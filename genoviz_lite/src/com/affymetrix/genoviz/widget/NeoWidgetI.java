@@ -454,21 +454,21 @@ public interface NeoWidgetI {
    */
   public Color getSelectionColor();
 
-  /**
-   * Determines whether or not subselection of glyphs is allowed.
-   *
-   * @param allowed <code>true</code> indicates that subselections
-   *   of glyphs are allowed.
-   */
-  public void setSubSelectionAllowed(boolean allowed);
-
-  /**
-   * Returns the current setting for subselection.
-   *
-   * @return <code>true</code> if subselection is currently allowed.
-   * @see #setSubSelectionAllowed
-   */
-  public boolean isSubSelectionAllowed();
+//  /**
+//   * Determines whether or not subselection of glyphs is allowed.
+//   *
+//   * @param allowed <code>true</code> indicates that subselections
+//   *   of glyphs are allowed.
+//   */
+//  public void setSubSelectionAllowed(boolean allowed);
+//
+//  /**
+//   * Returns the current setting for subselection.
+//   *
+//   * @return <code>true</code> if subselection is currently allowed.
+//   * @see #setSubSelectionAllowed
+//   */
+//  public boolean isSubSelectionAllowed();
 
   /**
    * Returns the bounding rectangle of the glyph in coordinates.
@@ -564,13 +564,6 @@ public interface NeoWidgetI {
    *  Clears all glyphs from the widget
    */
   public void clearWidget();
-
-  /**
-   *  returns true if the glyph supports selection of a subregion
-   *  in addition to selection of the whole item
-   */
-  public boolean supportsSubSelection(GlyphI glyph);
-
 
   /**
    * Make this glyph be drawn before all its siblings

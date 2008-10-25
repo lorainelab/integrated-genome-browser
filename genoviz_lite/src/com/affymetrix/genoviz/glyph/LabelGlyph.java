@@ -431,34 +431,6 @@ public class LabelGlyph extends Glyph {
     }
   }
 
-  /**
-   * We override the superclass's version of this method
-   * so that we can add both the labeling (this) and labeled glyph
-   * to the pick list.
-   */
-  @Override
-  public void pickTraversal(Rectangle pickRect, List<GlyphI> picks,
-      ViewI view)
-  {
-    if (isVisible && intersects(pickRect, view))  {
-      if (hit(pickRect, view))  {
-        picks.add(this);
-        if (null != this.labeled && !picks.contains(this.labeled)) {
-          picks.add(this.labeled);
-        }
-      }
-      if (children != null)  {
-        GlyphI child;
-        // We avoid object creation overhead by avoiding Enumeration.
-        int childnum = children.size();
-        for (int i=0; i<childnum; i++) {
-          child = children.get(i);
-          child.pickTraversal(pickRect, picks, view);
-        }
-      }
-    }
-  }
-
   public void setToggleByWidth(boolean b) {
     TOGGLE_BY_WIDTH = b;
   }

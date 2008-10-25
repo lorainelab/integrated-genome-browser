@@ -16,7 +16,6 @@ import com.affymetrix.genoviz.pack.PackerI;
 import java.awt.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.bioviews.Glyph.DrawOrder;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -28,16 +27,9 @@ import java.util.ArrayList;
  * containing a reference to a rectangle.  This makes more efficient
  * use of memory.
  * 
- * @author Gregg Helt 
+ * @author Gregg Helt
  */
 public class EffGlyph extends Rectangle2D.Double implements GlyphI {
-
-  private static final boolean debug = false;
-  private static final boolean DEBUG_DT = false;
-
-  // If true, apply corrections to avoid an AWT drawing bug that can happen
-  // for very large glyphs (bigger than about 32000 pixels).
-  static final boolean FIX_AWT_BIG_RECT_BUG = true;
 
   static protected int min_pixels_width=1; //TODO: make non-static, make part of the glyph style
   static protected int min_pixels_height=1; //TODO: make non-static, make part of the glyph style
@@ -52,6 +44,11 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   protected boolean selected;
   protected DrawOrder drawOrder = DrawOrder.DrawSelfFirst;
 
+  /**
+   * Constructs a simple invisible Glyph.  Typically, this Glyph
+   * is not used directly, but rather one of the sub-classes will
+   * be used.
+   */
   public EffGlyph() {
     super();
     isVisible = true;
@@ -66,34 +63,9 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   }
 
   /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void select(double x, double y, double width, double height) {
-    setSelected(true);
-  }
-
-  /**
-   * Always returns false.
-   * @return false
-   */
-  @Override
-  public boolean supportsSubSelection() {
-    return false;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Rectangle2D.Double getSelectedRegion() {//TODO: delete?
-    if (selected) { return this; }
-    else { return null; }
-  }
-
-  /**
    * Sets the {@link DrawOrder}.
    */
+  @Override
   public void setDrawOrder(DrawOrder order) {
     this.drawOrder = order;
   }
@@ -101,15 +73,13 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   /**
    * @return the {@link DrawOrder}.
    */
+  @Override
   public DrawOrder getDrawOrder() {
     return drawOrder;
   }
 
   @Override
   public void drawTraversal(ViewI view)  {
-    if (DEBUG_DT) {
-      System.err.println("called Glyph.drawTraversal() on " + this);
-    }
     if (drawOrder == DrawOrder.DrawSelfFirst) {
       if (withinView(view) && isVisible) {
         if (selected) { 
@@ -136,9 +106,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
         }
       }
     }
-    if (DEBUG_DT) {
-      System.err.println("leaving Glyph.drawTraversal()");
-    }
   }
 
   protected void drawChildren(ViewI view) {
@@ -163,14 +130,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    */
   @Override
   public void draw(ViewI view)  {
-    if (debug) {
-      Graphics g = view.getGraphics();
-      g.setColor(Color.red);
-      Rectangle pixelbox = view.getScratchPixBox();
-      view.transformToPixels(this, pixelbox);
-      g.drawRect(pixelbox.x+1, pixelbox.y+1,
-                 pixelbox.width-2, pixelbox.height-2);
-    }
   }
 
   /**
@@ -201,7 +160,9 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   }
 
   /**
-   * Draws the glyph with a different background to indicate that it is selected.
+   * Draws the glyph with a different background in the immediate
+   * region surrounding it.  Can be used to indicate that the
+   * glyph is selected.
    */
   protected void drawSelectedBackground(ViewI view) {
     Graphics g = view.getGraphics();
@@ -251,9 +212,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
   @Override
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
-      if (debug)  {
-        System.out.println("intersects");
-      }
       if (hit(pickRect, view))  {
         if (!pickList.contains(this)) {
  //TODO: why not just override equals() in EffGlyph?
@@ -262,9 +220,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
           // on coordinates.  This means that you can't "select" both a parent glyph
           // and a child glyph that have identical coordinates.
           pickList.add(this);
-        }
-        if (debug)   {
-          System.out.println("Hit " + this);
         }
       }
       if (children != null)  {
@@ -277,37 +232,6 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     }
   }
   
-  //TODO: implement or delete
-  /** NOT YET IMPLEMENTED. */
-  @Override
-  public void pickTraversal(Rectangle pickrect, List<GlyphI> pickList, ViewI view) {
-    //TODO: need to covert pickRect to coords...
-    /*
-    if (isVisible && intersects(pickRect, view))  {
-      if (debug)  {
-        System.out.println("intersects");
-      }
-      if (hit(pickRect, view))  {
-        if (!pickVec.contains(this)) {
-          pictList.add(this);
-        }
-        if (debug)   {
-          System.out.println("Hit " + this);
-        }
-      }
-      if (children != null)  {
-        GlyphI child;
-        // We avoid object creation overhead by avoiding Enumeration.
-        int childnum = children.size();
-        for (int i=0; i<childnum; i++) {
-          child = (GlyphI)children.get(i);
-          child.pickTraversal(pickRect, pictList, view);
-        }
-      }
-    }
-    */
-  }
-
   /**
    *  This base class always returns false.  Sub-classes must implement.
    */

@@ -1044,52 +1044,6 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   @Override
-  public void select(GlyphI gl, int start, int end) {
-    if (end < start) {
-      int temp = start;
-      start = end;
-      end = temp;
-    }
-    scene.select(gl, (double)start, gl.getCoordBox().y,
-                 (double)end-start, gl.getCoordBox().height);
-
-    if ( gl.isSelected() ) { // Selection was not suppressed by an unselectable glyph!
-      if (!(selected.contains(gl))) {
-        selected.add(gl);
-      }
-    }
-  }
-
-  @Override
-  public void select(List<GlyphI> glyphs, int start, int end) {
-    for (GlyphI g : glyphs) {
-      select(g, start, end);
-    }
-  }
-
-  @Override
-  public int getSelectedStart(GlyphI gl) {
-    if (! isHorizontal())  {
-      return (int)Math.round(gl.getSelectedRegion().y);
-    }
-    else {
-      return (int)Math.round(gl.getSelectedRegion().x);
-    }
-  }
-
-  @Override
-  public int getSelectedEnd(GlyphI gl) {
-    if (! isHorizontal()) {
-      return (int)Math.round(gl.getSelectedRegion().y +
-                        gl.getSelectedRegion().height - 1);
-    }
-    else {
-      return (int)Math.round(gl.getSelectedRegion().x +
-                        gl.getSelectedRegion().width - 1);
-    }
-  }
-
-  @Override
   public void update(Graphics g) {
     if (NM_DEBUG_PAINT)  {
       System.out.println("NeoMap.update() called");

@@ -47,6 +47,15 @@ import java.util.List;
  * @see com.affymetrix.genoviz.bioviews.ViewI
  */
 public interface GlyphI {
+
+  /**
+   * Determines the order in which the parent and child glyphs
+   * are drawn during {@link #drawTraversal(view)}
+   */
+  public enum DrawOrder {
+    DrawSelfFirst, DrawChildrenFirst
+  }
+
   /**
    * Draws the glyph and all it's children.
    * This can be implemented by recursively calling drawTraversal
@@ -56,6 +65,19 @@ public interface GlyphI {
    */
   public void drawTraversal(ViewI view);
 
+  /**
+   * Determines the order in which the parent and child glyphs
+   * are drawn during {@link #drawTraversal(view)}
+   * @param order
+   */
+  public void setDrawOrder(DrawOrder order);
+
+  /**
+   * Shows the order in which the parent and child glyphs
+   * are drawn during {@link #drawTraversal(view)}
+   */
+  public DrawOrder getDrawOrder();
+  
   /**
    * Draws the glyph itself, but not its children.
    * This will be called from inside {@link #drawTraversal(ViewI)}.
@@ -72,7 +94,7 @@ public interface GlyphI {
    *
    * @param parent contains this glyph as a child.
    */
-  //TODO: change to protected? Allow to be called only from addChild?
+  //TODO: remove from interface? Allow to be called only from addChild?
   public void setParent(GlyphI parent);
 
   /**
@@ -216,7 +238,7 @@ public interface GlyphI {
   /**
    * Whether or not this glyph is hitable.
    */
-    public boolean isHitable();
+  public boolean isHitable();
 
   /**
    * Sets whether or not the glyph is selected.
@@ -248,40 +270,6 @@ public interface GlyphI {
   public void setSelected(boolean selected);
 
   /**
-   * Selects a subregion of the glyph
-   * in coordinate space.
-   *
-   * @param x the left side of the subregion.
-   * This is relative to the overall coordinate space,
-   * not relative to the glyph.
-   * @param y the top of the subregion.
-   * This is relative to the overall coordinate space,
-   * not relative to the glyph.
-   * @param width of the subregion.
-   * @param height of the subregion.
-   */
-  public void select(double x, double y, double width, double height);
-
-  /**
-   * Indicates whether or not subselection is supported.
-   *
-   * @return true if subselection is supported.
-   */
-  //TODO: is this ever used?
-  public boolean supportsSubSelection();
-
-  /**
-   * Gets the region of the glyph that is selected.
-   * If the glyph does not support subselection,
-   * then this should return
-   * either the glyph's entire coordinate bounding box
-   * when selected or null when not selected
-   *
-   * @return the selected region.
-   */
-  public Rectangle2D.Double getSelectedRegion();
-
-  /**
    * Indicates whether or not the glyph is selected.
    *
    * @return selection state.
@@ -291,15 +279,12 @@ public interface GlyphI {
 
   /**
    * Searches children for hits and add them to the pick list.
-   * @param pickvec modified by this routine to return the results
+   * @param pickrect The coordinate rectangle
+   * @param pickvec A modifiable list into which the results will be added
+   * @param view The view to use
    */
-  public void pickTraversal(Rectangle pickrect, List<GlyphI> pickvec, ViewI view);
-
-  /**
-   * Searches children for hits and add them to the pick list.
-   * @param pickvec modified by this routine to return the results
-   */
-  public void pickTraversal(Rectangle2D.Double pickrect, List<GlyphI> pickvec, ViewI view);
+  public void pickTraversal(Rectangle2D.Double pickrect, 
+    List<GlyphI> pickvec, ViewI view);
 
 
   /**

@@ -13,7 +13,6 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.util.*;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
@@ -180,17 +179,14 @@ public class Scene implements SceneII  {
     clearDamage();
   }
 
+  @Override
   public Rectangle2D.Double getCoordBox() {
     return rootGlyph.getCoordBox();
   }
  
+  @Override
   public void pickTraversal(Rectangle2D.Double coordrect, 
     List<GlyphI> pickvect, ViewI view) {
-    rootGlyph.pickTraversal(coordrect, pickvect, view);
-  }
-
-  public void pickTraversal(Rectangle coordrect, List<GlyphI> pickvect,
-      ViewI view) {
     rootGlyph.pickTraversal(coordrect, pickvect, view);
   }
 
@@ -199,6 +195,7 @@ public class Scene implements SceneII  {
    * @param glyph the glyph to set.
    * @param isVisible whether or not the glyph is visible.
    */
+  @Override
   public void setVisibility(GlyphI glyph, boolean isVisible) {
     glyph.setVisibility(isVisible);
     expandDamage(glyph);
@@ -214,6 +211,7 @@ public class Scene implements SceneII  {
    * Selects a glyph.
    * @param gl The glyph to select
    */
+  @Override
   public void select(GlyphI gl) {
     if (gl != null) {
       gl.setSelected(true);
@@ -221,70 +219,11 @@ public class Scene implements SceneII  {
     }
   }
 
-  // Still need to deal with Y!!!!  GAH 12-10-97
-  public void select(GlyphI gl, double x, double y,
-      double width, double height) {
-    
-    if (!gl.supportsSubSelection()) {
-      select(gl);
-      return;
-    }
-
-    final Rectangle2D.Double prev_selbox = gl.getSelectedRegion();
-    if (prev_selbox == null)  {
-      gl.select(x, y, width, height);
-      expandDamage(gl, x, y, width, height);
-    }
-    else {
-      scratchCoordBox.setRect(prev_selbox.x, prev_selbox.y,
-          prev_selbox.width, prev_selbox.height);
-      gl.select(x, y, width, height);
-      final Rectangle2D.Double curr_selbox = gl.getSelectedRegion();
-      final Rectangle2D.Double union_selbox =
-        (Double) curr_selbox.createUnion(scratchCoordBox);
-      final Rectangle2D.Double common_selbox =
-        (Rectangle2D.Double) curr_selbox.createIntersection(scratchCoordBox);
-      final Rectangle2D.Double damage_selbox = new Rectangle2D.Double(
-          union_selbox.getX(), union_selbox.getY(),
-            union_selbox.getWidth(), union_selbox.getHeight());
-
-      // +1/-1 adjustments made to draw over previous selection edge
-
-      if (union_selbox.getY() == common_selbox.getY() &&
-          union_selbox.getHeight() == common_selbox.getHeight()) {
-
-        // both x-start and x-end are the same,
-        // therefore prev and current coord boxes are identical
-        // therefore don't need to expand damage at all?
-        if (union_selbox.x == common_selbox.x &&
-            union_selbox.width == common_selbox.width) {
-          return;
-        }
-
-        // x-start of selection hasn't moved
-        else if (union_selbox.x == common_selbox.x) {
-          damage_selbox.x = common_selbox.x + common_selbox.width;
-          damage_selbox.width =
-            union_selbox.width - common_selbox.width;
-        }
-
-        // x-end of selection hasn't moved
-        else if ((union_selbox.x + union_selbox.width) ==
-            (common_selbox.x + common_selbox.width)) {
-          damage_selbox.x = union_selbox.x;
-          damage_selbox.width = common_selbox.x - union_selbox.x;
-        }
-      }
-      expandDamage(gl, damage_selbox.x, damage_selbox.y,
-          damage_selbox.width, damage_selbox.height);
-    }
-
-  }
-
   /**
    * Deselects a glyph.
    * @param gl the glyph to be deselected.
    */
+  @Override
   public void deselect(GlyphI gl) {
     if (gl != null) {
       gl.setSelected(false);

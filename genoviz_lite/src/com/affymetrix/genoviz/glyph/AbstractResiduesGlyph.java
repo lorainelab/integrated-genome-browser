@@ -79,24 +79,6 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   @Override
   public Font getResidueFont() { return style.getFont(); }
 
-  @Override
-  public boolean supportsSubSelection() {
-    return true;
-  }
-
-  @Override
-  public java.awt.geom.Rectangle2D.Double getSelectedRegion() {
-    if (sel_glyph == null) {
-      if (selected) {
-        return this.getCoordBox();
-      }
-      else {
-        return null;
-      }
-    }
-    return sel_glyph.getCoordBox();
-  }
-
   /**
    * Calls super.setCoords and resets the reference space.
    * Also resets the coords for all the children.
@@ -133,20 +115,6 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   @Override
   public void setCoordBox( java.awt.geom.Rectangle2D.Double theBox ) {
     setCoords( theBox.x, theBox.y, theBox.width, theBox.height );
-  }
-
-  /**
-   * Overriding glyph.select(x,y,width,height) to ignore y & height.
-   * Just use x start and end (x+width).
-   * Should probably go in a LinearGlyph superclass...
-   */
-  @Override
-  public void select(double x, double y, double width, double height) {
-    if (orient == NeoConstants.Orientation.Horizontal) {
-      select(x, x+width);
-    } else if (orient == NeoConstants.Orientation.Vertical) {
-      select(y, y+height);
-    }
   }
 
   /**

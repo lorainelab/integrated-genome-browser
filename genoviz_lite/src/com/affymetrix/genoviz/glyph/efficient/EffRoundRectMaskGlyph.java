@@ -11,7 +11,6 @@
 
 package com.affymetrix.genoviz.glyph.efficient;
 
-import com.affymetrix.genoviz.bioviews.Glyph.DrawOrder;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.awt.geom.Area;

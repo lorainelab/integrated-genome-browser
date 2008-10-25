@@ -29,9 +29,6 @@ import com.affymetrix.genoviz.event.NeoViewMouseEvent;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.event.NeoWidgetEvent;
 import com.affymetrix.genoviz.event.NeoWidgetListener;
-import com.affymetrix.genoviz.util.GeneralUtils;
-
-import com.affymetrix.genoviz.glyph.RootGlyph;
 
 import com.affymetrix.genoviz.util.NeoConstants.Orientation;
 import java.awt.*;
@@ -41,6 +38,7 @@ import javax.swing.JScrollBar;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.swing.BoundedRangeModel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -51,7 +49,6 @@ import javax.swing.event.ChangeListener;
 public abstract class NeoWidget extends NeoAbstractWidget
   implements NeoWidgetI, AdjustmentListener {
 
-  private static final boolean DEBUG_SCROLLER_VALUES = false;
   private static final boolean DEBUG_SCROLL = false;
   private static final boolean DEBUG_ZOOM = false;
   
@@ -188,25 +185,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return orient == Orientation.Horizontal;
   }
   
-//  @Override
-//  public void setExpansionBehavior(WidgetAxis axis, ExpandBehavior behavior) {
-//    expansion_behavior[axis.ordinal()] = behavior;
-//    final XY newid;
-//    RootGlyph rglyph = scene.getRootGlyph();
-//    if (axis == WidgetAxis.Primary) {
-//      newid = XY.X;
-//    }
-//    else {
-//      newid = XY.Y;
-//    }
-//    rglyph.setExpansionBehavior(newid, behavior);
-//  }
-//
-//  @Override
-//  public ExpandBehavior getExpansionBehavior(WidgetAxis axis) {
-//    return expansion_behavior[axis.ordinal()];
-//  }
-
   public void setReshapeBehavior(int id, int behavior) {
     reshape_constraint[id] = behavior;
   }
@@ -352,6 +330,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return getItemsByCoord(coordrect);
   }
 
+  @Override
   public List<GlyphI> getItems(double x, double y, int location) {
     return getItems(x,y);
   }
@@ -359,27 +338,21 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
   public NeoWidgetI getWidget(int location) { return this; }
 
-//    public NeoWidgetI getWidget(GlyphI gl) {
-//      if (gl.getScene() == this.scene) { return this; }
-//      return null;
-//    }
-
   /**
    * Updates the visual appearance of the widget.  It is important to call
    * this method to view any externally introduced changes in widget
    * appearance since last call to updateWidget()
    */
+  @Override
   public void updateWidget() {
     updateWidget(false);
   }
 
   /**
    * Updates the visual appearance of the widget
-   *    if (full_update) then force redrawing of entire widget
-   *  Once optimizations are working smoothly, this should never be needed.
-   *    For most visual updates, updateWidget() with no arguments should
-   *  have the same effect but will be more efficient
+   *@param full_update  if true, then force redrawing of entire widget.
    */
+  @Override
   public void updateWidget(boolean full_update) {
     if (canvas == null) {
       return; // in case destroy() was called.
@@ -390,8 +363,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     canvas.repaint();
   }
 
-
-
+  @Override
   public void setRubberBandBehavior(boolean activate) {
     if (canvas == null) {
       return; // in case destroy() was called.
@@ -445,19 +417,22 @@ public abstract class NeoWidget extends NeoAbstractWidget
     return view.getCoordBox();
   }
 
+  @Override
   public Rectangle2D.Double getCoordBounds(GlyphI gl) {
     return gl.getCoordBox();
   }
 
+  @Override
   public void setPixelFuzziness(int blur) {
     pixelblur = blur;
   }
 
+  @Override
   public int getPixelFuzziness() {
     return pixelblur;
   }
 
-
+  @Override
   public void setScroller(WidgetAxis dim, JScrollBar adj) {
     final int id = dim.ordinal();
     if (adj == null) {
@@ -505,7 +480,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
     slider.addChangeListener(changeListener);
   }
 
-  // maybe should return coord it _actually_ scrolled to
+  //TODO: maybe should return coord it _actually_ scrolled to
+  @Override
   public void scroll(WidgetAxis dim, double coord_value) {
     // double new_coord_value = 0;
     // double prev_pixel_value;
@@ -619,39 +595,24 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double coord_offset = pixel_offset[ordinal] * coords_per_pixel[ordinal];
     double visible_coords = coords_per_pixel[ordinal] * pixel_size[ordinal];
 
-    /* if there is more visible than the maximum coordinate size, max out
-     *   the scrollbar so that it can't send any adjustment events
-     *   this uses a trick/bug that Scrollbar and NeoScrollbar both have,
-     *   namely that setting max and min to 0 will make the thumb the full
-     *   size of the scrollbar gutter
-     * BUT, setting value, max and min to 0 screws up in some situations
-     *   where coord_beg != 0.  (bug tracking # 24.5, from JM)
-     *   Trying setValues(coord_beg, 1, coord_beg, coord_beg) instead --
-     *      works for at least NeoMapDemo, and fixes bug   GAH 1-17-98
-     */
+    // If there is more visible than the maximum coordinate size, 
+    //  max-out the scrollbar.
+    BoundedRangeModel scrollModel = scroller[ordinal].getModel();
+    
+    // Since this code can be the result of the user sliding
+    // the zoomer, use the zoomer's value-is-adjusting flag.
     if (coord_size < visible_coords) {
-      if (DEBUG_SCROLLER_VALUES) {
-        System.err.println("setting scroller values with " +
-            "coord_size=" + coord_size +
-            " < visible_coord=" + visible_coords);
-      }
-
-      scroller[ordinal].getModel().setRangeProperties(
-        (int) coord_beg, 1, (int) coord_beg, (int) coord_beg+1, 
-        false);
+      scrollModel.setRangeProperties(
+        scrollModel.getMinimum(), scrollModel.getMaximum() - scrollModel.getMinimum(), 
+        scrollModel.getMinimum(), scrollModel.getMaximum(),
+        zoomer[ordinal].getValueIsAdjusting() || scrollModel.getValueIsAdjusting());
     }
     else {
-      if (DEBUG_SCROLLER_VALUES) {
-        if (ordinal == Yint) {
-          System.out.println("Setting Y scroll for " + GeneralUtils.toObjectString(this) + ", value: " + (int) coord_offset + ", visible: " + (int) visible_coords + ", min: " + (int) coord_beg + ", max: " + (int) coord_end);
-        }
-      }
-
       // value, extent, min, max
-      scroller[ordinal].getModel().setRangeProperties(
+      scrollModel.setRangeProperties(
         (int) coord_offset, (int) visible_coords, 
         (int) coord_beg, (int) coord_end, 
-        false);
+        zoomer[ordinal].getValueIsAdjusting() || scrollModel.getValueIsAdjusting());
     }
 
     if (scroll_behavior[ordinal] == ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT) {
@@ -807,29 +768,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
     if ( g.isSelected() && !selected.contains(g)) {
       selected.add(g);
     }
-  }
-
-  /**
-   * @see com.affymetrix.genoviz.widget.NeoMapI#select
-   */
-  public void select(List<GlyphI> glyphs, double x, double y,
-      double width, double height) {
-    for (GlyphI g : glyphs) {
-      select(g, x, y, width, height);
-    }
-  }
-
-  public void select(GlyphI g, double x, double y,
-      double width, double height) {
-    scene.select(g, x, y, width, height);
-    if (g.isSelected() && ! selected.contains(g)) {
-      selected.add(g);
-    }
-  }
-
-  @Override
-  public boolean supportsSubSelection(GlyphI gl) {
-    return gl.supportsSubSelection();
   }
 
   @Override
@@ -1029,31 +967,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public SceneII.SelectType getSelectionAppearance() {
     return scene.getSelectionAppearance();
   }
+
+  @Override
   public void setSelectionColor(Color col) {
     scene.setSelectionColor(col);
   }
+
+  @Override
   public Color getSelectionColor() {
     return scene.getSelectionColor();
-  }
-
-  /**
-   * Default implementation does nothing.
-   * This stub should be overridden by subclasses
-   * that allow sub selection.
-   */
-  @Override
-  public void setSubSelectionAllowed(boolean allowed) {
-  }
-
-  /**
-   * Default implementation returns false.
-   * This stub should be overridden by subclasses
-   * that allow sub selection.
-   * @return false
-   */
-  @Override
-  public boolean isSubSelectionAllowed() {
-    return false;
   }
 
   @Override
@@ -1261,10 +1183,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
   }
 
+  @Override
   public void toFrontOfSiblings(GlyphI glyph) {
     scene.toFrontOfSiblings(glyph);
   }
 
+  @Override
   public void toBackOfSiblings(GlyphI glyph) {
     scene.toBackOfSiblings(glyph);
   }
@@ -1411,10 +1335,13 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   private NeoWidgetListener listeners = null;
+
+  @Override
   public void addWidgetListener( NeoWidgetListener l ) {
     listeners = NeoEventMulticaster.add( listeners, l );
   }
 
+  @Override
   public void removeWidgetListener( NeoWidgetListener l ) {
     listeners = NeoEventMulticaster.remove( listeners, l );
   }

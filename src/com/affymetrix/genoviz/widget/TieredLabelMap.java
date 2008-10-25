@@ -24,13 +24,14 @@ import com.affymetrix.genoviz.widget.tieredmap.*;
  * in another tiered map.
  * A listener will typically keep the two maps in sync.
  */
+//TODO: remove class
 public class TieredLabelMap extends AbstractTieredMap {
 
   private Color uniform_label_color = null;
   private Color uniform_background_color = Color.gray;
   private Color uniform_outline_color = Color.black;
   private Font uniform_label_font = null;
-  private boolean subSelectionAllowed = false;
+  //private boolean subSelectionAllowed = false;
 
   public TieredLabelMap (boolean hscroll_show, boolean vscroll_show) {
     super(hscroll_show, vscroll_show);
@@ -159,7 +160,8 @@ public class TieredLabelMap extends AbstractTieredMap {
     }
     labelMTG.setLabel(mtg.getLabel());
     labelMTG.setCoords(0, 0, 100, 30);
-    labelMTG.setSelectable ( isSubSelectionAllowed() );
+    //labelMTG.setSelectable ( isSubSelectionAllowed() );
+    labelMTG.setSelectable ( true ); //TODO: think about
 
     List<String> v = mtg.getMoreStrings();
     if ( v != null ) {
@@ -232,17 +234,4 @@ public class TieredLabelMap extends AbstractTieredMap {
 
     super.packTiers(full_repack, stretch_map);
   }
-
-  /** Returns true if slection of individual tiers is allowed */
-  @Override
-  public boolean isSubSelectionAllowed() {
-    return subSelectionAllowed;
-  }
-
-  /** Sets whether slection of individual tiers is allowed */
-  @Override
-  public void setSubSelectionAllowed(boolean allowed) {
-    subSelectionAllowed = allowed;
-  }
-
 }

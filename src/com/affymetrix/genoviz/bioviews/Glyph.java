@@ -30,10 +30,6 @@ import java.awt.geom.Rectangle2D;
  * can be used as an invisible container for other child glyphs.
  */
 public abstract class Glyph implements GlyphI {
-
-  public static enum DrawOrder {
-    DrawSelfFirst, DrawChildrenFirst
-  }
   
   public boolean DEBUG_DRAW = false;
   private static final boolean debug = false;
@@ -74,56 +70,18 @@ public abstract class Glyph implements GlyphI {
     return getPositiveCoordBox().intersects(view.getCoordBox());
   }
 
-  /**
-   * Selecting a region of a glyph.
-   * This base class defaults to selecting the whole glyph.
-   * Subclasses can override this for a more appropriate implementation.
-   *
-   * @param x ignored
-   * @param y ignored
-   * @param width ignored
-   * @param height ignored
-   */
   @Override
-  public void select(double x, double y, double width, double height) {
-    setSelected(true);
-  }
-
-  /**
-   *  Default is that glyph does not support subselection.
-   *  Override this to indicate support for subselection.
-   */
-  @Override
-  public boolean supportsSubSelection() {
-    return false;
-  }
-
-  /**
-   *  Default implementation returns bounding box for the
-   *  entire glyph
-   */
-  @Override
-  public Rectangle2D.Double getSelectedRegion() {
-    if (selected) {
-      return getPositiveCoordBox();
-    } else {
-      return null;
-    }
-  }
-
   public void setDrawOrder(DrawOrder order) {
     drawOrder = order;
   }
 
+  @Override
   public DrawOrder getDrawOrder() {
     return drawOrder;
   }
 
   @Override
   public void drawTraversal(ViewI view) {
-    if (DEBUG_DT) {
-      System.err.println("called Glyph.drawTraversal() on " + this);
-    }
     if (drawOrder == DrawOrder.DrawSelfFirst) {
       if (withinView(view) && isVisible) {
         if (selected) {
@@ -146,9 +104,6 @@ public abstract class Glyph implements GlyphI {
           draw(view);
         }
       }
-    }
-    if (DEBUG_DT) {
-      System.err.println("leaving Glyph.drawTraversal()");
     }
   }
 
@@ -264,34 +219,6 @@ public abstract class Glyph implements GlyphI {
       }
     }
   }
-
-
-  /* By the time hit detection, packing, etc. calls
-   * a <code>Glyph.pickTraversal</code> method,
-   * any pixelboxes have been converted
-   * to coordboxes and the call is
-   * to <code>pickTraversal(<em>coordbox</em>, vec, view)</code>
-   */
-  @Override
-  public void pickTraversal(Rectangle pickRect, List<GlyphI> picks,
-          ViewI view) {
-    if (isVisible && intersects(pickRect, view)) {
-      if (hit(pickRect, view)) {
-        if (!picks.contains(this)) {
-          picks.add(this);
-        }
-      }
-      if (children != null) {
-        GlyphI child;
-        int childnum = children.size();
-        for (int i = 0; i < childnum; i++) {
-          child = children.get(i);
-          child.pickTraversal(pickRect, picks, view);
-        }
-      }
-    }
-  }
-
 
   /**
    * Detects whether or not this glyph is "hit"

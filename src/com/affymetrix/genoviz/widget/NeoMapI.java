@@ -98,83 +98,6 @@ public interface NeoMapI extends NeoWidgetI {
   public void setMapOffset(int start, int end);
 
   /**
-   * Selects a range along a GlyphI.
-   * This will default to normal selection
-   * if the glyph does not support selection of internal areas and ranges.
-   * Note that there is no deselect(glyph, start, end),
-   * since only one selection per glyph is allowed,
-   * either whole glyph or a contiguous range.  To
-   * deselect a range selection, call {@link #deselect(GlyphI glyph)}.
-   *
-   * @param glyph the GlyphI to select a range along
-   * @param start start of range to select
-   * @param end end of range to select
-   *
-   * @see #deselect
-   * @see #getSelected
-   * @see #getSelectedStart
-   * @see #getSelectedEnd
-   */
-  public void select(GlyphI glyph, int start, int end);
-
-  /**
-   * Selects a range along each GlyphI in a List.
-   * This will default to normal selection
-   * if the glyph does not support selection of internal areas and ranges.
-   * Note that there is no deselect(glyphs, start, end),
-   * since only one selection per glyph is allowed,
-   * either whole glyph or a contiguous range.
-   * To deselect a range selection for a List of glyphs,
-   * call {@link #deselect(List glyphs)}.
-   *
-   * @param glyphs a List of GlyphIs to select a range along
-   * @param start start of range to select
-   * @param end end of range to select
-   *
-   * @see #getSelected
-   * @see #getSelectedStart
-   * @see #getSelectedEnd
-   */
-  public void select(List<GlyphI> glyphs, int start, int end);
-
-  /**
-   * Selecting an area within a glyph.
-   * This will default to normal selection
-   * if the glyph does not support selection of internal areas.
-   * Note that there is no deselect(glyph, start, end, width, height),
-   * since only one selection per glyph is allowed,
-   * either whole glyph or a contiguous area.
-   * To deselect an area selection, call {@link #deselect(GlyphI glyph)}.
-   */
-  public void select(GlyphI glyph, double x, double y, double width, double height);
-
-  /**
-   * Selecting an area for all GlyphIs in a List.
-   * This will default to normal selection
-   * if the glyph does not support selection of internal areas.
-   * Note that there is no <code>deselect(glyphs, start, end, width, height)</code>,
-   * since only one selection per glyph is allowed,
-   * either whole glyph or a contiguous area.
-   * To deselect an area selection for a List of glyphs,
-   * call {@link #deselect(java.util.List)}.
-   */
-  public void select(List<GlyphI> glyphs, double x, double y, double width, double height);
-
-  /**
-   * Get the start of the selected range of a glyph.
-   * If the glyph does not suport subselection but is still selected,
-   * the start of the glyph will be returned.
-   */
-  public int getSelectedStart(GlyphI gl);
-
-  /**
-   * Get the end of the selected range of a glyph.
-   * If the glyph does not suport subselection but is still selected,
-   * the end of the glyph will be returned.
-   */
-  public int getSelectedEnd(GlyphI gl);
-
-  /**
    * Adds an axis number line along the primary axis at <code>offset</code>
    * along the secondary axis.
    */
@@ -232,6 +155,7 @@ public interface NeoMapI extends NeoWidgetI {
    */
   public void zoomOffset(double zoom_scale);
 
+  //TODO: Why not just use component.setBackground() ?
   public void setMapColor(Color col);
 
   public Color getMapColor();

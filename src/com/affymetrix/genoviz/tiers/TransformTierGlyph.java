@@ -197,34 +197,7 @@ public class TransformTierGlyph extends TierGlyph {
       }
       if (DEBUG_PICK_TRAVERSAL)  { debugLocation(pickRect); }
     }
-
   }
-
-
-  // NOT YET TESTED
-    @Override
-  public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList,
-                            ViewI view) {
-    if (isVisible && intersects(pickRect, view))  {
-      if (hit(pickRect, view))  {
-        if (!pickList.contains(this)) {
-          pickList.add(this);
-        }
-      }
-      if (children != null)  {
-	// recast to pickTraversal() with coord box rather than pixel box
-	pix_rect.setRect(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
-	tier_transform.inverseTransform(pix_rect, internal_pickRect);
-        GlyphI child;
-        int childnum = children.size();
-        for (int i=0; i<childnum; i++) {
-          child = children.get(i);
-          child.pickTraversal(internal_pickRect, pickList, view);
-        }
-      }
-    }
-  }
-
 
   // don't move children! just change tier's transform offset
   @Override

@@ -55,6 +55,7 @@ public interface SceneII extends SceneI {
 
   public boolean hasTransients();
 
+  //TODO: get rid of transients?
   public void addTransient(TransientGlyph tg);
 
   public void removeTransient(TransientGlyph tg);
@@ -77,9 +78,6 @@ public interface SceneII extends SceneI {
 
   /** Selects glyph and expands damage. */
   public void select(GlyphI g);
-
-  /** Selects glyph and expands damage. */
-  public void select(GlyphI g, double x, double y, double width, double height);
 
   public void toBack(GlyphI gl);
   

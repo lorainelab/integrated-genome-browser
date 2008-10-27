@@ -215,8 +215,8 @@ public class SeqResiduesLoader {
 
 	if ((min <= 0) && (max >= aseq.getLength())) {
 	    System.out.println("loading all residues");
-	    // loadAllResidues(aseq.getID());
-            return true;
+	    return loadAllResidues((SmartAnnotBioSeq)aseq);
+            //return true;
 	}
 	
         if (!(aseq instanceof GeneralBioSeq)) {

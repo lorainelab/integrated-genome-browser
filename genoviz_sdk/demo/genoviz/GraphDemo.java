@@ -77,10 +77,10 @@ public class GraphDemo extends Applet {
     ig.setImage(img1, this);
 
     // Put a logo near the bottom center of the map.
-    Image img3 = this.getImage(getCodeBase(), "./images/affymetrix_logo.gif");
+    /*Image img3 = this.getImage(getCodeBase(), "./images/affymetrix_logo.gif");
     map.configure("-offset 140");
     ig = (BasicImageGlyph)map.addItem(0, 999);
-    ig.setImage(img3, this);
+    ig.setImage(img3, this);*/
   }
 
 

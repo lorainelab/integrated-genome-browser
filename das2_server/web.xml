@@ -29,4 +29,15 @@
 		<servlet-name>GenometryDas2Servlet</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
+
+	<filter>
+	<filter-name>Compress</filter-name>
+		<filter-class>com.affymetrix.genometry.servlets.GZIPFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>Compress</filter-name>
+		<servlet-name>GenometryDas2Servlet</servlet-name>
+	</filter-mapping>
+
 </web-app>

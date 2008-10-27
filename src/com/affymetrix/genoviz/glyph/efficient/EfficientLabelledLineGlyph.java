@@ -18,10 +18,10 @@ import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import com.affymetrix.genoviz.util.NeoConstants.Placement;
 import java.awt.geom.Rectangle2D;
 
-/** A subclass of EffLabelledGlyph that makes all its children
+/** A subclass of EfficientLabelledGlyph that makes all its children
  *  center themselves vertically on the same line.
  */
-public class EffLabelledLineGlyph extends EffLabelledGlyph
+public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
    implements LabelledGlyph2  {
 
   boolean move_children = true;

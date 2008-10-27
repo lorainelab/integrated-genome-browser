@@ -20,7 +20,7 @@ import java.awt.geom.Rectangle2D;
  *  A new version of OutlineRectGlyph, 
  *     subclassed from EfficientGlyph instead of Glyph.
  */
-public class EffOutlineContGlyph extends EffSolidGlyph  {
+public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
   static boolean optimize_child_draw = true;
   static boolean DEBUG_OPTIMIZED_FILL = false;
   boolean move_children = true;

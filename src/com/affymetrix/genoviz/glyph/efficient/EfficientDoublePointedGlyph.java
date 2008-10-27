@@ -22,7 +22,7 @@ import java.awt.Rectangle;
  * It fills its containing pixelbox with the exception of the corners
  * on each "end" coord of the primary axis.
  */
-public class EffDoublePointedGlyph extends EffSolidGlyph {
+public class EfficientDoublePointedGlyph extends EfficientSolidGlyph {
 
   Orientation orientation = Orientation.Horizontal;
   

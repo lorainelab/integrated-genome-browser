@@ -24,13 +24,13 @@ import java.awt.geom.RoundRectangle2D;
  * a glyph representing one arm of a chromosome, with the cytobands
  * as children.
  */
-public class EffRoundRectMaskGlyph extends EffGlyph  {
+public class EfficientRoundRectMaskGlyph extends EfficientGlyph  {
 
   static BasicStroke stroke = new BasicStroke(2);
   RoundRectangle2D rr2d = new RoundRectangle2D.Double();
   Color fillColor = Color.WHITE;
   
-  public EffRoundRectMaskGlyph(Color fillColor) {
+  public EfficientRoundRectMaskGlyph(Color fillColor) {
     super();
     this.fillColor = fillColor;
     this.setDrawOrder(DrawOrder.DrawChildrenFirst);

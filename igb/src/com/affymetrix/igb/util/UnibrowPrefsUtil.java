@@ -76,6 +76,7 @@ import javax.swing.*;
      return getTopNode().getInt(param_name, def);
    }
 
+   /*
    public static void saveBooleanParam(String param_name, boolean param) {
      try {
        getTopNode().putBoolean(param_name, param);
@@ -83,6 +84,7 @@ import javax.swing.*;
        e.printStackTrace(System.out);
      }
    }
+    */
 
    public static boolean getBooleanParam(String param_name, boolean def) {
      return getTopNode().getBoolean(param_name, def);
@@ -532,6 +534,7 @@ import javax.swing.*;
    *  if the preference value changes.
    *  @param class_type one of Double, Long, Short, Integer, or Float
    */
+  /*
   public static JTextField createNumberTextField(final Preferences node,
     final String pref_name, final String default_val, final Class class_type) {
 
@@ -560,6 +563,7 @@ import javax.swing.*;
     });
     return text_box;
   }
+   */
 
   /**
    *  Makes sure that a given String is parseable as a particular Class of Number.
@@ -572,6 +576,7 @@ import javax.swing.*;
    *    (Note that the value of the fallback string is never tested and might not
    *    itself be a valid number.)
    */
+  /*
   static String normalizeStringToNumber(String new_val, String fallback, Class type) {
     String result = fallback;
     try {
@@ -592,7 +597,7 @@ import javax.swing.*;
         result = Short.toString(d.shortValue());
       }
       else if (String.class.equals(type)) {
-        /* Do nothing special for Strings. */
+        // Do nothing special for Strings. 
       }
       else {
         throw new IllegalArgumentException("Class '"+type+"' not accepted by this routine.");
@@ -602,7 +607,7 @@ import javax.swing.*;
       result = fallback;
     }
     return result;
-  }
+  }*/
 
   /**
    *  Creates a JComboBox associated with a String preference.
@@ -688,6 +693,7 @@ import javax.swing.*;
   /** Convert a String of arbitrary length into one that is short enough to
    *  be used as a key name or node name.
    */
+  /*
   public static String shortKeyName(String s) {
     String short_s;
     if (s.length() >= Preferences.MAX_KEY_LENGTH) {
@@ -697,6 +703,7 @@ import javax.swing.*;
     }
     return short_s;
   }
+   * */
 
 
 

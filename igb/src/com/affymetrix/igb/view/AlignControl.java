@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.view;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
@@ -22,7 +22,7 @@ import java.net.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SymWithProps;
+//import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.igb.IGB;
 
@@ -93,39 +93,8 @@ public class AlignControl implements ActionListener, ContextualPopupListener  {
     // base length of view in other IGB on length of view in current IGB?
     Rectangle2D vbox = gviewer.getSeqMap().getViewBounds();
     int view_length = (int)vbox.width;
-
-    // hack to look for most common case, where the other seq will be
-    //    a chromosome (and hence it's id will start with "chr")
-    //    need this because now starting to look at syms with breadth > 2 (like Psl3Syms)
-    SeqSpan other_span = null;
-    int spancount = annot_sym.getSpanCount();
-    for (int i=0; i<spancount; i++) {
-      SeqSpan ospan = annot_sym.getSpan(i);
-      BioSeq oseq = ospan.getBioSeq();
-      if (! SeqUtils.spansEqual(curspan, ospan)) {
-	if (oseq.getID().startsWith("chr")) {
-	  // found a other_span != curspan and likely on a chromosome, so use it
-	  other_span = ospan;
-	  break;
-	}
-      }
-    }
-    if (other_span == null) {
-      // no other spans with with seq id that looks like a chromosome,
-      //    so just take first one thats not equal...
-      for (int i=0; i<spancount; i++) {
-	SeqSpan ospan = annot_sym.getSpan(i);
-	if (! SeqUtils.spansEqual(curspan, ospan)) {
-	  other_span = ospan;
-	  break;
-	}
-      }
-    }
-    if (other_span == null) {
-      // looks like there _are_ no other unequal spans, so default to same span
-      other_span = curspan;
-    }
-
+    
+    SeqSpan other_span = FindOtherSpan(annot_sym, curspan);
     System.out.println("Other span: " + other_span);
 
     SeqUtils.printSpan(other_span);
@@ -144,7 +113,6 @@ public class AlignControl implements ActionListener, ContextualPopupListener  {
     }
     */
 
-    if (other_span == null) { other_span = curspan; }
     int min = other_span.getMin();
     int max = other_span.getMax();
     int selmin = min;
@@ -185,6 +153,44 @@ public class AlignControl implements ActionListener, ContextualPopupListener  {
       }
     }
   }
+  
+  private static SeqSpan FindOtherSpan(SeqSymmetry annot_sym, SeqSpan curspan) {
+
+        // hack to look for most common case, where the other seq will be
+        //    a chromosome (and hence it's id will start with "chr")
+        //    need this because now starting to look at syms with breadth > 2 (like Psl3Syms)
+        SeqSpan other_span = null;
+        int spancount = annot_sym.getSpanCount();
+        for (int i = 0; i < spancount; i++) {
+            SeqSpan ospan = annot_sym.getSpan(i);
+            BioSeq oseq = ospan.getBioSeq();
+            if (!SeqUtils.spansEqual(curspan, ospan)) {
+                if (oseq.getID().startsWith("chr")) {
+                    // found a other_span != curspan and likely on a chromosome, so use it
+                    other_span = ospan;
+                    break;
+                }
+            }
+        }
+        if (other_span == null) {
+            // no other spans with with seq id that looks like a chromosome,
+            //    so just take first one thats not equal...
+            for (int i = 0; i < spancount; i++) {
+                SeqSpan ospan = annot_sym.getSpan(i);
+                if (!SeqUtils.spansEqual(curspan, ospan)) {
+                    other_span = ospan;
+                    break;
+                }
+            }
+        }
+        if (other_span == null) {
+            // looks like there _are_ no other unequal spans, so default to same span
+            other_span = curspan;
+        }
+
+        return other_span;
+    }
+
 
   /**
    *  implementing ContextualPopupListener to dynamicly modify

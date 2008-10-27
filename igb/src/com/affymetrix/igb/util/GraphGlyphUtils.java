@@ -111,6 +111,7 @@ public class GraphGlyphUtils {
   /**
    *  very preliminary start on making MultiGraphs
    */
+  /*
   public static GraphGlyph displayMultiGraph(java.util.List grafs,
 					     AnnotatedBioSeq aseq, AffyTieredMap map,
 					     java.util.List cols, double graph_yloc, double graph_height,
@@ -166,7 +167,7 @@ public class GraphGlyphUtils {
 
     map.updateWidget();
     return multi_graph_glyph;
-  }
+  }*/
 
   public static Preferences getGraphPrefsNode() {
     return UnibrowPrefsUtil.getTopNode().node("graphs");

@@ -66,7 +66,7 @@ means that there are no restrictions on the attribute names in the
 <annotation_style> element, as different factories may recognize different
 attributes.
 Example:
-    <annotation_style annot_type="abc" factory="com.affymetrix.igb.glyph.GenericSymGlyphFactory" />
+    <annotation_style annot_type="abc" factory="com.affymetrix.igb.glyph.GenericGraphGlyphFactory" />
 
 Optionally specifying color:
 (Colors <b>IGNORED</b> by all standard glyph factories starting with IGB version 4.01)
@@ -87,7 +87,7 @@ factory to decide how to use these colors, based on their names.  If red/green/b
 attributes are included in <annotation_style> element (Method 1), the resulting Color
  is also added to the hash with key = "color".
 
-The usual default factory is the GenerAnnotGlyphFactory.
+The usual default factory is the GenericAnnotGlyphFactory.
 Attributes that GenericAnnotGlyphFactory recognizes currently include:
 
 "child glyph": This attribute specifies what glyph to use to render

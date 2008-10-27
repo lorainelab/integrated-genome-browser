@@ -26,12 +26,12 @@ import java.awt.geom.Rectangle2D;
  *
  *  This is a new version of ImprovedLineContGlyph,
  *     subclassed from EfficientGlyph instead of Glyph,
- *     and renamed EffLineContGlyph.
+ *     and renamed EfficientLineContGlyph.
  *
  *  Optimized to just draw a filled rect if glyph is small, and skip drawing children
  *
  */
-public class EffLineContGlyph extends EffSolidGlyph  {
+public class EfficientLineContGlyph extends EfficientSolidGlyph  {
   static boolean optimize_child_draw = true;
   static boolean DEBUG_OPTIMIZED_FILL = false;
   boolean move_children = true;

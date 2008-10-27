@@ -21,7 +21,7 @@ import java.awt.geom.Rectangle2D;
  *    Mainly a convenience so other Glyph's don't have to implement hit 
  *       methods if they are willing to stick with simple hits.
  */
-public class EffSolidGlyph extends EffGlyph  {
+public class EfficientSolidGlyph extends EfficientGlyph  {
 
   boolean hitable = true;
 

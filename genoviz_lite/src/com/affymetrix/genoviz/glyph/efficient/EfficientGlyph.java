@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * 
  * @author Gregg Helt
  */
-public class EffGlyph extends Rectangle2D.Double implements GlyphI {
+public class EfficientGlyph extends Rectangle2D.Double implements GlyphI {
 
   static protected int min_pixels_width=1; //TODO: make non-static, make part of the glyph style
   static protected int min_pixels_height=1; //TODO: make non-static, make part of the glyph style
@@ -49,7 +49,7 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
    * is not used directly, but rather one of the sub-classes will
    * be used.
    */
-  public EffGlyph() {
+  public EfficientGlyph() {
     super();
     isVisible = true;
   }
@@ -214,9 +214,9 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
         if (!pickList.contains(this)) {
- //TODO: why not just override equals() in EffGlyph?
+ //TODO: why not just override equals() in EfficientGlyph?
           // Note that contains() performs a test using "equals()".
-          // EffGlyph extends Rectangle2D which tests equality based
+          // EfficientGlyph extends Rectangle2D which tests equality based
           // on coordinates.  This means that you can't "select" both a parent glyph
           // and a child glyph that have identical coordinates.
           pickList.add(this);
@@ -402,28 +402,28 @@ public class EffGlyph extends Rectangle2D.Double implements GlyphI {
     setRect(coordbox);
   }
 
-  /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   @Override
   public void setForegroundColor(Color color)  {
     //    this.style = stylefactory.getStyle( color, style.getBackgroundColor(), style.getFont() );
     this.color = color;
   }
 
-  /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   @Override
   public Color getForegroundColor()  {
     return color;
     //    return this.style.getForegroundColor();
   }
 
-  /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   @Override
   public void setBackgroundColor(Color color)  {
     //    this.style = stylefactory.getStyle( style.getForegroundColor(), color, style.getFont() );
     this.color = color;
   }
 
-  /** For {@link EffGlyph} there is no difference between foreground and background color. */
+  /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   @Override
   public Color getBackgroundColor()  {
     //    return this.style.getBackgroundColor();

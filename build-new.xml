@@ -21,6 +21,7 @@
 		<property name="lib.dir"      value="${basedir}/ext" />
 		<property name="demos.dir"    value="${genoviz}/demo" />
 		<property name="tutorial.dir" value="${genoviz}/tutorial" />
+		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genometry}/src:${genometryImpl}/src:${igb}/src:${das2server}/src" />
 	</target>

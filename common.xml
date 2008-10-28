@@ -5,7 +5,6 @@
 
 		<!-- directory paths -->
 		<property name="dist.dir"     value="${basedir}/dist" />
-		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
 		<property name="webstart.dir" value="${dist.dir}/webstart" />
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 

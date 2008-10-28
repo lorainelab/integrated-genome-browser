@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+//TODO: consider deleting.  Currently unused.
 public class DragMonitor
 implements MouseListener, MouseMotionListener, NeoTimerListener {
 

@@ -12,22 +12,19 @@ package com.affymetrix.genoviz.awt;
 
 import com.affymetrix.genoviz.event.NeoPaintEvent;
 import com.affymetrix.genoviz.event.NeoPaintListener;
-import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
+import javax.swing.JComponent;
 
 /**
- * Extends {@link Container}
- * to treat canvas painting as an event
+ * Extends {@link JComponent}
+ * to treat painting as an event
  * that can be listened for (by a {@link NeoPaintListener}).
  */
-public class NeoCanvas extends Container  {
-  protected boolean grabFocusOnClick = true;
-  protected boolean focusable = true;
+public class NeoCanvas extends JComponent  {
   private final List<NeoPaintListener> paintListeners = new CopyOnWriteArrayList<NeoPaintListener>();
 
   /**
@@ -39,23 +36,31 @@ public class NeoCanvas extends Container  {
    * @see #update
    */
   @Override
-  public void paint(Graphics g) {
+  public void paintComponent(Graphics g) {
+    // Neither paint() nor paintComponent() really does much in NeoCanvas.
+    // Instead, it posts a paint event which will be heard by the ViewI,
+    // causing the ViewI to "draw" itself.
+    //TODO: consider letting paintCompoent just directly paint children.
     if (paintListeners.size() > 0) {
-      final Rectangle cliprect = g.getClipBounds();
-      final Rectangle paintrect;
-      // sometimes after a resize the cliprect starts out as null, so
-      //    checking to avoid NullPointerExceptions
-      if (cliprect != null)  {
-        paintrect = new Rectangle(cliprect.x, cliprect.y,
-                                  cliprect.width, cliprect.height);
-      } else {
-        paintrect = new Rectangle(getSize());
-      }
-      final NeoPaintEvent e = new NeoPaintEvent(this, paintrect, (Graphics2D) g);
-      postPaintEvent(e);
+      final Rectangle paintrect = getPaintRect(g);
+      postPaintEvent(new NeoPaintEvent(this, paintrect, (Graphics2D) g));
     }
   }
 
+  protected Rectangle getPaintRect(Graphics g) {
+    final Rectangle cliprect = g.getClipBounds();
+    final Rectangle paintrect;
+    // sometimes after a resize the cliprect starts out as null, so
+    //    checking to avoid NullPointerExceptions
+    if (cliprect != null) {
+      paintrect = new Rectangle(cliprect.x, cliprect.y,
+        cliprect.width, cliprect.height);
+    } else {
+      paintrect = new Rectangle(getSize());
+    }
+    return paintrect;
+  }
+  
   /**
    * Lets all the listeners know that this has been painted.
    *
@@ -98,42 +103,5 @@ public class NeoCanvas extends Container  {
    */
   public List<NeoPaintListener> getNeoPaintListeners() {
     return paintListeners;
-  }
-
-  /**
-   * Overriding to ensure that NeoCanvas will be included
-   * in Tab and Shift-Tab keyboard focus traversal.
-   */
-  @Override
-  public boolean isFocusable() {
-    return focusable;
-  }
-
-  /**
-   *  Overriding processMouseEvent to give NeoCanvas the focus on
-   *  mouse press over it
-   */
-  @Override
-  public void processMouseEvent(MouseEvent e) {
-    if (e.getID() == MouseEvent.MOUSE_PRESSED && grabFocusOnClick) {
-      this.requestFocus();
-    }
-    super.processMouseEvent(e);
-  }
-
-  /**
-   * Sets whether or not this component is to grab the focus
-   * when the mouse is clicked on it.
-   */
-  public void setGrabFocusOnClick(boolean b) {
-    grabFocusOnClick = b;
-  }
-
-  /**
-   * Gets whether or not this component is to grab the focus
-   * when the mouse is clicked on it.
-   */
-  public boolean getGrabFocusOnClick() {
-    return grabFocusOnClick;
   }
 }

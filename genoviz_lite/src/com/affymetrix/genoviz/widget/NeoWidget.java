@@ -49,12 +49,6 @@ import javax.swing.event.ChangeListener;
 public abstract class NeoWidget extends NeoAbstractWidget
   implements NeoWidgetI, AdjustmentListener {
 
-  private static final boolean DEBUG_SCROLL = false;
-  private static final boolean DEBUG_ZOOM = false;
-  
-  protected boolean checkZoomValue = true;
-  protected boolean checkScrollValue = true;
-
   protected NeoCanvas canvas;
 
   protected SceneII scene;
@@ -85,7 +79,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     ScaleConstraint.NONE, ScaleConstraint.NONE};
   protected int reshape_constraint[] = { FITWIDGET, FITWIDGET };
 
-  protected ExpandBehavior expansion_behavior[] = { 
+  protected ExpandBehavior expansion_behavior[] = {
     ExpandBehavior.NO_EXPAND, ExpandBehavior.NO_EXPAND };
 
   // constraints on transform scale
@@ -174,17 +168,17 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   protected Orientation orient;
-  
+
   @Override
   public Orientation getOrientation() {
     return orient;
   }
-  
+
   @Override
   public boolean isHorizontal() {
     return orient == Orientation.Horizontal;
   }
-  
+
   public void setReshapeBehavior(int id, int behavior) {
     reshape_constraint[id] = behavior;
   }
@@ -216,7 +210,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
       if (isHorizontal()) {
         scene.setCoords(start, sbox.y, size, sbox.height);
       } else {
-        scene.setCoords(sbox.x, start, sbox.width, size);      
+        scene.setCoords(sbox.x, start, sbox.width, size);
       }
     }
     else { // Secondary axis
@@ -312,14 +306,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
   }
 
   /**
-   * gets the items overlapping a given point in coordinate space.
+   * Gets the items overlapping a given point in coordinate space.
    * A fuzz factor, in pixels, is added around the point.
    *
    * @return the overlapping glyphs
    * @see com.affymetrix.genoviz.widget.NeoWidgetI#setPixelFuzziness
    */
+  @Override
   public List<GlyphI> getItems(double x, double y) {
-    java.awt.geom.Rectangle2D.Double coordrect = new java.awt.geom.Rectangle2D.Double(x, y, 1, 1);
+    Rectangle2D.Double coordrect = new Rectangle2D.Double(x, y, 1, 1);
     if (0 < pixelblur) {
       Rectangle pixrect = new Rectangle();
       pixrect = view.transformToPixels(coordrect, pixrect);
@@ -329,14 +324,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
     return getItemsByCoord(coordrect);
   }
-
-  @Override
-  public List<GlyphI> getItems(double x, double y, int location) {
-    return getItems(x,y);
-  }
-
-
-  public NeoWidgetI getWidget(int location) { return this; }
 
   /**
    * Updates the visual appearance of the widget.  It is important to call
@@ -469,12 +456,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     // GAH 6-29-99
     // setting max of exponential tranform to (max - visible amount) to
-    // compensate for the fact that the maximum for the value 
+    // compensate for the fact that the maximum for the value
     // is really the scrollbar maximum minus
     // the visible amount (the thumb)
     zoomtrans[id] = new ExponentialOneDimTransform(
       min_pixels_per_coord[id],
-      max_pixels_per_coord[id], 
+      max_pixels_per_coord[id],
       slider.getMinimum(),
       slider.getMaximum() - slider.getExtent());
     slider.addChangeListener(changeListener);
@@ -490,11 +477,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
     //   in these cases
     boolean force_scroller_adjust = false;
 
-    if (checkScrollValue) {
-      // trying to constrain scrolling to stay inside coordinate bounds
+    // The following block is trying to constrain scrolling
+    // to stay inside coordinate bounds.
+    //TODO: can it be simplified?
+    {
       Rectangle2D.Double scene_coords = getCoordBounds();
       Rectangle2D.Double view_coords = view.getCoordBox();
       double min_coord, max_coord;
+
+      //TODO: check this association of Primary with x.  Is that right?
       if (dim == WidgetAxis.Primary) {
         min_coord = scene_coords.x;
         max_coord = scene_coords.x + scene_coords.width - view_coords.width;
@@ -504,7 +495,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
         max_coord = scene_coords.y + scene_coords.height - view_coords.height;
       }
       if (min_coord >= max_coord) {
-        // this will iff view_coords >= scene_coords in id dimension, in
+        // this will be true iff view_coords >= scene_coords in id dimension, in
         // which case we are attempting to scroll something that is <=
         // the view -- therefore center it?
 
@@ -542,14 +533,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
       pixels_per_coord[ordinal] = trans.getScaleY();
       pixel_value = coord_value * pixels_per_coord[ordinal];
       trans.setOffsetY(-pixel_value);
-      if (DEBUG_SCROLL) {
-        System.out.println("Coord Value = " + coord_value +
-            ", Pixels/Coord = " + pixels_per_coord[ordinal] +
-            ", " +
-            ((coord_value * pixels_per_coord[ordinal])/ pixels_per_coord[ordinal]) +
-            ", " + (pixel_value / pixels_per_coord[ordinal]));
-      }
-
     }
 
     if (force_scroller_adjust || coord_value != scroller_value[ordinal]) {
@@ -557,12 +540,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
 
     view.calcCoordBox();
-    if (DEBUG_SCROLL) {
-      System.out.println("Scrolling to: " + coord_value);
-      System.out.println(trans);
-      System.out.println(view.getCoordBox());
-    }
-
   }
 
 
@@ -595,24 +572,33 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double coord_offset = pixel_offset[ordinal] * coords_per_pixel[ordinal];
     double visible_coords = coords_per_pixel[ordinal] * pixel_size[ordinal];
 
-    // If there is more visible than the maximum coordinate size, 
+    // If there is more visible than the maximum coordinate size,
     //  max-out the scrollbar.
     BoundedRangeModel scrollModel = scroller[ordinal].getModel();
+    boolean valueIsAdjusting = false;
+    if (zoomer[ordinal] != null) {
+      if (zoomer[ordinal].getValueIsAdjusting()) {
+        valueIsAdjusting = true;
+      }
+    }
+
     
     // Since this code can be the result of the user sliding
     // the zoomer, use the zoomer's value-is-adjusting flag.
-    if (coord_size < visible_coords) {
-      scrollModel.setRangeProperties(
-        scrollModel.getMinimum(), scrollModel.getMaximum() - scrollModel.getMinimum(), 
-        scrollModel.getMinimum(), scrollModel.getMaximum(),
-        zoomer[ordinal].getValueIsAdjusting() || scrollModel.getValueIsAdjusting());
-    }
-    else {
-      // value, extent, min, max
-      scrollModel.setRangeProperties(
-        (int) coord_offset, (int) visible_coords, 
-        (int) coord_beg, (int) coord_end, 
-        zoomer[ordinal].getValueIsAdjusting() || scrollModel.getValueIsAdjusting());
+    if (scrollModel != null) {
+      valueIsAdjusting |= scrollModel.getValueIsAdjusting();
+      if (coord_size < visible_coords) {
+        scrollModel.setRangeProperties(
+          scrollModel.getMinimum(), scrollModel.getMaximum() - scrollModel.getMinimum(),
+          scrollModel.getMinimum(), scrollModel.getMaximum(),
+          valueIsAdjusting);
+      } else {
+        // value, extent, min, max
+        scrollModel.setRangeProperties(
+          (int) coord_offset, (int) visible_coords,
+          (int) coord_beg, (int) coord_end,
+          valueIsAdjusting);
+      }
     }
 
     if (scroll_behavior[ordinal] == ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT) {
@@ -845,10 +831,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
             zoomer_scale[id] = (int) (zoomer_scale[id] + .0001);
           }
         }
-        if (DEBUG_ZOOM) {
-          System.out.println("pixels_per_base = " + zoomer_scale[id] +
-            ",  coords_per_pixel[id] = " + 1 / zoomer_scale[Xint]);
-        }
         zoom(dim, zoomer_scale[id]);
         updateWidget();
         prev_zoomer_value[id] = zoomer_value[id];
@@ -872,10 +854,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     scroller_value[id] = (int) scrolltrans[id].transform(source.getValue());
 
-    if (DEBUG_SCROLL) {
-      System.out.println("Scrolling to: " + scroller_value[id] + ", " +
-        source.getValue());
-    }
     if (scroller_value[id] != prev_scroller_value[id]) {
       scroll(dim, scroller_value[id]);
       updateWidget();
@@ -883,7 +861,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
     }
   }
 
-  //TODO: TransformI is a 2-dim transform, but we only specify to use one dimension of it. Weird!
   public void setScrollTransform(WidgetAxis dim, OneDimTransform trans) {
     scrolltrans[dim.ordinal()] = trans;
   }
@@ -931,6 +908,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
     Object result = model_hash.get(datamodel);
     if (result instanceof List) {
       return (List<GlyphI>)result;
+    } else if (result == null) {
+      return Collections.<GlyphI>emptyList();
     }
     else {
       return Arrays.<GlyphI>asList((GlyphI)result);
@@ -981,109 +960,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
   @Override
   public void zoom(WidgetAxis dim, double zoom_scale) {
     final int ordinal = dim.ordinal();
-    
-    /*
-       filtering out bogus zoom calls
-       should probably check for these internally in stretchToFit etc.,
-       before calling zoom() method, rather than here in the zoom() method
-       itself -- GAH 6-1-98
-    */
-    if (Double.isInfinite(zoom_scale) ||
-        Double.isNaN(zoom_scale)) {
-      if (DEBUG_ZOOM)  {
-        System.out.println("Weird zoom call, ignoring: id = " + dim +
-            ", scale = " + zoom_scale);
-      }
-      return;
-    }
-    if (DEBUG_ZOOM)  {
-      System.out.println("Zooming " + dim + " to " + zoom_scale);
-    }
 
-    /*
-     * Want to make sure zoom_scale is within range set by max and min
-     * pixels per coord.  If not then throw an IllegalArgumentException
-     * BUT, may end up with zoom_scale just below min or just above max due
-     * to doubleing point imprecision / rounding errors.  Therefore if
-     * zoom_scale is below min or above max, but by only a small amount
-     * relative to the magnitude of zoom_scale, then set to exactly the
-     * max or min
-     */
+    // Make sure zoom_scale is within range.
+    zoom_scale = Math.min(zoom_scale, max_pixels_per_coord[ordinal]);
+    zoom_scale = Math.max(zoom_scale, min_pixels_per_coord[ordinal]);
 
-     /*
-      This good and concientious checking breaks NeoSeq.
-
-      Therefore adding boolean to set to avoid this section in widgets
-      like NeoSeq -- GAH 6-1-98
-
-      partial solution to problem via silent death of weird calls (above)
-      could fully solve if switched to silent death of out-of-bounds calls
-      (commented out below) rather than throwing exceptions, but may
-      sometimes really want exception thrown if zoom bounds are exceeded.
-      Therefore leaving checkZoomValue boolean in for NeoSeq to toggle off
-
-      For now I'm putting in the silent death return -- GAH 6-4-98
-     */
-    if (checkZoomValue) {
-      if (zoom_scale > max_pixels_per_coord[ordinal]) {
-        double ratio_diff;
-        if (0 == max_pixels_per_coord[ordinal]) {
-          ratio_diff = 0;
-        }
-        else {
-          ratio_diff = Math.abs(1-zoom_scale/max_pixels_per_coord[ordinal]);
-        }
-        if (ratio_diff < 0.0001) {
-          zoom_scale = max_pixels_per_coord[ordinal];
-        }
-        else {
-          /*  changed to silent return to handle calls outside bounds
-              (which seems to happen intermittently for different widgets
-              on different platforms during scrolling, zooming,
-              stretchToFit, and resize)
-           */
-          if (DEBUG_ZOOM)  {
-            System.err.println("attempted to zoom " + dim + " to " +
-                zoom_scale + " pixels per coord, but max allowed is " +
-                max_pixels_per_coord[ordinal]);
-          }
-          return;
-          /*
-             throw new IllegalArgumentException("attempted to zoom to " +
-             zoom_scale + " pixels per coord, but max allowed is " +
-             max_pixels_per_coord[id]);
-           */
-        }
-      }
-      else if (zoom_scale < min_pixels_per_coord[ordinal]) {
-        double ratio_diff;
-        if (0 == min_pixels_per_coord[ordinal]) {
-          ratio_diff = 0;
-        }
-        else {
-          ratio_diff = Math.abs(1-zoom_scale/min_pixels_per_coord[ordinal]);
-        }
-        if (ratio_diff < 0.0001) {
-          zoom_scale = min_pixels_per_coord[ordinal];
-        }
-        else {
-          /*
-             changed to silent return to handle calls outside bounds
-             (which seems to happen intermittently for different widgets
-             on different platforms during scrolling, zooming,
-             stretchToFit, and resize)
-           */
-          if (DEBUG_ZOOM)  {
-            System.err.println("attempted to zoom " + dim + " to " +
-                zoom_scale + " pixels per coord, but min allowed is " +
-                min_pixels_per_coord[ordinal]);
-          }
-          return;
-        }
-      }
-    }
-
-    Rectangle2D.Double prev_view_coords = view.calcCoordBox(); //TODO: remove if unused
     double prev_pixels_per_coord = pixels_per_coord[ordinal];
     pixels_per_coord[ordinal] = zoom_scale;
     coords_per_pixel[ordinal] = 1/zoom_scale;
@@ -1111,22 +992,22 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     double prev_coord_offset = prev_pixel_offset * prev_coords_per_pixel;
     double prev_visible_coords = prev_coords_per_pixel * pixel_size[ordinal];
-    if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_MIDDLE) {
-      fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
-    }
-    else if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_START)  {
-      fixed_coord = prev_coord_offset;
-    }
-    else if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_END) {
-      fixed_coord = prev_coord_offset + prev_visible_coords;
-    }
-    else if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_COORD) {
-      fixed_coord = zoom_coord[ordinal];
-    }
-    else {
-      throw new IllegalArgumentException("zoom behavior must be on of "
-        + "CONSTRAIN_MIDDLE, CONSTRAIN_START, CONSTRAIN_END, or "
-        + "CONSTRAIN_COORD.");
+
+    switch (zoom_behavior[ordinal]) {
+      case CONSTRAIN_MIDDLE:
+        fixed_coord = prev_coord_offset + (prev_visible_coords / 2.0f);
+        break;
+      case CONSTRAIN_START:
+        fixed_coord = prev_coord_offset;
+        break;
+      case CONSTRAIN_END:
+        fixed_coord = prev_coord_offset + prev_visible_coords;
+        break;
+      case CONSTRAIN_COORD:
+        fixed_coord = zoom_coord[ordinal];
+        break;
+      default:
+        throw new IllegalArgumentException("zoom behavior value invalid");
     }
 
     double visible_coords = coords_per_pixel[ordinal] * pixel_size[ordinal];
@@ -1175,12 +1056,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
     adjustScroller(dim);
 
     view.calcCoordBox();
-    if (DEBUG_ZOOM) {
-      if (ordinal == Yint) {
-        System.out.println("zooming to: " + zoom_scale + ", coord offset = " +
-            coord_offset);
-      }
-    }
   }
 
   @Override
@@ -1191,14 +1066,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
   @Override
   public void toBackOfSiblings(GlyphI glyph) {
     scene.toBackOfSiblings(glyph);
-  }
-
-  /**
-   *  using isFullyWithinView() and isOnTop() to find out if
-   *  a glyph is unobscured on the screen
-   */
-  public boolean isUnObscured(GlyphI gl) {
-    return (isFullyWithinView(gl) && isOnTop(gl));
   }
 
   public boolean isOnTop(GlyphI gl) {
@@ -1229,10 +1096,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
     // b) the entire glyph is within the bounds of the region of
     //    the map drawn on screen iff union of view coord box and
     //    glyph coord box is same size as view coord box
-    java.awt.geom.Rectangle2D.Double viewbox = getView().getCoordBox();
-    java.awt.geom.Rectangle2D.Double glyphbox = gl.getCoordBox();
+    Rectangle2D.Double viewbox = getView().getCoordBox();
+    Rectangle2D.Double glyphbox = gl.getCoordBox();
     if (!glyphbox.intersects(viewbox)) { return false; }
-    java.awt.geom.Rectangle2D.Double unionbox = (java.awt.geom.Rectangle2D.Double) viewbox.createUnion(glyphbox);
+    Rectangle2D.Double unionbox = (Rectangle2D.Double) viewbox.createUnion(glyphbox);
 
     if (unionbox.equals(viewbox)) { return true; }
     return false;
@@ -1244,48 +1111,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
     // b) part of the glyph is within the bounds of the region of
     //    the map drawn on screen iff view coord box hits glyph
-    java.awt.geom.Rectangle2D.Double viewbox = getView().getCoordBox();
+    Rectangle2D.Double viewbox = getView().getCoordBox();
     return gl.hit(viewbox, this.getView());
-  }
-
-
-  /**
-   * Setting boolean for whether to restrict value
-   * in zoom(id, value) calls to be within range
-   * defined by calls to setMinZoom(id, min) and setMaxZoom(id, max).
-   * This is meant as temporary workaround for bugs in
-   * NeoSeq(), where these checks cause apps to hang
-   */
-  protected void setCheckZoomValue(boolean b) {
-    checkZoomValue = b;
-  }
-
-  /**
-   * Getting boolean for whether to restrict value
-   * in zoom(id, value) calls to be within range
-   * defined by calls to setMinZoom(id, min) and setMaxZoom(id, max).
-   */
-  public boolean getCheckZoomValue() {
-    return checkZoomValue;
-  }
-
-
-  /**
-   * Setting boolean for whether to restrict value in scroll(id, value)
-   * calls to stay within bounds of the map.
-   * This is meant as temporary workaround for bugs in
-   * NeoSeq(), where these checks cause problems
-   */
-  protected void setCheckScrollValue(boolean b) {
-    checkScrollValue = b;
-  }
-
-  /**
-   * Setting boolean for whether to restrict value in scroll(id, value)
-   * calls to stay within bounds of the map.
-   */
-  public boolean getCheckScrollValue() {
-    return checkScrollValue;
   }
 
   @Override
@@ -1345,7 +1172,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
   public void removeWidgetListener( NeoWidgetListener l ) {
     listeners = NeoEventMulticaster.remove( listeners, l );
   }
-  
+
   /**
    * Notify all the listeners that an event has occurred.
    */

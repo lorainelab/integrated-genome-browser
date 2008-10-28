@@ -1,11 +1,11 @@
 /**
-*   Copyright (c) 1998-2007 Affymetrix, Inc.
-*    
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
 *   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
+*   IGB_LICENSE.html file.
 *
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
@@ -68,62 +68,45 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
     this.ycoord = ycoord;
   }
 
-  /**
-   * points to in which part of a NeoContainerWidget the event occurred.
-   * @return the internal widget location of the event or UNKNOWN
-   * if the widget has no internal structure.
-   */
-  public int getLocation() {
-    return location;
-  }
-
-  /**
-   * @return the x coordinate of the event
-   * in widget coordinate units (<em>not</em> pixels).
-   */
+  /** {@inheritDoc } */
+  @Override
   public double getCoordX() {
     return xcoord;
   }
 
-  /**
-   * @return the y coordinate of the event
-   * in widget coordinate units (<em>not</em> pixels).
-   */
+  /** {@inheritDoc } */
+  @Override
   public double getCoordY() {
     return ycoord;
   }
 
-  /**
-   * @return the coordinates of the event as a Point2D
-   * in widget coordinate units (<em>not</em> pixels).
-   */
+  /** {@inheritDoc } */
+  @Override
   public Point2D.Double getPoint2D() {
     return new Point2D.Double(getCoordX(), getCoordY());
   }
 
-  /**
-   * @return the original event on which this NeoCoordEventI is based
-   * (usually a standard AWTEvent).
-   */
+  /** {@inheritDoc } */
+  @Override
   public EventObject getOriginalEvent() {
     return original_event;
   }
 
-  /**
-   * @return a List of GlyphI's
-   * whose coord bounds contain the coord location of the event.
-   */
+  /** {@inheritDoc } */
+  @Override
   public List<GlyphI> getItems() {
     if (cached_items == null) {
       Object src = getSource();
-      if (! (src instanceof NeoWidgetI)) { return null; }
-      cached_items = ((NeoWidgetI)src).getItems(getCoordX(), getCoordY(), getLocation());
+      if (! (src instanceof NeoWidgetI)) {
+        return null;
+      }
+      cached_items = ((NeoWidgetI)src).getItems(getCoordX(), getCoordY());
     }
     return cached_items;
   }
 
   /**
-   * for debugging.
+   * A String for debugging.
    */
   @Override
   public String toString() {
@@ -133,5 +116,4 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 
     return s;
   }
-
 }

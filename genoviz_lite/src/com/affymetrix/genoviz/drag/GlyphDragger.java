@@ -29,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * A class to handle generic dragging of Glyphs (and glyph hierarchies)
  * on a NeoWidget.
  */
+//TODO: consider deleting.
 public class GlyphDragger implements MouseListener, MouseMotionListener {
 
   // internal mapping of HORIZONTAL to HORIZ

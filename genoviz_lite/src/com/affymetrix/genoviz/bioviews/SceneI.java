@@ -68,6 +68,9 @@ public interface SceneI {
    SELECT_REVERSE
   };
 
+  // This constant exists to ease transition from genoviz to genovizLite.
+  public static final SelectType SELECT_OUTLINE = SelectType.SELECT_OUTLINE;
+  
 
   /**
    *  Selection style to apply to glyphs within this scene.

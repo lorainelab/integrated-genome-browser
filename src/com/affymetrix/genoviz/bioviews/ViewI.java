@@ -105,16 +105,16 @@ public interface ViewI  {
   public Rectangle2D.Double getCoordBox();
 
   
-  /**
-   * If this View is a sub-view of a portion of a larger view,
-   * use this to set a reference to the full view.
-   * This is used, for example, when a single NeoMap is being drawn as
-   * multiple sub-views on several different monitors or graphics cards.
-   * If this is not a sub-view, then the full view equals this view itself.
-   * @param full
-   */
-  public void setFullView(ViewI full);
-
+//  /**
+//   * If this View is a sub-view of a portion of a larger view,
+//   * use this to set a reference to the full view.
+//   * This is used, for example, when a single NeoMap is being drawn as
+//   * multiple sub-views on several different monitors or graphics cards.
+//   * If this is not a sub-view, then the full view equals this view itself.
+//   * @param full
+//   */
+//  public void setFullView(ViewI full);
+//
   /**
    * If this View is a sub-view of a portion of a larger view,
    * use this to set a reference to the full view.
@@ -182,10 +182,18 @@ public interface ViewI  {
   public Point transformToPixels(Point2D.Double src, Point dst);
 
   /**
-   *    Transforms src Point in pixel (screen) space to dst Point2D in
-   *    coord space.
+   * Transforms src Point in pixel (screen) space to dst Point2D in
+   * coord space.
    *
-   *    Returns alterred destination Point2D
+   * Returns alterred destination Point2D
    */
-  public Point2D transformToCoords(Point src, Point2D.Double dst);
+  public Point2D.Double transformToCoords(Point src, Point2D.Double dst);
+
+  /**
+   * Clips the given rectangle based on the current pixel bounds 
+   * of this view.
+   * @param src  The source rectangle
+   * @param dest  The destination rectangle in which to store the result
+   */
+  public void clipToPixelBox(Rectangle src, Rectangle dest);
 }

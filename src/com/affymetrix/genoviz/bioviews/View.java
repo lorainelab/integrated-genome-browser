@@ -73,13 +73,6 @@ public class View implements ViewI, NeoPaintListener,
 
   protected Rectangle pixelbox;
 
-  // GAH 2006-03-28  for experimental multiscreen support
-  // View may actually be a "subview" (for example when trying to farm single NeoMap out to multiple
-  //    NeoMap children, or during scroll optimizations), in which case glyphs may want
-  //    to know bounds, etc. of full virtual "parent" view.
-  // If this is not a subviwe, then full_view = this view
-  protected ViewI full_view = null;
-
   protected SceneII scene;
   protected LinearTwoDimTransform transform;
 
@@ -97,13 +90,13 @@ public class View implements ViewI, NeoPaintListener,
    *  List of {@link NeoViewBoxListener}s to be notified immediately <em>before</em>
    *    view is drawn with changed bounding box
    */
-  protected java.util.List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+  protected List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
   /**
    *  List of {@link NeoViewBoxListener}s to be notified immediately <em>after</em>
    *    view is drawn with changed bounding box
    */
-  protected java.util.List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+  protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
   /** Fields to help with optimizations **/
   protected boolean scrolling_optimized = false;
@@ -134,10 +127,9 @@ public class View implements ViewI, NeoPaintListener,
   protected Point2D.Double scratch_coord;
 
   protected Rectangle scene_pixelbox;
-  protected java.awt.geom.Rectangle2D.Double scene_coordbox;
+  protected Rectangle2D.Double scene_coordbox;
 
   public View()  {
-    full_view = this;
     // transforms initialized to Identity transform
     transform = new LinearTwoDimTransform();
     timecheck = new com.affymetrix.genoviz.util.Timer();
@@ -203,7 +195,7 @@ public class View implements ViewI, NeoPaintListener,
    * {@inheritDoc}
    */
   @Override
-  public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst)  {
+  public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst) {
     transform.transform(src, scratch_coords);
 
     dst.x = (int)scratch_coords.x;
@@ -225,22 +217,22 @@ public class View implements ViewI, NeoPaintListener,
     return dst;
   }
 
-//  public boolean clipToPixelBox(Rectangle src, Rectangle dst) {
-//    int sx2, sy2, vx2, vy2;
-//    sx2 = dst.x + dst.width;
-//    sy2 = dst.y + dst.height;
-//    vx2 = pixelbox.x + pixelbox.width;
-//    vy2 = pixelbox.y + pixelbox.height;
-//    dst.x = src.x<pixelbox.x ? pixelbox.x : src.x;
-//    dst.y = src.y<pixelbox.y ? pixelbox.y : src.y;
-//    dst.width = sx2>vx2 ? vx2-dst.x : sx2-dst.x;
-//    dst.height = sy2>vy2 ? vy2-dst.y : sy2-dst.y;
-//    return true;
-//  }
+  /** {@inheritDoc } */
+  @Override
+  public void clipToPixelBox(Rectangle src, Rectangle dst) {
+    int sx2, sy2, vx2, vy2;
+    sx2 = dst.x + dst.width;
+    sy2 = dst.y + dst.height;
+    vx2 = pixelbox.x + pixelbox.width;
+    vy2 = pixelbox.y + pixelbox.height;
+    dst.x = src.x<pixelbox.x ? pixelbox.x : src.x;
+    dst.y = src.y<pixelbox.y ? pixelbox.y : src.y;
+    dst.width = sx2>vx2 ? vx2-dst.x : sx2-dst.x;
+    dst.height = sy2>vy2 ? vy2-dst.y : sy2-dst.y;
+    return;
+  }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc } */
   @Override
   public Rectangle2D.Double transformToCoords(Rectangle src, Rectangle2D.Double dst)  {
     scratch_coords.x = (double)src.x;
@@ -257,7 +249,7 @@ public class View implements ViewI, NeoPaintListener,
    * {@inheritDoc}
    */
   @Override
-  public Point2D transformToCoords(Point src, Point2D.Double dst)  {
+  public Point2D.Double transformToCoords(Point src, Point2D.Double dst)  {
     scratch_coord.x = (double)src.x;
     scratch_coord.y = (double)src.y;
     return transform.inverseTransform(scratch_coord, dst);
@@ -268,7 +260,6 @@ public class View implements ViewI, NeoPaintListener,
    */
   @Override
   public void draw()  {
-
     // public synchronized void draw()  {
     boolean drawn = false;
     //    System.out.println("scale = " + ((LinearTwoDimTransform)transform).getScaleX());
@@ -757,14 +748,8 @@ public class View implements ViewI, NeoPaintListener,
 
   /** {@inheritDoc} */
   @Override
-  public void setFullView(ViewI full_view) {
-    this.full_view = full_view;
-  }
-
-  /** {@inheritDoc} */
-  @Override
   public ViewI getFullView() {
-    return full_view;
+    return this;
   }
 
   /** {@inheritDoc} */

@@ -43,6 +43,11 @@ public interface NeoWidgetI {
   
   static final int Xint = XY.X.ordinal();
   static final int Yint = XY.Y.ordinal();
+
+  //The following variables exist only to ease transition from genoviz to genovizLite
+  public final static XY X = XY.X;
+  public final static XY Y = XY.Y;
+  
   
   /**
    * Retrieves the orientation.  If {@link Orientation#Horizontal},
@@ -220,16 +225,16 @@ public interface NeoWidgetI {
   public double getMinZoom(WidgetAxis dim);
 
   /**
-   * Returns a list of all <code>GlyphI</code>s at
-   *  <code>x,y</code> in this widget.
+   * Returns a list of all <code>Glyph</code>s at
+   * coordinate point <code>x,y</code> in this widget.
    *
-   * @param a the double describing the Primary position
-   * @param b the double describing the Secondary position
+   * @param x the double describing the X coordinate
+   * @param y the double describing the Y coordinate
    *
-   * @return a <code>List</code> of <code>Glyph</code>s
-   * at <code>x,y</code>
+   * @return a List of {@link GlyphI}s
+   * at the point
    */
-  public List<GlyphI> getItems(double a, double b, int location);
+  public List<GlyphI> getItems(double x, double y);
 
   /**
    * Adds <code>glyph</code> to the list of selected glyphs for this

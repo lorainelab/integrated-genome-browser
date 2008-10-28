@@ -43,7 +43,7 @@ public class AffyTieredMap extends NeoMap {
   static boolean show_plus = true;
   static boolean show_minus = true;
   static boolean show_mixed = true;
-    
+
   public Action show_plus_action = new AbstractAction("Show (+) tiers") {
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -58,7 +58,7 @@ public class AffyTieredMap extends NeoMap {
       show_minus = ! show_minus;
       putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
       repackTheTiers(false, true);
-    }    
+    }
   };
   public Action show_mixed_action = new AbstractAction("Show (+/-) tiers") {
     @Override
@@ -66,7 +66,7 @@ public class AffyTieredMap extends NeoMap {
       show_mixed = ! show_mixed;
       putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
       repackTheTiers(false, true);
-    }    
+    }
   };
 
   public AffyTieredMap() {
@@ -101,10 +101,10 @@ public class AffyTieredMap extends NeoMap {
    */
   public void addTier(TierGlyph mtg, boolean ontop) {
     if (ontop) {
-      addTier(mtg, 0); 
+      addTier(mtg, 0);
     }
     else {
-      addTier(mtg, tiers.size()); 
+      addTier(mtg, tiers.size());
     }
   }
 
@@ -141,8 +141,8 @@ public class AffyTieredMap extends NeoMap {
   }
 
   /** Returns an unmodifiable list of all tiers. */
-  public List<TierGlyph> getAllTiers () { 
-    return Collections.unmodifiableList(tiers); 
+  public List<TierGlyph> getAllTiers () {
+    return Collections.unmodifiableList(tiers);
   }
 
   /**
@@ -165,7 +165,7 @@ public class AffyTieredMap extends NeoMap {
    * Pack tiers in order with respect to each other.
    * Any tier with no children won't be considered in packing; it will
    * be treated as zero-height.
-   * 
+   *
    * @param fullRepack if true, packs the contents of the tiers as well
    * as the tiers with respect to each other.
    * @param stretchMap reshapes the map to fit all of the tiers.
@@ -188,7 +188,7 @@ public class AffyTieredMap extends NeoMap {
     // Now hide or show tiers based on which checkboxes are selected
     for (int i=0; i<tiers.size(); i++) {
       TierGlyph mtg = tiers.get(i);
-      
+
       if (mtg.getChildCount() <= 0) {
         mtg.setState(TierGlyph.HIDDEN);
       }
@@ -277,7 +277,7 @@ public class AffyTieredMap extends NeoMap {
           System.out.println("One or both of these values is bad! " + start + ", " + end);
           setFloatBounds(WidgetAxis.Secondary, 0, 100);
         } else {
-          setFloatBounds(WidgetAxis.Secondary, newbox.y, newbox.y + newbox.height);          
+          setFloatBounds(WidgetAxis.Secondary, newbox.y, newbox.y + newbox.height);
         }
 	//	System.out.println("new bounds: " + this.getCoordBounds());
       }
@@ -382,7 +382,7 @@ public class AffyTieredMap extends NeoMap {
    *  A hack.  Sometimes after a stretchToFit() where fity is false it can happen
    *  that a portion of the area that should be filled by map tiers is empty.
    *  (Perhaps because some tiers were just hidden and the remaining ones don't
-   *  fill up all the space.)  As soon as the user touches the Secondary-zoomer, 
+   *  fill up all the space.)  As soon as the user touches the Secondary-zoomer,
    *  the map snaps to fill the given space.  This hack makes that happen automatically
    *  without the user having to touch the zoomer.
    */
@@ -463,9 +463,9 @@ public class AffyTieredMap extends NeoMap {
   @Override
   public void zoom(WidgetAxis dim, double zoom_scale) {
     final int ordinal = dim.ordinal();
-    if (dim == WidgetAxis.Primary) { 
-      super.zoom(dim, zoom_scale); 
-      return; 
+    if (dim == WidgetAxis.Primary) {
+      super.zoom(dim, zoom_scale);
+      return;
     }
     //    System.out.println("***** zoom_scale = " + zoom_scale + " *****");
     if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
@@ -566,8 +566,8 @@ public class AffyTieredMap extends NeoMap {
     //    trans.setOffsetY(pix_offset);
     trans.setScaleY(pixels_per_coord[ordinal]);
 
-    if (zoom_scale != zoomer_scale[ordinal]) { 
-      adjustZoomer(WidgetAxis.values()[ordinal]); 
+    if (zoom_scale != zoomer_scale[ordinal]) {
+      adjustZoomer(WidgetAxis.values()[ordinal]);
     }
     adjustScroller(dim);
 
@@ -589,10 +589,10 @@ public class AffyTieredMap extends NeoMap {
       stretchToFit(false, true, false);
     }
     updateWidget();
-    
+
     // pack them again!  This clears-up problems with the packing of the axis
     // tier and getting the labelmap lined-up with the main tier map.
-    packTiers(false,true); 
+    packTiers(false,true);
   }
 
   /** Prints this component. */
@@ -601,7 +601,7 @@ public class AffyTieredMap extends NeoMap {
     cpp.print();
     cpp = null; // for garbage collection
   }
-  
+
     // if fixed tiers, then pack first
     //    (responsibility for packing tier itself to a fixed pixel height
     //    is left to the tier (which may well delegate to it's packer...)
@@ -630,12 +630,3 @@ public class AffyTieredMap extends NeoMap {
     //     so that zoom is done with the right scene size, and pack is done with the
     //     appropriate scaling factor
 }
-
-
-
-
-
-
-
-
-

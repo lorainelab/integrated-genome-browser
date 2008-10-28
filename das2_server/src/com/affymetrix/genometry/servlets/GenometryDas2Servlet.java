@@ -1443,7 +1443,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    pw.println("  <MAINTAINER email=\"" + maintainer_email + "\" />");
 	}
 	pw.println("\t<AUTHORIZED>"+ authorized + "</AUTHORIZED>");
-	pw.println("\t<COMMENT>"+ comment + "</COMMENT>>");
+	pw.println("\t<COMMENT>"+ comment + "</COMMENT>");
 	pw.println("</LOGIN>");
 	//print and clear log
 	Das2Authorization.printArrayList(log);

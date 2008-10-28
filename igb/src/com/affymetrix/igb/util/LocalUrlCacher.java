@@ -20,6 +20,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
+import java.util.zip.GZIPInputStream;
 
 public class LocalUrlCacher {
     public static String cache_content_root = UnibrowPrefsUtil.getAppDataDirectory()+"cache/";
@@ -298,11 +299,8 @@ public class LocalUrlCacher {
 	if (cached) { local_timestamp = cache_file.lastModified(); }
 	URLConnection conn = null;
 	long remote_timestamp = 0;
-	int content_length = -1;
-	String content_type = null;
+	//String content_type = null;
 	boolean url_reachable = false;
-	boolean has_timestamp = false;
-	HttpURLConnection hcon = null;
 	int http_status = -1;
 
 	if (offline) {			
@@ -315,7 +313,10 @@ public class LocalUrlCacher {
 	if (cache_option != ONLY_CACHE) {
 	    try {
 		URL theurl = new URL(url);
-		conn = theurl.openConnection();	
+		conn = theurl.openConnection();
+                
+                conn.setRequestProperty("Accept-Encoding", "gzip");
+                
 		//set sessionId?
 		if (sessionId != null) conn.setRequestProperty("Cookie", sessionId);
 		//don't set if you are ignoring the cache, otherwise the server won't return the content if there's been no modification!
@@ -328,13 +329,13 @@ public class LocalUrlCacher {
 		if (DEBUG_CONNECTION) {
 		    reportHeaders(conn);
 		}
+		
+		//content_type = conn.getContentType();
 		remote_timestamp = conn.getLastModified();
-		has_timestamp = (remote_timestamp > 0);
-		content_type = conn.getContentType();
-		content_length = conn.getContentLength();
+                            
 		//	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
 		if (conn instanceof HttpURLConnection) {
-		    hcon = (HttpURLConnection)conn;
+		    HttpURLConnection hcon = (HttpURLConnection)conn;
 		    http_status = hcon.getResponseCode();
 		}
 		// Status codes:
@@ -362,156 +363,14 @@ public class LocalUrlCacher {
 	}
 	//	System.out.println("cached = " + cached + " :  " + url);
 	// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache		
-	if (cached && (cache_option != IGNORE_CACHE)) {			
-	    if (url_reachable) {
-		//  has a timestamp and response contents not modified since local cached copy last modified, so use local
-		if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
-		    if (DEBUG_CONNECTION)  {
-			Application.getSingleton().logInfo("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
-		    }
-		    result_stream = new BufferedInputStream(new FileInputStream(cache_file));
-		}
-		//long local_timestamp = cache_file.lastModified();
-		else if (has_timestamp && remote_timestamp <= local_timestamp) {
-		    if (DEBUG_CONNECTION) {
-			Application.getSingleton().logInfo("Cache exists and is more recent, using cache: " + cache_file);
-		    }
-		    result_stream = new BufferedInputStream(new FileInputStream(cache_file));
-		}
-		else {
-		    if (DEBUG_CONNECTION)  {
-			Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache: " + url);
-		    }
-		    result_stream = null;
-		}
-	    }
-	    else { // url is not reachable
-		if (cache_option != ONLY_CACHE) {
-		    if (DEBUG_CONNECTION)  {
-			Application.getSingleton().logWarning("Remote URL not reachable: " + url);
-		    }
-		}
-		if (DEBUG_CONNECTION)  {
-		    Application.getSingleton().logInfo("Loading cached file for URL: " + url);
-		}
-		result_stream = new BufferedInputStream(new FileInputStream(cache_file));
-	    }
-	    // using cached content, so should also use cached headers
-	    //   eventuallly want to improve so headers get updated if server is accessed and url is reachable
-	    if (result_stream != null && headers != null && headers_cached)  {
-		BufferedInputStream hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
-		Properties headerprops = new Properties();
-		headerprops.load(hbis);
-		headers.putAll(headerprops);
-		hbis.close();
-	    }
+	if (cached && (cache_option != IGNORE_CACHE)) {
+            boolean has_timestamp = (remote_timestamp > 0);
+            result_stream = TryToRetrieveFromCache(url_reachable, http_status, cache_file, has_timestamp, remote_timestamp, local_timestamp, url, cache_option, result_stream, headers, headers_cached, header_cache_file);
 	}
 
 	// Need to get data from URL, because no cache hit, or stale, or cache_option set to IGNORE_CACHE...
 	if (result_stream == null && url_reachable && (cache_option != ONLY_CACHE)) {				
-	    // populating header Properties (for persisting) and header input Map
-	    Map headermap = conn.getHeaderFields();
-	    Properties headerprops = new Properties();
-	    Iterator heads = headermap.entrySet().iterator();
-	    while (heads.hasNext()) {
-		Map.Entry ent = (Map.Entry)heads.next();
-		String key = (String)ent.getKey();;  // making all header names lower-case
-		java.util.List vals = (java.util.List)ent.getValue();
-		if (vals.size() > 0) {
-		    String val = (String)vals.get(0);
-		    if (key == null) { key = HTTP_STATUS_HEADER; }  // HTTP status code line has a null key, change so can be stored
-		    key = key.toLowerCase();
-		    headerprops.setProperty(key, val);
-		    if (headers != null) { headers.put(key, val); }
-		}
-	    }
-	    InputStream connstr = conn.getInputStream();
-	    BufferedInputStream bis = new BufferedInputStream(connstr);
-	    byte[] content = null;
-	    if (content_length >= 0) {       // if content_length header was set, can load based on length				
-		content = new byte[content_length];
-		//      int bytes_read = bis.read(content, 0, content_length);
-		int total_bytes_read = 0;
-		while (total_bytes_read < content_length) {
-		    int bytes_read = bis.read(content, total_bytes_read, (content_length - total_bytes_read));
-		    total_bytes_read += bytes_read;
-		}
-		if (total_bytes_read != content_length) {
-		    Application.getSingleton().logWarning("Bytes read not same as content length");
-		    System.out.println("Bytes read not same as content length");
-		}
-	    }
-	    else {
-		if (DEBUG_CONNECTION) {
-		    System.out.println("No content length header, so doing piecewise loading");
-		    Application.getSingleton().logDebug("No content length header, so doing piecewise loading");
-		}
-
-		// if no content_length header, then need to load a chunk at a time
-		//   till find end, then piece back together into content byte array
-		//   Note, must set initial capacity to 1000 to avoid stream loading interruption.
-		ArrayList<byte[]> chunks = new ArrayList(1000);
-		IntList byte_counts = new IntList(100);
-		int chunk_count = 0;
-		int chunk_size = 256 * 256;  // reading in 64KB chunks
-		int total_byte_count = 0;
-		int bytes_read = 0;				
-		while (bytes_read != -1) {  // if bytes_read == -1, then end of data reached
-		    byte[] chunk = new byte[chunk_size];
-		    bytes_read = bis.read(chunk, 0, chunk_size);
-		    if (DEBUG_CONNECTION) {
-			Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
-			System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);
-		    }
-		    if (bytes_read > 0)  { // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
-			total_byte_count += bytes_read;
-			chunks.add(chunk);
-			byte_counts.add(bytes_read);
-		    }
-		    chunk_count++;
-		}
-		if (DEBUG_CONNECTION) {
-		    Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
-		    System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
-		}
-
-		content_length = total_byte_count;
-		content = new byte[content_length];
-		total_byte_count = 0;
-		for (int i=0; i<chunks.size(); i++) {
-		    byte[] chunk = chunks.get(i);
-		    int byte_count = byte_counts.get(i);
-		    if (byte_count > 0) {
-			System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
-			total_byte_count += byte_count;
-		    }
-		}
-		chunks = null;
-	    }
-	    bis.close();
-	    connstr.close();
-	    if (write_to_cache)  {
-		if (content != null && content.length > 0) {
-		    if (DEBUG_CONNECTION)  {
-			Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
-			System.out.println("writing content to cache: " + cache_file.getPath());			
-		    }
-		    // write data from URL into a File
-		    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
-		    // no API for returning number of bytes successfully written, so write all in one shot...
-		    bos.write(content, 0, content.length);
-		    bos.close();
-		}
-		// cache headers also -- in [cache_dir]/headers ?
-		if (DEBUG_CONNECTION)  {
-		    Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
-		    System.out.println("writing headers to cache: " + header_cache_file.getPath());			
-		}
-		BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
-		headerprops.store(hbos, null);
-		hbos.close();
-	    }
-	    result_stream = new ByteArrayInputStream(content);
+	    result_stream = RetrieveFromURL(conn, headers, write_to_cache, cache_file, header_cache_file);
 	}
 
 	if (headers != null && DEBUG_CONNECTION) { reportHeaders(url, headers); }
@@ -521,6 +380,167 @@ public class LocalUrlCacher {
 	}
 	// if (result_stream == null)  { throw new IOException("WARNING: LocalUrlCacher couldn't get content for: " + url); }
 	return result_stream;
+    }
+
+    private static byte[] ReadIntoContentArray(int content_length, BufferedInputStream bis) throws IOException {
+        byte[] content = null;
+        if (content_length >= 0) {
+            // if content_length header was set, can load based on length
+            content = new byte[content_length];
+            //      int bytes_read = bis.read(content, 0, content_length);
+            int total_bytes_read = 0;
+            while (total_bytes_read < content_length) {
+                int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
+                total_bytes_read += bytes_read;
+            }
+            if (total_bytes_read != content_length) {
+                Application.getSingleton().logWarning("Bytes read not same as content length");
+                System.out.println("Bytes read not same as content length");
+            }
+        } else {
+            if (DEBUG_CONNECTION) {
+                System.out.println("No content length header, so doing piecewise loading");
+                Application.getSingleton().logDebug("No content length header, so doing piecewise loading");
+            }
+
+            // if no content_length header, then need to load a chunk at a time
+            //   till find end, then piece back together into content byte array
+            //   Note, must set initial capacity to 1000 to avoid stream loading interruption.
+            ArrayList<byte[]> chunks = new ArrayList(1000);
+            IntList byte_counts = new IntList(100);
+            int chunk_count = 0;
+            int chunk_size = 256 * 256; // reading in 64KB chunks
+            int total_byte_count = 0;
+            int bytes_read = 0;
+            while (bytes_read != -1) {
+                // if bytes_read == -1, then end of data reached
+                byte[] chunk = new byte[chunk_size];
+                bytes_read = bis.read(chunk, 0, chunk_size);
+                if (DEBUG_CONNECTION) {
+                    Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
+                    System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);
+                }
+                if (bytes_read > 0) {
+                    // want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
+                    total_byte_count += bytes_read;
+                    chunks.add(chunk);
+                    byte_counts.add(bytes_read);
+                }
+                chunk_count++;
+            }
+            if (DEBUG_CONNECTION) {
+                Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+                System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+            }
+
+            content_length = total_byte_count;
+            content = new byte[content_length];
+            total_byte_count = 0;
+            for (int i = 0; i < chunks.size(); i++) {
+                byte[] chunk = chunks.get(i);
+                int byte_count = byte_counts.get(i);
+                if (byte_count > 0) {
+                    System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
+                    total_byte_count += byte_count;
+                }
+            }
+            chunks = null;
+        }
+        return content;
+    }
+    
+    private static InputStream TryToRetrieveFromCache(boolean url_reachable, int http_status, File cache_file, boolean has_timestamp, long remote_timestamp, long local_timestamp, String url, int cache_option, InputStream result_stream, Map headers, boolean headers_cached, File header_cache_file) throws IOException, FileNotFoundException {
+        if (url_reachable) {
+            //  has a timestamp and response contents not modified since local cached copy last modified, so use local
+            if (http_status == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                if (DEBUG_CONNECTION) {
+                    Application.getSingleton().logInfo("Received HTTP_NOT_MODIFIED status for URL, using cache: " + cache_file);
+                }
+                result_stream = new BufferedInputStream(new FileInputStream(cache_file));
+            } else if (has_timestamp && remote_timestamp <= local_timestamp) {
+                if (DEBUG_CONNECTION) {
+                    Application.getSingleton().logInfo("Cache exists and is more recent, using cache: " + cache_file);
+                }
+                result_stream = new BufferedInputStream(new FileInputStream(cache_file));
+            } else {
+                if (DEBUG_CONNECTION) {
+                    Application.getSingleton().logInfo("cached file exists, but URL is more recent, so reloading cache: " + url);
+                }
+                result_stream = null;
+            }
+        } else {
+            // url is not reachable
+            if (cache_option != ONLY_CACHE) {
+                if (DEBUG_CONNECTION) {
+                    Application.getSingleton().logWarning("Remote URL not reachable: " + url);
+                }
+            }
+            if (DEBUG_CONNECTION) {
+                Application.getSingleton().logInfo("Loading cached file for URL: " + url);
+            }
+            result_stream = new BufferedInputStream(new FileInputStream(cache_file));
+        }
+        // using cached content, so should also use cached headers
+        //   eventuallly want to improve so headers get updated if server is accessed and url is reachable
+        if (result_stream != null && headers != null && headers_cached) {
+            BufferedInputStream hbis = new BufferedInputStream(new FileInputStream(header_cache_file));
+            Properties headerprops = new Properties();
+            headerprops.load(hbis);
+            headers.putAll(headerprops);
+            hbis.close();
+        }
+        return result_stream;
+    }
+
+    private static InputStream RetrieveFromURL(URLConnection conn, Map headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
+        InputStream result_stream;
+                
+        // populating header Properties (for persisting) and header input Map
+        Map headermap = conn.getHeaderFields();
+        Properties headerprops = new Properties();
+        Iterator heads = headermap.entrySet().iterator();
+        while (heads.hasNext()) {
+            Map.Entry ent = (Map.Entry) heads.next();
+            String key = (String) ent.getKey();
+            ; // making all header names lower-case
+            java.util.List vals = (java.util.List) ent.getValue();
+            if (vals.size() > 0) {
+                String val = (String) vals.get(0);
+                if (key == null) {
+                    key = HTTP_STATUS_HEADER;
+                } // HTTP status code line has a null key, change so can be stored
+                key = key.toLowerCase();
+                headerprops.setProperty(key, val);
+                if (headers != null) {
+                    headers.put(key, val);
+                }
+            }
+        }
+        
+        int content_length = -1; 
+        InputStream connstr;
+            String contentEncoding = conn.getHeaderField( "Content-Encoding" );
+            boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
+            if (isGZipped)
+            {
+                connstr = new GZIPInputStream( conn.getInputStream() );
+                // unknown content length, stick with -1
+            } else {
+                connstr = conn.getInputStream();
+                content_length = conn.getContentLength();
+            }
+
+        
+        //InputStream connstr = conn.getInputStream();
+        BufferedInputStream bis = new BufferedInputStream(connstr);
+        byte[] content = ReadIntoContentArray(content_length, bis);
+        bis.close();
+        connstr.close();
+        if (write_to_cache) {
+            WriteToCache(content, cache_file, header_cache_file, headerprops);
+        }
+        result_stream = new ByteArrayInputStream(content);
+        return result_stream;
     }
 
 
@@ -740,5 +760,27 @@ public class LocalUrlCacher {
 	} finally {
 	    if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
 	}
+    }
+
+    private static void WriteToCache(byte[] content, File cache_file, File header_cache_file, Properties headerprops) throws IOException, IOException, FileNotFoundException {
+        if (content != null && content.length > 0) {
+            if (DEBUG_CONNECTION) {
+                Application.getSingleton().logInfo("writing content to cache: " + cache_file.getPath());
+                System.out.println("writing content to cache: " + cache_file.getPath());
+            }
+            // write data from URL into a File
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
+            // no API for returning number of bytes successfully written, so write all in one shot...
+            bos.write(content, 0, content.length);
+            bos.close();
+        }
+        // cache headers also -- in [cache_dir]/headers ?
+        if (DEBUG_CONNECTION) {
+            Application.getSingleton().logInfo("writing headers to cache: " + header_cache_file.getPath());
+            System.out.println("writing headers to cache: " + header_cache_file.getPath());
+        }
+        BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
+        headerprops.store(hbos, null);
+        hbos.close();
     }
 }

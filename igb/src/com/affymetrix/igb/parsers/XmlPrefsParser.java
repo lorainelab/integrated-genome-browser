@@ -184,7 +184,7 @@ public class XmlPrefsParser {
       prefs_hash = parse(insrc, file_name, prefs_hash);
     }
     catch (Exception ex) {
-      System.err.println("ERROR while reading preferences.");
+      System.err.println("ERROR while reading preferences " + file_name);
       System.err.println("  "+ex.toString());
       ex.printStackTrace();
     }
@@ -198,7 +198,7 @@ public class XmlPrefsParser {
       prefs_hash = processDocument(prefsdoc, file_name, prefs_hash);
     }
     catch (Exception ex) {
-      System.err.println("ERROR while reading preferences.");
+      System.err.println("ERROR while reading preferences " + file_name);
       System.err.println("  "+ex.toString());
       ex.printStackTrace();
     }

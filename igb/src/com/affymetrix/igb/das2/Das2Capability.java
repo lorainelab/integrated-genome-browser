@@ -12,7 +12,7 @@ public class Das2Capability {
   public Das2Capability(String cap_type, URI cap_root, Map cap_formats) {
     type = cap_type;
     root_uri = cap_root;
-    cap_formats = formats;
+    formats = cap_formats;
   }
 
   protected void setVersionedSource(Das2VersionedSource vsource) {

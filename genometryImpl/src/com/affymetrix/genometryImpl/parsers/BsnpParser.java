@@ -302,7 +302,7 @@ public class BsnpParser {
           snp_syms.add(snp);
         }
         // I'm assuming the snp coords are sorted from min to max, thus the last coord is the max
-        if (aseq.getLength() < base_coord) {
+        if (aseq != null && aseq.getLength() < base_coord) {
           aseq.setLength(base_coord);
         }
       }

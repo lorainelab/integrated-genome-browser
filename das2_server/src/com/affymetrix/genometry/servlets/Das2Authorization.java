@@ -117,8 +117,9 @@ public class Das2Authorization {
 	/**Loads userFile creating users HashMap, userNames are converted to lowercase.*/
 	private boolean loadUserHashMap(){
 		users = new HashMap();
+                BufferedReader in = null;
 		try{
-			BufferedReader in = new BufferedReader(new FileReader(usersFile));
+			in = new BufferedReader(new FileReader(usersFile));
 			String line;
 			String[] tokens;	
 			while ((line = in.readLine())!=null){
@@ -151,11 +152,21 @@ public class Das2Authorization {
 					userDirs.put(versionedGenome, dirs);
 				}
 			}
-			return true;
 		}catch(Exception e){
 			e.printStackTrace();
 			return false;
 		}
+                finally {
+                    if (in != null) {
+                        try {
+                        in.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                }
+                return true;
 	}
 
 	/**Checks if user exists and whether their password matches.
@@ -182,8 +193,9 @@ public class Das2Authorization {
 	/**Loads the restrictedDirectories file into a hash.*/
 	private boolean loadRestrictedDirectories(){
 		restrictedDirectories = new HashMap();
+                BufferedReader in = null;
 		try{
-			BufferedReader in = new BufferedReader(new FileReader(restrictedDirectoriesFile));
+			in = new BufferedReader(new FileReader(restrictedDirectoriesFile));
 			String line;
 			String[] tokens;
 			while ((line = in.readLine())!=null){
@@ -209,7 +221,17 @@ public class Das2Authorization {
 			e.printStackTrace();
 			return false;
 		}
-		return true;
+                finally {
+                    if (in != null) {
+                        try {
+                        in.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    }
+                }
+                return true;
 	}
 
 	/**Print to System.out the ArrayList*/

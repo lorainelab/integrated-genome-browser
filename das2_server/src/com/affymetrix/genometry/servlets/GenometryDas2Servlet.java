@@ -219,7 +219,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
 
     static String DAS2_VERSION = "2.0";
-    public static String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
+    public final static String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
     static String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
     static String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
     static String TYPES_CONTENT_TYPE = "application/x-das-types+xml";
@@ -303,7 +303,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     ArrayList log = new ArrayList(100);
     //  HashMap directory_filter = new HashMap();
-    Memer mem;
+    //Memer mem;
     Map output_registry = new HashMap();
     //  DateFormat date_formatter = DateFormat.getDateTimeInstance();
     SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -505,23 +505,36 @@ public class GenometryDas2Servlet extends HttpServlet  {
      * @return null if an exception in thrown
      * */
     public static HashMap<String,String> loadFileIntoHashMap(File file) {
-	try{
-	    HashMap<String,String> names = new HashMap();
-	    BufferedReader in = new BufferedReader(new FileReader(file));
-	    String line;
-	    String[] keyValue;
-	    while ((line = in.readLine())!=null){
-		line = line.trim();
-		if (line.length() ==0 || line.startsWith("#")) continue;
-		keyValue = line.split("\\s+");
-		if (keyValue.length < 2) continue;
-		names.put(keyValue[0], keyValue[1]);
-	    }
-	    return names;
-	}catch (Exception e){
-	    e.printStackTrace();
-	    return null;
-	}
+	BufferedReader in = null;
+        HashMap<String, String> names = null;
+        try {
+            names = new HashMap();
+            in = new BufferedReader(new FileReader(file));
+            String line;
+            String[] keyValue;
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                if (line.length() == 0 || line.startsWith("#")) {
+                    continue;
+                }
+                keyValue = line.split("\\s+");
+                if (keyValue.length < 2) {
+                    continue;
+                }
+                names.put(keyValue[0], keyValue[1]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return names;
+        }
     }
 
     public void loadGenomes() throws IOException {
@@ -536,8 +549,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	//       for each file in genome_version directory
 	//           if directory, recurse in
 	//           else try to parse and annotate seqs based on file suffix (.xyz)
-	mem = new Memer();
-	mem.printMemory();
+	//mem = new Memer();
+	//mem.printMemory();
 
 	File top_level = new File(data_root);
 	if (! top_level.exists()) {
@@ -563,7 +576,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	// sort genomes based on "organism_order.txt" config file if present
 	sortGenomes();
 	System.gc();
-	mem.printMemory();
+	//mem.printMemory();
     }
 
 
@@ -860,7 +873,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    }
 	}
 	System.gc();
-	mem.printMemory();
+	//mem.printMemory();
     }
 
     public List getLog()  { return log; }
@@ -922,13 +935,13 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 	//    PrintWriter pw = response.getWriter();
 	//    addDasHeaders(response);		
-	if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {	
-	    handleSourcesRequest(request, response);
-	}
-	else if (path_info == null || path_info.trim().length() == 0) {   	
+        if (path_info == null || path_info.trim().length() == 0) {   	
 	    log.add("Unknown or missing DAS command");
 	    response.sendError(response.SC_BAD_REQUEST,
 			       "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
+	}
+        else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {	
+	    handleSourcesRequest(request, response);
 	}
 	else if (path_info.endsWith(login_query)){
 	    handleLoginRequest(request, response);

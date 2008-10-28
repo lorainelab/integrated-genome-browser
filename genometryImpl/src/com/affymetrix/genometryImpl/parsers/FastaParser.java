@@ -437,7 +437,7 @@ public static String parseResidues(InputStream istr) throws IOException {
     //    int bisbuf_size = 8192;
     int bisbuf_size = 16384;
 
-    byte[] bytebuf = new byte[bytebuf_size];
+    //byte[] bytebuf = new byte[bytebuf_size];
 
     int bytecount = 0;
     int milcount = 0;

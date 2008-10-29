@@ -195,7 +195,9 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
     //  For now assuming the source XML contains only a single segment
     try {
-			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+			SAXParserFactory f = SAXParserFactory.newInstance();
+			f.setNamespaceAware(true);
+			XMLReader reader = f.newSAXParser().getXMLReader();
 
 			try {
 				//      reader.setFeature("http://xml.org/sax/features/string-interning", true);

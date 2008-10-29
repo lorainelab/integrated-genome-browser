@@ -920,7 +920,9 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       InputSource isrc = new InputSource(response_stream);
       */
       InputSource isrc = new InputSource(uri);
-			XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+			SAXParserFactory f = SAXParserFactory.newInstance();
+			f.setNamespaceAware(true);
+			XMLReader reader = f.newSAXParser().getXMLReader();
       reader.setContentHandler(this);
       reader.parse(isrc);
     }

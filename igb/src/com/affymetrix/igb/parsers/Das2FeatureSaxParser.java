@@ -230,7 +230,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 		XMLReader reader = null;
     try {
-			reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+			SAXParserFactory f = SAXParserFactory.newInstance();
+			f.setNamespaceAware(true);
+			reader = f.newSAXParser().getXMLReader();
       //      reader.setFeature("http://xml.org/sax/features/string-interning", true);
       reader.setFeature("http://xml.org/sax/features/validation", false);
       reader.setFeature("http://apache.org/xml/features/validation/dynamic", false);

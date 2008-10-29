@@ -296,10 +296,10 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
    *  This is normally called from a menu item in the main Unibrow window.
    */
   public void actionPerformed(ActionEvent evt) {
-    boolean ok = showDasDialog();
+    /*boolean ok = showDasDialog();
     if (ok) {
       processDASRequest();
-    }
+    }*/
   }
 
   /** Uses the values selected in the dialogs to formulate and process

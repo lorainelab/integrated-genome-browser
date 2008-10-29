@@ -73,6 +73,9 @@
 		</jar>
 
 		<my.signjar jar="${webstart.dir}/igb.jar" />
+
+		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" />
+		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 	</target>
 
 	<target name="webapp" depends="jar" description="Create das2servlet web application">

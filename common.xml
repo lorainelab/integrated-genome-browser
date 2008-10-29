@@ -1,7 +1,6 @@
 <project>
 	<target name="common-init" depends="init">
     <tstamp/>
-    <property name="year" value="2005"/>
 
 		<!-- directory paths -->
 		<property name="dist.dir"     value="${basedir}/dist" />
@@ -10,6 +9,13 @@
 
 		<!-- file paths -->
 		<property name="web.xml" value="${das2server}/web.xml" />
+
+		<!-- JNLP Webstart -->
+		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
+		<property name="jnlp.version"   value="${DSTAMP}" />
+		<property name="jnlp.codebase"  value="http://genoviz.sourceforge.net/webstart/" />
+		<property name="jnlp.icon.name" value="affychip.gif" />
+		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
 
 		<!-- global compiler defaults -->
 		<property name="build.compiler"         value="modern" />
@@ -32,11 +38,9 @@
 		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
 		<property name="javadoc.src.version" value="5" />
 
-
-		<!-- The filters appear to be unused -->
-    <filter token="Copyright" value="Copyright (C) 1997-${year} by Affymetrix, Inc, USA."/> 
-    <filter token="year" value="${year}"/>
-    <filter token="date" value="${TODAY}"/>
+		<filter token="jnlp.version"  value="${jnlp.version}" />
+		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
+		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
 	</target>
 
 	<presetdef name="my.javac">

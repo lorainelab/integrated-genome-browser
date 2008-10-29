@@ -1667,41 +1667,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    /* support for single name, single format, no other filters */
 	    else if (names != null  && names.size() == 1) {
 		String name = (String)names.get(0);
-		// GAH 11-2006
-		//   need to enhance this to support multiple name parameters OR'd together
-
-		//   DAS/2 specification defines glob-style searches:
-		//   The string searches may be exact matches, substring, prefix or suffix searches.
-		//   The query type depends on if the search value starts and/or ends with a '*'.
-		//
-		//    ABC -- field exactly matches "ABC"
-		//    *ABC -- field ends with "ABC"
-		//    ABC* -- field starts with "ABC"
-		//    *ABC* -- field contains the substring "ABC"
-		boolean glob_start = name.startsWith("*");
-		boolean glob_end = name.endsWith("*");
-
-
-		Pattern name_pattern = null;
-		if (glob_start || glob_end)  {
-		    String name_regex = name.toLowerCase();
-		    if (glob_start)  {
-			// do replacement of first "*" with ".*" ?
-			name_regex = ".*" + name_regex.substring(1);
-		    }
-		    if (glob_end) {
-			// do replacement of last "*" with ".*" ?
-			name_regex = name_regex.substring(0, name_regex.length()-1) + ".*";
-		    }
-		    System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
-		    name_pattern = Pattern.compile(name_regex);
-		    result = genome.findSyms(name_pattern);
-		    //	   Collections.sort(result, new SeqSymIdComparator());
-		    System.out.println("!!!! regex matches: " + result.size());
-		}
-		else {  // ABC -- field exactly matches "ABC"
-		    result = genome.findSyms(name);
-		}
+                result = DetermineResult(name, genome, result);
 		if (types.size() > 0) {
 		    // make sure result syms are of one of the specified types
 		    /*  NOT DONE YET
@@ -1845,6 +1811,47 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 
     }
+    
+    
+    private List DetermineResult(String name, AnnotatedSeqGroup genome, List result) {
+        // GAH 11-2006
+        //   need to enhance this to support multiple name parameters OR'd together
+        //   DAS/2 specification defines glob-style searches:
+        //   The string searches may be exact matches, substring, prefix or suffix searches.
+        //   The query type depends on if the search value starts and/or ends with a '*'.
+        //
+        //    ABC -- field exactly matches "ABC"
+        //    *ABC -- field ends with "ABC"
+        //    ABC* -- field starts with "ABC"
+        //    *ABC* -- field contains the substring "ABC"
+        boolean glob_start = name.startsWith("*");
+        boolean glob_end = name.endsWith("*");
+
+
+        Pattern name_pattern = null;
+        if (glob_start || glob_end) {
+            String name_regex = name.toLowerCase();
+            if (glob_start) {
+                // do replacement of first "*" with ".*" ?
+                name_regex = ".*" + name_regex.substring(1);
+            }
+            if (glob_end) {
+                // do replacement of last "*" with ".*" ?
+                name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
+            }
+            System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
+            name_pattern = Pattern.compile(name_regex);
+            result = genome.findSyms(name_pattern);
+            //	   Collections.sort(result, new SeqSymIdComparator());
+            System.out.println("!!!! regex matches: " + result.size());
+        } else {
+            // ABC -- field exactly matches "ABC"
+            result = genome.findSyms(name);
+        }
+        return result;
+    }
+
+    
 
     public String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
 	//	query_type = (String)types.get(0);

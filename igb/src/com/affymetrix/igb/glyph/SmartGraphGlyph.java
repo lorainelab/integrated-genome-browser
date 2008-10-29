@@ -350,323 +350,345 @@ public class SmartGraphGlyph extends GraphGlyph {
      *      (one level of compression / summation)
      */
     if (USE_GRAPH_CACHE && (avg_points_per_pixel > compression_level)) {
-      int draw_beg_index;
-      int draw_end_index;
-
-      // first figure out which graph cache / compression level to use
-      // defaulting to first cache for now...
-      GraphCache2 graph_cache = caches.get(0);
-
-      draw_beg_index = Arrays.binarySearch(graph_cache.xmin, (int)xmin);
-      draw_end_index = Arrays.binarySearch(graph_cache.xmax, (int)xmax);
-      if (draw_beg_index < 0) {
-	// want draw_beg_index to be index of max xcoord <= view_start
-	//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-	draw_beg_index = (-draw_beg_index -1) - 1;
-	if (draw_beg_index < 0) { draw_beg_index = 0; }
-      }
-      if (draw_end_index < 0) {
-	// want draw_end_index to be index of min xcoord >= view_end
-	//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-	draw_end_index = -draw_end_index -1;
-	if (draw_end_index < 0) { draw_end_index = 0; }
-	else if (draw_end_index >= graph_cache.xmin.length) { draw_end_index = graph_cache.xmin.length - 1; }
-	if (draw_end_index < (graph_cache.xmin.length-1)) { draw_end_index++; }
-      }
-      coord.x = graph_cache.xmin[draw_beg_index];
-      //      coord.y = offset - (graph_cache.yavg[draw_beg_index] * yscale);
-      coord.y = offset - ((graph_cache.ymin[draw_beg_index] - getVisibleMinY()) * yscale);
-      view.transformToPixels(coord, prev_point);
-
-      int ymin_pixel = prev_point.y;
-      int ymax_pixel = prev_point.y;
-      int temp_ymin_pixel = prev_point.y;
-      int temp_ymax_pixel = prev_point.y;
-
-      int yavg_pixel;
-      int ysum = prev_point.y;
-      int temp_ysum = prev_point.y;
-
-      int points_in_pixel = 1;
-      int draw_count = 0;
-
-      // trying first with just min/max drawing...
-      {  // using cache, but still collecting values per pixel...
-	if (graph_style == MINMAXAVG) {
-          g.setColor(darker);
-        }
-	if (graph_style == LINE_GRAPH) {
-          g.setColor(getBackgroundColor());
-        }
-	for (int i = draw_beg_index; i <= draw_end_index; i++) {
-	  coord.x = ((double)graph_cache.xmin[i] + (double)graph_cache.xmax[i]) / 2.0;
-	  coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
-	  view.transformToPixels(coord, curr_point);
-	  // flipping -- hmm...
-	  //	ymin_pixel = curr_point.y;
-	  temp_ymax_pixel = curr_point.y;
-
-	  coord.y = offset - ((graph_cache.ymax[i] - getVisibleMinY()) * yscale);
-	  view.transformToPixels(coord, curr_point);
-	  // flipping -- hmm...
-	  //	ymax_pixel = curr_point.y;
-	  temp_ymin_pixel = curr_point.y;
-
-	  coord.y = offset - ((graph_cache.yavg[i] - getVisibleMinY()) * yscale);
-	  view.transformToPixels(coord, curr_point);
-	  temp_ysum = curr_point.y;
-
-	  if (prev_point.x == curr_point.x) {
-	    // collect ymin, ymax, y_average for all coord points that transform to
-	    //    the same x pixel
-	    ymin_pixel = Math.min(ymin_pixel, temp_ymin_pixel);
-	    ymax_pixel = Math.max(ymax_pixel, temp_ymax_pixel);
-	    ysum += temp_ysum;
-	    points_in_pixel++;
-	  }
-
-	  else {  // draw data for the previous pixel position
-	    yavg_pixel = ysum / points_in_pixel;
-            
-	    if ((graph_style == MINMAXAVG && MINMAXBAR) || 
-                graph_style == LINE_GRAPH ||
-                graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP
-                || graph_style == GraphStateI.EXT_HEAT_MAP) {
-              // this does NOT apply to AVG_HEAT_MAP
-
-              int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
-              int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-	      int yheight = yend - ystart;
-              
-              if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
-                g.fillRect(prev_point.x, ystart, 1, yheight);
-              } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
-                g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
-                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);              
-              } else if (graph_style == GraphStateI.MAX_HEAT_MAP) {
-                g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
-                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);              
-              } else if (graph_style == GraphStateI.EXT_HEAT_MAP) {
-                int sss = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
-                int eee = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
-                
-                if (Math.abs(sss-127) > Math.abs(eee-127)) { // Pick the most extreme value out of max and min
-                  g.setColor(state.getHeatMap().getColor(sss));
-                } else {
-                  g.setColor(state.getHeatMap().getColor(eee));
-                }
-                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-              }
-	      draw_count++;
-	    }
-	    if (AVGLINE || graph_style == GraphStateI.LINE_GRAPH) {
-	      // cache for drawing later
-	      if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
-		pixel_cache[prev_point.x] =
-		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
-	      }
-	    }
-                        
-	    ymin_pixel = temp_ymin_pixel;
-	    ymax_pixel = temp_ymax_pixel;
-	    ysum = temp_ysum;
-
-	    points_in_pixel = 1;
-	  } // end (prev_point.x != curr_point.x)
-          prev_point.x = curr_point.x; // this line is sometimes redundant
-          prev_point.y = curr_point.y; // this line is not redundant
-	}
-      }
-      if (SHOW_CACHE_INDICATOR) {
-	g.setColor(Color.RED);
-	g.fillRect(20, ymin_pixel-5, 25, 10);
-      }
-
-      //// LINE_GRAPH is basically just MIN/MAX/AVG graph without the AVG,
-      //// but then we have to draw the lines *between* the values in the pixel cache.
-      if (graph_style == GraphStateI.LINE_GRAPH) {
-        for (int i = draw_beg_index + 1; i <= draw_end_index; i++) {
-
-          int index = graph_cache.graph_index_max[i - 1];
-          coord.x = graph_cache.xmax[i-1];
-          coord.y = offset - ((graf.getGraphYCoord(index) - getVisibleMinY()) * yscale);
-          view.transformToPixels(coord, last_point_temp);
-          int x1 = last_point_temp.x;
-          int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
-
-          index = graph_cache.graph_index_min[i];
-          coord.x = graph_cache.xmin[i];
-          coord.y = offset - ((graf.getGraphYCoord(index) - getVisibleMinY()) * yscale);
-          view.transformToPixels(coord, last_point_temp);
-          int x2 = last_point_temp.x;
-          int y2 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
-
-          // x2 == curr_point.x ???
-          g.drawLine(x1, y1, x2, y2);
-        }
-      }
-
+        UseGraphCache(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
     }
     // not using graph "cache", because zoomed too far in (but not far enough to switch to bars)
     else  { // not using graph cache...
       // using binary search to find end points --
       //    assumes xcoords array is ordered by increasing value
-      int draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
-
-      // The +1 on draw_end_index might be an error, but it gets corrected below
-      int draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
-
-      if (draw_beg_index < 0) {
-	// want draw_beg_index to be index of max xcoord <= view_start
-	//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-	draw_beg_index = (-draw_beg_index -1) - 1;
-	if (draw_beg_index < 0) { draw_beg_index = 0; }
-      }
-      if (draw_end_index < 0) {
-	// want draw_end_index to be index of min xcoord >= view_end
-	//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-	draw_end_index = -draw_end_index -1;
-	if (draw_end_index < 0) { draw_end_index = 0; }
-	else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
-	if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
-      }
-
-      // draw_end_index is sometimes too large (by 1)
-      if (draw_end_index >= xcoords.length) {
-        draw_end_index = xcoords.length - 1;
-      }
-
-      coord.x = xcoords[draw_beg_index];
-      //      coord.y = offset - (ycoords[draw_beg_index] * yscale);
-      coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
-      view.transformToPixels(coord, prev_point);
-
-      int ymin_pixel = prev_point.y;
-      int ymax_pixel = prev_point.y;
-      int yavg_pixel;
-      int ysum = prev_point.y;
-      int points_in_pixel = 1;
-      int draw_count = 0;
-
-      if (graph_style == MINMAXAVG) {
-        g.setColor(darker);
-      }
-      if (graph_style == LINE_GRAPH) {
-        g.setColor(getBackgroundColor());
-      }      
-      for (int i = draw_beg_index; i <= draw_end_index; i++) {
-	coord.x = xcoords[i];
-	coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
-	view.transformToPixels(coord, curr_point);
-	if (prev_point.x == curr_point.x) {
-	  // collect ymin, ymax, y_average for all coord points that transform to
-	  //    the same x pixel
-	  ymin_pixel = Math.min(ymin_pixel, curr_point.y);
-	  ymax_pixel = Math.max(ymax_pixel, curr_point.y);
-	  ysum += curr_point.y;
-	  points_in_pixel++;
-	}
-	else {  // draw previous pixel position
-	    if ((graph_style == MINMAXAVG && MINMAXBAR) || 
-                graph_style == LINE_GRAPH ||
-                graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP
-                || graph_style == GraphStateI.EXT_HEAT_MAP) {
-              // Does not apply to AVG_HEAT_MAP
-
-            int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
-	    int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-	    int yheight = yend - ystart;
-
-            if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
-              g.fillRect(prev_point.x, ystart, 1, yheight);
-            } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
-              g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
-              g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-            } else if (graph_style == GraphStateI.MAX_HEAT_MAP) {
-              g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
-              g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-            } else if (graph_style == GraphStateI.EXT_HEAT_MAP) { 
-                int max = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
-                int min = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
-                
-                if (Math.abs(max-127) > Math.abs(min-127)) { // Pick the most extreme value out of max and min
-                  g.setColor(state.getHeatMap().getColor(max));
-                } else {
-                  g.setColor(state.getHeatMap().getColor(min));
-                }
-                g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-            }
-	    draw_count++;
-	  }
-	  yavg_pixel = ysum / points_in_pixel;
-	  if (AVGLINE || graph_style == LINE_GRAPH) {
-	    // cache for drawing later
-	    if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
-	      pixel_cache[prev_point.x] =
-		  Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
-	    }
-	  }
-          
-         if (graph_style == GraphStateI.LINE_GRAPH && i>0 && i<=graf.getPointCount()) {
-            coord.x = xcoords[i-1];
-            coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
-            view.transformToPixels(coord, last_point_temp);
-
-            int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
-            int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-            g.drawLine(prev_point.x, y1, curr_point.x, y2);
-          }
-          
-	  ymin_pixel = curr_point.y;
-	  ymax_pixel = curr_point.y;
-	  ysum = curr_point.y;
-	  points_in_pixel = 1;
-	}
-        prev_point.x = curr_point.x; // this line is sometimes redundant
-        prev_point.y = curr_point.y; // this line is not redundant
-      }
+        DontUseGraphCache(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
       // can only show threshold if xy coords are also being shown (show_graph = true)
     }
 
     if (AVGLINE) {
-      if (graph_style == MINMAXAVG) {
-        g.setColor(lighter);
-      }
-      int prev_index = 0;
-      // find the first pixel position that has a real value in pixel_cache
-      while ((prev_index < pixel_cache.length) && (pixel_cache[prev_index] == Integer.MIN_VALUE)) {
-	prev_index++;
-      }
-      if (prev_index != pixel_cache.length) { // successfully found a real value in pixel cache
-	int yval;
-	for (int i=prev_index+1; i<pixel_cache.length; i++) {
-	  yval = pixel_cache[i];
-          if (graph_style == GraphStateI.AVG_HEAT_MAP) {
-            if (yval != Integer.MIN_VALUE) {
-              g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yval))));
-              g.fillRect(i, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-              prev_index = i;
-            }
-          }
-          if (graph_style == GraphStateI.MINMAXAVG) {
-            if (yval != Integer.MIN_VALUE) {
-              if (pixel_cache[i-1] == Integer.MIN_VALUE &&
-                  coords_per_pixel > 30) {
-                // last pixel had no datapoints, so just draw a point at current pixel
-                g.drawLine(i, yval, i, yval);
-              }
-              else {
-                // last pixel had at least one datapoint, so connect with line
-                g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
-              }
-              prev_index = i;
-            }
-          }
-	}
-      }
+        DrawAvgLine(graph_style, g, heatmap_scaling, plot_bottom_ypixel, plot_top_ypixel, coords_per_pixel);
     }
   }
+  
+     private void DontUseGraphCache(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
+        // not using graph cache...
+        // using binary search to find end points --
+        //    assumes xcoords array is ordered by increasing value
+        int draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
 
+        // The +1 on draw_end_index might be an error, but it gets corrected below
+        int draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
+
+        if (draw_beg_index < 0) {
+            // want draw_beg_index to be index of max xcoord <= view_start
+            //  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
+            draw_beg_index = (-draw_beg_index - 1) - 1;
+            if (draw_beg_index < 0) {
+                draw_beg_index = 0;
+            }
+        }
+        if (draw_end_index < 0) {
+            // want draw_end_index to be index of min xcoord >= view_end
+            //   (insertion point)  [as defined in Arrays.binarySearch() docs]
+            draw_end_index = -draw_end_index - 1;
+            if (draw_end_index < 0) {
+                draw_end_index = 0;
+            } else if (draw_end_index >= xcoords.length) {
+                draw_end_index = xcoords.length - 1;
+            }
+            if (draw_end_index < (xcoords.length - 1)) {
+                draw_end_index++;
+            }
+        }
+
+        // draw_end_index is sometimes too large (by 1)
+        if (draw_end_index >= xcoords.length) {
+            draw_end_index = xcoords.length - 1;
+        }
+
+        coord.x = xcoords[draw_beg_index];
+        //      coord.y = offset - (ycoords[draw_beg_index] * yscale);
+        coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
+        view.transformToPixels(coord, prev_point);
+
+        int ymin_pixel = prev_point.y;
+        int ymax_pixel = prev_point.y;
+        int yavg_pixel;
+        int ysum = prev_point.y;
+        int points_in_pixel = 1;
+        int draw_count = 0;
+
+        if (graph_style == MINMAXAVG) {
+            g.setColor(darker);
+        }
+        if (graph_style == LINE_GRAPH) {
+            g.setColor(getBackgroundColor());
+        }
+        for (int i = draw_beg_index; i <= draw_end_index; i++) {
+            coord.x = xcoords[i];
+            coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
+            view.transformToPixels(coord, curr_point);
+            if (prev_point.x == curr_point.x) {
+                // collect ymin, ymax, y_average for all coord points that transform to
+                //    the same x pixel
+                ymin_pixel = Math.min(ymin_pixel, curr_point.y);
+                ymax_pixel = Math.max(ymax_pixel, curr_point.y);
+                ysum += curr_point.y;
+                points_in_pixel++;
+            } else {
+                // draw previous pixel position
+                if ((graph_style == MINMAXAVG && MINMAXBAR) || graph_style == LINE_GRAPH || graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP || graph_style == GraphStateI.EXT_HEAT_MAP) {
+                    // Does not apply to AVG_HEAT_MAP
+                    int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+                    int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
+                    int yheight = yend - ystart;
+
+                    if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+                        g.fillRect(prev_point.x, ystart, 1, yheight);
+                    } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
+                        g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
+                        g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                    } else if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+                        g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
+                        g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                    } else if (graph_style == GraphStateI.EXT_HEAT_MAP) {
+                        int max = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
+                        int min = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
+
+                        if (Math.abs(max - 127) > Math.abs(min - 127)) {
+                            // Pick the most extreme value out of max and min
+                            g.setColor(state.getHeatMap().getColor(max));
+                        } else {
+                            g.setColor(state.getHeatMap().getColor(min));
+                        }
+                        g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                    }
+                    draw_count++;
+                }
+                yavg_pixel = ysum / points_in_pixel;
+                if (AVGLINE || graph_style == LINE_GRAPH) {
+                    // cache for drawing later
+                    if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
+                        pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+                    }
+                }
+
+                if (graph_style == GraphStateI.LINE_GRAPH && i > 0 && i <= graf.getPointCount()) {
+                    coord.x = xcoords[i - 1];
+                    coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
+                    view.transformToPixels(coord, last_point_temp);
+
+                    int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+                    int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+                    g.drawLine(prev_point.x, y1, curr_point.x, y2);
+                }
+
+                ymin_pixel = curr_point.y;
+                ymax_pixel = curr_point.y;
+                ysum = curr_point.y;
+                points_in_pixel = 1;
+            }
+            prev_point.x = curr_point.x; // this line is sometimes redundant
+            prev_point.y = curr_point.y; // this line is not redundant
+        }
+        // can only show threshold if xy coords are also being shown (show_graph = true)
+    }
+
+    private void UseGraphCache(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
+        int draw_beg_index;
+        int draw_end_index;
+
+        // first figure out which graph cache / compression level to use
+        // defaulting to first cache for now...
+        GraphCache2 graph_cache = caches.get(0);
+
+        draw_beg_index = Arrays.binarySearch(graph_cache.xmin, (int) xmin);
+        draw_end_index = Arrays.binarySearch(graph_cache.xmax, (int) xmax);
+        if (draw_beg_index < 0) {
+            // want draw_beg_index to be index of max xcoord <= view_start
+            //  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
+            draw_beg_index = (-draw_beg_index - 1) - 1;
+            if (draw_beg_index < 0) {
+                draw_beg_index = 0;
+            }
+        }
+        if (draw_end_index < 0) {
+            // want draw_end_index to be index of min xcoord >= view_end
+            //   (insertion point)  [as defined in Arrays.binarySearch() docs]
+            draw_end_index = -draw_end_index - 1;
+            if (draw_end_index < 0) {
+                draw_end_index = 0;
+            } else if (draw_end_index >= graph_cache.xmin.length) {
+                draw_end_index = graph_cache.xmin.length - 1;
+            }
+            if (draw_end_index < (graph_cache.xmin.length - 1)) {
+                draw_end_index++;
+            }
+        }
+        coord.x = graph_cache.xmin[draw_beg_index];
+        //      coord.y = offset - (graph_cache.yavg[draw_beg_index] * yscale);
+        coord.y = offset - ((graph_cache.ymin[draw_beg_index] - getVisibleMinY()) * yscale);
+        view.transformToPixels(coord, prev_point);
+
+        int ymin_pixel = prev_point.y;
+        int ymax_pixel = prev_point.y;
+        int temp_ymin_pixel = prev_point.y;
+        int temp_ymax_pixel = prev_point.y;
+
+        int yavg_pixel;
+        int ysum = prev_point.y;
+        int temp_ysum = prev_point.y;
+
+        int points_in_pixel = 1;
+        int draw_count = 0;
+
+        // trying first with just min/max drawing...
+        {
+            // using cache, but still collecting values per pixel...
+            if (graph_style == MINMAXAVG) {
+                g.setColor(darker);
+            }
+            if (graph_style == LINE_GRAPH) {
+                g.setColor(getBackgroundColor());
+            }
+            for (int i = draw_beg_index; i <= draw_end_index; i++) {
+                coord.x = ((double) graph_cache.xmin[i] + (double) graph_cache.xmax[i]) / 2.0;
+                coord.y = offset - ((graph_cache.ymin[i] - getVisibleMinY()) * yscale);
+                view.transformToPixels(coord, curr_point);
+                // flipping -- hmm...
+                //	ymin_pixel = curr_point.y;
+                temp_ymax_pixel = curr_point.y;
+
+                coord.y = offset - ((graph_cache.ymax[i] - getVisibleMinY()) * yscale);
+                view.transformToPixels(coord, curr_point);
+                // flipping -- hmm...
+                //	ymax_pixel = curr_point.y;
+                temp_ymin_pixel = curr_point.y;
+
+                coord.y = offset - ((graph_cache.yavg[i] - getVisibleMinY()) * yscale);
+                view.transformToPixels(coord, curr_point);
+                temp_ysum = curr_point.y;
+
+                if (prev_point.x == curr_point.x) {
+                    // collect ymin, ymax, y_average for all coord points that transform to
+                    //    the same x pixel
+                    ymin_pixel = Math.min(ymin_pixel, temp_ymin_pixel);
+                    ymax_pixel = Math.max(ymax_pixel, temp_ymax_pixel);
+                    ysum += temp_ysum;
+                    points_in_pixel++;
+                } else {
+                    // draw data for the previous pixel position
+                    yavg_pixel = ysum / points_in_pixel;
+
+                    if ((graph_style == MINMAXAVG && MINMAXBAR) || graph_style == LINE_GRAPH || graph_style == GraphStateI.MIN_HEAT_MAP || graph_style == GraphStateI.MAX_HEAT_MAP || graph_style == GraphStateI.EXT_HEAT_MAP) {
+                        // this does NOT apply to AVG_HEAT_MAP
+                        int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+                        int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
+                        int yheight = yend - ystart;
+
+                        if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+                            g.fillRect(prev_point.x, ystart, 1, yheight);
+                        } else if (graph_style == GraphStateI.MIN_HEAT_MAP) {
+                            g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
+                            g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                        } else if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+                            g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
+                            g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                        } else if (graph_style == GraphStateI.EXT_HEAT_MAP) {
+                            int sss = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
+                            int eee = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
+
+                            if (Math.abs(sss - 127) > Math.abs(eee - 127)) {
+                                // Pick the most extreme value out of max and min
+                                g.setColor(state.getHeatMap().getColor(sss));
+                            } else {
+                                g.setColor(state.getHeatMap().getColor(eee));
+                            }
+                            g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                        }
+                        draw_count++;
+                    }
+                    if (AVGLINE || graph_style == GraphStateI.LINE_GRAPH) {
+                        // cache for drawing later
+                        if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
+                            pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+                        }
+                    }
+
+                    ymin_pixel = temp_ymin_pixel;
+                    ymax_pixel = temp_ymax_pixel;
+                    ysum = temp_ysum;
+
+                    points_in_pixel = 1;
+                } // end (prev_point.x != curr_point.x)
+                prev_point.x = curr_point.x; // this line is sometimes redundant
+                prev_point.y = curr_point.y; // this line is not redundant
+            }
+        }
+        if (SHOW_CACHE_INDICATOR) {
+            g.setColor(Color.RED);
+            g.fillRect(20, ymin_pixel - 5, 25, 10);
+        }
+
+        //// LINE_GRAPH is basically just MIN/MAX/AVG graph without the AVG,
+        //// but then we have to draw the lines *between* the values in the pixel cache.
+        if (graph_style == GraphStateI.LINE_GRAPH) {
+            for (int i = draw_beg_index + 1; i <= draw_end_index; i++) {
+
+                int index = graph_cache.graph_index_max[i - 1];
+                coord.x = graph_cache.xmax[i - 1];
+                coord.y = offset - ((graf.getGraphYCoord(index) - getVisibleMinY()) * yscale);
+                view.transformToPixels(coord, last_point_temp);
+                int x1 = last_point_temp.x;
+                int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+
+                index = graph_cache.graph_index_min[i];
+                coord.x = graph_cache.xmin[i];
+                coord.y = offset - ((graf.getGraphYCoord(index) - getVisibleMinY()) * yscale);
+                view.transformToPixels(coord, last_point_temp);
+                int x2 = last_point_temp.x;
+                int y2 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+
+                // x2 == curr_point.x ???
+                g.drawLine(x1, y1, x2, y2);
+            }
+        }
+    }
+
+
+    private void DrawAvgLine(int graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
+        if (graph_style == MINMAXAVG) {
+            g.setColor(lighter);
+        }
+        int prev_index = 0;
+        // find the first pixel position that has a real value in pixel_cache
+        while ((prev_index < pixel_cache.length) && (pixel_cache[prev_index] == Integer.MIN_VALUE)) {
+            prev_index++;
+        }
+        if (prev_index != pixel_cache.length) {
+            // successfully found a real value in pixel cache
+            int yval;
+            for (int i = prev_index + 1; i < pixel_cache.length; i++) {
+                yval = pixel_cache[i];
+                if (graph_style == GraphStateI.AVG_HEAT_MAP) {
+                    if (yval != Integer.MIN_VALUE) {
+                        g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yval))));
+                        g.fillRect(i, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+                        prev_index = i;
+                    }
+                }
+                if (graph_style == GraphStateI.MINMAXAVG) {
+                    if (yval != Integer.MIN_VALUE) {
+                        if (pixel_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
+                            // last pixel had no datapoints, so just draw a point at current pixel
+                            g.drawLine(i, yval, i, yval);
+                        } else {
+                            // last pixel had at least one datapoint, so connect with line
+                            g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
+                        }
+                        prev_index = i;
+                    }
+                }
+            }
+        }
+    }
+
+    
   /**
    *  Retrieve the graph yvalue corresponding to a given ycoord.
    */
@@ -1097,7 +1119,6 @@ public class SmartGraphGlyph extends GraphGlyph {
   }
 
 }
-
 class GraphCache2 {
   public int bases_per_entry;
   public int[] graph_index_min;

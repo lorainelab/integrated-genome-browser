@@ -55,6 +55,7 @@ import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 public class Das2ClientOptimizer {
 	static boolean USE_SEGMENT = Das2Region.USE_SEGMENT;
 	static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
@@ -291,44 +292,13 @@ public class Das2ClientOptimizer {
 		}
 
 		try {
-			StringBuffer buf = new StringBuffer(200);
-			if (USE_SEGMENT)  {
-				buf.append("segment=");
-				if (USE_SEGMENT_URI)  {
-					buf.append(URLEncoder.encode(region.getID(), UTF8));
-				}
-				else  {
-					buf.append(URLEncoder.encode(region.getName(), UTF8));
-				}
-				buf.append(";");
-			}
-
-			buf.append("overlaps=");
-			buf.append(URLEncoder.encode(overlap_filter, UTF8));
-			buf.append(";");
-			if (inside_filter != null) {
-				buf.append("inside=");
-				buf.append(URLEncoder.encode(inside_filter, UTF8));
-				buf.append(";");
-			}
-			buf.append("type=");
-			if (USE_TYPE_URI) {
-				buf.append(URLEncoder.encode(type.getID(), UTF8));
-			}
-			else {
-				buf.append(type.getName());
-			}
-			if (OPTIMIZE_FORMAT && format != null) {
-				buf.append(";");
-				buf.append("format=");
-				buf.append(URLEncoder.encode(format, UTF8));
-			}
+                        String query_part = DetermineQueryPart(region, overlap_filter, inside_filter, type, format);
 
 			if (format == null) {
 				format = default_format;
 			}
 
-			String query_part = buf.toString();
+			
 			String feature_query = request_root + "?" + query_part;
 			if (DEBUG) {
 				request_log.addLogMessage("feature query URL:  " + feature_query);
@@ -410,128 +380,7 @@ public class Das2ClientOptimizer {
 			}
 
 			if (request_log.getSuccess()) {
-				java.util.List feats = null;
-				if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE) ||
-						content_subtype.equals("das2feature") ||  // should remove this line
-						content_subtype.equals("das2xml") ||      // should remove this line
-						content_subtype.startsWith("x-das-feature")) {
-					request_log.addLogMessage("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
-					Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-					InputSource isrc = new InputSource(bis);
-					feats = parser.parse(isrc, feature_query, seq_group, false);
-				}
-				else if (content_subtype.equals("bgn")) {
-					request_log.addLogMessage("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
-					BgnParser parser = new BgnParser();
-					feats = parser.parse(bis, type.getID(), seq_group, -1, false);
-				}
-				else if (content_subtype.equals("bps")) {
-					request_log.addLogMessage("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");
-					BpsParser parser = new BpsParser();
-					DataInputStream dis = new DataInputStream(bis);
-					feats = parser.parse(dis, type.getID(), null, seq_group, false, false);
-				}
-				else if (content_subtype.equals("brs"))  {
-					request_log.addLogMessage("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
-					BrsParser parser = new BrsParser();
-					DataInputStream dis = new DataInputStream(bis);
-					feats = parser.parse(dis, type.getID(), seq_group, false);
-				}
-				else if (content_subtype.equals("bar")) {
-					request_log.addLogMessage("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
-					feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
-				}
-				else if (content_subtype.equals("bp2")) {
-					request_log.addLogMessage("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
-					Bprobe1Parser bp1_reader = new Bprobe1Parser();
-					// parsing probesets in bp2 format, also adding probeset ids
-					feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
-				}
-				else if (content_subtype.equals("ead")) {
-					request_log.addLogMessage("PARSING EAD FORMAT FOR DAS2 FEATURE RESPONSE");
-					ExonArrayDesignParser parser = new ExonArrayDesignParser();
-					feats = parser.parse(bis, seq_group, false, type.getName());
-				}
-				else if (content_subtype.equals("gff")) {
-					request_log.addLogMessage("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
-					GFFParser parser = new GFFParser();
-					feats = parser.parse(bis, ".", seq_group, false, false);
-				}
-				/*
-	else if (content_subtype.equals("bed")) {
-
-	}
-	else if (content_subtype.equals("simplebed")) {
-
-	}
-	else if (content_subtype.equals("psl")) {
-
-	}
-	else if (content_subtype.equals("dasxml") || 
-		 content_subtype.equals("dasgff") ) {
-
-	}
-				 */
-
-				else if (content_subtype.equals("link.psl")) {
-					request_log.addLogMessage("PARSING LINK.PSL FORMAT FOR DAS2 FEATURE RESPONSE");
-					PSLParser parser = new PSLParser();
-					parser.setIsLinkPsl(true);
-					parser.enableSharedQueryTarget(true);
-					// annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
-					feats = parser.parse(bis,
-							type.getName(), // The method name for the annotation to load from the file,
-							// (if there is a track line in the file, track name will be used instead
-							null, // An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
-							//  Null is ok; this will cause a temporary AnnotatedSeqGroup to be created.
-							seq_group,  // An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
-							null,  // "other" AnnotatedSeqGroup, only for PSL3 files
-							false, // do not annotate_query
-							false,  // do not annotate_target
-							false);   // do not annotate_other (not applicable since not PSL3)
-				}
-				else if (content_subtype.equals("cyt")) {
-					request_log.addLogMessage("PARSING CYT FORMAT FOR DAS2 FEATURE RESPONSE");
-					CytobandParser parser = new CytobandParser();
-					feats = parser.parse(bis, seq_group, false);
-				}
-				else {
-					request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
-					request_log.setSuccess(false);
-				}
-
-				boolean no_graphs = true;
-				if (feats == null || feats.size() == 0) {
-					// because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
-					//    populate with empty sym child/grandchild
-					//    [ though a better way might be to have request sym's span on aseq be dependent on children, so
-					//       if no children then no span on aseq (though still an overlap_span and inside_span) ]
-					SimpleSymWithProps child = new SimpleSymWithProps();
-					SimpleSymWithProps grandchild = new SimpleSymWithProps();
-					child.addChild(grandchild);
-					request_sym.addChild(child);
-				}
-				else if (request_log.getSuccess())  {  // checking success again, could have changed before getting to this point...
-					int feat_count = feats.size();
-					request_log.addLogMessage("parsed query results, annot count = " + feat_count);
-					for (int k=0; k<feat_count; k++) {
-						SeqSymmetry feat = (SeqSymmetry)feats.get(k);
-						if (feat instanceof GraphSym) {
-							addChildGraph((GraphSym)feat, request_sym);
-							no_graphs = false;  // should either be all graphs or no graphs
-						}
-						else  {
-							request_sym.addChild(feat);
-						}
-					}
-				}
-				// probably want to synchronize on annotated seq, since don't want to add annotations to aseq
-				// on one thread when might be rendering based on aseq in event thread...
-				// or maybe should just make addAnnotation() a synchronized method
-				if (no_graphs) {   // if graphs, then adding to annotation bioseq is already handled by addChildGraph() method
-					synchronized (aseq)  { aseq.addAnnotation(request_sym); }
-				}
-
+                            SuccessfullyRequestedLog(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel, request_sym, aseq);
 			}  // end if (success) conditional
 			if (bis != null) try {
 				bis.close();
@@ -547,6 +396,132 @@ public class Das2ClientOptimizer {
 		}
 		return request_log;
 	}
+
+    private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
+        StringBuffer buf = new StringBuffer(200);
+        if (USE_SEGMENT) {
+            buf.append("segment=");
+            if (USE_SEGMENT_URI) {
+                buf.append(URLEncoder.encode(region.getID(), UTF8));
+            } else {
+                buf.append(URLEncoder.encode(region.getName(), UTF8));
+            }
+            buf.append(";");
+        }
+
+        buf.append("overlaps=");
+        buf.append(URLEncoder.encode(overlap_filter, UTF8));
+        buf.append(";");
+        if (inside_filter != null) {
+            buf.append("inside=");
+            buf.append(URLEncoder.encode(inside_filter, UTF8));
+            buf.append(";");
+        }
+        buf.append("type=");
+        if (USE_TYPE_URI) {
+            buf.append(URLEncoder.encode(type.getID(), UTF8));
+        } else {
+            buf.append(type.getName());
+        }
+        if (OPTIMIZE_FORMAT && format != null) {
+            buf.append(";");
+            buf.append("format=");
+            buf.append(URLEncoder.encode(format, UTF8));
+        }
+        String query_part = buf.toString();
+
+        return query_part;
+    }
+        
+        
+    private static void SuccessfullyRequestedLog(String content_subtype, Das2RequestLog request_log, BufferedInputStream bis, String feature_query, AnnotatedSeqGroup seq_group, Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym, MutableAnnotatedBioSeq aseq) throws IOException, SAXException {
+        java.util.List feats = null;
+        if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE) || content_subtype.equals("das2feature") || content_subtype.equals("das2xml") || content_subtype.startsWith("x-das-feature")) {
+            request_log.addLogMessage("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
+            Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+            InputSource isrc = new InputSource(bis);
+            feats = parser.parse(isrc, feature_query, seq_group, false);
+        } else if (content_subtype.equals("bgn")) {
+            request_log.addLogMessage("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
+            BgnParser parser = new BgnParser();
+            feats = parser.parse(bis, type.getID(), seq_group, -1, false);
+        } else if (content_subtype.equals("bps")) {
+            request_log.addLogMessage("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");
+            BpsParser parser = new BpsParser();
+            DataInputStream dis = new DataInputStream(bis);
+            feats = parser.parse(dis, type.getID(), null, seq_group, false, false);
+        } else if (content_subtype.equals("brs")) {
+            request_log.addLogMessage("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
+            BrsParser parser = new BrsParser();
+            DataInputStream dis = new DataInputStream(bis);
+            feats = parser.parse(dis, type.getID(), seq_group, false);
+        } else if (content_subtype.equals("bar")) {
+            request_log.addLogMessage("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
+            feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
+        } else if (content_subtype.equals("bp2")) {
+            request_log.addLogMessage("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
+            Bprobe1Parser bp1_reader = new Bprobe1Parser();
+            // parsing probesets in bp2 format, also adding probeset ids
+            feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
+        } else if (content_subtype.equals("ead")) {
+            request_log.addLogMessage("PARSING EAD FORMAT FOR DAS2 FEATURE RESPONSE");
+            ExonArrayDesignParser parser = new ExonArrayDesignParser();
+            feats = parser.parse(bis, seq_group, false, type.getName());
+        } else if (content_subtype.equals("gff")) {
+            request_log.addLogMessage("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
+            GFFParser parser = new GFFParser();
+            feats = parser.parse(bis, ".", seq_group, false, false);
+        } else if (content_subtype.equals("link.psl")) {
+            request_log.addLogMessage("PARSING LINK.PSL FORMAT FOR DAS2 FEATURE RESPONSE");
+            PSLParser parser = new PSLParser();
+            parser.setIsLinkPsl(true);
+            parser.enableSharedQueryTarget(true);
+            // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
+            feats = parser.parse(bis, type.getName(), null, seq_group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
+        } else if (content_subtype.equals("cyt")) {
+            request_log.addLogMessage("PARSING CYT FORMAT FOR DAS2 FEATURE RESPONSE");
+            CytobandParser parser = new CytobandParser();
+            feats = parser.parse(bis, seq_group, false);
+        } else {
+            request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
+            request_log.setSuccess(false);
+        }
+
+        boolean no_graphs = true;
+        if (feats == null || feats.size() == 0) {
+            // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
+            //    populate with empty sym child/grandchild
+            //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
+            //       if no children then no span on aseq (though still an overlap_span and inside_span) ]
+            SimpleSymWithProps child = new SimpleSymWithProps();
+            SimpleSymWithProps grandchild = new SimpleSymWithProps();
+            child.addChild(grandchild);
+            request_sym.addChild(child);
+        } else if (request_log.getSuccess()) {
+            // checking success again, could have changed before getting to this point...
+            int feat_count = feats.size();
+            request_log.addLogMessage("parsed query results, annot count = " + feat_count);
+            for (int k = 0; k < feat_count; k++) {
+                SeqSymmetry feat = (SeqSymmetry) feats.get(k);
+                if (feat instanceof GraphSym) {
+                    addChildGraph((GraphSym) feat, request_sym);
+                    no_graphs = false; // should either be all graphs or no graphs
+                } else {
+                    request_sym.addChild(feat);
+                }
+            }
+        }
+        // probably want to synchronize on annotated seq, since don't want to add annotations to aseq
+        // on one thread when might be rendering based on aseq in event thread...
+        // or maybe should just make addAnnotation() a synchronized method
+        if (no_graphs) {
+            // if graphs, then adding to annotation bioseq is already handled by addChildGraph() method
+            synchronized (aseq) {
+                aseq.addAnnotation(request_sym);
+            }
+        }
+    }
+
 
 	/**
 	 *  Given a child GraphSym, find the appropriate parent [Composite]GraphSym and add child to it

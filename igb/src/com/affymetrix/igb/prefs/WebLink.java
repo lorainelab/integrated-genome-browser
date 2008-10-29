@@ -222,11 +222,8 @@ public class WebLink {
   }
   
   public boolean matches(String s) {
-    if (pattern == null) {
-      return true;
-    } else {
-      return pattern.matcher(s).matches();
-    }
+      return (pattern == null ||
+              pattern.matcher(s).matches());
   }
   
   /** A pattern that matches the string "$$". */

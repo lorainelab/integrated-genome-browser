@@ -384,7 +384,7 @@ public class IGB extends Application
    * Return the name of the file as a String, or null if not invoked with
    * -prefs option.
    */
-  public static String[] get_prefs_files(String[] args) {
+  public static String[] get_prefs_list(String[] args) {
     String files = get_arg("-prefs", args);
     if (files==null) {files = default_user_prefs_files;}
     StringTokenizer st = new StringTokenizer(files, ";");
@@ -440,79 +440,55 @@ public class IGB extends Application
    *  If prefs haven't been loaded yet, will force loading of prefs
    */
   public static Map getIGBPrefs() {
-    if (prefs_hash != null)  { return prefs_hash; }
-    else {
+      if (prefs_hash != null) {
+          return prefs_hash;
+      }
+
       prefs_hash = new HashMap();
       XmlPrefsParser prefs_parser = new XmlPrefsParser();
+      
+      LoadDefaultPrefsFromJar(prefs_parser);
 
+      LoadWebPrefs(prefs_parser);
+      
+      LoadFileOrURLPrefs(prefs_parser);
+
+      return prefs_hash;
+  }
+
+  private static void LoadDefaultPrefsFromJar(XmlPrefsParser prefs_parser) {
       /**  first load default prefs from jar */
       InputStream default_prefs_stream = null;
       try {
-        default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
-        System.out.println("loading default prefs from: " + default_prefs_resource);
-        prefs_parser.parse(default_prefs_stream, "", prefs_hash);
+          default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
+          System.out.println("loading default prefs from: " + default_prefs_resource);
+          prefs_parser.parse(default_prefs_stream, "", prefs_hash);
       } catch (Exception ex) {
-        System.out.println("Problem parsing prefs from: " + default_prefs_resource);
-        ex.printStackTrace();
+          System.out.println("Problem parsing prefs from: " + default_prefs_resource);
+          ex.printStackTrace();
       } finally {
-        try {default_prefs_stream.close();} catch (Exception e) {}
+          try {
+              default_prefs_stream.close();
+          } catch (Exception e) {
+          }
       }
-
+    }
+  
+     
+  private static void LoadWebPrefs(XmlPrefsParser prefs_parser) {
       // If a particular web prefs file was specified, then load it.
       // Otherwise try to load the web-based-default prefs file. (But
       // only load it if it is cached, then later update the cache on
       // a background thread.)
       String def_prefs_url = get_default_prefs_url(main_args);
       if (def_prefs_url == null) {
-        loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
+          loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
+      } else {
+          LoadPreferencesFromURL(def_prefs_url, prefs_parser);
       }
-      else {
-	InputStream default_prefs_url_str = null;
-	try {
-          default_prefs_url_str = LocalUrlCacher.getInputStream(def_prefs_url);
-	  System.out.println("loading prefs from url: " + def_prefs_url);
-	  prefs_parser.parse(default_prefs_url_str, def_prefs_url, prefs_hash);
-	} catch (IOException ex) {
-	  System.out.println("Problem parsing prefs from url: " + def_prefs_url);
-          System.out.println("Caused by: " + ex.toString());
-	} finally {
-	  try {default_prefs_url_str.close();} catch (Exception e) {}
-	}
-      }
-
-      String[] prefs_files = get_prefs_files(main_args);
-      if (prefs_files.length > 0) {
-	prefs_parser = new XmlPrefsParser();
-	for (int i=0; i<prefs_files.length; i++) {
-	  String filename = prefs_files[i];
-	  InputStream strm = null;
-
-	  try {
-	    System.out.flush();
-	    System.out.println("loading user prefs from: " + filename);
-	    File fil = new File(filename);
-	    if (fil.exists()) {
-	      strm = new FileInputStream(fil);
-	      prefs_parser.parse(strm, fil.getCanonicalPath(), prefs_hash);
-	    }
-	    else {
-	      System.out.println("could not find prefs file: " + filename);
-	    }
-	  } catch (Exception ex) {
-	    System.out.flush();
-	    System.out.println("Problem parsing prefs from: " + filename);
-	    System.out.println(ex.toString());
-	  } finally {
-	    try {strm.close();} catch (Exception e) {}
-	  }
-	}
-      }
-
     }
-    return prefs_hash;
-  }
-
-  /**
+     
+    /**
    *  Attempts to load the web-based XML default preferences file from the
    *  local cache.  If this file is not in the cache, will skip
    *  it and will NOT try to read it from the web.  (This is to prevent slowing
@@ -522,30 +498,90 @@ public class IGB extends Application
    *  the next time the program runs.
    *
    */
-  static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map prefs_hash) {
-    String web_prefs_url = WEB_PREFS_URL;
-    InputStream is = null;
-    try {
-      is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
-    } catch (IOException ioe) {
-      System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
-      is = null;
-    }
+    private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map prefs_hash) {
+        String web_prefs_url = WEB_PREFS_URL;
+        InputStream is = null;
+        try {
+            is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
+        } catch (IOException ioe) {
+            System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
+            is = null;
+        }
 
-    if (is != null) {
-      try {
-        prefs_parser.parse(is, web_prefs_url, prefs_hash);
-        System.out.println("Loading default prefs from url: " + web_prefs_url);
-      } catch (Exception ex) {
-         System.out.println("Problem parsing prefs from url: " + web_prefs_url);
-         System.out.println("Caused by: " + ex.toString());
-      } finally {
-        try {is.close();} catch (Exception e) {}
-      }
-    }
+        if (is != null) {
+            try {
+                prefs_parser.parse(is, web_prefs_url, prefs_hash);
+                System.out.println("Loading default prefs from url: " + web_prefs_url);
+            } catch (Exception ex) {
+                System.out.println("Problem parsing prefs from url: " + web_prefs_url);
+                System.out.println("Caused by: " + ex.toString());
+            } finally {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
+        }
 
-     LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
-  }
+        LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
+    }
+    
+    private static void LoadPreferencesFromURL(String prefs_url, XmlPrefsParser prefs_parser) {
+        InputStream prefs_url_stream = null;
+        try {
+            prefs_url_stream = LocalUrlCacher.getInputStream(prefs_url);
+            System.out.println("loading prefs from url: " + prefs_url);
+            prefs_parser.parse(prefs_url_stream, prefs_url, prefs_hash);
+        } catch (IOException ex) {
+            System.out.println("Problem parsing prefs from url: " + prefs_url);
+            System.out.println("Caused by: " + ex.toString());
+        } finally {
+            try {
+                prefs_url_stream.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+    
+    private static void LoadFileOrURLPrefs(XmlPrefsParser prefs_parser) {
+        String[] prefs_list = get_prefs_list(main_args);
+        if (prefs_list == null || prefs_list.length == 0)
+            return;
+        
+        prefs_parser = new XmlPrefsParser();
+        for (int i = 0; i < prefs_list.length; i++) {
+            String fileOrURL = prefs_list[i];
+            InputStream strm = null;
+
+            try {
+                System.out.flush();
+                System.out.println("loading user prefs from: " + fileOrURL);
+                File fil = new File(fileOrURL);
+                if (fil.exists()) {
+                    strm = new FileInputStream(fil);
+                    prefs_parser.parse(strm, fil.getCanonicalPath(), prefs_hash);
+                } else {
+                    // May be a URL
+                    if (fileOrURL.startsWith("http")) {
+                        LoadPreferencesFromURL(fileOrURL, prefs_parser);
+                    } else {
+                        System.out.println("could not find prefs file: " + fileOrURL);
+                    }
+                }
+            } catch (Exception ex) {
+                System.out.flush();
+                System.out.println("Problem parsing prefs from: " + fileOrURL);
+                System.out.println(ex.toString());
+            } finally {
+                try {
+                    strm.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+    }
+    
+
 
   protected void init() {
     frm = new JFrame(APP_NAME);

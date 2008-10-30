@@ -13,7 +13,7 @@
 		<all-permissions/>
 	</security>
 	<resources>
-		<j2se version="1.5+" max-heap-size="512m"/>
+		<j2se version="1.5+" max-heap-size="1024m"/>
 		<jar href="igb.jar" main="true" />
 		<jar href="affx_fusion.jar" />
 		<!-- <jar href="commons-logging.jar" /> -->

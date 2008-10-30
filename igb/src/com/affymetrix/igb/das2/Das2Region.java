@@ -202,7 +202,7 @@ public class Das2Region {
       BioSeq spanseq = span.getBioSeq();
       if (this.getAnnotatedSeq() == spanseq) {
 	StringBuffer buf = new StringBuffer(100);
-	// making sure to use name/id given by DAS server, which may be a synonym of the seq's id instead of the seq id itself
+	// making sure to use name/id given by DAS2 server, which may be a synonym of the seq's id instead of the seq id itself
 	//	if (USE_SEGMENT_URI) { buf.append(this.getID()); }
 	//	else { buf.append(this.getName()); }
 	buf.append(this.getName());

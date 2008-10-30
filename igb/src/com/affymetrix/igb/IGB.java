@@ -210,8 +210,11 @@ public class IGB extends Application
   public static void main(String[] args) {
     try {
 
-			// Configure HTTP User agent
-			System.setProperty("http.agent", HttpUserAgent);
+        System.out.println("Arguments!!!:");
+        for (int i = 0; i < args.length; i++) {
+            System.out.println("arg is:XXX" + args[i] + "XXX");        // Configure HTTP User agent
+        }
+        System.setProperty("http.agent", HttpUserAgent);
 
     // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
     System.setProperty("swing.aatext", "true");
@@ -261,7 +264,7 @@ public class IGB extends Application
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     processDasServersList(quick_load_url);
-    processDas2ServersList(quick_load_url);
+    //processDas2ServersList(quick_load_url);   -- the processing code was commented out.
 
     singleton_igb = new IGB();
     singleton_igb.init();
@@ -319,11 +322,11 @@ public class IGB extends Application
   public static void processDas2ServersList(String ql_url) {
     String server_loc_list = ql_url + "das2_servers.txt";
     try {
-      System.out.println("Trying to load DAS Server list: " + server_loc_list);
+      System.out.println("Trying to load DAS2 Server list: " + server_loc_list);
       Das2Discovery.addServersFromTabFile(server_loc_list);
     }
     catch (Exception ex) {
-      System.out.println("WARNING: Failed to load DAS Server list: " + ex);
+      System.out.println("WARNING: Failed to load DAS2 Server list: " + ex);
     }
   }
 

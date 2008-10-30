@@ -234,13 +234,13 @@ public class Das2VersionedSource  {
       this.types = new LinkedHashMap();
   }
 
-  /** Get regions from das server. */
+  /** Get regions from da2s server. */
   protected synchronized void initSegments() {
     String region_request;
     Das2Capability segcap = (Das2Capability)getCapability(SEGMENTS_CAP_QUERY);
     region_request = segcap.getRootURI().toString();
     try {
-      System.out.println("Das Segments Request: " + region_request);
+      System.out.println("Das2 Segments Request: " + region_request);
       Map headers = new LinkedHashMap();
       InputStream response = LocalUrlCacher.getInputStream(region_request, headers);
 
@@ -282,14 +282,14 @@ public class Das2VersionedSource  {
       }
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS region points for\n"+region_request, ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 region points for\n"+region_request, ex);
     }
     //TODO should regions_initialized be true if an exception occured?
     regions_initialized = true;
   }
 
 
-  // get annotation types from das server
+  // get annotation types from das2 server
   /**
    *  loading of parents disabled, getParents currently does nothing
    */
@@ -305,7 +305,7 @@ public class Das2VersionedSource  {
 
     //    if (filter != null) { types_request = types_request+"?ontology="+filter; }
     try {
-      System.out.println("Das Types Request: " + types_request);
+      System.out.println("Das2 Types Request: " + types_request);
       Map headers = new LinkedHashMap();
       InputStream response;
       //set in header a sessionId for types authentication?
@@ -401,7 +401,7 @@ public class Das2VersionedSource  {
       }
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types for\n"+types_request, ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 types for\n"+types_request, ex);
     }
     //TODO should types_initialized be true after an exception?
     types_initialized = true;

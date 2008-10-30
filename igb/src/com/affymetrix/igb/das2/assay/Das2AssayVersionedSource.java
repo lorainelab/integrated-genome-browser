@@ -139,7 +139,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       //FIXME: the material request is hard coded
       String materials_request = DasLoader.getCachedDocumentURL(materialsURI.resolve("material").toString());
 
-      System.out.println("Das Materials Request: " + materials_request);
+      System.out.println("Das2 Materials Request: " + materials_request);
       
       Das2MaterialSaxParser materialParser = new Das2MaterialSaxParser(this);
       javax.xml.parsers.SAXParserFactory saxParserFactory = javax.xml.parsers.SAXParserFactory.newInstance();
@@ -149,7 +149,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       parser.parse( new org.xml.sax.InputSource(materials_request));
       
     } catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS materials\n", ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 materials\n", ex);
     }
     //TODO should types_initialized be true after an exception?
     materials_initialized = true;
@@ -165,7 +165,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       URI resultsURI = new URI(this.getURI().toString()+"/");
       String results_request = DasLoader.getCachedDocumentURL(resultsURI.resolve("result").toString());
       
-      System.out.println("Das Results Request: " + results_request);
+      System.out.println("Das2 Results Request: " + results_request);
       
       Das2ResultSaxParser resultParser = new Das2ResultSaxParser(this);
       javax.xml.parsers.SAXParserFactory saxParserFactory = javax.xml.parsers.SAXParserFactory.newInstance();
@@ -175,7 +175,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       parser.parse( new org.xml.sax.InputSource(results_request));
       
     } catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types\n", ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 types\n", ex);
     }
     //TODO should types_initialized be true after an exception?
     results_initialized = true;
@@ -198,7 +198,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       parser.parse( new org.xml.sax.InputSource(assays_request));
       
     } catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types\n", ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 types\n", ex);
     }
     //TODO should types_initialized be true after an exception?
     assays_initialized = true;
@@ -214,7 +214,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
       URI platformURI = new URI(this.getURI().toString()+"/");
       String plat_request = DasLoader.getCachedDocumentURL(platformURI.resolve("platform").toString());
       
-      System.out.println("Current DAS platform Request: " + plat_request);
+      System.out.println("Current DAS2 platform Request: " + plat_request);
       Document doc = DasLoader.getDocument(plat_request);
       NodeList platlist = doc.getElementsByTagName("ArrayDesign");
       System.out.println("platforms: " + platlist.getLength());
@@ -224,12 +224,12 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
           this.addPlatform(new Das2Platform(this, platId));
       }
   } catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types\n", ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 types\n", ex);
   }
       platforms_initialized = true;
   }
 
-  // get annotation types from das server
+  // get annotation types from das2 server
   protected void initTypes(String filter, boolean getParents) {
     this.types_filter = filter;
     this.clearTypes();
@@ -262,7 +262,7 @@ public class Das2AssayVersionedSource extends Das2VersionedSource {
     
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS types\n", ex);
+      ErrorHandler.errorPanel("Error initializing DAS2 types\n", ex);
     }
     //TODO should types_initialized be true after an exception?
     this.types_initialized = true;

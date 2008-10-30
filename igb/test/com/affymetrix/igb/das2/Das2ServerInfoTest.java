@@ -48,9 +48,9 @@ public class Das2ServerInfoTest extends TestCase {
     /*  Iterator it = serverInfos.iterator();
       while (it.hasNext()) {
         Das2ServerInfo serverInfo = (Das2ServerInfo)it.next();
-        System.out.println("***** DAS Server Info *****");
+        System.out.println("***** DAS2 Server Info *****");
         System.out.println("  Root URL: " + serverInfo.getID());
-        System.out.println("  DAS version: " + serverInfo.getDasVersion());
+        System.out.println("  DAS2 version: " + serverInfo.getDasVersion());
         assertNotNull(serverInfo.getID());
         assertNotNull(serverInfo.getDasVersion());
         Iterator sources = serverInfo.getSources().values().iterator();

@@ -59,19 +59,19 @@ public class Das2AssayServerInfo extends com.affymetrix.igb.das2.Das2ServerInfo{
       try {
         URL das_request = server_uri.toURL();
         String das_query = das_request.toExternalForm();
-        System.out.println("Das Request: " + das_request);
+        System.out.println("Das2 Request: " + das_request);
         URLConnection request_con = das_request.openConnection();
         String content_type = request_con.getHeaderField("Content-Type");
         String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
 
-        //HACK: Affy das server barfs w/ a trailing slash, URI resolution
+        //HACK: Affy das2 server barfs w/ a trailing slash, URI resolution
         //      doesn't work without trailing slash, so adding it back in
         //      here.
         das_query = das_query+"/";
 
         setDasVersion(das_version);
 
-        System.out.println("DAS server version: " + das_version);
+        System.out.println("DAS2 server version: " + das_version);
         Document doc = DasLoader.getDocument(request_con);
 
         // FIXME: all these URIs need to be resolved against the base!!

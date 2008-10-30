@@ -45,7 +45,7 @@ public class Das2ServerInfo  {
 	static String QUERY_URI = "query_uri";
 	static String QUERY_ID = "query_id";
 
-	/** Creates an instance of Das2ServerInfo for the given DAS server.
+	/** Creates an instance of Das2ServerInfo for the given DAS2 server.
 	 *  @param init  whether or not to initialize the data right away.  If false
 	 *    will not contact the server to initialize data until needed.
 	 */
@@ -208,9 +208,9 @@ public class Das2ServerInfo  {
 		log.add("Attempting login to server: "+server_uri);
 		try{
 			//first check to see if server authenticates 
-			log.add("\tDoes server support authentication?");
+			//log.add("\tDoes server support authentication?");
 			String das_query = server_uri+"/login";
-			log.add("\t\tDas Authentication Request: " + das_query); 
+			log.add("\t\tDas2 Authentication Request: " + das_query); 
 			LinkedHashMap headers = new LinkedHashMap();
 			InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
 			Document doc = DasLoader.getDocument(response);
@@ -234,7 +234,7 @@ public class Das2ServerInfo  {
 			    	//attempt authentication
 			    	else if (userPassword[0].length() !=0 || userPassword[1].length() !=0) {
 			    		das_query = server_uri+"/login?user="+ userPassword[0]+"&password="+ userPassword[1];
-						log.add("\t\tDas Authentication Request: " + das_query); 
+						log.add("\t\tDas2 Authentication Request: " + das_query); 
 						headers.clear();
 						response = LocalUrlCacher.getInputStream(das_query, headers);
 						doc = DasLoader.getDocument(response);
@@ -295,7 +295,7 @@ public class Das2ServerInfo  {
 
 
 			if (content_type != null) {
-				// setting DAS version if present in content type header -- currently not used
+				// setting DAS2 version if present in content type header -- currently not used
 				int vindex = content_type.indexOf("version=");
 				if (vindex >= 0) {
 					String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
@@ -304,7 +304,7 @@ public class Das2ServerInfo  {
 			}
 
 			//GAH March 2006:
-			//   HACK: Affy das server has problems  w/ a trailing slash, but URI resolution
+			//   HACK: Affy das2 server has problems  w/ a trailing slash, but URI resolution
 			//      doesn't work without trailing slash, so adding it back in here.
 			if (! das_query.endsWith("/"))  { das_query = das_query+"/"; }
 			//       Document doc = DasLoader.getDocument(request_con);

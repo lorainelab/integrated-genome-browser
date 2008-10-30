@@ -49,7 +49,7 @@ public class Das2Discovery {
   }
 
   /**
-   *  Gets a Map of DAS servers.
+   *  Gets a Map of DAS2 servers.
    *  Map is from Strings (server names) to Das2ServerInfo's.
    */
   public static Map getDas2Servers() {

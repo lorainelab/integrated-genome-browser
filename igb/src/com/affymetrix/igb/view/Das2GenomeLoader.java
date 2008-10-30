@@ -57,7 +57,7 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 	    if (server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
 		TreeNode[] path_array = server_node.getPath();
 		TreePath server_path = new TreePath(path_array);
-		//only expand if no more Das servers
+		//only expand if no more Das2 servers
 		if (servers.hasNext() == false)expandAll(tree, server_path);
 	    }
 	}

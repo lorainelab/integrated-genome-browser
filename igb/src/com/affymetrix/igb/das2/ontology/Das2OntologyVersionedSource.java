@@ -36,7 +36,7 @@ public class Das2OntologyVersionedSource extends com.affymetrix.igb.das2.Das2Ver
         super((Das2Source)das_source, vers_uri, vers_uri.toString(), null, null, init);
     }
 
-    // get annotation types from das server
+    // get annotation types from das2 server
     protected void initTypes(String filter) {
       this.types_filter = filter;
       this.clearTypes();
@@ -53,7 +53,7 @@ public class Das2OntologyVersionedSource extends com.affymetrix.igb.das2.Das2Ver
       }
 
       try {
-        System.out.println("Das Ontology Request: " + ontologyTypesRequest);
+        System.out.println("Das2 Ontology Request: " + ontologyTypesRequest);
         Document doc = DasLoader.getDocument(ontologyTypesRequest);
         Element top_element = doc.getDocumentElement();
         NodeList typeList = doc.getElementsByTagName("term");
@@ -100,7 +100,7 @@ public class Das2OntologyVersionedSource extends com.affymetrix.igb.das2.Das2Ver
         }
       }
       catch (Exception ex) {
-          ErrorHandler.errorPanel("Error initializing DAS types for\n"+ontologyTypesRequest, ex);
+          ErrorHandler.errorPanel("Error initializing DAS2 types for\n"+ontologyTypesRequest, ex);
       }
       //TODO should types_initialized be true after an exception?
       this.types_initialized = true;

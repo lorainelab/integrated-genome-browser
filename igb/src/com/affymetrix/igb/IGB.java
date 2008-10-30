@@ -209,12 +209,9 @@ public class IGB extends Application
    */
   public static void main(String[] args) {
     try {
-
-        System.out.println("Arguments!!!:");
-        for (int i = 0; i < args.length; i++) {
-            System.out.println("arg is:XXX" + args[i] + "XXX");        // Configure HTTP User agent
-        }
-        System.setProperty("http.agent", HttpUserAgent);
+        
+        // Configure HTTP User agent
+        System.setProperty("http.agent", HttpUserAgent);    
 
     // Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
     System.setProperty("swing.aatext", "true");
@@ -1271,24 +1268,15 @@ public class IGB extends Application
     about_text.append(DocumentationView.getDocumentationText());
     message_pane.add(new JScrollPane(about_text));
 
-    JButton affyB = new JButton("Go To IGB at Affymetrix");
     JButton sfB = new JButton("Go To IGB at SourceForge");
-    affyB.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/tools/download_igb.affx");
-        }
-      } );
     sfB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           WebBrowserControl.displayURL("http://sourceforge.net/projects/genoviz/");
         }
       } );
     Box buttonP = Box.createHorizontalBox();
-    buttonP.add(Box.createHorizontalGlue());
-    buttonP.add(affyB);
-    buttonP.add(Box.createHorizontalGlue());
     buttonP.add(sfB);
-    buttonP.add(Box.createHorizontalGlue());
+
     message_pane.add(buttonP);
 
     final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,

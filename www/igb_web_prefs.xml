@@ -112,7 +112,7 @@ be used (if present).
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="TAIR\S*"
+  <annotation_url annot_type_regex="(?i).*/TAIR.*$" 
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />

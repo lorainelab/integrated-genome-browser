@@ -29,7 +29,7 @@ public class GFFParserTest extends TestCase {
   public void testParse() throws Exception {
     System.out.println("parse");
     
-    String filename = "igb/test/test_files/GFF1_example.gff";
+    String filename = "test/test_files/GFF1_example.gff";
     assertTrue(new File(filename).exists());
     InputStream istr = new FileInputStream(filename);
     assertNotNull(istr);

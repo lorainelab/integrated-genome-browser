@@ -38,8 +38,8 @@ public class Das1FeatureSaxParserTest extends TestCase {
     return suite;
   }
 
-  public static final String test_file_name_1 = "igb/test/test_files/das1-sample-hg18.dasxml";
-  public static final String test_file_name_2 = "igb/test/test_files/das1-sample-hg10.dasxml";
+  public static final String test_file_name_1 = "test/test_files/das1-sample-hg18.dasxml";
+  public static final String test_file_name_2 = "test/test_files/das1-sample-hg10.dasxml";
   
   // tests the parsing of the <LINK> elements
   public void testLinks() {

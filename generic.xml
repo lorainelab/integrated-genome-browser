@@ -30,30 +30,43 @@
 		<my.javac destdir="${build.dir}" />
   </target>
 
-  <target name="compile-tests" depends="common-init,compile">
+  <target name="compile-tests" depends="compile">
     <mkdir dir="${test.build.dir}" />
 		<my.javac srcdir="${test.src.dir}" destdir="${test.build.dir}" classpath="${junit.jar}:${test.classpath}" />
   </target>
 
-<target name="test" depends="compile-tests">
-	<mkdir dir="${test.report.dir}" />
-  <junit fork="yes" printsummary="yes" haltonfailure="no">
-    <batchtest fork="yes" todir="${test.report.dir}" >
-      <fileset dir="${test.build.dir}">
-        <include name="**/*Test.class" />
-      </fileset>
-    </batchtest>
-    <formatter type="xml" />
-		<classpath path="${junit.jar}:${test.classpath}" />
-  </junit>
-  <junitreport todir="${test.build.dir}">
-    <fileset dir="${test.build.dir}">
-      <include name="TEST-*.xml" />
-    </fileset>
-    <report todir="${test.build.dir}" />
-  </junitreport>
-</target>
-	  
+	<target name="test" depends="compile-tests">
+		<mkdir dir="${test.report.dir}" />
+
+		<condition property="junit.printsummary" value="false" else="true">
+			<and>
+				<isset property="build.compiler.emacs" />
+			</and>
+		</condition>
+		<condition property="junit.showoutput" else="false">
+			<and>
+				<isset property="build.compiler.emacs" />
+			</and>
+		</condition>
+
+		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="false" dir="${basedir}">
+			<classpath path="${junit.jar}:${test.classpath}" />
+			<formatter usefile="false" type="brief" if="build.compiler.emacs" />
+			<formatter type="xml" />
+			<batchtest todir="${test.build.dir}" >
+				<fileset dir="${test.build.dir}">
+					<include name="**/*Test.class" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${test.report.dir}">
+			<fileset dir="${test.build.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${test.report.dir}" />
+		</junitreport>
+	</target>
 
   <target name="jar" depends="compile">
 		<mkdir dir="${dist.dir}" />

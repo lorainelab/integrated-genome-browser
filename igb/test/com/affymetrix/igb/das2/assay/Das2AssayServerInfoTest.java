@@ -49,7 +49,7 @@ public class Das2AssayServerInfoTest extends TestCase {
     System.out.println("testGetRootOntologyUrl");
     
     // TODO add your test code below by replacing the default call to fail.
-    //fail("The test case is empty.");
+    fail("The test case is empty.");
   }
   
   /**

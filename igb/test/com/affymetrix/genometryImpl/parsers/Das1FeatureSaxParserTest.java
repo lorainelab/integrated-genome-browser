@@ -9,6 +9,8 @@ package com.affymetrix.genometryImpl.parsers;
 
 import junit.framework.*;
 import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -36,23 +38,36 @@ public class Das1FeatureSaxParserTest extends TestCase {
     return suite;
   }
 
-  public static final String test_file_name_1 = "test_files/das1-sample-hg18.dasxml";
-  public static final String test_file_name_2 = "test_files/das1-sample-hg10.dasxml";
+  public static final String test_file_name_1 = "igb/test/test_files/das1-sample-hg18.dasxml";
+  public static final String test_file_name_2 = "igb/test/test_files/das1-sample-hg10.dasxml";
   
   // tests the parsing of the <LINK> elements
   public void testLinks() {
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(test_file_name_1);   
+		InputStream istr = null;
+		assertTrue(new File(test_file_name_1).exists());
     
     AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
     Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
     
     List results = null;
     try {
+			istr = new FileInputStream(test_file_name_1);
+			assertNotNull(istr);
+
       results = parser.parse(istr, group);
     } catch (IOException ioe) {
       ioe.printStackTrace();
       fail("Failed due to Exception: " + ioe.toString());
-    }
+    } finally {
+			if (istr != null) {
+				try {
+					istr.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					fail("Failed due to Exception: " + e.toString());
+				}
+			}
+		}
     
     assertEquals(32, results.size());
         
@@ -68,18 +83,31 @@ public class Das1FeatureSaxParserTest extends TestCase {
   
   // tests the parsing of a simple example file
   public void testParse() {
-    InputStream istr = Thread.currentThread().getContextClassLoader().getResourceAsStream(test_file_name_2);
+		InputStream istr = null;
+		assertTrue(new File(test_file_name_2).exists());
     
     AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
     Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
     
     List results = null;
     try {
+			istr = new FileInputStream(test_file_name_2);
+			assertNotNull(istr);
+
       results = parser.parse(istr, group);
     } catch (IOException ioe) {
       ioe.printStackTrace();
       fail("Failed due to Exception: " + ioe.toString());
-    }
+    } finally {
+			if (istr != null) {
+				try {
+					istr.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					fail("Failed due to Exception: " + e.toString());
+				}
+			}
+		}
     
     assertEquals(1, results.size());
     

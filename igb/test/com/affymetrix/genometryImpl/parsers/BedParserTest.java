@@ -46,7 +46,7 @@ public class BedParserTest extends TestCase {
     BedParser parser = new BedParser();
     List<SeqSymmetry> result = parser.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
 
-    assertEquals(result.size(), 6);    
+    assertEquals(6, result.size());    
         
     UcscBedSym sym = (UcscBedSym) result.get(2);
     assertEquals(1, sym.getSpanCount());
@@ -94,7 +94,7 @@ public class BedParserTest extends TestCase {
     
     List<SeqSymmetry> result = instance.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
 
-    assertEquals(result.size(), 6);    
+    assertEquals(6, result.size());    
         
     UcscBedSym sym = (UcscBedSym) result.get(2);
     assertEquals(1, sym.getSpanCount());

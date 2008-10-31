@@ -48,6 +48,7 @@ public class GFF3ParserTest extends TestCase {
     assertNotNull(istr);
     
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
+		assertNotNull(seq_group);
 
     GFFParser instance = new GFFParser(); // the parser should be able to recognized
     // that this is GFF3 and create an instance of GFF3Parser to do the actual parsing.

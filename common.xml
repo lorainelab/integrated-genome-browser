@@ -38,6 +38,11 @@
 		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
 		<property name="javadoc.src.version" value="5" />
 
+		<!-- Location of JUnit -->
+		<!-- AFAIK, OS X 10.5 is only OS which does not automatically have it in ant's classpath -->
+		<property name="junit.jar"       value="/usr/share/junit/junit.jar" />
+
+
 		<filter token="jnlp.version"  value="${jnlp.version}" />
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />

@@ -16,10 +16,10 @@
 		<property name="build.dir"    value="${basedir}/build" />
 		<property name="docs.dir"     value="${basedir}/docs" />
 
-		<!-- JUnit tests -->
-		<property name="test.dir" value="${basedir}/test"/>
-		<property name="build-test.dir" value="${basedir}/build-test"/>
-		<property name="report-test.dir" value="${basedir}/report-test"/>
+		<!-- JUnit test configuration -->
+		<property name="test.src.dir"    value="${basedir}/test" />
+		<property name="test.build.dir"  value="${basedir}/build-test" />
+		<property name="test.report.dir" value="${test.build.dir}" />
 
 		<!-- property list file -->
 		<property file="${basedir}/ant.properties" />
@@ -31,27 +31,26 @@
   </target>
 
   <target name="compile-tests" depends="common-init,compile">
-    <mkdir dir="${build-test.dir}" />
-		<echo message="classpath: ${test.classpath}" />
-		<my.javac srcdir="${test.dir}" destdir="${build-test.dir}" classpath="${test.classpath}" />
+    <mkdir dir="${test.build.dir}" />
+		<my.javac srcdir="${test.src.dir}" destdir="${test.build.dir}" classpath="${junit.jar}:${test.classpath}" />
   </target>
 
 <target name="test" depends="compile-tests">
-<!--    <mkdir dir="${report-test.dir}" /> -->
+	<mkdir dir="${test.report.dir}" />
   <junit fork="yes" printsummary="yes" haltonfailure="no">
-    <batchtest fork="yes" todir="${build-test.dir}" >
-      <fileset dir="${build-test.dir}">
+    <batchtest fork="yes" todir="${test.report.dir}" >
+      <fileset dir="${test.build.dir}">
         <include name="**/*Test.class" />
       </fileset>
     </batchtest>
     <formatter type="xml" />
-		<classpath path="${test.classpath}" />
+		<classpath path="${junit.jar}:${test.classpath}" />
   </junit>
-  <junitreport todir="${build-test.dir}">
-    <fileset dir="${build-test.dir}">
+  <junitreport todir="${test.build.dir}">
+    <fileset dir="${test.build.dir}">
       <include name="TEST-*.xml" />
     </fileset>
-    <report todir="${build-test.dir}" />
+    <report todir="${test.build.dir}" />
   </junitreport>
 </target>
 	  
@@ -86,6 +85,7 @@
 		<delete dir="${docs.dir}"/>
 		<delete dir="${build.dir}" />
 		<delete dir="${dist.dir}" />
-		<delete dir="${build-test.dir}" />
+		<delete dir="${test.build.dir}" />
+		<delete dir="${test.report.dir}" />
   </target>
 </project>

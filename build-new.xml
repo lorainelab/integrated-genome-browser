@@ -147,6 +147,16 @@
 		</jar>
 	</target>
 
+	<target name="run" depends="jar" description="run IGB">
+		<java fork="true" classname="com.affymetrix.igb.IGB">
+			<jvmarg value="-Xmx1024m" />
+			<classpath>
+				<fileset dir="${lib.dir}" includes="*.jar" />
+				<fileset dir="${dist.dir}" includes="*.jar" />
+			</classpath>
+		</java>
+	</target>
+
 	<!--                                                                 -->
 	<!-- Macro to pass targets to each sub project.  All sub projects    -->
 	<!-- are build using generic.xml.                                    -->

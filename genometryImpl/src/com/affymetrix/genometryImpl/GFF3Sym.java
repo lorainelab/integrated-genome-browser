@@ -98,12 +98,24 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
     }
   }
 
+	/**
+	 * Return the ID.  Unknown if the original contract allows null to be
+	 * returned, but this class and users of this class assume it can
+	 * return null.
+	 *
+	 * @return ID or null
+	 */
+	@Override
   public String getID() {
     // This is overridden because we only want to check the value of this.id,
     // we do NOT want to check for a property named "id".  This is because GFF3
     // has a very different notion of what an ID is.  In GFF3 and "ID", in upper case,
     // only has meaning while processing the file and should be ignored later.
-    return this.id.toString();
+		if (this.id == null) {
+			return null;
+		} else {
+			return this.id.toString();
+		}
   }
   public String getSource()  { return source; }
   public String getFeatureType()  { return feature_type; }

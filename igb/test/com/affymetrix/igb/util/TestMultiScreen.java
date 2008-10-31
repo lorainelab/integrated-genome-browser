@@ -21,7 +21,7 @@ import com.affymetrix.igb.glyph.*;
  *    with new efficient implementation of GlyphI
  *    (root of implementation ==> com.affymetrix.igb.glyph.EfficientGlyph
  */
-public class MultiScreenTest2 implements ActionListener {
+public class TestMultiScreen implements ActionListener {
   int xwindows_per_screen = 1;
   int ywindows_per_screen = 1;
   int map_coord_width = 10000;
@@ -39,7 +39,7 @@ public class MultiScreenTest2 implements ActionListener {
   com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
   com.affymetrix.genoviz.util.Memer mem = new com.affymetrix.genoviz.util.Memer();
   public static void main(String[] args) {
-    MultiScreenTest2 tester = new MultiScreenTest2();
+    TestMultiScreen tester = new TestMultiScreen();
     tester.runTest();
   }
 
@@ -187,10 +187,8 @@ public class MultiScreenTest2 implements ActionListener {
 
 	    //	    NeoMap newmap = new NeoMap(map);  // make a new map with original
 	    //	    NeoMap newmap = new NeoMap(false, false);
-	    //	    NeoMap newmap = new NeoMap(true, true);
-	    //	    newmap.setRoot(map);
-	    AffyTieredMap newmap = new AffyTieredMap(map);
-
+	    NeoMap newmap = new NeoMap(true, true);
+	    newmap.setRoot(map);
 	    Container cpane = newfrm.getContentPane();
 	    cpane.setLayout(new BorderLayout());
 	    newmap.getNeoCanvas().setDoubleBuffered(false);

@@ -20,10 +20,10 @@ import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.widget.*;
 
 
-public class SplitterTest {
+public class TestSplitter {
 
   public static void main(String[] args) {
-    SplitterTest test = new SplitterTest();
+    TestSplitter test = new TestSplitter();
     test.doTest();
   }
 

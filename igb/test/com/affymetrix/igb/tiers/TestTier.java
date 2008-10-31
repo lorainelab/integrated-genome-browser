@@ -19,100 +19,99 @@ import java.util.*;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
 import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.awt.AdjustableJSlider;
 
-public class LabelledTierTest implements WindowListener, MouseListener  {
-  AffyLabelledTierMap map;
-  AdjustableJSlider xzoomer;
-  AdjustableJSlider yzoomer;
-  //  NeoScrollbar yzoomer;
+public class TestTier implements WindowListener, MouseListener  {
+  AffyTieredMap map;
+  NeoScrollbar xzoomer;
+  NeoScrollbar yzoomer;
 
   public static void main(String[] args) {
-    LabelledTierTest test = new LabelledTierTest();
+    TestTier test = new TestTier();
     test.doTest();
   }
 
   public void doTest() {
     JFrame frm;
-    frm = new JFrame("labelled tier test");
+    frm = new JFrame("tier test");
     frm.setSize(600, 400);
     frm.addWindowListener(this);
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
-    map = new AffyLabelledTierMap();
+    map = new AffyTieredMap(true, true);
     //    map.setBackground(Color.red);
 
-    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
-    map.setZoomer(NeoMap.X, xzoomer);
+    //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+    xzoomer = new NeoScrollbar(Adjustable.HORIZONTAL);
+    map.setZoomer(map.X, xzoomer);
     cpane.add("South", xzoomer);
 
-    yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-    //    yzoomer = new NeoScrollbar(Adjustable.VERTICAL);
-    map.setZoomer(NeoMap.Y, yzoomer);
+    //    yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+    yzoomer = new NeoScrollbar(Adjustable.VERTICAL);
+    map.setZoomer(map.Y, yzoomer);
     cpane.add("East", yzoomer);
 
     map.setMapRange(0, 1000);
-    map.setMapOffset(0, 1000);
+    map.setMapOffset(-100, 100);
     map.addMouseListener(this);
-
-    TierLabelManager tier_manager = new TierLabelManager(map);
-
-    // currently need to call setState() _after_ mucking with packer to 
-    //   get tier to set packer to a different packer ????
     
     TierGlyph tier;
-    TransformTierGlyph transform_tier;
     LinearTransform trans;
     ExpandPacker epacker;
 
     tier = new TierGlyph();
-    tier.setLabel("Tier1");
     tier.setFillColor(Color.blue);
-    ((ExpandPacker)tier.getExpandedPacker()).setMoveType(ExpandPacker.UP);
+    tier.setCoords(0, 0, 1000, 0);
+    tier.setExpandedPacker(new ExpandedTierPacker());
     tier.setState(TierGlyph.EXPANDED);
+    ((ExpandedTierPacker)tier.getExpandedPacker()).setMoveType(ExpandedTierPacker.UP);
     addGlyphs(tier);
     map.addTier(tier);
 
-    tier = new TierGlyph();
-    tier.setLabel("Tier1");
-    tier.setFillColor(Color.yellow);
-    ((ExpandPacker)tier.getExpandedPacker()).setMoveType(ExpandPacker.UP);
-    tier.setState(TierGlyph.EXPANDED);
-    addGlyphs(tier);
-    map.addTier(tier);
-
+    
+    TransformTierGlyph transform_tier;
     transform_tier = new TransformTierGlyph();
-    transform_tier.setLabel("Tier2 (80 pixels)");
+    //       trans = new LinearTransform();
+    //       trans.setScaleY(0.7f);
+    //       transform_tier.setTransform(trans);
     transform_tier.setFixedPixelHeight(true);
     transform_tier.setFixedPixHeight(80);
     transform_tier.setFillColor(Color.cyan);
+    transform_tier.setCoords(0, 0, 1000, 0);
+    epacker = new ExpandPacker();
+    transform_tier.setExpandedPacker(epacker);
+    epacker.setMoveType(ExpandPacker.UP);
+    transform_tier.setState(TierGlyph.EXPANDED);
     addGlyphs(transform_tier);
     map.addTier(transform_tier);
 
-    TransformTierGlyph axis_tier = new TransformTierGlyph();
-    axis_tier.setLabel("Coordinates");
-    axis_tier.setFixedPixelHeight(true);
-    axis_tier.setFixedPixHeight(30);
-    axis_tier.setFillColor(Color.white);
-    map.addTier(axis_tier);
-    GlyphI axis_glyph = map.addAxis(0);
-    axis_tier.addChild(axis_glyph);
-
     transform_tier = new TransformTierGlyph();
-    transform_tier.setLabel("Tier3 (40 pixels)");
+    //    trans = new LinearTransform();
+    //    trans.setScaleY(0.5f);
+    //    transform_tier.setTransform(trans);
     transform_tier.setFixedPixelHeight(true);
     transform_tier.setFixedPixHeight(40);
     transform_tier.setFillColor(Color.darkGray);
+    transform_tier.setCoords(0, 0, 1000, 0);
+    epacker = new ExpandPacker();
+    transform_tier.setExpandedPacker(epacker);
+    epacker.setMoveType(ExpandPacker.DOWN);
+    // currently need to call setState() _after_ mucking with packer to 
+    //   get tier to set packer to epacker
+    transform_tier.setState(TierGlyph.EXPANDED);
+    //    addGlyphs2(transform_tier);
     addGlyphs(transform_tier);
     map.addTier(transform_tier);
 
     tier = new TierGlyph();
-    tier.setLabel("Tier4");
     tier.setFillColor(Color.gray);
+    tier.setCoords(0, 0, 1000, 0);
+    tier.setState(TierGlyph.EXPANDED);
+    ((ExpandPacker)tier.getExpandedPacker()).setMoveType(ExpandPacker.DOWN);
     addGlyphs(tier);
     map.addTier(tier);
 
@@ -120,7 +119,6 @@ public class LabelledTierTest implements WindowListener, MouseListener  {
 
     cpane.add("Center", map);
     frm.show();
-
   }
 
   public void addGlyphs2(TierGlyph tier) {
@@ -167,13 +165,14 @@ public class LabelledTierTest implements WindowListener, MouseListener  {
   public void mouseReleased(MouseEvent e) { }
   public void mousePressed(MouseEvent evt) { 
     Object src = evt.getSource();
-    //    System.out.println(src);
     if (src == map) {
       NeoMouseEvent nme = (NeoMouseEvent)evt;
       map.clearSelected();
       Vector hitGlyphs = map.getItems(nme.getCoordX(), nme.getCoordY());
       map.select(hitGlyphs);
       map.updateWidget();
+      System.out.println("canvas event: " + nme.getX() + ", " + nme.getY() + 
+			 ",   " + map.getNeoCanvas());
     }
   }
 

@@ -26,7 +26,7 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
-public class LabelledTierTest2 extends Applet 
+public class TestLabelledTier2 extends Applet 
   implements ActionListener, ItemListener  {
   JFrame mainframe;
   Container mainpane;
@@ -44,7 +44,7 @@ public class LabelledTierTest2 extends Applet
 
 
   public static void main(String[] args) {
-    LabelledTierTest2 test = new LabelledTierTest2();
+    TestLabelledTier2 test = new TestLabelledTier2();
     test.init();
   }
 

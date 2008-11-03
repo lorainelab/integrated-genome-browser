@@ -202,6 +202,7 @@ public class FastaParserTest extends TestCase {
       assertTrue(new File(filename).exists());
  
       byte[] fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+			assertNotNull("fasta can not be null", fasta);
       for (int i=0;i<fasta.length;i++)
           System.out.print((char)fasta[i]);
       System.out.println();
@@ -258,7 +259,7 @@ public class FastaParserTest extends TestCase {
             System.out.print((char)fasta[i]);
         System.out.println();
         
-        assertTrue(expected_fasta.length >= fasta.length - header_len);
+        assertTrue(filename + ": Expected expected_fasta.length (" + expected_fasta.length + ") >= fasta.length (" + fasta.length + ") - header_len (" + header_len + ")", expected_fasta.length >= fasta.length - header_len);
         
         System.out.print("testing against expected:");
         for (int i = 0; i < fasta.length - header_len; i++) {

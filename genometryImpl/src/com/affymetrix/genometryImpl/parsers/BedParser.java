@@ -29,7 +29,6 @@ import com.affymetrix.genometryImpl.SymWithProps;
 /**
  *  A parser for UCSC's BED format.
  *  <pre>
- *  BED is tab-delimited
  *
  *  From http://genome.ucsc.edu/goldenPath/help/customTrack.html#BED
  *  BED format provides a flexible way to define the data lines that are displayed
@@ -78,10 +77,8 @@ import com.affymetrix.genometryImpl.SymWithProps;
  * </pre>
  */
 public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
-  static final boolean DEBUG = false;
-  static Pattern line_regex = Pattern.compile("\\t");  // single tab, NOT multiple whitespace
-    // Multiple whitespace would fail to be able to parse files written by this parser
-    // when symmetry ID's are left blank.
+  static final boolean DEBUG = true;
+  static Pattern line_regex = Pattern.compile("\\s+");
   static Pattern comma_regex = Pattern.compile(",");
   static Pattern tagval_regex = Pattern.compile("=");
 

@@ -34,7 +34,7 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 	final JDialog dialog = new JDialog(gviewer.getFrame(), "Genome Chooser", true);
 	Das2GenomeLoader loader = new Das2GenomeLoader(gviewer, dialog);
 	dialog.setSize(new Dimension(300, 400));
-	dialog.show();
+        dialog.setVisible(true);
     }
 
     public Das2GenomeLoader(SeqMapView gviewer, JDialog dialog) {
@@ -97,20 +97,7 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 		    new_genome.setSource(path.getPath()[1].toString()); 
 					
 		    if (new_genome != prev_genome) {
-			System.out.println("CHOOSING GENOME: " + version);
-			gmodel.setSelectedSeqGroup(new_genome);
-
-			MutableAnnotatedBioSeq selected_seq = ViewPersistenceUtils.restoreSeqSelection(new_genome);
-			if (selected_seq == null)  {
-			    // if no seq selection stored, the just select first one
-			    Das2Region first_region = (Das2Region)segments.next();
-			    MutableAnnotatedBioSeq first_seq = first_region.getAnnotatedSeq();
-			    gmodel.setSelectedSeq(first_seq);
-			}
-			SeqSpan visible_span = ViewPersistenceUtils.restoreSeqVisibleSpan(gviewer);
-			if (visible_span == null)  {
-			    // if no seq visible span, then leave zoomed out to whole chromosome, or zoom into smaller region?
-			}
+                        ChooseNewGenome(version, gmodel, new_genome, segments);
 		    }
 		}
 	    }
@@ -118,6 +105,24 @@ public class Das2GenomeLoader extends JComponent implements ActionListener {
 	else if (src == cancelB) {
 	    dial.dispose();
 	}
+    }
+
+    // We've chosen a new genome.
+    private void ChooseNewGenome(Das2VersionedSource version, SingletonGenometryModel gmodel, AnnotatedSeqGroup new_genome, Iterator segments) {
+        System.out.println("CHOOSING GENOME: " + version);
+        gmodel.setSelectedSeqGroup(new_genome);
+
+        MutableAnnotatedBioSeq selected_seq = ViewPersistenceUtils.restoreSeqSelection(new_genome);
+        if (selected_seq == null) {
+            // if no seq selection stored, the just select first one
+            Das2Region first_region = (Das2Region) segments.next();
+            MutableAnnotatedBioSeq first_seq = first_region.getAnnotatedSeq();
+            gmodel.setSelectedSeq(first_seq);
+        }
+        SeqSpan visible_span = ViewPersistenceUtils.restoreSeqVisibleSpan(gviewer);
+        if (visible_span == null) {
+            // if no seq visible span, then leave zoomed out to whole chromosome, or zoom into smaller region?
+        }
     }
 
 

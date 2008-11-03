@@ -31,13 +31,13 @@ import com.affymetrix.swing.DisplayUtils;
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  static boolean USE_QUICKLOAD = false;
-  static boolean USE_DAS2_VIEW = true;
-  static boolean USE_DAS1_VIEW = false;
+  //static boolean USE_QUICKLOAD = false;
+  //static boolean USE_DAS2_VIEW = true;
+  //static boolean USE_DAS1_VIEW = false;
 
   Das2LoadView3 das2_view3;
   DasLoadView das1_view;
-  QuickLoadView2 quick_view;
+  //QuickLoadView2 quick_view;
   //  SeqGroupView group_view;
 
   public DataLoadView() {
@@ -72,10 +72,10 @@ public class DataLoadView extends JComponent  {
     }
     */
   }
-
+/*
   public void initialize() {
     if (USE_QUICKLOAD)  { quick_view.initialize(); }
-  }
+  }*/
 }
 
 class SeqGroupView extends JComponent

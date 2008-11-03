@@ -75,7 +75,7 @@ public class IGB extends Application
 	 */
 	public static String HttpUserAgent = APP_SHORT_NAME + "/" + APP_VERSION + ", " + System.getProperty("os.name") + "/" + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
 
-  public static boolean USE_OVERVIEW = false;
+  //public static boolean USE_OVERVIEW = false;
   public static boolean USE_MULTI_WINDOW_MAP = false;
   public static boolean USE_REFRESH_BUTTON = true;
   public static boolean REPLACE_REPAINT_MANAGER = false;
@@ -165,7 +165,7 @@ public class IGB extends Application
   JMenuItem move_tabbed_panel_to_window_item;
 
   SeqMapView map_view;
-  OverView overview;
+  //OverView overview;
 
   //QuickLoaderView quickload_view;
 
@@ -868,7 +868,7 @@ public class IGB extends Application
       splitpane.setBottomComponent(tab_pane);
     }
 
-    if (USE_OVERVIEW) {
+    /*if (USE_OVERVIEW) {
       //      overview = new SeqMapView(true);
       overview = new OverView(false);
       gmodel.addSeqSelectionListener(overview);
@@ -883,9 +883,9 @@ public class IGB extends Application
       oversplit.setBottomComponent(splitpane);
       cpane.add("Center", oversplit);
     }
-    else {
+    else {*/
       cpane.add("Center", splitpane);
-    }
+    //}
 
     // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
     // pop-up menu (or any other mouse listener) on the tab handles.
@@ -948,7 +948,7 @@ public class IGB extends Application
         Object plugin = plugins.get(i);
         if (plugin instanceof DataLoadView) {
             data_load_view = (DataLoadView)plugin;
-            data_load_view.initialize();
+            //data_load_view.initialize();
         }
         if (plugin instanceof QuickLoadView2)  {
           ((QuickLoadView2)plugin).initialize();

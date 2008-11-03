@@ -2687,8 +2687,10 @@ public class SeqMapView extends JPanel
   /** Sets the hairline position and zoom center to the given spot. Does not call map.updateWidget() */
   public final void setZoomSpotX(double x) {
     int intx = (int) x;
-    if (hairline != null) {hairline.setSpot(intx);}
-    showHairlinePositionInStatusBar();
+    if (hairline != null) {
+        hairline.setSpot(intx);
+        showHairlinePositionInStatusBar();
+    }
     seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, intx);
   }
 

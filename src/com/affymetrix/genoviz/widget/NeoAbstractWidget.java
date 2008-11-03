@@ -18,9 +18,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
-import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.widget.ScrollIncrementBehavior;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -156,16 +154,6 @@ public abstract class NeoAbstractWidget extends Container
 //      moveRelative(g, x, y);
 //    }
 //  }
-
-
-  public void setScrollIncrementBehavior(WidgetAxis dim, ScrollIncrementBehavior behavior) {
-    scroll_behavior[dim.ordinal()] = behavior;
-  }
-
-  public ScrollIncrementBehavior getScrollIncrementBehavior(WidgetAxis dim) {
-    return scroll_behavior[dim.ordinal()];
-  }
-
 
   /** Subclasses should implement this. Default does nothing.
    *  Implementations should add selections to the List 'selected',

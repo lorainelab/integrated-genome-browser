@@ -15,7 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 
 /**
  *  An abstract base class for several different biological sequence glyphs.
@@ -31,13 +31,13 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
    * relative to the reference coordinate system.
    */
   protected int seq_beg, seq_end;
-  protected NeoConstants.Orientation orient = NeoConstants.Orientation.Horizontal;
+  protected Orientation orient = Orientation.Horizontal;
 
   /**
    * creates a horizontal glyph.
    */
   public AbstractResiduesGlyph() {
-    this(NeoConstants.Orientation.Horizontal);
+    this(Orientation.Horizontal);
   }
 
   /**
@@ -45,7 +45,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
    *
    * @param orientation should be HORIZONTAL or VERTICAL
    */
-  public AbstractResiduesGlyph(NeoConstants.Orientation orientation) {
+  public AbstractResiduesGlyph(Orientation orientation) {
     orient = orientation;
     //    setResidueFont(default_font);
     //setResidueColor(default_residue_color);
@@ -86,10 +86,10 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
   @Override
   public void setCoords(double x, double y, double width, double height) {
     super.setCoords(x, y, width, height);
-    if (orient == NeoConstants.Orientation.Horizontal) {
+    if (orient == Orientation.Horizontal) {
       seq_beg = (int)(coordbox.x);
       seq_end = (int)(coordbox.x + coordbox.width);
-    } else if (orient == NeoConstants.Orientation.Vertical) {
+    } else if (orient == Orientation.Vertical) {
       seq_beg = (int)(coordbox.y);
       seq_end = (int)(coordbox.y + coordbox.height);
     }
@@ -137,7 +137,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
     if (sel_glyph == null) {
       sel_glyph = new OutlineRectGlyph();
     }
-    if (orient == NeoConstants.Orientation.Horizontal) {
+    if (orient == Orientation.Horizontal) {
       if (start <= end) {
         if (start < coordbox.x) {
           start = (int)coordbox.x; }
@@ -151,7 +151,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
           start = (int)(coordbox.x + coordbox.width); }
       }
       sel_glyph.setCoords(start, coordbox.y, end-start, coordbox.height);
-    } else if (orient == NeoConstants.Orientation.Vertical) {
+    } else if (orient == Orientation.Vertical) {
       if (start <= end) {
         if (start < coordbox.y) {
           start = (int)coordbox.y; }

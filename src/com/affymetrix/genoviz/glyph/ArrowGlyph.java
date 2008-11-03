@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
  * An arrow glyph.

@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import com.affymetrix.genoviz.util.Orientation;
 import com.affymetrix.genoviz.widget.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
@@ -275,9 +275,9 @@ public class AffyTieredMap extends NeoMap {
         if (Double.isInfinite(end) || Double.isNaN(end) || Double.isInfinite(start) || Double.isNaN(start)) {
           //TODO: fix
           System.out.println("One or both of these values is bad! " + start + ", " + end);
-          setFloatBounds(WidgetAxis.Secondary, 0, 100);
+          setFloatBounds(WidgetAxis.Offset, 0, 100);
         } else {
-          setFloatBounds(WidgetAxis.Secondary, newbox.y, newbox.y + newbox.height);
+          setFloatBounds(WidgetAxis.Offset, newbox.y, newbox.y + newbox.height);
         }
 	//	System.out.println("new bounds: " + this.getCoordBounds());
       }
@@ -301,7 +301,7 @@ public class AffyTieredMap extends NeoMap {
   public void setBounds(WidgetAxis axis, int start, int end) {
     super.setBounds(axis, start, end);
     Rectangle2D.Double mbox = getScene().getRootGlyph().getCoordBox();
-    if ((axis != WidgetAxis.Primary) || (tiers == null)) {
+    if ((axis != WidgetAxis.Range) || (tiers == null)) {
       return;
     }
     for (int i=0; i<tiers.size(); i++) {
@@ -371,10 +371,10 @@ public class AffyTieredMap extends NeoMap {
       packTiers(false, true);
     }
     if (!fity) {
-      doZoomFix(WidgetAxis.Secondary);
+      doZoomFix(WidgetAxis.Offset);
     }
     if (!fitx) {
-      doZoomFix(WidgetAxis.Primary);
+      doZoomFix(WidgetAxis.Range);
     }
   }
 
@@ -382,7 +382,7 @@ public class AffyTieredMap extends NeoMap {
    *  A hack.  Sometimes after a stretchToFit() where fity is false it can happen
    *  that a portion of the area that should be filled by map tiers is empty.
    *  (Perhaps because some tiers were just hidden and the remaining ones don't
-   *  fill up all the space.)  As soon as the user touches the Secondary-zoomer,
+   *  fill up all the space.)  As soon as the user touches the Offset-zoomer,
    *  the map snaps to fill the given space.  This hack makes that happen automatically
    *  without the user having to touch the zoomer.
    */
@@ -438,11 +438,11 @@ public class AffyTieredMap extends NeoMap {
     LinearTwoDimTransform new_trans = super.calcFittedTransform();
     if (fixed_coord_height == 0)  { return new_trans; }
     //    if (fixed_pixel_height == 0)  { return new_trans; }
-    //    double prevmin = getMinZoom(this.Secondary);
+    //    double prevmin = getMinZoom(this.Offset);
     int mod_pixel_height = canvas.getSize().height - fixed_pixel_height;
     double mod_coord_height = fixed_coord_height;
     double minzoom = mod_pixel_height / mod_coord_height;
-    //    setMinZoom(this.Secondary, minzoom);
+    //    setMinZoom(this.Offset, minzoom);
     //    System.out.println("standard fit: " + new_trans);
     new_trans.setScaleY(minzoom);
     /*
@@ -450,7 +450,7 @@ public class AffyTieredMap extends NeoMap {
     System.out.println("canvas size: " + canvas.getSize().height);
     System.out.println("constant-pix tiers total pixel height = " + fixed_pixel_height);
     System.out.println("constant-coord tiers tot coord height = " + fixed_coord_height);
-    //    System.out.println("prev minzoom = " + prevmin + ", new minzoom = " + getMinZoom(this.Secondary));
+    //    System.out.println("prev minzoom = " + prevmin + ", new minzoom = " + getMinZoom(this.Offset));
     System.out.println("prev minzoom = " + prevmin + ", new minzoom = " + minzoom);
     System.out.println("calculated scene / view size at min zoom: " +
 		       canvas.size().height / minzoom );
@@ -459,12 +459,12 @@ public class AffyTieredMap extends NeoMap {
   }
 
 
-  //TODO: use WidgetAxis instead of integer
   @Override
-  public void zoom(WidgetAxis dim, double zoom_scale) {
-    final int ordinal = dim.ordinal();
-    if (dim == WidgetAxis.Primary) {
-      super.zoom(dim, zoom_scale);
+  public void zoom(WidgetAxis widgetAxis, double zoom_scale) {
+    XY pixelAxis = toPixelAxis(widgetAxis);
+    final int ordinal = pixelAxis.ordinal();
+    if (widgetAxis == WidgetAxis.Range) {
+      super.zoom(widgetAxis, zoom_scale);
       return;
     }
     //    System.out.println("***** zoom_scale = " + zoom_scale + " *****");
@@ -486,7 +486,7 @@ public class AffyTieredMap extends NeoMap {
     double coord_beg, coord_end, coord_size;
     double fixed_coord, fixed_pixel;
 
-    // assuming modifying Secondary
+    // assuming modifying Offset
     // assume zoom constraint is always to hold middle of previous view constant...
     if (zoom_behavior[ordinal] == ZoomConstraint.CONSTRAIN_MIDDLE) {
       fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
@@ -511,7 +511,7 @@ public class AffyTieredMap extends NeoMap {
     */
 
     // transforming fixed coord to find fixed pixel
-    fixed_pixel = trans.transform(WidgetAxis.Secondary, fixed_coord);
+    fixed_pixel = trans.transform(pixelAxis, fixed_coord);
     //    System.out.println("fixed coord = " + fixed_coord + ", fixed pixel = " + fixed_pixel);
 
     // calculate transform offset needed to hold coords at same fixed pixel
@@ -561,15 +561,15 @@ public class AffyTieredMap extends NeoMap {
     pixel_offset[ordinal] = coord_offset / coords_per_pixel[ordinal];
 
     // redoing setting of transform, in case there were any adjusments to trim to scene...
-    // assuming modifying Secondary
+    // assuming modifying Offset
     trans.setOffsetY(pixel_offset[ordinal]);
     //    trans.setOffsetY(pix_offset);
     trans.setScaleY(pixels_per_coord[ordinal]);
 
     if (zoom_scale != zoomer_scale[ordinal]) {
-      adjustZoomer(WidgetAxis.values()[ordinal]);
+      adjustZoomer(widgetAxis);
     }
-    adjustScroller(dim);
+    adjustScroller(widgetAxis);
 
     view.calcCoordBox();
     //    System.out.println("zooming to: " + zoom_scale + ", coord offset = " + coord_offset);
@@ -585,7 +585,7 @@ public class AffyTieredMap extends NeoMap {
     packTiers(full_repack, true);
     stretchToFit(false, stretch_vertically, false);
     // apply a hack to make sure strechToFit worked
-    if ((getZoom(WidgetAxis.Secondary) < getMinZoom(WidgetAxis.Secondary)) || (getZoom(WidgetAxis.Secondary) > getMaxZoom(WidgetAxis.Secondary))) {
+    if ((getZoom(WidgetAxis.Offset) < getMinZoom(WidgetAxis.Offset)) || (getZoom(WidgetAxis.Offset) > getMaxZoom(WidgetAxis.Offset))) {
       stretchToFit(false, true, false);
     }
     updateWidget();

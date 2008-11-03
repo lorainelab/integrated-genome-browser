@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 
 /**
  * A glyph that has direction.
@@ -37,13 +37,13 @@ import com.affymetrix.genoviz.util.NeoConstants;
  */
 public abstract class DirectedGlyph extends SolidGlyph {
 
-  private NeoConstants.Orientation orientation = NeoConstants.Orientation.Horizontal;
+  private Orientation orientation = Orientation.Horizontal;
 
-  public void setOrientation( NeoConstants.Orientation theOrientation ) {
+  public void setOrientation( Orientation theOrientation ) {
     this.orientation = theOrientation;
   }
 
-  public NeoConstants.Orientation getOrientation() {
+  public Orientation getOrientation() {
     return this.orientation;
   }
 
@@ -67,16 +67,16 @@ public abstract class DirectedGlyph extends SolidGlyph {
    * gets the direction of the glyph.
    */
   public int getDirection() {
-    if ( this.isForward() && NeoConstants.Orientation.Horizontal == this.getOrientation() ) {
+    if ( this.isForward() && Orientation.Horizontal == this.getOrientation() ) {
       return EAST;
     }
-    if ( this.isForward() && NeoConstants.Orientation.Vertical == this.getOrientation() ) {
+    if ( this.isForward() && Orientation.Vertical == this.getOrientation() ) {
       return SOUTH;
     }
-    if ( !this.isForward() && NeoConstants.Orientation.Horizontal == this.getOrientation() ) {
+    if ( !this.isForward() && Orientation.Horizontal == this.getOrientation() ) {
       return WEST;
     }
-    if ( !this.isForward() && NeoConstants.Orientation.Vertical == this.getOrientation() ) {
+    if ( !this.isForward() && Orientation.Vertical == this.getOrientation() ) {
       return NORTH;
     }
     throw new IllegalStateException
@@ -84,12 +84,13 @@ public abstract class DirectedGlyph extends SolidGlyph {
   }
 
   /**
-   * sets the coordinates in "coord" space.
+   * Sets the coordinates in "coord" space.
    *
    * <p> Here we also set the direction to forward or reverse
    * depending on the orientation and whether the "length"
    * of the glyph is negative.
    */
+  @Override
   public void setCoords(double x, double y, double width, double height)  {
     super.setCoords(x, y, width, height);
     switch ( this.getOrientation() ) {

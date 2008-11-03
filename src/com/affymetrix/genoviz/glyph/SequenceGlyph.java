@@ -15,7 +15,7 @@ import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -39,16 +39,16 @@ public class SequenceGlyph extends AbstractResiduesGlyph {
   }
 
   public SequenceGlyph() {
-    this(NeoConstants.Orientation.Horizontal);
+    this(Orientation.Horizontal);
   }
 
-  public SequenceGlyph(NeoConstants.Orientation orientation) {
+  public SequenceGlyph(Orientation orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
     scratchrect = new java.awt.geom.Rectangle2D.Double();
   }
 
-  public void setOrientation(NeoConstants.Orientation orientation) {
+  public void setOrientation(Orientation orientation) {
     this.orient = orientation;
     java.awt.geom.Rectangle2D.Double cb = this.getCoordBox();
     this.setCoords(cb.x, cb.y, cb.width, cb.height);
@@ -115,9 +115,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph {
   }
 
   public void draw(ViewI view) {
-    if (orient == NeoConstants.Orientation.Horizontal) {
+    if (orient == Orientation.Horizontal) {
       drawHorizontal( view );
-    } else if (orient == NeoConstants.Orientation.Vertical) {
+    } else if (orient == Orientation.Vertical) {
       drawVertical(view);
     }
     super.draw ( view );

@@ -67,7 +67,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
     add("Center", mapsplitter);
 
     if (hscroll_show) {
-      add(hscroll_loc, scroller[Xint]);
+      add(hscroll_loc, scroller[Xint]); //TODO: stop referring to Xint
     }
     if (vscroll_show) {
       add(vscroll_loc, scroller[Yint]);
@@ -167,7 +167,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   @Override
   public void setFloatBounds(WidgetAxis axis, double start, double end) {
     super.setFloatBounds(axis, start, end);
-    if (axis == WidgetAxis.Secondary && labelmap != null) {
+    if (axis == WidgetAxis.Offset && labelmap != null) {
       labelmap.setFloatBounds(axis, start, end);
     }
   }
@@ -175,7 +175,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   @Override
   public void setBounds(WidgetAxis axis, int start, int end) {
     super.setBounds(axis, start, end);
-    if (axis == WidgetAxis.Secondary && labelmap != null) {
+    if (axis == WidgetAxis.Offset && labelmap != null) {
       labelmap.setBounds(axis, start, end);
     }
   }
@@ -183,7 +183,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   @Override
   public void zoom(WidgetAxis dim, double zoom_scale) {
     super.zoom(dim, zoom_scale);
-    if (dim == WidgetAxis.Secondary && labelmap != null) {
+    if (dim == WidgetAxis.Offset && labelmap != null) {
       labelmap.zoom(dim, zoom_scale);
     }
   }
@@ -191,7 +191,7 @@ public class AffyLabelledTierMap extends AffyTieredMap {
   @Override
   public void scroll(WidgetAxis axisid, double value) {
     super.scroll(axisid, value);
-    if (axisid == WidgetAxis.Secondary && labelmap != null) {
+    if (axisid == WidgetAxis.Offset && labelmap != null) {
       labelmap.scroll(axisid, value);
     }
   }

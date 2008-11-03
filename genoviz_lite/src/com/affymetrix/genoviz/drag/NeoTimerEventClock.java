@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.drag;
 
 import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
+import com.affymetrix.genoviz.util.NeoConstants.Direction;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -51,7 +52,7 @@ public class NeoTimerEventClock extends Thread {
   protected int count = 0;
 
   /** an arbitrary object to include in generated NeoTimerEvents */
-  protected Object arg = null;
+  protected Direction arg = null;
 
   // probably should also have a time field in milliseconds, either
   //   absolute, relative, or both...
@@ -70,7 +71,7 @@ public class NeoTimerEventClock extends Thread {
   }
 
   public NeoTimerEventClock(int initial_interval,
-      int time_interval, Object arg) {
+      int time_interval, Direction arg) {
     this.time_interval = time_interval;
     this.initial_interval = initial_interval;
     this.arg = arg;

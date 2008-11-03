@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.WidgetAxis;
 import com.affymetrix.genoviz.event.NeoWidgetListener;
-import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.Color;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
@@ -51,8 +51,8 @@ public interface NeoWidgetI {
   
   /**
    * Retrieves the orientation.  If {@link Orientation#Horizontal},
-   * then {@link WidgetAxis#Primary} corresponds to {@link XY#X}, and
-   * {@link WidgetAxis#Secondary} corresponds to {@link XY#Y}.
+   * then {@link WidgetAxis#Range} corresponds to {@link XY#X}, and
+   * {@link WidgetAxis#Offset} corresponds to {@link XY#Y}.
    * @return
    */
   public Orientation getOrientation();
@@ -60,6 +60,10 @@ public interface NeoWidgetI {
   /** @return true if {@link #getOrientation()} is {@link Orientation#Horizontal} */
   public boolean isHorizontal();
 
+  public WidgetAxis toWidgetAxis(XY pixelAxis);
+  
+  public XY toPixelAxis(WidgetAxis widgetAxis);
+  
   /**
    * Indicates that the widget should be resized
    * to fit within a container
@@ -101,9 +105,9 @@ public interface NeoWidgetI {
    * within the current bounds of the widget.
    *
    * @param xstretch the boolean determines whether stretchToFit
-   *   is applied along the x-axis. (Primary axis if horizontal)
+   *   is applied along the x-axis. ({@link WidgetAxis#Range} if horizontal)
    * @param ystretch the boolean determines whether stretchToFit
-   *   is applied along the y-axis. (Secondary axis if horizontal).
+   *   is applied along the y-axis. ({@link WidgetAxis#Offset} if horizontal).
    */
   public void stretchToFit(boolean xstretch, boolean ystretch);
 
@@ -144,7 +148,7 @@ public interface NeoWidgetI {
    *
    * @see #getScrollIncrementBehavior
    */
-  public void setScrollIncrementBehavior(WidgetAxis dim, ScrollIncrementBehavior behavior);
+  public void setScrollIncrementBehavior(WidgetAxis widgetAxis, ScrollIncrementBehavior behavior);
 
   /**
    * Use this to decide whether or not the scrolling increment
@@ -156,7 +160,7 @@ public interface NeoWidgetI {
    *
    * @see #setScrollIncrementBehavior
    */
-  public ScrollIncrementBehavior getScrollIncrementBehavior(WidgetAxis dim);
+  public ScrollIncrementBehavior getScrollIncrementBehavior(WidgetAxis widgetAxis);
 
   /**
    * Scrolls this widget along the specified axis.
@@ -164,7 +168,7 @@ public interface NeoWidgetI {
    * @param dim    indentifies which axis to scroll.
    * @param value  the distance in coordinate space to scroll.
    */
-  public void scroll(WidgetAxis dim, double value);
+  public void scroll(WidgetAxis widgetAxis, double value);
 
   /**
    * Zoom this widget.
@@ -172,7 +176,7 @@ public interface NeoWidgetI {
    * @param zoom_scale the double indicating the number of pixels
    *   per coordinate
    */
-  public void zoom(WidgetAxis dim, double zoom_scale);
+  public void zoom(WidgetAxis widgetAxis, double zoom_scale);
 
   /**
    * Sets the maximum allowable <code>zoom_scale</code> for this widget.
@@ -189,7 +193,7 @@ public interface NeoWidgetI {
    * @see #zoom
    * @see #getMaxZoom
    */
-  public void setMaxZoom(WidgetAxis dim, double max);
+  public void setMaxZoom(WidgetAxis widgetAxis, double max);
 
   /*
    * Sets the minimum allowable <code>zoom_scale</code> for this widget.
@@ -206,7 +210,7 @@ public interface NeoWidgetI {
    * @see #zoom
    * @see #getMinZoom
    */
-  public void setMinZoom(WidgetAxis dim, double min);
+  public void setMinZoom(WidgetAxis widgetAxis, double min);
 
   /**
    * Returns the currently set maximum <code>zoom_scale</code>.
@@ -214,7 +218,7 @@ public interface NeoWidgetI {
    * @return the maximum number of pixels per coordinate.
    * @see #setMaxZoom
    */
-  public double getMaxZoom(WidgetAxis dim);
+  public double getMaxZoom(WidgetAxis widgetAxis);
 
   /**
    * Returns the currently set minimum <code>zoom_scale</code>.
@@ -222,7 +226,7 @@ public interface NeoWidgetI {
    * @return the minimum number of pixels per coordinate.
    * @see #setMinZoom
    */
-  public double getMinZoom(WidgetAxis dim);
+  public double getMinZoom(WidgetAxis widgetAxis);
 
   /**
    * Returns a list of all <code>Glyph</code>s at

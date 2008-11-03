@@ -1,6 +1,6 @@
 /**
 *   Copyright (c) 1998-2008 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
@@ -11,7 +11,7 @@
 
 package com.affymetrix.genoviz.transform;
 
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.widget.XY;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -23,9 +23,9 @@ public class LinearTwoDimTransform implements TwoDimTransform  {
   protected double xscale, yscale, xoffset, yoffset;
 
 
-  /** 
+  /**
    * Constructs a new LinearTwoDimTransform
-   * with Primary and Secondary scales set at 1
+   * with Range and Offset scales set at 1
    * and offsets of 0.
    */
   public LinearTwoDimTransform() {
@@ -66,7 +66,7 @@ public class LinearTwoDimTransform implements TwoDimTransform  {
 
   /**
    * Sets the transform's scales and offsets such that the coord_box's space is
-   * mapped to the pixel_box's space.  For example, to map a whole Scene to a 
+   * mapped to the pixel_box's space.  For example, to map a whole Scene to a
    * view, with no zooming, the coord_box would be the coordinate bounds of
    * the Scene, and the pixel_box the size of the NeoCanvas holding the View.
    * @param coord_box the coordinates of the Scene
@@ -83,17 +83,17 @@ public class LinearTwoDimTransform implements TwoDimTransform  {
    * Transforms the coordinate on the axis indicated.
    * If transform is being used in between a scene and a view,
    * this would convert from scene coordinates to view/pixel coordinates.
-   * @param orientation 
+   * @param orientation
    * @param in   the coordinate
    */
   @Override
-  public double transform(WidgetAxis orientation, double in) {
+  public double transform(XY pixelAxis, double in) {
     final double out;
-    switch (orientation) {
-      case Primary:
+    switch (pixelAxis) {
+      case X:
         out = in * xscale + xoffset;
         break;
-      case Secondary:
+      case Y:
         out = in * yscale + yoffset;
         break;
       default:
@@ -106,17 +106,17 @@ public class LinearTwoDimTransform implements TwoDimTransform  {
    * Transforms the coordinate inversely on the axis indicated.
    * If transform is being used in between a scene and a view,
    * this would convert from  view/pixel coordinates to Scene coordinates.
-   * @param orientation the WidgetAxis
+   * @param orientation the XY
    * @param in the coordinate
    */
   @Override
-  public double inverseTransform(WidgetAxis orientation, double in) {
+  public double inverseTransform(XY orientation, double in) {
     final double out;
     switch (orientation) {
-      case Primary:
+      case X:
         out = (in - xoffset) / xscale;
         break;
-      case Secondary:
+      case Y:
         out = (in - yoffset) / yscale;
         break;
       default:
@@ -125,10 +125,10 @@ public class LinearTwoDimTransform implements TwoDimTransform  {
     return out;
   }
 
-  /** 
+  /**
    * Sets the scale of the transform directly.
-   * @param x Primary scale
-   * @param y Secondary scale
+   * @param x Range scale
+   * @param y Offset scale
    */
   public void setScale(double x, double y) {
     xscale = x;
@@ -137,8 +137,8 @@ public class LinearTwoDimTransform implements TwoDimTransform  {
 
   /**
    * Sets the offsets directly.
-   * @param x Primary offset
-   * @param y Secondary offset
+   * @param x Range offset
+   * @param y Offset offset
    */
   public void setTranslation(double x, double y) {
     xoffset = x;

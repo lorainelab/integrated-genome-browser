@@ -66,17 +66,17 @@ public class TierTest {
 
     map.setSelectionAppearance(SelectType.SELECT_OUTLINE);
     
-    map.setReshapeBehavior(NeoMap.Xint, NeoMap.FITWIDGET - 3);
-    map.setReshapeBehavior(NeoMap.Yint, 0);
+    map.setReshapeBehavior(WidgetAxis.Range, NeoMap.FITWIDGET - 3);
+    map.setReshapeBehavior(WidgetAxis.Offset, 0);
     
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
     xzoomer = new JSlider(Adjustable.HORIZONTAL);
-    map.setZoomer(WidgetAxis.Primary, xzoomer);
+    map.setZoomer(WidgetAxis.Range, xzoomer);
     cpane.add("North", xzoomer);
 
     //    yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
     yzoomer = new JSlider(Adjustable.VERTICAL);
-    map.setZoomer(WidgetAxis.Secondary, yzoomer);
+    map.setZoomer(WidgetAxis.Offset, yzoomer);
     cpane.add("West", yzoomer);
 
     int mapWidth = 10000;

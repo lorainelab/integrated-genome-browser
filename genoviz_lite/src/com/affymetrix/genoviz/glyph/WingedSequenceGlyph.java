@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.transform.LinearTwoDimTransform;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 
 /**
  * Extends SequnceGlyph, but puts an ellipsis in the middle of the
@@ -30,10 +30,10 @@ public class WingedSequenceGlyph extends SequenceGlyph {
   Font variable_font;
 
   public WingedSequenceGlyph() {
-    this(NeoConstants.Orientation.Horizontal);
+    this(Orientation.Horizontal);
   }
 
-  public WingedSequenceGlyph(NeoConstants.Orientation orientation) {
+  public WingedSequenceGlyph(Orientation orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
     scratchrect = new java.awt.geom.Rectangle2D.Double();

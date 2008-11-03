@@ -11,5 +11,15 @@
 package com.affymetrix.genoviz.bioviews;
 
 /** Identifies the two axes of a SceneI. */
-public enum WidgetAxis {Primary, Secondary}
-  
+//TODO: find and verify all uses, especially uses of ordinal()
+public enum WidgetAxis {
+  /** The primary axis.
+   *  When a map is {@link com.affymetrix.genoviz.util.NeoConstants.Orientation#Horizontal},
+   *  this corresponds to the x axis.
+   */
+  Range,
+
+  /** The secondary axis. */
+  Offset;
+}
+

@@ -20,7 +20,7 @@ import java.util.List;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import java.awt.geom.Point2D;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -242,20 +242,20 @@ public class GlyphDragger implements MouseListener, MouseMotionListener {
     return newgl;
   }
 
-  public void setConstraint(NeoConstants.Orientation axis, boolean is_constrained) {
-    if (axis == NeoConstants.Orientation.Vertical) {
+  public void setConstraint(Orientation axis, boolean is_constrained) {
+    if (axis == Orientation.Vertical) {
       constrained[VERT] = is_constrained;
     }
-    else if (axis == NeoConstants.Orientation.Horizontal) {
+    else if (axis == Orientation.Horizontal) {
       constrained[HORIZ] = is_constrained;
     }
   }
 
-  public boolean getConstraint(NeoConstants.Orientation axis) {
-    if (axis == NeoConstants.Orientation.Vertical) {
+  public boolean getConstraint(Orientation axis) {
+    if (axis == Orientation.Vertical) {
       return constrained[VERT];
     }
-    else if (axis == NeoConstants.Orientation.Horizontal) {
+    else if (axis == Orientation.Horizontal) {
       return constrained[HORIZ];
     }
     else {

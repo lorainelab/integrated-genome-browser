@@ -48,12 +48,12 @@ public class LabelledTierTest {
     map.setBackground(Color.CYAN);
 
     xzoomer = new JSlider(Adjustable.HORIZONTAL);
-    map.setZoomer(WidgetAxis.Primary, xzoomer);
+    map.setZoomer(WidgetAxis.Range, xzoomer);
     cpane.add("North", xzoomer);
 
     yzoomer = new JSlider(Adjustable.VERTICAL);
     //    yzoomer = new NeoScrollbar(Adjustable.VERTICAL);
-    map.setZoomer(WidgetAxis.Secondary, yzoomer);
+    map.setZoomer(WidgetAxis.Offset, yzoomer);
     cpane.add("West", yzoomer);
 
     map.setMapRange(0, 1000);

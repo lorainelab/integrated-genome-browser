@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.FontMetrics;
@@ -41,7 +42,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
   private NeoMap map;
   private final double topMargin = 0.0;  // margins between viewable area and the shadow
   private final double bottomMargin = 0.0;
-  private NeoConstants.Orientation orientation;
+  private Orientation orientation;
   private boolean labeled=false;  // should we draw a label?
   private boolean labelForReverse = false;
   private long residueCount;
@@ -71,7 +72,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @param destination the map on which the shadow is cast.
    */
   public Shadow( NeoMap destination ) {
-    this( destination, NeoConstants.Orientation.Horizontal );
+    this( destination, Orientation.Horizontal );
   }
 
   /**
@@ -80,7 +81,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @param destination the map on which the shadow is cast.
    * @param theOrientation of the map (HORIZONTAL or VERTICAL).
    */
-  public Shadow( NeoMap destination, NeoConstants.Orientation theOrientation ) {
+  public Shadow( NeoMap destination, Orientation theOrientation ) {
     this( destination, theOrientation, Color.lightGray );
   }
 
@@ -94,11 +95,11 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
    * @param theOrientation of the map
    * @param theColor of the visible glyph
    */
-  public Shadow( NeoMap destination, NeoConstants.Orientation theOrientation, Color theColor ) {
+  public Shadow( NeoMap destination, Orientation theOrientation, Color theColor ) {
     resetShadow(destination, theOrientation, theColor);
   }
 
-  public void resetShadow(NeoMap destination, NeoConstants.Orientation theOrientation, Color theColor)  {
+  public void resetShadow(NeoMap destination, Orientation theOrientation, Color theColor)  {
     this.map = destination;
 
     // Start out with the TransientGlyph the full size of the map!

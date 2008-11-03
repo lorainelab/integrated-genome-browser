@@ -306,7 +306,7 @@ public abstract class AbstractTieredMap extends NeoMap
     super.setBounds(axis, start, end);
     java.awt.geom.Rectangle2D.Double mbox = getScene().getRootGlyph().getCoordBox();
 
-    if ((axis != WidgetAxis.Primary) || (tiers == null)) {
+    if ((axis != WidgetAxis.Range) || (tiers == null)) {
       return;
     }
 

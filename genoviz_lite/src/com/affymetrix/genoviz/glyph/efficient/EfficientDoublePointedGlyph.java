@@ -13,7 +13,7 @@ package com.affymetrix.genoviz.glyph.efficient;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 
-import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 

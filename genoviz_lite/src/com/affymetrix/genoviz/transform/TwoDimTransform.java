@@ -1,6 +1,6 @@
 /**
 *   Copyright (c) 1998-2008 Affymetrix, Inc.
-*    
+*
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
 *   this source code.
@@ -10,7 +10,7 @@
 */
 package com.affymetrix.genoviz.transform;
 
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.widget.XY;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -37,7 +37,7 @@ public interface TwoDimTransform extends Cloneable  {
    *
    * @return the transformed coordinate value
    */
-  public double transform(WidgetAxis dim, double in);
+  public double transform(XY dim, double in);
 
   /**
    * Inverts a single coordinate transformation.
@@ -47,7 +47,7 @@ public interface TwoDimTransform extends Cloneable  {
    *
    * @return the transformed coordinate value
    */
-  public double inverseTransform(WidgetAxis dim, double in);
+  public double inverseTransform(XY dim, double in);
 
 
   /**
@@ -78,7 +78,7 @@ public interface TwoDimTransform extends Cloneable  {
    *
    * @return the transformed rectangle
    */
-  public Rectangle2D.Double transform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
+  public Rectangle2D.Double transform(Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
 
   /**
    * Inverts the transformation of a rectangle.
@@ -88,7 +88,7 @@ public interface TwoDimTransform extends Cloneable  {
    *
    * @return the transformed rectangle
    */
-  public Rectangle2D.Double inverseTransform(java.awt.geom.Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
+  public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, java.awt.geom.Rectangle2D.Double dst);
 
   /**
    * Creates a clone of the TransormI.

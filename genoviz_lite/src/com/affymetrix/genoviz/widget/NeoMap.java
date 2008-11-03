@@ -36,7 +36,7 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.HorizontalAxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JScrollBar;
@@ -205,7 +205,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param vscroll_show determines whether or not to show a vertical scrollbar.
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show) {
-    this(hscroll_show, vscroll_show, NeoConstants.Orientation.Horizontal,
+    this(hscroll_show, vscroll_show, Orientation.Horizontal,
          new LinearTwoDimTransform());
   }
 
@@ -218,7 +218,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param vscroll_location determines where to show a the vertical scrollbar.
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show, String hscroll_location, String vscroll_location) {
-    this(hscroll_show, vscroll_show, NeoConstants.Orientation.Horizontal,
+    this(hscroll_show, vscroll_show, Orientation.Horizontal,
          new LinearTwoDimTransform(), hscroll_location, vscroll_location);
   }
 
@@ -228,7 +228,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param orient must be {@link com.affymetrix.genoviz.util.NeoConstants.Orientation#Horizontal} 
    * or {@link com.affymetrix.genoviz.util.NeoConstants.Orientation#Vertical}. 
    */
-  public NeoMap(NeoConstants.Orientation orient) {
+  public NeoMap(Orientation orient) {
     this(true, true, orient, new LinearTwoDimTransform());
   }
 
@@ -242,7 +242,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param tr LinearTwoDimTransform for zooming.
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show,
-    NeoConstants.Orientation orient, LinearTwoDimTransform tr) {
+    Orientation orient, LinearTwoDimTransform tr) {
     // use default hscroll_loc and vscroll_loc
     this(hscroll_show, vscroll_show, orient, tr, hscroll_default_loc, vscroll_default_loc);
   }
@@ -258,7 +258,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param vscroll_location can be "West", otherwise "East" is assumed.
    */
   public NeoMap(boolean hscroll_show, boolean vscroll_show,
-      NeoConstants.Orientation orient, LinearTwoDimTransform tr, String hscroll_location, String vscroll_location) {
+      Orientation orient, LinearTwoDimTransform tr, String hscroll_location, String vscroll_location) {
     super();
     this.hscroll_show = hscroll_show;
     this.vscroll_show = vscroll_show;
@@ -308,11 +308,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
      *  and reset in widgets that don't want it [like NeoSeq] )
      */
     if (hscroll_show)  {
-      setScrollIncrementBehavior(WidgetAxis.Primary, ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT);
+      setScrollIncrementBehavior(WidgetAxis.Range, ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT);
     }
 
     if (vscroll_show)  {
-      setScrollIncrementBehavior(WidgetAxis.Secondary, ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT);
+      setScrollIncrementBehavior(WidgetAxis.Offset, ScrollIncrementBehavior.AUTO_SCROLL_INCREMENT);
     }
 
     glyph_hash = new Hashtable<GlyphI,Object>();
@@ -527,12 +527,12 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     // scene.setCoords() is now handled in setBounds()
 
     if (! isHorizontal()) {
-      //      this.setBounds(Secondary,start,end);
-      this.setFloatBounds(WidgetAxis.Secondary,(double)start,(double)end);
+      //      this.setBounds(Offset,start,end);
+      this.setFloatBounds(WidgetAxis.Offset,(double)start,(double)end);
     }
     else {
-      //      this.setBounds(Primary,start,end);
-      this.setFloatBounds(WidgetAxis.Primary,(double)start,(double)end);
+      //      this.setBounds(Range,start,end);
+      this.setFloatBounds(WidgetAxis.Range,(double)start,(double)end);
     }
 
     if (axes != null) {
@@ -576,14 +576,17 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     return range;
   }
 
-
   /**
    * Sets the visible range to exactly match the given range.
    * This can cause the zoom level to change.
    * @param start
    * @param end
    */
-  public void setVisibleRangeTo(int start, int end) {
+  public void setVisibleRangeTo(double start, double end) {
+    final double coord_width = end - start;
+    final double pixel_width = getView().getPixelBox().width;
+    zoomRange(Math.min(pixel_width / coord_width, getMaxZoom(WidgetAxis.Range)));
+    scrollRange(start);
   }
   
   /**
@@ -594,8 +597,19 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param start
    * @param end
    */
-  public void scrollRangeToVisible(int start, int end) {
-    
+  public void scrollRangeToVisible(double start, double end) {
+    final int[] visibleRange = getVisibleRange();
+    final int visibleExtent = visibleRange[1] - visibleRange[0];
+
+    if (visibleExtent < (end-start)) {
+      setVisibleRangeTo(start, end);
+    } else if (start < visibleRange[0]) {
+      scrollRange(start);
+    } else if (end > visibleRange[1]) {
+      // scroll such that the new visibleRange end will equal rangeEnd
+      scrollRange(visibleRange[0] + end - visibleRange[1]);
+    }
+    // else, the range is already visible.
   }
   
   /**
@@ -609,10 +623,10 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     //TODO!: is this right?
     
     if (! isHorizontal()) {
-      this.setBounds(WidgetAxis.Primary, start, end);
+      this.setBounds(WidgetAxis.Range, start, end);
     }
     else  {
-      this.setBounds(WidgetAxis.Secondary,start,end);
+      this.setBounds(WidgetAxis.Offset,start,end);
     }
   }
 
@@ -650,7 +664,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   /**
-   *  xfit and yfit override reshape_constraint[Primary] and reshape_constraint[Secondary]
+   *  xfit and yfit override reshape_constraint[Range] and reshape_constraint[Offset]
    */
   @Override
   public void stretchToFit(boolean xfit, boolean yfit) {
@@ -788,9 +802,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         zoomer[Xint].getMinimum(),
         zoomer[Xint].getMaximum()-zoomer[Xint].getExtent());
 
-      adjustZoomer(WidgetAxis.Primary);
+      adjustZoomer(WidgetAxis.Range);
     }
-    adjustScroller(WidgetAxis.Primary);
+    adjustScroller(WidgetAxis.Range);
     if (zoomer[Yint] != null) {
       // setting maxy of exponential tranform to (max - visible amount) to
       // compensate for the fact that in JDK1.1 and Swing Scrollbars,
@@ -801,9 +815,9 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
         max_pixels_per_coord[Yint],
         zoomer[Yint].getMinimum(),
         zoomer[Yint].getMaximum()-zoomer[Yint].getExtent());
-      adjustZoomer(WidgetAxis.Secondary);
+      adjustZoomer(WidgetAxis.Offset);
     }
-    adjustScroller(WidgetAxis.Secondary);
+    adjustScroller(WidgetAxis.Offset);
 
     if (DEBUG_STRETCH)  {
       System.out.println("leaving NeoMap.stretchToFit(): " + stretchCount);
@@ -820,7 +834,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   public AxisGlyph addAxis(int offset) {
     AxisGlyph axis = null;
     if (! isHorizontal()) {
-      axis = new AxisGlyph(NeoConstants.Orientation.Vertical);
+      axis = new AxisGlyph(Orientation.Vertical);
       axis.setCoords(offset-10, scene.getCoordBox().y, 20,
                      scene.getCoordBox().height);
     }
@@ -848,31 +862,31 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   @Override
   public void setRangeZoomer(JSlider slider) {
-    setZoomer(WidgetAxis.Primary, slider);
+    setZoomer(WidgetAxis.Range, slider);
   }
 
   @Override
   public void setOffsetZoomer(JSlider slider) {
-    setZoomer(WidgetAxis.Secondary, slider);
+    setZoomer(WidgetAxis.Offset, slider);
   }
 
   public void scrollOffset(double value) {
-    scroll(WidgetAxis.Secondary, value);
+    scroll(WidgetAxis.Offset, value);
   }
 
   public void scrollRange(double value) {
-    scroll(WidgetAxis.Primary, value);
+    scroll(WidgetAxis.Range, value);
   }
 
 
   @Override
   public void zoomRange(double zoom_scale) {
-    zoom(WidgetAxis.Primary, zoom_scale);
+    zoom(WidgetAxis.Range, zoom_scale);
   }
 
   @Override
   public void zoomOffset(double zoom_scale) {
-    zoom(WidgetAxis.Secondary, zoom_scale);
+    zoom(WidgetAxis.Offset, zoom_scale);
   }
 
   /**
@@ -892,11 +906,11 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * scroller[] entries are expected to be NeoScrollbars
    */
   public void setRangeScroller(JScrollBar nscroll) {
-    setScroller(WidgetAxis.Primary, nscroll);
+    setScroller(WidgetAxis.Range, nscroll);
   }
 
   public void setOffsetScroller(JScrollBar nscroll) {
-    setScroller(WidgetAxis.Secondary, nscroll);
+    setScroller(WidgetAxis.Offset, nscroll);
   }
 
   public JScrollBar getScroller(WidgetAxis dim) {
@@ -904,7 +918,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   }
 
   /**
-   * @param dim should be {@link #Primary} or {@link #Secondary}.
+   * @param dim should be {@link #Range} or {@link #Offset}.
    * @return the slider responsible for zooming in the <var>id</var> direction.
    */
   public JSlider getZoomer(WidgetAxis dim) {
@@ -1138,7 +1152,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
     font_for_max_zoom = fnt;
     seqmetrics = view.getGraphics().getFontMetrics(font_for_max_zoom);
     int font_width = seqmetrics.charWidth('C');
-    setMaxZoom(WidgetAxis.Primary, font_width);
+    setMaxZoom(WidgetAxis.Range, font_width);
   }
 
 
@@ -1161,26 +1175,26 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       int pixels_per_scroll = 10;
       if (direction == NeoConstants.Direction.UP) {
         scroll_to_coord =
-          trans.inverseTransform(WidgetAxis.Secondary, -pixels_per_scroll);
-        scroll(WidgetAxis.Secondary, scroll_to_coord);
+          trans.inverseTransform(XY.Y, -pixels_per_scroll);
+        scroll(WidgetAxis.Offset, scroll_to_coord);
         updateWidget();
       }
       else if (direction == NeoConstants.Direction.DOWN) {
         scroll_to_coord =
-          trans.inverseTransform(WidgetAxis.Secondary, pixels_per_scroll);
-        scroll(WidgetAxis.Secondary, scroll_to_coord);
+          trans.inverseTransform(XY.Y, pixels_per_scroll);
+        scroll(WidgetAxis.Offset, scroll_to_coord);
         updateWidget();
       }
       else if (direction == NeoConstants.Direction.RIGHT) {
         scroll_to_coord =
-          trans.inverseTransform(WidgetAxis.Primary, pixels_per_scroll);
-        scroll(WidgetAxis.Primary, scroll_to_coord);
+          trans.inverseTransform(XY.X, pixels_per_scroll);
+        scroll(WidgetAxis.Range, scroll_to_coord);
         updateWidget();
       }
       else if (direction == NeoConstants.Direction.LEFT) {
         scroll_to_coord =
-          trans.inverseTransform(WidgetAxis.Primary, -pixels_per_scroll);
-        scroll(WidgetAxis.Primary, scroll_to_coord);
+          trans.inverseTransform(XY.X, -pixels_per_scroll);
+        scroll(WidgetAxis.Range, scroll_to_coord);
         updateWidget();
       }
     }

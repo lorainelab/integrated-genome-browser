@@ -15,11 +15,11 @@ package com.affymetrix.genoviz.util;
 
 //TODO separate these enums into separate java files
 public interface NeoConstants {
-
-  public static enum Orientation {
-    Horizontal, Vertical
-  }
   
+  /**
+   * Represents a direction in Pixel space, 
+   * not Widget Coordinate space.
+   */
   public static enum Direction {
     LEFT, RIGHT, UP, DOWN, CENTER, NONE,
     /** For flipping or reflecting things about a vertical axis. */
@@ -28,15 +28,11 @@ public interface NeoConstants {
     MIRROR_HORIZONTAL
   }
 
-  public static enum VerticalPlacement {
-    ABOVE, BELOW, CENTER
-  }
-  
-  public static enum HorizontalPlacement {
-    LEFT, RIGHT, CENTER
-  }
-  
-  public static enum Placement { //TODO: Split into Vertical and Horizontal placements
+  /**
+   * Represents a relative placement in 
+   * Pixel space, not Widget Coordinate space.
+   */
+  public static enum Placement {
     ABOVE, BELOW, CENTER, LEFT, RIGHT, NONE
   }
 }

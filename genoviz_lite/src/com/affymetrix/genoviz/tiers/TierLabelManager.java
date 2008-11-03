@@ -19,7 +19,7 @@ import javax.swing.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.util.NeoConstants.Orientation;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArrayList;
 

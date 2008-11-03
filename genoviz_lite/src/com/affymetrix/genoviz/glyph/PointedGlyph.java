@@ -1,5 +1,5 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
+*   Copyright (c) 1998-2008 Affymetrix, Inc.
 *
 *   Licensed under the Common Public License, Version 1.0 (the "License").
 *   A copy of the license must be included with any distribution of
@@ -15,7 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Orientation;
 import java.awt.Graphics;
 
 /**
@@ -27,6 +27,7 @@ import java.awt.Graphics;
  */
 public class PointedGlyph extends DirectedGlyph {
 
+  @Override
   public void draw(ViewI theView) {
     theView.transformToPixels(this.coordbox, this.pixelbox);
     if (this.pixelbox.width == 0) { this.pixelbox.width = 1; }
@@ -36,7 +37,7 @@ public class PointedGlyph extends DirectedGlyph {
     int x[] = new int[6];
     int y[] = new int[6];
     int halfThickness = 1;
-    if (NeoConstants.Orientation.Horizontal == this.getOrientation() && this.isForward()) {
+    if (Orientation.Horizontal == this.getOrientation() && this.isForward()) {
       halfThickness = (pixelbox.height-1)/2;
       x[0] = pixelbox.x;
       x[2] = pixelbox.x+pixelbox.width;
@@ -49,7 +50,7 @@ public class PointedGlyph extends DirectedGlyph {
       y[3] = y[0] + pixelbox.height;
       y[4] = y[3];
     }
-    else if (NeoConstants.Orientation.Horizontal == this.getOrientation() && !this.isForward()) {
+    else if (Orientation.Horizontal == this.getOrientation() && !this.isForward()) {
       halfThickness = (pixelbox.height-1)/2;
       x[0] = pixelbox.x;
       x[2] = x[0] + pixelbox.width;
@@ -62,7 +63,7 @@ public class PointedGlyph extends DirectedGlyph {
       y[3] = y[1] + pixelbox.height;
       y[4] = y[3];
     }
-    else if (NeoConstants.Orientation.Vertical == this.getOrientation() && this.isForward()) {
+    else if (Orientation.Vertical == this.getOrientation() && this.isForward()) {
       halfThickness = (pixelbox.width-1)/2;
       x[0] = pixelbox.x;
       x[1] = pixelbox.x+pixelbox.width;
@@ -75,7 +76,7 @@ public class PointedGlyph extends DirectedGlyph {
       y[2] = Math.max(y[3]-halfThickness, y[0])-1;
       y[4] = y[2];
     }
-    else if (NeoConstants.Orientation.Vertical == this.getOrientation() && !this.isForward()) {
+    else if (Orientation.Vertical == this.getOrientation() && !this.isForward()) {
       halfThickness = (pixelbox.width)/2;
       x[0] = pixelbox.x + pixelbox.width;
       x[1] = pixelbox.x;

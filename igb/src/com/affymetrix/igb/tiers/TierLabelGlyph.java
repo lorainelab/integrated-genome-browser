@@ -342,6 +342,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
    * @deprecated use {@link #setForegroundColor}.
    * Also see {@link #setBackgroundColor}.
    */
+	@Deprecated
   public void setColor( Color c ) {
     setForegroundColor( c );
   }
@@ -350,6 +351,7 @@ public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
    * @deprecated use {@link #getForegroundColor}.
    * Also see {@link #setBackgroundColor}.
    */
+	@Deprecated
   public Color getColor() {
     return getForegroundColor();
   }

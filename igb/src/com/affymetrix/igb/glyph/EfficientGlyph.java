@@ -500,6 +500,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
    * false otherwise.
    * @deprecated use {@link #setSelected(boolean)} instead.
    */
+	@Deprecated
   public void select(boolean selected) {
     setSelected(selected);
   }

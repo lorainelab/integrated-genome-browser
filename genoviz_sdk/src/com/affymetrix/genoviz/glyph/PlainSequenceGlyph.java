@@ -51,7 +51,9 @@ public class PlainSequenceGlyph extends AbstractResiduesGlyph {
 
   /**
    *  Deprecated -- use getResidues() instead
+	 * @deprecated
    */
+	@Deprecated
   public String getSequence() {
     return sequence;
   }

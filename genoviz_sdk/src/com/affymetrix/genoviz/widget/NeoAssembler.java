@@ -2043,33 +2043,43 @@ implements NeoAssemblerI, NeoViewBoxListener,
   public GlyphI getAxis () { return axis_glyph; }
 
   /** Deprecated methods that get/set residue rectangle colors. */
+	@Deprecated
   public Color getMatchColor() {
     return getMatchRectColor();
   }
+	@Deprecated
   public Color getMisMatchColor() {
     return getMisMatchRectColor();
   }
+	@Deprecated
   public Color getUnrecognizedColor() {
     return getUnrecognizedRectColor();
   }
+	@Deprecated
   public Color getResidueColor() {
     return getResidueFontColor();
   }
+	@Deprecated
   public void setMatchColor(Color col) {
     setMatchFontColor(col);
   }
+	@Deprecated
   public void setMisMatchColor(Color col) {
     setMisMatchRectColor(col);
   }
+	@Deprecated
   public void setUnrecognizedColor(Color col) {
     setUnrecognizedRectColor(col);
   }
+	@Deprecated
   public void setResidueColor(Color col) {
     setResidueFontColor(col);
   }
+	@Deprecated
   public void setUnalignedBackgroundColor(Color col) {
     setUnalignedRectColor(col);
   }
+	@Deprecated
   public void setUnalignedResidueColor(Color col) {
     setUnalignedFontColor(col);
   }

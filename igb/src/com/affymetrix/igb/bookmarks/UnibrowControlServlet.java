@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
@@ -149,77 +150,12 @@ public class UnibrowControlServlet {
     if (DEBUG_DAS2_LOAD)  { System.out.println("UnibrowControlServlet.loadDataFromDas2 called"); }
     ArrayList das2_requests = new ArrayList();
     ArrayList opaque_requests = new ArrayList();
-    for (int i=0; i<das2_server_urls.length; i++) {
-      String das2_server_url = URLDecoder.decode(das2_server_urls[i]);
-      String das2_query_url = URLDecoder.decode(das2_query_urls[i]);
-
-      String cap_url = null;
-      String seg_uri = null;
-      String type_uri = null;
-      String overstr = null;
-      String format = null;
-
-      boolean use_optimizer = true;
-
-      int qindex = das2_query_url.indexOf('?');
-      if (qindex > -1) {
-	cap_url = das2_query_url.substring( 0, qindex );
-	if (DEBUG_DAS2_LOAD)  { System.out.println("     capability: " + cap_url); }
-	String query = das2_query_url.substring( qindex+1 );
-	String[] query_array = query_splitter.split(query);
-	for (int k=-0; k<query_array.length; k++)  {
-	  String tagval = query_array[k];
-	  int eqindex = tagval.indexOf('=');
-	  String tag = tagval.substring(0, eqindex);
-	  String val = tagval.substring(eqindex+1);
-	  if (DEBUG_DAS2_LOAD)  { System.out.println("     query param, tag = : " + tag + ", val = " + val); }
-	  if (tag.equals("format") && (format == null)) { format = val; }
-	  else if (tag.equals("type") && (type_uri == null)) { type_uri = val; }
-	  else if (tag.equals("segment") && (seg_uri == null)) { seg_uri = val; }
-	  else if (tag.equals("overlaps") && (overstr == null)) { overstr = val; }
-	  else {
-	    use_optimizer = false;
-	    break;
-	  }
-	}
-	if (type_uri == null || seg_uri== null || overstr == null) { use_optimizer = false; }
-      }
-      else { use_optimizer = false; }
-
-      //
-      // only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
-      // otherwise treat like any other opaque data url via loadDataFromURLs call
-      //
-      if (use_optimizer) {
-	try {
-	  Das2ServerInfo server = Das2Discovery.getDas2Server(das2_server_url);
-	  if (server == null) { server = Das2Discovery.addDas2Server(das2_server_url, das2_server_url); }
-	  if (DEBUG_DAS2_LOAD)  { System.out.println("     server: " + server.getID()); }
-	  server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
-
-	  Das2VersionedSource version = (Das2VersionedSource)Das2Discovery.getCapabilityMap().get(cap_url);
-	  if (DEBUG_DAS2_LOAD)  { System.out.println("     version: " + version.getID()); }
-	  Das2Type dtype = (Das2Type)version.getTypes().get(type_uri);
-	  Das2Region segment = (Das2Region)version.getSegments().get(seg_uri);
-	  String[] minmax = overstr.split(":");
-	  int min = Integer.parseInt(minmax[0]);
-	  int max = Integer.parseInt(minmax[1]);
-	  SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
-	  Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap, null);
-	  request.setFormat(format);
-	  if (DEBUG_DAS2_LOAD)  { System.out.println("adding das2 request: " + das2_query_url); }
-	  das2_requests.add(request);
-	}
-	catch (Exception ex)  {
-	  // something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
-	  ex.printStackTrace();
-	  use_optimizer = false;
-	  opaque_requests.add(das2_query_url);
-	}
-      }
-
-    }
-
+		try {
+			generateDAS2AndOpaqueRequests(das2_server_urls, das2_query_urls, das2_requests, opaque_requests);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
     if (das2_requests.size() > 0)  {
       Das2LoadView3.processFeatureRequests(das2_requests, true);
     }
@@ -229,6 +165,96 @@ public class UnibrowControlServlet {
       loadDataFromURLs(uni, data_urls, null, null);
     }
   }
+	
+	private static void generateDAS2AndOpaqueRequests(final String[] das2_server_urls, final String[] das2_query_urls, ArrayList das2_requests, ArrayList opaque_requests) throws UnsupportedEncodingException {
+		for (int i = 0; i < das2_server_urls.length; i++) {
+			String das2_server_url = URLDecoder.decode(das2_server_urls[i], "UTF-8");
+			String das2_query_url = URLDecoder.decode(das2_query_urls[i], "UTF-8");
+
+			String cap_url = null;
+			String seg_uri = null;
+			String type_uri = null;
+			String overstr = null;
+			String format = null;
+
+			boolean use_optimizer = true;
+
+			int qindex = das2_query_url.indexOf('?');
+			if (qindex > -1) {
+				cap_url = das2_query_url.substring(0, qindex);
+				if (DEBUG_DAS2_LOAD) {
+					System.out.println("     capability: " + cap_url);
+				}
+				String query = das2_query_url.substring(qindex + 1);
+				String[] query_array = query_splitter.split(query);
+				for (int k = -0; k < query_array.length; k++) {
+					String tagval = query_array[k];
+					int eqindex = tagval.indexOf('=');
+					String tag = tagval.substring(0, eqindex);
+					String val = tagval.substring(eqindex + 1);
+					if (DEBUG_DAS2_LOAD) {
+						System.out.println("     query param, tag = : " + tag + ", val = " + val);
+					}
+					if (tag.equals("format") && (format == null)) {
+						format = val;
+					} else if (tag.equals("type") && (type_uri == null)) {
+						type_uri = val;
+					} else if (tag.equals("segment") && (seg_uri == null)) {
+						seg_uri = val;
+					} else if (tag.equals("overlaps") && (overstr == null)) {
+						overstr = val;
+					} else {
+						use_optimizer = false;
+						break;
+					}
+				}
+				if (type_uri == null || seg_uri == null || overstr == null) {
+					use_optimizer = false;
+				}
+			} else {
+				use_optimizer = false;
+			}
+
+			//
+			// only using optimizer if query has 1 segment, 1 overlaps, 1 type, 0 or 1 format, no other params
+			// otherwise treat like any other opaque data url via loadDataFromURLs call
+			//
+			if (use_optimizer) {
+				try {
+					Das2ServerInfo server = Das2Discovery.getDas2Server(das2_server_url);
+					if (server == null) {
+						server = Das2Discovery.addDas2Server(das2_server_url, das2_server_url);
+					}
+					if (DEBUG_DAS2_LOAD) {
+						System.out.println("     server: " + server.getID());
+					}
+					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
+					Das2VersionedSource version = (Das2VersionedSource) Das2Discovery.getCapabilityMap().get(cap_url);
+					if (DEBUG_DAS2_LOAD) {
+						System.out.println("     version: " + version.getID());
+					}
+					Das2Type dtype = (Das2Type) version.getTypes().get(type_uri);
+					Das2Region segment = (Das2Region) version.getSegments().get(seg_uri);
+					String[] minmax = overstr.split(":");
+					int min = Integer.parseInt(minmax[0]);
+					int max = Integer.parseInt(minmax[1]);
+					SeqSpan overlap = new SimpleSeqSpan(min, max, segment.getAnnotatedSeq());
+					Das2FeatureRequestSym request = new Das2FeatureRequestSym(dtype, segment, overlap, null);
+					request.setFormat(format);
+					if (DEBUG_DAS2_LOAD) {
+						System.out.println("adding das2 request: " + das2_query_url);
+					}
+					das2_requests.add(request);
+				} catch (Exception ex) {
+					// something went wrong with deconstructing DAS/2 query URL, so just add URL to list of opaque requests
+					ex.printStackTrace();
+					use_optimizer = false;
+					opaque_requests.add(das2_query_url);
+				}
+			}
+		}
+	}
+
 
   public static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
     try {

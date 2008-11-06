@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometry.*;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.regex.*;
@@ -254,14 +255,18 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       String[] tag_and_vals = equalsP.split(tag_vals[i], 2);
       if (tag_and_vals.length == 2) {
         String[] vals = commaP.split(tag_and_vals[1]);
-        for (int j=0; j<vals.length; j++) {
-          vals[j] = URLDecoder.decode(vals[j]);
-        }
-        if (vals.length == 1) { // put a single String
-          m.put(tag_and_vals[0], vals[0]);
-        } else { // put a String array
-          m.put(tag_and_vals[0], vals);
-        }
+				try {
+					for (int j=0; j<vals.length; j++) {
+						vals[j] = URLDecoder.decode(vals[j], "UTF-8");
+					}
+					if (vals.length == 1) { // put a single String
+						m.put(tag_and_vals[0], vals[0]);
+					} else { // put a String array
+						m.put(tag_and_vals[0], vals);
+					}
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
       }
     }
   }
@@ -287,9 +292,13 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
       return EMPTY_RESULT;
     }
     String[] results = val.split(",");
-    for (int i=0; i<results.length; i++) {
-      results[i] = URLDecoder.decode(results[i]);
-    }
+		try {
+			for (int i=0; i<results.length; i++) {
+				results[i] = URLDecoder.decode(results[i], "UTF-8");
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
     return results;
   }
 

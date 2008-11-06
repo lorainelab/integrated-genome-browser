@@ -202,7 +202,7 @@ public class OpenGraphAction extends AbstractAction {
    *  the last portion of the URL, but the entire URL may be used, depending on
    *  the preference GraphGlyphUtils.PREF_USE_URL_AS_NAME.
    */
-  public static String getGraphNameForURL(URL furl) {
+  public static String getGraphNameForURL(URL furl) throws UnsupportedEncodingException {
     String name;
     boolean use_full_url = GraphGlyphUtils.getGraphPrefsNode().getBoolean(
         GraphGlyphUtils.PREF_USE_URL_AS_NAME, GraphGlyphUtils.default_use_url_as_name);
@@ -214,7 +214,7 @@ public class OpenGraphAction extends AbstractAction {
       if (index > 0) {
         String last_name = name.substring(index+1);
         if (last_name.length()>0) { 
-          name = URLDecoder.decode(last_name); 
+          name = URLDecoder.decode(last_name, "UTF-8"); 
         }
       }
     }

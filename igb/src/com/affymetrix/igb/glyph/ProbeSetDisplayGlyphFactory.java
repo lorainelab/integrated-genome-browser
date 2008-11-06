@@ -473,6 +473,7 @@ the probeset, probe and pieces of probes
   }
 
   /** @deprecated Not tested with AnnotStyle mechanism */
+	@Deprecated
   void makeFloatingProbesetGlyph(Color probeset_color, SeqSpan span, String probeset_id,
     DerivedSeqSymmetry probeset_sym, SeqSymmetry transformed_probeset_sym) {
       GlyphI another_probeset_glyph = null;

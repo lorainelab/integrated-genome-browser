@@ -14,7 +14,9 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
+//import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
@@ -112,9 +114,9 @@ public class GraphGlyphUtils {
    *  very preliminary start on making MultiGraphs
    */
   /*
-  public static GraphGlyph displayMultiGraph(java.util.List grafs,
+  public static GraphGlyph displayMultiGraph(List grafs,
 					     AnnotatedBioSeq aseq, AffyTieredMap map,
-					     java.util.List cols, double graph_yloc, double graph_height,
+					     List cols, double graph_yloc, double graph_height,
 					     boolean use_floater) {
     System.out.println("trying to make SmartGraphGlyph for sliding window stats");
     MultiGraph multi_graph_glyph = new MultiGraph();
@@ -156,7 +158,7 @@ public class GraphGlyphUtils {
       multi_graph_glyph.addGraph(graph_glyph);
     }
 
-    //java.util.List glyphs = multi_graph_glyph.getGraphs();
+    //List glyphs = multi_graph_glyph.getGraphs();
     multi_graph_glyph.setVisibleMinY(0);
     //    multi_graph_glyph.setVisibleMinY(miny);
     multi_graph_glyph.setVisibleMaxY(maxy);

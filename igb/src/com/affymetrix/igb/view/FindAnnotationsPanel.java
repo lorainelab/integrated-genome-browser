@@ -22,6 +22,7 @@ import com.affymetrix.igb.util.ErrorHandler;
 
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -429,8 +430,8 @@ public class FindAnnotationsPanel extends JPanel {
     return sym_ids;
   }
   
-  java.util.List findByIDs(AnnotatedSeqGroup seq_group, Collection sym_ids) {
-    java.util.List the_list = new ArrayList();
+  List findByIDs(AnnotatedSeqGroup seq_group, Collection sym_ids) {
+    List the_list = new ArrayList();
 
     Iterator sym_iter = sym_ids.iterator();
     while (sym_iter.hasNext() && the_list.size() < AnnotBrowserView.THE_LIMIT) {
@@ -472,12 +473,12 @@ public class FindAnnotationsPanel extends JPanel {
 
     Set sym_ids = searchForID(seq_group);
 
-    java.util.List entries = new ArrayList(sym_ids);
+    List entries = new ArrayList(sym_ids);
     
     Iterator iter = sym_ids.iterator();
     while (iter.hasNext() && results.size() < AnnotBrowserView.THE_LIMIT) {
       String key = (String) iter.next();
-      java.util.List the_list = seq_group.findSyms(key);
+      List the_list = seq_group.findSyms(key);
       
       for (int k=0; k<the_list.size(); k++) {
         SeqSymmetry sym = (SeqSymmetry) the_list.get(k);

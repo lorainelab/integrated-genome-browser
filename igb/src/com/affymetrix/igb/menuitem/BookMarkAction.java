@@ -13,11 +13,14 @@
 
 package com.affymetrix.igb.menuitem;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.MenuListener;
 
@@ -469,8 +472,8 @@ public class BookMarkAction implements ActionListener, MenuListener {
       mark_sym.setProperty("end", new Integer(mark_span.getMax()));
       
       if (include_graphs) {
-	//        java.util.List graphs = BookmarkController.collectGraphs(gviewer.getSeqMap());
-        java.util.List graphs = gviewer.collectGraphs();
+	//        List graphs = BookmarkController.collectGraphs(gviewer.getSeqMap());
+        List graphs = gviewer.collectGraphs();
         BookmarkController.addGraphProperties(mark_sym, graphs);
       }
       

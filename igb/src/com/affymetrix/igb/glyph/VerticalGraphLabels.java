@@ -13,9 +13,15 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
@@ -23,7 +29,7 @@ public class VerticalGraphLabels extends SolidGlyph {
   static final boolean DEBUG_PIXELBOX = true;
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
 
-  java.util.List labels = new ArrayList();
+  List labels = new ArrayList();
   Font fnt;
   Rectangle debug_rect;
   //  int xcoord_offset = 5;

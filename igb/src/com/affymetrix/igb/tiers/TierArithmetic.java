@@ -14,6 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import java.util.*;
+import java.util.List;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -69,7 +70,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   }
 
   public void addUnionTier() {
-    java.util.List selected = handler.getSelectedTiers();
+    List selected = handler.getSelectedTiers();
     if (selected.size() >= 1) {
       addUnionTier(selected);
     }
@@ -79,7 +80,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   }
 
   public void addExclusiveTier(boolean exclusiveA) {
-    java.util.List selected = handler.getSelectedTiers();
+    List selected = handler.getSelectedTiers();
     if (selected.size() == 2) {
       TierGlyph tierA = (TierGlyph) selected.get(0);
       TierGlyph tierB = (TierGlyph) selected.get(1);
@@ -92,7 +93,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
 
 
   public void addXorTier() {
-    java.util.List selected = handler.getSelectedTiers();
+    List selected = handler.getSelectedTiers();
     if (selected.size() == 2) {
       TierGlyph tierA = (TierGlyph) selected.get(0);
       TierGlyph tierB = (TierGlyph) selected.get(1);
@@ -104,7 +105,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   }
 
   public void addNotTier() {
-    java.util.List selected = handler.getSelectedTiers();
+    List selected = handler.getSelectedTiers();
     if (selected.size() == 1) {
       TierGlyph tierA = (TierGlyph) selected.get(0);
       addNotTier(tierA);
@@ -116,7 +117,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
 
 
   public void addIntersectTier() {
-    java.util.List selected = handler.getSelectedTiers();
+    List selected = handler.getSelectedTiers();
     if (selected.size() == 2) {
       TierGlyph tierA = (TierGlyph) selected.get(0);
       TierGlyph tierB = (TierGlyph) selected.get(1);
@@ -133,7 +134,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     String method = "not: " + tierA.getLabel();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    java.util.List listA = new ArrayList();
+    List listA = new ArrayList();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
@@ -167,8 +168,8 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     }
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    java.util.List listA = new ArrayList();
-    java.util.List listB = new ArrayList();
+    List listA = new ArrayList();
+    List listB = new ArrayList();
 
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
@@ -205,8 +206,8 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     String method = "xor: " + tierA.getLabel() + ", " + tierB.getLabel();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    java.util.List listA = new ArrayList();
-    java.util.List listB = new ArrayList();
+    List listA = new ArrayList();
+    List listB = new ArrayList();
 
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
@@ -232,11 +233,11 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   }
 
 
-  public void addUnionTier(java.util.List tiers) {
+  public void addUnionTier(List tiers) {
     StringBuffer meth = new StringBuffer();
     meth.append("union: ");
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    java.util.List syms = new ArrayList();
+    List syms = new ArrayList();
     for (int t=0; t<tiers.size(); t++) {
       TierGlyph tier = (TierGlyph) tiers.get(t);
       meth.append(tier.getLabel() + ", ");
@@ -261,8 +262,8 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     String method = "intersect: " + tierA.getLabel() + ", " + tierB.getLabel();
 
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
-    java.util.List listA = new ArrayList();
-    java.util.List listB = new ArrayList();
+    List listA = new ArrayList();
+    List listB = new ArrayList();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
@@ -291,7 +292,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     if (handler != this.handler) {
       throw new RuntimeException("");
     }
-    java.util.List labels = handler.getSelectedTierLabels();
+    List labels = handler.getSelectedTierLabels();
     int num_selected = labels.size();
 
     boolean all_are_annotations = true;

@@ -16,6 +16,7 @@ package com.affymetrix.igb.das;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.SeqSpanComparator;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
@@ -108,7 +109,7 @@ public class DasClientOptimizer {
         int first_within_min;
         int last_within_max;
         if (prevcount > 0) {
-          java.util.List union_spans = SeqUtils.getLeafSpans(prev_union, iseq);
+          List union_spans = SeqUtils.getLeafSpans(prev_union, iseq);
           SeqSpanComparator spancomp = new SeqSpanComparator();
           // since prev_union was created via SeqSymSummarizer, spans should come out already
           //   sorted by ascending min (and with no overlaps)

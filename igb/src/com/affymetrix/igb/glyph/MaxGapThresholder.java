@@ -13,9 +13,13 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -30,7 +34,7 @@ public class MaxGapThresholder extends JPanel
   static int frm_width = 400;
   static int frm_height = 200;
 
-  java.util.List graphs = new ArrayList();
+  List graphs = new ArrayList();
   NeoWidgetI widg;
   JSlider tslider;
   JTextField maxgapTF;
@@ -95,7 +99,7 @@ public class MaxGapThresholder extends JPanel
   }
 
 
-  public void setGraphs(java.util.List newgraphs) {
+  public void setGraphs(List newgraphs) {
     graphs.clear();
     tslider.removeChangeListener(this);
     maxgapTF.removeActionListener(this);
@@ -138,7 +142,7 @@ public class MaxGapThresholder extends JPanel
   }
 
   public void setGraph(SmartGraphGlyph gl) {
-    java.util.List newgraphs = new ArrayList();
+    List newgraphs = new ArrayList();
     newgraphs.add(gl);
     setGraphs(newgraphs);
   }

@@ -16,6 +16,7 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.lang.Object.*;
@@ -63,7 +64,7 @@ public class Das2VersionedSource  {
   Map namespaces;
   Map regions = new LinkedHashMap();
   Map properties;
-  java.util.List assembly;
+  List assembly;
 
   AnnotatedSeqGroup genome = null;
   protected Map types = new LinkedHashMap();

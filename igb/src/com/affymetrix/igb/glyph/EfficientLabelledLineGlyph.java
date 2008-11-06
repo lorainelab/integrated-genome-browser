@@ -13,7 +13,14 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Stroke;
+import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -233,7 +240,7 @@ public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
   protected void adjustChildren() {
     double max_height = 0.0;
     if (isMoveChildren()) {
-      java.util.List childlist = this.getChildren();
+      List childlist = this.getChildren();
       if (childlist != null) {
         int child_count = this.getChildCount();
         for (int i=0; i<child_count; i++) {

@@ -13,9 +13,13 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
+import java.awt.Adjustable;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.*;
@@ -32,7 +36,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   
   AffyTieredMap labelmap;
   JSplitPane mapsplitter;
-  java.util.List label_glyphs = new ArrayList();
+  List label_glyphs = new ArrayList();
   JPanel can_panel;
   
   public AffyLabelledTierMap() {
@@ -93,7 +97,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     label_glyphs = new ArrayList();
   }
 
-  public java.util.List getTierLabels() {
+  public List getTierLabels() {
     return label_glyphs;
   }
 

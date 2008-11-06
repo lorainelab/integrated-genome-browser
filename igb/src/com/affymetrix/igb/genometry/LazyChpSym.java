@@ -2,6 +2,7 @@ package com.affymetrix.igb.genometry;
 
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
@@ -125,7 +126,7 @@ public class LazyChpSym extends ScoredContainerSym {
     return super.getChild(index);
   }
 
-  public float[] getChildScores(IndexedSym child, java.util.List scorelist) {
+  public float[] getChildScores(IndexedSym child, List scorelist) {
     if (! coords_loaded) { loadCoords(); }
     return super.getChildScores(child, scorelist);
   }

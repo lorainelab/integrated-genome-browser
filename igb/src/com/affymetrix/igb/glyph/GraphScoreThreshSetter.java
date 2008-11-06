@@ -28,7 +28,11 @@ import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.swing.DisplayUtils;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -36,6 +40,7 @@ import javax.swing.event.*;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.List;
 
 
 public class GraphScoreThreshSetter extends JPanel
@@ -61,7 +66,7 @@ public class GraphScoreThreshSetter extends JPanel
   boolean set_textbox_sizepref = false;
 //  boolean thresh_is_min = true;
 
-  java.util.List graphs = new ArrayList();
+  List graphs = new ArrayList();
   Map flipped_hash = new HashMap();
 
   NeoWidgetI widg;
@@ -268,7 +273,7 @@ public class GraphScoreThreshSetter extends JPanel
    *  Filters out any graphs that aren't SmartGraphGlyphs
    *  so other methods don't have to worry about doing type checking.
    */
-  public void setGraphs(java.util.List newgraphs) {
+  public void setGraphs(List newgraphs) {
     turnOffListening();
     graphs.clear();
     int gcount = newgraphs.size();

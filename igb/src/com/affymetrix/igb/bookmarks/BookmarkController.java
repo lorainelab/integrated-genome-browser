@@ -18,6 +18,7 @@ import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.*;
+import java.util.List;
 import java.io.*;
 
 import com.affymetrix.genometry.*;
@@ -101,12 +102,12 @@ public abstract class BookmarkController {
     //System.err.println("I am in loadGraphs!!!!");
 
     // Figure out the "source_url" paths of all currently-loaded graphs
-    java.util.List loaded_graphs = Collections.EMPTY_LIST;
+    List loaded_graphs = Collections.EMPTY_LIST;
     if (gviewer != null) {
       loaded_graphs = gviewer.collectGraphs();
     }
     Iterator iter = loaded_graphs.iterator();
-    java.util.List loaded_graph_paths = new Vector(loaded_graphs.size());
+    List loaded_graph_paths = new Vector(loaded_graphs.size());
     while (iter.hasNext()) {
       GraphGlyph gr = (GraphGlyph) iter.next();
       GraphSym graf_info = (GraphSym) gr.getInfo();
@@ -305,7 +306,7 @@ public abstract class BookmarkController {
     }
   }
 
-  public static void addGraphProperties(SymWithProps mark_sym, java.util.List graphs) {
+  public static void addGraphProperties(SymWithProps mark_sym, List graphs) {
     if (DEBUG) {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }

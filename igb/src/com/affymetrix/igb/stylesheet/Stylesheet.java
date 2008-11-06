@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
@@ -146,7 +147,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
     association = (AssociationElement) meth2association.get(meth);
     // Then try to match styleElement from regular expressions
     if (association == null) {
-      java.util.List keyset = new ArrayList(regex2association.keySet());
+      List keyset = new ArrayList(regex2association.keySet());
 
       // Look for a matching pattern, going backwards, so that the
       // patterns from the last preferences read take precedence over the

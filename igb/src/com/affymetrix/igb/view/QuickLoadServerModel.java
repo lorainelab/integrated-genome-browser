@@ -29,6 +29,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class QuickLoadServerModel {
@@ -45,7 +46,7 @@ public class QuickLoadServerModel {
   static Pattern tab_regex = Pattern.compile("\t");
 
   String root_url;
-  java.util.List genome_names = new ArrayList();
+  List genome_names = new ArrayList();
 
   Map group2name = new HashMap();
   Map genome2init = new HashMap();
@@ -76,7 +77,7 @@ public class QuickLoadServerModel {
     if (! root_url.endsWith("/")) {
       root_url = root_url + "/";
     }
-    java.util.List xxx = loadGenomeNames();
+    List xxx = loadGenomeNames();
     if (xxx == null || xxx.isEmpty()) {
       // do what?
     }
@@ -107,7 +108,7 @@ public class QuickLoadServerModel {
   }
 
   public String getRootUrl() { return root_url; }
-  public java.util.List getGenomeNames() { return genome_names; }
+  public List getGenomeNames() { return genome_names; }
   //public Map getSeqGroups() { return group2name; }
   public AnnotatedSeqGroup getSeqGroup(String genome_name) { return gmodel.addSeqGroup(genome_name);  }
 
@@ -132,10 +133,10 @@ public class QuickLoadServerModel {
    *  for the genome with the given name.
    *  The list may (rarely) be empty, but never null.
    */
-  public java.util.List getFilenames(String genome_name) {
+  public List getFilenames(String genome_name) {
     initGenome(genome_name);
     loadAnnotationNames(genome_name);
-    java.util.List filenames = (java.util.List) genome2file_names.get(genome_name);
+    List filenames = (List) genome2file_names.get(genome_name);
     if (filenames == null) return Collections.EMPTY_LIST;
     else return filenames;
   }
@@ -174,7 +175,7 @@ public class QuickLoadServerModel {
       if (seq_init && annot_init) {
 	genome2init.put(genome_name, Boolean.TRUE);
       }
-      java.util.List file_names = (java.util.List) genome2file_names.get(genome_name);
+      List file_names = (List) genome2file_names.get(genome_name);
       if (file_names != null) {
         file_names.clear();
       }
@@ -202,7 +203,7 @@ public class QuickLoadServerModel {
     String filename = genome_root + "annots.txt";
 
     // Make a new list of filenames, in case this is being re-initialized
-    java.util.List file_names = new ArrayList();
+    List file_names = new ArrayList();
     genome2file_names.put(genome_name, file_names);
 
     InputStream istr = null;
@@ -304,7 +305,7 @@ public class QuickLoadServerModel {
     try {
       InputStream istr= LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
       //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-      java.util.List regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
+      List regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
       int rcount = regions.size();
       //      Application.getApplicationLogger().fine("Encode regions: " + rcount);
       SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
@@ -390,7 +391,7 @@ public class QuickLoadServerModel {
   }
 
 
-  public java.util.List loadGenomeNames() {
+  public List loadGenomeNames() {
     ArrayList glist = null;
     try {
       InputStream istr = null;
@@ -452,7 +453,7 @@ public class QuickLoadServerModel {
 
           if (GraphSymUtils.isAGraphFilename(filename)) {
             URL url = new URL(annot_url);
-            java.util.List graphs = OpenGraphAction.loadGraphFile(url, current_group, gmodel.getSelectedSeq());
+            List graphs = OpenGraphAction.loadGraphFile(url, current_group, gmodel.getSelectedSeq());
             if (graphs != null) {
               // Reset the selected Seq Group to make sure that the DataLoadView knows
               // about any new chromosomes that were added.

@@ -14,6 +14,7 @@ package com.affymetrix.igb.parsers;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import affymetrix.fusion.chp.*;
 import affymetrix.calvin.data.*;
@@ -418,7 +419,7 @@ public class ChpParser {
 	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	  isym.setID(id);
 	  OneScoreEntry sentry = new OneScoreEntry(isym, val);
-	  java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	  List sentries = (List)seq2entries.get(aseq);
 	  if (sentries == null) {
 	    sentries = new ArrayList();
 	    seq2entries.put(aseq, sentries);
@@ -456,7 +457,7 @@ public class ChpParser {
 	    IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	    isym.setID(id);
 	    OneScoreEntry sentry = new OneScoreEntry(isym, val);
-	    java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	    List sentries = (List)seq2entries.get(aseq);
 	    if (sentries == null) {
 	      sentries = new ArrayList();
 	      seq2entries.put(aseq, sentries);
@@ -488,7 +489,7 @@ public class ChpParser {
     while (ents.hasNext()) {
       Map.Entry ent = (Map.Entry)ents.next();
       MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
-      java.util.List entry_list = (java.util.List)ent.getValue();
+      List entry_list = (List)ent.getValue();
       Collections.sort(entry_list, comp);
 
       // now make the container syms
@@ -568,7 +569,7 @@ public class ChpParser {
 	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	  isym.setID(id);
 	  TwoScoreEntry sentry = new TwoScoreEntry(isym, quant, pval);
-	  java.util.List sentries = (java.util.List)seq2entries.get(aseq);
+	  List sentries = (List)seq2entries.get(aseq);
 	  if (sentries == null) {
 	    sentries = new ArrayList();
 	    seq2entries.put(aseq, sentries);
@@ -598,7 +599,7 @@ public class ChpParser {
       while (ents.hasNext()) {
 	Map.Entry ent = (Map.Entry)ents.next();
 	MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
-	java.util.List entry_list = (java.util.List)ent.getValue();
+	List entry_list = (List)ent.getValue();
 	Collections.sort(entry_list, comp);
 
 	// now make the container syms

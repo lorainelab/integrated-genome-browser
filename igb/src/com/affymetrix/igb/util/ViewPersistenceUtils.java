@@ -1,6 +1,7 @@
 package com.affymetrix.igb.util;
 
 import java.util.*;
+import java.util.List;
 import java.util.prefs.*;
 
 import com.affymetrix.genometry.*;
@@ -84,7 +85,7 @@ public class ViewPersistenceUtils  {
      group_node.put(GENOME_ID, group.getID());  // preserve actual ID, no MD5 encoding, no slash removal
 
     //  get all accessed Das2VersionedSources that support SEGMENTS query
-    java.util.List versions = Das2Discovery.getVersionedSources(group, false, Das2VersionedSource.SEGMENTS_CAP_QUERY);
+    List versions = Das2Discovery.getVersionedSources(group, false, Das2VersionedSource.SEGMENTS_CAP_QUERY);
 
     if (versions != null && versions.size() > 0) {
       Das2VersionedSource version = (Das2VersionedSource)versions.get(0);

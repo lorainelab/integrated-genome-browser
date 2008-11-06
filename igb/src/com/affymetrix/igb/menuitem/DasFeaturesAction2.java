@@ -20,10 +20,13 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.event.UrlLoaderThread;
 
 // Java
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 
 import javax.xml.parsers.SAXParserFactory;
 import javax.swing.*;
@@ -360,7 +363,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       String seqid, int start, int stop,
       Vector types, boolean supports_minmax) {
 
-    java.util.List the_list = optimizeFeatureRequests(
+    List the_list = optimizeFeatureRequests(
         gviewer,
         server,source,source_name,
         seqid,start,stop,
@@ -385,14 +388,14 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
   /**
    *  Returns a List of String[2] arrays s, where each s[0] is a URL and s[1] is a tier name.
    */
-  static java.util.List optimizeFeatureRequests(SeqMapView gviewer,
+  static List optimizeFeatureRequests(SeqMapView gviewer,
       String das_server, String das_source, String source_name, 
       String seqid, int seqstart, int seqstop,
       Vector types, boolean server_supports_minmax) {
     boolean SHOW_DAS_QUERY_GENOMETRY = UnibrowPrefsUtil.getTopNode().getBoolean(
       PREF_SHOW_DAS_QUERY_GENOMETRY, default_show_das_query_genometry);
 
-    java.util.List the_list = new ArrayList(4); // it is usually a short list, so initialize with a small length
+    List the_list = new ArrayList(4); // it is usually a short list, so initialize with a small length
     MutableAnnotatedBioSeq current_seq =
       (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
 
@@ -472,11 +475,11 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
             //         and for last edge, hard_max = last_hard_max
 
             //        SeqSymmetry union_queries = SeqUtils.union(query_collector, query_sym, current_seq);
-            java.util.List temp_query_list = new ArrayList();
+            List temp_query_list = new ArrayList();
             temp_query_list.add(query_collector);
             SeqSymmetry union_queries = SeqUtils.union(temp_query_list, current_seq);
 
-            java.util.List union_spans = SeqUtils.getLeafSpans(union_queries, current_seq);
+            List union_spans = SeqUtils.getLeafSpans(union_queries, current_seq);
             SeqSpanComparator spancomp = new SeqSpanComparator();
             Collections.sort(union_spans, spancomp);
             int insert = Collections.binarySearch(union_spans, exclusive_span, spancomp);
@@ -713,7 +716,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
 
     Document doc = getDasDocument(das_request);
     if (doc != null) {
-      java.util.List sources = DasLoader.parseSourceList(doc);
+      List sources = DasLoader.parseSourceList(doc);
 
       String matching_id = null;
       Iterator iter = sources.iterator();

@@ -14,10 +14,12 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
 import java.io.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
@@ -44,9 +46,9 @@ public class GraphAdjusterView {
 
   static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 
-  public static java.util.List transformGraphs(java.util.List grafs, String trans_name, FloatTransformer transformer) {
+  public static List transformGraphs(List grafs, String trans_name, FloatTransformer transformer) {
     int gcount = grafs.size();
-    java.util.List newgrafs = new ArrayList(grafs.size());
+    List newgrafs = new ArrayList(grafs.size());
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
 
@@ -95,7 +97,7 @@ public class GraphAdjusterView {
     return newgrafs;
   }
 
-  public static void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, java.util.List grafs) {
+  public static void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, List grafs) {
     int gcount = grafs.size();
     for (int i=0; i<gcount; i++) {
       GraphSym graf = (GraphSym)grafs.get(i);
@@ -156,7 +158,7 @@ public class GraphAdjusterView {
   }
 
 
-  public static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, java.util.List grafs) {
+  public static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, List grafs) {
     int gcount = grafs.size();
     if (gcount > 1) {
       // actually shouldn't get here, since save button is disabled if more than one graph
@@ -180,7 +182,7 @@ public class GraphAdjusterView {
     }
   }
 
-  public static void changeColor(java.util.List graf_syms, SeqMapView gviewer) {
+  public static void changeColor(List graf_syms, SeqMapView gviewer) {
     int scount = graf_syms.size();
     if (scount > 0) {
       // Set an initial color so that the "reset" button will work.
@@ -199,7 +201,7 @@ public class GraphAdjusterView {
 	for (int i=0; i<scount; i++) {
 	  GraphSym graf = (GraphSym) graf_syms.get(i);
 	  // using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
-	  java.util.List glist = gviewer.getSeqMap().getItems(graf);
+	  List glist = gviewer.getSeqMap().getItems(graf);
 	  if (glist != null) {
 	    int glyphcount = glist.size();
 	    for (int k=0; k<glyphcount; k++) {
@@ -209,7 +211,7 @@ public class GraphAdjusterView {
 	      //   (which in turn triggers change in color for TierLabelGlyph...)
 	      if (gl.getParent() instanceof TierGlyph) {
 		gl.getParent().setForegroundColor(col);
-                java.util.List views = gl.getParent().getScene().getViews();
+                List views = gl.getParent().getScene().getViews();
                 for (int qq=0; qq<views.size(); qq++) {
                   ViewI v = (ViewI) views.get(qq);
                   if (gl.withinView(v)) {

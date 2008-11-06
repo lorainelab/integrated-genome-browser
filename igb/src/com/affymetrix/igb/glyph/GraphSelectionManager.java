@@ -13,10 +13,15 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.igb.tiers.*;
@@ -66,7 +71,7 @@ public class GraphSelectionManager
 
   static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
-  java.util.List graphlist = new ArrayList();
+  List graphlist = new ArrayList();
   GraphGlyph current_graph = null;
   GraphGlyph graph_to_scale = null;
   //   second_curent_graph is
@@ -552,7 +557,7 @@ public class GraphSelectionManager
    *  Does nothing.  Formerly this was used to bring-up a pop-up menu, but
    *  that could cause conflicts with the other pop-up menu which is opened
    *  by the SeqMapViewMouseListener.  Thus now instead of opening our own
-   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, java.util.List, SeqSymmetry)}
+   *  pop-up, we use the routine {@link #popupNotify(JPopupMenu, List, SeqSymmetry)}
    *  provided by the interface ContextualPopupListener to add to the pop-up
    *  menu which the SeqMapView itself constructs.
    */
@@ -727,7 +732,7 @@ public class GraphSelectionManager
     return result;
   }
 
-  public void popupNotify(JPopupMenu the_popup, java.util.List selected_syms, SeqSymmetry primary_sym) {
+  public void popupNotify(JPopupMenu the_popup, List selected_syms, SeqSymmetry primary_sym) {
     
     if (current_source == null) {
       // if there is no NeoWidgetI set for the current_source, then we cannot convert
@@ -779,10 +784,10 @@ public class GraphSelectionManager
       // This routine adapts it to also work as a TierLabelManager.PopupListener
       // for left-click on the TierLabelGlyph's
 
-      java.util.List labels = handler.getSelectedTierLabels();
-      java.util.List graph_glyphs = handler.getContainedGraphs(labels);
+      List labels = handler.getSelectedTierLabels();
+      List graph_glyphs = handler.getContainedGraphs(labels);
 
-      java.util.List graph_syms = new ArrayList(graph_glyphs.size());
+      List graph_syms = new ArrayList(graph_glyphs.size());
       for (int i=0; i<graph_glyphs.size(); i++) {
         GraphGlyph glyph = (GraphGlyph) graph_glyphs.get(i);
         graph_syms.add(glyph.getInfo()); // It will be a GraphSym object

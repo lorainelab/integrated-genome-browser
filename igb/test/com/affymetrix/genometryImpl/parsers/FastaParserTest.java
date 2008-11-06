@@ -5,6 +5,7 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import junit.framework.*;
 import java.io.*;
+import java.util.List;
 
 
 public class FastaParserTest extends TestCase {
@@ -62,7 +63,7 @@ public class FastaParserTest extends TestCase {
 
     //FastaParser instance = new FastaParser();
     
-    java.util.List seqs = FastaParser.parseAll(istr_1, seq_group);
+    List seqs = FastaParser.parseAll(istr_1, seq_group);
 
     assertEquals(1, seqs.size());
     assertEquals(1, seq_group.getSeqCount());

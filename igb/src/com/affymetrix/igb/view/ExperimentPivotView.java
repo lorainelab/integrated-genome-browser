@@ -14,9 +14,13 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -85,7 +89,7 @@ public class ExperimentPivotView extends JComponent
   AffyTieredMultiMap map;
   TierLabelManager tier_manager;  
   AnnotatedBioSeq currentSeq;  // current annotated seq
-  java.util.List experiment_graphs = new ArrayList();
+  List experiment_graphs = new ArrayList();
   
   JComboBox styleCB = new JComboBox();
   JComboBox scaleCB = new JComboBox();
@@ -105,7 +109,7 @@ public class ExperimentPivotView extends JComponent
   int experiment_style_int; // should correspond to def_style String value
   String experiment_scaling;
   
-  java.util.List current_syms = Collections.EMPTY_LIST;
+  List current_syms = Collections.EMPTY_LIST;
   
   static {
     string2style = new HashMap();
@@ -310,7 +314,7 @@ public class ExperimentPivotView extends JComponent
     setAnnotatedSeq(newseq);
   }
   
-  private void resetThisWidget( java.util.List theSyms ) {
+  private void resetThisWidget( List theSyms ) {
     String style_string = pref_node.get(PREF_STYLE, def_style);
     this.experiment_scaling = pref_node.get(PREF_SCALE, def_scale);
     
@@ -421,7 +425,7 @@ public class ExperimentPivotView extends JComponent
   }
 
   public void symSelectionChanged( SymSelectionEvent theEvent ) {
-    java.util.List syms = theEvent.getSelectedSyms();
+    List syms = theEvent.getSelectedSyms();
     if ( ! syms.isEmpty() ) {
       resetThisWidget( syms );
     }
@@ -579,7 +583,7 @@ public class ExperimentPivotView extends JComponent
     }
 
     Object[][] data;
-    java.util.List tiers = this.map.getTiers();
+    List tiers = this.map.getTiers();
     
     int non_hidden_tiers = 0;
     Iterator iter = map.getTiers().iterator();
@@ -654,7 +658,7 @@ public class ExperimentPivotView extends JComponent
     
     AnnotatedBioSeq seq = seq_group.getSeq(0);
     SeqSymmetry first_sym = seq.getAnnotation(0);
-    java.util.List symlist = new ArrayList();
+    List symlist = new ArrayList();
     for (int i=0; i<first_sym.getChildCount(); i++) {
       symlist.add(first_sym.getChild(i));
     }
@@ -734,7 +738,7 @@ public class ExperimentPivotView extends JComponent
     }
     
     void sortTiers() {
-      java.util.List all_tiers = tlh.getAllTierLabels();
+      List all_tiers = tlh.getAllTierLabels();
       Collections.sort(all_tiers, the_comparator);
       tlh.orderTiersByLabels(all_tiers);
       tlh.repackTheTiers(false, true);
@@ -747,8 +751,8 @@ public class ExperimentPivotView extends JComponent
         return;
       }
       
-      java.util.List selected_labels = handler.getSelectedTierLabels();
-      java.util.List all_labels = handler.getAllTierLabels();
+      List selected_labels = handler.getSelectedTierLabels();
+      List all_labels = handler.getAllTierLabels();
       hide_action.setEnabled(! selected_labels.isEmpty());
       show_all_action.setEnabled( ! all_labels.isEmpty() );
       sort_action.setEnabled( all_labels.size() > 1 );

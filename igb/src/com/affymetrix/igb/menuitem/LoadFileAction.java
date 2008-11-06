@@ -25,7 +25,11 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.awt.*;
+import java.util.List;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -252,7 +256,7 @@ public class LoadFileAction {
       // Also cannot handle compressed chp files, so don't bother with the Streamer class.
       if (annotfile.getName().toLowerCase().endsWith(".chp")) {
         //Application.getSingleton().logDebug("%%%%% received load request for CHP file: " + annotfile.getPath());
-        java.util.List results = ChpParser.parse(annotfile.getPath());
+        List results = ChpParser.parse(annotfile.getPath());
 	// aseq = getLastSeq(results);
       }
       else {
@@ -398,13 +402,13 @@ public class LoadFileAction {
       }
       else if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
         Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
-        java.util.List results = parser.parse(str, selected_group);
+        List results = parser.parse(str, selected_group);
         aseq = getFirstSeq(results);
         parser = null;
       }
       else if (lcname.endsWith(".das2xml")) {
 	Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-	java.util.List results = parser.parse(new InputSource(str), stream_name, selected_group, true);
+	List results = parser.parse(new InputSource(str), stream_name, selected_group, true);
         aseq = getFirstSeq(results);
         parser = null;
       }
@@ -499,14 +503,14 @@ public class LoadFileAction {
       else if (lcname.endsWith(".brs")) {
         BrsParser parser = new BrsParser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-        java.util.List alist = parser.parse(str, annot_type, selected_group);
+        List alist = parser.parse(str, annot_type, selected_group);
         aseq = input_seq;
         parser = null;
       }
       else if (lcname.endsWith(".bsnp")) {
         BsnpParser parser = new BsnpParser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
-        java.util.List alist = parser.parse(str, annot_type, selected_group, true);
+        List alist = parser.parse(str, annot_type, selected_group, true);
         Application.getSingleton().logDebug("total snps loaded: " + alist.size());
         aseq = input_seq;
         parser = null;
@@ -514,7 +518,7 @@ public class LoadFileAction {
       else if (lcname.endsWith(".brpt")) {
         BrptParser parser = new BrptParser();
         String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
-        java.util.List alist = parser.parse(str, annot_type, selected_group, true);
+        List alist = parser.parse(str, annot_type, selected_group, true);
         Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
         aseq = input_seq;
         parser = null;
@@ -549,7 +553,7 @@ public class LoadFileAction {
         parser = null;
       }
       else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
-        java.util.List seqs = FastaParser.parseAll(str, selected_group);
+        List seqs = FastaParser.parseAll(str, selected_group);
 
         if (input_seq != null && seqs.contains(input_seq)) {
           aseq = input_seq;
@@ -610,7 +614,7 @@ public class LoadFileAction {
 
 
   /** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
-  private static MutableAnnotatedBioSeq getFirstSeq(java.util.List syms) {
+  private static MutableAnnotatedBioSeq getFirstSeq(List syms) {
     MutableAnnotatedBioSeq first_seq = null;
     if (syms != null && ! syms.isEmpty()) {
       SeqSymmetry fsym = (SeqSymmetry) syms.get(0);
@@ -622,7 +626,7 @@ public class LoadFileAction {
 
   /** Returns the first BioSeq on the last SeqSymmetry in the given list, or null. */
   /*
-  private static MutableAnnotatedBioSeq getLastSeq(java.util.List syms) {
+  private static MutableAnnotatedBioSeq getLastSeq(List syms) {
     MutableAnnotatedBioSeq last_seq = null;
     if (syms != null && ! syms.isEmpty()) {
       SeqSymmetry fsym = (SeqSymmetry) syms.get(syms.size() - 1);

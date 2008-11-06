@@ -13,8 +13,12 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.util.*;
+import java.util.List;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
@@ -75,8 +79,8 @@ public class CoverageSummarizerGlyph extends SolidGlyph {
   /**
    *  @param spans a list of SeqSpan's all defined on the same BioSeq
    */
-  public void setCoveredIntervals(java.util.List spans) {
-    java.util.List spanlist = spans;
+  public void setCoveredIntervals(List spans) {
+    List spanlist = spans;
     int spancount = spanlist.size();
     if (spancount > 0) {
       // need to test to make sure projected and in ascending order --

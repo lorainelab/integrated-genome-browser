@@ -15,6 +15,7 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.event.*;
@@ -51,10 +52,10 @@ public class TierLabelManager {
   }
   
   /** Returns a list of TierGlyph items representing the selected tiers. */
-  public java.util.List getSelectedTiers() {
-    java.util.List selected_labels = getSelectedTierLabels();
+  public List getSelectedTiers() {
+    List selected_labels = getSelectedTierLabels();
     int sel_count = selected_labels.size();
-    java.util.List selected_tiers = new ArrayList();
+    List selected_tiers = new ArrayList();
 
     for (int i=0; i<sel_count; i++) {
       // TierGlyph should be data model for tier label, access via lable.getInfo()
@@ -66,18 +67,18 @@ public class TierLabelManager {
   }
   
   /** Returns a list of selected TierLabelGlyph items. */
-  public java.util.List getSelectedTierLabels() {
+  public List getSelectedTierLabels() {
     return labelmap.getSelected();
   }
 
   /** Returns a list of all TierLabelGlyph items. */
-  public java.util.List getAllTierLabels() {
+  public List getAllTierLabels() {
     return tiermap.getTierLabels();
   }
 
   /** Selects all non-hidden tiers. */
   public void selectAllTiers()  {
-    java.util.List labels = getAllTierLabels();
+    List labels = getAllTierLabels();
     int tiercount = labels.size();
     for (int i=0; i<tiercount; i++) {
       TierLabelGlyph tierlabel = (TierLabelGlyph) labels.get(i);
@@ -103,7 +104,7 @@ public class TierLabelManager {
       return;
     }
 
-    java.util.List labels = getAllTierLabels();
+    List labels = getAllTierLabels();
     boolean selections_changed = false;
     
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -154,8 +155,8 @@ public class TierLabelManager {
   }
 
   /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
-  public static java.util.List getContainedGraphs(java.util.List tier_label_glyphs) {
-    java.util.List result = new ArrayList();
+  public static List getContainedGraphs(List tier_label_glyphs) {
+    List result = new ArrayList();
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       result.addAll(getContainedGraphs(tlg));
@@ -164,7 +165,7 @@ public class TierLabelManager {
   }
   
   /** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
-  public static java.util.List getContainedGraphs(TierLabelGlyph tlg) {
+  public static List getContainedGraphs(TierLabelGlyph tlg) {
     ArrayList result = new ArrayList();
     TierGlyph tier = (TierGlyph) tlg.getInfo();
     IAnnotStyle style = tier.getAnnotStyle();
@@ -188,7 +189,7 @@ public class TierLabelManager {
    *  @param fit_y  Whether to change the zoom to fit all the tiers in the view
    *  @see #repackTheTiers(boolean, boolean)
    */
-  public void showTiers(java.util.List tier_labels, boolean full_repack, boolean fit_y) {
+  public void showTiers(List tier_labels, boolean full_repack, boolean fit_y) {
     Iterator iter = tier_labels.iterator();
     while (iter.hasNext()) {
       GlyphI g = (GlyphI) iter.next();
@@ -205,7 +206,7 @@ public class TierLabelManager {
    *  @param tier_labels  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    *  @param fit_y  Whether to change the zoom to fit all the tiers in the view
    */
-  public void hideTiers(java.util.List tier_labels, boolean full_repack, boolean fit_y) {
+  public void hideTiers(List tier_labels, boolean full_repack, boolean fit_y) {
     Iterator iter = tier_labels.iterator();
     while (iter.hasNext()) {
       GlyphI g = (GlyphI) iter.next();
@@ -218,7 +219,7 @@ public class TierLabelManager {
     repackTheTiers(full_repack, fit_y);
   }
   
-  void setTiersCollapsed(java.util.List tier_labels, boolean collapsed, boolean full_repack, boolean fit_y) {
+  void setTiersCollapsed(List tier_labels, boolean collapsed, boolean full_repack, boolean fit_y) {
     for (int i=0; i<tier_labels.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
       IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
@@ -228,7 +229,7 @@ public class TierLabelManager {
         // When collapsing, make them all be the same height as the tier.
         // (this is for simplicity in figuring out how to draw things.)
         if (collapsed) {
-          java.util.List graphs = getContainedGraphs(tlg);
+          List graphs = getContainedGraphs(tlg);
           double tier_height = style.getHeight();
           for (int j=0; j<graphs.size(); j++) {
             GraphGlyph graph = (GraphGlyph) graphs.get(j);
@@ -253,7 +254,7 @@ public class TierLabelManager {
    *  Sorts all tiers and then calls packTiers() and updateWidget().
    */
   public void sortTiers() {
-    java.util.List label_glyphs = tiermap.getTierLabels();
+    List label_glyphs = tiermap.getTierLabels();
     orderTierLabels(label_glyphs);
     orderTiersByLabels(label_glyphs);
 
@@ -281,7 +282,7 @@ public class TierLabelManager {
    *  Set a Comparator to be used to re-sort tiers after the user drags a tier.
    *  The default Comparator, which is probably good for all cases, sorts based
    *  on the y-position of the top of each tier after the mouse is released.
-   *  The actual sorting happens in {@link #orderTierLabels(java.util.List)}.
+   *  The actual sorting happens in {@link #orderTierLabels(List)}.
    */
   public void setTierSorter(Comparator c) {
     if (c == null) {
@@ -296,9 +297,9 @@ public class TierLabelManager {
    *  re-sort the given List of Tier Label Glyphs.  The List is
    *  sorted in-place.  Typically, do not use this directly, but
    *  call {@link #sortTiers()} instead, which will call this and then
-   *  call {@link #orderTiersByLabels(java.util.List)}.
+   *  call {@link #orderTiersByLabels(List)}.
    */
-  public void orderTierLabels(java.util.List label_glyphs) {
+  public void orderTierLabels(List label_glyphs) {
     if (tier_sorter != null) {
       Collections.sort(label_glyphs, tier_sorter);
     }
@@ -308,7 +309,7 @@ public class TierLabelManager {
    *  glyphs in the given list.  Will be called after orderTierLabels() 
    *  has determined the label order.  Can also be called from an external class.
    */
-  public void orderTiersByLabels(java.util.List label_glyphs) {
+  public void orderTiersByLabels(List label_glyphs) {
       // mucking directly with tiermap's tier Vector, which is not
       //     the cleanest way to do this, but is efficient...
       int tierCount = label_glyphs.size();
@@ -329,7 +330,7 @@ public class TierLabelManager {
     tiermap.repackTheTiers(full_repack, stretch_vertically);
   }
   
-  java.util.List popup_listeners = new ArrayList();
+  List popup_listeners = new ArrayList();
   
   public void addPopupListener(PopupListener p) {
     popup_listeners.add(p);

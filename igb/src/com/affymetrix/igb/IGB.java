@@ -12,13 +12,24 @@
 */
 package com.affymetrix.igb;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.*;
 import java.util.logging.Logger;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.util.Memer;
 
@@ -174,8 +185,8 @@ public class IGB extends Application
   DataLoadView data_load_view = null;
   AltSpliceView slice_view = null;
 
-  java.util.List plugins_info = new ArrayList(16);
-  java.util.List plugins = new ArrayList(16);
+  List plugins_info = new ArrayList(16);
+  List plugins = new ArrayList(16);
 
   static String user_dir = System.getProperty("user.dir");
   static String user_home = System.getProperty("user.home");
@@ -1514,7 +1525,7 @@ public class IGB extends Application
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
   }
 
-  public void popupNotify(JPopupMenu popup,  java.util.List selected_items, SeqSymmetry primary_sym) {
+  public void popupNotify(JPopupMenu popup,  List selected_items, SeqSymmetry primary_sym) {
     popup.add(popup_windowsM);
   }
 
@@ -1549,7 +1560,7 @@ public class IGB extends Application
    *  The ordering of those tags is maintained in the order of the tab panes
    *  they create.
    */
-  java.util.List getPluginsFromXmlPrefs(Map prefs_hash) {
+  List getPluginsFromXmlPrefs(Map prefs_hash) {
     ArrayList plugin_list = new ArrayList(16);
 
     boolean USE_ANNOT_BROWSER = false;

@@ -14,9 +14,11 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.Application;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
@@ -189,7 +191,7 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
     refreshSeqMapView();
   }
 
-  public void setStyleList(java.util.List styles) {
+  public void setStyleList(List styles) {
     model.setStyles(styles);
     model.fireTableDataChanged();
   }
@@ -215,13 +217,13 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
   void refreshList() {
     boolean only_displayed_tiers = true;
     boolean include_graph_styles = false;
-    java.util.List styles;
+    List styles;
     // if only_displayed_tiers, then only put AnnotStyles in table that are being used in tiers currently displayed in main view
     if (only_displayed_tiers) {
       styles = new ArrayList();
       styles.add(default_annot_style);
       if (smv != null) {  
-	java.util.List tiers = smv.getSeqMap().getTiers();
+	List tiers = smv.getSeqMap().getTiers();
 	LinkedHashMap stylemap = new LinkedHashMap();
 	Iterator titer = tiers.iterator();
 	while (titer.hasNext()) {
@@ -298,17 +300,17 @@ public class TierPrefsView extends JPanel implements ListSelectionListener, IPre
 
   class TierPrefsTableModel extends AbstractTableModel {
 
-    java.util.List tier_styles;
+    List tier_styles;
 
     TierPrefsTableModel() {
       this.tier_styles = Collections.EMPTY_LIST;
     }
 
-    public void setStyles(java.util.List tier_styles) {
+    public void setStyles(List tier_styles) {
       this.tier_styles = tier_styles;
     }
 
-    public java.util.List getStyles() {
+    public List getStyles() {
       return this.tier_styles;
     }
 

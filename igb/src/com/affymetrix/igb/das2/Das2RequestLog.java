@@ -16,6 +16,7 @@ package com.affymetrix.igb.das2;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -25,7 +26,7 @@ import java.util.Iterator;
 public class Das2RequestLog {
 
   boolean ECHO_LOG_TO_SYS_OUT = true;
-  private java.util.List status_strings = new ArrayList();
+  private List status_strings = new ArrayList();
 
   boolean success = false;
   Exception exception = null;

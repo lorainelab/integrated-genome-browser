@@ -13,9 +13,13 @@
 
 package com.affymetrix.igb.view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genometry.*;
@@ -38,7 +42,7 @@ public class AltSpliceView extends JComponent
   OrfAnalyzer2 orf_analyzer;
   JTextField buffer_sizeTF;
   JCheckBox slice_by_selectionCB;
-  java.util.List last_selected_syms = new ArrayList();
+  List last_selected_syms = new ArrayList();
   AnnotatedBioSeq last_seq_changed = null;
   boolean pending_sequence_change = false;
   boolean pending_selection_change = false;
@@ -223,7 +227,7 @@ public class AltSpliceView extends JComponent
     orf_analyzer.redoOrfs();
   }
 
-  public void sliceAndDice(java.util.List syms) {
+  public void sliceAndDice(List syms) {
     //    System.out.println("called AltSpliceView.sliceAndDice() " + syms.size());
     if (syms.size() > 0) {
       spliced_view.sliceAndDice(syms);
@@ -232,7 +236,7 @@ public class AltSpliceView extends JComponent
   }
 
   // takes a list (of SeqSymmetry) and removes any GraphSym's from it.
-  java.util.List removeGraphs(java.util.List syms) {
+  List removeGraphs(List syms) {
     int symcount = syms.size();
     ArrayList v = new ArrayList(syms.size());
     for (int i=0; i<symcount; i++) {
@@ -294,7 +298,7 @@ public class AltSpliceView extends JComponent
       return;
     }
 
-    java.util.List selected_labels = handler.getSelectedTierLabels();
+    List selected_labels = handler.getSelectedTierLabels();
 
     Action hide_action = new AbstractAction("Hide Tier") {
       public void actionPerformed(ActionEvent e) {

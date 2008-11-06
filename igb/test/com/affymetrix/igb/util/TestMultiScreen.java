@@ -1,9 +1,21 @@
 package com.affymetrix.igb.util;
 
-import java.awt.*;
+import java.awt.Adjustable;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.DisplayMode;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.*;
@@ -35,7 +47,7 @@ public class TestMultiScreen implements ActionListener {
   JButton memB = new JButton("Print Memory");
   JButton gcB = new JButton("Force GC");
   JButton glyphTestB = new JButton("Test Glyphs");
-  java.util.List extra_maps = new ArrayList();
+  List extra_maps = new ArrayList();
   com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
   com.affymetrix.genoviz.util.Memer mem = new com.affymetrix.genoviz.util.Memer();
   public static void main(String[] args) {

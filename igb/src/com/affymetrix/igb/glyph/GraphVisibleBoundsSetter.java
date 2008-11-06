@@ -14,9 +14,13 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.ChangeListener;
@@ -89,7 +93,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   //    desire to avoid recalculation of percent-to-score array (which requires a
   //    sort) every time a graph is selected...
   Map info2pscores = new HashMap();
-  java.util.List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+  List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 
   /*
    *  Now trying to map slider values to percentages, such that each slider
@@ -121,7 +125,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoWidgetI widg) {
     //    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
     GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
-    java.util.List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
+    List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
     glist.add(sgg);
     thresher.setGraphs(glist);
     JFrame frm = new JFrame("Graph Percentile Adjuster");
@@ -264,7 +268,7 @@ public class GraphVisibleBoundsSetter extends JPanel
   /**
    *  Set the set of graphs to the given List of GraphGlyph objects.
    */
-  public void setGraphs(java.util.List newgraphs) {
+  public void setGraphs(List newgraphs) {
     turnOffListening();
     graphs.clear();
     int gcount = newgraphs.size();

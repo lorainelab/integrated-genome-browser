@@ -19,6 +19,7 @@ import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import java.util.zip.GZIPInputStream;
 
@@ -500,7 +501,7 @@ public class LocalUrlCacher {
             Map.Entry ent = (Map.Entry) heads.next();
             String key = (String) ent.getKey();
             // making all header names lower-case
-            java.util.List vals = (java.util.List) ent.getValue();
+            List vals = (List) ent.getValue();
             if (vals.size() > 0) {
                 String val = (String) vals.get(0);
                 if (key == null) {

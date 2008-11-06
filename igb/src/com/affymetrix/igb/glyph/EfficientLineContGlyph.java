@@ -17,7 +17,10 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.List;
 
 /**
  *  A glyph that displays as a centered line and manipulates children to center on the
@@ -157,7 +160,7 @@ public class EfficientLineContGlyph extends EfficientSolidGlyph  {
   protected void adjustChildren() {
     double max_height = 0.0;
     if (isMoveChildren()) {
-      java.util.List childlist = this.getChildren();
+      List childlist = this.getChildren();
       if (childlist != null) {
         int child_count = this.getChildCount();
         for (int i=0; i<child_count; i++) {

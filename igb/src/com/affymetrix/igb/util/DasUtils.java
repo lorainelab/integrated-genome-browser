@@ -18,6 +18,7 @@ import com.affymetrix.igb.das.DasLoader;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.*;
 
 import org.xml.sax.*;
@@ -46,7 +47,7 @@ public class DasUtils {
     System.out.println("Das Request: " + request_str);
 
     Document doc = DasLoader.getDocument(request_str);
-    java.util.List sources = DasLoader.parseSourceList(doc);
+    List sources = DasLoader.parseSourceList(doc);
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
     result = lookup.findMatchingSynonym(sources, source_synonym);
@@ -67,7 +68,7 @@ public class DasUtils {
     System.out.println("Das Request: " + request_str);
 
     Document doc = DasLoader.getDocument(request_str);
-    java.util.List segments = DasLoader.parseSegmentsFromEntryPoints(doc);
+    List segments = DasLoader.parseSegmentsFromEntryPoints(doc);
 
     result = lookup.findMatchingSynonym(segments,  seqid_synonym);
     return result;

@@ -40,9 +40,13 @@ import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;
 import com.affymetrix.genometryImpl.util.FloatTransformer.LogTransform;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -304,11 +308,11 @@ implements SeqSelectionListener, SymSelectionListener {
     }
   }
 
-  java.util.List grafs = new ArrayList();
-  java.util.List glyphs = new ArrayList();
+  List grafs = new ArrayList();
+  List glyphs = new ArrayList();
 
   public void symSelectionChanged(SymSelectionEvent evt) {
-    java.util.List selected_syms = evt.getSelectedSyms();
+    List selected_syms = evt.getSelectedSyms();
     // Only pay attention to selections from the main SeqMapView or its map.
     // Ignore the splice view as well as events coming from this class itself.
     
@@ -320,7 +324,7 @@ implements SeqSelectionListener, SymSelectionListener {
     resetSelectedGraphGlyphs(selected_syms);
   }
   
-  public void resetSelectedGraphGlyphs(java.util.List selected_syms) {
+  public void resetSelectedGraphGlyphs(List selected_syms) {
     int symcount = selected_syms.size();
     is_listening = false; // turn off propagation of events from the GUI while we modify the settings
     if (grafs != selected_syms)   { 
@@ -344,7 +348,7 @@ implements SeqSelectionListener, SymSelectionListener {
 	}
 	// allowing for cases where same graph sym is represented by multiple graphs glyphs...
 	else if (gcount > 1) {  
-	  java.util.List multigl = gviewer.getSeqMap().getItems(graf);
+	  List multigl = gviewer.getSeqMap().getItems(graf);
 	  // add all graph glyphs representing graph sym
 	  //	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 	  glyphs.addAll(multigl);
@@ -567,7 +571,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
   void updateViewer() {
     final SeqMapView current_viewer = gviewer;
-    final java.util.List previous_graph_syms = new ArrayList(grafs);
+    final List previous_graph_syms = new ArrayList(grafs);
     // set selections to empty so that options get turned off
     resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
     SwingUtilities.invokeLater(new Runnable() {
@@ -916,7 +920,7 @@ implements SeqSelectionListener, SymSelectionListener {
       FloatTransformer trans = (FloatTransformer) name2transform.get(selection);
       Timer tim = new Timer();
       tim.start();
-      java.util.List newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
+      List newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
       System.out.println("time to transform graph: " + tim.read()/1000f);
       if (! newgrafs.isEmpty() )  {
         updateViewer();

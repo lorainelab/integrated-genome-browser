@@ -16,6 +16,7 @@ package com.affymetrix.igb.tiers;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genometry.*;
@@ -57,7 +58,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   Action rename_action = new AbstractAction("Change Display Name") {
     public void actionPerformed(ActionEvent e) {
-      java.util.List current_tiers = handler.getSelectedTiers();
+      List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() != 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
@@ -149,7 +150,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
     public void actionPerformed(ActionEvent e) {
-      java.util.List current_tiers = handler.getSelectedTiers();
+      List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
@@ -159,7 +160,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   };
   Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
     public void actionPerformed(ActionEvent e) {
-      java.util.List current_tiers = handler.getSelectedTiers();
+      List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
@@ -169,7 +170,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   };
   Action save_bed_action = new AbstractAction("Save tier as BED file") {
     public void actionPerformed(ActionEvent e) {
-      java.util.List current_tiers = handler.getSelectedTiers();
+      List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
@@ -180,7 +181,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   Action save_das_action = new AbstractAction("Save tier as DAS/2 XML file") {
       public void actionPerformed(ActionEvent e) {
-	java.util.List current_tiers = handler.getSelectedTiers();
+	List current_tiers = handler.getSelectedTiers();
 	if (current_tiers.size() > 1) {
 	  ErrorHandler.errorPanel("Must select only one tier");
 	}
@@ -191,7 +192,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   Action write_das_action = new AbstractAction("Test writing to DAS/2 server") {
     public void actionPerformed(ActionEvent e) {
-      java.util.List current_tiers = handler.getSelectedTiers();
+      List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
@@ -216,7 +217,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   Action delete_action = new AbstractAction("Delete selected tiers") {
     public void actionPerformed(ActionEvent e) {
-      java.util.List current_tiers = handler.getSelectedTierLabels();
+      List current_tiers = handler.getSelectedTierLabels();
       if (Application.confirmPanel("Really remove selected tiers?\n"+
           "Data will be removed from all chromosomes on this genome.\n"+
           "(Note: to remove graphs made from .egr files, delete the corresponding annotation tier.)"
@@ -254,12 +255,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     f.setVisible(true);
   }
 
-  java.util.List getStyles(java.util.List tier_label_glyphs) {
+  List getStyles(List tier_label_glyphs) {
     if (tier_label_glyphs.size() == 0) { return Collections.EMPTY_LIST; }
 
     // styles is a list of styles with no duplicates, so a Set rather than a List
     // might make sense.  But at the moment it seems faster to use a List
-    java.util.List styles = new ArrayList(tier_label_glyphs.size());
+    List styles = new ArrayList(tier_label_glyphs.size());
 
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
@@ -270,12 +271,12 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     return styles;
   }
 
-  void setTiersCollapsed(java.util.List tier_labels, boolean collapsed) {
+  void setTiersCollapsed(List tier_labels, boolean collapsed) {
     handler.setTiersCollapsed(tier_labels, collapsed, true, true);
     refreshMap(true);
   }
 
-  public void changeExpandMax(java.util.List tier_labels) {
+  public void changeExpandMax(List tier_labels) {
     if (tier_labels == null || tier_labels.size() == 0) {
       ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
       return;
@@ -311,7 +312,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeExpandMax(tier_labels, newmax);
   }
 
-  void changeExpandMax(java.util.List tier_label_glyphs, int max) {
+  void changeExpandMax(List tier_label_glyphs, int max) {
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       TierGlyph tier = (TierGlyph) tlg.getInfo();
@@ -322,7 +323,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  void setTwoTiers(java.util.List tier_label_glyphs, boolean b) {
+  void setTwoTiers(List tier_label_glyphs, boolean b) {
     for (int i=0; i<tier_label_glyphs.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
       TierGlyph tier = (TierGlyph) tlg.getInfo();
@@ -335,7 +336,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.sortTiers();
   }
 
-//  void changeHeight(java.util.List tier_label_glyphs, double height) {
+//  void changeHeight(List tier_label_glyphs, double height) {
 //    if (gviewer instanceof SeqMapView) {
 //    AffyTieredMap map = ((SeqMapView) gviewer).getSeqMap();
 //    for (int i=0; i<tier_label_glyphs.size(); i++) {
@@ -352,7 +353,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 //  }
 
   public void showAllTiers() {
-    java.util.List tiervec = handler.getAllTierLabels();
+    List tiervec = handler.getAllTierLabels();
 
     for (int i=0; i<tiervec.size(); i++) {
       TierLabelGlyph label = (TierLabelGlyph) tiervec.get(i);
@@ -408,7 +409,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   /** Hides multiple tiers and then repacks.
    *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    */
-  public void hideTiers(java.util.List tiers) {
+  public void hideTiers(List tiers) {
     Iterator iter = tiers.iterator();
     while (iter.hasNext()) {
       GlyphI g = (GlyphI) iter.next();
@@ -422,7 +423,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  public void changeColor(final java.util.List tier_label_glyphs, final boolean fg) {
+  public void changeColor(final List tier_label_glyphs, final boolean fg) {
     if (tier_label_glyphs.isEmpty()) {
       return;
     }
@@ -494,7 +495,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  void setColorByScore(java.util.List tier_labels, boolean b) {
+  void setColorByScore(List tier_labels, boolean b) {
     for (int i=0; i<tier_labels.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
       IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
@@ -507,13 +508,13 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  void removeTiers(java.util.List tier_labels) {
+  void removeTiers(List tier_labels) {
     gmodel.setSelectedSymmetries(Collections.EMPTY_LIST, this);
     Set types_to_remove = new TreeSet();
 
     for (int i=0; i<tier_labels.size(); i++) {
       TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
-      java.util.List graphs = handler.getContainedGraphs(tlg);
+      List graphs = handler.getContainedGraphs(tlg);
 
       if (graphs.isEmpty()) {
         IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
@@ -566,7 +567,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   public void saveAsDas2File(TierGlyph atier) {
     String annot_type = atier.getLabel();
     int childcount= atier.getChildCount();
-    java.util.List syms = new ArrayList(childcount);
+    List syms = new ArrayList(childcount);
     for (int i=0; i<childcount; i++) {
       GlyphI child = atier.getChild(i);
       if (child.getInfo() instanceof SeqSymmetry) {
@@ -599,7 +600,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   public void saveAsBedFile(TierGlyph atier) {
     int childcount= atier.getChildCount();
-    java.util.List syms = new ArrayList(childcount);
+    List syms = new ArrayList(childcount);
     for (int i=0; i<childcount; i++) {
       GlyphI child = atier.getChild(i);
       if (child.getInfo() instanceof SeqSymmetry) {
@@ -632,7 +633,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   }
 
-  static void collectSyms(GlyphI gl, java.util.List syms) {
+  static void collectSyms(GlyphI gl, List syms) {
     Object info = gl.getInfo();
     if ((info != null)  && (info instanceof SeqSymmetry)) {
       syms.add((SeqSymmetry)info);
@@ -650,7 +651,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
 
-    java.util.List syms = new ArrayList(child_count);
+    List syms = new ArrayList(child_count);
     collectSyms(atier, syms);
     if (child_count == 0 || syms.size() == 0) {
       ErrorHandler.errorPanel("Empty Tier",
@@ -695,7 +696,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //   just recursively descend through child glyphs of the tier, and if
     //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
     //   (don't descend into childA's children)
-    java.util.List syms = new ArrayList();
+    List syms = new ArrayList();
     collectSyms(atier, syms);
     if (syms.size() == 0) {
       ErrorHandler.errorPanel("Nothing to Summarize",
@@ -731,7 +732,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
-    java.util.List labels = handler.getSelectedTierLabels();
+    List labels = handler.getSelectedTierLabels();
     int num_selections = labels.size();
     boolean not_empty = ! handler.getAllTierLabels().isEmpty();
 
@@ -875,7 +876,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   // purely for debugging
   void doDebugAction() {
     if (DEBUG) {
-      java.util.List current_tiers = handler.getSelectedTiers();
+      List current_tiers = handler.getSelectedTiers();
       Iterator iter = current_tiers.iterator();
       while (iter.hasNext()) {
         TierGlyph tg = (TierGlyph) iter.next();

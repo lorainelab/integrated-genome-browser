@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.tiers.*;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.*;
@@ -129,7 +129,7 @@ public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandList
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
 
     Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
-    java.util.List hits = nevt.getItems();
+    List hits = nevt.getItems();
     int hcount = hits.size();
 
     GlyphI topgl = null;

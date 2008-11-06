@@ -14,10 +14,12 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.prefs.*;
 import java.util.regex.*;
@@ -349,7 +351,7 @@ DataRequestListener {
 	 *  so every request (one per type) launches on its own thread
 	 *  But for now putting them all on same (non-event) thread controlled by SwingWorker
 	 */
-	public static void processFeatureRequests(java.util.List requests, final boolean update_display) {
+	public static void processFeatureRequests(List requests, final boolean update_display) {
 		processFeatureRequests(requests, update_display, DEFAULT_THREAD_FEATURE_REQUESTS);
 	}
 
@@ -364,9 +366,9 @@ DataRequestListener {
 	 *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
 	 *
 	 */
-	public static void processFeatureRequests(java.util.List requests, final boolean update_display, boolean thread_requests) {
+	public static void processFeatureRequests(List requests, final boolean update_display, boolean thread_requests) {
 		if ((requests == null) || (requests.size() == 0)) { return; }
-		final java.util.List result_syms = new ArrayList();
+		final List result_syms = new ArrayList();
 
 		Map requests_by_version = new LinkedHashMap();
 		// split into entries by DAS/2 versioned source		
@@ -502,7 +504,7 @@ DataRequestListener {
 			types_table.repaint();
 			clearTreeView();
 			if (current_group == null) { return; }
-			//      java.util.List versions = Das2Discovery.getVersionedSources(current_group, true);
+			//      List versions = Das2Discovery.getVersionedSources(current_group, true);
 			Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
 			int current_sleep_time = 0;
 
@@ -1063,7 +1065,7 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
 
 	}
 
-	java.util.List type_states = new ArrayList();
+	List type_states = new ArrayList();
 
 	CheckTreeManager ctm;
 
@@ -1099,7 +1101,7 @@ class Das2TypesTableModel extends AbstractTableModel implements ChangeListener  
 		return type_states.indexOf(state);
 	}
 
-	public java.util.List getTypeStates() { return type_states; }
+	public List getTypeStates() { return type_states; }
 
 	public int getColumnCount() {
 		return column_names.length;

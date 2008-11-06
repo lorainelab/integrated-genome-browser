@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 public class AffyTieredMap extends NeoMap {
@@ -147,7 +148,7 @@ public class AffyTieredMap extends NeoMap {
   }
 
   // need to deprecate getTiers() or getAllTiers()
-  public java.util.List getTiers() { return tiers; }
+  public List getTiers() { return tiers; }
 
   // need to deprecate getTiers() or getAllTiers()
   public Vector getAllTiers () { return (Vector)getTiers(); }

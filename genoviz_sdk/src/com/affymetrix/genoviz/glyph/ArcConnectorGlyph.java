@@ -17,8 +17,9 @@ import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.*;
+import java.awt.Graphics;
 import java.util.*;
+import java.util.List;
 
 /**
  * Draws an arc line between the closest corners of two glyphs.
@@ -26,7 +27,7 @@ import java.util.*;
  */
 public class ArcConnectorGlyph extends Glyph {
 
-  private java.util.List<GlyphI> twoglyphs = new ArrayList<GlyphI>(2);
+  private List<GlyphI> twoglyphs = new ArrayList<GlyphI>(2);
   private int spans;
 
   private boolean aboveaxis = false;

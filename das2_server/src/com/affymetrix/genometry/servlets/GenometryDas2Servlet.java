@@ -3,6 +3,7 @@ package com.affymetrix.genometry.servlets;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -1359,7 +1360,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		}
 	    }
 
-	    java.util.List formats = (java.util.List) types_hash.get(feat_type);
+	    List formats = (List) types_hash.get(feat_type);
 	    String feat_type_encoded = URLEncoder.encode(feat_type);
 	    // URLEncoding replaces slashes, want to keep those...
 	    feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
@@ -1471,14 +1472,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		    Iterator titer = typeid2sym.keySet().iterator();
 		    while (titer.hasNext()) {
 			String type = (String)titer.next();
-			java.util.List flist = Collections.EMPTY_LIST;
+			List flist = Collections.EMPTY_LIST;
 			if (genome_types.get(type) == null) {
 			    SymWithProps tannot = aseq.getAnnotation(type);
 			    //	      System.out.println("type: " + type + ", format info: " +
 			    //				 tannot.getProperty("preferred_formats"));
 			    SymWithProps first_child = (SymWithProps)tannot.getChild(0);
 			    if (first_child != null) {
-				java.util.List formats = (java.util.List)first_child.getProperty("preferred_formats");
+				List formats = (List)first_child.getProperty("preferred_formats");
 				if (formats != null) { flist = formats; }
 			    }
 			    genome_types.put(type, flist);
@@ -1974,7 +1975,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
 
 
-    public boolean outputAnnotations(java.util.List syms, BioSeq seq,
+    public boolean outputAnnotations(List syms, BioSeq seq,
 				     String annot_type,
 				     HttpServletRequest request, HttpServletResponse response,
 				     String format) {

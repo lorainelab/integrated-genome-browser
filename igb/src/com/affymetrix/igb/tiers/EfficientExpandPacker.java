@@ -13,8 +13,9 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
@@ -145,7 +146,7 @@ public class EfficientExpandPacker extends ExpandPacker {
     }
     childbox = child.getCoordBox();
     if (DEBUG_PACK && test_tier)  { System.out.println("packing glyph: " + childbox); }
-    java.util.List sibsinrange = null;
+    List sibsinrange = null;
     boolean childMoved = true;
     if (avoid_sibs) {
       sibsinrange = tier.getPriorOverlaps(child_index);
@@ -229,7 +230,7 @@ public class EfficientExpandPacker extends ExpandPacker {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    java.util.List sibsinrange = null;
+    List sibsinrange = null;
     boolean childMoved = true;
     Vector sibs = parent.getChildren();
     if (sibs == null) { return null; }

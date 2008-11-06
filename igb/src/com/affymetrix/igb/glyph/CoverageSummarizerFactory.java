@@ -13,8 +13,9 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -93,7 +94,7 @@ public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
 
       int child_count = tsym.getChildCount();
       // initializing list internal array length to child count to reduce list expansions...
-      java.util.List leaf_spans = new ArrayList(child_count);
+      List leaf_spans = new ArrayList(child_count);
       SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
 
       CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();

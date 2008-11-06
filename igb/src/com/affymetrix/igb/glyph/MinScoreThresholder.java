@@ -13,7 +13,11 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -21,6 +25,7 @@ import javax.swing.event.ChangeEvent;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.widget.*;
 
@@ -31,7 +36,7 @@ public class MinScoreThresholder extends JPanel
   static int frm_width = 400;
   static int frm_height = 200;
   //  SmartGraphGlyph sgg;
-  java.util.List graphs = new ArrayList();
+  List graphs = new ArrayList();
   NeoWidgetI widg;
   JSlider tslider;
   JTextField minscoreTF;
@@ -84,7 +89,7 @@ public class MinScoreThresholder extends JPanel
     minscoreTF.addActionListener(this);
   }
 
-  public void setGraphs(java.util.List newgraphs) {
+  public void setGraphs(List newgraphs) {
     graphs.clear();
 
     tslider.removeChangeListener(this);

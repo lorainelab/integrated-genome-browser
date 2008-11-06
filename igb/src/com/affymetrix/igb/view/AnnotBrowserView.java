@@ -13,9 +13,12 @@
 
 package com.affymetrix.igb.view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
@@ -147,7 +150,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   
 //  FindResiduesPanel find_residues = new FindResiduesPanel();
   
-  protected Vector buildRows(java.util.List results) {
+  protected Vector buildRows(List results) {
         
     if (results == null || results.isEmpty()) {
       return new Vector(0);
@@ -198,7 +201,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         getSearchAction().setEnabled(false);
         clearTable("Working...");        
         
-        java.util.List results = Collections.EMPTY_LIST;
+        List results = Collections.EMPTY_LIST;
         try {
           results = finder.searchForSyms(final_seq_group);
         } catch (Exception e) {
@@ -285,7 +288,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         if (srow >= 0) {
           //Object o = table.getModel().getValueAt(srow, 0);
           SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-          java.util.List syms = new ArrayList(1);
+          List syms = new ArrayList(1);
           syms.add((SeqSymmetry) table.getModel().getValueAt(srow, 1));
           gmodel.setSelectedSymmetriesAndSeq(syms, this);
         }

@@ -16,9 +16,12 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.*;
 import javax.swing.*;
 
@@ -389,7 +392,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
-		java.util.List sym_list = group.findSyms(id);
+		List sym_list = group.findSyms(id);
 
 		if (sym_list != null && ! sym_list.isEmpty()) {
 			idHitCountL.setText(sym_list.size() + " matches found");

@@ -13,9 +13,13 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
@@ -51,7 +55,7 @@ public class PercentThresholder extends JPanel
   //    desire to avoid recalculation of percent-to-score array (which requires a
   //    sort) every time a graph is selected...
   Map info2pscores = new HashMap();
-  java.util.List graphs = new ArrayList();
+  List graphs = new ArrayList();
 
   /**
    *  Now trying to map slider values to percentages, such that each slider
@@ -68,7 +72,7 @@ public class PercentThresholder extends JPanel
   static PercentThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
     //    PercentThresholder thresher = new PercentThresholder(sgg, widg);
     PercentThresholder thresher = new PercentThresholder(widg);
-    java.util.List glist = new ArrayList();
+    List glist = new ArrayList();
     glist.add(sgg);
     thresher.setGraphs(glist);
     JFrame frm = new JFrame("Graph Percentile Adjuster");
@@ -158,7 +162,7 @@ public class PercentThresholder extends JPanel
     syncCB.addActionListener(this);
   }
 
-  public void setGraphs(java.util.List newgraphs) {
+  public void setGraphs(List newgraphs) {
     graphs.clear();
     int gcount = newgraphs.size();
     for (int i=0; i<gcount; i++) {

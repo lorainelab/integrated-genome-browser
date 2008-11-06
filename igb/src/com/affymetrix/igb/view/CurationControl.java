@@ -14,11 +14,12 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -423,7 +424,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
     String annot_type = atier.getLabel();
     // should probably do this via aseq.getAnnotation(annot_type);
     int childcount= atier.getChildCount();
-    java.util.List syms = new ArrayList(childcount);
+    List syms = new ArrayList(childcount);
     for (int i=0; i<childcount; i++) {
       GlyphI child = atier.getChild(i);
       if (child.getInfo() instanceof SeqSymmetry) {
@@ -467,7 +468,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
       InputSource isrc = new InputSource(new StringReader(return_contents));
       Das2FeatureSaxParser return_parser = new Das2FeatureSaxParser();
       // read return document as new annotations for now...
-      java.util.List results = return_parser.parse(isrc, writeback_loc, group, true);
+      List results = return_parser.parse(isrc, writeback_loc, group, true);
       System.out.println("results returned: " + results.size());
       success = true;
     }
@@ -490,7 +491,7 @@ public class CurationControl implements ActionListener, ContextualPopupListener 
    *  Implementing ContextualPopupListener to dynamicly modify
    *  right-click popup on SeqMapView to add a curation menu.
    */
-  public void popupNotify(JPopupMenu popup, java.util.List selected_items, SeqSymmetry primary_sym) {
+  public void popupNotify(JPopupMenu popup, List selected_items, SeqSymmetry primary_sym) {
     popup.add(curationM);
   }
 

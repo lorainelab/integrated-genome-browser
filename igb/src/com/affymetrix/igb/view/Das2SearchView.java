@@ -1,10 +1,12 @@
 package com.affymetrix.igb.view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.EditableComboBox;
 
@@ -114,7 +116,7 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
     }
   }
 
-  public java.util.List searchFeaturesByName(String name) {
+  public List searchFeaturesByName(String name) {
     if (name == null || name.equals(""))  { return null; }
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (group == null) { return null; }
@@ -122,7 +124,7 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
     if (version == null) { return null; }
 
     // if already searched with this name, then use cached results
-    java.util.List feats = (java.util.List)search_results_history.get(name);
+    List feats = (List)search_results_history.get(name);
     if (feats == null) {
       feats = version.getFeaturesByName(name, false);
       MutableComboBoxModel mcb = (MutableComboBoxModel)searchCB.getModel();
@@ -148,10 +150,10 @@ class SearchResultsTableModel extends AbstractTableModel {
   static int MAX_COLUMN = 5;
   static int STRAND_COLUMN = 6;
 
-  java.util.List search_results;
+  List search_results;
 
   String[] column_names = { "name", "ID", "type", "chromosome", "min", "max", "strand" };
-  public SearchResultsTableModel(java.util.List results) {
+  public SearchResultsTableModel(List results) {
     search_results = results;
   }
 

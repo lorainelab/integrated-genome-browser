@@ -15,8 +15,13 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.style.*;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
@@ -45,7 +50,7 @@ public class TierGlyph extends SolidGlyph {
    *    in front of the solid background, but behind the child glyphs
    *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
    */
-  java.util.List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+  List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
   public static final int HIDDEN = 100;
   public static final int COLLAPSED = 101;
@@ -115,7 +120,7 @@ public class TierGlyph extends SolidGlyph {
   protected PackerI collapse_packer = new CollapsePacker();
   //  protected PackerI summarize_packer = new SummarizePacker();
 
-  protected java.util.List<GlyphI> max_child_sofar = null;
+  protected List<GlyphI> max_child_sofar = null;
 
   IAnnotStyle style;
 
@@ -238,7 +243,7 @@ public class TierGlyph extends SolidGlyph {
    *      and that max_child_sofar list is also populated
    *      (via TierGlyph.initForSearching() call)
    */
-  public java.util.List getPriorOverlaps(int query_index) {
+  public List getPriorOverlaps(int query_index) {
     if ((! ready_for_searching)  || (! sorted)) {
       throw new RuntimeException("must call TierGlyph.initForSearching() before " +
 				 "calling TierGlyph.getPriorOverlaps");

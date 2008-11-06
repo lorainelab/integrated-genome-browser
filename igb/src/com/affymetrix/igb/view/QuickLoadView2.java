@@ -12,10 +12,14 @@
 */
 package com.affymetrix.igb.view;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.prefs.*;
 import javax.swing.*;
 import java.net.URL;
@@ -366,7 +370,7 @@ public class QuickLoadView2 extends JComponent
         current_server.initGenome(current_genome_name);
         genomeCB.setSelectedItem(current_genome_name);
 
-        java.util.List file_names = current_server.getFilenames(current_genome_name);
+        List file_names = current_server.getFilenames(current_genome_name);
         Iterator iter = file_names.iterator();
 
         // populate list of checkboxes for annotation types

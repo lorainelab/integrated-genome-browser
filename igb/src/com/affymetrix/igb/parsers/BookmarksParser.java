@@ -15,6 +15,7 @@ package com.affymetrix.igb.parsers;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.net.MalformedURLException;
 import com.affymetrix.igb.bookmarks.*;
 
@@ -211,7 +212,7 @@ public class BookmarksParser {
     BedParser bparser = new BedParser();
     
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
-    java.util.List annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false);
+    List annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false);
     
     if ((annots != null) && (annots.size() > 0)) {
       for (int k=0; k<annots.size(); k++) {

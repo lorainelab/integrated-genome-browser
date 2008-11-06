@@ -13,8 +13,9 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 
 public class CollapsePacker implements PaddedPackerI {
@@ -61,7 +62,7 @@ public class CollapsePacker implements PaddedPackerI {
   }
 
   protected void moveAllChildren(GlyphI parent, ViewI view) {
-    java.util.List children = parent.getChildren();
+    List children = parent.getChildren();
     if (children == null) { return; }
 
     for (int i=0; i<children.size(); i++) {

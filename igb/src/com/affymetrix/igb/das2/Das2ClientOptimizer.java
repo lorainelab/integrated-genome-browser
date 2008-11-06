@@ -16,6 +16,7 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -164,7 +165,7 @@ public class Das2ClientOptimizer {
 					// figure out min/max within bounds based on location of previous queries relative to new query
 					int first_within_min;
 					int last_within_max;
-					java.util.List union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
+					List union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
 					SeqSpanComparator spancomp = new SeqSpanComparator();
 					// since prev_union was created via SeqSymSummarizer, spans should come out already
 					//   sorted by ascending min (and with no overlaps)
@@ -435,7 +436,7 @@ public class Das2ClientOptimizer {
         
         
     private static void SuccessfullyRequestedLog(String content_subtype, Das2RequestLog request_log, BufferedInputStream bis, String feature_query, AnnotatedSeqGroup seq_group, Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym, MutableAnnotatedBioSeq aseq) throws IOException, SAXException {
-        java.util.List feats = null;
+        List feats = null;
         if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE) || content_subtype.equals("das2feature") || content_subtype.equals("das2xml") || content_subtype.startsWith("x-das-feature")) {
             request_log.addLogMessage("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
             Das2FeatureSaxParser parser = new Das2FeatureSaxParser();

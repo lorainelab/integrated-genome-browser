@@ -1,9 +1,20 @@
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Frame;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -51,7 +62,7 @@ public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, 
 
   ArrayList mlisteners = new ArrayList();
   ArrayList rlisteners = new ArrayList();
-  // java.util.List child_maps = new ArrayList();
+  // List child_maps = new ArrayList();
   //  LinearTransform temp_trans = new LinearTransform();
 
   public MultiWindowTierMap(boolean hscroll, boolean vscroll) {

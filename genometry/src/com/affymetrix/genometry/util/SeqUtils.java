@@ -14,6 +14,7 @@
 package com.affymetrix.genometry.util;
 
 import java.util.*;
+import java.util.List;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
@@ -451,9 +452,9 @@ public abstract class SeqUtils {
       return false;
     }
     /* testing for merging any overlaps...
-    java.util.List ispans = getLeafSpans(resultSym, seq);
+    List ispans = getLeafSpans(resultSym, seq);
     SeqSymmetry merged_results = spanMerger(spans);
-    java.util.List merged_ispans = getLeafSpans(merged_results, seq);
+    List merged_ispans = getLeafSpans(merged_results, seq);
     etc.
     */
 

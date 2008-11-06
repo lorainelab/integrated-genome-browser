@@ -13,9 +13,14 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
+import java.awt.Adjustable;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.*;
@@ -39,7 +44,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
   AffyTieredMap northWestMap = null;
 
   JPanel nwpan, nepan, wpan, cpan, epan;
-  java.util.List extra_glyphs = new ArrayList();
+  List extra_glyphs = new ArrayList();
   double extramap_inset = 5;
 
   private SixWaySplitPane windowPane;
@@ -231,7 +236,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     return extramap;
   }
 
-  public java.util.List getExtraMapTiers() {
+  public List getExtraMapTiers() {
     return extra_glyphs;
   }
 

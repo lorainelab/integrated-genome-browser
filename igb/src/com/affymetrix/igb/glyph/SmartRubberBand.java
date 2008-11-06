@@ -13,9 +13,9 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -38,7 +38,7 @@ public class SmartRubberBand extends com.affymetrix.genoviz.bioviews.RubberBand 
    *   RubberBand.heardEvent() if mouse press did not occur over a hitable glyph.
    */
   public void mousePressed(MouseEvent e) { 
-    java.util.List hit_glyphs = nmap.getItemsByPixel(e.getX(), e.getY());
+    List hit_glyphs = nmap.getItemsByPixel(e.getX(), e.getY());
     if (hit_glyphs == null || hit_glyphs.isEmpty()) {
       heardEvent(e); 
     }

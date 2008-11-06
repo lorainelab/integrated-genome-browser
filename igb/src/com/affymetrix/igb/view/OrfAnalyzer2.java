@@ -13,9 +13,12 @@
 
 package com.affymetrix.igb.view;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
@@ -63,7 +66,7 @@ public class OrfAnalyzer2 extends JComponent
   boolean show_orfs;
   BioSeq current_seq;
 
-  java.util.List orf_holders = new ArrayList();
+  List orf_holders = new ArrayList();
   String[] stop_codons = { "TAA", "TAG", "TGA", "TTA", "CTA", "TCA" };
   Color[] stop_colors = { Color.red, Color.orange, Color.yellow };
   boolean vertical_layout = false;

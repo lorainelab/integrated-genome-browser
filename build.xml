@@ -263,8 +263,8 @@ Make sure that the 'ext' directory exists and includes
   <target name="run" depends="init-igb,jar"
     description="Runs IGB (rebuilding it first, if needed).">
     <java fork="true" classname="com.affymetrix.igb.IGB">
-      <!-- Note: you can change the amout of memory to use here. -->
-      <jvmarg value="-mx256m"/>
+      <!-- Note: you can change the amount of memory to use here. -->
+      <jvmarg value="-mx1024m"/>
       <!--  Note: you can specify here which prefs file(s) to include. -->
       <arg value="-prefs"/>
       <arg value="${igb.src.dir}/igb_prefs.xml"/>

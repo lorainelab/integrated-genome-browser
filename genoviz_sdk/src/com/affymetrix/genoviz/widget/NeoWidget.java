@@ -1040,9 +1040,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
        before calling zoom() method, rather than here in the zoom() method
        itself -- GAH 6-1-98
     */
-    if (zoom_scale == Float.NEGATIVE_INFINITY ||
-        zoom_scale == Float.POSITIVE_INFINITY ||
-        zoom_scale == Float.NaN) {
+    if (Double.isInfinite(zoom_scale) ||
+        Double.isNaN(zoom_scale)) {
       if (DEBUG_ZOOM)  {
         System.out.println("Weird zoom call, ignoring: id = " + id +
             ", scale = " + zoom_scale);

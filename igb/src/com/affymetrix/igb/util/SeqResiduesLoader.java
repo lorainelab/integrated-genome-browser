@@ -44,6 +44,8 @@ public class SeqResiduesLoader {
 	if (seq_group instanceof Das2SeqGroup)  {
             // -1 indicates no min/max
             // Try to load in bnib format
+            
+            /*
             String uri = generateDas2URI(seq_group, aseq, -1, -1, true);
             loaded = LoadResiduesFromDAS2(seq_group, uri);
             if (!loaded) {
@@ -51,6 +53,16 @@ public class SeqResiduesLoader {
                 uri = generateDas2URI(seq_group, aseq, -1, -1, false);
                 loaded = LoadResiduesFromDAS2(seq_group, uri);
             }
+             * */
+            
+            String uri = generateDas2URI(seq_group, aseq, -1, -1, false);
+            loaded = LoadResiduesFromDAS2(seq_group, uri);
+            if (!loaded) {
+                // Try to load in fasta format
+                uri = generateDas2URI(seq_group, aseq, -1, -1, true);
+                loaded = LoadResiduesFromDAS2(seq_group, uri);
+            }
+            
 	}
 	if (! loaded)  {
             loaded = LoadResiduesFromQuickLoad(seq_group, seq_name, gviewer);

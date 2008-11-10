@@ -66,8 +66,9 @@ public class FastaParser {
                 if (!matched) {
                     continue;
                 }
-                StringBuffer buf = new StringBuffer();
                 String seqid = matcher.group(1);
+                
+                StringBuffer buf = new StringBuffer();
                 while (br.ready()) {
                     String line = br.readLine();
                     if (line == null) {
@@ -86,8 +87,14 @@ public class FastaParser {
 
                     buf.append(line);
                 }
-                String residues = buf.toString();
+                
+                // Didn't use .toString() here because of a memory bug in Java
+                // (See "stringbuffer memory java" for more details.)
+                String residues = new String(buf);
+                buf.setLength(0);
+                buf = null; // immediately allow the gc to use this memory
                 residues = residues.trim();
+                
                 MutableAnnotatedBioSeq seq = group.getSeq(seqid);
                 if (seq == null && seqid.indexOf(' ') > 0) {
                     // It's possible that the header has additional info past the chromosome name.  If so, remove and try again.
@@ -164,8 +171,15 @@ public static String parseResidues(InputStream istr) throws IOException {
                 }
 
                 buf.append(line);
-                result = buf.toString();
             }
+
+            // Didn't use .toString() here because of a memory bug in Java
+            // (See "stringbuffer memory java" for more details.)
+            result = new String(buf);
+            buf.setLength(0);
+            buf = null; // immediately allow the gc to use this memory
+            
+            result = result.trim();
         }
     } finally {
         if (br != null) {

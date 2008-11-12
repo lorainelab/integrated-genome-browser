@@ -17,13 +17,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
 //import com.affymetrix.igb.test.SearchSymTest;
-import com.affymetrix.genoviz.util.Memer;
+//import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
-import com.affymetrix.igb.parsers.*;
+import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import com.affymetrix.igb.das2.Das2Coords;
 
 import com.affymetrix.genometryImpl.*;
@@ -1095,7 +1095,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
         pw.println("This DAS/2 server cannot currently handle request:    ");
         pw.println(request.getRequestURL().toString());
     }
-
    
     
     private void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
@@ -1152,18 +1151,43 @@ public class GenometryDas2Servlet extends HttpServlet  {
         
         log.add("seq request mapping to file: " + file_name + " spanning " + spanStart + " to " + spanEnd);
 
+        setContentType(response, FastaParser.getMimeType());
         byte[] buf = FastaParser.ReadFASTA(seqfile, spanStart, spanEnd);
         byte[] header = FastaParser.GenerateNewHeader(seqname, org_name, spanStart, spanEnd);
-        setContentType(response, FastaParser.getMimeType());
-        if (buf != null) {
-            DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+        OutputFormattedFasta(buf, header, response.getOutputStream());
+    }
+
+    // Write a formatted fasta file out to the ServletOutputStream.
+    private static void OutputFormattedFasta(byte [] buf, byte [] header, ServletOutputStream sos) 
+            throws IOException, IOException, IllegalArgumentException {
+        if (buf == null)
+            return;
+        
+        DataOutputStream dos = new DataOutputStream(sos);
+        try {
             dos.write(header, 0, header.length);
-            dos.write(buf, 0, buf.length);
-            // should output stream get closed here?
+
+            byte[] newlineBuf = new byte[1];
+            newlineBuf[0] = '\n';
+
+            // Write out Fasta sequence, adding a newline after every LINELENGTH characters.
+            int lines = buf.length / FastaParser.LINELENGTH;
+            for (int i = 0; i < lines; i++) {
+                //System.out.println("Writing out line " + i + " with " + i * FastaParser.LINELENGTH);
+                dos.write(buf, i * FastaParser.LINELENGTH, FastaParser.LINELENGTH);
+                dos.write(newlineBuf, 0, 1);
+            }
+            if (buf.length % FastaParser.LINELENGTH > 0) {
+                // Write remainder of last line out to buffer
+                //System.out.println("Writing out remainder of " + buf.length % FastaParser.LINELENGTH + " at:" + lines * FastaParser.LINELENGTH);
+                dos.write(buf, lines * FastaParser.LINELENGTH, buf.length % FastaParser.LINELENGTH);
+                dos.write(newlineBuf, 0, 1);
+            }
+        } finally {
             dos.close();
         }
     }
-
+    
     
     public void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response)
 	throws IOException  {

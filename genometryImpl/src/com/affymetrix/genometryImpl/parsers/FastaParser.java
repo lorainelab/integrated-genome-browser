@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.regex.*;
 import java.text.*;
 
+import java.util.List;
+
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -35,7 +37,7 @@ public class FastaParser {
   //  int max_residues = 32000000;
 
   static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
-  static final int LINELENGTH=79;
+  public static final int LINELENGTH=79;
 
   public FastaParser() {
   }
@@ -67,7 +69,7 @@ public class FastaParser {
                     continue;
                 }
                 String seqid = matcher.group(1);
-                
+             
                 StringBuffer buf = new StringBuffer();
                 while (br.ready()) {
                     String line = br.readLine();
@@ -94,7 +96,7 @@ public class FastaParser {
                 buf.setLength(0);
                 buf = null; // immediately allow the gc to use this memory
                 residues = residues.trim();
-                
+              
                 MutableAnnotatedBioSeq seq = group.getSeq(seqid);
                 if (seq == null && seqid.indexOf(' ') > 0) {
                     // It's possible that the header has additional info past the chromosome name.  If so, remove and try again.
@@ -600,7 +602,7 @@ public static String parseResidues(InputStream istr) throws IOException {
                     if (nucleotides_read < 1) {
                         // end of file hit.  quit parsing.
                         System.out.println("Unexpected End of File at newline!");
-                        return returnShortenedBuffer(buf, i);
+                        return trimBuffer(buf);
                     }
                     if (nucleotides_read == 1 && x[0] == '\n') {
                         // expected
@@ -616,23 +618,23 @@ public static String parseResidues(InputStream istr) throws IOException {
                 int nucleotides_left_on_this_line = Math.min(LINELENGTH - line_location, nucleotides_len - i);
                 //int nucleotides_read = bis.read(buf, i + header_len, nucleotides_left_on_this_line);
                 int nucleotides_read = bis.read(buf, i, nucleotides_left_on_this_line);
+                if (nucleotides_read == -1)
+                    return trimBuffer(buf);
                 i+= nucleotides_read;
-                line_location = nucleotides_read;
+                line_location += nucleotides_read;
                 
                 if (nucleotides_read != nucleotides_left_on_this_line) {
                     // end of file hit.  quit parsing.
                     System.out.println("Unexpected EOF: i,nucleotides_read" + i + " " + nucleotides_read);
                     
-                    //return returnShortenedBuffer(buf, i + header_len);
-                    return returnShortenedBuffer(buf, i);
+                    return trimBuffer(buf);
                 }
             }
           
-            return buf;
+            return trimBuffer(buf);
         }
         finally {
             dis.close();
-            return buf;
         }
     }
     
@@ -661,25 +663,26 @@ public static String parseResidues(InputStream istr) throws IOException {
         return result;
     }
     
-     private static byte[] returnShortenedBuffer(byte[] buf, int i) {
-         if (i <= 0)
-             return buf; // Buffer is already as short as possible.
+
+     private static byte[] trimBuffer(byte[] buf) {
+         int i=buf.length;
+         
+         // Find last valid residue
+         while (i>=0 && (buf[i-1] == '\n' || buf[i-1] == 0)) {
+             i--;
+         }
+         if (i == 0)
+             return null;
          
         // Copy over shortened buffer
-        // was last character a newline? skip it as well.
-        if (buf[i] == '\n' || buf[i] == 0) {
-            i--;
-            //System.out.println("removing character");
-        }
-        if (i == 0) {
-            return null;
-        }
+
         byte[] buf2 = new byte[i];
         System.arraycopy(buf, 0, buf2, 0, i);
+        buf = null;
       
         return buf2;
     }
-
+     
     // Parse off the header (if it exists).
     public static byte[] skipFASTAHeader(String filename, BufferedInputStream bis)
             throws IOException, UnsupportedEncodingException {
@@ -752,7 +755,7 @@ public static String parseResidues(InputStream istr) throws IOException {
         }
         return skip_status;
     }
-
+  
     
     public static String getMimeType()  { return "text/fasta"; } 
 

@@ -136,7 +136,7 @@ public class ParserController {
 			else {
 				System.out.println("Can't parse, format not recognized: " + stream_name);
 			}
-			System.gc();
+			//System.gc();
 		}
 		catch (Exception ex) {
 			System.err.println("Error loading file: " + stream_name);

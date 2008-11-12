@@ -576,7 +576,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 	// sort genomes based on "organism_order.txt" config file if present
 	sortGenomes();
-	System.gc();
+	//System.gc();
 	//mem.printMemory();
     }
 
@@ -873,7 +873,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		if (istr != null) try {istr.close();} catch (IOException ioe) {}
 	    }
 	}
-	System.gc();
+	//System.gc();
 	//mem.printMemory();
     }
 

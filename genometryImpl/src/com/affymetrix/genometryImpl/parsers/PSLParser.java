@@ -396,8 +396,10 @@ public class PSLParser implements AnnotationWriter  {
         total_child_count += sym.getChildCount();
         results.add(sym);
 
-        if (total_annot_count % 5000 == 0) {
-          System.out.println("current annot count: " + total_annot_count);
+        if (DEBUG) {
+            if (total_annot_count % 5000 == 0) {
+                System.out.println("current annot count: " + total_annot_count);
+            }
         }
       }
     } catch (Exception e) {
@@ -414,8 +416,10 @@ public class PSLParser implements AnnotationWriter  {
     } finally {
       br.close();
     }
+    if (DEBUG) {
     System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
                        ", child count: " + total_child_count);
+    }
    /*
      if (results.size() == 0) {
       throw new IOException("The PSL file contianed no annotations.  "+
@@ -654,7 +658,7 @@ public class PSLParser implements AnnotationWriter  {
     }
   }
 
-
+/*
 
   public static void main(String[] args) {
     boolean calc_lengths = false;
@@ -735,6 +739,7 @@ public class PSLParser implements AnnotationWriter  {
       }
     }
   }
+ * */
 
 }
 

@@ -77,7 +77,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
  * </pre>
  */
 public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
-  static final boolean DEBUG = true;
+  static final boolean DEBUG = false;
   static Pattern line_regex = Pattern.compile("\\s+");
   static Pattern comma_regex = Pattern.compile(",");
   static Pattern tagval_regex = Pattern.compile("=");
@@ -111,8 +111,10 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       AnnotatedSeqGroup group, boolean annot_seq,
       String stream_name, boolean create_container)
     throws IOException {
+      if (DEBUG) {
     System.out.println("BED parser called, annotate seq: " + annotate_seq +
                        ", create_container_annot: " + create_container);
+      }
     /*
      *  seq2types is hash for making container syms (if create_container_annot == true)
      *  each entry in hash is: BioSeq ==> type2psym hash
@@ -148,7 +150,9 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
 
   public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
      throws IOException  {
+      if (DEBUG) {
     System.out.println("called BedParser.parseWithEvents()");
+      }
     String line;
     String type = default_type;
     boolean use_item_rgb = false;
@@ -604,6 +608,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
   }
 
   /** Tests parsing of the file passed as a parameter. */
+  /*
   public static void main(String[] args) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     String file_name = args[0];
@@ -622,6 +627,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
       ex.printStackTrace();
     }
   }
+   * */
 
   /**
    *  Implementing AnnotationWriter interface to write out annotations
@@ -629,7 +635,9 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
    **/
   public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
                                   String type, OutputStream outstream) {
-    System.out.println("in BedParser.writeAnnotations()");
+      if (DEBUG){
+          System.out.println("in BedParser.writeAnnotations()");
+      }
     boolean success = true;
     try {
       Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));

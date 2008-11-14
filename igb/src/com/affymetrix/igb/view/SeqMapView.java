@@ -1477,7 +1477,6 @@ public class SeqMapView extends JPanel
   /**
    * @deprecated Use {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}.
    */
-	@Deprecated
   public static String determineMethod(SeqSymmetry sym) {
     return SmartAnnotBioSeq.determineMethod(sym);
   }

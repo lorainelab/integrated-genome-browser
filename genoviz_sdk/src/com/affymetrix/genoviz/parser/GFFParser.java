@@ -23,7 +23,6 @@ import com.affymetrix.genoviz.util.Debug;
 
 import java.io.*;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -577,11 +576,11 @@ public class GFFParser implements ContentParser {
    * puts the header meta lines on the print writer.
    */
   private void fileHeader(PrintWriter pw) throws IOException {
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
     pw.println("##gff-version 1");
     pw.println("##source-version com.affymetrix.genoviz.parser.GFFParser");
-    pw.println("##date " + df.format(new Date()));
+    Date now = new Date();
+    pw.println("##date " + (1900+now.getYear()) + "-" + now.getMonth() +
+        "-" + now.getDate());
   }
 
   private final static int LINE_LENGTH = 60;

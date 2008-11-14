@@ -113,7 +113,6 @@ public class EPSWriter {
    *  a single jar, as we have done.  It is supposed to use the openide-lookup
    *  jar as well, but we also don't include that in our distributions.
    */
-	@Deprecated
   public static void showExportDialog(Component c) {
     ExportDialog export = new ExportDialog();
     export.showExportDialog(c, "Export view as ...", c, "export");

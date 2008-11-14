@@ -1035,7 +1035,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	throws IOException  {
 	String path_info = request.getPathInfo();
 	String query = request.getQueryString();
-	query = URLDecoder.decode(query, "UTF-8");
+	query = URLDecoder.decode(query);
 	ArrayList formats = new ArrayList();
 	ArrayList ranges = new ArrayList();
 	String[] query_array = query_splitter.split(query);
@@ -1385,7 +1385,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    }
 
 	    List formats = (List) types_hash.get(feat_type);
-	    String feat_type_encoded = URLEncoder.encode(feat_type, "UTF-8");
+	    String feat_type_encoded = URLEncoder.encode(feat_type);
 	    // URLEncoding replaces slashes, want to keep those...
 	    feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
 
@@ -1585,7 +1585,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
      *        filter by name(s)
      *
      */
-    public void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) {
 	log.add("received features request");
 	com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 	long tim;
@@ -1617,6 +1617,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 	else {  // request contains query string
 
+	    query = URLDecoder.decode(query);
 	    ArrayList formats = new ArrayList();
 	    ArrayList types = new ArrayList();
 	    ArrayList segments = new ArrayList();
@@ -1877,9 +1878,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     
 
-    public String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) throws IOException {
+    public String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
 	//	query_type = (String)types.get(0);
-	String query_type = URLDecoder.decode(full_type_uri, "UTF-8");
+	String query_type = URLDecoder.decode(full_type_uri);
 	// using end of URI for internal typeid if type is given as full URI
 	//    (as it should according to DAS/2 spec)
 	//    special-case exception is when need to know full URL for locating graph data,

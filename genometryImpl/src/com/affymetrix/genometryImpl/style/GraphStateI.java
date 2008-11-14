@@ -32,7 +32,6 @@ public interface GraphStateI {
   public static final int STAIRSTEP_GRAPH = 5;
   
   /** @deprecated Use EXT_HEAT_MAP for most cases. */
-	@Deprecated
   public static final int HEAT_MAP = 7;
 
   public static final int BIG_DOT_GRAPH = 8;

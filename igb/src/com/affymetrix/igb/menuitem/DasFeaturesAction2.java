@@ -515,11 +515,11 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
 
               das_feat_request =
                 das_server +   //  "/"  already included in current_das_server
-                URLEncoder.encode(das_source, "UTF-8") + "/" +
+                URLEncoder.encode(das_source) + "/" +
                 "features?" +
-                "segment=" + URLEncoder.encode(seqid, "UTF-8")
+                "segment=" + URLEncoder.encode(seqid)
                    + ":" + exclusive_span.getMin() + "," + exclusive_span.getMax() +
-                ";type=" + URLEncoder.encode(type, "UTF-8") +
+                ";type=" + URLEncoder.encode(type) +
                 ";minmin=" + first_hard_min +
                 ";maxmax=" + last_hard_max;
               the_list.add(new String[] {das_feat_request, type});
@@ -545,11 +545,11 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
 
                 das_feat_request =
                   das_server +   //  "/"  already included in current_das_server
-                  URLEncoder.encode(das_source, "UTF-8") + "/" +
+                  URLEncoder.encode(das_source) + "/" +
                   "features?" +
-                  "segment=" + URLEncoder.encode(seqid, "UTF-8")
+                  "segment=" + URLEncoder.encode(seqid)
                      + ":" + childspan.getMin() + "," + childspan.getMax() +
-                  ";type=" + URLEncoder.encode(type, "UTF-8") +
+                  ";type=" + URLEncoder.encode(type) +
                   ";minmin=" + cur_hard_min +
                   ";maxmax=" + cur_hard_max;
 
@@ -562,10 +562,10 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
         else {
           das_feat_request =
             das_server +   //  "/"  already included in current_das_server
-            URLEncoder.encode(das_source, "UTF-8") + "/" +
+            URLEncoder.encode(das_source) + "/" +
             "features?" +
-            "segment=" + URLEncoder.encode(seqid, "UTF-8") + ":" + seqstart + "," + seqstop +
-            ";type=" + URLEncoder.encode(type, "UTF-8");
+            "segment=" + URLEncoder.encode(seqid) + ":" + seqstart + "," + seqstop +
+            ";type=" + URLEncoder.encode(type);
           the_list.add(new String[] {das_feat_request, type});
         }
       }
@@ -663,15 +663,15 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
     for (int i=0; i<selected_types.size(); i++) {
       String type = (String)selected_types.elementAt(i);
       buf.append(";type=");
-      buf.append(URLEncoder.encode(type, "UTF-8"));
+      buf.append(URLEncoder.encode(type));
     }
     String types_modifier = buf.toString();
 
     das_feat_request =
       current_das_server +   //  "/"  already included in current_das_server
-      URLEncoder.encode(current_das_source, "UTF-8") + "/" +
+      URLEncoder.encode(current_das_source) + "/" +
       "features?" +
-      "segment=" + URLEncoder.encode(seqid, "UTF-8") + ":" + seqstart + "," + seqstop +
+      "segment=" + URLEncoder.encode(seqid) + ":" + seqstart + "," + seqstop +
       types_modifier;
     } catch (Exception e) {
       ErrorHandler.errorPanel("Error constructing DAS feature request\n"+e.toString());

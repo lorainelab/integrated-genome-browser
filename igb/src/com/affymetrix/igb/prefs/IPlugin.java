@@ -81,7 +81,7 @@ public interface IPlugin {
   /**
    * @deprecated
    */
-  @Deprecated
+  //@Deprecated
   public static final String TEXT_KEY_IGB = TEXT_KEY_APP;
 
   /**

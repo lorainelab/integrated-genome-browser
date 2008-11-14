@@ -287,7 +287,6 @@ public class GraphGlyphUtils {
   /**
    * @deprecated
    */
-	@Deprecated
   public static Color getDefaultGraphColor(int i) {
     int index = (i % default_graph_colors.length);
     String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;

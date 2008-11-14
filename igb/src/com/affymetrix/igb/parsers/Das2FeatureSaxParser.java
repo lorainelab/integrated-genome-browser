@@ -823,22 +823,28 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
 
-    protected String getChildID(SeqSymmetry child, String parent_id, int parent_index)  {
-      String feat_id = child.getID();
-      if (feat_id == null)  {
-	if (child instanceof Propertied) {
-	  feat_id = (String)((Propertied)child).getProperty("id");
-	}
-      }
-      if (feat_id == null) {
-	if (parent_id != null) {
-	  feat_id = parent_id + "." + Integer.toString(parent_index);
-	}
-      }
-      if (feat_id == null) {
-	feat_id = "unknown";
-      }
-      return feat_id;
+    // Get a child ID (return "unknown" if we can't determine it).
+    // If there is a parent, then we differentiate the children by using the child_index.
+    protected static String getChildID(SeqSymmetry child, String parent_id, int child_index) {
+        String feat_id = child.getID();
+        if (feat_id == null) {
+            if (child instanceof Propertied) {
+                feat_id = (String) ((Propertied) child).getProperty("id");
+            }
+            if (feat_id == null) {
+                if (parent_id != null) {
+                    feat_id = parent_id;
+                }
+                if (feat_id == null) {
+                    return "unknown";
+                }
+            }
+        }
+
+        if (parent_id != null) {
+            feat_id += "." + Integer.toString(child_index);
+        }
+        return feat_id;
     }
 
 

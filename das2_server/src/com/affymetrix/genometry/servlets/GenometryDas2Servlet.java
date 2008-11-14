@@ -1714,6 +1714,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		String type_full_uri = (String)types.get(0);
 		query_type = getInternalType(type_full_uri, genome);
 
+                log.add("   query type: " + query_type);
+                
 		String overlap = null;
 		if (overlaps.size() == 1) {
 		    overlap = (String)overlaps.get(0);
@@ -1722,47 +1724,51 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		// if overlap string is null (no overlap parameter), then no overlap filter --
 		///   which is the equivalent of any annot on seq passing overlap filter --
 		//    which is same as an overlap filter with range = [0, seq.length]
-		//    (thereforany annotation on the seq passes overlap filter
+		//    (therefore any annotation on the seq passes overlap filter)
 		//     then want all getLocationSpan will return bounds of seq as overlap
-		overlap_span = getLocationSpan(seqid, overlap, genome);
 
-		if (insides.size() == 1) {
-		    String inside = (String)insides.get(0);
-		    inside_span = getLocationSpan(seqid, inside, genome);
-		}
+                overlap_span = getLocationSpan(seqid, overlap, genome);
+                if (overlap_span != null) {
+                    log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span));
+                    if (insides.size() == 1) {
+                        String inside = (String) insides.get(0);
+                        inside_span = getLocationSpan(seqid, inside, genome);
+                        if (inside_span != null) {
+                            log.add("   inside_span: " + SeqUtils.spanToString(inside_span));
+                        }
+                    }
 
-		log.add("   query type: " + query_type);
-		if (overlap_span != null) { log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span)); }
-		if (inside_span != null) { log.add("   inside_span: " + SeqUtils.spanToString(inside_span)); }
-		//	if (query_type.endsWith(".bar")) {
-		Map graph_name2dir = (Map)genome2graphdirs.get(genome);
-		Map graph_name2file = (Map)genome2graphfiles.get(genome);
-		if ((graph_name2dir.get(query_type) != null) ||
-		    (graph_name2file.get(query_type) != null)  ||
-		    // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
-		    (query_type.endsWith(".bar")) )   {
-		    handleGraphRequest(xbase, response, query_type, overlap_span);
-		    return;
-		}
+                    //	if (query_type.endsWith(".bar")) {
+                    Map graph_name2dir = (Map) genome2graphdirs.get(genome);
+                    Map graph_name2file = (Map) genome2graphfiles.get(genome);
+                    if ((graph_name2dir.get(query_type) != null) ||
+                            (graph_name2file.get(query_type) != null) ||
+                            // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
+                            (query_type.endsWith(".bar"))) {
+                        handleGraphRequest(xbase, response, query_type, overlap_span);
+                        return;
+                    }
 
-		BioSeq oseq = overlap_span.getBioSeq();
-		outseq = oseq;
-                
-                com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
-		timecheck.start();
+                    BioSeq oseq = overlap_span.getBioSeq();
+                    outseq = oseq;
 
-		/** this is the main call to retrieve symmetries meeting query constraints */
-		result = this.getIntersectedSymmetries(overlap_span, query_type);
+                    com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+                    timecheck.start();
+
+                    /** this is the main call to retrieve symmetries meeting query constraints */
+                    result = this.getIntersectedSymmetries(overlap_span, query_type);
 
 
-		if (result == null)  { result = Collections.EMPTY_LIST; }
-		log.add("  overlapping annotations of type " + query_type + ": " + result.size());
-		log.add("  time for range query: " + (timecheck.read())/1000f);
+                    if (result == null) {
+                        result = Collections.EMPTY_LIST;
+                    }
+                    log.add("  overlapping annotations of type " + query_type + ": " + result.size());
+                    log.add("  time for range query: " + (timecheck.read()) / 1000f);
 
-		if (inside_span != null) {
-                    result = SpecifiedInsideSpan(inside_span, oseq, result, query_type);
-		}
-
+                    if (inside_span != null) {
+                        result = SpecifiedInsideSpan(inside_span, oseq, result, query_type);
+                    }
+                }
 	    }
 	    else {
 		// any query combination not recognized above may  be correct based on DAS/2 spec
@@ -1775,6 +1781,88 @@ public class GenometryDas2Servlet extends HttpServlet  {
         OutputTheAnnotations(output_format, response, result, outseq, query_type, xbase);
 
     }
+    
+    /**
+     *  1) looks for graph files in graph seq grouping directories (".graphs.seqs")
+     *  if not 1), then
+     *     2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
+     *     if not 2), then
+     *        3) tries to directly access file
+     */
+    public void handleGraphRequest(String xbase, HttpServletResponse response,
+				   String type, SeqSpan span) {
+	log.add("#### handling graph request");
+	SmartAnnotBioSeq seq = (SmartAnnotBioSeq)span.getBioSeq();
+	String seqid = seq.getID();
+	AnnotatedSeqGroup genome = seq.getSeqGroup();
+	log.add("#### type: " + type + ", genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
+	// use bar parser to extract just the overlap slice from the graph
+	String graph_name = type;   // for now using graph_name as graph type
+
+        Map graph_name2dir = (Map) genome2graphdirs.get(genome);
+        Map graph_name2file = (Map) genome2graphfiles.get(genome);
+        
+        String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
+	log.add("####    file:  " + file_path);
+        OutputGraphSlice(file_path, span, type, xbase, response);
+    }
+    
+      private static String DetermineFilePath(Map graph_name2dir, Map graph_name2file, String graph_name, String seqid) {
+        // for now using graph_name as graph type
+        boolean use_graph_dir = false;
+        String file_path = (String) graph_name2dir.get(graph_name);
+        if (file_path != null) {
+            use_graph_dir = true;
+        }
+        if (file_path == null) {
+            file_path = (String) graph_name2file.get(graph_name);
+        }
+        if (file_path == null) {
+            file_path = graph_name;
+        }
+        if (use_graph_dir) {
+            file_path += "/" + seqid + ".bar";
+        }
+        if (file_path.startsWith("file:")) {
+            // if file_path is URI string, strip off "file:" prefix
+            if (WINDOWS_OS_TEST) {
+                file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);
+            } else {
+                file_path = file_path.substring(5);
+            }
+        }
+        return file_path;
+    }
+
+      private void OutputGraphSlice(String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
+        GraphSym graf = null;
+        try {
+            graf = BarParser.getSlice(file_path, gmodel, span);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (graf != null) {
+            ArrayList gsyms = new ArrayList();
+            gsyms.add(graf);
+            log.add("#### returning graph slice in bar format");
+            outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, "bar");
+        } else {
+            // couldn't generate a GraphSym, so return an error?
+            log.add("####### problem with retrieving graph slice ########");
+            response.setStatus(response.SC_NOT_FOUND);
+            try {
+                PrintWriter pw = response.getWriter();
+                pw.println("DAS/2 server could not find graph to return for type: " + type);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            log.add("set status to 404 not found");
+        }
+    }
+
+  
+
+    
     
     // if an inside_span specified, then filter out intersected symmetries based on this:
     //    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
@@ -1936,92 +2024,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	return span;
     }
 
-
-
-    //  public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response)  {
-    /**
-     *  1) looks for graph files in graph seq grouping directories (".graphs.seqs")
-     *  if not 1), then
-     *     2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
-     *     if not 2), then
-     *        3) tries to directly access file
-     */
-    public void handleGraphRequest(String xbase, HttpServletResponse response,
-				   String type, SeqSpan span) {
-	log.add("#### handling graph request");
-	SmartAnnotBioSeq seq = (SmartAnnotBioSeq)span.getBioSeq();
-	String seqid = seq.getID();
-	AnnotatedSeqGroup genome = seq.getSeqGroup();
-	log.add("#### type: " + type + ", genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
-	// use bar parser to extract just the overlap slice from the graph
-	String graph_name = type;   // for now using graph_name as graph type
-
-        Map graph_name2dir = (Map) genome2graphdirs.get(genome);
-        Map graph_name2file = (Map) genome2graphfiles.get(genome);
-        
-        String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
-	log.add("####    file:  " + file_path);
-        OutputGraphSlice(file_path, span, type, xbase, response);
-    }
-    
-      private static String DetermineFilePath(Map graph_name2dir, Map graph_name2file, String graph_name, String seqid) {
-        // for now using graph_name as graph type
-        boolean use_graph_dir = false;
-        String file_path = (String) graph_name2dir.get(graph_name);
-        if (file_path != null) {
-            use_graph_dir = true;
-        }
-        if (file_path == null) {
-            file_path = (String) graph_name2file.get(graph_name);
-        }
-        if (file_path == null) {
-            file_path = graph_name;
-        }
-        if (use_graph_dir) {
-            file_path += "/" + seqid + ".bar";
-        }
-        if (file_path.startsWith("file:")) {
-            // if file_path is URI string, strip off "file:" prefix
-            if (WINDOWS_OS_TEST) {
-                file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);
-            } else {
-                file_path = file_path.substring(5);
-            }
-        }
-        return file_path;
-    }
-
-    
-    
-    
-      private void OutputGraphSlice(String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
-        GraphSym graf = null;
-        try {
-            graf = BarParser.getSlice(file_path, gmodel, span);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        if (graf != null) {
-            ArrayList gsyms = new ArrayList();
-            gsyms.add(graf);
-            log.add("#### returning graph slice in bar format");
-            outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, "bar");
-        } else {
-            // couldn't generate a GraphSym, so return an error?
-            log.add("####### problem with retrieving graph slice ########");
-            response.setStatus(response.SC_NOT_FOUND);
-            try {
-                PrintWriter pw = response.getWriter();
-                pw.println("DAS/2 server could not find graph to return for type: " + type);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            log.add("set status to 404 not found");
-        }
-    }
-
   
-
 
     public boolean outputAnnotations(List syms, BioSeq seq,
 				     String annot_type,

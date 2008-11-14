@@ -908,96 +908,94 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     //  public void service(HttpServletRequest request, HttpServletResponse response)
     //    throws ServletException, IOException {
-    @Override
+     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
 	throws ServletException, IOException {
+        com.affymetrix.genoviz.util.Timer timecheck = null;
+        try {
+            log.clear();
+            if (TIME_RESPONSES) {
+                timecheck = new com.affymetrix.genoviz.util.Timer();
+                timecheck.start();
+            }
+            log.add("*************** Genometry Das2 Servlet ***************");
+            log.add(date_formatter.format(new Date(System.currentTimeMillis())));
+            //    Memer mem = new Memer();
+            //    mem.printMemory();
+            String path_info = request.getPathInfo();
+            String query = request.getQueryString();
+            String request_url = request.getRequestURL().toString();
+            log.add("HttpServletResponse buffer size: " + response.getBufferSize());
+            log.add("path_info: " + path_info);
+            log.add("url: " + request_url);
+            log.add("query: " + query);
+            log.add("path translated = " + request.getPathTranslated());
+            log.add("context path = " + request.getContextPath());
+            log.add("request uri = " + request.getRequestURI());
+            log.add("servlet path = " + request.getServletPath());
 
-	com.affymetrix.genoviz.util.Timer timecheck = null;
-	log.clear();
-	if (TIME_RESPONSES)  {
-	    timecheck = new com.affymetrix.genoviz.util.Timer();
-	    timecheck.start();
-	}
-	log.add("*************** Genometry Das Servlet ***************");
-	log.add(date_formatter.format(new Date(System.currentTimeMillis())));
-	//    Memer mem = new Memer();
-	//    mem.printMemory();
-	String path_info = request.getPathInfo();
-	String query = request.getQueryString();
-	String request_url = request.getRequestURL().toString();
-	log.add("HttpServletResponse buffer size: " + response.getBufferSize());
-	log.add("path_info: " + path_info);
-	log.add("url: " + request_url);
-	log.add("query: " + query);
-	log.add("path translated = " + request.getPathTranslated());
-	log.add("context path = " + request.getContextPath());
-	log.add("request uri = " + request.getRequestURI());
-	log.add("servlet path = " + request.getServletPath());
-
-	//    PrintWriter pw = response.getWriter();
-	//    addDasHeaders(response);		
-        if (path_info == null || path_info.trim().length() == 0) {   	
-	    log.add("Unknown or missing DAS command");
-	    response.sendError(response.SC_BAD_REQUEST,
-			       "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
-	}
-        else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash))  {	
-	    handleSourcesRequest(request, response);
-	}
-	else if (path_info.endsWith(login_query)){
-	    handleLoginRequest(request, response);
-	}
-	else {	
-	    AnnotatedSeqGroup genome = getGenome(request);
-	    // log.add("Genome version: '"+ genome.getID() + "'");
-	    if (genome == null) {
-		log.add("Unknown genome version");
-		//        response.setStatus(response.SC_BAD_REQUEST);
-		response.sendError(response.SC_BAD_REQUEST,
-				   "Query was not recognized, possibly the genome name is incorrect or missing from path? " +
-				   SERVER_SYNTAX_EXPLANATION);
-	    }
-	    else {
-		String das_command = path_info.substring(path_info.lastIndexOf("/")+1);
-		log.add("das command: " + das_command);
-		//        DasCommandPlugin plugin = (DasCommandPlugin)command2plugin.get(das_command);
-		if (das_command.equals(segments_query)) {
-		    handleSegmentsRequest(request, response);
-		}
-		else if (das_command.equals(types_query))  {
-		    handleTypesRequest(request, response);
-		}
-		else if (das_command.equals(features_query)) {
-		    handleFeaturesRequest(request, response);
-		}
-		/** if "das_command" matches seq id in the genome, then handle as a specific segment query */
-		else if (genome.getSeq(das_command) != null)  {
-		    log.add("handling seq request: "+ request_url);
-		    BioSeq aseq = genome.getSeq(das_command);
-		    handleSequenceRequest(request, response);
-		}
-		/*
-		  else if (das_command.equals(add_command)) {
-		  handleAddFeatures(request, response);
-		  }
-		  else if (plugin != null) {
-		  plugin.handleRequest(this, request, response);
-		  }
-		*/
-		else {
-		    log.add("DAS request not recognized, setting HTTP status header to 400, BAD_REQUEST");
-		    response.sendError(response.SC_BAD_REQUEST,
-				       "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
-		}
-	    }
-	}
-	if (TIME_RESPONSES) {
-	    long tim = timecheck.read();
-	    log.add("---------- response time: " + tim/1000f + "----------");
-	}
-	for (int i=0; i<log.size(); i++) { System.out.println(log.get(i)); }
-	log.clear();
+            HandleDas2Request(path_info, response, request, request_url);
+        } 
+        finally {
+            if (log == null) {
+                return;
+            }
+            try {
+                if (TIME_RESPONSES) {
+                    long tim = timecheck.read();
+                    log.add("---------- response time: " + tim / 1000f + "----------");
+                }
+                for (int i = 0; i < log.size(); i++) {
+                    System.out.println(log.get(i));
+                }
+                log.clear();
+            } catch (Exception e) {
+            }
+        }
     }
+
+    
+    
+    private void HandleDas2Request(String path_info, HttpServletResponse response, HttpServletRequest request, String request_url) throws IOException {
+
+        //    PrintWriter pw = response.getWriter();
+        //    addDasHeaders(response);
+        if (path_info == null || path_info.trim().length() == 0) {
+            log.add("Unknown or missing DAS2 command");
+            response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
+        } else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
+            handleSourcesRequest(request, response);
+        } else if (path_info.endsWith(login_query)) {
+            handleLoginRequest(request, response);
+        } else {
+            AnnotatedSeqGroup genome = getGenome(request);
+            // log.add("Genome version: '"+ genome.getID() + "'");
+            if (genome == null) {
+                log.add("Unknown genome version");
+                //        response.setStatus(response.SC_BAD_REQUEST);
+                response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
+            } else {
+                String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
+                log.add("das2 command: " + das_command);
+                //        DasCommandPlugin plugin = (DasCommandPlugin)command2plugin.get(das_command);
+                if (das_command.equals(segments_query)) {
+                    handleSegmentsRequest(request, response);
+                } else if (das_command.equals(types_query)) {
+                    handleTypesRequest(request, response);
+                } else if (das_command.equals(features_query)) {
+                    handleFeaturesRequest(request, response);
+                } else if (genome.getSeq(das_command) != null) {
+                    log.add("handling seq request: " + request_url);
+                    BioSeq aseq = genome.getSeq(das_command);
+                    handleSequenceRequest(request, response);
+                } else {
+                    log.add("DAS2 request not recognized, setting HTTP status header to 400, BAD_REQUEST");
+                    response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
+                }
+            }
+        }
+    }
+   
 
 
 

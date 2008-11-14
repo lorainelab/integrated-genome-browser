@@ -954,8 +954,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
         }
     }
 
-    
-    
+  
     private void HandleDas2Request(String path_info, HttpServletResponse response, HttpServletRequest request, String request_url) throws IOException {
 
         //    PrintWriter pw = response.getWriter();
@@ -1093,8 +1092,8 @@ public class GenometryDas2Servlet extends HttpServlet  {
         pw.println("This DAS/2 server cannot currently handle request:    ");
         pw.println(request.getRequestURL().toString());
     }
+
    
-    
     private void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
         if (ranges.size() != 0) {
             // A ranged request for a bnib.  Not supported.
@@ -1585,8 +1584,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
      */
     public void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) {
 	log.add("received features request");
-	com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
-	long tim;
 
 	AnnotatedSeqGroup genome = getGenome(request);
 	if (genome == null) {
@@ -1596,7 +1593,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	//    addDasHeaders(response);
 	String path_info = request.getPathInfo();
 	String query = request.getQueryString();
-
+        String xbase = getXmlBase(request);
 	String output_format = default_feature_format;
 	String query_type = null;
 	SeqSpan overlap_span = null;
@@ -1709,7 +1706,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		     insides.size() <= 1 &&    // zere or one inside
 		     excludes.size() == 0 &&   // zero excludes
 		     names.size() == 0) {
-
+                
 		String seqid = (String)segments.get(0);
 		// using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
 		int sindex = seqid.lastIndexOf("/");
@@ -1744,12 +1741,14 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		    (graph_name2file.get(query_type) != null)  ||
 		    // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
 		    (query_type.endsWith(".bar")) )   {
-		    handleGraphRequest(request, response, query_type, overlap_span);
+		    handleGraphRequest(xbase, response, query_type, overlap_span);
 		    return;
 		}
 
 		BioSeq oseq = overlap_span.getBioSeq();
 		outseq = oseq;
+                
+                com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 		timecheck.start();
 
 		/** this is the main call to retrieve symmetries meeting query constraints */
@@ -1757,43 +1756,11 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 
 		if (result == null)  { result = Collections.EMPTY_LIST; }
-		tim = timecheck.read();
 		log.add("  overlapping annotations of type " + query_type + ": " + result.size());
-		log.add("  time for range query: " + tim/1000f);
+		log.add("  time for range query: " + (timecheck.read())/1000f);
 
-		// if an inside_span specified, then filter out intersected symmetries based on this:
-		//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)
 		if (inside_span != null) {
-		    int inside_min = inside_span.getMin();
-		    int inside_max = inside_span.getMax();
-		    BioSeq iseq = inside_span.getBioSeq();
-		    log.add("*** trying to apply inside_span constraints ***");
-		    if (iseq != oseq) {
-			log.add("Problem with applying inside_span constraint, different seqs: iseq = " +
-				iseq.getID() + ", oseq = " + oseq.getID());
-			// if different seqs, then no feature can pass constraint...
-			//   hmm, this might not strictly be true based on genometry...
-			result = Collections.EMPTY_LIST;
-		    }
-		    else {
-			timecheck.start();
-			MutableSeqSpan testspan = new SimpleMutableSeqSpan();
-			List orig_result = result;
-			int rcount = orig_result.size();
-			result = new ArrayList(rcount);
-			for (int i=0; i<rcount; i++) {
-			    SeqSymmetry sym = (SeqSymmetry)orig_result.get(i);
-			    // fill in testspan with span values for sym (on aseq)
-			    sym.getSpan(iseq, testspan);
-			    if ((testspan.getMin() >= inside_min) &&
-				(testspan.getMax() <= inside_max)) {
-				result.add(sym);
-			    }
-			}
-			tim = timecheck.read();
-			log.add("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
-			log.add("  time for inside_span filtering: " + tim/1000f);
-		    }
+                    result = SpecifiedInsideSpan(inside_span, oseq, result, query_type);
 		}
 
 	    }
@@ -1805,35 +1772,74 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		log.add("  ***** query combination not supported, throwing an error");
 	    }
 	}
-	timecheck.start();
-
-	log.add("return format: " + output_format);
-
-	try {
-	    if (DEBUG) {
-		response.setContentType("text/html");
-		PrintWriter pw = response.getWriter();
-		pw.println("overlapping annotations found: " + result.size());
-	    }
-	    else {
-		if (result == null) {
-		    response.sendError(response.SC_REQUEST_ENTITY_TOO_LARGE, "Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
-		}
-		else {
-		    outputAnnotations(result, outseq, query_type, request, response, output_format);
-		}
-		tim = timecheck.read();
-		log.add("  time for buffered output of results: " + tim/1000f);
-		timecheck.start();
-		tim = timecheck.read();
-		log.add("  time for closing output: " + tim/1000f);
-	    }
-	}
-	catch (Exception ex) {
-	    ex.printStackTrace();
-	}
+        OutputTheAnnotations(output_format, response, result, outseq, query_type, xbase);
 
     }
+    
+    // if an inside_span specified, then filter out intersected symmetries based on this:
+    //    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
+      private List SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List result, String query_type) {
+        int inside_min = inside_span.getMin();
+        int inside_max = inside_span.getMax();
+        BioSeq iseq = inside_span.getBioSeq();
+        log.add("*** trying to apply inside_span constraints ***");
+        if (iseq != oseq) {
+            log.add("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
+            // if different seqs, then no feature can pass constraint...
+            //   hmm, this might not strictly be true based on genometry...
+            result = Collections.EMPTY_LIST;
+        } else {
+            com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+            timecheck.start();
+            MutableSeqSpan testspan = new SimpleMutableSeqSpan();
+            List orig_result = result;
+            int rcount = orig_result.size();
+            result = new ArrayList(rcount);
+            for (int i = 0; i < rcount; i++) {
+                SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
+                // fill in testspan with span values for sym (on aseq)
+                sym.getSpan(iseq, testspan);
+                if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
+                    result.add(sym);
+                }
+            }
+            log.add("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
+            log.add("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
+        }
+        return result;
+    }
+
+  
+    
+    
+      private void OutputTheAnnotations(String output_format, HttpServletResponse response, List result, BioSeq outseq, String query_type, String xbase) {
+        try {
+            com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+            timecheck.start();
+            log.add("return format: " + output_format);
+
+            if (DEBUG) {
+                response.setContentType("text/html");
+                PrintWriter pw = response.getWriter();
+                pw.println("overlapping annotations found: " + result.size());
+            } else {
+                if (result == null) {
+                    response.sendError(response.SC_REQUEST_ENTITY_TOO_LARGE, "Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
+                } else {
+                    outputAnnotations(result, outseq, query_type, xbase, response, output_format);
+                }
+                long tim = timecheck.read();
+                log.add("  time for buffered output of results: " + tim / 1000f);
+                timecheck.start();
+                tim = timecheck.read();
+                log.add("  time for closing output: " + tim / 1000f);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+   
+   
     
     
     private List DetermineResult(String name, AnnotatedSeqGroup genome, List result) {
@@ -1940,7 +1946,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
      *     if not 2), then
      *        3) tries to directly access file
      */
-    public void handleGraphRequest(HttpServletRequest request, HttpServletResponse response,
+    public void handleGraphRequest(String xbase, HttpServletResponse response,
 				   String type, SeqSpan span) {
 	log.add("#### handling graph request");
 	SmartAnnotBioSeq seq = (SmartAnnotBioSeq)span.getBioSeq();
@@ -1950,56 +1956,76 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	// use bar parser to extract just the overlap slice from the graph
 	String graph_name = type;   // for now using graph_name as graph type
 
-	boolean use_graph_dir = false;
-	Map graph_name2dir = (Map)genome2graphdirs.get(genome);
-	Map graph_name2file = (Map)genome2graphfiles.get(genome);
-	String file_path = (String)graph_name2dir.get(graph_name);
-	if (file_path != null) { use_graph_dir = true; }
-	if (file_path == null) { file_path = (String)graph_name2file.get(graph_name); }
-	if (file_path == null) { file_path = graph_name; }
-	if (use_graph_dir) {
-	    file_path += "/" + seqid + ".bar";
-	}
-	if (file_path.startsWith("file:")) {  // if file_path is URI string, strip off "file:" prefix
-	    if (WINDOWS_OS_TEST) {
-		file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);
-	    }
-	    else {
-		file_path = file_path.substring(5);
-	    }
-	}
+        Map graph_name2dir = (Map) genome2graphdirs.get(genome);
+        Map graph_name2file = (Map) genome2graphfiles.get(genome);
+        
+        String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
 	log.add("####    file:  " + file_path);
-	GraphSym graf = null;
-	try  {
-	    graf = BarParser.getSlice(file_path, gmodel, span);
-	}		
-	catch (Exception ex)  { 
-	    ex.printStackTrace(); 
-	}
-	if (graf != null) {
-	    ArrayList gsyms = new ArrayList();
-	    gsyms.add(graf);
-	    log.add("#### returning graph slice in bar format");
-	    outputAnnotations(gsyms, span.getBioSeq(), type, request, response, "bar");
-	}
-	else {
-	    // couldn't generate a GraphSym, so return an error?
-	    log.add("####### problem with retrieving graph slice ########");
-	    response.setStatus(response.SC_NOT_FOUND);
-	    try {
-		PrintWriter pw = response.getWriter();
-		pw.println("DAS/2 server could not find graph to return for type: " +
-			   type);
-	    }
-	    catch (Exception ex) { ex.printStackTrace(); }
-	    log.add("set status to 404 not found");
-	}
+        OutputGraphSlice(file_path, span, type, xbase, response);
     }
+    
+      private static String DetermineFilePath(Map graph_name2dir, Map graph_name2file, String graph_name, String seqid) {
+        // for now using graph_name as graph type
+        boolean use_graph_dir = false;
+        String file_path = (String) graph_name2dir.get(graph_name);
+        if (file_path != null) {
+            use_graph_dir = true;
+        }
+        if (file_path == null) {
+            file_path = (String) graph_name2file.get(graph_name);
+        }
+        if (file_path == null) {
+            file_path = graph_name;
+        }
+        if (use_graph_dir) {
+            file_path += "/" + seqid + ".bar";
+        }
+        if (file_path.startsWith("file:")) {
+            // if file_path is URI string, strip off "file:" prefix
+            if (WINDOWS_OS_TEST) {
+                file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);
+            } else {
+                file_path = file_path.substring(5);
+            }
+        }
+        return file_path;
+    }
+
+    
+    
+    
+      private void OutputGraphSlice(String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
+        GraphSym graf = null;
+        try {
+            graf = BarParser.getSlice(file_path, gmodel, span);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if (graf != null) {
+            ArrayList gsyms = new ArrayList();
+            gsyms.add(graf);
+            log.add("#### returning graph slice in bar format");
+            outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, "bar");
+        } else {
+            // couldn't generate a GraphSym, so return an error?
+            log.add("####### problem with retrieving graph slice ########");
+            response.setStatus(response.SC_NOT_FOUND);
+            try {
+                PrintWriter pw = response.getWriter();
+                pw.println("DAS/2 server could not find graph to return for type: " + type);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            log.add("set status to 404 not found");
+        }
+    }
+
+  
 
 
     public boolean outputAnnotations(List syms, BioSeq seq,
 				     String annot_type,
-				     HttpServletRequest request, HttpServletResponse response,
+				     String xbase, HttpServletResponse response,
 				     String format) {
 	boolean success = true;
 	try {
@@ -2015,7 +2041,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		AnnotationWriter writer = (AnnotationWriter)writerclass.newInstance();
 		String mime_type = writer.getMimeType();
 		//	String xbase = request.getRequestURL().toString();
-		String xbase = getXmlBase(request);
+		
 		if (writer instanceof Das2FeatureSaxParser) {
 		    ((Das2FeatureSaxParser)writer).setBaseURI(new URI(xbase));
 		    setContentType(response, mime_type);

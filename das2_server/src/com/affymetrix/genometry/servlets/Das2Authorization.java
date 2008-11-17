@@ -236,10 +236,13 @@ public class Das2Authorization {
 
 	/**Print to System.out the ArrayList*/
 	public static void printArrayList(ArrayList al){
-		int num = al.size();
-		for (int i=0; i< num; i++){
-			System.out.println(al.get(i));
-		}
+            if (al == null) {
+                return;
+            }
+            int num = al.size();
+            for (int i = 0; i < num; i++) {
+                System.out.println(al.get(i));
+            }
 	}
 
 	private class User{

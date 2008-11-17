@@ -7,6 +7,7 @@ import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 
 /**
@@ -142,7 +143,7 @@ public class ParserController {
 			System.err.println("Error loading file: " + stream_name);
 			ex.printStackTrace();
 		} finally {
-			if (str != null) try {str.close();} catch (Exception e) {}
+                    GeneralUtils.safeClose(str);
 		}
 
 		// Now, enter the new SeqSymmetrys into the global SeqSymmetry

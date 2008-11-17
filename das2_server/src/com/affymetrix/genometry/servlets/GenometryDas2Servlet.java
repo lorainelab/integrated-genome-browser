@@ -29,6 +29,7 @@ import com.affymetrix.igb.das2.Das2Coords;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 
 /**
@@ -527,13 +528,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            GeneralUtils.safeClose(in);
             return names;
         }
     }
@@ -582,7 +577,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 
     /** sorts genomes and versions within genomes */
-    protected void sortGenomes() {
+    protected static void sortGenomes() {
 	// sort genomes based on "organism_order.txt" config file if present
 	// get Map.Entry for organism, sort based on order in organism_order.txt,
 	//    put in order in new LinkedHashMap(), then replace as organisms field
@@ -612,7 +607,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 
 
-    void loadSynonyms() {
+    static void loadSynonyms() {
 	File synfile = new File(synonym_file);
 	if (synfile.exists()) {
 	    System.out.println("DAS server synonym file found, loading synonyms");
@@ -640,6 +635,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    InputStream chromstream = new FileInputStream(chrom_info_file);
 	    //      seqhash = chrom_parser.parse(chromstream, genome_version);
 	    chrom_parser.parse(chromstream, gmodel, genome_version);
+            GeneralUtils.safeClose(chromstream);
 	}
 	else {
 	    System.out.println("couldn't find mod_chromInfo file for genome: " + genome_version);
@@ -650,6 +646,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		InputStream liftstream = new FileInputStream(lift_file);
 		//	seqhash = lift_parser.parse(liftstream, genome_version);
 		lift_parser.parse(liftstream, gmodel, genome_version);
+                GeneralUtils.safeClose(liftstream);
 	    }
 	    else {
 		System.out.println("couldn't find liftAll or mod_chromInfo file for genome!!! " + genome_version);
@@ -684,7 +681,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
 
     //  public void optimizeGenome(Map seqhash) {
-    public void optimizeGenome(AnnotatedSeqGroup genome) {
+    public static void optimizeGenome(AnnotatedSeqGroup genome) {
 	System.out.println("******** optimizing genome:  " + genome.getID() + "  ********");
 	/** third, replace top-level annotation SeqSymmetries with IntervalSearchSyms */
 	//    Iterator iter = seqhash.keySet().iterator();
@@ -720,7 +717,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
      *       if found so there is only one top-level annotation per type for each seq
      *
      */
-    public void optimizeSeq(MutableAnnotatedBioSeq aseq) {
+    public static void optimizeSeq(MutableAnnotatedBioSeq aseq) {
 	if (DEBUG)  { System.out.println("optimizing seq = " + aseq.getID()); }
 	int annot_count = aseq.getAnnotationCount();
 	for (int i=annot_count-1; i>=0; i--) {
@@ -738,7 +735,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
 
 
-    public void optimizeTypeContainer(TypeContainerAnnot container, MutableAnnotatedBioSeq aseq) {
+    public static void optimizeTypeContainer(TypeContainerAnnot container, MutableAnnotatedBioSeq aseq) {
 	if (DEBUG)  {
 	    System.out.println("optimizing type container: " + container.getProperty("method") +
 			       ", depth = " + SeqUtils.getDepth(container));
@@ -785,21 +782,27 @@ public class GenometryDas2Servlet extends HttpServlet  {
     }
 
 
-    public void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
+    public static void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
+        InputStream istr = null;
 	try {
 	    URL annot_url = new URL(url);
-	    InputStream istr = new BufferedInputStream(annot_url.openStream());
+	    istr = new BufferedInputStream(annot_url.openStream());
 	    // may need to trim down url_name here, but how much?
 	    loadAnnotsFromStream(istr, annot_name, genome);
 	}
 	catch (Exception ex) { ex.printStackTrace(); }
+        finally {
+            GeneralUtils.safeClose(istr);
+        }
     }
 
-    public void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
+    public static void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
 	ParserController.parse(istr, stream_name, gmodel, genome);
     }
 
-    String graph_dir_suffix = ".graphs.seqs";
+    
+    static String graph_dir_suffix = ".graphs.seqs";
+    
     /**
      *   If current_file is directory:
      *       if ".seqs" suffix, then handle as graphs
@@ -870,7 +873,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		ex.printStackTrace();
 	    }
 	    finally {
-		if (istr != null) try {istr.close();} catch (IOException ioe) {}
+                GeneralUtils.safeClose(istr);
 	    }
 	}
 	//System.gc();
@@ -950,6 +953,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
                 }
                 log.clear();
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -1110,9 +1114,12 @@ public class GenometryDas2Servlet extends HttpServlet  {
             byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
             setContentType(response, NibbleResiduesParser.getMimeType()); // set bnib format mime type
             DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-            dos.write(buf, 0, buf.length);
-            // should output stream get closed here?
-            dos.close();
+            try {
+                dos.write(buf, 0, buf.length);
+            } finally {
+                // should output stream get closed here?
+                GeneralUtils.safeClose(dos);
+            }
         } else {
             PrintWriter pw = response.getWriter();
             pw.println("File not found: " + file_name);
@@ -1181,7 +1188,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
                 dos.write(newlineBuf, 0, 1);
             }
         } finally {
-            dos.close();
+            GeneralUtils.safeClose(dos);
         }
     }
     
@@ -1403,14 +1410,17 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	    pw.flush();
 	    byte[] buf_array = buf.toByteArray();
 	    ByteArrayInputStream bais = new ByteArrayInputStream(buf_array);
-	    Source types_doc = new StreamSource(bais);
-	    Result result = new StreamResult(response.getWriter());
-	    try {
-		types_transformer.transform(types_doc, result);
-	    }
-	    catch (TransformerException ex) {
-		ex.printStackTrace();
-	    }
+            try {
+                Source types_doc = new StreamSource(bais);
+                Result result = new StreamResult(response.getWriter());
+                try {
+                    types_transformer.transform(types_doc, result);
+                } catch (TransformerException ex) {
+                    ex.printStackTrace();
+                }
+            } finally {
+                GeneralUtils.safeClose(bais);
+            }
 	}
     }
 
@@ -1424,7 +1434,6 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	String comment;
 	boolean authorized;
 	if (dasAuthorization.isAuthorizing()){
-
 	    //fetch parameters
 	    String userName = request.getParameter("user");
 	    String password = request.getParameter("password");
@@ -1912,7 +1921,9 @@ public class GenometryDas2Servlet extends HttpServlet  {
                 pw.println("overlapping annotations found: " + result.size());
             } else {
                 if (result == null) {
-                    response.sendError(response.SC_REQUEST_ENTITY_TOO_LARGE, "Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
+                    response.sendError(
+                            response.SC_REQUEST_ENTITY_TOO_LARGE, 
+                            "Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
                 } else {
                     outputAnnotations(result, outseq, query_type, xbase, response, output_format);
                 }
@@ -1930,7 +1941,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
    
     
     
-    private List DetermineResult(String name, AnnotatedSeqGroup genome, List result) {
+    private static List DetermineResult(String name, AnnotatedSeqGroup genome, List result) {
         // GAH 11-2006
         //   need to enhance this to support multiple name parameters OR'd together
         //   DAS/2 specification defines glob-style searches:
@@ -1970,7 +1981,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 
     
 
-    public String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
+    public static String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
 	//	query_type = (String)types.get(0);
 	String query_type = URLDecoder.decode(full_type_uri);
 	// using end of URI for internal typeid if type is given as full URI
@@ -2054,14 +2065,17 @@ public class GenometryDas2Servlet extends HttpServlet  {
 		}
 		log.add("return mime type: " + mime_type);
 		OutputStream outstream = response.getOutputStream();
-		// need to test and see if creating a new BufferedOutputStream in the
-		//   AnnotationWriter.writeAnnotations implementations is necessary
-		//    because it may incur a performance hit.  Though os is _not_ an instance of
-		//    BufferedOutputStream (at least using jetty server), may still provide it's
-		//    own buffering...
-		success = writer.writeAnnotations(syms, seq, annot_type, outstream);
-		outstream.flush();
-		outstream.close();
+                try {
+                    // need to test and see if creating a new BufferedOutputStream in the
+                    //   AnnotationWriter.writeAnnotations implementations is necessary
+                    //    because it may incur a performance hit.  Though os is _not_ an instance of
+                    //    BufferedOutputStream (at least using jetty server), may still provide it's
+                    //    own buffering...
+                    success = writer.writeAnnotations(syms, seq, annot_type, outstream);
+                    outstream.flush();
+                } finally {
+                    GeneralUtils.safeClose(outstream);
+                }
 	    }
 	}
 	catch (Exception ex) {
@@ -2081,7 +2095,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
      *  Should expand soon so results can be returned from multiple IntervalSearchSyms children
      *      of the TypeContainerAnnot
      */
-    public List getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
+    public static List getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
 	SmartAnnotBioSeq seq = (SmartAnnotBioSeq)query_span.getBioSeq();
 	SymWithProps container = seq.getAnnotation(annot_type);
 	if (container != null) {
@@ -2137,8 +2151,10 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	else { return request.getRequestURL().toString(); }
     }
 
-
-    public void testXSLT() {
+    
+    
+/*
+    public static void testXSLT() {
 	try {
 	    System.out.println("testing XSLT processing via JAXP");
 	    //    File xsltFile = new File(data_root + "types.xslt");
@@ -2160,7 +2176,7 @@ public class GenometryDas2Servlet extends HttpServlet  {
 	}
 	catch (Exception ex) { ex.printStackTrace(); }
     }
-
+*/
 
 
     /**
@@ -2284,7 +2300,5 @@ public class GenometryDas2Servlet extends HttpServlet  {
       }
       }
     */
-
-
 
 }

@@ -22,6 +22,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
@@ -330,8 +331,8 @@ public class UrlLoaderThread extends Thread {
       parser.parse(bis, type, null, group, false, true);
       group.symHashChanged(parser);
     } finally {
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
+        GeneralUtils.safeClose(bis);
+        GeneralUtils.safeClose(result_stream);
     }
   }
 
@@ -350,9 +351,8 @@ public class UrlLoaderThread extends Thread {
       das_parser.parse(result_stream, gmodel.getSelectedSeqGroup());
 
     } finally {
-
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
+        GeneralUtils.safeClose(bis);
+        GeneralUtils.safeClose(result_stream);
     }
   }
 
@@ -382,9 +382,8 @@ public class UrlLoaderThread extends Thread {
       }
 
     } finally {
-
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
+        GeneralUtils.safeClose(bis);
+        GeneralUtils.safeClose(result_stream);
     }
   }
 
@@ -410,9 +409,9 @@ public class UrlLoaderThread extends Thread {
       bps_parser.parse(dis, type, null, group, false, true);
       group.symHashChanged(bps_parser);
     } finally {
-      if (dis != null) try {dis.close();} catch (Exception e) {}
-      if (bis != null) try {bis.close();} catch (Exception e) {}
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
+        GeneralUtils.safeClose(dis);
+        GeneralUtils.safeClose(bis);
+        GeneralUtils.safeClose(result_stream);
     }
   }
 

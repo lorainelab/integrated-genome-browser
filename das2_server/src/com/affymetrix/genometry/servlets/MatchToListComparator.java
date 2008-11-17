@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.io.*;
 import java.util.*;
 
@@ -13,8 +14,9 @@ public class MatchToListComparator implements Comparator {
   List match_list = null;
 
   public MatchToListComparator(String filename) {
+    BufferedReader br = null;
     try {
-      BufferedReader br = new BufferedReader(new FileReader(new File(filename)));
+      br = new BufferedReader(new FileReader(new File(filename)));
       match_list = new ArrayList();
       String line;
       while ((line = br.readLine()) != null) {
@@ -22,12 +24,14 @@ public class MatchToListComparator implements Comparator {
 	String match_term = line.trim();
 	match_list.add(match_term);
       }
-      br.close();
     }
     catch (Exception ex) {
       System.out.println("Error initializing MatchToListComparator: ");
       match_list = null;
       ex.printStackTrace();
+    }
+    finally {
+        GeneralUtils.safeClose(br);
     }
     System.out.println("done initializing MatchToListComparator");
   }

@@ -34,11 +34,31 @@ public class SynonymLookup {
     InputStreamReader ireader = new InputStreamReader(istream);
     BufferedReader br = new BufferedReader(ireader);
     String line;
+    try {
     while ((line = br.readLine()) != null) {
       String[] fields = line_regex.split(line);
       if (fields.length > 0) {
         addSynonyms(fields);
       }
+    }
+    }
+    finally {
+        if (ireader != null) {
+            try {
+                ireader.close();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (br != null) {
+            try {
+                br.close();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
   }
 

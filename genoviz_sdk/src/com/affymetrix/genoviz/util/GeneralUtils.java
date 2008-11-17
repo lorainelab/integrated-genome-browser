@@ -169,5 +169,19 @@ public class GeneralUtils  {
     }
     return width;
   }
+  
+    /*
+     safely close a closeable object.
+     */
+    public static <S extends Closeable> void safeClose(S s) {
+        if (s == null)
+            return;
+        try {
+            s.close();
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
 }

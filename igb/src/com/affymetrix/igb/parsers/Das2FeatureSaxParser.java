@@ -31,6 +31,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.das2.*;
 
 //import com.affymetrix.igb.util.GenometryViewer; // for testing main
@@ -282,114 +283,141 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
         // push base_uri onto stack whether it has changed or not
         base_uri_stack.push(current_base_uri);
+        
+        
         // check to make sure elements are in DAS/2 namespace for standard handling
-        if ((!REQUIRE_DAS2_NAMESPACE) || uri.equalsIgnoreCase(DAS2_NAMESPACE)) {
-            if (current_elem == FEATURELIST || current_elem == FEATURES) {
-            } else if (current_elem == FEATURE) {
-                String feat_id_att = atts.getValue(URID);
-                if (feat_id_att == null) {
-                    feat_id_att = atts.getValue(ID);
-                }  // for backward-compatibility
-                try {
-                    feat_id = URLDecoder.decode(current_base_uri.resolve(feat_id_att).toString());
-                } catch (IllegalArgumentException ioe) {
-                    throw new SAXException("Feature id uses illegal characters: '" + feat_id_att + "'");
-                }
-                // trying "type", "type_id", and "type_uri" for type attribute name
-                String feat_type_att = atts.getValue(TYPE);
-                if (feat_type_att == null) {
-                    feat_type_att = atts.getValue(TYPEID);
-                }  // for backward-compatibility
-                if (feat_type_att == null) {
-                    feat_type_att = atts.getValue(TYPEURI);
-                }  // for backward-compatibility
-                try {
-                    feat_type = URLDecoder.decode(current_base_uri.resolve(feat_type_att).toString());
-                } catch (IllegalArgumentException ioe) {
-                    throw new SAXException("Feature type uses illegal characters: '" + feat_type_att + "'");
-                }
-                feat_name = atts.getValue(TITLE);
-                if (feat_name == null) {
-                    feat_name = atts.getValue(NAME);
-                }  // for backward-compatibility
-                // feat_parent_id has moved to <PARENT> element
-                //      feat_parent_id = atts.getValue("parent");
-                feat_created = atts.getValue(CREATED);
-                feat_modified = atts.getValue(MODIFIED);
-                feat_doc_href = atts.getValue(DOC_HREF);
-
-            } else if (current_elem == LOC) {
-                String seqid_att = atts.getValue(SEGMENT);
-                if (seqid_att == null) {
-                    seqid_att = atts.getValue(URID);
-                }
-                if (seqid_att == null) {
-                    seqid_att = atts.getValue(ID);
-                }
-                String seqid;
-                try {
-                    seqid = URLDecoder.decode(current_base_uri.resolve(seqid_att).toString());
-                } catch (IllegalArgumentException ioe) {
-                    throw new SAXException("Segment id uses illegal characters: '" + seqid_att + "'");
-                }
-                String range = atts.getValue(RANGE);
-                String cigar = atts.getValue(CIGAR);  // location can optionally have an alignment cigar string
-                // DO_SEQID_HACK is a very temporary fix!!!
-                // Need to move to using full URI references to identify sequences,
-                if (DO_SEQID_HACK) {
-                    seqid = doSeqIdHack(seqid);
-                }
-                SeqSpan span = getLocationSpan(seqid, range, seqgroup);
-                feat_locs.add(span);
-            } else if (current_elem == XID) {
-            } else if (current_elem == PARENT) {
-                if (feat_parent_id == null) {
-                    feat_parent_id = atts.getValue(URID);
-                    if (feat_parent_id == null) {
-                        feat_parent_id = atts.getValue(ID);
-                    }
-                    try {
-                        feat_parent_id = URLDecoder.decode(current_base_uri.resolve(feat_parent_id).toString());
-                    } catch (IllegalArgumentException ioe) {
-                        throw new SAXException("Parent id uses illegal characters: '" + feat_parent_id + "'");
-                    }
-                } else {
-                    System.out.println("WARNING:  multiple parents for feature, just using first one");
-                }
-            } else if (current_elem == PART) {
-                String part_id = atts.getValue(URID);
-                if (part_id == null) {
-                    part_id = atts.getValue(ID);
-                }
-                try {
-                    part_id = URLDecoder.decode(current_base_uri.resolve(part_id).toString());
-                } catch (IllegalArgumentException ioe) {
-                    throw new SAXException("Part id uses illegal characters: '" + part_id + "'");
-                }
-                /*
-                 *  Use part_id to look for child sym already constructed and placed in id2sym hash
-                 *  If child sym found then map part_id to child sym in feat_parts
-                 *  If child sym not found then map part_id to itself, and swap in child sym later when it's created
-                 */
-                SeqSymmetry child_sym = (SeqSymmetry) id2sym.get(part_id);
-                if (child_sym == null) {
-                    feat_parts.put(part_id, part_id);
-                } else {
-                    feat_parts.put(part_id, child_sym);
-                }
-            } else if (current_elem == PROP) {
-                feat_prop_key = atts.getValue(KEY);
-                feat_prop_val = atts.getValue(VALUE);
-            } else {
-                System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
-            }
-        } else {  // element is not in DAS/2 namespace
+        if ((REQUIRE_DAS2_NAMESPACE) && !uri.equalsIgnoreCase(DAS2_NAMESPACE)) {
+           // element is not in DAS/2 namespace
             // this may be some arbitrary XML mixed in with feature XML
             // if within the feature XML, should make a subtree of this XML and any subnodes, and attach
             //    as additional structured data as property of feature?
             System.out.println("element not recognized, and not within DAS2 namespace: " + current_elem);
+            return;
+        }
+            
+        if (current_elem.equals(FEATURELIST) || current_elem.equals(FEATURES) || current_elem.equals(XID)) {
+            return;
+        } 
+        
+        if (current_elem.equals(FEATURE)) {
+            // feat_parent_id has moved to <PARENT> element
+            //      feat_parent_id = atts.getValue("parent");
+            parseFeature(atts);
+        } else if (current_elem.equals(LOC)) {
+            // DO_SEQID_HACK is a very temporary fix!!!
+            // Need to move to using full URI references to identify sequences,
+            parseLoc(atts);
+        } else if (current_elem.equals(PARENT)) {
+            parseParent(atts);
+        } else if (current_elem.equals(PART)) {
+            parsePart(atts);
+        } else if (current_elem.equals(PROP)) {
+            feat_prop_key = atts.getValue(KEY);
+            feat_prop_val = atts.getValue(VALUE);
+        } else {
+            System.out.println("element not recognized, but within DAS2 namespace: " + current_elem);
         }
     }
+    
+    private void parseFeature(Attributes atts) throws SAXException {
+        String feat_id_att = atts.getValue(URID);
+        if (feat_id_att == null) {
+            feat_id_att = atts.getValue(ID);
+        } // for backward-compatibility
+        try {
+            feat_id = URLDecoder.decode(current_base_uri.resolve(feat_id_att).toString());
+        } catch (IllegalArgumentException ioe) {
+            throw new SAXException("Feature id uses illegal characters: '" + feat_id_att + "'");
+        }
+        // trying "type", "type_id", and "type_uri" for type attribute name
+        String feat_type_att = atts.getValue(TYPE);
+        if (feat_type_att == null) {
+            feat_type_att = atts.getValue(TYPEID);
+        } // for backward-compatibility
+        if (feat_type_att == null) {
+            feat_type_att = atts.getValue(TYPEURI);
+        } // for backward-compatibility
+        try {
+            feat_type = URLDecoder.decode(current_base_uri.resolve(feat_type_att).toString());
+        } catch (IllegalArgumentException ioe) {
+            throw new SAXException("Feature type uses illegal characters: '" + feat_type_att + "'");
+        }
+        feat_name = atts.getValue(TITLE);
+        if (feat_name == null) {
+            feat_name = atts.getValue(NAME);
+        } // for backward-compatibility
+        // feat_parent_id has moved to <PARENT> element
+        //      feat_parent_id = atts.getValue("parent");
+        feat_created = atts.getValue(CREATED);
+        feat_modified = atts.getValue(MODIFIED);
+        feat_doc_href = atts.getValue(DOC_HREF);
+    }
+
+    private void parseLoc(Attributes atts) throws SAXException {
+        String seqid_att = atts.getValue(SEGMENT);
+        if (seqid_att == null) {
+            seqid_att = atts.getValue(URID);
+        }
+        if (seqid_att == null) {
+            seqid_att = atts.getValue(ID);
+        }
+        String seqid;
+        try {
+            seqid = URLDecoder.decode(current_base_uri.resolve(seqid_att).toString());
+        } catch (IllegalArgumentException ioe) {
+            throw new SAXException("Segment id uses illegal characters: '" + seqid_att + "'");
+        }
+        String range = atts.getValue(RANGE);
+        String cigar = atts.getValue(CIGAR); // location can optionally have an alignment cigar string
+        // DO_SEQID_HACK is a very temporary fix!!!
+        // Need to move to using full URI references to identify sequences,
+        if (DO_SEQID_HACK) {
+            seqid = doSeqIdHack(seqid);
+        }
+        SeqSpan span = getLocationSpan(seqid, range, seqgroup);
+        feat_locs.add(span);
+    }
+
+    private void parseParent(Attributes atts) throws SAXException {
+        if (feat_parent_id == null) {
+            feat_parent_id = atts.getValue(URID);
+            if (feat_parent_id == null) {
+                feat_parent_id = atts.getValue(ID);
+            }
+            try {
+                feat_parent_id = URLDecoder.decode(current_base_uri.resolve(feat_parent_id).toString());
+            } catch (IllegalArgumentException ioe) {
+                throw new SAXException("Parent id uses illegal characters: '" + feat_parent_id + "'");
+            }
+        } else {
+            System.out.println("WARNING:  multiple parents for feature, just using first one");
+        }
+    }
+
+    private void parsePart(Attributes atts) throws SAXException {
+        String part_id = atts.getValue(URID);
+        if (part_id == null) {
+            part_id = atts.getValue(ID);
+        }
+        try {
+            part_id = URLDecoder.decode(current_base_uri.resolve(part_id).toString());
+        } catch (IllegalArgumentException ioe) {
+            throw new SAXException("Part id uses illegal characters: '" + part_id + "'");
+        }
+        /*
+         *  Use part_id to look for child sym already constructed and placed in id2sym hash
+         *  If child sym found then map part_id to child sym in feat_parts
+         *  If child sym not found then map part_id to itself, and swap in child sym later when it's created
+         */
+        SeqSymmetry child_sym = (SeqSymmetry) id2sym.get(part_id);
+        if (child_sym == null) {
+            feat_parts.put(part_id, part_id);
+        } else {
+            feat_parts.put(part_id, child_sym);
+        }
+    }
+
+
 
     public void clearAll() {
         result_syms = null;
@@ -432,10 +460,10 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
         // only two elements that need post-processing are  <FEATURE> and <PROP> ?
         //   other elements are either top <FEATURELISTS> or have only attributes
-        if (name == FEATURE) {
+        if (name.equals(FEATURE)) {
             addFeature();
             clearFeature();
-        } else if (name == PROP) {
+        } else if (name.equals(PROP)) {
             // need to process <PROP> elements after element is ended, because value may be in CDATA?
             // need to account for possibility that there are multiple property values of same ptype
             //    for such cases, make object that feat_prop_key maps to a List of the prop vals
@@ -615,8 +643,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         //  does not use seq arg, but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
         boolean success = true;
+        PrintWriter pw = null;
         try {
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
             pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             pw.println("<" + WRITEBACK + " xmlns=\"" + DAS2_NAMESPACE + "\">");
             //      pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
@@ -639,6 +668,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
             ex.printStackTrace();
             success = false;
         }
+        finally {
+            GeneralUtils.safeClose(pw);
+        }
         return success;
     }
 
@@ -651,8 +683,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         //  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
         boolean success = true;
+        PrintWriter pw = null;
         try {
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
 
             // may need to extract seqid, seq version, genome for properly setting xml:base...
             // for now only way to specify xml:base is to explicitly set via this.setXmlBase()
@@ -693,6 +726,9 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         } catch (Exception ex) {
             ex.printStackTrace();
             success = false;
+        }
+        finally {
+            GeneralUtils.safeClose(pw);
         }
         return success;
     }
@@ -984,7 +1020,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         return buf.toString();
     }
 
-    /*public static void main(String[] args) {
+        /*public static void main(String[] args) {
         boolean test_result_list = true;
         Das2FeatureSaxParser test = new Das2FeatureSaxParser();
         try {

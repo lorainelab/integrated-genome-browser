@@ -383,12 +383,15 @@ public class Das2ClientOptimizer {
 			if (request_log.getSuccess()) {
                             SuccessfullyRequestedLog(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel, request_sym, aseq);
 			}  // end if (success) conditional
-			if (bis != null) try {
+			if (bis != null) 
+                        {
+                            try {
 				bis.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 				// This type of exception shouldn't be included in the response status
 			}
+                        }
 		}
 		catch (Exception ex) {
 //			ex.printStackTrace();

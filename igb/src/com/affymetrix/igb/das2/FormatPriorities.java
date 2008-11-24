@@ -34,25 +34,28 @@ public class FormatPriorities {
 
   //  static String default_format = "das2feature";
 
-  static String getFormat(Das2Type type) {
-    if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...
-      return "bar";
+    static String getFormat(Das2Type type) {
+        if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...
+            return "bar";
+        }
+        if (type.getID().endsWith(".bed")) {
+            return "bed";
+        }
+        else {
+            Map type_formats = type.getFormats();
+            if (type_formats != null) {
+                int fcount = ordered_formats.length;
+                for (int i = 0; i < ordered_formats.length; i++) {
+                    String format = ordered_formats[i];
+                    if (type_formats.get(format) != null) {
+                        return format;
+                    }
+                }
+            }
+        }
+        // return default_format;
+        return null;
     }
-    else  {
-      Map type_formats = type.getFormats();
-      if (type_formats != null) {
-	int fcount = ordered_formats.length;
-	for (int i=0; i<ordered_formats.length; i++) {
-	  String format = ordered_formats[i];
-	  if (type_formats.get(format) != null) {
-	    return format;
-	  }
-	}
-      }
-    }
-    // return default_format;
-    return null;
-  }
 
   /**
    *  input is list of Das2Types, output is preferred format name

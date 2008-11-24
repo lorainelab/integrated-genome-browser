@@ -70,8 +70,8 @@ public class ParserController {
 				String annot_type = stream_name.substring(0, stream_name.lastIndexOf(".bps"));
 				// assume binary psl format
 				DataInputStream dis = new DataInputStream(str);
-				BpsParser psl_reader = new BpsParser();
-				results = psl_reader.parse(dis, annot_type, null, seq_group, false, true);
+				//BpsParser psl_reader = new BpsParser();
+				results = BpsParser.parse(dis, annot_type, null, seq_group, false, true);
 			}
 			else if (stream_name.endsWith(".bgn")) {
 				System.out.println("loading via BgnParser: " + stream_name);

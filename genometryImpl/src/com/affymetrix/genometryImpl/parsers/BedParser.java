@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+//import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 
 /**
@@ -77,6 +77,13 @@ import com.affymetrix.genometryImpl.SymWithProps;
  * </pre>
  */
 public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
+
+  // Used later to allow bed files to be output as a supported format in the DAS/2 types query.
+  static List<String> pref_list = new ArrayList<String>();
+  static {
+    pref_list.add("bed");
+  }
+
   static final boolean DEBUG = false;
   static Pattern line_regex = Pattern.compile("\\s+");
   static Pattern comma_regex = Pattern.compile(",");
@@ -372,6 +379,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
           parent_sym = new SimpleSymWithProps();
           parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
           parent_sym.setProperty("method", type);
+          parent_sym.setProperty("preferred_formats", pref_list);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
           parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
           seq.addAnnotation(parent_sym);
           type2csym.put(type, parent_sym);
@@ -656,7 +664,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
   }
 
   /** Returns "text/plain". */
-  public String getMimeType() { return "text/plain"; }
+  public String getMimeType() { return "text/bed"; }
 
 }
 

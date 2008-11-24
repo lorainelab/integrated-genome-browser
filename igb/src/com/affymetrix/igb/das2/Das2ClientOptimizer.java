@@ -64,8 +64,8 @@ public class Das2ClientOptimizer {
     static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
     static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
     static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
-    static boolean DEBUG = true;
-    static boolean DEBUG_HEADERS = true;
+    static boolean DEBUG = false;
+    static boolean DEBUG_HEADERS = false;
     static boolean OPTIMIZE_FORMAT = true;
     static boolean SHOW_DAS_QUERY_GENOMETRY = false;
     static String UTF8 = "UTF-8";

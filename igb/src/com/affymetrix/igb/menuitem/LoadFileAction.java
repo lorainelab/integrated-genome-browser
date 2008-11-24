@@ -582,7 +582,7 @@ public class LoadFileAction {
           "Format not recognized for file: " + stream_name, null);
       }
 
-      System.gc();
+      //System.gc();
     }
     catch (Exception ex) {
       the_exception = ex;

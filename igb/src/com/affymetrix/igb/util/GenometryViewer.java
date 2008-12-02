@@ -26,9 +26,9 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
+//import com.affymetrix.genometry.seq.*;
+//import com.affymetrix.genometry.span.*;
+//import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
 public class GenometryViewer extends JPanel implements MouseListener {
@@ -266,7 +266,7 @@ public class GenometryViewer extends JPanel implements MouseListener {
     }
   }
 
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     SeqSymmetry testsym1 = makeTestSymmetry1();
     BioSeq seq = testsym1.getSpan(0).getBioSeq();
     GenometryViewer view = displaySymmetry(testsym1, seq);
@@ -295,7 +295,7 @@ public class GenometryViewer extends JPanel implements MouseListener {
     sym4.addChild(sym6);
     sym4.addChild(sym7);
     return sym;
-  }
+  }*/
 
 }
 

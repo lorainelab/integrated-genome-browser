@@ -774,7 +774,7 @@ public class ChpParser {
     return results;
   }
 
-  public static void main(String[] args) throws IOException {
+  /*public static void main(String[] args) throws IOException {
     //    String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.addSeqGroup("H_sapiens_Mar_2006");
@@ -789,7 +789,7 @@ public class ChpParser {
                                ",  points = " + gsym.getPointCount());
         }
     }
-  }
+  }*/
 
 }
 /** For sorting single-score probeset entries */

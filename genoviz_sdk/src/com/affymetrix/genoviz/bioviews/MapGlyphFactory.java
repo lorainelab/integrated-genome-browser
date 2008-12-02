@@ -74,8 +74,7 @@ public class MapGlyphFactory implements NeoConstants  {
     width = default_width = 5;
     mirror = default_mirror = true;
 
-    // should default be SiblingCoordAvoid, VariableCoordAvoid,
-    //    or something else
+    // should default be SiblingCoordAvoid or something else
     setPacker( new SiblingCoordAvoid() );
 
     offset = default_offset = 0;

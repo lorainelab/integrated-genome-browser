@@ -23,7 +23,8 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.BedParser;
+//import com.affymetrix.genometryImpl.parsers.*;
 
 /**
  *  A class for reading and parsing a file of Bookmarks.

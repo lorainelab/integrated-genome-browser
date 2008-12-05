@@ -37,7 +37,7 @@ import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymStartComparator;
 
-import com.affymetrix.igb.util.GenometryViewer;  // for testing main
+//import com.affymetrix.igb.util.GenometryViewer;  // for testing main
 
 public class Xml2GenometryParser {
   // optionally skip over populating descriptors -- checking to see how this affects speed
@@ -870,6 +870,7 @@ public class Xml2GenometryParser {
 
   }
 
+  /*
   public static void main(String[] args) {
     Xml2GenometryParser test = new Xml2GenometryParser();
     String file_name = args[0];
@@ -888,7 +889,7 @@ public class Xml2GenometryParser {
       System.exit(1);
     }
     System.exit(0);
-  }
+  }*/
 
 
 }

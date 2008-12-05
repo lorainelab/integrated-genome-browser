@@ -13,11 +13,11 @@
 
 package com.affymetrix.igb.das2;
 
-import java.io.*;
+//import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.xml.sax.*;
-import org.w3c.dom.*;
+//import org.xml.sax.*;
+//import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;

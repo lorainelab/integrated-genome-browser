@@ -10,12 +10,14 @@
 
 package com.affymetrix.igb.das2.assay.sax;
 
-import java.io.*;
+//import java.io.*;
+import com.affymetrix.igb.das2.assay.Das2Assay;
+import com.affymetrix.igb.das2.assay.Das2AssayVersionedSource;
 import java.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
-import com.affymetrix.igb.das2.*;
-import com.affymetrix.igb.das2.assay.*;
+//import com.affymetrix.igb.das2.*;
+//import com.affymetrix.igb.das2.assay.*;
 
 /**
  *

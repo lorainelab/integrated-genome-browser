@@ -16,11 +16,11 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.regex.*;
+//import java.util.regex.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+//import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.util.*;
 

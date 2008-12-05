@@ -12,7 +12,7 @@
 */
 package com.affymetrix.igb.das2;
 
-import java.net.URI;
+//import java.net.URI;
 import java.util.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.TypedSym;

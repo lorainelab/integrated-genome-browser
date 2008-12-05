@@ -13,9 +13,11 @@
 
 package com.affymetrix.igb.das2.ontology;
 
+import com.affymetrix.igb.das2.Das2Type;
+import com.affymetrix.igb.das2.Das2VersionedSource;
 import java.util.*;
 import java.net.*;
-import com.affymetrix.igb.das2.*;
+//import com.affymetrix.igb.das2.*;
 
 public class Das2OntologyType extends Das2Type {
   Map parents; // the das2 server will change soon and parent/child relationships will be moved to another ontology namespace

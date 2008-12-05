@@ -14,7 +14,7 @@
 package com.affymetrix.igb.das2;
 
 import java.util.Comparator;
-import com.affymetrix.genometry.*;
+//import com.affymetrix.genometry.*;
 
 /**
  *  Sorts SeqSymmetries based on lexicographic ordering of IDs 

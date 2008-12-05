@@ -10,8 +10,11 @@
 
 package com.affymetrix.igb.das2.assay;
 
-import java.util.*;
-import com.affymetrix.igb.das2.*;
+//import java.util.*;
+
+import com.affymetrix.igb.das2.Das2VersionedSource;
+
+//import com.affymetrix.igb.das2.*;
 
 /**
  *

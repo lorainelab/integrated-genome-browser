@@ -10,7 +10,7 @@
 
 package com.affymetrix.igb.das2.assay;
 
-import com.affymetrix.igb.das2.*;
+//import com.affymetrix.igb.das2.*;
 
 /**
  *

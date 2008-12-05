@@ -13,14 +13,14 @@ package com.affymetrix.igb.das2.assay;
 import com.affymetrix.igb.das2.*;
 
 
-import java.io.*;
+//import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.xml.sax.*;
+//import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;
-import java.util.regex.*;
+//import java.util.regex.*;
 
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.das.DasLoader;

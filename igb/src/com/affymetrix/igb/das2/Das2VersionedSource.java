@@ -20,7 +20,7 @@ import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;
-import java.util.regex.*;
+//import java.util.regex.*;
 
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

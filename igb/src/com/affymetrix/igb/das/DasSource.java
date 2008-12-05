@@ -13,10 +13,10 @@
 
 package com.affymetrix.igb.das;
 
-import java.io.*;
-import java.net.*;
+//import java.io.*;
+//import java.net.*;
 import java.util.*;
-import org.xml.sax.*;
+//import org.xml.sax.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

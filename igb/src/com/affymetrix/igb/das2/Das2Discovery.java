@@ -13,12 +13,12 @@
 
 package com.affymetrix.igb.das2;
 
-import java.io.*;
+//import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.igb.util.*;
+//import com.affymetrix.igb.util.*;
 
 public class Das2Discovery {
 

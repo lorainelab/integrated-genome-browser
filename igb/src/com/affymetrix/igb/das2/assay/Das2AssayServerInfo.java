@@ -10,11 +10,14 @@
 
 package com.affymetrix.igb.das2.assay;
 
-import com.affymetrix.igb.das2.*;
+//import com.affymetrix.igb.das2.*;
 import java.net.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
+import com.affymetrix.igb.das2.Das2ServerInfo;
+import com.affymetrix.igb.das2.Das2Source;
+import com.affymetrix.igb.das2.Das2VersionedSource;
 
 /**
  *

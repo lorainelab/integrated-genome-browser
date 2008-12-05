@@ -12,12 +12,12 @@ package com.affymetrix.igb.das2.ontology;
 
 import com.affymetrix.igb.das2.*;
 
-import java.io.*;
+//import java.io.*;
 import java.net.*;
-import java.util.*;
+//import java.util.*;
 import org.w3c.dom.*;
 
-import com.affymetrix.genometryImpl.*;
+//import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.das.DasLoader;
 
 /**

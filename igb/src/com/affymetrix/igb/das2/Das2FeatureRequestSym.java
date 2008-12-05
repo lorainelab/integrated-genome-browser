@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.das2;
 
-import com.affymetrix.genometryImpl.TypedSym;
+//import com.affymetrix.genometryImpl.TypedSym;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;

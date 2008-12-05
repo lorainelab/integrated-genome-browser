@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
+//import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
   public static boolean DEBUG = false;

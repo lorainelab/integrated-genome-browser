@@ -24,7 +24,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
 import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
-import com.affymetrix.igb.das2.Das2Coords;
+//import com.affymetrix.genometry.das2.Das2Coords;
 
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.parsers.*;

@@ -8,13 +8,20 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.das2.*;
+//import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 import com.affymetrix.genometryImpl.util.StringUtils;
 
 import affymetrix.calvin.data.*;
+import com.affymetrix.igb.das2.Das2ClientOptimizer;
+import com.affymetrix.igb.das2.Das2Discovery;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.das2.Das2Region;
+import com.affymetrix.igb.das2.Das2ServerInfo;
+import com.affymetrix.igb.das2.Das2Type;
+import com.affymetrix.igb.das2.Das2VersionedSource;
 
 
 /**

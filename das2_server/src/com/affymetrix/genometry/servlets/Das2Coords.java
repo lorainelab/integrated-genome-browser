@@ -1,4 +1,4 @@
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometry.servlets;
 
 public class Das2Coords {
   String urid;

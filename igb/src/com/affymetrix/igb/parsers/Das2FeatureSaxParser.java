@@ -36,11 +36,11 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.das2.*;
 
 //import com.affymetrix.igb.util.GenometryViewer; // for testing main
+import com.affymetrix.igb.util.GenometryViewer;
 
 /**
  * Das2FeatureSaxParser reads and writes DAS2FEATURE XML format.
- *   Spec for this format is at http://biodas.org/documents/das2/das2_get.html
- *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
+ *   Spec for this format is at http://biodas.org/documents/das2/das2_get.html *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
  */
 public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         implements AnnotationWriter {
@@ -52,7 +52,8 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     static boolean REPORT_RESULTS = false;
     static boolean REPORT_MULTI_LOC = true;
     static boolean REQUIRE_DAS2_NAMESPACE = false;    // ADD_NEW_SEQS_TO_GROUP should be true to allow opening a file in a "new" genome via File->Open
-    static boolean ADD_NEW_SEQS_TO_GROUP = true;    //   "text/plain";
+    static boolean ADD_NEW_SEQS_TO_GROUP = false;    
+    //   "text/plain";
     //   "text/x-das-feature+xml";
     public static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
     public static String FEATURES_CONTENT_SUBTYPE = "x-das-features+xml";
@@ -241,10 +242,11 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
                 SeqUtils.printSymmetry((SeqSymmetry) result_syms.get(i));
             }
         }
+
+	System.out.println("feature constructor calls: "+ feature_constructor_calls);
+	//    clearAll();
         //    return aseq;
         return result_syms;
-
-    //    clearAll();
     }
 
     /**
@@ -421,6 +423,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 
 
     public void clearAll() {
+	feature_constructor_calls = 0;
         result_syms = null;
         id2sym.clear();
         base_uri_stack.clear();
@@ -510,6 +513,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     }
     int dup_count = 0;
 
+    int feature_constructor_calls = 0;
     public void addFeature() {
         // checking to make sure feature with same id doesn't already exist
         //   (ids _should_ be unique, but want to make sure)
@@ -519,8 +523,10 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
             return;
         }
         //SimpleDas2Feature featsym = new SimpleDas2Feature(new URI(feat_id), feat_type, feat_name, feat_parent_id,
+
         SimpleDas2Feature featsym = new SimpleDas2Feature(feat_id, feat_type, feat_name, feat_parent_id,
                 feat_created, feat_modified, feat_doc_href, feat_props);
+	feature_constructor_calls++;
         // add featsym to id2sym hash
         id2sym.put(feat_id, featsym);
         parent2parts.put(featsym, feat_parts);
@@ -1021,27 +1027,36 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         return buf.toString();
     }
 
-        /*public static void main(String[] args) {
-        boolean test_result_list = true;
-        Das2FeatureSaxParser test = new Das2FeatureSaxParser();
-        try {
-            //	String test_file_name = "c:/data/das2_responses/codesprint/feature_query3.xml";
-            String test_file_name = "c:/data/das2_responses/codesprint/genometry/features3.xml";
-            File test_file = new File(test_file_name);
-            FileInputStream fistr = new FileInputStream(test_file);
-            BufferedInputStream bis = new BufferedInputStream(fistr);
-            List annots = test.parse(new InputSource(bis), test_file_name, gmodel.addSeqGroup("test_group"), true);
-            bis.close();
-            System.out.println("annot count: " + annots.size());
-            SeqSymmetry first_annot = (SeqSymmetry) annots.get(0);
-            //      SeqUtils.printSymmetry(first_annot);
-            AnnotatedSeqGroup group = gmodel.getSeqGroup("test_group");
-            AnnotatedBioSeq aseq = group.getSeq(first_annot);
-            System.out.println("seq id: " + aseq.getID());
-            GenometryViewer viewer = GenometryViewer.displaySeq(aseq, false);
-            viewer.setAnnotatedSeq(aseq);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
-}
+    public static void main(String[] args) {
+      boolean test_result_list = true;
+      Das2FeatureSaxParser test = new Das2FeatureSaxParser();
+      try {
+	  //	String test_file_name = "c:/data/das2_responses/codesprint/feature_query3.xml";
+	  //	String test_file_name = "c:/data/das2_responses/codesprint/genometry/features3.xml";
+	  String test_file_name = System.getProperty("user.dir") + 
+	      "/igb/test/test_files/das2_sample_features.das2xml";
+
+	File test_file = new File(test_file_name);
+	FileInputStream fistr = new FileInputStream(test_file);
+	BufferedInputStream bis = new BufferedInputStream(fistr);
+	boolean prev_add_seqs_to_group = ADD_NEW_SEQS_TO_GROUP;
+	ADD_NEW_SEQS_TO_GROUP = true;
+	List annots = test.parse(new InputSource(bis), test_file_name, gmodel.addSeqGroup("test_group"), true);
+	ADD_NEW_SEQS_TO_GROUP = prev_add_seqs_to_group;
+	bis.close();
+	System.out.println("annot count: " + annots.size());
+	SeqSymmetry first_annot = (SeqSymmetry)annots.get(0);
+	//      SeqUtils.printSymmetry(first_annot);
+	AnnotatedSeqGroup group = gmodel.getSeqGroup("test_group");
+	AnnotatedBioSeq aseq = group.getSeq(first_annot);
+	System.out.println("seq id: " + aseq.getID());
+	GenometryViewer viewer = GenometryViewer.displaySeq(aseq, false);
+	viewer.setAnnotatedSeq(aseq);
+      }
+      catch (Exception ex) {
+	ex.printStackTrace();
+      }
+    }
+
+
+  }

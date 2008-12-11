@@ -62,7 +62,7 @@ public class PSLParser implements AnnotationWriter  {
 
   /**
    *  Whether or not to add new seqs from the file to the target AnnotatedSeqGroup.
-   *  Normally true; set this to false for "link.psl" files.
+   *  Normally false; set this to true for "link.psl" files.
    */
   public void setIsLinkPsl(boolean b) {
     is_link_psl = b;
@@ -597,6 +597,7 @@ public class PSLParser implements AnnotationWriter  {
   public String getTrackNamePrefix() { return track_name_prefix; }
 
 
+  /*
   public void calcLengthDistribution(String input_file) {
     int bincount = 100;
     // log10(n) = log(n) / log(10).
@@ -657,6 +658,7 @@ public class PSLParser implements AnnotationWriter  {
       ex.printStackTrace();
     }
   }
+   * */
 
 /*
 

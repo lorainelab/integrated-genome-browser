@@ -14,8 +14,10 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.span.*;
+//import com.affymetrix.genometry.seq.*;
+import com.affymetrix.genometry.seq.SimpleBioSeq;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+//import com.affymetrix.genometry.span.*;
 
 /**
  *  Routines to convert generic SeqSymmetry's to PSL SeqSymmetry's.
@@ -28,6 +30,7 @@ public class SeqSymmetryConverter {
    *  matches, mismatches, repmatches, ncount, gNumInsert, qBaseInsert, tNumInsert, tBaseInsert.
    *  @param type  The PSL type parameter
    */
+    /*
   public static Psl3Sym convertToTrioPslSym(SeqSymmetry sym, String type,
 					    BioSeq queryseq, BioSeq targetseq, BioSeq otherseq) {
     int child_count = sym.getChildCount();
@@ -60,7 +63,7 @@ public class SeqSymmetryConverter {
 				 otherseq, ospan.getMin(), ospan.getMax(),
 				 child_count, blockSizes, qmins, tmins, omins);
     return trisym;
-  }
+  }*/
 
   /**
    *  Converts any SeqSymmetry into a UcscPslSym.

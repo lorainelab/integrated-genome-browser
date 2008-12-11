@@ -334,7 +334,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   }
   
   /** Main method for testing visual layout. */
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     AnnotBrowserView testview = new AnnotBrowserView();
     JFrame frm = new JFrame();
     Container cpane = frm.getContentPane();
@@ -345,7 +345,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       public void windowClosing(WindowEvent evt) { System.exit(0);}
     });
     frm.setVisible(true);
-  }
+  }*/
 
   // implementation of IPlugin
   public void putPluginProperty(Object key, Object value) {

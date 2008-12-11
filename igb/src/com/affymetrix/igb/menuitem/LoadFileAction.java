@@ -398,7 +398,8 @@ public class LoadFileAction {
           VarParser parser = new VarParser();
           parser.parse(str, selected_group);
           return input_seq;
-      } else if (PARSE_REGION && (lcname.endsWith("." + SegmenterRptParser.CN_REGION_FILE_EXT) || lcname.endsWith("." + SegmenterRptParser.LOH_REGION_FILE_EXT))) {
+      } else if (PARSE_REGION &&
+              (lcname.endsWith("." + SegmenterRptParser.CN_REGION_FILE_EXT) || lcname.endsWith("." + SegmenterRptParser.LOH_REGION_FILE_EXT))) {
           SegmenterRptParser parser = new SegmenterRptParser();
           parser.parse(str, stream_name, selected_group);
           return input_seq;
@@ -533,8 +534,7 @@ public class LoadFileAction {
         // If the name ends with ".link.psl" then assume it is a mapping
         // of probe sets to consensus seqs to genome, and thus select
         // psl_option = 1 "target".
-        // Otherwise, the user has to tell us whether to annotate the
-        // "query" or "target" or "other"
+
         if (lcname.endsWith(".link.psl")) {
             parser.setIsLinkPsl(true);
             psl_option = 1; // "target"
@@ -542,6 +542,7 @@ public class LoadFileAction {
             psl_option = 1;
         } else {
             // .psl3 file
+            // the user has to tell us whether to annotate the "query" or "target" or "other"
             Object[] options;
             //if (lcname.endsWith(".psl3")) {
             options = new Object[]{"Query", "Target", "Other"};

@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.*;
-import java.io.*;
+//import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -35,16 +35,16 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
+//import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.LocalUrlCacher;
+//import com.affymetrix.igb.util.LocalUrlCacher;
+//import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SeqResiduesLoader;
-import com.affymetrix.igb.view.QuickLoadView2;
+//import com.affymetrix.igb.view.QuickLoadView2;
 import com.affymetrix.swing.threads.SwingWorker;
 import javax.swing.event.*;
 
@@ -490,110 +490,131 @@ DataRequestListener {
 			if (newgroup == null)  {System.out.println("%%%%%%% Das2LoadView3 received GroupSelectionEvent:, group " + newgroup);}
 			else {System.out.println( "%%%%%%% Das2LoadView3 received GroupSelectionEvent, group: " + newgroup.getID());}
 		}
-		if ((current_group != newgroup) || (newgroup == null)) {
-			current_group = newgroup;
 
-			// need to reset table before populating tree
-			//    (because tree population may trigger table population)
-			//      System.out.println("********** resetting table **********");
-			types_table_model = new Das2TypesTableModel(check_tree_manager);
-			types_table.setModel(types_table_model);
-			TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
-			stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
-			types_table.validate();
-			types_table.repaint();
-			clearTreeView();
-			if (current_group == null) { return; }
-			//      List versions = Das2Discovery.getVersionedSources(current_group, true);
-			Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
-			int current_sleep_time = 0;
+		if ((current_group == newgroup) && (newgroup != null))
+            return;
 
-			//for each server calling a SwingWorker to see if it contains any matching versioned genomes
-			while (servers.hasNext()) {
-				current_sleep_time += 5000;
-				final Das2ServerInfo server = (Das2ServerInfo)((Map.Entry)servers.next()).getValue();
-				final AnnotatedSeqGroup cgroup = current_group;
-				final int sleep_time = current_sleep_time;
-				final BioSeq prev_seq = gmodel.getSelectedSeq();
+        current_group = newgroup;
 
-				SwingWorker server_worker = new SwingWorker() {
-					public Object construct() {
-						if (ADD_DELAYS)  { try { Thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
-						Collection vers = server.getVersionedSources(cgroup);
-						return vers;
-					}
+        // need to reset table before populating tree
+        //    (because tree population may trigger table population)
+        //      System.out.println("********** resetting table **********");
+        types_table_model = new Das2TypesTableModel(check_tree_manager);
+        types_table.setModel(types_table_model);
+        TableColumn stratcol = types_table.getColumnModel().getColumn(Das2TypesTableModel.LOAD_STRATEGY_COLUMN);
+        stratcol.setCellEditor(new DefaultCellEditor(typestateCB));
+        types_table.validate();
+        types_table.repaint();
+        clearTreeView();
+        if (current_group == null) {
+            return;
+        }
+        //      List versions = Das2Discovery.getVersionedSources(current_group, true);
+        Iterator servers = Das2Discovery.getDas2Servers().entrySet().iterator();
+        int current_sleep_time = 0;
 
-					public void finished() {
-						Iterator versions = null;
-						try {
-							versions = ((Collection)this.get()).iterator();
-						}
-						catch (Exception ex) { ex.printStackTrace(); }						
-						if (versions != null) {
-							while (versions.hasNext()) {
-								final Das2VersionedSource version = (Das2VersionedSource)versions.next();
-								Executor vexec = ThreadUtils.getPrimaryExecutor(version);
-								final Das2VersionTreeNode version_node = addVersionToTree(version);
-								final boolean userSelectedServer = server.getName().equals(nameSelectedDasServer);
-								if (userSelectedServer ||
-										server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME) || 
-										Das2TypeState.checkLoadStatus(version))  {									
-									// at least one annotation type for this genome (version) has pref set to {load = true}
-									//   (OR this genome is accessed from default DAS2 server, and therefore needs to be expanded
-									//         in the tree regardless of type load status...)
-									//   therefore calling version.getTypes() on separate thread (in case it triggers long access to DAS/2 server)
-									// once types are populated then in event thread call version_node.getChildCount(),
-									//   which trigger version_node.populate() to add type nodes to tree structure
-									//   adding type nodes to tree structure in turn triggers adding to table any
-									//     types with preferences {load = true}
+        //for each server calling a SwingWorker to see if it contains any matching versioned genomes
+        while (servers.hasNext()) {
+            current_sleep_time += 5000;
+            final Das2ServerInfo server = (Das2ServerInfo) ((Map.Entry) servers.next()).getValue();
+            final AnnotatedSeqGroup cgroup = current_group;
+            final int sleep_time = current_sleep_time;
+            final BioSeq prev_seq = gmodel.getSelectedSeq();
 
-									//There's a problem here, if only one one server has the versionedGenome and it's not the default 
-									//then nothing gets loaded on first access, to fix I set das2 server name in AnnotatedSeqGroup and
-									//expand if it is here - Nix
-									//
-									SwingWorker types_worker = new SwingWorker() {
-										public Object construct() {
-											if (ADD_DELAYS)  { try { Thread.currentThread().sleep(sleep_time); } catch (Exception ex) { } }
-											if (ADD_DELAYS)  { System.out.println("--------  types worker woke up from sleep"); }
-											// version.getTypes() will trigger call to DAS/2 server if necessary
-											Map types = version.getTypes();											
-											return types;
-										}
-										public void finished() {
-											// need to somehow set up so if a seqSelection event happened between when group selection triggered
-											// SwingWorker and when table is populated, will redo a call to getFeatures(WHOLE_SEQUENCE)
-											// Test selected seq before SwingWorker started and after node.getChildCount(), and if different,
-											//    fire off a getFeatures(WHOLE_SEQUENCE) ??
-											//    This is likely to usually be the case when initializing types via this SwingWorker, since
-											//    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
-											int tcount = version_node.getChildCount(); // triggers tree and table population with types info
-											// If Das2VersionedSource is the one selected by the user in the genome chooser then
-											//     want to automatically expand tree to show it's available types
-											//			  if (version.getSource().getServerInfo() ==
-											//  Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
-											if (userSelectedServer) {
-												TreeNode[] path_array = version_node.getPath();
-												TreePath path = new TreePath(path_array);
-												tree.expandPath(path);
-											}
-											if (prev_seq != gmodel.getSelectedSeq()) {
-												System.out.println("selected seq: " + gmodel.getSelectedSeq() + ", prev_seq: " + prev_seq);
-												// seq changed while types were being retrieved?  Load annotations with type = WHOLE_SEQUENCE?
-												loadFeatures(Das2TypeState.WHOLE_SEQUENCE);
-											}
-										}
-									};
-									//		    types_worker.start();
-									vexec.execute(types_worker);
-								}
-							}
-						}
-					}
-				};
-				server_worker.start();
-			}
+            SwingWorker server_worker = new SwingWorker() {
 
-		}
+                public Object construct() {
+                    if (ADD_DELAYS) {
+                        try {
+                            Thread.currentThread().sleep(sleep_time);
+                        } catch (Exception ex) {
+                        }
+                    }
+                    Collection vers = server.getVersionedSources(cgroup);
+                    return vers;
+                }
+
+                public void finished() {
+                    Iterator versions = null;
+                    try {
+                        versions = ((Collection) this.get()).iterator();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    if (versions == null) {
+                        return;
+                    }
+
+                    while (versions.hasNext()) {
+                        final Das2VersionedSource version = (Das2VersionedSource) versions.next();
+                        Executor vexec = ThreadUtils.getPrimaryExecutor(version);
+                        final Das2VersionTreeNode version_node = addVersionToTree(version);
+                        final boolean userSelectedServer = server.getName().equals(nameSelectedDasServer);
+                        if (userSelectedServer ||
+                                server == Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME) ||
+                                Das2TypeState.checkLoadStatus(version)) {
+                            // at least one annotation type for this genome (version) has pref set to {load = true}
+                            //   (OR this genome is accessed from default DAS2 server, and therefore needs to be expanded
+                            //         in the tree regardless of type load status...)
+                            //   therefore calling version.getTypes() on separate thread (in case it triggers long access to DAS/2 server)
+                            // once types are populated then in event thread call version_node.getChildCount(),
+                            //   which trigger version_node.populate() to add type nodes to tree structure
+                            //   adding type nodes to tree structure in turn triggers adding to table any
+                            //     types with preferences {load = true}
+
+                            //There's a problem here, if only one one server has the versionedGenome and it's not the default
+                            //then nothing gets loaded on first access, to fix I set das2 server name in AnnotatedSeqGroup and
+                            //expand if it is here - Nix
+                            //
+                            SwingWorker types_worker = new SwingWorker() {
+
+                                public Object construct() {
+                                    if (ADD_DELAYS) {
+                                        try {
+                                            Thread.currentThread().sleep(sleep_time);
+                                        } catch (Exception ex) {
+                                        }
+                                    }
+                                    if (ADD_DELAYS) {
+                                        System.out.println("--------  types worker woke up from sleep");
+                                    }
+                                    // version.getTypes() will trigger call to DAS/2 server if necessary
+                                    Map types = version.getTypes();
+                                    return types;
+                                }
+
+                                public void finished() {
+                                    // need to somehow set up so if a seqSelection event happened between when group selection triggered
+                                    // SwingWorker and when table is populated, will redo a call to getFeatures(WHOLE_SEQUENCE)
+                                    // Test selected seq before SwingWorker started and after node.getChildCount(), and if different,
+                                    //    fire off a getFeatures(WHOLE_SEQUENCE) ??
+                                    //    This is likely to usually be the case when initializing types via this SwingWorker, since
+                                    //    on main thread groupSelectionEvent is often immediately followed by seqSelectionEvent
+                                    int tcount = version_node.getChildCount(); // triggers tree and table population with types info
+                                    // If Das2VersionedSource is the one selected by the user in the genome chooser then
+                                    //     want to automatically expand tree to show it's available types
+                                    //			  if (version.getSource().getServerInfo() ==
+                                    //  Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME)) {
+                                    if (userSelectedServer) {
+                                        TreeNode[] path_array = version_node.getPath();
+                                        TreePath path = new TreePath(path_array);
+                                        tree.expandPath(path);
+                                    }
+                                    if (prev_seq != gmodel.getSelectedSeq()) {
+                                        System.out.println("selected seq: " + gmodel.getSelectedSeq() + ", prev_seq: " + prev_seq);
+                                        // seq changed while types were being retrieved?  Load annotations with type = WHOLE_SEQUENCE?
+                                        loadFeatures(Das2TypeState.WHOLE_SEQUENCE);
+                                    }
+                                }
+                            };
+                            //		    types_worker.start();
+                            vexec.execute(types_worker);
+                        }
+                    }
+                }
+            };
+            server_worker.start();
+        }
 	}
 
 	public boolean dataRequested(DataRequestEvent evt) {
@@ -709,37 +730,41 @@ DataRequestListener {
 		ChangeListener check_changer = new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
 				Object src = evt.getSource();
-				if (src instanceof Das2TypeState) {
-					Das2TypeState tstate = (Das2TypeState)src;
-					Das2Type dtype = tstate.getDas2Type();
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode)tstate2node.get(tstate);
-					TreePath node_path = new TreePath(node.getPath());
-					CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
-					boolean checked = ctmodel.isPathSelected(node_path);
-					boolean load = tstate.getLoad();
-					if (checked != load) {
-						if (load) { ctmodel.addSelectionPath(node_path); }
-						else { ctmodel.removeSelectionPath(node_path); }
-					}
-					if (load) {
-						// either load turned on or change in load strategy,
-						//    but either way if load strategy is WHOLE_SEQUENCE, fire off DAS/2 whole seq
-						//        request for this type
-						//    (if this annotation type for whole seq already loaded then request will get supressed in optimizer)
-						if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE)  {
-							MutableAnnotatedBioSeq seq = gmodel.getSelectedSeq();
-							Das2Region region= version.getSegment(seq);
-							SeqSpan overlap = new SimpleSeqSpan(0, seq.getLength(), seq);
-							if (region != null) {
-								Das2FeatureRequestSym request_sym =
-									new Das2FeatureRequestSym(dtype, region, overlap, null);
-								ArrayList requests = new ArrayList();
-								requests.add(request_sym);
-								processFeatureRequests(requests, true);
-							}
-						}
-					}
-				}
+				if (!(src instanceof Das2TypeState))
+                    return;
+
+                Das2TypeState tstate = (Das2TypeState) src;
+                Das2Type dtype = tstate.getDas2Type();
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tstate2node.get(tstate);
+                TreePath node_path = new TreePath(node.getPath());
+                CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
+                boolean checked = ctmodel.isPathSelected(node_path);
+                boolean load = tstate.getLoad();
+                if (checked != load) {
+                    if (load) {
+                        ctmodel.addSelectionPath(node_path);
+                    } else {
+                        ctmodel.removeSelectionPath(node_path);
+                    }
+                }
+                if (load) {
+                    // either load turned on or change in load strategy,
+                    //    but either way if load strategy is WHOLE_SEQUENCE, fire off DAS/2 whole seq
+                    //        request for this type
+                    //    (if this annotation type for whole seq already loaded then request will get supressed in optimizer)
+                    if (tstate.getLoadStrategy() == Das2TypeState.WHOLE_SEQUENCE) {
+                        MutableAnnotatedBioSeq seq = gmodel.getSelectedSeq();
+                        Das2Region region = version.getSegment(seq);
+                        SeqSpan overlap = new SimpleSeqSpan(0, seq.getLength(), seq);
+                        if (region != null) {
+                            Das2FeatureRequestSym request_sym =
+                                    new Das2FeatureRequestSym(dtype, region, overlap, null);
+                            ArrayList requests = new ArrayList();
+                            requests.add(request_sym);
+                            processFeatureRequests(requests, true);
+                        }
+                    }
+                }
 			}
 		};
 
@@ -772,55 +797,56 @@ DataRequestListener {
 		 *  Need to add hierarchical types structure for type names that can be treated as paths...
 		 */
 		protected synchronized void populate() {
-			if (! populated) {				
-				populated = true;
-				Map types = version.getTypes();
-				// intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
-				Map internodes = new HashMap();
-				Iterator iter = types.values().iterator();
+			if (populated)
+                return;
 
-				while (iter.hasNext()) {
-					Das2Type type = (Das2Type)iter.next();
-					Das2TypeState tstate = Das2TypeState.getState(type);
-					String type_name = type.getName();					
-					String[] path_elements = path_separator_regex.split(type_name);
-					int path_length = path_elements.length;
-					int path_index = 1;
-					DefaultMutableTreeNode parent = this;
-					String growingPath = "";
-					while (path_index < path_length) {
-						String pathel = path_elements[path_index-1];
-						String testPath = growingPath+pathel+path_separator;
-						//does the testPath exist?
-						DefaultMutableTreeNode internode = (DefaultMutableTreeNode)internodes.get(testPath);
-						if (internode == null) {
-							// intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
-							internode = new DefaultMutableTreeNode(pathel);
-							//must put full path of pathel, not just last directory since these are often repeated 
-							internodes.put(testPath, internode);
-							parent.add(internode);
-						}
-						growingPath = testPath;
-						parent = internode;
-						path_index++;
-					}
-					//System.out.println("type: " + tstate + ", load: " + tstate.getLoad());
-					//System.out.println("type: " + type_name);
-					//	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
-					DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
-					tstate2node.put(tstate, child);
-					child.setAllowsChildren(false);
-					//	  this.add(child);
-					parent.add(child);
-					if (tstate.getLoad()) {
-						//	    System.out.println("  setting type to loaded");
-						TreePath child_path = new TreePath(child.getPath());
-						CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
-						ctmodel.addSelectionPath(child_path);
-					}
-					tstate.addChangeListener(check_changer);
-				}
-			}
+			populated = true;
+            Map types = version.getTypes();
+            // intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
+            Map internodes = new HashMap();
+            Iterator iter = types.values().iterator();
+
+            while (iter.hasNext()) {
+                Das2Type type = (Das2Type) iter.next();
+                Das2TypeState tstate = Das2TypeState.getState(type);
+                String type_name = type.getName();
+                String[] path_elements = path_separator_regex.split(type_name);
+                int path_length = path_elements.length;
+                int path_index = 1;
+                DefaultMutableTreeNode parent = this;
+                String growingPath = "";
+                while (path_index < path_length) {
+                    String pathel = path_elements[path_index - 1];
+                    String testPath = growingPath + pathel + path_separator;
+                    //does the testPath exist?
+                    DefaultMutableTreeNode internode = (DefaultMutableTreeNode) internodes.get(testPath);
+                    if (internode == null) {
+                        // intermediate nodes, for adding hierarchical types structure for type names that can be treated as paths...
+                        internode = new DefaultMutableTreeNode(pathel);
+                        //must put full path of pathel, not just last directory since these are often repeated
+                        internodes.put(testPath, internode);
+                        parent.add(internode);
+                    }
+                    growingPath = testPath;
+                    parent = internode;
+                    path_index++;
+                }
+                //System.out.println("type: " + tstate + ", load: " + tstate.getLoad());
+                //System.out.println("type: " + type_name);
+                //	Das2TypeTreeNode child = new Das2TypeTreeNode(type);
+                DefaultMutableTreeNode child = new DefaultMutableTreeNode(tstate);
+                tstate2node.put(tstate, child);
+                child.setAllowsChildren(false);
+                //	  this.add(child);
+                parent.add(child);
+                if (tstate.getLoad()) {
+                    //	    System.out.println("  setting type to loaded");
+                    TreePath child_path = new TreePath(child.getPath());
+                    CheckTreeSelectionModel ctmodel = check_tree_manager.getSelectionModel();
+                    ctmodel.addSelectionPath(child_path);
+                }
+                tstate.addChangeListener(check_changer);
+            }
 		}
 
 	} // END Das2VersionTreeNode

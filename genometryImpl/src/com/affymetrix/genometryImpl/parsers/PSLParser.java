@@ -31,7 +31,7 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 
 public class PSLParser implements AnnotationWriter  {
 
-  static List<String> psl_pref_list = Arrays.asList("bps", "psl");
+  static List<String> psl_pref_list = Arrays.asList("psl");
   static List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");
   static List<String> psl3_pref_list = Arrays.asList("psl3", "bps", "psl");
 

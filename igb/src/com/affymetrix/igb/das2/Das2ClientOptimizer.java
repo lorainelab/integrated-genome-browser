@@ -412,7 +412,7 @@ public class Das2ClientOptimizer {
             } else {
                 URL query_url = new URL(feature_query);
                 if (DEBUG) {
-                    request_log.addLogMessage("    opening connection");
+                    request_log.addLogMessage("    opening connection " + feature_query);
                 }
                 // casting to HttpURLConnection, since Das2 servers should be either accessed via either HTTP or HTTPS
                 HttpURLConnection query_con = (HttpURLConnection) query_url.openConnection();
@@ -482,56 +482,70 @@ public class Das2ClientOptimizer {
             Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym, MutableAnnotatedBioSeq aseq)
             throws IOException, SAXException {
         List feats = null;
-        if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE) || content_subtype.equals("das2feature") || content_subtype.equals("das2xml") || content_subtype.startsWith("x-das-feature")) {
-            request_log.addLogMessage("PARSING DAS2FEATURE FORMAT FOR DAS2 FEATURE RESPONSE");
+        if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)
+                || content_subtype.equals("das2feature")
+                || content_subtype.equals("das2xml")
+                || content_subtype.startsWith("x-das-feature")) {
+            AddParsingLogMessage(request_log, content_subtype);
             Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
             InputSource isrc = new InputSource(bis);
             feats = parser.parse(isrc, feature_query, seq_group, false);
         } else if (content_subtype.equals("bed")) {
-			request_log.addLogMessage("PARSING BED FORMAT FOR DAS2 FEATURE RESPONSE");
+			AddParsingLogMessage(request_log, content_subtype);
             BedParser parser = new BedParser();
 			feats = parser.parse(bis, gmodel, seq_group, false, type.getID(), false);
         } else if (content_subtype.equals("bgn")) {
-            request_log.addLogMessage("PARSING BGN FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             BgnParser parser = new BgnParser();
             feats = parser.parse(bis, type.getID(), seq_group, -1, false);
         } else if (content_subtype.equals("bps")) {
-            request_log.addLogMessage("PARSING BPS FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             BpsParser parser = new BpsParser();
             DataInputStream dis = new DataInputStream(bis);
             feats = parser.parse(dis, type.getID(), null, seq_group, false, false);
         } else if (content_subtype.equals("brs")) {
-            request_log.addLogMessage("PARSING BRS FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             BrsParser parser = new BrsParser();
             DataInputStream dis = new DataInputStream(bis);
             feats = parser.parse(dis, type.getID(), seq_group, false);
         } else if (content_subtype.equals("bar")) {
-            request_log.addLogMessage("PARSING BAR FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
         } else if (content_subtype.equals("bp2")) {
-            request_log.addLogMessage("PARSING BP2 FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             Bprobe1Parser bp1_reader = new Bprobe1Parser();
             // parsing probesets in bp2 format, also adding probeset ids
             feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
         } else if (content_subtype.equals("ead")) {
-            request_log.addLogMessage("PARSING EAD FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             ExonArrayDesignParser parser = new ExonArrayDesignParser();
             feats = parser.parse(bis, seq_group, false, type.getName());
         } else if (content_subtype.equals("gff")) {
-            request_log.addLogMessage("PARSING GFF FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             GFFParser parser = new GFFParser();
             feats = parser.parse(bis, ".", seq_group, false, false);
         } else if (content_subtype.equals("link.psl")) {
-            request_log.addLogMessage("PARSING LINK.PSL FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
+            // reference to LoadFileAction.ParsePSL
             PSLParser parser = new PSLParser();
             parser.setIsLinkPsl(true);
             parser.enableSharedQueryTarget(true);
             // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
+            // why is annotate_target parameter below set to false?
             feats = parser.parse(bis, type.getName(), null, seq_group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
         } else if (content_subtype.equals("cyt")) {
-            request_log.addLogMessage("PARSING CYT FORMAT FOR DAS2 FEATURE RESPONSE");
+            AddParsingLogMessage(request_log, content_subtype);
             CytobandParser parser = new CytobandParser();
             feats = parser.parse(bis, seq_group, false);
+        } else if (content_subtype.equals("psl")) {
+            AddParsingLogMessage(request_log, content_subtype);
+            // reference to LoadFileAction.ParsePSL
+            PSLParser parser = new PSLParser();
+            parser.enableSharedQueryTarget(true);
+            // annotate target sequence
+
+            DataInputStream dis = new DataInputStream(bis);
+            feats = parser.parse(dis, type.getName(), null, seq_group, null, false, true, false);
         } else {
             request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
             request_log.setSuccess(false);
@@ -570,6 +584,10 @@ public class Das2ClientOptimizer {
                 aseq.addAnnotation(request_sym);
             }
         }
+    }
+
+     private static void AddParsingLogMessage(Das2RequestLog request_log, String content_subtype) {
+        request_log.addLogMessage("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
     }
 
     /**

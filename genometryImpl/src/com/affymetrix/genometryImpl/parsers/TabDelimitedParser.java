@@ -243,6 +243,7 @@ public class TabDelimitedParser {
     return;
   }
 
+  /*
   public static void main(String[] args) {
     String fil = System.getProperty("user.dir") + "/data/copy_number/DUKE_US_DukeCNV_NSP_T24_1_1.rpt";
     // type, start, end, length, strand, group, boolean props, boolean has_header
@@ -265,7 +266,7 @@ public class TabDelimitedParser {
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-  }
+  }*/
 
 
 }

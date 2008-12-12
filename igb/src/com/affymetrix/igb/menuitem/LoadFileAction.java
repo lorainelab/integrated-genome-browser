@@ -362,6 +362,7 @@ public class LoadFileAction {
       //
       // Note that this must be done regardless of whether this load() method was
       // called from inside this class or in loading a bookmark, etc.
+
       gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
 
       if (the_exception != null) {
@@ -560,11 +561,11 @@ public class LoadFileAction {
         boolean annotate_other = psl_option == 2;
 
         if (annotate_query) {
-            parser.parse(str, stream_name, selected_group, null, null, true, false, false);
+            parser.parse(str, stream_name, selected_group, null, null, annotate_query, annotate_target, annotate_other);
         } else if (annotate_target) {
-            parser.parse(str, stream_name, null, selected_group, null, false, true, false);
+            parser.parse(str, stream_name, null, selected_group, null, annotate_query, annotate_target, annotate_other);
         } else if (annotate_other) {
-            parser.parse(str, stream_name, null, null, selected_group, false, false, true);
+            parser.parse(str, stream_name, null, null, selected_group, annotate_query, annotate_target, annotate_other);
         }
     }
 

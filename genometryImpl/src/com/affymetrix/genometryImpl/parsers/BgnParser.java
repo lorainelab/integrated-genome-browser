@@ -32,6 +32,7 @@ import com.affymetrix.genometryImpl.util.Timer;
 public class BgnParser implements AnnotationWriter  {
   boolean use_byte_buffer = true;
   boolean write_from_text = true;
+  static final boolean DEBUG = false;
 
   static List<String> pref_list = new ArrayList<String>();
   static {
@@ -228,12 +229,14 @@ public class BgnParser implements AnnotationWriter  {
         chromseq.addAnnotation(annot);
       }
     }
-    System.out.println("bgn file load time: " + tim.read()/1000f);
-    System.out.println("transcript count = " + count);
-    System.out.println("exon count = " + total_exon_count);
-    if (count > 0)  {
-        System.out.println("average exons / transcript = " +
-                           ((double) total_exon_count / (double) count));
+    if (DEBUG) {
+        System.out.println("bgn file load time: " + tim.read() / 1000f);
+        System.out.println("transcript count = " + count);
+        System.out.println("exon count = " + total_exon_count);
+        if (count > 0) {
+            System.out.println("average exons / transcript = " +
+                    ((double) total_exon_count / (double) count));
+        }
     }
     if (! reached_EOF) {
       System.out.println("File loading was terminated early.");
@@ -414,17 +417,20 @@ public class BgnParser implements AnnotationWriter  {
     catch (Exception ex) {
       ex.printStackTrace();
     }
-    System.out.println("load time: " + tim.read()/1000f);
-    System.out.println("line count = " + count);
-    System.out.println("file length = " + flength);
-    System.out.println("max genomic transcript length: " + max_tlength);
-    System.out.println("max exons in single transcript: " + max_exons);
-    System.out.println("total exons: " + total_exon_count);
-    System.out.println("max spliced transcript length: " + max_spliced_length);
-    System.out.println("spliced transcripts > 65000: " + big_spliced);
+    if (DEBUG) {
+        System.out.println("load time: " + tim.read() / 1000f);
+        System.out.println("line count = " + count);
+        System.out.println("file length = " + flength);
+        System.out.println("max genomic transcript length: " + max_tlength);
+        System.out.println("max exons in single transcript: " + max_exons);
+        System.out.println("total exons: " + total_exon_count);
+        System.out.println("max spliced transcript length: " + max_spliced_length);
+        System.out.println("spliced transcripts > 65000: " + big_spliced);
+    }
   }
 
   /** For testing. */
+  /*
   public static void main(String[] args) {
     String text_file = null;
     String bin_file = null;
@@ -438,7 +444,7 @@ public class BgnParser implements AnnotationWriter  {
     BgnParser test = new BgnParser();
     //    test.readTextTest(text_file, null);
     test.convertTextToBinary(text_file, bin_file, null);
-  }
+  }*/
 
 
   /**

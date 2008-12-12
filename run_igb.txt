@@ -11,5 +11,5 @@ REM This file assumes you have the 'java' program in your PATH.
 REM If not, go to http://java.com and verify your installation.
 REM (Be sure to restart your computer.)
 
-java -mx256m -classpath "igb_exe.jar" "com.affymetrix.igb.IGB"
+java -mx1024m -classpath "igb_exe.jar" "com.affymetrix.igb.IGB"
 

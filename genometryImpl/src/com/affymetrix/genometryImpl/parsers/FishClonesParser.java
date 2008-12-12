@@ -13,11 +13,11 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import java.io.*;
+//import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+//import com.affymetrix.genometry.SeqSymmetry;
+//import com.affymetrix.genometry.util.SeqUtils;
+//import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+//import java.io.*;
 
 /**
  *  Parses tab-delimited output "fishClones.txt" files from UCSC.
@@ -31,7 +31,7 @@ public class FishClonesParser extends TabDelimitedParser {
     super(-1, 0, 1, 2, -1, -1, -1, 3, false, false, addToIndex);
   }
   
-  
+  /*
   public static void main(String[] args) {
     String filname = System.getProperty("user.dir") + "/CVS Repositories/affy/GenotypeConsoleBrowser/data/QuickLoad/hg18/fishClones.fsh";
     File file = new File(filname);
@@ -54,5 +54,5 @@ public class FishClonesParser extends TabDelimitedParser {
     } catch (Exception ex) {
       ex.printStackTrace();
     }
-  }
+  }*/
 }

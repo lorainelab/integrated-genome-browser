@@ -2,7 +2,6 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
-import com.affymetrix.genometryImpl.util.RevCompNibbleIterator;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import junit.framework.*;
 import java.io.*;
@@ -44,42 +43,4 @@ public class NibbleBioSeqTest extends TestCase {
     assertEquals(test_string,result_string);
   }
   
-  // Verify that Reverse Complement works with NibbleIterators
-  public void testRevComp() {
-    String test_string = "ACTGAACC";
-    String reverse_string = "GGTTCAGT";
-    byte[] test_array = NibbleIterator.stringToNibbles(test_string, 0, test_string.length());
-    NibbleIterator nibs = new NibbleIterator(test_array, test_string.length());
-    RevCompNibbleIterator rcnibs = new RevCompNibbleIterator(test_array, test_string.length());
-
-    String rcstr = rcnibs.substring(0, rcnibs.getLength());
-    assertEquals(reverse_string,rcstr);
-    System.out.println("length: " + test_string.length());
-    System.out.println("in:   " + test_string);
-    System.out.println("nib:  " + nibs.substring(0, test_string.length()));
-
-    /*
-    StringBuffer compbuf = new StringBuffer();
-    for (int i=0; i<test_string.length(); i++) {
-      compbuf.append(rcnibs.compCharAt(i));
-    }
-    System.out.println("comp: " + compbuf.toString());
-
-    StringBuffer revbuf = new StringBuffer();
-    for (int i=0; i<test_string.length(); i++) {
-      revbuf.append(rcnibs.revCharAt(i));
-    }
-    System.out.println("rev:  " + revbuf.toString());
-    */
-
-    /*
-    StringBuffer rcbuf = new StringBuffer();
-    for (int i=0; i<test_string.length(); i++) {
-      rcbuf.append(rcnibs.charAt(i));
-    }
-    */
-    System.out.println("rc:   " + rcstr);
-    System.out.println("index of TTT in forward: " + nibs.indexOf("TTT", 0));
-    System.out.println("index of TTT in revcomp: " + rcnibs.indexOf("TTT", 0));
-  }
 }

@@ -165,7 +165,7 @@ public class WebBrowserControl {
   }
 
   public static final String PREF_BROWSER_CMD = "browser command";
-  public static final String DEFAULT_BROWSER_CMD = "netscape";
+  public static final String DEFAULT_BROWSER_CMD = "firefox";
   
   /** Returns the command name used to start a browser on a unix system.
    *  (Actually, used on any non-windows system; on Windows not needed, thus ignored.)

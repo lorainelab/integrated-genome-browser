@@ -1372,9 +1372,14 @@ public class GenometryDas2Servlet extends HttpServlet {
             if (DEBUG) {
                 log.add("feat_type: " + feat_type + ", formats: " + formats);
             }
-            pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
+            /*pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
                     "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
-            if ((formats != null) && (!formats.isEmpty())) {
+            */
+            // Not currently using accession or ontology
+            pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
+                    "\" >");
+
+             if ((formats != null) && (!formats.isEmpty())) {
                 for (int k = 0; k < formats.size(); k++) {
                     String format = (String) formats.get(k);
                     pw.println("       <FORMAT name=\"" + format + "\" />");

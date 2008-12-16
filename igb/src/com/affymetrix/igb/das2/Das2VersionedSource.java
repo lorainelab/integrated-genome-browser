@@ -346,6 +346,10 @@ public class Das2VersionedSource {
             else {
                 response = LocalUrlCacher.getInputStream(types_request, headers);            //Document doc = DasLoader.getDocument(types_request);
             }
+            if (response == null) {
+                System.out.println("Types request " + types_request + " was not reachable.");
+                return;
+            }
             Document doc = DasLoader.getDocument(response);
             Element top_element = doc.getDocumentElement();
             NodeList typelist = doc.getElementsByTagName("TYPE");

@@ -21,7 +21,7 @@ package com.affymetrix.genoviz.datamodel;
 public class AlignSequence extends Sequence  {
 
   private int alignEnd;
-  private static final int GAP_CHAR = MultiSeqAlign.GAP_CHAR;
+  private static final int GAP_CHAR = ' ';
 
   public void setAlignEnd(int alignEnd) {
     this.alignEnd = alignEnd;

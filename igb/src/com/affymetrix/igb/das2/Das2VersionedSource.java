@@ -313,7 +313,7 @@ public class Das2VersionedSource {
         } catch (Exception ex) {
             ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
         }
-        //TODO should regions_initialized be true if an exception occured?
+        //TODO should regions_initialized be true if an exception occurred?
         regions_initialized = true;
     }
     // get annotation types from das2 server

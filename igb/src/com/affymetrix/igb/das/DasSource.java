@@ -151,7 +151,7 @@ public class DasSource {
     catch (Exception ex) {
       ErrorHandler.errorPanel("Error initializing DAS entry points for\n"+entry_request, ex);
     }
-    //TODO should entries_initialized be true if an exception occured?
+    //TODO should entries_initialized be true if an exception occurred?
     entries_initialized = true;
   }
 

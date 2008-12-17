@@ -1342,7 +1342,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
     if (! (evt instanceof NeoViewMouseEvent)) { return; }
     NeoViewMouseEvent e = (NeoViewMouseEvent)evt;
 
-    // NeoViewMouseEvents return the _View_ they occured on as the source,
+    // NeoViewMouseEvents return the _View_ they occurred on as the source,
     // rather than the Component like most AWTEvents
     Object source = e.getSource();
 

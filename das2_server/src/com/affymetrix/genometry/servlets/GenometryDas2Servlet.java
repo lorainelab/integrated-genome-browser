@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -314,7 +316,11 @@ public class GenometryDas2Servlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         System.out.println("Called GenometryDas2Servlet.init()");
-
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //attempt to load fields from System.properties or file
         if (loadAndSetFields() == false) {
             System.out.println("FAILED to init() GenometryDas2Servlet, aborting!");
@@ -338,7 +344,6 @@ public class GenometryDas2Servlet extends HttpServlet {
 
             initFormats(output_registry, graph_formats);
 
-            // JN -- I suspect this synonym loading is not currently working.
             loadSynonyms();
 
             loadGenomes();
@@ -561,35 +566,6 @@ public class GenometryDas2Servlet extends HttpServlet {
         sortGenomes();
     }
 
-    /** sorts genomes and versions within genomes */
-    protected static void sortGenomes() {
-        // sort genomes based on "organism_order.txt" config file if present
-        // get Map.Entry for organism, sort based on order in organism_order.txt,
-        //    put in order in new LinkedHashMap(), then replace as organisms field
-        File org_order_file = new File(org_order_filename);
-        if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
-            Comparator org_comp = new MatchToListComparator(org_order_filename);
-            List orglist = new ArrayList(organisms.keySet());
-            Collections.sort(orglist, org_comp);
-            Map sorted_organisms = new LinkedHashMap();
-            Iterator orgs = orglist.iterator();
-            while (orgs.hasNext()) {
-                String org = (String) orgs.next();
-                //	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
-                sorted_organisms.put(org, organisms.get(org));
-            }
-            organisms = sorted_organisms;
-        }
-        if (SORT_VERSIONS_BY_DATE_CONVENTION) {
-            Comparator date_comp = new GenomeVersionDateComparator();
-            Iterator org_versions = organisms.values().iterator();
-            while (org_versions.hasNext()) {
-                List versions = (List) org_versions.next();
-                Collections.sort(versions, date_comp);
-            }
-        }
-    }
-
     public void loadGenome(File genome_directory, String organism) throws IOException {
         // first, create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
         String genome_version = genome_directory.getName();
@@ -619,7 +595,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         optimizeGenome(genome);
     }
 
-     private void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
+    private void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
         String genome_path = genome_directory.getAbsolutePath();
         File chrom_info_file = new File(genome_path + "/mod_chromInfo.txt");
         if (chrom_info_file.exists()) {
@@ -642,9 +618,6 @@ public class GenometryDas2Servlet extends HttpServlet {
             }
         }
     }
-
-
-
 
     //  public void optimizeGenome(Map seqhash) {
     public static void optimizeGenome(AnnotatedSeqGroup genome) {
@@ -744,6 +717,36 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
+    /** sorts genomes and versions within genomes */
+    protected static void sortGenomes() {
+        // sort genomes based on "organism_order.txt" config file if present
+        // get Map.Entry for organism, sort based on order in organism_order.txt,
+        //    put in order in new LinkedHashMap(), then replace as organisms field
+        File org_order_file = new File(org_order_filename);
+        if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
+            Comparator org_comp = new MatchToListComparator(org_order_filename);
+            List orglist = new ArrayList(organisms.keySet());
+            Collections.sort(orglist, org_comp);
+            Map sorted_organisms = new LinkedHashMap();
+            Iterator orgs = orglist.iterator();
+            while (orgs.hasNext()) {
+                String org = (String) orgs.next();
+                //	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
+                sorted_organisms.put(org, organisms.get(org));
+            }
+            organisms = sorted_organisms;
+        }
+        if (SORT_VERSIONS_BY_DATE_CONVENTION) {
+            Comparator date_comp = new GenomeVersionDateComparator();
+            Iterator org_versions = organisms.values().iterator();
+            while (org_versions.hasNext()) {
+                List versions = (List) org_versions.next();
+                Collections.sort(versions, date_comp);
+            }
+        }
+    }
+
+    
     public static void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
         InputStream istr = null;
         try {
@@ -1324,24 +1327,7 @@ public class GenometryDas2Servlet extends HttpServlet {
             response.setStatus(response.SC_BAD_REQUEST);
             return;
         }
-
-        //fetch Session object and userAccessibleDirectories?
-        HashMap userAuthorizedResources = null;
-        if (dasAuthorization.isAuthorizing()) {
-            System.out.println("\tDas authorization in effect ");
-            HttpSession userSession = request.getSession(false);
-            if (userSession != null) {
-                Object obj = userSession.getAttribute("authorizedResources");
-                if (obj != null) {
-                    userAuthorizedResources = (HashMap) obj;
-                    System.out.println("\t\tFound 'authorizedResources'");
-                } else {
-                    System.out.println("\t\tCould not fetch 'authorizedResources' from user session");
-                }
-            } else {
-                System.out.println("\t\tUser session is null");
-            }
-        }
+        HashMap userAuthorizedResources = getUserAuthorizedResources(request);
 
         //    response.setContentType(TYPES_CONTENT_TYPE);
         setContentType(response, TYPES_CONTENT_TYPE);
@@ -1359,58 +1345,8 @@ public class GenometryDas2Servlet extends HttpServlet {
             pw = response.getWriter();
         }
 
-        printXmlDeclaration(pw);
         String xbase = getXmlBase(request) + genome.getID() + "/";
-        //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
-        pw.println("<TYPES ");
-        pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-        pw.println("    xml:base=\"" + xbase + "\" >");
-
-        //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
-        //    Iterator types_iter = types.iterator();
-        //    Iterator types_iter = types_hash.keySet().iterator();
-        List sorted_types_list = new ArrayList(types_hash.keySet());
-        Collections.sort(sorted_types_list);
-        Iterator types_iter = sorted_types_list.iterator();
-        while (types_iter.hasNext()) {
-
-            String feat_type = (String) types_iter.next();
-
-            //check if authorizing particular types
-            if (dasAuthorization.isAuthorizing()) {
-                boolean showType = dasAuthorization.showResource(userAuthorizedResources, genome.getID(), feat_type);
-                if (showType) {
-                    System.out.println("\t\tShowing " + genome.getID() + " " + feat_type);
-                } else {
-                    System.out.println("\t\tBlocking " + genome.getID() + " " + feat_type);
-                    continue;
-                }
-            }
-
-            List formats = (List) types_hash.get(feat_type);
-            String feat_type_encoded = URLEncoder.encode(feat_type);
-            // URLEncoding replaces slashes, want to keep those...
-            feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
-
-            if (DEBUG) {
-                log.add("feat_type: " + feat_type + ", formats: " + formats);
-            }
-            /*pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
-                    "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
-            */
-            // Not currently using accession or ontology
-            pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
-                    "\" >");
-
-             if ((formats != null) && (!formats.isEmpty())) {
-                for (int k = 0; k < formats.size(); k++) {
-                    String format = (String) formats.get(k);
-                    pw.println("       <FORMAT name=\"" + format + "\" />");
-                }
-            }
-            pw.println("   </TYPE>");
-        }
-        pw.println("</TYPES>");
+        writeTypesXML(pw, xbase, genome.getID(), types_hash, userAuthorizedResources, dasAuthorization);
 
         if (use_types_xslt) {
             pw.flush();
@@ -1430,68 +1366,33 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
-    /**Checks to see if a this server instance is authorizing. If so, will check to see if any user and password parameters were supplied.
-     * If no parameters are supplied the an xml doc is returned with a AUTHORIZED tag set to true, otherwise false.
-     * This is basically a call to see if login capabilities are implemented.
-     * If parameters are supplied, the method attempts to authenticate the user, if OK an HTTPSession object is created 
-     * for the user and a JSESSIONID is attached to the xml response as a cookie.*/
-    public void handleLoginRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.add("Received login request");
-        String comment;
-        boolean authorized;
+    private HashMap getUserAuthorizedResources(HttpServletRequest request) {
+        //fetch Session object and userAccessibleDirectories?
+        HashMap userAuthorizedResources = null;
         if (dasAuthorization.isAuthorizing()) {
-            //fetch parameters
-            String userName = request.getParameter("user");
-            String password = request.getParameter("password");
-            String encrypted = null;
-            if (password != null) {
-                encrypted = Das2Authorization.encrypt(password);
-            }
-            log.add("\tName: " + userName);
-            log.add("\tEncryptedPassword: " + encrypted);
-
-            //look up to see if match
-            HashMap authorizedResources = dasAuthorization.validate(userName, password);
-            if (authorizedResources != null) {
-                //get session or create a new one
-                HttpSession session = request.getSession(true);
-                session.setAttribute("authorizedResources", authorizedResources);
-                session.setMaxInactiveInterval(259200); //72hrs
-                log.add("\tSet HashMap in user session " + authorizedResources);
-                comment = "Logged in.";
-                authorized = true;
+            System.out.println("\tDas authorization in effect ");
+            HttpSession userSession = request.getSession(false);
+            if (userSession != null) {
+                Object obj = userSession.getAttribute("authorizedResources");
+                if (obj != null) {
+                    userAuthorizedResources = (HashMap) obj;
+                    System.out.println("\t\tFound 'authorizedResources'");
+                } else {
+                    System.out.println("\t\tCould not fetch 'authorizedResources' from user session");
+                }
             } else {
-                comment = "Failed to log in, either the user doesn't exist or the password is incorrect.";
-                authorized = false;
+                System.out.println("\t\tUser session is null");
             }
-        } else {
-            comment = "This DAS2 server is not restricting access to any resources.  No need for authentication.";
-            authorized = true;
         }
-        //send response
-        setContentType(response, LOGIN_CONTENT_TYPE);
-        PrintWriter pw = response.getWriter();
-        String xbase = getXmlBase(request);
-        printXmlDeclaration(pw);
-        pw.println("<LOGIN");
-        pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-        pw.println("    xml:base=\"" + xbase + "\" >");
-        if (maintainer_email != null && maintainer_email.length() > 0) {
-            pw.println("  <MAINTAINER email=\"" + maintainer_email + "\" />");
-        }
-        pw.println("\t<AUTHORIZED>" + authorized + "</AUTHORIZED>");
-        pw.println("\t<COMMENT>" + comment + "</COMMENT>");
-        pw.println("</LOGIN>");
-        //print and clear log
-        Das2Authorization.printArrayList(log);
-        log.clear();
+        return userAuthorizedResources;
     }
 
-    /**
+
+     /**
      *  Gets the list of types of annotations for a given genome version.
      *  Assuming top-level annotations hold type info in property "method" or "meth".
-     *  @return a Map where keys are feature type String's and values
-     *    are non-null List's of preferred format String's
+     *  @return a Map where keys are feature type Strings and values
+     *    are non-null Lists of preferred format Strings
      *
      *  may want to cache this info (per versioned source) at some point...
      */
@@ -1555,6 +1456,115 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
+    private static void writeTypesXML(
+            PrintWriter pw, String xbase, String genome_id, Map types_hash, HashMap userAuthorizedResources, Das2Authorization dasAuthorization) {
+        printXmlDeclaration(pw);
+        //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
+        pw.println("<TYPES ");
+        pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
+        pw.println("    xml:base=\"" + xbase + "\" >");
+        //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
+        //    Iterator types_iter = types.iterator();
+        //    Iterator types_iter = types_hash.keySet().iterator();
+        List sorted_types_list = new ArrayList(types_hash.keySet());
+        Collections.sort(sorted_types_list);
+        Iterator types_iter = sorted_types_list.iterator();
+        while (types_iter.hasNext()) {
+            String feat_type = (String) types_iter.next();
+            //check if authorizing particular types
+            if (dasAuthorization.isAuthorizing()) {
+                boolean showType = dasAuthorization.showResource(userAuthorizedResources, genome_id, feat_type);
+                if (showType) {
+                    System.out.println("\t\tShowing " + genome_id + " " + feat_type);
+                } else {
+                    System.out.println("\t\tBlocking " + genome_id + " " + feat_type);
+                    continue;
+                }
+            }
+            List formats = (List) types_hash.get(feat_type);
+            String feat_type_encoded = URLEncoder.encode(feat_type);
+            // URLEncoding replaces slashes, want to keep those...
+            feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
+            /*if (DEBUG) {
+                log.add("feat_type: " + feat_type + ", formats: " + formats);
+            }*/
+            /*pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
+            "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
+             */
+            // Not currently using accession or ontology
+
+            String title = feat_type;
+
+            pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + title + "\" >");
+            if ((formats != null) && (!formats.isEmpty())) {
+                for (int k = 0; k < formats.size(); k++) {
+                    String format = (String) formats.get(k);
+                    pw.println("       <FORMAT name=\"" + format + "\" />");
+                }
+            }
+            pw.println("   </TYPE>");
+        }
+        pw.println("</TYPES>");
+    }
+
+
+    /**Checks to see if a this server instance is authorizing. If so, will check to see if any user and password parameters were supplied.
+     * If no parameters are supplied the an xml doc is returned with a AUTHORIZED tag set to true, otherwise false.
+     * This is basically a call to see if login capabilities are implemented.
+     * If parameters are supplied, the method attempts to authenticate the user, if OK an HTTPSession object is created 
+     * for the user and a JSESSIONID is attached to the xml response as a cookie.*/
+    public void handleLoginRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.add("Received login request");
+        String comment;
+        boolean authorized;
+        if (dasAuthorization.isAuthorizing()) {
+            //fetch parameters
+            String userName = request.getParameter("user");
+            String password = request.getParameter("password");
+            String encrypted = null;
+            if (password != null) {
+                encrypted = Das2Authorization.encrypt(password);
+            }
+            log.add("\tName: " + userName);
+            log.add("\tEncryptedPassword: " + encrypted);
+
+            //look up to see if match
+            HashMap authorizedResources = dasAuthorization.validate(userName, password);
+            if (authorizedResources != null) {
+                //get session or create a new one
+                HttpSession session = request.getSession(true);
+                session.setAttribute("authorizedResources", authorizedResources);
+                session.setMaxInactiveInterval(259200); //72hrs
+                log.add("\tSet HashMap in user session " + authorizedResources);
+                comment = "Logged in.";
+                authorized = true;
+            } else {
+                comment = "Failed to log in, either the user doesn't exist or the password is incorrect.";
+                authorized = false;
+            }
+        } else {
+            comment = "This DAS2 server is not restricting access to any resources.  No need for authentication.";
+            authorized = true;
+        }
+        //send response
+        setContentType(response, LOGIN_CONTENT_TYPE);
+        PrintWriter pw = response.getWriter();
+        String xbase = getXmlBase(request);
+        printXmlDeclaration(pw);
+        pw.println("<LOGIN");
+        pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
+        pw.println("    xml:base=\"" + xbase + "\" >");
+        if (maintainer_email != null && maintainer_email.length() > 0) {
+            pw.println("  <MAINTAINER email=\"" + maintainer_email + "\" />");
+        }
+        pw.println("\t<AUTHORIZED>" + authorized + "</AUTHORIZED>");
+        pw.println("\t<COMMENT>" + comment + "</COMMENT>");
+        pw.println("</LOGIN>");
+        //print and clear log
+        Das2Authorization.printArrayList(log);
+        log.clear();
+    }
+
 
     /**
      *  precedence for feature out format:
@@ -1577,7 +1587,7 @@ public class GenometryDas2Servlet extends HttpServlet {
     //                    one "type" filter (by typeid), no ORing of multiple type filters
      *
      *  New logic for DAS/2 feature request filters:
-     *  If there are multiple occurences of the same filter name in the request, take the union
+     *  If there are multiple occurrences of the same filter name in the request, take the union
      *      of the results of each of these filters individually
      *  Then take intersection of results of each different filter name
      *  (OR similar filters, AND different filters [ except excludes ] )

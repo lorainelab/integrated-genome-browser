@@ -16,9 +16,11 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-
-import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.event.*;
+import com.affymetrix.genoviz.awt.NeoCanvas;
+import com.affymetrix.genoviz.event.NeoDragEvent;
+import com.affymetrix.genoviz.event.NeoDragListener;
+import com.affymetrix.genoviz.event.NeoTimerEvent;
+import com.affymetrix.genoviz.event.NeoTimerListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 public class DragMonitor

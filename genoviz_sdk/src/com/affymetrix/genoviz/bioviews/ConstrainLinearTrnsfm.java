@@ -13,9 +13,6 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
-import java.lang.*;
-
 /**
  *  A transform used internally by NeoSeq, should not be used directly.
  */

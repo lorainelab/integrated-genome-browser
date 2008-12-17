@@ -16,10 +16,8 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
-import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 
 
 /**

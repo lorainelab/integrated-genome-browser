@@ -10,9 +10,8 @@
 *   The license is also available at
 *   http://www.opensource.org/licenses/cpl.php
 */
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometryImpl.das2;
 
-//import java.net.URI;
 import java.util.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.TypedSym;
@@ -31,7 +30,6 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
   List notes;  // or should these just be folded into properties?
   List xids;   // or should these just be folded into properties?
 
-  // public SimpleDas2Feature(URI furi, String feat_type, String feat_name, String feat_parent_id,
   public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
 			   String feat_created, String feat_modified, String feat_doc_href, Map feat_props) {
     id = feat_id;
@@ -45,15 +43,12 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     setProperties(feat_props);   // feat_props should be null if the feature XML had no <PROP> elements
   }
 
-  //  public URI getURI() { return feat_uri; }
-  //  public String getID() { return feat_uri.toString(); }
   public String getID() { return id; }
   public String getName() { return name; }
   /** implementing TypedSym interface */
   public String getType() { return type; }
 
   public Object getProperty(String prop) {
-      //    if (prop.equals("id")) { return feat_uri.toString(); }
     if (prop.equals("id")) { return id; }
     else if (prop.equals("name")) { return name; }
     else if (prop.equals("type")) { return type; }
@@ -73,7 +68,6 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     if (cprops == null) {
       cprops = new LinkedHashMap();
     }
-    //    cprops.put("id", feat_uri.toString());
     cprops.put("id", id);
     if (name != null)  { cprops.put("name", name); }
     if (type != null)  { cprops.put("type", type); }  // should never be null though

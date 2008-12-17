@@ -10,7 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-package com.affymetrix.igb.parsers;
+package com.affymetrix.genometryImpl.parsers;
 
 import java.io.*;
 import java.net.*;
@@ -28,15 +28,9 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-//import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.SymWithProps;
-//import com.affymetrix.genometryImpl.parsers.*;
-import com.affymetrix.genometryImpl.parsers.AnnotationWriter;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.igb.das2.*;
-
-//import com.affymetrix.igb.util.GenometryViewer; // for testing main
-import com.affymetrix.igb.util.GenometryViewer;
+import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 
 /**
  * Das2FeatureSaxParser reads and writes DAS2FEATURE XML format.
@@ -1026,7 +1020,7 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
         }
         return buf.toString();
     }
-
+/*
     public static void main(String[] args) {
       boolean test_result_list = true;
       Das2FeatureSaxParser test = new Das2FeatureSaxParser();
@@ -1058,5 +1052,5 @@ public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
       }
     }
 
-
+*/
   }

@@ -26,7 +26,6 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
 import org.xml.sax.InputSource;
 
 public class UrlLoaderThread extends Thread {

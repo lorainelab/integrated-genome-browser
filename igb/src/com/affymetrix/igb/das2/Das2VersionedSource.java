@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.das.DasLoader;
-import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 
 /**
  *

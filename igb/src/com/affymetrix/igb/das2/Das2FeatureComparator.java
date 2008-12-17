@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.das2;
 
+import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import java.util.Comparator;
 //import com.affymetrix.genometry.*;
 

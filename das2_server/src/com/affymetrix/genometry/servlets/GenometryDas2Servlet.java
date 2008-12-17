@@ -16,19 +16,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-//import com.affymetrix.igb.test.SearchSymTest;
-//import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
-import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
-//import com.affymetrix.genometry.das2.Das2Coords;
-
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**

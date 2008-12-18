@@ -14,10 +14,9 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.util.TableFilter;
-
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.io.*;
 import java.text.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -270,7 +269,7 @@ public class PivotViewExporter extends AbstractAction {
         out.flush();
       }
       catch ( IOException ioe ) {
-        com.affymetrix.igb.util.ErrorHandler.errorPanel("Problem saving file", ioe);
+          ErrorHandler.errorPanel("Problem saving file", ioe);
       }
       finally {
         if (out != null) try {out.close();} catch (Exception ex) {}

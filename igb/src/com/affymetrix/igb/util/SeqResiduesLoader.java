@@ -16,6 +16,7 @@ import com.affymetrix.igb.view.QuickLoadView2;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 public class SeqResiduesLoader {
 

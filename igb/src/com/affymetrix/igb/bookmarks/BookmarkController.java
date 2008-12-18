@@ -13,9 +13,6 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.GeneralBioSeq;
-import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.Color;
 import java.util.*;
 import java.util.List;
@@ -26,6 +23,7 @@ import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.*;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;

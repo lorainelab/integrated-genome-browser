@@ -44,11 +44,8 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.igb.Application;
-
 import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.parsers.*;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;

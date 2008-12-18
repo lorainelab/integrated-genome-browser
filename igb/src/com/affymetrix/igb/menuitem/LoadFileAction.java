@@ -14,9 +14,6 @@
 package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.igb.Application;
-//import com.affymetrix.igb.parsers.Xml2GenometryParser;
-//import com.affymetrix.igb.parsers.Das2FeatureSaxParser;
-//import com.affymetrix.genometryImpl.parsers.BrptParser;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GenometryModel;
@@ -39,6 +36,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;

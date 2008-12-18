@@ -25,7 +25,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.parsers.Streamer;

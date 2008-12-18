@@ -41,7 +41,7 @@ import com.affymetrix.igb.parsers.*;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 
 import com.affymetrix.igb.bookmarks.*;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.swing.DisplayUtils;

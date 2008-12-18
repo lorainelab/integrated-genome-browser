@@ -14,7 +14,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.MalformedURLException;

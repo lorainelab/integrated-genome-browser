@@ -33,7 +33,7 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
 import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;

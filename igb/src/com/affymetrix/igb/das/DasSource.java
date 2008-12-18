@@ -21,7 +21,7 @@ import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 public class DasSource {
 

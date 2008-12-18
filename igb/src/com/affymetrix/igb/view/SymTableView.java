@@ -18,7 +18,6 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.genometryImpl.event.*;
 
 public class SymTableView extends PropertySheet implements SymSelectionListener {

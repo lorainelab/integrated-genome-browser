@@ -30,9 +30,9 @@ import com.affymetrix.genometryImpl.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
-import com.affymetrix.igb.parsers.*;
 
 /*
  * Desired optimizations:

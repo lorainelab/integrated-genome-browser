@@ -25,7 +25,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.*;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.swing.threads.SwingWorker;
 
 public class DasLoadView extends JComponent

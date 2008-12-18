@@ -23,7 +23,7 @@ import javax.swing.event.*;
 
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.util.TableSorter2;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.BooleanTableCellRenderer;
 import com.affymetrix.swing.DisplayUtils;

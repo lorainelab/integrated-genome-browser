@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;

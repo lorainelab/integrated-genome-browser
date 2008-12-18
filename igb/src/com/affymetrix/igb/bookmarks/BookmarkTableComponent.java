@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;

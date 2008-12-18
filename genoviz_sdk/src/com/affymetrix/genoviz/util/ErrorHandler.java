@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.util;
+package com.affymetrix.genoviz.util;
 
 import java.awt.Component;
 import java.awt.Toolkit;

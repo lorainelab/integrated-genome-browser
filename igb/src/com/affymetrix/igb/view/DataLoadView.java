@@ -24,7 +24,6 @@ import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.swing.DisplayUtils;
 

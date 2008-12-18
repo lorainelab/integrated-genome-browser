@@ -15,6 +15,7 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.IntList;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;

@@ -18,7 +18,7 @@ import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
 import java.awt.event.*;
 import java.util.*;

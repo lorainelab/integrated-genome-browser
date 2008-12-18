@@ -11,7 +11,7 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.igb.das2;
+package com.affymetrix.genometryImpl.das2;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

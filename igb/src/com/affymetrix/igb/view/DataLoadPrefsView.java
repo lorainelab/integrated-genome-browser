@@ -15,7 +15,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SeqResiduesLoader;
 import com.affymetrix.genometryImpl.util.SynonymLookup;

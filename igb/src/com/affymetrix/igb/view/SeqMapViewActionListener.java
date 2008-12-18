@@ -21,7 +21,6 @@ import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.AffyTieredMap;

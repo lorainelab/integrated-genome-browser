@@ -21,7 +21,7 @@ import org.w3c.dom.*;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometryImpl.util.SynonymLookup;  //  just for testing via main()
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 
   //  just for testing via main()
 import com.affymetrix.igb.util.LocalUrlCacher;

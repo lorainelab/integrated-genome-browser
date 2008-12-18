@@ -16,7 +16,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
@@ -24,7 +24,6 @@ import com.affymetrix.swing.DisplayUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 

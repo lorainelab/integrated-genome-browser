@@ -13,8 +13,7 @@
 
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.igb.util.ErrorHandler;
-import java.awt.*;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import java.awt.event.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;

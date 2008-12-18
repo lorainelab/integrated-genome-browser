@@ -17,39 +17,24 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
 import javax.swing.*;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.symmetry.*;
-import com.affymetrix.genometry.util.*;
-
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.event.*;
 
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das.DasDiscovery;
-import com.affymetrix.igb.event.*;
 import com.affymetrix.igb.util.*;
-import com.affymetrix.genometryImpl.parsers.LiftParser;
-import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
-import com.affymetrix.genometryImpl.parsers.BedParser;
-import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 
 public class QuickLoadView2 extends JComponent

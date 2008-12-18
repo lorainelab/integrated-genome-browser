@@ -16,16 +16,16 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.Color;
 import java.awt.Rectangle;
-//import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.PixelFloaterGlyph;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.tiers.*;
 import java.util.prefs.Preferences;
 
 public class GraphGlyphUtils {

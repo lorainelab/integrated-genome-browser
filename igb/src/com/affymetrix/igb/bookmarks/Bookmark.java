@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
 import java.io.Serializable;
 import java.net.*;
 import java.util.*;

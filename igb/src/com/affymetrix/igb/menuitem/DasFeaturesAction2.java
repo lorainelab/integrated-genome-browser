@@ -18,6 +18,18 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SeqSpanComparator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.igb.event.UrlLoaderThread;
+import com.affymetrix.igb.das.*;
+import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometry.symmetry.*;
+import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.GeneralBioSeq; // should replace with Versioned interface...
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.genoviz.bioviews.*;
 
 // Java
 import java.awt.BorderLayout;
@@ -35,19 +47,9 @@ import org.xml.sax.*;
 
 import org.w3c.dom.Document;
 
-import com.affymetrix.genoviz.bioviews.*;
 
-import com.affymetrix.igb.das.*;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.GeneralBioSeq; // should replace with Versioned interface...
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.util.ErrorHandler;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
+
+
 
 public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler implements ActionListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();

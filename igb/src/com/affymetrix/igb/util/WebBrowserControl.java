@@ -15,6 +15,7 @@ package com.affymetrix.igb.util;
 
 import java.io.IOException;
 import com.affymetrix.igb.Application;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import javax.swing.SwingUtilities;
 
 /**

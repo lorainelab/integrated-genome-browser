@@ -22,7 +22,9 @@ import org.w3c.dom.*;
 import com.affymetrix.igb.das.DasLoader;
 //import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.igb.util.*;
+import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.SimpleAuthenticator;
+//import com.affymetrix.igb.util.*;
 
 public class Das2ServerInfo  {
   static boolean DEBUG_SOURCES_QUERY = false;

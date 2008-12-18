@@ -13,6 +13,7 @@ import javax.swing.EditableComboBox;
 import com.affymetrix.igb.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.das2.Das2FeatureComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.igb.das2.*;

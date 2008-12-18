@@ -10,9 +10,7 @@ import javax.swing.tree.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.das2.*;
-import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.util.ViewPersistenceUtils;
 
 public class Das2GenomeLoader extends JComponent implements ActionListener { 

@@ -13,7 +13,7 @@
 package com.affymetrix.igb;
 
 import com.affymetrix.igb.prefs.IPlugin;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.StatusBar;
 import java.awt.Image;

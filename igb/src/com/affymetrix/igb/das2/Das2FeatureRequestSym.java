@@ -13,11 +13,11 @@
 
 package com.affymetrix.igb.das2;
 
-//import com.affymetrix.genometryImpl.TypedSym;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 
 /**
  *  Encapsulates a <b>constrained</b> DAS2 feature query and the features returned from the query.

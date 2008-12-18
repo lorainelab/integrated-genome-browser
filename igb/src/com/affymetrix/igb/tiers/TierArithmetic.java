@@ -19,12 +19,11 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.util.ErrorHandler;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
 

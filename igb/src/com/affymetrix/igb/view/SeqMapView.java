@@ -1293,7 +1293,7 @@ public class SeqMapView extends JPanel
     if (frm != null) {
       StringBuffer title = new StringBuffer(128);
       if (appNameFirstInTitle) {
-        title.append(Application.getSingleton().getApplicationName());
+        title.append(Application.getSingleton().getApplicationName() + " " + Application.getSingleton().getVersion());
       }
       if (seq != null) {
         if (title.length() > 0) {
@@ -1314,7 +1314,7 @@ public class SeqMapView extends JPanel
         if (title.length() > 0) {
           title.append(" - ");
         }
-        title.append(Application.getSingleton().getApplicationName());
+        title.append(Application.getSingleton().getApplicationName() + " " + Application.getSingleton().getVersion());
       }
       frm.setTitle(title.toString());
     }
@@ -1437,7 +1437,7 @@ public class SeqMapView extends JPanel
       SeqSymmetry[] cached_path = transform_path;
 
       SeqSymmetry comp = ((CompositeBioSeq)aseq).getComposition();
-      // assuming a two-level deep compositioin hierarchy for now...
+      // assuming a two-level deep composition hierarchy for now...
       //   need to make more recursive at some point...
       //   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
       int scount = comp.getChildCount();

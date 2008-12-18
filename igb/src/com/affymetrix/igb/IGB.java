@@ -253,8 +253,7 @@ public class IGB extends Application
     // be captured there.
     ConsoleView.init();
 
-    System.out.println("Starting \"" + APP_NAME + "\"");
-    System.out.println("Version: " + APP_VERSION);
+    System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION + "\"");
     System.out.println();
 
     main_args = args;
@@ -594,7 +593,7 @@ public class IGB extends Application
 
 
   protected void init() {
-    frm = new JFrame(APP_NAME);
+    frm = new JFrame(APP_NAME + " " + APP_VERSION);
     RepaintManager rm = RepaintManager.currentManager(frm);
     /*
     if (REPLACE_REPAINT_MANAGER) {
@@ -906,7 +905,7 @@ public class IGB extends Application
     tab_pane.setMinimumSize(new Dimension(0,0));
 
     if (USE_STATUS_BAR) {
-      status_bar.setStatus(getApplicationName());
+      status_bar.setStatus(getApplicationName() + " " + getVersion());
       cpane.add(status_bar, BorderLayout.SOUTH);
     }
 

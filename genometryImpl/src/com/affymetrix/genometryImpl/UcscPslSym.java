@@ -292,15 +292,16 @@ public class UcscPslSym
     HashMap<String,Object> tprops = new HashMap<String,Object>();
 
     tprops.put("id", getQuerySeq().getID());
-    tprops.put("type", type);
-    tprops.put("matches", new Integer(getMatches()));
-    tprops.put("# query inserts", new Integer(getQueryNumInserts()));
-    tprops.put("q bases inserted", new Integer(getQueryBaseInserts()));
-    tprops.put("# target inserts", new Integer(getTargetNumInserts()));
-    tprops.put("t bases inserted", new Integer(getTargetBaseInserts()));
+    tprops.put("type", "Pairwise Alignment");
     tprops.put("same orientation", new Boolean(getSameOrientation()));
-    tprops.put("query seq", getQuerySeq().getID());
-    tprops.put("target seq", getTargetSeq().getID());
+    tprops.put("# matches", new Integer(getMatches()));
+    tprops.put("query length", new Integer(queryseq.getLength()));
+    tprops.put("# query inserts", new Integer(getQueryNumInserts()));
+    tprops.put("# query bases inserted", new Integer(getQueryBaseInserts()));
+    tprops.put("# target inserts", new Integer(getTargetNumInserts()));
+    tprops.put("# target bases inserted", new Integer(getTargetBaseInserts()));
+    //tprops.put("query seq", getQuerySeq().getID());
+    //tprops.put("target seq", getTargetSeq().getID());
     if (props != null) {
       tprops.putAll(props);
     }
@@ -310,16 +311,18 @@ public class UcscPslSym
   public Object getProperty(String key) {
     if (key.equals("id")) {  return getQuerySeq().getID(); }
     else if (key.equals("method")) {  return getType(); }
-    else if (key.equals("type")) {  return getType(); }
-    else if (key.equals("query seq")) { return getQuerySeq().getID(); }
-    else if (key.equals("target seq")) { return  getTargetSeq().getID(); }
-    else if (key.equals("matches")) { return Integer.toString(getMatches()); }
-    else if (key.equals("# query inserts")) { return Integer.toString(getQueryNumInserts()); }
-    else if (key.equals("q bases inserted")) { return Integer.toString(getQueryBaseInserts()); }
-    else if (key.equals("# target inserts")) { return Integer.toString(getTargetNumInserts()); }
-    else if (key.equals("t bases inserted")) { return Integer.toString(getTargetBaseInserts()); }
+    else if (key.equals("type")) {  return "Pairwise Alignment"; }
     else if (key.equals("same orientation")) { return getSameOrientation()?"true":"false"; }
+    else if (key.equals("# matches")) { return Integer.toString(getMatches()); }
+    else if (key.equals("query length")) { return Integer.toString(queryseq.getLength()); }
+    else if (key.equals("# query inserts")) { return Integer.toString(getQueryNumInserts()); }
+    else if (key.equals("# query bases inserted")) { return Integer.toString(getQueryBaseInserts()); }
+    else if (key.equals("# target inserts")) { return Integer.toString(getTargetNumInserts()); }
+    else if (key.equals("# target bases inserted")) { return Integer.toString(getTargetBaseInserts()); }
 
+    //else if (key.equals("query seq")) { return getQuerySeq().getID(); }
+    //else if (key.equals("target seq")) { return  getTargetSeq().getID(); }
+    
     // then try to match with any extras
     else if (props != null) {
       return props.get(key);

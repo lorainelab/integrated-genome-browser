@@ -1,6 +1,5 @@
 package com.affymetrix.igb.util;
 
-import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
 
@@ -9,7 +8,6 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.igb.genometry.*;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -75,7 +73,7 @@ public class ViewPersistenceUtils  {
 
   public static void saveGroupSelection(AnnotatedSeqGroup group) {
     Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
-     if (genomes_node == null) {
+     if (genomes_node == null || group == null) {
       return;
      }
      genomes_node.put(SELECTED_GENOME_PREF, group.getID());
@@ -145,13 +143,14 @@ public class ViewPersistenceUtils  {
    *  Using UnibrowPrefUtils to convert node names if they are too long
    */
   public static void saveSeqSelection(AnnotatedBioSeq seq) {
-    if (seq instanceof SmartAnnotBioSeq) {
-      AnnotatedSeqGroup current_group = ((SmartAnnotBioSeq)seq).getSeqGroup();
+    if (seq == null || !(seq instanceof SmartAnnotBioSeq))
+        return;
+
+      AnnotatedSeqGroup current_group = ((SmartAnnotBioSeq) seq).getSeqGroup();
       Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
       Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, current_group.getID(), true);
-        //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
+      //  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
       group_node.put(SELECTED_SEQ_PREF, seq.getID());
-    }
   }
 
 

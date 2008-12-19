@@ -13,8 +13,8 @@
 
 package com.affymetrix.igb.das;
 
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometry.*;
 
 public class DasFeatureRequestSym extends SimpleSymWithProps  {
 

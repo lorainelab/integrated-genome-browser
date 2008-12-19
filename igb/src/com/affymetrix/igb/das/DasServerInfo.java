@@ -18,13 +18,7 @@ import java.util.*;
 import java.util.regex.*;
 import org.w3c.dom.*;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.genometryImpl.util.SynonymLookup;  //  just for testing via main()
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genoviz.util.ErrorHandler;
-
-  //  just for testing via main()
-import com.affymetrix.igb.util.LocalUrlCacher;
 
 
 public class DasServerInfo {
@@ -195,66 +189,5 @@ public class DasServerInfo {
     }
     initialized = true;
     return initialized;
-  }
-
-  /**
-   *  For testing.
-   */
-  public static void main(String[] args) {
-    String test_url = "http://205.217.46.81:9091/QueryServlet/das";
-
-    SynonymLookup dlookup = new SynonymLookup();
-    LocalUrlCacher.loadSynonyms(dlookup, "http://147.208.165.250/quickload_data/synonyms.txt");
-    
-    SynonymLookup.setDefaultLookup(dlookup);
-    DasServerInfo test = new DasServerInfo(test_url, "name unknown", true);
-    System.out.println("***** DAS Server Info *****");
-    System.out.println("  root URL: " + test.getRootUrl());
-    System.out.println("  DAS version: " + test.getDasVersion());
-    System.out.println("  description: " + test.getDescription());
-    System.out.println("  capabilities: ");
-    Iterator caps = test.getCapabilities().entrySet().iterator();
-    while (caps.hasNext()) {
-      Map.Entry cap = (Map.Entry) caps.next();
-      System.out.println("     key = " + cap.getKey() + ", val = " +
-                         cap.getValue());
-    }
-    Iterator sources = test.getDataSources().values().iterator();
-    System.out.println("  data sources: ");
-    while (sources.hasNext()) {
-      DasSource source = (DasSource)sources.next();
-      System.out.println("     id = " + source.getID() + ", version = " + source.getVersion() +
-			 ", name = " + source.getName() + ", description = " + source.getDescription() +
-			 ", info_url = " + source.getInfoUrl() + ", mapmaster = " + source.getMapMaster());
-    }
-
-    sources = test.getDataSources().values().iterator();
-    DasSource first_source = (DasSource)sources.next();
-    //    first_source.initialize();
-    Map entryhash = first_source.getEntryPoints();
-    Iterator entries = entryhash.values().iterator();
-    while (entries.hasNext()) {
-      DasEntryPoint entry_point = (DasEntryPoint)entries.next();
-      System.out.println("entry point:  id = " + entry_point.getID());
-      AnnotatedBioSeq seq = (AnnotatedBioSeq)entry_point.getAnnotatedSeq();
-      System.out.println("seq: " + seq.getID() + ", length = " + seq.getLength());
-    }
-    Map typehash = first_source.getTypes();
-    Iterator types = typehash.values().iterator();
-    while (types.hasNext()) {
-      DasType type = (DasType)types.next();
-      System.out.println("type:  id = " + type.getID());
-    }
-
-    AnnotatedSeqGroup genome = first_source.getGenome();
-    System.out.println("current genome: " + genome);
-    
-    Iterator iter = genome.getSeqList().iterator();
-    while (iter.hasNext()) {
-      AnnotatedBioSeq seq = (AnnotatedBioSeq)iter.next();
-      System.out.println("seq: " + seq.getID() + ", length = " + seq.getLength());
-    }
-
-    System.out.println("**************************");
   }
 }

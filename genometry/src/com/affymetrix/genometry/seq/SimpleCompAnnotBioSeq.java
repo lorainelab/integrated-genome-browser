@@ -14,7 +14,6 @@
 package com.affymetrix.genometry.seq;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.DNAUtils;
 import java.util.*;
 
@@ -33,24 +32,31 @@ public class SimpleCompAnnotBioSeq
   protected List<SeqSymmetry> annots;
 
   public String getResidues(int start, int end, char fillchar) {
-    String result = null;
-    if (start < 0 || end > getLength()) { result = null; }
-    else if (residues == null) {
-      result = super.getResidues(start, end, fillchar);
-    }
-    else  {
-      if (start == 0 && end == getLength()) {
-	result = residues; }
-      else if (start == getLength() && end == 0) {
-	result = DNAUtils.reverseComplement(residues);  }
-      else if (start <= end) {
-	result = residues.substring(start, end);
+      int residue_length = this.getLength();
+      if (start < 0 || residue_length <= 0) {
+          return null;
+      }
+
+      // Sanity checks on argument size.
+      start = Math.min(start, residue_length);
+      end = Math.min(end, residue_length);
+      if (start <= end) {
+          end = Math.min(end, start+residue_length);
       }
       else {
-	result = DNAUtils.reverseComplement(residues.substring(start, end));
+          start = Math.min(start, end+residue_length);
       }
-    }
-    return result;
+
+      if (residues == null) {
+          return super.getResidues(start, end, fillchar);
+      }
+
+      if (start <= end) {
+          return residues.substring(start, end);
+      }
+
+      // start > end -- that means reverse complement.
+      return DNAUtils.reverseComplement(residues.substring(start, end));
   }
 
   public boolean isComplete(int start, int end) {

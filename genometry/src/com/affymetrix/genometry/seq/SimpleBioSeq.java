@@ -59,14 +59,29 @@ public class SimpleBioSeq implements BioSeq, MutableBioSeq {
    *          If end < start, the reverse complement string will be returned. 
    */
   public String getResidues(int start, int end) { 
-    if (residues == null) { return null; }
-    if (start <= end) {
-      if (residues.length() < end) { return null; }
-      return residues.substring(start, end);
-    }
-    else {
+      if (residues == null) {
+          return null;
+      }
+
+      int residue_length = this.getLength();
+      if (start < 0 || residue_length <= 0) {
+          return null;
+      }
+
+      // Sanity checks on argument size.
+      start = Math.min(start, residue_length);
+      end = Math.min(end, residue_length);
+      if (start <= end) {
+          end = Math.min(end, start + residue_length);
+      } else {
+          start = Math.min(start, end + residue_length);
+      }
+
+      if (start <= end) {
+          return residues.substring(start, end);
+      }
+
       return DNAUtils.reverseComplement(residues.substring(end, start));
-    }
   }
 
   public boolean isComplete() { 

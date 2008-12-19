@@ -75,9 +75,24 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   }
 
   public String getResidues(int start, int end, char fillchar) {
-    String result = null;
-    if (start < 0 || end > getLength()) { result = null; }
-    else if (this.getComposition() != null)  {
+      int residue_length = this.getLength();
+      if (start < 0 || residue_length <= 0) {
+          return null;
+      }
+
+      if (this.getComposition() == null) {
+          return null;
+      }
+
+      // Sanity checks on argument size.
+      start = Math.min(start, residue_length);
+      end = Math.min(end, residue_length);
+      if (start <= end) {
+          end = Math.min(end, start + residue_length);
+      } else {
+          start = Math.min(start, end + residue_length);
+      }
+
       SeqSpan residue_span = new SimpleSeqSpan(start, end, this);
       int reslength = Math.abs(end - start);
       char[] char_array = new char[reslength];
@@ -85,13 +100,12 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
       java.util.Arrays.fill(char_array, fillchar);
       SeqSymmetry rootsym = this.getComposition();
       getResidues(residue_span, fillchar, rootsym, char_array, 0);
-      result = new String(char_array);
-      if (DEBUG_GET_RESIDUES)  {
-        System.out.println(result.substring(0, 15) + "..." + result.substring(result.length()-15));
+      String result = new String(char_array);
+      if (DEBUG_GET_RESIDUES) {
+          System.out.println(result.substring(0, 15) + "..." + result.substring(result.length() - 15));
       }
 
-    }
-    return result;
+      return result;
   }
 
   protected void getResidues(SeqSpan this_residue_span, char fillchar,

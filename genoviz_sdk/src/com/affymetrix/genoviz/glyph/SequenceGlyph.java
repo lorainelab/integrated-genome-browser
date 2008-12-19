@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -199,11 +198,11 @@ public class SequenceGlyph extends AbstractResiduesGlyph
     }
   }
 
+  // Essentially the same as CharSeqGlyph.draw
   protected void drawHorizontal(ViewI view) {
-    Rectangle pixelclipbox = view.getPixelBox();
     Rectangle2D coordclipbox = view.getCoordBox();
     Graphics g = view.getGraphics();
-    double pixels_per_base, bases_per_pixel;
+    double pixels_per_base;
     int visible_ref_beg, visible_ref_end,
         visible_seq_beg, visible_seq_end, visible_seq_span,
         seq_beg_index, seq_end_index;
@@ -230,7 +229,6 @@ public class SequenceGlyph extends AbstractResiduesGlyph
           visible_seq_span, coordbox.height);
       view.transformToPixels(scratchrect, pixelbox);
       pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();
-      bases_per_pixel = 1/pixels_per_base;
       int seq_pixel_offset = pixelbox.x;
       int seq_pixel_width =  pixelbox.width;
 
@@ -256,6 +254,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
    * <p> We are showing letters regardless of the height constraints on the glyph.
    * This is temporary until we get more intelligent font management for sequence glyphs.
    */
+
+
+  // Look at similarity with CharSeqGlyph.drawHorizontalResidues
   protected void drawHorizontalResidues
     ( Graphics g,
       double pixelsPerBase,
@@ -263,53 +264,51 @@ public class SequenceGlyph extends AbstractResiduesGlyph
       int seqBegIndex,
       int seqEndIndex,
       int pixelStart ) {
-    int baseline = (this.pixelbox.y+(this.pixelbox.height/2)) + this.fontmet.getAscent()/2 - 1;
-    g.setFont( getResidueFont() );
-    g.setColor( getForegroundColor() );
-    if ( this.font_width < pixelsPerBase ) { // Ample room to draw residue letters.
-      for ( int i = seqBegIndex; i < seqEndIndex; i++ ) {
-        double f = i - seqBegIndex;
-        g.drawString( String.valueOf(
-          residues.charAt( i ) ),
-          ( pixelStart + (int) ( f * pixelsPerBase ) ),
-          baseline );
+      int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+      g.setFont(getResidueFont());
+      g.setColor(getForegroundColor());
+      if (this.font_width < pixelsPerBase) { // Ample room to draw residue letters.
+          for (int i = seqBegIndex; i < seqEndIndex; i++) {
+              double f = i - seqBegIndex;
+              String str = String.valueOf(residues.charAt(i));
+              if (str != null) {
+                  g.drawString(str,
+                          (pixelStart + (int) (f * pixelsPerBase)),
+                          baseline);
+              }
+          }
+      } else if (((double) ((int) pixelsPerBase) == pixelsPerBase) // Make sure it's an integral number of pixels per base.
+              && (this.font_width == pixelsPerBase)) { // pixelsPerBase matches the font width.
+          // Draw the whole string in one go.
+           String str = residues.substring(seqBegIndex, (seqEndIndex - seqBegIndex));
+          if (str != null) {
+              g.drawString(str, pixelStart, baseline);
+          }
+      } else { // Not enough room for letters in this font if sequence is dense.
+          int h = Math.max(1, Math.min(this.pixelbox.height, this.fontmet.getAscent()));
+          int y = Math.min(baseline, (this.pixelbox.y + this.pixelbox.height)) - h;
+          for (int i = seqBegIndex; i < seqEndIndex; i++) {
+              if (!Character.isWhitespace(residues.charAt(i))) {
+                  int w = (int) Math.max(1, pixelsPerBase - 1);
+                  // Make it wider if spaces follow.
+                  for (int a = i + 1; a < seqEndIndex && ' ' == residues.charAt(a); a++) {
+                      w += pixelsPerBase;
+                  }
+                  double f = i - seqBegIndex;
+                  int x = pixelStart + (int) (f * pixelsPerBase);
+                  if (w <= this.font_width) {
+                      if (this.isDrawingRects()) {
+                          g.drawRect(x, y, w - 1, h - 1);
+                      }
+                  } else { // There is enough room for residue letter.
+                      g.drawString(
+                              String.valueOf(residues.charAt(i)),
+                              (pixelStart + (int) (f * pixelsPerBase)),
+                              baseline);
+                  }
+              }
+          }
       }
-    }
-    else if (
-      ( (double)( (int) pixelsPerBase ) == pixelsPerBase ) // Make sure it's an integral number of pixels per base.
-      && ( this.font_width == pixelsPerBase )
-      )
-    { // pixelsPerBase matches the font width.
-      // Draw the whole string in one go.
-      g.drawString(residues.substring(seqBegIndex,seqEndIndex),
-        pixelStart, baseline);
-    }
-    else { // Not enough room for letters in this font if sequence is dense.
-      int h = Math.max( 1, Math.min( this.pixelbox.height, this.fontmet.getAscent() ) );
-      int y = Math.min( baseline, ( this.pixelbox.y + this.pixelbox.height ) ) - h;
-      for ( int i = seqBegIndex; i < seqEndIndex; i++ ) {
-        if ( !Character.isWhitespace( residues.charAt( i ) ) ) {
-          int w = ( int ) Math.max( 1, pixelsPerBase - 1 );
-          // Make it wider if spaces follow.
-          for ( int a=i+1; a < seqEndIndex && ' ' == residues.charAt( a ); a++ ) {
-            w += pixelsPerBase;
-          }
-          double f = i - seqBegIndex;
-          int x = pixelStart + ( int ) ( f * pixelsPerBase );
-          if ( w <= this.font_width ) {
-            if ( this.isDrawingRects() ) {
-              g.drawRect( x, y, w-1, h-1 );
-            }
-          }
-          else { // There is enough room for residue letter.
-            g.drawString(
-              String.valueOf( residues.charAt( i ) ),
-              ( pixelStart + (int) ( f * pixelsPerBase ) ),
-              baseline );
-          }
-        }
-      }
-    }
   }
 
   public boolean hit(Rectangle pixel_hitbox, ViewI view)  {

@@ -280,7 +280,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
       } else if (((double) ((int) pixelsPerBase) == pixelsPerBase) // Make sure it's an integral number of pixels per base.
               && (this.font_width == pixelsPerBase)) { // pixelsPerBase matches the font width.
           // Draw the whole string in one go.
-           String str = residues.substring(seqBegIndex, (seqEndIndex - seqBegIndex));
+           String str = residues.substring(seqBegIndex, seqEndIndex);
           if (str != null) {
               g.drawString(str, pixelStart, baseline);
           }

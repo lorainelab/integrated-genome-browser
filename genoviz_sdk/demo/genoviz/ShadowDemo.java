@@ -17,7 +17,6 @@ import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
-import java.util.Enumeration;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -188,7 +187,7 @@ public class ShadowDemo extends Applet
     super.destroy();
   }
 
-
+/*
   private void showEnds(String theSequence) {
     String message;
     if (20 < theSequence.length()) {
@@ -204,7 +203,7 @@ public class ShadowDemo extends Applet
     catch (Exception e) {
       System.out.println(message);
     }
-  }
+  }*/
 
   public void addBackgroundAnnotation() {
     Object annot = seqview.addAnnotation(seqview.getSelectedStart(),
@@ -215,6 +214,7 @@ public class ShadowDemo extends Applet
     seqview.updateWidget();
   }
 
+  /*
   private void addTextAnnotation() {
     Object annot =
       seqview.addTextColorAnnotation(seqview.getSelectedStart(),
@@ -232,7 +232,7 @@ public class ShadowDemo extends Applet
       annotations.removeElement(annot);
       seqview.updateWidget();
     }
-  }
+  }*/
 
   // sets up a map of size length
 
@@ -257,7 +257,7 @@ public class ShadowDemo extends Applet
     mapview.addAxis(0);
 
     mapview.configure(
-        "-offset -45 -glyphtype com.affymetrix.genoviz.glyph.WingedSequenceGlyph -width 16");
+        "-offset -45 -glyphtype com.affymetrix.genoviz.glyph.SequenceGlyph -width 16");
 
     // Add a SequenceGlyph to the map
 
@@ -310,7 +310,6 @@ public class ShadowDemo extends Applet
    */
 
   public GlyphI setUpShadowRect (NeoSeqI source, NeoMap destination) {
-    int beg, end;
 
     TransientGlyph tg      = new TransientGlyph();
     GlyphI         rglyph  = new OutlineRectGlyph();
@@ -359,7 +358,13 @@ public class ShadowDemo extends Applet
         (((shadowRect.getCoordBox()).x + mouse_offset) > (mapview.getCoordBounds()).width))
       return;
 
-    shadowRect.getCoordBox().x = mouseCurrentLoc - mouse_offset;
+    // The above was not sufficient -- additional bounds check
+    double newShadowLoc = mouseCurrentLoc - mouse_offset;
+    if (newShadowLoc < 0.0 || newShadowLoc > (mapview.getCoordBounds()).width)
+        return;
+
+
+    shadowRect.getCoordBox().x = newShadowLoc;
     mapview.setZoomBehavior ( NeoWidgetI.X, NeoWidgetI.CONSTRAIN_COORD,
         mouseCurrentLoc - mouse_offset );
     // Update the new "base" of the mouse location

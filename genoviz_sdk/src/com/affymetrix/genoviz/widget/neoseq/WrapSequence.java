@@ -14,17 +14,12 @@
 package com.affymetrix.genoviz.widget.neoseq;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Range;
-import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.genoviz.glyph.*;
 
 public class WrapSequence extends WrapGlyph {
 

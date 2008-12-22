@@ -191,7 +191,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     };
 
-  Action write_das_action = new AbstractAction("Test writing to DAS/2 server") {
+  /*Action write_das_action = new AbstractAction("Test writing to DAS/2 server") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -202,7 +202,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       curcon.commitCurations(current_tier);
       // testDas2Writeback(current_tier);
     }
-  };
+  };*/
 
   Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
     public void actionPerformed(ActionEvent e) {
@@ -232,7 +232,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   JMenu changeMenu = new JMenu("Change...");
   JMenu strandsMenu = new JMenu("Strands...");
   JMenuItem deleteMI = new JMenuItem("Delete");
-  boolean curation_enabled = UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations);
 
   ActionToggler at1;
   ActionToggler at2;
@@ -787,7 +786,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     save_bed_action.setEnabled(num_selections == 1);
     save_das_action.setEnabled(num_selections == 1);
-    write_das_action.setEnabled(num_selections == 1);
+    //write_das_action.setEnabled(num_selections == 1);
     JMenu save_menu = new JMenu("Save Annotations");
 
     if (num_selections == 1) {
@@ -853,9 +852,9 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(save_menu);
     save_menu.add(save_bed_action);
     save_menu.add(save_das_action);
-    if (das2_writeback_enabled && curation_enabled && Application.getSingleton() instanceof IGB) {
+    /*if (das2_writeback_enabled && curation_enabled && Application.getSingleton() instanceof IGB) {
       save_menu.add(write_das_action);
-    }
+    }*/
 
     // The delete_action works properly, but the QuickLoad tab doesn't update
     // its state in response.  So it is best to disable this for now.

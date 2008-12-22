@@ -17,11 +17,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.view.CurationControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
@@ -82,10 +80,6 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
-
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Enable Curation Testing (requires restart)", UnibrowPrefsUtil.getTopNode(),
-      CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations));
-
     misc_box.add(clear_prefsB);
     clear_prefsB.addActionListener(this);
 

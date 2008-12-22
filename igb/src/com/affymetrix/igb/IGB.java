@@ -179,7 +179,6 @@ public class IGB extends Application
 
   //QuickLoaderView quickload_view;
 
-  CurationControl curation_control;
   AlignControl align_control;
   DataLoadView data_load_view = null;
   AltSpliceView slice_view = null;
@@ -344,10 +343,6 @@ public class IGB extends Application
 
   public SeqMapView getMapView() {
     return map_view;
-  }
-
-  public CurationControl getCurationControl() {
-    return curation_control;
   }
 
   // currently not needed
@@ -709,9 +704,6 @@ public class IGB extends Application
     bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
     align_control = new AlignControl(this, map_view);
-    if (UnibrowPrefsUtil.getTopNode().getBoolean(CurationControl.PREF_ENABLE_CURATIONS, CurationControl.default_enable_curations)) {
-      curation_control = new CurationControl(map_view);
-    }
 
     open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
     load_das_action = new DasFeaturesAction2(map_view);

@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.util.Timer;
 
 import org.w3c.dom.*;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -123,7 +124,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         "Oct",
         "Nov",
         "Dec"};
-    static Map genomeid2coord;
+    static Map<String,Das2Coords> genomeid2coord;
 
 
     static {
@@ -134,7 +135,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         //     rather than an HTML page (hopefully will be served up as DAS/2 sources & segments XML)
         // covering the two naming schemes currently in use with this server, for example
         //     "H_sapiens_date" and "Human_date"
-        genomeid2coord = new HashMap();
+        genomeid2coord = new HashMap<String,Das2Coords>();
         genomeid2coord.put("H_sapiens_Mar_2006",
                 new Das2Coords("http://www.ncbi.nlm.nih.gov/genome/H_sapiens/B36.1/",
                 "NCBI", "9606", "36", "Chromosome", null));
@@ -271,7 +272,7 @@ public class GenometryDas2Servlet extends HttpServlet {
      *  Map of commands to plugins, for extending DAS server to
      *     recognize additional commands.
      */
-    Map command2plugin = new HashMap();
+    //Map command2plugin = new HashMap();
 
     static final Pattern query_splitter = Pattern.compile("[;\\&]");
     static final Pattern tagval_splitter = Pattern.compile("=");
@@ -286,32 +287,32 @@ public class GenometryDas2Servlet extends HttpServlet {
      *  Top level data structure that holds all the genome models in source/version hierarchy
      *  maps organism names to list of genome versions for that organism
      */
-    static Map organisms = new LinkedHashMap();
+    static Map<String,List<AnnotatedSeqGroup>> organisms = new LinkedHashMap<String,List<AnnotatedSeqGroup>>();
 
     // specifying a template for chromosome seqs constructed in lift and chromInfo parsers
     //  MutableAnnotatedBioSeq template_seq = new NibbleBioSeq();
     MutableAnnotatedBioSeq template_seq = new SmartAnnotBioSeq();
     LiftParser lift_parser = new LiftParser(template_seq);
     ChromInfoParser chrom_parser = new ChromInfoParser(template_seq);
-    ArrayList log = new ArrayList(100);
+    ArrayList<String> log = new ArrayList<String>(100);
     //  HashMap directory_filter = new HashMap();
-    Map output_registry = new HashMap();
+    Map<String,Class> output_registry = new HashMap<String,Class>();
     //  DateFormat date_formatter = DateFormat.getDateTimeInstance();
     SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
     long date_initialized = 0;
     String date_init_string = null;
-    Map genome2graphfiles = new LinkedHashMap();
-    Map genome2graphdirs = new LinkedHashMap();
+    Map<AnnotatedSeqGroup,Map<String,String>> genome2graphfiles = new LinkedHashMap<AnnotatedSeqGroup,Map<String,String>>();
+    Map<AnnotatedSeqGroup,Map<String,String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup,Map<String,String>>();
     //  Map graph_name2file = new LinkedHashMap();  // mapping to graph files when there is one file for all seqs
     //  Map graph_name2dir = new LinkedHashMap();   // mapping to graph directories when multiple files under dir, one for each seq
-    ArrayList graph_formats = new ArrayList();
+    ArrayList<String> graph_formats = new ArrayList<String>();
     Transformer types_transformer;
     boolean DEFAULT_USE_TYPES_XSLT = true;
     boolean use_types_xslt;
     private Das2Authorization dasAuthorization;
 
     static final String annots_filename = "annots.xml"; // potential file for annots parsing
-    static Map annots_map = new LinkedHashMap();    // hash of file names and titles
+    static Map<String,String> annots_map = new LinkedHashMap<String,String>();    // hash of file names and titles
 
     @Override
     public void init() throws ServletException {
@@ -460,7 +461,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         BufferedReader in = null;
         HashMap<String, String> names = null;
         try {
-            names = new HashMap();
+            names = new HashMap<String, String>();
             in = new BufferedReader(new FileReader(file));
             String line;
             String[] keyValue;
@@ -483,7 +484,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
-    private static void initFormats(Map output_registry, ArrayList graph_formats) {
+    private static void initFormats(Map<String,Class> output_registry, ArrayList<String> graph_formats) {
         // Alternatives: (for now trying option B)
         //   A. hashing to AnnotationWriter object:
         //        output_registry.put("bps", new BpsParser());
@@ -580,9 +581,9 @@ public class GenometryDas2Servlet extends HttpServlet {
         genome2graphdirs.put(genome, new LinkedHashMap());
         genome2graphfiles.put(genome, new LinkedHashMap());
         genome.setOrganism(organism);
-        List versions = (List) organisms.get(organism);
+        List<AnnotatedSeqGroup> versions = organisms.get(organism);
         if (versions == null) {
-            versions = new ArrayList();
+            versions = new ArrayList<AnnotatedSeqGroup>();
             organisms.put(organism, versions);
         }
         versions.add(genome);
@@ -725,12 +726,10 @@ public class GenometryDas2Servlet extends HttpServlet {
         File org_order_file = new File(org_order_filename);
         if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
             Comparator org_comp = new MatchToListComparator(org_order_filename);
-            List orglist = new ArrayList(organisms.keySet());
+            List<String> orglist = new ArrayList<String>(organisms.keySet());
             Collections.sort(orglist, org_comp);
-            Map sorted_organisms = new LinkedHashMap();
-            Iterator orgs = orglist.iterator();
-            while (orgs.hasNext()) {
-                String org = (String) orgs.next();
+            Map<String,List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String,List<AnnotatedSeqGroup>>();
+            for (String org: orglist) {
                 //	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
                 sorted_organisms.put(org, organisms.get(org));
             }
@@ -738,9 +737,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
         if (SORT_VERSIONS_BY_DATE_CONVENTION) {
             Comparator date_comp = new GenomeVersionDateComparator();
-            Iterator org_versions = organisms.values().iterator();
-            while (org_versions.hasNext()) {
-                List versions = (List) org_versions.next();
+            for (List<AnnotatedSeqGroup> versions : organisms.values()) {
                 Collections.sort(versions, date_comp);
             }
         }
@@ -762,7 +759,7 @@ public class GenometryDas2Servlet extends HttpServlet {
     }
 
     public static void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
-        ParserController.parse(istr, stream_name, gmodel, genome);
+        ParserController.parse(istr, annots_map, stream_name, gmodel, genome);
     }
 
 
@@ -797,12 +794,12 @@ public class GenometryDas2Servlet extends HttpServlet {
             // special casing so bar files are seen in types request, but not parsed in on startup
             //    (because using graph slicing so don't have to pull all bar file graphs into memory)
             System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
-            Map graph_name2file = (Map) genome2graphfiles.get(genome);
+            Map<String,String> graph_name2file = genome2graphfiles.get(genome);
             graph_name2file.put(type_name, file_path);
             return;
         }
 
-        if (!annots_map.isEmpty() && !annots_map.containsKey(file_name)) {
+        if (!annots_map.isEmpty() && !annots_map.containsKey(file_name.toLowerCase())) {
             // we have loaded in an annots.xml file, but yet this file is not in it and should be ignored.
             return;
         }
@@ -841,15 +838,14 @@ public class GenometryDas2Servlet extends HttpServlet {
             //	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
             String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
             System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
-            Map graph_name2dir = (Map) genome2graphdirs.get(genome);
+            Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
             graph_name2dir.put(graph_name, file_path);
         } else {
             //System.out.println("checking for annotations in directory: " + current_file);
-            File[] child_files = current_file.listFiles();
+            //File[] child_files = current_file.listFiles();
             String[] child_file_names = current_file.list();
             Arrays.sort(child_file_names);
-            for (int i = 0; i < child_files.length; i++) {
-                String child_file_name = child_file_names[i];
+            for (String child_file_name : child_file_names) {
                 File child_file = new File(current_file, child_file_name);
                 loadAnnotsFromFile(child_file, genome, new_type_prefix);
             }
@@ -857,7 +853,7 @@ public class GenometryDas2Servlet extends HttpServlet {
     }
 
     // If an annots.xml file exists, add its elements to annots_map
-    private static void parseAnnotsXml(String file_path, String annots_filename, Map annots_map) {
+    private static void parseAnnotsXml(String file_path, String annots_filename, Map<String,String> annots_map) {
         File annot = new File(file_path + "/" + annots_filename);
         if (!annot.exists()) {
             return;
@@ -877,12 +873,13 @@ public class GenometryDas2Servlet extends HttpServlet {
                 Node fileNode = listOfFiles.item(s);
                 if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element fileElement = (Element) fileNode;
-                    String name = fileElement.getAttribute("name");
+                    String filename = fileElement.getAttribute("name");
                     String title = fileElement.getAttribute("title");
                     String desc = fileElement.getAttribute("description");   // not currently used
 
-                    if (name != null) {
-                        annots_map.put(name, title);
+                    if (filename != null) {
+                        // We use lower-case here, since filename's case is unimportant.
+                        annots_map.put(filename.toLowerCase(), title);
                     }
                 }
             }
@@ -927,11 +924,11 @@ public class GenometryDas2Servlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        com.affymetrix.genoviz.util.Timer timecheck = null;
+        Timer timecheck = null;
         try {
             log.clear();
             if (TIME_RESPONSES) {
-                timecheck = new com.affymetrix.genoviz.util.Timer();
+                timecheck = new Timer();
                 timecheck.start();
             }
             log.add("*************** Genometry Das2 Servlet ***************");
@@ -1215,18 +1212,14 @@ public class GenometryDas2Servlet extends HttpServlet {
         // other elements to add:
 
         //    Map genomes = gmodel.getSeqGroups();
-        Iterator oiter = organisms.entrySet().iterator();
-        while (oiter.hasNext()) {
-            Map.Entry oentry = (Map.Entry) oiter.next();
-            String org = (String) oentry.getKey();
-            List versions = (List) oentry.getValue();
+        for (Map.Entry<String,List<AnnotatedSeqGroup>> oentry : organisms.entrySet()) {
+            String org = oentry.getKey();
+            List<AnnotatedSeqGroup> versions = oentry.getValue();
             //Iterator giter = genomes.entrySet().iterator();
             //      pw.println("  <SOURCE id=\"" + org + "\" >" );
             pw.println("  <SOURCE uri=\"" + org + "\" title=\"" + org + "\" >");
 
-            Iterator giter = versions.iterator();
-            while (giter.hasNext()) {
-                AnnotatedSeqGroup genome = (AnnotatedSeqGroup) giter.next();
+            for (AnnotatedSeqGroup genome : versions) {
                 Das2Coords coords = (Das2Coords) genomeid2coord.get(genome.getID());
                 //	System.out.println("Genome: " + genome.getID() + ", organism: " + genome.getOrganism() +
                 //		     ", version: " + genome.getVersion() + ", seq count: " + genome.getSeqCount());
@@ -1397,7 +1390,7 @@ public class GenometryDas2Servlet extends HttpServlet {
      *  may want to cache this info (per versioned source) at some point...
      */
     private static Map getTypes(
-            AnnotatedSeqGroup genome, Map genome2graphfiles, Map genome2graphdirs, ArrayList graph_formats) {
+            AnnotatedSeqGroup genome, Map genome2graphfiles, Map genome2graphdirs, ArrayList<String> graph_formats) {
         Map genome_types = new LinkedHashMap();
 
         AddSeqsToTypes(genome, genome_types);
@@ -1424,9 +1417,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 
     // iterate over seqs to collect annotation types
      private static void AddSeqsToTypes(AnnotatedSeqGroup genome, Map genome_types) {
-        Iterator seqiter = genome.getSeqList().iterator();
-        while (seqiter.hasNext()) {
-            MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq) seqiter.next();
+         for (MutableAnnotatedBioSeq mseq : genome.getSeqList()) {
             if (mseq instanceof SmartAnnotBioSeq) {
                 SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) mseq;
                 Map typeid2sym = aseq.getTypeMap();
@@ -1493,8 +1484,9 @@ public class GenometryDas2Servlet extends HttpServlet {
              */
             // Not currently using accession or ontology
 
+            // Title may be stored in annots.xml file.
             String title = feat_type;
-
+            
             pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + title + "\" >");
             if ((formats != null) && (!formats.isEmpty())) {
                 for (int k = 0; k < formats.size(); k++) {
@@ -1776,8 +1768,8 @@ public class GenometryDas2Servlet extends HttpServlet {
                     }
 
                     //	if (query_type.endsWith(".bar")) {
-                    Map graph_name2dir = (Map) genome2graphdirs.get(genome);
-                    Map graph_name2file = (Map) genome2graphfiles.get(genome);
+                    Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
+                    Map<String,String> graph_name2file = genome2graphfiles.get(genome);
                     if ((graph_name2dir.get(query_type) != null) ||
                             (graph_name2file.get(query_type) != null) ||
                             // (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
@@ -1789,7 +1781,7 @@ public class GenometryDas2Servlet extends HttpServlet {
                     BioSeq oseq = overlap_span.getBioSeq();
                     outseq = oseq;
 
-                    com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+                    Timer timecheck = new Timer();
                     timecheck.start();
 
                     /** this is the main call to retrieve symmetries meeting query constraints */
@@ -1835,23 +1827,23 @@ public class GenometryDas2Servlet extends HttpServlet {
         // use bar parser to extract just the overlap slice from the graph
         String graph_name = type;   // for now using graph_name as graph type
 
-        Map graph_name2dir = (Map) genome2graphdirs.get(genome);
-        Map graph_name2file = (Map) genome2graphfiles.get(genome);
+        Map<String,String> graph_name2dir = (Map<String,String>) genome2graphdirs.get(genome);
+        Map<String,String> graph_name2file = (Map<String,String>) genome2graphfiles.get(genome);
 
         String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
         log.add("####    file:  " + file_path);
         OutputGraphSlice(file_path, span, type, xbase, response);
     }
 
-    private static String DetermineFilePath(Map graph_name2dir, Map graph_name2file, String graph_name, String seqid) {
+    private static String DetermineFilePath(Map<String,String> graph_name2dir, Map<String,String> graph_name2file, String graph_name, String seqid) {
         // for now using graph_name as graph type
         boolean use_graph_dir = false;
-        String file_path = (String) graph_name2dir.get(graph_name);
+        String file_path = graph_name2dir.get(graph_name);
         if (file_path != null) {
             use_graph_dir = true;
         }
         if (file_path == null) {
-            file_path = (String) graph_name2file.get(graph_name);
+            file_path = graph_name2file.get(graph_name);
         }
         if (file_path == null) {
             file_path = graph_name;
@@ -1909,7 +1901,7 @@ public class GenometryDas2Servlet extends HttpServlet {
             //   hmm, this might not strictly be true based on genometry...
             result = Collections.EMPTY_LIST;
         } else {
-            com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+            Timer timecheck = new Timer();
             timecheck.start();
             MutableSeqSpan testspan = new SimpleMutableSeqSpan();
             List orig_result = result;
@@ -1931,7 +1923,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 
     private void OutputTheAnnotations(String output_format, HttpServletResponse response, List result, BioSeq outseq, String query_type, String xbase) {
         try {
-            com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+            Timer timecheck = new Timer();
             timecheck.start();
             log.add("return format: " + output_format);
 
@@ -2169,16 +2161,15 @@ public class GenometryDas2Servlet extends HttpServlet {
     }
 
     // Print out the genomes
-    private static void printGenomes(Map organisms) {
-        Iterator orgiter = organisms.entrySet().iterator();
-        while (orgiter.hasNext()) {
-            Map.Entry ent = (Map.Entry) orgiter.next();
-            String org = (String) ent.getKey();
+    private static void printGenomes(Map<String,List<AnnotatedSeqGroup>> organisms) {
+        for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
+            String org = ent.getKey();
             System.out.println("Organism: " + org);
-            Iterator versions = ((List) ent.getValue()).iterator();
-            while (versions.hasNext()) {
-                AnnotatedSeqGroup version = (AnnotatedSeqGroup) versions.next();
-                System.out.println("    Genome version: " + version.getID() + ", organism: " + version.getOrganism() + ", sub-version: " + version.getVersion() + ", seq count: " + version.getSeqCount());
+            for (AnnotatedSeqGroup version : ent.getValue()) {
+                System.out.println("    Genome version: " + version.getID() 
+                        + ", organism: " + version.getOrganism()
+                        + ", sub-version: " + version.getVersion()
+                        + ", seq count: " + version.getSeqCount());
             }
         }
     }

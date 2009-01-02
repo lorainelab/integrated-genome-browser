@@ -121,7 +121,7 @@ public class PSLParser implements AnnotationWriter  {
 
     boolean in_bottom_of_link_psl = false;
 
-    // the three xxx2types Maps accomodate using create_container_annot and psl with track lines.
+    // the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
     Map<BioSeq,Map<String,SimpleSymWithProps>> target2types = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>();
     Map<BioSeq,Map<String,SimpleSymWithProps>> query2types = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>();
     Map<BioSeq,Map<String,SimpleSymWithProps>> other2types = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>();

@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.igb.das.DasDiscovery;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -133,7 +134,7 @@ public class XmlPrefsParser {
    */
   public static void addFilename(String filename, Map prefs_hash) {
     if (filename != null && filename.length() > 0) {
-      List filenames = getFilenames(prefs_hash);
+      List <String> filenames = getFilenames(prefs_hash);
       filenames.add(filename);
     }
   }
@@ -141,8 +142,8 @@ public class XmlPrefsParser {
   /** Returns a List of Strings added with {@link #addFilename}.
    *  The list can be empty but is never null.
    */
-  public static List getFilenames(Map prefs_hash) {
-    List filenames = (List) prefs_hash.get(FILENAME_LIST);
+  public static List <String> getFilenames(Map prefs_hash) {
+    List <String> filenames = (List) prefs_hash.get(FILENAME_LIST);
     if (filenames == null) {
       filenames = new ArrayList(4);
       prefs_hash.put(FILENAME_LIST, filenames);
@@ -178,7 +179,7 @@ public class XmlPrefsParser {
   }
    * */
 
-  public Map parse(InputStream istr, String file_name, Map prefs_hash) {
+  public Map parse(InputStream istr, String file_name, Map<String,Map> prefs_hash) {
     try {
       InputSource insrc = new InputSource(istr);
       prefs_hash = parse(insrc, file_name, prefs_hash);
@@ -191,7 +192,7 @@ public class XmlPrefsParser {
     return prefs_hash;
   }
 
-  public Map parse(InputSource insource, String file_name, Map prefs_hash) {
+  public Map parse(InputSource insource, String file_name, Map<String,Map> prefs_hash) {
     try {
       //      System.out.println("parsing from source: " + insource);
       Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
@@ -209,7 +210,7 @@ public class XmlPrefsParser {
    * Returns a Map stored in "prefs_hash" under "name", creating a new one if necessary.
    * These will be LinkedHashMap's, to guarantee the ordering of keys.
    */
-  public static Map getNamedMap(Map prefs_hash, String name) {
+  public static Map getNamedMap(Map<String,Map> prefs_hash, String name) {
     Map m = (Map) prefs_hash.get(name);
     if (m == null) {
       m = new LinkedHashMap();
@@ -301,19 +302,38 @@ public class XmlPrefsParser {
             String server_name = el.getAttribute("name");
             String server_url = el.getAttribute("url");
             //das_servers.put(server_name, server_url);
-            com.affymetrix.igb.das.DasDiscovery.addDasServer(server_name, server_url);
+            DasDiscovery.addDasServer(server_name, server_url);
           }
 	  else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
-	    String server_name = el.getAttribute("name");
-            String server_url = el.getAttribute("url");
-	    if (Das2Discovery.getDas2Server(server_url) == null) {
-	      System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
-	      com.affymetrix.igb.das2.Das2Discovery.addDas2Server(server_name, server_url);
-	    }
-	    else {
-	      System.out.println("XmlPrefsParser tried to add DAS/2 server, but already exists: " + server_url);
-	    }
-	  }
+          String server_name = el.getAttribute("name");
+          String server_url = el.getAttribute("url");
+          if (Das2Discovery.getDas2Server(server_url) == null) {
+              System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
+              Das2Discovery.addDas2Server(server_name, server_url);
+          } else {
+              System.out.println("XmlPrefsParser tried to add DAS/2 server, but already exists: " + server_url);
+          }
+      }
+      else if (name.equalsIgnoreCase("server")) {
+          // new generic server format
+          String server_type = el.getAttribute("type").toLowerCase();
+          String server_name = el.getAttribute("name");
+          String server_url = el.getAttribute("url");
+          if (server_type.equalsIgnoreCase("das")) {
+              System.out.println("XmlPrefsParser adding DAS server: " + server_name + ",  " + server_url);
+              DasDiscovery.addDasServer(server_name, server_url);
+          } else if (server_type.equalsIgnoreCase("das2")) {
+              if (Das2Discovery.getDas2Server(server_url) == null) {
+                  System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
+                  Das2Discovery.addDas2Server(server_name, server_url);
+              } else {
+                  System.out.println("XmlPrefsParser tried to add DAS/2 server, but already exists: " + server_url);
+              }
+          } else if (server_type.equalsIgnoreCase("quickload")) {
+
+          }
+
+      }
         } catch (Exception nfe) {
           System.err.println("ERROR setting preference '"+the_name+"':");
           System.err.println("  "+nfe.toString());

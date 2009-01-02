@@ -95,12 +95,12 @@ public class Das2ClientOptimizer {
     //
     // also attaches
     // assume for now one type, one overlap span
-    public static List loadFeatures(Das2FeatureRequestSym request_sym) {
+    public static List<Das2FeatureRequestSym> loadFeatures(Das2FeatureRequestSym request_sym) {
         Das2RequestLog request_log = request_sym.getLog();
 
         //    request_log.addLogMessage("called Das2ClientOptimizer.loadFeatures()");
         //  public static List optimizeFeatureRequests(List input_requests) {
-        List output_requests = new ArrayList();
+        List<Das2FeatureRequestSym> output_requests = new ArrayList<Das2FeatureRequestSym>();
         // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
         SeqSymmetry overlap_sym = request_sym.getOverlapSym();
         SeqSpan overlap_span = request_sym.getOverlapSpan();

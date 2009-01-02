@@ -72,8 +72,8 @@ public class Bookmark implements Serializable {
    *  @return a Map, which can be empty.  All entries will be Strings.
    *  All keys and values will be decoded with {@link URLDecoder}.
    */
-  public static Map parseParameters(URL url) {
-    Map map = new LinkedHashMap();
+  public static Map<String,String[]> parseParameters(URL url) {
+    Map<String,String[]> map = new LinkedHashMap();
     String query = url.getQuery();
     if (query != null) {
       parseParametersFromQuery(map, query, true);
@@ -91,7 +91,7 @@ public class Bookmark implements Serializable {
    *  All entries will be Strings.
    *  @param use_url_decoding whether or not to apply {@link URLDecoder} to all keys and values.
    */
-  public static void parseParametersFromQuery(Map map, String query, boolean use_url_decoding) {
+  public static void parseParametersFromQuery(Map<String,String[]> map, String query, boolean use_url_decoding) {
     if (query != null) {
       StringTokenizer st = new StringTokenizer(query, "&");
       while (st.hasMoreTokens()) {
@@ -122,7 +122,7 @@ public class Bookmark implements Serializable {
   
   public static final String IGB_GRAPHS_PRAGMA = "##IGB-graphs ";
   
-  public static void parseIGBGraphsPragma(Map map, String line, boolean use_url_decoding) {
+  public static void parseIGBGraphsPragma(Map<String,String[]> map, String line, boolean use_url_decoding) {
     if (line.startsWith(IGB_GRAPHS_PRAGMA)) {
       String graph_props = line.substring(IGB_GRAPHS_PRAGMA.length());
       parseParametersFromQuery(map, graph_props, use_url_decoding);
@@ -141,7 +141,7 @@ public class Bookmark implements Serializable {
    *     be added to the map. (Empty means "String.trim().length()==0" )
    *  @param value a String.  Null is ok.
    */
-  static void addToMap(Map map, String key, String value) {
+  static void addToMap(Map<String,String[]> map, String key, String value) {
     if (key == null || key.trim().length()==0) {
       return;
     }
@@ -164,7 +164,7 @@ public class Bookmark implements Serializable {
    *  (For String[] objects, each String gets appended individually as a
    *  key=value pair, with the same key name.)
    */
-  public static String constructURL(Map props) {
+  public static String constructURL(Map<String,String[]> props) {
     return constructURL(SimpleBookmarkServer.DEFAULT_SERVLET_URL, props);
   }
 
@@ -177,7 +177,7 @@ public class Bookmark implements Serializable {
    *  @param url_base The beginning part of a url, like "http://www.xxx.com"
    *    or even "http://www.xxx.com?x=1&y=2".
    */
-  public static String constructURL(String url_base, Map props) {
+  public static String constructURL(String url_base, Map<String,String[]> props) {
     StringBuffer sb = new StringBuffer();
     sb.append(url_base);
     
@@ -233,7 +233,7 @@ public class Bookmark implements Serializable {
     } catch (java.io.UnsupportedEncodingException e) {}
   }
   
-  public Map getParameters() {
+  public Map<String,String[]> getParameters() {
     return parseParameters(url);
   }
   

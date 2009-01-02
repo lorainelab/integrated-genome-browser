@@ -49,6 +49,8 @@ import skt.swing.tree.check.TreePathSelectable;
 
 
 
+
+
 /**
  *  New strategy for handling DAS/2 data
  *
@@ -309,7 +311,7 @@ DataRequestListener {
 
 		System.out.println("seq = " + visible_seq.getID() +
 				", min = " + overlap.getMin() + ", max = " + overlap.getMax());
-		ArrayList requests = new ArrayList();
+		ArrayList<Das2FeatureRequestSym> requests = new ArrayList();
 
 		Iterator tstates = types_table_model.getTypeStates().iterator();
 		while (tstates.hasNext()) {
@@ -346,7 +348,7 @@ DataRequestListener {
 	 *  so every request (one per type) launches on its own thread
 	 *  But for now putting them all on same (non-event) thread controlled by SwingWorker
 	 */
-	public static void processFeatureRequests(List requests, final boolean update_display) {
+	public static void processFeatureRequests(List<Das2FeatureRequestSym> requests, final boolean update_display) {
 		processFeatureRequests(requests, update_display, DEFAULT_THREAD_FEATURE_REQUESTS);
 	}
 
@@ -361,58 +363,20 @@ DataRequestListener {
 	 *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
 	 *
 	 */
-	public static void processFeatureRequests(List requests, final boolean update_display, boolean thread_requests) {
+	public static void processFeatureRequests(List<Das2FeatureRequestSym> requests, final boolean update_display, boolean thread_requests) {
 		if ((requests == null) || (requests.size() == 0)) { return; }
-		final List result_syms = new ArrayList();
+		final List<Das2FeatureRequestSym> result_syms = new ArrayList<Das2FeatureRequestSym>();
 
-		Map requests_by_version = new LinkedHashMap();
-		// split into entries by DAS/2 versioned source		
-		Iterator rsyms = requests.iterator();
-		while (rsyms.hasNext()) {
-			Das2FeatureRequestSym request = (Das2FeatureRequestSym)rsyms.next();
-			Das2Type dtype = request.getDas2Type();
-			Das2VersionedSource version = dtype.getVersionedSource();
-			Set rset = (Set)requests_by_version.get(version);
-			if (rset == null) {
-				// Using Set instead of List here guarantees only one request per type, even if version (and therefore type) shows up
-				//    in multiple branches of DAS/2 server/source/version/type tree.
-				rset = new LinkedHashSet();
-				requests_by_version.put(version, rset);
-			}
-			rset.add(request);
-		}
+        Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = splitRequestsByVersion(requests);
 
-
-		Iterator entries = requests_by_version.entrySet().iterator();
-		while (entries.hasNext()) {
-			Map.Entry entry = (Map.Entry)entries.next();
+        for (Map.Entry entry : requests_by_version.entrySet()) {
 			Das2VersionedSource version = (Das2VersionedSource)entry.getKey();
 			Executor vexec = ThreadUtils.getPrimaryExecutor(version);
-			final Set request_set = (Set)entry.getValue();
+			final Set<Das2FeatureRequestSym> request_set = (Set<Das2FeatureRequestSym>)entry.getValue();
 
 			SwingWorker worker = new SwingWorker() {
 				public Object construct() {
-					Iterator request_syms = request_set.iterator();
-					while (request_syms.hasNext()) {
-						Das2FeatureRequestSym request_sym = (Das2FeatureRequestSym)request_syms.next();
-
-						// Create an AnnotStyle so that we can automatically set the
-						// human-readable name to the DAS2 name, rather than the ID, which is a URI
-						Das2Type type = request_sym.getDas2Type();
-						if (DEBUG)  { System.out.println("$$$$$ in Das2LoadView3.processFeatureRequests(), getting style for: " + type.getName()); }
-						IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
-						style.setHumanName(type.getName());
-						Application.getSingleton().setStatus("Loading "+type.getShortName(), false);
-						if (USE_DAS2_OPTIMIZER) {
-							result_syms.addAll(Das2ClientOptimizer.loadFeatures(request_sym));
-						}
-						else {
-							request_sym.getRegion().getFeatures(request_sym);
-							MutableAnnotatedBioSeq aseq = request_sym.getRegion().getAnnotatedSeq();
-							aseq.addAnnotation(request_sym);
-							result_syms.add(request_sym);
-						}
-					}
+                    createResultSyms(request_set, result_syms);
 					return null;
 				}
 
@@ -443,6 +407,49 @@ DataRequestListener {
 		//for some reason this doesn't always get called
 		Application.getSingleton().setStatus("", false);
 	}
+
+    private static Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> splitRequestsByVersion(List<Das2FeatureRequestSym> requests) {
+        Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = new LinkedHashMap();
+        // split into entries by DAS/2 versioned source
+
+        for (Das2FeatureRequestSym request: requests) {
+            Das2Type dtype = request.getDas2Type();
+            Das2VersionedSource version = dtype.getVersionedSource();
+            Set<Das2FeatureRequestSym> rset = requests_by_version.get(version);
+            if (rset == null) {
+                // Using Set instead of List here guarantees only one request per type, even if version (and therefore type) shows up
+                //    in multiple branches of DAS/2 server/source/version/type tree.
+                rset = new LinkedHashSet();
+                requests_by_version.put(version, rset);
+            }
+            rset.add(request);
+        }
+        return requests_by_version;
+    }
+
+      private static void createResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<Das2FeatureRequestSym> result_syms) {
+        for (Das2FeatureRequestSym request_sym : request_set) {
+            // Create an AnnotStyle so that we can automatically set the
+            // human-readable name to the DAS2 name, rather than the ID, which is a URI
+            Das2Type type = request_sym.getDas2Type();
+            if (DEBUG) {
+                System.out.println("$$$$$ in Das2LoadView3.processFeatureRequests(), getting style for: " + type.getName());
+            }
+            IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
+            style.setHumanName(type.getName());
+            Application.getSingleton().setStatus("Loading " + type.getShortName(), false);
+            if (USE_DAS2_OPTIMIZER) {
+                List<Das2FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
+                result_syms.addAll(feature_list);
+            } else {
+                request_sym.getRegion().getFeatures(request_sym);
+                MutableAnnotatedBioSeq aseq = request_sym.getRegion().getAnnotatedSeq();
+                aseq.addAnnotation(request_sym);
+                result_syms.add(request_sym);
+            }
+        }
+    }
+
 
 	/**
 	 *  Called when selected sequence is changed.
@@ -847,8 +854,6 @@ DataRequestListener {
 	} // END Das2VersionTreeNode
 
 }  // END Das2LoadView3 class
-
-
 /**
  *
  *  Das2TypeState

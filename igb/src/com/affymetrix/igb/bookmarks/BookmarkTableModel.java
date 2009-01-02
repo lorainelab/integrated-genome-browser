@@ -14,7 +14,7 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.util.*;
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * A simple instance of AbstractTableModel used by BookmarkTableComponent.
@@ -48,9 +48,8 @@ public class BookmarkTableModel extends AbstractTableModel {
   /** Fills the table model with data from the Map.
    *  Some extra empty rows may also be appended to the table to 
    *  allow room for extra data.
-   *  @param map  A map where all keys are String's and all values are String[]'s.
    */
-  public void setValuesFromMap(Map map) {
+  public void setValuesFromMap(Map<String,String[]> map) {
     if (map == null) {
       throw new IllegalArgumentException("Map was null");
     }
@@ -80,7 +79,7 @@ public class BookmarkTableModel extends AbstractTableModel {
    *  {@link #setValuesFromMap(Map)}.
    *  Any item with an empty key or value will not be included in the Map.
    */
-  public Map getValuesAsMap() {
+  public Map<String,String[]> getValuesAsMap() {
     LinkedHashMap m = new LinkedHashMap();
     for (int i=0; i<getRowCount(); i++) {
       String key = (String) getValueAt(i, 0);

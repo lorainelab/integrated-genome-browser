@@ -43,6 +43,7 @@ import com.affymetrix.igb.util.SeqResiduesLoader;
 import com.affymetrix.swing.threads.SwingWorker;
 import javax.swing.event.*;
 
+//from: MySwing: Advanced Swing Utilites Copyright (C) 2005 Santhosh Kumar T
 import skt.swing.tree.check.CheckTreeManager;
 import skt.swing.tree.check.CheckTreeSelectionModel;
 import skt.swing.tree.check.TreePathSelectable;

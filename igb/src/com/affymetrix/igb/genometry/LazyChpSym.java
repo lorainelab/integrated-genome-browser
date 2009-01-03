@@ -14,6 +14,7 @@ import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 import com.affymetrix.genometryImpl.util.StringUtils;
 
+// in affx_fusion.jar
 import affymetrix.calvin.data.*;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.das2.Das2Discovery;

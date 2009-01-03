@@ -76,8 +76,9 @@ public class IGB extends Application
   implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener  {
   static IGB singleton_igb;
   public static String APP_NAME = IGBConstants.APP_NAME;
-	public static String APP_SHORT_NAME = IGBConstants.APP_SHORT_NAME;
+  public static String APP_SHORT_NAME = IGBConstants.APP_SHORT_NAME;
   public static String APP_VERSION = IGBConstants.IGB_VERSION;
+  
 	/**
 	 * HTTP User Agent presented to servers.  Java version is appended by
 	 * the JRE at runtime.  The user agent is of the format

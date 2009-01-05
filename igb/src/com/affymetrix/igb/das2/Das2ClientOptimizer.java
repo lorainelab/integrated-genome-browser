@@ -545,7 +545,9 @@ public class Das2ClientOptimizer {
             // annotate target sequence
 
             DataInputStream dis = new DataInputStream(bis);
-            feats = parser.parse(dis, type.getName(), null, seq_group, null, false, true, false);
+            parser.parse(dis, type.getName(), null, seq_group, null, false, true, false);
+            // Note that here we specifically ignore the output of parser.parse, because it's already been added to the seq_group.
+            // Otherwise we double-count and add multiple tiers.
         } else {
             request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
             request_log.setSuccess(false);

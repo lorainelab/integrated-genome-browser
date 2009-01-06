@@ -1,9 +1,8 @@
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import java.util.*;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.util.Timer;
 
 /**
  *   CompositeGraphSym.
@@ -15,119 +14,116 @@ import com.affymetrix.genometryImpl.util.Timer;
  *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
  *      been populated from.
  */
-public class CompositeGraphSym extends GraphSymFloat  {
+public class CompositeGraphSym extends GraphSymFloat {
 
-  public CompositeGraphSym(String id, BioSeq seq) {
-    super(null, null, id, seq);
-  }
-
-  /**
-   *  Overriding addChild() to only accept GraphSymFloat children,
-   *     integrates x and y coord arrays of child into composite's coord arrays
-   *     (and nulls old ones out for gc).
-   *  Assumes that slices can abut but do _not_ overlap
-   *    "abut" in this case means that (sliceA.span.max == sliceB.span.min)
-   *    since these are half-open half-closed intervals, this is not actually overlap but abutment...
-   *
-   */
-  public void addChild(SeqSymmetry sym)  {
-    // System.out.println("called CompositeGraphSym.addChild(): " + sym);
-    if (sym instanceof GraphSym) {
-      GraphSymFloat slice = (GraphSymFloat) sym;
-      int[] slice_xcoords = slice.getGraphXCoords();
-      float[] slice_ycoords;
-      if (sym instanceof GraphSymFloat) {
-        slice_ycoords = slice.getGraphYCoords();
-      } else {
-        slice_ycoords = slice.copyGraphYCoords();
-      }
-
-      if (xcoords == null && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
-        setCoords(slice_xcoords, slice_ycoords);
-        slice.setCoords(null, null);
-      }
-      else {
-        // if no data points in slice, then just keep old coords
-        if ((slice_xcoords != null) && (slice_xcoords.length > 0))  {
-	  // use binary search to figure out what index "A" that slice_xcoords array should insert
-	  //    into existing xcoord array
-	  int slice_min = slice_xcoords[0];
-	  int slice_index = Arrays.binarySearch(xcoords, slice_min);
-	  if (slice_index < 0) {
-	    // want draw_beg_index to be index of max xcoord <= view_start
-	    //  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-	    slice_index = (-slice_index -1);
-	  }
-
-	  int[] new_xcoords = new int[xcoords.length + slice_xcoords.length];
-	  int new_index = 0;
-	  // since slices cannot overlap, new xcoord array should be:
-
-	  //    old xcoord array entries up to "A-1"
-	  if (slice_index > 0)  {
-	    System.arraycopy(xcoords, 0, new_xcoords, new_index, slice_index);
-	    new_index += slice_index;
-	  }
-	  //    all of slice_xcoords entries
-	  System.arraycopy(slice_xcoords, 0, new_xcoords, new_index, slice_xcoords.length);
-	  new_index += slice_xcoords.length;
-	  //    old xcoord array entries from "A" to end of old xcoord array
-	  if (slice_index < xcoords.length) {
-	    System.arraycopy(xcoords, slice_index, new_xcoords, new_index, xcoords.length - slice_index);
-	  }
-
-	  // get rid of old xcoords
-	  xcoords = new_xcoords;
-	  slice_xcoords = null;
-	  slice.xcoords = null;
-	  float[] new_ycoords = new float[getGraphYCoords().length + slice_ycoords.length];
-	  new_index = 0;
-
-	  //    old ycoord array entries up to "A-1"
-	  if (slice_index > 0)  {
-	    System.arraycopy(getGraphYCoords(), 0, new_ycoords, new_index, slice_index);
-	    new_index += slice_index;
-	  }
-	  //    all of slice_ycoords entries
-	  System.arraycopy(slice_ycoords, 0, new_ycoords, new_index, slice_ycoords.length);
-	  new_index += slice_ycoords.length;
-	  //    old ycoord array entries from "A" to end of old ycoord array
-	  if (slice_index < getGraphYCoords().length) {
-	    System.arraycopy(getGraphYCoords(), slice_index, new_ycoords, new_index, getGraphYCoords().length - slice_index);
-	  }
-          setCoords(xcoords, new_ycoords);
-          slice.setCoords(null, null);
-	  //System.out.println("composite graph points: " + getGraphYCoords().length);
-	  // trying to encourage garbage collection of old coord arrays
-	  //	System.gc();
-	}
-	// also need to recalculate point_min_ycoord and point_max_ycoord
-	//   but already know these for previous coords, so just iterate through slice coords to update
-	// actually these are only in the graph glyphs -- but might want to move them to graph sym
-	//   to improve recalculation performance
-      }
-      // assuming GraphSym seq span is bounds of graph slice, add GraphSym as child
-      // but remember coords are nulled out!
-      // NOTE: the slice coordinates do not HAVE to be set to null, they could
-      // be set to some sub-array of the composite graph arrays backed by the same data.
-      super.addChild(slice);
+    public CompositeGraphSym(String id, BioSeq seq) {
+        super(null, null, id, seq);
     }
 
-    else {
-      throw new RuntimeException("only GraphSyms can be added as children to CompositeGraphSym!");
-    }
-  }
+    /**
+     *  Overriding addChild() to only accept GraphSymFloat children,
+     *     integrates x and y coord arrays of child into composite's coord arrays
+     *     (and nulls old ones out for gc).
+     *  Assumes that slices can abut but do _not_ overlap
+     *    "abut" in this case means that (sliceA.span.max == sliceB.span.min)
+     *    since these are half-open half-closed intervals, this is not actually overlap but abutment...
+     *
+     */
+    public void addChild(SeqSymmetry sym) {
+        // System.out.println("called CompositeGraphSym.addChild(): " + sym);
+        if (sym instanceof GraphSym) {
+            GraphSymFloat slice = (GraphSymFloat) sym;
+            int[] slice_xcoords = slice.getGraphXCoords();
+            float[] slice_ycoords;
+            if (sym instanceof GraphSymFloat) {
+                slice_ycoords = slice.getGraphYCoords();
+            } else {
+                slice_ycoords = slice.copyGraphYCoords();
+            }
 
-/*
-  public static void main(String[] args) {
+            if (xcoords == null && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
+                setCoords(slice_xcoords, slice_ycoords);
+                slice.setCoords(null, null);
+            } else {
+                // if no data points in slice, then just keep old coords
+                if ((slice_xcoords != null) && (slice_xcoords.length > 0)) {
+                    // use binary search to figure out what index "A" that slice_xcoords array should insert
+                    //    into existing xcoord array
+                    int slice_min = slice_xcoords[0];
+                    int slice_index = Arrays.binarySearch(xcoords, slice_min);
+                    if (slice_index < 0) {
+                        // want draw_beg_index to be index of max xcoord <= view_start
+                        //  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
+                        slice_index = (-slice_index - 1);
+                    }
+
+                    int[] new_xcoords = new int[xcoords.length + slice_xcoords.length];
+                    int new_index = 0;
+                    // since slices cannot overlap, new xcoord array should be:
+
+                    //    old xcoord array entries up to "A-1"
+                    if (slice_index > 0) {
+                        System.arraycopy(xcoords, 0, new_xcoords, new_index, slice_index);
+                        new_index += slice_index;
+                    }
+                    //    all of slice_xcoords entries
+                    System.arraycopy(slice_xcoords, 0, new_xcoords, new_index, slice_xcoords.length);
+                    new_index += slice_xcoords.length;
+                    //    old xcoord array entries from "A" to end of old xcoord array
+                    if (slice_index < xcoords.length) {
+                        System.arraycopy(xcoords, slice_index, new_xcoords, new_index, xcoords.length - slice_index);
+                    }
+
+                    // get rid of old xcoords
+                    xcoords = new_xcoords;
+                    slice_xcoords = null;
+                    slice.xcoords = null;
+                    float[] new_ycoords = new float[getGraphYCoords().length + slice_ycoords.length];
+                    new_index = 0;
+
+                    //    old ycoord array entries up to "A-1"
+                    if (slice_index > 0) {
+                        System.arraycopy(getGraphYCoords(), 0, new_ycoords, new_index, slice_index);
+                        new_index += slice_index;
+                    }
+                    //    all of slice_ycoords entries
+                    System.arraycopy(slice_ycoords, 0, new_ycoords, new_index, slice_ycoords.length);
+                    new_index += slice_ycoords.length;
+                    //    old ycoord array entries from "A" to end of old ycoord array
+                    if (slice_index < getGraphYCoords().length) {
+                        System.arraycopy(getGraphYCoords(), slice_index, new_ycoords, new_index, getGraphYCoords().length - slice_index);
+                    }
+                    setCoords(xcoords, new_ycoords);
+                    slice.setCoords(null, null);
+                //System.out.println("composite graph points: " + getGraphYCoords().length);
+                // trying to encourage garbage collection of old coord arrays
+                //	System.gc();
+                }
+            // also need to recalculate point_min_ycoord and point_max_ycoord
+            //   but already know these for previous coords, so just iterate through slice coords to update
+            // actually these are only in the graph glyphs -- but might want to move them to graph sym
+            //   to improve recalculation performance
+            }
+            // assuming GraphSym seq span is bounds of graph slice, add GraphSym as child
+            // but remember coords are nulled out!
+            // NOTE: the slice coordinates do not HAVE to be set to null, they could
+            // be set to some sub-array of the composite graph arrays backed by the same data.
+            super.addChild(slice);
+        } else {
+            throw new RuntimeException("only GraphSyms can be added as children to CompositeGraphSym!");
+        }
+    }
+
+    /*
+    public static void main(String[] args) {
     // testing large System.arrayCopy operations
     Timer tim= new Timer();
     int asize = 5000000;
     int[] array1 = new int[asize];
     float[] array2 = new float[asize];
     for (int i=0; i<array1.length; i++) {
-      array1[i] = i*3;
-      array2[i] = i*5.0f;
+    array1[i] = i*3;
+    array2[i] = i*5.0f;
     }
 
     System.out.println("starting array copies");
@@ -139,7 +135,7 @@ public class CompositeGraphSym extends GraphSymFloat  {
     tim.start();
     float[] array5 = new float[asize];
     for (int i=0; i<asize; i++) {
-      array5[i] = array2[i];
+    array5[i] = array2[i];
     }
     long timeC = tim.read();
     tim.start();
@@ -152,63 +148,62 @@ public class CompositeGraphSym extends GraphSymFloat  {
     System.out.println("time for float incremental copy: " + timeC/1000f);
     System.out.println("time for float array copy: " + timeB/1000f);
 
-  }
- * */
+    }
+     * */
 
-  /*  Old plan -- child GraphSym's, each with own xcoord and ycoord array
-  public int[] getGraphXCoords() {
+    /*  Old plan -- child GraphSym's, each with own xcoord and ycoord array
+    public int[] getGraphXCoords() {
     int total_points = this.getPointCount();
     int[] xcoords = new int[total_points];
     int point_count = 0;
     int child_count = children.size();
     for (int i=0; i<child_count; i++) {
-      Object child = children.get(i);
-      if (child instanceof GraphSym) {
-	GraphSym gsym = (GraphSym)child;
-	int[] child_xcoords = gsym.getGraphXCoords();
-	int child_point_count = child_xcoords.length;
-	System.arraycopy(child_xcoords, 0, xcoords, point_count, child_point_count);
-	point_count += child_point_count;
-      }
+    Object child = children.get(i);
+    if (child instanceof GraphSym) {
+    GraphSym gsym = (GraphSym)child;
+    int[] child_xcoords = gsym.getGraphXCoords();
+    int child_point_count = child_xcoords.length;
+    System.arraycopy(child_xcoords, 0, xcoords, point_count, child_point_count);
+    point_count += child_point_count;
+    }
     }
     return xcoords;
-  }
+    }
 
-  public float[] getGraphYCoords() {
+    public float[] getGraphYCoords() {
     int total_points = this.getPointCount();
     float[] ycoords = new float[total_points];
     int point_count = 0;
     int child_count = children.size();
     for (int i=0; i<child_count; i++) {
-      Object child = children.get(i);
-      if (child instanceof GraphSym) {
-	GraphSym gsym = (GraphSym)child;
-	float[] child_ycoords = gsym.getGraphYCoords();
-	int child_point_count = child_ycoords.length;
-	System.arraycopy(child_ycoords, 0, ycoords, point_count, child_point_count);
-	point_count += child_point_count;
-      }
+    Object child = children.get(i);
+    if (child instanceof GraphSym) {
+    GraphSym gsym = (GraphSym)child;
+    float[] child_ycoords = gsym.getGraphYCoords();
+    int child_point_count = child_ycoords.length;
+    System.arraycopy(child_ycoords, 0, ycoords, point_count, child_point_count);
+    point_count += child_point_count;
+    }
     }
     return ycoords;
-  }
+    }
 
-  public int getPointCount() {
+    public int getPointCount() {
     int point_count = 0;
     int child_count = children.size();
     for (int i=0; i<child_count; i++) {
-      Object child = children.get(i);
-      if (child instanceof GraphSym) {
-	point_count += ((GraphSym)child).getPointCount();
-      }
+    Object child = children.get(i);
+    if (child instanceof GraphSym) {
+    point_count += ((GraphSym)child).getPointCount();
+    }
     }
     return point_count;
-  }
-  */
+    }
+     */
 
-  /*
-  public float getGraphYCoord(int i) {
+    /*
+    public float getGraphYCoord(int i) {
     return float_y[i];
-  }
-  */
-
+    }
+     */
 }

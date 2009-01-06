@@ -13,11 +13,17 @@
 
 package com.affymetrix.genometryImpl;
 
+
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
+import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -26,8 +32,6 @@ public class AnnotatedSeqGroup {
 
   String id;
   String organism;
-  String version; // not currently used?
-  //Date version_date;  // not currently used
   String description;
   String source; //as in Das2 server name
 
@@ -59,51 +63,6 @@ public class AnnotatedSeqGroup {
     return seqlist;
   }
 
-  /**
-   *  Returns the set of type id String's of all the types on all
-   *  the SmartAnnotBioSeq's returned by getSeqList().
-   */
-  public Set<String> getTypeIds() {
-    Set<String> types = new TreeSet<String>();
-    List<MutableAnnotatedBioSeq> seq_list = getSeqList();
-    for (MutableAnnotatedBioSeq seq : seq_list) {
-      if (seq instanceof SmartAnnotBioSeq) {
-        types.addAll(((SmartAnnotBioSeq) seq).getTypeIds());
-      }
-    }
-    return types;
-  }
-  
-  public Set<String> getGraphTypeIds() {
-    Set<String> types = new TreeSet<String>();
-    for (MutableAnnotatedBioSeq seq : getSeqList()) {
-      if (seq instanceof SmartAnnotBioSeq) {
-        types.addAll(((SmartAnnotBioSeq) seq).getGraphTypeIds());
-      }
-    }
-    return types;
-  }
-
-  /**
-   *  Returns true if any seq in the group contains an annotation of the given type.
-   *  Equivalent to getTypeIds().contains(type), but usually faster.
-   */
-  public boolean hasType(String type) {
-    if (type == null) {
-      return false;
-    }
-    List seq_list = getSeqList();
-    Iterator iter = seq_list.iterator();
-    while (iter.hasNext()) {
-      MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
-      if (seq instanceof SmartAnnotBioSeq) {
-        if (((SmartAnnotBioSeq) seq).getTypeIds().contains(type.toLowerCase())) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
   
   /**
    *  Remove all annotations of a given type from all seqs in this group.
@@ -117,17 +76,6 @@ public class AnnotatedSeqGroup {
         ((SmartAnnotBioSeq) seq).removeType(type.toLowerCase());
       }
     }
-  }
-
-  public String getUniqueTypeID(String id) {
-    if (id == null) { return null; }
-    String newid = id;
-    int prevcount = 0;
-    while (hasType(newid)) {
-      prevcount++;
-      newid = id + "." + prevcount;
-    }
-    return newid;
   }
 
   /**
@@ -261,12 +209,6 @@ public class AnnotatedSeqGroup {
   /** may want to move set/getOrganism() to an AnnotatedGenome subclass */
   public void setOrganism(String org) {  organism = org; }
   public String getOrganism() { return organism; }
-
-  /** Not currently used, may want to move getVersion() to an AnnotatedGenome subclass */
-  public String getVersion() { return version; }
-
-//  /** Not currently used, may want to move getVersionDate() to an AnnotatedGenome subclass */
-//  public Date getVersionDate() { return version_date; }
 
   /** NOT YET IMPLEMENTED */  //TODO: Isn't this implemented?
   @SuppressWarnings("unchecked")

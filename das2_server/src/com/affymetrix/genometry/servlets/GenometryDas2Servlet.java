@@ -1055,7 +1055,6 @@ public class GenometryDas2Servlet extends HttpServlet {
 
         AnnotatedSeqGroup genome = getGenome(request);
         log.add("Organism: " + genome.getOrganism());
-        log.add("Version: " + genome.getVersion());
         log.add("ID: " + genome.getID());
         //PrintWriter pw = response.getWriter();
         String org_name = genome.getOrganism();
@@ -2168,7 +2167,6 @@ public class GenometryDas2Servlet extends HttpServlet {
             for (AnnotatedSeqGroup version : ent.getValue()) {
                 System.out.println("    Genome version: " + version.getID() 
                         + ", organism: " + version.getOrganism()
-                        + ", sub-version: " + version.getVersion()
                         + ", seq count: " + version.getSeqCount());
             }
         }

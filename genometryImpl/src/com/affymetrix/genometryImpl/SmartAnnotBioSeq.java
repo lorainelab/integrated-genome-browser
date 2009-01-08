@@ -348,4 +348,10 @@ public class SmartAnnotBioSeq extends GeneralBioSeq  {
     }
     return meth;
   }
+
+   @Override
+   public String toString() {
+       return this.id;
+   }
+
 }

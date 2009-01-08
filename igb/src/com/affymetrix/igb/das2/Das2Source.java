@@ -35,8 +35,8 @@ public class Das2Source {
   protected String description;
   protected String info_url;
   protected String taxon;
-  protected Map versions = new LinkedHashMap();
-  protected Map name2version = new LinkedHashMap();
+  protected Map<String,Das2VersionedSource> versions = new LinkedHashMap<String,Das2VersionedSource>();
+  protected Map<String,Das2VersionedSource> name2version = new LinkedHashMap<String,Das2VersionedSource>();
   Das2VersionedSource latest_version = null;
 
   Das2ServerInfo server;
@@ -81,7 +81,7 @@ public class Das2Source {
   */
 
   /** returns Map of version ID to Das2VersionedSource */
-  public synchronized Map getVersions() {
+  public synchronized Map<String,Das2VersionedSource> getVersions() {
     return versions;
   }
 

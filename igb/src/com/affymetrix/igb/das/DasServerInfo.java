@@ -32,8 +32,8 @@ public class DasServerInfo {
   String das_version;
   String name;
   String description;
-  Map capabilities = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
-  Map sources = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
+  Map<String,String> capabilities = new LinkedHashMap<String,String>();  // using LinkedHashMap for predictable iteration
+  Map<String,DasSource> sources = new LinkedHashMap<String,DasSource>();  // using LinkedHashMap for predictable iteration
   boolean initialized = false;
 
   /** Creates an instance of DasServerInfo for the given DAS server.
@@ -78,7 +78,7 @@ public class DasServerInfo {
     return (String) capabilities.get(cap);
   }
 
-  public Map getDataSources() {
+  public Map<String,DasSource> getDataSources() {
     if (!initialized) { initialize(); }
     return sources;
   }

@@ -34,8 +34,8 @@ public class Das2ServerInfo  {
 	protected URI server_uri;
 	protected String das_version;
 	protected String name;
-	protected Map sources = new LinkedHashMap();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
-	protected Map name2source = new LinkedHashMap();  // using LinkedHashMap for predictable iteration
+	protected Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
+	protected Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
 	protected boolean initialized = false;
 	private String sessionId = null; //used to store a session id following authentication with a DAS2 server
 
@@ -76,7 +76,7 @@ public class Das2ServerInfo  {
 
 	public String toString() { return getName(); }
 
-	public synchronized Map getSources() {
+	public synchronized Map<String,Das2Source> getSources() {
 		if (!initialized) { initialize(); }
 		return sources;
 	}
@@ -104,8 +104,8 @@ public class Das2ServerInfo  {
 	 */
 	public Das2Source getSource(String id) {
 		if (!initialized) { initialize(); }
-		Das2Source source = (Das2Source)sources.get(id);
-		if (source == null) { source = (Das2Source)name2source.get(id); }
+		Das2Source source = sources.get(id);
+		if (source == null) { source = name2source.get(id); }
 		return source;
 	}
 

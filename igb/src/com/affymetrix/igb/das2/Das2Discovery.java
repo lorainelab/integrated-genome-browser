@@ -30,7 +30,7 @@ public class Das2Discovery {
   //  static public String DEFAULT_DAS2_SERVER_NAME = "localhost";
   static public String DEFAULT_DAS2_SERVER_NAME = "NetAffx";
   static Map name2url = new LinkedHashMap();
-  static Map name2server = new LinkedHashMap();
+  static Map<String,Das2ServerInfo> name2server = new LinkedHashMap<String,Das2ServerInfo>();
   static Map url2server = new LinkedHashMap();
   static Map cap2version = new LinkedHashMap();
 
@@ -52,7 +52,7 @@ public class Das2Discovery {
    *  Gets a Map of DAS2 servers.
    *  Map is from Strings (server names) to Das2ServerInfo's.
    */
-  public static Map getDas2Servers() {
+  public static Map<String,Das2ServerInfo> getDas2Servers() {
     return name2server;
   }
 

@@ -23,7 +23,7 @@ import java.util.prefs.*;
 
 public class DasDiscovery {
 
-  static Map das_servers;
+  static Map<String,DasServerInfo> das_servers;
   static Pattern tab_splitter = Pattern.compile("\t");
 
   static int DAS_NAME = 0;
@@ -41,10 +41,10 @@ public class DasDiscovery {
    *  Java's persistent preferences.
    *  Subsequent calls will return the cached Map.
    */
-  public static Map getDasServers() {
+  public static Map<String,DasServerInfo> getDasServers() {
 
     if (das_servers == null) {
-      das_servers = new LinkedHashMap();
+      das_servers = new LinkedHashMap<String,DasServerInfo>();
       addServersFromPreferences();
     }
 

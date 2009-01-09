@@ -89,9 +89,9 @@ public class DasClientOptimizer {
         contlist.add(cont_sym);
         prev_union = SeqSymSummarizer.getUnion(contlist, iseq);
 
-        ArrayList qnewlist = new ArrayList();
+        ArrayList<SeqSymmetry> qnewlist = new ArrayList<SeqSymmetry>();
         qnewlist.add(new_query);
-        ArrayList qoldlist = new ArrayList();
+        ArrayList<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
         qoldlist.add(prev_union);
         split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, iseq);
       }

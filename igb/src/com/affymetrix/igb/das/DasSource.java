@@ -35,8 +35,8 @@ public class DasSource {
   String mapmaster;
   DasServerInfo server;
   AnnotatedSeqGroup genome = null;
-  Map entry_points = new LinkedHashMap();
-  Map types = new LinkedHashMap();
+  Map<String,DasEntryPoint> entry_points = new LinkedHashMap<String,DasEntryPoint>();
+  Map<String,DasType> types = new LinkedHashMap<String,DasType>();
   boolean entries_initialized = false;
   boolean types_initialized = false;
 
@@ -69,14 +69,14 @@ public class DasSource {
     return genome;
   }
 
-  public Map getEntryPoints() {
+  public Map<String,DasEntryPoint> getEntryPoints() {
     if (! entries_initialized)  {
       initEntryPoints();
     }
     return entry_points;
   }
 
-  public Map getTypes() {
+  public Map<String,DasType> getTypes() {
     if (! types_initialized) {
       initTypes();
     }

@@ -108,8 +108,8 @@ public class Das2ClientOptimizer {
         Das2Region region = request_sym.getRegion();
         Das2Type type = request_sym.getDas2Type();
         String typeid = type.getID();
-        int omin = overlap_span.getMin();
-        int omax = overlap_span.getMax();
+        //int omin = overlap_span.getMin();
+        //int omax = overlap_span.getMax();
         SeqSymmetry split_query = null;
 
         if (!(seq instanceof SmartAnnotBioSeq)) {
@@ -119,8 +119,7 @@ public class Das2ClientOptimizer {
             split_query = OptimizeDas2Query(seq, typeid, request_log, type, output_requests, request_sym, overlap_sym, region);
         }
 
-        for (int i = 0; i < output_requests.size(); i++) {
-            Das2FeatureRequestSym request = (Das2FeatureRequestSym) output_requests.get(i);
+        for (Das2FeatureRequestSym request : output_requests) {
             optimizedLoadFeatures(request);
         }
 
@@ -147,7 +146,7 @@ public class Das2ClientOptimizer {
     }
 
 
-    private static SeqSymmetry OptimizeDas2Query(MutableAnnotatedBioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
+    private static SeqSymmetry OptimizeDas2Query(MutableAnnotatedBioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
         SeqSymmetry split_query = null;
         SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) seq;
         MutableSeqSymmetry cont_sym;
@@ -173,7 +172,7 @@ public class Das2ClientOptimizer {
             if (DEBUG) {
                 request_log.addLogMessage("  child count: " + prevcount);
             }
-            ArrayList prev_overlaps = new ArrayList(prevcount);
+            ArrayList<SeqSymmetry> prev_overlaps = new ArrayList<SeqSymmetry>(prevcount);
             for (int i = 0; i < prevcount; i++) {
                 SeqSymmetry prev_request = cont_sym.getChild(i);
                 if (prev_request instanceof Das2FeatureRequestSym) {
@@ -183,9 +182,9 @@ public class Das2ClientOptimizer {
                 }
             }
             SeqSymmetry prev_union = SeqSymSummarizer.getUnion(prev_overlaps, aseq);
-            ArrayList qnewlist = new ArrayList();
+            ArrayList<SeqSymmetry> qnewlist = new ArrayList<SeqSymmetry>();
             qnewlist.add(overlap_sym);
-            ArrayList qoldlist = new ArrayList();
+            ArrayList<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
             qoldlist.add(prev_union);
             split_query = SplitQuery(qnewlist, qoldlist, aseq, split_query, request_log, typeid, prev_union, type, region, output_requests);
             //	output_requests.add(request_sym);
@@ -194,7 +193,7 @@ public class Das2ClientOptimizer {
     }
 
 
-    private static SeqSymmetry SplitQuery(ArrayList qnewlist, ArrayList qoldlist, SmartAnnotBioSeq aseq, SeqSymmetry split_query, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List output_requests) {
+    private static SeqSymmetry SplitQuery(ArrayList<SeqSymmetry> qnewlist, ArrayList<SeqSymmetry> qoldlist, SmartAnnotBioSeq aseq, SeqSymmetry split_query, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
         split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list
@@ -209,7 +208,7 @@ public class Das2ClientOptimizer {
             // figure out min/max within bounds based on location of previous queries relative to new query
             int first_within_min;
             int last_within_max;
-            List union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
+            List<SeqSpan> union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
             SeqSpanComparator spancomp = new SeqSpanComparator();
             // since prev_union was created via SeqSymSummarizer, spans should come out already
             //   sorted by ascending min (and with no overlaps)
@@ -221,18 +220,18 @@ public class Das2ClientOptimizer {
             if (insert == 0) {
                 first_within_min = 0;
             } else {
-                first_within_min = ((SeqSpan) union_spans.get(insert - 1)).getMax();
+                first_within_min = (union_spans.get(insert - 1)).getMax();
             }
             // since sorted by min, need to make sure that we are at the insert index
             //   at which get(index).min >= exclusive_span.max,
             //   so increment till this (or end) is reached
-            while ((insert < union_spans.size()) && (((SeqSpan) union_spans.get(insert)).getMin() < split_query_span.getMax())) {
+            while ((insert < union_spans.size()) && ((union_spans.get(insert)).getMin() < split_query_span.getMax())) {
                 insert++;
             }
             if (insert == union_spans.size()) {
                 last_within_max = aseq.getLength();
             } else {
-                last_within_max = ((SeqSpan) union_spans.get(insert)).getMin();
+                last_within_max = (union_spans.get(insert)).getMin();
             }
             // done determining first_within_min and last_within_max
             int split_count = split_query.getChildCount();
@@ -344,8 +343,8 @@ public class Das2ClientOptimizer {
                 request_log.addLogMessage("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
 
             }
-            LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, gmodel, request_sym);
-
+            boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, gmodel, request_sym);
+            request_log.setSuccess(success);
         } catch (Exception ex) {
 //			ex.printStackTrace();
             request_log.setSuccess(false);
@@ -390,7 +389,7 @@ public class Das2ClientOptimizer {
         return query_part;
     }
 
-    private static void LoadFeaturesFromQuery(
+    private static boolean LoadFeaturesFromQuery(
             SeqSpan overlap_span, MutableAnnotatedBioSeq aseq, String feature_query, String format, Das2RequestLog request_log,
             AnnotatedSeqGroup seq_group, Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym)
             throws SAXException, IOException, IOException {
@@ -399,13 +398,19 @@ public class Das2ClientOptimizer {
          *  Need to look at content-type of server response
          */
         BufferedInputStream bis = null;
+        InputStream istr = null;
         String content_subtype = null;
         
         try {
             // if overlap_span is entire length of sequence, then check for caching
             if ((overlap_span.getMin() == 0) && (overlap_span.getMax() == aseq.getLength())) {
                 //	LocalUrlCacher.getInputStream(feature_query, cache_usage, cache_annots);
-                InputStream istr = LocalUrlCacher.getInputStream(feature_query);
+                istr = LocalUrlCacher.getInputStream(feature_query);
+                if (istr == null) {
+                    request_log.addLogMessage("Server couldn't be accessed with query " + feature_query);
+                    request_log.setSuccess(false);
+                    return false;
+                }
                 bis = new BufferedInputStream(istr);
                 // for now, assume that when caching, content type returned is same as content type requested
                 content_subtype = format;
@@ -446,11 +451,12 @@ public class Das2ClientOptimizer {
                 if (response_code >= 400 && response_code < 600) {
                     request_log.addLogMessage("Server returned error code, aborting response parsing!");
                     request_log.setSuccess(false);
+                    return false;
                 } else {
                     // request_log.addLogMessage("    getting content type");
                     String content_type = query_con.getContentType();
                     // request_log.addLogMessage("    getting input stream");
-                    InputStream istr = query_con.getInputStream();
+                    istr = query_con.getInputStream();
                     bis = new BufferedInputStream(istr);
                     if (DEBUG) {
                         request_log.addLogMessage("content type: " + content_type);
@@ -472,8 +478,10 @@ public class Das2ClientOptimizer {
             if (request_log.getSuccess()) {
                 DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel, request_sym, aseq);
             } // end if (success) conditional
+            return request_log.getSuccess();
         } finally {
             GeneralUtils.safeClose(bis);
+            GeneralUtils.safeClose(istr);
         }
     }
 

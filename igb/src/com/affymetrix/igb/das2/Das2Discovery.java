@@ -29,10 +29,10 @@ public class Das2Discovery {
 
   //  static public String DEFAULT_DAS2_SERVER_NAME = "localhost";
   static public String DEFAULT_DAS2_SERVER_NAME = "NetAffx";
-  static Map name2url = new LinkedHashMap();
+  static Map<String,String> name2url = new LinkedHashMap<String,String>();
   static Map<String,Das2ServerInfo> name2server = new LinkedHashMap<String,Das2ServerInfo>();
-  static Map url2server = new LinkedHashMap();
-  static Map cap2version = new LinkedHashMap();
+  static Map<String,Das2ServerInfo> url2server = new LinkedHashMap<String,Das2ServerInfo>();
+  static Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<String,Das2VersionedSource>();
 
   static {
     name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/genome");
@@ -56,11 +56,11 @@ public class Das2Discovery {
     return name2server;
   }
 
-  public static Map getDas2Urls() {
+  public static Map<String,String> getDas2Urls() {
     return name2url;
   }
 
-  public static Map getCapabilityMap() { return cap2version; }
+  public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
 
   public static void addServersFromTabFile(String server_loc_url) {
     // System.out.println("------------ Adding servers from tab format file :"+server_loc_list);
@@ -97,28 +97,25 @@ public class Das2Discovery {
    *  Return the Das2ServerInfo object for the DAS/2 server
    */
   public static Das2ServerInfo getDas2Server(String id) {
-    Map servers = getDas2Servers();
-    Das2ServerInfo server = (Das2ServerInfo)url2server.get(id);
-    if (server == null) { server = (Das2ServerInfo)name2server.get(id); }
+    Das2ServerInfo server = url2server.get(id);
+    if (server == null) { server = name2server.get(id); }
     return server;
   }
 
   protected static void initServers() {
-    Iterator names = name2url.keySet().iterator();
-    while (names.hasNext()) {
-      String name = (String)names.next();
-      String url = (String)name2url.get(name);
-      initServer(url, name);
+      for (String name : name2url.keySet()) {
+          String url = name2url.get(name);
+          initServer(url, name);
     }
   }
 
   public static Das2ServerInfo addDas2Server(String name, String url)  {
-    if (name2url.get(name) == null) {
-      return initServer(url, name);
-    }
-    else {
-      return null;
-    }
+      if (name2url.get(name) == null) {
+          name2url.put(url, name);
+          return initServer(url, name);
+      } else {
+          return null;
+      }
   }
 
 
@@ -149,7 +146,7 @@ public class Das2Discovery {
    *  if (try_unloaded_servers) then force retrieval of versioned sources info for
    *       all known servers, otherwise only check versioned sources whose info is already loaded
    */
-  public static List getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+  public static List<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
     return getVersionedSources(group, try_unloaded_servers, null);
   }
 
@@ -161,39 +158,35 @@ public class Das2Discovery {
    *  CAPABILITY arg specified a capability that the versioned source must have to be included in the returned list
    *       if CAPABILITY is null, then no capability filter is applied
    */
-  public static List getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers, String capability) {
+  public static List<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers, String capability) {
+        List<Das2VersionedSource> matches = new ArrayList<Das2VersionedSource>();
+        if (group == null) {
+            return matches;
+        }
 
-    List matches = new ArrayList();
-    if (group != null) {
-      Iterator servers = getDas2Servers().values().iterator();
-      while (servers.hasNext()) {
-	Das2ServerInfo server = (Das2ServerInfo)servers.next();
-	//      System.out.println("  server: " + server.getName());
-	boolean init = server.isInitialized();
-	if ((! init) && try_unloaded_servers) {
-	  server.initialize();
-	  init = server.isInitialized();
-	}
-	if (init) {
-	  Iterator sources = server.getSources().values().iterator();
-	  while (sources.hasNext()) {
-	    Das2Source source = (Das2Source)sources.next();
-	    Iterator versioned_sources = source.getVersions().values().iterator();
-	    while (versioned_sources.hasNext()) {
-	      Das2VersionedSource version = (Das2VersionedSource)versioned_sources.next();
-	      //	    System.out.println("     version: " + version.getName());
-	      if (version.getGenome() == group) {
-		if ((capability == null) || (version.getCapability(capability) != null)) {
-		  matches.add(version);
-		}
-	      }
-	    }
-	  }
-	}
-      }
+        for (Das2ServerInfo server : getDas2Servers().values()) {
+            boolean init = server.isInitialized();
+            if ((!init) && try_unloaded_servers) {
+                server.initialize();
+                init = server.isInitialized();
+            }
+            if (!init) {
+                continue;
+            }
+
+            for (Das2Source source : server.getSources().values()) {
+                for (Das2VersionedSource version : source.getVersions().values()) {
+                    if (version.getGenome() == group) {
+                        if ((capability == null) || (version.getCapability(capability) != null)) {
+                            matches.add(version);
+                        }
+                    }
+                }
+            }
+        }
+
+        return matches;
     }
-    return matches;
-  }
 
 
   /**
@@ -202,16 +195,14 @@ public class Das2Discovery {
    *  if (try_unloaded_servers) then force search of
    *       all known servers, otherwise only check info that is already loaded??
    */
-  public static List getSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
-    List vsources = getVersionedSources(group, try_unloaded_servers);
-    Set sourceset = new LinkedHashSet(vsources.size());
-    Iterator iter = vsources.iterator();
-    while (iter.hasNext()) {
-      Das2VersionedSource version = (Das2VersionedSource)iter.next();
+  public static List<Das2Source> getSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+    List<Das2VersionedSource> vsources = getVersionedSources(group, try_unloaded_servers);
+    Set<Das2Source> sourceset = new LinkedHashSet<Das2Source>(vsources.size());
+    for (Das2VersionedSource version : vsources) {
       Das2Source source = version.getSource();
       sourceset.add(source);
     }
-    List results = new ArrayList(sourceset);
+    List<Das2Source> results = new ArrayList<Das2Source>(sourceset);
     return results;
   }
 
@@ -223,15 +214,13 @@ public class Das2Discovery {
    *       all known servers, otherwise only check info that is already loaded??
    */
   public static List getServers(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
-    List vsources = getVersionedSources(group, try_unloaded_servers);
-    Set serverset = new LinkedHashSet(vsources.size());
-    Iterator iter = vsources.iterator();
-    while (iter.hasNext()) {
-      Das2VersionedSource version = (Das2VersionedSource)iter.next();
+    List<Das2VersionedSource> vsources = getVersionedSources(group, try_unloaded_servers);
+    Set<Das2ServerInfo> serverset = new LinkedHashSet<Das2ServerInfo>(vsources.size());
+    for (Das2VersionedSource version : vsources) {
       Das2ServerInfo server = version.getSource().getServerInfo();
       serverset.add(server);
     }
-    List results = new ArrayList(serverset);
+    List<Das2ServerInfo> results = new ArrayList<Das2ServerInfo>(serverset);
     return results;
   }
 

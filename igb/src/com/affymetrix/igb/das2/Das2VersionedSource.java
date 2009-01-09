@@ -55,14 +55,14 @@ public class Das2VersionedSource {
     String info_url;
     Date creation_date;
     Date modified_date;
-    Map capabilities = new HashMap();
+    Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
     Map namespaces;
-    Map regions = new LinkedHashMap();
+    Map<String,Das2Region> regions = new LinkedHashMap<String,Das2Region>();
     Map properties;
     List assembly;
     AnnotatedSeqGroup genome = null;
-    protected Map types = new LinkedHashMap();
-    protected Map name2types = new LinkedHashMap();
+    protected Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
+    protected Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
     protected boolean regions_initialized = false;
     protected boolean types_initialized = false;
     protected String types_filter = null;
@@ -145,7 +145,7 @@ public class Das2VersionedSource {
     }
 
     public Das2Capability getCapability(String type) {
-        return (Das2Capability) capabilities.get(type);
+        return capabilities.get(type);
     }
 
     public AnnotatedSeqGroup getGenome() {
@@ -193,7 +193,7 @@ public class Das2VersionedSource {
         this.info_url = url;
     }
 
-    public synchronized Map getSegments() {
+    public synchronized Map<String,Das2Region> getSegments() {
         if (!regions_initialized) {
             initSegments();
         }
@@ -226,26 +226,26 @@ public class Das2VersionedSource {
     public synchronized void addType(Das2Type type) {
         types.put(type.getID(), type);
         String name = type.getName();
-        List prevlist = (List) name2types.get(name);
+        List<Das2Type> prevlist = name2types.get(name);
         if (prevlist == null) {
-            prevlist = new ArrayList();
+            prevlist = new ArrayList<Das2Type>();
             name2types.put(name, prevlist);
         }
         prevlist.add(type);
     }
 
-    public synchronized Map getTypes() {
+    public synchronized Map<String,Das2Type> getTypes() {
         if (!types_initialized || types_filter != null) {
             initTypes(null, false);
         }
         return types;
     }
 
-    public List getTypesByName(String name) {
+    public List<Das2Type> getTypesByName(String name) {
         if (!types_initialized || types_filter != null) {
             initTypes(null, false);
         }
-        return (List) name2types.get(name);
+        return name2types.get(name);
     }
 
     /*
@@ -257,7 +257,7 @@ public class Das2VersionedSource {
     }
      */
     public void clearTypes() {
-        this.types = new LinkedHashMap();
+        this.types = new LinkedHashMap<String,Das2Type>();
     }
 
     /** Get regions from da2s server. */

@@ -92,8 +92,8 @@ public class Das2Source {
    *  Will return null if this Das2Source has no Das2VersionedSource with that id or name
    */
   public synchronized Das2VersionedSource getVersion(String id) {
-    Das2VersionedSource version = (Das2VersionedSource)versions.get(id);
-    if (version == null) { version = (Das2VersionedSource)name2version.get(id); }
+    Das2VersionedSource version = versions.get(id);
+    if (version == null) { version = name2version.get(id); }
     return version;
   }
 

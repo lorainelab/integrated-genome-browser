@@ -41,7 +41,7 @@ public class GFF3ParserTest extends TestCase {
   public void testParseCanonical() throws Exception {
     System.out.println("parse");
     
-    String filename = "test/test_files/GFF3_canonical_example.gff3";
+    String filename = "test/data/gff3/GFF3_canonical_example.gff3";
     assertTrue(new File(filename).exists());
     
     InputStream istr = new FileInputStream(filename);
@@ -95,7 +95,7 @@ public class GFF3ParserTest extends TestCase {
   public void testParseErrors() throws IOException {
     System.out.println("parse");
     
-    String filename = "test/test_files/GFF3_with_errors.gff3";
+    String filename = "test/data/gff3/GFF3_with_errors.gff3";
     assertTrue(new File(filename).exists());
     
     InputStream istr = new FileInputStream(filename);

@@ -32,7 +32,7 @@ public class BedParserTest extends TestCase {
 
   public void testParseFromFile() throws IOException {
     
-    String filename = "test/test_files/bed_01.bed";
+    String filename = "test/data/bed/bed_01.bed";
     assertTrue(new File(filename).exists());
     
     InputStream istr = new FileInputStream(filename); 

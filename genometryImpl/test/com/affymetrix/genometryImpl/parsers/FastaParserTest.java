@@ -49,12 +49,12 @@ public class FastaParserTest extends TestCase {
   
   
   public void testParseAll() throws Exception {
-    String filename_1 = "test/test_files/FASTA_chrQ.fasta";
+    String filename_1 = "test/data/fasta/FASTA_chrQ.fasta";
     assertTrue(new File(filename_1).exists());
     InputStream istr_1 = new FileInputStream(filename_1);
     assertNotNull(istr_1);
 
-    String filename_2 = "test/test_files/FASTA_small_genome.fasta";
+    String filename_2 = "test/data/fasta/FASTA_small_genome.fasta";
     assertTrue(new File(filename_2).exists());
     InputStream istr_2 = new FileInputStream(filename_2);
     assertNotNull(istr_2);
@@ -88,7 +88,7 @@ public class FastaParserTest extends TestCase {
   }
 
   public void testParse() throws Exception {
-    String filename = "test/test_files/FASTA_chrQ.fasta";
+    String filename = "test/data/fasta/FASTA_chrQ.fasta";
     assertTrue(new File(filename).exists());
     
     InputStream istr = new FileInputStream(filename);
@@ -105,7 +105,7 @@ public class FastaParserTest extends TestCase {
   
   
   public void testReadFASTA() throws Exception {
-      String filename = "test/test_files/FASTA_obey_70.fasta";
+      String filename = "test/data/fasta/FASTA_obey_70.fasta";
       assertTrue(new File(filename).exists());
  
       char [] expected_fasta = null;
@@ -136,7 +136,7 @@ public class FastaParserTest extends TestCase {
   
 
   public void testReadBadFASTA_1() throws Exception {
-      String filename = "test/test_files/FASTA_not_obey_70.fasta";
+      String filename = "test/data/fasta/FASTA_not_obey_70.fasta";
       assertTrue(new File(filename).exists());
  
       char [] expected_fasta = null;
@@ -152,7 +152,7 @@ public class FastaParserTest extends TestCase {
   }
   
   public void testReadBadFASTA_2() throws Exception {
-      String filename = "test/test_files/FASTA_not_obey_70.fasta";
+      String filename = "test/data/fasta/FASTA_not_obey_70.fasta";
       assertTrue(new File(filename).exists());
  
       char [] expected_fasta = null;
@@ -169,7 +169,7 @@ public class FastaParserTest extends TestCase {
   }
   
   public void testSkipFastaHeader() throws Exception {
-     String filename = "test/test_files/chrC.fasta";
+     String filename = "test/data/fasta/chrC.fasta";
      DataInputStream dis = new DataInputStream(new FileInputStream(filename));
      BufferedInputStream bis = new BufferedInputStream(dis);
      byte[] fasta = FastaParser.skipFASTAHeader(filename, bis);
@@ -185,7 +185,7 @@ public class FastaParserTest extends TestCase {
   // Test of a certain case I saw when running a query.
   // This was due to Java not implementing a proper skip() method.
   public void testChrCfailure() throws Exception {
-      String filename = "test/test_files/chrC.fasta";
+      String filename = "test/data/fasta/chrC.fasta";
       int start=8020,end=8021;
       System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
       assertTrue(new File(filename).exists());
@@ -197,7 +197,7 @@ public class FastaParserTest extends TestCase {
   }
   
   public void testChrCfailure2() throws Exception {
-      String filename = "test/test_files/chrC.fasta";
+      String filename = "test/data/fasta/chrC.fasta";
       int start=200000,end=200001;
       System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
       assertTrue(new File(filename).exists());
@@ -211,7 +211,7 @@ public class FastaParserTest extends TestCase {
   }
   // Test of a certain case I saw when running a query.
   public void testChrC_OK() throws Exception {
-      String filename = "test/test_files/chrC.fasta";
+      String filename = "test/data/fasta/chrC.fasta";
       
       char[] expected_fasta = "ATGG".toCharArray();
       byte[] fasta = null;

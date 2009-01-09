@@ -34,7 +34,7 @@ public class WiggleParserTest extends TestCase {
   }
 
   public void testParse() throws Exception {
-    String filename = "test/test_files/wiggleExample.wig";
+    String filename = "test/data/wiggle/wiggleExample.wig";
     assertTrue(new File(filename).exists());
     
     InputStream istr = new FileInputStream(filename);

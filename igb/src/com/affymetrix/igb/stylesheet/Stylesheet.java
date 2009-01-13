@@ -22,28 +22,28 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
 import java.util.List;
-//import java.util.regex.Pattern;
+import java.util.regex.Pattern;
 
 public class Stylesheet implements Cloneable, XmlAppender {
   public static boolean DEBUG = false;
 
-  LinkedHashMap/*<String, AssociationElement>*/ meth2association = new LinkedHashMap/*<String, AssociationElement>*/();
-  LinkedHashMap/*<Pattern, AssociationElement>*/ regex2association = new LinkedHashMap/*<Pattern, AssociationElement>*/();
-  LinkedHashMap/*<String, AssociationElement>*/ type2association = new LinkedHashMap/*<String, AssociationElement>*/();
+  LinkedHashMap<String, AssociationElement> meth2association = new LinkedHashMap<String, AssociationElement>();
+  LinkedHashMap<Pattern, AssociationElement> regex2association = new LinkedHashMap<Pattern, AssociationElement>();
+  LinkedHashMap<String, AssociationElement> type2association = new LinkedHashMap<String, AssociationElement>();
 
-  LinkedHashMap stylename2styleElement = new LinkedHashMap();
+  LinkedHashMap<String,StyleElement> stylename2styleElement = new LinkedHashMap<String,StyleElement>();
 
   public static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
 
   public Object clone() throws CloneNotSupportedException {
     Stylesheet clone = (Stylesheet) super.clone();
-    clone.meth2association = new LinkedHashMap();
+    clone.meth2association = new LinkedHashMap<String, AssociationElement>();
     clone.meth2association.putAll(meth2association);
-    clone.regex2association = new LinkedHashMap();
+    clone.regex2association = new LinkedHashMap<Pattern, AssociationElement>();
     clone.regex2association.putAll(regex2association);
-    clone.type2association = new LinkedHashMap();
+    clone.type2association = new LinkedHashMap<String, AssociationElement>();
     clone.type2association.putAll(type2association);
-    clone.stylename2styleElement = new LinkedHashMap();
+    clone.stylename2styleElement = new LinkedHashMap<String,StyleElement>();
     clone.stylename2styleElement.putAll(stylename2styleElement);
     return clone;
   }
@@ -56,7 +56,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
   }
 
   public StyleElement getStyleByName(String name) {
-    return (StyleElement) stylename2styleElement.get(name);
+    return stylename2styleElement.get(name);
   }
 
   /** Creates a new style.  If one with the given name already exists, it will
@@ -144,20 +144,20 @@ public class Stylesheet implements Cloneable, XmlAppender {
     }
     AssociationElement association = null;
     // First try to match styleElement based on exact name match
-    association = (AssociationElement) meth2association.get(meth);
+    association = meth2association.get(meth);
     // Then try to match styleElement from regular expressions
     if (association == null) {
-      List keyset = new ArrayList(regex2association.keySet());
+      List<Pattern> keyset = new ArrayList<Pattern>(regex2association.keySet());
 
       // Look for a matching pattern, going backwards, so that the
       // patterns from the last preferences read take precedence over the
       // first ones read (such as the default prefs).  Within a single
       // file, the last matching pattern will trump any earlier ones.
       for (int j=keyset.size()-1 ; j >= 0 && association == null; j--) {
-        java.util.regex.Pattern regex = (java.util.regex.Pattern) keyset.get(j);
+        Pattern regex = keyset.get(j);
         if (regex.matcher(meth).find()) {
 	  if (DEBUG)  {System.out.println("   found style match, regex: " + regex.pattern() + ", matches: " + meth); }
-          association = (AssociationElement) regex2association.get(regex);
+          association = regex2association.get(regex);
           // Put the stylename in meth2stylename to speed things up next time through.
           meth2association.put(meth, association);
         }
@@ -167,7 +167,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
   }
 
   public AssociationElement getAssociationForType(String type){
-    return (AssociationElement) type2association.get(type);
+    return type2association.get(type);
   }
 
   private StyleElement default_style;
@@ -206,7 +206,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
     sb.append("\n");
     sb.append(indent).append("<ASSOCIATIONS>\n");
 
-    List associations = new ArrayList();
+    List<AssociationElement> associations = new ArrayList<AssociationElement>();
     associations.addAll(meth2association.values());
     associations.addAll(regex2association.values());
     associations.addAll(type2association.values());
@@ -245,6 +245,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
       }
       return se;
     }
+        @Override
     public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry sym, GlyphI container,
         Stylesheet stylesheet, PropertyMap context) {
       StyleElement referredStyle = getReferredStyle(stylesheet);
@@ -254,6 +255,7 @@ public class Stylesheet implements Cloneable, XmlAppender {
       return referredStyle.symToGlyph(gviewer, sym, containerGlyph, stylesheet, context);
     }
 
+        @Override
     public StringBuffer appendXML(String indent, StringBuffer sb) {
       sb.append(indent).append('<').append(NAME);
       XmlStylesheetParser.appendAttribute(sb, ATT_NAME, name);

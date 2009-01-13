@@ -26,7 +26,7 @@ import java.util.List;
 public class Das2RequestLog {
 
   boolean ECHO_LOG_TO_SYS_OUT = true;
-  private List status_strings = new ArrayList();
+  private List<String> status_strings = new ArrayList<String>();
 
   boolean success = false;
   Exception exception = null;

@@ -150,7 +150,7 @@ public class Das2VersionedSource {
 
     public AnnotatedSeqGroup getGenome() {
         if (genome == null) {
-            // trying to use name for groupd id first, if no name then use full URI
+            // trying to use name for group id first, if no name then use full URI
             // This won't work in every situation!  Really need to resolve issues between VersionedSource URI ids and group ids
             String groupid = this.getName();
             if (groupid == null) {

@@ -63,10 +63,10 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     return super.setProperty(tag, val);
   }
 
-  public Map cloneProperties() {
-    Map cprops = super.cloneProperties();
+  public Map<String,Object> cloneProperties() {
+    Map<String,Object> cprops = super.cloneProperties();
     if (cprops == null) {
-      cprops = new LinkedHashMap();
+      cprops = new LinkedHashMap<String,Object>();
     }
     cprops.put("id", id);
     if (name != null)  { cprops.put("name", name); }
@@ -77,7 +77,8 @@ public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
     return cprops;
   }
 
-  public Map getProperties() {
+    @Override
+  public Map<String,Object> getProperties() {
     return cloneProperties();
   }
 

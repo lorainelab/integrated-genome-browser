@@ -178,7 +178,7 @@ public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender 
     Iterator iter = this.keySet().iterator();
     while (iter.hasNext()) {
      String key = (String) iter.next();
-     Object value = (Object) this.getProperty(key);
+     Object value = this.getProperty(key);
      sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_VALUE, "" + value);
@@ -193,7 +193,7 @@ public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender 
     Iterator iter = this.keySet().iterator();
     while (iter.hasNext()) {
       String key = (String) iter.next();
-      Object value = (Object) this.getProperty(key);
+      Object value = this.getProperty(key);
       sb.append(indent + "  ").append("<PROPERTY ");
       XmlStylesheetParser.appendAttribute(sb, "key", key);
       XmlStylesheetParser.appendAttribute(sb, "value", "" + value);

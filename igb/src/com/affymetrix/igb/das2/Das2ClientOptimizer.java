@@ -199,82 +199,87 @@ public class Das2ClientOptimizer {
             // all of current query overlap range covered by previous queries, so return empty list
             if (DEBUG) {
                 request_log.addLogMessage("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);
+
             }
+            return split_query;
+        }
+
+        SeqSpan split_query_span = split_query.getSpan(aseq);
+        if (DEBUG) {
+            request_log.addLogMessage("DAS/2 optimizer, split query: " + SeqUtils.symToString(split_query));
+        }
+        // figure out min/max within bounds based on location of previous queries relative to new query
+        int first_within_min;
+        int last_within_max;
+        List<SeqSpan> union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
+        SeqSpanComparator spancomp = new SeqSpanComparator();
+        // since prev_union was created via SeqSymSummarizer, spans should come out already
+        //   sorted by ascending min (and with no overlaps)
+        //          Collections.sort(union_spans, spancomp);
+        int insert = Collections.binarySearch(union_spans, split_query_span, spancomp);
+        if (insert < 0) {
+            insert = -insert - 1;
+        }
+        if (insert == 0) {
+            first_within_min = 0;
         } else {
-            SeqSpan split_query_span = split_query.getSpan(aseq);
+            first_within_min = (union_spans.get(insert - 1)).getMax();
+        }
+        // since sorted by min, need to make sure that we are at the insert index
+        //   at which get(index).min >= exclusive_span.max,
+        //   so increment till this (or end) is reached
+        while ((insert < union_spans.size()) && ((union_spans.get(insert)).getMin() < split_query_span.getMax())) {
+            insert++;
+        }
+        if (insert == union_spans.size()) {
+            last_within_max = aseq.getLength();
+        } else {
+            last_within_max = (union_spans.get(insert)).getMin();
+        }
+        // done determining first_within_min and last_within_max
+        splitIntoSubSpans(split_query, aseq, first_within_min, last_within_max, request_log, type, region, output_requests, typeid);
+        
+        //	output_requests.add(request_sym);
+        return split_query;
+    }
+
+
+    private static void splitIntoSubSpans(
+            SeqSymmetry split_query, SmartAnnotBioSeq aseq, int first_within_min, int last_within_max, Das2RequestLog request_log, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests, String typeid) {
+        int split_count = split_query.getChildCount();
+        int cur_within_min;
+        int cur_within_max;
+        for (int k = 0; k < split_count; k++) {
+            SeqSymmetry csym = split_query.getChild(k);
+            SeqSpan ospan = csym.getSpan(aseq);
+            if (k == 0) {
+                cur_within_min = first_within_min;
+            } else {
+                cur_within_min = ospan.getMin();
+            }
+            if (k == (split_count - 1)) {
+                cur_within_max = last_within_max;
+            } else {
+                cur_within_max = ospan.getMax();
+            }
+            SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
             if (DEBUG) {
-                request_log.addLogMessage("DAS/2 optimizer, split query: " + SeqUtils.symToString(split_query));
+                request_log.addLogMessage("   new request: " + SeqUtils.spanToString(ispan));
             }
-            // figure out min/max within bounds based on location of previous queries relative to new query
-            int first_within_min;
-            int last_within_max;
-            List<SeqSpan> union_spans = SeqUtils.getLeafSpans(prev_union, aseq);
-            SeqSpanComparator spancomp = new SeqSpanComparator();
-            // since prev_union was created via SeqSymSummarizer, spans should come out already
-            //   sorted by ascending min (and with no overlaps)
-            //          Collections.sort(union_spans, spancomp);
-            int insert = Collections.binarySearch(union_spans, split_query_span, spancomp);
-            if (insert < 0) {
-                insert = -insert - 1;
-            }
-            if (insert == 0) {
-                first_within_min = 0;
-            } else {
-                first_within_min = (union_spans.get(insert - 1)).getMax();
-            }
-            // since sorted by min, need to make sure that we are at the insert index
-            //   at which get(index).min >= exclusive_span.max,
-            //   so increment till this (or end) is reached
-            while ((insert < union_spans.size()) && ((union_spans.get(insert)).getMin() < split_query_span.getMax())) {
-                insert++;
-            }
-            if (insert == union_spans.size()) {
-                last_within_max = aseq.getLength();
-            } else {
-                last_within_max = (union_spans.get(insert)).getMin();
-            }
-            // done determining first_within_min and last_within_max
-            int split_count = split_query.getChildCount();
-            if (split_count == 0) {
-                request_log.addLogMessage("PROBLEM IN DAS2CLIENTOPTIMIZER, SPLIT QUERY HAS NO CHILDREN");
-            } else {
-                int cur_within_min;
-                int cur_within_max;
-                for (int k = 0; k < split_count; k++) {
-                    SeqSymmetry csym = split_query.getChild(k);
-                    SeqSpan ospan = csym.getSpan(aseq);
-                    if (k == 0) {
-                        cur_within_min = first_within_min;
-                    } else {
-                        cur_within_min = ospan.getMin();
-                    }
-                    if (k == (split_count - 1)) {
-                        cur_within_max = last_within_max;
-                    } else {
-                        cur_within_max = ospan.getMax();
-                    }
-                    SeqSpan ispan = new SimpleSeqSpan(cur_within_min, cur_within_max, aseq);
-                    if (DEBUG) {
-                        request_log.addLogMessage("   new request: " + SeqUtils.spanToString(ispan));
-                    }
-                    Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
-                    output_requests.add(new_request);
-                    if (SHOW_DAS_QUERY_GENOMETRY) {
-                        SimpleSymWithProps within_swp = new SimpleSymWithProps();
-                        within_swp.addSpan(new SimpleSeqSpan(cur_within_min, cur_within_max, aseq));
-                        within_swp.addChild(new SingletonSeqSymmetry(cur_within_min, cur_within_min, aseq));
-                        within_swp.addChild(csym);
-                        within_swp.addChild(new SingletonSeqSymmetry(cur_within_max, cur_within_max, aseq));
-                        within_swp.setProperty("method", "das_within_query:" + typeid);
-                        synchronized (aseq) {
-                            aseq.addAnnotation(within_swp);
-                        }
-                    }
+            Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
+            output_requests.add(new_request);
+            if (SHOW_DAS_QUERY_GENOMETRY) {
+                SimpleSymWithProps within_swp = new SimpleSymWithProps();
+                within_swp.addSpan(new SimpleSeqSpan(cur_within_min, cur_within_max, aseq));
+                within_swp.addChild(new SingletonSeqSymmetry(cur_within_min, cur_within_min, aseq));
+                within_swp.addChild(csym);
+                within_swp.addChild(new SingletonSeqSymmetry(cur_within_max, cur_within_max, aseq));
+                within_swp.setProperty("method", "das_within_query:" + typeid);
+                synchronized (aseq) {
+                    aseq.addAnnotation(within_swp);
                 }
             }
         }
-        //	output_requests.add(request_sym);
-        return split_query;
     }
 
 
@@ -476,7 +481,8 @@ public class Das2ClientOptimizer {
             }
 
             if (request_log.getSuccess()) {
-                DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel, request_sym, aseq);
+                List feats = DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel);
+                addSymmetriesAndAnnotations(feats, request_sym, request_log, aseq);
             } // end if (success) conditional
             return request_log.getSuccess();
         } finally {
@@ -485,9 +491,9 @@ public class Das2ClientOptimizer {
         }
     }
 
-    private static void DetermineFormatAndParse(
+    private static List DetermineFormatAndParse(
             String content_subtype, Das2RequestLog request_log, BufferedInputStream bis, String feature_query, AnnotatedSeqGroup seq_group,
-            Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym, MutableAnnotatedBioSeq aseq)
+            Das2Type type, SingletonGenometryModel gmodel)
             throws IOException, SAXException {
         List feats = null;
         if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)
@@ -508,9 +514,8 @@ public class Das2ClientOptimizer {
             feats = parser.parse(bis, type.getID(), seq_group, -1, false);
         } else if (content_subtype.equals("bps")) {
             AddParsingLogMessage(request_log, content_subtype);
-            BpsParser parser = new BpsParser();
             DataInputStream dis = new DataInputStream(bis);
-            feats = parser.parse(dis, type.getID(), null, seq_group, false, false);
+            feats = BpsParser.parse(dis, type.getID(), null, seq_group, false, false);
         } else if (content_subtype.equals("brs")) {
             AddParsingLogMessage(request_log, content_subtype);
             BrsParser parser = new BrsParser();
@@ -560,7 +565,14 @@ public class Das2ClientOptimizer {
             request_log.addLogMessage("ABORTING DAS2 FEATURE LOADING, FORMAT NOT RECOGNIZED: " + content_subtype);
             request_log.setSuccess(false);
         }
+        return feats;
+    }
 
+     private static void AddParsingLogMessage(Das2RequestLog request_log, String content_subtype) {
+        request_log.addLogMessage("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
+    }
+
+     private static void addSymmetriesAndAnnotations(List feats, Das2FeatureRequestSym request_sym, Das2RequestLog request_log, MutableAnnotatedBioSeq aseq) {
         boolean no_graphs = true;
         if (feats == null || feats.size() == 0) {
             // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
@@ -596,9 +608,6 @@ public class Das2ClientOptimizer {
         }
     }
 
-     private static void AddParsingLogMessage(Das2RequestLog request_log, String content_subtype) {
-        request_log.addLogMessage("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
-    }
 
     /**
      *  Given a child GraphSym, find the appropriate parent [Composite]GraphSym and add child to it

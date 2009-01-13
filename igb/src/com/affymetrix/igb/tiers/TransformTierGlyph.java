@@ -111,8 +111,8 @@ public class TransformTierGlyph extends TierGlyph {
     modified_view_transform = new LinearTransform();
     modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
     modified_view_transform.setOffsetX(incoming_view_transform.getOffsetX());
-    modified_view_transform.setScaleY((double)trans2D.getScaleY());
-    modified_view_transform.setOffsetY((double)trans2D.getTranslateY());
+    modified_view_transform.setScaleY(trans2D.getScaleY());
+    modified_view_transform.setOffsetY(trans2D.getTranslateY());
     view.setTransform(modified_view_transform);
 
     // need to set view coordbox based on nested transformation
@@ -175,7 +175,7 @@ public class TransformTierGlyph extends TierGlyph {
         GlyphI child;
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
-          child = (GlyphI)children.elementAt( i );
+          child = children.elementAt( i );
           child.pickTraversal(internal_pickRect, pickVector, view );
         }
       }
@@ -201,7 +201,7 @@ public class TransformTierGlyph extends TierGlyph {
         GlyphI child;
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = (GlyphI)children.elementAt(i);
+          child = children.elementAt(i);
           child.pickTraversal(internal_pickRect, pickVector, view);
         }
       }
@@ -264,8 +264,8 @@ public class TransformTierGlyph extends TierGlyph {
     trans2D.translate(1.0, tier_transform.getOffsetY());
     trans2D.scale(1.0, tier_transform.getScaleY());
 
-    trans.setScaleY((double)trans2D.getScaleY());
-    trans.setOffsetY((double)trans2D.getTranslateY());
+    trans.setScaleY(trans2D.getScaleY());
+    trans.setOffsetY(trans2D.getTranslateY());
   }
 
 

@@ -14,7 +14,7 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+//import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
@@ -34,11 +34,11 @@ public class StyleElement implements DrawableElement {
   public static String ATT_NAME="name";
   public static String ATT_CONTAINER="container";
   
-  static Map names2styles = new HashMap();
+  static Map<String,StyleElement> names2styles = new HashMap<String,StyleElement>();
   
   String childContainer = ".";
   PropertyMap propertyMap;
-  List matchElements;
+  List<MatchElement> matchElements;
   GlyphElement glyphElement;
 
   String name;
@@ -57,9 +57,9 @@ public class StyleElement implements DrawableElement {
       clone.glyphElement = (GlyphElement) this.glyphElement.clone();
     }
     if (matchElements != null) {
-      clone.matchElements = new ArrayList(matchElements.size());
+      clone.matchElements = new ArrayList<MatchElement>(matchElements.size());
       for (int i=0; i<matchElements.size(); i++) {
-        MatchElement me = (MatchElement) matchElements.get(i);
+        MatchElement me = matchElements.get(i);
         MatchElement new_me = (MatchElement) me.clone();
         clone.matchElements.add(new_me);
       }
@@ -138,7 +138,7 @@ public class StyleElement implements DrawableElement {
 
  public void addMatchElement(MatchElement me) {
     if (matchElements == null) {
-      matchElements = new ArrayList();
+      matchElements = new ArrayList<MatchElement>();
     }
     matchElements.add(me);
   }

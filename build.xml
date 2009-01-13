@@ -1,331 +1,185 @@
-<!-- ==============================================================
+<!--                                                                 -->
+<!-- Test file for new, improved build system.  There are still a    -->
+<!-- number of problems to be worked out.  This files does not yet   -->
+<!-- have test, demo, or run targets. The test and demo targets may  -->
+<!-- have to be one off, or the targets need to be added to all sub- -->
+<!-- projects via the common.xml.  The common.xml should also be     -->
+<!-- be able to be used on a sub-project alone.                      -->
+<!--                                                                 -->
+<project name="master" basedir=".">
+	<import file="common.xml" />
 
-This is the build file that is used by ant to compile IGB.
+	<target name="init">
+		<!-- Locations of subprojets -->
+		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
+		<property name="genometry"     value="${basedir}/genometry" />
+		<property name="genometryImpl" value="${basedir}/genometryImpl" />
+		<property name="igb"           value="${basedir}/igb" />
+		<property name="das2server"    value="${basedir}/das2_server" />
 
-Make sure that both 'ant' and 'javac' are in your path.
+		<!-- directory paths -->
+		<property name="lib.dir"      value="${basedir}/ext" />
+		<property name="demos.dir"    value="${genoviz}/demo" />
+		<property name="tutorial.dir" value="${genoviz}/tutorial" />
+		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
 
-Make sure that the 'ext' directory exists and includes
-  all needed external jar files.  Refer to the README.txt file
-  for the list of needed jar files.
-
--->
-
-<project name="IGB" default="usage" basedir=".">
-
-
-  <!-- =================================================================== -->
-  <!-- Initialization target                                               -->
-  <!-- =================================================================== -->
-  <target name="init">
-    <tstamp/>
-
-    <property name="Name" value="IGB"/>
-
-    <echo message="----------- ${Name} ------------"/>
-
-    <property name="build.compiler" value="modern"/>
-    <property name="debug" value="on"/>
-    <property name="optimize" value="off"/>
-    <property name="deprecation" value="off"/>
-
-    <!-- Define the source directories -->
-    <property name="root.dir" value="."/>
-    <property name="genoviz.dir" value="${root.dir}/genoviz_sdk"/>
-    <property name="genoviz.src.dir" value="${genoviz.dir}/src"/>
-    <property name="genometry.dir" value="${root.dir}/genometry"/>
-    <property name="genometry.src.dir" value="${genometry.dir}/src"/>
-    <property name="genometryImpl.dir" value="${root.dir}/genometryImpl"/>
-    <property name="genometryImpl.src.dir" value="${genometryImpl.dir}/src"/>
-    <property name="igb.dir" value="${root.dir}/igb"/>
-    <property name="igb.src.dir" value="${igb.dir}/src"/>
-    <property name="das2_server.dir" value="${root.dir}/das2_server"/>
-		<property name="das2_server.src.dir" value="${das2_server.dir}/src"/>
-
-    <!-- Define the source build directories -->
-    <!--   (The source and class directories are the same)  -->
-    <property name="classes.dir" value="${igb.dir}/src"/>
-
-    <!-- Define the directory with external jar files -->
-    <property name="lib.dir" value="${root.dir}/ext" />
-    <property name="lib2.dir" value="${root.dir}/ext2" />
-
-    <!-- Define the output jar file -->
-    <property name="igb.jar" value="${root.dir}/igb.jar"/>
-
-    <!-- Define the output documentation directory -->
-    <property name="api-docs.dir" value="${root.dir}/documentation/api-docs"/>
-
-    <!-- Define the output executable jar file -->
-    <property name="igb_exe.jar" value="${root.dir}/igb_exe.jar"/>
-  </target>
-  
-  <target name="init-igb" depends="init">
-
-    <fail unless="lib.dir">
-
-    *************************************************************
-
-    To use this ant build script:
-    
-    1. Obtain .jar files for:
-
-       Jetty servlet container, version 4.1 or higher
-       http://www.jettyserver.org/jetty/
-    
-       javax.servlet.jar 
-
-       Note: IGB requires Xerces code, which ant uses.  When you
-       run IGB on its own, you'll need to include the Xerces .jar
-       file(s) in the java classpath.  Xerces project url is:
-       http://xml.apache.org/xerces-j
-       
-    2. Place copies of those jar files in some directory.
-    
-    3. Run 'ant clean all' to build both igb.jar and das2_server.jar
-       Run 'ant clean jar' to build just igb.jar and dependent jars.
-
-    *************************************************************
-
-    </fail>
-    <!-- All jar files in the "lib" directory will be used during compilation. -->
-    <path id="project.class.path">
-      <pathelement path="genoviz_sdk/genoviz.jar" />
-      <pathelement path="genometry/genometry.jar" />
-      <pathelement path="genometryImpl/genometryImpl.jar" />
-      <fileset dir="${lib.dir}">
-        <include name="**/*.jar"/>
-      </fileset>
-    </path>
-
-		<!-- Javadoc requires the jars in ${lib2.dir} -->
-    <path id="javadoc.class.path">
-      <pathelement path="genoviz_sdk/genoviz.jar" />
-      <pathelement path="genometry/genometry.jar" />
-      <pathelement path="genometryImpl/genometryImpl.jar" />
-      <fileset dir="${lib.dir}">
-        <include name="**/*.jar"/>
-      </fileset>
-      <fileset dir="${lib2.dir}">
-        <include name="**/*.jar"/>
-      </fileset>
-    </path>
-
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Help on usage                                                       -->
-  <!-- =================================================================== -->
-  <target name="usage" description="(default) displays build menu">
-    <echo message=""/>
-    <echo message=""/>
-    <echo message="IGB Build file"/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=" To compile IGB and create the igb.jar file, type 'ant jar'."/>
-    <echo message=" To run IGB from inside ant, type 'ant run'."/>
-    <echo message=""/>
-    <echo message=" For a list of all possible ant targets, type 'ant -projecthelp'"/>
-    <echo message=""/>
-    <echo message="-------------------------------------------------------------"/>
-    <echo message=""/>
-    <echo message=""/>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Compiles GenoViz                                                     -->
-  <!-- =================================================================== -->
-  <target name="compile-genoviz" depends="init" 
-    description="Compiles GenoViz">
-    <ant dir="${genoviz.dir}" target="jar" inheritAll="false"/>
-  </target>
-
-  
-  <!-- =================================================================== -->
-  <!-- Compiles Genometry                                                  -->
-  <!-- =================================================================== -->
-  <target name="compile-genometry" depends="init" 
-    description="Compiles Genometry (Interfaces)">
-    <ant dir="${genometry.dir}" target="all" inheritAll="false"/>
-  </target>
-  
-  <!-- =================================================================== -->
-  <!-- Compiles and builds jar for DAS2 Server                             -->
-  <!-- =================================================================== -->
-  <target name="das2server" depends="init,compile-genoviz" 
-    description="Compiles and builds jar for DAS2 Server">
-    <ant dir="${das2_server.dir}" target="all" inheritAll="false"/>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Compiles GenometryImpl                                              -->
-  <!-- =================================================================== -->
-  <target name="compile-genometry-impl" depends="init,compile-genometry" 
-    description="Compiles Genometry Implementations">
-    <ant dir="${genometryImpl.dir}" target="all" inheritAll="false"/>
-  </target>
-  
-  <!-- =================================================================== -->
-  <!-- Compiles All                                                        -->
-  <!-- =================================================================== -->
-  <!-- target name="compile" -->
-  <target name="compile" depends="init,init-igb,compile-genoviz,compile-genometry,compile-genometry-impl"
-    description="Compiles IGB">
-    <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}"
-           debug="${debug}"
-           deprecation="${deprecation}" 
-           optimize="${optimize}"
-           source="1.5"
-           >
-      <src path="${igb.src.dir}"/>
-      <classpath refid="project.class.path" />
-    </javac>
-    <!-- Copy all "resource" files into the classes directory -->
-    <copy todir="${classes.dir}">
-      <fileset dir="${igb.src.dir}">
-        <exclude name="**/*.java"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <!-- =================================================================== -->
-  <!-- Creates the igb.jar                                                 -->
-  <!-- =================================================================== -->
-  <target name="jar" depends="compile" 
-    description="Builds the IGB jar file.">
-    <jar jarfile="${igb.jar}" update="false">
-      <!-- Make sure to copy all "resource" files as well as class files -->
-      <fileset dir="${classes.dir}">
-       <exclude name="test/affymetrix/**"/>
-       <exclude name="com/affymetrix/igb/test/**"/>
-       <exclude name="**/*.java"/>
-       <exclude name="**/package.html"/>
-       <exclude name="**/.*"/>
-      </fileset>
-    </jar>
-
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Creates igb.jar and das2_server.jar (which it depends on igb.jar)   -->
-  <!-- =================================================================== -->
-  <target name="all" depends="jar,das2server" 
-    description="Builds the IGB and das2_server jars">
-  </target>
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genometry}/src:${genometryImpl}/src:${igb}/src:${das2server}/src" />
+	</target>
 
 
-  <!-- =================================================================== -->
-  <!-- Creates an executable, large .jar file                              -->
-  <!-- =================================================================== -->
-  <!-- Contents of all external jar files will be included  -->
-    
-  <target name="exe" depends="jar" 
-          description="generate executable .jar file" >
-      <jar jarfile="${igb_exe.jar}" update="false">
-      <manifest>
-        <attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
-      </manifest>
-      <metainf file="LICENSE.html"/>
-      <metainf file="NOTICES.txt"/>
-      <zipfileset src="${igb.jar}"/>
-      <zipfileset src="genometry/genometry.jar"/>
-      <zipfileset src="genometryImpl/genometryImpl.jar"/>
-      <zipfileset src="genoviz_sdk/genoviz.jar"/>
-      <zipgroupfileset dir="${lib.dir}">
-        <include name="**/*.jar"/>
-      </zipgroupfileset>
-    </jar>
-  </target>
+	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
+		<iterate target="compile" />
+	</target>
 
-  <!-- =================================================================== -->
-  <!-- Clean restores distribution to original state                       -->
-  <!-- =================================================================== -->
-  <target name="clean" depends="init"
-    description="Restores distribution to its original state">
-    <ant dir="${genoviz.dir}" target="clean" inheritAll="false"/>
-    <ant dir="${genometry.dir}" target="clean" inheritAll="false"/>
-    <ant dir="${genometryImpl.dir}" target="clean" inheritAll="false"/>
-    <ant dir="${das2_server.dir}" target="clean" inheritAll="false"/>
-    <delete file="${igb.jar}"/>
-    <delete file="${igb_exe.jar}"/>
-    <delete dir="${api-docs.dir}"/>
-    <delete>
-      <fileset dir="${root.dir}">
-        <include name="**/*.class"/>
-      </fileset>
-    </delete>
-  </target>
+	<target name="demos" depends="jar" description="Compile genoviz demos">
+		<my.javac srcdir="${demos.dir}"    classpath="${genoviz}/build" />
+		<my.javac srcdir="${tutorial.dir}" classpath="${genoviz}/build" />
+		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
+	</target>
 
+	<target name="compile-tests" depends="common-init">
+		<iterate target="compile-tests" />
+	</target>
 
-<!-- Note: Output from IGB will be easier to read if you run it from the 
-      command line rather than from inside of ant. But you can run it from
-      ant if you wish.  -->
-  <target name="run" depends="init-igb,jar"
-    description="Runs IGB (rebuilding it first, if needed).">
-    <java fork="true" classname="com.affymetrix.igb.IGB">
-      <!-- Note: you can change the amount of memory to use here. -->
-      <jvmarg value="-mx1024m"/>
-      <!--  Note: you can specify here which prefs file(s) to include. -->
-      <arg value="-prefs"/>
-      <arg value="${igb.src.dir}/igb_prefs.xml"/>
-      <classpath>
-        <pathelement location="${igb.jar}"/>
-        <path refid="project.class.path"/>
-      </classpath>
-    </java>
-  </target>
+	<target name="test" depends="common-init" description="Run unit tests for all genoviz subprojects">
+		<iterate target="test" />
+	</target>
 
+	<target name="jar" depends="common-init" description="Create jar files for all genoviz subprojects">
+		<iterate target="jar" />
+	</target>
 
-  <target name="docs" depends="init-igb" description="Builds javadocs">
-    <mkdir dir="${api-docs.dir}"/>
-		<javadoc
-			destdir="${api-docs.dir}"
-			author="true"
-			version="true"
-			use="true"
-			windowtitle="${Name} API"
-			maxmemory="128m"
-			access="private"
-			verbose="false"
-			splitindex="false"
-			source="1.5">
-			<link href="http://java.sun.com/j2se/1.5.0/docs/api/"/>
-			<link href="http://java.sun.com/javaee/5/docs/api/"/>
-			<classpath refid="javadoc.class.path"/>
-			<packageset dir="${igb.src.dir}"/>
-			<packageset dir="${genoviz.src.dir}"/>
-			<packageset dir="${genometry.src.dir}"/>
-			<packageset dir="${genometryImpl.src.dir}"/>
-			<packageset dir="${das2_server.src.dir}"/>
-      <doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
-      <bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
-    </javadoc>
-    <echo>
-     ***********************************************
-       Javadocs were created in the directory: 
-       ${api-docs.dir}
-     ***********************************************
-    </echo>
-  </target> 
+	<target name="webstart" depends="common-init" description="Create webstart-compatible IGB jars">
+		<iterate target="webstart" />
 
-  <!-- Note regarding javac-version target:
-  This is not the way to see what version of the JVM ant will use
-  to compile your source. Ant spawns it's own shell to do the
-  compiling and uses the JVM specified by your JAVA_HOME env
-  variable. Check this out by running ant like this:
-   $ ant -v -diagnostics | grep java.version 
-  -->
-  <target name="javac-version">
-		<echo message="${java.version} from ${java.vendor}"/>
-		<!--
-    <exec executable="javac">
-      <arg value="-version"/>
-   </exec>
-	 -->
-  </target>
+		<delete file="${webstart.dir}/das2server.jar" />
 
+		<my.signjar jar="${lib.dir}/affx_fusion.jar"     signedjar="${webstart.dir}/affx_fusion.jar" />
+		<my.signjar jar="${lib.dir}/freehep.jar"         signedjar="${webstart.dir}/freehep.jar" />
+		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"       signedjar="${webstart.dir}/jlfgr-1_0.jar" />
+		<my.signjar jar="${lib.dir}/myswing.jar"         signedjar="${webstart.dir}/myswing.jar" />
+		<my.signjar jar="${lib.dir}/swing-layout.jar"    signedjar="${webstart.dir}/swing-layout.jar" />
+		<my.signjar jar="${lib.dir}/xercesImpl.jar"      signedjar="${webstart.dir}/xercesImpl.jar" />
+
+		<jar jarfile="${webstart.dir}/igb.jar" index="true">
+			<zipfileset src="${dist.dir}/igb.jar" />
+			<indexjars>
+				<fileset dir="${webstart.dir}">
+					<exclude name="igb.jar" />
+					<include name="*.jar" />
+				</fileset>
+			</indexjars>
+		</jar>
+
+		<my.signjar jar="${webstart.dir}/igb.jar" />
+
+		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" />
+		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
+	</target>
+
+	<target name="webapp" depends="jar" description="Create das2servlet web application">
+		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
+		<copy todir="${webapp.dir}/WEB-INF/lib">
+			<fileset dir="${dist.dir}">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="xercesImpl.jar" />
+			</fileset>
+		</copy>
+		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" />
+	</target>
+
+	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
+		<iterate target="all" />
+	</target>
+
+	<target name="clean" depends="common-init">
+		<delete file="igb_exe.jar"/>
+		<delete file="${genoviz}/genoviz.jar" />
+		<delete dir="${dist.dir}" />
+		<delete dir="${webstart.dir}" />
+		<delete dir="${webapp.dir}" />
+
+		<delete>
+			<fileset dir="${demos.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${tutorial.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</delete>
+
+		<iterate target="clean" />
+	</target>
+
+	<target name="docs" depends="common-init" description="Create java documentation for all genoviz subprojects">
+		<mkdir dir="${docs.dir}"/>
+		<my.javadoc sourcepath="${javadoc.src.path}">
+			<classpath>
+				<fileset dir="${lib.dir}" includes="*.jar" />
+			</classpath>
+			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
+		</my.javadoc>
+	</target>
+
+	<target name="exe" depends="jar" description="Create a single-jar IGB application">
+		<jar jarfile="igb_exe.jar" update="false">
+			<manifest>
+				<attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
+			</manifest>
+			<metainf file="LICENSE.html"/>
+			<metainf file="NOTICES.txt"/>
+			<zipgroupfileset dir="${dist.dir}">
+				<exclude name="das2server.jar" />
+				<include name="*.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="affx_fusion.jar"/>
+				<include name="freehep.jar"/>
+				<include name="jlfgr-1_0.jar"/>
+				<include name="myswing.jar"/>
+				<include name="swing-layout.jar"/>
+				<include name="xercesImpl.jar"/>
+			</zipgroupfileset>
+		</jar>
+	</target>
+
+	<target name="run" depends="jar" description="run IGB">
+		<java fork="true" classname="com.affymetrix.igb.IGB">
+			<jvmarg value="-Xmx1024m" />
+			<arg value="-prefs" />
+			<arg value="${igb}/etc/igb_prefs.xml" />
+			<classpath>
+				<fileset dir="${lib.dir}" includes="*.jar" />
+				<fileset dir="${dist.dir}" includes="*.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<!--                                                                 -->
+	<!-- Macro to pass targets to each sub project.  All sub projects    -->
+	<!-- are build using generic.xml.                                    -->
+	<!--                                                                 -->
+	<macrodef name="iterate">
+		<attribute name="target" default=""/>
+		<sequential>
+			<subant target="@{target}" genericantfile="generic.xml" inheritall="true">
+				<!-- multiple dirsets ensure dependency ordering -->
+				<dirset dir="${basedir}">
+					<include name="genoviz_sdk" />
+					<include name="genometry" />
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="genometryImpl" />
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="igb" />
+				</dirset>
+				<dirset dir="${basedir}">
+					<include name="das2_server" />
+				</dirset>
+			</subant>
+		</sequential>
+	</macrodef>
 </project>
-
-<!-- End of file -->
-
-

@@ -16,7 +16,6 @@
 		<j2se version="1.5+" max-heap-size="1024m"/>
 		<jar href="igb.jar" main="true" />
 		<jar href="affx_fusion.jar" />
-		<!-- <jar href="commons-logging.jar" /> -->
 		<jar href="freehep.jar" download="lazy" />
 		<jar href="genometry.jar" />
 		<jar href="genometryImpl.jar" />

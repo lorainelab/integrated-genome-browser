@@ -73,8 +73,7 @@ servlet.jar
   Version 2.2 or higher
   http://java.sun.com/products/servlet/2.2/
 
-xerces.jar
-(or xml-apis.jar, xercesImpl.jar and commons-logging.jar)
+xercesImpl.jar
   Version 1.3 or higher, but NOT Version 2.0 or higher.
   http://xml.apache.org/xerces-j/
 

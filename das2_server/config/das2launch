@@ -41,7 +41,6 @@
 #            igb.jar
 #
 #  * Install the external jars in $JAR_DIR/external. These include:
-#            commons-logging.jar
 #            javax.servlet.jar
 #            org.mortbay.jetty.jar
 #            xercesImpl.jar

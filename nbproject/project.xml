@@ -212,7 +212,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>das2_server/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genoviz_sdk/src:genometry/src:genometryImpl/src:igb/src</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar;ext/org.mortbay.jetty.jar;genoviz_sdk/src;genometry/src;genometryImpl/src;igb/src</classpath>
                 <built-to>dist/das2server.jar</built-to>
                 <javadoc-built-to>documentation/api-docs</javadoc-built-to>
                 <source-level>1.5</source-level>
@@ -242,35 +242,35 @@
             <compilation-unit>
                 <package-root>das2_server/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar:/usr/share/java/junit4.jar</classpath>
+                <classpath mode="compile">usr/share/junit/junit.jar;usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar</classpath>
                 <built-to>das2_server/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>genometry/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar:/usr/share/java/junit4.jar:genometry/src</classpath>
+                <classpath mode="compile">usr/share/junit/junit.jar;usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src</classpath>
                 <built-to>genometry/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>genometryImpl/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar:/usr/share/java/junit4.jar:genometry/src:genometryImpl/src</classpath>
+                <classpath mode="compile">usr/share/junit/junit.jar;usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src;genometryImpl/src</classpath>
                 <built-to>genometryImpl/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>genoviz_sdk/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar:/usr/share/java/junit4.jar</classpath>
+                <classpath mode="compile">usr/share/junit/junit.jar;usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar</classpath>
                 <built-to>genoviz_sdk/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>igb/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar:/usr/share/java/junit4.jar:igb/src:genoviz_sdk/src:genometryImpl/src</classpath>
+                <classpath mode="compile">usr/share/junit/junit.jar;usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;igb/src;genoviz_sdk/src;genometryImpl/src</classpath>
                 <built-to>igb/build-test</built-to>
                 <javadoc-built-to>/documentation/api-docs</javadoc-built-to>
                 <source-level>1.5</source-level>

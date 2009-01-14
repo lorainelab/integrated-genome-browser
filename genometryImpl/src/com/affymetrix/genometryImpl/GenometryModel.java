@@ -26,6 +26,12 @@ import java.util.*;
 
 public class GenometryModel {
 
+    /**
+     * Ann's comment: There is a lot of logic related to selection of
+     * SeqSymmetry objects. It appears that SeqSymmetry on many different
+     * BioSeq objects can be selected simultaneously. Why? What does
+     * selection mean in this context?
+     */
   /** Creates a new instance of GenometryModel */
   public GenometryModel() {
   }

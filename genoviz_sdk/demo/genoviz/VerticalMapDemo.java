@@ -35,7 +35,7 @@ public class VerticalMapDemo extends Applet {
 
   public void init() {
     panel1 = testMap(NeoMap.HORIZONTAL);
-    panel2 = testMap(NeoMap.VERTICAL);
+    //panel2 = testMap(NeoMap.VERTICAL);
     this.setLayout(new GridLayout(1,2,10,0));
     this.add(panel1);
     this.add(panel2);
@@ -43,7 +43,7 @@ public class VerticalMapDemo extends Applet {
   }
 
   public Panel testMap(int orient) {
-    final NeoMap map = new NeoMap(orient);
+    final NeoMap map = new NeoMap();
     final VisibleRange selectedRange = new VisibleRange();
 
     map.setSelectionEvent(map.ON_MOUSE_DOWN);

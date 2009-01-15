@@ -79,14 +79,14 @@ public class GlyphEdgeMatcher  {
     }
   }
 
-  public void matchEdges(NeoMapI map, GlyphI query, List target_glyphs, List match_glyphs) {
+  private void matchEdges(NeoMapI map, GlyphI query, List target_glyphs, List match_glyphs) {
     for (int k=0; k<target_glyphs.size(); k++) {
       GlyphI target = (GlyphI) target_glyphs.get(k);
       matchEdges(map, query, target, match_glyphs);
     }
   }
   
-  public void matchEdges(NeoMapI map, GlyphI query, GlyphI target, List match_glyphs) {
+  private void matchEdges(NeoMapI map, GlyphI query, GlyphI target, List match_glyphs) {
     //    System.out.println("trying to match edges: query = " + query + ", target = " + target);
     call_count++;
     

@@ -19,7 +19,6 @@ import java.util.*;
 
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
@@ -310,6 +309,7 @@ public class NeoSeq extends NeoContainerWidget
    * Instead of taking a Swing Caret object,
    * it takes a PositionListener.
    */
+  /*
   public void addCaretListener( PositionListener p ) {
     System.err.println( "NeoSeq.addCaretListener: ..." );
     if ( null == this.insertionPoint ) {
@@ -319,8 +319,8 @@ public class NeoSeq extends NeoContainerWidget
       this.insertionPoint.addListener( p );
     }
   }
-
-  public boolean isEditable() {
+*/
+  boolean isEditable() {
     return this.editable;
   }
 
@@ -329,6 +329,7 @@ public class NeoSeq extends NeoContainerWidget
    *  Currently requires that the pixel width of this NeoSeq and root NeoSeq
    *  remain the same -- GAH 1-19-98
    */
+  /*
   protected void setRoot(NeoSeq root) {
 
     // need to set up a derived view from  each individual NeoMap
@@ -357,7 +358,7 @@ public class NeoSeq extends NeoContainerWidget
     num_glyph = root.num_glyph;
     residue_glyph = root.residue_glyph;
     setSelection(root.sel_range); // monitor the same selection as the root.
-  }
+  }*/
 
   public void setSelection(Selection theSelection) {
     if (null != sel_range) {

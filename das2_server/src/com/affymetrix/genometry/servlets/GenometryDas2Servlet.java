@@ -1635,16 +1635,16 @@ public class GenometryDas2Servlet extends HttpServlet {
         } else {  // request contains query string
 
             query = URLDecoder.decode(query);
-            ArrayList formats = new ArrayList();
-            ArrayList types = new ArrayList();
-            ArrayList segments = new ArrayList();
-            ArrayList overlaps = new ArrayList();
-            ArrayList insides = new ArrayList();
-            ArrayList excludes = new ArrayList();
-            ArrayList names = new ArrayList();
-            ArrayList coordinates = new ArrayList();
-            ArrayList links = new ArrayList();
-            ArrayList notes = new ArrayList();
+            ArrayList<String> formats = new ArrayList<String>();
+            ArrayList<String> types = new ArrayList<String>();
+            ArrayList<String> segments = new ArrayList<String>();
+            ArrayList<String> overlaps = new ArrayList<String>();
+            ArrayList<String> insides = new ArrayList<String>();
+            ArrayList<String> excludes = new ArrayList<String>();
+            ArrayList<String> names = new ArrayList<String>();
+            ArrayList<String> coordinates = new ArrayList<String>();
+            ArrayList<String> links = new ArrayList<String>();
+            ArrayList<String> notes = new ArrayList<String>();
             Map props = new HashMap();
 
             // genometry server does not currently serve up features with PROPERTY, LINK, or NOTE element,
@@ -1696,7 +1696,7 @@ public class GenometryDas2Servlet extends HttpServlet {
                 }
             }
             if (formats.size() == 1) {
-                output_format = (String) formats.get(0);
+                output_format = formats.get(0);
             }
 
             if (!known_query) {
@@ -1712,8 +1712,9 @@ public class GenometryDas2Servlet extends HttpServlet {
                     notes.size() > 0 ||
                     props.size() > 0) {
                 result = new ArrayList();
-            } /* support for single name, single format, no other filters */ else if (names != null && names.size() == 1) {
-                String name = (String) names.get(0);
+            } /* support for single name, single format, no other filters */
+            else if (names != null && names.size() == 1) {
+                String name = names.get(0);
                 result = DetermineResult(name, genome, result);
                 if (types.size() > 0) {
                     // make sure result syms are of one of the specified types
@@ -1826,8 +1827,8 @@ public class GenometryDas2Servlet extends HttpServlet {
         // use bar parser to extract just the overlap slice from the graph
         String graph_name = type;   // for now using graph_name as graph type
 
-        Map<String,String> graph_name2dir = (Map<String,String>) genome2graphdirs.get(genome);
-        Map<String,String> graph_name2file = (Map<String,String>) genome2graphfiles.get(genome);
+        Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
+        Map<String,String> graph_name2file = genome2graphfiles.get(genome);
 
         String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
         log.add("####    file:  " + file_path);

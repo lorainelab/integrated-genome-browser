@@ -14,7 +14,7 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.widget.*;
+//import com.affymetrix.genoviz.widget.*;
 
 import java.awt.*;
 import java.awt.event.*;

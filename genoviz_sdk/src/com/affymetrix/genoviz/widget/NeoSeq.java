@@ -256,17 +256,18 @@ public class NeoSeq extends NeoContainerWidget
    *  Currently requires that the pixel width of this NeoSeq and root NeoSeq
    *  remain the same -- GAH 1-19-98
    */
+  /*
   public NeoSeq(NeoSeq root) {
     this();
     setRoot(root);
-  }
+  }*/
 
   /** Set up a NeoSeq with the given Adjustable as the scroller. */
-
+/*
   public NeoSeq(Adjustable scroller) {
     this();
     setScroller(scroller);
-  }
+  }*/
 
   public void setEditable( boolean theAbility ) {
     if ( this.editable == theAbility )

@@ -123,10 +123,11 @@ public class GraphAdjusterView {
       mut.removeAnnotation(gsym);
     }
 
+    /*
     if (Application.ALLOW_DELETING_DATA && aseq instanceof SmartAnnotBioSeq) {
       String method = SmartAnnotBioSeq.determineMethod(gsym);
       gmodel.getSelectedSeqGroup().removeType(method);
-    }
+    }*/
 
     GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
     if (gl != null) {

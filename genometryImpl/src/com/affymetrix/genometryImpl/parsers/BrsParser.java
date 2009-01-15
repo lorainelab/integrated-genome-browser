@@ -46,6 +46,8 @@ public class BrsParser implements AnnotationWriter  {
     pref_list.add("brs");
   }
 
+  final private static boolean DEBUG = false;
+
   boolean use_byte_buffer = true;
   boolean write_from_text = true;
   boolean write_objects = false;
@@ -221,13 +223,15 @@ public class BrsParser implements AnnotationWriter  {
         chromseq.addAnnotation(annot);
       }
     }
-    SingletonGenometryModel.logInfo("load time: " + tim.read()/1000f);
-    SingletonGenometryModel.logInfo("transcript count = " + count);
-    SingletonGenometryModel.logInfo("exon count = " + total_exon_count);
-    if (count > 0)  {
-        SingletonGenometryModel.logInfo("average exons / transcript = " +
-                           ((double) total_exon_count / (double) count));
-    }
+      if (DEBUG) {
+          SingletonGenometryModel.logInfo("load time: " + tim.read() / 1000f);
+          SingletonGenometryModel.logInfo("transcript count = " + count);
+          SingletonGenometryModel.logInfo("exon count = " + total_exon_count);
+          if (count > 0) {
+              SingletonGenometryModel.logInfo("average exons / transcript = " +
+                      ((double) total_exon_count / (double) count));
+          }
+      }
     return results;
   }
 

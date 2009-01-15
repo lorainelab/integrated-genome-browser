@@ -312,7 +312,8 @@ public class GraphSymUtils {
    *  have a single GraphSym returned.  This will return only the first graph
    *  from the list returned by readGraphs(), or null.
    */
-  public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
+
+  /*public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
     // This method is used only by affy *internal* version of IGB.
     //TODO: Maybe this should throw an exception if the file contains more than one graph?
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -339,7 +340,7 @@ public class GraphSymUtils {
       }
     }
     return graf;
-  }
+  }*/
 
 
   static List wrapInList(GraphSym gsym) {

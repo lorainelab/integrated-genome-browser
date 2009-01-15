@@ -216,6 +216,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
+  /*
   Action delete_action = new AbstractAction("Delete selected tiers") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTierLabels();
@@ -226,7 +227,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
         removeTiers(current_tiers);
       }
     }
-  };
+  };*/
 
   JMenu showMenu = new JMenu("Show...");
   JMenu changeMenu = new JMenu("Change...");
@@ -508,6 +509,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
+  /*
   void removeTiers(List tier_labels) {
     gmodel.setSelectedSymmetries(Collections.EMPTY_LIST, this);
     Set types_to_remove = new TreeSet();
@@ -543,7 +545,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
     refreshMap(true);
-  }
+  }*/
 
 
   /*

@@ -218,22 +218,23 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    *
    * @param hscroll_show determines whether or not to show a horizontal scrollbar.
    * @param vscroll_show determines whether or not to show a vertical scrollbar.
-   * @param hscroll_location determines where to show a the horizontal scrollbar.
-   * @param vscroll_location determines where to show a the vertical scrollbar.
+   * @param hscroll_location determines where to show the horizontal scrollbar.
+   * @param vscroll_location determines where to show the vertical scrollbar.
    */
-  public NeoMap(boolean hscroll_show, boolean vscroll_show, String hscroll_location, String vscroll_location) {
+  /*public NeoMap(boolean hscroll_show, boolean vscroll_show, String hscroll_location, String vscroll_location) {
     this(hscroll_show, vscroll_show, HORIZONTAL,
          new LinearTransform(), hscroll_location, vscroll_location);
-  }
+  }*/
 
   /**
    * creates a horizontal or vertical map with scrollbars.
    *
    * @param orient must be {@link #HORIZONTAL} or {@link #VERTICAL}.
    */
+  /*
   public NeoMap(int orient) {
     this(true, true, orient, new LinearTransform());
-  }
+  }*/
 
   /**
    * constructs a map with the given configuration.
@@ -260,7 +261,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * @param hscroll_location can be "North", otherwise "South" is assumed.
    * @param vscroll_location can be "West", otherwise "East" is assumed.
    */
-  public NeoMap(boolean hscroll_show, boolean vscroll_show,
+  private NeoMap(boolean hscroll_show, boolean vscroll_show,
       int orient, LinearTransform tr, String hscroll_location, String vscroll_location) {
     super();
     this.hscroll_show = hscroll_show;

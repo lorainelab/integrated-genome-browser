@@ -14,8 +14,8 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
  */
 public class Das2SeqGroup extends AnnotatedSeqGroup {
 
-  Das2VersionedSource original_version;
-  Set versions = new LinkedHashSet();
+  private final Das2VersionedSource original_version;
+  //private Set versions = new LinkedHashSet();
 
   public Das2SeqGroup(Das2VersionedSource version, String gid) {
     super(gid);
@@ -46,7 +46,7 @@ public class Das2SeqGroup extends AnnotatedSeqGroup {
   /**
    *  Returns the sequence at the given position in the sequence list.
    */
-  public MutableAnnotatedBioSeq getSeq(int index) {
+  public SmartAnnotBioSeq getSeq(int index) {
     ensureSeqsLoaded();
     return super.getSeq(index);
   }
@@ -61,7 +61,7 @@ public class Das2SeqGroup extends AnnotatedSeqGroup {
   /** Gets a sequence based on its name, possibly taking synonyms into account.
    *  See {@link #setUseSynonyms(boolean)}.
    */
-  public MutableAnnotatedBioSeq getSeq(String synonym) {
+  public SmartAnnotBioSeq getSeq(String synonym) {
     ensureSeqsLoaded();
     return super.getSeq(synonym);
 
@@ -73,7 +73,7 @@ public class Das2SeqGroup extends AnnotatedSeqGroup {
    *  @return the first sequence it finds (by iterating through sym's spans),
    *    or null if none is found.
    */
-  public MutableAnnotatedBioSeq getSeq(SeqSymmetry sym) {
+  public SmartAnnotBioSeq getSeq(SeqSymmetry sym) {
     ensureSeqsLoaded();
     return super.getSeq(sym);
   }
@@ -82,13 +82,14 @@ public class Das2SeqGroup extends AnnotatedSeqGroup {
    *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
    *  and increasing its length to the given value if necessary.
    */
+    @Override
   public SmartAnnotBioSeq addSeq(String seqid, int length) {
     if (seqid == null) {
       throw new NullPointerException();
     }
     SmartAnnotBioSeq aseq;
     // calling super.getSeq() to avoid ensureSeqsLoaded() calls??
-    aseq = (SmartAnnotBioSeq)super.getSeq(seqid);
+    aseq = super.getSeq(seqid);
     if (aseq != null) {
       if (aseq.getLength() < length) {
         aseq.setLength(length);

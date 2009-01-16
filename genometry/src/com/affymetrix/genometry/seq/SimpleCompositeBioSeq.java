@@ -25,20 +25,6 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   protected double length = 0;
   protected SeqSymmetry compose;
 
-  public SimpleCompositeBioSeq(String id, int length) {
-    this(id);
-    this.length = length;
-  }
-
-  public SimpleCompositeBioSeq(SeqSymmetry comp) {
-    compose = comp;
-  }
-
-  public SimpleCompositeBioSeq(SeqSymmetry comp, String id) {
-    this.compose = comp;
-    this.id = id;
-  }
-
   public SimpleCompositeBioSeq(String id) {
     this.id = id;
   }

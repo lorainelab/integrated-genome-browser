@@ -33,9 +33,9 @@
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
 		<my.javac srcdir="${demos.dir}/src" destdir="${demos.dir}" classpath="${genoviz}/build" />
-		<my.javac srcdir="${tutorial.dir}"  destdir="${tutorial.dir}"      classpath="${genoviz}/build" />
+		<my.javac srcdir="${tutorial.dir}"                         classpath="${genoviz}/build" />
 
-		<copy file="${dist.dir}/genoviz.jar" todir="${demos.dir}/genoviz" />
+		<copy file="${dist.dir}/genoviz.jar" todir="${demos.dir}" />
 		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
 	</target>
 
@@ -99,10 +99,11 @@
 	<target name="clean" depends="common-init">
 		<delete file="igb_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
+		<delete file="${demos.dir}/genoviz.jar" />
 		<delete dir="${dist.dir}" />
 		<delete dir="${webstart.dir}" />
 		<delete dir="${webapp.dir}" />
-		<!-- <delete dir="${demos.dir}/genoviz" /> -->
+		<delete dir="${demos.dir}/genoviz" />
 
 		<delete>
 			<fileset dir="${tutorial.dir}">

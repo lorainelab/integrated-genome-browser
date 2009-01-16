@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz;
+package genoviz.demo;
 
 import java.awt.*;
 import java.applet.*;

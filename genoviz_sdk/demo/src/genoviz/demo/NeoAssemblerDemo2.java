@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz;
+package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
@@ -19,10 +19,10 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;
 
-import demo.genoviz.adapter.AssemblyAdapter;
-import demo.genoviz.datamodel.Assembly;
-import demo.genoviz.parser.AlignmentParser;
-import demo.genoviz.parser.SequenceParser;
+import genoviz.demo.adapter.AssemblyAdapter;
+import genoviz.demo.datamodel.Assembly;
+import genoviz.demo.parser.AlignmentParser;
+import genoviz.demo.parser.SequenceParser;
 
 import java.applet.*;
 import java.awt.*;

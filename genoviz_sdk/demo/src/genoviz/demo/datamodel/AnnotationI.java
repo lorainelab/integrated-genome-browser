@@ -11,9 +11,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.datamodel;
+package genoviz.demo.datamodel;
 
-public interface SequenceAnnotationI extends AnnotationI  {
-  // inherits getStart(), getEnd() from AnnotationI
-  public String getResidues();
+public interface AnnotationI {
+  public int getStart();
+  public int getEnd();
 }

@@ -11,12 +11,12 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.adapter;
+package genoviz.demo.adapter;
 
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
-import demo.genoviz.datamodel.SequenceAnnotationI;
+import genoviz.demo.datamodel.SequenceAnnotationI;
 
 public class SequenceAnnotAdapter implements NeoDataAdapterI {
   protected MapGlyphFactory factory;

@@ -32,8 +32,10 @@
 	</target>
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
-		<my.javac srcdir="${demos.dir}"    classpath="${genoviz}/build" />
-		<my.javac srcdir="${tutorial.dir}" classpath="${genoviz}/build" />
+		<my.javac srcdir="${demos.dir}/src" destdir="${demos.dir}" classpath="${genoviz}/build" />
+		<my.javac srcdir="${tutorial.dir}"  destdir="${tutorial.dir}"      classpath="${genoviz}/build" />
+
+		<copy file="${dist.dir}/genoviz.jar" todir="${demos.dir}/genoviz" />
 		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
 	</target>
 
@@ -100,11 +102,9 @@
 		<delete dir="${dist.dir}" />
 		<delete dir="${webstart.dir}" />
 		<delete dir="${webapp.dir}" />
+		<!-- <delete dir="${demos.dir}/genoviz" /> -->
 
 		<delete>
-			<fileset dir="${demos.dir}">
-				<include name="**/*.class" />
-			</fileset>
 			<fileset dir="${tutorial.dir}">
 				<include name="**/*.class" />
 			</fileset>
@@ -175,8 +175,6 @@
 				</dirset>
 				<dirset dir="${basedir}">
 					<include name="igb" />
-				</dirset>
-				<dirset dir="${basedir}">
 					<include name="das2_server" />
 				</dirset>
 			</subant>

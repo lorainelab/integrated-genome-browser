@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.datamodel;
+package genoviz.demo.datamodel;
 
 import java.util.*;
 import com.affymetrix.genoviz.datamodel.*;

@@ -11,11 +11,11 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.adapter;
+package genoviz.demo.adapter;
 
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import demo.genoviz.datamodel.AnnotationI;
+import genoviz.demo.datamodel.AnnotationI;
 
 /**
  * an almost trivial example of a DataAdapter

@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz;
+package genoviz.demo;
 
 import java.applet.*;
 import java.awt.*;
@@ -42,9 +42,9 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.glyph.AlignmentGlyph;
 import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 
-import demo.genoviz.datamodel.Assembly;
-import demo.genoviz.parser.AlignmentParser;
-import demo.genoviz.parser.SequenceParser;
+import genoviz.demo.datamodel.Assembly;
+import genoviz.demo.parser.AlignmentParser;
+import genoviz.demo.parser.SequenceParser;
 
 /**
  *  A demo of the NeoAssembler widget.  Uses "low-level" calls to

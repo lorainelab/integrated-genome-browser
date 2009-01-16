@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz;
+package genoviz.demo;
 
 import java.applet.*;
 import java.awt.*;
@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.datamodel.Trace;
 import com.affymetrix.genoviz.datamodel.TraceI;
 import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.*;
-import demo.genoviz.datamodel.Assembly;
+import genoviz.demo.datamodel.Assembly;
 
 
 public class NeoTracerDemo extends Applet

@@ -11,10 +11,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.datamodel;
+package genoviz.demo.datamodel;
 
-public interface ScoredAnnotationI extends AnnotationI {
+public interface SequenceAnnotationI extends AnnotationI  {
   // inherits getStart(), getEnd() from AnnotationI
-  public double getScore();
-  public double getScore(int score_type);
+  public String getResidues();
 }

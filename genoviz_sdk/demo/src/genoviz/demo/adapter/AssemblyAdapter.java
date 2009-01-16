@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.adapter;
+package genoviz.demo.adapter;
 
 import java.util.*;
 import com.affymetrix.genoviz.awt.*;
@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.glyph.AlignmentGlyph;
 import com.affymetrix.genoviz.widget.NeoAssembler;
-import demo.genoviz.datamodel.Assembly;
+import genoviz.demo.datamodel.Assembly;
 
 public class AssemblyAdapter implements NeoDataAdapterI {
 

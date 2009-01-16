@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.parser;
+package genoviz.demo.parser;
 
 import java.io.*;
 import java.net.*;

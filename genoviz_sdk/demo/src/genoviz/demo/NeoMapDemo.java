@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz;
+package genoviz.demo;
 
 import java.applet.*;
 import java.awt.*;
@@ -19,8 +19,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-import demo.genoviz.datamodel.*;
-import demo.genoviz.adapter.*;
+import genoviz.demo.datamodel.*;
+import genoviz.demo.adapter.*;
 
 import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;

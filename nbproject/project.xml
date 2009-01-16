@@ -75,6 +75,12 @@
                     <location>igb/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>genoviz_sdk/demo/src</label>
+                    <type>java</type>
+                    <location>genoviz_sdk/demo/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -193,6 +199,10 @@
                         <label>igb/test</label>
                         <location>igb/test</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>genoviz_sdk/demo/src</label>
+                        <location>genoviz_sdk/demo/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -273,6 +283,11 @@
                 <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;igb/src;genoviz_sdk/src;genometryImpl/src</classpath>
                 <built-to>igb/build-test</built-to>
                 <javadoc-built-to>/documentation/api-docs</javadoc-built-to>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>genoviz_sdk/demo/src</package-root>
+                <classpath mode="compile">genoviz_sdk/src</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

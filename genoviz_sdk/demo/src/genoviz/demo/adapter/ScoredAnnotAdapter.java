@@ -11,12 +11,12 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package demo.genoviz.adapter;
+package genoviz.demo.adapter;
 
 import java.util.*;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import demo.genoviz.datamodel.ScoredAnnotationI;
+import genoviz.demo.datamodel.ScoredAnnotationI;
 
 /**
  * a data adapter that colors glyphs based on the score of an annotation

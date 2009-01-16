@@ -11,10 +11,9 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package com.affymetrix.igb.util;
+package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometry.*;
@@ -23,8 +22,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.Streamer;
 import com.affymetrix.genometryImpl.parsers.SgrParser;

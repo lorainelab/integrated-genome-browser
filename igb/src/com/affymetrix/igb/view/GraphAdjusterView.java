@@ -22,13 +22,11 @@ import java.util.*;
 import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.igb.menuitem.FileTracker;
@@ -37,8 +35,8 @@ import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphSaverFileChooser;
-import com.affymetrix.igb.util.GraphSymUtils;
 import java.text.NumberFormat;
 import java.text.ParseException;
 

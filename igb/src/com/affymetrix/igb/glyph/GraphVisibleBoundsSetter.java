@@ -27,8 +27,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import java.text.DecimalFormat;
 
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import java.text.ParseException;
 

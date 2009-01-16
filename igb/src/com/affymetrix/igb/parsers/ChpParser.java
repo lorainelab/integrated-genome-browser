@@ -33,15 +33,14 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.Application;
-//import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.das2.Das2Region;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 

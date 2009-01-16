@@ -36,11 +36,11 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
-import com.affymetrix.igb.util.*;
 import org.xml.sax.SAXException;
 
 public class LoadFileAction {

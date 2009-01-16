@@ -26,12 +26,12 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.parsers.Streamer;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 

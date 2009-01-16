@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;

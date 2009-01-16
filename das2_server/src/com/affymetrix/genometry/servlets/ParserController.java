@@ -2,11 +2,11 @@ package com.affymetrix.genometry.servlets;
 
 import java.io.*;
 import java.util.*;
-import com.affymetrix.igb.util.GraphSymUtils;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**

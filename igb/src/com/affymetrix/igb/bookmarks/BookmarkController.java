@@ -21,6 +21,7 @@ import java.io.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.genoviz.util.ErrorHandler;

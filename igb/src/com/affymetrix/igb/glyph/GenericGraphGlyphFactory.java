@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;

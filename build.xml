@@ -6,7 +6,7 @@
 <!-- projects via the common.xml.  The common.xml should also be     -->
 <!-- be able to be used on a sub-project alone.                      -->
 <!--                                                                 -->
-<project name="master" basedir=".">
+<project name="IGB" basedir=".">
 	<import file="common.xml" />
 
 	<target name="init">

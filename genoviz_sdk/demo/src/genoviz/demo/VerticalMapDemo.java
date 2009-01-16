@@ -38,7 +38,7 @@ public class VerticalMapDemo extends Applet {
     //panel2 = testMap(NeoMap.VERTICAL);
     this.setLayout(new GridLayout(1,2,10,0));
     this.add(panel1);
-    this.add(panel2);
+    //this.add(panel2);
 
   }
 

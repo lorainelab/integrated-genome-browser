@@ -22,7 +22,7 @@ import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 
 /**
- * A mouse event ocurring over a NeoWidget.
+ * A mouse event occurring over a NeoWidget.
  * (Actually anything implementing {@link NeoWidgetI}.)
  * NeoMouseEvent provides methods for querying
  * the widget coordinates and widget location of a mouse event.
@@ -42,7 +42,7 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
    * widget location, and widget x/y coords.
    * @param ome the original MouseEvent that this NeoMouseEvent is based on
    * @param source the Neo widget that generated the event
-   * @param location id of the widget location the event ocurred over, if
+   * @param location id of the widget location the event occurred over, if
    *        the widget has internal structure
    */
   public NeoMouseEvent(MouseEvent ome, Component source, int location,

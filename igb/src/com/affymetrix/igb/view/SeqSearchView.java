@@ -62,7 +62,7 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 	JButton clear_button = new JButton("Clear");
 
 	SeqMapView gviewer;
-	Vector glyphs = new Vector();
+	Vector<GlyphI> glyphs = new Vector<GlyphI>();
 	Color hitcolor = new Color(150, 150, 255);
 
 	//  public SeqSearchView(SeqMapView gviewer) {
@@ -156,30 +156,13 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 			clearAll();
 		}
 		else if (src == coordsearchTF && coordsearchTF.getText().trim().length()>0) {
-			try {
-				//strip of any non number characters
-				String stripped = coordsearchTF.getText().replaceAll("\\D", "");
-				int pos = Integer.parseInt(stripped);
-				//  if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
-				if (vseq != null && pos >= 0 && pos <= vseq.getLength()) {
-					Rectangle2D vbox = map.getViewBounds();
-					double map_start = pos - vbox.width/2;
-					map.scroll(map.X, map_start);
-					gviewer.setZoomSpotX((double) pos);
-					map.updateWidget();
-				} else {
-					Application.errorPanel("Position "+pos+" is out of bounds");
-					coordsearchTF.setText("");
-				}
-			} catch (NumberFormatException nfe) {
-				Application.errorPanel("Position "+coordsearchTF.getText()+" is not a number");
-			}
+            coordSearch(vseq, map);
 		}
 		else if (src == entryTF || src == regexTF) {
 			clearResults();
 
 			Timer tim = new Timer();
-			GlyphI seq_glyph = null;
+			
 			//    AnnotatedBioSeq vseq = gviewer.getSeq();
 			if (vseq==null || ! vseq.isComplete()) {
 				if (src == entryTF) {
@@ -194,185 +177,14 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 			if (vseq instanceof CompositeNegSeq) {
 				residue_offset = ((CompositeNegSeq)vseq).getMin();
 			}
+
 			TransformTierGlyph axis_tier = gviewer.getAxisTier();
-			//      IntList positions = new IntList(1000);
-			// find the sequence glyph on axis tier...
-			for (int i=0; i<axis_tier.getChildCount(); i++) {
-				if (axis_tier.getChild(i) instanceof AbstractResiduesGlyph) {
-					seq_glyph = axis_tier.getChild(i);
-					break;
-				}
-			}
-
+            GlyphI seq_glyph = findSeqGlyph(axis_tier);
 			if (src == entryTF) {
-				String searchstring = entryTF.getText();
-				if (searchstring.length() == 0) {
-					hitCountL.setText(" No hits");
-					return;
-				}
-				if (searchstring.length() < 3) {
-					Application.errorPanel("Must use at least three residues.");
-					hitCountL.setText(" No hits");
-					return;
-				}
-				try {
-					tim.start();
-					boolean use_nibseq = (vseq instanceof GeneralBioSeq);
-					GeneralBioSeq nibseq = null;
-					String residues = null;
-					int res_index = -1;
-					try {
-						if (use_nibseq) {
-							System.out.flush();
-							searchstring = searchstring.toUpperCase();
-							System.out.println("searching NibbleBioSeq for ocurrences of \"" +
-									searchstring + "\" in sequence");
-							nibseq = (GeneralBioSeq)vseq;
-							res_index = nibseq.indexOf(searchstring, 0);
-						}
-						else {
-							System.out.println("searching for ocurrences of \"" + searchstring + "\" in residues");
-							System.out.flush();
-							residues = vseq.getResidues();
-							res_index = residues.indexOf(searchstring, 0);
-						}
-					}
-					catch (Exception ex) {
-						Application.errorPanel("Only partial residues loaded, must have all residues for seq loaded first");
-						return;
-					}
-
-					int seq_index;
-					int length = searchstring.length();
-					int hit_count = 0;
-					while (res_index >= 0 && hit_count < MAX_HITS) {
-						//        positions.add(seq_index);
-						GlyphI gl = new FillRectGlyph();
-						seq_index = res_index + residue_offset;
-						//        System.out.println("got hit at: " + seq_index);
-						gl.setColor(hitcolor);
-						if (seq_glyph != null) {
-							gl.setCoords(seq_index, seq_glyph.getCoordBox().y, length, seq_glyph.getCoordBox().height);
-							seq_glyph.addChild(gl);
-							// when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
-							gl.setCoords(seq_index, seq_glyph.getCoordBox().y, length, seq_glyph.getCoordBox().height/2);
-						} else {
-							gl.setCoords(seq_index, 10, length, 10);
-							axis_tier.addChild(gl);
-						}
-						glyphs.add(gl);
-						hit_count++;
-
-						if (use_nibseq) {
-							res_index = nibseq.indexOf(searchstring, res_index+1);
-						}
-						else {
-							res_index = residues.indexOf(searchstring, res_index+1);
-						}
-					}
-
-					// Search for reverse complement of query string
-					//   flip searchstring around, and redo nibseq search...
-					String rev_searchstring = DNAUtils.reverseComplement(searchstring);
-					if (use_nibseq) {
-						System.out.println("searching NibbleBioSeq for ocurrences of \"" + rev_searchstring + "\" in sequence");
-						res_index = nibseq.indexOf(rev_searchstring, 0);
-					}
-					else {
-						System.out.println("searching for ocurrences of \"" + rev_searchstring + "\" in residues");
-						res_index = residues.indexOf(rev_searchstring, 0);
-					}
-
-					while (res_index >= 0 && hit_count < MAX_HITS) {
-						GlyphI gl = new FillRectGlyph();
-						seq_index = res_index + residue_offset;
-						gl.setColor(hitcolor);
-						if (seq_glyph != null) {
-							gl.setCoords(seq_index, seq_glyph.getCoordBox().y + 5, length, seq_glyph.getCoordBox().height);
-							seq_glyph.addChild(gl);
-							// when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
-							gl.setCoords(seq_index, seq_glyph.getCoordBox().y + seq_glyph.getCoordBox().height/2, length, seq_glyph.getCoordBox().height/2);
-						} else {
-							gl.setCoords(seq_index, 15, length, 10);
-							axis_tier.addChild(gl);
-						}
-						glyphs.add(gl);
-						hit_count++;
-
-						if (use_nibseq) {
-							res_index = nibseq.indexOf(rev_searchstring, res_index+1);
-						}
-						else {
-							res_index = residues.indexOf(rev_searchstring, res_index+1);
-						}
-					}
-
-					float match_time = tim.read()/1000f;
-
-					if (hit_count == MAX_HITS) {
-						hitCountL.setText(" " + hit_count + " or more hits");
-					} else {
-						hitCountL.setText(" " + hit_count + " hits");
-					}
-					System.out.println("time to run search: " + match_time);
-				} catch (Exception e) {
-					Application.errorPanel("Exception", e);
-				}
-				map.updateWidget();
+                entryTF(tim, vseq, residue_offset, seq_glyph, axis_tier, map);
 			}
 			else if (src == regexTF) {
-				if (regexTF.getText().length() == 0) {
-					regexHitCountL.setText(" No hits");
-					return;
-				}
-				regexHitCountL.setText(" Working...");
-				tim.start();
-				String residues = vseq.getResidues();
-				try {
-					int hit_count = 0;
-					int res_index = 0;
-					String str = regexTF.getText();
-					if (str.length() < 3) {
-						Application.errorPanel("Regular expression must contain at least 3 characters");
-						return;
-					}
-					// It is possible to add the flag Pattern.CASE_INSENSITIVE, but that
-					// makes the search slower.  Better to let the user decide whether
-					// to add the "(?i)" flag for themselves
-					Pattern regex = Pattern.compile(str);
-					Matcher matcher = regex.matcher(residues);
-					while (matcher.find()) {
-						int start = matcher.start(0) + residue_offset;
-						int end = matcher.end(0) + residue_offset;
-						GlyphI gl = new FillRectGlyph();
-						gl.setColor(hitcolor);
-						if (seq_glyph != null) {
-							gl.setCoords(start, seq_glyph.getCoordBox().y, end-start, seq_glyph.getCoordBox().height);
-							seq_glyph.addChild(gl);
-						}
-						else {
-							gl.setCoords(start, 10, end-start, 10);
-							axis_tier.addChild(gl);
-						}
-						glyphs.add(gl);
-						hit_count++;
-					}
-					// WARNING -- need to also search for reverse complement of query string
-					//   NOT YET IMPLEMENTED
-					// reverse complement query string and search against residues
-					// can't just reverse-complement regular expression -- would be a complicated
-					//   process...
-					float match_time = tim.read()/1000f;
-					System.out.println("time to run search: " + match_time);
-					regexHitCountL.setText(" " + hit_count + " hits");
-					map.updateWidget();
-				}
-				catch (PatternSyntaxException pse) {
-					Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
-				}
-				catch (Exception ex) {
-					Application.errorPanel("Problem with regular expression...", ex);
-				}
+                regexTF(tim, vseq, residue_offset, seq_glyph, axis_tier, map);
 			}
 		}
 		else if (src == idsearchTF) {
@@ -386,13 +198,203 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 
 	}
 
-	public void findSym(String id)  {
+    private final void coordSearch(BioSeq vseq, NeoMap map) {
+        try {
+            //strip of any non number characters
+            String stripped = coordsearchTF.getText().replaceAll("\\D", "");
+            int pos = Integer.parseInt(stripped);
+            //  if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
+            if (vseq != null && pos >= 0 && pos <= vseq.getLength()) {
+                Rectangle2D vbox = map.getViewBounds();
+                double map_start = pos - vbox.width / 2;
+                map.scroll(NeoMap.X, map_start);
+                gviewer.setZoomSpotX((double) pos);
+                map.updateWidget();
+            } else {
+                Application.errorPanel("Position " + pos + " is out of bounds");
+                coordsearchTF.setText("");
+            }
+        } catch (NumberFormatException nfe) {
+            Application.errorPanel("Position " + coordsearchTF.getText() + " is not a number");
+        }
+    }
+
+    private final void entryTF(Timer tim, BioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
+        String searchstring = entryTF.getText();
+        if (searchstring.length() == 0) {
+            hitCountL.setText(" No hits");
+            return;
+        }
+        if (searchstring.length() < 3) {
+            Application.errorPanel("Must use at least three residues.");
+            hitCountL.setText(" No hits");
+            return;
+        }
+        try {
+            tim.start();
+            boolean use_nibseq = vseq instanceof GeneralBioSeq;
+            GeneralBioSeq nibseq = null;
+            String residues = null;
+            int res_index = -1;
+            try {
+                if (use_nibseq) {
+                    System.out.flush();
+                    searchstring = searchstring.toUpperCase();
+                    System.out.println("searching NibbleBioSeq for occurrences of \"" + searchstring + "\" in sequence");
+                    nibseq = (GeneralBioSeq) vseq;
+                    res_index = nibseq.indexOf(searchstring, 0);
+                } else {
+                    System.out.println("searching for occurrences of \"" + searchstring + "\" in residues");
+                    System.out.flush();
+                    residues = vseq.getResidues();
+                    res_index = residues.indexOf(searchstring, 0);
+                }
+            } catch (Exception ex) {
+                Application.errorPanel("Only partial residues loaded, must have all residues for seq loaded first");
+                return;
+            }
+            int seq_index;
+            int length = searchstring.length();
+            int hit_count = 0;
+            while (res_index >= 0 && hit_count < MAX_HITS) {
+                //        positions.add(seq_index);
+                GlyphI gl = new FillRectGlyph();
+                seq_index = res_index + residue_offset;
+                //        System.out.println("got hit at: " + seq_index);
+                gl.setColor(hitcolor);
+                if (seq_glyph != null) {
+                    gl.setCoords(seq_index, seq_glyph.getCoordBox().y, length, seq_glyph.getCoordBox().height);
+                    seq_glyph.addChild(gl);
+                    // when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
+                    gl.setCoords(seq_index, seq_glyph.getCoordBox().y, length, seq_glyph.getCoordBox().height / 2);
+                } else {
+                    gl.setCoords(seq_index, 10, length, 10);
+                    axis_tier.addChild(gl);
+                }
+                glyphs.add(gl);
+                hit_count++;
+                if (use_nibseq) {
+                    res_index = nibseq.indexOf(searchstring, res_index + 1);
+                } else {
+                    res_index = residues.indexOf(searchstring, res_index + 1);
+                }
+            }
+            // Search for reverse complement of query string
+            //   flip searchstring around, and redo nibseq search...
+            String rev_searchstring = DNAUtils.reverseComplement(searchstring);
+            if (use_nibseq) {
+                System.out.println("searching NibbleBioSeq for occurrences of \"" + rev_searchstring + "\" in sequence");
+                res_index = nibseq.indexOf(rev_searchstring, 0);
+            } else {
+                System.out.println("searching for occurrences of \"" + rev_searchstring + "\" in residues");
+                res_index = residues.indexOf(rev_searchstring, 0);
+            }
+            while (res_index >= 0 && hit_count < MAX_HITS) {
+                GlyphI gl = new FillRectGlyph();
+                seq_index = res_index + residue_offset;
+                gl.setColor(hitcolor);
+                if (seq_glyph != null) {
+                    gl.setCoords(seq_index, seq_glyph.getCoordBox().y + 5, length, seq_glyph.getCoordBox().height);
+                    seq_glyph.addChild(gl);
+                    // when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
+                    gl.setCoords(seq_index, seq_glyph.getCoordBox().y + seq_glyph.getCoordBox().height / 2, length, seq_glyph.getCoordBox().height / 2);
+                } else {
+                    gl.setCoords(seq_index, 15, length, 10);
+                    axis_tier.addChild(gl);
+                }
+                glyphs.add(gl);
+                hit_count++;
+                if (use_nibseq) {
+                    res_index = nibseq.indexOf(rev_searchstring, res_index + 1);
+                } else {
+                    res_index = residues.indexOf(rev_searchstring, res_index + 1);
+                }
+            }
+            float match_time = tim.read() / 1000f;
+            if (hit_count == MAX_HITS) {
+                hitCountL.setText(" " + hit_count + " or more hits");
+            } else {
+                hitCountL.setText(" " + hit_count + " hits");
+            }
+            System.out.println("time to run search: " + match_time);
+        } catch (Exception e) {
+            Application.errorPanel("Exception", e);
+        }
+        map.updateWidget();
+    }
+
+    private static final GlyphI findSeqGlyph(TransformTierGlyph axis_tier) {
+        //      IntList positions = new IntList(1000);
+        // find the sequence glyph on axis tier...
+        GlyphI seq_glyph = null;
+        for (int i = 0; i < axis_tier.getChildCount(); i++) {
+            if (axis_tier.getChild(i) instanceof AbstractResiduesGlyph) {
+                seq_glyph = axis_tier.getChild(i);
+                break;
+            }
+        }
+        return seq_glyph;
+    }
+
+    private final void regexTF(Timer tim, BioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
+        if (regexTF.getText().length() == 0) {
+            regexHitCountL.setText(" No hits");
+            return;
+        }
+        regexHitCountL.setText(" Working...");
+        tim.start();
+        String residues = vseq.getResidues();
+        try {
+            int hit_count = 0;
+            int res_index = 0;
+            String str = regexTF.getText();
+            if (str.length() < 3) {
+                Application.errorPanel("Regular expression must contain at least 3 characters");
+                return;
+            }
+            // It is possible to add the flag Pattern.CASE_INSENSITIVE, but that
+            // makes the search slower.  Better to let the user decide whether
+            // to add the "(?i)" flag for themselves
+            Pattern regex = Pattern.compile(str);
+            Matcher matcher = regex.matcher(residues);
+            while (matcher.find()) {
+                int start = matcher.start(0) + residue_offset;
+                int end = matcher.end(0) + residue_offset;
+                GlyphI gl = new FillRectGlyph();
+                gl.setColor(hitcolor);
+                if (seq_glyph != null) {
+                    gl.setCoords(start, seq_glyph.getCoordBox().y, end - start, seq_glyph.getCoordBox().height);
+                    seq_glyph.addChild(gl);
+                } else {
+                    gl.setCoords(start, 10, end - start, 10);
+                    axis_tier.addChild(gl);
+                }
+                glyphs.add(gl);
+                hit_count++;
+            }
+            // WARNING -- need to also search for reverse complement of query string
+            //   NOT YET IMPLEMENTED
+            // reverse complement query string and search against residues
+            // can't just reverse-complement regular expression -- would be a complicated
+            //   process...
+            float match_time = tim.read() / 1000f;
+            System.out.println("time to run search: " + match_time);
+            regexHitCountL.setText(" " + hit_count + " hits");
+            map.updateWidget();
+        } catch (PatternSyntaxException pse) {
+            Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+        } catch (Exception ex) {
+            Application.errorPanel("Problem with regular expression...", ex);
+        }
+    }
+
+	private final void findSym(String id)  {
 		if (id == null) { return; }
 		//System.out.println("looking for id: " + id);
 		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
-		List sym_list = group.findSyms(id);
+		List<SeqSymmetry> sym_list = group.findSyms(id);
 
 		if (sym_list != null && ! sym_list.isEmpty()) {
 			idHitCountL.setText(sym_list.size() + " matches found");
@@ -402,5 +404,6 @@ public class SeqSearchView extends JComponent implements ActionListener  {
 			idHitCountL.setText(" no matches");
 		}
 	}
-}
+
+  }
 

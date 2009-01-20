@@ -236,7 +236,7 @@ public class RestrictionControlView extends JComponent
       }
     }
 
-    System.out.println("searching for ocurrences of \"" + site + "\" in sequence");
+    System.out.println("searching for occurrences of \"" + site + "\" in sequence");
     int res_index;
     if (use_nibseq)  { res_index = nibseq.indexOf(site, 0); }
     else  { res_index = residues.indexOf(site, 0); }

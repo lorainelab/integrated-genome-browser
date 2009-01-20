@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package tutorial.genoviz;
+package genoviz.tutorial;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.parser.*;
@@ -22,24 +22,21 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.*;
 
-public class SimpleMap6 extends Applet {
+public class SimpleMap5 extends Applet {
 
-
-  protected MapHandler parser;
+  protected NarcissusParser parser;
   protected NeoPanel pan;
 
   public void init() {
-
-    parser = new MapHandler();
-
-    this.setLayout( new BorderLayout() );
+    parser = new NarcissusParser();
+    this.setLayout(new BorderLayout());
     pan = new NeoPanel();
-    pan.setLayout( new BorderLayout() );
-    add( "Center", pan );
+    pan.setLayout(new BorderLayout());
+    add("Center", pan);
     String param;
     param = getParameter( "config" );
-    if ( null != param ) {
-      parseInputString( param );
+    if (null != param) {
+      parseInputString(param);
     }
   }
 
@@ -48,15 +45,15 @@ public class SimpleMap6 extends Applet {
     this.pan.removeAll();
     this.pan.invalidate();
     try {
-      NeoWidgetI widget =
-        (NeoWidgetI) parser.importContent( new StringReader( theString ) );
+      NeoWidgetI widget = (NeoWidgetI) parser.importContent
+        (new StringReader(theString));
       this.pan.add( "Center", (Component) widget );
       this.pan.validate();
       widget.updateWidget();
     }
-    catch ( IOException e ) {
-      System.err.println( "Couldn't parse the string." );
-      System.err.println( "  " + e.getMessage() );
+    catch (IOException e) {
+      System.err.println("Couldn't parse the string.");
+      System.err.println("  " + e.getMessage());
     }
   }
 

@@ -20,7 +20,6 @@
 		<!-- directory paths -->
 		<property name="lib.dir"      value="${basedir}/ext" />
 		<property name="demos.dir"    value="${genoviz}/demo" />
-		<property name="tutorial.dir" value="${genoviz}/tutorial" />
 		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genometry}/src:${genometryImpl}/src:${igb}/src:${das2server}/src" />
@@ -33,10 +32,8 @@
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
 		<my.javac srcdir="${demos.dir}/src" destdir="${demos.dir}" classpath="${genoviz}/build" />
-		<my.javac srcdir="${tutorial.dir}"                         classpath="${genoviz}/build" />
 
 		<copy file="${dist.dir}/genoviz.jar" todir="${demos.dir}" />
-		<copy file="${dist.dir}/genoviz.jar" todir="${genoviz}" />
 	</target>
 
 	<target name="compile-tests" depends="common-init">
@@ -104,12 +101,6 @@
 		<delete dir="${webstart.dir}" />
 		<delete dir="${webapp.dir}" />
 		<delete dir="${demos.dir}/genoviz" />
-
-		<delete>
-			<fileset dir="${tutorial.dir}">
-				<include name="**/*.class" />
-			</fileset>
-		</delete>
 
 		<iterate target="clean" />
 	</target>

@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package tutorial.genoviz;
+package genoviz.tutorial;
 
 import com.affymetrix.genoviz.datamodel.Sequence;
 import com.affymetrix.genoviz.parser.ContentParser;

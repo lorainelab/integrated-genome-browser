@@ -16,7 +16,7 @@
 for the SimpleMap demo program.  This time we will use an
 xml parser.
 The new parser,
-<a href="../tutorial/genoviz/MapHandler.java"
+<a href="../demo/src/genoviz/tutorial/MapHandler.java"
 >MapHandler</a>, now extends the HandlerBase object
 from the org.xml.sax package.  To better integrate it into 
 the demo, it also implements the ContentParser interface.
@@ -24,7 +24,7 @@ Note that MapHandler depends on the SAX parser in Java 1.4.
 It can be easily changed to use other SAX parsers.
 
 <p> Once more... the rest of
-<a href="../tutorial/genoviz/SimpleMap6.java"
+<a href="../demo/src/genoviz/tutorial/SimpleMap6.java"
 >SimpleMap</a> is trivial.  In fact, because we have 
 implemented the ContentParser interface for our parser,
 the only line that has changed is for the creation of the 
@@ -53,9 +53,9 @@ ContentParser object from NarcissusParser to MapHandler.
 
 <div class="applet">
 <applet
-  codebase=".."
+  codebase="../demo"
   archive="genoviz.jar"
-  code="tutorial.genoviz.SimpleMap6"
+  code="genoviz.tutorial.SimpleMap6"
   height="150"
   width="570"
 >

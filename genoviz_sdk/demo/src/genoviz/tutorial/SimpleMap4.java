@@ -11,16 +11,11 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package tutorial.genoviz;
+package genoviz.tutorial;
 
-import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.datamodel.Range;
-import com.affymetrix.genoviz.widget.NeoSeq;
-import com.affymetrix.genoviz.widget.NeoSeqI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 
-import java.awt.Component;
-import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
@@ -28,18 +23,11 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.util.Hashtable;
-
 import java.util.Vector;
 
-public class SequenceMap0 extends SimpleMap4 {
+public class SimpleMap4 extends SimpleMap3 {
 
-  protected NeoSeqI seq = new NeoSeq();
-  protected Frame seqFrame = null;
-  protected NeoPanel pan = new NeoPanel();
-
-  public String getAppletInfo() {
-    return "Simple Sequence Map - genoviz Software, Inc.";
-  }
+  protected Hashtable featureTypes = new Hashtable();
 
   protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
     throws IOException
@@ -68,20 +56,8 @@ public class SequenceMap0 extends SimpleMap4 {
       else if (keyword.equalsIgnoreCase("FeatureType")) {
         parseFeatureType(theTokens);
       }
-      else if (keyword.equalsIgnoreCase("Sequence")) {
-        String s = parseSequence(theTokens);
-        seq.setResidues(s);
-        if (null == seqFrame) {
-          seqFrame = new Frame("sequence");
-          pan.setLayout(new BorderLayout());
-          pan.add("Center", (Component)seq);
-          seqFrame.add("Center", pan);
-          seqFrame.setSize(300, 200);
-          seqFrame.show();
-        }
-      }
       else {
-        MapGlyphFactory fac = (MapGlyphFactory)this.featureTypes.get(keyword);
+        MapGlyphFactory fac = (MapGlyphFactory)featureTypes.get(keyword);
         if (null == fac) { // not a keyword.
           System.err.println("\"" + keyword + "\" is not a keyword.");
           return;
@@ -89,40 +65,39 @@ public class SequenceMap0 extends SimpleMap4 {
         else { // a feature type
           int[] r = null;
           r = parseDirectedRange(theTokens);
-          this.map.addItem(fac, r[0], r[1]);
+          Object item = this.map.addItem(fac, r[0], r[1]);
+          parseLabel(theTokens, item);
         }
       }
     }
   }
 
-  public void start() {
-    super.start();
-    if (null != seqFrame) {
-      seqFrame.show();
-    }
-  }
-  public void stop() {
-    super.stop();
-    if (null != seqFrame) {
-      seqFrame.setVisible(false);
-    }
-  }
-
-  protected String parseSequence(StreamTokenizer theTokens)
+  protected void parseFeatureType(StreamTokenizer theTokens)
     throws IOException
   {
-    int token;
-    theTokens.eolIsSignificant(false);
-    StringBuffer sb = new StringBuffer("");
-    while (StreamTokenizer.TT_WORD == (token = theTokens.nextToken()))
-    {
-      sb.append(theTokens.sval);
+    int token = theTokens.nextToken();
+    switch (token) {
+    case StreamTokenizer.TT_WORD:
+      String name = new String(theTokens.sval);
+      token = theTokens.nextToken();
+      switch (token) {
+      case '"':
+      case StreamTokenizer.TT_WORD:
+        String config = new String(theTokens.sval);
+        MapGlyphFactory f = this.map.addFactory(config);
+        featureTypes.put(name, f);
+        break;
+      default:
+        theTokens.pushBack();
+      }
+      break;
+    default:
+      theTokens.pushBack();
     }
-    return sb.toString();
   }
 
   public static void main (String argv[]) {
-    SimpleMap0 me = new SequenceMap0();
+    SimpleMap0 me = new SimpleMap4();
     Frame f = new Frame("GenoViz");
     f.add("Center", me);
     me.addFileMenuItems(f);
@@ -138,7 +113,7 @@ public class SequenceMap0 extends SimpleMap4 {
     } );
 
     f.pack();
-    f.setBounds( 20, 40, 300, 250 );
+    f.setBounds(20, 40, 400, 500);
     f.show();
   }
 

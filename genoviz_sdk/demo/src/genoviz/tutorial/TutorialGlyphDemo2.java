@@ -11,7 +11,7 @@
 *   http://www.opensource.org/licenses/cpl.php
 */
 
-package tutorial.genoviz;
+package genoviz.tutorial;
 
 import java.applet.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
-public class TutorialGlyphDemo extends Applet {
+public class TutorialGlyphDemo2 extends Applet {
 
   public void init() {
     NeoMap map = new NeoMap(true, false);
@@ -29,13 +29,13 @@ public class TutorialGlyphDemo extends Applet {
     map.addAxis(30);
     GlyphI tglyph;
 
-    tglyph = new RoundedRect();
-    tglyph.setCoords(5000, 50, 1000, 30);
-    tglyph.setColor(Color.green);
+    tglyph = new ScaleText();
+    tglyph.setCoords(5000, 50, 1500, 15);
+    tglyph.setColor(Color.orange);
     map.addItem(tglyph);
 
-    tglyph = new RoundedRect();
-    tglyph.setCoords(3000, 80, 1000, 15);
+    tglyph = new ScaleText();
+    tglyph.setCoords(3000, 70, 1000, 15);
     tglyph.setColor(Color.blue);
     map.addItem(tglyph);
 

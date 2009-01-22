@@ -7,43 +7,43 @@
 
 package com.affymetrix.igb.das2;
 
-import junit.framework.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
  *
  * @author boconnor
  */
-public class Das2ServerInfoTest extends TestCase {
-    
+public class Das2ServerInfoTest {
     ArrayList serverInfos;
     
-    public Das2ServerInfoTest(String testName) {
-        super(testName);
+    public Das2ServerInfoTest() {
     }
 
-    protected void setUp() throws Exception {
-      //String[] test_urls = {"http://das.biopackages.net/das/genome", "http://205.217.46.81:9091/das2/genome/sequence"};
+    @Before
+    public void setUp() throws URISyntaxException {
 			String[] test_urls = { "http://netaffxdas.affymetrix.com/das2/genome" };
       serverInfos = new ArrayList();
-      for (int i=0; i<test_urls.length; i++) {
-        serverInfos.add(new Das2ServerInfo(test_urls[i], "DAS2 Server", true));
+      for (String url : test_urls) {
+        serverInfos.add(new Das2ServerInfo(url, "DAS2 Server", true));
       }
     }
 
-    protected void tearDown() throws Exception {
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(Das2ServerInfoTest.class);
-        
-        return suite;
+    @After
+    public void tearDown() {
     }
 
     /**
      * Test of getSources method, of class com.affymetrix.igb.das2.Das2ServerInfo.
      */
+    @Test
     public void testGetSources() {
+        fail("test needs to be re-implemented so it does not use the network");
       Iterator it = serverInfos.iterator();
       while (it.hasNext()) {
         Das2ServerInfo serverInfo = (Das2ServerInfo)it.next();

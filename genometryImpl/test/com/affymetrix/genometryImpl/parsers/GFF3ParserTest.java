@@ -6,38 +6,38 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GFF3Sym;
-import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
 /**
  * Tests of class {@link com.affymetrix.igb.parsers.GFF3Parser}.
  */
-public class GFF3ParserTest extends TestCase {
+public class GFF3ParserTest {
   
-  public GFF3ParserTest(String testName) {
-    super(testName);
+  public GFF3ParserTest() {
   }
 
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() {
   }
 
-  protected void tearDown() throws Exception {
-  }
-
-  public static Test suite() {
-    TestSuite suite = new TestSuite(GFF3ParserTest.class);
-    
-    return suite;
+  @After
+  public void tearDown() {
   }
 
   /**
    * Test of parse method using a canonical example.
    */
+  @Test
   public void testParseCanonical() throws Exception {
     System.out.println("parse");
     
@@ -92,6 +92,7 @@ public class GFF3ParserTest extends TestCase {
     istr.close();
   }
 
+  @Test
   public void testParseErrors() throws IOException {
     System.out.println("parse");
     
@@ -119,6 +120,7 @@ public class GFF3ParserTest extends TestCase {
   /**
    * Test of processDirective method, of class com.affymetrix.igb.parsers.GFF3Parser.
    */
+  @Test
   public void testProcessDirective() throws Exception {
     System.out.println("processDirective");
     

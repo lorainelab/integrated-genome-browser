@@ -1,35 +1,30 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometryImpl.util.NibbleIterator;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import junit.framework.*;
-import java.io.*;
-import java.util.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class NibbleBioSeqTest extends TestCase {
-  
+import com.affymetrix.genometryImpl.util.NibbleIterator;
+
+public class NibbleBioSeqTest {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   
-  public NibbleBioSeqTest(String testName) {
-    super(testName);
+  public NibbleBioSeqTest() {
   }
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() {
   }
 
-  @Override
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(NibbleBioSeqTest.class);
-    
-    return suite;
-  }
-
-  // Verify that, if you read in a nibble string, and then write it out, it's the same.
+  /**
+   * Verify that, if you read in a nibble string, and then write it out, it's the same.
+   */
+  @Test
   public void testStringToNibblesAndBack() {
     String test_string = "ACTGAAACCCTTTGGGNNNATATGCGC";
     

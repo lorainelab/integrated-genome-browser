@@ -1,25 +1,21 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import junit.framework.*;
 import java.io.*;
 import java.util.List;
 
 
-public class FastaParserTest extends TestCase {
+public class FastaParserTest {
   
-  public FastaParserTest(String testName) {
-    super(testName);
+  public FastaParserTest() {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(FastaParserTest.class);
-    
-    return suite;
-  }
-  
+  @Test
   public void testGenerateNewHeader() throws Exception {
       String chrom_name = "chrC";
       String genome_name = "A_thaliana_TAIR8";
@@ -47,7 +43,7 @@ public class FastaParserTest extends TestCase {
       }
   }
   
-  
+  @Test
   public void testParseAll() throws Exception {
     String filename_1 = "test/data/fasta/FASTA_chrQ.fasta";
     assertTrue(new File(filename_1).exists());
@@ -87,6 +83,7 @@ public class FastaParserTest extends TestCase {
     assertEquals("SATV", seq.getResidues(0,4));
   }
 
+  @Test
   public void testParse() throws Exception {
     String filename = "test/data/fasta/FASTA_chrQ.fasta";
     assertTrue(new File(filename).exists());
@@ -104,6 +101,7 @@ public class FastaParserTest extends TestCase {
   }
   
   
+  @Test
   public void testReadFASTA() throws Exception {
       String filename = "test/data/fasta/FASTA_obey_70.fasta";
       assertTrue(new File(filename).exists());
@@ -135,6 +133,7 @@ public class FastaParserTest extends TestCase {
   }
   
 
+  @Test
   public void testReadBadFASTA_1() throws Exception {
       String filename = "test/data/fasta/FASTA_not_obey_70.fasta";
       assertTrue(new File(filename).exists());
@@ -151,6 +150,7 @@ public class FastaParserTest extends TestCase {
       fail("Should throw an IllegalArgumentException");     
   }
   
+  @Test
   public void testReadBadFASTA_2() throws Exception {
       String filename = "test/data/fasta/FASTA_not_obey_70.fasta";
       assertTrue(new File(filename).exists());
@@ -167,7 +167,8 @@ public class FastaParserTest extends TestCase {
       }
       fail("Should throw an UnsupportedEncodingException");     
   }
-  
+
+  @Test
   public void testSkipFastaHeader() throws Exception {
      String filename = "test/data/fasta/chrC.fasta";
      DataInputStream dis = new DataInputStream(new FileInputStream(filename));
@@ -182,8 +183,11 @@ public class FastaParserTest extends TestCase {
   }
   
   
-  // Test of a certain case I saw when running a query.
-  // This was due to Java not implementing a proper skip() method.
+  /**
+   * Test of a certain case I saw when running a query.
+   * This was due to Java not implementing a proper skip() method.
+   */
+  @Test
   public void testChrCfailure() throws Exception {
       String filename = "test/data/fasta/chrC.fasta";
       int start=8020,end=8021;
@@ -195,7 +199,8 @@ public class FastaParserTest extends TestCase {
           System.out.print((char)fasta[i]);
       System.out.println();
   }
-  
+
+  @Test
   public void testChrCfailure2() throws Exception {
       String filename = "test/data/fasta/chrC.fasta";
       int start=200000,end=200001;
@@ -209,7 +214,11 @@ public class FastaParserTest extends TestCase {
       System.out.println();
 
   }
-  // Test of a certain case I saw when running a query.
+
+  /**
+   * Test of a certain case I saw when running a query.
+   */
+  @Test
   public void testChrC_OK() throws Exception {
       String filename = "test/data/fasta/chrC.fasta";
       

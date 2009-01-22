@@ -7,26 +7,25 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import junit.framework.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class TrackLineParserTest extends TestCase {
+public class TrackLineParserTest {
 
-  public TrackLineParserTest(String testName) {
-    super(testName);
+  public TrackLineParserTest() {
   }
 
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() {
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(TrackLineParserTest.class);
-
-    return suite;
-  }
-
+  @Test
   public void testSetTrackProperties() {
     String str = "track foo=bar this=\"that\" color=123,100,10 useScore=1 ignore= ignore2 nothing=\"\" url=\"http://www.foo.bar?x=y&this=$$\"";
     TrackLineParser tlp = new TrackLineParser();

@@ -663,7 +663,7 @@ public class BedParser implements AnnotationWriter, StreamingParser, ParserListe
     return success;
   }
 
-  /** Returns "text/plain". */
+  /** Returns "text/bed". */
   public String getMimeType() { return "text/bed"; }
 
 }

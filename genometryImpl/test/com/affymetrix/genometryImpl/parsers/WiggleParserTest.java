@@ -7,13 +7,15 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.style.GraphStateI;
-import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
@@ -21,18 +23,12 @@ import java.util.*;
  *
  * @author Ed Erwin
  */
-public class WiggleParserTest extends TestCase {
+public class WiggleParserTest {
   
-  public WiggleParserTest(String testName) {
-    super(testName);
+  public WiggleParserTest() {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(WiggleParserTest.class);
-    
-    return suite;
-  }
-
+  @Test
   public void testParse() throws Exception {
     String filename = "test/data/wiggle/wiggleExample.wig";
     assertTrue(new File(filename).exists());
@@ -84,6 +80,8 @@ public class WiggleParserTest extends TestCase {
     
   }
   
+  @Test
   public void testWriteGraphs() {
+      fail("test not implemented");
   }
 }

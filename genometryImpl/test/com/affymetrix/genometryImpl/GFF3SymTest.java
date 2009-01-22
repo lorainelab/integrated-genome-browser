@@ -4,56 +4,72 @@
  *
  * Created on August 24, 2006, 10:28 AM
  */
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.GFF3Sym;
-import junit.framework.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
-public class GFF3SymTest extends TestCase {
+public class GFF3SymTest {
   
-  public GFF3SymTest(String testName) {
-    super(testName);
+  public GFF3SymTest() {
   }
 
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() {
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(GFF3SymTest.class);
-    
-    return suite;
-  }
-
+  @Test
   public void testGetSource() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetFeatureType() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetScore() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetFrame() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetAttributes() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetProperty() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testSetProperty() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetProperties() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testCloneProperties() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetIdFromGFF3Attributes() {
     assertEquals("test1", GFF3Sym.getIdFromGFF3Attributes("test1;test2=foo;ID=test1"));
     assertEquals("test2", GFF3Sym.getIdFromGFF3Attributes("ID=test2"));
@@ -67,13 +83,13 @@ public class GFF3SymTest extends TestCase {
     assertEquals("NC_000964.2:yaaA:unknown_transcript_1", GFF3Sym.getIdFromGFF3Attributes(example)); 
   }
 
+  @Test
   public void testAddAllAttributesFromGFF3() {
+      fail("test not implemented");
   }
 
+  @Test
   public void testGetGFF3PropertyFromAttributes() {
+      fail("test not implemented");
   }
-
-  public void testMain() {
-  }
-  
 }

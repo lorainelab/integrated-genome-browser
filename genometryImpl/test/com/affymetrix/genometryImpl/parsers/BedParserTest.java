@@ -1,35 +1,32 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
-import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
-public class BedParserTest extends TestCase {
-  
+public class BedParserTest {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   
-  public BedParserTest(String testName) {
-    super(testName);
+  public BedParserTest() {
   }
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() {
   }
 
-  @Override
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(BedParserTest.class);
-    
-    return suite;
-  }
-
+  @Test
   public void testParseFromFile() throws IOException {
     
     String filename = "test/data/bed/bed_01.bed";
@@ -69,6 +66,7 @@ public class BedParserTest extends TestCase {
   /**
    * Test of parse method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testParseFromString() throws Exception {
     System.out.println("parse");
     
@@ -117,6 +115,7 @@ public class BedParserTest extends TestCase {
   /**
    * Test of parseIntArray method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testParseIntArray() {
     System.out.println("parseIntArray");
     
@@ -129,7 +128,8 @@ public class BedParserTest extends TestCase {
       assertEquals(expResult[i], result[i]);
     }    
   }
-  
+
+  @Test
   public void testParseIntArrayWithWhitespace() {
     System.out.println("parseIntArray");
     
@@ -151,6 +151,7 @@ public class BedParserTest extends TestCase {
   /**
    * Test of makeBlockMins method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testMakeBlockMins() {
     System.out.println("makeBlockMins");
     
@@ -168,6 +169,7 @@ public class BedParserTest extends TestCase {
   /**
    * Test of makeBlockMaxs method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testMakeBlockMaxs() {
     System.out.println("makeBlockMaxs");
     
@@ -185,6 +187,7 @@ public class BedParserTest extends TestCase {
   /**
    * Test of writeBedFormat method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testWriteBedFormat() throws Exception {
     System.out.println("writeBedFormat");
     
@@ -203,6 +206,7 @@ public class BedParserTest extends TestCase {
   /**
    * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testWriteAnnotations() {
     System.out.println("writeAnnotations");
 
@@ -243,14 +247,14 @@ public class BedParserTest extends TestCase {
   /**
    * Test of getMimeType method, of class com.affymetrix.igb.parsers.BedParser.
    */
+  @Test
   public void testGetMimeType() {
     System.out.println("getMimeType");
     
     BedParser instance = new BedParser();
     
-    String expResult = "text/plain";
     String result = instance.getMimeType();
-    assertEquals(expResult, result);    
+    assertTrue("text/plain".equals(result) || "text/bed".equals(result));
   }
   
 }

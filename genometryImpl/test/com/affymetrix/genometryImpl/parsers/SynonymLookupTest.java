@@ -1,30 +1,27 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import java.util.*;
-import junit.framework.*;
 
 /**
  * A class to test the SynonymLookup class.
  * Specifially tests the effect of setting the flags "case_sensitive" and "strip_random".
  *
  */
+public class SynonymLookupTest {
+    static SynonymLookup sl;
 
-public class SynonymLookupTest extends TestCase {
 
-  public SynonymLookupTest( String theName ) {
-    super( theName );
+  public SynonymLookupTest() {
   }
-    
-  public static Test suite() {
-    TestSuite suite = new TestSuite(SynonymLookupTest.class);
-    
-    return suite;
-  }
-  
-  static SynonymLookup sl;
-  
-  public void setUp() throws Exception {
+
+
+  @Before
+  public void setUp() {
     sl = new SynonymLookup();
     
     
@@ -39,8 +36,6 @@ public class SynonymLookupTest extends TestCase {
     sl.addSynonyms(new String[] {"chrM", "M", "chrMT", "mitochondria", "mitochondrion"});
     sl.addSynonyms(new String[] {"R_norvegicus_Jan_2003", "Rat_Jan_2003", "Rat jan2003", "rn2", "rn:Jan_2003", "Rn:Jan_2003"});
     sl.addSynonyms(new String[] {"H_sapiens_May_2004", "Human_May_2004", "hs.NCBIv35", "hg17", "human_ncbi35", "ncbi.v35", "hs:May_2004", "Hs:May_2004", "hs:NCBIv35", "Hs:NCBIv35", "ensembl1834", "chado/chado-Hsa-17", "human/17", "Hs;NCBIv35", "Hs:NCBI35"});
-    
-    super.setUp();
   }
    
   
@@ -78,7 +73,8 @@ public class SynonymLookupTest extends TestCase {
   }
   
   /** Run some tests with case-sensitive set to true. */
-  public static void testCaseSensitive() {
+  @Test
+  public void testCaseSensitive() {
     sl.setCaseSensitive(true);
     helper1(sl);
 
@@ -94,7 +90,8 @@ public class SynonymLookupTest extends TestCase {
   }
   
   /** Run some tests with case-sensitive set to false. */
-  public static void testCaseInsensitive() {
+  @Test
+  public void testCaseInsensitive() {
     sl.setCaseSensitive(false);
     helper1(sl);
 
@@ -123,7 +120,8 @@ public class SynonymLookupTest extends TestCase {
   }
   
   /** Tests what happens when SynonymLookup.stripRandom is set to true.  */
-  public static void testStripRandom() {
+  @Test
+  public void testStripRandom() {
     sl.stripRandom = true;
     helper1(sl);
     

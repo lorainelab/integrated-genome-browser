@@ -7,34 +7,35 @@
 
 package com.affymetrix.genometry.util;
 
-import junit.framework.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 
-public class SeqUtilsTest extends TestCase {
+
+public class SeqUtilsTest {
   AnnotatedBioSeq seqA;
   AnnotatedBioSeq seqB;
   
-  public SeqUtilsTest(String testName) {
-    super(testName);
+  public SeqUtilsTest() {
   }
-  
-  protected void setUp() throws Exception {
+
+  @Before
+  public void setUp() throws Exception {
     seqA = new SimpleAnnotatedBioSeq("Seq A", 1000000);
     seqB = new SimpleAnnotatedBioSeq("Seq B", 1000000);
   }
-  
-  protected void tearDown() throws Exception {
+
+  @After
+  public void tearDown() throws Exception {
   }
-  
-  public static Test suite() {
-    TestSuite suite = new TestSuite(SeqUtilsTest.class);
-    
-    return suite;
-  }
-  
+
+  @Test
   public void testUnion() {
     System.out.println("union");
 
@@ -190,6 +191,7 @@ public class SeqUtilsTest extends TestCase {
   /**
    * Test of transformSymmetry method, of class com.affymetrix.genometry.util.SeqUtils.
    */
+  @Test
   public void testTransformSymmetry() {
     System.out.println("transformSymmetry");
     AnnotatedBioSeq annot_seq = new SimpleAnnotatedBioSeq("annot", 1000000);

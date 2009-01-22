@@ -1,31 +1,30 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.UcscGffSym;
-import junit.framework.*;
 import java.io.*;
 import java.util.*;
 
-public class GFFParserTest extends TestCase {
+public class GFFParserTest {
   
-  public GFFParserTest(String testName) {
-    super(testName);
+  public GFFParserTest() {
   }
 
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
   }
 
-  public static Test suite() {
-    TestSuite suite = new TestSuite(GFFParserTest.class);
-    
-    return suite;
-  }
-
-
+  @Test
   public void testParse() throws Exception {
     System.out.println("parse");
     
@@ -105,9 +104,12 @@ public class GFFParserTest extends TestCase {
     
   }
 
+  /**
+   * Test that the regular expression designed to tell the difference
+   * between GFF1 and GFF2 from the "group" or "attributes" field actually works
+   */
+  @Test
   public void testGFF1RegularExpression() {
-    // Test that the regular expression designed to tell the difference
-    // between GFF1 and GFF2 from the "group" or "attributes" field actually works
     
     assertTrue(UcscGffSym.gff1_regex.matcher("foo").matches());
     assertTrue(UcscGffSym.gff1_regex.matcher("foo ").matches());
@@ -126,6 +128,7 @@ public class GFFParserTest extends TestCase {
   /**
    * Test of processDirective method, of class com.affymetrix.igb.parsers.GFF3Parser.
    */
+  @Test
   public void testProcessDirective() throws Exception {
     System.out.println("processDirective");
     

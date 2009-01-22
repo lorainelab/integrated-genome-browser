@@ -7,7 +7,11 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import junit.framework.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 import java.io.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,28 +24,25 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *
  * @author Ed Erwin
  */
-public class Das1FeatureSaxParserTest extends TestCase {
-  
-  public Das1FeatureSaxParserTest(String testName) {
-    super(testName);
-  }
-
-  protected void setUp() throws Exception {
-  }
-
-  protected void tearDown() throws Exception {
-  }
-
-  public static Test suite() {
-    TestSuite suite = new TestSuite(Das1FeatureSaxParserTest.class);
-    
-    return suite;
-  }
-
+public class Das1FeatureSaxParserTest {
   public static final String test_file_name_1 = "test/data/das1/das1-sample-hg18.dasxml";
   public static final String test_file_name_2 = "test/data/das1/das1-sample-hg10.dasxml";
   
-  // tests the parsing of the <LINK> elements
+  public Das1FeatureSaxParserTest() {
+  }
+
+  @Before
+  public void setUp() {
+  }
+
+  @After
+  public void tearDown() {
+  }
+  
+  /**
+   * Tests the parsing of the <LINK> elements
+   */
+  @Test
   public void testLinks() {
 		InputStream istr = null;
 		assertTrue(new File(test_file_name_1).exists());
@@ -81,7 +82,10 @@ public class Das1FeatureSaxParserTest extends TestCase {
     assertEquals(4, sym_7.getChildCount());
   }
   
-  // tests the parsing of a simple example file
+  /**
+   * Tests the parsing of a simple example file
+   */
+  @Test
   public void testParse() {
 		InputStream istr = null;
 		assertTrue(new File(test_file_name_2).exists());

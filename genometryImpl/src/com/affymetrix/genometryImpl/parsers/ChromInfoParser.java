@@ -18,35 +18,35 @@ import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.Versioned;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+//import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 
-public class ChromInfoParser {
-  static final Pattern tab_regex = Pattern.compile("\t");
-  static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
+public final class ChromInfoParser {
+  private static final Pattern tab_regex = Pattern.compile("\t");
+  //static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
 
-  MutableAnnotatedBioSeq template_seq = default_seq_template;
+  //MutableAnnotatedBioSeq template_seq = default_seq_template;
 
   /** Constructs a ChromInfoParser with a default template sequence. */
-  public ChromInfoParser() { }
+  //public ChromInfoParser() { }
 
-  public ChromInfoParser(MutableAnnotatedBioSeq template) {
-    template_seq = template;
-  }
+  //public ChromInfoParser(MutableAnnotatedBioSeq template) {
+    //template_seq = template;
+  //}
 
   /**
    *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
    *  adds it to the GenometryModel.
    */
-  public AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version)
+  public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version)
     throws IOException {
 
     AnnotatedSeqGroup seq_group = gmodel.addSeqGroup(genome_version);
     BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
     String line;
     while ((line = dis.readLine()) != null) {
-      if (line.equals("") || line.startsWith("#") || (line.length() == 0))  { continue; }
+      if ( (line.length() == 0) || line.equals("") || line.startsWith("#"))  { continue; }
       String[] fields = tab_regex.split(line);
       if (fields.length <= 0) { continue; }
       String chrom_name = fields[0];

@@ -66,19 +66,19 @@ import javax.xml.parsers.DocumentBuilder;
  */
 public class GenometryDas2Servlet extends HttpServlet {
 
-    private static boolean DEBUG = false;
-    private static String RELEASE_VERSION = "2.6";
-    private static boolean MAKE_LANDSCAPES = false;
-    private static boolean TIME_RESPONSES = true;
-    private static boolean ADD_VERSION_TO_CONTENT_TYPE = false;
-    private static boolean USE_CREATED_ATT = true;
+    private static final boolean DEBUG = false;
+    private static final String RELEASE_VERSION = "2.6";
+    //private static boolean MAKE_LANDSCAPES = false;
+    private static final boolean TIME_RESPONSES = true;
+    private static final boolean ADD_VERSION_TO_CONTENT_TYPE = false;
+    private static final boolean USE_CREATED_ATT = true;
     private static boolean WINDOWS_OS_TEST = false;
-    private static boolean SORT_SOURCES_BY_ORGANISM = true;
-    private static boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
-    private static Pattern interval_splitter = Pattern.compile(":");
-    private static String SERVER_SYNTAX_EXPLANATION =
+    private static final boolean SORT_SOURCES_BY_ORGANISM = true;
+    private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
+    private static final Pattern interval_splitter = Pattern.compile(":");
+    private static final String SERVER_SYNTAX_EXPLANATION =
             "See http://netaffxdas.affymetrix.com/das2 for proper query syntax.";
-    private static String LIMITED_FEATURE_QUERIES_EXPLANATION =
+    private static final String LIMITED_FEATURE_QUERIES_EXPLANATION =
             "See http://netaffxdas.affymetrix.com/das2 for supported feature queries.";
 
     /* The long versions of these error messages appears to cause problems for Apache.
@@ -89,11 +89,11 @@ public class GenometryDas2Servlet extends HttpServlet {
     a web page which contains additional information to help guide the user about
     acceptable queries.  - SteveC 15 Apr 2008
      */
-    private static String SERVER_SYNTAX_EXPLANATION_LONG =
+    /*private static String SERVER_SYNTAX_EXPLANATION_LONG =
             "The Genometry DAS/2 server always uses a standard URI syntax for DAS/2 query URIs,\n\n" +
             " and enforces this by specifying URIs in the SOURCES doc according to this standard:\n" +
-            "    das_server_root/genome_name/capability_name[?query_parameters]";
-    private static String LIMITED_FEATURE_QUERIES_EXPLANATION_LONG =
+            "    das_server_root/genome_name/capability_name[?query_parameters]";*/
+    /*private static String LIMITED_FEATURE_QUERIES_EXPLANATION_LONG =
             "The Genometry DAS/2 server currently does not support the full range of \n" +
             "DAS/2 feature queries and feature filters required by the DAS/2 specification. \n" +
             "To allow the Genometry DAS/2 server to still comply with the specification, \n" +
@@ -108,11 +108,11 @@ public class GenometryDas2Servlet extends HttpServlet {
             "     1 overlaps filter \n" +
             "     0 or 1 inside filter \n" +
             "     0 or 1 format parameter \n" +
-            "     0 other filters/parameters \n";
+            "     0 other filters/parameters \n";*/
     /**
      *  For sorting
      */
-    private static String[] months = {"Jan",
+    /*private static String[] months = {"Jan",
         "Feb",
         "Mar",
         "Apr",
@@ -123,7 +123,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         "Sep",
         "Oct",
         "Nov",
-        "Dec"};
+        "Dec"};*/
     private static Map<String,Das2Coords> genomeid2coord;
 
 
@@ -291,7 +291,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 
     // specifying a template for chromosome seqs constructed in lift and chromInfo parsers
     //  MutableAnnotatedBioSeq template_seq = new NibbleBioSeq();
-    private MutableAnnotatedBioSeq template_seq = new SmartAnnotBioSeq();
+    //private MutableAnnotatedBioSeq template_seq = new SmartAnnotBioSeq();
     //LiftParser lift_parser = new LiftParser(template_seq);
     //ChromInfoParser chrom_parser = new ChromInfoParser(template_seq);
     private ArrayList<String> log = new ArrayList<String>(100);
@@ -475,13 +475,13 @@ public class GenometryDas2Servlet extends HttpServlet {
                     continue;
                 }
                 names.put(keyValue[0], keyValue[1]);
-            }
+            }            
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             GeneralUtils.safeClose(in);
-            return names;
         }
+        return names;
     }
 
     private static final void initFormats(Map<String,Class> output_registry, ArrayList<String> graph_formats) {
@@ -739,7 +739,7 @@ public class GenometryDas2Servlet extends HttpServlet {
     }
 
     
-    private static final void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
+    /*private static final void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
         InputStream istr = null;
         try {
             URL annot_url = new URL(url);
@@ -751,7 +751,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         } finally {
             GeneralUtils.safeClose(istr);
         }
-    }
+    }*/
 
     private static final void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
         ParserController.parse(istr, annots_map, stream_name, gmodel, genome);
@@ -884,9 +884,9 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
-    private final List getLog() {
+    /*private final List getLog() {
         return log;
-    }
+    }*/
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -2126,7 +2126,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
-    private final void setXmlBase(String xbase) {
+    final void setXmlBase(String xbase) {
         xml_base = xbase;
         String trimmed_xml_base;
         if (xml_base.endsWith("/")) {

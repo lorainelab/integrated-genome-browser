@@ -58,10 +58,10 @@
 	</presetdef>
 
 	<presetdef name="my.javadoc">
-		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name} API" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
+		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Integrated Genome Browser" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
 			<link href="${javadoc.j2se.url}"/>
 			<link href="${javadoc.j2ee.url}"/>
-			<doctitle><![CDATA[<h1>${name} API</h1>]]></doctitle>
+			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
 		</javadoc>
 	</presetdef>

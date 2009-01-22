@@ -22,7 +22,7 @@
 		<property name="demos.dir"    value="${genoviz}/demo" />
 		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
 
-		<property name="javadoc.src.path"   value="${genoviz}/src:${genometry}/src:${genometryImpl}/src:${igb}/src:${das2server}/src" />
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${genometryImpl}/src:${genometryImpl}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test" />
 	</target>
 
 
@@ -110,8 +110,8 @@
 		<my.javadoc sourcepath="${javadoc.src.path}">
 			<classpath>
 				<fileset dir="${lib.dir}" includes="*.jar" />
+				<pathelement path="${junit.jar}" />
 			</classpath>
-			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
 		</my.javadoc>
 	</target>
 

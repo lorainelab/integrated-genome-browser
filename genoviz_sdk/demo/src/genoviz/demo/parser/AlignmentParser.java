@@ -71,7 +71,7 @@ public class AlignmentParser {
   /**
    * gets the alignment data by parsing a stream of characters.
    *
-   * @param istream from whence the data come.
+   * @param chars the BufferedReader holding the character stream
    * @return a collection of Mappings
    * @see com.affymetrix.genoviz.datamodel.Mapping
    */
@@ -115,7 +115,7 @@ public class AlignmentParser {
   /**
    * gets the alignment data by parsing a stream of bytes.
    *
-   * @param istream from whence the data come.
+   * @param chars the BufferedReader holding the character stream
    * @param seqhash a collection of matching sequence data
    *                keyed by the same ids as are in the alignment data
    *                to be parsed.

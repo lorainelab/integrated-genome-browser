@@ -53,7 +53,7 @@ public class SequenceParser {
   /**
    * parsers the data coming from a stream of characters.
    *
-   * @param istream from whence the bytes come.
+   * @param chars the BufferedReader holding the character stream
    * @return a Vector of Sequences.
    * @see com.affymetrix.genoviz.datamodel.Sequence
    */

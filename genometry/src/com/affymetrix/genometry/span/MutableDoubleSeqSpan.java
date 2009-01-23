@@ -74,49 +74,6 @@ public class MutableDoubleSeqSpan extends DoubleSeqSpan implements MutableSeqSpa
     this.end = end;
   }
 
-  public void stretchSpan(int start, int end) {
-    if (this.end > this.start) {
-      if (start > end) {
-          int temp = start;
-          start = end;
-          end = temp;
-        }
-      if (start < this.start) {
-        this.start = start;
-      }
-      if (end > this.end) {
-        this.end = end;
-      }
-    } else if (this.end < this.start) {
-      if (start < end) {
-        int temp = start;
-        start = end;
-        end = temp;
-      }
-      if (start > this.start) {
-        this.start = start;
-      }
-      if (end < this.end) {
-        this.end = end;
-      }
-    } else {
-      if (start <= end) {
-        if (start < this.start) {
-          this.start = start;
-        }
-        if (end > this.end) {
-          this.end = end;
-        }
-      } else {
-        if (start > this.start) {
-          this.start = start;
-        }
-        if (end < this.end) {
-          this.end = end;
-        }
-      }
-    }
-  }
 }
 
 

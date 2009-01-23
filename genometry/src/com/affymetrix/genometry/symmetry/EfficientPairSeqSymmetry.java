@@ -139,65 +139,6 @@ public class EfficientPairSeqSymmetry implements SeqSymmetry {
     }
   }
 
-  public void stretchSpan(int index, int start, int end) {
-    if (0 == index) {
-      if (endA >= startA) {
-        if (start > end) {
-          int temp = start;
-          start = end;
-          end = temp;
-        }
-        if (start < startA) {
-          startA = start;
-        }
-        if (end > endA) {
-          endA = end;
-        }
-      } else {
-        if (start < end) {
-          int temp = start;
-          start = end;
-          end = temp;
-        }
-        if (start > startA) {
-          startA = start;
-        }
-        if (end < endA) {
-          endA = end;
-        }
-      }
-    } else if (1 == index) {
-      if (endB >= startB) {
-        if (start > end) {
-          int temp = start;
-          start = end;
-          end = temp;
-        }
-        if (start < startB) {
-          startB = start;
-        }
-        if (end > endB) {
-          endB = end;
-        }
-      } else {
-        if (start < end) {
-          int temp = start;
-          start = end;
-          end = temp;
-        }
-        if (start > startB) {
-          startB = start;
-        }
-        if (end < endB) {
-          endB = end;
-        }
-      }
-    } else {
-      throw new RuntimeException(
-        "EfficientPairSeqSymmetry.stretchSpan requires an index of 0 or 1");
-    }
-  }
-
   public int getChildCount() {
     if (null != children)
       return children.size();

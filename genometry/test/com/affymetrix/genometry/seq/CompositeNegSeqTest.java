@@ -81,7 +81,7 @@ public class CompositeNegSeqTest {
 	}
 
 	/**
-	 * Test if CompositeNegSeq(String, int, int) will accept min > max.
+	 * Test if CompositeNegSeq(String, int, int) will accept min &gt; max.
 	 */
 	@Test
 	public void testConstructor7() {
@@ -137,6 +137,138 @@ public class CompositeNegSeqTest {
     public void testGetResidues2() {
         fail("Test is not implemented");
     }
+
+	/**
+	 * Simple test to verify that setBounds(int, int) is operating in
+	 * the expected manner
+	 */
+	@Test
+	public void testSetBounds1() {
+		CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 0, 1000);
+
+		assertEquals(   0, testseq.getMin());
+		assertEquals(1000, testseq.getMax());
+
+		testseq.setBounds(500, 1500);
+		assertEquals( 500, testseq.getMin());
+		assertEquals(1500, testseq.getMax());
+		
+		assertEquals(testseq.getMax() - testseq.getMin(), testseq.getLength());
+		assertEquals((double)testseq.getMax() - (double)testseq.getMin(), testseq.getLengthDouble(), 0.00001d);
+
+	}
+
+	/**
+	 * Test setBounds(int, int) to see what occurs if min == max
+	 */
+	@Test
+	public void testSetBounds2() {
+		CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 0, 1000);
+
+		assertEquals(   0, testseq.getMin());
+		assertEquals(1000, testseq.getMax());
+
+		try {
+			testseq.setBounds(314159,314159);
+			fail("setBounds(int, int) allowed min == max");
+		} catch (IllegalArgumentException e) { }
+	}
+
+	/**
+	 * Test setBounds(int, int) to see what occurs if min &gt; max
+	 */
+	@Test
+	public void testSetBounds3() {
+		CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 0, 1000);
+
+		assertEquals(   0, testseq.getMin());
+		assertEquals(1000, testseq.getMax());
+
+		try {
+			testseq.setBounds(100, -1000);
+			fail("setBounds(int, int) allowed min > max");
+		} catch (IllegalArgumentException e) { }
+	}
+
+	/**
+	 * Test setBounds(int, int) using a min and max whose values are
+	 * between Integer.MIN_VALUE and Integer.MAX_VALUE but whose
+	 * difference is greater than Integer.MAX_VALUE.
+	 */
+	@Test
+	public void testSetBounds4() {
+		CompositeNegSeq testseq = new CompositeNegSeq("testseq", 0, 1000);
+
+		assertEquals(   0, testseq.getMin());
+		assertEquals(1000, testseq.getMax());
+
+		try {
+			testseq.setBounds(-2147483640, 2147483640);
+		} catch (IllegalArgumentException e) {
+			fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+		}
+
+		assertEquals(-2147483640, testseq.getMin());
+		assertEquals(2147483640, testseq.getMax());
+
+		assertEquals(4294967280d, testseq.getLengthDouble(), 0.00001d);
+		assertEquals((double)testseq.getMax() - (double)testseq.getMin(), testseq.getLengthDouble(), 0.00001d);
+	}
+
+	/**
+	 * Test setBoundsDouble(double, double) using numbers above
+	 * Integer.MAX_VALUE  Note that there is no way to directly verify
+	 * that the values were actually set, as the only to access the
+	 * information is via getLengthDouble().
+	 *
+	 * In fact, min and max are stored as int, so the bounds will be
+	 * wrong
+	 */
+	@Test
+	public void testSetBoundsDouble1() {
+		CompositeNegSeq testseq = new CompositeNegSeq("testseq", 0, 1000);
+
+		assertEquals(   0, testseq.getMin());
+		assertEquals(1000, testseq.getMax());
+
+		try {
+			testseq.setBoundsDouble(3.14159e42d, 3.14159e45d);
+		} catch (IllegalArgumentException e) {
+			fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+		}
+
+		/* These will not work until CompositeNegSeq is fixed */
+		/* assertEquals((double)testseq.getMin(), 3.14159e42d, 0.00001d); */
+		/* assertEquals((double)testseq.getMax(), 3.14159e45d, 0.00001d); */
+
+		assertEquals(3.13844841e45d, testseq.getLengthDouble(), 0.00001d);
+		assertEquals((double)testseq.getMax() - (double)testseq.getMin(), testseq.getLengthDouble(), 0.00001d);
+	}
+
+	/**
+	 * Test setBoundsDouble(double, double) using a min and max whose
+	 * values are between Integer.MIN_VALUE and Integer.MAX_VALUE but
+	 * whose difference is greater than Integer.MAX_VALUE.
+	 */
+	@Test
+	public void testSetBoundsDouble2() {
+		CompositeNegSeq testseq = new CompositeNegSeq("testseq", 0, 1000);
+
+		assertEquals(   0, testseq.getMin());
+		assertEquals(1000, testseq.getMax());
+
+		try {
+			testseq.setBoundsDouble(-2147483640d, 2147483640d);
+		} catch (IllegalArgumentException e) {
+			fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+		}
+
+		assertEquals(-2147483640, testseq.getMin());
+		assertEquals(2147483640, testseq.getMax());
+		assertEquals(4294967280d, testseq.getLengthDouble(), 0.00001d);
+
+		assertEquals((double)testseq.getMax() - (double)testseq.getMin(), testseq.getLengthDouble(), 0.00001d);
+	}
 
     /**
      * Test isComplete(int, int)

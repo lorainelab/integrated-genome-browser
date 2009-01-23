@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -18,7 +19,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometry.SearchableSeqSymmetry;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
@@ -992,7 +997,6 @@ public class GenometryDas2Servlet extends HttpServlet {
                     handleFeaturesRequest(request, response);
                 } else if (genome.getSeq(das_command) != null) {
                     log.add("handling seq request: " + request_url);
-                    BioSeq aseq = genome.getSeq(das_command);
                     handleSequenceRequest(request, response);
                 } else {
                     log.add("DAS2 request not recognized, setting HTTP status header to 400, BAD_REQUEST");
@@ -1407,34 +1411,29 @@ public class GenometryDas2Servlet extends HttpServlet {
 
     // iterate over seqs to collect annotation types
      private static final void AddSeqsToTypes(AnnotatedSeqGroup genome, Map genome_types) {
-         for (MutableAnnotatedBioSeq mseq : genome.getSeqList()) {
-            if (mseq instanceof SmartAnnotBioSeq) {
-                SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) mseq;
-                Map typeid2sym = aseq.getTypeMap();
-                if (typeid2sym != null) {
-                    Iterator titer = typeid2sym.keySet().iterator();
-                    while (titer.hasNext()) {
-                        String type = (String) titer.next();
-                        List flist = Collections.EMPTY_LIST;
-                        if (genome_types.get(type) == null) {
-                            SymWithProps tannot = aseq.getAnnotation(type);
-                            //	      System.out.println("type: " + type + ", format info: " +
-                            //				 tannot.getProperty("preferred_formats"));
-                            SymWithProps first_child = (SymWithProps) tannot.getChild(0);
-                            if (first_child != null) {
-                                List formats = (List) first_child.getProperty("preferred_formats");
-                                if (formats != null) {
-                                    flist = formats;
-                                }
-                            }
-                            genome_types.put(type, flist);
-                        }
-                    }
-                }
-            } else {
-                System.out.println("in DAS2 servlet getTypes(), found a seq that is _not_ a SmartAnnotSeq: " + mseq);
-            }
-        }
+         for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
+             Map typeid2sym = aseq.getTypeMap();
+             if (typeid2sym != null) {
+                 Iterator titer = typeid2sym.keySet().iterator();
+                 while (titer.hasNext()) {
+                     String type = (String) titer.next();
+                     List flist = Collections.EMPTY_LIST;
+                     if (genome_types.get(type) == null) {
+                         SymWithProps tannot = aseq.getAnnotation(type);
+                         //	      System.out.println("type: " + type + ", format info: " +
+                         //				 tannot.getProperty("preferred_formats"));
+                         SymWithProps first_child = (SymWithProps) tannot.getChild(0);
+                         if (first_child != null) {
+                             List formats = (List) first_child.getProperty("preferred_formats");
+                             if (formats != null) {
+                                 flist = formats;
+                             }
+                         }
+                         genome_types.put(type, flist);
+                     }
+                 }
+             }
+         }
     }
 
     private static final void writeTypesXML(
@@ -1725,20 +1724,20 @@ public class GenometryDas2Servlet extends HttpServlet {
                     excludes.size() == 0 && // zero excludes
                     names.size() == 0) {
 
-                String seqid = (String) segments.get(0);
+                String seqid = segments.get(0);
                 // using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
                 int sindex = seqid.lastIndexOf("/");
                 if (sindex >= 0) {
                     seqid = seqid.substring(sindex + 1);
                 }
-                String type_full_uri = (String) types.get(0);
+                String type_full_uri = types.get(0);
                 query_type = getInternalType(type_full_uri, genome);
 
                 log.add("   query type: " + query_type);
 
                 String overlap = null;
                 if (overlaps.size() == 1) {
-                    overlap = (String) overlaps.get(0);
+                    overlap = overlaps.get(0);
                 }
                 System.out.println("overlaps val = " + overlap);
                 // if overlap string is null (no overlap parameter), then no overlap filter --
@@ -1751,7 +1750,7 @@ public class GenometryDas2Servlet extends HttpServlet {
                 if (overlap_span != null) {
                     log.add("   overlap_span: " + SeqUtils.spanToString(overlap_span));
                     if (insides.size() == 1) {
-                        String inside = (String) insides.get(0);
+                        String inside = insides.get(0);
                         inside_span = getLocationSpan(seqid, inside, genome);
                         if (inside_span != null) {
                             log.add("   inside_span: " + SeqUtils.spanToString(inside_span));
@@ -2048,7 +2047,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         try {
             //    AnnotationWriter writer = (AnnotationWriter)output_registry.get(format);
             // or should this be done by class:
-            Class writerclass = (Class) output_registry.get(format);
+            Class writerclass = output_registry.get(format);
             if (writerclass == null) {
                 log.add("no AnnotationWriter found for format: " + format);
                 response.setStatus(response.SC_BAD_REQUEST);

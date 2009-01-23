@@ -200,18 +200,23 @@ public class FastaParserTest {
       System.out.println();
   }
 
+  /*
+   * Test beginning value out of range.
+   */
   @Test
   public void testChrCfailure2() throws Exception {
       String filename = "test/data/fasta/chrC.fasta";
-      int start=200000,end=200001;
+      int start=200000,end=200001; // file size < 200000.
       System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
       assertTrue(new File(filename).exists());
- 
-      byte[] fasta = FastaParser.ReadFASTA(new File(filename), start, end);
-			assertNotNull("fasta can not be null", fasta);
-      for (int i=0;i<fasta.length;i++)
-          System.out.print((char)fasta[i]);
-      System.out.println();
+
+      try {
+          FastaParser.ReadFASTA(new File(filename), start, end);
+      }
+      catch(java.lang.IllegalArgumentException ex) {
+          return;
+      }
+      fail("Should throw an IllegalArgumentException");
 
   }
 

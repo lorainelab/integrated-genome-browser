@@ -538,10 +538,17 @@ public static String parseResidues(InputStream istr) throws IOException {
             throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " was negative.");
         if (end_sequence < begin_sequence)
             throw new java.lang.IllegalArgumentException("range " + begin_sequence + ":" + end_sequence + " was negative.");
+
+        if (!seqfile.exists())
+            throw new java.io.FileNotFoundException("Couldn't find file " + seqfile.toString());
         
+        if (begin_sequence > seqfile.length())
+            throw new java.lang.IllegalArgumentException("beginning sequence:" + begin_sequence + " larger than file size:" + (int)seqfile.length());
+
         // Sanity check on huge range... can't be larger than the overall file size.
-        if (seqfile.length() <= (long)Integer.MAX_VALUE)
+        if (seqfile.length() <= (long)Integer.MAX_VALUE) {
             end_sequence = Math.min(end_sequence, (int)seqfile.length());
+        }
         
         byte[] buf = null;
         DataInputStream dis = new DataInputStream(new FileInputStream(seqfile));

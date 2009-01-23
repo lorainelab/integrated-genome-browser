@@ -54,7 +54,6 @@ public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpa
     this.seq = seq;
   }
 
-
   public void setDouble(double start, double end, BioSeq seq) {
     this.start = (int)start;
     this.end = (int)end;
@@ -72,50 +71,6 @@ public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpa
   
   public void setEndDouble(double end) {
     this.end = (int)end;
-  }
-
-  public void stretchSpan(int start, int end) {
-    if (this.end > this.start) {
-      if (start > end) {
-          int temp = start;
-          start = end;
-          end = temp;
-        }
-      if (start < this.start) {
-        this.start = start;
-      }
-      if (end > this.end) {
-        this.end = end;
-      }
-    } else if (this.end < this.start) {
-      if (start < end) {
-        int temp = start;
-        start = end;
-        end = temp;
-      }
-      if (start > this.start) {
-        this.start = start;
-      }
-      if (end < this.end) {
-        this.end = end;
-      }
-    } else {
-      if (start <= end) {
-        if (start < this.start) {
-          this.start = start;
-        }
-        if (end > this.end) {
-          this.end = end;
-        }
-      } else {
-        if (start > this.start) {
-          this.start = start;
-        }
-        if (end < this.end) {
-          this.end = end;
-        }
-      }
-    }
   }
 }
 

@@ -23,7 +23,7 @@ public interface MutableSeqSpan extends SeqSpan  {
   /** Extends the range of coordinates to include this range, but does not
    *  change the orientation of this SeqSpan.
    */
-  public void stretchSpan(int start, int end);
+  //public void stretchSpan(int start, int end);
   public void setBioSeq(BioSeq seq);
 
   public void setStartDouble(double start);

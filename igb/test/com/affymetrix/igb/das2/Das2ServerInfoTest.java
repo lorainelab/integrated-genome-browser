@@ -30,7 +30,8 @@ public class Das2ServerInfoTest {
 			String[] test_urls = { "http://netaffxdas.affymetrix.com/das2/genome" };
       serverInfos = new ArrayList();
       for (String url : test_urls) {
-        serverInfos.add(new Das2ServerInfo(url, "DAS2 Server", true));
+		// Commented out because add accesses the network
+        /* serverInfos.add(new Das2ServerInfo(url, "DAS2 Server", true)); */
       }
     }
 

@@ -46,7 +46,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
     this.start = min;
     this.end = max;
     if (min > max) {
-      throw new RuntimeException("problem in CompositeNegSeq constructor! min must be < max");
+      throw new IllegalArgumentException("problem in CompositeNegSeq constructor! min must be < max");
     }
     //    this.length = end - start;
     this.length = (double)end - (double)start;

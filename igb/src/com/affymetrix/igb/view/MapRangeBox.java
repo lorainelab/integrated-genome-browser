@@ -54,11 +54,11 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   
   // accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
   // (The chromosome name cannot contain any spaces.)
-  static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+  //static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   
   // accepts a pattern like: "chr2 : 3,040,000 + 20000"
   // (The chromosome name cannot contain any spaces.)
-  static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
+  //static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
 
   // accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
   static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
@@ -96,28 +96,28 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   
   public void viewBoxChanged(NeoViewBoxChangeEvent e) {
     com.affymetrix.genoviz.bioviews.Rectangle2D vbox = e.getCoordBox();
-    setRangeText(FORMAT_CHROM_START_END, vbox.x, vbox.width + vbox.x);
+    setRangeText(vbox.x, vbox.width + vbox.x);
   }
   
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     range_box.setText("");
   }
     
-  void setRangeText(int format, double start, double end) {
-    if (format == FORMAT_CHROM_START_END) {
+  void setRangeText(double start, double end) {
+    /*if (format == FORMAT_CHROM_START_END) {
       SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
       if (gmodel.getSelectedSeq() != null) {
         range_box.setText(gmodel.getSelectedSeq().getID() + ": " +  nformat.format(start) + " - " + nformat.format(end));
       } else {
         range_box.setText(nformat.format(start) + " - " + nformat.format(end));
       }
-    } else if (format == FORMAT_START_END) {
+    } else if (format == FORMAT_START_END) {*/
       range_box.setText(nformat.format(start) + " : " + nformat.format(end));
-    } else if (format == FORMAT_START_WIDTH) {
+    /*} else if (format == FORMAT_START_WIDTH) {
       range_box.setText(nformat.format(start) + " + " + nformat.format(end-start));      
     } else if (format == FORMAT_CENTER) {
       range_box.setText(nformat.format((start + end)/2));      
-    }
+    }*/
   }
  
 //  Set<String> allowedChromosomes = null;
@@ -139,15 +139,15 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
       gview.zoomTo(start, end);
 
       double width = end - start;
-      int display_format = FORMAT_START_END;
+      //int display_format = FORMAT_START_END;
       try {
-        Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
-        Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range_box.getText());
+//        Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
+//        Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range_box.getText());
         Matcher start_end_matcher = start_end_pattern.matcher(range_box.getText());
         Matcher start_width_matcher = start_width_pattern.matcher(range_box.getText());
         Matcher center_matcher = center_pattern.matcher(range_box.getText());
         
-        if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
+        /*if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
           Matcher matcher;
           boolean uses_width;
           if (chrom_start_width_matcher.matches()) {
@@ -186,7 +186,8 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
 
           //gview.zoomTo(start, end);
         }
-        else if (start_end_matcher.matches()) {
+        else*/
+         if (start_end_matcher.matches()) {
           String start_text = start_end_matcher.group(1);
           String end_text = start_end_matcher.group(2);
           start = nformat.parse(start_text).doubleValue();
@@ -216,12 +217,12 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
         if (span == null) {
           range_box.setText("");
         } else {
-          setRangeText(display_format, span.getStart(), span.getEnd());
+          setRangeText(span.getStart(), span.getEnd());
         }
 
       } catch (Exception ex) {
         System.out.println("Exception in MapRangeBox: " + ex);
-        setRangeText(display_format, start, end);
+        setRangeText(start, end);
       }
     }
   };

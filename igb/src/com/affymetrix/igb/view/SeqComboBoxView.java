@@ -17,8 +17,8 @@ import com.affymetrix.igb.util.ViewPersistenceUtils;
 import com.affymetrix.igb.IGB;
 
 public class SeqComboBoxView extends JComponent
-  implements ItemListener, ActionListener,
-	     GroupSelectionListener, SeqSelectionListener {
+//  implements ItemListener, ActionListener,GroupSelectionListener, SeqSelectionListener {
+implements ActionListener{
 
   static boolean DEBUG_EVENTS = false;
   static final String SELECT_A_SEQUENC = "Select a seq";
@@ -28,31 +28,31 @@ public class SeqComboBoxView extends JComponent
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   AnnotatedBioSeq selected_seq = null;
   SeqMapView gviewer;
-  JLabel seqL;
-  JComboBox seqCB;
+  //JLabel seqL;
+  //JComboBox seqCB;
   JButton genomeB;
 
   public SeqComboBoxView(SeqMapView gviwer) {
     this.gviewer = gviwer;
     // need to set maximum x size of seqL and seqCB (or entire SeqComboBoxView), so doesn't grab space needed by other parts of GUI
-    JLabel genomeL = new JLabel("Genome: ");
+    //JLabel genomeL = new JLabel("Genome: ");
     JComboBox genomeCB = new JComboBox();
     genomeB = new JButton("Pick Genome");
     genomeCB.addItem("unknown");
-    seqL = new JLabel("Sequence: ", SwingConstants.RIGHT);
-    seqCB = new JComboBox();
-    seqCB.addItem(NO_SEQUENCES);
+    //seqL = new JLabel("Sequence: ", SwingConstants.RIGHT);
+    //seqCB = new JComboBox();
+    //seqCB.addItem(NO_SEQUENCES);
     this.setLayout(new GridLayout(1, 3));
 
     // if using QuickLoad view, then navigating genome within that view, so don't include genome selection button here
     if (! IGB.useQuickLoad()) {
       this.add(genomeB);
     }
-    this.add(seqL);
-    this.add(seqCB);
-    seqCB.addItemListener(this);
-    gmodel.addGroupSelectionListener(this);
-    gmodel.addSeqSelectionListener(this);
+    // this.add(seqL);
+    //this.add(seqCB);
+    //seqCB.addItemListener(this);
+    //gmodel.addGroupSelectionListener(this);
+    //gmodel.addSeqSelectionListener(this);
     genomeB.addActionListener(this);
   }
 
@@ -64,7 +64,7 @@ public class SeqComboBoxView extends JComponent
   }
 
 
-  public void groupSelectionChanged(GroupSelectionEvent evt) {
+  /*public void groupSelectionChanged(GroupSelectionEvent evt) {
     //    AnnotatedSeqGroup group = (AnnotatedSeqGroup)evt.getSelectedGroups().get(0);
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (this.DEBUG_EVENTS)  {
@@ -90,9 +90,9 @@ public class SeqComboBoxView extends JComponent
         seqCB.addItem(seqid);
       }
     }
-  }
+  }*/
 
-  public void seqSelectionChanged(SeqSelectionEvent evt) {
+  /*public void seqSelectionChanged(SeqSelectionEvent evt) {
     AnnotatedBioSeq aseq = evt.getSelectedSeq();
 
     if (this.DEBUG_EVENTS)  {
@@ -114,10 +114,10 @@ public class SeqComboBoxView extends JComponent
       String seqid = aseq.getID();
       seqCB.setSelectedItem(seqid);
     }
-  }
+  }*/
 
 
-  public void itemStateChanged(ItemEvent evt) {
+  /*public void itemStateChanged(ItemEvent evt) {
     Object src = evt.getSource();
     if (DEBUG_EVENTS)  { System.out.println("SeqComboBoxView received itemStateChanged event: " + evt); }
     if ((src == seqCB) && (evt.getStateChange() == ItemEvent.SELECTED)) {
@@ -147,7 +147,7 @@ public class SeqComboBoxView extends JComponent
     //      System.out.println("&&&&&&&& SeqComboBoxView genome selection button pressed");
     //    }
   }
-
+*/
 
 
 }

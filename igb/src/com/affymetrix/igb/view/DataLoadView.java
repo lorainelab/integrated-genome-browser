@@ -30,14 +30,8 @@ import com.affymetrix.swing.DisplayUtils;
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  //static boolean USE_QUICKLOAD = false;
-  //static boolean USE_DAS2_VIEW = true;
-  //static boolean USE_DAS1_VIEW = false;
-
   Das2LoadView3 das2_view3;
-  DasLoadView das1_view;
-  //QuickLoadView2 quick_view;
-  //  SeqGroupView group_view;
+  SeqGroupView group_view;
 
   public DataLoadView() {
     // some of the options in DataLoadPrefsView are specific to QuickLoad, but still want to be able to see 
@@ -45,31 +39,22 @@ public class DataLoadView extends JComponent  {
     PreferencesPanel pp = PreferencesPanel.getSingleton();
     pp.addPrefEditorComponent(new DataLoadPrefsView());
 
-    //    group_view = new SeqGroupView();
-    //    this.setBorder(BorderFactory.createEtchedBorder());
-
     this.setLayout(new BorderLayout());
-    
-    das2_view3 = new Das2LoadView3();
-    this.add("Center", das2_view3);
 
-    /*
-    JTabbedPane tpane = new JTabbedPane();
-    this.add("Center", tpane);
-    if (USE_DAS2_VIEW) {
-      das2_view3 = new Das2LoadView3();
-      tpane.addTab("Annotation Types", das2_view3);
-    }
-    if (USE_DAS1_VIEW) {
-      das1_view = new DasLoadView();
-      tpane.addTab("DAS/1", das1_view);
-    }
-    if (USE_QUICKLOAD)  {
-      quick_view = new QuickLoadView2();
-      quick_view.setBorder(BorderFactory.createEtchedBorder());
-      tpane.addTab("QuickLoad", quick_view);
-    }
-    */
+     JPanel main_panel = new JPanel();
+    this.add(main_panel);
+    this.setBorder(BorderFactory.createEtchedBorder());
+
+    main_panel.setLayout(new BorderLayout());
+
+    das2_view3 = new Das2LoadView3();
+    main_panel.add("Center", das2_view3);
+
+    group_view = new SeqGroupView();
+    main_panel.add("West",group_view);
+
+    
+
   }
 /*
   public void initialize() {

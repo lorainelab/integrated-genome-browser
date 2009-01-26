@@ -29,7 +29,7 @@ import java.util.*;
  *
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
-public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, ParentOfLeafSym, IntId {
+public class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, IntId {
   SharedProbesetInfo info;
   boolean forward;
   int nid;

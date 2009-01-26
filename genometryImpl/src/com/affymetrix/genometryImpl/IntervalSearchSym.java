@@ -150,7 +150,7 @@ public class IntervalSearchSym extends SimpleSymWithProps
    *  if no children of this IntervalSearchSym intersect qinterval,
    *     then the returned SeqSymmetry will be empty (no children).
    */
-  public SeqSymmetry getIntersectedSymmetries(SeqSpan qinterval) {
+  /*public SeqSymmetry getIntersectedSymmetries(SeqSpan qinterval) {
     SimpleSymWithProps result = new SimpleSymWithProps();
     List hitsyms = this.getOverlappingChildren(qinterval);
     if (hitsyms != null) {
@@ -161,7 +161,7 @@ public class IntervalSearchSym extends SimpleSymWithProps
       }
     }
     return result;
-  }
+  }*/
 
   /**
    *  GAH 5-25-2004
@@ -169,7 +169,7 @@ public class IntervalSearchSym extends SimpleSymWithProps
    *  Assume for first cut, _any_ child that overlaps qinterval can be returned as "nearest child"
    *  If not overlappers, then actual nearest child is returned
    */
-  public SeqSymmetry getNearestChild(SeqSpan qinterval) {
+  /*public SeqSymmetry getNearestChild(SeqSpan qinterval) {
     //TODO under construction?
     int child_count = getChildCount();
     if (child_count <= 0) { return null; }
@@ -228,7 +228,7 @@ public class IntervalSearchSym extends SimpleSymWithProps
     }
     //    return results;
     return null;
-  }
+  }*/
 
 
   /**

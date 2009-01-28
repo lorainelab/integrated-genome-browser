@@ -68,48 +68,40 @@ public class DisplayUtils {
    * Adapted from "Swing Hacks" by Joshua Marinacci and Chris Adamson, 
    *    copyright 2005 O'Reilly Media, ISBN 0-596-00907-0
    */
-  public static void adjustColumnPreferredWidths(JTable table, boolean include_headers) {
-    // strategy - get max width for cells in column and
-    // make that the preferred width
-    TableColumnModel columnModel = table.getColumnModel();
-    for (int col=0; col<table.getColumnCount(); col++) {
-      int maxwidth = 0;
-      for (int row=0; row<table.getRowCount(); row++) {
-	TableCellRenderer rend = table.getCellRenderer (row, col);
-	Object value = table.getValueAt (row, col);
-	Component comp = rend.getTableCellRendererComponent (table,
-							     value,
-							     false,
-							     false,
-							     row,
-							     col);
-	maxwidth = Math.max (comp.getPreferredSize().width,
-			     maxwidth);
-      } // for row
-      if (include_headers) {
-	// include the column header's preferred width too
-	TableColumn column = columnModel.getColumn (col);
-	TableCellRenderer headerRenderer = column.getHeaderRenderer();
-	if (headerRenderer == null) {
-	  headerRenderer = table.getTableHeader().getDefaultRenderer();
-	}
-	Object headerValue = column.getHeaderValue();
-	Component headerComp =
-	  headerRenderer.getTableCellRendererComponent (table,
-							headerValue,
-							false,
-							false,
-							0,
-							col);
-	maxwidth = Math.max (maxwidth, headerComp.getPreferredSize().width);
-	column.setPreferredWidth (maxwidth);
+  public static final void adjustColumnPreferredWidths(JTable table, boolean include_headers) {
+      // strategy - get max width for cells in column and
+      // make that the preferred width
+      TableColumnModel columnModel = table.getColumnModel();
+      for (int col = 0; col < table.getColumnCount(); col++) {
+          TableColumn column = columnModel.getColumn(col);
+          int maxwidth = getMaxWidth(table, col, include_headers, column);
+          column.setPreferredWidth(maxwidth);
       }
-      else {
-	// don't include the column header's preferred width
-	TableColumn column = columnModel.getColumn (col);
-	column.setPreferredWidth (maxwidth);
-      }
-    } // for col
+  }
+
+
+  /**
+   * Determine the max width of the column.
+   */
+  private static final int getMaxWidth(JTable table, int col, boolean include_headers, TableColumn column) {
+        int maxwidth = 0;
+        for (int row = 0; row < table.getRowCount(); row++) {
+            TableCellRenderer rend = table.getCellRenderer(row, col);
+            Object value = table.getValueAt(row, col);
+            Component comp = rend.getTableCellRendererComponent(table, value, false, false, row, col);
+            maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+        }
+        if (include_headers) {
+            // include the column header's preferred width too
+            TableCellRenderer headerRenderer = column.getHeaderRenderer();
+            if (headerRenderer == null) {
+                headerRenderer = table.getTableHeader().getDefaultRenderer();
+            }
+            Object headerValue = column.getHeaderValue();
+            Component headerComp = headerRenderer.getTableCellRendererComponent(table, headerValue, false, false, 0, col);
+            maxwidth = Math.max(maxwidth, headerComp.getPreferredSize().width);
+        }
+        return maxwidth;
   }
 
 
@@ -139,4 +131,5 @@ public class DisplayUtils {
     //TODO: if frame is null, create one?
     DisplayUtils.bringFrameToFront(frame);
   }
+
 }

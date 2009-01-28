@@ -405,7 +405,7 @@ public class LocalUrlCacher {
             // if no content_length header, then need to load a chunk at a time
             //   till find end, then piece back together into content byte array
             //   Note, must set initial capacity to 1000 to avoid stream loading interruption.
-            ArrayList<byte[]> chunks = new ArrayList(1000);
+            ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
             IntList byte_counts = new IntList(100);
             int chunk_count = 0;
             int chunk_size = 256 * 256; // reading in 64KB chunks

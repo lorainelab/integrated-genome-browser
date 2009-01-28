@@ -20,7 +20,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 
-public class SimpleSeqSymmetry implements SeqSymmetry {
+public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 
   protected List<SeqSpan> spans;
   protected List<SeqSymmetry> children = null;
@@ -28,7 +28,7 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
   public SimpleSeqSymmetry() {
   }
 
-  public SimpleSeqSymmetry(SeqSpan[] span_array) {
+  /*public SimpleSeqSymmetry(SeqSpan[] span_array) {
     this();
     if (span_array != null && span_array.length > 0) {
       this.spans = new ArrayList<SeqSpan>();
@@ -37,9 +37,9 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
         spans.add(span_array[i]);
       }
     }
-  }
+  }*/
 
-  public SimpleSeqSymmetry(SeqSpan spanA, SeqSpan spanB, SeqSpan[] cspans1, SeqSpan[] cspans2) {
+  /*public SimpleSeqSymmetry(SeqSpan spanA, SeqSpan spanB, SeqSpan[] cspans1, SeqSpan[] cspans2) {
     spans = new ArrayList<SeqSpan>(2);
     spans.add(spanA);
     spans.add(spanB);
@@ -55,13 +55,10 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
   public SimpleSeqSymmetry(List<SeqSpan> spans) {
     this();
     this.spans = spans;
-  }
+  }*/
 
   public SeqSpan getSpan(BioSeq seq) {
-    int max = getSpanCount();
-    SeqSpan span;
-    for (int i=0; i<max; i++) {
-      span = getSpan(i);
+    for (SeqSpan span : spans) {
       if (span.getBioSeq() == seq) {
         return span;
       }
@@ -86,19 +83,14 @@ public class SimpleSeqSymmetry implements SeqSymmetry {
 
   public boolean getSpan(int index, MutableSeqSpan span) {
     SeqSpan vspan = spans.get(index);
-    span.setStart(vspan.getStart());
-    span.setEnd(vspan.getEnd());
-    span.setBioSeq(vspan.getBioSeq());
+    span.set(vspan.getStart(), vspan.getEnd(), vspan.getBioSeq());
     return true;
   }
 
   public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
-    for (int i=0; i<spans.size(); i++) {
-      SeqSpan vspan = spans.get(i);
+    for (SeqSpan vspan : spans) {
       if (vspan.getBioSeq() == seq) {
-        span.setStart(vspan.getStart());
-        span.setEnd(vspan.getEnd());
-        span.setBioSeq(vspan.getBioSeq());
+        span.set(vspan.getStart(), vspan.getEnd(), vspan.getBioSeq());
         return true;
       }
     }

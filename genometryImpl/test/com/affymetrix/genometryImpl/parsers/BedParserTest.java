@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SimpleSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
 import java.io.*;
@@ -197,10 +198,13 @@ public class BedParserTest {
     BioSeq seq = group.addSeq("chr12", 500000);
     SeqSpan span = new SimpleSeqSpan(500,800,seq);
     SeqSpan[] span_array = new SeqSpan[] {span};
-    SeqSymmetry sym = new SimpleSeqSymmetry(span_array);
+    SimpleMutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();
+    for (SeqSpan span_in_array : span_array) {
+        sym.addSpan(span_in_array);
+    }
     
     BedParser.writeBedFormat(out, sym, seq);
-    assertEquals("chr12\t500\t800\n", out.toString());    
+    assertEquals("chr12\t500\t800\n", out.toString());
   }
 
   /**

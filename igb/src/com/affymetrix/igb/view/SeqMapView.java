@@ -1345,7 +1345,7 @@ public class SeqMapView extends JPanel
      *    This method is currently somewhat problematic, since it does not descend into BioSeqs
      *      that aseq might be composed of to factor in bounds of annotations on those sequences
      */
-    public SeqSpan getAnnotationBounds(boolean exclude_graphs) {
+    private final SeqSpan getAnnotationBounds(boolean exclude_graphs) {
         int annotCount = aseq.getAnnotationCount();
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
@@ -1356,12 +1356,12 @@ public class SeqMapView extends JPanel
                 if (!exclude_graphs) {
                     GraphSym graf = (GraphSym) annotSym;
                     int[] xcoords = graf.getGraphXCoords();
-                    min = (int) Math.min(xcoords[0], min);
-                    max = (int) Math.max(xcoords[xcoords.length - 1], max);
+                    min = Math.min(xcoords[0], min);
+                    max = Math.max(xcoords[xcoords.length - 1], max);
                 }
             } else if (annotSym instanceof TypeContainerAnnot) {
                 TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-                int[] sub_bounds = tca.getAnnotationBounds(aseq, exclude_graphs, min, max);
+                int[] sub_bounds = getAnnotationBounds(aseq, tca, exclude_graphs, min, max);
                 min = sub_bounds[0];
                 max = sub_bounds[1];
             } else { // this shouldn't happen: should only be TypeContainerAnnots
@@ -1380,6 +1380,51 @@ public class SeqMapView extends JPanel
             return null;
         }
     }
+
+
+  /** Returns the minimum and maximum positions of all included annotations.
+   *  Necessary because getMin() and getMax() do not give this information
+   *  for this type of SeqSymmetry.
+   *
+   *  @param seq  consider annotations only on this seq
+   *  @param exclude_graphs if true, ignore graph annotations
+   *  @param min  an initial minimum value.
+   *  @param max  an initial maximum value.
+   */
+  private static final int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, boolean exclude_graphs, int min, int max) {
+    int[] min_max = new int[2];
+    min_max[0] = min;
+    min_max[1] = max;
+
+    int child_count = tca.getChildCount();
+    for (int j=0; j<child_count; j++) {
+      SeqSymmetry next_sym = tca.getChild(j);
+
+      int annotCount = next_sym.getChildCount();
+      for (int i=0; i<annotCount; i++) {
+        // all_gene_searches, all_repeat_searches, etc.
+        SeqSymmetry annotSym = next_sym.getChild(i);
+        if (annotSym instanceof GraphSym) {
+          if (! exclude_graphs) {
+            GraphSym graf = (GraphSym)annotSym;
+            int[] xcoords = graf.getGraphXCoords();
+            min_max[0] = Math.min(xcoords[0], min_max[0]);
+            min_max[1] = Math.max(xcoords[xcoords.length-1], min_max[1]);   // JN - was using min_max[0]; fixed
+            // TODO: This needs to take into account GraphIntervalSyms width coords also !!
+            // The easiest way would be to re-write the GraphSym and GraphIntervalSym
+            // method getSpan() so that it returned the correct values.
+          }
+        } else {
+          SeqSpan span = annotSym.getSpan(seq);
+          if (span != null) {
+            min_max[0] = Math.min(span.getMin(), min_max[0]);
+            min_max[1] = Math.max(span.getMax(), min_max[1]);
+          }
+        }
+      }
+    }
+    return min_max;
+  }
 
     void addAnnotationTiers() {
         if (aseq == null) {

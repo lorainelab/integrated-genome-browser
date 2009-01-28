@@ -27,7 +27,7 @@ import java.io.*;
  *  Query span is at span {@link #TARGET_INDEX} = 1.
  */
 public class UcscPslSym
-  implements SeqSymmetry, TypedSym, SearchableSeqSymmetry, SymWithProps {
+  implements TypedSym, SearchableSeqSymmetry, SymWithProps {
 
   public static final int QUERY_INDEX = 0;
   public static final int TARGET_INDEX = 1;

@@ -153,7 +153,7 @@ public class UniFileFilter extends FileFilter {
    *<li> "foo.gz" returns null.
    *</ol>
    */
-  public String getExtension(File f) {
+  /*public String getExtension(File f) {
     if(f != null) {
       String filename = f.getName().toLowerCase();
       filename = stripCompressionEndings(filename);
@@ -163,7 +163,7 @@ public class UniFileFilter extends FileFilter {
       }
     }
     return null;
-  }
+  }*/
 
 
   public void addExtension(String extension) {

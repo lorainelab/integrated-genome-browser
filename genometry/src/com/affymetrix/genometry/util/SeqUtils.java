@@ -2040,13 +2040,13 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    *    to calculate the bounds, rather than just the immediate children.
    *  currently always returns a forward span
    */
-  public static final SeqSpan getLeafBounds(SeqSymmetry parent, BioSeq seq) {
+  /*public static final SeqSpan getLeafBounds(SeqSymmetry parent, BioSeq seq) {
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
     MutableSeqSpan result = new SimpleMutableSeqSpan(max, min, seq);
     getLeafBounds(parent, seq, result);
     return result;
-  }
+  }*/
 
   /**
    *  Helper function for {@link #getLeafBounds(SeqSymmetry, BioSeq)}.
@@ -2055,7 +2055,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
    *    to calculate the bounds, rather than just the immediate children.
    *  Currently always returns a forward span
    */
-  public static final void getLeafBounds(SeqSymmetry parent, BioSeq seq, MutableSeqSpan result) {
+  /*public static final void getLeafBounds(SeqSymmetry parent, BioSeq seq, MutableSeqSpan result) {
     int child_count = parent.getChildCount();
     if (child_count <= 0) {
       SeqSpan span = parent.getSpan(seq);
@@ -2068,7 +2068,7 @@ s                System.out.print("intersect span: "); printSpan(interSpan);
         getLeafBounds(child, seq, result);
       }
     }
-  }
+  }*/
 
   public static final int FORWARD = 5555;
   public static final int REVERSE = 5556;

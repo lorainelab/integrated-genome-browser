@@ -57,14 +57,17 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
     this.spans = spans;
   }*/
 
-  public SeqSpan getSpan(BioSeq seq) {
-    for (SeqSpan span : spans) {
-      if (span.getBioSeq() == seq) {
-        return span;
-      }
+    public SeqSpan getSpan(BioSeq seq) {
+        if (spans == null) {
+            return null;
+        }
+        for (SeqSpan span : spans) {
+            if (span.getBioSeq() == seq) {
+                return span;
+            }
+        }
+        return null;
     }
-    return null;
-  }
 
   public int getSpanCount() {
     if (spans == null) { return 0; }
@@ -88,13 +91,16 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
   }
 
   public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
-    for (SeqSpan vspan : spans) {
-      if (vspan.getBioSeq() == seq) {
-        span.set(vspan.getStart(), vspan.getEnd(), vspan.getBioSeq());
-        return true;
-      }
-    }
-    return false;
+        if (spans == null) {
+            return false;
+        }
+        for (SeqSpan vspan : spans) {
+            if (vspan.getBioSeq() == seq) {
+                span.set(vspan.getStart(), vspan.getEnd(), vspan.getBioSeq());
+                return true;
+            }
+        }
+        return false;
   }
 
   public int getChildCount() {

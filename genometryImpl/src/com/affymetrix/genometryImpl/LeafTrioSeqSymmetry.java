@@ -24,7 +24,7 @@ public class LeafTrioSeqSymmetry implements SeqSymmetry {
   protected int startA, startB, endA, endB, startC, endC;
   protected BioSeq seqA, seqB, seqC;
   
-  public LeafTrioSeqSymmetry(SeqSpan spanA, SeqSpan spanB, SeqSpan spanC) {
+  /*public LeafTrioSeqSymmetry(SeqSpan spanA, SeqSpan spanB, SeqSpan spanC) {
     startA = spanA.getStart();
     startB = spanB.getStart();
     startC = spanC.getStart();
@@ -34,7 +34,7 @@ public class LeafTrioSeqSymmetry implements SeqSymmetry {
     seqA = spanA.getBioSeq();
     seqB = spanB.getBioSeq();
     seqC = spanC.getBioSeq();
-  }
+  }*/
 
   public LeafTrioSeqSymmetry(int startA, int endA, BioSeq seqA, 
 				  int startB, int endB, BioSeq seqB, 

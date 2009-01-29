@@ -58,12 +58,12 @@ public class InvokeUtils {
      *
      * @see #invokeAndWait
      */
-    public static int invokeConfirmDialog(Component parentComponent,
+    /*public static int invokeConfirmDialog(Component parentComponent,
             Object message, String title, int optionType, int messageType)
                 throws InterruptedException {
         return invokeOptionDialog(parentComponent, message, title,
                 optionType, messageType, null, null, null);
-    }
+    }*/
 
     /**
      * Causes <i>JOptionPane.showOptionDialog()</i> to be executed synchronously
@@ -119,12 +119,12 @@ public class InvokeUtils {
      *
      * @see #invokeAndWait
      */
-    public static Object invokeInputDialog(Component parentComponent,
+    /*public static Object invokeInputDialog(Component parentComponent,
             Object message, String title, int messageType)
                 throws InterruptedException {
         return invokeInputDialog(parentComponent, message, title,
                 messageType, null, null, null);
-    }
+    }*/
 
     /**
      * Causes <i>JOptionPane.showInputDialog()</i> to be executed synchronously
@@ -135,7 +135,7 @@ public class InvokeUtils {
      *
      * @see #invokeAndWait
      */
-    public static Object invokeInputDialog(
+   /* public static Object invokeInputDialog(
             final Component parentComponent,
             final Object message,
             final String title,
@@ -157,8 +157,8 @@ public class InvokeUtils {
             return invokeAndWait(showInputDialog);
         }
         catch (InvocationTargetException e) {
-            /* showOptionDialog doesn't throw checked exceptions
-               so ex must be a RuntimeException or an Error. */
+            // showOptionDialog doesn't throw checked exceptions
+            //   so ex must be a RuntimeException or an Error.
             Throwable ex = e.getTargetException();
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) ex;
@@ -166,7 +166,7 @@ public class InvokeUtils {
                 throw (Error) ex;
             }
         }
-    }
+    }*/
 
 }
 

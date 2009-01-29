@@ -184,15 +184,15 @@ public abstract class SwingWorker extends FutureResult implements Runnable {
 
      */
 
-    public synchronized void interrupt() {
+    /*public synchronized void interrupt() {
 
         if (thread != null) {
 
-            /* Try-catch is workaround for JDK1.2.1 applet security bug.
+            // Try-catch is workaround for JDK1.2.1 applet security bug.
 
-               JDK1.2.1 overzealously throws a security exception if an
+             //  JDK1.2.1 overzealously throws a security exception if an
 
-               applet interrupts a thread that is no longer alive. */
+             //  applet interrupts a thread that is no longer alive. 
 
             try { thread.interrupt(); } catch (Exception ex) { }
 
@@ -200,7 +200,7 @@ public abstract class SwingWorker extends FutureResult implements Runnable {
 
         setException(new InterruptedException());
 
-    }
+    }*/
 
 
 
@@ -220,13 +220,13 @@ public abstract class SwingWorker extends FutureResult implements Runnable {
 
     */
 
-    public synchronized void clear() {
+    /*public synchronized void clear() {
 
         super.clear();
 
         thread = null;
 
-    }
+    }*/
 
 
 

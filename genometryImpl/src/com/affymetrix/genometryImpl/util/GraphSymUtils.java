@@ -386,7 +386,7 @@ public class GraphSymUtils {
   }
 
 
-  public static GraphSymFloat revCompGraphSym(GraphSym gsym, BioSeq symseq, BioSeq revcomp_symseq) {
+  /*public static GraphSymFloat revCompGraphSym(GraphSym gsym, BioSeq symseq, BioSeq revcomp_symseq) {
     int xpos[] = gsym.getGraphXCoords();
 
     int rcxpos[] = new int[xpos.length];
@@ -403,7 +403,7 @@ public class GraphSymUtils {
     GraphSymFloat revcomp_gsym = new GraphSymFloat(rcxpos, rcypos, unique_newid, revcomp_symseq);
     revcomp_gsym.setGraphName(newid);
     return revcomp_gsym;
-  }
+  }*/
 
   /** Writes out in a variety of possible formats depending
    *  on the suffix of the filename.
@@ -459,13 +459,13 @@ public class GraphSymUtils {
   }
 
 
-  public static void writeTagVal(DataOutputStream dos, String tag, String val)
+  /*public static void writeTagVal(DataOutputStream dos, String tag, String val)
     throws IOException  {
     dos.writeInt(tag.length());
     dos.writeBytes(tag);
     dos.writeInt(val.length());
     dos.writeBytes(val);
-  }
+  }*/
 
   public static HashMap readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
     HashMap tvpairs = new HashMap(pair_count);

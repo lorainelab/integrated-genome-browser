@@ -596,15 +596,15 @@ public class BarParser implements AnnotationWriter  {
 		return graphs;
 	}
 
-	public static void writeTagVal(DataOutput dos, String tag, String val)
+	/*public static void writeTagVal(DataOutput dos, String tag, String val)
 	throws IOException  {
 		dos.writeInt(tag.length());
 		dos.writeBytes(tag);
 		dos.writeInt(val.length());
 		dos.writeBytes(val);
-	}
+	}*/
 
-	public static HashMap<String,String> readTagValPairs(DataInput dis, int pair_count) throws IOException  {
+	private static final HashMap<String,String> readTagValPairs(DataInput dis, int pair_count) throws IOException  {
 		HashMap<String,String> tvpairs = new HashMap<String,String>(pair_count);
 		if (DEBUG_READ) { System.out.println("reading tagvals: "); }
 		for (int i=0; i<pair_count; i++) {

@@ -24,6 +24,7 @@ public class GFF3SymTest {
   public void tearDown() {
   }
 
+  /*
   @Test
   public void testGetSource() {
       fail("test not implemented");
@@ -58,7 +59,7 @@ public class GFF3SymTest {
   public void testSetProperty() {
       fail("test not implemented");
   }
-
+  
   @Test
   public void testGetProperties() {
       fail("test not implemented");
@@ -68,6 +69,7 @@ public class GFF3SymTest {
   public void testCloneProperties() {
       fail("test not implemented");
   }
+   */
 
   @Test
   public void testGetIdFromGFF3Attributes() {
@@ -83,6 +85,7 @@ public class GFF3SymTest {
     assertEquals("NC_000964.2:yaaA:unknown_transcript_1", GFF3Sym.getIdFromGFF3Attributes(example)); 
   }
 
+  /*
   @Test
   public void testAddAllAttributesFromGFF3() {
       fail("test not implemented");
@@ -92,4 +95,5 @@ public class GFF3SymTest {
   public void testGetGFF3PropertyFromAttributes() {
       fail("test not implemented");
   }
+   */
 }

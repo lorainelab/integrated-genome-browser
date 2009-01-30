@@ -13,7 +13,23 @@
 
 package com.affymetrix.genometry;
 
+/**
+ * Extensions to the BioSeq interface which stores the residues as smaller
+ * sequences internally.
+ */
 public interface CompositeBioSeq extends BioSeq {
+
+  /**
+   * Returns the SeqSymmetry which represents the residues in the sequence.
+   *
+   * @return the SeqSymmetry which represents the residues in the sequence
+   */
   public SeqSymmetry getComposition();
+
+  /**
+   * Sets the SeqSymmetry which represents the residues in the sequence.
+   *
+   * @param comp the SeqSymmetry which represents the residues in the sequence
+   */
   public void setComposition(SeqSymmetry comp);
 }

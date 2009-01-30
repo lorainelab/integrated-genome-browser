@@ -17,18 +17,37 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
+/**
+ * A simple implementation of CompositeBioSeq. This class must be subclassed
+ * to be used as there is no method to modify the length of the sequence. In
+ * the future, this class may become an abstract class or be merged with its
+ * subclass (CompositeNegSeq).
+ */
 public class SimpleCompositeBioSeq implements CompositeBioSeq {
 
+  /** Boolean debug variable for the class. */
   public boolean DEBUG_GET_RESIDUES = false;
+  /**
+   * String identifier for the sequence.  This is not guaranteed to be unique.
+   */
   protected String id;
+  /** Length of the sequence. */
   //  protected int length = 0;
+  /**
+   * Length of the sequence, stored as a double.  The value is always an
+   * integer and much of the functionality of this class and its sub-classes
+   * is lost if the length is greater than Interger.INT_MAX.
+   */
   protected double length = 0;
+  /** SeqSymetry to store the sequence in. */
   protected SeqSymmetry compose;
 
+  /** This class should never be instantiated. */
   public SimpleCompositeBioSeq(String id) {
     this.id = id;
   }
 
+  /** This class should never be instantiated. */
   public SimpleCompositeBioSeq() { }
 
   public SeqSymmetry getComposition() {
@@ -48,8 +67,21 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   //  public int getMin() { return 0; }
   //  public int getMax() { return getLength(); }
 
+  /**
+   * Returns the number of residues in the sequence as a double.
+   *
+   * @return the number of residues in the sequence as a double
+   */
   public double getLengthDouble() { return length; }
 
+  /**
+   * Returns all residues on the sequence.
+   *
+   * This function is never used, as it is overridden in the only subclass and
+   * this class can not be called directly.
+   *
+   * @return a String containing all residues on the sequence
+   */
   public String getResidues() {
     // may want to do a caching strategy at some point, in case there are repeated
     //   getResidues calls...
@@ -60,6 +92,19 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
     return getResidues(start, end, ' ');
   }
 
+  /**
+   * Returns the residues on the sequence between start and end using the
+   * fillchar to fill any gaps in the sequence.  Unknown if this implementation
+   * is inclusive or exclusive on start and end.
+   *
+   * This function is never used, as it is overridden in the only subclass and
+   * this class can not be called directly.
+   *
+   * @param  start    the start index (inclusive?)
+   * @param  end      the end index (exclusive?)
+   * @param  fillchar the character to fill empty residues in the sequence with
+   * @return          a String containing residues between start and end
+   */
   public String getResidues(int start, int end, char fillchar) {
       int residue_length = this.getLength();
       if (start < 0 || residue_length <= 0) {
@@ -94,6 +139,17 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
       return result;
   }
 
+  /**
+   * Function for finding residues.  This function is a bit of a mess:
+   * several of the parameters are unused and the implementation is more
+   * confusing than it needs to be.
+   *
+   * @param this_residue_span the SeqSpan to find residues on
+   * @param fillchar          unused
+   * @param sym               the SeqSymmetry to search for residues
+   * @param residues          the character array to be filled with residues
+   * @param buf_offset        unused
+   */
   protected void getResidues(SeqSpan this_residue_span, char fillchar,
                              SeqSymmetry sym, char[] residues, int buf_offset) {
     int symCount = sym.getChildCount();
@@ -153,10 +209,31 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
     }
   }
 
+  /**
+   * Returns true if all residues on the sequence are available.
+   *
+   * This function is never used, as it is overridden in the only subclass and
+   * this class can not be called directly.
+   *
+   * @return true if all residues on the sequence are available
+   */
   public boolean isComplete() {
     return isComplete(0, this.getLength());
   }
 
+  /**
+   * Returns true if all residues between start and end are available.  Unknown
+   * if implementations of this function are inclusive or exclusive on start
+   * and end.
+   * <p />
+   * <em>WARNING:</em> This implementation is flawed.  It only verifies that
+   * all SeqSymmetrys are complete, not that the SeqSymmetrys completely
+   * cover the range in question.
+   *
+   * @param  start the start index (inclusive?)
+   * @param  end   the end index (exclusive?)
+   * @return       true if all residues betwen start and end are available
+   */
   public boolean isComplete(int start, int end) {
     // assuming that if all sequences the composite is composed of are
     //    complete, then composite is also complete

@@ -33,13 +33,15 @@ import com.affymetrix.genometry.span.*;
  */
 public class CompositeNegSeq extends SimpleCompositeBioSeq {
 
+  /** The index of the first residue of the sequence. */
   int start;
+  /** The index of the last residue of the sequence. */
   int end;
   //  double start;
   //  double end;
 
   /**
-   *  Constructor. Requires that min < max.
+   *  Constructor. Requires that min less than max.
    */
   public CompositeNegSeq(String id, int min, int max) {
     this(id);
@@ -67,9 +69,39 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
   public CompositeNegSeq() { }
 
 
+  /**
+   * Returns the integer index of the first residue of the sequence.  Negative
+   * values are acceptable.  The value returned is undefined if the minimum
+   * value is set using setBoundsDouble(double, double) to something outside
+   * of Integer.MIN_VALUE and Integer.MAX_VALUE.
+   *
+   * @return the integer index of the first residue of the sequence.
+   */
   public int getMin() { return start; }
+
+  /**
+   * Returns the integer index of the last residue of the sequence.  The
+   * maximum value must always be greater than the minimum value.  The value
+   * returned is undefined if the maximum value is set using
+   * setBoundsDouble(double, double) to something outside of Integer.MIN_VALUE
+   * and Integer.MAX_VALUE.
+   *
+   * @return the integer index of the last residue of the sequence.
+   */
   public int getMax() { return end; }
 
+  /**
+   * Sets the start and end of the sequence as double values.
+   * <p />
+   * <em>WARNING:</em> min and max are stored intenally using integers.  If
+   * min or max are outside of the range Integer.MIN_VALUE and
+   * Interger.MAX_VALUE, the values will not be stored properly.  The length
+   * (min - max) is computed and stored as a double before min and max are
+   * downcast to int.
+   *
+   * @param min the index of the first residue of the sequence, as a double.
+   * @param max the index of the last residue of the sequence, as a double.
+   */
   public void setBoundsDouble(double min, double max) {
     length = max - min;
     if (min < Integer.MIN_VALUE) { start = Integer.MIN_VALUE + 1; }
@@ -78,6 +110,12 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
     else { end = (int)max; }
   }
 
+  /**
+   * Sets the start and end of the sequence
+   *
+   * @param min the index of the first residue of the sequence.
+   * @param max the index of the last residue of the sequence.
+   */
   public void setBounds(int min, int max) {
     start = min;
     end = max;
@@ -85,18 +123,37 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
     length = (double)end - (double)start;
   }
 
+  /**
+   * Returns true if all residues on the sequence are available.
+   *
+   * @return true if all residues on the sequence are available.
+   */
+  @Override
   public boolean isComplete() {
     return isComplete(start, end);
   }
 
   /**
-   *  Returns the complete residues in a String.
-   *  Overrided to include residues where position < 0.
+   * Returns all residues on the sequence.
+   *
+   * @return a String containing all residues on the sequence.
    */
+  @Override
   public String getResidues() {
     return getResidues(start, end);
   }
 
+  /**
+   * Returns the residues on the sequence between start and end using the
+   * fillchar to fill any gaps in the sequence.  Unknown if this implementation
+   * is inclusive or exclusive on start and end.
+   *
+   * @param  start    the start index (inclusive?)
+   * @param  end      the end index (exclusive?)
+   * @param  fillchar the character to fill empty residues in the sequence with.
+   * @return          a String containing residues between start and end.
+   */
+  @Override
   public String getResidues(int res_start, int res_end, char fillchar) {
     SeqSpan residue_span = new SimpleSeqSpan(res_start, res_end, this);
     int reslength = Math.abs(res_end - res_start);

@@ -43,7 +43,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
   /**
    *  Constructor. Requires that min less than max.
    */
-  public CompositeNegSeq(String id, int min, int max) {
+  /*public CompositeNegSeq(String id, int min, int max) {
     this(id);
     this.start = min;
     this.end = max;
@@ -52,7 +52,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
     }
     //    this.length = end - start;
     this.length = (double)end - (double)start;
-  }
+  }*/
 
 
   public CompositeNegSeq(String id, int length) {

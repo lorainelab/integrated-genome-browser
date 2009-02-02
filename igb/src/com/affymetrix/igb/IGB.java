@@ -851,7 +851,7 @@ public class IGB extends Application
     //    RepaintManager rm = RepaintManager.currentManager(frm);
     if (REPORT_GRAPHICS_CONFIG) { System.out.println("repaint manager: " + rm.getClass()); }
     Rectangle frame_bounds = UnibrowPrefsUtil.retrieveWindowLocation("main window",
-        new Rectangle(0, 0, 800, 600));
+        new Rectangle(0, 0, 950, 600)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
     UnibrowPrefsUtil.setWindowSize(frm, frame_bounds);
 
     tab_pane = new JTabbedPane();

@@ -49,12 +49,13 @@ public class LinearTransform implements TransformI  {
    * by this.pixel_box.  Should be able to "fit" a glyph hierarchy into the pixel_box
    * by calling this with the top glyph's coord_box
    */
+  /*
   public LinearTransform(Rectangle2D coord_box, Rectangle pixel_box)  {
     xscale = (double)pixel_box.width / coord_box.width;
     yscale = (double)pixel_box.height / coord_box.height;
     xoffset = (double)pixel_box.x - xscale * coord_box.x;
     yoffset = (double)pixel_box.y - yscale * coord_box.y;
-  }
+  }*/
 
   public void copyTransform(LinearTransform LT) {
     xscale = LT.getScaleX();

@@ -87,6 +87,8 @@ public class QuickLoadView2 extends JComponent
   JButton optionsB;
   DataLoadPrefsView optionsP;
 
+    SeqGroupView group_view;
+
   int pref_tab_number = -1;
 
   boolean auto_select_first_seq_in_group = true;
@@ -149,6 +151,10 @@ public class QuickLoadView2 extends JComponent
     this.add("North", choice_panel);
     this.add("Center", new JScrollPane(types_panel));
     this.add("South", buttonP);
+
+    group_view = new SeqGroupView();
+    this.add("West",group_view);
+
     this.setBorder(BorderFactory.createEtchedBorder());
 
     gmodel.addGroupSelectionListener(this);

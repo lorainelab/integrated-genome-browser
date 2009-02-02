@@ -43,7 +43,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
     this(HORIZONTAL);
   }
 
-  public SequenceGlyph(int orientation) {
+  private SequenceGlyph(int orientation) {
     super(orientation);
     full_rect = new FillRectGlyph();
     scratchrect = new Rectangle2D();

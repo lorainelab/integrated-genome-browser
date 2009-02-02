@@ -1169,7 +1169,7 @@ public class SeqMapView extends JPanel
             while (iter.hasNext()) {
                 SeqSymmetry old_selected_sym = (SeqSymmetry) iter.next();
 
-                GlyphI gl = (GlyphI) seqmap.getItem(old_selected_sym);
+                GlyphI gl = seqmap.getItem(old_selected_sym);
                 if (gl != null) {
                     seqmap.select(gl);
                 }
@@ -1222,11 +1222,11 @@ public class SeqMapView extends JPanel
         }
 
         seqmap.toFront(axis_tier);
-        List floating_layers = getFloatingLayers();
+        List<GlyphI> floating_layers = getFloatingLayers();
 
         // restore floating layers to front of map
         for (int i = 0; i < floating_layers.size(); i++) {
-            GlyphI layer_glyph = (GlyphI) floating_layers.get(i);
+            GlyphI layer_glyph = floating_layers.get(i);
             seqmap.toFront(layer_glyph);
         }
         // notifyPlugins();
@@ -1309,12 +1309,12 @@ public class SeqMapView extends JPanel
      *  Returns all floating layers _except_ grid layer (which is supposed to stay
      *  behind everything else).
      */
-    public List getFloatingLayers() {
-        List layers = new ArrayList();
+    private List<GlyphI> getFloatingLayers() {
+        List<GlyphI> layers = new ArrayList<GlyphI>();
         GlyphI root_glyph = seqmap.getScene().getGlyph();
         int gcount = root_glyph.getChildCount();
         for (int i = 0; i < gcount; i++) {
-            GlyphI cgl = (GlyphI) root_glyph.getChild(i);
+            GlyphI cgl = root_glyph.getChild(i);
             if ((cgl instanceof PixelFloaterGlyph) && (cgl != grid_layer)) {
                 layers.add(cgl);
             }

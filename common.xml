@@ -42,6 +42,10 @@
 		<!-- OS X and Debian do not appear to have junit in ant's path -->
 		<property name="junit.jar"       value="/usr/share/junit/junit.jar:/usr/share/java/junit4.jar" />
 
+		<!-- Configuration for pmd -->
+		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />
+		<available classname="net.sourceforge.pmd.cpd.CPDTask" property="have.cpd" />
+
 		<filter token="jnlp.version"  value="${jnlp.version}" />
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
@@ -54,10 +58,10 @@
 	</presetdef>
 
 	<presetdef name="my.javadoc">
-		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="Integrated Genome Browser" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
+		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name}" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">
 			<link href="${javadoc.j2se.url}"/>
 			<link href="${javadoc.j2ee.url}"/>
-			<doctitle><![CDATA[<h1>IGB - Integrated Genome Browser</h1>]]></doctitle>
+			<doctitle><![CDATA[<h1>${name}</h1>]]></doctitle>
 			<bottom><![CDATA[<i>Copyright &#169; Affymetrix, Inc.</i>]]></bottom>
 		</javadoc>
 	</presetdef>
@@ -65,4 +69,24 @@
 	<presetdef name="my.signjar">
 		<signjar alias="${jar.sign.alias}" storepass="${jar.sign.keystore.pass}" keystore="${jar.sign.keystore}" keypass="${jar.sign.alias.pass}" />
 	</presetdef>
+
+	<target name="pmd-init" depends="common-init" if="have.pmd">
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" />
+
+		<presetdef name="my.pmd">
+			<pmd shortFilenames="true" classpath="${etc.dir}/pmd-cfg.xml" rulesetfiles="${etc.dir}/pmd-cfg.xml">
+				<formatter type="xml" toFile="${report.dir}/${report.prefix}pmd.xml" />
+				<!-- for some reason, ${src.dir} will not work here -->
+				<fileset dir="src" includes="**/*.java" />
+			</pmd>
+		</presetdef>
+	</target>
+
+	<target name="cpd-init" depends="common-init" if="have.cpd">
+		<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" />
+
+		<presetdef name="my.cpd">
+			<cpd encoding="UTF-8" minimumTokenCount="50" format="xml" outputFile="${report.dir}/${report.prefix}cpd.xml" />
+		</presetdef>
+	</target>
 </project>

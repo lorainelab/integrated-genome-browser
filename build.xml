@@ -10,6 +10,8 @@
 	<import file="common.xml" />
 
 	<target name="init">
+		<property name="name" value="Integrated Genome Browser" />
+
 		<!-- Locations of subprojets -->
 		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
 		<property name="genometry"     value="${basedir}/genometry" />
@@ -18,13 +20,14 @@
 		<property name="das2server"    value="${basedir}/das2_server" />
 
 		<!-- directory paths -->
-		<property name="lib.dir"      value="${basedir}/ext" />
-		<property name="demos.dir"    value="${genoviz}/demo" />
-		<property name="docs.dir"     value="${basedir}/documentation/api-docs" />
+		<property name="lib.dir"    value="${basedir}/ext" />
+		<property name="etc.dir"    value="${basedir}/etc" />
+		<property name="demos.dir"  value="${genoviz}/demo" />
+		<property name="docs.dir"   value="${basedir}/documentation/api-docs" />
+		<property name="report.dir" value="${basedir}/reports" />
 
 		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${genometryImpl}/src:${genometryImpl}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test" />
 	</target>
-
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
 		<iterate target="compile" />
@@ -93,6 +96,26 @@
 		<iterate target="all" />
 	</target>
 
+	<target name="report" depends="test,docs,pmd,cpd" description="Generate reports about the project" />
+
+	<target name="pmd" depends="common-init" if="have.pmd" description="run pmd static analysis program">
+		<iterate target="pmd" />
+	</target>
+
+	<target name="cpd" depends="common-init,cpd-init" if="have.cpd" description="run pmd's cut and paste detection">
+		<mkdir dir="${report.dir}" />
+		<property name="report.prefix" value="" />
+		<my.cpd>
+			<fileset dir=".">
+				<exclude name="genoviz_lite/**/*.java" />
+				<exclude name="*/test/**/*.java" />
+				<exclude name="*/demo/**/*.java" />
+				<include name="**/*.java" />
+			</fileset>
+		</my.cpd>
+		<xslt in="${report.dir}/${report.prefix}cpd.xml" style="${etc.dir}/cpdhtml.xslt" out="${report.dir}/${report.prefix}cpd.html" />
+	</target>
+
 	<target name="clean" depends="common-init">
 		<delete file="igb_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
@@ -101,6 +124,7 @@
 		<delete dir="${webstart.dir}" />
 		<delete dir="${webapp.dir}" />
 		<delete dir="${demos.dir}/genoviz" />
+		<delete dir="${report.dir}" />
 
 		<iterate target="clean" />
 	</target>

@@ -2,7 +2,7 @@
 	<import file="common.xml" />
 
   <target name="init">
-		<!-- Locations of subprojets -->
+		<!-- Locations of subprojects -->
 		<property name="genoviz"       value="${basedir}/../genoviz_sdk" />
 		<property name="genometry"     value="${basedir}/../genometry" />
 		<property name="genometryImpl" value="${basedir}/../genometryImpl" />
@@ -10,11 +10,13 @@
 		<property name="das2server"    value="${basedir}/../das2_server" />
 
 		<!-- directory paths -->
-		<property name="lib.dir"      value="${basedir}/../ext" />
-		<property name="src.dir"      value="${basedir}/src "/>
-		<property name="rsrc.dir"     value="${basedir}/resources" />
-		<property name="build.dir"    value="${basedir}/build" />
-		<property name="docs.dir"     value="${basedir}/docs" />
+		<property name="lib.dir"     value="${basedir}/../ext" />
+		<property name="etc.dir"     value="${basedir}/../etc" />
+		<property name="src.dir"     value="${basedir}/src "/>
+		<property name="rsrc.dir"    value="${basedir}/resources" />
+		<property name="build.dir"   value="${basedir}/build" />
+		<property name="docs.dir"    value="${basedir}/docs" />
+		<property name="reports.dir" value="${basedir}/reports" />
 
 		<!-- JUnit test configuration -->
 		<property name="test.src.dir"    value="${basedir}/test" />
@@ -23,6 +25,9 @@
 
 		<!-- property list file -->
 		<property file="${basedir}/ant.properties" />
+
+		<property name="jarfile"       value="${project}.jar" />
+		<property name="report.prefix" value="${project}." />
   </target>
 
   <target name="compile" depends="common-init">
@@ -93,6 +98,21 @@
 		<my.javadoc sourcepath="${src.dir}" classpath="${classpath}" />
 	</target>
 
+	<target name="pmd" depends="common-init,pmd-init" if="have.pmd" description="run pmd static analysis program">
+		<mkdir dir="${report.dir}" />
+		<my.pmd />
+		<xslt in="${report.dir}/${report.prefix}pmd.xml" style="${etc.dir}/pmd-nicerhtml.xsl" out="${report.dir}/${report.prefix}pmd.html" />
+	</target>
+
+	<target name="cpd" depends="common-init,cpd-init" if="have.cpd" description="run pmd's cut and paste detection">
+		<mkdir dir="${report.dir}" />
+		<my.cpd>
+			<!-- for some reason, ${src.dir} will not work here -->
+			<fileset dir="src" includes="**/*.java" />
+		</my.cpd>
+		<xslt in="${report.dir}/${report.prefix}cpd.xml" style="${etc.dir}/cpdhtml.xslt" out="${report.dir}/${report.prefix}cpd.html" />
+	</target>
+
 	<target name="clean" depends="common-init">
     <delete file="${component}.jar"/>
 		<delete dir="${docs.dir}"/>
@@ -100,5 +120,6 @@
 		<delete dir="${dist.dir}" />
 		<delete dir="${test.build.dir}" />
 		<delete dir="${test.report.dir}" />
+		<delete dir="${report.dir}" />
   </target>
 </project>

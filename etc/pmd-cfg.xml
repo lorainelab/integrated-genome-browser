@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<ruleset name="genoviz"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+  <description>This ruleset if for the genoviz project</description>
+
+  <rule ref="rulesets/basic.xml">
+		<exclude name="ForLoopShouldBeWhileLoop" />
+	</rule>
+	<rule ref="rulesets/braces.xml/WhileLoopsMustUseBraces" />
+	<rule ref="rulesets/clone.xml" />
+	<rule ref="rulesets/codesize.xml">
+		<exclude name="TooManyMethods" />
+	</rule>
+	<rule ref="rulesets/controversial.xml">
+		<exclude name="OnlyOneReturn" />
+		<exclude name="AvoidFinalLocalVariables" />
+	</rule>
+	<rule ref="rulesets/coupling.xml" />
+	<rule ref="rulesets/design.xml">
+		<exclude name="ConfusingTernary" />
+	</rule>
+	<rule ref="rulesets/finalizers.xml" />
+	<rule ref="rulesets/imports.xml" />
+	<rule ref="rulesets/j2ee.xml" />
+	<rule ref="rulesets/junit.xml" />
+	<rule ref="rulesets/logging-jakarta-commons.xml" />
+	<rule ref="rulesets/logging-java.xml" />
+	<rule ref="rulesets/migrating.xml">
+		<exclude name="ReplaceVectorWithList" />
+	</rule>
+	<rule ref="rulesets/naming.xml">
+		<exclude name="ShortVariable" />
+		<exclude name="LongVariable" />
+		<exclude name="VariableNamingConventions" />
+		<exclude name="MethodNamingConventions" />
+		<exclude name="ClassNamingConventions" />
+		<exclude name="AbstractNaming" />
+		<exclude name="PackageCase" />
+		<exclude name="BooleanGetMethodName" />
+	</rule>
+	<rule ref="rulesets/optimizations.xml" />
+	<rule ref="rulesets/strictexception.xml" />
+	<rule ref="rulesets/strings.xml" />
+	<rule ref="rulesets/sunsecure.xml" />
+	<rule ref="rulesets/typeresolution.xml" />
+  <rule ref="rulesets/unusedcode.xml"/>
+</ruleset>

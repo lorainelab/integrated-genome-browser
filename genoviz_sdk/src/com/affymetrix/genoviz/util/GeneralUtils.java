@@ -21,7 +21,7 @@ import java.util.*;
 /**
  * General utilities for use by other classes as static methods.
  */
-public class GeneralUtils  {
+public final class GeneralUtils  {
 
   protected static Hashtable<String,Color> colormap;
 
@@ -170,8 +170,8 @@ public class GeneralUtils  {
     return width;
   }
   
-    /*
-     safely close a closeable object.
+    /**
+     * Safely close a Closeable object.  If it doesn't exist, return.
      */
     public static <S extends Closeable> void safeClose(S s) {
         if (s == null)

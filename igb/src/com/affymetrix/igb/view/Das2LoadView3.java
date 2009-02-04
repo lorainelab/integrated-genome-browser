@@ -350,7 +350,7 @@ DataRequestListener {
 	 *  But for now putting them all on same (non-event) thread controlled by SwingWorker
 	 */
 	public static void processFeatureRequests(List<Das2FeatureRequestSym> requests, final boolean update_display) {
-		processFeatureRequests(requests, update_display, DEFAULT_THREAD_FEATURE_REQUESTS);
+		processFeatureRequests(requests, update_display, DEFAULT_THREAD_FEATURE_REQUESTS, gmodel, gviewer);
 	}
 
 	/**
@@ -364,7 +364,13 @@ DataRequestListener {
 	 *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
 	 *
 	 */
-	public static void processFeatureRequests(List<Das2FeatureRequestSym> requests, final boolean update_display, boolean thread_requests) {
+	public static void processFeatureRequests(
+            List<Das2FeatureRequestSym> requests,
+            final boolean update_display,
+            boolean thread_requests,
+            final SingletonGenometryModel gmodel,
+            final SeqMapView gviewer
+            ) {
 		if ((requests == null) || (requests.size() == 0)) { return; }
 		final List<Das2FeatureRequestSym> result_syms = new ArrayList<Das2FeatureRequestSym>();
 
@@ -428,7 +434,7 @@ DataRequestListener {
         return requests_by_version;
     }
 
-      private static void createResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<Das2FeatureRequestSym> result_syms) {
+      static final void createResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<Das2FeatureRequestSym> result_syms) {
         for (Das2FeatureRequestSym request_sym : request_set) {
             // Create an AnnotStyle so that we can automatically set the
             // human-readable name to the DAS2 name, rather than the ID, which is a URI

@@ -213,7 +213,7 @@ public class GraphSymUtils {
    *  Reads one or more graphs from an input stream.
    *  Equivalent to a call to the other readGraphs() method using seq = null.
    */
-  public static List readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) throws IOException  {
+  public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) throws IOException  {
     return readGraphs(istr, stream_name, gmodel, seq_group, (MutableAnnotatedBioSeq) null);
   }
 
@@ -228,8 +228,8 @@ public class GraphSymUtils {
    *   do not specify a BioSeq, use this parameter to specify it.  If null
    *   then GenometryModel.getSelectedSeq() will be used.
    */
-  public static List readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
-    List grafs = null;
+  public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
+    List<GraphSym> grafs = null;
     StringBuffer stripped_name = new StringBuffer();
     InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
     String sname = stripped_name.toString().toLowerCase();
@@ -286,7 +286,7 @@ public class GraphSymUtils {
     processGraphSyms(grafs, stream_name);
 
     if (grafs == null) {
-      grafs = Collections.EMPTY_LIST;
+      grafs = Collections.<GraphSym>emptyList();
     }
     return grafs;
   }
@@ -340,10 +340,10 @@ public class GraphSymUtils {
   }*/
 
 
-  static List wrapInList(GraphSym gsym) {
-    List grafs = null;
+  static List<GraphSym> wrapInList(GraphSym gsym) {
+    List<GraphSym> grafs = null;
     if (gsym != null) {
-      grafs = new ArrayList();
+      grafs = new ArrayList<GraphSym>();
       grafs.add(gsym);
     }
     return grafs;
@@ -467,8 +467,8 @@ public class GraphSymUtils {
     dos.writeBytes(val);
   }*/
 
-  public static HashMap readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
-    HashMap tvpairs = new HashMap(pair_count);
+  public static HashMap<String, String> readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
+    HashMap<String,String> tvpairs = new HashMap<String,String>(pair_count);
     if (DEBUG_READ) { System.out.println("seq tagval count: " + pair_count); }
     for (int i=0; i<pair_count; i++) {
       int taglength = dis.readInt();

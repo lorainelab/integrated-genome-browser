@@ -431,7 +431,7 @@ public class BarParser implements AnnotationWriter  {
 	}
 
 	/** Parse a file in BAR format. */
-	public static List parse(InputStream istr, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String stream_name)
+	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String stream_name)
 	throws IOException  {
 		return parse(istr, gmodel, seq_group, stream_name, true);
 	}

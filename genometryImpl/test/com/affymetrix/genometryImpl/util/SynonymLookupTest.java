@@ -1,10 +1,9 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.util;
 
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometryImpl.util.SynonymLookup;
 import java.util.*;
 
 /**

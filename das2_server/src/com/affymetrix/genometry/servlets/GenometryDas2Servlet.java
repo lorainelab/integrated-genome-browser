@@ -725,7 +725,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         //    put in order in new LinkedHashMap(), then replace as organisms field
         File org_order_file = new File(org_order_filename);
         if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
-            Comparator org_comp = new MatchToListComparator(org_order_filename);
+            Comparator<String> org_comp = new MatchToListComparator(org_order_filename);
             List<String> orglist = new ArrayList<String>(organisms.keySet());
             Collections.sort(orglist, org_comp);
             Map<String,List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String,List<AnnotatedSeqGroup>>();
@@ -736,7 +736,7 @@ public class GenometryDas2Servlet extends HttpServlet {
             organisms = sorted_organisms;
         }
         if (SORT_VERSIONS_BY_DATE_CONVENTION) {
-            Comparator date_comp = new GenomeVersionDateComparator();
+            Comparator<AnnotatedSeqGroup> date_comp = new GenomeVersionDateComparator();
             for (List<AnnotatedSeqGroup> versions : organisms.values()) {
                 Collections.sort(versions, date_comp);
             }

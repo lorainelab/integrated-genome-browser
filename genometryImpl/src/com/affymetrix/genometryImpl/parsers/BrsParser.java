@@ -426,7 +426,7 @@ public class BrsParser implements AnnotationWriter  {
     */
   }
 
-  public void writeObjTest(String text_file, String bin_file) {
+  /*public void writeObjTest(String text_file, String bin_file) {
     System.out.println("Writing object");
     int count = 0;
     long flength = 0;
@@ -526,7 +526,7 @@ public class BrsParser implements AnnotationWriter  {
     catch (Exception ex) {
       ex.printStackTrace();
     }
-  }
+  }*/
   /**
    *  Reads a text file and writes a binary file.
    *<p>
@@ -584,7 +584,7 @@ public class BrsParser implements AnnotationWriter  {
   public String getMimeType() { return "binary/brs"; }
 
 
-  public class SerialHolder implements Serializable {
+  /*public class SerialHolder implements Serializable {
     static final long serialVersionUID = 1L;
     Vector transvec;
     public SerialHolder(Vector transvec) {
@@ -618,5 +618,5 @@ public class BrsParser implements AnnotationWriter  {
       this.emins = emins;
       this.emaxs = emaxs;
     }
-  }
+  }*/
 }

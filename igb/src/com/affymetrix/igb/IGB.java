@@ -269,7 +269,7 @@ public class IGB extends Application
     //    String quick_load_url = "file:/C:/data/quickload/";
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
-    processDasServersList(quick_load_url);
+    //processDasServersList(quick_load_url);    -- not working correctly on http://netaffxdas.affymetrix.com/das/
     //processDas2ServersList(quick_load_url);   -- the processing code was commented out.
 
     singleton_igb = new IGB();

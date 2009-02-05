@@ -414,7 +414,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
    * so that we can add both the labeling (this) and labeled glyph
    * to the pickVector.
    */
-  public void pickTraversal(Rectangle2D pickRect, Vector pickVector,
+  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
       ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
@@ -439,7 +439,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
    * so that we can add both the labeling (this) and labeled glyph
    * to the pickVector.
    */
-  public void pickTraversal(Rectangle pickRect, Vector pickVector,
+  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
       ViewI view)
   {
     if (isVisible && intersects(pickRect, view))  {

@@ -154,7 +154,7 @@ public class TransformTierGlyph extends TierGlyph {
   //
   // need to redo pickTraversal, etc. to take account of transform also...
   //
-  public void pickTraversal(Rectangle2D pickRect, Vector pickVector,
+  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
 
     // copied form first part of Glyph.pickTraversal()
@@ -186,7 +186,7 @@ public class TransformTierGlyph extends TierGlyph {
 
 
   // NOT YET TESTED
-  public void pickTraversal(Rectangle pickRect, Vector pickVector,
+  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
                             ViewI view) {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {

@@ -59,7 +59,7 @@ public class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph
   /**
    *  Reifying flyweight glyphs as needed in pickTraversal.
    */
-  public void pickTraversal(Rectangle2D pickRect, Vector pickVector,
+  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
     super.pickTraversal(pickRect, pickVector, view);
     if (isVisible && intersects(pickRect, view))  {

@@ -66,7 +66,7 @@ public class GlyphEdgeMatcher  {
    *
    *  Glyphs added for matches are collected and returned in match_glyphs vector.
    */
-  public void matchEdges(NeoMapI map, List query_glyphs, List target_glyphs, List match_glyphs) {
+  public void matchEdges(NeoMapI map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
     call_count = 0;
     start_match_count = 0;
     end_match_count = 0;
@@ -74,19 +74,19 @@ public class GlyphEdgeMatcher  {
     intersect_count = 0;
     //    System.out.println("called GlyphEdgeMatcher.matchEdges(), query_glyph count = " + query_glyphs.size());
     for (int i=0; i<query_glyphs.size(); i++) {
-      GlyphI query = (GlyphI) query_glyphs.get(i);
+      GlyphI query = query_glyphs.get(i);
       matchEdges(map, query, target_glyphs, match_glyphs);
     }
   }
 
-  private void matchEdges(NeoMapI map, GlyphI query, List target_glyphs, List match_glyphs) {
+  private void matchEdges(NeoMapI map, GlyphI query, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
     for (int k=0; k<target_glyphs.size(); k++) {
       GlyphI target = (GlyphI) target_glyphs.get(k);
       matchEdges(map, query, target, match_glyphs);
     }
   }
   
-  private void matchEdges(NeoMapI map, GlyphI query, GlyphI target, List match_glyphs) {
+  private void matchEdges(NeoMapI map, GlyphI query, GlyphI target, List<GlyphI> match_glyphs) {
     //    System.out.println("trying to match edges: query = " + query + ", target = " + target);
     call_count++;
     

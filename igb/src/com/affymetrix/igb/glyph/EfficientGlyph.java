@@ -182,7 +182,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D pickRect, Vector pickVector, ViewI view)  {
+  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
@@ -210,7 +210,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
   }
 
   /** NOT YET IMPLEMENTED. */
-  public void pickTraversal(Rectangle pickRect, Vector pickVector, ViewI view) {
+  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector, ViewI view) {
     //TODO: need to covert pickRect to coords...
     /*
     if (isVisible && intersects(pickRect, view))  {

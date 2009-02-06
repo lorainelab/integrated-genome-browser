@@ -97,7 +97,7 @@ public class PixelFloaterGlyph extends Glyph  {
   }
 
   Rectangle scratchRect = new Rectangle();
-  public void pickTraversal(Rectangle2D pickRect, Vector pickVector,
+  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
     LinearTransform vtrans = (LinearTransform)view.getTransform();
     double cached_y = pickRect.y;

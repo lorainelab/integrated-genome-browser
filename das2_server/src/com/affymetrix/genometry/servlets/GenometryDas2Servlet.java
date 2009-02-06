@@ -583,8 +583,8 @@ public class GenometryDas2Servlet extends HttpServlet {
         if (genome == null) {
             return;
         }  // bail out if genome didn't get added to AnnotatedSeqGroups
-        genome2graphdirs.put(genome, new LinkedHashMap());
-        genome2graphfiles.put(genome, new LinkedHashMap());
+        genome2graphdirs.put(genome, new LinkedHashMap<String, String>());
+        genome2graphfiles.put(genome, new LinkedHashMap<String, String>());
         genome.setOrganism(organism);
         List<AnnotatedSeqGroup> versions = organisms.get(organism);
         if (versions == null) {
@@ -1320,7 +1320,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         setContentType(response, TYPES_CONTENT_TYPE);
         //    addDasHeaders(response);
 
-        Map types_hash = GenometryDas2Servlet.getTypes(genome, genome2graphfiles, genome2graphdirs, graph_formats);
+        Map<String,List<String>> types_hash = GenometryDas2Servlet.getTypes(genome, genome2graphfiles, genome2graphdirs, graph_formats);
 
         //    StringWriter buf = new StringWriter(types_hash.size() * 1000);
         ByteArrayOutputStream buf = null;
@@ -1383,9 +1383,9 @@ public class GenometryDas2Servlet extends HttpServlet {
      *
      *  may want to cache this info (per versioned source) at some point...
      */
-    private static final Map getTypes(
+    private static final Map<String,List<String>> getTypes(
             AnnotatedSeqGroup genome, Map genome2graphfiles, Map genome2graphdirs, ArrayList<String> graph_formats) {
-        Map genome_types = new LinkedHashMap();
+        Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
 
         AddSeqsToTypes(genome, genome_types);
 
@@ -1410,14 +1410,14 @@ public class GenometryDas2Servlet extends HttpServlet {
     }
 
     // iterate over seqs to collect annotation types
-     private static final void AddSeqsToTypes(AnnotatedSeqGroup genome, Map genome_types) {
+     private static final void AddSeqsToTypes(AnnotatedSeqGroup genome, Map<String,List<String>> genome_types) {
          for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
-             Map typeid2sym = aseq.getTypeMap();
+             Map<String, SymWithProps> typeid2sym = aseq.getTypeMap();
              if (typeid2sym != null) {
                  Iterator titer = typeid2sym.keySet().iterator();
                  while (titer.hasNext()) {
                      String type = (String) titer.next();
-                     List flist = Collections.EMPTY_LIST;
+                     List<String> flist = Collections.<String>emptyList();
                      if (genome_types.get(type) == null) {
                          SymWithProps tannot = aseq.getAnnotation(type);
                          //	      System.out.println("type: " + type + ", format info: " +
@@ -1437,7 +1437,7 @@ public class GenometryDas2Servlet extends HttpServlet {
     }
 
     private static final void writeTypesXML(
-            PrintWriter pw, String xbase, String genome_id, Map types_hash, HashMap userAuthorizedResources, Das2Authorization dasAuthorization) {
+            PrintWriter pw, String xbase, String genome_id, Map<String,List<String>> types_hash, HashMap userAuthorizedResources, Das2Authorization dasAuthorization) {
         printXmlDeclaration(pw);
         //    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
         pw.println("<TYPES ");
@@ -1446,7 +1446,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         //    SortedSet types = new TreeSet(types_hash.keySet());  // this sorts the types alphabetically
         //    Iterator types_iter = types.iterator();
         //    Iterator types_iter = types_hash.keySet().iterator();
-        List sorted_types_list = new ArrayList(types_hash.keySet());
+        List<String> sorted_types_list = new ArrayList<String>(types_hash.keySet());
         Collections.sort(sorted_types_list);
         Iterator types_iter = sorted_types_list.iterator();
         while (types_iter.hasNext()) {
@@ -1614,7 +1614,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         SeqSpan contain_span = null;
         SeqSpan identical_span = null;
 
-        List result = null;
+        List<SeqSymmetry> result = null;
         BioSeq outseq = null;
 
         if (query == null || query.length() == 0) {
@@ -1701,7 +1701,7 @@ public class GenometryDas2Servlet extends HttpServlet {
             else if (links.size() > 0 ||
                     notes.size() > 0 ||
                     props.size() > 0) {
-                result = new ArrayList();
+                result = new ArrayList<SeqSymmetry>();
             } /* support for single name, single format, no other filters */
             else if (names != null && names.size() == 1) {
                 String name = names.get(0);
@@ -1779,7 +1779,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 
 
                     if (result == null) {
-                        result = Collections.EMPTY_LIST;
+                        result = Collections.<SeqSymmetry>emptyList();
                     }
                     log.add("  overlapping annotations of type " + query_type + ": " + result.size());
                     log.add("  time for range query: " + (timecheck.read()) / 1000f);
@@ -1860,7 +1860,7 @@ public class GenometryDas2Servlet extends HttpServlet {
             ex.printStackTrace();
         }
         if (graf != null) {
-            ArrayList gsyms = new ArrayList();
+            ArrayList<SeqSymmetry> gsyms = new ArrayList<SeqSymmetry>();
             gsyms.add(graf);
             log.add("#### returning graph slice in bar format");
             outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, "bar");
@@ -1880,7 +1880,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 
     // if an inside_span specified, then filter out intersected symmetries based on this:
     //    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-    private final List SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List result, String query_type) {
+    private final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List<SeqSymmetry> result, String query_type) {
         int inside_min = inside_span.getMin();
         int inside_max = inside_span.getMax();
         BioSeq iseq = inside_span.getBioSeq();
@@ -1889,14 +1889,14 @@ public class GenometryDas2Servlet extends HttpServlet {
             log.add("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
             // if different seqs, then no feature can pass constraint...
             //   hmm, this might not strictly be true based on genometry...
-            result = Collections.EMPTY_LIST;
+            result = Collections.<SeqSymmetry>emptyList();
         } else {
             Timer timecheck = new Timer();
             timecheck.start();
             MutableSeqSpan testspan = new SimpleMutableSeqSpan();
             List orig_result = result;
             int rcount = orig_result.size();
-            result = new ArrayList(rcount);
+            result = new ArrayList<SeqSymmetry>(rcount);
             for (int i = 0; i < rcount; i++) {
                 SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
                 // fill in testspan with span values for sym (on aseq)
@@ -1911,7 +1911,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         return result;
     }
 
-    private final void OutputTheAnnotations(String output_format, HttpServletResponse response, List result, BioSeq outseq, String query_type, String xbase) {
+    private final void OutputTheAnnotations(String output_format, HttpServletResponse response, List<SeqSymmetry> result, BioSeq outseq, String query_type, String xbase) {
         try {
             Timer timecheck = new Timer();
             timecheck.start();
@@ -1940,7 +1940,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         }
     }
 
-    private static final List DetermineResult(String name, AnnotatedSeqGroup genome, List result) {
+    private static final List<SeqSymmetry> DetermineResult(String name, AnnotatedSeqGroup genome, List<SeqSymmetry> result) {
         // GAH 11-2006
         //   need to enhance this to support multiple name parameters OR'd together
         //   DAS/2 specification defines glob-style searches:
@@ -2039,7 +2039,7 @@ public class GenometryDas2Servlet extends HttpServlet {
         return span;
     }
 
-    private final boolean outputAnnotations(List syms, BioSeq seq,
+    private final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
             String annot_type,
             String xbase, HttpServletResponse response,
             String format) {
@@ -2093,7 +2093,7 @@ public class GenometryDas2Servlet extends HttpServlet {
      *  Should expand soon so results can be returned from multiple IntervalSearchSyms children
      *      of the TypeContainerAnnot
      */
-    private static final List getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
+    private static final List<SeqSymmetry> getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
         SmartAnnotBioSeq seq = (SmartAnnotBioSeq) query_span.getBioSeq();
         SymWithProps container = seq.getAnnotation(annot_type);
         if (container != null) {
@@ -2106,7 +2106,7 @@ public class GenometryDas2Servlet extends HttpServlet {
                 }
             }
         }
-        return Collections.EMPTY_LIST;
+        return Collections.<SeqSymmetry>emptyList();
     }
 
     private static final void printXmlDeclaration(PrintWriter pw) {

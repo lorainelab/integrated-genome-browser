@@ -23,14 +23,14 @@ public class Das2Authorization {
 	
 	/**Salt for md5 encryption.*/
 	private static final String md5Salt = "TheGreatSaltLake";
-	private ArrayList<String> log = new ArrayList();
+	private ArrayList<String> log = new ArrayList<String>();
 	private boolean authorizing = false;
 	private Pattern separator = Pattern.compile(File.separator);
 	
 
 
 	/**HashMap of versionedGenome: restrictedDirectory (String), see restrictedDirectoriesFile*/
-	HashMap<String,HashSet> restrictedDirectories = null;
+	HashMap<String,HashSet<String>> restrictedDirectories = null;
 
 	/**HashMap of lowercase userName: User (String : User), see userFile*/
 	HashMap<String,User> users = null;
@@ -116,7 +116,7 @@ public class Das2Authorization {
 
 	/**Loads userFile creating users HashMap, userNames are converted to lowercase.*/
 	private boolean loadUserHashMap(){
-		users = new HashMap();
+		users = new HashMap<String, User>();
                 BufferedReader in = null;
 		try{
 			in = new BufferedReader(new FileReader(usersFile));
@@ -139,15 +139,15 @@ public class Das2Authorization {
 					users.put(userName, user);
 				}
 				//add new directory?
-				HashMap userDirs = user.authorizedDirectories;
+				HashMap<String,HashSet<String>> userDirs = user.authorizedDirectories;
 				String versionedGenome = tokens[2].trim();
 				String protectedDirectory = tokens[3].trim();
 				if (userDirs.containsKey(versionedGenome)){
-					HashSet dirs = (HashSet)userDirs.get(versionedGenome);
+					HashSet<String> dirs = userDirs.get(versionedGenome);
 					dirs.add(protectedDirectory);
 				}
 				else {
-					HashSet<String> dirs = new HashSet();
+					HashSet<String> dirs = new HashSet<String>();
 					dirs.add(protectedDirectory);
 					userDirs.put(versionedGenome, dirs);
 				}
@@ -192,7 +192,7 @@ public class Das2Authorization {
 
 	/**Loads the restrictedDirectories file into a hash.*/
 	private boolean loadRestrictedDirectories(){
-		restrictedDirectories = new HashMap();
+		restrictedDirectories = new HashMap<String,HashSet<String>>();
                 BufferedReader in = null;
 		try{
 			in = new BufferedReader(new FileReader(restrictedDirectoriesFile));
@@ -208,11 +208,11 @@ public class Das2Authorization {
 				}
 				//does it already exist?
 				if (restrictedDirectories.containsKey(tokens[0])){
-					HashSet dirs = restrictedDirectories.get(tokens[0]);
+					HashSet<String> dirs = restrictedDirectories.get(tokens[0]);
 					dirs.add(tokens[1]);
 				}
 				else {
-					HashSet<String> dirs = new HashSet();
+					HashSet<String> dirs = new HashSet<String>();
 					dirs.add(tokens[1]);
 					restrictedDirectories.put(tokens[0], dirs);
 				}
@@ -248,7 +248,7 @@ public class Das2Authorization {
 	private class User{
 		//fields
 		String encryptedPassword;
-		HashMap<String,HashSet> authorizedDirectories = new HashMap<String,HashSet>();
+		HashMap<String,HashSet<String>> authorizedDirectories = new HashMap<String,HashSet<String>>();
 		private User (String encryptedPassword) {
 			this.encryptedPassword = encryptedPassword;
 		}
@@ -257,7 +257,7 @@ public class Das2Authorization {
 		}
 	}
 
-	public HashMap<String,HashSet> getRestrictedDirectories() {
+	public HashMap<String,HashSet<String>> getRestrictedDirectories() {
 		return restrictedDirectories;
 	}
 	public boolean isAuthorizing() {

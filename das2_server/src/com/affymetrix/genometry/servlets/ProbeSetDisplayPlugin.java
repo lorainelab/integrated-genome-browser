@@ -58,7 +58,7 @@ public class ProbeSetDisplayPlugin implements AnnotationWriter {
      *  Step 2, 3, 4 handled as output issue...
      *
      */
-  public static void collectAndWriteAnnotations(Collection consensus_syms, AnnotatedBioSeq genome_seq, String array_name,
+  public static void collectAndWriteAnnotations(Collection<SeqSymmetry> consensus_syms, AnnotatedBioSeq genome_seq, String array_name,
   OutputStream outstream) {
       
     String array_name_prefix = "";
@@ -70,10 +70,10 @@ public class ProbeSetDisplayPlugin implements AnnotationWriter {
     String poly_a_sites_type = array_name_prefix + POLY_A_SITES_TYPE;
     String poly_a_stacks_type = array_name_prefix + POLY_A_STACKS_TYPE;
 
-    Set probesets = new HashSet();
-    Set crossHybProbes = new HashSet();
-    Set polyASites = new HashSet();
-    Set polyAStacks = new HashSet();
+    Set<SeqSymmetry> probesets = new HashSet<SeqSymmetry>();
+    Set<SeqSymmetry> crossHybProbes = new HashSet<SeqSymmetry>();
+    Set<SeqSymmetry> polyASites = new HashSet<SeqSymmetry>();
+    Set<SeqSymmetry> polyAStacks = new HashSet<SeqSymmetry>();
 
     Iterator iter = consensus_syms.iterator();
     while (iter.hasNext()) {
@@ -92,7 +92,7 @@ public class ProbeSetDisplayPlugin implements AnnotationWriter {
 	    //          SeqSymmetry cons_annot = aseq.getAnnotation(m);
 	    SeqSymmetry cons_annot = container.getChild(cindex);
 	    if (cons_annot instanceof SymWithProps) {
-	      Set probesetsFound = null;
+	      Set<SeqSymmetry> probesetsFound = null;
 	      SymWithProps cons_sym = (SymWithProps) cons_annot;
 	      String type = (String) cons_sym.getProperty("method");
 	      if (type.equalsIgnoreCase(probeset_type)) {
@@ -133,7 +133,7 @@ public class ProbeSetDisplayPlugin implements AnnotationWriter {
   }
 
 
-  public static void writePSLTrack(PSLParser parser, Collection syms, BioSeq seq, String type, 
+  public static void writePSLTrack(PSLParser parser, Collection<SeqSymmetry> syms, BioSeq seq, String type,
     String description, OutputStream outstream) {
     if (! syms.isEmpty()) {
       parser.writeAnnotations(syms, seq, true, type, description, outstream);

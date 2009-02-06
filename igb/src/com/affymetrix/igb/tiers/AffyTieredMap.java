@@ -32,7 +32,7 @@ public class AffyTieredMap extends NeoMap {
 
   boolean TIME_PACKING = false;
   public String name; // for debugging only
-  protected Vector tiers = new Vector();
+  protected Vector<TierGlyph> tiers = new Vector<TierGlyph>();
   com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 
   // the total pixel height of visible fixed pixel tiers
@@ -148,10 +148,10 @@ public class AffyTieredMap extends NeoMap {
   }
 
   // need to deprecate getTiers() or getAllTiers()
-  public List getTiers() { return tiers; }
+  public List<TierGlyph> getTiers() { return tiers; }
 
   // need to deprecate getTiers() or getAllTiers()
-  public Vector getAllTiers () { return (Vector)getTiers(); }
+  public Vector<TierGlyph> getAllTiers () { return tiers; }
 
   public void repack() {
     // WARNING

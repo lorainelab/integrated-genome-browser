@@ -91,7 +91,7 @@ public class SeqMapView extends JPanel
     static final boolean DIAGNOSTICS = false;
     static final boolean DEBUG_TIERS = false;
     public static boolean DEBUG_COMP = false;
-    static final boolean DEBUG_STYLESHEETS = true;
+    static final boolean DEBUG_STYLESHEETS = false;
     /** Add spans to the transformation sym that will cause all
      * "intron" spans in the regions of aseq between exons chosen for slicing
      * to be transformed into zero-length spans.
@@ -256,6 +256,9 @@ public class SeqMapView extends JPanel
     JButton refreshB = new JButton("Refresh Data");
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
+    final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
+    public static Font axisFont = new Font("Courier", Font.BOLD, 12);
+
     /** Constructor provided for subclasses.
      *  In other cases, use {@link #makeSeqMapView}.
      */
@@ -266,6 +269,7 @@ public class SeqMapView extends JPanel
     public class SeqMapViewComponentListener extends ComponentAdapter {
         // When the map is resized, make sure the graphs are still visible.
 
+        @Override
         public void componentResized(ComponentEvent e) {
             SwingUtilities.invokeLater(new Runnable() {
 
@@ -305,18 +309,18 @@ public class SeqMapView extends JPanel
      */
     protected AffyTieredMap createSeqMap(boolean splitWindows, boolean labelTiermap,
             boolean internalXScroller, boolean internalYScroller) {
-        AffyTieredMap seqmap;
+        AffyTieredMap resultSeqMap;
         if (splitWindows) {
-            seqmap = new MultiWindowTierMap(false, false);
+            resultSeqMap = new MultiWindowTierMap(false, false);
         } else if (labelTiermap) {
-            seqmap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
-            NeoMap label_map = ((AffyLabelledTierMap) seqmap).getLabelMap();
+            resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
+            NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
             label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
             label_map.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
         } else {
-            seqmap = new AffyTieredMap(internalXScroller, internalYScroller);
+            resultSeqMap = new AffyTieredMap(internalXScroller, internalYScroller);
         }
-        return seqmap;
+        return resultSeqMap;
     }
 
     protected void init(boolean add_popups, boolean split_win, boolean label_tiermap, boolean use_refresh_button) {
@@ -345,7 +349,7 @@ public class SeqMapView extends JPanel
         seqmap.getNeoCanvas().setDoubleBuffered(false);
         //    map.getLabelMap().getNeoCanvas().setDoubleBuffered(false);
 
-        seqmap.setScrollIncrementBehavior(seqmap.X, seqmap.AUTO_SCROLL_HALF_PAGE);
+        seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
         Adjustable xzoomer;
         Adjustable yzoomer;
@@ -401,7 +405,7 @@ public class SeqMapView extends JPanel
         this.setLayout(new BorderLayout());
 
         xzoombox = Box.createHorizontalBox();
-        SeqComboBoxView seq_chooser = new SeqComboBoxView(this);
+        //SeqComboBoxView seq_chooser = new SeqComboBoxView(this);
         //    seq_chooser.setSize(new Dimension(5, 10));
         //    xzoombox.add(seq_chooser);
         //    seq_chooser.setSize(new Dimension(5, 10));
@@ -424,13 +428,13 @@ public class SeqMapView extends JPanel
         boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
         if (x_above) {
             JPanel pan = new JPanel(new BorderLayout());
-            pan.add("West", seq_chooser);
+//            pan.add("West", seq_chooser);
             pan.add("Center", xzoombox);
             this.add(BorderLayout.NORTH, pan);
         //      this.add(BorderLayout.NORTH, xzoombox);
         } else {
             JPanel pan = new JPanel(new BorderLayout());
-            pan.add("West", seq_chooser);
+ //           pan.add("West", seq_chooser);
             pan.add("Center", xzoombox);
             this.add(BorderLayout.SOUTH, pan);
         //      this.add(BorderLayout.SOUTH, xzoombox);
@@ -447,7 +451,7 @@ public class SeqMapView extends JPanel
 
         // experimenting with transcriptarium split windows
         if (split_win) {
-            // don't display map if split_win, display is via multiple separate windows controlled by seqmap
+            // don't display map if split_win, display is via multiple separate windows controlled by resultSeqMap
             NeoScrollbar xscroller = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
             NeoScrollbar yscroller = new NeoScrollbar(NeoScrollbar.VERTICAL);
             //      xscroller.setSendEvents(true);  // not sure if this is necessary or desired
@@ -485,7 +489,7 @@ public class SeqMapView extends JPanel
             }
 
             TransformTierGlyph axis_tier = getAxisTier();
-            Vector children = axis_tier.getChildren();
+            Vector<GlyphI> children = axis_tier.getChildren();
 
             if (pce.getKey().equals(PREF_AXIS_LABEL_FORMAT)) {
                 AxisGlyph ag = null;
@@ -586,18 +590,22 @@ public class SeqMapView extends JPanel
             setHumanName("Coordinates");
         }
 
+        @Override
         public boolean getSeparate() {
             return false;
         }
 
+        @Override
         public boolean getCollapsed() {
             return false;
         }
 
+        @Override
         public boolean getExpandable() {
             return false;
         }
 
+        @Override
         public void setColor(Color c) {
             UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, c);
         }
@@ -632,11 +640,10 @@ public class SeqMapView extends JPanel
     public TransformTierGlyph getAxisTier() {
         return axis_tier;
     }
-    public static Font axisFont = new Font("Courrier", Font.BOLD, 12);
 
-    public static void setAxisFont(Font f) {
+/*    public static void setAxisFont(Font f) {
         axisFont = f;
-    }
+    }*/
 
     /** Set up a tier with fixed pixel height and place axis in it. */
     TransformTierGlyph addAxisTier(int tier_index) {
@@ -769,7 +776,7 @@ public class SeqMapView extends JPanel
                 }
             }
         }
-//    seqmap.repack();
+//    resultSeqMap.repack();
         return axis_tier;
     }
 
@@ -802,7 +809,7 @@ public class SeqMapView extends JPanel
         }
         return null;
     }
-    final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
+
 
     /**
      *  Creates a cytoband glyph.  Handling two cases:
@@ -1098,7 +1105,7 @@ public class SeqMapView extends JPanel
         if (coord_shift) {
             // map range will probably change after this if SHRINK_WRAP_MAP_BOUNDS is set to true...
             //      map.setMapRange(viewseq.getMin(), viewseq.getMax());
-            //      seqmap.setMapRange(0, viewseq.getLength());
+            //      resultSeqMap.setMapRange(0, viewseq.getLength());
             coord_shift = false;
         } else {
             /*if (rev_comp) {
@@ -1663,7 +1670,7 @@ public class SeqMapView extends JPanel
         select(symlist, false, true, true);
     }
 
-    protected static void collectGraphs(GlyphI parent, Collection graphlist) {
+    /*protected static void collectGraphs(GlyphI parent, Collection graphlist) {
         if (parent instanceof GraphGlyph) {
             graphlist.add(parent);
         }
@@ -1674,7 +1681,7 @@ public class SeqMapView extends JPanel
                 collectGraphs(child, graphlist);
             }
         }
-    }
+    }*/
 
     void select(List sym_list) {
         select(sym_list, false, false, true);
@@ -1690,7 +1697,7 @@ public class SeqMapView extends JPanel
         for (int i = 0; i < symcount; i++) {
             SeqSymmetry sym = (SeqSymmetry) sym_list.get(i);
             // currently assuming 1-to-1 mapping of sym to glyph
-            GlyphI gl = (GlyphI) seqmap.getItem(sym);
+            GlyphI gl = seqmap.getItem(sym);
             if (gl != null) {
                 seqmap.select(gl);
             }
@@ -1922,7 +1929,7 @@ public class SeqMapView extends JPanel
         if (seqmap.getSelected().isEmpty()) {
             return null;
         } else {
-            return (GlyphI) seqmap.getSelected().lastElement();
+            return seqmap.getSelected().lastElement();
         }
     }
 
@@ -2095,8 +2102,8 @@ public class SeqMapView extends JPanel
                 next_min = sym.getChild(i + 1).getSpan(aseq).getMin();
             }
 
-            int slice_min = (int) Math.max(prev_max, (exact_span.getMin() - slice_buffer));
-            int slice_max = (int) Math.min(next_min, (exact_span.getMax() + slice_buffer));
+            int slice_min = Math.max(prev_max, (exact_span.getMin() - slice_buffer));
+            int slice_max = Math.min(next_min, (exact_span.getMax() + slice_buffer));
             MutableSeqSpan seq_slice_span = new SimpleMutableSeqSpan(slice_min, slice_max, aseq);
 
             int slice_length = seq_slice_span.getLength();
@@ -2214,7 +2221,7 @@ public class SeqMapView extends JPanel
             JPanel pan = new JPanel();
 
             Rectangle2D cbox = seqmap.getViewBounds();
-            //      int bases_in_view = (int) seqmap.getView().getCoordBox().width;
+            //      int bases_in_view = (int) resultSeqMap.getView().getCoordBox().width;
             int bases_in_view = (int) cbox.width;
             as_start_pos = (int) cbox.x;
             as_end_pos = this.getViewSeq().getLength();
@@ -2323,8 +2330,8 @@ public class SeqMapView extends JPanel
         double pix_per_coord = 1.0 / (double) bases_per_pixel;
         final double coords_to_scroll = (double) pix_to_scroll / pix_per_coord;
 
-        //    Rectangle2D cbox = seqmap.getViewBounds();
-        //Rectangle pbox = seqmap.getView().getPixelBox();
+        //    Rectangle2D cbox = resultSeqMap.getViewBounds();
+        //Rectangle pbox = resultSeqMap.getView().getPixelBox();
         //    double start = (int)cbox.x;
         //    double start = start_coord;
 
@@ -2336,7 +2343,7 @@ public class SeqMapView extends JPanel
 
                 public void actionPerformed(ActionEvent evt) {
                     Rectangle2D vbox = seqmap.getViewBounds();
-                    //	    Rectangle2D mbox = seqmap.getCoordBounds();
+                    //	    Rectangle2D mbox = resultSeqMap.getCoordBounds();
                     int scrollpos = (int) (vbox.x + coords_to_scroll);
                     //	    if ((scrollpos + vbox.width) > (mbox.x + mbox.width))  {
                     if ((scrollpos + vbox.width) > end_coord) {
@@ -2460,7 +2467,7 @@ public class SeqMapView extends JPanel
         System.out.println("clamping, xmin = " + (int) vbox.x + ", xmax = " + (int) (vbox.x + vbox.width));
         seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
         seqmap.stretchToFit(false, false);
-        //    seqmap.packTiers(false, true, false);  // already called in stretchToFit()
+        //    resultSeqMap.packTiers(false, true, false);  // already called in stretchToFit()
         seqmap.updateWidget();
     }
 
@@ -3021,8 +3028,8 @@ public class SeqMapView extends JPanel
                 return;
             }
 
-            //      sym_popup.show(seqmap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
-            // if seqmap is a MultiWindowTierMap, then using seqmap as Component target arg to popup.show()
+            //      sym_popup.show(resultSeqMap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
+            // if resultSeqMap is a MultiWindowTierMap, then using resultSeqMap as Component target arg to popup.show()
             //  won't work, since it's component is never actually rendered -- so checking here
             /// to use appropriate target Component and pixel position
             EventObject oevt = nevt.getOriginalEvent();

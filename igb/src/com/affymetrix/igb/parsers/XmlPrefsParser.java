@@ -29,6 +29,8 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.das2.Das2Discovery;
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.view.QuickLoadServerModel;
 
 /**
  *Class for parsing preferences for IGB.
@@ -310,8 +312,6 @@ public class XmlPrefsParser {
           if (Das2Discovery.getDas2Server(server_url) == null) {
               System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
               Das2Discovery.addDas2Server(server_name, server_url);
-          } else {
-              System.out.println("XmlPrefsParser tried to add DAS/2 server, but already exists: " + server_url);
           }
       }
       else if (name.equalsIgnoreCase("server")) {
@@ -319,18 +319,15 @@ public class XmlPrefsParser {
           String server_type = el.getAttribute("type").toLowerCase();
           String server_name = el.getAttribute("name");
           String server_url = el.getAttribute("url");
+          System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url);
           if (server_type.equalsIgnoreCase("das")) {
-              System.out.println("XmlPrefsParser adding DAS server: " + server_name + ",  " + server_url);
               DasDiscovery.addDasServer(server_name, server_url);
           } else if (server_type.equalsIgnoreCase("das2")) {
               if (Das2Discovery.getDas2Server(server_url) == null) {
-                  System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
                   Das2Discovery.addDas2Server(server_name, server_url);
-              } else {
-                  System.out.println("XmlPrefsParser tried to add DAS/2 server, but already exists: " + server_url);
               }
           } else if (server_type.equalsIgnoreCase("quickload")) {
-
+              ServerList.addServer(QuickLoadServerModel.class, server_name, server_url);
           }
 
       }

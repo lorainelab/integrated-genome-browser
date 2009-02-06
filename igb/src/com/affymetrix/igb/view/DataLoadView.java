@@ -30,7 +30,7 @@ import com.affymetrix.swing.DisplayUtils;
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  Das2LoadView3 das2_view3;
+  GeneralLoadView general_load_view;
   SeqGroupView group_view;
 
   public DataLoadView() {
@@ -47,8 +47,8 @@ public class DataLoadView extends JComponent  {
 
     main_panel.setLayout(new BorderLayout());
 
-    das2_view3 = new Das2LoadView3();
-    main_panel.add("Center", das2_view3);
+    general_load_view = new GeneralLoadView();
+    main_panel.add("Center", general_load_view);
 
     group_view = new SeqGroupView();
     main_panel.add("West",group_view);
@@ -95,16 +95,16 @@ class SeqGroupView extends JComponent
       BorderFactory.createEmptyBorder(0,2,0,2)));
 
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    this.add(genomeCB);
+    //this.add(genomeCB);
     this.add(Box.createRigidArea(new Dimension(0, 5)));
     this.add(scroller);
 
-    this.setBorder(BorderFactory.createTitledBorder("Current Genome"));
+    this.setBorder(BorderFactory.createTitledBorder("Current Sequence"));
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
     lsm = seqtable.getSelectionModel();
     lsm.addListSelectionListener(this);
-    genomeCB.addItemListener(this);
+    //genomeCB.addItemListener(this);
   }
 
   String most_recent_seq_id = null;

@@ -45,20 +45,20 @@ public class QuickLoadServerModel {
   static Pattern tab_regex = Pattern.compile("\t");
 
   String root_url;
-  List genome_names = new ArrayList();
+  List<String> genome_names = new ArrayList<String>();
 
-  Map group2name = new HashMap();
-  Map genome2init = new HashMap();
+  Map<AnnotatedSeqGroup,String> group2name = new HashMap<AnnotatedSeqGroup,String>();
+  Map<String,Boolean> genome2init = new HashMap<String,Boolean>();
 
   // A map from String genome name to a List of filenames on the server for that group
-  Map genome2file_names = new HashMap();
+  Map<String,List<String>> genome2file_names = new HashMap<String,List<String>>();
 
   /**
    *  Map of AnnotatedSeqGroup to a load state map.
    *  Each load state map is a map of an annotation type name to Boolean for
    *  whether it has already been loaded or not
    */
-  static Map group2states = new HashMap();
+  static Map<AnnotatedSeqGroup,Map<String,Boolean>> group2states = new HashMap<AnnotatedSeqGroup,Map<String,Boolean>>();
 
   
   public void clear() {
@@ -82,14 +82,14 @@ public class QuickLoadServerModel {
     }
   }
 
-  static Map url2quickload = new HashMap();
+  static Map<String,QuickLoadServerModel> url2quickload = new HashMap<String,QuickLoadServerModel>();
 
   public static QuickLoadServerModel getQLModelForURL(SingletonGenometryModel gmodel, URL url) {
     String ql_http_root = url.toExternalForm();
     if (! ql_http_root.endsWith("/")) {
       ql_http_root = ql_http_root + "/";
     }
-    QuickLoadServerModel ql_server = (QuickLoadServerModel) url2quickload.get(ql_http_root);
+    QuickLoadServerModel ql_server = url2quickload.get(ql_http_root);
     if (ql_server == null) {
       ql_server = new QuickLoadServerModel(gmodel, ql_http_root);
       url2quickload.put(ql_http_root, ql_server);
@@ -107,7 +107,7 @@ public class QuickLoadServerModel {
   }
 
   public String getRootUrl() { return root_url; }
-  public List getGenomeNames() { return genome_names; }
+  public List<String> getGenomeNames() { return genome_names; }
   //public Map getSeqGroups() { return group2name; }
   public AnnotatedSeqGroup getSeqGroup(String genome_name) { return gmodel.addSeqGroup(genome_name);  }
 
@@ -116,7 +116,7 @@ public class QuickLoadServerModel {
    *  refer to the same genome.
    */
   public String getGenomeName(AnnotatedSeqGroup group) {
-    return (String)group2name.get(group);
+    return group2name.get(group);
   }
 
   public static String stripFilenameExtensions(String name) {
@@ -132,17 +132,17 @@ public class QuickLoadServerModel {
    *  for the genome with the given name.
    *  The list may (rarely) be empty, but never null.
    */
-  public List getFilenames(String genome_name) {
+  public List<String> getFilenames(String genome_name) {
     initGenome(genome_name);
     loadAnnotationNames(genome_name);
-    List filenames = (List) genome2file_names.get(genome_name);
-    if (filenames == null) return Collections.EMPTY_LIST;
+    List<String> filenames = genome2file_names.get(genome_name);
+    if (filenames == null) return Collections.<String>emptyList();
     else return filenames;
   }
 
   /** Returns Map of annotation type name to Boolean, true iff annotation type is already loaded */
-  public static Map getLoadStates(AnnotatedSeqGroup group) {
-    return (Map)group2states.get(group);
+  public static Map<String,Boolean> getLoadStates(AnnotatedSeqGroup group) {
+    return group2states.get(group);
   }
 
   public static boolean getLoadState(AnnotatedSeqGroup group, String file_name) {
@@ -154,9 +154,9 @@ public class QuickLoadServerModel {
   }
 
   public static void setLoadState(AnnotatedSeqGroup group, String file_name, boolean loaded) {
-    Map load_states = (Map) group2states.get(group);
+    Map<String,Boolean> load_states = group2states.get(group);
     if (load_states == null) {
-      load_states = new LinkedHashMap();
+      load_states = new LinkedHashMap<String,Boolean>();
       group2states.put(group, load_states);
     }
     load_states.put(stripFilenameExtensions(file_name), Boolean.valueOf(loaded));
@@ -166,7 +166,7 @@ public class QuickLoadServerModel {
   
   public void initGenome(String genome_name) {
     if (genome_name == null) { return; }
-    Boolean init = (Boolean)genome2init.get(genome_name);
+    Boolean init = genome2init.get(genome_name);
     if (allow_reinitialization || init != Boolean.TRUE) {
       Application.getApplicationLogger().fine("initializing data for genome: " + genome_name);
       boolean seq_init = loadSeqInfo(genome_name);
@@ -183,7 +183,7 @@ public class QuickLoadServerModel {
 
   /** Returns true if the given genome has already been initialized via initGenome(String). */
   public boolean isInitialized(String genome_name) {
-    Boolean b = (Boolean) genome2init.get(genome_name);
+    Boolean b = genome2init.get(genome_name);
     return (Boolean.TRUE.equals(b));
   }
   
@@ -202,7 +202,7 @@ public class QuickLoadServerModel {
     String filename = genome_root + "annots.txt";
 
     // Make a new list of filenames, in case this is being re-initialized
-    List file_names = new ArrayList();
+    List<String> file_names = new ArrayList<String>();
     genome2file_names.put(genome_name, file_names);
 
     InputStream istr = null;
@@ -390,8 +390,8 @@ public class QuickLoadServerModel {
   }
 
 
-  public List loadGenomeNames() {
-    ArrayList glist = null;
+  public List<String> loadGenomeNames() {
+    ArrayList<String> glist = null;
     try {
       InputStream istr = null;
       try {
@@ -402,12 +402,12 @@ public class QuickLoadServerModel {
       }
       if (istr == null) {
         System.out.println("Could not load QuickLoad contents from\n" + root_url + "contents.txt");
-        return Collections.EMPTY_LIST;
+        return Collections.<String>emptyList();
       }
       InputStreamReader ireader = new InputStreamReader(istr);
       BufferedReader br = new BufferedReader(ireader);
       String line;
-      glist = new ArrayList();
+      glist = new ArrayList<String>();
       while ((line = br.readLine()) != null) {
         AnnotatedSeqGroup group = null;
         String[] fields = tab_regex.split(line);
@@ -477,6 +477,7 @@ public class QuickLoadServerModel {
     }
   }
 
+    @Override
   public String toString() {
     return "QuickLoadServerModel: url='" + getRootUrl() + "'";
   }

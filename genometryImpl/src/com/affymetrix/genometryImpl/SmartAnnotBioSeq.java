@@ -82,7 +82,7 @@ public class SmartAnnotBioSeq extends GeneralBioSeq  {
   /**
    *  returns Map of type id to container sym for annotations of that type
    */
-  public Map getTypeMap() {
+  public Map<String, SymWithProps> getTypeMap() {
     return type_id2sym;
   }
 

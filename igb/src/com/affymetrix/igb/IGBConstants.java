@@ -13,6 +13,9 @@
 
 package com.affymetrix.igb;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
  *  Some global constants.
@@ -23,5 +26,36 @@ public abstract class IGBConstants {
 
   public static String APP_NAME = "Integrated Genome Browser";
   public static String APP_SHORT_NAME = "IGB";
-  public static String IGB_VERSION = "5.3";
+  public static String IGB_VERSION;
+  public static String BUILD_VERSION;
+  private static final String DEFAULT_STRING = "UNKNOWN";
+
+  /*
+   * This is not the best way to do this -- It just requires the least
+   * change to the current code base.
+   */
+  static {
+	  InputStream is = IGBConstants.class.getResourceAsStream("/igb.properties");
+	  Properties p = new Properties();
+
+	  if (is == null) {
+		  IGB_VERSION   = DEFAULT_STRING;
+		  BUILD_VERSION = DEFAULT_STRING;
+	  } else {
+		  try {
+			p.load(is);
+			BUILD_VERSION = p.getProperty("build.version", DEFAULT_STRING);
+			IGB_VERSION   = p.getProperty("igb.version", DEFAULT_STRING);
+			IGB_VERSION  += "." + BUILD_VERSION;
+		  } catch(IOException e) {
+			  e.printStackTrace();
+		  }finally {
+			  try {
+				is.close();
+			  } catch (IOException e) {
+				  e.printStackTrace();
+			  }
+		  }
+	  }
+  }
 }

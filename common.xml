@@ -7,12 +7,14 @@
 		<property name="webstart.dir" value="${dist.dir}/webstart" />
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 
+		<property name="build.version"   value="${DSTAMP}" />
+
 		<!-- file paths -->
 		<property name="web.xml" value="${das2server}/web.xml" />
 
 		<!-- JNLP Webstart -->
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
-		<property name="jnlp.version"   value="${DSTAMP}" />
+		<property name="jnlp.version"   value="${build.version}" />
 		<property name="jnlp.codebase"  value="http://genoviz.sourceforge.net/webstart/" />
 		<property name="jnlp.icon.name" value="affychip.gif" />
 		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
@@ -46,6 +48,7 @@
 		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />
 		<available classname="net.sourceforge.pmd.cpd.CPDTask" property="have.cpd" />
 
+		<filter token="build.version"  value="${build.version}" />
 		<filter token="jnlp.version"  value="${jnlp.version}" />
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />

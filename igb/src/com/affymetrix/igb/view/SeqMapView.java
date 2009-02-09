@@ -123,7 +123,7 @@ public class SeqMapView extends JPanel
     SeqSpan viewspan_before_slicing = null;
     List selection_listeners = new ArrayList();
     List popup_listeners = new ArrayList();
-    List data_request_listeners = new ArrayList();
+    List<DataRequestListener> data_request_listeners = new ArrayList<DataRequestListener>();
     protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
     /**
      *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
@@ -293,14 +293,10 @@ public class SeqMapView extends JPanel
      *  that control tier hiding and collapsing and so forth.  It is probably best
      *  NOT to set this to true in any view other than the main view; it should
      *  be false in the AltSpliceView, for instance.
-     * @param use_refresh_button Whether to add a data refresh button, to trigger
-     *  sending DataRequestEvents to DataRequestListeners.  This is used to notify
-     *  components that are doing partial data-loading based on current view
-     *  (DAS client controls, graph slice loaders, etc.)
      */
-    public static SeqMapView makeSeqMapView(boolean add_popups, boolean split_win, boolean use_refresh_button) {
+    public static SeqMapView makeSeqMapView(boolean add_popups, boolean split_win) {
         SeqMapView smv = new SeqMapView();
-        smv.init(add_popups, split_win, true, use_refresh_button);
+        smv.init(add_popups, split_win, true);
         return smv;
     }
 
@@ -323,7 +319,7 @@ public class SeqMapView extends JPanel
         return resultSeqMap;
     }
 
-    protected void init(boolean add_popups, boolean split_win, boolean label_tiermap, boolean use_refresh_button) {
+    protected void init(boolean add_popups, boolean split_win, boolean label_tiermap) {
 
         if (split_win) {
             label_tiermap = false;
@@ -415,7 +411,7 @@ public class SeqMapView extends JPanel
 
         xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
         xzoombox.add((Component) xzoomer);
-        if (use_refresh_button) {
+        /*if (use_refresh_button) {
             xzoombox.add(refreshB);
             refreshB.addActionListener(new ActionListener() {
 
@@ -423,7 +419,7 @@ public class SeqMapView extends JPanel
                     broadcastDataRequest();
                 }
             });
-        }
+        }*/
 
         boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
         if (x_above) {
@@ -3324,19 +3320,6 @@ public class SeqMapView extends JPanel
         data_request_listeners.remove(listener);
     }
 
-    protected boolean broadcastDataRequest() {
-        SeqSpan request_span = this.getVisibleSpan();
-        if (data_request_listeners.size() > 0) {
-            DataRequestEvent evt = new DataRequestEvent(this, request_span);
-            Iterator listeners = data_request_listeners.iterator();
-            while (listeners.hasNext()) {
-                DataRequestListener listener = (DataRequestListener) listeners.next();
-                listener.dataRequested(evt);
-            }
-        }
-        return false;
-
-    }
 
     /** Get the span of the symmetry that is on the seq being viewed. */
     public SeqSpan getViewSeqSpan(SeqSymmetry sym) {

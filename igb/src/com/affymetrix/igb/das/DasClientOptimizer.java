@@ -30,7 +30,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public class DasClientOptimizer {
   //static boolean SHOW_DAS_QUERY_GENOMETRY = true;
-  boolean server_supports_within = true;
+  final static boolean server_supports_within = true;
 
   /**
    *  The main IGB data model root, a hash of genome ids to
@@ -49,10 +49,10 @@ public class DasClientOptimizer {
    *    (or possibly "http://server.location:port/das_root/genome_version/" ?)
    *  @param overlap_span  The span containing the range from which you want annotations.
    *     The BioSeq of this SeqSpan must NOT be an instance of {@link SmartAnnotBioSeq}.
-   *  @param types  a list of String's containg the types of annotations you want
+   *  @param types  a list of Strings containing the types of annotations you want
    */
-  public boolean loadAnnotations(String das_source_root, String das_source_label,
-                                 SeqSpan overlap_span, List types) {
+  public static boolean loadAnnotations(String das_source_root, String das_source_label,
+                                 SeqSpan overlap_span, List<String> types) {
     boolean SHOW_DAS_QUERY_GENOMETRY = UnibrowPrefsUtil.getTopNode().getBoolean(
       DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry);
     BioSeq seq = overlap_span.getBioSeq();
@@ -63,12 +63,12 @@ public class DasClientOptimizer {
     SeqSymmetry new_query = new SingletonSeqSymmetry(overlap_span);
     SmartAnnotBioSeq iseq = (SmartAnnotBioSeq)seq;
     String genome_version = iseq.getVersion();
-    int omin = overlap_span.getMin();
-    int omax = overlap_span.getMax();
+    //int omin = overlap_span.getMin();
+    //int omax = overlap_span.getMax();
     int typecount = types.size();
 
     for (int i=0; i<typecount; i++) {
-      String short_type = (String)types.get(i);
+      String short_type = types.get(i);
       String long_type = das_source_label + ":" + short_type;
       SimpleSymWithProps query_sym = new SimpleSymWithProps();
       query_sym.setProperty("method", ("das_raw_query:" + long_type));

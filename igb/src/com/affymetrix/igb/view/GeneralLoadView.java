@@ -31,9 +31,9 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.general.GenericFeature;
+import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.util.SeqResiduesLoader;
-import com.affymetrix.igb.view.GeneralLoadUtils.genericFeature;
-import com.affymetrix.igb.view.GeneralLoadUtils.genericVersion;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +51,7 @@ final class GeneralLoadView extends JComponent
     private JPanel types_panel;
     private JButton all_residuesB;
     private JButton partial_residuesB;
+    private JButton load_visible_dataB;
     private AnnotatedSeqGroup current_group;
     private AnnotatedBioSeq current_seq;
     private final Map cb2filename = new HashMap();
@@ -90,6 +91,21 @@ final class GeneralLoadView extends JComponent
 
         JPanel buttonP = new JPanel();
         buttonP.setLayout(new GridLayout(1, 3));
+
+/*  
+     *  sending DataRequestEvents to DataRequestListeners.  This is used to notify
+     *  components that are doing partial data-loading based on current view
+     *  (DAS client controls, graph slice loaders, etc.)*/
+        load_visible_dataB = new JButton("Load Visible Data");
+        load_visible_dataB.addActionListener(this);
+        buttonP.add(load_visible_dataB);
+         /*   refreshB.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent evt) {
+                    broadcastDataRequest();
+                }
+            });*/
+
         if (IGB.isSequenceAccessible()) {
             all_residuesB = new JButton("Load All Sequence");
             all_residuesB.addActionListener(this);
@@ -118,6 +134,7 @@ final class GeneralLoadView extends JComponent
         versionCB.addItemListener(this);
         speciesCB.addItemListener(this);
     }
+
 
     private void initializeSpeciesCB() {
         speciesCB.removeAllItems();
@@ -177,6 +194,21 @@ final class GeneralLoadView extends JComponent
                 ErrorHandler.errorPanel("Error", "Can't do optimized full residues retrieval for this sequence.", gviewer);
             } else {
                 SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq) current_seq);
+            }
+        } else if (src == load_visible_dataB) {
+            broadcastDataRequest();
+        }
+    }
+
+    /**
+     * Broadcast the data request.
+     */
+     private void broadcastDataRequest() {
+        SeqSpan request_span = gviewer.getVisibleSpan();
+        if (gviewer.data_request_listeners.size() > 0) {
+            DataRequestEvent evt = new DataRequestEvent(this, request_span);
+            for (DataRequestListener listener : gviewer.data_request_listeners) {
+                listener.dataRequested(evt);
             }
         }
     }
@@ -239,7 +271,7 @@ final class GeneralLoadView extends JComponent
         // Since the same version name may occur on multiple servers, we use sets
         // to eliminate the redundant elements.
         Set<String> versionNames = new HashSet<String>();
-        for (genericVersion gVersion : this.glu.genome2genericVersionList.get(speciesName)) {
+        for (GenericVersion gVersion : this.glu.genome2genericVersionList.get(speciesName)) {
             versionNames.add(gVersion.versionName);
         }
         for(String versionName : versionNames) {
@@ -326,7 +358,7 @@ final class GeneralLoadView extends JComponent
      * Create the JTable with the list of features and their status.
      */
     private void createFeaturesTable(String genomeVersionName) {
-        List<genericFeature> features = this.glu.getFeatures(genomeVersionName);
+        List<GenericFeature> features = this.glu.getFeatures(genomeVersionName);
         FeaturesTableModel model = new FeaturesTableModel(this.glu, features);
         JTable table = new JTable(model);
         TableWithVisibleComboBox.setComboBoxEditor(table, 0, FeaturesTableModel.loadChoices);
@@ -345,14 +377,23 @@ final class GeneralLoadView extends JComponent
         if (DEBUG_EVENTS) {
             System.out.println("GeneralLoadView.seqSelectionChanged() called with " + seqID);
         }
+        disableButtonsIfGenomeSequence(seqID);
+    }
 
+    /**
+     * Don't allow buttons to be used if we're viewing the entire sequence.
+     * (We do this because it's not clear if the user REALLY would want to load all of the specified data.)
+     * (In fact, for the full sequence this would currently be too much memory for the app.)
+     * @param seqID
+     */
+    private void disableButtonsIfGenomeSequence(String seqID) {
         // hardwiring names for genome and encode virtual seqs, need to generalize this soon
         final String GENOME_SEQ_ID = "genome";
         final String ENCODE_REGIONS_ID = "encode_regions";
-
         boolean disableResidues = seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID);
         all_residuesB.setEnabled(!disableResidues);
         partial_residuesB.setEnabled(!disableResidues);
+        load_visible_dataB.setEnabled(!disableResidues);
     }
 }
 

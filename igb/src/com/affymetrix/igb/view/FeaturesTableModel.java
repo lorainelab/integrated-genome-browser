@@ -3,10 +3,9 @@ package com.affymetrix.igb.view;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
+import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
-import com.affymetrix.igb.view.GeneralLoadUtils.genericFeature;
-//import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -26,11 +25,11 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
     private static final int LOAD_STRATEGY_COLUMN = 0;
     private static final int LOAD_STATUS_COLUMN = 3;
    
-	List<genericFeature> features;
+	List<GenericFeature> features;
 
     GeneralLoadUtils glu;
 
-    public FeaturesTableModel(GeneralLoadUtils glu, List<genericFeature> features) {
+    public FeaturesTableModel(GeneralLoadUtils glu, List<GenericFeature> features) {
         this.glu = glu;
         this.features = features;
 
@@ -53,15 +52,15 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
         }
     }
 
-	public genericFeature getFeature(int row) {
+	public GenericFeature getFeature(int row) {
 		return features.get(row);
 	}
 
-	public int getRow(genericFeature feature) {
+	public int getRow(GenericFeature feature) {
 		return features.indexOf(feature);
 	}
 
-	public List<genericFeature> getFeatures() { return features; }
+	public List<GenericFeature> getFeatures() { return features; }
 
 	public int getColumnCount() {
 		return columnNames.length;
@@ -117,7 +116,7 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
 
     @Override
 	public void setValueAt(Object value, int row, int col) {
-		genericFeature gFeature = features.get(row);
+		GenericFeature gFeature = features.get(row);
         String valueString = value.toString();
         
 		if (col == LOAD_STRATEGY_COLUMN)  {
@@ -126,7 +125,8 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
                 gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);
                 fireTableCellUpdated(row, col);
 
-                if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.WHOLE) {
+                if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+                    //  For features with "visible range", we don't dynamically load the feature.
                     System.out.println("Selected : " + gFeature.featureName);
                     this.glu.loadAndDisplayAnnotations(gFeature);
                     Application.getSingleton().setStatus("", false);
@@ -146,8 +146,8 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
 	public void stateChanged(ChangeEvent evt) {
 		Object src = evt.getSource();
         System.out.println("FeaturesTableModel.stateChanged() called, source:" + src);
-		if (src instanceof genericFeature) {
-			int row = getRow((genericFeature)src);
+		if (src instanceof GenericFeature) {
+			int row = getRow((GenericFeature)src);
 			if (row >=0) {  // if typestate is present in table, then send notification of row change
 				fireTableRowsUpdated(row, row);
 			}

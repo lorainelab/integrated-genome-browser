@@ -295,6 +295,7 @@ public class Das2VersionedSource {
                 if (Das2FeatureSaxParser.DO_SEQID_HACK) {
                     region_id = Das2FeatureSaxParser.doSeqIdHack(region_id);
                 }
+                
                 String lengthstr = reg.getAttribute("length");
                 String region_name = reg.getAttribute(NAME);
                 if (region_name.length() == 0) {

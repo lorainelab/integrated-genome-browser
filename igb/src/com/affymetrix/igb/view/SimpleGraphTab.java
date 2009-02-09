@@ -133,12 +133,12 @@ implements SeqSelectionListener, SymSelectionListener {
 
   public SimpleGraphTab(Application app) {
     if (app == null) {
-      this.gviewer = SeqMapView.makeSeqMapView(true, false, false); // for testing only
+      this.gviewer = SeqMapView.makeSeqMapView(true, false); // for testing only
     } else {
       this.gviewer = app.getMapView();
     }
 
-    Vector v = new Vector(8);
+    Vector<String> v = new Vector<String>(8);
     v.add(HeatMap.HEATMAP_0);
     v.add(HeatMap.HEATMAP_1);
     v.add(HeatMap.HEATMAP_2);

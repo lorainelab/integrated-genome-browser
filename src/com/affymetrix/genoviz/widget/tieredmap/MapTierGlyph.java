@@ -169,7 +169,6 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
   /**
    * @return a clone of the moreStrings List, used with TieredLabelMap.
    */
-  @SuppressWarnings("unchecked")
   public List<String> getMoreStrings() {
     if ( this.moreStrings == null ) {
       moreStrings = new ArrayList<String>();

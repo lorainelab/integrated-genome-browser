@@ -50,6 +50,7 @@ public class TierLabelManager {
   }
   
   /** Returns a list of TierGlyph items representing the selected tiers. */
+  @SuppressWarnings("unchecked")
   public java.util.List getSelectedTiers() {
     java.util.List selected_labels = getSelectedTierLabels();
     int sel_count = selected_labels.size();
@@ -153,6 +154,7 @@ public class TierLabelManager {
 //  }
 
   /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
+  @SuppressWarnings("unchecked")
   public static java.util.List getContainedGraphs(java.util.List tier_label_glyphs) {
     java.util.List result = new ArrayList();
     for (int i=0; i<tier_label_glyphs.size(); i++) {
@@ -163,6 +165,7 @@ public class TierLabelManager {
   }
   
   /** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
+  @SuppressWarnings("unchecked")
   public static java.util.List getContainedGraphs(TierLabelGlyph tlg) {
     ArrayList result = new ArrayList();
     TierGlyph tier = (TierGlyph) tlg.getInfo();
@@ -307,6 +310,7 @@ public class TierLabelManager {
    *  call {@link #sortTiers()} instead, which will call this and then
    *  call {@link #orderTiersByLabels(java.util.List)}.
    */
+  @SuppressWarnings("unchecked")
   public void orderTierLabels(List label_glyphs) {
     if (tier_sorter != null) {
       Collections.sort(label_glyphs, tier_sorter);

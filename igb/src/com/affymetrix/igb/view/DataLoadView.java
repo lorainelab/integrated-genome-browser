@@ -82,6 +82,7 @@ class SeqGroupView extends JComponent
     //genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     genomeCB = new JComboBox() {
+        @Override
       public Dimension getMaximumSize() {
         return new Dimension(
           super.getMaximumSize().width,
@@ -112,7 +113,7 @@ class SeqGroupView extends JComponent
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     //    AnnotatedSeqGroup group = (AnnotatedSeqGroup)evt.getSelectedGroups().get(0);
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    if (this.DEBUG_EVENTS)  {
+    if (SeqGroupView.DEBUG_EVENTS)  {
       System.out.println("SeqGroupView received groupSelectionChanged() event");
       if (group == null)  { System.out.println("  group is null"); }
       else  {
@@ -166,7 +167,7 @@ class SeqGroupView extends JComponent
   }
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
+    if (SeqGroupView.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
     synchronized (seqtable) {  // or should synchronize on lsm?
      // if (selected_seq != evt.getSelectedSeq()) {
 	lsm.removeListSelectionListener(this);
@@ -209,7 +210,7 @@ class SeqGroupView extends JComponent
   public void valueChanged(ListSelectionEvent evt) {
     Object src = evt.getSource();
     if ((src == lsm) && (! evt.getValueIsAdjusting())) { // ignore extra messages
-      if (this.DEBUG_EVENTS)  { System.out.println("SeqGroupView received valueChanged() ListSelectionEvent"); }
+      if (SeqGroupView.DEBUG_EVENTS)  { System.out.println("SeqGroupView received valueChanged() ListSelectionEvent"); }
       int srow = seqtable.getSelectedRow();
       if (srow >= 0)  {
         String seq_name = (String) seqtable.getModel().getValueAt(srow, 0);
@@ -221,7 +222,9 @@ class SeqGroupView extends JComponent
     }
   }
 
+  @Override
   public Dimension getMinimumSize() { return new Dimension(200, 50); }
+    @Override
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
   public void itemStateChanged(ItemEvent e) {

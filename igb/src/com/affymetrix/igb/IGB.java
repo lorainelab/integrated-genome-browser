@@ -138,7 +138,7 @@ public final class IGB extends Application
 
   public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
   LoadFileAction open_file_action;
-  DasFeaturesAction2 load_das_action;
+  //DasFeaturesAction2 load_das_action;
 
   JMenuItem gc_item;
   JMenuItem memory_item;
@@ -707,7 +707,7 @@ public final class IGB extends Application
     align_control = new AlignControl(this, map_view);
 
     open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
-    load_das_action = new DasFeaturesAction2(map_view);
+    //load_das_action = new DasFeaturesAction2(map_view);
     clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
     clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
     open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);

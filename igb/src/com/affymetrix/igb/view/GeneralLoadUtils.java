@@ -21,6 +21,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasClientOptimizer;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.das.DasEntryPoint;
+import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
 import com.affymetrix.igb.das.DasType;
@@ -56,6 +57,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import javax.swing.text.Document;
 
 public class GeneralLoadUtils {
     public static enum LoadStrategy { NO_LOAD, VISIBLE, WHOLE };    
@@ -67,7 +69,8 @@ public class GeneralLoadUtils {
      *  using negative start coord for virtual genome chrom because (at least for human genome)
      *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
      */
-    final double default_genome_min = -2100200300;
+//    final double default_genome_min = -2100200300;
+    final double default_genome_min = 0;
     final boolean DEBUG_VIRTUAL_GENOME = true;
 
     Class server_type;  // Is the server Das (DasServerInfo), Das/2 (Das2ServerInfo), or Quickload?
@@ -504,105 +507,6 @@ public class GeneralLoadUtils {
     }
 
 
-
-    public void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
-        int chrom_count = group.getSeqCount();
-        if (chrom_count <= 1) {
-            // no need to make a virtual "genome" chrom if there is only a single chromosome
-            return;
-        }
-
-        Application.getApplicationLogger().fine("$$$$$ adding virtual genome seq to seq group");
-        String GENOME_SEQ_ID = "genome";
-        if (group.getSeq(GENOME_SEQ_ID) != null) {
-            return; // return if we've already created the virtual genome
-        }
-
-        SmartAnnotBioSeq genome_seq = group.addSeq(GENOME_SEQ_ID, 0);
-        for (int i = 0; i < chrom_count; i++) {
-            BioSeq chrom_seq = group.getSeq(i);
-            if (chrom_seq == genome_seq)
-                continue;
-            addSeqToVirtualGenome(genome_seq,chrom_seq,default_genome_min,DEBUG_VIRTUAL_GENOME);
-        }
-    }
-
-    private static void addSeqToVirtualGenome(SmartAnnotBioSeq genome_seq, BioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
-        double glength = genome_seq.getLengthDouble();
-        int clength = chrom.getLength();
-        int spacer = (clength > 5000000) ? 5000000 : 100000;
-        double new_glength = glength + clength + spacer;
-        //	genome_seq.setLength(new_glength);
-        genome_seq.setBoundsDouble(default_genome_min, default_genome_min + new_glength);
-        if (DEBUG_VIRTUAL_GENOME) {
-            Application.getApplicationLogger().fine("added seq: " + chrom.getID() + ", new genome bounds: min = " + genome_seq.getMin() + ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
-        }
-        MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
-        MutableSeqSymmetry mapping = (MutableSeqSymmetry) genome_seq.getComposition();
-        if (mapping == null) {
-            mapping = new SimpleMutableSeqSymmetry();
-            mapping.addSpan(new MutableDoubleSeqSpan(default_genome_min, default_genome_min + clength, genome_seq));
-            genome_seq.setComposition(mapping);
-        } else {
-            MutableDoubleSeqSpan mspan = (MutableDoubleSeqSpan) mapping.getSpan(genome_seq);
-            mspan.setDouble(default_genome_min, default_genome_min + new_glength, genome_seq);
-        }
-        // using doubles for coords, because may end up with coords > MAX_INT
-        child.addSpan(new MutableDoubleSeqSpan(glength + default_genome_min, glength + clength + default_genome_min, genome_seq));
-        child.addSpan(new MutableDoubleSeqSpan(0, clength, chrom));
-        if (DEBUG_VIRTUAL_GENOME) {
-            SeqUtils.printSpan(child.getSpan(0));
-            SeqUtils.printSpan(child.getSpan(1));
-        }
-        mapping.addChild(child);
-    }
-
-
-    /**
-     *  addEncodeVirtualSeq.
-     *  adds virtual CompositeBioSeq which is composed from all the ENCODE regions.
-     *  assumes urlpath resolves to bed file for ENCODE regions
-     */
-    public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, final String urlpath) {
-        InputStream istr = null;
-        Application.getApplicationLogger().fine("$$$$$ adding virtual encode seq to seq group");
-        // assume it's a bed file...
-        BedParser parser = new BedParser();
-        try {
-            istr = LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
-            //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-            List<SeqSymmetry> regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
-            SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
-            MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
-
-            int min_base_pos = 0;
-            int current_base = min_base_pos;
-            int spacer = 20000;
-            for (SeqSymmetry esym : regions) {
-                SeqSpan espan = esym.getSpan(0);
-                int elength = espan.getLength();
-
-                SimpleSymWithProps child = new SimpleSymWithProps();
-                String cid = esym.getID();
-                if (cid != null) {
-                    child.setID(cid);
-                }
-                child.addSpan(espan);
-                child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
-                mapping.addChild(child);
-                current_base = current_base + elength + spacer;
-            }
-            virtual_seq.setBounds(min_base_pos, current_base);
-            mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
-            virtual_seq.setComposition(mapping);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            GeneralUtils.safeClose(istr);
-        }
-        return;
-    }
-
     // Load the sequence info for the given genome (version, unimportant).
     // Then send it to the genometry model.
     public boolean loadSeqInfo(final String versionName) {
@@ -615,7 +519,8 @@ public class GeneralLoadUtils {
         if (group == null)
             return false;
 
-        
+        addGenomeVirtualSeq(group);
+
         if (gmodel.getSelectedSeqGroup() != group) {
             gmodel.setSelectedSeqGroup(group);
         }
@@ -624,15 +529,12 @@ public class GeneralLoadUtils {
             gmodel.setSelectedSeq(group.getSeq(0)); // default to the first chromosome
         }
 
-        if (group != null) {
-            addGenomeVirtualSeq(group);
-        }
-       
         return true;
     }
 
+
         // Load the sequence info for the given genome versionr.
-    public AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
+    private AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
         AnnotatedSeqGroup group = null;
         if (DEBUG) {
             System.out.println("loading list of chromosomes for genome version: " + gVersion.versionName);
@@ -702,6 +604,9 @@ public class GeneralLoadUtils {
             }
             //version.getEntryPoints();
 
+           //Document doc = DasLoader.getDocument(request_con);
+        //seqs = DasLoader.parseSegmentsFromEntryPoints(doc);
+
            return group;
         }
         if (gVersion.gServer.serverClass == QuickLoadServerModel.class) {
@@ -727,6 +632,104 @@ public class GeneralLoadUtils {
 
         return null;
     }
+
+    private void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
+        int chrom_count = group.getSeqCount();
+        if (chrom_count <= 1) {
+            // no need to make a virtual "genome" chrom if there is only a single chromosome
+            return;
+        }
+
+        Application.getApplicationLogger().fine("$$$$$ adding virtual genome seq to seq group");
+        String GENOME_SEQ_ID = "genome";
+        if (group.getSeq(GENOME_SEQ_ID) != null) {
+            return; // return if we've already created the virtual genome
+        }
+
+        SmartAnnotBioSeq genome_seq = group.addSeq(GENOME_SEQ_ID, 0);
+        for (int i = 0; i < chrom_count; i++) {
+            BioSeq chrom_seq = group.getSeq(i);
+            if (chrom_seq == genome_seq)
+                continue;
+            addSeqToVirtualGenome(genome_seq,chrom_seq,default_genome_min,DEBUG_VIRTUAL_GENOME);
+        }
+    }
+
+    private static void addSeqToVirtualGenome(SmartAnnotBioSeq genome_seq, BioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
+        double glength = genome_seq.getLengthDouble();
+        int clength = chrom.getLength();
+        int spacer = (clength > 5000000) ? 5000000 : 100000;
+        double new_glength = glength + clength + spacer;
+        //	genome_seq.setLength(new_glength);
+        genome_seq.setBoundsDouble(default_genome_min, default_genome_min + new_glength);
+        if (DEBUG_VIRTUAL_GENOME) {
+            System.out.println("added seq: " + chrom.getID() + ", new genome bounds: min = " + genome_seq.getMin() + ", max = " + genome_seq.getMax() + ", length = " + genome_seq.getLengthDouble());
+        }
+        MutableSeqSymmetry child = new SimpleMutableSeqSymmetry();
+        MutableSeqSymmetry mapping = (MutableSeqSymmetry) genome_seq.getComposition();
+        if (mapping == null) {
+            mapping = new SimpleMutableSeqSymmetry();
+            mapping.addSpan(new MutableDoubleSeqSpan(default_genome_min, default_genome_min + clength, genome_seq));
+            genome_seq.setComposition(mapping);
+        } else {
+            MutableDoubleSeqSpan mspan = (MutableDoubleSeqSpan) mapping.getSpan(genome_seq);
+            mspan.setDouble(default_genome_min, default_genome_min + new_glength, genome_seq);
+        }
+        // using doubles for coords, because may end up with coords > MAX_INT
+        child.addSpan(new MutableDoubleSeqSpan(glength + default_genome_min, glength + clength + default_genome_min, genome_seq));
+        child.addSpan(new MutableDoubleSeqSpan(0, clength, chrom));
+        if (DEBUG_VIRTUAL_GENOME) {
+            SeqUtils.printSpan(child.getSpan(0));
+            SeqUtils.printSpan(child.getSpan(1));
+        }
+        mapping.addChild(child);
+    }
+
+
+    /**
+     *  addEncodeVirtualSeq.
+     *  adds virtual CompositeBioSeq which is composed from all the ENCODE regions.
+     *  assumes urlpath resolves to bed file for ENCODE regions
+     */
+    /*public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, final String urlpath) {
+        InputStream istr = null;
+        Application.getApplicationLogger().fine("$$$$$ adding virtual encode seq to seq group");
+        // assume it's a bed file...
+        BedParser parser = new BedParser();
+        try {
+            istr = LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
+            //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
+            List<SeqSymmetry> regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
+            SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
+            MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
+
+            int min_base_pos = 0;
+            int current_base = min_base_pos;
+            int spacer = 20000;
+            for (SeqSymmetry esym : regions) {
+                SeqSpan espan = esym.getSpan(0);
+                int elength = espan.getLength();
+
+                SimpleSymWithProps child = new SimpleSymWithProps();
+                String cid = esym.getID();
+                if (cid != null) {
+                    child.setID(cid);
+                }
+                child.addSpan(espan);
+                child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
+                mapping.addChild(child);
+                current_base = current_base + elength + spacer;
+            }
+            virtual_seq.setBounds(min_base_pos, current_base);
+            mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
+            virtual_seq.setComposition(mapping);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            GeneralUtils.safeClose(istr);
+        }
+        return;
+    }*/
 
     /**
      * Load and display annotations (requested for the specific feature).

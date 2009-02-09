@@ -51,6 +51,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.CharIterator;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
+import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.tiers.*;
@@ -606,28 +607,34 @@ public class SeqMapView extends JPanel
             UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, c);
         }
 
+        @Override
         public Color getColor() {
             return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_COLOR, default_axis_color);
         }
 
+        @Override
         public void setBackground(Color c) {
             UnibrowPrefsUtil.putColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, c);
         }
 
+        @Override
         public Color getBackground() {
             return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
         }
 
+        @Override
         public void setHumanName(String s) {
             //UnibrowPrefsUtil.getTopNode().put(PREF_AXIS_NAME, s);
             super.setHumanName(s);
         }
 
+        @Override
         public String getHumanName() {
             //return UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_NAME, "Coordinates");
             return super.getHumanName();
         }
 
+        @Override
         public void setShow(boolean b) {
             super.setShow(b);
         }
@@ -1044,17 +1051,17 @@ public class SeqMapView extends JPanel
             return;
         }
 
-        com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
+        Timer tim = new Timer();
         tim.start();
 
         boolean same_seq = ((seq == this.aseq) && (seq != null));
 
-        ArrayList temp_tiers = null;
+        ArrayList<TierGlyph> temp_tiers = null;
         int axis_index = 0;
         match_glyphs = new Vector();
         List old_selections = Collections.EMPTY_LIST;
-        double old_zoom_spot_x = seqmap.getZoomCoord(seqmap.X);
-        double old_zoom_spot_y = seqmap.getZoomCoord(seqmap.Y);
+        double old_zoom_spot_x = seqmap.getZoomCoord(AffyTieredMap.X);
+        double old_zoom_spot_y = seqmap.getZoomCoord(AffyTieredMap.Y);
 
         if (same_seq) {
             // Gather information about what is currently selected, so can restore it later
@@ -1068,13 +1075,13 @@ public class SeqMapView extends JPanel
         // stash annotation tiers for proper state restoration after resetting for same seq
         //    (but presumably added / deleted / modified annotations...)
 
-        temp_tiers = new ArrayList();
+        temp_tiers = new ArrayList<TierGlyph>();
         // copying map tiers to separate list to avoid problems when removing tiers
         //   (and thus modifying map.getTiers() list -- could probably deal with this
         //    via iterators, but feels safer this way...)
-        ArrayList cur_tiers = new ArrayList(seqmap.getTiers());
+        ArrayList<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
         for (int i = 0; i < cur_tiers.size(); i++) {
-            TierGlyph tg = (TierGlyph) cur_tiers.get(i);
+            TierGlyph tg = cur_tiers.get(i);
             if (tg == axis_tier) {
                 axis_index = i;
             } else {
@@ -1144,7 +1151,7 @@ public class SeqMapView extends JPanel
         // add back in previous annotation tiers (with all children removed)
         if (temp_tiers != null) {
             for (int i = 0; i < temp_tiers.size(); i++) {
-                TierGlyph tg = (TierGlyph) temp_tiers.get(i);
+                TierGlyph tg = temp_tiers.get(i);
                 if (DEBUG_TIERS) {
                     System.out.println("adding back tier: " + tg.getLabel() + ", scene = " + tg.getScene());
                 }
@@ -1711,7 +1718,7 @@ public class SeqMapView extends JPanel
         if (sym == null) {
             select(Collections.EMPTY_LIST, add_to_previous, call_listeners, update_widget);
         } else {
-            ArrayList list = new ArrayList(1);
+            ArrayList<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
             list.add(sym);
             select(list, add_to_previous, call_listeners, update_widget);
         }
@@ -1987,6 +1994,7 @@ public class SeqMapView extends JPanel
 
         slice_thread = new Thread() {
 
+            @Override
             public void run() {
                 enableSeqMap(false);
                 sliceAndDiceNow(syms);
@@ -2387,7 +2395,7 @@ public class SeqMapView extends JPanel
         pixels_per_coord = Math.min(pixels_per_coord, seqmap.getMaxZoom(NeoWidgetI.X));
         seqmap.zoom(NeoWidgetI.X, pixels_per_coord);
         seqmap.scroll(NeoWidgetI.X, smin);
-        seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, (smin + smax) / 2);
+        seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
         seqmap.updateWidget();
     }
 
@@ -2438,8 +2446,8 @@ public class SeqMapView extends JPanel
                     seqmap.getMaxZoom(NeoWidgetI.X)));
             seqmap.scroll(NeoWidgetI.X, -(seqmap.getVisibleRange()[0]));
             seqmap.scroll(NeoWidgetI.X, (rect.x - rect.width * 0.05));
-            seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
-            seqmap.setZoomBehavior(seqmap.Y, seqmap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
+            seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
+            seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
             seqmap.updateWidget();
         }
     }
@@ -2492,14 +2500,14 @@ public class SeqMapView extends JPanel
             SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
             String version = ((Versioned) aseq).getVersion();
-            List syns = lookup.getSynonyms(version);
+            List<String> syns = lookup.getSynonyms(version);
 
             if (syns == null) {
-                syns = new ArrayList();
+                syns = new ArrayList<String>();
                 syns.add(version);
             }
             for (int i = 0; i < syns.size(); i++) {
-                String syn = (String) syns.get(i);
+                String syn = syns.get(i);
                 // Having to hardwire this check to figure out which synonym to use to match
                 //  with UCSC.  Really need to have some way when loading synonyms to specify
                 //  which ones should be used when communicating with which external resource!
@@ -2727,12 +2735,12 @@ public class SeqMapView extends JPanel
             hairline.setSpot(intx);
             showHairlinePositionInStatusBar();
         }
-        seqmap.setZoomBehavior(seqmap.X, seqmap.CONSTRAIN_COORD, intx);
+        seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, intx);
     }
 
     /** Sets the hairline position to the given spot. Does not call map.updateWidget() */
     public final void setZoomSpotY(double y) {
-        seqmap.setZoomBehavior(seqmap.Y, seqmap.CONSTRAIN_COORD, y);
+        seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, y);
     }
 
     /** Toggles the hairline between labeled/unlabled and returns true

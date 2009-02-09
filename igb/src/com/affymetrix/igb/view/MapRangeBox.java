@@ -15,13 +15,8 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.bookmarks.Bookmark;
-import com.affymetrix.igb.event.*;
-import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
@@ -37,10 +32,12 @@ public class MapRangeBox extends JComponent implements NeoViewBoxListener, Group
   SeqMapView gview;
   
   public JTextField range_box = new JTextField("") {
+      @Override
     public Dimension getPreferredSize() {
       Dimension d = super.getPreferredSize();
       return new Dimension(200, d.height);
     }
+        @Override
     public Dimension getMaximumSize() {
       Dimension d = super.getMaximumSize();
       return new Dimension(200, getPreferredSize().height);

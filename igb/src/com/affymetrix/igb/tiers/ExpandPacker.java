@@ -194,7 +194,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
 
   public Rectangle pack(GlyphI parent, ViewI view) {
     //    System.out.println("begin ExpandPacker.pack(glyph, view)");
-    Vector sibs = parent.getChildren();
+    Vector<GlyphI> sibs = parent.getChildren();
     GlyphI child;
     Rectangle2D cbox;
     Rectangle2D pbox = parent.getCoordBox();
@@ -264,7 +264,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     double coord_height = ymax - ymin;
     coord_height = coord_height + (2 * parent_spacer);
     for (int i=0; i<sibs.size(); i++) {
-      child = (GlyphI)sibs.elementAt(i);
+      child = sibs.elementAt(i);
       child.moveRelative(0, parent_spacer - ymin);
       //      System.out.println(child.getCoordBox());
     }
@@ -272,19 +272,19 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     // old implementation
     Rectangle2D newbox = new Rectangle2D();
     Rectangle2D tempbox = new Rectangle2D();  
-    child = (GlyphI)sibs.elementAt(0);
+    child = sibs.elementAt(0);
     newbox.reshape(pbox.x, child.getCoordBox().y, 
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-	child = (GlyphI)sibs.elementAt(i);
+	child = sibs.elementAt(i);
 	GeometryUtils.union(newbox, child.getCoordBox(), newbox);
       }
     }
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-	child = (GlyphI)sibs.elementAt(i);
+	child = sibs.elementAt(i);
 	Rectangle2D childbox = child.getCoordBox();
 	tempbox.reshape(newbox.x, childbox.y, newbox.width, childbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
@@ -292,7 +292,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
-	child = (GlyphI)sibs.elementAt(i);
+	child = sibs.elementAt(i);
 	Rectangle2D childbox = child.getCoordBox();
 	tempbox.reshape(childbox.x, newbox.y, childbox.width, newbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
@@ -343,15 +343,15 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    Vector sibs = parent.getChildren();
+    Vector<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
-    Vector sibsinrange = null;
+    Vector<GlyphI> sibsinrange = null;
     boolean childMoved = true;
     if (avoid_sibs) {
-      sibsinrange = new Vector();
+      sibsinrange = new Vector<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
-	GlyphI sibling = (GlyphI)sibs.elementAt(i);
+	GlyphI sibling = sibs.elementAt(i);
 	siblingbox = sibling.getCoordBox();
 	if (!(siblingbox.x > (childbox.x+childbox.width) ||
 	      ((siblingbox.x+siblingbox.width) < childbox.x)) ) {
@@ -372,7 +372,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = (GlyphI)sibsinrange.elementAt(j);
+        GlyphI sibling = sibsinrange.elementAt(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

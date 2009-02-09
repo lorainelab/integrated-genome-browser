@@ -114,7 +114,7 @@ public final class IGB extends Application
   final static String TABBED_PANES_TITLE = "Tabbed Panes";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static Map prefs_hash;
+  static Map<String,Map> prefs_hash;
   static String[] main_args;
   static Map comp2window = new HashMap(); // Maps Component -> Frame
   Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
@@ -184,7 +184,7 @@ public final class IGB extends Application
   DataLoadView data_load_view = null;
   AltSpliceView slice_view = null;
 
-  List plugins_info = new ArrayList(16);
+  List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
   List plugins = new ArrayList(16);
 
   static String user_dir = System.getProperty("user.dir");
@@ -449,7 +449,7 @@ public final class IGB extends Application
           return prefs_hash;
       }
 
-      prefs_hash = new HashMap();
+      prefs_hash = new HashMap<String,Map>();
       XmlPrefsParser prefs_parser = new XmlPrefsParser();
       
       LoadDefaultPrefsFromJar(prefs_parser);
@@ -503,7 +503,7 @@ public final class IGB extends Application
    *  the next time the program runs.
    *
    */
-    private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map prefs_hash) {
+    private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map<String,Map> prefs_hash) {
         String web_prefs_url = WEB_PREFS_URL;
         InputStream is = null;
         try {
@@ -1552,7 +1552,7 @@ public final class IGB extends Application
    *  The ordering of those tags is maintained in the order of the tab panes
    *  they create.
    */
-  List getPluginsFromXmlPrefs(Map prefs_hash) {
+  List<PluginInfo> getPluginsFromXmlPrefs(Map prefs_hash) {
     ArrayList<PluginInfo> plugin_list = new ArrayList<PluginInfo>(16);
 
     boolean USE_ANNOT_BROWSER = false;

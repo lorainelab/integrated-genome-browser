@@ -362,8 +362,9 @@ final class GeneralLoadView extends JComponent
         FeaturesTableModel model = new FeaturesTableModel(this.glu, features);
         JTable table = new JTable(model);
         TableWithVisibleComboBox.setComboBoxEditor(table, 0, FeaturesTableModel.loadChoices);
-        JScrollPane scrollPane = new JScrollPane(table);
-        types_panel.add(scrollPane);
+        //JScrollPane scrollPane = new JScrollPane(table);
+        //types_panel.add(scrollPane);
+        types_panel.add(table);
     }
 
 

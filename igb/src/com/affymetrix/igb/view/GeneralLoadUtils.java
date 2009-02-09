@@ -45,9 +45,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -96,7 +98,7 @@ public class GeneralLoadUtils {
     // versions associated with a given genome.
     Map<String,List<GenericVersion>> genome2genericVersionList;
     Map<String,String> versionName2genome;
-    Map<String,List<GenericVersion>> versionName2versionList;
+    Map<String,Set<GenericVersion>> versionName2versionSet;
 
     //public boolean allow_reinitialization = true;
 
@@ -110,7 +112,7 @@ public class GeneralLoadUtils {
         discoveredServers.clear();
         genome2genericVersionList.clear();
         versionName2genome.clear();
-        versionName2versionList.clear();
+        versionName2versionSet.clear();
     }
 
     public GeneralLoadUtils(SingletonGenometryModel gmodel, SeqMapView gviewer) {
@@ -125,7 +127,7 @@ public class GeneralLoadUtils {
         discoveredServers = new LinkedHashMap<String, genericServer>();
         genome2genericVersionList = new LinkedHashMap<String,List<GenericVersion>>();
         versionName2genome = new HashMap<String,String>();
-        versionName2versionList = new HashMap<String,List<GenericVersion>>();
+        versionName2versionSet = new HashMap<String,Set<GenericVersion>>();
     }
 
     /**
@@ -276,15 +278,9 @@ public class GeneralLoadUtils {
                         this.genome2genericVersionList.put(genomeName, gVersionList);
                     } else {
                         gVersionList = this.genome2genericVersionList.get(genomeName);
-                        if (!this.genome2genericVersionList.containsKey(genomeName)) {
-                            gVersionList = new ArrayList<GenericVersion>(1);
-                            this.genome2genericVersionList.put(genomeName, gVersionList);
-                        } else {
-                            gVersionList = this.genome2genericVersionList.get(genomeName);
-                        }
-                        GenericVersion gVersion = new GenericVersion(genomeName, gServer, quickloadServer);
-                        discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, genomeName);
                     }
+                    GenericVersion gVersion = new GenericVersion(genomeName, gServer, quickloadServer);
+                    discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, genomeName);
                 }
                 return;
         }
@@ -296,18 +292,18 @@ public class GeneralLoadUtils {
     private void discoverVersion(String versionName, genericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String genomeName) {
         gVersionList.add(gVersion);
         versionName2genome.put(versionName, genomeName);
-        List<GenericVersion> versionList;
-        if (this.versionName2versionList.containsKey(versionName)) {
-            versionList = this.versionName2versionList.get(versionName);
+        Set<GenericVersion> versionSet;
+        if (this.versionName2versionSet.containsKey(versionName)) {
+            versionSet = this.versionName2versionSet.get(versionName);
         } else {
-            versionList = new ArrayList<GenericVersion>(1);
-            this.versionName2versionList.put(versionName, versionList);
+            versionSet = new HashSet<GenericVersion>(1);
+            this.versionName2versionSet.put(versionName, versionSet);
         }
-        versionList.add(gVersion);
+        versionSet.add(gVersion);
         AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
         group2version.put(group, gVersion);
         if (DEBUG) {
-            System.out.println("Added " + gServer.serverClass + " version: " + this.genome2genericVersionList.get(genomeName).get(0).versionName);
+            System.out.println("Added " + gServer.serverClass + "genome: " + genomeName + " version: " + versionName + "--" + this.genome2genericVersionList.get(genomeName).get(0).versionName);
         }
     }
 
@@ -340,11 +336,9 @@ public class GeneralLoadUtils {
      *  The list may (rarely) be empty, but never null.
      */
     public List<GenericFeature> getFeatures(final String versionName) {
-        //initVersion(versionName);
-
         // There may be more than one server with the same versionName.  Merge all the version names.
         List<GenericFeature> featureList = new ArrayList<GenericFeature>();
-        for (GenericVersion gVersion: this.versionName2versionList.get(versionName)) {
+        for (GenericVersion gVersion: this.versionName2versionSet.get(versionName)) {
             featureList.addAll(gVersion.features);
         }
         return featureList;
@@ -699,6 +693,11 @@ public class GeneralLoadUtils {
         return null;
     }
 
+    /**
+     * Load and display annotations (requested for the specific feature).
+     * @param gFeature
+     * @return
+     */
     public boolean loadAndDisplayAnnotations(GenericFeature gFeature) {
         MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
 		MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();

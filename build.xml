@@ -161,36 +161,26 @@
 		</jar>
 	</target>
 
-	<target name="run" depends="jar" description="run IGB">
+	<target name="run" depends="compile" description="run IGB">
 		<java fork="true" classname="com.affymetrix.igb.IGB">
 			<jvmarg value="-Xmx1024m" />
 			<arg value="-prefs" />
 			<arg value="${igb}/etc/igb_prefs.xml" />
 			<classpath>
 				<fileset dir="${lib.dir}" includes="*.jar" />
-				<fileset dir="${dist.dir}" includes="*.jar" />
+				<dirset dir="${basedir}">
+					<include name="*/build" />
+				</dirset>
 			</classpath>
 		</java>
 	</target>
 
-	<target name="nbprofile" depends="jar" description="profile IGB in NetBeans">
-		<fail unless="netbeans.home">This target can only run inside the NetBeans IDE.</fail>
+	<target name="profile-nb" if="netbeans.home">
+		<ant target="profile-nb" antfile="nbproject/ide-targets.xml" /> 
+	</target>
 
-		<nbprofiledirect>
-			<classpath>
-				<pathelement location="dist/igb.jar"/>
-			</classpath>
-		</nbprofiledirect>
-		<java fork="true" classname="com.affymetrix.igb.IGB">
-			<jvmarg value="-Xmx1024m" />
-			<jvmarg value="${profiler.info.jvmargs.agent}" />
-			<arg value="-prefs" />
-			<arg value="${igb}/etc/igb_prefs.xml" />
-			<classpath>
-				<fileset dir="${lib.dir}" includes="*.jar" />
-				<fileset dir="${dist.dir}" includes="*.jar" />
-			</classpath>
-		</java>
+	<target name="profile-single-nb" if="netbeans.home">
+		<ant target="profile-single-nb" antfile="nbproject/ide-targets.xml" /> 
 	</target>
 
 	<!--                                                                 -->

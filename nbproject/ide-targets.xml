@@ -3,11 +3,13 @@
     <import file="../build.xml"/>
     <!-- TODO: edit the following target according to your needs -->
     <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#debugj2se) -->
-    <target depends="jar" description="run IGB" name="debug-nb">
+    <target depends="compile" description="debug IGB" name="debug-nb">
         <nbjpdastart addressproperty="jpda.address" name="IGB" transport="dt_socket">
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar"/>
-                <fileset dir="${dist.dir}" includes="*.jar"/>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
             </classpath>
         </nbjpdastart>
         <java classname="com.affymetrix.igb.IGB" fork="true">
@@ -15,11 +17,71 @@
             <arg value="-prefs"/>
             <arg value="${igb}/etc/igb_prefs.xml"/>
             <classpath>
-                <fileset dir="${lib.dir}" includes="*.jar"/>
-                <fileset dir="${dist.dir}" includes="*.jar"/>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
             </classpath>
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+        </java>
+    </target>
+
+    <target name="profile-nb" depends="compile" description="profile IGB in NetBeans">
+        <nbprofiledirect>
+            <classpath>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
+            </classpath>
+            <rootspath>
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
+            </rootspath>
+        </nbprofiledirect>
+        <java fork="true" classname="com.affymetrix.igb.IGB" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
+            <jvmarg value="-Xmx1024m" />
+            <jvmarg value="${profiler.info.jvmargs.agent}" />
+            <jvmarg line="${profiler.info.jvmargs}"/>
+            <arg value="-prefs" />
+            <arg value="${igb}/etc/igb_prefs.xml" />
+            <classpath>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="profile-single-nb" depends="compile" description="profile single file in NetBeans">
+        <nbprofiledirect>
+            <classpath>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
+            </classpath>
+            <rootspath>
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
+            </rootspath>
+        </nbprofiledirect>
+				<java fork="true" classname="${profile.class}" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
+            <jvmarg value="-Xmx1024m" />
+            <jvmarg value="${profiler.info.jvmargs.agent}" />
+            <jvmarg line="${profiler.info.jvmargs}"/>
+            <arg value="-prefs" />
+            <arg value="${igb}/etc/igb_prefs.xml" />
+            <classpath>
+                <fileset dir="${lib.dir}" includes="*.jar" />
+                <dirset dir="${basedir}">
+                    <include name="*/build" />
+                </dirset>
+            </classpath>
         </java>
     </target>
 </project>

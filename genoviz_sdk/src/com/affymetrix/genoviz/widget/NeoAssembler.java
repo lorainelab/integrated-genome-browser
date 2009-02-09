@@ -1259,7 +1259,6 @@ implements NeoAssemblerI, NeoViewBoxListener,
 
   int select_start, select_end;
 
-  @SuppressWarnings("unchecked")
   public void heardMouseEvent(MouseEvent evt) {
     int id = evt.getID();
     Object source = evt.getSource();

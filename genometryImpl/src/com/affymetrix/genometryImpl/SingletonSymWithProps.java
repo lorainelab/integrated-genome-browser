@@ -48,7 +48,6 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
    *  Uses the same type of Map class (HashMap, TreeMap, etc.)
    *  as the original.
    */
-  @SuppressWarnings("unchecked")
   public Map<String,Object> cloneProperties() {
     if (props == null) { return null; }
     // quick check for efficient Hashtable cloning

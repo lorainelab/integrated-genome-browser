@@ -55,7 +55,6 @@ public abstract class NeoAbstractWidget extends Container
     return models_have_multiple_glyphs;
   }
 
-  @SuppressWarnings("unchecked")
   public void setDataModel(GlyphI gl, Object datamodel) {
     // glyph to datamodel must be one-to-one
     // datamodel to glyph can be one-to-many

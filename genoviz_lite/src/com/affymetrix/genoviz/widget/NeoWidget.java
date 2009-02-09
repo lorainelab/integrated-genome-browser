@@ -959,7 +959,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @return a List of all the glyphs tied to the given data model.
    */
   @Override
-  @SuppressWarnings("unchecked")
    public List<GlyphI> getItems(Object datamodel) {
     Object result = model_hash.get(datamodel);
     if (result instanceof List) {

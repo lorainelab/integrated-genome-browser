@@ -99,7 +99,6 @@ public class AffySingleChromData {
   public List<SeqSymmetry> makeGraphs(AnnotatedBioSeq seq) throws IOException {
     List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(columns.size());
       
-    @SuppressWarnings("unchecked")
     ArrayList<CharSequence> probeSetNames = (ArrayList<CharSequence>) columns.get(0).getData();
     probeSetNames.trimToSize();
     

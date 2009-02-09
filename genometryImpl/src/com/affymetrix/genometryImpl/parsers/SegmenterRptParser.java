@@ -276,7 +276,6 @@ public class SegmenterRptParser {
   }
   
   public String getHeaderValue(String key, SymWithProps sym) {
-    @SuppressWarnings("unchecked")
     Map<String,String> map = (Map<String,String>) sym.getProperty(HEADER_PROP_KEY_NAME);
     if (map != null) {
       return map.get(key);

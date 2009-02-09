@@ -150,7 +150,6 @@ public class AdHocSeqFeature implements SeqFeatureI {
    * @param theName a name for the attribute.
    * @param theValue a value for the attribute.
    */
-  @SuppressWarnings("unchecked")
   public void addAttribute(String theName, String theValue) {
     Object oldValue = attributes.get(theName);
     if (null == oldValue) {

@@ -21,7 +21,6 @@ import java.util.Vector;
  * The sort is based on Comparable.compare(obj) method.
  * @see Comparable
  */
-@SuppressWarnings("unchecked")
 public class QuickSorter {
 
   /**

@@ -420,7 +420,6 @@ public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
     return map.put(featgroup, o);
   }
 
-  @SuppressWarnings("unchecked")
   public void addFeature() {
     boolean filter = false;
 

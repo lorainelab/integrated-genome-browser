@@ -196,7 +196,6 @@ public class PropertySheet extends JPanel {
    * @param useOnlySpecifiedColumns If true, then the property sheet will display ONLY the properties
    * whose names are listed. 
    */
-  @SuppressWarnings("unchecked")
   Vector reorderNames(Vector name_values, Vector preferred_ordering, boolean useOnlySpecifiedColumns) {
     Vector reordered = new Vector(name_values.size());
     for (int i=0; i<preferred_ordering.size(); i++) {

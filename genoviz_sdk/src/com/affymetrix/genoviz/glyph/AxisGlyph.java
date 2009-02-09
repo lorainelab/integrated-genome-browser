@@ -157,7 +157,6 @@ public class AxisGlyph extends Glyph {
   }
 
   //TODO: use a Range object for the range
-  @SuppressWarnings("unchecked")
   public void selectRange ( int[] range ) {
     if ( range.length != 2 ) {
       System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );

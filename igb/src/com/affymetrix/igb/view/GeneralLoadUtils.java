@@ -482,12 +482,12 @@ public class GeneralLoadUtils {
         }
 
         Application.getApplicationLogger().fine("$$$$$ adding virtual genome seq to seq group");
-        if (!QuickLoadView2.build_virtual_genome ||
-                (group.getSeq(QuickLoadView2.GENOME_SEQ_ID) != null)) {
-            return;
+        String GENOME_SEQ_ID = "genome";
+        if (group.getSeq(GENOME_SEQ_ID) != null) {
+            return; // return if we've already created the virtual genome
         }
 
-        SmartAnnotBioSeq genome_seq = group.addSeq(QuickLoadView2.GENOME_SEQ_ID, 0);
+        SmartAnnotBioSeq genome_seq = group.addSeq(GENOME_SEQ_ID, 0);
         for (int i = 0; i < chrom_count; i++) {
             BioSeq chrom_seq = group.getSeq(i);
             if (chrom_seq == genome_seq)
@@ -589,7 +589,11 @@ public class GeneralLoadUtils {
             gmodel.setSelectedSeqGroup(group);
         }
 
-        if (QuickLoadView2.build_virtual_genome && group != null) {
+        if (gmodel.getSelectedSeq() == null) {
+            gmodel.setSelectedSeq(group.getSeq(0)); // default to the first chromosome
+        }
+
+        if (group != null) {
             addGenomeVirtualSeq(group);
         }
        

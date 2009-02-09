@@ -44,9 +44,9 @@ public class GenometryModel {
   // maps sequences to lists of selected symmetries
   Map<AnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<AnnotatedBioSeq,List<SeqSymmetry>>();
 
-  List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
-  List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
-  List<SymSelectionListener> sym_selection_listeners = Collections.synchronizedList(new ArrayList<SymSelectionListener>());
+  final List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
+  final List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
+  final List<SymSelectionListener> sym_selection_listeners = Collections.synchronizedList(new ArrayList<SymSelectionListener>());
   //List model_change_listeners = new ArrayList();
 
   AnnotatedSeqGroup selected_group = null;
@@ -161,7 +161,7 @@ public class GenometryModel {
     group_selection_listeners.remove(listener);
   }
 
-  public List getGroupSelectionListeners() {
+  public List<GroupSelectionListener> getGroupSelectionListeners() {
     return group_selection_listeners;
   }
 
@@ -170,9 +170,9 @@ public class GenometryModel {
     synchronized (group_selection_listeners) {
       // the "synchronized" block, by itself, doesn't seem to be enough,
       // so also copying the list
-      ArrayList<GroupSelectionListener> xxx = new ArrayList<GroupSelectionListener>(group_selection_listeners);
-      for (int i=xxx.size()-1; i>=0; i--) {
-        xxx.get(i).groupSelectionChanged(evt);
+      ArrayList<GroupSelectionListener> listeners = new ArrayList<GroupSelectionListener>(group_selection_listeners);
+      for (int i=listeners.size()-1; i>=0; i--) {
+        listeners.get(i).groupSelectionChanged(evt);
       }
     }
   }
@@ -210,7 +210,7 @@ public class GenometryModel {
     seq_selection_listeners.remove(listener);
   }
 
-  public List getSeqSelectionListeners() {
+  public List<SeqSelectionListener> getSeqSelectionListeners() {
     return seq_selection_listeners;
   }
 
@@ -241,7 +241,7 @@ public class GenometryModel {
     sym_selection_listeners.remove(listener);
   }
 
-  public List getSymSelectionListeners() {
+  public List<SymSelectionListener> getSymSelectionListeners() {
     return sym_selection_listeners;
   }
 
@@ -253,9 +253,9 @@ public class GenometryModel {
     synchronized (sym_selection_listeners) {
       // the "synchronized" block, by itself, doesn't seem to be enough,
       // so also copying the list
-      ArrayList<SymSelectionListener> xxx = new ArrayList<SymSelectionListener>(sym_selection_listeners);
-      for (int i=xxx.size()-1; i>=0; i--) {
-        xxx.get(i).symSelectionChanged(sevt);
+      ArrayList<SymSelectionListener> listeners = new ArrayList<SymSelectionListener>(sym_selection_listeners);
+      for (int i=listeners.size()-1; i>=0; i--) {
+        listeners.get(i).symSelectionChanged(sevt);
       }
     }
   }

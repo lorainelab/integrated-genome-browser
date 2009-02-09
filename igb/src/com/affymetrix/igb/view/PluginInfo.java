@@ -112,8 +112,8 @@ public class PluginInfo {
       public int compare(Object a, Object b) {
         PluginInfo pa = (PluginInfo) a;
         PluginInfo pb = (PluginInfo) b;
-        if (QuickLoaderView.class.getName().equals(pa.getClassName())) { return -1; }
-        else if (QuickLoaderView.class.getName().equals(pb.getClassName())) { return 1; }
+        //if (QuickLoaderView.class.getName().equals(pa.getClassName())) { return -1; }
+        //else if (QuickLoaderView.class.getName().equals(pb.getClassName())) { return 1; }
         return 0;
       }
     };
@@ -187,8 +187,8 @@ public class PluginInfo {
   // it makes sure that necessary plugins are always present
   public static void createStandardPlugins() {
      // The "QuickLoad" plugin is absolutely required, so always force "load" to "true"
-     PluginInfo.getNodeForName("QuickLoad").put(KEY_CLASS, QuickLoaderView.class.getName());
-     PluginInfo.getNodeForName("QuickLoad").putBoolean(KEY_LOAD, true);
+     //PluginInfo.getNodeForName("QuickLoad").put(KEY_CLASS, QuickLoaderView.class.getName());
+     //PluginInfo.getNodeForName("QuickLoad").putBoolean(KEY_LOAD, true);
 
      PluginInfo.getNodeForName("Selection Info").put(KEY_CLASS, SymTableView.class.getName());
 

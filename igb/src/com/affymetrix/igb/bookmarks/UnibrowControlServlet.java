@@ -23,11 +23,11 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.Das2LoadView3;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.igb.general.FeatureLoading;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -147,7 +147,7 @@ public class UnibrowControlServlet {
     if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0) { return; }
     else if (das2_server_urls.length != das2_query_urls.length) { return; }
     if (DEBUG_DAS2_LOAD)  { System.out.println("UnibrowControlServlet.loadDataFromDas2 called"); }
-    ArrayList das2_requests = new ArrayList();
+    ArrayList<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
     ArrayList opaque_requests = new ArrayList();
     for (int i=0; i<das2_server_urls.length; i++) {
       String das2_server_url = URLDecoder.decode(das2_server_urls[i]);
@@ -199,8 +199,8 @@ public class UnibrowControlServlet {
 
 	  Das2VersionedSource version = (Das2VersionedSource)Das2Discovery.getCapabilityMap().get(cap_url);
 	  if (DEBUG_DAS2_LOAD)  { System.out.println("     version: " + version.getID()); }
-	  Das2Type dtype = (Das2Type)version.getTypes().get(type_uri);
-	  Das2Region segment = (Das2Region)version.getSegments().get(seg_uri);
+	  Das2Type dtype = version.getTypes().get(type_uri);
+	  Das2Region segment = version.getSegments().get(seg_uri);
 	  String[] minmax = overstr.split(":");
 	  int min = Integer.parseInt(minmax[0]);
 	  int max = Integer.parseInt(minmax[1]);
@@ -221,7 +221,8 @@ public class UnibrowControlServlet {
     }
 
     if (das2_requests.size() > 0)  {
-      Das2LoadView3.processFeatureRequests(das2_requests, true);
+        SeqMapView gviewer = Application.getSingleton().getMapView();
+        FeatureLoading.processDas2FeatureRequests(das2_requests, true, true, gmodel, gviewer);
     }
     if (opaque_requests.size() > 0) {
       String[] data_urls = new String[opaque_requests.size()];

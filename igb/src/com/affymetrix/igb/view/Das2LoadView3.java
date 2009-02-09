@@ -178,7 +178,7 @@ DataRequestListener {
 		JPanel types_panel = new JPanel(new BorderLayout());
 		types_panel.setBorder(new TitledBorder("Recently Accessed Annotation Types"));
 
-		namesearch = new Das2SearchView(this);
+		namesearch = new Das2SearchView();
 
 		types_panel.add("Center", table_scroller);
 		final JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);

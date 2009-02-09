@@ -72,7 +72,7 @@ import com.affymetrix.swing.DisplayUtils;
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
  */
-public class IGB extends Application
+public final class IGB extends Application
   implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener  {
   static IGB singleton_igb;
   public static String APP_NAME = IGBConstants.APP_NAME;
@@ -393,12 +393,12 @@ public class IGB extends Application
     String files = get_arg("-prefs", args);
     if (files==null) {files = default_user_prefs_files;}
     StringTokenizer st = new StringTokenizer(files, ";");
-    Set result = new HashSet();
+    Set<String> result = new HashSet<String>();
     result.add(st.nextToken());
     while (st.hasMoreTokens()) {
       result.add(st.nextToken());
     }
-    return (String[]) result.toArray(new String[result.size()]);
+    return result.toArray(new String[result.size()]);
   }
 
   public static String get_default_prefs_url(String[] args) {
@@ -1005,7 +1005,7 @@ public class IGB extends Application
     Object plugin = null;
     Throwable t = null;
     try {
-      plugin = pi.instantiatePlugin(class_name);
+      plugin = PluginInfo.instantiatePlugin(class_name);
     } catch (InstantiationException e) {
       plugin = null;
       t = e;
@@ -1049,6 +1049,7 @@ public class IGB extends Application
     return plugin;
   }
 
+    @Override
   public void setPluginInstance(Class c, IPlugin plugin) {
     super.setPluginInstance(c, plugin);
     if (c.equals(BookmarkManagerView.class)) {
@@ -1552,7 +1553,7 @@ public class IGB extends Application
    *  they create.
    */
   List getPluginsFromXmlPrefs(Map prefs_hash) {
-    ArrayList plugin_list = new ArrayList(16);
+    ArrayList<PluginInfo> plugin_list = new ArrayList<PluginInfo>(16);
 
     boolean USE_ANNOT_BROWSER = false;
     boolean USE_SLICE_VIEW = true;

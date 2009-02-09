@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SingletonGenometryModel extends GenometryModel {
+public final class SingletonGenometryModel extends GenometryModel {
 
   static SingletonGenometryModel smodel = new SingletonGenometryModel();
 

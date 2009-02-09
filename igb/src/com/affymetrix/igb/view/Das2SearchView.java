@@ -41,7 +41,6 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
 
   SeqMapView gviewer;
   JTable results_table;
-  Das2LoadView3 parent_view;
   Map search_results_history = new LinkedHashMap();  // keeping history of search results
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
@@ -52,10 +51,9 @@ public class Das2SearchView extends JPanel implements ActionListener, GroupSelec
     results_table.setModel(new SearchResultsTableModel(new java.util.ArrayList()));
   }
 
-  public Das2SearchView(Das2LoadView3 view) {
+  public Das2SearchView() {
     super();
     gviewer = Application.getSingleton().getMapView();
-    this.parent_view = view;
     this.setLayout(new BorderLayout());
 
     JPanel pan1 = new JPanel();

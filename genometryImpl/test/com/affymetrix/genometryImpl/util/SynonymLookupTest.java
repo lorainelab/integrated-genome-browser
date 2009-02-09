@@ -81,7 +81,7 @@ public class SynonymLookupTest {
 		sl.addSynonyms(new String[] {"AA", "dd", "ee"});
 
 		a.add("aa");
-		/* a.add("AA"); */
+		a.add("AA");
 		a.add("bb");
 		a.add("cc");
 		a.add("dd");
@@ -91,6 +91,7 @@ public class SynonymLookupTest {
 
 		caseInsensitiveLookupHelper("aA", a);
 		caseInsensitiveLookupHelper("aa", a);
+		caseInsensitiveLookupHelper("AA", a);
 	}
 
 	private void caseInsensitiveLookupHelper(String test, List<String> expected) {
@@ -98,7 +99,7 @@ public class SynonymLookupTest {
 
 		System.out.println("synonym:    " + test);
 		System.out.println("synonymSet: " + synonymSet);
-		/* assertEquals("Size of synonymSet does not match size expected", expected.size(), synonymSet.size()); */
+		assertEquals("Size of synonymSet does not match size expected", expected.size(), synonymSet.size());
 		for (String synonym : expected) {
 			assertTrue("Could not find synonym " + synonym + " in list.", synonymSet.contains(synonym));
 		}
@@ -123,8 +124,8 @@ public class SynonymLookupTest {
     assertTrue(sl.isSynonym("chr2", "2"));
     assertTrue(sl.isSynonym("2", "chr2"));
     
-    List list1 = sl.getSynonyms("chrMT");
-    List list2 = sl.getSynonyms("chrM");
+    List<String> list1 = sl.getSynonyms("chrMT");
+    List<String> list2 = sl.getSynonyms("chrM");
     assertEquals(list1.size(), list2.size());    
 
     // This tests that the null and empty strings were ignored in the input
@@ -132,8 +133,8 @@ public class SynonymLookupTest {
     assertFalse(sl.isSynonym("chr2", "chr3"));
     
     // The elements in list1 and list2 should be the same, other than ordering
-    Set set1 = new HashSet(list1);
-    Set set2 = new HashSet(list2);
+    Set<String> set1 = new HashSet<String>(list1);
+    Set<String> set2 = new HashSet<String>(list2);
     assertEquals(set1, set2);    
   }
   
@@ -150,7 +151,7 @@ public class SynonymLookupTest {
     assertFalse(sl.isSynonym("chr2", "CHR2"));
     
     // There is no list of synonyms for "chrm" if case sensitive is true.
-    List list3 = sl.getSynonyms("chrm");
+    List<String> list3 = sl.getSynonyms("chrm");
     assertTrue(list3 == null);
   }
   
@@ -168,14 +169,14 @@ public class SynonymLookupTest {
     
     // There *is* a list of synonyms for "chrm" if case sensitive is false.
     // and it should match the list for "CHRmT"
-    List list3 = sl.getSynonyms("chrm");
-    List list4 = sl.getSynonyms("CHRmT");
+    List<String> list3 = sl.getSynonyms("chrm");
+    List<String> list4 = sl.getSynonyms("CHRmT");
     assertTrue(list3 != null);
     assertTrue(list4 != null);
 
     // The elements in list3 and list4 should be the same, other than ordering
-    Set set3 = new HashSet(list3);
-    Set set4 = new HashSet(list4);
+    Set<String> set3 = new HashSet<String>(list3);
+    Set<String> set4 = new HashSet<String>(list4);
     assertEquals(set3, set4);
 
     // even with case-sensitive set to false, the list will not actually contain "chrm", but rather "chrM"

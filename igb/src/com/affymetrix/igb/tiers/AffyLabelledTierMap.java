@@ -36,7 +36,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   
   AffyTieredMap labelmap;
   JSplitPane mapsplitter;
-  List label_glyphs = new ArrayList();
+  List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
   JPanel can_panel;
   
   public AffyLabelledTierMap() {
@@ -94,10 +94,10 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   public void clearWidget() {
     super.clearWidget();
     labelmap.clearWidget();
-    label_glyphs = new ArrayList();
+    label_glyphs = new ArrayList<TierLabelGlyph>();
   }
 
-  public List getTierLabels() {
+  public List<TierLabelGlyph> getTierLabels() {
     return label_glyphs;
   }
 

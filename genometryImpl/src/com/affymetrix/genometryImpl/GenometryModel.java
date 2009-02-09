@@ -403,7 +403,7 @@ public class GenometryModel {
    *  Get the list of selected symmetries on the currently selected sequence.
    *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
    */
-  public List getSelectedSymmetriesOnCurrentSeq() {
+  public List<SeqSymmetry> getSelectedSymmetriesOnCurrentSeq() {
     return getSelectedSymmetries(selected_seq);
   }
 

@@ -621,7 +621,7 @@ implements NeoTracerI, Observer, NeoViewBoxListener
       // and add them directly.
       this.base_count = trace.getBaseCount();
       BaseCall[] b = trace.getActiveBaseCalls().getBaseCalls();
-      base_map.removeItem ( base_glyphs );
+      base_map.removeItem ( (GlyphI)base_glyphs );
       base_calls_vector.removeAllElements();
       base_glyphs.removeAllElements();
       addBaseCalls( b, start );

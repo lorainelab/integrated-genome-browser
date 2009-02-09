@@ -1020,7 +1020,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   }
 
-  public void removeItem(Vector vec) {
+  public void removeItem(Vector<GlyphI> vec) {
     /*
      * Remove from end of child Vector instead of beginning! -- that way, won't
      * get issues with trying to access elements off end of Vector as
@@ -1029,7 +1029,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
      */
     int count = vec.size();
     for (int i=count-1; i>=0; i--) {
-      GlyphI g = (GlyphI)vec.elementAt(i);
+      GlyphI g = vec.elementAt(i);
       if (null != g) {
         removeItem(g);
       }

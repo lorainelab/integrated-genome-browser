@@ -10,6 +10,7 @@
 <tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
 -->
 
+<server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" />
 
 <boolean tag="USE_QUICK_LOADER" val="false" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />

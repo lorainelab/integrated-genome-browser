@@ -52,6 +52,7 @@ implements MouseListener, MouseMotionListener, NeoTimerListener {
   @Override
   public void mousePressed(MouseEvent e) { }
 
+  @SuppressWarnings(value="deprecation")
   @Override
   public void mouseReleased(MouseEvent e) {
     if (timer != null) {
@@ -65,6 +66,7 @@ implements MouseListener, MouseMotionListener, NeoTimerListener {
   @Override
   public void mouseMoved(MouseEvent e) { }
 
+  @SuppressWarnings(value="deprecation")
   @Override
   public void mouseDragged(MouseEvent evt) {
     Dimension dim = can.getSize();

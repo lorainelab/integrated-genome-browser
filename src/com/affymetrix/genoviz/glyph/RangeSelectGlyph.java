@@ -146,6 +146,7 @@ public class RangeSelectGlyph extends FillRectGlyph implements LabelledGlyphI {
   /**
    * Converts all primary selections to secondary selections.
    */
+  @SuppressWarnings("unchecked")
   public void convertRanges () {
     secondary_selections.addAll(primary_selections);
     primary_selections.clear();

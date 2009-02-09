@@ -188,7 +188,7 @@ public interface NeoQuallerI extends NeoWidgetI {
    *
    * @return a Vector of one or more glyphs below the point.
    */
-  public Vector getItems(double xcoord, double ycoord, int component);
+  public Vector<GlyphI> getItems(double xcoord, double ycoord, int component);
 
 
   public void zoomRange(double scale);

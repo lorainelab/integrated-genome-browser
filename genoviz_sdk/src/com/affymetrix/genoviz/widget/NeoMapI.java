@@ -147,7 +147,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @see #getSelectedStart
    * @see #getSelectedEnd
    */
-  public void select(Vector glyphs, int start, int end);
+  public void select(Vector<GlyphI> glyphs, int start, int end);
 
   /**
    * Selecting an area within a glyph.
@@ -170,7 +170,7 @@ public interface NeoMapI extends NeoWidgetI {
    * To deselect an area selection for a Vector of glyphs,
    * call {@link #deselect(Vector glyphs)}.
    */
-  public void select(Vector glyphs, double x, double y, double width, double height);
+  public void select(Vector<GlyphI> glyphs, double x, double y, double width, double height);
 
   /**
    * Get the start of the selected range of a glyph.
@@ -338,7 +338,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @return a <code>Vector</code> of <code>Glyph</code>s
    * at <code>x,y</code>
    */
-  public Vector getItems(double x, double y);
+  public Vector<GlyphI> getItems(double x, double y);
 
   /**
    * returns a vector of all <code>Glyphs</code> within the
@@ -350,7 +350,7 @@ public interface NeoMapI extends NeoWidgetI {
    * @return a <code>Vector</code> of <code>Glyphs</code>
    *  in <code>pixrect</code>
    */
-  public Vector getItems(Rectangle pixrect);
+  public Vector<GlyphI> getItems(Rectangle pixrect);
 
   /**
    * retrieve a Vector of all drawn glyphs that overlap
@@ -361,7 +361,7 @@ public interface NeoMapI extends NeoWidgetI {
   /**
    * retrieve all drawn glyphs that overlap the pixel at point x, y.
    */
-  public Vector getItemsByPixel(int x, int y);
+  public Vector<GlyphI> getItemsByPixel(int x, int y);
 
   /**
    * adds a <code>NeoDataAdapterI</code> to this widget.

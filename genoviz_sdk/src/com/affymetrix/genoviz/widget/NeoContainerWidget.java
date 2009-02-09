@@ -245,7 +245,7 @@ implements NeoWidgetI{
   /** Subclasses must define getLocation() method. */
   public abstract int getLocation(NeoWidgetI widget);
 
-  public Vector getItems(double xcoord, double ycoord, int location) {
+  public Vector<GlyphI> getItems(double xcoord, double ycoord, int location) {
     // getWidget() is defined in subclasses
     NeoWidgetI widg = getWidget(location);
     if (widg == this) {
@@ -463,7 +463,6 @@ implements NeoWidgetI{
   /**
    * @see NeoWidgetI#scroll
    */
-  @SuppressWarnings("unchecked")
   public void scroll(int axisid, double value) {
     if (!(NeoWidgetI.X == axisid || NeoWidgetI.Y == axisid))
       throw new IllegalArgumentException(
@@ -477,8 +476,7 @@ implements NeoWidgetI{
     }
   }
 
-  @SuppressWarnings("unchecked")
-  public Vector getItems(Object datamodel) {
+  public Vector<GlyphI> getItems(Object datamodel) {
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {
       return (Vector)result;

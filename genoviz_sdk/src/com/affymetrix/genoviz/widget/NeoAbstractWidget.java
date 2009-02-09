@@ -124,7 +124,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
     }
     return null;
   }
-  public Enumeration getColorNames() {
+  public Enumeration<String> getColorNames() {
     return colormap.keys();
   }
 

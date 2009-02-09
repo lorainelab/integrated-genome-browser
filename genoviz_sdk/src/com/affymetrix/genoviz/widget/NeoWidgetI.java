@@ -470,7 +470,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @return a <code>Vector</code> of <code>Glyph</code>s
    * at <code>x,y</code>
    */
-  public Vector getItems(double x, double y, int location);
+  public Vector<GlyphI> getItems(double x, double y, int location);
 
   /**
    * adds <code>glyph</code> to the list of selected glyphs for this
@@ -492,7 +492,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #deselect
    * @see #getSelected
    */
-  public void select(Vector glyphs);
+  public void select(Vector<GlyphI> glyphs);
 
   /**
    * Removes <code>glyph</code> from the list of selected glyphs for this widget.
@@ -510,7 +510,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #select
    * @see #getSelected
    */
-  public void deselect(Vector glyphs);
+  public void deselect(Vector<GlyphI> glyphs);
 
   /**
    * retrieves all currently selected glyphs.
@@ -519,7 +519,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #deselect
    * @see #select
    */
-  public Vector getSelected();
+  public Vector<GlyphI> getSelected();
 
   /**
    * If this widget contains other widgets, returns the internal widget
@@ -581,7 +581,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @param visible a boolean indicator of visibility.  if false,
    *   then the GlyphI is not displayed.
    */
-  public void setVisibility(Vector glyphs, boolean visible);
+  public void setVisibility(Vector<GlyphI> glyphs, boolean visible);
 
   /**
    * gets the visibility of an item in this widget.
@@ -626,7 +626,7 @@ public interface NeoWidgetI extends NeoConstants   {
    *   set by <code>addColor</code>
    * @see #addColor
    */
-  public Enumeration getColorNames();
+  public Enumeration<String> getColorNames();
 
   /**
    * Associates an arbitrary datamodel object with a glyph.  Can be retrieved using
@@ -682,7 +682,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @return the <code>Vector</code> of glyphs associated with <code>
    *  datamodel</code>.
    */
-  public Vector getItems(Object datamodel);
+  public Vector<GlyphI> getItems(Object datamodel);
 
 
   /**
@@ -715,7 +715,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #moveAbsolute
    * @see NeoMapI#addItem
    */
-  public void moveRelative(Vector glyphs, double diffx, double diffy);
+  public void moveRelative(Vector<GlyphI> glyphs, double diffx, double diffy);
 
   /**
    * modifies the position of <code>glyph</code> to be the
@@ -740,7 +740,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @see #moveRelative
    * @see NeoMapI#addItem
    */
-  public void moveAbsolute(Vector glyphs, double x, double y);
+  public void moveAbsolute(Vector<GlyphI> glyphs, double x, double y);
 
 
   /**
@@ -971,7 +971,7 @@ public interface NeoWidgetI extends NeoConstants   {
    * @param glyphs the Vector of GlyphIs to remove
    * @see NeoMapI#addItem
    */
-  public void removeItem(Vector glyphs);
+  public void removeItem(Vector<GlyphI> glyphs);
 
   /**
    *  Clears all glyphs from the widget

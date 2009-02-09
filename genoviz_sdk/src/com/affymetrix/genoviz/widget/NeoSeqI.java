@@ -235,7 +235,7 @@ public interface NeoSeqI extends NeoWidgetI, Translatable {
    * @see #AXIS_SCROLLER
    * @see #UNKNOWN
    */
-  public Vector getItems(double xcoord, double ycoord, int component);
+  public Vector<GlyphI> getItems(double xcoord, double ycoord, int component);
 
   /**
    * get the Java AWT font of the sequence residues.

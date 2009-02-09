@@ -211,7 +211,7 @@ public interface NeoAssemblerI extends NeoWidgetI {
    * @see #OFFSET_SCROLLER
    * @see #UNKNOWN
    */
-  public Vector getItems(double xcoord, double ycoord, int component);
+  public Vector<GlyphI> getItems(double xcoord, double ycoord, int component);
 
   // should probably be in a NeoResidueI interface?
   // since it is also needed in NeoSeq, NeoMap, NeoQualler, NeoTracer

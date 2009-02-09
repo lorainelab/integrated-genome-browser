@@ -229,7 +229,7 @@ public interface NeoTracerI extends NeoWidgetI  {
    * @see #OFFSET_ZOOMER
    * @see #UNKNOWN
    */
-  public Vector getItems(double xcoord, double ycoord, int component);
+  public Vector<GlyphI> getItems(double xcoord, double ycoord, int component);
 
   /**
    * Gets the color used for the background

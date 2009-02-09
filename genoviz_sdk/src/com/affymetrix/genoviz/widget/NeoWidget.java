@@ -335,7 +335,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    *  retrieve a Vector of all drawn glyphs that overlap
    *  the pixel point x, y.
    */
-  public Vector getItemsByPixel(int x, int y) {
+  public Vector<GlyphI> getItemsByPixel(int x, int y) {
     Rectangle pixrect = new Rectangle(x-this.pixelblur, y-this.pixelblur,
         2*this.pixelblur, 2*this.pixelblur);
     Rectangle2D coordrect = new Rectangle2D();
@@ -349,7 +349,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @param pixrect a rectangle in pixel space
    * @return the overlapping glyphs
    */
-  public Vector getItems(Rectangle pixrect) {
+  public Vector<GlyphI> getItems(Rectangle pixrect) {
     // no pixelblur for region selection
     Rectangle2D coordrect = new Rectangle2D();
     coordrect = view.transformToCoords(pixrect, coordrect);
@@ -967,8 +967,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
    * @param datamodel being visualized.
    * @return a Vector of all the glyphs tied to the given data model.
    */
-   @SuppressWarnings("unchecked")
-   public Vector getItems(Object datamodel) {
+   public Vector<GlyphI> getItems(Object datamodel) {
     Collections.singletonList(datamodel);
     Object result = model_hash.get(datamodel);
     if (result instanceof Vector) {

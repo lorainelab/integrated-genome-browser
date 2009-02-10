@@ -122,8 +122,8 @@ public class SeqMapView extends JPanel
     boolean slicing_in_effect = false;
     boolean hairline_is_labeled = false;
     SeqSpan viewspan_before_slicing = null;
-    List selection_listeners = new ArrayList();
-    List popup_listeners = new ArrayList();
+    List<SymSelectionListener> selection_listeners = new ArrayList<SymSelectionListener>();
+    List<ContextualPopupListener> popup_listeners = new ArrayList<ContextualPopupListener>();
     List<DataRequestListener> data_request_listeners = new ArrayList<DataRequestListener>();
     protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
     /**
@@ -215,11 +215,11 @@ public class SeqMapView extends JPanel
     public static final boolean default_y_zoomer_left = true;
     static NumberFormat nformat = NumberFormat.getIntegerInstance();
     /** Hash of method names (lower case) to forward tiers */
-    Map method2ftier = new HashMap();
+    Map<String,TierGlyph> method2ftier = new HashMap<String,TierGlyph>();
     /** Hash of method names (lower case) to reverse tiers */
-    Map method2rtier = new HashMap();
+    Map<String,TierGlyph> method2rtier = new HashMap<String,TierGlyph>();
     /** Hash of GraphStates to TierGlyphs. */
-    Map gstyle2tier = new HashMap();
+    Map<IAnnotStyle,TierGlyph> gstyle2tier = new HashMap<IAnnotStyle,TierGlyph>();
     //Map gstyle2floatTier = new HashMap();
     PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
     GlyphEdgeMatcher edge_matcher = null;
@@ -247,7 +247,7 @@ public class SeqMapView extends JPanel
     protected SeqMapViewMouseListener mouse_listener;
     CharSeqGlyph seq_glyph = null;
     SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
-    Vector match_glyphs = new Vector();
+    Vector<GlyphI> match_glyphs = new Vector<GlyphI>();
     protected TierLabelManager tier_manager;
     PixelFloaterGlyph grid_layer = null;
     GridGlyph grid_glyph = null;
@@ -961,11 +961,11 @@ public class SeqMapView extends JPanel
         aseq = null;
         viewseq = null;
         clearSelection();
-        method2rtier = new HashMap();
-        method2ftier = new HashMap();
-        gstyle2tier = new HashMap();
+        method2rtier = new HashMap<String,TierGlyph>();
+        method2ftier = new HashMap<String,TierGlyph>();
+        gstyle2tier = new HashMap<IAnnotStyle,TierGlyph>();
         //gstyle2floatTier = new HashMap();
-        match_glyphs = new Vector();
+        match_glyphs = new Vector<GlyphI>();
         seqmap.updateWidget();
     }
 
@@ -1058,8 +1058,8 @@ public class SeqMapView extends JPanel
 
         ArrayList<TierGlyph> temp_tiers = null;
         int axis_index = 0;
-        match_glyphs = new Vector();
-        List old_selections = Collections.EMPTY_LIST;
+        match_glyphs = new Vector<GlyphI>();
+        List<SeqSymmetry> old_selections = Collections.<SeqSymmetry>emptyList();
         double old_zoom_spot_x = seqmap.getZoomCoord(AffyTieredMap.X);
         double old_zoom_spot_y = seqmap.getZoomCoord(AffyTieredMap.Y);
 
@@ -1068,7 +1068,7 @@ public class SeqMapView extends JPanel
             if (preserve_selection) {
                 old_selections = getSelectedSyms();
             } else {
-                old_selections = Collections.EMPTY_LIST;
+                old_selections = Collections.<SeqSymmetry>emptyList();
             }
         }
 
@@ -1193,7 +1193,7 @@ public class SeqMapView extends JPanel
 
         } else {
             // do selection based on what the genometry model thinks is selected
-            List symlist = gmodel.getSelectedSymmetries(seq);
+            List<SeqSymmetry> symlist = gmodel.getSelectedSymmetries(seq);
             select(symlist, false, false, false);
 
             String title = getSelectionTitle(seqmap.getSelected());
@@ -1580,8 +1580,8 @@ public class SeqMapView extends JPanel
                 (annotSym.getChildCount() > 0) &&
                 (annotSym.getChild(0) instanceof Das2FeatureRequestSym)) {
             int child_count = annotSym.getChildCount();
-            TierGlyph fortier = (TierGlyph) method2ftier.get(meth.toLowerCase());
-            TierGlyph revtier = (TierGlyph) method2rtier.get(meth.toLowerCase());
+            TierGlyph fortier = method2ftier.get(meth.toLowerCase());
+            TierGlyph revtier = method2rtier.get(meth.toLowerCase());
             for (int i = 0; i < child_count; i++) {
                 SeqSymmetry csym = annotSym.getChild(i);
                 if (csym instanceof Das2FeatureRequestSym) {
@@ -1657,7 +1657,7 @@ public class SeqMapView extends JPanel
     }
 
     public void selectAllGraphs() {
-        List glyphlist = new ArrayList();
+        List<GlyphI> glyphlist = new ArrayList<GlyphI>();
         GlyphI rootglyph = seqmap.getScene().getGlyph();
         collectGraphs(rootglyph, glyphlist);
         // convert graph glyphs to GraphSyms via glyphsToSyms
@@ -1667,7 +1667,7 @@ public class SeqMapView extends JPanel
             GraphGlyphUtils.checkPixelBounds((GraphGlyph) glyphlist.get(i), getSeqMap());
         }
 
-        List symlist = glyphsToSyms(glyphlist);
+        List<SeqSymmetry> symlist = glyphsToSyms(glyphlist);
         //    System.out.println("called SeqMapView.selectAllGraphs(), select count: " + symlist.size());
         // call select(list) on list of graph syms
         select(symlist, false, true, true);
@@ -1686,11 +1686,11 @@ public class SeqMapView extends JPanel
         }
     }*/
 
-    void select(List sym_list) {
+    void select(List<SeqSymmetry> sym_list) {
         select(sym_list, false, false, true);
     }
 
-    void select(List sym_list, boolean add_to_previous,
+    void select(List<SeqSymmetry> sym_list, boolean add_to_previous,
             boolean call_listeners, boolean update_widget) {
         if (!add_to_previous) {
             clearSelection();
@@ -1698,7 +1698,7 @@ public class SeqMapView extends JPanel
 
         int symcount = sym_list.size();
         for (int i = 0; i < symcount; i++) {
-            SeqSymmetry sym = (SeqSymmetry) sym_list.get(i);
+            SeqSymmetry sym = sym_list.get(i);
             // currently assuming 1-to-1 mapping of sym to glyph
             GlyphI gl = seqmap.getItem(sym);
             if (gl != null) {
@@ -1716,7 +1716,7 @@ public class SeqMapView extends JPanel
     void select(SeqSymmetry sym, boolean add_to_previous,
             boolean call_listeners, boolean update_widget) {
         if (sym == null) {
-            select(Collections.EMPTY_LIST, add_to_previous, call_listeners, update_widget);
+            select(Collections.<SeqSymmetry>emptyList(), add_to_previous, call_listeners, update_widget);
         } else {
             ArrayList<SeqSymmetry> list = new ArrayList<SeqSymmetry>(1);
             list.add(sym);
@@ -1751,29 +1751,29 @@ public class SeqMapView extends JPanel
      * Given a list of glyphs, returns a list of syms that those
      *  glyphs represent.
      */
-    protected List glyphsToSyms(List glyphs) {
-        List syms = new ArrayList(glyphs.size());
+    protected List<SeqSymmetry> glyphsToSyms(List<GlyphI> glyphs) {
+        List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(glyphs.size());
         if (glyphs.size() > 0) {
             // if some syms are represented by multiple glyphs, then want to make sure glyphsToSyms()
             //    doesn't return the same sym multiple times, so have to do a bit more work
             if (seqmap.hasMultiGlyphsPerModel()) {
                 //	System.out.println("#########    in SeqMapView.glyphsToSyms(), possible multiple glyphs per sym");
-                HashMap symhash = new HashMap();
+                HashMap<SeqSymmetry,SeqSymmetry> symhash = new HashMap<SeqSymmetry,SeqSymmetry>();
                 for (int i = 0; i < glyphs.size(); i++) {
-                    GlyphI gl = (GlyphI) glyphs.get(i);
+                    GlyphI gl = glyphs.get(i);
                     SeqSymmetry sym = glyphToSym(gl);
                     if (sym != null) {
                         symhash.put(sym, sym);
                     }
                 }
-                Iterator iter = symhash.values().iterator();
+                Iterator<SeqSymmetry> iter = symhash.values().iterator();
                 while (iter.hasNext()) {
                     syms.add(iter.next());
                 }
             } else {
                 //  no syms represented by multiple glyphs, so can use more efficient way of collecting syms
                 for (int i = 0; i < glyphs.size(); i++) {
-                    GlyphI gl = (GlyphI) glyphs.get(i);
+                    GlyphI gl = glyphs.get(i);
                     SeqSymmetry sym = glyphToSym(gl);
                     if (sym != null) {
                         syms.add(sym);
@@ -1789,9 +1789,9 @@ public class SeqMapView extends JPanel
      *  {@link SingletonGenometryModel#setSelectedSymmetries(List, Object)}.
      */
     void postSelections() {
-        Vector selected_glyphs = seqmap.getSelected();
+        Vector<GlyphI> selected_glyphs = seqmap.getSelected();
 
-        List selected_syms = glyphsToSyms(selected_glyphs);
+        List<SeqSymmetry> selected_syms = glyphsToSyms(selected_glyphs);
         // Note that seq_selected_sym (the selected residues) is not included in selected_syms
         gmodel.setSelectedSymmetries(selected_syms, this);
     }
@@ -1862,13 +1862,13 @@ public class SeqMapView extends JPanel
                     //   now assuming depth = 2...  actually, should _really_ fix this when building SeqSymmetries,
                     //   so order of children reflects the order they should be spliced in, rather
                     //   than their order relative to a particular seq
-                    List sorted_children = new ArrayList(child_count);
+                    List<SeqSymmetry> sorted_children = new ArrayList<SeqSymmetry>(child_count);
                     for (int i = 0; i < child_count; i++) {
                         sorted_children.add(residues_sym.getChild(i));
                     }
                     boolean forward = span.isForward();
 
-                    Comparator symcompare = new SeqSymStartComparator(aseq, forward);
+                    Comparator<SeqSymmetry> symcompare = new SeqSymStartComparator(aseq, forward);
                     Collections.sort(sorted_children, symcompare);
                     MutableSeqSymmetry sorted_sym = new SimpleMutableSeqSymmetry();
                     for (int i = 0; i < child_count; i++) {
@@ -1942,8 +1942,8 @@ public class SeqMapView extends JPanel
      *  region, if any.  Use getSelectedRegion() for that.
      *  @return a List of SeqSymmetry objects, possibly empty.
      */
-    public List getSelectedSyms() {
-        Vector glyphs = seqmap.getSelected();
+    public List<SeqSymmetry> getSelectedSyms() {
+        Vector<GlyphI> glyphs = seqmap.getSelected();
         return glyphsToSyms(glyphs);
     }
 
@@ -1980,7 +1980,7 @@ public class SeqMapView extends JPanel
         testUnion(getSelectedSyms());
     }
 
-    public void testUnion(List syms) {
+    public void testUnion(List<SeqSymmetry> syms) {
         SimpleSymWithProps unionSym = new SimpleSymWithProps();
         unionSym.setProperty("method", "union_test");
         SeqUtils.union(syms, unionSym, aseq);
@@ -1989,7 +1989,7 @@ public class SeqMapView extends JPanel
         setAnnotatedSeq(aseq, true, true);
     }
 
-    public void sliceAndDice(final List syms) {
+    public void sliceAndDice(final List<SeqSymmetry> syms) {
         stopSlicingThread();
 
         slice_thread = new Thread() {
@@ -2005,7 +2005,7 @@ public class SeqMapView extends JPanel
         slice_thread.start();
     }
 
-    void sliceAndDiceNow(List syms) {
+    void sliceAndDiceNow(List<SeqSymmetry> syms) {
         SimpleSymWithProps unionSym = new SimpleSymWithProps();
         SeqUtils.union(syms, unionSym, aseq);
         sliceAndDiceNow(unionSym);
@@ -2407,7 +2407,7 @@ public class SeqMapView extends JPanel
 
     /** Zoom to a region including all the currently selected Glyphs. */
     public void zoomToSelections() {
-        Vector selections = seqmap.getSelected();
+        Vector<GlyphI> selections = seqmap.getSelected();
         if (selections.size() > 0) {
             zoomToRectangle(getRegionForGlyphs(selections));
         } else if (getSelectedRegion() != null) {
@@ -2419,14 +2419,14 @@ public class SeqMapView extends JPanel
     /** Returns a rectangle containing all the current selections.
      *  @return null if the vector of glyphs is empty
      */
-    public Rectangle2D getRegionForGlyphs(List glyphs) {
+    public Rectangle2D getRegionForGlyphs(List<GlyphI> glyphs) {
         int size = glyphs.size();
         if (size > 0) {
             Rectangle2D rect = new Rectangle2D();
-            GlyphI g0 = (GlyphI) glyphs.get(0);
+            GlyphI g0 = glyphs.get(0);
             rect.copyRect(g0.getCoordBox());
             for (int i = 1; i < size; i++) {
-                GlyphI g = (GlyphI) glyphs.get(i);
+                GlyphI g = glyphs.get(i);
                 rect.add(g.getCoordBox());
             }
             return rect;
@@ -2595,7 +2595,7 @@ public class SeqMapView extends JPanel
         }
     }
 
-    public void doEdgeMatching(List query_glyphs, boolean update_map) {
+    public void doEdgeMatching(List<GlyphI> query_glyphs, boolean update_map) {
 
         if (!show_edge_matches) {
             return;
@@ -2608,12 +2608,12 @@ public class SeqMapView extends JPanel
         int qcount = query_glyphs.size();
         int match_query_count = query_glyphs.size();
         for (int i = 0; i < qcount && match_query_count <= max_for_matching; i++) {
-            match_query_count += ((GlyphI) query_glyphs.get(i)).getChildCount();
+            match_query_count += query_glyphs.get(i).getChildCount();
         }
 
         if (match_query_count <= max_for_matching) {
-            match_glyphs = new Vector();
-            ArrayList target_glyphs = new ArrayList();
+            match_glyphs = new Vector<GlyphI>();
+            ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
             target_glyphs.add(seqmap.getScene().getGlyph());
             double fuzz = getEdgeMatcher().getFuzziness();
             if (fuzz == 0.0) {
@@ -2642,7 +2642,7 @@ public class SeqMapView extends JPanel
         if (show_edge_matches) {
             doEdgeMatching(seqmap.getSelected(), true);
         } else {
-            doEdgeMatching(new Vector(0), true);
+            doEdgeMatching(new Vector<GlyphI>(0), true);
         }
     }
 
@@ -2712,7 +2712,7 @@ public class SeqMapView extends JPanel
             if (Application.DEBUG_EVENTS) {
                 System.out.println("SeqMapView received selection event originating from: " + src_id);
             }
-            List symlist = evt.getSelectedSyms();
+            List<SeqSymmetry> symlist = evt.getSelectedSyms();
             // select:
             //   add_to_previous ==> false
             //   call_listeners ==> false
@@ -2809,10 +2809,10 @@ public class SeqMapView extends JPanel
      */
     void selectParents(boolean top_level) {
         // copy selections to a new list before starting, because list of selections will be modified
-        List all_selections = new ArrayList(seqmap.getSelected());
-        Iterator iter = all_selections.iterator();
+        List<GlyphI> all_selections = new ArrayList<GlyphI>(seqmap.getSelected());
+        Iterator<GlyphI> iter = all_selections.iterator();
         while (iter.hasNext()) {
-            GlyphI child = (GlyphI) iter.next();
+            GlyphI child = iter.next();
             GlyphI pglyph = getParent(child, top_level);
             if (pglyph != child) {
                 seqmap.deselect(child);
@@ -2870,7 +2870,7 @@ public class SeqMapView extends JPanel
     }
 
     // sets the text on the JLabel based on the current selection
-    private void setPopupMenuTitle(JLabel label, List selected_glyphs) {
+    private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
         String title = "";
         if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
             GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
@@ -2910,7 +2910,7 @@ public class SeqMapView extends JPanel
     // Compare the code here with SymTableView.selectionChanged()
     // The logic about finding the ID from instances of DerivedSeqSymmetry
     // should be similar in both places, or else users could get confused.
-    private String getSelectionTitle(List selected_glyphs) {
+    private String getSelectionTitle(List<GlyphI> selected_glyphs) {
         String id = null;
         if (selected_glyphs.isEmpty()) {
             //id = "No selection";
@@ -2918,7 +2918,7 @@ public class SeqMapView extends JPanel
             sym_used_for_title = null;
         } else {
             if (selected_glyphs.size() == 1) {
-                GlyphI topgl = (GlyphI) selected_glyphs.get(0);
+                GlyphI topgl = selected_glyphs.get(0);
                 Object info = topgl.getInfo();
                 SeqSymmetry sym = null;
                 if (info instanceof SeqSymmetry) {
@@ -2980,7 +2980,7 @@ public class SeqMapView extends JPanel
      *  handled by showPopup(), which calls this method.
      */
     protected void preparePopup(JPopupMenu popup) {
-        List selected_glyphs = seqmap.getSelected();
+        List<GlyphI> selected_glyphs = seqmap.getSelected();
 
         setPopupMenuTitle(sym_info, selected_glyphs);
 
@@ -3011,7 +3011,7 @@ public class SeqMapView extends JPanel
         }
 
         for (int i = 0; i < popup_listeners.size(); i++) {
-            ContextualPopupListener listener = (ContextualPopupListener) popup_listeners.get(i);
+            ContextualPopupListener listener = popup_listeners.get(i);
             listener.popupNotify(popup, selected_syms, sym_used_for_title);
         }
     }
@@ -3064,25 +3064,25 @@ public class SeqMapView extends JPanel
         popup_listeners.remove(listener);
     }
 
-    public List getPopupListeners() {
-        return Collections.unmodifiableList(popup_listeners);
+    public List<ContextualPopupListener> getPopupListeners() {
+        return Collections.<ContextualPopupListener>unmodifiableList(popup_listeners);
     }
 
     /** Recurse through glyphs and collect those that are instanceof GraphGlyph. */
-    public List collectGraphs() {
-        ArrayList graphs = new ArrayList();
+    public List<GlyphI> collectGraphs() {
+        ArrayList<GlyphI> graphs = new ArrayList<GlyphI>();
         GlyphI root = seqmap.getScene().getGlyph();
         collectGraphs(root, graphs);
         return graphs;
     }
 
     /** Recurse through glyph hierarchy and collect graphs. */
-    public static void collectGraphs(GlyphI gl, List graphs) {
+    public static void collectGraphs(GlyphI gl, List<GlyphI> graphs) {
         int max = gl.getChildCount();
         for (int i = 0; i < max; i++) {
             GlyphI child = gl.getChild(i);
             if (child instanceof GraphGlyph) {
-                graphs.add(child);
+                graphs.add((GraphGlyph) child);
             }
             if (child.getChildCount() > 0) {
                 collectGraphs(child, graphs);
@@ -3109,7 +3109,7 @@ public class SeqMapView extends JPanel
             throw new NullPointerException();
         }
 
-        TierGlyph tier = (TierGlyph) gstyle2tier.get(style);
+        TierGlyph tier = gstyle2tier.get(style);
         if (tier == null) {
             tier = new TierGlyph(style);
             tier.setDirection(tier_direction);
@@ -3183,8 +3183,8 @@ public class SeqMapView extends JPanel
         AffyTieredMap map = this.getSeqMap();
 
         // try to match up method with tiers...
-        TierGlyph fortier = (TierGlyph) method2ftier.get(meth.toLowerCase());
-        TierGlyph revtier = (TierGlyph) method2rtier.get(meth.toLowerCase());
+        TierGlyph fortier = method2ftier.get(meth.toLowerCase());
+        TierGlyph revtier = method2rtier.get(meth.toLowerCase());
 
         if (style.isGraphTier()) {
             constant_heights = false;

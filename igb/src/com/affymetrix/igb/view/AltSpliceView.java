@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
@@ -42,7 +43,7 @@ public class AltSpliceView extends JComponent
   OrfAnalyzer2 orf_analyzer;
   JTextField buffer_sizeTF;
   JCheckBox slice_by_selectionCB;
-  List last_selected_syms = new ArrayList();
+  List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
   AnnotatedBioSeq last_seq_changed = null;
   boolean pending_sequence_change = false;
   boolean pending_selection_change = false;
@@ -227,7 +228,7 @@ public class AltSpliceView extends JComponent
     orf_analyzer.redoOrfs();
   }
 
-  public void sliceAndDice(List syms) {
+  public void sliceAndDice(List<SeqSymmetry> syms) {
     //    System.out.println("called AltSpliceView.sliceAndDice() " + syms.size());
     if (syms.size() > 0) {
       spliced_view.sliceAndDice(syms);
@@ -236,11 +237,11 @@ public class AltSpliceView extends JComponent
   }
 
   // takes a list (of SeqSymmetry) and removes any GraphSym's from it.
-  List removeGraphs(List syms) {
+  List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
     int symcount = syms.size();
-    ArrayList v = new ArrayList(syms.size());
+    ArrayList<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());
     for (int i=0; i<symcount; i++) {
-      Object sym = syms.get(i);
+      SeqSymmetry sym = syms.get(i);
       if (! (sym instanceof GraphSym)) {
         v.add(sym);
       }
@@ -302,7 +303,7 @@ public class AltSpliceView extends JComponent
 
     Action hide_action = new AbstractAction("Hide Tier") {
       public void actionPerformed(ActionEvent e) {
-        spliced_view.doEdgeMatching(Collections.EMPTY_LIST, false);
+        spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
         handler.hideTiers(handler.getSelectedTierLabels(), false, true);
       }
     };
@@ -310,7 +311,7 @@ public class AltSpliceView extends JComponent
     Action restore_all_action = new AbstractAction("Show All") {
       public void actionPerformed(ActionEvent e) {
         // undo all edge-matching, because packing will behave badly otherwise.
-        spliced_view.doEdgeMatching(Collections.EMPTY_LIST, false);        
+        spliced_view.doEdgeMatching(Collections.<GlyphI>emptyList(), false);
         handler.showTiers(handler.getAllTierLabels(), true, true);
       }
     };

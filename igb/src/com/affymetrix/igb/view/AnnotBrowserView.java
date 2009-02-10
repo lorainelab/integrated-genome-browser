@@ -372,10 +372,8 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   }
 
   /** A Comparator that compares based on {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}. */
-  public static class SeqSymmetryMethodComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
-      SeqSymmetry s1 = (SeqSymmetry) o1;
-      SeqSymmetry s2 = (SeqSymmetry) o2;
+  public static class SeqSymmetryMethodComparator implements Comparator<SeqSymmetry> {
+    public int compare(SeqSymmetry s1, SeqSymmetry s2) {
       return SmartAnnotBioSeq.determineMethod(s1).compareTo(SmartAnnotBioSeq.determineMethod(s2));
     }
   }

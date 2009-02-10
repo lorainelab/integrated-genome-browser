@@ -21,10 +21,8 @@ import com.affymetrix.genometry.*;
  *  Always orders in ascending order first by {@link SeqSpan#getMin()}, 
  *  then by {@link SeqSpan#getMax()}, regardless of the span orientations.
  */
-public class SeqSpanComparator implements Comparator {
-  public int compare(Object obj1, Object obj2) {
-    SeqSpan span1 = (SeqSpan)obj1;
-    SeqSpan span2 = (SeqSpan)obj2;
+public class SeqSpanComparator implements Comparator<SeqSpan> {
+  public int compare(SeqSpan span1, SeqSpan span2) {
     if (span1.getMin() < span2.getMin()) {
       return -1;
     }

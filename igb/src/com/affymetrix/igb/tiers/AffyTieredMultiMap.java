@@ -457,16 +457,13 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     }
   }
 
-  private class VerticalTierComparator implements Comparator {
-    private int compare( GlyphI g1, GlyphI g2 ) {
+  private class VerticalTierComparator implements Comparator<GlyphI> {
+    public int compare( GlyphI g1, GlyphI g2 ) {
       double y1 = g1.getCoordBox().y;
       double y2 = g2.getCoordBox().y;
       if ( y1 < y2 ) return -1;
       if ( y2 < y1 ) return 1;
       return 0;
-    }
-    public int compare(Object o1, Object o2) {
-      return compare( (GlyphI) o1, (GlyphI) o2 );
     }
   }
   private VerticalTierComparator extraMapSorter = new VerticalTierComparator();

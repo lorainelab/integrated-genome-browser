@@ -18,7 +18,7 @@ import java.util.Comparator;
 /**
  *  Sorts SeqSymmetries based on lexicographic ordering of IDs 
  */
-public class Das2FeatureComparator implements Comparator {
+public class Das2FeatureComparator implements Comparator<SimpleDas2Feature> {
   boolean use_name;
 
   /**
@@ -30,9 +30,7 @@ public class Das2FeatureComparator implements Comparator {
     this.use_name = use_name;
   }
 
-  public int compare(Object obj1, Object obj2) {
-    SimpleDas2Feature sym1 = (SimpleDas2Feature)obj1;
-    SimpleDas2Feature sym2 = (SimpleDas2Feature)obj2;
+  public int compare(SimpleDas2Feature sym1, SimpleDas2Feature sym2) {
     if (use_name) {
       String name1 = sym1.getName();
       String name2 = sym2.getName();

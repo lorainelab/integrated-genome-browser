@@ -822,10 +822,10 @@ public class ChpParser {
    */
 
   /** For sorting single-score probeset entries */
-class ScoreEntryComparator implements Comparator  {
-  public int compare(Object objA, Object objB) {
-    SeqSpan symA = ((ScoreEntry)objA).sym.getSpan(0);
-    SeqSpan symB = ((ScoreEntry)objB).sym.getSpan(0);
+class ScoreEntryComparator implements Comparator<ScoreEntry>  {
+  public int compare(ScoreEntry seA, ScoreEntry seB) {
+    SeqSpan symA = seA.sym.getSpan(0);
+    SeqSpan symB = seB.sym.getSpan(0);
     if (symA.getMin() < symB.getMin()) { return -1; }
     else if (symA.getMin() > symB.getMin()) { return 1; }
     else {  // mins are equal, try maxes

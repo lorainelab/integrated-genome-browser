@@ -1,7 +1,10 @@
 package com.affymetrix.igb.general;
 
+import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A class that's useful for visualizing a generic feature.
@@ -14,7 +17,7 @@ public final class GenericFeature {
     public final String featureName;      // friendly name of the feature.
     public final GenericVersion gVersion;        // Points to the version that uses this feature.
     public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
-    public LoadStatus loadStatus;   // status of feature loading, visible to the user.
+    public Map<AnnotatedBioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
 
     /**
      * @param featureName
@@ -24,6 +27,6 @@ public final class GenericFeature {
         this.featureName = featureName;
         this.gVersion = gVersion;
         this.loadStrategy = LoadStrategy.NO_LOAD;
-        this.loadStatus = LoadStatus.UNLOADED;
+        this.LoadStatusMap = new HashMap<AnnotatedBioSeq, LoadStatus>();
     }
 }

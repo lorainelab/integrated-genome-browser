@@ -22,8 +22,6 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.genometryImpl.event.DataRequestEvent;
-import com.affymetrix.genometryImpl.event.DataRequestListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -34,11 +32,13 @@ import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.util.SeqResiduesLoader;
+import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
+import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
 import java.util.HashSet;
 import java.util.Set;
 
 final class GeneralLoadView extends JComponent
-        implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener, DataRequestListener {
+        implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
     GeneralLoadUtils glu;
     private static boolean DEBUG_EVENTS = false;
@@ -56,12 +56,13 @@ final class GeneralLoadView extends JComponent
     private AnnotatedBioSeq current_seq;
     private final Map cb2filename = new HashMap();
     private SeqMapView gviewer;
+    private JTable feature_table;
 
     //boolean auto_select_first_seq_in_group = true;
     public GeneralLoadView() {
         if (Application.getSingleton() != null) {
             gviewer = Application.getSingleton().getMapView();
-            gviewer.addDataRequestListener(this);
+            //gviewer.addDataRequestListener(this);
         }
 
         this.glu = new GeneralLoadUtils(gmodel, gviewer);
@@ -97,12 +98,13 @@ final class GeneralLoadView extends JComponent
      *  components that are doing partial data-loading based on current view
      *  (DAS client controls, graph slice loaders, etc.)*/
         load_visible_dataB = new JButton("Load Visible Data");
+        load_visible_dataB.setEnabled(false);
         load_visible_dataB.addActionListener(this);
         buttonP.add(load_visible_dataB);
          /*   refreshB.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent evt) {
-                    broadcastDataRequest();
+                    loadVisibleData();
                 }
             });*/
 
@@ -157,18 +159,6 @@ final class GeneralLoadView extends JComponent
     }
 
    
-    /**
-     * "Refresh Data" was pressed.
-     * @param evt
-     * @return
-     */
-    public boolean dataRequested(DataRequestEvent evt) {
-		System.out.println("(IGNORED) GeneralLoadView received DataRequestEvent: " + evt);
-        //TODO
-		//loadFeaturesInView();
-		return false;
-	}
-
     public void actionPerformed(ActionEvent evt) {
         Object src = evt.getSource();
         /* handles residues loading based on partial or full sequence load buttons */
@@ -196,21 +186,44 @@ final class GeneralLoadView extends JComponent
                 SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq) current_seq);
             }
         } else if (src == load_visible_dataB) {
-            broadcastDataRequest();
+            loadVisibleData();
         }
     }
 
     /**
-     * Broadcast the data request.
+     * Load any data that's marked for visible range.
      */
-     private void broadcastDataRequest() {
+     private void loadVisibleData() {
+        // Full genome sequence not allowed right now.
+        //if (IsGenomeSequence()) {
+        //     }
+
         SeqSpan request_span = gviewer.getVisibleSpan();
-        if (gviewer.data_request_listeners.size() > 0) {
-            DataRequestEvent evt = new DataRequestEvent(this, request_span);
-            for (DataRequestListener listener : gviewer.data_request_listeners) {
-                listener.dataRequested(evt);
-            }
+
+        if (DEBUG_EVENTS) {
+            System.out.println("Visible load request span: " + request_span.getStart() + " " + request_span.getEnd());
         }
+        // Load any features that have a visible strategy and haven't already been loaded.
+        String genomeVersionName = (String) versionCB.getSelectedItem();
+        for (GenericFeature gFeature : this.glu.getFeatures(genomeVersionName)) {
+            if (gFeature.loadStrategy != LoadStrategy.VISIBLE) {
+                continue;
+            }
+            if (!gFeature.LoadStatusMap.containsKey(current_seq)) {
+                System.out.println("ERROR!  " + current_seq.getID() + " does not contain feature status" );
+            }
+            /*if (gFeature.LoadStatusMap.get(current_seq) != LoadStatus.UNLOADED) {
+                continue;
+            }*/
+            // Even if it's already loaded, we may want to reload... for example, if the viewsize changes.
+            
+            if (DEBUG_EVENTS) {
+                System.out.println("Selected : " + gFeature.featureName);
+            }
+            this.glu.loadAndDisplayAnnotations(gFeature, current_seq);
+        }
+        Application.getSingleton().setStatus("", false);
+
     }
 
     /**
@@ -239,13 +252,6 @@ final class GeneralLoadView extends JComponent
     private void speciesCBChanged() {
         String selectedSpecies = (String) speciesCB.getSelectedItem();
         refreshVersionCB(selectedSpecies);
-        //auto_select_first_seq_in_group = false;
-        // Don't let the group selectedSpecies trigger an automatic seq selectedSpecies
-        // because that could happen during start-up and would always force the brief display
-        // of chr1 (or whatever chr is first in the group) before going to the old_group_id.
-        //gmodel.setSelectedSeqGroup(null); // causes a GroupSelectionEvent
-        //types_panel.invalidate(); // make sure display gets updated
-    //auto_select_first_seq_in_group = true;
     }
 
      /**
@@ -331,7 +337,6 @@ final class GeneralLoadView extends JComponent
      */
     private void groupSelectionChangedInternal(AnnotatedSeqGroup group) {
         cb2filename.clear();
-        types_panel.removeAll();
         current_group = group;
         String genomeVersionName = null;
         if (current_group == null || this.glu == null || !this.glu.group2version.containsKey(group)) {
@@ -355,16 +360,19 @@ final class GeneralLoadView extends JComponent
     }
 
     /**
-     * Create the JTable with the list of features and their status.
+     * Create the table with the list of features and their status.
      */
     private void createFeaturesTable(String genomeVersionName) {
+        System.out.println("Creating new table with chrom " + (current_seq == null ? null : current_seq.getID()));
+        types_panel.removeAll();
         List<GenericFeature> features = this.glu.getFeatures(genomeVersionName);
-        FeaturesTableModel model = new FeaturesTableModel(this.glu, features);
-        JTable table = new JTable(model);
-        TableWithVisibleComboBox.setComboBoxEditor(table, 0, FeaturesTableModel.loadChoices);
+        FeaturesTableModel model = new FeaturesTableModel(this, features, current_seq);
+        this.feature_table = new JTable(model);
+        TableWithVisibleComboBox.setComboBoxEditor(this.feature_table, 0, FeaturesTableModel.loadChoices);
         //JScrollPane scrollPane = new JScrollPane(table);
         //types_panel.add(scrollPane);
-        types_panel.add(table);
+        types_panel.add(this.feature_table);
+        types_panel.invalidate();
     }
 
 
@@ -374,11 +382,34 @@ final class GeneralLoadView extends JComponent
      */
     public void seqSelectionChanged(SeqSelectionEvent evt) {
         current_seq = evt.getSelectedSeq();
-        String seqID = current_seq == null ? null : current_seq.getID();
-        if (DEBUG_EVENTS) {
-            System.out.println("GeneralLoadView.seqSelectionChanged() called with " + seqID);
+        disableButtonsIfGenomeSequence();
+
+        String genomeVersionName = (String)this.versionCB.getSelectedItem();
+        if (genomeVersionName == null || genomeVersionName.equals(SELECT)) {
+            return;
         }
-        disableButtonsIfGenomeSequence(seqID);
+        
+        createFeaturesTable(genomeVersionName);
+
+        // Are there any "whole range" sequences that haven't been loaded?
+        // Load any features that have a visible strategy and haven't already been loaded.
+        for (GenericFeature gFeature : this.glu.getFeatures(genomeVersionName)) {
+            if (gFeature.loadStrategy != LoadStrategy.WHOLE) {
+                continue;
+            }
+            if (!gFeature.LoadStatusMap.containsKey(current_seq)) {
+                System.out.println("ERROR!  " + current_seq.getID() + " does not contain feature status");
+            }
+            if (gFeature.LoadStatusMap.get(current_seq) != LoadStatus.UNLOADED) {
+            continue;
+            }
+
+            if (DEBUG_EVENTS) {
+                System.out.println("Selected : " + gFeature.featureName);
+            }
+            this.glu.loadAndDisplayAnnotations(gFeature, current_seq);
+        }
+        
     }
 
     /**
@@ -387,14 +418,38 @@ final class GeneralLoadView extends JComponent
      * (In fact, for the full sequence this would currently be too much memory for the app.)
      * @param seqID
      */
-    private void disableButtonsIfGenomeSequence(String seqID) {
+    private void disableButtonsIfGenomeSequence() {
+        boolean isGenomeSequence = IsGenomeSequence();
+        all_residuesB.setEnabled(!isGenomeSequence);
+        partial_residuesB.setEnabled(!isGenomeSequence);
+        //load_visible_dataB.setEnabled(!isGenomeSequence);
+    }
+
+    /**
+     * Accessor method.
+     * See if we need to enable/disable the load_visible_dataB
+     * by looking at the features' load strategies.
+     */
+    void changeVisibleDataButtonIfNecessary(List<GenericFeature> features) {
+        boolean enabled = false;
+        for(GenericFeature gFeature : features) {
+            if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
+                enabled = true;
+                break;
+            }
+        }
+
+        if (load_visible_dataB.isEnabled() != enabled) {
+            load_visible_dataB.setEnabled(enabled);
+        }
+    }
+
+    private boolean IsGenomeSequence() {
         // hardwiring names for genome and encode virtual seqs, need to generalize this soon
+        final String seqID = current_seq == null ? null : current_seq.getID();
         final String GENOME_SEQ_ID = "genome";
         final String ENCODE_REGIONS_ID = "encode_regions";
-        boolean disableResidues = seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID);
-        all_residuesB.setEnabled(!disableResidues);
-        partial_residuesB.setEnabled(!disableResidues);
-        load_visible_dataB.setEnabled(!disableResidues);
+        return (seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID));
     }
 }
 

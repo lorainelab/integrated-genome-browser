@@ -1,19 +1,17 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -202,20 +200,6 @@ public class GeneralLoadUtils {
         }
     }
 
-
-    public static boolean getCacheResidues() {
-        return false;
-    }
-
-    public static boolean getCacheAnnots() {
-        return false;
-    }
-
-/*
-    public String getRootUrl() {
-        return root_url;
-    }
-*/
     // Does the work of getting the genome names.
     private void getGenomesAndVersionsInternal(final String serverName) {
         // discover genomes from server
@@ -322,7 +306,6 @@ public class GeneralLoadUtils {
     }
 
 
-
     public AnnotatedSeqGroup getSeqGroup(final String genome_name) {
         return gmodel.addSeqGroup(genome_name);
     }
@@ -359,39 +342,7 @@ public class GeneralLoadUtils {
     }
 
 
-    /** Returns Map of annotation type name to Integer, 0 if annotation type is not loaded */
-    public static Map<String,Integer> getLoadStates(AnnotatedSeqGroup group) {
-        return group2states.get(group);
-    }
-
-    public static int getLoadState(AnnotatedSeqGroup group, final String file_name) {
-        Map<String,Integer> load_states = getLoadStates(group);
-        if (load_states == null) {
-            return 0; /* shouldn't happen */
-        }
-        String stripped_file = stripFilenameExtensions(file_name);
-        return load_states.get(stripped_file);
-    }
-
-    public static void setLoadState(AnnotatedSeqGroup group, final String file_name, int loaded) {
-        Map<String,Integer> load_states = group2states.get(group);
-        if (load_states == null) {
-            load_states = new LinkedHashMap<String,Integer>();
-            group2states.put(group, load_states);
-        }
-        String stripped_file = stripFilenameExtensions(file_name);
-        load_states.put(stripped_file, loaded);
-    }
-
-    public static void setLoadStatus(AnnotatedSeqGroup group, final String server, final String genome, final String feature, int loaded) {
-        String unique_name = "";
-//        LoadStatus ls = new LoadStatus();
-
-  //      this.genomeAndServer2LoadStatus.put(unique_name,)
-    }
-
-
-     public void initVersion(final String versionName) {
+    void initVersion(final String versionName) {
         if (versionName == null) {
             return;
         }
@@ -399,8 +350,9 @@ public class GeneralLoadUtils {
         if (init == null || !init.booleanValue()) {
             System.out.println("initializing data for version: " + versionName);
             Application.getApplicationLogger().fine("initializing data for version: " + versionName);
-            boolean seq_init = loadSeqInfo(versionName);
+            
             loadFeatureNames(versionName);
+            boolean seq_init = loadSeqInfo(versionName);
             
             boolean annot_init = true;
             if (seq_init && annot_init) {
@@ -521,6 +473,15 @@ public class GeneralLoadUtils {
 
         addGenomeVirtualSeq(group);
 
+        for (GenericFeature gFeature : gVersion.features) {
+            for (SmartAnnotBioSeq sabq : group.getSeqList()) {
+                // Add chromosome sequences to feature
+                if (!gFeature.LoadStatusMap.containsKey(sabq)) {
+                gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
+                }
+            }
+        }
+
         if (gmodel.getSelectedSeqGroup() != group) {
             gmodel.setSelectedSeqGroup(group);
         }
@@ -533,7 +494,7 @@ public class GeneralLoadUtils {
     }
 
 
-        // Load the sequence info for the given genome versionr.
+        // Load the sequence info for the given genome version.
     private AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
         AnnotatedSeqGroup group = null;
         if (DEBUG) {
@@ -733,10 +694,15 @@ public class GeneralLoadUtils {
 
     /**
      * Load and display annotations (requested for the specific feature).
+     * Adjust the load status accordingly.
      * @param gFeature
      * @return
      */
-    public boolean loadAndDisplayAnnotations(GenericFeature gFeature) {
+    public boolean loadAndDisplayAnnotations(GenericFeature gFeature, AnnotatedBioSeq cur_seq) {
+        // We don't validate previous load status.  It's assumed that we want to reload the feature.
+
+        gFeature.LoadStatusMap.put(cur_seq, LoadStatus.UNLOADED);
+        
         MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
 		MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();
 		if (selected_seq == null || visible_seq == null) {
@@ -766,6 +732,7 @@ public class GeneralLoadUtils {
 
         Class serverClass = gFeature.gVersion.gServer.serverClass;
         if (serverClass == Das2ServerInfo.class) {
+            SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADING);
             if (loadDAS2Annotations(
                     selected_seq,
                     gFeature.featureName,
@@ -773,21 +740,26 @@ public class GeneralLoadUtils {
                     gviewer,
                     visible_seq,
                     overlap)) {
+                SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADED);
                 return true;
             }
+            SetLoadStatus(gFeature,cur_seq,LoadStatus.UNLOADED);
             return false;
         }
         if (serverClass == DasServerInfo.class) {
             //TODO
             List<String> featureList = new ArrayList<String>(1);
             featureList.add(gFeature.featureName);
+            SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADING);
             if (DasClientOptimizer.loadAnnotations(
                     gFeature.gVersion.gServer.URL,
                     "",
                     overlap,
                     featureList)) {
+                SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADED);
                 return true;
             }
+            SetLoadStatus(gFeature,cur_seq,LoadStatus.UNLOADED);
             return false;
         }
         if (serverClass == QuickLoadServerModel.class) {
@@ -801,7 +773,8 @@ public class GeneralLoadUtils {
             BufferedInputStream bis = null;
 
             try {
-                istr = LocalUrlCacher.getInputStream(annot_url, getCacheAnnots());
+                SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADING);
+                istr = LocalUrlCacher.getInputStream(annot_url, true);
                 if (istr != null) {
                     bis = new BufferedInputStream(istr);
 
@@ -817,24 +790,26 @@ public class GeneralLoadUtils {
                         LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeq());
                     }
 
-                    //setLoadState(current_group, feature_name, true);
+                    SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADED);
                     return true;
                 }
             } catch (Exception ex) {
                 ErrorHandler.errorPanel("ERROR", "Problem loading requested url:\n" + annot_url, ex);
-                // keep load state false so we can load this annotation from a different server
-                //setLoadState(current_group, feature_name, false);
             } finally {
                 GeneralUtils.safeClose(bis);
                 GeneralUtils.safeClose(istr);
             }
 
-
+            SetLoadStatus(gFeature,cur_seq,LoadStatus.UNLOADED);
             return false;
         }
 
         System.out.println("class " + serverClass + " is not implemented.");
         return false;
+    }
+
+    private static void SetLoadStatus(GenericFeature gFeature, AnnotatedBioSeq aseq, LoadStatus ls) {
+        gFeature.LoadStatusMap.put(aseq, ls);
     }
 
     /**

@@ -4,7 +4,7 @@ import com.affymetrix.igb.view.QuickLoadServerModel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ServerList {
+public final class ServerList {
 
     // Currently just has list of Quickload servers.  Eventually will add DAS and DAS/2 servers here.
     static Map<String, String> name2url = new LinkedHashMap<String, String>();

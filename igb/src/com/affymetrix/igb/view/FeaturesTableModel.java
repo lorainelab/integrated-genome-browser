@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
@@ -16,22 +17,25 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
 public class FeaturesTableModel extends AbstractTableModel implements ChangeListener  {
-	private static String [] columnNames = {"Load Range","Name","Server","Server Type","Load Status"};
+//	private static String [] columnNames = {"Load Range","Name","Server","Server Type","Load Status"};
+    private static String [] columnNames = {"Load Range","Name","Server","Server Type"};
     static String [] loadChoices = {"Don't Load","Visible Range","Whole Range"};
     public final EnumMap<LoadStrategy,String> LoadStrategyMap;  // map to a friendly string
     public final Map<String,LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
     public final  EnumMap<LoadStatus,String> LoadStatusMap;    // map to a friendly string
 
+    public final AnnotatedBioSeq cur_seq;
     private static final int LOAD_STRATEGY_COLUMN = 0;
     private static final int LOAD_STATUS_COLUMN = 3;
    
 	List<GenericFeature> features;
 
-    GeneralLoadUtils glu;
+    GeneralLoadView glv;
 
-    public FeaturesTableModel(GeneralLoadUtils glu, List<GenericFeature> features) {
-        this.glu = glu;
+    public FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, AnnotatedBioSeq cur_seq) {
+        this.glv = glv;
         this.features = features;
+        this.cur_seq = cur_seq;
 
         this.LoadStatusMap = new EnumMap<LoadStatus,String>(LoadStatus.class);
         this.LoadStatusMap.put(LoadStatus.LOADED, "loaded");
@@ -95,8 +99,10 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
                     return "Quickload";
                 }
                 return "unknown";
-            case 4:
-                return this.LoadStatusMap.get(features.get(row).loadStatus);
+            /*case 4:
+                GenericFeature gFeature = features.get(row);
+                LoadStatus ls = gFeature.LoadStatusMap.get(this.cur_seq);
+                return this.LoadStatusMap.get(ls);*/
             default:
                 System.out.println("Shouldn't reach here: " + row + " " + col);
                 return null;
@@ -116,31 +122,27 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
 
     @Override
 	public void setValueAt(Object value, int row, int col) {
-		GenericFeature gFeature = features.get(row);
-        String valueString = value.toString();
+	    if (col != LOAD_STRATEGY_COLUMN) {
+            return;
+        }
         
-		if (col == LOAD_STRATEGY_COLUMN)  {
-            if (!this.LoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
-                // strategy changed.  Update the feature object.
-                gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);
-                fireTableCellUpdated(row, col);
+        GenericFeature gFeature = features.get(row);
+        String valueString = value.toString();
+        if (!this.LoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
+            // strategy changed.  Update the feature object.
+            gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);
+            fireTableCellUpdated(row, col);
 
-                if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
-                    //  For features with "visible range", we don't dynamically load the feature.
-                    System.out.println("Selected : " + gFeature.featureName);
-                    this.glu.loadAndDisplayAnnotations(gFeature);
-                    Application.getSingleton().setStatus("", false);
-                }
+            if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+                System.out.println("Selected : " + gFeature.featureName);
+                this.glv.glu.loadAndDisplayAnnotations(gFeature, this.cur_seq);
+                Application.getSingleton().setStatus("", false);
+            }
 
-            }
-		}
-        /*else if (col == LOAD_STATUS_COLUMN) {
-            if (!this.LoadStatusMap.get(gFeature.loadStatus).equals(valueString)) {
-                // status changed.
-                gFeature.loadStatus = (LoadStatus)value;
-                fireTableCellUpdated(row, col);
-            }
-        }*/
+            //  Whatever feature strategy changed, it may have affected
+            // the enable status of the "load visible" button
+            this.glv.changeVisibleDataButtonIfNecessary(features);
+        }
 	}
 
 	public void stateChanged(ChangeEvent evt) {

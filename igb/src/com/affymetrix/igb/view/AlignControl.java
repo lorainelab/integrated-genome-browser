@@ -84,8 +84,7 @@ public class AlignControl implements ActionListener, ContextualPopupListener  {
     System.out.println("trying to send control request");
     SeqSymmetry annot_sym = gviewer.getSelectedSymmetry();
     //    SeqUtils.printSymmetry(annot_sym);
-    MutableAnnotatedBioSeq aseq =
-      (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 
     // trying to get "other" span in symmetry (the one that doesn't map to aseq)
     SeqSpan curspan = annot_sym.getSpan(aseq);

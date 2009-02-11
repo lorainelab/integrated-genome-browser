@@ -1872,7 +1872,7 @@ public class SeqMapView extends JPanel
                     Collections.sort(sorted_children, symcompare);
                     MutableSeqSymmetry sorted_sym = new SimpleMutableSeqSymmetry();
                     for (int i = 0; i < child_count; i++) {
-                        sorted_sym.addChild((SeqSymmetry) sorted_children.get(i));
+                        sorted_sym.addChild(sorted_children.get(i));
                     }
                     residues_sym = sorted_sym;
                 }

@@ -81,7 +81,7 @@ public class Das2Authorization {
 		Iterator it = users.keySet().iterator();
 		//for each user
 		while (it.hasNext()){
-			User user = (User)users.get(it.next());
+			User user = users.get(it.next());
 			//fetch HashMap<versionedGenome, HashSet<protectedDirectories>
 			HashMap dirs = user.authorizedDirectories;
 			//for each versionedGenome
@@ -133,7 +133,7 @@ public class Das2Authorization {
 				//does user exist?
 				String userName = tokens[0].trim().toLowerCase();
 				User user;
-				if (users.containsKey(userName)) user = (User) users.get(userName);
+				if (users.containsKey(userName)) user = users.get(userName);
 				else {
 					user = new User(tokens[1].trim());
 					users.put(userName, user);
@@ -180,7 +180,7 @@ public class Das2Authorization {
 		if (users.containsKey(lcun) == false) return null;
 		//check password
 		String crypted = MD5Crypt.crypt(nonEncryptedPassword, md5Salt);
-		User user = (User)users.get(lcun);
+		User user = users.get(lcun);
 		if (crypted.equals(user.encryptedPassword)) return user.authorizedDirectories;
 		return null;
 	} 

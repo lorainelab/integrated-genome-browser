@@ -30,7 +30,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
+final public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
   static final String PREF_SYN_FILE_URL = "Synonyms File URL";
 
@@ -144,10 +144,10 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
     this.add(cache_options_box);
 
     // adding quickload choicebox to cache options box for expediency
-    use_quickloadCB.setAlignmentX(0.0f);
+   /* use_quickloadCB.setAlignmentX(0.0f);
     cache_options_box.add(use_quickloadCB);
 
-    Box url_box = new Box(BoxLayout.Y_AXIS);
+   Box url_box = new Box(BoxLayout.Y_AXIS);
     url_box.setBorder(new javax.swing.border.TitledBorder("Personal QuickLoad URL"));
     final JTextField quickload_url_TF = UnibrowPrefsUtil.createTextField(
         UnibrowPrefsUtil.getLocationsNode(), QuickLoadView2.PREF_USER_DEFINED_QUICKLOAD_URL, "");
@@ -164,7 +164,7 @@ public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
       public void stateChanged(ChangeEvent e) {
         quickload_url_TF.setEnabled(use_quickloadCB.isSelected());
       }
-    });
+    });*/
 
     cache_annotsCB.setAlignmentX(0.0f);
     cache_options_box.add(cache_annotsCB);

@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-public class PluginInfo {
+final public class PluginInfo {
 
   public static final String NODE_PLUGINS = "plugins";
 

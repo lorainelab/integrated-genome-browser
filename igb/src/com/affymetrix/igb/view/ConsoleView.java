@@ -23,7 +23,7 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
 
-public class ConsoleView {
+final public class ConsoleView {
   
   static String TITLE;
   

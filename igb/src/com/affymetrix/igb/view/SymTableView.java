@@ -20,7 +20,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.*;
 import java.text.NumberFormat;
 
-public class SymTableView extends PropertySheet implements SymSelectionListener {
+final public class SymTableView extends PropertySheet implements SymSelectionListener {
 
     static int testcount = 0;
     List<SeqSymmetry> currentSyms = Collections.<SeqSymmetry>emptyList();

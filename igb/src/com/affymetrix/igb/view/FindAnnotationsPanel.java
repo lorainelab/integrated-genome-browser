@@ -29,7 +29,7 @@ import javax.swing.event.*;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 
-public class FindAnnotationsPanel extends JPanel {
+final class FindAnnotationsPanel extends JPanel {
   
   JDialog the_dialog;
 

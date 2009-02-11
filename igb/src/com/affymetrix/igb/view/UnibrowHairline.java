@@ -19,7 +19,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.Font;
 import java.util.prefs.*;
 
-public class UnibrowHairline {
+final public class UnibrowHairline {
 
   public static String PREF_KEEP_HAIRLINE_IN_VIEW = "Keep hairline in view";
   public static boolean default_keep_hairline_in_view = true;

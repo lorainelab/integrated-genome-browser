@@ -26,7 +26,7 @@ import javax.swing.*;
 
 
 /** A Text Box for displaying and setting the range of a SeqMapView. */
-public class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
+final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupSelectionListener {
   
   NeoMap map;
   SeqMapView gview;

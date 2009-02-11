@@ -21,7 +21,7 @@ import com.affymetrix.igb.util.JTableCutPasteAdapter;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.swing.BlockingTableCellEditor;
 
-public class PropertySheet extends JPanel {
+class PropertySheet extends JPanel {
     
   // the table showing name-value pairs
   JTable table;

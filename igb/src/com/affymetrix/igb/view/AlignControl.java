@@ -30,7 +30,7 @@ import com.affymetrix.igb.IGB;
  *  AlignControl tries to display other seq of a pairwise alignment in
  *   another instance of IGB (by utilizing UnibrowControlServlet)
  */
-public class AlignControl implements ActionListener, ContextualPopupListener  {
+final public class AlignControl implements ActionListener, ContextualPopupListener  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   SeqMapView gviewer;
   JMenuItem pushAlignUrlMI;

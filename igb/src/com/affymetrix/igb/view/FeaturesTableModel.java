@@ -16,7 +16,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
-public class FeaturesTableModel extends AbstractTableModel implements ChangeListener  {
+final public class FeaturesTableModel extends AbstractTableModel implements ChangeListener  {
 	private static String [] columnNames = {"Load Range","Name","Server","Server Type","Load Status"};
 //    private static String [] columnNames = {"Load Range","Name","Server","Server Type"};
     static String [] loadChoices = {"Don't Load","Visible Range","Whole Range"};

@@ -41,7 +41,7 @@ final class GeneralLoadView extends JComponent
         implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
     GeneralLoadUtils glu;
-    private static boolean DEBUG_EVENTS = false;
+    private static boolean DEBUG_EVENTS = true;
     static boolean BUILD_VIRTUAL_GENOME = true;
     static boolean BUILD_VIRTUAL_ENCODE = true;
     private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -54,16 +54,14 @@ final class GeneralLoadView extends JComponent
     private JButton load_visible_dataB;
     private AnnotatedSeqGroup current_group;
     private AnnotatedBioSeq current_seq;
-    private final Map cb2filename = new HashMap();
     private SeqMapView gviewer;
     private JTable feature_table;
     private FeaturesTableModel feature_model;
+    private boolean first_time_called = true;
 
-    //boolean auto_select_first_seq_in_group = true;
     public GeneralLoadView() {
         if (Application.getSingleton() != null) {
             gviewer = Application.getSingleton().getMapView();
-            //gviewer.addDataRequestListener(this);
         }
 
         this.glu = new GeneralLoadUtils(gmodel, gviewer);
@@ -94,20 +92,10 @@ final class GeneralLoadView extends JComponent
         JPanel buttonP = new JPanel();
         buttonP.setLayout(new GridLayout(1, 3));
 
-/*  
-     *  sending DataRequestEvents to DataRequestListeners.  This is used to notify
-     *  components that are doing partial data-loading based on current view
-     *  (DAS client controls, graph slice loaders, etc.)*/
         load_visible_dataB = new JButton("Load Visible Data");
         load_visible_dataB.setEnabled(false);
         load_visible_dataB.addActionListener(this);
         buttonP.add(load_visible_dataB);
-         /*   refreshB.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent evt) {
-                    loadVisibleData();
-                }
-            });*/
 
         if (IGB.isSequenceAccessible()) {
             all_residuesB = new JButton("Load All Sequence");
@@ -137,7 +125,6 @@ final class GeneralLoadView extends JComponent
         versionCB.addItemListener(this);
         speciesCB.addItemListener(this);
     }
-
 
     private void initializeSpeciesCB() {
         speciesCB.removeAllItems();
@@ -337,7 +324,6 @@ final class GeneralLoadView extends JComponent
      * @param group
      */
     private void groupSelectionChangedInternal(AnnotatedSeqGroup group) {
-        cb2filename.clear();
         current_group = group;
         String genomeVersionName = null;
         if (current_group == null || this.glu == null || !this.glu.group2version.containsKey(group)) {
@@ -346,11 +332,17 @@ final class GeneralLoadView extends JComponent
             genomeVersionName = this.glu.group2version.get(group).versionName;
         }
         if (genomeVersionName == null) {
+            if (!SELECT.equals((String)versionCB.getSelectedItem())) {
+                System.out.println("ERROR: invalid version selected: " + (String)versionCB.getSelectedItem());
+                return;
+            }
             // if no genome version in server matches selected AnnotatedSeqGroup,
-            // then clear the types_panel and un-select the item
-            versionCB.setEnabled(false);
-            versionCB.setSelectedIndex(0);
+            // then clear the types_panel and un-select the item   
+            types_panel.removeAll();
         } else {
+            if (this.first_time_called) {
+                firstTimeGroupSelectionChanged(genomeVersionName); // No longer the first time called.
+            }
             this.glu.initVersion(genomeVersionName);
             versionCB.setSelectedItem(genomeVersionName);
             createFeaturesTable(genomeVersionName);
@@ -359,6 +351,32 @@ final class GeneralLoadView extends JComponent
             System.out.println("groupSelectionChangedInternal to " + genomeVersionName);
         }
     }
+
+    /**
+     * GroupSelectionChanged method is being called for the first time.
+     * This may be a call from the bookmark code, in which case we need to be sure that various boxes are set properly.
+     * @param genomeVersionName
+     */
+      private void firstTimeGroupSelectionChanged(String genomeVersionName) {
+        String selectedSpecies = (String) speciesCB.getSelectedItem();
+        if (selectedSpecies.equals(SELECT)) {
+            // Fix combo boxes.  Turn off their listeners temporarily so there are no side effects.
+            speciesCB.removeItemListener(this);
+            speciesCB.setSelectedItem(this.glu.versionName2genome.get(genomeVersionName));
+            if (SELECT.equals((String)versionCB.getSelectedItem())) {
+                versionCB.removeItemListener(this);
+                versionCB.setSelectedItem(genomeVersionName);
+                versionCB.setEnabled(true);
+                versionCB.addItemListener(this);
+            }
+            speciesCB.addItemListener(this);
+
+            // refresh the seq box, which otherwise won't contain the full genome.
+        }
+        this.first_time_called = false; // No longer the first time called.
+    }
+
+
 
     /**
      * Create the table with the list of features and their status.
@@ -436,7 +454,7 @@ final class GeneralLoadView extends JComponent
 
     /**
      * Accessor method.
-     * See if we need to enable/disable the load_visible_dataB
+     * See if we need to enable/disable the load_visible_dataB button
      * by looking at the features' load strategies.
      */
     void changeVisibleDataButtonIfNecessary(List<GenericFeature> features) {

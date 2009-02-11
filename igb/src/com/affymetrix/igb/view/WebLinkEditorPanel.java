@@ -24,7 +24,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class WebLinkEditorPanel extends JPanel {
+final class WebLinkEditorPanel extends JPanel {
   WebLink selected_link = null;
   
   JTextField name_tf = new JTextField("");

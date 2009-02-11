@@ -57,7 +57,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.text.Document;
 
-public class GeneralLoadUtils {
+final public class GeneralLoadUtils {
     public static enum LoadStrategy { NO_LOAD, VISIBLE, WHOLE };    
     public static enum LoadStatus { UNLOADED, LOADING, LOADED };
 
@@ -77,6 +77,8 @@ public class GeneralLoadUtils {
     //public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
     final static String ENCODE_FILE_NAME = "encodeRegions.bed";
     final static String ENCODE_FILE_NAME2 = "encode.bed";
+    public final static String GENOME_SEQ_ID = "genome";                // user here and in SeqMapView
+    public final static String ENCODE_REGIONS_ID = "encode_regions";    // used in SeqMapView
     //static boolean CACHE_RESIDUES_DEFAULT = false;
     //static boolean CACHE_ANNOTS_DEFAULT = true;
     final SingletonGenometryModel gmodel;
@@ -601,8 +603,9 @@ public class GeneralLoadUtils {
             return;
         }
 
-        Application.getApplicationLogger().fine("$$$$$ adding virtual genome seq to seq group");
-        String GENOME_SEQ_ID = "genome";
+        if (DEBUG) {
+        System.out.println("$$$$$ adding virtual genome seq to seq group");
+        }
         if (group.getSeq(GENOME_SEQ_ID) != null) {
             return; // return if we've already created the virtual genome
         }

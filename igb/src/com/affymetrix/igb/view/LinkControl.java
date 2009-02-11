@@ -23,7 +23,7 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.WebBrowserControl;
 
-public class LinkControl implements ContextualPopupListener {
+final class LinkControl implements ContextualPopupListener {
 
   public LinkControl() { }
 

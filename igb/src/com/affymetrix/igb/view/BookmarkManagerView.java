@@ -37,7 +37,7 @@ import javax.swing.tree.*;
 /**
  *  A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
-public class BookmarkManagerView extends JPanel implements TreeSelectionListener, IPlugin {
+final public class BookmarkManagerView extends JPanel implements TreeSelectionListener, IPlugin {
   JTree tree;
   BottomThing thing;
 

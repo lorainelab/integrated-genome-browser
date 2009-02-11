@@ -34,7 +34,7 @@ import javax.swing.table.*;
  *
  * @author  Eric Blossom
  */
-public class PivotViewExporter extends AbstractAction {
+final class PivotViewExporter extends AbstractAction {
 
   /**
    * Convert the table to tab delimited format.

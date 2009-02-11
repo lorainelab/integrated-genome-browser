@@ -31,7 +31,7 @@ import java.util.*;
 
 import javax.swing.*;
 
-public class SeqMapViewActionListener implements ActionListener {
+final class SeqMapViewActionListener implements ActionListener {
   final static String ZOOM_OUT_FULLY = "ZOOM_OUT_FULLY";
 
   final static String ZOOM_OUT_X = "ZOOM_OUT_X";

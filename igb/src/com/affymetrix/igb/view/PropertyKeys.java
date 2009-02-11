@@ -21,7 +21,7 @@ import java.util.*;
  * <p>
  * This is a modified version of com.affymetrix.genoviz.bio.datamodel.feature.PropertyKeys
  */
-public class PropertyKeys {
+final class PropertyKeys {
   String[] keys = new String[0];
 
   /**

@@ -41,7 +41,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
  *  AltSpliceView, and apply to the virtual sequence being viewed in AltSpliceView.  It does
  *  not incorporate (at least not yet) content stat graphs (GC, dicodon, etc.).
  */
-public class OrfAnalyzer2 extends JComponent
+final public class OrfAnalyzer2 extends JComponent
     implements ChangeListener, ActionListener  {
 
   public static final String PREF_STOP_CODON_COLOR = "stop codon";

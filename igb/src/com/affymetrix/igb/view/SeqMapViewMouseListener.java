@@ -41,7 +41,7 @@ import java.util.List;
  *  For Windows users, this is the normal behavior anyway.  For Mac and Linux
  *  users, it is not standard, but should be fine.
  */
-public class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener {
+final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListener {
 
 
   // This flag determines whether selection events are processed on

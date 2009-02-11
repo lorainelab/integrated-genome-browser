@@ -739,7 +739,7 @@ public class SeqMapView extends JPanel
                         cgl = new FillRectGlyph();
                         cgl.setColor(c3);
                     } else {
-                        if (viewseq.getID().equals(QuickLoadView2.GENOME_SEQ_ID)) {
+                        if (viewseq.getID().equals(GeneralLoadUtils.GENOME_SEQ_ID)) {
                             // hide axis numbering
                             axis.setLabelFormat(AxisGlyph.NO_LABELS);
                             cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
@@ -749,7 +749,7 @@ public class SeqMapView extends JPanel
                             }
                             ((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
                             cgl.setColor(axis.getForegroundColor());
-                        } else if (viewseq.getID().equals(QuickLoadView2.ENCODE_REGIONS_ID)) {
+                        } else if (viewseq.getID().equals(GeneralLoadUtils.ENCODE_REGIONS_ID)) {
                             cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
                             String label = childsym.getID();
                             if (label != null) {
@@ -1976,7 +1976,7 @@ public class SeqMapView extends JPanel
         sliceAndDice(getSelectedSyms());
     }
 
-    public void testUnion() {
+    /*public void testUnion() {
         testUnion(getSelectedSyms());
     }
 
@@ -1987,7 +1987,7 @@ public class SeqMapView extends JPanel
         ((MutableAnnotatedBioSeq) aseq).addAnnotation(unionSym);
         System.out.println("*** unionSym: " + unionSym + ", childcount = " + unionSym.getChildCount());
         setAnnotatedSeq(aseq, true, true);
-    }
+    }*/
 
     public void sliceAndDice(final List<SeqSymmetry> syms) {
         stopSlicingThread();
@@ -2329,7 +2329,7 @@ public class SeqMapView extends JPanel
         return result;
     }
 
-    public void toggleAutoScroll(int bases_per_pixel, int pix_to_scroll,
+    private void toggleAutoScroll(int bases_per_pixel, int pix_to_scroll,
             int timer_interval, final int start_coord, final int end_coord, final boolean cycle) {
         double pix_per_coord = 1.0 / (double) bases_per_pixel;
         final double coords_to_scroll = (double) pix_to_scroll / pix_per_coord;

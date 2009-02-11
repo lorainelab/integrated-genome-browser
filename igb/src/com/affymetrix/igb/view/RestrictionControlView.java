@@ -30,7 +30,7 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 
-public class RestrictionControlView extends JComponent
+final public class RestrictionControlView extends JComponent
      implements ListSelectionListener, ActionListener  {
   SeqMapView gviewer;
   Hashtable site_hash = new Hashtable();

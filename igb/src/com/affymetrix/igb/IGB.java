@@ -912,17 +912,17 @@ public final class IGB extends Application
     //    frm.resize(1000, 750);
     frm.setVisible(true);
 
-    if (useQuickLoad()) {
+    /*if (useQuickLoad()) {
       //      PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
       PluginInfo quickload = new PluginInfo(QuickLoadView2.class.getName(), "QuickLoad", true);
       plugins_info.add(quickload);
     }
-    else {
+    else {*/
       //    if (USE_DATALOAD)  {
       PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
       plugins_info.add(dataload);
 
-    }
+    //}
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
     plugins_info.add(selection_info);
@@ -952,15 +952,17 @@ public final class IGB extends Application
             data_load_view = (DataLoadView)plugin;
             //data_load_view.initialize();
         }
-        if (plugin instanceof QuickLoadView2)  {
+        /*if (plugin instanceof QuickLoadView2)  {
           ((QuickLoadView2)plugin).initialize();
-        }
+        }*/
     }
 
     if (slice_view != null) {
       MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
       export_slice_item.setEnabled(true);
     }
+
+                System.out.println("Way out of bookmark");
 
     WebLink.autoLoad();
 

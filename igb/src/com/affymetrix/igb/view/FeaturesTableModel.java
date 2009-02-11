@@ -17,8 +17,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
 public class FeaturesTableModel extends AbstractTableModel implements ChangeListener  {
-//	private static String [] columnNames = {"Load Range","Name","Server","Server Type","Load Status"};
-    private static String [] columnNames = {"Load Range","Name","Server","Server Type"};
+	private static String [] columnNames = {"Load Range","Name","Server","Server Type","Load Status"};
+//    private static String [] columnNames = {"Load Range","Name","Server","Server Type"};
     static String [] loadChoices = {"Don't Load","Visible Range","Whole Range"};
     public final EnumMap<LoadStrategy,String> LoadStrategyMap;  // map to a friendly string
     public final Map<String,LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
@@ -99,10 +99,10 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
                     return "Quickload";
                 }
                 return "unknown";
-            /*case 4:
+            case 4:
                 GenericFeature gFeature = features.get(row);
                 LoadStatus ls = gFeature.LoadStatusMap.get(this.cur_seq);
-                return this.LoadStatusMap.get(ls);*/
+                return this.LoadStatusMap.get(ls);
             default:
                 System.out.println("Shouldn't reach here: " + row + " " + col);
                 return null;
@@ -135,7 +135,7 @@ public class FeaturesTableModel extends AbstractTableModel implements ChangeList
 
             if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
                 System.out.println("Selected : " + gFeature.featureName);
-                this.glv.glu.loadAndDisplayAnnotations(gFeature, this.cur_seq);
+                this.glv.glu.loadAndDisplayAnnotations(gFeature, this.cur_seq, this);
                 Application.getSingleton().setStatus("", false);
             }
 

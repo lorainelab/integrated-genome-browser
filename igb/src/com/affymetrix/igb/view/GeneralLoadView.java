@@ -57,6 +57,7 @@ final class GeneralLoadView extends JComponent
     private final Map cb2filename = new HashMap();
     private SeqMapView gviewer;
     private JTable feature_table;
+    private FeaturesTableModel feature_model;
 
     //boolean auto_select_first_seq_in_group = true;
     public GeneralLoadView() {
@@ -220,7 +221,7 @@ final class GeneralLoadView extends JComponent
             if (DEBUG_EVENTS) {
                 System.out.println("Selected : " + gFeature.featureName);
             }
-            this.glu.loadAndDisplayAnnotations(gFeature, current_seq);
+            this.glu.loadAndDisplayAnnotations(gFeature, current_seq, feature_model);
         }
         Application.getSingleton().setStatus("", false);
 
@@ -363,15 +364,23 @@ final class GeneralLoadView extends JComponent
      * Create the table with the list of features and their status.
      */
     private void createFeaturesTable(String genomeVersionName) {
-        System.out.println("Creating new table with chrom " + (current_seq == null ? null : current_seq.getID()));
-        types_panel.removeAll();
+        if (DEBUG_EVENTS) {
+            System.out.println("Creating new table with chrom " + (current_seq == null ? null : current_seq.getID()));
+        }
+
         List<GenericFeature> features = this.glu.getFeatures(genomeVersionName);
-        FeaturesTableModel model = new FeaturesTableModel(this, features, current_seq);
-        this.feature_table = new JTable(model);
-        TableWithVisibleComboBox.setComboBoxEditor(this.feature_table, 0, FeaturesTableModel.loadChoices);
-        //JScrollPane scrollPane = new JScrollPane(table);
-        //types_panel.add(scrollPane);
+        feature_model = new FeaturesTableModel(this, features, current_seq);
+        
+        this.feature_table = new JTable(feature_model);
+        this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
+        this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);   // Allow columns to be resized
+
+        // Don't enable combo box for full genome sequence
+        TableWithVisibleComboBox.setComboBoxEditor(this.feature_table, 0, FeaturesTableModel.loadChoices, !this.IsGenomeSequence());
+
+        types_panel.removeAll();
         types_panel.add(this.feature_table);
+        feature_model.fireTableDataChanged();
         types_panel.invalidate();
     }
 
@@ -407,7 +416,7 @@ final class GeneralLoadView extends JComponent
             if (DEBUG_EVENTS) {
                 System.out.println("Selected : " + gFeature.featureName);
             }
-            this.glu.loadAndDisplayAnnotations(gFeature, current_seq);
+            this.glu.loadAndDisplayAnnotations(gFeature, current_seq, feature_model);
         }
         
     }
@@ -431,6 +440,10 @@ final class GeneralLoadView extends JComponent
      * by looking at the features' load strategies.
      */
     void changeVisibleDataButtonIfNecessary(List<GenericFeature> features) {
+        if (IsGenomeSequence()) {
+            return;
+            // Currently not enabling this button for the full sequence.
+        }
         boolean enabled = false;
         for(GenericFeature gFeature : features) {
             if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
@@ -444,7 +457,7 @@ final class GeneralLoadView extends JComponent
         }
     }
 
-    private boolean IsGenomeSequence() {
+    boolean IsGenomeSequence() {
         // hardwiring names for genome and encode virtual seqs, need to generalize this soon
         final String seqID = current_seq == null ? null : current_seq.getID();
         final String GENOME_SEQ_ID = "genome";

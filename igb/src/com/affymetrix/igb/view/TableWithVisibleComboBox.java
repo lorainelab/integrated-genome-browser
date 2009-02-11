@@ -5,6 +5,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  * A table with an always-visible combo box.
@@ -16,11 +17,13 @@ final class TableWithVisibleComboBox {
      * Set the columm to use the ComboBox editor and renderer
      * @param items
      */
-    static void setComboBoxEditor(JTable table, int column, String[] items) {
+    static void setComboBoxEditor(JTable table, int column, String[] items, boolean enabled) {
         JComboBox editor = new JComboBox(items);
         DefaultCellEditor dce = new DefaultCellEditor(editor);
-        table.getColumnModel().getColumn(column).setCellEditor(dce);
-        table.getColumnModel().getColumn(column).setCellRenderer(new ComboBoxRenderer());
+        TableColumn c = table.getColumnModel().getColumn(column);
+        c.setCellEditor(dce);
+        c.setCellRenderer(new ComboBoxRenderer());
+        ((JComboBox)c.getCellRenderer()).setEnabled(enabled);
     }
 
     private static final class ComboBoxRenderer extends JComboBox implements TableCellRenderer {
@@ -31,8 +34,6 @@ final class TableWithVisibleComboBox {
             setBorder(null);
             removeAllItems();
             addItem(value);
-
-            // TODO: Make row size of combo box larger.
 
             return this;
         }

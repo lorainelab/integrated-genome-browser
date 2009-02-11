@@ -69,7 +69,7 @@ public class GeneralLoadUtils {
      */
 //    final double default_genome_min = -2100200300;
     final double default_genome_min = 0;
-    final boolean DEBUG_VIRTUAL_GENOME = true;
+    final boolean DEBUG_VIRTUAL_GENOME = false;
 
     Class server_type;  // Is the server Das (DasServerInfo), Das/2 (Das2ServerInfo), or Quickload?
 
@@ -648,60 +648,16 @@ public class GeneralLoadUtils {
 
 
     /**
-     *  addEncodeVirtualSeq.
-     *  adds virtual CompositeBioSeq which is composed from all the ENCODE regions.
-     *  assumes urlpath resolves to bed file for ENCODE regions
-     */
-    /*public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, final String urlpath) {
-        InputStream istr = null;
-        Application.getApplicationLogger().fine("$$$$$ adding virtual encode seq to seq group");
-        // assume it's a bed file...
-        BedParser parser = new BedParser();
-        try {
-            istr = LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
-            //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-            List<SeqSymmetry> regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
-            SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
-            MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
-
-            int min_base_pos = 0;
-            int current_base = min_base_pos;
-            int spacer = 20000;
-            for (SeqSymmetry esym : regions) {
-                SeqSpan espan = esym.getSpan(0);
-                int elength = espan.getLength();
-
-                SimpleSymWithProps child = new SimpleSymWithProps();
-                String cid = esym.getID();
-                if (cid != null) {
-                    child.setID(cid);
-                }
-                child.addSpan(espan);
-                child.addSpan(new SimpleSeqSpan(current_base, current_base + elength, virtual_seq));
-                mapping.addChild(child);
-                current_base = current_base + elength + spacer;
-            }
-            virtual_seq.setBounds(min_base_pos, current_base);
-            mapping.addSpan(new SimpleSeqSpan(min_base_pos, current_base, virtual_seq));
-            virtual_seq.setComposition(mapping);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            GeneralUtils.safeClose(istr);
-        }
-        return;
-    }*/
-
-    /**
      * Load and display annotations (requested for the specific feature).
      * Adjust the load status accordingly.
      * @param gFeature
      * @return
      */
-    public boolean loadAndDisplayAnnotations(GenericFeature gFeature, AnnotatedBioSeq cur_seq) {
+    public boolean loadAndDisplayAnnotations(GenericFeature gFeature, AnnotatedBioSeq cur_seq, FeaturesTableModel model) {
+
         // We don't validate previous load status.  It's assumed that we want to reload the feature.
 
-        gFeature.LoadStatusMap.put(cur_seq, LoadStatus.UNLOADED);
+        SetLoadStatus(gFeature,cur_seq,model,LoadStatus.UNLOADED);
         
         MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
 		MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq)gviewer.getViewSeq();
@@ -732,7 +688,7 @@ public class GeneralLoadUtils {
 
         Class serverClass = gFeature.gVersion.gServer.serverClass;
         if (serverClass == Das2ServerInfo.class) {
-            SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADING);
+            SetLoadStatus(gFeature,cur_seq,model,LoadStatus.LOADING);
             if (loadDAS2Annotations(
                     selected_seq,
                     gFeature.featureName,
@@ -740,26 +696,26 @@ public class GeneralLoadUtils {
                     gviewer,
                     visible_seq,
                     overlap)) {
-                SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADED);
+                SetLoadStatus(gFeature,cur_seq,model,LoadStatus.LOADED);
                 return true;
             }
-            SetLoadStatus(gFeature,cur_seq,LoadStatus.UNLOADED);
+            SetLoadStatus(gFeature,cur_seq,model,LoadStatus.UNLOADED);
             return false;
         }
         if (serverClass == DasServerInfo.class) {
             //TODO
             List<String> featureList = new ArrayList<String>(1);
             featureList.add(gFeature.featureName);
-            SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADING);
+            SetLoadStatus(gFeature,cur_seq,model,LoadStatus.LOADING);
             if (DasClientOptimizer.loadAnnotations(
                     gFeature.gVersion.gServer.URL,
                     "",
                     overlap,
                     featureList)) {
-                SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADED);
+                SetLoadStatus(gFeature,cur_seq,model,LoadStatus.LOADED);
                 return true;
             }
-            SetLoadStatus(gFeature,cur_seq,LoadStatus.UNLOADED);
+            SetLoadStatus(gFeature,cur_seq,model,LoadStatus.UNLOADED);
             return false;
         }
         if (serverClass == QuickLoadServerModel.class) {
@@ -773,7 +729,7 @@ public class GeneralLoadUtils {
             BufferedInputStream bis = null;
 
             try {
-                SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADING);
+                SetLoadStatus(gFeature,cur_seq,model,LoadStatus.LOADING);
                 istr = LocalUrlCacher.getInputStream(annot_url, true);
                 if (istr != null) {
                     bis = new BufferedInputStream(istr);
@@ -790,7 +746,7 @@ public class GeneralLoadUtils {
                         LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeq());
                     }
 
-                    SetLoadStatus(gFeature,cur_seq,LoadStatus.LOADED);
+                    SetLoadStatus(gFeature,cur_seq,model,LoadStatus.LOADED);
                     return true;
                 }
             } catch (Exception ex) {
@@ -800,7 +756,7 @@ public class GeneralLoadUtils {
                 GeneralUtils.safeClose(istr);
             }
 
-            SetLoadStatus(gFeature,cur_seq,LoadStatus.UNLOADED);
+            SetLoadStatus(gFeature,cur_seq,model,LoadStatus.UNLOADED);
             return false;
         }
 
@@ -808,8 +764,9 @@ public class GeneralLoadUtils {
         return false;
     }
 
-    private static void SetLoadStatus(GenericFeature gFeature, AnnotatedBioSeq aseq, LoadStatus ls) {
+    private static void SetLoadStatus(GenericFeature gFeature, AnnotatedBioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
         gFeature.LoadStatusMap.put(aseq, ls);
+
     }
 
     /**

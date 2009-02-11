@@ -17,6 +17,7 @@ import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 public final class SeqResiduesLoader {
 
@@ -110,13 +111,7 @@ public final class SeqResiduesLoader {
             loaded = false;
             ex.printStackTrace();
         } finally {
-            try {
-                if (istr != null) {
-                    istr.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            GeneralUtils.safeClose(istr);
         }
 
         return loaded;
@@ -148,13 +143,7 @@ public final class SeqResiduesLoader {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            try {
-                if (istr != null) {
-                    istr.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            GeneralUtils.safeClose(istr);
         }
 
         return null;
@@ -200,10 +189,7 @@ public final class SeqResiduesLoader {
             ErrorHandler.errorPanel("Error",
                     "cannot access sequence:\n" + "seq = '" + seq_name + "'\n" + "version = '" + genome_name + "'\n" + "server = " + root_url, gviewer, ex);
         } finally {
-            try {
-                istr.close();
-            } catch (Exception e) {
-            }
+            GeneralUtils.safeClose(istr);
         }
         return loaded;
     }

@@ -263,7 +263,7 @@ public class Das2VersionedSource {
     /** Get regions from da2s server. */
     protected synchronized void initSegments() {
         String region_request;
-        Das2Capability segcap = (Das2Capability) getCapability(SEGMENTS_CAP_QUERY);
+        Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
         region_request = segcap.getRootURI().toString();
         try {
             System.out.println("Das2 Segments Request: " + region_request);

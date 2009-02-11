@@ -233,13 +233,13 @@ public class TierLabelManager {
           List<GraphGlyph> graphs = getContainedGraphs(tlg);
           double tier_height = style.getHeight();
           for (int j=0; j<graphs.size(); j++) {
-            GraphGlyph graph = (GraphGlyph) graphs.get(j);
+            GraphGlyph graph = graphs.get(j);
             graph.getGraphState().getTierStyle().setHeight(tier_height);
           }
         }
         
         for (int j=0; j<tlg.getReferenceTier().getScene().getViews().size(); j++) {
-          tlg.getReferenceTier().pack((ViewI) tlg.getReferenceTier().getScene().getViews().get(j));
+          tlg.getReferenceTier().pack(tlg.getReferenceTier().getScene().getViews().get(j));
         }
       }
     }

@@ -75,7 +75,7 @@ public class DasServerInfo {
 
   public String getCapability(String cap) {
     if (!initialized) { initialize(); }
-    return (String) capabilities.get(cap);
+    return capabilities.get(cap);
   }
 
   public Map<String,DasSource> getDataSources() {

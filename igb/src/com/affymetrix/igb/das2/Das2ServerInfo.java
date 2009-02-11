@@ -147,7 +147,7 @@ public class Das2ServerInfo  {
 		Iterator siter = this.getSources().values().iterator();
 		while (siter.hasNext()) {
 			Das2Source source = (Das2Source)siter.next();
-			Das2VersionedSource version = (Das2VersionedSource)source.getVersion(version_id);
+			Das2VersionedSource version = source.getVersion(version_id);
 			if (version != null) {
 				return version;
 			}
@@ -206,7 +206,7 @@ public class Das2ServerInfo  {
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
 	public synchronized void login(){
-		ArrayList log = new ArrayList();
+		ArrayList<String> log = new ArrayList<String>();
 		log.add("Attempting login to server: "+server_uri);
 		try{
 			//first check to see if server authenticates 

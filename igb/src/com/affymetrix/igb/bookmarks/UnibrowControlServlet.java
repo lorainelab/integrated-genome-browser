@@ -197,7 +197,7 @@ public class UnibrowControlServlet {
 	  if (DEBUG_DAS2_LOAD)  { System.out.println("     server: " + server.getID()); }
 	  server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
 
-	  Das2VersionedSource version = (Das2VersionedSource)Das2Discovery.getCapabilityMap().get(cap_url);
+	  Das2VersionedSource version = Das2Discovery.getCapabilityMap().get(cap_url);
 	  if (DEBUG_DAS2_LOAD)  { System.out.println("     version: " + version.getID()); }
 	  Das2Type dtype = version.getTypes().get(type_uri);
 	  Das2Region segment = version.getSegments().get(seg_uri);

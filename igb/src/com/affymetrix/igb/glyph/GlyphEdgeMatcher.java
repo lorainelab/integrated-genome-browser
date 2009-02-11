@@ -81,7 +81,7 @@ public class GlyphEdgeMatcher  {
 
   private void matchEdges(NeoMapI map, GlyphI query, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
     for (int k=0; k<target_glyphs.size(); k++) {
-      GlyphI target = (GlyphI) target_glyphs.get(k);
+      GlyphI target = target_glyphs.get(k);
       matchEdges(map, query, target, match_glyphs);
     }
   }

@@ -72,9 +72,10 @@ public class UrlLoaderThread extends Thread {
     this.file_extensions = file_extensions;
   }
 
+    @Override
   public void run() {
     ThreadProgressMonitor monitor = null;
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     try {
       // should really move to using gmodel's currently selected  _group_ of sequences rather than
@@ -241,7 +242,7 @@ public class UrlLoaderThread extends Thread {
   static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String file_extension, String type)
     throws java.net.UnknownHostException, java.io.IOException {
 
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     //TODO: This is an important part of the data loading code, but it could be improved.
 

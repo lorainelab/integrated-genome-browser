@@ -125,7 +125,7 @@ public class AffyTieredMap extends NeoMap {
 
   public TierGlyph getTier(String tier_name) {
     for (int i=0; i<tiers.size(); i++) {
-      TierGlyph tgl = (TierGlyph)tiers.get(i);
+      TierGlyph tgl = tiers.get(i);
       if (tier_name.equals(tgl.getLabel())) {
 	return tgl;
       }
@@ -192,14 +192,14 @@ public class AffyTieredMap extends NeoMap {
     //    System.out.println("packTiers: " + packCount++);
     if (full_repack) {
       for (int i=0; i<tiers.size(); i++) {
-        TierGlyph mtg = (TierGlyph) tiers.elementAt(i);
+        TierGlyph mtg = tiers.elementAt(i);
         mtg.pack(getView());
       }
     }
 
     // Now hide or show tiers based on which checkboxes are selected
     for (int i=0; i<tiers.size(); i++) {
-      TierGlyph mtg = (TierGlyph) tiers.elementAt(i);
+      TierGlyph mtg = tiers.elementAt(i);
       IAnnotStyle style = mtg.getAnnotStyle();
       
       if (mtg.getChildCount() <= 0) {
@@ -232,7 +232,7 @@ public class AffyTieredMap extends NeoMap {
     //    System.out.println("in packTiers(), bounding coordbox: " + mbox);
     TierGlyph mtg;
     for (int i=0; i<tiers.size(); i++) {
-      mtg = (TierGlyph) tiers.elementAt(i);
+      mtg = tiers.elementAt(i);
       // don't make room if tier is'nt visible, or if it's hidden
       if ( (! mtg.isVisible()) ||
 	   ((mtg.getState() == TierGlyph.HIDDEN))) {
@@ -267,7 +267,7 @@ public class AffyTieredMap extends NeoMap {
       mtg = null;
 
       for (int i=0; i<tiers.size(); i++) {
-        mtg = (TierGlyph) tiers.elementAt(i);
+        mtg = tiers.elementAt(i);
 	if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {
 	  //	  System.out.println("still trying to hide tier: " + mtg.getLabel());
 	  continue;
@@ -310,7 +310,7 @@ public class AffyTieredMap extends NeoMap {
       return;
     }
     for (int i=0; i<tiers.size(); i++) {
-      TierGlyph tier = (TierGlyph)tiers.elementAt(i);
+      TierGlyph tier = tiers.elementAt(i);
       Rectangle2D tbox = tier.getCoordBox();
       tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
     }
@@ -343,7 +343,7 @@ public class AffyTieredMap extends NeoMap {
   protected boolean hasFixedTier() {
     int tierCount = tiers.size();
     for (int i=0; i<tierCount; i++) {
-      TierGlyph mtg = (TierGlyph)tiers.elementAt(i);
+      TierGlyph mtg = tiers.elementAt(i);
       if (mtg instanceof TransformTierGlyph) {
 	TransformTierGlyph transtier = (TransformTierGlyph)mtg;
 	if (transtier.hasFixedPixelHeight()) {

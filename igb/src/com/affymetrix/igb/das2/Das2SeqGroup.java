@@ -38,7 +38,8 @@ public class Das2SeqGroup extends AnnotatedSeqGroup {
    *  Will not return null.  The list is in the same order as in
    *  {@link #getSeq(int)}.
    */
-  public List getSeqList() {
+    @Override
+  public List<SmartAnnotBioSeq> getSeqList() {
     ensureSeqsLoaded();
     return super.getSeqList();
   }

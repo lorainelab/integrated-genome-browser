@@ -95,7 +95,7 @@ public class Bookmark implements Serializable {
     if (query != null) {
       StringTokenizer st = new StringTokenizer(query, "&");
       while (st.hasMoreTokens()) {
-        String token = (String) st.nextToken();
+        String token = st.nextToken();
         int ind_1 = token.indexOf('=');
 
         String key, value;
@@ -145,7 +145,7 @@ public class Bookmark implements Serializable {
     if (key == null || key.trim().length()==0) {
       return;
     }
-    String[] array = (String[]) map.get(key);
+    String[] array = map.get(key);
     if (array == null) {
       String[] new_array = new String[] {value};
       map.put(key, new_array);

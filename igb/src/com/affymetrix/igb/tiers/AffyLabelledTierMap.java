@@ -158,7 +158,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
 
   public void removeTier(TierGlyph toRemove) {
     super.removeTier(toRemove);
-    GlyphI label_glyph = (GlyphI)labelmap.getItem(toRemove);
+    GlyphI label_glyph = labelmap.getItem(toRemove);
     if (label_glyph != null) {
       labelmap.removeItem(label_glyph);
       label_glyphs.remove(label_glyph);

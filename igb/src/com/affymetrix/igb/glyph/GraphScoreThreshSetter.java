@@ -754,7 +754,7 @@ public class GraphScoreThreshSetter extends JPanel
   int pickle_count = 0;
   public void pickleThreshold(SmartGraphGlyph sgg) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 
     nformat2.setPositivePrefix("+");
 

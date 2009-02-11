@@ -79,7 +79,7 @@ public class DasClientOptimizer {
 
       MutableSeqSymmetry cont_sym = (MutableSeqSymmetry)iseq.getAnnotation(long_type);
       if (cont_sym == null) {
-        cont_sym = (MutableSeqSymmetry)iseq.addAnnotation(long_type);
+        cont_sym = iseq.addAnnotation(long_type);
       }
       int prevcount = cont_sym.getChildCount();
       SeqSymmetry prev_union = null;

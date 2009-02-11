@@ -45,12 +45,12 @@ public class ThreadProgressMonitor {
     if (cancel_text == null) {cancel_text = "Cancel";}
     String ok_text = UIManager.getString("OptionPane.okButtonText");
     if (ok_text == null) {ok_text = "OK";}
-    Vector button_vector = new Vector(2);
+    Vector<String> button_vector = new Vector<String>(2);
     if (can_dismiss) {button_vector.add(ok_text);}
     if (can_cancel) {button_vector.add(cancel_text);}
     final String cancel = cancel_text;
     final String ok = ok_text;
-    String[] buttons = (String[]) button_vector.toArray(new String[button_vector.size()]);
+    String[] buttons = button_vector.toArray(new String[button_vector.size()]);
     this.thread = t;
     this.opt_pane = new JOptionPane(
       message,

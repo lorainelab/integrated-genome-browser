@@ -30,7 +30,7 @@ public class Das2WritebackVersionedSource extends Das2VersionedSource  {
   }
 
   public boolean writeAnnotations(ArrayList annots) {
-    Das2Capability writecap = (Das2Capability)getCapability(WRITEBACK_CAP_QUERY);
+    Das2Capability writecap = getCapability(WRITEBACK_CAP_QUERY);
     String write_url = writecap.getRootURI().toString();
     return false;
   }

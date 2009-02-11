@@ -446,8 +446,8 @@ public class BookMarkAction implements ActionListener, MenuListener {
   }
 
   void bookmarkCurrentPosition(boolean include_graphs) {
-    AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    AffyTieredMap map = gviewer.getSeqMap();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 
     if (aseq == null) {
       uni.errorPanel("Error", "Nothing to bookmark");

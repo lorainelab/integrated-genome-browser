@@ -132,7 +132,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     //    int index = handler.getTierIndex(tierA);
     String method = "not: " + tierA.getLabel();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     List listA = new ArrayList();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
@@ -166,7 +166,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
       method = "B not A:" + tierB.getLabel() + ", " + tierA.getLabel();
     }
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     List listA = new ArrayList();
     List listB = new ArrayList();
 
@@ -204,7 +204,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     //    int index = handler.getTierIndex(tierB);
     String method = "xor: " + tierA.getLabel() + ", " + tierB.getLabel();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     List listA = new ArrayList();
     List listB = new ArrayList();
 
@@ -235,7 +235,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
   public void addUnionTier(List tiers) {
     StringBuffer meth = new StringBuffer();
     meth.append("union: ");
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     List syms = new ArrayList();
     for (int t=0; t<tiers.size(); t++) {
       TierGlyph tier = (TierGlyph) tiers.get(t);
@@ -260,7 +260,7 @@ public class TierArithmetic implements TierLabelManager.PopupListener {
     //    int index = handler.getTierIndex(tierB);
     String method = "intersect: " + tierA.getLabel() + ", " + tierB.getLabel();
 
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     List listA = new ArrayList();
     List listB = new ArrayList();
     for (int i=0; i<tierA.getChildCount(); i++) {

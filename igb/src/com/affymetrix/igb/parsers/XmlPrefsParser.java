@@ -213,7 +213,7 @@ public class XmlPrefsParser {
    * These will be LinkedHashMap's, to guarantee the ordering of keys.
    */
   public static Map getNamedMap(Map<String,Map> prefs_hash, String name) {
-    Map m = (Map) prefs_hash.get(name);
+    Map m = prefs_hash.get(name);
     if (m == null) {
       m = new LinkedHashMap();
       prefs_hash.put(name, m);

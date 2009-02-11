@@ -399,7 +399,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
 
     List the_list = new ArrayList(4); // it is usually a short list, so initialize with a small length
     MutableAnnotatedBioSeq current_seq =
-      (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+        gmodel.getSelectedSeq();
 
     if (current_seq == null) {
       ErrorHandler.errorPanel("You must first load a sequence");
@@ -649,7 +649,7 @@ public class DasFeaturesAction2 extends org.xml.sax.helpers.DefaultHandler imple
       }
 
     MutableAnnotatedBioSeq current_seq =
-      (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+            gmodel.getSelectedSeq();
     String seqid = (String)select_seqCB.getSelectedItem();
     if (SHOW_DAS_QUERY_GENOMETRY) {
       if (current_seq.equals(seqid) || lookup.isSynonym(current_seq.getID(), seqid)) {

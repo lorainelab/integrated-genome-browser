@@ -582,7 +582,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     int option = chooser.showSaveDialog(null);
     if (option == JFileChooser.APPROVE_OPTION) {
       FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
       BufferedWriter bw = null;
       try {
 	File fil = chooser.getSelectedFile();
@@ -618,7 +618,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     int option = chooser.showSaveDialog(null);
     if (option == JFileChooser.APPROVE_OPTION) {
       FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
       BufferedWriter bw = null;
       try {
 	File fil = chooser.getSelectedFile();
@@ -650,7 +650,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   public void addSymCoverageTier(TierGlyph atier) {
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
 
     List syms = new ArrayList(child_count);
@@ -706,7 +706,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       return;
     }
 
-    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     String graphid = "summary: " + atier.getLabel();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, graphid);
     gsym.setGraphName("depth: " + atier.getLabel());

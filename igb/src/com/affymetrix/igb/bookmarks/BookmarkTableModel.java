@@ -34,7 +34,7 @@ public class BookmarkTableModel extends AbstractTableModel {
     }
   }
   
-  List duples = Collections.EMPTY_LIST;
+  List<Duple> duples = Collections.EMPTY_LIST;
   String[] names = {"Parameter", "Value"};
   
   /** The number of extra rows to display to give users room to
@@ -53,11 +53,11 @@ public class BookmarkTableModel extends AbstractTableModel {
     if (map == null) {
       throw new IllegalArgumentException("Map was null");
     }
-    duples = new ArrayList();
+    duples = new ArrayList<Duple>();
     Iterator keys = map.keySet().iterator();
     while (keys.hasNext()) {
       String key = (String) keys.next();
-      String[] value = (String[]) map.get(key);
+      String[] value = map.get(key);
       if (value.length == 0) {
        //System.out.println("******************* length 0 for: "+key);
        duples.add(new Duple(key, ""));
@@ -94,7 +94,7 @@ public class BookmarkTableModel extends AbstractTableModel {
 
   public Object getValueAt(int row, int col) {
     if (row < duples.size()) {
-      Duple duple = (Duple) duples.get(row);
+      Duple duple = duples.get(row);
       if (col==0) {
         return duple.a;
       } else if (col==1) {
@@ -106,7 +106,7 @@ public class BookmarkTableModel extends AbstractTableModel {
 
   public void setValueAt(Object aValue, int row, int col) {
     String s = (aValue == null ? "" : aValue.toString());
-    Duple duple = (Duple) duples.get(row);
+    Duple duple = duples.get(row);
     if (col==0) {
       duple.a = s;
     } else if (col==1) {

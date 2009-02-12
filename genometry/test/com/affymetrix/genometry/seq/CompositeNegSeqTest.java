@@ -18,48 +18,48 @@ public class CompositeNegSeqTest {
 	static final CompositeNegSeq seq         = new CompositeNegSeq("seq");
 	static final CompositeNegSeq seq_len     = new CompositeNegSeq("len", 500);
 
-    public CompositeNegSeqTest() {
-    }
+	public CompositeNegSeqTest() {
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@Before
+		public void setUp() {
+		}
 
-    @After
-    public void tearDown() {
-    }
+	@After
+		public void tearDown() {
+		}
 
 	/**
 	 * Test if CompositeNegSeq(String) will accept a null string.
 	 */
 	@Test
-	public void testConstructor1() {
-		constructorTest(null, "Constructor accepted a null id");
-	}
+		public void testConstructor1() {
+			constructorTest(null, "Constructor accepted a null id");
+		}
 
 	/**
 	 * Test if CompositeNegSeq(String, int) will accept a null string.
 	 */
 	@Test
-	public void testConstructor2() {
-		constructorTest(null, 42, "Constructor accepted a null id");
-	}
+		public void testConstructor2() {
+			constructorTest(null, 42, "Constructor accepted a null id");
+		}
 
 	/**
 	 * Test if CompositeNegSeq(String, len) will accept a negative length.
 	 */
 	@Test
-	public void testConstructor3() {
-		constructorTest("neg_len", -500, "Constructor accepted a negative length");
-	}
+		public void testConstructor3() {
+			constructorTest("neg_len", -500, "Constructor accepted a negative length");
+		}
 
 	/**
 	 * Test if CompositeNegSeq(String, int) will accept a zero length.
 	 */
 	@Test
-	public void testConstructor4() {
-		constructorTest("zero_len", 0, "Constructor accepted a zero length");
-	}
+		public void testConstructor4() {
+			constructorTest("zero_len", 0, "Constructor accepted a zero length");
+		}
 
 	/**
 	 * private function to aid in testing constructor
@@ -88,53 +88,53 @@ public class CompositeNegSeqTest {
 	 * the expected manner
 	 */
 	@Test
-	public void testSetBounds1() {
-		CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
+		public void testSetBounds1() {
+			CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
 
-		assertEquals(   0, testseq.getMin());
-		assertEquals(1000, testseq.getMax());
+			assertEquals(   0, testseq.getMin());
+			assertEquals(1000, testseq.getMax());
 
-		testseq.setBounds(500, 1500);
-		assertEquals( 500, testseq.getMin());
-		assertEquals(1500, testseq.getMax());
+			testseq.setBounds(500, 1500);
+			assertEquals( 500, testseq.getMin());
+			assertEquals(1500, testseq.getMax());
 
-		assertEquals(1000, testseq.getLength());
-		assertEquals(1000, testseq.getMax() - testseq.getMin());
-		assertEquals(1000d, testseq.getLengthDouble(), 0.00001d);
+			assertEquals(1000, testseq.getLength());
+			assertEquals(1000, testseq.getMax() - testseq.getMin());
+			assertEquals(1000d, testseq.getLengthDouble(), 0.00001d);
 
-	}
+		}
 
 	/**
 	 * Test setBounds(int, int) to see what occurs if min == max
 	 */
 	@Test
-	public void testSetBounds2() {
-		CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
+		public void testSetBounds2() {
+			CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
 
-		assertEquals(   0, testseq.getMin());
-		assertEquals(1000, testseq.getMax());
+			assertEquals(   0, testseq.getMin());
+			assertEquals(1000, testseq.getMax());
 
-		try {
-			testseq.setBounds(314159,314159);
-			fail("setBounds(int, int) allowed min == max");
-		} catch (IllegalArgumentException e) { }
-	}
+			try {
+				testseq.setBounds(314159,314159);
+				fail("setBounds(int, int) allowed min == max");
+			} catch (IllegalArgumentException e) { }
+		}
 
 	/**
 	 * Test setBounds(int, int) to see what occurs if min &gt; max
 	 */
 	@Test
-	public void testSetBounds3() {
-		CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
+		public void testSetBounds3() {
+			CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
 
-		assertEquals(   0, testseq.getMin());
-		assertEquals(1000, testseq.getMax());
+			assertEquals(   0, testseq.getMin());
+			assertEquals(1000, testseq.getMax());
 
-		try {
-			testseq.setBounds(100, -1000);
-			fail("setBounds(int, int) allowed min > max");
-		} catch (IllegalArgumentException e) { }
-	}
+			try {
+				testseq.setBounds(100, -1000);
+				fail("setBounds(int, int) allowed min > max");
+			} catch (IllegalArgumentException e) { }
+		}
 
 	/**
 	 * Test setBounds(int, int) using a min and max whose values are
@@ -142,24 +142,24 @@ public class CompositeNegSeqTest {
 	 * difference is greater than Integer.MAX_VALUE.
 	 */
 	@Test
-	public void testSetBounds4() {
-		CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
+		public void testSetBounds4() {
+			CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
 
-		assertEquals(   0, testseq.getMin());
-		assertEquals(1000, testseq.getMax());
+			assertEquals(   0, testseq.getMin());
+			assertEquals(1000, testseq.getMax());
 
-		try {
-			testseq.setBounds(-2147483640, 2147483640);
-		} catch (IllegalArgumentException e) {
-			fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+			try {
+				testseq.setBounds(-2147483640, 2147483640);
+			} catch (IllegalArgumentException e) {
+				fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+			}
+
+			assertEquals(-2147483640, testseq.getMin());
+			assertEquals(2147483640, testseq.getMax());
+
+			assertEquals(4294967280d, testseq.getLengthDouble(), 0.00001d);
+			assertEquals(4294967280d, (double)testseq.getMax() - (double)testseq.getMin(), 0.00001d);
 		}
-
-		assertEquals(-2147483640, testseq.getMin());
-		assertEquals(2147483640, testseq.getMax());
-
-		assertEquals(4294967280d, testseq.getLengthDouble(), 0.00001d);
-		assertEquals(4294967280d, (double)testseq.getMax() - (double)testseq.getMin(), 0.00001d);
-	}
 
 	/**
 	 * Test setBoundsDouble(double, double) using numbers above
@@ -171,25 +171,25 @@ public class CompositeNegSeqTest {
 	 * wrong
 	 */
 	@Test
-	public void testSetBoundsDouble1() {
-		CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
+		public void testSetBoundsDouble1() {
+			CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
 
-		assertEquals(   0, testseq.getMin());
-		assertEquals(1000, testseq.getMax());
+			assertEquals(   0, testseq.getMin());
+			assertEquals(1000, testseq.getMax());
 
-		try {
-			testseq.setBoundsDouble(3.14159e42d, 3.14159e45d);
-		} catch (IllegalArgumentException e) {
-			fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+			try {
+				testseq.setBoundsDouble(3.14159e42d, 3.14159e45d);
+			} catch (IllegalArgumentException e) {
+				fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+			}
+
+			/* These will not work until CompositeNegSeq is fixed */
+			/* assertEquals((double)testseq.getMin(), 3.14159e42d, 0.00001d); */
+			/* assertEquals((double)testseq.getMax(), 3.14159e45d, 0.00001d); */
+
+			assertEquals(3.13844841e45d, testseq.getLengthDouble(), 0.00001d);
+			assertEquals(3.13844841e45d, (double)testseq.getMax() - (double)testseq.getMin(), 0.00001d);
 		}
-
-		/* These will not work until CompositeNegSeq is fixed */
-		/* assertEquals((double)testseq.getMin(), 3.14159e42d, 0.00001d); */
-		/* assertEquals((double)testseq.getMax(), 3.14159e45d, 0.00001d); */
-
-		assertEquals(3.13844841e45d, testseq.getLengthDouble(), 0.00001d);
-		assertEquals(3.13844841e45d, (double)testseq.getMax() - (double)testseq.getMin(), 0.00001d);
-	}
 
 	/**
 	 * Test setBoundsDouble(double, double) using a min and max whose
@@ -197,22 +197,22 @@ public class CompositeNegSeqTest {
 	 * whose difference is greater than Integer.MAX_VALUE.
 	 */
 	@Test
-	public void testSetBoundsDouble2() {
-		CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
+		public void testSetBoundsDouble2() {
+			CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
 
-		assertEquals(   0, testseq.getMin());
-		assertEquals(1000, testseq.getMax());
+			assertEquals(   0, testseq.getMin());
+			assertEquals(1000, testseq.getMax());
 
-		try {
-			testseq.setBoundsDouble(-2147483640d, 2147483640d);
-		} catch (IllegalArgumentException e) {
-			fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+			try {
+				testseq.setBoundsDouble(-2147483640d, 2147483640d);
+			} catch (IllegalArgumentException e) {
+				fail("setBoundsDouble(double, double) failed:" + e.getMessage());
+			}
+
+			assertEquals(-2147483640, testseq.getMin());
+			assertEquals(2147483640, testseq.getMax());
+
+			assertEquals(4294967280d, testseq.getLengthDouble(), 0.00001d);
+			assertEquals(4294967280d, (double)testseq.getMax() - (double)testseq.getMin(), 0.00001d);
 		}
-
-		assertEquals(-2147483640, testseq.getMin());
-		assertEquals(2147483640, testseq.getMax());
-
-		assertEquals(4294967280d, testseq.getLengthDouble(), 0.00001d);
-		assertEquals(4294967280d, (double)testseq.getMax() - (double)testseq.getMin(), 0.00001d);
-	}
 }

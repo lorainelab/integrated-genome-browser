@@ -14,6 +14,6 @@
 package com.affymetrix.genometryImpl.style;
 
 public interface StateProvider {
-  public IAnnotStyleExtended getAnnotStyle(String name);
-  public GraphStateI getGraphState(String name);
+	public IAnnotStyleExtended getAnnotStyle(String name);
+	public GraphStateI getGraphState(String name);
 }

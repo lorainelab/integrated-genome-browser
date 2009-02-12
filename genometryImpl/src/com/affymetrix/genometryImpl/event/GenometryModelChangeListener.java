@@ -14,5 +14,5 @@
 package com.affymetrix.genometryImpl.event;
 
 public interface GenometryModelChangeListener {
-  public void genometryModelChanged(GenometryModelChangeEvent evt);
+	public void genometryModelChanged(GenometryModelChangeEvent evt);
 }

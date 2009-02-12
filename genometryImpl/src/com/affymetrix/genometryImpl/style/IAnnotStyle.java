@@ -21,52 +21,52 @@ import java.util.Map;
  * whether the tier contains annotation data or graph data.
  */
 public interface IAnnotStyle {
-  public Color getColor();
-  public void setColor(Color c);
-  
-  public boolean getShow();
-  public void setShow(boolean b);
-  
-  public String getUniqueName();
-  
-  public String getHumanName();
-  public void setHumanName(String s);
-  
-  public Color getBackground();
-  public void setBackground(Color c);
-  
-  public boolean getCollapsed();
-  public void setCollapsed(boolean b);
+	public Color getColor();
+	public void setColor(Color c);
 
-  /** Gets maximum rows of annotations to stack in the tier. */
-  public int getMaxDepth();
-  /** Sets maximum rows of annotations to stack in the tier. */
-  public void setMaxDepth(int m);
+	public boolean getShow();
+	public void setShow(boolean b);
 
-  public void setHeight(double h);
-  public double getHeight();
-  
-  public void setY(double y);
-  public double getY();
+	public String getUniqueName();
 
-  /** Whether setCollapsed() is allowed. In some styles collapse/expand has
-   *  no meaning.  So getCollapsed() and getMaxDepth() has no meaning for those
-   *  styles.
-   */
-  public boolean getExpandable();
-  public void setExpandable(boolean b);
-  
-  /** Indicated whether this tier will be used for a graph. */
-  public boolean isGraphTier();
-  public void setGraphTier(boolean b);
+	public String getHumanName();
+	public void setHumanName(String s);
 
-  /**
-   *  Gets a reference to a Map that can be used to store any arbitrary 
-   *  extra properties.  This can be used to
-   *  store all the properties of a UCSC track-line, for example.
-   *  (These properties are not persisted in the java prefs system.)
-   */
-  public Map<String,Object> getTransientPropertyMap();
-  
-  public void copyPropertiesFrom(IAnnotStyle s);
+	public Color getBackground();
+	public void setBackground(Color c);
+
+	public boolean getCollapsed();
+	public void setCollapsed(boolean b);
+
+	/** Gets maximum rows of annotations to stack in the tier. */
+	public int getMaxDepth();
+	/** Sets maximum rows of annotations to stack in the tier. */
+	public void setMaxDepth(int m);
+
+	public void setHeight(double h);
+	public double getHeight();
+
+	public void setY(double y);
+	public double getY();
+
+	/** Whether setCollapsed() is allowed. In some styles collapse/expand has
+	 *  no meaning.  So getCollapsed() and getMaxDepth() has no meaning for those
+	 *  styles.
+	 */
+	public boolean getExpandable();
+	public void setExpandable(boolean b);
+
+	/** Indicated whether this tier will be used for a graph. */
+	public boolean isGraphTier();
+	public void setGraphTier(boolean b);
+
+	/**
+	 *  Gets a reference to a Map that can be used to store any arbitrary 
+	 *  extra properties.  This can be used to
+	 *  store all the properties of a UCSC track-line, for example.
+	 *  (These properties are not persisted in the java prefs system.)
+	 */
+	public Map<String,Object> getTransientPropertyMap();
+
+	public void copyPropertiesFrom(IAnnotStyle s);
 }

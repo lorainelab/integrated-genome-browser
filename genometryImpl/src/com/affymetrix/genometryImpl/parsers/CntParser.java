@@ -27,190 +27,190 @@ import java.util.regex.*;
  */
 public class CntParser {
 
-  static Pattern tag_val = Pattern.compile("(.*)=(.*)");
-  static Pattern line_regex = Pattern.compile("\\t");
-  static Pattern section_regex = Pattern.compile("\\[.*\\]");
+	static Pattern tag_val = Pattern.compile("(.*)=(.*)");
+	static Pattern line_regex = Pattern.compile("\\t");
+	static Pattern section_regex = Pattern.compile("\\[.*\\]");
 
-  static final String SECTION_HEADER = "[Header]";
-  static final String SECTION_COL_NAME = "[ColumnName]";
-  static final String SECTION_DATA = "[Data]";
+	static final String SECTION_HEADER = "[Header]";
+	static final String SECTION_COL_NAME = "[ColumnName]";
+	static final String SECTION_DATA = "[Data]";
 
-  // index of the first column containing data
-  static final int FIRST_DATA_COLUMN = 3;
-  
-  public CntParser() {
-  }
+	// index of the first column containing data
+	static final int FIRST_DATA_COLUMN = 3;
 
-  public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
-  throws IOException  {
+	public CntParser() {
+	}
 
-    String line;
+	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
+		throws IOException  {
 
-    Thread thread = Thread.currentThread();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+		String line;
 
-    Matcher section_regex_matcher = section_regex.matcher("");
-    Matcher tag_val_matcher = tag_val.matcher("");
-    String current_section = "";
-    Map<String,Object> headerData = new HashMap<String,Object>();
+		Thread thread = Thread.currentThread();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 
-
-    // First read the header
-    while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-      section_regex_matcher.reset(line);
-      if (section_regex_matcher.matches()) {
-        current_section = line;
-        if (SECTION_HEADER.equals(current_section)) {
-          continue;
-        } else {
-          break;
-        }
-      }
-
-      if (SECTION_HEADER.equals(current_section)) {
-        tag_val_matcher.reset(line);
-        if (tag_val_matcher.matches()) {
-          String tag = tag_val_matcher.group(1);
-          String val = tag_val_matcher.group(2);
-          headerData.put(tag, val);
-        }
-      } else {
-        break; // finished with header, move to next section
-      }
-    }
-
-    String[] column_names = null;
-
-    while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-      section_regex_matcher.reset(line);
-      if (section_regex_matcher.matches()) {
-        current_section = line;
-        if (SECTION_COL_NAME.equals(current_section)) {
-          continue;
-        } else {
-          break;
-        }
-      }
-
-      if (SECTION_COL_NAME.equals(current_section)) {
-        column_names = line_regex.split(line);
-      } else {
-        break; // finished section, move to next section
-      }
-    }
-
-    if (column_names == null) {
-      throw new IOException("Column names were missing or malformed");
-    }
-
-    int numScores = column_names.length - FIRST_DATA_COLUMN;
-    if (numScores < 1) {
-      throw new IOException("No score columns in file");
-    }
+		Matcher section_regex_matcher = section_regex.matcher("");
+		Matcher tag_val_matcher = tag_val.matcher("");
+		String current_section = "";
+		Map<String,Object> headerData = new HashMap<String,Object>();
 
 
-//    SeqSymmetry foo = new SingletonSeqSymmetry();
+		// First read the header
+		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+			section_regex_matcher.reset(line);
+			if (section_regex_matcher.matches()) {
+				current_section = line;
+				if (SECTION_HEADER.equals(current_section)) {
+					continue;
+				} else {
+					break;
+				}
+			}
 
-    while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+			if (SECTION_HEADER.equals(current_section)) {
+				tag_val_matcher.reset(line);
+				if (tag_val_matcher.matches()) {
+					String tag = tag_val_matcher.group(1);
+					String val = tag_val_matcher.group(2);
+					headerData.put(tag, val);
+				}
+			} else {
+				break; // finished with header, move to next section
+			}
+		}
 
-      String[] fields = line_regex.split(line);
-        int field_count = fields.length;
+		String[] column_names = null;
 
-        if (fields == null || field_count != column_names.length) {
-          throw new IOException("Line has wrong number of data columns.");
-        }
+		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+			section_regex_matcher.reset(line);
+			if (section_regex_matcher.matches()) {
+				current_section = line;
+				if (SECTION_COL_NAME.equals(current_section)) {
+					continue;
+				} else {
+					break;
+				}
+			}
 
-        String snpId = fields[0];
-        String seqid = fields[1];
-        int x = Integer.parseInt(fields[2]);
+			if (SECTION_COL_NAME.equals(current_section)) {
+				column_names = line_regex.split(line);
+			} else {
+				break; // finished section, move to next section
+			}
+		}
 
-        MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
-        if (aseq == null) { aseq = seq_group.addSeq(seqid, x); }
-        if (x > aseq.getLength()) { aseq.setLength(x); }
+		if (column_names == null) {
+			throw new IOException("Column names were missing or malformed");
+		}
 
-//        SingletonSymWithProps child = new SingletonSymWithProps(x, x, aseq);
-//        child.setProperty("method", "SNP IDs");
-//        aseq.addAnnotation(child);
-//        seq_group.addToIndex(snpId, child);
-
-        IntList xVals = getXCoordsForSeq(aseq);
-        xVals.add(x);
-
-        FloatList[] floats = getFloatsForSeq(aseq, numScores);
-        for (int j=0; j<numScores; j++) {
-          FloatList floatList = floats[j];
-          float floatVal = parseFloat(fields[FIRST_DATA_COLUMN+j]);
-          floatList.add(floatVal);
-        }
-    }   // end of line-reading loop
+		int numScores = column_names.length - FIRST_DATA_COLUMN;
+		if (numScores < 1) {
+			throw new IOException("No score columns in file");
+		}
 
 
-    Iterator seqids = thing2.keySet().iterator();
-    while (seqids.hasNext()) {
-      String seqid = (String) seqids.next();
-      IntList x = (IntList) thing2.get(seqid);
-      x.trimToSize();
-      FloatList[] ys = (FloatList[]) thing.get(seqid);
-      MutableAnnotatedBioSeq seq = seq_group.getSeq(seqid);
-      for (int i=0; i<ys.length; i++) {
-        FloatList y = ys[i];
-        String id = column_names[i+FIRST_DATA_COLUMN];
-        if ("ChipNum".equals(id)) {
-          continue;
-        }
-        id = getGraphIdForColumn(id, seq_group);
-        GraphSymFloat graf = new GraphSymFloat(x.getInternalArray(), y.copyToArray(), id, seq);
-        seq.addAnnotation(graf);
-      }
-    }
+		//    SeqSymmetry foo = new SingletonSeqSymmetry();
 
-  }
+		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
 
-  Map<String,String> unique_gids = new HashMap<String,String>();
-  String getGraphIdForColumn(String column_id, AnnotatedSeqGroup seq_group) {
-    String gid = unique_gids.get(column_id);
-    if (gid == null) {
-      gid = AnnotatedSeqGroup.getUniqueGraphID(column_id, seq_group);
-      unique_gids.put(column_id, gid);
-    }
-    return gid;
-  }
+			String[] fields = line_regex.split(line);
+			int field_count = fields.length;
 
-  public static float parseFloat(String s) {
-    float val = 0.0f;
-    try {
-      val = Float.parseFloat(s);
-    } catch (NumberFormatException nfe) {
-      val = 0.0f;
-    }
-    return val;
-  }
+			if (fields == null || field_count != column_names.length) {
+				throw new IOException("Line has wrong number of data columns.");
+			}
 
-  Map<String,Object> thing = new HashMap<String,Object>();
-  Map<String,Object> thing2 = new HashMap<String,Object>();
+			String snpId = fields[0];
+			String seqid = fields[1];
+			int x = Integer.parseInt(fields[2]);
 
-  FloatList[] getFloatsForSeq(BioSeq seq, int numScores) {
-    FloatList[] floats = (FloatList[]) thing.get(seq.getID());
+			MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+			if (aseq == null) { aseq = seq_group.addSeq(seqid, x); }
+			if (x > aseq.getLength()) { aseq.setLength(x); }
 
-    if (floats == null) {
-      floats = new FloatList[numScores];
-      for (int i=0; i<numScores; i++) {
-        floats[i] = new FloatList();
-      }
-      thing.put(seq.getID(), floats);
-    }
+			//        SingletonSymWithProps child = new SingletonSymWithProps(x, x, aseq);
+			//        child.setProperty("method", "SNP IDs");
+			//        aseq.addAnnotation(child);
+			//        seq_group.addToIndex(snpId, child);
 
-    return floats;
-  }
+			IntList xVals = getXCoordsForSeq(aseq);
+			xVals.add(x);
 
-  IntList getXCoordsForSeq(BioSeq seq) {
-    IntList xcoords = (IntList) thing2.get(seq.getID());
+			FloatList[] floats = getFloatsForSeq(aseq, numScores);
+			for (int j=0; j<numScores; j++) {
+				FloatList floatList = floats[j];
+				float floatVal = parseFloat(fields[FIRST_DATA_COLUMN+j]);
+				floatList.add(floatVal);
+			}
+		}   // end of line-reading loop
 
-    if (xcoords == null) {
-      xcoords = new IntList();
-      thing2.put(seq.getID(), xcoords);
-    }
 
-    return xcoords;
-  }
+		Iterator seqids = thing2.keySet().iterator();
+		while (seqids.hasNext()) {
+			String seqid = (String) seqids.next();
+			IntList x = (IntList) thing2.get(seqid);
+			x.trimToSize();
+			FloatList[] ys = (FloatList[]) thing.get(seqid);
+			MutableAnnotatedBioSeq seq = seq_group.getSeq(seqid);
+			for (int i=0; i<ys.length; i++) {
+				FloatList y = ys[i];
+				String id = column_names[i+FIRST_DATA_COLUMN];
+				if ("ChipNum".equals(id)) {
+					continue;
+				}
+				id = getGraphIdForColumn(id, seq_group);
+				GraphSymFloat graf = new GraphSymFloat(x.getInternalArray(), y.copyToArray(), id, seq);
+				seq.addAnnotation(graf);
+			}
+		}
+
+	}
+
+	Map<String,String> unique_gids = new HashMap<String,String>();
+	String getGraphIdForColumn(String column_id, AnnotatedSeqGroup seq_group) {
+		String gid = unique_gids.get(column_id);
+		if (gid == null) {
+			gid = AnnotatedSeqGroup.getUniqueGraphID(column_id, seq_group);
+			unique_gids.put(column_id, gid);
+		}
+		return gid;
+	}
+
+	public static float parseFloat(String s) {
+		float val = 0.0f;
+		try {
+			val = Float.parseFloat(s);
+		} catch (NumberFormatException nfe) {
+			val = 0.0f;
+		}
+		return val;
+	}
+
+	Map<String,Object> thing = new HashMap<String,Object>();
+	Map<String,Object> thing2 = new HashMap<String,Object>();
+
+	FloatList[] getFloatsForSeq(BioSeq seq, int numScores) {
+		FloatList[] floats = (FloatList[]) thing.get(seq.getID());
+
+		if (floats == null) {
+			floats = new FloatList[numScores];
+			for (int i=0; i<numScores; i++) {
+				floats[i] = new FloatList();
+			}
+			thing.put(seq.getID(), floats);
+		}
+
+		return floats;
+	}
+
+	IntList getXCoordsForSeq(BioSeq seq) {
+		IntList xcoords = (IntList) thing2.get(seq.getID());
+
+		if (xcoords == null) {
+			xcoords = new IntList();
+			thing2.put(seq.getID(), xcoords);
+		}
+
+		return xcoords;
+	}
 }

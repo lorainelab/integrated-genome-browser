@@ -32,43 +32,43 @@ import com.affymetrix.genometryImpl.util.Timer;
 /**
  * Parser for files in BAR format.
  * <pre>
-   Bar format definition:
+ Bar format definition:
 
-   1	Char	8	The file type identifier. This is always set to "barr\r\n\032\n".
-   2	Float	4	The file version number.  Valid versions are 1.0 and 2.0
-   3	Integer	4	The number of sequences stored in the file. Referred to as NSEQ.
-   4	Integer	4	The number of columns per data point. Referred to as NCOL.
-   5	Integer	4*NCOL	The field types, one per column of data. The possible values are:
-                         0 - Double
-                         1 - Float
-                         2 - 4 byte signed integer
-                         3 - 2 byte signed integer
-			 4 - 1 byte signed integer
-			 5 - 4 byte unsigned integer
-			 6 - 2 byte unsigned integer
-			 7 - 1 byte unsigned integer
-   6	Integer	4	Numbern of tag/value pairs.
-   7	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.
-   8	Char	TAGNAMELEN	The name of the tag.
-   9	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.
-   10	Char	TAGVALLEN	The value of the tag/value pair.
+ 1	Char	8	The file type identifier. This is always set to "barr\r\n\032\n".
+ 2	Float	4	The file version number.  Valid versions are 1.0 and 2.0
+ 3	Integer	4	The number of sequences stored in the file. Referred to as NSEQ.
+ 4	Integer	4	The number of columns per data point. Referred to as NCOL.
+ 5	Integer	4*NCOL	The field types, one per column of data. The possible values are:
+ 0 - Double
+ 1 - Float
+ 2 - 4 byte signed integer
+ 3 - 2 byte signed integer
+ 4 - 1 byte signed integer
+ 5 - 4 byte unsigned integer
+ 6 - 2 byte unsigned integer
+ 7 - 1 byte unsigned integer
+ 6	Integer	4	Numbern of tag/value pairs.
+ 7	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.
+ 8	Char	TAGNAMELEN	The name of the tag.
+ 9	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.
+ 10	Char	TAGVALLEN	The value of the tag/value pair.
 
 
-   BAR SEQ/DATA SECTION HEADER
+ BAR SEQ/DATA SECTION HEADER
 
-   11	Integer	4	The number of characters in the name of the sequence. Referred to as SEQNAMELEN.
-   12	Char	SEQNAMELEN	The sequence name.
-   13	Integer	4	The number of characters in the name of the sequence group.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
-   14	Char	SEQGROUPNAMELEN	The name of the group of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
-   15	Integer	4	The number of characters in the sequence version string. Referred to as SEQVERLEN.
-   16	Char	SEQVERLEN	The sequence version.
-   17	Integer	4	Number of tag/value pairs.  Used only in version 2.0 or greater.
-   18	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.  Used only in version 2.0 or greater.
-   19	Char	TAGNAMELEN	The name of the tag.  Used only in version 2.0 or greater.
-   20	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.  Used only in version 2.0 or greater.
-   21	Char	TAGVALLEN	The value of the tag/value pair.  Used only in version 2.0 or greater.
-   22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
-   23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
+ 11	Integer	4	The number of characters in the name of the sequence. Referred to as SEQNAMELEN.
+ 12	Char	SEQNAMELEN	The sequence name.
+ 13	Integer	4	The number of characters in the name of the sequence group.  Referred to as SEQGROUPNAMELEN.  Used only in version 2.0 or greater.
+ 14	Char	SEQGROUPNAMELEN	The name of the group of which the sequence is a member (for example, often specifies organism).  Referred to as SEQGROUPNAME.  Used only in version 2.0 or greater.
+ 15	Integer	4	The number of characters in the sequence version string. Referred to as SEQVERLEN.
+ 16	Char	SEQVERLEN	The sequence version.
+ 17	Integer	4	Number of tag/value pairs.  Used only in version 2.0 or greater.
+ 18	Integer	4	The number of characters in the name of the tag. Referred to as TAGNAMELEN.  Used only in version 2.0 or greater.
+ 19	Char	TAGNAMELEN	The name of the tag.  Used only in version 2.0 or greater.
+ 20	Integer	4	The number of characters in the value part of the tag/value pair. Referred to as TAGVALLEN.  Used only in version 2.0 or greater.
+ 21	Char	TAGVALLEN	The value of the tag/value pair.  Used only in version 2.0 or greater.
+ 22	Integer	4	The number of data points defined in the sequence. Each data point will contain NCOL column values.
+ 23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
  *</pre>
  */
 public class BarParser implements AnnotationWriter  {
@@ -167,7 +167,7 @@ public class BarParser implements AnnotationWriter  {
 					System.out.println("  next index, base_pos = " + chunk_mins[min_index + 1]);	}
 				System.out.println("max_index = " +max_index);
 			}
-			
+
 			//did the binary search return a negative number indicating that the requested max_base 
 			//   is beyond the last chunk? If so then read to end.
 			if (max_index < 0) readToEnd = true;
@@ -259,11 +259,11 @@ public class BarParser implements AnnotationWriter  {
 				System.out.println("getSlice() done, points: " + graph_xcoords.length + ", time taken: " + (t1/1000f));
 			}
 			if (DEBUG_SLICE)  { System.out.println("made graph for slice: " + graf); }
-			
+
 			//fetch tagValues and write properties
 			Map<String,String> seq_tagvals = seq_header.tagvals;
 			if (seq_tagvals !=null && seq_tagvals.size() !=0) copyProps(graf, seq_tagvals);
-			
+
 			//attempt to find and set strand information			
 			if (seq_tagvals.containsKey("strand")) {						
 				String strand = (String) seq_tagvals.get("strand");
@@ -361,7 +361,7 @@ public class BarParser implements AnnotationWriter  {
 	 * </pre>
 	 */
 	public static void buildIndex(String file_name, String coord_set_id, GenometryModel gmodel, AnnotatedSeqGroup seq_group)
-	throws IOException {
+		throws IOException {
 		Timer tim = new Timer();
 		tim.start();
 		// builds an index per sequence in the bar file
@@ -388,25 +388,25 @@ public class BarParser implements AnnotationWriter  {
 			}
 
 			int skip_offset = (points_per_chunk * bytes_per_point) - 4;  // -4 to account for read of 4-byte integer for base coord
-			CHUNK_LOOP:
-				while (point_count < total_points) {
-					int base_pos = dis.readInt();
-					chunk_mins[chunk_count] = base_pos;
-					if (DEBUG_INDEXER)  {System.out.println("chunk: " + chunk_count + ", index: " + point_count + ",  start base: " + base_pos);}
-					int bytes_to_skip = skip_offset;
-					while (bytes_to_skip > 0)  {
-						int skipped = (int)dis.skip(bytes_to_skip);
-						if (DEBUG_INDEXER)  { System.out.println("   skipped: " + skipped); }
-						if (skipped < 0) {
-							if (DEBUG_INDEXER)  {System.out.println("end of file reached"); }
-							break CHUNK_LOOP;
-						} // EOF reached
-						bytes_to_skip -= skipped;
-					}
-					point_count += points_per_chunk;
-					if (DEBUG_INDEXER)  {System.out.println("  point count: " + point_count); }
-					chunk_count++;
+CHUNK_LOOP:
+			while (point_count < total_points) {
+				int base_pos = dis.readInt();
+				chunk_mins[chunk_count] = base_pos;
+				if (DEBUG_INDEXER)  {System.out.println("chunk: " + chunk_count + ", index: " + point_count + ",  start base: " + base_pos);}
+				int bytes_to_skip = skip_offset;
+				while (bytes_to_skip > 0)  {
+					int skipped = (int)dis.skip(bytes_to_skip);
+					if (DEBUG_INDEXER)  { System.out.println("   skipped: " + skipped); }
+					if (skipped < 0) {
+						if (DEBUG_INDEXER)  {System.out.println("end of file reached"); }
+						break CHUNK_LOOP;
+					} // EOF reached
+					bytes_to_skip -= skipped;
 				}
+				point_count += points_per_chunk;
+				if (DEBUG_INDEXER)  {System.out.println("  point count: " + point_count); }
+				chunk_count++;
+			}
 			// just making sure edge case doesn't mess things up...
 			if (chunk_mins[total_chunks-1] == 0) { chunk_mins[total_chunks-1] = seq_header.aseq.getLength(); }
 			if (DEBUG_READ) {
@@ -432,7 +432,7 @@ public class BarParser implements AnnotationWriter  {
 
 	/** Parse a file in BAR format. */
 	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String stream_name)
-	throws IOException  {
+		throws IOException  {
 		return parse(istr, gmodel, seq_group, stream_name, true);
 	}
 
@@ -440,7 +440,7 @@ public class BarParser implements AnnotationWriter  {
 	public static List<GraphSym> parse(InputStream istr, GenometryModel gmodel,
 			AnnotatedSeqGroup default_seq_group, String stream_name,
 			boolean ensure_unique_id)
-			throws IOException {		
+		throws IOException {		
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
 		List<GraphSym> graphs = null;
@@ -515,16 +515,16 @@ public class BarParser implements AnnotationWriter  {
 						if (bar2)  { copyProps(graf, seq_tagvals); }
 						//	  graf.setProperty("method", graph_id);
 						//          System.out.println("done reading graph data: " + graf);
-						
+
 						//attempt to find and set strand information
 						if (seq_tagvals.containsKey("strand")) {						
 							String strand = (String) seq_tagvals.get("strand");
 							if (strand.equals("+")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
 							if (strand.equals("-")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
 						}
-						
+
 						graphs.add(graf);
-					}
+							}
 					else {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
@@ -579,7 +579,7 @@ public class BarParser implements AnnotationWriter  {
 						mm_graf.setProperty("probetype", "MM (mismatch)");
 						graphs.add(pm_graf);
 						graphs.add(mm_graf);
-					}
+							}
 					else {
 						throw new IOException("Error in BAR file: Currently, first val must be int4, others must be float4.");
 					}
@@ -597,12 +597,12 @@ public class BarParser implements AnnotationWriter  {
 	}
 
 	/*public static void writeTagVal(DataOutput dos, String tag, String val)
-	throws IOException  {
-		dos.writeInt(tag.length());
-		dos.writeBytes(tag);
-		dos.writeInt(val.length());
-		dos.writeBytes(val);
-	}*/
+	  throws IOException  {
+  dos.writeInt(tag.length());
+  dos.writeBytes(tag);
+  dos.writeInt(val.length());
+  dos.writeBytes(val);
+  }*/
 
 	private static final HashMap<String,String> readTagValPairs(DataInput dis, int pair_count) throws IOException  {
 		HashMap<String,String> tvpairs = new HashMap<String,String>(pair_count);
@@ -754,7 +754,7 @@ public class BarParser implements AnnotationWriter  {
 							(! (testseq instanceof Versioned))) {
 						seq = testseq;
 						break;
-					}
+							}
 					else {
 						String test_version = ((Versioned)testseq).getVersion();
 						if ((lookup.isSynonym(test_version, seqversion)) ||
@@ -763,7 +763,7 @@ public class BarParser implements AnnotationWriter  {
 							if (DEBUG_READ) { System.out.println("found synonymn"); }
 							seq = testseq;
 							break;
-						}
+								}
 					}
 				}
 			}
@@ -792,7 +792,7 @@ public class BarParser implements AnnotationWriter  {
 		if (((version == null)  || version.equals("")) &&
 				((groupname == null) || groupname.equals("") )) {
 			group = default_seq_group;
-		}
+				}
 		else {
 			if (groupname != null && version != null) {
 				group = gmodel.getSeqGroup(groupname + ":" + version);
@@ -874,7 +874,7 @@ public class BarParser implements AnnotationWriter  {
 
 			//write out all properties from seq and/or graphs as tag/vals
 			writeTagValuePairs(dos,graf.getProperties());
-			
+
 			int[] xcoords = graf.getGraphXCoords();
 			//float[] ycoords = (float[]) graf.getGraphYCoords();
 			int total_points = xcoords.length;
@@ -895,7 +895,7 @@ public class BarParser implements AnnotationWriter  {
 		System.out.println("wrote .bar file to stream");
 		return success;
 	}
-	
+
 	public static void writeTagValuePairs(DataOutputStream dos,Map<String,Object> tagValuePairs) throws IOException{
 		//any tag value pairs?
 		if (tagValuePairs == null || tagValuePairs.size() == 0) dos.writeInt(0);

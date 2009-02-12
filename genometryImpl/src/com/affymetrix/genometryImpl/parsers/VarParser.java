@@ -30,65 +30,65 @@ import java.util.regex.Pattern;
  */
 public class VarParser {
 
-  public static final String GENOMIC_VARIANTS = "Genomic Variants";
+	public static final String GENOMIC_VARIANTS = "Genomic Variants";
 
-  static Pattern line_regex = Pattern.compile("\\t");
+	static Pattern line_regex = Pattern.compile("\\t");
 
-  public VarParser() {
-  }
+	public VarParser() {
+	}
 
-  public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
-  throws IOException  {
+	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
+		throws IOException  {
 
-    String line;
+		String line;
 
-    Thread thread = Thread.currentThread();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
+		Thread thread = Thread.currentThread();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 
-    line = reader.readLine();
-    String[] column_names = null;
-    column_names = line_regex.split(line);
+		line = reader.readLine();
+		String[] column_names = null;
+		column_names = line_regex.split(line);
 
-    if (column_names == null) {
-      throw new IOException("Column names were missing or malformed");
-    }
+		if (column_names == null) {
+			throw new IOException("Column names were missing or malformed");
+		}
 
-    int line_count = 1;
-    String[] fields;
-    while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-        line_count++;
+		int line_count = 1;
+		String[] fields;
+		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+			line_count++;
 
-        fields = line_regex.split(line);
-        int field_count = fields.length;
+			fields = line_regex.split(line);
+			int field_count = fields.length;
 
-        if (fields == null || field_count > column_names.length) {
-          throw new IOException("Line " + line_count + " has wrong number of data columns: " + field_count);
-        }
+			if (fields == null || field_count > column_names.length) {
+				throw new IOException("Line " + line_count + " has wrong number of data columns: " + field_count);
+			}
 
-        String variationId = fields[0];
-        String seqid = fields[2];
-        int start = Integer.parseInt(fields[3]);
-        int end = Integer.parseInt(fields[4]);
+			String variationId = fields[0];
+			String seqid = fields[2];
+			int start = Integer.parseInt(fields[3]);
+			int end = Integer.parseInt(fields[4]);
 
-        MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
-        if (aseq == null) { aseq = seq_group.addSeq(seqid, end); }
-        if (start > aseq.getLength()) { aseq.setLength(start); }
-        if (end > aseq.getLength()) { aseq.setLength(end); }
+			MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+			if (aseq == null) { aseq = seq_group.addSeq(seqid, end); }
+			if (start > aseq.getLength()) { aseq.setLength(start); }
+			if (end > aseq.getLength()) { aseq.setLength(end); }
 
-        SingletonSymWithProps var = new SingletonSymWithProps(variationId, start, end, aseq);
-        var.setProperty("id", variationId);
-        //child.setProperty("VariationID", variationId);
-        var.setProperty("method", GENOMIC_VARIANTS);
-        var.setProperty(column_names[1], fields[1]);
-        for (int c=5; c < fields.length; c++) {
-          String propName = column_names[c];
-          if (! propName.startsWith("Locus")) {
-            var.setProperty(propName, fields[c]);
-          }
-        }
+			SingletonSymWithProps var = new SingletonSymWithProps(variationId, start, end, aseq);
+			var.setProperty("id", variationId);
+			//child.setProperty("VariationID", variationId);
+			var.setProperty("method", GENOMIC_VARIANTS);
+			var.setProperty(column_names[1], fields[1]);
+			for (int c=5; c < fields.length; c++) {
+				String propName = column_names[c];
+				if (! propName.startsWith("Locus")) {
+					var.setProperty(propName, fields[c]);
+				}
+			}
 
-        aseq.addAnnotation(var);
-        seq_group.addToIndex(fields[0], var); // variation id
-    }   // end of line-reading loop
-  }
+			aseq.addAnnotation(var);
+			seq_group.addToIndex(fields[0], var); // variation id
+		}   // end of line-reading loop
+	}
 }

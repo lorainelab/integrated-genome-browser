@@ -70,8 +70,8 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *  When building genometry models based on GFF, feature "grouping" corresponds to
  *      making some symmetries (the ones to be grouped) into children of other symmetries
  *
-  // if loading as new BioSeq, use source id to specify ID of new BioSeq
-  // if merging to previous BioSeq, use source id to check for identity with BioSeq
+// if loading as new BioSeq, use source id to specify ID of new BioSeq
+// if merging to previous BioSeq, use source id to check for identity with BioSeq
  *
  *  for GTF,
  *  still need to deal with CDS and CDS_insert!!!
@@ -133,7 +133,7 @@ public class GFFParser implements AnnotationWriter  {
 			"\\s*\"([^\"]*)\""    /* pattern 1 */
 			+ "|"                   /* or */
 			+ "\\s*([^\"\\s]\\S*)"  /* pattern 2 */
-	);
+			);
 
 	static final Pattern gff3_tagval_splitter = Pattern.compile("=");
 	static final Pattern gff3_multival_splitter = Pattern.compile(",");
@@ -268,18 +268,18 @@ public class GFFParser implements AnnotationWriter  {
 	boolean use_track_lines = true;
 
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
-	throws IOException {
+		throws IOException {
 		return this.parse(istr, ".", seq_group, create_container_annot);
 	}
 
 	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
-	throws IOException {
+		throws IOException {
 		return this.parse(istr, default_source, seq_group, create_container_annot, true);
 	}
 
 	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
 			boolean create_container_annot, boolean annotate_seq)
-			throws IOException {
+		throws IOException {
 		System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
 
 		int line_count = 0;
@@ -529,552 +529,552 @@ public class GFFParser implements AnnotationWriter  {
 		//    System.out.println("seq length: " + seq.getLength());
 		//    System.out.println("annot count: " + seq.getAnnotationCount());
 		return results;
-	}
-
-	/**
-	 *  Retrieves (and/or creates) a container symmetry based on the BioSeq
-	 *    and the method.
-	 *  When a new container is created, it is also added to the BioSeq.
-	 *  Each entry in seq2meths maps a BioSeq to a Map called "meth2csym".
-	 *  Each meth2csym is hash where each entry maps a "method/source" to a container Symmetry.
-	 *  It is a two-step process to find container sym for a particular meth on a particular seq:
-	 *    Map meth2csym = (Map)seq2meths.get(seq);
-	 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
-	 */
-	static SimpleSymWithProps getContainer(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2meths,
-			MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq) {
-
-		Map<String,SimpleSymWithProps> meth2csym = seq2meths.get(seq);
-		if (meth2csym == null) {
-			meth2csym = new HashMap<String,SimpleSymWithProps>();
-			seq2meths.put(seq, meth2csym);
 		}
-		SimpleSymWithProps parent_sym = meth2csym.get(meth);
-		if (parent_sym == null) {
-			parent_sym = new SimpleSymWithProps();
-			parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-			parent_sym.setProperty("method", meth);
-			parent_sym.setProperty("preferred_formats", pref_list);
-			parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-			if (annotate_seq) {
-				seq.addAnnotation(parent_sym);
+
+		/**
+		 *  Retrieves (and/or creates) a container symmetry based on the BioSeq
+		 *    and the method.
+		 *  When a new container is created, it is also added to the BioSeq.
+		 *  Each entry in seq2meths maps a BioSeq to a Map called "meth2csym".
+		 *  Each meth2csym is hash where each entry maps a "method/source" to a container Symmetry.
+		 *  It is a two-step process to find container sym for a particular meth on a particular seq:
+		 *    Map meth2csym = (Map)seq2meths.get(seq);
+		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
+		 */
+		static SimpleSymWithProps getContainer(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2meths,
+				MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq) {
+
+			Map<String,SimpleSymWithProps> meth2csym = seq2meths.get(seq);
+			if (meth2csym == null) {
+				meth2csym = new HashMap<String,SimpleSymWithProps>();
+				seq2meths.put(seq, meth2csym);
 			}
-			meth2csym.put(meth, parent_sym);
+			SimpleSymWithProps parent_sym = meth2csym.get(meth);
+			if (parent_sym == null) {
+				parent_sym = new SimpleSymWithProps();
+				parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+				parent_sym.setProperty("method", meth);
+				parent_sym.setProperty("preferred_formats", pref_list);
+				parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+				if (annotate_seq) {
+					seq.addAnnotation(parent_sym);
+				}
+				meth2csym.put(meth, parent_sym);
+			}
+			return parent_sym;
 		}
-		return parent_sym;
-	}
 
-	/**
-	 *  Resorts child syms of a mutable symmetry in either ascending order if
-	 *   sym's span on sortseq is forward, or descending if sym's span on sortseq is reverse,
-	 *   based on child sym's span's start position on BioSeq sortseq.
-	 */
-	public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq)  {
-		SeqSpan pspan = psym.getSpan(sortseq);
-		boolean ascending = pspan.isForward();
-		//    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
-		//    System.out.println("sortseq: " + sortseq.getID());
-		//    SeqUtils.printSymmetry(psym);
-		int child_count = psym.getChildCount();
-		if (child_count > 0) {
-			List<SeqSymmetry> child_list = new ArrayList<SeqSymmetry>(child_count);
-			for (int i=0; i<child_count; i++) {
-				SeqSymmetry csym = psym.getChild(i);
-				if (csym.getSpan(sortseq) != null) {
-					child_list.add(psym.getChild(i));
+		/**
+		 *  Resorts child syms of a mutable symmetry in either ascending order if
+		 *   sym's span on sortseq is forward, or descending if sym's span on sortseq is reverse,
+		 *   based on child sym's span's start position on BioSeq sortseq.
+		 */
+		public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq)  {
+			SeqSpan pspan = psym.getSpan(sortseq);
+			boolean ascending = pspan.isForward();
+			//    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
+			//    System.out.println("sortseq: " + sortseq.getID());
+			//    SeqUtils.printSymmetry(psym);
+			int child_count = psym.getChildCount();
+			if (child_count > 0) {
+				List<SeqSymmetry> child_list = new ArrayList<SeqSymmetry>(child_count);
+				for (int i=0; i<child_count; i++) {
+					SeqSymmetry csym = psym.getChild(i);
+					if (csym.getSpan(sortseq) != null) {
+						child_list.add(psym.getChild(i));
+					}
+				}
+				psym.removeChildren();
+				Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
+				Collections.sort(child_list, comp);
+				int new_child_count = child_list.size();
+				for (int i=0; i<new_child_count; i++) {
+					psym.addChild(child_list.get(i));
 				}
 			}
-			psym.removeChildren();
-			Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
-			Collections.sort(child_list, comp);
-			int new_child_count = child_list.size();
-			for (int i=0; i<new_child_count; i++) {
-				psym.addChild(child_list.get(i));
-			}
 		}
-	}
 
-	static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
-	static final Pattern directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)");
-	static final Pattern directive_hierarchy = Pattern.compile("##IGB-filter-hierarchy (.*)");
-	static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
-	static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
-	static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
+		static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
+		static final Pattern directive_filter = Pattern.compile("##IGB-filter-(include |exclude |clear)(.*)");
+		static final Pattern directive_hierarchy = Pattern.compile("##IGB-filter-hierarchy (.*)");
+		static final Pattern directive_group_by = Pattern.compile("##IGB-group-by (.*)");
+		static final Pattern directive_group_from_first = Pattern.compile("##IGB-group-properties-from-first-member (true|false)");
+		static final Pattern directive_index_field = Pattern.compile("##IGB-group-id-field (.*)");
 
-	boolean use_hierarchy = false;
-	Map<String,Integer> hierarchy_levels = new HashMap<String,Integer>(); // Map of String to Integer
-	Map<String,String> hierarchy_id_fields = new HashMap<String,String>(); // Map of String to String
+		boolean use_hierarchy = false;
+		Map<String,Integer> hierarchy_levels = new HashMap<String,Integer>(); // Map of String to Integer
+		Map<String,String> hierarchy_id_fields = new HashMap<String,String>(); // Map of String to String
 
-	/**
-	 *  Process directive lines in the input, which are lines beginning with "##".
-	 *  Directives that are not understood are treated as comments.
-	 *  Directives that are understood include "##IGB-filter-include x y z",
-	 *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x",
-	 *  and "##IGB-hierarchy 3 exon <exon_id>".
-	 */
-	void processDirective(String line) throws IOException {
-		Matcher m = directive_version.matcher(line);
-		if (m.matches()) {
-			String vstr = m.group(1).trim();
-			try {
-				int vers = (int)(Float.parseFloat(vstr));
-				System.out.println("parsing GFF, setting version to: " + vers);
-				setGffVersion(vers);
-			}
-			catch (Exception ex) {
-				System.err.println("could not parse \"##gff-version\" pragma line: " + line);
-				ex.printStackTrace();
-			}
-			return;
-		}
-		m = directive_filter.matcher(line);
-		if (m.matches()) {
-			resetFilters();
-			String[] feature_types = m.group(2).split(" ");
-			for (int i=0;i<feature_types.length; i++) {
-				String feature_type = feature_types[i].trim();
-				if (feature_type.length() > 0) {
-					addFeatureFilter(feature_type, "include ".equals(m.group(1)));
+		/**
+		 *  Process directive lines in the input, which are lines beginning with "##".
+		 *  Directives that are not understood are treated as comments.
+		 *  Directives that are understood include "##IGB-filter-include x y z",
+		 *  "##IGB-filter-exclude a b c", "##IGB-filter-clear", "##IGB-group-by x",
+		 *  and "##IGB-hierarchy 3 exon <exon_id>".
+		 */
+		void processDirective(String line) throws IOException {
+			Matcher m = directive_version.matcher(line);
+			if (m.matches()) {
+				String vstr = m.group(1).trim();
+				try {
+					int vers = (int)(Float.parseFloat(vstr));
+					System.out.println("parsing GFF, setting version to: " + vers);
+					setGffVersion(vers);
 				}
+				catch (Exception ex) {
+					System.err.println("could not parse \"##gff-version\" pragma line: " + line);
+					ex.printStackTrace();
+				}
+				return;
 			}
-			return;
-		}
-
-		m = directive_group_by.matcher(line);
-		if (m.matches()) {
-			String group = m.group(1).trim();
-			if (group.length() > 0) {
-				setGroupTag(group);
-			} else {
-				setGroupTag(null);
-			}
-			return;
-		}
-
-		m = directive_group_from_first.matcher(line);
-		if (m.matches()) {
-			String true_false = m.group(1).trim();
-			use_first_one_as_group = "true".equals(true_false);
-			return;
-		}
-
-		m = directive_index_field.matcher(line);
-		if (m.matches()) {
-			group_id_field_name = m.group(1).trim();
-			return;
-		}
-
-		m = directive_hierarchy.matcher(line);
-		if (m.matches()) {
-			if (! use_hierarchy) {
-				// If this is the first time the tag is seen, reset the filters
+			m = directive_filter.matcher(line);
+			if (m.matches()) {
 				resetFilters();
+				String[] feature_types = m.group(2).split(" ");
+				for (int i=0;i<feature_types.length; i++) {
+					String feature_type = feature_types[i].trim();
+					if (feature_type.length() > 0) {
+						addFeatureFilter(feature_type, "include ".equals(m.group(1)));
+					}
+				}
+				return;
 			}
-			String hierarchy_string = m.group(1).trim();
 
-			// Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
-			// The ID field is optional.
-			// Example:  2 psr  3 probeset <probeset_name> 4 probe <probe_id>
-			Pattern p = Pattern.compile("\\s*([0-9]+)\\s*(\\S*)(\\s*<(\\S*)>)?");
-
-			Matcher mm = p.matcher(hierarchy_string);
-			while (mm.find()) {
-				String level_string = mm.group(1);
-				String feature_type = mm.group(2);
-				Integer level = new Integer(level_string);
-				hierarchy_levels.put(feature_type, level);
-				addFeatureFilter(feature_type, true); // include only the items mentioned in the hierarchy
-
-				System.out.println("  Hierarchical parsing level: "+feature_type+" -> "+level);
-
-				String id_field = mm.group(4);
-				if (id_field != null) {hierarchy_id_fields.put(feature_type, id_field);}
+			m = directive_group_by.matcher(line);
+			if (m.matches()) {
+				String group = m.group(1).trim();
+				if (group.length() > 0) {
+					setGroupTag(group);
+				} else {
+					setGroupTag(null);
+				}
+				return;
 			}
-			if (hierarchy_levels.isEmpty()) {
-				throw new IOException("The '##IGB-filter-hierarchy' directive could not be parsed");
-			} else {
-				use_hierarchy = true;
+
+			m = directive_group_from_first.matcher(line);
+			if (m.matches()) {
+				String true_false = m.group(1).trim();
+				use_first_one_as_group = "true".equals(true_false);
+				return;
 			}
+
+			m = directive_index_field.matcher(line);
+			if (m.matches()) {
+				group_id_field_name = m.group(1).trim();
+				return;
+			}
+
+			m = directive_hierarchy.matcher(line);
+			if (m.matches()) {
+				if (! use_hierarchy) {
+					// If this is the first time the tag is seen, reset the filters
+					resetFilters();
+				}
+				String hierarchy_string = m.group(1).trim();
+
+				// Patern: repetition of:  [spaces]Integer[spaces]Name[spaces]<ID_field_name>
+				// The ID field is optional.
+				// Example:  2 psr  3 probeset <probeset_name> 4 probe <probe_id>
+				Pattern p = Pattern.compile("\\s*([0-9]+)\\s*(\\S*)(\\s*<(\\S*)>)?");
+
+				Matcher mm = p.matcher(hierarchy_string);
+				while (mm.find()) {
+					String level_string = mm.group(1);
+					String feature_type = mm.group(2);
+					Integer level = new Integer(level_string);
+					hierarchy_levels.put(feature_type, level);
+					addFeatureFilter(feature_type, true); // include only the items mentioned in the hierarchy
+
+					System.out.println("  Hierarchical parsing level: "+feature_type+" -> "+level);
+
+					String id_field = mm.group(4);
+					if (id_field != null) {hierarchy_id_fields.put(feature_type, id_field);}
+				}
+				if (hierarchy_levels.isEmpty()) {
+					throw new IOException("The '##IGB-filter-hierarchy' directive could not be parsed");
+				} else {
+					use_hierarchy = true;
+				}
+				return;
+			}
+
+
+			// Issue warnings about directives that aren't understood only for "##IGB-" directives.
+			if (line.startsWith("##IGB")) {
+				System.out.println("WARNING: GFF/GTF processing directive not understood: '"+line+"'");
+			}
+		}
+
+
+		/**
+		 *  Parse GFF attributes field into a properties on the Map. Each entry is
+		 *  key = attribute tag, value = attribute values, with following restrictions:
+		 *    if single value for a key, then hash.get(key) = value
+		 *    if no value for a key, then hash.get(key) = key
+		 *    if multiple values for a key, then hash.get(key) = Vector vec,
+		 *         and each value is an element in vec
+		 */
+		public static void processAttributes(Map<String,Object> m, String attributes) {
+			Vector<String> vals = new Vector<String>();
+			String[] attarray = att_regex.split(attributes);
+			for (int i=0; i<attarray.length; i++) {
+				String att = attarray[i];
+				Matcher tag_matcher = tag_regex.matcher(att);
+				if (tag_matcher.find()) {
+					String tag = tag_matcher.group(1);
+
+					int index = tag_matcher.end(1);
+					Matcher value_matcher = value_regex.matcher(att);
+					boolean matches = value_matcher.find(index);
+					while (matches) {
+
+						String group1 = value_matcher.group(1);
+						String group2 = value_matcher.group(2);
+						if (group1 != null) {
+							vals.addElement(group1);
+						}
+						else {
+							vals.addElement(group2);
+						}
+						matches = value_matcher.find();
+					}
+					// common case where there's only one value for a tag,
+					//  so hash the tag to that value
+					if (vals.size() == 1) {
+						Object the_object = vals.elementAt(0);
+						m.put(tag, the_object);
+						vals.removeAllElements();
+					}
+					// rare case -- if no value for the tag, hash the tag to itself...
+					else if (vals.size() == 0) {
+						m.put(tag, tag);
+						vals.removeAllElements();
+					}
+					// not-so-common case where there's multiple values for a tag,
+					//   so hash the tag to the Vector/List of all the values,
+					//   and make a new Vector for next tag-value entry
+					else {
+						m.put(tag, vals);
+						vals = new Vector<String>();
+					}
+				}
+			}  // end attribute processing
 			return;
 		}
 
+		/**
+		 *  Sets the parser to some standard settings that filter-out "intron" and
+		 *  "transcript" lines, among other things, and groups by "transcript_id".
+		 */
+		public void setUseStandardFilters(boolean b) {
+			// "standard" filters may depend on whether file is GFF1, GFF2, GTF, or GFF3
+			addFeatureFilter("intron");
+			addFeatureFilter("splice3");
+			addFeatureFilter("splice5");
+			addFeatureFilter("splice_donor");
+			addFeatureFilter("splice_acceptor");
+			addFeatureFilter("prim_trans");
+			addFeatureFilter("transcript");
+			addFeatureFilter("gene");
+			addFeatureFilter("cluster");
+			addFeatureFilter("psr");
+			addFeatureFilter("link");
 
-		// Issue warnings about directives that aren't understood only for "##IGB-" directives.
-		if (line.startsWith("##IGB")) {
-			System.out.println("WARNING: GFF/GTF processing directive not understood: '"+line+"'");
+			System.out.println("group tag: transcript_id");
+			setGroupTag("transcript_id");
 		}
-	}
 
+		public void setGffVersion(int version) {
+			// is use_standard_filters, then reset filters whenever gff version is set
+			gff_version = version;
+			if (gff_version != 3) {
+				setUseStandardFilters(use_standard_filters);
+			}
+		}
 
-	/**
-	 *  Parse GFF attributes field into a properties on the Map. Each entry is
-	 *  key = attribute tag, value = attribute values, with following restrictions:
-	 *    if single value for a key, then hash.get(key) = value
-	 *    if no value for a key, then hash.get(key) = key
-	 *    if multiple values for a key, then hash.get(key) = Vector vec,
-	 *         and each value is an element in vec
-	 */
-	public static void processAttributes(Map<String,Object> m, String attributes) {
-		Vector<String> vals = new Vector<String>();
-		String[] attarray = att_regex.split(attributes);
-		for (int i=0; i<attarray.length; i++) {
-			String att = attarray[i];
-			Matcher tag_matcher = tag_regex.matcher(att);
-			if (tag_matcher.find()) {
-				String tag = tag_matcher.group(1);
+		static final Integer TWO = new Integer(2);
 
-				int index = tag_matcher.end(1);
-				Matcher value_matcher = value_regex.matcher(att);
-				boolean matches = value_matcher.find(index);
-				while (matches) {
+		int number_of_duplicate_warnings = 0;
 
-					String group1 = value_matcher.group(1);
-					String group2 = value_matcher.group(2);
-					if (group1 != null) {
-						vals.addElement(group1);
+		public String hackGff3GroupId(String atts) {
+			String groupid = null;
+			String featid = null;
+			String[] tagvals = att_regex.split(atts);
+			for (int i=0; i<tagvals.length; i++) {
+				String tagval = tagvals[i];
+				String[] tv = gff3_tagval_splitter.split(tagval);
+				String tag = tv[0];
+				String val = tv[1];
+				//      String vals = gff3_multival_splitter.split(val);
+				if (tag.equals(GFF3_PARENT)) {
+					groupid = val;
+				}
+				else if (tag.equals(GFF3_ID)) {
+					featid = val;
+					Object obj = gff3_id_hash.get(featid);
+					if (obj == null) {
+						gff3_id_hash.put(featid, featid);
 					}
 					else {
-						vals.addElement(group2);
-					}
-					matches = value_matcher.find();
-				}
-				// common case where there's only one value for a tag,
-				//  so hash the tag to that value
-				if (vals.size() == 1) {
-					Object the_object = vals.elementAt(0);
-					m.put(tag, the_object);
-					vals.removeAllElements();
-				}
-				// rare case -- if no value for the tag, hash the tag to itself...
-				else if (vals.size() == 0) {
-					m.put(tag, tag);
-					vals.removeAllElements();
-				}
-				// not-so-common case where there's multiple values for a tag,
-				//   so hash the tag to the Vector/List of all the values,
-				//   and make a new Vector for next tag-value entry
-				else {
-					m.put(tag, vals);
-					vals = new Vector<String>();
-				}
-			}
-		}  // end attribute processing
-		return;
-	}
-
-	/**
-	 *  Sets the parser to some standard settings that filter-out "intron" and
-	 *  "transcript" lines, among other things, and groups by "transcript_id".
-	 */
-	public void setUseStandardFilters(boolean b) {
-		// "standard" filters may depend on whether file is GFF1, GFF2, GTF, or GFF3
-		addFeatureFilter("intron");
-		addFeatureFilter("splice3");
-		addFeatureFilter("splice5");
-		addFeatureFilter("splice_donor");
-		addFeatureFilter("splice_acceptor");
-		addFeatureFilter("prim_trans");
-		addFeatureFilter("transcript");
-		addFeatureFilter("gene");
-		addFeatureFilter("cluster");
-		addFeatureFilter("psr");
-		addFeatureFilter("link");
-
-		System.out.println("group tag: transcript_id");
-		setGroupTag("transcript_id");
-	}
-
-	public void setGffVersion(int version) {
-		// is use_standard_filters, then reset filters whenever gff version is set
-		gff_version = version;
-		if (gff_version != 3) {
-			setUseStandardFilters(use_standard_filters);
-		}
-	}
-
-	static final Integer TWO = new Integer(2);
-
-	int number_of_duplicate_warnings = 0;
-
-	public String hackGff3GroupId(String atts) {
-		String groupid = null;
-		String featid = null;
-		String[] tagvals = att_regex.split(atts);
-		for (int i=0; i<tagvals.length; i++) {
-			String tagval = tagvals[i];
-			String[] tv = gff3_tagval_splitter.split(tagval);
-			String tag = tv[0];
-			String val = tv[1];
-			//      String vals = gff3_multival_splitter.split(val);
-			if (tag.equals(GFF3_PARENT)) {
-				groupid = val;
-			}
-			else if (tag.equals(GFF3_ID)) {
-				featid = val;
-				Object obj = gff3_id_hash.get(featid);
-				if (obj == null) {
-					gff3_id_hash.put(featid, featid);
-				}
-				else {
-					if (obj instanceof String) {
-						gff3_id_hash.put(featid, TWO);
-						featid = featid + "_1";
-					}
-					else if (obj instanceof Integer) {
-						Integer iobj = (Integer)obj;
-						int fcount = iobj.intValue();
-						gff3_id_hash.put(featid, new Integer(fcount+1));
-						featid = featid + "_" + iobj.toString();
-					}
-					if (number_of_duplicate_warnings++ <= 10) {
-						System.out.println("duplicate feature id, new id: " + featid);
-						if (number_of_duplicate_warnings == 10) {
-							System.out.println("(Suppressing further warnings about duplicate ids");
+						if (obj instanceof String) {
+							gff3_id_hash.put(featid, TWO);
+							featid = featid + "_1";
+						}
+						else if (obj instanceof Integer) {
+							Integer iobj = (Integer)obj;
+							int fcount = iobj.intValue();
+							gff3_id_hash.put(featid, new Integer(fcount+1));
+							featid = featid + "_" + iobj.toString();
+						}
+						if (number_of_duplicate_warnings++ <= 10) {
+							System.out.println("duplicate feature id, new id: " + featid);
+							if (number_of_duplicate_warnings == 10) {
+								System.out.println("(Suppressing further warnings about duplicate ids");
+							}
 						}
 					}
 				}
 			}
-		}
-		if (groupid == null) {
-			return featid;
-		}
-		else  {
-			return groupid;
-		}
-	}
-
-	public String determineGroupId(SymWithProps sym, String group_tag) {
-		String group_id = null;
-		if ((group_tag != null)) {
-			if (gff_version == GFF3) {
-				System.out.println("shouldn't get here, GFF3 should have been transformed to look like GFF1");
+			if (groupid == null) {
+				return featid;
 			}
-			else {
-				Object value = sym.getProperty(group_tag);
-				if (value != null) {
-					if (value instanceof String) {
-						group_id = (String) value;
-						if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
-					}
-					else if (value instanceof Number) {
-						group_id = "" + value;
-					}
-					else if (value instanceof Character) {
-						group_id = "" + value;
-					}
-					else if (value instanceof List) {  // such as a Vector
-						// If there are multiple values for the group_tag, then take first one as String value
-						List valist = (List)value;
-						if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
-							group_id = (String) valist.get(0);
+			else  {
+				return groupid;
+			}
+		}
+
+		public String determineGroupId(SymWithProps sym, String group_tag) {
+			String group_id = null;
+			if ((group_tag != null)) {
+				if (gff_version == GFF3) {
+					System.out.println("shouldn't get here, GFF3 should have been transformed to look like GFF1");
+				}
+				else {
+					Object value = sym.getProperty(group_tag);
+					if (value != null) {
+						if (value instanceof String) {
+							group_id = (String) value;
 							if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
 						}
+						else if (value instanceof Number) {
+							group_id = "" + value;
+						}
+						else if (value instanceof Character) {
+							group_id = "" + value;
+						}
+						else if (value instanceof List) {  // such as a Vector
+							// If there are multiple values for the group_tag, then take first one as String value
+							List valist = (List)value;
+							if ((valist.size() > 0) && (valist.get(0) instanceof String)) {
+								group_id = (String) valist.get(0);
+								if (GROUP_ID_TO_LOWER_CASE) { group_id = group_id.toLowerCase(); }
+							}
+						}
 					}
 				}
 			}
+			return group_id;
 		}
-		return group_id;
-	}
 
-	public static void main(String[] args) {
-		GFFParser test = new GFFParser();
-		String input_file_name = null;
-		String output_file_name = null;
-		/*
-    if (args.length >= 1)  {
-      input_file_name = args[0];
-    } else {
-      System.out.println("Usage:  java GFFParser <filename>");
-      System.exit(0);
-    }
-		 */
-		input_file_name  = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
-		//    output_file_name = "out.gff";
+		public static void main(String[] args) {
+			GFFParser test = new GFFParser();
+			String input_file_name = null;
+			String output_file_name = null;
+			/*
+			   if (args.length >= 1)  {
+			   input_file_name = args[0];
+			   } else {
+			   System.out.println("Usage:  java GFFParser <filename>");
+			   System.exit(0);
+			   }
+			   */
+			input_file_name  = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
+			//    output_file_name = "out.gff";
 
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
+			SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+			AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
-		// test.setUseStandardFilters(true);
-		//    test.setGffVersion(GFF3);
-		//    test.addFeatureFilter("misc_feature");
-		//    test.addFeatureFilter("tRNA_gene");
+			// test.setUseStandardFilters(true);
+			//    test.setGffVersion(GFF3);
+			//    test.addFeatureFilter("misc_feature");
+			//    test.addFeatureFilter("tRNA_gene");
 
-		Memer mem = new Memer();
-		System.out.println(mem.toString());
-		List<SeqSymmetry> annots = null;
-		try {
-			File fl = new File(input_file_name);
-			FileInputStream fistr = new FileInputStream(fl);
-			//      annots = test.parse(fistr, seq_group, test.default_create_container_annot);
-			annots = test.parse(fistr, seq_group, false);
-			fistr.close();
-
-			int annots_to_write = 1;
-			for (int i = 0; i < annots_to_write && i < annots.size(); i++) {
-				System.out.println("\nSymmetry #" + (i + 1) +
-				" ------------------------------");
-				SymWithProps sym = (SymWithProps) annots.get(i);
-				SeqUtils.printSymmetry(sym, "  ", true);
-			}
-			System.out.println("------------------------------");
-
-			System.out.println("\nannots: " + annots.size());
+			Memer mem = new Memer();
 			System.out.println(mem.toString());
-			System.gc();
-			if (output_file_name != null) {
-				System.out.println("writing out annots to: " + output_file_name);
-				FileOutputStream fos = new FileOutputStream(new File(output_file_name));
-				test.writeAnnotations(annots, null, fos);
-				fos.close();
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		//    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
-		System.out.println(mem.toString());
-		System.out.println("done");
-	}
+			List<SeqSymmetry> annots = null;
+			try {
+				File fl = new File(input_file_name);
+				FileInputStream fistr = new FileInputStream(fl);
+				//      annots = test.parse(fistr, seq_group, test.default_create_container_annot);
+				annots = test.parse(fistr, seq_group, false);
+				fistr.close();
 
-	/**
-	 *  Assumes that the sym being output is of depth = 2 (which UcscPslSyms are).
-	 */
-	public static void outputGffFormat(SymWithProps psym, BioSeq seq, Writer wr)
-	throws IOException {
-		//  public static void outputGffFormat(UcscPslSym psym, BioSeq seq, Writer wr) throws IOException  {
-		int childcount = psym.getChildCount();
-		String meth = (String)psym.getProperty("source");
-		if (meth == null) { meth = (String)psym.getProperty("type"); }
-		//    String id = (String)psym.getProperty("id");
-		String group = (String)psym.getProperty("group");
-		if (group == null) { group = psym.getID(); }
-		if (group == null) { group = (String)psym.getProperty("id"); }
-
-		for (int i=0; i<childcount; i++) {
-			SeqSymmetry csym = psym.getChild(i);
-			SeqSpan span = csym.getSpan(seq);
-
-			// GFF ==> seqname source feature start end score strand frame group
-			wr.write(seq.getID()); // seqname
-			wr.write('\t');
-
-			// source
-			if (meth != null)  { wr.write(meth); }
-			else { wr.write("unknown_source"); }
-			wr.write('\t');
-
-			String child_type = null;
-			SymWithProps cwp = null;
-			if (csym instanceof SymWithProps) {
-				cwp = (SymWithProps)csym;
-				child_type = (String)cwp.getProperty("type");
-			}
-			if (child_type != null) { wr.write(child_type); }
-			else  { wr.write("unknown_feature_type"); }
-			wr.write('\t');
-
-			wr.write(Integer.toString(span.getMin()+1)); wr.write('\t');  // start
-			wr.write(Integer.toString(span.getMax())); wr.write('\t');  // end
-
-			// score
-			Object score = null;
-			if (cwp != null) { score = cwp.getProperty("score"); }
-			if (score != null) { wr.write(score.toString()); }
-			else { wr.write("."); }
-			wr.write('\t');
-
-			// strand
-			if (span.isForward()) { wr.write("+"); } else { wr.write("-"); }
-			wr.write('\t');
-
-			// frame
-			Object frame = null;
-			if (cwp != null)  { frame = cwp.getProperty("frame"); }
-			if (frame != null) { wr.write(frame.toString()); }
-			else {  wr.write('.'); }
-			wr.write('\t');  // frame
-
-			// group
-			//      if (id != null) { wr.write(id); }
-			if (group != null) { wr.write(group); }
-
-			wr.write('\n');
-		}
-	}
-
-
-	// assumes that seqid for outputting in GFF format is id of sym's first span's BioSeq
-	// currently type is ignored
-	public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
-		boolean success = true;
-		int count = 0;
-		System.out.println("in GFFParser.writeAnnotations()");
-		try {
-			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				count++;
-				if (count % 1000 == 0) {
-					System.out.println("output count: " + count);
+				int annots_to_write = 1;
+				for (int i = 0; i < annots_to_write && i < annots.size(); i++) {
+					System.out.println("\nSymmetry #" + (i + 1) +
+							" ------------------------------");
+					SymWithProps sym = (SymWithProps) annots.get(i);
+					SeqUtils.printSymmetry(sym, "  ", true);
 				}
-				SeqSymmetry sym = (SeqSymmetry)iterator.next();
-				SeqSpan span = sym.getSpan(0);
-				BioSeq seq = span.getBioSeq();
-				if (sym instanceof SymWithProps) {
-					outputGffFormat((SymWithProps)sym, seq, bw);
-				}
-				else {
-					System.err.println("sym is not instance of SymWithProps");
+				System.out.println("------------------------------");
+
+				System.out.println("\nannots: " + annots.size());
+				System.out.println(mem.toString());
+				System.gc();
+				if (output_file_name != null) {
+					System.out.println("writing out annots to: " + output_file_name);
+					FileOutputStream fos = new FileOutputStream(new File(output_file_name));
+					test.writeAnnotations(annots, null, fos);
+					fos.close();
 				}
 			}
-			bw.flush();
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			success = false;
-		}
-		System.out.println("total line count: " + count);
-		return success;
-	}
-
-
-	/**
-	 *  Implementing AnnotationWriter interface to write out annotations
-	 *    to an output stream as "GFF" format.
-	 *  @param type  currently ignored
-	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
-			String type, OutputStream outstream) {
-		boolean success = true;
-		System.out.println("in GFFParser.writeAnnotations()");
-		try {
-			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry sym = (SeqSymmetry)iterator.next();
-				if (sym instanceof SymWithProps) {
-					outputGffFormat((SymWithProps)sym, seq, bw);
-				}
-				else {
-					System.err.println("sym is not instance of SymWithProps");
-				}
+			catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			bw.flush();
+			//    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
+			System.out.println(mem.toString());
+			System.out.println("done");
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			success = false;
+
+		/**
+		 *  Assumes that the sym being output is of depth = 2 (which UcscPslSyms are).
+		 */
+		public static void outputGffFormat(SymWithProps psym, BioSeq seq, Writer wr)
+			throws IOException {
+			//  public static void outputGffFormat(UcscPslSym psym, BioSeq seq, Writer wr) throws IOException  {
+			int childcount = psym.getChildCount();
+			String meth = (String)psym.getProperty("source");
+			if (meth == null) { meth = (String)psym.getProperty("type"); }
+			//    String id = (String)psym.getProperty("id");
+			String group = (String)psym.getProperty("group");
+			if (group == null) { group = psym.getID(); }
+			if (group == null) { group = (String)psym.getProperty("id"); }
+
+			for (int i=0; i<childcount; i++) {
+				SeqSymmetry csym = psym.getChild(i);
+				SeqSpan span = csym.getSpan(seq);
+
+				// GFF ==> seqname source feature start end score strand frame group
+				wr.write(seq.getID()); // seqname
+				wr.write('\t');
+
+				// source
+				if (meth != null)  { wr.write(meth); }
+				else { wr.write("unknown_source"); }
+				wr.write('\t');
+
+				String child_type = null;
+				SymWithProps cwp = null;
+				if (csym instanceof SymWithProps) {
+					cwp = (SymWithProps)csym;
+					child_type = (String)cwp.getProperty("type");
+				}
+				if (child_type != null) { wr.write(child_type); }
+				else  { wr.write("unknown_feature_type"); }
+				wr.write('\t');
+
+				wr.write(Integer.toString(span.getMin()+1)); wr.write('\t');  // start
+				wr.write(Integer.toString(span.getMax())); wr.write('\t');  // end
+
+				// score
+				Object score = null;
+				if (cwp != null) { score = cwp.getProperty("score"); }
+				if (score != null) { wr.write(score.toString()); }
+				else { wr.write("."); }
+				wr.write('\t');
+
+				// strand
+				if (span.isForward()) { wr.write("+"); } else { wr.write("-"); }
+				wr.write('\t');
+
+				// frame
+				Object frame = null;
+				if (cwp != null)  { frame = cwp.getProperty("frame"); }
+				if (frame != null) { wr.write(frame.toString()); }
+				else {  wr.write('.'); }
+				wr.write('\t');  // frame
+
+				// group
+				//      if (id != null) { wr.write(id); }
+				if (group != null) { wr.write(group); }
+
+				wr.write('\n');
+			}
+			}
+
+
+			// assumes that seqid for outputting in GFF format is id of sym's first span's BioSeq
+			// currently type is ignored
+			public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
+				boolean success = true;
+				int count = 0;
+				System.out.println("in GFFParser.writeAnnotations()");
+				try {
+					Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+					Iterator iterator = syms.iterator();
+					while (iterator.hasNext()) {
+						count++;
+						if (count % 1000 == 0) {
+							System.out.println("output count: " + count);
+						}
+						SeqSymmetry sym = (SeqSymmetry)iterator.next();
+						SeqSpan span = sym.getSpan(0);
+						BioSeq seq = span.getBioSeq();
+						if (sym instanceof SymWithProps) {
+							outputGffFormat((SymWithProps)sym, seq, bw);
+						}
+						else {
+							System.err.println("sym is not instance of SymWithProps");
+						}
+					}
+					bw.flush();
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+					success = false;
+				}
+				System.out.println("total line count: " + count);
+				return success;
+			}
+
+
+			/**
+			 *  Implementing AnnotationWriter interface to write out annotations
+			 *    to an output stream as "GFF" format.
+			 *  @param type  currently ignored
+			 **/
+			public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+					String type, OutputStream outstream) {
+				boolean success = true;
+				System.out.println("in GFFParser.writeAnnotations()");
+				try {
+					Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+					Iterator iterator = syms.iterator();
+					while (iterator.hasNext()) {
+						SeqSymmetry sym = (SeqSymmetry)iterator.next();
+						if (sym instanceof SymWithProps) {
+							outputGffFormat((SymWithProps)sym, seq, bw);
+						}
+						else {
+							System.err.println("sym is not instance of SymWithProps");
+						}
+					}
+					bw.flush();
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
+					success = false;
+				}
+				return success;
+			}
+
+			/**
+			 *  Implementing AnnotationWriter interface to write out annotations
+			 *    to an output stream as "GFF" format.
+			 **/
+			public String getMimeType() { return "text/plain"; }
+
+			public void setUseDefaultSource(boolean useDefaultSource) {
+				this.useDefaultSource = useDefaultSource;
+			}
 		}
-		return success;
-	}
-
-	/**
-	 *  Implementing AnnotationWriter interface to write out annotations
-	 *    to an output stream as "GFF" format.
-	 **/
-	public String getMimeType() { return "text/plain"; }
-
-	public void setUseDefaultSource(boolean useDefaultSource) {
-		this.useDefaultSource = useDefaultSource;
-	}
-}

@@ -18,10 +18,10 @@ package com.affymetrix.genometryImpl.parsers;
  *  The file extension should be {@link #FILE_EXT}.
  */
 public class FishClonesParser extends TabDelimitedParser {
-  public static final String FILE_EXT = "fsh";
-  public static final String FISH_CLONES_METHOD = "fishClones";
-  
-  public FishClonesParser(boolean addToIndex) {
-    super(-1, 0, 1, 2, -1, -1, -1, 3, false, false, addToIndex);
-  }
+	public static final String FILE_EXT = "fsh";
+	public static final String FISH_CLONES_METHOD = "fishClones";
+
+	public FishClonesParser(boolean addToIndex) {
+		super(-1, 0, 1, 2, -1, -1, -1, 3, false, false, addToIndex);
+	}
 }

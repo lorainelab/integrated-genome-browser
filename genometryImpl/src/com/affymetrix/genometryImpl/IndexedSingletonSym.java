@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package com.affymetrix.genometryImpl;
 
@@ -24,71 +24,71 @@ import com.affymetrix.genometry.symmetry.*;
  *  will throw exceptions if the parent is null.
  */
 public class IndexedSingletonSym extends SingletonSeqSymmetry implements IndexedSym, SymWithProps {
-  int index_in_parent = -1;
-  ScoredContainerSym parent = null;
-  String id = null;
+	int index_in_parent = -1;
+	ScoredContainerSym parent = null;
+	String id = null;
 
-  /** Constructor. Be sure to also call {@link #setParent} and {@link #setIndex}.
-   */
-  public IndexedSingletonSym(int start, int end, BioSeq seq)  {
-    super(start, end, seq);
-  }
+	/** Constructor. Be sure to also call {@link #setParent} and {@link #setIndex}.
+	*/
+	public IndexedSingletonSym(int start, int end, BioSeq seq)  {
+		super(start, end, seq);
+	}
 
-  public void setParent(ScoredContainerSym par) { parent = par; }
-  public void setIndex(int index) { index_in_parent = index; }
-  public ScoredContainerSym getParent() { return parent; }
-  public int getIndex() { return index_in_parent; }
-  public void setID(String symid) { id = symid; }
-  public String getID() { return id; }
+	public void setParent(ScoredContainerSym par) { parent = par; }
+	public void setIndex(int index) { index_in_parent = index; }
+	public ScoredContainerSym getParent() { return parent; }
+	public int getIndex() { return index_in_parent; }
+	public void setID(String symid) { id = symid; }
+	public String getID() { return id; }
 
-  public Map<String,Object> getProperties() {
-    Map<String,Object> props;
-    if (id != null) {
-      props = cloneProperties();
-    }
-    else {
-      props = parent.getProperties();
-    }
-    return props;
-  }
+	public Map<String,Object> getProperties() {
+		Map<String,Object> props;
+		if (id != null) {
+			props = cloneProperties();
+		}
+		else {
+			props = parent.getProperties();
+		}
+		return props;
+	}
 
-  public Map<String,Object> cloneProperties() {
-    Map<String,Object> props = parent.cloneProperties();
-    if (id != null) {
-      props.put("id", id);
-    }
-    return props;
-  }
+	public Map<String,Object> cloneProperties() {
+		Map<String,Object> props = parent.cloneProperties();
+		if (id != null) {
+			props.put("id", id);
+		}
+		return props;
+	}
 
-  public Object getProperty(String key) {
-    if (key.equals("id")) { return id; }
-    else { return parent.getProperty(key); }
-  }
+	public Object getProperty(String key) {
+		if (key.equals("id")) { return id; }
+		else { return parent.getProperty(key); }
+	}
 
-  /** IndexedSingletonSym does not support setting properties, so this will
-   *  return false.
-   */
-  public boolean setProperty(String key, Object val) {
-    if (key.equals("id")) {
-      setID((String)val);
-      return true;
-    }
-    else  {
-      System.err.println("IndexedSingletonSym does not support setting properties, except for id");
-      return false;
-    }
-  }
+	/** IndexedSingletonSym does not support setting properties, so this will
+	 *  return false.
+	 */
+	public boolean setProperty(String key, Object val) {
+		if (key.equals("id")) {
+			setID((String)val);
+			return true;
+		}
+		else  {
+			System.err.println("IndexedSingletonSym does not support setting properties, except for id");
+			return false;
+		}
+	}
 
-  /*
-  public float[] getScores(List scorelist) {
-    return this.getParent().getChildScores(this, scorelist);
-  }
+	/*
+	   public float[] getScores(List scorelist) {
+	   return this.getParent().getChildScores(this, scorelist);
+	   }
 
-  public float[] getScores() {
-    return this.getParent().getChildScores(this);
-  }
+	   public float[] getScores() {
+	   return this.getParent().getChildScores(this);
+	   }
 
-  public int getScoreCount() { return this.getParent().getScoreCount(); }
-  */
+	   public int getScoreCount() { return this.getParent().getScoreCount(); }
+	   */
 
 }

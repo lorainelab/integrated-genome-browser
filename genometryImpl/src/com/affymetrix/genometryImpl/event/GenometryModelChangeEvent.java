@@ -19,41 +19,41 @@ import java.util.EventObject;
 
 public class GenometryModelChangeEvent extends EventObject {
 
-  EventType type;
-  transient AnnotatedSeqGroup seq_group;
-  static final long serialVersionUID = 1L;
+	EventType type;
+	transient AnnotatedSeqGroup seq_group;
+	static final long serialVersionUID = 1L;
 
-  public GenometryModelChangeEvent(GenometryModel gmodel, EventType type, AnnotatedSeqGroup group) {
-    super(gmodel);
-    this.type = type;
-    this.seq_group = group;
-  }
+	public GenometryModelChangeEvent(GenometryModel gmodel, EventType type, AnnotatedSeqGroup group) {
+		super(gmodel);
+		this.type = type;
+		this.seq_group = group;
+	}
 
-  public GenometryModel getGenometryModel() {
-    return (GenometryModel) getSource();
-  }
+	public GenometryModel getGenometryModel() {
+		return (GenometryModel) getSource();
+	}
 
-  public EventType getType() {
-    return type;
-  }
+	public EventType getType() {
+		return type;
+	}
 
-  public AnnotatedSeqGroup getSeqGroup() {
-    return seq_group;
-  }
+	public AnnotatedSeqGroup getSeqGroup() {
+		return seq_group;
+	}
 
-  public static class EventType {
-    String name;
+	public static class EventType {
+		String name;
 
-    protected EventType(String name) {
-      this.name = name;
-    }
+		protected EventType(String name) {
+			this.name = name;
+		}
 
-    @Override
-    public String toString() {
-      return name;
-    }
-  }
+		@Override
+			public String toString() {
+				return name;
+			}
+	}
 
-  public static final EventType SEQ_GROUP_ADDED = new EventType("Seq Group Added");
-  public static final EventType SEQ_GROUP_REMOVED = new EventType("Seq Group Removed");
+	public static final EventType SEQ_GROUP_ADDED = new EventType("Seq Group Added");
+	public static final EventType SEQ_GROUP_REMOVED = new EventType("Seq Group Removed");
 }

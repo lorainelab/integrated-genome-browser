@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl;
 /**
  *  Top-level annots attached to a SmartAnnotBioSeq.
  */
-public class TypeContainerAnnot extends SimpleSymWithProps implements TypedSym  {
+public final class TypeContainerAnnot extends SimpleSymWithProps implements TypedSym  {
 	String type;
 
 	public TypeContainerAnnot(String type) {

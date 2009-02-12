@@ -37,7 +37,7 @@ import java.util.regex.*;
  *     isSynonymous() method.
  *
  */
-public class SmartAnnotBioSeq extends GeneralBioSeq  {
+public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	Map type_name2sym = null;   // also keeping a hash of type _names_ to container annotations
 	List<SeqModifiedListener> modified_listeners = null;

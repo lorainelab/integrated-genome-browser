@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
  *     initially accessed from a DAS/2 server as a Das2VersionedSource
  *  ensures that group's AnnotatedBioSeqs are instantiated when they are needed
  */
-public class Das2SeqGroup extends AnnotatedSeqGroup {
+public final class Das2SeqGroup extends AnnotatedSeqGroup {
 
   private final Das2VersionedSource original_version;
   //private Set versions = new LinkedHashSet();

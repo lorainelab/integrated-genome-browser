@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 1998-2005 Affymetrix, Inc.
+ *    
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.  
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package com.affymetrix.genoviz.parser;
 
@@ -54,77 +54,77 @@ import java.util.StringTokenizer;
 public class PhredParser
 {
 
-  BufferedReader fastaDataIn;
-  BufferedReader qualDataIn;
+	BufferedReader fastaDataIn;
+	BufferedReader qualDataIn;
 
-  /**
-   * constructs a ReadConfidence data model
-   * from phred output parsed
-   * from over an internet.
-   *
-   * @param fastaURL whence the fasta format sequence data come.
-   * @param qualURL whence the corresponding quality scores come.
-   */
-  public ReadConfidence parseFiles ( URL fastaURL, URL qualURL ) {
+	/**
+	 * constructs a ReadConfidence data model
+	 * from phred output parsed
+	 * from over an internet.
+	 *
+	 * @param fastaURL whence the fasta format sequence data come.
+	 * @param qualURL whence the corresponding quality scores come.
+	 */
+	public ReadConfidence parseFiles ( URL fastaURL, URL qualURL ) {
 
-    try {
+		try {
 
-      InputStream fastain = fastaURL.openStream();
-      fastaDataIn = new BufferedReader( new InputStreamReader( fastain ) );
+			InputStream fastain = fastaURL.openStream();
+			fastaDataIn = new BufferedReader( new InputStreamReader( fastain ) );
 
-      InputStream qualin = qualURL.openStream();
-      qualDataIn = new BufferedReader( new InputStreamReader( qualin ) );
+			InputStream qualin = qualURL.openStream();
+			qualDataIn = new BufferedReader( new InputStreamReader( qualin ) );
 
-    } catch (MalformedURLException e) {
-      System.out.println(e.getMessage());
-      e.printStackTrace();
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
-      e.printStackTrace();
-    }
+		} catch (MalformedURLException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 
-    String fastaLine = new String();
-    String qualLine = new String();
-    StringTokenizer fastaST;
-    StringTokenizer qualST;
-    BaseConfidence baseConf;
-    ReadConfidence readConf = new ReadConfidence();
+		String fastaLine = new String();
+		String qualLine = new String();
+		StringTokenizer fastaST;
+		StringTokenizer qualST;
+		BaseConfidence baseConf;
+		ReadConfidence readConf = new ReadConfidence();
 
-    try {
-      // First skip the fasta ">" tag lines
-      do {
-        fastaLine = fastaDataIn.readLine();
-      } while ( fastaLine.startsWith ( ">" ) );
-      do {
-        qualLine = qualDataIn.readLine();
-      } while ( qualLine.startsWith ( ">" ) );
+		try {
+			// First skip the fasta ">" tag lines
+			do {
+				fastaLine = fastaDataIn.readLine();
+			} while ( fastaLine.startsWith ( ">" ) );
+			do {
+				qualLine = qualDataIn.readLine();
+			} while ( qualLine.startsWith ( ">" ) );
 
-      qualST = new StringTokenizer( qualLine, " \n", false );
-      do {
-        fastaST = new StringTokenizer( fastaLine, "acgtnACGTN", true );
-        do {
-          char base = fastaST.nextToken().charAt( 0 );
-          if ( ! qualST.hasMoreTokens() ) {
-            qualLine = qualDataIn.readLine();
-            qualST = new StringTokenizer( qualLine, " \n", false );
-          }
-          int conf = Integer.parseInt( qualST.nextToken() );
-          baseConf = new BaseConfidence( base, conf );
-          readConf.addBaseConfidence( baseConf );
-        } while ( fastaST.hasMoreTokens() ) ;
+			qualST = new StringTokenizer( qualLine, " \n", false );
+			do {
+				fastaST = new StringTokenizer( fastaLine, "acgtnACGTN", true );
+				do {
+					char base = fastaST.nextToken().charAt( 0 );
+					if ( ! qualST.hasMoreTokens() ) {
+						qualLine = qualDataIn.readLine();
+						qualST = new StringTokenizer( qualLine, " \n", false );
+					}
+					int conf = Integer.parseInt( qualST.nextToken() );
+					baseConf = new BaseConfidence( base, conf );
+					readConf.addBaseConfidence( baseConf );
+				} while ( fastaST.hasMoreTokens() ) ;
 
-        fastaLine = fastaDataIn.readLine();
-      } while ( (fastaLine != null)
-          && ! fastaLine.startsWith ( ">" )
-          && ! qualLine.startsWith ( ">" ) );
-    }
-    catch ( IOException e ) {
-      System.out.println( e.getMessage() );
-      e.printStackTrace();
-    }
+				fastaLine = fastaDataIn.readLine();
+			} while ( (fastaLine != null)
+					&& ! fastaLine.startsWith ( ">" )
+					&& ! qualLine.startsWith ( ">" ) );
+		}
+		catch ( IOException e ) {
+			System.out.println( e.getMessage() );
+			e.printStackTrace();
+		}
 
-    return readConf;
+		return readConf;
 
-  }
+	}
 
 }

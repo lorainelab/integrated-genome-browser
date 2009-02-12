@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 1998-2005 Affymetrix, Inc.
+ *    
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.  
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package com.affymetrix.genoviz.widget;
 
@@ -39,115 +39,115 @@ import java.util.*;
  */
 public class TieredNeoMap extends AbstractTieredMap {
 
-  /**
-   * @param hscroll_show     If true, TieredNeoMap uses its own horizontal scrollbar
-   * @param vscroll_show     If true, TieredNeoMap uses its own vertival scrollbar
-   *
-   */
+	/**
+	 * @param hscroll_show     If true, TieredNeoMap uses its own horizontal scrollbar
+	 * @param vscroll_show     If true, TieredNeoMap uses its own vertival scrollbar
+	 *
+	 */
 
-  public TieredNeoMap(boolean hscroll_show, boolean vscroll_show) {
-    super(hscroll_show, vscroll_show);
-  }
+	public TieredNeoMap(boolean hscroll_show, boolean vscroll_show) {
+		super(hscroll_show, vscroll_show);
+	}
 
-  public TieredNeoMap() {
-    super();
-  }
+	public TieredNeoMap() {
+		super();
+	}
 
-  /** Add the given tier to the map, building top-down. */
-  public void addTier(MapTierGlyph mtg) {
-    addTier(mtg, false);
-  }
+	/** Add the given tier to the map, building top-down. */
+	public void addTier(MapTierGlyph mtg) {
+		addTier(mtg, false);
+	}
 
 
-  /**
-   * Repacks the tiers relative to each other.
-   * @param full_repack determines if a complete repack of all tiers is forced
-   */
-  public void packTiers(boolean full_repack, boolean stretch_map)  {
-    if (full_repack) {
-    }
-    super.packTiers(full_repack, stretch_map);
-  }
+	/**
+	 * Repacks the tiers relative to each other.
+	 * @param full_repack determines if a complete repack of all tiers is forced
+	 */
+	public void packTiers(boolean full_repack, boolean stretch_map)  {
+		if (full_repack) {
+		}
+		super.packTiers(full_repack, stretch_map);
+	}
 
-  /**
-   * Add the given tier to the map.
-   * @param mtg the MapTierGlyph being added.
-   * @param ontop determines whether tier goes above or below existing tiers
-   */
-  public void addTier(MapTierGlyph mtg, boolean ontop) {
-    if (mtg == null)
-      return;
-    int evtid;
-    this.addItem(mtg);
-    // Use packTiers() rather than repack(), 'cause repack would
-    // generate a TierEvent and any label maps will be out of sync
-    // without the TierEvent.ADD below
+	/**
+	 * Add the given tier to the map.
+	 * @param mtg the MapTierGlyph being added.
+	 * @param ontop determines whether tier goes above or below existing tiers
+	 */
+	public void addTier(MapTierGlyph mtg, boolean ontop) {
+		if (mtg == null)
+			return;
+		int evtid;
+		this.addItem(mtg);
+		// Use packTiers() rather than repack(), 'cause repack would
+		// generate a TierEvent and any label maps will be out of sync
+		// without the TierEvent.ADD below
 
-    if (ontop) {
-      tiers.insertElementAt(mtg, 0);
-      evtid = TierEvent.ADD_TOP;
-    }
-    else {
-      tiers.addElement(mtg);
-      evtid = TierEvent.ADD_BOTTOM;
-    }
+		if (ontop) {
+			tiers.insertElementAt(mtg, 0);
+			evtid = TierEvent.ADD_TOP;
+		}
+		else {
+			tiers.addElement(mtg);
+			evtid = TierEvent.ADD_BOTTOM;
+		}
 
-    mtg.addTierStateChangeListener (this);
-    TierEvent te = new TierEvent (this, evtid, mtg);
-    this.notifyTierEventListeners(te);
-  }
+		mtg.addTierStateChangeListener (this);
+		TierEvent te = new TierEvent (this, evtid, mtg);
+		this.notifyTierEventListeners(te);
+	}
 
-  /**
-   * TierEventListener implementation.
-   * This is used primarily for communication with a TieredLabelMap.
-   */
-  public void heardTierEvent(TierEvent evt) {
-    // We only care if this came from a TieredLabelMap
-    if (!(evt.getSource() instanceof TieredLabelMap))
-      return;
+	/**
+	 * TierEventListener implementation.
+	 * This is used primarily for communication with a TieredLabelMap.
+	 */
+	public void heardTierEvent(TierEvent evt) {
+		// We only care if this came from a TieredLabelMap
+		if (!(evt.getSource() instanceof TieredLabelMap))
+			return;
 
-    // Distill info from the event
+		// Distill info from the event
 
-    TieredLabelMap tlm = (TieredLabelMap) evt.getSource();
-    MapTierGlyph mtg = evt.getTier();
-    int type = evt.getType();
-    if (debug_events) {
-      System.out.println(name + " heardTierEvent(): " +
-          mtg.getLabel() + ", " + evt.getTypeString());
-    }
+		TieredLabelMap tlm = (TieredLabelMap) evt.getSource();
+		MapTierGlyph mtg = evt.getTier();
+		int type = evt.getType();
+		if (debug_events) {
+			System.out.println(name + " heardTierEvent(): " +
+					mtg.getLabel() + ", " + evt.getTypeString());
+		}
 
-    switch (type) {
-    case TierEvent.ADD:
-    case TierEvent.ADD_BOTTOM:
-    case TierEvent.ADD_TOP:
-      // Added a label?  Ignore it.
-      break;
+		switch (type) {
+			case TierEvent.ADD:
+			case TierEvent.ADD_BOTTOM:
+			case TierEvent.ADD_TOP:
+				// Added a label?  Ignore it.
+				break;
 
-    case TierEvent.REMOVE:
-      this.removeCorrTier(tlm, mtg);
-      this.packToMatch(tlm, false, evt.getStretchMap() );
-      this.updateWidget();
-      break;
+			case TierEvent.REMOVE:
+				this.removeCorrTier(tlm, mtg);
+				this.packToMatch(tlm, false, evt.getStretchMap() );
+				this.updateWidget();
+				break;
 
-    case TierEvent.REPACK:
-      this.packToMatch (tlm, evt.getFullRepack(), evt.getStretchMap() );
-      this.updateWidget();
-      break;
+			case TierEvent.REPACK:
+				this.packToMatch (tlm, evt.getFullRepack(), evt.getStretchMap() );
+				this.updateWidget();
+				break;
 
-    case TierEvent.REORDER:
-      this.moveTiers (tlm, evt.getMoveLocs());
-      this.packToMatch(tlm,  evt.getFullRepack(), evt.getStretchMap() );
-      this.updateWidget();
-      break;
+			case TierEvent.REORDER:
+				this.moveTiers (tlm, evt.getMoveLocs());
+				this.packToMatch(tlm,  evt.getFullRepack(), evt.getStretchMap() );
+				this.updateWidget();
+				break;
 
-    case TierEvent.STATE_CHANGED:
-      this.adjustState (tlm, mtg);
-      this.packToMatch(tlm,  evt.getFullRepack(), evt.getStretchMap() );
-     this.updateWidget();
-      break;
-    default:
-      return;
-    }
-  }
+			case TierEvent.STATE_CHANGED:
+				this.adjustState (tlm, mtg);
+				this.packToMatch(tlm,  evt.getFullRepack(), evt.getStretchMap() );
+				this.updateWidget();
+				break;
+			default:
+				return;
+		}
+	}
 
 }

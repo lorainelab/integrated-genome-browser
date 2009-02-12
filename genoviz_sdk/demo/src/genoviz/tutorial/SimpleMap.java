@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 1998-2005 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package genoviz.tutorial;
 
@@ -43,222 +43,222 @@ import java.util.Vector;
 
 public class SimpleMap extends Applet implements ActionListener {
 
-  protected NeoMap map = new NeoMap();
+	protected NeoMap map = new NeoMap();
 
-  public SimpleMap () {
-    map.setMapRange(1, 100);
-    map.setMapOffset(-50, 50);
-    map.addAxis(0);
-    setLayout(new BorderLayout());
-    add("Center", map);
-  }
+	public SimpleMap () {
+		map.setMapRange(1, 100);
+		map.setMapOffset(-50, 50);
+		map.addAxis(0);
+		setLayout(new BorderLayout());
+		add("Center", map);
+	}
 
-  public String getAppletInfo() {
-    return("Simple Map Demo - genoviz Software, Inc.");
-  }
+	public String getAppletInfo() {
+		return("Simple Map Demo - genoviz Software, Inc.");
+	}
 
-  public void init() {
-    super.init();
-    String s = getParameter("config");
-    if (null != s) {
-      parseInputString(s);
-    }
-  }
+	public void init() {
+		super.init();
+		String s = getParameter("config");
+		if (null != s) {
+			parseInputString(s);
+		}
+	}
 
-  protected void addFileMenuItems(Frame theFrame) {
-    int FILE = 0; // assuming the File menu is the first one.
-    Menu fileMenu;
-    MenuBar menuBar = theFrame.getMenuBar();
-    if ( null == menuBar ) {
-      menuBar = new MenuBar();
-      fileMenu = new Menu( "File" );
-      menuBar.add( fileMenu );
-      theFrame.setMenuBar( menuBar );
-    }
-    fileMenu = menuBar.getMenu(FILE);
-    Vector items = new Vector();
-    if (null != fileMenu) {
-      // Remove and save the items already on the menu.
-      while (0 < fileMenu.getItemCount()) {
-        items.addElement(fileMenu.getItem(0));
-        fileMenu.remove(0);
-      }
-      // Add an Open item.
-      MenuItem openCommand = new MenuItem("Open");
-      openCommand.addActionListener(this);
-      fileMenu.add(openCommand);
-      // Replace the other items.
-      Enumeration enm = items.elements();
-      while (enm.hasMoreElements()) {
-        Object o = enm.nextElement();
-        fileMenu.add((MenuItem)o);
-      }
-    }
-  }
-
-
-  public void actionPerformed(ActionEvent theEvent) {
-    if (theEvent.getSource() instanceof MenuItem) {
-      // For now assume it's the Open File menu item.
-      Container f = this.getParent();
-      while (null != f && !(f instanceof Frame)) {
-        f = f.getParent();
-      }
-      if (null != f) {
-        FileDialog dialog = new FileDialog((Frame)f,
-          "Open File", FileDialog.LOAD);
-        dialog.pack();
-        dialog.show();
-        if (null != dialog.getFile()) { // not cancelled
-          this.map.clearWidget();
-          this.map.addAxis(0);
-          try {
-            parseFile(new File(dialog.getDirectory(), dialog.getFile()));
-          }
-          catch (IOException e) {
-          }
-        }
-        this.map.updateWidget();
-      }
-    }
-  }
-
-  private void parseFile(File theFile) throws IOException {
-    parseInput(new FileReader(theFile));
-  }
-
-  public void parseInputString(String theString) {
-    this.map.clearWidget();
-    this.map.addAxis(0);
-    try {
-      parseInput(new StringReader(theString));
-    }
-    catch (IOException e) {
-    }
-    this.map.updateWidget();
-  }
-
-  private void parseInput(Reader theStream) throws IOException {
-    int lineNumber = 1;
-    StreamTokenizer tokens = new StreamTokenizer(theStream);
-    tokens.eolIsSignificant(true);
-    int token;
-    while (StreamTokenizer.TT_EOF != (token = tokens.nextToken())) {
-      switch (token) {
-      case StreamTokenizer.TT_WORD: // keyword
-        tokens.pushBack();
-        parseLine(lineNumber, tokens);
-        break;
-      default:
-        System.err.println("got token " + token);
-        System.err.println("Skipping line " + lineNumber);
-      case StreamTokenizer.TT_EOL: // reset
-        while (StreamTokenizer.TT_EOF != token
-          && StreamTokenizer.TT_EOL != token)
-        {
-          token = tokens.nextToken();
-          switch (token) {
-          case StreamTokenizer.TT_NUMBER:
-            System.err.print(" " + tokens.nval);
-            break;
-          case StreamTokenizer.TT_WORD:
-            System.err.print(" " + tokens.sval);
-            break;
-          case '"':
-            System.err.print(" \"" + tokens.sval + "\"");
-            break;
-          default:
-            System.err.print(" " + (char)token);
-            break;
-          case StreamTokenizer.TT_EOL:
-            System.err.println(" <END OF LINE>");
-            break;
-          case StreamTokenizer.TT_EOF:
-            System.err.println(" <END OF FILE>");
-          }
-        }
-        lineNumber++;
-      }
-    }
-  }
-
-  private void parseLine(int theLineNumber, StreamTokenizer theTokens)
-    throws IOException
-  {
-    int token = theTokens.nextToken();
-    if (StreamTokenizer.TT_WORD == token) { // We have the keyword.
-      String keyword = theTokens.sval;
-      if (keyword.equalsIgnoreCase("range")) {
-        Range r = parseRange(theTokens);
-        this.map.setMapRange(r.beg, r.end);
-      }
-      else if (keyword.equalsIgnoreCase("offsets")) {
-        Range r = parseRange(theTokens);
-        this.map.setMapOffset(r.beg, r.end);
-      }
-      else if (keyword.equalsIgnoreCase("glyph")) {
-        Range r = parseRange(theTokens);
-        String configuration = parseString(theTokens);
-        this.map.configure(configuration);
-        this.map.addItem(r.beg, r.end);
-      }
-      else { // not a keyword.
-        System.err.println("\"" + keyword + "\" is not a keyword.");
-        return;
-      }
-    }
-  }
-
-  private Range parseRange(StreamTokenizer theTokens)
-    throws IOException
-  {
-    int begin, end;
-    int token = theTokens.nextToken();
-    if (StreamTokenizer.TT_NUMBER == token) {
-      begin = (int) theTokens.nval;
-      token = (int) theTokens.nextToken();
-      if (StreamTokenizer.TT_NUMBER == token) {
-        end = (int) theTokens.nval;
-        return new Range(begin, end);
-      }
-    }
-    return null;
-  }
-
-  private String parseString(StreamTokenizer theTokens)
-    throws IOException
-  {
-    int token = theTokens.nextToken();
-    switch (token) {
-      case StreamTokenizer.TT_WORD:
-      case '"':
-        return theTokens.sval;
-      default:
-        System.err.println("expected a string");
-        return "";
-    }
-  }
+	protected void addFileMenuItems(Frame theFrame) {
+		int FILE = 0; // assuming the File menu is the first one.
+		Menu fileMenu;
+		MenuBar menuBar = theFrame.getMenuBar();
+		if ( null == menuBar ) {
+			menuBar = new MenuBar();
+			fileMenu = new Menu( "File" );
+			menuBar.add( fileMenu );
+			theFrame.setMenuBar( menuBar );
+		}
+		fileMenu = menuBar.getMenu(FILE);
+		Vector items = new Vector();
+		if (null != fileMenu) {
+			// Remove and save the items already on the menu.
+			while (0 < fileMenu.getItemCount()) {
+				items.addElement(fileMenu.getItem(0));
+				fileMenu.remove(0);
+			}
+			// Add an Open item.
+			MenuItem openCommand = new MenuItem("Open");
+			openCommand.addActionListener(this);
+			fileMenu.add(openCommand);
+			// Replace the other items.
+			Enumeration enm = items.elements();
+			while (enm.hasMoreElements()) {
+				Object o = enm.nextElement();
+				fileMenu.add((MenuItem)o);
+			}
+		}
+	}
 
 
-  public static void main (String argv[]) {
-    SimpleMap me = new SimpleMap();
-    Frame f = new Frame("GenoViz");
-    f.add("Center", me);
-    me.addFileMenuItems(f);
+	public void actionPerformed(ActionEvent theEvent) {
+		if (theEvent.getSource() instanceof MenuItem) {
+			// For now assume it's the Open File menu item.
+			Container f = this.getParent();
+			while (null != f && !(f instanceof Frame)) {
+				f = f.getParent();
+			}
+			if (null != f) {
+				FileDialog dialog = new FileDialog((Frame)f,
+						"Open File", FileDialog.LOAD);
+				dialog.pack();
+				dialog.show();
+				if (null != dialog.getFile()) { // not cancelled
+					this.map.clearWidget();
+					this.map.addAxis(0);
+					try {
+						parseFile(new File(dialog.getDirectory(), dialog.getFile()));
+					}
+					catch (IOException e) {
+					}
+				}
+				this.map.updateWidget();
+			}
+		}
+	}
 
-    f.addWindowListener( new WindowAdapter() {
-      public void windowClosing( WindowEvent e ) {
-        Window w = (Window) e.getSource();
-        w.dispose();
-      }
-      public void windowClosed( WindowEvent e ) {
-        System.exit( 0 );
-      }
-    } );
+	private void parseFile(File theFile) throws IOException {
+		parseInput(new FileReader(theFile));
+	}
 
-    f.pack();
-    f.setBounds( 20, 40, 300, 250);
-    f.show();
-  }
+	public void parseInputString(String theString) {
+		this.map.clearWidget();
+		this.map.addAxis(0);
+		try {
+			parseInput(new StringReader(theString));
+		}
+		catch (IOException e) {
+		}
+		this.map.updateWidget();
+	}
+
+	private void parseInput(Reader theStream) throws IOException {
+		int lineNumber = 1;
+		StreamTokenizer tokens = new StreamTokenizer(theStream);
+		tokens.eolIsSignificant(true);
+		int token;
+		while (StreamTokenizer.TT_EOF != (token = tokens.nextToken())) {
+			switch (token) {
+				case StreamTokenizer.TT_WORD: // keyword
+					tokens.pushBack();
+					parseLine(lineNumber, tokens);
+					break;
+				default:
+					System.err.println("got token " + token);
+					System.err.println("Skipping line " + lineNumber);
+				case StreamTokenizer.TT_EOL: // reset
+					while (StreamTokenizer.TT_EOF != token
+							&& StreamTokenizer.TT_EOL != token)
+					{
+						token = tokens.nextToken();
+						switch (token) {
+							case StreamTokenizer.TT_NUMBER:
+								System.err.print(" " + tokens.nval);
+								break;
+							case StreamTokenizer.TT_WORD:
+								System.err.print(" " + tokens.sval);
+								break;
+							case '"':
+								System.err.print(" \"" + tokens.sval + "\"");
+								break;
+							default:
+								System.err.print(" " + (char)token);
+								break;
+							case StreamTokenizer.TT_EOL:
+								System.err.println(" <END OF LINE>");
+								break;
+							case StreamTokenizer.TT_EOF:
+								System.err.println(" <END OF FILE>");
+						}
+					}
+					lineNumber++;
+			}
+		}
+	}
+
+	private void parseLine(int theLineNumber, StreamTokenizer theTokens)
+		throws IOException
+	{
+		int token = theTokens.nextToken();
+		if (StreamTokenizer.TT_WORD == token) { // We have the keyword.
+			String keyword = theTokens.sval;
+			if (keyword.equalsIgnoreCase("range")) {
+				Range r = parseRange(theTokens);
+				this.map.setMapRange(r.beg, r.end);
+			}
+			else if (keyword.equalsIgnoreCase("offsets")) {
+				Range r = parseRange(theTokens);
+				this.map.setMapOffset(r.beg, r.end);
+			}
+			else if (keyword.equalsIgnoreCase("glyph")) {
+				Range r = parseRange(theTokens);
+				String configuration = parseString(theTokens);
+				this.map.configure(configuration);
+				this.map.addItem(r.beg, r.end);
+			}
+			else { // not a keyword.
+				System.err.println("\"" + keyword + "\" is not a keyword.");
+				return;
+			}
+		}
+	}
+
+	private Range parseRange(StreamTokenizer theTokens)
+		throws IOException
+	{
+		int begin, end;
+		int token = theTokens.nextToken();
+		if (StreamTokenizer.TT_NUMBER == token) {
+			begin = (int) theTokens.nval;
+			token = (int) theTokens.nextToken();
+			if (StreamTokenizer.TT_NUMBER == token) {
+				end = (int) theTokens.nval;
+				return new Range(begin, end);
+			}
+		}
+		return null;
+	}
+
+	private String parseString(StreamTokenizer theTokens)
+		throws IOException
+	{
+		int token = theTokens.nextToken();
+		switch (token) {
+			case StreamTokenizer.TT_WORD:
+			case '"':
+				return theTokens.sval;
+			default:
+				System.err.println("expected a string");
+				return "";
+		}
+	}
+
+
+	public static void main (String argv[]) {
+		SimpleMap me = new SimpleMap();
+		Frame f = new Frame("GenoViz");
+		f.add("Center", me);
+		me.addFileMenuItems(f);
+
+		f.addWindowListener( new WindowAdapter() {
+			public void windowClosing( WindowEvent e ) {
+				Window w = (Window) e.getSource();
+				w.dispose();
+			}
+			public void windowClosed( WindowEvent e ) {
+				System.exit( 0 );
+			}
+		} );
+
+		f.pack();
+		f.setBounds( 20, 40, 300, 250);
+		f.show();
+	}
 
 }

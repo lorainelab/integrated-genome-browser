@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 1998-2005 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package genoviz.demo.adapter;
 
@@ -27,53 +27,53 @@ import genoviz.demo.datamodel.AnnotationI;
  */
 public class AnnotationAdapter implements NeoDataAdapterI {
 
-  protected MapGlyphFactory factory;
+	protected MapGlyphFactory factory;
 
-  /** need a Scene to set up MapGlyphFactory (which needs to know
-   *  which scene it is building glyphs for, in order to pack the
-   *   glyph relative to other glyphs [actually, should really need to
-   *   know the View that it should base its packing on, but for now
-   *   we consider the simpler case where it packs to the first view
-   *   of the scene])
-   */
-  protected Scene scene;
+	/** need a Scene to set up MapGlyphFactory (which needs to know
+	 *  which scene it is building glyphs for, in order to pack the
+	 *   glyph relative to other glyphs [actually, should really need to
+	 *   know the View that it should base its packing on, but for now
+	 *   we consider the simpler case where it packs to the first view
+	 *   of the scene])
+	 */
+	protected Scene scene;
 
-  public AnnotationAdapter() {
-    factory = new MapGlyphFactory();
-  }
+	public AnnotationAdapter() {
+		factory = new MapGlyphFactory();
+	}
 
-  public void setScene(Scene scene) {
-    this.scene = scene;
-    factory.setScene(scene);
-  }
+	public void setScene(Scene scene) {
+		this.scene = scene;
+		factory.setScene(scene);
+	}
 
-  public void configure(String options) {
-    factory.configure(options);
-  }
+	public void configure(String options) {
+		factory.configure(options);
+	}
 
-  public void configure(Hashtable options)  {
-    factory.configure(options);
-  }
+	public void configure(Hashtable options)  {
+		factory.configure(options);
+	}
 
-  public boolean accepts(Object obj) {
-    return (obj instanceof AnnotationI);
-  }
+	public boolean accepts(Object obj) {
+		return (obj instanceof AnnotationI);
+	}
 
-  // note that scene must be set, or factory will return null if packing
-  //     is needed
-  public GlyphI createGlyph(Object obj) {
-    AnnotationI annot = (AnnotationI)obj;
-    float start = (float)annot.getStart();
-    float end = (float)annot.getEnd();
+	// note that scene must be set, or factory will return null if packing
+	//     is needed
+	public GlyphI createGlyph(Object obj) {
+		AnnotationI annot = (AnnotationI)obj;
+		float start = (float)annot.getStart();
+		float end = (float)annot.getEnd();
 
-    GlyphI gl;
-    if (start <= end) {
-      gl = factory.makeGlyph((float)start, (float)(end+1));
-    }
-    else {
-      gl = factory.makeGlyph((float)(start+1), (float)end);
-    }
-    return gl;
-  }
+		GlyphI gl;
+		if (start <= end) {
+			gl = factory.makeGlyph((float)start, (float)(end+1));
+		}
+		else {
+			gl = factory.makeGlyph((float)(start+1), (float)end);
+		}
+		return gl;
+	}
 
 }

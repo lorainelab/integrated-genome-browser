@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 1998-2005 Affymetrix, Inc.
+ *    
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.  
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package com.affymetrix.genoviz.widget;
 
@@ -29,106 +29,106 @@ import java.awt.event.ItemEvent;
  * Customizer for a NeoMap for use with NeoMap as a Java bean.
  */
 public class NeoMapCustomizer
-  extends NeoWidgetCustomizer
+	extends NeoWidgetCustomizer
 {
 
-  NeoMap map;
-  Choice mapColorChoice;
+	NeoMap map;
+	Choice mapColorChoice;
 
-  public NeoMapCustomizer() {
-    super();
-    includeMapColorEditor();
-  }
+	public NeoMapCustomizer() {
+		super();
+		includeMapColorEditor();
+	}
 
-  public void includeSelection() {
-    super.includeSelection();
-    selectionPanel.add(builtInSelectionChoice);
-  }
+	public void includeSelection() {
+		super.includeSelection();
+		selectionPanel.add(builtInSelectionChoice);
+	}
 
-  public void includeMapColorEditor() {
-    Panel mapColorPanel = new Panel();
-    mapColorChoice = new Choice();
-    mapColorChoice.addItemListener(this);
-    mapColorPanel.setLayout(valuePanelLayout);
-    Label mapColorLabel = new Label("Map Color:", Label.RIGHT);
-    add(mapColorLabel);
-    layout.setConstraints(mapColorLabel, labelConstraints);
-    layout.setConstraints(mapColorPanel, valueConstraints);
-    mapColorPanel.add(mapColorChoice);
-    add(mapColorPanel);
-    valueConstraints.gridy++;
-  }
+	public void includeMapColorEditor() {
+		Panel mapColorPanel = new Panel();
+		mapColorChoice = new Choice();
+		mapColorChoice.addItemListener(this);
+		mapColorPanel.setLayout(valuePanelLayout);
+		Label mapColorLabel = new Label("Map Color:", Label.RIGHT);
+		add(mapColorLabel);
+		layout.setConstraints(mapColorLabel, labelConstraints);
+		layout.setConstraints(mapColorPanel, valueConstraints);
+		mapColorPanel.add(mapColorChoice);
+		add(mapColorPanel);
+		valueConstraints.gridy++;
+	}
 
-  private void setSelectionEvent() {
-    int method = NeoMapI.NO_SELECTION;
-    String s = this.builtInSelectionChoice.getSelectedItem();
-    if (s.equals("On mouse down")) {
-      method = NeoMapI.ON_MOUSE_DOWN;
-    }
-    else if (s.equals("On mouse up")) {
-      method = NeoMapI.ON_MOUSE_UP;
-    }
-    map.setSelectionEvent(method);
-    map.updateWidget();
-  }
+	private void setSelectionEvent() {
+		int method = NeoMapI.NO_SELECTION;
+		String s = this.builtInSelectionChoice.getSelectedItem();
+		if (s.equals("On mouse down")) {
+			method = NeoMapI.ON_MOUSE_DOWN;
+		}
+		else if (s.equals("On mouse up")) {
+			method = NeoMapI.ON_MOUSE_UP;
+		}
+		map.setSelectionEvent(method);
+		map.updateWidget();
+	}
 
-  public void itemStateChanged(ItemEvent theEvent) {
-    if (null == this.map) {
-    }
-    else if (theEvent.getSource() == this.builtInSelectionChoice) {
-      setSelectionEvent();
-      return;
-    }
-    else if (theEvent.getSource() == mapColorChoice) {
-      Color c = map.getColor(this.mapColorChoice.getSelectedItem());
-      map.setMapColor(c);
-      map.updateWidget();
-      return;
-    }
-    super.itemStateChanged(theEvent);
-  }
+	public void itemStateChanged(ItemEvent theEvent) {
+		if (null == this.map) {
+		}
+		else if (theEvent.getSource() == this.builtInSelectionChoice) {
+			setSelectionEvent();
+			return;
+		}
+		else if (theEvent.getSource() == mapColorChoice) {
+			Color c = map.getColor(this.mapColorChoice.getSelectedItem());
+			map.setMapColor(c);
+			map.updateWidget();
+			return;
+		}
+		super.itemStateChanged(theEvent);
+	}
 
-  // PropertyChangeListener Methods
+	// PropertyChangeListener Methods
 
-  public void setObject(Object bean) {
-    NeoMap map;
-    if (bean instanceof NeoMap) {
-      map = (NeoMap)bean;
-      super.setObject(map);
-    }
-    else {
-      throw new IllegalArgumentException("need a NeoMap");
-    }
-    // Background
-    if (null != mapColorChoice) {
-      loadColorChoice(mapColorChoice, map.getMapColor());
-    }
-    if (null != builtInSelectionChoice) {
-      String[] selectionMethods = { "Off",
-                                    "On mouse down",
-                                    "On mouse up" };
-      int current = map.getSelectionEvent();
-      String currentChoice = "Off";
-      switch (current) {
-      case NeoMapI.NO_SELECTION:
-        currentChoice = "Off";
-        break;
-      case NeoMapI.ON_MOUSE_DOWN:
-        currentChoice = "On mouse down";
-        break;
-      case NeoMapI.ON_MOUSE_UP:
-        currentChoice = "On mouse up";
-        break;
-      }
-      loadChoice(builtInSelectionChoice, selectionMethods, currentChoice);
-    }
+	public void setObject(Object bean) {
+		NeoMap map;
+		if (bean instanceof NeoMap) {
+			map = (NeoMap)bean;
+			super.setObject(map);
+		}
+		else {
+			throw new IllegalArgumentException("need a NeoMap");
+		}
+		// Background
+		if (null != mapColorChoice) {
+			loadColorChoice(mapColorChoice, map.getMapColor());
+		}
+		if (null != builtInSelectionChoice) {
+			String[] selectionMethods = { "Off",
+				"On mouse down",
+				"On mouse up" };
+			int current = map.getSelectionEvent();
+			String currentChoice = "Off";
+			switch (current) {
+				case NeoMapI.NO_SELECTION:
+					currentChoice = "Off";
+					break;
+				case NeoMapI.ON_MOUSE_DOWN:
+					currentChoice = "On mouse down";
+					break;
+				case NeoMapI.ON_MOUSE_UP:
+					currentChoice = "On mouse up";
+					break;
+			}
+			loadChoice(builtInSelectionChoice, selectionMethods, currentChoice);
+		}
 
-    int reshapeBehavior = map.getReshapeBehavior(NeoMapI.X);
-    this.reshapingBehaviorX.setState(NeoMapI.FITWIDGET == reshapeBehavior);
-    reshapeBehavior = map.getReshapeBehavior(NeoMapI.Y);
-    this.reshapingBehaviorY.setState(NeoMapI.FITWIDGET == reshapeBehavior);
+		int reshapeBehavior = map.getReshapeBehavior(NeoMapI.X);
+		this.reshapingBehaviorX.setState(NeoMapI.FITWIDGET == reshapeBehavior);
+		reshapeBehavior = map.getReshapeBehavior(NeoMapI.Y);
+		this.reshapingBehaviorY.setState(NeoMapI.FITWIDGET == reshapeBehavior);
 
-    this.map = (NeoMap)bean;
-  }
+		this.map = (NeoMap)bean;
+	}
 
 }

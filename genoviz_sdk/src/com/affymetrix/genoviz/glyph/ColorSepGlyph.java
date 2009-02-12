@@ -1,15 +1,15 @@
 /**
-*   Copyright (c) 1998-2005 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
+ *   Copyright (c) 1998-2005 Affymetrix, Inc.
+ *    
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.  
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 
 package com.affymetrix.genoviz.glyph;
 
@@ -38,34 +38,34 @@ import com.affymetrix.genoviz.bioviews.*;
  */
 public class ColorSepGlyph extends Glyph  {
 
-  protected Color colors[] = {};
+	protected Color colors[] = {};
 
-  public Color[] getColorArray() {
-    return colors;
-  }
+	public Color[] getColorArray() {
+		return colors;
+	}
 
-  public void setColorArray(Color[] ca) {
-    colors = ca;
-    return ;
-  }
+	public void setColorArray(Color[] ca) {
+		colors = ca;
+		return ;
+	}
 
-  protected void drawChildren(ViewI view) {
-    if (children == null)  { return; }
-    if (colors.length > 0) {
-      for (int colorIndex = 0; colorIndex < colors.length; colorIndex++) {
-        Enumeration children_enum = children.elements();
-        GlyphI child;
-        while (children_enum.hasMoreElements())  {
-          child = (GlyphI)children_enum.nextElement();
-          if (child.getColor() == colors[colorIndex]) {
-            child.drawTraversal(view);
-          }
-        }
-      }
-    }
-    else {
-      super.drawChildren(view);
-    }
-  }
+	protected void drawChildren(ViewI view) {
+		if (children == null)  { return; }
+		if (colors.length > 0) {
+			for (int colorIndex = 0; colorIndex < colors.length; colorIndex++) {
+				Enumeration children_enum = children.elements();
+				GlyphI child;
+				while (children_enum.hasMoreElements())  {
+					child = (GlyphI)children_enum.nextElement();
+					if (child.getColor() == colors[colorIndex]) {
+						child.drawTraversal(view);
+					}
+				}
+			}
+		}
+		else {
+			super.drawChildren(view);
+		}
+	}
 
 }

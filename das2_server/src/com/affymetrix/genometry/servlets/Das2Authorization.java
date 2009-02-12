@@ -20,13 +20,13 @@ public class Das2Authorization {
 	 * example: 'CairnsLab CFfMZEChIYRNdlRtu0JKs0 S_pombe_Apr_2007 CairnsPrivateData'
 	 */
 	private File usersFile;
-	
+
 	/**Salt for md5 encryption.*/
 	private static final String md5Salt = "TheGreatSaltLake";
 	private ArrayList<String> log = new ArrayList<String>();
 	private boolean authorizing = false;
 	private Pattern separator = Pattern.compile(File.separator);
-	
+
 
 
 	/**HashMap of versionedGenome: restrictedDirectory (String), see restrictedDirectoriesFile*/
@@ -39,10 +39,10 @@ public class Das2Authorization {
 	public Das2Authorization(File dataRoot){
 		//attempt to initialize
 		log.add("Initializing DasAuthorization...");
-		
+
 		//does dataRoot exist?
 		if (dataRoot.exists()== false) log.add("\tAborting, dataRoot does not exist -> "+dataRoot);
-		
+
 		else {
 			//create files
 			restrictedDirectoriesFile = new File (dataRoot, "restrictedDirectories.txt");
@@ -117,7 +117,7 @@ public class Das2Authorization {
 	/**Loads userFile creating users HashMap, userNames are converted to lowercase.*/
 	private boolean loadUserHashMap(){
 		users = new HashMap<String, User>();
-                BufferedReader in = null;
+		BufferedReader in = null;
 		try{
 			in = new BufferedReader(new FileReader(usersFile));
 			String line;
@@ -156,17 +156,17 @@ public class Das2Authorization {
 			e.printStackTrace();
 			return false;
 		}
-                finally {
-                    if (in != null) {
-                        try {
-                        in.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-                    }
-                }
-                return true;
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**Checks if user exists and whether their password matches.
@@ -184,7 +184,7 @@ public class Das2Authorization {
 		if (crypted.equals(user.encryptedPassword)) return user.authorizedDirectories;
 		return null;
 	} 
-	
+
 	/**For encrypting a password using this Classes salt.*/
 	public static String encrypt (String password){
 		return MD5Crypt.crypt(password, md5Salt);
@@ -193,7 +193,7 @@ public class Das2Authorization {
 	/**Loads the restrictedDirectories file into a hash.*/
 	private boolean loadRestrictedDirectories(){
 		restrictedDirectories = new HashMap<String,HashSet<String>>();
-                BufferedReader in = null;
+		BufferedReader in = null;
 		try{
 			in = new BufferedReader(new FileReader(restrictedDirectoriesFile));
 			String line;
@@ -221,28 +221,28 @@ public class Das2Authorization {
 			e.printStackTrace();
 			return false;
 		}
-                finally {
-                    if (in != null) {
-                        try {
-                        in.close();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-                    }
-                }
-                return true;
+		finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**Print to System.out the ArrayList*/
 	public static void printArrayList(ArrayList al){
-            if (al == null) {
-                return;
-            }
-            int num = al.size();
-            for (int i = 0; i < num; i++) {
-                System.out.println(al.get(i));
-            }
+		if (al == null) {
+			return;
+		}
+		int num = al.size();
+		for (int i = 0; i < num; i++) {
+			System.out.println(al.get(i));
+		}
 	}
 
 	private class User{
@@ -263,20 +263,20 @@ public class Das2Authorization {
 	public boolean isAuthorizing() {
 		return authorizing;
 	}
-	
+
 	/**Looks to see if resource is 1st even restricted and 2nd if resource is contained
 	 * in userAccessibleDirectories.*/
 	public boolean showResource(HashMap userAccessibleDirectories, String versionedGenomeDirectory, String requestedResource){
 		//does the versionedGenomeDirectory contain any restrictedDirectories?
 		if (restrictedDirectories.containsKey(versionedGenomeDirectory) == false) return true;
-		
+
 		//is it a restricted directory
 		//get global restricted directories under versionedGenome
 		HashSet restrictedDirs = restrictedDirectories.get(versionedGenomeDirectory);
 		//split requestedResource by the file separator
 		String[] t = separator.split(requestedResource);
 		if (restrictedDirs.contains(t[0]) == false) return true;
-		
+
 		//OK, it's restricted, can they view it?
 		//do they have any permitted directories?
 		if (userAccessibleDirectories == null) return false;

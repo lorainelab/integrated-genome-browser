@@ -818,4 +818,63 @@ final public class GeneralLoadUtils {
         }
         return true;
     }
+
+
+
+
+		/**
+		 * Load residues on span.
+		 * First, attempt to load them with DAS/2 servers.
+		 * Second, attempt to load them with Quickload servers.
+		 * Third, attempt to load them with DAS/1 servers.
+		 * @param aseq
+		 * @param span
+		 * @return true if succeeded.
+		 */
+		boolean loadResidues(String genomeVersionName, SmartAnnotBioSeq aseq, SeqSpan span) {
+			String seq_name = aseq.getID();
+			System.out.println("processing request to load residues for sequence: " + seq_name);
+			if (aseq.isComplete()) {
+				System.out.println("already have residues for " + seq_name);
+				return false;
+			}
+
+			AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+
+			boolean loaded = false;
+
+			// TODO: Synonyms will be an issue soon!
+			// We'll need to know what the appropriate synonym is, for the given server.
+
+			// Determine list of servers that might have this chromosome sequence.
+			List<GenericFeature> features = this.getFeatures(genomeVersionName);
+			Set<genericServer> serversWithChrom = new HashSet<genericServer>();
+			for (GenericFeature feature: features) {
+				serversWithChrom.add(feature.gVersion.gServer);
+			}
+
+			// Attempt to load via DAS/2
+			for(genericServer server: serversWithChrom) {
+				if (server.serverClass == Das2ServerInfo.class) {
+
+				}
+			}
+
+
+			// Attempt to load via Quickload
+			for(genericServer server: serversWithChrom) {
+				if (server.serverClass == QuickLoadServerModel.class) {
+
+				}
+			}
+
+			// Attempt to load via DAS/1
+			for(genericServer server: serversWithChrom) {
+				if (server.serverClass == DasServerInfo.class) {
+					
+				}
+			}
+
+			return true;
+		}
   }

@@ -17,10 +17,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -52,19 +50,13 @@ public class DataLoadView extends JComponent  {
 
     group_view = new SeqGroupView();
     main_panel.add("West",group_view);
-
-    
-
   }
-/*
-  public void initialize() {
-    if (USE_QUICKLOAD)  { quick_view.initialize(); }
-  }*/
 }
 
 class SeqGroupView extends JComponent
-  implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener,
-  ItemListener /*, GenometryModelChangeListener */ {
+  implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener
+	/*,ItemListener */
+	 /*, GenometryModelChangeListener */ {
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -74,21 +66,21 @@ class SeqGroupView extends JComponent
   AnnotatedBioSeq selected_seq = null;
   ListSelectionModel lsm;
   //JLabel genomeL;
-  JComboBox genomeCB;
+  //JComboBox genomeCB;
 
   public SeqGroupView() {
     seqtable = new JTable();
     //genomeL = new JLabel(NO_GENOME);
     //genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    genomeCB = new JComboBox() {
+    /*genomeCB = new JComboBox() {
         @Override
       public Dimension getMaximumSize() {
         return new Dimension(
           super.getMaximumSize().width,
           getPreferredSize().height);
       }
-    };
+    };*/
 
     JScrollPane scroller = new JScrollPane(seqtable);
     scroller.setBorder(BorderFactory.createCompoundBorder(
@@ -122,7 +114,7 @@ class SeqGroupView extends JComponent
       }
     }
 
-    if (group == null) {
+    /*if (group == null) {
       //genomeL.setText(NO_GENOME);
       genomeCB.setSelectedIndex(-1);
     } else {
@@ -130,7 +122,7 @@ class SeqGroupView extends JComponent
       //genomeL.setText(group_id);
       addItemToComboBox(genomeCB, group_id);
       genomeCB.setSelectedItem(group_id);
-    }
+    }*/
     SeqGroupTableModel mod = new SeqGroupTableModel(group);
     selected_seq = null;
     seqtable.setModel(mod);
@@ -227,7 +219,7 @@ class SeqGroupView extends JComponent
     @Override
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
-  public void itemStateChanged(ItemEvent e) {
+  /*public void itemStateChanged(ItemEvent e) {
     if (e.getSource() == genomeCB && e.getStateChange() == ItemEvent.SELECTED) {
       String genome_id = (String) e.getItem();
       if (genome_id != null) {
@@ -235,52 +227,8 @@ class SeqGroupView extends JComponent
         gmodel.setSelectedSeqGroup(group);
       }
     }
-  }
-
-//  public void genometryModelChanged(GenometryModelChangeEvent evt) {
-//    AnnotatedSeqGroup group = evt.getSeqGroup();
-//    if (evt.getType().equals(GenometryModelChangeEvent.SEQ_GROUP_ADDED)) {
-//      genomeCB.addItem(group.getID());
-//    } else if (evt.getType().equals(GenometryModelChangeEvent.SEQ_GROUP_REMOVED)) {
-//      genomeCB.removeItem(group.getID());
-//    }
-//  }
-
+  }*/
 }
 
 
-class SeqGroupTableModel extends AbstractTableModel  {
-  AnnotatedSeqGroup group;
 
-  public SeqGroupTableModel(AnnotatedSeqGroup seq_group) {
-    group = seq_group;
-  }
-
-  public int getRowCount() { return (group == null ? 0 : group.getSeqCount()); }
-
-  public int getColumnCount() { return 2; }
-
-  public Object getValueAt(int row, int col) {
-    if (group != null) {
-      MutableAnnotatedBioSeq seq = group.getSeq(row);
-      if (col == 0) {
-        return seq.getID();
-      }
-      else if (col == 1) {
-	if (seq instanceof CompositeNegSeq) {
-	  return Long.toString((long)((CompositeNegSeq)seq).getLengthDouble());
-	}
-	else {
-	  return Integer.toString(seq.getLength());
-	}
-      }
-    }
-    return null;
-  }
-
-  public String getColumnName(int col) {
-    if (col == 0) { return "Sequence"; }
-    else if (col == 1) { return "Length"; }
-    else { return null; }
-  }
-}

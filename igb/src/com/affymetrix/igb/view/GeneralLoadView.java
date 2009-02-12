@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
@@ -99,9 +100,11 @@ final class GeneralLoadView extends JComponent
 
 		if (IGB.isSequenceAccessible()) {
 			all_residuesB = new JButton("Load All Sequence");
+			all_residuesB.setEnabled(false);
 			all_residuesB.addActionListener(this);
 			buttonP.add(all_residuesB);
 			partial_residuesB = new JButton("Load Sequence in View");
+			partial_residuesB.setEnabled(false);
 			if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
 				partial_residuesB.addActionListener(this);
 				buttonP.add(partial_residuesB);
@@ -408,9 +411,7 @@ final class GeneralLoadView extends JComponent
 	 */
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		current_seq = evt.getSelectedSeq();
-/*		if (current_seq == null) {
-			return;
-		}*/
+
 		disableButtonsIfNullOrGenomeSequence();
 
 		String genomeVersionName = (String) this.versionCB.getSelectedItem();

@@ -345,7 +345,7 @@ public class XmlPrefsParser {
       String loadstr = el.getAttribute("load");
       // ignore if load attribute set to false
       //     if (loadstr == null || (! loadstr.equalsIgnoreCase("false")) ) {
-	Map plugins = getNamedMap(prefs_hash, PLUGINS);
+	Map<String,PluginInfo> plugins = getNamedMap(prefs_hash, PLUGINS);
 	String plugin_name = el.getAttribute("name");
 	String class_name = el.getAttribute("class");
 	String description = el.getAttribute("description");

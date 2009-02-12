@@ -962,8 +962,6 @@ public final class IGB extends Application
       export_slice_item.setEnabled(true);
     }
 
-                System.out.println("Way out of bookmark");
-
     WebLink.autoLoad();
 
     // bootstrap bookmark from Preferences for last genome / sequence / region

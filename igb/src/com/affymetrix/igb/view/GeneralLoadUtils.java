@@ -769,6 +769,7 @@ final public class GeneralLoadUtils {
 
     private static void SetLoadStatus(GenericFeature gFeature, AnnotatedBioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
         gFeature.LoadStatusMap.put(aseq, ls);
+				model.fireTableDataChanged();
 
     }
 

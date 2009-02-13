@@ -253,7 +253,7 @@ final class GeneralLoadView extends JComponent
 		}
 		
 		// Select the null group (and the null seq), if it's not already selected.
-		this.ChangeSelectedIfNecessary(null);
+		this.ChangeSelectedGroups(null);
 	}
 
 	/**
@@ -267,7 +267,7 @@ final class GeneralLoadView extends JComponent
 		}
 		if (version_name.equals(SELECT)) {
 			// Select the null group (and the null seq), if it's not already selected.
-			this.ChangeSelectedIfNecessary(null);
+			this.ChangeSelectedGroups(null);
 		} else {
 			AnnotatedSeqGroup group = gmodel.getSeqGroup(version_name);
 			if (group == null) {
@@ -275,7 +275,7 @@ final class GeneralLoadView extends JComponent
 				group = gmodel.getSeqGroup(this.glu.versionName2genome.get(version_name));
 			}
 			// Select the group (and the first seq), if it's not already selected.
-			this.ChangeSelectedIfNecessary(group);
+			this.ChangeSelectedGroups(group);
 		}
 	}
 
@@ -374,19 +374,16 @@ final class GeneralLoadView extends JComponent
 				versionCB.setEnabled(true);
 			}
 		}
-
+		
 		// Initialize this genome version.
 		this.glu.initVersion(genomeVersionName);
+		this.glu.initSeq(genomeVersionName);
 
 		speciesCB.addItemListener(this);
 		versionCB.addItemListener(this);
 
 		speciesCB.setEnabled(true);
 		versionCB.setEnabled(true);
-
-
-		feature_panel.invalidate(); // make sure display gets updated
-		feature_panel.repaint();
 	}
 
 
@@ -517,30 +514,16 @@ final class GeneralLoadView extends JComponent
 
 
 	/**
-	 * Only send these event if they change.
 	 * Calling gmodel.setSelectedSeq() will also bounce event back to this.seqSelectionChanged()
 	 * calling gmodel.setSelectedSeqGroup() will also bounce event back to this.groupSelectionChanged()
 	 * @param sabq
 	 */
-	private void ChangeSelectedIfNecessary(AnnotatedSeqGroup group) {
-		System.out.println("ChangeSelectedIfNecessary");
+	private void ChangeSelectedGroups(AnnotatedSeqGroup group) {
 		gmodel.setSelectedSeqGroup(group);
 		
 		// Note that this SmartAnnotBioSeq may be set by the gmodel, above.
 		SmartAnnotBioSeq sabq = group == null ? null : group.getSeq(0);
 		gmodel.setSelectedSeq(sabq);
-		
-
-
-		/*if (gmodel.getSelectedSeqGroup() != group) {
-			SmartAnnotBioSeq sabq = group == null ? null : group.getSeq(0);
-			if (gmodel.getSelectedSeq() != sabq) {
-				System.out.println("Invoking setSelectedSeq");
-				gmodel.setSelectedSeq(sabq);
-			}
-			System.out.println("Invoking setSelectedSeqGroup");
-			gmodel.setSelectedSeqGroup(group);
-		}*/
 	}
 }
 

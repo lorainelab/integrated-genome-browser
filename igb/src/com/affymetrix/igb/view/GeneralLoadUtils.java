@@ -352,14 +352,25 @@ final public class GeneralLoadUtils {
 		}
 		Boolean init = version2init.get(versionName);
 		if (init == null || !init.booleanValue()) {
-			System.out.println("initializing data for version: " + versionName);
-			Application.getApplicationLogger().fine("initializing data for version: " + versionName);
+			System.out.println("initializing feature names for version: " + versionName);
 
 			loadFeatureNames(versionName);
+		}
+	}
+
+	/**
+	 * Make sure this genome version has been initialized.
+	 * @param versionName
+	 */
+	void initSeq(final String versionName) {
+		if (versionName == null) {
+			return;
+		}
+		Boolean init = version2init.get(versionName);
+		if (init == null || !init.booleanValue()) {
 			boolean seq_init = loadSeqInfo(versionName);
 
-			boolean annot_init = true;
-			if (seq_init && annot_init) {
+			if (seq_init) {
 				version2init.put(versionName, Boolean.TRUE);
 			}
 		}
@@ -401,7 +412,6 @@ final public class GeneralLoadUtils {
 				System.out.println("Interruption while getting feature list.");
 			}
 		}
-
 		return true;
 	}
 
@@ -419,6 +429,7 @@ final public class GeneralLoadUtils {
 			System.out.println("Feature names are already loaded.");
 			return;
 		}
+
 
 		if (gVersion.gServer.serverClass == Das2ServerInfo.class) {
 			System.out.println("Discovering DAS2 features for " + gVersion.versionName);
@@ -471,15 +482,15 @@ final public class GeneralLoadUtils {
 		}
 		Set<GenericVersion> gVersionSet = this.versionName2versionSet.get(versionName);
 		List<GenericVersion> gVersions = new ArrayList<GenericVersion>(gVersionSet);
-		GenericVersion gVersion = gVersions.get(0);	// Get first server as default for chromosome data.
-
-		AnnotatedSeqGroup group = loadChromInfo(gVersion);
+		
+		AnnotatedSeqGroup group = loadChromInfo(gVersions);
 		if (group == null) {
 			return false;
 		}
 
 		addGenomeVirtualSeq(group);
 
+		GenericVersion gVersion = gVersions.get(0);	// Get first server as default for chromosome data.
 		for (GenericFeature gFeature : gVersion.features) {
 			for (SmartAnnotBioSeq sabq : group.getSeqList()) {
 				// Add chromosome sequences to feature

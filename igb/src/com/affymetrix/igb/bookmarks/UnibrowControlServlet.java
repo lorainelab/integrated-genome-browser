@@ -143,7 +143,7 @@ public class UnibrowControlServlet {
    *  call processFeatureRequests(request_syms, update_display, thread_requests)
    *       (which in turn call Das2ClientOptimizer.loadFeatures(request_sym))
    */
-  public static void loadDataFromDas2(final Application uni, final String[] das2_server_urls, final String[] das2_query_urls) {
+  private static void loadDataFromDas2(final Application uni, final String[] das2_server_urls, final String[] das2_query_urls) {
     if (das2_server_urls == null || das2_query_urls == null || das2_query_urls.length == 0) { return; }
     else if (das2_server_urls.length != das2_query_urls.length) { return; }
     if (DEBUG_DAS2_LOAD)  { System.out.println("UnibrowControlServlet.loadDataFromDas2 called"); }
@@ -231,7 +231,7 @@ public class UnibrowControlServlet {
     }
   }
 
-  public static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
+  private static void loadDataFromURLs(final Application uni, final String[] data_urls, final String[] extensions, final String[] tier_names) {
     try {
       if (data_urls != null && data_urls.length != 0) {
         URL[] urls = new URL[data_urls.length];

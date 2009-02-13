@@ -13,8 +13,6 @@
 package com.affymetrix.igb.view;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -54,9 +52,7 @@ public class DataLoadView extends JComponent  {
 }
 
 class SeqGroupView extends JComponent
-  implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener
-	/*,ItemListener */
-	 /*, GenometryModelChangeListener */ {
+  implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -70,18 +66,8 @@ class SeqGroupView extends JComponent
 
   public SeqGroupView() {
     seqtable = new JTable();
-    //genomeL = new JLabel(NO_GENOME);
-    //genomeL.setFont(genomeL.getFont().deriveFont(Font.BOLD));
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    /*genomeCB = new JComboBox() {
-        @Override
-      public Dimension getMaximumSize() {
-        return new Dimension(
-          super.getMaximumSize().width,
-          getPreferredSize().height);
-      }
-    };*/
-
+   
     JScrollPane scroller = new JScrollPane(seqtable);
     scroller.setBorder(BorderFactory.createCompoundBorder(
       scroller.getBorder(),
@@ -97,7 +83,6 @@ class SeqGroupView extends JComponent
     gmodel.addSeqSelectionListener(this);
     lsm = seqtable.getSelectionModel();
     lsm.addListSelectionListener(this);
-    //genomeCB.addItemListener(this);
   }
 
   String most_recent_seq_id = null;
@@ -114,15 +99,6 @@ class SeqGroupView extends JComponent
       }
     }
 
-    /*if (group == null) {
-      //genomeL.setText(NO_GENOME);
-      genomeCB.setSelectedIndex(-1);
-    } else {
-      String group_id = group.getID();
-      //genomeL.setText(group_id);
-      addItemToComboBox(genomeCB, group_id);
-      genomeCB.setSelectedItem(group_id);
-    }*/
     SeqGroupTableModel mod = new SeqGroupTableModel(group);
     selected_seq = null;
     seqtable.setModel(mod);
@@ -147,45 +123,35 @@ class SeqGroupView extends JComponent
     }
   }
 
-  // add an item to a combo box iff it isn't already included
-  void addItemToComboBox(JComboBox cb, Object item) {
-    for (int i=0; i<cb.getItemCount(); i++) {
-      Object o = cb.getItemAt(i);
-      if (o.equals(item)) {
-        return;
-      }
-    }
-    cb.addItem(item);
-  }
-
   public void seqSelectionChanged(SeqSelectionEvent evt) {
-    if (SeqGroupView.DEBUG_EVENTS)  { System.out.println("SeqGroupView received seqSelectionChanged() event"); }
-    synchronized (seqtable) {  // or should synchronize on lsm?
-     // if (selected_seq != evt.getSelectedSeq()) {
-	lsm.removeListSelectionListener(this);
-	//selected_seq = gmodel.getSelectedSeq();
-        selected_seq = evt.getSelectedSeq();
-	if (selected_seq == null) {
-          seqtable.clearSelection();
-        }
-        else  {
-          most_recent_seq_id = selected_seq.getID();
+		if (SeqGroupView.DEBUG_EVENTS) {
+			System.out.println("SeqGroupView received seqSelectionChanged() event");
+		}
+		synchronized (seqtable) {  // or should synchronize on lsm?
+			// if (selected_seq != evt.getSelectedSeq()) {
+			lsm.removeListSelectionListener(this);
+			//selected_seq = gmodel.getSelectedSeq();
+			selected_seq = evt.getSelectedSeq();
+			if (selected_seq == null) {
+				seqtable.clearSelection();
+			} else {
+				most_recent_seq_id = selected_seq.getID();
 
-          for (int i=0; i<seqtable.getRowCount(); i++) {
-            // should be able to use == here instead of equals(), because table's model really returns seq.getID()
-            if (most_recent_seq_id ==  seqtable.getValueAt(i, 0)) {
-              if (seqtable.getSelectedRow() != i) {
-                seqtable.setRowSelectionInterval(i, i);
-                scrollTableLater(seqtable, i);
-              }
-              break;
-            }
-          }
-        }
-	lsm.addListSelectionListener(this);
-     // }
-    }
-  }
+				for (int i = 0; i < seqtable.getRowCount(); i++) {
+					// should be able to use == here instead of equals(), because table's model really returns seq.getID()
+					if (most_recent_seq_id == seqtable.getValueAt(i, 0)) {
+						if (seqtable.getSelectedRow() != i) {
+							seqtable.setRowSelectionInterval(i, i);
+							scrollTableLater(seqtable, i);
+						}
+						break;
+					}
+				}
+			}
+			lsm.addListSelectionListener(this);
+		// }
+		}
+	}
 
   // Scroll the table such that the selected row is visible
   void scrollTableLater(final JTable table, final int i) {
@@ -219,15 +185,6 @@ class SeqGroupView extends JComponent
     @Override
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
-  /*public void itemStateChanged(ItemEvent e) {
-    if (e.getSource() == genomeCB && e.getStateChange() == ItemEvent.SELECTED) {
-      String genome_id = (String) e.getItem();
-      if (genome_id != null) {
-        AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_id);
-        gmodel.setSelectedSeqGroup(group);
-      }
-    }
-  }*/
 }
 
 

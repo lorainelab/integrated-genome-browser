@@ -965,7 +965,7 @@ public final class IGB extends Application
     WebLink.autoLoad();
 
     // bootstrap bookmark from Preferences for last genome / sequence / region
-    ViewPersistenceUtils.restoreLastView(map_view);
+    //ViewPersistenceUtils.restoreLastView(map_view);
 
     // Need to let the QuickLoad system get started-up before starting
     //   the control server that listens to ping requests?

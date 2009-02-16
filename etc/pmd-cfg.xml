@@ -51,9 +51,9 @@
 		<exclude name="PackageCase" />
 		<exclude name="BooleanGetMethodName" />
 	</rule>
-	<rule ref="rulesets/optimization.xml">
-		<exclude rule="LocalVariableCouldBeFinal" />
-		<exclude rule="MethodArgumentCouldBeFinal" />
+	<rule ref="rulesets/optimizations.xml">
+		<exclude name="LocalVariableCouldBeFinal" />
+		<exclude name="MethodArgumentCouldBeFinal" />
 	</rule>
 	<rule ref="rulesets/strictexception.xml" />
 	<rule ref="rulesets/strings.xml" />

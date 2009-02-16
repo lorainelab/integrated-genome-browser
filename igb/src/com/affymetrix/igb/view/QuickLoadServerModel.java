@@ -216,7 +216,7 @@ public class QuickLoadServerModel {
 				if (fields.length >= 1) {
 					String annot_file_name = fields[0];
 					if (annot_file_name == null || annot_file_name.length()==0) {
-						System.out.println("Quickload WARNING: empty file name detected.");
+						//System.out.println("Quickload WARNING: empty file name detected.");
 						continue;
 					}
 					file_names.add(annot_file_name);

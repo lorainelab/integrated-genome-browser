@@ -170,9 +170,9 @@ final class GeneralLoadView extends JComponent
 		String genomeVersionName = (String)versionCB.getSelectedItem();
 		if (src == partial_residuesB) {
 			SeqSpan viewspan = gviewer.getVisibleSpan();
-			this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax());
+			this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax(), viewspan);
 		} else if (src == all_residuesB) {
-			this.glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength());
+			this.glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength(), null);
 		} else if (src == refresh_dataB) {
 			loadVisibleData();
 		}

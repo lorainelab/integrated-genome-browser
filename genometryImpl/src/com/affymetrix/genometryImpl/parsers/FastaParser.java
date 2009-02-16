@@ -23,6 +23,7 @@ import java.util.List;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
@@ -32,12 +33,13 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
  *  If there are multiple sequences in the file, ignores the rest.
  *  The parseAll() method will load all sequences listed in the file.
  */
-public class FastaParser {
+public final class FastaParser {
 
 	//  int max_residues = 32000000;
 
 	static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
 	public static final int LINELENGTH=79;
+	private static final boolean DEBUG=false;
 
 	public FastaParser() {
 	}
@@ -109,23 +111,17 @@ public class FastaParser {
 				seq.setResidues(residues);
 
 				seqlist.add(seq);
+				if (DEBUG) {
 				System.out.println("length of sequence: " + residues.length());
+				}
 			}
 		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException ioe) {
-				}
-			}
-			if (istr != null) {
-				try {
-					istr.close();
-				} catch (IOException ioe) {
-				}
-			}
+			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(istr);
 		}
+		if (DEBUG) {
 		System.out.println("done loading fasta file");
+		}
 		return seqlist;
 	}
 
@@ -184,20 +180,11 @@ public class FastaParser {
 				result = result.trim();
 			}
 		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException ioe) {
-				}
-			}
-			if (istr != null) {
-				try {
-					istr.close();
-				} catch (IOException ioe) {
-				}
-			}
-			return result;
+			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(istr);
+			
 		}
+		return result;
 	}
 
 	/**
@@ -320,8 +307,8 @@ public class FastaParser {
 		catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			if (br != null) {try {br.close();} catch (IOException ioe) {}}
-			if (istr != null) {try {istr.close();} catch (IOException ioe2) {}}
+			GeneralUtils.safeClose(br);
+			GeneralUtils.safeClose(istr);
 		}
 		System.gc();
 		//    try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
@@ -493,7 +480,7 @@ public class FastaParser {
 			catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {
-				if (br != null) {try {br.close();} catch (IOException ioe) {}}
+				GeneralUtils.safeClose(br);
 			}
 			/*
 			   System.gc();
@@ -641,7 +628,8 @@ public class FastaParser {
 				return trimBuffer(buf);
 			}
 			finally {
-				dis.close();
+				GeneralUtils.safeClose(bis);
+				GeneralUtils.safeClose(dis);
 			}
 		}
 

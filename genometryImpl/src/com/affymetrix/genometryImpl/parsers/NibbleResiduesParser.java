@@ -21,8 +21,9 @@ import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
-public class NibbleResiduesParser {
+public final class NibbleResiduesParser {
 
 	/**
 	 *  Parses an input stream.
@@ -34,11 +35,11 @@ public class NibbleResiduesParser {
 	 */
 	public static GeneralBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
 		GeneralBioSeq result_seq = null;
+		BufferedInputStream bis = null;
 		DataInputStream dis = null;
 		try {
 			Timer tim = new Timer();
 			tim.start();
-			BufferedInputStream bis;
 			if (istr instanceof BufferedInputStream) {
 				bis = (BufferedInputStream)istr;
 			}
@@ -73,7 +74,8 @@ public class NibbleResiduesParser {
 			System.out.println("time to read in bnib residues file: " + read_time);
 		}
 		finally {
-			if (dis != null) {try {dis.close();} catch(Exception e) {}}
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(bis);
 		}
 		return result_seq;
 	}
@@ -103,7 +105,7 @@ public class NibbleResiduesParser {
 			seq = parse(fis, seq_group);
 		}
 		finally {
-			if (fis != null) {try {fis.close();} catch(Exception e) {}}
+			GeneralUtils.safeClose(fis);
 		}
 		return seq;
 	}
@@ -133,11 +135,14 @@ public class NibbleResiduesParser {
 		//      4-bit residue encoding maps to 16 possible IUPAC codes:
 		//     [ A, C, G, T, N, M, R, W, S, Y, K, V, H, D, B, X ]
 
+		FileOutputStream fos = null;
 		DataOutputStream dos = null;
+		BufferedOutputStream bos = null;
+
 		try {
 			File fil = new File(file_name);
-			FileOutputStream fos = new FileOutputStream(fil);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			fos = new FileOutputStream(fil);
+			bos = new BufferedOutputStream(fos);
 			dos = new DataOutputStream(bos);
 			dos.writeUTF(seqname);
 			dos.writeUTF(seqversion);
@@ -170,7 +175,9 @@ public class NibbleResiduesParser {
 			System.out.println("done writing out nibble file");
 		}
 		finally {
-			if (dos != null) {try {dos.close();} catch(Exception e) {}}
+			GeneralUtils.safeClose(dos);
+			GeneralUtils.safeClose(bos);
+			GeneralUtils.safeClose(fos);
 		}
 	}
 

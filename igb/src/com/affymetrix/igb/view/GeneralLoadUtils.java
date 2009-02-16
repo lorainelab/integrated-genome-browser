@@ -391,11 +391,12 @@ final public class GeneralLoadUtils {
 	 * @return
 	 */
 	private boolean loadFeatureNames(final String versionName) {
-		String genomeName = this.versionName2genome.get(versionName);
-		for (final GenericVersion gVersion : this.genome2genericVersionList.get(genomeName)) {
-			if (!gVersion.versionName.equals(versionName)) {
-				continue;
-			}
+		for (final GenericVersion gVersion : this.versionName2versionSet.get(versionName)) {
+		//String genomeName = this.versionName2genome.get(versionName);
+		//for (final GenericVersion gVersion : this.genome2genericVersionList.get(genomeName)) {
+			//if (!gVersion.versionName.equals(versionName)) {
+			//	continue;
+			//}
 
 			// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
 			try {
@@ -516,12 +517,14 @@ final public class GeneralLoadUtils {
 
 		addGenomeVirtualSeq(group);
 
-		GenericVersion gVersion = gVersions.get(0);	// Get first server as default for chromosome data.
-		for (GenericFeature gFeature : gVersion.features) {
-			for (SmartAnnotBioSeq sabq : group.getSeqList()) {
-				// Add chromosome sequences to feature
-				if (!gFeature.LoadStatusMap.containsKey(sabq)) {
-					gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
+		for (GenericVersion gVersion : gVersions) {
+			// Initialize all the servers with unloaded status of the feature/chromosome combinations.
+			for (GenericFeature gFeature : gVersion.features) {
+				for (SmartAnnotBioSeq sabq : group.getSeqList()) {
+					// Add chromosome sequences to feature
+					if (!gFeature.LoadStatusMap.containsKey(sabq)) {
+						gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
+					}
 				}
 			}
 		}
@@ -878,32 +881,24 @@ final public class GeneralLoadUtils {
 	 * Second, attempt to load them with Quickload servers.
 	 * Third, attempt to load them with DAS/1 servers.
 	 * @param aseq
-	 * @param span
+	 * @param span	-- may be null, if the entire sequence is requested.
 	 * @return true if succeeded.
 	 */
-	boolean loadResidues(String genomeVersionName, SmartAnnotBioSeq aseq, int min, int max) {
+	boolean loadResidues(String genomeVersionName, SmartAnnotBioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		if (DEBUG) {
 			System.out.println("processing request to load residues for sequence: " + seq_name);
 		}
+
+		/*
+		 * This test does not work properly, so it's being commented out for now.
+		 *
 		if (aseq.isComplete()) {
 			if (DEBUG) {
 				System.out.println("already have residues for " + seq_name);
 			}
 			return false;
-		}
-
-		SeqSpan span;
-		if ((min <= 0) && (max >= aseq.getLength())) {
-			if (DEBUG) {
-				System.out.println("loading all residues");
-			}
-			span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
-		} else {
-			span = new SimpleSeqSpan(min, max, aseq);
-		}
-
-		boolean loaded = false;
+		}*/
 
 		// TODO: Synonyms will be an issue soon!
 		// We'll need to know what the appropriate synonym is, for the given server.
@@ -914,11 +909,18 @@ final public class GeneralLoadUtils {
 		for (GenericFeature feature : features) {
 			serversWithChrom.add(feature.gVersion.gServer);
 		}
-		
-		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, span, aseq);
+
+		if ((min <= 0) && (max >= aseq.getLength())) {
+			if (DEBUG) {
+				System.out.println("loading all residues");
+			}
+			min = 0;
+			max = aseq.getLength();
+		}
+
+		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 	}
 
-	
 
 	
 

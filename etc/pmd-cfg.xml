@@ -8,7 +8,7 @@
 
   <description>This ruleset if for the genoviz project</description>
 
-  <rule ref="rulesets/basic.xml">
+	<rule ref="rulesets/basic.xml">
 		<exclude name="ForLoopShouldBeWhileLoop" />
 	</rule>
 	<rule ref="rulesets/braces.xml/WhileLoopsMustUseBraces" />
@@ -19,8 +19,13 @@
 	<rule ref="rulesets/controversial.xml">
 		<exclude name="OnlyOneReturn" />
 		<exclude name="AvoidFinalLocalVariables" />
+		<exclude name="AvoidFinalLocalVariable" />
+		<exclude name="DataflowAnomalyAnalysis" />
+		<exclude name="DefaultPackage" />
 	</rule>
-	<rule ref="rulesets/coupling.xml" />
+	<rule ref="rulesets/coupling.xml">
+		<exclude name="ExcessiveImports" />
+	</rule>
 	<rule ref="rulesets/design.xml">
 		<exclude name="ConfusingTernary" />
 	</rule>
@@ -29,7 +34,10 @@
 	<rule ref="rulesets/j2ee.xml" />
 	<rule ref="rulesets/junit.xml" />
 	<rule ref="rulesets/logging-jakarta-commons.xml" />
-	<rule ref="rulesets/logging-java.xml" />
+	<rule ref="rulesets/logging-java.xml">
+		<exclude name="SystemPrintln" />
+		<exclude name="AvoidPrintStackTrace" />
+	</rule>
 	<rule ref="rulesets/migrating.xml">
 		<exclude name="ReplaceVectorWithList" />
 	</rule>
@@ -43,7 +51,10 @@
 		<exclude name="PackageCase" />
 		<exclude name="BooleanGetMethodName" />
 	</rule>
-	<rule ref="rulesets/optimizations.xml" />
+	<rule ref="rulesets/optimizations.xml">
+		<exclude rule="LocalVariableCouldBeFinal" />
+		<exclude rule="MethodArgumentCouldBeFinal" />
+	</rule>
 	<rule ref="rulesets/strictexception.xml" />
 	<rule ref="rulesets/strings.xml" />
 	<rule ref="rulesets/sunsecure.xml" />

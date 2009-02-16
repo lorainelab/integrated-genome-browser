@@ -29,4 +29,13 @@ public final class GenericFeature {
         this.loadStrategy = LoadStrategy.NO_LOAD;
         this.LoadStatusMap = new HashMap<AnnotatedBioSeq, LoadStatus>();
     }
+
+		@Override
+		public String toString() {
+			String temp = this.featureName + this.loadStrategy.toString();
+			for (LoadStatus ls : LoadStatusMap.values()) {
+				temp += " " + ls.toString();
+			}
+			return this.featureName + this.loadStrategy.toString();
+		}
 }

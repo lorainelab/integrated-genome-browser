@@ -195,45 +195,57 @@ public class QuickLoadServerModel {
    *  You can retrieve the filenames with {@link #getFilenames(String)}
    */
   public boolean loadAnnotationNames(String genome_name) {
-    boolean success = false;
-    String genome_root = root_url + genome_name + "/";
-    AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
-    Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
-    String filename = genome_root + "annots.txt";
+   boolean success = false;
+		String genome_root = root_url + genome_name + "/";
+		AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
+		Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
+		String filename = genome_root + "annots.txt";
 
-    // Make a new list of filenames, in case this is being re-initialized
-    List<String> file_names = new ArrayList<String>();
-    genome2file_names.put(genome_name, file_names);
+		// Make a new list of filenames, in case this is being re-initialized
+		List<String> file_names = new ArrayList<String>();
+		genome2file_names.put(genome_name, file_names);
 
-    InputStream istr = null;
-    BufferedReader br = null;
-    try {
-      istr = LocalUrlCacher.getInputStream(filename, getCacheAnnots());
-      br = new BufferedReader(new InputStreamReader(istr));
-      String line;
-      while ((line = br.readLine()) != null) {
-        String[] fields = tab_regex.split(line);
-        if (fields.length >= 1) {
-          String annot_file_name = fields[0];
-          //          Application.getApplicationLogger().fine("    " + annot_file_name);
-          file_names.add(annot_file_name);
-	  if (QuickLoadView2.build_virtual_encode &&
-	      (annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&
-	      (group.getSeq(QuickLoadView2.ENCODE_REGIONS_ID) == null) ) {
-	    addEncodeVirtualSeq(group, (genome_root + annot_file_name));
-	  }
-        }
-      }
-      success = true;
-    }
-    catch (Exception ex) {
-      System.out.println("Couldn't find or couldn't process file "+filename);
-      ex.printStackTrace();
-    } finally {
-      if (istr != null) try { istr.close(); } catch (Exception e) {}
-      if (br != null) try {br.close(); } catch (Exception e) {}
-    }
-    return success;
+		InputStream istr = null;
+		BufferedReader br = null;
+		try {
+			istr = LocalUrlCacher.getInputStream(filename, getCacheAnnots());
+			br = new BufferedReader(new InputStreamReader(istr));
+			String line;
+			while ((line = br.readLine()) != null) {
+				String[] fields = tab_regex.split(line);
+				if (fields.length >= 1) {
+					String annot_file_name = fields[0];
+					if (annot_file_name == null || annot_file_name.length()==0) {
+						System.out.println("Quickload WARNING: empty file name detected.");
+						continue;
+					}
+					file_names.add(annot_file_name);
+					if (QuickLoadView2.build_virtual_encode &&
+									(annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&
+									(group.getSeq(QuickLoadView2.ENCODE_REGIONS_ID) == null)) {
+						addEncodeVirtualSeq(group, (genome_root + annot_file_name));
+					}
+				}
+			}
+			success = true;
+		} catch (Exception ex) {
+			System.out.println("Couldn't find or couldn't process file " + filename);
+			ex.printStackTrace();
+		} finally {
+			if (istr != null) {
+				try {
+					istr.close();
+				} catch (Exception e) {
+				}
+			}
+			if (br != null) {
+				try {
+					br.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+		return success;
   }
 
   /**

@@ -13,12 +13,10 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.igb.menuitem.FileTracker;
-import com.affymetrix.igb.prefs.*;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.SeqResiduesLoader;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import java.awt.Dimension;
@@ -27,8 +25,6 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 final public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
@@ -38,11 +34,11 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   static Map usage2str;
 
   JButton clear_cacheB;
-  JCheckBox use_quickloadCB;
+  //JCheckBox use_quickloadCB;
   JCheckBox cache_annotsCB;
   JCheckBox cache_residuesCB;
   JComboBox cache_usage_selector;
-  JButton reset_das_dna_serverB = new JButton("Reset");
+  //JButton reset_das_dna_serverB = new JButton("Reset");
   JTextField syn_file_TF;
 
   static {
@@ -66,7 +62,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.setBorder(BorderFactory.createEtchedBorder());
 
-    Box server_box = new Box(BoxLayout.X_AXIS);
+    /*Box server_box = new Box(BoxLayout.X_AXIS);
     server_box.setBorder(new javax.swing.border.TitledBorder("Das DNA Server URL"));
     JTextField das_dna_server_TF =
         UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(),
@@ -81,7 +77,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     reset_das_dna_serverB.addActionListener(reset_das_dna_server_al);
     server_box.setAlignmentX(0.0f);
     this.add(server_box);
-    this.add(Box.createRigidArea(new Dimension(0, 5)));
+    this.add(Box.createRigidArea(new Dimension(0, 5)));*/
 
 
     Box syn_box = Box.createVerticalBox();
@@ -115,9 +111,9 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
       }
     });
 
-    use_quickloadCB = UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad (requires restart)",
+    /*use_quickloadCB = UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad (requires restart)",
 						      IGB.USE_QUICKLOAD_INSTEAD_OF_DAS2,
-						      IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);
+						      IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);*/
     cache_annotsCB = UnibrowPrefsUtil.createCheckBox("Cache Annotations",
         UnibrowPrefsUtil.getTopNode(),
         QuickLoadServerModel.PREF_QUICKLOAD_CACHE_ANNOTS,
@@ -227,8 +223,8 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
   ActionListener reset_das_dna_server_al = new ActionListener() {
     public void actionPerformed(ActionEvent e) {
-      UnibrowPrefsUtil.getLocationsNode().put(SeqResiduesLoader.PREF_DAS_DNA_SERVER_URL,
-          SeqResiduesLoader.DEFAULT_DAS_DNA_SERVER);
+      /*UnibrowPrefsUtil.getLocationsNode().put(SeqResiduesLoader.PREF_DAS_DNA_SERVER_URL,
+          SeqResiduesLoader.DEFAULT_DAS_DNA_SERVER);*/
     }
   };
 
@@ -302,7 +298,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   }
 
   public String getToolTip() {
-    return "Edit QuickLoad data sources and preferences";
+    return "Edit data sources and preferences";
   }
 
   public String getHelpTextHTML() {
@@ -313,7 +309,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     sb.append("This panel allows you to change settings for data sources.  ");
     sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
     sb.append("</p>\n");
-
+/*
     sb.append("<p>\n");
     sb.append("<h2>Personal QuickLoad URL</h2>\n");
     sb.append("Optional, generally left blank.  You can put the URL of a local or remote directory ");
@@ -332,7 +328,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     sb.append("The most common value here is <pre>http://genome.cse.ucsc.edu/cgi-bin/das</pre> ");
     sb.append("but that server doesn't include data for all species.");
     sb.append("</p>\n");
-
+*/
     sb.append("<p>\n");
     sb.append("<h2>Personal Synonyms File</h2>\n");
     sb.append("Optional.  The location of a synonyms file to use to help resolve cases where ");
@@ -363,8 +359,8 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   }
 
   /** A main method for testing. */
-  public static void main(String[] args) throws Exception {
+ /* public static void main(String[] args) throws Exception {
     DataLoadPrefsView p = new DataLoadPrefsView();
     PreferencesPanel.testPanel(p);
-  }
+  }*/
 }

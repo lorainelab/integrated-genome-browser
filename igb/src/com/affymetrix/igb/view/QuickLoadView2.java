@@ -182,7 +182,7 @@ public class QuickLoadView2 extends JComponent
         System.err.println("Error in QuickLoaderView: " +
                            "SeqMapView seq and QuickLoaderView current_seq not the same!");
       } else {
-	SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
+	//SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
       }
     }
     else if (src == all_residuesB) {
@@ -192,7 +192,7 @@ public class QuickLoadView2 extends JComponent
 	ErrorHandler.errorPanel("Error", "Can't do optimized full residues retrieval for this sequence.", gviewer); 
       }
       else {
-	SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq)current_seq);
+	//SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq)current_seq);
       }
     }
     else if (src == optionsB) {

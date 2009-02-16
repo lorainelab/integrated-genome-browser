@@ -13,8 +13,6 @@ import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
-
-import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -29,7 +27,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
-import com.affymetrix.igb.util.SeqResiduesLoader;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
 import java.util.HashSet;
@@ -55,7 +52,7 @@ final class GeneralLoadView extends JComponent
 	private JButton partial_residuesB;
 	private JButton refresh_dataB;
 	private AnnotatedSeqGroup current_group;
-	private AnnotatedBioSeq current_seq;
+	private SmartAnnotBioSeq current_seq;
 	private SeqMapView gviewer;
 	private JTable feature_table;
 	private FeaturesTableModel feature_model;
@@ -170,11 +167,12 @@ final class GeneralLoadView extends JComponent
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
+		String genomeVersionName = (String)versionCB.getSelectedItem();
 		if (src == partial_residuesB) {
 			SeqSpan viewspan = gviewer.getVisibleSpan();
-			SeqResiduesLoader.loadPartialResidues(viewspan, current_group);
+			this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax());
 		} else if (src == all_residuesB) {
-			SeqResiduesLoader.loadAllResidues((SmartAnnotBioSeq) current_seq);
+			this.glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength());
 		} else if (src == refresh_dataB) {
 			loadVisibleData();
 		}
@@ -393,7 +391,7 @@ final class GeneralLoadView extends JComponent
 	 * @param evt
 	 */
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		current_seq = evt.getSelectedSeq();
+		current_seq = (SmartAnnotBioSeq)evt.getSelectedSeq();
 
 		if (DEBUG_EVENTS) {
 			System.out.println("GeneralLoadView.seqSelectionChanged() called, current_seq: " + (current_seq == null ? null : current_seq.getID()));
@@ -423,6 +421,9 @@ final class GeneralLoadView extends JComponent
 		}
 
 		List<GenericFeature> features = this.glu.getFeatures(genomeVersionName);
+		if (DEBUG_EVENTS) {
+			System.out.println("features: " + features.toString());
+		}
 		this.feature_model = new FeaturesTableModel(this, features, current_seq);
 
 		this.feature_table = new JTable(feature_model);

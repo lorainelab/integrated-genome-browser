@@ -34,10 +34,12 @@ import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
+import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.general.genericServer;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
+import com.affymetrix.igb.util.DasUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -419,7 +421,7 @@ final public class GeneralLoadUtils {
 	 * Load the annotations for the given version.  This is specific to one server.
 	 * @param gVersion
 	 */
-	private void loadFeatureNames(final GenericVersion gVersion) {
+	private synchronized void loadFeatureNames(final GenericVersion gVersion) {
 		if (gVersion.features.size() > 0) {
 			System.out.println("Feature names are already loaded.");
 			return;
@@ -432,31 +434,56 @@ final public class GeneralLoadUtils {
 
 
 		if (gVersion.gServer.serverClass == Das2ServerInfo.class) {
-			System.out.println("Discovering DAS2 features for " + gVersion.versionName);
+			if (DEBUG) {
+				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
+			}
 			// Discover features from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 			for (Das2Type type : version.getTypes().values()) {
 				String type_name = type.getName();
+				if (type_name == null || type_name.length() == 0) {
+					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+					continue;
+				}
 				gVersion.features.add(new GenericFeature(type_name, gVersion));
 			}
 			return;
 		}
 		if (gVersion.gServer.serverClass == DasServerInfo.class) {
 			// Discover features from DAS
+			if (DEBUG) {
+				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
+			}
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 			for (DasType type : version.getTypes().values()) {
 				String type_name = type.getID();
+				if (type_name == null || type_name.length() == 0) {
+					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+					continue;
+				}
 				gVersion.features.add(new GenericFeature(type_name, gVersion));
 			}
 			return;
 		}
 		if (gVersion.gServer.serverClass == QuickLoadServerModel.class) {
 			// Discover feature names from QuickLoad
+
 			try {
 				URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
+				if (DEBUG) {
+				System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String)gVersion.gServer.serverObj);
+			}
+				
 				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
 				List<String> featureNames = quickloadServer.getFilenames(gVersion.versionName);
 				for (String featureName : featureNames) {
+					if (featureName == null || featureName.length() == 0) {
+						System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+						continue;
+					}
+					if (DEBUG) {
+						System.out.println("Adding feature " + featureName);
+					}
 					gVersion.features.add(new GenericFeature(featureName, gVersion));
 				}
 			} catch (Exception ex) {
@@ -466,7 +493,6 @@ final public class GeneralLoadUtils {
 		}
 
 		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverClass);
-	//return false;
 	}
 
 	/**
@@ -549,6 +575,7 @@ final public class GeneralLoadUtils {
 			// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
 			//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
 			group.setSource(gVersion.gServer.serverName);
+			System.out.println("In DAS2 GLU code");
 			version.getSegments();
 			return group;
 		}
@@ -854,15 +881,27 @@ final public class GeneralLoadUtils {
 	 * @param span
 	 * @return true if succeeded.
 	 */
-	boolean loadResidues(String genomeVersionName, SmartAnnotBioSeq aseq, SeqSpan span) {
+	boolean loadResidues(String genomeVersionName, SmartAnnotBioSeq aseq, int min, int max) {
 		String seq_name = aseq.getID();
-		System.out.println("processing request to load residues for sequence: " + seq_name);
+		if (DEBUG) {
+			System.out.println("processing request to load residues for sequence: " + seq_name);
+		}
 		if (aseq.isComplete()) {
-			System.out.println("already have residues for " + seq_name);
+			if (DEBUG) {
+				System.out.println("already have residues for " + seq_name);
+			}
 			return false;
 		}
 
-		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+		SeqSpan span;
+		if ((min <= 0) && (max >= aseq.getLength())) {
+			if (DEBUG) {
+				System.out.println("loading all residues");
+			}
+			span = new SimpleSeqSpan(0, aseq.getLength(), aseq);
+		} else {
+			span = new SimpleSeqSpan(min, max, aseq);
+		}
 
 		boolean loaded = false;
 
@@ -875,26 +914,12 @@ final public class GeneralLoadUtils {
 		for (GenericFeature feature : features) {
 			serversWithChrom.add(feature.gVersion.gServer);
 		}
-
-		// Attempt to load via DAS/2
-		for (genericServer server : serversWithChrom) {
-			if (server.serverClass == Das2ServerInfo.class) {
-			}
-		}
-
-
-		// Attempt to load via Quickload
-		for (genericServer server : serversWithChrom) {
-			if (server.serverClass == QuickLoadServerModel.class) {
-			}
-		}
-
-		// Attempt to load via DAS/1
-		for (genericServer server : serversWithChrom) {
-			if (server.serverClass == DasServerInfo.class) {
-			}
-		}
-
-		return true;
+		
+		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, span, aseq);
 	}
+
+	
+
+	
+
 }

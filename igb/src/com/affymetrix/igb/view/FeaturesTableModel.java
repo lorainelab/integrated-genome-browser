@@ -111,6 +111,9 @@ final public class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	@Override
 	public Class getColumnClass(int c) {
+		if ((getValueAt(0, c)) == null) {
+			System.out.println("Null Reference ERROR: column " + c);
+		}
 		return getValueAt(0, c).getClass();
 	}
 

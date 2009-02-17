@@ -116,6 +116,9 @@ public final class WiggleParser {
 				current_format = WiggleFormat.FIXEDSTEP;
 				current_seq_id = WiggleParser.parseFormatLine( line, "chrom","unknown");
 				current_start = Integer.parseInt(WiggleParser.parseFormatLine( line, "start","1"));
+				if (current_start < 1) {
+					throw new IllegalArgumentException("'fixedStep' format with start of " + current_start +".");
+				}
 				current_step = Integer.parseInt(WiggleParser.parseFormatLine( line, "step","1"));
 				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","0"));
 				continue;
@@ -130,27 +133,22 @@ public final class WiggleParser {
 
 
 			String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
+			
+			validateArguments(current_format, line, fields);
+
 			if (current_format == WiggleFormat.BED4) {
 				parseDataLine(fields, seq_group, current_data, current_datamap);
 				continue;
 			}
 			if (current_format == WiggleFormat.VARSTEP) {
-				if (fields.length < 2) {
-					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line in file: " + line);
-				}
 				parseDataLine(fields, current_seq_id, current_span, seq_group, current_data, current_datamap);
 				continue;
 			}
 			if (current_format == WiggleFormat.FIXEDSTEP) {
-				if (fields.length < 1) {
-					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line in file: " + line);
-				}
 				parseDataLine(fields, current_seq_id, current_start, current_span, seq_group, current_data, current_datamap);
 				current_start += current_step;	// We advance the start based upon the step.
 				continue;
 			}
-
-			throw new IllegalArgumentException("Wiggle format error: format " + current_format + " undefined");
 		}
 
 		grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), seq_group, current_datamap, stream_name));
@@ -163,6 +161,30 @@ public final class WiggleParser {
 		}
 
 		return grafs;
+	}
+
+	/**
+	 * Sanity checking on arguments.
+	 * @param current_format
+	 * @param line
+	 * @param fields
+	 */
+	private static void validateArguments(WiggleFormat current_format, String line, String [] fields) {
+		if (current_format == WiggleFormat.BED4) {
+			if (fields.length < 4) {
+				throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+			}
+		}
+		if (current_format == WiggleFormat.VARSTEP) {
+			if (fields.length < 2) {
+				throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+			}
+		}
+		if (current_format == WiggleFormat.FIXEDSTEP) {
+			if (fields.length < 1) {
+				throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+			}
+		}
 	}
 
 
@@ -221,7 +243,13 @@ public final class WiggleParser {
 			current_datamap.put(current_seq_id, current_data);
 		}
 
-		current_data.xlist.add(Integer.parseInt(fields[0]));	// start
+		int current_start = Integer.parseInt(fields[1]);
+		if (current_start < 1) {
+			throw new IllegalArgumentException("'variableStep' format with start of " + current_start +".");
+		}
+		current_start -=1;	// This is because fixedStep and variableStep sequences are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
+
+		current_data.xlist.add(current_start);	// start
 		current_data.ylist.add(Float.parseFloat(fields[1]));	// y value
 		current_data.wlist.add(current_span);									// width is just the span.
 	
@@ -249,6 +277,8 @@ public final class WiggleParser {
 			current_data = new WiggleData(seq_group, current_seq_id);
 			current_datamap.put(current_seq_id, current_data);
 		}
+
+		current_start -=1;	// This is because fixedStep and variableStep formats are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
 		current_data.xlist.add(current_start);								// start
 		current_data.ylist.add(Float.parseFloat(fields[0]));	// y value

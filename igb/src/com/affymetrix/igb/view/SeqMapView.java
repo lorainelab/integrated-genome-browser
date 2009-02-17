@@ -62,7 +62,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.ObjectUtils;
-import com.affymetrix.igb.util.UnibrowControlUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 
@@ -89,10 +88,10 @@ public class SeqMapView extends JPanel
         implements AnnotatedSeqViewer, SymSelectionSource,
         SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener {
 
-    static final boolean DIAGNOSTICS = false;
-    static final boolean DEBUG_TIERS = false;
+    private static final boolean DIAGNOSTICS = false;
+    private static final boolean DEBUG_TIERS = false;
     public static boolean DEBUG_COMP = false;
-    static final boolean DEBUG_STYLESHEETS = false;
+    private static final boolean DEBUG_STYLESHEETS = false;
     /** Add spans to the transformation sym that will cause all
      * "intron" spans in the regions of aseq between exons chosen for slicing
      * to be transformed into zero-length spans.
@@ -100,7 +99,7 @@ public class SeqMapView extends JPanel
      * and draw them (if desired) without requiring messy calculations in
      * the glyph factories.
      */
-    public static final boolean ADD_INTRON_TRANSFORMS = true;
+    private static final boolean ADD_INTRON_TRANSFORMS = true;
     /**
      * Extends the action of ADD_INTRON_TRANSFORMS to add an extra transform for
      * the "intron" that extends from the start of the sequence to the first
@@ -109,7 +108,7 @@ public class SeqMapView extends JPanel
      * to work better to let the glyph factories figure out this information in
      * other ways.
      */
-    public static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
+    private static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
     protected boolean view_cytobands_in_axis = true;
     public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
     //  public boolean LABEL_TIERMAP = true;
@@ -182,7 +181,7 @@ public class SeqMapView extends JPanel
     // mapping of annotated seq to virtual "view" seq
     MutableSeqSymmetry seq2viewSym;
     SeqSymmetry[] transform_path;
-    public static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
+    private static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
     /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
     public static final String VALUE_AXIS_LABEL_FORMAT_COMMA = "COMMA";
     /** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */

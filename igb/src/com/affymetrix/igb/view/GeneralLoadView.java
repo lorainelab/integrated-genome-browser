@@ -350,10 +350,7 @@ final class GeneralLoadView extends JComponent
 		if (genomeVersionName == null) {
 			// group and/or genome is null.  Disable most everything.
 
-			if (!SELECT.equals(selectedVersion)) {
-				System.out.println("ERROR: invalid version selected: " + selectedVersion);
-				return;
-			}
+			// This could happen if, say, someone loaded a file directly.
 			return;
 		}
 		

@@ -21,19 +21,19 @@ import java.util.*;
 import java.util.regex.*;
 
 
-public class TrackLineParser {
+public final class TrackLineParser {
 
-	static Pattern line_regex = Pattern.compile("\t");
-	static Pattern comma_regex = Pattern.compile(",");
+	//static Pattern line_regex = Pattern.compile("\t");
+	private static final Pattern comma_regex = Pattern.compile(",");
 
-	public static final String NAME="name";
-	public static final String COLOR="color";
-	public static final String DESCRIPTION="description";
-	public static final String VISIBILITY ="visibility";
-	public static final String URL="url";
+	static final String NAME="name";
+	private static final String COLOR="color";
+	private static final String DESCRIPTION="description";
+	private static final String VISIBILITY ="visibility";
+	private static final String URL="url";
 
 	/** Value will be stored in the IAnnotStyle extended properties. */
-	public static final String USE_SCORE="usescore";
+	private static final String USE_SCORE="usescore";
 
 	/** If this property has the value "on" (case-insensitive) and the SeqSymmetry
 	 *  has a property {@link #ITEM_RGB}, then that color will be used for drawing that
@@ -44,7 +44,7 @@ public class TrackLineParser {
 	/** A pattern that matches things like   <b>aaa=bbb</b> or <b>aaa="bbb"</b>
 	 *  or even <b>"aaa"="bbb=ccc"</b>.
 	 */
-	static Pattern track_line_parser = Pattern.compile(
+	private static final Pattern track_line_parser = Pattern.compile(
 			"([\\S&&[^=]]+)"     // Group 1: One or more non-whitespace characters (except =)
 			+ "="                 //  an equals sign
 			+ "("                 // Group 2: Either ....
@@ -53,7 +53,7 @@ public class TrackLineParser {
 			+ "(?:\\S+)"        // Any non-whitespace characters
 			+ ")");               //    ... end of group 2
 
-	Map<String,String> track_hash = new TreeMap<String,String>();
+	private final Map<String,String> track_hash = new TreeMap<String,String>();
 
 	public TrackLineParser() {}
 
@@ -63,7 +63,7 @@ public class TrackLineParser {
 	 *  Convert a color in string representation "RRR,GGG,BBB" into a Color.
 	 *  Note that this can throw an exception if the String is poorly formatted.
 	 */
-	public static Color reformatColor(String color_string) {
+	static Color reformatColor(String color_string) {
 		String[] rgb = comma_regex.split(color_string);
 		if (rgb.length == 3) {
 			int red = Integer.parseInt(rgb[0]);
@@ -76,7 +76,7 @@ public class TrackLineParser {
 	}
 
 	/** If the string starts and ends with '\"' characters, this removes them. */
-	public static final String unquote(String str) {
+	private static final String unquote(String str) {
 		int length = str.length();
 		if (length>1 && str.charAt(0)=='\"' && str.charAt(length-1)=='\"') {
 			return str.substring(1, length-1);
@@ -92,7 +92,7 @@ public class TrackLineParser {
 	 *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
 	 *  Any old values are cleared from the existing track line hash first.
 	 */
-	public Map<String,String> parseTrackLine(String track_line) {
+	Map<String,String> parseTrackLine(String track_line) {
 		return parseTrackLine(track_line, null);
 	}
 
@@ -103,7 +103,7 @@ public class TrackLineParser {
 	 *  Any old values are cleared from the existing track line hash first.
 	 *  If track_name_prefix arg is non-null, it is added as prefix to parsed in track name
 	 */
-	public Map<String,String> parseTrackLine(String track_line, String track_name_prefix) {
+	Map<String,String> parseTrackLine(String track_line, String track_name_prefix) {
 		track_hash.clear();
 		Matcher matcher = track_line_parser.matcher(track_line);
 		// If performance becomes important, it is possible to save and re-use a Matcher,
@@ -118,7 +118,7 @@ public class TrackLineParser {
 				System.out.println("Couldn't parse this part of the track line: "+matcher.group(0));
 			}
 		}
-		String track_name = (String)track_hash.get(NAME);
+		String track_name = track_hash.get(NAME);
 		if (track_name != null && track_name_prefix != null) {
 			String new_track_name = track_name_prefix + track_name;
 			track_hash.put(NAME, new_track_name);
@@ -132,7 +132,7 @@ public class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	public static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group,
+	static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group,
 			Map<String,String> track_hash, String default_track_name) {
 		String name = track_hash.get(NAME);
 		if (name == null) {
@@ -150,7 +150,7 @@ public class TrackLineParser {
 	 *  (For a graph, the IAnnotStyle will be an instance of DefaultIAnnotStyle,
 	 *   for a non-graph, it will be an instance of AnnotStyle.)
 	 */
-	public static void applyTrackProperties(Map<String,String> track_hash, IAnnotStyle style) {
+	private static void applyTrackProperties(Map<String,String> track_hash, IAnnotStyle style) {
 		//System.out.println("setting track properties from: "+track_line);
 
 		String description = track_hash.get(DESCRIPTION);
@@ -214,7 +214,7 @@ public class TrackLineParser {
 	 *  Applies the UCSC track properties that it understands to the GraphState
 	 *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
 	 */
-	public static void applyTrackProperties(Map<String,String> track_hash, GraphStateI gstate) {
+	static void applyTrackProperties(Map<String,String> track_hash, GraphStateI gstate) {
 		applyTrackProperties(track_hash, gstate.getTierStyle());
 
 		String view_limits = track_hash.get("viewlimits");

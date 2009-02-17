@@ -1,16 +1,9 @@
 <prefs>
 
-<!-- It not necessary to set the QuickLoadUrl in this file.
-     If one is specified, it will be used in addition to the default one(s).
-<tagval tag="QuickLoadUrl" val="http://netaffxdas.affymetrix.com/quickload_data/"/>
--->
-<!--
-   It is no longer possible to specify a DasDnaServer through this file.
-   Set it in the preferences graphical interface.
-<tagval  tag="DasDnaServer" val="http://genome.cse.ucsc.edu/cgi-bin/das" />
--->
-
+<!-- Specify servers here with type, name, and url.  Type is "das", "das2", or "quickload" -->
 <server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" />
+<server type="quickload" name="NetAffx Quickload" url="http://netaffxdas.affymetrix.com/quickload_data" />
+
 
 <boolean tag="USE_QUICK_LOADER" val="false" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />

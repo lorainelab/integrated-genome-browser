@@ -2484,14 +2484,14 @@ public class SeqMapView extends JPanel
         seqmap.updateWidget();
     }
 
-    public void pushView(String remote_address) {
+    /*public void pushView(String remote_address) {
         Rectangle2D vbox = seqmap.getView().getCoordBox();
         int start = (int) vbox.x;
         int end = (int) (vbox.x + vbox.width);
         SeqSpan span = new SimpleSeqSpan(start, end, aseq);
         UnibrowControlUtils.sendLocationCommand(remote_address, span);
         Application.getApplicationLogger().finest("sent span to: " + remote_address);
-    }
+    }*/
 
     /** Returns the genome version in UCSC two-letter plus number format, like "hg17". */
     public String getUcscGenomeVersion() {

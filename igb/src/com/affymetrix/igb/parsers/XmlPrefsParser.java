@@ -147,7 +147,7 @@ public class XmlPrefsParser {
   public static List <String> getFilenames(Map prefs_hash) {
     List <String> filenames = (List) prefs_hash.get(FILENAME_LIST);
     if (filenames == null) {
-      filenames = new ArrayList(4);
+      filenames = new ArrayList<String>(4);
       prefs_hash.put(FILENAME_LIST, filenames);
     }
     return filenames;
@@ -194,7 +194,7 @@ public class XmlPrefsParser {
     return prefs_hash;
   }
 
-  public Map parse(InputSource insource, String file_name, Map<String,Map> prefs_hash) {
+  private Map parse(InputSource insource, String file_name, Map<String,Map> prefs_hash) {
     try {
       //      System.out.println("parsing from source: " + insource);
       Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
@@ -223,7 +223,7 @@ public class XmlPrefsParser {
 
 
 
-  public Map processDocument(Document prefsdoc, String file_name, Map prefs_hash) {
+  private Map processDocument(Document prefsdoc, String file_name, Map prefs_hash) {
     addFilename(file_name, prefs_hash);
     Map type2factory = getNamedMap(prefs_hash, MATCH_FACTORIES);
     Map regex2factory = getNamedMap(prefs_hash, REGEX_FACTORIES);
@@ -341,22 +341,22 @@ public class XmlPrefsParser {
 
   }
 
-    public void processPlugin(Element el, Map prefs_hash) {
-      String loadstr = el.getAttribute("load");
-      // ignore if load attribute set to false
-      //     if (loadstr == null || (! loadstr.equalsIgnoreCase("false")) ) {
-	Map<String,PluginInfo> plugins = getNamedMap(prefs_hash, PLUGINS);
-	String plugin_name = el.getAttribute("name");
-	String class_name = el.getAttribute("class");
-	String description = el.getAttribute("description");
-	String info_url = el.getAttribute("info_url");
-	boolean load = (loadstr == null ? true : (! loadstr.equalsIgnoreCase("false")));
-	if (plugin_name != null && class_name != null) {
-	  System.out.println("plugin, name = " + plugin_name + ", class = " + class_name);
-	  //PluginInfo pinfo = new PluginInfo(class_name, plugin_name, description, info_url, load);
-	  PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load);
-	  plugins.put(plugin_name, pinfo);
-	}
+   private void processPlugin(Element el, Map prefs_hash) {
+		String loadstr = el.getAttribute("load");
+		// ignore if load attribute set to false
+		//     if (loadstr == null || (! loadstr.equalsIgnoreCase("false")) ) {
+		Map<String, PluginInfo> plugins = getNamedMap(prefs_hash, PLUGINS);
+		String plugin_name = el.getAttribute("name");
+		String class_name = el.getAttribute("class");
+		String description = el.getAttribute("description");
+		String info_url = el.getAttribute("info_url");
+		boolean load = (loadstr == null ? true : (!loadstr.equalsIgnoreCase("false")));
+		if (plugin_name != null && class_name != null) {
+			System.out.println("plugin, name = " + plugin_name + ", class = " + class_name);
+			//PluginInfo pinfo = new PluginInfo(class_name, plugin_name, description, info_url, load);
+			PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load);
+			plugins.put(plugin_name, pinfo);
+		}
       //      }
     }
 
@@ -373,23 +373,23 @@ public class XmlPrefsParser {
    *  By default, match is case-insensitive;  use match_case="true" if you want
    *  to require an exact match.
    */
-  public void processLinkUrl(Element el) {
-    Map attmap = XmlPrefsParser.getAttributeMap(el);
-    String annot_type_regex_string = (String) attmap.get("annot_type_regex");
+  private void processLinkUrl(Element el) {
+    Map<String,String> attmap = XmlPrefsParser.getAttributeMap(el);
+    String annot_type_regex_string = attmap.get("annot_type_regex");
     if (annot_type_regex_string != null && annot_type_regex_string.trim().length()==0) {
       annot_type_regex_string = null;
     }
-    String url = (String) attmap.get("url");
+    String url = attmap.get("url");
     if (url != null && url.trim().length()==0) {
       url = null;
     }
-    String name = (String) attmap.get("name");
+    String name = attmap.get("name");
     if (annot_type_regex_string != null && url != null) {
      try {
       WebLink link = new WebLink();
       link.setName(name);
       link.setUrl(url);
-      if ("false".equalsIgnoreCase((String) attmap.get("match_case"))) {
+      if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
         link.setRegex("(?-i)" + annot_type_regex_string);
         //regex = Pattern.compile(annot_type_regex_string);
       } else {
@@ -409,25 +409,25 @@ public class XmlPrefsParser {
     }
   }
 
-  public void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
+  private void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
     /*  Builds two hash tables:
      *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI
      *  regex2factory ==> hash of RE objects derived from "annot_starts_with",
      *      "annot_ends_with", and "annot_regex" fields mapped to MapViewGlyphFactoryI
      */
     Class factory_class = default_factory_class;
-    Map attmap = XmlPrefsParser.getAttributeMap(el);
+    Map<String,String> attmap = XmlPrefsParser.getAttributeMap(el);
     // add colors
     XmlPrefsParser.addColors(el, attmap);
 
     // annotation_style element _must_ have and annot_type attribute
     // planning to relax this at some point to allow for element to have one (and only one) of:
     //     annot_type, annot_type_starts_with, annot_type_ends_with, annot_type_regex...
-    String annot_type = (String)attmap.get("annot_type");
+    String annot_type = attmap.get("annot_type");
     if (attmap.get("factory") != null) {
       String factory_name = null;
       try {
-        factory_name = (String) attmap.get("factory");
+        factory_name = attmap.get("factory");
 
         factory_class = ObjectUtils.classForName(factory_name);
         //System.out.println("mapping annot_type to factory: "+annot_type+" --> "+factory_class.getName());
@@ -450,9 +450,9 @@ public class XmlPrefsParser {
       else {
         String regex_string = null;
         try {
-          String annot_starts_with = (String)attmap.get("annot_type_starts_with");
-          String annot_ends_with = (String)attmap.get("annot_type_ends_with");
-          String annot_regex = (String)attmap.get("annot_type_regex");
+          String annot_starts_with = attmap.get("annot_type_starts_with");
+          String annot_ends_with = attmap.get("annot_type_ends_with");
+          String annot_regex = attmap.get("annot_type_regex");
           if (annot_starts_with != null) {
             regex_string = "^"+annot_starts_with;
 	    //            System.out.println("regex string: " + regex_string);
@@ -490,7 +490,7 @@ public class XmlPrefsParser {
     }
   }
 
-  public static void addColors(Element el, Map hash) {
+  private static void addColors(Element el, Map hash) {
     if (el.hasAttribute("red")) {
       int red = Integer.parseInt(el.getAttribute("red"));
       int green = Integer.parseInt(el.getAttribute("green"));
@@ -524,8 +524,8 @@ public class XmlPrefsParser {
     }
   }
 
-  public static Map getAttributeMap(Element el) {
-    HashMap amap = new HashMap();
+  private static Map<String,String> getAttributeMap(Element el) {
+    HashMap<String,String> amap = new HashMap<String,String>();
     NamedNodeMap atts = el.getAttributes();
     int attcount = atts.getLength();
     for (int i=0; i<attcount; i++) {

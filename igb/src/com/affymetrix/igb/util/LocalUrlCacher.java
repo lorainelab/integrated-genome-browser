@@ -16,6 +16,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
@@ -696,35 +697,36 @@ public class LocalUrlCacher {
 	t.start();
     }
 
-    static void updateCacheUrlAndWait(String url) throws IOException {
-	InputStream is = null;
-	try {
-	    getInputStream(url, NORMAL_CACHE, true);
-	    Application.getSingleton().logInfo("Updated cache for: " + url);
-	} finally {
-	    if (is != null) try { is.close(); } catch (IOException ioe) {}
-	}
-    }
-
-
-    public static void reportHeaders(URLConnection query_con) {
-	try {
-	    //      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
-	    System.out.println("URL: " + query_con.getURL().toString());
-	    int hindex = 0;
-	    while (true) {
-		String val = query_con.getHeaderField(hindex);
-		String key = query_con.getHeaderFieldKey(hindex);
-		if (val == null && key == null) {
-		    break;
+    private static void updateCacheUrlAndWait(String url) throws IOException {
+		InputStream is = null;
+		try {
+			getInputStream(url, NORMAL_CACHE, true);
+			Application.getSingleton().logInfo("Updated cache for: " + url);
+		} finally {
+			GeneralUtils.safeClose(is);
 		}
-		//	Application.getSingleton().logInfo("   header:   key = " + key + ", val = " + val);
-		System.out.println("   header:   key = " + key + ", val = " + val);
-		hindex++;
-	    }
 	}
-	catch (Exception ex)  { ex.printStackTrace(); }
-    }
+
+
+   public static void reportHeaders(URLConnection query_con) {
+		try {
+			//      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
+			System.out.println("URL: " + query_con.getURL().toString());
+			int hindex = 0;
+			while (true) {
+				String val = query_con.getHeaderField(hindex);
+				String key = query_con.getHeaderFieldKey(hindex);
+				if (val == null && key == null) {
+					break;
+				}
+				//	Application.getSingleton().logInfo("   header:   key = " + key + ", val = " + val);
+				System.out.println("   header:   key = " + key + ", val = " + val);
+				hindex++;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
     public static void loadSynonyms(SynonymLookup lookup, String synonym_loc) {
 	Application.getSingleton().logInfo("URL for synonyms: " + synonym_loc);
@@ -749,7 +751,7 @@ public class LocalUrlCacher {
 	    Application.getSingleton().logWarning("Error while loading synonym data from: " + synonym_loc);
 	    t.printStackTrace();
 	} finally {
-	    if (syn_stream != null) try {syn_stream.close();} catch(Exception e) {}
+		GeneralUtils.safeClose(syn_stream);
 	}
     }
 

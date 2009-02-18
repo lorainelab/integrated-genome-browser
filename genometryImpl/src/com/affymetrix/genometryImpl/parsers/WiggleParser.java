@@ -216,9 +216,7 @@ public final class WiggleParser {
 		int start = Math.min(x1, x2);
 		int width = Math.max(x1, x2) - start;
 
-		current_data.xlist.add(x1);
-		current_data.wlist.add(width);
-		current_data.ylist.add(Float.parseFloat(fields[3]));	// y value
+		current_data.add(x1, Float.parseFloat(fields[3]), width);
 	}
 	
 	/**
@@ -249,9 +247,7 @@ public final class WiggleParser {
 		}
 		current_start -=1;	// This is because fixedStep and variableStep sequences are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
-		current_data.xlist.add(current_start);	// start
-		current_data.ylist.add(Float.parseFloat(fields[1]));	// y value
-		current_data.wlist.add(current_span);									// width is just the span.
+		current_data.add(current_start, Float.parseFloat(fields[1]), current_span);
 	
 	}
 
@@ -280,9 +276,7 @@ public final class WiggleParser {
 
 		current_start -=1;	// This is because fixedStep and variableStep formats are 1-indexed.  See http://genome.ucsc.edu/goldenPath/help/wiggle.html
 
-		current_data.xlist.add(current_start);								// start
-		current_data.ylist.add(Float.parseFloat(fields[0]));	// y value
-		current_data.wlist.add(current_span);									// width is just the span.
+		current_data.add(current_start, Float.parseFloat(fields[0]), current_span);
 	}
 
 

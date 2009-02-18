@@ -9,8 +9,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import java.util.List;
-
+import java.util.SortedSet;
+import java.util.TreeSet;
+import javax.swing.table.JTableHeader;
 import javax.swing.*;
+
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometry.SeqSpan;
@@ -29,9 +32,7 @@ import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
-import java.util.HashSet;
-import java.util.Set;
-import javax.swing.table.JTableHeader;
+
 
 final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
@@ -147,13 +148,13 @@ final class GeneralLoadView extends JComponent
 		speciesCB.addItem(SELECT);
 		this.glu.discoverServersAndGenomesAndVersions();
 
-		if (this.glu.genome_names.size() == 0) {
+		if (this.glu.species_names.size() == 0) {
 			// Disable the genome_name selectedSpecies.
 			speciesCB.setEnabled(false);
 			return;
 		}
 
-		for (String genome_name : this.glu.genome_names) {
+		for (String genome_name : this.glu.species_names) {
 			speciesCB.addItem(genome_name);
 		}
 
@@ -297,10 +298,11 @@ final class GeneralLoadView extends JComponent
 		// Add version names to combo boxes.
 		// Since the same version name may occur on multiple servers, we use sets
 		// to eliminate the redundant elements.
-		Set<String> versionNames = new HashSet<String>();
-		for (GenericVersion gVersion : this.glu.genome2genericVersionList.get(speciesName)) {
+		SortedSet<String> versionNames = new TreeSet<String>();
+		for (GenericVersion gVersion : this.glu.species2genericVersionList.get(speciesName)) {
 			versionNames.add(gVersion.versionName);
 		}
+
 		for (String versionName : versionNames) {
 			versionCB.addItem(versionName);
 		}

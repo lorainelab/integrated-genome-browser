@@ -13,18 +13,18 @@
 
 package genoviz.tutorial;
 
-import java.applet.*;
+import java.applet.Applet;
 import java.awt.*;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
 public class TutorialGlyphDemo extends Applet {
 
+	@Override
 	public void init() {
 		NeoMap map = new NeoMap(true, false);
-		map.setSelectionEvent(map.ON_MOUSE_DOWN);
+		map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
 		map.setMapRange(0, 10000);
 		map.addAxis(30);
 		GlyphI tglyph;
@@ -39,8 +39,8 @@ public class TutorialGlyphDemo extends Applet {
 		tglyph.setColor(Color.blue);
 		map.addItem(tglyph);
 
-		NeoScrollbar xzoomer = new NeoScrollbar(NeoScrollbar.VERTICAL);
-		map.setZoomer(map.X, xzoomer);
+		Scrollbar xzoomer = new Scrollbar(Scrollbar.VERTICAL);
+		map.setZoomer(Scrollbar.HORIZONTAL, xzoomer);
 
 		NeoPanel pan = new NeoPanel();
 		pan.setLayout(new BorderLayout());

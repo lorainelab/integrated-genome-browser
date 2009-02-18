@@ -157,7 +157,8 @@ final public class GeneralLoadUtils {
 			Runnable r = new Runnable() {
 
 				public void run() {
-					discoverServersAndGenomesAndVersionsInternal();
+					discoverServersInternal();
+					discoverSpeciesAndVersionsInternal();
 				}
 			};
 			Thread thr1 = new Thread(r);
@@ -170,7 +171,10 @@ final public class GeneralLoadUtils {
 		}
 	}
 
-	public synchronized void discoverServersAndGenomesAndVersionsInternal() {
+	/**
+	 * Discover the list of servers.
+	 */
+	public synchronized void discoverServersInternal() {
 		for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
 			Das2ServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
@@ -178,7 +182,6 @@ final public class GeneralLoadUtils {
 				if (!discoveredServers.containsKey(serverName)) {
 					genericServer g = new genericServer(serverName, server.getURI().toString(), server.getClass(), server);
 					discoveredServers.put(serverName, g);
-					this.getGenomesAndVersionsInternal(serverName);
 				}
 			}
 		}
@@ -193,7 +196,6 @@ final public class GeneralLoadUtils {
 				if (!discoveredServers.containsKey(serverName)) {
 					genericServer g = new genericServer(serverName, server.getRootUrl(), server.getClass(), server);
 					discoveredServers.put(serverName, g);
-					this.getGenomesAndVersionsInternal(serverName);
 				}
 			}
 		}
@@ -203,33 +205,37 @@ final public class GeneralLoadUtils {
 		for (genericServer gServer : ServerList.getServers().values()) {
 			if (gServer.serverClass == QuickLoadServerModel.class) {
 				discoveredServers.put(gServer.serverName, gServer);
-				this.getGenomesAndVersionsInternal(gServer.serverName);
 			}
 		}
 	}
 
-	// Does the work of getting the genome names.
-	private void getGenomesAndVersionsInternal(final String serverName) {
-		// discover genomes from server
-		genericServer gServer = discoveredServers.get(serverName);
-		if (gServer.serverClass == Das2ServerInfo.class) {
-			getDAS2Genomes(gServer);
-			return;
-		}
-		if (gServer.serverClass == DasServerInfo.class) {
-			getDAS1Genomes(gServer);
-			return;
-		}
-		if (gServer.serverClass == QuickLoadServerModel.class) {
-			getQuickLoadGenomes(gServer);
-			return;
-		}
+	/**
+	 * Discover the species and genome versions.
+	 */
+	public synchronized void discoverSpeciesAndVersionsInternal() {
+		for (genericServer gServer : discoveredServers.values()) {
+			if (gServer.serverClass == Das2ServerInfo.class) {
+				getDAS2Genomes(gServer);
+				continue;
+			}
+			if (gServer.serverClass == DasServerInfo.class) {
+				getDAS1Genomes(gServer);
+				continue;
+			}
+			if (gServer.serverClass == QuickLoadServerModel.class) {
+				getQuickLoadGenomes(gServer);
+				continue;
+			}
 
-		System.out.println("WARNING: Unknown server class " + gServer.serverClass);
+			System.out.println("WARNING: Unknown server class " + gServer.serverClass);
+		}
 	}
 
+	/**
+	 * Discover genomes from DAS
+	 * @param gServer
+	 */
 	private synchronized void getDAS1Genomes(genericServer gServer) {
-		// Discover genomes from DAS
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		for (DasSource source : server.getDataSources().values()) {
 			System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
@@ -248,8 +254,11 @@ final public class GeneralLoadUtils {
 		}
 	}
 
+	/**
+	 * Discover genomes from DAS/2
+	 * @param gServer
+	 */
 	private synchronized void getDAS2Genomes(genericServer gServer) {
-		// Discover genomes from DAS/2
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
 			String genomeName = source.getName();
@@ -270,8 +279,11 @@ final public class GeneralLoadUtils {
 		}
 	}
 
+	/**
+	 * Discover genomes from Quickload
+	 * @param gServer
+	 */
 	private synchronized void getQuickLoadGenomes(genericServer gServer) {
-		// Discover genomes from Quickload
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -578,7 +590,6 @@ final public class GeneralLoadUtils {
 			// Calling version.getSegments() to ensure that Das2VersionedSource is populated with Das2Region segments,
 			//    which in turn ensures that AnnotatedSeqGroup is populated with SmartAnnotBioSeqs
 			group.setSource(gVersion.gServer.serverName);
-			System.out.println("In DAS2 GLU code");
 			version.getSegments();
 			return group;
 		}

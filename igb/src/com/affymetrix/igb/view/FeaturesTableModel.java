@@ -16,11 +16,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * Model for table of features.
+ */
 final public class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
 
 	private static String[] columnNames = {"Load Range", "Name", "Server", "Server Type", "Load Status"};
-//    private static String [] columnNames = {"Load Range","Name","Server","Server Type"};
-	static String[] loadChoices = {"Don't Load", "Visible Range", "Whole Range"};
+	static String[] standardLoadChoices = {"Don't Load", "Visible Range", "Whole Range"};
+	static String[] quickloadLoadChoices = {"Don't Load", "Whole Range"};
 	public final EnumMap<LoadStrategy, String> LoadStrategyMap;  // map to a friendly string
 	public final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	public final EnumMap<LoadStatus, String> LoadStatusMap;    // map to a friendly string
@@ -41,9 +44,9 @@ final public class FeaturesTableModel extends AbstractTableModel implements Chan
 		this.LoadStatusMap.put(LoadStatus.UNLOADED, "not loaded");
 
 		this.LoadStrategyMap = new EnumMap<LoadStrategy, String>(LoadStrategy.class);
-		this.LoadStrategyMap.put(LoadStrategy.NO_LOAD, loadChoices[0]);
-		this.LoadStrategyMap.put(LoadStrategy.VISIBLE, loadChoices[1]);
-		this.LoadStrategyMap.put(LoadStrategy.WHOLE, loadChoices[2]);
+		this.LoadStrategyMap.put(LoadStrategy.NO_LOAD, standardLoadChoices[0]);
+		this.LoadStrategyMap.put(LoadStrategy.VISIBLE, standardLoadChoices[1]);
+		this.LoadStrategyMap.put(LoadStrategy.WHOLE, standardLoadChoices[2]);
 
 		// Here we map the friendly string back to the LoadStrategy.
 		// Rather than repeating the lines above, we loop over all LoadStrategy elements and take advantage
@@ -119,11 +122,7 @@ final public class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		if (col == LOAD_STRATEGY_COLUMN) {
-			return true;
-		} else {
-			return false;
-		}
+		return (col == LOAD_STRATEGY_COLUMN);
 	}
 
 	@Override
@@ -153,7 +152,6 @@ final public class FeaturesTableModel extends AbstractTableModel implements Chan
 
 	public void stateChanged(ChangeEvent evt) {
 		Object src = evt.getSource();
-		System.out.println("FeaturesTableModel.stateChanged() called, source:" + src);
 		if (src instanceof GenericFeature) {
 			int row = getRow((GenericFeature) src);
 			if (row >= 0) {  // if typestate is present in table, then send notification of row change

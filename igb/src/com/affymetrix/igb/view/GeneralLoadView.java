@@ -435,7 +435,7 @@ final class GeneralLoadView extends JComponent
 
 
 		// Don't enable combo box for full genome sequence
-		TableWithVisibleComboBox.setComboBoxEditor(this.feature_table, 0, FeaturesTableModel.loadChoices, !this.IsGenomeSequence());
+		TableWithVisibleComboBox.setComboBoxEditor(this.feature_table, 0, FeaturesTableModel.standardLoadChoices, !this.IsGenomeSequence());
 
 		this.feature_panel.add(this.feature_table);
 		this.feature_model.fireTableDataChanged();

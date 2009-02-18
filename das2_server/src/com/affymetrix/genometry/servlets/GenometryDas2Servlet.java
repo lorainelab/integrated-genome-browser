@@ -1635,7 +1635,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 			ArrayList<String> coordinates = new ArrayList<String>();
 			ArrayList<String> links = new ArrayList<String>();
 			ArrayList<String> notes = new ArrayList<String>();
-			Map props = new HashMap();
+			Map<String,ArrayList<String>> props = new HashMap<String,ArrayList<String>>();
 
 			// genometry server does not currently serve up features with PROPERTY, LINK, or NOTE element,
 			//   so if any of these are encountered and the response is not an error for some other reason,
@@ -1675,9 +1675,9 @@ public class GenometryDas2Servlet extends HttpServlet {
 					// if already seen this key, get list from hash and add to it
 					// if not already seen, create new list and add to hash with key prop-key
 					String pkey = tag.substring(5);  // strip off "prop-" to get key
-					ArrayList vlist = (ArrayList) props.get(pkey);
+					ArrayList<String> vlist = props.get(pkey);
 					if (vlist == null) {
-						vlist = new ArrayList();
+						vlist = new ArrayList<String>();
 						props.put(pkey, vlist);
 					}
 					vlist.add(val);

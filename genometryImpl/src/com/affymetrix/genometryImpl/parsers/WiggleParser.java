@@ -243,7 +243,7 @@ public final class WiggleParser {
 			current_datamap.put(current_seq_id, current_data);
 		}
 
-		int current_start = Integer.parseInt(fields[1]);
+		int current_start = Integer.parseInt(fields[0]);
 		if (current_start < 1) {
 			throw new IllegalArgumentException("'variableStep' format with start of " + current_start +".");
 		}

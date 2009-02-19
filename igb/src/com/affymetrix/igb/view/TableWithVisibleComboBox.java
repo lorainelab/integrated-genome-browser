@@ -1,34 +1,54 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.igb.das.DasServerInfo;
+import com.affymetrix.igb.das2.Das2ServerInfo;
+import com.affymetrix.igb.general.GenericFeature;
 import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
 import java.util.Hashtable;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 
 /**
  * A table with two customizations:
  * 1.  An always-visible combo box. For a user, this differentiates the field from a text box, and thus indicates they have a choice.
  * 2.  Different combo box elements per row.  This allows different behavior per server type.
  */
-final class TableWithVisibleComboBox {
+public final class TableWithVisibleComboBox {
 
 	/**
-	 * Set the columm to use the ComboBox editor and renderer
+	 * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
 	 * @param items
 	 */
-	static void setComboBoxEditor(JTable table, int column, String[] items, boolean enabled) {
-		JComboBox editor = new JComboBox(items);
-		DefaultCellEditor dce = new DefaultCellEditor(editor);
+	public static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
+		RowEditorModel rm = new RowEditorModel();
+		// tell the JTableX which RowEditorModel we are using
+		table.setRowEditorModel(rm);
+		
+		FeaturesTableModel ftm = (FeaturesTableModel)table.getModel();
+
+		JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
+		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
+		JComboBox QuickLoadcb = new JComboBox(FeaturesTableModel.quickloadLoadChoices);
+		DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
+
+		for (int row = 0; row < ftm.features.size(); row++) {
+			GenericFeature gFeature = ftm.features.get(row);
+			Class c = gFeature.gVersion.gServer.serverClass;
+			if (c == Das2ServerInfo.class || c == DasServerInfo.class) {
+				rm.addEditorForRow(row, DASeditor);
+			} else if (c == QuickLoadServerModel.class) {
+				rm.addEditorForRow(row, QuickLoadeditor);
+			} else {
+				System.out.println("ERROR: Undefined class " + c);
+			}
+		}
+
 		TableColumn c = table.getColumnModel().getColumn(column);
-		c.setCellEditor(dce);
 		c.setCellRenderer(new ComboBoxRenderer());
 		((JComboBox) c.getCellRenderer()).setEnabled(enabled);
 	}
@@ -45,78 +65,61 @@ final class TableWithVisibleComboBox {
 			return this;
 		}
 	}
+}
 
-	/**
-	 * Allow each row to have a different editor.
-	 */
-	private class EachRowEditor implements TableCellEditor {
-		protected Hashtable<Integer,TableCellEditor> editors;
-		protected TableCellEditor editor,  defaultEditor;
-		JTable table;
+/**
+ * This maps a row to a specific editor.
+ */
+	class RowEditorModel {
 
-		/**
-		 * Constructs EachRowEditor. Create default editor
-		 *
-		 * @see TableCellEditor
-		 * @see DefaultCellEditor
-		 */
-		public EachRowEditor(JTable table) {
-			this.table = table;
-			editors = new Hashtable<Integer,TableCellEditor>();
-			defaultEditor = new DefaultCellEditor(new JTextField());
+		private Hashtable<Integer, TableCellEditor> row2Editor;
+
+		public RowEditorModel() {
+			row2Editor = new Hashtable<Integer, TableCellEditor>();
 		}
 
-		public void setEditorAt(int row, TableCellEditor editor) {
-			editors.put(new Integer(row), editor);
+		public void addEditorForRow(int row, TableCellEditor e) {
+			row2Editor.put(new Integer(row), e);
 		}
 
-		public Component getTableCellEditorComponent(JTable table, Object value,
-						boolean isSelected, int row, int column) {
-			return editor.getTableCellEditorComponent(table, value, isSelected,
-							row, column);
+		public void removeEditorForRow(int row) {
+			row2Editor.remove(new Integer(row));
 		}
 
-		public Object getCellEditorValue() {
-			return editor.getCellEditorValue();
-		}
-
-		public boolean stopCellEditing() {
-			return editor.stopCellEditing();
-		}
-
-		public void cancelCellEditing() {
-			editor.cancelCellEditing();
-		}
-
-		public boolean isCellEditable(EventObject anEvent) {
-			selectEditor((MouseEvent) anEvent);
-			return editor.isCellEditable(anEvent);
-		}
-
-		public void addCellEditorListener(CellEditorListener l) {
-			editor.addCellEditorListener(l);
-		}
-
-		public void removeCellEditorListener(CellEditorListener l) {
-			editor.removeCellEditorListener(l);
-		}
-
-		public boolean shouldSelectCell(EventObject anEvent) {
-			selectEditor((MouseEvent) anEvent);
-			return editor.shouldSelectCell(anEvent);
-		}
-
-		protected void selectEditor(MouseEvent e) {
-			int row;
-			if (e == null) {
-				row = table.getSelectionModel().getAnchorSelectionIndex();
-			} else {
-				row = table.rowAtPoint(e.getPoint());
-			}
-			editor = editors.get(new Integer(row));
-			if (editor == null) {
-				editor = defaultEditor;
-			}
+		public TableCellEditor getEditor(int row) {
+			return row2Editor.get(new Integer(row));
 		}
 	}
-}
+
+	/**
+	 * A JTable with a RowEditorModel.
+	 */
+	class JTableX extends JTable {
+
+		public RowEditorModel rm;
+
+		public JTableX(TableModel tm) {
+			super(tm);
+			rm = null;
+		}
+
+		public void setRowEditorModel(RowEditorModel rm) {
+			this.rm = rm;
+		}
+
+		public RowEditorModel getRowEditorModel() {
+			return rm;
+		}
+
+		@Override
+		public TableCellEditor getCellEditor(int row, int col) {
+			TableCellEditor tmpEditor = null;
+			if (rm != null) {
+				tmpEditor = rm.getEditor(row);
+			}
+			if (tmpEditor != null) {
+				return tmpEditor;
+			}
+			return super.getCellEditor(row, col);
+		}
+	}

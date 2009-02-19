@@ -32,6 +32,8 @@ import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
+import com.affymetrix.igb.view.JTableX;
+import javax.swing.table.TableModel;
 
 
 final class GeneralLoadView extends JComponent
@@ -55,7 +57,8 @@ final class GeneralLoadView extends JComponent
 	private AnnotatedSeqGroup current_group;
 	private SmartAnnotBioSeq current_seq;
 	private SeqMapView gviewer;
-	private JTable feature_table;
+	private JTableX feature_table;
+	//private JTable feature_table;
 	private FeaturesTableModel feature_model;
 	private boolean first_time_called = true;
 
@@ -425,7 +428,7 @@ final class GeneralLoadView extends JComponent
 		}
 		this.feature_model = new FeaturesTableModel(this, features, current_seq);
 
-		this.feature_table = new JTable(feature_model);
+		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);   // Allow columns to be resized
 
@@ -437,7 +440,7 @@ final class GeneralLoadView extends JComponent
 
 
 		// Don't enable combo box for full genome sequence
-		TableWithVisibleComboBox.setComboBoxEditor(this.feature_table, 0, FeaturesTableModel.standardLoadChoices, !this.IsGenomeSequence());
+		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, 0, !this.IsGenomeSequence());
 
 		this.feature_panel.add(this.feature_table);
 		this.feature_model.fireTableDataChanged();

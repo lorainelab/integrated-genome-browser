@@ -36,6 +36,10 @@ public class QuickLoadServerModel {
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
   static String ENCODE_FILE_NAME = "encodeRegions.bed";
   static String ENCODE_FILE_NAME2 = "encode.bed";
+	static public String GENOME_SEQ_ID = "genome";
+  static public String ENCODE_REGIONS_ID = "encode_regions";
+	static public boolean build_virtual_genome = true;
+  static public boolean build_virtual_encode = true;
 
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
@@ -220,9 +224,9 @@ public class QuickLoadServerModel {
 						continue;
 					}
 					file_names.add(annot_file_name);
-					if (QuickLoadView2.build_virtual_encode &&
+					if (build_virtual_encode &&
 									(annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&
-									(group.getSeq(QuickLoadView2.ENCODE_REGIONS_ID) == null)) {
+									(group.getSeq(ENCODE_REGIONS_ID) == null)) {
 						addEncodeVirtualSeq(group, (genome_root + annot_file_name));
 					}
 				}
@@ -262,9 +266,9 @@ public class QuickLoadServerModel {
     }
 
     Application.getApplicationLogger().fine("$$$$$ adding virtual genome seq to seq group");
-    if (QuickLoadView2.build_virtual_genome &&
-	(group.getSeq(QuickLoadView2.GENOME_SEQ_ID) == null) ) {
-      SmartAnnotBioSeq genome_seq = group.addSeq(QuickLoadView2.GENOME_SEQ_ID, 0);
+    if (build_virtual_genome &&
+	(group.getSeq(GENOME_SEQ_ID) == null) ) {
+      SmartAnnotBioSeq genome_seq = group.addSeq(GENOME_SEQ_ID, 0);
       for (int i=0; i<seq_count; i++) {
 	BioSeq seq = group.getSeq(i);
 	if (seq != genome_seq) {
@@ -316,10 +320,10 @@ public class QuickLoadServerModel {
     try {
       InputStream istr= LocalUrlCacher.getInputStream(urlpath, getCacheAnnots());
       //      BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-      List regions = parser.parse(istr, gmodel, seq_group, false, QuickLoadView2.ENCODE_REGIONS_ID, false);
+      List regions = parser.parse(istr, gmodel, seq_group, false, ENCODE_REGIONS_ID, false);
       int rcount = regions.size();
       //      Application.getApplicationLogger().fine("Encode regions: " + rcount);
-      SmartAnnotBioSeq virtual_seq = seq_group.addSeq(QuickLoadView2.ENCODE_REGIONS_ID, 0);
+      SmartAnnotBioSeq virtual_seq = seq_group.addSeq(ENCODE_REGIONS_ID, 0);
       MutableSeqSymmetry mapping = new SimpleMutableSeqSymmetry();
 
       int min_base_pos = 0;
@@ -389,7 +393,7 @@ public class QuickLoadServerModel {
       }
       Application.getApplicationLogger().fine("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
-      if (QuickLoadView2.build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
+      if (build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error loading data for genome '"+ genome_name +"'", ex);

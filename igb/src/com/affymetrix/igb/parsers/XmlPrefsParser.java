@@ -31,7 +31,6 @@ import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.view.QuickLoadServerModel;
 
 /**
  *Class for parsing preferences for IGB.

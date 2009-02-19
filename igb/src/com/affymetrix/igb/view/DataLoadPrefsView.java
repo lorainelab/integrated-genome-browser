@@ -35,8 +35,8 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
   JButton clear_cacheB;
   //JCheckBox use_quickloadCB;
-  JCheckBox cache_annotsCB;
-  JCheckBox cache_residuesCB;
+  //JCheckBox cache_annotsCB;
+  //JCheckBox cache_residuesCB;
   JComboBox cache_usage_selector;
   //JButton reset_das_dna_serverB = new JButton("Reset");
   JTextField syn_file_TF;
@@ -114,14 +114,14 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     /*use_quickloadCB = UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad (requires restart)",
 						      IGB.USE_QUICKLOAD_INSTEAD_OF_DAS2,
 						      IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);*/
-    cache_annotsCB = UnibrowPrefsUtil.createCheckBox("Cache Annotations",
+    /*cache_annotsCB = UnibrowPrefsUtil.createCheckBox("Cache Annotations",
         UnibrowPrefsUtil.getTopNode(),
         QuickLoadServerModel.PREF_QUICKLOAD_CACHE_ANNOTS,
         QuickLoadServerModel.CACHE_ANNOTS_DEFAULT);
     cache_residuesCB = UnibrowPrefsUtil.createCheckBox("Cache DNA Residues",
         UnibrowPrefsUtil.getTopNode(),
         QuickLoadServerModel.PREF_QUICKLOAD_CACHE_RESIDUES,
-        QuickLoadServerModel.CACHE_RESIDUES_DEFAULT);
+        QuickLoadServerModel.CACHE_RESIDUES_DEFAULT);*/
 
     clear_cacheB = new JButton("Clear Cache");
     cache_usage_selector = new JComboBox();
@@ -162,10 +162,10 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
       }
     });*/
 
-    cache_annotsCB.setAlignmentX(0.0f);
-    cache_options_box.add(cache_annotsCB);
-    cache_residuesCB.setAlignmentX(0.0f);
-    cache_options_box.add(cache_residuesCB);
+    //cache_annotsCB.setAlignmentX(0.0f);
+    //cache_options_box.add(cache_annotsCB);
+    //cache_residuesCB.setAlignmentX(0.0f);
+    //cache_options_box.add(cache_residuesCB);
     JComponent usageP = Box.createHorizontalBox();
     usageP.add(Box.createRigidArea(new Dimension(5,0)));
     usageP.add(new JLabel("Cache Usage"));

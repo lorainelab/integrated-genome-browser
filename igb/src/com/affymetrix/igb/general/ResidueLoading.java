@@ -22,7 +22,6 @@ import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.util.DasUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.InputStream;
 import java.util.HashMap;

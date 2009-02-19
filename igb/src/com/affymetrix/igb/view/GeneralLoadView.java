@@ -32,8 +32,6 @@ import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
-import com.affymetrix.igb.view.JTableX;
-import javax.swing.table.TableModel;
 
 
 final class GeneralLoadView extends JComponent
@@ -58,7 +56,6 @@ final class GeneralLoadView extends JComponent
 	private SmartAnnotBioSeq current_seq;
 	private SeqMapView gviewer;
 	private JTableX feature_table;
-	//private JTable feature_table;
 	private FeaturesTableModel feature_model;
 	private boolean first_time_called = true;
 

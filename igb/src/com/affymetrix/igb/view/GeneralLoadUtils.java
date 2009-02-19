@@ -559,20 +559,8 @@ final public class GeneralLoadUtils {
 		}
 		if (gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
 			// Discover chromosomes from QuickLoad
-
-			URL quickloadURL;
-			try {
-				quickloadURL = new URL((String) gVersion.gServer.serverObj);
-				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
-				group = quickloadServer.getSeqGroup(gVersion.versionName);
-				group.setSource(gVersion.gServer.serverName);
-
-			//quickloadServer.
-			} catch (MalformedURLException ex) {
-				ex.printStackTrace();
-			//Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
-			}
-
+			group = gmodel.addSeqGroup(gVersion.versionName);
+			group.setSource(gVersion.gServer.serverName);
 			return group;
 		}
 

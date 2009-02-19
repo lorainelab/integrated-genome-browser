@@ -68,7 +68,7 @@ public final class FeatureLoading {
 			return;
 		}
 
-		if (gVersion.gServer.serverClass == Das2ServerInfo.class) {
+		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS2) {
 			if (DEBUG) {
 				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
 			}
@@ -84,7 +84,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverClass == DasServerInfo.class) {
+		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS) {
 			// Discover features from DAS
 			if (DEBUG) {
 				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
@@ -100,7 +100,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverClass == QuickLoadServerModel.class) {
+		if (gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
 			// Discover feature names from QuickLoad
 
 			try {
@@ -127,7 +127,7 @@ public final class FeatureLoading {
 			return;
 		}
 
-		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverClass);
+		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
 	}
 
 	/**

@@ -3,6 +3,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.general.GenericFeature;
+import com.affymetrix.igb.general.GenericServer;
 import java.awt.Component;
 import java.util.Hashtable;
 import javax.swing.DefaultCellEditor;
@@ -38,13 +39,13 @@ public final class TableWithVisibleComboBox {
 
 		for (int row = 0; row < ftm.features.size(); row++) {
 			GenericFeature gFeature = ftm.features.get(row);
-			Class c = gFeature.gVersion.gServer.serverClass;
-			if (c == Das2ServerInfo.class || c == DasServerInfo.class) {
+			GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
+			if (serverType == GenericServer.ServerType.DAS || serverType == GenericServer.ServerType.DAS2) {
 				rm.addEditorForRow(row, DASeditor);
-			} else if (c == QuickLoadServerModel.class) {
+			} else if (serverType == GenericServer.ServerType.QuickLoad) {
 				rm.addEditorForRow(row, QuickLoadeditor);
 			} else {
-				System.out.println("ERROR: Undefined class " + c);
+				System.out.println("ERROR: Undefined class " + serverType);
 			}
 		}
 

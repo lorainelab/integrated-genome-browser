@@ -36,7 +36,7 @@ import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.general.genericServer;
+import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.DasUtils;
@@ -100,8 +100,8 @@ final public class GeneralLoadUtils {
 	 */
 	//static Map<AnnotatedSeqGroup, Map<String, Integer>> group2states;
 
-	// server name-> genericServer class.
-	final Map<String, genericServer> discoveredServers;
+	// server name-> GenericServer class.
+	final Map<String, GenericServer> discoveredServers;
 
 	// versions associated with a given genome.
 	final Map<String, List<GenericVersion>> species2genericVersionList;
@@ -128,7 +128,7 @@ final public class GeneralLoadUtils {
 		group2version = new HashMap<AnnotatedSeqGroup, GenericVersion>();
 		version2init = new HashMap<String, Boolean>();
 		//group2states = new HashMap<AnnotatedSeqGroup, Map<String, Integer>>();
-		discoveredServers = new LinkedHashMap<String, genericServer>();
+		discoveredServers = new LinkedHashMap<String, GenericServer>();
 		species2genericVersionList = new LinkedHashMap<String, List<GenericVersion>>();
 		versionName2species = new HashMap<String, String>();
 		versionName2versionSet = new HashMap<String, Set<GenericVersion>>();
@@ -164,13 +164,13 @@ final public class GeneralLoadUtils {
 	/**
 	 * Discover the list of servers.
 	 */
-	public static synchronized void discoverServersInternal(final Map<String, genericServer> discoveredServers) {
+	public static synchronized void discoverServersInternal(final Map<String, GenericServer> discoveredServers) {
 		for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
 			Das2ServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
 				if (!discoveredServers.containsKey(serverName)) {
-					genericServer g = new genericServer(serverName, server.getURI().toString(), server.getClass(), server);
+					GenericServer g = new GenericServer(serverName, server.getURI().toString(), server.getClass(), server);
 					discoveredServers.put(serverName, g);
 				}
 			}
@@ -184,7 +184,7 @@ final public class GeneralLoadUtils {
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
 				if (!discoveredServers.containsKey(serverName)) {
-					genericServer g = new genericServer(serverName, server.getRootUrl(), server.getClass(), server);
+					GenericServer g = new GenericServer(serverName, server.getRootUrl(), server.getClass(), server);
 					discoveredServers.put(serverName, g);
 				}
 			}
@@ -192,8 +192,8 @@ final public class GeneralLoadUtils {
 
 		// Discover Quickload servers
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
-		for (genericServer gServer : ServerList.getServers().values()) {
-			if (gServer.serverClass == QuickLoadServerModel.class) {
+		for (GenericServer gServer : ServerList.getServers().values()) {
+			if (gServer.serverType == GenericServer.ServerType.QuickLoad) {
 				discoveredServers.put(gServer.serverName, gServer);
 			}
 		}
@@ -203,22 +203,22 @@ final public class GeneralLoadUtils {
 	 * Discover the species and genome versions.
 	 */
 	public synchronized void discoverSpeciesAndVersionsInternal() {
-		for (genericServer gServer : discoveredServers.values()) {
-			if (gServer.serverClass == Das2ServerInfo.class) {
+		for (GenericServer gServer : discoveredServers.values()) {
+			if (gServer.serverType == GenericServer.ServerType.DAS2) {
 				getDAS2Species(gServer);
 				getDAS2Versions(gServer);
 				continue;
 			}
-			if (gServer.serverClass == DasServerInfo.class) {
+			if (gServer.serverType == GenericServer.ServerType.DAS) {
 				getDAS1Genomes(gServer);
 				continue;
 			}
-			if (gServer.serverClass == QuickLoadServerModel.class) {
+			if (gServer.serverType == GenericServer.ServerType.QuickLoad) {
 				getQuickLoadGenomes(gServer);
 				continue;
 			}
 
-			System.out.println("WARNING: Unknown server class " + gServer.serverClass);
+			System.out.println("WARNING: Unknown server class " + gServer.serverType);
 		}
 	}
 
@@ -226,7 +226,7 @@ final public class GeneralLoadUtils {
 	 * Discover genomes from DAS
 	 * @param gServer
 	 */
-	private synchronized void getDAS1Genomes(genericServer gServer) {
+	private synchronized void getDAS1Genomes(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		for (DasSource source : server.getDataSources().values()) {
 			if (DEBUG) {
@@ -251,7 +251,7 @@ final public class GeneralLoadUtils {
 	 * Discover genomes from DAS/2
 	 * @param gServer
 	 */
-	private synchronized void getDAS2Species(genericServer gServer) {
+	private synchronized void getDAS2Species(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = source.getName();
@@ -276,7 +276,7 @@ final public class GeneralLoadUtils {
 	 * Discover genomes from DAS/2
 	 * @param gServer
 	 */
-	private synchronized void getDAS2Versions(genericServer gServer) {
+	private synchronized void getDAS2Versions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = source.getName();
@@ -295,7 +295,7 @@ final public class GeneralLoadUtils {
 	 * Discover genomes from Quickload
 	 * @param gServer
 	 */
-	private synchronized void getQuickLoadGenomes(genericServer gServer) {
+	private synchronized void getQuickLoadGenomes(GenericServer gServer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -336,7 +336,7 @@ final public class GeneralLoadUtils {
 		}
 	}
 
-	private void discoverVersion(String versionName, genericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String genomeName) {
+	private void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String genomeName) {
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
@@ -352,7 +352,7 @@ final public class GeneralLoadUtils {
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
 		group2version.put(group, gVersion);
 		if (DEBUG) {
-			System.out.println("Added " + gServer.serverClass + "genome: " + genomeName + " version: " + versionName + "--" + this.species2genericVersionList.get(genomeName).get(0).versionName);
+			System.out.println("Added " + gServer.serverType + "genome: " + genomeName + " version: " + versionName + "--" + this.species2genericVersionList.get(genomeName).get(0).versionName);
 		}
 	}
 
@@ -496,9 +496,9 @@ final public class GeneralLoadUtils {
 			return null;
 		}
 		if (DEBUG) {
-			System.out.println("Discovering " + gVersion.gServer.serverClass + " chromosomes");
+			System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
 		}
-		if (gVersion.gServer.serverClass == Das2ServerInfo.class) {
+		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS2) {
 
 			// Discover chromosomes from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
@@ -510,7 +510,7 @@ final public class GeneralLoadUtils {
 			version.getSegments();
 			return group;
 		}
-		if (gVersion.gServer.serverClass == DasServerInfo.class) {
+		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS) {
 			// Discover chromosomes from DAS
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 
@@ -557,7 +557,7 @@ final public class GeneralLoadUtils {
 
 			return group;
 		}
-		if (gVersion.gServer.serverClass == QuickLoadServerModel.class) {
+		if (gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
 			// Discover chromosomes from QuickLoad
 
 			URL quickloadURL;
@@ -576,7 +576,7 @@ final public class GeneralLoadUtils {
 			return group;
 		}
 
-		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverClass);
+		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
 
 		return null;
 	}
@@ -673,8 +673,8 @@ final public class GeneralLoadUtils {
 		}
 
 
-		Class serverClass = gFeature.gVersion.gServer.serverClass;
-		if (serverClass == Das2ServerInfo.class) {
+		GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
+		if (serverType == GenericServer.ServerType.DAS2) {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
 			if (loadDAS2Annotations(
 							selected_seq,
@@ -689,7 +689,7 @@ final public class GeneralLoadUtils {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 			return false;
 		}
-		if (serverClass == DasServerInfo.class) {
+		if (serverType == GenericServer.ServerType.DAS) {
 			//TODO
 			List<String> featureList = new ArrayList<String>(1);
 			featureList.add(gFeature.featureName);
@@ -705,7 +705,7 @@ final public class GeneralLoadUtils {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 			return false;
 		}
-		if (serverClass == QuickLoadServerModel.class) {
+		if (serverType == GenericServer.ServerType.QuickLoad) {
 			//String annot_url = root_url + genome_version_name + "/" + feature_name;
 			//String root_url = gFeature.gVersion.;
 
@@ -747,7 +747,7 @@ final public class GeneralLoadUtils {
 			return false;
 		}
 
-		System.out.println("class " + serverClass + " is not implemented.");
+		System.out.println("class " + serverType + " is not implemented.");
 		return false;
 	}
 
@@ -833,7 +833,7 @@ final public class GeneralLoadUtils {
 
 		// Determine list of servers that might have this chromosome sequence.
 		List<GenericFeature> features = this.getFeatures(genomeVersionName);
-		Set<genericServer> serversWithChrom = new HashSet<genericServer>();
+		Set<GenericServer> serversWithChrom = new HashSet<GenericServer>();
 		for (GenericFeature feature : features) {
 			serversWithChrom.add(feature.gVersion.gServer);
 		}

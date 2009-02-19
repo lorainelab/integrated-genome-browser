@@ -45,7 +45,7 @@ public final class ResidueLoading {
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
 	public static boolean getResidues(
-					Set<genericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, SmartAnnotBioSeq aseq, SeqSpan span) {
+					Set<GenericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, SmartAnnotBioSeq aseq, SeqSpan span) {
 
 		boolean partial_load = (min > 0 || max < aseq.getLength());	// Are we only asking for part of the sequence?
 		
@@ -53,9 +53,8 @@ public final class ResidueLoading {
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
 		// Attempt to load via DAS/2
-		for (genericServer server : serversWithChrom) {
-			if (server.serverClass == Das2ServerInfo.class) {
-				
+		for (GenericServer server : serversWithChrom) {
+			if (server.serverType == GenericServer.ServerType.DAS2) {
 				String uri;
 
 				if (partial_load) {
@@ -90,8 +89,8 @@ public final class ResidueLoading {
 		
 		if (!partial_load) {
 			// Attempt to load via Quickload -- not supported except for full loading.
-			for (genericServer server : serversWithChrom) {
-				if (server.serverClass == QuickLoadServerModel.class) {
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == GenericServer.ServerType.QuickLoad) {
 					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
@@ -101,8 +100,8 @@ public final class ResidueLoading {
 		}
 
 		for ( // Attempt to load via DAS/1
-						genericServer server : serversWithChrom) {
-			if (server.serverClass == DasServerInfo.class) {
+						GenericServer server : serversWithChrom) {
+			if (server.serverType == GenericServer.ServerType.DAS) {
 				String residues = GetDAS1Residues(server.serverName, genomeVersionName, seq_name, min, max);
 				if (residues != null) {
 					// Add to composition if we're doing a partial sequence

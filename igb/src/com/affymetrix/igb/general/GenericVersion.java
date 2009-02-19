@@ -9,7 +9,7 @@ import java.util.List;
 public final class GenericVersion {
 
     public final String versionName;          // name of the version.
-    public final genericServer gServer; // generic Server object.
+    public final GenericServer gServer; // generic Server object.
     public final Object versionSourceObj;     // Das2VersionedSource, DasVersionedSource, ..., QuickLoad?
     public final List<GenericFeature> features;
 
@@ -18,7 +18,7 @@ public final class GenericVersion {
      * @param gServer
      * @param versionSourceObj
      */
-    public GenericVersion(String versionName, genericServer gServer, Object versionSourceObj) {
+    public GenericVersion(String versionName, GenericServer gServer, Object versionSourceObj) {
         this.versionName = versionName;
         this.gServer = gServer;
         this.versionSourceObj = versionSourceObj;

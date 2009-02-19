@@ -5,6 +5,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.general.GenericFeature;
+import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
 import java.util.EnumMap;
@@ -96,11 +97,11 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 	public Object getValueAt(int row, int col) {
 		GenericFeature gFeature = features.get(row);
-		Class c;
+		GenericServer.ServerType serverType;
 		switch (col) {
 			case 0:
-				c = gFeature.gVersion.gServer.serverClass;
-				if (c == QuickLoadServerModel.class) {
+				serverType = gFeature.gVersion.gServer.serverType;
+				if (serverType == GenericServer.ServerType.QuickLoad) {
 					return this.QuickLoadStrategyMap.get(gFeature.loadStrategy);
 				}
 				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
@@ -109,14 +110,14 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 			case 2:
 				return gFeature.gVersion.gServer.serverName;
 			case 3:
-				c = gFeature.gVersion.gServer.serverClass;
-				if (c == Das2ServerInfo.class) {
+				serverType = gFeature.gVersion.gServer.serverType;
+				if (serverType == GenericServer.ServerType.DAS2) {
 					return "DAS/2";
 				}
-				if (c == DasServerInfo.class) {
+				if (serverType == GenericServer.ServerType.DAS) {
 					return "DAS";
 				}
-				if (c == QuickLoadServerModel.class) {
+				if (serverType == GenericServer.ServerType.QuickLoad) {
 					return "Quickload";
 				}
 				return "unknown";
@@ -150,9 +151,9 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 		String valueString = value.toString();
 		GenericFeature gFeature = features.get(row);
-		Class c = gFeature.gVersion.gServer.serverClass;
+		GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
 
-		if (c == QuickLoadServerModel.class) {
+		if (serverType == GenericServer.ServerType.QuickLoad) {
 			if (!this.QuickLoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
 				// strategy changed.  Update the feature object.
 				gFeature.loadStrategy = this.reverseQuickLoadStrategyMap.get(valueString);

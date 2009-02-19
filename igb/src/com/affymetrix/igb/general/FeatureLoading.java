@@ -5,13 +5,19 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.das.DasServerInfo;
+import com.affymetrix.igb.das.DasSource;
+import com.affymetrix.igb.das.DasType;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.util.ThreadUtils;
+import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.swing.threads.SwingWorker;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -23,6 +29,106 @@ import java.util.concurrent.Executor;
 public final class FeatureLoading {
 
 	private static final boolean DEBUG = false;
+	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+
+	/**
+	 * Load annotation names for the given version name (across multiple servers).
+	 * The internal call is threaded to keep from locking up the GUI.
+	 * @param versionName
+	 * @return
+	 */
+	public static boolean loadFeatureNames(Set<GenericVersion> versionSet) {
+		for (final GenericVersion gVersion : versionSet) {
+			// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
+			try {
+				Runnable r = new Runnable() {
+					public void run() {
+						loadFeatureNames(gVersion);
+					}
+				};
+				Thread thr1 = new Thread(r);
+				thr1.start();
+				while (thr1.isAlive()) {
+					Thread.sleep(200);
+				}
+			} catch (InterruptedException ie) {
+				System.out.println("Interruption while getting feature list.");
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Load the annotations for the given version.  This is specific to one server.
+	 * @param gVersion
+	 */
+	private static synchronized void loadFeatureNames(final GenericVersion gVersion) {
+		if (gVersion.features.size() > 0) {
+			System.out.println("Feature names are already loaded.");
+			return;
+		}
+
+		if (gVersion.gServer.serverClass == Das2ServerInfo.class) {
+			if (DEBUG) {
+				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
+			}
+			// Discover features from DAS/2
+			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
+			for (Das2Type type : version.getTypes().values()) {
+				String type_name = type.getName();
+				if (type_name == null || type_name.length() == 0) {
+					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+					continue;
+				}
+				gVersion.features.add(new GenericFeature(type_name, gVersion));
+			}
+			return;
+		}
+		if (gVersion.gServer.serverClass == DasServerInfo.class) {
+			// Discover features from DAS
+			if (DEBUG) {
+				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
+			}
+			DasSource version = (DasSource) gVersion.versionSourceObj;
+			for (DasType type : version.getTypes().values()) {
+				String type_name = type.getID();
+				if (type_name == null || type_name.length() == 0) {
+					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+					continue;
+				}
+				gVersion.features.add(new GenericFeature(type_name, gVersion));
+			}
+			return;
+		}
+		if (gVersion.gServer.serverClass == QuickLoadServerModel.class) {
+			// Discover feature names from QuickLoad
+
+			try {
+				URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
+				if (DEBUG) {
+				System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String)gVersion.gServer.serverObj);
+			}
+
+				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
+				List<String> featureNames = quickloadServer.getFilenames(gVersion.versionName);
+				for (String featureName : featureNames) {
+					if (featureName == null || featureName.length() == 0) {
+						System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
+						continue;
+					}
+					if (DEBUG) {
+						System.out.println("Adding feature " + featureName);
+					}
+					gVersion.features.add(new GenericFeature(featureName, gVersion));
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			return;
+		}
+
+		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverClass);
+	}
 
 	/**
 	 *  Want to put loading of DAS/2 annotations on separate thread(s) (since processFeatureRequests() call is most

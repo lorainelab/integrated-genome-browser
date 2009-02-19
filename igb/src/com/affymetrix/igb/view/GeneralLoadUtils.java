@@ -69,15 +69,17 @@ final public class GeneralLoadUtils {
 
 		UNLOADED, LOADING, LOADED
 	};
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
+	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)
 	 *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
 	 */
 //    final double default_genome_min = -2100200300;
-	final double default_genome_min = 0;
-	final boolean DEBUG_VIRTUAL_GENOME = false;
-	Class server_type;  // Is the server Das (DasServerInfo), Das/2 (Das2ServerInfo), or Quickload?
+	private static final double default_genome_min = 0;
+
+	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private final SeqMapView gviewer;
 
 	//public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
 	//public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
@@ -87,10 +89,7 @@ final public class GeneralLoadUtils {
 	public final static String ENCODE_REGIONS_ID = "encode_regions";    // used in SeqMapView
 	//static boolean CACHE_RESIDUES_DEFAULT = false;
 	//static boolean CACHE_ANNOTS_DEFAULT = true;
-	final SingletonGenometryModel gmodel;
-	final SeqMapView gviewer;
-	final static Pattern tab_regex = Pattern.compile("\t");
-	String root_url;
+
 	final SortedSet<String> species_names;   // Genome names are unique even across multiple servers; thus we use a set instead of a list.
 	final Map<AnnotatedSeqGroup, GenericVersion> group2version;
 	private final Map<String, Boolean> version2init;
@@ -99,64 +98,56 @@ final public class GeneralLoadUtils {
 	 *  Each load state map is a map of an annotation type name to Boolean for
 	 *  whether it has already been loaded or not
 	 */
-	static Map<AnnotatedSeqGroup, Map<String, Integer>> group2states;
+	//static Map<AnnotatedSeqGroup, Map<String, Integer>> group2states;
 
 	// server name-> genericServer class.
 	final Map<String, genericServer> discoveredServers;
 
 	// versions associated with a given genome.
 	final Map<String, List<GenericVersion>> species2genericVersionList;
-	final Map<String, String> versionName2genome;
+	final Map<String, String> versionName2species;
 	final Map<String, Set<GenericVersion>> versionName2versionSet;
 
 	//public boolean allow_reinitialization = true;
 	public void clear() {
-		group2states.clear();
+		//group2states.clear();
 		species_names.clear();
 		group2version.clear();
 		version2init.clear();
-		group2states.clear();
+		//group2states.clear();
 		discoveredServers.clear();
 		species2genericVersionList.clear();
-		versionName2genome.clear();
+		versionName2species.clear();
 		versionName2versionSet.clear();
 	}
 
-	public GeneralLoadUtils(SingletonGenometryModel gmodel, SeqMapView gviewer) {
-		//SingletonGenometryModel gmodel, String url) {
-		this.gmodel = gmodel;
-		this.gviewer = gviewer;
+	public GeneralLoadUtils() {
+		this.gviewer = Application.getSingleton().getMapView();
 
 		species_names = new TreeSet<String>();
 		group2version = new HashMap<AnnotatedSeqGroup, GenericVersion>();
 		version2init = new HashMap<String, Boolean>();
-		group2states = new HashMap<AnnotatedSeqGroup, Map<String, Integer>>();
+		//group2states = new HashMap<AnnotatedSeqGroup, Map<String, Integer>>();
 		discoveredServers = new LinkedHashMap<String, genericServer>();
 		species2genericVersionList = new LinkedHashMap<String, List<GenericVersion>>();
-		versionName2genome = new HashMap<String, String>();
+		versionName2species = new HashMap<String, String>();
 		versionName2versionSet = new HashMap<String, Set<GenericVersion>>();
 	}
 
 	/**
 	 * Discover all of the servers and genomes and versions.
 	 */
-	void discoverServersAndGenomesAndVersions() {
-		/*if (discoveredServers.size() > 0) {
-		// servers have already been discovered and are cached.
-		return discoveredServers.keySet();
-		}*/
-
+	void discoverServersAndSpeciesAndVersions() {
 		// it's assumed that if we're here, we need to refresh this information.
 		discoveredServers.clear();
 		species_names.clear();
-
 
 		// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
 		try {
 			Runnable r = new Runnable() {
 
 				public void run() {
-					discoverServersInternal();
+					discoverServersInternal(discoveredServers);
 					discoverSpeciesAndVersionsInternal();
 				}
 			};
@@ -173,7 +164,7 @@ final public class GeneralLoadUtils {
 	/**
 	 * Discover the list of servers.
 	 */
-	public synchronized void discoverServersInternal() {
+	public static synchronized void discoverServersInternal(final Map<String, genericServer> discoveredServers) {
 		for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
 			Das2ServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
@@ -214,7 +205,8 @@ final public class GeneralLoadUtils {
 	public synchronized void discoverSpeciesAndVersionsInternal() {
 		for (genericServer gServer : discoveredServers.values()) {
 			if (gServer.serverClass == Das2ServerInfo.class) {
-				getDAS2Genomes(gServer);
+				getDAS2Species(gServer);
+				getDAS2Versions(gServer);
 				continue;
 			}
 			if (gServer.serverClass == DasServerInfo.class) {
@@ -237,7 +229,9 @@ final public class GeneralLoadUtils {
 	private synchronized void getDAS1Genomes(genericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		for (DasSource source : server.getDataSources().values()) {
-			System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
+			if (DEBUG) {
+				System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
+			}
 			String genomeName = source.getDescription();
 			String versionName = source.getName();
 			species_names.add(genomeName);
@@ -257,18 +251,37 @@ final public class GeneralLoadUtils {
 	 * Discover genomes from DAS/2
 	 * @param gServer
 	 */
-	private synchronized void getDAS2Genomes(genericServer gServer) {
+	private synchronized void getDAS2Species(genericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = source.getName();
 			species_names.add(speciesName);
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
-				gVersionList = new ArrayList<GenericVersion>(source.getVersions().size());
+				gVersionList = new ArrayList<GenericVersion>();
 				this.species2genericVersionList.put(speciesName, gVersionList);
 			} else {
 				gVersionList = this.species2genericVersionList.get(speciesName);
 			}
+			/*// Das/2 has versioned sources.  Get each version.
+			for (Das2VersionedSource versionSource : source.getVersions().values()) {
+				String versionName = versionSource.getName();
+				GenericVersion gVersion = new GenericVersion(versionName, gServer, versionSource);
+				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
+			}*/
+		}
+	}
+
+	/**
+	 * Discover genomes from DAS/2
+	 * @param gServer
+	 */
+	private synchronized void getDAS2Versions(genericServer gServer) {
+		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+		for (Das2Source source : server.getSources().values()) {
+			String speciesName = source.getName();
+			List<GenericVersion> gVersionList = this.species2genericVersionList.get(speciesName);
+
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String versionName = versionSource.getName();
@@ -298,13 +311,15 @@ final public class GeneralLoadUtils {
 			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
 			GenericVersion gVersion = this.group2version.get(group);
 			if (gVersion != null) {
-				String speciesName = this.versionName2genome.get(gVersion.versionName);
 				// We've found a corresponding version object that was initialized earlier.
+				String speciesName = this.versionName2species.get(gVersion.versionName);
 				GenericVersion quickLoadVersion = new GenericVersion(gVersion.versionName, gServer, quickloadServer);
 				List<GenericVersion> gVersionList = this.species2genericVersionList.get(speciesName);
 				discoverVersion(gVersion.versionName, gServer, quickLoadVersion, gVersionList, speciesName);
 				continue;
 			}
+
+			// Unknown genome.  We'll add the name as if it's a species and a version.
 			if (DEBUG) {
 				System.out.println("Unknown quickload genome:" + genomeName);
 			}
@@ -325,7 +340,7 @@ final public class GeneralLoadUtils {
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
-		versionName2genome.put(versionName, genomeName);
+		versionName2species.put(versionName, genomeName);
 		Set<GenericVersion> versionSet;
 		if (this.versionName2versionSet.containsKey(versionName)) {
 			versionSet = this.versionName2versionSet.get(versionName);
@@ -339,10 +354,6 @@ final public class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("Added " + gServer.serverClass + "genome: " + genomeName + " version: " + versionName + "--" + this.species2genericVersionList.get(genomeName).get(0).versionName);
 		}
-	}
-
-	public AnnotatedSeqGroup getSeqGroup(final String genome_name) {
-		return gmodel.addSeqGroup(genome_name);
 	}
 
 	/** Returns the name that this server uses to refer to the given AnnotatedSeqGroup.
@@ -385,7 +396,7 @@ final public class GeneralLoadUtils {
 		if (init == null || !init.booleanValue()) {
 			System.out.println("initializing feature names for version: " + versionName);
 
-			loadFeatureNames(versionName);
+			FeatureLoading.loadFeatureNames(this.versionName2versionSet.get(versionName));
 		}
 	}
 
@@ -413,117 +424,7 @@ final public class GeneralLoadUtils {
 		return (Boolean.TRUE.equals(b));
 	}
 
-	/**
-	 * Load annotation names for the given version name (across multiple servers).
-	 * The internal call is threaded to keep from locking up the GUI.
-	 * @param versionName
-	 * @return
-	 */
-	private boolean loadFeatureNames(final String versionName) {
-		for (final GenericVersion gVersion : this.versionName2versionSet.get(versionName)) {
-		//String speciesName = this.versionName2genome.get(versionName);
-		//for (final GenericVersion gVersion : this.species2genericVersionList.get(speciesName)) {
-			//if (!gVersion.versionName.equals(versionName)) {
-			//	continue;
-			//}
-
-			// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
-			try {
-				Runnable r = new Runnable() {
-
-					public void run() {
-						loadFeatureNames(gVersion);
-					}
-				};
-				Thread thr1 = new Thread(r);
-				thr1.start();
-				while (thr1.isAlive()) {
-					Thread.sleep(200);
-				}
-			} catch (InterruptedException ie) {
-				System.out.println("Interruption while getting feature list.");
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Load the annotations for the given version.  This is specific to one server.
-	 * @param gVersion
-	 */
-	private synchronized void loadFeatureNames(final GenericVersion gVersion) {
-		if (gVersion.features.size() > 0) {
-			System.out.println("Feature names are already loaded.");
-			return;
-		}
-
-		if (gVersion.features.size() > 0) {
-			System.out.println("Feature names are already loaded.");
-			return;
-		}
-
-
-		if (gVersion.gServer.serverClass == Das2ServerInfo.class) {
-			if (DEBUG) {
-				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
-			}
-			// Discover features from DAS/2
-			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
-			for (Das2Type type : version.getTypes().values()) {
-				String type_name = type.getName();
-				if (type_name == null || type_name.length() == 0) {
-					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
-					continue;
-				}
-				gVersion.features.add(new GenericFeature(type_name, gVersion));
-			}
-			return;
-		}
-		if (gVersion.gServer.serverClass == DasServerInfo.class) {
-			// Discover features from DAS
-			if (DEBUG) {
-				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
-			}
-			DasSource version = (DasSource) gVersion.versionSourceObj;
-			for (DasType type : version.getTypes().values()) {
-				String type_name = type.getID();
-				if (type_name == null || type_name.length() == 0) {
-					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
-					continue;
-				}
-				gVersion.features.add(new GenericFeature(type_name, gVersion));
-			}
-			return;
-		}
-		if (gVersion.gServer.serverClass == QuickLoadServerModel.class) {
-			// Discover feature names from QuickLoad
-
-			try {
-				URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
-				if (DEBUG) {
-				System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String)gVersion.gServer.serverObj);
-			}
-				
-				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
-				List<String> featureNames = quickloadServer.getFilenames(gVersion.versionName);
-				for (String featureName : featureNames) {
-					if (featureName == null || featureName.length() == 0) {
-						System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
-						continue;
-					}
-					if (DEBUG) {
-						System.out.println("Adding feature " + featureName);
-					}
-					gVersion.features.add(new GenericFeature(featureName, gVersion));
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			return;
-		}
-
-		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverClass);
-	}
+	
 
 	/**
 	 * Load the sequence info for the given genome version.
@@ -532,9 +433,8 @@ final public class GeneralLoadUtils {
 	 * @return
 	 */
 	public boolean loadSeqInfo(final String versionName) {
-		String genomeName = this.versionName2genome.get(versionName);
 		if (DEBUG) {
-			System.out.println("loading seqinfo : Genome " + genomeName + " Version " + versionName);
+			System.out.println("loading seqinfo : Version " + versionName);
 		}
 		Set<GenericVersion> gVersionSet = this.versionName2versionSet.get(versionName);
 		List<GenericVersion> gVersions = new ArrayList<GenericVersion>(gVersionSet);
@@ -544,7 +444,7 @@ final public class GeneralLoadUtils {
 			return false;
 		}
 
-		addGenomeVirtualSeq(group);
+		addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);
 
 		for (GenericVersion gVersion : gVersions) {
 			// Initialize all the servers with unloaded status of the feature/chromosome combinations.
@@ -568,7 +468,7 @@ final public class GeneralLoadUtils {
 	 * @param gVersion
 	 * @return
 	 */
-	private AnnotatedSeqGroup loadChromInfo(List<GenericVersion> gVersions) {
+	private static AnnotatedSeqGroup loadChromInfo(List<GenericVersion> gVersions) {
 		for (GenericVersion gVersion : gVersions) {
 			if (DEBUG) {
 				System.out.println("loading list of chromosomes for genome version: " + gVersion.versionName + " from server " + gVersion.gServer.serverName);
@@ -584,7 +484,7 @@ final public class GeneralLoadUtils {
 	/**
 	 * Load the sequence info for the given genome version.
 	 */
-	private AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
+	private static AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
 		AnnotatedSeqGroup group = null;
 		
 		//System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
@@ -681,7 +581,7 @@ final public class GeneralLoadUtils {
 		return null;
 	}
 
-	private void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
+	private static void addGenomeVirtualSeq(AnnotatedSeqGroup group, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
 		int chrom_count = group.getSeqCount();
 		if (chrom_count <= 1) {
 			// no need to make a virtual "genome" chrom if there is only a single chromosome
@@ -948,8 +848,4 @@ final public class GeneralLoadUtils {
 
 		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 	}
-
-
-	
-
 }

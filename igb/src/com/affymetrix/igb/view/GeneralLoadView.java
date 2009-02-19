@@ -64,7 +64,7 @@ final class GeneralLoadView extends JComponent
 			gviewer = Application.getSingleton().getMapView();
 		}
 
-		this.glu = new GeneralLoadUtils(gmodel, gviewer);
+		this.glu = new GeneralLoadUtils();
 
 		this.setLayout(new BorderLayout());
 		feature_panel = new JPanel();
@@ -146,7 +146,7 @@ final class GeneralLoadView extends JComponent
 	private void initializeSpeciesCB() {
 		speciesCB.removeAllItems();
 		speciesCB.addItem(SELECT);
-		this.glu.discoverServersAndGenomesAndVersions();
+		this.glu.discoverServersAndSpeciesAndVersions();
 
 		if (this.glu.species_names.size() == 0) {
 			// Disable the genome_name selectedSpecies.
@@ -271,7 +271,7 @@ final class GeneralLoadView extends JComponent
 			AnnotatedSeqGroup group = gmodel.getSeqGroup(version_name);
 			if (group == null) {
 				System.out.println("Group was null");
-				group = gmodel.getSeqGroup(this.glu.versionName2genome.get(version_name));
+				group = gmodel.getSeqGroup(this.glu.versionName2species.get(version_name));
 			}
 			// Select the group (and the first seq), if it's not already selected.
 			this.ChangeSelectedGroups(group);
@@ -365,7 +365,7 @@ final class GeneralLoadView extends JComponent
 		if (selectedSpecies.equals(SELECT) || selectedVersion.equals(SELECT)) {
 			// We need to be sure that the combo boxes are set properly.
 			// They could have been set improperly if called from bookmark code.
-			speciesCB.setSelectedItem(this.glu.versionName2genome.get(genomeVersionName));
+			speciesCB.setSelectedItem(this.glu.versionName2species.get(genomeVersionName));
 			if (SELECT.equals(selectedVersion)) {
 				versionCB.setSelectedItem(genomeVersionName);
 				versionCB.setEnabled(true);

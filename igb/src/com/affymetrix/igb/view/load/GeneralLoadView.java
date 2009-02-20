@@ -149,13 +149,17 @@ final public class GeneralLoadView extends JComponent
 		speciesCB.addItem(SELECT);
 		this.glu.discoverServersAndSpeciesAndVersions();
 
-		if (this.glu.species_names.size() == 0) {
+		int speciesListLength = this.glu.species2genericVersionList.keySet().size();
+		if (speciesListLength == 0) {
 			// Disable the genome_name selectedSpecies.
 			speciesCB.setEnabled(false);
 			return;
 		}
 
-		for (String genome_name : this.glu.species_names) {
+		// Sort the species before presenting them
+		SortedSet<String> speciesList = new TreeSet<String>();
+		speciesList.addAll(this.glu.species2genericVersionList.keySet());
+		for (String genome_name : speciesList) {
 			speciesCB.addItem(genome_name);
 		}
 

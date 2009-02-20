@@ -29,7 +29,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.prefs.Preferences;
 
-public class GraphGlyphUtils {
+public final class GraphGlyphUtils {
   public static final boolean DEBUG = false;
 
   public static final String PREF_USE_FLOATING_GRAPHS = "use floating graphs";
@@ -288,11 +288,12 @@ public class GraphGlyphUtils {
   /**
    * @deprecated
    */
+	/*
   public static Color getDefaultGraphColor(int i) {
     int index = (i % default_graph_colors.length);
     String color_pref_name = PREF_GRAPH_COLOR_PREFIX + index;
     Color col = UnibrowPrefsUtil.getColor(getGraphPrefsNode(), color_pref_name, default_graph_colors[index]);
     return col;
-  }
+  }*/
 
 }

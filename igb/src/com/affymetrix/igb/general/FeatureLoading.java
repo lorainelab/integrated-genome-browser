@@ -34,7 +34,7 @@ public final class FeatureLoading {
 	/**
 	 * Load annotation names for the given version name (across multiple servers).
 	 * The internal call is threaded to keep from locking up the GUI.
-	 * @param versionName
+	 * @param versionSet
 	 * @return
 	 */
 	public static boolean loadFeatureNames(Set<GenericVersion> versionSet) {
@@ -152,7 +152,7 @@ public final class FeatureLoading {
 		}
 		final List<Das2FeatureRequestSym> result_syms = new ArrayList<Das2FeatureRequestSym>();
 
-		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = splitRequestsByVersion(requests);
+		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version = splitDAS2RequestsByVersion(requests);
 
 		for (Map.Entry<Das2VersionedSource, Set<Das2FeatureRequestSym>> entry : requests_by_version.entrySet()) {
 			Das2VersionedSource version = entry.getKey();
@@ -162,7 +162,7 @@ public final class FeatureLoading {
 			SwingWorker worker = new SwingWorker() {
 
 				public Object construct() {
-					createResultSyms(request_set, result_syms);
+					createDAS2ResultSyms(request_set, result_syms);
 					return null;
 				}
 
@@ -195,11 +195,14 @@ public final class FeatureLoading {
 		Application.getSingleton().setStatus("", false);
 	}
 
-	private static Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> splitRequestsByVersion(List<Das2FeatureRequestSym> requests) {
+	/**
+	 * split into entries by DAS/2 versioned source
+	 * @param requests
+	 * @return
+	 */
+	private static Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> splitDAS2RequestsByVersion(List<Das2FeatureRequestSym> requests) {
 		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version =
 						new LinkedHashMap<Das2VersionedSource, Set<Das2FeatureRequestSym>>();
-		// split into entries by DAS/2 versioned source
-
 		for (Das2FeatureRequestSym request : requests) {
 			Das2Type dtype = request.getDas2Type();
 			Das2VersionedSource version = dtype.getVersionedSource();
@@ -215,7 +218,7 @@ public final class FeatureLoading {
 		return requests_by_version;
 	}
 
-	private static final void createResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<Das2FeatureRequestSym> result_syms) {
+	private static final void createDAS2ResultSyms(final Set<Das2FeatureRequestSym> request_set, final List<Das2FeatureRequestSym> result_syms) {
 		for (Das2FeatureRequestSym request_sym : request_set) {
 			// Create an AnnotStyle so that we can automatically set the
 			// human-readable name to the DAS2 name, rather than the ID, which is a URI

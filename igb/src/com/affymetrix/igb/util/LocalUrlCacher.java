@@ -42,11 +42,9 @@ public final class LocalUrlCacher {
 	public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
 	public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 	public static final String URL_NOT_REACHABLE = "URL_NOT_REACHABLE";
-	private static final String TYPE_FILE = "In Filesystem";
-	private static final String TYPE_CACHED = "Cached";
-	private static final String TYPE_STALE_CACHE = "Stale Cache";
-	private static final String TYPE_NOT_CACHED = "Remote File";
-	private static final String TYPE_UNREACHABLE = "Not Available?";
+
+	private static enum CacheType { FILE, CACHED, STALE_CACHE, NOT_CACHED, UNREACHABLE};
+
 	private static boolean offline = false;
 
 	// make sure both content and header directories exist
@@ -124,11 +122,8 @@ public final class LocalUrlCacher {
 
 	/**
 	 *  Returns the accesibility of the file represented by the URL.
-	 *  Will be one of {@link #TYPE_FILE}, {@link #TYPE_CACHED},
-	 *  {@link #TYPE_STALE_CACHE}, {@link #TYPE_NOT_CACHED},
-	 *  {@link #TYPE_UNREACHABLE}.
 	 */
-	private static String getLoadType(String url, int cache_option) {
+	private static CacheType getLoadType(String url, int cache_option) {
 
 		// if url is a file url, and not caching files, then just directly return stream
 		if (isFile(url)) {
@@ -137,13 +132,13 @@ public final class LocalUrlCacher {
 				File f = new File(file_url);
 				Application.getSingleton().logDebug("Checking for existence of: " + f.getPath());
 				if (f.exists()) {
-					return TYPE_FILE;
+					return CacheType.FILE;
 				} else {
-					return TYPE_UNREACHABLE;
+					return CacheType.UNREACHABLE;
 				}
 			} catch (URISyntaxException use) {
 				Application.getSingleton().logWarning("URISyntaxException: " + url);
-				return TYPE_FILE;
+				return CacheType.FILE;
 			}
 		}
 
@@ -152,9 +147,9 @@ public final class LocalUrlCacher {
 
 		if (offline || cache_option == ONLY_CACHE) {
 			if (cached) {
-				return TYPE_CACHED;
+				return CacheType.CACHED;
 			} else {
-				return TYPE_NOT_CACHED;
+				return CacheType.NOT_CACHED;
 			}
 		}
 
@@ -190,9 +185,9 @@ public final class LocalUrlCacher {
 
 		if (!url_reachable) {
 			if (cached && cache_option != IGNORE_CACHE) {
-				return TYPE_CACHED;
+				return CacheType.CACHED;
 			} else {
-				return TYPE_UNREACHABLE;
+				return CacheType.UNREACHABLE;
 			}
 		}
 
@@ -200,12 +195,12 @@ public final class LocalUrlCacher {
 		if (cached) {
 			long local_timestamp = cache_file.lastModified();
 			if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
-				return TYPE_CACHED;
+				return CacheType.CACHED;
 			} else {
-				return TYPE_STALE_CACHE;
+				return CacheType.STALE_CACHE;
 			}
 		} else {
-			return TYPE_NOT_CACHED;
+			return CacheType.NOT_CACHED;
 		}
 	}
 
@@ -561,7 +556,7 @@ public final class LocalUrlCacher {
 			cache_usage_param = ONLY_CACHE;
 		}
 
-		String cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
+		CacheType cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
 
 		String short_filename = "selected file";
 		int index = filename.lastIndexOf('/');
@@ -569,17 +564,17 @@ public final class LocalUrlCacher {
 			short_filename = filename.substring(index + 1);
 		}
 
-		if (LocalUrlCacher.TYPE_FILE.equals(cache_type)) {
+		if (cache_type == CacheType.FILE) {
 			// just go ahead and load it
 			return LocalUrlCacher.getInputStream(filename, cache_usage_param, cache_annots_param);
-		} else if (LocalUrlCacher.TYPE_CACHED.equals(cache_type) && !(cache_usage_param == LocalUrlCacher.IGNORE_CACHE)) {
+		} else if (cache_type == CacheType.CACHED && !(cache_usage_param == LocalUrlCacher.IGNORE_CACHE)) {
 			// just go ahead and load from cache
 			return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
-		} else if (LocalUrlCacher.TYPE_UNREACHABLE.equals(cache_type)) {
+		} else if (cache_type == CacheType.UNREACHABLE) {
 			ErrorHandler.errorPanel("File Unreachable",
 							"The requested file can not be found:\n" + filename);
 			return null;
-		} else if (LocalUrlCacher.TYPE_STALE_CACHE.equals(cache_type)) {
+		} else if (cache_type == CacheType.STALE_CACHE) {
 
 			int choice = 0;
 			if (isJarUrl(filename)) {
@@ -600,7 +595,7 @@ public final class LocalUrlCacher {
 			} else if (choice == 2) {
 				return null;
 			}
-		} else if (LocalUrlCacher.TYPE_NOT_CACHED.equals(cache_type)) {
+		} else if (cache_type == CacheType.NOT_CACHED) {
 
 			if (getOffLine()) {
 				ErrorHandler.errorPanel("You are running in off-line mode and this file is not cached locally: " + short_filename);

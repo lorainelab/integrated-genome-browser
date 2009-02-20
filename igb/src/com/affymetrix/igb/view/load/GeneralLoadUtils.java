@@ -18,15 +18,11 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasClientOptimizer;
 import com.affymetrix.igb.das.DasDiscovery;
-import com.affymetrix.igb.das.DasEntryPoint;
-import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
-import com.affymetrix.igb.das.DasType;
 import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.das2.Das2Region;
-import com.affymetrix.igb.das2.Das2SeqGroup;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2Source;
 import com.affymetrix.igb.das2.Das2Type;
@@ -39,7 +35,6 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.util.DasUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
@@ -58,7 +53,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 final public class GeneralLoadUtils {
 
@@ -92,15 +86,8 @@ final public class GeneralLoadUtils {
 	//static boolean CACHE_RESIDUES_DEFAULT = false;
 	//static boolean CACHE_ANNOTS_DEFAULT = true;
 
-	final SortedSet<String> species_names;   // Genome names are unique even across multiple servers; thus we use a set instead of a list.
 	final Map<AnnotatedSeqGroup, GenericVersion> group2version;
 	private final Map<String, Boolean> version2init;
-	/**
-	 *  Map of AnnotatedSeqGroup to a load state map.
-	 *  Each load state map is a map of an annotation type name to Boolean for
-	 *  whether it has already been loaded or not
-	 */
-	//static Map<AnnotatedSeqGroup, Map<String, Integer>> group2states;
 
 	// server name-> GenericServer class.
 	final Map<String, GenericServer> discoveredServers;
@@ -112,11 +99,8 @@ final public class GeneralLoadUtils {
 
 	//public boolean allow_reinitialization = true;
 	public void clear() {
-		//group2states.clear();
-		species_names.clear();
 		group2version.clear();
 		version2init.clear();
-		//group2states.clear();
 		discoveredServers.clear();
 		species2genericVersionList.clear();
 		versionName2species.clear();
@@ -126,10 +110,8 @@ final public class GeneralLoadUtils {
 	public GeneralLoadUtils() {
 		this.gviewer = Application.getSingleton().getMapView();
 
-		species_names = new TreeSet<String>();
 		group2version = new HashMap<AnnotatedSeqGroup, GenericVersion>();
 		version2init = new HashMap<String, Boolean>();
-		//group2states = new HashMap<AnnotatedSeqGroup, Map<String, Integer>>();
 		discoveredServers = new LinkedHashMap<String, GenericServer>();
 		species2genericVersionList = new LinkedHashMap<String, List<GenericVersion>>();
 		versionName2species = new HashMap<String, String>();
@@ -142,7 +124,6 @@ final public class GeneralLoadUtils {
 	void discoverServersAndSpeciesAndVersions() {
 		// it's assumed that if we're here, we need to refresh this information.
 		discoveredServers.clear();
-		species_names.clear();
 
 		// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
 		try {
@@ -212,7 +193,7 @@ final public class GeneralLoadUtils {
 				continue;
 			}
 			if (gServer.serverType == GenericServer.ServerType.DAS) {
-				getDAS1Genomes(gServer);
+				getDAS1Species(gServer);
 				continue;
 			}
 			if (gServer.serverType == GenericServer.ServerType.QuickLoad) {
@@ -225,10 +206,10 @@ final public class GeneralLoadUtils {
 	}
 
 	/**
-	 * Discover genomes from DAS
+	 * Discover species from DAS
 	 * @param gServer
 	 */
-	private synchronized void getDAS1Genomes(GenericServer gServer) {
+	private synchronized void getDAS1Species(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		for (DasSource source : server.getDataSources().values()) {
 			if (DEBUG) {
@@ -238,10 +219,9 @@ final public class GeneralLoadUtils {
 			/* TODO: GenericVersion should be able to store source's name and ID */
 			/* String versionName = source.getName(); */
 			String versionName = source.getID();
-			species_names.add(genomeName);
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(genomeName)) {
-				gVersionList = new ArrayList<GenericVersion>(1);
+				gVersionList = new ArrayList<GenericVersion>();
 				this.species2genericVersionList.put(genomeName, gVersionList);
 			} else {
 				gVersionList = this.species2genericVersionList.get(genomeName);
@@ -251,6 +231,7 @@ final public class GeneralLoadUtils {
 		}
 	}
 
+
 	/**
 	 * Discover genomes from DAS/2
 	 * @param gServer
@@ -259,20 +240,11 @@ final public class GeneralLoadUtils {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = source.getName();
-			species_names.add(speciesName);
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
 				gVersionList = new ArrayList<GenericVersion>();
 				this.species2genericVersionList.put(speciesName, gVersionList);
-			} else {
-				gVersionList = this.species2genericVersionList.get(speciesName);
 			}
-			/*// Das/2 has versioned sources.  Get each version.
-			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				String versionName = versionSource.getName();
-				GenericVersion gVersion = new GenericVersion(versionName, gServer, versionSource);
-				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
-			}*/
 		}
 	}
 
@@ -327,7 +299,6 @@ final public class GeneralLoadUtils {
 			if (DEBUG) {
 				System.out.println("Unknown quickload genome:" + genomeName);
 			}
-			species_names.add(genomeName);
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(genomeName)) {
 				gVersionList = new ArrayList<GenericVersion>(1);

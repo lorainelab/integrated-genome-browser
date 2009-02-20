@@ -233,7 +233,9 @@ final public class GeneralLoadUtils {
 				System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
 			}
 			String genomeName = source.getDescription();
-			String versionName = source.getName();
+			/* TODO: GenericVersion should be able to store source's name and ID */
+			/* String versionName = source.getName(); */
+			String versionName = source.getID();
 			species_names.add(genomeName);
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(genomeName)) {
@@ -516,44 +518,7 @@ final public class GeneralLoadUtils {
 
 			group = version.getGenome();
 			group.setSource(gVersion.gServer.serverName);
-			Map<String, DasEntryPoint> chromMap = version.getEntryPoints();
-			for (DasEntryPoint chrom : chromMap.values()) {
-				// Something similar to running Das2Region.
-               /*String lengthstr = reg.getAttribute("length");
-				String region_name = reg.getAttribute(NAME);
-				if (region_name.length() == 0) {
-				region_name = reg.getAttribute(TITLE);
-				}
-				String region_info_url = reg.getAttribute("doc_href");
-				String description = null;
-				int length = Integer.parseInt(lengthstr);
-				Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
-				 * */
-
-				String name = chrom.getID(); // maybe
-				int length = chrom.getSegment().getLength();
-
-				AnnotatedSeqGroup genome = group;
-				MutableAnnotatedBioSeq aseq = null;
-				if (!(genome instanceof Das2SeqGroup)) {
-					aseq = genome.getSeq(name);
-					if (aseq == null) {
-						aseq = genome.getSeq(chrom.getID());    // maybe
-					}
-				}
-				// b) if can't find a previously seen genome for this DasSource, then
-				//     create a new genome entry
-				if (aseq == null) {
-					// using name instead of id for now
-					aseq = genome.addSeq(name, length);
-				}
-				SimpleSeqSpan segment_span = new SimpleSeqSpan(0, length, aseq);
-
-			}
-			//version.getEntryPoints();
-
-			//Document doc = DasLoader.getDocument(request_con);
-			//seqs = DasLoader.parseSegmentsFromEntryPoints(doc);
+			version.getEntryPoints();
 
 			return group;
 		}
@@ -682,6 +647,7 @@ final public class GeneralLoadUtils {
 			List<String> featureList = new ArrayList<String>(1);
 			featureList.add(gFeature.featureName);
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
+			/* TODO: loadAnnotations is non-functional */
 			if (DasClientOptimizer.loadAnnotations(
 							gFeature.gVersion.gServer.URL,
 							"",

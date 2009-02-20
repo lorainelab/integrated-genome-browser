@@ -44,9 +44,11 @@ public class DasType {
   long last_added;  
   DasSource das_source;
 
-  public DasType(DasSource source, String id) {
+  public DasType(DasSource source, String id, String method, String category) {
     type_id = id;
     das_source = source;
+	this.method = method;
+	this.category = category;
   }
 
   public String getID() { return type_id; }

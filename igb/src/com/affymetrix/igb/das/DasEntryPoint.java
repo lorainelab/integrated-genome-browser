@@ -44,6 +44,7 @@ public class DasEntryPoint {
     this.start = start-1;  // converting from 1-base coords to 0-interbase coords
     this.stop = stop;
     this.forward = forward_orient;
+	initEntryPoint();
   }
   protected void setDescription(String desc) { description = desc; }
   protected void setSeqType(String type) { seqtype = type; }

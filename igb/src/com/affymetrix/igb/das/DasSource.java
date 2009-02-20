@@ -69,14 +69,14 @@ public class DasSource {
     return genome;
   }
 
-  public Map<String,DasEntryPoint> getEntryPoints() {
+  public synchronized Map<String,DasEntryPoint> getEntryPoints() {
     if (! entries_initialized)  {
       initEntryPoints();
     }
     return entry_points;
   }
 
-  public Map<String,DasType> getTypes() {
+  public synchronized Map<String,DasType> getTypes() {
     if (! types_initialized) {
       initTypes();
     }
@@ -98,7 +98,7 @@ public class DasSource {
   }
 
   /** Get entry points from das server. */
-  protected void initEntryPoints() {
+  protected synchronized void initEntryPoints() {
     String entry_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/entry_points";
     try {
       System.out.println("Das Entry Request: " + entry_request);
@@ -156,7 +156,7 @@ public class DasSource {
   }
 
   // get annotation types from das server
-  protected void initTypes() {
+  protected synchronized void initTypes() {
     String types_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/types";
     try {
       System.out.println("Das Types Request: " + types_request);
@@ -175,7 +175,7 @@ public class DasSource {
 	if (count_text != null) { countstr = count_text.getData(); }
 
 	//	System.out.println("type id: " + typeid);
-	DasType type = new DasType(this, typeid);
+	DasType type = new DasType(this, typeid, method, category);
 	this.addType(type);
       }
     }

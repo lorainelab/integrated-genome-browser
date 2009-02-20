@@ -103,52 +103,25 @@ public final class LocalUrlCacher {
 	 *  The File object returned is created by getCacheFileForURL, but the actual on-disk file is not created --
 	 *     that is up to other methods in LocalUrlCacher
 	 */
-	private static File getCacheContentFile(String url) {
-		File fil = new File(cache_content_root);
+	private static File getCacheFile(String root, String url) {
+		File fil = new File(root);
 		if (!fil.exists()) {
 			Application.getSingleton().logInfo("Creating new cache directory: " + fil.getAbsolutePath());
 			fil.mkdirs();
 		}
 		String encoded_url = UrlToFileName.encode(url);
-		String cache_file_name = cache_content_root + encoded_url;
+		String cache_file_name = root + encoded_url;
 		// Need to make sure that full path of file is < 255 characters to ensure
 		//    cross-platform compatibility (some OS allow any length, some only restrict file name
 		//    length (last path segment), but there are some that restrict full path to <= 255 characters
 		if (cache_file_name.length() > 255) {
-			cache_file_name = cache_content_root + UrlToFileName.toMd5(encoded_url);
+			cache_file_name = root + UrlToFileName.toMd5(encoded_url);
 		}
 		File cache_file = new File(cache_file_name);
 		return cache_file;
 	}
 
-	private static File getCacheHeaderFile(String url) {
-		File fil = new File(cache_header_root);
-		if (!fil.exists()) {
-			Application.getSingleton().logInfo("Creating new header directory: " + fil.getAbsolutePath());
-			fil.mkdirs();
-		}
-		String encoded_url = UrlToFileName.encode(url);
-		String cache_file_name = cache_header_root + encoded_url;
-		// Need to make sure that full path of file is < 255 characters to ensure
-		//    cross-platform compatibility (some OS allow any length, some only restrict file name
-		//    length (last path segment), but there are some that restrict full path to <= 255 characters
-		if (cache_file_name.length() > 255) {
-			cache_file_name = cache_header_root + UrlToFileName.toMd5(encoded_url);
-		}
-		File cache_file = new File(cache_file_name);
-		return cache_file;
-	}
 
-	/** Returns the cache directory, creating it if necessary. */
-	/*static File getCacheDirectory() {
-	File fil = new File(cache_content_root);
-	if (! fil.exists()) {
-	Application.getSingleton().logInfo("Creating new cache directory: " + fil.getAbsolutePath());
-	fil.mkdirs();
-	// It is possible that mkdirs() will fail.  Do what then?
-	}
-	return fil;
-	}*/
 	/**
 	 *  Returns the accesibility of the file represented by the URL.
 	 *  Will be one of {@link #TYPE_FILE}, {@link #TYPE_CACHED},
@@ -174,7 +147,7 @@ public final class LocalUrlCacher {
 			}
 		}
 
-		File cache_file = getCacheContentFile(url);
+		File cache_file = getCacheFile(cache_content_root, url);
 		boolean cached = cache_file.exists();
 
 		if (offline || cache_option == ONLY_CACHE) {
@@ -301,8 +274,8 @@ public final class LocalUrlCacher {
 		//      if content is returned, check last-modified header just to be sure (some servers might ignore
 		//        if-modified-since header?)
 		InputStream result_stream = null;
-		File cache_file = getCacheContentFile(url);
-		File header_cache_file = getCacheHeaderFile(url);
+		File cache_file = getCacheFile(cache_content_root, url);
+		File header_cache_file = getCacheFile(cache_header_root, url);
 		long local_timestamp = -1;
 		if (cache_file.exists()) {
 			local_timestamp = cache_file.lastModified();
@@ -503,7 +476,7 @@ public final class LocalUrlCacher {
 			Properties headerprops = new Properties();
 			headerprops.load(hbis);
 			headers.putAll(headerprops);
-			hbis.close();
+			GeneralUtils.safeClose(hbis);
 		}
 		return result_stream;
 	}
@@ -549,8 +522,9 @@ public final class LocalUrlCacher {
 		//InputStream connstr = conn.getInputStream();
 		BufferedInputStream bis = new BufferedInputStream(connstr);
 		byte[] content = ReadIntoContentArray(content_length, bis);
-		bis.close();
-		connstr.close();
+		GeneralUtils.safeClose(bis);
+		GeneralUtils.safeClose(connstr);
+
 		if (write_to_cache) {
 			WriteToCache(content, cache_file, header_cache_file, headerprops);
 		}
@@ -740,13 +714,7 @@ public final class LocalUrlCacher {
 		try {
 			syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
 		} catch (IOException ioe) {
-			if (syn_stream != null) {
-				try {
-					syn_stream.close();
-				} catch (Exception e) {
-				}
-			}
-			syn_stream = null;
+			GeneralUtils.safeClose(syn_stream);
 		}
 
 		if (syn_stream == null) {
@@ -775,7 +743,7 @@ public final class LocalUrlCacher {
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(cache_file));
 			// no API for returning number of bytes successfully written, so write all in one shot...
 			bos.write(content, 0, content.length);
-			bos.close();
+			GeneralUtils.safeClose(bos);
 		}
 		// cache headers also -- in [cache_dir]/headers ?
 		if (DEBUG_CONNECTION) {
@@ -784,6 +752,6 @@ public final class LocalUrlCacher {
 		}
 		BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
 		headerprops.store(hbos, null);
-		hbos.close();
+		GeneralUtils.safeClose(hbos);
 	}
 }

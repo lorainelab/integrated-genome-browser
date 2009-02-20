@@ -1,8 +1,8 @@
 package com.affymetrix.igb.general;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
-import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
+import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
+import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.view.load;
 
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
@@ -29,12 +29,15 @@ public final class TableWithVisibleComboBox {
 		RowEditorModel rm = new RowEditorModel();
 		// tell the JTableX which RowEditorModel we are using
 		table.setRowEditorModel(rm);
-		
-		FeaturesTableModel ftm = (FeaturesTableModel)table.getModel();
+
+		FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
 
 		JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
+		DAScb.setEnabled(enabled);
 		DefaultCellEditor DASeditor = new DefaultCellEditor(DAScb);
+		
 		JComboBox QuickLoadcb = new JComboBox(FeaturesTableModel.quickloadLoadChoices);
+		QuickLoadcb.setEnabled(enabled);
 		DefaultCellEditor QuickLoadeditor = new DefaultCellEditor(QuickLoadcb);
 
 		for (int row = 0; row < ftm.features.size(); row++) {

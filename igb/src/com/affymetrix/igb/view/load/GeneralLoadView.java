@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.view.load;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -30,11 +30,12 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
-import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
-import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
+import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
+import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 
 
-final class GeneralLoadView extends JComponent
+final public class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
 	GeneralLoadUtils glu;

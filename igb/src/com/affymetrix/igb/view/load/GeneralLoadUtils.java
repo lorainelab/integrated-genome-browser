@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.BioSeq;
@@ -41,6 +41,8 @@ import com.affymetrix.igb.menuitem.LoadFileAction;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.DasUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.view.QuickLoadServerModel;
+import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;

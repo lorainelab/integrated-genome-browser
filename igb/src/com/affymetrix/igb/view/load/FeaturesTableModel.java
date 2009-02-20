@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.igb.Application;
@@ -6,8 +6,8 @@ import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericServer;
-import com.affymetrix.igb.view.GeneralLoadUtils.LoadStatus;
-import com.affymetrix.igb.view.GeneralLoadUtils.LoadStrategy;
+import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
+import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;

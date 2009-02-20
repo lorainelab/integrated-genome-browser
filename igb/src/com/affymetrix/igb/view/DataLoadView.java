@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.swing.DisplayUtils;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class DataLoadView extends JComponent  {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();

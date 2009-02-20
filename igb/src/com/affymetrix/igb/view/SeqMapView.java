@@ -65,6 +65,7 @@ import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;

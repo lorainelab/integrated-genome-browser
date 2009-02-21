@@ -16,8 +16,8 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das.DasClientOptimizer;
 import com.affymetrix.igb.das.DasDiscovery;
+import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
 import com.affymetrix.igb.das2.Das2Discovery;
@@ -616,16 +616,11 @@ final public class GeneralLoadUtils {
 			return false;
 		}
 		if (serverType == GenericServer.ServerType.DAS) {
-			//TODO
-			List<String> featureList = new ArrayList<String>(1);
-			featureList.add(gFeature.featureName);
-			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
-			/* TODO: loadAnnotations is non-functional */
-			if (DasClientOptimizer.loadAnnotations(
-							gFeature.gVersion.gServer.URL,
-							"",
-							overlap,
-							featureList)) {
+			if (DasFeatureLoader.loadFeatures(
+					gFeature.gVersion.gServer.URL,
+					gFeature.gVersion.versionName,
+					gFeature.featureName,
+					overlap)) {
 				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
 				return true;
 			}

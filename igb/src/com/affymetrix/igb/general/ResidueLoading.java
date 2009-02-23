@@ -30,7 +30,7 @@ import java.util.Set;
 
 public final class ResidueLoading {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	
 	/**
 	 * Get residues from servers: DAS/2, Quickload, or DAS/1.
@@ -101,7 +101,7 @@ public final class ResidueLoading {
 		for ( // Attempt to load via DAS/1
 						GenericServer server : serversWithChrom) {
 			if (server.serverType == GenericServer.ServerType.DAS) {
-				String residues = GetDAS1Residues(server.serverName, genomeVersionName, seq_name, min, max);
+				String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
 				if (residues != null) {
 					// Add to composition if we're doing a partial sequence
 					if (partial_load) {

@@ -17,14 +17,12 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.das.DasLoader;
 import java.io.*;
 import java.net.*;
-import java.util.*;
 import java.util.List;
 import java.util.regex.*;
 
 import org.xml.sax.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 // TODO: Merge this class with com.affymetrix.igb.das.DasLoader
 
@@ -32,6 +30,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
  *  A set of DAS loading and parsing functions.
  */
 public class DasUtils {
+	private static final boolean DEBUG = true;
+
+
   static final Pattern white_space = Pattern.compile("\\s+");
 
   /**
@@ -44,10 +45,11 @@ public class DasUtils {
     String result = null;
     //      System.out.println("in DasUtils.findDasSource()");
     String request_str = das_server + "/dsn";
-    System.out.println("Das Request: " + request_str);
-
+		if (DEBUG) {
+			System.out.println("Das Request: " + request_str);
+		}
     Document doc = DasLoader.getDocument(request_str);
-    List sources = DasLoader.parseSourceList(doc);
+    List<String> sources = DasLoader.parseSourceList(doc);
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
     result = lookup.findMatchingSynonym(sources, source_synonym);
@@ -65,10 +67,11 @@ public class DasUtils {
     //      System.out.println("in DasUtils.findDasSeqID()");
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
     String request_str = das_server + "/" + das_source + "/entry_points";
-    System.out.println("Das Request: " + request_str);
-
+		if (DEBUG) {
+			System.out.println("Das Request: " + request_str);
+		}
     Document doc = DasLoader.getDocument(request_str);
-    List segments = DasLoader.parseSegmentsFromEntryPoints(doc);
+    List<String> segments = DasLoader.parseSegmentsFromEntryPoints(doc);
 
     result = lookup.findMatchingSynonym(segments,  seqid_synonym);
     return result;
@@ -88,7 +91,9 @@ public class DasUtils {
     das_source + "/dna?segment=" +
     das_seqid + ":" + (min+1) + "," + max;
     URL request_url = new URL(request);
+		if (DEBUG) {
     System.out.println("DAS request: " + request);
+		}
     URLConnection request_con = request_url.openConnection();
     InputStream result_stream = request_con.getInputStream();
     residues = parseDasResidues(new BufferedInputStream(result_stream));

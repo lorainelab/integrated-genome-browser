@@ -120,12 +120,12 @@ public abstract class DasLoader {
    *  Returns a Map where keys are String labels and values are SeqSpan's.
    *  Looks for <gff><segment id="..."> where the id's are in the given seq_group.
    */
-  public static Map parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
+  public static Map<String,SeqSpan> parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
     if (DEBUG) System.out.println("========= Parsing term query");
-    Map segment_hash = new HashMap();
+    Map<String,SeqSpan> segment_hash = new HashMap<String,SeqSpan>();
 
     Element top_element = doc.getDocumentElement();
-    String name = top_element.getTagName();
+    //String name = top_element.getTagName();
     //      System.out.println("top element: " + name);
     NodeList children = top_element.getChildNodes();
     for (int i=0; i<children.getLength(); i++) {
@@ -164,8 +164,8 @@ public abstract class DasLoader {
    *  Returns a List of String's which are the id's of the segments.
    *  From <entry_points><segment id="...">.
    */
-  public static List parseSegmentsFromEntryPoints(Document doc) {
-    List seqs = new Vector();
+  public static List<String> parseSegmentsFromEntryPoints(Document doc) {
+    List<String> seqs = new Vector<String>();
     if (DEBUG) System.out.println("========= Parsing Segments from Entry Points");
     Element top_element = doc.getDocumentElement();
     String name = top_element.getTagName();
@@ -193,8 +193,8 @@ public abstract class DasLoader {
   /** Returns a list of source id Strings.
    *  From  <dsn><source id="...">.
    */
-  public static List parseSourceList(Document doc) {
-    List ids = new ArrayList();
+  public static List<String> parseSourceList(Document doc) {
+    List<String> ids = new ArrayList<String>();
     if (DEBUG) System.out.println("========= Parsing Source List");
     String matching_id = null;
     Element top_element = doc.getDocumentElement();

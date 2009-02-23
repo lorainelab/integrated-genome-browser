@@ -107,6 +107,8 @@ public final class ResidueLoading {
 					if (partial_load) {
 						// span is non-null, here
 						AddResiduesToComposition(aseq, residues, span);
+					} else {
+						aseq.setResidues(residues);
 					}
 					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;

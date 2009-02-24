@@ -265,8 +265,8 @@ public final class IGB extends Application
 
     getIGBPrefs(); // force loading of prefs
 
-    String quick_load_url = QuickLoadView2.getQuickLoadUrl();
-    //    String quick_load_url = "file:/C:/data/quickload/";
+    String quick_load_url = getQuickLoadUrl();
+
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     //processDasServersList(quick_load_url);    -- not working correctly on http://netaffxdas.affymetrix.com/das/
@@ -302,6 +302,34 @@ public final class IGB extends Application
      System.exit(1);
    }
   }
+
+	// this one is set by the user in the igb_prefs file.  It can be null
+	// we sort-of hope to phase this out
+	private static String getUrlFromPrefsFile() {
+		return (String) IGB.getIGBPrefs().get("QuickLoadUrl");
+	}
+
+	private static String getUrlLastUsed() {
+		final String PREF_LAST_QUICKLOAD_URL = "QuickLoad: Last URL";
+		final String DEFAULT_QUICKLOAD_URL = "http://netaffxdas.affymetrix.com/quickload_data/";
+		String url = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
+		if (url == null || url.length() == 0) {
+			url = DEFAULT_QUICKLOAD_URL;
+		}
+
+		return url;
+	}
+
+	// equivalent to getURLLastUsed()
+	// modified to first look if one was specified in the igb_prefs.xml
+	// TODO -- need to iterate over all servers, all server types, etc.
+	private static String getQuickLoadUrl() {
+		String u = getUrlFromPrefsFile();
+		if (u != null) {
+			return u;
+		}
+		return getUrlLastUsed();
+	}
 
 
   public IGB() { }

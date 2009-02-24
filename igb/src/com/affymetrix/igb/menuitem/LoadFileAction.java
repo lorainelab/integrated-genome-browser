@@ -116,7 +116,7 @@ public class LoadFileAction {
           FishClonesParser.FILE_EXT, "FishClones"));
       }
       chooser.addChoosableFileFilter(new UniFileFilter("map"));
-      HashSet all_known_endings = new HashSet();
+      HashSet<String> all_known_endings = new HashSet<String>();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
       for (int i=0; i<filters.length; i++) {
         if (filters[i] instanceof UniFileFilter) {
@@ -126,7 +126,7 @@ public class LoadFileAction {
         }
       }
       UniFileFilter all_known_types = new UniFileFilter(
-        (String[]) all_known_endings.toArray(new String[all_known_endings.size()]),
+        all_known_endings.toArray(new String[all_known_endings.size()]),
         "Known Types");
       all_known_types.setExtensionListInDescription(false);
       all_known_types.addCompressionEndings(Streamer.compression_endings);

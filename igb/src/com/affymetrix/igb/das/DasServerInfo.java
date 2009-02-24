@@ -185,7 +185,9 @@ public class DasServerInfo {
       }
     }
     catch (Exception ex) {
-      ErrorHandler.errorPanel("Error initializing DAS server info for\n"+root_url, ex);
+      System.out.println("Error initializing DAS server info for\n"+root_url);
+			ex.printStackTrace();
+			return false;
     }
     initialized = true;
     return initialized;

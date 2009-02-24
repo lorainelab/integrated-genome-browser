@@ -199,13 +199,13 @@ public class QuickLoadServerModel {
    *  You can retrieve the filenames with {@link #getFilenames(String)}
    */
   public boolean loadAnnotationNames(String genome_name) {
-   boolean success = false;
 		String genome_root = root_url + genome_name + "/";
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
 		Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
-		String filename = genome_root + "annots.txt";
+		String filename = genome_root + "annots.txt";		
 
 		// Make a new list of filenames, in case this is being re-initialized
+		// If this search fails, then we're just returning an empty list.
 		List<String> file_names = new ArrayList<String>();
 		genome2file_names.put(genome_name, file_names);
 
@@ -213,8 +213,14 @@ public class QuickLoadServerModel {
 		BufferedReader br = null;
 		try {
 			istr = LocalUrlCacher.getInputStream(filename, getCacheAnnots());
+			if (istr == null) {
+				// Search failed.  getInputStream has already logged warnings about this.
+				return false;
+			}
 			br = new BufferedReader(new InputStreamReader(istr));
+
 			String line;
+
 			while ((line = br.readLine()) != null) {
 				String[] fields = tab_regex.split(line);
 				if (fields.length >= 1) {
@@ -231,25 +237,15 @@ public class QuickLoadServerModel {
 					}
 				}
 			}
-			success = true;
+			return true;
 		} catch (Exception ex) {
 			System.out.println("Couldn't find or couldn't process file " + filename);
 			ex.printStackTrace();
+			return false;
 		} finally {
-			if (istr != null) {
-				try {
-					istr.close();
-				} catch (Exception e) {
-				}
-			}
-			if (br != null) {
-				try {
-					br.close();
-				} catch (Exception e) {
-				}
-			}
+			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(br);
 		}
-		return success;
   }
 
   /**

@@ -190,6 +190,11 @@ the probeset, probe and pieces of probes
   
   private static int GLYPH_HEIGHT = 20;
   
+  /**
+   *   Creation of genoviz Glyphs for rendering 
+   *      probe set alignments
+   *      includes transformations used by slice view and other alternative coordinate systems
+   */
   public GlyphI addToTier(SeqSymmetry consensus_sym, TierGlyph forward_tier, TierGlyph reverse_tier) {
 
     if (SeqUtils.getDepth(consensus_sym) != glyph_depth) {
@@ -251,49 +256,33 @@ the probeset, probe and pieces of probes
     map.setDataModelFromOriginalSym(pglyph, transformed_consensus_sym);
 
     int childCount = transformed_consensus_sym.getChildCount();
+    java.util.List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
 
     for (int i=0; i<childCount; i++) {
       SeqSymmetry child = transformed_consensus_sym.getChild(i);
       SeqSpan cspan = child.getSpan(coordseq);
-      if (cspan == null) {
-        if (i == 0) {
-          // if first child has null span, it represents a deletion, so extend parent to left
-          pglyph.getCoordBox().width += pglyph.getCoordBox().x;
-          pglyph.getCoordBox().x = 0;
-
-          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
-          boundary_glyph.setCoords(0.0, child_y + child_height/4, 1.0, child_height/2);
-          boundary_glyph.setColor(pglyph.getColor());
-          //boundary_glyph.setHitable(false);
-          pglyph.addChild(boundary_glyph);
-        } else if (i == childCount - 1) {
-          // if last child has null span, it represents a deletion, so extend parent to right
-          pglyph.getCoordBox().width = coordseq.getLength() - pglyph.getCoordBox().x;
-
-          GenericAnnotGlyphFactory.DeletionGlyph boundary_glyph = new GenericAnnotGlyphFactory.DeletionGlyph();
-          boundary_glyph.setCoords(coordseq.getLength()-0.5, child_y + child_height/4, 1.0, child_height/2);
-          boundary_glyph.setColor(pglyph.getColor());
-          //boundary_glyph.setHitable(false);
-          pglyph.addChild(boundary_glyph);
-        }
-        // any deletion at a point other than the left or right edge will produce
-        // a cspan of length 0 rather than a null one and so will be dealt with below
-
-        continue;
-     }
-
-      GlyphI cglyph;
-      if (cspan.getLength() == 0) {
-        cglyph = new GenericAnnotGlyphFactory.DeletionGlyph();
-      } else {
-        cglyph = new EfficientOutlinedRectGlyph();
+      if (cspan == null)  {
+	outside_children.add(child);
       }
+      else  {
+	GlyphI cglyph;
+	if (cspan.getLength() == 0) {
+	  cglyph = new DeletionGlyph();
+	} else {
+	  cglyph = new EfficientOutlinedRectGlyph();
+	}
 
-      cglyph.setCoords(cspan.getMin(), child_y + child_height/4, cspan.getLength(), child_height/2);
-      cglyph.setColor(consensus_color);
-      pglyph.addChild(cglyph);
-      map.setDataModelFromOriginalSym(cglyph, child);
-    }
+	cglyph.setCoords(cspan.getMin(), child_y + child_height/4, cspan.getLength(), child_height/2);
+	cglyph.setColor(consensus_color);
+	pglyph.addChild(cglyph);
+	map.setDataModelFromOriginalSym(cglyph, child);
+      }
+    } 
+    
+    // call out to handle rendering to indicate if any of the children of the 
+    //    orginal annotation are completely outside the view
+    DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 
+				      child_y + child_height/4, child_height/2);
 
     // Add the pglyph to the tier before drawing probesets because probesets
     // calculate their positions relative to the coordinates of the pglyph's coordbox

@@ -17,14 +17,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
  *  A way of mapping synonyms to each other.
+ *
+ * @version $Id$
  */
 public final class SynonymLookup {
 	private static final boolean DEBUG = false;
@@ -217,7 +219,7 @@ public final class SynonymLookup {
 	 *  @param test  the id you want to find a synonym for
 	 *  @return either null or a String s, where isSynonym(test, s) is true.
 	 */
-	public String findMatchingSynonym(List<String> choices, String test) {
+	public String findMatchingSynonym(Collection<String> choices, String test) {
 		String result = null;
 		for (String id : choices) {
 			if (this.isSynonym(test, id)) {

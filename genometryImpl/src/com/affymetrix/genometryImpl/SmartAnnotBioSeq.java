@@ -36,6 +36,7 @@ import java.util.regex.*;
  *   Also adds reference to AnnotatedSeqGroup (getSeqGroup()), and
  *     isSynonymous() method.
  *
+ * @version: $Id$
  */
 public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
@@ -59,6 +60,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		seq_group = group;
 	}
 
+	/*
 	public boolean isSynonymous(String synonym) {
 		if (getID() != null && getID().equals(synonym)) { return true; }
 		else {
@@ -66,6 +68,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			return (lookup.isSynonym(getID(), synonym));
 		}
 	}
+	 */
 
 	/**
 	 *  Returns the set of type id String's that can be used in

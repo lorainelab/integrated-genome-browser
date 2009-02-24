@@ -26,6 +26,10 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
+/**
+ *
+ * @version $Id$
+ */
 public class AnnotatedSeqGroup {
 
 	final private String id;
@@ -38,6 +42,11 @@ public class AnnotatedSeqGroup {
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,ArrayList<SeqSymmetry>> id2sym_hash;
 	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
+	/**
+	 * Private copy of the synonym lookup table.
+	 * @see com.affymetrix.genometryImpl.util.SynonymLookup#getDefaultLookup()
+	 */
+	private final static SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
 	public AnnotatedSeqGroup(String gid) {
 		id = gid;
@@ -163,14 +172,26 @@ public class AnnotatedSeqGroup {
 
 	/** Gets a sequence based on its name, possibly taking synonyms into account.
 	 *  See {@link #setUseSynonyms(boolean)}.
+	 *
+	 * @param synonym the string identifier of the requested SmartAnnotBioSeq
+	 * @return a SmartAnnotBioSeq for the give synonym or null
 	 */
 	public SmartAnnotBioSeq getSeq(String synonym) {
 		SmartAnnotBioSeq aseq = id2seq.get(synonym);
 		if (use_synonyms && aseq == null) {
-			// try and find a synonym
-			for (SmartAnnotBioSeq synseq : id2seq.values()) {
-				if (synseq.isSynonymous(synonym)) {
-					return synseq;
+			/*
+			 * Try and find a synonym.
+			 *
+			 * synonyms null check would not be necessary if getSynonyms()
+			 * always returned a List;
+			 */
+			Collection<String> synonyms = lookup.getSynonyms(synonym);
+			if (synonyms != null) {
+				for (String syn : synonyms) {
+					aseq = id2seq.get(syn);
+					if (aseq != null) {
+						return aseq;
+					}
 				}
 			}
 		}
@@ -199,7 +220,7 @@ public class AnnotatedSeqGroup {
 	}
 
 	final public boolean isSynonymous(String synonym) {
-		return id.equals(synonym) || SynonymLookup.getDefaultLookup().isSynonym(id, synonym);
+		return id.equals(synonym) || lookup.isSynonym(id, synonym);
 	}
 
 	/**

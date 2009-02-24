@@ -342,25 +342,51 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         SeqSymmetry child = null;
         SeqSpan cspan = null;
         child = sym.getChild(i);
+	boolean already_right_extended = false;
+	boolean already_left_extended = false;
 
         cspan = gviewer.getViewSeqSpan(child);
 
-        if (cspan == null) {
+	/** GAH 2009-02-23 BUG FIX for issues 2390626, 1832822
+	 *  found splice view deletion rendering bug when annotation is on negative strand
+	 *  Problem was that previous code was assuming that if any children were out of the slice view, then either: 
+	 *     first child is out on left (5') side of view
+	 *     last child is out on right (3') side of view
+	 *     or both
+	 *  But ordering of children in the slice view cannot be assumed
+	 *  So instead, now checking bounds of child's original coords relative to composition coords of entire slice view
+	 */
 
-          if (i == 0) {
-            // if first child has null span, it represents a deletion, so extend parent to left
+        if (!same_seq && 
+	    cspan == null &&
+	    coordseq instanceof CompositeBioSeq)  {
+	  
+	  SeqSpan original_child_span = child.getSpan(annotseq);
+	  if (original_child_span == null)  { continue; }  // shouldn't happen, but just in case, ignore this child
+	  // symmetry representing composition of view seq from slices of annnoted seqs
+	  SeqSymmetry viewsym = ((CompositeBioSeq)coordseq).getComposition(); 
+	  SeqSpan viewedges = viewsym.getSpan(annotseq);
+
+	  // if no other children have already triggered leftward parent extension,
+	  //   and child span is left of entire view, then extend parent to LEFT
+	  if (!already_left_extended && 
+	      original_child_span.getMax() <= viewedges.getMin())  { 
+	    already_left_extended = true;
             pglyph.getCoordBox().width += pglyph.getCoordBox().x;
             pglyph.getCoordBox().x = 0;
-
             DeletionGlyph boundary_glyph = new DeletionGlyph();
             boundary_glyph.setCoords(0.0, 0.0, 1.0, (double) thin_height);
             boundary_glyph.setColor(pglyph.getColor());
             //boundary_glyph.setHitable(false);
             pglyph.addChild(boundary_glyph);
-          } else if (i == childCount - 1) {
-            // if last child has null span, it represents a deletion, so extend parent to right
+	  }
+	  
+	  // if no other children have already triggered rightward parent extension,
+	  //   and child span is right of entire view, then extend parent to RIGHT
+	  else if (!already_right_extended && 
+		   original_child_span.getMin() >= viewedges.getMax())  {
+	    already_right_extended = true;
             pglyph.getCoordBox().width = coordseq.getLength() - pglyph.getCoordBox().x;
-
             DeletionGlyph boundary_glyph = new DeletionGlyph();
             boundary_glyph.setCoords(coordseq.getLength()-0.5, 0.0, 1.0, (double) thin_height);
             boundary_glyph.setColor(pglyph.getColor());
@@ -369,10 +395,10 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
           }
           // any deletion at a point other than the left or right edge will produce
           // a cspan of length 0 rather than a null one and so will be dealt with below
-
           continue;
-        }
 
+	}  // END cspan == null conditional
+	  
         GlyphI cglyph;
         if (cspan.getLength() == 0) {
           cglyph = new DeletionGlyph();

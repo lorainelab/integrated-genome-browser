@@ -13,20 +13,19 @@
 
 package com.affymetrix.genometryImpl;
 
-
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.event.SeqModifiedEvent;
-import com.affymetrix.genometryImpl.event.SeqModifiedListener;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- *   Extends NibbleBioSeq to add "retrieve top-level feature by 'method'/'type'".
+ *   Extends GeneralBioSeq to add "retrieve top-level feature by 'method'/'type'".
  *
  *   Also imposes structure in the top two levels of annotation hierarchy.
  *   First level for a given type is a container symmetry with that type;
@@ -39,12 +38,12 @@ import java.util.regex.*;
  * @version: $Id$
  */
 public final class SmartAnnotBioSeq extends GeneralBioSeq  {
-	Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
-	Map type_name2sym = null;   // also keeping a hash of type _names_ to container annotations
-	List<SeqModifiedListener> modified_listeners = null;
-	AnnotatedSeqGroup seq_group;
-	boolean modify_events_enabled = true;
-	boolean modification_cached = false;
+	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
+	//Map type_name2sym = null;   // also keeping a hash of type _names_ to container annotations
+	//private List<SeqModifiedListener> modified_listeners = null;
+	private AnnotatedSeqGroup seq_group;
+	//private boolean modify_events_enabled = true;
+	//private boolean modification_cached = false;
 
 	public SmartAnnotBioSeq() { }
 
@@ -74,13 +73,13 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	 *  Returns the set of type id String's that can be used in
 	 * {@link #getAnnotation(String)}.
 	 */
-	public Set<String> getTypeIds() {
+	/*public Set<String> getTypeIds() {
 		if (type_id2sym == null) {
 			return Collections.<String>emptySet();
 		} else {
 			return Collections.unmodifiableSet(type_id2sym.keySet());
 		}
-	}
+	}*/
 
 	/**
 	 *  returns Map of type id to container sym for annotations of that type
@@ -90,7 +89,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	}
 
 
-	public Set<String> getGraphTypeIds() {
+	/*public Set<String> getGraphTypeIds() {
 		if (type_id2sym == null) {
 			return Collections.<String>emptySet();
 		} else {
@@ -102,7 +101,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			}
 			return Collections.unmodifiableSet(graph_ids);
 		}
-	}
+	}*/
 
 	/**
 	 *  Returns a top-level symmetry or null.
@@ -130,7 +129,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		return results;
 	}
 
-	public void addModifiedListener(SeqModifiedListener listener) {
+	/*public void addModifiedListener(SeqModifiedListener listener) {
 		if (modified_listeners == null) {
 			modified_listeners = new ArrayList<SeqModifiedListener>();
 		}
@@ -144,21 +143,21 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				modified_listeners = null;
 			}
 		}
-	}
+	}*/
 
 	/**
 	 *  Toggling notification of listeners to seq modification events.
 	 *  If notification is turned off, then seq modifications will be accumulated
 	 *  and passed as a single modification event when notification is turned back on.
 	 */
-	public void setModifyEventsEnabled(boolean b) {
+	/*public void setModifyEventsEnabled(boolean b) {
 		modify_events_enabled = b;
 		if (modify_events_enabled && modification_cached) {
 			notifyModified();
 		}
-	}
+	}*/
 
-	protected void notifyModified()  {
+	/*protected void notifyModified()  {
 		if (modified_listeners != null) {
 			if (modify_events_enabled) {
 				SeqModifiedEvent evt = new SeqModifiedEvent(this);
@@ -167,21 +166,21 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				modification_cached = true;
 			}
 		}
-	}
+	}*/
 
-	protected void notifyModified(SeqModifiedEvent evt) {
-		if (! modify_events_enabled) {
+	//protected void notifyModified(SeqModifiedEvent evt) {
+		/*if (! modify_events_enabled) {
 			throw new RuntimeException("ERROR: SmartAnnotBioSeq.notifyModified() called, but " +
 					"modify_events_enabled flag == false");
-		}
-		if (modified_listeners != null) {
+		}*/
+		/*if (modified_listeners != null) {
 			//System.out.println("SeqModifiedEvent occurred on " + this.getID() + " notifying listeners");
 			for (SeqModifiedListener listener : modified_listeners) {
 				listener.seqModified(evt);
 			}
-		}
-		modification_cached = false;
-	}
+		}*/
+		//modification_cached = false;
+	//}
 
 	/**
 	 *  Creates an empty top-level container sym.
@@ -198,7 +197,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		container.addSpan(span);
 		type_id2sym.put(type, container);
 		super.addAnnotation(container);
-		notifyModified();
+		//notifyModified();
 		return container;
 	}
 
@@ -217,7 +216,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			container = addAnnotation(type);
 		}
 		container.addChild(sym);
-		notifyModified();
+		//notifyModified();
 	}
 
 
@@ -255,7 +254,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				throw new RuntimeException("n SmartAnnotBioSeq.addAnnotation: sym must be a SymWithProps");
 			}
 			super.addAnnotation(sym);
-			notifyModified();
+			//notifyModified();
 			return;
 		}
 		String type = determineMethod(sym);
@@ -276,7 +275,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	public synchronized void removeAnnotation(SeqSymmetry annot) {
 		if (! needsContainer(annot)) {
 			super.removeAnnotation(annot);
-			notifyModified();
+			//notifyModified();
 			//      return;
 		}
 		else {
@@ -286,12 +285,12 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				if (container == annot) {
 					type_id2sym.remove(type);
 					super.removeAnnotation(annot);
-					notifyModified();
+					//notifyModified();
 					//	  return;
 				}
 				else {
 					container.removeChild(annot);
-					notifyModified();
+					//notifyModified();
 				}
 			}
 		}
@@ -304,7 +303,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			if (container != null) {
 				type_id2sym.remove(type);
 				super.removeAnnotation(container);
-				notifyModified();
+				//notifyModified();
 			}
 		}
 	}
@@ -318,7 +317,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
 	 * GraphSym's and ScoredContainerSym's are added directly, not in containers.
 	 */
-	public boolean needsContainer(SeqSymmetry sym) {
+	private static boolean needsContainer(SeqSymmetry sym) {
 		if (sym instanceof GraphSym || sym instanceof ScoredContainerSym || sym instanceof TypeContainerAnnot) {
 			return false;
 		} else {

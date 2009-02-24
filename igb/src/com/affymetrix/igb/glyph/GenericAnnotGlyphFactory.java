@@ -337,13 +337,12 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     if (ADD_CHILDREN) {
       int childCount = sym.getChildCount();
-
+      boolean already_right_extended = false;
+      boolean already_left_extended = false;
       for (int i=0; i<childCount; i++) {
         SeqSymmetry child = null;
         SeqSpan cspan = null;
         child = sym.getChild(i);
-	boolean already_right_extended = false;
-	boolean already_left_extended = false;
 
         cspan = gviewer.getViewSeqSpan(child);
 
@@ -353,7 +352,7 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 	 *     first child is out on left (5') side of view
 	 *     last child is out on right (3') side of view
 	 *     or both
-	 *  But ordering of children in the slice view cannot be assumed
+	 *  But ordering of children within a parent cannot be assumed
 	 *  So instead, now checking bounds of child's original coords relative to composition coords of entire slice view
 	 */
 
@@ -410,7 +409,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
         Color child_color = getSymColor(child, the_style);
         if (cdsSpan != null) {
           cheight = thin_height;
-          if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } else if (SeqUtils.overlap(cdsSpan, cspan)) {
+          if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } 
+	  else if (SeqUtils.overlap(cdsSpan, cspan)) {
 
             SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
             SeqSymmetry cds_sym_3 = cds_sym_2;
@@ -433,15 +433,15 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
               }
             }
           }
-        }
+        }  // END CDS rendering conditional
         cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
         cglyph.setColor(child_color);
         pglyph.addChild(cglyph);
         if (SET_CHILD_INFO) {
           map.setDataModelFromOriginalSym(cglyph, child);
         }
-      }
-    }
+      }   // END child rendering loop
+    }     // END child rendering conditional
 
     the_tier.addChild(pglyph);
     return pglyph;

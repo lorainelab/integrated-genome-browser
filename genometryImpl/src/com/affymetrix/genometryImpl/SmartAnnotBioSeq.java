@@ -296,7 +296,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		}
 	}
 
-	public void removeType(String type) {
+	/*public void removeType(String type) {
 		if ((type != null)) {
 			type = type.toLowerCase();
 			MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
@@ -306,12 +306,12 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				//notifyModified();
 			}
 		}
-	}
+	}*/
 
-	public synchronized void removeAnnotation(int index) {
+	/*public synchronized void removeAnnotation(int index) {
 		SeqSymmetry annot = getAnnotation(index);
 		removeAnnotation(annot);  // this will handle super call, removal from type2sym, notification, etc.
-	}
+	}*/
 
 	/**
 	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.

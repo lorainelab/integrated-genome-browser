@@ -1003,9 +1003,9 @@ public final class IGB extends Application
     initialized = true;
   }
 
-  public static boolean useQuickLoad() {
+  /*public static boolean useQuickLoad() {
     return UnibrowPrefsUtil.getBooleanParam(USE_QUICKLOAD_INSTEAD_OF_DAS2, DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);
-  }
+  }*/
 
 
   /** Returns true if initialization has completed. */

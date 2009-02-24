@@ -250,6 +250,11 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
 
+  /**
+   *   Creation of genoviz Glyphs for rendering
+   *      a two-level symmetry (parent with children) in the SeqMapView 
+   *      includes transformations used by slice view and other alternative coordinate systems
+   */
   public GlyphI doTwoLevelGlyph(SeqSymmetry insym, TierGlyph forward_tier, TierGlyph reverse_tier)
   throws java.lang.InstantiationException, java.lang.IllegalAccessException {
 
@@ -337,8 +342,8 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
     if (ADD_CHILDREN) {
       int childCount = sym.getChildCount();
-      boolean already_right_extended = false;
-      boolean already_left_extended = false;
+
+      java.util.List<SeqSymmetry> outside_children = new ArrayList<SeqSymmetry>();
       for (int i=0; i<childCount; i++) {
         SeqSymmetry child = null;
         SeqSpan cspan = null;
@@ -346,106 +351,68 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
         cspan = gviewer.getViewSeqSpan(child);
 
-	/** GAH 2009-02-23 BUG FIX for issues 2390626, 1832822
-	 *  found splice view deletion rendering bug when annotation is on negative strand
-	 *  Problem was that previous code was assuming that if any children were out of the slice view, then either: 
-	 *     first child is out on left (5') side of view
-	 *     last child is out on right (3') side of view
-	 *     or both
-	 *  But ordering of children within a parent cannot be assumed
-	 *  So instead, now checking bounds of child's original coords relative to composition coords of entire slice view
-	 */
-
-        if (!same_seq && 
-	    cspan == null &&
-	    coordseq instanceof CompositeBioSeq)  {
-	  
-	  SeqSpan original_child_span = child.getSpan(annotseq);
-	  if (original_child_span == null)  { continue; }  // shouldn't happen, but just in case, ignore this child
-	  // symmetry representing composition of view seq from slices of annnoted seqs
-	  SeqSymmetry viewsym = ((CompositeBioSeq)coordseq).getComposition(); 
-	  SeqSpan viewedges = viewsym.getSpan(annotseq);
-
-	  // if no other children have already triggered leftward parent extension,
-	  //   and child span is left of entire view, then extend parent to LEFT
-	  if (!already_left_extended && 
-	      original_child_span.getMax() <= viewedges.getMin())  { 
-	    already_left_extended = true;
-            pglyph.getCoordBox().width += pglyph.getCoordBox().x;
-            pglyph.getCoordBox().x = 0;
-            DeletionGlyph boundary_glyph = new DeletionGlyph();
-            boundary_glyph.setCoords(0.0, 0.0, 1.0, (double) thin_height);
-            boundary_glyph.setColor(pglyph.getColor());
-            //boundary_glyph.setHitable(false);
-            pglyph.addChild(boundary_glyph);
+	if (cspan == null)  {   // if no span for view, then child is either to left or right of view
+	  outside_children.add(child);  // collecting children outside of view to handle later
+	}
+	else  {
+	  GlyphI cglyph;
+	  if (cspan.getLength() == 0) {
+	    cglyph = new DeletionGlyph();
+	  } 
+	  else {
+	    cglyph = (GlyphI)child_glyph_class.newInstance();
 	  }
-	  
-	  // if no other children have already triggered rightward parent extension,
-	  //   and child span is right of entire view, then extend parent to RIGHT
-	  else if (!already_right_extended && 
-		   original_child_span.getMin() >= viewedges.getMax())  {
-	    already_right_extended = true;
-            pglyph.getCoordBox().width = coordseq.getLength() - pglyph.getCoordBox().x;
-            DeletionGlyph boundary_glyph = new DeletionGlyph();
-            boundary_glyph.setCoords(coordseq.getLength()-0.5, 0.0, 1.0, (double) thin_height);
-            boundary_glyph.setColor(pglyph.getColor());
-            //boundary_glyph.setHitable(false);
-            pglyph.addChild(boundary_glyph);
-          }
-          // any deletion at a point other than the left or right edge will produce
-          // a cspan of length 0 rather than a null one and so will be dealt with below
-          continue;
+	
+	  double cheight = thick_height;
+	  Color child_color = getSymColor(child, the_style);
+	  if (cdsSpan != null) {
+	    cheight = thin_height;
+	    if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } 
+	    else if (SeqUtils.overlap(cdsSpan, cspan)) {
 
-	}  // END cspan == null conditional
-	  
-        GlyphI cglyph;
-        if (cspan.getLength() == 0) {
-          cglyph = new DeletionGlyph();
-        } else {
-          cglyph = (GlyphI)child_glyph_class.newInstance();
-        }
-
-        double cheight = thick_height;
-        Color child_color = getSymColor(child, the_style);
-        if (cdsSpan != null) {
-          cheight = thin_height;
-          if (SeqUtils.contains(cdsSpan, cspan)) { cheight = thick_height; } 
-	  else if (SeqUtils.overlap(cdsSpan, cspan)) {
-
-            SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
-            SeqSymmetry cds_sym_3 = cds_sym_2;
-            if (! same_seq) {
-              cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
-            }
-            SeqSpan cds_span = gviewer.getViewSeqSpan(cds_sym_3);
-            if (cds_span != null) {
-              GlyphI cds_glyph;
-              if (cspan.getLength() == 0) {
-                cds_glyph = new DeletionGlyph();
-              } else {
-                cds_glyph = (GlyphI)child_glyph_class.newInstance();
-              }
-              cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
-              cds_glyph.setColor(child_color); // CDS same color as exon
-              pglyph.addChild(cds_glyph);
-              if (SET_CHILD_INFO) {
-                map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
-              }
-            }
-          }
-        }  // END CDS rendering conditional
-        cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
-        cglyph.setColor(child_color);
-        pglyph.addChild(cglyph);
-        if (SET_CHILD_INFO) {
-          map.setDataModelFromOriginalSym(cglyph, child);
-        }
+	      SeqSymmetry cds_sym_2 = SeqUtils.intersection(cds_sym, child, annotseq);
+	      SeqSymmetry cds_sym_3 = cds_sym_2;
+	      if (! same_seq) {
+		cds_sym_3 = gviewer.transformForViewSeq(cds_sym_2, annotseq);
+	      }
+	      SeqSpan cds_span = gviewer.getViewSeqSpan(cds_sym_3);
+	      if (cds_span != null) {
+		GlyphI cds_glyph;
+		if (cspan.getLength() == 0) {
+		  cds_glyph = new DeletionGlyph();
+		} else {
+		  cds_glyph = (GlyphI)child_glyph_class.newInstance();
+		}
+		cds_glyph.setCoords(cds_span.getMin(), 0, cds_span.getLength(), thick_height);
+		cds_glyph.setColor(child_color); // CDS same color as exon
+		pglyph.addChild(cds_glyph);
+		if (SET_CHILD_INFO) {
+		  map.setDataModelFromOriginalSym(cds_glyph, cds_sym_3);
+		}
+	      }
+	    }
+	  }  // END CDS rendering conditional
+	  cglyph.setCoords(cspan.getMin(), 0, cspan.getLength(), cheight);
+	  cglyph.setColor(child_color);
+	  pglyph.addChild(cglyph);
+	  if (SET_CHILD_INFO) {
+	    map.setDataModelFromOriginalSym(cglyph, child);
+	  }
+	}
       }   // END child rendering loop
+
+      // call out to handle rendering to indicate if any of the children of the 
+      //    orginal annotation are completely outside the view
+      DeletionGlyph.handleEdgeRendering(outside_children, pglyph, annotseq, coordseq, 0.0, thin_height);
     }     // END child rendering conditional
 
     the_tier.addChild(pglyph);
     return pglyph;
   }
+
+
+
+
 
   static Object getTheProperty(SeqSymmetry sym, String prop) {
     if (prop == null || (prop.trim().length()==0)) {
@@ -578,45 +545,4 @@ public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
   }
 
-  /** A small x-shaped glyph that can be used to indicate a deleted exon
-   * in the slice view.
-   */
-  public static class DeletionGlyph extends SolidGlyph {
-
-    /** Draws a small "X". */
-    @Override
-    public void draw(ViewI view) {
-      Rectangle pbox = view.getScratchPixBox();
-      view.transformToPixels(this.coordbox, pbox);
-      Graphics g = view.getGraphics();
-
-      // Unlikely this will ever be big enough to need the fix.
-      //EfficientSolidGlyph.fixAWTBigRectBug(view, pixelbox);
-
-      //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
-      pbox.height = Math.max( pbox.height, min_pixels_height );
-
-      final int half_height = pbox.height/2;
-      final int h = Math.min(half_height, 4);
-
-      final int x1 = pbox.x - h;
-      final int x2 = pbox.x + h;
-
-      final int y1 = pbox.y + half_height - h;
-      final int y2 = pbox.y + half_height + h;
-
-      g.setColor(getBackgroundColor()); // this is the tier foreground color
-
-      g.drawLine(x1, y1, x2, y2);
-      g.drawLine(x1, y2, x2, y1);
-
-      super.draw(view);
-    }
-
-    /** Overridden to always return false. */
-    @Override
-    public boolean isHitable() {
-      return false;
-    }
-  }
 }

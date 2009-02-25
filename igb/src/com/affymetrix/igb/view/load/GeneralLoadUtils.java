@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.Application;
@@ -43,6 +44,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -54,6 +56,10 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @version $Id$
+ */
 final public class GeneralLoadUtils {
 
 	public static enum LoadStrategy {
@@ -86,6 +92,7 @@ final public class GeneralLoadUtils {
 	//static boolean CACHE_RESIDUES_DEFAULT = false;
 	//static boolean CACHE_ANNOTS_DEFAULT = true;
 
+	/* TODO: can one group be represented by multiple versions? */
 	final Map<AnnotatedSeqGroup, GenericVersion> group2version;
 	private final Map<String, Boolean> version2init;
 
@@ -216,10 +223,14 @@ final public class GeneralLoadUtils {
 			if (DEBUG) {
 				System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
 			}
-			String speciesName = source.getDescription();
+			/* TODO: speciesName needs its own SynonymLookup or equivalent
+			 * using normalizeVersion allows us to use previously know names
+			 */
+			/* String speciesName = source.getDescription(); */
+			String speciesName = normalizeVersion(source.getID(), versionName2versionSet.keySet());
 			/* TODO: GenericVersion should be able to store source's name and ID */
 			/* String versionName = source.getName(); */
-			String versionName = source.getID();
+			String versionName = normalizeVersion(source.getID(), versionName2versionSet.keySet());
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
 				gVersionList = new ArrayList<GenericVersion>();
@@ -261,7 +272,7 @@ final public class GeneralLoadUtils {
 
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				String versionName = versionSource.getName();
+				String versionName = normalizeVersion(versionSource.getName(), versionName2versionSet.keySet());
 				GenericVersion gVersion = new GenericVersion(versionName, gServer, versionSource);
 				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 			}
@@ -283,6 +294,7 @@ final public class GeneralLoadUtils {
 		List<String> genomeList = quickloadServer.getGenomeNames();
 
 		for (String genomeName : genomeList) {
+			genomeName = normalizeVersion(genomeName, versionName2versionSet.keySet());
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
 
 			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
@@ -312,6 +324,14 @@ final public class GeneralLoadUtils {
 		}
 	}
 
+	/**
+	 *
+	 * @param versionName not null or empty.
+	 * @param gServer only used by debug statement.
+	 * @param gVersion not null.
+	 * @param gVersionList not null.
+	 * @param genomeName not null or empty.
+	 */
 	private void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String genomeName) {
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
@@ -330,6 +350,25 @@ final public class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("Added " + gServer.serverType + "genome: " + genomeName + " version: " + versionName);
 		}
+	}
+
+	/**
+	 * Returns an existing synonym for the requested version. Will return the
+	 * requested version if no synonynms already exist.
+	 * <p />
+	 * TODO - this is not used everywhere it should be, so odd behavior may
+	 * occur.
+	 *
+	 * @param version The name of the requested version.
+	 * @return an existing synonym for the requested version or the requested version
+	 */
+	private static String normalizeVersion(String version, Collection<String> versions) {
+		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+		if (!versions.contains(version)) {
+			String v = lookup.findMatchingSynonym(versions, version);
+			return (v != null) ? v : version;
+		}
+		return version;
 	}
 
 	/** Returns the name that this server uses to refer to the given AnnotatedSeqGroup.
@@ -355,8 +394,8 @@ final public class GeneralLoadUtils {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		for (GenericVersion gVersion : this.versionName2versionSet.get(versionName)) {
-			featureList.addAll(gVersion.features);
-		}
+					featureList.addAll(gVersion.features);
+				}
 		return featureList;
 	}
 

@@ -85,6 +85,10 @@ import java.util.prefs.*;
 import java.util.regex.Pattern;
 import javax.swing.*;
 
+/**
+ *
+ * @version $Id$
+ */
 public class SeqMapView extends JPanel
         implements AnnotatedSeqViewer, SymSelectionSource,
         SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener {
@@ -2500,14 +2504,13 @@ public class SeqMapView extends JPanel
             SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
             String version = ((Versioned) aseq).getVersion();
-            List<String> syns = lookup.getSynonyms(version);
+            Collection<String> syns = lookup.getSynonyms(version);
 
             if (syns == null) {
                 syns = new ArrayList<String>();
                 syns.add(version);
             }
-            for (int i = 0; i < syns.size(); i++) {
-                String syn = syns.get(i);
+            for (String syn : syns) {
                 // Having to hardwire this check to figure out which synonym to use to match
                 //  with UCSC.  Really need to have some way when loading synonyms to specify
                 //  which ones should be used when communicating with which external resource!

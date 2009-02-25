@@ -46,6 +46,8 @@ import com.affymetrix.igb.das2.Das2VersionedSource;
  *     but for now want to leverage off use of ScoredContainerGlyphFactory to render as graphs
  *
  *  For every CHP file that needs coord resolution there should be a LazyChpSym for each sequence in the genome
+ *
+ * @version $Id$
  */
 public class LazyChpSym extends ScoredContainerSym {
 
@@ -219,11 +221,13 @@ public class LazyChpSym extends ScoredContainerSym {
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
     Map types = vsource.getTypes();
     Map matched_types = new HashMap();
-    ArrayList chp_array_syns = lookup.getSynonyms(chp_array_type);
-    if (chp_array_syns == null) { chp_array_syns = new ArrayList(); chp_array_syns.add(chp_array_type); }
-    for (int i=0; i<chp_array_syns.size(); i++) {
+    Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
+    if (chp_array_syns == null) {
+		chp_array_syns = new ArrayList<String>();
+		chp_array_syns.add(chp_array_type);
+	}
+    for (String synonym : chp_array_syns) {
       //      String synonym = (String)chp_array_syns.get(i);
-      String synonym = (String)chp_array_syns.get(i);
       String lcsyn = synonym.toLowerCase();
       //      System.out.println("   synonym: " + synonym);
       Iterator titer = types.entrySet().iterator();

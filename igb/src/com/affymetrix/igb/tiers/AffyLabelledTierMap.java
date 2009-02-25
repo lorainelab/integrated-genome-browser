@@ -27,6 +27,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import java.awt.Component;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which 
@@ -73,11 +74,11 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     this.setLayout(new BorderLayout());
     add("Center", mapsplitter);
 
-    if (hscroll_show && scroller[X] instanceof NeoScrollbar)  {
-      add(hscroll_loc, (NeoScrollbar)scroller[X]);
+    if (hscroll_show && scroller[X] instanceof Component) {
+      add(hscroll_loc, (Component) scroller[X]);
     }
-    if (vscroll_show && scroller[Y] instanceof NeoScrollbar)  {
-      add(vscroll_loc, (NeoScrollbar)scroller[Y]);
+    if (vscroll_show && scroller[Y] instanceof Component)  {
+      add(vscroll_loc, (Component)scroller[Y]);
     }
   }
 

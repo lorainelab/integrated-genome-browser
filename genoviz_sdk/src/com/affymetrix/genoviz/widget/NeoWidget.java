@@ -116,7 +116,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected Rectangle2D bandbox;
 	protected boolean rbActivated = false;
 
-	boolean use_neoscrollers = true;
+	boolean use_neoscrollers = false;
 
 	protected boolean hscroll_show, vscroll_show;
 

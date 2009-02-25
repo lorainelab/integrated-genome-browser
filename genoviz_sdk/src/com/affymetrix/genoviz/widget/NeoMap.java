@@ -37,6 +37,7 @@ import com.affymetrix.genoviz.event.*;
 
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
+import javax.swing.JScrollBar;
 
 /**
  * NeoMap is the <strong>implementation</strong> of NeoMapI.
@@ -261,10 +262,10 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			* @param hscroll_location can be "North", otherwise "South" is assumed.
 			* @param vscroll_location can be "West", otherwise "East" is assumed.
 			*/
-		   private NeoMap(boolean hscroll_show, boolean vscroll_show,
+		   private NeoMap(boolean hscroll_showb, boolean vscroll_show,
 				   int orient, LinearTransform tr, String hscroll_location, String vscroll_location) {
 			   super();
-			   this.hscroll_show = hscroll_show;
+			   this.hscroll_show = hscroll_showb;
 			   this.vscroll_show = vscroll_show;
 			   this.hscroll_loc = hscroll_location;
 			   this.vscroll_loc = vscroll_location;
@@ -284,14 +285,12 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 				   setOffsetScroller(new NeoScrollbar(NeoScrollbar.VERTICAL));
 			   }
 			   else {
-				   // Using jdk scrollbars currently causes problems!
-				   // I think because _some_ JVMs have "fixed" the original bugs in
-				   // Scrollbar min/max/value/visible, whereas NeoScrollbar/NeoWidget/etc.
-				   // are implemented to assume those original bugs...
-				   //
-				   // Could try fixing via ???
-				   setRangeScroller(new Scrollbar(Scrollbar.HORIZONTAL));
-				   setOffsetScroller(new Scrollbar(Scrollbar.VERTICAL));
+			     // GAH 2/25/2009
+			     //  switched to using JScrollBar as alternative to NeoScrollbar, 
+			     //  previous problems with Swing JScrollBar (and I think AWT Scrollbar as well)
+			     //      seem to have been resolved as of JDK 1.5
+			     setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
+			     setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
 			   }
 
 			   zoomer[X] = null;
@@ -369,18 +368,18 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 
 		   /**
 			* Lay out the Components contained within this NeoMap.
-			* In the case of the base NeoMap, the NeoCanvas and NeoScrollbars.
+			* In the case of the base NeoMap, the NeoCanvas and (optionally) scroller components.
 			* This has been separated out from constructor
 			* to allow for subclasses to more easily change layout.
 			*/
 		   public void initComponentLayout() {
 			   if (use_border_layout) {
 				   this.setLayout(new BorderLayout());
-				   if (hscroll_show && scroller[X] instanceof NeoScrollbar)  {
-					   add(hscroll_loc, (NeoScrollbar)scroller[X]);
+				   if (hscroll_show && scroller[X] instanceof Component)  {
+					   add(hscroll_loc, (Component)scroller[X]);
 				   }
-				   if (vscroll_show && scroller[Y] instanceof NeoScrollbar)  {
-					   add(vscroll_loc, (NeoScrollbar)scroller[Y]);
+				   if (vscroll_show && scroller[Y] instanceof Component)  {
+					   add(vscroll_loc, (Component)scroller[Y]);
 				   }
 				   add("Center", canvas);
 			   }
@@ -392,7 +391,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 				   if (hscroll_show && scroller[X] instanceof Component)  {
 					   gbc.fill = GridBagConstraints.HORIZONTAL;
 					   if (hscroll_loc.equalsIgnoreCase("North")) {
-						   gbc.anchor = GridBagConstraints.NORTH;
+					   gbc.anchor = GridBagConstraints.NORTH;
 					   }
 					   else {
 						   gbc.anchor = GridBagConstraints.SOUTH;
@@ -507,7 +506,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 					  -- oops, that bug is back --  GAH 8/11/97
 
 					  Unfortunately, this usually results in redundant calls to NeoCanvas
-					  and NeoScrollbar reshape() and repaint(), but that seems more acceptable
+					  and scroller reshape() and repaint(), but that seems more acceptable
 					  than the problems it fixes, since resizing is a fairly rare event
 					  */
 				   if (debug || DEBUG_RESHAPE) {
@@ -977,8 +976,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 		   /**
 			* setRangeScroller() and setOffsetScroller() should probably be combined
 			* with setZoomer() to have a more general
-			* setAdjustable(int id, Adjustable adj) method.  But at the moment the
-			* scroller[] entries are expected to be NeoScrollbars
+			* setAdjustable(int id, Adjustable adj) method. 
 			*/
 		   public void setRangeScroller(Adjustable nscroll) {
 			   setScroller(X, nscroll);

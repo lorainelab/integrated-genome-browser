@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -211,6 +212,24 @@ public final class SynonymLookup {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Find the preferred name of the given synonym.  Under the hood, this just
+	 * returns the first synonym in the list of available synonyms for the
+	 * input.
+	 * <p />
+	 * Will return the input synonym if no synonyms are known.
+	 *
+	 * @param synonym the synonym to find the preferred name of.
+	 * @return the preferred name of the synonym.
+	 */
+	public String getPreferredName(String synonym) {
+		List<String> c = getSynonyms(synonym);
+		if (c != null && !c.isEmpty()) {
+			return c.get(0);
+		}
+		return synonym;
 	}
 
 	/**

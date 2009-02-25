@@ -40,6 +40,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -104,6 +105,28 @@ final public class GeneralLoadUtils {
 	final Map<String, String> versionName2species;	// the species associated with the given version.
 	final Map<String, Set<GenericVersion>> versionName2versionSet;
 	// the list of GenericVersion objects associated with the version name.  This is to avoid synonym stuff.
+
+	/** Private synonym lookup for correlating versions to species. */
+	private static final SynonymLookup SPECIES_LOOKUP = new SynonymLookup();
+	
+	/**
+	 * Location of synonym file for correlating versions to species.
+	 * The file lookup is done using {@link Class#getResourceAsStream(String)}.
+	 * The default file is {@value}.
+	 * 
+	 * @see #SPECIES_LOOKUP
+	 */
+	private static final String SPECIES_SYNONYM_FILE = "/species.txt";
+
+	/*
+	 * This is done in a static context vs the constructor to ensure that
+	 * static functions have access to the synonyms
+	 */
+	static {
+		try {
+			SPECIES_LOOKUP.loadSynonyms(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
+		} catch (IOException e) { }
+	}
 
 	//public boolean allow_reinitialization = true;
 	public void clear() {
@@ -227,7 +250,7 @@ final public class GeneralLoadUtils {
 			 * using normalizeVersion allows us to use previously know names
 			 */
 			/* String speciesName = source.getDescription(); */
-			String speciesName = normalizeVersion(source.getID(), versionName2versionSet.keySet());
+			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getID());
 			/* TODO: GenericVersion should be able to store source's name and ID */
 			/* String versionName = source.getName(); */
 			String versionName = normalizeVersion(source.getID(), versionName2versionSet.keySet());
@@ -251,7 +274,7 @@ final public class GeneralLoadUtils {
 	private synchronized void getDAS2Species(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
-			String speciesName = source.getName();
+			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getName());
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
 				gVersionList = new ArrayList<GenericVersion>();
@@ -267,7 +290,7 @@ final public class GeneralLoadUtils {
 	private synchronized void getDAS2Versions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
-			String speciesName = source.getName();
+			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getName());
 			List<GenericVersion> gVersionList = this.species2genericVersionList.get(speciesName);
 
 			// Das/2 has versioned sources.  Get each version.
@@ -307,20 +330,21 @@ final public class GeneralLoadUtils {
 				discoverVersion(gVersion.versionName, gServer, quickLoadVersion, gVersionList, speciesName);
 				continue;
 			}
+			String species = SPECIES_LOOKUP.getPreferredName(genomeName);
 
 			// Unknown genome.  We'll add the name as if it's a species and a version.
 			if (DEBUG) {
 				System.out.println("Unknown quickload genome:" + genomeName);
 			}
 			List<GenericVersion> gVersionList;
-			if (!this.species2genericVersionList.containsKey(genomeName)) {
+			if (!this.species2genericVersionList.containsKey(species)) {
 				gVersionList = new ArrayList<GenericVersion>(1);
-				this.species2genericVersionList.put(genomeName, gVersionList);
+				this.species2genericVersionList.put(species, gVersionList);
 			} else {
-				gVersionList = this.species2genericVersionList.get(genomeName);
+				gVersionList = this.species2genericVersionList.get(species);
 			}
 			gVersion = new GenericVersion(genomeName, gServer, quickloadServer);
-			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, genomeName);
+			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
 		}
 	}
 

@@ -453,6 +453,8 @@ public class SeqMapView extends JPanel
         // experimenting with transcriptarium split windows
         if (split_win) {
             // don't display map if split_win, display is via multiple separate windows controlled by resultSeqMap
+	    // if splitting into multiple windows, only use NeoScrollbars for NeoMap scrolling -- 
+	    //    using JScrollBars _might_ work, but not yet tested
             NeoScrollbar xscroller = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
             NeoScrollbar yscroller = new NeoScrollbar(NeoScrollbar.VERTICAL);
             //      xscroller.setSendEvents(true);  // not sure if this is necessary or desired

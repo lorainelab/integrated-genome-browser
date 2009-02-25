@@ -10,6 +10,7 @@ import java.util.*;
  * A class to test the SynonymLookup class.
  * Specifially tests the effect of setting the flags "case_sensitive" and "strip_random".
  *
+ * @version $Id$
  */
 public class SynonymLookupTest {
 	static SynonymLookup sl;
@@ -39,7 +40,7 @@ public class SynonymLookupTest {
 
 	@Test
 		public void testAddSynonym() {
-			List<String> synonymSet;
+			Collection<String> synonymSet;
 			List<String> a = new ArrayList<String>();
 
 			sl.setCaseSensitive(true);
@@ -95,7 +96,7 @@ public class SynonymLookupTest {
 		}
 
 	private void caseInsensitiveLookupHelper(String test, List<String> expected) {
-		List<String> synonymSet = sl.getSynonyms(test);
+		Collection<String> synonymSet = sl.getSynonyms(test);
 
 		System.out.println("synonym:    " + test);
 		System.out.println("synonymSet: " + synonymSet);
@@ -124,8 +125,8 @@ public class SynonymLookupTest {
 		assertTrue(sl.isSynonym("chr2", "2"));
 		assertTrue(sl.isSynonym("2", "chr2"));
 
-		List<String> list1 = sl.getSynonyms("chrMT");
-		List<String> list2 = sl.getSynonyms("chrM");
+		Collection<String> list1 = sl.getSynonyms("chrMT");
+		Collection<String> list2 = sl.getSynonyms("chrM");
 		assertEquals(list1.size(), list2.size());    
 
 		// This tests that the null and empty strings were ignored in the input
@@ -151,8 +152,8 @@ public class SynonymLookupTest {
 			assertFalse(sl.isSynonym("chr2", "CHR2"));
 
 			// There is no list of synonyms for "chrm" if case sensitive is true.
-			List<String> list3 = sl.getSynonyms("chrm");
-			assertTrue(list3 == null);
+			Collection<String> list3 = sl.getSynonyms("chrm");
+			assertTrue(list3.isEmpty());
 		}
 
 	/** Run some tests with case-sensitive set to false. */
@@ -169,8 +170,8 @@ public class SynonymLookupTest {
 
 			// There *is* a list of synonyms for "chrm" if case sensitive is false.
 			// and it should match the list for "CHRmT"
-			List<String> list3 = sl.getSynonyms("chrm");
-			List<String> list4 = sl.getSynonyms("CHRmT");
+			Collection<String> list3 = sl.getSynonyms("chrm");
+			Collection<String> list4 = sl.getSynonyms("CHRmT");
 			assertTrue(list3 != null);
 			assertTrue(list4 != null);
 
@@ -208,6 +209,8 @@ public class SynonymLookupTest {
 			// False due to case-sensitivity: we know nothing about "CHR2"
 			assertFalse(sl.isSynonym("2_random", "CHR2_random"));
 			assertFalse(sl.isSynonym("chr2_random", "CHR2_random"));
+
+			assertFalse(sl.isSynonym("1_ranDom", "chr1_Random"));
 
 
 			// When case-sensitive is false, it should now know that 2_random == CHR2_random == chr2_random

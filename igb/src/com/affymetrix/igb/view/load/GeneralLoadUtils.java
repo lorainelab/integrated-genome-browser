@@ -45,7 +45,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -72,7 +71,7 @@ final public class GeneralLoadUtils {
 
 		UNLOADED, LOADING, LOADED
 	};
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)
@@ -106,6 +105,12 @@ final public class GeneralLoadUtils {
 	final Map<String, Set<GenericVersion>> versionName2versionSet;
 	// the list of GenericVersion objects associated with the version name.  This is to avoid synonym stuff.
 
+	/**
+	 * Private copy of the default Synonym lookup
+	 * @see SynonymLookup#getDefaultLookup()
+	 */
+	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
+	
 	/** Private synonym lookup for correlating versions to species. */
 	private static final SynonymLookup SPECIES_LOOKUP = new SynonymLookup();
 	
@@ -253,7 +258,7 @@ final public class GeneralLoadUtils {
 			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getID());
 			/* TODO: GenericVersion should be able to store source's name and ID */
 			/* String versionName = source.getName(); */
-			String versionName = normalizeVersion(source.getID(), versionName2versionSet.keySet());
+			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
 				gVersionList = new ArrayList<GenericVersion>();
@@ -295,7 +300,7 @@ final public class GeneralLoadUtils {
 
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
-				String versionName = normalizeVersion(versionSource.getName(), versionName2versionSet.keySet());
+				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
 				GenericVersion gVersion = new GenericVersion(versionName, gServer, versionSource);
 				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 			}
@@ -317,7 +322,7 @@ final public class GeneralLoadUtils {
 		List<String> genomeList = quickloadServer.getGenomeNames();
 
 		for (String genomeName : genomeList) {
-			genomeName = normalizeVersion(genomeName, versionName2versionSet.keySet());
+			genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeName);
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
 
 			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
@@ -374,25 +379,6 @@ final public class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("Added " + gServer.serverType + "genome: " + genomeName + " version: " + versionName);
 		}
-	}
-
-	/**
-	 * Returns an existing synonym for the requested version. Will return the
-	 * requested version if no synonynms already exist.
-	 * <p />
-	 * TODO - this is not used everywhere it should be, so odd behavior may
-	 * occur.
-	 *
-	 * @param version The name of the requested version.
-	 * @return an existing synonym for the requested version or the requested version
-	 */
-	private static String normalizeVersion(String version, Collection<String> versions) {
-		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-		if (!versions.contains(version)) {
-			String v = lookup.findMatchingSynonym(versions, version);
-			return (v != null) ? v : version;
-		}
-		return version;
 	}
 
 	/** Returns the name that this server uses to refer to the given AnnotatedSeqGroup.

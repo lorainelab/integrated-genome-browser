@@ -106,6 +106,19 @@
                     <script>nbproject/ide-targets.xml</script>
                     <target>debug-nb</target>
                 </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-src</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>genoviz_sdk/demo/src</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <export>
                 <type>jar</type>
@@ -215,6 +228,10 @@
                     <ide-action name="run"/>
                     <ide-action name="test"/>
                     <ide-action name="debug"/>
+                    <action>
+                        <label>Demos</label>
+                        <target>demos</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>

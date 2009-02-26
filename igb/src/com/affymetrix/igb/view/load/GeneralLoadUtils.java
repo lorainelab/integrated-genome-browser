@@ -216,7 +216,7 @@ final public class GeneralLoadUtils {
 	/**
 	 * Discover the species and genome versions.
 	 */
-	public synchronized void discoverSpeciesAndVersionsInternal() {
+	private synchronized void discoverSpeciesAndVersionsInternal() {
 		for (GenericServer gServer : discoveredServers.values()) {
 			if (gServer.serverType == GenericServer.ServerType.DAS2) {
 				getDAS2Species(gServer);
@@ -224,11 +224,11 @@ final public class GeneralLoadUtils {
 				continue;
 			}
 			if (gServer.serverType == GenericServer.ServerType.DAS) {
-				getDAS1Species(gServer);
+				getDAS1SpeciesAndVersions(gServer);
 				continue;
 			}
 			if (gServer.serverType == GenericServer.ServerType.QuickLoad) {
-				getQuickLoadGenomes(gServer);
+				getQuickLoadSpeciesAndVersions(gServer);
 				continue;
 			}
 
@@ -240,7 +240,7 @@ final public class GeneralLoadUtils {
 	 * Discover species from DAS
 	 * @param gServer
 	 */
-	private synchronized void getDAS1Species(GenericServer gServer) {
+	private synchronized void getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		for (DasSource source : server.getDataSources().values()) {
 			if (DEBUG) {
@@ -306,7 +306,7 @@ final public class GeneralLoadUtils {
 	 * Discover genomes from Quickload
 	 * @param gServer
 	 */
-	private synchronized void getQuickLoadGenomes(GenericServer gServer) {
+	private synchronized void getQuickLoadSpeciesAndVersions(GenericServer gServer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -402,19 +402,19 @@ final public class GeneralLoadUtils {
 	/*public String getGenomeName(AnnotatedSeqGroup group) {
 	return group2version.get(group);
 	}*/
-	public static String stripFilenameExtensions(final String name) {
+	/*public static String stripFilenameExtensions(final String name) {
 		String new_name = name;
 		if (name.indexOf('.') > 0) {
 			new_name = name.substring(0, name.lastIndexOf('.'));
 		}
 		return new_name;
-	}
+	}*/
 
 	/**
 	 *  Returns the list of features for the genome with the given version name.
 	 *  The list may (rarely) be empty, but never null.
 	 */
-	public List<GenericFeature> getFeatures(final String versionName) {
+	List<GenericFeature> getFeatures(final String versionName) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		for (GenericVersion gVersion : this.versionName2versionSet.get(versionName)) {
@@ -458,10 +458,10 @@ final public class GeneralLoadUtils {
 	}
 
 	/** Returns true if the given genome has already been initialized via initGenome(String). */
-	public boolean isInitialized(final String genome_name) {
+	/*public boolean isInitialized(final String genome_name) {
 		Boolean b = version2init.get(genome_name);
 		return (Boolean.TRUE.equals(b));
-	}
+	}*/
 
 	
 
@@ -471,7 +471,7 @@ final public class GeneralLoadUtils {
 	 * @param versionName
 	 * @return
 	 */
-	public boolean loadSeqInfo(final String versionName) {
+	private boolean loadSeqInfo(final String versionName) {
 		if (DEBUG) {
 			System.out.println("loading seqinfo : Version " + versionName);
 		}
@@ -631,7 +631,7 @@ final public class GeneralLoadUtils {
 	 * @param gFeature
 	 * @return
 	 */
-	public boolean loadAndDisplayAnnotations(GenericFeature gFeature, AnnotatedBioSeq cur_seq, FeaturesTableModel model) {
+	boolean loadAndDisplayAnnotations(GenericFeature gFeature, AnnotatedBioSeq cur_seq, FeaturesTableModel model) {
 
 		// We don't validate previous load status.  It's assumed that we want to reload the feature.
 

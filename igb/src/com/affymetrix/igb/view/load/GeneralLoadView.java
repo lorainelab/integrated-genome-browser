@@ -33,6 +33,7 @@ import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
+import java.awt.Component;
 
 
 final public class GeneralLoadView extends JComponent
@@ -58,7 +59,7 @@ final public class GeneralLoadView extends JComponent
 	private SeqMapView gviewer;
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
-	private boolean first_time_called = true;
+
 
 	public GeneralLoadView() {
 		if (Application.getSingleton() != null) {

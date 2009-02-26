@@ -286,7 +286,7 @@ public final class SynonymLookup {
 	 * @param synonym  the id you want to find a synonym for.
 	 * @param cs set the case-sensitive behaviour of the synonym lookup.
 	 * @param sr set the strip random behaviour of the synonym lookup.
-	 * @return either null or a String synonym, where isSynonym(synonym, synonym) is true.
+	 * @return either String synonym, where isSynonym(synonym, synonym) is true or the original synonym.
 	 */
 	public String findMatchingSynonym(Collection<String> choices, String synonym, boolean cs, boolean sr) {
 		for (String id : choices) {
@@ -294,7 +294,7 @@ public final class SynonymLookup {
 				return id;
 			}
 		}
-		return null;
+		return synonym;
 	}
 
 	/**

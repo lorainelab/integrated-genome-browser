@@ -210,7 +210,7 @@ public final class IGB extends Application
     ";" +
     (new File(user_dir, DEFAULT_PREFS_FILENAME)).getAbsolutePath();
 
-  static String rest_file = "rest_enzymes"; // located in same directory as this class
+  //static String rest_file = "rest_enzymes"; // located in same directory as this class
 
   boolean initialized = false;
 

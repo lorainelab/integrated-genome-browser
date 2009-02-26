@@ -55,19 +55,22 @@ final public class RestrictionControlView extends JComponent
     this.gviewer = Application.getSingleton().getMapView();
     boolean load_success  = true;
 
-    String rest_file = "rest_enzymes"; // located in same directory as the IGB class
+    //String rest_file = "rest_enzymes"; // located in same directory as the IGB class
+	String rest_file = "/rest_enzymes";
     InputStream file_input_str =
     Application.class.getResourceAsStream(rest_file);
+	/*
     if (file_input_str == null) {
       // Look for restriction enzymes file as both rest_enzymes" and "/rest_enzymes".
       rest_file = "/" + rest_file;
       file_input_str = Application.class.getResourceAsStream(rest_file);
+	 */
       if (file_input_str == null) {
         Application.errorPanel("Cannot open restriction enzyme file",
         "Cannot find restriction enzyme file '"+rest_file+"'.\n"+
         "Restriction mapping will not be available.");
       }
-    }    
+    /* } */
     
     DataInputStream distr = null;
     if (file_input_str == null) {

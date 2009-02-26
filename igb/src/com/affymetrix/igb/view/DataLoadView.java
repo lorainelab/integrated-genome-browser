@@ -115,7 +115,7 @@ class SeqGroupView extends JComponent
     seqtable.validate();
     seqtable.repaint();
 
-    if (group != null) {
+    if (group != null && most_recent_seq_id != null) {
       // When changing genomes, try to keep the same chromosome selected when possible
       MutableAnnotatedBioSeq aseq = group.getSeq(most_recent_seq_id);
       if (aseq != null) {

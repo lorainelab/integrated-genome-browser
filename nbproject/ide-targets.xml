@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="IGB-IDE">
     <import file="../build.xml"/>
-    <!-- TODO: edit the following target according to your needs -->
-    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#debugj2se) -->
     <target depends="compile" description="debug IGB" name="debug-nb">
         <nbjpdastart addressproperty="jpda.address" name="IGB" transport="dt_socket">
             <classpath>

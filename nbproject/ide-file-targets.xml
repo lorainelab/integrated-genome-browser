@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="IGB-IDE">
-    <!-- TODO: edit the following target according to your needs -->
-    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
-    <target name="run-selected-file-in-src">
+    <import file="../build.xml"/>
+    <target name="run-selected-file-in-src" depends="demos">
         <fail unless="run.class">Must set property 'run.class'</fail>
-        <ant antfile="build.xml" inheritall="false" target="demos"/>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
                 <pathelement path="genoviz_sdk/demo" />

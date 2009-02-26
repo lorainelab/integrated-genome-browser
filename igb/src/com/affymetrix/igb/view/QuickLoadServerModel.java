@@ -43,6 +43,7 @@ public class QuickLoadServerModel {
 
   static boolean CACHE_RESIDUES_DEFAULT = false;
   static boolean CACHE_ANNOTS_DEFAULT = true;
+  private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
   SingletonGenometryModel gmodel;
 
@@ -97,7 +98,7 @@ public class QuickLoadServerModel {
     if (ql_server == null) {
       ql_server = new QuickLoadServerModel(gmodel, ql_http_root);
       url2quickload.put(ql_http_root, ql_server);
-      LocalUrlCacher.loadSynonyms(SynonymLookup.getDefaultLookup(), ql_http_root+"synonyms.txt");
+      LocalUrlCacher.loadSynonyms(LOOKUP, ql_http_root+"synonyms.txt");
     }
     return ql_server;
   }
@@ -113,14 +114,16 @@ public class QuickLoadServerModel {
   public String getRootUrl() { return root_url; }
   public List<String> getGenomeNames() { return genome_names; }
   //public Map getSeqGroups() { return group2name; }
-  public AnnotatedSeqGroup getSeqGroup(String genome_name) { return gmodel.addSeqGroup(genome_name);  }
+  public AnnotatedSeqGroup getSeqGroup(String genome_name) {
+	  return gmodel.addSeqGroup(LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genome_name));
+  }
 
   /** Returns the name that this QuickLoad server uses to refer to the given AnnotatedSeqGroup.
    *  Because of synonyms, different QuickLoad servers may use different names to
    *  refer to the same genome.
    */
   public String getGenomeName(AnnotatedSeqGroup group) {
-    return group2name.get(group);
+    return LOOKUP.findMatchingSynonym(genome_names, group2name.get(group));
   }
 
   public static String stripFilenameExtensions(String name) {
@@ -137,6 +140,7 @@ public class QuickLoadServerModel {
    *  The list may (rarely) be empty, but never null.
    */
   public List<String> getFilenames(String genome_name) {
+	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
     initGenome(genome_name);
     loadAnnotationNames(genome_name);
     List<String> filenames = genome2file_names.get(genome_name);
@@ -199,6 +203,7 @@ public class QuickLoadServerModel {
    *  You can retrieve the filenames with {@link #getFilenames(String)}
    */
   public boolean loadAnnotationNames(String genome_name) {
+	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		String genome_root = root_url + genome_name + "/";
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
 		Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
@@ -348,6 +353,7 @@ public class QuickLoadServerModel {
 
 
   public boolean loadSeqInfo(String genome_name) {
+	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
     boolean success = false;
     String genome_root = root_url + genome_name + "/";
     AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
@@ -426,7 +432,7 @@ public class QuickLoadServerModel {
         if (fields.length >= 1) {
           String genome_name = fields[0];
           glist.add(genome_name);
-          group = gmodel.addSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
+          group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
           genome_names.add(genome_name);
           group2name.put(group, genome_name);
           // Application.getApplicationLogger().fine("added genome, name = " + line + ", group = " + group.getID() + ", " + group);

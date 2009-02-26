@@ -43,8 +43,7 @@ public class SynonymLookupTest {
 			Collection<String> synonymSet;
 			List<String> a = new ArrayList<String>();
 
-			sl.setCaseSensitive(true);
-			sl.stripRandom = false;
+			boolean cs = true;
 
 			sl.addSynonyms(new String[] {"a", "b", "c"});
 			sl.addSynonyms(new String[] {"d", "e", "f"});
@@ -62,7 +61,7 @@ public class SynonymLookupTest {
 
 			for (String synonym : a) {
 				System.out.println("synonym:    " + synonym);
-				synonymSet = sl.getSynonyms(synonym);
+				synonymSet = sl.getSynonyms(synonym, cs);
 				System.out.println("synonymSet: " + synonymSet);
 				assertEquals("synonymSet is the wrong size for synonym " + synonym + ".",7, synonymSet.size());
 				for (String current : a) {
@@ -74,9 +73,6 @@ public class SynonymLookupTest {
 	@Test
 		public void testCaseInsensitiveLookup() {
 			List<String> a = new ArrayList<String>();
-
-			sl.setCaseSensitive(false);
-			sl.stripRandom = false;
 
 			sl.addSynonyms(new String[] {"aa", "bb", "cc"});
 			sl.addSynonyms(new String[] {"AA", "dd", "ee"});
@@ -96,7 +92,7 @@ public class SynonymLookupTest {
 		}
 
 	private void caseInsensitiveLookupHelper(String test, List<String> expected) {
-		Collection<String> synonymSet = sl.getSynonyms(test);
+		Collection<String> synonymSet = sl.getSynonyms(test, false);
 
 		System.out.println("synonym:    " + test);
 		System.out.println("synonymSet: " + synonymSet);
@@ -109,29 +105,29 @@ public class SynonymLookupTest {
 	/** Some tests that don't depend on whether case-sensitive or not. 
 	 *  This test is called as a helper in some other tests.
 	 */
-	public static void helper1(SynonymLookup sl) {
-		assertTrue(sl.isSynonym("chr1", "1"));
-		assertTrue(sl.isSynonym("chr1", "CHR1"));
-		assertTrue(sl.isSynonym("1", "chr1"));
-		assertTrue(sl.isSynonym("1", "CHR1"));
-		assertTrue(sl.isSynonym("CHR1", "chr1"));
-		assertTrue(sl.isSynonym("CHR1", "1"));
+	public static void helper1(SynonymLookup sl, boolean cs, boolean sr) {
+		assertTrue(sl.isSynonym("chr1", "1", cs, sr));
+		assertTrue(sl.isSynonym("chr1", "CHR1", cs, sr));
+		assertTrue(sl.isSynonym("1", "chr1", cs, sr));
+		assertTrue(sl.isSynonym("1", "CHR1", cs, sr));
+		assertTrue(sl.isSynonym("CHR1", "chr1", cs, sr));
+		assertTrue(sl.isSynonym("CHR1", "1", cs, sr));
 
 		// This tests transitivity: that two things defined on separate lines ARE considered synonyms
-		assertTrue(sl.isSynonym("CHR1", "one"));
+		assertTrue(sl.isSynonym("CHR1", "one", cs, sr));
 
-		assertFalse(sl.isSynonym("1", "chr2"));
+		assertFalse(sl.isSynonym("1", "chr2", cs, sr));
 
-		assertTrue(sl.isSynonym("chr2", "2"));
-		assertTrue(sl.isSynonym("2", "chr2"));
+		assertTrue(sl.isSynonym("chr2", "2", cs, sr));
+		assertTrue(sl.isSynonym("2", "chr2", cs, sr));
 
-		Collection<String> list1 = sl.getSynonyms("chrMT");
-		Collection<String> list2 = sl.getSynonyms("chrM");
+		Collection<String> list1 = sl.getSynonyms("chrMT", cs);
+		Collection<String> list2 = sl.getSynonyms("chrM", cs);
 		assertEquals(list1.size(), list2.size());    
 
 		// This tests that the null and empty strings were ignored in the input
 		// (If they were not ignored, then "chr2" == "" == "chr3" due to transitivity)
-		assertFalse(sl.isSynonym("chr2", "chr3"));
+		assertFalse(sl.isSynonym("chr2", "chr3", cs, sr));
 
 		// The elements in list1 and list2 should be the same, other than ordering
 		Set<String> set1 = new HashSet<String>(list1);
@@ -142,36 +138,38 @@ public class SynonymLookupTest {
 	/** Run some tests with case-sensitive set to true. */
 	@Test
 		public void testCaseSensitive() {
-			sl.setCaseSensitive(true);
-			helper1(sl);
+			boolean cs = true;
+			boolean sr = false;
+			helper1(sl, cs, sr);
 
 			// These tests are all false when case-sensitive is true
-			assertFalse(sl.isSynonym("CHR2", "2"));
-			assertFalse(sl.isSynonym("CHR2", "chr2"));
-			assertFalse(sl.isSynonym("2", "CHR2"));
-			assertFalse(sl.isSynonym("chr2", "CHR2"));
+			assertFalse(sl.isSynonym("CHR2", "2", cs, sr));
+			assertFalse(sl.isSynonym("CHR2", "chr2", cs, sr));
+			assertFalse(sl.isSynonym("2", "CHR2", cs, sr));
+			assertFalse(sl.isSynonym("chr2", "CHR2", cs, sr));
 
 			// There is no list of synonyms for "chrm" if case sensitive is true.
-			Collection<String> list3 = sl.getSynonyms("chrm");
+			Collection<String> list3 = sl.getSynonyms("chrm", cs);
 			assertTrue(list3.isEmpty());
 		}
 
 	/** Run some tests with case-sensitive set to false. */
 	@Test
 		public void testCaseInsensitive() {
-			sl.setCaseSensitive(false);
-			helper1(sl);
+			boolean cs = false;
+			boolean sr = false;
+			helper1(sl, cs, sr);
 
 			// These tests are all true when case-sensitive is true
-			assertTrue(sl.isSynonym("CHR2", "2"));
-			assertTrue(sl.isSynonym("CHR2", "chr2"));
-			assertTrue(sl.isSynonym("2", "CHR2"));
-			assertTrue(sl.isSynonym("chr2", "CHR2"));
+			assertTrue(sl.isSynonym("CHR2", "2", cs, sr));
+			assertTrue(sl.isSynonym("CHR2", "chr2", cs, sr));
+			assertTrue(sl.isSynonym("2", "CHR2", cs, sr));
+			assertTrue(sl.isSynonym("chr2", "CHR2", cs, sr));
 
 			// There *is* a list of synonyms for "chrm" if case sensitive is false.
 			// and it should match the list for "CHRmT"
-			Collection<String> list3 = sl.getSynonyms("chrm");
-			Collection<String> list4 = sl.getSynonyms("CHRmT");
+			Collection<String> list3 = sl.getSynonyms("chrm", cs);
+			Collection<String> list4 = sl.getSynonyms("CHRmT", cs);
 			assertTrue(list3 != null);
 			assertTrue(list4 != null);
 
@@ -189,39 +187,39 @@ public class SynonymLookupTest {
 	/** Tests what happens when SynonymLookup.stripRandom is set to true.  */
 	@Test
 		public void testStripRandom() {
-			sl.stripRandom = true;
-			helper1(sl);
+			boolean cs = true;
+			boolean sr = true;
+			helper1(sl, cs, sr);
 
-			sl.setCaseSensitive(true);
-			assertTrue(sl.isSynonym("1_random", "chr1_random"));
-			assertTrue(sl.isSynonym("1_random", "one_random"));
-			assertTrue(sl.isSynonym("chrMT_random", "M_random"));
+			assertTrue(sl.isSynonym("1_random", "chr1_random", cs, sr));
+			assertTrue(sl.isSynonym("1_random", "one_random", cs, sr));
+			assertTrue(sl.isSynonym("chrMT_random", "M_random", cs, sr));
 
 			// "random" chromosomes are NOT the same as non-random ones
-			assertFalse(sl.isSynonym("1_random", "chr1"));
-			assertFalse(sl.isSynonym("2", "chr2_random"));
+			assertFalse(sl.isSynonym("1_random", "chr1", cs, sr));
+			assertFalse(sl.isSynonym("2", "chr2_random", cs, sr));
 
 			// True because "CHR1", "chr1" and "1" were all explicity given as input
-			assertTrue(sl.isSynonym("1_random", "CHR1_random"));
-			assertTrue(sl.isSynonym("1_random", "chr1_random"));
-			assertTrue(sl.isSynonym("chr1_random", "CHR1_random"));
+			assertTrue(sl.isSynonym("1_random", "CHR1_random", cs, sr));
+			assertTrue(sl.isSynonym("1_random", "chr1_random", cs, sr));
+			assertTrue(sl.isSynonym("chr1_random", "CHR1_random", cs, sr));
 
 			// False due to case-sensitivity: we know nothing about "CHR2"
-			assertFalse(sl.isSynonym("2_random", "CHR2_random"));
-			assertFalse(sl.isSynonym("chr2_random", "CHR2_random"));
+			assertFalse(sl.isSynonym("2_random", "CHR2_random", cs, sr));
+			assertFalse(sl.isSynonym("chr2_random", "CHR2_random", cs, sr));
 
-			assertFalse(sl.isSynonym("1_ranDom", "chr1_Random"));
+			assertFalse(sl.isSynonym("1_ranDom", "chr1_Random", cs, sr));
 
 
 			// When case-sensitive is false, it should now know that 2_random == CHR2_random == chr2_random
-			sl.setCaseSensitive(false);
-			assertTrue(sl.isSynonym("2_random", "CHR2_random"));
-			assertTrue(sl.isSynonym("chr2_random", "CHR2_random"));
+			cs = false;
+			assertTrue(sl.isSynonym("2_random", "CHR2_random", cs, sr));
+			assertTrue(sl.isSynonym("chr2_random", "CHR2_random", cs, sr));
 
-			assertTrue(sl.isSynonym("CHRMT_RaNdOm", "M_random"));
-			assertFalse(sl.isSynonym("CHRMT_RANDOM", "CHRM"));
+			assertTrue(sl.isSynonym("CHRMT_RaNdOm", "M_random", cs, sr));
+			assertFalse(sl.isSynonym("CHRMT_RANDOM", "CHRM", cs, sr));
 
 			// This is false because we didn't teach it about "MT" (we taught it "chrMT" not "MT")
-			assertFalse(sl.isSynonym("CHRMT_RANDOM", "MT_random"));
+			assertFalse(sl.isSynonym("CHRMT_RANDOM", "MT_random", cs, sr));
 		}
 }

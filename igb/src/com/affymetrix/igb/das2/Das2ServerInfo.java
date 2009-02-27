@@ -288,7 +288,7 @@ public class Das2ServerInfo  {
 			Map headers = new LinkedHashMap();
 			InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
                         if (response == null) { 
-                            System.out.println("WARNING: Could not find Das2 server");
+                            System.out.println("WARNING: Could not find Das2 server " + server_uri);
                             return false;
                         }
 
@@ -313,95 +313,9 @@ public class Das2ServerInfo  {
 			Document doc = DasLoader.getDocument(response);
 
 			Element top_element = doc.getDocumentElement();
+			
 			NodeList sources= doc.getElementsByTagName("SOURCE");
-			//      System.out.println("source count: " + sources.getLength());
-			for (int i=0; i< sources.getLength(); i++)  {
-				Element source = (Element)sources.item(i);
-				//        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
-				String source_id = source.getAttribute(URID);
-				if (source_id.length() == 0) { source_id = source.getAttribute(ID); }
-				String source_name = source.getAttribute(TITLE);
-				if (source_name.length() == 0) { source_name = source.getAttribute(NAME); }
-				if (DEBUG_SOURCES_QUERY) { System.out.println("title: " + source_name + ",  length: " + source_name.length()); }
-				if (source_name == null || source_name.length() == 0) { source_name = source_id; }
-				if (DEBUG_SOURCES_QUERY)  { System.out.println("source_name: " + source_name); }
-				String source_info_url = source.getAttribute("doc_href");
-				String source_description = source.getAttribute("description");
-				String source_taxon = source.getAttribute("taxid");
-
-				URI source_uri = getBaseURI(das_query, source).resolve(source_id);
-
-				Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url,
-						source_taxon, source_description);
-				this.addDataSource(dasSource);
-				NodeList slist = source.getChildNodes();
-				for (int k=0; k < slist.getLength(); k++) {
-					if (slist.item(k).getNodeName().equals("VERSION"))  {
-						Element version = (Element)slist.item(k);
-						String version_id = version.getAttribute(URID);
-						if (version_id.length() == 0) { version_id = version.getAttribute(ID); }
-						String version_name = version.getAttribute(TITLE);
-						if (version_name.length() == 0) { version_name = version.getAttribute(NAME); }
-						if (version_name.length() == 0) { version_name = version_id; }
-						if (DEBUG_SOURCES_QUERY)  { System.out.println("version_name: " + version_name); }
-
-						String version_desc = version.getAttribute("description");
-						String version_info_url = version.getAttribute("doc_href");
-						//	    setDasVersionedSource(dasSource, version_id, false);
-						URI version_uri = getBaseURI(das_query, version).resolve(version_id);
-						if (DEBUG_SOURCES_QUERY) {
-							System.out.println("base URI for version element: " + getBaseURI(das_query, version));
-							System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
-						}
-
-
-						NodeList vlist = version.getChildNodes();
-						HashMap caps = new HashMap();
-						URI coords_uri = null;
-						for (int j=0; j<vlist.getLength(); j++) {
-							String nodename = vlist.item(j).getNodeName();
-							// was CATEGORY, renamed CAPABILITY
-							if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
-								Element capel = (Element)vlist.item(j);
-								String captype = capel.getAttribute(TYPE);
-								String query_id = capel.getAttribute(QUERY_URI);
-								if (query_id.length() == 0) { query_id = capel.getAttribute(QUERY_ID); }
-								URI base_uri = getBaseURI(das_query, capel);
-								URI cap_root = base_uri.resolve(query_id);
-								if (DEBUG_SOURCES_QUERY) {
-									System.out.println("Capability: " + captype + ", URI: " + cap_root);
-								}
-								// for now don't worry about format subelements
-								Das2Capability cap = new Das2Capability(captype, cap_root, null);
-								//		vsource.addCapability(cap);
-								caps.put(captype, cap);
-							}
-							else if (nodename.equals("COORDINATES")) {
-								Element coordel = (Element)vlist.item(j);
-								String uri_att = coordel.getAttribute("uri");
-								URI base_uri = getBaseURI(das_query, coordel);
-								coords_uri = base_uri.resolve(uri_att);
-								//		System.out.println("$$$$ Coordinates URI: " + coords_uri);
-							}
-						}
-						Das2VersionedSource vsource;
-						if (caps.get(Das2WritebackVersionedSource.WRITEBACK_CAP_QUERY) != null) {
-							vsource = new Das2WritebackVersionedSource(dasSource, version_uri, coords_uri, version_name,
-									version_desc, version_info_url, false);
-						}
-						else {
-							vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name,
-									version_desc, version_info_url, false);
-						}
-						Iterator capiter = caps.values().iterator();
-						while (capiter.hasNext()) {
-							Das2Capability cap = (Das2Capability)capiter.next();
-							vsource.addCapability(cap);
-						}
-						dasSource.addVersion(vsource);
-					}
-				}
-			}
+			parseSources(sources, das_query);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -410,6 +324,118 @@ public class Das2ServerInfo  {
 		initialized = true;
 		return initialized;
 	}
+
+	private void parseSources(NodeList sources, String das_query) {
+		//      System.out.println("source count: " + sources.getLength());
+		for (int i = 0; i < sources.getLength(); i++) {
+			Element source = (Element) sources.item(i);
+			//        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
+			String source_id = source.getAttribute(URID);
+			if (source_id.length() == 0) {
+				source_id = source.getAttribute(ID);
+			}
+			String source_name = source.getAttribute(TITLE);
+			if (source_name.length() == 0) {
+				source_name = source.getAttribute(NAME);
+			}
+			if (DEBUG_SOURCES_QUERY) {
+				System.out.println("title: " + source_name + ",  length: " + source_name.length());
+			}
+			if (source_name == null || source_name.length() == 0) {
+				source_name = source_id;
+			}
+			if (DEBUG_SOURCES_QUERY) {
+				System.out.println("source_name: " + source_name);
+			}
+			String source_info_url = source.getAttribute("doc_href");
+			String source_description = source.getAttribute("description");
+			String source_taxon = source.getAttribute("taxid");
+			URI source_uri = getBaseURI(das_query, source).resolve(source_id);
+			Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url, source_taxon, source_description);
+			this.addDataSource(dasSource);
+			
+			NodeList slist = source.getChildNodes();
+			parseSourceChildren(slist, das_query, dasSource);
+		}
+	}
+
+
+	private void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource) {
+		for (int k = 0; k < slist.getLength(); k++) {
+			if (!slist.item(k).getNodeName().equals("VERSION")) {
+				continue;
+			}
+
+			Element version = (Element) slist.item(k);
+			String version_id = version.getAttribute(URID);
+			if (version_id.length() == 0) {
+				version_id = version.getAttribute(ID);
+			}
+			String version_name = version.getAttribute(TITLE);
+			if (version_name.length() == 0) {
+				version_name = version.getAttribute(NAME);
+			}
+			if (version_name.length() == 0) {
+				version_name = version_id;
+			}
+			if (DEBUG_SOURCES_QUERY) {
+				System.out.println("version_name: " + version_name);
+			}
+			String version_desc = version.getAttribute("description");
+			String version_info_url = version.getAttribute("doc_href");
+			//	    setDasVersionedSource(dasSource, version_id, false);
+			URI version_uri = getBaseURI(das_query, version).resolve(version_id);
+			if (DEBUG_SOURCES_QUERY) {
+				System.out.println("base URI for version element: " + getBaseURI(das_query, version));
+				System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
+			}
+			NodeList vlist = version.getChildNodes();
+			HashMap caps = new HashMap();
+			URI coords_uri = null;
+			for (int j = 0; j < vlist.getLength(); j++) {
+				String nodename = vlist.item(j).getNodeName();
+				// was CATEGORY, renamed CAPABILITY
+				if (nodename.equals("CAPABILITY") || nodename.equals("CATEGORY")) {
+					Element capel = (Element) vlist.item(j);
+					String captype = capel.getAttribute(TYPE);
+					String query_id = capel.getAttribute(QUERY_URI);
+					if (query_id.length() == 0) {
+						query_id = capel.getAttribute(QUERY_ID);
+					}
+					URI base_uri = getBaseURI(das_query, capel);
+					URI cap_root = base_uri.resolve(query_id);
+					if (DEBUG_SOURCES_QUERY) {
+						System.out.println("Capability: " + captype + ", URI: " + cap_root);
+					}
+					// for now don't worry about format subelements
+					Das2Capability cap = new Das2Capability(captype, cap_root, null);
+					//		vsource.addCapability(cap);
+					caps.put(captype, cap);
+				} else if (nodename.equals("COORDINATES")) {
+					Element coordel = (Element) vlist.item(j);
+					String uri_att = coordel.getAttribute("uri");
+					URI base_uri = getBaseURI(das_query, coordel);
+					coords_uri = base_uri.resolve(uri_att);
+				//		System.out.println("$$$$ Coordinates URI: " + coords_uri);
+				}
+			}
+			Das2VersionedSource vsource;
+			if (caps.get(Das2WritebackVersionedSource.WRITEBACK_CAP_QUERY) != null) {
+				vsource = new Das2WritebackVersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
+			} else {
+				vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
+			}
+			Iterator capiter = caps.values().iterator();
+			while (capiter.hasNext()) {
+				Das2Capability cap = (Das2Capability) capiter.next();
+				vsource.addCapability(cap);
+			}
+			dasSource.addVersion(vsource);
+		}
+
+	}
+
+	
 
 	/**
 	    static boolean TEST_WRITEBACK_SERVER = false;
@@ -474,4 +500,5 @@ public class Das2ServerInfo  {
 	public String getSessionId() {
 		return sessionId;
 	}
+
 }

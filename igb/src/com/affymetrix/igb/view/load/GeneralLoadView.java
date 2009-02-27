@@ -33,7 +33,8 @@ import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
-import java.awt.Component;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 final public class GeneralLoadView extends JComponent
@@ -131,8 +132,39 @@ final public class GeneralLoadView extends JComponent
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
-		initializeKingdomCB();
-		initializeSpeciesCB();
+		populateSpeciesData();
+
+	}
+
+	/**
+	 * Discover servers, species, etc., asynchronously.
+	 */
+	private void populateSpeciesData() {
+		Executor vexec = Executors.newSingleThreadExecutor();
+
+		SwingWorker worker = new SwingWorker() {
+			@Override
+			public void done() {
+				initializeKingdomCB();
+				initializeSpeciesCB();
+				addListeners();
+			}
+
+			protected Object doInBackground() throws Exception {
+				discoverServersAndSpeciesAndVersions();
+				return null;
+			}
+		};
+
+		vexec.execute(worker);
+
+	}
+
+	private void discoverServersAndSpeciesAndVersions() {
+		this.glu.discoverServersAndSpeciesAndVersions();
+	}
+
+	private void addListeners() {
 
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
@@ -145,10 +177,12 @@ final public class GeneralLoadView extends JComponent
 		// TODO
 	}
 
+	/**
+	 * Initialize Species combo box.  It is assumed that we have the species data at this point.
+	 */
 	private void initializeSpeciesCB() {
 		speciesCB.removeAllItems();
 		speciesCB.addItem(SELECT);
-		this.glu.discoverServersAndSpeciesAndVersions();
 
 		int speciesListLength = this.glu.species2genericVersionList.keySet().size();
 		if (speciesListLength == 0) {

@@ -28,8 +28,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
@@ -38,7 +36,6 @@ import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
@@ -191,19 +188,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     };
 
-  /*Action write_das_action = new AbstractAction("Test writing to DAS/2 server") {
-    public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
-      if (current_tiers.size() > 1) {
-        ErrorHandler.errorPanel("Must select only one tier");
-      }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
-      CurationControl curcon = ((IGB) Application.getSingleton()).getCurationControl();
-      curcon.commitCurations(current_tier);
-      // testDas2Writeback(current_tier);
-    }
-  };*/
-
   Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
     public void actionPerformed(ActionEvent e) {
       changeExpandMax(handler.getSelectedTierLabels());
@@ -337,22 +321,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.sortTiers();
   }
 
-//  void changeHeight(List tier_label_glyphs, double height) {
-//    if (gviewer instanceof SeqMapView) {
-//    AffyTieredMap map = ((SeqMapView) gviewer).getSeqMap();
-//    for (int i=0; i<tier_label_glyphs.size(); i++) {
-//      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
-//      TierGlyph tier = (TierGlyph) tlg.getInfo();
-//      IAnnotStyle style = tier.getAnnotStyle();
-//      style.setHeight(???);
-//      tier.pack(map.getView());
-//    }
-//    map.packTiers(false, true, false);
-//    map.stretchToFit(false, true);
-//    map.updateWidget();
-//    }
-//  }
-
   public void showAllTiers() {
     List tiervec = handler.getAllTierLabels();
 
@@ -383,6 +351,7 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
       style.setShow(false);
       final JMenuItem show_tier = new JMenuItem() {
         // override getText() because the HumanName of the style might change
+				@Override
         public String getText() {
           String name = style.getHumanName();
           if (name == null) { name = "<unnamed>"; }
@@ -547,24 +516,6 @@ public class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(true);
   }*/
 
-
-  /*
-  public void outputWritebackTestFile(OutputStream ostr) {
-    String test_writeback_file = "C:/data/das2_testing/writeback_test5.xml";
-    try {
-      BufferedReader reader =
-	new BufferedReader(new InputStreamReader(new FileInputStream(new File(test_writeback_file))));
-      PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(ostr)));
-      String line;
-      while ((line = reader.readLine()) != null) {
-	writer.println(line);
-        System.out.println(line);
-      }
-      writer.flush();
-    }
-    catch (Exception ex) { ex.printStackTrace(); }
-  }
-  */
 
   public void saveAsDas2File(TierGlyph atier) {
     String annot_type = atier.getLabel();

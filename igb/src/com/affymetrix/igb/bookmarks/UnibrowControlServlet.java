@@ -222,7 +222,7 @@ public class UnibrowControlServlet {
 
     if (das2_requests.size() > 0)  {
         SeqMapView gviewer = Application.getSingleton().getMapView();
-        FeatureLoading.processDas2FeatureRequests(das2_requests, true, true, gmodel, gviewer);
+        FeatureLoading.processDas2FeatureRequests(das2_requests, true, gmodel, gviewer);
     }
     if (opaque_requests.size() > 0) {
       String[] data_urls = new String[opaque_requests.size()];

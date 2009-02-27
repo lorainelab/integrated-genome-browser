@@ -162,13 +162,13 @@ final public class GeneralLoadUtils {
 		discoveredServers.clear();
 
 		// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
-		try {
+		/*try {
 			Runnable r = new Runnable() {
 
-				public void run() {
+				public void run() {*/
 					discoverServersInternal(discoveredServers);
 					discoverSpeciesAndVersionsInternal();
-				}
+/*				}
 			};
 			Thread thr1 = new Thread(r);
 			thr1.start();
@@ -177,7 +177,7 @@ final public class GeneralLoadUtils {
 			}
 		} catch (InterruptedException ie) {
 			System.out.println("Interruption while getting server list.");
-		}
+		}*/
 	}
 
 	/**
@@ -770,7 +770,7 @@ final public class GeneralLoadUtils {
 		}
 
 		if (requests.size() > 0) {
-			FeatureLoading.processDas2FeatureRequests(requests, true, true, gmodel, gviewer);
+			FeatureLoading.processDas2FeatureRequests(requests, true, gmodel, gviewer);
 		}
 		return true;
 	}

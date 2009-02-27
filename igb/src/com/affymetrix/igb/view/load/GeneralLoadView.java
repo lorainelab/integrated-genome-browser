@@ -11,9 +11,20 @@ import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import javax.swing.table.JTableHeader;
-import javax.swing.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometry.SeqSpan;
@@ -33,8 +44,8 @@ import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+
+import org.jdesktop.swingworker.SwingWorker;
 
 
 final public class GeneralLoadView extends JComponent

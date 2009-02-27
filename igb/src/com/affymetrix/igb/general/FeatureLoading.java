@@ -5,18 +5,15 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
 import com.affymetrix.igb.das.DasType;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.swing.threads.SwingWorker;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import org.jdesktop.swingworker.SwingWorker;
 
 public final class FeatureLoading {
 
@@ -144,7 +142,6 @@ public final class FeatureLoading {
 	public static void processDas2FeatureRequests(
 					List<Das2FeatureRequestSym> requests,
 					final boolean update_display,
-					boolean thread_requests,
 					final SingletonGenometryModel gmodel,
 					final SeqMapView gviewer) {
 		if ((requests == null) || (requests.size() == 0)) {
@@ -161,13 +158,13 @@ public final class FeatureLoading {
 
 			SwingWorker worker = new SwingWorker() {
 
-				public Object construct() {
+				public Object doInBackground() {
 					createDAS2ResultSyms(request_set, result_syms);
 					return null;
 				}
 
 				@Override
-				public void finished() {
+				public void done() {
 					if (update_display && gviewer != null) {
 						MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 						gviewer.setAnnotatedSeq(aseq, true, true);
@@ -176,20 +173,7 @@ public final class FeatureLoading {
 				}
 			};
 
-			if (thread_requests) {
-				//	worker.start();
-				vexec.execute(worker);
-			} else {
-				// if not threaded, then want to execute code in above subclass of SwingWorker, but within this thread
-				//   so just ignore the thread features of SwingWorker and call construct() and finished() directly to
-				//   to execute in this thread
-				try {
-					worker.construct();
-					worker.finished();
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
+			vexec.execute(worker);
 		}
 		//for some reason this doesn't always get called
 		Application.getSingleton().setStatus("", false);

@@ -28,6 +28,10 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
 import org.xml.sax.InputSource;
 
+/**
+ *
+ * @version $Id$
+ */
 public class UrlLoaderThread extends Thread {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   final URL[] urls;
@@ -348,7 +352,7 @@ public class UrlLoaderThread extends Thread {
       result_stream = feat_request_con.getInputStream();
       bis = new BufferedInputStream(result_stream);
       Das1FeatureSaxParser das_parser = new Das1FeatureSaxParser();
-      das_parser.parse(result_stream, gmodel.getSelectedSeqGroup());
+      das_parser.parse(bis, gmodel.getSelectedSeqGroup());
 
     } finally {
         GeneralUtils.safeClose(bis);

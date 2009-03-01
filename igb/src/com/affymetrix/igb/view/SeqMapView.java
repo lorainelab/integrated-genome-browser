@@ -124,7 +124,7 @@ public class SeqMapView extends JPanel
     boolean coord_shift = false;
     boolean show_slicendice = false;
     boolean slicing_in_effect = false;
-    boolean hairline_is_labeled = false;
+    boolean hairline_is_labeled = true;
     SeqSpan viewspan_before_slicing = null;
     List<SymSelectionListener> selection_listeners = new ArrayList<SymSelectionListener>();
     List<ContextualPopupListener> popup_listeners = new ArrayList<ContextualPopupListener>();
@@ -263,6 +263,35 @@ public class SeqMapView extends JPanel
 
     final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
     public static Font axisFont = new Font("Courier", Font.BOLD, 12);
+
+		boolean report_hairline_position_in_status_bar = false;
+		boolean report_status_in_status_bar = true;
+
+		protected SeqSymmetry sym_used_for_title = null;
+
+		/*
+     *  units to scroll are either in pixels or bases
+     */
+
+		ActionListener map_auto_scroller = null;
+    javax.swing.Timer swing_timer = null;
+    int as_bases_per_pix = 75;
+    int as_pix_to_scroll = 4;
+    int as_time_interval = 20;
+    int as_start_pos = 0;
+    int as_end_pos;
+    int modcount = 0;
+
+		private final int xoffset_pop = 10;
+    private final int yoffset_pop = 0;
+
+		JMenu navigation_menu = null;
+
+		Thread slice_thread = null;
+
+		/** Whether the Application name goes first in the title bar.
+     */
+    protected boolean appNameFirstInTitle = false;
 
     /** Constructor provided for subclasses.
      *  In other cases, use {@link #makeSeqMapView}.
@@ -1283,11 +1312,6 @@ public class SeqMapView extends JPanel
 
         return version_info;
     }
-    /** Whether the Application name goes first in the title bar.
-     *  It seems to be standard in most application for the application name
-     *  to go last.  But marketing departments sometimes require otherwise.
-     */
-    protected boolean appNameFirstInTitle = false;
 
     protected void setTitleBar(AnnotatedBioSeq seq) {
         Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
@@ -2020,7 +2044,6 @@ public class SeqMapView extends JPanel
     public SeqSymmetry getSliceSymmetry() {
         return slice_symmetry;
     }
-    Thread slice_thread = null;
 
     // disables the sliced view while the slicing thread works
     void enableSeqMap(boolean b) {
@@ -2213,17 +2236,7 @@ public class SeqMapView extends JPanel
         }
     }
     //  public void autoScroll(int timer_interval, int bases_to_scroll) {
-  /*
-     *  units to scroll are either in pixels or bases
-     */
-    ActionListener map_auto_scroller = null;
-    javax.swing.Timer swing_timer = null;
-    int as_bases_per_pix = 75;
-    int as_pix_to_scroll = 4;
-    int as_time_interval = 20;
-    int as_start_pos = 0;
-    int as_end_pos;
-    int modcount = 0;
+  
 
     public void toggleAutoScroll() {
         if (map_auto_scroller == null) {
@@ -2889,7 +2902,6 @@ public class SeqMapView extends JPanel
         }
         label.setText(title);
     }
-    boolean report_hairline_position_in_status_bar = true;
 
     void showHairlinePositionInStatusBar() {
         if (!report_hairline_position_in_status_bar) {
@@ -2901,7 +2913,6 @@ public class SeqMapView extends JPanel
         String pos = "  " + nformat.format((int) hairline.getSpot()) + "  ";
         Application.getSingleton().setStatusBarHairlinePosition(pos);
     }
-    boolean report_status_in_status_bar = true;
 
     void setStatus(String title) {
         if (!report_status_in_status_bar) {
@@ -2910,7 +2921,7 @@ public class SeqMapView extends JPanel
         showHairlinePositionInStatusBar();
         Application.getSingleton().setStatus(title, false);
     }
-    protected SeqSymmetry sym_used_for_title = null;
+
 
     // Compare the code here with SymTableView.selectionChanged()
     // The logic about finding the ID from instances of DerivedSeqSymmetry
@@ -3020,8 +3031,7 @@ public class SeqMapView extends JPanel
             listener.popupNotify(popup, selected_syms, sym_used_for_title);
         }
     }
-    private final int xoffset_pop = 10;
-    private final int yoffset_pop = 0;
+
 
     void showPopup(NeoMouseEvent nevt) {
         sym_popup.setVisible(false); // in case already showing
@@ -3306,7 +3316,6 @@ public class SeqMapView extends JPanel
                     "not the sequence it is currently viewing");
         }
     }
-    JMenu navigation_menu = null;
 
     public JMenu getNavigationMenu(String menu_name) {
         if (navigation_menu == null) {

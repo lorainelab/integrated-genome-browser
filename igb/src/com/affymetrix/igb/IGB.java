@@ -768,7 +768,7 @@ public final class IGB extends Application
 
     toggle_hairline_label_item = new JCheckBoxMenuItem("Toggle Hairline Label");
     toggle_hairline_label_item.setMnemonic(KeyEvent.VK_H);
-    boolean use_hairline_label = UnibrowPrefsUtil.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, false);
+    boolean use_hairline_label = UnibrowPrefsUtil.getTopNode().getBoolean(SeqMapView.PREF_HAIRLINE_LABELED, true);
     if (map_view.isHairlineLabeled() != use_hairline_label) {
       map_view.toggleHairlineLabel();
     }

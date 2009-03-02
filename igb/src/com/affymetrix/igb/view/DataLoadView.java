@@ -31,25 +31,24 @@ public class DataLoadView extends JComponent  {
   SeqGroupView group_view;
 
   public DataLoadView() {
-    // some of the options in DataLoadPrefsView are specific to QuickLoad, but still want to be able to see 
-    //     DataLoadPrefsView even when not using QuickLoad
-    PreferencesPanel pp = PreferencesPanel.getSingleton();
-    pp.addPrefEditorComponent(new DataLoadPrefsView());
-
     this.setLayout(new BorderLayout());
 
-     JPanel main_panel = new JPanel();
+		JPanel main_panel = new JPanel();
     this.add(main_panel);
     this.setBorder(BorderFactory.createEtchedBorder());
 
     main_panel.setLayout(new BorderLayout());
 
+		group_view = new SeqGroupView();
+    main_panel.add("West",group_view);
+
     general_load_view = new GeneralLoadView();
     main_panel.add("Center", general_load_view);
 
-    group_view = new SeqGroupView();
-    main_panel.add("West",group_view);
-  }
+		final PreferencesPanel pp = PreferencesPanel.getSingleton();
+		pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));
+		
+	}
 }
 
 class SeqGroupView extends JComponent

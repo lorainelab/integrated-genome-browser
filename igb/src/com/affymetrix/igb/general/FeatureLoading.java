@@ -37,21 +37,7 @@ public final class FeatureLoading {
 	 */
 	public static boolean loadFeatureNames(Set<GenericVersion> versionSet) {
 		for (final GenericVersion gVersion : versionSet) {
-			// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
-			try {
-				Runnable r = new Runnable() {
-					public void run() {
-						loadFeatureNames(gVersion);
-					}
-				};
-				Thread thr1 = new Thread(r);
-				thr1.start();
-				while (thr1.isAlive()) {
-					Thread.sleep(200);
-				}
-			} catch (InterruptedException ie) {
-				System.out.println("Interruption while getting feature list.");
-			}
+			loadFeatureNames(gVersion);
 		}
 		return true;
 	}

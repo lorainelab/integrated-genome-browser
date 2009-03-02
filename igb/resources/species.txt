@@ -16,7 +16,7 @@ Canis lupus familiaris	Dog	C_familiaris	C_familiaris_May_2005	canFam1	canFam2
 Drosophila ananassae	D. ananassae	D_ananassae	droAna1	droAna2
 Drosophila erecta	D. erecta	D_erecta	droEre1
 Drosophila grimshawi	D. grimshawi	D_grimshawi	droGri1
-Drosophila melanogaster	D. melanogaster	D_melanogaster	D_melanogaster_Apr_2004	D_melanogaster_Apr_2006	dm1	dm2	dm3
+Drosophila melanogaster	D. melanogaster	D_melanogaster	D_melanogaster_Apr_2004	D_melanogaster_Apr_2006	D_melanogaster_Jan_2003	dm1	dm2	dm3
 Drosophila mojavensis	D. mojavensis	D_mojavensis	droMoj1	droMoj2
 Drosophila persimilis	D. persimilis	D_persimilis	droPer1
 Drosophila pseudoobscura	D. pseudoobscura	D_pseudoobscura	dp2	dp3

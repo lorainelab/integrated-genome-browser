@@ -15,9 +15,11 @@
 	<rule ref="rulesets/clone.xml" />
 	<rule ref="rulesets/codesize.xml">
 		<exclude name="TooManyMethods" />
+		<exclude name="ExcessiveParameterList" />
 	</rule>
 	<rule ref="rulesets/controversial.xml">
 		<exclude name="OnlyOneReturn" />
+		<exclude name="UnusedModifier" />
 		<exclude name="AvoidFinalLocalVariables" />
 		<exclude name="AvoidFinalLocalVariable" />
 		<exclude name="DataflowAnomalyAnalysis" />
@@ -25,6 +27,7 @@
 	</rule>
 	<rule ref="rulesets/coupling.xml">
 		<exclude name="ExcessiveImports" />
+		<exclude name="CouplingBetweenObjects" />
 	</rule>
 	<rule ref="rulesets/design.xml">
 		<exclude name="ConfusingTernary" />
@@ -41,6 +44,7 @@
 	</rule>
 	<rule ref="rulesets/migrating.xml">
 		<exclude name="ReplaceVectorWithList" />
+		<exclude name="JUnit4TestShouldUseTestAnnotation" />
 	</rule>
 	<rule ref="rulesets/naming.xml">
 		<exclude name="ShortVariable" />
@@ -59,6 +63,8 @@
 	<rule ref="rulesets/strictexception.xml" />
 	<rule ref="rulesets/strings.xml" />
 	<rule ref="rulesets/sunsecure.xml" />
-	<rule ref="rulesets/typeresolution.xml" />
+	<rule ref="rulesets/typeresolution.xml">
+		<exclude name="LooseCoupling" />
+	</rule>
   <rule ref="rulesets/unusedcode.xml"/>
 </ruleset>

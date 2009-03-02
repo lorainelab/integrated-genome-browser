@@ -52,20 +52,18 @@ final public class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
 	GeneralLoadUtils glu;
-	private static boolean DEBUG_EVENTS = false;
-	static boolean BUILD_VIRTUAL_GENOME = true;
-	static boolean BUILD_VIRTUAL_ENCODE = true;
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static final boolean DEBUG_EVENTS = false;
+	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static final String SELECT = "Select";
 	private static final String GENOME_SEQ_ID = "genome";
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
 	private JComboBox kingdomCB;
-	private JComboBox versionCB;
-	private JComboBox speciesCB;
+	private final JComboBox versionCB;
+	private final JComboBox speciesCB;
 	private JPanel feature_panel;
 	private JButton all_residuesB;
 	private JButton partial_residuesB;
-	private JButton refresh_dataB;
+	private final JButton refresh_dataB;
 	private AnnotatedSeqGroup current_group;
 	private SmartAnnotBioSeq current_seq;
 	private SeqMapView gviewer;

@@ -1,7 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.igb.das.DasServerInfo;
-import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericServer;
 import java.awt.Component;
@@ -76,22 +74,22 @@ public final class TableWithVisibleComboBox {
  */
 	class RowEditorModel {
 
-		private Hashtable<Integer, TableCellEditor> row2Editor;
+		private final Hashtable<Integer, TableCellEditor> row2Editor;
 
 		public RowEditorModel() {
 			row2Editor = new Hashtable<Integer, TableCellEditor>();
 		}
 
 		public void addEditorForRow(int row, TableCellEditor e) {
-			row2Editor.put(new Integer(row), e);
+			row2Editor.put(Integer.valueOf(row), e);
 		}
 
 		public void removeEditorForRow(int row) {
-			row2Editor.remove(new Integer(row));
+			row2Editor.remove(Integer.valueOf(row));
 		}
 
 		public TableCellEditor getEditor(int row) {
-			return row2Editor.get(new Integer(row));
+			return row2Editor.get(Integer.valueOf(row));
 		}
 	}
 

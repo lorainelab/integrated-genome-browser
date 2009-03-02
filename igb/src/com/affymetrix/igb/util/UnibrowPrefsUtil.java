@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.swing.ColorIcon;
@@ -38,16 +39,19 @@ import javax.swing.*;
   public static final String COMPONENT_STATE_TAB = "TAB";
   public static final String COMPONENT_STATE_WINDOW = "WINDOW";
 
-   public static String SLASH_STANDIN = "%";
-
+	public static String SLASH_STANDIN = "%";
 
   /** The name of a boolean preference. Setting to true to be sure to save bookmarks.*/
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
   public static final boolean default_ask_before_exiting = true;
-
-  private static Vector FILENAMES;
+  static JFileChooser static_chooser = null;
+  static SortedSet<String> keystroke_node_names = new TreeSet<String>();
+	private static boolean bse_already_warned_once = false;
+  static String app_dir = null;
+	
+  private static Vector<String> FILENAMES;
   static {
-    FILENAMES = new Vector();
+    FILENAMES = new Vector<String>();
     FILENAMES.add(CONTROL_GRAPH_DIRECTORY);
     FILENAMES.add(DATA_DIRECTORY);
     FILENAMES.add(OUTPUT_DIRECTORY);
@@ -207,7 +211,7 @@ import javax.swing.*;
     return getTopNode().get(name+" state", COMPONENT_STATE_TAB);
   }
 
-  static JFileChooser static_chooser = null;
+
 
   /** Gets a static re-usable file chooser that prefers "xml" files. */
   static JFileChooser getJFileChooser() {
@@ -249,7 +253,7 @@ import javax.swing.*;
       fos = new FileOutputStream(f);
       prefs.exportSubtree(fos);
     } finally {
-      try { fos.close(); } catch (Exception e) {}
+			GeneralUtils.safeClose(fos);
     }
   }
 
@@ -291,7 +295,7 @@ import javax.swing.*;
       fis = new FileInputStream(f);
       prefs.importPreferences(fis);
     } finally {
-      try { fis.close(); } catch (Exception e) {}
+			GeneralUtils.safeClose(fis);
     }
   }
 
@@ -332,10 +336,8 @@ import javax.swing.*;
     return UnibrowPrefsUtil.getTopNode().node("keystrokes");
   }
 
-  static SortedSet keystroke_node_names = new TreeSet();
-
-  public static Collection getKeystrokesNodeNames() {
-    return Collections.unmodifiableSet(new TreeSet(keystroke_node_names));
+  public static Collection<String> getKeystrokesNodeNames() {
+    return Collections.unmodifiableSet(new TreeSet<String>(keystroke_node_names));
   }
 
   /** Finds the KeyStroke that was specified in the preferences
@@ -393,7 +395,6 @@ import javax.swing.*;
     return str;
   }
 
-  static String app_dir = null;
 
   /** Returns the location of the application data directory.
    *  The String will always end with "/".
@@ -414,7 +415,6 @@ import javax.swing.*;
     return app_dir;
   }
 
-  static boolean bse_already_warned_once = false;
 
   /** Will issue a stern warning message the first time a BackingStoreException
    *  is passed to this method, but will be silent about all future ones.
@@ -563,7 +563,7 @@ import javax.swing.*;
         if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
           if (! combo_box.getSelectedItem().equals(evt.getNewValue())) {
             // Note: checking that selection differs from new value prevents infinite loop.
-            combo_box.setSelectedItem( ((String) evt.getNewValue()).intern() );
+            combo_box.setSelectedItem( (evt.getNewValue()).intern() );
           }
         }
       }
@@ -624,11 +624,11 @@ import javax.swing.*;
 
 
 
-   public static String shortNodeName(String s)  {
+   /*public static String shortNodeName(String s)  {
      return shortNodeName(s, false);
-   }
+   }*/
 
-   public static String shortNodeName(String s, boolean remove_slash)  {
+   private static String shortNodeName(String s, boolean remove_slash)  {
     String short_s;
     if (s.length() >= Preferences.MAX_NAME_LENGTH) {
       short_s = UrlToFileName.toMd5(s);

@@ -41,6 +41,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericVersion;
+import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
@@ -156,6 +157,7 @@ final public class GeneralLoadView extends JComponent
 			public void done() {
 				initializeKingdomCB();
 				initializeSpeciesCB();
+				RestorePersistentGenome();
 				addListeners();
 			}
 
@@ -209,6 +211,56 @@ final public class GeneralLoadView extends JComponent
 
 		speciesCB.setEnabled(true);
 		speciesCB.setSelectedIndex(0);
+	}
+
+		/**
+	 * bootstrap bookmark from Preferences for last species/version/genome / sequence / region
+	 * @param gviewer
+	 * @return
+	 */
+	private void RestorePersistentGenome() {
+		// Get group and seq info from persistent preferences.
+		// (Recovering as much data as possible before activating listeners.)
+		AnnotatedSeqGroup group = Persistence.restoreGroupSelection();
+		if (group == null) {
+			return;
+		}
+
+		GenericVersion gVersion = this.glu.group2version.get(group);
+		if (gVersion == null || gVersion.versionName == null) {
+			return;
+		}
+
+		String speciesName = this.glu.versionName2species.get(gVersion.versionName);
+		if (speciesName == null) {
+			return;
+		}
+
+		// Set the selected species (the combo box is already populated)
+		speciesCB.setSelectedItem(speciesName);
+
+		// populate the version combo box.
+		refreshVersionCB(speciesName);
+		
+		// select the version, using events to populate the feature and chrom table.
+		addListeners();
+		versionCB.setSelectedItem(gVersion.versionName);
+		
+		// Select the persistent chromosome, and restore the span.
+		SmartAnnotBioSeq seq = Persistence.restoreSeqSelection(group);
+		if (seq == null) {
+			return;
+		}
+		if (gmodel.getSelectedSeq() != seq) {
+			gmodel.setSelectedSeq(seq);
+		}
+		
+		// Try/catch may not be needed.
+		try {
+			Persistence.restoreSeqVisibleSpan(gviewer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -298,6 +350,8 @@ final public class GeneralLoadView extends JComponent
 			versionCB.setEnabled(false);
 		} else {
 			refreshVersionCB(speciesName);
+			versionCB.setEnabled(true);
+			versionCB.addItemListener(this);
 		}
 		
 		// Select the null group (and the null seq), if it's not already selected.
@@ -355,9 +409,6 @@ final public class GeneralLoadView extends JComponent
 		for (String versionName : versionNames) {
 			versionCB.addItem(versionName);
 		}
-
-		versionCB.setEnabled(true);
-		versionCB.addItemListener(this);
 	}
 
 	

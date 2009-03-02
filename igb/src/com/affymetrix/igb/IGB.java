@@ -53,6 +53,7 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
+import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -63,7 +64,6 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.util.ViewPersistenceUtils;
 import com.affymetrix.swing.DisplayUtils;
 
 
@@ -116,9 +116,9 @@ public final class IGB extends Application
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static Map<String,Map> prefs_hash;
   static String[] main_args;
-  static Map comp2window = new HashMap(); // Maps Component -> Frame
-  Map comp2plugin = new HashMap(); // Maps Component -> PluginInfo
-  Map comp2menu_item = new HashMap(); // Component -> JCheckBoxMenuItem
+  static Map<Component,Frame> comp2window = new HashMap<Component,Frame>();
+  Map<Component,PluginInfo> comp2plugin = new HashMap<Component,PluginInfo>();
+  Map<Component,JCheckBoxMenuItem> comp2menu_item = new HashMap<Component,JCheckBoxMenuItem>();
 
   JMenu popup_windowsM = new JMenu("Open in Window...");
   Memer mem = new Memer();
@@ -185,7 +185,7 @@ public final class IGB extends Application
   AltSpliceView slice_view = null;
 
   List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
-  List plugins = new ArrayList(16);
+  List<Object> plugins = new ArrayList<Object>(16);
 
   static String user_dir = System.getProperty("user.dir");
   static String user_home = System.getProperty("user.home");
@@ -296,7 +296,6 @@ public final class IGB extends Application
         mue.printStackTrace(System.err);
       }
     }
-
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
@@ -935,6 +934,7 @@ public final class IGB extends Application
     // on top of the main frame, not hidden by it.
 
     frm.addWindowListener( new WindowAdapter() {
+			@Override
 	public void windowClosing(WindowEvent evt) {exit();}
       });
     //    frm.resize(1000, 750);
@@ -966,24 +966,21 @@ public final class IGB extends Application
     if (plugins_info == null || plugins_info.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
     } else {
-      Iterator iter = plugins_info.iterator();
-      while (iter.hasNext()) {
-        PluginInfo pi = (PluginInfo) iter.next();
+			for (PluginInfo pi : plugins_info) {
         Object plugin = setUpPlugIn(pi);
         plugins.add(plugin);
       }
     }
 
-    for (int i=0; i<plugins.size(); i++)  {
-        Object plugin = plugins.get(i);
-        if (plugin instanceof DataLoadView) {
-            data_load_view = (DataLoadView)plugin;
-            //data_load_view.initialize();
-        }
-        /*if (plugin instanceof QuickLoadView2)  {
-          ((QuickLoadView2)plugin).initialize();
-        }*/
-    }
+		for (Object plugin : plugins) {
+			if (plugin instanceof DataLoadView) {
+				data_load_view = (DataLoadView) plugin;
+			//data_load_view.initialize();
+			}
+		/*if (plugin instanceof QuickLoadView2)  {
+		((QuickLoadView2)plugin).initialize();
+		}*/
+		}
 
     if (slice_view != null) {
       MenuUtil.addToMenu(export_to_file_menu, export_slice_item);
@@ -1056,7 +1053,7 @@ public final class IGB extends Application
     }
 
     if (plugin instanceof JComponent) {
-      comp2plugin.put(plugin, pi);
+      comp2plugin.put((Component)plugin, pi);
       String title = pi.getDisplayName();
       String tool_tip = ((JComponent) plugin).getToolTipText();
       if (tool_tip == null) {tool_tip = title;}
@@ -1064,7 +1061,7 @@ public final class IGB extends Application
       boolean in_a_window = (UnibrowPrefsUtil.getComponentState(title).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
       //boolean in_a_window = PluginInfo.PLACEMENT_WINDOW.equals(pi.getPlacement());
       addToPopupWindows(comp, title);
-      JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+      JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
       menu_item.setSelected(in_a_window);
       if (in_a_window) {
         //openCompInWindow(comp, title, tool_tip, null, tab_pane);
@@ -1345,7 +1342,7 @@ public final class IGB extends Application
       }
       WebLink.autoSave();
       saveWindowLocations();
-      ViewPersistenceUtils.saveCurrentView(map_view);
+      Persistence.saveCurrentView(map_view);
       System.exit(0);
     }
   }
@@ -1359,16 +1356,14 @@ public final class IGB extends Application
     // Save the main window location
     UnibrowPrefsUtil.saveWindowLocation(frm, "main window");
 
-    Iterator iter = comp2plugin.keySet().iterator();
-    while (iter.hasNext()) {
-      Component comp = (Component) iter.next();
-      PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
-      Frame f = (Frame) comp2window.get(comp);
+		for (Component comp : comp2plugin.keySet()) {
+      Frame f = comp2window.get(comp);
       if (f != null) {
+				PluginInfo pi = comp2plugin.get(comp);
         UnibrowPrefsUtil.saveWindowLocation(f, pi.getPluginName());
       }
     }
-    Frame f = (Frame) comp2window.get(tab_pane);
+    Frame f = comp2window.get(tab_pane);
     if (f != null) {
       UnibrowPrefsUtil.saveWindowLocation(f, TABBED_PANES_TITLE);
     }
@@ -1398,7 +1393,7 @@ public final class IGB extends Application
     final String tool_tip = comp.getToolTipText();
 
     if (comp2plugin.get(comp) instanceof PluginInfo) {
-      PluginInfo pi = (PluginInfo) comp2plugin.get(comp);
+      PluginInfo pi = comp2plugin.get(comp);
       title = pi.getPluginName();
       display_name = pi.getDisplayName();
     } else {
@@ -1447,7 +1442,7 @@ public final class IGB extends Application
 	    tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
             UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
             //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_TAB);
-            JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+            JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
             if (menu_item != null) {
               menu_item.setSelected(false);
             }
@@ -1456,7 +1451,7 @@ public final class IGB extends Application
     }
     // extra window already exists, but may not be visible
     else {
-      DisplayUtils.bringFrameToFront((Frame) comp2window.get(comp));
+      DisplayUtils.bringFrameToFront(comp2window.get(comp));
     }
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
@@ -1509,7 +1504,7 @@ public final class IGB extends Application
           splitpane.setBottomComponent(comp);
           splitpane.setDividerLocation(0.70);
           UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
-          JCheckBoxMenuItem menu_item = (JCheckBoxMenuItem) comp2menu_item.get(comp);
+          JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
           if (menu_item != null) {
             menu_item.setSelected(false);
           }
@@ -1540,7 +1535,7 @@ public final class IGB extends Application
     }
     // extra window already exists, but may not be visible
     else {
-      DisplayUtils.bringFrameToFront((Frame) comp2window.get(comp));
+      DisplayUtils.bringFrameToFront(comp2window.get(comp));
     }
     UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
   }
@@ -1556,7 +1551,7 @@ public final class IGB extends Application
 	public void actionPerformed(ActionEvent evt) {
 	  JCheckBoxMenuItem src = (JCheckBoxMenuItem) evt.getSource();
 	  //openCompInWindow(comp, title, tool_tip, null, tab_pane);
-          Frame frame = (Frame) comp2window.get(comp);
+          Frame frame = comp2window.get(comp);
           if (frame == null) {
             openCompInWindow(comp, tab_pane);
             src.setSelected(true);
@@ -1661,9 +1656,9 @@ public final class IGB extends Application
   AnnotatedSeqGroup prev_selected_group = null;
   public void groupSelectionChanged(GroupSelectionEvent evt) {
     AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
-    if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
-      ViewPersistenceUtils.saveSeqSelection(prev_selected_seq);
-      ViewPersistenceUtils.saveSeqVisibleSpan(map_view);
+    if ((prev_selected_group != selected_group) && (prev_selected_seq instanceof SmartAnnotBioSeq)) {
+      Persistence.saveSeqSelection((SmartAnnotBioSeq)prev_selected_seq);
+      Persistence.saveSeqVisibleSpan(map_view);
     }
     prev_selected_group = selected_group;
   }
@@ -1673,7 +1668,7 @@ public final class IGB extends Application
     AnnotatedBioSeq selected_seq = evt.getSelectedSeq();
     if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
       //      System.out.println("----------- saving visible span selection for seq: " + prev_selected_seq.getID());
-      ViewPersistenceUtils.saveSeqVisibleSpan(map_view);
+      Persistence.saveSeqVisibleSpan(map_view);
     }
     prev_selected_seq = selected_seq;
   }

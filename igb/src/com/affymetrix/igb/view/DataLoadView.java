@@ -46,7 +46,7 @@ public class DataLoadView extends JComponent  {
     main_panel.add("Center", general_load_view);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
-		pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));
+		pp.addPrefEditorComponent(new DataLoadPrefsView());
 		
 	}
 }

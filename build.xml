@@ -56,12 +56,13 @@
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${lib.dir}/affx_fusion.jar"     signedjar="${webstart.dir}/affx_fusion.jar" />
-		<my.signjar jar="${lib.dir}/freehep.jar"         signedjar="${webstart.dir}/freehep.jar" />
-		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"       signedjar="${webstart.dir}/jlfgr-1_0.jar" />
-		<my.signjar jar="${lib.dir}/myswing.jar"         signedjar="${webstart.dir}/myswing.jar" />
-		<my.signjar jar="${lib.dir}/swing-layout.jar"    signedjar="${webstart.dir}/swing-layout.jar" />
-		<my.signjar jar="${lib.dir}/xercesImpl.jar"      signedjar="${webstart.dir}/xercesImpl.jar" />
+		<my.signjar jar="${lib.dir}/affx_fusion.jar"      signedjar="${webstart.dir}/affx_fusion.jar" />
+		<my.signjar jar="${lib.dir}/freehep.jar"          signedjar="${webstart.dir}/freehep.jar" />
+		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"        signedjar="${webstart.dir}/jlfgr-1_0.jar" />
+		<my.signjar jar="${lib.dir}/myswing.jar"          signedjar="${webstart.dir}/myswing.jar" />
+		<my.signjar jar="${lib.dir}/swing-layout.jar"     signedjar="${webstart.dir}/swing-layout.jar" />
+		<my.signjar jar="${lib.dir}/swing-worker-1.2.jar" signedjar="${webstart.dir}/swing-worker-1.2.jar" />
+		<my.signjar jar="${lib.dir}/xercesImpl.jar"       signedjar="${webstart.dir}/xercesImpl.jar" />
 
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
 			<zipfileset src="${dist.dir}/igb.jar" />

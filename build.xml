@@ -157,6 +157,7 @@
 				<include name="jlfgr-1_0.jar"/>
 				<include name="myswing.jar"/>
 				<include name="swing-layout.jar"/>
+				<include name="swing-worker-1.2.jar" />
 				<include name="xercesImpl.jar"/>
 			</zipgroupfileset>
 		</jar>

@@ -42,6 +42,8 @@ public class AnnotationAdapter implements NeoDataAdapterI {
 		factory = new MapGlyphFactory();
 	}
 
+        public MapGlyphFactory getGlyphFactory()  { return factory; }
+
 	public void setScene(Scene scene) {
 		this.scene = scene;
 		factory.setScene(scene);

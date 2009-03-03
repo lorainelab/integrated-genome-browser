@@ -46,6 +46,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 
+import javax.swing.table.TableColumn;
 import org.jdesktop.swingworker.SwingWorker;
 
 
@@ -527,7 +528,17 @@ final public class GeneralLoadView extends JComponent
 
 		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
+
+		// Handle sizing of the columns
 		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);   // Allow columns to be resized
+		int maxFeatureNameLength = 1;
+		for(GenericFeature feature : features) {
+			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
+		}
+		// the first column contains the feature names.  Resize it so that feature names are fully displayed.
+		TableColumn col = this.feature_table.getColumnModel().getColumn(0);
+		col.setPreferredWidth(maxFeatureNameLength);
+
 
 		// Must explicitly show the header, since we're not in a scroll panel
 		JTableHeader header = this.feature_table.getTableHeader();

@@ -122,7 +122,7 @@ final public class GeneralLoadUtils {
 	 * @see #SPECIES_LOOKUP
 	 */
 	private static final String SPECIES_SYNONYM_FILE = "/species.txt";
-
+	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
 	/*
 	 * This is done in a static context vs the constructor to ensure that
 	 * static functions have access to the synonyms
@@ -130,7 +130,12 @@ final public class GeneralLoadUtils {
 	static {
 		try {
 			SPECIES_LOOKUP.loadSynonyms(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
-		} catch (IOException e) { }
+
+			// Eventually this will need its own synonyms object.
+			SPECIES_LOOKUP.loadSynonyms(GeneralLoadUtils.class.getResourceAsStream(CHROM_SYNONYM_FILE));
+		} catch (IOException e) { 
+			e.printStackTrace();
+		}
 	}
 
 	//public boolean allow_reinitialization = true;

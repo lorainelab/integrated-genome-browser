@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
+import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.view.SeqMapView;
 
 /**
@@ -52,21 +53,20 @@ public final class DasFeatureLoader {
 	/**
 	 * Load annotations from a DAS server.
 	 * 
-	 * @param das_root the url of the DAS server root.
-	 * @param genome_name the name of the DAS genome to load annotations from.
-	 * @param type the name of the DAS type to load annotations from.
-	 * @param overlap SeqSpan containing the range for which you want annotations.
+	 * @param gFeature the generic feature that is to be loaded from the server.
+	 * @param query_span SeqSpan containing the range for which you want annotations.
 	 * @return true if data was loaded
 	 */
-	public static boolean loadFeatures(String das_root, String genome_name, String type, SeqSpan query_span) {
+	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
+		String das_root = gFeature.gVersion.gServer.URL;
 		MutableAnnotatedBioSeq current_seq = (MutableAnnotatedBioSeq) gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();
 
 		try {
 			String query_root = das_root.endsWith("/") ? das_root : das_root.concat("/")
-						+ URLEncoder.encode(genome_name, ENCODING) + "/features?"
+						+ URLEncoder.encode(gFeature.gVersion.versionID, ENCODING) + "/features?"
 						+ "segment=" + URLEncoder.encode(current_seq.getID(), ENCODING);
-			String encoded_type = ";type=" + URLEncoder.encode(type, ENCODING);
+			String encoded_type = ";type=" + URLEncoder.encode(gFeature.featureName, ENCODING);
 			String id = query_root + encoded_type;
 
 			SimpleSymWithProps query_sym = new SimpleSymWithProps();
@@ -83,7 +83,7 @@ public final class DasFeatureLoader {
 				seen.addChild(optimized_sym);
 			
 				String[] tier_names = new String[urls.size()];
-				Arrays.fill(tier_names, type);
+				Arrays.fill(tier_names, gFeature.featureName);
 			
 				UrlLoaderThread loader = new UrlLoaderThread(gviewer, urls.toArray(new URL[urls.size()]), null, tier_names);
 				loader.runEventually();
@@ -117,7 +117,6 @@ public final class DasFeatureLoader {
 			String query;
 			for (int i = 0; i < sym.getSpanCount(); i++) {
 				span = sym.getSpan(i);
-				/* TODO: handle servers which are not 1-indexed */
 				query = query_root + URLEncoder.encode(":" + (span.getMin() + 1) + "," + span.getMax(), ENCODING) + encoded_type;
 				urls.add(new URL(query));
 			}

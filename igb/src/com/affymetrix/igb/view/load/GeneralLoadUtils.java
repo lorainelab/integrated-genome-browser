@@ -259,6 +259,7 @@ final public class GeneralLoadUtils {
 			/* TODO: GenericVersion should be able to store source's name and ID */
 			/* String versionName = source.getName(); */
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
+			String versionID = source.getID();
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
 				gVersionList = new ArrayList<GenericVersion>();
@@ -266,7 +267,7 @@ final public class GeneralLoadUtils {
 			} else {
 				gVersionList = this.species2genericVersionList.get(speciesName);
 			}
-			GenericVersion gVersion = new GenericVersion(versionName, gServer, source);
+			GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, source);
 			discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 		}
 	}
@@ -301,7 +302,8 @@ final public class GeneralLoadUtils {
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
-				GenericVersion gVersion = new GenericVersion(versionName, gServer, versionSource);
+				String versionID = versionSource.getName();
+				GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, versionSource);
 				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 			}
 		}
@@ -321,8 +323,8 @@ final public class GeneralLoadUtils {
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
 		List<String> genomeList = quickloadServer.getGenomeNames();
 
-		for (String genomeName : genomeList) {
-			genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeName);
+		for (String genomeID : genomeList) {
+			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
 
 			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
@@ -330,7 +332,7 @@ final public class GeneralLoadUtils {
 			if (gVersion != null) {
 				// We've found a corresponding version object that was initialized earlier.
 				String speciesName = this.versionName2species.get(gVersion.versionName);
-				GenericVersion quickLoadVersion = new GenericVersion(gVersion.versionName, gServer, quickloadServer);
+				GenericVersion quickLoadVersion = new GenericVersion(genomeID, gVersion.versionName, gServer, quickloadServer);
 				List<GenericVersion> gVersionList = this.species2genericVersionList.get(speciesName);
 				discoverVersion(gVersion.versionName, gServer, quickLoadVersion, gVersionList, speciesName);
 				continue;
@@ -348,7 +350,7 @@ final public class GeneralLoadUtils {
 			} else {
 				gVersionList = this.species2genericVersionList.get(species);
 			}
-			gVersion = new GenericVersion(genomeName, gServer, quickloadServer);
+			gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
 			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
 		}
 	}
@@ -666,11 +668,7 @@ final public class GeneralLoadUtils {
 			return false;
 		}
 		if (serverType == GenericServer.ServerType.DAS) {
-			if (DasFeatureLoader.loadFeatures(
-					gFeature.gVersion.gServer.URL,
-					gFeature.gVersion.versionName,
-					gFeature.featureName,
-					overlap)) {
+			if (DasFeatureLoader.loadFeatures(gFeature, overlap)) {
 				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
 				return true;
 			}

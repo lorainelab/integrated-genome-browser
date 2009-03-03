@@ -10,25 +10,33 @@
   <body>
     <h1>GenoViz</h1>
     
-    <h2>Tools for Genomics Data Visualization</h2>
+    <h2>Tools for Genomic Data Visualization</h2>
       
     <p>The <a href="http://sourceforge.net/projects/genoviz/">GenoViz project</a> includes three components:</p>
       <ul>
         <li><b>GenoViz SDK</b> (software development kit) is a 
-          library of re-usable components for genomics data visualization.
+          library of re-usable components for genomics data visualization. A newer, experimental version of the toolkit (genoviz_lite) is also available. At the moment, we are not supporting or testing genoviz_lite, but may do so in the near future.
         </li>
 
         <li><b>Genometry</b> is a unified data model to represent relationships
-          between biological sequences.
+          between biological sequences. It is mainly used in the Integrated Genome Browser:
         </li>
 
-        <li><b>Integrated Genome Browser</b> (<b>IGB</b>, pronounced "ig-bee") is an
-          application built upon the GenoViz SDK and Genometry for
-          visualization and exploration of genomes and
-          corresponding annotations from multiple data sources.
-          IGB is also a client for the <a href="http://biodas.org/">DAS</a> (Distributed Annotation System) protocol.
+        <li><b>Integrated Genome Browser</b> (<b>IGB</b>, pronounced "ig-bee") is a desktop
+          application that uses both the GenoViz SDK and Genometry. It supports visualization and
+          exploration of genes, genomes, and genome-scale data sets, especially data from genome tiling arrays. 
+          IGB can display data from <a href="http://biodas.org/">DAS</a> (Distributed Annotation System) servers and
+        local files on your file system.
         </li>
       </ul>
+      <p>To view or obtain source code, visit the Genoviz project pages: <a href="http://sourceforge.net/projects/genoviz/">http://sourceforge.net/projects/genoviz/</a>.</p>
+
+          <p>
+      Please report <a href="http://sourceforge.net/tracker/?atid=714744&amp;group_id=129420&amp;func=browse">bugs</a> 
+      and <a href="http://sourceforge.net/tracker/?atid=714747&amp;group_id=129420&amp;func=browse">feature requests</a>
+      using the <a href="http://sourceforge.net/tracker/?group_id=129420">request tracker</a> provided
+      on the GenoViz project pages.
+    </p>
 
     
     <table>
@@ -36,25 +44,20 @@
         <td valign="top">
           <b>IGB Resources</b>
           <ul>
+            <li><b>Download</b>
+            <p>Visit <a href="http://igb.bioviz.org">igb.bioviz.org</a> to obtain a copy of the Integrated Genome Browser. This site also hosts additional documentation, links to news items and updates, and is currently the most up-to-date source of information about IGB. 
+            <p>Affymetrix provides also hosts an <a href="http://www.affymetrix.com/partners_programs/programs/developer/tools/download_igb.affx">IGB download page</a>. 
+            </p>
+            </li>
             <li><b>Documentation</b>
               <p><a href="http://www.affymetrix.com/support/developer/tools/IGB_User_Guide.pdf">Manual (PDF)</a>
-                <i>Updated Feb. 2007</i> for IGB 4.56<br/>
-            <a href="http://genoviz.sourceforge.net/release_notes/igb_release.html">Release notes (HTML)</a> for version 4.0 and up<br/>
-            <a href="http://sourceforge.net/docman/?group_id=129420">Other documentation</a></p>
+                <i>Updated Feb. 2007</i> for IGB 4.56<br/><br/>
+            <a href="http://genoviz.sourceforge.net/release_notes/igb_release.html">Release notes (HTML)</a> for version 4.0 and up<br/><br/>
+            <a href="http://sourceforge.net/docman/?group_id=129420">Other documentation</a> <i>May be out-of-date!</i></p>
             </li>
-            <li><b>Downloads</b>
-            <p><b>Most Users</b> should Install and 
-            <a href="http://www.affymetrix.com/support/developer/tools/download_igb.affx">Launch IGB</a> using 
-            Java WebStart to ensure the correct version of Java and the current version of IGB are used.
-            Installation and updates will happen automatically if you start IGB with this method.
-            </p>
+
+
             
-            <p><b>Advanced Users</b> may <a href="http://sourceforge.net/project/showfiles.php?group_id=129420">download</a> compiled jar files.</p>
-            
-            <p><b>Developers</b> can <a href="http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx">download</a> 
-               source code after reading the <a href="http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to">terms and conditions</a>.
-            </p>            
-            </li>
           </ul>
         </td>
         <td valign="top">
@@ -72,13 +75,6 @@
       This software is provided <i>as is</i>, with the hope that it will be useful.  Please
       read the notes describing these 
       <a href="http://www.affymetrix.com/support/developer/tools/affytools.affx">terms and conditions</a>.
-    </p>
-    <p>
-      Please report <a href="http://sourceforge.net/tracker/?atid=714744&amp;group_id=129420&amp;func=browse">bugs</a> 
-      and <a href="http://sourceforge.net/tracker/?atid=714747&amp;group_id=129420&amp;func=browse">feature requests</a>
-      using the <a href="http://sourceforge.net/tracker/?group_id=129420">request tracker</a> provided
-      on the GenoViz SourceForge project page: 
-      <a href="http://sourceforge.net/projects/genoviz/"><tt>http://sourceforge.net/projects/genoviz/</tt></a>.
     </p>
     <p>
       For comments, or for requests related to Affymetrix products, you may also use the

@@ -21,48 +21,35 @@ Now let's flesh this out a bit with the help of a few more GenoViz classes.
 In the first few lines,
 we introduce a few methods for setting parameters of the map:
 <pre>
-map.setMapRange(1, 100);
-map.setMapOffset(0, 50);
+map.setMapRange(0, 1000);
+map.setMapOffset(0, 100);
 map.addAxis(10);
 </pre>
-We set
-the horizontal range of the map and the vertical offsets the map will handle.
+<p>We set the horizontal range of the map and the vertical offsets the map will handle.
 Range numbers increase from left to right. Offset numbers increase from
 top to bottom. We also specify that we want an axis drawn near the top
 of the map (offset 10 from the top).
 
 <p>The next thing we do is add a glyph to the map. GenoViz supplies
-a number of glyphs you can use. Here we use a StringGlyph so we can present
-a message. To use a glyph, the map is configured for a particular type
-of glyph. Then a glyph is added at a particular stretch of the map:
+a number of glyphs you can use, and there are several ways to add glyphs to maps.  
+The simplest way is:  
 <pre>
-map.configure(
-         "-offset 25 -color black " +                      
-         "-glyphtype com.affymetrix.genoviz.glyph.StringGlyph -width 9");
-StringGlyph sg = (StringGlyph) map.addItem(45, 54);
-sg.setString("Hello Map");
+map.addItem(300, 500);
 </pre>
-The options to map.configure() are explained on the 
-<a href="SimpleMap.html">next page</a> of the tutorial. You
-could add several glyphs all of the same type to the map in different horizontal
-locations without reconfiguring. Some of the glyphs can take other properties.
-The StringGlyph is one of these. This is why the glyph is returned by the
-addItem method. Here we set a text string for the StringGlyph. A SequenceGlyph
-can have a string of residues set.
-<p>NeoPanel is a heavyweight panel that overrides update() and paint()
-to avoid flicker. It ensures that no background is drawn (except occasionally
-in peers in some JVMs). Lightweight components can thus be placed in a
-NeoBlankPanel to prevent flickering when lightweights are painting. This
-is needed because lightweight painting forces painting of heavyweight (containment)
-ancestors.
+
+<p>The arguments to NeoMap.addItem() are the start and end coordinates of the glyph, specified in the coordinate system that was set by the NeoMap.setMapRange() call.  In this case we are relying on the NeoMap's default glyph settings, which are to use a FillRectGlyph with color set to black and a defaut thickness.<br>
+
+<p>You could add several glyphs all of the same type to the map in different horizontal
+locations without reconfiguring.
+
 <br>&nbsp;
 <p>Here's how it looks running as an Applet.
 <p><applet 
     codebase="../demo"
     archive="genoviz.jar"
         code="genoviz.tutorial.HelloMap"
-        height=150
-        width=300
+        height="150"
+        width="100%"
 ></applet>
 <p>Here's how it looks running as an application.
 <br><img SRC="helloMap.gif" >

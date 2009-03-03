@@ -41,6 +41,9 @@ public class ScoredAnnotAdapter implements NeoDataAdapterI {
 	public ScoredAnnotAdapter() {
 		factory = new MapGlyphFactory();
 	}
+      
+        public MapGlyphFactory getGlyphFactory()  { return factory; }
+
 
 	public void setScene(Scene scene) {
 		this.scene = scene;

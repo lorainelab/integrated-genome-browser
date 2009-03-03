@@ -12,16 +12,10 @@
 */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
-import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -34,20 +28,20 @@ import java.util.regex.Pattern;
 public class QuickLoadServerModel {
   public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
-  static String ENCODE_FILE_NAME = "encodeRegions.bed";
-  static String ENCODE_FILE_NAME2 = "encode.bed";
-	static public String GENOME_SEQ_ID = "genome";
-  static public String ENCODE_REGIONS_ID = "encode_regions";
-	static public boolean build_virtual_genome = true;
-  static public boolean build_virtual_encode = true;
+  //static String ENCODE_FILE_NAME = "encodeRegions.bed";
+  //static String ENCODE_FILE_NAME2 = "encode.bed";
+	//static public String GENOME_SEQ_ID = "genome";
+  //static public String ENCODE_REGIONS_ID = "encode_regions";
+	//static public boolean build_virtual_genome = true;
+  //static public boolean build_virtual_encode = true;
 
-  static boolean CACHE_RESIDUES_DEFAULT = false;
+  static boolean CACHE_RESIDUES_DEFAULT = true;
   static boolean CACHE_ANNOTS_DEFAULT = true;
   private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
   SingletonGenometryModel gmodel;
 
-  static Pattern tab_regex = Pattern.compile("\t");
+  private static final Pattern tab_regex = Pattern.compile("\t");
 
   String root_url;
   List<String> genome_names = new ArrayList<String>();
@@ -58,16 +52,18 @@ public class QuickLoadServerModel {
   // A map from String genome name to a List of filenames on the server for that group
   Map<String,List<String>> genome2file_names = new HashMap<String,List<String>>();
 
+	private static final boolean allow_reinitialization = false;
+
   /**
    *  Map of AnnotatedSeqGroup to a load state map.
    *  Each load state map is a map of an annotation type name to Boolean for
    *  whether it has already been loaded or not
    */
-  static Map<AnnotatedSeqGroup,Map<String,Boolean>> group2states = new HashMap<AnnotatedSeqGroup,Map<String,Boolean>>();
+  //static Map<AnnotatedSeqGroup,Map<String,Boolean>> group2states = new HashMap<AnnotatedSeqGroup,Map<String,Boolean>>();
 
   
   public void clear() {
-    group2states.clear();
+    //group2states.clear();
     genome_names.clear();
     group2name.clear();
     genome2init.clear();
@@ -103,18 +99,18 @@ public class QuickLoadServerModel {
     return ql_server;
   }
 
-  public static boolean getCacheResidues() {
+  /*public static boolean getCacheResidues() {
     return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_RESIDUES, CACHE_RESIDUES_DEFAULT);
-  }
+  }*/
 
-  public static boolean getCacheAnnots() {
+  private static boolean getCacheAnnots() {
     return UnibrowPrefsUtil.getBooleanParam(PREF_QUICKLOAD_CACHE_ANNOTS, CACHE_ANNOTS_DEFAULT);
   }
 
-  public String getRootUrl() { return root_url; }
+  private String getRootUrl() { return root_url; }
   public List<String> getGenomeNames() { return genome_names; }
   //public Map getSeqGroups() { return group2name; }
-  public AnnotatedSeqGroup getSeqGroup(String genome_name) {
+  private AnnotatedSeqGroup getSeqGroup(String genome_name) {
 	  return gmodel.addSeqGroup(LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genome_name));
   }
 
@@ -126,13 +122,13 @@ public class QuickLoadServerModel {
     return LOOKUP.findMatchingSynonym(genome_names, group2name.get(group));
   }
 
-  public static String stripFilenameExtensions(String name) {
+  /*public static String stripFilenameExtensions(String name) {
     String new_name = name;
     if (name.indexOf('.') > 0) {
       new_name = name.substring(0, name.lastIndexOf('.'));
     }
     return new_name;
-  }
+  }*/
 
   /**
    *  Returns the list of String filenames that this QuickLoad server has
@@ -149,28 +145,29 @@ public class QuickLoadServerModel {
   }
 
   /** Returns Map of annotation type name to Boolean, true iff annotation type is already loaded */
-  public static Map<String,Boolean> getLoadStates(AnnotatedSeqGroup group) {
+ /* public static Map<String,Boolean> getLoadStates(AnnotatedSeqGroup group) {
     return group2states.get(group);
-  }
+  }*/
 
-  public static boolean getLoadState(AnnotatedSeqGroup group, String file_name) {
+  /*public static boolean getLoadState(AnnotatedSeqGroup group, String file_name) {
     Map load_states = getLoadStates(group);
-    if (load_states == null) { return false; /* shouldn't happen */}
+    if (load_states == null) { return false; // shouldn't happen /
+	 }
     Boolean boo = (Boolean)load_states.get(stripFilenameExtensions(file_name));
     if (boo == null) { return false; }
     else { return boo.booleanValue(); }
-  }
+  }*/
 
-  public static void setLoadState(AnnotatedSeqGroup group, String file_name, boolean loaded) {
+  /*public static void setLoadState(AnnotatedSeqGroup group, String file_name, boolean loaded) {
     Map<String,Boolean> load_states = group2states.get(group);
     if (load_states == null) {
       load_states = new LinkedHashMap<String,Boolean>();
       group2states.put(group, load_states);
     }
     load_states.put(stripFilenameExtensions(file_name), Boolean.valueOf(loaded));
-  }
+  }*/
 
-  public boolean allow_reinitialization = false;
+
   
   public void initGenome(String genome_name) {
     if (genome_name == null) { return; }
@@ -180,9 +177,9 @@ public class QuickLoadServerModel {
       boolean seq_init = loadSeqInfo(genome_name);
       boolean annot_init = loadAnnotationNames(genome_name);
       if (seq_init && annot_init) {
-	genome2init.put(genome_name, Boolean.TRUE);
+				genome2init.put(genome_name, Boolean.TRUE);
       }
-      List file_names = (List) genome2file_names.get(genome_name);
+      List<String> file_names = genome2file_names.get(genome_name);
       if (file_names != null) {
         file_names.clear();
       }
@@ -190,10 +187,10 @@ public class QuickLoadServerModel {
   }
 
   /** Returns true if the given genome has already been initialized via initGenome(String). */
-  public boolean isInitialized(String genome_name) {
+  /*public boolean isInitialized(String genome_name) {
     Boolean b = genome2init.get(genome_name);
     return (Boolean.TRUE.equals(b));
-  }
+  }*/
   
   /**
    *  Determines the list of annotation files available in the genome directory.
@@ -235,11 +232,11 @@ public class QuickLoadServerModel {
 						continue;
 					}
 					file_names.add(annot_file_name);
-					if (build_virtual_encode &&
+					/*if (build_virtual_encode &&
 									(annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME) || annot_file_name.equalsIgnoreCase(ENCODE_FILE_NAME2)) &&
 									(group.getSeq(ENCODE_REGIONS_ID) == null)) {
 						addEncodeVirtualSeq(group, (genome_root + annot_file_name));
-					}
+					}*/
 				}
 			}
 			return true;
@@ -257,7 +254,7 @@ public class QuickLoadServerModel {
    *  using negative start coord for virtual genome seq because (at least for human genome)
    *     whole genome start/end/length can't be represented with positive 4-byte ints (limit is +/- 2.1 billion)
    */
-  double default_genome_min = -2100200300;
+ /* double default_genome_min = -2100200300;
   boolean DEBUG_VIRTUAL_GENOME = false;
   public void addGenomeVirtualSeq(AnnotatedSeqGroup group) {
     int seq_count = group.getSeqCount();
@@ -308,13 +305,13 @@ public class QuickLoadServerModel {
       }  // end loop through group's seqs
     }
   }
-
+*/
   /**
    *  addEncodeVirtualSeq.
    *  adds virtual CompositeBioSeq which is composed from all the ENCODE regions.
    *  assumes urlpath resolves to bed file for ENCODE regions
    */
-  public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, String urlpath)  {
+  /*public void addEncodeVirtualSeq(AnnotatedSeqGroup seq_group, String urlpath)  {
     Application.getApplicationLogger().fine("$$$$$ adding virtual encode seq to seq group");
     // assume it's a bed file...
     BedParser parser = new BedParser();
@@ -349,7 +346,7 @@ public class QuickLoadServerModel {
     }
     catch (Exception ex) {  ex.printStackTrace(); }
     return;
-  }
+  }*/
 
 
   public boolean loadSeqInfo(String genome_name) {
@@ -364,7 +361,6 @@ public class QuickLoadServerModel {
 
       Application.getApplicationLogger().fine("lift URL: " + genome_root + "liftAll.lft");
       String lift_path = genome_root + "liftAll.lft";
-      String cinfo_path = genome_root + "mod_chromInfo.txt";
       try {
         lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots());
       }
@@ -374,6 +370,7 @@ public class QuickLoadServerModel {
       }
       if (lift_stream == null) {
         try {
+					String cinfo_path = genome_root + "mod_chromInfo.txt";
           cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path,  getCacheAnnots());
         }
         catch (Exception ex) {
@@ -384,25 +381,25 @@ public class QuickLoadServerModel {
 
       boolean annot_contigs = false;
       if (lift_stream != null) {
-        LiftParser lift_loader = new LiftParser();
-        group = lift_loader.parse(lift_stream, gmodel, genome_name, annot_contigs);
+        //LiftParser lift_loader = new LiftParser();
+        group = LiftParser.parse(lift_stream, gmodel, genome_name, annot_contigs);
         success = true;
       }
       else if (cinfo_stream != null) {
-        ChromInfoParser chrominfo_loader = new ChromInfoParser();
-        group = chrominfo_loader.parse(cinfo_stream, gmodel, genome_name);
+        //ChromInfoParser chrominfo_loader = new ChromInfoParser();
+        group = ChromInfoParser.parse(cinfo_stream, gmodel, genome_name);
         success = true;
       }
       Application.getApplicationLogger().fine("group: " + (group == null ? null : group.getID()) + ", " + group);
       //      gmodel.setSelectedSeqGroup(group);
-      if (build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
+     // if (build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error loading data for genome '"+ genome_name +"'", ex);
     }
     finally {
-      if (lift_stream != null)  try { lift_stream.close(); } catch (Exception e) {}
-      if (cinfo_stream != null) try { cinfo_stream.close(); } catch (Exception e) {}
+			GeneralUtils.safeClose(lift_stream);
+			GeneralUtils.safeClose(cinfo_stream);
     }
     return success;
   }
@@ -410,8 +407,10 @@ public class QuickLoadServerModel {
 
   public List<String> loadGenomeNames() {
     ArrayList<String> glist = null;
+		InputStream istr = null;
+		InputStreamReader ireader = null;
+		BufferedReader br = null;
     try {
-      InputStream istr = null;
       try {
         istr = LocalUrlCacher.getInputStream(root_url + "contents.txt", getCacheAnnots());
       } catch (Exception e) {
@@ -422,8 +421,8 @@ public class QuickLoadServerModel {
         System.out.println("Could not load QuickLoad contents from\n" + root_url + "contents.txt");
         return Collections.<String>emptyList();
       }
-      InputStreamReader ireader = new InputStreamReader(istr);
-      BufferedReader br = new BufferedReader(ireader);
+      ireader = new InputStreamReader(istr);
+      br = new BufferedReader(ireader);
       String line;
       glist = new ArrayList<String>();
       while ((line = br.readLine()) != null) {
@@ -442,17 +441,19 @@ public class QuickLoadServerModel {
           group.setDescription(fields[1]);
         }
       }
-      istr.close();
-      ireader.close();
-      br.close();
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error loading genome names", ex);
     }
+		finally {
+			GeneralUtils.safeClose(istr);
+			GeneralUtils.safeClose(ireader);
+			GeneralUtils.safeClose(br);
+		}
     return glist;
   }
 
-  public void loadAnnotations(AnnotatedSeqGroup current_group, String filename) {
+ /* public void loadAnnotations(AnnotatedSeqGroup current_group, String filename) {
     boolean loaded = getLoadState(current_group, filename);
     if (loaded) {
       Application.getApplicationLogger().fine("already loaded: " + filename);
@@ -494,7 +495,7 @@ public class QuickLoadServerModel {
       }
     }
   }
-
+*/
     @Override
   public String toString() {
     return "QuickLoadServerModel: url='" + getRootUrl() + "'";

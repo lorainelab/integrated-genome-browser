@@ -32,7 +32,6 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 
 /*
  * Desired optimizations:
@@ -77,11 +76,12 @@ public class Das2ClientOptimizer {
     static boolean SEPARATE_SEGMENT_FILTER = false;
     static String default_format = "das2feature";
     
-
+		private static final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
+		private static final boolean default_show_das_query_genometry = false;
     static {
         SHOW_DAS_QUERY_GENOMETRY =
-                UnibrowPrefsUtil.getTopNode().getBoolean(DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY,
-                DasFeaturesAction2.default_show_das_query_genometry);
+                UnibrowPrefsUtil.getTopNode().getBoolean(PREF_SHOW_DAS_QUERY_GENOMETRY,
+                default_show_das_query_genometry);
     }
 
     // input is a single Das2FeatureRequestSym

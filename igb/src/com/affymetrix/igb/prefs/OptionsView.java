@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.affymetrix.igb.menuitem.DasFeaturesAction2;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
@@ -78,8 +77,11 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
 						 IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2) );
     */
 
+		final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
+		final boolean default_show_das_query_genometry = false;
+
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
-      DasFeaturesAction2.PREF_SHOW_DAS_QUERY_GENOMETRY, DasFeaturesAction2.default_show_das_query_genometry));
+      PREF_SHOW_DAS_QUERY_GENOMETRY, default_show_das_query_genometry));
     misc_box.add(clear_prefsB);
     clear_prefsB.addActionListener(this);
 

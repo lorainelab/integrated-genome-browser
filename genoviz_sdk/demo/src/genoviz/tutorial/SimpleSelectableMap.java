@@ -29,7 +29,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-public class SimpleSelectableMap extends SimpleMap0
+public class SimpleSelectableMap extends GlyphTestMap  
 	implements NeoRubberBandListener {
 
 	protected boolean isApplet = true;
@@ -109,7 +109,7 @@ public class SimpleSelectableMap extends SimpleMap0
 				System.exit( 0 );
 			}
 		} );
-		me.addFileMenuItems(f);
+		// me.addFileMenuItems(f);
 		f.pack();
 		f.setBounds(20, 40, 400, 500);
 		f.show();

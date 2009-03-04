@@ -16,33 +16,36 @@
         The other widgets are made up of NeoMaps
         specialized for a particular problem.
         Let's build as short a program as we can
-        with a NeoMap.
+        with a NeoMap.  We will use the Swing toolkit for basic GUI
+        functionality -- although GenoViz widgets can also work
+        with other Java GUI toolkits such as AWT or SWT, Swing is 
+        the most common in use today.
 </p>
 
 <pre>
-package tutorial.genoviz;
+package genoviz.tutorial;
 
 import com.affymetrix.genoviz.widget.NeoMap;
-import java.awt.Frame;
+import javax.swing.JFrame;
 
-public class HelloMap {
+public class Hello {
 
   public static void main (String argv[]) {
-    NeoMap m = new NeoMap();
-    Frame f = new Frame( "HelloMap" );
-    f.add("Center", m);
-    f.setBounds(20, 40, 300, 100);
-    f.setVisible(true);
+    NeoMap map = new NeoMap();
+    JFrame frm = new JFrame( "Hello" );
+    frm.getContentPane().add("Center", map);
+    frm.setBounds(20, 40, 300, 100);
+    frm.setVisible(true);
   }
 
 }
 </pre>
 
-<p>        When you run this program
+<p>     When you run this program
         you should see something
         like what you see below.
         The map is empty,
-        but the nice pale blue color and the scroll bars let us know
+        but the nice pale blue color lets us know
         that it is there.
         Pale blue is the default background color
         for a NeoMap.
@@ -54,12 +57,10 @@ public class HelloMap {
 <ol>
 <li>        Change the background color of the map with a call
                 to the NeoMap's setMapColor() method.
-<li>        Create a window listener for the frame
-                and call System.exit() when the window is closed.
 </ol>
 
 <h2>        Next: <a href="HelloAgain.html">Hello Again</a>
-        - Adding a Glyph
+        - Adding Glyphs, Setting Coordinates
 </h2>
 
 </body>

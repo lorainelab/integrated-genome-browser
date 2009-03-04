@@ -29,7 +29,7 @@ public class MapGlyphFactory implements NeoConstants  {
 	protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 	protected String name;
 	protected Scene scene;
-	protected Color color, default_color, foreground_color, default_foreground;
+	protected Color background_color, default_background, foreground_color,  default_foreground;
 	protected double offset, default_offset, width, default_width;
 	protected boolean mirror, default_mirror;
 
@@ -68,7 +68,7 @@ public class MapGlyphFactory implements NeoConstants  {
 		orient = orientation;
 		GlyphI tempglyph = new FillRectGlyph();
 		glyphtype = default_glyphtype = tempglyph.getClass();
-		color = default_color = Color.black;
+		background_color = default_background = Color.black;
 		foreground_color = default_foreground = Color.white;
 		width = default_width = 5;
 		mirror = default_mirror = true;
@@ -106,12 +106,12 @@ public class MapGlyphFactory implements NeoConstants  {
 	 * </table>
 	 * <p> Valid options are
 	 * <table>
-	 * <tr><td><code>-color</td><td><var>String</var></td>
-	 * <td>a color name like "red" or "nicePaleBlue"</td></tr>
+	 * <tr><td><code>-background_color</td><td><var>String</var></td>
+	 * <td>a background_color name like "red" or "nicePaleBlue"</td></tr>
 	 * <tr><td><code>-background</td><td><var>String</var></td>
-	 * <td>same as "color"</td></tr>
+	 * <td>same as "background_color"</td></tr>
 	 * <tr><td><code>-foreground</td><td><var>String</var></td>
-	 * <td>a color name like "red" or "nicePaleBlue"</td></tr>
+	 * <td>a background_color name like "red" or "nicePaleBlue"</td></tr>
 	 * <tr><td><code>-glyphtype </td><td><var>String</var></td>
 	 * <td>the name of a class implementing GlyphI</td></tr>
 	 * <tr><td><code>-mirror</td><td><var>boolean</var></td>
@@ -125,7 +125,7 @@ public class MapGlyphFactory implements NeoConstants  {
 	 */
 	public void configure(Hashtable<String,Object> options) {
 		configureTemp(options);
-		default_color = color;
+		default_background = background_color;
 		default_width = width;
 		default_offset = offset;
 		default_glyphtype = glyphtype;
@@ -135,9 +135,9 @@ public class MapGlyphFactory implements NeoConstants  {
 	}
 
 	/**
-	 * adds a named color to the GenoViz color map.
+	 * adds a named background_color to the GenoViz background_color map.
 	 *
-	 * @param name of the color
+	 * @param name of the background_color
 	 * @param col the Color
 	 */
 	static void addColor(String name, Color col) {
@@ -145,20 +145,20 @@ public class MapGlyphFactory implements NeoConstants  {
 	}
 
 	public Color getColor() {
-		return this.color;
+		return this.background_color;
 	}
 
-	public Color getBackgroundColor () { return this.color; }
+	public Color getBackgroundColor () { return this.background_color; }
 
 	public Color getForegroundColor () { return this.foreground_color; }
 
 	protected void setTempColor(Color color) {
-		this.color = color;
+		this.background_color = color;
 	}
 
 	public void setColor(Color color) {
 		setTempColor(color);
-		this.default_color = color;
+		this.default_background = color;
 	}
 
 	protected void setTempForegroundColor ( Color color ) {
@@ -240,7 +240,7 @@ public class MapGlyphFactory implements NeoConstants  {
 		String tempstr;
 		int tempint;
 
-		// checking for new color and setting if present
+		// checking for new background_color and setting if present
 		tempobj = options.get("-color");
 		if (tempobj != null) {
 			if (tempobj instanceof Color) {
@@ -433,7 +433,7 @@ public class MapGlyphFactory implements NeoConstants  {
 				item.setCoords(beg, actual_offset, end-beg, actual_width);
 			}
 
-			item.setBackgroundColor(color);
+			item.setBackgroundColor(background_color);
 			item.setForegroundColor(foreground_color);
 
 			if (packer != null) {
@@ -490,7 +490,7 @@ public class MapGlyphFactory implements NeoConstants  {
 		GlyphI gl = makeGlyph(beg, end);
 
 		// restore configure fields to their previous values
-		color = default_color;
+		background_color = default_background;
 		foreground_color = default_foreground;
 		width = default_width;
 		offset = default_offset;
@@ -539,7 +539,7 @@ public class MapGlyphFactory implements NeoConstants  {
 		GlyphI gl = makeItem(beg, end);
 
 		// restore configure fields to their previous values
-		color = default_color;
+		background_color = default_background;
 		foreground_color = default_foreground;
 		width = default_width;
 		offset = default_offset;

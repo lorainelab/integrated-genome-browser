@@ -63,10 +63,10 @@ public class SequenceMap1 extends SequenceMap0 implements NeoRangeListener {
 	}
 
 	public static void main (String argv[]) {
-		SimpleMap0 me = new SequenceMap1();
+		SequenceMap1 me = new SequenceMap1();
 		Frame f = new Frame("GenoViz");
 		f.add("Center", me);
-		me.addFileMenuItems(f);
+		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
 			public void windowClosing( WindowEvent e ) {

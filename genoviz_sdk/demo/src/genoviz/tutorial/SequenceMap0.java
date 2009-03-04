@@ -41,7 +41,8 @@ public class SequenceMap0 extends SimpleMap4 {
 		return "Simple Sequence Map - genoviz Software, Inc.";
 	}
 
-	protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
+	/*
+       protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
 		throws IOException
 	{
 		int token = theTokens.nextToken();
@@ -94,6 +95,7 @@ public class SequenceMap0 extends SimpleMap4 {
 			}
 		}
 	}
+       */
 
 	public void start() {
 		super.start();
@@ -122,10 +124,10 @@ public class SequenceMap0 extends SimpleMap4 {
 	}
 
 	public static void main (String argv[]) {
-		SimpleMap0 me = new SequenceMap0();
+		SequenceMap0 me = new SequenceMap0();
 		Frame f = new Frame("GenoViz");
 		f.add("Center", me);
-		me.addFileMenuItems(f);
+		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
 			public void windowClosing( WindowEvent e ) {

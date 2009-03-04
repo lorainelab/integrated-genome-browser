@@ -13,29 +13,35 @@
 
 package genoviz.tutorial;
 
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.JScrollBar;
 
-public class SimpleMap3 extends SimpleMap2 {
+public class SimpleMap3 extends SimpleMap1 {
 
-	Adjustable zoomer, scroller;
+	AdjustableJSlider zoomer;
+      JScrollBar scroller;
 
 	public SimpleMap3() {
-		zoomer = new NeoScrollbar(NeoScrollbar.VERTICAL);
-		add("West", (Component)zoomer);
+		zoomer = new AdjustableJSlider(JScrollBar.VERTICAL);
+            zoomer.setBackground(Color.green);
+            zoomer.setForeground(Color.red);
+		add("West", zoomer);
 		map.setRangeZoomer(zoomer);
-		scroller = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-		add("South", (Component)scroller);
+		scroller = new JScrollBar(JScrollBar.HORIZONTAL);
+		add("South", scroller);
 		map.setRangeScroller(scroller);
+		map.setMapColor(Color.green);
 	}
 
 	public static void main (String argv[]) {
-		SimpleMap0 me = new SimpleMap3();
+		SimpleMap3 me = new SimpleMap3();
 		Frame f = new Frame("GenoViz");
 		f.add(me, BorderLayout.CENTER);
-		me.addFileMenuItems(f);
+		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
 			public void windowClosing( WindowEvent e ) {

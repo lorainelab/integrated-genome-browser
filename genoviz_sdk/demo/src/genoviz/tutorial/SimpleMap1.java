@@ -13,131 +13,80 @@
 
 package genoviz.tutorial;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.datamodel.Range;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.glyph.LabelGlyph;
 
-import java.awt.Frame;
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import com.affymetrix.genoviz.glyph.StringGlyph;
+import java.awt.Color;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.io.Reader;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
-public class SimpleMap1 extends SimpleMap0 {
+public class SimpleMap1 extends GlyphTestMap {
 
-	Hashtable positions = new Hashtable();
-
-	public SimpleMap1() {
-		positions.put("left", new Integer(LabelGlyph.LEFT));
-		positions.put("right", new Integer(LabelGlyph.RIGHT));
-		positions.put("above", new Integer(LabelGlyph.ABOVE));
-		positions.put("below", new Integer(LabelGlyph.BELOW));
+  protected void parseInput(Reader input)  {
+    String line;
+    MapGlyphFactory fac = map.getFactory();
+    try  {
+      BufferedReader binput = new BufferedReader(input);
+      while ((line = binput.readLine()) != null)  {
+	String[] fields = line.split("\\s+");
+	if (fields.length >= 3)  {
+	  String type = fields[0];
+	  int start = Integer.parseInt(fields[1]);
+	  int end = Integer.parseInt(fields[2]);
+	  if (type.equals("foo"))  { 
+	    fac.setGlyphtype(com.affymetrix.genoviz.glyph.FillRectGlyph.class);
+	    fac.setBackgroundColor(Color.blue);
+	  }
+	  else if (type.equals("bar"))  {
+	    fac.setGlyphtype(com.affymetrix.genoviz.glyph.OutlineRectGlyph.class);
+	    fac.setForegroundColor(Color.red);
+	    fac.setBackgroundColor(Color.green);
+	  }
+	  else if (type.equals("baz"))  {
+	    fac.setGlyphtype(com.affymetrix.genoviz.glyph.ArrowGlyph.class);
+	    fac.setBackgroundColor(Color.green);
+	  }
+	  else {
+	    fac.setGlyphtype(com.affymetrix.genoviz.glyph.FillRectGlyph.class);
+	    fac.setBackgroundColor(Color.black);
+	  }
+	  GlyphI glyph_to_label = map.addItem(start, end);
+	  // fac.setGlyphtype(com.affymetrix.genoviz.glyph.LabelGlyph.class);
+	  //	  LabelGlyph label = (LabelGlyph)map.addItem(0,0);
+	  StringGlyph label = new StringGlyph();
+	  label.setString(type);
+	  label.setForegroundColor(Color.red);
+	  label.setBackgroundColor(Color.gray);
+//	  label.setLabelledGlyph(glyph_to_label);
+//	  label.setPlacement(LabelGlyph.BELOW);
+	  map.addItem(label);
 	}
+      }
+      map.repack();
+      map.updateWidget();
+    }
+    catch (IOException ex)  {
+      System.err.println("problem with parsing input, possibly syntax error?");
+      ex.printStackTrace();
+    }
+  } 
 
-	protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
-		throws IOException
-	{
-		int token = theTokens.nextToken();
-		if (StreamTokenizer.TT_WORD == token) { // We have the keyword.
-			String keyword = theTokens.sval;
-			if (keyword.equalsIgnoreCase("range")) {
-				Range r = null;
-				r = parseRange(theTokens);
-				this.map.setMapRange(r.beg, r.end);
-			}
-			else if (keyword.equalsIgnoreCase("offsets")) {
-				Range r = null;
-				r = parseRange(theTokens);
-				this.map.setMapOffset(r.beg, r.end);
-			}
-			else if (keyword.equalsIgnoreCase("glyph")) {
-				int[] r = null;
-				r = parseDirectedRange(theTokens);
-				String configuration = parseString(theTokens);
-				this.map.configure(configuration);
-				Object item = this.map.addItem(r[0], r[1]);
-				if (parseLabel(theTokens, item)) {
-					this.map.configure(configuration); // Reconfigure because of label.
-				}
-			}
-			else { // not a keyword.
-				System.err.println("\"" + keyword + "\" is not a keyword.");
-				return;
-			}
-		}
-	}
 
-	private boolean parseLabel(StreamTokenizer theTokens, Object theLabeledGlyph)
-		throws IOException
-	{
-		int token = theTokens.nextToken();
-		switch (token) {
-			default:
-			case StreamTokenizer.TT_EOL:
-				theTokens.pushBack();
-				return false;
-			case StreamTokenizer.TT_WORD:
-				if (theTokens.sval.equalsIgnoreCase("labeled")) {
-					int location = LabelGlyph.LEFT;
-					token = theTokens.nextToken();
-					switch (token) {
-						default:
-							theTokens.pushBack();
-							return false;
-						case '"':
-							theTokens.pushBack();
-							break;
-						case StreamTokenizer.TT_WORD:
-							Object p = positions.get(theTokens.sval.toLowerCase());
-							if (null == p) {
-								theTokens.pushBack();
-							}
-							else {
-								location = ((Integer)p).intValue();
-							}
-							break;
-					}
-					String labelText = parseString(theTokens);
-					this.map.configure("-glyphtype com.affymetrix.genoviz.glyph.LabelGlyph");
-					LabelGlyph label = (LabelGlyph)this.map.addItem(0, 0);
-					label.setText(labelText);
-					label.setLabeledGlyph((Glyph)theLabeledGlyph);
-					label.setPlacement(location);
-				}
-				else {
-					System.err.println("expected \"labeled\". Got \""
-							+ theTokens.sval + "\".");
-					theTokens.pushBack();
-					return false;
-				}
-				break;
-		}
-		return true;
-	}
+  public static void main (String argv[]) {
+    SimpleMap1 me = new SimpleMap1();
+    JFrame frm = new JFrame("GenoViz SimpleMap Tutorial");
+    frm.add("Center", me);
+    frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//    me.addFileMenuItems(frm);
+    frm.pack();
+    frm.setBounds( 20, 40, 400, 500 );
+    frm.setVisible(true);
+  }
 
-	public static void main (String argv[]) {
-		SimpleMap0 me = new SimpleMap1();
-		Frame f = new Frame("GenoViz");
-		f.add("Center", me);
-		me.addFileMenuItems(f);
-
-		f.addWindowListener( new WindowAdapter() {
-			public void windowClosing( WindowEvent e ) {
-				Window w = (Window) e.getSource();
-				w.dispose();
-			}
-			public void windowClosed( WindowEvent e ) {
-				System.exit( 0 );
-			}
-		} );
-
-		f.pack();
-		f.setBounds(20, 40, 400, 500);
-		f.show();
-	}
-
+ 
 }

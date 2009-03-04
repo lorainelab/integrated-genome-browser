@@ -29,7 +29,8 @@ public class SimpleMap4 extends SimpleMap3 {
 
 	protected Hashtable featureTypes = new Hashtable();
 
-	protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
+	/*
+       protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
 		throws IOException
 	{
 		int token = theTokens.nextToken();
@@ -71,6 +72,7 @@ public class SimpleMap4 extends SimpleMap3 {
 			}
 		}
 	}
+       */
 
 	protected void parseFeatureType(StreamTokenizer theTokens)
 		throws IOException
@@ -97,10 +99,10 @@ public class SimpleMap4 extends SimpleMap3 {
 	}
 
 	public static void main (String argv[]) {
-		SimpleMap0 me = new SimpleMap4();
+		SimpleMap4 me = new SimpleMap4();
 		Frame f = new Frame("GenoViz");
 		f.add("Center", me);
-		me.addFileMenuItems(f);
+		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
 			public void windowClosing( WindowEvent e ) {

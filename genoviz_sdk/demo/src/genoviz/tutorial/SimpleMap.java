@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.datamodel.Range;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Event;
 import java.awt.FileDialog;
@@ -40,17 +41,22 @@ import java.io.StreamTokenizer;
 import java.io.StringReader;
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.swing.JApplet;
 
-public class SimpleMap extends Applet implements ActionListener {
+public class SimpleMap extends JApplet implements ActionListener {
 
 	protected NeoMap map = new NeoMap();
 
 	public SimpleMap () {
-		map.setMapRange(1, 100);
-		map.setMapOffset(-50, 50);
+		map.setMapRange(0, 1000);
+		map.setMapOffset(-100, 100);
 		map.addAxis(0);
-		setLayout(new BorderLayout());
-		add("Center", map);
+            map.setMapColor(Color.yellow);
+//		setLayout(new BorderLayout());
+//		add("Center", map);
+            Container cpane = this.getContentPane();
+            cpane.setLayout(new BorderLayout());
+            cpane.add("Center", map);
 	}
 
 	public String getAppletInfo() {

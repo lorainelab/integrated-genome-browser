@@ -27,7 +27,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
  * invisible container for other child glyphs.
  */
 public abstract class Glyph implements GlyphI  {
-	public boolean DEBUG_DRAW = false;
+    public boolean DEBUG_DRAW = false;
 	public static final int DRAW_SELF_FIRST = 0;
 	public static final int DRAW_CHILDREN_FIRST = 1;
 
@@ -151,7 +151,7 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public void draw(ViewI view)  {
-		if (debug) {
+		if (DEBUG_DRAW) {
 			Graphics g = view.getGraphics();
 			g.setColor(Color.red);
 			view.transformToPixels(coordbox, pixelbox);

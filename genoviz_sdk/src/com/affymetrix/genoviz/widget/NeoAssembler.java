@@ -26,6 +26,8 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.widget.neoassembler.*;
+import javax.swing.JScrollBar;
+import javax.swing.JSlider;
 
 /**
  * NeoAssembler is an <strong>implementation</strong>
@@ -65,6 +67,8 @@ public class NeoAssembler extends NeoContainerWidget
 	public static int FIXED_COLOR = AlignedResiduesGlyph.FIXED_COLOR;
 	public static int NONE = AlignedResiduesGlyph.NONE;
 	public static int CALCULATED = AlignedResiduesGlyph.CALCULATED;
+        public static boolean use_neo_scroll = false;
+        public static boolean use_neo_zoom = false;
 
 	protected int font_color_strategy = FIXED_COLOR;
 	protected int rect_color_strategy = ALIGNMENT_BASED;
@@ -77,7 +81,7 @@ public class NeoAssembler extends NeoContainerWidget
 	protected boolean show_axis = true;
 	protected boolean apply_color_retro = true;
 	protected boolean colors_affect_cons = true;
-	protected boolean internal_zoomer = true;
+        protected boolean internal_zoomer = true;
 	protected boolean fontControlsMaxZoom = true;
 	protected boolean fontControlsGlyphHeight = true;
 	protected String consensus_name = null;
@@ -108,7 +112,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	// locations for scrollbars, consensus, and labels
 	protected int vscroll_loc, hscroll_loc, cons_loc, label_loc;
-	protected int scroll_size, cons_height, label_width;
+        protected int scroll_size, zoom_size, cons_height, label_width;
 	protected int align_offset, align_glyph_height, align_offset_scale, label_font_height;
 	protected int align_coord_spacing, align_pixel_spacing, align_spacing;
 	protected int label_string_inset = 2;
@@ -157,7 +161,8 @@ public class NeoAssembler extends NeoContainerWidget
 	protected Color unaligned_rect_color = new Color(220, 220, 220);
 	protected Color background_col = Color.lightGray;
 
-	protected Font label_font = new Font("Helvetica", Font.BOLD, 12);
+    //    protected Font label_font = new Font("Helvetica", Font.BOLD, 12);
+    protected Font label_font = new Font("Courier", Font.BOLD, 12);
 	protected Font residue_font = new Font("Courier", Font.BOLD, 12);
 
 	// toggle for automatically applying new color settings
@@ -236,6 +241,7 @@ public class NeoAssembler extends NeoContainerWidget
 		cons_loc = PLACEMENT_TOP;
 		label_loc = PLACEMENT_LEFT;
 		scroll_size = 16;
+		zoom_size = 20;
 		cons_height = 40;
 		label_width = 100;
 		align_offset = 0;
@@ -269,17 +275,28 @@ public class NeoAssembler extends NeoContainerWidget
 		addWidget(consmap);
 		addWidget(conslabelmap);
 
-		hscroll = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-		vscroll = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		if (use_neo_scroll)  {
+		    hscroll = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+		    vscroll = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		}
+		else  {
+		    hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
+		    vscroll = new JScrollBar(JScrollBar.VERTICAL);
+		}
 		if (internal_zoomer)  {
+		    if (use_neo_zoom)  {
 			hzoom = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+		    }
+		    else  {
+			hzoom = new AdjustableJSlider(JSlider.HORIZONTAL);
+		    }
 		}
 
 		setBackground(default_panel_background);
 
 		alignmap.setMapColor(default_map_background);
 		consmap.setMapColor(default_map_background);
-		labelmap.setMapColor(Color.red); //tss default_label_background);
+		labelmap.setMapColor(Color.lightGray); //tss default_label_background);
 		conslabelmap.setMapColor(default_label_background);
 
 		this.setLayout(null);
@@ -914,6 +931,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 *                         PLACEMENT_LEFT, or PLACEMENT_RIGHT.
 	 */
 	public void configureLayout(int component, int placement) {
+	    //	    System.out.println("in NeoAssembler.configureLayout()");
 		if (component == AXIS_SCROLLER) {
 			hscroll_loc = placement;
 		}
@@ -988,6 +1006,7 @@ public class NeoAssembler extends NeoContainerWidget
 		// alignment map ybeg = label map ybeg = vertical scroll ybeg
 		// alignment map xbeg = consensus map xbeg = horizontal scroll xbeg
 
+	    //	    System.out.println("in old NeoAssembler.doLayout()");
 		LinearTransform trans = (LinearTransform)alignmap.getView().getTransform();
 		Dimension dim = this.getSize();
 		int cons_y=0, label_x=0;
@@ -1066,14 +1085,13 @@ public class NeoAssembler extends NeoContainerWidget
 		((Component)vscroll).setSize(scroll_size, align_height);
 
 		if (internal_zoomer) {
-			((Component)hzoom).setBounds(corner_x, corner_y,
-				corner_width, scroll_size);
-			((Component)hzoom).setSize(corner_width, scroll_size);
+		    ((Component)hzoom).setBounds(corner_x, corner_y,
+						 corner_width, zoom_size);
+		    ((Component)hzoom).setSize(corner_width, zoom_size);
 		}
-
 		conslabelmap.setBounds(corner_x,
-				corner_y + corner_height - scroll_size,
-				corner_width, scroll_size);
+				corner_y + corner_height - zoom_size,
+				corner_width, zoom_size);
 
 		// scale perpendicular to axis is always 1
 		try {

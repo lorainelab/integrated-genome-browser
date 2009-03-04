@@ -82,7 +82,8 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		if ( null != str ) {
 			text_width = fm.stringWidth(str);
 		}
-		int text_height = fm.getAscent() + fm.getDescent();
+		// int text_height = fm.getAscent() + fm.getDescent();
+		int text_height = fm.getAscent();
 		int blank_width = fm.charWidth ('z')*2;
 
 		Rectangle2D view_box = view.getCoordBox();
@@ -129,8 +130,10 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 			g.setColor( getForegroundColor() );
 			// define adjust such that: ascent-adjust = descent+adjust
 			// (But see comment above about the extra -1 pixel)
-			int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;
-			g.drawString (str, pixelbox.x, pixelbox.y -pixelbox.height/2+adjust);
+			//			int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;
+			// changed from -1 to +2 so descent is overhanging (rather than ascent)
+			int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) + 2;
+			g.drawString (str, pixelbox.x, pixelbox.y -pixelbox.height/2 + adjust);
 		}
 
 		if (DEBUG_PIXELBOX) {

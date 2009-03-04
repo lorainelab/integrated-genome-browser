@@ -96,7 +96,7 @@ public abstract class BookmarkController {
     int default_maxgap_thresh = 100;
     boolean default_show_thresh = false;
     int default_thresh_direction = GraphStateI.THRESHOLD_DIRECTION_GREATER;
-    Map combos = new HashMap();
+    Map<String,IAnnotStyle> combos = new HashMap<String,IAnnotStyle>();
 
     //System.err.println("I am in loadGraphs!!!!");
 
@@ -106,7 +106,7 @@ public abstract class BookmarkController {
       loaded_graphs = gviewer.collectGraphs();
     }
     Iterator iter = loaded_graphs.iterator();
-    List loaded_graph_paths = new Vector(loaded_graphs.size());
+    List<String> loaded_graph_paths = new Vector<String>(loaded_graphs.size());
     while (iter.hasNext()) {
       GraphGlyph gr = (GraphGlyph) iter.next();
       GraphSym graf_info = (GraphSym) gr.getInfo();
@@ -270,7 +270,7 @@ public abstract class BookmarkController {
             gstate.setThresholdDirection(thresh_direction);
 
             if (combo_name != null) {
-              IAnnotStyle combo_style = (IAnnotStyle) combos.get(combo_name);
+              IAnnotStyle combo_style = combos.get(combo_name);
               if (combo_style == null) {
                 combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
                 combo_style.setHumanName("Joined Graphs");
@@ -310,10 +310,10 @@ public abstract class BookmarkController {
       System.out.println("in addGraphProperties, graph count = " + graphs.size());
     }
     int max = graphs.size();
-    Map combo_styles = new HashMap();
+    Map<IAnnotStyle,Integer> combo_styles = new HashMap<IAnnotStyle,Integer>();
 
     // Holds a list of labels of graphs for which no url could be found.
-    Set unfound_labels = new LinkedHashSet();
+    Set<String> unfound_labels = new LinkedHashSet<String>();
 
     // "j" loops throug all graphs, while "i" counts only the ones
     // that are actually book-markable (thus i <= j)
@@ -367,7 +367,7 @@ public abstract class BookmarkController {
 
         IAnnotStyle combo_style = gr.getGraphState().getComboStyle();
         if (combo_style != null) {
-          Integer combo_style_num = (Integer) combo_styles.get(combo_style);
+          Integer combo_style_num = combo_styles.get(combo_style);
           if (combo_style_num == null) {
             combo_style_num = new Integer(combo_styles.size() + 1);
             combo_styles.put(combo_style, combo_style_num);
@@ -398,7 +398,7 @@ public abstract class BookmarkController {
   public static Map constructBookmarkProperties(SeqSymmetry sym) {
     SeqSpan span = sym.getSpan(0);
     BioSeq seq = span.getBioSeq();
-    Map props = new LinkedHashMap();
+    Map<String,String> props = new LinkedHashMap<String,String>();
     props.put("seqid", seq.getID());
     if (seq instanceof GeneralBioSeq) {
       props.put("version", ((GeneralBioSeq)seq).getVersion());

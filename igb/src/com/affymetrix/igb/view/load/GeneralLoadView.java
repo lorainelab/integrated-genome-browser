@@ -176,6 +176,13 @@ final public class GeneralLoadView extends JComponent
 		this.glu.discoverServersAndSpeciesAndVersions();
 	}
 
+	/*private void removeListeners() {
+		gmodel.removeGroupSelectionListener(this);
+		gmodel.removeSeqSelectionListener(this);
+
+		speciesCB.addItemListener(this);
+		versionCB.addItemListener(this);
+	}*/
 	private void addListeners() {
 
 		gmodel.addGroupSelectionListener(this);
@@ -377,11 +384,47 @@ final public class GeneralLoadView extends JComponent
 				System.out.println("Group was null");
 				group = gmodel.getSeqGroup(this.glu.versionName2species.get(version_name));
 			}
+
+			//loadAndRefreshDataAfterVersionChange(version_name,group);
+			
 			// Select the group (and the first seq), if it's not already selected.
 			this.ChangeSelectedGroups(group);
 		}
 	}
 
+
+	/**
+	 * Load in version and seq data.
+	 * Select the group (and the first seq), if it's not already selected.
+	 * This will send out events that other classes are listening to.
+	 * This is threaded to avoid locking up the UI.
+	 * @param version_name
+	 * @param group
+	 */
+	/*private void loadAndRefreshDataAfterVersionChange(final String version_name, final AnnotatedSeqGroup group) {
+		removeListeners();
+		refresh_dataB.setEnabled(false);
+		all_residuesB.setEnabled(false);
+		partial_residuesB.setEnabled(false);
+
+		this.feature_panel.removeAll();
+
+		Executor vexec = Executors.newSingleThreadExecutor();
+
+		SwingWorker worker = new SwingWorker() {
+			protected Object doInBackground() throws Exception {
+				glu.initVersion(version_name);
+				glu.initSeq(version_name);
+				return null;
+			}
+			@Override
+			public void done() {
+				addListeners();
+				ChangeSelectedGroups(group);
+			}
+		};
+		vexec.execute(worker);
+	}*/
 
 	/**
 	 * Refresh the genome versions, now that the species has changed.

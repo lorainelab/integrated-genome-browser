@@ -48,7 +48,9 @@ public final class FeatureLoading {
 	 */
 	private static synchronized void loadFeatureNames(final GenericVersion gVersion) {
 		if (gVersion.features.size() > 0) {
-			System.out.println("Feature names are already loaded.");
+			if (DEBUG) {
+				System.out.println("Feature names are already loaded.");
+			}
 			return;
 		}
 

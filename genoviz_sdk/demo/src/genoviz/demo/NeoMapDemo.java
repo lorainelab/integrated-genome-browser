@@ -450,11 +450,8 @@ public class NeoMapDemo extends JApplet
     optionsMenu.add(zoomingMenu);
     optionsMenu.add(fuzzinessMenu);
 
-    JMenuBar bar = this.getJMenuBar();
-    if (null == bar) {
-      bar = new JMenuBar();
-      this.setJMenuBar(bar);
-    }
+    JMenuBar bar = new JMenuBar();
+    this.setJMenuBar(bar);
     //    bar.add(fileMenu);
     bar.add(editMenu);
     bar.add(optionsMenu);

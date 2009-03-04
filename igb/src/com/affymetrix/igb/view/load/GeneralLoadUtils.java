@@ -426,8 +426,9 @@ final public class GeneralLoadUtils {
 		}
 		Boolean init = version2init.get(versionName);
 		if (init == null || !init.booleanValue()) {
-			System.out.println("initializing feature names for version: " + versionName);
-
+			if (DEBUG) {
+				System.out.println("initializing feature names for version: " + versionName);
+			}
 			FeatureLoading.loadFeatureNames(this.versionName2versionSet.get(versionName));
 		}
 	}

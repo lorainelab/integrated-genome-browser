@@ -40,6 +40,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.general.GenericFeature;
+import com.affymetrix.igb.general.GenericServer.ServerType;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.view.SeqMapView;
@@ -169,7 +170,6 @@ final public class GeneralLoadView extends JComponent
 		};
 
 		vexec.execute(worker);
-
 	}
 
 	private void discoverServersAndSpeciesAndVersions() {
@@ -566,12 +566,22 @@ final public class GeneralLoadView extends JComponent
 			if (gFeature.loadStrategy != LoadStrategy.WHOLE) {
 				continue;
 			}
+
 			if (!gFeature.LoadStatusMap.containsKey(current_seq)) {
 				System.out.println("ERROR!  " + current_seq.getID() + " does not contain feature status");
 			}
-			if (gFeature.LoadStatusMap.get(current_seq) != LoadStatus.UNLOADED) {
+			LoadStatus ls = gFeature.LoadStatusMap.get(current_seq);
+			if (ls != LoadStatus.UNLOADED) {
 				continue;
 			}
+			if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad) {
+				// These have already been loaded(QuickLoad is loaded for the entire genome at once)
+				if (ls == LoadStatus.UNLOADED) {
+					gFeature.LoadStatusMap.put(current_seq, LoadStatus.LOADED);
+				}
+				continue;
+			}
+
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
@@ -627,7 +637,7 @@ final public class GeneralLoadView extends JComponent
 	/**
 	 * Calling gmodel.setSelectedSeq() will also bounce event back to this.seqSelectionChanged()
 	 * calling gmodel.setSelectedSeqGroup() will also bounce event back to this.groupSelectionChanged()
-	 * @param sabq
+	 * @param group
 	 */
 	private void ChangeSelectedGroups(AnnotatedSeqGroup group) {
 		gmodel.setSelectedSeqGroup(group);

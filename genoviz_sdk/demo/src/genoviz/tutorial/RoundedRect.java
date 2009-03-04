@@ -21,7 +21,9 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 public class RoundedRect extends SolidGlyph {
 
 	public void draw(ViewI view) {
-		this.calcPixels(view);
+	  // calcPixels() uses view argument to calculate pixel box 
+	  ///   of glyph based on coord box of glyph and view transform
+	        this.calcPixels(view);  
 		Rectangle bbox = this.getPixelBox();
 		Graphics g = view.getGraphics();
 		g.setColor( this.getBackgroundColor() );

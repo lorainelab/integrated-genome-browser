@@ -368,21 +368,25 @@ final public class GeneralLoadView extends JComponent
 		if (DEBUG_EVENTS) {
 			System.out.println("Selected version: " + version_name);
 		}
+
+		// Select the null group (and the null seq), if it's not already selected.
+		this.ChangeSelectedGroups(null);
+
 		if (version_name.equals(SELECT)) {
-			// Select the null group (and the null seq), if it's not already selected.
-			this.ChangeSelectedGroups(null);
-		} else {
-			AnnotatedSeqGroup group = gmodel.getSeqGroup(version_name);
-			if (group == null) {
-				System.out.println("Group was null");
-				group = gmodel.getSeqGroup(this.glu.versionName2species.get(version_name));
-			}
-
-			//loadAndRefreshDataAfterVersionChange(version_name,group);
-
-			// Select the group (and the first seq), if it's not already selected.
-			this.ChangeSelectedGroups(group);
+			return;
 		}
+
+
+		AnnotatedSeqGroup group = gmodel.getSeqGroup(version_name);
+		if (group == null) {
+			System.out.println("Group was null");
+			group = gmodel.getSeqGroup(this.glu.versionName2species.get(version_name));
+		}
+
+		//loadAndRefreshDataAfterVersionChange(version_name,group);
+
+		// Select the group (and the first seq), if it's not already selected.
+		this.ChangeSelectedGroups(group);
 	}
 
 	/**
@@ -396,6 +400,7 @@ final public class GeneralLoadView extends JComponent
 		}
 
 		removeListeners();
+		
 		// Set the selected species (the combo box is already populated)
 		speciesCB.setSelectedItem(speciesName);
 		// populate the version combo box.
@@ -418,38 +423,7 @@ final public class GeneralLoadView extends JComponent
 		versionCB.setSelectedItem(genomeVersionName);
 	}
 
-	/**
-	 * Load in version and seq data.
-	 * Select the group (and the first seq), if it's not already selected.
-	 * This will send out events that other classes are listening to.
-	 * This is threaded to avoid locking up the UI.
-	 * @param version_name
-	 * @param group
-	 */
-	/*private void loadAndRefreshDataAfterVersionChange(final String version_name, final AnnotatedSeqGroup group) {
-	removeListeners();
-	refresh_dataB.setEnabled(false);
-	all_residuesB.setEnabled(false);
-	partial_residuesB.setEnabled(false);
-
-	this.feature_panel.removeAll();
-
-	Executor vexec = Executors.newSingleThreadExecutor();
-
-	SwingWorker worker = new SwingWorker() {
-	protected Object doInBackground() throws Exception {
-	glu.initVersion(version_name);
-	glu.initSeq(version_name);
-	return null;
-	}
-	@Override
-	public void done() {
-	addListeners();
-	ChangeSelectedGroups(group);
-	}
-	};
-	vexec.execute(worker);
-	}*/
+	
 	/**
 	 * Refresh the genome versions, now that the species has changed.
 	 * @param speciesName
@@ -674,12 +648,36 @@ final public class GeneralLoadView extends JComponent
 	 * calling gmodel.setSelectedSeqGroup() will also bounce event back to this.groupSelectionChanged()
 	 * @param group
 	 */
-	private void ChangeSelectedGroups(AnnotatedSeqGroup group) {
-		gmodel.setSelectedSeqGroup(group);
+	private void ChangeSelectedGroups(final AnnotatedSeqGroup group) {
+		if (group == null) {
+			gmodel.setSelectedSeqGroup(null);
+			gmodel.setSelectedSeq(null);
+			return;
+		}
 
-		// Note that this SmartAnnotBioSeq may be set by the gmodel, above.
-		SmartAnnotBioSeq sabq = group == null ? null : group.getSeq(0);
-		gmodel.setSelectedSeq(sabq);
+		speciesCB.setEnabled(false);
+		versionCB.setEnabled(false);
+
+		Executor vexec = Executors.newSingleThreadExecutor();
+
+		SwingWorker worker = new SwingWorker() {
+			protected Object doInBackground() throws Exception {
+				// Do some threading.
+				gmodel.setSelectedSeqGroup(group);
+				return null;
+			}
+
+			@Override
+			public void done() {
+				speciesCB.setEnabled(true);
+				versionCB.setEnabled(true);
+				// Note that this SmartAnnotBioSeq may be set by the gmodel, above.
+				SmartAnnotBioSeq sabq = group.getSeq(0);
+				gmodel.setSelectedSeq(sabq);
+			}
+		};
+		vexec.execute(worker);
 	}
+
 }
 

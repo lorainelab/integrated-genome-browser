@@ -682,43 +682,11 @@ final public class GeneralLoadUtils {
 			return false;
 		}
 		if (serverType == GenericServer.ServerType.QuickLoad) {
-			//String annot_url = root_url + genome_version_name + "/" + feature_name;
-			//String root_url = gFeature.gVersion.;
-
-			String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionName + "/" + gFeature.featureName;
-			System.out.println("need to load: " + annot_url);
-			Application.getApplicationLogger().fine("need to load: " + annot_url);
-			InputStream istr = null;
-			BufferedInputStream bis = null;
-
-			try {
-				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
-				istr = LocalUrlCacher.getInputStream(annot_url, true);
-				if (istr != null) {
-					bis = new BufferedInputStream(istr);
-
-					if (GraphSymUtils.isAGraphFilename(gFeature.featureName)) {
-						URL url = new URL(annot_url);
-						List graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-						if (graphs != null) {
-							// Reset the selected Seq Group to make sure that the DataLoadView knows
-							// about any new chromosomes that were added.
-							gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-						}
-					} else {
-						LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeq());
-					}
-
-					SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
-					return true;
-				}
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel("ERROR", "Problem loading requested url:\n" + annot_url, ex);
-			} finally {
-				GeneralUtils.safeClose(bis);
-				GeneralUtils.safeClose(istr);
+			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
+			if (FeatureLoading.loadQuickLoadAnnotations(gFeature)) {
+				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
+				return true;
 			}
-
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 			return false;
 		}
@@ -732,6 +700,10 @@ final public class GeneralLoadUtils {
 		model.fireTableDataChanged();
 
 	}
+
+
+
+	
 
 	/**
 	 * Loads (and displays) DAS/2 annotations.

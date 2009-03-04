@@ -4,6 +4,8 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasSource;
 import com.affymetrix.igb.das.DasType;
@@ -11,9 +13,14 @@ import com.affymetrix.igb.das2.Das2ClientOptimizer;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
+import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.menuitem.OpenGraphAction;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -167,6 +174,7 @@ public final class FeatureLoading {
 		Application.getSingleton().setStatus("", false);
 	}
 
+
 	/**
 	 * split into entries by DAS/2 versioned source
 	 * @param requests
@@ -205,4 +213,58 @@ public final class FeatureLoading {
 			result_syms.addAll(feature_list);
 		}
 	}
+
+	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
+		final String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionName + "/" + gFeature.featureName;
+		if (DEBUG) {
+			System.out.println("need to load: " + annot_url);
+		}
+		Application.getApplicationLogger().fine("need to load: " + annot_url);
+
+		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
+
+		SwingWorker worker = new SwingWorker() {
+
+			public Object doInBackground() {
+				loadQuickLoadFeature(annot_url, gFeature);
+				return null;
+			}
+		};
+
+		vexec.execute(worker);
+		return true;
+
+	}
+	
+	private static boolean loadQuickLoadFeature(String annot_url, GenericFeature gFeature) throws OutOfMemoryError {
+		InputStream istr = null;
+		BufferedInputStream bis = null;
+		try {
+			istr = LocalUrlCacher.getInputStream(annot_url, true);
+			if (istr != null) {
+				bis = new BufferedInputStream(istr);
+				if (GraphSymUtils.isAGraphFilename(gFeature.featureName)) {
+					URL url = new URL(annot_url);
+					List graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+					if (graphs != null) {
+						// Reset the selected Seq Group to make sure that the DataLoadView knows
+						// about any new chromosomes that were added.
+						gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+					}
+				} else {
+					LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeq());
+				}
+				return true;
+			}
+		} catch (Exception ex) {
+			System.out.println("Problem loading requested url:" + annot_url);
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(istr);
+		}
+		return false;
+	}
+
+
 }

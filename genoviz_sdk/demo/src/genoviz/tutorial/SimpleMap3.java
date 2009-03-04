@@ -34,7 +34,6 @@ public class SimpleMap3 extends SimpleMap1 {
 		scroller = new JScrollBar(JScrollBar.HORIZONTAL);
 		add("South", scroller);
 		map.setRangeScroller(scroller);
-		map.setMapColor(Color.green);
 	}
 
 	public static void main (String argv[]) {
@@ -54,7 +53,7 @@ public class SimpleMap3 extends SimpleMap1 {
 		} );
 
 		f.pack();
-		f.setBounds(20, 40, 400, 500);
+		f.setBounds(20, 40, 900, 400);
 		f.show();
 	}
 

@@ -56,11 +56,11 @@ public class HairMap extends SimpleMap3 {
 	}
 
 	public static void main( String argv[] ) {
-		SimpleMap0 me = new HairMap();
+		HairMap me = new HairMap();
 		Frame f = new Frame( "GenoViz" );
 
 		f.add( me, BorderLayout.CENTER );
-		me.addFileMenuItems( f );
+		// me.addFileMenuItems( f );
 		f.addWindowListener( new WindowAdapter() {
 			public void windowClosing( WindowEvent e ) {
 				Window w = ( Window ) e.getSource();
@@ -74,7 +74,7 @@ public class HairMap extends SimpleMap3 {
 
 		} );
 		f.pack();
-		f.setBounds( 20, 40, 400, 500 );
+		f.setBounds( 20, 40, 900, 400 );
 		f.show();
 	}
 

@@ -84,7 +84,7 @@ public class SimpleMap1 extends GlyphTestMap {
     frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 //    me.addFileMenuItems(frm);
     frm.pack();
-    frm.setBounds( 20, 40, 400, 500 );
+    frm.setBounds(20, 40, 900, 400);
     frm.setVisible(true);
   }
 

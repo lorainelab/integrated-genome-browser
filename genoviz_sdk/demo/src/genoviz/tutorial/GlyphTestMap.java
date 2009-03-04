@@ -50,7 +50,7 @@ public class GlyphTestMap extends JApplet implements ActionListener {
   public GlyphTestMap () {
     // false args to constructor turns off internal scrollbars
     map = new NeoMap(false, false);
-    map.setMapColor(Color.PINK);
+    //    map.setMapColor(Color.PINK);
     // make sure map expands to encompass all glyph x coords
     map.setExpansionBehavior(NeoMap.X, NeoMap.EXPAND); 
     // make sure map expands to encompass all glyph y coords

@@ -50,7 +50,6 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 import javax.swing.table.TableColumn;
 import org.jdesktop.swingworker.SwingWorker;
 
-
 final public class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
@@ -72,7 +71,6 @@ final public class GeneralLoadView extends JComponent
 	private SeqMapView gviewer;
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
-
 
 	public GeneralLoadView() {
 		if (Application.getSingleton() != null) {
@@ -155,6 +153,7 @@ final public class GeneralLoadView extends JComponent
 		Executor vexec = Executors.newSingleThreadExecutor();
 
 		SwingWorker worker = new SwingWorker() {
+
 			@Override
 			public void done() {
 				initializeKingdomCB();
@@ -176,13 +175,14 @@ final public class GeneralLoadView extends JComponent
 		this.glu.discoverServersAndSpeciesAndVersions();
 	}
 
-	/*private void removeListeners() {
+	private void removeListeners() {
 		gmodel.removeGroupSelectionListener(this);
 		gmodel.removeSeqSelectionListener(this);
 
 		speciesCB.addItemListener(this);
 		versionCB.addItemListener(this);
-	}*/
+	}
+
 	private void addListeners() {
 
 		gmodel.addGroupSelectionListener(this);
@@ -221,7 +221,7 @@ final public class GeneralLoadView extends JComponent
 		speciesCB.setSelectedIndex(0);
 	}
 
-		/**
+	/**
 	 * bootstrap bookmark from Preferences for last species/version/genome / sequence / region
 	 * @param gviewer
 	 * @return
@@ -244,16 +244,10 @@ final public class GeneralLoadView extends JComponent
 			return;
 		}
 
-		// Set the selected species (the combo box is already populated)
-		speciesCB.setSelectedItem(speciesName);
+		setTheSpecies(speciesName);
 
-		// populate the version combo box.
-		refreshVersionCB(speciesName);
-		
-		// select the version, using events to populate the feature and chrom table.
-		addListeners();
-		versionCB.setSelectedItem(gVersion.versionName);
-		
+		setTheVersion(gVersion.versionName);
+
 		// Select the persistent chromosome, and restore the span.
 		SmartAnnotBioSeq seq = Persistence.restoreSeqSelection(group);
 		if (seq == null) {
@@ -262,7 +256,7 @@ final public class GeneralLoadView extends JComponent
 		if (gmodel.getSelectedSeq() != seq) {
 			gmodel.setSelectedSeq(seq);
 		}
-		
+
 		// Try/catch may not be needed.
 		try {
 			Persistence.restoreSeqVisibleSpan(gviewer);
@@ -277,7 +271,7 @@ final public class GeneralLoadView extends JComponent
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		String genomeVersionName = (String)versionCB.getSelectedItem();
+		String genomeVersionName = (String) versionCB.getSelectedItem();
 		if (src == partial_residuesB) {
 			SeqSpan viewspan = gviewer.getVisibleSpan();
 			this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax(), viewspan);
@@ -342,7 +336,6 @@ final public class GeneralLoadView extends JComponent
 		}
 	}
 
-
 	/**
 	 * The species combo box changed.
 	 * ANY time the species changes, everything will be disabled and cleared aside from the species and version combo boxes.
@@ -361,7 +354,7 @@ final public class GeneralLoadView extends JComponent
 			versionCB.setEnabled(true);
 			versionCB.addItemListener(this);
 		}
-		
+
 		// Select the null group (and the null seq), if it's not already selected.
 		this.ChangeSelectedGroups(null);
 	}
@@ -386,12 +379,44 @@ final public class GeneralLoadView extends JComponent
 			}
 
 			//loadAndRefreshDataAfterVersionChange(version_name,group);
-			
+
 			// Select the group (and the first seq), if it's not already selected.
 			this.ChangeSelectedGroups(group);
 		}
 	}
 
+	/**
+	 * If somehow the species wasn't set (an external event called, like preferences or bookmarks)
+	 * then set the species.
+	 * @param speciesName
+	 */
+	private void setTheSpecies(String speciesName) {
+		if (speciesName.equals(speciesCB.getSelectedItem())) {
+			return;
+		}
+
+		removeListeners();
+		// Set the selected species (the combo box is already populated)
+		speciesCB.setSelectedItem(speciesName);
+		// populate the version combo box.
+		refreshVersionCB(speciesName);
+		// select the version, using events to populate the feature and chrom table.
+		addListeners();
+	}
+
+	/**
+	 * If somehow the genome version wasn't set (an external event called, like preferences or bookmarks)
+	 * then set the genome version.
+	 * @param speciesName
+	 */
+	private void setTheVersion(String genomeVersionName) {
+		// Initialize this genome version.
+		this.glu.initVersion(genomeVersionName);
+		this.glu.initSeq(genomeVersionName);
+
+		// select the version, using events to populate the feature and chrom table.
+		versionCB.setSelectedItem(genomeVersionName);
+	}
 
 	/**
 	 * Load in version and seq data.
@@ -402,30 +427,29 @@ final public class GeneralLoadView extends JComponent
 	 * @param group
 	 */
 	/*private void loadAndRefreshDataAfterVersionChange(final String version_name, final AnnotatedSeqGroup group) {
-		removeListeners();
-		refresh_dataB.setEnabled(false);
-		all_residuesB.setEnabled(false);
-		partial_residuesB.setEnabled(false);
+	removeListeners();
+	refresh_dataB.setEnabled(false);
+	all_residuesB.setEnabled(false);
+	partial_residuesB.setEnabled(false);
 
-		this.feature_panel.removeAll();
+	this.feature_panel.removeAll();
 
-		Executor vexec = Executors.newSingleThreadExecutor();
+	Executor vexec = Executors.newSingleThreadExecutor();
 
-		SwingWorker worker = new SwingWorker() {
-			protected Object doInBackground() throws Exception {
-				glu.initVersion(version_name);
-				glu.initSeq(version_name);
-				return null;
-			}
-			@Override
-			public void done() {
-				addListeners();
-				ChangeSelectedGroups(group);
-			}
-		};
-		vexec.execute(worker);
+	SwingWorker worker = new SwingWorker() {
+	protected Object doInBackground() throws Exception {
+	glu.initVersion(version_name);
+	glu.initSeq(version_name);
+	return null;
+	}
+	@Override
+	public void done() {
+	addListeners();
+	ChangeSelectedGroups(group);
+	}
+	};
+	vexec.execute(worker);
 	}*/
-
 	/**
 	 * Refresh the genome versions, now that the species has changed.
 	 * @param speciesName
@@ -455,7 +479,6 @@ final public class GeneralLoadView extends JComponent
 		}
 	}
 
-	
 	/**
 	 * This gets called when the genome version is changed.
 	 * This occurs via the combo boxes, or by an external event like bookmarks.
@@ -466,67 +489,39 @@ final public class GeneralLoadView extends JComponent
 		if (DEBUG_EVENTS) {
 			System.out.println("GeneralLoadView.groupSelectionChanged() called, group: " + (group == null ? null : group.getID()));
 		}
-		if (current_group != group) {
-			current_group = group;
-
-			String genomeVersionName = null;
-			if (group == null || this.glu == null || !this.glu.group2version.containsKey(group)) {
-				genomeVersionName = null;
-			} else {
-				genomeVersionName = this.glu.group2version.get(group).versionName;
-			}
-
-			groupSelectionChangedInternal(genomeVersionName);
-		}
-	}
-
-	/**
-	 * The genome version actually changed, rather than just someone choosing the same version.
-	 *
-	 * @param group
-	 */
-	private void groupSelectionChangedInternal(String genomeVersionName) {
-		if (DEBUG_EVENTS) {
-			System.out.println("groupSelectionChangedInternal to " + genomeVersionName);
-		}
-
-		String selectedSpecies = (String) speciesCB.getSelectedItem();
-		String selectedVersion = (String) versionCB.getSelectedItem();
-		
-		if (genomeVersionName == null) {
-			// group and/or genome is null.  Disable most everything.
-
-			// This could happen if, say, someone loaded a file directly.
+		if (current_group == group) {
 			return;
 		}
-		
-		// A valid group was selected.
 
-		// Don't allow combo boxes to be selected while refreshing.
-		speciesCB.removeItemListener(this);
-		versionCB.removeItemListener(this);
+		current_group = group;
 
-		if (selectedSpecies.equals(SELECT) || selectedVersion.equals(SELECT)) {
-			// We need to be sure that the combo boxes are set properly.
-			// They could have been set improperly if called from bookmark code.
-			speciesCB.setSelectedItem(this.glu.versionName2species.get(genomeVersionName));
-			if (SELECT.equals(selectedVersion)) {
-				versionCB.setSelectedItem(genomeVersionName);
-				versionCB.setEnabled(true);
-			}
+		if (current_group == null) {
+			return;
 		}
-		
-		// Initialize this genome version.
-		this.glu.initVersion(genomeVersionName);
-		this.glu.initSeq(genomeVersionName);
 
-		speciesCB.addItemListener(this);
-		versionCB.addItemListener(this);
+		String genomeVersionName = null;
+		if (group == null || this.glu == null || !this.glu.group2version.containsKey(group)) {
+			genomeVersionName = null;
+		} else {
+			genomeVersionName = this.glu.group2version.get(group).versionName;
+		}
 
-		speciesCB.setEnabled(true);
-		versionCB.setEnabled(true);
+		if (genomeVersionName == null) {
+			// Couldn't find version -- we have problems.
+			System.out.println("ERROR - Couldn't find version " + genomeVersionName);
+			return;
+		}
+
+		String speciesName = this.glu.versionName2species.get(genomeVersionName);
+		if (speciesName == null) {
+			// Couldn't find species matching this version -- we have problems.
+			System.out.println("ERROR - Couldn't find species for version " + genomeVersionName);
+			return;
+		}
+
+		this.setTheSpecies(speciesName);
+		this.setTheVersion(genomeVersionName);
 	}
-
 
 
 	/**
@@ -534,7 +529,7 @@ final public class GeneralLoadView extends JComponent
 	 * @param evt
 	 */
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		current_seq = (SmartAnnotBioSeq)evt.getSelectedSeq();
+		current_seq = (SmartAnnotBioSeq) evt.getSelectedSeq();
 
 		if (DEBUG_EVENTS) {
 			System.out.println("GeneralLoadView.seqSelectionChanged() called, current_seq: " + (current_seq == null ? null : current_seq.getID()));
@@ -555,7 +550,7 @@ final public class GeneralLoadView extends JComponent
 		loadWholeRangeFeatures(versionName);
 	}
 
-		/**
+	/**
 	 * Create the table with the list of features and their status.
 	 */
 	private void createFeaturesTable(String genomeVersionName) {
@@ -575,7 +570,7 @@ final public class GeneralLoadView extends JComponent
 		// Handle sizing of the columns
 		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);   // Allow columns to be resized
 		int maxFeatureNameLength = 1;
-		for(GenericFeature feature : features) {
+		for (GenericFeature feature : features) {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
 		// the first column contains the feature names.  Resize it so that feature names are fully displayed.
@@ -585,9 +580,9 @@ final public class GeneralLoadView extends JComponent
 
 		// Must explicitly show the header, since we're not in a scroll panel
 		JTableHeader header = this.feature_table.getTableHeader();
-    this.feature_panel.setLayout(new BorderLayout());
-    this.feature_panel.add(header, BorderLayout.NORTH);
-    this.feature_panel.add(this.feature_table, BorderLayout.CENTER);
+		this.feature_panel.setLayout(new BorderLayout());
+		this.feature_panel.add(header, BorderLayout.NORTH);
+		this.feature_panel.add(this.feature_table, BorderLayout.CENTER);
 
 
 		// Don't enable combo box for full genome sequence
@@ -632,8 +627,6 @@ final public class GeneralLoadView extends JComponent
 		}
 	}
 
-
-
 	/**
 	 * Don't allow buttons to be used if we're viewing the entire sequence.
 	 * (We do this because it's not clear if the user REALLY would want to load all of the specified data.)
@@ -676,7 +669,6 @@ final public class GeneralLoadView extends JComponent
 		return (seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID));
 	}
 
-
 	/**
 	 * Calling gmodel.setSelectedSeq() will also bounce event back to this.seqSelectionChanged()
 	 * calling gmodel.setSelectedSeqGroup() will also bounce event back to this.groupSelectionChanged()
@@ -684,7 +676,7 @@ final public class GeneralLoadView extends JComponent
 	 */
 	private void ChangeSelectedGroups(AnnotatedSeqGroup group) {
 		gmodel.setSelectedSeqGroup(group);
-		
+
 		// Note that this SmartAnnotBioSeq may be set by the gmodel, above.
 		SmartAnnotBioSeq sabq = group == null ? null : group.getSeq(0);
 		gmodel.setSelectedSeq(sabq);

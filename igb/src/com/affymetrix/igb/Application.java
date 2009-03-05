@@ -137,8 +137,8 @@ public abstract class Application {
   public static boolean confirmPanel(String message) {
     Application app = getSingleton();
     JFrame frame = (app==null) ? null : app.getFrame();
-    return (JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(
-      frame, message, "Confirm", JOptionPane.OK_CANCEL_OPTION));
+    return (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(
+      frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
   }
 
   public static void informPanel(String message) {

@@ -205,9 +205,9 @@ public class SeqMapView extends JPanel
     /** Name of a boolean preference for whether the hairline lable should be on. */
     public static final String PREF_HAIRLINE_LABELED = "Hairline Label On";
     /** Name of a boolean preference for whether the horizontal zoom slider is above the map. */
-    public static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
+    private static final String PREF_X_ZOOMER_ABOVE = "Horizontal Zoomer Above Map";
     /** Name of a boolean preference for whether the vertical zoom slider is left of the map. */
-    public static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
+    private static final String PREF_Y_ZOOMER_LEFT = "Vertical Zoomer Left of Map";
     public static final Color default_axis_color = Color.BLACK;
     public static final Color default_axis_background = Color.WHITE;
     public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;

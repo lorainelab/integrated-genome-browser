@@ -26,7 +26,7 @@ import com.affymetrix.igb.view.UnibrowHairline;
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
  */
-public class OptionsView extends JPanel implements IPrefEditorComponent, ActionListener  {
+public final class OptionsView extends JPanel implements IPrefEditorComponent, ActionListener  {
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
   JButton clear_prefsB = new JButton("Reset all preferences to defaults");
@@ -62,26 +62,15 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Keep hairline in view", UnibrowPrefsUtil.getTopNode(),
       UnibrowHairline.PREF_KEEP_HAIRLINE_IN_VIEW, UnibrowHairline.default_keep_hairline_in_view));
 
-    misc_box.add(Box.createRigidArea(new Dimension(0,5)));
+    /*misc_box.add(Box.createRigidArea(new Dimension(0,5)));
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place horizontal zoomer at top", UnibrowPrefsUtil.getTopNode(),
       SeqMapView.PREF_X_ZOOMER_ABOVE, SeqMapView.default_x_zoomer_above));
 
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Place vertical zoomer at left", UnibrowPrefsUtil.getTopNode(),
-      SeqMapView.PREF_Y_ZOOMER_LEFT, SeqMapView.default_y_zoomer_left));
+      SeqMapView.PREF_Y_ZOOMER_LEFT, SeqMapView.default_y_zoomer_left));*/
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
 
-    /*
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Turn off DAS/2, turn on QuickLoad",
-						 IGB.USE_QUICKLOAD_INSTEAD_OF_DAS2,
-						 IGB.DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2) );
-    */
-
-		final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
-		final boolean default_show_das_query_genometry = false;
-
-    misc_box.add(UnibrowPrefsUtil.createCheckBox("Advanced: Show DAS query genometry", UnibrowPrefsUtil.getTopNode(),
-      PREF_SHOW_DAS_QUERY_GENOMETRY, default_show_das_query_genometry));
     misc_box.add(clear_prefsB);
     clear_prefsB.addActionListener(this);
 
@@ -123,7 +112,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     customizer_box.add(new JButton(customizer_action));
      */
 
-    JPanel edge_match_box = new JPanel();
+    /*JPanel edge_match_box = new JPanel();
     edge_match_box.setLayout(new GridLayout(2,2));
     edge_match_box.setBorder(new javax.swing.border.TitledBorder("Edge matching"));
 
@@ -132,7 +121,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     edge_match_box.add(edge_match_color);
     JButton fuzzy_edge_match_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), SeqMapView.PREF_EDGE_MATCH_FUZZY_COLOR, SeqMapView.default_edge_match_fuzzy_color);
     edge_match_box.add(new JLabel("Fuzzy matching color: "));
-    edge_match_box.add(fuzzy_edge_match_color);
+    edge_match_box.add(fuzzy_edge_match_color);*/
 
     JPanel orf_box = new JPanel();
     orf_box.setLayout(new GridLayout(2,2));
@@ -166,13 +155,13 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     axis_box.add(axis_label_format_CB);
 
     axis_box.setAlignmentX(0.0f);
-    edge_match_box.setAlignmentX(0.0f);
+    //edge_match_box.setAlignmentX(0.0f);
     orf_box.setAlignmentX(0.0f);
     misc_box.setAlignmentX(0.0f);
 
     //main_box.add(customizer_box);
     main_box.add(axis_box);
-    main_box.add(edge_match_box);
+    //main_box.add(edge_match_box);
     main_box.add(orf_box);
     main_box.add(Box.createRigidArea(new Dimension(0,5)));
     main_box.add(misc_box);
@@ -203,6 +192,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     d.setVisible(true);
     d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     d.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
       public void windowClosing(java.awt.event.WindowEvent e) {
         System.exit(0);
       }
@@ -215,7 +205,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
 
     sb.append("<h1>" + this.getName() + "</h1>\n");
     sb.append("<p>\n");
-    sb.append("This panel allows you to change a variety of miscelaneous settings.  ");
+    sb.append("This panel allows you to change a variety of miscellaneous settings.  ");
     sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
     //sb.append("Most changes here will take effect immediately;  ");
     //sb.append("others take effect only after a re-start.  ");
@@ -236,7 +226,7 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
 
-    sb.append("<p>\n");
+    /*sb.append("<p>\n");
     sb.append("<h2>Place horizontal zoomer at top</h2>\n");
     sb.append("Whether to place the slider used for horizontal zooming above the map ");
     sb.append("instead of below.  ");
@@ -248,21 +238,12 @@ public class OptionsView extends JPanel implements IPrefEditorComponent, ActionL
     sb.append("the map instead of to the right.  ");
     sb.append("</p>\n");
 
-
-    sb.append("<p>\n");
-    sb.append("<h2>Show DAS query genometry</h2>\n");
-    sb.append("Intended for advanced users, for debugging of DAS servers.  ");
-    sb.append("Shows the coordinate regions used in queries to the DAS server.  ");
-    //sb.append("<br><br>Changes do not require re-start.  ");
-    sb.append("Recommend: false.");
-    sb.append("</p>\n");
-
     sb.append("<p>\n");
     sb.append("<h2>Enable Curation Testing</h2>\n");
     sb.append("Intended for advanced users, for alpha-testing of curation functions.  ");
     sb.append("Changes require re-start.  ");
     sb.append("Recommend: false.");
-    sb.append("</p>\n");
+    sb.append("</p>\n");*/
 
     sb.append("<p>\n");
     sb.append("<h2>Browser Command (Unix Only)</h2>\n");

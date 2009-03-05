@@ -53,36 +53,35 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  *
  */
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class Das2ClientOptimizer {
+public final class Das2ClientOptimizer {
 
-    static boolean USE_SEGMENT = Das2Region.USE_SEGMENT;
-    static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
-    static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
-    static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
-    static boolean DEBUG = false;
-    static boolean DEBUG_HEADERS = false;
-    static boolean OPTIMIZE_FORMAT = true;
-    static boolean SHOW_DAS_QUERY_GENOMETRY = false;
-    static String UTF8 = "UTF-8";
+    //static boolean USE_SEGMENT = Das2Region.USE_SEGMENT;
+    //static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
+    //static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
+    //static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
+    private static final boolean DEBUG = false;
+    private static final boolean DEBUG_HEADERS = false;
+    private static final boolean OPTIMIZE_FORMAT = true;
+    private static final boolean SHOW_DAS_QUERY_GENOMETRY = false;
+    private static final String UTF8 = "UTF-8";
     /**
      *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
      *  out into a separate query field, "segment", that applies to all location-based filters in the query
      *  (overlaps, inside, ??)
      */
-    static boolean SEPARATE_SEGMENT_FILTER = false;
-    static String default_format = "das2feature";
+    //static boolean SEPARATE_SEGMENT_FILTER = false;
+    private static final String default_format = "das2feature";
     
-		private static final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
+		/*private static final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
 		private static final boolean default_show_das_query_genometry = false;
     static {
         SHOW_DAS_QUERY_GENOMETRY =
                 UnibrowPrefsUtil.getTopNode().getBoolean(PREF_SHOW_DAS_QUERY_GENOMETRY,
                 default_show_das_query_genometry);
-    }
+    }*/
 
     // input is a single Das2FeatureRequestSym
     // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input request,
@@ -295,7 +294,7 @@ public class Das2ClientOptimizer {
         SeqSpan inside_span = request_sym.getInsideSpan();
         String overlap_filter = null;
         String inside_filter = null;
-        if (USE_SEGMENT) {
+        if (Das2Region.USE_SEGMENT) {
             overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
             if (inside_span != null) {
                 inside_filter = Das2FeatureSaxParser.getRangeString(inside_span, false);
@@ -360,9 +359,9 @@ public class Das2ClientOptimizer {
 
     private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
         StringBuffer buf = new StringBuffer(200);
-        if (USE_SEGMENT) {
+        if (Das2Region.USE_SEGMENT) {
             buf.append("segment=");
-            if (USE_SEGMENT_URI) {
+            if (Das2Region.USE_SEGMENT_URI) {
                 buf.append(URLEncoder.encode(region.getID(), UTF8));
             } else {
                 buf.append(URLEncoder.encode(region.getName(), UTF8));
@@ -379,7 +378,7 @@ public class Das2ClientOptimizer {
             buf.append(";");
         }
         buf.append("type=");
-        if (USE_TYPE_URI) {
+        if (Das2Region.USE_TYPE_URI) {
             buf.append(URLEncoder.encode(type.getID(), UTF8));
         } else {
             buf.append(type.getName());

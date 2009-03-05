@@ -21,10 +21,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class PreferencesPanel extends JPanel {
+public final class PreferencesPanel extends JPanel {
 
-  static final String WINDOW_NAME = "Preferences Window";
-  static final String HELP_WINDOW_NAME = "Preferences Help Window";
+  private static final String WINDOW_NAME = "Preferences Window";
+  private static final String HELP_WINDOW_NAME = "Preferences Help Window";
 
   JFrame frame = null;
   static PreferencesPanel singleton = null;
@@ -48,12 +48,18 @@ public class PreferencesPanel extends JPanel {
   }
 
   public static int TAB_NUM_TIERS = -1;
-  public static int TAB_NUM_DAS = -1;
-  public static int TAB_NUM_KEY_STROKES = -1;
-  public static int TAB_NUM_MISC_OPTIONS = -1;
-  public static int TAB_NUM_GRAPHS_VIEW = -1;
+  private static int TAB_NUM_DAS = -1;
+  private static int TAB_NUM_KEY_STROKES = -1;
+  private static int TAB_NUM_MISC_OPTIONS = -1;
+  private static int TAB_NUM_GRAPHS_VIEW = -1;
+	
+  public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / Import";
+  public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / Export";
+  //public final static String CLEAR_ACTION_COMMAND  = WINDOW_NAME + " / Clear";
+  public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / Help";
+  public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / Help for current tab";
 
-  TierPrefsView tpv = null;
+  private TierPrefsView tpv = null;
 
   /** Creates an instance of PreferencesView.  It will contain tabs for
    *  setting various types of preferences.  You can put this view in any
@@ -66,10 +72,12 @@ public class PreferencesPanel extends JPanel {
 
       singleton.tpv = new TierPrefsView(false, true);
       singleton.tpv.addComponentListener(new ComponentAdapter() {
+				@Override
         public void componentHidden(ComponentEvent e) {
           singleton.tpv.removedFromView();
         }
       });
+			singleton.tpv.refresh();	// necessary, otherwise the first time this is seen, it's empty.
 
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
 
@@ -115,7 +123,7 @@ public class PreferencesPanel extends JPanel {
     return tab_pane.indexOfComponent((Component) pec);
   }
 
-  public IPrefEditorComponent[] getPrefEditorComponents() {
+  private IPrefEditorComponent[] getPrefEditorComponents() {
     int count = tab_pane.getTabCount();
     IPrefEditorComponent[] comps = new IPrefEditorComponent[count];
     for (int i=0; i<count; i++) {
@@ -155,7 +163,7 @@ public class PreferencesPanel extends JPanel {
 
       cont.add(this);
       frame.pack(); // pack() to set frame to its preferred size
-      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(WINDOW_NAME, new Rectangle(400, 400));
+      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(WINDOW_NAME, new Rectangle(1000, 400));
       if (pos != null) {
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
@@ -169,7 +177,7 @@ public class PreferencesPanel extends JPanel {
     return frame;
   }
 
-  JMenuBar getMenuBar() {
+  private JMenuBar getMenuBar() {
     JMenuBar menu_bar = new JMenuBar();
     JMenu prefs_menu = new JMenu("Preferences");
     //prefs_menu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
@@ -192,7 +200,7 @@ public class PreferencesPanel extends JPanel {
     return menu_bar;
   }
 
-  void showHelp(String s) {
+  private void showHelp(String s) {
     JEditorPane text = new JEditorPane();
     text.setContentType("text/html");
     text.setText(s);
@@ -241,7 +249,7 @@ public class PreferencesPanel extends JPanel {
   }
 
 
-  String getHelpTextHTML() {
+  private String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
 
     sb.append("<h1>Preferences</h1>\n");
@@ -284,7 +292,7 @@ public class PreferencesPanel extends JPanel {
     return sb.toString();
   }
 
-  void showHelpForTab() {
+  private void showHelpForTab() {
     Component c = tab_pane.getSelectedComponent();
     String text = null;
     if (c instanceof IPrefEditorComponent) {
@@ -297,13 +305,7 @@ public class PreferencesPanel extends JPanel {
     } else {
       showHelp(text);
     }
-  }
-
-  public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / Import";
-  public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / Export";
-  //public final static String CLEAR_ACTION_COMMAND  = WINDOW_NAME + " / Clear";
-  public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / Help";
-  public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / Help for current tab";
+	}
 
   private Action getExportAction() {
     if (export_action == null) {
@@ -390,7 +392,7 @@ public class PreferencesPanel extends JPanel {
   /** A simple method for testing an IPrefEditorComponent, which MUST also
    *  be a JComponent, by simply bringing it up in a JDialog.
    */
-  public static void testPanel(IPrefEditorComponent p) {
+  /*public static void testPanel(IPrefEditorComponent p) {
     JDialog d = new JDialog();
     d.setTitle(p.getName());
     d.getContentPane().add((JComponent) p);
@@ -403,10 +405,10 @@ public class PreferencesPanel extends JPanel {
         System.exit(0);
       }
     });
-  }
+  }*/
 
   /** A main method for testing. */
-  public static void main(String[] args) throws Exception {
+  /*public static void main(String[] args) throws Exception {
     PreferencesPanel pp = getSingleton();
     JFrame f = pp.getFrame();
     f.addWindowListener( new WindowAdapter() {
@@ -415,5 +417,5 @@ public class PreferencesPanel extends JPanel {
       }
     });
     f.setVisible(true);
-  }
+  }*/
 }

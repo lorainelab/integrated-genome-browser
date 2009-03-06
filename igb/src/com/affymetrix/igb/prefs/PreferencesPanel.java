@@ -116,6 +116,7 @@ public final class PreferencesPanel extends JPanel {
   public int addPrefEditorComponent(final IPrefEditorComponent pec) {
     tab_pane.addTab(pec.getName(), pec.getIcon(), (Component) pec, pec.getToolTip());
     ((Component) pec).addComponentListener(new ComponentAdapter() {
+			@Override
       public void componentShown(ComponentEvent e) {
         pec.refresh();
       }
@@ -143,6 +144,7 @@ public final class PreferencesPanel extends JPanel {
       final Container cont = frame.getContentPane();
       frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       frame.addWindowListener( new WindowAdapter() {
+				@Override
         public void windowClosing(WindowEvent evt) {
           // save the current size into the preferences, so the window
           // will re-open with this size next time
@@ -210,8 +212,8 @@ public final class PreferencesPanel extends JPanel {
     JScrollPane scroller = new JScrollPane(text);
     scroller.setPreferredSize(new java.awt.Dimension(300, 400));
 
-    JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
-    final JDialog dialog = new JDialog(frame, "Help", true);
+    JFrame frameAncestor = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
+    final JDialog dialog = new JDialog(frameAncestor, "Help", true);
     dialog.getContentPane().add(scroller, "Center");
     Action close_action = new AbstractAction("OK") {
       public void actionPerformed(ActionEvent e) {
@@ -239,6 +241,7 @@ public final class PreferencesPanel extends JPanel {
     }
     dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     dialog.addWindowListener( new WindowAdapter() {
+			@Override
       public void windowClosing(WindowEvent evt) {
         UnibrowPrefsUtil.saveWindowLocation(dialog, HELP_WINDOW_NAME);
         dialog.dispose();
@@ -255,9 +258,9 @@ public final class PreferencesPanel extends JPanel {
     sb.append("<h1>Preferences</h1>\n");
     sb.append("<p>\n");
     sb.append("The tabs in the Help window control different aspects of the program.  ");
-    sb.append("In each case, any values you set will remain in effect when you shut-down and restart the program.  ");
+    sb.append("In each case, any values you set will remain in effect when you shut down and restart the program.  ");
     sb.append("In some cases, the changes will take effect immediately.  ");
-    sb.append("In other cases, it will be necessary to shut-down and re-start the program before the changes take effect.  ");
+    sb.append("In other cases, it will be necessary to shut down and restart the program before the changes take effect.  ");
     sb.append("</p>\n");
 
     sb.append("<h2>Export</h2>\n");
@@ -270,8 +273,7 @@ public final class PreferencesPanel extends JPanel {
     sb.append("<p>\n");
     sb.append("<b>Import</b> allows you to load persistent preferences from an XML file.  ");
     sb.append("A file chooser will open allowing you to choose the file.  ");
-    sb.append("Use this to load an XML file previously saved with <b>Export</b>, ");
-    sb.append("or to load a preference file provided by Affymetrix or another user.  ");
+    sb.append("Use this to load an XML file previously saved with <b>Export</b>. ");
     sb.append("All loaded preferences are <em>merged</em> with your existing preferences.  ");
     sb.append("Be sure you trust the provider of the file.  ");
 //    sb.append("It is impossible to limit the effects of import to preferences specific to this program.  ");

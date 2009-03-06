@@ -45,6 +45,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     this.add(scroll_pane, BorderLayout.CENTER);
 
     model = new DefaultTableModel() {
+			@Override
       public boolean isCellEditable(int row, int column) {return false;}
       public Class getColumnClass(int column) {
         return String.class;
@@ -141,7 +142,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
     sb.append("<p>\n");
     sb.append("Use this panel to associate a shortcut keystroke with various menu items and other actions.  ");
     sb.append("Choose an action, type a key combination and press 'Apply'.  ");
-    sb.append("It is necessary to shut-down and <b>re-start</b> the program before the changes take effect.  ");
+    sb.append("It is necessary to shut down and <b>restart</b> the program before the changes take effect.  ");
     sb.append("</p>\n");
     
     sb.append("<p>\n");
@@ -172,7 +173,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
   }
 
   /** A main method for testing. */
-  public static void main(String[] args) throws Exception {
+  /*public static void main(String[] args) throws Exception {
     KeyStrokesView p = new KeyStrokesView();
     //p.showShortcuts();
    
@@ -188,7 +189,7 @@ public class KeyStrokesView extends JPanel implements ListSelectionListener,
       }
     }
     );
-  }
+  }*/
   
   public String getInfoURL() {
     return null;

@@ -181,7 +181,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
   }
 
   /** A main method for testing. */
-  public static void main(String[] args) throws Exception {
+  /*public static void main(String[] args) throws Exception {
     OptionsView p = new OptionsView();
 
     JDialog d = new JDialog();
@@ -198,7 +198,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
       }
     }
     );
-  }
+  }*/
 
   public String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
@@ -220,7 +220,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
 
     sb.append("<p>\n");
     sb.append("<h2>Keep hairline in view</h2>\n");
-    sb.append("Whether to automtatically prevent the hairline from moving ");
+    sb.append("Whether to automatically prevent the hairline from moving ");
     sb.append("outside the view as you scroll.  ");
     sb.append("Recommend: true.");
     //sb.append("<br><br>Changes do not require re-start.  ");

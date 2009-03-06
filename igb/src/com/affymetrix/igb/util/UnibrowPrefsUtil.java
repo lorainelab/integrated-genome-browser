@@ -291,9 +291,8 @@ import javax.swing.*;
   throws IOException, InvalidPreferencesFormatException {
     FileInputStream fis = null;
     try {
-      Preferences prefs = getTopNode();
       fis = new FileInputStream(f);
-      prefs.importPreferences(fis);
+      Preferences.importPreferences(fis);
     } finally {
 			GeneralUtils.safeClose(fis);
     }

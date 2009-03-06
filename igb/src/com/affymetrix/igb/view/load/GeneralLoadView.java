@@ -54,7 +54,7 @@ final public class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
 	GeneralLoadUtils glu;
-	private static final boolean DEBUG_EVENTS = false;
+	private static final boolean DEBUG_EVENTS = true;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static final String SELECT = "Select";
 	private static final String GENOME_SEQ_ID = "genome";
@@ -455,7 +455,7 @@ final public class GeneralLoadView extends JComponent
 
 	/**
 	 * This gets called when the genome version is changed.
-	 * This occurs via the combo boxes, or by an external event like bookmarks.
+	 * This occurs via the combo boxes, or by an external event like bookmarks, or LoadFileAction
 	 * @param evt
 	 */
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
@@ -481,8 +481,9 @@ final public class GeneralLoadView extends JComponent
 		}
 
 		if (genomeVersionName == null) {
-			// Couldn't find version -- we have problems.
-			System.out.println("ERROR - Couldn't find version " + genomeVersionName);
+			// Couldn't find version.  This could happen if, say, a new group was created in LoadFileAction.
+			System.out.println("Couldn't find version " + genomeVersionName);
+			
 			return;
 		}
 
@@ -518,9 +519,31 @@ final public class GeneralLoadView extends JComponent
 		if (current_seq == null || speciesName.equals(SELECT) || versionName.equals(SELECT)) {
 			return;
 		}
+		
+		// validate that this sequence is in our group.
+		AnnotatedSeqGroup aseq = current_seq.getSeqGroup();
+		if (aseq == null) {
+			if (DEBUG_EVENTS) {
+				System.out.println("sequence was null");
+			}
+			all_residuesB.setEnabled(false);
+			partial_residuesB.setEnabled(false);
+			refresh_dataB.setEnabled(false);
+			return;
+		}
+		GenericVersion gVersion = this.glu.group2version.get(aseq);
+		if (gVersion == null || !(gVersion.versionName.equals(versionName))) {
+			if (DEBUG_EVENTS) {
+				System.out.println("version doesn't match");
+			}
+			// TODO: in such a case, we need to add this unknown version to the genome browser.
+			all_residuesB.setEnabled(false);
+			partial_residuesB.setEnabled(false);
+			refresh_dataB.setEnabled(false);
+			return;
+		}
 
 		createFeaturesTable(versionName);
-
 		loadWholeRangeFeatures(versionName);
 	}
 
@@ -535,6 +558,15 @@ final public class GeneralLoadView extends JComponent
 		List<GenericFeature> features = this.glu.getFeatures(genomeVersionName);
 		if (DEBUG_EVENTS) {
 			System.out.println("features: " + features.toString());
+		}
+		if (features == null || features.isEmpty()) {
+			this.feature_panel.removeAll();
+			return;
+		}
+
+
+		if (DEBUG_EVENTS) {
+			System.out.println("Creating table with features: " + features.toString());
 		}
 		this.feature_model = new FeaturesTableModel(this, features, current_seq);
 

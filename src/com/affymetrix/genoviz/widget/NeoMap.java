@@ -420,7 +420,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * Destructor that unlocks graphic resources, cuts links.
    * Call only when the map is no longer being displayed.
    * This overrides {@link NeoWidget#destroy()}
-   * so that we can clear the rubber band and it's listeners.
+   * so that we can clear the rubber band and its listeners.
    */
   @Override
   public void destroy() {
@@ -971,7 +971,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
   @Override
   public void clearWidget() {
     super.clearWidget();
-    // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
+    // create new eveGlyph, set its coords and expansion behavior to old eveGlyph
     RootGlyph oldeve = scene.getRootGlyph();
     Rectangle2D.Double evebox = oldeve.getCoordBox();
     RootGlyph neweve = new RootGlyph();

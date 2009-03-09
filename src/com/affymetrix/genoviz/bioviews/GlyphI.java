@@ -57,7 +57,7 @@ public interface GlyphI {
   }
 
   /**
-   * Draws the glyph and all it's children.
+   * Draws the glyph and all its children.
    * This can be implemented by recursively calling drawTraversal
    * for each child.
    *
@@ -189,7 +189,7 @@ public interface GlyphI {
   public Rectangle getPixelBox(ViewI view);
 
 
-  // A Glyph can advise its parent of it's minimum recommended size.
+  // A Glyph can advise its parent of its minimum recommended size.
 
   /**
    * Sets the minimum size the glyph can assume

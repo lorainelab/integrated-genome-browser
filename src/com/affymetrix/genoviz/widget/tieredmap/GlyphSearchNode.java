@@ -335,13 +335,13 @@ public class GlyphSearchNode implements Cloneable {
 
   /**
    * Free-up memory by removing references to Glyphs.
-   * Also calls this method on it's own left- and
+   * Also calls this method on its own left- and
    * right-hand neighbors, leading to a cascade of
-   * child-removal.  This clears-up alot of the
+   * child-removal.  This clears up a lot of the
    * loitering objects in AnnotationStation. Although
    * there may be possible instances when one wouldn't
    * want to call removeChildren on the left- and right-hand
-   * neighbors, I can think of any.
+   * neighbors, I can't think of any.
    */
   public void removeChildren() {
     if (children != null) {

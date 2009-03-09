@@ -73,7 +73,7 @@ public class MultiLabelRectGlyph extends FillRectGlyph implements MultiLabelledG
 
   /**
    * Tell this MultiLabelRectGlyph what Font to use for drawing
-   * it's labels.  If @param font differs from the current Font,
+   * its labels.  If @param font differs from the current Font,
    * then remeasure our label strings, storing the results in
    * a private array of ints.
    */

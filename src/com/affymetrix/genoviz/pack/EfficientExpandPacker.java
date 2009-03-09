@@ -124,7 +124,7 @@ public class EfficientExpandPacker extends ExpandPacker {
    *     and also requires index of child in parent to optimize
    * packs a child.
    * This adjusts the child's offset
-   * until it no longer reports hitting any of it's siblings.
+   * until it no longer reports hitting any of its siblings.
    */
   public Rectangle pack(GlyphI parent, GlyphI child, int child_index, 
     boolean avoid_sibs) {
@@ -199,7 +199,7 @@ public class EfficientExpandPacker extends ExpandPacker {
   /**
    * Packs a child.
    * This adjusts the child's offset
-   * until it no longer reports hitting any of it's siblings.
+   * until it no longer reports hitting any of its siblings.
    */
   @Override
   public Rectangle pack(GlyphI parent, GlyphI child, boolean avoid_sibs) {

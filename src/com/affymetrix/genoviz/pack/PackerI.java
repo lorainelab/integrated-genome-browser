@@ -21,7 +21,7 @@ import java.awt.Rectangle;
 public interface PackerI {
 
   /**
-   * Packs a given glyph within it's parent.
+   * Packs a given glyph within its parent.
    * This is typically called for each child of a glyph
    * in the other pack method of this interface.
    *

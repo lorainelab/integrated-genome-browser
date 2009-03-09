@@ -218,7 +218,7 @@ public class AffyTieredMap extends NeoMap {
     TierGlyph mtg;
     for (int i=0; i<tiers.size(); i++) {
       mtg = tiers.get(i);
-      // don't make room if tier is'nt visible, or if it's hidden
+      // don't make room if tier isn't visible, or if it's hidden
       if ( (! mtg.isVisible()) ||
 	   ((mtg.getState() == TierGlyph.HIDDEN))) {
 	//	System.out.println("hiding tier: " + mtg.getLabel());
@@ -604,7 +604,7 @@ public class AffyTieredMap extends NeoMap {
 
     // if fixed tiers, then pack first
     //    (responsibility for packing tier itself to a fixed pixel height
-    //    is left to the tier (which may well delegate to it's packer...)
+    //    is left to the tier (which may well delegate to its packer...)
     // supressing call to updateWidget() in packTiers()
     //    (de facto standard with GenoViz is for anything that calls zoom() or scroll(),
     //    the caller is responsible for deciding whether and when to call updateWidget())

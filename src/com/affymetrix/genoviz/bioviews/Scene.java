@@ -173,7 +173,7 @@ public class Scene implements SceneII  {
     // This will cause problems when trying to do damage control across
     // views on multiple canvases!!!  11-17-97
     // should probably switch to a long damage_counter for both View
-    // and Scene, so View can compare to it's own counter and decide based
+    // and Scene, so View can compare to its own counter and decide based
     // on that what to do, and Scene can in turn check View counters to
     // decide when it can zero out the damage again
     clearDamage();

@@ -66,7 +66,7 @@ public class MultiLabelRoundRectGlyph extends RoundRectGlyph implements MultiLab
 
   /**
    * Tell this MultiLabelRoundRectGlyph what Font to use for drawing
-   * it's labels.
+   * its labels.
    * @param font If different from the current Font,
    * then remeasures our label strings, storing the results in
    * a private array of ints.

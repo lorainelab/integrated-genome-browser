@@ -322,7 +322,7 @@ public class ExpandPacker implements PaddedPackerI {
   /**
    * Packs a child.
    * This adjusts the child's offset
-   * until it no longer reports hitting any of it's siblings.
+   * until it no longer reports hitting any of its siblings.
    */
   public Rectangle pack(GlyphI parent, GlyphI child, 
 			boolean avoid_sibs) {

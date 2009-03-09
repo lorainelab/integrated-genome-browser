@@ -83,7 +83,7 @@ public final class GraphGlyphUtils {
    *  If the glyph is not a floating glyph, this will have no effect on it
    *  and will return false.
    *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
-   *   the glyph's coord box is also it's pixel box.
+   *   the glyph's coord box is also its pixel box.
    */
   public static boolean checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
     boolean changed_coords = false;

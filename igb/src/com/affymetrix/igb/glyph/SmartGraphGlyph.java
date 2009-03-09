@@ -794,9 +794,9 @@ public class SmartGraphGlyph extends GraphGlyph {
     }
 
 
-    // dynamicly confining threshold to within getVisibleMinY() and getVisibleMaxY(), since
+    // dynamically confining threshold to within getVisibleMinY() and getVisibleMaxY(), since
     //   I'm having trouble dealing with this in GlyphDragger (where I'm trying to
-    //   optionally confine drag of glyph so that it can't go outside it's parent's borders...
+    //   optionally confine drag of glyph so that it can't go outside its parent's borders...
     else {
       // GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
       //   otherwise it could conflict with reported threshold settings in GraphAdjusterView

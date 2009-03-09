@@ -3049,7 +3049,7 @@ public class SeqMapView extends JPanel
 
             //      sym_popup.show(resultSeqMap, nevt.getX()+xoffset_pop, nevt.getY()+yoffset_pop);
             // if resultSeqMap is a MultiWindowTierMap, then using resultSeqMap as Component target arg to popup.show()
-            //  won't work, since it's component is never actually rendered -- so checking here
+            //  won't work, since its component is never actually rendered -- so checking here
             /// to use appropriate target Component and pixel position
             EventObject oevt = nevt.getOriginalEvent();
             //      System.out.println("original event: " + oevt);

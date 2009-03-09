@@ -156,7 +156,7 @@ final public class AlignControl implements ActionListener, ContextualPopupListen
   private static SeqSpan FindOtherSpan(SeqSymmetry annot_sym, SeqSpan curspan) {
 
         // hack to look for most common case, where the other seq will be
-        //    a chromosome (and hence it's id will start with "chr")
+        //    a chromosome (and hence its id will start with "chr")
         //    need this because now starting to look at syms with breadth > 2 (like Psl3Syms)
         SeqSpan other_span = null;
         int spancount = annot_sym.getSpanCount();

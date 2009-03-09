@@ -150,7 +150,7 @@ public final class PreferencesPanel extends JPanel {
           // will re-open with this size next time
           UnibrowPrefsUtil.saveWindowLocation(frame, WINDOW_NAME);
           // if the TierPrefsView is being displayed, the apply any changes from it.
-          // if it is not being displayed, then it's changes have already been applied in componentHidden()
+          // if it is not being displayed, then its changes have already been applied in componentHidden()
           if (singleton.tpv != null) {
             if (singleton.tab_pane.getSelectedComponent() == singleton.tpv) {
               singleton.tpv.removedFromView();

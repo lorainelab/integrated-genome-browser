@@ -20,7 +20,7 @@ import java.util.*;
  *  A cascading implementation of the Java Map class that also implements
  *  the Genometry Propertied interface.
  *  Will store properties in its own Map.  Will look for properties
- *  first in its own Map, then in it's parent Map, then the parent's parent, etc.
+ *  first in its own Map, then in its parent Map, then the parent's parent, etc.
  *  All keys and values must be String's.
  */
 public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender {

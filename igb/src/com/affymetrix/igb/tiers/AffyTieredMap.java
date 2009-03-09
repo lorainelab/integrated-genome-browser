@@ -618,7 +618,7 @@ public class AffyTieredMap extends NeoMap {
 
     // if fixed tiers, then pack first
     //    (responsibility for packing tier itself to a fixed pixel height
-    //    is left to the tier (which may well delegate to it's packer...)
+    //    is left to the tier (which may well delegate to its packer...)
     // supressing call to updateWidget() in packTiers()
     //    (de facto standard with GenoViz is for anything that calls zoom() or scroll(),
     //    the caller is responsible for deciding whether and when to call updateWidget())

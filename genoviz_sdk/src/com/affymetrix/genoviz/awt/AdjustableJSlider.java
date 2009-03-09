@@ -38,7 +38,7 @@ public class AdjustableJSlider extends JSlider implements Adjustable {
 
 	/**
 	 * constructs a slider in the given orientation.
-	 * The slider will be constructed so that it's minimum and maximum
+	 * The slider will be constructed so that its minimum and maximum
 	 * are at the same ends that a scrollbar's of the same orientation are.
 	 * This is unlike vertical sliders which differ from vertical scrollbars.
 	 * If you want a vertical slider with the minimum at the bottom,

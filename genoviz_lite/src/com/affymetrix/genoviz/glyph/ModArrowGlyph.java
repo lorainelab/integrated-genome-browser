@@ -17,7 +17,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 /**
- * another arrow glyph which adjusts to it's coord bounds.
+ * another arrow glyph which adjusts to its coord bounds.
  * This does not extend DirectedGlyph
  * and, hence, wont work on vertical maps.
  */

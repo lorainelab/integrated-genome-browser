@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.*;
  *
  *  whereas NeoDragEvent is meant to keep NeoDragListeners posted about
  *    mouse drag gestures that start in a NeoWidget and extend beyond
- *    it's borders, usually implying the NeoWidget should be "scrolled"
+ *    its borders, usually implying the NeoWidget should be "scrolled"
  *    in some manner
  *
  *  WARNING -- if this class is changed to inherit from AWTEvent, need to
@@ -64,14 +64,14 @@ public class NeoGlyphDragEvent extends EventObject {
 	 * but <em>before</em> the display has been redrawn
 	 * to reflect the changed glyph coords.
 	 *
-	 * <p> So to get new location of glyph, just ask for it's coords.
+	 * <p> So to get new location of glyph, just ask for its coords.
 	 * Currently old location of glyph is not available...
 	 *
 	 * <p> Also, if dragging a copy,
 	 * the call to GlyphDragListeners will occur <em>before</em> the copy is removed.
 	 *
 	 * <p> [ If you want to drag multiple glyphs, throw them into some sort of glyph
-	 *    that stretches around it's children (like StretchContainerGlyph?) ]
+	 *    that stretches around its children (like StretchContainerGlyph?) ]
 	 */
 	public NeoGlyphDragEvent(Object source, int id, GlyphI glyph) {
 		super(source);

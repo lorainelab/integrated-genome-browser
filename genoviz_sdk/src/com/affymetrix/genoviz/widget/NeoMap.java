@@ -453,7 +453,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			* Destructor that unlocks graphic resources, cuts links.
 			* Call only when the map is no longer being displayed.
 			* This overrides {@link NeoWidget#destroy()}
-			* so that we can clear the rubber band and it's listeners.
+			* so that we can clear the rubber band and its listeners.
 			*/
 		   public void destroy() {
 			   clearWidget();
@@ -1042,7 +1042,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			*/
 		   public void clearWidget() {
 			   super.clearWidget();
-			   // create new eveGlyph, set it's coords and expansion behavior to old eveGlyph
+			   // create new eveGlyph, set its coords and expansion behavior to old eveGlyph
 			   RootGlyph oldeve = (RootGlyph)scene.getGlyph();
 			   Rectangle2D evebox = oldeve.getCoordBox();
 			   RootGlyph neweve = new RootGlyph();

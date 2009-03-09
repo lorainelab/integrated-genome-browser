@@ -302,7 +302,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 	/**
 	 * Packs a child.
 	 * This adjusts the child's offset
-	 * until it no longer reports hitting any of it's siblings.
+	 * until it no longer reports hitting any of its siblings.
 	 */
 	public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
 		Rectangle2D childbox, siblingbox;
@@ -365,7 +365,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 						 * for LabelGlyphs.
 						 * Someday, we might try changing the LabelGlyph's orientation
 						 * to its labeled glyph.
-						 * i.e. move it to the other side or inside it's labeled glyph.
+						 * i.e. move it to the other side or inside its labeled glyph.
 						 */
 					}
 					else {

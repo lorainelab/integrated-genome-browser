@@ -18,7 +18,7 @@ import java.util.*;
 
 /**
  * A Glyph Style is associated with each glyph,
- * keeping it's background color, foreground color and Font.
+ * keeping its background color, foreground color and Font.
  * In combination with the {@link GlyphStyleFactory},
  * it uses the Flyweight pattern.
  * Only one object exists for each used combination of colors and fonts.

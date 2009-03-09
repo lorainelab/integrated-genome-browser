@@ -29,7 +29,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
   /**
    * Packs a child.
    * This adjusts the child's offset
-   * until it no longer reports hitting any of it's siblings.
+   * until it no longer reports hitting any of its siblings.
    */
   @Override
   public Rectangle pack(GlyphI parent, GlyphI child) {

@@ -639,7 +639,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 	 *     a TypeContainerAnnot attached directly to the seq for each method/type of annotation
 	 *     and a (probably single) child for each container which is an IntervalSearchSym that
 	 *     holds annotations of the given type, and which has been optimized for range-based
-	 *     queries to return it's children
+	 *     queries to return its children
 	 *    Another way to think of this is that there are two levels of annotation hierarchy
 	 *       above what one would otherwise consider the "top level" annotations.
 	 *       For example for transcript predictions there would be a four-level hiearchy:
@@ -2069,7 +2069,7 @@ public class GenometryDas2Servlet extends HttpServlet {
 						// need to test and see if creating a new BufferedOutputStream in the
 						//   AnnotationWriter.writeAnnotations implementations is necessary
 						//    because it may incur a performance hit.  Though os is _not_ an instance of
-						//    BufferedOutputStream (at least using jetty server), may still provide it's
+						//    BufferedOutputStream (at least using jetty server), may still provide its
 						//    own buffering...
 						success = writer.writeAnnotations(syms, seq, annot_type, outstream);
 						outstream.flush();

@@ -299,7 +299,7 @@ public class HorizontalAxisGlyph extends Glyph {
    * <p> A NeoMap keeps a list of its axes
    * added via the NeoMap's addAxis method.
    * Every time the NeoMap's range changes this method is called
-   * for each of it's axes.
+   * for each of its axes.
    */
   public void rangeChanged() {
     coordbox.x = parent.getCoordBox().x;

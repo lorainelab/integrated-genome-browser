@@ -362,7 +362,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	}
 
 	/**
-	 * Restore a hidden glyph to it's previous state.
+	 * Restore a hidden glyph to its previous state.
 	 * If the <code>state=={@link #HIDDEN}</code>,
 	 * restore the glyph to the state it was in before it was hidden.
 	 * Otherwise, do nothing.

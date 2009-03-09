@@ -319,12 +319,12 @@ public final class FastaParser {
 		//     then String will point to StringBuffer's
 		//     current internal array, which may be up to twice as big as actually needed to
 		//     hold residues (see String(StringBuffer) constructor, and how StringBuffer
-		//     stretches it's internal array in StringBuffer.expandCapacity()).  And even if
+		//     stretches its internal array in StringBuffer.expandCapacity()).  And even if
 		//     StringBuffer changes later, it's the StringBuffer that creates a new array -- String
 		//     still points to the old array
 		//   this does take more time (and potentially more peak memory), since have to first
 		//     copy buffer's characters to char array, and then the String(char[]) constructor will
-		//     copy the charray's charatcters to it's own internal array.  BUT, will decrease
+		//     copy the charray's characters to its own internal array.  BUT, will decrease
 		//     long-term memory usage
 		//   trying to force garbage collection via System.gc() to minimize memory spike while
 		//      doing the double-copy

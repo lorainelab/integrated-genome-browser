@@ -324,7 +324,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
 
   /**
-   * makes sure the shadow maintains it's size relative to the map.
+   * makes sure the shadow maintains its size relative to the map.
    */
   @Override
   public void viewBoxChanged(NeoViewBoxChangeEvent e) {

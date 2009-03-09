@@ -14,7 +14,7 @@
 package com.affymetrix.genoviz.datamodel;
 
 /**
- * is a String with some constraints on it's construction.
+ * is a String with some constraints on its construction.
  * Since the java.lang.String object is final,
  * this class contains a String rather than extends String.
  * Unlike String, this class can be extended

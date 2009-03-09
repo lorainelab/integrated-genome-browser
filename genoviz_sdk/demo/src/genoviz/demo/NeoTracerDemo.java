@@ -519,7 +519,7 @@ public class NeoTracerDemo extends Applet
 		int theFirstPeak = 0;
 		if ( 0 < theFirstBase ) {
 			// Ann's note: It seems weird to me that we have to cast the interface trace to
-			// it's imlementation. Why is this? Anyhow, to get this file to compile, I need
+			// its implementation. Why is this? Anyhow, to get this file to compile, I need
 			// to cast trace to Trace, which implements TraceI
 			int a = (((Trace)trace).getBaseCall(theFirstBase-1)).getTracePoint();
 			int b = (((Trace)trace).getBaseCall(theFirstBase)).getTracePoint();

@@ -93,7 +93,7 @@ public class Range implements Cloneable {
 	 * creates a new range representing the intersection of two ranges.
 	 * <em>Bug:</em> If the two ranges do not overlap,
 	 * this will return an invalid range,
-	 * whose end is less than it's beginning.
+	 * whose end is less than its beginning.
 	 *
 	 * @param that is another range to intersect with this one.
 	 * @return the intersection of the this and that.

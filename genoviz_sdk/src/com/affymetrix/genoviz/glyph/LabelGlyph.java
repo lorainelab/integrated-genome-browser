@@ -24,7 +24,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
  */
 public class LabelGlyph extends Glyph implements NeoConstants  {
 	// If TOGGLE_BY_WIDTH, then will only display when there is enough space
-	// (calculated by pixel width) along it's labelled glyph.
+	// (calculated by pixel width) along its labelled glyph.
 	boolean TOGGLE_BY_WIDTH = false;
 	private static final boolean DEBUG_PIXELBOX = false;
 	private static final boolean DEBUG_HIT = true;

@@ -88,15 +88,15 @@ public interface SequenceI {
 	 * Note that this method <em>excludes</em> the residue at <em>end</em>.
 	 * This is so that it agrees with analogous methods in String and StringBuffer.
 	 *
-	 * @param start index of the first residue to retreive.
-	 * @param end index of the residue after the last residue to retreive.
+	 * @param start index of the first residue to retrieve.
+	 * @param end index of the residue after the last residue to retrieve.
 	 */
 	public String getResidues(int start, int end);
 
 	/**
 	 * Gets a residue at a given position.
 	 *
-	 * @param n index of the residue to retreive.
+	 * @param n index of the residue to retrieve.
 	 * @return the character code for the residue
 	 * or 0 is if n is out of bounds.
 	 */

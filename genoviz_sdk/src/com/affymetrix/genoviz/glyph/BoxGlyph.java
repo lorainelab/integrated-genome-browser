@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.Rectangle2D;
  * A glyph that contains children within an outline.
  *
  * This is convenient for representing data
- * that has multiple sub-ranges within it's range.
+ * that has multiple sub-ranges within its range.
  * e.g. genes which have a known intron/exon structure.
  */
 public class BoxGlyph extends OutlineRectGlyph  {

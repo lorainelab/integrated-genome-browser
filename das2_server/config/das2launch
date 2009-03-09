@@ -316,7 +316,7 @@ shift $(($OPTIND - 1))
 
 # When the start command of das2d is called, it should invoke this
 # script which then calls the java command to start the DAS/2 server. 
-# This script then waits on it's process ID indefinitely.
+# This script then waits on its process ID indefinitely.
 
 # When this script is stopped by the daemon, it will leads to the DAS/2 java
 # process getting killed during the clean_up function, 

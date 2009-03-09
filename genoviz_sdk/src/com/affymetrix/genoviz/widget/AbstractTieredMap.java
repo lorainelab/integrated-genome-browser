@@ -207,7 +207,7 @@ public abstract class AbstractTieredMap
 		for (int i=0; i<tiers.size(); i++) {
 			mtg = tiers.elementAt(i);
 
-			// don't make room if tier is'nt visible, or if it's hidden
+			// don't make room if tier isn't visible, or if it's hidden
 
 			if (!mtg.isVisible() || (mtg.getState() == MapTierGlyph.HIDDEN))
 				continue;

@@ -864,7 +864,7 @@ public class DNAUtils implements Translatable  {
 	 *
 	 * @param buf a string of nucleotide codes
 	 *            each of which is replaced
-	 *            with it's complementary code.
+	 *            with its complementary code.
 	 * @see #complement
 	 */
 	protected static void complementBuffer(StringBuffer buf) {

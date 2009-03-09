@@ -18,7 +18,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 /**
- * A LineContainerGlyph that recursively sets the colors of it's children.
+ * A LineContainerGlyph that recursively sets the colors of its children.
  */
 public class LineContainer2Glyph extends LineContainerGlyph  {
 

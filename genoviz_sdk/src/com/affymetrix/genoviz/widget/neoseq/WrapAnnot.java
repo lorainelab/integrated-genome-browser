@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.*;
 /**
  * contains other WrapGlyphs.
  * A WrapAnnot does not draw itself.
- * It is used merely to cashe residues per line for it's children.
+ * It is used merely to cashe residues per line for its children.
  * There may well be a better way.
  */
 public class WrapAnnot extends WrapGlyph {
@@ -50,7 +50,7 @@ public class WrapAnnot extends WrapGlyph {
 
 	/**
 	 * does nothing.
-	 * It's children will draw themselves.
+	 * Its children will draw themselves.
 	 */
 	public void draw(ViewI v) {
 	}

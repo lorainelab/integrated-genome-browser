@@ -1184,7 +1184,7 @@ public class NeoAssembler extends NeoContainerWidget
 	/**
 	 * This implements the selection method portion of NeoMapI.
 	 * That portion of NeoMapI might move to NeoWidgetI
-	 * or to a new interface of it's own.
+	 * or to a new interface of its own.
 	 * @see NeoMapI
 	 */
 	public void setSelectionEvent(int theEvent) {

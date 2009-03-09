@@ -119,6 +119,10 @@ public final class FeatureLoading {
 			}
 			return;
 		}
+		if (gVersion.gServer.serverType == GenericServer.ServerType.Unknown) {
+			// no features.  This was an unknown type.
+			return;
+		}
 
 		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
 	}

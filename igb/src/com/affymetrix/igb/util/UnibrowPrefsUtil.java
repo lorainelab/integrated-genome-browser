@@ -68,6 +68,18 @@ import javax.swing.*;
   public static Preferences getTopNode() {
     return Preferences.userRoot().node("/com/affymetrix/igb");
   }
+	public static Preferences getKeystrokesNode() {
+    return UnibrowPrefsUtil.getTopNode().node("keystrokes");
+  }
+	 public static Preferences getLocationsNode() {
+    return UnibrowPrefsUtil.getTopNode().node("locations");
+  }
+  public static Preferences getGenomesNode() {
+    return UnibrowPrefsUtil.getTopNode().node("genomes");
+  }
+	public static Preferences getServersNode() {
+		return UnibrowPrefsUtil.getTopNode().node("servers");
+	}
 
    public static void saveIntParam(String param_name, int param) {
      try {
@@ -314,26 +326,24 @@ import javax.swing.*;
    *  @param parent_comp  the parent component for the JOptionPane, null is ok
    */
   public static void clearPreferences(Component parent_comp) {
-    // The option pane used differs from the confirmDialog only in
-    // that "No" is the default choice.
-    String[] options = {"Yes", "No"};
-    if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
-      parent_comp, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
-      JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-      options, options[1])) {
+		 // The option pane used differs from the confirmDialog only in
+		 // that "No" is the default choice.
+		 String[] options = {"Yes", "No"};
+		 if (JOptionPane.YES_OPTION == JOptionPane.showOptionDialog(
+						 parent_comp, "Really reset all preferences to defaults?\n(this will also exit the application)", "Clear preferences?",
+						 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+						 options, options[1])) {
 
-      try {
-        getTopNode().removeNode();
-	System.exit(0);
-      } catch (Exception e) {
-        ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
-      }
-    }
-  }
+			 try {
+				 getTopNode().removeNode();
+				 System.exit(0);
+			 } catch (Exception e) {
+				 ErrorHandler.errorPanel("ERROR", "Error clearing preferences", e);
+			 }
+		 }
+	 }
 
-  public static Preferences getKeystrokesNode() {
-    return UnibrowPrefsUtil.getTopNode().node("keystrokes");
-  }
+
 
   public static Collection<String> getKeystrokesNodeNames() {
     return Collections.unmodifiableSet(new TreeSet<String>(keystroke_node_names));
@@ -370,13 +380,7 @@ import javax.swing.*;
     return ks;
   }
 
-  public static Preferences getLocationsNode() {
-    return UnibrowPrefsUtil.getTopNode().node("locations");
-  }
-
-  public static Preferences getGenomesNode() {
-    return UnibrowPrefsUtil.getTopNode().node("genomes");
-  }
+ 
 
   public static String getLocation(String name, String default_value) {
 
@@ -676,6 +680,7 @@ import javax.swing.*;
 
     frame.setVisible(true);
     frame.addWindowListener( new WindowAdapter() {
+			@Override
       public void windowClosing(WindowEvent evt) {
         // save the current size into the preferences, so the window
         // will re-open with this size next time

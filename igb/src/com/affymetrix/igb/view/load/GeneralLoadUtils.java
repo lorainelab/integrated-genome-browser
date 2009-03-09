@@ -241,7 +241,10 @@ final public class GeneralLoadUtils {
 				getQuickLoadSpeciesAndVersions(gServer);
 				continue;
 			}
-
+			if (gServer.serverType == GenericServer.ServerType.Unknown) {
+				System.out.println("WARNING: Discovered server class " + gServer.serverType);
+				continue;
+			}
 			System.out.println("WARNING: Unknown server class " + gServer.serverType);
 		}
 	}
@@ -265,13 +268,7 @@ final public class GeneralLoadUtils {
 			/* String versionName = source.getName(); */
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
 			String versionID = source.getID();
-			List<GenericVersion> gVersionList;
-			if (!this.species2genericVersionList.containsKey(speciesName)) {
-				gVersionList = new ArrayList<GenericVersion>();
-				this.species2genericVersionList.put(speciesName, gVersionList);
-			} else {
-				gVersionList = this.species2genericVersionList.get(speciesName);
-			}
+			List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 			GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, source);
 			discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 		}
@@ -348,16 +345,32 @@ final public class GeneralLoadUtils {
 			if (DEBUG) {
 				System.out.println("Unknown quickload genome:" + genomeName);
 			}
-			List<GenericVersion> gVersionList;
-			if (!this.species2genericVersionList.containsKey(species)) {
-				gVersionList = new ArrayList<GenericVersion>(1);
-				this.species2genericVersionList.put(species, gVersionList);
-			} else {
-				gVersionList = this.species2genericVersionList.get(species);
-			}
+
+			List<GenericVersion> gVersionList = this.getSpeciesVersionList(species);
+
 			gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
 			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
 		}
+	}
+
+	/**
+	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
+	 * Update GeneralLoadUtils state.
+	 * @param aseq
+	 * @return
+	 */
+	GenericVersion getUnknownVersion(AnnotatedSeqGroup aseq) {
+		String versionName = aseq.getID();
+		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
+
+		List<GenericVersion> gVersionList = this.getSpeciesVersionList(speciesName);
+
+		GenericServer gServer = new  GenericServer(null, null, GenericServer.ServerType.Unknown, null);
+		GenericVersion gVersion = new GenericVersion(versionName, versionName, gServer, null);
+
+		discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
+
+		return gVersion;
 	}
 
 	/**
@@ -366,13 +379,13 @@ final public class GeneralLoadUtils {
 	 * @param gServer only used by debug statement.
 	 * @param gVersion not null.
 	 * @param gVersionList not null.
-	 * @param genomeName not null or empty.
+	 * @param speciesName not null or empty.
 	 */
-	private void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String genomeName) {
+	private void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String speciesName) {
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
-		versionName2species.put(versionName, genomeName);
+		versionName2species.put(versionName, speciesName);
 		Set<GenericVersion> versionSet;
 		if (this.versionName2versionSet.containsKey(versionName)) {
 			versionSet = this.versionName2versionSet.get(versionName);
@@ -384,8 +397,25 @@ final public class GeneralLoadUtils {
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
 		group2version.put(group, gVersion);
 		if (DEBUG) {
-			System.out.println("Added " + gServer.serverType + "genome: " + genomeName + " version: " + versionName);
+			System.out.println("Added " + gServer.serverType + "genome: " + speciesName + " version: " + versionName);
 		}
+	}
+
+
+	/**
+	 * Get list of versions for given species.  Create it if it doesn't exist.
+	 * @param speciesName
+	 * @return
+	 */
+	private List<GenericVersion> getSpeciesVersionList(String speciesName) {
+		List<GenericVersion> gVersionList;
+		if (!this.species2genericVersionList.containsKey(speciesName)) {
+			gVersionList = new ArrayList<GenericVersion>();
+			this.species2genericVersionList.put(speciesName, gVersionList);
+		} else {
+			gVersionList = this.species2genericVersionList.get(speciesName);
+		}
+		return gVersionList;
 	}
 
 	/** Returns the name that this server uses to refer to the given AnnotatedSeqGroup.
@@ -559,6 +589,10 @@ final public class GeneralLoadUtils {
 			group.setSource(gVersion.gServer.serverName);
 			return group;
 		}
+		if (gVersion.gServer.serverType == GenericServer.ServerType.Unknown) {
+				group = gmodel.addSeqGroup(gVersion.versionName);
+				return group;
+			}
 
 		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
 

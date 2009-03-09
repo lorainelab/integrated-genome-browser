@@ -53,7 +53,7 @@ public final class UnibrowControlServlet {
 	/*public void setUnibrowInstance(Application uni) {
 	this.uni = uni;
 	}*/
-	/** Convenience method for retreiving a String parameter from a parameter map
+	/** Convenience method for retrieving a String parameter from a parameter map
 	 *  of an HttpServletRequest.
 	 *  @param map Should be a Map, such as from {@link javax.servlet.ServletRequest#getParameterMap()},
 	 *  where the only keys are String and String[] objects.

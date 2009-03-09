@@ -7,7 +7,7 @@ import com.affymetrix.igb.das2.Das2ServerInfo;
  * A class that's useful for visualizing a generic server.
  */
 public final class GenericServer {
-	public static enum ServerType { DAS, DAS2, QuickLoad };
+	public static enum ServerType { DAS, DAS2, QuickLoad, Unknown };
 	
 	public final String serverName;   // name of the server.
 	public final String URL;          // URL/file that points to the server.

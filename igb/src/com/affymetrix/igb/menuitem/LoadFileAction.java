@@ -232,7 +232,7 @@ public class LoadFileAction {
             gmodel.setSelectedSeq(new_seq);
           } else if (previous_seq != null) {
             // Setting the selected Seq, even if it hasn't changed identity, is to
-            // make the SeqMapView update itself.  (It's contents may have changed.)
+            // make the SeqMapView update itself.  (Its contents may have changed.)
             gmodel.setSelectedSeq(previous_seq);
           }
         }
@@ -243,7 +243,7 @@ public class LoadFileAction {
   }
 
 
-  public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile, 
+  private static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile,
       GenometryModel gmodel, MutableAnnotatedBioSeq input_seq) 
   throws IOException {
       MutableAnnotatedBioSeq aseq = null;

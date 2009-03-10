@@ -18,8 +18,8 @@ import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import java.util.prefs.*;
+//import com.affymetrix.igb.util.UnibrowPrefsUtil;
+//import java.util.prefs.*;
 
 public class DasDiscovery {
 
@@ -45,7 +45,7 @@ public class DasDiscovery {
 
     if (das_servers == null) {
       das_servers = new LinkedHashMap<String,DasServerInfo>();
-      addServersFromPreferences();
+      //addServersFromPreferences();
     }
 
     return das_servers;
@@ -90,11 +90,11 @@ public class DasDiscovery {
     }
   }
 
-  public static Preferences getPreferencesNode() {
+  /*public static Preferences getPreferencesNode() {
     return UnibrowPrefsUtil.getTopNode().node("DAS Servers");
-  }
+  }*/
 
-  static void addServersFromPreferences() {
+  /*static void addServersFromPreferences() {
     Preferences top_node = getPreferencesNode();
 
     try {
@@ -116,7 +116,7 @@ public class DasDiscovery {
     } catch (BackingStoreException bse) {
       UnibrowPrefsUtil.handleBSE(null, bse);
     }
-  }
+  }*/
 
 
   /**
@@ -136,7 +136,7 @@ public class DasDiscovery {
     if (url == null || name == null) {
       throw new IllegalArgumentException();
     }
-    Preferences p = getNodeForURL(url, true);
+    /*Preferences p = getNodeForURL(url, true);
     String preferred_name = p.get(KEY_NAME, null);
     if (preferred_name == null) {
       // Store the name for this DAS URL only if it doesn't already have a name
@@ -146,7 +146,9 @@ public class DasDiscovery {
     if (p.getBoolean(KEY_ENABLED, true)) {
       server = new DasServerInfo(url, preferred_name, false);
       das_servers.put(preferred_name, server);
-    }
+    }*/
+		server = new DasServerInfo(url, name, false);
+		das_servers.put(name, server);
 		return server;
   }
 
@@ -154,7 +156,7 @@ public class DasDiscovery {
    *  Remove a given Das URL, both from the in-memory list and the persistent
    *  storage.
    */
-  public void removeDasServer(String url) {
+  /*public void removeDasServer(String url) {
     if (url == null) {
       throw new IllegalArgumentException();
     }
@@ -174,10 +176,10 @@ public class DasDiscovery {
         }
       }
     }
-  }
+  }*/
 
   // Gets a node for the url, possibly making it if it didn't exist already.
-  public static Preferences getNodeForURL(String url, boolean create) {
+  /*public static Preferences getNodeForURL(String url, boolean create) {
     Preferences p = null;
     try {
       String[] node_names = getPreferencesNode().childrenNames();
@@ -208,16 +210,16 @@ public class DasDiscovery {
       p.put(KEY_URL, url);
     }
     return p;
-  }
+  }*/
 
   // the node names are meaningless, so just pick some integer that hasn't
   // been used yet
-  static String getUnusedNodeName() throws BackingStoreException {
+  /*static String getUnusedNodeName() throws BackingStoreException {
     int i=1000;
     String s = Integer.toString(i);
     while (getPreferencesNode().nodeExists(s)) {
       s = Integer.toString( ++i );
     }
     return s;
-  }
+  }*/
 }

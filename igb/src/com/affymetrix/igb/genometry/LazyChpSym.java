@@ -49,7 +49,7 @@ import com.affymetrix.igb.das2.Das2VersionedSource;
  *
  * @version $Id$
  */
-public class LazyChpSym extends ScoredContainerSym {
+public final class LazyChpSym extends ScoredContainerSym {
 
   public static String PROBESET_SERVER_NAME = "NetAffx";
   // public static String PROBESET_SERVER_NAME = "localhost";  // for debugging

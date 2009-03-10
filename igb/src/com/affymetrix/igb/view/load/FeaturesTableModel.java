@@ -22,7 +22,9 @@ import javax.swing.table.AbstractTableModel;
  */
 final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
 
-	private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
+	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
+	//Turn off "Load Status" for now.
+	private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type"};
 	static String[] standardLoadChoices = {"Don't Load", "Region In View", "Whole Chromosome"};
 	static String[] quickloadLoadChoices = {"Don't Load", "Whole Genome"};
 	private final EnumMap<LoadStrategy, String> DASLoadStrategyMap;  // map to a friendly string

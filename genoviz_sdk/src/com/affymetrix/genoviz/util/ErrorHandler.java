@@ -117,11 +117,11 @@ public abstract class ErrorHandler {
 		dialog.setResizable(true);
 
 		if (SwingUtilities.isEventDispatchThread()) {
-			dialog.show();
+			dialog.setVisible(true);
 		} else {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					dialog.show();
+					dialog.setVisible(true);
 				}
 			});
 		}

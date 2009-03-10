@@ -18,9 +18,9 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Dimension;
 import java.awt.event.*;
 import java.io.*;
@@ -30,12 +30,14 @@ import java.util.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
 final public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
-  static final String PREF_SYN_FILE_URL = "Synonyms File URL";
+  private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
 
   private static Map<String,Integer> cache_usage_options;
   private static Map<Integer,String> usage2str;
@@ -48,10 +50,11 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   //JButton reset_das_dna_serverB = new JButton("Reset");
   //JTextField syn_file_TF;
 
-	private static final String QuickLoadTitle = "Add Server File/URL";
-	private static final String DASTitle = "Add Server File";
+	private static final String AddServerTitle = "Add Server";
+	//private static final String DASTitle = "Add Server File";
 
   private JFileChooser chooser = null;
+	private final GeneralLoadView glv;
 
   static {
     String norm = "Normal Usage";
@@ -106,13 +109,14 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   };
 
 
-  public DataLoadPrefsView() {
+  public DataLoadPrefsView(GeneralLoadView glv) {
+		this.glv = glv;
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.setBorder(BorderFactory.createEtchedBorder());
 
 		synonymsBox();
 
-		//addServerBox();
+		addServerBox();
 		
     cacheBox();
 
@@ -122,7 +126,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 	private void synonymsBox() {
 		Box syn_box = Box.createVerticalBox();
-		syn_box.setBorder(new javax.swing.border.TitledBorder("Personal Synonyms File"));
+		syn_box.setBorder(new javax.swing.border.TitledBorder("Add Personal Synonyms File"));
 		final JTextField syn_file_TF = UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), PREF_SYN_FILE_URL, "");
 		syn_file_TF.setMaximumSize(new Dimension(syn_file_TF.getMaximumSize().width, syn_file_TF.getPreferredSize().height));
 		syn_file_TF.setAlignmentX(0.0f);
@@ -186,17 +190,52 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 	}
 
 
+  private void processSynFile(String path) {
+    try {
+      UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, path);
+      File f = new File(path);
+      if (! f.exists()) {
+        ErrorHandler.errorPanel("File Not Found",
+            "Synonyms file not found at the specified path\n" + path, this);
+        return;
+      } else {
+        FileInputStream fis = new FileInputStream(f);
+        SynonymLookup.getDefaultLookup().loadSynonyms(fis);
+
+        JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(),
+            "Loaded Synonyms", JOptionPane.INFORMATION_MESSAGE);
+      }
+    } catch (IOException ioe) {
+      ErrorHandler.errorPanel("ERROR",
+          "Exception while reading from file\n" + path,
+          this, ioe);
+    }
+  }
+
+
+
 	private void addServerBox() {
 
 		final Box serverBox = Box.createVerticalBox();
-		final TitledBorder tBorder = new TitledBorder(QuickLoadTitle);
+		final TitledBorder tBorder = new TitledBorder(AddServerTitle);
 		serverBox.setBorder(tBorder);
 		
 
-		final JTextField serverTF = new JTextField("");
+		final JTextField serverTF = new JTextField("",100);
 		serverTF.setMaximumSize(new Dimension(serverTF.getMaximumSize().width,serverTF.getPreferredSize().height));
 		serverTF.setAlignmentX(0.0f);
+		final JLabel serverLabel = new JLabel("Server URL (or directory)");
+		serverLabel.setLabelFor(serverTF);
+		serverBox.add(serverLabel);
 		serverBox.add(serverTF);
+
+		final JTextField serverNameTF = new JTextField("",100);
+		serverNameTF.setMaximumSize(new Dimension(serverNameTF.getMaximumSize().width,serverNameTF.getPreferredSize().height));
+		serverNameTF.setAlignmentX(0.0f);
+		final JLabel serverNameLabel = new JLabel("Server name");
+		serverNameLabel.setLabelFor(serverNameTF);
+		serverBox.add(serverNameLabel);
+		serverBox.add(serverNameTF);
 
 		final Vector<String> serverTypes = new Vector<String>(3);
 		serverTypes.add("QuickLoad");
@@ -221,55 +260,79 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 		this.add(Box.createRigidArea(new Dimension(0, 5)));
 
-		// Make the title self-explanatory
-		/*serverTypeCB.addItemListener(new ItemListener() {
+		// Make the label self-explanatory
+		serverTypeCB.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				String serverType = (String)serverTypeCB.getSelectedItem();
-				System.out.println("Selected " + serverType);
 				if (serverType.equals("QuickLoad")) {
-					tBorder.setTitle(DataLoadPrefsView.QuickLoadTitle);
-					serverBox.setBorder(tBorder);
+					serverLabel.setText("Server URL (or directory)");
 				} else {
-					tBorder.setTitle(DataLoadPrefsView.DASTitle);
-					serverBox.setBorder(tBorder);
+					serverLabel.setText("Server URL");
 				}
 			}
-		});*/
+		});
 		addServerB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				addServer(serverTF.getText(), (String)serverTypeCB.getSelectedItem());
+				addServer(serverTF.getText(), (String)serverTypeCB.getSelectedItem(),serverNameTF.getText());
 			}
 		});
 	}
 
-	private void addServer(String serverName, String serverType) {
+	private void addServer(String DirectoryOrURL, String serverType, String serverName) {
+		if (serverName == null || serverName.length() == 0) {
+			ErrorHandler.errorPanel("Blank server name","Server name must be specified",this);
+			return;
+		}
 		if (serverType.equals("QuickLoad")) {
-			File f = new File(serverName);
-			if (f.exists()) {
+			File f = new File(DirectoryOrURL);
+			if (f.isDirectory()) {
+				addToPreferences(DirectoryOrURL, serverType, serverName);
 				// file exists -- add to preferences
 				return;
 			}
 		}
 		try {
 			// it's a URL, hopefully
-			URL url = new URL(serverName);
-			/*
-			} else if (serverType.equals("DAS2")) {
-			System.out.println("Add DAS2 " + serverName);
-			} else {
-			System.out.println("Add DAS " + serverName);
-			}*/
+			URL url = new URL(DirectoryOrURL);
+			addToPreferences(DirectoryOrURL, serverType, serverName);
 		} catch (MalformedURLException ex) {
-			String errorTitle = "Invalid URL" + (serverType.equals("QuickLoad") ? "/File" : "");
+			String errorTitle = "Invalid URL" + (serverType.equals("QuickLoad") ? "/Directory" : "");
 			String errorMessage =
-							"'" + serverName + "' is not a valid URL"
-							+ (serverType.equals("QuickLoad") ? " or file" : "");
+							"'" + DirectoryOrURL + "' is not a valid URL"
+							+ (serverType.equals("QuickLoad") ? " or directory" : "");
 			ErrorHandler.errorPanel(errorTitle,errorMessage,this);
 			return;
 		}
+	}
 
-		// Add to preferences
+	/**
+	 * Add the URL/Directory and server name to the preferences.
+	 * @param DirectoryOrURL
+	 * @param serverType
+	 * @param serverName
+	 */
+	private void addToPreferences(String DirectoryOrURL, String serverType, String serverName) {
+		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
+		Preferences individualServerPref = prefServers.node(serverType);
+		individualServerPref.put(DirectoryOrURL, serverName);
+		try {
+			individualServerPref.flush();
+			// Add to GeneralLoadView
+		} catch (BackingStoreException ex) {
+			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+		}
 
+		// Add to GeneralLoadView
+		
+
+		serverDialog(serverName,DirectoryOrURL);
+	}
+
+	private void serverDialog(String serverName, String DirectoryOrURL) {
+		JOptionPane.showMessageDialog(null,
+						"Server " + serverName + " at " + DirectoryOrURL + " has been added.",
+						"Server has been added",
+						JOptionPane.INFORMATION_MESSAGE);
 	}
 
 
@@ -320,31 +383,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		clear_cacheB.addActionListener(clear_cache_al);
 	}
 
-
-  
-  private void processSynFile(String path) {
-    try {
-      UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, path);
-      File f = new File(path);
-      if (! f.exists()) {
-        ErrorHandler.errorPanel("File Not Found",
-            "Synonyms file not found at the specified path\n" + path, this);
-        return;
-      } else {
-        FileInputStream fis = new FileInputStream(f);
-        SynonymLookup.getDefaultLookup().loadSynonyms(fis);
-
-        JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(),
-            "Loaded Synonyms", JOptionPane.INFORMATION_MESSAGE);
-      }
-    } catch (IOException ioe) {
-      ErrorHandler.errorPanel("ERROR",
-          "Exception while reading from file\n" + path,
-          this, ioe);
-    }
-  }
-
-
+ 
   @Override
   public String getName() {
     return "Data Sources";
@@ -384,18 +423,18 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     sb.append("</p>\n");
 */
     sb.append("<p>\n");
-    sb.append("<h2>Add Server file/URL</h2>\n");
+    sb.append("<h2>Add Server</h2>\n");
     sb.append("Add an additional server for loading of genomes, sequences, etc.");
 		sb.append("The user needs to specify if this is a Quickload, DAS, or DAS/2 server");
     sb.append("</p>\n");
 		
     sb.append("<p>\n");
-    sb.append("<h2>Personal Synonyms File</h2>\n");
-    sb.append("Optional.  The location of a synonyms file to use to help resolve cases where ");
+    sb.append("<h2>Add Personal Synonyms File</h2>\n");
+    sb.append("The location of a synonyms file to use to help resolve cases where ");
     sb.append("different data files refer to the same genome or chromosome by different names. ");
     sb.append("For instance 'hg16' = 'ncbi.v34' and 'chrM' = 'chrMT' and 'chr1' = 'CHR1'. ");
     sb.append("This is simply a tab-delimited file where entries on the same row are all synonymous. ");
-    sb.append("Synonyms will be <b>merged</b> from the NetAffx QuickLoad server, your personal QuickLoad server, and the file listed here. ");
+    sb.append("Synonyms will be <b>merged</b> from the servers, preference files, and the file listed here. ");
     sb.append("</p>\n");
 
     sb.append("<p>\n");

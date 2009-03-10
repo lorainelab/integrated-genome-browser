@@ -24,7 +24,9 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
@@ -43,6 +45,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
@@ -53,7 +56,10 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
+import com.affymetrix.igb.general.GenericServer;
+import com.affymetrix.igb.general.GenericServer.ServerType;
 import com.affymetrix.igb.general.Persistence;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -65,6 +71,7 @@ import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.swing.DisplayUtils;
+import java.util.prefs.Preferences;
 
 
 
@@ -75,29 +82,29 @@ import com.affymetrix.swing.DisplayUtils;
 public final class IGB extends Application
   implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener  {
   static IGB singleton_igb;
-  public static String APP_NAME = IGBConstants.APP_NAME;
-  public static String APP_SHORT_NAME = IGBConstants.APP_SHORT_NAME;
-  public static String APP_VERSION = IGBConstants.IGB_VERSION;
+  private static String APP_NAME = IGBConstants.APP_NAME;
+  private static String APP_SHORT_NAME = IGBConstants.APP_SHORT_NAME;
+  private static String APP_VERSION = IGBConstants.IGB_VERSION;
   
 	/**
 	 * HTTP User Agent presented to servers.  Java version is appended by
 	 * the JRE at runtime.  The user agent is of the format
 	 * "APP_SHORT_NAME/APP_VERSION, os.name/os.version (os.arch)".
 	 */
-	public static String HttpUserAgent = APP_SHORT_NAME + "/" + APP_VERSION + ", " + System.getProperty("os.name") + "/" + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
+	private static String HttpUserAgent = APP_SHORT_NAME + "/" + APP_VERSION + ", " + System.getProperty("os.name") + "/" + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
 
   //public static boolean USE_OVERVIEW = false;
-  public static boolean USE_MULTI_WINDOW_MAP = false;
+  private static boolean USE_MULTI_WINDOW_MAP = false;
   //public static boolean USE_REFRESH_BUTTON = true;
-  public static boolean REPLACE_REPAINT_MANAGER = false;
-  public static boolean REPORT_GRAPHICS_CONFIG = false;
+  //private static boolean REPLACE_REPAINT_MANAGER = false;
+  private static boolean REPORT_GRAPHICS_CONFIG = false;
 
-  public static String USE_QUICKLOAD_INSTEAD_OF_DAS2 = "USE_QUICKLOAD_INSTEAD_OF_DAS2";
-  public static boolean DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2 = false;
+  //public static String USE_QUICKLOAD_INSTEAD_OF_DAS2 = "USE_QUICKLOAD_INSTEAD_OF_DAS2";
+  //public static boolean DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2 = false;
   //  public static boolean USE_QUICKLOAD = false;  // if false, QuickLoadView2 may still be used by DataLoadView
   //  public static boolean USE_DATALOAD = true;  //  DataLoadView may also use QuickLoadView2
-  public static final boolean DEBUG_EVENTS = false;
-  public static final boolean ADD_DIAGNOSTICS = false;
+  //public static final boolean DEBUG_EVENTS = false;
+  private static final boolean ADD_DIAGNOSTICS = false;
   public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 
   // Whether to allow users to delete data from the loaded AnnotatedSeqGroup.
@@ -106,12 +113,12 @@ public final class IGB extends Application
   // when data has been deleted so that it can reload data of the same time
   // if requested, and the DAS/1 loader needs to get rid of its cached queries
   // related to the given feature type.
-  public static final boolean ALLOW_DELETING_DATA = false;
+  //public static final boolean ALLOW_DELETING_DATA = false;
 
-  public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
-  public static boolean default_sequence_accessible = true;
+  //public static final String PREF_SEQUENCE_ACCESSIBLE = "Sequence accessible";
+  private static final boolean default_sequence_accessible = true;
 
-  final static String TABBED_PANES_TITLE = "Tabbed Panes";
+  private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static Map<String,Map> prefs_hash;
@@ -187,14 +194,14 @@ public final class IGB extends Application
   List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
   List<Object> plugins = new ArrayList<Object>(16);
 
-  static String user_dir = System.getProperty("user.dir");
-  static String user_home = System.getProperty("user.home");
+  private static final String user_dir = System.getProperty("user.dir");
+  private static final String user_home = System.getProperty("user.home");
 
   FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 
-  static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
+  private static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
 
-  static String default_prefs_resource = "/igb_default_prefs.xml";
+  private static final String default_prefs_resource = "/igb_default_prefs.xml";
 
   /**
    *  We no longer distribute a file called "igb_prefs.xml".
@@ -204,7 +211,7 @@ public final class IGB extends Application
    *  the user's home directory, since they may have put some personal modifications
    *  there.
    */
-  public static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
+  private static final String DEFAULT_PREFS_FILENAME = "igb_prefs.xml";
   static String default_user_prefs_files =
     (new File(user_home, DEFAULT_PREFS_FILENAME)).getAbsolutePath() +
     ";" +
@@ -212,7 +219,7 @@ public final class IGB extends Application
 
   //static String rest_file = "rest_enzymes"; // located in same directory as this class
 
-  boolean initialized = false;
+  private static boolean initialized = false;
 
   /**
    * Start the program.
@@ -441,27 +448,25 @@ public final class IGB extends Application
    * returns "bar", get_arg("flag_2") returns a non-null string,
    * and get_arg("flag_5") returns null.
    */
-  public static String get_arg(String label,String[] args) {
-    String to_return = null;
-    boolean got_it = false;
-    if (label != null && args != null) {
-      int num_args = args.length;
-      for (int i = 0 ; i < num_args ; i++) {
-	String item = args[i];
-	if (got_it) {
-	  to_return = item;
-	  break;
+ public static String get_arg(String label, String[] args) {
+		String to_return = null;
+		boolean got_it = false;
+		if (label != null && args != null) {
+			for (String item : args) {
+				if (got_it) {
+					to_return = item;
+					break;
+				}
+				if (item.equals(label)) {
+					got_it = true;
+				}
+			}
+		}
+		if (got_it && to_return == null) {
+			to_return = "true";
+		}
+		return to_return;
 	}
-	if (item.equals(label)) {
-	  got_it = true;
-	}
-      }
-    }
-    if (got_it && to_return == null) {
-      to_return = "true";
-    }
-    return to_return;
-  }
 
   public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
@@ -485,134 +490,155 @@ public final class IGB extends Application
       
       LoadFileOrURLPrefs(prefs_parser);
 
+			LoadPreferencePrefs();
+
       return prefs_hash;
   }
 
-  private static void LoadDefaultPrefsFromJar(XmlPrefsParser prefs_parser) {
-      /**  first load default prefs from jar */
-      InputStream default_prefs_stream = null;
-      try {
-          default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
-          System.out.println("loading default prefs from: " + default_prefs_resource);
-          prefs_parser.parse(default_prefs_stream, "", prefs_hash);
-      } catch (Exception ex) {
-          System.out.println("Problem parsing prefs from: " + default_prefs_resource);
-          ex.printStackTrace();
-      } finally {
-          try {
-              default_prefs_stream.close();
-          } catch (Exception e) {
-          }
-      }
-    }
-  
-     
-  private static void LoadWebPrefs(XmlPrefsParser prefs_parser) {
-      // If a particular web prefs file was specified, then load it.
-      // Otherwise try to load the web-based-default prefs file. (But
-      // only load it if it is cached, then later update the cache on
-      // a background thread.)
-      String def_prefs_url = get_default_prefs_url(main_args);
-      if (def_prefs_url == null) {
-          loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
-      } else {
-          LoadPreferencesFromURL(def_prefs_url, prefs_parser);
-      }
-    }
-     
-    /**
-   *  Attempts to load the web-based XML default preferences file from the
-   *  local cache.  If this file is not in the cache, will skip
-   *  it and will NOT try to read it from the web.  (This is to prevent slowing
-   *  down the start-up process.)  Regardless of whether the file was actualy read,
-   *  will then spawn a background thread that will try to create or update
-   *  the local cached copy of this preferences file so it will be available
-   *  the next time the program runs.
-   *
-   */
-    private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map<String,Map> prefs_hash) {
-        String web_prefs_url = WEB_PREFS_URL;
-        InputStream is = null;
-        try {
-            is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
-        } catch (IOException ioe) {
-            System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
-            is = null;
-        }
+ private static void LoadDefaultPrefsFromJar(XmlPrefsParser prefs_parser) {
+		/**  first load default prefs from jar */
+		InputStream default_prefs_stream = null;
+		try {
+			default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
+			System.out.println("loading default prefs from: " + default_prefs_resource);
+			prefs_parser.parse(default_prefs_stream, "", prefs_hash);
+		} catch (Exception ex) {
+			System.out.println("Problem parsing prefs from: " + default_prefs_resource);
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(default_prefs_stream);
+		}
+	}
 
-        if (is != null) {
-            try {
-                prefs_parser.parse(is, web_prefs_url, prefs_hash);
-                System.out.println("Loading default prefs from url: " + web_prefs_url);
-            } catch (Exception ex) {
-                System.out.println("Problem parsing prefs from url: " + web_prefs_url);
-                System.out.println("Caused by: " + ex.toString());
-            } finally {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                }
-            }
-        }
+	private static void LoadWebPrefs(XmlPrefsParser prefs_parser) {
+		// If a particular web prefs file was specified, then load it.
+		// Otherwise try to load the web-based-default prefs file. (But
+		// only load it if it is cached, then later update the cache on
+		// a background thread.)
+		String def_prefs_url = get_default_prefs_url(main_args);
+		if (def_prefs_url == null) {
+			loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
+		} else {
+			LoadPreferencesFromURL(def_prefs_url, prefs_parser);
+		}
+	}
 
-        LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
-    }
-    
-    private static void LoadPreferencesFromURL(String prefs_url, XmlPrefsParser prefs_parser) {
-        InputStream prefs_url_stream = null;
-        try {
-            prefs_url_stream = LocalUrlCacher.getInputStream(prefs_url);
-            System.out.println("loading prefs from url: " + prefs_url);
-            prefs_parser.parse(prefs_url_stream, prefs_url, prefs_hash);
-        } catch (IOException ex) {
-            System.out.println("Problem parsing prefs from url: " + prefs_url);
-            System.out.println("Caused by: " + ex.toString());
-        } finally {
-            try {
-                prefs_url_stream.close();
-            } catch (Exception e) {
-            }
-        }
-    }
-    
-    private static void LoadFileOrURLPrefs(XmlPrefsParser prefs_parser) {
-        String[] prefs_list = get_prefs_list(main_args);
-        if (prefs_list == null || prefs_list.length == 0)
-            return;
-        
-        prefs_parser = new XmlPrefsParser();
-        for (int i = 0; i < prefs_list.length; i++) {
-            String fileOrURL = prefs_list[i];
-            InputStream strm = null;
+	/**
+	 *  Attempts to load the web-based XML default preferences file from the
+	 *  local cache.  If this file is not in the cache, will skip
+	 *  it and will NOT try to read it from the web.  (This is to prevent slowing
+	 *  down the start-up process.)  Regardless of whether the file was actualy read,
+	 *  will then spawn a background thread that will try to create or update
+	 *  the local cached copy of this preferences file so it will be available
+	 *  the next time the program runs.
+	 *
+	 */
+	private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map<String, Map> prefs_hash) {
+		String web_prefs_url = WEB_PREFS_URL;
+		InputStream is = null;
+		try {
+			is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
+		} catch (IOException ioe) {
+			System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
+			is = null;
+		}
 
-            try {
-                System.out.flush();
-                System.out.println("loading user prefs from: " + fileOrURL);
-                File fil = new File(fileOrURL);
-                if (fil.exists()) {
-                    strm = new FileInputStream(fil);
-                    prefs_parser.parse(strm, fil.getCanonicalPath(), prefs_hash);
-                } else {
-                    // May be a URL
-                    if (fileOrURL.startsWith("http")) {
-                        LoadPreferencesFromURL(fileOrURL, prefs_parser);
-                    } else {
-                        System.out.println("could not find prefs file: " + fileOrURL);
-                    }
-                }
-            } catch (Exception ex) {
-                System.out.flush();
-                System.out.println("Problem parsing prefs from: " + fileOrURL);
-                System.out.println(ex.toString());
-            } finally {
-                try {
-                    strm.close();
-                } catch (Exception e) {
-                }
-            }
-        }
-    }
-    
+		if (is != null) {
+			try {
+				prefs_parser.parse(is, web_prefs_url, prefs_hash);
+				System.out.println("Loading default prefs from url: " + web_prefs_url);
+			} catch (Exception ex) {
+				System.out.println("Problem parsing prefs from url: " + web_prefs_url);
+				System.out.println("Caused by: " + ex.toString());
+			} finally {
+				GeneralUtils.safeClose(is);
+			}
+		}
+
+		LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
+	}
+
+	private static void LoadPreferencesFromURL(String prefs_url, XmlPrefsParser prefs_parser) {
+		InputStream prefs_url_stream = null;
+		try {
+			prefs_url_stream = LocalUrlCacher.getInputStream(prefs_url);
+			System.out.println("loading prefs from url: " + prefs_url);
+			prefs_parser.parse(prefs_url_stream, prefs_url, prefs_hash);
+		} catch (IOException ex) {
+			System.out.println("Problem parsing prefs from url: " + prefs_url);
+			System.out.println("Caused by: " + ex.toString());
+		} finally {
+			GeneralUtils.safeClose(prefs_url_stream);
+		}
+	}
+
+	private static void LoadFileOrURLPrefs(XmlPrefsParser prefs_parser) {
+		String[] prefs_list = get_prefs_list(main_args);
+		if (prefs_list == null || prefs_list.length == 0) {
+			return;
+		}
+
+		prefs_parser = new XmlPrefsParser();
+		for (String fileOrURL : prefs_list) {
+			InputStream strm = null;
+			try {
+				System.out.flush();
+				System.out.println("loading user prefs from: " + fileOrURL);
+				File fil = new File(fileOrURL);
+				if (fil.exists()) {
+					strm = new FileInputStream(fil);
+					prefs_parser.parse(strm, fil.getCanonicalPath(), prefs_hash);
+				} else {
+					// May be a URL
+					if (fileOrURL.startsWith("http")) {
+						LoadPreferencesFromURL(fileOrURL, prefs_parser);
+					} else {
+						System.out.println("could not find prefs file: " + fileOrURL);
+					}
+				}
+			} catch (Exception ex) {
+				System.out.flush();
+				System.out.println("Problem parsing prefs from: " + fileOrURL);
+				System.out.println(ex.toString());
+			} finally {
+				GeneralUtils.safeClose(strm);
+			}
+		}
+	}
+
+
+	/**
+	 * Load preferences from Java-based Preference nodes.
+	 * We're only loading servers here, but eventually, all the preferences will be loaded in this fashion.
+	 */
+	private static void LoadPreferencePrefs() {
+		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
+		LoadPreferencePrefs(prefServers.node("QuickLoad"),ServerType.QuickLoad);
+		LoadPreferencePrefs(prefServers.node("DAS"),ServerType.DAS);
+		LoadPreferencePrefs(prefServers.node("DAS2"),ServerType.DAS2);
+	}
+
+	private static void LoadPreferencePrefs(Preferences prefServers, ServerType serverType) {
+		try {
+			for (String serverURL : prefServers.keys()) {
+          //String server_type = el.getAttribute("type").toLowerCase();
+          String server_name = prefServers.get(serverURL,"value");
+
+					System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
+					if (serverType == ServerType.QuickLoad) {
+						ServerList.addServer(ServerType.QuickLoad,server_name, serverURL);
+					} else if (serverType == ServerType.DAS) {
+						DasDiscovery.addDasServer(server_name, serverURL);
+					} else {
+						if (Das2Discovery.getDas2Server(serverURL) == null) {
+                  Das2Discovery.addDas2Server(server_name, serverURL);
+              }
+					}
+			}
+		} catch (BackingStoreException ex) {
+			Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
 
   protected void init() {
@@ -632,24 +658,24 @@ public final class IGB extends Application
     // hardwiring to switch to using multiple windows for main map if there are 4 or more screens
     GraphicsDevice[] devices = genv.getScreenDevices();
 
-    if (devices.length >= 4) {
-      int multi_window_choice =
-	JOptionPane.showConfirmDialog(frm,
-				      "Use multi-screen rendering speedups?\n" +
-				      "(but some features will be disabled)",
-				      "Multi-screen Rendering Options",
-				      JOptionPane.YES_NO_OPTION);
+   if (devices.length >= 4) {
+			int multi_window_choice =
+							JOptionPane.showConfirmDialog(frm,
+							"Use multi-screen rendering speedups?\n" +
+							"(but some features will be disabled)",
+							"Multi-screen Rendering Options",
+							JOptionPane.YES_NO_OPTION);
 
-      if (multi_window_choice == JOptionPane.YES_OPTION) {
-	System.out.println("&&&&&&&&&&&&&&  MULTI_WINDOW_CHOICE = YES &&&&&&&&&&&&&&");
-	USE_MULTI_WINDOW_MAP = true;
-	REPORT_GRAPHICS_CONFIG = true;
-      }
-    }
-    if (REPORT_GRAPHICS_CONFIG)  {
-      System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
-      GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
-    }
+			if (multi_window_choice == JOptionPane.YES_OPTION) {
+				System.out.println("&&&&&&&&&&&&&&  MULTI_WINDOW_CHOICE = YES &&&&&&&&&&&&&&");
+				USE_MULTI_WINDOW_MAP = true;
+				REPORT_GRAPHICS_CONFIG = true;
+			}
+		}
+		if (REPORT_GRAPHICS_CONFIG) {
+			System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
+			GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
+		}
     // force loading of prefs if hasn't happened yet
     // usually since IGB.main() is called first, prefs will have already been loaded
     //   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
@@ -989,8 +1015,6 @@ public final class IGB extends Application
 
     WebLink.autoLoad();
 
-    // bootstrap bookmark from Preferences for last genome / sequence / region
-    //ViewPersistenceUtils.restoreLastView(map_view);
 
     // Need to let the QuickLoad system get started-up before starting
     //   the control server that listens to ping requests?
@@ -1431,7 +1455,8 @@ public final class IGB extends Application
       }
       frame.setVisible(true);
       frame.addWindowListener( new WindowAdapter() {
-	  public void windowClosing(WindowEvent evt) {
+				@Override
+				public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window
             // will re-open with this size next time
             UnibrowPrefsUtil.saveWindowLocation(frame, title);
@@ -1461,7 +1486,7 @@ public final class IGB extends Application
 
     final String title = TABBED_PANES_TITLE;
     final String display_name = title;
-    final String tool_tip = null;
+    //final String tool_tip = null;
     Image temp_icon = null;
 
     // If not already open in a new window, make a new window
@@ -1512,15 +1537,16 @@ public final class IGB extends Application
       };
 
       frame.addWindowListener( new WindowAdapter() {
+				@Override
         public void windowClosing(WindowEvent evt) {
           SwingUtilities.invokeLater(return_panes_to_main_window);
         }});
 
-       JMenuBar mbar = new JMenuBar();
-       frame.setJMenuBar(mbar);
+       JMenuBar mBar = new JMenuBar();
+       frame.setJMenuBar(mBar);
        JMenu menu1 = new JMenu("Windows");
        menu1.setMnemonic('W');
-       mbar.add( menu1 );
+       mBar.add( menu1 );
 
        menu1.add(new AbstractAction("Return Tabbed Panes to Main Window") {
         public void actionPerformed(ActionEvent evt) {

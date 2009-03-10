@@ -124,8 +124,10 @@ public class DasDiscovery {
    *  If this is called before the first time {@link #getDasServers()} is
    *  called, it forces a call to that method to load the default servers.
    */
-  public static void addDasServer(String name, String url)  {
-    if (das_servers == null) {
+  public static DasServerInfo addDasServer(String name, String url)  {
+    DasServerInfo server = null;
+
+		if (das_servers == null) {
       // if this routine is ever called before getDasServers(), then
       // force a call to getDasServers() here to load the default values
       // before adding the new one.
@@ -142,9 +144,10 @@ public class DasDiscovery {
       preferred_name = name;
     }
     if (p.getBoolean(KEY_ENABLED, true)) {
-      DasServerInfo server = new DasServerInfo(url, preferred_name, false);
+      server = new DasServerInfo(url, preferred_name, false);
       das_servers.put(preferred_name, server);
     }
+		return server;
   }
 
   /**

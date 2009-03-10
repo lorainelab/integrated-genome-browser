@@ -12,10 +12,8 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.das.DasFeatureLoader;
@@ -34,14 +32,9 @@ import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.general.GenericServer;
-import com.affymetrix.igb.menuitem.LoadFileAction;
-import com.affymetrix.igb.menuitem.OpenGraphAction;
-import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,8 +44,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -159,30 +150,57 @@ final public class GeneralLoadUtils {
 		versionName2versionSet = new HashMap<String, Set<GenericVersion>>();
 	}
 
+
+	/**
+	 * Add specified server, finding species and versions associated with it.
+	 * @param serverName
+	 * @param serverURL
+	 * @param serverType
+	 * @return success of server add.
+	 */
+	boolean addServer(String serverName, String serverURL, GenericServer.ServerType serverType) {
+		if (discoveredServers.containsKey(serverName)) {
+			System.out.println("Server " + serverName +" already exists");
+			return false;
+		}
+		
+		if (serverType == GenericServer.ServerType.QuickLoad) {
+			GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL);
+			if (gServer == null) {
+				return false;
+			}
+			discoveredServers.put(gServer.serverName, gServer);
+			getQuickLoadSpeciesAndVersions(gServer);
+			
+		} else if (serverType == GenericServer.ServerType.DAS) {
+			DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
+			if (server == null) {
+				return false;
+			}
+			GenericServer gServer = new GenericServer(serverName, server.getRootUrl(), server.getClass(), server);
+			discoveredServers.put(serverName, gServer);
+			getDAS1SpeciesAndVersions(gServer);
+
+		} else if (serverType == GenericServer.ServerType.DAS2) {
+			Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
+			if (server == null) {
+				return false;
+			}
+			GenericServer gServer = new GenericServer(serverName, server.getURI().toString(), server.getClass(), server);
+			discoveredServers.put(serverName, gServer);
+			getDAS2Species(gServer);
+			getDAS2Versions(gServer);
+		}
+		return true;
+	}
 	/**
 	 * Discover all of the servers and genomes and versions.
 	 */
 	void discoverServersAndSpeciesAndVersions() {
 		// it's assumed that if we're here, we need to refresh this information.
 		discoveredServers.clear();
-
-		// We use a thread to get the servers.  (Otherwise the user may see a lockup of their UI.)
-		/*try {
-			Runnable r = new Runnable() {
-
-				public void run() {*/
-					discoverServersInternal(discoveredServers);
-					discoverSpeciesAndVersionsInternal();
-/*				}
-			};
-			Thread thr1 = new Thread(r);
-			thr1.start();
-			while (thr1.isAlive()) {
-				Thread.sleep(200);
-			}
-		} catch (InterruptedException ie) {
-			System.out.println("Interruption while getting server list.");
-		}*/
+		discoverServersInternal(discoveredServers);
+		discoverSpeciesAndVersionsInternal();
 	}
 
 	/**

@@ -312,6 +312,15 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 	 * @param serverName
 	 */
 	private void addToPreferences(String DirectoryOrURL, String serverType, String serverName) {
+		// Add to GeneralLoadView and validate
+		if (!this.glv.addServer(serverName, DirectoryOrURL, serverType)) {
+			ErrorHandler.errorPanel(
+							"Error loading server",
+							serverType + " server " + serverName + " at " + DirectoryOrURL + "was not successfully loaded.\nPlease check that directory/URL is valid, and you have a working network connection.");
+			return;
+		}
+
+
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
 		Preferences individualServerPref = prefServers.node(serverType);
 		individualServerPref.put(DirectoryOrURL, serverName);
@@ -321,10 +330,7 @@ final public class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
 		}
-
-		// Add to GeneralLoadView
 		
-
 		serverDialog(serverName,DirectoryOrURL);
 	}
 

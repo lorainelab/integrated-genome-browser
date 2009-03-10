@@ -55,7 +55,7 @@ final public class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
 	GeneralLoadUtils glu;
-	private static final boolean DEBUG_EVENTS = true;
+	private static final boolean DEBUG_EVENTS = false;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static final String SELECT = "Select";
 	private static final String GENOME_SEQ_ID = "genome";
@@ -174,6 +174,37 @@ final public class GeneralLoadView extends JComponent
 
 	private void discoverServersAndSpeciesAndVersions() {
 		this.glu.discoverServersAndSpeciesAndVersions();
+	}
+
+	/**
+	 * Add and verify another server.  Called from DataLoadPrefsView.
+	 * @param serverName
+	 * @param serverURL
+	 * @param serverType
+	 */
+	public boolean addServer(String serverName, String serverURL, String serverType) {
+		boolean successful = false;
+		if (serverType.equals("QuickLoad")) {
+			successful = this.glu.addServer(serverName, serverURL, GenericServer.ServerType.QuickLoad);
+		} else if (serverType.equals("DAS")) {
+			successful = this.glu.addServer(serverName, serverURL, GenericServer.ServerType.DAS);
+		} else if (serverType.equals("DAS2")) {
+			successful = this.glu.addServer(serverName, serverURL, GenericServer.ServerType.DAS2);
+		}
+		if (!successful) {
+			return false;
+		}
+
+		// server has been added.  Refresh necessary boxes, tables, etc.
+		ChangeSelectedGroups(null);
+		removeListeners();
+		initializeSpeciesCB();
+		refreshVersionCB(SELECT);
+		this.feature_panel.removeAll();
+		disableAllButtons();
+		addListeners();
+
+		return true;
 	}
 
 	private void removeListeners() {
@@ -494,6 +525,7 @@ final public class GeneralLoadView extends JComponent
 
 		this.setTheSpecies(speciesName);
 		this.setTheVersion(gVersion.versionName);
+		addListeners();
 	}
 
 	/**

@@ -73,11 +73,11 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	}
 
 	public GenericFeature getFeature(int row) {
-		return features.get(row);
+		return (features == null) ? null : features.get(row);
 	}
 
 	public int getRow(GenericFeature feature) {
-		return features.indexOf(feature);
+		return (features == null) ? null : features.indexOf(feature);
 	}
 
 	public List<GenericFeature> getFeatures() {
@@ -89,7 +89,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	}
 
 	public int getRowCount() {
-		return features.size();
+		return (features == null) ? 0 : features.size();
 	}
 
 	@Override
@@ -98,6 +98,9 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	}
 
 	public Object getValueAt(int row, int col) {
+		if (features == null) {
+			return null;
+		}
 		GenericFeature gFeature = features.get(row);
 		GenericServer.ServerType serverType;
 		switch (col) {

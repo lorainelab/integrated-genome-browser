@@ -63,7 +63,7 @@ final public class GeneralLoadView extends JComponent
 	private JComboBox kingdomCB;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
-	private JPanel feature_panel;
+	//private JPanel feature_panel;
 	private JButton all_residuesB;
 	private JButton partial_residuesB;
 	private final JButton refresh_dataB;
@@ -72,6 +72,7 @@ final public class GeneralLoadView extends JComponent
 	private SeqMapView gviewer;
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
+	JScrollPane jsp;
 
 	public GeneralLoadView() {
 		if (Application.getSingleton() != null) {
@@ -81,8 +82,6 @@ final public class GeneralLoadView extends JComponent
 		this.glu = new GeneralLoadUtils();
 
 		this.setLayout(new BorderLayout());
-		feature_panel = new JPanel();
-		feature_panel.setLayout(new BoxLayout(feature_panel, BoxLayout.Y_AXIS));
 
 		JPanel choice_panel = new JPanel();
 		choice_panel.setLayout(new BoxLayout(choice_panel, BoxLayout.X_AXIS));
@@ -137,8 +136,13 @@ final public class GeneralLoadView extends JComponent
 			buttonP.add(new JLabel("No sequence available", JLabel.CENTER));
 		}
 
+		this.feature_model = new FeaturesTableModel(this, null, null);
+		this.feature_table = new JTableX(this.feature_model);
+		this.feature_table.setModel(this.feature_model);
+
+		jsp = new JScrollPane(this.feature_table);
 		this.add("North", choice_panel);
-		this.add("Center", new JScrollPane(feature_panel));
+		this.add("Center", jsp);
 		this.add("South", buttonP);
 
 		this.setBorder(BorderFactory.createEtchedBorder());
@@ -146,6 +150,7 @@ final public class GeneralLoadView extends JComponent
 		populateSpeciesData();
 
 	}
+
 
 	/**
 	 * Discover servers, species, etc., asynchronously.
@@ -200,7 +205,7 @@ final public class GeneralLoadView extends JComponent
 		removeListeners();
 		initializeSpeciesCB();
 		refreshVersionCB(SELECT);
-		this.feature_panel.removeAll();
+		clearFeaturesTable();
 		disableAllButtons();
 		addListeners();
 
@@ -501,7 +506,8 @@ final public class GeneralLoadView extends JComponent
 			System.out.println("GeneralLoadView.groupSelectionChanged() called, group: " + (group == null ? null : group.getID()));
 		}
 
-		this.feature_panel.removeAll();
+		clearFeaturesTable();
+		
 		disableAllButtons();
 
 		current_group = group;
@@ -541,7 +547,8 @@ final public class GeneralLoadView extends JComponent
 			System.out.println("GeneralLoadView.seqSelectionChanged() called, current_seq: " + (current_seq == null ? null : current_seq.getID()));
 		}
 
-		this.feature_panel.removeAll();
+		clearFeaturesTable();
+
 		disableAllButtons();
 
 		current_seq = aseq;
@@ -603,6 +610,12 @@ final public class GeneralLoadView extends JComponent
 	}
 
 
+	private void clearFeaturesTable() {
+		this.feature_model = new FeaturesTableModel(this, null, null);
+		this.feature_table.setModel(this.feature_model);
+		jsp.setViewportView(this.feature_table);
+	}
+
 	/**
 	 * Create the table with the list of features and their status.
 	 */
@@ -616,7 +629,7 @@ final public class GeneralLoadView extends JComponent
 			System.out.println("features: " + features.toString());
 		}
 		if (features == null || features.isEmpty()) {
-			this.feature_panel.removeAll();
+			clearFeaturesTable();
 			return;
 		}
 
@@ -625,12 +638,12 @@ final public class GeneralLoadView extends JComponent
 			System.out.println("Creating table with features: " + features.toString());
 		}
 		this.feature_model = new FeaturesTableModel(this, features, current_seq);
-
+		this.feature_model.fireTableDataChanged();
 		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 
 		// Handle sizing of the columns
-		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);   // Allow columns to be resized
+		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 		int maxFeatureNameLength = 1;
 		for (GenericFeature feature : features) {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
@@ -640,19 +653,13 @@ final public class GeneralLoadView extends JComponent
 		col.setPreferredWidth(maxFeatureNameLength);
 
 
-		// Must explicitly show the header, since we're not in a scroll panel
-		JTableHeader header = this.feature_table.getTableHeader();
-		this.feature_panel.setLayout(new BorderLayout());
-		this.feature_panel.add(header, BorderLayout.NORTH);
-		this.feature_panel.add(this.feature_table, BorderLayout.CENTER);
-
 
 		// Don't enable combo box for full genome sequence
 		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, 0, !this.IsGenomeSequence());
 
-		this.feature_panel.add(this.feature_table);
 		this.feature_model.fireTableDataChanged();
-		this.feature_panel.invalidate();
+		jsp.setViewportView(this.feature_table);
+
 
 		disableButtonsIfNecessary();
 		changeVisibleDataButtonIfNecessary(features);	// might have been disabled when switching to another chromosome or genome.

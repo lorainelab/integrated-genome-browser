@@ -67,6 +67,9 @@ class SeqGroupView extends JComponent
   public SeqGroupView() {
     seqtable = new JTable();
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		SeqGroupTableModel mod = new SeqGroupTableModel(null);
+    seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
    
     JScrollPane scroller = new JScrollPane(seqtable);
     scroller.setBorder(BorderFactory.createCompoundBorder(

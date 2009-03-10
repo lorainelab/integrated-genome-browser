@@ -468,7 +468,7 @@ public class Das2VersionedSource {
      *       For now, trying to just add features directly to seq...)
      *   For now, not allowing combination with any other filters
      */
-    /*private synchronized List getFeaturesByName(String name, boolean annotate_seq) {
+    public synchronized List getFeaturesByName(String name, boolean annotate_seq) {
 		List feats = null;
 		try {
 			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
@@ -496,6 +496,6 @@ public class Das2VersionedSource {
 			ex.printStackTrace();
 		}
 		return feats;
-	}*/
+	}
 
 }

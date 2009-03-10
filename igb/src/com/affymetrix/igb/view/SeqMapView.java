@@ -2907,11 +2907,11 @@ public class SeqMapView extends JPanel
         if (!report_hairline_position_in_status_bar) {
             return;
         }
-        if (hairline == null || Application.getSingleton() == null) {
+        /*if (hairline == null || Application.getSingleton() == null) {
             return;
         }
         String pos = "  " + nformat.format((int) hairline.getSpot()) + "  ";
-        Application.getSingleton().setStatusBarHairlinePosition(pos);
+        Application.getSingleton().setStatusBarHairlinePosition(pos);*/
     }
 
     void setStatus(String title) {

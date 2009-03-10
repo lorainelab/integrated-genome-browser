@@ -710,6 +710,8 @@ final public class GeneralLoadUtils {
 
 
 		GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
+		Application.getSingleton().setNotLockedUpStatus("Loading " + gFeature.featureName);
+
 		if (serverType == GenericServer.ServerType.DAS2) {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
 			if (loadDAS2Annotations(

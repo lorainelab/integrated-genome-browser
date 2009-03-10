@@ -23,7 +23,7 @@ import javax.swing.*;
 
 public abstract class Application {
 
-  final static boolean USE_STATUS_BAR = true;
+  //final static boolean USE_STATUS_BAR = true;
   public static boolean ALLOW_DELETING_DATA = false;
   public static boolean CACHE_GRAPHS = true;
 
@@ -34,10 +34,10 @@ public abstract class Application {
 
   public Application() {
     singleton = this;
-    if (USE_STATUS_BAR) {
+    //if (USE_STATUS_BAR) {
       // must define singleton variable before instantiating StatusBar()
       status_bar = new StatusBar();
-    }
+    //}
   }
 
   Map<Class,IPlugin> plugin_hash = new HashMap<Class,IPlugin>();
@@ -55,11 +55,11 @@ public abstract class Application {
   }
 
   public static Application getSingleton() {
-    if (singleton == null) {
+    /*if (singleton == null) {
       return new NullApplication();
-    } else {
+    } else {*/
       return singleton;
-    }
+ //   }
   }
 
   abstract public Image getIcon();
@@ -75,7 +75,18 @@ public abstract class Application {
     return true;
   }
 
-  /** Sets the text in the status bar.
+	/**
+	 * Set the status, and make a little progress bar so that the app doesn't look locked up.
+	 * @param s
+	 */
+ public void setNotLockedUpStatus(String s) {
+	 status_bar.setStatus("  " + s);
+	 status_bar.progressBar.setVisible(true);
+	 status_bar.progressBar.setIndeterminate(true);
+
+ }
+
+	/** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.
    *  It is safe to call this method even if the status bar is not being displayed.
    */
@@ -83,11 +94,12 @@ public abstract class Application {
     setStatus(s, true);
   }
 
-  public void setStatusBarHairlinePosition(String s) {
-    if (USE_STATUS_BAR && status_bar != null) {
+  /*public void setStatusBarHairlinePosition(String s) {
+    if (status_bar != null) {
       status_bar.setPosition(s);
+			status_bar.progressBar.setVisible(false);
     }
-  }
+  }*/
 
   /** Sets the text in the status bar.
    *  Will optionally echo a copy of the string to System.out.
@@ -95,8 +107,9 @@ public abstract class Application {
    *  @param echo  Whether to echo a copy to System.out.
    */
   public void setStatus(String s, boolean echo) {
-    if (USE_STATUS_BAR && status_bar != null) {
+    if (status_bar != null) {
       status_bar.setStatus("  " + s);
+			status_bar.progressBar.setVisible(false);
     }
     if (echo && s != null) {System.out.println(s);}
   }
@@ -170,7 +183,7 @@ public abstract class Application {
   }
 
   /** A very basic implementation of Application.  It returns null from most methods. */
-  static class NullApplication extends Application {
+  /*static class NullApplication extends Application {
     public Image getIcon() { return null;}
     public JFrame getFrame() { return null;}
     public SeqMapView getMapView() {return null;}
@@ -178,9 +191,9 @@ public abstract class Application {
     public String getVersion() {return "0.0";}
     public String getResourceString(String key) { return null; }
 
-    /** Returns a non-null Logger. */
+    // Returns a non-null Logger.
     public Logger getLogger() {
       return Logger.getLogger("Null Logger");
     }
-  };
+  };*/
 }

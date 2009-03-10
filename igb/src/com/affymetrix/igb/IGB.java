@@ -272,15 +272,17 @@ public final class IGB extends Application
 
     getIGBPrefs(); // force loading of prefs
 
-    String quick_load_url = getQuickLoadUrl();
+    
+    singleton_igb = new IGB();
 
+    singleton_igb.init();
+
+		String quick_load_url = getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
     LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     //processDasServersList(quick_load_url);    -- not working correctly on http://netaffxdas.affymetrix.com/das/
     //processDas2ServersList(quick_load_url);   -- the processing code was commented out.
 
-    singleton_igb = new IGB();
-    singleton_igb.init();
 
 
     // If the command line contains a parameter "-href http://..." where
@@ -950,10 +952,10 @@ public final class IGB extends Application
     tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     tab_pane.setMinimumSize(new Dimension(0,0));
 
-    if (USE_STATUS_BAR) {
+    //if (USE_STATUS_BAR) {
       status_bar.setStatus(getApplicationName() + " " + getVersion());
       cpane.add(status_bar, BorderLayout.SOUTH);
-    }
+    //}
 
     // Show the frame before loading the plugins.  Thus any error panel
     // that is created by an exception during plugin set-up will appear

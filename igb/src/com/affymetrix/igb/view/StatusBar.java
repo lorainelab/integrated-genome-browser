@@ -22,8 +22,9 @@ import java.text.DecimalFormat;
 
 final public class StatusBar extends JPanel {
   
-  JLabel position_ta;
+  //JLabel position_ta;
   JLabel status_ta;
+	public JProgressBar progressBar;
   JLabel memory_ta;
 
   JPopupMenu popup_menu = new JPopupMenu();
@@ -56,11 +57,13 @@ final public class StatusBar extends JPanel {
       tt_status_memory = "Memory Used / Available";
     }
     
-    position_ta = new JLabel("");
+    //position_ta = new JLabel("");
     status_ta = new JLabel("");
+		progressBar = new JProgressBar();
     memory_ta = new JLabel("");
-    position_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
+    //position_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
     status_ta.setBorder(new BevelBorder(BevelBorder.LOWERED));
+		progressBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
     // this border leaves some extra space, especially on the right side,
     // so the Mac OS can put the "resize window" gui there
     memory_ta.setBorder(
@@ -69,8 +72,10 @@ final public class StatusBar extends JPanel {
           BorderFactory.createEmptyBorder(0,12,0,15)
         ));
     
-    position_ta.setToolTipText(tt_hairline);
+    //position_ta.setToolTipText(tt_hairline);
     status_ta.setToolTipText(tt_status);
+		progressBar.setIndeterminate(false);
+		progressBar.setVisible(false);
     memory_ta.setToolTipText(tt_status_memory);
     
 //    Box memory_ta_container = Box.createHorizontalBox();
@@ -84,8 +89,9 @@ final public class StatusBar extends JPanel {
     BorderLayout bl = new BorderLayout();
     setLayout(bl);
     
-    this.add(position_ta, BorderLayout.WEST);
-    this.add(status_ta, BorderLayout.CENTER);
+    //this.add(position_ta, BorderLayout.WEST);
+    this.add(status_ta, BorderLayout.WEST);
+		this.add(progressBar,BorderLayout.CENTER);
     this.add(memory_ta, BorderLayout.EAST);
 
     JMenuItem gc_MI = new JMenuItem(performGcAction);
@@ -128,11 +134,11 @@ final public class StatusBar extends JPanel {
    *  Can be safely called from any thread.
    *  @param s  a String, null is ok; null will erase the String.
    */
-  public void setPosition(String s) {
+  /*public void setPosition(String s) {
     if (s == null) { s = ""; }
     
     updateSafely(position_ta, s);
-  }
+  }*/
   
   Action performGcAction = new AbstractAction("Release Unused Memory") {
     public void actionPerformed(ActionEvent ae) {

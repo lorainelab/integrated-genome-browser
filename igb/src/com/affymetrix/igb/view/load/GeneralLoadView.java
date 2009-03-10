@@ -147,6 +147,7 @@ final public class GeneralLoadView extends JComponent
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
+		
 		populateSpeciesData();
 
 	}
@@ -156,6 +157,8 @@ final public class GeneralLoadView extends JComponent
 	 * Discover servers, species, etc., asynchronously.
 	 */
 	private void populateSpeciesData() {
+		Application.getSingleton().setNotLockedUpStatus("Loading servers...");
+
 		Executor vexec = Executors.newSingleThreadExecutor();
 
 		SwingWorker worker = new SwingWorker() {
@@ -169,6 +172,7 @@ final public class GeneralLoadView extends JComponent
 			public void done() {
 				initializeKingdomCB();
 				initializeSpeciesCB();
+				Application.getSingleton().setNotLockedUpStatus("Loading previous genome...");
 				RestorePersistentGenome();
 				addListeners();
 			}
@@ -583,7 +587,9 @@ final public class GeneralLoadView extends JComponent
 			return;
 		}
 
+		Application.getSingleton().setNotLockedUpStatus("Loading feature list...");
 		createFeaturesTable(versionName);
+		Application.getSingleton().setNotLockedUpStatus("Loading features...");
 		loadWholeRangeFeatures(versionName);
 	}
 
@@ -767,6 +773,8 @@ final public class GeneralLoadView extends JComponent
 		speciesCB.setEnabled(false);
 		versionCB.setEnabled(false);
 
+		Application.getSingleton().setNotLockedUpStatus("Loading genomes...");
+
 		Executor vexec = Executors.newSingleThreadExecutor();
 
 		SwingWorker worker = new SwingWorker() {
@@ -782,8 +790,9 @@ final public class GeneralLoadView extends JComponent
 				speciesCB.setEnabled(true);
 				versionCB.setEnabled(true);
 				// Note that this SmartAnnotBioSeq may be set by the gmodel, above.
-				SmartAnnotBioSeq sabq = group.getSeq(0);
+				final SmartAnnotBioSeq sabq = group.getSeq(0);
 				gmodel.setSelectedSeq(sabq);
+				Application.getSingleton().setStatus("",false);
 			}
 		};
 		vexec.execute(worker);

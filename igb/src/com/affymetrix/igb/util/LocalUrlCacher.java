@@ -208,11 +208,11 @@ public final class LocalUrlCacher {
 		return getInputStream(url, getPreferredCacheUsage(), true);
 	}
 
-	public static InputStream getInputStream(String url, Map headers) throws IOException {
+	public static InputStream getInputStream(String url, Map<String,String> headers) throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), true, headers);
 	}
 
-	public static InputStream getInputStream(String url, boolean write_to_cache, Map headers)
+	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> headers)
 					throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, headers);
 	}
@@ -236,12 +236,12 @@ public final class LocalUrlCacher {
 	 *
 	 *  headers will get cleared of any entries it had before getting passed as arg
 	 */
-	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map headers)
+	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers)
 					throws IOException {
 		//look to see if a sessionId is present in the headers
 		String sessionId = null;
 		if (headers != null && headers.containsKey("sessionId")) {
-			sessionId = (String) headers.get("sessionId");
+			sessionId = headers.get("sessionId");
 		}
 		//clear headers
 		if (headers != null) {

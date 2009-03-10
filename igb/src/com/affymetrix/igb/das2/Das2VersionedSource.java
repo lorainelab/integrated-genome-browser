@@ -67,6 +67,7 @@ public class Das2VersionedSource {
     protected boolean types_initialized = false;
     protected String types_filter = null;
     LinkedList platforms = new LinkedList();
+		private static boolean DEBUG = false;
 
     /**
      *  To maintain backward compatibility, keeping constuctor with no coords_uri argument,
@@ -261,62 +262,69 @@ public class Das2VersionedSource {
     }
 
     /** Get regions from da2s server. */
-    protected synchronized void initSegments() {
-        String region_request;
-        Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
-        region_request = segcap.getRootURI().toString();
-        try {
-            System.out.println("Das2 Segments Request: " + region_request);
-            Map headers = new LinkedHashMap();
-            InputStream response = LocalUrlCacher.getInputStream(region_request, headers);
+	protected synchronized void initSegments() {
+		String region_request;
+		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
+		region_request = segcap.getRootURI().toString();
+		try {
+			if (DEBUG) {
+				System.out.println("Das2 Segments Request: " + region_request);
+			}
+			Map<String, String> headers = new LinkedHashMap<String, String>();
+			InputStream response = LocalUrlCacher.getInputStream(region_request, headers);
 
-            // Document doc = DasLoader.getDocument(region_request);
-            Document doc = DasLoader.getDocument(response);
-            Element top_element = doc.getDocumentElement();
-            NodeList regionlist = doc.getElementsByTagName("SEGMENT");
-            System.out.println("segments: " + regionlist.getLength());
-            for (int i = 0; i < regionlist.getLength(); i++) {
-                Element reg = (Element) regionlist.item(i);
-                String region_id = reg.getAttribute(URID);
-                if (region_id.length() == 0) {
-                    region_id = reg.getAttribute(ID);
-                }
-                // GAH 10-24-2007  temporary hack to weed out bad seqs that are somehow
-                //   getting added to segments response from Affy DAS/2 server
-                if ((region_id.indexOf("|") >= 0) ||
-                        (region_id.charAt(region_id.length() - 1) == '.')) {
-                    System.out.println("@@@@@@@@@@@@@ caught bad seq id: " + region_id);
-                    continue;
-                }
-                URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
+			// Document doc = DasLoader.getDocument(region_request);
+			Document doc = DasLoader.getDocument(response);
+			Element top_element = doc.getDocumentElement();
+			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
+			if (DEBUG) {
+				System.out.println("segments: " + regionlist.getLength());
+			}
+			getRegionList(regionlist, region_request);
+		} catch (Exception ex) {
+			ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
+		}
+		//TODO should regions_initialized be true if an exception occurred?
+		regions_initialized = true;
+	}
 
-                // GAH _TEMPORARY_ hack to strip down region_id
-                // Need to move to full URI resolution very soon!
-                if (Das2FeatureSaxParser.DO_SEQID_HACK) {
-                    region_id = Das2FeatureSaxParser.doSeqIdHack(region_id);
-                }
-                
-                String lengthstr = reg.getAttribute("length");
-                String region_name = reg.getAttribute(NAME);
-                if (region_name.length() == 0) {
-                    region_name = reg.getAttribute(TITLE);
-                }
-                String region_info_url = reg.getAttribute("doc_href");
 
-                String description = null;
-                int length = Integer.parseInt(lengthstr);
-                Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
-                if (DEBUG_SEGMENTS_QUERY) {
-                    System.out.println("segment: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
-                }
-                this.addRegion(region);
-            }
-        } catch (Exception ex) {
-            ErrorHandler.errorPanel("Error initializing DAS2 region points for\n" + region_request, ex);
-        }
-        //TODO should regions_initialized be true if an exception occurred?
-        regions_initialized = true;
-    }
+	private void getRegionList(NodeList regionlist, String region_request) throws NumberFormatException {
+		for (int i = 0; i < regionlist.getLength(); i++) {
+			Element reg = (Element) regionlist.item(i);
+			String region_id = reg.getAttribute(URID);
+			if (region_id.length() == 0) {
+				region_id = reg.getAttribute(ID);
+			}
+			// GAH 10-24-2007  temporary hack to weed out bad seqs that are somehow
+			//   getting added to segments response from Affy DAS/2 server
+			if ((region_id.indexOf("|") >= 0) || (region_id.charAt(region_id.length() - 1) == '.')) {
+				System.out.println("@@@@@@@@@@@@@ caught bad seq id: " + region_id);
+				continue;
+			}
+			URI region_uri = Das2ServerInfo.getBaseURI(region_request, reg).resolve(region_id);
+			// GAH _TEMPORARY_ hack to strip down region_id
+			// Need to move to full URI resolution very soon!
+			if (Das2FeatureSaxParser.DO_SEQID_HACK) {
+				region_id = Das2FeatureSaxParser.doSeqIdHack(region_id);
+			}
+			String lengthstr = reg.getAttribute("length");
+			String region_name = reg.getAttribute(NAME);
+			if (region_name.length() == 0) {
+				region_name = reg.getAttribute(TITLE);
+			}
+			String region_info_url = reg.getAttribute("doc_href");
+			//String description = null;
+			int length = Integer.parseInt(lengthstr);
+			Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
+			if (DEBUG_SEGMENTS_QUERY) {
+				System.out.println("segment: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
+			}
+			this.addRegion(region);
+		}
+	}
+
+
     // get annotation types from das2 server
     /**
      *  loading of parents disabled, getParents currently does nothing
@@ -333,121 +341,123 @@ public class Das2VersionedSource {
 
         //    if (filter != null) { types_request = types_request+"?ontology="+filter; }
         try {
-            System.out.println("Das2 Types Request: " + types_request);
-            Map headers = new LinkedHashMap();
-            InputStream response;
-            //set in header a sessionId for types authentication?
-            //Also, if there is a sessionId then should ignore cache so user can get hidden types
-            String sessionId = source.getServerInfo().getSessionId();
-            if (sessionId != null) {
-                headers.put("sessionId", sessionId);
-                //if sessionID then connected so ignore cache
-                response = LocalUrlCacher.getInputStream(types_request, LocalUrlCacher.IGNORE_CACHE, false, headers);
-            } //get input stream
-            else {
-                response = LocalUrlCacher.getInputStream(types_request, headers);            //Document doc = DasLoader.getDocument(types_request);
-            }
-            if (response == null) {
-                System.out.println("Types request " + types_request + " was not reachable.");
-                return;
-            }
-            Document doc = DasLoader.getDocument(response);
-            Element top_element = doc.getDocumentElement();
-            NodeList typelist = doc.getElementsByTagName("TYPE");
-            // System.out.println("types: " + typelist.getLength());
-            int typeCounter = 0;
+					if (DEBUG) {
+						System.out.println("Das2 Types Request: " + types_request);
+					}
+					Map<String, String> headers = new LinkedHashMap<String, String>();
+					InputStream response;
+					//set in header a sessionId for types authentication?
+					//Also, if there is a sessionId then should ignore cache so user can get hidden types
+					String sessionId = source.getServerInfo().getSessionId();
+					if (sessionId != null) {
+						headers.put("sessionId", sessionId);
+						//if sessionID then connected so ignore cache
+						response = LocalUrlCacher.getInputStream(types_request, LocalUrlCacher.IGNORE_CACHE, false, headers);
+					} //get input stream
+					else {
+						response = LocalUrlCacher.getInputStream(types_request, headers);            //Document doc = DasLoader.getDocument(types_request);
+					}
+					if (response == null) {
+						System.out.println("Types request " + types_request + " was not reachable.");
+						return;
+					}
+					Document doc = DasLoader.getDocument(response);
+					Element top_element = doc.getDocumentElement();
+					NodeList typelist = doc.getElementsByTagName("TYPE");
+					// System.out.println("types: " + typelist.getLength());
+					int typeCounter = 0;
 
-            //      ontologyStuff1();
-            for (int i = 0; i < typelist.getLength(); i++) {
-                Element typenode = (Element) typelist.item(i);
+					getTypeList(typelist, types_request);
 
-                String typeid = typenode.getAttribute(URID); // Gets the ID value
-                if (typeid.length() == 0) {
-                    typeid = typenode.getAttribute(ID);
-                }
-
-                // GAH Temporary hack to deal with typeids that are not legal URIs
-                //    unfortunately this can mess up XML Base resolution when the id is an absolute URI
-                //    (because URI-encoding will replace any colons, but those are used by URI resolution...)
-                //    real fix needs to be on server(s), not client!!
-
-                //	typeid = URLEncoder.encode(typeid, "UTF-8");
-
-                //	typeid = "./" + typeid;
-                //        String typeid = typenode.getAttribute("ontology");                            // Gets the ID value
-                //FIXME: quick hack to get the type IDs to be kind of right (for now)
-
-                // temporary workaround for getting type ending, rather than full URI
-                //	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }
-                // if these characters are one the beginning, take off the 1st 2 characters...
-                //FIXME: quick hack to get the type IDs to be kind of right (for now)
-
-                String ontid = typenode.getAttribute("ontology");
-                String type_source = typenode.getAttribute("source");
-                String href = typenode.getAttribute("doc_href");
-                String type_name = typenode.getAttribute(NAME);
-                if (type_name.length() == 0) {
-                    type_name = typenode.getAttribute(TITLE);
-                }
-
-                NodeList flist = typenode.getElementsByTagName("FORMAT");
-                LinkedHashMap formats = new LinkedHashMap();
-                HashMap props = new HashMap();
-                for (int k = 0; k < flist.getLength(); k++) {
-                    Element fnode = (Element) flist.item(k);
-                    String formatid = fnode.getAttribute(NAME);
-                    if (formatid == null) {
-                        formatid = fnode.getAttribute(ID);
-                    }
-                    String mimetype = fnode.getAttribute("mimetype");
-                    if (mimetype == null || mimetype.equals("")) {
-                        mimetype = "unknown";
-                    }
-                    //	  System.out.println("alternative format for annot type " + typeid +
-                    //": format = " + formatid + ", mimetype = " + mimetype);
-                    formats.put(formatid, mimetype);
-                }
-
-                NodeList plist = typenode.getElementsByTagName("PROP");
-                for (int k = 0; k < plist.getLength(); k++) {
-                    Element pnode = (Element) plist.item(k);
-                    String key = pnode.getAttribute("key");
-                    String val = pnode.getAttribute("value");
-                    // if (key.equals("load_hint")) { System.out.println("@@@@@ Das2Type has load_hint: " + type_name + ", " + val); }
-                    props.put(key, val);
-                }
-
-                // System.out.println("type id att: " + typeid);
-                // System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
-
-                // If one of the typeid's is not a valid URI, then skip it, but allow
-                // other typeid's to get through.
-                URI type_uri = null;
-                try {
-                    type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
-                } catch (Exception e) {
-                    System.out.println("Error in typeid, skipping: " + typeid +
-                            "\nUsually caused by an improper character in the URI.");
-                }
-
-                if (type_uri != null) {
-                    // System.out.println("type URI: " + type_uri.toString());
-                    Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);   // parents field is null for now -- remove at some point?
-                    //	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
-                    //	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
-                    this.addType(type);
-                }
-            }
-        } catch (Exception ex) {
+					if (DEBUG) {
+						System.out.println("Out of Das2 Types Request: " + types_request);
+					}
+				} catch (Exception ex) {
             ErrorHandler.errorPanel("Error initializing DAS2 types for\n" + types_request, ex);
         }
         //TODO should types_initialized be true after an exception?
         types_initialized = true;
     }
 
-    public synchronized List getFeaturesByName(String name) {
+
+	private void getTypeList(NodeList typelist, String types_request) {
+		if (DEBUG) {
+		System.out.println("Das2 Type Length: " + typelist.getLength());
+		}
+		//      ontologyStuff1();
+		for (int i = 0; i < typelist.getLength(); i++) {
+			Element typenode = (Element) typelist.item(i);
+			String typeid = typenode.getAttribute(URID); // Gets the ID value
+			if (typeid.length() == 0) {
+				typeid = typenode.getAttribute(ID);
+			}
+			// GAH Temporary hack to deal with typeids that are not legal URIs
+			//    unfortunately this can mess up XML Base resolution when the id is an absolute URI
+			//    (because URI-encoding will replace any colons, but those are used by URI resolution...)
+			//    real fix needs to be on server(s), not client!!
+			//	typeid = URLEncoder.encode(typeid, "UTF-8");
+			//	typeid = "./" + typeid;
+			//        String typeid = typenode.getAttribute("ontology");                            // Gets the ID value
+			//FIXME: quick hack to get the type IDs to be kind of right (for now)
+			// temporary workaround for getting type ending, rather than full URI
+			//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }
+			// if these characters are one the beginning, take off the 1st 2 characters...
+			//FIXME: quick hack to get the type IDs to be kind of right (for now)
+			String ontid = typenode.getAttribute("ontology");
+			String type_source = typenode.getAttribute("source");
+			String href = typenode.getAttribute("doc_href");
+			String type_name = typenode.getAttribute(NAME);
+			if (type_name.length() == 0) {
+				type_name = typenode.getAttribute(TITLE);
+			}
+			NodeList flist = typenode.getElementsByTagName("FORMAT");
+			LinkedHashMap<String,String> formats = new LinkedHashMap<String,String>();
+			HashMap<String,String> props = new HashMap<String,String>();
+			for (int k = 0; k < flist.getLength(); k++) {
+				Element fnode = (Element) flist.item(k);
+				String formatid = fnode.getAttribute(NAME);
+				if (formatid == null) {
+					formatid = fnode.getAttribute(ID);
+				}
+				String mimetype = fnode.getAttribute("mimetype");
+				if (mimetype == null || mimetype.equals("")) {
+					mimetype = "unknown";
+				}
+				//	  System.out.println("alternative format for annot type " + typeid +
+				//": format = " + formatid + ", mimetype = " + mimetype);
+				formats.put(formatid, mimetype);
+			}
+			NodeList plist = typenode.getElementsByTagName("PROP");
+			for (int k = 0; k < plist.getLength(); k++) {
+				Element pnode = (Element) plist.item(k);
+				String key = pnode.getAttribute("key");
+				String val = pnode.getAttribute("value");
+				// if (key.equals("load_hint")) { System.out.println("@@@@@ Das2Type has load_hint: " + type_name + ", " + val); }
+				props.put(key, val);
+			}
+			// System.out.println("type id att: " + typeid);
+			// System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
+			// If one of the typeid's is not a valid URI, then skip it, but allow
+			// other typeid's to get through.
+			URI type_uri = null;
+			try {
+				type_uri = Das2ServerInfo.getBaseURI(types_request, typenode).resolve(typeid);
+			} catch (Exception e) {
+				System.out.println("Error in typeid, skipping: " + typeid + "\nUsually caused by an improper character in the URI.");
+			}
+			if (type_uri != null) {
+				// System.out.println("type URI: " + type_uri.toString());
+				Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null); // parents field is null for now -- remove at some point?
+				//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
+				//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
+				this.addType(type);
+			}
+		}
+	}
+
+    /*public synchronized List getFeaturesByName(String name) {
         return getFeaturesByName(name, false);
-    }
+    }*/
 
     /**
      *  Use the name feature filter in DAS/2 to retrieve features by name or id (maybe alias).
@@ -458,32 +468,34 @@ public class Das2VersionedSource {
      *       For now, trying to just add features directly to seq...)
      *   For now, not allowing combination with any other filters
      */
-    public synchronized List getFeaturesByName(String name, boolean annotate_seq) {
-        List feats = null;
-        try {
-            Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
-            String request_root = featcap.getRootURI().toString();
-            String nameglob = name;
-            if (Das2Region.URL_ENCODE_QUERY) {
-                nameglob = URLEncoder.encode(nameglob, "UTF-8");
-            }
-            String feature_query = request_root + "?name=" + nameglob;
-            System.out.println("feature query: " + feature_query);
+    /*private synchronized List getFeaturesByName(String name, boolean annotate_seq) {
+		List feats = null;
+		try {
+			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
+			String request_root = featcap.getRootURI().toString();
+			String nameglob = name;
+			if (Das2Region.URL_ENCODE_QUERY) {
+				nameglob = URLEncoder.encode(nameglob, "UTF-8");
+			}
+			String feature_query = request_root + "?name=" + nameglob;
+			if (DEBUG) {
+				System.out.println("feature query: " + feature_query);
+			}
+			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+			URL query_url = new URL(feature_query);
+			URLConnection query_con = query_url.openConnection();
+			InputStream istr = query_con.getInputStream();
+			BufferedInputStream bis = new BufferedInputStream(istr);
+			//      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);
+			feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), annotate_seq);
+			int feat_count = feats.size();
+			System.out.println("parsed query results, annot count = " + feat_count);
+			bis.close();
+			istr.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return feats;
+	}*/
 
-            Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-            URL query_url = new URL(feature_query);
-            URLConnection query_con = query_url.openConnection();
-            InputStream istr = query_con.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(istr);
-            //      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);
-            feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), annotate_seq);
-            int feat_count = feats.size();
-            System.out.println("parsed query results, annot count = " + feat_count);
-            bis.close();
-            istr.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return feats;
-    }
 }

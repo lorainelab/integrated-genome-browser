@@ -79,18 +79,25 @@ public abstract class Application {
 	 * Set the status, and make a little progress bar so that the app doesn't look locked up.
 	 * @param s
 	 */
- public void setNotLockedUpStatus(String s) {
+ public synchronized void setNotLockedUpStatus(String s) {
 	 status_bar.setStatus("  " + s);
+	 this.setNotLockedUpStatus();
+ }
+
+ /**
+	 * Make a little progress bar so that the app doesn't look locked up.
+	 * @param s
+	 */
+ public synchronized void setNotLockedUpStatus() {
 	 status_bar.progressBar.setVisible(true);
 	 status_bar.progressBar.setIndeterminate(true);
-
  }
 
 	/** Sets the text in the status bar.
    *  Will also echo a copy of the string to System.out.
    *  It is safe to call this method even if the status bar is not being displayed.
    */
-  public void setStatus(String s) {
+  public synchronized void setStatus(String s) {
     setStatus(s, true);
   }
 
@@ -106,7 +113,7 @@ public abstract class Application {
    *  It is safe to call this method even if the status bar is not being displayed.
    *  @param echo  Whether to echo a copy to System.out.
    */
-  public void setStatus(String s, boolean echo) {
+  public synchronized void setStatus(String s, boolean echo) {
     if (status_bar != null) {
       status_bar.setStatus("  " + s);
 			status_bar.progressBar.setVisible(false);

@@ -98,23 +98,34 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	}
 
 	public Object getValueAt(int row, int col) {
-		if (features == null) {
-			return null;
+		if (features == null || features.size() == 0) {
+			// Indicate to user that there's no data.
+			if (col == 2) {
+				return "No feature data found";
+			}
+			return "";
 		}
 		GenericFeature gFeature = features.get(row);
 		GenericServer.ServerType serverType;
 		switch (col) {
 			case 0:
+				// return the load strategy
 				serverType = gFeature.gVersion.gServer.serverType;
 				if (serverType == GenericServer.ServerType.QuickLoad) {
 					return this.QuickLoadStrategyMap.get(gFeature.loadStrategy);
 				}
 				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
 			case 1:
+				// return the friendly feature name.
+				if (gFeature.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
+					return GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName);
+				}
 				return gFeature.featureName;
 			case 2:
+				// return the server name
 				return gFeature.gVersion.gServer.serverName;
 			case 3:
+				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;
 				if (serverType == GenericServer.ServerType.DAS2) {
 					return "DAS/2";
@@ -127,6 +138,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 				}
 				return "unknown";
 			case 4:
+				// return the load status
 				LoadStatus ls = gFeature.LoadStatusMap.get(this.cur_seq);
 				return this.LoadStatusMap.get(ls);
 			default:
@@ -182,7 +194,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 			if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
 				this.glv.glu.loadAndDisplayAnnotations(gFeature, this.cur_seq, this);
-				Application.getSingleton().setStatus("", false);
+				//Application.getSingleton().setStatus("", false);
 			}
 
 			//  Whatever feature strategy changed, it may have affected

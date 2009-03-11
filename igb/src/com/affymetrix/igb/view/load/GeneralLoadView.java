@@ -174,6 +174,7 @@ final public class GeneralLoadView extends JComponent
 				initializeSpeciesCB();
 				Application.getSingleton().setNotLockedUpStatus("Loading previous genome...");
 				RestorePersistentGenome();
+				Application.getSingleton().setStatus("",false);
 				addListeners();
 			}
 		};
@@ -587,10 +588,10 @@ final public class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().setNotLockedUpStatus("Loading feature list...");
+		Application.getSingleton().setNotLockedUpStatus();
 		createFeaturesTable(versionName);
-		Application.getSingleton().setNotLockedUpStatus("Loading features...");
 		loadWholeRangeFeatures(versionName);
+		Application.getSingleton().setStatus("",false);
 	}
 
 
@@ -773,7 +774,7 @@ final public class GeneralLoadView extends JComponent
 		speciesCB.setEnabled(false);
 		versionCB.setEnabled(false);
 
-		Application.getSingleton().setNotLockedUpStatus("Loading genomes...");
+		Application.getSingleton().setNotLockedUpStatus("Loading feature list...");
 
 		Executor vexec = Executors.newSingleThreadExecutor();
 

@@ -443,13 +443,18 @@ final public class GeneralLoadUtils {
 	/*public String getGenomeName(AnnotatedSeqGroup group) {
 	return group2version.get(group);
 	}*/
-	/*public static String stripFilenameExtensions(final String name) {
-		String new_name = name;
+
+	/**
+	 * Used to give a friendly name for QuickLoad features.
+	 * @param name
+	 * @return
+	 */
+	public static String stripFilenameExtensions(final String name) {
 		if (name.indexOf('.') > 0) {
-			new_name = name.substring(0, name.lastIndexOf('.'));
+			return name.substring(0, name.lastIndexOf('.'));
 		}
-		return new_name;
-	}*/
+		return name;
+	}
 
 	/**
 	 *  Returns the list of features for the genome with the given version name.
@@ -710,7 +715,7 @@ final public class GeneralLoadUtils {
 
 
 		GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
-		Application.getSingleton().setNotLockedUpStatus("Loading " + gFeature.featureName);
+		Application.getSingleton().setNotLockedUpStatus();
 
 		if (serverType == GenericServer.ServerType.DAS2) {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);

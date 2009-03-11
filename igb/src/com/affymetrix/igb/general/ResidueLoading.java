@@ -222,11 +222,11 @@ public final class ResidueLoading {
 	 // try loading via DAS/2 server that genome was originally modeled from
 	private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, String uri) {
 		InputStream istr = null;
-		Map headers = new HashMap();
+		Map<String,String> headers = new HashMap<String,String>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
 			// System.out.println(headers);
-			String content_type = (String) headers.get("content-type");
+			String content_type = headers.get("content-type");
 			if (DEBUG) {
 				System.out.println("    response content-type: " + content_type);
 			}
@@ -270,11 +270,11 @@ public final class ResidueLoading {
 	// try loading via DAS/2 server
     private static String GetPartialFASTADas2Residues(String uri) {
         InputStream istr = null;
-        Map headers = new HashMap();
+        Map<String,String> headers = new HashMap<String,String>();
         try {
             istr = LocalUrlCacher.getInputStream(uri, true, headers);
             // System.out.println(headers);
-            String content_type = (String) headers.get("content-type");
+            String content_type = headers.get("content-type");
             if (DEBUG) {
 							System.out.println("    response content-type: " + content_type);
 						}

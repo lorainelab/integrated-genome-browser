@@ -29,6 +29,7 @@ public abstract class IGBConstants {
   public static String IGB_VERSION;
   public static String BUILD_VERSION;
   private static final String DEFAULT_STRING = "UNKNOWN";
+	public static final boolean DEBUG = false;
 
   /*
    * This is not the best way to do this -- It just requires the least

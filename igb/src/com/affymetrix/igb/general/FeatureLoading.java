@@ -19,6 +19,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -212,7 +213,7 @@ public final class FeatureLoading {
 			}
 			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
 			style.setHumanName(type.getName());
-			Application.getSingleton().setStatus("Loading " + type.getShortName(), false);
+			Application.getSingleton().setNotLockedUpStatus("Loading " + type.getShortName());
 			List<Das2FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
 			result_syms.addAll(feature_list);
 		}
@@ -223,6 +224,7 @@ public final class FeatureLoading {
 		if (DEBUG) {
 			System.out.println("need to load: " + annot_url);
 		}
+		Application.getSingleton().setNotLockedUpStatus("Loading " + GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName));
 		Application.getApplicationLogger().fine("need to load: " + annot_url);
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
@@ -232,6 +234,10 @@ public final class FeatureLoading {
 			public Object doInBackground() {
 				loadQuickLoadFeature(annot_url, gFeature);
 				return null;
+			}
+			@Override
+			public void done() {
+				Application.getSingleton().setStatus("",false);
 			}
 		};
 

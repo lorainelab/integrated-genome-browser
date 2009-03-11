@@ -39,8 +39,7 @@ public class Das2VersionedSource {
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
-    static boolean DEBUG_TYPES_QUERY = false;
-    static boolean DEBUG_SEGMENTS_QUERY = false;
+    private static final boolean DEBUG = false;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -67,7 +66,6 @@ public class Das2VersionedSource {
     protected boolean types_initialized = false;
     protected String types_filter = null;
     LinkedList platforms = new LinkedList();
-		private static boolean DEBUG = false;
 
     /**
      *  To maintain backward compatibility, keeping constuctor with no coords_uri argument,
@@ -102,6 +100,7 @@ public class Das2VersionedSource {
         return name;
     }
 
+		@Override
     public String toString() {
         return getName();
     }
@@ -317,7 +316,7 @@ public class Das2VersionedSource {
 			//String description = null;
 			int length = Integer.parseInt(lengthstr);
 			Das2Region region = new Das2Region(this, region_uri, region_name, region_info_url, length);
-			if (DEBUG_SEGMENTS_QUERY) {
+			if (DEBUG) {
 				System.out.println("segment: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
 			}
 			this.addRegion(region);
@@ -383,6 +382,9 @@ public class Das2VersionedSource {
 	private void getTypeList(NodeList typelist, String types_request) {
 		if (DEBUG) {
 		System.out.println("Das2 Type Length: " + typelist.getLength());
+		if (typelist.getLength() == 1) {
+			System.out.println("Das2 Types: " + typelist.item(0));
+		}
 		}
 		//      ontologyStuff1();
 		for (int i = 0; i < typelist.getLength(); i++) {

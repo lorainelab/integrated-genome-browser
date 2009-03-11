@@ -269,13 +269,12 @@ public final class IGB extends Application
     if (offline != null) {
       LocalUrlCacher.setOffLine("true".equals(offline));
     }
-
-    getIGBPrefs(); // force loading of prefs
-
     
     singleton_igb = new IGB();
+		
+		getIGBPrefs(); // force loading of prefs
 
-    singleton_igb.init();
+		singleton_igb.init();
 
 		String quick_load_url = getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();

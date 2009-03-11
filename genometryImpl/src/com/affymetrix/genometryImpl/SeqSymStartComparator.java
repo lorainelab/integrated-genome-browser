@@ -23,7 +23,7 @@ import com.affymetrix.genometry.*;
  *  @see  SeqSymMinComparator
  *  @see  SeqSymStartComparator
  */
-public class SeqSymStartComparator implements Comparator<SeqSymmetry> {
+public final class SeqSymStartComparator implements Comparator<SeqSymmetry> {
 	boolean ascending;
 	BioSeq seq;
 

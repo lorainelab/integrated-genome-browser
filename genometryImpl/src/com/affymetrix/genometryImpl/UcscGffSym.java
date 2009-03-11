@@ -22,7 +22,7 @@ import java.util.regex.*;
  *  A sym to efficiently store GFF 1.0 annotations.
  *  See http://genome.ucsc.edu/goldenPath/help/customTrack.html#GTF
  */
-public class UcscGffSym extends SingletonSymWithProps implements Scored {
+public final class UcscGffSym extends SingletonSymWithProps implements Scored {
 
 	public static final char UNKNOWN_FRAME = '.';
 

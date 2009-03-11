@@ -23,7 +23,7 @@ import java.util.List;
  *  A class to keep track of the result of and log messages from a single
  *  Das2Request.
  */
-public class Das2RequestLog {
+public final class Das2RequestLog {
 
 	boolean ECHO_LOG_TO_SYS_OUT = true;
 	private List<String> status_strings = new ArrayList<String>();

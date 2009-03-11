@@ -14,7 +14,7 @@ import java.util.*;
  *      BUT, also have child syms of CompositeGraphSym that keep track of what slices coords have already
  *      been populated from.
  */
-public class CompositeGraphSym extends GraphSymFloat {
+public final class CompositeGraphSym extends GraphSymFloat {
 
 	public CompositeGraphSym(String id, BioSeq seq) {
 		super(null, null, id, seq);

@@ -19,7 +19,7 @@ import com.affymetrix.genometry.*;
 /**
  *  Sorts SeqSymmetries based on lexicographic ordering of IDs 
  */
-public class SeqSymIdComparator implements Comparator<SeqSymmetry> {
+public final class SeqSymIdComparator implements Comparator<SeqSymmetry> {
 
 	public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
 		String id1 = sym1.getID();

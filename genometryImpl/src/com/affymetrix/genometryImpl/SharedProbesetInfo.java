@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl;
 import java.util.*;
 import com.affymetrix.genometry.*;
 
-public class SharedProbesetInfo {
+public final class SharedProbesetInfo {
 	BioSeq seq;
 	int probe_length;
 	String id_prefix;

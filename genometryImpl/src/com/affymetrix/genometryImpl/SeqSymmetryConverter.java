@@ -22,7 +22,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 /**
  *  Routines to convert generic SeqSymmetry's to PSL SeqSymmetry's.
  */
-public class SeqSymmetryConverter {
+public final class SeqSymmetryConverter {
 
 	/**
 	 *  Converts any SeqSymmetry defined on three BioSeq's into a Psl3Sym.

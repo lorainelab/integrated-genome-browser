@@ -20,7 +20,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 
 
-public class SingletonSymWithIntId extends MutableSingletonSeqSymmetry implements IntId {
+public final class SingletonSymWithIntId extends MutableSingletonSeqSymmetry implements IntId {
 	int nid;
 	String id_prefix;
 

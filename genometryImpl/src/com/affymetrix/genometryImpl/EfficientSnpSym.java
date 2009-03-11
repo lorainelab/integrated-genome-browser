@@ -14,7 +14,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.*;
 
-public class EfficientSnpSym implements SeqSymmetry, SeqSpan {
+public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	/**
 	 *  from parent can derive id construction, annot type, annot source, etc.
 	 */

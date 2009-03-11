@@ -22,7 +22,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *  A SeqSymmetry for holding graph for graphs that have y values that apply to
  *  intervals.  So instead of (x,y) there is (x_start, x_width, y).
  */
-public class GraphIntervalSym extends GraphSymFloat {
+public final class GraphIntervalSym extends GraphSymFloat {
 	int wcoords[];
 
 	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, BioSeq seq) {

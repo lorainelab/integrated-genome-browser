@@ -49,7 +49,7 @@ import com.affymetrix.genometry.symmetry.*;
  * </pre>
  *
  */
-public class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWithProps {
+public final class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, SymWithProps {
 
 	String geneName;
 	String name;

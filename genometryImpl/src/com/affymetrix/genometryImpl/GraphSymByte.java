@@ -18,7 +18,7 @@ import com.affymetrix.genometry.BioSeq;
 /**
  *  A SeqSymmetry for holding integer-based graph data.
  */
-public class GraphSymByte extends GraphSym {
+public final class GraphSymByte extends GraphSym {
 
 	private byte[] byte_y;
 

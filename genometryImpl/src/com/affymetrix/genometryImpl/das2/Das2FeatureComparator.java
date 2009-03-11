@@ -18,7 +18,7 @@ import java.util.Comparator;
 /**
  *  Sorts SeqSymmetries based on lexicographic ordering of IDs 
  */
-public class Das2FeatureComparator implements Comparator<SimpleDas2Feature> {
+public final class Das2FeatureComparator implements Comparator<SimpleDas2Feature> {
 	boolean use_name;
 
 	/**

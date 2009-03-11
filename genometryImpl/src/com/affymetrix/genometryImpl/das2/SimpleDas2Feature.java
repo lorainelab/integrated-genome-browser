@@ -16,7 +16,7 @@ import java.util.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.TypedSym;
 
-public class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
+public final class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
 	String id;
 	//  URI feat_uri;
 	String type;  // eventually replace with Das2Type

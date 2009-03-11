@@ -20,7 +20,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 
-public class Psl3Sym extends UcscPslSym {
+public final class Psl3Sym extends UcscPslSym {
 	static int OTHER_INDEX = 2;
 	BioSeq otherseq;
 	boolean same_other_orientation;  // orientation of "other" spans relative to _query_

@@ -22,7 +22,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 
-public class SeqSymSummarizer {
+public final class SeqSymSummarizer {
 
 	/**
 	 *  Makes a summary graph of a set the spans of some SeqSymmetries on a given BioSeq.

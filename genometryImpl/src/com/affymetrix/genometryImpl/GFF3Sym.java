@@ -337,7 +337,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 		return false;
 	}
 
-	public static class MultiLineGFF3Sym extends GFF3Sym {
+	public static final class MultiLineGFF3Sym extends GFF3Sym {
 		public MultiLineGFF3Sym(BioSeq seq, String source, String feature_type, int a, int b,
 				float score, char strand, char frame, String attributes) {
 			super(seq, source, feature_type, a, b, score, strand, frame, attributes);

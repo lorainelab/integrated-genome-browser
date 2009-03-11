@@ -19,7 +19,7 @@ import java.util.Comparator;
 /**
  *  Sorts based on UcscPslSym.getTargetMin().
  */
-public class UcscPslComparator implements Comparator<UcscPslSym> {
+public final class UcscPslComparator implements Comparator<UcscPslSym> {
 
 	/** Sorts two instances of UcscPslSym based on UcscPslSym.getTargetMin() */
 	public int compare(UcscPslSym sym1, UcscPslSym sym2) {

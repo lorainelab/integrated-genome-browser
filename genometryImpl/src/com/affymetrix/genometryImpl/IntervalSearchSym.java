@@ -28,7 +28,7 @@ import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
  *      the relationship between suffix arrays and suffix trees.
  *      thanks to Antonio for the suggesting the name...)
  */
-public class IntervalSearchSym extends SimpleSymWithProps
+public final class IntervalSearchSym extends SimpleSymWithProps
 	implements SearchableSeqSymmetry  {
 	static boolean DEBUG = false;
 	boolean ready_for_searching = false;

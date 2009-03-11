@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 
 import java.io.PrintStream;
 
-public class AffyChpColumnType {
+public final class AffyChpColumnType {
 	String name;
 	AffyDataType type;
 	int size;

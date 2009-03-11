@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.util.*;
 import java.io.*;
 import java.util.*;
 
-public class AffyChpColumnData {
+public final class AffyChpColumnData {
 	String name;
 	AffyDataType type;
 	int size;

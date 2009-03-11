@@ -17,7 +17,7 @@ package com.affymetrix.genometryImpl.parsers;
  *  Parses tab-delimited output "fishClones.txt" files from UCSC.
  *  The file extension should be {@link #FILE_EXT}.
  */
-public class FishClonesParser extends TabDelimitedParser {
+public final class FishClonesParser extends TabDelimitedParser {
 	public static final String FILE_EXT = "fsh";
 	public static final String FISH_CLONES_METHOD = "fishClones";
 

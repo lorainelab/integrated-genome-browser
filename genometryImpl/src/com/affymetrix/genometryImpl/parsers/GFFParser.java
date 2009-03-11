@@ -84,7 +84,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *     can build appropriate genometry models
  *</pre>
  */
-public class GFFParser implements AnnotationWriter  {
+public final class GFFParser implements AnnotationWriter  {
 	public static final int VERSION_UNKNOWN = 0;
 	public static final int GFF1 = 1;
 	public static final int GFF2 = 2;

@@ -29,7 +29,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class AffySingleChromData {
+public final class AffySingleChromData {
 
 	int start;
 	int rowCount;

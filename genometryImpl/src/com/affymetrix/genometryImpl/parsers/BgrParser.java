@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.Timer;
 
-public class BgrParser {
+public final class BgrParser {
 
 	/**
 	 * Writes bgr format.

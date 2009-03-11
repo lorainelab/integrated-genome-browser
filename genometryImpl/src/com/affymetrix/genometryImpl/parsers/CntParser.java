@@ -25,7 +25,7 @@ import java.util.regex.*;
 /**
  *  A parser for textual ".cnt" files from the Affymetrix CNAT program.
  */
-public class CntParser {
+public final class CntParser {
 
 	static Pattern tag_val = Pattern.compile("(.*)=(.*)");
 	static Pattern line_regex = Pattern.compile("\\t");

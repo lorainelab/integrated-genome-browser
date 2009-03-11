@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.PointIntFloat;
 
-public class SgrParser {
+public final class SgrParser {
 	static boolean DEBUG = false;
 	static Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 	static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace

@@ -76,7 +76,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *
  * </pre>
  */
-public class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
+public final class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	static List<String> pref_list = new ArrayList<String>();

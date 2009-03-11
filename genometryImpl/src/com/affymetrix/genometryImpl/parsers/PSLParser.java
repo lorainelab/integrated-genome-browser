@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.Psl3Sym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 
-public class PSLParser implements AnnotationWriter  {
+public final class PSLParser implements AnnotationWriter  {
 
 	static List<String> psl_pref_list = Arrays.asList("psl");
 	static List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");

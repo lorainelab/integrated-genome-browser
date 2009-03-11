@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.util.Timer;
 /**
  *  Just like refFlat table format, except no geneName field (just name field).
  */
-public class BgnParser implements AnnotationWriter  {
+public final class BgnParser implements AnnotationWriter  {
 	boolean use_byte_buffer = true;
 	boolean write_from_text = true;
 	static final boolean DEBUG = false;

@@ -34,7 +34,7 @@ import java.util.regex.*;
  *  See http://song.sourceforge.net/gff3.shtml.
  *</pre>
  */
-public class GFF3Parser {
+public final class GFF3Parser {
 	public static final int GFF3 = 3;
 
 	// Any tag name beginning with a capital letter must be one of the reserved names.

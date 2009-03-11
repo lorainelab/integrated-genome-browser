@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import java.io.*;
 import java.util.*;
 
-public class AffyGenericDataHeader {
+public final class AffyGenericDataHeader {
 
 	public CharSequence data_type_guid;
 	public CharSequence unique_id;

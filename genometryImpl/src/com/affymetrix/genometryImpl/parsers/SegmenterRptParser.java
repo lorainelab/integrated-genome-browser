@@ -30,7 +30,7 @@ import java.util.regex.*;
  *
  *  (This was based on the TabDelimitedParser, but then specialized.)
  */
-public class SegmenterRptParser {
+public final class SegmenterRptParser {
 	public static final String GAIN = "Gain";
 	public static final String LOSS = "Loss";
 	//public static final String LOH = "LOH";

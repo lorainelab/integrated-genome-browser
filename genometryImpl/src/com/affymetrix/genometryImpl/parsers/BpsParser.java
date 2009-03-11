@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 
-public class BpsParser implements AnnotationWriter  {
+public final class BpsParser implements AnnotationWriter  {
 
 	static List<String> pref_list = new ArrayList<String>();
 	static {

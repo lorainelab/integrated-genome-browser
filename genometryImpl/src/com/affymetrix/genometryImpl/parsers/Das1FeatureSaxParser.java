@@ -68,7 +68,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *</pre>
  */
 
-public class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
+public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	implements AnnotationWriter  {
 	static final int UNKNOWN = 0;
 	static final int FORWARD = 1;

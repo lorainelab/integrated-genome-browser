@@ -66,7 +66,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
  *                 min genome position (int, zero interbase)
  *</pre>
  */
-public class Bprobe1Parser implements AnnotationWriter {
+public final class Bprobe1Parser implements AnnotationWriter {
 
 	static boolean DEBUG = true;
 	static List<String> pref_list = new ArrayList<String>();

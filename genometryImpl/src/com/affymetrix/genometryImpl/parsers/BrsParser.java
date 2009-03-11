@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * but "refFlat.txt" is preferred.
  * (refFlat contains gene names, while refGene does not.)
  */
-public class BrsParser implements AnnotationWriter  {
+public final class BrsParser implements AnnotationWriter  {
 
 	static List<String> pref_list = new ArrayList<String>();
 	static {
@@ -584,7 +584,7 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 public String getMimeType() { return "binary/brs"; }
 
 
-/*public class SerialHolder implements Serializable {
+/*public final class SerialHolder implements Serializable {
   static final long serialVersionUID = 1L;
   Vector transvec;
   public SerialHolder(Vector transvec) {
@@ -592,7 +592,7 @@ public String getMimeType() { return "binary/brs"; }
   }
 }
 
-public class SerialTrans implements Serializable {
+public final class SerialTrans implements Serializable {
 static final long serialVersionUID = 1L;
 String geneName;
 String name;

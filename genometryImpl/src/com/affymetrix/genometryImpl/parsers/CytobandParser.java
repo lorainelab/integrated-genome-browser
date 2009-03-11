@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 /**
  *  A parser designed to parse data from cytoBand.txt files from UCSC.
  */
-public class CytobandParser implements AnnotationWriter  {
+public final class CytobandParser implements AnnotationWriter  {
 
 	static Pattern line_regex = Pattern.compile("\\t");
 
@@ -221,7 +221,7 @@ public class CytobandParser implements AnnotationWriter  {
 
 	public static enum Arm {SHORT, LONG, UNKNOWN};
 
-	public class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
+	public final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
 		String band;
 
 		public CytobandSym(int start, int end, BioSeq seq, String name, String band) {

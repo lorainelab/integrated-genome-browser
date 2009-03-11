@@ -88,7 +88,7 @@ chr22        14434054        14434140        +        36.2883        40.7145
 
 <pre>
 */
-public class ScoredIntervalParser {
+public final class ScoredIntervalParser {
 
 	static Pattern line_regex  = Pattern.compile("\t");
 	static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
@@ -561,7 +561,7 @@ public class ScoredIntervalParser {
 	}
 
 	/** For sorting of sin lines. */
-	public class SinEntry {
+	public final class SinEntry {
 		SeqSymmetry sym;
 		float[] scores;
 		public SinEntry(SeqSymmetry sym, float[] scores) {
@@ -571,7 +571,7 @@ public class ScoredIntervalParser {
 	}
 
 	/** For sorting of sin lines. */
-	public class SinEntryComparator implements Comparator<SinEntry>  {
+	public final class SinEntryComparator implements Comparator<SinEntry>  {
 		public int compare(SinEntry objA, SinEntry objB) {
 			SeqSpan symA = objA.sym.getSpan(0);
 			SeqSpan symB = objB.sym.getSpan(0);

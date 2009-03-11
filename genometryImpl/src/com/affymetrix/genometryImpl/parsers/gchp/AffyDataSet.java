@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.util.*;
 import java.io.*;
 import java.util.*;
 
-public class AffyDataSet {
+public final class AffyDataSet {
 
 	private long pos_first_data_element;
 	private long pos_next_data_element;

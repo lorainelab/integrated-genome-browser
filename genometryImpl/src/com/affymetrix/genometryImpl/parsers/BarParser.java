@@ -71,7 +71,7 @@ import com.affymetrix.genometryImpl.util.Timer;
  23			The next set of values in the file is the data points for the sequence. Each data point contains NCOL column values. The type, thus the size, of each column is defined above in the field types section.
  *</pre>
  */
-public class BarParser implements AnnotationWriter  {
+public final class BarParser implements AnnotationWriter  {
 	static boolean DEBUG_READ = false;
 	static boolean DEBUG_SLICE = false;
 	static boolean DEBUG_DATA = false;

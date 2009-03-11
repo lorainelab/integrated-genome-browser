@@ -70,7 +70,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *
  * </pre>
  */
-public class BrptParser {
+public final class BrptParser {
 	//    static String default_text_infile = "c:/data/ucsc/hg17/repeats/rmsk_all.txt";
 	//    static String genome_version = "H_sapiens_Apr_2003";
 

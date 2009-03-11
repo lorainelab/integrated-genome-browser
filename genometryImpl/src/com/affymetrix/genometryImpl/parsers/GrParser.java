@@ -23,7 +23,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class GrParser {
+public final class GrParser {
 
 	static Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 

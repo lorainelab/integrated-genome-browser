@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /** A parser for the Affymetrix Generic CHP format. */
-public class AffyGenericChpFile {
+public final class AffyGenericChpFile {
 
 	int magic; // magic number.  Always 59.
 	int version; // version number.  Always 1.

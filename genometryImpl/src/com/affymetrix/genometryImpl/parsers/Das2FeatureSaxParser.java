@@ -36,7 +36,7 @@ import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
  * Das2FeatureSaxParser reads and writes DAS2FEATURE XML format.
  *   Spec for this format is at http://biodas.org/documents/das2/das2_get.html *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
  */
-public class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
+public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
 	implements AnnotationWriter {
 
 	// DO_SEQID_HACK is a very temporary fix!!!

@@ -19,7 +19,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class AffyDataGroup {
+public final class AffyDataGroup {
 
 	/** File position of the NEXT data group. */
 	long file_pos;

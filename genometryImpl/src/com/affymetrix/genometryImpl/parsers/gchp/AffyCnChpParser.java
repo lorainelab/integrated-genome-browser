@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.parsers.Streamer;
 import java.io.*;
 import java.util.*;
 
-public class AffyCnChpParser {
+public final class AffyCnChpParser {
 
 	/** Creates a new instance of AffyCnChpParser */
 	public AffyCnChpParser() {

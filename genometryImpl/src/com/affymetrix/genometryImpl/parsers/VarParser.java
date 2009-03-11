@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 /**
  *  A parser designed to parse genomic variants data from http://projects.tcag.ca/variation/
  */
-public class VarParser {
+public final class VarParser {
 
 	public static final String GENOMIC_VARIANTS = "Genomic Variants";
 

@@ -93,7 +93,7 @@ import com.affymetrix.genometryImpl.util.Timer;
  *
  *</pre>
  */
-public class BsnpParser {
+public final class BsnpParser {
 	//  static String default_text_infile = "c:/data/ucsc/hg15/";
 	//  static String genome_version = "H_sapiens_Apr_2003";
 

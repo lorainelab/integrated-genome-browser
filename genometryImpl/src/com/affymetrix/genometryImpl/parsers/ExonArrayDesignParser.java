@@ -112,7 +112,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 
 *</pre>
 */
-public class ExonArrayDesignParser implements AnnotationWriter {
+public final class ExonArrayDesignParser implements AnnotationWriter {
 	static boolean USE_FULL_HIERARCHY = false;
 
 	static boolean DEBUG = false;

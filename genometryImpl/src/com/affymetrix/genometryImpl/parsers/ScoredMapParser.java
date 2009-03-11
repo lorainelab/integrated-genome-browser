@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  *  This class (and file format) have been replaced by ScoredIntervalParser (and sin file format)
  *  Kept now only to parse in older data files.
  */
-public class ScoredMapParser {
+public final class ScoredMapParser {
 
 	static Pattern line_regex  = Pattern.compile("\t");
 	//boolean attach_graphs = ScoredIntervalParser.default_attach_graphs;

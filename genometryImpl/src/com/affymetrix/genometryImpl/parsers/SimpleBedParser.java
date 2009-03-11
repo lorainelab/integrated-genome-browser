@@ -19,7 +19,7 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
-public class SimpleBedParser implements AnnotationWriter {
+public final class SimpleBedParser implements AnnotationWriter {
 
 	public String getMimeType() { return "text/plain"; }
 

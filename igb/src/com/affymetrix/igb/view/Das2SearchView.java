@@ -28,7 +28,7 @@ import com.affymetrix.igb.das2.*;
  *      via Das2LoadView3.loadFeatures() / loadFeaturesInView(), (potentially in optimized formats)
  *      and to set view to results sym's seq and span
  */
-public class Das2SearchView extends JPanel implements ActionListener, GroupSelectionListener {
+public final class Das2SearchView extends JPanel implements ActionListener, GroupSelectionListener {
   static Das2ServerInfo default_server;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   static boolean DEBUG_EVENTS = false;

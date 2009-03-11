@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
-public class DasSource {
+public final class DasSource {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 

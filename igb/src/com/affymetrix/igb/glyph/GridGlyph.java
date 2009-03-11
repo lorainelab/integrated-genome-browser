@@ -16,7 +16,7 @@ package com.affymetrix.igb.glyph;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 
-public class GridGlyph extends Glyph {
+public final class GridGlyph extends Glyph {
   double grid_spacing = 0;
   Rectangle gridbox_pix = new Rectangle();
   Rectangle2D gridbox_coords = new Rectangle2D();

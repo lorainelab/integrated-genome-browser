@@ -51,7 +51,7 @@ import java.util.logging.Logger;
  *
  * @version $Id$
  */
-final public class GeneralLoadUtils {
+public final class GeneralLoadUtils {
 
 	public static enum LoadStrategy {
 

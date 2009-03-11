@@ -24,7 +24,7 @@ import java.util.Vector;
  *  This is similar to the javax.swing.ProgressMonitor class, but does not
  *  show a JProgressBar, and has optional "OK" and "Cancel" buttons to dismiss the dialog.
  */
-public class ThreadProgressMonitor {
+public final class ThreadProgressMonitor {
   JOptionPane opt_pane;
   JDialog dialog;
   Thread thread;

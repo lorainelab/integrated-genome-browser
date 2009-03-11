@@ -48,7 +48,7 @@ import com.affymetrix.igb.view.SeqMapView;
  *  It is mostly an obsolete class, since most of the manipulations are now done without
  *  using pop-up menus.
  */
-public class GraphSelectionManager
+public final class GraphSelectionManager
   implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
   ContextualPopupListener, TierLabelManager.PopupListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();

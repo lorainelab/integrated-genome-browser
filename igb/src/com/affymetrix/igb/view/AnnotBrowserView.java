@@ -43,7 +43,7 @@ import com.affymetrix.swing.IntegerTableCellRenderer;
  *  {@link AnnotatedSeqGroup#getSymmetryIDs()}.  When the user selects an item,
  *  the {@link SeqMapView} will zoom to it.
  */
-final public class AnnotBrowserView extends JPanel
+public final class AnnotBrowserView extends JPanel
 implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
 
   private final JTable table = new JTable();

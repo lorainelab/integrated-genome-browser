@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 /**
  * A glyph used to display a label for a TierGlyph.
  */
-public class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
+public final class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
 
   private static final boolean DEBUG_PIXELBOX = false;
   private Rectangle debug_rect;

@@ -43,7 +43,7 @@ import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import org.xml.sax.SAXException;
 
-public class LoadFileAction {
+public final class LoadFileAction {
 
   JFrame gviewerFrame;
   FileTracker load_dir_tracker;

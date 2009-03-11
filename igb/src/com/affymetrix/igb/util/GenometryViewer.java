@@ -31,7 +31,7 @@ import com.affymetrix.genometry.*;
 //import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
-public class GenometryViewer extends JPanel implements MouseListener {
+public final class GenometryViewer extends JPanel implements MouseListener {
   boolean PRINT_SELECTION = true;
   boolean SHOW_RESIDUES = true;
   BioSeq current_seq;

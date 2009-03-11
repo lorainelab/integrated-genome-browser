@@ -26,7 +26,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SimpleAuthenticator;
 //import com.affymetrix.igb.util.*;
 
-public class Das2ServerInfo  {
+public final class Das2ServerInfo  {
   static boolean DEBUG_SOURCES_QUERY = false;
 
 	protected static String SOURCES_QUERY = "sequence";

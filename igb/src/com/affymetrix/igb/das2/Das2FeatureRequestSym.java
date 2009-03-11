@@ -37,7 +37,7 @@ import com.affymetrix.genometryImpl.das2.Das2RequestLog;
  *       (bounds of all returned spans [or union of overlap_span and bounds of all returned spans?]
  *
  */
-public class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
+public final class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
 
   LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
   SeqSpan inside_span;

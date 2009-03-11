@@ -39,7 +39,7 @@ import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
-public class SeqMapViewPopup implements TierLabelManager.PopupListener {
+public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   static final boolean DEBUG = false;
   static boolean das2_writeback_enabled = false;

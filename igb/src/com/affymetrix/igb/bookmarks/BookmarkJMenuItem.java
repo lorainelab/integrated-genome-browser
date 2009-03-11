@@ -20,7 +20,7 @@ import java.awt.Font;
 /**
  * A JMenuItem that contains a reference to a Bookmark object.
  */
-public class BookmarkJMenuItem extends JMenuItem {
+public final class BookmarkJMenuItem extends JMenuItem {
 
   private Bookmark bookmark;
   

@@ -24,7 +24,7 @@ import java.util.*;
  *  The server reads only the single "GET" line from the header,
  *  ignores all other input, returns no output, and closes the connection.
  */
-public class SimpleBookmarkServer {
+public final class SimpleBookmarkServer {
   public static final int default_server_port = 7085;
 
   /** The OLD name of the IGB servlet, "UnibrowControl". */

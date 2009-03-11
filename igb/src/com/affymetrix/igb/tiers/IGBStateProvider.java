@@ -8,7 +8,7 @@ import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
-public class IGBStateProvider implements StateProvider {
+public final class IGBStateProvider implements StateProvider {
 
    Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
 

@@ -28,7 +28,7 @@ import java.util.Comparator;
    *  forward strands.
    *  see {@link TierLabelManager#setTierSorter(Comparator)}
    */
-  public class RealmBasedTierSorter implements Comparator {
+  public final class RealmBasedTierSorter implements Comparator {
     TierLabelManager manager;
     
     public RealmBasedTierSorter(TierLabelManager manager) {

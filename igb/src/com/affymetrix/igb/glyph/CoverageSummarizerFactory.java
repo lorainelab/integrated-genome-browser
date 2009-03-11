@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.tiers.*;
 
-public class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
+public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
   static int default_glyph_height = 50;
 
   Color glyph_color;

@@ -28,7 +28,7 @@ import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 
-public class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
+public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
   boolean check_same_seq = true;
   double sgg_transition = SmartGraphGlyph.default_transition_scale;

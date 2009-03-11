@@ -35,7 +35,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
-public class OpenGraphAction extends AbstractAction {
+public final class OpenGraphAction extends AbstractAction {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
   int graph_count = 0;

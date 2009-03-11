@@ -29,7 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  *  A set of DAS loading and parsing functions.
  */
-public class DasUtils {
+public final class DasUtils {
 	private static final boolean DEBUG = true;
 
 

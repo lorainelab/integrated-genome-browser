@@ -19,7 +19,7 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class KeyStrokeEditPanel extends JPanel {
+public final class KeyStrokeEditPanel extends JPanel {
   static final boolean DEBUG = false;
   
   JTextField key_field = new JTextField(20);

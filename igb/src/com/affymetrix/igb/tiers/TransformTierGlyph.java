@@ -34,7 +34,7 @@ import com.affymetrix.genoviz.glyph.*;
  *     these are _not_ considered children, so transform does not apply to them
  *
  */
-public class TransformTierGlyph extends TierGlyph {
+public final class TransformTierGlyph extends TierGlyph {
   boolean DEBUG_PICK_TRAVERSAL = false;
 
   /*

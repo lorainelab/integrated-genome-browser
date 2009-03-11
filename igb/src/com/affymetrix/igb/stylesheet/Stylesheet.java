@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Stylesheet implements Cloneable, XmlAppender {
+public final class Stylesheet implements Cloneable, XmlAppender {
   public static boolean DEBUG = false;
 
   LinkedHashMap<String, AssociationElement> meth2association = new LinkedHashMap<String, AssociationElement>();

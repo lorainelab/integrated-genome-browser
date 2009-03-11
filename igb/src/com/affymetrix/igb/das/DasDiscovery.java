@@ -21,7 +21,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 //import com.affymetrix.igb.util.UnibrowPrefsUtil;
 //import java.util.prefs.*;
 
-public class DasDiscovery {
+public final class DasDiscovery {
 
   static Map<String,DasServerInfo> das_servers;
   static Pattern tab_splitter = Pattern.compile("\t");

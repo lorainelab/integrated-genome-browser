@@ -20,7 +20,7 @@ import java.net.PasswordAuthentication;
 import java.net.*;
 import javax.swing.*;
 
-public class UnibrowAuthenticator extends Authenticator  {
+public final class UnibrowAuthenticator extends Authenticator  {
   JFrame frm;
   JTextField userTF = new JTextField();
   JPasswordField passwordTF = new JPasswordField();

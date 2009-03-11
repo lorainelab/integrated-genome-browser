@@ -46,7 +46,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.swing.DisplayUtils;
 
-public class BookMarkAction implements ActionListener, MenuListener {
+public final class BookMarkAction implements ActionListener, MenuListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   final static boolean DEBUG = false;
 

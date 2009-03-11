@@ -18,7 +18,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 
-public class DasEntryPoint {
+public final class DasEntryPoint {
 
   String entry_id;
   String description;

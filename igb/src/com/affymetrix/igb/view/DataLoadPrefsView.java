@@ -35,7 +35,7 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
-final public class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
+public final class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
   private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
 

@@ -51,7 +51,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
-final public class SimpleGraphTab extends JPanel
+public final class SimpleGraphTab extends JPanel
 implements SeqSelectionListener, SymSelectionListener {
 
   SeqMapView gviewer = null;

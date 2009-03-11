@@ -107,7 +107,7 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
 
  *</pre>
  */
-public class XmlPrefsParser {
+public final class XmlPrefsParser {
 
 	static Class default_factory_class =
 					com.affymetrix.igb.glyph.GenericAnnotGlyphFactory.class;

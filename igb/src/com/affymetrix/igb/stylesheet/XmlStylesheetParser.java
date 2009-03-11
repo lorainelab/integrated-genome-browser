@@ -26,7 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 /**
  *  Loads an XML document using the igb_stylesheet_1.dtd.
  */
-public class XmlStylesheetParser {
+public final class XmlStylesheetParser {
 
   Stylesheet stylesheet = new Stylesheet();
   static Stylesheet system_stylesheet = null;

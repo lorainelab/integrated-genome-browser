@@ -18,7 +18,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 /** Models an "ELSE" element.  Just like a "MATCH" element, except that
     it always evaluates to true.
  */
-public class ElseElement extends MatchElement {
+public final class ElseElement extends MatchElement {
   public static String NAME = "ELSE";
   
   /** Always returns true. */

@@ -19,7 +19,7 @@ import org.w3c.dom.*;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 
-public class DasServerInfo {
+public final class DasServerInfo {
 
 	static boolean REPORT_SOURCES = false;
 	static boolean REPORT_CAPS = true;

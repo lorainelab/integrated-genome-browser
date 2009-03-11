@@ -15,7 +15,7 @@ package com.affymetrix.igb.das;
 
 import java.util.*;
 
-public class DasType {
+public final class DasType {
   String type_id;
   String method;
   String category;

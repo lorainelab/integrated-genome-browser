@@ -16,7 +16,7 @@ package com.affymetrix.igb.tiers;
 import java.util.Comparator;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 
-public class GlyphMinComparator implements Comparator<GlyphI> {
+public final class GlyphMinComparator implements Comparator<GlyphI> {
 
   public int compare(GlyphI g1, GlyphI g2) {
     if (g1.getCoordBox().x < g2.getCoordBox().x) { return -1; }

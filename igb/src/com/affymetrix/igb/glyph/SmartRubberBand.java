@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.*;
  *     can be set up so that rubberbanding will only occur if the mouse drag is started 
  *     where no glyphs are hit.
  */
-public class SmartRubberBand extends com.affymetrix.genoviz.bioviews.RubberBand {
+public final class SmartRubberBand extends com.affymetrix.genoviz.bioviews.RubberBand {
   NeoMap nmap;
 
   public SmartRubberBand(NeoMap nmap) {

@@ -20,7 +20,7 @@ import java.net.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-public class BookmarkListEditor {
+public final class BookmarkListEditor {
   
   /** The name of the JFrame. */
   public static final String TITLE = "Bookmark Editor";

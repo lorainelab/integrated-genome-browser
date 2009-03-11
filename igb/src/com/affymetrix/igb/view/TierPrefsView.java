@@ -35,7 +35,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyle;
 /**
  *  A panel for choosing tier properties for the {@link SeqMapView}.
  */
-final public class TierPrefsView extends JPanel implements ListSelectionListener, IPrefEditorComponent  {
+public final class TierPrefsView extends JPanel implements ListSelectionListener, IPrefEditorComponent  {
 
   private final JTable table = new JTable();
 

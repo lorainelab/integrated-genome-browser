@@ -30,7 +30,7 @@ import java.util.*;
  *  Most of the drawing work is handled by other classes, such as
  *  GlyphElement.
  */
-public class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
+public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
   static boolean DEBUG = false;
 
   Stylesheet stylesheet = null;

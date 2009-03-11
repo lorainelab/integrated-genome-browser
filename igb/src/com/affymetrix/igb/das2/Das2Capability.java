@@ -3,7 +3,7 @@ package com.affymetrix.igb.das2;
 import java.net.*;
 import java.util.*;
 
-public class Das2Capability {
+public final class Das2Capability {
   String type;
   URI root_uri;
   Map formats;

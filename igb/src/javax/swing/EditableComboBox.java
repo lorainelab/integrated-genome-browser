@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-public class EditableComboBox extends JComboBox {
+public final class EditableComboBox extends JComboBox {
 
   public EditableComboBox() {
     reset();
@@ -28,7 +28,7 @@ public class EditableComboBox extends JComboBox {
     removeAllItems();
   }
 
-  public class FilterableComboBoxModel extends AbstractListModel
+  public final class FilterableComboBoxModel extends AbstractListModel
     implements MutableComboBoxModel {
 
     private List items;
@@ -116,7 +116,7 @@ public class EditableComboBox extends JComboBox {
         return o.toString().startsWith(prefix); }
   }
 
-  public class MyEditor implements ComboBoxEditor, DocumentListener {
+  public final class MyEditor implements ComboBoxEditor, DocumentListener {
     public JTextField text;
     private volatile boolean filtering = false;
     private volatile boolean setting = false;

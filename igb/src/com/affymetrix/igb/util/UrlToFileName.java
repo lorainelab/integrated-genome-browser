@@ -78,7 +78,7 @@ segment=http%3A%2F%2Flocalhost%3A9092%2Fdas2%2Fgenome%2FH_sapiens_Mar_2006%2Fchr
 
  *  
  */
-public class UrlToFileName {
+public final class UrlToFileName {
 
   static MessageDigest md5_generator;
   

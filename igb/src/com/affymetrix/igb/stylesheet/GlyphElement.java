@@ -34,7 +34,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.util.*;
 
-public class GlyphElement implements Cloneable, XmlAppender {
+public final class GlyphElement implements Cloneable, XmlAppender {
 /*
 <!ELEMENT GLYPH (PROPERTY*, GLYPH*, CHILDREN?)>
 <!ATTLIST GLYPH

@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.Timer;
 
-public class FlyPointLinkerGlyph extends FlyweightPointGlyph {
+public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
   boolean flyweights_ordered = true;
   boolean link_points = true;
   int distance_min_threshold = 0;

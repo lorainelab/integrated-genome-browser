@@ -29,7 +29,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.widget.*;
 
-public class MinScoreThresholder extends JPanel
+public final class MinScoreThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
   static NumberFormat nformat = new DecimalFormat();

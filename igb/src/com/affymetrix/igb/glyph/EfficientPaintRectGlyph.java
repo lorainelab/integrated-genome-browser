@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 /**
  *  A glyph that is drawn as a painted rectangle.
  */
-public class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
+public final class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
     
   Paint paint = new GradientPaint(0, 0, Color.GREEN, 5, 2, Color.YELLOW, true);
   

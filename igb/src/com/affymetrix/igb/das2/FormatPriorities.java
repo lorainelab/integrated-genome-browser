@@ -13,7 +13,7 @@ import java.util.*;
  *   format priorities that apply to all types
  *
  */
-public class FormatPriorities {
+public final class FormatPriorities {
 
   /**
    *  Different format types, prioritized

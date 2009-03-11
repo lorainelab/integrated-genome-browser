@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.parsers.BedParser;
  *  A class for reading and parsing a file of Bookmarks.
  *  Accepts several formats.
  */
-public class BookmarksParser {
+public final class BookmarksParser {
   
   private static final boolean DEBUG = false;
 

@@ -45,7 +45,7 @@ import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 
 
-public class ChpParser {
+public final class ChpParser {
   static boolean DEBUG = false;
   static boolean reader_registered = false;
   //  public static void parse(InputStream str, AnnotatedSeqGroup seq_group, String stream_name) {

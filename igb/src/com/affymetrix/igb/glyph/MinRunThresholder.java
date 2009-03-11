@@ -26,7 +26,7 @@ import javax.swing.event.ChangeEvent;
 
 import com.affymetrix.genoviz.widget.*;
 
-public class MinRunThresholder extends JPanel
+public final class MinRunThresholder extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
 
   static int frm_width = 400;

@@ -20,7 +20,7 @@ import java.util.regex.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 //import com.affymetrix.igb.util.*;
 
-public class Das2Discovery {
+public final class Das2Discovery {
 
     static Pattern tab_splitter = Pattern.compile("\t");
     static int DAS_NAME = 0;

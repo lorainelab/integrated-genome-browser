@@ -31,7 +31,7 @@ import org.freehep.util.export.ExportDialog;
  * Turns off/on double-buffering in Swing and NGSDK components.
  *
  */
-public class EPSWriter {
+public final class EPSWriter {
   static boolean DEBUG = false;
   static boolean DISABLE_SWING_BUFFERING = true;
   static boolean DISABLE_NEO_BUFFERING = true;

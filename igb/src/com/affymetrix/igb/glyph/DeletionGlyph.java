@@ -13,7 +13,7 @@ import java.awt.Rectangle;
   /** A small x-shaped glyph that can be used to indicate a deleted exon
    * in the slice view.
    */
-public class DeletionGlyph extends SolidGlyph {
+public final class DeletionGlyph extends SolidGlyph {
   
 
   /** Draws a small "X". */

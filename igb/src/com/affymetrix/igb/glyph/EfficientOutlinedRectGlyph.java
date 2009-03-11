@@ -22,7 +22,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 /**
  *  A glyph that is drawn as a solid, outlined rectangle.
  */
-public class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph  {
+public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph  {
   Color bgcolor = Color.white;
   static boolean optimize_child_draw = true;
   

@@ -20,7 +20,7 @@ import javax.swing.table.AbstractTableModel;
  * A simple instance of AbstractTableModel used by BookmarkTableComponent.
  * @author  ed
  */
-public class BookmarkTableModel extends AbstractTableModel {
+public final class BookmarkTableModel extends AbstractTableModel {
   
   /** A silly little helper class that holds two strings. 
    *  A String[2] array would work just as well.

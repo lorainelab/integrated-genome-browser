@@ -37,7 +37,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
-public class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
+public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static boolean DEBUG = false;
   static boolean SET_PARENT_INFO = true;
   static boolean SET_CHILD_INFO = true;

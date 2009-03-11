@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class ThreadUtils {
+public final class ThreadUtils {
   static Map obj2exec = new HashMap();
 
   /**

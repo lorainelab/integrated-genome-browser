@@ -43,7 +43,7 @@ import com.affymetrix.genometryImpl.SeqSymSummarizer;
  *    absolute glyph count,
  *    fraction coverage count.
  */
-public class CoverageSummarizerGlyph extends SolidGlyph {
+public final class CoverageSummarizerGlyph extends SolidGlyph {
   public static int COVERAGE = 2;
   public static int SIMPLE = 3;
   public static int SMOOTHED_COVERAGE = 4;

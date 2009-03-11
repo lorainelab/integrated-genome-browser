@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.igb.glyph.GraphGlyph;
 
-public class TierLabelManager {
+public final class TierLabelManager {
 
   AffyLabelledTierMap tiermap;
   AffyTieredMap labelmap;
@@ -265,7 +265,7 @@ public class TierLabelManager {
   }
   
   /** Comparator class needed to sort tiers based on label placement. */
-  public class MinYSorter implements Comparator<GlyphI> {
+  public final class MinYSorter implements Comparator<GlyphI> {
     public int compare(GlyphI glyph1, GlyphI glyph2) {
       Rectangle2D box1 = glyph1.getCoordBox();
       Rectangle2D box2 = glyph2.getCoordBox();

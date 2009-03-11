@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class QuickLoadServerModel {
+public final class QuickLoadServerModel {
   //private static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
   //private static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
   //static String ENCODE_FILE_NAME = "encodeRegions.bed";

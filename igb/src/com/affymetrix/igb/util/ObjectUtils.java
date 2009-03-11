@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.util;
 
-public class ObjectUtils {
+public final class ObjectUtils {
 
   public static String objString(Object obj) {
     return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());

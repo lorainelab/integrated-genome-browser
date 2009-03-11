@@ -23,7 +23,7 @@ import java.util.*;
  *  first in its own Map, then in its parent Map, then the parent's parent, etc.
  *  All keys and values must be String's.
  */
-public class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender {
+public final class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender {
 
   private PropertyMap parentProperties;
   

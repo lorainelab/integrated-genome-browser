@@ -20,7 +20,7 @@ import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
-public class AssociationElement implements DrawableElement {
+public final class AssociationElement implements DrawableElement {
   /*
      Element name can be "METHOD_ASSOCIATION", "METHOD_REGEX_ASSOCIATION",
      or "TYPE_ASSOCIATION"

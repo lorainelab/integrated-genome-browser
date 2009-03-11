@@ -52,7 +52,7 @@ import java.io.StringBufferInputStream;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
-final public class ExperimentPivotView extends JComponent
+public final class ExperimentPivotView extends JComponent
       implements SymSelectionListener, ActionListener, AnnotatedSeqViewer, SeqSelectionListener
 {
 

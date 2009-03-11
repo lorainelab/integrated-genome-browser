@@ -15,7 +15,7 @@ package com.affymetrix.igb.das2;
 import java.net.*;
 import java.util.*;
 
-public class Das2WritebackVersionedSource extends Das2VersionedSource  {
+public final class Das2WritebackVersionedSource extends Das2VersionedSource  {
 
   static final String WRITEBACK_CAP_QUERY = "writeback";
 

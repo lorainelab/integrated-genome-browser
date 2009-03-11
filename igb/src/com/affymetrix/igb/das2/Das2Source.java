@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
  *
  * started with com.affymetrix.igb.das.DasSource and modified
  */
-public class Das2Source {
+public final class Das2Source {
 
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 

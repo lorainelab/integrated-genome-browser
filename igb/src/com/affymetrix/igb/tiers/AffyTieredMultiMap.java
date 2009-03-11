@@ -35,7 +35,7 @@ import com.affymetrix.swing.SixWaySplitPane;
  *  Wraps a AffyTieredMap and another map that has tier labels which
  *    track changes in tiers (size, placement) of AffyTieredMap.
  */
-public class AffyTieredMultiMap extends AffyLabelledTierMap {
+public final class AffyTieredMultiMap extends AffyLabelledTierMap {
 
   /* The extra map is where the rotated view appears on the right. */
   AffyTieredMap extramap;
@@ -457,7 +457,7 @@ public class AffyTieredMultiMap extends AffyLabelledTierMap {
     }
   }
 
-  private class VerticalTierComparator implements Comparator<GlyphI> {
+  private final class VerticalTierComparator implements Comparator<GlyphI> {
     public int compare( GlyphI g1, GlyphI g2 ) {
       double y1 = g1.getCoordBox().y;
       double y2 = g2.getCoordBox().y;

@@ -6,7 +6,7 @@ import java.awt.*;
 
 import com.affymetrix.igb.Application;
 
-public class GraphicsConfigChecker {
+public final class GraphicsConfigChecker {
 
   public GraphicsConfigChecker() {
     reportGraphicsConfig();

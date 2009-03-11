@@ -32,7 +32,7 @@ import org.xml.sax.InputSource;
  *
  * @version $Id$
  */
-public class UrlLoaderThread extends Thread {
+public final class UrlLoaderThread extends Thread {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
   final URL[] urls;
   final String[] tier_names;

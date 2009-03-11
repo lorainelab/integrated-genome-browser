@@ -20,7 +20,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.text.DecimalFormat;
 
-final public class StatusBar extends JPanel {
+public final class StatusBar extends JPanel {
   
   //JLabel position_ta;
   JLabel status_ta;

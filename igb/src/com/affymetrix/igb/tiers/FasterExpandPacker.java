@@ -109,7 +109,7 @@ import com.affymetrix.genometryImpl.util.DoubleList;
  *    to visually indicate pileup
  *</p>
  */
-public class FasterExpandPacker extends EfficientExpandPacker
+public final class FasterExpandPacker extends EfficientExpandPacker
    implements  PaddedPackerI, NeoConstants {
 
   int max_slots_allowed = 1000;

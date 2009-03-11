@@ -52,7 +52,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS
  */
-public class SmartGraphGlyph extends GraphGlyph {
+public final class SmartGraphGlyph extends GraphGlyph {
   public boolean NEWDEBUG = false;
   public boolean THRESH_DEBUG = false;
 

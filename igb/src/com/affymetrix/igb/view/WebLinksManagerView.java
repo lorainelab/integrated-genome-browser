@@ -30,7 +30,7 @@ import javax.swing.event.*;
 /**
  *  A panel for viewing and editing weblinks.
  */
-final public class WebLinksManagerView extends JPanel {
+public final class WebLinksManagerView extends JPanel {
   JList the_list;
 
   JMenuBar mbar = new JMenuBar();

@@ -30,7 +30,7 @@ import java.util.*;
 /**
  *  A factory for showing instances of GFF3Sym.
  */
-public class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
+public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
   SeqMapView gviewer;
 
   static GFF3GlyphFactory static_instance = null;

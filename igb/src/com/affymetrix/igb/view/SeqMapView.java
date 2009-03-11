@@ -300,7 +300,7 @@ public class SeqMapView extends JPanel
         super();
     }
 
-    public class SeqMapViewComponentListener extends ComponentAdapter {
+    public final class SeqMapViewComponentListener extends ComponentAdapter {
         // When the map is resized, make sure the graphs are still visible.
 
         @Override

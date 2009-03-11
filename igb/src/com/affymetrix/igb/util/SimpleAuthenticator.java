@@ -20,7 +20,7 @@ import javax.swing.*;
 
 /**Based on the UnibrowAuthenticator, a simple Dialog box to fetch userName and 
  * password info for authenticating with a DAS2 server.*/
-public class SimpleAuthenticator {
+public final class SimpleAuthenticator {
 
   private JTextField userTF = new JTextField();
   private JPasswordField passwordTF = new JPasswordField();

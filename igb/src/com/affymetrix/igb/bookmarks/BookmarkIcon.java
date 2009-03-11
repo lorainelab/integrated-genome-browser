@@ -21,7 +21,7 @@ import javax.swing.*;
  *  form for one that opens in an external browser.
  *  (This is currently just a test class.  Not ready for production use.)
  */
-public class BookmarkIcon implements Icon {
+public final class BookmarkIcon implements Icon {
     public static final int UNIBROW_CONTROL = 0;
     public static final int EXTERNAL = 1;
     public static final int SEPARATOR = 2;

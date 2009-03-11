@@ -32,7 +32,7 @@ import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import java.text.ParseException;
 
-public class GraphVisibleBoundsSetter extends JPanel
+public final class GraphVisibleBoundsSetter extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
 
   static DecimalFormat val_format;

@@ -36,7 +36,7 @@ import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
 
-public class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
+public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
   
   static final boolean separate_by_strand = true;

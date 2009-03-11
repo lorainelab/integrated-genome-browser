@@ -19,7 +19,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 //import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-final public class PluginInfo {
+public final class PluginInfo {
 
   public static final String NODE_PLUGINS = "plugins";
 

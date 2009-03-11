@@ -21,7 +21,7 @@ import javax.swing.tree.*;
  *
  * @author  ed
  */
-public class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
+public final class BookmarkTreeCellRenderer extends DefaultTreeCellRenderer {
   
   int underlined_row = -1;
   int outlined_row = -1;

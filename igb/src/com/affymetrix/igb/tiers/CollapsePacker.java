@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 
-public class CollapsePacker implements PaddedPackerI {
+public final class CollapsePacker implements PaddedPackerI {
   public static final int ALIGN_TOP = 1000;
   public static final int ALIGN_BOTTOM = 1001;
   public static final int ALIGN_CENTER = 1002;

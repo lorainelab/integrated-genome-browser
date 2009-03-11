@@ -24,7 +24,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
-public class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
+public final class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
   static int frm_width = 400;
   static int frm_height = 200;
   GlyphEdgeMatcher edge_matcher;

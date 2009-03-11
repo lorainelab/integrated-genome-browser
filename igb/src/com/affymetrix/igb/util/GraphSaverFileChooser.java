@@ -25,7 +25,7 @@ import javax.swing.filechooser.FileFilter;
  *  This can be used to load graphs also, but it is only set-up to recognize
  *  the few graph file types that can also be written out.
  */
-public class GraphSaverFileChooser extends UniFileChooser {
+public final class GraphSaverFileChooser extends UniFileChooser {
 
   static public final UniFileFilter wig_filter = new UniFileFilter(new String[] {"wig"}, "Wiggle Graph");
   static public final UniFileFilter egr_filter = new UniFileFilter(new String[] {"egr"}, "Scored Interval Graph");

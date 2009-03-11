@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 
-public class Das2Region {
+public final class Das2Region {
 
     static public boolean USE_SEGMENT = true;  // segment param, or old version with seq included in other filters
     static public boolean USE_SEGMENT_URI = true;

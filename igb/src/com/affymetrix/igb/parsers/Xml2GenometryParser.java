@@ -39,7 +39,7 @@ import com.affymetrix.genometryImpl.SeqSymStartComparator;
 
 //import com.affymetrix.igb.util.GenometryViewer;  // for testing main
 
-public class Xml2GenometryParser {
+public final class Xml2GenometryParser {
   // optionally skip over populating descriptors -- checking to see how this affects speed
   public static boolean POPULATE_DESCRIPTORS = true;
   public static boolean USE_INTERNING = false;

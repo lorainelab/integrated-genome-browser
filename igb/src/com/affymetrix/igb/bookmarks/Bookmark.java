@@ -21,7 +21,7 @@ import java.util.*;
 /**
  *  Holds a bookmark, which is simply a name associated with a URL.
  */
-public class Bookmark implements Serializable {
+public final class Bookmark implements Serializable {
 
   /** The name of one of the parameters in the URL of a UnibrowControlServlet bookmark. */
   public static final String SEQID = "seqid";

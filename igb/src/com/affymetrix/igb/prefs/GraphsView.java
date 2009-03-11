@@ -23,7 +23,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 /**
  *  A panel that shows the preferences for graph properties.
  */
-public class GraphsView extends JPanel implements IPrefEditorComponent  {
+public final class GraphsView extends JPanel implements IPrefEditorComponent  {
     
   public GraphsView() {
     super();

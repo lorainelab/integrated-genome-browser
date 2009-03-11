@@ -25,7 +25,7 @@ import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
-public class VerticalGraphLabels extends SolidGlyph {
+public final class VerticalGraphLabels extends SolidGlyph {
   static final boolean DEBUG_PIXELBOX = true;
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
 

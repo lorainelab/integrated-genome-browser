@@ -16,7 +16,7 @@ package com.affymetrix.igb.das;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
-public class DasFeatureRequestSym extends SimpleSymWithProps  {
+public final class DasFeatureRequestSym extends SimpleSymWithProps  {
 
   SeqSymmetry query_overlap;
   SeqSymmetry query_within;

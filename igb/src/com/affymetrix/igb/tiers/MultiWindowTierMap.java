@@ -32,7 +32,7 @@ import com.affymetrix.igb.event.VirtualRubberBandEvent;
 //   Any methods that only affect scene should not need to be propagated to child windows,
 //      since scene is shared by parent and all children
 //
-public class MultiWindowTierMap extends AffyTieredMap implements MouseListener, NeoRubberBandListener {
+public final class MultiWindowTierMap extends AffyTieredMap implements MouseListener, NeoRubberBandListener {
   //  Frame, Window, JFrame, JWindow
   boolean USE_SWING = true;
   boolean USE_FRAME = false;

@@ -16,7 +16,7 @@ package com.affymetrix.igb.das2;
 import java.util.*;
 import java.net.*;
 
-public class Das2Type {
+public final class Das2Type {
   protected Das2VersionedSource versioned_source;
   protected URI type_uri;
   protected String name;

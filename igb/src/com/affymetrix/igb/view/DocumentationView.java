@@ -16,7 +16,7 @@ package com.affymetrix.igb.view;
 /**
  *  A class that contains some basic documentation text.
  */
-final public class DocumentationView {
+public final class DocumentationView {
   public DocumentationView() {
   }
   

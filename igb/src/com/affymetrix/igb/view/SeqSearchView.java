@@ -37,7 +37,7 @@ import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 
-final public class SeqSearchView extends JComponent implements ActionListener  {
+public final class SeqSearchView extends JComponent implements ActionListener  {
 
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.

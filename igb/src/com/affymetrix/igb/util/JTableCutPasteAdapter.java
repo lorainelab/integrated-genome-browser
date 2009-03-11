@@ -39,7 +39,7 @@ import javax.swing.table.TableCellEditor;
  *
  */
 
-public class JTableCutPasteAdapter {
+public final class JTableCutPasteAdapter {
 
   JTable jTable1;
 

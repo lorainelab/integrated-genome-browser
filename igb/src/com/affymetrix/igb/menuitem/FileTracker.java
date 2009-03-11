@@ -19,7 +19,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 /**
  *  Used to cache info on current directory.
  */
-public class FileTracker {
+public final class FileTracker {
   final String name;
 
   /** The singleton FileTracker used to remember the user's most recent data directory. */

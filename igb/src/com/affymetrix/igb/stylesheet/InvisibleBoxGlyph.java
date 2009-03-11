@@ -20,7 +20,7 @@ import com.affymetrix.igb.glyph.EfficientOutlineContGlyph;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-public class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
+public final class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
   public InvisibleBoxGlyph() {
   }
 

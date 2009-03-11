@@ -43,7 +43,7 @@ import java.util.*;
 import java.util.List;
 
 
-public class GraphScoreThreshSetter extends JPanel
+public final class GraphScoreThreshSetter extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
 
   SeqMapView gviewer = null;

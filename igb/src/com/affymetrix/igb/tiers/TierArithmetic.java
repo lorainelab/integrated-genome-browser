@@ -31,7 +31,7 @@ import com.affymetrix.igb.view.AnnotatedSeqViewer;
  *  A PopupListener that adds the ability to create "union", "intersection", etc.,
  *  tiers based on selected annotation tiers.  Is not used on graph tiers.
  */
-public class TierArithmetic implements TierLabelManager.PopupListener {
+public final class TierArithmetic implements TierLabelManager.PopupListener {
 
   static final boolean DEBUG = false;
 

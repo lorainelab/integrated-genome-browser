@@ -72,7 +72,7 @@ import javax.swing.table.*;
  * @version 2.0 02/27/04
  */
 
-public class TableSorter2 extends AbstractTableModel {
+public final class TableSorter2 extends AbstractTableModel {
   protected TableModel tableModel;
   
   public static final int DESCENDING = -1;
@@ -299,7 +299,7 @@ public class TableSorter2 extends AbstractTableModel {
   
   // Helper classes
   
-  private class Row implements Comparable {
+  private final class Row implements Comparable {
     private int modelIndex;
     
     public Row(int index) {
@@ -335,7 +335,7 @@ public class TableSorter2 extends AbstractTableModel {
     }
   }
   
-  private class TableModelHandler implements TableModelListener {
+  private final class TableModelHandler implements TableModelListener {
     public void tableChanged(TableModelEvent e) {
       // If we're not sorting by anything, just pass the event along.
       if (!isSorting()) {
@@ -390,7 +390,7 @@ public class TableSorter2 extends AbstractTableModel {
     }
   }
   
-  private class MouseHandler extends MouseAdapter {
+  private final class MouseHandler extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
       JTableHeader h = (JTableHeader) e.getSource();
       TableColumnModel columnModel = h.getColumnModel();
@@ -463,7 +463,7 @@ public class TableSorter2 extends AbstractTableModel {
     }
   }
   
-  private class SortableHeaderRenderer implements TableCellRenderer {
+  private final class SortableHeaderRenderer implements TableCellRenderer {
     private TableCellRenderer tableCellRenderer;
     
     public SortableHeaderRenderer(TableCellRenderer tableCellRenderer) {

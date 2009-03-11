@@ -28,7 +28,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 /** A subclass of EfficientLabelledGlyph that makes all its children
  *  center themselves vertically on the same line.
  */
-public class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
+public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
    implements LabelledGlyph  {
 
   boolean move_children = true;

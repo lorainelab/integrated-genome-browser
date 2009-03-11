@@ -18,7 +18,7 @@ import java.io.Serializable;
 /** Used to represent a separator in a bookmark list.  Can be displayed visually
  *  with a JSeparator, for example.
  */
-public class Separator implements Serializable {
+public final class Separator implements Serializable {
   /** Creates a new instance of Separator */
   public Separator() {}
 }

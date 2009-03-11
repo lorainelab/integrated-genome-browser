@@ -23,7 +23,7 @@ import java.awt.Dimension;
  *
  * @author  eric
  */
-public class MotionPanel extends JPanel {
+public final class MotionPanel extends JPanel {
   
   /** Creates a new panel
    * with zooming and panning along the same axis.

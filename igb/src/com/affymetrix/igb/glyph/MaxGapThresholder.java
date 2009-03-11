@@ -28,7 +28,7 @@ import javax.swing.event.ChangeEvent;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 
 
-public class MaxGapThresholder extends JPanel
+public final class MaxGapThresholder extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
 
   static int frm_width = 400;

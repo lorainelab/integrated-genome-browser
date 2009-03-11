@@ -28,7 +28,7 @@ import java.util.regex.*;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 
-public class WebLink {
+public final class WebLink {
   String url = null;
   String name = "";
   String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");

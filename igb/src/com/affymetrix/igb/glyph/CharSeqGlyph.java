@@ -39,7 +39,7 @@ import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
  * and at high resolution overlays the residue letters.
  *
  */
-public class CharSeqGlyph extends AbstractResiduesGlyph
+public final class CharSeqGlyph extends AbstractResiduesGlyph
   implements NeoConstants {
 
   int parent_seq_beg, parent_seq_end;

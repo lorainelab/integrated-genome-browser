@@ -40,7 +40,7 @@ import com.affymetrix.igb.util.GraphSaverFileChooser;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-final public class GraphAdjusterView {
+public final class GraphAdjusterView {
 
   static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 

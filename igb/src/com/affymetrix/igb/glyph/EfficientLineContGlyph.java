@@ -37,7 +37,7 @@ import java.util.List;
  *  Optimized to just draw a filled rect if glyph is small, and skip drawing children
  *
  */
-public class EfficientLineContGlyph extends EfficientSolidGlyph  {
+public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
   static boolean optimize_child_draw = true;
   static boolean DEBUG_OPTIMIZED_FILL = false;
   boolean move_children = true;

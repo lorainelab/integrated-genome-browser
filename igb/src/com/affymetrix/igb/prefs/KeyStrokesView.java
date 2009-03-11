@@ -27,7 +27,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
  */
-public class KeyStrokesView extends JPanel implements ListSelectionListener, 
+public final class KeyStrokesView extends JPanel implements ListSelectionListener, 
   PreferenceChangeListener, IPrefEditorComponent  {
 
   private final JTable table = new JTable();

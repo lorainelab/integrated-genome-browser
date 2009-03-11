@@ -51,7 +51,7 @@ import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 import javax.swing.table.TableColumn;
 import org.jdesktop.swingworker.SwingWorker;
 
-final public class GeneralLoadView extends JComponent
+public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
 	GeneralLoadUtils glu;
@@ -120,21 +120,21 @@ final public class GeneralLoadView extends JComponent
 		refresh_dataB.addActionListener(this);
 		buttonP.add(refresh_dataB);
 
-		if (IGB.isSequenceAccessible()) {
-			all_residuesB = new JButton("Load All Sequence");
-			all_residuesB.setEnabled(false);
-			all_residuesB.addActionListener(this);
-			buttonP.add(all_residuesB);
-			partial_residuesB = new JButton("Load Sequence in View");
-			partial_residuesB.setEnabled(false);
-			if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
-				partial_residuesB.addActionListener(this);
-				buttonP.add(partial_residuesB);
-			}
-		} else {
-			buttonP.add(Box.createRigidArea(new Dimension(5, 0)));
-			buttonP.add(new JLabel("No sequence available", JLabel.CENTER));
+		//if (IGB.isSequenceAccessible()) {
+		all_residuesB = new JButton("Load All Sequence");
+		all_residuesB.setEnabled(false);
+		all_residuesB.addActionListener(this);
+		buttonP.add(all_residuesB);
+		partial_residuesB = new JButton("Load Sequence in View");
+		partial_residuesB.setEnabled(false);
+		if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
+			partial_residuesB.addActionListener(this);
+			buttonP.add(partial_residuesB);
 		}
+		/*} else {
+		buttonP.add(Box.createRigidArea(new Dimension(5, 0)));
+		buttonP.add(new JLabel("No sequence available", JLabel.CENTER));
+		}*/
 
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table = new JTableX(this.feature_model);
@@ -151,7 +151,6 @@ final public class GeneralLoadView extends JComponent
 		populateSpeciesData();
 
 	}
-
 
 	/**
 	 * Discover servers, species, etc., asynchronously.
@@ -776,8 +775,13 @@ final public class GeneralLoadView extends JComponent
 
 		Application.getSingleton().setNotLockedUpStatus("Loading feature list...");
 
-		Executor vexec = Executors.newSingleThreadExecutor();
+		// Setting the group and setting the seq both have the potential of locking up the ui.
+		SetSelectedGroupAndSeqThreadSafe(group);
+	}
 
+
+	private void SetSelectedGroupAndSeqThreadSafe(final AnnotatedSeqGroup group) {
+		Executor vexec = Executors.newSingleThreadExecutor();
 		SwingWorker worker = new SwingWorker() {
 
 			protected Object doInBackground() throws Exception {
@@ -790,11 +794,30 @@ final public class GeneralLoadView extends JComponent
 			public void done() {
 				speciesCB.setEnabled(true);
 				versionCB.setEnabled(true);
-				// Note that this SmartAnnotBioSeq may be set by the gmodel, above.
+				SetSelectedSeqThreadSafe(group);
+			}
+		};
+		vexec.execute(worker);
+	}
+
+
+	private void SetSelectedSeqThreadSafe(final AnnotatedSeqGroup group) {
+		Executor vexec = Executors.newSingleThreadExecutor();
+
+		SwingWorker worker = new SwingWorker() {
+
+			protected Object doInBackground() throws Exception {
+				// Do some threading.
 				final SmartAnnotBioSeq sabq = group.getSeq(0);
 				gmodel.setSelectedSeq(sabq);
-				Application.getSingleton().setStatus("",false);
+				return null;
 			}
+
+			@Override
+			public void done() {
+				Application.getSingleton().setStatus("", false);
+			}
+
 		};
 		vexec.execute(worker);
 	}

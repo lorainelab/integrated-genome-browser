@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.glyph.*;
  *  Extends FillRectGlyph for showing threshold, so that it keeps a label showing threshold level 
  *  on far left.
  */
-public class ThreshGlyph extends FillRectGlyph {
+public final class ThreshGlyph extends FillRectGlyph {
   static Font label_font = new Font("SansSerif", Font.PLAIN, 12);
   
   String label;

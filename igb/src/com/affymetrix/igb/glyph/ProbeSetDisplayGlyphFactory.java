@@ -34,7 +34,7 @@ import com.affymetrix.igb.view.SeqMapView;
  *  for showing any gapped alignments of sequences against the genome 
  *  along with annotations mapped onto those sequences.
  */
-public class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
+public final class ProbeSetDisplayGlyphFactory implements MapViewGlyphFactoryI  {
 
 /*
 Algorithm for drawing probe-set-display data.

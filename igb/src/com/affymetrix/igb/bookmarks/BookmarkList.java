@@ -31,7 +31,7 @@ import javax.swing.tree.*;
  * and output formatting.
  * @author  ed
  */
-public class BookmarkList extends DefaultMutableTreeNode {
+public final class BookmarkList extends DefaultMutableTreeNode {
   public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
     
   // protected so that you are forced to use one of the provided constructors

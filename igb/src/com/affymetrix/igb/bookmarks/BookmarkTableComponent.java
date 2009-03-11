@@ -29,7 +29,7 @@ import javax.swing.*;
  * Call {@link #setBookmarkFromGUI(Bookmark)} when a "submit" button is pressed.
  * @author  ed
  */
-public class BookmarkTableComponent {
+public final class BookmarkTableComponent {
   private static final boolean DEBUG = true;
 
   JPanel main_box = new JPanel();

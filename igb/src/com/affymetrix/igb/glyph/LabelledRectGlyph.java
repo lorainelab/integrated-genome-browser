@@ -18,7 +18,7 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
-public class LabelledRectGlyph extends FillRectGlyph {
+public final class LabelledRectGlyph extends FillRectGlyph {
   String label;
   boolean toggle_by_width = true;
   Font fnt;

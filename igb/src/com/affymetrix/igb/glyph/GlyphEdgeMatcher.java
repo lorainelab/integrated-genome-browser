@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 
-public class GlyphEdgeMatcher  {
+public final class GlyphEdgeMatcher  {
 
   Color col = Color.white;
   int start_match_count = 0;

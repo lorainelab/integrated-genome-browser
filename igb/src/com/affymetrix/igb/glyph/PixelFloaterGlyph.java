@@ -27,7 +27,7 @@ import com.affymetrix.genoviz.bioviews.*;
  *   PixelFloaterGlyph is always intersected by anything that intersects the 
  *   current view (the View's viewbox).
  */
-public class PixelFloaterGlyph extends Glyph  {
+public final class PixelFloaterGlyph extends Glyph  {
   LinearTransform childtrans = new LinearTransform();
   Rectangle2D view_pix_box = new Rectangle2D();
   boolean OUTLINE_BOUNDS = false;

@@ -19,7 +19,7 @@ import java.util.Comparator;
  * Similar to java.awt.geom.Point2D, but uses int for x
  * and float for y.
  */
-public class PointIntFloat {
+public final class PointIntFloat {
 	public int x;
 	public float y;
 
@@ -69,7 +69,7 @@ public class PointIntFloat {
 			return getClass().getName() + "[x=" + x + ",y=" + y + "]";
 		}
 
-	static class PointIntFloatComparator implements Comparator<PointIntFloat>  {
+	static final class PointIntFloatComparator implements Comparator<PointIntFloat>  {
 		boolean compare_by_x;
 		boolean ascending_order;
 

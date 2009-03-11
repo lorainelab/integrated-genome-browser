@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.style;
 
 import java.util.*;
 
-public class DefaultStateProvider implements StateProvider {
+public final class DefaultStateProvider implements StateProvider {
 
 	Map<String,IAnnotStyleExtended> id2annotState;
 	Map<String,GraphState> id2graphState;

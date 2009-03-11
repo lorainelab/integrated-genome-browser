@@ -18,7 +18,7 @@ package com.affymetrix.genometryImpl.util;
  *  Does not implement the Collection interfaces.
  *  Really just for getting a stretchable array of bytes.
  */
-public class ByteList {
+public final class ByteList {
 
 	/**
 	 *  The array of primitives (in the case of byteList, bytes).

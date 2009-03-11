@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.event;
 import java.util.*;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 
-public class SeqSelectionEvent extends EventObject {
+public final class SeqSelectionEvent extends EventObject {
 	List<AnnotatedBioSeq> selected_seqs;
 	AnnotatedBioSeq primary_selection = null;
 	static final long serialVersionUID = 1L;

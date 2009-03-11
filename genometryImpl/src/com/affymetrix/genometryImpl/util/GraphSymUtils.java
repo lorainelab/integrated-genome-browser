@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.parsers.GrParser;
 import com.affymetrix.genometryImpl.parsers.BgrParser;
 import com.affymetrix.genometryImpl.parsers.WiggleParser;
 
-public class GraphSymUtils {
+public final class GraphSymUtils {
 
 	static boolean DEBUG_READ = false;
 	static boolean DEBUG_DATA = false;

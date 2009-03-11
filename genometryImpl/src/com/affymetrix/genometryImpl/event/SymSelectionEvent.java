@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.event;
 import com.affymetrix.genometry.SeqSymmetry;
 import java.util.*;
 
-public class SymSelectionEvent extends EventObject {
+public final class SymSelectionEvent extends EventObject {
 	List<SeqSymmetry> selected_syms;
 	static final long serialVersionUID = 1L;
 

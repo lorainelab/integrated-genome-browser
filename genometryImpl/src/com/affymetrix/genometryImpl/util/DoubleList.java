@@ -18,7 +18,7 @@ package com.affymetrix.genometryImpl.util;
  *  does not implement the Collection interfaces.
  *  really just for getting a stretchable array of doubles.
  */
-public class DoubleList {
+public final class DoubleList {
 	/**
 	 *  the array of primitives (in the case of DoubleList, doubles)
 	 */

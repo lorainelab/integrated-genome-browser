@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import java.util.EventObject;
 
-public class GenometryModelChangeEvent extends EventObject {
+public final class GenometryModelChangeEvent extends EventObject {
 
 	EventType type;
 	transient AnnotatedSeqGroup seq_group;
@@ -41,7 +41,7 @@ public class GenometryModelChangeEvent extends EventObject {
 		return seq_group;
 	}
 
-	public static class EventType {
+	public static final class EventType {
 		String name;
 
 		protected EventType(String name) {

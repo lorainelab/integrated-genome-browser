@@ -27,7 +27,7 @@ import com.affymetrix.genometry.SeqSpan;
  *        reimplementing range-based data loading and optimizations]
  *
  */
-public class DataRequestEvent extends EventObject {
+public final class DataRequestEvent extends EventObject {
 	SeqSpan seq_span;
 	static final long serialVersionUID = 1L;
 

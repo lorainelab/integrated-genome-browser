@@ -24,7 +24,7 @@ import javax.swing.table.TableCellRenderer;
  *  (The default Swing class in JDK 1.4.2 does not take focus into account,
  *  but they may fix this in some future release.)
  */
-public class BooleanTableCellRenderer extends JCheckBox 
+public final class BooleanTableCellRenderer extends JCheckBox 
 implements TableCellRenderer {
     
   boolean indicateWhenEditable = true;

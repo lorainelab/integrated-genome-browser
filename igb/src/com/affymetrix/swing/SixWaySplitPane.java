@@ -22,7 +22,7 @@ import javax.swing.*;
  * Six Way Split Pane for IGB.
  * @author  Eric Blossom
  */
-public class SixWaySplitPane extends JComponent {
+public final class SixWaySplitPane extends JComponent {
   
   private Component[] interiorPanel = new Component[6];
   
@@ -35,7 +35,7 @@ public class SixWaySplitPane extends JComponent {
   /**
    * Sycronized multiple split panes.
    */
-  private class SyncroSizer extends ComponentAdapter {
+  private final class SyncroSizer extends ComponentAdapter {
     private Set peers = new HashSet();
     public void add( JSplitPane thePane ) {
       this.peers.add( thePane );

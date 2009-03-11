@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.style;
 import java.awt.Color;
 import java.util.*;
 
-public class HeatMap {
+public final class HeatMap {
 
 	/** Name of the Black-and-White Standard HeatMap. */
 	public static final String HEATMAP_0 = "Black/White";

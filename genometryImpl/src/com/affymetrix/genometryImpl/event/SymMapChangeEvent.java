@@ -20,7 +20,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
  *  Events used to let listeners know about changes in the
  *  ID-to-Symmetry Mapping in an AnnotatedSeqGroup.
  */
-public class SymMapChangeEvent extends EventObject {
+public final class SymMapChangeEvent extends EventObject {
 	transient AnnotatedSeqGroup group;
 	static final long serialVersionUID = 1L;
 

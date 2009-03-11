@@ -19,7 +19,7 @@ import javax.swing.Icon;
 /**
  *  A simple square icon for showing a block of color.
  */
-public class ColorIcon implements Icon {
+public final class ColorIcon implements Icon {
 
   Color the_color = Color.BLACK;
   int the_size = 11;

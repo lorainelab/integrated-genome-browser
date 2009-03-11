@@ -43,7 +43,7 @@ import java.lang.reflect.*;
  * <p>[<a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html"> Introduction to this package. </a>]
  **/
 
-public class FutureResult {
+public final class FutureResult {
   /** The result of the operation **/
   protected Object value_ = null;
   

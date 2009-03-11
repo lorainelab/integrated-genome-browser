@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometryImpl.util;
 
-public class StringUtils {
+public final class StringUtils {
 
 	public static boolean isAllDigits(CharSequence cseq) {
 		int char_count = cseq.length();

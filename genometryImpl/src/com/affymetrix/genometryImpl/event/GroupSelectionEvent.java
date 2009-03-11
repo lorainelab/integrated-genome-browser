@@ -17,7 +17,7 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
-public class GroupSelectionEvent extends EventObject {
+public final class GroupSelectionEvent extends EventObject {
 	List<AnnotatedSeqGroup> selected_groups;
 	AnnotatedSeqGroup primary_selection = null;
 	static final long serialVersionUID = 1L;

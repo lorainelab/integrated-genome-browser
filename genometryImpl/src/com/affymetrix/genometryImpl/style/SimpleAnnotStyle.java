@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.style;
 
 import java.awt.Color;
 
-public class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleExtended {
+public final class SimpleAnnotStyle extends DefaultIAnnotStyle implements IAnnotStyleExtended {
 
 	// Should be called only from within package or from StateProvider.
 	protected SimpleAnnotStyle(String name, boolean is_graph) {

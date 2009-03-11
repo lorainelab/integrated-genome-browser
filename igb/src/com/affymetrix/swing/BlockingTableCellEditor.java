@@ -20,7 +20,7 @@ import javax.swing.*;
 /*
  * A table cell editor that will reject all attempts at editing.
  */
-public class BlockingTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+public final class BlockingTableCellEditor extends AbstractCellEditor implements TableCellEditor {
   
   Object original = null;
   

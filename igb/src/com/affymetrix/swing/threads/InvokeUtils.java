@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author  Joseph Bowbeer
  * @version 1.0
  */
-public class InvokeUtils {
+public final class InvokeUtils {
 
     /**
      * Causes <i>function.call()</i> to be executed synchronously on the

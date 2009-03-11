@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
  *    were added / modified, but rather to a list of the "top-level" (first or
  *    second level) annotations that fully encompass the change
  */
-public class SeqModifiedEvent extends EventObject {
+public final class SeqModifiedEvent extends EventObject {
 	SmartAnnotBioSeq seq;
 	static final long serialVersionUID = 1L;
 

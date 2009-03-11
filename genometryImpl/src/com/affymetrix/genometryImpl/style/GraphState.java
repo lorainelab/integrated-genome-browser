@@ -19,7 +19,7 @@ import java.util.*;
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
  */
-public class GraphState implements GraphStateI {
+public final class GraphState implements GraphStateI {
 
 	String graph_path;
 	String unique_id;

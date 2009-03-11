@@ -14,7 +14,7 @@ import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Component;
 
-public class ColorTableCellRenderer extends JLabel implements TableCellRenderer {
+public final class ColorTableCellRenderer extends JLabel implements TableCellRenderer {
     Border unselectedBorder = null;
     Border selectedBorder = null;
 

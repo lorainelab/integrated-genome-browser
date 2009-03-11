@@ -23,7 +23,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  *  Use this only with non-editable table cells unless an appropriate
  *  TableCellEditor is also used.
  */
-public class IntegerTableCellRenderer extends DefaultTableCellRenderer {
+public final class IntegerTableCellRenderer extends DefaultTableCellRenderer {
   
   NumberFormat nf;
   

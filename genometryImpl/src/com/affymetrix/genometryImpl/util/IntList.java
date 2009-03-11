@@ -18,7 +18,7 @@ package com.affymetrix.genometryImpl.util;
  *  Does not implement the Collection interfaces.
  *  Really just for getting a stretchable array of ints.
  */
-public class IntList {
+public final class IntList {
 
 	/**
 	 *  The array of primitives (in the case of IntList, ints).

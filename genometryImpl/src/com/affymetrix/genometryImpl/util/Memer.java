@@ -17,7 +17,7 @@ import java.text.NumberFormat;
 /**
  * A little utility class to help monitor memory usage.
  */
-public class Memer {
+public final class Memer {
 
 	Runtime rt;
 	long prevCheck, currCheck;

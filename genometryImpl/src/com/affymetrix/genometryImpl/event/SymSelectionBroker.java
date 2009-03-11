@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.event;
 import java.util.*;
 import com.affymetrix.genometry.*;
 
-public class SymSelectionBroker implements SymSelectionListener, SymSelectionSource   {
+public final class SymSelectionBroker implements SymSelectionListener, SymSelectionSource   {
 
 	List<SymSelectionListener> selection_clients = new Vector<SymSelectionListener>();
 

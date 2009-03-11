@@ -42,7 +42,7 @@ public interface FloatTransformer  {
 	 *  use Math.pow(y, x) for y^x (inverse of log_base_y(x)
 	 *
 	 */
-	public class LogNatural implements FloatTransformer {
+	public final class LogNatural implements FloatTransformer {
 		static float LN1 = (float)Math.log(1); // should be 0...
 		public float transform(float x) {
 			// could pick any threshold > 0 to cut off low end at,
@@ -58,7 +58,7 @@ public interface FloatTransformer  {
 	}
 
 
-	public class LogBase10 implements FloatTransformer {
+	public final class LogBase10 implements FloatTransformer {
 		static double LN10 = Math.log(10);
 		static float LOG10_1 = (float)(Math.log(1)/LN10);
 		public float transform(float x) {
@@ -73,7 +73,7 @@ public interface FloatTransformer  {
 	}
 
 
-	public class LogBase2 implements FloatTransformer {
+	public final class LogBase2 implements FloatTransformer {
 		static double LN2 = Math.log(2);
 		static float LOG2_1 = (float)(Math.log(1)/LN2);
 		public float transform(float x) {
@@ -86,7 +86,7 @@ public interface FloatTransformer  {
 		public boolean isInvertible()  { return false; }
 	}
 
-	public class LogTransform implements FloatTransformer {
+	public final class LogTransform implements FloatTransformer {
 		double base;
 		double LN_BASE;
 		float LOG_1;
@@ -108,7 +108,7 @@ public interface FloatTransformer  {
 	 *   Generalized replacement for LogNatural, LogBase2, LogBase10, etc.
 	 *    transforms x to base raised to the x (base^x)
 	 */
-	public class PowTransform implements FloatTransformer {
+	public final class PowTransform implements FloatTransformer {
 		double base;
 		double LN_BASE;
 		float LOG_1;
@@ -136,7 +136,7 @@ public interface FloatTransformer  {
 	 *     (transform() calls LogTransform.inverseTransform(),
 	 *      inverseTransform() calls LogTransform.transform())
 	 */
-	public class InverseLogTransform implements FloatTransformer {
+	public final class InverseLogTransform implements FloatTransformer {
 		LogTransform inner_trans;
 		public InverseLogTransform(double base) {
 			inner_trans = new LogTransform(base);
@@ -146,7 +146,7 @@ public interface FloatTransformer  {
 		public boolean isInvertible() { return true; }
 	}
 
-	public class IdentityTransform implements FloatTransformer {
+	public final class IdentityTransform implements FloatTransformer {
 		public IdentityTransform() {}
 		public float transform(float x) { return x; }
 		public float inverseTransform(float x) { return x; }

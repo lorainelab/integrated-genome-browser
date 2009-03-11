@@ -18,7 +18,7 @@ package com.affymetrix.genometryImpl.util;
  *  Does not implement the Collection interfaces.
  *  Really just for getting a stretchable array of shorts.
  */
-public class ShortList {
+public final class ShortList {
 
 	/**
 	 *  The array of primitives (in the case of shortList, shorts).

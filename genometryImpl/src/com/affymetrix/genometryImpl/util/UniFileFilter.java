@@ -24,7 +24,7 @@ import java.io.*;
  *  UniFileFilter uff = new UniFileFilter(new String[] {"gff", "gtf"}, "GFF Files"));
  *  uff.addCompressionEndings(new String[] {".gz", ".zip"});
  */
-public class UniFileFilter extends FileFilter {
+public final class UniFileFilter extends FileFilter {
 
 
 	private HashSet<String> filters = null;

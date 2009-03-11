@@ -22,7 +22,7 @@ package com.affymetrix.swing.threads;
  * timed-out operations are artificially interrupted by timers.
  **/
 
-public class TimeoutException extends InterruptedException {
+public final class TimeoutException extends InterruptedException {
 
   /** 
    * The approximate time that the operation lasted before 

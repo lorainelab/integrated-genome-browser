@@ -18,7 +18,7 @@ package com.affymetrix.genometryImpl.util;
  *  does not implement the Collection interfaces.
  *  really just for getting a stretchable array of floats.
  */
-public class FloatList {
+public final class FloatList {
 	/**
 	 *  the array of primitives (in the case of FloatList, floats)
 	 */

@@ -21,7 +21,7 @@ package com.affymetrix.swing.threads;
  * @author  Joseph Bowbeer
  * @version 1.0
  */
-public class TimedCallable extends Object implements Callable {
+public final class TimedCallable extends Object implements Callable {
 
     private final Callable function;
     private final long millis;

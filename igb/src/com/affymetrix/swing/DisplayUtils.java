@@ -20,7 +20,7 @@ import javax.swing.table.*;
 /**
  *  General Swing display utilities.
  */
-public class DisplayUtils {
+public final class DisplayUtils {
   
   /** De-iconify a Frame and bring it to the front of the display, 
    *  without changing the minimized/maximized state.

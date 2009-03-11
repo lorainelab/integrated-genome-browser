@@ -18,7 +18,7 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 
-public class SimpleAnnotatedBioSeq
+public final class SimpleAnnotatedBioSeq
 	extends SimpleBioSeq
 	implements MutableAnnotatedBioSeq {
 

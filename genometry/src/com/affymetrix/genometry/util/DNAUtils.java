@@ -17,7 +17,7 @@ package com.affymetrix.genometry.util;
  * A collection of constants and static methods
  * useful in manipulating ascii representations of DNA sequences.
  */
-public class DNAUtils {
+public final class DNAUtils {
 
 	/**
 	 * Determines the (non-reversed) complement of a sequence of nucleotides.

@@ -17,7 +17,7 @@ import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 
-public class MutableDoubleSeqSpan extends DoubleSeqSpan implements MutableSeqSpan {
+public final class MutableDoubleSeqSpan extends DoubleSeqSpan implements MutableSeqSpan {
 
 	public MutableDoubleSeqSpan(double start, double end, BioSeq seq) {
 		super(start, end, seq);

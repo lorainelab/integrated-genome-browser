@@ -465,7 +465,7 @@ public abstract class SeqUtils {
 	}
 
 	/** Inner class helper for inverse() method. */
-	static class StartSorter implements Comparator<SeqSpan> {
+	static final class StartSorter implements Comparator<SeqSpan> {
 		static StartSorter static_instance = null;
 
 		public static StartSorter getInstance() {

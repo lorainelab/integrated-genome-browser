@@ -20,7 +20,7 @@ import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import java.util.List;
 
-public class EfficientPairSeqSymmetry implements SeqSymmetry {
+public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 
 	protected static final int count = 2;
 	protected int startA, startB, endA, endB;

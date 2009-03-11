@@ -1,6 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
-public class Das2Coords {
+public final class Das2Coords {
 	String urid;
 	String authority;
 	String taxid;

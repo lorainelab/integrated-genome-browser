@@ -12,7 +12,7 @@ import java.security.MessageDigest;
 
   @see java.security.MessageDigest
   */
-public class MD5 extends MessageDigest implements Cloneable
+public final class MD5 extends MessageDigest implements Cloneable
 {
 	private final int W[] = new int[16];
 	private long bytecount;

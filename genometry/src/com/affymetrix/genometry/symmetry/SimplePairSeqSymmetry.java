@@ -19,7 +19,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 import java.util.List;
 
-public class SimplePairSeqSymmetry implements SeqSymmetry {
+public final class SimplePairSeqSymmetry implements SeqSymmetry {
 
 	protected List<SeqSymmetry> children = null;
 	protected SeqSymmetry parent = null;

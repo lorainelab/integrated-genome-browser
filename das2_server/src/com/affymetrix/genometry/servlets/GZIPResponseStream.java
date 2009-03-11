@@ -13,7 +13,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class GZIPResponseStream extends ServletOutputStream {
+public final class GZIPResponseStream extends ServletOutputStream {
 	protected ByteArrayOutputStream baos = null;
 	protected GZIPOutputStream gzipstream = null;
 	protected boolean closed = false;

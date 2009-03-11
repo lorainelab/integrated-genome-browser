@@ -12,7 +12,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 /**
  *  Trying to make a central repository for parsers.
  */
-public class ParserController {
+public final class ParserController {
 
 	public static List parse(
 			InputStream instr, Map<String, String> annots_map, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {

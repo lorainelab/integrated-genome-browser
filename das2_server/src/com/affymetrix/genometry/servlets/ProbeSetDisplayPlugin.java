@@ -16,8 +16,8 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.*;
 
-//public class ProbeSetDisplayPlugin implements DasCommandPlugin, AnnotationWriter {
-public class ProbeSetDisplayPlugin implements AnnotationWriter {
+//public final class ProbeSetDisplayPlugin implements DasCommandPlugin, AnnotationWriter {
+public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	static final String CONSENSUS_TYPE = "netaffx consensus";
 	static final String PROBESET_TYPE = "netaffx probesets";
 	static final String CROSSHYB_TYPE = "netaffx crosshyb";

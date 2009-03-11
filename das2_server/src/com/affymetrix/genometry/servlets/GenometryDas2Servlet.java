@@ -69,7 +69,7 @@ import javax.xml.parsers.DocumentBuilder;
 //           else try to parse and annotate seqs based on file suffix (.xyz)
 //
 */
-public class GenometryDas2Servlet extends HttpServlet {
+public final class GenometryDas2Servlet extends HttpServlet {
 
 	private static final boolean DEBUG = false;
 	private static final String RELEASE_VERSION = "2.6";

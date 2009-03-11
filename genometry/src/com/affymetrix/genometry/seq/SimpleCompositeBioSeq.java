@@ -36,7 +36,7 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
 	/**
 	 * Length of the sequence, stored as a double.  The value is always an
 	 * integer and much of the functionality of this class and its sub-classes
-	 * is lost if the length is greater than Interger.INT_MAX.
+	 * is lost if the length is greater than Integer.INT_MAX.
 	 */
 	protected double length = 0;
 	/** SeqSymetry to store the sequence in. */

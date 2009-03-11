@@ -17,7 +17,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 
-public class SimpleDerivedSeqSymmetry extends SimpleMutableSeqSymmetry 
+public final class SimpleDerivedSeqSymmetry extends SimpleMutableSeqSymmetry 
 	implements DerivedSeqSymmetry  {
 
 	SeqSymmetry original_sym;

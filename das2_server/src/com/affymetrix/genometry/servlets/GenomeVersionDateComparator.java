@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
-public class GenomeVersionDateComparator implements Comparator<AnnotatedSeqGroup> {
+public final class GenomeVersionDateComparator implements Comparator<AnnotatedSeqGroup> {
 	static String[] month_array = { "Jan",
 		"Feb",
 		"Mar",

@@ -13,7 +13,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class GZIPResponseWrapper extends HttpServletResponseWrapper {
+public final class GZIPResponseWrapper extends HttpServletResponseWrapper {
 	protected HttpServletResponse origResponse = null;
 	protected ServletOutputStream stream = null;
 	protected PrintWriter writer = null;

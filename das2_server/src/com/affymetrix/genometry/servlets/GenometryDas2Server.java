@@ -10,7 +10,7 @@ import org.mortbay.jetty.servlet.*;
 /**
  *  Pure java web server wrapper around GenometryDas2Servlet
  */
-public class GenometryDas2Server {
+public final class GenometryDas2Server {
 
 	//  static int default_server_port = 9092;
 	static boolean SHOW_GUI = false;

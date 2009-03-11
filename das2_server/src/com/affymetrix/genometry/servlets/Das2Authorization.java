@@ -5,7 +5,7 @@ import java.util.regex.*;
 
 /**For restricting access of DAS2 resources to particular users based on the contents of two txt files 
  * placed in the das2 data directory: restrictedDirectories.txt and users.txt*/
-public class Das2Authorization {
+public final class Das2Authorization {
 	//fields
 	/**File containing two columns, tab delimited, with a versionedGenomeDirectoryName and a directory within that has restrict access
 	 * example: 'S_pombe_Apr_2007	CairnsPrivateData'*/
@@ -245,7 +245,7 @@ public class Das2Authorization {
 		}
 	}
 
-	private class User{
+	private final class User{
 		//fields
 		String encryptedPassword;
 		HashMap<String,HashSet<String>> authorizedDirectories = new HashMap<String,HashSet<String>>();

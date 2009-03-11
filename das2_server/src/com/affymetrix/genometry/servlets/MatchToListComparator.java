@@ -10,7 +10,7 @@ import java.util.*;
  *  If one of the two input Strings is not in list, should sort to bottom
  *  Any whitspace at end of Strings in file is trimmed off
  */
-public class MatchToListComparator implements Comparator<String> {
+public final class MatchToListComparator implements Comparator<String> {
 	List<String> match_list = null;
 
 	public MatchToListComparator(String filename) {

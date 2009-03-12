@@ -76,7 +76,7 @@
 
 		<my.signjar jar="${webstart.dir}/igb.jar" />
 
-		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" />
+		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 	</target>
 

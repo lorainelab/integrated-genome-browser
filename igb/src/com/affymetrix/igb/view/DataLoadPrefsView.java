@@ -297,7 +297,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			public void actionPerformed(ActionEvent e) {
 				File f = performChoose(JFileChooser.DIRECTORIES_ONLY);
 				if (f != null && f.isDirectory()) {
-					serverTF.setText(f.getAbsolutePath());
+					serverTF.setText("file://" + f.getAbsolutePath());
 				}
 			}
 		});
@@ -311,7 +311,16 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		if (serverType.equals("QuickLoad")) {
 			File f = new File(DirectoryOrURL);
 			if (f.isDirectory()) {
-				addToPreferences(DirectoryOrURL, serverType, serverName);
+				try {
+				URL url = new URL(f.toString());
+				addToPreferences(url.toString(), serverType, serverName);
+				}
+				catch (MalformedURLException ex) {
+					String errorTitle = "Invalid URL" + (serverType.equals("QuickLoad") ? "/Directory" : "");
+			String errorMessage = "'file://" + f + "' is not a valid QuickLoad directory";
+			ErrorHandler.errorPanel(errorTitle,errorMessage,this);
+			return;
+				}
 				// file exists -- add to preferences
 				return;
 			}
@@ -341,7 +350,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		if (!this.glv.addServer(serverName, DirectoryOrURL, serverType)) {
 			ErrorHandler.errorPanel(
 							"Error loading server",
-							serverType + " server " + serverName + " at " + DirectoryOrURL + "was not successfully loaded.\nPlease check that directory/URL is valid, and you have a working network connection.");
+							serverType + " server " + serverName + " at " + DirectoryOrURL + " was not successfully loaded.\nPlease check that directory/URL is valid, and you have a working network connection.");
 			return;
 		}
 

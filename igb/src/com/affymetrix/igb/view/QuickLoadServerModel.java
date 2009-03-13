@@ -277,6 +277,11 @@ public final class QuickLoadServerModel {
         String[] fields = tab_regex.split(line);
         if (fields.length >= 1) {
           String genome_name = fields[0];
+					genome_name = genome_name.trim();
+					if (genome_name.length() == 0) {
+						System.out.println("Found blank QuickLoad genome -- skipping");
+						continue;
+					}
           glist.add(genome_name);
           group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
           genome_names.add(genome_name);

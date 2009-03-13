@@ -163,23 +163,24 @@ public final class GeneralLoadUtils {
 			System.out.println("Server " + serverName +" already exists");
 			return false;
 		}
-		
+
+		try {
 		if (serverType == GenericServer.ServerType.QuickLoad) {
 			GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL);
 			if (gServer == null) {
 				return false;
 			}
-			discoveredServers.put(gServer.serverName, gServer);
 			getQuickLoadSpeciesAndVersions(gServer);
-			
+			discoveredServers.put(gServer.serverName, gServer);
+
 		} else if (serverType == GenericServer.ServerType.DAS) {
 			DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
 			if (server == null) {
 				return false;
 			}
 			GenericServer gServer = new GenericServer(serverName, server.getRootUrl(), server.getClass(), server);
-			discoveredServers.put(serverName, gServer);
 			getDAS1SpeciesAndVersions(gServer);
+			discoveredServers.put(serverName, gServer);
 
 		} else if (serverType == GenericServer.ServerType.DAS2) {
 			Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
@@ -187,9 +188,14 @@ public final class GeneralLoadUtils {
 				return false;
 			}
 			GenericServer gServer = new GenericServer(serverName, server.getURI().toString(), server.getClass(), server);
-			discoveredServers.put(serverName, gServer);
 			getDAS2Species(gServer);
 			getDAS2Versions(gServer);
+			discoveredServers.put(serverName, gServer);
+		}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
 		}
 		return true;
 	}

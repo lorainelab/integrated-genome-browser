@@ -21,7 +21,11 @@ import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.LayoutManager;
 import java.awt.event.*;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -53,7 +57,6 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 	private static final String AddServerTitle = "Add Server";
 	//private static final String DASTitle = "Add Server File";
 
-  private JFileChooser chooser = null;
 	private final GeneralLoadView glv;
 
   static {
@@ -72,42 +75,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     usage2str.put(ignore_cache, ignore);
     usage2str.put(cache_only, only);
   }
-
-	ActionListener clear_cache_al = new ActionListener() {
-    public void actionPerformed(ActionEvent e) {
-      LocalUrlCacher.clearCache();
-    }
-  };
-
-
-  ActionListener browse_for_syn_file_al = new ActionListener() {
-    public void actionPerformed(ActionEvent e) {
-      if (chooser == null) {
-        chooser = new JFileChooser();
-      }
-      chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-      chooser.rescanCurrentDirectory();
-
-      int option = chooser.showOpenDialog(DataLoadPrefsView.this);
-
-      if (option == JFileChooser.APPROVE_OPTION) {
-        File f = chooser.getSelectedFile();
-        UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, f.getPath());
-      }
-    }
-  };
-
-  // the cache_usage_selector will probably go away later
-  ItemListener cache_usage_al = new ItemListener() {
-    public void itemStateChanged(ItemEvent e) {
-      String usage_str = (String) cache_usage_selector.getSelectedItem();
-      int usage = (DataLoadPrefsView.cache_usage_options.get(usage_str)).intValue();
-      //QuickLoadServerModel.setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
-      LocalUrlCacher.setPreferredCacheUsage(usage);
-      // UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
-    }
-  };
-
+ 
 
   public DataLoadPrefsView(GeneralLoadView glv) {
 		this.glv = glv;
@@ -124,6 +92,24 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   }
 
 
+	private File performChoose(int FileSelectionMode) throws HeadlessException {
+		JFileChooser chooser = new JFileChooser();
+		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+		chooser.setFileSelectionMode(FileSelectionMode);
+		if (FileSelectionMode == JFileChooser.DIRECTORIES_ONLY) {
+			chooser.setDialogTitle("Choose Directory");
+		} else {
+			chooser.setDialogTitle("Choose File");
+		}
+		chooser.setAcceptAllFileFilterUsed(FileSelectionMode != JFileChooser.DIRECTORIES_ONLY);
+		chooser.rescanCurrentDirectory();
+		int option = chooser.showOpenDialog(DataLoadPrefsView.this);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile();
+		}
+		return null;
+	}
+
 	private void synonymsBox() {
 		Box syn_box = Box.createVerticalBox();
 		syn_box.setBorder(new javax.swing.border.TitledBorder("Add Personal Synonyms File"));
@@ -134,6 +120,16 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		
 		Box syn_box_line2 = new Box(BoxLayout.X_AXIS);
 		syn_box_line2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+		ActionListener browse_for_syn_file_al = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				File f = performChoose(JFileChooser.FILES_AND_DIRECTORIES);
+				if (f != null) {
+					UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, f.getPath());
+				}
+			}
+		};
+
 
 		JButton browse_for_syn_fileB = new JButton("Browse");
 		browse_for_syn_fileB.addActionListener(browse_for_syn_file_al);
@@ -219,61 +215,90 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		final Box serverBox = Box.createVerticalBox();
 		final TitledBorder tBorder = new TitledBorder(AddServerTitle);
 		serverBox.setBorder(tBorder);
-		
 
-		final JTextField serverTF = new JTextField("",100);
-		serverTF.setMaximumSize(new Dimension(serverTF.getMaximumSize().width,serverTF.getPreferredSize().height));
-		serverTF.setAlignmentX(0.0f);
-		final JLabel serverLabel = new JLabel("Server URL (or directory)");
+		// ServerBox1
+		final Box serverBox1 = Box.createHorizontalBox();
+		serverBox1.setAlignmentX(0.0f);
+		final JTextField serverTF = new JTextField("",50);
+		serverTF.setMaximumSize(new Dimension(serverTF.getPreferredSize()));
+		serverTF.setAlignmentX(Component.CENTER_ALIGNMENT);
+		final JLabel serverLabel = new JLabel("Server URL   ");
+		serverLabel.setAlignmentX(0.0f);
 		serverLabel.setLabelFor(serverTF);
-		serverBox.add(serverLabel);
-		serverBox.add(serverTF);
+		serverBox1.add(serverLabel);
+		serverBox1.add(serverTF);
+		serverBox1.add(Box.createRigidArea(new Dimension(10,0)));
+		final JButton browse_for_QuickLoad_fileB = new JButton("Local Directory");
+		serverBox1.add(browse_for_QuickLoad_fileB);
 
-		final JTextField serverNameTF = new JTextField("",100);
-		serverNameTF.setMaximumSize(new Dimension(serverNameTF.getMaximumSize().width,serverNameTF.getPreferredSize().height));
-		serverNameTF.setAlignmentX(0.0f);
-		final JLabel serverNameLabel = new JLabel("Server name");
+		int preferredWidth = serverTF.getMaximumSize().width + serverLabel.getMaximumSize().width + 10 + browse_for_QuickLoad_fileB.getMaximumSize().width;
+		int preferredHeight = serverBox1.getPreferredSize().height;
+
+		serverBox1.setPreferredSize(new Dimension(preferredWidth, preferredHeight));
+		
+		// ServerBox2
+		final Box serverBox2 = Box.createHorizontalBox();
+		serverBox2.setAlignmentX(0.0f);
+		final JTextField serverNameTF = new JTextField("",50);
+		serverNameTF.setMaximumSize(new Dimension(serverNameTF.getPreferredSize()));
+		serverNameTF.setAlignmentX(Component.CENTER_ALIGNMENT);
+		final JLabel serverNameLabel = new JLabel("Server name ");
+		serverNameLabel.setAlignmentX(0.0f);
 		serverNameLabel.setLabelFor(serverNameTF);
-		serverBox.add(serverNameLabel);
-		serverBox.add(serverNameTF);
+		serverBox2.add(serverNameLabel);
+		serverBox2.add(serverNameTF);
 
+		// ServerBox3
 		final Vector<String> serverTypes = new Vector<String>(3);
 		serverTypes.add("QuickLoad");
 		serverTypes.add("DAS2");
 		serverTypes.add("DAS");
 		final JComboBox serverTypeCB = new JComboBox(serverTypes);
-		Dimension d = new Dimension(serverTypeCB.getPreferredSize());
-		serverTypeCB.setMaximumSize(d);
+		serverTypeCB.setMaximumSize(new Dimension(serverTypeCB.getPreferredSize()));
+		serverTypeCB.setAlignmentX(0.0f);
+		final JLabel serverTypeLabel = new JLabel("Server type");
+		serverTypeLabel.setLabelFor(serverTypeCB);
+		serverTypeLabel.setAlignmentX(0.0f);
+		final Box serverBox3 = new Box(BoxLayout.X_AXIS);
+		serverBox3.setAlignmentX(0.0f);
+		serverBox3.add(serverTypeLabel);
+		serverBox3.add(serverTypeCB);
 
+		// ServerBox4
 		final JButton addServerB = new JButton("Add");
-
-		final Box serverBoxLine2 = new Box(BoxLayout.X_AXIS);
-		serverBoxLine2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		serverBoxLine2.add(serverTypeCB);
-		serverBoxLine2.add(Box.createRigidArea(new Dimension(10, 0)));
-		serverBoxLine2.add(addServerB);
-		serverBoxLine2.setAlignmentX(0.0f);
-
-		serverBox.add(serverBoxLine2);
+		addServerB.setAlignmentX(0.0f);
+		final Box serverBox4 = new Box(BoxLayout.X_AXIS);
+		serverBox4.setAlignmentX(0.0f);
+		serverBox4.add(Box.createRigidArea(new Dimension(10, 0)));
+		serverBox4.add(addServerB);
+		serverBox.add(serverBox1);
+		serverBox.add(serverBox2);
+		serverBox.add(serverBox3);
+		serverBox.add(serverBox4);
 		serverBox.setAlignmentX(0.0f);
 		this.add(serverBox);
 
-		this.add(Box.createRigidArea(new Dimension(0, 5)));
+		//this.add(Box.createRigidArea(new Dimension(0, 5)));
 
 		// Make the label self-explanatory
 		serverTypeCB.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				String serverType = (String)serverTypeCB.getSelectedItem();
-				if (serverType.equals("QuickLoad")) {
-					serverLabel.setText("Server URL (or directory)");
-				} else {
-					serverLabel.setText("Server URL");
-				}
+				browse_for_QuickLoad_fileB.setVisible(serverType.equals("QuickLoad"));
 			}
 		});
 		addServerB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				addServer(serverTF.getText(), (String)serverTypeCB.getSelectedItem(),serverNameTF.getText());
+			}
+		});
+
+		browse_for_QuickLoad_fileB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				File f = performChoose(JFileChooser.DIRECTORIES_ONLY);
+				if (f != null && f.isDirectory()) {
+					serverTF.setText(f.getAbsolutePath());
+				}
 			}
 		});
 	}
@@ -385,7 +410,29 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		clear_cache_box.add(Box.createHorizontalGlue());
 		clear_cache_box.setAlignmentX(0.0f);
 		cache_options_box.add(clear_cache_box);
+
+		// the cache_usage_selector will probably go away later
+		ItemListener cache_usage_al = new ItemListener() {
+
+			public void itemStateChanged(ItemEvent e) {
+				String usage_str = (String) cache_usage_selector.getSelectedItem();
+				int usage = (DataLoadPrefsView.cache_usage_options.get(usage_str)).intValue();
+				//QuickLoadServerModel.setCacheBehavior(usage, cache_annotsCB.isSelected(), cache_residuesCB.isSelected());
+				LocalUrlCacher.setPreferredCacheUsage(usage);
+			// UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
+			}
+		};
+
 		cache_usage_selector.addItemListener(cache_usage_al);
+
+		ActionListener clear_cache_al = new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				LocalUrlCacher.clearCache();
+			}
+		};
+
+
 		clear_cacheB.addActionListener(clear_cache_al);
 	}
 

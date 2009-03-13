@@ -643,7 +643,7 @@ public final class IGB extends Application
 
 
   protected void init() {
-    frm = new JFrame(APP_NAME + " " + APP_VERSION);
+    frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
     RepaintManager rm = RepaintManager.currentManager(frm);
     /*
     if (REPLACE_REPAINT_MANAGER) {

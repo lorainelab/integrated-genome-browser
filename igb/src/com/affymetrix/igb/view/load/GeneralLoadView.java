@@ -319,9 +319,15 @@ public final class GeneralLoadView extends JComponent
 		String genomeVersionName = (String) versionCB.getSelectedItem();
 		if (src == partial_residuesB) {
 			SeqSpan viewspan = gviewer.getVisibleSpan();
-			this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax(), viewspan);
+			if (!this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+				ErrorHandler.errorPanel("Couldn't load partial sequence",
+								"Was not able to load partial sequence.  Some servers do not have this capability.  Please try loading the entire sequence.");
+			}
 		} else if (src == all_residuesB) {
-			this.glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength(), null);
+			if (!this.glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength(), null)) {
+				ErrorHandler.errorPanel("Couldn't load sequence",
+								"Was not able to load the sequence for an unknown reason.");
+			}
 		} else if (src == refresh_dataB) {
 			loadVisibleData();
 		}

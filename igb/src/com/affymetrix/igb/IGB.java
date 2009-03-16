@@ -349,7 +349,7 @@ public final class IGB extends Application
    *  Meant to replace QuickLoadView2.processDasServerList()
    *  @param ql_url The root URL for the QuickLoad server, ending with "/".
    */
-  public static void processDasServersList(String ql_url) {
+  /*public static void processDasServersList(String ql_url) {
     String server_loc_list = ql_url + "das_servers.txt";
     try {
       System.out.println("Trying to load DAS Server list: " + server_loc_list);
@@ -358,8 +358,8 @@ public final class IGB extends Application
     catch (Exception ex) {
       System.out.println("WARNING: Failed to load DAS Server list: " + ex);
     }
-  }
-
+  }*/
+/*
   public static void processDas2ServersList(String ql_url) {
     String server_loc_list = ql_url + "das2_servers.txt";
     try {
@@ -369,13 +369,13 @@ public final class IGB extends Application
     catch (Exception ex) {
       System.out.println("WARNING: Failed to load DAS2 Server list: " + ex);
     }
-  }
+  }*/
 
 
-  public static boolean isSequenceAccessible() {
+  /*public static boolean isSequenceAccessible() {
     //return UnibrowPrefsUtil.getBooleanParam(PREF_SEQUENCE_ACCESSIBLE, default_sequence_accessible);
     return default_sequence_accessible;
-  }
+  }*/
 
   public SeqMapView getMapView() {
     return map_view;
@@ -386,15 +386,15 @@ public final class IGB extends Application
   //  return quickload_view;
   //}
 
-  public static Application getSingleton() {
+ /* public static Application getSingleton() {
     return singleton_igb;
-  }
+  }*/
 
-  public JMenuBar getMenuBar() { return mbar; }
+  //public JMenuBar getMenuBar() { return mbar; }
   public JFrame getFrame() { return frm; }
-  public JTabbedPane getTabPane() { return tab_pane; }
+  //public JTabbedPane getTabPane() { return tab_pane; }
 
-  void startControlServer() {
+  private void startControlServer() {
     // Use the Swing Thread to start a non-Swing thread
     // that will start the control server.
     // Thus the control server will be started only after current GUI stuff is finished,
@@ -424,7 +424,7 @@ public final class IGB extends Application
    * Return the name of the file as a String, or null if not invoked with
    * -prefs option.
    */
-  public static String[] get_prefs_list(String[] args) {
+  private static String[] get_prefs_list(String[] args) {
     String files = get_arg("-prefs", args);
     if (files==null) {files = default_user_prefs_files;}
     StringTokenizer st = new StringTokenizer(files, ";");
@@ -436,7 +436,7 @@ public final class IGB extends Application
     return result.toArray(new String[result.size()]);
   }
 
-  public static String get_default_prefs_url(String[] args) {
+  private static String get_default_prefs_url(String[] args) {
     String def_prefs_url = get_arg("-default_prefs_url", args);
     return def_prefs_url;
   }
@@ -449,7 +449,7 @@ public final class IGB extends Application
    * returns "bar", get_arg("flag_2") returns a non-null string,
    * and get_arg("flag_5") returns null.
    */
- public static String get_arg(String label, String[] args) {
+ private static String get_arg(String label, String[] args) {
 		String to_return = null;
 		boolean got_it = false;
 		if (label != null && args != null) {
@@ -469,15 +469,15 @@ public final class IGB extends Application
 		return to_return;
 	}
 
-  public static SingletonGenometryModel getGenometryModel() {
+ /* public static SingletonGenometryModel getGenometryModel() {
     return gmodel;
-  }
+  }*/
 
   /**
    *  Returns IGB prefs hash
    *  If prefs haven't been loaded yet, will force loading of prefs
    */
-  public static Map getIGBPrefs() {
+  private static Map getIGBPrefs() {
       if (prefs_hash != null) {
           return prefs_hash;
       }
@@ -642,7 +642,7 @@ public final class IGB extends Application
 	}
 
 
-  protected void init() {
+  private void init() {
     frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
     RepaintManager rm = RepaintManager.currentManager(frm);
     /*
@@ -967,28 +967,14 @@ public final class IGB extends Application
     //    frm.resize(1000, 750);
     frm.setVisible(true);
 
-    /*if (useQuickLoad()) {
-      //      PluginInfo quickload = new PluginInfo(QuickLoaderView.class.getName(), "QuickLoad", true);
-      PluginInfo quickload = new PluginInfo(QuickLoadView2.class.getName(), "QuickLoad", true);
-      plugins_info.add(quickload);
-    }
-    else {*/
-      //    if (USE_DATALOAD)  {
       PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
       plugins_info.add(dataload);
-
-    //}
 
     PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
     plugins_info.add(selection_info);
 
+
     plugins_info.addAll(getPluginsFromXmlPrefs(getIGBPrefs()));
-    //plugin_list = null;
-    //try {
-    //  plugin_list = Plugin>Info.getAllPlugins();
-    //} catch (java.util.prefs.BackingStoreException bse) {
-    //  UnibrowPrefsUtil.handleBSE(this.frm, bse);
-    //}
 
     if (plugins_info == null || plugins_info.isEmpty()) {
       System.out.println("There are no plugins specified in preferences.");
@@ -1004,9 +990,6 @@ public final class IGB extends Application
 				data_load_view = (DataLoadView) plugin;
 			//data_load_view.initialize();
 			}
-		/*if (plugin instanceof QuickLoadView2)  {
-		((QuickLoadView2)plugin).initialize();
-		}*/
 		}
 
     if (slice_view != null) {
@@ -1031,15 +1014,15 @@ public final class IGB extends Application
 
 
   /** Returns true if initialization has completed. */
-  public boolean isInitialized() {
+  /*public boolean isInitialized() {
     return initialized;
-  }
+  }*/
 
   /**
    *  Puts the given component either in the tab pane or in its own window,
    *  depending on saved user preferences.
    */
-  Object setUpPlugIn(PluginInfo pi) {
+  private Object setUpPlugIn(PluginInfo pi) {
 
     if (! pi.shouldLoad()) return null;
 
@@ -1099,7 +1082,7 @@ public final class IGB extends Application
     return plugin;
   }
 
-    @Override
+	@Override
   public void setPluginInstance(Class c, IPlugin plugin) {
     super.setPluginInstance(c, plugin);
     if (c.equals(BookmarkManagerView.class)) {
@@ -1242,7 +1225,7 @@ public final class IGB extends Application
     }
   }
 
-  public void showAboutDialog() {
+  private void showAboutDialog() {
     JPanel message_pane = new JPanel();
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
@@ -1314,7 +1297,7 @@ public final class IGB extends Application
     dialog.setVisible(true);
   }
 
-  public void showDocumentationDialog() {
+  private void showDocumentationDialog() {
     JPanel message_pane = new JPanel();
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
@@ -1394,7 +1377,7 @@ public final class IGB extends Application
     }
   }
 
-  public void openTabInNewWindow(final JTabbedPane tab_pane) {
+  private void openTabInNewWindow(final JTabbedPane tab_pane) {
     Runnable r = new Runnable() {
       public void run() {
         int index = tab_pane.getSelectedIndex();
@@ -1412,7 +1395,7 @@ public final class IGB extends Application
     SwingUtilities.invokeLater(r);
   }
 
-  void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
+  private void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
     final String title;
     final String display_name;
     final String tool_tip = comp.getToolTipText();
@@ -1483,7 +1466,7 @@ public final class IGB extends Application
     //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
   }
 
-  void openTabbedPanelInNewWindow(final JComponent comp) {
+  private void openTabbedPanelInNewWindow(final JComponent comp) {
 
     final String title = TABBED_PANES_TITLE;
     final String display_name = title;
@@ -1571,7 +1554,7 @@ public final class IGB extends Application
     popup.add(popup_windowsM);
   }
 
-  void addToPopupWindows(final JComponent comp, final String title) {
+  private void addToPopupWindows(final JComponent comp, final String title) {
     JCheckBoxMenuItem popupMI = new JCheckBoxMenuItem(title);
     popup_windowsM.add(popupMI);
     popupMI.addActionListener(new ActionListener() {
@@ -1602,13 +1585,14 @@ public final class IGB extends Application
    *  The ordering of those tags is maintained in the order of the tab panes
    *  they create.
    */
-  List<PluginInfo> getPluginsFromXmlPrefs(Map prefs_hash) {
+  private List<PluginInfo> getPluginsFromXmlPrefs(Map prefs_hash) {
     ArrayList<PluginInfo> plugin_list = new ArrayList<PluginInfo>(16);
 
     boolean USE_ANNOT_BROWSER = false;
     boolean USE_SLICE_VIEW = true;
     boolean USE_GRAPH_ADJUSTER = true;
     boolean USE_PATTERN_SEARCHER = true;
+		boolean USE_NAME_SEARCHER = true;
     boolean USE_RESTRICTION_MAPPER = false;
     boolean USE_PIVOT_VIEW = false;
     if (prefs_hash.get("USE_GRAPH_ADJUSTER") != null) {
@@ -1621,6 +1605,8 @@ public final class IGB extends Application
       USE_RESTRICTION_MAPPER = ((Boolean)prefs_hash.get("USE_RESTRICTION_MAPPER")).booleanValue(); }
     if (prefs_hash.get("USE_PATTERN_SEARCHER") != null) {
       USE_PATTERN_SEARCHER = ((Boolean)prefs_hash.get("USE_PATTERN_SEARCHER")).booleanValue(); }
+		if (prefs_hash.get("USE_NAME_SEARCHER") != null) {
+      USE_NAME_SEARCHER = ((Boolean)prefs_hash.get("USE_NAME_SEARCHER")).booleanValue(); }
     if (prefs_hash.get("USE_ANNOT_BROWSER") != null) {
       USE_ANNOT_BROWSER = ((Boolean)prefs_hash.get("USE_ANNOT_BROWSER")).booleanValue(); }
 
@@ -1634,6 +1620,10 @@ public final class IGB extends Application
     }
     if (USE_PATTERN_SEARCHER) {
       PluginInfo pi = new PluginInfo(SeqSearchView.class.getName(), "Pattern Search", true);
+      plugin_list.add(pi);
+    }
+		if (USE_NAME_SEARCHER) {
+      PluginInfo pi = new PluginInfo(Das2SearchView.class.getName(), "Name Search", true);
       plugin_list.add(pi);
     }
 

@@ -121,11 +121,11 @@ public final class Das2ServerInfo  {
 		else { return (Das2VersionedSource)vsources.iterator().next(); }
 	}
 
-	public Collection getVersionedSources(AnnotatedSeqGroup group) {
+	private Collection<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group) {
 		// should probably make a vsource2seqgroup hash,
 		//   but for now can just iterate through sources and versions
 		//    Das2VersionedSource result = null;
-		Set results = new LinkedHashSet();
+		Set<Das2VersionedSource> results = new LinkedHashSet<Das2VersionedSource>();
 		Iterator siter = getSources().values().iterator();
 		while (siter.hasNext()) {
 			Das2Source source = (Das2Source)siter.next();

@@ -26,13 +26,15 @@ Drosophila virilis	D. virilis	D_virilis	droVir1	droVir2
 Drosophila yakuba	D. yakuba	D_yakuba	droYak1	droYak2
 Danio rerio	Zebrafish	D_rerio	D_rerio_Mar_2006	D_rerio_Jul_2007	danRer3	danRer4	danRer5
 Equus caballus	Horse	H_caballus	equCab1	equCab2
+Escherichia coli	e-coli_oct-2007
 Felis catus	Cat	F_catus	felCat3
 Gallus gallus	Chicken	G_gallus	G_gallus_May_2006	galGal2	galGal3
 Gasterosteus aculeatus	Stickleback G_aculeatus	gasAcu1
 Homo sapiens	Human	H_sapiens	H_sapiens_Jun_2002	H_sapiens_Nov_2002	H_sapiens_Jul_2003	H_sapiens_May_2004	H_sapiens_Mar_2006	hg16	hg17	hg18
 Macaca mulatta	Rhesus	M_mulatta	M_mulatta_Jan_2006	rheMac2
 Monodelphis domestica	Opossum	M_domestica	monDom1	monDom4
-Mus musculus	Mouse	M_musculus	M_musculus_Feb_2002	M_musculus_Feb_2003	M_musculus_Oct_2003	M_musculus_Aug_2005	M_musculus_Mar_2006	M_musculus_Jul_2007	mm7	mm8	mm9
+Mus musculus	Mouse	M_musculus	M_musculus_Feb_2002	M_musculus_Feb_2003	M_musculus_Oct_2003	M_musculus_Aug_2005	M_musculus_Mar_2006	M_musculus_Jul_2007	mm7	mm8	mm9	mouse_feb-2006_mm8	Mm:NCBIv37
+Mycobacterium tuberculosis	mtuberculosis-h37Rv_sep2008
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna1
 Oryza sativa	Rice	O_sativa	O_sativa_Jan_2007
 Oryzias latipes	Medaka	O_latipes	oryLat2
@@ -41,8 +43,8 @@ Petromyzon marinus	Lamprey	P_marinus	petMar1
 Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe2
 Pristionchus pacificus	P. pacificus	P_pacificus	priPac1
 Rattus norvegicus	Rat	R_norvegicus	R_norvegicus_Jan_2003	R_norvegicus_Jun_2003	R_norvegicus_Nov_2004	rn3	rn4
-Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1
-Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004
+Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	yeast_feb2006_37_1d	yeast_may2008
+Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	pombe_sep-2007
 Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur1	strPur2
 Taeniopygia guttata	Zebra Finch	taeGut1
 Takifugu rubripes	Fugu	fr1	fr2

@@ -44,6 +44,7 @@ import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.general.GenericServer.ServerType;
 import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.general.Persistence;
+import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
@@ -315,22 +316,49 @@ public final class GeneralLoadView extends JComponent
 	 * @param evt
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		Object src = evt.getSource();
-		String genomeVersionName = (String) versionCB.getSelectedItem();
-		if (src == partial_residuesB) {
-			SeqSpan viewspan = gviewer.getVisibleSpan();
-			if (!this.glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
-				ErrorHandler.errorPanel("Couldn't load partial sequence",
-								"Was not able to load partial sequence.  Some servers do not have this capability.  Please try loading the entire sequence.");
-			}
-		} else if (src == all_residuesB) {
-			if (!this.glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength(), null)) {
-				ErrorHandler.errorPanel("Couldn't load sequence",
-								"Was not able to load the sequence for an unknown reason.");
-			}
-		} else if (src == refresh_dataB) {
+		final Object src = evt.getSource();
+		if (src == refresh_dataB) {
 			loadVisibleData();
+			return;
 		}
+		if (src != partial_residuesB && src != all_residuesB) {
+			return;
+		}
+
+		Application.getSingleton().setNotLockedUpStatus("Loading residues");
+
+		final String genomeVersionName = (String) versionCB.getSelectedItem();
+
+		// Use a SwingWorker to avoid locking up the GUI.
+		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
+
+		SwingWorker worker = new SwingWorker() {
+
+			public Object doInBackground() {
+				if (src == partial_residuesB) {
+					SeqSpan viewspan = gviewer.getVisibleSpan();
+					if (!glu.loadResidues(genomeVersionName, current_seq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+						// Load the full sequence if the partial one couldn't be loaded.
+						if (!glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength(), null)) {
+							ErrorHandler.errorPanel("Couldn't load sequence",
+											"Was not able to locate the sequence.");
+						}
+					}
+				} else {
+					if (!glu.loadResidues(genomeVersionName, current_seq, 0, current_seq.getLength(), null)) {
+						ErrorHandler.errorPanel("Couldn't load sequence",
+										"Was not able to locate the sequence.");
+					}
+				}
+				return null;
+			}
+			@Override
+			public void done() {
+				Application.getSingleton().setStatus("",false);
+			}
+		};
+
+		vexec.execute(worker);
 	}
 
 	/**

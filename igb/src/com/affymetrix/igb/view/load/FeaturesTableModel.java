@@ -1,9 +1,6 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das.DasServerInfo;
-import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
@@ -24,7 +21,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
-	private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type"};
+	private static String[] columnNames = { "Load Mode", "Name","Server", "Server Type"};
 	static String[] standardLoadChoices = {"Don't Load", "Region In View", "Whole Chromosome"};
 	static String[] quickloadLoadChoices = {"Don't Load", "Whole Genome"};
 	private final EnumMap<LoadStrategy, String> DASLoadStrategyMap;  // map to a friendly string
@@ -33,8 +30,11 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	private final Map<String, LoadStrategy> reverseQuickLoadStrategyMap;  // from friendly string to enum
 	private final EnumMap<LoadStatus, String> LoadStatusMap;    // map to a friendly string
 	private final AnnotatedBioSeq cur_seq;
-	private static final int LOAD_STRATEGY_COLUMN = 0;
-	private static final int LOAD_STATUS_COLUMN = 3;
+	static final int LOAD_STRATEGY_COLUMN = 0;
+	private static final int FEATURE_NAME_COLUMN = 1;
+	private static final int SERVER_NAME_COLUMN = 2;
+	private static final int SERVER_TYPE_COLUMN = 3;
+	private static final int LOAD_STATUS_COLUMN = 4;
 	final List<GenericFeature> features;
 	private final GeneralLoadView glv;
 
@@ -72,6 +72,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		}
 	}
 
+
 	public GenericFeature getFeature(int row) {
 		return (features == null) ? null : features.get(row);
 	}
@@ -108,23 +109,26 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		GenericFeature gFeature = features.get(row);
 		GenericServer.ServerType serverType;
 		switch (col) {
-			case 0:
+			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
 				serverType = gFeature.gVersion.gServer.serverType;
 				if (serverType == GenericServer.ServerType.QuickLoad) {
 					return this.QuickLoadStrategyMap.get(gFeature.loadStrategy);
 				}
 				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
-			case 1:
+			case FEATURE_NAME_COLUMN:
 				// return the friendly feature name.
+				String featureName = "";
 				if (gFeature.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
-					return GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName);
+					featureName =  GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName);
+				} else {
+					featureName = gFeature.featureName;
 				}
-				return gFeature.featureName;
-			case 2:
+				return featureName;
+			case SERVER_NAME_COLUMN:
 				// return the server name
 				return gFeature.gVersion.gServer.serverName;
-			case 3:
+			case SERVER_TYPE_COLUMN:
 				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;
 				if (serverType == GenericServer.ServerType.DAS2) {
@@ -137,7 +141,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 					return "Quickload";
 				}
 				return "unknown";
-			case 4:
+			case LOAD_STATUS_COLUMN:
 				// return the load status
 				LoadStatus ls = gFeature.LoadStatusMap.get(this.cur_seq);
 				return this.LoadStatusMap.get(ls);

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -46,6 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
@@ -481,6 +483,60 @@ public final class GeneralLoadUtils {
 					featureList.addAll(gVersion.features);
 				}
 		return featureList;
+	}
+
+	/**
+	 * Convert list of features into a tree.
+	 * If a feature name has a slash (e.g. "a/b/c"), then it is to be represented as a series of nodes.
+	 * Note that if a feature "a/b" is on server #1, and feature "a/c" is on server #2, then
+	 * these features have distinct parents.
+	 * @param features
+	 * @return
+	 */
+	static DefaultMutableTreeNode CreateFeatureTree(List<GenericFeature> features) {
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+
+		if (features != null) {
+			for (GenericFeature feature : features) {
+				addOrFindNode(root, feature, feature.featureName);
+			}
+		}
+
+		return root;
+	}
+
+	/**
+	 * See if a node already exists for this feature's first "/".
+	 * @param root
+	 * @param featureName
+	 * @return
+	 */
+	private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
+		if (!featureName.contains("/")) {
+			//System.out.println("adding leaf : " + featureName);
+			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(feature);
+			root.add(newNode);
+			return;
+		}
+		String featureLeft = featureName.substring(0,featureName.indexOf("/"));
+		String featureRight = featureName.substring(featureName.indexOf("/") +1);
+		Enumeration en = root.children();
+		while (en.hasMoreElements()) {
+			DefaultMutableTreeNode candidate = (DefaultMutableTreeNode)en.nextElement();
+			GenericFeature candidateFeature = (GenericFeature)candidate.getUserObject();
+			String candidateName  = candidateFeature.featureName;
+			// See if this can go under a previous node.  Be sure we're working with the same version/server.
+			if (candidateName.equals(featureLeft) && candidateFeature.gVersion.equals(feature.gVersion))  {
+				addOrFindNode(candidate,feature,featureRight);
+				return;
+			}
+		}
+
+		// Couldn't find matching node.  Add new one.
+		GenericFeature dummyFeature = new GenericFeature(featureLeft, feature.gVersion);
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeature);
+		root.add(newNode);
+		addOrFindNode(newNode, feature, featureRight);
 	}
 
 	/**

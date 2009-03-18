@@ -45,6 +45,7 @@ Pristionchus pacificus	P. pacificus	P_pacificus	priPac1
 Rattus norvegicus	Rat	R_norvegicus	R_norvegicus_Jan_2003	R_norvegicus_Jun_2003	R_norvegicus_Nov_2004	rn3	rn4
 Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	yeast_feb2006_37_1d	yeast_may2008
 Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	pombe_sep-2007
+Sodalis glossinidius	S_glossinidius
 Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur1	strPur2
 Taeniopygia guttata	Zebra Finch	taeGut1
 Takifugu rubripes	Fugu	fr1	fr2

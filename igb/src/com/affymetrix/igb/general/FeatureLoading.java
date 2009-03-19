@@ -224,7 +224,7 @@ public final class FeatureLoading {
 		if (DEBUG) {
 			System.out.println("need to load: " + annot_url);
 		}
-		Application.getSingleton().setNotLockedUpStatus("Loading " + GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName));
+		Application.getSingleton().setNotLockedUpStatus("Loading " + gFeature.toString());
 		Application.getApplicationLogger().fine("need to load: " + annot_url);
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);

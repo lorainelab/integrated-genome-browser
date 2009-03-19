@@ -46,4 +46,9 @@ public final class GenericServer {
 			this.serverType = ServerType.QuickLoad;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return this.serverName;
+	}
 }

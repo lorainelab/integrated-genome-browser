@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.view.load.FeatureTreeView;
 import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
@@ -29,6 +30,8 @@ public class DataLoadView extends JComponent  {
 
   GeneralLoadView general_load_view;
   SeqGroupView group_view;
+	FeatureTreeView feature_tree_view;
+
 
   public DataLoadView() {
     this.setLayout(new BorderLayout());
@@ -41,6 +44,9 @@ public class DataLoadView extends JComponent  {
 
 		group_view = new SeqGroupView();
     main_panel.add("West",group_view);
+		
+		//feature_tree_view = new FeatureTreeView();
+		//main_panel.add("Center", feature_tree_view.tree_scroller);
 
     general_load_view = new GeneralLoadView();
     main_panel.add("Center", general_load_view);

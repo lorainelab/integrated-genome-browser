@@ -5,6 +5,7 @@ import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, AnnotatedBioSeq cur_seq) {
 		this.glv = glv;
-		this.features = features;
+		this.features = getVisibleFeatures(features);
 		this.cur_seq = cur_seq;
 
 		this.LoadStatusMap = new EnumMap<LoadStatus, String>(LoadStatus.class);
@@ -70,6 +71,24 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
 			this.reverseQuickLoadStrategyMap.put(this.QuickLoadStrategyMap.get(strategy), strategy);
 		}
+	}
+
+	/**
+	 * Only want to display features with visible attribute set to true.
+	 * @param features
+	 * @return
+	 */
+	private static List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
+		if (features == null) {
+			return null;
+		}
+		List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
+		for (GenericFeature gFeature : features) {
+			if (gFeature.visible) {
+				visibleFeatures.add(gFeature);
+			}
+		}
+		return visibleFeatures;
 	}
 
 
@@ -118,16 +137,10 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
 			case FEATURE_NAME_COLUMN:
 				// return the friendly feature name.
-				String featureName = "";
-				if (gFeature.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
-					featureName =  GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName);
-				} else {
-					featureName = gFeature.featureName;
-				}
-				return featureName;
+				return gFeature.toString();
 			case SERVER_NAME_COLUMN:
-				// return the server name
-				return gFeature.gVersion.gServer.serverName;
+				// return the friendly server name
+				return gFeature.gVersion.gServer.toString();
 			case SERVER_TYPE_COLUMN:
 				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;

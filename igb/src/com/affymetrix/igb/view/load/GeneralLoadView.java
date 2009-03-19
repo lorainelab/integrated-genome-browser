@@ -73,7 +73,8 @@ public final class GeneralLoadView extends JComponent
 	private SeqMapView gviewer;
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
-	JScrollPane jsp;
+	JScrollPane featuresTableScrollPane;
+	private FeatureTreeView feature_tree_view;
 
 	public GeneralLoadView() {
 		if (Application.getSingleton() != null) {
@@ -81,70 +82,79 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		this.glu = new GeneralLoadUtils();
-
+	
 		this.setLayout(new BorderLayout());
 
-		JPanel choice_panel = new JPanel();
-		choice_panel.setLayout(new BoxLayout(choice_panel, BoxLayout.X_AXIS));
-		choice_panel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
+		JPanel choicePanel = new JPanel();
+		choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.X_AXIS));
+		choicePanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
 
 		/*kingdomCB = new JComboBox();
 		kingdomCB.setEnabled(false);
 		kingdomCB.setEditable(false);
-		choice_panel.add(new JLabel("Kingdom:"));
-		choice_panel.add(Box.createHorizontalStrut(5));
-		choice_panel.add(kingdomCB);
-		choice_panel.add(Box.createHorizontalGlue());*/
+		choicePanel.add(new JLabel("Kingdom:"));
+		choicePanel.add(Box.createHorizontalStrut(5));
+		choicePanel.add(kingdomCB);
+		choicePanel.add(Box.createHorizontalGlue());*/
 
 		speciesCB = new JComboBox();
 		speciesCB.setEnabled(false);
 		speciesCB.setEditable(false);
-		choice_panel.add(new JLabel("Species:"));
-		choice_panel.add(Box.createHorizontalStrut(5));
-		choice_panel.add(speciesCB);
-		choice_panel.add(Box.createHorizontalGlue());
+		choicePanel.add(new JLabel("Species:"));
+		choicePanel.add(Box.createHorizontalStrut(5));
+		choicePanel.add(speciesCB);
+		choicePanel.add(Box.createHorizontalGlue());
 
 		versionCB = new JComboBox();
 		versionCB.setEnabled(false);
 		versionCB.setEditable(false);
-		choice_panel.add(new JLabel("Genome Version:"));
-		choice_panel.add(Box.createHorizontalStrut(5));
-		choice_panel.add(versionCB);
-		choice_panel.add(Box.createHorizontalStrut(20));
+		choicePanel.add(new JLabel("Genome Version:"));
+		choicePanel.add(Box.createHorizontalStrut(5));
+		choicePanel.add(versionCB);
+		choicePanel.add(Box.createHorizontalStrut(20));
 
 
-		JPanel buttonP = new JPanel();
-		buttonP.setLayout(new GridLayout(1, 3));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridLayout(1, 3));
 
 		refresh_dataB = new JButton("Refresh Data");
 		refresh_dataB.setEnabled(false);
 		refresh_dataB.addActionListener(this);
-		buttonP.add(refresh_dataB);
+		buttonPanel.add(refresh_dataB);
 
 		//if (IGB.isSequenceAccessible()) {
 		all_residuesB = new JButton("Load All Sequence");
 		all_residuesB.setEnabled(false);
 		all_residuesB.addActionListener(this);
-		buttonP.add(all_residuesB);
+		buttonPanel.add(all_residuesB);
 		partial_residuesB = new JButton("Load Sequence in View");
 		partial_residuesB.setEnabled(false);
 		if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
 			partial_residuesB.addActionListener(this);
-			buttonP.add(partial_residuesB);
+			buttonPanel.add(partial_residuesB);
 		}
 		/*} else {
-		buttonP.add(Box.createRigidArea(new Dimension(5, 0)));
-		buttonP.add(new JLabel("No sequence available", JLabel.CENTER));
+		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		buttonPanel.add(new JLabel("No sequence available", JLabel.CENTER));
 		}*/
+
 
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setModel(this.feature_model);
 
-		jsp = new JScrollPane(this.feature_table);
-		this.add("North", choice_panel);
-		this.add("Center", jsp);
-		this.add("South", buttonP);
+		this.feature_tree_view = new FeatureTreeView(this);
+		featuresTableScrollPane = new JScrollPane(this.feature_table);
+
+		JPanel featuresPanel = new JPanel();
+		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
+		featuresPanel.add(new JLabel("Selected Features:"));
+		featuresPanel.add(featuresTableScrollPane);
+
+		this.add("North", choicePanel);
+		this.add("West", this.feature_tree_view);
+		this.add("Center", featuresPanel);
+		this.add("South", buttonPanel);
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
@@ -622,7 +632,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		Application.getSingleton().setNotLockedUpStatus();
-		createFeaturesTable(versionName);
+		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);
 		Application.getSingleton().setStatus("",false);
 	}
@@ -653,13 +663,15 @@ public final class GeneralLoadView extends JComponent
 	private void clearFeaturesTable() {
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table.setModel(this.feature_model);
-		jsp.setViewportView(this.feature_table);
+		featuresTableScrollPane.setViewportView(this.feature_table);
+		this.feature_tree_view.clearTreeView();
 	}
 
 	/**
 	 * Create the table with the list of features and their status.
 	 */
-	private void createFeaturesTable(String genomeVersionName) {
+	void createFeaturesTable() {
+		String genomeVersionName = (String) this.versionCB.getSelectedItem();
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating new table with chrom " + (current_seq == null ? null : current_seq.getID()));
 		}
@@ -670,13 +682,15 @@ public final class GeneralLoadView extends JComponent
 		}
 		if (features == null || features.isEmpty()) {
 			clearFeaturesTable();
+			this.feature_tree_view.clearTreeView();
 			return;
 		}
-
+		this.feature_tree_view.initOrRefreshTree(features);
 
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating table with features: " + features.toString());
 		}
+
 		this.feature_model = new FeaturesTableModel(this, features, current_seq);
 		this.feature_model.fireTableDataChanged();
 		this.feature_table = new JTableX(this.feature_model);
@@ -698,7 +712,7 @@ public final class GeneralLoadView extends JComponent
 		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !this.IsGenomeSequence());
 
 		this.feature_model.fireTableDataChanged();
-		jsp.setViewportView(this.feature_table);
+		featuresTableScrollPane.setViewportView(this.feature_table);
 
 
 		disableButtonsIfNecessary();

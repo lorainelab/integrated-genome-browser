@@ -452,25 +452,6 @@ public final class GeneralLoadUtils {
 	return group2version.get(group);
 	}*/
 
-	/**
-	 * Used to give a friendly name for QuickLoad features.
-	 * @param name
-	 * @return
-	 */
-	public static String stripFilenameExtensions(final String name) {
-		// Remove ending .gz or .zip extension.
-		if (name.endsWith(".gz")) {
-			return stripFilenameExtensions(name.substring(0, name.length() -3));
-		}
-		if (name.endsWith(".zip")) {
-			return stripFilenameExtensions(name.substring(0, name.length() -4));
-		}
-
-		if (name.indexOf('.') > 0) {
-			return name.substring(0, name.lastIndexOf('.'));
-		}
-		return name;
-	}
 
 	/**
 	 *  Returns the list of features for the genome with the given version name.
@@ -486,59 +467,21 @@ public final class GeneralLoadUtils {
 	}
 
 	/**
-	 * Convert list of features into a tree.
-	 * If a feature name has a slash (e.g. "a/b/c"), then it is to be represented as a series of nodes.
-	 * Note that if a feature "a/b" is on server #1, and feature "a/c" is on server #2, then
-	 * these features have distinct parents.
-	 * @param features
+	 * Returns the list of servers associated with the given versions.
+	 * @param features -- assumed to be non-null.
 	 * @return
 	 */
-	static DefaultMutableTreeNode CreateFeatureTree(List<GenericFeature> features) {
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
-
-		if (features != null) {
-			for (GenericFeature feature : features) {
-				addOrFindNode(root, feature, feature.featureName);
+	public static List<GenericServer> getServersWithAssociatedFeatures(List<GenericFeature> features) {
+		List<GenericServer> serverList = new ArrayList<GenericServer>();
+		for (GenericFeature gFeature : features) {
+			if (!serverList.contains(gFeature.gVersion.gServer)) {
+				serverList.add(gFeature.gVersion.gServer);
 			}
 		}
-
-		return root;
+		return serverList;
 	}
 
-	/**
-	 * See if a node already exists for this feature's first "/".
-	 * @param root
-	 * @param featureName
-	 * @return
-	 */
-	private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
-		if (!featureName.contains("/")) {
-			//System.out.println("adding leaf : " + featureName);
-			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(feature);
-			root.add(newNode);
-			return;
-		}
-		String featureLeft = featureName.substring(0,featureName.indexOf("/"));
-		String featureRight = featureName.substring(featureName.indexOf("/") +1);
-		Enumeration en = root.children();
-		while (en.hasMoreElements()) {
-			DefaultMutableTreeNode candidate = (DefaultMutableTreeNode)en.nextElement();
-			GenericFeature candidateFeature = (GenericFeature)candidate.getUserObject();
-			String candidateName  = candidateFeature.featureName;
-			// See if this can go under a previous node.  Be sure we're working with the same version/server.
-			if (candidateName.equals(featureLeft) && candidateFeature.gVersion.equals(feature.gVersion))  {
-				addOrFindNode(candidate,feature,featureRight);
-				return;
-			}
-		}
-
-		// Couldn't find matching node.  Add new one.
-		GenericFeature dummyFeature = new GenericFeature(featureLeft, feature.gVersion);
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeature);
-		root.add(newNode);
-		addOrFindNode(newNode, feature, featureRight);
-	}
-
+	
 	/**
 	 * Make sure this genome version has been initialized.
 	 * @param versionName

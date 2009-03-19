@@ -36,28 +36,17 @@ public final class GenericFeature {
 	@Override
 	public String toString() {
 		if (this.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
-			return stripFilenameExtensions(this.featureName);
-		}
-		return this.featureName;
-	}
-
-	/**
-	 * Used to give a friendly name for QuickLoad features.
-	 * @param name
-	 * @return
-	 */
-	private static String stripFilenameExtensions(final String name) {
-		// Remove ending .gz or .zip extension.
-		if (name.endsWith(".gz")) {
-			return stripFilenameExtensions(name.substring(0, name.length() -3));
-		}
-		if (name.endsWith(".zip")) {
-			return stripFilenameExtensions(name.substring(0, name.length() -4));
+			return GeneralLoadUtils.stripFilenameExtensions(this.featureName);
 		}
 
-		if (name.indexOf('.') > 0) {
-			return name.substring(0, name.lastIndexOf('.'));
-		}
-		return name;
+		// remove all but the last "/", since these will be represented in a friendly tree view.
+		if (!this.featureName.contains("/"))
+			return this.featureName;
+
+		int lastSlash = this.featureName.lastIndexOf("/");
+		return this.featureName.substring(lastSlash + 1,featureName.length());
+
 	}
+
+	
 }

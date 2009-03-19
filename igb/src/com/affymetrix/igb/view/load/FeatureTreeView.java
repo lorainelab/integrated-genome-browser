@@ -36,10 +36,11 @@ public final class FeatureTreeView extends JComponent {
 	private DefaultMutableTreeNode treetop = null;
 	private static final String path_separator = "/";
 	private static final Pattern path_separator_regex = Pattern.compile(path_separator);
-	CheckTreeManager check_tree_manager; // manager for tree with checkboxes
-	TreeCheckListener tree_check_listener = new TreeCheckListener();
-	GeneralLoadView glv;
+	private CheckTreeManager check_tree_manager; // manager for tree with checkboxes
+	private final TreeCheckListener tree_check_listener = new TreeCheckListener();
+	private final GeneralLoadView glv;
 	private TreePath selectedPath;
+	private TreeCellRenderer tcr;
 
 	public FeatureTreeView(GeneralLoadView glv) {
 		this.glv = glv;	// used to see feature table, which this is linked to.
@@ -48,13 +49,13 @@ public final class FeatureTreeView extends JComponent {
 		JPanel tree_panel = new JPanel();
 		tree_panel.setLayout(new BoxLayout(tree_panel, BoxLayout.Y_AXIS));
 		tree_panel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
-		JLabel genome_features_label = new JLabel("Genome Features:");
+		JLabel genome_features_label = new JLabel("Choose Data Sources and Data Sets:");
 		genome_features_label.setAlignmentX(0.0f);
 		tree_panel.add(genome_features_label);
 		tree_panel.setAlignmentX(0.0f);
 
 		tree = new JTree();
-		TreeCellRenderer tcr = tree.getCellRenderer();
+		tcr = tree.getCellRenderer();
 		// if possible, hide leaf icons (since have checkboxes too)
 		if (tcr instanceof DefaultTreeCellRenderer) {
 			DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer) tcr;
@@ -77,8 +78,9 @@ public final class FeatureTreeView extends JComponent {
 		check_tree_manager = new CheckTreeManager(tree, false, only_leaf_nodes);
 		check_tree_manager.getSelectionModel().addTreeSelectionListener(tree_check_listener);
 
+
 		tree_scroller = new JScrollPane(tree);
-		tree_scroller.setMinimumSize(new Dimension(300, 0));
+		//tree_scroller.setMinimumSize(new Dimension(300, 0));
 		tree_scroller.setPreferredSize(new Dimension(300, 0));
 		tree_scroller.setAlignmentX(0.0f);
 		clearTreeView();
@@ -88,6 +90,9 @@ public final class FeatureTreeView extends JComponent {
 
 	}
 
+	/**
+	 * Clear the tree view.
+	 */
 	synchronized void clearTreeView() {
 		treetop = new DefaultMutableTreeNode("");
 		TreeModel tmodel = new DefaultTreeModel(treetop, true);
@@ -95,6 +100,11 @@ public final class FeatureTreeView extends JComponent {
 		tree_scroller.invalidate();
 	}
 
+	/**
+	 * Initialize (or simply refresh) the tree.
+	 * If a node is already selected (this could happen if the user used a leaf checkbox), then we don't need to do this.
+	 * @param features
+	 */
 	public void initOrRefreshTree(List <GenericFeature>features) {
 		if (selectedPath != null) {
 			selectedPath = null;
@@ -102,9 +112,26 @@ public final class FeatureTreeView extends JComponent {
 			// Don't want to re-create tree when we have a selected node.
 		}
 		DefaultMutableTreeNode root = CreateTree(features);
+		//this.setVisible(root != null && (root.getChildCount() > 0));
 		treetop = root;
 		TreeModel tmodel = new DefaultTreeModel(treetop, true);
 		tree.setModel(tmodel);
+
+		// Sometimes the text of the nodes is too small.  This is a hack to deal with that.
+		if (tcr instanceof DefaultTreeCellRenderer) {
+			DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer) tcr;
+
+			// determine longest component name (similar to tree depth, but more useful here).
+			int preferredSize = 0;
+			for (GenericFeature gFeature : features) {
+				preferredSize = Math.max(preferredSize, gFeature.toString().length());
+			}
+			preferredSize+=100;	//hack
+			preferredSize = Math.max(200, preferredSize);	// 200 is reasonable even for a small tree.
+
+			dtcr.setPreferredSize(new Dimension(preferredSize, 20));
+			dtcr.setMaximumSize(dtcr.getPreferredSize());
+		}
 		tree_scroller.invalidate();
 	}
 
@@ -137,18 +164,6 @@ public final class FeatureTreeView extends JComponent {
 				root.add(serverRoot);
 			}
 
-		}
-
-		return root;
-	}
-
-	static DefaultMutableTreeNode CreateServerTree(List<GenericFeature> features) {
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
-
-		if (features != null) {
-			for (GenericFeature feature : features) {
-				addOrFindNode(root, feature, feature.featureName);
-			}
 		}
 
 		return root;
@@ -189,6 +204,9 @@ public final class FeatureTreeView extends JComponent {
 		addOrFindNode(newNode, feature, featureRight);
 	}
 
+	/**
+	 * Remove node and move it to features table, if it's checked.
+	 */
 	class TreeCheckListener implements TreeSelectionListener {
 
 		public void valueChanged(TreeSelectionEvent evt) {

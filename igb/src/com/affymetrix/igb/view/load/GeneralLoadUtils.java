@@ -868,4 +868,24 @@ public final class GeneralLoadUtils {
 
 		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 	}
+
+	/**
+	 * Used to give a friendly name for QuickLoad features.
+	 * @param name
+	 * @return
+	 */
+	public static String stripFilenameExtensions(final String name) {
+		// Remove ending .gz or .zip extension.
+		if (name.endsWith(".gz")) {
+			return stripFilenameExtensions(name.substring(0, name.length() -3));
+		}
+		if (name.endsWith(".zip")) {
+			return stripFilenameExtensions(name.substring(0, name.length() -4));
+		}
+
+		if (name.indexOf('.') > 0) {
+			return name.substring(0, name.lastIndexOf('.'));
+		}
+		return name;
+	}
 }

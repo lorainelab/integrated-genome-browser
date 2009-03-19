@@ -136,8 +136,11 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 				}
 				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
 			case FEATURE_NAME_COLUMN:
-				// return the friendly feature name.
-				return gFeature.toString();
+				// the friendly feature name removes slashes.  Clip it here.
+				if (gFeature.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
+					return GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName);
+				}
+				return gFeature.featureName;
 			case SERVER_NAME_COLUMN:
 				// return the friendly server name
 				return gFeature.gVersion.gServer.toString();

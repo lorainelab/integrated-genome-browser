@@ -41,15 +41,12 @@ public class DataLoadView extends JComponent  {
     this.setBorder(BorderFactory.createEtchedBorder());
 
     main_panel.setLayout(new BorderLayout());
-
-		group_view = new SeqGroupView();
-    main_panel.add("West",group_view);
 		
-		//feature_tree_view = new FeatureTreeView();
-		//main_panel.add("Center", feature_tree_view.tree_scroller);
-
     general_load_view = new GeneralLoadView();
     main_panel.add("Center", general_load_view);
+
+		group_view = new SeqGroupView();
+    main_panel.add("East",group_view);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));

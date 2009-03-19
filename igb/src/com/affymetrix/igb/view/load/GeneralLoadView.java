@@ -58,7 +58,8 @@ public final class GeneralLoadView extends JComponent
 	GeneralLoadUtils glu;
 	private static final boolean DEBUG_EVENTS = false;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-	private static final String SELECT = "Select";
+	private static final String SELECT_SPECIES = "Species";
+	private static final String SELECT_GENOME = "Genome Version";
 	private static final String GENOME_SEQ_ID = "genome";
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
 	private JComboBox kingdomCB;
@@ -98,46 +99,48 @@ public final class GeneralLoadView extends JComponent
 		choicePanel.add(Box.createHorizontalGlue());*/
 
 		speciesCB = new JComboBox();
+						speciesCB.addItem(SELECT_SPECIES);
+		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width*4,speciesCB.getPreferredSize().height));
+
 		speciesCB.setEnabled(false);
 		speciesCB.setEditable(false);
-		choicePanel.add(new JLabel("Species:"));
+		choicePanel.add(new JLabel("Choose:"));
 		choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(speciesCB);
-		choicePanel.add(Box.createHorizontalGlue());
+		//choicePanel.add(Box.createHorizontalGlue());
 
+		choicePanel.add(Box.createHorizontalStrut(50));
 		versionCB = new JComboBox();
+		versionCB.addItem(SELECT_GENOME);
+		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);
 		versionCB.setEditable(false);
-		choicePanel.add(new JLabel("Genome Version:"));
-		choicePanel.add(Box.createHorizontalStrut(5));
+		//choicePanel.add(new JLabel("Genome Version:"));
+		//choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(versionCB);
-		choicePanel.add(Box.createHorizontalStrut(20));
+		//choicePanel.add(Box.createHorizontalStrut(20));
 
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
-		refresh_dataB = new JButton("Refresh Data");
-		refresh_dataB.setEnabled(false);
-		refresh_dataB.addActionListener(this);
-		buttonPanel.add(refresh_dataB);
-
-		//if (IGB.isSequenceAccessible()) {
 		all_residuesB = new JButton("Load All Sequence");
+		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setEnabled(false);
 		all_residuesB.addActionListener(this);
 		buttonPanel.add(all_residuesB);
 		partial_residuesB = new JButton("Load Sequence in View");
+		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
 		if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
 			partial_residuesB.addActionListener(this);
 			buttonPanel.add(partial_residuesB);
 		}
-		/*} else {
-		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-		buttonPanel.add(new JLabel("No sequence available", JLabel.CENTER));
-		}*/
-
+		refresh_dataB = new JButton("Refresh Data");
+		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
+		refresh_dataB.setEnabled(false);
+		refresh_dataB.addActionListener(this);
+		buttonPanel.add(refresh_dataB);
 
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table = new JTableX(this.feature_model);
@@ -148,7 +151,7 @@ public final class GeneralLoadView extends JComponent
 
 		JPanel featuresPanel = new JPanel();
 		featuresPanel.setLayout(new BoxLayout(featuresPanel, BoxLayout.Y_AXIS));
-		featuresPanel.add(new JLabel("Selected Features:"));
+		featuresPanel.add(new JLabel("Choose Load Mode for Data Sets:"));
 		featuresPanel.add(featuresTableScrollPane);
 
 		this.add("North", choicePanel);
@@ -219,7 +222,7 @@ public final class GeneralLoadView extends JComponent
 		ChangeSelectedGroups(null);
 		removeListeners();
 		initializeSpeciesCB();
-		refreshVersionCB(SELECT);
+		refreshVersionCB(SELECT_GENOME);
 		clearFeaturesTable();
 		disableAllButtons();
 		addListeners();
@@ -254,7 +257,7 @@ public final class GeneralLoadView extends JComponent
 	private void initializeSpeciesCB() {
 		speciesCB.removeItemListener(this);
 		speciesCB.removeAllItems();
-		speciesCB.addItem(SELECT);
+		speciesCB.addItem(SELECT_SPECIES);
 
 		int speciesListLength = this.glu.species2genericVersionList.keySet().size();
 		if (speciesListLength == 0) {
@@ -434,7 +437,7 @@ public final class GeneralLoadView extends JComponent
 	private void speciesCBChanged() {
 		String speciesName = (String) speciesCB.getSelectedItem();
 		versionCB.removeItemListener(this);
-		if (speciesName.equals(SELECT)) {
+		if (speciesName.equals(SELECT_SPECIES)) {
 			// Turn off version combo box
 			versionCB.setSelectedIndex(0);
 			versionCB.setEnabled(false);
@@ -462,7 +465,7 @@ public final class GeneralLoadView extends JComponent
 		// Select the null group (and the null seq), if it's not already selected.
 		this.ChangeSelectedGroups(null);
 
-		if (version_name.equals(SELECT)) {
+		if (version_name.equals(SELECT_GENOME)) {
 			return;
 		}
 
@@ -518,10 +521,10 @@ public final class GeneralLoadView extends JComponent
 	private void refreshVersionCB(String speciesName) {
 		versionCB.removeItemListener(this);
 		versionCB.removeAllItems();
-		versionCB.addItem(SELECT);
+		versionCB.addItem(SELECT_GENOME);
 		versionCB.setSelectedIndex(0);
 
-		if (speciesName.equals(SELECT)) {
+		if (speciesName.equals(SELECT_SPECIES)) {
 			// Disable the version.
 			versionCB.setEnabled(false);
 			return;
@@ -622,7 +625,7 @@ public final class GeneralLoadView extends JComponent
 
 		String speciesName = (String) speciesCB.getSelectedItem();
 		String versionName = (String) this.versionCB.getSelectedItem();
-		if (speciesName.equals(SELECT) || versionName.equals(SELECT)) {
+		if (speciesName.equals(SELECT_SPECIES) || versionName.equals(SELECT_GENOME)) {
 			return;
 		}
 

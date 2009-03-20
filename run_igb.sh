@@ -5,7 +5,7 @@
 
 # IGB requires java 1.5 or higher
 
-export JAVA="/nfs/linux/pkg/java_pkg/jdk1.5/bin/java"
+export JAVA="`which java`"
 
 $JAVA -mx1024m -jar igb_exe.jar
 

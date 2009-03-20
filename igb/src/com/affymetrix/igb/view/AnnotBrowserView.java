@@ -304,7 +304,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   }
   
   Action createSearchAction() {
-    String name = "Find Annotations...";
+    String name = "Find Annotations For Loaded Data...";
     Action a = new AbstractAction(name) {
       public void actionPerformed(ActionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {

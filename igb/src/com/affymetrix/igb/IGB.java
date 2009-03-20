@@ -199,7 +199,7 @@ public final class IGB extends Application
 
   FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 
-  private static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
+  //private static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
 
   private static final String default_prefs_resource = "/igb_default_prefs.xml";
 
@@ -517,9 +517,9 @@ public final class IGB extends Application
 		// only load it if it is cached, then later update the cache on
 		// a background thread.)
 		String def_prefs_url = get_default_prefs_url(main_args);
-		if (def_prefs_url == null) {
-			loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
-		} else {
+		if (def_prefs_url != null) {
+		//	loadDefaultWebBasedPrefs(prefs_parser, prefs_hash);
+		//} else {
 			LoadPreferencesFromURL(def_prefs_url, prefs_parser);
 		}
 	}
@@ -534,7 +534,7 @@ public final class IGB extends Application
 	 *  the next time the program runs.
 	 *
 	 */
-	private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map<String, Map> prefs_hash) {
+	/*private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map<String, Map> prefs_hash) {
 		String web_prefs_url = WEB_PREFS_URL;
 		InputStream is = null;
 		try {
@@ -557,7 +557,7 @@ public final class IGB extends Application
 		}
 
 		LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
-	}
+	}*/
 
 	private static void LoadPreferencesFromURL(String prefs_url, XmlPrefsParser prefs_parser) {
 		InputStream prefs_url_stream = null;

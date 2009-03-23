@@ -1,5 +1,7 @@
 <prefs>
 
+<!-- NOTE: In IGB 5.4 and above, this file is not loaded by default. -->
+
 <!--
 This is a web-based preferences file for IGB.
 

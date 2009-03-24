@@ -684,7 +684,7 @@ public class SeqMapView extends JPanel
     }*/
 
     /** Set up a tier with fixed pixel height and place axis in it. */
-    TransformTierGlyph addAxisTier(int tier_index) {
+    private TransformTierGlyph addAxisTier(int tier_index) {
 
         axis_tier = new TransformTierGlyph(getAxisAnnotStyle());
         axis_tier.setFixedPixelHeight(true);
@@ -754,8 +754,7 @@ public class SeqMapView extends JPanel
             SeqSymmetry compsym = ((CompositeBioSeq) viewseq).getComposition();
             if (compsym != null) {
                 int compcount = compsym.getChildCount();
-
-                // create a color, c3, inbetween the foreground and background colors
+                // create a color, c3, in between the foreground and background colors
                 Color c1 = axis.getForegroundColor();
                 Color c2 = axis.getBackgroundColor();
                 Color c3 = new Color(
@@ -1091,8 +1090,7 @@ public class SeqMapView extends JPanel
 
         boolean same_seq = ((seq == this.aseq) && (seq != null));
 
-        ArrayList<TierGlyph> temp_tiers = null;
-        int axis_index = 0;
+        
         match_glyphs = new Vector<GlyphI>();
         List<SeqSymmetry> old_selections = Collections.<SeqSymmetry>emptyList();
         double old_zoom_spot_x = seqmap.getZoomCoord(AffyTieredMap.X);
@@ -1110,7 +1108,8 @@ public class SeqMapView extends JPanel
         // stash annotation tiers for proper state restoration after resetting for same seq
         //    (but presumably added / deleted / modified annotations...)
 
-        temp_tiers = new ArrayList<TierGlyph>();
+        ArrayList<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
+				int axis_index = 0;
         // copying map tiers to separate list to avoid problems when removing tiers
         //   (and thus modifying map.getTiers() list -- could probably deal with this
         //    via iterators, but feels safer this way...)
@@ -1168,7 +1167,7 @@ public class SeqMapView extends JPanel
             transform_path = null;
         //}
         }
-        if (viewseq instanceof CompositeNegSeq) {
+				if (viewseq instanceof CompositeNegSeq) {
             CompositeNegSeq compnegseq = (CompositeNegSeq) viewseq;
             seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
         } else {
@@ -1466,7 +1465,7 @@ public class SeqMapView extends JPanel
     return min_max;
   }
 
-    void addAnnotationTiers() {
+    private void addAnnotationTiers() {
         if (aseq == null) {
             // This shouldn't happen, but I've seen it during startup: eee july 2007
             return;
@@ -1481,7 +1480,7 @@ public class SeqMapView extends JPanel
         for (int i = 0; i < aseq.getAnnotationCount(); i++) {
             SeqSymmetry annotSym = aseq.getAnnotation(i);
 
-            // skip over any cytoband data.  It is show in a different way
+            // skip over any cytoband data.  It is shown in a different way
             if (annotSym instanceof TypeContainerAnnot) {
                 TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 
@@ -1577,7 +1576,7 @@ public class SeqMapView extends JPanel
         return default_glyph_factory;
     }
 
-    public void addAnnotationGlyphs(SeqSymmetry annotSym) {
+    private void addAnnotationGlyphs(SeqSymmetry annotSym) {
         // Map symmetry subclass or method type to a factory, and call factory to make glyphs
         MapViewGlyphFactoryI factory = null;
         String meth = determineMethod(annotSym);

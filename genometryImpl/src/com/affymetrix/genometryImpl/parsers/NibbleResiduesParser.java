@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class NibbleResiduesParser {
@@ -54,14 +55,9 @@ public final class NibbleResiduesParser {
 			int num_residues = dis.readInt();
 			//      System.out.println("length: " + num_residues);
 
-			BioSeq existing_seq = seq_group.getSeq(name);
+			SmartAnnotBioSeq existing_seq = seq_group.getSeq(name);
 			if (existing_seq != null) {
-				if (existing_seq instanceof GeneralBioSeq) {
-					result_seq = (GeneralBioSeq) existing_seq;
-				}
-				else {
-					throw new IOException("Trouble parsing bnib file, existing bio seq is of wrong type.");
-				}
+				result_seq = (GeneralBioSeq) existing_seq;
 			}
 			else {
 				result_seq = seq_group.addSeq(name, num_residues);
@@ -95,7 +91,7 @@ public final class NibbleResiduesParser {
 	}
 
 
-	public static GeneralBioSeq readBinaryFile(String file_name) throws IOException {
+	/*public static GeneralBioSeq readBinaryFile(String file_name) throws IOException {
 		FileInputStream fis = null;
 		GeneralBioSeq seq = null;
 		try {
@@ -108,7 +104,7 @@ public final class NibbleResiduesParser {
 			GeneralUtils.safeClose(fis);
 		}
 		return seq;
-	}
+	}*/
 
 	// Read BNIB sequence from specified file.  Note that range can't be specified.
 	public static byte[] ReadBNIB(File seqfile) throws FileNotFoundException, IOException {
@@ -119,7 +115,7 @@ public final class NibbleResiduesParser {
 		return buf;
 	}
 
-	public static void writeBinaryFile(String file_name, String seqname, String seqversion,
+	private static void writeBinaryFile(String file_name, String seqname, String seqversion,
 			String residues) throws IOException {
 
 		// Note: We need to support case because many groups, including
@@ -204,10 +200,9 @@ public final class NibbleResiduesParser {
 			StringBuffer sb = new StringBuffer();
 			InputStream isr = Streamer.getInputStream(fil, sb);
 
-			FastaParser fastparser = new FastaParser();
 			// if file is gzipped or zipped, then fil.length() will not really be the max_seq_length,
 			//   but that's okay because the parse() method only uses it as a suggestion
-			MutableAnnotatedBioSeq seq = fastparser.parse(isr, null, (int)(fil.length()));
+			MutableAnnotatedBioSeq seq = FastaParser.parse(isr, null, (int)(fil.length()));
 			int seqlength = seq.getResidues().length();
 			System.out.println("length: " + seqlength);
 

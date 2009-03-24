@@ -180,6 +180,9 @@ public final class LoadFileAction {
         gmodel.setSelectedSeqGroup(new_group);
       }
 
+			//System.out.println("Selected group is :"  + gmodel.getSelectedSeqGroup().getID());
+			//System.out.println("Selected seq is :" +gmodel.getSelectedSeq());
+
       MutableAnnotatedBioSeq new_seq = null;
 
       for (int i=0; i<fils.length; i++) {

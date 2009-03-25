@@ -649,6 +649,10 @@ public final class GeneralLoadUtils {
 			return; // return if we've already created the virtual genome
 		}
 
+		if (!isVirtualGenomeSmallEnough(group, chrom_count)) {
+			return;
+		}
+
 		SmartAnnotBioSeq genome_seq = group.addSeq(GENOME_SEQ_ID, 0);
 		for (int i = 0; i < chrom_count; i++) {
 			BioSeq chrom_seq = group.getSeq(i);
@@ -657,6 +661,32 @@ public final class GeneralLoadUtils {
 			}
 			addSeqToVirtualGenome(genome_seq, chrom_seq, default_genome_min, DEBUG_VIRTUAL_GENOME);
 		}
+	}
+
+	/**
+	 * Make sure virtual genome doesn't overflow int bounds.
+	 * @param group
+	 * @return
+	 */
+	private static boolean isVirtualGenomeSmallEnough(AnnotatedSeqGroup group, int chrom_count) {
+		double seq_bounds = 0.0;
+
+		for (int i = 0; i < chrom_count; i++) {
+			BioSeq chrom_seq = group.getSeq(i);
+			int clength = chrom_seq.getLength();
+			int spacer = (clength > 5000000) ? 5000000 : 100000;
+			seq_bounds += clength + spacer;
+			if (DEBUG_VIRTUAL_GENOME) {
+				System.out.println("seq_bounds:" + seq_bounds);
+			}
+			if (seq_bounds > Integer.MAX_VALUE) {
+				if (DEBUG_VIRTUAL_GENOME) {
+					System.out.println("Virtual genome too large for " + group.getID());
+				}
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void addSeqToVirtualGenome(SmartAnnotBioSeq genome_seq, BioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {

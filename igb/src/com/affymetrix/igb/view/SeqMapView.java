@@ -53,6 +53,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
@@ -1317,7 +1318,7 @@ public class SeqMapView extends JPanel
         if (frm != null) {
             StringBuffer title = new StringBuffer(128);
             if (appNameFirstInTitle) {
-                title.append(Application.getSingleton().getApplicationName() + " " + Application.getSingleton().getVersion());
+                title.append(IGBConstants.APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
             }
             if (seq != null) {
                 if (title.length() > 0) {
@@ -1338,7 +1339,7 @@ public class SeqMapView extends JPanel
                 if (title.length() > 0) {
                     title.append(" - ");
                 }
-                title.append(Application.getSingleton().getApplicationName() + " " + Application.getSingleton().getVersion());
+                title.append(IGBConstants.APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
             }
             frm.setTitle(title.toString());
         }

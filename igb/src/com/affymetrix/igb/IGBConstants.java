@@ -27,7 +27,7 @@ public abstract class IGBConstants {
   public static String APP_NAME = "Integrated Genome Browser";
   public static String APP_SHORT_NAME = "IGB";
   public static String IGB_FRIENDLY_VERSION;	// e.g., 5.4
-	public static String BUILD_VERSION;	// e.g., 3579
+	private static String BUILD_VERSION;	// e.g., 3579
 	public static String IGB_VERSION;		// e.g., 5.4.3579
   private static final String DEFAULT_STRING = "UNKNOWN";
 	public static final boolean DEBUG = false;
@@ -49,7 +49,7 @@ public abstract class IGBConstants {
 			BUILD_VERSION = p.getProperty("build.version", DEFAULT_STRING);
 			IGB_VERSION   = p.getProperty("igb.version", DEFAULT_STRING);
 			IGB_FRIENDLY_VERSION = IGB_VERSION;
-			IGB_FRIENDLY_VERSION += " Beta";	// 5.4 is currently Beta
+			//IGB_FRIENDLY_VERSION += " Beta";
 			IGB_VERSION  += "." + BUILD_VERSION;
 		  } catch(IOException e) {
 			  e.printStackTrace();

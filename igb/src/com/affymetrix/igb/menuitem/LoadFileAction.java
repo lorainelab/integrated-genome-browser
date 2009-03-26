@@ -50,11 +50,11 @@ public final class LoadFileAction {
   static int unknown_group_count = 1;
   public static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 
-  protected static boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
+  /*protected static boolean PARSE_CNT = false; // whether to parse ".cnt" files from CNAT
   protected static boolean PARSE_REGION = false; // whether to parse files from Genotype Console Segmenter
   protected static boolean PARSE_VAR = false; // whether to parse ".var" files (Toronto DB of genomic variations)
   protected static boolean PARSE_FSH = false; // whether to parse ".fsh" files (fishClones.txt from UCSC)
-
+*/
   /**
    *  Constructor.
    *  @param ft  a FileTracker used to keep track of directory to load from
@@ -75,7 +75,8 @@ public final class LoadFileAction {
       chooser = new MergeOptionFileChooser();
       chooser.setMultiSelectionEnabled(true);
       chooser.addChoosableFileFilter(new UniFileFilter("axml"));
-      chooser.addChoosableFileFilter(new UniFileFilter("bed"));
+      chooser.addChoosableFileFilter(new UniFileFilter(
+							new String[] {"bed"}, "BED Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2", "ead"},
         "Binary Files"));
@@ -98,7 +99,7 @@ public final class LoadFileAction {
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"sin", "egr", "egr.txt"},
         "Scored Interval Files"));
-      if (PARSE_CNT) {
+      /*if (PARSE_CNT) {
         chooser.addChoosableFileFilter(new UniFileFilter("cnt", "Copy Number Files"));
         chooser.addChoosableFileFilter(new UniFileFilter(
           new String[] {"cnchp", "lohchp"},  "Copy Number CHP Files"));
@@ -114,8 +115,10 @@ public final class LoadFileAction {
       if (PARSE_FSH) {
         chooser.addChoosableFileFilter(new UniFileFilter(
           FishClonesParser.FILE_EXT, "FishClones"));
-      }
-      chooser.addChoosableFileFilter(new UniFileFilter("map"));
+      }*/
+      chooser.addChoosableFileFilter(new UniFileFilter(
+							new String[] {"map"}, "Scored Map Files"));
+
       HashSet<String> all_known_endings = new HashSet<String>();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
       for (int i=0; i<filters.length; i++) {
@@ -141,7 +144,7 @@ public final class LoadFileAction {
     return loadFile(SingletonGenometryModel.getGenometryModel(), load_dir_tracker, gviewerFrame);
   }
 
-  static public File[] loadFile(GenometryModel gmodel, 
+  private static File[] loadFile(GenometryModel gmodel,
       FileTracker load_dir_tracker, JFrame gviewerFrame)  {
 
     MergeOptionFileChooser chooser = getFileChooser();
@@ -208,7 +211,9 @@ public final class LoadFileAction {
         }
       }
 
+
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+
       if (group == null) {
         // This primarily can happen if the merge button is not selected
         // and the loading of the file fails or fails to create a seq group.
@@ -392,7 +397,7 @@ public final class LoadFileAction {
       } else if (lcname.endsWith(".axml")) {
           Xml2GenometryParser parser = new Xml2GenometryParser();
           return parser.parse(str, input_seq);
-      } else if (PARSE_CNT && lcname.endsWith(".cnt")) {
+      /*}	else if (PARSE_CNT && lcname.endsWith(".cnt")) {
           CntParser parser = new CntParser();
           parser.parse(str, selected_group);
           return input_seq;
@@ -414,7 +419,7 @@ public final class LoadFileAction {
               s = s.substring(0, index);
           }
           parser.parse(str, s, selected_group);
-          return input_seq;
+          return input_seq;*/
       } else if (lcname.endsWith(".cnchp") || lcname.endsWith(".lohchp")) {
           AffyCnChpParser parser = new AffyCnChpParser();
           parser.parse(null, ChromLoadPolicy.getLoadAllPolicy(), str, stream_name, selected_group);
@@ -602,7 +607,7 @@ public final class LoadFileAction {
    *  subclass is more control of where the JCheckBox is placed inside the
    *  dialog.
    */
-  public static class MergeOptionFileChooser extends JFileChooser {
+  private static class MergeOptionFileChooser extends JFileChooser {
     ButtonGroup bgroup = new ButtonGroup();
     public JRadioButton merge_button = new JRadioButton("Merge with currently-loaded data", true);
     public JRadioButton no_merge_button = new JRadioButton("Create new genome: ", false);

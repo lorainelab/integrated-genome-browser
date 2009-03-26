@@ -143,7 +143,7 @@ public final class UrlLoaderThread extends Thread {
     }
   }
   
-  void parseUrl(ThreadProgressMonitor monitor, URL url, String file_extension, String tier_name)
+  private void parseUrl(ThreadProgressMonitor monitor, URL url, String file_extension, String tier_name)
   throws IOException {
     String where_from = url.getHost();
     if (where_from == null || where_from.length()==0) {
@@ -177,7 +177,7 @@ public final class UrlLoaderThread extends Thread {
   }
 
 
-  void updateViewer(final SeqMapView gviewer, final MutableAnnotatedBioSeq seq) {
+  private void updateViewer(final SeqMapView gviewer, final MutableAnnotatedBioSeq seq) {
     if (gviewer==null || seq==null) return;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -215,7 +215,7 @@ public final class UrlLoaderThread extends Thread {
   // Parses term names from a "type" string.
   // Returns default_value if parsing fails, or there is no "type" string.
   // Example:  "type=one;two;three"  -> {"one", "two", "three"}
-  static String parseTermName(URL url, String default_value) {
+	private static String parseTermName(URL url, String default_value) {
     //TODO: unlike the rest of this class, this IS specific to DAS and should be moved to DasUtils
     String value = null;
     String query = url.getQuery();
@@ -243,7 +243,7 @@ public final class UrlLoaderThread extends Thread {
    *  data to the given BioSeq.
    *  @param type  a parameter passed on to parsePSL
    */
-  static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String file_extension, String type)
+  private static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String file_extension, String type)
     throws java.net.UnknownHostException, java.io.IOException {
 
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
@@ -321,7 +321,7 @@ public final class UrlLoaderThread extends Thread {
    *  PSL file, and then adds the resulting data to the given BioSeq,
    *  using the parser {@link PSLParser}.
    */
-  static void parsePSL(URLConnection feat_request_con, String type)
+  private static void parsePSL(URLConnection feat_request_con, String type)
   throws IOException {
     MutableAnnotatedBioSeq new_seq = null;
     InputStream result_stream = null;
@@ -344,7 +344,7 @@ public final class UrlLoaderThread extends Thread {
    *  Opens a text input stream from the given url and adds the resulting
    *  data to the given BioSeq.
    */
-  static void parseDas1XML(URLConnection feat_request_con)
+  private static void parseDas1XML(URLConnection feat_request_con)
   throws IOException {
     InputStream result_stream = null;
     BufferedInputStream bis = null;
@@ -364,7 +364,7 @@ public final class UrlLoaderThread extends Thread {
    *  Opens a text input stream from the given url and adds the resulting
    *  data to the given BioSeq.
    */
-  static void parseDas2XML(URLConnection feat_request_con)
+  private static void parseDas2XML(URLConnection feat_request_con)
   throws IOException {
     InputStream result_stream = null;
     BufferedInputStream bis = null;
@@ -397,7 +397,7 @@ public final class UrlLoaderThread extends Thread {
    *  @param type  a parameter passed on to
    *  {@link BpsParser#parse(DataInputStream, String, AnnotatedSeqGroup, AnnotatedSeqGroup, boolean, boolean)}.
    */
-  static void parseBinaryBps(URLConnection feat_request_con, String type)
+  private static void parseBinaryBps(URLConnection feat_request_con, String type)
   throws IOException {
     InputStream result_stream = null;
     BufferedInputStream bis = null;
@@ -410,7 +410,7 @@ public final class UrlLoaderThread extends Thread {
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
-      bps_parser.parse(dis, type, null, group, false, true);
+      BpsParser.parse(dis, type, null, group, false, true);
       group.symHashChanged(bps_parser);
     } finally {
         GeneralUtils.safeClose(dis);

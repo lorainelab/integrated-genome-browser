@@ -35,7 +35,7 @@ import java.util.*;
 public class MapHandler extends HandlerBase implements ContentParser {
 	protected NeoMapI       map = new NeoMap( true, false );
 	protected Parser        xmlParser;
-	private Hashtable       positions = new Hashtable();
+	private Hashtable<String,Integer>       positions = new Hashtable<String,Integer>();
 	private Hashtable       featureTypes = new Hashtable();
 	private Hashtable       featureLabels = new Hashtable();
 	private Hashtable       links = new Hashtable();
@@ -161,17 +161,17 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			String v;
 			int    glyphBegin = 0, glyphEnd = 1;
 
-			v = ( String ) attributes.getValue( "start" );
+			v = attributes.getValue("start");
 			if ( null != v ) {
 				glyphBegin = Integer.parseInt( v );
 			}
 
-			v = ( String ) attributes.getValue( "end" );
+			v = attributes.getValue("end");
 			if ( null != v ) {
 				glyphEnd = Integer.parseInt( v );
 			}
 
-			v = ( String ) attributes.getValue( "config" );
+			v = attributes.getValue("config");
 			if ( null != v ) {
 				lastItem = this.map.addItem( fac, glyphBegin, glyphEnd, v );
 			}
@@ -179,7 +179,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 				lastItem = this.map.addItem( fac, glyphBegin, glyphEnd );
 			}
 
-			v = ( String ) attributes.getValue( "name" );
+			v = attributes.getValue("name");
 			if ( null != v ) {
 				if ( lastItem instanceof LabelledRectGlyph ) {
 					( ( LabelledRectGlyph ) lastItem ).setText( v );
@@ -204,12 +204,12 @@ public class MapHandler extends HandlerBase implements ContentParser {
 				}
 			}
 
-			v = ( String ) attributes.getValue( "href" );
+			v = attributes.getValue("href");
 			if ( null != v ) {
 				links.put( lastItem, v );
 			}
 
-			v = ( String ) attributes.getValue( "target" );
+			v = attributes.getValue("target");
 			if ( null != v ) {
 				targets.put( lastItem, v );
 			}
@@ -217,11 +217,11 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		else if ( name.equals( "featureType" ) ) {  // defining a new glyph style
 			String v;
 
-			v = ( String ) attributes.getValue( "name" );
+			v = attributes.getValue("name");
 			if ( null != v ) {
 				String fName = v;
 
-				v = ( String ) attributes.getValue( "config" );
+				v = attributes.getValue("config");
 
 				Object p = getLabelPosition( attributes );
 
@@ -232,7 +232,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			String v;
 			int    axisOffset = 0;
 
-			v = ( String ) attributes.getValue( "offset" );
+			v = attributes.getValue("offset");
 			if ( null != v ) {
 				axisOffset = Integer.parseInt( v );
 			}
@@ -253,14 +253,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			int    mapMin = 0, mapMax = 100;
 			int    mapTop = -100, mapBottom = 100;
 
-			v = ( String ) attributes.getValue( "min" );
+			v = attributes.getValue("min");
 			if ( null != v ) {
 				Debug.inform( "min set to " + v );
 
 				mapMin = Integer.parseInt( v );
 			}
 
-			v = ( String ) attributes.getValue( "max" );
+			v = attributes.getValue("max");
 			if ( null != v ) {
 				Debug.inform( "max set to " + v );
 				mapMax = Integer.parseInt( v );
@@ -268,17 +268,17 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 			this.map.setMapRange( mapMin, mapMax );
 
-			v = ( String ) attributes.getValue( "top" );
+			v = attributes.getValue("top");
 			if ( null != v ) {
 				mapTop = Integer.parseInt( v );
 			}
 
-			v = ( String ) attributes.getValue( "bottom" );
+			v = attributes.getValue("bottom");
 			if ( null != v ) {
 				mapBottom = Integer.parseInt( v );
 			}
 
-			v = ( String ) attributes.getValue( "color" );
+			v = attributes.getValue("color");
 			if ( null != v ) {
 				com.affymetrix.genoviz.util.NeoColorMap cm = 
 					com.affymetrix.genoviz.util.NeoColorMap.getColorMap();
@@ -288,7 +288,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 			this.map.setMapOffset( mapTop, mapBottom );
 
-			v = ( String ) attributes.getValue( "config" );
+			v = attributes.getValue("config");
 			if ( null != v ) {
 				// This may not be needed because of glyph factory below.
 				this.map.configure( v );
@@ -450,10 +450,10 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 	private Object getLabelPosition( AttributeList attributes ) {
 		Object p = null;
-		String v = ( String ) attributes.getValue( "labeled" );
+		String v = attributes.getValue("labeled");
 
 		if ( null == v ) {  // Allow English as well as American spelling.
-			v = ( String ) attributes.getValue( "labelled" );
+			v = attributes.getValue("labelled");
 		}
 
 		if ( null != v ) {

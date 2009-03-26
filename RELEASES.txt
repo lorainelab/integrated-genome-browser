@@ -4,6 +4,15 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-5.4
+  + Major change:  unification of QuickLoad, DAS/1, and DAS/2 interfaces.
+  + QuickLoad, DAS/1, and DAS/2 servers are all accessed through the "Data Sources" preferences tab. These servers can be added through the "File->Preferences->Data Sources" tab.
+  + Genome selection is now done via the combo boxes at the top of the Data Sources tab. Sequence selection is now done via the Sequence list on the right-hand side.
+  + Full support of a genome view. By choosing the "genome" selection in the Sequence list, the user can see the entire genome of the target organism in a signle view.
+  + Annotation Browser tab is turned on by default.
+  + The DAS/2 "Name Search", "Annotation Browser", and "Pattern Search", will all be combined in a later release.
+  + Many bugfixes. See the SourceForge bugs page for a partial list.
+
 IGB-5.01
   + The major change from previous versions is DAS/2 has replaced QuickLoad as 
     the primary way to access remote data.

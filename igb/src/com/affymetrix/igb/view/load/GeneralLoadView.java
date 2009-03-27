@@ -222,7 +222,7 @@ public final class GeneralLoadView extends JComponent
 		ChangeSelectedGroups(null);
 		removeListeners();
 		initializeSpeciesCB();
-		refreshVersionCB(SELECT_GENOME);
+		refreshVersionCB(SELECT_SPECIES);
 		clearFeaturesTable();
 		disableAllButtons();
 		addListeners();

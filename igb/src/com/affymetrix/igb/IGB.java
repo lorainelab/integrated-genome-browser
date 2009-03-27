@@ -261,7 +261,11 @@ public final class IGB extends Application
     ConsoleView.init();
 
     System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION + "\"");
-    System.out.println();
+		System.out.println("UserAgent: " + HttpUserAgent);
+		System.out.println("Java version: " + System.getProperty("java.version")+" from "+System.getProperty("java.vendor"));
+    Runtime runtime = Runtime.getRuntime();  
+		System.out.println("System memory: " + runtime.maxMemory() / 1024 + " allocated: " + runtime.totalMemory() / 1024);
+		System.out.println();
 
     main_args = args;
 

@@ -207,7 +207,7 @@ public final class Das2ServerInfo  {
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
 	public synchronized void login(){
 		ArrayList<String> log = new ArrayList<String>();
-		log.add("Attempting login to server: "+server_uri);
+		//log.add("Attempting login to server: "+server_uri);
 		try{
 			//first check to see if server authenticates 
 			//log.add("\tDoes server support authentication?");
@@ -232,7 +232,10 @@ public final class Das2ServerInfo  {
 			    while (true){
 			    	userPassword = sa.requestAuthentication(message);
 			    	//did they hit cancel
-			    	if (userPassword == null) break;
+			    	if (userPassword == null) {
+							log.add("User canceled login.");
+							break;
+						}
 			    	//attempt authentication
 			    	else if (userPassword[0].length() !=0 || userPassword[1].length() !=0) {
 			    		das_query = server_uri+"/login?user="+ userPassword[0]+"&password="+ userPassword[1];

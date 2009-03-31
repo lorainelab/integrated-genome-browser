@@ -613,7 +613,7 @@ public class SeqMapView extends JPanel
     }
     TransformTierGlyph axis_tier;
 
-    public IAnnotStyleExtended getAxisAnnotStyle() {
+    private IAnnotStyleExtended getAxisAnnotStyle() {
         return axis_annot_style;
     }
     /** An un-collapsible instance.  It is hideable, though. */

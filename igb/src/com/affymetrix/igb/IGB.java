@@ -924,7 +924,7 @@ public final class IGB extends Application
 
     cpane.setLayout(new BorderLayout());
     splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-    splitpane.setOneTouchExpandable(true);
+    //splitpane.setOneTouchExpandable(true);		// confusing to new users
     splitpane.setDividerSize(8);
     splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
     splitpane.setTopComponent(map_view);
@@ -944,7 +944,7 @@ public final class IGB extends Application
       gmodel.addSymSelectionListener(overview);
       overview.setFrame(frm);
       JSplitPane oversplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-      oversplit.setOneTouchExpandable(true);
+      //oversplit.setOneTouchExpandable(true);		// confusing to new users
       oversplit.setDividerSize(8);
       oversplit.setDividerLocation(100);
       oversplit.setTopComponent(overview);

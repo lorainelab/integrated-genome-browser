@@ -128,7 +128,7 @@ public class AltSpliceView extends JComponent
 
       JScrollPane oscroller = new JScrollPane(options_panel);
       JSplitPane splitpane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-      splitpane.setOneTouchExpandable(true);
+      //splitpane.setOneTouchExpandable(true);		// confusing to new users
       splitpane.setDividerSize(8);
       int dloc = (int)frmbounds.getWidth() - (int)oscroller.getPreferredSize().getWidth() - 25;  // -20 for border etc.
       splitpane.setDividerLocation(dloc);
@@ -141,7 +141,7 @@ public class AltSpliceView extends JComponent
       options_panel.add("East", orf_analyzer);
       JSplitPane splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
       splitpane.setResizeWeight(1);  // allocate as much space as possible to top panel
-      splitpane.setOneTouchExpandable(true);
+      //splitpane.setOneTouchExpandable(true);		// confusing to new users
       splitpane.setDividerSize(8);
       splitpane.setTopComponent(spliced_view);
       splitpane.setBottomComponent(options_panel);

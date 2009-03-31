@@ -60,7 +60,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     // setMapColor() controls what I normally think of as the background.
 
     mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    mapsplitter.setOneTouchExpandable(true);
+    //mapsplitter.setOneTouchExpandable(true);		// confusing to new users
     mapsplitter.setDividerSize(8);
     mapsplitter.setDividerLocation(100);
     NeoCanvas ncan = this.getNeoCanvas();

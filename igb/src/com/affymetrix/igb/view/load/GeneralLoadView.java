@@ -49,6 +49,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
 import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 
+import javax.swing.JSplitPane;
 import javax.swing.table.TableColumn;
 import org.jdesktop.swingworker.SwingWorker;
 
@@ -155,8 +156,11 @@ public final class GeneralLoadView extends JComponent
 		featuresPanel.add(featuresTableScrollPane);
 
 		this.add("North", choicePanel);
-		this.add("West", this.feature_tree_view);
-		this.add("Center", featuresPanel);
+
+		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
+		jPane.setResizeWeight(0.5);		
+		
+		this.add("Center", jPane);
 		this.add("South", buttonPanel);
 
 		this.setBorder(BorderFactory.createEtchedBorder());

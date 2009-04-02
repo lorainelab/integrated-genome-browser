@@ -170,6 +170,11 @@ public final class DasServerInfo {
 	private void parseDSNElement(Element dsn) throws DOMException {
 		NodeList sourcelist = dsn.getElementsByTagName("SOURCE");
 		Element source = (Element) sourcelist.item(0);
+		if (source == null) {
+			// SOURCE tag is required.
+			System.out.println("Missing SOURCE element.  Ignoring.");
+			return;
+		}
 		String sourceid = source.getAttribute("id");
 		String source_version = source.getAttribute("version");
 		String sourcename = null;
@@ -177,10 +182,16 @@ public final class DasServerInfo {
 		if (nametext != null) {
 			sourcename = nametext.getData();
 		}
+
 		NodeList masterlist = dsn.getElementsByTagName("MAPMASTER");
-		String master_url = null;
 		Element master = (Element) masterlist.item(0);
+		if (master == null) {
+			// MAPMASTER tag is required.
+			System.out.println("Missing MAPMASTER element.  Ignoring " + sourceid);
+			return;
+		}
 		Text mastertext = (Text) master.getFirstChild();
+		String master_url = null;
 		if (mastertext != null) {
 			master_url = mastertext.getData();
 		}

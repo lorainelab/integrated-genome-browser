@@ -99,7 +99,7 @@ public final class Xml2GenometryParser {
     MutableAnnotatedBioSeq result = null;
     Timer tim = null;
     Memer mem = null;
-    System.gc();
+    //System.gc();
     //    try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
     if (USE_MEMER)  { mem = new Memer(); }
     if (USE_TIMER)  { tim = new Timer(); }
@@ -111,7 +111,7 @@ public final class Xml2GenometryParser {
 			DocumentBuilderFactory factory = DasLoader.nonValidatingFactory();
 			DasLoader.doNotDeferNodeExpansion(factory);
 			Document seqdoc = factory.newDocumentBuilder().parse(insource);
-      System.gc();
+      //System.gc();
       if (USE_MEMER)  { mem.printMemory(); }
       if (USE_TIMER)  {
 	System.out.println("Time to convert XML to DOM: " + tim.read()/1000f);
@@ -121,7 +121,7 @@ public final class Xml2GenometryParser {
       result = processDocument(seqdoc, seq);
       seqdoc = null;
       factory = null;
-      System.gc();
+      //System.gc();
       if (USE_MEMER) { mem.printMemory(); }
       if (USE_TIMER)  {
 	System.out.println("Time to convert DOM to genometry: " + tim.read()/1000f);
@@ -134,7 +134,7 @@ public final class Xml2GenometryParser {
       int[] counts = SeqUtils.collectCounts(result);
       System.out.println("counts: syms = " + counts[0] + ", spans = " + counts[1]);
     }
-    System.gc();
+    //System.gc();
     return result;
   }
 

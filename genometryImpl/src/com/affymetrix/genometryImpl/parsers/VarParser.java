@@ -61,7 +61,7 @@ public final class VarParser {
 			fields = line_regex.split(line);
 			int field_count = fields.length;
 
-			if (fields == null || field_count > column_names.length) {
+			if (field_count > column_names.length) {
 				throw new IOException("Line " + line_count + " has wrong number of data columns: " + field_count);
 			}
 

@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 //import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
@@ -119,39 +120,36 @@ public final class LiftParser {
 				}
 
 				contig_count++;
-				MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
+				SmartAnnotBioSeq chrom = seq_group.getSeq(chrom_name);
 				if (chrom == null) {
 					chrom_count++;
 					chrom = seq_group.addSeq(chrom_name, chrom_length);
-					if (chrom instanceof Versioned) {
-						((Versioned) chrom).setVersion(genome_version);
+					chrom.setVersion(genome_version);
+				}
+
+				MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();
+				if (comp == null) {
+					comp = new SimpleSymWithProps();
+					((SimpleSymWithProps) comp).setProperty("method", "contigs");
+					if (SET_COMPOSITION) {
+						((CompositeBioSeq) chrom).setComposition(comp);
+					}
+					if (annotate_seq) {
+						chrom.addAnnotation(comp);
 					}
 				}
-				if (chrom instanceof CompositeBioSeq) {
-					MutableSeqSymmetry comp = (MutableSeqSymmetry) (((CompositeBioSeq) chrom).getComposition());
-					if (comp == null) {
-						comp = new SimpleSymWithProps();
-						((SimpleSymWithProps) comp).setProperty("method", "contigs");
-						if (SET_COMPOSITION) {
-							((CompositeBioSeq) chrom).setComposition(comp);
-						}
-						if (annotate_seq) {
-							chrom.addAnnotation(comp);
-						}
-					}
-					SimpleSymWithProps csym = new SimpleSymWithProps();
-					csym.addSpan(new SimpleSeqSpan(chrom_start, (chrom_start + match_length), chrom));
-					csym.addSpan(new SimpleSeqSpan(0, match_length, contig));
-					csym.setProperty("method", "contig");
-					csym.setProperty("id", contig.getID());
-					comp.addChild(csym);
-				}
+				SimpleSymWithProps csym = new SimpleSymWithProps();
+				csym.addSpan(new SimpleSeqSpan(chrom_start, (chrom_start + match_length), chrom));
+				csym.addSpan(new SimpleSeqSpan(0, match_length, contig));
+				csym.setProperty("method", "contig");
+				csym.setProperty("id", contig.getID());
+				comp.addChild(csym);
 			}
 		} catch (EOFException ex) {
 			SingletonGenometryModel.logDebug("reached end of lift file");
 		}
 
-		Collection chroms = seq_group.getSeqList();
+		Collection<SmartAnnotBioSeq> chroms = seq_group.getSeqList();
 		Iterator iter = chroms.iterator();
 		while (iter.hasNext()) {
 			CompositeBioSeq chrom = (CompositeBioSeq) iter.next();

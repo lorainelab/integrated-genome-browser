@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscGeneSym;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
 import java.io.*;
@@ -180,14 +181,14 @@ public final class BrsParser implements AnnotationWriter  {
 					}
 					UcscGeneSym sym = new UcscGeneSym(annot_type, geneName, name, chromseq, forward,
 							tmin, tmax, cmin, cmax, emins, emaxs);
-					if (seq_group != null) {
-						if (geneName.length()!=0) {
-							seq_group.addToIndex(geneName, sym);
-						}
-						if (name.length()!=0) {
-							seq_group.addToIndex(name, sym);
-						}
+
+					if (geneName.length() != 0) {
+						seq_group.addToIndex(geneName, sym);
 					}
+					if (name.length() != 0) {
+						seq_group.addToIndex(name, sym);
+					}
+
 
 					results.add(sym);
 					if (chromseq.getLength() < tmax) { chromseq.setLength(tmax); }
@@ -292,12 +293,14 @@ public final class BrsParser implements AnnotationWriter  {
 
 		Timer tim = new Timer();
 		tim.start();
+
+		DataOutputStream dos = null;
+		DataInputStream dis = null;
 		try {
 			File fil = new File(file_name);
 			flength = fil.length();
 			FileInputStream fis = new FileInputStream(fil);
 			BufferedInputStream bis = new BufferedInputStream(fis);
-			DataInputStream dis = null;
 			if (use_byte_buffer) {
 				byte[] bytebuf = new byte[(int)flength];
 				bis.read(bytebuf);
@@ -309,7 +312,7 @@ public final class BrsParser implements AnnotationWriter  {
 			}
 			String line;
 
-			DataOutputStream dos = null;
+
 			if (write_from_text) {
 				File outfile = new File(bin_file);
 				FileOutputStream fos = new FileOutputStream(outfile);
@@ -404,6 +407,9 @@ public final class BrsParser implements AnnotationWriter  {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(dos);
 		}
 
 		System.out.println("load time: " + tim.read()/1000f);

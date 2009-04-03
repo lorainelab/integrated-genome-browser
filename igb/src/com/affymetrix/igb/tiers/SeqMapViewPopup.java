@@ -322,19 +322,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   public void showAllTiers() {
-    List tiervec = handler.getAllTierLabels();
+    List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
 
-    for (int i=0; i<tiervec.size(); i++) {
-      TierLabelGlyph label = (TierLabelGlyph) tiervec.get(i);
-      TierGlyph tier = (TierGlyph) label.getInfo();
-      IAnnotStyle style = tier.getAnnotStyle();
-      if (style != null) {
-        style.setShow(true);
-      }
-      if (style.getShow()) {
-        tier.restoreState();
-      }
-    }
+		for (TierLabelGlyph label : tiervec) {
+			TierGlyph tier = (TierGlyph) label.getInfo();
+			IAnnotStyle style = tier.getAnnotStyle();
+			if (style != null) {
+				style.setShow(true);
+				tier.restoreState();
+			}
+		}
     showMenu.removeAll();
 
     refreshMap(true); // when re-showing all tiers, do strech_to_fit in the y-direction
@@ -347,7 +344,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   protected void hideOneTier(final TierGlyph tier) {
     final IAnnotStyle style = tier.getAnnotStyle();
     // if style.getShow() is already false, there is likely a bug somewhere!
-    if (style != null && style.getShow()) {
+		if (style == null) {
+			return;
+		}
+    if (style.getShow()) {
       style.setShow(false);
       final JMenuItem show_tier = new JMenuItem() {
         // override getText() because the HumanName of the style might change

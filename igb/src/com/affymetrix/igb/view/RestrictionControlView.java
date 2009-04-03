@@ -24,6 +24,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.GeneralBioSeq;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
@@ -101,8 +102,8 @@ public final class RestrictionControlView extends JComponent
       Application.errorPanel("Problem loading restriction site file, aborting load\n"+
       ex.toString());
     } finally {
-      if (distr!=null) try {distr.close();} catch (Exception e) {}
-      if (file_input_str != null) try { file_input_str.close(); } catch (Exception e) {}
+			GeneralUtils.safeClose(distr);
+			GeneralUtils.safeClose(file_input_str);
     }
 
     if (load_success) {

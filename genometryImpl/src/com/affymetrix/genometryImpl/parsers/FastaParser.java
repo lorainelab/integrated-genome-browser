@@ -716,7 +716,7 @@ public final class FastaParser {
 		// exactly one sequence.
 		// no comment lines.
 		// exactly linelength nucleotides per line (until the last line), with a carriage return following each line.
-		public static void ConvertFASTAToNormalizedFASTA(File oldfile, String newfilename, int linelength)
+		/*public static void ConvertFASTAToNormalizedFASTA(File oldfile, String newfilename, int linelength)
 			throws FileNotFoundException, IOException, IllegalArgumentException {
 			if (linelength <= 0)
 				throw new java.lang.IllegalArgumentException(
@@ -737,8 +737,8 @@ public final class FastaParser {
 			int header_len = (header == null ? 0 : header.length);
 			bis.reset();
 			bis.skip(header_len);
-			FileOutputStream fos = new FileOutputStream(newfile);
-			}
+			//FileOutputStream fos = new FileOutputStream(newfile);
+			}*/
 
 			// Turns out you can't trust Java to skip to a location in a file.
 			// (See http://java.sun.com/j2se/1.5.0/docs/api/java/io/InputStream.html#skip(long) .)

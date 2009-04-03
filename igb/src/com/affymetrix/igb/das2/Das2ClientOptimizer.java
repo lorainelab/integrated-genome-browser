@@ -472,7 +472,7 @@ public final class Das2ClientOptimizer {
                         content_subtype = content_subtype.trim();
                     }
                     request_log.addLogMessage("content subtype: " + content_subtype);
-                    if (content_type == null || content_subtype == null || content_type.equals("unknown") || content_subtype.equals("unknown") || content_subtype.equals("xml") || content_subtype.equals("plain")) {
+                    if (content_subtype == null || content_type.equals("unknown") || content_subtype.equals("unknown") || content_subtype.equals("xml") || content_subtype.equals("plain")) {
                         // if content type is not descriptive enough, go by what was requested
                         content_subtype = format;
                     }

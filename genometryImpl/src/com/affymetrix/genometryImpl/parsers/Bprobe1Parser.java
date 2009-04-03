@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *
@@ -214,7 +215,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		}
 
 		finally {
-			if (dis != null) {try { dis.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(dis);
 		}
 		return results;
 	}

@@ -383,7 +383,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 			SeqSymmetry tcluster_exemplar = null;
 			if (seqs.size() > 0) {
-				SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(0);
+				SmartAnnotBioSeq aseq = group.getSeq(0);
 				SymWithProps typesym = aseq.getAnnotation(annot_type);
 				SeqSymmetry container = typesym.getChild(0);
 				tcluster_exemplar = container.getChild(0);
@@ -392,7 +392,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			writeEadHeader(tcluster_exemplar, annot_type, seqs, dos);
 
 			for (int i=0; i<scount; i++) {
-				SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(i);
+				SmartAnnotBioSeq aseq = group.getSeq(i);
 				SymWithProps typesym = aseq.getAnnotation(annot_type);
 				// transcript clusters should be third level down in hierarchy:
 				//    1) type container

@@ -43,11 +43,11 @@ public final class PluginInfo {
     this.plugin_name = plugin_name;
     // If the plugin_name is null, it will try to set itself to the
     // class name, with the package name removed.
-    if (plugin_name == null || plugin_name.trim().equals("") && class_name != null) {
+    if ((plugin_name == null || plugin_name.trim().equals("")) && class_name != null) {
       this.plugin_name = class_name;
-      int index = plugin_name.lastIndexOf('.');
+      int index = this.plugin_name.lastIndexOf('.');
       if (index >= 0) {
-        plugin_name = plugin_name.substring(index);
+        this.plugin_name = this.plugin_name.substring(index);
       }
     }
     this.load = load;

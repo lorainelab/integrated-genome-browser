@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class BpsParser implements AnnotationWriter  {
 
@@ -182,8 +183,8 @@ public final class BpsParser implements AnnotationWriter  {
 			results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
 		}
 		finally {
-			if (dis != null) {try { dis.close(); } catch (Exception e) {}}
-			if (fis != null) {try { fis.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(fis);
 		}
 		return results;
 	}
@@ -344,14 +345,16 @@ public final class BpsParser implements AnnotationWriter  {
 		tim.start();
 
 		List results = null;
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
 		try  {
 			File fil = new File(file_name);
 			double flength = fil.length();
-			FileInputStream fis = new FileInputStream(fil);
+			fis = new FileInputStream(fil);
 			InputStream istr = null;
 			if (use_byte_buffer) {
 				byte[] bytebuf = new byte[(int)flength];
-				BufferedInputStream bis = new BufferedInputStream(fis);
+				bis = new BufferedInputStream(fis);
 				bis.read(bytebuf);
 				bis.close();
 				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
@@ -366,8 +369,11 @@ public final class BpsParser implements AnnotationWriter  {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(fis);
 		}
-		long timecount = tim.read();
+		//long timecount = tim.read();
 		SingletonGenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read()/1000f));
 		return results;
 	}

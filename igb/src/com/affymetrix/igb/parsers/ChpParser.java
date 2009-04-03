@@ -192,7 +192,7 @@ public final class ChpParser {
     List results = new ArrayList();
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
-      SmartAnnotBioSeq aseq = (SmartAnnotBioSeq)group.getSeq(i);
+      SmartAnnotBioSeq aseq = group.getSeq(i);
       String seqid = aseq.getID();
       // Don't make LazyChpSym if can't find sequence on DAS/2 server
       Das2Region das_segment = vsource.getSegment(aseq);

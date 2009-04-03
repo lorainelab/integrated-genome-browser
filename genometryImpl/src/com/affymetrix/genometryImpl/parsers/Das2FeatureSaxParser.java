@@ -555,7 +555,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				BioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
 				MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a SmartAnnotBioSeq
-				if ((seq != null) && (aseq != null) && (seq == aseq)) {
+				if ((aseq != null) && (seq == aseq)) {
 					result_syms.add(featsym);
 					if (add_to_sym_hash) {
 						//	    System.out.println("adding to sym hash: " + featsym.getName() + ", " + featsym.getID());

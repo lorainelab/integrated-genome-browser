@@ -187,25 +187,27 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 
   private void processSynFile(String path) {
-    try {
-      UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, path);
-      File f = new File(path);
-      if (! f.exists()) {
-        ErrorHandler.errorPanel("File Not Found",
-            "Synonyms file not found at the specified path\n" + path, this);
-        return;
-      } else {
-        FileInputStream fis = new FileInputStream(f);
-        SynonymLookup.getDefaultLookup().loadSynonyms(fis);
+		UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, path);
+		File f = new File(path);
+		if (!f.exists()) {
+			ErrorHandler.errorPanel("File Not Found",
+							"Synonyms file not found at the specified path\n" + path, this);
+			return;
+		}
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(f);
+			SynonymLookup.getDefaultLookup().loadSynonyms(fis);
 
-        JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(),
-            "Loaded Synonyms", JOptionPane.INFORMATION_MESSAGE);
-      }
-    } catch (IOException ioe) {
-      ErrorHandler.errorPanel("ERROR",
-          "Exception while reading from file\n" + path,
-          this, ioe);
-    }
+			JOptionPane.showMessageDialog(this, "Loaded synonyms from: " + f.getName(),
+							"Loaded Synonyms", JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException ioe) {
+			ErrorHandler.errorPanel("ERROR",
+							"Exception while reading from file\n" + path,
+							this, ioe);
+		} finally {
+			GeneralUtils.safeClose(fis);
+		}
   }
 
 

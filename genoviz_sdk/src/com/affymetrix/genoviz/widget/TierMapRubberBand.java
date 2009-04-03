@@ -158,9 +158,7 @@ public class TierMapRubberBand extends RubberBand {
 			atm.setAbleToPackToMatch(false);
 		}
 
-		if (tiermap != null){
-			tiermap.moveTier( from, to );
-		}
+		tiermap.moveTier(from, to);
 
 		for (i=0; i<size; i++){
 			atm = other_maps.elementAt(i);

@@ -363,7 +363,7 @@ public final class GraphSymUtils {
 			for (int i=0; i<grafs.size(); i++) {
 				GraphSym gsym = (GraphSym) grafs.get(i);
 				BioSeq gseq = gsym.getGraphSeq();
-				if (gseq instanceof BioSeq) {
+				if (gseq != null) {
 					String gid = gsym.getID();
 					String newid = getUniqueGraphID(gid, gseq);
 					//TODO: Instead of re-setting the graph ID, a unique ID should have been used in the constructor
@@ -375,9 +375,9 @@ public final class GraphSymUtils {
 				if (gseq instanceof MutableAnnotatedBioSeq)   {
 					((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
 				}
-				if (gsym != null)  {
-					gsym.setProperty("source_url", original_stream_name);
-				}
+
+				gsym.setProperty("source_url", original_stream_name);
+
 				if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
 					gsym = GraphSymUtils.convertTransFragGraph(gsym);
 				}

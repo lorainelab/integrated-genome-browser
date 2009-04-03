@@ -90,7 +90,7 @@ public final class CytobandParser implements AnnotationWriter  {
 				float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
 				boolean forward;
 
-				if (fields == null || field_count < 4) {
+				if (field_count < 4) {
 					throw new IOException("Line has wrong number of data columns.");
 				}
 

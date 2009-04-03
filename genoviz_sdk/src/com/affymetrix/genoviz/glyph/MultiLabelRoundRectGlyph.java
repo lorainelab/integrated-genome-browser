@@ -167,10 +167,8 @@ public class MultiLabelRoundRectGlyph extends RoundRectGlyph implements MultiLab
 						text = getLabelStrings()[index];
 						int mid = pixelbox.x + ( pixelbox.width / 2 ) - ( text_width / 2 );
 						// define adjust such that: ascent-adjust = descent+adjust
-						if (null != fm) {
-							int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0);
-							g.drawString( text, mid, midline + adjust );
-						}
+						int adjust = (int) ((fm.getAscent() - fm.getDescent()) / 2.0);
+						g.drawString(text, mid, midline + adjust);
 					}
 				}
 				if (null != savefont) {

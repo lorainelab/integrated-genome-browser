@@ -264,7 +264,7 @@ public final class IGB extends Application
 		System.out.println("UserAgent: " + HttpUserAgent);
 		System.out.println("Java version: " + System.getProperty("java.version")+" from "+System.getProperty("java.vendor"));
     Runtime runtime = Runtime.getRuntime();  
-		System.out.println("System memory: " + runtime.maxMemory() / 1024 + " allocated: " + runtime.totalMemory() / 1024);
+		System.out.println("System memory: " + runtime.maxMemory() / 1024);
 		if (args != null) {
 			System.out.print("arguments: ");
 			for (String arg : args) {

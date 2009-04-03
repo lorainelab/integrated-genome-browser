@@ -1,8 +1,7 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import javax.swing.table.AbstractTableModel;
 
 final class SeqGroupTableModel extends AbstractTableModel {
@@ -23,15 +22,11 @@ final class SeqGroupTableModel extends AbstractTableModel {
 
 	public Object getValueAt(int row, int col) {
 		if (group != null) {
-			MutableAnnotatedBioSeq seq = group.getSeq(row);
+			SmartAnnotBioSeq seq = group.getSeq(row);
 			if (col == 0) {
 				return seq.getID();
 			} else if (col == 1) {
-				if (seq instanceof CompositeNegSeq) {
-					return Long.toString((long) ((CompositeNegSeq) seq).getLengthDouble());
-				} else {
-					return Integer.toString(seq.getLength());
-				}
+				return Long.toString((long) seq.getLengthDouble());
 			}
 		}
 		return null;

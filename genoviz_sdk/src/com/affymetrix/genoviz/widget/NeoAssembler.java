@@ -712,7 +712,7 @@ public class NeoAssembler extends NeoContainerWidget
 						alignstart, alignend);
 
 			gl.setBackgroundColorMatrix(bg_color_matrix);
-			if (ref_seq != null && gl != null) {
+			if (ref_seq != null) {
 				gl.setReference(ref_seq);
 			}
 			gl.setMatchChar ( match_char );

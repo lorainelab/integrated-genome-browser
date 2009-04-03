@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.Versioned;
 //import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 
 public final class ChromInfoParser {
 	private static final Pattern tab_regex = Pattern.compile("\t");
@@ -52,12 +53,10 @@ public final class ChromInfoParser {
 			String chrom_name = fields[0];
 
 			int chrLength = Integer.parseInt(fields[1]);
-			MutableAnnotatedBioSeq chrom = seq_group.getSeq(chrom_name);
+			SmartAnnotBioSeq chrom = seq_group.getSeq(chrom_name);
 			if (chrom == null) {  // if chrom already in seq group, then don't add to list
 				chrom = seq_group.addSeq(chrom_name, chrLength);
-				if (chrom instanceof Versioned) {
-					((Versioned)chrom).setVersion(genome_version);
-				}
+				chrom.setVersion(genome_version);
 			}
 		}
 		return seq_group;

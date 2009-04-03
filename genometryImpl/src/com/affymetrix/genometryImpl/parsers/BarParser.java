@@ -26,6 +26,7 @@ import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
 
@@ -117,7 +118,7 @@ public final class BarParser implements AnnotationWriter  {
 	public static GraphSymFloat getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {	
 		Timer tim = new Timer();
 		tim.start();
-		boolean USE_RANDOM_ACCESS = false;
+		//boolean USE_RANDOM_ACCESS = false;
 		GraphSymFloat graf = null;
 		BioSeq aseq = span.getBioSeq();
 		String seq_name = aseq.getID();
@@ -175,13 +176,13 @@ public final class BarParser implements AnnotationWriter  {
 
 		DataInput dis = null;
 		try {
-			if (USE_RANDOM_ACCESS) {
+			/*if (USE_RANDOM_ACCESS) {
 
 			}
-			else {
+			else {*/
 				FileInputStream fis = new FileInputStream(new File(file_name));
 				dis = new DataInputStream(new BufferedInputStream(fis));
-			}
+//			}
 			BarFileHeader bar_header = parseBarHeader(dis);
 			BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, seq_group, bar_header);
 			int bytes_per_point = bar_header.bytes_per_point;
@@ -261,15 +262,21 @@ public final class BarParser implements AnnotationWriter  {
 			if (DEBUG_SLICE)  { System.out.println("made graph for slice: " + graf); }
 
 			//fetch tagValues and write properties
-			Map<String,String> seq_tagvals = seq_header.tagvals;
-			if (seq_tagvals !=null && seq_tagvals.size() !=0) copyProps(graf, seq_tagvals);
-
-			//attempt to find and set strand information			
-			if (seq_tagvals.containsKey("strand")) {						
-				String strand = (String) seq_tagvals.get("strand");
-				if (strand.equals("+")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-				if (strand.equals("-")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+			Map<String, String> seq_tagvals = seq_header.tagvals;
+			if (seq_tagvals != null && seq_tagvals.size() > 0) {
+				copyProps(graf, seq_tagvals);
+				//attempt to find and set strand information
+				if (seq_tagvals.containsKey("strand")) {
+					String strand = seq_tagvals.get("strand");
+					if (strand.equals("+")) {
+						graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+					}
+					if (strand.equals("-")) {
+						graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+					}
+				}
 			}
+
 
 			// now output bar file slice??
 
@@ -518,7 +525,7 @@ CHUNK_LOOP:
 
 						//attempt to find and set strand information
 						if (seq_tagvals.containsKey("strand")) {						
-							String strand = (String) seq_tagvals.get("strand");
+							String strand = seq_tagvals.get("strand");
 							if (strand.equals("+")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
 							if (strand.equals("-")) graf.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
 						}
@@ -589,8 +596,8 @@ CHUNK_LOOP:
 			SingletonGenometryModel.getLogger().fine("bar load time: " + t1/1000f);
 		}
 		finally {
-			try { bis.close(); } catch (Exception e) {}
-			try { dis.close(); } catch (Exception e) {}
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(dis);
 		}
 
 		return graphs;

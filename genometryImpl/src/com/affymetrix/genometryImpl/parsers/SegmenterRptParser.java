@@ -158,7 +158,7 @@ public final class SegmenterRptParser {
 
 			// skip any comment lines
 			String line = br.readLine();
-			while (line != null && line.startsWith("#") || line.startsWith("[")) {
+			while (line != null && (line.startsWith("#") || line.startsWith("["))) {
 				parseHeaderLine(line);
 				line = br.readLine();
 			}
@@ -178,7 +178,7 @@ public final class SegmenterRptParser {
 
 			// skip any other comment lines
 			line = br.readLine();
-			while (line != null && line.startsWith("#") || line.startsWith("[")) {
+			while (line != null && (line.startsWith("#") || line.startsWith("["))) {
 				line = br.readLine();
 			}
 

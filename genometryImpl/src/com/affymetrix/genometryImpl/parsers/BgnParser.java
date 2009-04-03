@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.UcscGeneSym;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
 /**
@@ -322,12 +323,13 @@ public final class BgnParser implements AnnotationWriter  {
 
 		Timer tim = new Timer();
 		tim.start();
+		DataOutputStream dos = null;
+		DataInputStream dis = null;
 		try {
 			File fil = new File(text_file);
 			flength = fil.length();
 			FileInputStream fis = new FileInputStream(fil);
 			BufferedInputStream bis = new BufferedInputStream(fis);
-			DataInputStream dis = null;
 			if (use_byte_buffer) {
 				byte[] bytebuf = new byte[(int)flength];
 				bis.read(bytebuf);
@@ -339,7 +341,6 @@ public final class BgnParser implements AnnotationWriter  {
 			}
 			String line;
 
-			DataOutputStream dos = null;
 			if (write_from_text) {
 				File outfile = new File(bin_file);
 				FileOutputStream fos = new FileOutputStream(outfile);
@@ -416,6 +417,9 @@ public final class BgnParser implements AnnotationWriter  {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(dos);
 		}
 		if (DEBUG) {
 			System.out.println("load time: " + tim.read() / 1000f);

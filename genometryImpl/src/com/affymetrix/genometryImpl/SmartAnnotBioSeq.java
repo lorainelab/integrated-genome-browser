@@ -110,8 +110,8 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	 *     so GraphSyms can be retrieved with graph id given as type
 	 */
 	public SymWithProps getAnnotation(String type) {
-		if (type_id2sym == null) { return null; }
-		return type_id2sym.get(type.toLowerCase());
+		if (type_id2sym == null) { return null; }	
+		return type_id2sym.get(type);
 	}
 
 	public List<SymWithProps> getAnnotations(Pattern regex) {
@@ -187,7 +187,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	 *  @return an instance of {@link TypeContainerAnnot}
 	 */
 	public synchronized MutableSeqSymmetry addAnnotation(String type) {
-		type = type.toLowerCase();
+		type = type;
 		if (type_id2sym == null) { 
 			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 		}
@@ -207,7 +207,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	 *     if doesn't yet exist.
 	 */
 	public synchronized void addAnnotation(SeqSymmetry sym, String type) {
-		type = type.toLowerCase();
+		type = type;
 		if (type_id2sym == null) { 
 			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 		}
@@ -249,7 +249,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation, sym.getID() == null && (! needsContainer(sym)), this should never happen!");
 			}
 			if (sym instanceof SymWithProps) {
-				type_id2sym.put(id.toLowerCase(), (SymWithProps) sym);
+				type_id2sym.put(id, (SymWithProps) sym);
 			} else {
 				throw new RuntimeException("n SmartAnnotBioSeq.addAnnotation: sym must be a SymWithProps");
 			}
@@ -298,7 +298,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 
 	/*public void removeType(String type) {
 		if ((type != null)) {
-			type = type.toLowerCase();
+			type = type;
 			MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
 			if (container != null) {
 				type_id2sym.remove(type);
@@ -346,7 +346,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			}
 		}
 		if (meth != null) {
-			meth = meth.toLowerCase();
+			meth = meth;
 		}
 		return meth;
 	}

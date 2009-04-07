@@ -34,8 +34,8 @@ public final class NibbleResiduesParser {
 	 *  BioSeq does exist that is not of the type NibbleBioSeq, an exception
 	 *  will be thrown.
 	 */
-	public static GeneralBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
-		GeneralBioSeq result_seq = null;
+	public static SmartAnnotBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+		SmartAnnotBioSeq result_seq = null;
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
 		try {
@@ -56,10 +56,7 @@ public final class NibbleResiduesParser {
 			//      System.out.println("length: " + num_residues);
 
 			SmartAnnotBioSeq existing_seq = seq_group.getSeq(name);
-			if (existing_seq != null) {
-				result_seq = (GeneralBioSeq) existing_seq;
-			}
-			else {
+			if (existing_seq == null) {
 				result_seq = seq_group.addSeq(name, num_residues);
 			}
 

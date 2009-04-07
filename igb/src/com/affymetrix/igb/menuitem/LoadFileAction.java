@@ -33,6 +33,7 @@ import javax.swing.*;
 import org.xml.sax.InputSource;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
@@ -85,7 +86,7 @@ public final class LoadFileAction {
         new String[] {"gff", "gtf", "gff3"},
         "GFF Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
-        new String[] {"fa", "fasta"},
+        new String[] {"fa", "fasta", "fas"},
         "FASTA Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
         new String[] {"psl", "psl3"},
@@ -502,18 +503,18 @@ public final class LoadFileAction {
           parser.parse(str, annot_type, selected_group, false);
           return null;
       } else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
-          List seqs = FastaParser.parseAll(str, selected_group);
+          List<SmartAnnotBioSeq> seqs = FastaParser.parseAll(str, selected_group);
           if (input_seq != null && seqs.contains(input_seq)) {
               return input_seq;
           } else if (!seqs.isEmpty()) {
-              return (MutableAnnotatedBioSeq) seqs.get(0);
+              return seqs.get(0);
           } else {
               return null;
           }
       } else if (lcname.endsWith(".bnib")) {
           //TODO: check that these conditions make sense
           if (input_seq == null || input_seq instanceof GeneralBioSeq) {
-              MutableAnnotatedBioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+              SmartAnnotBioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
               if (aseq != gmodel.getSelectedSeq()) {
                   //TODO: maybe set the current seq to this seq
                   Application.getSingleton().logWarning("This is not the currently-selected sequence.");

@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import java.io.*;
 import java.util.List;
 
@@ -59,12 +60,12 @@ public class FastaParserTest {
 
 			//FastaParser instance = new FastaParser();
 
-			List seqs = FastaParser.parseAll(istr_1, seq_group);
+			List<SmartAnnotBioSeq> seqs = FastaParser.parseAll(istr_1, seq_group);
 
 			assertEquals(1, seqs.size());
 			assertEquals(1, seq_group.getSeqCount());
 
-			BioSeq seq = (BioSeq) seqs.get(0);
+			SmartAnnotBioSeq seq = seqs.get(0);
 			assertEquals("chrQ", seq.getID());
 
 			seqs = FastaParser.parseAll(istr_2, seq_group);
@@ -72,13 +73,13 @@ public class FastaParserTest {
 			assertEquals(3, seqs.size());
 			assertEquals(4, seq_group.getSeqCount());
 
-			seq = (BioSeq) seqs.get(0);
+			seq = seqs.get(0);
 			assertEquals("gi|5524211|gb|AAD44166.1| cytochrome b [Elephas maximus maximus]", seq.getID());
 
-			seq = (BioSeq) seqs.get(1);
+			seq = seqs.get(1);
 			assertEquals("SEQUENCE_1", seq.getID());
 
-			seq = (BioSeq) seqs.get(2);
+			seq = seqs.get(2);
 			assertEquals("SEQUENCE_2", seq.getID());
 			assertEquals("SATV", seq.getResidues(0,4));
 		}

@@ -23,6 +23,7 @@ import java.util.List;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -52,8 +53,8 @@ public final class FastaParser {
 	 * Returns the List of sequences that were read from the file, which will be
 	 * a subset of the sequences in the group.
 	 */
-	public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
+	public static List<SmartAnnotBioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+		ArrayList<SmartAnnotBioSeq> seqlist = new ArrayList<SmartAnnotBioSeq>();
 		//int line_count = 0;
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
@@ -99,7 +100,7 @@ public final class FastaParser {
 				buf = null; // immediately allow the gc to use this memory
 				residues = residues.trim();
 
-				MutableAnnotatedBioSeq seq = group.getSeq(seqid);
+				SmartAnnotBioSeq seq = group.getSeq(seqid);
 				if (seq == null && seqid.indexOf(' ') > 0) {
 					// It's possible that the header has additional info past the chromosome name.  If so, remove and try again.
 					String name = seqid.substring(0, seqid.indexOf(' '));
@@ -126,8 +127,8 @@ public final class FastaParser {
 	}
 
 
-	public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		List <BioSeq> bioList = parseAll(istr,group);
+	public static SmartAnnotBioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+		List <SmartAnnotBioSeq> bioList = parseAll(istr,group);
 		if (bioList == null)
 			return null;
 		return bioList.get(0);
@@ -535,6 +536,10 @@ public final class FastaParser {
 			// Sanity check on huge range... can't be larger than the overall file size.
 			if (seqfile.length() <= (long)Integer.MAX_VALUE) {
 				end_sequence = Math.min(end_sequence, (int)seqfile.length());
+			}
+
+			if (begin_sequence == end_sequence) {
+				return null;
 			}
 
 			byte[] buf = null;

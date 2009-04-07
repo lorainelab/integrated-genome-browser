@@ -117,7 +117,7 @@ public class FastaParserTest {
 			expected_fasta = "L".toCharArray();
 			testFASTASegment(filename, fasta, expected_fasta, 0, 1);
 
-			expected_fasta = "".toCharArray();
+			expected_fasta = null;
 			testFASTASegment(filename, fasta, expected_fasta, 3, 3);
 
 			expected_fasta = "LMPFLH".toCharArray();
@@ -263,6 +263,12 @@ public class FastaParserTest {
 		int header_len = (header == null ? 0 : header.length);
 
 		fasta = FastaParser.ReadFASTA(new File(filename), start, end);
+
+		if (expected_fasta == null) {
+			assertNull(fasta);
+			return;
+		}
+
 		assertNotNull(fasta);
 
 		System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
@@ -278,7 +284,7 @@ public class FastaParserTest {
 
 		System.out.print("testing against expected:");
 		for (int i = 0; i < fasta.length - header_len; i++) {
-			System.out.print((char)expected_fasta[i]);
+			System.out.print(expected_fasta[i]);
 			assertEquals(expected_fasta[i], (char) fasta[i + header_len]);
 		}
 		System.out.println();

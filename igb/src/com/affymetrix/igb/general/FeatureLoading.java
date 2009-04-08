@@ -1,6 +1,7 @@
 package com.affymetrix.igb.general;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -255,7 +256,7 @@ public final class FeatureLoading {
 				bis = new BufferedInputStream(istr);
 				if (GraphSymUtils.isAGraphFilename(gFeature.featureName)) {
 					URL url = new URL(annot_url);
-					List graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+					List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 					if (graphs != null) {
 						// Reset the selected Seq Group to make sure that the DataLoadView knows
 						// about any new chromosomes that were added.

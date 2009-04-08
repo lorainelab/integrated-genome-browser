@@ -428,102 +428,124 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	}
 
 
+	public static void writeBedFormat(Writer wr, List<SeqSymmetry> syms, BioSeq seq)
+		throws IOException  {
+		for (SeqSymmetry sym : syms) {
+			writeBedFormat(wr, sym, seq);
+		}
+	}
 
 	/**
 	 *  Writes bed file format.
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	public static void writeBedFormat(Writer out, SeqSymmetry sym, BioSeq seq)
+	private static void writeBedFormat(Writer out, SeqSymmetry sym, BioSeq seq)
 		throws IOException {
-		if ((sym instanceof UcscBedSym) && (sym.getSpan(seq) != null)) {
-			UcscBedSym bedsym = (UcscBedSym)sym;
+		if (DEBUG) {
+			System.out.println("writing sym: " + sym);
+		}
+		SeqSpan span = sym.getSpan(seq);
+		if (span == null) {
+			return;
+		}
+
+		if (sym instanceof UcscBedSym) {
+			UcscBedSym bedsym = (UcscBedSym) sym;
 			if (seq == bedsym.getBioSeq()) {
 				bedsym.outputBedFormat(out);
 			}
+			return;
 		}
-		else {
-			if (DEBUG) {System.out.println("writing sym: " + sym);}
-			SeqSpan span = sym.getSpan(seq);
-			SymWithProps propsym = null;
-			if (sym instanceof SymWithProps) {
-				propsym = (SymWithProps)sym;
+
+		SymWithProps propsym = null;
+		if (sym instanceof SymWithProps) {
+			propsym = (SymWithProps) sym;
+		}
+
+		writeOutFile(out, seq, span, sym, propsym);
+	}
+
+
+	private static void writeOutFile(Writer out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
+		out.write(seq.getID());
+		out.write('\t');
+		int min = span.getMin();
+		int max = span.getMax();
+		out.write(Integer.toString(min));
+		out.write('\t');
+		out.write(Integer.toString(max));
+		int childcount = sym.getChildCount();
+		if ((!span.isForward()) || (childcount > 0) || (propsym != null)) {
+			out.write('\t');
+			if (propsym != null) {
+				if (propsym.getProperty("name") != null) {
+					out.write((String) propsym.getProperty("name"));
+				} else if (propsym.getProperty("id") != null) {
+					out.write((String) propsym.getProperty("id"));
+				}
 			}
-			if (span != null) {
-				int childcount = sym.getChildCount();
-				out.write(seq.getID());
-				out.write('\t');
-				int min = span.getMin();
-				int max = span.getMax();
-				out.write(Integer.toString(min));
-				out.write('\t');
-				out.write(Integer.toString(max));
-				if ( (! span.isForward()) || (childcount > 0) || (propsym != null) ) {
-					out.write('\t');
-					if (propsym != null) {
-						if (propsym.getProperty("name") != null) { out.write((String)propsym.getProperty("name")); }
-						else if (propsym.getProperty("id") != null) { out.write((String)propsym.getProperty("id")); }
-					}
-					out.write('\t');
-					if ((propsym != null)  && (propsym.getProperty("score") != null))  {
-						out.write(propsym.getProperty("score").toString());
-					} else if (sym instanceof Scored) {
-						out.write(Float.toString(((Scored) sym).getScore()));
-					}
-					else { out.write('0'); }
-					out.write('\t');
-					if (span.isForward()) { out.write('+'); }
-					else { out.write('-'); }
-					if (childcount > 0) {
-						out.write('\t');
-						if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
-							out.write(propsym.getProperty("cds min").toString());
-						}
-						else { out.write(Integer.toString(min)); }
-						out.write('\t');
-						if ((propsym != null) && (propsym.getProperty("cds max") != null))  {
-							out.write(propsym.getProperty("cds max").toString());
-						}
-						else { out.write(Integer.toString(max)); }
-						out.write('\t');
-						out.write('0');
-						out.write('\t');
-						out.write(Integer.toString(childcount));
-						out.write('\t');
-						int[] blockSizes = new int[childcount];
-						int[] blockStarts = new int[childcount];
-						for (int i=0; i<childcount; i++) {
-							SeqSymmetry csym = sym.getChild(i);
-							SeqSpan cspan = csym.getSpan(seq);
-							blockSizes[i] = cspan.getLength();
-							blockStarts[i] = cspan.getMin() - min;
-						}
-						for (int i=0; i<childcount; i++) {
-							out.write(Integer.toString(blockSizes[i]));
-							out.write(',');
-						}
-						out.write('\t');
-						for (int i=0; i<childcount; i++) {
-							out.write(Integer.toString(blockStarts[i]));
-							out.write(',');
-						}
-					}  // END "if (childcount > 0)"
-				}  // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
+			out.write('\t');
+			if ((propsym != null) && (propsym.getProperty("score") != null)) {
+				out.write(propsym.getProperty("score").toString());
+			} else if (sym instanceof Scored) {
+				out.write(Float.toString(((Scored) sym).getScore()));
+			} else {
+				out.write('0');
+			}
+			out.write('\t');
+			if (span.isForward()) {
+				out.write('+');
+			} else {
+				out.write('-');
+			}
+			if (childcount > 0) {
+				writeOutChildren(out, propsym, min, max, childcount, sym, seq);
+			}
+		} // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
+		out.write('\n');
+	}
 
-				out.write('\n');
-			}   // END "if (span != null)"
+
+
+	private static void writeOutChildren(Writer out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
+		out.write('\t');
+		if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
+			out.write(propsym.getProperty("cds min").toString());
+		} else {
+			out.write(Integer.toString(min));
+		}
+		out.write('\t');
+		if ((propsym != null) && (propsym.getProperty("cds max") != null)) {
+			out.write(propsym.getProperty("cds max").toString());
+		} else {
+			out.write(Integer.toString(max));
+		}
+		out.write('\t');
+		out.write('0');
+		out.write('\t');
+		out.write(Integer.toString(childcount));
+		out.write('\t');
+		int[] blockSizes = new int[childcount];
+		int[] blockStarts = new int[childcount];
+		for (int i = 0; i < childcount; i++) {
+			SeqSymmetry csym = sym.getChild(i);
+			SeqSpan cspan = csym.getSpan(seq);
+			blockSizes[i] = cspan.getLength();
+			blockStarts[i] = cspan.getMin() - min;
+		}
+		for (int i = 0; i < childcount; i++) {
+			out.write(Integer.toString(blockSizes[i]));
+			out.write(',');
+		}
+		out.write('\t');
+		for (int i = 0; i < childcount; i++) {
+			out.write(Integer.toString(blockStarts[i]));
+			out.write(',');
 		}
 	}
 
-	public static void writeBedFormat(Writer wr, List syms, BioSeq seq)
-		throws IOException  {
-		int symcount = syms.size();
-		for (int i=0; i<symcount; i++) {
-			SeqSymmetry sym = (SeqSymmetry)syms.get(i);
-			//      System.out.println("trying to write sym: " + sym);
-			writeBedFormat(wr, sym, seq);
-		}
-	}
+
 
 	/**
 	 *  Writes a simple bed file format.  Uses the SeqSpan at index 0.

@@ -29,8 +29,10 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.parsers.Streamer;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -89,7 +91,7 @@ public final class OpenGraphAction extends AbstractAction {
           this,
           false, false);
         monitor.showDialogEventually();
-        List graphs = null;
+        List<GraphSym> graphs = null;
         try {
           AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
           graphs = loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
@@ -139,9 +141,9 @@ public final class OpenGraphAction extends AbstractAction {
    *  this is a reminder that this is fairly common here.  (You have to catch
    *  "Throwable" rather than "Exception" to catch these.)
    */
-  static List loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
+  static List<GraphSym> loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
   throws IOException, OutOfMemoryError {
-    List graphs = Collections.EMPTY_LIST;
+    List<GraphSym> graphs = Collections.<GraphSym>emptyList();
     if (aseq != null) {
       for (int i=0; i<files.length; i++) {
         if (monitor != null) {monitor.setMessageEventually("Loading graph from: "+files[i].getPath());}
@@ -153,8 +155,8 @@ public final class OpenGraphAction extends AbstractAction {
   }
 
   //TODO: Make a version that works with an InputStream instead of a url
-  public static List loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
-    List graphs = Collections.EMPTY_LIST;
+  public static List<GraphSym> loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
+    List<GraphSym> graphs = Collections.<GraphSym>emptyList();
     InputStream fis = null;
     try {
       String path = furl.getPath();
@@ -174,25 +176,25 @@ public final class OpenGraphAction extends AbstractAction {
       
       String graph_name = getGraphNameForURL(furl);
       // Now set the graph names (either the URL or the filename, possibly with an integer appended)
-      for (int i=0; i<graphs.size(); i++) {
-                com.affymetrix.genometryImpl.GraphSym gg = (com.affymetrix.genometryImpl.GraphSym) graphs.get(i);
+     for (int i = 0; i < graphs.size(); i++) {
+				GraphSym gg = graphs.get(i);
 
-        IAnnotStyle style = gg.getGraphState().getTierStyle();
-        
-        String name = graph_name;
-        if (graphs.size() > 1) {
-          name = name + " " + (i+1);
-        }
-        if (style.getHumanName().equals(gg.getID())) {
-          //Only apply a new graph name it current name is the same as the ID.
-          //(Because the ID is mainly for internal use and if a different name
-          // has already been set by the parser, it is probably a good one.)
-          style.setHumanName(name);
-        }
-      }      
+				IAnnotStyle style = gg.getGraphState().getTierStyle();
+
+				String name = graph_name;
+				if (graphs.size() > 1) {
+					name = name + " " + (i + 1);
+				}
+				if (style.getHumanName().equals(gg.getID())) {
+					//Only apply a new graph name if current name is the same as the ID.
+					//(Because the ID is mainly for internal use and if a different name
+					// has already been set by the parser, it is probably a good one.)
+					style.setHumanName(name);
+				}
+			}
       
     } finally {
-      if (fis != null) try { fis.close(); } catch (IOException ioe) {}
+			GeneralUtils.safeClose(fis);
     }
     return graphs;
   }
@@ -249,7 +251,7 @@ public final class OpenGraphAction extends AbstractAction {
       chooser.addChoosableFileFilter(new UniFileFilter("gr", "Text Graph"));
       chooser.addChoosableFileFilter(new UniFileFilter("bgr"));
       chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
-      HashSet all_known_endings = new HashSet();
+      HashSet<String> all_known_endings = new HashSet<String>();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
       for (int i=0; i<filters.length; i++) {
         if (filters[i] instanceof UniFileFilter) {
@@ -259,7 +261,7 @@ public final class OpenGraphAction extends AbstractAction {
         }
       }
       UniFileFilter all_known_types = new UniFileFilter(
-        (String[]) all_known_endings.toArray(new String[all_known_endings.size()]),
+        all_known_endings.toArray(new String[all_known_endings.size()]),
         "Known Graph Types");
       all_known_types.setExtensionListInDescription(false);
       all_known_types.addCompressionEndings(Streamer.compression_endings);

@@ -33,6 +33,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
@@ -551,54 +552,51 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
 
-  public void saveAsBedFile(TierGlyph atier) {
-    int childcount= atier.getChildCount();
-    List syms = new ArrayList(childcount);
-    for (int i=0; i<childcount; i++) {
-      GlyphI child = atier.getChild(i);
-      if (child.getInfo() instanceof SeqSymmetry) {
-	syms.add(child.getInfo());
-      }
-    }
-    System.out.println("Saving symmetries as BED file: "+ syms.size());
+  private static void saveAsBedFile(TierGlyph atier) {
+		int childcount = atier.getChildCount();
+		List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(childcount);
+		for (int i = 0; i < childcount; i++) {
+			GlyphI child = atier.getChild(i);
+			if (child.getInfo() instanceof SeqSymmetry) {
+				syms.add((SeqSymmetry)child.getInfo());
+			}
+		}
+		System.out.println("Saving symmetries as BED file: " + syms.size());
 //    com.affymetrix.genometry.util.SeqUtils.printSymmetry((SeqSymmetry) syms.get(0));
 
-    JFileChooser chooser = UniFileChooser.getFileChooser("Bed file", "bed");
-    chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
+		JFileChooser chooser = UniFileChooser.getFileChooser("Bed file", "bed");
+		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 
-    int option = chooser.showSaveDialog(null);
-    if (option == JFileChooser.APPROVE_OPTION) {
-      FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-      BufferedWriter bw = null;
-      try {
-	File fil = chooser.getSelectedFile();
-	FileWriter fw = new FileWriter(fil);
-	bw = new BufferedWriter(fw);
-	BedParser.writeBedFormat(bw, syms, aseq);
-	bw.close();
-      }
-      catch (Exception ex) {
-	ErrorHandler.errorPanel("Problem saving file", ex);
-      } finally {
-        if (bw != null) try {bw.close();} catch (IOException ioe) {}
-      }
-    }
-  }
+		int option = chooser.showSaveDialog(null);
+		if (option == JFileChooser.APPROVE_OPTION) {
+			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
+			MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+			BufferedWriter bw = null;
+			try {
+				File fil = chooser.getSelectedFile();
+				FileWriter fw = new FileWriter(fil);
+				bw = new BufferedWriter(fw);
+				BedParser.writeBedFormat(bw, syms, aseq);
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel("Problem saving file", ex);
+			} finally {
+				GeneralUtils.safeClose(bw);
+			}
+		}
+	}
 
   static void collectSyms(GlyphI gl, List syms) {
-    Object info = gl.getInfo();
-    if ((info != null)  && (info instanceof SeqSymmetry)) {
-      syms.add((SeqSymmetry)info);
-    }
-    else if (gl.getChildCount() > 0) {
-      // if no SeqSymmetry associated with glyph, descend and try children
-      int child_count = gl.getChildCount();
-      for (int i=0; i<child_count; i++) {
-	collectSyms(gl.getChild(i), syms);
-      }
-    }
-  }
+		Object info = gl.getInfo();
+		if ((info != null) && (info instanceof SeqSymmetry)) {
+			syms.add((SeqSymmetry) info);
+		} else if (gl.getChildCount() > 0) {
+			// if no SeqSymmetry associated with glyph, descend and try children
+			int child_count = gl.getChildCount();
+			for (int i = 0; i < child_count; i++) {
+				collectSyms(gl.getChild(i), syms);
+			}
+		}
+	}
 
   public void addSymCoverageTier(TierGlyph atier) {
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();

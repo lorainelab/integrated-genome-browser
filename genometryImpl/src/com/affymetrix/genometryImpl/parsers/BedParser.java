@@ -440,7 +440,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	private static void writeBedFormat(Writer out, SeqSymmetry sym, BioSeq seq)
+	public static void writeBedFormat(Writer out, SeqSymmetry sym, BioSeq seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);

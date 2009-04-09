@@ -1705,7 +1705,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					} /* support for single name, single format, no other filters */
 			else if (names != null && names.size() == 1) {
 				String name = names.get(0);
-				result = DetermineResult(name, genome, result);
+				result = DetermineResult(name, genome);
 				if (types.size() > 0) {
 					// make sure result syms are of one of the specified types
 					/*  NOT DONE YET
@@ -1940,7 +1940,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		private static final List<SeqSymmetry> DetermineResult(String name, AnnotatedSeqGroup genome, List<SeqSymmetry> result) {
+		private static final List<SeqSymmetry> DetermineResult(String name, AnnotatedSeqGroup genome) {
 			// GAH 11-2006
 			//   need to enhance this to support multiple name parameters OR'd together
 			//   DAS/2 specification defines glob-style searches:
@@ -1954,7 +1954,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			boolean glob_start = name.startsWith("*");
 			boolean glob_end = name.endsWith("*");
 
-
+			List<SeqSymmetry> result = null;
 			Pattern name_pattern = null;
 			if (glob_start || glob_end) {
 				String name_regex = name.toLowerCase();

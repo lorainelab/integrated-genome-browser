@@ -536,20 +536,21 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
       MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
       BufferedWriter bw = null;
-      try {
-	File fil = chooser.getSelectedFile();
-	FileOutputStream fos = new FileOutputStream(fil);
-	Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
-	das_parser.writeAnnotations(syms, aseq, annot_type, fos);
-        fos.close();
-      }
-      catch (Exception ex) {
-	ErrorHandler.errorPanel("Problem saving file", ex);
-      } finally {
-        if (bw != null) try {bw.close();} catch (IOException ioe) {}
-      }
-    }
-  }
+			FileOutputStream fos = null;
+    try {
+				File fil = chooser.getSelectedFile();
+				fos = new FileOutputStream(fil);
+				Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
+				das_parser.writeAnnotations(syms, aseq, annot_type, fos);
+				fos.close();
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel("Problem saving file", ex);
+			} finally {
+				GeneralUtils.safeClose(bw);
+				GeneralUtils.safeClose(fos);
+			}
+		}
+	}
 
 
   private static void saveAsBedFile(TierGlyph atier) {
@@ -585,7 +586,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-  static void collectSyms(GlyphI gl, List syms) {
+  static void collectSyms(GlyphI gl, List<SeqSymmetry> syms) {
 		Object info = gl.getInfo();
 		if ((info != null) && (info instanceof SeqSymmetry)) {
 			syms.add((SeqSymmetry) info);
@@ -602,7 +603,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
 
-    List syms = new ArrayList(child_count);
+    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
     collectSyms(atier, syms);
     if (child_count == 0 || syms.size() == 0) {
       ErrorHandler.errorPanel("Empty Tier",
@@ -611,7 +612,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 
     SeqSymmetry union_sym = SeqSymSummarizer.getUnion(syms, aseq);
-    SymWithProps wrapperSym;;
+    SymWithProps wrapperSym;
     if (union_sym instanceof SymWithProps) {
       wrapperSym = (SymWithProps) union_sym;
     } else {
@@ -647,7 +648,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     //   just recursively descend through child glyphs of the tier, and if
     //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
     //   (don't descend into childA's children)
-    List syms = new ArrayList();
+    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
     collectSyms(atier, syms);
     if (syms.size() == 0) {
       ErrorHandler.errorPanel("Nothing to Summarize",

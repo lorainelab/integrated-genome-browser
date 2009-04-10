@@ -15,6 +15,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.Application;
 
+import com.affymetrix.igb.util.LocalUrlCacher;
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -102,6 +103,8 @@ public final class SimpleBookmarkServer {
       try {
         // try and find an open port...
         URLConnection conn = test_url.openConnection();
+				conn.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+				conn.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
         conn.connect();
         // if connection is successful, that means we cannot use that port
         // and must try another one.
@@ -133,6 +136,8 @@ public final class SimpleBookmarkServer {
         try {
           URL test_url = new URL("http://localhost:" + current_port + "/"+SERVLET_NAME+"?ping=yes");
           URLConnection conn = test_url.openConnection();
+					conn.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+					conn.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
           conn.connect();
           Application.logInfo("Found another igb listening at port: " + current_port);
           other_igb_port = current_port;

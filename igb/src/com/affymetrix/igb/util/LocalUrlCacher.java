@@ -43,6 +43,9 @@ public final class LocalUrlCacher {
 	public static final int CACHE_USAGE_DEFAULT = LocalUrlCacher.NORMAL_CACHE;
 	public static final String URL_NOT_REACHABLE = "URL_NOT_REACHABLE";
 
+	public static final int CONNECT_TIMEOUT = 30000;	// If you can't connect in 30 seconds, fail.
+	public static final int READ_TIMEOUT = 180000;		// If you can't read in 3 minutes, fail.
+
 	private static enum CacheType { FILE, CACHED, STALE_CACHE, NOT_CACHED, UNREACHABLE};
 
 	private static boolean offline = false;
@@ -164,6 +167,8 @@ public final class LocalUrlCacher {
 
 		try {
 			URL theurl = new URL(url);
+			conn.setConnectTimeout(CONNECT_TIMEOUT);
+			conn.setReadTimeout(READ_TIMEOUT);
 			conn = theurl.openConnection();
 			// adding a conn.connect() call here to force throwing of error here if can't open connection
 			//    because some method calls on URLConnection like those below don't always throw errors
@@ -252,6 +257,8 @@ public final class LocalUrlCacher {
 		if ((!CACHE_FILE_URLS) && isFile(url)) {
 			URL furl = new URL(url);
 			URLConnection huc = furl.openConnection();
+			huc.setConnectTimeout(CONNECT_TIMEOUT);
+			huc.setReadTimeout(READ_TIMEOUT);
 			//set sessionId
 			if (sessionId != null) {
 				huc.setRequestProperty("Cookie", sessionId);
@@ -292,6 +299,8 @@ public final class LocalUrlCacher {
 			try {
 				URL theurl = new URL(url);
 				conn = theurl.openConnection();
+				conn.setConnectTimeout(CONNECT_TIMEOUT);
+				conn.setReadTimeout(READ_TIMEOUT);
 
 				conn.setRequestProperty("Accept-Encoding", "gzip");
 

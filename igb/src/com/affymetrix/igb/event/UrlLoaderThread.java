@@ -26,6 +26,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.menuitem.LoadFileAction;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import org.xml.sax.InputSource;
 
 /**
@@ -153,6 +154,8 @@ public final class UrlLoaderThread extends Thread {
     if (isInterrupted() || monitor.isCancelled()) {return;}
     
     URLConnection connection = url.openConnection();
+		connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+		connection.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
     connection.connect(); // throws an exception if no connection available
     
     monitor.setMessageEventually("Loading data from "+where_from);

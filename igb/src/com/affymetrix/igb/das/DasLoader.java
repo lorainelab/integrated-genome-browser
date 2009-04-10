@@ -88,6 +88,8 @@ public abstract class DasLoader {
     Document doc = null;
     URL request_url = new URL(url);
     URLConnection request_con = request_url.openConnection();
+		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
     doc = getDocument(request_con);
     return doc;
   }
@@ -234,6 +236,8 @@ public abstract class DasLoader {
     // fetch info about this URL
     URL request_url = new URL(url);
     URLConnection request_con = request_url.openConnection();
+		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 
     // figure out hashcode
     int hashcode = url.hashCode();

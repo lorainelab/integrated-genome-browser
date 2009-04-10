@@ -95,6 +95,8 @@ public final class DasUtils {
     System.out.println("DAS request: " + request);
 		}
     URLConnection request_con = request_url.openConnection();
+		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
     InputStream result_stream = request_con.getInputStream();
     residues = parseDasResidues(new BufferedInputStream(result_stream));
     return residues;

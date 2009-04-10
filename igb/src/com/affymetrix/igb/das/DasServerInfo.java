@@ -12,12 +12,11 @@
  */
 package com.affymetrix.igb.das;
 
+import com.affymetrix.igb.util.LocalUrlCacher;
 import java.net.*;
 import java.util.*;
 import java.util.regex.*;
 import org.w3c.dom.*;
-
-import com.affymetrix.genoviz.util.ErrorHandler;
 
 public final class DasServerInfo {
 
@@ -120,6 +119,8 @@ public final class DasServerInfo {
 			System.out.println("Das Request: " + request_str);
 			URL das_request = new URL(request_str);
 			URLConnection request_con = das_request.openConnection();
+			request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+			request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			String das_version = request_con.getHeaderField("X-DAS-Version");
 			String das_status = request_con.getHeaderField("X-DAS-Status");
 			String das_capabilities = request_con.getHeaderField("X-DAS-Capabilities");

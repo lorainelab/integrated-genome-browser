@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 //import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.util.LocalUrlCacher;
 
 /**
  *  AlignControl tries to display other seq of a pairwise alignment in
@@ -134,6 +135,8 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
       //      request_url.openConnection().connect();
       //      request_url.getContent();
       URLConnection con = request_url.openConnection();
+			con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+			con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
       //      con.setDoInput(true);
       // for some reason, need to get input stream and close it to trigger
       //    "response" at other end...

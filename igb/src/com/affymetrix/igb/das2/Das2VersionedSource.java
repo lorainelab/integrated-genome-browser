@@ -486,6 +486,8 @@ public class Das2VersionedSource {
 			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 			URL query_url = new URL(feature_query);
 			URLConnection query_con = query_url.openConnection();
+			query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
+			query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			InputStream istr = query_con.getInputStream();
 			BufferedInputStream bis = new BufferedInputStream(istr);
 			//      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);

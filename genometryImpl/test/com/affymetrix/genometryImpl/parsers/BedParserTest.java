@@ -249,6 +249,46 @@ public class BedParserTest {
 		}
 
 	/**
+	 * Test of writeAnnotations method, of class com.affymetrix.igb.parsers.BedParser.
+	 * Validate that if the genes have the same name, then loading and writing them out
+	 * gives the same information.
+	 */
+	@Test
+		public void testWriteAnnotations2() {
+			System.out.println("writeAnnotations2");
+
+			String string =
+				"chr1	455031	455267	EL049618	0	+	455031	455267	0	3	9,36,26,	0,80,210,\n"+
+        "chr1	457618	457865	EL049618	0	+	457618	457865	0	3	9,36,26,	0,97,221,\n"
+				;
+
+			InputStream istr = new ByteArrayInputStream(string.getBytes());
+			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+			boolean annot_seq = true;
+			String stream_name = "test_file";
+			boolean create_container = true;
+			BedParser instance = new BedParser();
+
+			Collection<SeqSymmetry> syms = null;
+			try {
+				syms = instance.parse(istr,gmodel,group,annot_seq,stream_name,create_container);
+			} catch (IOException ioe) {
+				fail("Exception: " + ioe);
+			}
+
+			// Now we have read the data into "syms", so let's try writing it.
+
+			SmartAnnotBioSeq seq = group.getSeq("chr1");
+			String type = "test_type";
+			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+
+			boolean result = instance.writeAnnotations(syms, seq, type, outstream);
+			assertEquals(true, result);
+			assertEquals(string, outstream.toString());
+		}
+
+
+	/**
 	 * Test of getMimeType method, of class com.affymetrix.igb.parsers.BedParser.
 	 */
 	@Test

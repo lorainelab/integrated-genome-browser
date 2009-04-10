@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 //import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *  A parser for UCSC's BED format.
@@ -342,7 +343,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	/** Parses the name field from the file.  Ensures that names are unique by
 	 *  adding a ".1", ".2", etc., as needed.
 	 */
-	public String parseName(String s) {
+	/*public String parseName(String s) {
 		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
 		Integer count = name_counts.get(annot_name);
 		if (count == null) {
@@ -353,6 +354,16 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 			name_counts.put(annot_name, new_count);
 			annot_name = annot_name + "." + new_count.toString();
 		}
+		return annot_name;
+	}*/
+
+	/**
+	 * Parses the name field from the file.  Gene names are allowed to be non-unique.
+	 * @param s
+	 * @return
+	 */
+	public static String parseName(String s) {
+		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
 		return annot_name;
 	}
 
@@ -550,19 +561,19 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	/**
 	 *  Writes a simple bed file format.  Uses the SeqSpan at index 0.
 	 */
-	public static void writeSimpleBedFormat(Writer wr, List syms, boolean writeCDS)
+	/*public static void writeSimpleBedFormat(Writer wr, List syms, boolean writeCDS)
 		throws IOException  {
 		int symcount = syms.size();
 		for (int i=0; i<symcount; i++) {
 			SeqSymmetry sym = (SeqSymmetry)syms.get(i);
 			writeSimpleBedFormat(wr, sym, writeCDS);
 		}
-	}
+	}*/
 
 	/**
 	 *  Writes bed file format.  Uses the span at index 0.
 	 */
-	public static void writeSimpleBedFormat(Writer out, SeqSymmetry sym, boolean writeCDS)
+	/*public static void writeSimpleBedFormat(Writer out, SeqSymmetry sym, boolean writeCDS)
 		throws IOException {
 		
 		SeqSpan span = sym.getSpan(0);
@@ -646,7 +657,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 
 		out.write('\n');
 	}
-
+*/
 	/** Tests parsing of the file passed as a parameter. */
 	/*
 	   public static void main(String[] args) {
@@ -679,8 +690,9 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 			System.out.println("in BedParser.writeAnnotations()");
 		}
 		boolean success = true;
+		Writer bw = null;
 		try {
-			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+			bw = new BufferedWriter(new OutputStreamWriter(outstream));
 			Iterator iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry sym = (SeqSymmetry)iterator.next();
@@ -691,6 +703,8 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 		catch (Exception ex) {
 			ex.printStackTrace();
 			success = false;
+		} finally {
+			GeneralUtils.safeClose(bw);
 		}
 		return success;
 	}

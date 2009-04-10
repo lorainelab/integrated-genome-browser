@@ -26,7 +26,7 @@ public class GFFParserTest {
 
 	@Test
 		public void testParse() throws Exception {
-			System.out.println("parse");
+			//System.out.println("parse");
 
 			String filename = "test/data/gff1/GFF1_example.gff";
 			assertTrue(new File(filename).exists());
@@ -130,7 +130,7 @@ public class GFFParserTest {
 	 */
 	@Test
 		public void testProcessDirective() throws Exception {
-			System.out.println("processDirective");
+			//System.out.println("processDirective");
 
 			GFFParser instance = new GFFParser();
 

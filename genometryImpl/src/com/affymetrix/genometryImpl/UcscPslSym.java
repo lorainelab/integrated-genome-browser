@@ -412,7 +412,7 @@ public class UcscPslSym
 			out.write(Integer.toString(tmins[i]));
 			out.write(',');
 		}
-		out.write('\t');
+		//out.write('\t');	Unnecessary tab.
 		if (include_newline) {
 			out.write('\n');
 		}

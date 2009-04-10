@@ -535,7 +535,7 @@ public final class PSLParser implements AnnotationWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "PSL" format
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		return writeAnnotations(syms, seq, false, type, null, outstream);
 	}
@@ -543,7 +543,7 @@ public final class PSLParser implements AnnotationWriter  {
 	/**
 	 *  This version of the method is able to write out track lines
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 			boolean writeTrackLines, String type,
 			String description, OutputStream outstream) {
 		boolean success = true;
@@ -562,9 +562,7 @@ public final class PSLParser implements AnnotationWriter  {
 				bw.newLine();
 			}
 
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry sym = (SeqSymmetry)iterator.next();
+			for (SeqSymmetry sym : syms) {
 				if (! (sym instanceof UcscPslSym)) {
 					SeqUtils.printSymmetry(sym);
 					int spancount = sym.getSpanCount();

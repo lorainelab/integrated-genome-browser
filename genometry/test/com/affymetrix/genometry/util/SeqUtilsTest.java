@@ -37,7 +37,7 @@ public class SeqUtilsTest {
 
 	@Test
 		public void testUnion() {
-			System.out.println("union");
+			//System.out.println("union");
 
 			BioSeq seq = seqA;
 			SeqSymmetry symA;
@@ -89,7 +89,7 @@ public class SeqUtilsTest {
 
 			result = SeqUtils.union(symC, symD, seqA);
 			assertNotNull(result);
-			SeqUtils.printSymmetry(result);
+			//SeqUtils.printSymmetry(result);
 
 			assertEquals(4, result.getChildCount());
 			assertEquals(100, result.getSpan(seqA).getStart());
@@ -193,7 +193,7 @@ public class SeqUtilsTest {
 	 */
 	@Test
 		public void testTransformSymmetry() {
-			System.out.println("transformSymmetry");
+			//System.out.println("transformSymmetry");
 			AnnotatedBioSeq annot_seq = new SimpleAnnotatedBioSeq("annot", 1000000);
 			AnnotatedBioSeq view_seq = new SimpleAnnotatedBioSeq("view_seq", 1000000);
 

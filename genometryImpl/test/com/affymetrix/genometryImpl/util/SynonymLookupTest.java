@@ -57,12 +57,12 @@ public class SynonymLookupTest {
 			a.add("f");
 			a.add("g");
 
-			System.out.println("running testAddSynonym");
+			//System.out.println("running testAddSynonym");
 
 			for (String synonym : a) {
-				System.out.println("synonym:    " + synonym);
+				//System.out.println("synonym:    " + synonym);
 				synonymSet = sl.getSynonyms(synonym, cs);
-				System.out.println("synonymSet: " + synonymSet);
+				//System.out.println("synonymSet: " + synonymSet);
 				assertEquals("synonymSet is the wrong size for synonym " + synonym + ".",7, synonymSet.size());
 				for (String current : a) {
 					assertTrue("Could not find synonym " + current + "in list.", synonymSet.contains(current));
@@ -84,7 +84,7 @@ public class SynonymLookupTest {
 			a.add("dd");
 			a.add("ee");
 
-			System.out.println("running testCaseInsensitiveLookup");
+			//System.out.println("running testCaseInsensitiveLookup");
 
 			caseInsensitiveLookupHelper("aA", a);
 			caseInsensitiveLookupHelper("aa", a);
@@ -94,8 +94,8 @@ public class SynonymLookupTest {
 	private void caseInsensitiveLookupHelper(String test, List<String> expected) {
 		Collection<String> synonymSet = sl.getSynonyms(test, false);
 
-		System.out.println("synonym:    " + test);
-		System.out.println("synonymSet: " + synonymSet);
+		//System.out.println("synonym:    " + test);
+		//System.out.println("synonymSet: " + synonymSet);
 		assertEquals("Size of synonymSet does not match size expected", expected.size(), synonymSet.size());
 		for (String synonym : expected) {
 			assertTrue("Could not find synonym " + synonym + " in list.", synonymSet.contains(synonym));

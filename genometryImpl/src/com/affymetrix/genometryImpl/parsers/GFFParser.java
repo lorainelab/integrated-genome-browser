@@ -17,7 +17,6 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
@@ -26,8 +25,6 @@ import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GFF3Sym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 
@@ -98,6 +95,7 @@ public final class GFFParser implements AnnotationWriter  {
 
 	int gff_version = 0;
 
+	private static final boolean DEBUG = false;
 	boolean DEBUG_GROUPING = false;
 	boolean USE_FILTER = true;
 	boolean USE_GROUPING = true;
@@ -280,8 +278,9 @@ public final class GFFParser implements AnnotationWriter  {
 	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
 			boolean create_container_annot, boolean annotate_seq)
 		throws IOException {
-		System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
-
+		if (DEBUG) {
+			System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
+		}
 		int line_count = 0;
 		int sym_count = 0;
 		int group_count = 0;
@@ -685,8 +684,9 @@ public final class GFFParser implements AnnotationWriter  {
 					hierarchy_levels.put(feature_type, level);
 					addFeatureFilter(feature_type, true); // include only the items mentioned in the hierarchy
 
+					if (DEBUG) {
 					System.out.println("  Hierarchical parsing level: "+feature_type+" -> "+level);
-
+					}
 					String id_field = mm.group(4);
 					if (id_field != null) {hierarchy_id_fields.put(feature_type, id_field);}
 				}
@@ -780,7 +780,9 @@ public final class GFFParser implements AnnotationWriter  {
 			addFeatureFilter("psr");
 			addFeatureFilter("link");
 
+			if (DEBUG) {
 			System.out.println("group tag: transcript_id");
+			}
 			setGroupTag("transcript_id");
 		}
 
@@ -876,18 +878,18 @@ public final class GFFParser implements AnnotationWriter  {
 			return group_id;
 		}
 
-		public static void main(String[] args) {
+		/*public static void main(String[] args) {
 			GFFParser test = new GFFParser();
 			String input_file_name = null;
 			String output_file_name = null;
-			/*
-			   if (args.length >= 1)  {
-			   input_file_name = args[0];
-			   } else {
-			   System.out.println("Usage:  java GFFParser <filename>");
-			   System.exit(0);
-			   }
-			   */
+			//
+			//   if (args.length >= 1)  {
+			//   input_file_name = args[0];
+			//   } else {
+			//   System.out.println("Usage:  java GFFParser <filename>");
+			//   System.exit(0);
+			//   }
+			   
 			input_file_name  = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
 			//    output_file_name = "out.gff";
 
@@ -934,7 +936,7 @@ public final class GFFParser implements AnnotationWriter  {
 			//    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
 			System.out.println(mem.toString());
 			System.out.println("done");
-		}
+		}*/
 
 		/**
 		 *  Assumes that the sym being output is of depth = 2 (which UcscPslSyms are).
@@ -1008,7 +1010,9 @@ public final class GFFParser implements AnnotationWriter  {
 			public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
 				boolean success = true;
 				int count = 0;
+				if (DEBUG) {
 				System.out.println("in GFFParser.writeAnnotations()");
+				}
 				try {
 					Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
 					Iterator iterator = syms.iterator();
@@ -1046,7 +1050,9 @@ public final class GFFParser implements AnnotationWriter  {
 			public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 					String type, OutputStream outstream) {
 				boolean success = true;
+				if (DEBUG) {
 				System.out.println("in GFFParser.writeAnnotations()");
+				}
 				try {
 					Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
 					Iterator iterator = syms.iterator();

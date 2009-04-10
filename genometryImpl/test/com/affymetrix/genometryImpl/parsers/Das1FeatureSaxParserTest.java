@@ -117,7 +117,7 @@ public class Das1FeatureSaxParserTest {
 
 			SymWithProps sym = (SymWithProps) results.get(0);
 
-			SeqUtils.printSymmetry(sym, "  ", true);
+			//SeqUtils.printSymmetry(sym, "  ", true);
 
 			assertEquals(1, sym.getSpanCount());
 			assertEquals(46, sym.getSpan(0).getLength());

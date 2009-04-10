@@ -163,7 +163,7 @@ public class FastaParserTest {
 				testFASTASegment(filename, fasta, expected_fasta, 10, 100);
 			}
 			catch(java.io.UnsupportedEncodingException ex) {
-				System.out.println(ex.toString());
+				//System.out.println(ex.toString());
 				return;
 			}
 			fail("Should throw an UnsupportedEncodingException");     
@@ -176,11 +176,11 @@ public class FastaParserTest {
 			BufferedInputStream bis = new BufferedInputStream(dis);
 			byte[] fasta = FastaParser.skipFASTAHeader(filename, bis);
 
-			System.out.print("TEST: header is ");
+			//System.out.print("TEST: header is ");
 			assertNotNull(fasta);
-			for (int i =0;i<fasta.length;i++)
+			/*for (int i =0;i<fasta.length;i++)
 				System.out.print((char)fasta[i]);
-			System.out.println("");
+			System.out.println("");*/
 		}
 
 
@@ -192,13 +192,13 @@ public class FastaParserTest {
 		public void testChrCfailure() throws Exception {
 			String filename = "test/data/fasta/chrC.fasta";
 			int start=8020,end=8021;
-			System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
+			//System.out.println("ChrCfailure: Testing " + filename + " from [" + start + ":" + end + "]");
 			assertTrue(new File(filename).exists());
 
 			byte[] fasta = FastaParser.ReadFASTA(new File(filename), start, end);
-			for (int i=0;i<fasta.length;i++)
+			/*for (int i=0;i<fasta.length;i++)
 				System.out.print((char)fasta[i]);
-			System.out.println();
+			System.out.println();*/
 		}
 
 	/*
@@ -208,7 +208,7 @@ public class FastaParserTest {
 		public void testChrCfailure2() throws Exception {
 			String filename = "test/data/fasta/chrC.fasta";
 			int start=200000,end=200001; // file size < 200000.
-			System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
+			//System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
 			assertTrue(new File(filename).exists());
 
 			try {
@@ -255,7 +255,7 @@ public class FastaParserTest {
 		}
 
 	private void testFASTASegment(String filename, byte[] fasta, char[] expected_fasta, int start, int end) throws IOException {
-		System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
+		//System.out.println("Testing " + filename + " from [" + start + ":" + end + "]");
 
 		DataInputStream dis = new DataInputStream(new FileInputStream(filename));
 		BufferedInputStream bis = new BufferedInputStream(dis);
@@ -272,22 +272,22 @@ public class FastaParserTest {
 
 		assertNotNull(fasta);
 
-		System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
+		//System.out.println("expected, header, actual " + expected_fasta.length + ":" + header_len + ":" + fasta.length);
 
 		assertTrue(end - start >= fasta.length - header_len);
 
-		System.out.print("actual:");
+		/*System.out.print("actual:");
 		for (int i=header_len;i<fasta.length;i++)
 			System.out.print((char)fasta[i]);
-		System.out.println();
+		System.out.println();*/
 
 		assertTrue(filename + ": Expected expected_fasta.length (" + expected_fasta.length + ") >= fasta.length (" + fasta.length + ") - header_len (" + header_len + ")", expected_fasta.length >= fasta.length - header_len);
 
-		System.out.print("testing against expected:");
+		//System.out.print("testing against expected:");
 		for (int i = 0; i < fasta.length - header_len; i++) {
-			System.out.print(expected_fasta[i]);
+			//System.out.print(expected_fasta[i]);
 			assertEquals(expected_fasta[i], (char) fasta[i + header_len]);
 		}
-		System.out.println();
+		//System.out.println();
 	}
 }

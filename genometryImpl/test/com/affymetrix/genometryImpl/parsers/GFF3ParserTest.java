@@ -2,7 +2,6 @@
  * GFF3ParserTest.java
  * JUnit based test
  *
- * Created on August 18, 2006, 4:49 PM
  */
 package com.affymetrix.genometryImpl.parsers;
 
@@ -12,7 +11,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GFF3Sym;
 import java.io.*;
@@ -39,7 +37,7 @@ public class GFF3ParserTest {
 	 */
 	@Test
 		public void testParseCanonical() throws Exception {
-			System.out.println("parse");
+			//System.out.println("parse");
 
 			String filename = "test/data/gff3/GFF3_canonical_example.gff3";
 			assertTrue(new File(filename).exists());
@@ -94,7 +92,7 @@ public class GFF3ParserTest {
 
 	@Test
 		public void testParseErrors() throws IOException {
-			System.out.println("parse");
+			//System.out.println("parse");
 
 			String filename = "test/data/gff3/GFF3_with_errors.gff3";
 			assertTrue(new File(filename).exists());
@@ -111,9 +109,9 @@ public class GFF3ParserTest {
 			List expResult = null;
 			List result = instance.parse(istr, seq_group, true);
 
-			for (int i=0; i<result.size(); i++) {
+			/*for (int i=0; i<result.size(); i++) {
 				SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
-			}
+			}*/
 			assertEquals(1, result.size());
 		}
 
@@ -122,7 +120,7 @@ public class GFF3ParserTest {
 	 */
 	@Test
 		public void testProcessDirective() throws Exception {
-			System.out.println("processDirective");
+			//System.out.println("processDirective");
 
 			GFF3Parser instance = new GFF3Parser();
 

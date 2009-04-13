@@ -22,6 +22,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.view.SeqMapView;
+import javax.swing.SwingWorker;
 
 /**
  * Class to aid in loading features from DAS servers.
@@ -84,7 +85,9 @@ public final class DasFeatureLoader {
 			
 				String[] tier_names = new String[urls.size()];
 				Arrays.fill(tier_names, gFeature.featureName);
-			
+
+				Application.getSingleton().setNotLockedUpStatus("loading " + gFeature.featureName);
+
 				UrlLoaderThread loader = new UrlLoaderThread(gviewer, urls.toArray(new URL[urls.size()]), null, tier_names);
 				loader.runEventually();
 			}

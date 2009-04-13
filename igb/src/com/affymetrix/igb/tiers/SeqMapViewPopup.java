@@ -178,7 +178,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  Action save_das_action = new AbstractAction("Save tier as DAS/2 XML file") {
+  /*Action save_das_action = new AbstractAction("Save tier as DAS/2 XML file") {
       public void actionPerformed(ActionEvent e) {
 	List current_tiers = handler.getSelectedTiers();
 	if (current_tiers.size() > 1) {
@@ -187,7 +187,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
 	saveAsDas2File(current_tier);
       }
-    };
+    };*/
 
   Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
     public void actionPerformed(ActionEvent e) {
@@ -518,7 +518,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }*/
 
 
-  public void saveAsDas2File(TierGlyph atier) {
+  /*public void saveAsDas2File(TierGlyph atier) {
     String annot_type = atier.getLabel();
     int childcount= atier.getChildCount();
     List syms = new ArrayList(childcount);
@@ -550,7 +550,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 				GeneralUtils.safeClose(fos);
 			}
 		}
-	}
+	}*/
 
 
   private static void saveAsBedFile(TierGlyph atier) {
@@ -737,7 +737,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
     save_bed_action.setEnabled(num_selections == 1);
-    save_das_action.setEnabled(num_selections == 1);
+    //save_das_action.setEnabled(num_selections == 1);
     //write_das_action.setEnabled(num_selections == 1);
     JMenu save_menu = new JMenu("Save Annotations");
 
@@ -751,13 +751,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       coverage_action.setEnabled(is_annotation_type);
       save_menu.setEnabled(is_annotation_type);
       save_bed_action.setEnabled(is_annotation_type);
-      save_das_action.setEnabled(is_annotation_type);
+      //save_das_action.setEnabled(is_annotation_type);
     } else {
       sym_summarize_action.setEnabled(false);
       coverage_action.setEnabled(false);
       save_menu.setEnabled(false);
       save_bed_action.setEnabled(false);
-      save_das_action.setEnabled(false);
+      //save_das_action.setEnabled(false);
     }
 
     changeMenu.removeAll();
@@ -803,7 +803,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     popup.add(save_menu);
     save_menu.add(save_bed_action);
-    save_menu.add(save_das_action);
+    //save_menu.add(save_das_action);
     /*if (das2_writeback_enabled && curation_enabled && Application.getSingleton() instanceof IGB) {
       save_menu.add(write_das_action);
     }*/
@@ -832,7 +832,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       Iterator iter = current_tiers.iterator();
       while (iter.hasNext()) {
         TierGlyph tg = (TierGlyph) iter.next();
-        IAnnotStyle style = (IAnnotStyle) tg.getAnnotStyle();
+        IAnnotStyle style = tg.getAnnotStyle();
         System.out.println("Tier: " + tg);
         System.out.println("Style: " + style);
       }

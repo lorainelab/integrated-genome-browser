@@ -115,7 +115,10 @@ public final class DasServerInfo {
 		try {
 			//      System.out.println("in DasUtils.findDasSource()");
 			//      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-			String request_str = root_url + "/dsn";
+			String request_str = root_url;
+			if (!request_str.contains("/dsn")) {
+				request_str += "/dsn";
+			}
 			System.out.println("Das Request: " + request_str);
 			URL das_request = new URL(request_str);
 			URLConnection request_con = das_request.openConnection();

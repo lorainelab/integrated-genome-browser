@@ -79,7 +79,7 @@ public final class UrlLoaderThread extends Thread {
 
     @Override
   public void run() {
-    ThreadProgressMonitor monitor = null;
+    //ThreadProgressMonitor monitor = null;
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     try {
@@ -93,16 +93,17 @@ public final class UrlLoaderThread extends Thread {
       }
       //System.out.println("in UrlLoaderThread, get selected seq: " + aseq.getID());
 
-      monitor = new ThreadProgressMonitor(
+      /*monitor = new ThreadProgressMonitor(
         gviewer.getFrame(),
         "Loading...",
         "Loading data from URL",
         this,
         false, false);
-      monitor.showDialogEventually();
+      monitor.showDialogEventually();*/
+			Application.getSingleton().setNotLockedUpStatus();
       
       for (int i=0; i<urls.length; i++) {
-        if (isInterrupted() || monitor.isCancelled()) {break;}
+        if (isInterrupted()) {break;}
 
         URL url = urls[i];
         
@@ -120,16 +121,16 @@ public final class UrlLoaderThread extends Thread {
 
         System.out.println("Attempting to load data from URL: "+url.toExternalForm());
         try {
-          parseUrl(monitor, url, file_extension, tier_name);
+          parseUrl(url, file_extension, tier_name);
         } catch (IOException ioe) {
           handleException(ioe);
-          if (isInterrupted() || monitor.isCancelled()) {return;}
+          if (isInterrupted()) {return;}
           continue; // try the next url
         }
-        if (isInterrupted() || monitor.isCancelled()) {return;}
+        if (isInterrupted()) {return;}
 
-        monitor.setMessageEventually("Updating view");
-        if (isInterrupted() || monitor.isCancelled()) {break;}
+				Application.getSingleton().setNotLockedUpStatus("Updating view");
+        if (isInterrupted()) {break;}
 
         // update the view, except for the last time where we let the "finally" block do it
         if (i<urls.length) {updateViewer(gviewer, aseq);}
@@ -138,28 +139,31 @@ public final class UrlLoaderThread extends Thread {
     } catch (Exception e) {
       if (! (e instanceof InterruptedException)) { handleException(e); }
     } finally {
-      if (monitor != null) {monitor.closeDialogEventually();}
+      //if (monitor != null) {monitor.closeDialogEventually();}
       // update the view again, mainly in case the thread was interrupted
       updateViewer(gviewer, aseq);
     }
+		Application.getSingleton().setStatus("");
   }
   
-  private void parseUrl(ThreadProgressMonitor monitor, URL url, String file_extension, String tier_name)
+  private void parseUrl(URL url, String file_extension, String tier_name)
   throws IOException {
     String where_from = url.getHost();
     if (where_from == null || where_from.length()==0) {
       where_from = url.getPath();
     }
-    monitor.setMessageEventually("Connecting to "+where_from);
-    if (isInterrupted() || monitor.isCancelled()) {return;}
+		Application.getSingleton().setNotLockedUpStatus("Connecting to " + where_from);
+    //monitor.setMessageEventually("Connecting to "+where_from);
+    if (isInterrupted()) {return;}
     
     URLConnection connection = url.openConnection();
 		connection.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 		connection.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
     connection.connect(); // throws an exception if no connection available
     
-    monitor.setMessageEventually("Loading data from "+where_from);
-    if (isInterrupted() || monitor.isCancelled()) {return;}
+    //monitor.setMessageEventually("Loading data from "+where_from);
+		Application.getSingleton().setNotLockedUpStatus("Loading data from " + where_from);
+    if (isInterrupted()) {return;}
     
     parseDataFromURL(gviewer, connection, file_extension, tier_name);
   }

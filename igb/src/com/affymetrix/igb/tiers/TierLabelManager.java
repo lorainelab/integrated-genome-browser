@@ -156,10 +156,9 @@ public final class TierLabelManager {
   }
 
   /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
-  public static List<GlyphI> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-    List<GlyphI> result = new ArrayList<GlyphI>();
-    for (int i=0; i<tier_label_glyphs.size(); i++) {
-      TierLabelGlyph tlg = tier_label_glyphs.get(i);
+  public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
+    List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+		for (TierLabelGlyph tlg : tier_label_glyphs) {
       result.addAll(getContainedGraphs(tlg));
     }
     return result;

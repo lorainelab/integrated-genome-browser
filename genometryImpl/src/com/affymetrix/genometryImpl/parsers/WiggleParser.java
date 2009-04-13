@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.util.Iterator;
 
 
 /**
@@ -321,13 +322,15 @@ public final class WiggleParser {
 		GraphStateI gstate = AnnotatedSeqGroup.getStateProvider().getGraphState(graph_id);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
-		for (String seq_id : current_datamap.keySet()) {
-			WiggleData wig = current_datamap.get(seq_id);
-			GraphSymFloat gsym = wig.createGraph(graph_id);
+		// Need iterator because we're removing data on the fly
+		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();
+		while (wiggleDataIterator.hasNext()) {
+			GraphSymFloat gsym = wiggleDataIterator.next().createGraph(graph_id);
 
 			if (gsym != null) {
 				grafs.add(gsym);
 			}
+			wiggleDataIterator.remove();	// free up memory now that we've created the graph.
 		}
 
 		return grafs;

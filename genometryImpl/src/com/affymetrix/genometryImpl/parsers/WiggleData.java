@@ -1,9 +1,9 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,25 +30,22 @@ final class WiggleData {
 		if (data.isEmpty()) {
 			return null;
 		}
-		
-		int[]   xlist = new int[data.size()];
-		float[] ylist = new float[data.size()];
-		int[]   wlist = new int[data.size()];
-
-		/* TODO: potential bug
-		 *       - largest_x is found before the data are sorted
-		 *       - an x may have a larger width than largest x, causing
-		 *         (other.x + other.w) > (largest.x + largest.w)
-		 */
-		Point3D largest = data.get(data.size() - 1);
-		int largest_x = largest.x + largest.w;
-
-		BioSeq seq = seq_group.addSeq(seq_id, largest_x);
 
 		PointComp pointcomp = new PointComp();
 		Collections.sort(data, pointcomp);
 
-		for (int i=0; i<data.size(); i++) {
+		int dataSize = data.size();
+
+		int[]   xlist = new int[dataSize];
+		float[] ylist = new float[dataSize];
+		int[]   wlist = new int[dataSize];
+
+		Point3D largest = data.get(dataSize - 1);
+		int largest_x = largest.x + largest.w;
+
+		SmartAnnotBioSeq seq = seq_group.addSeq(seq_id, largest_x);
+
+		for (int i=0; i<dataSize; i++) {
 			Point3D p = data.get(i);
 			xlist[i] = p.x;
 			ylist[i] = p.y;

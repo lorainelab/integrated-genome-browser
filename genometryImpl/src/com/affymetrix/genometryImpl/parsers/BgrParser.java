@@ -16,10 +16,10 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.Timer;
 
 public final class BgrParser {
@@ -136,7 +136,7 @@ public final class BgrParser {
 			count++;
 		}
 
-		MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+		SmartAnnotBioSeq seq = seq_group.getSeq(seq_name);
 		if (seq == null) {
 			//System.out.println("seq not found, creating new seq: '"+seq_name+"'");
 			seq = seq_group.addSeq(seq_name, largest_x);

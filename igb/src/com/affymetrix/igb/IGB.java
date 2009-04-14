@@ -32,13 +32,18 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -47,6 +52,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.das.DasDiscovery;
@@ -56,7 +62,6 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
-import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.general.GenericServer.ServerType;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
@@ -64,14 +69,14 @@ import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.tiers.MultiWindowTierMap;
-import com.affymetrix.igb.util.EPSWriter;
+import com.affymetrix.igb.util.ComponentWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.swing.DisplayUtils;
-import java.util.prefs.Preferences;
+
 
 
 
@@ -783,7 +788,7 @@ public final class IGB extends Application
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
-    export_to_file_menu = new JMenu("Print to EPS File");
+    export_to_file_menu = new JMenu("Print to File");
     export_to_file_menu.setMnemonic('T');
     export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
     export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
@@ -1035,7 +1040,6 @@ public final class IGB extends Application
    *  depending on saved user preferences.
    */
   private Object setUpPlugIn(PluginInfo pi) {
-
     if (! pi.shouldLoad()) return null;
 
     String class_name = pi.getClassName();
@@ -1073,6 +1077,13 @@ public final class IGB extends Application
     }
 
     if (plugin instanceof JComponent) {
+			if (plugin instanceof DataLoadView) {
+				data_load_view = (DataLoadView) plugin;
+			}
+			if (plugin instanceof AltSpliceView) {
+				slice_view = (AltSpliceView) plugin;
+			}
+			
       comp2plugin.put((Component)plugin, pi);
       String title = pi.getDisplayName();
       String tool_tip = ((JComponent) plugin).getToolTipText();
@@ -1099,13 +1110,6 @@ public final class IGB extends Application
     super.setPluginInstance(c, plugin);
     if (c.equals(BookmarkManagerView.class)) {
       bmark_action.setBookmarkManager((BookmarkManagerView) plugin);
-    }
-
-    if (plugin instanceof DataLoadView) {
-      data_load_view = (DataLoadView) plugin;
-    }
-    if (plugin instanceof AltSpliceView) {
-      slice_view = (AltSpliceView) plugin;
     }
   }
 
@@ -1136,7 +1140,8 @@ public final class IGB extends Application
     }
     else if (src == export_map_item) {
       try {
-        EPSWriter.outputToFile(map_view.getSeqMap().getNeoCanvas());
+				AffyLabelledTierMap tm = (AffyLabelledTierMap) map_view.getSeqMap();
+				ComponentWriter.showExportDialog(tm.getNeoCanvas());
       } catch (Exception ex) {
         errorPanel("Problem during output.", ex);
       }
@@ -1144,7 +1149,7 @@ public final class IGB extends Application
     else if (src == export_labelled_map_item) {
       try {
         AffyLabelledTierMap tm = (AffyLabelledTierMap) map_view.getSeqMap();
-        EPSWriter.outputToFile(tm.getSplitPane());
+        ComponentWriter.showExportDialog(tm.getSplitPane());
       } catch (Exception ex) {
         errorPanel("Problem during output.", ex);
       }
@@ -1153,7 +1158,7 @@ public final class IGB extends Application
       try {
         if (slice_view != null) {
           AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap();
-          EPSWriter.outputToFile(tm.getSplitPane());
+          ComponentWriter.showExportDialog(tm.getSplitPane());
         }
       } catch (Exception ex) {
         errorPanel("Problem during output.", ex);

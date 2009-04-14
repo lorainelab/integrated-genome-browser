@@ -79,7 +79,7 @@ xercesImpl.jar
 
 freehep-*.jar
   Several files from the FreeHEP Vector Graphics library
-  which allow the printing of EPS files.  (We may combine
+  which allow the printing of files.  (We may combine
   these into a single freehep.jar file.)
 
 myswing.jar

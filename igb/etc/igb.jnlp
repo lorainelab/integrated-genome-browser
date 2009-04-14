@@ -16,7 +16,7 @@
 		<j2se version="1.5+" max-heap-size="1024m"/>
 		<jar href="igb.jar" main="true" />
 		<jar href="affx_fusion.jar" />
-		<jar href="freehep.jar" download="lazy" />
+		<jar href="freehep-2.1.1.jar" download="lazy" />
 		<jar href="genometry.jar" />
 		<jar href="genometryImpl.jar" />
 		<jar href="genoviz.jar" />

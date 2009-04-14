@@ -57,7 +57,7 @@
 		<delete file="${webstart.dir}/das2server.jar" />
 
 		<my.signjar jar="${lib.dir}/affx_fusion.jar"      signedjar="${webstart.dir}/affx_fusion.jar" />
-		<my.signjar jar="${lib.dir}/freehep.jar"          signedjar="${webstart.dir}/freehep.jar" />
+		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"          signedjar="${webstart.dir}/freehep-2.1.1.jar" />
 		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"        signedjar="${webstart.dir}/jlfgr-1_0.jar" />
 		<my.signjar jar="${lib.dir}/myswing.jar"          signedjar="${webstart.dir}/myswing.jar" />
 		<my.signjar jar="${lib.dir}/swing-layout.jar"     signedjar="${webstart.dir}/swing-layout.jar" />
@@ -153,7 +153,7 @@
 			</zipgroupfileset>
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="affx_fusion.jar"/>
-				<include name="freehep.jar"/>
+				<include name="freehep-2.1.1.jar"/>
 				<include name="jlfgr-1_0.jar"/>
 				<include name="myswing.jar"/>
 				<include name="swing-layout.jar"/>

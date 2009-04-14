@@ -81,6 +81,12 @@
                     <location>genoviz_sdk/demo/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>genoviz_lite/src</label>
+                    <type>java</type>
+                    <location>genoviz_lite/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -216,6 +222,10 @@
                         <label>genoviz_sdk/demo/src</label>
                         <location>genoviz_sdk/demo/src</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>genoviz_lite/src</label>
+                        <location>genoviz_lite/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -262,7 +272,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>igb/src</package-root>
-                <classpath mode="compile">ext/affx_fusion.jar:ext/freehep.jar:ext/myswing.jar:ext/swing-layout.jar:ext/swing-worker-1.2.jar:genoviz_sdk/src:genometry/src:genometryImpl/src</classpath>
+                <classpath mode="compile">ext/affx_fusion.jar:ext/myswing.jar:ext/swing-layout.jar:ext/swing-worker-1.2.jar:ext/freehep-2.1.1.jar:genoviz_sdk/src:genometry/src:genometryImpl/src</classpath>
                 <built-to>dist/igb.jar</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
@@ -305,6 +315,10 @@
             <compilation-unit>
                 <package-root>genoviz_sdk/demo/src</package-root>
                 <classpath mode="compile">genoviz_sdk/src</classpath>
+                <source-level>1.5</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>genoviz_lite/src</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

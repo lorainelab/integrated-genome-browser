@@ -788,7 +788,7 @@ public final class IGB extends Application
     print_item = new JMenuItem("Print", KeyEvent.VK_P);
     print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
     print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
-    export_to_file_menu = new JMenu("Print to File");
+    export_to_file_menu = new JMenu("Export");
     export_to_file_menu.setMnemonic('T');
     export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
     export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);

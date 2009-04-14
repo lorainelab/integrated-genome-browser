@@ -2,10 +2,6 @@ package com.affymetrix.igb.util;
 
 import java.awt.Component;
 import org.freehep.util.export.ExportDialog;
-import java.io.InputStreamReader;
-import java.io.IOException;
-import java.io.BufferedReader;
-
 
 /**
  * Prints a component to a file.
@@ -20,19 +16,7 @@ public final class ComponentWriter {
    *  formats using the FreeHep libraries.  
    */
   public static void showExportDialog(Component c) {
-try {
-    InputStreamReader isr = new InputStreamReader(ComponentWriter.class.getResourceAsStream("/META-INF/services/org.freehep.util.export.ExportFileType"));
-    BufferedReader br = new BufferedReader(isr);
-    String s = br.readLine();
-    while (s != null) {
-	System.err.println(s);
-        s = br.readLine();
-    }
-} catch (IOException e) {
-e.printStackTrace();
-}
     ExportDialog export = new ExportDialog();
     export.showExportDialog(c, "Export view as ...", c, "export");
   }
-
 }

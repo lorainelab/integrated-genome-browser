@@ -22,7 +22,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.view.SeqMapView;
-import javax.swing.SwingWorker;
+import org.jdesktop.swingworker.SwingWorker;
 
 /**
  * Class to aid in loading features from DAS servers.

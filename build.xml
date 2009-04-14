@@ -64,6 +64,7 @@
 		<my.signjar jar="${lib.dir}/swing-worker-1.2.jar" signedjar="${webstart.dir}/swing-worker-1.2.jar" />
 		<my.signjar jar="${lib.dir}/xercesImpl.jar"       signedjar="${webstart.dir}/xercesImpl.jar" />
 
+		<!--
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
 			<zipfileset src="${dist.dir}/igb.jar" />
 			<indexjars>
@@ -75,6 +76,8 @@
 		</jar>
 
 		<my.signjar jar="${webstart.dir}/igb.jar" />
+		-->
+		<my.signjar jar="${dist.dir}/igb.jar" signedjar="${webstart.dir}/igb.jar" />
 
 		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />

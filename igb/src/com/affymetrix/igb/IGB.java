@@ -141,6 +141,7 @@ public final class IGB extends Application
   JMenu file_menu;
   JMenu export_to_file_menu;
   JMenu view_menu;
+	JMenu edit_menu;
   //JMenu navigation_menu;
   JMenu bookmark_menu;
   JMenu tools_menu;
@@ -409,6 +410,7 @@ public final class IGB extends Application
 
   //public JMenuBar getMenuBar() { return mbar; }
   public JFrame getFrame() { return frm; }
+
   //public JTabbedPane getTabPane() { return tab_pane; }
 
   private void startControlServer() {
@@ -714,47 +716,25 @@ public final class IGB extends Application
 
     mbar = MenuUtil.getMainMenuBar();
     frm.setJMenuBar(mbar);
-    file_menu = MenuUtil.getMenu("File");
-    file_menu.setMnemonic('F');
-    //mbar.add( file_menu );
 
-    view_menu = MenuUtil.getMenu("View");
-    view_menu.setMnemonic('V');
-    //mbar.add(view_menu);
-
-    bookmark_menu = MenuUtil.getMenu("Bookmarks");
-    bookmark_menu.setMnemonic('B');
-    //mbar.add(bookmark_menu);
-
-    tools_menu = MenuUtil.getMenu("Tools");
-    tools_menu.setMnemonic('T');
-    //mbar.add(tools_menu);
-
-    help_menu = MenuUtil.getMenu("Help");
-    help_menu.setMnemonic('H');
-    //mbar.add(help_menu);
-    //    select_broker = new SymSelectionBroker();
-
-    String tile_xpixels_arg = get_arg("-tile_width", main_args);
-    String tile_ypixels_arg = get_arg("-tile_height", main_args);
-    String tile_col_arg = get_arg("-tile_columns", main_args);
-    String tile_row_arg = get_arg("-tile_rows", main_args);
-    if (tile_xpixels_arg != null &&
-	tile_ypixels_arg != null &&
-	tile_col_arg != null &&
-	tile_row_arg != null) {
-      USE_MULTI_WINDOW_MAP = true;
-      try {
-	MultiWindowTierMap.tile_width = Integer.parseInt(tile_xpixels_arg);
-	MultiWindowTierMap.tile_height = Integer.parseInt(tile_ypixels_arg);
-	MultiWindowTierMap.tile_columns = Integer.parseInt(tile_col_arg);
-	MultiWindowTierMap.tile_rows = Integer.parseInt(tile_row_arg);
-      }
-      catch (Exception ex) {
-	ex.printStackTrace();
-      }
-    }
-
+		String tile_xpixels_arg = get_arg("-tile_width", main_args);
+		String tile_ypixels_arg = get_arg("-tile_height", main_args);
+		String tile_col_arg = get_arg("-tile_columns", main_args);
+		String tile_row_arg = get_arg("-tile_rows", main_args);
+		if (tile_xpixels_arg != null &&
+						tile_ypixels_arg != null &&
+						tile_col_arg != null &&
+						tile_row_arg != null) {
+			USE_MULTI_WINDOW_MAP = true;
+			try {
+				MultiWindowTierMap.tile_width = Integer.parseInt(tile_xpixels_arg);
+				MultiWindowTierMap.tile_height = Integer.parseInt(tile_ypixels_arg);
+				MultiWindowTierMap.tile_columns = Integer.parseInt(tile_col_arg);
+				MultiWindowTierMap.tile_rows = Integer.parseInt(tile_row_arg);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
 
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
@@ -766,13 +746,25 @@ public final class IGB extends Application
     gmodel.addSeqSelectionListener(map_view);
     gmodel.addGroupSelectionListener(map_view);
     gmodel.addSymSelectionListener(map_view);
-    //    gmodel.addSeqModifiedListener(map_view);
 
-    //    navigation_menu = map_view.getNavigationMenu("Go");
-    //    navigation_menu.setMnemonic('G');
-    //    navigation_menu.add(new JMenu("Genome..."));
-    //    mbar.add( navigation_menu, 2);
+		file_menu = MenuUtil.getMenu("File");
+    file_menu.setMnemonic('F');
 
+		edit_menu = MenuUtil.getMenu("Edit");
+		edit_menu.setMnemonic('E');
+
+		view_menu = MenuUtil.getMenu("View");
+		view_menu.setMnemonic('V');
+
+		bookmark_menu = MenuUtil.getMenu("Bookmarks");
+    bookmark_menu.setMnemonic('B');
+
+    tools_menu = MenuUtil.getMenu("Tools");
+    tools_menu.setMnemonic('T');
+
+    help_menu = MenuUtil.getMenu("Help");
+    help_menu.setMnemonic('H');
+		
     bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
     align_control = new AlignControl(this, map_view);
@@ -825,47 +817,10 @@ public final class IGB extends Application
     move_tab_to_window_item = new JMenuItem("Open Current Tab in New Window", KeyEvent.VK_O);
     move_tabbed_panel_to_window_item = new JMenuItem("Open Tabbed Panes in New Window", KeyEvent.VK_P);
 
-    web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
+		fileMenu();
 
-    preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
-    preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
-    preferences_item.addActionListener(this);
-
-    MenuUtil.addToMenu(file_menu, open_file_item);
-    //MenuUtil.addToMenu(file_menu, load_das_item);
-    MenuUtil.addToMenu(file_menu, clear_item);
-    MenuUtil.addToMenu(file_menu, clear_graphs_item);
-    file_menu.addSeparator();
-    MenuUtil.addToMenu(file_menu, print_item);
-    file_menu.add(export_to_file_menu);
-    MenuUtil.addToMenu(export_to_file_menu, export_map_item);
-    MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
-    file_menu.addSeparator();
-    MenuUtil.addToMenu(file_menu, preferences_item);
-
-    file_menu.addSeparator();
-    MenuUtil.addToMenu(file_menu, exit_item);
-
-    // rev_comp option currently not working, so disabled
-    JMenu strands_menu = new JMenu("Strands");
-    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_plus_action));
-    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
-    strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
-
-    view_menu.add(strands_menu);
-    //    MenuUtil.addToMenu(view_menu, rev_comp_item);
-    MenuUtil.addToMenu(view_menu, autoscroll_item);
-    MenuUtil.addToMenu(view_menu, res2clip_item);
-    MenuUtil.addToMenu(view_menu, view_ucsc_item);
-
-    MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
-    MenuUtil.addToMenu(view_menu, adjust_edgematch_item);
-    MenuUtil.addToMenu(view_menu, clamp_view_item);
-    MenuUtil.addToMenu(view_menu, unclamp_item);
-    MenuUtil.addToMenu(view_menu, shrink_wrap_item);
-    MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
-    MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
-    MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
+		editMenu();
+		viewMenu();
 
     MenuUtil.addToMenu(tools_menu, web_links_item);
 
@@ -1025,16 +980,51 @@ public final class IGB extends Application
     initialized = true;
   }
 
-  /*public static boolean useQuickLoad() {
-    return UnibrowPrefsUtil.getBooleanParam(USE_QUICKLOAD_INSTEAD_OF_DAS2, DEFAULT_USE_QUICKLOAD_INSTEAD_OF_DAS2);
-  }*/
+	private void fileMenu() {
+		web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
+		preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
+		preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
+		preferences_item.addActionListener(this);
+		MenuUtil.addToMenu(file_menu, open_file_item);
+		//MenuUtil.addToMenu(file_menu, load_das_item);
+		MenuUtil.addToMenu(file_menu, clear_item);
+		MenuUtil.addToMenu(file_menu, clear_graphs_item);
+		file_menu.addSeparator();
+		MenuUtil.addToMenu(file_menu, print_item);
+		file_menu.add(export_to_file_menu);
+		MenuUtil.addToMenu(export_to_file_menu, export_map_item);
+		MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
+		file_menu.addSeparator();
+		MenuUtil.addToMenu(file_menu, preferences_item);
+		file_menu.addSeparator();
+		MenuUtil.addToMenu(file_menu, exit_item);
+	}
 
+	private void editMenu() {
+		MenuUtil.addToMenu(edit_menu, res2clip_item);
+	}
 
-  /** Returns true if initialization has completed. */
-  /*public boolean isInitialized() {
-    return initialized;
-  }*/
+	private void viewMenu() {
+		// rev_comp option currently not working, so disabled
+		JMenu strands_menu = new JMenu("Strands");
+		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_plus_action));
+		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
+		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
+		view_menu.add(strands_menu);
+		//    MenuUtil.addToMenu(view_menu, rev_comp_item);
+		MenuUtil.addToMenu(view_menu, autoscroll_item);
+		MenuUtil.addToMenu(view_menu, view_ucsc_item);
+		MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
+		MenuUtil.addToMenu(view_menu, adjust_edgematch_item);
+		MenuUtil.addToMenu(view_menu, clamp_view_item);
+		MenuUtil.addToMenu(view_menu, unclamp_item);
+		MenuUtil.addToMenu(view_menu, shrink_wrap_item);
+		MenuUtil.addToMenu(view_menu, toggle_hairline_label_item);
+		MenuUtil.addToMenu(view_menu, move_tab_to_window_item);
+		MenuUtil.addToMenu(view_menu, move_tabbed_panel_to_window_item);
+	}
 
+	
   /**
    *  Puts the given component either in the tab pane or in its own window,
    *  depending on saved user preferences.
@@ -1712,4 +1702,5 @@ public final class IGB extends Application
   public Logger getLogger() {
     return APP;
   }
+
 }

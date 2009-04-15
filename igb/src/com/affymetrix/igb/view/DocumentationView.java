@@ -30,12 +30,12 @@ public final class DocumentationView {
     sb.append("extra documentation, and a place to report bugs or feature requests.\n");
     sb.append("\n");
     sb.append("Introduction Page: http://genoviz.sourceforge.net/\n");
-    sb.append("User's Guide (PDF): \n  http://www.affymetrix.com/support/developer/tools/IGB_User_Guide.pdf\n");    
-    sb.append("Release Notes: \n  http://genoviz.sourceforge.net/release_notes/igb_release.html");
+    sb.append("User's Guide (PDF): \n http://genoviz.sourceforge.net/IGB_User_Guide.pdf\n");
+    sb.append("Release Notes: \n http://genoviz.sourceforge.net/release_notes/igb_release.html");
     sb.append("\n");
-    sb.append("Downloads: http://sourceforge.net/project/showfiles.php?group_id=129420\n");
-    sb.append("Documentation: http://sourceforge.net/docman/?group_id=129420\n");
-    sb.append("Bug Reports: http://sourceforge.net/tracker/?group_id=129420&atid=714744\n");
+    sb.append("Downloads: \n http://sourceforge.net/project/showfiles.php?group_id=129420\n");
+    sb.append("Documentation: \n http://sourceforge.net/docman/?group_id=129420\n");
+    sb.append("Bug Reports: \n http://sourceforge.net/tracker/?group_id=129420&atid=714744\n");
     sb.append("\n");
     
     return sb.toString();

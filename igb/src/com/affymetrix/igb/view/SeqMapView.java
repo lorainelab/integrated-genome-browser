@@ -34,7 +34,6 @@ import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 
-import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -1301,8 +1300,8 @@ public class SeqMapView extends JPanel
                 version_info = group.getID();
             }
         }
-        if ((version_info == null) && (seq instanceof Versioned)) {
-            version_info = ((Versioned) seq).getVersion();
+        if ((version_info == null) && (seq instanceof SmartAnnotBioSeq)) {
+            version_info = ((SmartAnnotBioSeq) seq).getVersion();
         }
         if ("hg17".equals(version_info)) {
             version_info = "hg17 = NCBI35";
@@ -2515,10 +2514,10 @@ public class SeqMapView extends JPanel
     /** Returns the genome version in UCSC two-letter plus number format, like "hg17". */
     public String getUcscGenomeVersion() {
         String ucsc_version = null;
-        if (aseq instanceof Versioned && !slicing_in_effect) {
+        if (aseq instanceof SmartAnnotBioSeq && !slicing_in_effect) {
             SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-            String version = ((Versioned) aseq).getVersion();
+            String version = ((SmartAnnotBioSeq) aseq).getVersion();
             Collection<String> syns = lookup.getSynonyms(version);
 
             if (syns == null) {

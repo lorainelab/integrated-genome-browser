@@ -33,7 +33,7 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
  * </pre>
  */
 public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
-	implements SearchableCharIterator, Versioned {
+	implements SearchableCharIterator {
 
 	String version;
 	// length field inherited from SimpleCompositeBioseq (by way of SimpleCompAnnotBioSeq)

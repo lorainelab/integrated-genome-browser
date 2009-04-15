@@ -16,9 +16,6 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.Versioned;
-//import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;

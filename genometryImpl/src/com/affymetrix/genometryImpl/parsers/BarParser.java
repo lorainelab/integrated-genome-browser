@@ -19,7 +19,6 @@ import java.util.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.Versioned;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
@@ -29,6 +28,8 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
+
+
 
 /**
  * Parser for files in BAR format.
@@ -682,13 +683,15 @@ CHUNK_LOOP:
 		}
 	}
 
-	static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header)  throws IOException {
+	static BarSeqHeader parseSeqHeader(DataInput dis, GenometryModel gmodel, AnnotatedSeqGroup default_seq_group, BarFileHeader file_header) throws IOException {
 		int namelength = dis.readInt();
 		//      String
 		byte[] barray = new byte[namelength];
 		dis.readFully(barray);
 		String seqname = new String(barray);
-		if (DEBUG_READ)  { System.out.println("seq: " + seqname); }
+		if (DEBUG_READ) {
+			System.out.println("seq: " + seqname);
+		}
 
 		String groupname = null;
 		boolean bar2 = (file_header.version >= 2.0f);
@@ -697,14 +700,18 @@ CHUNK_LOOP:
 			barray = new byte[grouplength];
 			dis.readFully(barray);
 			groupname = new String(barray);
-			if (DEBUG_READ)  { System.out.println("group length: " + grouplength + ", group: " + groupname); }
+			if (DEBUG_READ) {
+				System.out.println("group length: " + grouplength + ", group: " + groupname);
+			}
 		}
 
 		int verslength = dis.readInt();
 		barray = new byte[verslength];
 		dis.readFully(barray);
 		String seqversion = new String(barray);
-		if (DEBUG_READ) { System.out.println("version length: " + verslength + ", version: " + seqversion); }
+		if (DEBUG_READ) {
+			System.out.println("version length: " + verslength + ", version: " + seqversion);
+		}
 
 		// hack to extract seq version and seq name from seqname field for bar files that were made
 		//   with the version and name concatenated (with ";" separator) into the seqname field
@@ -712,42 +719,51 @@ CHUNK_LOOP:
 		String orig_seqname = seqname;
 		if (sc_pos >= 0) {
 			seqversion = seqname.substring(0, sc_pos);
-			seqname = seqname.substring(sc_pos+1);
-			if (DEBUG_READ)  { System.out.println("seqname = " + seqname + ", seqversion = " + seqversion); }
+			seqname = seqname.substring(sc_pos + 1);
+			if (DEBUG_READ) {
+				System.out.println("seqname = " + seqname + ", seqversion = " + seqversion);
+			}
 		}
 
-		HashMap<String,String> seq_tagvals = null;
+		HashMap<String, String> seq_tagvals = null;
 		if (bar2) {
 			int seq_tagval_count = dis.readInt();
-			if (DEBUG_READ)  { System.out.println("seq tagval count: " + seq_tagval_count); }
+			if (DEBUG_READ) {
+				System.out.println("seq tagval count: " + seq_tagval_count);
+			}
 			seq_tagvals = readTagValPairs(dis, seq_tagval_count);
 		}
 
 		int total_points = dis.readInt();
 		if (DEBUG_READ) {
 			System.out.println("   seqname = " + seqname + ", version = " + seqversion +
-					", group = " + groupname +
-					", data points = " + total_points);
+							", group = " + groupname +
+							", data points = " + total_points);
 		}
 		//      System.out.println("total data points for graph " + k + ": " + total_points);
 		MutableAnnotatedBioSeq seq = null;
 
 		AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
+		seq = determineSeq(seq_group, seqname, seq, orig_seqname, seqversion, groupname, bar2);
+		BarSeqHeader seq_header = new BarSeqHeader(seq, total_points, seq_tagvals);
+		return seq_header;
+	}
+
+
+	private static MutableAnnotatedBioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, MutableAnnotatedBioSeq seq, String orig_seqname, String seqversion, String groupname, boolean bar2) {
 		// trying standard AnnotatedSeqGroup seq id resolution first
-
 		seq = seq_group.getSeq(seqname);
-		if (seq == null) { seq = seq_group.getSeq(orig_seqname); }
-
+		if (seq == null) {
+			seq = seq_group.getSeq(orig_seqname);
+		}
 		// if standard AnnotatedSeqGroup seq id resolution doesn't work, try old technique
 		//    (hopefully can eliminate this soon)
 		if (seq == null) {
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 			//TODO: Convert this to the standard way of getting synomous sequences,
 			// but we may have to check for extra bar-specific synonyms involving seq group and version
-			Iterator iter = seq_group.getSeqList().iterator();
-			while (iter.hasNext()) {
+			for (SmartAnnotBioSeq testseq : seq_group.getSeqList()) {
 				// testing both seq id and version id (if version id is available)
-				MutableAnnotatedBioSeq testseq = (MutableAnnotatedBioSeq) iter.next();
 				if (lookup.isSynonym(testseq.getID(), seqname)) {
 					// GAH 1-23-2005
 					// need to ensure that if bar2 format, the seq group is also a synonym!
@@ -757,25 +773,22 @@ CHUNK_LOOP:
 					//      seqversion
 					//      groupname + ":" + seqversion
 					if ((seqversion == null && groupname == null) ||
-							(((seqversion == null)  || seqversion.equals("")) && ((groupname == null) || groupname.equals("")) ) ||
-							(! (testseq instanceof Versioned))) {
+									(((seqversion == null) || seqversion.equals("")) && ((groupname == null) || groupname.equals("")))) {
 						seq = testseq;
 						break;
+					} else {
+						String test_version = testseq.getVersion();
+						if ((lookup.isSynonym(test_version, seqversion)) || (lookup.isSynonym(test_version, groupname)) || (lookup.isSynonym(test_version, groupname + ":" + seqversion))) {
+							if (DEBUG_READ) {
+								System.out.println("found synonymn");
 							}
-					else {
-						String test_version = ((Versioned)testseq).getVersion();
-						if ((lookup.isSynonym(test_version, seqversion)) ||
-								(lookup.isSynonym(test_version, groupname)) ||
-								(lookup.isSynonym(test_version, (groupname + ":" + seqversion))) ) {
-							if (DEBUG_READ) { System.out.println("found synonymn"); }
 							seq = testseq;
 							break;
-								}
+						}
 					}
 				}
 			}
 		}
-
 		if (seq == null) {
 			if (bar2 && groupname != null) {
 				seqversion = groupname + ":" + seqversion;
@@ -784,10 +797,12 @@ CHUNK_LOOP:
 			//        seq = seq_group.addSeq(seqname, 500000000);
 			seq = seq_group.addSeq(seqname, 1000);
 		}
-		if (DEBUG_READ)  { System.out.println("seq: " + seq); }
-		BarSeqHeader seq_header = new BarSeqHeader(seq, total_points, seq_tagvals);
-		return seq_header;
+		if (DEBUG_READ) {
+			System.out.println("seq: " + seq);
+		}
+		return seq;
 	}
+
 
 	/**
 	 *  if group and version are null/blank, assume default_seq_group is correct.
@@ -936,8 +951,6 @@ CHUNK_LOOP:
 
 
 }
-
-
 class BarSeqHeader {
 	MutableAnnotatedBioSeq aseq;
 	int data_point_count;

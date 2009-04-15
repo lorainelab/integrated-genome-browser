@@ -28,7 +28,11 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 
-import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
@@ -71,7 +75,7 @@ import javax.xml.parsers.DocumentBuilder;
 */
 public final class GenometryDas2Servlet extends HttpServlet {
 
-	private static final boolean DEBUG = false;
+	static final boolean DEBUG = false;
 	private static final String RELEASE_VERSION = "2.6";
 	//private static boolean MAKE_LANDSCAPES = false;
 	private static final boolean TIME_RESPONSES = true;
@@ -598,7 +602,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		loadAnnotsFromFile(genome_directory, genome, null);
 
 		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
-		optimizeGenome(genome);
+		Optimize.Genome(genome);
 	}
 
 	private final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
@@ -621,100 +625,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			} else {
 				System.out.println("couldn't find liftAll or mod_chromInfo file for genome!!! " + genome_version);
 			}
-		}
-	}
-
-	//  public void optimizeGenome(Map seqhash) {
-	private static final void optimizeGenome(AnnotatedSeqGroup genome) {
-		System.out.println("******** optimizing genome:  " + genome.getID() + "  ********");
-		/** third, replace top-level annotation SeqSymmetries with IntervalSearchSyms */
-		for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
-			optimizeSeq(aseq);
-		}
-	}
-
-
-	/*
-	 *  After optimization, should end up (assuming seq is a SmartAnnotBioSeq) with
-	 *     a TypeContainerAnnot attached directly to the seq for each method/type of annotation
-	 *     and a (probably single) child for each container which is an IntervalSearchSym that
-	 *     holds annotations of the given type, and which has been optimized for range-based
-	 *     queries to return its children
-	 *    Another way to think of this is that there are two levels of annotation hierarchy
-	 *       above what one would otherwise consider the "top level" annotations.
-	 *       For example for transcript predictions there would be a four-level hiearchy:
-	 *            single TypeContainerAnnot object A attached as annotation to seq
-	 *            single IntervalSearchSym object B, child of A
-	 *            multiple transcripts, children of B
-	 *            multiple exons, children of transcripts
-	 *
-	 *
-	 *  To Do:
-	 *
-	 *     check for multiple top-level annotations of the same type, and combine
-	 *       if found so there is only one top-level annotation per type for each seq
-	 *
-	 */
-	private static final void optimizeSeq(SmartAnnotBioSeq aseq) {
-		if (DEBUG) {
-			System.out.println("optimizing seq = " + aseq.getID());
-		}
-		int annot_count = aseq.getAnnotationCount();
-		for (int i = annot_count - 1; i >= 0; i--) {
-			// annot should be a TypeContainerAnnot (if seq is a SmartAnnotBioSeq)
-			SeqSymmetry annot = aseq.getAnnotation(i);
-			if (annot instanceof TypeContainerAnnot) {
-				TypeContainerAnnot container = (TypeContainerAnnot) annot;
-				optimizeTypeContainer(container, aseq);
-			} else {
-				System.out.println("problem in optimizeSeq(), found top-level sym that is not a TypeContainerAnnot: " +
-						annot);
-			}
-		}
-	}
-
-	private static final void optimizeTypeContainer(TypeContainerAnnot container, SmartAnnotBioSeq aseq) {
-		if (DEBUG) {
-			System.out.println("optimizing type container: " + container.getProperty("method") +
-					", depth = " + SeqUtils.getDepth(container));
-		}
-		String annot_type = container.getType();
-		int child_count = container.getChildCount();
-		ArrayList<SeqSymmetry> temp_annots = new ArrayList<SeqSymmetry>(child_count);
-
-		// more efficient to remove from end of annotations...
-		for (int i = child_count - 1; i >= 0; i--) {
-			SeqSymmetry child = container.getChild(i);
-			// if child is not IntervalSearchSym, copy to temp list in preparation for
-			//    converting children to IntervalSearchSyms
-			if (child instanceof IntervalSearchSym) {
-				IntervalSearchSym search_sym = (IntervalSearchSym) child;
-				if (!search_sym.getOptimizedForSearch()) {
-					search_sym.initForSearching(aseq);
-				}
-			} else {
-				temp_annots.add(child);
-				// really want to do container.removeChild(i) here, but
-				//   currently there is no removeChild(int) method for MutableSeqSymmetry and descendants
-				container.removeChild(child);
-			}
-		}
-
-		int temp_count = temp_annots.size();
-		//    System.out.println("optimizing for: " + container.getType() + ", seq: " + aseq.getID() + ", count: " + temp_count);
-		// iterate through all annotations from TypeContainerAnnot on this sequence that are not IntervalSearchSyms,
-		//    convert them to IntervalSearchSyms.
-		for (int i = temp_count - 1; i >= 0; i--) {
-			SeqSymmetry annot_sym = temp_annots.get(i);
-			IntervalSearchSym search_sym = new IntervalSearchSym(aseq, annot_sym);
-			search_sym.setProperty("method", annot_type);
-			search_sym.initForSearching(aseq);
-			container.addChild(search_sym);
-		}
-		//    if (MAKE_LANDSCAPES) { makeLandscapes(aseq); }
-		if (DEBUG) {
-			System.out.println("finished optimizing container: " + container.getProperty("method") +
-					", depth = " + SeqUtils.getDepth(container));
 		}
 	}
 

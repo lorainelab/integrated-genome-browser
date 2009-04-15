@@ -48,9 +48,8 @@ while (( "$#" )); do
 done
 
 # Find out where the jar files reside
-DIR=`readlink $0`
-test -n "$DIR" && DIR=`dirname $DIR`
-test -z "$DIR" && DIR=`dirname $PWD/$0`
+DIR=`readlink -f $0`
+DIR=`dirname $DIR`
 
 # Use 1GiB RAM per default 
 echo $VMARGS | grep -q '\-Xmx\|\-mx' || VMARGS="$VMARGS -Xmx1024m"

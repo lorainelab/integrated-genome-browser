@@ -2092,7 +2092,7 @@ public class SeqMapView extends JPanel
      *  Performs a genometry-based slice-and-dice.
      *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
      */
-    void sliceAndDiceNow(SeqSymmetry sym) {
+    private void sliceAndDiceNow(SeqSymmetry sym) {
         //    System.out.println("%%%%%% called SeqMapView.sliceAndDice() %%%%%%");
         if (!slicing_in_effect) {
             //   only redo viewspan_before_slicing if slicing is not already in effect, because
@@ -2113,7 +2113,7 @@ public class SeqMapView extends JPanel
 
         slice_symmetry = sym;
         viewseq = new CompositeNegSeq("view_seq", aseq.getLength());
-        viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
+        //viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
 
         // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
         //    mapped to viewseq

@@ -15,7 +15,6 @@ package com.affymetrix.genometry.seq;
 
 import java.util.*;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 
 public final class SimpleAnnotatedBioSeq
@@ -74,7 +73,7 @@ public final class SimpleAnnotatedBioSeq
 		}
 	}
 
-	public SeqSymmetry getAnnotationByID(String id) {
+	/*public SeqSymmetry getAnnotationByID(String id) {
 		if (null != annots) {
 			int s = annots.size();
 			for (int i = 0; i<s; i++) {
@@ -88,21 +87,21 @@ public final class SimpleAnnotatedBioSeq
 			}
 		}
 		return null;
-	}
+	}*/
 
 
 	/**
 	 *  NOT YET IMPLEMENTED
 	 */
-	public List<SeqSymmetry> getIntersectedAnnotations(SeqSpan span) {
+	/*public List<SeqSymmetry> getIntersectedAnnotations(SeqSpan span) {
 		return annots;
-	}
+	}*/
 
 	/**
 	 *  NOT YET IMPLEMENTED
 	 */
-	public List<SeqSymmetry> getContainedAnnotations(SeqSpan span) {
+	/*public List<SeqSymmetry> getContainedAnnotations(SeqSpan span) {
 		return annots;
-	}
+	}*/
 
 }

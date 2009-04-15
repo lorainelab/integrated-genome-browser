@@ -66,7 +66,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
 		super(id);
 	}
 
-	public CompositeNegSeq() { }
+	//public CompositeNegSeq() { }
 
 
 	/**

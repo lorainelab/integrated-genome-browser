@@ -17,8 +17,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.DNAUtils;
 import java.util.*;
 
-public class SimpleCompAnnotBioSeq
-//  extends SimpleCompositeBioSeq
+public abstract class SimpleCompAnnotBioSeq
 	extends CompositeNegSeq
 	implements CompositeBioSeq, MutableAnnotatedBioSeq, MutableBioSeq {
 
@@ -75,7 +74,7 @@ public class SimpleCompAnnotBioSeq
 		super(id);
 	}
 
-	public SimpleCompAnnotBioSeq()  { }
+	//public SimpleCompAnnotBioSeq()  { }
 
 	public void addAnnotation(SeqSymmetry annot) {
 		if (null == annots) { annots = new ArrayList<SeqSymmetry>(); }
@@ -107,11 +106,11 @@ public class SimpleCompAnnotBioSeq
 	}
 
 	/** NOT YET IMPLEMENTED */
-	public SeqSymmetry getAnnotationByID(String id) { return null; }
+	//public SeqSymmetry getAnnotationByID(String id) { return null; }
 	/** NOT YET IMPLEMENTED */
-	public List getIntersectedAnnotations(SeqSpan span) { return null; }
+	//public List getIntersectedAnnotations(SeqSpan span) { return null; }
 	/** NOT YET IMPLEMENTED */
-	public List getContainedAnnotations(SeqSpan span) { return null; }
+	//public List getContainedAnnotations(SeqSpan span) { return null; }
 	//-----------------------------------------------------
 	// END Methods copied from SimpleAnnotatedBioSeq
 	//-----------------------------------------------------

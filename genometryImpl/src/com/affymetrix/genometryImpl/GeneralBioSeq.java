@@ -39,7 +39,7 @@ public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
 	// length field inherited from SimpleCompositeBioseq (by way of SimpleCompAnnotBioSeq)
 	SearchableCharIterator residues_provider;
 
-	public GeneralBioSeq() { }
+	//public GeneralBioSeq() { }
 
 	public GeneralBioSeq(String seqid, String seqversion, int length) {
 		super(seqid, length);

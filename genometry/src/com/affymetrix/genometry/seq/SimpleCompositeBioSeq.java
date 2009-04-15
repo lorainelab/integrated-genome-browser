@@ -23,7 +23,7 @@ import com.affymetrix.genometry.util.SeqUtils;
  * the future, this class may become an abstract class or be merged with its
  * subclass (CompositeNegSeq).
  */
-public class SimpleCompositeBioSeq implements CompositeBioSeq {
+public abstract class SimpleCompositeBioSeq implements CompositeBioSeq {
 
 	/** Boolean debug variable for the class. */
 	public boolean DEBUG_GET_RESIDUES = false;
@@ -48,7 +48,7 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
 	}
 
 	/** This class should never be instantiated. */
-	public SimpleCompositeBioSeq() { }
+	//public SimpleCompositeBioSeq() { }
 
 	public SeqSymmetry getComposition() {
 		return compose;

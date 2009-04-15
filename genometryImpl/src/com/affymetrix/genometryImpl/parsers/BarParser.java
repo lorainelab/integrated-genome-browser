@@ -13,12 +13,13 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleBioSeq;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
@@ -288,7 +289,7 @@ public final class BarParser implements AnnotationWriter  {
 		return graf;
 	}
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		String test_file = "c:/data/graph_slice_test/test.bar";
 		if (args.length > 0) {
 			test_file = args[0];
@@ -311,7 +312,7 @@ public final class BarParser implements AnnotationWriter  {
 		//    getSlice(test_file, gmodel, new SimpleSeqSpan(157999267, 158400000, testseq));
 		//    getSlice(test_file, gmodel, new SimpleSeqSpan(158400000, 159000000, testseq));
 		//    getSlice(test_file, gmodel, new SimpleSeqSpan(158500000, 159000000, testseq));
-	}
+	}*/
 
 	public static void testFullRead(String test_file) throws IOException {
 		Timer tim = new Timer();

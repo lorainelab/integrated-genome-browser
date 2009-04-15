@@ -45,7 +45,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 	//private boolean modify_events_enabled = true;
 	//private boolean modification_cached = false;
 
-	public SmartAnnotBioSeq() { }
+	//public SmartAnnotBioSeq() { }
 
 	public SmartAnnotBioSeq(String seqid, String seqversion, int length) {
 		super(seqid, seqversion, length);

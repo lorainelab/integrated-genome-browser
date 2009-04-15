@@ -19,7 +19,6 @@ import com.affymetrix.genometry.*;
 
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
-import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -73,7 +72,7 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
-	private static void SetResiduesIterator(int num_residues, DataInputStream dis, GeneralBioSeq result_seq) throws IOException {
+	private static void SetResiduesIterator(int num_residues, DataInputStream dis, SmartAnnotBioSeq result_seq) throws IOException {
 		byte[] nibble_array;
 		if ((num_residues % 2) == 0) {
 			nibble_array = new byte[num_residues / 2];

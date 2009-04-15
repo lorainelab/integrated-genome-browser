@@ -29,9 +29,9 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.view.SeqMapView;
 
 import com.affymetrix.igb.tiers.*;
@@ -450,7 +450,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 
     if (aseq == null) {
-      uni.errorPanel("Error", "Nothing to bookmark");
+      Application.errorPanel("Error", "Nothing to bookmark");
     } else {
       Rectangle2D vbox = map.getView().getCoordBox();
       SimpleSymWithProps mark_sym = new BookmarkSymmetry();
@@ -460,8 +460,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       mark_sym.addSpan(mark_span);
 
       String version = "unknown";
-      if (aseq instanceof GeneralBioSeq) {
-        version = ((GeneralBioSeq)aseq).getVersion();
+      if (aseq instanceof SmartAnnotBioSeq) {
+        version = ((SmartAnnotBioSeq)aseq).getVersion();
       }
       String default_name =
         version + ", " + aseq.getID() + ":" + mark_span.getMin() +

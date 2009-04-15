@@ -400,8 +400,8 @@ public abstract class BookmarkController {
     BioSeq seq = span.getBioSeq();
     Map<String,String> props = new LinkedHashMap<String,String>();
     props.put("seqid", seq.getID());
-    if (seq instanceof GeneralBioSeq) {
-      props.put("version", ((GeneralBioSeq)seq).getVersion());
+    if (seq instanceof SmartAnnotBioSeq) {
+      props.put("version", ((SmartAnnotBioSeq)seq).getVersion());
     } else {
       props.put("version", "unknown");
     }

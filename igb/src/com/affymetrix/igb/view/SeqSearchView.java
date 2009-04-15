@@ -14,7 +14,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -34,6 +33,7 @@ import com.affymetrix.genoviz.glyph.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 
@@ -232,8 +232,8 @@ public final class SeqSearchView extends JComponent implements ActionListener  {
         }
         try {
             tim.start();
-            boolean use_nibseq = vseq instanceof GeneralBioSeq;
-            GeneralBioSeq nibseq = null;
+            boolean use_nibseq = vseq instanceof SmartAnnotBioSeq;
+            SmartAnnotBioSeq nibseq = null;
             String residues = null;
             int res_index = -1;
             try {
@@ -241,7 +241,7 @@ public final class SeqSearchView extends JComponent implements ActionListener  {
                     System.out.flush();
                     searchstring = searchstring.toUpperCase();
                     System.out.println("searching NibbleBioSeq for occurrences of \"" + searchstring + "\" in sequence");
-                    nibseq = (GeneralBioSeq) vseq;
+                    nibseq = (SmartAnnotBioSeq) vseq;
                     res_index = nibseq.indexOf(searchstring, 0);
                 } else {
                     System.out.println("searching for occurrences of \"" + searchstring + "\" in residues");

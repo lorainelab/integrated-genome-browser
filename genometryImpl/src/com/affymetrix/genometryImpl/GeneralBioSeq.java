@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
  *     just make pass-through calls for most SearchableCharIterator methods...
  * </pre>
  */
-public class GeneralBioSeq extends SimpleCompAnnotBioSeq
+public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
 	implements SearchableCharIterator, Versioned {
 
 	String version;

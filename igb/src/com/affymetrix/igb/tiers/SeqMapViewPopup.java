@@ -282,7 +282,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 					  "Change Selected Tiers Max Height", JOptionPane.PLAIN_MESSAGE,
 					  null, null, initial_value);
 
-    if (input == JOptionPane.UNINITIALIZED_VALUE || !(input instanceof String)) {
+    if ( input == null || input.equals(JOptionPane.UNINITIALIZED_VALUE)) {
       return;
     }
 

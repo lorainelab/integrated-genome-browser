@@ -556,8 +556,8 @@ public final class GraphScoreThreshSetter extends JPanel
       widg.updateWidget();
     }
     else if (src == threshCB) {
-      String selection = (String)((JComboBox)threshCB).getSelectedItem();
-      boolean thresh_on = (selection == ON);
+      String selection = (String)(threshCB).getSelectedItem();
+      boolean thresh_on = (selection.equals(ON));
       int gcount = graphs.size();
       for (int i=0; i<gcount; i++) {
         SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);

@@ -208,7 +208,7 @@ import javax.swing.*;
    *          of the acceptable values
    */
   public static void saveComponentState(String name, String state) {
-    if ((state == COMPONENT_STATE_TAB) || (state == COMPONENT_STATE_WINDOW)) {
+    if (state.equals(COMPONENT_STATE_TAB) || state.equals(COMPONENT_STATE_WINDOW)) {
       getTopNode().put(name+" state", state);
     } else {
       throw new IllegalArgumentException();

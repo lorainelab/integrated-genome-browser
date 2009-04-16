@@ -387,8 +387,8 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			}
 		}
 		finally {
-			if (bos != null) {try { bos.close(); } catch (Exception e) {}}
-			if (dos != null) {try { dos.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(bos);
+			GeneralUtils.safeClose(dos);
 		}
 	}
 

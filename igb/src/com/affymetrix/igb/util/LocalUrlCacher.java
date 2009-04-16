@@ -167,9 +167,9 @@ public final class LocalUrlCacher {
 
 		try {
 			URL theurl = new URL(url);
+			conn = theurl.openConnection();
 			conn.setConnectTimeout(CONNECT_TIMEOUT);
 			conn.setReadTimeout(READ_TIMEOUT);
-			conn = theurl.openConnection();
 			// adding a conn.connect() call here to force throwing of error here if can't open connection
 			//    because some method calls on URLConnection like those below don't always throw errors
 			//    when connection can't be opened -- which would end up allowing url_reachable to be set to true

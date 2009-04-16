@@ -573,7 +573,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		GenericVersion gVersion = this.glu.group2version.get(group);
 		if (gVersion == null) {
-			gVersion = createUnknownVersion(group);
+			createUnknownVersion(group);
 			return;
 		}
 
@@ -623,7 +623,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		GenericVersion gVersion = this.glu.group2version.get(group);
 		if (gVersion == null) {
-			gVersion = createUnknownVersion(group);
+			createUnknownVersion(group);
 			return;
 		}
 
@@ -649,7 +649,7 @@ public final class GeneralLoadView extends JComponent
 	 * group has been created independently of the discovery process (probably by loading a file).
 	 * create new "unknown" species/version.
 	 */
-	private GenericVersion createUnknownVersion(AnnotatedSeqGroup group) {
+	private void createUnknownVersion(AnnotatedSeqGroup group) {
 		removeListeners();
 		GenericVersion gVersion = this.glu.getUnknownVersion(group);
 		String species = this.glu.versionName2species.get(gVersion.versionName);
@@ -663,7 +663,6 @@ public final class GeneralLoadView extends JComponent
 		partial_residuesB.setEnabled(false);
 		refresh_dataB.setEnabled(false);
 		addListeners();
-		return gVersion;
 	}
 
 

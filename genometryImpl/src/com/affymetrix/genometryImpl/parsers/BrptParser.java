@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *
@@ -220,8 +221,8 @@ public final class BrptParser {
 			}
 		}
 		finally {
-			if (bis != null) {try { bis.close(); } catch (Exception e) {}}
-			if (dis != null) {try { dis.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(dis);
 		}
 		return rpt_syms;
 	}

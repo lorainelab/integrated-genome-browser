@@ -48,6 +48,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.InputStream;
+//import java.io.StringBufferInputStream;
 import java.io.StringBufferInputStream;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -56,7 +57,7 @@ public final class ExperimentPivotView extends JComponent
       implements SymSelectionListener, ActionListener, AnnotatedSeqViewer, SeqSelectionListener
 {
 
-  static String BLANK = "";
+  //static String BLANK = "";
 
   // styles
   final static String LINE = "Line";
@@ -465,7 +466,7 @@ public final class ExperimentPivotView extends JComponent
     }
   }
 
-  public GraphGlyph addGraph(SeqSymmetry sym, TierGlyph mtg) {
+  private GraphGlyph addGraph(SeqSymmetry sym, TierGlyph mtg) {
     GraphGlyph gl = null;
     if (sym instanceof IndexedSym) {
       IndexedSym isym = (IndexedSym)sym;
@@ -484,6 +485,8 @@ public final class ExperimentPivotView extends JComponent
       }
       xcoords[point_count] = point_count * score_spacing;
       ycoords[point_count] = 0;
+
+			// TODO: Bug here.  The next line will cause a NullReferenceException in its 3rd argument.
       GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, null, null);
       
       // Each graph has its own, un-named, GraphState object
@@ -533,13 +536,13 @@ public final class ExperimentPivotView extends JComponent
     Object src = evt.getSource();
     if (src == styleCB) {
       String selection = (String) styleCB.getSelectedItem();
-      if (selection != BLANK) {
+			if (selection.length() > 0) {
         setExperimentStyle(selection);
       }
     }
     else if (src == scaleCB) {
       String selection = (String) scaleCB.getSelectedItem();
-      if (selection != BLANK) {
+      if (selection.length() > 0) {
         setExperimentScaling(selection, true);
       }
     }

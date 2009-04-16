@@ -367,7 +367,7 @@ public final class GraphSymUtils {
 					String gid = gsym.getID();
 					String newid = getUniqueGraphID(gid, gseq);
 					//TODO: Instead of re-setting the graph ID, a unique ID should have been used in the constructor
-					if (newid != gid) {
+					if (!(newid.equals(gid))) {
 						gsym.setID(newid);
 					}
 				}

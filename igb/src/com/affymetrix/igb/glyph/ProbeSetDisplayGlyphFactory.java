@@ -469,8 +469,8 @@ the probeset, probe and pieces of probes
       double floating_probeset_height = GLYPH_HEIGHT;
       double child_y = floating_probeset_y;
       double child_height = floating_probeset_height;
-      {
-        String ps_label_field = null; // the AnnotStyle system doesn't have any way to set this property
+   //   {
+        /*String ps_label_field = null; // the AnnotStyle system doesn't have any way to set this property
           // the "Extended Properties" has could be used if we want to resurrect this
         if (ps_label_field != null) {
           LabelledGlyph lglyph = new EfficientLabelledGlyph();
@@ -497,13 +497,13 @@ the probeset, probe and pieces of probes
           addProbesToProbeset(outline, transformed_probeset_sym, child_y, child_height, probeset_color);
 
           another_probeset_glyph.addChild(outline);
-        } else {
+        } else {*/
           another_probeset_glyph = new EfficientOutlineContGlyph();
           another_probeset_glyph.setCoords(span.getMin(), floating_probeset_y, span.getLength(), floating_probeset_height);
           another_probeset_glyph.setColor(probeset_color);
           addProbesToProbeset(another_probeset_glyph, transformed_probeset_sym, child_y, child_height, probeset_color);
-        }
-      }
+ //       }
+ //     }
 
       String meth = SeqMapView.determineMethod(probeset_sym.getOriginalSymmetry());
       if (meth==null) {meth = "unknown";}

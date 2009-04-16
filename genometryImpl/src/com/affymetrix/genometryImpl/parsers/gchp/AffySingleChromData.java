@@ -79,7 +79,7 @@ public final class AffySingleChromData {
 
 	void skip(DataInputStream dis) throws IOException {
 		int rowSize = totalRowSize();
-		long skipSize = rowCount * rowSize;
+		long skipSize = (long)rowCount * rowSize;	// cast to long before multiplying to avoid possible overflow
 
 		while (skipSize > 0) {
 			long skipped = dis.skip(skipSize);

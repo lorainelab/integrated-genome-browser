@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -131,13 +132,12 @@ public final class GraphAdjusterView {
     if (gl != null) {
       gviewer.getSeqMap().removeItem(gl);
       // clean-up references to the graph, allowing garbage-collection, etc.
-      gviewer.select(Collections.EMPTY_LIST);
+      gviewer.select(Collections.<SeqSymmetry>emptyList());
 
       // if this is not a floating graph, then it's in a tier,
       //    so check tier -- if this graph is only child, then get rid of the tier also
-      if (gviewer.getSeqMap() instanceof AffyTieredMap &&
-          (! gl.getGraphState().getFloatGraph()) ) {
-        AffyTieredMap map = (AffyTieredMap)gviewer.getSeqMap();
+      if (! gl.getGraphState().getFloatGraph()) {
+        AffyTieredMap map = gviewer.getSeqMap();
         GlyphI parentgl = gl.getParent();
         parentgl.removeChild(gl);
         if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it

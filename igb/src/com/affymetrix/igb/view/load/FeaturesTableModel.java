@@ -97,7 +97,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	}
 
 	public int getRow(GenericFeature feature) {
-		return (features == null) ? null : features.indexOf(feature);
+		return (features == null) ? -1 : features.indexOf(feature);
 	}
 
 	public List<GenericFeature> getFeatures() {

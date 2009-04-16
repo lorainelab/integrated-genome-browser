@@ -19,6 +19,7 @@ import com.affymetrix.genometry.*;
 
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
+import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -55,7 +56,9 @@ public final class NibbleResiduesParser {
 			//      System.out.println("length: " + num_residues);
 
 			SmartAnnotBioSeq existing_seq = seq_group.getSeq(name);
-			if (existing_seq == null) {
+			if (existing_seq != null) {
+				result_seq = existing_seq;
+			} else {
 				result_seq = seq_group.addSeq(name, num_residues);
 			}
 
@@ -72,7 +75,7 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
-	private static void SetResiduesIterator(int num_residues, DataInputStream dis, SmartAnnotBioSeq result_seq) throws IOException {
+	private static void SetResiduesIterator(int num_residues, DataInputStream dis, GeneralBioSeq result_seq) throws IOException {
 		byte[] nibble_array;
 		if ((num_residues % 2) == 0) {
 			nibble_array = new byte[num_residues / 2];
@@ -83,6 +86,7 @@ public final class NibbleResiduesParser {
 		System.out.println("nibble array length: " + nibble_array.length);
 
 		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
+		System.out.println("NibbleIterator: " + residues_provider);
 		result_seq.setResiduesProvider(residues_provider);
 	}
 

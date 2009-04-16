@@ -105,7 +105,7 @@ public final class WiggleParser {
 
 				current_format = WiggleFormat.VARSTEP;
 				current_seq_id = WiggleParser.parseFormatLine( line, "chrom","unknown");
-				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","0"));
+				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","1"));
 				continue;
 			}
 
@@ -121,7 +121,7 @@ public final class WiggleParser {
 					throw new IllegalArgumentException("'fixedStep' format with start of " + current_start +".");
 				}
 				current_step = Integer.parseInt(WiggleParser.parseFormatLine( line, "step","1"));
-				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","0"));
+				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","1"));
 				continue;
 			}
 

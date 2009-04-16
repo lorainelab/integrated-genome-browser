@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.ScoredSingletonSym;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -43,6 +42,7 @@ public final class GraphIntervalSym extends GraphSymFloat {
 		return wcoords;
 	}
 
+	@Override
 	public int getChildCount() {
 		return xcoords.length;
 	}
@@ -51,6 +51,7 @@ public final class GraphIntervalSym extends GraphSymFloat {
 	 *  Constructs a temporary SeqSymmetry to represent the graph value of a single span.
 	 *  The returned SeqSymmetry will implement the {@link Scored} interface.
 	 */
+	@Override
 	public SeqSymmetry getChild(int index) {
 		return new ScoredSingletonSym(xcoords[index], xcoords[index]+wcoords[index], graph_original_seq, getGraphYCoord(index));
 	}

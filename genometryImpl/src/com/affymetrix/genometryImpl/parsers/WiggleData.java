@@ -56,12 +56,22 @@ final class WiggleData {
 	}
 
 	public void add(int x, float y, int w) {
+		if (!data.isEmpty()) {
+			// See if we can merge intervals with same Y coordinate.
+			// This is done to save space in redundant wiggle files.
+			Point3D lastP = data.get(data.size()-1);
+			if (y == lastP.y && x >= lastP.x && x <= (lastP.x + lastP.w)) {
+				lastP.w = x - lastP.x + w;
+				return;
+			}
+		}
 		data.add(new Point3D(x, y, w));
 	}
 
 	private static final class Point3D {
 		private final float y;
-		private final int x, w;
+		private final int x;
+		private int w;
 		public Point3D(int x, float y,int w) {
 			this.x = x; this.y =y; this.w = w;
 		}

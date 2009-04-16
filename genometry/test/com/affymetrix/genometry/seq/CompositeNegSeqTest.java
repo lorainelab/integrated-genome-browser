@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * @author sgblanch
  */
 public class CompositeNegSeqTest {	
-	static final CompositeNegSeq seq         = new CompositeNegSeq("seq");
+	static final CompositeNegSeq seq         = new CompositeNegSeq("seq", 0);
 	static final CompositeNegSeq seq_len     = new CompositeNegSeq("len", 500);
 
 	public CompositeNegSeqTest() {
@@ -67,7 +67,7 @@ public class CompositeNegSeqTest {
 	private void constructorTest(String id, String err_msg) {
 		CompositeNegSeq testseq;
 		try {
-			testseq = new CompositeNegSeq(id);
+			testseq = new CompositeNegSeq(id, 0);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}

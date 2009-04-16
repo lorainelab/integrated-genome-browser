@@ -19,7 +19,7 @@ import java.util.*;
 
 public abstract class SimpleCompAnnotBioSeq
 	extends CompositeNegSeq
-	implements CompositeBioSeq, MutableAnnotatedBioSeq, MutableBioSeq {
+	implements CompositeBioSeq, MutableAnnotatedBioSeq {
 
 	boolean DEBUG = false;
 	// GAH 8-14-2002: need a residues field in case residues need to be cached
@@ -30,6 +30,7 @@ public abstract class SimpleCompAnnotBioSeq
 
 	protected List<SeqSymmetry> annots;
 
+	@Override
 	public String getResidues(int start, int end, char fillchar) {
 		int residue_length = this.getLength();
 		if (start < 0 || residue_length <= 0) {
@@ -58,6 +59,7 @@ public abstract class SimpleCompAnnotBioSeq
 		return DNAUtils.reverseComplement(residues.substring(start, end));
 	}
 
+	@Override
 	public boolean isComplete(int start, int end) {
 		if (residues != null) { return true; }
 		else  { return super.isComplete(start, end); }
@@ -70,9 +72,9 @@ public abstract class SimpleCompAnnotBioSeq
 		super(id, length);
 	}
 
-	public SimpleCompAnnotBioSeq(String id)  {
+	/*public SimpleCompAnnotBioSeq(String id)  {
 		super(id);
-	}
+	}*/
 
 	//public SimpleCompAnnotBioSeq()  { }
 
@@ -87,11 +89,11 @@ public abstract class SimpleCompAnnotBioSeq
 		}
 	}
 
-	public void removeAnnotation(int index) {
+	/*public void removeAnnotation(int index) {
 		if (null != annots) {
 			annots.remove(index);
 		}
-	}
+	}*/
 
 	public int getAnnotationCount() {
 		if (null != annots) return annots.size();
@@ -119,7 +121,7 @@ public abstract class SimpleCompAnnotBioSeq
 	//-----------------------------------------------------
 	// BEGIN methods copied from SimpleBioSeq
 	//-----------------------------------------------------
-	public void setID(String id) { this.id = id; }
+	//public void setID(String id) { this.id = id; }
 	public void setLength(int length) {
 		//    this.length = length;
 		setBounds(0, length);  // sets start, end, bounds

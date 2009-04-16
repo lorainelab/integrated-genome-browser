@@ -23,9 +23,9 @@ public class SimpleBioSeq implements BioSeq, MutableBioSeq {
 	protected int length;
 	protected String residues;
 
-	public SimpleBioSeq() {
+	/*public SimpleBioSeq() {
 		length = 0;
-	}
+	}*/
 
 	public SimpleBioSeq(String id, int length) {
 		this.id = id;
@@ -38,10 +38,10 @@ public class SimpleBioSeq implements BioSeq, MutableBioSeq {
 		this.length = residues.length();
 	}
 
-	public SimpleBioSeq(String id) {
+	/*public SimpleBioSeq(String id) {
 		this.id = id;
 		this.length = 0;
-	}
+	}*/
 
 	public String getID() { return id; }
 	//  public int getMin() { return 0; }
@@ -92,7 +92,7 @@ public class SimpleBioSeq implements BioSeq, MutableBioSeq {
 		return (residues.length() >= end);
 	}
 
-	public void setID(String id) { this.id = id; }
+	//public void setID(String id) { this.id = id; }
 
 	public void setLength(int length) { 
 		this.length = length; 

@@ -23,10 +23,10 @@ public final class SimpleAnnotatedBioSeq
 
 	protected List<SeqSymmetry> annots;
 
-	public SimpleAnnotatedBioSeq(String id, int length, List<SeqSymmetry> annots) {
+	/*public SimpleAnnotatedBioSeq(String id, int length, List<SeqSymmetry> annots) {
 		this(id, length);
 		this.annots = annots;
-	}
+	}*/
 
 	public SimpleAnnotatedBioSeq(String id, String residues) {
 		super(id, residues);
@@ -36,9 +36,9 @@ public final class SimpleAnnotatedBioSeq
 		super(id, length);
 	}
 
-	public SimpleAnnotatedBioSeq(String id)  {
+	/*public SimpleAnnotatedBioSeq(String id)  {
 		super(id);
-	}
+	}*/
 
 	public void addAnnotation(SeqSymmetry annot) {
 		if (null == annots) { annots = new ArrayList<SeqSymmetry>(); }
@@ -51,11 +51,11 @@ public final class SimpleAnnotatedBioSeq
 		}
 	}
 
-	public void removeAnnotation(int index) {
+	/*public void removeAnnotation(int index) {
 		if (null != annots) {
 			annots.remove(index);
 		}
-	}
+	}*/
 
 	public int getAnnotationCount() {
 		if (null != annots) {

@@ -56,7 +56,7 @@ public class CompositeNegSeq extends SimpleCompositeBioSeq {
 
 
 	public CompositeNegSeq(String id, int length) {
-		this(id);
+		super(id);
 		this.length = length;
 		start = 0;
 		end = length;

@@ -17,5 +17,5 @@ public interface MutableAnnotatedBioSeq extends AnnotatedBioSeq, MutableBioSeq {
 
 	public void addAnnotation(SeqSymmetry annot);
 	public void removeAnnotation(SeqSymmetry annot);
-	public void removeAnnotation(int index);
+	//public void removeAnnotation(int index);
 }

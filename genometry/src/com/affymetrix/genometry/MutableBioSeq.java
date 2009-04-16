@@ -14,7 +14,7 @@
 package com.affymetrix.genometry;
 
 public interface MutableBioSeq extends BioSeq {
-	public void setID(String id);
+	//public void setID(String id);
 	public void setLength(int length);
 	public void setResidues(String residues);
 

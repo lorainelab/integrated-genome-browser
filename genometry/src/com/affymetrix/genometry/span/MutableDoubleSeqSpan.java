@@ -14,7 +14,6 @@
 package com.affymetrix.genometry.span;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 
 public final class MutableDoubleSeqSpan extends DoubleSeqSpan implements MutableSeqSpan {
@@ -23,9 +22,9 @@ public final class MutableDoubleSeqSpan extends DoubleSeqSpan implements Mutable
 		super(start, end, seq);
 	}
 
-	public MutableDoubleSeqSpan(SeqSpan span) {
+	/*public MutableDoubleSeqSpan(SeqSpan span) {
 		this(span.getStartDouble(), span.getEndDouble(), span.getBioSeq());
-	}
+	}*/
 
 	public MutableDoubleSeqSpan()  {
 		this(0, 0, null);

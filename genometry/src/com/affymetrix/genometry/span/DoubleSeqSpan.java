@@ -31,6 +31,7 @@ public class DoubleSeqSpan implements SeqSpan, Cloneable {
 		return false;
 	}
 
+	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}

@@ -132,13 +132,9 @@ public final class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group,
-			Map<String,String> track_hash, String default_track_name) {
-		String name = track_hash.get(NAME);
-		if (name == null) {
-			track_hash.put(NAME, default_track_name);
-			name = default_track_name;
-		}
+	static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group, Map<String,String> track_hash, String default_track_name) {
+		String name = default_track_name;
+		track_hash.put(NAME, default_track_name);
 		StateProvider provider = seq_group.getStateProvider();
 		IAnnotStyle style = provider.getAnnotStyle(name);
 		applyTrackProperties(track_hash, style);

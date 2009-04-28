@@ -931,12 +931,12 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *         seqid/min:max:strand
 	 *   but _not_ the case where there is no seqid, or no min, or no max
 	 */
-	public static SeqSpan getLocationSpan(String seqrng, AnnotatedSeqGroup group) {
+	/*public static SeqSpan getLocationSpan(String seqrng, AnnotatedSeqGroup group) {
 		int sindex = seqrng.lastIndexOf("/");
 		String seqid = seqrng.substring(0, sindex);
 		String rng = seqrng.substring(sindex + 1);
 		return getLocationSpan(seqid, rng, group);
-	}
+	}*/
 
 	public static String getLocationSeqId(String seqrng) {
 		int sindex = seqrng.lastIndexOf("/");
@@ -959,7 +959,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		return new_seqid;
 	}
 
-	public static SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
+	private static SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
 		if (seqid == null || rng == null) {
 			return null;
 		}
@@ -975,7 +975,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		BioSeq seq;
 		// need to revisit what to do if group == null
 		if (group == null) {
-			seq = new SimpleBioSeq(seqid, max);
+			seq = new SmartAnnotBioSeq(seqid, "", max);
 		} else {
 			if (ADD_NEW_SEQS_TO_GROUP) {
 				// this will both create the seq and stretch its length if necessary.
@@ -983,7 +983,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			} else {
 				seq = group.getSeq(seqid);
 				if (seq == null) {
-					seq = new SimpleBioSeq(seqid, max);
+					seq = new SmartAnnotBioSeq(seqid, "", max);
 				}
 			}
 		}

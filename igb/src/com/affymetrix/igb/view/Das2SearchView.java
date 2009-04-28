@@ -13,13 +13,17 @@ import javax.swing.EditableComboBox;
 import com.affymetrix.igb.*;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.das2.Das2FeatureComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.das2.*;
+
 
 /**
  *  Strategy is to call Das2VersionedSource.getFeaturesByName()
@@ -32,26 +36,20 @@ import com.affymetrix.igb.das2.*;
  *      and to set view to results sym's seq and span
  */
 public final class Das2SearchView extends JPanel implements ActionListener, GroupSelectionListener {
-
-	static Das2ServerInfo default_server;
 	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	static boolean DEBUG_EVENTS = false;
 
-
-	static {
-		default_server = Das2Discovery.getDas2Server(Das2Discovery.DEFAULT_DAS2_SERVER_NAME);
-	}
 	EditableComboBox searchCB = new EditableComboBox();
 	SeqMapView gviewer;
 	JTable results_table;
-	Map<String,List> search_results_history = new LinkedHashMap<String,List>();  // keeping history of search results
+	//Map<String,List> search_results_history = new LinkedHashMap<String,List>();  // keeping history of search results
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		if (DEBUG_EVENTS) {
 			System.out.println("Das2SearchView.groupSelectionChanged() called");
 		}
 		// need to clear table, search history, combo box
-		search_results_history = new LinkedHashMap<String,List>();
+		//search_results_history = new LinkedHashMap<String,List>();
 		searchCB.reset();
 		results_table.setModel(new SearchResultsTableModel(new ArrayList()));
 	}
@@ -132,23 +130,33 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 		if (group == null) {
 			return null;
 		}
-		Das2VersionedSource version = default_server.getVersionedSource(group);
-		if (version == null) {
+
+		List features = new ArrayList();
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (gVersion.gServer.serverType == ServerType.DAS2) {
+				Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
+				if (version != null) {
+					features.addAll(searchFeaturesByName(name, version));
+				}
+			}
+		}
+		if (features.isEmpty()) {
 			return null;
 		}
 
-		// if already searched with this name, then use cached results
-		List feats = search_results_history.get(name);
-		if (feats == null) {
-			feats = version.getFeaturesByName(name, false);
-			MutableComboBoxModel mcb = (MutableComboBoxModel) searchCB.getModel();
-			mcb.addElement(name);
-			search_results_history.put(name, feats);
-		}
-		System.out.println("features found: " + feats.size());
-		Collections.sort(feats, new Das2FeatureComparator(true));  // sort based on name / ID
-		SearchResultsTableModel tmodel = new SearchResultsTableModel(feats);
+		System.out.println("features found: " + features.size());
+		Collections.sort(features, new Das2FeatureComparator(true)); // sort based on name / ID
+		SearchResultsTableModel tmodel = new SearchResultsTableModel(features);
 		results_table.setModel(tmodel);
+
+		return features;
+	}
+
+	private List searchFeaturesByName(String name, Das2VersionedSource version) {
+		List feats = version.getFeaturesByName(name, false);
+		MutableComboBoxModel mcb = (MutableComboBoxModel) searchCB.getModel();
+		mcb.addElement(name);
+
 		return feats;
 	}
 }

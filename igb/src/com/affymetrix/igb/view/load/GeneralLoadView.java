@@ -292,12 +292,16 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		GenericVersion gVersion = group.getVersion();
-		if (gVersion == null || gVersion.versionName == null) {
+		List<GenericVersion> gVersions = group.getVersions();
+		if (gVersions.isEmpty()) {
+			return;
+		}
+		String versionName = gVersions.get(0).versionName;
+		if (versionName == null) {
 			return;
 		}
 
-		String speciesName = this.glu.versionName2species.get(gVersion.versionName);
+		String speciesName = this.glu.versionName2species.get(versionName);
 		if (speciesName == null) {
 			return;
 		}
@@ -307,7 +311,7 @@ public final class GeneralLoadView extends JComponent
 		addListeners();
 
 		// select the version, using events to populate the feature and chrom table.
-		setTheVersion(gVersion.versionName);
+		setTheVersion(versionName);
 
 		// Select the persistent chromosome, and restore the span.
 		SmartAnnotBioSeq seq = Persistence.restoreSeqSelection(group);
@@ -569,21 +573,25 @@ public final class GeneralLoadView extends JComponent
 		if (current_group == null) {
 			return;
 		}
-		GenericVersion gVersion = group.getVersion();
-		if (gVersion == null) {
+		List<GenericVersion> gVersions = group.getVersions();
+		if (gVersions.isEmpty()) {
 			createUnknownVersion(group);
 			return;
 		}
-
-		String speciesName = this.glu.versionName2species.get(gVersion.versionName);
+		String versionName = gVersions.get(0).versionName;
+		if (versionName == null) {
+			System.out.println("ERROR -- couldn't find version");
+			return;
+		}
+		String speciesName = this.glu.versionName2species.get(versionName);
 		if (speciesName == null) {
 			// Couldn't find species matching this version -- we have problems.
-			System.out.println("ERROR - Couldn't find species for version " + gVersion.versionName);
+			System.out.println("ERROR - Couldn't find species for version " + versionName);
 			return;
 		}
 
 		this.setTheSpecies(speciesName);
-		this.setTheVersion(gVersion.versionName);
+		this.setTheVersion(versionName);
 		addListeners();
 	}
 
@@ -619,8 +627,8 @@ public final class GeneralLoadView extends JComponent
 			}
 			return;
 		}
-		GenericVersion gVersion = group.getVersion();
-		if (gVersion == null) {
+		List<GenericVersion> gVersions = group.getVersions();
+		if (gVersions.isEmpty()) {
 			createUnknownVersion(group);
 			return;
 		}
@@ -631,7 +639,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		if (gVersion == null || !(gVersion.versionName.equals(versionName))) {
+		if (!(gVersions.get(0).versionName.equals(versionName))) {
 			System.out.println("ERROR - version doesn't match");
 			return;
 		}
@@ -765,8 +773,8 @@ public final class GeneralLoadView extends JComponent
 		if (enabled) {
 			enabled = current_seq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" version
-				GenericVersion gVersion = current_seq.getSeqGroup().getVersion();
-				enabled = (gVersion != null && gVersion.gServer.serverType != ServerType.Unknown);
+				List<GenericVersion> gVersions = current_seq.getSeqGroup().getVersions();
+				enabled = (!gVersions.isEmpty() && gVersions.get(0).gServer.serverType != ServerType.Unknown);
 			}
 		}
 

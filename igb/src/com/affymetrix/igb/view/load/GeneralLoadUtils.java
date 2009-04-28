@@ -343,13 +343,14 @@ public final class GeneralLoadUtils {
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
 
 			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
-			GenericVersion gVersion = group.getVersion();
-			if (gVersion != null) {
+			List<GenericVersion> gVersions = group.getVersions();
+			if (!gVersions.isEmpty()) {
 				// We've found a corresponding version object that was initialized earlier.
-				String speciesName = this.versionName2species.get(gVersion.versionName);
-				GenericVersion quickLoadVersion = new GenericVersion(genomeID, gVersion.versionName, gServer, quickloadServer);
+				String versionName = gVersions.get(0).versionName;
+				String speciesName = this.versionName2species.get(versionName);
+				GenericVersion quickLoadVersion = new GenericVersion(genomeID, versionName, gServer, quickloadServer);
 				List<GenericVersion> gVersionList = this.species2genericVersionList.get(speciesName);
-				discoverVersion(gVersion.versionName, gServer, quickLoadVersion, gVersionList, speciesName);
+				discoverVersion(versionName, gServer, quickLoadVersion, gVersionList, speciesName);
 				continue;
 			}
 			String species = SPECIES_LOOKUP.getPreferredName(genomeName);
@@ -361,7 +362,7 @@ public final class GeneralLoadUtils {
 
 			List<GenericVersion> gVersionList = this.getSpeciesVersionList(species);
 
-			gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
+			GenericVersion gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
 			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
 		}
 	}
@@ -408,7 +409,7 @@ public final class GeneralLoadUtils {
 		}
 		versionSet.add(gVersion);
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
-		group.setVersion(gVersion);
+		group.addVersion(gVersion);
 		if (DEBUG) {
 			System.out.println("Added " + gServer.serverType + "genome: " + speciesName + " version: " + versionName);
 		}

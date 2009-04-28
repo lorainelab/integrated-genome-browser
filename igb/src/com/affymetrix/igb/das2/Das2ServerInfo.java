@@ -74,6 +74,7 @@ public final class Das2ServerInfo  {
 		return name;
 	}
 
+	@Override
 	public String toString() { return getName(); }
 
 	public synchronized Map<String,Das2Source> getSources() {
@@ -290,10 +291,10 @@ public final class Das2ServerInfo  {
 			if (DEBUG_SOURCES_QUERY)  { System.out.println("Das2 Request: " + server_uri); }
 			Map headers = new LinkedHashMap();
 			InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
-                        if (response == null) { 
-                            System.out.println("WARNING: Could not find Das2 server " + server_uri);
-                            return false;
-                        }
+			if (response == null) {
+				System.out.println("WARNING: Could not find Das2 server " + server_uri);
+				return false;
+			}
 
 			String content_type = (String)headers.get("content-type");
 			if (DEBUG_SOURCES_QUERY) { System.out.println("Das2 Response content type: " + content_type); }
@@ -313,6 +314,7 @@ public final class Das2ServerInfo  {
 			//      doesn't work without trailing slash, so adding it back in here.
 			if (! das_query.endsWith("/"))  { das_query = das_query+"/"; }
 			//       Document doc = DasLoader.getDocument(request_con);
+			System.out.println("Initializing " + server_uri);
 			Document doc = DasLoader.getDocument(response);
 
 			Element top_element = doc.getDocumentElement();

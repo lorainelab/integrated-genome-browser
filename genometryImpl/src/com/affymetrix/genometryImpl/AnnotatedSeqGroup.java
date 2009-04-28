@@ -37,7 +37,7 @@ public class AnnotatedSeqGroup {
 	private String organism;
 	private String description;
 	private String source; //as in Das2 server name
-	private GenericVersion gVersion;
+	final private List<GenericVersion> gVersions = new ArrayList<GenericVersion>();
 	private boolean use_synonyms;
 	final private Map<String, SmartAnnotBioSeq> id2seq;
 	private ArrayList<SmartAnnotBioSeq> seqlist; //lazy copy of id2seq.values()
@@ -88,12 +88,14 @@ public class AnnotatedSeqGroup {
 		return organism;
 	}
 
-	final public void setVersion(GenericVersion gVersion) {
-		this.gVersion = gVersion;
+	final public void addVersion(GenericVersion gVersion) {
+		if (!this.gVersions.contains(gVersion)) {
+			this.gVersions.add(gVersion);
+		}
 	}
 
-	final public GenericVersion getVersion() {
-		return this.gVersion;
+	final public List<GenericVersion> getVersions() {
+		return this.gVersions;
 	}
 	
 	/** By default, simply returns the global StateProvider, but subclasses

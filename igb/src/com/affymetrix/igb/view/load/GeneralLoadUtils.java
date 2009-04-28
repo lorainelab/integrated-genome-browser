@@ -76,8 +76,6 @@ public final class GeneralLoadUtils {
 	//static boolean CACHE_RESIDUES_DEFAULT = false;
 	//static boolean CACHE_ANNOTS_DEFAULT = true;
 
-	/* TODO: can one group be represented by multiple versions? */
-	final Map<AnnotatedSeqGroup, GenericVersion> group2version;
 	private final Map<String, Boolean> version2init;
 
 	// server name-> GenericServer class.
@@ -124,7 +122,6 @@ public final class GeneralLoadUtils {
 
 	//public boolean allow_reinitialization = true;
 	public void clear() {
-		group2version.clear();
 		version2init.clear();
 		discoveredServers.clear();
 		species2genericVersionList.clear();
@@ -135,7 +132,6 @@ public final class GeneralLoadUtils {
 	public GeneralLoadUtils() {
 		this.gviewer = Application.getSingleton().getMapView();
 
-		group2version = new HashMap<AnnotatedSeqGroup, GenericVersion>();
 		version2init = new HashMap<String, Boolean>();
 		discoveredServers = new LinkedHashMap<String, GenericServer>();
 		species2genericVersionList = new LinkedHashMap<String, List<GenericVersion>>();
@@ -347,7 +343,7 @@ public final class GeneralLoadUtils {
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
 
 			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
-			GenericVersion gVersion = this.group2version.get(group);
+			GenericVersion gVersion = group.getVersion();
 			if (gVersion != null) {
 				// We've found a corresponding version object that was initialized earlier.
 				String speciesName = this.versionName2species.get(gVersion.versionName);
@@ -412,7 +408,7 @@ public final class GeneralLoadUtils {
 		}
 		versionSet.add(gVersion);
 		AnnotatedSeqGroup group = gmodel.addSeqGroup(versionName); // returns existing group if found, otherwise creates a new group
-		group2version.put(group, gVersion);
+		group.setVersion(gVersion);
 		if (DEBUG) {
 			System.out.println("Added " + gServer.serverType + "genome: " + speciesName + " version: " + versionName);
 		}

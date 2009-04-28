@@ -22,6 +22,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
 import com.affymetrix.genometryImpl.event.SymMapChangeListener;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -36,6 +37,7 @@ public class AnnotatedSeqGroup {
 	private String organism;
 	private String description;
 	private String source; //as in Das2 server name
+	private GenericVersion gVersion;
 	private boolean use_synonyms;
 	final private Map<String, SmartAnnotBioSeq> id2seq;
 	private ArrayList<SmartAnnotBioSeq> seqlist; //lazy copy of id2seq.values()
@@ -86,6 +88,14 @@ public class AnnotatedSeqGroup {
 		return organism;
 	}
 
+	final public void setVersion(GenericVersion gVersion) {
+		this.gVersion = gVersion;
+	}
+
+	final public GenericVersion getVersion() {
+		return this.gVersion;
+	}
+	
 	/** By default, simply returns the global StateProvider, but subclasses
 	 *  can implement a different one for each seq group.
 	 */

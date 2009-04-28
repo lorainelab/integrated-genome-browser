@@ -292,7 +292,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		GenericVersion gVersion = this.glu.group2version.get(group);
+		GenericVersion gVersion = group.getVersion();
 		if (gVersion == null || gVersion.versionName == null) {
 			return;
 		}
@@ -569,7 +569,7 @@ public final class GeneralLoadView extends JComponent
 		if (current_group == null) {
 			return;
 		}
-		GenericVersion gVersion = this.glu.group2version.get(group);
+		GenericVersion gVersion = group.getVersion();
 		if (gVersion == null) {
 			createUnknownVersion(group);
 			return;
@@ -619,7 +619,7 @@ public final class GeneralLoadView extends JComponent
 			}
 			return;
 		}
-		GenericVersion gVersion = this.glu.group2version.get(group);
+		GenericVersion gVersion = group.getVersion();
 		if (gVersion == null) {
 			createUnknownVersion(group);
 			return;
@@ -765,7 +765,7 @@ public final class GeneralLoadView extends JComponent
 		if (enabled) {
 			enabled = current_seq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" version
-				GenericVersion gVersion = this.glu.group2version.get(current_seq.getSeqGroup());
+				GenericVersion gVersion = current_seq.getSeqGroup().getVersion();
 				enabled = (gVersion != null && gVersion.gServer.serverType != ServerType.Unknown);
 			}
 		}

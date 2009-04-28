@@ -1,10 +1,11 @@
 package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.igb.general.GenericFeature;
-import com.affymetrix.igb.general.GenericServer;
-import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
-import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -126,19 +127,19 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 			return "";
 		}
 		GenericFeature gFeature = features.get(row);
-		GenericServer.ServerType serverType;
+		ServerType serverType;
 		switch (col) {
 			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
 				serverType = gFeature.gVersion.gServer.serverType;
-				if (serverType == GenericServer.ServerType.QuickLoad) {
+				if (serverType == ServerType.QuickLoad) {
 					return this.QuickLoadStrategyMap.get(gFeature.loadStrategy);
 				}
 				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
 			case FEATURE_NAME_COLUMN:
 				// the friendly feature name removes slashes.  Clip it here.
-				if (gFeature.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
-					return GeneralLoadUtils.stripFilenameExtensions(gFeature.featureName);
+				if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad) {
+					return LoadUtils.stripFilenameExtensions(gFeature.featureName);
 				}
 				return gFeature.featureName;
 			case SERVER_NAME_COLUMN:
@@ -147,13 +148,13 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 			case SERVER_TYPE_COLUMN:
 				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;
-				if (serverType == GenericServer.ServerType.DAS2) {
+				if (serverType == ServerType.DAS2) {
 					return "DAS/2";
 				}
-				if (serverType == GenericServer.ServerType.DAS) {
+				if (serverType == ServerType.DAS) {
 					return "DAS";
 				}
-				if (serverType == GenericServer.ServerType.QuickLoad) {
+				if (serverType == ServerType.QuickLoad) {
 					return "Quickload";
 				}
 				return "unknown";
@@ -188,9 +189,9 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 		String valueString = value.toString();
 		GenericFeature gFeature = features.get(row);
-		GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
+		ServerType serverType = gFeature.gVersion.gServer.serverType;
 
-		if (serverType == GenericServer.ServerType.QuickLoad) {
+		if (serverType == ServerType.QuickLoad) {
 			if (!this.QuickLoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
 				// strategy changed.  Update the feature object.
 				gFeature.loadStrategy = this.reverseQuickLoadStrategyMap.get(valueString);

@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.igb.general.GenericFeature;
-import com.affymetrix.igb.general.GenericServer;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Component;
 import java.util.Hashtable;
 import javax.swing.DefaultCellEditor;
@@ -40,10 +40,10 @@ public final class TableWithVisibleComboBox {
 
 		for (int row = 0; row < ftm.features.size(); row++) {
 			GenericFeature gFeature = ftm.features.get(row);
-			GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
-			if (serverType == GenericServer.ServerType.DAS || serverType == GenericServer.ServerType.DAS2) {
+			ServerType serverType = gFeature.gVersion.gServer.serverType;
+			if (serverType == ServerType.DAS || serverType == ServerType.DAS2) {
 				rm.addEditorForRow(row, DASeditor);
-			} else if (serverType == GenericServer.ServerType.QuickLoad) {
+			} else if (serverType == ServerType.QuickLoad) {
 				rm.addEditorForRow(row, QuickLoadeditor);
 			} else {
 				System.out.println("ERROR: Undefined class " + serverType);

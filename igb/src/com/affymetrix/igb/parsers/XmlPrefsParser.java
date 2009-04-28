@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das.DasDiscovery;
 import java.io.*;
@@ -29,7 +30,6 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.das2.Das2Discovery;
-import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
 
 /**
@@ -311,7 +311,7 @@ public final class XmlPrefsParser {
 								Das2Discovery.addDas2Server(server_name, server_url);
 							}
 						} else if (server_type.equalsIgnoreCase("quickload")) {
-							ServerList.addServer(GenericServer.ServerType.QuickLoad, server_name, server_url);
+							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
 						}
 
 					}

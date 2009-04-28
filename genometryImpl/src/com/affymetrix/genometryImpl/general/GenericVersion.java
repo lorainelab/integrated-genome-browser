@@ -1,4 +1,4 @@
-package com.affymetrix.igb.general;
+package com.affymetrix.genometryImpl.general;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A class that's useful for visualizing a generic version.
  *
- * @version $Id$
+ * @version $Id: GenericVersion.java 3659 2009-03-19 19:50:27Z jnicol $
  */
 public final class GenericVersion {
 

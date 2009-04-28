@@ -29,6 +29,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *
@@ -472,6 +473,8 @@ public class Das2VersionedSource {
      */
     public synchronized List getFeaturesByName(String name, boolean annotate_seq) {
 		List feats = null;
+		InputStream istr = null;
+		BufferedInputStream bis = null;
 		try {
 			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
 			String request_root = featcap.getRootURI().toString();
@@ -488,16 +491,17 @@ public class Das2VersionedSource {
 			URLConnection query_con = query_url.openConnection();
 			query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 			query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-			InputStream istr = query_con.getInputStream();
-			BufferedInputStream bis = new BufferedInputStream(istr);
+			istr = query_con.getInputStream();
+			bis = new BufferedInputStream(istr);
 			//      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);
 			feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), annotate_seq);
 			int feat_count = feats.size();
 			System.out.println("parsed query results, annot count = " + feat_count);
-			bis.close();
-			istr.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(istr);
 		}
 		return feats;
 	}

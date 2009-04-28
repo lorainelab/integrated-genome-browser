@@ -1,5 +1,7 @@
 package com.affymetrix.igb.general;
 
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,7 +43,7 @@ public final class ServerList {
      * @param url
      * @return
      */
-    public static GenericServer addServer(GenericServer.ServerType serverType, String name, String url) {
+    public static GenericServer addServer(ServerType serverType, String name, String url) {
         if (name2url.get(name) == null) {
             name2url.put(url, name);
             return initServer(serverType, url, name);
@@ -57,14 +59,14 @@ public final class ServerList {
      * @param name
      * @return
      */
-    protected static GenericServer initServer(GenericServer.ServerType serverType, String url, String name) {
+    protected static GenericServer initServer(ServerType serverType, String url, String name) {
         GenericServer server = null;
         try {
             String root_url = url;
             if (! root_url.endsWith("/")) {
                 root_url = root_url + "/";
             }
-            if (serverType == GenericServer.ServerType.QuickLoad) {
+            if (serverType == ServerType.QuickLoad) {
                 server = new GenericServer(name, root_url, serverType, root_url);
                 name2server.put(name, server);
                 url2server.put(url, server);

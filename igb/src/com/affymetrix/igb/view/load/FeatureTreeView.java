@@ -1,8 +1,8 @@
 
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.igb.general.GenericFeature;
-import com.affymetrix.igb.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Enumeration;

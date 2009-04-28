@@ -24,11 +24,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.JTableHeader;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometry.SeqSpan;
 
+import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
@@ -37,17 +39,13 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGB;
-import com.affymetrix.igb.general.GenericFeature;
-import com.affymetrix.igb.general.GenericServer;
-import com.affymetrix.igb.general.GenericServer.ServerType;
-import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
-import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
 
 import javax.swing.JSplitPane;
 import javax.swing.table.TableColumn;
@@ -212,11 +210,11 @@ public final class GeneralLoadView extends JComponent
 	public boolean addServer(String serverName, String serverURL, String serverType) {
 		boolean successful = false;
 		if (serverType.equals("QuickLoad")) {
-			successful = this.glu.addServer(serverName, serverURL, GenericServer.ServerType.QuickLoad);
+			successful = this.glu.addServer(serverName, serverURL, ServerType.QuickLoad);
 		} else if (serverType.equals("DAS")) {
-			successful = this.glu.addServer(serverName, serverURL, GenericServer.ServerType.DAS);
+			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS);
 		} else if (serverType.equals("DAS2")) {
-			successful = this.glu.addServer(serverName, serverURL, GenericServer.ServerType.DAS2);
+			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS2);
 		}
 		if (!successful) {
 			return false;
@@ -768,7 +766,7 @@ public final class GeneralLoadView extends JComponent
 			enabled = current_seq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" version
 				GenericVersion gVersion = this.glu.group2version.get(current_seq.getSeqGroup());
-				enabled = (gVersion != null && gVersion.gServer.serverType != GenericServer.ServerType.Unknown);
+				enabled = (gVersion != null && gVersion.gServer.serverType != ServerType.Unknown);
 			}
 		}
 

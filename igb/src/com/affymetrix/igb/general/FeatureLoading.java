@@ -1,8 +1,11 @@
 package com.affymetrix.igb.general;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -20,7 +23,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -63,7 +65,7 @@ public final class FeatureLoading {
 			return;
 		}
 
-		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS2) {
+		if (gVersion.gServer.serverType == ServerType.DAS2) {
 			if (DEBUG) {
 				System.out.println("Discovering DAS2 features for " + gVersion.versionName);
 			}
@@ -79,7 +81,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS) {
+		if (gVersion.gServer.serverType == ServerType.DAS) {
 			// Discover features from DAS
 			if (DEBUG) {
 				System.out.println("Discovering DAS1 features for " + gVersion.versionName);
@@ -95,7 +97,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
+		if (gVersion.gServer.serverType == ServerType.QuickLoad) {
 			// Discover feature names from QuickLoad
 
 			try {
@@ -121,7 +123,7 @@ public final class FeatureLoading {
 			}
 			return;
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.Unknown) {
+		if (gVersion.gServer.serverType == ServerType.Unknown) {
 			// no features.  This was an unknown type.
 			return;
 		}

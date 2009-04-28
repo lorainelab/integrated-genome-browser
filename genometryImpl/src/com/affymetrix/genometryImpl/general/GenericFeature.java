@@ -1,9 +1,10 @@
-package com.affymetrix.igb.general;
+package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
-import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStatus;
-import com.affymetrix.igb.view.load.GeneralLoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +36,8 @@ public final class GenericFeature {
 
 	@Override
 	public String toString() {
-		if (this.gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
-			return GeneralLoadUtils.stripFilenameExtensions(this.featureName);
+		if (this.gVersion.gServer.serverType == ServerType.QuickLoad) {
+			return LoadUtils.stripFilenameExtensions(this.featureName);
 		}
 
 		// remove all but the last "/", since these will be represented in a friendly tree view.

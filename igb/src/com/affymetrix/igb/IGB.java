@@ -41,6 +41,7 @@ import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
@@ -62,7 +63,6 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.prefs.*;
 import com.affymetrix.igb.bookmarks.SimpleBookmarkServer;
-import com.affymetrix.igb.general.GenericServer.ServerType;
 import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;

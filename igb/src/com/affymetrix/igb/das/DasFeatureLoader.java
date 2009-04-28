@@ -18,9 +18,9 @@ import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
-import com.affymetrix.igb.general.GenericFeature;
 import com.affymetrix.igb.view.SeqMapView;
 import org.jdesktop.swingworker.SwingWorker;
 

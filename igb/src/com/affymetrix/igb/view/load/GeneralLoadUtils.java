@@ -8,10 +8,16 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -27,18 +33,14 @@ import com.affymetrix.igb.das2.Das2Source;
 import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
-import com.affymetrix.igb.general.GenericFeature;
-import com.affymetrix.igb.general.GenericVersion;
 import com.affymetrix.igb.general.ResidueLoading;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.general.GenericServer;
 import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -47,23 +49,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
  *
  * @version $Id$
  */
 public final class GeneralLoadUtils {
-
-	public static enum LoadStrategy {
-
-		NO_LOAD, VISIBLE, WHOLE
-	};
-
-	public static enum LoadStatus {
-
-		UNLOADED, LOADING, LOADED
-	};
 	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 	/**
@@ -160,14 +151,14 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	boolean addServer(String serverName, String serverURL, GenericServer.ServerType serverType) {
+	boolean addServer(String serverName, String serverURL, ServerType serverType) {
 		if (discoveredServers.containsKey(serverName)) {
 			System.out.println("Server " + serverName +" already exists");
 			return false;
 		}
 
 		try {
-		if (serverType == GenericServer.ServerType.QuickLoad) {
+		if (serverType == ServerType.QuickLoad) {
 			GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL);
 			if (gServer == null) {
 				return false;
@@ -175,21 +166,21 @@ public final class GeneralLoadUtils {
 			getQuickLoadSpeciesAndVersions(gServer);
 			discoveredServers.put(gServer.serverName, gServer);
 
-		} else if (serverType == GenericServer.ServerType.DAS) {
+		} else if (serverType == ServerType.DAS) {
 			DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
 			if (server == null) {
 				return false;
 			}
-			GenericServer gServer = new GenericServer(serverName, server.getRootUrl(), server.getClass(), server);
+			GenericServer gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);
 			getDAS1SpeciesAndVersions(gServer);
 			discoveredServers.put(serverName, gServer);
 
-		} else if (serverType == GenericServer.ServerType.DAS2) {
+		} else if (serverType == ServerType.DAS2) {
 			Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
 			if (server == null) {
 				return false;
 			}
-			GenericServer gServer = new GenericServer(serverName, server.getURI().toString(), server.getClass(), server);
+			GenericServer gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
 			getDAS2Species(gServer);
 			getDAS2Versions(gServer);
 			discoveredServers.put(serverName, gServer);
@@ -220,7 +211,7 @@ public final class GeneralLoadUtils {
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
 				if (!discoveredServers.containsKey(serverName)) {
-					GenericServer g = new GenericServer(serverName, server.getURI().toString(), server.getClass(), server);
+					GenericServer g = new GenericServer(serverName, server.getURI().toString(), ServerType.DAS2, server);
 					discoveredServers.put(serverName, g);
 				}
 			}
@@ -234,7 +225,7 @@ public final class GeneralLoadUtils {
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
 				if (!discoveredServers.containsKey(serverName)) {
-					GenericServer g = new GenericServer(serverName, server.getRootUrl(), server.getClass(), server);
+					GenericServer g = new GenericServer(serverName, server.getRootUrl(), ServerType.DAS, server);
 					discoveredServers.put(serverName, g);
 				}
 			}
@@ -243,7 +234,7 @@ public final class GeneralLoadUtils {
 		// Discover Quickload servers
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
 		for (GenericServer gServer : ServerList.getServers().values()) {
-			if (gServer.serverType == GenericServer.ServerType.QuickLoad) {
+			if (gServer.serverType == ServerType.QuickLoad) {
 				discoveredServers.put(gServer.serverName, gServer);
 			}
 		}
@@ -254,20 +245,20 @@ public final class GeneralLoadUtils {
 	 */
 	private synchronized void discoverSpeciesAndVersionsInternal() {
 		for (GenericServer gServer : discoveredServers.values()) {
-			if (gServer.serverType == GenericServer.ServerType.DAS2) {
+			if (gServer.serverType == ServerType.DAS2) {
 				getDAS2Species(gServer);
 				getDAS2Versions(gServer);
 				continue;
 			}
-			if (gServer.serverType == GenericServer.ServerType.DAS) {
+			if (gServer.serverType == ServerType.DAS) {
 				getDAS1SpeciesAndVersions(gServer);
 				continue;
 			}
-			if (gServer.serverType == GenericServer.ServerType.QuickLoad) {
+			if (gServer.serverType == ServerType.QuickLoad) {
 				getQuickLoadSpeciesAndVersions(gServer);
 				continue;
 			}
-			if (gServer.serverType == GenericServer.ServerType.Unknown) {
+			if (gServer.serverType == ServerType.Unknown) {
 				System.out.println("WARNING: Discovered server class " + gServer.serverType);
 				continue;
 			}
@@ -391,7 +382,7 @@ public final class GeneralLoadUtils {
 
 		List<GenericVersion> gVersionList = this.getSpeciesVersionList(speciesName);
 
-		GenericServer gServer = new  GenericServer(null, null, GenericServer.ServerType.Unknown, null);
+		GenericServer gServer = new  GenericServer(null, null, ServerType.Unknown, null);
 		GenericVersion gVersion = new GenericVersion(versionName, versionName, gServer, null);
 
 		discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
@@ -597,7 +588,7 @@ public final class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("Discovering " + gVersion.gServer.serverType + " chromosomes");
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS2) {
+		if (gVersion.gServer.serverType == ServerType.DAS2) {
 
 			// Discover chromosomes from DAS/2
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
@@ -609,7 +600,7 @@ public final class GeneralLoadUtils {
 			version.getSegments();
 			return group;
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.DAS) {
+		if (gVersion.gServer.serverType == ServerType.DAS) {
 			// Discover chromosomes from DAS
 			DasSource version = (DasSource) gVersion.versionSourceObj;
 
@@ -619,13 +610,13 @@ public final class GeneralLoadUtils {
 
 			return group;
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.QuickLoad) {
+		if (gVersion.gServer.serverType == ServerType.QuickLoad) {
 			// Discover chromosomes from QuickLoad
 			group = gmodel.addSeqGroup(gVersion.versionName);
 			group.setSource(gVersion.gServer.serverName);
 			return group;
 		}
-		if (gVersion.gServer.serverType == GenericServer.ServerType.Unknown) {
+		if (gVersion.gServer.serverType == ServerType.Unknown) {
 				group = gmodel.addSeqGroup(gVersion.versionName);
 				return group;
 			}
@@ -757,10 +748,10 @@ public final class GeneralLoadUtils {
 		}
 
 
-		GenericServer.ServerType serverType = gFeature.gVersion.gServer.serverType;
+		ServerType serverType = gFeature.gVersion.gServer.serverType;
 		Application.getSingleton().setNotLockedUpStatus();
 
-		if (serverType == GenericServer.ServerType.DAS2) {
+		if (serverType == ServerType.DAS2) {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
 			if (loadDAS2Annotations(
 							selected_seq,
@@ -775,7 +766,7 @@ public final class GeneralLoadUtils {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 			return false;
 		}
-		if (serverType == GenericServer.ServerType.DAS) {
+		if (serverType == ServerType.DAS) {
 			if (DasFeatureLoader.loadFeatures(gFeature, overlap)) {
 				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
 				return true;
@@ -783,7 +774,7 @@ public final class GeneralLoadUtils {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 			return false;
 		}
-		if (serverType == GenericServer.ServerType.QuickLoad) {
+		if (serverType == ServerType.QuickLoad) {
 			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
 			if (FeatureLoading.loadQuickLoadAnnotations(gFeature)) {
 				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
@@ -899,23 +890,4 @@ public final class GeneralLoadUtils {
 		return ResidueLoading.getResidues(serversWithChrom, genomeVersionName, seq_name, min, max, aseq, span);
 	}
 
-	/**
-	 * Used to give a friendly name for QuickLoad features.
-	 * @param name
-	 * @return
-	 */
-	public static String stripFilenameExtensions(final String name) {
-		// Remove ending .gz or .zip extension.
-		if (name.endsWith(".gz")) {
-			return stripFilenameExtensions(name.substring(0, name.length() -3));
-		}
-		if (name.endsWith(".zip")) {
-			return stripFilenameExtensions(name.substring(0, name.length() -4));
-		}
-
-		if (name.indexOf('.') > 0) {
-			return name.substring(0, name.lastIndexOf('.'));
-		}
-		return name;
-	}
 }

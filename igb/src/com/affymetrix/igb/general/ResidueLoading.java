@@ -6,8 +6,10 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.seq.SimpleBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -45,7 +47,7 @@ public final class ResidueLoading {
 
 		// Attempt to load via DAS/2
 		for (GenericServer server : serversWithChrom) {
-			if (server.serverType == GenericServer.ServerType.DAS2) {
+			if (server.serverType == ServerType.DAS2) {
 				String uri;
 
 				if (partial_load) {
@@ -83,7 +85,7 @@ public final class ResidueLoading {
 		if (!partial_load) {
 			// Attempt to load via Quickload -- not supported except for full loading.
 			for (GenericServer server : serversWithChrom) {
-				if (server.serverType == GenericServer.ServerType.QuickLoad) {
+				if (server.serverType == ServerType.QuickLoad) {
 					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
 						AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
@@ -95,7 +97,7 @@ public final class ResidueLoading {
 
 		for ( // Attempt to load via DAS/1
 						GenericServer server : serversWithChrom) {
-			if (server.serverType == GenericServer.ServerType.DAS) {
+			if (server.serverType == ServerType.DAS) {
 				String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
 				if (residues != null) {
 					// Add to composition if we're doing a partial sequence

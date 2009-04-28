@@ -11,18 +11,21 @@ import java.util.List;
 import javax.swing.EditableComboBox;
 
 import com.affymetrix.igb.*;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.das2.Das2FeatureComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
-import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.igb.das2.*;
 
 /**
  *  Strategy is to call Das2VersionedSource.getFeaturesByName()
  *     (either only the "current version" or all known versions that match current seq group)
  *  Should get back list of results as syms (returned from DAS/2 server in das2feature XML format)
- *  Howevever, want to configure parsing so that results are NOT added as annotations to seqs,
+ *  However, want to configure parsing so that results are NOT added as annotations to seqs,
  *      rather they are displayed as a list to choose from
  *  When a result is selected, the result sym's range is used as a guide to construct other DAS/2 queries
  *      via Das2LoadView3.loadFeatures() / loadFeaturesInView(), (potentially in optimized formats)
@@ -50,7 +53,7 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 		// need to clear table, search history, combo box
 		search_results_history = new LinkedHashMap<String,List>();
 		searchCB.reset();
-		results_table.setModel(new SearchResultsTableModel(new java.util.ArrayList()));
+		results_table.setModel(new SearchResultsTableModel(new ArrayList()));
 	}
 
 	public Das2SearchView() {
@@ -59,14 +62,14 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 		this.setLayout(new BorderLayout());
 
 		JPanel pan1 = new JPanel();
-		pan1.add(new JLabel("Name Search (EXPERIMENTAL, AFFYMETRIX SERVER ONLY): "));
+		pan1.add(new JLabel("Name Search (EXPERIMENTAL, DAS2 SERVERS ONLY): "));
 		pan1.add(searchCB);
 		this.add("North", pan1);
 		searchCB.addActionListener(this);
 
 		results_table = new JTable();
 		results_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		results_table.setModel(new SearchResultsTableModel(new java.util.ArrayList())); // initializing table with empty searhc results model
+		results_table.setModel(new SearchResultsTableModel(new ArrayList())); // initializing table with empty search results model
 		JScrollPane table_scroller = new JScrollPane(results_table);
 
 		//    this.setLayout(new BorderLayout());
@@ -81,7 +84,7 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 				if (e.getClickCount() == 2) {
 					Point p = e.getPoint();
 					int row = results_table.rowAtPoint(p);
-					int column = results_table.columnAtPoint(p); // This is the view column!
+					//int column = results_table.columnAtPoint(p); // This is the view column!
 					SearchResultsTableModel mod = (SearchResultsTableModel) results_table.getModel();
 					SimpleDas2Feature feat = mod.getSearchResult(row);
 					displaySearchResult(feat);

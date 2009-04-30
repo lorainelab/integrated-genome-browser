@@ -37,8 +37,6 @@ import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymStartComparator;
 
-//import com.affymetrix.igb.util.GenometryViewer;  // for testing main
-
 public final class Xml2GenometryParser {
   // optionally skip over populating descriptors -- checking to see how this affects speed
   public static boolean POPULATE_DESCRIPTORS = true;
@@ -869,27 +867,5 @@ public final class Xml2GenometryParser {
     mrna.addAnnotation(m2pSym);
 
   }
-
-  /*
-  public static void main(String[] args) {
-    Xml2GenometryParser test = new Xml2GenometryParser();
-    String file_name = args[0];
-    try {
-      File fl = new File(file_name);
-      FileInputStream fistr = new FileInputStream(fl);
-      MutableAnnotatedBioSeq seq = test.parse(fistr, null);
-      int acount = seq.getAnnotationCount();
-      System.out.println("Annotation count: " + acount);
-      GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
-      viewer.setPrintSelection(false);
-      viewer.setAnnotatedSeq(seq);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-      System.exit(1);
-    }
-    System.exit(0);
-  }*/
-
 
 }

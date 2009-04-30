@@ -52,7 +52,6 @@ public class LabelledTierTest {
     cpane.add("North", xzoomer);
 
     yzoomer = new JSlider(Adjustable.VERTICAL);
-    //    yzoomer = new NeoScrollbar(Adjustable.VERTICAL);
     map.setZoomer(WidgetAxis.Offset, yzoomer);
     cpane.add("West", yzoomer);
 

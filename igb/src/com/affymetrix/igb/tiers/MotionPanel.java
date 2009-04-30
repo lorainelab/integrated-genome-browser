@@ -15,7 +15,6 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import javax.swing.*;
 import java.awt.Dimension;
 
@@ -65,7 +64,7 @@ public final class MotionPanel extends JPanel {
   }
   
   class Shim extends JComponent implements Cloneable {
-    private Dimension prefSize = new Dimension( 16, 16 ); // Same as NeoScrollbar.
+    private Dimension prefSize = new Dimension( 16, 16 );
     private Dimension minSize = new Dimension( 1, 1 );
     public Dimension getPreferredSize() {
       return this.prefSize;
@@ -75,16 +74,16 @@ public final class MotionPanel extends JPanel {
     }
   }
 
-  private NeoScrollbar pScroller;
-  private NeoScrollbar sScroller;
+  private JScrollBar pScroller;
+  private JScrollBar sScroller;
   private void setPanAxis( int theAxis ) {
     switch ( theAxis ) {
       case NeoWidgetI.PRIMARY_AXIS:
-        this.pScroller = new NeoScrollbar( this.orientation );
+        this.pScroller = new JScrollBar( this.orientation );
         add( this.pScroller );
         break;
       case NeoWidgetI.SECONDARY_AXIS:
-        this.sScroller = new NeoScrollbar( this.orientation );
+        this.sScroller = new JScrollBar( this.orientation );
         add( this.sScroller );
         break;
       case -1:
@@ -132,7 +131,7 @@ public final class MotionPanel extends JPanel {
     add( theZoomer );
   }
 
-  public NeoScrollbar getPanner( int theAxis ) {
+  public JScrollBar getPanner( int theAxis ) {
     switch ( theAxis ) {
       case NeoWidgetI.PRIMARY_AXIS:
         return this.pScroller;

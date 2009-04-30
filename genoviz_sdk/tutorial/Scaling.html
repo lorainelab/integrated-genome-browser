@@ -26,10 +26,10 @@ public class SimpleMap3 extends SimpleMap2 {
   Adjustable zoomer, scroller;
 
   public SimpleMap3() {
-    zoomer = new NeoScrollbar(NeoScrollbar.VERTICAL);
+    zoomer = new JScrollBar(JScrollBar.VERTICAL);
     add("West", (Component)zoomer);
     map.setRangeZoomer(zoomer);
-    scroller = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+    scroller = new JScrollBar(JScrollBar.HORIZONTAL);
     add("South", (Component)scroller);
     map.setRangeScroller(scroller);
   }

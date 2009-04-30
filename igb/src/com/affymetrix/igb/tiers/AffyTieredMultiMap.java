@@ -68,6 +68,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   /**
    *  Overriding method from NeoMap. Called in NeoMap constructor.
    */
+	@Override
   public void initComponentLayout() {
 
     this.northEastMap = new AffyTieredMap( false, false );
@@ -105,7 +106,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     this.epan.add( extramap, BorderLayout.CENTER );
     this.epan.setPreferredSize( new Dimension( 100, 200 ) );
 
-    if ( this.hscroll_show && this.scroller[X] instanceof NeoScrollbar )  {
+    if ( this.hscroll_show && this.scroller[X] instanceof JScrollBar )  {
       this.wpan.add( new MotionPanel( this.scroller[X].getOrientation(), -1 ), BorderLayout.SOUTH );
       MotionPanel mp = new MotionPanel( this.scroller[X].getOrientation(), X, X );
       setZoomer( X, mp.getZoomer( X ) );
@@ -113,7 +114,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
       this.scroller[X] = mp.getPanner( X );
       this.epan.add( new MotionPanel( this.scroller[X].getOrientation(), -1, -1 ), BorderLayout.SOUTH );
     }
-    if ( this.vscroll_show && this.scroller[Y] instanceof NeoScrollbar )  {
+    if ( this.vscroll_show && this.scroller[Y] instanceof JScrollBar )  {
       MotionPanel mp = new MotionPanel( this.scroller[Y].getOrientation(), Y );
       setZoomer( Y, mp.getZoomer( Y ) );
       this.epan.add( mp, BorderLayout.EAST );
@@ -157,7 +158,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   public void addScroller( int theOrientation, int theSection ) {
     if ( HORIZONTAL == theOrientation && EAST == theSection ) {
       MotionPanel mp = new MotionPanel( theOrientation, X );
-      NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.HORIZONTAL );
+      JScrollBar sb = new JScrollBar( JScrollBar.HORIZONTAL );
       this.epan.add( mp, BorderLayout.SOUTH );
       this.extramap.setScroller( X, mp.getPanner( X ) );
       this.extramap.setZoomer(X, mp.getZoomer(X));
@@ -165,7 +166,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
       this.northEastMap.setZoomer( X, mp.getZoomer( X ) );
     }
     else if ( VERTICAL == theOrientation && NORTH == theSection ) {
-      NeoScrollbar sb = new NeoScrollbar( NeoScrollbar.VERTICAL );
+      JScrollBar sb = new JScrollBar( JScrollBar.VERTICAL );
       this.nepan.add( sb, BorderLayout.EAST );
       if ( null != this.northWestMap ) this.northWestMap.setScroller( Y, sb );
       this.northMap.setScroller( Y, sb );

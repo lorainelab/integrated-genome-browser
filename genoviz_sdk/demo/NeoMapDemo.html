@@ -43,7 +43,7 @@
       When the applet runs, two windows should be brought up, one that
       contains the map and scrollbars for scrolling the map, and
       another window with two other scrollbars for scaling/zooming the
-      map (actually these are all NeoScrollbars).  We put the zoom
+      map (actually these are all JScrollBars).  We put the zoom
       controls in a separate window to emphasize that these controls
       are not part of the map widget itself, but can easily be
       registered as map widget controls.  In the source code this is
@@ -51,8 +51,8 @@
     </p>
 
     <pre>
-xzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-yzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+xzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
+yzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
 map.setZoomer(map.X, xzoomer);
 map.setZoomer(map.Y, yzoomer);
     </pre>
@@ -90,7 +90,7 @@ map.zoom(map.X, 2)
 
     <pre>
 map = new NeoMap(true, false);  // turn off internal vertical scroller
-yscroller = new NeoScrollbar(NeoScrollbar.VERTICAL);
+yscroller = new JScrollBar(JScrollBar.VERTICAL);
 map.setScroller(map.Y, yscroller);
 </pre>
 

@@ -17,14 +17,15 @@ import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
-
-import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.widget.Shadow;
+import com.affymetrix.genoviz.widget.VisibleRange;
+import javax.swing.JScrollBar;
 
 /**
  *  Demonstrates using the vertical map option
@@ -46,10 +47,10 @@ public class VerticalMapDemo extends Applet {
 		final NeoMap map = new NeoMap();
 		final VisibleRange selectedRange = new VisibleRange();
 
-		map.setSelectionEvent(map.ON_MOUSE_DOWN);
+		map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
 		map.setMapRange(0, 10000);
 		map.setMapOffset(-100, 100);
-		AxisGlyph ax = (AxisGlyph)map.addAxis(0);
+		AxisGlyph ax = map.addAxis(0);
 
 		map.configure("-glyphtype FillRectGlyph -color green" +
 				" -offset 40 -width 5");
@@ -65,10 +66,10 @@ public class VerticalMapDemo extends Applet {
 		map.addItem(4000, 1000);
 		map.addItem(6000, 9000);
 
-		NeoScrollbar xzoomer = new NeoScrollbar(NeoScrollbar.VERTICAL);
-		map.setZoomer(map.X, xzoomer);
-		NeoScrollbar yzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-		map.setZoomer(map.Y, yzoomer);
+		JScrollBar xzoomer = new JScrollBar(JScrollBar.VERTICAL);
+		map.setZoomer(NeoMap.X, xzoomer);
+		JScrollBar yzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
+		map.setZoomer(NeoMap.Y, yzoomer);
 
 		NeoPanel map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
@@ -82,6 +83,7 @@ public class VerticalMapDemo extends Applet {
 
 		if (orient==NeoMap.HORIZONTAL) {
 			map.addMouseListener( new MouseAdapter() {
+				@Override
 				public void mouseReleased( MouseEvent e ) {
 					selectedRange.setSpot( ((NeoMouseEvent)e).getCoordX() );
 				}
@@ -89,6 +91,7 @@ public class VerticalMapDemo extends Applet {
 		}
 		else {
 			map.addMouseListener( new MouseAdapter() {
+				@Override
 				public void mouseReleased( MouseEvent e ) {
 					selectedRange.setSpot( ((NeoMouseEvent)e).getCoordY() );
 				}
@@ -96,11 +99,11 @@ public class VerticalMapDemo extends Applet {
 		}
 
 
-		final int axisID = (orient==NeoMap.HORIZONTAL) ? map.X : map.Y;
+		final int axisID = (orient==NeoMap.HORIZONTAL) ? NeoMap.X : NeoMap.Y;
 		NeoRangeListener zoomMidPointSetter = new NeoRangeListener() {
 			public void rangeChanged( NeoRangeEvent e ) {
 				double midPoint = ( e.getVisibleEnd() + e.getVisibleStart() ) / 2.0;
-				map.setZoomBehavior(axisID, map.CONSTRAIN_COORD, midPoint );
+				map.setZoomBehavior(axisID, NeoMap.CONSTRAIN_COORD, midPoint );
 				map.updateWidget();
 			}
 		};

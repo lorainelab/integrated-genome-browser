@@ -67,8 +67,8 @@ public class NeoAssembler extends NeoContainerWidget
 	public static int FIXED_COLOR = AlignedResiduesGlyph.FIXED_COLOR;
 	public static int NONE = AlignedResiduesGlyph.NONE;
 	public static int CALCULATED = AlignedResiduesGlyph.CALCULATED;
-        public static boolean use_neo_scroll = false;
-        public static boolean use_neo_zoom = false;
+	public static boolean use_neo_scroll = false;
+	public static boolean use_neo_zoom = false;
 
 	protected int font_color_strategy = FIXED_COLOR;
 	protected int rect_color_strategy = ALIGNMENT_BASED;
@@ -275,21 +275,10 @@ public class NeoAssembler extends NeoContainerWidget
 		addWidget(consmap);
 		addWidget(conslabelmap);
 
-		if (use_neo_scroll)  {
-		    hscroll = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-		    vscroll = new NeoScrollbar(NeoScrollbar.VERTICAL);
-		}
-		else  {
-		    hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
-		    vscroll = new JScrollBar(JScrollBar.VERTICAL);
-		}
+		hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
+		vscroll = new JScrollBar(JScrollBar.VERTICAL);
 		if (internal_zoomer)  {
-		    if (use_neo_zoom)  {
-			hzoom = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-		    }
-		    else  {
 			hzoom = new AdjustableJSlider(JSlider.HORIZONTAL);
-		    }
 		}
 
 		setBackground(default_panel_background);

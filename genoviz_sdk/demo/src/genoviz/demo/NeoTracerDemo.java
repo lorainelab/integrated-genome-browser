@@ -16,12 +16,9 @@ package genoviz.demo;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
-import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.BaseCalls;
 import com.affymetrix.genoviz.datamodel.ReadConfidence;
@@ -29,7 +26,7 @@ import com.affymetrix.genoviz.datamodel.Trace;
 import com.affymetrix.genoviz.datamodel.TraceI;
 import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.*;
-import genoviz.demo.datamodel.Assembly;
+import javax.swing.JScrollBar;
 
 
 public class NeoTracerDemo extends Applet
@@ -123,8 +120,8 @@ public class NeoTracerDemo extends Applet
 	public NeoTracerDemo() {
 		if (external_zoomers) {
 			widget = new NeoTracer(true, false, false);
-			xzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-			yzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+			xzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
+			yzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
 			widget.setZoomer(widget.X, xzoomer);
 			widget.setZoomer(widget.Y, yzoomer);
 		}
@@ -497,8 +494,8 @@ public class NeoTracerDemo extends Applet
 	public void zoomFrameSetup() {
 		zoomframe.setBackground(Color.white);
 		zoomframe.setLayout(new BorderLayout());
-		zoomframe.add("South", (NeoScrollbar)xzoomer);
-		zoomframe.add("North", (NeoScrollbar)yzoomer);
+		zoomframe.add("South", (JScrollBar)xzoomer);
+		zoomframe.add("North", (JScrollBar)yzoomer);
 		zoomframe.pack();
 		zoomframe.setSize(200, zoomframe.getSize().height);
 	}

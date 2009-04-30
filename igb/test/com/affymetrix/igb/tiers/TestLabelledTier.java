@@ -19,17 +19,14 @@ import java.util.*;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 
 public class TestLabelledTier implements WindowListener, MouseListener  {
   AffyLabelledTierMap map;
   AdjustableJSlider xzoomer;
   AdjustableJSlider yzoomer;
-  //  NeoScrollbar yzoomer;
 
   public static void main(String[] args) {
     TestLabelledTier test = new TestLabelledTier();
@@ -51,7 +48,6 @@ public class TestLabelledTier implements WindowListener, MouseListener  {
     cpane.add("South", xzoomer);
 
     yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-    //    yzoomer = new NeoScrollbar(Adjustable.VERTICAL);
     map.setZoomer(NeoMap.Y, yzoomer);
     cpane.add("East", yzoomer);
 

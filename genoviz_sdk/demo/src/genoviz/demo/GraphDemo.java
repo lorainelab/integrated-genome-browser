@@ -15,19 +15,17 @@ package genoviz.demo;
 
 import java.awt.*;
 import java.applet.*;
-import java.net.*;
 import java.util.*;
-import java.awt.image.ImageObserver;
 
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.BasicGraphGlyph;
 import com.affymetrix.genoviz.glyph.BasicImageGlyph;
+import javax.swing.JScrollBar;
 
 public class GraphDemo extends Applet {
 	NeoMap map;
-	NeoScrollbar xzoomer;
+	JScrollBar xzoomer;
 	Vector selected = new Vector();
 
 	public void init() {
@@ -36,7 +34,7 @@ public class GraphDemo extends Applet {
 		map.setMapRange(0, 1000);
 		map.addAxis(0);
 
-		xzoomer = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		xzoomer = new JScrollBar(JScrollBar.VERTICAL);
 
 		NeoPanel widg_pan = new NeoPanel();
 		widg_pan.setLayout(new BorderLayout());

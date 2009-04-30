@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neoseq.*;
+import javax.swing.JScrollBar;
 
 /**
  * NeoSeq is an <strong>implementation</strong> of NeoSeqI.
@@ -193,7 +194,7 @@ public class NeoSeq extends NeoContainerWidget
 
 		this.setLayout(null);
 
-		offset_scroll = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		offset_scroll = new JScrollBar(JScrollBar.VERTICAL);
 		this.setScroller (offset_scroll);
 
 		add((Component)offset_scroll);
@@ -1893,7 +1894,7 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 	/**
-	 * Return the NeoScrollbar responsible for scrolling in the NeoSeqI.
+	 * Return the JScrollBar responsible for scrolling in the NeoSeqI.
 	 */
 	public Adjustable getScroller() {
 		return offset_scroll;

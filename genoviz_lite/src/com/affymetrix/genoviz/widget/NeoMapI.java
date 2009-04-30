@@ -41,8 +41,8 @@ import javax.swing.JSlider;
  * <pre>
  * NeoMapI map = new NeoMap();
  *
- * // add zoom adjustable (in this case NeoScrollbar)
- * map.setRangeZoomer(new NeoScrollbar(NeoScrollbar.HORIZONTAL));
+ * // add zoom adjustable (in this case JScrollBar)
+ * map.setRangeZoomer(new JScrollBar(JScrollBar.HORIZONTAL));
  *
  * map.setMapRange(-500,500); // X bounds
  * map.setMapOffset(-20,20);  // Y bounds

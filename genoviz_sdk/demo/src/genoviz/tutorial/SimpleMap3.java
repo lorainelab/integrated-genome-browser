@@ -14,7 +14,6 @@
 package genoviz.tutorial;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -42,8 +42,8 @@ import com.affymetrix.genoviz.glyph.AxisGlyph;
  * <pre>
  * NeoMapI map = new NeoMap();
  *
- * // add zoom adjustable (in this case NeoScrollbar)
- * map.setRangeZoomer(new NeoScrollbar(NeoScrollbar.HORIZONTAL));
+ * // add zoom adjustable (in this case JScrollBar)
+ * map.setRangeZoomer(new JScrollBar(JScrollBar.HORIZONTAL));
  *
  * map.setMapRange(-500,500); // X bounds
  * map.setMapOffset(-20,20);  // Y bounds
@@ -544,7 +544,7 @@ public interface NeoMapI extends NeoWidgetI {
 	 *           Should be X or Y.
 	 * @param adj an <code>Adjustable</code>
 	 *            to be associated with the axis.
-	 *            Typically this will be a NeoScrollbar.
+	 *            Typically this will be a JScrollBar.
 	 * @see #X
 	 * @see #Y
 	 */

@@ -17,7 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.awt.*;
+import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.event.*;
@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neotracer.*;
+import javax.swing.JScrollBar;
 
 class TraceNotSetException extends Exception {};
 class BaseCallsNotSetException extends Exception {};
@@ -163,17 +164,17 @@ public class NeoTracer extends NeoContainerWidget
 		this.setLayout(null);
 
 		if (hscroll_show)  {
-			hscroll = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+			hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
 			add((Component) hscroll);
 			setRangeScroller( hscroll );
 		}
 		if (hzoom_show)  {
-			hzoom = new NeoScrollbar(NeoScrollbar.VERTICAL);
+			hzoom = new JScrollBar(JScrollBar.VERTICAL);
 			add((Component)hzoom);
 			setRangeZoomer( hzoom );
 		}
 		if (vzoom_show)  {
-			vzoom = new NeoScrollbar(NeoScrollbar.VERTICAL);
+			vzoom = new JScrollBar(JScrollBar.VERTICAL);
 			add((Component)vzoom);
 			setOffsetZoomer( vzoom );
 		}

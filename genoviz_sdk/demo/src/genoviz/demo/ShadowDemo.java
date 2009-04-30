@@ -18,11 +18,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 
-import com.affymetrix.genoviz.awt.*;
+import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.*;
+import javax.swing.JScrollBar;
 
 /**
  *  Demo of "shadowing" a NeoSeq on a NeoMap via
@@ -276,7 +277,7 @@ public class ShadowDemo extends Applet
 		mapview.setSize(MAP_WIDTH, MAP_HEIGHT);
 		mapview.setBackground(new Color(180, 250, 250));
 
-		NeoScrollbar hzoom = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		JScrollBar hzoom = new JScrollBar(JScrollBar.VERTICAL);
 		mapview.setZoomer(mapview.X, hzoom);
 
 		NeoPanel map_pan = new NeoPanel();

@@ -348,7 +348,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 
   /**
    * Lay out the Components contained within this NeoMap.
-   * In the case of the base NeoMap, the NeoCanvas and NeoScrollbars.
+   * In the case of the base NeoMap, the NeoCanvas and JScrollbars.
    * This has been separated out from constructor
    * to allow for subclasses to more easily change layout.
    */
@@ -479,7 +479,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
       -- oops, that bug is back --  GAH 8/11/97
 
       Unfortunately, this usually results in redundant calls to NeoCanvas
-      and NeoScrollbar reshape() and repaint(), but that seems more acceptable
+      and JScrollbar reshape() and repaint(), but that seems more acceptable
       than the problems it fixes, since resizing is a fairly rare event
      */
     if (debug || DEBUG_RESHAPE) {
@@ -903,7 +903,7 @@ NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
    * setRangeScroller() and setOffsetScroller() should probably be combined
    * with setZoomer() to have a more general
    * setAdjustable(int id, Adjustable adj) method.  But at the moment the
-   * scroller[] entries are expected to be NeoScrollbars
+   * scroller[] entries are expected to be JScrollbars
    */
   public void setRangeScroller(JScrollBar nscroll) {
     setScroller(WidgetAxis.Range, nscroll);

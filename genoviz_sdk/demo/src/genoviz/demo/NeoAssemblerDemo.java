@@ -22,10 +22,8 @@ import java.util.Enumeration;
 import java.net.URL;
 
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-//import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
@@ -33,7 +31,6 @@ import com.affymetrix.genoviz.datamodel.Span;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoAssembler;
-//import com.affymetrix.genoviz.widget.NeoAssemblerI;
 import com.affymetrix.genoviz.widget.NeoAssemblerCustomizer;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.Memer;
@@ -45,6 +42,7 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
+import javax.swing.JScrollBar;
 
 /**
  *  A demo of the NeoAssembler widget.  Uses "low-level" calls to
@@ -66,7 +64,7 @@ public class NeoAssemblerDemo extends Applet
 	public boolean no_reverse = false;
 
 	NeoAssembler map;
-	NeoScrollbar hzoom;
+	JScrollBar hzoom;
 	Frame mapframe, propframe, zoomframe;
 	//  boolean tryUniChild = false;
 
@@ -162,7 +160,7 @@ public class NeoAssemblerDemo extends Applet
 
 		map = new NeoAssembler(use_internal_zoomer);
 		if (!use_internal_zoomer) {
-			hzoom = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
+			hzoom = new JScrollBar(JScrollBar.HORIZONTAL);
 			map.setZoomer(NeoAssembler.X, hzoom);
 			zoomFrameSetup();
 		}

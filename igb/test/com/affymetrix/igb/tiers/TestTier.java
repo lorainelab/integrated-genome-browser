@@ -18,17 +18,14 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.widget.tieredmap.ExpandedTierPacker;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.*;
 
 public class TestTier implements WindowListener, MouseListener  {
   AffyTieredMap map;
-  NeoScrollbar xzoomer;
-  NeoScrollbar yzoomer;
+  JScrollBar xzoomer;
+  JScrollBar yzoomer;
 
   public static void main(String[] args) {
     TestTier test = new TestTier();
@@ -46,12 +43,12 @@ public class TestTier implements WindowListener, MouseListener  {
     //    map.setBackground(Color.red);
 
     //    xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
-    xzoomer = new NeoScrollbar(Adjustable.HORIZONTAL);
+    xzoomer = new JScrollBar(Adjustable.HORIZONTAL);
     map.setZoomer(map.X, xzoomer);
     cpane.add("South", xzoomer);
 
     //    yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-    yzoomer = new NeoScrollbar(Adjustable.VERTICAL);
+    yzoomer = new JScrollBar(Adjustable.VERTICAL);
     map.setZoomer(map.Y, yzoomer);
     cpane.add("East", yzoomer);
 

@@ -422,7 +422,7 @@ public interface NeoSeqI extends NeoWidgetI, Translatable {
 	/**
 	 * Return the NeoAdjustable responsible for scrolling in the NeoSeqI.
 	 * For the current NeoSeq implementation, this can be cast to a
-	 * NeoScrollbar or Component to adjust foregrounds and background colors, etc.
+	 * JScrollBar or Component to adjust foregrounds and background colors, etc.
 	 */
 	public Adjustable getScroller();
 

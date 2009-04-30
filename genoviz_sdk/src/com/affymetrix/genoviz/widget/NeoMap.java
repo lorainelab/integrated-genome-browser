@@ -18,7 +18,6 @@ import java.awt.event.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
-import com.affymetrix.genoviz.awt.NeoScrollbar;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -280,18 +279,12 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			   default_factory = new MapGlyphFactory(orient);
 			   default_factory.setScene(scene);
 
-			   if (use_neoscrollers) {
-				   setRangeScroller(new NeoScrollbar(NeoScrollbar.HORIZONTAL));
-				   setOffsetScroller(new NeoScrollbar(NeoScrollbar.VERTICAL));
-			   }
-			   else {
 			     // GAH 2/25/2009
-			     //  switched to using JScrollBar as alternative to NeoScrollbar, 
+			     //  switched to using JScrollBar
 			     //  previous problems with Swing JScrollBar (and I think AWT Scrollbar as well)
 			     //      seem to have been resolved as of JDK 1.5
 			     setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
 			     setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
-			   }
 
 			   zoomer[X] = null;
 			   zoomer[Y] = null;

@@ -12,8 +12,15 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.CompositeBioSeq;
+import com.affymetrix.genometry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometry.MutableSeqSymmetry;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -23,8 +30,14 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.genoviz.widget.Shadow;
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
+import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genoviz.bioviews.PackerI;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
@@ -50,7 +63,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.CharIterator;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
-import com.affymetrix.genoviz.util.Timer;
+
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
@@ -64,8 +77,8 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
+
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -384,18 +397,9 @@ public class SeqMapView extends JPanel
         Adjustable xzoomer;
         Adjustable yzoomer;
 
-        if (NEO_XZOOMER) {
-            xzoomer = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-            ((NeoScrollbar) xzoomer).setSendEvents(true);
-        } else {
-            xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
-        }
-        if (NEO_YZOOMER) {
-            yzoomer = new NeoScrollbar(NeoScrollbar.VERTICAL);
-            ((NeoScrollbar) yzoomer).setSendEvents(true);
-        } else {
-            yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-        }
+			xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+			yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+
         seqmap.setZoomer(NeoMap.X, xzoomer);
         seqmap.setZoomer(NeoMap.Y, yzoomer);
 
@@ -480,24 +484,25 @@ public class SeqMapView extends JPanel
         }
 
         // experimenting with transcriptarium split windows
-        if (split_win) {
-            // don't display map if split_win, display is via multiple separate windows controlled by resultSeqMap
-	    // if splitting into multiple windows, only use NeoScrollbars for NeoMap scrolling -- 
-	    //    using JScrollBars _might_ work, but not yet tested
-            NeoScrollbar xscroller = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-            NeoScrollbar yscroller = new NeoScrollbar(NeoScrollbar.VERTICAL);
-            //      xscroller.setSendEvents(true);  // not sure if this is necessary or desired
-            //      yscroller.setSendEvents(true);  // not sure if this is necessary or desired
-            seqmap.setRangeScroller(xscroller);
-            seqmap.setOffsetScroller(yscroller);
-            JPanel scrollP = new JPanel();
-            scrollP.setLayout(new BorderLayout());
-            scrollP.add(BorderLayout.SOUTH, xscroller);
-            scrollP.add(BorderLayout.WEST, yscroller);
-            this.add(BorderLayout.CENTER, scrollP);
-        } else {
-            this.add(BorderLayout.CENTER, seqmap);
-        }
+      if (split_win) {
+				// don't display map if split_win, display is via multiple separate windows controlled by resultSeqMap
+
+				//  switched to using JScrollBar,
+				//  previous problems with Swing JScrollBar (and I think AWT Scrollbar as well)
+				//      seem to have been resolved as of JDK 1.5
+				JScrollBar xscroller = new JScrollBar(JScrollBar.HORIZONTAL);
+				JScrollBar yscroller = new JScrollBar(JScrollBar.VERTICAL);
+
+				seqmap.setRangeScroller(xscroller);
+				seqmap.setOffsetScroller(yscroller);
+				JPanel scrollP = new JPanel();
+				scrollP.setLayout(new BorderLayout());
+				scrollP.add(BorderLayout.SOUTH, xscroller);
+				scrollP.add(BorderLayout.WEST, yscroller);
+				this.add(BorderLayout.CENTER, scrollP);
+			} else {
+				this.add(BorderLayout.CENTER, seqmap);
+			}
         LinkControl link_control = new LinkControl();
         this.addPopupListener(link_control);
 

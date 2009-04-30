@@ -17,7 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.awt.*;
+import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.event.*;
@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neoqualler.*;
+import javax.swing.JScrollBar;
 
 /**
  * NeoQualler is the <b>implementation</b> of NeoQuallerI.
@@ -63,10 +64,10 @@ public class NeoQualler extends NeoContainerWidget
 	protected NeoMap bar_map;
 	protected NeoMap base_map;
 
-	protected NeoScrollbar hscroll;
-	protected NeoScrollbar hzoom;
+	protected JScrollBar hscroll;
+	protected JScrollBar hzoom;
 
-	protected NeoScrollbar vzoom;
+	protected JScrollBar vzoom;
 
 	// locations for scrollbars, consensus, and labels
 	protected int hscroll_loc = PLACEMENT_BOTTOM;
@@ -98,10 +99,10 @@ public class NeoQualler extends NeoContainerWidget
 		bar_map = new NeoMap(false, false);
 		base_map = new NeoMap(false, false);
 
-		hscroll = new NeoScrollbar(NeoScrollbar.HORIZONTAL);
-		hzoom = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		hscroll = new JScrollBar(JScrollBar.HORIZONTAL);
+		hzoom = new JScrollBar(JScrollBar.VERTICAL);
 
-		vzoom = new NeoScrollbar(NeoScrollbar.VERTICAL);
+		vzoom = new JScrollBar(JScrollBar.VERTICAL);
 
 		setBackground(default_panel_background);
 		bar_map.setMapColor(default_bar_background);

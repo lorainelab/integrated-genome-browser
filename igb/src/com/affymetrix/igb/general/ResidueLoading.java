@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.util.DasUtils;
+import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.InputStream;
@@ -136,21 +136,21 @@ public final class ResidueLoading {
 			return null;
 		}
 		try {
-			String das_dna_source = DasUtils.findDasSource(das_dna_server, current_genome_name);
+			String das_dna_source = DasLoader.findDasSource(das_dna_server, current_genome_name);
 			if (das_dna_source == null) {
 				if (DEBUG) {
 					System.out.println("Couldn't find das source genome " + current_genome_name + " on DAS server:" + das_dna_server);
 				}
 				return null;    // if das_dna_source is null, there's no way to determine the residues
 			}
-			String das_seqid = DasUtils.findDasSeqID(das_dna_server, das_dna_source, seqid);
+			String das_seqid = DasLoader.findDasSeqID(das_dna_server, das_dna_source, seqid);
 			if (das_seqid == null) {
 				if (DEBUG) {
 					System.out.println("Couldn't access sequence residues on DAS server  seqid: " + seqid + " genome: " + current_genome_name + " DAS server: " + das_dna_server);
 				}
 				return null;    // if seqid is null, there's no way to determine the residues
 			}
-			residues = DasUtils.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
+			residues = DasLoader.getDasResidues(das_dna_server, das_dna_source, das_seqid, min, max);
 			if (DEBUG) {
 				System.out.println("DAS DNA response length: " + residues.length());
 			}

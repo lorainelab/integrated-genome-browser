@@ -714,11 +714,9 @@ public final class GeneralLoadView extends JComponent
 		for (GenericFeature feature : features) {
 			maxFeatureNameLength = Math.max(maxFeatureNameLength, feature.featureName.length());
 		}
-		// the first column contains the feature names.  Resize it so that feature names are fully displayed.
-		TableColumn col = this.feature_table.getColumnModel().getColumn(FeaturesTableModel.LOAD_STRATEGY_COLUMN);
+		// the second column contains the feature names.  Resize it so that feature names are fully displayed.
+		TableColumn col = this.feature_table.getColumnModel().getColumn(FeaturesTableModel.FEATURE_NAME_COLUMN);
 		col.setPreferredWidth(maxFeatureNameLength);
-
-
 
 		// Don't enable combo box for full genome sequence
 		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !this.IsGenomeSequence());

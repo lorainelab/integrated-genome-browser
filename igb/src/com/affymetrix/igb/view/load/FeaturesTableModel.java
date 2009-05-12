@@ -24,7 +24,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
 	private static String[] columnNames = { "Load Mode", "Name","Server", "Server Type"};
-	static String[] standardLoadChoices = {"Don't Load", "Region In View", "Whole Chromosome"};
+	static String[] standardLoadChoices = {"Don't Load", "Region In View"};
 	static String[] quickloadLoadChoices = {"Don't Load", "Whole Genome"};
 	private final EnumMap<LoadStrategy, String> DASLoadStrategyMap;  // map to a friendly string
 	private final EnumMap<LoadStrategy, String> QuickLoadStrategyMap;  // map to a friendly string
@@ -33,7 +33,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	private final EnumMap<LoadStatus, String> LoadStatusMap;    // map to a friendly string
 	private final AnnotatedBioSeq cur_seq;
 	static final int LOAD_STRATEGY_COLUMN = 0;
-	private static final int FEATURE_NAME_COLUMN = 1;
+	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
 	private static final int SERVER_TYPE_COLUMN = 3;
 	private static final int LOAD_STATUS_COLUMN = 4;
@@ -53,7 +53,6 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		this.DASLoadStrategyMap = new EnumMap<LoadStrategy, String>(LoadStrategy.class);
 		this.DASLoadStrategyMap.put(LoadStrategy.NO_LOAD, standardLoadChoices[0]);
 		this.DASLoadStrategyMap.put(LoadStrategy.VISIBLE, standardLoadChoices[1]);
-		this.DASLoadStrategyMap.put(LoadStrategy.WHOLE, standardLoadChoices[2]);
 		// Here we map the friendly string back to the LoadStrategy.
 		// Rather than repeating the lines above, we loop over all LoadStrategy elements and take advantage
 		// of the predefined DASLoadStrategyMap.
@@ -178,7 +177,15 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		return (col == LOAD_STRATEGY_COLUMN);
+		if (col != LOAD_STRATEGY_COLUMN) {
+			return false;
+		}
+
+		// This cell is only editable if the feature isn't already fully loaded.
+		GenericFeature gFeature = features.get(row);
+		ServerType serverType = gFeature.gVersion.gServer.serverType;
+		return ((serverType == ServerType.DAS || serverType == ServerType.DAS2) ||
+						(serverType == ServerType.QuickLoad && gFeature.loadStrategy != LoadStrategy.WHOLE));
 	}
 
 	@Override
@@ -192,6 +199,9 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
 
 		if (serverType == ServerType.QuickLoad) {
+			if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+				return;	// We can't change strategies once we've loaded the entire genome.
+			}
 			if (!this.QuickLoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
 				// strategy changed.  Update the feature object.
 				gFeature.loadStrategy = this.reverseQuickLoadStrategyMap.get(valueString);

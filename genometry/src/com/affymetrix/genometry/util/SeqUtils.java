@@ -802,123 +802,9 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 		//      if (DEBUG) { System.out.println("resultSym is leaf"); }
 		// is mapSym leaf?  no
 		if (src2dst_recurse &&
-				mapSym.getChildCount() > 0) {
-
-			if (DEBUG) { System.out.println("looping through mapSym children"); }
-			//        if (DEBUG) { System.out.print("mapSym: "); SeqUtils.printSymmetry(mapSym); }
-			// STEP 1
-			int map_childcount = mapSym.getChildCount();
-
-STEP1_LOOP:
-			for (int index = 0; index < map_childcount; index++) {
-				SeqSymmetry map_child_sym = mapSym.getChild(index);
-				MutableSeqSymmetry childResult = null;
-
-				// STEP 1a
-				// "sit still"
-				// find the subset of BioSeqs that are pointed to by SeqSpans in both
-				//    the map_child_sym (spanX) and the resultSym (spanY)
-				// for each seqA of these BioSeqs, calculate SeqSpan spanZ, the intersection of
-				//        spanX and the spanY
-				//    if no intersection, keep looping
-				//    if intersection exists, then add to child_resultSym
-				int spanCount = 0;
-				if (map_child_sym != null) {
-					spanCount = map_child_sym.getSpanCount();
-				}
-
-				// WARNING: still need to switch to using mutable SeqSpan args for efficiency
-				for (int spandex=0; spandex < spanCount; spandex++) {
-					SeqSpan mapspan = map_child_sym.getSpan(spandex);
-					BioSeq seq = mapspan.getBioSeq();
-					//            System.out.println(seq.getID());
-					if (DEBUG)  { System.out.print("MapSpan -- "); SeqUtils.printSpan(mapspan); }
-					SeqSpan respan = resultSym.getSpan(seq);
-					if (DEBUG)  { System.out.print("ResSpan -- "); SeqUtils.printSpan(respan); }
-					if (respan != null) {
-						// GAH 6-12-2003 flipped intersection() span args around
-						// shouldn't really matter, since later redoing intersectSpan based
-						//     on respan orientation anyway...
-						// SeqSpan intersectSpan = intersection(mapspan, respan);
-						//              MutableSeqSpan intersectSpan = (MutableSeqSpan)intersection(mapspan, respan);
-						MutableSeqSpan interSpan = (MutableSeqSpan)intersection(respan, mapspan);
-
-						if (interSpan != null) {
-							// GAH 6-12-2003
-							// ensuring that orientation of intersectSpan is same as respan
-							// (regardless of behavior of intersection());
-							if (respan.isForward()) {
-								interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-							}
-							else {
-								interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-							}
-							/*
-							   System.out.print("resultSym: "); printSymmetry(resultSym);
-							   System.out.print("mapSym: "); printSymmetry(map_child_sym);
-							   s                System.out.print("intersect span: "); printSpan(interSpan);
-							   System.out.println("-------------------------");
-							   */
-
-							if (childResult == null) {
-								// special-casing derived seq symmetries to preserve derivation info...
-								// hmm, maybe should just make this the normal case and always preserve
-								//    derivation info (if available...)
-								// NOT YET TESTED!!!
-								//    GAH 5-14-2002
-								if (mapSym instanceof DerivedSeqSymmetry) {
-									childResult = new SimpleDerivedSeqSymmetry();
-									((DerivedSeqSymmetry)childResult).setOriginalSymmetry(resultSym);
-								}
-								else {
-									childResult = new SimpleMutableSeqSymmetry();
-								}
-							}
-							childResult.addSpan(interSpan);
-						}
-					}
-				}
-				if (childResult == null) {
-					if (DEBUG)  { System.out.println("NO INTERSECTION, SKIPPING REST OF STEP 1 LOOP"); }
-					//            break STEP1_LOOP;
-					continue;
-				}
-				if (DEBUG)  { System.out.print("" + index + ", after Step 1a -- "); SeqUtils.printSymmetry(childResult); }
-
-				// STEP 1b
-				// "roll back"
-				// find the subset of BioSeqs that are pointed to by a SeqSpan spanX in resultSym
-				//      but not by any SeqSpan in childResult
-				// for each seqA of these BioSeqs, calculate spanY by using resultSym as a mapping
-				//      symmetry and childResult as the resultSet (but don't recurse...):
-				// ACTUALLY, don't have to find subset -- this will happen in transformSymmetry!
-				//      (which will fall through to STEP 3??)
-				//      transformSymmetry(childResult, resultSym, false)
-				transformSymmetry(childResult, resultSym, false);
-
-				if (DEBUG)  { System.out.print("" + index + ", after Step 1b -- "); SeqUtils.printSymmetry(childResult); }
-
-				// STEP 1c
-				// "roll forward"
-				//  find the subset of BioSeqs that are pointed to by a SeqSpan spanX in
-				//     subMapSym but not by any SeqSpan in childResult (subResSym)
-				//  for each SeqA of these BioSeqs, calculate spanY by using subMapSym as
-				//     a mapping symmetry and childResult as the resultSet (with recursion)
-				// ACTUALLY, don't have to find subset -- this will happen in transformSymmetry!
-				//      (which will fall through to STEP 3?? -- not sure how well this plays with
-				//       the recursion...)
-				//      transformSymmetry(childResult, subMapSym, true)
-				transformSymmetry(childResult, map_child_sym, true);
-
-				if (DEBUG)  { System.out.print("" + index + ", after Step 1c -- "); SeqUtils.printSymmetry(childResult); }
-
-				resultSym.addChild(childResult);
-			}
-
-			// STEP 2
-			addParentSpans(resultSym, mapSym);
-
-				}  // end of loop through mapSym children
+						mapSym.getChildCount() > 0) {
+			loopThruMapSymChildren(mapSym, resultSym);
+		}
 
 		// is mapSym leaf?  yes
 		else {  // STEP3
@@ -1035,6 +921,131 @@ STEP1_LOOP:
 	}   // end of (resultSym leaf? -- yes) branch
 	return true;
 }
+
+
+
+	private static void loopThruMapSymChildren(SeqSymmetry mapSym, MutableSeqSymmetry resultSym) {
+		if (DEBUG) {
+			System.out.println("looping through mapSym children");
+		}
+		//        if (DEBUG) { System.out.print("mapSym: "); SeqUtils.printSymmetry(mapSym); }
+		// STEP 1
+		int map_childcount = mapSym.getChildCount();
+		STEP1_LOOP:
+		for (int index = 0; index < map_childcount; index++) {
+			SeqSymmetry map_child_sym = mapSym.getChild(index);
+			MutableSeqSymmetry childResult = null;
+			// STEP 1a
+			// "sit still"
+			// find the subset of BioSeqs that are pointed to by SeqSpans in both
+			//    the map_child_sym (spanX) and the resultSym (spanY)
+			// for each seqA of these BioSeqs, calculate SeqSpan spanZ, the intersection of
+			//        spanX and the spanY
+			//    if no intersection, keep looping
+			//    if intersection exists, then add to child_resultSym
+			int spanCount = 0;
+			if (map_child_sym != null) {
+				spanCount = map_child_sym.getSpanCount();
+			}
+			// WARNING: still need to switch to using mutable SeqSpan args for efficiency
+			for (int spandex = 0; spandex < spanCount; spandex++) {
+				SeqSpan mapspan = map_child_sym.getSpan(spandex);
+				BioSeq seq = mapspan.getBioSeq();
+				//            System.out.println(seq.getID());
+				if (DEBUG) {
+					System.out.print("MapSpan -- ");
+					SeqUtils.printSpan(mapspan);
+				}
+				SeqSpan respan = resultSym.getSpan(seq);
+				if (DEBUG) {
+					System.out.print("ResSpan -- ");
+					SeqUtils.printSpan(respan);
+				}
+				if (respan != null) {
+					// GAH 6-12-2003 flipped intersection() span args around
+					// shouldn't really matter, since later redoing intersectSpan based
+					//     on respan orientation anyway...
+					// SeqSpan intersectSpan = intersection(mapspan, respan);
+					//              MutableSeqSpan intersectSpan = (MutableSeqSpan)intersection(mapspan, respan);
+					MutableSeqSpan interSpan = (MutableSeqSpan) intersection(respan, mapspan);
+					if (interSpan != null) {
+						// GAH 6-12-2003
+						// ensuring that orientation of intersectSpan is same as respan
+						// (regardless of behavior of intersection());
+						if (respan.isForward()) {
+							interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
+						} else {
+							interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
+						}
+						/*
+						System.out.print("resultSym: "); printSymmetry(resultSym);
+						System.out.print("mapSym: "); printSymmetry(map_child_sym);
+						s                System.out.print("intersect span: "); printSpan(interSpan);
+						System.out.println("-------------------------");
+						 */
+						if (childResult == null) {
+							// special-casing derived seq symmetries to preserve derivation info...
+							// hmm, maybe should just make this the normal case and always preserve
+							//    derivation info (if available...)
+							// NOT YET TESTED!!!
+							//    GAH 5-14-2002
+							if (mapSym instanceof DerivedSeqSymmetry) {
+								childResult = new SimpleDerivedSeqSymmetry();
+								((DerivedSeqSymmetry) childResult).setOriginalSymmetry(resultSym);
+							} else {
+								childResult = new SimpleMutableSeqSymmetry();
+							}
+						}
+						childResult.addSpan(interSpan);
+					}
+				}
+			}
+			if (childResult == null) {
+				if (DEBUG) {
+					System.out.println("NO INTERSECTION, SKIPPING REST OF STEP 1 LOOP");
+				}
+				//            break STEP1_LOOP;
+				continue;
+			}
+			if (DEBUG) {
+				System.out.print("" + index + ", after Step 1a -- ");
+				SeqUtils.printSymmetry(childResult);
+			}
+			// STEP 1b
+			// "roll back"
+			// find the subset of BioSeqs that are pointed to by a SeqSpan spanX in resultSym
+			//      but not by any SeqSpan in childResult
+			// for each seqA of these BioSeqs, calculate spanY by using resultSym as a mapping
+			//      symmetry and childResult as the resultSet (but don't recurse...):
+			// ACTUALLY, don't have to find subset -- this will happen in transformSymmetry!
+			//      (which will fall through to STEP 3??)
+			//      transformSymmetry(childResult, resultSym, false)
+			transformSymmetry(childResult, resultSym, false);
+			if (DEBUG) {
+				System.out.print("" + index + ", after Step 1b -- ");
+				SeqUtils.printSymmetry(childResult);
+			}
+			// STEP 1c
+			// "roll forward"
+			//  find the subset of BioSeqs that are pointed to by a SeqSpan spanX in
+			//     subMapSym but not by any SeqSpan in childResult (subResSym)
+			//  for each SeqA of these BioSeqs, calculate spanY by using subMapSym as
+			//     a mapping symmetry and childResult as the resultSet (with recursion)
+			// ACTUALLY, don't have to find subset -- this will happen in transformSymmetry!
+			//      (which will fall through to STEP 3?? -- not sure how well this plays with
+			//       the recursion...)
+			//      transformSymmetry(childResult, subMapSym, true)
+			transformSymmetry(childResult, map_child_sym, true);
+			if (DEBUG) {
+				System.out.print("" + index + ", after Step 1c -- ");
+				SeqUtils.printSymmetry(childResult);
+			}
+			resultSym.addChild(childResult);
+		}
+		// STEP 2
+		addParentSpans(resultSym, mapSym);
+	}
+
 
 /*
    public static final boolean transformSymmetry2(MutableSeqSymmetry resultSym, SeqSymmetry mapSym,

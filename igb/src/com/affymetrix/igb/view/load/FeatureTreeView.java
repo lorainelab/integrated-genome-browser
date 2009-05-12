@@ -1,6 +1,8 @@
 
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import java.awt.BorderLayout;
@@ -213,7 +215,15 @@ public final class FeatureTreeView extends JComponent {
 			TreePath path = evt.getPath();
 			DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) path.getLastPathComponent();
 			GenericFeature gFeature = (GenericFeature) tnode.getUserObject();
-			gFeature.visible = true;
+			if (!gFeature.visible) {
+				if (gFeature.loadStrategy == LoadStrategy.NO_LOAD) {
+					if (gFeature.gVersion.gServer.serverType == ServerType.DAS ||
+									gFeature.gVersion.gServer.serverType == ServerType.DAS2) {
+						gFeature.loadStrategy = LoadStrategy.VISIBLE;	// Put in "load region in view" by default in DAS/1 and DAS/2
+					}
+				}
+				gFeature.visible = true;
+			}
 
 			// Remove the node.
 			DefaultMutableTreeNode validNode = getNextValidNode(tnode);

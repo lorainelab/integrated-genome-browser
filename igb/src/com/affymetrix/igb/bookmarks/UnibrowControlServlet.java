@@ -81,7 +81,7 @@ public final class UnibrowControlServlet {
 	 *  objects.  For example, this could be the Map returned by
 	 *  {@link javax.servlet.ServletRequest#getParameterMap()}.
 	 */
-	static void goToBookmark(Application uni, Map parameters) throws NumberFormatException {
+	public static void goToBookmark(Application uni, Map parameters) throws NumberFormatException {
 		String seqid = getStringParameter(parameters, Bookmark.SEQID);
 		String version = getStringParameter(parameters, Bookmark.VERSION);
 		String start_param = getStringParameter(parameters, Bookmark.START);

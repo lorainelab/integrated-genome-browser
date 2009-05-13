@@ -14,9 +14,13 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
@@ -51,11 +55,11 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
   
   // accepts a pattern like: "chr2 : 3,040,000 : 4,502,000"  or "chr2:10000-20000"
   // (The chromosome name cannot contain any spaces.)
-  //static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
+  static final Pattern chrom_start_end_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
   
   // accepts a pattern like: "chr2 : 3,040,000 + 20000"
   // (The chromosome name cannot contain any spaces.)
-  //static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
+  static final Pattern chrom_start_width_pattern = Pattern.compile("^\\s*(\\S+)\\s*[:]\\s*([0-9,]+)\\s*\\+\\s*([0-9,]+)\\s*$");
 
   // accepts a pattern like: "3,040,000 : 4,502,000"  or "10000-20000"
   static final Pattern start_end_pattern = Pattern.compile("^\\s*([0-9,]+)\\s*[:-]\\s*([0-9,]+)\\s*$");
@@ -138,13 +142,13 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
       double width = end - start;
       //int display_format = FORMAT_START_END;
       try {
-//        Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
-//        Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range_box.getText());
+        Matcher chrom_start_end_matcher = chrom_start_end_pattern.matcher(range_box.getText());
+        Matcher chrom_start_width_matcher = chrom_start_width_pattern.matcher(range_box.getText());
         Matcher start_end_matcher = start_end_pattern.matcher(range_box.getText());
         Matcher start_width_matcher = start_width_pattern.matcher(range_box.getText());
         Matcher center_matcher = center_pattern.matcher(range_box.getText());
         
-        /*if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
+        if (chrom_start_end_matcher.matches() || chrom_start_width_matcher.matches()) {
           Matcher matcher;
           boolean uses_width;
           if (chrom_start_width_matcher.matches()) {
@@ -183,7 +187,7 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
 
           //gview.zoomTo(start, end);
         }
-        else*/
+        else
          if (start_end_matcher.matches()) {
           String start_text = start_end_matcher.group(1);
           String end_text = start_end_matcher.group(2);

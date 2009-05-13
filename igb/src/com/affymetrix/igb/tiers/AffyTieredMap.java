@@ -363,12 +363,17 @@ public class AffyTieredMap extends NeoMap {
     if (packTiers) {
       packTiers(false, true, false);
     }
+
+		// JN -- this hack appears to work somewhat, but it's still quite possible to resize IGB components (DataLoadViews, for example) and see this.
     if (!fity) {
-      doZoomFix(NeoMap.Y); 
+      doZoomFix(NeoMap.Y);
     }
-    if (!fitx) {
-      doZoomFix(NeoMap.X);
-    }
+
+		// JN -- commented out.  This hack fails here when first opening IGB, resulting in a display with negative coordinates.
+		// Even when the hack is on, it's still possible to resize the entire window and see this.
+    /*if (!fitx) {
+     doZoomFix(NeoMap.X);
+    }*/
   }
 
   /**

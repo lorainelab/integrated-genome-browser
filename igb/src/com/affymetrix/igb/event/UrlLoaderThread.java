@@ -280,7 +280,7 @@ public final class UrlLoaderThread extends Thread {
       String filename = url.getPath();
       
       InputStream stream = feat_request_con.getInputStream();
-      LoadFileAction.load(gviewer.getFrame(), stream,  filename, gmodel, aseq);
+      LoadFileAction.load(gviewer.getFrame(), stream,  filename, gmodel, seq_group, aseq);
     } 
     else if (content_type == null ||
         content_type.startsWith("content/unknown") ||
@@ -298,7 +298,7 @@ public final class UrlLoaderThread extends Thread {
       }
       
       InputStream stream = feat_request_con.getInputStream();
-      LoadFileAction.load(gviewer.getFrame(), stream,  filename, gmodel, aseq);
+      LoadFileAction.load(gviewer.getFrame(), stream,  filename, gmodel, seq_group, aseq);
     }
     else if (content_type.startsWith("binary/bps")) {
       parseBinaryBps(feat_request_con, type);

@@ -265,7 +265,7 @@ public final class FeatureLoading {
 						gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
 					}
 				} else {
-					LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeq());
+					LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 				}
 				return true;
 			}

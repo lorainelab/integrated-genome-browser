@@ -27,6 +27,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 import org.xml.sax.InputSource;
@@ -169,131 +171,142 @@ public final class LoadFileAction {
     int option = chooser.showOpenDialog(gviewerFrame);
 
     File[] fils = new File[0];
-    if (option == JFileChooser.APPROVE_OPTION) {
-      load_dir_tracker.setFile(chooser.getCurrentDirectory());
-      fils = chooser.getSelectedFiles();
+    if (option != JFileChooser.APPROVE_OPTION) {
+			return fils;
+		}
 
-      AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
-      MutableAnnotatedBioSeq previous_seq = gmodel.getSelectedSeq();
+		load_dir_tracker.setFile(chooser.getCurrentDirectory());
+		fils = chooser.getSelectedFiles();
 
-      if (! chooser.merge_button.isSelected()) {
-        // Not merging, so create a new Seq Group
-        String new_name = chooser.genome_name_TF.getText();
-        AnnotatedSeqGroup new_group = gmodel.addSeqGroup(new_name);
-        gmodel.setSelectedSeqGroup(new_group);
-      }
+		AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
+		MutableAnnotatedBioSeq previous_seq = gmodel.getSelectedSeq();
 
-			//System.out.println("Selected group is :"  + gmodel.getSelectedSeqGroup().getID());
-			//System.out.println("Selected seq is :" +gmodel.getSelectedSeq());
+		MutableAnnotatedBioSeq new_seq = null;
+		if (!chooser.merge_button.isSelected()) {
+			// Not merging, so create a new Seq Group
+			String new_name = chooser.genome_name_TF.getText();
+			AnnotatedSeqGroup new_group = gmodel.addSeqGroup(new_name);
+			// Due to threading -- needed to pass in new group, rather than setting it and then querying that property.
+			new_seq = loadFilesIntoSeq(fils, gviewerFrame, gmodel, new_group, gmodel.getSelectedSeq());
+			gmodel.setSelectedSeqGroup(new_group);
+		} else {
+			new_seq = loadFilesIntoSeq(fils, gviewerFrame, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+		}
 
-      MutableAnnotatedBioSeq new_seq = null;
+		setGroupAndSeq(gmodel, previous_seq_group, previous_seq, new_seq);
 
-      for (int i=0; i<fils.length; i++) {
-        File cfil = fils[i];
-        String file_name = cfil.toString();
-        if (file_name.indexOf("http:") > -1) {  // direct input of http...
-          // This method of inputing a URL is not the best way to go, but it sometimes works...
-          // On Linux, and maybe in general, if the user types "http://www.google.com",
-          // it will come out as "/home/user/http:/www.google.com", so we have to
-          // trim off the beginning stuff AND add back the double slash "//" after http.
-//          String url_name = "http://" + file_name.substring(file_name.indexOf("http:")+6);
-//          Application.getSingleton().logInfo("detected url input: " + url_name);
-//          loadFromUrl(gviewerFrame, url_name, aseq);
-          //TODO: maybe support this again?
-          Application.logError("Loading from a URL is not currently supported.");
-        }
-        else {
-          try {
-            new_seq = load(gviewerFrame, cfil, gmodel, gmodel.getSelectedSeq());
-          } catch (Exception ex) {
-            ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
-          }
-        }
-      }
-
-
-      AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-
-      if (group == null) {
-        // This primarily can happen if the merge button is not selected
-        // and the loading of the file fails or fails to create a seq group.
-        gmodel.setSelectedSeqGroup(previous_seq_group);
-        gmodel.setSelectedSeq(previous_seq);
-      }
-      else {
-        // The purpose of calling setSelectedSeqGroup, even if identity of
-        // the seq group has not changed, is to make sure that
-        // the DataLoadView and the AnnotBrowserView update their displays.
-        // (Because the contents of the seq group may have changed.)
-        gmodel.setSelectedSeqGroup(group);
-
-        if (group != previous_seq_group) {
-          if (new_seq != null && group.getSeqList().contains(new_seq)) {
-            gmodel.setSelectedSeq(new_seq);
-          } else if (group.getSeqCount() > 0) {
-            gmodel.setSelectedSeq(group.getSeq(0));
-          }
-        }
-        else {
-          // the seq_group has not changed, but the seq might have
-          if (new_seq != null && group.getSeqList().contains(new_seq)) {
-            gmodel.setSelectedSeq(new_seq);
-          } else if (previous_seq != null) {
-            // Setting the selected Seq, even if it hasn't changed identity, is to
-            // make the SeqMapView update itself.  (Its contents may have changed.)
-            gmodel.setSelectedSeq(previous_seq);
-          }
-        }
-      }
-    }
-
-    return fils;
-  }
+		return fils;
+	}
 
 
   private static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile,
-      GenometryModel gmodel, MutableAnnotatedBioSeq input_seq) 
-  throws IOException {
-      MutableAnnotatedBioSeq aseq = null;
-      InputStream fistr = null;
-      try {
-          // need to handle CHP files as a special case, because ChpParser currently only has
-          //    a parse() method that takes the file name as an argument, no method to parse from
-          //    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
-          //
-          // Also cannot handle compressed chp files, so don't bother with the Streamer class.
-          if (annotfile.getName().toLowerCase().endsWith(".chp")) {
-              //Application.getSingleton().logDebug("%%%%% received load request for CHP file: " + annotfile.getPath());
-              List results = ChpParser.parse(annotfile.getPath());
-          // aseq = getLastSeq(results);
-          } else {
-              //int file_length = (int)annotfile.length();
-              //fistr = new FileInputStream(annotfile);
-              StringBuffer sb = new StringBuffer();
-              fistr = Streamer.getInputStream(annotfile, sb);
-              String stripped_name = sb.toString();
-              //int pindex = stripped_name.lastIndexOf(".");
-              //String suffix = null;
-              //if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
-              if (GraphSymUtils.isAGraphFilename(stripped_name)) {
-                  AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
-                  if (seq_group == null) {
-                      ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  " +
-                              "Graph data must be merged with already loaded genomic data.", null);
-                  } else {
-                      URL url = annotfile.toURI().toURL();
-                      OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
-                  }
-              } else {
-                  aseq = load(gviewerFrame, fistr, stripped_name, gmodel, input_seq);
-              }
-          }
-      } // Don't catch exception, just throw it
-      finally {
-          GeneralUtils.safeClose(fistr);
-      }
-      return aseq;
-  }
+					GenometryModel gmodel, AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq input_seq)
+					throws IOException {
+		MutableAnnotatedBioSeq aseq = null;
+		InputStream fistr = null;
+		try {
+			// need to handle CHP files as a special case, because ChpParser currently only has
+			//    a parse() method that takes the file name as an argument, no method to parse from
+			//    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
+			//
+			// Also cannot handle compressed chp files, so don't bother with the Streamer class.
+			if (annotfile.getName().toLowerCase().endsWith(".chp")) {
+				//Application.getSingleton().logDebug("%%%%% received load request for CHP file: " + annotfile.getPath());
+				List results = ChpParser.parse(annotfile.getPath());
+			// aseq = getLastSeq(results);
+			} else {
+				//int file_length = (int)annotfile.length();
+				//fistr = new FileInputStream(annotfile);
+				StringBuffer sb = new StringBuffer();
+				fistr = Streamer.getInputStream(annotfile, sb);
+				String stripped_name = sb.toString();
+				//int pindex = stripped_name.lastIndexOf(".");
+				//String suffix = null;
+				//if (pindex >= 0)  { suffix = stripped_name.substring(pindex+1); }
+				if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+					if (seq_group == null) {
+						ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  " +
+										"Graph data must be merged with already loaded genomic data.", null);
+					} else {
+						URL url = annotfile.toURI().toURL();
+						OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
+					}
+				} else {
+					aseq = load(gviewerFrame, fistr, stripped_name, gmodel, seq_group, input_seq);
+				}
+			}
+		} // Don't catch exception, just throw it
+		finally {
+			GeneralUtils.safeClose(fistr);
+		}
+		return aseq;
+	}
+
+
+	private static MutableAnnotatedBioSeq loadFilesIntoSeq(
+					File[] fils, JFrame gviewerFrame, GenometryModel gmodel,
+					AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq seq) {
+		//System.out.println("Selected group is :"  + gmodel.getSelectedSeqGroup().getID());
+		//System.out.println("Selected seq is :" +gmodel.getSelectedSeq());
+		MutableAnnotatedBioSeq new_seq = null;
+		for (File cfil : fils) {
+			String file_name = cfil.toString();
+			if (file_name.indexOf("http:") > -1) {
+				// direct input of http...
+				// This method of inputing a URL is not the best way to go, but it sometimes works...
+				// On Linux, and maybe in general, if the user types "http://www.google.com",
+				// it will come out as "/home/user/http:/www.google.com", so we have to
+				// trim off the beginning stuff AND add back the double slash "//" after http.
+//          String url_name = "http://" + file_name.substring(file_name.indexOf("http:")+6);
+//          Application.getSingleton().logInfo("detected url input: " + url_name);
+//          loadFromUrl(gviewerFrame, url_name, aseq);
+				//TODO: maybe support this again?
+				Application.logError("Loading from a URL is not currently supported.");
+			} else {
+				try {
+					new_seq = load(gviewerFrame, cfil, gmodel, seq_group, seq);
+				} catch (Exception ex) {
+					ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Error loading file", ex);
+				}
+			}
+		}
+		return new_seq;
+	}
+
+
+
+	private static void setGroupAndSeq(GenometryModel gmodel, AnnotatedSeqGroup previous_seq_group, MutableAnnotatedBioSeq previous_seq, MutableAnnotatedBioSeq new_seq) {
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+		if (group == null) {
+			// This primarily can happen if the merge button is not selected
+			// and the loading of the file fails or fails to create a seq group.
+			gmodel.setSelectedSeqGroup(previous_seq_group);
+			gmodel.setSelectedSeq(previous_seq);
+		} else {
+			// The purpose of calling setSelectedSeqGroup, even if identity of
+			// the seq group has not changed, is to make sure that
+			// the DataLoadView and the AnnotBrowserView update their displays.
+			// (Because the contents of the seq group may have changed.)
+			gmodel.setSelectedSeqGroup(group);
+			if (group != previous_seq_group) {
+				if (new_seq != null && group.getSeqList().contains(new_seq)) {
+					gmodel.setSelectedSeq(new_seq);
+				} else if (group.getSeqCount() > 0) {
+					gmodel.setSelectedSeq(group.getSeq(0));
+				}
+			} else {
+				// the seq_group has not changed, but the seq might have
+				if (new_seq != null && group.getSeqList().contains(new_seq)) {
+					gmodel.setSelectedSeq(new_seq);
+				} else if (previous_seq != null) {
+					// Setting the selected Seq, even if it hasn't changed identity, is to
+					// make the SeqMapView update itself.  (Its contents may have changed.)
+					gmodel.setSelectedSeq(previous_seq);
+				}
+			}
+		}
+	}
+
 
   // This seems to be unused.
   /*
@@ -329,9 +342,8 @@ public final class LoadFileAction {
    *  class if necessary.
    */
   public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, InputStream instr,
-        String stream_name, GenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
+        String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, MutableAnnotatedBioSeq input_seq)
   throws IOException {
-      AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
       if (selected_group == null) {
           // this should never happen
           throw new IOException("Must select a genome before loading a file");

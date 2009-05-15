@@ -87,6 +87,9 @@ public class Scene implements SceneI  {
 	 */
 	public void setGlyph(GlyphI glyph) {
 		eveGlyph = glyph;
+		if (glyph == null) {
+			return;
+		}
 		eveGlyph.setScene(this);
 		maxDamage();
 	}

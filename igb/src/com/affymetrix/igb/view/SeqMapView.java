@@ -2617,12 +2617,13 @@ public class SeqMapView extends JPanel
         }
     }
 
+		/**
+		 * Do edge matching.  If query_glyphs is empty, clear all edges.
+		 * @param query_glyphs
+		 * @param update_map
+		 */
     public void doEdgeMatching(List<GlyphI> query_glyphs, boolean update_map) {
-
-        if (!show_edge_matches) {
-            return;
-        }
-
+				// Clear previous edges
         if (match_glyphs != null && match_glyphs.size() > 0) {
             seqmap.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
         }

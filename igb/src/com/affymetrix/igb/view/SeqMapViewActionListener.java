@@ -129,14 +129,17 @@ final class SeqMapViewActionListener implements ActionListener {
   public void doAction(String command) {
     if (command.equals(gviewer.zoomtoMI.getText())) {
       gviewer.zoomToSelections();
-    } else if (command.equals(gviewer.zoomclampMI.getText())) {
+    }
+		/*else if (command.equals(gviewer.zoomclampMI.getText())) {
       Vector selected_glyphs = seqmap.getSelected();
       if (selected_glyphs.isEmpty()) {
         Application.errorPanel("Nothing selected");
       } else {
         gviewer.clampToGlyph((GlyphI) selected_glyphs.lastElement());
       }
-    } else if (command.equals(gviewer.selectParentMI.getText())) {
+		 
+    }*/
+		else if (command.equals(gviewer.selectParentMI.getText())) {
       gviewer.selectParents();
     } else if (command.equals(gviewer.printSymmetryMI.getText())) {
       SeqSymmetry sym = gviewer.getSelectedSymmetry();

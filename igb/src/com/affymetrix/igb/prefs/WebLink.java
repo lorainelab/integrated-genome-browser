@@ -168,7 +168,7 @@ public final class WebLink {
   }
   
   public void setName(String name) {
-    if ("null".equals(name) || name == null) {
+    if (name == null || "null".equals(name)) {
       this.name = "";
     } else {
       this.name = name;

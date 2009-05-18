@@ -249,17 +249,17 @@ public class SeqMapView extends JPanel
     private static final JMenuItem empty_menu_item = new JMenuItem("");
     //  JMenuItem copyAsCurationMI;
     JMenuItem zoomtoMI = empty_menu_item;
-    JMenuItem printMI = empty_menu_item;
-    JMenuItem zoomclampMI = empty_menu_item;
+    //JMenuItem printMI = empty_menu_item;
+    //JMenuItem zoomclampMI = empty_menu_item;
     JMenuItem selectParentMI = empty_menu_item;
-    JMenuItem renumberMinMI = empty_menu_item;
-    JMenuItem renumberMaxMI = empty_menu_item;
-    JMenuItem revertCoordsMI = empty_menu_item;
+    //JMenuItem renumberMinMI = empty_menu_item;
+    //JMenuItem renumberMaxMI = empty_menu_item;
+    //JMenuItem revertCoordsMI = empty_menu_item;
     JMenuItem printSymmetryMI = empty_menu_item;
     JMenuItem slicendiceMI = empty_menu_item;
 
     // for right-click on background
-    JMenuItem renumberMI = empty_menu_item;
+    //JMenuItem renumberMI = empty_menu_item;
     protected SeqMapViewActionListener action_listener;
     protected SeqMapViewMouseListener mouse_listener;
     CharSeqGlyph seq_glyph = null;
@@ -3006,7 +3006,7 @@ public class SeqMapView extends JPanel
         setPopupMenuTitle(sym_info, selected_glyphs);
 
         popup.add(sym_info);
-        popup.add(printMI);
+        //popup.add(printMI);
         if (!selected_glyphs.isEmpty()) {
             popup.add(zoomtoMI);
         }

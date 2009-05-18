@@ -2,7 +2,7 @@
 
 <!-- Specify servers here with type, name, and url.  Type is "das", "das2", or "quickload" -->
 <server type="das2" name="NetAffx" url="http://netaffxdas.affymetrix.com/das2/genome" />
-<!--<server type="quickload" name="NetAffx Quickload" url="http://netaffxdas.affymetrix.com/quickload_data" />-->
+<server type="quickload" name="NetAffx Quickload" url="http://netaffxdas.affymetrix.com/quickload_data" />
 
 
 <boolean tag="USE_QUICK_LOADER" val="false" />

@@ -74,22 +74,11 @@
 
 
   <!-- Add an NCBI link for mRNA methods that do not have the word "TAIR" -->
-  <!-- The multiple regexes are used to negate the entire word "TAIR" -->
-  <annotation_url annot_type_regex="(?i)[^T].*mRNA"
+  <!-- This is a 0-length negative lookahead regular expression for TAIR -->
+  <annotation_url annot_type_regex="(?i)^(?!TAIR).*mRNA"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="(?i)T[^A].*mRNA"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex="(?i)TA[^I].*mRNA"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
-  <annotation_url annot_type_regex="(?i)TAI[^R].*mRNA"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
+
 </prefs>
 

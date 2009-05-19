@@ -8,6 +8,8 @@
 <server type="quickload" name="Bioviz QuickLoad" url="http://bioviz.org/plant_quickload/"/>
 
 
+
+
 <boolean tag="USE_QUICK_LOADER" val="false" />
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
 <boolean tag="USE_SLICE_VIEW" val="true" />
@@ -20,9 +22,10 @@
 
 
 
-  <!-- <annotation_url> associates a "method" type regular expression with a URL.
+  <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)
+         annot_id_regex:  a regular expression (case insensitive by default)
          url:               a url.  Every instance of "$$" (if any) will be
                             substituted with the item ID when forming links.
   -->
@@ -30,6 +33,12 @@
   <annotation_url annot_type_regex="(?i).*RefSeq$"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+
+  <!-- Match any gene with id beginning with AT. -->
+  <annotation_url annot_id_regex="^AT.*$"
+    name="arabidopsis.org"
+    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />
 
   <annotation_url annot_type_regex="(?i).*TAIR.*$" 
@@ -72,13 +81,13 @@
     url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
   />
 
-
   <!-- Add an NCBI link for mRNA methods that do not have the word "TAIR" -->
   <!-- This is a 0-length negative lookahead regular expression for TAIR -->
   <annotation_url annot_type_regex="(?i)^(?!TAIR).*mRNA"
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
+
 
 </prefs>
 

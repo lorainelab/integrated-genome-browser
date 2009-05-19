@@ -345,12 +345,13 @@ public final class XmlPrefsParser {
 	}
 
 	/**
-	 *  Sets-up a regular-expression matching between a method name and a url,
+	 *  Sets up a regular-expression matching between a method name or id and a url,
 	 *  which can be used, for example, in SeqMapView to "get more info" about
 	 *  an item.
 	 *  For example:
 	 *  <p>
 	 *  <code>&gt;annotation_url annot_type_regex="google" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
+	 * <code>&gt;annotation_url annot_id_regex="^AT*" match_case="false" url="http://www.google.com/search?q=$$" /&lt;</code>
 	 *  <p>
 	 *  Note that the url can contain "$$" which will later be substituted with the
 	 *  "id" of the annotation to form a link.
@@ -359,34 +360,40 @@ public final class XmlPrefsParser {
 	 */
 	private void processLinkUrl(Element el) {
 		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
-		String annot_type_regex_string = attmap.get("annot_type_regex");
-		if (annot_type_regex_string != null && annot_type_regex_string.trim().length() == 0) {
-			annot_type_regex_string = null;
-		}
 		String url = attmap.get("url");
-		if (url != null && url.trim().length() == 0) {
-			url = null;
+		if (url == null || url.trim().length() == 0) {
+			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
+			return;
 		}
-		String name = attmap.get("name");
-		if (annot_type_regex_string != null && url != null) {
-			try {
-				WebLink link = new WebLink();
-				link.setName(name);
-				link.setUrl(url);
-				if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
-					link.setRegex("(?-i)" + annot_type_regex_string);
-				//regex = Pattern.compile(annot_type_regex_string);
-				} else {
-					link.setRegex(annot_type_regex_string);
-				//regex = Pattern.compile(annot_type_regex_string, Pattern.CASE_INSENSITIVE);
-				}
 
-				WebLink.addWebLink(link);
-			} catch (PatternSyntaxException pse) {
-				System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
+		WebLink.RegexType type_regex = WebLink.RegexType.TYPE;
+		String annot_regex_string = attmap.get("annot_type_regex");
+		if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
+			type_regex = WebLink.RegexType.ID;
+			annot_regex_string = attmap.get("annot_id_regex");
+		}
+		if (annot_regex_string == null || annot_regex_string.trim().length() == 0) {
+			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':" + el.toString());
+			return;
+		}
+	
+		String name = attmap.get("name");
+		try {
+			WebLink link = new WebLink();
+			link.setRegexType(type_regex);
+			link.setName(name);
+			link.setUrl(url);
+			if ("false".equalsIgnoreCase(attmap.get("match_case"))) {
+				link.setRegex("(?-i)" + annot_regex_string);
+			//regex = Pattern.compile(annot_regex_string);
+			} else {
+				link.setRegex(annot_regex_string);
+			//regex = Pattern.compile(annot_regex_string, Pattern.CASE_INSENSITIVE);
 			}
-		} else {
-			System.out.println("ERROR: Empty data in preferences file for an 'annotation_url':  " + "annot_type_regex='" + annot_type_regex_string + "'  url='" + url + "'");
+
+			WebLink.addWebLink(link);
+		} catch (PatternSyntaxException pse) {
+			System.out.println("ERROR: Regular expression syntax error in preferences\n" + pse.getMessage());
 		}
 	}
 

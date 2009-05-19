@@ -88,7 +88,7 @@ public final class WebLinksManagerView extends JPanel {
   }
 
   JList createJList() {
-    JList j_list = new JList(WebLink.getWebLinkListModel());
+    JList j_list = new JList(WebLink.getWebList().toArray());
     
     j_list.setCellRenderer(list_renderer);    
     j_list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

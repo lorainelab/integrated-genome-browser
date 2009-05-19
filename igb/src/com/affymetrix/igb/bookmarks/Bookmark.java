@@ -73,7 +73,7 @@ public final class Bookmark implements Serializable {
    *  All keys and values will be decoded with {@link URLDecoder}.
    */
   public static Map<String,String[]> parseParameters(URL url) {
-    Map<String,String[]> map = new LinkedHashMap();
+    Map<String,String[]> map = new LinkedHashMap<String,String[]>();
     String query = url.getQuery();
     if (query != null) {
       parseParametersFromQuery(map, query, true);

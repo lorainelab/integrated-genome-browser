@@ -131,10 +131,11 @@ public final class GeneralLoadView extends JComponent
 		partial_residuesB = new JButton("Load Sequence in View");
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
-		if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
-			partial_residuesB.addActionListener(this);
-			buttonPanel.add(partial_residuesB);
-		}
+		//if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
+		
+		partial_residuesB.addActionListener(this);
+		buttonPanel.add(partial_residuesB);
+		//}
 		refresh_dataB = new JButton("Refresh Data");
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refresh_dataB.setEnabled(false);

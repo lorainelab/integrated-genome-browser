@@ -28,10 +28,7 @@
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="(?i).*mRNA$"
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
+
   <annotation_url annot_type_regex="(?i).*TAIR.*$" 
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
@@ -72,18 +69,24 @@
     url="http://www.genedb.org/genedb/Search?name=$$&amp;organism=pombe&amp;desc=yes&amp;wildcard=yes&amp;searchId=Search"
   />
 
-<!--
-  <annotation_url annot_type_regex="^.*Ex-1_0-st.*Probes$"
-    name="NetAffx Probeset Details"
-    url="http://www.affymetrix.com/analysis/netaffx/exon/probe_set.affx?pk=$$"
+
+  <!-- Add an NCBI link for mRNA methods that do not have the word "TAIR" -->
+  <!-- The multiple regexes are used to negate the entire word "TAIR" -->
+  <annotation_url annot_type_regex="(?i)[^T].*mRNA"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="^.*Ex-1_0-st.*Transcripts$"
-    name="NetAffx Transcript Details"
-    url="http://www.affymetrix.com/analysis/netaffx/exon/transcript.affx?pk=$$"
+  <annotation_url annot_type_regex="(?i)T[^A].*mRNA"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
--->
-
-
-
+  <annotation_url annot_type_regex="(?i)TA[^I].*mRNA"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="(?i)TAI[^R].*mRNA"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
 </prefs>
 

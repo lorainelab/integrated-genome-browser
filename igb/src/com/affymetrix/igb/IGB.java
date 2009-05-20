@@ -1171,7 +1171,9 @@ public final class IGB extends Application
       map_view.copySelectedResidues();
     }
     else if (src == view_ucsc_item) {
-      System.out.println("trying to invoke UCSC genome browser");
+			if (DEBUG_EVENTS) {
+				System.out.println("trying to invoke UCSC genome browser");
+			}
       map_view.invokeUcscView();
     }
     else if (src == autoscroll_item) {
@@ -1190,16 +1192,16 @@ public final class IGB extends Application
     //      map_view.reverseComplement();
     //    }
     else if (src == shrink_wrap_item) {
-      System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
+      if (DEBUG_EVENTS) {
+				System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
+			}
       map_view.setShrinkWrap(! map_view.getShrinkWrap());
       shrink_wrap_item.setState(map_view.getShrinkWrap());
     }
     else if (src == clamp_view_item) {
-      System.out.println("trying to clamp to view");
       map_view.clampToView();
     }
     else if (src == unclamp_item) {
-      System.out.println("trying to unclamp");
       map_view.unclamp();
     }
     else if (src == toggle_hairline_label_item) {

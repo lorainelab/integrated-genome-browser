@@ -81,12 +81,6 @@
                     <location>genoviz_sdk/demo/src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
-                <source-folder>
-                    <label>genoviz_lite/src</label>
-                    <type>java</type>
-                    <location>genoviz_lite/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">

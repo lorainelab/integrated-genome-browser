@@ -216,10 +216,6 @@
                         <label>genoviz_sdk/demo/src</label>
                         <location>genoviz_sdk/demo/src</location>
                     </source-folder>
-                    <source-folder style="packages">
-                        <label>genoviz_lite/src</label>
-                        <location>genoviz_lite/src</location>
-                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -309,10 +305,6 @@
             <compilation-unit>
                 <package-root>genoviz_sdk/demo/src</package-root>
                 <classpath mode="compile">genoviz_sdk/src</classpath>
-                <source-level>1.5</source-level>
-            </compilation-unit>
-            <compilation-unit>
-                <package-root>genoviz_lite/src</package-root>
                 <source-level>1.5</source-level>
             </compilation-unit>
         </java-data>

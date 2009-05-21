@@ -133,13 +133,33 @@ public final class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group,
-			Map<String,String> track_hash, String default_track_name) {
+	static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group, Map<String,String> track_hash, String default_track_name) {
 		String name = track_hash.get(NAME);
+		
+		//this will create the correct track name for IGB to display the track correctly
+		String separator = ((default_track_name.indexOf("/") > -1) ? "/" : "\\");
+		String[] s = default_track_name.split(separator);
+		//if the filename equals the name of the specific track
+		if (s[s.length - 1].equals(name)) {
+			name = default_track_name;
+		} else {  //if the track name does not equal the filename
+			StringBuffer newTrackName = new StringBuffer();
+			//append path to name
+			for (int i = 0; i < s.length - 1; i++) {
+				newTrackName.append(s[i] + separator);
+			}
+			//append track name
+			newTrackName.append(name);
+			name = newTrackName.toString();
+		}
+		
+		track_hash.put(NAME, name);
+
 		if (name == null) {
 			track_hash.put(NAME, default_track_name);
 			name = default_track_name;
 		}
+		
 		StateProvider provider = seq_group.getStateProvider();
 		IAnnotStyle style = provider.getAnnotStyle(name);
 		applyTrackProperties(track_hash, style);

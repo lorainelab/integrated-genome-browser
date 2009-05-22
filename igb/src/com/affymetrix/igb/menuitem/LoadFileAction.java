@@ -76,7 +76,6 @@ public final class LoadFileAction {
     if (chooser == null) {
       chooser = new MergeOptionFileChooser();
       chooser.setMultiSelectionEnabled(true);
-      chooser.addChoosableFileFilter(new UniFileFilter("axml"));
       chooser.addChoosableFileFilter(new UniFileFilter(
 							new String[] {"bed"}, "BED Files"));
       chooser.addChoosableFileFilter(new UniFileFilter(
@@ -406,9 +405,10 @@ public final class LoadFileAction {
           CytobandParser parser = new CytobandParser();
           parser.parse(str, selected_group);
           return input_seq;
+					/*
       } else if (lcname.endsWith(".axml")) {
           Xml2GenometryParser parser = new Xml2GenometryParser();
-          return parser.parse(str, input_seq);
+          return parser.parse(str, input_seq);*/
       /*}	else if (PARSE_CNT && lcname.endsWith(".cnt")) {
           CntParser parser = new CntParser();
           parser.parse(str, selected_group);

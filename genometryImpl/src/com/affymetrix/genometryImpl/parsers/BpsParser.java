@@ -149,7 +149,7 @@ public final class BpsParser implements AnnotationWriter  {
 
 	public static void convertPslToBps(String psl_in, String bps_out)  {
 		System.out.println("reading text psl file");
-		List psl_syms = readPslFile(psl_in);
+		List<SeqSymmetry> psl_syms = readPslFile(psl_in);
 		System.out.println("done reading text psl file, annot count = " + psl_syms.size());
 		System.out.println("writing binary psl file");
 		//    writeBpsFile(psl_syms, bps_out);
@@ -340,16 +340,16 @@ public final class BpsParser implements AnnotationWriter  {
 	}
 
 
-	public static List readPslFile(String file_name) {
+	private static List<SeqSymmetry> readPslFile(String file_name) {
 		Timer tim = new Timer();
 		tim.start();
 
-		List results = null;
+		List<SeqSymmetry> results = null;
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 		try  {
 			File fil = new File(file_name);
-			double flength = fil.length();
+			long flength = fil.length();
 			fis = new FileInputStream(fil);
 			InputStream istr = null;
 			if (use_byte_buffer) {
@@ -405,8 +405,9 @@ public final class BpsParser implements AnnotationWriter  {
 			String type, OutputStream outstream) {
 		//    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
 		boolean success = true;
+		DataOutputStream dos = null;
 		try {
-			DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outstream));
+			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 			Iterator iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry sym = (SeqSymmetry)iterator.next();
@@ -427,6 +428,9 @@ public final class BpsParser implements AnnotationWriter  {
 		catch (Exception ex) {
 			ex.printStackTrace();
 			success = false;
+		}
+		finally {
+			GeneralUtils.safeClose(dos);
 		}
 		return success;
 	}

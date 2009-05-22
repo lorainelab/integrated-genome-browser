@@ -458,8 +458,7 @@ public final class LoadFileAction {
       } else if (lcname.endsWith(".bps")) {
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
           DataInputStream dis = new DataInputStream(str);
-          BpsParser parser = new BpsParser();
-          parser.parse(dis, annot_type, null, selected_group, false, true);
+          BpsParser.parse(dis, annot_type, null, selected_group, false, true);
           return input_seq;
       } else if (lcname.endsWith(".bed")) {
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));

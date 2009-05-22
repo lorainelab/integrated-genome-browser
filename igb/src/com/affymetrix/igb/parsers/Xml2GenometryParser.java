@@ -35,38 +35,40 @@ import com.affymetrix.igb.das.DasLoader;
 
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 
 public final class Xml2GenometryParser {
 	// optionally skip over populating descriptors -- checking to see how this affects speed
 
-	public static boolean POPULATE_DESCRIPTORS = true;
-	public static boolean USE_INTERNING = false;
-	public static boolean USE_TIMER = true;
-	public static boolean USE_MEMER = true;
-	boolean DEBUG = false;
-	HashMap mrna_hash;
-	HashMap prot_hash;
+	private static final boolean POPULATE_DESCRIPTORS = true;
+	private static final boolean USE_INTERNING = false;
+	private static final boolean USE_TIMER = true;
+	private static final boolean USE_MEMER = true;
+	private static final boolean DEBUG = false;
+	private HashMap mrna_hash;
+	private HashMap prot_hash;
 	//  MutableAnnotatedBioSeq genomic;
-	MutableSeqSymmetry all_gene_searches = null;
+	private MutableSeqSymmetry all_gene_searches = null;
 	// hash of method name to genesearch method symmetry (a SymWithProps whose child
 	//    symmetries are all genesearch syms that use the same "method" --
 	//    est, rsmrna, sanger, etc.)
-	Hashtable method_to_sym = new Hashtable();
+	private Hashtable<String,SimpleSymWithProps> method_to_sym =
+					new Hashtable<String,SimpleSymWithProps>();
 
-	public Xml2GenometryParser() {
-	}
+	/*public Xml2GenometryParser() {
+	}*/
 
-	public MutableAnnotatedBioSeq parse(InputStream istr) {
+	/*public MutableAnnotatedBioSeq parse(InputStream istr) {
 		return parse(istr, null);
-	}
+	}*/
 
 	/**
 	 * Create a new BioSeq and add annotations to it.
 	 * @param insource  the InputSource which supplies data for the parser
 	 */
-	public MutableAnnotatedBioSeq parse(InputSource insource) {
+	/*public MutableAnnotatedBioSeq parse(InputSource insource) {
 		return parse(insource, null);
-	}
+	}*/
 
 	/**
 	 *  This may look a little strange, because the MutableAnnotatedBioSeq returned is
@@ -91,7 +93,7 @@ public final class Xml2GenometryParser {
 		return result;
 	}
 
-	public MutableAnnotatedBioSeq parse(InputSource insource, MutableAnnotatedBioSeq seq) {
+	private MutableAnnotatedBioSeq parse(InputSource insource, MutableAnnotatedBioSeq seq) {
 		MutableAnnotatedBioSeq result = null;
 		Timer tim = null;
 		Memer mem = null;
@@ -103,7 +105,7 @@ public final class Xml2GenometryParser {
 		if (USE_TIMER) {
 			tim = new Timer();
 		}
-		boolean success = false;
+		//boolean success = false;
 		try {
 			if (USE_TIMER) {
 				tim.start();
@@ -167,109 +169,115 @@ public final class Xml2GenometryParser {
 	 *  Process the document.
 	 *  The document must refer to the "same" sequence as the genomic arg.
 	 */
-	public MutableAnnotatedBioSeq processDocument(Document seqdoc, MutableAnnotatedBioSeq seq) {
-		MutableAnnotatedBioSeq genomic = seq;
-		String seqid = null;
-		String residues = null;
+	private MutableAnnotatedBioSeq processDocument(Document seqdoc, MutableAnnotatedBioSeq seq) {
 		Element top_element = seqdoc.getDocumentElement();
-		int glength = 0;
 		String name = top_element.getTagName();
 		// REALLY NEED TO ADD CHECKS IN HERE TO VERIFY THAT SEQ AND DOCUMENT REFER TO "SAME"
 		//     SEQUENCE (IF SEQ != NULL)
-		if (name.equalsIgnoreCase("dnaseq")) {
-			if (DEBUG) {
-				System.out.println("processing dna seq");
-			}
+		if (!name.equalsIgnoreCase("dnaseq")) {
+			return seq;
+		}
 
-			/** if have residues, then ignore the dnaseq's length attribute */
-			NodeList children = top_element.getChildNodes();
-			for (int i = 0; i < children.getLength(); i++) {
-				Node child = children.item(i);
-				String cname = child.getNodeName();
-				// System.out.println(name);
-				if (cname != null && cname.equalsIgnoreCase("residues")) {
-					Text resnode = (Text) child.getFirstChild();
-					String temp_residues = resnode.getData();
-					int length = temp_residues.length();
-					System.out.println("seq length: " + length);
-					// looks weird, but side effect is to trim new String's internal char array --
-					//  then can garbage collect temp_residues later, and hopefully will save space...
-					residues = new String(temp_residues);
-					temp_residues = null;
-				}
-				if (cname != null && cname.equalsIgnoreCase("identifier")) {
-					//	  System.out.println("TESTING IDENTIFIER");
-					Element idelem = (Element) child;
-					if (idelem.getAttribute("preferred") == null ||
-									idelem.getAttribute("preferred").equalsIgnoreCase("TRUE")) {
-						seqid = idelem.getAttribute("name");
-						System.out.println("id: " + seqid);
-					}
+		MutableAnnotatedBioSeq genomic = seq;
+		String seqid = null;
+		String residues = null;
+		int glength = 0;
+
+		if (DEBUG) {
+			System.out.println("processing dna seq");
+		}
+
+		/** if have residues, then ignore the dnaseq's length attribute */
+		NodeList children = top_element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			String cname = child.getNodeName();
+			if (cname == null) {
+				continue;
+			}
+			if (cname.equalsIgnoreCase("residues")) {
+				Text resnode = (Text) child.getFirstChild();
+				String temp_residues = resnode.getData();
+				System.out.println("seq length: " + temp_residues.length());
+				// looks weird, but side effect is to trim new String's internal char array --
+				//  then can garbage collect temp_residues later, and hopefully will save space...
+				residues = new String(temp_residues);
+				temp_residues = null;
+			}
+			if (cname.equalsIgnoreCase("identifier")) {
+				//	  System.out.println("TESTING IDENTIFIER");
+				Element idelem = (Element) child;
+				if (idelem.getAttribute("preferred") == null ||
+								idelem.getAttribute("preferred").equalsIgnoreCase("TRUE")) {
+					seqid = idelem.getAttribute("name");
+					System.out.println("id: " + seqid);
 				}
 			}
-			try {
-				glength = Integer.parseInt(top_element.getAttribute("length"));
-				System.out.println("no residues, but length specified: " + glength);
-			} catch (Exception ex) {
-				System.out.println("problem with dnaseq length attribute, arbitrarily assigning 200000");
-				glength = 0;
+		}
+		try {
+			glength = Integer.parseInt(top_element.getAttribute("length"));
+			System.out.println("no residues, but length specified: " + glength);
+		} catch (Exception ex) {
+			System.out.println("problem with dnaseq length attribute, assigning 0");
+			ex.printStackTrace();
+			glength = 0;
+		}
+
+		MutableAnnotatedBioSeq current_seq = null;
+
+		if (genomic == null) {
+			if (seqid == null) {
+				seqid = "unknown";
 			}
-
-			MutableAnnotatedBioSeq current_seq = null;
-
-			if (genomic == null) {
-				//	genomic = new SimpleAnnotatedBioSeq("genome", glength);
-				if (seqid == null) {
-					seqid = "unknown";
+			if (residues == null) {
+				// assign arbitrary length to sequence if no length or residues
+				if (glength == 0) {
+					glength = 200000;
 				}
-				if (residues == null) {
-					// assign arbitrary length to sequence if no length or residues
-					if (glength == 0) {
-						glength = 200000;
-					}
-					genomic = new SimpleAnnotatedBioSeq(seqid, glength);
-				} else {
-					genomic = new SimpleAnnotatedBioSeq(seqid, residues);
-				}
+				genomic = new SmartAnnotBioSeq(seqid, "unknown", glength);
+			} else {
+				genomic = new SmartAnnotBioSeq(seqid, "unknown", residues.length());
+				genomic.setResidues(residues);
+			}
+			current_seq = genomic;
+		} else {
+			// should maybe check for sequence id matches here???
+			if (seqid.equals(genomic.getID())) {
 				current_seq = genomic;
 			} else {
-				// should maybe check for sequence id matches here???
-				if (seqid.equals(genomic.getID())) {
-					current_seq = genomic;
-				} else {
-					System.out.println("trying to merge but seq ids don't match, checking composition: " +
-									"current id = " + seqid + ", previous id = " + genomic.getID());
-					if (genomic instanceof CompositeBioSeq) {
-						CompositeBioSeq cgenomic = (CompositeBioSeq) genomic;
-						SeqSymmetry comp = cgenomic.getComposition();
-						// need to switch this to a full recursion...
-						int scount = comp.getChildCount();
-						for (int i = 0; i < scount; i++) {
-							SeqSymmetry csym = comp.getChild(i);
-							// return seq in a symmetry span that _doesn't_ match genomic
-							BioSeq cseq = SeqUtils.getOtherSeq(csym, genomic);
-							if (cseq.getID().equals(seqid) && (cseq instanceof MutableAnnotatedBioSeq)) {
-								System.out.println("got a composition match, resetting seq to annotate to: " + seqid);
-								current_seq = (MutableAnnotatedBioSeq) cseq;
-								break;
-							}
+				System.out.println("trying to merge but seq ids don't match, checking composition: " +
+								"current id = " + seqid + ", previous id = " + genomic.getID());
+				if (genomic instanceof CompositeBioSeq) {
+					CompositeBioSeq cgenomic = (CompositeBioSeq) genomic;
+					SeqSymmetry comp = cgenomic.getComposition();
+					// need to switch this to a full recursion...
+					int scount = comp.getChildCount();
+					for (int i = 0; i < scount; i++) {
+						SeqSymmetry csym = comp.getChild(i);
+						// return seq in a symmetry span that _doesn't_ match genomic
+						BioSeq cseq = SeqUtils.getOtherSeq(csym, genomic);
+						if (cseq instanceof MutableAnnotatedBioSeq && cseq.getID().equals(seqid)) {
+							System.out.println("got a composition match, resetting seq to annotate to: " + seqid);
+							current_seq = (MutableAnnotatedBioSeq) cseq;
+							break;
 						}
 					}
 				}
 			}
-			if (current_seq == null) {
-				System.out.println("couldn't perform merge, no seq id match");
-				return null;
-			}
-			processDNASeq(current_seq, top_element);
 		}
+		if (current_seq == null) {
+			System.out.println("couldn't perform merge, no seq id match");
+			return null;
+		}
+		processDNASeq(current_seq, top_element);
+
 		return genomic;
 	}
 
-	public void processDNASeq(MutableAnnotatedBioSeq genomic, Element elem) {
+	private void processDNASeq(MutableAnnotatedBioSeq genomic, Element elem) {
 		// clearing method_to_sym tabel (just in case, this might
 		//  help with multiple DNAs in same XML doc?
-		method_to_sym = new Hashtable();
+		method_to_sym = new Hashtable<String,SimpleSymWithProps>();
 		NodeList children = elem.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -318,7 +326,7 @@ public final class Xml2GenometryParser {
 			String name = child.getNodeName();
 			// System.out.println(name);
 			if (name != null && name.equalsIgnoreCase("aaseq")) {
-				processProtein(genomic, (Element) child);
+				processProtein((Element) child);
 			}
 		}
 
@@ -336,7 +344,7 @@ public final class Xml2GenometryParser {
 		}
 	}
 
-	public void processProtein(MutableAnnotatedBioSeq genomic, Element elem) {
+	private void processProtein(Element elem) {
 		String pid = elem.getAttribute("id");
 		MutableAnnotatedBioSeq protein = (MutableAnnotatedBioSeq) prot_hash.get(pid);
 		if (DEBUG) {
@@ -353,7 +361,7 @@ public final class Xml2GenometryParser {
 		}
 	}
 
-	public void processSimSearch(MutableAnnotatedBioSeq query_seq, Element elem) {
+	private void processSimSearch(MutableAnnotatedBioSeq query_seq, Element elem) {
 		NodeList children = elem.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -364,7 +372,7 @@ public final class Xml2GenometryParser {
 		}
 	}
 
-	public void processSimHit(MutableAnnotatedBioSeq query_seq, Element elem) {
+	private void processSimHit(MutableAnnotatedBioSeq query_seq, Element elem) {
 		SimpleSymWithProps hitSym = new SimpleSymWithProps();
 		addDescriptors(elem, hitSym);
 
@@ -411,7 +419,7 @@ public final class Xml2GenometryParser {
 	 *  may at some point want to change so id is set for mapped sequence rather
 	 *    than the sym itself.
 	 */
-	public void addDescriptors(Element elem, Propertied sym) {
+	private void addDescriptors(Element elem, Propertied sym) {
 		if (!POPULATE_DESCRIPTORS) {
 			return;
 		}
@@ -446,7 +454,7 @@ public final class Xml2GenometryParser {
 		}
 	}
 
-	public SeqSymmetry processSimSpan(MutableAnnotatedBioSeq query_seq, Element elem) {
+	private SeqSymmetry processSimSpan(MutableAnnotatedBioSeq query_seq, Element elem) {
 		int start = Integer.parseInt(elem.getAttribute("query_start")) - 1;
 		int end;
 		// blech!  need to standardize on which tag to use!
@@ -473,7 +481,7 @@ public final class Xml2GenometryParser {
 		return spanSym;
 	}
 
-	public void processAdHocAnalysis(MutableAnnotatedBioSeq genomic, Element elem) {
+	private void processAdHocAnalysis(MutableAnnotatedBioSeq genomic, Element elem) {
 		SimpleSymWithProps analysis = new SimpleSymWithProps();
 		String meth = elem.getAttribute("method");
 		if (meth == null) {
@@ -500,7 +508,7 @@ public final class Xml2GenometryParser {
 		System.out.println("adhoc features: " + analysis.getChildCount());
 	}
 
-	public void processRepeatSearch(MutableAnnotatedBioSeq genomic, Element elem) {
+	private void processRepeatSearch(MutableAnnotatedBioSeq genomic, Element elem) {
 		SimpleSymWithProps repeat_search = new SimpleSymWithProps();
 		repeat_search.setProperty("method", "repeats");
 		NodeList children = elem.getChildNodes();
@@ -517,7 +525,7 @@ public final class Xml2GenometryParser {
 		System.out.println("repeats: " + repeat_search.getChildCount());
 	}
 
-	public void processAdHocFeature(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym,
+	private void processAdHocFeature(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym,
 					Element elem) {
 		int start = Integer.parseInt(elem.getAttribute("start")) - 1;
 		int end = Integer.parseInt(elem.getAttribute("end")) - 1;
@@ -530,7 +538,7 @@ public final class Xml2GenometryParser {
 		parentSym.addChild(featSym);
 	}
 
-	public void processRepeat(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym,
+	private void processRepeat(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym,
 					Element elem) {
 		int start = Integer.parseInt(elem.getAttribute("start")) - 1;
 		int end = Integer.parseInt(elem.getAttribute("end")) - 1;
@@ -543,7 +551,7 @@ public final class Xml2GenometryParser {
 		parentSym.addChild(repeatSym);
 	}
 
-	public void processGeneSearch(MutableAnnotatedBioSeq genomic, Element elem) {
+	private void processGeneSearch(MutableAnnotatedBioSeq genomic, Element elem) {
 
 		//    System.out.println("processing gene search");
 		//    Integer id = getInteger(n.getAttribute("id"));
@@ -575,7 +583,7 @@ public final class Xml2GenometryParser {
 		//     parent symmetry that represents _all_ gene searches)
 		SimpleSymWithProps method_sym;
 		if (method_to_sym.containsKey(meth)) {
-			method_sym = (SimpleSymWithProps) method_to_sym.get(meth);
+			method_sym = method_to_sym.get(meth);
 		} else {
 			method_sym = new SimpleSymWithProps();
 			method_to_sym.put(meth, method_sym);
@@ -585,7 +593,7 @@ public final class Xml2GenometryParser {
 	//    genomic.addAnnotation(gene_search);
 	}
 
-	public void processGene(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym, Element elem) {
+	private void processGene(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym, Element elem) {
 		int start = Integer.parseInt(elem.getAttribute("start")) - 1;
 		int end = Integer.parseInt(elem.getAttribute("end")) - 1;
 		if (start < end) {
@@ -612,7 +620,7 @@ public final class Xml2GenometryParser {
 		parentSym.addChild(gene_sym);
 	}
 
-	public void processTranscript(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym, Element elem) {
+	private void processTranscript(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym, Element elem) {
 		int start = Integer.parseInt(elem.getAttribute("start")) - 1;
 		int end = Integer.parseInt(elem.getAttribute("end")) - 1;
 		if (start < end) {
@@ -633,7 +641,7 @@ public final class Xml2GenometryParser {
 		}
 	}
 
-	public void processMRNA(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym, Element elem) {
+	private void processMRNA(MutableAnnotatedBioSeq genomic, MutableSeqSymmetry parentSym, Element elem) {
 		int start = Integer.parseInt(elem.getAttribute("start")) - 1;
 		int end = Integer.parseInt(elem.getAttribute("end")) - 1;
 		if (start < end) {
@@ -653,7 +661,7 @@ public final class Xml2GenometryParser {
 		boolean forward = (span.isForward());
 
 
-		List exon_list = new ArrayList();
+		List<SeqSymmetry> exon_list = new ArrayList<SeqSymmetry>();
 		List exon_insert_list = new ArrayList();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -679,13 +687,9 @@ public final class Xml2GenometryParser {
 		// sorting exons, so that later position calculations are accurate
 		Collections.sort(exon_list, new SeqSymStartComparator(genomic, forward));
 
-		//    System.out.println("=======================");
-		for (int i = 0; i < exon_list.size(); i++) {
-			SeqSymmetry esym = (SeqSymmetry) exon_list.get(i);
-			//      SeqUtils.printSymmetry(esym);
+		for (SeqSymmetry esym : exon_list) {
 			m2gSym.addChild(esym);
 		}
-		//    System.out.println("=======================");
 
 		int exoncount = m2gSym.getChildCount();
 		int mrnalength = 0;
@@ -791,7 +795,7 @@ public final class Xml2GenometryParser {
 	//    SeqUtils.printSymmetry(m2gSym);
 	}
 
-	public void processExonInsert(MutableSeqSymmetry exonSym, Vector hit_inserts,
+	private void processExonInsert(MutableSeqSymmetry exonSym, Vector hit_inserts,
 					BioSeq genomic, BioSeq mrna) {
 		// assumes that hit_inserts are in order 5' to 3' along transcript
 		// assumes that each exon_insert in hit_inserts actually is contained in the exon
@@ -854,7 +858,7 @@ public final class Xml2GenometryParser {
 		}
 	}
 
-	public SimpleSymWithProps processExon(MutableAnnotatedBioSeq genomic, Element elem) {
+	private SimpleSymWithProps processExon(MutableAnnotatedBioSeq genomic, Element elem) {
 		// should not be any nodes underneath exon tags (at least in current pseudo-DTD)
 		int start = Integer.parseInt(elem.getAttribute("start")) - 1;
 		int end = Integer.parseInt(elem.getAttribute("end")) - 1;
@@ -874,7 +878,7 @@ public final class Xml2GenometryParser {
 	//    m2gSym.addChild(exonsym);
 	}
 
-	public void processCDS(MutableAnnotatedBioSeq genomic, Element elem, SeqSymmetry m2gSym,
+	private void processCDS(MutableAnnotatedBioSeq genomic, Element elem, SeqSymmetry m2gSym,
 					MutableAnnotatedBioSeq mrna, String protein_id) {
 		int start = Integer.parseInt(elem.getAttribute("transstart")) - 1;
 		/*

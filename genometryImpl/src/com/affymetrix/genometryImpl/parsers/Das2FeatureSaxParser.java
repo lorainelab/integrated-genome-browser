@@ -37,7 +37,7 @@ import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
  *   Spec for this format is at http://biodas.org/documents/das2/das2_get.html *   DTD is at http://www.biodas.org/dtd/das2feature.dtd ???
  */
 public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandler
-	implements AnnotationWriter {
+				implements AnnotationWriter {
 
 	// DO_SEQID_HACK is a very temporary fix!!!
 // Need to move to using full URI references to identify sequences,
@@ -46,7 +46,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	static boolean REPORT_RESULTS = false;
 	static boolean REPORT_MULTI_LOC = true;
 	static boolean REQUIRE_DAS2_NAMESPACE = false;    // ADD_NEW_SEQS_TO_GROUP should be true to allow opening a file in a "new" genome via File->Open
-	static boolean ADD_NEW_SEQS_TO_GROUP = false;    
+	static boolean ADD_NEW_SEQS_TO_GROUP = false;
 	//   "text/plain";
 	//   "text/x-das-feature+xml";
 	public static String FEATURES_CONTENT_TYPE = "application/x-das-features+xml";
@@ -237,7 +237,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 		}
 
-		System.out.println("feature constructor calls: "+ feature_constructor_calls);
+		System.out.println("feature constructor calls: " + feature_constructor_calls);
 		//    clearAll();
 		//    return aseq;
 		return result_syms;
@@ -261,9 +261,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  implementing sax content handler interface.
 	 */
 	public void startElement(String uri, String localName, String qname, Attributes atts)
-		throws SAXException {
+					throws SAXException {
 		// to be fully compliant with DAS/2 spec, should comply with XML namespaces, and therefore
-	//     should make sure that the uri is the DAS/2 namespace URI
+		//     should make sure that the uri is the DAS/2 namespace URI
 //     because otherwise if there is arbitrary embedded XML, could have other elements with same localName
 		//     (but they will have different namespace uri (or none)?)
 		String name = localName;
@@ -294,7 +294,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		if (current_elem.equals(FEATURELIST) || current_elem.equals(FEATURES) || current_elem.equals(XID)) {
 			return;
-		} 
+		}
 
 		if (current_elem.equals(FEATURE)) {
 			// feat_parent_id has moved to <PARENT> element
@@ -414,8 +414,6 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 	}
 
-
-
 	public void clearAll() {
 		feature_constructor_calls = 0;
 		result_syms = null;
@@ -506,8 +504,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		//    }
 	}
 	int dup_count = 0;
-
 	int feature_constructor_calls = 0;
+
 	public void addFeature() {
 		// checking to make sure feature with same id doesn't already exist
 		//   (ids _should_ be unique, but want to make sure)
@@ -519,7 +517,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		//SimpleDas2Feature featsym = new SimpleDas2Feature(new URI(feat_id), feat_type, feat_name, feat_parent_id,
 
 		SimpleDas2Feature featsym = new SimpleDas2Feature(feat_id, feat_type, feat_name, feat_parent_id,
-				feat_created, feat_modified, feat_doc_href, feat_props);
+						feat_created, feat_modified, feat_doc_href, feat_props);
 		feature_constructor_calls++;
 		// add featsym to id2sym hash
 		id2sym.put(feat_id, featsym);
@@ -541,7 +539,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		if (feat_parts.size() > 0) {
 			if (childrenReady(featsym)) {
 				addChildren(featsym);
-				//	parent2parts.remove(featsym);
+			//	parent2parts.remove(featsym);
 			}
 		}
 
@@ -580,7 +578,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					parent_parts.put(feat_id, featsym);
 					if (childrenReady(parent)) {
 						addChildren(parent);
-						//	  parent2parts.remove(parent_sym);
+					//	  parent2parts.remove(parent_sym);
 					}
 				}
 			}
@@ -668,8 +666,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			success = false;
-		}
-		finally {
+		} finally {
 			GeneralUtils.safeClose(pw);
 		}
 		return success;
@@ -727,8 +724,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			success = false;
-		}
-		finally {
+		} finally {
 			GeneralUtils.safeClose(pw);
 		}
 		return success;
@@ -739,7 +735,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Recursively descends to write out all descendants.
 	 */
 	public void writeDasFeature(SeqSymmetry annot, String parent_id, int parent_index,
-			String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
+					String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
 		//	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		String feat_name = null;
@@ -762,10 +758,10 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			feat_title = feat_id;
 		}
 		/*
-		   if (annot instanceof Named) {
-		   feat_title = ((Named)annot).getName();
-		   }
-		   */
+		if (annot instanceof Named) {
+		feat_title = ((Named)annot).getName();
+		}
+		 */
 
 		// print <FEATURE ...> line
 		pw.print("  <FEATURE uri=\"");
@@ -813,14 +809,14 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 
 		/*
-		   pw.print("     <LOC segment=\"");
-		   pw.print(span.getBioSeq().getID());
-		   pw.print("\" range=\"");
-		   String range = getRangeString(span);
-		   pw.print(range);
-		   pw.print("\" />");
-		   pw.println();
-		   */
+		pw.print("     <LOC segment=\"");
+		pw.print(span.getBioSeq().getID());
+		pw.print("\" range=\"");
+		String range = getRangeString(span);
+		pw.print(range);
+		pw.print("\" />");
+		pw.println();
+		 */
 
 		//  parent has moved from being an attribute to being an element (zero or more)
 		//    writeDasFeature() currently does not handle multiple parents, only zero or one
@@ -863,7 +859,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				writeDasFeature(child, feat_id, i, feat_type, pw, mspan);
 			}
 		}
-		}
+	}
 
 	// Get a child ID (return "unknown" if we can't determine it).
 	// If there is a parent, then we differentiate the children by using the child_index.
@@ -932,12 +928,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *   but _not_ the case where there is no seqid, or no min, or no max
 	 */
 	/*public static SeqSpan getLocationSpan(String seqrng, AnnotatedSeqGroup group) {
-		int sindex = seqrng.lastIndexOf("/");
-		String seqid = seqrng.substring(0, sindex);
-		String rng = seqrng.substring(sindex + 1);
-		return getLocationSpan(seqid, rng, group);
+	int sindex = seqrng.lastIndexOf("/");
+	String seqid = seqrng.substring(0, sindex);
+	String rng = seqrng.substring(sindex + 1);
+	return getLocationSpan(seqid, rng, group);
 	}*/
-
 	public static String getLocationSeqId(String seqrng) {
 		int sindex = seqrng.lastIndexOf("/");
 		String seqid = seqrng.substring(0, sindex);
@@ -1021,10 +1016,10 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		return buf.toString();
 	}
 	/*
-	   public static void main(String[] args) {
-	   boolean test_result_list = true;
-	   Das2FeatureSaxParser test = new Das2FeatureSaxParser();
-	   try {
+	public static void main(String[] args) {
+	boolean test_result_list = true;
+	Das2FeatureSaxParser test = new Das2FeatureSaxParser();
+	try {
 	//	String test_file_name = "c:/data/das2_responses/codesprint/feature_query3.xml";
 	//	String test_file_name = "c:/data/das2_responses/codesprint/genometry/features3.xml";
 	String test_file_name = System.getProperty("user.dir") + 
@@ -1046,11 +1041,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	System.out.println("seq id: " + aseq.getID());
 	GenometryViewer viewer = GenometryViewer.displaySeq(aseq, false);
 	viewer.setAnnotatedSeq(aseq);
-	   }
-	   catch (Exception ex) {
-	   ex.printStackTrace();
-	   }
-	   }
-
-*/
 	}
+	catch (Exception ex) {
+	ex.printStackTrace();
+	}
+	}
+
+	 */
+}

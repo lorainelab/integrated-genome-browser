@@ -154,7 +154,9 @@ public class GenometryModel {
 	}
 
 	public void addGroupSelectionListener(GroupSelectionListener listener) {
-		group_selection_listeners.add(listener);
+		if (!group_selection_listeners.contains(listener)) {
+			group_selection_listeners.add(listener);
+		}
 	}
 
 	public void removeGroupSelectionListener(SeqSelectionListener listener) {
@@ -203,7 +205,9 @@ public class GenometryModel {
 	}
 
 	public void addSeqSelectionListener(SeqSelectionListener listener) {
-		seq_selection_listeners.add(listener);
+		if (!seq_selection_listeners.contains(listener)) {
+			seq_selection_listeners.add(listener);
+		}
 	}
 
 	public void removeSeqSelectionListener(SeqSelectionListener listener) {
@@ -234,7 +238,9 @@ public class GenometryModel {
 	}
 
 	public void addSymSelectionListener(SymSelectionListener listener) {
-		sym_selection_listeners.add(listener);
+		if (!sym_selection_listeners.contains(listener)) {
+			sym_selection_listeners.add(listener);
+		}
 	}
 
 	public void removeSymSelectionListener(SymSelectionListener listener) {

@@ -8,15 +8,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -50,7 +47,6 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import org.jdesktop.swingworker.SwingWorker;
 
@@ -64,6 +60,7 @@ public final class GeneralLoadView extends JComponent
 	private static final String SELECT_GENOME = "Genome Version";
 	private static final String GENOME_SEQ_ID = "genome";
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
+	private AnnotatedSeqGroup curGroup = null;
 	private JComboBox kingdomCB;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
@@ -560,8 +557,16 @@ public final class GeneralLoadView extends JComponent
 				versionCB.setEnabled(false);
 				versionCB.addItemListener(this);
 			}
+			curGroup = group;
 			return;
 		}
+		if (curGroup == group) {
+			if (DEBUG_EVENTS) {
+				System.out.println("GeneralLoadView.groupSelectionChanged(): group was same as previous.");
+			}
+			return;
+		}
+		curGroup = group;
 
 		List<GenericVersion> gVersions = group.getVersions();
 		if (gVersions.isEmpty()) {
@@ -611,11 +616,9 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("GeneralLoadView.seqSelectionChanged() called, aseq: " + (aseq == null ? null : aseq.getID()));
 		}
 
-		clearFeaturesTable();
-
-		disableAllButtons();
-
 		if (aseq == null) {
+			clearFeaturesTable();
+			disableAllButtons();
 			return;
 		}
 
@@ -645,7 +648,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().setNotLockedUpStatus();
+		Application.getSingleton().setNotLockedUpStatus("Loading features");
 
 		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);

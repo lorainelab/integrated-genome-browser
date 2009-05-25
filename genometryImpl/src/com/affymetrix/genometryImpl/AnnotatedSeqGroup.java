@@ -53,7 +53,7 @@ public class AnnotatedSeqGroup {
 	public AnnotatedSeqGroup(String gid) {
 		id = gid;
 		use_synonyms = true;
-		id2seq = new LinkedHashMap<String, SmartAnnotBioSeq>();
+		id2seq = Collections.<String, SmartAnnotBioSeq>synchronizedMap(new LinkedHashMap<String, SmartAnnotBioSeq>());
 		id2seq_dirty_bit = false;
 		seqlist = new ArrayList<SmartAnnotBioSeq>();
 		id2sym_hash = new TreeMap<String,ArrayList<SeqSymmetry>>();

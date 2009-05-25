@@ -8,12 +8,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -47,6 +50,7 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
 import org.jdesktop.swingworker.SwingWorker;
 
@@ -220,17 +224,16 @@ public final class GeneralLoadView extends JComponent
 
 		// server has been added.  Refresh necessary boxes, tables, etc.
 		initializeSpeciesCB();
-
-		refreshVersionCB((String)speciesCB.getSelectedItem());
 		clearFeaturesTable();
-		//disableAllButtons();
+		speciesCB.addItemListener(this);
+		speciesCB.setSelectedItem(SELECT_SPECIES);
+		gmodel.setSelectedSeqGroup(null);
 
 		return true;
 	}
 
 
 	private void addListeners() {
-
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
 
@@ -301,9 +304,7 @@ public final class GeneralLoadView extends JComponent
 			gmodel.setSelectedSeqGroup(group);
 		}
 
-		
-		this.glu.initVersion(versionName);	// Make sure this genome version's feature names are initialized.
-		this.glu.initSeq(versionName);	// Make sure the chromosome sequences are initialized.
+		initVersion(versionName);
 
 		// Select the persistent chromosome, and restore the span.
 		SmartAnnotBioSeq seq = Persistence.restoreSeqSelection(group);
@@ -312,7 +313,6 @@ public final class GeneralLoadView extends JComponent
 		}
 		gmodel.addSeqSelectionListener(this);
 		if (gmodel.getSelectedSeq() != seq) {
-			System.out.println("5: Restoring persistent seq " + (seq == null ? null : seq.getID()));
 			gmodel.setSelectedSeq(seq);
 		}
 
@@ -324,6 +324,13 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
+	private void initVersion(String versionName) {
+		Application.getSingleton().setNotLockedUpStatus("Loading chromosomes...");
+		this.glu.initVersion(versionName); // Make sure this genome version's feature names are initialized.
+		this.glu.initSeq(versionName); // Make sure the chromosome sequences are initialized.
+		Application.getSingleton().setStatus("",false);
+	}
+	
 	/**
 	 * Handles clicking of partial residue, all residue, and refresh data buttons.
 	 * @param evt
@@ -487,10 +494,9 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Group was null -- trying species instead");
 			group = gmodel.getSeqGroup(this.glu.versionName2species.get(versionName));
 		}
-		gmodel.setSelectedSeqGroup(group);
 
-		this.glu.initVersion(versionName);	// Make sure this genome version's feature names are initialized.
-		this.glu.initSeq(versionName);	// Make sure the chromosome sequences are initialized.
+		initVersion(versionName);
+		gmodel.setSelectedSeqGroup(group);
 
 		// TODO: Need to be certain that the group is selected at this point!
 		gmodel.setSelectedSeq(group.getSeq(0));
@@ -677,9 +683,7 @@ public final class GeneralLoadView extends JComponent
 			refreshVersionCB(species);
 		}
 
-			// Initialize this genome version.
-		this.glu.initVersion(gVersion.versionName);
-		this.glu.initSeq(gVersion.versionName);
+		initVersion(gVersion.versionName);
 
 		versionCB.setSelectedItem(gVersion.versionName);
 		versionCB.setEnabled(true);

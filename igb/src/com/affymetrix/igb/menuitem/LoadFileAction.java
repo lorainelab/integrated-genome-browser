@@ -165,7 +165,7 @@ public final class LoadFileAction {
       chooser.merge_button.setEnabled(true);
     }
     chooser.genome_name_TF.setEnabled(chooser.no_merge_button.isSelected());
-    chooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " +(unknown_group_count++));
+    chooser.genome_name_TF.setText(UNKNOWN_GROUP_PREFIX + " " + unknown_group_count);
 
     int option = chooser.showOpenDialog(gviewerFrame);
 
@@ -183,6 +183,7 @@ public final class LoadFileAction {
 		MutableAnnotatedBioSeq new_seq = null;
 		if (!chooser.merge_button.isSelected()) {
 			// Not merging, so create a new Seq Group
+			unknown_group_count++;
 			String new_name = chooser.genome_name_TF.getText();
 			AnnotatedSeqGroup new_group = gmodel.addSeqGroup(new_name);
 			// Due to threading -- needed to pass in new group, rather than setting it and then querying that property.
@@ -287,52 +288,25 @@ public final class LoadFileAction {
 			// the DataLoadView and the AnnotBrowserView update their displays.
 			// (Because the contents of the seq group may have changed.)
 			gmodel.setSelectedSeqGroup(group);
-			if (group != previous_seq_group) {
-				if (new_seq != null && group.getSeqList().contains(new_seq)) {
-					gmodel.setSelectedSeq(new_seq);
-				} else if (group.getSeqCount() > 0) {
-					gmodel.setSelectedSeq(group.getSeq(0));
-				}
+			if (new_seq != null && group.getSeqList().contains(new_seq)) {
+				gmodel.setSelectedSeq(new_seq);
 			} else {
-				// the seq_group has not changed, but the seq might have
-				if (new_seq != null && group.getSeqList().contains(new_seq)) {
-					gmodel.setSelectedSeq(new_seq);
-				} else if (previous_seq != null) {
-					// Setting the selected Seq, even if it hasn't changed identity, is to
-					// make the SeqMapView update itself.  (Its contents may have changed.)
-					gmodel.setSelectedSeq(previous_seq);
+				if (group != previous_seq_group) {
+					if (group.getSeqCount() > 0) {
+						gmodel.setSelectedSeq(group.getSeq(0));
+					}
+				} else {
+					// the seq_group has not changed, but the seq might have
+					if (previous_seq != null) {
+						// Setting the selected Seq, even if it hasn't changed identity, is to
+						// make the SeqMapView update itself.  (Its contents may have changed.)
+						gmodel.setSelectedSeq(previous_seq);
+					}
 				}
 			}
 		}
 	}
 
-
-  // This seems to be unused.
-  /*
-  public static MutableAnnotatedBioSeq loadFromUrl(JFrame gviewerFrame, String url_name, 
-      GenometryModel gmodel, MutableAnnotatedBioSeq input_seq)
-  throws IOException {
-    IOException ioe = null;
-    MutableAnnotatedBioSeq result = null;
-    InputStream istr = null;
-    try {
-      URL loadurl = new URL(url_name);
-      istr = new BufferedInputStream(loadurl.openStream());
-      result = load(gviewerFrame, istr, url_name, gmodel, input_seq);
-    }
-    catch (IOException ex) {
-      ioe = ex;
-    } finally {
-      if (istr != null) {try {istr.close();} catch (Exception e) {}}
-    }
-
-    if (ioe != null) {
-      throw ioe;
-    }
-
-    return result;
-  }
-   */
 
   /** Loads from an InputStream.
    *  Detects the type of file based on the filename ending of the
@@ -598,19 +572,6 @@ public final class LoadFileAction {
     }
     return first_seq;
   }
-
-  /** Returns the first BioSeq on the last SeqSymmetry in the given list, or null. */
-  /*
-  private static MutableAnnotatedBioSeq getLastSeq(List syms) {
-    MutableAnnotatedBioSeq last_seq = null;
-    if (syms != null && ! syms.isEmpty()) {
-      SeqSymmetry fsym = (SeqSymmetry) syms.get(syms.size() - 1);
-      SeqSpan fspan = fsym.getSpan(0);
-      last_seq = (MutableAnnotatedBioSeq) fspan.getBioSeq();
-    }
-    return last_seq;
-  }
-*/
   
   /** A JFileChooser that has a checkbox for whether you want to merge annotations.
    *  Note that an alternative way of adding a checkbox to a JFileChooser

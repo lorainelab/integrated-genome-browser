@@ -92,7 +92,7 @@ public class FastaParserTest {
 			InputStream istr = new FileInputStream(filename);
 			assertNotNull(istr);
 
-			MutableAnnotatedBioSeq result = FastaParser.parse(istr);
+			SmartAnnotBioSeq result = FastaParser.parse(istr);
 
 			assertEquals("chrQ", result.getID());
 			assertEquals(33, result.getLength());

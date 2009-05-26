@@ -56,7 +56,7 @@ public abstract class SimpleCompAnnotBioSeq
 		}
 
 		// start > end -- that means reverse complement.
-		return DNAUtils.reverseComplement(residues.substring(start, end));
+		return DNAUtils.reverseComplement(residues.substring(end, start));
 	}
 
 	@Override

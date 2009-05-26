@@ -35,15 +35,10 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
  *  The parseAll() method will load all sequences listed in the file.
  */
 public final class FastaParser {
-
-	//  int max_residues = 32000000;
-
-	static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
+	private static final Pattern header_regex = Pattern.compile("^\\s*>(.+)");
 	public static final int LINELENGTH=79;
 	private static final boolean DEBUG=false;
 
-	public FastaParser() {
-	}
 
 	/**
 	 * Parses an input stream which can contain one or more sequences in FASTA format.
@@ -192,7 +187,7 @@ public final class FastaParser {
 	 *  Parse an input stream, creating a single new BioSeq.
 	 *  @param istr an InputStream that will be read and then closed
 	 */
-	public static MutableAnnotatedBioSeq parse(InputStream istr) throws IOException {
+	public static SmartAnnotBioSeq parse(InputStream istr) throws IOException {
 		return FastaParser.parse(istr, null);
 	}
 
@@ -204,8 +199,18 @@ public final class FastaParser {
 	 *   residues into.  If not null, then the sequence in the file must have a name
 	 *   that is synonymous with aseq.
 	 */
-	private static MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq) {
+	private static SmartAnnotBioSeq parse(InputStream istr, SmartAnnotBioSeq aseq) {
 		return FastaParser.parse(istr, aseq, -1);
+	}
+
+	// to help eliminate memory spike (by dynamic reallocation of memory in StringBuffer -- don't ask...)
+	// give upper limit to sequence length, based on file size -- this will be an overestimate (due to
+	//   white space, name header, etc.), but probably no more than 10% greater than actual size, which
+	//   is a lot better than aforementioned memory spike, which can temporarily double the amount of
+	//   memory needed
+	public static SmartAnnotBioSeq parse(InputStream istr, SmartAnnotBioSeq aseq,
+			int max_seq_length) {
+		return FastaParser.oldparse(istr, aseq, max_seq_length);
 	}
 
 	/**
@@ -219,7 +224,7 @@ public final class FastaParser {
 	 *   residues into.  If not null, then the sequence in the file must have a name
 	 *   that is synonymous with aseq.
 	 */
-	public static MutableAnnotatedBioSeq oldparse(InputStream istr, MutableAnnotatedBioSeq aseq,
+	private static SmartAnnotBioSeq oldparse(InputStream istr, SmartAnnotBioSeq aseq,
 			int max_seq_length) {
 		boolean use_buffer_directly = false;
 		boolean fixed_length_buffer = false;
@@ -236,7 +241,7 @@ public final class FastaParser {
 
 		com.affymetrix.genometryImpl.util.Timer tim = new com.affymetrix.genometryImpl.util.Timer();
 		tim.start();
-		MutableAnnotatedBioSeq seq = aseq;
+		SmartAnnotBioSeq seq = aseq;
 		String seqid = ("unknown");
 		// maybe guesstimate size of buffer needed based on file size???
 		StringBuffer buf;
@@ -281,25 +286,6 @@ public final class FastaParser {
 				//        buf.append(line.substring(0, line.length()-1));
 				buf.append(line);
 				line_count++;
-				/*
-				   if (line_count % 100000 == 0) {
-				   System.out.println("line count: " + line_count);
-				   mem.printMemory();
-				   }
-				   */
-				//            System.out.println("line count: " + line_count);
-				/*
-				   boolean matched = seq_regex.match(line);
-				   if (matched) {
-				   String line_residues = seq_regex.getParen(1);
-				//  System.out.println("^^^" + line_residues + "$$$");
-				buf.append(line_residues);
-				line_count++;
-				if (line_count % 10000 == 0) {
-				//            System.out.println("line count: " + line_count);
-				}
-				   }
-				   */
 			}
 			//      System.out.println("Read entire sequence, length = " + buf.length());
 		}
@@ -346,20 +332,7 @@ public final class FastaParser {
 			residues = new String(temp_residues);
 			printMemory();
 			temp_residues = null;
-			/*
-			   int length = buf.length();
-			//    StringBuffer newbuf = new StringBuffer(length);
-			char[] charray = new char[length];
-			buf.getChars(0, length, charray, 0);
-			printMemory();
-			buf = null;
-			System.gc();
-			//      try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
-			printMemory();
-			residues = new String(charray);
-			charray = null;
-			printMemory();
-			*/
+		
 			System.gc();
 			//      try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
 			printMemory();
@@ -367,17 +340,12 @@ public final class FastaParser {
 			buf = null;
 		}
 		System.gc();
-		//    try  { Thread.currentThread().sleep(1000); } catch (Exception ex) { }
-
-		// old way:
-		//    residues = buf.toString();
-		//    buf = null;
+		
 		System.out.println("id: " + seqid);
 		//    System.out.println("residues: " + residues.length());
 		if (seq == null) {
-			seq = new SimpleAnnotatedBioSeq(seqid, residues);
-			//      seq = new SimpleAnnotatedBioSeq(seqid, residues.length());
-			//      seq = new SimpleAnnotatedBioSeq(seqid, 31234567);
+			seq = new SmartAnnotBioSeq(seqid, seqid, residues.length());
+			seq.setResidues(residues);
 		}
 		else {  // try to merge with existing seq
 			if (SynonymLookup.getDefaultLookup().isSynonym(seq.getID(), seqid)) {
@@ -396,15 +364,7 @@ public final class FastaParser {
 		return seq;
 	}
 
-	// to help eliminate memory spike (by dynamic reallocation of memory in StringBuffer -- don't ask...)
-	// give upper limit to sequence length, based on file size -- this will be an overestimate (due to
-	//   white space, name header, etc.), but probably no more than 10% greater than actual size, which
-	//   is a lot better than aforementioned memory spike, which can temporarily double the amount of
-	//   memory needed
-	public static MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq,
-			int max_seq_length) {
-		return FastaParser.oldparse(istr, aseq, max_seq_length);
-	}
+	
 
 		// Read FASTA sequence from specified file.
 		// We assume a header of less than 500 characters, terminated by a newline.

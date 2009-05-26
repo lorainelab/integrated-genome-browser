@@ -83,11 +83,9 @@ public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
 
 	public String substring(int start, int end) {
 		if (residues_provider == null) {
-			return super.getResidues(start, start+end+1);
+			return super.getResidues(start, end);
 		}
-		else {
-			return residues_provider.substring(start, end);
-		}
+		return residues_provider.substring(start, end);
 	}
 
 	public int indexOf(String str, int fromIndex) {

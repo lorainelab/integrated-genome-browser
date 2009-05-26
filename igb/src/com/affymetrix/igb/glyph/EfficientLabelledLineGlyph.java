@@ -59,10 +59,10 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
         //        fillDraw(view);
         if (label_loc == NORTH) {
           g.fillRect(pixelbox.x, pixelbox.y+(pixelbox.height/2),
-                     pixelbox.width, (int)Math.max(1, pixelbox.height/2));
+                     pixelbox.width,Math.max(1, pixelbox.height / 2));
         } else {
           g.fillRect(pixelbox.x, pixelbox.y,
-                     pixelbox.width, (int)Math.max(1, pixelbox.height/2));
+                     pixelbox.width,Math.max(1, pixelbox.height / 2));
         }
       }
       else {
@@ -116,7 +116,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
       if (getChildCount() <= 0) {
         // if no children, draw a box
         g.fillRect(pixelbox.x, pixelbox.y + (pixelbox.height / 2),
-                pixelbox.width, (int) Math.max(1, pixelbox.height / 2));
+                pixelbox.width,Math.max(1, pixelbox.height / 2));
       } else {
         // if there are children, draw a line.
         drawDirectedLine(g, pixelbox.x, pixelbox.y + pixelbox.height / 2, pixelbox.width, this.arrowDirection);

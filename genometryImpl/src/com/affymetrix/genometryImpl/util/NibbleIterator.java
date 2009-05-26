@@ -164,15 +164,15 @@ public final class NibbleIterator implements SearchableCharIterator {
 		return nib;
 	}
 
-	public boolean isEnd(int pos) {
+	/*public boolean isEnd(int pos) {
 		//    return (pos >= nibble_array.length);
 		return (pos >= length);
-	}
+	}*/
 
-	public String substring(int offset) {
+	/*public String substring(int offset) {
 		System.out.println("called NibbleIterator.substring(offset)");
 		return substring(offset, this.length);
-	}
+	}*/
 
 	public String substring(int offset, int length) {
 		//    System.out.println("called NibbleIterator.substring(offset = " + offset + ", length = " + length + ")");

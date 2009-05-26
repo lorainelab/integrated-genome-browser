@@ -13,11 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.Timer;
 
 public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
   boolean flyweights_ordered = true;
@@ -98,7 +95,7 @@ public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
 	//   ensure line is drawn at beginning if appropriate
 	if (start_index == 0) {
 	  //	  prev_pos = view_start;
-	  prev_pos = (int)Math.max(view_start, xmin);
+	  prev_pos = Math.max(view_start, xmin);
 	}
 	for (int i=start_index; i<=end_index; i++) {
 	  pos = xcoords[i];
@@ -116,7 +113,7 @@ public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
 	//   ensure line is drawn at end if appropriate
 	if (end_index == (xcoords.length - 1)) {
 	  //	  pos = view_end;
-	  pos = (int)Math.min(view_end, xmax);
+	  pos = Math.min(view_end, xmax);
 	  int distance = (pos - prev_pos);
 	  if (distance >= distance_min_threshold) {
 	    lbox.x = prev_pos + 3.0f;

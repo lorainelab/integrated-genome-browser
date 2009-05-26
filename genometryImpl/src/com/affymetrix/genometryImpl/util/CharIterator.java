@@ -21,11 +21,5 @@ package com.affymetrix.genometryImpl.util;
  */
 public interface CharIterator {
 
-	public char charAt(int pos);
 
-	public boolean isEnd(int pos);
-
-	public String substring(int offset);
-
-	public String substring(int offset, int length);
 }

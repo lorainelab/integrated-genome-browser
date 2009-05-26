@@ -102,14 +102,14 @@ public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
 		}
 	}
 
-	public boolean isEnd(int pos) {
+	/*public boolean isEnd(int pos) {
 		return (pos >= length);
-	}
+	}*/
 
-	public String substring(int offset) {
+	/*public String substring(int offset) {
 		//    System.out.println("called NibbleBioSeq.substring(offset)");
 		return substring(offset, getLength());
-	}
+	}*/
 
 	public String substring(int offset, int length) {
 		if (residues_provider == null) {

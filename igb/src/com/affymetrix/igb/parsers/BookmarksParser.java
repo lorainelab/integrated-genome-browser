@@ -24,6 +24,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 //import com.affymetrix.genometryImpl.parsers.*;
 
 /**
@@ -75,9 +76,9 @@ public final class BookmarksParser {
           }
         }
       } finally {
-        if (br != null) {br.close();}
-        if (isr != null) {isr.close();}
-        if (fis != null) {fis.close();}
+				GeneralUtils.safeClose(br);
+				GeneralUtils.safeClose(isr);
+				GeneralUtils.safeClose(fis);
       }
     }
     return result;

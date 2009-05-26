@@ -348,7 +348,6 @@ public final class WebLink {
 			bw.write("</prefs>");
 			bw.write(separator);
 			bw.write(separator);
-			bw.close();
 		} finally {
 			GeneralUtils.safeClose(bw);
 			GeneralUtils.safeClose(fw);

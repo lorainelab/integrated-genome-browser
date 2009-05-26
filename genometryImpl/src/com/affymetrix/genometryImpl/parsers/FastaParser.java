@@ -204,7 +204,7 @@ public final class FastaParser {
 	 *   residues into.  If not null, then the sequence in the file must have a name
 	 *   that is synonymous with aseq.
 	 */
-	public static MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq) {
+	private static MutableAnnotatedBioSeq parse(InputStream istr, MutableAnnotatedBioSeq aseq) {
 		return FastaParser.parse(istr, aseq, -1);
 	}
 
@@ -302,8 +302,6 @@ public final class FastaParser {
 				   */
 			}
 			//      System.out.println("Read entire sequence, length = " + buf.length());
-			br.close();
-			istr.close();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -407,111 +405,6 @@ public final class FastaParser {
 			int max_seq_length) {
 		return FastaParser.oldparse(istr, aseq, max_seq_length);
 	}
-
-	/**
-	 *  trying a new strategy to speed parsing.
-	 */
-	public static MutableAnnotatedBioSeq newparse(InputStream istr, MutableAnnotatedBioSeq aseq,
-			int max_seq_length) {
-		StringBuffer buf;
-		if (max_seq_length > 0) {
-			buf = new StringBuffer(max_seq_length);
-		}
-		else {
-			buf = new StringBuffer();
-		}
-		//    StringBuffer buf = new StringBuffer(10);
-		com.affymetrix.genometryImpl.util.Timer tim = new com.affymetrix.genometryImpl.util.Timer();
-		tim.start();
-		Memer mem = new Memer();
-		//int line_count = 0;
-		MutableAnnotatedBioSeq seq = aseq;
-		String seqid = "unknown";
-
-		//    byte[] bytebuf = new byte[50];
-		// with bytebuf_size = bisbuf_size = 2048 --> 0.81 seconds to read chr21.fa (45.5 Mb),
-		//     or 0.35 seconds with no StringBuffer memory allocation...
-
-		//    int bytebuf_size = 2048;
-		//    int bytebuf_size = 4096;
-		//    int bytebuf_size = 8192;
-		int bytebuf_size = 16384;
-		//    int bisbuf_size = 2048;
-		//    int bisbuf_size = 4096;
-		//    int bisbuf_size = 8192;
-		int bisbuf_size = 16384;
-
-		//byte[] bytebuf = new byte[bytebuf_size];
-
-		int bytecount = 0;
-		int milcount = 0;
-		/*
-		   try {
-		   BufferedInputStream bis = new BufferedInputStream(istr, bisbuf_size);
-		//      for (int i= 0; i<max_seq_length; i++) {
-		//              int b = bis.read();
-		//      }
-		for (int i= 0; i<max_seq_length-bytebuf_size; i+=bytebuf_size) {
-		//      for (int i= 0; i<max_seq_length; i+=bytebuf_size) {
-		bytecount += bis.read(bytebuf);
-		for (int k=0; k<bytebuf.length; k++) {
-		buf.append((char)bytebuf[k]);
-		}
-		//        System.out.println("buf length = " + buf.length());
-		//        System.out.println("buf: " + buf.substring(0, 100));
-		}
-		System.out.println("bytes read: " + bytecount);
-		}
-		*/
-		BufferedReader br = null;
-		try {
-			int charcount = 0;
-			char[] charbuf = new char[bytebuf_size];
-			br = new BufferedReader(new InputStreamReader(istr));
-			for (int i=0; i<max_seq_length-bytebuf_size; i+=bytebuf_size) {
-				//      for (int i=0; i<max_seq_length; i+=bytebuf_size) {
-				charcount += br.read(charbuf);
-				buf.append(charbuf);
-				//        for (int k=0; k<charbuf.length; k++) {
-				//          buf.append(charbuf[k]);
-				//        }
-				}
-			System.out.println("chars read: " + charcount);
-			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-			} finally {
-				GeneralUtils.safeClose(br);
-			}
-			/*
-			   System.gc();
-
-			   String residues = null;
-			   System.gc();
-			   residues = new String(buf);
-			   buf = null;
-			   System.gc();
-			   System.out.println("id: " + seqid);
-			//    System.out.println("residues: " + residues.length());
-			if (seq == null) {
-			seq = new SimpleAnnotatedBioSeq(seqid, residues);
-			}
-			else {  // try to merge with existing seq
-			if (seq.getID().equals(seqid)) {
-			seq.setResidues(residues);
-			}
-			else {
-			System.out.println("ABORTING MERGE, sequence ids don't match: " +
-			"old seq id = " + seq.getID() + ", new seq id = " + seqid);
-			}
-			}
-			*/
-			System.out.println("time to execute: " + tim.read()/1000f);
-			mem.printMemory();
-			System.out.println("done loading fasta file");
-			System.out.println("StringBuffer 0-100: " + buf.substring(0, 100));
-			return seq;
-		}
 
 		// Read FASTA sequence from specified file.
 		// We assume a header of less than 500 characters, terminated by a newline.

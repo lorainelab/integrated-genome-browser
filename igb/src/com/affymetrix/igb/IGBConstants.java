@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -54,11 +55,7 @@ public abstract class IGBConstants {
 		  } catch(IOException e) {
 			  e.printStackTrace();
 		  }finally {
-			  try {
-				is.close();
-			  } catch (IOException e) {
-				  e.printStackTrace();
-			  }
+			  GeneralUtils.safeClose(is);
 		  }
 	  }
   }

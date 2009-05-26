@@ -23,6 +23,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 //import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -130,6 +131,8 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
       "&start=" + min + "&end=" + max +
       "&selectstart=" + selmin + "&selectend=" + selmax;
     System.out.println("request URL: " + request);
+		
+		InputStream istr = null;
     try {
       URL request_url = new URL(request);
       //      request_url.openConnection().connect();
@@ -140,8 +143,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
       //      con.setDoInput(true);
       // for some reason, need to get input stream and close it to trigger
       //    "response" at other end...
-      InputStream istr = con.getInputStream();
-      istr.close();
+      istr = con.getInputStream();
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -154,6 +156,9 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
 	sendControlRequest();
       }
     }
+		finally {
+			GeneralUtils.safeClose(istr);
+		}
   }
   
   private static SeqSpan FindOtherSpan(SeqSymmetry annot_sym, SeqSpan curspan) {

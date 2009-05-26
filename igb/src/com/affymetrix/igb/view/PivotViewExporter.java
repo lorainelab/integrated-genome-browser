@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.TableFilter;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import java.io.*;
@@ -272,7 +273,7 @@ final class PivotViewExporter extends AbstractAction {
           ErrorHandler.errorPanel("Problem saving file", ioe);
       }
       finally {
-        if (out != null) try {out.close();} catch (Exception ex) {}
+        GeneralUtils.safeClose(out);
       }
     }
   }

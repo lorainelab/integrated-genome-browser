@@ -33,6 +33,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -519,7 +520,7 @@ public final class GraphSelectionManager
       catch (Exception ex) {
          Application.errorPanel("Error saving graph", ex);
       } finally {
-        if (ostr != null) try { ostr.close(); } catch (IOException ioe) {}
+				GeneralUtils.safeClose(ostr);
       }
     }
     else {

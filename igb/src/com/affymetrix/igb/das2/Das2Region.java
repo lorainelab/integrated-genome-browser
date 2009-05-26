@@ -23,6 +23,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class Das2Region {
 
@@ -158,6 +159,8 @@ public final class Das2Region {
             buf.append(type.getName());
         }
 
+				InputStream istr = null;
+				BufferedInputStream bis = null;
         try {
             String query_part = buf.toString();
             if (URL_ENCODE_QUERY) {
@@ -175,8 +178,8 @@ public final class Das2Region {
 
             request_log.setHttpResponse(response_code, response_message);
 
-            InputStream istr = query_con.getInputStream();
-            BufferedInputStream bis = new BufferedInputStream(istr);
+            istr = query_con.getInputStream();
+            bis = new BufferedInputStream(istr);
             List feats = parser.parse(new InputSource(bis), feature_query, getVersionedSource().getGenome(), false);
             int feat_count = feats.size();
             request_log.addLogMessage("parsed query results, annot count = " + feat_count);
@@ -186,22 +189,13 @@ public final class Das2Region {
                 request_sym.addChild(feat);
             }
             success = true;
-            try {
-                bis.close();
-            } catch (Exception e) {
-                // this sort of exception does NOT mean the request failed.
-                request_log.addLogMessage("WARNING: Couldn't close buffered input stream.");
-            }
-            try {
-                istr.close();
-            } catch (Exception e) {
-                // this sort of exception does NOT mean the request failed.
-                request_log.addLogMessage("WARNING: Couldn't close input stream.");
-            }
         } catch (Exception ex) {
             request_log.setException(ex);
             success = false;
-        }
+        } finally {
+					GeneralUtils.safeClose(bis);
+					GeneralUtils.safeClose(istr);
+				}
         request_log.setSuccess(success);
         return success;
     }

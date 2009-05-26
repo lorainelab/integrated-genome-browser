@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasLoader;
 import java.io.*;
@@ -109,8 +110,8 @@ public final class XmlStylesheetParser {
       stylesheet = parse(bistr);
     }
     finally {
-      if (bistr != null) {try {bistr.close();} catch (Exception e) {}}
-      if (fistr != null) {try {fistr.close();} catch (Exception e) {}}
+			GeneralUtils.safeClose(bistr);
+			GeneralUtils.safeClose(fistr);
     }
     return stylesheet;
   }

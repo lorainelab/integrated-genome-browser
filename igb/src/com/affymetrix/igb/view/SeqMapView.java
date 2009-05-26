@@ -59,7 +59,7 @@ import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.util.CharIterator;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 
@@ -745,9 +745,9 @@ public class SeqMapView extends JPanel
         // need to change this to get residues from viewseq! (to take account of reverse complement,
         //    coord shift, slice'n'dice, etc.
         // but first, need to fix CompositeBioSeq.isComplete() implementations...
-        if (viewseq instanceof CharIterator) {
+        if (viewseq instanceof SearchableCharIterator) {
             // currently only GeneralBioSeq implements CharacterIterator
-            seq_glyph.setResiduesProvider((CharIterator) viewseq, viewseq.getLength());
+            seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
         } else {
             String residues = viewseq.getResidues();
             if (residues != null) {
@@ -1292,27 +1292,29 @@ public class SeqMapView extends JPanel
         }
     }
 
-    protected String getVersionInfo(BioSeq seq) {
-        String version_info = null;
-        if (seq instanceof SmartAnnotBioSeq && (((SmartAnnotBioSeq) seq).getSeqGroup() != null)) {
-            AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
-            if (group.getDescription() != null) {
-                version_info = group.getDescription();
-            } else {
-                version_info = group.getID();
-            }
-        }
-        if ((version_info == null) && (seq instanceof SmartAnnotBioSeq)) {
-            version_info = ((SmartAnnotBioSeq) seq).getVersion();
-        }
-        if ("hg17".equals(version_info)) {
-            version_info = "hg17 = NCBI35";
-        } else if ("hg18".equals(version_info)) {
-            version_info = "hg18 = NCBI36";
-        }
+  protected String getVersionInfo(BioSeq seq) {
+		String version_info = null;
+		if (seq instanceof SmartAnnotBioSeq) {
+			if (((SmartAnnotBioSeq) seq).getSeqGroup() != null) {
+				AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
+				if (group.getDescription() != null) {
+					version_info = group.getDescription();
+				} else {
+					version_info = group.getID();
+				}
+			}
+			if (version_info == null) {
+				version_info = ((SmartAnnotBioSeq) seq).getVersion();
+			}
+		}
+		if ("hg17".equals(version_info)) {
+			version_info = "hg17 = NCBI35";
+		} else if ("hg18".equals(version_info)) {
+			version_info = "hg18 = NCBI36";
+		}
 
-        return version_info;
-    }
+		return version_info;
+	}
 
     protected void setTitleBar(AnnotatedBioSeq seq) {
         Pattern pattern = Pattern.compile("chr([0-9XYM]*)");

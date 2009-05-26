@@ -223,8 +223,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 						) { // pixelsPerBase matches the font width.
 			// Draw the whole string in one go.
 
-			// This overrides the standard substring code!  In this substring method, the second argument is length!
-			String str = residue_provider.substring(seqBegIndex, (seqEndIndex - seqBegIndex));
+			String str = residue_provider.substring(seqBegIndex, seqEndIndex);
 			if (str != null) {
 				g.drawString(str, pixelStart, baseline);
 			}

@@ -154,7 +154,7 @@ public final class NibbleIterator implements SearchableCharIterator {
 
 		char nib;
 		try {
-			//    char nib = nibble2char[(by & filter) >> offset];
+			//    char nib = nibble2char[(by & filter) >> start];
 			nib = nibble2char[(by & filter) >> offset];
 		} catch (Exception ex) {
 			System.out.println("!!!! problem: base pos = " + pos + ", nibble2char index = " + n2c_index);
@@ -165,18 +165,18 @@ public final class NibbleIterator implements SearchableCharIterator {
 	}
 
 	/*public boolean isEnd(int pos) {
-		//    return (pos >= nibble_array.length);
-		return (pos >= length);
+		//    return (pos >= nibble_array.end);
+		return (pos >= end);
 	}*/
 
-	/*public String substring(int offset) {
-		System.out.println("called NibbleIterator.substring(offset)");
-		return substring(offset, this.length);
+	/*public String substring(int start) {
+		System.out.println("called NibbleIterator.substring(start)");
+		return substring(start, this.end);
 	}*/
 
-	public String substring(int offset, int length) {
-		//    System.out.println("called NibbleIterator.substring(offset = " + offset + ", length = " + length + ")");
-		return NibbleIterator.nibblesToString(nibble_array, offset, offset + length);
+	public String substring(int start, int end) {
+		//    System.out.println("called NibbleIterator.substring(start = " + start + ", end = " + end + ")");
+		return nibblesToString(nibble_array, start, end);
 	}
 
 	public int getLength() {
@@ -188,7 +188,7 @@ public final class NibbleIterator implements SearchableCharIterator {
 		//            char v1[] = value;
 		//            char v2[] = str.value;
 		char querychars[] = str.toCharArray();
-		//            int max = offset + (count - str.count);
+		//            int max = start + (count - str.count);
 		int max = length - str.length();
 		if (fromIndex >= length) {
 			if (length == 0 && fromIndex == 0 && str.length() == 0) {
@@ -205,17 +205,14 @@ public final class NibbleIterator implements SearchableCharIterator {
 			return fromIndex;
 		}
 
-		//            int strOffset = str.offset;
 		int strOffset = 0;
 		char first = querychars[strOffset];
-		//        int i = offset + fromIndex;
 		int i = fromIndex;
 
 		startSearchForFirstChar:
 		while (true) {
 
 			/* Look for first character. */
-			//            while (i <= max && v1[i] != first) {
 			while (i <= max && this.charAt(i) != first) {
 				i++;
 			}
@@ -225,7 +222,6 @@ public final class NibbleIterator implements SearchableCharIterator {
 
 			/* Found first character, now look at the rest of querychars */
 			int j = i + 1;
-			//            int end = j + str.count - 1;
 			int end = j + str.length() - 1;
 			int k = strOffset + 1;
 			while (j < end) {
@@ -236,63 +232,40 @@ public final class NibbleIterator implements SearchableCharIterator {
 					continue startSearchForFirstChar;
 				}
 			}
-			//            return i - offset;        /* Found whole string. */
 			return i;
 		}
 	}
 
 	public static byte[] stringToNibbles(String str, int start, int end) {
-		if (start <= end) {
-			int length = end - start;
-			int extra_nibble = length & one_mask;
-			//      System.out.println("extra nibble: " + extra_nibble);
-			//      length = length / 2;
-			byte[] nibbles = new byte[(length / 2) + extra_nibble];
-
-			//      for (int i=start; i<end; i++) {
-			//      for (int i=0; i<length-1; i++) {
-			//      for (int i=0; i<length-1; i++) {
-			int max;
-			if (extra_nibble > 0) {
-				max = length - 1;
-			} else {
-				max = length;
-			}
-			for (int i = 0; i < length - 1; i++) {
-				int byte_index = i >> 1;
-				char ch1 = str.charAt(i + start);
-				i++;
-				char ch2 = str.charAt(i + start);
-
-				byte hinib = char2nibble[ch1];
-				byte lonib = char2nibble[ch2];
-				byte two_nibbles = (byte) ((hinib << 4) + lonib);
-				//        System.out.println("" + hinib + ", " + lonib + ", " + two_nibbles);
-				//        byte two_nibbles = (byte)((hinib << 4) | lonib);
-				//        byte two_nibbles = nibbles2bytes[hinib][lonib];
-				nibbles[byte_index] = two_nibbles;
-			}
-			if (extra_nibble > 0) {
-				int byte_index = (length - 1) >> 1;
-				char ch1 = str.charAt(length - 1 + start);
-				//        i++;
-				//        char ch2 = str.charAt(i + start);
-
-				byte hinib = char2nibble[ch1];
-				//        byte lonib = char2nibble[ch2];
-				//        byte two_nibbles = (byte)((hinib << 4) +  lonib);
-				byte singlet_nibble = (byte) (hinib << 4);
-				//        System.out.println("" + hinib + ", no lonib, " + singlet_nibble);
-				//        byte two_nibbles = (byte)((hinib << 4) | lonib);
-				//        byte two_nibbles = nibbles2bytes[hinib][lonib];
-				nibbles[byte_index] = singlet_nibble;
-			}
-			return nibbles;
-		} else {
+		if (start >= end) {
 			System.out.println("in NibbleIterator.stringToNibbles(), " +
-							"start < end NOT YET IMPLEMENTED");
+							"start >= end NOT YET IMPLEMENTED");
+			return null;
 		}
-		return null;
+
+		int length = end - start;
+		int extra_nibble = length & one_mask;
+		byte[] nibbles = new byte[(length / 2) + extra_nibble];
+
+		for (int i = 0; i < length - 1; i++) {
+			int byte_index = i >> 1;
+			char ch1 = str.charAt(i + start);
+			i++;
+			char ch2 = str.charAt(i + start);
+
+			byte hinib = char2nibble[ch1];
+			byte lonib = char2nibble[ch2];
+			byte two_nibbles = (byte) ((hinib << 4) + lonib);
+			nibbles[byte_index] = two_nibbles;
+		}
+		if (extra_nibble > 0) {
+			int byte_index = (length - 1) >> 1;
+			char ch1 = str.charAt(length - 1 + start);
+			byte hinib = char2nibble[ch1];
+			byte singlet_nibble = (byte) (hinib << 4);
+			nibbles[byte_index] = singlet_nibble;
+		}
+		return nibbles;
 	}
 
 	public static String nibblesToString(byte[] nibbles, int start, int end) {

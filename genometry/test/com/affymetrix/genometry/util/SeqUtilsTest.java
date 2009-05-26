@@ -94,16 +94,27 @@ public class SeqUtilsTest {
 			assertEquals(4, result.getChildCount());
 			assertEquals(100, result.getSpan(seqA).getStart());
 			assertEquals(1100, result.getSpan(seqA).getEnd());
+			assertEquals(100, result.getSpan(seqA).getMin());
+			assertEquals(1100, result.getSpan(seqA).getMax());
+			assertTrue(result.getSpan(seqA).isForward());
 
+			assertTrue(result.getChild(0).getSpan(seqA).isForward());
 			assertEquals(100, result.getChild(0).getSpan(seqA).getStart());
 			assertEquals(300, result.getChild(0).getSpan(seqA).getEnd());
 
+			assertTrue(result.getChild(1).getSpan(seqA).isForward());
 			assertEquals(500, result.getChild(1).getSpan(seqA).getStart());
 			assertEquals(600, result.getChild(1).getSpan(seqA).getEnd());
 
-			// These two tests fail:  this child has a backwards orientation
-			assertEquals(800, result.getChild(2).getSpan(seqA).getStart());
-			assertEquals(900, result.getChild(2).getSpan(seqA).getEnd());
+			assertFalse(result.getChild(2).getSpan(seqA).isForward());
+
+			assertEquals(900, result.getChild(2).getSpan(seqA).getStart());
+			assertEquals(800, result.getChild(2).getSpan(seqA).getEnd());
+
+			assertEquals(900, result.getChild(2).getSpan(seqA).getMax());
+			assertEquals(800, result.getChild(2).getSpan(seqA).getMin());
+
+
 
 			assertEquals(1000, result.getChild(3).getSpan(seqA).getStart());
 			assertEquals(1100, result.getChild(3).getSpan(seqA).getEnd()); 

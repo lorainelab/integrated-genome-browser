@@ -19,7 +19,6 @@ import com.affymetrix.genometry.*;
 
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
-import com.affymetrix.genometryImpl.GeneralBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -75,18 +74,14 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
-	private static void SetResiduesIterator(int num_residues, DataInputStream dis, GeneralBioSeq result_seq) throws IOException {
-		byte[] nibble_array;
-		if ((num_residues % 2) == 0) {
-			nibble_array = new byte[num_residues / 2];
-		} else {
-			nibble_array = new byte[(num_residues / 2) + 1];
-		}
+	private static void SetResiduesIterator(int num_residues, DataInputStream dis, SmartAnnotBioSeq result_seq) throws IOException {
+		byte[] nibble_array = new byte[num_residues / 2 + num_residues % 2];
+
 		dis.readFully(nibble_array);
-		System.out.println("nibble array length: " + nibble_array.length);
+		//System.out.println("nibble array length: " + nibble_array.length);
 
 		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
-		System.out.println("NibbleIterator: " + residues_provider);
+		//System.out.println("NibbleIterator: " + residues_provider);
 		result_seq.setResiduesProvider(residues_provider);
 	}
 
@@ -121,6 +116,14 @@ public final class NibbleResiduesParser {
 		}
 	}
 
+	/**
+	 * Read BNIB sequence from specified file.  (begin,end] are in interbase coords.
+	 * @param seqfile
+	 * @param begin
+	 * @param end
+	 * @return
+	 */
+	
 	private static void writeBinaryFile(String file_name, String seqname, String seqversion,
 			String residues) throws IOException {
 

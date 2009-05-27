@@ -20,8 +20,6 @@ import java.text.*;
 
 import java.util.List;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;

@@ -86,7 +86,7 @@ public final class GraphSymUtils {
 
 					// calculating graf length from xcoords, since graf's span
 					//    is (usually) incorrectly set to start = 0, end = seq.getLength();
-					double points_per_base = (double)xcoords.length / (double)graf_base_length;
+					double points_per_base = (double)xcoords.length / graf_base_length;
 					int initcap = (int)(points_per_base * toseq.getLength() * 1.5);
 					if (initcap > MAX_INITCAP) {
 						initcap = MAX_INITCAP;
@@ -536,7 +536,7 @@ public final class GraphSymUtils {
 			if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
 			//      System.out.println("percent: " + percent + ", score_index: " + score_index
 			//			 + ", percent_index: " + (percent * bins_per_percent));
-			percent2score[(int)Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
+			percent2score[Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
 		}
 		// just making sure max 100% is really 100%...
 		percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];

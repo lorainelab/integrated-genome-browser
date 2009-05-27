@@ -275,7 +275,7 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	/**
-	 * bootstrap bookmark from Preferences for last species/version/genome / sequence / region
+	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
 	 * @param gviewer
 	 * @return
 	 */
@@ -323,7 +323,7 @@ public final class GeneralLoadView extends JComponent
 
 	private void initVersion(String versionName) {
 		Application.getSingleton().setNotLockedUpStatus("Loading chromosomes...");
-		this.glu.initVersion(versionName); // Make sure this genome version's feature names are initialized.
+		this.glu.initVersion(versionName); // Make sure this genome versionName's feature names are initialized.
 		this.glu.initSeq(versionName); // Make sure the chromosome sequences are initialized.
 		Application.getSingleton().setStatus("",false);
 	}
@@ -440,24 +440,28 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * The species combo box changed.
 	 * If the species changes to SELECT, the SelectedSeqGroup is set to null.
-	 * If the species changes to a specific organism and there's only one choice for the genome version, the SelectedSeqGroup is set to that version.
+	 * If the species changes to a specific organism and there's only one choice for the genome versionName, the SelectedSeqGroup is set to that versionName.
 	 * Otherwise, the SelectedSetGroup is set to null.
 	 */
 	private void speciesCBChanged() {
 		String speciesName = (String) speciesCB.getSelectedItem();
 
-		// Populate the version CB
+		// Populate the versionName CB
 		refreshVersionCB(speciesName);
 
-		// Set the selected seq group if there's only one possible choice for the version.
+		// Set the selected seq group if there's only one possible choice for the versionName.
 		if (!speciesName.equals(SELECT_SPECIES) && this.glu.species2genericVersionList != null) {
 			if (versionCB.getItemCount() == 2) {
-				// There is precisely one genome version, and the versionCB has precisely one genome version (and the SELECT option)
+				// There is precisely one genome versionName, and the versionCB has precisely one genome versionName (and the SELECT option)
 				List<GenericVersion> versionList = this.glu.species2genericVersionList.get(speciesName);
-				String version = versionList.get(0).versionName;
-				AnnotatedSeqGroup genome = gmodel.getSeqGroup(version);
-				if (genome != null && genome != gmodel.getSelectedSeqGroup() && versionCB.getItemAt(1).equals(version)) {
+				String versionName = versionList.get(0).versionName;
+				AnnotatedSeqGroup genome = gmodel.getSeqGroup(versionName);
+				if (genome != null && genome != gmodel.getSelectedSeqGroup() && versionCB.getItemAt(1).equals(versionName)) {
+					initVersion(versionName);
 					gmodel.setSelectedSeqGroup(genome);
+
+					// TODO: Need to be certain that the group is selected at this point!
+					gmodel.setSelectedSeq(genome.getSeq(0));
 					return;
 				}
 			}
@@ -469,7 +473,7 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	/**
-	 * The version combo box changed.
+	 * The versionName combo box changed.
 	 * This changes the selected group (either to null, or to a valid group).
 	 * It is assumed that at this point, the species is valid.
 	 */
@@ -504,7 +508,7 @@ public final class GeneralLoadView extends JComponent
 
 	/**
 	 * Refresh the genome versions, now that the species has changed.
-	 * If there's precisely one version, just select it.
+	 * If there's precisely one versionName, just select it.
 	 * @param speciesName
 	 */
 	private void refreshVersionCB(String speciesName) {
@@ -514,13 +518,13 @@ public final class GeneralLoadView extends JComponent
 		versionCB.setSelectedIndex(0);
 
 		if (speciesName.equals(SELECT_SPECIES)) {
-			// Disable the version.
+			// Disable the versionName.
 			versionCB.setEnabled(false);
 			return;
 		}
 
-		// Add version names to combo boxes.
-		// Since the same version name may occur on multiple servers, we use sets
+		// Add versionName names to combo boxes.
+		// Since the same versionName name may occur on multiple servers, we use sets
 		// to eliminate the redundant elements.
 		SortedSet<String> versionNames = new TreeSet<String>();
 		for (GenericVersion gVersion : this.glu.species2genericVersionList.get(speciesName)) {
@@ -535,7 +539,7 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	/**
-	 * This gets called when the genome version is changed.
+	 * This gets called when the genome versionName is changed.
 	 * This occurs via the combo boxes, or by an external event like bookmarks, or LoadFileAction
 	 * @param evt
 	 */
@@ -580,7 +584,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		String speciesName = this.glu.versionName2species.get(versionName);
 		if (speciesName == null) {
-			// Couldn't find species matching this version -- we have problems.
+			// Couldn't find species matching this versionName -- we have problems.
 			System.out.println("ERROR - Couldn't find species for version " + versionName);
 			return;
 		}
@@ -592,7 +596,7 @@ public final class GeneralLoadView extends JComponent
 			speciesCB.addItemListener(this);
 		}
 		if (!versionName.equals(versionCB.getSelectedItem())) {
-			refreshVersionCB(speciesName);			// Populate the version CB
+			refreshVersionCB(speciesName);			// Populate the versionName CB
 			versionCB.removeItemListener(this);
 			versionCB.setSelectedItem(versionName);
 			versionCB.addItemListener(this);
@@ -658,7 +662,7 @@ public final class GeneralLoadView extends JComponent
 
 	/**
 	 * group has been created independently of the discovery process (probably by loading a file).
-	 * create new "unknown" species/version.
+	 * create new "unknown" species/versionName.
 	 */
 	private void createUnknownVersion(AnnotatedSeqGroup group) {
 		gmodel.removeGroupSelectionListener(this);
@@ -682,7 +686,7 @@ public final class GeneralLoadView extends JComponent
 
 			// Set the selected species (the combo box is already populated)
 			speciesCB.setSelectedItem(species);
-			// populate the version combo box.
+			// populate the versionName combo box.
 			refreshVersionCB(species);
 		}
 
@@ -798,7 +802,7 @@ public final class GeneralLoadView extends JComponent
 		if (enabled) {
 			SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq) gmodel.getSelectedSeq();
 			enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
-			if (enabled) {		// Don't allow buttons for an "unknown" version
+			if (enabled) {		// Don't allow buttons for an "unknown" versionName
 				List<GenericVersion> gVersions = curSeq.getSeqGroup().getVersions();
 				enabled = (!gVersions.isEmpty() && gVersions.get(0).gServer.serverType != ServerType.Unknown);
 			}

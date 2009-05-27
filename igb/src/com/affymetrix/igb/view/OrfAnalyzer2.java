@@ -31,7 +31,6 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
@@ -172,8 +171,8 @@ public final class OrfAnalyzer2 extends JComponent
     //    int reside_offset = span_start;
     int residue_offset = 0;
 
-    if (vseq instanceof CompositeNegSeq) {
-      residue_offset = ((CompositeNegSeq)vseq).getMin();
+    if (vseq instanceof SmartAnnotBioSeq) {
+      residue_offset = ((SmartAnnotBioSeq)vseq).getMin();
     }
 
     AffyTieredMap map = smv.getSeqMap();

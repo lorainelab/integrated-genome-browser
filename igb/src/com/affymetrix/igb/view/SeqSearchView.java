@@ -32,7 +32,6 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.glyph.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
@@ -174,8 +173,8 @@ public final class SeqSearchView extends JComponent implements ActionListener  {
 				return;
 			}
 			int residue_offset = 0;
-			if (vseq instanceof CompositeNegSeq) {
-				residue_offset = ((CompositeNegSeq)vseq).getMin();
+			if (vseq instanceof SmartAnnotBioSeq) {
+				residue_offset = ((SmartAnnotBioSeq)vseq).getMin();
 			}
 
 			TransformTierGlyph axis_tier = gviewer.getAxisTier();

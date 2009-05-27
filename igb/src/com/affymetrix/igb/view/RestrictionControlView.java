@@ -21,7 +21,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.*;
@@ -224,13 +223,12 @@ public final class RestrictionControlView extends JComponent
     boolean use_nibseq = (vseq instanceof SmartAnnotBioSeq);
     if (use_nibseq) {
       nibseq = (SmartAnnotBioSeq)vseq;
+			residue_offset = ((SmartAnnotBioSeq)vseq).getMin();
     }
     else {
       residues = vseq.getResidues();
     }
-    if (vseq instanceof CompositeNegSeq) {
-      residue_offset = ((CompositeNegSeq)vseq).getMin();
-    }
+
     // find the sequence glyph on axis tier...
     for (int i=0; i<axis_tier.getChildCount(); i++) {
       if (axis_tier.getChild(i) instanceof SequenceGlyph) {

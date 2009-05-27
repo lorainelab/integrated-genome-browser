@@ -37,7 +37,6 @@ import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.PackerI;
 
-import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
@@ -732,8 +731,8 @@ public class SeqMapView extends JPanel
         seq_glyph.setHitable(false);
         seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
 //    seq_glyph.setCoords(viewseq.getMin(), 0, viewseq.getLength(), 10);
-        if (viewseq instanceof CompositeNegSeq) {
-            CompositeNegSeq compseq = (CompositeNegSeq) viewseq;
+        if (viewseq instanceof SmartAnnotBioSeq) {
+            SmartAnnotBioSeq compseq = (SmartAnnotBioSeq) viewseq;
             seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
         } else {
             seq_glyph.setCoords(0, 0, viewseq.getLength(), 10);
@@ -1171,8 +1170,8 @@ public class SeqMapView extends JPanel
             transform_path = null;
         //}
         }
-				if (viewseq instanceof CompositeNegSeq) {
-            CompositeNegSeq compnegseq = (CompositeNegSeq) viewseq;
+				if (viewseq instanceof SmartAnnotBioSeq) {
+            SmartAnnotBioSeq compnegseq = (SmartAnnotBioSeq) viewseq;
             seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
         } else {
             seqmap.setMapRange(0, viewseq.getLength());
@@ -2186,8 +2185,8 @@ public class SeqMapView extends JPanel
         seq2viewSym.addSpan(seq_span);
         seq2viewSym.addSpan(view_span);
 
-        ((CompositeNegSeq) viewseq).setComposition(seq2viewSym);
-        ((CompositeNegSeq) viewseq).setBounds(view_span.getMin(), view_span.getMax());
+        ((SmartAnnotBioSeq) viewseq).setComposition(seq2viewSym);
+        ((SmartAnnotBioSeq) viewseq).setBounds(view_span.getMin(), view_span.getMax());
         transform_path = new SeqSymmetry[1];
         transform_path[0] = seq2viewSym;
         slicing_in_effect = true;
@@ -2472,9 +2471,9 @@ public class SeqMapView extends JPanel
     }
 
     public void unclamp() {
-        if (viewseq instanceof CompositeNegSeq) {
-            int min = ((CompositeNegSeq) viewseq).getMin();
-            int max = ((CompositeNegSeq) viewseq).getMax();
+        if (viewseq instanceof SmartAnnotBioSeq) {
+            int min = ((SmartAnnotBioSeq) viewseq).getMin();
+            int max = ((SmartAnnotBioSeq) viewseq).getMax();
             seqmap.setMapRange(min, max);
         } else {
             seqmap.setMapRange(0, viewseq.getLength());

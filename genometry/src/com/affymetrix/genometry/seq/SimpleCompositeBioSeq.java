@@ -26,11 +26,11 @@ import com.affymetrix.genometry.util.SeqUtils;
 public abstract class SimpleCompositeBioSeq implements CompositeBioSeq {
 
 	/** Boolean debug variable for the class. */
-	public boolean DEBUG_GET_RESIDUES = false;
+	private static final boolean DEBUG_GET_RESIDUES = false;
 	/**
 	 * String identifier for the sequence.  This is not guaranteed to be unique.
 	 */
-	protected String id;
+	private final String id;
 	/** Length of the sequence. */
 	//  protected int length = 0;
 	/**
@@ -82,11 +82,12 @@ public abstract class SimpleCompositeBioSeq implements CompositeBioSeq {
 	 *
 	 * @return a String containing all residues on the sequence
 	 */
-	public String getResidues() {
-		// may want to do a caching strategy at some point, in case there are repeated
-		//   getResidues calls...
-		return getResidues(0, getLength());
-	}
+	public abstract String getResidues();
+	/*public String getResidues() {
+	// may want to do a caching strategy at some point, in case there are repeated
+	//   getResidues calls...
+	return getResidues(0, getLength());
+	}*/
 
 	public String getResidues(int start, int end) {
 		return getResidues(start, end, ' ');
@@ -105,39 +106,40 @@ public abstract class SimpleCompositeBioSeq implements CompositeBioSeq {
 	 * @param  fillchar the character to fill empty residues in the sequence with
 	 * @return          a String containing residues between start and end
 	 */
-	public String getResidues(int start, int end, char fillchar) {
-		int residue_length = this.getLength();
-		if (start < 0 || residue_length <= 0) {
-			return null;
-		}
-
-		if (this.getComposition() == null) {
-			return null;
-		}
-
-		// Sanity checks on argument size.
-		start = Math.min(start, residue_length);
-		end = Math.min(end, residue_length);
-		if (start <= end) {
-			end = Math.min(end, start + residue_length);
-		} else {
-			start = Math.min(start, end + residue_length);
-		}
-
-		SeqSpan residue_span = new SimpleSeqSpan(start, end, this);
-		int reslength = Math.abs(end - start);
-		char[] char_array = new char[reslength];
-		// start with all spaces
-		java.util.Arrays.fill(char_array, fillchar);
-		SeqSymmetry rootsym = this.getComposition();
-		getResidues(residue_span, fillchar, rootsym, char_array, 0);
-		String result = new String(char_array);
-		if (DEBUG_GET_RESIDUES) {
-			System.out.println(result.substring(0, 15) + "..." + result.substring(result.length() - 15));
-		}
-
-		return result;
+	public abstract String getResidues(int start, int end, char fillchar);
+	/*public String getResidues(int start, int end, char fillchar) {
+	int residue_length = this.getLength();
+	if (start < 0 || residue_length <= 0) {
+	return null;
 	}
+
+	if (this.getComposition() == null) {
+	return null;
+	}
+
+	// Sanity checks on argument size.
+	start = Math.min(start, residue_length);
+	end = Math.min(end, residue_length);
+	if (start <= end) {
+	end = Math.min(end, start + residue_length);
+	} else {
+	start = Math.min(start, end + residue_length);
+	}
+
+	SeqSpan residue_span = new SimpleSeqSpan(start, end, this);
+	int reslength = Math.abs(end - start);
+	char[] char_array = new char[reslength];
+	// start with all spaces
+	java.util.Arrays.fill(char_array, fillchar);
+	SeqSymmetry rootsym = this.getComposition();
+	getResidues(residue_span, fillchar, rootsym, char_array, 0);
+	String result = new String(char_array);
+	if (DEBUG_GET_RESIDUES) {
+	System.out.println(result.substring(0, 15) + "..." + result.substring(result.length() - 15));
+	}
+
+	return result;
+	}*/
 
 	/**
 	 * Function for finding residues.  This function is a bit of a mess:
@@ -217,9 +219,10 @@ public abstract class SimpleCompositeBioSeq implements CompositeBioSeq {
 	 *
 	 * @return true if all residues on the sequence are available
 	 */
-	public boolean isComplete() {
-		return isComplete(0, this.getLength());
-	}
+	public abstract boolean isComplete();
+	/*public boolean isComplete() {
+	return isComplete(0, this.getLength());
+	}*/
 
 	/**
 	 * Returns true if all residues between start and end are available.  Unknown

@@ -353,7 +353,7 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 
 	@Override
 		public String toString() {
-			return this.id;
+			return this.getID();
 		}
 
 }

@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.*;
 //import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.seq.SimpleBioSeq;
+import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 //import com.affymetrix.genometry.span.*;
 
@@ -100,7 +100,7 @@ public final class SeqSymmetryConverter {
 			curlength += child_tspan.getLength();
 		}
 
-		MutableBioSeq queryseq = new SimpleBioSeq(qname, curlength);
+		MutableBioSeq queryseq = new SimpleAnnotatedBioSeq(qname, curlength);
 		SeqSpan qspan = new SimpleSeqSpan(0, curlength, queryseq);
 
 		UcscPslSym pslsym = new UcscPslSym(type, -1, -1, -1, -1,

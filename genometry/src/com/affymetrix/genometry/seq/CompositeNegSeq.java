@@ -32,7 +32,7 @@ import com.affymetrix.genometry.util.SeqUtils;
  *  CompositeBioSeq with the desired zero-point at 0 (which pushes
  *  coords 5' to zero-point into negative coords)
  */
-public class CompositeNegSeq implements CompositeBioSeq {
+public abstract class CompositeNegSeq implements CompositeBioSeq {
 	private static final boolean DEBUG_GET_RESIDUES = false;
 
 	/** The index of the first residue of the sequence. */
@@ -63,9 +63,9 @@ public class CompositeNegSeq implements CompositeBioSeq {
 		end = length;
 	}
 
-	public CompositeNegSeq(String id) {
+	/*public CompositeNegSeq(String id) {
 		this.id = id;
-	}
+	}*/
 
 	/**
 	 * Returns the integer index of the first residue of the sequence.  Negative

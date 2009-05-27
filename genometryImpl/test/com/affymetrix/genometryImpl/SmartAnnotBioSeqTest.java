@@ -1,24 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package com.affymetrix.genometry.seq;
+package com.affymetrix.genometryImpl;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author sgblanch
- */
-public class CompositeNegSeqTest {	
-	static final CompositeNegSeq seq         = new CompositeNegSeq("seq", 0);
-	static final CompositeNegSeq seq_len     = new CompositeNegSeq("len", 500);
+public class SmartAnnotBioSeqTest {
+static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version", 0);
+	static final SmartAnnotBioSeq seq_len     = new SmartAnnotBioSeq("len", "version", 500);
 
-	public CompositeNegSeqTest() {
+	public SmartAnnotBioSeqTest() {
 	}
 
 	@Before
@@ -34,7 +25,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testConstructor1() {
-			constructorTest(null, "Constructor accepted a null id");
+			constructorTest(null, "version", "Constructor accepted a null id");
 		}
 
 	/**
@@ -42,7 +33,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testConstructor2() {
-			constructorTest(null, 42, "Constructor accepted a null id");
+			constructorTest(null, "version", 42, "Constructor accepted a null id");
 		}
 
 	/**
@@ -50,7 +41,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testConstructor3() {
-			constructorTest("neg_len", -500, "Constructor accepted a negative length");
+			constructorTest("neg_len", "version", -500, "Constructor accepted a negative length");
 		}
 
 	/**
@@ -58,16 +49,15 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testConstructor4() {
-			constructorTest("zero_len", 0, "Constructor accepted a zero length");
+			constructorTest("zero_len", "version", 0, "Constructor accepted a zero length");
 		}
 
 	/**
 	 * private function to aid in testing constructor
 	 */
-	private void constructorTest(String id, String err_msg) {
-		CompositeNegSeq testseq;
+	private void constructorTest(String id, String version, String err_msg) {
 		try {
-			testseq = new CompositeNegSeq(id, 0);
+			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq(id, version, 0);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}
@@ -75,10 +65,9 @@ public class CompositeNegSeqTest {
 	/**
 	 * private function to aid in testing constructor
 	 */
-	private void constructorTest(String id, int len, String err_msg) {
-		CompositeNegSeq testseq;
+	private void constructorTest(String id, String version, int len, String err_msg) {
 		try {
-			testseq = new CompositeNegSeq(id, len);
+			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq(id, version, len);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}
@@ -89,7 +78,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testSetBounds1() {
-			CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
+			SmartAnnotBioSeq testseq  = new SmartAnnotBioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -109,7 +98,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testSetBounds2() {
-			CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
+			SmartAnnotBioSeq testseq  = new SmartAnnotBioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -125,7 +114,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testSetBounds3() {
-			CompositeNegSeq testseq  = new CompositeNegSeq("testseq", 1000);
+			SmartAnnotBioSeq testseq  = new SmartAnnotBioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -143,7 +132,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testSetBounds4() {
-			CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
+			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -172,7 +161,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testSetBoundsDouble1() {
-			CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
+			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -198,7 +187,7 @@ public class CompositeNegSeqTest {
 	 */
 	@Test
 		public void testSetBoundsDouble2() {
-			CompositeNegSeq testseq = new CompositeNegSeq("testseq", 1000);
+			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());

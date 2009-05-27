@@ -2113,7 +2113,7 @@ public class SeqMapView extends JPanel
         }
 
         slice_symmetry = sym;
-        viewseq = new CompositeNegSeq("view_seq", aseq.getLength());
+        viewseq = new SmartAnnotBioSeq("view_seq", "", aseq.getLength());
         //viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
 
         // rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other

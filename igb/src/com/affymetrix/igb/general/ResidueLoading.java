@@ -3,7 +3,7 @@ package com.affymetrix.igb.general;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.seq.SimpleBioSeq;
+import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
@@ -321,7 +321,7 @@ public final class ResidueLoading {
 		 * @param span
 		 */
     private static void AddResiduesToComposition(SmartAnnotBioSeq aseq, String residues, SeqSpan span) {
-        BioSeq subseq = new SimpleBioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), residues);
+        BioSeq subseq = new SimpleAnnotatedBioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), residues);
 
         SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);
         SeqSpan span2 = span;

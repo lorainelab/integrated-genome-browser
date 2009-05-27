@@ -19,16 +19,20 @@ import java.util.*;
 
 public abstract class SimpleCompAnnotBioSeq
 	extends CompositeNegSeq
-	implements CompositeBioSeq, MutableAnnotatedBioSeq {
+	implements MutableAnnotatedBioSeq {
 
-	boolean DEBUG = false;
+	private static final boolean DEBUG = false;
 	// GAH 8-14-2002: need a residues field in case residues need to be cached
 	// (rather than derived from composition), or if we choose to store residues here
 	// instead of in composition seqs in case we actually want to compose/cache
 	// all residues...
-	protected String residues;
+	private String residues;
 
-	protected List<SeqSymmetry> annots;
+	private List<SeqSymmetry> annots;
+
+	public SimpleCompAnnotBioSeq(String id, int length)  {
+		super(id, length);
+	}
 
 	@Override
 	public String getResidues(int start, int end, char fillchar) {
@@ -65,18 +69,7 @@ public abstract class SimpleCompAnnotBioSeq
 		else  { return super.isComplete(start, end); }
 	}
 
-	//-----------------------------------------------------
-	// BEGIN Methods copied from SimpleAnnotatedBioSeq
-	//-----------------------------------------------------
-	public SimpleCompAnnotBioSeq(String id, int length)  {
-		super(id, length);
-	}
-
-	/*public SimpleCompAnnotBioSeq(String id)  {
-		super(id);
-	}*/
-
-	//public SimpleCompAnnotBioSeq()  { }
+	
 
 	public void addAnnotation(SeqSymmetry annot) {
 		if (null == annots) { annots = new ArrayList<SeqSymmetry>(); }
@@ -88,12 +81,6 @@ public abstract class SimpleCompAnnotBioSeq
 			annots.remove(annot);
 		}
 	}
-
-	/*public void removeAnnotation(int index) {
-		if (null != annots) {
-			annots.remove(index);
-		}
-	}*/
 
 	public int getAnnotationCount() {
 		if (null != annots) return annots.size();
@@ -107,23 +94,7 @@ public abstract class SimpleCompAnnotBioSeq
 			return null;
 	}
 
-	/** NOT YET IMPLEMENTED */
-	//public SeqSymmetry getAnnotationByID(String id) { return null; }
-	/** NOT YET IMPLEMENTED */
-	//public List getIntersectedAnnotations(SeqSpan span) { return null; }
-	/** NOT YET IMPLEMENTED */
-	//public List getContainedAnnotations(SeqSpan span) { return null; }
-	//-----------------------------------------------------
-	// END Methods copied from SimpleAnnotatedBioSeq
-	//-----------------------------------------------------
-
-
-	//-----------------------------------------------------
-	// BEGIN methods copied from SimpleBioSeq
-	//-----------------------------------------------------
-	//public void setID(String id) { this.id = id; }
 	public void setLength(int length) {
-		//    this.length = length;
 		setBounds(0, length);  // sets start, end, bounds
 
 		// if length does not agree with length of residues, null out residues
@@ -145,10 +116,6 @@ public abstract class SimpleCompAnnotBioSeq
 		this.residues = residues;
 		this.length = residues.length();
 	}
-	//-----------------------------------------------------
-	// END methods copied from SimpleBioSeq
-	//-----------------------------------------------------
-
 }
 
 

@@ -231,6 +231,7 @@ public class GraphGlyph extends Glyph {
 	Point2D x_plus_width2D = new Point2D(0,0);
 	Point curr_x_plus_width = new Point(0,0);
 
+	@Override
 	public void draw(ViewI view) {
 		draw(view, getGraphStyle());
 	}
@@ -450,7 +451,7 @@ public class GraphGlyph extends Glyph {
                 }
 
                 if (wcoords == null) {
-                    g.fillRect(curr_point.x, ymin_pixel, 1, yheight_pixel + 1);
+                    g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
                 } else {
                     final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
                     g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
@@ -460,7 +461,7 @@ public class GraphGlyph extends Glyph {
                     if (graph_style == GraphStateI.BIG_DOT_GRAPH) {
                         g.fillRect(curr_point.x - 1, curr_point.y - 1, 3, 3);
                     } else {
-                        g.fillRect(curr_point.x, curr_point.y, 1, 1);
+                        g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y);	// point
                     }
                 } else {
                     if (graph_style == GraphStateI.BIG_DOT_GRAPH) {
@@ -491,7 +492,8 @@ public class GraphGlyph extends Glyph {
 
                     if (curr_point.x == prev_point.x) {
                         g.setColor(heatmap_colors[curr_max_index]);
-                        g.fillRect(prev_point.x, pixelbox.y, 1, pixelbox.height + 1);
+                        //g.fillRect(prev_point.x, pixelbox.y, 1, pixelbox.height + 1);
+												g.drawLine(prev_point.x, pixelbox.y, prev_point.x, pixelbox.y + pixelbox.height);
                     } else {
                         g.setColor(heatmap_colors[heatmap_index]);
                         // the x+1 start point prevents this from over-writing the last rectangle
@@ -508,11 +510,12 @@ public class GraphGlyph extends Glyph {
                         heatmap_index = 255;
                     }
                     int pixel_width = curr_x_plus_width.x - curr_point.x;
-                    if (pixel_width < 1) {
-                        pixel_width = 1;
-                    }
                     g.setColor(heatmap_colors[heatmap_index]);
-                    g.fillRect(curr_point.x, pixelbox.y, pixel_width, pixelbox.height + 1);
+										if (pixel_width <= 1) {
+											g.drawLine(curr_point.x, pixelbox.y, curr_point.x, pixelbox.y + pixelbox.height);
+                    } else {
+											g.fillRect(curr_point.x, pixelbox.y, pixel_width, pixelbox.height + 1);
+										}
                 }
             } else if (graph_style == STAIRSTEP_GRAPH) {
                 if (i <= 0 || (graf.getGraphYCoord(i - 1) != 0)) {
@@ -613,7 +616,7 @@ public class GraphGlyph extends Glyph {
 			g.setColor(this.getColor());
 			g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
 			//      g.setColor(Color.gray);
-			g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
+			//g.drawRect(hpix.x, hpix.y, hpix.width, hpix.height);
 		}
 	}
 
@@ -644,7 +647,7 @@ public class GraphGlyph extends Glyph {
 		Stroke old_stroke = g.getStroke();
 		g.setStroke(grid_stroke);
 		g.setFont(axis_font);
-		FontMetrics fm = g.getFontMetrics();
+		//FontMetrics fm = g.getFontMetrics();
 
 		for (int i=0; i<grid.length; i++) {
 			float gridY = grid[i];
@@ -682,34 +685,36 @@ public class GraphGlyph extends Glyph {
 		if (GraphState.isHeatMapStyle(getGraphStyle())) {
 			return;
 		}
+		
+		Rectangle hpix = calcHandlePix(view);
+		if (hpix == null) {
+			return;
+		}
 
 		Graphics g = view.getGraphics();
-		Rectangle hpix = calcHandlePix(view);
+		g.setColor(this.getColor());
+		g.setFont(axis_font);
+		FontMetrics fm = g.getFontMetrics();
+		int font_height = fm.getHeight();
+		double last_pixel = Double.NaN; // the y-value at which the last tick String was drawn
 
-		if (hpix != null) {
-			g.setColor(this.getColor());
-			g.setFont(axis_font);
-			FontMetrics fm = g.getFontMetrics();
-			int font_height = fm.getHeight();
-			double last_pixel = Double.NaN; // the y-value at which the last tick String was drawn
-
-			Double[] tick_coords = determineYTickCoords();
-			double[] tick_pixels = convertToPixels(view, tick_coords);
-			for (int i = 0; i <tick_pixels.length; i++) {
-				double mark_ypix = tick_pixels[i];
-				g.fillRect(hpix.x, (int) mark_ypix, hpix.width + 8, 1);
-				// Always draw the lowest tick value, and indicate the others only
-				// if there is enough room between them that the text won't overlap
-				if (Double.isNaN(last_pixel) || Math.abs(mark_ypix - last_pixel) > font_height) {
-					AttributedString minString = new AttributedString(nformat.format(tick_coords[i]));
-					minString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
-					minString.addAttribute(TextAttribute.FOREGROUND, lighter);
-					minString.addAttribute(TextAttribute.FONT, axis_font);
-					g.drawString(minString.getIterator(), hpix.x + 15, (int) mark_ypix + fm.getDescent());
-					last_pixel = mark_ypix;
-				}
+		Double[] tick_coords = determineYTickCoords();
+		double[] tick_pixels = convertToPixels(view, tick_coords);
+		for (int i = 0; i < tick_pixels.length; i++) {
+			double mark_ypix = tick_pixels[i];
+			g.fillRect(hpix.x, (int) mark_ypix, hpix.width + 8, 1);
+			// Always draw the lowest tick value, and indicate the others only
+			// if there is enough room between them that the text won't overlap
+			if (Double.isNaN(last_pixel) || Math.abs(mark_ypix - last_pixel) > font_height) {
+				AttributedString minString = new AttributedString(nformat.format(tick_coords[i]));
+				minString.addAttribute(TextAttribute.BACKGROUND, state.getTierStyle().getBackground());
+				minString.addAttribute(TextAttribute.FOREGROUND, lighter);
+				minString.addAttribute(TextAttribute.FONT, axis_font);
+				g.drawString(minString.getIterator(), hpix.x + 15, (int) mark_ypix + fm.getDescent());
+				last_pixel = mark_ypix;
 			}
 		}
+
 	}
 
 	/** Creates an array of about 4 to 10 coord values evenly spaced between 
@@ -722,7 +727,7 @@ public class GraphGlyph extends Glyph {
 	}
 
 	/** Creates an array of about 4 to 10 coord values evenly spaced between min and max. */
-	public static Double[] determineYTickCoords(double min, double max) {
+	private static Double[] determineYTickCoords(double min, double max) {
 		double range = max - min;
 		double interval = Math.pow(10, Math.floor(Math.log10(range)));    
 		double start = Math.floor(min/interval) * interval;
@@ -992,6 +997,7 @@ public class GraphGlyph extends Glyph {
 	protected Color lighter;
 	protected Color darker;
 
+	@Override
 	public void setBackgroundColor(Color col) {
 		super.setBackgroundColor(col);
 		lighter = col.brighter();

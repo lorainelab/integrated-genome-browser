@@ -16,12 +16,12 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
@@ -114,7 +114,7 @@ public final class BrptParser {
 	}
 
 	public List<SeqSymmetry> readTextFormat(BufferedReader br) throws IOException {
-		int weird_length_count = 0;
+		//int weird_length_count = 0;
 		Map<String,MutableSeqSymmetry> id2psym = new HashMap<String,MutableSeqSymmetry>();
 		ArrayList<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
 		int repeat_count = 0;
@@ -130,7 +130,7 @@ public final class BrptParser {
 				MutableSeqSymmetry psym = id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
+					seq = new SmartAnnotBioSeq(seqid, seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);
@@ -168,7 +168,7 @@ public final class BrptParser {
 		return parent_syms;
 	}
 
-	public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq) 
+	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq)
 		throws IOException {
 		System.out.println("parsing brpt file");
 		List<SeqSymmetry> rpt_syms = null;

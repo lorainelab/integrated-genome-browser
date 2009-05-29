@@ -14,13 +14,10 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.*;
-//import com.affymetrix.genometry.seq.*;
-import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
-//import com.affymetrix.genometry.span.*;
 
 /**
- *  Routines to convert generic SeqSymmetry's to PSL SeqSymmetry's.
+ *  Routines to convert generic SeqSymmetrys to PSL SeqSymmetrys.
  */
 public final class SeqSymmetryConverter {
 
@@ -100,7 +97,7 @@ public final class SeqSymmetryConverter {
 			curlength += child_tspan.getLength();
 		}
 
-		MutableBioSeq queryseq = new SimpleAnnotatedBioSeq(qname, curlength);
+		MutableBioSeq queryseq = new SmartAnnotBioSeq(qname, qname, curlength);
 		SeqSpan qspan = new SimpleSeqSpan(0, curlength, queryseq);
 
 		UcscPslSym pslsym = new UcscPslSym(type, -1, -1, -1, -1,

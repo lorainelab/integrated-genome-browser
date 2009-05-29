@@ -17,7 +17,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -26,6 +25,7 @@ import com.affymetrix.genometryImpl.EfficientSnpSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.Timer;
 
@@ -93,7 +93,7 @@ import com.affymetrix.genometryImpl.util.Timer;
  *
  *</pre>
  */
-public final class BsnpParser {
+public abstract class BsnpParser {
 	//  static String default_text_infile = "c:/data/ucsc/hg15/";
 	//  static String genome_version = "H_sapiens_Apr_2003";
 
@@ -101,11 +101,11 @@ public final class BsnpParser {
 	//  type enum('SNP','INDEL','SEGMENTAL','unknown') NOT NULL default 'unknown',
 
 	//  static Pattern line_regex = Pattern.compile("\t");
-	static Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-	Map source_hash = new HashMap();
-	Map type_hash = new HashMap();
+	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
+	//Map source_hash = new HashMap();
+	//Map type_hash = new HashMap();
 
-	public void outputBsnpFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos) 
+	private static void outputBsnpFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos)
 		throws IOException {
 		try        {
 			int pcount = parents.size();
@@ -153,17 +153,15 @@ public final class BsnpParser {
 chr1        XbaI        SNP_A-1507333        219135381        219135381        .        +        .
 	 *</pre>
 	 */
-	public List<SeqSymmetry> readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
+	private static List<SeqSymmetry> readGffFormat(InputStream istr, GenometryModel gmodel) throws IOException {
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		try {
 			GFFParser gff_parser = new GFFParser();
 			gff_parser.parse(istr, seq_group, true);
-			Iterator iter = seq_group.getSeqList().iterator();
 			int problem_count = 0;
-			while (iter.hasNext()) {
-				AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+			for (SmartAnnotBioSeq aseq : seq_group.getSeqList()) {
 				int acount = aseq.getAnnotationCount();
 				String seqid = aseq.getID();
 				System.out.println("seq = " + seqid + ", annots = " + acount);
@@ -172,7 +170,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				// need to debug this eventually...
 				if (acount >= 1) { 
 					SimpleSymWithProps new_psym = new SimpleSymWithProps();
-					MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
+					MutableAnnotatedBioSeq seq = new SmartAnnotBioSeq(seqid, aseq.getVersion(), 1000000000);
 					new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					for (int k=0; k<acount; k++) {
@@ -205,7 +203,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	}
 
 
-	public List<SeqSymmetry> readTextFormat(BufferedReader br) {
+	private static List<SeqSymmetry> readTextFormat(BufferedReader br) {
 		int snp_count = 0;
 		int weird_length_count = 0;
 		Map<String,SeqSymmetry> id2psym = new HashMap<String,SeqSymmetry>();
@@ -218,7 +216,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				MutableSeqSymmetry psym = (MutableSeqSymmetry)id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					MutableAnnotatedBioSeq seq = new SimpleAnnotatedBioSeq(seqid, 1000000000);
+					MutableAnnotatedBioSeq seq = new SmartAnnotBioSeq(seqid, seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);
@@ -248,7 +246,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		return parent_syms;
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq) 
+	public static List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annot_seq)
 		throws IOException {
 		//System.out.println("parsing bsnp file");
 		Timer tim = new Timer();
@@ -312,22 +310,19 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		return snp_syms;
 	}
 
-
-
-	static boolean TEST_BINARY_PARSE = false;
-
 	public static void main(String[] args) {
 		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 		try {
+			boolean TEST_BINARY_PARSE = false;
 			if (TEST_BINARY_PARSE) {
 				AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
 				String binfile = args[0];
 				System.out.println("parsing in snp data from .bsnp file: " + binfile);
-				BsnpParser tester = new BsnpParser();
+				//BsnpParser tester = new BsnpParser();
 				File ifil = new File(binfile);
 				InputStream istr = new FileInputStream(ifil);
-				tester.parse(istr, "snp", seq_group, true);
+				BsnpParser.parse(istr, "snp", seq_group, true);
 				System.out.println("finished parsing in snp data from .bsnp file");
 				istr.close();
 			}
@@ -347,26 +342,26 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 					else {
 						bin_outfile = text_infile + ".bsnp";
 					}
-					BsnpParser tester = new BsnpParser();
+					//BsnpParser tester = new BsnpParser();
 					File ifil = new File(text_infile);
 					List<SeqSymmetry> parent_syms = null;
 					if (text_infile.endsWith(".txt")) {
 						BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(ifil)));
 						System.out.println("reading in text data from: " + text_infile);
-						parent_syms = tester.readTextFormat(br);
+						parent_syms = BsnpParser.readTextFormat(br);
 						br.close();
 					}
 					else if (text_infile.endsWith(".gff")) {
 						InputStream istr = new FileInputStream(ifil);
 						System.out.println("reading in gff data from: " + text_infile);
-						parent_syms = tester.readGffFormat(istr, gmodel);
+						parent_syms = BsnpParser.readGffFormat(istr, gmodel);
 						istr.close();
 					}
 
 					File ofil = new File(bin_outfile);
 					DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(ofil)));
 					System.out.println("outputing binary data to: " + bin_outfile);
-					tester.outputBsnpFormat(parent_syms, genome_version, dos);
+					BsnpParser.outputBsnpFormat(parent_syms, genome_version, dos);
 					dos.close();
 					System.out.println("finished converting text data to binary .bsnp format");
 				}

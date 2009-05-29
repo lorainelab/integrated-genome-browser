@@ -430,8 +430,8 @@ final class FindAnnotationsPanel extends JPanel {
     return sym_ids;
   }
   
-  List findByIDs(AnnotatedSeqGroup seq_group, Collection sym_ids) {
-    List the_list = new ArrayList();
+  List<SeqSymmetry> findByIDs(AnnotatedSeqGroup seq_group, Collection sym_ids) {
+    List<SeqSymmetry> the_list = new ArrayList<SeqSymmetry>();
 
     Iterator sym_iter = sym_ids.iterator();
     while (sym_iter.hasNext() && the_list.size() < AnnotBrowserView.THE_LIMIT) {

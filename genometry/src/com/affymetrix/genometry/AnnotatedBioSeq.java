@@ -14,7 +14,7 @@
 package com.affymetrix.genometry;
 
 public interface AnnotatedBioSeq extends BioSeq {
-
+	public String getVersion();
 	public int getAnnotationCount();
 	public SeqSymmetry getAnnotation(int index);
 

@@ -14,12 +14,12 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.FloatList;
 
 import java.io.*;
@@ -106,7 +106,7 @@ public final class ScoredMapParser {
 		System.out.println("testing ScoredMapParser, parsing file: " + test_file);
 		ScoredMapParser tester = new ScoredMapParser();
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		MutableAnnotatedBioSeq aseq = new SimpleAnnotatedBioSeq("test_seq", 50000000);
+		MutableAnnotatedBioSeq aseq = new SmartAnnotBioSeq("test_seq", "test_version", 50000000);
 		try {
 			FileInputStream fis = new FileInputStream(new File(test_file));
 			tester.parse(fis, test_name, aseq, seq_group);

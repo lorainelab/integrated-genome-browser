@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.regex.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -111,9 +110,9 @@ public final class LiftParser {
 				String splitname[] = re_name.split(tempname);
 				String contig_name = splitname[CONTIG_NAME_SUBFIELD];
 				// experimenting with constructing virtual sequences by using chromosomes as contigs
-				MutableAnnotatedBioSeq contig = seq_group.getSeq(contig_name);
+				SmartAnnotBioSeq contig = seq_group.getSeq(contig_name);
 				if (contig == null) {
-					contig = new SimpleAnnotatedBioSeq(contig_name, match_length);
+					contig = new SmartAnnotBioSeq(contig_name, contig.getVersion(), match_length);
 				}
 
 				contig_count++;

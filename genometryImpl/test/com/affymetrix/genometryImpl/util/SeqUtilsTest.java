@@ -1,11 +1,4 @@
-/*
- * SeqUtilsTest.java
- * JUnit based test
- *
- * Created on June 20, 2006, 1:14 PM
- */
-
-package com.affymetrix.genometry.util;
+package com.affymetrix.genometryImpl.util;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,9 +6,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.SimpleAnnotatedBioSeq;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
+import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 
 
 public class SeqUtilsTest {
@@ -27,8 +21,8 @@ public class SeqUtilsTest {
 
 	@Before
 		public void setUp() throws Exception {
-			seqA = new SimpleAnnotatedBioSeq("Seq A", 1000000);
-			seqB = new SimpleAnnotatedBioSeq("Seq B", 1000000);
+			seqA = new SmartAnnotBioSeq("Seq A", "version", 1000000);
+			seqB = new SmartAnnotBioSeq("Seq B", "version", 1000000);
 		}
 
 	@After
@@ -205,8 +199,8 @@ public class SeqUtilsTest {
 	@Test
 		public void testTransformSymmetry() {
 			//System.out.println("transformSymmetry");
-			AnnotatedBioSeq annot_seq = new SimpleAnnotatedBioSeq("annot", 1000000);
-			AnnotatedBioSeq view_seq = new SimpleAnnotatedBioSeq("view_seq", 1000000);
+			AnnotatedBioSeq annot_seq = new SmartAnnotBioSeq("annot", "version", 1000000);
+			AnnotatedBioSeq view_seq = new SmartAnnotBioSeq("view_seq", "version", 1000000);
 
 			// First create a slicing transforming symmetry such that
 			// region from 500-600 in seqA get transformed to region 0-100 in seqB

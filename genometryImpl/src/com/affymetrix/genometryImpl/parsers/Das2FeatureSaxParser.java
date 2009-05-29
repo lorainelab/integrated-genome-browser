@@ -22,7 +22,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.seq.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;

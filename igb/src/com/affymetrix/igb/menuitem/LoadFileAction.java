@@ -451,15 +451,15 @@ public final class LoadFileAction {
           List alist = parser.parse(str, annot_type, selected_group);
           return input_seq;
       } else if (lcname.endsWith(".bsnp")) {
-          BsnpParser parser = new BsnpParser();
+          //BsnpParser parser = new BsnpParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
-          List alist = parser.parse(str, annot_type, selected_group, true);
+          List<SeqSymmetry> alist = BsnpParser.parse(str, annot_type, selected_group, true);
           Application.getSingleton().logDebug("total snps loaded: " + alist.size());
           return input_seq;
       } else if (lcname.endsWith(".brpt")) {
           BrptParser parser = new BrptParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".brpt"));
-          List alist = parser.parse(str, annot_type, selected_group, true);
+          List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, true);
           Application.getSingleton().logDebug("total repeats loaded: " + alist.size());
           return input_seq;
       } else if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {

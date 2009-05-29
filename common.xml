@@ -16,7 +16,7 @@
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
 		<property name="jnlp.version"   value="${build.version}" />
 		<property name="jnlp.codebase"  value="http://genoviz.sourceforge.net/webstart/" />
-		<property name="jnlp.icon.name" value="affychip.gif" />
+		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
 
 		<!-- global compiler defaults -->

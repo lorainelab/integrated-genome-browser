@@ -24,7 +24,7 @@ PREFIX=`dirname $PREFIX`
 # File Locations
 JARDIR="$PREFIX/dist"
 LIBDIR="$PREFIX/ext"
-ICON="$PREFIX/igb/resources/com/affymetrix/igb/affychip.gif"
+ICON="$PREFIX/igb/resources/com/affymetrix/igb/igb.gif"
 
 # Do our best to find java
 test -z "$JAVACMD" -a -n "$JAVA_HOME" && JAVACMD=$JAVA_HOME/bin/java

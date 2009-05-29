@@ -1333,17 +1333,18 @@ public final class IGB extends Application
 
 
   /** Returns the icon stored in the jar file.
-   *  It is expected to be at com.affymetrix.igb.affychip.gif.
+   *  It is expected to be at com.affymetrix.igb.igb.gif.
    *  @return null if the image file is not found or can't be opened.
    */
   public Image getIcon() {
     Image icon = null;
     try {
-      URL url = IGB.class.getResource("affychip.gif");
+      URL url = IGB.class.getResource("igb.gif");
       if (url != null) {
         icon = Toolkit.getDefaultToolkit().getImage(url);
       }
     } catch (Exception e) {
+			e.printStackTrace();
       // It isn't a big deal if we can't find the icon, just return null
     }
     return icon;

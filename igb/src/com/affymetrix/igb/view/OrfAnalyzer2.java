@@ -65,7 +65,7 @@ public final class OrfAnalyzer2 extends JComponent
   boolean show_orfs;
   BioSeq current_seq;
 
-  List orf_holders = new ArrayList();
+  private List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
   String[] stop_codons = { "TAA", "TAG", "TGA", "TTA", "CTA", "TCA" };
   Color[] stop_colors = { Color.red, Color.orange, Color.yellow };
   boolean vertical_layout = false;
@@ -109,34 +109,31 @@ public final class OrfAnalyzer2 extends JComponent
 
 
   public void stateChanged(ChangeEvent evt) {
-    Object src = evt.getSource();
-    if (src == orf_thresh_slider) {
-      current_orf_thresh = orf_thresh_slider.getValue();
-      //      System.out.println("value: " + current_orf_thresh);
-      for (int i=0; i<orf_holders.size(); i++) {
-	FlyPointLinkerGlyph fw = (FlyPointLinkerGlyph)orf_holders.get(i);
-	fw.setMinThreshold(current_orf_thresh);
-      }
-      AffyTieredMap map = smv.getSeqMap();
-      map.updateWidget();
-      orf_threshL.setText(Integer.toString(current_orf_thresh));
-    }
-  }
+		Object src = evt.getSource();
+		if (src == orf_thresh_slider) {
+			current_orf_thresh = orf_thresh_slider.getValue();
+			for (FlyPointLinkerGlyph fw : orf_holders) {
+				fw.setMinThreshold(current_orf_thresh);
+			}
+			AffyTieredMap map = smv.getSeqMap();
+			map.updateWidget();
+			orf_threshL.setText(Integer.toString(current_orf_thresh));
+		}
+	}
 
-  public void actionPerformed(ActionEvent evt) {
-    Object src = evt.getSource();
-    if (src == showCB) {
-      show_orfs = ((JCheckBox)src).isSelected();
-      if (show_orfs)  {
-        redoOrfs();
-      }
-      else {
-	AffyTieredMap map = smv.getSeqMap();
-	removeTiersFromMap();
-	adjustMap();
-      }
-    }
-  }
+ public void actionPerformed(ActionEvent evt) {
+		Object src = evt.getSource();
+		if (src == showCB) {
+			show_orfs = ((JCheckBox) src).isSelected();
+			if (show_orfs) {
+				redoOrfs();
+			} else {
+				AffyTieredMap map = smv.getSeqMap();
+				removeTiersFromMap();
+				adjustMap();
+			}
+		}
+	}
 
 
   public void redoOrfs()  {
@@ -153,12 +150,12 @@ public final class OrfAnalyzer2 extends JComponent
     SeqSpan vspan = smv.getVisibleSpan();
     int span_start = vspan.getMin();
     int span_end = vspan.getMax();
-    int span_mid = (span_start + span_end)/2;
+    int span_mid = (int)(0.5f * span_start + 0.5f * span_end);
 
     span_start = span_mid - (max_analysis_span/2);
-    span_start = (int)(span_start / 3) * 3;
+    span_start -= span_start % 3;
     span_end = span_mid + (max_analysis_span/2);
-    span_end = (int)(span_end / 3) * 3;
+    span_end -= span_end % 3;
 
     // rounding down to closest divisible by three (for consistency of forward strand frames)
     //    span_start = (int)(span_start / 3) * 3;
@@ -176,7 +173,7 @@ public final class OrfAnalyzer2 extends JComponent
     }
 
     AffyTieredMap map = smv.getSeqMap();
-    orf_holders = new Vector();
+    orf_holders = new Vector<FlyPointLinkerGlyph>();
     if (vseq==null || ! (vseq.isComplete())) {
       Application.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
       show_orfs = false;
@@ -222,35 +219,45 @@ public final class OrfAnalyzer2 extends JComponent
 
     //    System.out.println("start of span: " + span_start);
     //    System.out.println("end of span: " + span_end);
-    //    System.out.println("length of span: " + span_length);
-    for (int i = 0; i<stop_codons.length; i++) {
-      int count=0;
-      boolean forward_codon = (i <= 2);
-      String codon = stop_codons[i];
+  //    System.out.println("length of span: " + span_length);
+		for (int i = 0; i < stop_codons.length; i++) {
+			int count = 0;
+			boolean forward_codon = (i <= 2);
+			String codon = stop_codons[i];
 
-      int seq_index = span_start;
-      int res_index;
-      //      if (use_nibseq)  { res_index = nibseq.indexOf(codon, 0); }
-      //      else { res_index = residues.indexOf(codon, 0); }
-      res_index = span_start - residue_offset;
-      if (use_nibseq)  { res_index = nibseq.indexOf(codon, res_index); }
-      else { res_index = residues.indexOf(codon, res_index); }
-      // need to factor in possible offset of residues string from start of
-      //    sequence (for example, when sequence is a CompNegSeq)
-      while (res_index >= 0  && (seq_index < span_end)) {
-	int frame;
-	// need to factor in possible offset of residues string from start of
-	//    sequence (for example, when sequence is a CompNegSeq)
-	seq_index = res_index + residue_offset;
+			int seq_index = span_start;
+			int res_index;
+			//      if (use_nibseq)  { res_index = nibseq.indexOf(codon, 0); }
+			//      else { res_index = residues.indexOf(codon, 0); }
+			res_index = span_start - residue_offset;
+			if (use_nibseq) {
+				res_index = nibseq.indexOf(codon, res_index);
+			} else {
+				res_index = residues.indexOf(codon, res_index);
+			}
+			// need to factor in possible offset of residues string from start of
+			//    sequence (for example, when sequence is a CompNegSeq)
+			while (res_index >= 0 && (seq_index < span_end)) {
+				int frame;
+				// need to factor in possible offset of residues string from start of
+				//    sequence (for example, when sequence is a CompNegSeq)
+				seq_index = res_index + residue_offset;
 
-	if (forward_codon) { frame = res_index % 3; } // forward frames = (0, 1, 2)
-	else { frame = 3 + (res_index % 3); } // reverse frames = (3, 4, 5)
-	//	System.out.println("frame: " + frame);
-	frame_lists[frame].add(seq_index);
-	if (use_nibseq) { res_index = nibseq.indexOf(codon, res_index+1); }
-	else { res_index = residues.indexOf(codon, res_index+1); }
-	count++;
-      }
+				if (forward_codon) {
+					frame = res_index % 3;
+				} // forward frames = (0, 1, 2)
+				else {
+					frame = 3 + (res_index % 3);
+				} // reverse frames = (3, 4, 5)
+				//	System.out.println("frame: " + frame);
+				frame_lists[frame].add(seq_index);
+				if (use_nibseq) {
+					res_index = nibseq.indexOf(codon, res_index + 1);
+				} else {
+					res_index = residues.indexOf(codon, res_index + 1);
+				}
+				count++;
+			}
       //      System.out.println("resindex: " + res_index);
       //      System.out.println("seqindex: " + seq_index);
       //      System.out.println("count: " + count);
@@ -284,6 +291,7 @@ public final class OrfAnalyzer2 extends JComponent
         orf_holders.add(fw);
       } else {
         orf_glyph = new FillRectGlyph() {
+					@Override
           public boolean isHitable() { return false; }
         };
         orf_glyph.setColor(tier.getFillColor());

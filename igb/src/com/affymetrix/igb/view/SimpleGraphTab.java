@@ -375,7 +375,7 @@ implements SeqSelectionListener, SymSelectionListener {
     if (! glyphs.isEmpty()) {
       first_glyph = (GraphGlyph) glyphs.get(0);
       graph_style = first_glyph.getGraphStyle();
-      if (graph_style == GraphStateI.HEAT_MAP) {
+      if (graph_style == GraphStateI.MAX_HEAT_MAP) {
         hm = first_glyph.getHeatMap();
       }
       the_height = first_glyph.getGraphState().getTierStyle().getHeight();
@@ -406,7 +406,7 @@ implements SeqSelectionListener, SymSelectionListener {
       if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
         graph_style = -1;
       }
-      if (graph_style == GraphStateI.HEAT_MAP) {
+      if (graph_style == GraphStateI.MAX_HEAT_MAP) {
         if (first_glyph.getHeatMap() != gl.getHeatMap()) {
           hm = null;
         }
@@ -448,7 +448,7 @@ implements SeqSelectionListener, SymSelectionListener {
         break;
     }
 
-    if (graph_style == GraphStateI.HEAT_MAP) {
+    if (graph_style == GraphStateI.MAX_HEAT_MAP) {
       heat_mapCB.setEnabled(true);
       if (hm == null) {
         heat_mapCB.setSelectedIndex(-1);
@@ -536,9 +536,9 @@ implements SeqSelectionListener, SymSelectionListener {
       Runnable r = new Runnable() {
         public void run() {
           GraphGlyph first_glyph = (GraphGlyph) glyphs.get(0);
-          if (style == GraphStateI.HEAT_MAP) {
+          if (style == GraphStateI.MAX_HEAT_MAP) {
             // set to heat map FIRST so that getHeatMap() below will return default map instead of null
-            first_glyph.setGraphStyle(GraphStateI.HEAT_MAP);
+            first_glyph.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
           }
           HeatMap hm = ((GraphGlyph) glyphs.get(0)).getHeatMap();
 	  //          for (int i=0; i<grafs.size(); i++) {
@@ -546,11 +546,11 @@ implements SeqSelectionListener, SymSelectionListener {
             GraphGlyph sggl = (GraphGlyph) glyphs.get(i);
             sggl.setShowGraph(true);
             sggl.setGraphStyle(style); // leave the heat map whatever it was
-            if ((style == GraphStateI.HEAT_MAP) && (hm != sggl.getHeatMap())) {
+            if ((style == GraphStateI.MAX_HEAT_MAP) && (hm != sggl.getHeatMap())) {
               hm = null;
             }
           }
-          if (style == GraphStateI.HEAT_MAP) {
+          if (style == GraphStateI.MAX_HEAT_MAP) {
             heat_mapCB.setEnabled(true);
             if (hm == null) {
               heat_mapCB.setSelectedIndex(-1);

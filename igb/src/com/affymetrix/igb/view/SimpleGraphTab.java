@@ -185,7 +185,7 @@ implements SeqSelectionListener, SymSelectionListener {
 
     barB.addActionListener(new GraphStyleSetter(GraphGlyph.BAR_GRAPH));
     dotB.addActionListener(new GraphStyleSetter(GraphGlyph.DOT_GRAPH));
-    hmapB.addActionListener(new GraphStyleSetter(GraphGlyph.HEAT_MAP));
+    hmapB.addActionListener(new GraphStyleSetter(GraphStateI.MAX_HEAT_MAP));
     lineB.addActionListener(new GraphStyleSetter(GraphGlyph.LINE_GRAPH));
     mmavgB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.MINMAXAVG));
     sstepB.addActionListener(new GraphStyleSetter(GraphGlyph.STAIRSTEP_GRAPH));
@@ -597,7 +597,7 @@ implements SeqSelectionListener, SymSelectionListener {
           for (int i=0; i<glyphs.size(); i++) {
             GraphGlyph gl = (GraphGlyph) glyphs.get(i);
             gl.setShowGraph(true);
-            gl.setGraphStyle(GraphGlyph.HEAT_MAP);
+            gl.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
             gl.setHeatMap(hm);
           }
           gviewer.getSeqMap().updateWidget();

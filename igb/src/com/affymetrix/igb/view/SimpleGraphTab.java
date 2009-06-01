@@ -183,12 +183,12 @@ implements SeqSelectionListener, SymSelectionListener {
     heat_mapCB_box.setAlignmentX(0.0f);
     stylebox.add(heat_mapCB_box);
 
-    barB.addActionListener(new GraphStyleSetter(GraphGlyph.BAR_GRAPH));
-    dotB.addActionListener(new GraphStyleSetter(GraphGlyph.DOT_GRAPH));
+    barB.addActionListener(new GraphStyleSetter(GraphStateI.BAR_GRAPH));
+    dotB.addActionListener(new GraphStyleSetter(GraphStateI.DOT_GRAPH));
     hmapB.addActionListener(new GraphStyleSetter(GraphStateI.MAX_HEAT_MAP));
-    lineB.addActionListener(new GraphStyleSetter(GraphGlyph.LINE_GRAPH));
-    mmavgB.addActionListener(new GraphStyleSetter(SmartGraphGlyph.MINMAXAVG));
-    sstepB.addActionListener(new GraphStyleSetter(GraphGlyph.STAIRSTEP_GRAPH));
+    lineB.addActionListener(new GraphStyleSetter(GraphStateI.LINE_GRAPH));
+    mmavgB.addActionListener(new GraphStyleSetter(GraphStateI.MINMAXAVG));
+    sstepB.addActionListener(new GraphStyleSetter(GraphStateI.STAIRSTEP_GRAPH));
 
     stylegroup.add(barB);
     stylegroup.add(dotB);
@@ -375,7 +375,7 @@ implements SeqSelectionListener, SymSelectionListener {
     if (! glyphs.isEmpty()) {
       first_glyph = (GraphGlyph) glyphs.get(0);
       graph_style = first_glyph.getGraphStyle();
-      if (graph_style == GraphGlyph.HEAT_MAP) {
+      if (graph_style == GraphStateI.HEAT_MAP) {
         hm = first_glyph.getHeatMap();
       }
       the_height = first_glyph.getGraphState().getTierStyle().getHeight();
@@ -406,7 +406,7 @@ implements SeqSelectionListener, SymSelectionListener {
       if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
         graph_style = -1;
       }
-      if (graph_style == GraphGlyph.HEAT_MAP) {
+      if (graph_style == GraphStateI.HEAT_MAP) {
         if (first_glyph.getHeatMap() != gl.getHeatMap()) {
           hm = null;
         }
@@ -425,22 +425,22 @@ implements SeqSelectionListener, SymSelectionListener {
     }
 
     switch(graph_style) {
-      case SmartGraphGlyph.MINMAXAVG:
+      case GraphStateI.MINMAXAVG:
         mmavgB.setSelected(true);
         break;
-      case GraphGlyph.LINE_GRAPH:
+      case GraphStateI.LINE_GRAPH:
         lineB.setSelected(true);
         break;
-      case GraphGlyph.BAR_GRAPH:
+      case GraphStateI.BAR_GRAPH:
         barB.setSelected(true);
         break;
-      case GraphGlyph.DOT_GRAPH:
+      case GraphStateI.DOT_GRAPH:
         dotB.setSelected(true);
         break;
-      case GraphGlyph.HEAT_MAP:
+      case GraphStateI.MAX_HEAT_MAP:
         hmapB.setSelected(true);
         break;
-      case GraphGlyph.STAIRSTEP_GRAPH:
+      case GraphStateI.STAIRSTEP_GRAPH:
         sstepB.setSelected(true);
         break;
       default:
@@ -448,7 +448,7 @@ implements SeqSelectionListener, SymSelectionListener {
         break;
     }
 
-    if (graph_style == GraphGlyph.HEAT_MAP) {
+    if (graph_style == GraphStateI.HEAT_MAP) {
       heat_mapCB.setEnabled(true);
       if (hm == null) {
         heat_mapCB.setSelectedIndex(-1);
@@ -536,9 +536,9 @@ implements SeqSelectionListener, SymSelectionListener {
       Runnable r = new Runnable() {
         public void run() {
           GraphGlyph first_glyph = (GraphGlyph) glyphs.get(0);
-          if (style == GraphGlyph.HEAT_MAP) {
+          if (style == GraphStateI.HEAT_MAP) {
             // set to heat map FIRST so that getHeatMap() below will return default map instead of null
-            first_glyph.setGraphStyle(GraphGlyph.HEAT_MAP);
+            first_glyph.setGraphStyle(GraphStateI.HEAT_MAP);
           }
           HeatMap hm = ((GraphGlyph) glyphs.get(0)).getHeatMap();
 	  //          for (int i=0; i<grafs.size(); i++) {
@@ -546,11 +546,11 @@ implements SeqSelectionListener, SymSelectionListener {
             GraphGlyph sggl = (GraphGlyph) glyphs.get(i);
             sggl.setShowGraph(true);
             sggl.setGraphStyle(style); // leave the heat map whatever it was
-            if ((style == GraphGlyph.HEAT_MAP) && (hm != sggl.getHeatMap())) {
+            if ((style == GraphStateI.HEAT_MAP) && (hm != sggl.getHeatMap())) {
               hm = null;
             }
           }
-          if (style == GraphGlyph.HEAT_MAP) {
+          if (style == GraphStateI.HEAT_MAP) {
             heat_mapCB.setEnabled(true);
             if (hm == null) {
               heat_mapCB.setSelectedIndex(-1);

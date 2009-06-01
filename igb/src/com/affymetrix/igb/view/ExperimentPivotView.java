@@ -39,6 +39,7 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.glyph.*;
@@ -104,8 +105,8 @@ public final class ExperimentPivotView extends JComponent
   
   static {
     string2style = new HashMap();
-    string2style.put(LINE, new Integer(SmartGraphGlyph.LINE_GRAPH));
-    string2style.put(STAIRSTEP, new Integer(SmartGraphGlyph.STAIRSTEP_GRAPH));
+    string2style.put(LINE, new Integer(GraphStateI.LINE_GRAPH));
+    string2style.put(STAIRSTEP, new Integer(GraphStateI.STAIRSTEP_GRAPH));
 
     string2style.put(HEATMAP1, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_1));
     string2style.put(HEATMAP2, HeatMap.getStandardHeatMap(HeatMap.HEATMAP_2));
@@ -213,7 +214,7 @@ public final class ExperimentPivotView extends JComponent
     if (obj instanceof Integer) {
       style = ((Integer)string2style.get(selection)).intValue();
     } else if (obj instanceof HeatMap) {
-      style = GraphGlyph.HEAT_MAP;
+      style = GraphStateI.HEAT_MAP;
     }
     return style;
   }
@@ -221,7 +222,7 @@ public final class ExperimentPivotView extends JComponent
   private void setExperimentStyle(String selection) {
     pref_node.put(PREF_STYLE, selection);
     int ee = experimentStyleToInt(selection);
-    if (ee == GraphGlyph.HEAT_MAP) {
+    if (ee == GraphStateI.HEAT_MAP) {
       setHeatMap((HeatMap) string2style.get(selection), false);
     }
     setExperimentStyle(ee, true);
@@ -239,7 +240,7 @@ public final class ExperimentPivotView extends JComponent
     //    want the graph to fill the tier it's contained in, but for rendering graph as
     //    a line graph or bar graph then want some spacing between the graphs, so need
     //    graphs to be smaller than the tiers they are contained in
-    if (experiment_style_int == GraphGlyph.HEAT_MAP) {
+    if (experiment_style_int == GraphStateI.HEAT_MAP) {
       map.setExtraMapInset(0);
     }
     else {

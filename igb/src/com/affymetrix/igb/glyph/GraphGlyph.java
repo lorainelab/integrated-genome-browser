@@ -29,6 +29,16 @@ import com.affymetrix.genometryImpl.style.HeatMap;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 
+/*
+ * These are replacing private copies which GraphGlyph used to keep
+ */
+import static com.affymetrix.genometryImpl.style.GraphStateI.BAR_GRAPH;
+import static com.affymetrix.genometryImpl.style.GraphStateI.DOT_GRAPH;
+import static com.affymetrix.genometryImpl.style.GraphStateI.BIG_DOT_GRAPH;
+import static com.affymetrix.genometryImpl.style.GraphStateI.HEAT_MAP;
+import static com.affymetrix.genometryImpl.style.GraphStateI.LINE_GRAPH;
+import static com.affymetrix.genometryImpl.style.GraphStateI.STAIRSTEP_GRAPH;
+
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
@@ -47,12 +57,6 @@ public abstract class GraphGlyph extends Glyph {
 	static NumberFormat nformat = new DecimalFormat();
 	static NumberFormat nformat2 = NumberFormat.getIntegerInstance();
 	static int axis_bins = 10;
-
-	public static final int LINE_GRAPH = GraphStateI.LINE_GRAPH;
-	public static final int BAR_GRAPH = GraphStateI.BAR_GRAPH;
-	public static final int DOT_GRAPH = GraphStateI.DOT_GRAPH;
-	public static final int STAIRSTEP_GRAPH = GraphStateI.STAIRSTEP_GRAPH;
-	public static final int HEAT_MAP = GraphStateI.HEAT_MAP;
 
 	int xpix_offset = 0;
 	Point zero_point = new Point(0,0);
@@ -456,15 +460,15 @@ public abstract class GraphGlyph extends Glyph {
                     final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
                     g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
                 }
-            } else if (graph_style == GraphStateI.DOT_GRAPH || graph_style == GraphStateI.BIG_DOT_GRAPH) {
+            } else if (graph_style == DOT_GRAPH || graph_style == BIG_DOT_GRAPH) {
                 if (wcoords == null) {
-                    if (graph_style == GraphStateI.BIG_DOT_GRAPH) {
+                    if (graph_style == BIG_DOT_GRAPH) {
                         g.fillRect(curr_point.x - 1, curr_point.y - 1, 3, 3);
                     } else {
                         g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y);	// point
                     }
                 } else {
-                    if (graph_style == GraphStateI.BIG_DOT_GRAPH) {
+                    if (graph_style == BIG_DOT_GRAPH) {
                         final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
                         g.fillRect(curr_point.x, curr_point.y - 1, width, 3);
                     } else {

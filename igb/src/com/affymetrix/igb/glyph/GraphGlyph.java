@@ -34,7 +34,7 @@ import java.text.AttributedString;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public class GraphGlyph extends Glyph {
+public abstract class GraphGlyph extends Glyph {
 	public boolean TIME_DRAWING = false;
 
 	// THICK_OUTLINE: should the selection outline be thick?
@@ -782,21 +782,6 @@ public class GraphGlyph extends Glyph {
 		}
 		return y_pixels;
 	}
-
-	//  public double getGraphMinPixel(ViewI view) {
-	//    double offset = scratch_trans.getOffsetY();
-	//    coord.y = offset; // visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
-	//    view.transformToPixels(coord, scratch_point);
-	//    return scratch_point.y;
-	//  }
-	//
-	//  public int getGraphMaxPixel(ViewI view) {
-	//    double offset = scratch_trans.getOffsetY();
-	//    double yscale = scratch_trans.getScaleY();
-	//    coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
-	//    view.transformToPixels(coord, scratch_point);
-	//    return scratch_point.y;
-	//  }
 
 	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
 	 *  the outline is usually drawn a pixel or two larger than the glyph.

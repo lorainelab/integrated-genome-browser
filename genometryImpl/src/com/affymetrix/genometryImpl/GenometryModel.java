@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import java.util.*;
 
-public class GenometryModel {
+public abstract class GenometryModel {
 
 	/**
 	 * Ann's comment: There is a lot of logic related to selection of
@@ -32,9 +32,6 @@ public class GenometryModel {
 	 * BioSeq objects can be selected simultaneously. Why? What does
 	 * selection mean in this context?
 	 */
-	/** Creates a new instance of GenometryModel */
-	public GenometryModel() {
-	}
 
 	static public boolean DEBUG = false;
 
@@ -118,21 +115,21 @@ public class GenometryModel {
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
 	}
 
-	public void removeSeqGroup(AnnotatedSeqGroup group) {
+	/*public void removeSeqGroup(AnnotatedSeqGroup group) {
 		seq_groups.remove(group.getID());
 		for (BioSeq seq : group.getSeqList()) {
 			seq2selectedSymsHash.remove(seq);
 		}
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
-	}
+	}*/
 
-	public void removeAllSeqGroups() {
+	/*public void removeAllSeqGroups() {
 		this.setSelectedSeq(null);
 		this.setSelectedSeqGroup(null);
 		seq_groups.clear();
 		seq2selectedSymsHash.clear();
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
-	}
+	}*/
 
 	public AnnotatedSeqGroup getSelectedSeqGroup() {
 		return selected_group;
@@ -167,7 +164,7 @@ public class GenometryModel {
 		return group_selection_listeners;
 	}
 
-	void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
+	private void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
 		GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
 		synchronized (group_selection_listeners) {
 			// the "synchronized" block, by itself, doesn't seem to be enough,
@@ -251,7 +248,7 @@ public class GenometryModel {
 		return sym_selection_listeners;
 	}
 
-	void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {
+	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {
 		if (DEBUG) {
 			System.out.println("Firing event: " + syms.size());
 		}
@@ -270,7 +267,7 @@ public class GenometryModel {
 	 *  This may be different from the currently selected BioSeq's, because
 	 *  selection of sequence(s) and symmetries are independent.
 	 */
-	public List<AnnotatedBioSeq> getSequencesWithSelections() {
+	/*public List<AnnotatedBioSeq> getSequencesWithSelections() {
 		Set<AnnotatedBioSeq> sequences = new HashSet<AnnotatedBioSeq>();
 		for (AnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
 			List<SeqSymmetry> list = seq2selectedSymsHash.get(seq);
@@ -279,7 +276,7 @@ public class GenometryModel {
 			}
 		}
 		return new ArrayList<AnnotatedBioSeq>(sequences);
-	}
+	}*/
 
 	/**
 	 *  Sets the selected symmetries.
@@ -327,7 +324,7 @@ public class GenometryModel {
 	 *  @param syms A List of SeqSymmetry objects to select.
 	 *  @return The List of sequences with selections on them after this operation.
 	 */
-	List<MutableAnnotatedBioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {
+	private List<MutableAnnotatedBioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {
 
 		if (DEBUG) {
 			System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
@@ -380,14 +377,14 @@ public class GenometryModel {
 	 *  @param src The object responsible for selecting the sequences.
 	 *  @param seq The MutableAnnotatedBioSeq to select the symmetries for.
 	 */
-	void setSelectedSymmetries(List<SeqSymmetry> syms, Object src, MutableAnnotatedBioSeq seq ) {
+	/*void setSelectedSymmetries(List<SeqSymmetry> syms, Object src, MutableAnnotatedBioSeq seq ) {
 		setSelectedSymmetries(syms, seq);
 		fireSymSelectionEvent(src, syms);
-	}
+	}*/
 
 	// Selects a List of SeqSymmetry objects for a particular BioSeq.
 	// Does not send a selection event.
-	void setSelectedSymmetries(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) {
+	private void setSelectedSymmetries(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) {
 		if (seq == null) { return; }
 		// Should it complain if any of the syms are not on the specified seq?
 		// (This is not an issue since this is not called from outside of this class.)
@@ -417,14 +414,14 @@ public class GenometryModel {
 	 *  Get the list of selected symmetries on the currently selected sequence.
 	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
 	 */
-	public List<SeqSymmetry> getSelectedSymmetriesOnAllSeqs() {
+	/*public List<SeqSymmetry> getSelectedSymmetriesOnAllSeqs() {
 		List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
 		for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
 			result.addAll(list);
 		}
 
 		return result;
-	}
+	}*/
 
 	/**
 	 *  Get the list of selected symmetries on the specified sequence.
@@ -452,7 +449,7 @@ public class GenometryModel {
 	 *  Clears the symmetry selection for every sequence.
 	 *  Does not notifies the selection listeners.
 	 */
-	void clearSelectedSymmetries() {
+	private void clearSelectedSymmetries() {
 		for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
 			list.clear();
 		}

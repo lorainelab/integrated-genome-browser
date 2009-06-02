@@ -11,7 +11,7 @@
             </classpath>
         </nbjpdastart>
         <java classname="com.affymetrix.igb.IGB" fork="true">
-            <jvmarg value="-Xmx1024m"/>
+            <jvmarg line="${igb.jvmargs}"/>
             <arg value="-prefs"/>
             <arg value="${igb}/etc/igb_prefs.xml"/>
             <classpath>
@@ -40,7 +40,7 @@
             </rootspath>
         </nbprofiledirect>
         <java fork="true" classname="com.affymetrix.igb.IGB" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
-            <jvmarg value="-Xmx1024m" />
+            <jvmarg line="${igb.jvmargs}" />
             <jvmarg value="${profiler.info.jvmargs.agent}" />
             <jvmarg line="${profiler.info.jvmargs}"/>
             <arg value="-prefs" />
@@ -69,7 +69,7 @@
             </rootspath>
         </nbprofiledirect>
 				<java fork="true" classname="${profile.class}" jvm="${profiler.info.jvm}" dir="${profiler.session.working.dir}">
-            <jvmarg value="-Xmx1024m" />
+            <jvmarg line="${igb.jvmargs}" />
             <jvmarg value="${profiler.info.jvmargs.agent}" />
             <jvmarg line="${profiler.info.jvmargs}"/>
             <arg value="-prefs" />

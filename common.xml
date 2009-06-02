@@ -44,6 +44,9 @@
 		<!-- OS X and Debian do not appear to have junit in ant's path -->
 		<property name="junit.jar"       value="/usr/share/junit/junit.jar:/usr/share/java/junit4.jar" />
 
+		<!-- Java VM configuration -->
+		<property name="igb.jvmargs" value="-Xms32m -Xmx1024m" />
+
 		<!-- Configuration for pmd -->
 		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />
 		<available classname="net.sourceforge.pmd.cpd.CPDTask" property="have.cpd" />
@@ -56,7 +59,7 @@
 
 	<presetdef name="my.javac">
 		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}">
-			<compilerarg compiler="modern" value="${compiler.args}" />
+			<compilerarg compiler="modern" line="${compiler.args}" />
     </javac>
 	</presetdef>
 

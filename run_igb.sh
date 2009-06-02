@@ -22,8 +22,6 @@ PREFIX=`readlink -f $0`
 PREFIX=`dirname $PREFIX`
 
 # File Locations
-JARDIR="$PREFIX/dist"
-LIBDIR="$PREFIX/ext"
 ICON="$PREFIX/igb/resources/com/affymetrix/igb/igb.gif"
 
 # Do our best to find java
@@ -43,13 +41,14 @@ while (( "$#" )); do
 	shift
 done
 
-# Use 1GiB RAM per default 
+# Use 1GiB RAM as maximum heap size
 echo $VMARGS[*] | grep -q '\-Xmx\|\-mx' || VMARGS[${#VMARGS[*]}]="-Xmx1024m"
+# Use 32MiB as initial heap size
+echo $VMARGS[*] | grep -q '\-Xms\|\-ms' || VMARGS[${#VMARGS[*]}]="-Xms32m"
 
 # Some Apple Specific settings. Should there be a way to override these?
 if [[ `uname -s` == "Darwin" ]]; then
 	VMARGS[${#VMARGS[*]}]="-Dapple.laf.useScreenMenuBar=true"
-	# TODO: Allow spaces in program name
 	VMARGS[${#VMARGS[*]}]="-Xdock:name=Integrated Genome Browser"
 	VMARGS[${#VMARGS[*]}]="-Xdock:icon=$ICON"
 fi

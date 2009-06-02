@@ -168,7 +168,7 @@
 
 	<target name="run" depends="compile" description="run IGB">
 		<java fork="true" classname="com.affymetrix.igb.IGB">
-			<jvmarg value="-Xmx1024m" />
+			<jvmarg line="${igb.jvmargs}" />
 			<arg value="-prefs" />
 			<arg value="${igb}/etc/igb_prefs.xml" />
 			<classpath>

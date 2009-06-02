@@ -162,11 +162,11 @@ public class FastaParserTest {
 			try {
 				testFASTASegment(filename, fasta, expected_fasta, 10, 100);
 			}
-			catch(java.io.UnsupportedEncodingException ex) {
+			catch(java.lang.AssertionError ex) {
 				//System.out.println(ex.toString());
 				return;
 			}
-			fail("Should throw an UnsupportedEncodingException");     
+			fail("Should throw an AssertionError Exception");
 		}
 
 	@Test

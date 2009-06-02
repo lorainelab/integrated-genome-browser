@@ -936,6 +936,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return genome;
 	}
 
+	/**
+	 * Handle a sequence request.
+	 * @param request
+	 * @param response
+	 * @throws java.io.IOException
+	 */
 	private final void handleSequenceRequest(HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 		String path_info = request.getPathInfo();
@@ -1005,13 +1011,15 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 	private final void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
-		if (ranges.size() != 0) {
+		/*if (ranges.size() != 0) {
 			// A ranged request for a bnib.  Not supported.
 			PrintWriter pw = response.getWriter();
 			pw.println("This DAS/2 server does not support ranged " + format + " requests:    ");
 			pw.println(request.getRequestURL().toString());
 			return;
-		}
+		}*/
+
+		// range requests are ignored.  The entire sequence is returned.
 
 		String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".bnib";
 		log.add("seq request mapping to file: " + file_name);
@@ -1034,6 +1042,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
+	 * @param ranges
+	 * @param span
+	 * @param org_name
+	 * @param version_name
+	 * @param seqname
+	 * @param format
+	 * @param response
+	 * @param request
+	 * @throws java.io.IOException
+	 */
+	@Deprecated
 	private final void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
 		throws IOException {
 		String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".fa";

@@ -364,12 +364,21 @@ public final class FastaParser {
 
 	
 
-		// Read FASTA sequence from specified file.
-		// We assume a header of less than 500 characters, terminated by a newline.
-		// We assume exactly one sequence in the FASTA file.
-		// We assume no comment lines.
-		// We assume exactly LINELENGTH nucleotides per line (until the last line), with a carriage return following each line.
-		// Sequence range is specified in interbase format. (See http://www.biodas.org/documents/das2/das2_get.html.)
+	/**Read FASTA sequence from specified file for DAS/2 serving.
+	 * We assume a header of less than 500 characters, terminated by a newline.
+	 * We assume exactly one sequence in the FASTA file.
+	 * We assume no comment lines.
+	 * We assume exactly LINELENGTH nucleotides per line (until the last line), with a carriage return following each line.
+	 * Sequence range is specified in interbase format. (See http://www.biodas.org/documents/das2/das2_get.html.)
+	 *
+	 * @param seqfile
+	 * @param begin_sequence
+	 * @param end_sequence
+	 * @return
+	 * @throws java.io.FileNotFoundException
+	 * @throws java.io.IOException
+	 * @throws java.lang.IllegalArgumentException
+	 */
 		public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
 			throws FileNotFoundException, IOException, IllegalArgumentException {
 
@@ -460,8 +469,8 @@ public final class FastaParser {
 							continue;
 						}
 
-						// What is this character?
-						throw new java.io.UnsupportedEncodingException("Unexpected char at end of line: " + (char)x[0]);
+						// What is this character doing here?
+						throw new java.lang.AssertionError("Unexpected char at end of line: " + (char)x[0] + "\nPlease verify that the FASTA file satisfies DAS/2 format assumptions.");
 					}
 
 					// Read several characters if possible

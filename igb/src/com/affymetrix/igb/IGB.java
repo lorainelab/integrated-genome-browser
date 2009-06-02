@@ -1396,8 +1396,8 @@ public final class IGB extends Application
           return;
         }
         final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
-        final String title = tab_pane.getTitleAt(index);
-        final String tool_tip = tab_pane.getToolTipTextAt(index);
+        //final String title = tab_pane.getTitleAt(index);
+        //final String tool_tip = tab_pane.getToolTipTextAt(index);
         //openCompInWindow(comp, title, tool_tip, null, tab_pane);
         openCompInWindow(comp, tab_pane);
       }
@@ -1406,69 +1406,75 @@ public final class IGB extends Application
   }
 
   private void openCompInWindow(final JComponent comp, final JTabbedPane tab_pane) {
-    final String title;
-    final String display_name;
-    final String tool_tip = comp.getToolTipText();
+		final String title;
+		final String display_name;
+		final String tool_tip = comp.getToolTipText();
 
-    if (comp2plugin.get(comp) instanceof PluginInfo) {
-      PluginInfo pi = comp2plugin.get(comp);
-      title = pi.getPluginName();
-      display_name = pi.getDisplayName();
-    } else {
-      title = comp.getName();
-      display_name = comp.getName();
-    }
+		if (comp2plugin.get(comp) instanceof PluginInfo) {
+			PluginInfo pi = comp2plugin.get(comp);
+			title = pi.getPluginName();
+			display_name = pi.getDisplayName();
+		} else {
+			title = comp.getName();
+			display_name = comp.getName();
+		}
 
-    Image temp_icon = null;
-    if (comp instanceof IPlugin) {
-      IPlugin pv = (IPlugin) comp;
-      ImageIcon image_icon = (ImageIcon) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
-      if (image_icon != null) temp_icon = image_icon.getImage();
-    }
-    if (temp_icon==null) { temp_icon = getIcon(); }
+		Image temp_icon = null;
+		if (comp instanceof IPlugin) {
+			IPlugin pv = (IPlugin) comp;
+			ImageIcon image_icon = (ImageIcon) pv.getPluginProperty(IPlugin.TEXT_KEY_ICON);
+			if (image_icon != null) {
+				temp_icon = image_icon.getImage();
+			}
+		}
+		if (temp_icon == null) {
+			temp_icon = getIcon();
+		}
 
-    // If not already open in a new window, make a new window
-    if (comp2window.get(comp) == null) {
-      tab_pane.remove(comp);
-      tab_pane.validate();
+		// If not already open in a new window, make a new window
+		if (comp2window.get(comp) == null) {
+			tab_pane.remove(comp);
+			tab_pane.validate();
 
-      final JFrame frame = new JFrame(display_name);
-      final Image icon = temp_icon;
-      if (icon != null) { frame.setIconImage(icon); }
-      final Container cont = frame.getContentPane();
-      frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+			final JFrame frame = new JFrame(display_name);
+			final Image icon = temp_icon;
+			if (icon != null) {
+				frame.setIconImage(icon);
+			}
+			final Container cont = frame.getContentPane();
+			frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-      cont.add(comp);
-      comp.setVisible(true);
-      comp2window.put(comp, frame);
-      frame.pack(); // pack() to set frame to its preferred size
+			cont.add(comp);
+			comp.setVisible(true);
+			comp2window.put(comp, frame);
+			frame.pack(); // pack() to set frame to its preferred size
 
-      Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
-      if (pos != null) {
-        UnibrowPrefsUtil.setWindowSize(frame, pos);
-      }
-      frame.setVisible(true);
-      frame.addWindowListener( new WindowAdapter() {
+			Rectangle pos = UnibrowPrefsUtil.retrieveWindowLocation(title, frame.getBounds());
+			if (pos != null) {
+				UnibrowPrefsUtil.setWindowSize(frame, pos);
+			}
+			frame.setVisible(true);
+			frame.addWindowListener(new WindowAdapter() {
+
 				@Override
 				public void windowClosing(WindowEvent evt) {
-            // save the current size into the preferences, so the window
-            // will re-open with this size next time
-            UnibrowPrefsUtil.saveWindowLocation(frame, title);
-	    comp2window.remove(comp);
-	    cont.remove(comp);
-	    cont.validate();
-	    frame.dispose();
-	    tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
-            UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
-            //PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_TAB);
-            JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
-            if (menu_item != null) {
-              menu_item.setSelected(false);
-            }
-	  }
-	});
-    }
-    // extra window already exists, but may not be visible
+					// save the current size into the preferences, so the window
+					// will re-open with this size next time
+					UnibrowPrefsUtil.saveWindowLocation(frame, title);
+					comp2window.remove(comp);
+					cont.remove(comp);
+					cont.validate();
+					frame.dispose();
+					tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
+					UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
+					//PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_TAB);
+					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
+					if (menu_item != null) {
+						menu_item.setSelected(false);
+					}
+				}
+			});
+		} // extra window already exists, but may not be visible
     else {
       DisplayUtils.bringFrameToFront(comp2window.get(comp));
     }

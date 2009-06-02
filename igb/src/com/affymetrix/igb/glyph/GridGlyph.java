@@ -13,8 +13,11 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
+//import com.affymetrix.genoviz.bioviews.*;
 
 public final class GridGlyph extends Glyph {
   double grid_spacing = 0;
@@ -27,11 +30,13 @@ public final class GridGlyph extends Glyph {
   
   public double getGridSpacing() { return grid_spacing; }
 
+	@Override
   public void drawTraversal(ViewI view) {
     coordbox.reshape(view.getCoordBox());
     super.drawTraversal(view);
   }
 
+	@Override
   public void draw(ViewI view) {
     // don't draw unless grid spacing has been set to > 0
     if (grid_spacing <0) { return; }

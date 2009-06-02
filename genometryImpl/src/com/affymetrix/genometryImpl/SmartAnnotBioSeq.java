@@ -423,8 +423,14 @@ public final class SmartAnnotBioSeq
 	}
 
 	public int indexOf(String str, int fromIndex) {
-		// TODO: this will fail if residues_provider is null, so may need to call inside try/catch clause
-		return residues_provider.indexOf(str, fromIndex);
+		if (residues_provider != null) {
+			return residues_provider.indexOf(str, fromIndex);
+		}
+		if (residues != null) {
+			return residues.indexOf(str, fromIndex);
+		}
+		System.out.println("WARNING: Could not find residues for " + str);
+		return -1;
 	}
 
 

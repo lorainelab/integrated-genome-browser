@@ -41,68 +41,68 @@ import com.affymetrix.igb.stylesheet.PropertyMap;
  */
 public class AnnotStyle implements IAnnotStyleExtended {
 
-  static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
+  private static Preferences tiers_root_node = UnibrowPrefsUtil.getTopNode().node("tiers");
 
   // A pattern that matches two or more slash "/" characters.
   // A preference node name can't contain two slashes, nor end with a slash.
-  static final Pattern multiple_slashes = Pattern.compile("/{2,}");
+  private static final Pattern multiple_slashes = Pattern.compile("/{2,}");
 
-  static public final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
+  private static final String NAME_OF_DEFAULT_INSTANCE = "* DEFAULT *";
 
   // The String constants named PREF_* are for use in the persistent preferences
   // They are not displayed to users, and should never change
   //static final String PREF_SHOW = "Show";
-  static final String PREF_SEPARATE = "Separate Tiers";
-  static final String PREF_COLLAPSED = "Collapsed";
-  static final String PREF_MAX_DEPTH = "Max Depth";
-  static final String PREF_COLOR = "Color";
-  static final String PREF_BACKGROUND = "Background";
-  static final String PREF_HUMAN_NAME = "Human Name";
-  static final String PREF_LABEL_FIELD = "Label Field";
-  static final String PREF_GLYPH_DEPTH = "Glyph Depth";
-  static final String PREF_HEIGHT = "Height"; // height per glyph? // linear transform value?
+  private static final String PREF_SEPARATE = "Separate Tiers";
+  private static final String PREF_COLLAPSED = "Collapsed";
+  private static final String PREF_MAX_DEPTH = "Max Depth";
+  private static final String PREF_COLOR = "Color";
+  private static final String PREF_BACKGROUND = "Background";
+  private static final String PREF_HUMAN_NAME = "Human Name";
+  private static final String PREF_LABEL_FIELD = "Label Field";
+  private static final String PREF_GLYPH_DEPTH = "Glyph Depth";
+  private static final String PREF_HEIGHT = "Height"; // height per glyph? // linear transform value?
 
-  static final boolean default_show = true;
-  static final boolean default_separate = true;
-  static final boolean default_collapsed = false;
-  static final boolean default_expandable = true;
-  static final int default_max_depth = 4;
+  private static final boolean default_show = true;
+  private static final boolean default_separate = true;
+  private static final boolean default_collapsed = false;
+  private static final boolean default_expandable = true;
+  private static final int default_max_depth = 10;
   //  static final Color default_color = Color.GREEN;
-  static final Color default_color = Color.CYAN;
-  static final Color default_background = Color.BLACK;
-  static final String default_label_field = "";
-  static final int default_glyph_depth = 2;
-  static final double default_height = 20.0;
-  static final double default_y = 0.0;
+  private static final Color default_color = Color.CYAN;
+  private static final Color default_background = Color.BLACK;
+  private static final String default_label_field = "";
+  private static final int default_glyph_depth = 2;
+  private static final double default_height = 20.0;
+  private static final double default_y = 0.0;
   public static final int MAX_MAX_DEPTH = Integer.MAX_VALUE;
 
   public static boolean DEBUG = false;
   public static boolean DEBUG_NODE_PUTS = false;
   // whether to create and use a java Preferences node object for this instance
-  boolean is_persistent = true;
+  private boolean is_persistent = true;
 
-  boolean show = default_show;
-  boolean separate = default_separate;
-  boolean collapsed = default_collapsed;
-  boolean expandable = default_expandable;
-  int max_depth = default_max_depth;
-  Color color = default_color;
-  Color background = default_background;
-  String label_field = default_label_field;
-  int glyph_depth = default_glyph_depth;
-  double height = default_height;
-  double y = default_y;
-  String url = null;
+  private boolean show = default_show;
+  private boolean separate = default_separate;
+  private boolean collapsed = default_collapsed;
+  private boolean expandable = default_expandable;
+  private int max_depth = default_max_depth;
+  private Color color = default_color;
+  private Color background = default_background;
+  private String label_field = default_label_field;
+  private int glyph_depth = default_glyph_depth;
+  private double height = default_height;
+  private double y = default_y;
+  private String url = null;
 
-  boolean color_by_score = false;
-  HeatMap custom_heatmap = null;
+  private boolean color_by_score = false;
+  private HeatMap custom_heatmap = null;
 
-  String unique_name;
-  String human_name;
+  private String unique_name;
+  private String human_name;
 
-  Preferences node;
+  private Preferences node;
 
-  static Map<String,AnnotStyle> static_map = new LinkedHashMap<String,AnnotStyle>();
+  private static Map<String,AnnotStyle> static_map = new LinkedHashMap<String,AnnotStyle>();
 
   public static AnnotStyle getInstance(String unique_name) {
     return getInstance(unique_name, true);

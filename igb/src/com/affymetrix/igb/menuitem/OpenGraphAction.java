@@ -27,7 +27,6 @@ import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genometryImpl.parsers.Streamer;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -256,7 +255,7 @@ public final class OpenGraphAction extends AbstractAction {
       for (int i=0; i<filters.length; i++) {
         if (filters[i] instanceof UniFileFilter) {
           UniFileFilter uff = (UniFileFilter) filters[i];
-          uff.addCompressionEndings(Streamer.compression_endings);
+          uff.addCompressionEndings(GeneralUtils.compression_endings);
           all_known_endings.addAll(uff.getExtensions());
         }
       }
@@ -264,7 +263,7 @@ public final class OpenGraphAction extends AbstractAction {
         all_known_endings.toArray(new String[all_known_endings.size()]),
         "Known Graph Types");
       all_known_types.setExtensionListInDescription(false);
-      all_known_types.addCompressionEndings(Streamer.compression_endings);
+      all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
       chooser.addChoosableFileFilter(all_known_types);
       //chooser.setFileFilter(filters[0]); // set to "All Files"
     }

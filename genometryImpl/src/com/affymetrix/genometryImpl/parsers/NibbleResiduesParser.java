@@ -207,7 +207,7 @@ public final class NibbleResiduesParser {
 			}
 			File fil = new File(infile_name);
 			StringBuffer sb = new StringBuffer();
-			InputStream isr = Streamer.getInputStream(fil, sb);
+			InputStream isr = GeneralUtils.getInputStream(fil, sb);
 
 			// if file is gzipped or zipped, then fil.length() will not really be the max_seq_length,
 			//   but that's okay because the parse() method only uses it as a suggestion

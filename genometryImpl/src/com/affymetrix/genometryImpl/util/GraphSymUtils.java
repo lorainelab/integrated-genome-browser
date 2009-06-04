@@ -23,7 +23,6 @@ import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.Streamer;
 import com.affymetrix.genometryImpl.parsers.SgrParser;
 import com.affymetrix.genometryImpl.parsers.BarParser;
 import com.affymetrix.genometryImpl.parsers.GrParser;
@@ -199,7 +198,7 @@ public final class GraphSymUtils {
 	 *  before testing the name.
 	 */
 	public static boolean isAGraphFilename(String name) {
-		String lc = Streamer.stripEndings(name).toLowerCase();
+		String lc = GeneralUtils.stripEndings(name).toLowerCase();
 		return (
 				lc.endsWith(".gr") ||
 				lc.endsWith(".bgr") ||
@@ -231,7 +230,7 @@ public final class GraphSymUtils {
 	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
 		List<GraphSym> grafs = null;
 		StringBuffer stripped_name = new StringBuffer();
-		InputStream newstr = Streamer.unzipStream(istr, stream_name, stripped_name);
+		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
 		String sname = stripped_name.toString().toLowerCase();
 
 		if (seq == null) {

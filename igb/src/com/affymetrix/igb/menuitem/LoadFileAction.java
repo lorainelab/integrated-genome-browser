@@ -39,8 +39,9 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.util.GeneralUtils;
+
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import org.xml.sax.SAXException;
@@ -125,7 +126,7 @@ public final class LoadFileAction {
       for (int i=0; i<filters.length; i++) {
         if (filters[i] instanceof UniFileFilter) {
           UniFileFilter uff = (UniFileFilter) filters[i];
-          uff.addCompressionEndings(Streamer.compression_endings);
+          uff.addCompressionEndings(GeneralUtils.compression_endings);
           all_known_endings.addAll(uff.getExtensions());
         }
       }
@@ -133,7 +134,7 @@ public final class LoadFileAction {
         all_known_endings.toArray(new String[all_known_endings.size()]),
         "Known Types");
       all_known_types.setExtensionListInDescription(false);
-      all_known_types.addCompressionEndings(Streamer.compression_endings);
+      all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
       chooser.addChoosableFileFilter(all_known_types);
       chooser.setFileFilter(all_known_types);
     }
@@ -209,7 +210,7 @@ public final class LoadFileAction {
 			//    a parse() method that takes the file name as an argument, no method to parse from
 			//    an inputstream (ChpParser uses Affymetrix Fusion SDK for actual file parsing)
 			//
-			// Also cannot handle compressed chp files, so don't bother with the Streamer class.
+			// Also cannot handle compressed chp files
 			if (annotfile.getName().toLowerCase().endsWith(".chp")) {
 				//Application.getSingleton().logDebug("%%%%% received load request for CHP file: " + annotfile.getPath());
 				List results = ChpParser.parse(annotfile.getPath());
@@ -218,7 +219,7 @@ public final class LoadFileAction {
 				//int file_length = (int)annotfile.length();
 				//fistr = new FileInputStream(annotfile);
 				StringBuffer sb = new StringBuffer();
-				fistr = Streamer.getInputStream(annotfile, sb);
+				fistr = GeneralUtils.getInputStream(annotfile, sb);
 				String stripped_name = sb.toString();
 				//int pindex = stripped_name.lastIndexOf(".");
 				//String suffix = null;
@@ -311,8 +312,8 @@ public final class LoadFileAction {
   /** Loads from an InputStream.
    *  Detects the type of file based on the filename ending of the
    *  stream_name parameter, for example ".dasxml".
-   *  The stream will be passed through uncompression routines in the Streamer
-   *  class if necessary.
+   *  The stream will be passed through uncompression routines
+   *  if necessary.
    */
   public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, InputStream instr,
         String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, MutableAnnotatedBioSeq input_seq)
@@ -330,7 +331,7 @@ public final class LoadFileAction {
 
       try {
           StringBuffer stripped_name = new StringBuffer();
-          str = Streamer.unzipStream(instr, stream_name, stripped_name);
+          str = GeneralUtils.unzipStream(instr, stream_name, stripped_name);
           stream_name = stripped_name.toString();
 
           if (str instanceof BufferedInputStream) {

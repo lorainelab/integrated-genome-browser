@@ -69,9 +69,9 @@ public final class FastaParser {
 				StringBuffer buf = new StringBuffer();
 				while (br.ready()) {
 					String line = br.readLine();
-					if (line == null) {
+					if (line == null || line.length() == 0) {
 						continue;
-					}  // skip null lines
+					}  // skip null and empty lines
 
 					if (line.charAt(0) == ';') {
 						continue;
@@ -148,9 +148,9 @@ public final class FastaParser {
 				StringBuffer buf = new StringBuffer();
 				while (br.ready()) {
 					String line = br.readLine();
-					if (line == null) {
+					if (line == null || line.length() == 0) {
 						continue;
-					}  // skip null lines
+					}  // skip null and empty lines
 
 					if (line.charAt(0) == ';') {
 						continue;
@@ -271,7 +271,7 @@ public final class FastaParser {
 			}
 			while (br.ready()) {
 				String line = br.readLine();
-				if (line == null) { continue; }  // skip null lines
+				if (line == null || line.length()==0) { continue; }  // skip null and empty lines
 
 				if (line.startsWith(";")) { continue; } // lines beginning with ";" are comments
 				// see http://en.wikipedia.org/wiki/Fasta_format

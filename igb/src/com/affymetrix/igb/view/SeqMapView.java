@@ -414,7 +414,6 @@ public class SeqMapView extends JPanel
                 //TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
                 tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
             }
-//      tier_manager.setTierSorter(new RealmBasedTierSorter(tier_manager));
         }
 
         seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
@@ -2656,7 +2655,8 @@ public class SeqMapView extends JPanel
      */
     public void symSelectionChanged(SymSelectionEvent evt) {
         Object src = evt.getSource();
-        String src_id = ObjectUtils.objString(src);
+				String src_id = src.getClass().getName() + "@" + Integer.toHexString(src.hashCode());
+
         // ignore self-generated xym selection -- already handled internally
         if (src == this) {
             if (Application.DEBUG_EVENTS) {

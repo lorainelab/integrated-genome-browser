@@ -15,12 +15,12 @@ package com.affymetrix.igb.util;
 
 public final class ObjectUtils {
 
-  public static String objString(Object obj) {
+  /*public static String objString(Object obj) {
     return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
-  }
+  }*/
 
-  public static String objToString(Object obj) { return objString(obj); }
-  public static String objectToString(Object obj) { return objString(obj); }
+  //public static String objToString(Object obj) { return objString(obj); }
+  //public static String objectToString(Object obj) { return objString(obj); }
 
   
   /**

@@ -20,15 +20,18 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public final class KeyStrokeEditPanel extends JPanel {
-  static final boolean DEBUG = false;
+  private static final boolean DEBUG = false;
   
-  JTextField key_field = new JTextField(20);
-  JLabel key_label = new JLabel("Type a shortcut: " );
-  JButton apply_button = new JButton("Apply this shortcut");
-  JButton clear_button = new JButton("Clear this shortcut");
+  private final JTextField key_field = new JTextField(20);
+  private final JLabel key_label = new JLabel("Type a shortcut: " );
+  private final JButton apply_button = new JButton("Apply this shortcut");
+  private final JButton clear_button = new JButton("Clear this shortcut");
   
   private int key_code;
   private int modifiers;
+
+	private Preferences the_node = null;
+  private String the_key = null;
   
   /** Creates a new instance of KeyStrokesView */
   public KeyStrokeEditPanel() {
@@ -87,10 +90,9 @@ public final class KeyStrokeEditPanel extends JPanel {
     setEnabled(false);
   }
   
-  Preferences the_node = null;
-  String the_key = null;
+
   
-  public void setPreferenceKey(Preferences node, String key, String def_value) {
+  void setPreferenceKey(Preferences node, String key, String def_value) {
     this.the_node = node;
     this.the_key = key;
     if (this.the_node == null || this.the_key == null) {
@@ -106,13 +108,14 @@ public final class KeyStrokeEditPanel extends JPanel {
     key_field.getToolTipText();
   }
   
+	@Override
   public void setEnabled(boolean b) {
     apply_button.setEnabled(b);
     clear_button.setEnabled(b);
     key_field.setEnabled(b);
   }
   
-  public void applyAction() {
+  private void applyAction() {
     if (the_node == null || the_key == null) {
       // shouldn't happen
       ErrorHandler.errorPanel("ERROR", "No shortcut command selected");
@@ -149,7 +152,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     }
   }
   
-  public void clearAction() {
+  private void clearAction() {
     if (the_node == null || the_key == null) {
       // shouldn't happen
       ErrorHandler.errorPanel("ERROR", "No shortcut command selected");
@@ -161,7 +164,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   }
   
   /** Returns true if the primary key code is control, or alt, etc. */
-  boolean isModifierKey(KeyStroke key) {
+  private boolean isModifierKey(KeyStroke key) {
     int key_code = key.getKeyCode();
     return (
       (key_code == KeyEvent.VK_ALT) || 
@@ -179,17 +182,13 @@ public final class KeyStrokeEditPanel extends JPanel {
     return KeyStroke.getKeyStroke(key_code, modifiers);
   }
   
-//  public java.awt.Dimension getPreferredSize() {
-//    return new java.awt.Dimension(300, 100);
-//  }
-  
   /**
    *  Convert a KeyStroke to a String in the same format used
    *  by KeyStroke.getKeyStroke(String).
    *  Modified, originally from the Java Developer's Almanac 1.4.
    *  http://javaalmanac.com/egs/javax.swing/Key2Str.html
    */
-  public static String keyStroke2String(KeyStroke key) {
+  private static String keyStroke2String(KeyStroke key) {
     StringBuffer s = new StringBuffer(50);
     int m = key.getModifiers();
     
@@ -218,27 +217,6 @@ public final class KeyStrokeEditPanel extends JPanel {
       s.append("shift ");
     }
     
-    // in our case, we only care about "pressed" keys, and don't
-    // need to explicitly write that
-        /*
-        switch (key.getKeyEventType()) {
-        case KeyEvent.KEY_TYPED:
-            s.append("typed ");
-            s.append(key.getKeyChar() + " ");
-            break;
-        case KeyEvent.KEY_PRESSED:
-            s.append("pressed ");
-            s.append(getKeyText(key.getKeyCode()) + " ");
-            break;
-        case KeyEvent.KEY_RELEASED:
-            s.append("released ");
-            s.append(getKeyText(key.getKeyCode()) + " ");
-            break;
-        default:
-            s.append("unknown-event-type ");
-            break;
-        }
-         */
     s.append(getKeyText(key.getKeyCode()));
     
     return s.toString();
@@ -248,7 +226,7 @@ public final class KeyStrokeEditPanel extends JPanel {
    *  From the Java Developer's Almanac 1.4.
    *  http://javaalmanac.com/egs/javax.swing/Key2Str.html
    */
-  public static String getKeyText(int keyCode) {
+  private static String getKeyText(int keyCode) {
     if (keyCode >= KeyEvent.VK_0 && keyCode <= KeyEvent.VK_9 ||
     keyCode >= KeyEvent.VK_A && keyCode <= KeyEvent.VK_Z) {
       return String.valueOf((char)keyCode);
@@ -416,7 +394,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   }
 
   /** A main method for testing. */
-  public static void main(String[] args) throws Exception {
+  /*public static void main(String[] args) throws Exception {
     KeyStrokeEditPanel p = new KeyStrokeEditPanel();
     p.setEnabled(true);
     
@@ -432,6 +410,6 @@ public final class KeyStrokeEditPanel extends JPanel {
       }
     }
     );
-  }
+  }*/
   
 }

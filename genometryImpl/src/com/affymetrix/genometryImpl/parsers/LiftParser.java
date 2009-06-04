@@ -112,7 +112,7 @@ public final class LiftParser {
 				// experimenting with constructing virtual sequences by using chromosomes as contigs
 				SmartAnnotBioSeq contig = seq_group.getSeq(contig_name);
 				if (contig == null) {
-					contig = new SmartAnnotBioSeq(contig_name, contig.getVersion(), match_length);
+					contig = new SmartAnnotBioSeq(contig_name, "", match_length);
 				}
 
 				contig_count++;

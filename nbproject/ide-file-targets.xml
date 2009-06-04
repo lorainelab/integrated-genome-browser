@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir=".." name="IGB-IDE">
     <import file="../build.xml"/>
-    <target name="run-selected-file-in-src" depends="demos">
+    <target depends="demos" name="run-selected-file-in-src">
         <fail unless="run.class">Must set property 'run.class'</fail>
         <java classname="${run.class}" failonerror="true" fork="true">
             <classpath>
-                <pathelement path="genoviz_sdk/demo" />
-                <fileset dir="${lib.dir}" includes="*.jar" />
+                <pathelement path="genoviz_sdk/demo"/>
+                <fileset dir="${lib.dir}" includes="*.jar"/>
                 <dirset dir="${basedir}">
-                    <include name="*/build" />
+                    <include name="*/build"/>
                 </dirset>
+            </classpath>
+        </java>
+    </target>
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#runsingle) -->
+    <target name="run-selected-file-in-src">
+        <fail unless="run.class">Must set property 'run.class'</fail>
+        <ant antfile="build.xml" inheritall="false" target="compile"/>
+        <java classname="${run.class}" failonerror="true" fork="true">
+            <classpath>
+                <pathelement path="ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genoviz_sdk/src:genometry/src:genometryImpl/src"/>
+                <pathelement location="dist/das2server.jar"/>
             </classpath>
         </java>
     </target>

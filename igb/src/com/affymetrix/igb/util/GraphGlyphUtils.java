@@ -87,7 +87,7 @@ public final class GraphGlyphUtils {
    */
   public static boolean checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
     boolean changed_coords = false;
-    if (gl.getGraphState().getFloatGraph() == true) {
+    if (gl.getGraphState().getFloatGraph()) {
       Rectangle mapbox = map.getView().getPixelBox();
       Rectangle2D gbox = gl.getCoordBox();
       if (gbox.y < mapbox.y) {

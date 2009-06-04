@@ -122,7 +122,7 @@ public final class MaxGapThresholder extends JPanel
           all_have_thresh_on = gl.getShowThreshold();
         } else {
           all_have_same_thresh = all_have_same_thresh && (this_thresh == first_thresh);
-          all_have_thresh_on &= gl.getShowThreshold();
+          all_have_thresh_on = all_have_thresh_on && gl.getShowThreshold();
         }
       }
       maxgap_thresh = newthresh / gcount;

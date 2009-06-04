@@ -322,6 +322,7 @@ public class SeqMapView extends JPanel
                     List graphs = collectGraphs();
                     boolean b = false;
                     for (int i = 0; i < graphs.size(); i++) {
+											// checkPixelBounds has effect on object!
                         b |= GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
                     }
                     if (b) {

@@ -837,7 +837,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
       Iterator iter = dragging_paths.iterator();
       while (iter.hasNext() && forbidden==false) {
         TreePath tp = (TreePath) iter.next();
-        forbidden |= (tp.equals(path) || tp.isDescendant(path));
+        forbidden = forbidden || (tp.equals(path) || tp.isDescendant(path));
       }
       return !(forbidden);
     }

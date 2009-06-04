@@ -117,8 +117,8 @@ public final class MinRunThresholder extends JPanel
           all_have_same_min_run = true;
           all_have_thresh_on = gl.getShowThreshold();
         } else {
-          all_have_same_min_run &= (this_min_run == first_min_run);
-          all_have_thresh_on &= gl.getShowThreshold();
+          all_have_same_min_run = all_have_same_min_run && (this_min_run == first_min_run);
+          all_have_thresh_on = all_have_thresh_on && gl.getShowThreshold();
         }
       }
       minrun_thresh = newthresh / gcount;

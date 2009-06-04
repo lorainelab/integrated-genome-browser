@@ -384,7 +384,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
             this.before.width = cb.width;
             this.before.height = cb.height;
             moveToAvoid(child, sibling, movetype);
-            childMoved |= ! before.equals(child.getCoordBox()); 
+            childMoved = childMoved || ! before.equals(child.getCoordBox());
         }
       }
     }

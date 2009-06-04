@@ -702,14 +702,14 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       IAnnotStyle style = glyph.getAnnotStyle();
       if (style instanceof IAnnotStyleExtended) {
         IAnnotStyleExtended astyle = (IAnnotStyleExtended) style;
-        any_are_color_on |= astyle.getColorByScore();
-        any_are_color_off |= (! astyle.getColorByScore());
-        any_are_separate_tiers |= astyle.getSeparate();
-        any_are_single_tier |= (! astyle.getSeparate());
+        any_are_color_on = any_are_color_on || astyle.getColorByScore();
+        any_are_color_off = any_are_color_off || (! astyle.getColorByScore());
+        any_are_separate_tiers = any_are_separate_tiers || astyle.getSeparate();
+        any_are_single_tier = any_are_single_tier || (! astyle.getSeparate());
       }
       if (style.getExpandable()) {
-        any_are_collapsed |= style.getCollapsed();
-        any_are_expanded |= ! style.getCollapsed();
+        any_are_collapsed = any_are_collapsed || style.getCollapsed();
+        any_are_expanded = any_are_expanded || ! style.getCollapsed();
       }
     }
 

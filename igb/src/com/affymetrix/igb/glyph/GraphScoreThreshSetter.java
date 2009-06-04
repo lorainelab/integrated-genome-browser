@@ -288,10 +288,10 @@ public final class GraphScoreThreshSetter extends JPanel
 			gcount = graphs.size();
 			for (int i = 1; i < gcount; i++) {
 				SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
-				show_thresholds_match &= (first_glyph.getShowThreshold() == sggl.getShowThreshold());
-				thresh_directions_match &= (first_glyph.getThresholdDirection() == sggl.getThresholdDirection());
-				thresh_starts_match &= (first_glyph.getThreshStartShift() == sggl.getThreshStartShift());
-				thresh_ends_match &= (first_glyph.getThreshEndShift() == sggl.getThreshEndShift());
+				show_thresholds_match = show_thresholds_match && (first_glyph.getShowThreshold() == sggl.getShowThreshold());
+				thresh_directions_match = thresh_directions_match && (first_glyph.getThresholdDirection() == sggl.getThresholdDirection());
+				thresh_starts_match = thresh_starts_match && (first_glyph.getThreshStartShift() == sggl.getThreshStartShift());
+				thresh_ends_match = thresh_ends_match && (first_glyph.getThreshEndShift() == sggl.getThreshEndShift());
 			}
 
 			if (show_thresholds_match) {

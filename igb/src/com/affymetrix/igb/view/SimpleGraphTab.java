@@ -73,6 +73,10 @@ public final class SimpleGraphTab extends JPanel
 	ButtonGroup stylegroup = new ButtonGroup();
 	JButton colorB = new JButton("Color");
 	JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
+
+	private	List<GraphSym> grafs = new ArrayList<GraphSym>();
+	private List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+
 	public Action select_all_graphs_action = new AbstractAction("Select All Graphs") {
 
 		public void actionPerformed(ActionEvent e) {
@@ -286,8 +290,7 @@ public final class SimpleGraphTab extends JPanel
 			but.setEnabled(b);
 		}
 	}
-	List grafs = new ArrayList();
-	List glyphs = new ArrayList();
+
 
 	public void symSelectionChanged(SymSelectionEvent evt) {
 		List selected_syms = evt.getSelectedSyms();
@@ -352,7 +355,7 @@ public final class SimpleGraphTab extends JPanel
 		int graph_style = -1;
 		HeatMap hm = null;
 		if (!glyphs.isEmpty()) {
-			first_glyph = (GraphGlyph) glyphs.get(0);
+			first_glyph = glyphs.get(0);
 			graph_style = first_glyph.getGraphStyle();
 			if (graph_style == GraphStateI.MAX_HEAT_MAP) {
 				hm = first_glyph.getHeatMap();
@@ -370,9 +373,7 @@ public final class SimpleGraphTab extends JPanel
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (int i = 1; i < num_glyphs; i++) {
-			GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-
+		for (GraphGlyph gl : glyphs) {
 			all_are_floating = all_are_floating && gl.getGraphState().getFloatGraph();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
@@ -397,7 +398,7 @@ public final class SimpleGraphTab extends JPanel
 		if (num_glyphs == 0) {
 			selected_graphs_label.setText("No graphs selected");
 		} else if (num_glyphs == 1) {
-			GraphSym graf_0 = (GraphSym) grafs.get(0);
+			GraphSym graf_0 = grafs.get(0);
 			selected_graphs_label.setText(graf_0.getGraphName());
 		} else {
 			selected_graphs_label.setText(num_glyphs + " graphs selected");
@@ -486,7 +487,7 @@ public final class SimpleGraphTab extends JPanel
 		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		SimpleGraphTab graph_tab = new SimpleGraphTab();
 		JFrame fr = new JFrame();
 		fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -494,7 +495,7 @@ public final class SimpleGraphTab extends JPanel
 		cpan.add(graph_tab);
 		fr.pack();
 		fr.setVisible(true);
-	}
+	}*/
 
 	class GraphStyleSetter implements ActionListener {
 
@@ -515,15 +516,13 @@ public final class SimpleGraphTab extends JPanel
 			Runnable r = new Runnable() {
 
 				public void run() {
-					GraphGlyph first_glyph = (GraphGlyph) glyphs.get(0);
+					GraphGlyph first_glyph = glyphs.get(0);
 					if (style == GraphStateI.MAX_HEAT_MAP) {
 						// set to heat map FIRST so that getHeatMap() below will return default map instead of null
 						first_glyph.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
 					}
-					HeatMap hm = ((GraphGlyph) glyphs.get(0)).getHeatMap();
-					//          for (int i=0; i<grafs.size(); i++) {
-					for (int i = 0; i < glyphs.size(); i++) {
-						GraphGlyph sggl = (GraphGlyph) glyphs.get(i);
+					HeatMap hm = (glyphs.get(0)).getHeatMap();
+					for (GraphGlyph sggl : glyphs) {
 						sggl.setShowGraph(true);
 						sggl.setGraphStyle(style); // leave the heat map whatever it was
 						if ((style == GraphStateI.MAX_HEAT_MAP) && (hm != sggl.getHeatMap())) {
@@ -551,7 +550,7 @@ public final class SimpleGraphTab extends JPanel
 
 	void updateViewer() {
 		final SeqMapView current_viewer = gviewer;
-		final List previous_graph_syms = new ArrayList(grafs);
+		final List<GraphSym> previous_graph_syms = new ArrayList<GraphSym>(grafs);
 		// set selections to empty so that options get turned off
 		resetSelectedGraphGlyphs(Collections.EMPTY_LIST);
 		SwingUtilities.invokeLater(new Runnable() {
@@ -575,8 +574,7 @@ public final class SimpleGraphTab extends JPanel
 				HeatMap hm = HeatMap.getStandardHeatMap(name);
 
 				if (hm != null) {
-					for (int i = 0; i < glyphs.size(); i++) {
-						GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+					for (GraphGlyph gl : glyphs) {
 						gl.setShowGraph(true);
 						gl.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
 						gl.setHeatMap(hm);
@@ -606,9 +604,7 @@ public final class SimpleGraphTab extends JPanel
 
 			AffyTieredMap map = gviewer.getSeqMap();
 
-			for (int i = 0; i < glyphs.size(); i++) {
-				GraphGlyph gl = (GraphGlyph) glyphs.get(i);
-
+			for (GraphGlyph gl : glyphs) {
 				Rectangle2D cbox = gl.getCoordBox();
 				gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
@@ -812,7 +808,7 @@ public final class SimpleGraphTab extends JPanel
 
 			// If any of them already has a combo style, use that one
 			for (int i = 0; i < gcount && combo_style == null; i++) {
-				GraphSym gsym = (GraphSym) grafs.get(i);
+				GraphSym gsym = grafs.get(i);
 				combo_style = gsym.getGraphState().getComboStyle();
 			}
 			// otherwise, construct a new combo style
@@ -825,8 +821,7 @@ public final class SimpleGraphTab extends JPanel
 			//combo_style.setHeight(5); // just use the default height
 
 			// Now apply that combo style to all the selected graphs
-			for (int i = 0; i < gcount; i++) {
-				GraphSym gsym = (GraphSym) grafs.get(i);
+			for (GraphSym gsym : grafs) {
 				GraphStateI gstate = gsym.getGraphState();
 				gstate.setComboStyle(combo_style);
 				gstate.getTierStyle().setHeight(combo_style.getHeight());
@@ -840,16 +835,12 @@ public final class SimpleGraphTab extends JPanel
 		 *  combo state of each graph's state to null.
 		 */
 		void splitGraphs() {
-			int gcount = grafs.size();
-
-			if (gcount == 0) {
+			if (grafs.isEmpty()) {
 				return;
 			}
 
-			for (int i = 0; i < gcount; i++) {
-				GraphSym gsym = (GraphSym) grafs.get(i);
+			for (GraphSym gsym : grafs) {
 				GraphStateI gstate = gsym.getGraphState();
-
 				gstate.setComboStyle(null);
 
 				// For simplicity, set the floating state of all new tiers to false.
@@ -861,8 +852,8 @@ public final class SimpleGraphTab extends JPanel
 
 		public void graphArithmetic(String operation) {
 			if (glyphs.size() == 2) {
-				GraphGlyph graphA = (GraphGlyph) glyphs.get(0);
-				GraphGlyph graphB = (GraphGlyph) glyphs.get(1);
+				GraphGlyph graphA = glyphs.get(0);
+				GraphGlyph graphB = glyphs.get(1);
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
 
 				if (newsym != null) {
@@ -879,16 +870,14 @@ public final class SimpleGraphTab extends JPanel
 		}
 
 		void setShowAxis(boolean b) {
-			for (int i = 0; i < glyphs.size(); i++) {
-				GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+			for (GraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
 			}
 			gviewer.getSeqMap().updateWidget();
 		}
 
 		void setShowLabels(boolean b) {
-			for (int i = 0; i < glyphs.size(); i++) {
-				GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+			for (GraphGlyph gl : glyphs) {
 				gl.setShowLabel(b);
 			}
 			gviewer.getSeqMap().updateWidget();
@@ -900,17 +889,16 @@ public final class SimpleGraphTab extends JPanel
 			FloatTransformer trans = (FloatTransformer) name2transform.get(selection);
 			Timer tim = new Timer();
 			tim.start();
-			List newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
+			List<GraphSym> newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
 			System.out.println("time to transform graph: " + tim.read() / 1000f);
 			if (!newgrafs.isEmpty()) {
 				updateViewer();
 			}
 		}
 
-		void floatGraphs(boolean do_float) {
+		private void floatGraphs(boolean do_float) {
 			boolean something_changed = false;
-			for (int i = 0; i < glyphs.size(); i++) {
-				GraphGlyph gl = (GraphGlyph) glyphs.get(i);
+			for (GraphGlyph gl : glyphs) {
 				GraphStateI gstate = gl.getGraphState();
 				if (gstate.getComboStyle() != null) {
 					gstate.setComboStyle(null);

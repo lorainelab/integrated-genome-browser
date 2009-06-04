@@ -1726,9 +1726,7 @@ public class SeqMapView extends JPanel
             clearSelection();
         }
 
-        int symcount = sym_list.size();
-        for (int i = 0; i < symcount; i++) {
-            SeqSymmetry sym = sym_list.get(i);
+				for (SeqSymmetry sym : sym_list) {
             // currently assuming 1-to-1 mapping of sym to glyph
             GlyphI gl = seqmap.getItem(sym);
             if (gl != null) {
@@ -2195,49 +2193,6 @@ public class SeqMapView extends JPanel
         setAnnotatedSeq(aseq);
     }
 
-    /** Currently has no effect: the grid is not currently available. */
-    /*public void setGridColor() {
-        if (grid_glyph != null) {
-            Color col = JColorChooser.showDialog(frm,
-                    "Grid Color Chooser", grid_glyph.getColor());
-            if (col != null) {
-                grid_glyph.setColor(col);
-                grid_glyph.setVisibility(true);  // making sure grid visibility is on
-                seqmap.updateWidget();
-            }
-        }
-    }*/
-
-    /** Currently has no effect: the grid is not currently available. */
-    /*public void setGridSpacing() {
-        if (grid_glyph != null) {
-            String str = JOptionPane.showInputDialog(frm,
-                    "Number of bases between grid lines: ", Double.toString(grid_glyph.getGridSpacing()));
-            if (str != null) {
-                try {
-                    double bases = Double.parseDouble(str);
-                    grid_glyph.setGridSpacing(bases);
-                    grid_glyph.setVisibility(true);  // making sure grid visibility is on
-                } catch (Exception ex) {
-                    ErrorHandler.errorPanel("Error setting grid spacing to '" + str + "'", ex);
-                }
-            }
-            seqmap.updateWidget();
-        }
-    }*/
-
-    /** Currently has no effect: the grid is not currently available. */
-    /*public void toggleGrid() {
-        if (grid_glyph != null) {
-            boolean grid_on = grid_glyph.isVisible();
-            grid_on = !grid_on;
-            grid_glyph.setVisibility(grid_on);
-            seqmap.updateWidget();
-        }
-    }*/
-    //  public void autoScroll(int timer_interval, int bases_to_scroll) {
-  
-
     public void toggleAutoScroll() {
         if (map_auto_scroller == null) {
             //      toggleAutoScroll(
@@ -2497,15 +2452,6 @@ public class SeqMapView extends JPanel
         seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
         seqmap.updateWidget();
     }
-
-    /*public void pushView(String remote_address) {
-        Rectangle2D vbox = seqmap.getView().getCoordBox();
-        int start = (int) vbox.x;
-        int end = (int) (vbox.x + vbox.width);
-        SeqSpan span = new SimpleSeqSpan(start, end, aseq);
-        UnibrowControlUtils.sendLocationCommand(remote_address, span);
-        Application.getApplicationLogger().finest("sent span to: " + remote_address);
-    }*/
 
     /** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
     private String getUcscGenomeVersion() {

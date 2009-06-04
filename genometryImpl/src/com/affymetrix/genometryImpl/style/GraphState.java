@@ -69,17 +69,17 @@ public final class GraphState implements GraphStateI {
 
 	// if float_graph, then graph should float above annotations in tiers
 	// if !float_graph, then graph should be in its own tier
-	boolean float_graph = false;
-	boolean show_threshold = false;
-	boolean show_axis = false;
-	boolean show_grid = false;
+	private boolean float_graph = false;
+	private boolean show_threshold = false;
+	private boolean show_axis = false;
+	private boolean show_grid = false;
 
-	boolean show_handle = true;
-	boolean show_graph = true;
-	boolean show_bounds = false;
-	boolean show_label = true;
-	boolean show_label_on_right = false;
-	boolean show_zero_line = true;
+	private boolean show_handle = true;
+	private boolean show_graph = true;
+	private boolean show_bounds = false;
+	private boolean show_label = true;
+	private boolean show_label_on_right = false;
+	private boolean show_zero_line = true;
 
 	HeatMap heat_map;
 	IAnnotStyle tier_style;
@@ -151,7 +151,7 @@ public final class GraphState implements GraphStateI {
 		tier_style.setExpandable(false);
 		tier_style.setHeight(default_graph_height);
 
-		setFloatGraph(false);
+		setFloatGraph(true);
 	}
 
 	/** Copy all the properties, except ID and label, of the given state into this state. */

@@ -149,6 +149,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
     resetThreshLabel();
   }
 
+	@Override
   public void draw(ViewI view) {
     if (NEWDEBUG) {
       System.out.println("called SmartGraphGlyph.draw(), coords = " + coordbox);
@@ -211,7 +212,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
     transition_scale = d;
   }
   
-  protected void drawSmart(ViewI view) {
+  private void drawSmart(ViewI view) {
     // could size cache to just the view's pixelbox, but then may end up creating a
     //   new int array every time the pixelbox changes (which with view damage or
     //   scrolling optimizations turned on could be often)
@@ -1081,36 +1082,6 @@ public final class SmartGraphGlyph extends GraphGlyph {
   public double getThreshStartShift() { return state.getThreshStartShift(); }
   public double getThreshEndShift() { return state.getThreshEndShift(); }
 
-
-  /*
-  public void setPointCoords(int xcoords[], float ycoords[]) {
-    if (xcoords.length <= 0 || ycoords.length <= 0) {
-      return;
-    }
-    super.setPointCoords(xcoords, ycoords);
-    caches.clear();
-    if (CALC_GRAPH_CACHE) {
-      double graph_coord_length = xcoords[xcoords.length-1] - xcoords[0];
-      double avg_bases_per_point = graph_coord_length / ((double)xcoords.length);
-      int bases_per_bin = (int)Math.ceil(avg_bases_per_point * compression_level);
-
-      GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, ycoords);
-      caches.add(graph_cache);
-    }
-    //    if (getMinScoreThreshold() == Float.NEGATIVE_INFINITY ||
-    //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
-    //      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
-    //    }
-    if ((getMinScoreThreshold() == Float.NEGATIVE_INFINITY) && (getMaxScoreThreshold() == Float.POSITIVE_INFINITY))  {
-      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
-    }
-  }
-  */
-
- //  public void setFasterDraw(boolean b) { USE_GRAPH_CACHE = b; }
-  // public boolean getFasterDraw() { return USE_GRAPH_CACHE; }
-  // public void setCalcCache(boolean b) { CALC_GRAPH_CACHE = b; }
-  // public boolean getCalcCache() { return CALC_GRAPH_CACHE; }
 
   /**
    *  Same as GraphGlyph.getInternalLinearTransform(), except

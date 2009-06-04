@@ -45,13 +45,9 @@ public final class GraphAdjusterView {
 
   static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 
-  public static List transformGraphs(List grafs, String trans_name, FloatTransformer transformer) {
-    int gcount = grafs.size();
-    List newgrafs = new ArrayList(grafs.size());
-    for (int i=0; i<gcount; i++) {
-      GraphSym graf = (GraphSym)grafs.get(i);
-
-      //float[] old_ycoords = graf.getGraphYCoords();
+  public static List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
+    List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
+		for (GraphSym graf : grafs) {
       float[] new_ycoords;
       
       if (transformer instanceof IdentityTransform && graf instanceof GraphSymFloat) {
@@ -181,11 +177,11 @@ public final class GraphAdjusterView {
     }
   }
 
-  public static void changeColor(List graf_syms, SeqMapView gviewer) {
+  public static void changeColor(List<GraphSym> graf_syms, SeqMapView gviewer) {
     int scount = graf_syms.size();
     if (scount > 0) {
       // Set an initial color so that the "reset" button will work.
-      GraphSym graf_0 = (GraphSym) graf_syms.get(0);
+      GraphSym graf_0 = graf_syms.get(0);
       GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
       Color initial_color = Color.GREEN;
       if (gl_0 != null) {
@@ -197,8 +193,7 @@ public final class GraphAdjusterView {
         "Graph Color Chooser", initial_color);
       // Note: If the user selects "Cancel", col will be null
       if (col != null) {
-	for (int i=0; i<scount; i++) {
-	  GraphSym graf = (GraphSym) graf_syms.get(i);
+				for (GraphSym graf : graf_syms) {
 	  // using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
 	  List glist = gviewer.getSeqMap().getItems(graf);
 	  if (glist != null) {

@@ -609,7 +609,7 @@ public abstract class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void drawHandle(ViewI view) {
+	protected void drawHandle(ViewI view) {
 		if (handle_width <= 0) {
 			return;
 		}

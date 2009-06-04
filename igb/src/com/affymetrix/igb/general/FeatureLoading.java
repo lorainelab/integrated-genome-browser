@@ -223,7 +223,7 @@ public final class FeatureLoading {
 	}
 
 	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
-		final String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionName + "/" + gFeature.featureName;
+		final String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionID + "/" + gFeature.featureName;
 		if (DEBUG) {
 			System.out.println("need to load: " + annot_url);
 		}

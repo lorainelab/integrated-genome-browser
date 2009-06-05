@@ -159,7 +159,9 @@ public final class GeneralLoadUtils {
 			if (gServer == null) {
 				return false;
 			}
-			getQuickLoadSpeciesAndVersions(gServer);
+			if (!getQuickLoadSpeciesAndVersions(gServer)) {
+				return false;
+			}
 			discoveredServers.put(gServer.serverName, gServer);
 
 		} else if (serverType == ServerType.DAS) {
@@ -265,9 +267,14 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover species from DAS
 	 * @param gServer
+	 * @return false if there's an obvious problem
 	 */
-	private synchronized void getDAS1SpeciesAndVersions(GenericServer gServer) {
+	private synchronized boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
+		if (server.getDataSources() == null || server.getDataSources().values() == null || server.getDataSources().values().isEmpty()) {
+			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
+			return false;
+		}
 		for (DasSource source : server.getDataSources().values()) {
 			if (DEBUG) {
 				System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
@@ -285,15 +292,21 @@ public final class GeneralLoadUtils {
 			GenericVersion gVersion = new GenericVersion(versionID, versionName, gServer, source);
 			discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 		}
+		return true;
 	}
 
 
 	/**
 	 * Discover genomes from DAS/2
 	 * @param gServer
+	 * @return false if there's an obvious problem
 	 */
-	private synchronized void getDAS2Species(GenericServer gServer) {
+	private synchronized boolean getDAS2Species(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
+		if (server.getSources() == null || server.getSources().values() == null || server.getSources().values().isEmpty()) {
+			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
+			return false;
+		}
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getName());
 			List<GenericVersion> gVersionList;
@@ -302,6 +315,7 @@ public final class GeneralLoadUtils {
 				this.species2genericVersionList.put(speciesName, gVersionList);
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -327,16 +341,26 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover genomes from Quickload
 	 * @param gServer
+	 * @return false if there's an obvious failure.
 	 */
-	private synchronized void getQuickLoadSpeciesAndVersions(GenericServer gServer) {
+	private synchronized boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
 		} catch (MalformedURLException ex) {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
 		}
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
+		if (quickloadServer == null) {
+			System.out.println("ERROR: No quickload server model found for server: " + gServer.serverName);
+			return false;
+		}
 		List<String> genomeList = quickloadServer.getGenomeNames();
+		if (genomeList == null || genomeList.isEmpty()) {
+			System.out.println("WARNING: No species found in server: " + gServer.serverName);
+			return false;
+		}
 
 		for (String genomeID : genomeList) {
 			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
@@ -365,6 +389,7 @@ public final class GeneralLoadUtils {
 			GenericVersion gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
 			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
 		}
+		return true;
 	}
 
 	/**

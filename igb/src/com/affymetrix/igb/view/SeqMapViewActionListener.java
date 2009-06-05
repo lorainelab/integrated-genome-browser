@@ -141,7 +141,8 @@ final class SeqMapViewActionListener implements ActionListener {
     }*/
 		else if (command.equals(gviewer.selectParentMI.getText())) {
       gviewer.selectParents();
-    } else if (command.equals(gviewer.printSymmetryMI.getText())) {
+    /*}
+		else if (command.equals(gviewer.printSymmetryMI.getText())) {
       SeqSymmetry sym = gviewer.getSelectedSymmetry();
       if (sym == null) {
         Application.errorPanel("No symmetry selected");
@@ -161,7 +162,7 @@ final class SeqMapViewActionListener implements ActionListener {
         }
       } else {
         SeqUtils.printSymmetry(sym);
-      }
+      }*/
     } else if (command.equals(gviewer.slicendiceMI)) {
       gviewer.sliceBySelection();
     } else if (command.equals(ZOOM_OUT_FULLY)) {

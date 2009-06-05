@@ -253,7 +253,7 @@ public class SeqMapView extends JPanel
     //JMenuItem renumberMinMI = empty_menu_item;
     //JMenuItem renumberMaxMI = empty_menu_item;
     //JMenuItem revertCoordsMI = empty_menu_item;
-    JMenuItem printSymmetryMI = empty_menu_item;
+    //JMenuItem s = empty_menu_item;
     JMenuItem slicendiceMI = empty_menu_item;
 
     // for right-click on background
@@ -597,7 +597,7 @@ public class SeqMapView extends JPanel
         zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
         zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
         selectParentMI = setUpMenuItem(sym_popup, "Select parent");
-        printSymmetryMI = setUpMenuItem(sym_popup, "Print symmetry");
+        //printSymmetryMI = setUpMenuItem(sym_popup, "Print symmetry");
         if (show_slicendice) {
             slicendiceMI = setUpMenuItem(sym_popup, "Slice and dice");
         }
@@ -2954,9 +2954,9 @@ public class SeqMapView extends JPanel
         if (selected_syms.size() > 0) {
             popup.add(selectParentMI);
         }
-        if (selected_syms.size() == 1) {
+        /*if (selected_syms.size() == 1) {
             popup.add(printSymmetryMI);
-        }
+        }*/
         if (DEBUG_STYLESHEETS) {
             Action reload_stylesheet = new AbstractAction("Re-load user stylesheet") {
 

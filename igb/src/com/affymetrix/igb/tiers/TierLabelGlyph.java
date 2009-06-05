@@ -1,411 +1,202 @@
-/**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
  * A glyph used to display a label for a TierGlyph.
  */
-public final class TierLabelGlyph extends SolidGlyph implements NeoConstants  {
+public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
+	private Rectangle debug_rect;
+	private Font fnt;
+	private boolean show_background = false;
+	private boolean show_outline = false;
 
-  private static final boolean DEBUG_PIXELBOX = false;
-  private Rectangle debug_rect;
-
-  private Font fnt;
-  private int placement;
-  private boolean show_background = false;
-  private boolean show_outline = false;
-  private boolean show_label = true;
-  
-  static final boolean THICK_OUTLINE = true;
-  static final boolean DRAW_COLLAPSED_EXPANDED_ICONS = false;
-
-  public static boolean draw_graph_ticks = false;
-  
-  public String toString() {
-    return ("TierLabelGlyph: label: \""+getLabelString()+"\"  +coordbox: "+coordbox);
-  }
-
-  /**
-   *  Constructor.  
-   *  @param reference_tier the tier in the main part of the AffyLabelledTierMap, 
-   *    must not be null
-   */
-  public TierLabelGlyph(TierGlyph reference_tier) {
-    this();
-    //str = reference_tier.getLabel();
-    //if (str==null) {str = "......."; }
-    this.setInfo(reference_tier);
-  }
-  
-  private TierLabelGlyph () {
-    placement = CENTER;
-    if (DEBUG_PIXELBOX) {
-      debug_rect = new Rectangle();
-    }
-  }
-
-  /** Overridden such that the info must be of type TierGlyph.  It is used
-   *  to store the reference tier that will be returned by getReferenceTier().
-   */
-  public void setInfo(Object o) {
-    if (! (o instanceof TierGlyph)) {
-      throw new IllegalArgumentException();
-    }
-    super.setInfo(o);
-  }
-  
-  /** Returns the reference tier from the main map in AffyLabelledTierMap. 
-   *  Equivalent to value returned by getInfo().  Will not be null.
-   */
-  public TierGlyph getReferenceTier() {
-    return (TierGlyph) getInfo();
-  }
-    
- String getDirectionString(TierGlyph tg) {
-    switch (tg.direction) {
-      case TierGlyph.DIRECTION_FORWARD:
-        return "(+)";
-      case TierGlyph.DIRECTION_REVERSE:
-        return "(-)";
-      case TierGlyph.DIRECTION_BOTH:
-        return "(+/-)";
-      default: // DIRECTION_NONE
-        return "";
-    }
-  }
-      
-  /** Returns the label of the reference tier, or some default string if there isn't one. */
-  String getLabelString() {
-    TierGlyph reference_tier = getReferenceTier();
-    if (reference_tier == null || reference_tier.getLabel() == null) {
-      return ".......";
-    } else {
-      String direction_str = getDirectionString(reference_tier);
-      if ("".equals(direction_str)) {
-        return reference_tier.getLabel();
-      } else {
-        return reference_tier.getLabel() + " " + direction_str;
-      }
-    }
-  }
-  
-  public void setShowBackground(boolean show) {
-    show_background = show;
-  }
-  public boolean getShowBackground() {
-    return show_background;
-  }
-
-  public void setShowOutline(boolean show) {
-    show_outline = show;
-  }
-
-  public boolean getShowOutline() {
-    return show_outline;
-  }
-
-  /** Sets whether or not to draw the label string. Default is true. */
-  public void setShowLabel(boolean show) {
-    show_label = show;
-  }
-
-  /** Whether or not to draw the label string. Default is true. */
-  public boolean getShowLabel() {
-    return show_label;
-  }
-  
-  boolean useRefTierColors = true;
-  boolean useInvertedRefTierColors = false;
-  
-  /** Whether to use the same color as the reference TierGlyph,
-   *  and thus ignore any setting of the colors on this Glyph.
-   *  Default is TRUE.
-   *  @see #getReferenceTier()
-   */
-  public void setUseRefTierColors(boolean b) {
-    this.useRefTierColors = b;
-  }
-  
-  /** Whether to use the same color as the reference TierGlyph,
-   *  and thus ignore any setting of the colors on this Glyph.
-   *  Default is TRUE.
-   *  @see #getReferenceTier()
-   */
-  public boolean getUseRefTierColors() {
-    return this.useRefTierColors;
-  }
-  
-  public void setInvertRefTierColors(boolean b) {
-    useInvertedRefTierColors = b;
-  }
-
-  public boolean getInvertRefTierColors() {
-    return useInvertedRefTierColors;
-  }
-
-  Color[] getFgAndBg() {
-    TierGlyph reftier = this.getReferenceTier();
-    Color[] c = new Color[2];
-    if (useRefTierColors) {
-      if (useInvertedRefTierColors) {
-        c[0] = reftier.getFillColor();
-        c[1] = reftier.getForegroundColor();
-      } else {
-        c[1] = reftier.getFillColor();
-        c[0] = reftier.getForegroundColor();
-      }
-    } else {
-      c[1] = getBackgroundColor();
-      c[0] = getForegroundColor();
-    }
-    return c;
-  }
-  
-  
-  public void draw(ViewI view) {
-    Color[] colors = getFgAndBg();
-    Color fgcolor = colors[0];
-    Color bgcolor = colors[1];
-
-    TierGlyph reftier = this.getReferenceTier();
-    boolean collapsed = reftier.getAnnotStyle().getCollapsed();
-    
-    Graphics g = view.getGraphics();
-    g.setPaintMode();
-    
-    view.transformToPixels(coordbox, pixelbox);
-    if (DEBUG_PIXELBOX) {
-      debug_rect.setBounds(pixelbox.x, pixelbox.y,
-			 pixelbox.width, pixelbox.height);
-    }
-
-    if( getShowBackground() ) { // show background
-      //      Color bgc = getBackgroundColor();
-      //      if ( null != bgc ) {
-	//	g.setColor( getBackgroundColor() );
-      if (bgcolor != null) {
-	g.setColor(bgcolor);
-	g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-      }
-    }
-    if (getShowOutline()) {
-      //      g.setColor(this.getForegroundColor());
-      g.setColor(fgcolor);
-      g.drawRect(pixelbox.x,   pixelbox.y,   pixelbox.width-1, pixelbox.height-1);
-      if (THICK_OUTLINE) {
-        g.drawRect(pixelbox.x+1, pixelbox.y+1, pixelbox.width-3, pixelbox.height-3);
-      }
-    }
-
-    if (DRAW_COLLAPSED_EXPANDED_ICONS && reftier.getAnnotStyle().getExpandable()) {
-      if (collapsed) {
-        g.setColor(fgcolor);
-        g.drawLine(pixelbox.x + pixelbox.width - 13, pixelbox.y + 8, pixelbox.x + pixelbox.width - 5, pixelbox.y + 8);
-        g.drawLine(pixelbox.x + pixelbox.width - 9, pixelbox.y + 4, pixelbox.x + pixelbox.width - 9, pixelbox.y + 12);
-      } else {
-        g.setColor(fgcolor);
-        g.drawLine(pixelbox.x + pixelbox.width - 13, pixelbox.y + 8, pixelbox.x + pixelbox.width - 5, pixelbox.y + 8);
-      }
-    }
-
-    if (show_label) {
-      g.setColor( fgcolor );
-      drawLabel(g);
-    }
-    
-    if (DEBUG_PIXELBOX) {
-      // testing pixbox...
-      g.setColor(Color.red);
-      g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-      g.setColor(Color.yellow);
-      g.drawRect(debug_rect.x, debug_rect.y,
-		 debug_rect.width, debug_rect.height);
-    }
-    
-    drawGraphTicks(view);
-    super.draw(view);
-  }
-
-  void drawLabel(Graphics g) {
-    // assumes that pixelbox coordinates are already computed
-    
-    if ( null != fnt ) {
-      g.setFont(fnt);
-    }
-    FontMetrics fm = g.getFontMetrics();
-    int text_width = 0;
-    String label = getLabelString();
-    if ( null != label ) {
-      text_width = fm.stringWidth(label);
-    }
-    int text_height = fm.getAscent() + fm.getDescent();
-    int blank_width = fm.charWidth ('z')*2;
-
-    // only show text if it will fit in pixelbox (and it's not null)...
-    if ((text_height <= pixelbox.height)  && (label != null)) {
-
-      if (placement == LEFT ) {
-	//pixelbox.x = pixelbox.x;
-      }
-      else if (placement == RIGHT) {
-	pixelbox.x = pixelbox.x + pixelbox.width + blank_width;
-      }
-      else {
-	if (text_width > pixelbox.width) {
-	  // if text wider than glyph's pixelbox, then show beginning of text
-	  pixelbox.x = pixelbox.x+1;
+	@Override
+	public String toString() {
+		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
 	}
-	else {
-	  // if text wider than glyph's pixelbox, then center text
-	  pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
+
+	/**
+	 *  Constructor.
+	 *  @param reference_tier the tier in the main part of the AffyLabelledTierMap,
+	 *    must not be null
+	 */
+	public TierLabelGlyph(TierGlyph reference_tier) {
+		this.setInfo(reference_tier);
 	}
-      }
-      if (placement == ABOVE) {
-	//pixelbox.y = pixelbox.y;
-      }
-      else if (placement == BELOW) {
-	pixelbox.y = pixelbox.y + pixelbox.height;
-      }
-      else {
-	pixelbox.y = pixelbox.y + pixelbox.height/2 + text_height/2;
-      }
-      pixelbox.width = text_width;
-      pixelbox.height = text_height+1; // +1 for an extra pixel below the text
-      // so letters like 'g' still have at
-      // least one pixel below them
 
-      // display string
-      //g.setColor( fgcolor );
-      //g.setColor( getForegroundColor() );
-      // define adjust such that: ascent-adjust = descent+adjust
-      // (But see comment above about the extra -1 pixel)
-      int adjust = (int) ((fm.getAscent()-fm.getDescent())/2.0) -1;
-      g.drawString (label, pixelbox.x, pixelbox.y -pixelbox.height/2+adjust);
-    }
-  }
-  
-  
-  /** Draws the outline in a way that looks good for tiers.  With other glyphs,
-   *  the outline is usually drawn a pixel or two larger than the glyph.
-   *  With TierGlyphs, it is better to draw the outline inside of or contiguous
-   *  with the glyphs borders.
-   **/
-  protected void drawSelectedOutline(ViewI view) {
-    draw(view);
+	/** Overridden such that the info must be of type TierGlyph.  It is used
+	 *  to store the reference tier that will be returned by getReferenceTier().
+	 */
+	public void setInfo(Object o) {
+		if (!(o instanceof TierGlyph)) {
+			throw new IllegalArgumentException();
+		}
+		super.setInfo(o);
+	}
 
-    Graphics g = view.getGraphics();
-    g.setColor(view.getScene().getSelectionColor());
-    view.transformToPixels(getPositiveCoordBox(), pixelbox);
-    g.drawRect(pixelbox.x, pixelbox.y,
-               pixelbox.width-1, pixelbox.height-1);
-    if (THICK_OUTLINE) {
-      g.drawRect(pixelbox.x+1, pixelbox.y+1,
-               pixelbox.width-3, pixelbox.height-3);
-    }
-  }
+	/** Returns the reference tier from the main map in AffyLabelledTierMap.
+	 *  Equivalent to value returned by getInfo().  Will not be null.
+	 */
+	public TierGlyph getReferenceTier() {
+		return (TierGlyph) getInfo();
+	}
 
-  public void setFont(Font f) {
-    this.fnt = f;
-  }
+	private String getDirectionString(TierGlyph tg) {
+		switch (tg.direction) {
+			case TierGlyph.DIRECTION_FORWARD:
+				return "(+)";
+			case TierGlyph.DIRECTION_REVERSE:
+				return "(-)";
+			case TierGlyph.DIRECTION_BOTH:
+				return "(+/-)";
+			default: // DIRECTION_NONE
+				return "";
+		}
+	}
 
-  public Font getFont() {
-    return this.fnt;
-  }
+	/**
+	 * Returns the label of the reference tier, or some default string if there isn't one.
+	 * @return
+	 */
+	private String getLabelString() {
+		TierGlyph reference_tier = getReferenceTier();
+		if (reference_tier == null || reference_tier.getLabel() == null) {
+			return ".......";
+		}
+		String direction_str = getDirectionString(reference_tier);
+		if (direction_str.length() == 0) {
+			return reference_tier.getLabel();
+		}
+		return reference_tier.getLabel() + " " + direction_str;
+	}
 
-  public void setPlacement(int placement) {
-    this.placement = placement;
-  }
+	public void setShowBackground(boolean show) {
+		show_background = show;
+	}
 
-  public int getPlacement() {
-    return placement;
-  }
+	private boolean getShowBackground() {
+		return show_background;
+	}
 
-  /**
-   * @deprecated use {@link #setForegroundColor}.
-   * Also see {@link #setBackgroundColor}.
-   */
-  public void setColor( Color c ) {
-    setForegroundColor( c );
-  }
+	public void setShowOutline(boolean show) {
+		show_outline = show;
+	}
 
-  /**
-   * @deprecated use {@link #getForegroundColor}.
-   * Also see {@link #setBackgroundColor}.
-   */
-  public Color getColor() {
-    return getForegroundColor();
-  }
+	private boolean getShowOutline() {
+		return show_outline;
+	}
 
-  static double axis_bins = 10;
-  int xpix_offset = 0;
-  Point zero_point = new Point(0,0);
-  Point2D coord = new Point2D(0,0);
-  Point curr_point = new Point(0,0);
-  Point prev_point = new Point(0,0);
-  Point scratch_point = new Point(0,0);
-  LinearTransform scratch_trans = new LinearTransform();
+	@Override
+	public void draw(ViewI view) {
+		TierGlyph reftier = this.getReferenceTier();
+		Color fgcolor = reftier.getForegroundColor();
+		Color bgcolor = reftier.getFillColor();
 
-  Rectangle2D label_coord_box = new Rectangle2D();
-  Rectangle label_pix_box = new Rectangle();
+		Graphics g = view.getGraphics();
+		g.setPaintMode();
 
-  public void drawGraphTicks(ViewI view) {
-    // draws bars to indicate the range of the graph in pixels.
-    // may also draw tick marks.
-    
-    if (this.getReferenceTier().getChildCount() == 0) {
-      return;
-    }
-    
-    GlyphI glyph = this.getReferenceTier().getChild(0);
-    if (! (glyph instanceof GraphGlyph)) {
-      return;
-    }
-    GraphGlyph gglyph = (GraphGlyph) glyph;
-    
-    if (! draw_graph_ticks || GraphState.isHeatMapStyle(gglyph.getGraphStyle())) {
-      return;
-    }
+		view.transformToPixels(coordbox, pixelbox);
 
-    view.transformToPixels(coordbox, pixelbox);
-    Double[] tick_coords = gglyph.determineYTickCoords();
-    double[] tick_pixels = gglyph.convertToPixels(view, tick_coords);
-    
-    Graphics g = view.getGraphics();
-    Color[] colors = getFgAndBg();
-    g.setColor(colors[0]);
-    for (int i=0; i<tick_pixels.length; i++) {
-      double mark_ypix = tick_pixels[i];
-      g.fillRect(pixelbox.x+pixelbox.width/4, (int)mark_ypix, pixelbox.width/2, 1);
-    }
+		if (getShowBackground()) { // show background
+			if (bgcolor != null) {
+				g.setColor(bgcolor);
+				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
+			}
+		}
+		if (getShowOutline()) {
+			g.setColor(fgcolor);
+			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height - 1);
+			g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
+		}
 
-//    Double[] min_max_coords = new Double[2];
-//    min_max_coords[0] = (double) gglyph.getGraphMinY();
-//    min_max_coords[1] = (double) gglyph.getGraphMaxY();
-//    double[] min_max_pixels = gglyph.convertToPixels(view, min_max_coords);
-//    for (int i=0; i<min_max_pixels.length; i++) {
-//      double mark_ypix = min_max_pixels[i];
-//      g.fillRect(pixelbox.x+pixelbox.width/4, (int)(mark_ypix), pixelbox.width/2, 2);
-//    }
-//
-//    g.fillRect(pixelbox.x + pixelbox.width/2-1, (int) min_max_pixels[0],
-//               1, (int) (min_max_pixels[1] - min_max_pixels[0]));
-  }
+		g.setColor(fgcolor);
+		drawLabel(g, view.getPixelBox());
+
+		super.draw(view);
+	}
+
+	void drawLabel(Graphics g, Rectangle boundingPixelBox) {
+		// assumes that pixelbox coordinates are already computed
+
+		if (null != fnt) {
+			g.setFont(fnt);
+		}
+		String label = getLabelString();
+		if (label == null) {
+			return;
+		}
+
+		FontMetrics fm = g.getFontMetrics();
+		int text_height = fm.getAscent() + fm.getDescent();
+		// only show text if it will fit in pixelbox
+		if (text_height > pixelbox.height) {
+			return;
+		}
+
+		// Lower bound of visible glyph
+		int lowerY = Math.max(pixelbox.y, boundingPixelBox.y);
+
+		// Upper bound of visible glyph
+		int upperY = Math.min(
+						pixelbox.y + pixelbox.height,
+						boundingPixelBox.y + boundingPixelBox.height);
+
+		int text_width = fm.stringWidth(label);
+		if (text_width > pixelbox.width) {
+			// if text wider than glyph's pixelbox, then show beginning of text
+			pixelbox.x += 1;
+		} else {
+			// if text wider than glyph's pixelbox, then center text
+			pixelbox.x += pixelbox.width / 2 - text_width / 2;
+		}
+
+		g.drawString(label, pixelbox.x, (lowerY + upperY + text_height) / 2);
+
+	}
+
+	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
+	 *  the outline is usually drawn a pixel or two larger than the glyph.
+	 *  With TierGlyphs, it is better to draw the outline inside of or contiguous
+	 *  with the glyph's borders.
+	 **/
+	protected void drawSelectedOutline(ViewI view) {
+		draw(view);
+
+		Graphics g = view.getGraphics();
+		g.setColor(view.getScene().getSelectionColor());
+		view.transformToPixels(getPositiveCoordBox(), pixelbox);
+		g.drawRect(pixelbox.x, pixelbox.y,
+						pixelbox.width - 1, pixelbox.height - 1);
+
+		g.drawRect(pixelbox.x + 1, pixelbox.y + 1,
+						pixelbox.width - 3, pixelbox.height - 3);
+	}
+
+	public void setFont(Font f) {
+		this.fnt = f;
+	}
+
+	public Font getFont() {
+		return this.fnt;
+	}
+
+	/**
+	 * @deprecated use {@link #setForegroundColor}.
+	 * Also see {@link #setBackgroundColor}.
+	 */
+	public void setColor(Color c) {
+		setForegroundColor(c);
+	}
+
+	/**
+	 * @deprecated use {@link #getForegroundColor}.
+	 * Also see {@link #setBackgroundColor}.
+	 */
+	public Color getColor() {
+		return getForegroundColor();
+	}
 }

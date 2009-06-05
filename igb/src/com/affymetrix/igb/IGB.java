@@ -633,16 +633,17 @@ public final class IGB extends Application
 	 */
 	private static void LoadPreferencePrefs() {
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		LoadPreferencePrefs(prefServers.node("QuickLoad"),ServerType.QuickLoad);
-		LoadPreferencePrefs(prefServers.node("DAS"),ServerType.DAS);
-		LoadPreferencePrefs(prefServers.node("DAS2"),ServerType.DAS2);
+		LoadServerPrefs(prefServers.node("QuickLoad"),ServerType.QuickLoad);
+		LoadServerPrefs(prefServers.node("DAS"),ServerType.DAS);
+		LoadServerPrefs(prefServers.node("DAS2"),ServerType.DAS2);
 	}
 
-	private static void LoadPreferencePrefs(Preferences prefServers, ServerType serverType) {
+	private static void LoadServerPrefs(Preferences prefServers, ServerType serverType) {
 		try {
 			for (String serverURL : prefServers.keys()) {
           //String server_type = el.getAttribute("type").toLowerCase();
-          String server_name = prefServers.get(serverURL,"value");
+				String server_name = prefServers.get(serverURL,"value");
+				serverURL = URLDecoder.decode(serverURL, "UTF-8");
 
 					System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
 					if (serverType == ServerType.QuickLoad) {
@@ -657,6 +658,8 @@ public final class IGB extends Application
 			}
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (UnsupportedEncodingException e) {
+			Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, null, e);
 		}
 	}
 

@@ -30,6 +30,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 
 import java.util.logging.Level;
@@ -359,12 +360,14 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
 		Preferences individualServerPref = prefServers.node(serverType);
-		individualServerPref.put(DirectoryOrURL, serverName);
 		try {
+			individualServerPref.put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), serverName);
 			individualServerPref.flush();
 			// Add to GeneralLoadView
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (UnsupportedEncodingException e) {
+			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
 		}
 		
 		serverDialog(serverName,DirectoryOrURL);

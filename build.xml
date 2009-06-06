@@ -147,6 +147,7 @@
 		<jar jarfile="igb_exe.jar" update="false">
 			<manifest>
 				<attribute name="Main-Class" value="com.affymetrix.igb.IGB"/>
+				<attribute name="SplashScreen-Image" value="com/affymetrix/igb/igb_splash.gif"/>
 			</manifest>
 			<metainf file="LICENSE.html"/>
 			<metainf file="NOTICES.txt"/>

@@ -230,88 +230,6 @@ public abstract class DasLoader {
     return ids;
   }
 
-  /** FIXME: This is test code, functionality will be rolled into
-   *  or replaced by com.affymetrix.igb.util.LocalUrlCacher.
-   *  A method that checks the URL requested against a local
-   *  document store and returns the local document URL if the
-   *  server doc hasn't changed. Otherwise it just returns
-   *  the URL argument.
-   */
-  public static String getCachedDocumentURL(String url)
-    throws java.net.MalformedURLException, java.io.IOException {
-
-    // fetch info about this URL
-    URL request_url = new URL(url);
-    URLConnection request_con = request_url.openConnection();
-		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
-		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-
-    // figure out hashcode
-    int hashcode = url.hashCode();
-
-    // find and create cache dir
-    String home = System.getProperty("user.home");
-    String sep = System.getProperty("file.separator");
-    String cacheDir = home+sep+".igb"+sep+"cache";
-    new File(cacheDir).mkdirs();
-    File cacheFile = new File(cacheDir+sep+hashcode+".cache");
-    long cacheDate = cacheFile.lastModified();
-
-    /* HACK: I'm forcing the use of the cache docs
-     * FIXME: if I to a getLastModified on a non-cached DAS/2 server (biopackages)
-     * it actually causes the complete request to go through!!  So this call takes
-     * forever and really makes the local caceh pointless.
-     */
-    long date = 0;// HACK: request_con.getLastModified();
-    // try "Age" header if it exists
-    /*if (date == 0) {
-      String age_in_sec = request_con.getHeaderField("Age");
-      if (age_in_sec != null) {
-        long age = Long.parseLong(age_in_sec);
-        age = age * 1000;
-        date = (new Date().getTime()) - age;
-        //System.out.println("AGE: "+age);
-      }
-    }
-      HACK */
-
-    // If the server doesn't report a lastModified then flush the cache every month (86400000 is milliseconds in a day)
-    // FIXME: this should be configurable
-    double cacheAge = new Date().getTime() - cacheDate;
-    double maxAge = 30*8.64e+07;
-    if (cacheDate < date || cacheDate == 0 || (date == 0 && cacheAge > maxAge)) {
-      BufferedReader in = new BufferedReader(
-                          new InputStreamReader(
-                          request_con.getInputStream()));
-      BufferedWriter out = new BufferedWriter(
-                           new OutputStreamWriter(
-                           new FileOutputStream(cacheFile)));
-      String inputLine;
-      while ((inputLine = in.readLine()) != null) {
-          out.write(inputLine);
-          out.newLine();
-      }
-      in.close();
-      out.close();
-    }
-
-    // Finally, set the mod time of the cache file if the server reports it
-    if (date > 0) cacheFile.setLastModified(date);
-
-    String returnString = "file:///"+cacheFile.getAbsolutePath();
-    //the following is needed on Windows to make the path a URL (instead of a Windows path)
-    try {
-        Pattern p = Pattern.compile("\\\\");
-        Matcher m = p.matcher(returnString);
-        returnString = m.replaceAll("/");
-    }
-    catch(PatternSyntaxException e){
-        System.out.println(e.getMessage());
-    }
-    return returnString;
-
-  }
-
 	/**
    *  Finds a DAS source on the given server that is a synonym of the
    *  String you request.
@@ -419,14 +337,5 @@ public abstract class DasLoader {
 
 		return residues;
 	}
-
-  /**
-   *  A thin wrapper around {@link DasLoader#getDocument(InputStream)}.
-   */
-/*  public static Document getDocument(InputStream istr) throws IOException, SAXException, ParserConfigurationException {
-    Document doc = DasLoader.getDocument(istr);
-    return doc;
-  }*/
-
 
 }

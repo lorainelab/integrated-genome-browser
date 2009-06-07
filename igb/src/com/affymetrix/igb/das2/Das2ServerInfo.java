@@ -22,6 +22,7 @@ import org.w3c.dom.*;
 import com.affymetrix.igb.das.DasLoader;
 //import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SimpleAuthenticator;
 //import com.affymetrix.igb.util.*;
@@ -278,8 +279,7 @@ public final class Das2ServerInfo  {
 	 * Return true if successfully initialized.
 	 */
 	public synchronized boolean initialize() {
-
-		//TODO: clean-up streams in finally block
+		InputStream response = null;
 		try {
 			if (server_uri == null) { return false; }
 			//      das_request = server_uri.toURL();
@@ -288,23 +288,27 @@ public final class Das2ServerInfo  {
 			//does server support authentication? If so then throw up dialog box and attempt.
 			login();
 
-			if (DEBUG_SOURCES_QUERY)  { System.out.println("Das2 Request: " + server_uri); }
-			Map headers = new LinkedHashMap();
-			InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
+			if (DEBUG_SOURCES_QUERY) {
+				System.out.println("Das2 Request: " + server_uri);
+			}
+			Map<String,String> headers = new LinkedHashMap<String,String>();
+			response = LocalUrlCacher.getInputStream(das_query, headers);
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;
 			}
 
-			String content_type = (String)headers.get("content-type");
-			if (DEBUG_SOURCES_QUERY) { System.out.println("Das2 Response content type: " + content_type); }
+			String content_type = headers.get("content-type");
+			if (DEBUG_SOURCES_QUERY) {
+				System.out.println("Das2 Response content type: " + content_type);
+			}
 
 
 			if (content_type != null) {
 				// setting DAS2 version if present in content type header -- currently not used
 				int vindex = content_type.indexOf("version=");
 				if (vindex >= 0) {
-					String das_version = content_type.substring(content_type.indexOf("version=")+8, content_type.length());
+					String das_version = content_type.substring(content_type.indexOf("version=") + 8, content_type.length());
 					setDasVersion(das_version);
 				}
 			}
@@ -312,19 +316,22 @@ public final class Das2ServerInfo  {
 			//GAH March 2006:
 			//   HACK: Affy das2 server has problems  w/ a trailing slash, but URI resolution
 			//      doesn't work without trailing slash, so adding it back in here.
-			if (! das_query.endsWith("/"))  { das_query = das_query+"/"; }
+			if (!das_query.endsWith("/")) {
+				das_query = das_query + "/";
+			}
 			//       Document doc = DasLoader.getDocument(request_con);
 			System.out.println("Initializing " + server_uri);
 			Document doc = DasLoader.getDocument(response);
 
 			Element top_element = doc.getDocumentElement();
-			
-			NodeList sources= doc.getElementsByTagName("SOURCE");
+
+			NodeList sources = doc.getElementsByTagName("SOURCE");
 			parseSources(sources, das_query);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
-                        return false;   // not successfully initialized if there was an exception.
+			return false;   // not successfully initialized if there was an exception.
+		} finally {
+			GeneralUtils.safeClose(response);
 		}
 		initialized = true;
 		return initialized;

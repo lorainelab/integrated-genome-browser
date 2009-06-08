@@ -102,7 +102,7 @@ import javax.swing.*;
  */
 public class SeqMapView extends JPanel
         implements AnnotatedSeqViewer, SymSelectionSource,
-        SymSelectionListener, SeqSelectionListener, GroupSelectionListener, SeqModifiedListener {
+        SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 
     private static final boolean DIAGNOSTICS = false;
     private static final boolean DEBUG_TIERS = false;
@@ -139,7 +139,6 @@ public class SeqMapView extends JPanel
     SeqSpan viewspan_before_slicing = null;
     List<SymSelectionListener> selection_listeners = new ArrayList<SymSelectionListener>();
     List<ContextualPopupListener> popup_listeners = new ArrayList<ContextualPopupListener>();
-    List<DataRequestListener> data_request_listeners = new ArrayList<DataRequestListener>();
     protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
     /**
      *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
@@ -3251,17 +3250,6 @@ public class SeqMapView extends JPanel
         setAnnotatedSeq(newseq);
     }
 
-    public void seqModified(SeqModifiedEvent evt) {
-        SmartAnnotBioSeq modseq = evt.getModifiedSeq();
-        if (modseq == this.getAnnotatedSeq()) {
-            System.out.println("SeqMapView received a seqModified event, re-rendering via setAnnotatedSeq() call");
-            setAnnotatedSeq(modseq, true, true);
-        } else {
-            System.out.println("ERROR: SeqMapView received a seqModified event for a sequence that is " +
-                    "not the sequence it is currently viewing");
-        }
-    }
-
     public JMenu getNavigationMenu(String menu_name) {
         if (navigation_menu == null) {
             navigation_menu = new JMenu(menu_name);
@@ -3277,16 +3265,7 @@ public class SeqMapView extends JPanel
         return navigation_menu;
     }
 
-    public void addDataRequestListener(DataRequestListener listener) {
-        if (!data_request_listeners.contains(listener)) {
-            data_request_listeners.add(listener);
-        }
-    }
-
-    public void removeDataRequestListener(DataRequestListener listener) {
-        data_request_listeners.remove(listener);
-    }
-
+ 
 
     /** Get the span of the symmetry that is on the seq being viewed. */
     public SeqSpan getViewSeqSpan(SeqSymmetry sym) {

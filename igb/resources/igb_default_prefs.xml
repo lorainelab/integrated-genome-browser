@@ -35,8 +35,8 @@
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
 
-  <!-- Match any gene with id beginning with AT. -->
-  <annotation_url annot_id_regex="^AT.*$"
+  <!-- Match any gene with id beginning with AT (with no dashes). -->
+  <annotation_url annot_id_regex="^AT[^-]*$"
     name="arabidopsis.org"
     url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
   />

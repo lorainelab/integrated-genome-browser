@@ -79,16 +79,19 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
 
   protected Object[][] buildRows(Preferences node) {
     Collection<String> keys = UnibrowPrefsUtil.getKeystrokesNodeNames();
-    
-    int num_rows = keys.size();
-    int num_cols = 2;
-    Object[][] rows = new Object[num_rows][num_cols];
-    Iterator iter = keys.iterator();
-    for (int i=0; iter.hasNext(); i++) {
-      String key = (String) iter.next();
-      rows[i][0] = key;
-      rows[i][1] = node.get(key, "");
-    }
+	Object[][] rows;
+
+	synchronized (keys) {
+		int num_rows = keys.size();
+		int num_cols = 2;
+		rows = new Object[num_rows][num_cols];
+		Iterator iter = keys.iterator();
+		for (int i=0; iter.hasNext(); i++) {
+			String key = (String) iter.next();
+			rows[i][0] = key;
+			rows[i][1] = node.get(key, "");
+		}
+	}
     return rows;
   }
 

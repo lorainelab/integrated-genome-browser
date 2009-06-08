@@ -45,7 +45,7 @@ import javax.swing.*;
   public static final String ASK_BEFORE_EXITING = "Ask before exiting";
   public static final boolean default_ask_before_exiting = true;
   static JFileChooser static_chooser = null;
-  static SortedSet<String> keystroke_node_names = new TreeSet<String>();
+  static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
 	private static boolean bse_already_warned_once = false;
   static String app_dir = null;
 	
@@ -345,9 +345,10 @@ import javax.swing.*;
 
 
 
-  public static Collection<String> getKeystrokesNodeNames() {
-    return Collections.unmodifiableSet(new TreeSet<String>(keystroke_node_names));
-  }
+	public static Collection<String> getKeystrokesNodeNames() {
+		/* Can not return an unmodifiableSet() because of synchronization */
+		return keystroke_node_names;
+	}
 
   /** Finds the KeyStroke that was specified in the preferences
    *  for the given action_command String.

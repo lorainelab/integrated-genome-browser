@@ -33,8 +33,8 @@ public class GrParserTest {
 
 		assertEquals(stream_name, gr0.getGraphSeq().getID());
 		assertEquals(10, gr0.getPointCount());
-		assertEquals(-0.275948, gr0.getGraphYCoord(2));
-		assertEquals(0.275948, gr0.getGraphYCoord(3));
+		assertEquals(-0.0447924, gr0.getGraphYCoord(2),0.01);
+		assertEquals(0.275948, gr0.getGraphYCoord(3),0.01);
 		assertEquals(948028, gr0.getGraphXCoords()[3]);
 	}
 

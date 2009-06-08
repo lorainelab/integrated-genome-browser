@@ -18,14 +18,13 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
-import java.awt.LayoutManager;
 import java.awt.event.*;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -40,6 +39,10 @@ import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
 
   private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
@@ -86,6 +89,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		synonymsBox();
 
 		addServerBox();
+		addSourcesBox();
 		
     cacheBox();
 
@@ -211,6 +215,14 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		}
   }
 
+	private void addSourcesBox() {
+		final Box sourceBox = Box.createVerticalBox();
+		sourceBox.setBorder(new TitledBorder("Current Servers"));
+		final JTable table = new JTable(new SourceTableModel());
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		sourceBox.add(new JScrollPane(table));
+		this.add(sourceBox);
+	}
 
 
 	private void addServerBox() {

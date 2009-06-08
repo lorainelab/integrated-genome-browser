@@ -31,6 +31,7 @@ import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.prefs.SourceTableModel;
 
 /**
  *Class for parsing preferences for IGB.
@@ -106,6 +107,7 @@ child_glyph="com.affymetrix.igb.glyph.EfficientFillRectGlyph"  />
 <b>IGNORED</b> starting with IGB 4.01.
 
  *</pre>
+ * @version $Id$
  */
 public final class XmlPrefsParser {
 
@@ -306,12 +308,15 @@ public final class XmlPrefsParser {
 						}
 						if (server_type.equalsIgnoreCase("das")) {
 							DasDiscovery.addDasServer(server_name, server_url);
+							SourceTableModel.add(server_name, server_url, "DAS");
 						} else if (server_type.equalsIgnoreCase("das2")) {
 							if (Das2Discovery.getDas2Server(server_url) == null) {
 								Das2Discovery.addDas2Server(server_name, server_url);
+								SourceTableModel.add(server_name, server_url, "DAS2");
 							}
 						} else if (server_type.equalsIgnoreCase("quickload")) {
 							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
+							SourceTableModel.add(server_name, server_url, "QuickLoad");
 						}
 
 					}

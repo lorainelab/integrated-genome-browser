@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A class that's useful for visualizing a generic version.
  *
- * @version $Id: GenericVersion.java 3659 2009-03-19 19:50:27Z jnicol $
+ * @version $Id$
  */
 public final class GenericVersion {
 

@@ -151,7 +151,7 @@ public final class GraphState implements GraphStateI {
 		tier_style.setExpandable(false);
 		tier_style.setHeight(default_graph_height);
 
-		setFloatGraph(true);
+		setFloatGraph(false);
 	}
 
 	/** Copy all the properties, except ID and label, of the given state into this state. */

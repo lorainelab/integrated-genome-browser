@@ -29,7 +29,7 @@ public final class ConsoleView {
   
   static JFrame frame;
     
-  protected ConsoleView() {
+  private ConsoleView() {
     TITLE = Application.getSingleton().getApplicationName() + " Console";
   }
   
@@ -65,7 +65,7 @@ public final class ConsoleView {
    *  but not displaying it if it isn't already displayed.
    *  If you want to display the frame, call {@link #showConsole()} instead.
    */
-  public static JFrame getFrame() {
+  private static JFrame getFrame() {
     if (frame == null) {
       frame = createFrame();
       Container cpane = frame.getContentPane();
@@ -85,7 +85,7 @@ public final class ConsoleView {
     return frame;
   }
   
-  static JScrollPane createOutPane() {
+  private static JScrollPane createOutPane() {
     // if it is ever necessary to make a public getOutPane() method,
     // we'll need to make sure that createOutPane() is only called once.
 
@@ -120,7 +120,7 @@ public final class ConsoleView {
   /**
    *  Creates a JFrame to hold the console.
    */
-  static JFrame createFrame() {
+  private static JFrame createFrame() {
     final JFrame frame = new JFrame(TITLE);
 
     ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif");
@@ -143,7 +143,7 @@ public final class ConsoleView {
    *  This sort of use of the code is allowed (even without attribution).
    *  See the preface of their book for details.
    */
-  public static class JTextAreaOutputStream extends OutputStream {
+  private static class JTextAreaOutputStream extends OutputStream {
     JTextArea ta;
     PrintStream original;
     char[] temp_char_array = new char[1];

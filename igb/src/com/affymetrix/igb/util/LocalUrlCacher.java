@@ -547,10 +547,10 @@ public final class LocalUrlCacher {
 		}
 	}
 
-	public static InputStream askAndGetInputStream(String filename, boolean cache_annots_param)
+	/*public static InputStream askAndGetInputStream(String filename, boolean cache_annots_param)
 					throws IOException {
 		return askAndGetInputStream(filename, getPreferredCacheUsage(), cache_annots_param);
-	}
+	}*/
 
 	/**
 	 *  Similar to {@link #getInputStream(String)}, but asks the user before
@@ -558,7 +558,7 @@ public final class LocalUrlCacher {
 	 *  @return returns an InputStream or null if the user cancelled or the file
 	 *  is unreachable.
 	 */
-	private static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param)
+	/*private static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param)
 					throws IOException {
 
 		if (offline) {
@@ -630,7 +630,7 @@ public final class LocalUrlCacher {
 		}
 
 		return null;
-	}
+	}*/
 
 	/**
 	 *  Forces flushing of entire cache.
@@ -685,7 +685,7 @@ public final class LocalUrlCacher {
 	private static void updateCacheUrlAndWait(String url) throws IOException {
 		InputStream is = null;
 		try {
-			getInputStream(url, NORMAL_CACHE, true);
+			is = getInputStream(url, NORMAL_CACHE, true);
 			Application.getSingleton().logInfo("Updated cache for: " + url);
 		} finally {
 			GeneralUtils.safeClose(is);

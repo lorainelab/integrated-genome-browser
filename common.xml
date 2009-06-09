@@ -57,6 +57,7 @@
 		<filter token="jnlp.version"  value="${jnlp.version}" />
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
+		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
 	</target>
 
 	<presetdef name="my.javac">

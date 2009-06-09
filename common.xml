@@ -18,6 +18,8 @@
 		<property name="jnlp.codebase"  value="http://genoviz.sourceforge.net/webstart/" />
 		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
+		<property name="jnlp.splashicon.name" value="igb_splash.gif" />
+		<property name="jnlp.splashicon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.splashicon.name}" />
 
 		<!-- global compiler defaults -->
 		<property name="build.compiler"         value="modern" />

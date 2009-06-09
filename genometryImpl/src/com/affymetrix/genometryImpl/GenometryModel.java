@@ -455,24 +455,4 @@ public abstract class GenometryModel {
 		}
 		seq2selectedSymsHash.clear();
 	}
-
-	//  public void addModelChangeListener(GenometryModelChangeListener listener) {
-	//    model_change_listeners.add(listener);
-	//  }
-	//
-	//  public void removeModelChangeListener(GenometryModelChangeListener listener) {
-	//    model_change_listeners.remove(listener);
-	//  }
-	//
-	//  public List getModelChangeListeners() {
-	//    return model_change_listeners;
-	//  }
-	//
-	//  void fireModelChangeEvent(GenometryModelChangeEvent.EventType type, AnnotatedSeqGroup group) {
-	//    GenometryModelChangeEvent event = new GenometryModelChangeEvent(this, type, group);
-	//    for (int i=model_change_listeners.size()-1; i>=0; i--) {
-	//      GenometryModelChangeListener listener = (GenometryModelChangeListener) model_change_listeners.get(i);
-	//      listener.genometryModelChanged(event);
-	//    }
-	//  }
 }

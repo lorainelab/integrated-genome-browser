@@ -61,6 +61,7 @@ public final class GeneralLoadView extends JComponent
 	private static final String GENOME_SEQ_ID = "genome";
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
 	private AnnotatedSeqGroup curGroup = null;
+	private SmartAnnotBioSeq curSeq = null;
 	private JComboBox kingdomCB;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
@@ -561,7 +562,7 @@ public final class GeneralLoadView extends JComponent
 				versionCB.setEnabled(false);
 				versionCB.addItemListener(this);
 			}
-			curGroup = group;
+			curGroup = null;
 			return;
 		}
 		if (curGroup == group) {
@@ -623,9 +624,16 @@ public final class GeneralLoadView extends JComponent
 		if (aseq == null) {
 			clearFeaturesTable();
 			disableAllButtons();
+			curSeq = null;
 			return;
 		}
-
+		if (curSeq == aseq) {
+			if (DEBUG_EVENTS) {
+				System.out.println("GeneralLoadView.seqSelectionChanged(): group was same as previous.");
+			}
+			return;
+		}
+		curSeq = aseq;
 
 		// validate that this sequence is in our group.
 		AnnotatedSeqGroup group = aseq.getSeqGroup();

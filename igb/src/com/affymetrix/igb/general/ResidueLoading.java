@@ -307,11 +307,44 @@ public final class ResidueLoading {
 		 * @param aseq
 		 */
 		private static void AddResiduesToComposition(SmartAnnotBioSeq aseq) {
+			if (aseq.getResiduesProvider() != null) {
+				SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
+				AddResiduesToComposition(aseq, span);
+				return;
+			}
 			String residues = aseq.getResidues();
 			SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
 			AddResiduesToComposition(aseq, residues, span);
 		}
 		
+		private static void AddResiduesToComposition(SmartAnnotBioSeq aseq, SeqSpan span) {
+			SmartAnnotBioSeq subseq = new SmartAnnotBioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
+
+        SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);
+        SeqSpan span2 = span;
+        MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
+        subsym.addSpan(span1);
+        subsym.addSpan(span2);
+
+        MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
+        if (compsym == null) {
+            //No children.  Add one.
+            compsym = new SimpleMutableSeqSymmetry();
+            compsym.addChild(subsym);
+            compsym.addSpan(new SimpleSeqSpan(span2.getMin(), span2.getMax(), aseq));
+            aseq.setComposition(compsym);
+        } else {
+					// Merge children that already exist.
+            compsym.addChild(subsym);
+            SeqSpan compspan = compsym.getSpan(aseq);
+            int compmin = Math.min(compspan.getMin(), span.getMin());
+            int compmax = Math.max(compspan.getMax(), span.getMax());
+            SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
+            compsym.removeSpan(compspan);
+            compsym.addSpan(new_compspan);
+        }
+		}
+
     /**
 		 * Adds the residues to the composite sequence.  This allows merging of subsequences.
 		 * @param aseq

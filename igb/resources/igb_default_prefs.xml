@@ -33,20 +33,7 @@
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
 
-  <!-- Match any gene with id beginning with AT (with no dashes). -->
-  <annotation_url annot_id_regex="^AT[^-]*$"
-    name="arabidopsis.org"
-    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
-  />
 
-  <annotation_url annot_type_regex="(?i).*TAIR.*$" 
-    name="arabidopsis.org"
-    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
-  />
-  <annotation_url annot_type_regex=".*EST\s\(.*\)$" 
-    name="NCBI"
-    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
-  />
   <annotation_url annot_type_regex="(?i).*EnsGene$"
     name="Ensembl Human ID search"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
@@ -82,6 +69,41 @@
   <!-- Add an NCBI link for mRNA methods that do not have the word "TAIR" -->
   <!-- This is a 0-length negative lookahead regular expression for TAIR -->
   <annotation_url annot_type_regex="(?i)^(?!TAIR).*mRNA"
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+
+
+<!--  Bioviz-specific matchings. -->
+  <!-- Match genes with id beginning with AT, no dashes, and a decimal point followed by a number.. -->
+  <annotation_url annot_id_regex="^AT[^-]*\.\d+$"
+    name="arabidopsis.org"
+    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+  />
+
+
+  <!-- Match TAIRx_  -->
+  <annotation_url annot_type_regex="(?i).*TAIR._.*$" 
+    name="arabidopsis.org"
+    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+  />
+
+  <!-- Match TAIRvx -->
+  <annotation_url annot_type_regex="(?i).*TAIRv.*$" 
+    name="arabidopsis.org"
+    url="http://www.arabidopsis.org/servlets/TairObject?type=gene&amp;name=$$"
+  />
+
+
+  <annotation_url annot_type_regex="^EST\s\(.*\)$" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="^EST_TAIR7$" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="^cDNA_TAIR7$" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />

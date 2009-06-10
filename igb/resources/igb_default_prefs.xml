@@ -99,11 +99,11 @@
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="^EST_TAIR7$" 
+  <annotation_url annot_type_regex="^EST_TAIR7.*" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
-  <annotation_url annot_type_regex="^cDNA_TAIR7$" 
+  <annotation_url annot_type_regex="^cDNA_TAIR7.*" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />

@@ -1,7 +1,7 @@
 Anolis carolinensis	Lizard	A_carolinensis	anoCar1
 Anopheles gambiae	A.gambiae	A_gambiae	anoGam1
 Apis mellifera	A_mellifera	apiMel1	apiMel2
-Arabidopsis thaliana	A. thaliana	A_thaliana	A_thaliana_TAIR7
+Arabidopsis thaliana	A. thaliana	A_thaliana	A_thaliana_Jan_2004	A_thaliana_TAIR7	A_thalina_TAIR8	A_thaliana_TAIR9
 Bos taurus	Cow	B_taurus	B_taurus_Aug_2006	B_taurus_Oct_2007	bosTau2	bosTau3	bosTau4
 Branchiostoma floridae	Lancet	B_floridae	braFlo1
 Callithrix jacchus	Marmoset	C_jacchus	calJac1
@@ -48,9 +48,9 @@ Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe2
 Populus trichocarpa	Black Cottonwood	P_trichocarpa	P_trichocarpa_Jun_2004
 Pristionchus pacificus	P. pacificus	P_pacificus	priPac1
 Rattus norvegicus	Rat	R_norvegicus	R_norvegicus_Jan_2003	R_norvegicus_Jun_2003	R_norvegicus_Nov_2004	rn3	rn4
-Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	yeast_feb2006_37_1d	yeast_may2008	S_cerevisiae_feb_2006	S_cerevisiae_Jul_2007	S_cerevisiae_Apr_2008	S_cerevisiae_may_2008
-Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	S_pombe_sep_2007	pombe_sep-2007
-Sodalis glossinidius	S_glossinidius
+Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	yeast_feb2006_37_1d	yeast_may2008	S_cerevisiae_feb_2006	S_cerevisiae_Jul_2007	S_cerevisiae_Apr_2008	S_cerevisiae_may_2008	yeast_2005Jan	yeast_Ver1
+Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	S_pombe_Apr_2007	S_pombe_sep_2007	pombe_sep-2007
+Sodalis glossinidius	S_glossinidius	S_glossinidius_Jan_2006
 Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur1	strPur2
 Taeniopygia guttata	Zebra Finch	taeGut1
 Takifugu rubripes	Fugu	fr1	fr2

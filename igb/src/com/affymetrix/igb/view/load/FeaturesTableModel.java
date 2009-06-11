@@ -23,7 +23,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
-	private static String[] columnNames = { "Load Mode", "Name","Server", "Server Type"};
+	private static String[] columnNames = { "Choose Load Mode", "Data Set","Data Source", "Data Source Type"};
 	static String[] standardLoadChoices = {"Don't Load", "Region In View"};
 	static String[] quickloadLoadChoices = {"Don't Load", "Whole Genome"};
 	private final EnumMap<LoadStrategy, String> DASLoadStrategyMap;  // map to a friendly string

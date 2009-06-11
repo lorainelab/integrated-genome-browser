@@ -32,8 +32,10 @@ public abstract class IGBConstants {
 	public static String IGB_VERSION;		// e.g., 5.4.3579
   private static final String DEFAULT_STRING = "UNKNOWN";
 	public static final boolean DEBUG = false;
+    public static final String DEFAULT_PREFS_API_RESOURCE = "/igb_default_APIprefs.xml";
+    public static final String default_prefs_resource = "/igb_default_prefs.xml";
 
-  /*
+    /*
    * This is not the best way to do this -- It just requires the least
    * change to the current code base.
    */

@@ -170,8 +170,6 @@
 	<target name="run" depends="compile" description="run IGB">
 		<java fork="true" classname="com.affymetrix.igb.IGB">
 			<jvmarg line="${igb.jvmargs}" />
-			<arg value="-prefs" />
-			<arg value="${igb}/etc/igb_prefs.xml" />
 			<classpath>
 				<fileset dir="${lib.dir}" includes="*.jar" />
 				<dirset dir="${basedir}">

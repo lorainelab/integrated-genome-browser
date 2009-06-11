@@ -47,6 +47,7 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
     model = new DefaultTableModel() {
 			@Override
       public boolean isCellEditable(int row, int column) {return false;}
+            @Override
       public Class getColumnClass(int column) {
         return String.class;
       }
@@ -77,7 +78,7 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
     validate();
   }
 
-  protected Object[][] buildRows(Preferences node) {
+  private static Object[][] buildRows(Preferences node) {
     Collection<String> keys = UnibrowPrefsUtil.getKeystrokesNodeNames();
 	Object[][] rows;
 
@@ -96,7 +97,7 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
   }
 
   /** Re-populates the table with the shortcut data. */
-  public void showShortcuts() {
+  private void showShortcuts() {
     Object[][] rows = null;
     rows = buildRows(UnibrowPrefsUtil.getKeystrokesNode());
     model.setDataVector(rows, col_headings);
@@ -120,7 +121,7 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
     }
   }
   
-  void editKeystroke(String id) {
+  private void editKeystroke(String id) {
     edit_panel.setPreferenceKey(UnibrowPrefsUtil.getKeystrokesNode(), id, "");
   }
 
@@ -133,11 +134,11 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
     refresh();
   }  
 
-  public void destroy() {
+  /*public void destroy() {
     removeAll();
     if (lsm != null) {lsm.removeListSelectionListener(this);}
     UnibrowPrefsUtil.getKeystrokesNode().removePreferenceChangeListener(this);
-  }
+  }*/
 
   public String getHelpTextHTML() {
     StringBuffer sb = new StringBuffer();
@@ -174,25 +175,6 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
   public String getToolTip() {
     return "Edit Locations";
   }
-
-  /** A main method for testing. */
-  /*public static void main(String[] args) throws Exception {
-    KeyStrokesView p = new KeyStrokesView();
-    //p.showShortcuts();
-   
-    JDialog d = new JDialog();
-    d.setTitle("Shortcuts");
-    d.getContentPane().add(p);
-    d.pack();
-    
-    d.setVisible(true);
-    d.addWindowListener(new java.awt.event.WindowAdapter() {
-      public void windowClosing(java.awt.event.WindowEvent e) {
-        System.exit(0);
-      }
-    }
-    );
-  }*/
   
   public String getInfoURL() {
     return null;

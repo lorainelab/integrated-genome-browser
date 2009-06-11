@@ -164,7 +164,7 @@ public final class KeyStrokeEditPanel extends JPanel {
   }
   
   /** Returns true if the primary key code is control, or alt, etc. */
-  private boolean isModifierKey(KeyStroke key) {
+  private static boolean isModifierKey(KeyStroke key) {
     int key_code = key.getKeyCode();
     return (
       (key_code == KeyEvent.VK_ALT) || 
@@ -178,7 +178,7 @@ public final class KeyStrokeEditPanel extends JPanel {
     );
   }
       
-  public KeyStroke getStroke() {
+  private KeyStroke getStroke() {
     return KeyStroke.getKeyStroke(key_code, modifiers);
   }
   
@@ -392,24 +392,4 @@ public final class KeyStrokeEditPanel extends JPanel {
     
     return "unknown(0x" + Integer.toString(keyCode, 16) + ")";
   }
-
-  /** A main method for testing. */
-  /*public static void main(String[] args) throws Exception {
-    KeyStrokeEditPanel p = new KeyStrokeEditPanel();
-    p.setEnabled(true);
-    
-    JDialog d = new JDialog();
-    d.setTitle("Enter Shortcut Key");
-    d.getContentPane().add(p);
-    d.pack();
-    
-    d.setVisible(true);
-    d.addWindowListener(new java.awt.event.WindowAdapter() {
-      public void windowClosing(java.awt.event.WindowEvent e) {
-        System.exit(0);
-      }
-    }
-    );
-  }*/
-  
 }

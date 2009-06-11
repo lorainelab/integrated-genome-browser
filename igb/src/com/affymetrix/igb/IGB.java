@@ -207,7 +207,6 @@ public final class IGB extends Application
 
   //private static final String WEB_PREFS_URL = "http://genoviz.sourceforge.net/igb_web_prefs.xml";
 
-  private static final String default_prefs_resource = "/igb_default_prefs.xml";
 
   /**
    *  We no longer distribute a file called "igb_prefs.xml".
@@ -510,24 +509,47 @@ public final class IGB extends Application
       
       LoadFileOrURLPrefs(prefs_parser);
 
-			LoadPreferencePrefs();
+			LoadServerPrefs();
 
       return prefs_hash;
   }
 
  private static void LoadDefaultPrefsFromJar(XmlPrefsParser prefs_parser) {
-		/**  first load default prefs from jar */
+		/**  first load default prefs from jar (with XmlPrefsParser)*/
 		InputStream default_prefs_stream = null;
 		try {
-			default_prefs_stream = IGB.class.getResourceAsStream(default_prefs_resource);
-			System.out.println("loading default prefs from: " + default_prefs_resource);
+			default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.default_prefs_resource);
+			System.out.println("loading default prefs from: " + IGBConstants.default_prefs_resource);
 			prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
-			System.out.println("Problem parsing prefs from: " + default_prefs_resource);
+			System.out.println("Problem parsing prefs from: " + IGBConstants.default_prefs_resource);
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}
+
+
+		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
+		try {
+			if ((UnibrowPrefsUtil.getTopNode()).nodeExists("keystrokes")) {
+				return;
+			}
+		} catch (BackingStoreException ex) {
+		}
+
+			/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
+		try {
+			default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			System.out.println("Default User preferences were not found.  loading default User preferencess from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			Preferences.importPreferences(default_prefs_stream);
+			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
+		} catch (Exception ex) {
+			System.out.println("Problem parsing prefs from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(default_prefs_stream);
+		}
+		
 	}
 
 	private static void LoadWebPrefs(XmlPrefsParser prefs_parser) {
@@ -631,7 +653,7 @@ public final class IGB extends Application
 	 * Load preferences from Java-based Preference nodes.
 	 * We're only loading servers here, but eventually, all the preferences will be loaded in this fashion.
 	 */
-	private static void LoadPreferencePrefs() {
+	private static void LoadServerPrefs() {
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
 		LoadServerPrefs(prefServers.node("QuickLoad"),ServerType.QuickLoad);
 		LoadServerPrefs(prefServers.node("DAS"),ServerType.DAS);
@@ -1250,13 +1272,13 @@ public final class IGB extends Application
     about_text.append("and the Vector Graphics package from java.FreeHEP.org \n");
     about_text.append("(released under the LGPL license).\n");
     about_text.append(" \n");
-    Iterator names = XmlPrefsParser.getFilenames(prefs_hash).iterator();
+    /*Iterator names = XmlPrefsParser.getFilenames(prefs_hash).iterator();
     if (names.hasNext()) {
       about_text.append("\nLoaded the following preference file(s): \n");
       while (names.hasNext()) {
         about_text.append("  " + (String) names.next() + "\n");
       }
-    }
+    }*/
     String cache_root = com.affymetrix.igb.util.LocalUrlCacher.getCacheRoot();
     File cache_file = new File(cache_root);
     if (cache_file.exists()) {

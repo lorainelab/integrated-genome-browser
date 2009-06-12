@@ -61,24 +61,6 @@
                             <entry key="Preferences Window / Import" value=""/>
                         </map>
                     </node>
-                    <node name="servers">
-                        <map/>
-                        <node name="DAS">
-                            <map/>
-                        </node>
-                        <node name="DAS2">
-                            <map>
-                                <entry key="http%3A%2F%2Fnetaffxdas.affymetrix.com%2Fdas2%2Fgenome" value="NetAffx"/>
-                                <entry key="http%3A%2F%2Fbioviz.org%2Fdas2%2Fgenome" value="Bioviz"/>
-                            </map>
-                        </node>
-                        <node name="QuickLoad">
-                            <map>
-                                <entry key="http%3A%2F%2Fnetaffxdas.affymetrix.com%2Fquickload_data" value="NetAffx QuickLoad"/>
-                                <entry key="http%3A%2F%2Fbioviz.org%2Fplant_quickload" value="Bioviz QuickLoad"/>
-                            </map>
-                        </node>
-                    </node>
                 </node>
             </node>
         </node>

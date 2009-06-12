@@ -387,7 +387,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 	private void serverDialog(String serverName, String DirectoryOrURL) {
 		JOptionPane.showMessageDialog(null,
-						"Server " + serverName + " at " + DirectoryOrURL + " has been added.",
+						"Server " + serverName + " at " + DirectoryOrURL + " has been added. If you do not see your new server, please restart the application",
 						"Server has been added",
 						JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -489,6 +489,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     sb.append("<p>\n");
     sb.append("This panel allows you to change settings for data sources.  ");
     sb.append("It is not necessary to restart the program for these changes to take effect.  ");
+		sb.append("NOTE: Temporarily, the Add Server functionality may require a restart to take effect.");
     sb.append("</p>\n");
 /*
     sb.append("<p>\n");

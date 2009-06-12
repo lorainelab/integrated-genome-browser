@@ -1263,15 +1263,22 @@ public final class IGB extends Application
     JPanel message_pane = new JPanel();
     message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
     JTextArea about_text = new JTextArea();
-    about_text.append(APP_NAME + ", version: " + APP_VERSION + "\n");
-    about_text.append("Copyright 2001-2007 Affymetrix Inc." + "\n");
-    about_text.append("\n");
-    about_text.append(APP_NAME + " uses the Xerces\n");
-    about_text.append("package from the Apache Software Foundation, \n");
-    about_text.append("the Fusion SDK from Affymetrix,  \n");
-    about_text.append("and the Vector Graphics package from java.FreeHEP.org \n");
-    about_text.append("(released under the LGPL license).\n");
-    about_text.append(" \n");
+		
+		String text = APP_NAME +", version: " + APP_VERSION +"\n\n" +
+						"IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n" +
+						"which develops interactive visualization software for genomics.\n" +
+						"Affymetrix, Inc., donated Genoviz and IGB to the open source community in January, 2005.\n" +
+						"IGB and Genoviz receive support from National Science Foundation's Arabidopsis 2010 program\n" +
+						"and from a growing community of developers and scientists. For details, see:\n" +
+						"http://igb.bioviz.org\n" +
+						"http://genoviz.sourceforge.net\n\n" +
+						"Source code for IGB is released under the Common Public License, v1.0.\n" +
+						"IGB is Copyright (c) 2000-2005 Affymetrix, Inc.\n" +
+						"IGB uses the Xerces package from the Apache Software Foundation, \n" +
+						"the Fusion SDK from Affymetrix,  \n" +
+						"and the Vector Graphics package from java.FreeHEP.org \n" +
+						"(released under the LGPL license).\n\n";
+		about_text.append(text);
     /*Iterator names = XmlPrefsParser.getFilenames(prefs_hash).iterator();
     if (names.hasNext()) {
       about_text.append("\nLoaded the following preference file(s): \n");

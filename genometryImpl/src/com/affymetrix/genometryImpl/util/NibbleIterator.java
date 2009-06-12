@@ -22,6 +22,7 @@ public final class NibbleIterator implements SearchableCharIterator {
 	public NibbleIterator(byte[] nibs, int len) {
 		this.length = len;
 		this.nibble_array = nibs;
+		//this.validateNibbles();
 	}
 
 	// really should do this more elegantly, so each bit in nibble represents boolean
@@ -69,7 +70,8 @@ public final class NibbleIterator implements SearchableCharIterator {
 	// 1110 ==> T
 	// 1111 ==>
 	 */
-	static final char[] nibble2char = {'A', 'C', 'G', 'T',
+	static final char[] nibble2char = {
+		'A', 'C', 'G', 'T',
 		'N', 'M', 'R', 'W',
 		'S', 'Y', 'K', 'V',
 		'H', 'D', 'B', 'U'};
@@ -279,7 +281,13 @@ public final class NibbleIterator implements SearchableCharIterator {
 			int offset = offsets[index];
 			byte filter = filters[index];
 			byte by = nibbles[i >> 1];
-			char nib = nibble2char[(by & filter) >> offset];
+			char nib = 'N';
+			try {
+				nib = nibble2char[(by & filter) >> offset];
+			} catch (Exception ex) {
+				// TODO: Occasionally there is a problem here.  Will investigate.
+				//System.out.println("Invalid residue found at position " + i + ". Treating as an 'N'");
+			}
 			buf.append(nib);
 		}
 		residues = buf.toString();
@@ -287,5 +295,33 @@ public final class NibbleIterator implements SearchableCharIterator {
 			residues = DNAUtils.reverseComplement(residues);
 		}
 		return residues;
+	}
+
+	public boolean validateSingleByte(int i) {
+		byte filter = 0;
+		char nib = 0;
+		byte by = 0;
+		int offset=0;
+			try {
+			int index = i & one_mask;  // either 0 or 1, index into offsets and filters arrays
+			offset = offsets[index];
+			filter = filters[index];
+			by = this.nibble_array[i >> 1];
+			nib = nibble2char[(by & filter) >> offset];
+			} catch (Exception ex) {
+				System.out.println("invalid Nibble file... error at index " + i + " with offset " + offset +
+								" and filter, by " + filter + " " + by  + " int: " + (by & filter) + " "+ ((by & filter) >> offset));
+				ex.printStackTrace();
+				return false;
+			}
+		return true;
+	}
+
+	public boolean validateNibbles() {
+		for (int i = 0; i < this.length; i++)
+		{
+			validateSingleByte(i);
+		}
+		return true;
 	}
 }

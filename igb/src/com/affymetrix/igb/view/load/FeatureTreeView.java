@@ -3,8 +3,11 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.igb.Application;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Enumeration;
@@ -14,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -68,6 +72,19 @@ public final class FeatureTreeView extends JComponent {
 		tree.setEditable(false);
 
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+				
+		//add a tree selection listener to the data access tree
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+	      public void valueChanged(TreeSelectionEvent e) {
+		        DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+		        if (node == null) return;
+				if (node.isLeaf()) {					
+					//trigger the event
+					SingletonGenometryModel.getGenometryModel().setSelectedFeature(e.getPath());					
+				}
+	      	}
+		});
+
 
 		// Only put checkboxes on leaf nodes.
 		TreePathSelectable only_leaf_nodes = new TreePathSelectable(){
@@ -158,7 +175,7 @@ public final class FeatureTreeView extends JComponent {
 			DefaultMutableTreeNode serverRoot = new DefaultMutableTreeNode(server.toString());
 			serverRoot.setUserObject(server);
 			for (GenericFeature feature : features) {
-				if (!feature.visible && feature.gVersion.gServer.equals(server)) {
+				if (!feature.visible && feature.gVersion.gServer.equals(server)) {				
 					addOrFindNode(serverRoot, feature, feature.featureName);
 				}
 			}
@@ -245,8 +262,7 @@ public final class FeatureTreeView extends JComponent {
 			
 
 			// Need to trigger a change in the Features Table.
-			glv.createFeaturesTable();		
-			
+			glv.createFeaturesTable();			
 		}
 
 		/**

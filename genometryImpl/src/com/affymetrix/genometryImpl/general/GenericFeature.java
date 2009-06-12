@@ -17,6 +17,7 @@ import java.util.Map;
 public final class GenericFeature {
 
 	public final String featureName;      // friendly name of the feature.
+	public final Map<String, String> featureProps;
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
 	public boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
@@ -28,6 +29,21 @@ public final class GenericFeature {
 	 */
 	public GenericFeature(String featureName, GenericVersion gVersion) {
 		this.featureName = featureName;
+		this.featureProps = null;
+		this.gVersion = gVersion;
+		this.visible = false;
+		this.loadStrategy = LoadStrategy.NO_LOAD;
+		this.LoadStatusMap = new HashMap<AnnotatedBioSeq, LoadStatus>();
+	}
+	
+	/**
+	 * @param featureName
+	 * @param featureProps
+	 * @param gVersion
+	 */
+	public GenericFeature(String featureName, Map<String, String> featureProps, GenericVersion gVersion) {
+		this.featureName = featureName;
+		this.featureProps = featureProps;
 		this.gVersion = gVersion;
 		this.visible = false;
 		this.loadStrategy = LoadStrategy.NO_LOAD;

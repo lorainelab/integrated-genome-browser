@@ -16,13 +16,19 @@ import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.general.GenericFeature;
+
 import java.util.*;
+
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.TreePath;
 
 public abstract class GenometryModel {
 
@@ -44,6 +50,7 @@ public abstract class GenometryModel {
 	final List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
 	final List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
 	final List<SymSelectionListener> sym_selection_listeners = Collections.synchronizedList(new ArrayList<SymSelectionListener>());
+	final List<FeatureSelectionListener> feature_selection_listeners = Collections.synchronizedList(new ArrayList<FeatureSelectionListener>());
 	//List model_change_listeners = new ArrayList();
 
 	AnnotatedSeqGroup selected_group = null;
@@ -175,6 +182,41 @@ public abstract class GenometryModel {
 			}
 		}
 	}
+	
+	//Feature Select Event	
+	public void setSelectedFeature(TreePath path) {
+		if (DEBUG)  {
+			System.out.println("GenometryModel.setSelectedFeature() called, ");
+		}
+		fireFeatureSelectionEvent(this, path);
+	}
+	
+	public void addFeatureSelectionListener(FeatureSelectionListener listener) {
+		if (!feature_selection_listeners.contains(listener)) {
+			feature_selection_listeners.add(listener);
+		}
+	}
+	
+	public void removeFeatureSelectionListener(SeqSelectionListener listener) {
+		feature_selection_listeners.remove(listener);
+	}
+
+	public List<FeatureSelectionListener> getFeatureSelectionListeners() {
+		return feature_selection_listeners;
+	}
+
+	private void fireFeatureSelectionEvent(Object src, TreePath path) {
+		TreeSelectionEvent evt = new TreeSelectionEvent(src, path, false, null, null);
+		synchronized (feature_selection_listeners) {
+			// the "synchronized" block, by itself, doesn't seem to be enough,
+			// so also copying the list
+			ArrayList<FeatureSelectionListener> listeners = new ArrayList<FeatureSelectionListener>(feature_selection_listeners);
+			for (int i=listeners.size()-1; i>=0; i--) {
+				listeners.get(i).featureSelectionChanged(evt);
+			}
+		}
+	}
+	
 
 	public MutableAnnotatedBioSeq getSelectedSeq() {
 		return selected_seq;

@@ -13,52 +13,58 @@
 package com.affymetrix.igb.view;
 
 import java.awt.*;
+import java.util.Map;
+
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.FeatureTreeView;
 import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
-public class DataLoadView extends JComponent  {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+public class DataLoadView extends JComponent  { 
+	
+	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-  GeneralLoadView general_load_view;
-  SeqGroupView group_view;
+	GeneralLoadView general_load_view;
+	SeqGroupView group_view;
 	FeatureTreeView feature_tree_view;
+	TrackInfoView track_info_view;
 
-
-  public DataLoadView() {
-    this.setLayout(new BorderLayout());
+	public DataLoadView() {
+		this.setLayout(new BorderLayout());
 
 		JPanel main_panel = new JPanel();
 
-    this.add(main_panel);
-    this.setBorder(BorderFactory.createEtchedBorder());
+		this.add(main_panel);
+		this.setBorder(BorderFactory.createEtchedBorder());
 
-    main_panel.setLayout(new BorderLayout());
+		main_panel.setLayout(new BorderLayout());
 
-    general_load_view = new GeneralLoadView();
+		general_load_view = new GeneralLoadView();
 		group_view = new SeqGroupView();
-
+		track_info_view = new TrackInfoView();
+			
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, general_load_view, group_view);
 		jPane.setResizeWeight(0.9);
+		JSplitPane jPaneTrackInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jPane, track_info_view);
+		jPaneTrackInfo.setResizeWeight(0.9);
 
-		main_panel.add("Center", jPane);
+		main_panel.add("Center", jPaneTrackInfo);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));
-		
-	}
+	}	
 }
 
-class SeqGroupView extends JComponent
-  implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -74,13 +80,13 @@ class SeqGroupView extends JComponent
     seqtable = new JTable();
     seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		SeqGroupTableModel mod = new SeqGroupTableModel(null);
+	SeqGroupTableModel mod = new SeqGroupTableModel(null);
     seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
    
     JScrollPane scroller = new JScrollPane(seqtable);
     scroller.setBorder(BorderFactory.createCompoundBorder(
-      scroller.getBorder(),
-      BorderFactory.createEmptyBorder(0,2,0,2)));
+    scroller.getBorder(),
+    BorderFactory.createEmptyBorder(0,2,0,2)));
 
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     //this.add(genomeCB);
@@ -90,7 +96,7 @@ class SeqGroupView extends JComponent
     this.setBorder(BorderFactory.createTitledBorder("Current Sequence"));
     gmodel.addGroupSelectionListener(this);
     gmodel.addSeqSelectionListener(this);
-    lsm = seqtable.getSelectionModel();
+    lsm = seqtable.getSelectionModel(); 
     lsm.addListSelectionListener(this);
   }
 
@@ -101,10 +107,11 @@ class SeqGroupView extends JComponent
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (SeqGroupView.DEBUG_EVENTS)  {
       System.out.println("SeqGroupView received groupSelectionChanged() event");
-      if (group == null)  { System.out.println("  group is null"); }
-      else  {
-        System.out.println("  group: " + group.getID());
-        System.out.println("  seq count: " + group.getSeqCount());
+      if (group == null)  { 
+    	  System.out.println("  group is null"); 
+      } else  {
+    	  System.out.println("  group: " + group.getID());
+    	  System.out.println("  seq count: " + group.getSeqCount());
       }
     }
 
@@ -194,6 +201,64 @@ class SeqGroupView extends JComponent
     @Override
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
+}
+
+class TrackInfoView extends JComponent implements FeatureSelectionListener {
+	
+	static boolean DEBUG_EVENTS = false;
+	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static final String NO_TRACK = "No Track Selected";
+	
+	JTable trackPropTable;
+	AnnotatedBioSeq selected_track = null;
+	ListSelectionModel lsm;
+
+	public TrackInfoView() {
+		trackPropTable = new JTable();
+		trackPropTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				
+		TrackPropertyTableModel mod = new TrackPropertyTableModel(null, null);
+		trackPropTable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
+		 
+		JScrollPane scroller = new JScrollPane(trackPropTable);
+		scroller.setBorder(BorderFactory.createCompoundBorder(scroller.getBorder(), BorderFactory.createEmptyBorder(0,2,0,2)));
+		
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.add(Box.createRigidArea(new Dimension(0, 5)));
+		this.add(scroller);
+		
+		this.setBorder(BorderFactory.createTitledBorder("Track Properties"));			
+		
+		 gmodel.addFeatureSelectionListener(this);
+	}
+	
+	@Override
+	public void featureSelectionChanged(TreeSelectionEvent e) {
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+		GenericFeature selectedFeature = (GenericFeature) selectedNode.getUserObject();
+		String selectedName = selectedFeature.featureName;				
+		
+		//reset the title
+		this.setBorder(BorderFactory.createTitledBorder("Track Properties - " + selectedName));
+		//add the data		
+		Map<String, String> properties= selectedFeature.featureProps;	
+		
+		TrackPropertyTableModel mod = new TrackPropertyTableModel(selectedName, properties);
+		trackPropTable.setModel(mod);
+	
+		trackPropTable.validate();
+		trackPropTable.repaint();
+	}
+	
+	@Override
+	public Dimension getMinimumSize() { 
+		return new Dimension(200, 50); 
+	}
+	
+	@Override
+	public Dimension getPreferredSize() { 
+		return new Dimension(200, 50); 
+	}
 }
 
 

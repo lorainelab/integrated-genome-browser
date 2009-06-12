@@ -27,6 +27,7 @@ import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -73,11 +74,16 @@ public final class FeatureLoading {
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 			for (Das2Type type : version.getTypes().values()) {
 				String type_name = type.getName();
+				Map<String, String> type_props = (Map<String, String>)type.getProps();
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.features.add(new GenericFeature(type_name, gVersion));
+				if (type_props != null && type_props.size() > 0) {
+					gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
+				} else {
+					gVersion.features.add(new GenericFeature(type_name, gVersion));
+				}
 			}
 			return;
 		}

@@ -24,12 +24,12 @@ public final class Das2Type {
   protected String ontology;
   protected String derivation;  // in DAS2 XML, this is source attribute
   protected String info_url;    // doc_href
-  protected Map props;
+  protected Map<String, String> props;
   protected Map formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
 
   //  public Das2Type(Das2VersionedSource version, String id, String ontology, String derivation, String href, Map formats, Map props, Map parents) {
   public Das2Type(Das2VersionedSource version, URI type_uri, String name, String ontology,
-		  String derivation, String href, Map formats, Map props, Map parents) {
+		  String derivation, String href, Map formats, Map<String, String> props, Map parents) {
     this.versioned_source = version;
     //    this.id = id;
     this.type_uri = type_uri;
@@ -57,7 +57,7 @@ public final class Das2Type {
   public String getOntology() { return ontology; }
   public String getDerivation() { return derivation; }  // source attribute, but getSource() clashes with getVersionedSource();
   public String getInfoUrl() { return info_url; }
-  public Map getProps() { return props; }
+  public Map<String, String> getProps() { return props; }
   public String getProperty(String key) { 
     String val = null;
     if (props != null) { val = (String)props.get(key); }

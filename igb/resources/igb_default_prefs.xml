@@ -4,8 +4,8 @@
 <server type="das2" name="NetAffx DAS2" url="http://netaffxdas.affymetrix.com/das2/genome" />
 <server type="quickload" name="NetAffx QuickLoad" url="http://netaffxdas.affymetrix.com/quickload_data" />
 
-<server type="das2" name="Bioviz DAS2" url="http://bioviz.org/das2/genome" /> -->
-<server type="quickload" name="Bioviz QuickLoad" url="http://bioviz.org/plant_quickload/"/>
+<server type="das2" name="Bioviz DAS2" url="http://bioviz.org/das2/genome" />
+<server type="quickload" name="Bioviz QuickLoad" url="http://bioviz.org/quickload/"/>
 
 
 

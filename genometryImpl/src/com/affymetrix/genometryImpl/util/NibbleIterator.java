@@ -1,118 +1,40 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometry.util.DNAUtils;
 
 public final class NibbleIterator implements SearchableCharIterator {
-
-	int length;
-	byte[] nibble_array;
+	private int length;
+	private byte[] nibble_array;
 
 	public NibbleIterator(byte[] nibs, int len) {
 		this.length = len;
 		this.nibble_array = nibs;
-		//this.validateNibbles();
 	}
 
-	// really should do this more elegantly, so each bit in nibble represents boolean
-	//   for whether a particular base is present --
-	//       base:   A C G T
-	//        bit:   1 2 3 4
-	//   so for example, nibble 0101 binary (= 5 decimal) would be (A or T)...
-	/*
-	static final char[] nibble2char = {
-	'-', // 0000 ==> no bases (gap?)
-	'A', // 0001 ==> A
-	'C', // 0010 ==> C
-	// 0011 ==> C|A
-	'G', // 0100 ==> G
-	// 0101 ==> G|A
-	// 0110 ==> G|C
-	// 0111 ==> G|C|A
-	'T', // 1000 ==> T
-	// 1001 ==> T|A
-	// 1010 ==> T|C
-	// 1011 ==> T|C|A
-	// 1100 ==> T|G
-	// 1101 ==> T|G|A
-	// 1110 ==> T|G|C
-	'N', // 1111 ==> T|G|C|A
-	 */
-	// or possibly rig it to reverse complements of a single base is just the
-	//    bitwise NOT of the base ( revcomp(nibble) = ^ nibble ) :
-	/*
-	static final char[] nibble2char = {
-	// 0000
-	'A', // 0001 ==> A
-	// 0010 ==> C
-	// 0011 ==>
-	// 0100 ==>
-	// 0101 ==>
-	// 0110 ==>
-	// 0111 ==>
-	// 1000 ==>
-	// 1001 ==>
-	// 1010 ==>
-	// 1011 ==>
-	// 1100 ==>
-	// 1101 ==> G
-	// 1110 ==> T
-	// 1111 ==>
-	 */
-	static final char[] nibble2char = {
+	private static final char[] nibble2char = {
 		'A', 'C', 'G', 'T',
 		'N', 'M', 'R', 'W',
 		'S', 'Y', 'K', 'V',
 		'H', 'D', 'B', 'U'};
-	static final byte[] char2nibble = new byte[256];
-
+	private static final byte[] char2nibble = new byte[256];
 
 	static {
-
-		char2nibble['A'] = 0;
-		char2nibble['C'] = 1;
-		char2nibble['G'] = 2;
-		char2nibble['T'] = 3;
-		char2nibble['N'] = 4;
-		char2nibble['M'] = 5;
-		char2nibble['R'] = 6;
-		char2nibble['W'] = 7;
-		char2nibble['S'] = 8;
-		char2nibble['Y'] = 9;
-		char2nibble['K'] = 10;
-		char2nibble['V'] = 11;
-		char2nibble['H'] = 12;
-		char2nibble['D'] = 13;
-		char2nibble['B'] = 14;
-		char2nibble['U'] = 15;
-
-		char2nibble['a'] = 0;
-		char2nibble['c'] = 1;
-		char2nibble['g'] = 2;
-		char2nibble['t'] = 3;
-		char2nibble['n'] = 4;
-		char2nibble['m'] = 5;
-		char2nibble['r'] = 6;
-		char2nibble['w'] = 7;
-		char2nibble['s'] = 8;
-		char2nibble['y'] = 9;
-		char2nibble['k'] = 10;
-		char2nibble['v'] = 11;
-		char2nibble['h'] = 12;
-		char2nibble['d'] = 13;
-		char2nibble['b'] = 14;
-		char2nibble['u'] = 15;
+		char2nibble['A'] = char2nibble['a'] = 0;
+		char2nibble['C'] = char2nibble['c'] = 1;
+		char2nibble['G'] = char2nibble['g'] = 2;
+		char2nibble['T'] = char2nibble['t'] = 3;
+		char2nibble['N'] = char2nibble['n'] = 4;
+		char2nibble['M'] = char2nibble['m'] = 5;
+		char2nibble['R'] = char2nibble['r'] = 6;
+		char2nibble['W'] = char2nibble['w'] = 7;
+		char2nibble['S'] = char2nibble['s'] = 8;
+		char2nibble['Y'] = char2nibble['y'] = 9;
+		char2nibble['K'] = char2nibble['k'] = 10;
+		char2nibble['V'] = char2nibble['v'] = 11;
+		char2nibble['H'] = char2nibble['h'] = 12;
+		char2nibble['D'] = char2nibble['d'] = 13;
+		char2nibble['B'] = char2nibble['b'] = 14;
+		char2nibble['U'] = char2nibble['u'] = 15;
 	}
 	// 127 -->   0111 1111
 	// -128 -->  1111 1111
@@ -120,64 +42,36 @@ public final class NibbleIterator implements SearchableCharIterator {
 	// -16  -->  1111 0000   --> (-128) + 64 + 32 + 16
 
 	// & with hifilter to filter out 4 hi bits (only lo bits retained)
-	static final byte hifilter = 15;
+	private static final byte hifilter = 15;
 	// & with lofilter to filter out 4 lo bits (only hi bits retained)
-	static final byte lofilter = -16;
+	private static final byte lofilter = -16;
 
 	// number of bits to shift when converting hinibble and lonibble
 	//   (4 bits for hinibble, 0 bits for lonibble)
-	static final int offsets[] = {4, 0};
-	//  static final byte filters[] = { hifilter, lofilter };
-	static final byte filters[] = {lofilter, hifilter};
-	static final int one_mask = 1;
+	private static final int offsets[] = {4, 0};
+
+	private static final byte filters[] = {lofilter, hifilter};
+	private static final int one_mask = 1;
 
 	/**
 	 *  BEGIN
 	 *  CharacterIterator implementation
 	 */
 	public char charAt(int pos) {
-		//TODO
-		/*
-		 *  BLECH!!!
-		 *  Very strange problem with _one_ position, pos = 30927828
-		 *  MUST FIX SOON
-		 */
-		//    if (pos == 30927828 || pos == 13698664) {
-		if (pos == 30927828) {
-			// System.out.println("hit weird NibbleIterator problem with 30927828");
-			// return 'N';
-		}
-
 		int index = pos & one_mask;  // either 0 or 1, index into offsets and filters arrays
 		int offset = offsets[index];
 		byte filter = filters[index];
 		byte by = nibble_array[pos >> 1];
-		int n2c_index = ((by & filter) >> offset);
 
-		char nib;
-		try {
-			//    char nib = nibble2char[(by & filter) >> start];
-			nib = nibble2char[(by & filter) >> offset];
-		} catch (Exception ex) {
-			System.out.println("!!!! problem: base pos = " + pos + ", nibble2char index = " + n2c_index);
-			ex.printStackTrace();
-			nib = 'N';
+		int arrIndex = (by & filter) >> offset;
+		if (arrIndex < 0) {
+			// JN - fixes bug with signed binary shifting.  See checkin comments.
+			arrIndex += nibble2char.length;
 		}
-		return nib;
+		return nibble2char[arrIndex];
 	}
 
-	/*public boolean isEnd(int pos) {
-		//    return (pos >= nibble_array.end);
-		return (pos >= end);
-	}*/
-
-	/*public String substring(int start) {
-		System.out.println("called NibbleIterator.substring(start)");
-		return substring(start, this.end);
-	}*/
-
 	public String substring(int start, int end) {
-		//    System.out.println("called NibbleIterator.substring(start = " + start + ", end = " + end + ")");
 		return nibblesToString(nibble_array, start, end);
 	}
 
@@ -186,11 +80,7 @@ public final class NibbleIterator implements SearchableCharIterator {
 	}
 
 	public int indexOf(String str, int fromIndex) {
-
-		//            char v1[] = value;
-		//            char v2[] = str.value;
 		char querychars[] = str.toCharArray();
-		//            int max = start + (count - str.count);
 		int max = length - str.length();
 		if (fromIndex >= length) {
 			if (length == 0 && fromIndex == 0 && str.length() == 0) {
@@ -281,13 +171,13 @@ public final class NibbleIterator implements SearchableCharIterator {
 			int offset = offsets[index];
 			byte filter = filters[index];
 			byte by = nibbles[i >> 1];
-			char nib = 'N';
-			try {
-				nib = nibble2char[(by & filter) >> offset];
-			} catch (Exception ex) {
-				// TODO: Occasionally there is a problem here.  Will investigate.
-				//System.out.println("Invalid residue found at position " + i + ". Treating as an 'N'");
+			int arrIndex = (by & filter) >> offset;
+			if (arrIndex < 0) {
+				// JN - fixes bug with signed binary shifting.  See checkin comments.
+				arrIndex += nibble2char.length;
 			}
+			char nib = nibble2char[arrIndex];
+
 			buf.append(nib);
 		}
 		residues = buf.toString();
@@ -295,33 +185,5 @@ public final class NibbleIterator implements SearchableCharIterator {
 			residues = DNAUtils.reverseComplement(residues);
 		}
 		return residues;
-	}
-
-	public boolean validateSingleByte(int i) {
-		byte filter = 0;
-		char nib = 0;
-		byte by = 0;
-		int offset=0;
-			try {
-			int index = i & one_mask;  // either 0 or 1, index into offsets and filters arrays
-			offset = offsets[index];
-			filter = filters[index];
-			by = this.nibble_array[i >> 1];
-			nib = nibble2char[(by & filter) >> offset];
-			} catch (Exception ex) {
-				System.out.println("invalid Nibble file... error at index " + i + " with offset " + offset +
-								" and filter, by " + filter + " " + by  + " int: " + (by & filter) + " "+ ((by & filter) >> offset));
-				ex.printStackTrace();
-				return false;
-			}
-		return true;
-	}
-
-	public boolean validateNibbles() {
-		for (int i = 0; i < this.length; i++)
-		{
-			validateSingleByte(i);
-		}
-		return true;
 	}
 }

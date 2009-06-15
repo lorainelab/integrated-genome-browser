@@ -13,19 +13,16 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
-import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.genoviz.awt.NeoCanvas;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import java.awt.Component;
 
@@ -35,10 +32,10 @@ import java.awt.Component;
  */
 public class AffyLabelledTierMap extends AffyTieredMap  {
   
-  AffyTieredMap labelmap;
-  JSplitPane mapsplitter;
-  List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
-  JPanel can_panel;
+  private AffyTieredMap labelmap;
+  private JSplitPane mapsplitter;
+  private List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
+  private JPanel can_panel;
   
   public AffyLabelledTierMap() {
     super();
@@ -52,6 +49,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
    *  Overriding initComponenetLayout from NeoMap
    *    (called in NeoMap constructor...).
    */
+	@Override
   public void initComponentLayout() {
     labelmap = new AffyTieredMap(false, false);    
     labelmap.setRubberBandBehavior(false);
@@ -82,16 +80,19 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	@Override
   public void setMapColor(Color c) {
     super.setMapColor(c);
     labelmap.setMapColor(c);
   }
-  
+
+	@Override
   public void setBackground(Color c) {
     super.setBackground(c);
     labelmap.setBackground(c);
   }
-  
+
+	@Override
   public void clearWidget() {
     super.clearWidget();
     labelmap.clearWidget();
@@ -105,7 +106,8 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   public AffyTieredMap getLabelMap() {
     return labelmap;
   }
-    
+
+	@Override
   public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) { 
     super.packTiers(full_repack, stretch_map, extra_for_now);
     //Rectangle2D bbox = this.getCoordBounds();
@@ -132,6 +134,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
    * which, in turn calls {@link AffyTieredMap#addTier(TierGlyph,int)}
    * which we override here.
    */
+	@Override
   public void addTier(TierGlyph mtg, int tier_index) {
     super.addTier(mtg, tier_index);
     createTierLabel(mtg);    
@@ -157,6 +160,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     return label_glyph;
   }
 
+	@Override
   public void removeTier(TierGlyph toRemove) {
     super.removeTier(toRemove);
     GlyphI label_glyph = labelmap.getItem(toRemove);
@@ -166,6 +170,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	@Override
   public void setFloatBounds(int axis, double start, double end) {
     super.setFloatBounds(axis, start, end);
     if (axis == Y && labelmap != null) { 
@@ -173,6 +178,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	@Override
   public void setBounds(int axis, int start, int end) {
     super.setBounds(axis, start, end);
     if (axis == Y && labelmap != null) { 
@@ -180,6 +186,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	@Override
   public void zoom(int axisid, double zoom_scale) { 
     super.zoom(axisid, zoom_scale);
     if (axisid == Y && labelmap != null) {
@@ -187,6 +194,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	@Override
   public void scroll(int axisid, double value) {
     super.scroll(axisid, value);
     if (axisid == Y && labelmap != null) {
@@ -194,33 +202,39 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	@Override
   public void setZoomBehavior(int axisid, int constraint, double coord) {
     super.setZoomBehavior(axisid, constraint, coord);
     labelmap.setZoomBehavior(axisid, constraint, coord);
   }
 
+	@Override
   public void updateWidget() {
     super.updateWidget();
     labelmap.updateWidget();
   }
 
+	@Override
   public void updateWidget(boolean full_update) {
     super.updateWidget(full_update);
     labelmap.updateWidget(full_update);
   }
 
+	@Override
   public void stretchToFit(boolean fitx, boolean fity) {
     super.stretchToFit(fitx, fity);
     labelmap.stretchToFit(fitx, fity);
   }
 
+	@Override
   public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
     super.repackTheTiers(full_repack, stretch_vertically);  
     labelmap.repackTheTiers(full_repack, stretch_vertically);  
   }
 
   /** Prints this component, including the label map. */
-  public void print() throws java.awt.print.PrinterException {
+  @Override
+	public void print() throws java.awt.print.PrinterException {
     print(true);
   }
   
@@ -244,11 +258,20 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   public JSplitPane getSplitPane() {
     return mapsplitter;
   }
-  
+
+
+	@Override
+	public void componentResized(ComponentEvent evt) {
+		if (evt.getSource() == canvas) {
+			this.stretchToFit(true,true);
+			this.updateWidget();
+		}
+	}
+
   /**
    *  main for testing AffyLabelledTierMap
    */
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     AffyLabelledTierMap map = new AffyLabelledTierMap();
 
     AdjustableJSlider xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
@@ -283,6 +306,6 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
       }
     } );
     frm.setVisible(true);
-  }
+  }*/
 
 }

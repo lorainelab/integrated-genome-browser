@@ -311,7 +311,7 @@ public class SeqMapView extends JPanel
     }
 
     public final class SeqMapViewComponentListener extends ComponentAdapter {
-        // When the map is resized, make sure the graphs are still visible.
+        // update graphs and annotations when the map is resized.
 
         @Override
         public void componentResized(ComponentEvent e) {
@@ -319,14 +319,12 @@ public class SeqMapView extends JPanel
 
                 public void run() {
                     List graphs = collectGraphs();
-                    boolean b = false;
                     for (int i = 0; i < graphs.size(); i++) {
-											// checkPixelBounds has effect on object!
-                        b |= GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+                        GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
                     }
-                    if (b) {
-                        getSeqMap().updateWidget();
-                    }
+										getSeqMap().stretchToFit(true,true);
+										getSeqMap().updateWidget();
+
                 }
             });
         }

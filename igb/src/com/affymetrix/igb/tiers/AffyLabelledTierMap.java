@@ -32,7 +32,7 @@ import java.awt.Component;
  */
 public class AffyLabelledTierMap extends AffyTieredMap  {
   
-  private AffyTieredMap labelmap;
+  AffyTieredMap labelmap;
   private JSplitPane mapsplitter;
   private List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
   private JPanel can_panel;

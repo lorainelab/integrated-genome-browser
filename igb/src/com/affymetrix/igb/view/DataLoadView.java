@@ -57,7 +57,8 @@ public class DataLoadView extends JComponent  {
 		JSplitPane jPaneTrackInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jPane, track_info_view);
 		jPaneTrackInfo.setResizeWeight(0.9);
 
-		main_panel.add("Center", jPaneTrackInfo);
+		//main_panel.add("Center", jPaneTrackInfo);
+		main_panel.add("Center", jPane);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
 		pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));

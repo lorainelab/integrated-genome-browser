@@ -30,10 +30,6 @@ public class SgrParserTest {
 		assertEquals(1, results.size());
 		GraphSym gr0 = results.get(0);
 
-		for (int i=0;i<gr0.getGraphXCoords().length;i++) {
-			System.out.println("y at: " + i + " is " + gr0.getGraphYCoord(i));
-		}
-
 		assertEquals("16", gr0.getGraphSeq().getID());
 		assertEquals(10, gr0.getPointCount());
 		assertEquals(-0.0447924, gr0.getGraphYCoord(2), 0.01);

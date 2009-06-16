@@ -233,7 +233,6 @@ class TrackInfoView extends JComponent implements FeatureSelectionListener {
 		 gmodel.addFeatureSelectionListener(this);
 	}
 	
-	@Override
 	public void featureSelectionChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
 		GenericFeature selectedFeature = (GenericFeature) selectedNode.getUserObject();

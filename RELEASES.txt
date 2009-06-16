@@ -4,6 +4,23 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-5.5
+  + Incremental change: UI improvements, memory management, code cleanup.  This is the last Java 5-compatible release; Java 5 will NOT be supported after this. 
+  + Image export (print to file) for many formats, such as: 
+PostScript, PDF, EMF, SVF, Flash SWF, as well as GIF, PNG, JPG and PPM. 
+  + Image export (print to file) for Sliced View.
+  + Clearer and more robust "Add Server" page, including a fix for an Apple bug when saving server preferences.  
+  + New IGB icon and splash screen.
+  + Major performance improvement in Heatmaps for mid- to large- size graphs.
+  + More efficient Wiggle format representation, using an estimated ~30% less memory.
+  + Several parser bug fixes.
+  + Finite timeouts for remote resources (DAS servers, etc.)
+  + Closing resource leaks.
+  + Case sensitivity improvements for data sets.
+  + Default shortcuts.
+  + Additional unification for DAS/1.
+  + New Genoviz FASTQ parser.
+
 IGB-5.4
   + Major change:  unification of QuickLoad, DAS/1, and DAS/2 interfaces.
   + QuickLoad, DAS/1, and DAS/2 servers are all accessed through the "Data Sources" preferences tab. These servers can be added through the "File->Preferences->Data Sources" tab.

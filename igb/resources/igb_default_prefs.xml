@@ -95,7 +95,11 @@
   />
 
 
-  <annotation_url annot_type_regex="^EST\s\(.*\)$" 
+  <annotation_url annot_type_regex=".*EST.*single.*map.*" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex=".*EST.*multiple.*map.*" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
@@ -104,6 +108,22 @@
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
   <annotation_url annot_type_regex="^cDNA_TAIR7.*" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex=".*cDNA.*single.*map.*" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex=".*cDNA.*multiple.*map.*" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="^GenBank\scDNA.*\(.*\)$" 
+    name="NCBI"
+    url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
+  />
+  <annotation_url annot_type_regex="^RefSeq\scDNA.*\(.*\)$" 
     name="NCBI"
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />

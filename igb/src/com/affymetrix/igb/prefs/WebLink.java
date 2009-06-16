@@ -20,6 +20,7 @@ import java.util.regex.PatternSyntaxException;
 public final class WebLink {
 
 	public enum RegexType { TYPE, ID };
+	private static final boolean DEBUG = false;
 	private String url = null;
 	private String name = "";
 	private String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
@@ -129,8 +130,14 @@ public final class WebLink {
 		}
 
 		if (method != null) {
+			if (DEBUG) {
+				System.out.println("method is : " + method);
+			}
 			for (WebLink link : weblink_list) {
 				if (link.url != null && link.matches(method)) {
+					if (DEBUG) {
+						System.out.println("link " + link + " matches. ");
+					}
 					results.add(link);
 				}
 			}

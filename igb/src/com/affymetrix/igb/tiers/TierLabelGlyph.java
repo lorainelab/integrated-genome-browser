@@ -9,7 +9,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
  * A glyph used to display a label for a TierGlyph.
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
-	private Rectangle debug_rect;
 	private Font fnt;
 	private boolean show_background = false;
 	private boolean show_outline = false;
@@ -31,6 +30,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	/** Overridden such that the info must be of type TierGlyph.  It is used
 	 *  to store the reference tier that will be returned by getReferenceTier().
 	 */
+	@Override
 	public void setInfo(Object o) {
 		if (!(o instanceof TierGlyph)) {
 			throw new IllegalArgumentException();
@@ -163,6 +163,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 *  With TierGlyphs, it is better to draw the outline inside of or contiguous
 	 *  with the glyph's borders.
 	 **/
+	@Override
 	protected void drawSelectedOutline(ViewI view) {
 		draw(view);
 
@@ -176,10 +177,12 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 						pixelbox.width - 3, pixelbox.height - 3);
 	}
 
+	@Override
 	public void setFont(Font f) {
 		this.fnt = f;
 	}
 
+	@Override
 	public Font getFont() {
 		return this.fnt;
 	}
@@ -188,6 +191,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 * @deprecated use {@link #setForegroundColor}.
 	 * Also see {@link #setBackgroundColor}.
 	 */
+	@Override
 	public void setColor(Color c) {
 		setForegroundColor(c);
 	}
@@ -196,7 +200,10 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 * @deprecated use {@link #getForegroundColor}.
 	 * Also see {@link #setBackgroundColor}.
 	 */
+	@Override
 	public Color getColor() {
 		return getForegroundColor();
 	}
+
+
 }

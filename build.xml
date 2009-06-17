@@ -179,6 +179,24 @@
 		</java>
 	</target>
 
+	<target name="release" depends="exe, webapp, webstart, docs" description="Package IGB for Release">
+		<zip destfile="${dist.dir}/igb.zip">
+			<fileset file="${basedir}/run_igb.sh" />
+			<fileset file="${basedir}/run_igb.bat" />
+			<fileset file="${basedir}/igb_exe.jar" />
+		</zip>
+		<war destfile="${dist.dir}/das2server.war">
+			<fileset dir="${webapp.dir}" />
+		</war>
+		<zip destfile="${dist.dir}/igb-webstart.zip">
+			<fileset dir="${webstart.dir}" />
+		</zip>
+		<zip destfile="${dist.dir}/genoviz-api-docs.zip">
+			<fileset dir="${docs.dir}" />
+		</zip>
+
+	</target>
+
 	<target name="profile-nb" if="netbeans.home">
 		<ant target="profile-nb" antfile="nbproject/ide-targets.xml" /> 
 	</target>

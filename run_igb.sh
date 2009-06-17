@@ -51,6 +51,7 @@ if [[ `uname -s` == "Darwin" ]]; then
 	VMARGS[${#VMARGS[*]}]="-Dapple.laf.useScreenMenuBar=true"
 	VMARGS[${#VMARGS[*]}]="-Xdock:name=Integrated Genome Browser"
 	VMARGS[${#VMARGS[*]}]="-Xdock:icon=$ICON"
+	VMARGS[${#VMARGS[*]}]="-d64"
 fi
 
 # Launch IGB

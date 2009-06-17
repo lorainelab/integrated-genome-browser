@@ -88,6 +88,7 @@
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${dist.dir}">
 				<include name="*.jar" />
+				<exclude name="igb.jar" />
 			</fileset>
 			<fileset dir="${lib.dir}">
 				<include name="xercesImpl.jar" />
@@ -179,22 +180,89 @@
 		</java>
 	</target>
 
-	<target name="release" depends="exe, webapp, webstart, docs" description="Package IGB for Release">
-		<zip destfile="${dist.dir}/igb.zip">
-			<fileset file="${basedir}/run_igb.sh" />
-			<fileset file="${basedir}/run_igb.bat" />
-			<fileset file="${basedir}/igb_exe.jar" />
+	<target name="release" depends="common-init, release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
+
+	<target name="release-igb" depends="exe">
+		<mkdir dir="${release.dir}/igb" />
+
+		<copy todir="${release.dir}/igb">
+			<fileset dir="${basedir}">
+				<include name="NOTICES.txt" />
+				<include name="RELEASES.txt" />
+				<include name="LICENSE.html" />
+				<include name="run_igb.*" />
+				<include name="igb_exe.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="*.txt" />
+				<exclude name="README.txt" />
+			</fileset>
+		</copy>
+
+		<zip destfile="${release.dir}/igb.zip" basedir="${release.dir}">
+			<include name="igb/**" />
 		</zip>
-		<war destfile="${dist.dir}/das2server.war">
+	</target>
+
+	<target name="release-das2server" depends="webapp">
+		<mkdir dir="${release.dir}" />
+
+		<war destfile="${release.dir}/das2server.war">
+			<fileset dir="${basedir}">
+				<include name="NOTICES.txt" />
+				<include name="RELEASES.txt" />
+				<include name="LICENSE.html" />
+			</fileset>
+			<fileset file="${lib.dir}/APACHE_LICENSE_2.txt" />
 			<fileset dir="${webapp.dir}" />
 		</war>
-		<zip destfile="${dist.dir}/igb-webstart.zip">
-			<fileset dir="${webstart.dir}" />
-		</zip>
-		<zip destfile="${dist.dir}/genoviz-api-docs.zip">
-			<fileset dir="${docs.dir}" />
-		</zip>
+	</target>
 
+	<target name="release-igb-webstart" depends="common-init">
+		<mkdir dir="${release.dir}/igb-webstart" />
+
+		<antcall target="webstart">
+			<param name="webstart.dir" value="${release.dir}/igb-webstart" />
+		</antcall>
+
+		<copy todir="${release.dir}/igb-webstart">
+			<fileset dir="${basedir}">
+				<include name="NOTICES.txt" />
+				<include name="RELEASES.txt" />
+				<include name="LICENSE.html" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="*.txt" />
+				<exclude name="README.txt" />
+			</fileset>
+		</copy>
+
+		<zip destfile="${release.dir}/igb-webstart.zip" basedir="${release.dir}">
+			<include name="igb-webstart/**" />
+		</zip>
+	</target>
+
+	<target  name="release-genoviz-sdk" depends="jar, demos">
+		<mkdir dir="${release.dir}/genoviz-sdk" />
+		<ant antfile="${basedir}/generic.xml" dir="${basedir}/genoviz_sdk" target="docs">
+			<property name="docs.dir"   value="${release.dir}/genoviz-sdk/api-docs" />
+		</ant>
+		<copy todir="${release.dir}/genoviz-sdk/genoviz-sdk/">
+			<fileset file="${dist.dir}/genoviz.jar" />
+			<fileset dir="${basedir}">
+				<include name="NOTICES.txt" />
+				<include name="RELEASES.txt" />
+				<include name="LICENSE.html" />
+			</fileset>
+			<fileset dir="${genoviz}">
+				<include name="index.html" />
+				<include name="tutorial/**" />
+				<include name="demo/**" />
+			</fileset>
+		</copy>
+		<zip destfile="${release.dir}/genoviz-sdk.zip" basedir="${release.dir}" >
+			<include name="genoviz-sdk/**" />
+		</zip>
 	</target>
 
 	<target name="profile-nb" if="netbeans.home">

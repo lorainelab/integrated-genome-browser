@@ -6,6 +6,7 @@
 		<property name="dist.dir"     value="${basedir}/dist" />
 		<property name="webstart.dir" value="${dist.dir}/webstart" />
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
+		<property name="release.dir"   value="${dist.dir}/release" />
 
 		<property name="build.version"   value="${DSTAMP}" />
 

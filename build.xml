@@ -180,7 +180,7 @@
 		</java>
 	</target>
 
-	<target name="release" depends="common-init, release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
+	<target name="release" depends="release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
 
 	<target name="release-igb" depends="exe">
 		<mkdir dir="${release.dir}/igb" />
@@ -204,18 +204,26 @@
 		</zip>
 	</target>
 
-	<target name="release-das2server" depends="webapp">
-		<mkdir dir="${release.dir}" />
+	<target name="release-das2server" depends="common-init">
+		<mkdir dir="${release.dir}/das2server" />
 
-		<war destfile="${release.dir}/das2server.war">
+		<antcall target="webapp">
+			<param name="webapp.dir" value="${release.dir}/das2server/das2" />
+		</antcall>
+
+		<copy todir="${release.dir}/das2server">
 			<fileset dir="${basedir}">
 				<include name="NOTICES.txt" />
 				<include name="RELEASES.txt" />
 				<include name="LICENSE.html" />
 			</fileset>
 			<fileset file="${lib.dir}/APACHE_LICENSE_2.txt" />
-			<fileset dir="${webapp.dir}" />
-		</war>
+			<fileset file="${das2server}/INSTALL.txt" />
+		</copy>
+
+		<zip destfile="${release.dir}/das2server.zip" basedir="${release.dir}">
+			<include name="das2server/**" />
+		</zip>
 	</target>
 
 	<target name="release-igb-webstart" depends="common-init">

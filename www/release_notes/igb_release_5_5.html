@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title>IGB 5.4 Release Notes</title>
+    <title>IGB 5.5 Release Notes</title>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <meta http-equiv="Content-Language" content="en-US" />
     <link rel="stylesheet" type="text/css" media="screen" href="/stylesheet.css" />
@@ -13,35 +13,56 @@
     
     <br>
     
-    <h1>IGB 5.4 release notes</h1>
+    <h1>IGB 5.5 release notes</h1>
         
-    IGB 5.4 is a significant new release that unifies QuickLoad, DAS/1, and DAS/2 interfaces and incorporates many bugfixes.<br><br>
+    IGB 5.5 is an incremental release that incorporates UI improvements, memory management, and other bugfixes.<br>
     
-    IGB 5.4 requires <b>Java version 1.5</b> or higher.
-
+    IGB 5.5 requires <b>Java version 1.5</b> or higher.  <b>Releases after IGB 5.5 will require Java 6.</b>
     <ul>
-      
-      <li>QuickLoad, DAS/1, and DAS/2 servers are all accessed through the "Data Sources" preferences tab.
-   These servers can be added through the "File->Preferences->Data Sources" tab.  
-</li>
-<br>
-      <li>Genome selection is now done via the combo boxes at the top of the Data Sources tab.  
-      Sequence selection is now done via the Sequence list on the right-hand side. 
- </li>
-<br>
-<li>Full support of a genome view.  By choosing the "genome" selection in the Sequence list, the user can see the entire genome of the target organism in a signle view.
-<br>
-      <li>Annotation Browser tab is turned on by default.<br>
-          The DAS/2 "Name Search", "Annotation Browser", and "Pattern Search", will all be combined in a later release.
-      </li>
-<br>
-	<li>Many bugfixes.  See the <a href="http://sourceforge.net/tracker/?atid=714744&group_id=129420&func=browse">SourceForge bugs page</a> for a partial list.
-</li>
 
-    </ul>
-<br/><br/>    
-    
-    
+<li>
+Image export (print to file) for many formats, such as: PostScript, PDF, EMF, SVF, Flash SWF, as well as GIF, PNG, JPG and PPM.
+</li>
+<li>
+Image export (print to file) for Sliced View.
+</li>
+<li>
+Clearer and more robust "Add Server" page.
+</li>
+<li>
+New IGB icon and splash screen.
+</li>
+<li>
+Major performance improvement in Heatmaps for mid- to large- size graphs.
+</li>
+<li>
+More efficient Wiggle format representation, using an estimated ~30% less memory.
+</li>
+<li>
+Several parser bug fixes.
+</li>
+<li>
+Finite timeouts for remote resources (DAS servers, etc.)
+</li>
+<li>
+Closing resource leaks.
+</li>
+<li>
+Case sensitivity improvements for data sets.
+</li>
+<li>
+Default shortcuts.
+</li>
+<li>
+Additional unification for DAS/1.
+</li>
+<li>
+New Genoviz FASTQ parser.
+</li>
+</ul>
+
+<br/><br/>
+
     <div id="footer">
       <p class="center">
         IGB is part of the <a href="http://genoviz.sourceforge.net">GenoViz project.</a>

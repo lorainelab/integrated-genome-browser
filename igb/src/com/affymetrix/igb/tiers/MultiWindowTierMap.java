@@ -60,8 +60,8 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
   MultiMapMouseHandler child_mouse_handler;
   Rectangle total_pixbox = new Rectangle(xbump, ybump, total_width, total_height);
 
-  ArrayList mlisteners = new ArrayList();
-  ArrayList rlisteners = new ArrayList();
+  ArrayList<MouseListener> mlisteners = new ArrayList<MouseListener>();
+  ArrayList<NeoRubberBandListener> rlisteners = new ArrayList<NeoRubberBandListener>();
   // List child_maps = new ArrayList();
   //  LinearTransform temp_trans = new LinearTransform();
 
@@ -93,7 +93,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
     //    Rectangle view_pbox = rootview.getPixelBox();
 
     //int map_count = child_maps.size();
-    int map_count = tile_columns * tile_rows;
+    //int map_count = tile_columns * tile_rows;
     // update all the child maps
     for (int x=0; x<tile_columns; x++) {
       //      NeoMap cmap = (NeoMap)child_maps.get(i);
@@ -141,11 +141,11 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
     }
 //    int xwindows_per_screen = tile_columns / screen_count;
 //    int ywindows_per_screen = tile_rows;
-    int xwindows_per_screen = 1;
-    int ywindows_per_screen = 1;
+    //int xwindows_per_screen = 1;
+    //int ywindows_per_screen = 1;
 
-    Map bounds2config = new LinkedHashMap();
-    Map config2devnum = new HashMap();
+    Map<Rectangle,GraphicsConfiguration> bounds2config = new LinkedHashMap<Rectangle,GraphicsConfiguration>();
+    Map<GraphicsConfiguration,Integer> config2devnum = new HashMap<GraphicsConfiguration,Integer>();
     for (int i=0; i<devices.length; i++)  {
       GraphicsDevice dev = devices[i];
       String id = dev.getIDstring();
@@ -174,7 +174,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
     System.out.println("#######  Allocating multiple windows for MultiWindowTierMap:");
     for (int x=0; x<tile_columns; x++) {
       for (int y=0; y<tile_rows; y++) {
-	Point topleft = new Point((x * tile_width) + xbump, (y * tile_height) + ybump);
+	//Point topleft = new Point((x * tile_width) + xbump, (y * tile_height) + ybump);
 	Rectangle win_bounds = new Rectangle((x * tile_width) + xbump, (y * tile_height) + ybump,
 					 tile_width, tile_height);
 	Iterator iterbounds = bounds2config.keySet().iterator();
@@ -182,7 +182,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 	  Rectangle screen_bounds = (Rectangle)iterbounds.next();
 	  if (win_bounds.intersects(screen_bounds)) {
 	    // found the right screen for this window
-            GraphicsConfiguration gconfig = (GraphicsConfiguration)bounds2config.get(screen_bounds);
+            GraphicsConfiguration gconfig = bounds2config.get(screen_bounds);
 	    Container win;
 	    if (USE_SWING) {
 	      if (USE_FRAME) { win = new JFrame(gconfig); }
@@ -229,7 +229,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 	    //	    newmap.setScrollIncrementBehavior(newmap.X, newmap.AUTO_SCROLL_HALF_PAGE);
             child_maps[x][y] = newmap;
 	    //            System.out.println("added map : " + child_maps[x][y]);
-            win.show();
+            win.setVisible(true);
 	    break;
 	  }
 	}
@@ -264,7 +264,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
       // Therefore setting up extra list to keep track of listeners and notify them here
       //  this.processMouseEvent(pevt);
       for (int i=0; i<mlisteners.size(); i++) {
-	MouseListener listener = (MouseListener)mlisteners.get(i);
+	MouseListener listener = mlisteners.get(i);
 	//	System.out.println("listener: " + listener);
         if (listener != null) {
 	  int id = pevt.getID();
@@ -291,6 +291,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
   }
 
 
+	@Override
   public void rubberBandChanged(NeoRubberBandEvent evt) {
     transformRubberBandEvent(evt);
   }
@@ -340,7 +341,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
       //	new NeoRubberBandEvent(this.getNeoCanvas(), evt.getID(), evt.getWhen(), evt.getModifiers(),
       //			       newx, newy, evt.getClickCount(), evt.isPopupTrigger(), evt.getRubberBand());
       for (int i=0; i<rlisteners.size(); i++) {
-	NeoRubberBandListener listener = (NeoRubberBandListener)rlisteners.get(i);
+	NeoRubberBandListener listener = rlisteners.get(i);
 	if (listener != null) {
 	  listener.rubberBandChanged(new_evt);
 	}
@@ -349,23 +350,27 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
     }
   }
 
+	@Override
   public void addMouseListener(MouseListener listener) {
     //    System.out.println("-------- adding mouse listener to MultiWindowTierMap: " + listener);
     super.addMouseListener(listener);
     mlisteners.add(listener);
   }
 
+	@Override
   public void removeMouseListener(MouseListener listener) {
     super.removeMouseListener(listener);
     mlisteners.remove(listener);
   }
 
+	@Override
   public void addRubberBandListener(NeoRubberBandListener listener) {
     //    System.out.println("-------- adding rubberband listener to MultiWindowTierMap: " + listener);
     super.addRubberBandListener(listener);
     rlisteners.add(listener);
   }
 
+	@Override
   public void removeRubberBandListener(NeoRubberBandListener listener) {
     super.removeRubberBandListener(listener);
     rlisteners.remove(listener);

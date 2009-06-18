@@ -68,7 +68,7 @@ public final class TierLabelManager {
   }
   
   /** Returns a list of selected TierLabelGlyph items. */
-  public List<GlyphI> getSelectedTierLabels() {
+  public List getSelectedTierLabels() {
     return labelmap.getSelected();
   }
 

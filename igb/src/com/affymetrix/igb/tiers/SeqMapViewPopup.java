@@ -242,15 +242,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     f.setVisible(true);
   }
 
-  List getStyles(List tier_label_glyphs) {
-    if (tier_label_glyphs.size() == 0) { return Collections.EMPTY_LIST; }
+  List<IAnnotStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
+    if (tier_label_glyphs.size() == 0) { return Collections.<IAnnotStyle>emptyList(); }
 
     // styles is a list of styles with no duplicates, so a Set rather than a List
     // might make sense.  But at the moment it seems faster to use a List
-    List styles = new ArrayList(tier_label_glyphs.size());
+    List<IAnnotStyle> styles = new ArrayList<IAnnotStyle>(tier_label_glyphs.size());
 
     for (int i=0; i<tier_label_glyphs.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
+      TierLabelGlyph tlg = tier_label_glyphs.get(i);
       TierGlyph tier = tlg.getReferenceTier();
       IAnnotStyle tps = tier.getAnnotStyle();
       if (tps != null && ! styles.contains(tps)) styles.add(tps);
@@ -395,7 +395,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  public void changeColor(final List tier_label_glyphs, final boolean fg) {
+  public void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
     if (tier_label_glyphs.isEmpty()) {
       return;
     }
@@ -416,7 +416,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     ActionListener al = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (int i=0; i<tier_label_glyphs.size(); i++) {
-          TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
+          TierLabelGlyph tlg = tier_label_glyphs.get(i);
           TierGlyph tier = (TierGlyph) tlg.getInfo();
           IAnnotStyle style = tier.getAnnotStyle();
 
@@ -428,9 +428,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
               style.setBackground(chooser.getColor());
             }
           }
-          Iterator graphs_iter = handler.getContainedGraphs(tier_label_glyphs).iterator();
-          while (graphs_iter.hasNext()) {
-            GraphGlyph gg =(GraphGlyph) graphs_iter.next();
+					for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
             if (fg) {
               gg.setColor(chooser.getColor());
               gg.getGraphState().getTierStyle().setColor(chooser.getColor());

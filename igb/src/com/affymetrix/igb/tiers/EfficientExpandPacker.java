@@ -230,15 +230,15 @@ public class EfficientExpandPacker extends ExpandPacker {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    List sibsinrange = null;
+    List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
-    Vector sibs = parent.getChildren();
+    Vector<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
     if (avoid_sibs) {
-      sibsinrange = new Vector();
+      sibsinrange = new Vector<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
-	GlyphI sibling = (GlyphI)sibs.get(i);
+	GlyphI sibling = sibs.get(i);
 	siblingbox = sibling.getCoordBox();
 	if (!(siblingbox.x > (childbox.x+childbox.width) ||
 	      ((siblingbox.x+siblingbox.width) < childbox.x)) ) {
@@ -260,7 +260,7 @@ public class EfficientExpandPacker extends ExpandPacker {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = (GlyphI)sibsinrange.get(j);
+        GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

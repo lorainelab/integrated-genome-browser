@@ -44,7 +44,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   AffyTieredMap northWestMap = null;
 
   JPanel nwpan, nepan, wpan, cpan, epan;
-  List extra_glyphs = new ArrayList();
+  List<TierGlyph> extra_glyphs = new ArrayList<TierGlyph>();
   double extramap_inset = 5;
 
   private SixWaySplitPane windowPane;
@@ -230,7 +230,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     if (northEastMap != null) { northEastMap.clearWidget(); }
     if (northWestMap != null)  { northWestMap.clearWidget(); }
     if (labelmap != null)  { labelmap.clearWidget(); } // or is this handled in the superclass?
-    extra_glyphs = new ArrayList();
+    extra_glyphs = new ArrayList<TierGlyph>();
   }
 
   public AffyTieredMap getExtraMap() {
@@ -247,8 +247,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) {
     super.packTiers(full_repack, stretch_map, extra_for_now);
     Rectangle2D lbox = extramap.getCoordBounds();
-    for (int i=0; i<extra_glyphs.size(); i++) {
-      TierGlyph extra_glyph = (TierGlyph) extra_glyphs.get(i);
+		for (TierGlyph extra_glyph : extra_glyphs) {
       TierGlyph tier_glyph = (TierGlyph)extra_glyph.getInfo();
       Rectangle2D tbox = tier_glyph.getCoordBox();
       extra_glyph.setCoords(0, 0, lbox.width, tbox.height);

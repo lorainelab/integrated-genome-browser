@@ -131,9 +131,9 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
   public void addNotTier(TierGlyph tierA) {
     //    int index = handler.getTierIndex(tierA);
     String method = "not: " + tierA.getLabel();
-    SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
+    //SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-    List listA = new ArrayList();
+    List<SeqSymmetry> listA = new ArrayList<SeqSymmetry>();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();
@@ -167,8 +167,8 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
     }
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-    List listA = new ArrayList();
-    List listB = new ArrayList();
+    List<SeqSymmetry> listA = new ArrayList<SeqSymmetry>();
+    List<SeqSymmetry> listB = new ArrayList<SeqSymmetry>();
 
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
@@ -205,8 +205,8 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
     String method = "xor: " + tierA.getLabel() + ", " + tierB.getLabel();
     SeqSymmetry tempsym = (SeqSymmetry)tierA.getChild(0).getInfo();
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-    List listA = new ArrayList();
-    List listB = new ArrayList();
+    List<SeqSymmetry> listA = new ArrayList<SeqSymmetry>();
+    List<SeqSymmetry> listB = new ArrayList<SeqSymmetry>();
 
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
@@ -236,7 +236,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
     StringBuffer meth = new StringBuffer();
     meth.append("union: ");
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-    List syms = new ArrayList();
+    List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
     for (int t=0; t<tiers.size(); t++) {
       TierGlyph tier = (TierGlyph) tiers.get(t);
       meth.append(tier.getLabel() + ", ");
@@ -261,8 +261,8 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
     String method = "intersect: " + tierA.getLabel() + ", " + tierB.getLabel();
 
     MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-    List listA = new ArrayList();
-    List listB = new ArrayList();
+    List<SeqSymmetry> listA = new ArrayList<SeqSymmetry>();
+    List<SeqSymmetry> listB = new ArrayList<SeqSymmetry>();
     for (int i=0; i<tierA.getChildCount(); i++) {
       GlyphI child = tierA.getChild(i);
       SeqSymmetry csym = (SeqSymmetry)child.getInfo();

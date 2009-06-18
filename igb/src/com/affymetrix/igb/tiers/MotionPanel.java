@@ -148,6 +148,6 @@ public final class MotionPanel extends JPanel {
     c.add( new MotionPanel( SwingConstants.HORIZONTAL, NeoWidgetI.PRIMARY_AXIS ) );
     f.setDefaultCloseOperation( f.EXIT_ON_CLOSE );
     f.setSize( 300, 100 );
-    f.show();
+    f.setVisible(true);
   }
 }

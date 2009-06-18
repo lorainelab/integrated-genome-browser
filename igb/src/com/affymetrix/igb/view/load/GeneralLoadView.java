@@ -355,6 +355,7 @@ public final class GeneralLoadView extends JComponent
 		SwingWorker worker = new SwingWorker() {
 
 			public Object doInBackground() {
+				try {
 				if (src == partial_residuesB) {
 					SeqSpan viewspan = gviewer.getVisibleSpan();
 					if (!glu.loadResidues(genomeVersionName, curSeq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
@@ -369,6 +370,10 @@ public final class GeneralLoadView extends JComponent
 						ErrorHandler.errorPanel("Couldn't load sequence",
 										"Was not able to locate the sequence.");
 					}
+				}
+				}
+				catch (Exception ex) {
+					ex.printStackTrace();
 				}
 				return null;
 			}

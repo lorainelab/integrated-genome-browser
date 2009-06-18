@@ -168,7 +168,11 @@ public final class FeatureLoading {
 			SwingWorker worker = new SwingWorker() {
 
 				public Object doInBackground() {
+					try {
 					createDAS2ResultSyms(request_set, result_syms);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 					return null;
 				}
 
@@ -241,7 +245,11 @@ public final class FeatureLoading {
 		SwingWorker worker = new SwingWorker() {
 
 			public Object doInBackground() {
+				try {
 				loadQuickLoadFeature(annot_url, gFeature);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 				return null;
 			}
 			@Override

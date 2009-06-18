@@ -1861,9 +1861,9 @@ public class SeqMapView extends JPanel
             residues_sym = getSelectedRegion();
             from = " from selected region";
         } else {
-            List syms = getSelectedSyms();
+            List<SeqSymmetry> syms = getSelectedSyms();
             if (syms.size() == 1) {
-                residues_sym = (SeqSymmetry) syms.get(0);
+                residues_sym = syms.get(0);
                 from = " from selected item";
             }
         }
@@ -2947,7 +2947,7 @@ public class SeqMapView extends JPanel
         if (!selected_glyphs.isEmpty()) {
             popup.add(zoomtoMI);
         }
-        List selected_syms = getSelectedSyms();
+        List<SeqSymmetry> selected_syms = getSelectedSyms();
         if (selected_syms.size() > 0) {
             popup.add(selectParentMI);
         }

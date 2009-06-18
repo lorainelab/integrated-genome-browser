@@ -485,7 +485,7 @@ public final class LocalUrlCacher {
 		return result_stream;
 	}
 
-	private static InputStream RetrieveFromURL(URLConnection conn, Map headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
+	private static InputStream RetrieveFromURL(URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
 		InputStream result_stream;
 
 		// populating header Properties (for persisting) and header input Map
@@ -536,7 +536,7 @@ public final class LocalUrlCacher {
 		return result_stream;
 	}
 
-	public static void reportHeaders(String url, Map headers) {
+	public static void reportHeaders(String url, Map<String,String> headers) {
 		if (headers != null) {
 			Application.getSingleton().logInfo("   HEADERS for URL: " + url);
 			Iterator heads = headers.entrySet().iterator();

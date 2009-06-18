@@ -216,14 +216,14 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
   void refreshList() {
     boolean only_displayed_tiers = true;
     boolean include_graph_styles = false;
-    List styles;
+    List<AnnotStyle> styles;
     // if only_displayed_tiers, then only put AnnotStyles in table that are being used in tiers currently displayed in main view
     if (only_displayed_tiers) {
-      styles = new ArrayList();
+      styles = new ArrayList<AnnotStyle>();
       styles.add(default_annot_style);
       if (smv != null) {  
-	List tiers = smv.getSeqMap().getTiers();
-	LinkedHashMap stylemap = new LinkedHashMap();
+	List<TierGlyph> tiers = smv.getSeqMap().getTiers();
+	LinkedHashMap<AnnotStyle,AnnotStyle> stylemap = new LinkedHashMap<AnnotStyle,AnnotStyle>();
 	Iterator titer = tiers.iterator();
 	while (titer.hasNext()) {
 	  TierGlyph tier = (TierGlyph)titer.next();
@@ -231,16 +231,16 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
 	  if ((style instanceof AnnotStyle) &&
 	      (style.getShow()) && 
 	      (tier.getChildCount() > 0) ) {
-	    stylemap.put(style, style);
+	    stylemap.put((AnnotStyle)style, (AnnotStyle)style);
 	  }
 	}
 	styles.addAll(stylemap.values());
       }
     }
     else { styles = AnnotStyle.getAllLoadedInstances(); }
-    ArrayList customizables = new ArrayList(styles.size());
+    ArrayList<AnnotStyle> customizables = new ArrayList<AnnotStyle>(styles.size());
     for (int i=0; i<styles.size(); i++) {
-      AnnotStyle the_style = (AnnotStyle) styles.get(i);
+      AnnotStyle the_style = styles.get(i);
       if (the_style.getCustomizable()) {
 	// if graph tier style then only include if include_graph_styles toggle is set (app is _not_ IGB)
 	if ((! the_style.isGraphTier()) || include_graph_styles) {

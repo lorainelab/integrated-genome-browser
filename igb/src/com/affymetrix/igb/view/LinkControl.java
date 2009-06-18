@@ -88,25 +88,24 @@ final class LinkControl implements ContextualPopupListener {
 			return;
 		}
 
-		Iterator iter = urls.entrySet().iterator();
-
 		if (urls.size() == 1) {
-			Map.Entry<String, String> entry = (Map.Entry<String, String>) iter.next();
-			String url = entry.getKey();
-			String name = entry.getValue();
-			if (name == null || name.equals(url)) {
-				name = "Get more info";
+			for (Map.Entry<String, String> entry : urls.entrySet()) {
+				String url = entry.getKey();
+				String name = entry.getValue();
+				if (name == null || name.equals(url)) {
+					name = "Get more info";
+				}
+
+				JMenuItem mi = makeMenuItem(name, url);
+				mi.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
+				popup.add(mi);
 			}
-			JMenuItem mi = makeMenuItem(name, url);
-			mi.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
-			popup.add(mi);
 		} else {
 			JMenu linkMenu = new JMenu("Get more info");
 			linkMenu.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Search16.gif"));
 			popup.add(linkMenu);
 
-			while (iter.hasNext()) {
-				Map.Entry<String, String> entry = (Map.Entry<String, String>) iter.next();
+			for (Map.Entry<String, String> entry : urls.entrySet()) {
 				String url = entry.getKey();
 				String name = entry.getValue();
 				if (name == null || name.equals(url)) {

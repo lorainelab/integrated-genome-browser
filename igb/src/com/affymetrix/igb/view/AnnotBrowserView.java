@@ -53,7 +53,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   // is a String representing the Tier
   private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
   private final static Class[] col_classes = {String.class, SeqSymmetry.class, Integer.class, Integer.class, String.class};
-  private final static Vector col_headings_vector = new Vector(Arrays.asList(col_headings));
+  private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
   static final int NUM_COLUMNS = 5;
 
   private final DefaultTableModel model;
@@ -149,7 +149,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   
 //  FindResiduesPanel find_residues = new FindResiduesPanel();
   
-  protected Vector buildRows(List results) {
+  private Vector buildRows(List results) {
         
     if (results == null || results.isEmpty()) {
       return new Vector(0);
@@ -212,7 +212,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             model.setDataVector(rows, col_headings_vector);
-            int num_results = rows.size();
+            //int num_results = rows.size();
             if (rows.size() >= THE_LIMIT) {
               setStatus("More than " + THE_LIMIT + " results");
             } else {
@@ -287,7 +287,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
         if (srow >= 0) {
           //Object o = table.getModel().getValueAt(srow, 0);
           SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-          List syms = new ArrayList(1);
+          List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
           syms.add((SeqSymmetry) table.getModel().getValueAt(srow, 1));
           gmodel.setSelectedSymmetriesAndSeq(syms, this);
         }

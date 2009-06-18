@@ -101,8 +101,8 @@ public final class TableSorter2 extends AbstractTableModel {
   private JTableHeader tableHeader;
   private MouseListener mouseListener;
   private TableModelListener tableModelListener;
-  private Map columnComparators = new HashMap();
-  private List sortingColumns = new ArrayList();
+  private Map<Class,Comparator> columnComparators = new HashMap<Class, Comparator>();
+  private List<Directive> sortingColumns = new ArrayList<Directive>();
   
   public TableSorter2() {
     this.mouseListener = new MouseHandler();
@@ -169,7 +169,7 @@ public final class TableSorter2 extends AbstractTableModel {
   
   private Directive getDirective(int column) {
     for (int i = 0; i < sortingColumns.size(); i++) {
-      Directive directive = (Directive)sortingColumns.get(i);
+      Directive directive = sortingColumns.get(i);
       if (directive.column == column) {
         return directive;
       }

@@ -33,10 +33,10 @@ public final class SixWaySplitPane extends JComponent {
   private final JSplitPane vSplitTwo = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, vSplitOne, easternRegion );
   
   /**
-   * Sycronized multiple split panes.
+   * Synchronized multiple split panes.
    */
   private final class SyncroSizer extends ComponentAdapter {
-    private Set peers = new HashSet();
+    private Set<JSplitPane> peers = new HashSet<JSplitPane>();
     public void add( JSplitPane thePane ) {
       this.peers.add( thePane );
       thePane.setContinuousLayout( true );

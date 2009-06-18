@@ -18,5 +18,5 @@ import javax.swing.JPopupMenu;
 import java.util.List;
 
 public interface ContextualPopupListener {
-  public void popupNotify(JPopupMenu popup, List selected_items, SeqSymmetry primary_sym);
+  public void popupNotify(JPopupMenu popup, List<SeqSymmetry> selected_items, SeqSymmetry primary_sym);
 }

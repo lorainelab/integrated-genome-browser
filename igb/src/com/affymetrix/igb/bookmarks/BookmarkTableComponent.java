@@ -110,7 +110,7 @@ public final class BookmarkTableComponent {
     cancelEditing(); // just in case!
     if (bm == null) {
       url_field.setText("");
-      data_model.setValuesFromMap(Collections.EMPTY_MAP);
+      data_model.setValuesFromMap(Collections.<String,String[]>emptyMap());
     } else {
       URL url = bm.getURL();
       String url_base = bm.getURL().toExternalForm();

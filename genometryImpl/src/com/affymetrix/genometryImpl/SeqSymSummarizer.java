@@ -179,10 +179,9 @@ public final class SeqSymSummarizer {
 	/**
 	 *  Assumes all spans refer to same BioSeq
 	 */
-	public static List getMergedSpans(List<SeqSpan> spans) {
+	public static List<SeqSpan> getMergedSpans(List<SeqSpan> spans) {
 		GraphSym landscape = getSpanSummary(spans, true, null);
-		List merged_spans = projectLandscapeSpans(landscape);
-		return merged_spans;
+		return projectLandscapeSpans(landscape);
 	}
 
 	public static List<SeqSpan> projectLandscapeSpans(GraphSym landscape) {

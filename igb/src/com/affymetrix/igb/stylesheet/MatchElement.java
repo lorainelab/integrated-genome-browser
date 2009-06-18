@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -52,7 +51,7 @@ public class MatchElement implements DrawableElement {
   
   StyleElement styleElement;
   PropertyMap propertyMap;
-  List subMatchList = new ArrayList();
+  List<MatchElement> subMatchList = new ArrayList<MatchElement>();
   
   String match_test = null;
   String match_param = null;
@@ -61,9 +60,8 @@ public class MatchElement implements DrawableElement {
   public Object clone() throws CloneNotSupportedException {
     MatchElement clone = (MatchElement) super.clone();
     clone.styleElement = (StyleElement) styleElement.clone();
-    clone.subMatchList = new ArrayList(subMatchList.size());
-    for (int i=0; i<subMatchList.size(); i++) {
-      MatchElement me = (MatchElement) subMatchList.get(i);
+    clone.subMatchList = new ArrayList<MatchElement>(subMatchList.size());
+		for (MatchElement me : subMatchList) {
       MatchElement new_me = (MatchElement) me.clone();
       clone.subMatchList.add(new_me);
     }
@@ -93,10 +91,8 @@ public class MatchElement implements DrawableElement {
     
     GlyphI result = null;
     
-    if (subMatchList != null && ! subMatchList.isEmpty()) {
-      Iterator iter = subMatchList.iterator();
-      while (iter.hasNext() && result == null) {
-        MatchElement me = (MatchElement) iter.next();
+    if (subMatchList != null) {
+			for (MatchElement me : subMatchList) {
         result = me.symToGlyph(gviewer, sym, gl, stylesheet, propertyMap);
       }
     }
@@ -166,7 +162,7 @@ public class MatchElement implements DrawableElement {
     this.styleElement = style;
   }
 
-  public List getSubMatchList() {
+  public List<MatchElement> getSubMatchList() {
     return this.subMatchList;
   }
   
@@ -183,10 +179,8 @@ public class MatchElement implements DrawableElement {
     if (this.propertyMap != null) {
       propertyMap.appendXML(indent + "  ", sb);
     }
-    
-    Iterator iter = this.getSubMatchList().iterator();
-    while (iter.hasNext()) {
-     MatchElement kid = (MatchElement) iter.next();
+
+		for (MatchElement kid : this.getSubMatchList()) {
      kid.appendXML(indent + "  ", sb);
     }
     

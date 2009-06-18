@@ -45,9 +45,9 @@ public static String ATT_POSITIONS = "child_positions";
 //  
 //  String child_arrangement = ARRANGEMENT_CENTER;
   
-  String childContainer = ".";
-  String childPositions; // becomes default position for children glyphs if they don't override it
-  List matchElements;
+  private String childContainer = ".";
+  private String childPositions; // becomes default position for children glyphs if they don't override it
+  private List<MatchElement> matchElements;
   StyleElement styleElement;
   
   PropertyMap propertyMap;
@@ -60,15 +60,15 @@ public static String ATT_POSITIONS = "child_positions";
       expand_packer.setStretchHorizontal(false);
   }
   
+	@Override
   public Object clone() throws CloneNotSupportedException {
     ChildrenElement clone = (ChildrenElement) super.clone();
     if (styleElement != null) {
       clone.styleElement = (StyleElement) styleElement.clone();
     }
     if (matchElements != null) {
-      clone.matchElements = new ArrayList(matchElements.size());
-      for (int i=0; i<matchElements.size(); i++) {
-        MatchElement me = (MatchElement) matchElements.get(i);
+      clone.matchElements = new ArrayList<MatchElement>(matchElements.size());
+			for (MatchElement me : matchElements) {
         MatchElement new_me = (MatchElement) me.clone();
         clone.matchElements.add(new_me);
       }
@@ -197,7 +197,7 @@ public static String ATT_POSITIONS = "child_positions";
   
   public void addMatchElement(MatchElement me) {
     if (matchElements == null) {
-      matchElements = new ArrayList();
+      matchElements = new ArrayList<MatchElement>();
     }
     matchElements.add(me);
   }

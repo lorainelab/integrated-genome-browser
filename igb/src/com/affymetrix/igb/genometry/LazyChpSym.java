@@ -219,8 +219,8 @@ public final class LazyChpSym extends ScoredContainerSym {
      *     (caveat -- need to remove any path prefix from type name first) -- GAH
      */
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-    Map types = vsource.getTypes();
-    Map matched_types = new HashMap();
+    Map<String,Das2Type> types = vsource.getTypes();
+    Map<Das2Type,Das2Type> matched_types = new HashMap<Das2Type,Das2Type>();
     Collection<String> chp_array_syns = lookup.getSynonyms(chp_array_type);
     if (chp_array_syns == null) {
 		chp_array_syns = new ArrayList<String>();
@@ -250,9 +250,9 @@ public final class LazyChpSym extends ScoredContainerSym {
       return;
     }
 
-    List symlist = new ArrayList(10000);
+    List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>(10000);
     List id_data_hits = new ArrayList(10000);
-    List id_sym_hits = new ArrayList(10000);
+    List<SeqSymmetry> id_sym_hits = new ArrayList<SeqSymmetry>(10000);
     int id_hit_count = 0;
     int str_hit_count = 0;
     int all_digit_not_int = 0;
@@ -300,7 +300,7 @@ public final class LazyChpSym extends ScoredContainerSym {
     // Iterate through probeset annotations, if possible do integer id binary search,
     //     otherwise do hash for string ID
     for (int i=0; i<symcount; i++) {
-      SeqSymmetry annot = (SeqSymmetry)symlist.get(i);
+      SeqSymmetry annot = symlist.get(i);
       Object data = null;
       if (annot instanceof IntId) {
 	// want to use integer id to avoid lots of String churn
@@ -371,7 +371,7 @@ public final class LazyChpSym extends ScoredContainerSym {
     boolean has_pvals = false;
     for (int i=0; i<id_hit_count; i++) {
       Object data = id_data_hits.get(i);
-      SeqSymmetry sym = (SeqSymmetry)id_sym_hits.get(i);
+      SeqSymmetry sym = id_sym_hits.get(i);
       SeqSpan span = sym.getSpan(0);
       IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), span.getBioSeq());
       this.addChild(isym);
@@ -411,7 +411,7 @@ public final class LazyChpSym extends ScoredContainerSym {
    *     ??? (for gene chips)
    *     ??? (for genotyping chips)
    */
-  protected void addIdSyms(SeqSymmetry sym, List symlist) {
+  protected void addIdSyms(SeqSymmetry sym, List<SeqSymmetry> symlist) {
     if (sym instanceof IntId) {
       symlist.add(sym);
     }

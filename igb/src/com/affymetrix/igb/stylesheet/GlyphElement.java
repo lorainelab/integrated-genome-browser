@@ -103,7 +103,7 @@ public final class GlyphElement implements Cloneable, XmlAppender {
   public static Color default_color = Color.GREEN;
   
   PropertyMap propertyMap;
-  List enclosedGlyphElements = null;
+  List<GlyphElement> enclosedGlyphElements = null;
   ChildrenElement childrenElement = null;
   String position;
   String type;
@@ -117,9 +117,9 @@ public final class GlyphElement implements Cloneable, XmlAppender {
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
     if (this.enclosedGlyphElements != null) {
-      clone.enclosedGlyphElements = new ArrayList(enclosedGlyphElements.size());
+      clone.enclosedGlyphElements = new ArrayList<GlyphElement>(enclosedGlyphElements.size());
       for (int i=0; i<enclosedGlyphElements.size(); i++) {
-        GlyphElement ge = (GlyphElement) enclosedGlyphElements.get(i);
+        GlyphElement ge = enclosedGlyphElements.get(i);
         GlyphElement new_glyph_element = (GlyphElement) ge.clone();
         clone.enclosedGlyphElements.add(new_glyph_element);
       }
@@ -157,13 +157,13 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     this.type = type;
   }
   
-  public List getEnclosedGlyphElements() {
+  public List<GlyphElement> getEnclosedGlyphElements() {
     return this.enclosedGlyphElements;
   }
   
   public void addGlyphElement(GlyphElement ge) {
     if (enclosedGlyphElements == null) {
-      enclosedGlyphElements = new ArrayList();
+      enclosedGlyphElements = new ArrayList<GlyphElement>();
     }
     enclosedGlyphElements.add(ge);
   }
@@ -342,8 +342,8 @@ public final class GlyphElement implements Cloneable, XmlAppender {
   }
   
   static Color findColor(PropertyMap pm) {
-    Color color = (Color) pm.getColor(PROP_KEY_COLOR);
-    if (color == null || "".equals(color)) {
+    Color color = pm.getColor(PROP_KEY_COLOR);
+    if (color == null || "".equals(color.toString())) {
       IAnnotStyleExtended style = (IAnnotStyleExtended) pm.get(IAnnotStyleExtended.class.getName());
       if (style != null) {
         color = style.getColor();

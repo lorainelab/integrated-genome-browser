@@ -15,6 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -62,7 +63,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
     return false;
   }
 
-  Map annot_factories = new LinkedHashMap();
+  Map<String,MapViewGlyphFactoryI> annot_factories = new LinkedHashMap<String,MapViewGlyphFactoryI>();
   public void createGlyph(SeqSymmetry sym, SeqMapView gviewer, boolean next_to_axis) {
       // fixing bug encountered when sym doesn't have span on sequence it is annotating --
       //   currently should only see these as "dummy" placeholder syms that are
@@ -71,11 +72,11 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
       if (sym.getSpanCount() == 0)  { return; }
     // I'm assuming that for container glyphs, the container method is the
     // same as the contained items method
-    String meth = SeqMapView.determineMethod(sym);
+    String meth = SmartAnnotBioSeq.determineMethod(sym);
 
     // shortcut for delegating to other factories
     //    (or at least GenericAnnotGlyphFactory via AssociationElement...)
-    MapViewGlyphFactoryI subfactory = (MapViewGlyphFactoryI)annot_factories.get(meth);
+    MapViewGlyphFactoryI subfactory = annot_factories.get(meth);
 
     if (subfactory != null) {
       subfactory.createGlyph(sym, gviewer);

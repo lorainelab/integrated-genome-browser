@@ -80,7 +80,7 @@ public final class BookmarkTableModel extends AbstractTableModel {
    *  Any item with an empty key or value will not be included in the Map.
    */
   public Map<String,String[]> getValuesAsMap() {
-    LinkedHashMap m = new LinkedHashMap();
+    LinkedHashMap<String,String[]> m = new LinkedHashMap<String,String[]>();
     for (int i=0; i<getRowCount(); i++) {
       String key = (String) getValueAt(i, 0);
       String value = (String) getValueAt(i, 1);

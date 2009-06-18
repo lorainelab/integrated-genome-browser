@@ -142,11 +142,11 @@ public final class ChpParser {
     return results;
   }
 
-  public static List parseTilingChp(FusionCHPTilingData tchp)  {
+  public static List<GraphSymFloat> parseTilingChp(FusionCHPTilingData tchp)  {
     return parseTilingChp(tchp, true);
   }
 
-  public static List parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq) {
+  public static List<GraphSymFloat> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq) {
     return parseTilingChp(tchp, annotate_seq, true);
   }
 
@@ -165,7 +165,7 @@ public final class ChpParser {
      *     and match by id to associate locations with the probeset results.
      *
      */
-  protected static List makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries) {
+  protected static List<LazyChpSym> makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries) {
     //    Timer tim2 = new Timer();
     //    tim2.start();
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -189,11 +189,11 @@ public final class ChpParser {
     IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type_name);
     style.setGlyphDepth(1);
 
-    List results = new ArrayList();
+    List<LazyChpSym> results = new ArrayList<LazyChpSym>();
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
       SmartAnnotBioSeq aseq = group.getSeq(i);
-      String seqid = aseq.getID();
+      //String seqid = aseq.getID();
       // Don't make LazyChpSym if can't find sequence on DAS/2 server
       Das2Region das_segment = vsource.getSegment(aseq);
       // I think above test for presence of sequence on server will handle skipping the genome and encode regions
@@ -215,10 +215,10 @@ public final class ChpParser {
 
 
   /** same as parseQuantChp, but adding detection/pval */
-  public static List parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    List results = null;
+  public static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
+    //SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    //AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    List<LazyChpSym> results = null;
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
@@ -226,7 +226,7 @@ public final class ChpParser {
     int ps_count = chp.getEntryCount();
     //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
-    List int_entries = new ArrayList(ps_count);
+    List<ProbeSetQuantificationDetectionData> int_entries = new ArrayList<ProbeSetQuantificationDetectionData>(ps_count);
     int int_id_count = 0;
     int str_id_count = 0;
     System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
@@ -291,10 +291,10 @@ public final class ChpParser {
   }
 
 
-  public static List parseQuantChp(FusionCHPQuantificationData chp) {
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    List results = null;
+  public static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp) {
+    //SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    //AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+    List<LazyChpSym> results = null;
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
@@ -302,7 +302,7 @@ public final class ChpParser {
     int ps_count = chp.getEntryCount();
     //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
-    List int_entries = new ArrayList(ps_count);
+    List<ProbeSetQuantificationData> int_entries = new ArrayList<ProbeSetQuantificationData>(ps_count);
     int int_id_count = 0;
     int str_id_count = 0;
     System.out.println("array type: " + array_type + ", alg name = " + algName + ", version = " + algVersion);
@@ -371,10 +371,10 @@ public final class ChpParser {
    *  class) stores an "id" for Exon results and "name" for 3' IVT results. The "name" property will be
    *  empty for Exon results.
    */
-  public static List oldParseQuantChp(FusionCHPQuantificationData chp) {
+  public static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    ArrayList results = new ArrayList();
+    //ArrayList results = new ArrayList();
 
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
@@ -398,11 +398,12 @@ public final class ChpParser {
 	System.out.println("3' IVT CHP file");
       }
     }
-    Map seq2entries = new HashMap();
+    Map<MutableAnnotatedBioSeq,List<OneScoreEntry>> seq2entries =
+						new HashMap<MutableAnnotatedBioSeq,List<OneScoreEntry>>();
     int match_count = 0;
 
     if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
-      ArrayList syms = new ArrayList();
+      ArrayList<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
       for (int i=0; i<ps_count; i++) {
 	psqData = chp.getQuantificationEntry(i);
 	float val = psqData.getQuantification();
@@ -416,15 +417,15 @@ public final class ChpParser {
 	if (syms.size() > 0) {
 	  // for exon chips, assume at most a single pre-existing sym for each probeset in CHP file
 	  match_count++;
-	  SeqSymmetry prev_sym = (SeqSymmetry)syms.get(0);
+	  SeqSymmetry prev_sym = syms.get(0);
 	  SeqSpan span = prev_sym.getSpan(0);
 	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
 	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	  isym.setID(id);
 	  OneScoreEntry sentry = new OneScoreEntry(isym, val);
-	  List sentries = (List)seq2entries.get(aseq);
+	  List<OneScoreEntry> sentries = seq2entries.get(aseq);
 	  if (sentries == null) {
-	    sentries = new ArrayList();
+	    sentries = new ArrayList<OneScoreEntry>();
 	    seq2entries.put(aseq, sentries);
 	  }
 	  sentries.add(sentry);
@@ -433,7 +434,7 @@ public final class ChpParser {
       }
     }
     else {  // 3' IVT results, so try to match up names of probesets with ids already seen
-      ArrayList syms = new ArrayList();
+      ArrayList<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
       for (int i=0; i<ps_count; i++) {
 	psqData = chp.getQuantificationEntry(i);
 	float val = psqData.getQuantification();
@@ -454,15 +455,15 @@ public final class ChpParser {
 	if (scount > 0) {
 	  match_count++;
 	  for (int k=0; k<scount; k++) {
-	    SeqSymmetry prev_sym = (SeqSymmetry)syms.get(k);
+	    SeqSymmetry prev_sym = syms.get(k);
 	    SeqSpan span = prev_sym.getSpan(0);
 	    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
 	    IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	    isym.setID(id);
 	    OneScoreEntry sentry = new OneScoreEntry(isym, val);
-	    List sentries = (List)seq2entries.get(aseq);
+	    List<OneScoreEntry> sentries = seq2entries.get(aseq);
 	    if (sentries == null) {
-	      sentries = new ArrayList();
+	      sentries = new ArrayList<OneScoreEntry>();
 	      seq2entries.put(aseq, sentries);
 	    }
 	    sentries.add(sentry);
@@ -488,11 +489,9 @@ public final class ChpParser {
 
     // now for each sequence seen, sort the SinEntry list by span min/max
     ScoreEntryComparator comp = new ScoreEntryComparator();
-    Iterator ents  = seq2entries.entrySet().iterator();
-    while (ents.hasNext()) {
-      Map.Entry ent = (Map.Entry)ents.next();
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)ent.getKey();
-      List entry_list = (List)ent.getValue();
+		for (Map.Entry<MutableAnnotatedBioSeq,List<OneScoreEntry>> ent : seq2entries.entrySet()) {
+      MutableAnnotatedBioSeq aseq = ent.getKey();
+      List<OneScoreEntry> entry_list = ent.getValue();
       Collections.sort(entry_list, comp);
 
       // now make the container syms
@@ -504,7 +503,7 @@ public final class ChpParser {
       float[] scores = new float[entry_count];
       System.out.println("seq: " + aseq.getID() + ", entry list count: " + entry_count);
       for (int k=0; k<entry_count; k++) {
-	OneScoreEntry sentry = (OneScoreEntry)entry_list.get(k);
+	OneScoreEntry sentry = entry_list.get(k);
 	container.addChild(sentry.sym);
 	scores[k] = sentry.score;
       }
@@ -514,7 +513,7 @@ public final class ChpParser {
     }
 
     System.out.println("done parsing quantification data CHP file");
-    return results;
+    return Collections.<LazyChpSym>emptyList();
   }
 
 
@@ -662,16 +661,16 @@ public final class ChpParser {
     return results;
   }
 
-  public static List parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
+  public static List<GraphSymFloat> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    ArrayList results = new ArrayList();
+    ArrayList<GraphSymFloat> results = new ArrayList<GraphSymFloat>();
     int seq_count = tchp.getNumberSequences();
     String alg_name = tchp.getAlgName();
     String alg_vers = tchp.getAlgVersion();
 
     System.out.println("seq_count = " + seq_count + ", alg_name = " + alg_name + ", alg_vers = " + alg_vers);
 
-    Map file_prop_hash = new LinkedHashMap();
+    Map<String,String> file_prop_hash = new LinkedHashMap<String,String>();
     List alg_params = tchp.getAlgParams();
     for (int i=0; i<alg_params.size(); i++) {
       ParameterNameValue param = (ParameterNameValue) alg_params.get(i);

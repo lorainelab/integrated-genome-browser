@@ -62,13 +62,13 @@ public interface ViewI  {
 	 * Set the Graphics that this view should draw on.
 	 * (will move to implementation rather than interface in next release)
 	 */
-	public void setGraphics(Graphics g);
+	public void setGraphics(Graphics2D g);
 
 	/**
 	 * Get the Graphics that this view should draw on
 	 * (will move to implementation rather than interface in next release)
 	 */
-	public Graphics getGraphics();
+	public Graphics2D getGraphics();
 
 	// (should really be rewritten to take advantage of
 	// com.affymetrix.genoviz.util.GeometryUtils class)

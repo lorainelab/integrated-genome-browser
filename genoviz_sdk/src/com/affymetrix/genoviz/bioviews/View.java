@@ -106,7 +106,7 @@ public class View implements ViewI, NeoPaintListener,
 		   protected NeoCanvas component;
 
 		   protected Rectangle2D coordbox;
-		   protected Graphics2D graphics;
+		   protected Graphics graphics;
 		   protected boolean isTimed = false;
 		   protected com.affymetrix.genoviz.util.Timer timecheck;
 		   protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
@@ -343,7 +343,7 @@ public class View implements ViewI, NeoPaintListener,
 			   scene_coordbox = scene.getCoordBox();
 			   scene_pixelbox = transformToPixels(scene_coordbox, scene_pixelbox);
 
-			   Graphics2D tempGraphics = null;
+			   Graphics tempGraphics = null;
 			   if (isBuffered()) {
 				   if (DEBUG_BUFFERED) {
 					   System.out.println("view is buffered");
@@ -355,7 +355,7 @@ public class View implements ViewI, NeoPaintListener,
 						   }
 				   bufferGraphics = bufferImage.getGraphics();
 				   tempGraphics = getGraphics();
-				   setGraphics((Graphics2D) bufferGraphics);
+				   setGraphics(bufferGraphics);
 			   }
 			   else if (graphics == null) {
 				   getGraphics();
@@ -863,15 +863,15 @@ public class View implements ViewI, NeoPaintListener,
 			   return full_view;
 		   }
 
-		   public void setGraphics(Graphics2D g)  {
+		   public void setGraphics(Graphics g)  {
 			   graphics = g;
 		   }
 
-		   public Graphics2D getGraphics()  {
+		   public Graphics getGraphics()  {
 			   if (graphics == null && component != null)  {
 				   // Not sure if this is a good idea -- forcing this wreaks havoc
 				   //   on the updates... -- Gregg
-				   setGraphics((Graphics2D) component.getGraphics());
+				   setGraphics(component.getGraphics());
 			   }
 			   return graphics;
 		   }

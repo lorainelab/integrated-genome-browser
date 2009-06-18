@@ -18,15 +18,15 @@ import java.awt.event.PaintEvent;
 
 public class NeoPaintEvent extends PaintEvent {
 
-	Graphics2D g;
+	Graphics g;
 
 	/** event id is always PAINT */
-	public NeoPaintEvent(Component source, Rectangle updateRect, Graphics2D g) {
+	public NeoPaintEvent(Component source, Rectangle updateRect, Graphics g) {
 		super(source, PaintEvent.PAINT, updateRect);
 		this.g = g;
 	}
 
-	public Graphics2D getGraphics() {
+	public Graphics getGraphics() {
 		return g;
 	}
 

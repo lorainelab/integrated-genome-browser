@@ -1186,7 +1186,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			   }
 		   }
 
-		   public void update(Graphics2D g) {
+		   public void update(Graphics g) {
 			   if (NM_DEBUG_PAINT)  {
 				   System.out.println("NeoMap.update() called");
 			   }
@@ -1203,7 +1203,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 		   }
 
 
-		   public void paint(Graphics2D g) {
+		   public void paint(Graphics g) {
 			   if (NM_DEBUG_PAINT) {
 				   System.out.println("NeoMap.paint() called");
 			   }

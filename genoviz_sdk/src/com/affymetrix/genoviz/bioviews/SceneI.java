@@ -132,7 +132,7 @@ public interface SceneI {
 	/**
 	 *  Draw all the views of this scene that use Component c.
 	 */
-	public void draw(Component c, Graphics2D g); // draw one canvas
+	public void draw(Component c, Graphics g); // draw one canvas
 	//  (maybe this should be implementation, not interface?)
 
 	/**

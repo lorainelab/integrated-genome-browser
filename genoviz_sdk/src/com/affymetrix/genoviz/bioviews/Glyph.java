@@ -152,7 +152,7 @@ public abstract class Glyph implements GlyphI  {
 
 	public void draw(ViewI view)  {
 		if (DEBUG_DRAW) {
-			Graphics2D g = view.getGraphics();
+			Graphics g = view.getGraphics();
 			g.setColor(Color.red);
 			view.transformToPixels(coordbox, pixelbox);
 			g.drawRect(pixelbox.x+1, pixelbox.y+1,
@@ -198,7 +198,7 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	protected void drawSelectedBackground(ViewI view) {
-		Graphics2D g = view.getGraphics();
+		Graphics g = view.getGraphics();
 		g.setColor(view.getScene().getSelectionColor());
 		view.transformToPixels(getPositiveCoordBox(), pixelbox);
 		g.fillRect(pixelbox.x-3, pixelbox.y-3,
@@ -208,7 +208,7 @@ public abstract class Glyph implements GlyphI  {
 
 	protected void drawSelectedOutline(ViewI view) {
 		draw(view);
-		Graphics2D g = view.getGraphics();
+		Graphics g = view.getGraphics();
 		g.setColor(view.getScene().getSelectionColor());
 		// see WARNING above (in drawSelected())
 		//      g.setColor(scene.getSelectionColor());

@@ -188,7 +188,7 @@ public class Scene implements SceneI  {
 	/**
 	 * Draw one canvas.
 	 */
-	public void draw(Component c, Graphics2D g)  {
+	public void draw(Component c, Graphics g)  {
 		ViewI view;
 		int i = 0;
 		while (i < views.size())  {

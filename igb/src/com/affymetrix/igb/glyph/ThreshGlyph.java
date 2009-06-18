@@ -39,7 +39,7 @@ public final class ThreshGlyph extends FillRectGlyph {
     view.transformToPixels(coordbox, pixelbox);
     Graphics g = view.getGraphics();
     g.setColor(this.getBackgroundColor());
-    int xpos = (int)Math.max(pixelbox.x, 0);
+    int xpos = Math.max(pixelbox.x, 0);
     g.drawString(label, xpos+20, pixelbox.y-2);
   }
 }

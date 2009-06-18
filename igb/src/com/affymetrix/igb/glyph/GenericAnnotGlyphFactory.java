@@ -125,7 +125,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       return;
     }
 
-    String meth = SeqMapView.determineMethod(sym);
+    String meth = SmartAnnotBioSeq.determineMethod(sym);
 
     if (meth != null) {
       IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);
@@ -520,7 +520,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   /** Used to manage a re-usable object pool. */
-  static java.util.Stack derived_stack = new Stack();
+  static Stack<DerivedSeqSymmetry> derived_stack = new Stack<DerivedSeqSymmetry>();
   static final int max_stack_size = 100;
 
   /** Get an instance of DerivedSeqSymmetry from an object pool. */
@@ -528,7 +528,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     if (derived_stack.isEmpty()) {
       return new SimpleDerivedSeqSymmetry();
     } else {
-      return (DerivedSeqSymmetry) derived_stack.pop();
+      return derived_stack.pop();
     }
   }
 

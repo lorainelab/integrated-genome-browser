@@ -29,7 +29,7 @@ public final class VerticalGraphLabels extends SolidGlyph {
   static final boolean DEBUG_PIXELBOX = true;
   static Font default_font = new Font("Courier", Font.PLAIN, 12);
 
-  List labels = new ArrayList();
+  List<String> labels = new ArrayList<String>();
   Font fnt;
   Rectangle debug_rect;
   //  int xcoord_offset = 5;
@@ -45,6 +45,7 @@ public final class VerticalGraphLabels extends SolidGlyph {
     labels.add(label);
   }
 
+	@Override
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
 
@@ -54,7 +55,7 @@ public final class VerticalGraphLabels extends SolidGlyph {
     g.setFont(fnt);
     FontMetrics fm = g.getFontMetrics();
 
-    int text_height = fm.getAscent() + fm.getDescent();
+    //int text_height = fm.getAscent() + fm.getDescent();
     //    int text_height = fm.getAscent();
     int label_count = labels.size();
     //    float spacing = (float)pixelbox.width/(float)label_count;
@@ -66,9 +67,8 @@ public final class VerticalGraphLabels extends SolidGlyph {
     //    float xpos = text_height + half_spacing;
     float xpos = pixelbox.x + half_spacing;
     //    float xpos = half_spacing + text_height/2;
-    for (int i=0; i<label_count; i++) {
-      String label = (String)labels.get(i);
-      int text_width = fm.stringWidth(label);
+		for (String label : labels) {
+      //int text_width = fm.stringWidth(label);
       AffineTransform oldtrans = g2.getTransform();
       g2.transform(AffineTransform.getRotateInstance(-Math.PI/2.0, xpos, ypos));
       //      g2.setColor(Color.green);

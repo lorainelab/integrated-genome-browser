@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.widget.NeoWidgetI;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -24,7 +25,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import com.affymetrix.genoviz.widget.*;
 
 public final class PercentThresholder extends JPanel
   implements ChangeListener, ActionListener  {
@@ -54,8 +54,8 @@ public final class PercentThresholder extends JPanel
   //    FIX THIS!  But also need to balance between memory concerns and the
   //    desire to avoid recalculation of percent-to-score array (which requires a
   //    sort) every time a graph is selected...
-  Map info2pscores = new HashMap();
-  List graphs = new ArrayList();
+  Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
+  List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
 
   /**
    *  Now trying to map slider values to percentages, such that each slider
@@ -72,7 +72,7 @@ public final class PercentThresholder extends JPanel
   static PercentThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
     //    PercentThresholder thresher = new PercentThresholder(sgg, widg);
     PercentThresholder thresher = new PercentThresholder(widg);
-    List glist = new ArrayList();
+    List<SmartGraphGlyph> glist = new ArrayList<SmartGraphGlyph>();
     glist.add(sgg);
     thresher.setGraphs(glist);
     JFrame frm = new JFrame("Graph Percentile Adjuster");
@@ -80,6 +80,7 @@ public final class PercentThresholder extends JPanel
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", thresher);
     frm.addWindowListener( new WindowAdapter() {
+			@Override
       public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
@@ -88,7 +89,7 @@ public final class PercentThresholder extends JPanel
     } );
     //    frm.setSize(frm_width, frm_height);
     frm.pack();
-    frm.show();
+		frm.setVisible(true);
     return thresher;
   }
 
@@ -127,7 +128,7 @@ public final class PercentThresholder extends JPanel
     //    max_percent_slider.setPreferredSize(new Dimension(600, 40));
     max_percent_slider.setPreferredSize(new Dimension(600, 15));
 
-    Hashtable decimal_labels = new Hashtable();
+    Hashtable<Integer, JLabel> decimal_labels = new Hashtable<Integer, JLabel>();
 
     for (float f=0.0f; f<=1000.0f; f+=slider_label_offset) {
       Integer slideval = new Integer((int)f);
@@ -162,14 +163,12 @@ public final class PercentThresholder extends JPanel
     syncCB.addActionListener(this);
   }
 
-  public void setGraphs(List newgraphs) {
+  private void setGraphs(List<SmartGraphGlyph> newgraphs) {
     graphs.clear();
-    int gcount = newgraphs.size();
-    for (int i=0; i<gcount; i++) {
-      GraphGlyph gl = (GraphGlyph)newgraphs.get(i);
+		for (SmartGraphGlyph gl : newgraphs) {
       Object info = gl.getInfo();
       if (info == null) { System.err.println("Graph has no info! " + gl); }
-      float[] p2score = (float[])info2pscores.get(info);
+      float[] p2score = info2pscores.get(info);
       if (p2score == null) {
 	p2score = calcPercents2Scores(gl);
 	info2pscores.put(info, p2score);
@@ -181,7 +180,7 @@ public final class PercentThresholder extends JPanel
   public float[] calcPercents2Scores(GraphGlyph sgg) {
     // System.out.println("calculating percentages");
     //float[] scores = sgg.getYCoords();
-    int num_scores = sgg.graf.getPointCount();;
+    //int num_scores = sgg.graf.getPointCount();;
     //    int num_percents = max_percent - min_percent + 1;
     int num_percents = (int)(abs_max_percent * sliders_per_percent + 1);
     System.out.println("num_percents: " + num_percents);
@@ -223,7 +222,7 @@ public final class PercentThresholder extends JPanel
 	if (sync_min_max) {
 	  float min_percent = 100 - max_percent;
 	  setVisibleMinPercent(min_percent);
-	  prev_min = (float)min_percent;
+	  prev_min = min_percent;
 	  min_percent_slider.setValue((int)(min_percent * sliders_per_percent));
 	}
 	//	System.out.println("percent: " + max_percent +
@@ -231,7 +230,7 @@ public final class PercentThresholder extends JPanel
 	prev_max = max_val;
 	widg.updateWidget();
       }
-      max_perT.setText(Float.toString((float)prev_max));
+      max_perT.setText(Float.toString(prev_max));
     }
     else if (src == min_percent_slider) {
       if (min_val >= prev_max) {
@@ -245,7 +244,7 @@ public final class PercentThresholder extends JPanel
 	if (sync_min_max) {
 	  float max_percent = 100 - min_percent;
 	  setVisibleMaxPercent(max_percent);
-	  prev_max = (float)max_percent;
+	  prev_max = max_percent;
 	  max_percent_slider.setValue((int)(max_percent * sliders_per_percent));
 	}
 	//	System.out.println("percent: " + min_percent +
@@ -253,7 +252,7 @@ public final class PercentThresholder extends JPanel
 	prev_min = min_val;
 	widg.updateWidget();
       }
-      min_perT.setText(Float.toString((float)prev_min));
+      min_perT.setText(Float.toString(prev_min));
     }
   }
 
@@ -305,12 +304,10 @@ public final class PercentThresholder extends JPanel
    *   Argument is _value_, not percentage.
    */
   public void setVisibleMinPercent(float percent) {
-    int gcount = graphs.size();
-    for (int i=0; i<gcount; i++) {
-      GraphGlyph gl = (GraphGlyph)graphs.get(i);
+		for (SmartGraphGlyph gl : graphs) {
       Object info = gl.getInfo();
-      float[] percent2score = (float[])info2pscores.get(info);
-      float min_score = percent2score[(int)Math.round(percent * sliders_per_percent)];
+      float[] percent2score = info2pscores.get(info);
+      float min_score = percent2score[Math.round(percent * sliders_per_percent)];
       gl.setVisibleMinY(min_score);
     }
   }
@@ -322,16 +319,12 @@ public final class PercentThresholder extends JPanel
    *   Argument is _value_, not percentage.
    */
   public void setVisibleMaxPercent(float percent) {
-    int gcount = graphs.size();
-    for (int i=0; i<gcount; i++) {
-      GraphGlyph gl = (GraphGlyph)graphs.get(i);
+		for (SmartGraphGlyph gl : graphs) {
       Object info = gl.getInfo();
-      float[] percent2score = (float[])info2pscores.get(info);
-      float max_score = percent2score[(int)Math.round(percent * sliders_per_percent)];
+      float[] percent2score = info2pscores.get(info);
+      float max_score = percent2score[Math.round(percent * sliders_per_percent)];
       gl.setVisibleMaxY(max_score);
     }
   }
-
-
 
 }

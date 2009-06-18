@@ -79,8 +79,8 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
   /**
    *  @param spans a list of SeqSpan's all defined on the same BioSeq
    */
-  public void setCoveredIntervals(List spans) {
-    List spanlist = spans;
+  public void setCoveredIntervals(List<SeqSpan> spans) {
+    List<SeqSpan> spanlist = spans;
     int spancount = spanlist.size();
     if (spancount > 0) {
       // need to test to make sure projected and in ascending order --
@@ -88,53 +88,53 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
       // check for sorted and sort by min if needed
       // NOT YET IMPLEMENTED
-      int prev_min = ((SeqSpan)spans.get(0)).getMin();
-      for (int i=1; i<spancount-1; i++) {
-	SeqSpan cspan = (SeqSpan)spans.get(i);
-	int cur_min = cspan.getMin();
-	if (cur_min < prev_min) {
-	  // need to sort
-	  //System.out.println("In CoverageSummarizerGlyph: intervals are not in sorted order, sorting");
-	  SeqSpanComparator span_compare = new SeqSpanComparator();
-	  Collections.sort(spans, span_compare);
-	  // sorted, so don't have to keep checking, so break;
-	  break;
-	}
-	prev_min = cur_min;
-      }
+      int prev_min = (spans.get(0)).getMin();
+			for (int i = 1; i < spancount - 1; i++) {
+				SeqSpan cspan = spans.get(i);
+				int cur_min = cspan.getMin();
+				if (cur_min < prev_min) {
+					// need to sort
+					//System.out.println("In CoverageSummarizerGlyph: intervals are not in sorted order, sorting");
+					SeqSpanComparator span_compare = new SeqSpanComparator();
+					Collections.sort(spans, span_compare);
+					// sorted, so don't have to keep checking, so break;
+					break;
+				}
+				prev_min = cur_min;
+			}
 
-      // check for overlap and project (merge/union all spans together) if needed
-      prev_min = ((SeqSpan)spans.get(0)).getMin();
-      int prev_max = ((SeqSpan)spans.get(0)).getMax();
-      for (int i=1; i<spancount-1; i++) {
-	SeqSpan cspan = (SeqSpan)spans.get(i);
-	if (prev_max > cspan.getMin())  {
-	  // spans overlap, need to project (union all spans together)
-	  // set spanlist to union of spans...
-	  //System.out.println("In CoverageSummarizerGlyph: intervals overlap, merging intervals");
-	  spanlist = SeqSymSummarizer.getMergedSpans(spans);
-	  break;
-	}
-	prev_max = cspan.getMax();
-      }
+     // check for overlap and project (merge/union all spans together) if needed
+			prev_min = (spans.get(0)).getMin();
+			int prev_max = (spans.get(0)).getMax();
+			for (int i = 1; i < spancount - 1; i++) {
+				SeqSpan cspan = spans.get(i);
+				if (prev_max > cspan.getMin()) {
+					// spans overlap, need to project (union all spans together)
+					// set spanlist to union of spans...
+					//System.out.println("In CoverageSummarizerGlyph: intervals overlap, merging intervals");
+					spanlist = SeqSymSummarizer.getMergedSpans(spans);
+					break;
+				}
+				prev_max = cspan.getMax();
+			}
 
-      // projecting may have changed span count (shrunk span list)
-      spancount = spanlist.size();
+			// projecting may have changed span count (shrunk span list)
+			spancount = spanlist.size();
 
-      int[] newmins = new int[spancount];
-      int[] newmaxs = new int[spancount];
-      BioSeq firstseq = ((SeqSpan)spanlist.get(0)).getBioSeq();
-      for (int i=0; i<spancount; i++) {
-	SeqSpan span = (SeqSpan)spanlist.get(i);
-	newmins[i] = span.getMin();
-	newmaxs[i] = span.getMax();
-	if (span.getBioSeq() != firstseq) {
-	  throw new RuntimeException("in CoverageSummarizerGlyph, not all input spans point to same seq!!!");
+			int[] newmins = new int[spancount];
+			int[] newmaxs = new int[spancount];
+			BioSeq firstseq = (spanlist.get(0)).getBioSeq();
+			for (int i = 0; i < spancount; i++) {
+				SeqSpan span = spanlist.get(i);
+				newmins[i] = span.getMin();
+				newmaxs[i] = span.getMax();
+				if (span.getBioSeq() != firstseq) {
+					throw new RuntimeException("in CoverageSummarizerGlyph, not all input spans point to same seq!!!");
+				}
+			}
+			setCoveredIntervals(newmins, newmaxs);
+		}
 	}
-      }
-      setCoveredIntervals(newmins, newmaxs);
-    }
-  }
 
   /**
    *  Each index i in min_array/max_array indicates a span from

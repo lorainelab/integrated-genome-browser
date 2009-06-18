@@ -58,7 +58,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
     Toolkit kit = Toolkit.getDefaultToolkit();
     // Dimension dim = kit.getScreenSize();
 
-    int pixindex = 1;;
+    //int pixindex = 1;;
     int pntcount = 3;
     while (true) {
       // converting to float to trigger correct deriveFont() method...

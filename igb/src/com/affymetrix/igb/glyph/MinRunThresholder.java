@@ -32,7 +32,7 @@ public final class MinRunThresholder extends JPanel
   static int frm_width = 400;
   static int frm_height = 200;
   //  SmartGraphGlyph sgg;
-  List graphs = new ArrayList();
+  List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
   NeoWidgetI widg;
   JSlider tslider;
   JTextField minrunTF;
@@ -95,7 +95,7 @@ public final class MinRunThresholder extends JPanel
     minrunTF.addFocusListener(this);
   }
 
-  public void setGraphs(List newgraphs) {
+  public void setGraphs(List<SmartGraphGlyph> newgraphs) {
     graphs.clear();
     tslider.removeChangeListener(this);
     minrunTF.removeActionListener(this);
@@ -106,11 +106,11 @@ public final class MinRunThresholder extends JPanel
     
     int gcount = newgraphs.size();
     if (gcount > 0) {
-      int newthresh = 0;
-      for (int i=0; i<gcount; i++) {
-	SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
-	graphs.add(gl);
-        int this_min_run = (int) gl.getMinRunThreshold();
+     int newthresh = 0;
+			for (int i = 0; i < gcount; i++) {
+				SmartGraphGlyph gl = newgraphs.get(i);
+				graphs.add(gl);
+				int this_min_run = (int) gl.getMinRunThreshold();
 	newthresh += this_min_run;
         if (i==0) {
           first_min_run = this_min_run;
@@ -139,7 +139,7 @@ public final class MinRunThresholder extends JPanel
 
 
   public void setGraph(SmartGraphGlyph gl) {
-    List newgraphs = new ArrayList();
+    List<SmartGraphGlyph> newgraphs = new ArrayList<SmartGraphGlyph>();
     newgraphs.add(gl);
     setGraphs(newgraphs);
   }
@@ -157,8 +157,7 @@ public final class MinRunThresholder extends JPanel
       int current_thresh = tslider.getValue();
       if (current_thresh != minrun_thresh) {
 	minrun_thresh = current_thresh;
-	for (int i=0; i<graphs.size(); i++) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
+	for (SmartGraphGlyph sgg : graphs) {
 	  sgg.setMinRunThreshold(minrun_thresh);
 	}
 	minrunTF.removeActionListener(this);
@@ -187,8 +186,7 @@ public final class MinRunThresholder extends JPanel
 	}
 	else {
 	  minrun_thresh = new_thresh;
-	  for (int i=0; i<graphs.size(); i++) {
-	    SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
+		for (SmartGraphGlyph sgg : graphs) {
 	    sgg.setMinRunThreshold(minrun_thresh);
 	  }
 	  tslider.removeChangeListener(this);
@@ -206,13 +204,13 @@ public final class MinRunThresholder extends JPanel
 	}
       }
     } catch (NumberFormatException nfe) {
-      setGraphs(new ArrayList(graphs));
+      setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
     }
   }
 
   public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
-    setGraphs(new ArrayList(graphs));
+    setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
   }
 
   public void focusGained(FocusEvent e) {

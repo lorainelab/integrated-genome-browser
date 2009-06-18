@@ -13,10 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.GFF3Sym;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genoviz.bioviews.*;
 
@@ -60,7 +57,7 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
 
-    String meth = SeqMapView.determineMethod(sym);
+    String meth = SmartAnnotBioSeq.determineMethod(sym);
     if (meth == null && sym.getChildCount() <= 0) {
       // this only happens if we recurse all the way to the bottom of the
       // feature tree without finding a method name.
@@ -136,7 +133,7 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
     
     MutableSeqSymmetry mrnaSym = GenericAnnotGlyphFactory.copyToDerivedNonRecursive(insym);
     int childCount = insym.getChildCount();
-    ArrayList other_children = new ArrayList(childCount);
+    ArrayList<GFF3Sym> other_children = new ArrayList<GFF3Sym>(childCount);
     for (int i=0; i<childCount; i++) {
       GFF3Sym childsym = (GFF3Sym) insym.getChild(i);
       if (GFF3Sym.FEATURE_TYPE_EXON.equalsIgnoreCase(childsym.getFeatureType())) {
@@ -145,7 +142,7 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
         
         // collect any children of the childsym to draw later
         for (int j=0; j<childsym.getChildCount(); j++) {
-          other_children.add(childsym.getChild(j));
+          other_children.add((GFF3Sym)childsym.getChild(j));
         }
 
       } else {
@@ -154,9 +151,8 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
       }
     }
     gl = default_glyph_factory.addToTier(mrnaSym, ftier, rtier, true);
-    
-    for (int i=0; i<other_children.size(); i++) {
-      GFF3Sym childsym = (GFF3Sym) other_children.get(i);
+
+		for (GFF3Sym childsym : other_children) {
       glyphifySymmetry(childsym, style, ftier, rtier);
     }
     return gl;
@@ -174,7 +170,7 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
     
     MutableSeqSymmetry groupSym = GenericAnnotGlyphFactory.copyToDerivedNonRecursive(insym);
     int childCount = insym.getChildCount();
-    ArrayList other_children = new ArrayList(childCount);
+    ArrayList<GFF3Sym> other_children = new ArrayList<GFF3Sym>(childCount);
     for (int i=0; i<childCount; i++) {
 
       GFF3Sym childsym = (GFF3Sym) insym.getChild(i);
@@ -184,7 +180,7 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
         
         // collect any children of the childsym to draw later
         for (int j=0; j<childsym.getChildCount(); j++) {
-          other_children.add(childsym.getChild(j));
+          other_children.add((GFF3Sym)childsym.getChild(j));
         }
 
       } else {
@@ -199,8 +195,7 @@ public final class GFF3GlyphFactory implements MapViewGlyphFactoryI  {
       // do what?
     }
 
-    for (int i=0; i<other_children.size(); i++) {
-      GFF3Sym childsym = (GFF3Sym) other_children.get(i);
+		for (GFF3Sym childsym : other_children) {
       glyphifySymmetry(childsym, style, ftier, rtier);
     }
     return gl;

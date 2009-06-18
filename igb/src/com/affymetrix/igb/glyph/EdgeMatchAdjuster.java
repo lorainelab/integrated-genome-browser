@@ -62,7 +62,7 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
     singleton_frame.pack();
     singleton_frame.setState(Frame.NORMAL);
     singleton_frame.toFront();
-    singleton_frame.show();
+    singleton_frame.setVisible(true);
     return singleton_adjuster;
   }
 

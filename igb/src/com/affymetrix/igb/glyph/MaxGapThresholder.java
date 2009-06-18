@@ -34,7 +34,7 @@ public final class MaxGapThresholder extends JPanel
   static int frm_width = 400;
   static int frm_height = 200;
 
-  List graphs = new ArrayList();
+  List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
   NeoWidgetI widg;
   JSlider tslider;
   JTextField maxgapTF;
@@ -60,6 +60,7 @@ public final class MaxGapThresholder extends JPanel
     cpane.add("Center", dthresher);
     //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
+			@Override
       public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
@@ -99,7 +100,7 @@ public final class MaxGapThresholder extends JPanel
   }
 
 
-  public void setGraphs(List newgraphs) {
+  public void setGraphs(List<SmartGraphGlyph> newgraphs) {
     graphs.clear();
     tslider.removeChangeListener(this);
     maxgapTF.removeActionListener(this);
@@ -112,7 +113,7 @@ public final class MaxGapThresholder extends JPanel
     if (gcount > 0) {
       int newthresh = 0;
       for (int i=0; i<gcount; i++) {
-	SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
+	SmartGraphGlyph gl = newgraphs.get(i);
 	graphs.add(gl);
         int this_thresh = (int) gl.getMaxGapThreshold();
 	newthresh += this_thresh;
@@ -142,11 +143,12 @@ public final class MaxGapThresholder extends JPanel
   }
 
   public void setGraph(SmartGraphGlyph gl) {
-    List newgraphs = new ArrayList();
+    List<SmartGraphGlyph> newgraphs = new ArrayList<SmartGraphGlyph>();
     newgraphs.add(gl);
     setGraphs(newgraphs);
   }
 
+	@Override
   public void setEnabled(boolean b) {
     super.setEnabled(b);
     tslider.setEnabled(b);
@@ -160,8 +162,7 @@ public final class MaxGapThresholder extends JPanel
       int current_thresh = tslider.getValue();
       if (current_thresh != maxgap_thresh) {
 	maxgap_thresh = current_thresh;
-	for (int i=0; i<graphs.size(); i++) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
+	for (SmartGraphGlyph sgg : graphs) {
 	  sgg.setMaxGapThreshold(maxgap_thresh);
 	}
 	maxgapTF.removeActionListener(this);
@@ -190,8 +191,7 @@ public final class MaxGapThresholder extends JPanel
 	}
 	else {
 	  maxgap_thresh = new_thresh;
-	  for (int i=0; i<graphs.size(); i++) {
-	    SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
+		for (SmartGraphGlyph sgg : graphs) {
 	    sgg.setMaxGapThreshold(maxgap_thresh);
 	  }
 	  tslider.removeChangeListener(this);
@@ -209,13 +209,13 @@ public final class MaxGapThresholder extends JPanel
 	}
       }
     } catch (NumberFormatException nfe) {
-      setGraphs(new ArrayList(graphs));
+      setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
     }
   }
 
   public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
-    setGraphs(new ArrayList(graphs));
+    setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
   }
 
   public void focusGained(FocusEvent e) {

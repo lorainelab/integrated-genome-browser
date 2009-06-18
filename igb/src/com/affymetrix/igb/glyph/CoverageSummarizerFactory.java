@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.tiers.*;
@@ -60,9 +61,9 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {
-    SeqSpan span = sym.getSpan(0);
+    //SeqSpan span = sym.getSpan(0);
 
-    String meth = gviewer.determineMethod(sym);
+    String meth = SmartAnnotBioSeq.determineMethod(sym);
     IAnnotStyleExtended annot_style = AnnotStyle.getInstance(meth , false);
 
     if (meth != null) {
@@ -94,7 +95,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
 
       int child_count = tsym.getChildCount();
       // initializing list internal array length to child count to reduce list expansions...
-      List leaf_spans = new ArrayList(child_count);
+      List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(child_count);
       SeqUtils.collectLeafSpans(tsym, coordseq, leaf_spans);
 
       CoverageSummarizerGlyph cov = new CoverageSummarizerGlyph();

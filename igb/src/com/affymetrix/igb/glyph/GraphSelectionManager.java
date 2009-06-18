@@ -743,7 +743,7 @@ public final class GraphSelectionManager
       return;
     }
     
-    Vector selected_graph_glyphs = new Vector(0);
+    Vector<GraphGlyph> selected_graph_glyphs = new Vector<GraphGlyph>(0);
     current_graph = null;
     second_current_graph = null;
 
@@ -753,14 +753,14 @@ public final class GraphSelectionManager
       SeqSymmetry sym = (SeqSymmetry) iter.next();
       GlyphI g = current_source.getItem(sym);
       if (g instanceof GraphGlyph) {
-        selected_graph_glyphs.add(g);
+        selected_graph_glyphs.add((GraphGlyph)g);
       }
     }
 
     JMenu combine = new JMenu("Combine Graphs");
     if (selected_graph_glyphs.size() >= 2) {
-      current_graph = (GraphGlyph) selected_graph_glyphs.get(0);
-      second_current_graph = (GraphGlyph) selected_graph_glyphs.get(1);
+      current_graph = selected_graph_glyphs.get(0);
+      second_current_graph = selected_graph_glyphs.get(1);
 
       combine.setEnabled(true);
       JLabel graph_info_A = new JLabel("A: "+getGraphLabel(current_graph));
@@ -787,16 +787,15 @@ public final class GraphSelectionManager
       // for left-click on the TierLabelGlyph's
 
       List labels = handler.getSelectedTierLabels();
-      List graph_glyphs = handler.getContainedGraphs(labels);
+      List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
-      List graph_syms = new ArrayList(graph_glyphs.size());
-      for (int i=0; i<graph_glyphs.size(); i++) {
-        GraphGlyph glyph = (GraphGlyph) graph_glyphs.get(i);
-        graph_syms.add(glyph.getInfo()); // It will be a GraphSym object
+      List<GraphSym> graph_syms = new ArrayList<GraphSym>(graph_glyphs.size());
+			for (GraphGlyph glyph : graph_glyphs) {
+        graph_syms.add((GraphSym)glyph.getInfo()); // It will be a GraphSym object
       }
       GraphSym primary_sym = null;
       if (! graph_syms.isEmpty()) {
-        primary_sym = (GraphSym) graph_syms.get(0);
+        primary_sym = graph_syms.get(0);
       }
 
       this.popupNotify(popup, graph_syms, primary_sym);

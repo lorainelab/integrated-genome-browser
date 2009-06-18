@@ -36,7 +36,7 @@ public final class MinScoreThresholder extends JPanel
   static int frm_width = 400;
   static int frm_height = 200;
   //  SmartGraphGlyph sgg;
-  List graphs = new ArrayList();
+  List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
   NeoWidgetI widg;
   JSlider tslider;
   JTextField minscoreTF;
@@ -53,6 +53,7 @@ public final class MinScoreThresholder extends JPanel
     cpane.add("Center", dthresher);
     //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
+			@Override
       public void windowClosing(WindowEvent evt) {
 	Window w = evt.getWindow();
 	w.setVisible(false);
@@ -60,7 +61,7 @@ public final class MinScoreThresholder extends JPanel
       }
     } );
     frm.pack();
-    frm.show();
+    frm.setVisible(true);
     return dthresher;
   }
 
@@ -89,7 +90,7 @@ public final class MinScoreThresholder extends JPanel
     minscoreTF.addActionListener(this);
   }
 
-  public void setGraphs(List newgraphs) {
+  public void setGraphs(List<SmartGraphGlyph> newgraphs) {
     graphs.clear();
 
     tslider.removeChangeListener(this);
@@ -100,8 +101,7 @@ public final class MinScoreThresholder extends JPanel
     //    System.out.println("in MinScoreThresholder.setGraphs(), count = " + gcount);
     //    float minscore_thresh = 0;
     float newthresh = 0;
-    for (int i=0; i<gcount; i++) {
-      SmartGraphGlyph gl = (SmartGraphGlyph)newgraphs.get(i);
+		for (SmartGraphGlyph gl : newgraphs) {
       graphs.add(gl);
       thresh_min = Math.min(thresh_min, gl.getGraphMinY());
       thresh_max = Math.max(thresh_max, gl.getGraphMaxY());
@@ -159,7 +159,7 @@ public final class MinScoreThresholder extends JPanel
   }
 
   public int calcSliderVal(float thresh_score) {
-    return (int)Math.round((thresh_score - thresh_min) * sliders_per_score);
+    return Math.round((thresh_score - thresh_min) * sliders_per_score);
   }
 
 
@@ -170,8 +170,7 @@ public final class MinScoreThresholder extends JPanel
       float current_thresh = calcScore(tslider.getValue());
       if (current_thresh != minscore_thresh) {
 	minscore_thresh = current_thresh;
-	for (int i=0; i<graphs.size(); i++) {
-	  SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
+	for (SmartGraphGlyph sgg : graphs) {
 	  sgg.setMinScoreThreshold(minscore_thresh);
 	}
 	minscoreTF.removeActionListener(this);
@@ -192,8 +191,7 @@ public final class MinScoreThresholder extends JPanel
 	}
 	else {
 	  minscore_thresh = new_thresh;
-	  for (int i=0; i<graphs.size(); i++) {
-	    SmartGraphGlyph sgg = (SmartGraphGlyph)graphs.get(i);
+		for (SmartGraphGlyph sgg : graphs) {
 	    sgg.setMinScoreThreshold(minscore_thresh);
 	  }
 	  tslider.removeChangeListener(this);

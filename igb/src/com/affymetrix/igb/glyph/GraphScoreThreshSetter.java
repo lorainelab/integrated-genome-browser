@@ -60,7 +60,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	//private boolean set_slider_sizepref = false;
 	//private boolean set_textbox_sizepref = false;
 //  boolean thresh_is_min = true;
-	private List graphs = new ArrayList();
+	private List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
 	//private Map flipped_hash = new HashMap();
 	private NeoWidgetI widg;
 	private GraphVisibleBoundsSetter per_info_provider;
@@ -244,6 +244,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			thresh_setter_frame.setVisible(true);
 			thresh_setter_frame.addWindowListener(new WindowAdapter() {
 
+				@Override
 				public void windowClosing(WindowEvent evt) {
 					// save the current size into the preferences, so the window
 					// will re-open with this size next time
@@ -261,14 +262,12 @@ public final class GraphScoreThreshSetter extends JPanel
 	 *  Filters out any graphs that aren't SmartGraphGlyphs
 	 *  so other methods don't have to worry about doing type checking.
 	 */
-	public void setGraphs(List newgraphs) {
+	public void setGraphs(List<GraphGlyph> newgraphs) {
 		turnOffListening();
 		graphs.clear();
-		int gcount = newgraphs.size();
-		for (int i = 0; i < gcount; i++) {
-			GraphGlyph gl = (GraphGlyph) newgraphs.get(i);
+		for (GraphGlyph gl : newgraphs) {
 			if (gl instanceof SmartGraphGlyph) {
-				graphs.add(gl);
+				graphs.add((SmartGraphGlyph)gl);
 			}
 		}
 		initPercents();
@@ -279,15 +278,13 @@ public final class GraphScoreThreshSetter extends JPanel
 			threshCB.setSelectedIndex(-1);
 			threshCB.setEnabled(false);
 		} else {
-			SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
+			SmartGraphGlyph first_glyph = graphs.get(0);
 			boolean show_thresholds_match = true;
 			boolean thresh_directions_match = true;
 			boolean thresh_starts_match = true;
 			boolean thresh_ends_match = true;
 
-			gcount = graphs.size();
-			for (int i = 1; i < gcount; i++) {
-				SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph sggl : graphs) {
 				show_thresholds_match = show_thresholds_match && (first_glyph.getShowThreshold() == sggl.getShowThreshold());
 				thresh_directions_match = thresh_directions_match && (first_glyph.getThresholdDirection() == sggl.getThresholdDirection());
 				thresh_starts_match = thresh_starts_match && (first_glyph.getThreshStartShift() == sggl.getThreshStartShift());
@@ -355,8 +352,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			float avg_of_score_vals = 0;
 			int gcount = graphs.size();
 
-			for (int i = 0; i < gcount; i++) {
-				SmartGraphGlyph gl = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph gl : graphs) {
 				float min = gl.getGraphMinY();
 				float max = gl.getGraphMaxY();
 				float score_val;
@@ -407,8 +403,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			float max_of_score_vals = Float.NEGATIVE_INFINITY;
 			float avg_of_score_vals = 0;
 			int gcount = graphs.size();
-			for (int i = 0; i < gcount; i++) {
-				SmartGraphGlyph gl = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph gl : graphs) {
 				float val;
 				if (gl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
 					val = gl.getMinScoreThreshold();
@@ -485,7 +480,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				setScoreThreshold(thresh);  // also sets prev_thresh_val
 			} catch (ParseException ex) { // couldn't parse, keep same...
 				//score_valT.setText(val_format.format(prev_thresh_val));
-				setGraphs(new ArrayList(graphs));
+				setGraphs(new ArrayList<GraphGlyph>(graphs));
 			}
 		} else if (src == score_perT) {
 			try {
@@ -498,7 +493,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				setScoreThresholdByPercent(thresh_per); // also sets prev_thresh_per
 			} catch (ParseException ex) { // couldn't parse, keep same...
 				//score_perT.setText(per_format.format(prev_thresh_per));
-				setGraphs(new ArrayList(graphs));
+				setGraphs(new ArrayList<GraphGlyph>(graphs));
 			}
 		} else if (src == thresh_aboveB) {
 			if (prev_thresh_type == THRESH_TYPE_VALUE) {
@@ -519,7 +514,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			} catch (NumberFormatException ex) {
 				//SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
 				//shift_startTF.setText(val_format.format(first_glyph.getThreshStartShift()));
-				setGraphs(new ArrayList(graphs));
+				setGraphs(new ArrayList<GraphGlyph>(graphs));
 			}
 		} else if (src == shift_endTF) {
 			try {
@@ -528,25 +523,21 @@ public final class GraphScoreThreshSetter extends JPanel
 			} catch (NumberFormatException ex) {
 				//SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
 				//shift_endTF.setText(val_format.format(first_glyph.getThreshEndShift()));
-				setGraphs(new ArrayList(graphs));
+				setGraphs(new ArrayList<GraphGlyph>(graphs));
 			}
 		} else if (src == tier_threshB) {
-			int gcount = graphs.size();
-			for (int i = 0; i < gcount; i++) {
-				SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph sggl : graphs) {
 				pickleThreshold(sggl);
 			}
 			widg.updateWidget();
 		} else if (src == threshCB) {
 			String selection = (String) (threshCB).getSelectedItem();
 			boolean thresh_on = (selection.equals(ON));
-			int gcount = graphs.size();
-			for (int i = 0; i < gcount; i++) {
-				SmartGraphGlyph sggl = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph sggl : graphs) {
 				sggl.setShowThreshold(thresh_on);
 			}
 			widg.updateWidget();
-			this.setGraphs(new ArrayList(graphs));
+			this.setGraphs(new ArrayList<GraphGlyph>(graphs));
 		}
 	}
 
@@ -596,8 +587,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			float min_per = Float.POSITIVE_INFINITY;
 			float max_per = Float.NEGATIVE_INFINITY;
 			float avg_per = 0;
-			for (int i = 0; i < gcount; i++) {
-				SmartGraphGlyph sgg = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph sgg : graphs) {
 				float percent = per_info_provider.getPercentForValue(sgg, val);
 				min_per = Math.min(percent, min_per);
 				max_per = Math.max(percent, max_per);
@@ -655,8 +645,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			float min_val = Float.POSITIVE_INFINITY;
 			float max_val = Float.NEGATIVE_INFINITY;
 			float avg_val = 0;
-			for (int i = 0; i < gcount; i++) {
-				SmartGraphGlyph sgg = (SmartGraphGlyph) graphs.get(i);
+			for (SmartGraphGlyph sgg : graphs) {
 				float val = per_info_provider.getValueForPercent(sgg, percent);
 
 				min_val = Math.min(val, min_val);

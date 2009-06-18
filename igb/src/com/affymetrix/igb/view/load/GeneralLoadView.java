@@ -47,8 +47,8 @@ import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 import javax.swing.JSplitPane;
+import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
-import org.jdesktop.swingworker.SwingWorker;
 
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {

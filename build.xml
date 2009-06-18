@@ -61,7 +61,6 @@
 		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"        signedjar="${webstart.dir}/jlfgr-1_0.jar" />
 		<my.signjar jar="${lib.dir}/myswing.jar"          signedjar="${webstart.dir}/myswing.jar" />
 		<my.signjar jar="${lib.dir}/swing-layout.jar"     signedjar="${webstart.dir}/swing-layout.jar" />
-		<my.signjar jar="${lib.dir}/swing-worker-1.2.jar" signedjar="${webstart.dir}/swing-worker-1.2.jar" />
 
 		<!--
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
@@ -158,7 +157,6 @@
 				<include name="jlfgr-1_0.jar"/>
 				<include name="myswing.jar"/>
 				<include name="swing-layout.jar"/>
-				<include name="swing-worker-1.2.jar" />
 			</zipgroupfileset>
 		</jar>
 	</target>

@@ -23,7 +23,6 @@
 		<jar href="jlfgr-1_0.jar" />
 		<jar href="myswing.jar" />
 		<jar href="swing-layout.jar" />
-		<jar href="swing-worker-1.2.jar" />
 	</resources>
 	<application-desc main-class="com.affymetrix.igb.IGB" />
 </jnlp>

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import org.jdesktop.swingworker.SwingWorker;
+import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
 

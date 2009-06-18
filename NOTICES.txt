@@ -1,16 +1,7 @@
 This software may be distributed along with software developed 
 by third-parties, covered by separate licenses.
 
-A)   This product includes software developed by the
-     Apache Software Foundation (http://www.apache.org/)
-     The Apache license may be found at
-     http://www.apache.org/licenses/LICENSE-2.0
-
-     The software developed by the Apache Software Foundation
-     which may be distributed with this product includes:
-     xercesImpl.jar
-
-B)   This product may include portions of the Jetty package 
+A)   This product may include portions of the Jetty package 
      from Mort Bay Consulting.
      (Starting with IGB 5.12, only the das2_server code relies on Jetty.)
      http://jetty.mortbay.org/jetty/
@@ -21,7 +12,7 @@ B)   This product may include portions of the Jetty package
      The files from the Jetty project included with this product include: 
      org.mortbay.jetty.jar, javax.servlet.jar
 
-C)   This product includes a copy of the Fusion SDK from 
+B)   This product includes a copy of the Fusion SDK from 
      Affymetrix, Inc. (pure Java version).
      http://www.affymetrix.com/support/developer/fusion/index.affx
 
@@ -33,7 +24,7 @@ C)   This product includes a copy of the Fusion SDK from
      The GenoViz project disclaims all copyright interest in the "Fusion SDK".
      This copy of the fusion sdk is stored in the file affx_fusion.jar
 
-D)   This product may include the Java look and feel Graphics Repository
+C)   This product may include the Java look and feel Graphics Repository
      Copyright 1994-2006 Sun Microsystems, Inc.
      http://java.sun.com/developer/techDocs/hi/repository/
 
@@ -43,7 +34,7 @@ D)   This product may include the Java look and feel Graphics Repository
      IGB can be used with or without this jar file.
 
 
-E)   This product includes portions of the Vector Graphics software library 
+D)   This product includes portions of the Vector Graphics software library 
      developed by the FreeHEP project, which is covered by the 
      GNU Lesser General Public License, version 2.1.
 
@@ -52,7 +43,7 @@ E)   This product includes portions of the Vector Graphics software library
      The files from this project are bundled together in freehep.jar
      A copy of the license is included in the file FREEHEP_LICENSE_LGPL.txt.
 
-F)   This product may include myswing.jar from
+E)   This product may include myswing.jar from
      https://myswing.dev.java.net/
      Which is covered by this license
      http://www.gnu.org/copyleft/lesser.html

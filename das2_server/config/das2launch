@@ -43,8 +43,6 @@
 #  * Install the external jars in $JAR_DIR/external. These include:
 #            javax.servlet.jar
 #            org.mortbay.jetty.jar
-#            xercesImpl.jar
-#            xml-apis.jar
 #          
 #  * If you want to use this script to manage the DAS/2 server as a
 #    standard linux daemon, you'll need to have root access on the

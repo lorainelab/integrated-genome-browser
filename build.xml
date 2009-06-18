@@ -62,7 +62,6 @@
 		<my.signjar jar="${lib.dir}/myswing.jar"          signedjar="${webstart.dir}/myswing.jar" />
 		<my.signjar jar="${lib.dir}/swing-layout.jar"     signedjar="${webstart.dir}/swing-layout.jar" />
 		<my.signjar jar="${lib.dir}/swing-worker-1.2.jar" signedjar="${webstart.dir}/swing-worker-1.2.jar" />
-		<my.signjar jar="${lib.dir}/xercesImpl.jar"       signedjar="${webstart.dir}/xercesImpl.jar" />
 
 		<!--
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
@@ -89,9 +88,6 @@
 			<fileset dir="${dist.dir}">
 				<include name="*.jar" />
 				<exclude name="igb.jar" />
-			</fileset>
-			<fileset dir="${lib.dir}">
-				<include name="xercesImpl.jar" />
 			</fileset>
 		</copy>
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" />
@@ -163,7 +159,6 @@
 				<include name="myswing.jar"/>
 				<include name="swing-layout.jar"/>
 				<include name="swing-worker-1.2.jar" />
-				<include name="xercesImpl.jar"/>
 			</zipgroupfileset>
 		</jar>
 	</target>

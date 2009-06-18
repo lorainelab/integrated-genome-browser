@@ -24,8 +24,8 @@
 
 		<!-- global compiler defaults -->
 		<property name="build.compiler"         value="modern" />
-		<property name="ant.build.javac.target" value="5" />
-		<property name="ant.build.javac.source" value="5" />
+		<property name="ant.build.javac.target" value="6" />
+		<property name="ant.build.javac.source" value="6" />
 
 		<!-- compiler defaults passed to javac -->
 		<property name="debug"         value="on" />
@@ -39,9 +39,9 @@
 		<property name="jar.sign.alias.pass"    value="${jar.sign.keystore.pass}" />
 
 		<!-- javadoc defaults -->
-		<property name="javadoc.j2se.url"    value="http://java.sun.com/j2se/1.5.0/docs/api/" />
-		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/5/docs/api/" />
-		<property name="javadoc.src.version" value="5" />
+		<property name="javadoc.j2se.url"    value="http://java.sun.com/javase/6/docs/api/" />
+		<property name="javadoc.j2ee.url"    value="http://java.sun.com/javaee/6/docs/api/" />
+		<property name="javadoc.src.version" value="6" />
 
 		<!-- Location of JUnit -->
 		<!-- OS X and Debian do not appear to have junit in ant's path -->

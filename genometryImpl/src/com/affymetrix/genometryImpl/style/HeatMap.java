@@ -14,58 +14,76 @@
 package com.affymetrix.genometryImpl.style;
 
 import java.awt.Color;
-import java.util.*;
 
 public final class HeatMap {
+	public enum StandardHeatMap {
+		BLACK_WHITE("Black/White", Color.BLACK, Color.WHITE),
+		VIOLET("Violet", Color.BLACK, new Color(255, 0, 255)),
+		BLUE_YELLOW("Blue/Yellow", Color.BLUE, Color.YELLOW),
+		BLUE_YELLOW_2("Blue/Yellow 2", new Color(0, 0, 128), new Color(255, 255, 0)),
+		RED_BLACK_GREEN("Red/Black/Green", null, null) {
+			@Override
+			protected HeatMap create(String name, Color c1, Color c2) {
+				Color[] colors = new Color[bins];
+				for (int bin = 0; bin < bins; bin++) {
+					colors[bin] = new Color(Math.max(255 - 2*bin, 0), Math.min(Math.max(2 * (bin-128), 0), 255), 0);
+				}
+				return new HeatMap(name, colors);
 
-	/** Name of the Black-and-White Standard HeatMap. */
-	public static final String HEATMAP_0 = "Black/White";
+			}
+		},
+		RAINBOW("Rainbow", null, null) {
+			@Override
+			protected HeatMap create(String name, Color c1, Color c2) {
+				Color[] colors = new Color[bins];
+				for (int bin = 0; bin < bins; bin++) {
+					colors[bin] = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/bins, 0.8f, 1.0f));
+				}
+				return new HeatMap(name, colors);
+			}
+		},
+		RED_GRAY_BLUE("Red/Gray/Blue", null, null) {
+			@Override
+			protected HeatMap create(String name, Color c1, Color c2) {
+				Color c;
+				Color[] colors = new Color[bins];
+				for (int bin = 0; bin < bins; bin++) {
+					c = new Color(Color.HSBtoRGB(0.66f*(1.0f*bin)/bins, 0.8f, 1.0f));
+					int g = (192 * c.getGreen()) / 256;
+					colors[bin] = new Color(Math.max(c.getRed(), g), g, Math.max(c.getBlue(), g));
+				}
+				return new HeatMap(name, colors);
+			}
+		},
+		TRANSPARENT_BW("Transparent B/W", new Color(0, 0, 0, 128), new Color(255, 255, 255, 128)),
+		TRANSPARENT_RED("Transparent Red", new Color(0, 0, 0, 128), new Color(255, 0, 0, 128)),
+		TRANSPARENT_GREEN("Transparent Green", new Color(0, 0, 0, 128), new Color(0, 255, 0, 128)),
+		TRANSPARENT_BLUE("Transparent Blue", new Color(0, 0, 0, 128), new Color(0, 0, 255, 128));
 
-	/** Name of the Violet Standard HeatMap. */
-	public static final String HEATMAP_1 = "Violet";
+		private static final int bins = 256;
+		private final HeatMap heatmap;
 
-	/** Name of the Blue/Yellow Standard HeatMap. */
-	public static final String HEATMAP_2 = "Blue/Yellow";
+		private StandardHeatMap(String name, Color c1, Color c2) {
+			this.heatmap = create(name, c1, c2);
+		}
 
-	/** Name of the Red/Green Standard HeatMap. */
-	public static final String HEATMAP_3 = "Red/Black/Green";
+		protected HeatMap create(String name, Color c1, Color c2) {
+			return HeatMap.makeLinearHeatmap(name, c1, c2);
+		}
 
-	/** Name of the second Blue/Yellow Standard HeatMap. */
-	public static final String HEATMAP_4 = "Blue/Yellow 2";
+		public HeatMap getHeatMap() { return heatmap; }
 
-	/** Name of the Standard Rainbow HeatMap. */
-	public static final String HEATMAP_RAINBOW = "Rainbow";
-
-	/** Name of the Standard Rainbow HeatMap. */
-	public static final String HEATMAP_RED_GRAY_BLUE = "Red/Gray/Blue";
-
-	/** Name of the Transparent Black-and-White Standard HeatMap. */
-	public static final String HEATMAP_T_0 = "Transparent B/W";
-
-	/** Name of the Transparent Violet Standard HeatMap. */
-	public static final String HEATMAP_T_1 = "Transparent Blue";
-
-	/** Name of the Transparent Blue/Yellow Standard HeatMap. */
-	public static final String HEATMAP_T_2 = "Transparent Red";
-
-	/** Name of the Transparent Red/Green Standard HeatMap. */
-	public static final String HEATMAP_T_3 = "Transparent Green";
+		@Override
+		public String toString() { return heatmap.getName(); }
+	}
 
 	public static final String PREF_HEATMAP_NAME = "Default Heatmap";
-	public static final String def_heatmap_name = HEATMAP_2;
+	public static final StandardHeatMap def_heatmap_name = StandardHeatMap.BLUE_YELLOW;
 
-	public static String[] HEATMAP_NAMES = {
-		HEATMAP_0, HEATMAP_1, HEATMAP_2, HEATMAP_3, HEATMAP_4,
-		HEATMAP_T_0, HEATMAP_T_2, HEATMAP_T_3, HEATMAP_T_1,
-		HEATMAP_RAINBOW, HEATMAP_RED_GRAY_BLUE
-	};
+	private final String name;
+	private final Color[] colors;
 
-	static Map<String,HeatMap> name2heatmap = new HashMap<String,HeatMap>();
-
-	String name;
-	Color[] colors;
-
-	public HeatMap(String name, Color[] colors) {
+	private HeatMap(String name, Color[] colors) {
 		this.name = name;
 		this.colors = colors;
 	}
@@ -95,95 +113,26 @@ public final class HeatMap {
 
 	/**
 	 *  Returns one of the standard pre-defined heat maps using the names in
-	 *  HEATMAP_NAMES, or null if one with the given name does not exist.
+	 *  StandardHeatMap.
+	 * <br />
+	 * Will throw NullPointerException if name is null or
+	 * IllegalArgumentException if a StandardHeatMap for the requested
+	 * name does not exist.
+	 *
+	 * @param name the name of the StandardHeatMap to return
+	 * @return the HeatMap for the requested StandHeatMap
 	 */
 	public static HeatMap getStandardHeatMap(String name) {
-		HeatMap hm = name2heatmap.get(name);
-		if (hm == null) {
-			int r,g,b;
-			int bins = 256;
-			Color[] cc = new Color[bins];
-
-			if (HEATMAP_0.equals(name)) {
-				r=0; g=0; b=0;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r++, g++, b++);
-				}
-			} else if (HEATMAP_1.equals(name)) {
-				r=0; g=0; b=0;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r++, g, b++);
-				}
-			} else if (HEATMAP_2.equals(name)) {
-				r=0; g=0; b=255;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r++, g++, b--);
-				}
-			} else if (HEATMAP_3.equals(name)) {
-				// red-black-green colormap
-				for (int i=0; i<bins; i++) {
-					r = Math.max(255 - 2*i, 0);
-					g = Math.min(Math.max(2 * (i-128), 0), 255);
-					b = 0;
-					cc[i] = new Color(r, g, b);
-				}
-			} else if (HEATMAP_4.equals(name)) {
-				r=0; g=0; b=128;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r++, g++, b);
-					if (i % 2 == 0)  { b--; }
-				}
-			} else if (HEATMAP_RAINBOW.equals(name)) {
-				for (int i=0; i<bins; i++) {
-					// hues from red to blue
-					cc[i] = new Color(Color.HSBtoRGB(0.66f*(1.0f*i)/bins, 0.8f, 1.0f));
-				}
-			} else if (HEATMAP_RED_GRAY_BLUE.equals(name)) {
-				int gray_level = 128+64;
-				for (int i=0; i<bins; i++) {
-					// start with hues from red to green to blue
-					// then convert the green part into a background gray level
-					Color c = new Color(Color.HSBtoRGB(0.66f*(1.0f*i)/bins, 0.8f, 1.0f));
-					int gg = (gray_level * c.getGreen()) / 256;
-					cc[i] = new Color(
-							Math.max(c.getRed(), gg),
-							gg, 
-							Math.max(c.getBlue(), gg));
+		try {
+			return StandardHeatMap.valueOf(name).getHeatMap();
+		} catch (IllegalArgumentException e) {
+			for (StandardHeatMap s : StandardHeatMap.values()) {
+				if (s.toString().equals(name)) {
+					return s.getHeatMap();
 				}
 			}
-
-			// Now the transparent ones
-			else if (HEATMAP_T_0.equals(name)) {
-				r=0; g=0; b=0;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r++, g++, b++, 128);
-				}
-			} else if (HEATMAP_T_1.equals(name)) {
-				r=0; g=0; b=0;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r, g, b++, 128);
-				}
-			} else if (HEATMAP_T_2.equals(name)) {
-				r=0; g=0; b=0;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r++, g, b, 128);
-				}
-			} else if (HEATMAP_T_3.equals(name)) {
-				r=0; g=0; b=0;
-				for (int i=0; i<bins; i++) {
-					cc[i] = new Color(r, g++, b, 128);
-				}
-			} else {
-				cc = null;
-			}
-
-			if (cc != null) {
-				hm = new HeatMap(name, cc);
-				name2heatmap.put(name, hm);
-			}
+			throw e;
 		}
-
-		return hm;
 	}
 
 	/** Make a HeatMap that interpolates linearly between the two given colors. */
@@ -214,8 +163,19 @@ public final class HeatMap {
 			int r = (int) ((1.0f - x) * c1.getRed() + x * c2.getRed());
 			int g = (int) ((1.0f - x) * c1.getGreen() + x * c2.getGreen());
 			int b = (int) ((1.0f - x) * c1.getBlue() + x * c2.getBlue());
+			int a = (int) ((1.0f - x) * c1.getAlpha() + x * c2.getAlpha());
 
-			return new Color(r, g, b);
+			return new Color(r, g, b, a);
 		}
 	}
+
+	public static String[] getStandardNames() {
+			int length = StandardHeatMap.values().length;
+			String[] names = new String[length];
+			HeatMap.StandardHeatMap[] shm = StandardHeatMap.values();
+			for (int i=0; i<length; i++) {
+				names[i] = shm[i].toString();
+			}
+			return names;
+		}
 }

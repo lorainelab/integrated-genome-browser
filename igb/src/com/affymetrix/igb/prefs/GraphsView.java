@@ -56,7 +56,7 @@ public final class GraphsView extends JPanel implements IPrefEditorComponent  {
 						 ScoredIntervalParser.default_attach_graphs));
     
     JComboBox heat_cb = UnibrowPrefsUtil.createComboBox(UnibrowPrefsUtil.getTopNode(), HeatMap.PREF_HEATMAP_NAME,
-        HeatMap.HEATMAP_NAMES, HeatMap.def_heatmap_name);
+        HeatMap.getStandardNames(), HeatMap.def_heatmap_name.toString());
     Box heat_row = Box.createHorizontalBox();
     heat_row.add(new JLabel("Preferred Heatmap"));
     heat_row.add(Box.createRigidArea(new Dimension(6,0)));

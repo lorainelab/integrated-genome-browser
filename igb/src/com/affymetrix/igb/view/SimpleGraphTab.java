@@ -128,17 +128,7 @@ public final class SimpleGraphTab extends JPanel
 		this.gviewer = app.getMapView();
 		//}
 
-		Vector<String> v = new Vector<String>(8);
-		v.add(HeatMap.HEATMAP_0);
-		v.add(HeatMap.HEATMAP_1);
-		v.add(HeatMap.HEATMAP_2);
-		v.add(HeatMap.HEATMAP_3);
-		v.add(HeatMap.HEATMAP_4);
-		v.add(HeatMap.HEATMAP_T_0);
-		v.add(HeatMap.HEATMAP_T_2);
-		v.add(HeatMap.HEATMAP_T_3);
-		v.add(HeatMap.HEATMAP_T_1); // List red and green before blue.  Blue is less useful.
-		heat_mapCB = new JComboBox(v);
+		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
 		heat_mapCB.addItemListener(new HeatMapItemListener());
 
 		// A box to contain the heat-map JComboBox, to help get the alignment right

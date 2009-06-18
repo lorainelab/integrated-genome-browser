@@ -186,7 +186,7 @@ public final class GraphState implements GraphStateI {
 	public final int getGraphStyle() { return graph_style; }
 	public HeatMap getHeatMap() {
 		if (heat_map == null) {
-			heat_map = HeatMap.getStandardHeatMap(HeatMap.HEATMAP_0);
+			heat_map = HeatMap.StandardHeatMap.BLACK_WHITE.getHeatMap();
 		}
 		return heat_map;
 	}

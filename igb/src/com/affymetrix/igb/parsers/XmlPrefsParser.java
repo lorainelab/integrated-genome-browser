@@ -150,33 +150,7 @@ public final class XmlPrefsParser {
 		return filenames;
 	}
 
-	/*
-	public Map parse(File fl) {
-	Map prefs_hash = new HashMap();
-	FileInputStream fistr = null;
-	BufferedInputStream bistr = null;
-	try {
-	fistr = new FileInputStream(fl);
-	bistr = new BufferedInputStream(fistr);
-	prefs_hash = parse(bistr, fl.getCanonicalPath(), prefs_hash);
-	}
-	catch(Exception ex) {
-	System.out.println("ERROR: Exception processing preferences file "+ex.toString());
-	}
-	finally {
-	if (bistr != null) try {bistr.close();} catch (Exception e) {}
-	if (fistr != null) try {fistr.close();} catch (Exception e) {}
-	}
-	return prefs_hash;
-	}
-	 * */
 
-	/*
-	public Map parse(InputStream istr, String file_name)  {
-	HashMap prefs_hash = new HashMap();
-	return parse(istr, file_name, prefs_hash);
-	}
-	 * */
 	public Map parse(InputStream istr, String file_name, Map<String, Map> prefs_hash) {
 		try {
 			InputSource insrc = new InputSource(istr);

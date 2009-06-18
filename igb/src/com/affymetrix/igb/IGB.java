@@ -1663,11 +1663,8 @@ public final class IGB extends Application
     boolean USE_PATTERN_SEARCHER = true;
 		boolean USE_NAME_SEARCHER = true;
     boolean USE_RESTRICTION_MAPPER = false;
-    boolean USE_PIVOT_VIEW = false;
     if (prefs_hash.get("USE_GRAPH_ADJUSTER") != null) {
       USE_GRAPH_ADJUSTER = ((Boolean)prefs_hash.get("USE_GRAPH_ADJUSTER")).booleanValue(); }
-    if (prefs_hash.get("USE_PIVOT_VIEW") != null) {
-      USE_PIVOT_VIEW = ((Boolean)prefs_hash.get("USE_PIVOT_VIEW")).booleanValue(); }
     if (prefs_hash.get("USE_SLICE_VIEW") != null) {
       USE_SLICE_VIEW = ((Boolean)prefs_hash.get("USE_SLICE_VIEW")).booleanValue();  }
     if (prefs_hash.get("USE_RESTRICTION_MAPPER") != null) {
@@ -1693,11 +1690,6 @@ public final class IGB extends Application
     }
 		if (USE_NAME_SEARCHER) {
       PluginInfo pi = new PluginInfo(Das2SearchView.class.getName(), "Name Search", true);
-      plugin_list.add(pi);
-    }
-
-    if (USE_PIVOT_VIEW) {
-      PluginInfo pi = new PluginInfo(ExperimentPivotView.class.getName(), "Pivot View", true);
       plugin_list.add(pi);
     }
 

@@ -60,7 +60,6 @@
 		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"          signedjar="${webstart.dir}/freehep-2.1.1.jar" />
 		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"        signedjar="${webstart.dir}/jlfgr-1_0.jar" />
 		<my.signjar jar="${lib.dir}/myswing.jar"          signedjar="${webstart.dir}/myswing.jar" />
-		<my.signjar jar="${lib.dir}/swing-layout.jar"     signedjar="${webstart.dir}/swing-layout.jar" />
 
 		<!--
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
@@ -156,7 +155,6 @@
 				<include name="freehep-2.1.1.jar"/>
 				<include name="jlfgr-1_0.jar"/>
 				<include name="myswing.jar"/>
-				<include name="swing-layout.jar"/>
 			</zipgroupfileset>
 		</jar>
 	</target>

@@ -262,7 +262,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>igb/src</package-root>
-                <classpath mode="compile">ext/affx_fusion.jar:ext/myswing.jar:ext/swing-layout.jar:ext/freehep-2.1.1.jar:genoviz_sdk/src:genometry/src:genometryImpl/src</classpath>
+                <classpath mode="compile">ext/affx_fusion.jar:ext/myswing.jar:ext/freehep-2.1.1.jar:genoviz_sdk/src:genometry/src:genometryImpl/src</classpath>
                 <built-to>dist/igb.jar</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

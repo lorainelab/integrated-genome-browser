@@ -610,7 +610,7 @@ public final class SimpleGraphTab extends JPanel
 			map.updateWidget();
 		}
 	}
-	static Map name2transform;
+	static Map<String,FloatTransformer> name2transform;
 	static String BLANK = "";
 	static String IDENTITY_TRANSFORM = "Copy";
 	static String LOG_10 = "Log10";
@@ -622,7 +622,7 @@ public final class SimpleGraphTab extends JPanel
 
 
 	static {
-		name2transform = new LinkedHashMap();
+		name2transform = new LinkedHashMap<String,FloatTransformer>();
 		name2transform.put(IDENTITY_TRANSFORM, new IdentityTransform());
 		name2transform.put(LOG_10, new LogTransform(10));
 		name2transform.put(LOG_2, new LogTransform(2));

@@ -13,8 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -28,8 +27,10 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.genometryImpl.util.IntList;
+//import com.affymetrix.genometryImpl.util.FloatList;
+//import com.affymetrix.genometryImpl.util.IntList;
+import com.affymetrix.genometryImpl.GraphSym;
+//import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.Rectangle2D;
@@ -80,7 +81,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
   boolean TRANSITION_TO_BARS = true;
   boolean SHOW_CACHE_INDICATOR = false;
   boolean USE_GRAPH_CACHE = true;
-  boolean CALC_GRAPH_CACHE = true;
+  //boolean CALC_GRAPH_CACHE = true;
   boolean CACHE_DIRECT_DRAW = false;
 
   boolean AVGLINE = true;
@@ -95,7 +96,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
   // still need to make thresh_glyph draw as a fixed-pixel (1 or 2) line instead of as a variable-pixel fillRect...
   ThreshGlyph thresh_glyph = new ThreshGlyph();
 
-  ArrayList<GraphCache2> caches = new ArrayList<GraphCache2>();  // the hiearchy of graph caches (well really just one for now...)
+  //ArrayList<GraphCache2> caches = new ArrayList<GraphCache2>();  // the hiearchy of graph caches (well really just one for now...)
   int compression_level = 20;  // average # of points per entry in flat graph compression cache
 
   /*
@@ -122,8 +123,8 @@ public final class SmartGraphGlyph extends GraphGlyph {
     this.addChild(thresh_glyph);
 
     if (xcoords == null || graf == null || xcoords.length <=0 || graf.getPointCount() <= 0) { return; }
-    caches.clear();
-    if (CALC_GRAPH_CACHE) {
+    //caches.clear();
+    /*if (CALC_GRAPH_CACHE) {
       double graph_coord_length = xcoords[xcoords.length-1] - xcoords[0];
       double avg_bases_per_point = graph_coord_length / ((double)xcoords.length);
       int bases_per_bin = (int)Math.ceil(avg_bases_per_point * compression_level);
@@ -138,7 +139,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
         GraphCache2 graph_cache = new GraphCache2(bases_per_bin, xcoords, graf.copyGraphYCoords());
         caches.add(graph_cache);
       }
-    }
+    }*/
     //    if (getMinScoreThreshold() == Float.NEGATIVE_INFINITY ||
     //	getMinScoreThreshold() == Float.POSITIVE_INFINITY) {
     //      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
@@ -161,48 +162,44 @@ public final class SmartGraphGlyph extends GraphGlyph {
     // hack to get thresholding to work -- thresh line child glyph keeps getting removed
     //   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...
     if (this.getChildCount() == 0) {
-      if (thresh_glyph == null) {
-	thresh_glyph = new ThreshGlyph();
-	//	thresh_glyph.setVisibility(getShowThreshold());
-	thresh_glyph.setSelectable(false);
-	thresh_glyph.setColor(thresh_color);
-      }
-      this.addChild(thresh_glyph);
-    }
+			if (thresh_glyph == null) {
+				thresh_glyph = new ThreshGlyph();
+				//	thresh_glyph.setVisibility(getShowThreshold());
+				thresh_glyph.setSelectable(false);
+				thresh_glyph.setColor(thresh_color);
+			}
+			this.addChild(thresh_glyph);
+		}
 
-    if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
-      double xpixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
-      double xcoords_per_pixel = 1 / xpixels_per_coord;
-      if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
-	// if at resolution where bars should be displayed, then draw as LINE or BAR graph
-	if ((graph_style == MINMAXAVG)  && 
-	    (Application.getSingleton() instanceof IGB) ) {
-	  super.draw(view, BAR_GRAPH);
-	}
-	else { 
-	  super.draw(view, LINE_GRAPH);
-	}
-      }
-      else {
-        drawSmart(view);
-      }
+		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+			double xpixels_per_coord = ((LinearTransform) view.getTransform()).getScaleX();
+			double xcoords_per_pixel = 1 / xpixels_per_coord;
+			if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
+				// if at resolution where bars should be displayed, then draw as LINE or BAR graph
+				if ((graph_style == MINMAXAVG) &&
+								(Application.getSingleton() instanceof IGB)) {
+					super.draw(view, BAR_GRAPH);
+				} else {
+					super.draw(view, LINE_GRAPH);
+				}
+			} else {
+				drawSmart(view);
+			}
 
-    } else if (graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP 
-        || graph_style == AVG_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
+		} else if (graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == AVG_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
 
-      drawSmart(view);
+			drawSmart(view);
 
-    } else {
-      // Not one of the special styles, so default to regular GraphGlyph.draw method.
-      super.draw(view);
-    }
+		} else {
+			// Not one of the special styles, so default to regular GraphGlyph.draw method.
+			super.draw(view);
+		}
 
-    if (getShowThreshold()) {
-      drawThresholdedRegions(view);
-    }
-    else {
-      thresh_glyph.setVisibility(false);
-    }
+		if (getShowThreshold()) {
+			drawThresholdedRegions(view);
+		} else {
+			thresh_glyph.setVisibility(false);
+		}
   }
 
   /** Sets the scale at which the drawing routine will switch between the
@@ -284,8 +281,8 @@ public final class SmartGraphGlyph extends GraphGlyph {
     Rectangle2D view_coordbox = view.getCoordBox();
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
-    int beg_index = 0;
-    int end_index = xcoords.length-1;
+    //int beg_index = 0;
+    //int end_index = xcoords.length-1;
 
     // plot_top_ypixel and plot_bottom_ypixel are replacements for pixelbox.y and pbox_yheight in many 
     //   (but not all) calculations, they take into account an internal transform to shrink the graph rendering 
@@ -351,31 +348,31 @@ public final class SmartGraphGlyph extends GraphGlyph {
      *   (for first attempt, should choose greatest compression level such that compression (number of points per
      *     cache entry at that level) is still less than avg_points_per_pixel)
      */
-    double graph_coord_length = xcoords[end_index] - xcoords[beg_index];
-    double avg_coords_between_points = graph_coord_length / xcoords.length;
-    double avg_points_per_coord = 1.0 / avg_coords_between_points;
-    double avg_points_per_pixel = avg_points_per_coord * coords_per_pixel;
+    //double graph_coord_length = xcoords[end_index] - xcoords[beg_index];
+    //double avg_coords_between_points = graph_coord_length / xcoords.length;
+    //double avg_points_per_coord = 1.0 / avg_coords_between_points;
+    //double avg_points_per_pixel = avg_points_per_coord * coords_per_pixel;
     /*
      *  first implementation of graph compression caching, just using a flat caching
      *      (one level of compression / summation)
      */
-    if (USE_GRAPH_CACHE && (avg_points_per_pixel > compression_level)) {
+    /*if (USE_GRAPH_CACHE && (avg_points_per_pixel > compression_level)) {
         UseGraphCache(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
-    }
+    }*/
     // not using graph "cache", because zoomed too far in (but not far enough to switch to bars)
-    else  { // not using graph cache...
+   // else  { // not using graph cache...
       // using binary search to find end points --
       //    assumes xcoords array is ordered by increasing value
-        DontUseGraphCache(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
+        DrawPoints(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
       // can only show threshold if xy coords are also being shown (show_graph = true)
-    }
+   // }
 
     if (AVGLINE) {
         DrawAvgLine(graph_style, g, heatmap_scaling, plot_bottom_ypixel, plot_top_ypixel, coords_per_pixel);
     }
   }
   
-     private void DontUseGraphCache(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
+     private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
         // not using graph cache...
         // using binary search to find end points --
         //    assumes xcoords array is ordered by increasing value
@@ -499,7 +496,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
         // can only show threshold if xy coords are also being shown (show_graph = true)
     }
 
-    private void UseGraphCache(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
+    /*private void UseGraphCache(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
         int draw_beg_index;
         int draw_end_index;
 
@@ -658,7 +655,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
                 g.drawLine(x1, y1, x2, y2);
             }
         }
-    }
+    }*/
 
 
     private void DrawAvgLine(int graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
@@ -702,7 +699,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
   /**
    *  Retrieve the graph yvalue corresponding to a given ycoord.
    */
-  public float getGraphValue(ViewI view, double coord_value) {
+  float getGraphValue(ViewI view, double coord_value) {
     getInternalLinearTransform(view, scratch_trans);
     double yscale = scratch_trans.getScaleY();
     double offset = scratch_trans.getOffsetY();
@@ -714,7 +711,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
   /**
    *  Retrieve the map y coord corresponding to a given graph yvalue.
    */
-  public double getCoordValue(ViewI view, float graph_value) {
+  private double getCoordValue(ViewI view, float graph_value) {
     getInternalLinearTransform(view, scratch_trans);
     double yscale = scratch_trans.getScaleY();
     double offset = scratch_trans.getOffsetY();
@@ -723,7 +720,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
     return coord_value;
   }
 
-  public void drawThresholdedRegions(ViewI view) {
+  private void drawThresholdedRegions(ViewI view) {
     drawThresholdedRegions(view, null, null);
   }
 
@@ -733,297 +730,293 @@ public final class SmartGraphGlyph extends GraphGlyph {
    *   populate regions_parent with child SeqSymmetries for each region that passes threshold,
    *
    */
-  public void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
-   /*
-    *  Should really eventually move the SeqSymmetry stuff out of this class, maybe have
-    *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or
-    *     something...
-    */
-    double max_gap_threshold = getMaxGapThreshold();
-    double min_run_threshold = getMinRunThreshold();
-    double span_start_shift = getThreshStartShift();
-    double span_end_shift = getThreshEndShift();
+  void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
+  /*
+		 *  Should really eventually move the SeqSymmetry stuff out of this class, maybe have
+		 *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or
+		 *     something...
+		 */
+		double max_gap_threshold = getMaxGapThreshold();
+		double min_run_threshold = getMinRunThreshold();
+		double span_start_shift = getThreshStartShift();
+		double span_end_shift = getThreshEndShift();
 
-    int thresh_direction = getThresholdDirection();
-    float min_score_threshold = Float.NEGATIVE_INFINITY;
-    float max_score_threshold = Float.POSITIVE_INFINITY;
-    if (thresh_direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
-      min_score_threshold = getMinScoreThreshold();
-      max_score_threshold = Float.POSITIVE_INFINITY;
-    }
-    else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS) {
-      min_score_threshold = Float.NEGATIVE_INFINITY;
-      max_score_threshold = getMaxScoreThreshold();
-    }
-    else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
-      min_score_threshold = getMinScoreThreshold();
-      max_score_threshold = getMaxScoreThreshold();
-    }
+		int thresh_direction = getThresholdDirection();
+		float min_score_threshold = Float.NEGATIVE_INFINITY;
+		float max_score_threshold = Float.POSITIVE_INFINITY;
+		if (thresh_direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
+			min_score_threshold = getMinScoreThreshold();
+			max_score_threshold = Float.POSITIVE_INFINITY;
+		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS) {
+			min_score_threshold = Float.NEGATIVE_INFINITY;
+			max_score_threshold = getMaxScoreThreshold();
+		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
+			min_score_threshold = getMinScoreThreshold();
+			max_score_threshold = getMaxScoreThreshold();
+		}
 
-    // if neither min or max score thresholds have been set, assume that only using
-    //     min score threshold and set so it is in the middle of visible score range
-    if (Float.isInfinite(min_score_threshold) && Float.isInfinite(max_score_threshold)) {
-      setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY())/2));
-      min_score_threshold = getMinScoreThreshold();
-      max_score_threshold = Float.POSITIVE_INFINITY;
-    }
+		// if neither min or max score thresholds have been set, assume that only using
+		//     min score threshold and set so it is in the middle of visible score range
+		if (Float.isInfinite(min_score_threshold) && Float.isInfinite(max_score_threshold)) {
+			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
+			min_score_threshold = getMinScoreThreshold();
+			max_score_threshold = Float.POSITIVE_INFINITY;
+		}
 
-    Rectangle2D view_coordbox = view.getCoordBox();
-    double xmin = view_coordbox.x;
-    double xmax = view_coordbox.x + view_coordbox.width;
-    int draw_beg_index;
-    int draw_end_index;
-    boolean make_syms = ((region_holder != null) && (aseq != null));
-    //    boolean make_syms = (aseq != null);
-    int sym_count = 0;
-    int draw_count = 0;
-    if (make_syms) {
-      // if writing to region_holder, then want to do _whole_ graph, not just
-      //   what's in current view
-      draw_beg_index = 0;
-      draw_end_index = xcoords.length - 1;
-    }
-    else {
-      draw_beg_index = Arrays.binarySearch(xcoords, (int)xmin);
-      draw_end_index = Arrays.binarySearch(xcoords, (int)xmax) + 1;
-    }
+		Rectangle2D view_coordbox = view.getCoordBox();
+		double xmin = view_coordbox.x;
+		double xmax = view_coordbox.x + view_coordbox.width;
+		int draw_beg_index;
+		int draw_end_index;
+		boolean make_syms = ((region_holder != null) && (aseq != null));
+		//    boolean make_syms = (aseq != null);
+		int sym_count = 0;
+		int draw_count = 0;
+		if (make_syms) {
+			// if writing to region_holder, then want to do _whole_ graph, not just
+			//   what's in current view
+			draw_beg_index = 0;
+			draw_end_index = xcoords.length - 1;
+		} else {
+			draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
+			draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
+		}
 
-    if (draw_beg_index < 0) {
-      // want draw_beg_index to be index of max xcoord <= view_start
-      //  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-      draw_beg_index = (-draw_beg_index -1) - 1;
-     if (draw_beg_index < 0) { draw_beg_index = 0; }
-    }
-    if (draw_end_index < 0) {
-      // want draw_end_index to be index of min xcoord >= view_end
-      //   (insertion point)  [as defined in Arrays.binarySearch() docs]
-      draw_end_index = -draw_end_index -1;
-      if (draw_end_index < 0) { draw_end_index = 0; }
-      else if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
-      if (draw_end_index < (xcoords.length-1)) { draw_end_index++; }
-    }
+		if (draw_beg_index < 0) {
+			// want draw_beg_index to be index of max xcoord <= view_start
+			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
+			draw_beg_index = (-draw_beg_index - 1) - 1;
+			if (draw_beg_index < 0) {
+				draw_beg_index = 0;
+			}
+		}
+		if (draw_end_index < 0) {
+			// want draw_end_index to be index of min xcoord >= view_end
+			//   (insertion point)  [as defined in Arrays.binarySearch() docs]
+			draw_end_index = -draw_end_index - 1;
+			if (draw_end_index < 0) {
+				draw_end_index = 0;
+			} else if (draw_end_index >= xcoords.length) {
+				draw_end_index = xcoords.length - 1;
+			}
+			if (draw_end_index < (xcoords.length - 1)) {
+				draw_end_index++;
+			}
+		} // dynamically confining threshold to within getVisibleMinY() and getVisibleMaxY(), since
+		//   I'm having trouble dealing with this in GlyphDragger (where I'm trying to
+		//   optionally confine drag of glyph so that it can't go outside its parent's borders...
+		else {
+			// GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
+			//   otherwise it could conflict with reported threshold settings in GraphAdjusterView
+			//   instead, later in method setting thresh glyph visibility to false if outside visible score range
+			//      if (min_score_threshold < getVisibleMinY()) { setScoreThreshold(getVisibleMinY()); }
+			//      else if (min_score_threshold > getVisibleMaxY()) { setScoreThreshold(getVisibleMaxY()); }
+		}
 
+		double thresh_ycoord;
+		double thresh_score;
+		if (!Float.isInfinite(min_score_threshold)) {
+			thresh_score = min_score_threshold;
+		} else if (!Float.isInfinite(max_score_threshold)) {
+			thresh_score = max_score_threshold;
+		} else {
+			System.out.println("in SmartGraphGlyph.drawThresholdedRegions(), problem with setting up threshold line!");
+			thresh_score = (getVisibleMinY() + (getVisibleMaxY() / 2));
+		}
+		if (thresh_score < getVisibleMinY() ||
+						thresh_score > getVisibleMaxY()) {
+			thresh_glyph.setVisibility(false);
+		} else {
+			thresh_glyph.setVisibility(true);
+		}
 
-    // dynamically confining threshold to within getVisibleMinY() and getVisibleMaxY(), since
-    //   I'm having trouble dealing with this in GlyphDragger (where I'm trying to
-    //   optionally confine drag of glyph so that it can't go outside its parent's borders...
-    else {
-      // GAH 4-12-2005 commenting out restriction of score threshold to visible range, because
-      //   otherwise it could conflict with reported threshold settings in GraphAdjusterView
-      //   instead, later in method setting thresh glyph visibility to false if outside visible score range
-      //      if (min_score_threshold < getVisibleMinY()) { setScoreThreshold(getVisibleMinY()); }
-      //      else if (min_score_threshold > getVisibleMaxY()) { setScoreThreshold(getVisibleMaxY()); }
-    }
+		thresh_ycoord = getCoordValue(view, (float) thresh_score);
+		thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
 
-    double thresh_ycoord;
-    double thresh_score;
-    if ( ! Float.isInfinite(min_score_threshold)) {
-      thresh_score = min_score_threshold;
-    }
-    else if (! Float.isInfinite(max_score_threshold)) {
-      thresh_score = max_score_threshold;
-    }
-    else {
-      System.out.println("in SmartGraphGlyph.drawThresholdedRegions(), problem with setting up threshold line!");
-      thresh_score = (getVisibleMinY() + (getVisibleMaxY()/2));
-    }
-    if (thresh_score < getVisibleMinY()  ||
-	thresh_score > getVisibleMaxY() ) {
-      thresh_glyph.setVisibility(false);
-    }
-    else {
-      thresh_glyph.setVisibility(true);
-    }
+		Graphics g = view.getGraphics();
+		g.setColor(lighter);
+		double x, w, y;
+		double pass_thresh_start = 0;
+		double pass_thresh_end = 0;
 
-    thresh_ycoord = getCoordValue(view, (float)thresh_score);
-    thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
+		boolean pass_threshold_mode = false;
+		int min_index = 0;
+		int max_index = xcoords.length - 1;
 
-    Graphics g = view.getGraphics();
-    g.setColor(lighter);
-    double x, w, y;
-    double pass_thresh_start = 0;
-    double pass_thresh_end = 0;
+		// need to widen range searched to include previous and next points out of view that
+		//   pass threshold (unless distance to view is > max_gap_threshold
+		int new_beg = draw_beg_index;
 
-    boolean pass_threshold_mode = false;
-    int min_index = 0;
-    int max_index = xcoords.length-1;
+		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
+		while ((new_beg > min_index) &&
+						// ((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
+						((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
+			new_beg--;
+		}
+		draw_beg_index = new_beg;
 
-    // need to widen range searched to include previous and next points out of view that
-    //   pass threshold (unless distance to view is > max_gap_threshold
-    int new_beg = draw_beg_index;
+		int new_end = draw_end_index;
+		boolean pass_score_thresh;
+		boolean passes_max_gap;
+		//    boolean passes_min_run;
+		boolean draw_previous = false;
+		//    while ((new_end < max_index) &&   // end_index is really the maximum allowed draw_end_index
+		//	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold) &&
+		//	   (ycoords[new_end] < min_score_threshold)) {
 
-    // GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
-    while ((new_beg > min_index) &&
-    	   // ((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
-    	   ((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
-      new_beg--;
-    }
-    draw_beg_index = new_beg;
+		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
+		while ((new_end < max_index) && // end_index is really the maximum allowed draw_end_index
+						// 	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold)) {
+						((xcoords[new_end] - xcoords[draw_end_index]) <= max_gap_threshold)) {
+			new_end++;
+		}
+		draw_end_index = new_end;
 
-    int new_end = draw_end_index;
-    boolean pass_score_thresh;
-    boolean passes_max_gap;
-    //    boolean passes_min_run;
-    boolean draw_previous = false;
-    //    while ((new_end < max_index) &&   // end_index is really the maximum allowed draw_end_index
-    //	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold) &&
-    //	   (ycoords[new_end] < min_score_threshold)) {
+		if (draw_end_index >= xcoords.length) {
+			draw_end_index = xcoords.length - 1;
+		}
 
-    // GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
-    while ((new_end < max_index) &&   // end_index is really the maximum allowed draw_end_index
-	   // 	   ((xcoords[new_end] - xcoords[draw_end_index]) < max_gap_threshold)) {
-	   ((xcoords[new_end] - xcoords[draw_end_index]) <= max_gap_threshold)) {
-      new_end++;
-    }
-    draw_end_index = new_end;
+		if (THRESH_DEBUG) {
+			int check_xmin = xcoords[draw_beg_index];
+			int check_xmax = xcoords[draw_end_index];
+			int delta_xmin = (int) xmin - check_xmin;  // should be positive
+			int delta_xmax = check_xmax - (int) xmax; // should be positive
+			System.out.println("");
+			System.out.println("view   bounds: min = " + xmin + ", max = " + xmax);
+			System.out.println("check bounds: min = " + check_xmin + ", max = " + check_xmax);
+			System.out.println("delta: min = " + delta_xmin + ", max = " + delta_xmax);
+			if (delta_xmin < 0) {
+				System.out.println("$$$$$$$$$$$$ xmin < check_xmin $$$$$$$$$$$");
+			}
+			if (delta_xmax < 0) {
+				System.out.println("$$$$$$$$$$$$ xmax > check_xmax $$$$$$$$$$$");
+			}
+		}
 
-    if (draw_end_index >= xcoords.length) { draw_end_index = xcoords.length - 1; }
+		// eight possible states:
+		//
+		//     pass_threshold_mode    [y >= min_score_threshold]   [x-pass_thresh_end <= max_dis_thresh]
+		//
+		//  prune previous region and draw when:
+		//      true, false, false
+		//      true, true, false
+		for (int i = draw_beg_index; i <= draw_end_index; i++) {
+			x = xcoords[i];
+			w = 0;
+			if (wcoords != null) {
+				w = wcoords[i];
+			}
+			y = graf.getGraphYCoord(i);
 
-    if (THRESH_DEBUG) {
-      int check_xmin = xcoords[draw_beg_index];
-      int check_xmax = xcoords[draw_end_index];
-      int delta_xmin = (int)xmin - check_xmin;  // should be positive
-      int delta_xmax = check_xmax - (int)xmax; // should be positive
-      System.out.println("");
-      System.out.println("view   bounds: min = " + xmin + ", max = " + xmax);
-      System.out.println("check bounds: min = " + check_xmin + ", max = " + check_xmax);
-      System.out.println("delta: min = " + delta_xmin + ", max = " + delta_xmax);
-      if (delta_xmin < 0) { System.out.println("$$$$$$$$$$$$ xmin < check_xmin $$$$$$$$$$$"); }
-      if (delta_xmax < 0) { System.out.println("$$$$$$$$$$$$ xmax > check_xmax $$$$$$$$$$$"); }
-    }
+			//      pass_score_thresh = ((y >= min_score_threshold) &&
+			// GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline
+			pass_score_thresh = ((y > min_score_threshold) &&
+							(y <= max_score_threshold));
+			passes_max_gap = ((x - pass_thresh_end) <= max_gap_threshold);
+			if (pass_threshold_mode) {  // if currently keeping track of potential passed-threshold region
+				// true, ?, ?
+				if (pass_score_thresh) { // this point passes threshold test
+					// true, true, ?
+					if (passes_max_gap) { // AND its within max distance
+						// true, true, true
+						// passes threshold test, within max distance, keep extending region
+						pass_thresh_end = x + w;
+					} else {
+						// true, true, false
+						// passes threshold test, but NOT within max distance
+						// therefore end (and draw) previous region, and start this as a potential new region
+						draw_previous = true;
+					}
+				} else {  // this point does not pass threshold test
+					// true, false, ?
+					if (passes_max_gap) {
+						// true, false, true
+					} else {
+						// true, false, false
+						// attempting to extend region, but NOT passing threshold, and NOT within max distance
+						// therefore end (and draw) previous region
+						draw_previous = true;
+					}
+				}
+			} else {
+				// false, ?, ?
+				if (pass_score_thresh) {
+					// false, true, ?
+					// switch into pass_threshold_mode
+					// don't need to worry about distance thresh here
+					pass_thresh_start = x;
+					pass_thresh_end = x + w;
+					pass_threshold_mode = true;
+				} else {
+					// false, false, ?
+					// not extending a region (since not in pass_threshold_mode), so do nothing?
+					// don't need to worry about distance thresh here
+				}
+			}
 
-    // eight possible states:
-    //
-    //     pass_threshold_mode    [y >= min_score_threshold]   [x-pass_thresh_end <= max_dis_thresh]
-    //
-    //  prune previous region and draw when:
-    //      true, false, false
-    //      true, true, false
-    for (int i = draw_beg_index; i <= draw_end_index; i++) {
-      x = xcoords[i];
-      w = 0;
-      if (wcoords != null) {
-        w = wcoords[i];
-      }
-      y = graf.getGraphYCoord(i);
+			if (draw_previous) {
+				double draw_min = pass_thresh_start + span_start_shift;
+				double draw_max = pass_thresh_end + span_end_shift;
+				//	boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
+				// make sure that length of region is > min_run_threshold
+				// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
+				boolean passes_min_run = ((draw_max - draw_min) > min_run_threshold);
+				if (passes_min_run) {  // make sure aren't drawing single points
+					coord.x = draw_min;
+					view.transformToPixels(coord, prev_point);
+					coord.x = draw_max;
+					view.transformToPixels(coord, curr_point);
+					if (make_syms) {
+						SeqSymmetry sym =
+										new SingletonSeqSymmetry((int) draw_min, (int) draw_max, aseq);
+						region_holder.addChild(sym);
+						sym_count++;
+					} else {
+						draw_count++;
+						g.fillRect(prev_point.x,
+										pixelbox.y + pixelbox.height - thresh_contig_height,
+										curr_point.x - prev_point.x + 1,
+										thresh_contig_height);
+					}
+				}
+				draw_previous = false;
+				if (pass_score_thresh) {  // current point passes threshold test, start new region scan
+					pass_thresh_start = x;
+					pass_thresh_end = x + w;
+					pass_threshold_mode = true;
+				} else {
+					pass_threshold_mode = false;
+				}
+			}
+		}
 
-      //      pass_score_thresh = ((y >= min_score_threshold) &&
-      // GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline
-      pass_score_thresh = ((y > min_score_threshold) &&
-      			   (y <= max_score_threshold) );
-      passes_max_gap = ((x - pass_thresh_end) <= max_gap_threshold);
-      if (pass_threshold_mode) {  // if currently keeping track of potential passed-threshold region
-	// true, ?, ?
-	if (pass_score_thresh) { // this point passes threshold test
-	  // true, true, ?
-	  if (passes_max_gap) { // AND its within max distance
-	    // true, true, true
-	    // passes threshold test, within max distance, keep extending region
-	    pass_thresh_end = x + w;
-	  }
-	  else {
-	    // true, true, false
-	    // passes threshold test, but NOT within max distance
-	    // therefore end (and draw) previous region, and start this as a potential new region
-	    draw_previous = true;
-	  }
+		// clean up by doing a draw if exited loop while still in pass_threshold_mode
+		if (pass_threshold_mode && (pass_thresh_end != pass_thresh_start)) {
+			//	  System.out.println("clean up at " + pass_thresh_start);
+			double draw_min = pass_thresh_start + span_start_shift;
+			double draw_max = pass_thresh_end + span_end_shift;
+			//      boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
+			// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
+			boolean passes_min_run = ((draw_max - draw_min) > min_run_threshold);
+			if (passes_min_run) {
+				coord.x = draw_min;
+				view.transformToPixels(coord, prev_point);
+				coord.x = draw_max;
+				view.transformToPixels(coord, curr_point);
+				if (make_syms) {
+					SeqSymmetry sym =
+									new SingletonSeqSymmetry((int) pass_thresh_start, (int) pass_thresh_end, aseq);
+					region_holder.addChild(sym);
+				} else {
+					g.fillRect(prev_point.x,
+									pixelbox.y + pixelbox.height - thresh_contig_height,
+									curr_point.x - prev_point.x + 1,
+									thresh_contig_height);
+				}
+			}
+
+		}
 	}
-	else {  // this point does not pass threshold test
-	  // true, false, ?
-	  if (passes_max_gap) {
-	    // true, false, true
-	  }
-	  else {
-	    // true, false, false
-	    // attempting to extend region, but NOT passing threshold, and NOT within max distance
-	    // therefore end (and draw) previous region
-	    draw_previous = true;
-	  }
-	}
-      }
-      else {
-	// false, ?, ?
-	if (pass_score_thresh) {
-	  // false, true, ?
-	  // switch into pass_threshold_mode
-	  // don't need to worry about distance thresh here
-	  pass_thresh_start = x;
-	  pass_thresh_end = x + w;
-	  pass_threshold_mode = true;
-	}
-	else {
-	  // false, false, ?
-	  // not extending a region (since not in pass_threshold_mode), so do nothing?
-	  // don't need to worry about distance thresh here
-	}
-      }
-
-      if (draw_previous) {
-	double draw_min = pass_thresh_start + span_start_shift;
-	double draw_max = pass_thresh_end + span_end_shift;
-	//	boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
-	// make sure that length of region is > min_run_threshold
-	// GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
-	boolean passes_min_run = ((draw_max - draw_min) > min_run_threshold);
-	if (passes_min_run) {  // make sure aren't drawing single points
-	  coord.x = draw_min;
-	  view.transformToPixels(coord, prev_point);
-	  coord.x = draw_max;
-	  view.transformToPixels(coord, curr_point);
-	  if (make_syms) {
-	    SeqSymmetry sym =
-	      new SingletonSeqSymmetry((int)draw_min, (int)draw_max, aseq);
-	    region_holder.addChild(sym);
-	    sym_count++;
-	  }
-	  else {
-	    draw_count++;
-	    g.fillRect(prev_point.x,
-		       pixelbox.y + pixelbox.height - thresh_contig_height,
-		       curr_point.x - prev_point.x + 1,
-		       thresh_contig_height);
-	  }
-	}
-	draw_previous = false;
-	if (pass_score_thresh) {  // current point passes threshold test, start new region scan
-	  pass_thresh_start = x;
-	  pass_thresh_end = x + w;
-	  pass_threshold_mode = true;
-	}
-	else {
-	  pass_threshold_mode = false;
-	}
-      }
-    }
-
-    // clean up by doing a draw if exited loop while still in pass_threshold_mode
-    if (pass_threshold_mode && (pass_thresh_end != pass_thresh_start)) {
-      //	  System.out.println("clean up at " + pass_thresh_start);
-      double draw_min = pass_thresh_start + span_start_shift;
-      double draw_max = pass_thresh_end + span_end_shift;
-      //      boolean passes_min_run = ((draw_max - draw_min) >= min_run_threshold);
-      // GAH 2006-02-16 changed to > min_run instead of >=, to better mirror Affy tiling array pipeline
-      boolean passes_min_run = ((draw_max - draw_min) > min_run_threshold);
-      if (passes_min_run) {
-	coord.x = draw_min;
-	view.transformToPixels(coord, prev_point);
-	coord.x = draw_max;
-	view.transformToPixels(coord, curr_point);
-	if (make_syms) {
-	  SeqSymmetry sym =
-	    new SingletonSeqSymmetry((int)pass_thresh_start, (int)pass_thresh_end, aseq);
-	  region_holder.addChild(sym);
-	}
-	else {
-	  g.fillRect(prev_point.x,
-		     pixelbox.y + pixelbox.height - thresh_contig_height,
-		     curr_point.x - prev_point.x + 1,
-		     thresh_contig_height);
-	}
-      }
-
-    }
-  }
 
 
   public void setBackgroundColor(Color col) {
@@ -1039,7 +1032,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 
   public boolean getShowThreshold() { return state.getShowThreshold(); }
 
-  public void resetThreshLabel() {
+  private void resetThreshLabel() {
     float min_thresh = getMinScoreThreshold();
     float max_thresh = getMaxScoreThreshold();
     int direction = state.getThresholdDirection();
@@ -1054,17 +1047,17 @@ public final class SmartGraphGlyph extends GraphGlyph {
     }
   }
 
-  public void setThresholdDirection(int d) {
+  void setThresholdDirection(int d) {
     state.setThresholdDirection(d);
     resetThreshLabel();
   }
 
-  public void setMinScoreThreshold(float thresh) {
+  void setMinScoreThreshold(float thresh) {
     state.setMinScoreThreshold(thresh);
     resetThreshLabel();
   }
 
-  public void setMaxScoreThreshold(float thresh) {
+  void setMaxScoreThreshold(float thresh) {
     state.setMaxScoreThreshold(thresh);
     resetThreshLabel();
   }
@@ -1099,7 +1092,8 @@ public final class SmartGraphGlyph extends GraphGlyph {
   }
 
 }
-class GraphCache2 {
+
+/*class GraphCache2 {
   public int bases_per_entry;
   public int[] graph_index_min;
   public int[] graph_index_max;
@@ -1182,5 +1176,5 @@ class GraphCache2 {
     yavg = yavg_list.copyToArray();
     num_points = num_points_list.copyToArray();
   }
-}
+}*/
 

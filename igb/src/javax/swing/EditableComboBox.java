@@ -7,11 +7,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxEditor;
-import javax.swing.MutableComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 

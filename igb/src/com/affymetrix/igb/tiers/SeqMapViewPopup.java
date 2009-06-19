@@ -258,12 +258,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     return styles;
   }
 
-  void setTiersCollapsed(List tier_labels, boolean collapsed) {
+  private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
     handler.setTiersCollapsed(tier_labels, collapsed, true, true);
     refreshMap(true);
   }
 
-  public void changeExpandMax(List tier_labels) {
+  public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
     if (tier_labels == null || tier_labels.size() == 0) {
       ErrorHandler.errorPanel("changeExpandMaxAll called with an empty list");
       return;
@@ -271,7 +271,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     String initial_value = "0";
     if (tier_labels.size() == 1) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(0);
+      TierLabelGlyph tlg = tier_labels.get(0);
       TierGlyph tg = (TierGlyph) tlg.getInfo();
       IAnnotStyle style = tg.getAnnotStyle();
       if (style != null) { initial_value = "" + style.getMaxDepth(); }
@@ -402,7 +402,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     final JColorChooser chooser = new JColorChooser();
 
-    TierLabelGlyph tlg_0 = (TierLabelGlyph) tier_label_glyphs.get(0);
+    TierLabelGlyph tlg_0 = tier_label_glyphs.get(0);
     TierGlyph tier_0 = (TierGlyph) tlg_0.getInfo();
     IAnnotStyle style_0 = tier_0.getAnnotStyle();
     if (style_0 != null) {

@@ -402,7 +402,7 @@ public final class Das2ServerInfo  {
 				System.out.println("versioned source, name: " + version_name + ", URI: " + version_uri.toString());
 			}
 			NodeList vlist = version.getChildNodes();
-			HashMap caps = new HashMap();
+			HashMap<String,Das2Capability> caps = new HashMap<String,Das2Capability>();
 			URI coords_uri = null;
 			for (int j = 0; j < vlist.getLength(); j++) {
 				String nodename = vlist.item(j).getNodeName();
@@ -437,9 +437,9 @@ public final class Das2ServerInfo  {
 			} else {
 				vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
 			}
-			Iterator capiter = caps.values().iterator();
+			Iterator<Das2Capability> capiter = caps.values().iterator();
 			while (capiter.hasNext()) {
-				Das2Capability cap = (Das2Capability) capiter.next();
+				Das2Capability cap = capiter.next();
 				vsource.addCapability(cap);
 			}
 			dasSource.addVersion(vsource);
@@ -480,7 +480,7 @@ public final class Das2ServerInfo  {
 	 * Attempt to retrieve base URI for an Element from a DOM-level2 model
 	 */
 	public static URI getBaseURI(String doc_uri, Node cnode) {
-		Stack xml_bases = new Stack();
+		Stack<String> xml_bases = new Stack<String>();
 		Node pnode = cnode;
 		while (pnode != null) {
 			if (pnode instanceof Element) {
@@ -495,7 +495,7 @@ public final class Das2ServerInfo  {
 		try  {
 			base_uri = new URI(doc_uri);
 			while (! (xml_bases.empty())) {
-				String xbase = (String) xml_bases.pop();
+				String xbase = xml_bases.pop();
 				base_uri = base_uri.resolve(xbase);
 			}
 		}

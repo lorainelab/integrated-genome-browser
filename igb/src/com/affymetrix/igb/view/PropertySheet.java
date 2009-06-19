@@ -112,7 +112,7 @@ class PropertySheet extends JPanel {
    *   one or more Properties
    * @param props - the list of Properties
    */
-  public String[] getColumnHeadings(Vector name_values,
+  private String[] getColumnHeadings(Vector<String[]> name_values,
                                     Map[] props) {
     // will contain number of Properties + 1 if by_rows is false
     // will contain number of values if by_rows is true
@@ -151,7 +151,7 @@ class PropertySheet extends JPanel {
    *   one or more Properties
    * @param props  the list of Properties
    */
-  public String[][] buildRows(Vector name_values, Map[] props) {
+  public String[][] buildRows(Vector<String[]> name_values, Map[] props) {
     int num_props = props.length;
     int num_vals = name_values.size();
     String[][] rows = null;
@@ -159,7 +159,7 @@ class PropertySheet extends JPanel {
       rows = new String[num_props][num_vals];
       for (int j = 0 ; j < num_props ; j++) {
         for (int i = 0 ; i < num_vals ; i++) {
-          String[] vals = (String[]) name_values.elementAt(i);
+          String[] vals = name_values.elementAt(i);
           try {
             rows[j][i]=vals[j+1];
           }
@@ -172,7 +172,7 @@ class PropertySheet extends JPanel {
     else {
       rows = new String[num_vals][num_props + 1];
       for (int i = 0 ; i < num_vals ; i++) {
-        String[] vals = (String[]) name_values.elementAt(i);
+        String[] vals = name_values.elementAt(i);
         rows[i][0] = vals[0];
         for (int j = 1 ; j < vals.length ; j++) {
           rows[i][j] = vals[j];
@@ -196,12 +196,12 @@ class PropertySheet extends JPanel {
    * @param useOnlySpecifiedColumns If true, then the property sheet will display ONLY the properties
    * whose names are listed. 
    */
-  Vector reorderNames(Vector name_values, Vector preferred_ordering, boolean useOnlySpecifiedColumns) {
-    Vector reordered = new Vector(name_values.size());
+  Vector<String[]> reorderNames(Vector<String[]> name_values, Vector preferred_ordering, boolean useOnlySpecifiedColumns) {
+    Vector<String[]> reordered = new Vector<String[]>(name_values.size());
     for (int i=0; i<preferred_ordering.size(); i++) {
       String request = (String)preferred_ordering.elementAt(i);
       for (int k=0; k<name_values.size(); k++) {
-        String[] vals = (String[])name_values.elementAt(k);
+        String[] vals = name_values.elementAt(k);
         if (vals != null && vals.length > 0) {
           String name = vals[0];
           if (name.equals(request)) {
@@ -269,7 +269,7 @@ class PropertySheet extends JPanel {
   public void showProperties(Map[] props, Vector preferred_prop_order, String noData) {
     PropertyKeys propkeys = new PropertyKeys();
 
-    Vector name_values = propkeys.getNameValues(props, noData);
+    Vector<String[]> name_values = propkeys.getNameValues(props, noData);
     if (preferred_prop_order != null) {
       name_values = reorderNames(name_values, preferred_prop_order, useOnlyDefaultProperties);
     }

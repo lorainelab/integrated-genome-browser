@@ -84,7 +84,7 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return o;
   }
   
-  boolean contains(List list, Object o) {
+  private boolean contains(List list, Object o) {
     for (int i=0; i<list.size(); i++) {
       if (list.get(i) == o) {
         return true;
@@ -93,7 +93,7 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return false;
   }
     
-  Object getProperty(String key, int recur, List ancestors) {
+  private Object getProperty(String key, int recur, List ancestors) {
 
     if (contains(ancestors, this)) {
       System.out.println("WARNING: Caught an infinite loop!");

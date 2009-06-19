@@ -77,12 +77,6 @@ public interface IPlugin {
    *  Key for holding an instance of {@link com.affymetrix.igb.Application}.
    */
   public static final String TEXT_KEY_APP = "Application";
-  
-  /**
-   * @deprecated
-   */
-  //@Deprecated
-  public static final String TEXT_KEY_IGB = TEXT_KEY_APP;
 
   /**
    *  Key for holding an instance of {@link com.affymetrix.igb.view.SeqMapView}.

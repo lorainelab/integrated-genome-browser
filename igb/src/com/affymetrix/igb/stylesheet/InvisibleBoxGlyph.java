@@ -37,7 +37,7 @@ public final class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
       GlyphI child;
       int numChildren = getChildCount();
       for ( int i = 0; i < numChildren; i++ ) {
-	child = (GlyphI) children.get( i );
+	child = children.get( i );
 	// TransientGlyphs are usually NOT drawn in standard drawTraversal
 	if (!(child instanceof TransientGlyph) || drawTransients()) {
           Rectangle pixelbox = view.getScratchPixBox();

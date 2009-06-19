@@ -74,7 +74,7 @@ public final class FeatureLoading {
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 			for (Das2Type type : version.getTypes().values()) {
 				String type_name = type.getName();
-				Map<String, String> type_props = (Map<String, String>)type.getProps();
+				Map<String, String> type_props = type.getProps();
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;

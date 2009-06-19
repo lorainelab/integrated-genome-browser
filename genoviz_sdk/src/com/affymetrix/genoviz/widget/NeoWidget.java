@@ -971,12 +971,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		Collections.singletonList(datamodel);
 		Object result = model_hash.get(datamodel);
 		if (result instanceof Vector) {
-			return (Vector)result;
+			return (Vector<GlyphI>)result;
 		}
 		else {
-			Vector vec = new Vector();
+			Vector<GlyphI> vec = new Vector<GlyphI>();
 			if ( null != result ) {
-				vec.addElement(result);
+				vec.addElement((GlyphI)result);
 			}
 			return vec;
 		}

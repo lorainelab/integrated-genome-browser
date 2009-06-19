@@ -41,7 +41,7 @@ public final class GenometryDas2Server {
 						server.stop(); // should call servlet.destroy() for every servlet that's been init()ed
 					}
 					catch (Exception ex) { ex.printStackTrace(); }
-					frm.hide();
+					frm.setVisible(false);
 					System.exit(0);
 				}
 			}
@@ -49,7 +49,7 @@ public final class GenometryDas2Server {
 			cpane.add("Center", exitB);
 			frm.setSize(300, 80);
 			//      frm.pack();
-			frm.show();
+			frm.setVisible(true);
 		}
 
 		// Create a port listener

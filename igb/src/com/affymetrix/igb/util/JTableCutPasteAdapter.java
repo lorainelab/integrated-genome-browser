@@ -171,7 +171,7 @@ public final class JTableCutPasteAdapter {
       rowstring=st1.nextToken();
       StringTokenizer st2=new StringTokenizer(rowstring,"\t");
       for(int j=0;st2.hasMoreTokens();j++) {
-        value=(String) st2.nextToken();
+        value=st2.nextToken();
         if (startRow+i< jTable1.getRowCount()  &&  startCol+j< jTable1.getColumnCount()) {
           jTable1.setValueAt(value,startRow+i,startCol+j);
         }

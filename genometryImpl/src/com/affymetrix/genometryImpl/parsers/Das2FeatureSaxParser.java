@@ -107,8 +107,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	boolean add_to_sym_hash = true;
 	String current_elem = null;  // current element
 	StringBuffer current_chars = null;
-	Stack elemstack = new Stack();
-	Stack base_uri_stack = new Stack();
+	Stack<String> elemstack = new Stack<String>();
+	Stack<URI> base_uri_stack = new Stack<URI>();
 	URI current_base_uri = null;
 	String feat_id = null;
 	String feat_type = null;
@@ -121,7 +121,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	String feat_prop_key = null;
 	String feat_prop_val = null;
 	/**  list of SeqSpans specifying feature locations */
-	List feat_locs = new ArrayList();
+	List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
 	//  List feat_aligns = new ArrayList();  // alignments are now merged with locations
 	List feat_xids = new ArrayList();
 	/**
@@ -142,7 +142,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  List of feature jsyms resulting from parse
 	 */
-	List result_syms = null;
+	List<SeqSymmetry> result_syms = null;
 	/**
 	 *  Need mapping so can connect parents and children after sym has already been created
 	 */
@@ -206,7 +206,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 *  result_syms get populated via callbacks from reader.parse(),
 		 *    eventually leading to result_syms.add() calls in addFeatue();
 		 */
-		result_syms = new ArrayList();
+		result_syms = new ArrayList<SeqSymmetry>();
 
 		seqgroup = group;
 
@@ -232,7 +232,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		System.out.println("finished parsing das2xml feature doc, number of top-level features: " + result_syms.size());
 		if (REPORT_RESULTS) {
 			for (int i = 0; i < result_syms.size(); i++) {
-				SeqUtils.printSymmetry((SeqSymmetry) result_syms.get(i));
+				SeqUtils.printSymmetry(result_syms.get(i));
 			}
 		}
 
@@ -483,12 +483,12 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			//      feat_prop_content = "";
 			feat_prop_key = null;
 			feat_prop_val = null;
-			current_elem = (String) elemstack.pop();
+			current_elem = elemstack.pop();
 		}
 
 		// base_uri_stack.push(...) is getting called in every startElement() call,
 		// so need to call base_uri_stack.pop() at end of every endElement() call;
-		current_base_uri = (URI) base_uri_stack.pop();
+		current_base_uri = base_uri_stack.pop();
 
 	}
 
@@ -525,7 +525,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		// add locations as spans...
 		int loc_count = feat_locs.size();
 		for (int i = 0; i < loc_count; i++) {
-			SeqSpan span = (SeqSpan) feat_locs.get(i);
+			SeqSpan span = feat_locs.get(i);
 			featsym.addSpan(span);
 		}
 
@@ -548,7 +548,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				System.out.println("loc count: " + loc_count);
 			}
 			for (int i = 0; i < loc_count; i++) {
-				SeqSpan span = (SeqSpan) feat_locs.get(i);
+				SeqSpan span = feat_locs.get(i);
 				BioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
 				MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a SmartAnnotBioSeq

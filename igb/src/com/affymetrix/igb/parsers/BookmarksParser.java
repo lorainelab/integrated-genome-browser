@@ -230,7 +230,7 @@ public final class BookmarksParser {
         }
         BookmarkList sub_list = bookmarks;
         if (path != null) {
-          sub_list = (BookmarkList) bookmarks.getSubListByPath(path, "/", true);
+          sub_list = bookmarks.getSubListByPath(path, "/", true);
         }
         try {
           if (DEBUG) System.out.println("Bookmark: "+annotname);

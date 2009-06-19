@@ -60,7 +60,7 @@ public final class Das2Type {
   public Map<String, String> getProps() { return props; }
   public String getProperty(String key) { 
     String val = null;
-    if (props != null) { val = (String)props.get(key); }
+    if (props != null) { val = props.get(key); }
     return val;
   }
   public Map getFormats() { return formats; }

@@ -5,7 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public final class ThreadUtils {
-  static Map obj2exec = new HashMap();
+  static Map<Object,Executor> obj2exec = new HashMap<Object,Executor>();
 
   /**
    *   Gets the primary executor for a given object key
@@ -15,7 +15,7 @@ public final class ThreadUtils {
    *      execute sequentially in order, and no more than one task will be active at any given time
    */
   public synchronized static Executor getPrimaryExecutor(Object key) {
-    Executor exec = (Executor)obj2exec.get(key);
+    Executor exec = obj2exec.get(key);
     if (exec == null) {
       exec = Executors.newSingleThreadExecutor();
       obj2exec.put(key, exec);

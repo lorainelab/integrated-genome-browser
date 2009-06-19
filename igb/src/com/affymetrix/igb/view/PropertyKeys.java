@@ -43,61 +43,64 @@ final class PropertyKeys {
    * @param noData  the String value to use to represent cases where
    *   there is no value of the property for a given key
    */
-  public Vector getNameValues(Map[] props, String noData) {
-    Vector result = new Vector();
-    // collect all possible names from the given Properties
-    int num_props = props.length;
-    Hashtable rows_thus_far = new Hashtable();
-    for (int i = 0; i < props.length; i++) {
-      //      System.out.println(i);
-      //      System.out.println(props[i]);
-      if (props[i] == null) {
-	continue;
-      }
-      Iterator names_iter = props[i].keySet().iterator();
-      while (names_iter.hasNext()) {
-	Object obj = names_iter.next();
-	String name = null;
-        String name_value[] = null;
-        if (obj != null)  {
-          name = obj.toString();
-          name_value = (String[])rows_thus_far.get(name);
-        }
-        if (name_value != null) continue;
-        else {
-          name_value = new String[num_props+1];
-          name_value[0] = name;
-          for (int j = 0 ; j < props.length ; j++) {
-	    Object val = null;
-	    if (props[j] != null) {
-	      val = props[j].get(name);
-	    }
-            val = (val == null ? noData : val);
-	    // if val is a List for multivalued property, rely on toString() to convert to [item1, item2, etc.]
-	    //   string representation
-            name_value[j+1] = val.toString();
-          }
-          rows_thus_far.put(name,name_value);
-        }
-      }
-    }
-    // now sort
-    for (int i = 0 ; i < keys.length ; i++) {
-      Object row = rows_thus_far.get(keys[i]);
-      if (row != null) result.addElement(row);
-      rows_thus_far.remove(keys[i]);
-    }
-    Enumeration rows = rows_thus_far.elements();
-    while (rows.hasMoreElements()) {
-      result.addElement(rows.nextElement());
-    }
-    return result;
-  }
+  public Vector<String[]> getNameValues(Map[] props, String noData) {
+		Vector<String[]> result = new Vector<String[]>();
+		// collect all possible names from the given Properties
+		int num_props = props.length;
+		Hashtable<String, String[]> rows_thus_far = new Hashtable<String, String[]>();
+		for (int i = 0; i < props.length; i++) {
+			//      System.out.println(i);
+			//      System.out.println(props[i]);
+			if (props[i] == null) {
+				continue;
+			}
+			Iterator names_iter = props[i].keySet().iterator();
+			while (names_iter.hasNext()) {
+				Object obj = names_iter.next();
+				String name = null;
+				String name_value[] = null;
+				if (obj != null) {
+					name = obj.toString();
+					name_value = rows_thus_far.get(name);
+				}
+				if (name_value != null) {
+					continue;
+				} else {
+					name_value = new String[num_props + 1];
+					name_value[0] = name;
+					for (int j = 0; j < props.length; j++) {
+						Object val = null;
+						if (props[j] != null) {
+							val = props[j].get(name);
+						}
+						val = (val == null ? noData : val);
+						// if val is a List for multivalued property, rely on toString() to convert to [item1, item2, etc.]
+						//   string representation
+						name_value[j + 1] = val.toString();
+					}
+					rows_thus_far.put(name, name_value);
+				}
+			}
+		}
+		// now sort
+		for (int i = 0; i < keys.length; i++) {
+			String[] row = rows_thus_far.get(keys[i]);
+			if (row != null) {
+				result.addElement(row);
+			}
+			rows_thus_far.remove(keys[i]);
+		}
+		Enumeration<String[]> rows = rows_thus_far.elements();
+		while (rows.hasMoreElements()) {
+			result.addElement(rows.nextElement());
+		}
+		return result;
+	}
 
-  public static String getName(Vector name_values,
+  public static String getName(Vector<String[]> name_values,
                                  int index) {
     // name_values is a list of arrays - the first item of
     // each array is the name-value
-    return ((String[])name_values.elementAt(index))[0];
+    return (name_values.elementAt(index))[0];
   }
 }

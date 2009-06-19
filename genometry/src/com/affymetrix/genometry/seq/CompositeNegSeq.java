@@ -18,6 +18,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
 
+
 /**
  *  A CompositeBioSeq that can have start less than 0.
  *  (Other BioSeqs only have a length, and start = 0, end = length is implicit)
@@ -155,13 +156,14 @@ public abstract class CompositeNegSeq implements CompositeBioSeq {
 			char[] char_array = new char[reslength];
 			java.util.Arrays.fill(char_array, fillchar);
 			SeqSymmetry rootsym = this.getComposition();
-			if (rootsym == null)  { return null; }
-			// adjusting index into array to compensate for possible seq start < 0
-			int array_offset = -start;
-			getResidues(residue_span, rootsym, char_array);
-			// Note that new String(char[]) causes the allocation of a second char array
-			String res = new String(char_array);
-			return res;
+			if (rootsym != null) {
+				// adjusting index into array to compensate for possible seq start < 0
+				//int array_offset = -start;
+				getResidues(residue_span, rootsym, char_array);
+				// Note that new String(char[]) causes the allocation of a second char array
+			}
+
+			return new String(char_array);
 		}
 
 	/**

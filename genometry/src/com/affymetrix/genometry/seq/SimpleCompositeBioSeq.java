@@ -16,6 +16,7 @@ package com.affymetrix.genometry.seq;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
+import java.util.Arrays;
 
 public class SimpleCompositeBioSeq implements CompositeBioSeq {
 
@@ -75,23 +76,18 @@ public class SimpleCompositeBioSeq implements CompositeBioSeq {
   }
 
   public String getResidues(int start, int end, char fillchar) {
-    String result = null;
-    if (start < 0 || end > getLength()) { result = null; }
-    else if (this.getComposition() != null)  {
+    int reslength = Math.abs(end - start);
+		char[] char_array = new char[reslength];
+		Arrays.fill(char_array, fillchar);
+    if (start >=0 && end <= this.getLength() && this.getComposition() != null)  {
       SeqSpan residue_span = new SimpleSeqSpan(start, end, this);
-      int reslength = Math.abs(end - start);
-      char[] char_array = new char[reslength];
-      // start with all spaces
-      java.util.Arrays.fill(char_array, fillchar);
       SeqSymmetry rootsym = this.getComposition();
       getResidues(residue_span, fillchar, rootsym, char_array, 0);
-      result = new String(char_array);
-      if (DEBUG_GET_RESIDUES)  {
+      /*if (DEBUG_GET_RESIDUES)  {
         System.out.println(result.substring(0, 15) + "..." + result.substring(result.length()-15));
-      }
-
+      }*/
     }
-    return result;
+    return new String(char_array);
   }
 
   protected void getResidues(SeqSpan this_residue_span, char fillchar,

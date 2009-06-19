@@ -17,8 +17,9 @@ import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
+import java.awt.geom.Rectangle2D;
 
-public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genoviz.bioviews.GlyphI {
+public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix.genoviz.bioviews.GlyphI {
   public static final int DRAW_SELF_FIRST = 0;
   public static final int DRAW_CHILDREN_FIRST = 1;
 
@@ -61,7 +62,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     return false;
   }
 
-  public Rectangle2D getSelectedRegion() {
+  public Rectangle2D.Double getSelectedRegion() {
     if (selected) { return this; }
     else { return null; }
   }
@@ -182,7 +183,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector, ViewI view)  {
+  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
@@ -190,7 +191,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       if (hit(pickRect, view))  {
         if (!pickVector.contains(this)) {
           // Note that Vector.contains() performs a test using "equals()".
-          // EfficientGlyph extends Rectangle2D which tests equality based
+          // EfficientGlyph extends Rectangle2D.Double which tests equality based
           // on coordinates.  This means that you can't "select" both a parent glyph
           // and a child glyph that have identical coordinates.
           pickVector.add(this);
@@ -238,11 +239,11 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
     */
   }
 
-  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+  public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
     return false;
   }
 
-  public boolean intersects(Rectangle2D rect, ViewI view)  {
+  public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
     return isVisible && rect.intersects(this);
   }
 
@@ -357,11 +358,11 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       y = y + height;
       height = -height;
     }
-    this.reshape(x, y, width, height);
+    this.setRect(x, y, width, height);
 
   }
 
-  public Rectangle2D getCoordBox()   {
+  public Rectangle2D.Double getCoordBox()   {
     return this;
   }
 
@@ -371,7 +372,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
    * Note that this does not make the assurances of setCoords().
    * @see #setCoords
    */
-  public void setCoordBox(Rectangle2D coordbox)   {
+  public void setCoordBox(Rectangle2D.Double coordbox)   {
     this.x = coordbox.x;
     this.y = coordbox.y;
     this.width = coordbox.width;

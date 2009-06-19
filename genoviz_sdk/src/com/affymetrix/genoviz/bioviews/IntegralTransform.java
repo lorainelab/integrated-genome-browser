@@ -13,6 +13,8 @@
 
 package com.affymetrix.genoviz.bioviews;
 
+import java.awt.geom.Rectangle2D;
+
 /**
  *  A transform used internally by NeoSeq, should not be used directly.
  */
@@ -90,7 +92,7 @@ public class IntegralTransform extends LinearTransform {
 		}
 	}
 
-	public Rectangle2D transform(Rectangle2D src, Rectangle2D dst) {
+	public Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst) {
 		super.transform(src, dst);
 		if (INTEGRAL_TRANSFORM) {
 			if (INTEGRAL_TRANSFORM_X) {
@@ -106,7 +108,7 @@ public class IntegralTransform extends LinearTransform {
 		return dst;
 	}
 
-	public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst) {
+	public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst) {
 		super.inverseTransform(src, dst);
 		if (INTEGRAL_INVERSE) {
 			if (INTEGRAL_INVERSE_X) {

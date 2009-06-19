@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Supports compositions of widgets into a more complex widget.
@@ -113,7 +114,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget
 
 	//********************************************************
 
-	public Rectangle2D getCoordBounds(GlyphI gl) {
+	public Rectangle2D.Double getCoordBounds(GlyphI gl) {
 		return gl.getCoordBox();
 	}
 

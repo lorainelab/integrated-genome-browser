@@ -18,6 +18,7 @@ import java.util.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.geom.Rectangle2D;
 
 /**
  * This packer makes sure siblings do not overlap.
@@ -34,7 +35,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 	 */
 	public Rectangle pack(GlyphI parent,
 			GlyphI child, ViewI view) {
-		Rectangle2D childbox, siblingbox;
+		Rectangle2D.Double childbox, siblingbox;
 		childbox = child.getCoordBox();
 		Vector children = parent.getChildren();
 		if (children == null) { return null; }
@@ -76,7 +77,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 						 */
 					}
 					else {
-						Rectangle2D cb = child.getCoordBox();
+						Rectangle2D.Double cb = child.getCoordBox();
 						this.before.x = cb.x;
 						this.before.y = cb.y;
 						this.before.width = cb.width;

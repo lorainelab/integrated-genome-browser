@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.event.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A SceneI is an abstract two dimensional space with x and y coordinates
@@ -148,7 +149,7 @@ public interface SceneI {
 	/**
 	 *  return the coordinate bounds of the entire scene
 	 */
-	public Rectangle2D getCoordBox();
+	public Rectangle2D.Double getCoordBox();
 
 
 	// Styles are not yet implemented

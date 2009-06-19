@@ -16,6 +16,7 @@ package com.affymetrix.igb.tiers;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
@@ -49,15 +50,15 @@ public final class TransformTierGlyph extends TierGlyph {
   LinearTransform tier_transform = new LinearTransform();
 
   LinearTransform modified_view_transform = new LinearTransform();
-  Rectangle2D modified_view_coordbox = new Rectangle2D();
+  Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
 
   LinearTransform incoming_view_transform;
-  Rectangle2D incoming_view_coordbox;
+  Rectangle2D.Double incoming_view_coordbox;
 
   // for caching in pickTraversal() methods
-  Rectangle2D internal_pickRect = new Rectangle2D();
+  Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   // for caching in pickTraversal(pixbox, picks, view) method
-  Rectangle2D pix_rect = new Rectangle2D();
+  Rectangle2D.Double pix_rect = new Rectangle2D.Double();
 
   public TransformTierGlyph() {
     super();
@@ -154,7 +155,7 @@ public final class TransformTierGlyph extends TierGlyph {
   //
   // need to redo pickTraversal, etc. to take account of transform also...
   //
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
 
     // copied form first part of Glyph.pickTraversal()
@@ -196,7 +197,7 @@ public final class TransformTierGlyph extends TierGlyph {
       }
       if (children != null)  {
 	// recast to pickTraversal() with coord box rather than pixel box
-	pix_rect.reshape(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
+	pix_rect.setRect(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
 	tier_transform.inverseTransform(pix_rect, internal_pickRect);
         GlyphI child;
         int childnum = children.size();
@@ -220,7 +221,7 @@ public final class TransformTierGlyph extends TierGlyph {
   }
 
 
-  public void debugLocation(Rectangle2D pickRect) {
+  public void debugLocation(Rectangle2D.Double pickRect) {
     // just for debugging
     tier_transform.inverseTransform(pickRect, internal_pickRect);
     GlyphI pick_glyph = new FillRectGlyph();

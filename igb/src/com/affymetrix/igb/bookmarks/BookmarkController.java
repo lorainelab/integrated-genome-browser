@@ -22,7 +22,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.*;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -30,6 +29,7 @@ import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import javax.swing.SwingUtilities;
 
@@ -337,7 +337,7 @@ public abstract class BookmarkController {
         }
       } else {
         i++;
-        Rectangle2D gbox = gr.getCoordBox();
+        Rectangle2D.Double gbox = gr.getCoordBox();
 
         boolean is_floating = GraphGlyphUtils.hasFloatingAncestor(gr);
         mark_sym.setProperty("graph_source_url_" + i, source_url);

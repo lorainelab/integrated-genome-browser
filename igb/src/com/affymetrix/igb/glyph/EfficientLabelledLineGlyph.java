@@ -24,6 +24,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.geom.Rectangle2D;
 
 /** A subclass of EfficientLabelledGlyph that makes all its children
  *  center themselves vertically on the same line.
@@ -36,7 +37,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
   @Override
   public void draw(ViewI view) {
     //    super.draw(view);
-    Rectangle2D full_view_cbox = view.getFullView().getCoordBox();
+    Rectangle2D.Double full_view_cbox = view.getFullView().getCoordBox();
     Graphics g = view.getGraphics();
 
     // perform an intersection of the view and this glyph, in the X axis only.
@@ -215,7 +216,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
     if (isMoveChildren()) {
       // child.cbox.y is modified, but not child.cbox.height)
       // center the children of the LineContainerGlyph on the line
-      final Rectangle2D cbox = child.getCoordBox();
+      final Rectangle2D.Double cbox = child.getCoordBox();
       double ycenter;
       // use moveAbsolute or moveRelative to make sure children also get moved
 

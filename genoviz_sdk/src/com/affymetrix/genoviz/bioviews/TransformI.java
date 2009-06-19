@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * An object implementing this interface
@@ -88,7 +89,7 @@ public interface TransformI extends Cloneable  {
 	 *
 	 * @return the rectangle transformed
 	 */
-	public Rectangle2D transform(Rectangle2D src, Rectangle2D dst);
+	public Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst);
 
 	/**
 	 * inverts the transformation of a rectangle.
@@ -98,7 +99,7 @@ public interface TransformI extends Cloneable  {
 	 *
 	 * @return the rectangle transformed
 	 */
-	public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst);
+	public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst);
 
 	/**
 	 * appends one transformation to another

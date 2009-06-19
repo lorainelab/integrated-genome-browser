@@ -32,7 +32,6 @@ import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.PackerI;
@@ -89,6 +88,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
@@ -1764,7 +1764,7 @@ public class SeqMapView extends JPanel
         // Create a fake symmetry for things that don't have any glyph info.
         // This allows the genomic coordinates of the selected item to be visible in the SymTableView,
         // and allows slicing to be done based on the item.
-        Rectangle2D cb = gl.getCoordBox();
+        Rectangle2D.Double cb = gl.getCoordBox();
         SeqSymmetry fake_sym = new SingletonSeqSymmetry((int) cb.x, (int) (cb.x + cb.width-1), aseq);
         return fake_sym;
          */
@@ -2194,7 +2194,7 @@ public class SeqMapView extends JPanel
             //      toggleAutoScroll(
             JPanel pan = new JPanel();
 
-            Rectangle2D cbox = seqmap.getViewBounds();
+            Rectangle2D.Double cbox = seqmap.getViewBounds();
             //      int bases_in_view = (int) resultSeqMap.getView().getCoordBox().width;
             int bases_in_view = (int) cbox.width;
             as_start_pos = (int) cbox.x;
@@ -2304,7 +2304,7 @@ public class SeqMapView extends JPanel
         double pix_per_coord = 1.0 / (double) bases_per_pixel;
         final double coords_to_scroll = (double) pix_to_scroll / pix_per_coord;
 
-        //    Rectangle2D cbox = resultSeqMap.getViewBounds();
+        //    Rectangle2D.Double cbox = resultSeqMap.getViewBounds();
         //Rectangle pbox = resultSeqMap.getView().getPixelBox();
         //    double start = (int)cbox.x;
         //    double start = start_coord;
@@ -2316,8 +2316,8 @@ public class SeqMapView extends JPanel
             map_auto_scroller = new ActionListener() {
 
                 public void actionPerformed(ActionEvent evt) {
-                    Rectangle2D vbox = seqmap.getViewBounds();
-                    //	    Rectangle2D mbox = resultSeqMap.getCoordBounds();
+                    Rectangle2D.Double vbox = seqmap.getViewBounds();
+                    //	    Rectangle2D.Double mbox = resultSeqMap.getCoordBounds();
                     int scrollpos = (int) (vbox.x + coords_to_scroll);
                     //	    if ((scrollpos + vbox.width) > (mbox.x + mbox.width))  {
                     if ((scrollpos + vbox.width) > end_coord) {
@@ -2389,12 +2389,12 @@ public class SeqMapView extends JPanel
     /** Returns a rectangle containing all the current selections.
      *  @return null if the vector of glyphs is empty
      */
-    private static Rectangle2D getRegionForGlyphs(List<GlyphI> glyphs) {
+    private static Rectangle2D.Double getRegionForGlyphs(List<GlyphI> glyphs) {
         int size = glyphs.size();
         if (size > 0) {
-            Rectangle2D rect = new Rectangle2D();
+            Rectangle2D.Double rect = new Rectangle2D.Double();
             GlyphI g0 = glyphs.get(0);
-            rect.copyRect(g0.getCoordBox());
+            rect.setRect(g0.getCoordBox());
             for (int i = 1; i < size; i++) {
                 GlyphI g = glyphs.get(i);
                 rect.add(g.getCoordBox());
@@ -2408,7 +2408,7 @@ public class SeqMapView extends JPanel
     /**
      *  Zoom to include (and slightly exceed) a given rectangular region in coordbox coords.
      */
-    private void zoomToRectangle(Rectangle2D rect) {
+    private void zoomToRectangle(Rectangle2D.Double rect) {
         if (rect != null) {
             double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);
             seqmap.zoom(NeoWidgetI.X, Math.min(
@@ -2435,7 +2435,7 @@ public class SeqMapView extends JPanel
     }
 
     public void clampToView() {
-        Rectangle2D vbox = seqmap.getViewBounds();
+        Rectangle2D.Double vbox = seqmap.getViewBounds();
         seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
         seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
         seqmap.updateWidget();
@@ -2443,7 +2443,7 @@ public class SeqMapView extends JPanel
 
     public void clampToGlyph(GlyphI gl) {
         zoomToGlyph(gl);
-        Rectangle2D vbox = seqmap.getViewBounds();
+        Rectangle2D.Double vbox = seqmap.getViewBounds();
         seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
         seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
         seqmap.updateWidget();
@@ -2484,7 +2484,7 @@ public class SeqMapView extends JPanel
     private String getRegionString() {
         String region = null;
         if (!slicing_in_effect) {
-            Rectangle2D vbox = seqmap.getView().getCoordBox();
+            Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
             int start = (int) vbox.x;
             int end = (int) (vbox.x + vbox.width);
             String seqid = aseq.getID();
@@ -2616,7 +2616,7 @@ public class SeqMapView extends JPanel
      *  return a SeqSpan representing the visible bounds of the view seq
      */
     public SeqSpan getVisibleSpan() {
-        Rectangle2D vbox = seqmap.getView().getCoordBox();
+        Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
         SeqSpan vspan = new SimpleSeqSpan((int) vbox.x,
                 (int) (vbox.x + vbox.width),
                 viewseq);
@@ -3049,7 +3049,7 @@ public class SeqMapView extends JPanel
 
     public GlyphI getPixelFloaterGlyph() {
         PixelFloaterGlyph floater = pixel_floater_glyph;
-        Rectangle2D cbox = getSeqMap().getCoordBounds();
+        Rectangle2D.Double cbox = getSeqMap().getCoordBounds();
         floater.setCoords(cbox.x, 0, cbox.width, 0);
 
         return floater;

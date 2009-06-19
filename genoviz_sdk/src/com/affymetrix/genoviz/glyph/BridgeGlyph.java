@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 import java.awt.Color;
 import java.awt.Graphics;

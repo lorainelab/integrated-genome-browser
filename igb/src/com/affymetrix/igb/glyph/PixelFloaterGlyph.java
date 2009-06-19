@@ -16,6 +16,7 @@ package com.affymetrix.igb.glyph;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * The PixelFloaterGlyph is meant to be a container / wrapper for glyphs that wish to 
@@ -29,7 +30,7 @@ import com.affymetrix.genoviz.bioviews.*;
  */
 public final class PixelFloaterGlyph extends Glyph  {
   LinearTransform childtrans = new LinearTransform();
-  Rectangle2D view_pix_box = new Rectangle2D();
+  Rectangle2D.Double view_pix_box = new Rectangle2D.Double();
   boolean OUTLINE_BOUNDS = false;
   boolean XPIXEL_FLOAT = false;
   boolean YPIXEL_FLOAT = true;
@@ -41,12 +42,12 @@ public final class PixelFloaterGlyph extends Glyph  {
    */
   public void drawTraversal(ViewI view) {
     LinearTransform vtrans = (LinearTransform)view.getTransform();
-    Rectangle2D vbox = view.getCoordBox();
+    Rectangle2D.Double vbox = view.getCoordBox();
     Rectangle pbox = view.getPixelBox();
     //    yidentity.setScaleX(vtrans.getScaleX());
     //    yidentity.setOffsetX(vtrans.getOffsetX());
     setChildTransform(view);
-    view_pix_box.reshape(vbox.x, (double)pbox.y, 
+    view_pix_box.setRect(vbox.x, (double)pbox.y,
     			 vbox.width, (double)pbox.height);
     //    view.setTransform(yidentity);
     view.setTransform(childtrans);
@@ -60,7 +61,7 @@ public final class PixelFloaterGlyph extends Glyph  {
     if (OUTLINE_BOUNDS) {
       Graphics g = view.getGraphics();
       g.setColor(Color.yellow);
-      Rectangle2D cbox = this.getCoordBox();
+      Rectangle2D.Double cbox = this.getCoordBox();
       g.drawRect(view.getPixelBox().x + 1, (int)cbox.y, 
 		 view.getPixelBox().width - 2, (int)cbox.height);
     }
@@ -89,7 +90,7 @@ public final class PixelFloaterGlyph extends Glyph  {
   public boolean intersects(Rectangle rect)  {
     return isVisible;
   }
-  public boolean intersects(Rectangle2D rect, ViewI view)  {
+  public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
     return isVisible;
   }
   public boolean withinView(ViewI view) {
@@ -97,14 +98,14 @@ public final class PixelFloaterGlyph extends Glyph  {
   }
 
   Rectangle scratchRect = new Rectangle();
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
     LinearTransform vtrans = (LinearTransform)view.getTransform();
     double cached_y = pickRect.y;
     double cached_height = pickRect.height;
-    Rectangle2D vbox = view.getCoordBox();
+    Rectangle2D.Double vbox = view.getCoordBox();
     Rectangle pbox = view.getPixelBox();
-    view_pix_box.reshape(vbox.x, (double)pbox.y, 
+    view_pix_box.setRect(vbox.x, (double)pbox.y,
     			 vbox.width, (double)pbox.height);
 
     view.transformToPixels(pickRect, scratchRect);

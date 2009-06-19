@@ -16,7 +16,6 @@ package genoviz.tutorial;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.event.NeoRubberBandEvent;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.SceneI;
 
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -28,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
@@ -262,7 +262,7 @@ public class NeoDraw extends JApplet
 	  // Rubberband is non-trivial.
 
 	  // Create a glyph to fit.
-	  Rectangle2D coordBox = new Rectangle2D();
+	  Rectangle2D.Double coordBox = new Rectangle2D.Double();
 	  coordBox = this.map.getView().transformToCoords(pixelBox, coordBox);
 	  MapGlyphFactory fac = map.getFactory();
 	  fac.setOffset((int)coordBox.y);

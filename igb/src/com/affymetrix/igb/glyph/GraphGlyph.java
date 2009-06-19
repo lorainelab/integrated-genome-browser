@@ -15,6 +15,7 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.GraphSym;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -66,7 +67,7 @@ public abstract class GraphGlyph extends Glyph {
 	Point prev_point = new Point(0,0);
 	Point scratch_point = new Point(0,0);
 
-	Rectangle2D label_coord_box = new Rectangle2D();
+	Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
 	Rectangle label_pix_box = new Rectangle();
 
 	com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
@@ -270,7 +271,7 @@ public abstract class GraphGlyph extends Glyph {
 		}
 
 		//    Rectangle view_pixbox = view.getPixelBox();
-		Rectangle2D view_coordbox = view.getCoordBox();
+		Rectangle2D.Double view_coordbox = view.getCoordBox();
 		double xmin = view_coordbox.x;
 		double xmax = view_coordbox.x + view_coordbox.width;
 
@@ -579,7 +580,7 @@ public abstract class GraphGlyph extends Glyph {
 			Graphics g = view.getGraphics();
 			g.setFont(default_font);
 			FontMetrics fm = g.getFontMetrics();
-			java.awt.geom.Rectangle2D sb = fm.getStringBounds(getLabel(), g);
+			Rectangle2D.Double sb = (Rectangle2D.Double)fm.getStringBounds(getLabel(), g);
 			int stringWidth = (int) sb.getWidth() + 1;
 
 			//      int stringHeight = fm.getMaxAscent() - 1;
@@ -861,7 +862,7 @@ public abstract class GraphGlyph extends Glyph {
 	 *      since won't currently take account of nested transforms, etc.
 	 */
 	@Override
-	public boolean hit(Rectangle2D coord_hitbox, ViewI view) {
+	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
 		// within bounds of graph ?
 		if (getShowHandle() && isVisible() && coord_hitbox.intersects(coordbox)) {
 			// overlapping handle ?  (need to do this one in pixel space?)

@@ -14,12 +14,12 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
@@ -889,7 +889,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	/**
 	 * returns the bounding rectangle of the glyph in coordinates
 	 */
-	public Rectangle2D getCoordBounds(GlyphI glyph);
+	public Rectangle2D.Double getCoordBounds(GlyphI glyph);
 
 	/**
 	 * sets the pointing precision of the mouse.

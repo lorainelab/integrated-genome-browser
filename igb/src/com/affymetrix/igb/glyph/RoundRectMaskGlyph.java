@@ -29,7 +29,7 @@ import java.awt.geom.RoundRectangle2D;
 public final class RoundRectMaskGlyph extends EfficientGlyph  {
 
   static BasicStroke stroke = new BasicStroke(2);
-  RoundRectangle2D rr2d = new RoundRectangle2D.Double();
+  RoundRectangle2D.Double rr2d = new RoundRectangle2D.Double();
   Color fillColor = Color.WHITE;
   
   public RoundRectMaskGlyph(Color fillColor) {
@@ -38,7 +38,7 @@ public final class RoundRectMaskGlyph extends EfficientGlyph  {
     this.setDrawOrder(EfficientGlyph.DRAW_CHILDREN_FIRST);
   }
   
-  RoundRectangle2D getShapeInPixels(ViewI view) {
+  RoundRectangle2D.Double getShapeInPixels(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
 
@@ -65,7 +65,7 @@ public final class RoundRectMaskGlyph extends EfficientGlyph  {
    *  drawChildren() should be called before draw.
    */
   public void draw(ViewI view) {    
-    RoundRectangle2D s = getShapeInPixels(view);
+    RoundRectangle2D.Double s = getShapeInPixels(view);
     Area a = new Area(s.getFrame());
     a.subtract(new Area(s));
 

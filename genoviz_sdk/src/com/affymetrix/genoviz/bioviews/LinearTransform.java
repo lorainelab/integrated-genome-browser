@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 
 /**
@@ -51,7 +52,7 @@ public class LinearTransform implements TransformI  {
 	 * by calling this with the top glyph's coord_box
 	 */
 	/*
-	   public LinearTransform(Rectangle2D coord_box, Rectangle pixel_box)  {
+	   public LinearTransform(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
 	   xscale = (double)pixel_box.width / coord_box.width;
 	   yscale = (double)pixel_box.height / coord_box.height;
 	   xoffset = (double)pixel_box.x - xscale * coord_box.x;
@@ -73,7 +74,7 @@ public class LinearTransform implements TransformI  {
 	 * @param coord_box the coordinates of the Scene
 	 * @param pixel_box coordinates of the pixel space to which you are mapping.
 	 */
-	public void fit(Rectangle2D coord_box, Rectangle pixel_box)  {
+	public void fit(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
 		xscale = (double)pixel_box.width / coord_box.width;
 		yscale = (double)pixel_box.height / coord_box.height;
 		xoffset = (double)pixel_box.x - xscale * coord_box.x;
@@ -136,11 +137,11 @@ public class LinearTransform implements TransformI  {
 
 	/**
 	 * Transforms the source rectangle.
-	 * @param src the Rectangle2D to be transformed.
+	 * @param src the Rectangle2D.Double to be transformed.
 	 * @param dst ignored
 	 * @return the Souce rectangle transformed.
 	 */
-	public Rectangle2D transform(Rectangle2D src, Rectangle2D dst) {
+	public Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst) {
 		dst.x = src.x * xscale + xoffset;
 		dst.y = src.y * yscale + yoffset;
 		dst.width = src.width * xscale;
@@ -158,11 +159,11 @@ public class LinearTransform implements TransformI  {
 
 	/**
 	 * Transforms the source rectangle inversely.
-	 * @param src the Rectangle2D to be transformed.
+	 * @param src the Rectangle2D.Double to be transformed.
 	 * @param dst ignored
 	 * @return the souce rectangle transformed.
 	 */
-	public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst) {
+	public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst) {
 		dst.x = (src.x - xoffset) / xscale;
 		dst.y = (src.y - yoffset) / yscale;
 		dst.width = src.width / xscale;

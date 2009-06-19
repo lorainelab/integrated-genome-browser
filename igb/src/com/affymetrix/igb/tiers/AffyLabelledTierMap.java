@@ -22,9 +22,9 @@ import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import java.awt.Component;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which 
@@ -110,16 +110,16 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
 	@Override
   public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) { 
     super.packTiers(full_repack, stretch_map, extra_for_now);
-    //Rectangle2D bbox = this.getCoordBounds();
+    //Rectangle2D.Double bbox = this.getCoordBounds();
     //    labelmap.setMapOffset((int)bbox.y, (int)(bbox.y + bbox.height));
     // this should actually get dealt with in AffyTieredMap, since packTiers() calls 
     //     this.setFloatBounds(), which in turn calls labelmap.setFloatOffset()
     //    labelmap.setFloatBounds(bbox.y, bbox.y + bbox.height);
-    Rectangle2D lbox = labelmap.getCoordBounds();
+    Rectangle2D.Double lbox = labelmap.getCoordBounds();
     for (int i=0; i<label_glyphs.size(); i++) {
       GlyphI label_glyph = (GlyphI)label_glyphs.get(i);
       TierGlyph tier_glyph = (TierGlyph)label_glyph.getInfo();
-      Rectangle2D tbox = tier_glyph.getCoordBox();
+      Rectangle2D.Double tbox = tier_glyph.getCoordBox();
       //      label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       //      System.out.println(label_glyph.getCoordBox());

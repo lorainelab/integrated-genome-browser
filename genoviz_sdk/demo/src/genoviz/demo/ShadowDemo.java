@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.*;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
 /**
@@ -317,7 +318,7 @@ public class ShadowDemo extends Applet
 
 		// currently need to make TransientGlyph the full size of the map!
 
-		Rectangle2D sbox = destination.getScene().getCoordBox();
+		Rectangle2D.Double sbox = destination.getScene().getCoordBox();
 		tg.setCoords(sbox.x, -20, sbox.width, 40);
 		rglyph.setCoords(0, -20, 1, 40);
 		rglyph.setColor(Color.red);
@@ -422,7 +423,7 @@ public class ShadowDemo extends Applet
 	public void rangeChanged(NeoRangeEvent evt) {
 		int sbeg   = (int) evt.getVisibleStart();
 		int swidth = (int) evt.getVisibleEnd() - sbeg + 1;
-		Rectangle2D sbox = mapview.getCoordBounds(shadowRect);
+		Rectangle2D.Double sbox = mapview.getCoordBounds(shadowRect);
 		shadowRect.setCoords(sbeg, sbox.y, swidth, sbox.height);
 		mapview.updateWidget();
 	}

@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
@@ -38,8 +39,8 @@ public class Scene implements SceneI  {
 	 * should force a full draw on the next Widget draw call
 	 */
 	protected boolean damaged = false;
-	protected Rectangle2D damageCoordBox;
-	protected Rectangle2D scratchCoordBox;
+	protected Rectangle2D.Double damageCoordBox;
+	protected Rectangle2D.Double scratchCoordBox;
 
 	/**
 	 * Vector of transient glyphs that are "layered" on top of views
@@ -64,7 +65,7 @@ public class Scene implements SceneI  {
 		views = new Vector<ViewI>();
 		select_color = Color.red;
 		select_style = SELECT_FILL;
-		scratchCoordBox = new Rectangle2D();
+		scratchCoordBox = new Rectangle2D.Double();
 	}
 
 	/**
@@ -208,7 +209,7 @@ public class Scene implements SceneI  {
 		clearDamage();
 	}
 
-	public Rectangle2D getCoordBox() {
+	public Rectangle2D.Double getCoordBox() {
 		return eveGlyph.getCoordBox();
 	}
 
@@ -247,7 +248,7 @@ public class Scene implements SceneI  {
 		return null;
 	}
 
-	public void pickTraversal(Rectangle2D coordrect, Vector<GlyphI> pickvect,
+	public void pickTraversal(Rectangle2D.Double coordrect, Vector<GlyphI> pickvect,
 			ViewI view) {
 		eveGlyph.pickTraversal(coordrect, pickvect, view);
 	}
@@ -302,7 +303,7 @@ public class Scene implements SceneI  {
 			System.out.println("supports sub selection, expanding damage: " +
 					x + ", " + y + ", " + width + ", " + height);
 		}
-		Rectangle2D prev_selbox = gl.getSelectedRegion();
+		Rectangle2D.Double prev_selbox = gl.getSelectedRegion();
 		if (prev_selbox == null)  {
 			if (debug) {
 				System.out.println("in Scene.select(), prev_selbox is null");
@@ -311,21 +312,21 @@ public class Scene implements SceneI  {
 			expandDamage(gl, x, y, width, height);
 		}
 		else {
-			scratchCoordBox.reshape(prev_selbox.x, prev_selbox.y,
+			scratchCoordBox.setRect(prev_selbox.x, prev_selbox.y,
 					prev_selbox.width, prev_selbox.height);
 			if (debug) {
 				System.out.println("in Scene.select(), prev_selbox NOT null, " +
 						"calling select(x,y,w,h) on " + obj);
 			}
 			gl.select(x, y, width, height);
-			Rectangle2D curr_selbox = gl.getSelectedRegion();
+			Rectangle2D.Double curr_selbox = gl.getSelectedRegion();
 			Rectangle2D union_selbox =
-				curr_selbox.union(scratchCoordBox);
+				curr_selbox.createUnion(scratchCoordBox);
 			Rectangle2D common_selbox =
-				curr_selbox.intersection(scratchCoordBox);
-			Rectangle2D damage_selbox =
-				new Rectangle2D(union_selbox.x, union_selbox.y,
-						union_selbox.width, union_selbox.height);
+				curr_selbox.createIntersection(scratchCoordBox);
+			Rectangle2D.Double damage_selbox =
+				new Rectangle2D.Double(union_selbox.getX(), union_selbox.getY(),
+						union_selbox.getWidth(), union_selbox.getHeight());
 
 			if (debug) {
 				System.out.println("PrevBox:   " + prev_selbox);
@@ -336,14 +337,14 @@ public class Scene implements SceneI  {
 
 			// +1/-1 adjustments made to draw over previous selection edge
 
-			if (union_selbox.y == common_selbox.y &&
-					union_selbox.height == common_selbox.height) {
+			if (union_selbox.getY() == common_selbox.getY() &&
+					union_selbox.getHeight() == common_selbox.getHeight()) {
 
 				// both x-start and x-end are the same,
 				// therefore prev and current coord boxes are identical
 				// therefore don't need to expand damage at all?
-				if (union_selbox.x == common_selbox.x &&
-						union_selbox.width == common_selbox.width) {
+				if (union_selbox.getX() == common_selbox.getX() &&
+						union_selbox.getWidth() == common_selbox.getWidth()) {
 					if (debug) {
 						System.out.println("***** selection not changed, no damage *****");
 					}
@@ -351,20 +352,20 @@ public class Scene implements SceneI  {
 						}
 
 				// x-start of selection hasn't moved
-				else if (union_selbox.x == common_selbox.x) {
+				else if (union_selbox.getX() == common_selbox.getX()) {
 					if (debug) {
 						System.out.println("***** x-start of selection hasn't moved ****");
 					}
-					damage_selbox.x = common_selbox.x + common_selbox.width;
+					damage_selbox.x = common_selbox.getX() + common_selbox.getWidth();
 					damage_selbox.width =
-						union_selbox.width - common_selbox.width;
+						union_selbox.getWidth() - common_selbox.getWidth();
 				}
 
 				// x-end of selection hasn't moved
-				else if ((union_selbox.x + union_selbox.width) ==
-						(common_selbox.x + common_selbox.width)) {
-					damage_selbox.x = union_selbox.x;
-					damage_selbox.width = common_selbox.x - union_selbox.x;
+				else if ((union_selbox.getX() + union_selbox.getWidth()) ==
+						(common_selbox.getX() + common_selbox.getWidth())) {
+					damage_selbox.x = union_selbox.getX();
+					damage_selbox.width = common_selbox.getX() - union_selbox.getX();
 					if (debug) {
 						System.out.println("***** x-end of selection hasn't moved ****");
 						System.out.println("Union:  " + union_selbox);
@@ -458,11 +459,11 @@ public class Scene implements SceneI  {
 			return;
 		}
 		damaged = true;
-		Rectangle2D gcoords = glyph.getCoordBox();
+		Rectangle2D.Double gcoords = glyph.getCoordBox();
 
 		if (damageCoordBox == null) {
-			damageCoordBox = new Rectangle2D();
-			damageCoordBox.copyRect(gcoords);
+			damageCoordBox = new Rectangle2D.Double();
+			damageCoordBox.setRect(gcoords);
 		}
 		else {
 			damageCoordBox.add(gcoords);
@@ -495,7 +496,7 @@ public class Scene implements SceneI  {
 		}
 
 		if (damageCoordBox == null) {
-			damageCoordBox = new Rectangle2D(x, y, width, height);
+			damageCoordBox = new Rectangle2D.Double(x, y, width, height);
 		}
 		else {
 			damageCoordBox.add(x, y);
@@ -512,7 +513,7 @@ public class Scene implements SceneI  {
 		return damaged;
 	}
 
-	public Rectangle2D getDamageCoordBox() {
+	public Rectangle2D.Double getDamageCoordBox() {
 		return damageCoordBox;
 	}
 

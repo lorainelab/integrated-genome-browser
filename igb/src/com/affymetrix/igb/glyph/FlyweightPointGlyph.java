@@ -14,6 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 public class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph  {
@@ -26,7 +27,7 @@ public class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph
     template_glyph = gl;
     xcoords = xarray;
     flylength = flength;
-    Rectangle2D tbox = template_glyph.getCoordBox();
+    Rectangle2D.Double tbox = template_glyph.getCoordBox();
     int xmin = xarray[0];
     int xmax = xarray[xarray.length-1];
     int xlength = xmax - xmin + flength;  // extend to include flength
@@ -41,10 +42,10 @@ public class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph
   }
 
   public void drawFlyweights(ViewI view) {
-    Rectangle2D cbox = this.getCoordBox();
+    Rectangle2D.Double cbox = this.getCoordBox();
     template_glyph.setCoords(cbox.x, cbox.y, flylength, cbox.height);
     if (xcoords != null) {
-      Rectangle2D tbox = template_glyph.getCoordBox();
+      Rectangle2D.Double tbox = template_glyph.getCoordBox();
       int flycount = xcoords.length;
       for (int i=0; i<flycount; i++) {
 	tbox.x = xcoords[i];
@@ -59,12 +60,12 @@ public class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph
   /**
    *  Reifying flyweight glyphs as needed in pickTraversal.
    */
-  public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
     super.pickTraversal(pickRect, pickVector, view);
     if (isVisible && intersects(pickRect, view))  {
       if (xcoords != null) {
-	Rectangle2D tbox = template_glyph.getCoordBox();
+	Rectangle2D.Double tbox = template_glyph.getCoordBox();
 	int flycount = xcoords.length;
 	for (int i=0; i<flycount; i++) {
 	  tbox.x = xcoords[i];

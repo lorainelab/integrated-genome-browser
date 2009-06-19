@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 
@@ -105,7 +106,7 @@ public class View implements ViewI, NeoPaintListener,
 
 		   protected NeoCanvas component;
 
-		   protected Rectangle2D coordbox;
+		   protected Rectangle2D.Double coordbox;
 		   protected Graphics2D graphics;
 		   protected boolean isTimed = false;
 		   protected com.affymetrix.genoviz.util.Timer timecheck;
@@ -134,8 +135,8 @@ public class View implements ViewI, NeoPaintListener,
 
 		   protected TransformI lastTransform;  // copy of transform from last draw
 		   // I think prevCalcCoordBox can be replaced with prevCoordBox -- GAH 8/4/97
-		   protected Rectangle2D prevCalcCoordBox;
-		   protected Rectangle2D prevCoordBox;
+		   protected Rectangle2D.Double prevCalcCoordBox;
+		   protected Rectangle2D.Double prevCoordBox;
 		   protected Image bufferImage;
 		   protected Graphics bufferGraphics;
 		   protected Dimension bufferSize;
@@ -152,16 +153,16 @@ public class View implements ViewI, NeoPaintListener,
 		   /*
 			  Views have a few boxes that aren't visible to the outside world
 			  These are to store temporary stuff, for instance to have a
-			  destination Rectangle2D when doing transformations that actually
+			  destination Rectangle2D.Double when doing transformations that actually
 			  map to pixel space (not sure if scratch_pixels is really needed...)
 			  */
-		   protected Rectangle2D scratch_coords;
+		   protected Rectangle2D.Double scratch_coords;
 		   protected Rectangle scratch_pixels;
 		   protected Point2D.Double scratch_coord;
 		   protected Point scratch_pixel;
 
 		   protected Rectangle scene_pixelbox;
-		   protected Rectangle2D scene_coordbox;
+		   protected Rectangle2D.Double scene_coordbox;
 
 		   public View()  {
 			   full_view = this;
@@ -170,12 +171,12 @@ public class View implements ViewI, NeoPaintListener,
 			   timecheck = new com.affymetrix.genoviz.util.Timer();
 			   pixelbox = new Rectangle();
 
-			   setCoordBox(new Rectangle2D());
+			   setCoordBox(new Rectangle2D.Double());
 
-			   prevCoordBox = new Rectangle2D();
-			   prevCalcCoordBox = new Rectangle2D();
+			   prevCoordBox = new Rectangle2D.Double();
+			   prevCalcCoordBox = new Rectangle2D.Double();
 			   scratch_pixels = new Rectangle();
-			   scratch_coords = new Rectangle2D();
+			   scratch_coords = new Rectangle2D.Double();
 			   scratch_pixel = new Point(0,0);
 			   scratch_coord = new Point2D.Double(0,0);
 			   scene_pixelbox = new Rectangle();
@@ -255,7 +256,7 @@ public class View implements ViewI, NeoPaintListener,
 			 coordinate spaces to pixel space, hence
 			 transformToPixels() and transformToCoords().
 			 */
-		   public Rectangle transformToPixels(Rectangle2D src, Rectangle dst)  {
+		   public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst)  {
 			   transform.transform(src, scratch_coords);
 
 			   dst.x = (int)scratch_coords.x;
@@ -304,13 +305,13 @@ public class View implements ViewI, NeoPaintListener,
 			 alters AND returns destination Rectangle2D, to follow 2D API
 			 transform convention
 			 */
-		   public Rectangle2D transformToCoords(Rectangle src, Rectangle2D dst)  {
+		   public Rectangle2D.Double transformToCoords(Rectangle src, Rectangle2D.Double dst)  {
 			   scratch_coords.x = (double)src.x;
 			   scratch_coords.y = (double)src.y;
 			   scratch_coords.width = (double)src.width;
 			   scratch_coords.height = (double)src.height;
 			   //    System.out.println("calling inverseTransform: " + transform);
-			   Rectangle2D result = transform.inverseTransform(scratch_coords, dst);
+			   Rectangle2D.Double result = transform.inverseTransform(scratch_coords, dst);
 			   //    System.out.println("done calling inverseTransform");
 			   return result;
 		   }
@@ -381,7 +382,7 @@ public class View implements ViewI, NeoPaintListener,
 			   if (!(coordbox.equals(prevCoordBox))) {
 				   // need to change this to a more general ViewBoxChange event...
 				   if (predraw_viewbox_listeners.size() > 0) {
-					   Rectangle2D newbox = new Rectangle2D(coordbox.x, coordbox.y,
+					   Rectangle2D.Double newbox = new Rectangle2D.Double(coordbox.x, coordbox.y,
 							   coordbox.width, coordbox.height);
 					   NeoViewBoxChangeEvent nevt =
 						   new NeoViewBoxChangeEvent(this, newbox, true);
@@ -465,7 +466,7 @@ public class View implements ViewI, NeoPaintListener,
 			   if (!(coordbox.equals(prevCoordBox))) {
 				   // need to change this to a more general ViewBoxChange event...
 				   if (viewbox_listeners.size() > 0) {
-					   Rectangle2D newbox = new Rectangle2D(coordbox.x, coordbox.y,
+					   Rectangle2D.Double newbox = new Rectangle2D.Double(coordbox.x, coordbox.y,
 							   coordbox.width, coordbox.height);
 					   NeoViewBoxChangeEvent nevt =
 						   new NeoViewBoxChangeEvent(this, newbox, false);
@@ -476,7 +477,7 @@ public class View implements ViewI, NeoPaintListener,
 				   }
 			   }
 
-			   prevCoordBox.reshape(coordbox.x, coordbox.y,
+			   prevCoordBox.setRect(coordbox.x, coordbox.y,
 					   coordbox.width, coordbox.height);
 
 			   }
@@ -724,7 +725,7 @@ public class View implements ViewI, NeoPaintListener,
 			   // also make sure that current coord box and previous coord box
 			   //   overlap
 			   transformToCoords(pixelbox, coordbox);
-			   Rectangle2D currCoordBox = coordbox;
+			   Rectangle2D.Double currCoordBox = coordbox;
 			   setTransform(prevTransform);
 			   transformToCoords(pixelbox, prevCalcCoordBox);
 			   prevCoordBox = prevCalcCoordBox;
@@ -736,7 +737,7 @@ public class View implements ViewI, NeoPaintListener,
 
 			   // 3. find intersection of previous coord box and current coord box,
 			   //    and convert to pixels
-			   Rectangle2D coordOverlap = coordbox.intersection(prevCoordBox);
+			   Rectangle2D.Double coordOverlap = (Rectangle2D.Double)coordbox.createIntersection(prevCoordBox);
 			   Rectangle prevOverlapPixBox = new Rectangle();
 			   Rectangle currOverlapPixBox = new Rectangle();
 			   setTransform(prevTransform);
@@ -759,7 +760,7 @@ public class View implements ViewI, NeoPaintListener,
 
 			   // 5. revise view to be portion of new coordbox that doesn't overlap
 			   //    old coordbox
-			   Rectangle2D nolCoordBox = new Rectangle2D();
+			   Rectangle2D.Double nolCoordBox = new Rectangle2D.Double();
 			   // already know that either xcoords are unchanged (c.x=p.x) OR
 			   //                          ycoords are unchanged (c.y=p.y)
 			   // see notes on determining non-overlapping rectangle...
@@ -847,11 +848,11 @@ public class View implements ViewI, NeoPaintListener,
 			   return pixelbox;
 		   }
 
-		   public void setCoordBox(Rectangle2D coordbox)  {
+		   public void setCoordBox(Rectangle2D.Double coordbox)  {
 			   this.coordbox = coordbox;
 		   }
 
-		   public Rectangle2D getCoordBox()  {
+		   public Rectangle2D.Double getCoordBox()  {
 			   return this.coordbox;
 		   }
 
@@ -913,7 +914,7 @@ public class View implements ViewI, NeoPaintListener,
 			   return scene;
 		   }
 
-		   public Rectangle2D calcCoordBox() {
+		   public Rectangle2D.Double calcCoordBox() {
 			   return transformToCoords(pixelbox, coordbox);
 		   }
 
@@ -1048,7 +1049,7 @@ public class View implements ViewI, NeoPaintListener,
 				   System.out.println("View heard MOUSE_PRESSED: " + this);
 			   }
 			   Rectangle pixrect = new Rectangle(x, y, 0, 0);
-			   Rectangle2D coordrect = new Rectangle2D();
+			   Rectangle2D.Double coordrect = new Rectangle2D.Double();
 
 			   // Check for intersection with view's pixelbox
 			   // if (pixrect.intersects(getPixelBox())) {

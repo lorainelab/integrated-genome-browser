@@ -15,6 +15,7 @@ package com.affymetrix.igb.glyph;
 
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Rectangle2D;
 
 public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
   boolean flyweights_ordered = true;
@@ -52,10 +53,10 @@ public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
   }
 
   public void drawFlyweights(ViewI view) {
-    Rectangle2D vbox = view.getCoordBox();
-    Rectangle2D cbox = this.getCoordBox();
-    Rectangle2D tbox = template_glyph.getCoordBox();
-    Rectangle2D lbox = link_glyph.getCoordBox();
+    Rectangle2D.Double vbox = view.getCoordBox();
+    Rectangle2D.Double cbox = this.getCoordBox();
+    Rectangle2D.Double tbox = template_glyph.getCoordBox();
+    Rectangle2D.Double lbox = link_glyph.getCoordBox();
 
     tbox.width = flylength;
     tbox.y = cbox.y;

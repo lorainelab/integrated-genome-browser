@@ -19,6 +19,7 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * a glyph specialized for displaying called bases along a chromatogram.
@@ -69,7 +70,7 @@ public class TraceBaseGlyph extends Glyph  {
 	protected Point2D.Double baseCoordPoint = new Point2D.Double(0,0);
 	protected Point2D.Double selCoordPoint = new Point2D.Double(0,0);
 
-	protected Rectangle2D labelCoords = new Rectangle2D();
+	protected Rectangle2D.Double labelCoords = new Rectangle2D.Double();
 	protected Rectangle labelPixels = new Rectangle();
 
 	protected OutlineRectGlyph sel_glyph;
@@ -112,7 +113,7 @@ public class TraceBaseGlyph extends Glyph  {
 	}
 
 	protected void setHeight( int height ) {
-		Rectangle2D old_rect = getCoordBox();
+		Rectangle2D.Double old_rect = getCoordBox();
 		setCoords( old_rect.x, old_rect.y, old_rect.width, height );
 	}
 	public int getHeight() {
@@ -122,7 +123,7 @@ public class TraceBaseGlyph extends Glyph  {
 	public void draw(ViewI view) {
 		int beg, end, i, j;
 		Graphics g = view.getGraphics();
-		Rectangle2D viewbox = view.getCoordBox();
+		Rectangle2D.Double viewbox = view.getCoordBox();
 
 		double pixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
 		double coords_per_base = (double)dataCount/(double)baseCount;
@@ -227,7 +228,7 @@ public class TraceBaseGlyph extends Glyph  {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 
@@ -278,7 +279,7 @@ public class TraceBaseGlyph extends Glyph  {
 			sel_glyph.setForegroundColor(sel_color);
 			addChild(sel_glyph, 0);
 		}
-		Rectangle2D cb = getCoordBox();
+		Rectangle2D.Double cb = getCoordBox();
 		// Why are we adding to cb.y? Why was 5 added to cb.y and cb.height? elb 1999-12-02
 		sel_glyph.setCoords( start, cb.y, end-start + 1, cb.height );
 	}
@@ -294,7 +295,7 @@ public class TraceBaseGlyph extends Glyph  {
 		return true;
 	}
 
-	public Rectangle2D getSelectedRegion() {
+	public Rectangle2D.Double getSelectedRegion() {
 		if (sel_glyph == null) {
 			if (selected) {
 				return this.getCoordBox();

@@ -15,14 +15,10 @@ package com.affymetrix.genoviz.widget.neoseq;
 import com.affymetrix.genoviz.glyph.*;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Range;
+import java.awt.geom.Rectangle2D;
 
 public class WrapNumbers extends WrapGlyph {
 
@@ -30,7 +26,7 @@ public class WrapNumbers extends WrapGlyph {
 	protected int firstOrd = 0;
 	protected boolean revNums = false;
 
-	protected Rectangle2D visible_box;
+	protected Rectangle2D.Double visible_box;
 
 	/** specifies the gap between the numbers and the residues to the right. */
 	private static final int RIGHT_MARGIN = 6;

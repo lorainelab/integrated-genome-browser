@@ -18,6 +18,7 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.Position;
+import java.awt.geom.Rectangle2D;
 
 /**
  * a caret or cursor for editing a NeoSeq.
@@ -41,7 +42,7 @@ public class Caret extends WrapGlyph {
 	 */
 	private Point2D.Double colorCoordPoint2 = new Point2D.Double(0,0);
 
-	private Rectangle2D visible_box;
+	private Rectangle2D.Double visible_box;
 
 	private int y_offset_fudge = 3;
 

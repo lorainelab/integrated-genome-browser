@@ -26,6 +26,7 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neotracer.*;
+import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
 class TraceNotSetException extends Exception {};
@@ -390,7 +391,7 @@ public class NeoTracer extends NeoContainerWidget
 		this.range = new Range(start, end);
 		trace_map.setMapRange(start, end);
 		base_map.setMapRange(start, end);
-		Rectangle2D box = base_axis.getCoordBox();
+		Rectangle2D.Double box = base_axis.getCoordBox();
 		base_axis.setCoords ( start, box.y, end - start, box.height );
 	}
 
@@ -496,14 +497,14 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	public Range getVisiblePeakRange() {
-		Rectangle2D visible_box = trace_map.getView().calcCoordBox();
+		Rectangle2D.Double visible_box = trace_map.getView().calcCoordBox();
 		return new Range((int)visible_box.x,
 				(int)(visible_box.x + visible_box.width));
 	}
 
 	// this is a slow way to do this
 	public Range getVisibleBaseRange() {
-		Rectangle2D visible_box = trace_map.getView().calcCoordBox();
+		Rectangle2D.Double visible_box = trace_map.getView().calcCoordBox();
 		int visible_left = (int)(visible_box.x);
 		int visible_right = (int)(visible_left + visible_box.width);
 		Range r = new Range(-1,-1);
@@ -820,7 +821,7 @@ public class NeoTracer extends NeoContainerWidget
 
 		double current_trace_point = (double)getBaseTracePoint( baseNum );
 
-		Rectangle2D viewbox = trace_map.getView().getCoordBox();
+		Rectangle2D.Double viewbox = trace_map.getView().getCoordBox();
 		double new_scroll_pos = current_trace_point - viewbox.width/2;
 
 		trace_map.scrollRange((int)new_scroll_pos);
@@ -865,7 +866,7 @@ public class NeoTracer extends NeoContainerWidget
 			view_fraction = (double)view_point / (double)view_width;
 		}
 
-		Rectangle2D viewbox = trace_map.getView().getCoordBox();
+		Rectangle2D.Double viewbox = trace_map.getView().getCoordBox();
 		double new_scroll_pos = current_trace_point - ( viewbox.width * view_fraction );
 
 		trace_map.scrollRange( (int)new_scroll_pos );
@@ -1200,7 +1201,7 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	public void setLeftTrim(int left_trim_end) {
-		Rectangle2D coordbox = trace_glyph.getCoordBox();
+		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (left_trim_glyph != null) {
 			trace_glyph.removeChild(left_trim_glyph);
 		}
@@ -1212,7 +1213,7 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	public void setRightTrim(int right_trim_start) {
-		Rectangle2D coordbox = trace_glyph.getCoordBox();
+		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (right_trim_glyph != null) {
 			trace_glyph.removeChild(right_trim_glyph);
 		}
@@ -1281,8 +1282,8 @@ public class NeoTracer extends NeoContainerWidget
 
 		// want to move to "same" location as in previous orientation,
 		// but since rev-comped from previous, need to calculate this
-		Rectangle2D tbox = trace_map.getScene().getCoordBox();
-		Rectangle2D vbox = trace_map.getView().getCoordBox();
+		Rectangle2D.Double tbox = trace_map.getScene().getCoordBox();
+		Rectangle2D.Double vbox = trace_map.getView().getCoordBox();
 
 		double twidth = tbox.width;
 		double tbeg = tbox.x;
@@ -1333,7 +1334,7 @@ public class NeoTracer extends NeoContainerWidget
 
 		Vector gchildren = trace_glyph.getChildren();
 		GlyphI gchild;
-		Rectangle2D childbox;
+		Rectangle2D.Double childbox;
 		for (int i=0; i<gchildren.size(); i++) {
 			gchild = (GlyphI)gchildren.elementAt(i);
 			// since selection glyph already dealt with, need to skip it
@@ -1422,7 +1423,7 @@ public class NeoTracer extends NeoContainerWidget
 
 		endAt++; // This seems to be needed to match selection. Why?
 
-		Rectangle2D coordbox = trace_glyph.getCoordBox();
+		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (left_trim_glyph != null) {
 			trace_glyph.removeChild(left_trim_glyph);
 		}
@@ -1451,7 +1452,7 @@ public class NeoTracer extends NeoContainerWidget
 		int firstTrimmedBase = getBaseCount() - this.rightTrim;
 		int startAt = samplePoint( firstTrimmedBase, BEFORE );
 
-		Rectangle2D coordbox = trace_glyph.getCoordBox();
+		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (right_trim_glyph != null) {
 			trace_glyph.removeChild(right_trim_glyph);
 		}

@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.awt.geom.Point2D;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
@@ -157,7 +158,7 @@ public class View implements ViewI, NeoPaintListener,
 			  */
 		   protected Rectangle2D scratch_coords;
 		   protected Rectangle scratch_pixels;
-		   protected Point2D scratch_coord;
+		   protected Point2D.Double scratch_coord;
 		   protected Point scratch_pixel;
 
 		   protected Rectangle scene_pixelbox;
@@ -177,7 +178,7 @@ public class View implements ViewI, NeoPaintListener,
 			   scratch_pixels = new Rectangle();
 			   scratch_coords = new Rectangle2D();
 			   scratch_pixel = new Point(0,0);
-			   scratch_coord = new Point2D(0,0);
+			   scratch_coord = new Point2D.Double(0,0);
 			   scene_pixelbox = new Rectangle();
 		   }
 
@@ -277,7 +278,7 @@ public class View implements ViewI, NeoPaintListener,
 			   return dst;
 		   }
 
-		   public Point transformToPixels(Point2D src, Point dst)  {
+		   public Point transformToPixels(Point2D.Double src, Point dst)  {
 			   transform.transform(src, scratch_coord);
 			   dst.x = (int)scratch_coord.x;
 			   dst.y = (int)scratch_coord.y;
@@ -315,7 +316,7 @@ public class View implements ViewI, NeoPaintListener,
 			   return result;
 		   }
 
-		   public Point2D transformToCoords(Point src, Point2D dst)  {
+		   public Point2D.Double transformToCoords(Point src, Point2D.Double dst)  {
 			   scratch_coord.x = (double)src.x;
 			   scratch_coord.y = (double)src.y;
 			   return transform.inverseTransform(scratch_coord, dst);

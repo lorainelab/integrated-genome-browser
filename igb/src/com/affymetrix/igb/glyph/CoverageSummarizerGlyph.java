@@ -22,12 +22,17 @@ import java.util.List;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
-import com.affymetrix.genoviz.bioviews.*;
+//import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import java.awt.geom.Point2D;
 
 /**
  *  Intended for dynamically summarizing coverage of a collection of spans.
@@ -57,7 +62,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
   int[] maxs = null;
   double[] yval_for_xpixel = null;
   double[] smoothed_yval = null;
-  Point2D curr_coord = new Point2D(0,0);
+  Point2D.Double curr_coord = new Point2D.Double(0,0);
   Point curr_pixel = new Point(0,0);
   int glyph_style = DEFAULT_STYLE;
   float avg_coverage;

@@ -14,12 +14,10 @@
 package com.affymetrix.genoviz.widget.neoqualler;
 
 import java.awt.*;
-import java.util.Vector;
-import java.util.Enumeration;
-
+import java.awt.geom.Point2D;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.widget.NeoQualler;
+
 import com.affymetrix.genoviz.glyph.*;
 
 public class QualityBases extends Glyph  {
@@ -64,10 +62,10 @@ public class QualityBases extends Glyph  {
 	protected Point basePixelPoint = new Point(0,0);
 	protected Point selPixelPoint = new Point(0,0);
 
-	protected Point2D prevCoordPoint = new Point2D(0,0);
-	protected Point2D currCoordPoint = new Point2D(0,0);
-	protected Point2D baseCoordPoint = new Point2D(0,0);
-	protected Point2D selCoordPoint = new Point2D(0,0);
+	protected Point2D.Double prevCoordPoint = new Point2D.Double(0,0);
+	protected Point2D.Double currCoordPoint = new Point2D.Double(0,0);
+	protected Point2D.Double baseCoordPoint = new Point2D.Double(0,0);
+	protected Point2D.Double selCoordPoint = new Point2D.Double(0,0);
 
 	protected int read_length;
 	protected String bString = baseString[4]; // default to -

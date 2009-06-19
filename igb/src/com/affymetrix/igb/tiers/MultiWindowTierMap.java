@@ -14,7 +14,7 @@ import java.awt.Window;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
-import java.util.List;
+import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
@@ -313,7 +313,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
       // calculate pixel point for new RubberBandEvent
       Point orig_pixpoint = evt.getPoint();
       // transform pixels from child map to coords
-      Point2D cpoint = new Point2D(0, 0);
+      Point2D.Double cpoint = new Point2D.Double(0, 0);
       orig_map.getView().transformToCoords(orig_pixpoint, cpoint);
       // transform coords to pixels on full/parent map
       Point new_pixpoint = new Point();

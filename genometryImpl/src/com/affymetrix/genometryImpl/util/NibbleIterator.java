@@ -36,21 +36,20 @@ public final class NibbleIterator implements SearchableCharIterator {
 		char2nibble['B'] = char2nibble['b'] = 14;
 		char2nibble['U'] = char2nibble['u'] = 15;
 	}
-	// 127 -->   0111 1111
-	// -128 -->  1111 1111
-	// 15   -->  0000 1111
-	// -16  -->  1111 0000   --> (-128) + 64 + 32 + 16
 
-	// & with hifilter to filter out 4 hi bits (only lo bits retained)
-	private static final byte hifilter = 15;
-	// & with lofilter to filter out 4 lo bits (only hi bits retained)
-	private static final byte lofilter = -16;
+	// 0x0f   -->  0000 0000 0000 0000 0000 0000 0000 1111
+	// 0xf0   -->  0000 0000 0000 0000 0000 0000 1111 0000
+
+	// AND with hifilter to filter out 4 hi bits (only lo bits retained)
+	private static final int hifilter = 0x0f;
+	// AND with lofilter to filter out 4 lo bits (only hi bits retained)
+	private static final int lofilter = 0xf0;
 
 	// number of bits to shift when converting hinibble and lonibble
 	//   (4 bits for hinibble, 0 bits for lonibble)
 	private static final int offsets[] = {4, 0};
 
-	private static final byte filters[] = {lofilter, hifilter};
+	private static final int filters[] = {lofilter, hifilter};
 	private static final int one_mask = 1;
 
 	/**
@@ -60,14 +59,14 @@ public final class NibbleIterator implements SearchableCharIterator {
 	public char charAt(int pos) {
 		int index = pos & one_mask;  // either 0 or 1, index into offsets and filters arrays
 		int offset = offsets[index];
-		byte filter = filters[index];
+		int filter = filters[index];
 		byte by = nibble_array[pos >> 1];
 
-		int arrIndex = (by & filter) >> offset;
-		if (arrIndex < 0) {
+		int arrIndex = (by & filter) >>> offset;
+		/*if (arrIndex < 0) {
 			// JN - fixes bug with signed binary shifting.  See checkin comments.
 			arrIndex += nibble2char.length;
-		}
+		}*/
 		return nibble2char[arrIndex];
 	}
 
@@ -169,13 +168,13 @@ public final class NibbleIterator implements SearchableCharIterator {
 		for (int i = min; i < max; i++) {
 			int index = i & one_mask;  // either 0 or 1, index into offsets and filters arrays
 			int offset = offsets[index];
-			byte filter = filters[index];
+			int filter = filters[index];
 			byte by = nibbles[i >> 1];
-			int arrIndex = (by & filter) >> offset;
-			if (arrIndex < 0) {
-				// JN - fixes bug with signed binary shifting.  See checkin comments.
-				arrIndex += nibble2char.length;
-			}
+			int arrIndex = (by & filter) >>> offset;
+		/*if (arrIndex < 0) {
+			// JN - fixes bug with signed binary shifting.  See checkin comments.
+			arrIndex += nibble2char.length;
+		}*/
 			char nib = nibble2char[arrIndex];
 
 			buf.append(nib);

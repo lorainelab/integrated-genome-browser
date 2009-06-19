@@ -17,8 +17,7 @@ import com.affymetrix.genoviz.glyph.*;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.awt.geom.Point2D;
 
 public class TraceGlyph extends Glyph  {
 	public static final int A = 0;
@@ -47,9 +46,9 @@ public class TraceGlyph extends Glyph  {
 	protected Point currPixelPoint = new Point(0,0);
 	protected Point basePixelPoint = new Point(0,0);
 
-	protected Point2D prevCoordPoint = new Point2D(0,0);
-	protected Point2D currCoordPoint = new Point2D(0,0);
-	protected Point2D baseCoordPoint = new Point2D(0,0);
+	protected Point2D.Double prevCoordPoint = new Point2D.Double(0,0);
+	protected Point2D.Double currCoordPoint = new Point2D.Double(0,0);
+	protected Point2D.Double baseCoordPoint = new Point2D.Double(0,0);
 
 	/*
 	   pixels_per_base is an _average_ over the whole trace

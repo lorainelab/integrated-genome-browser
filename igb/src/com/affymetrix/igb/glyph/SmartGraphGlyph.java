@@ -19,6 +19,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.*;
+import java.awt.geom.Point2D;
 
 import com.affymetrix.igb.*;
 import com.affymetrix.genometry.BioSeq;

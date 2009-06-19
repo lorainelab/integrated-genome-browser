@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
@@ -51,8 +52,8 @@ public class GlyphDragger
 
 	double prevx, prevy;
 	double currentx, currenty;
-	Point2D prev_point = new Point2D(0, 0);
-	Point2D cur_point = new Point2D(0, 0);
+	Point2D.Double prev_point = new Point2D.Double(0, 0);
+	Point2D.Double cur_point = new Point2D.Double(0, 0);
 
 	GlyphI dragged_glyph;
 	NeoWidgetI widget;

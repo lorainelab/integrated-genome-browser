@@ -12,17 +12,12 @@
  */
 
 package com.affymetrix.genoviz.widget.neoseq;
-import com.affymetrix.genoviz.glyph.*;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import java.awt.geom.Point2D;
 
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
-import com.affymetrix.genoviz.datamodel.Range;
 
 public class WrapColors extends AnnotationGlyph {
 
@@ -33,13 +28,13 @@ public class WrapColors extends AnnotationGlyph {
 	 * colorCoordPoint1.x = offset of start position of annot into row of bases
 	 * colorCoordPoint1.y = first base of row that start of annot is in
 	 */
-	protected Point2D colorCoordPoint1 = new Point2D(0,0);
+	protected Point2D.Double colorCoordPoint1 = new Point2D.Double(0,0);
 
 	/**
 	 * colorCoordPoint2.x = offset of end position of annot into row of bases
 	 * colorCoordPoint2.y = last base of row that start of annot is in
 	 */
-	protected Point2D colorCoordPoint2 = new Point2D(0,0);
+	protected Point2D.Double colorCoordPoint2 = new Point2D.Double(0,0);
 
 	protected Rectangle2D visible_box;
 

@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
@@ -880,7 +881,7 @@ public class NeoTracer extends NeoContainerWidget
 	public int getBaseViewPoint( int base_index ) {
 		int trace_point = getBaseCall( base_index ).getTracePoint();
 		Point p = new Point();
-		trace_map.getView().transformToPixels( new Point2D( trace_point, 0 ), p );
+		trace_map.getView().transformToPixels( new Point2D.Double( trace_point, 0 ), p );
 		return p.x;
 	}
 

@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 
 /**
  * Also see interface TransformI for more documentation.
@@ -184,7 +185,7 @@ public class LinearTransform implements TransformI  {
 	 * @param dst ignored
 	 * @return the souce Point2D transformed.
 	 */
-	public Point2D transform(Point2D src, Point2D dst) {
+	public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
 		dst.x = src.x * xscale + xoffset;
 		dst.y = src.y * yscale + yoffset;
 		return dst;
@@ -196,7 +197,7 @@ public class LinearTransform implements TransformI  {
 	 * @param dst ignored
 	 * @return the souce Point2D transformed.
 	 */
-	public Point2D inverseTransform(Point2D src, Point2D dst) {
+	public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
 		dst.x = (src.x - xoffset) / xscale;
 		dst.y = (src.y - yoffset) / yscale;
 		return dst;

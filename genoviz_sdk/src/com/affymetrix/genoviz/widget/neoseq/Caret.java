@@ -13,17 +13,11 @@
 
 package com.affymetrix.genoviz.widget.neoseq;
 
-import com.affymetrix.genoviz.glyph.*;
-
 import java.awt.*;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import java.awt.geom.Point2D;
 
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.Position;
-import com.affymetrix.genoviz.datamodel.Range;
 
 /**
  * a caret or cursor for editing a NeoSeq.
@@ -39,13 +33,13 @@ public class Caret extends WrapGlyph {
 	 * x = offset of start position of annot into row of bases
 	 * y = first base of row that start of annot is in
 	 */
-	private Point2D colorCoordPoint1 = new Point2D(0,0);
+	private Point2D.Double colorCoordPoint1 = new Point2D.Double(0,0);
 
 	/**
 	 * x = offset of end position of annot into row of bases
 	 * y = last base of row that start of annot is in
 	 */
-	private Point2D colorCoordPoint2 = new Point2D(0,0);
+	private Point2D.Double colorCoordPoint2 = new Point2D.Double(0,0);
 
 	private Rectangle2D visible_box;
 

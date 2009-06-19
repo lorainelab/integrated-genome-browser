@@ -13,6 +13,8 @@
 
 package com.affymetrix.genoviz.bioviews;
 
+import java.awt.geom.Point2D;
+
 /**
  *  A transform used internally by NeoSeq, should not be used directly.
  */
@@ -119,13 +121,13 @@ public class ConstrainLinearTrnsfm extends LinearTransform {
 		return dst;
 	}
 
-	public Point2D transform(Point2D src, Point2D dst) {
+	public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
 		dst.x = src.x * xscale + xoffset;
 		dst.y = src.y * yscale + yoffset;
 		return dst;
 	}
 
-	public Point2D inverseTransform(Point2D src, Point2D dst) {
+	public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
 		dst.x = (src.x - xoffset) / xscale;
 		dst.y = (src.y - yoffset) / yscale;
 		return dst;

@@ -18,6 +18,7 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometry.SeqSymmetry;
@@ -60,7 +61,7 @@ public abstract class GraphGlyph extends Glyph {
 
 	int xpix_offset = 0;
 	Point zero_point = new Point(0,0);
-	Point2D coord = new Point2D(0,0);
+	Point2D.Double coord = new Point2D.Double(0,0);
 	Point curr_point = new Point(0,0);
 	Point prev_point = new Point(0,0);
 	Point scratch_point = new Point(0,0);
@@ -232,7 +233,7 @@ public abstract class GraphGlyph extends Glyph {
 	public GraphStateI getGraphState() { return state; }
 
 	// temporary variables used in draw()
-	Point2D x_plus_width2D = new Point2D(0,0);
+	Point2D.Double x_plus_width2D = new Point2D.Double(0,0);
 	Point curr_x_plus_width = new Point(0,0);
 
 	@Override

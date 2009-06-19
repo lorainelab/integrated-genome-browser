@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Point2D;
 
 /**
  *  A glyph that, given a xcoord array and a ycoord array, draws an xy line graph.
@@ -37,7 +38,7 @@ public class BasicGraphGlyph extends Glyph {
 		int end_index = xcoords.length-1;
 
 		g.setColor(getForegroundColor());
-		Point2D coord = new Point2D(0,0);
+		Point2D.Double coord = new Point2D.Double(0,0);
 		Point curr_point = new Point(0,0);
 		Point prev_point = new Point(0,0);
 

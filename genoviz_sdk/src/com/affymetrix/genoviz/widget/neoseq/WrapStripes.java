@@ -12,16 +12,11 @@
  */
 
 package com.affymetrix.genoviz.widget.neoseq;
-import com.affymetrix.genoviz.glyph.*;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
+import java.awt.geom.Point2D;
 
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.datamodel.Range;
 
 public class WrapStripes extends WrapGlyph {
 
@@ -30,8 +25,8 @@ public class WrapStripes extends WrapGlyph {
 	protected Point backPixelPoint1 = new Point(0,0);
 	protected Point backPixelPoint2 = new Point(0,0);
 
-	protected Point2D backCoordPoint1 = new Point2D(0,0);
-	protected Point2D backCoordPoint2 = new Point2D(0,0);
+	protected Point2D.Double backCoordPoint1 = new Point2D.Double(0,0);
+	protected Point2D.Double backCoordPoint2 = new Point2D.Double(0,0);
 
 
 	public static final int NONE = 0;

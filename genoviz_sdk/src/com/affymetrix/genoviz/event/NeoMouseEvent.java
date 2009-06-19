@@ -18,8 +18,8 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.Vector;
 
-import com.affymetrix.genoviz.bioviews.Point2D;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
+import java.awt.geom.Point2D;
 
 /**
  * A mouse event occurring over a NeoWidget.
@@ -96,8 +96,8 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 	 * @return the coordinates of the event as a Point2D
 	 * in widget coordinate units (<em>not</em> pixels).
 	 */
-	public Point2D getPoint2D() {
-		return new Point2D(getCoordX(), getCoordY());
+	public Point2D.Double getPoint2D() {
+		return new Point2D.Double(getCoordX(), getCoordY());
 	}
 
 	/**

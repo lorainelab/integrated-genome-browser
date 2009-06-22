@@ -13,11 +13,15 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
+//import com.affymetrix.genoviz.bioviews.*;
+
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
+import java.awt.geom.Rectangle2D;
 
 public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 
@@ -26,7 +30,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 	protected double coord_fuzziness = 1;
 	protected double spacing = 2;
 	protected int movetype;
-	protected Rectangle2D before = new Rectangle2D();
+	protected Rectangle2D.Double before = new Rectangle2D.Double();
 
 	boolean STRETCH_HORIZONTAL = true;
 	boolean STRETCH_VERTICAL = true;
@@ -126,8 +130,8 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 	 */
 	public void moveToAvoid(
 			GlyphI glyph_to_move, GlyphI glyph_to_avoid, int movetype) {
-		Rectangle2D movebox = glyph_to_move.getCoordBox();
-		Rectangle2D avoidbox = glyph_to_avoid.getCoordBox();
+		Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
+		Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
 		if ( ! movebox.intersects ( avoidbox ) ) return;
 		if (movetype == MIRROR_VERTICAL) {
 			if (movebox.y < 0) {
@@ -197,8 +201,8 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		/**
 		 *  child packing
 		 */
-		Rectangle2D cbox;
-		Rectangle2D pbox = parent.getCoordBox();
+		Rectangle2D.Double cbox;
+		Rectangle2D.Double pbox = parent.getCoordBox();
 
 		// resetting height of parent to just spacers
 		parent.setCoords(pbox.x, pbox.y, pbox.width, 2 * parent_spacer);
@@ -263,8 +267,8 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 			parent.setCoords(pbox.x, pbox.y, pbox.width, parent_spacer);
 			return null;
 		}
-		Rectangle2D newbox = new Rectangle2D();
-		Rectangle2D tempbox = new Rectangle2D();
+		Rectangle2D.Double newbox = new Rectangle2D.Double();
+		Rectangle2D.Double tempbox = new Rectangle2D.Double();
 		child = sibs.elementAt(0);
 		newbox.setRect(pbox.x, child.getCoordBox().y,
 				pbox.width, child.getCoordBox().height);
@@ -278,7 +282,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		else if (STRETCH_VERTICAL) {
 			for (int i=1; i<sibs_size; i++) {
 				child = sibs.elementAt(i);
-				Rectangle2D childbox = child.getCoordBox();
+				Rectangle2D.Double childbox = child.getCoordBox();
 				tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
 				GeometryUtils.union(newbox, tempbox, newbox);
 			}
@@ -286,7 +290,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
 			for (int i=1; i<sibs_size; i++) {
 				child = sibs.elementAt(i);
-				Rectangle2D childbox = child.getCoordBox();
+				Rectangle2D.Double childbox = child.getCoordBox();
 				tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
 				GeometryUtils.union(newbox, tempbox, newbox);
 			}
@@ -305,8 +309,8 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 	 * until it no longer reports hitting any of its siblings.
 	 */
 	public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
-		Rectangle2D childbox, siblingbox;
-		Rectangle2D pbox = parent.getCoordBox();
+		Rectangle2D.Double childbox, siblingbox;
+		Rectangle2D.Double pbox = parent.getCoordBox();
 		childbox = child.getCoordBox();
 		if (movetype == UP) {
 			child.moveAbsolute(childbox.x,
@@ -369,7 +373,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 						 */
 					}
 					else {
-						Rectangle2D cb = child.getCoordBox();
+						Rectangle2D.Double cb = child.getCoordBox();
 						this.before.x = cb.x;
 						this.before.y = cb.y;
 						this.before.width = cb.width;

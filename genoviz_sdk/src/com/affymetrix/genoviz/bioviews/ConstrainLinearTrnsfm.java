@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  A transform used internally by NeoSeq, should not be used directly.
@@ -105,7 +106,7 @@ public class ConstrainLinearTrnsfm extends LinearTransform {
 		yoffset = y;
 	}
 
-	public Rectangle2D transform(Rectangle2D src, Rectangle2D dst) {
+	public Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst) {
 		dst.x = src.x * xscale + xoffset;
 		dst.y = src.y * yscale + yoffset;
 		dst.width = src.width * xscale;
@@ -113,7 +114,7 @@ public class ConstrainLinearTrnsfm extends LinearTransform {
 		return dst;
 	}
 
-	public Rectangle2D inverseTransform(Rectangle2D src, Rectangle2D dst) {
+	public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst) {
 		dst.x = (src.x - xoffset) / xscale;
 		dst.y = (src.y - yoffset) / yscale;
 		dst.width = src.width / xscale;

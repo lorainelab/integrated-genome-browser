@@ -19,10 +19,10 @@ import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import java.awt.geom.Rectangle2D;
 
 /**
  * This interface provides general purpose controls for a map.
@@ -356,7 +356,7 @@ public interface NeoMapI extends NeoWidgetI {
 	 * retrieve a Vector of all drawn glyphs that overlap
 	 * the coordinate rectangle coordrect.
 	 */
-	public Vector getItemsByCoord(Rectangle2D coordrect);
+	public Vector getItemsByCoord(Rectangle2D.Double coordrect);
 
 	/**
 	 * retrieve all drawn glyphs that overlap the pixel at point x, y.
@@ -569,16 +569,16 @@ public interface NeoMapI extends NeoWidgetI {
 	public int[] getMapOffset();
 
 	/**
-	 * Returns a Rectangle2D with the maps bounds (x, y, width, height).
+	 * Returns a Rectangle2D.Double with the maps bounds (x, y, width, height).
 	 */
-	public Rectangle2D getCoordBounds();
+	public Rectangle2D.Double getCoordBounds();
 
 	/**
-	 * Returns a Rectangle2D with the
+	 * Returns a Rectangle2D.Double with the
 	 * coordinate bounds (x, y, width, height)
 	 * currently displayed in the map's view.
 	 */
-	public Rectangle2D getViewBounds();
+	public Rectangle2D.Double getViewBounds();
 
 	/**
 	 * Adds a viewbox listener to listen for changes

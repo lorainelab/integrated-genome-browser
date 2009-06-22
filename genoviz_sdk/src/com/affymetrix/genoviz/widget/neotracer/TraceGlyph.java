@@ -18,6 +18,7 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 public class TraceGlyph extends Glyph  {
 	public static final int A = 0;
@@ -99,7 +100,7 @@ public class TraceGlyph extends Glyph  {
 		int beg, end, i, j;
 		double[] traceArray;
 		Graphics g = view.getGraphics();
-		Rectangle2D viewbox = view.getCoordBox();
+		Rectangle2D.Double viewbox = view.getCoordBox();
 
 		pixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
 		coords_per_base = (double)dataCount/(double)baseCount;
@@ -146,7 +147,7 @@ public class TraceGlyph extends Glyph  {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 
@@ -208,7 +209,7 @@ public class TraceGlyph extends Glyph  {
 			sel_glyph.setColor(sel_color);
 			addChild(sel_glyph, 0);
 		}
-		Rectangle2D cb = getCoordBox();
+		Rectangle2D.Double cb = getCoordBox();
 		sel_glyph.setCoords(start,cb.y,end-start + 1,cb.height);
 	}
 
@@ -226,7 +227,7 @@ public class TraceGlyph extends Glyph  {
 		return true;
 	}
 
-	public Rectangle2D getSelectedRegion() {
+	public Rectangle2D.Double getSelectedRegion() {
 		if (sel_glyph == null) {
 			if (selected) {
 				return this.getCoordBox();

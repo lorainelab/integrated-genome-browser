@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  A glyph to display a vertical or horizontal numbered axis.
@@ -318,14 +319,14 @@ public class AxisGlyph extends Glyph {
 		setCenter();
 	}
 
-	public void setCoordBox(Rectangle2D coordbox) {
+	public void setCoordBox(Rectangle2D.Double coordbox) {
 		super.setCoordBox(coordbox);
 		setCenter();
 	}
 
 	double center_line;
 	static int centerLineThickness = 2;
-	private Rectangle2D lastCoordBox = null;
+	private Rectangle2D.Double lastCoordBox = null;
 
 	/**
 	 * Centers the center_line within this axis' coordbox.
@@ -349,14 +350,14 @@ public class AxisGlyph extends Glyph {
 		if (null == lastCoordBox) { // then this is the first time we've done this.
 
 			// Mark the original placement of our coord box.
-			lastCoordBox = new Rectangle2D
+			lastCoordBox = new Rectangle2D.Double
 				(this.coordbox.x,
 				 this.coordbox.y,
 				 this.coordbox.width,
 				 this.coordbox.height);
 
 			// Center the center_line in the original coord box.
-			Rectangle2D centralLine = new Rectangle2D(coordbox.x, coordbox.y, 0f, 0f);
+			Rectangle2D.Double centralLine = new Rectangle2D.Double(coordbox.x, coordbox.y, 0f, 0f);
 			if (orient == VERTICAL) {
 				center_line = coordbox.x + coordbox.width/2;
 				centralLine.x = center_line;
@@ -396,7 +397,7 @@ public class AxisGlyph extends Glyph {
 				}
 			}
 
-			Rectangle2D temp_rect = new Rectangle2D(coordbox.x, coordbox.y,
+			Rectangle2D.Double temp_rect = new Rectangle2D.Double(coordbox.x, coordbox.y,
 					coordbox.width, coordbox.height);
 			// Readjust the coord box to match the new pixel box.
 			theView.transformToCoords(centralBox, temp_rect);
@@ -457,11 +458,11 @@ public class AxisGlyph extends Glyph {
 
 	// A couple constants used only in the draw method.
 	protected int subtick_size = 1;
-	protected static final Rectangle2D unitrect = new Rectangle2D(0,0,1,1);
+	protected static final Rectangle2D.Double unitrect = new Rectangle2D.Double(0,0,1,1);
 	// A couple of temporary rectangles used in the draw method
-	private final Rectangle2D select_coord = new Rectangle2D();
+	private final Rectangle2D.Double select_coord = new Rectangle2D.Double();
 	private final Rectangle select_pix = new Rectangle();
-	private final Rectangle2D scratchcoords = new Rectangle2D();
+	private final Rectangle2D.Double scratchcoords = new Rectangle2D.Double();
 	private final Rectangle scratchpixels = new Rectangle();
 
 	public void draw(ViewI view) {
@@ -493,7 +494,7 @@ public class AxisGlyph extends Glyph {
 		if (DEBUG_DRAW) { System.err.println("Pixels: " + pixelbox); }
 		if (DEBUG_DRAW) { System.err.println("Transform: " + view.getTransform());}
 
-		Rectangle2D scenebox = scene.getCoordBox();
+		Rectangle2D.Double scenebox = scene.getCoordBox();
 		double scene_start, scene_end;
 		if (orient == VERTICAL) {
 			scene_start = scenebox.y;
@@ -1041,7 +1042,7 @@ public class AxisGlyph extends Glyph {
 		return (isHitable() && pixel_hitbox.intersects(pixelbox));
 	}
 
-	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return (isHitable() && coord_hitbox.intersects(coordbox));
 	}
 }

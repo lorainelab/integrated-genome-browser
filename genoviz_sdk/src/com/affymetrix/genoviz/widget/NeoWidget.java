@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
@@ -24,7 +25,6 @@ import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.TransformI;
@@ -36,6 +36,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Abstract implementation of NeoWidgetI.
@@ -113,7 +114,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected Adjustable zoomer[] = new Adjustable[2];
 
 	protected RubberBand rband;
-	protected Rectangle2D bandbox;
+	protected Rectangle2D.Double bandbox;
 	protected boolean rbActivated = false;
 
 	boolean use_neoscrollers = false;
@@ -273,7 +274,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 */
 	public void setFloatBounds(int id, double start, double end) {
 		double size = end - start;
-		Rectangle2D sbox = scene.getCoordBox();
+		Rectangle2D.Double sbox = scene.getCoordBox();
 		if (id == X) {
 			scene.setCoords(start, sbox.y, size, sbox.height);
 		}
@@ -290,7 +291,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 */
 	public void setBounds(int id, int start, int end) {
 		double size = end-start+1;
-		Rectangle2D sbox = scene.getCoordBox();
+		Rectangle2D.Double sbox = scene.getCoordBox();
 		if (id == X) {
 			scene.setCoords(start, sbox.y, size, sbox.height);
 		}
@@ -314,7 +315,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	public Vector getVisibleItems() {
 		// SHOULD THIS BE getViewBounds() INSTEAD!!??!!!
 		//    WHICH GLYPHS DO WE REALLY WANT TO RETURN????
-		Rectangle2D coordrect = getCoordBounds();
+		Rectangle2D.Double coordrect = getCoordBounds();
 		Vector<GlyphI> pickvect = new Vector<GlyphI>();
 		scene.pickTraversal(coordrect, pickvect, view);
 		return pickvect;
@@ -325,7 +326,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 *  retrieve a Vector of all drawn glyphs that overlap
 	 *  the coordinate rectangle coordrect.
 	 */
-	public Vector<GlyphI> getItemsByCoord(Rectangle2D coordrect) {
+	public Vector<GlyphI> getItemsByCoord(Rectangle2D.Double coordrect) {
 		Vector<GlyphI> pickvect = new Vector<GlyphI>();
 		scene.pickTraversal(coordrect, pickvect, view);
 		return pickvect;
@@ -338,7 +339,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	public Vector<GlyphI> getItemsByPixel(int x, int y) {
 		Rectangle pixrect = new Rectangle(x-this.pixelblur, y-this.pixelblur,
 				2*this.pixelblur, 2*this.pixelblur);
-		Rectangle2D coordrect = new Rectangle2D();
+		Rectangle2D.Double coordrect = new Rectangle2D.Double();
 		coordrect = view.transformToCoords(pixrect, coordrect);
 		return this.getItemsByCoord(coordrect);
 	}
@@ -351,7 +352,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 */
 	public Vector<GlyphI> getItems(Rectangle pixrect) {
 		// no pixelblur for region selection
-		Rectangle2D coordrect = new Rectangle2D();
+		Rectangle2D.Double coordrect = new Rectangle2D.Double();
 		coordrect = view.transformToCoords(pixrect, coordrect);
 		return getItemsByCoord(coordrect);
 	}
@@ -364,7 +365,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#setPixelFuzziness
 	 */
 	public Vector<GlyphI> getItems(double x, double y) {
-		Rectangle2D coordrect = new Rectangle2D(x, y, 1, 1);
+		Rectangle2D.Double coordrect = new Rectangle2D.Double(x, y, 1, 1);
 		if (0 < pixelblur) {
 			Rectangle pixrect = new Rectangle();
 			pixrect = view.transformToPixels(coordrect, pixrect);
@@ -463,15 +464,15 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		return gl.getPixelBox(view);
 	}
 
-	public Rectangle2D getCoordBounds() {
+	public Rectangle2D.Double getCoordBounds() {
 		return scene.getCoordBox();
 	}
 
-	public Rectangle2D getViewBounds() {
+	public Rectangle2D.Double getViewBounds() {
 		return view.getCoordBox();
 	}
 
-	public Rectangle2D getCoordBounds(GlyphI gl) {
+	public Rectangle2D.Double getCoordBounds(GlyphI gl) {
 		return gl.getCoordBox();
 	}
 
@@ -537,8 +538,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 		if (checkScrollValue) {
 			// trying to constrain scrolling to stay inside coordinate bounds
-			Rectangle2D scene_coords = getCoordBounds();
-			Rectangle2D view_coords = view.getCoordBox();
+			Rectangle2D.Double scene_coords = getCoordBounds();
+			Rectangle2D.Double view_coords = view.getCoordBox();
 			double min_coord, max_coord;
 			if (id == X) {
 				min_coord = scene_coords.x;
@@ -621,7 +622,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		scroller[id].removeAdjustmentListener(this);
 
 		double coord_beg, coord_end, coord_size;
-		Rectangle2D scenebox = scene.getCoordBox();
+		Rectangle2D.Double scenebox = scene.getCoordBox();
 		if (id == X)  {
 			pixel_offset[id] = -1 * trans.getOffsetX();
 			coord_beg = scenebox.x;
@@ -1134,7 +1135,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			}
 		}
 
-		Rectangle2D prev_view_coords = view.calcCoordBox();
+		Rectangle2D.Double prev_view_coords = view.calcCoordBox();
 		double prev_pixels_per_coord = pixels_per_coord[id];
 		pixels_per_coord[id] = zoom_scale;
 		coords_per_pixel[id] = 1/zoom_scale;
@@ -1142,7 +1143,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			return;
 		}
 
-		Rectangle2D scenebox = scene.getCoordBox();
+		Rectangle2D.Double scenebox = scene.getCoordBox();
 		double prev_coords_per_pixel = 1/prev_pixels_per_coord;
 		double prev_pixel_offset;
 		double coord_beg, coord_end, coord_size;
@@ -1252,7 +1253,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	public boolean isOnTop(GlyphI gl) {
 		if (!gl.isVisible()) { return false; }
-		Rectangle2D cbox = gl.getCoordBox();
+		Rectangle2D.Double cbox = gl.getCoordBox();
 		Vector<GlyphI> pickvect = new Vector<GlyphI>();
 		getScene().pickTraversal(cbox, pickvect, getView());
 		if (pickvect.size() == 0) {
@@ -1278,10 +1279,10 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		// b) the entire glyph is within the bounds of the region of
 		//    the map drawn on screen iff union of view coord box and
 		//    glyph coord box is same size as view coord box
-		Rectangle2D viewbox = getView().getCoordBox();
-		Rectangle2D glyphbox = gl.getCoordBox();
+		Rectangle2D.Double viewbox = getView().getCoordBox();
+		Rectangle2D.Double glyphbox = gl.getCoordBox();
 		if (!glyphbox.intersects(viewbox)) { return false; }
-		Rectangle2D unionbox = viewbox.union(glyphbox);
+		Rectangle2D.Double unionbox = (Rectangle2D.Double)viewbox.createUnion(glyphbox);
 
 		if (unionbox.equals(viewbox)) { return true; }
 		return false;
@@ -1293,7 +1294,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 		// b) part of the glyph is within the bounds of the region of
 		//    the map drawn on screen iff view coord box hits glyph
-		Rectangle2D viewbox = getView().getCoordBox();
+		Rectangle2D.Double viewbox = getView().getCoordBox();
 		return gl.hit(viewbox, this.getView());
 	}
 

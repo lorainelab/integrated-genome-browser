@@ -17,6 +17,7 @@ import java.util.Vector;
 import java.util.Hashtable;
 
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Rectangle2D;
 
 public class GlyphSearchNode implements Cloneable {
 
@@ -130,7 +131,7 @@ public class GlyphSearchNode implements Cloneable {
 		if (debug) {
 			System.out.println("insert");
 		}
-		Rectangle2D cb = g.getCoordBox();
+		Rectangle2D.Double cb = g.getCoordBox();
 		double a = cb.x;
 		double b = cb.x + cb.width;
 		if (a > b) {
@@ -173,7 +174,7 @@ public class GlyphSearchNode implements Cloneable {
 	}
 
 	public void removeGlyph ( GlyphI g ) {
-		Rectangle2D cb = g.getCoordBox();
+		Rectangle2D.Double cb = g.getCoordBox();
 		double a = cb.x;
 		double b = cb.x + cb.width;
 		if (a > b) {
@@ -201,7 +202,7 @@ public class GlyphSearchNode implements Cloneable {
 		// CURRENTLY WE DON'T HANDLE REMOVING OR MOVING GLYPHS!!!
 
 		if (null == o) {
-			Rectangle2D cb = g.getCoordBox();
+			Rectangle2D.Double cb = g.getCoordBox();
 			double a = cb.x;
 			double b = cb.x + cb.width;
 			if (a > b) {
@@ -235,7 +236,7 @@ public class GlyphSearchNode implements Cloneable {
 	}
 
 	private void getOverlaps(GlyphI i, Vector<GlyphI> o) {
-		Rectangle2D gbox = i.getCoordBox();
+		Rectangle2D.Double gbox = i.getCoordBox();
 		double a = gbox.x;
 		double b = gbox.x + gbox.width;
 		if (a > b) {
@@ -252,7 +253,7 @@ public class GlyphSearchNode implements Cloneable {
 			for (int j=0; j<j_size; j++) {
 				GlyphI c = children.elementAt(j);
 				if (i != c) {
-					Rectangle2D cbox = c.getCoordBox();
+					Rectangle2D.Double cbox = c.getCoordBox();
 					if (debug) {
 						System.out.println("cbox[x: " + cbox.x + ", x + width: " + ( cbox.x + cbox.width) + "]" );
 					}
@@ -301,7 +302,7 @@ public class GlyphSearchNode implements Cloneable {
 			int j_size = children.size();
 			for (int j=0; j<j_size; j++) {
 				GlyphI c = children.elementAt(j);
-				Rectangle2D cbox = c.getCoordBox();
+				Rectangle2D.Double cbox = c.getCoordBox();
 				if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
 					o.addElement(c);
 				}

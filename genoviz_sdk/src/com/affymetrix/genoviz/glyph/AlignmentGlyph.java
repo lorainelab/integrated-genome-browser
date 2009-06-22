@@ -18,7 +18,6 @@ import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Scene;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.NASequenceI;
@@ -28,6 +27,7 @@ import com.affymetrix.genoviz.datamodel.NASequence;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.Vector;
 import java.util.Enumeration;
 
@@ -179,7 +179,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		if (null != subGlyphs){
 			for (int k = 0; k<subGlyphs.size(); k++){
 				SolidGlyph sg = (SolidGlyph)(subGlyphs.elementAt(k));
-				Rectangle2D rect = sg.getCoordBox();
+				Rectangle2D.Double rect = sg.getCoordBox();
 				sg.setCoords(rect.x, y, rect.width, height);
 			}
 		}
@@ -653,7 +653,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 		}
 
-		public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
+		public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 			return isVisible?coord_hitbox.intersects(coordbox):false;
 		}
 
@@ -724,7 +724,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		 * expands the AlignmentGlyph if child extends the alignment.
 		 */
 		protected void expandIfNeeded(GlyphI child) {
-			Rectangle2D childbox = child.getCoordBox();
+			Rectangle2D.Double childbox = child.getCoordBox();
 			double oldend = coordbox.x + coordbox.width;
 			double newend = childbox.x + childbox.width;
 			if (childbox.x < coordbox.x || newend > oldend) {

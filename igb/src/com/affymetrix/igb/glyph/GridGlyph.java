@@ -14,15 +14,15 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 //import com.affymetrix.genoviz.bioviews.*;
 
 public final class GridGlyph extends Glyph {
   double grid_spacing = 0;
   Rectangle gridbox_pix = new Rectangle();
-  Rectangle2D gridbox_coords = new Rectangle2D();
+  Rectangle2D.Double gridbox_coords = new Rectangle2D.Double();
 
   public void setGridSpacing(double spacing) {
     grid_spacing = spacing;
@@ -45,7 +45,7 @@ public final class GridGlyph extends Glyph {
     //    coordbox.setRect(getParent().getCoordBox());
     coordbox.setRect(view.getCoordBox());
 
-    Rectangle2D vbox = view.getCoordBox();
+    Rectangle2D.Double vbox = view.getCoordBox();
 
     double xmin = vbox.x;
     double xmax = vbox.x + vbox.width;

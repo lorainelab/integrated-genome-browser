@@ -424,7 +424,7 @@ the probeset, probe and pieces of probes
       return;
     }
 
-    //Rectangle2D parent_coords = parent_glyph.getCoordBox();
+    //Rectangle2D.Double parent_coords = parent_glyph.getCoordBox();
     double probe_height = consensus_exon_height/3;
     double probe_y = consensus_exon_y;
     if (span.isForward()) {probe_y = consensus_exon_y;}

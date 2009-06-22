@@ -27,6 +27,7 @@ import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
 
 public final class GraphGlyphUtils {
@@ -89,7 +90,7 @@ public final class GraphGlyphUtils {
     boolean changed_coords = false;
     if (gl.getGraphState().getFloatGraph()) {
       Rectangle mapbox = map.getView().getPixelBox();
-      Rectangle2D gbox = gl.getCoordBox();
+      Rectangle2D.Double gbox = gl.getCoordBox();
       if (gbox.y < mapbox.y) {
         gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
         //      System.out.println("adjusting graph coords + : " + gl.getCoordBox());
@@ -125,7 +126,7 @@ public final class GraphGlyphUtils {
     multi_graph_glyph.setForegroundColor(Color.white);
     multi_graph_glyph.setColor(Color.white);
 
-    Rectangle2D mapbox = map.getCoordBounds();
+    Rectangle2D.Double mapbox = map.getCoordBounds();
     multi_graph_glyph.setCoords(mapbox.x, graph_yloc, mapbox.width, graph_height);
     float maxy = Float.NEGATIVE_INFINITY;
     float miny = Float.POSITIVE_INFINITY;

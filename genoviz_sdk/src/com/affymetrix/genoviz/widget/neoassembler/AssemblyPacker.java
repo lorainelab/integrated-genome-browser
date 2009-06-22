@@ -18,6 +18,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.glyph.*;
+import java.awt.geom.Rectangle2D;
 
 public class AssemblyPacker implements PackerI {
 
@@ -59,8 +60,8 @@ public class AssemblyPacker implements PackerI {
 
 
 	protected void pack(GlyphI assembly, AlignmentGlyph seq, int position) {
-		Rectangle2D assemblyBox = assembly.getCoordBox();
-		Rectangle2D seqBox = seq.getCoordBox();
+		Rectangle2D.Double assemblyBox = assembly.getCoordBox();
+		Rectangle2D.Double seqBox = seq.getCoordBox();
 		double offset = assemblyBox.y + (position * (seqBox.height + spacing));
 		if (seq.isForward()) {
 			seq.setCoords(seqBox.x, offset, seqBox.width, seqBox.height);
@@ -81,14 +82,14 @@ public class AssemblyPacker implements PackerI {
 	public Rectangle pack(GlyphI assembly, ViewI view) {
 		if (assembly == null || view == null) { return null; }
 		Vector alignments = assembly.getChildren();
-		Rectangle2D prevbox = assembly.getCoordBox();
+		Rectangle2D.Double prevbox = assembly.getCoordBox();
 		assembly.setCoords(prevbox.x, prevbox.y, prevbox.width, 0);
 
 		if (alignments == null) { return null; }
 		AlignmentGlyph align;
 		int i;
 		double offset;
-		Rectangle2D rect, cbox;
+		Rectangle2D.Double rect, cbox;
 
 		cbox = assembly.getCoordBox();
 		offset = cbox.y;

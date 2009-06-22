@@ -17,6 +17,7 @@ import java.awt.Rectangle;
 import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.geom.Rectangle2D;
 
 public final class CollapsePacker implements PaddedPackerI {
   public static final int ALIGN_TOP = 1000;
@@ -29,7 +30,7 @@ public final class CollapsePacker implements PaddedPackerI {
   protected double spacing = 0;
 
   public Rectangle pack(GlyphI parent, ViewI view) {
-    Rectangle2D pbox = parent.getCoordBox();
+    Rectangle2D.Double pbox = parent.getCoordBox();
     Vector children = parent.getChildren();
     double maxHeight = 0;
 
@@ -47,7 +48,7 @@ public final class CollapsePacker implements PaddedPackerI {
     parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
     moveAllChildren(parent, view);
 
-    Rectangle2D newbox = new Rectangle2D();
+    Rectangle2D.Double newbox = new Rectangle2D.Double();
     newbox.setRect(parent.getCoordBox());
     // trying to transform according to tier's internal transform  
     //   (since packing is done base on tier's children)
@@ -94,8 +95,8 @@ public final class CollapsePacker implements PaddedPackerI {
   }
 
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
-    Rectangle2D pbox = parent.getCoordBox();
-    Rectangle2D cbox = child.getCoordBox();
+    Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D.Double cbox = child.getCoordBox();
     
     if (alignment == ALIGN_CENTER) {
       double center = pbox.y + pbox.height / 2;

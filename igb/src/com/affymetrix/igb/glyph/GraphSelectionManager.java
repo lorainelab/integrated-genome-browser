@@ -43,6 +43,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.ContextualPopupListener;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -623,7 +624,7 @@ public final class GraphSelectionManager
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
     NeoWidgetI widg = (NeoWidgetI)nevt.getSource();
     if (scaling_graph)  {
-      Rectangle2D bbox = graph_to_scale.getCoordBox();
+      Rectangle2D.Double bbox = graph_to_scale.getCoordBox();
       double coord_diff = start_mouse_ycoord - nevt.getCoordY();
       //      System.out.println(coord_diff);
       double graph_center = bbox.y + (bbox.height/2);
@@ -701,7 +702,7 @@ public final class GraphSelectionManager
         ViewI view = widg.getView();
         GlyphI threshgl = gl;
         SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
-        Rectangle2D tbox = threshgl.getCoordBox();
+        Rectangle2D.Double tbox = threshgl.getCoordBox();
         float new_threshold = graphgl.getGraphValue(view, tbox.y);
         if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {
           graphgl.setMinScoreThreshold(new_threshold);

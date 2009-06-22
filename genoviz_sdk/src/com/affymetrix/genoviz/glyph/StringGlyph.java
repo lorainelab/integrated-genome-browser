@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A glyph used to display a text string.
@@ -86,7 +87,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		int text_height = fm.getAscent();
 		int blank_width = fm.charWidth ('z')*2;
 
-		Rectangle2D view_box = view.getCoordBox();
+		Rectangle2D.Double view_box = view.getCoordBox();
 		view.transformToPixels(coordbox, pixelbox);
 		if (DEBUG_PIXELBOX) {
 			debug_rect.setBounds(pixelbox.x, pixelbox.y,

@@ -24,9 +24,9 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 //import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  AlignControl tries to display other seq of a pairwise alignment in
@@ -92,7 +92,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
     SeqSpan curspan = annot_sym.getSpan(aseq);
 
     // base length of view in other IGB on length of view in current IGB?
-    Rectangle2D vbox = gviewer.getSeqMap().getViewBounds();
+    Rectangle2D.Double vbox = gviewer.getSeqMap().getViewBounds();
     int view_length = (int)vbox.width;
     
     SeqSpan other_span = FindOtherSpan(annot_sym, curspan);

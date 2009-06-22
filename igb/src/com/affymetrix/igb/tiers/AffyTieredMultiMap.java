@@ -30,6 +30,7 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.swing.SixWaySplitPane;
+import java.awt.geom.Rectangle2D;
 
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which
@@ -246,10 +247,10 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    */
   public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) {
     super.packTiers(full_repack, stretch_map, extra_for_now);
-    Rectangle2D lbox = extramap.getCoordBounds();
+    Rectangle2D.Double lbox = extramap.getCoordBounds();
 		for (TierGlyph extra_glyph : extra_glyphs) {
       TierGlyph tier_glyph = (TierGlyph)extra_glyph.getInfo();
-      Rectangle2D tbox = tier_glyph.getCoordBox();
+      Rectangle2D.Double tbox = tier_glyph.getCoordBox();
       extra_glyph.setCoords(0, 0, lbox.width, tbox.height);
       extra_glyph.moveAbsolute(lbox.x, tbox.y);
       for (int k=0; k<extra_glyph.getChildCount(); k++) {
@@ -293,7 +294,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
 //  public void addNorthEastGlyph( SolidGlyph theGlyph ) {
 //    int[] offset = this.northEastMap.getMapOffset();
 //    int[] range = this.northEastMap.getMapRange();
-//    Rectangle2D r = new Rectangle2D( range[0], offset[0], range[1], offset[1] );
+//    Rectangle2D.Double r = new Rectangle2D( range[0], offset[0], range[1], offset[1] );
 //    theGlyph.setCoordBox( r );
 //    theGlyph.setCoords(0, 0, 100, 100);
 //    this.northEastMap.addItem( theGlyph );

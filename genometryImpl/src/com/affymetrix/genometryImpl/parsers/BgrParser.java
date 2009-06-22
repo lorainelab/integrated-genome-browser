@@ -61,8 +61,7 @@ public final class BgrParser {
 
 		if (headers == null) {
 			headers = new HashMap(); // use an empty map
-		}
-		else {
+		}		           
 			if (headers.get("seq_name") == null) {
 				if (graf.getGraphSeq() == null) {
 					dos.writeUTF("null");
@@ -72,22 +71,21 @@ public final class BgrParser {
 			}
 			else { dos.writeUTF((String)headers.get("seq_name")); }
 			if (headers.get("release_name") == null)  {dos.writeUTF("null"); }
-			else  { dos.writeUTF((String)headers.get("release_name")); }
+			else  { dos.writeUTF((String)headers.get("release_name")); }           
 			if (headers.get("analysis_group_name") == null)  { dos.writeUTF("null");}
-			else  { dos.writeUTF((String)headers.get("analysis_group_name")); }
+			else  { dos.writeUTF((String)headers.get("analysis_group_name")); }           
 			if (headers.get("map_analysis_group_name") == null)  { dos.writeUTF("null"); }
-			else  { dos.writeUTF((String)headers.get("map_analysis_group_name")); }
+			else  { dos.writeUTF((String)headers.get("map_analysis_group_name")); }           
 			if (headers.get("method_name") == null)  { dos.writeUTF("null");}
-			else  { dos.writeUTF((String)headers.get("method_name")); }
+			else  { dos.writeUTF((String)headers.get("method_name")); }          
 			if (headers.get("parameter_set_name") == null)  { dos.writeUTF("null");}
-			else  {dos.writeUTF((String)headers.get("parameter_set_name"));}
+			else  {dos.writeUTF((String)headers.get("parameter_set_name"));}           
 			if (headers.get("value_type_name") == null)  { dos.writeUTF("null"); }
-			else  { dos.writeUTF((String)headers.get("value_type_name")); }
+			else  { dos.writeUTF((String)headers.get("value_type_name")); }           
 			if (headers.get("control_group_name") == null) { dos.writeUTF("null"); }
-			else { dos.writeUTF((String)headers.get("control_group_name")); }
-		}
+			else { dos.writeUTF((String)headers.get("control_group_name")); }           		
 		dos.writeInt(total_points);
-		for (int i=0; i<total_points; i++) {
+		for (int i=0; i<total_points; i++) {        
 			dos.writeInt(xcoords[i]);
 			dos.writeFloat(graf.getGraphYCoord(i));
 		}

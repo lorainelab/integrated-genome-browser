@@ -25,6 +25,7 @@ import java.util.regex.*;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.DNAUtils;
@@ -34,7 +35,6 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
-import java.awt.geom.Rectangle2D;
 
 public final class SeqSearchView extends JComponent implements ActionListener  {
 
@@ -204,7 +204,7 @@ public final class SeqSearchView extends JComponent implements ActionListener  {
             int pos = Integer.parseInt(stripped);
             //  if (vseq != null && pos >= vseq.getMin() && pos <= vseq.getMax()) {
             if (vseq != null && pos >= 0 && pos <= vseq.getLength()) {
-                Rectangle2D.Double vbox = map.getViewBounds();
+                Rectangle2D vbox = map.getViewBounds();
                 double map_start = pos - vbox.width / 2;
                 map.scroll(NeoMap.X, map_start);
                 gviewer.setZoomSpotX((double) pos);

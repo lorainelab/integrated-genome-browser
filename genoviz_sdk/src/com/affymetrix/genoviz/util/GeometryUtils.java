@@ -13,8 +13,8 @@
 
 package com.affymetrix.genoviz.util;
 
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  Static methods for efficient geometry operations.
@@ -37,13 +37,13 @@ public class GeometryUtils {
 	/**
 	 *  Calculate the intersection of src1 and src2, and return as modified dst.
 	 */
-	public static Rectangle2D.Double intersection(Rectangle2D.Double src1, Rectangle2D.Double src2,
-			Rectangle2D.Double dst) {
+	public static Rectangle2D intersection(Rectangle2D src1, Rectangle2D src2,
+			Rectangle2D dst) {
 		double xbeg = Math.max(src1.x, src2.x);
 		double xend = Math.min(src1.x + src1.width, src2.x + src2.width);
 		double ybeg = Math.max(src1.y, src2.y);
 		double yend = Math.min(src1.y + src1.height, src2.y + src2.height);
-		dst.setRect(xbeg, ybeg, xend - xbeg, yend - ybeg);
+		dst.reshape(xbeg, ybeg, xend - xbeg, yend - ybeg);
 		return dst;
 	}
 
@@ -63,13 +63,13 @@ public class GeometryUtils {
 	/**
 	 *  Calculate the union of src1 and src2, and return as modified dst.
 	 */
-	public static Rectangle2D.Double union(Rectangle2D.Double src1, Rectangle2D.Double src2,
-			Rectangle2D.Double dst) {
+	public static Rectangle2D union(Rectangle2D src1, Rectangle2D src2,
+			Rectangle2D dst) {
 		double xbeg = Math.min(src1.x, src2.x);
 		double xend = Math.max(src1.x + src1.width, src2.x + src2.width);
 		double ybeg = Math.min(src1.y, src2.y);
 		double yend = Math.max(src1.y + src1.height, src2.y + src2.height);
-		dst.setRect(xbeg, ybeg, xend - xbeg, yend - ybeg);
+		dst.reshape(xbeg, ybeg, xend - xbeg, yend - ybeg);
 		return dst;
 	}
 

@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Modified version of {@link com.affymetrix.genoviz.glyph.SequenceGlyph}.
@@ -46,7 +45,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	SearchableCharIterator chariter;
 	FillRectGlyph full_rect; // the background rectangle
 	boolean residuesSet = false;
-	Rectangle2D.Double scratchrect;
+	Rectangle2D scratchrect;
 	int residue_length = 0;
 	static Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
@@ -62,7 +61,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	public CharSeqGlyph() {
 		super(HORIZONTAL);
 		full_rect = new FillRectGlyph();
-		scratchrect = new Rectangle2D.Double();
+		scratchrect = new Rectangle2D();
 		setResidueFont(mono_default_font);
 	}
 
@@ -73,7 +72,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	}
 
 	@Override
-	public void setCoordBox(Rectangle2D.Double coordbox) {
+	public void setCoordBox(Rectangle2D coordbox) {
 		super.setCoordBox(coordbox);
 		full_rect.setCoordBox(coordbox);
 	}
@@ -145,7 +144,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	// Essentially the same as SequenceGlyph.drawHorizontal
 	@Override
 	public void draw(ViewI view) {
-		Rectangle2D.Double coordclipbox = view.getCoordBox();
+		Rectangle2D coordclipbox = view.getCoordBox();
 		Graphics g = view.getGraphics();
 		double pixels_per_base;
 		int visible_ref_beg, visible_ref_end,
@@ -170,7 +169,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 				seq_end_index = residue_length;
 			}
 
-			scratchrect.setRect(visible_seq_beg, coordbox.y,
+			scratchrect.reshape(visible_seq_beg, coordbox.y,
 							visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = ((LinearTransform) view.getTransform()).getScaleX();
@@ -255,7 +254,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	}
 
 	@Override
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view) {
 		return isVisible && isHitable() && coord_hitbox.intersects(coordbox);
 	}
 

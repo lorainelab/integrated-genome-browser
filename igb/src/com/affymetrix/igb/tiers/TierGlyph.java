@@ -26,7 +26,6 @@ import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  TierGlyph is intended for use with AffyTieredMap.
@@ -187,7 +186,7 @@ public class TierGlyph extends SolidGlyph {
       // could do max list as int array or as symmetry list, for now doing symmetry list
       max_child_sofar = new ArrayList<GlyphI>(child_count);
       GlyphI curMaxChild = getChild(0);
-      Rectangle2D.Double curbox = curMaxChild.getCoordBox();
+      Rectangle2D curbox = curMaxChild.getCoordBox();
       double max = curbox.x + curbox.width;
       for (int i=0; i<child_count; i++) {
 	GlyphI child = this.getChild(i);
@@ -258,7 +257,7 @@ public class TierGlyph extends SolidGlyph {
     while (cur_index > 0) {
       cur_index--;
       GlyphI cur_max_glyph = max_child_sofar.get(cur_index);
-      Rectangle2D.Double rect = cur_max_glyph.getCoordBox();
+      Rectangle2D rect = cur_max_glyph.getCoordBox();
       double cur_max = rect.x + rect.width;
       if (cur_max < query_min) {
 	cur_index++;
@@ -270,7 +269,7 @@ public class TierGlyph extends SolidGlyph {
     ArrayList<GlyphI> result = new ArrayList<GlyphI>();
     for (int i=cur_index; i<query_index; i++) {
       GlyphI child = getChild(i);
-      Rectangle2D.Double rect = child.getCoordBox();
+      Rectangle2D rect = child.getCoordBox();
       double max = rect.x + rect.width;
       if (max >= query_min) {
 	result.add(child);
@@ -338,8 +337,8 @@ public class TierGlyph extends SolidGlyph {
     for (int i=0; i<cycles; i++) {
       initForSearching();
       super.pack(view);
-      Rectangle2D.Double mbox = scene.getCoordBox();
-      Rectangle2D.Double cbox = this.getCoordBox();
+      Rectangle2D mbox = scene.getCoordBox();
+      Rectangle2D cbox = this.getCoordBox();
 
       if (shouldDrawLabel()) {
         // Add extra space to make room for the label.
@@ -402,8 +401,8 @@ public class TierGlyph extends SolidGlyph {
     int mcount = middle_glyphs.size();
     for (int i=0; i<mcount; i++) {
       GlyphI mglyph = middle_glyphs.get(i);
-      Rectangle2D.Double mbox = mglyph.getCoordBox();
-      mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
+      Rectangle2D mbox = mglyph.getCoordBox();
+      mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
       mglyph.setColor(style.getBackground());
       mglyph.drawTraversal(view);
     }
@@ -445,7 +444,7 @@ public class TierGlyph extends SolidGlyph {
       g.setFont(default_font);
       FontMetrics fm = g.getFontMetrics();
 
-//      java.awt.geom.Rectangle2D.Double rect2d = g.getFontMetrics().getStringBounds(getLabel(), g);
+//      java.awt.geom.Rectangle2D rect2d = g.getFontMetrics().getStringBounds(getLabel(), g);
 //      g.setColor(Color.CYAN);
 //      g.fillRect((hpix.x + hpix.width + 1), (hpix.y  + 1),
 //          (int) rect2d.getWidth(), (int) rect2d.getHeight());

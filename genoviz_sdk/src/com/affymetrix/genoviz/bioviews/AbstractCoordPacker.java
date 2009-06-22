@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import com.affymetrix.genoviz.util.*;
 
@@ -34,7 +33,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 	protected double spacing = 2;
 
 	protected int movetype;
-	protected Rectangle2D.Double before = new Rectangle2D.Double();
+	protected Rectangle2D before = new Rectangle2D();
 
 	/**
 	 * constructs a packer that moves glyphs away from the horizontal axis.
@@ -81,7 +80,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 	 *     This is the minimal distance glyph coordboxes need to be separated by
 	 *     in order to be considered not overlapping.
 	 * <p> <em>WARNING: better not make this greater than spacing.</em>
-	 * <p> Note that since Rectangle2D.Double does not consider two rects
+	 * <p> Note that since Rectangle2D does not consider two rects
 	 *     that only share an edge to be intersecting,
 	 *     will need to have a coord_fuzziness &gt; 0
 	 *     in order to consider these to be overlapping.
@@ -134,8 +133,8 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 	 */
 	public void moveToAvoid(GlyphI glyph_to_move,
 			GlyphI glyph_to_avoid, int movetype)  {
-		Rectangle2D.Double movebox = glyph_to_move.getCoordBox();
-		Rectangle2D.Double avoidbox = glyph_to_avoid.getCoordBox();
+		Rectangle2D movebox = glyph_to_move.getCoordBox();
+		Rectangle2D avoidbox = glyph_to_avoid.getCoordBox();
 
 		/*
 		 * Mirror vertically about the horizontal coordinate axis

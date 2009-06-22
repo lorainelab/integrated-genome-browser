@@ -44,7 +44,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -596,7 +595,7 @@ public final class SimpleGraphTab extends JPanel
 			AffyTieredMap map = gviewer.getSeqMap();
 
 			for (GraphGlyph gl : glyphs) {
-				Rectangle2D.Double cbox = gl.getCoordBox();
+				Rectangle2D cbox = gl.getCoordBox();
 				gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
 				// If a graph is joined with others in a combo tier, repack that tier.
@@ -900,7 +899,7 @@ public final class SimpleGraphTab extends JPanel
 					//GraphGlyphUtils.floatGraph(gl, gviewer);
 
 					// figure out correct height
-					Rectangle2D.Double coordbox = gl.getCoordBox();
+					Rectangle2D coordbox = gl.getCoordBox();
 					Rectangle pixbox = new Rectangle();
 					gviewer.getSeqMap().getView().transformToPixels(coordbox, pixbox);
 					gstate.getTierStyle().setY(pixbox.y);
@@ -912,9 +911,9 @@ public final class SimpleGraphTab extends JPanel
 					//GraphGlyphUtils.attachGraph(gl, gviewer);
 
 					// figure out correct height
-					Rectangle2D.Double tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
+					Rectangle2D tempbox = gl.getCoordBox();  // pixels, since in PixelFloaterGlyph 1:1 mapping of pixel:coord
 					Rectangle pixbox = new Rectangle((int) tempbox.x, (int) tempbox.y, (int) tempbox.width, (int) tempbox.height);
-					Rectangle2D.Double coordbox = new Rectangle2D.Double();
+					Rectangle2D coordbox = new Rectangle2D();
 					gviewer.getSeqMap().getView().transformToCoords(pixbox, coordbox);
 					gstate.getTierStyle().setY(coordbox.y); // currently y has no effect on attached graphs, but will someday
 					gstate.getTierStyle().setHeight(coordbox.height);

@@ -45,7 +45,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.swing.DisplayUtils;
-import java.awt.geom.Rectangle2D;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -453,7 +452,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     if (aseq == null) {
       Application.errorPanel("Error", "Nothing to bookmark");
     } else {
-      Rectangle2D.Double vbox = map.getView().getCoordBox();
+      Rectangle2D vbox = map.getView().getCoordBox();
       SimpleSymWithProps mark_sym = new BookmarkSymmetry();
       SeqSpan mark_span = new SimpleSeqSpan((int)vbox.x,
                                             (int)(vbox.x+vbox.width),

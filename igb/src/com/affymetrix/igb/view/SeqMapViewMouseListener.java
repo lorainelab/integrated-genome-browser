@@ -22,7 +22,6 @@ import com.affymetrix.igb.tiers.*;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 
@@ -241,7 +240,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
     // calculate pixel width of topgl, if <= 2, and it has no children,
     //   and parent glyphs has pixel width <= 10, then select parent instead of child..
     Rectangle pbox = new Rectangle();
-    Rectangle2D.Double cbox = topgl.getCoordBox();
+    Rectangle2D cbox = topgl.getCoordBox();
     map.getView().transformToPixels(cbox, pbox);
 
     if (pbox.width <= 2) {
@@ -321,7 +320,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
       rubber_band_start = evt;
     }
     if (evt.getID() == NeoRubberBandEvent.BAND_END) {
-      Rectangle2D.Double cbox = new Rectangle2D.Double();
+      Rectangle2D cbox = new Rectangle2D();
       Rectangle pbox = evt.getPixelBox();
       map.getView().transformToCoords(pbox, cbox);
       if (DEBUG_RUBBERBAND) {

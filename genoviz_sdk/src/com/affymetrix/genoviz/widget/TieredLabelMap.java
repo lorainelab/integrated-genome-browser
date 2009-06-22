@@ -17,7 +17,9 @@ import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
 
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.event.TierEvent;
+import com.affymetrix.genoviz.widget.NeoWidgetI;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 
 /**

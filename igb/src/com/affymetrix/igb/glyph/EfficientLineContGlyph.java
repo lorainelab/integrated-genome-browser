@@ -14,12 +14,12 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 /**
@@ -124,7 +124,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
 
   @Override
-  public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible ? coord_hitbox.intersects(this) : false;
   }
 
@@ -147,7 +147,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
     if (isMoveChildren()) {
       // child.cbox.y is modified, but not child.cbox.height)
       // center the children of the LineContainerGlyph on the line
-      final Rectangle2D.Double cbox = child.getCoordBox();
+      final Rectangle2D cbox = child.getCoordBox();
       final double ycenter = this.y + this.height/2;
       // use moveAbsolute or moveRelative to make sure children of "child" glyph also get moved
       child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);

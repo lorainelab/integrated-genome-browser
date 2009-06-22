@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.awt.geom.Point2D;
 
@@ -148,8 +147,8 @@ public class GlyphDragger
 			cur_point.y = prev_point.y;
 		}
 		if (force_within_parent) {
-			Rectangle2D.Double pbox = dragged_glyph.getParent().getCoordBox();
-			Rectangle2D.Double cbox = dragged_glyph.getCoordBox();
+			Rectangle2D pbox = dragged_glyph.getParent().getCoordBox();
+			Rectangle2D cbox = dragged_glyph.getCoordBox();
 			if (cur_point.y < pbox.y) {
 				dragged_glyph.moveAbsolute(cbox.x, pbox.y);
 			}
@@ -226,7 +225,7 @@ public class GlyphDragger
 		else {
 			newgl.setColor(col);
 		}
-		Rectangle2D.Double cbox = gl.getCoordBox();
+		Rectangle2D cbox = gl.getCoordBox();
 		newgl.setCoords(cbox.x, cbox.y-5, cbox.width, cbox.height);
 		Vector children = gl.getChildren();
 		if (children != null) {

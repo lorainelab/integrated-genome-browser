@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.*;
@@ -1202,7 +1201,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	public Range getVisibleRange() {
 
-		Rectangle2D.Double visible_box = residue_map.getView().calcCoordBox();
+		Rectangle2D visible_box = residue_map.getView().calcCoordBox();
 
 		int start = (int)(visible_box.y);
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
@@ -1236,7 +1235,7 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 	public int getCoordResidue(double xcoord, double ycoord) {
-		Rectangle2D.Double visible_box = residue_map.getView().calcCoordBox();
+		Rectangle2D visible_box = residue_map.getView().calcCoordBox();
 
 		if (xcoord < 0) {
 			xcoord = 0;
@@ -1933,8 +1932,8 @@ public class NeoSeq extends NeoContainerWidget
 		if (!drag_scrolling_enabled || (src != residue_drag_monitor)) { return; }
 		int direction = evt.getDirection();
 		if (direction != NORTH && direction != SOUTH) { return; }
-		Rectangle2D.Double mbox = residue_map.getCoordBounds();
-		Rectangle2D.Double vbox = residue_map.getViewBounds();
+		Rectangle2D mbox = residue_map.getCoordBounds();
+		Rectangle2D vbox = residue_map.getViewBounds();
 		int coord_to_scroll;
 
 		if (direction == NORTH) {

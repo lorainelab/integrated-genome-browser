@@ -24,6 +24,7 @@ import java.net.URL;
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Span;
@@ -41,7 +42,6 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
-import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
 /**
@@ -958,7 +958,7 @@ public class NeoAssemblerDemo extends Applet
 
 	public String getSelectedResidues ( AlignmentGlyph theGlyph ) {
 		if ( ! (theGlyph.isSelected() ) ) return( "" );
-		Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
+		Rectangle2D selectedBox = theGlyph.getSelectedRegion();
 		Mapping glyphMap = theGlyph.getMapping();
 		SequenceI glyphSeq = theGlyph.getSequence();
 		int begSeq = (int)selectedBox.x;
@@ -983,7 +983,7 @@ public class NeoAssemblerDemo extends Applet
 				theRange[1] = 0;
 			}
 			else {
-				Rectangle2D.Double selectedBox = theGlyph.getSelectedRegion();
+				Rectangle2D selectedBox = theGlyph.getSelectedRegion();
 				theRange[0] = (int)(selectedBox.x);
 				theRange[1] = (int)(selectedBox.x + selectedBox.width - 1);
 			}

@@ -23,7 +23,6 @@ import com.affymetrix.igb.Application;
 
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.event.VirtualRubberBandEvent;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  Splits a tiered map across multiple windows on multiple screens.
@@ -90,7 +89,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
     double yoffset = trans.getOffsetY();
     //    temp_trans.copyTransform(trans);
     // figure out total coords in view -- should be able to just get coordbox?
-    //    Rectangle2D.Double view_cbox = rootview.getCoordBox();
+    //    Rectangle2D view_cbox = rootview.getCoordBox();
     //    Rectangle view_pbox = rootview.getPixelBox();
 
     //int map_count = child_maps.size();
@@ -324,7 +323,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 
       // do same to calculate pixel box for new RubberBandEvent
       Rectangle orig_pixbox = evt.getPixelBox();
-      Rectangle2D.Double cbox = new Rectangle2D.Double();
+      Rectangle2D cbox = new Rectangle2D();
       orig_map.getView().transformToCoords(orig_pixbox, cbox);
       Rectangle new_pixbox = new Rectangle();
       this.getView().transformToPixels(cbox, new_pixbox);

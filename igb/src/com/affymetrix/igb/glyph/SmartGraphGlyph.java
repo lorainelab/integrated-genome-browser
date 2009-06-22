@@ -34,13 +34,13 @@ import com.affymetrix.genometryImpl.GraphSym;
 //import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
 /*
  * These are replacing private copies which (Smart)GraphGlyph used to keep
  */
-import java.awt.geom.Rectangle2D;
 import static com.affymetrix.genometryImpl.style.GraphStateI.BAR_GRAPH;
 import static com.affymetrix.genometryImpl.style.GraphStateI.AVG_HEAT_MAP;
 import static com.affymetrix.genometryImpl.style.GraphStateI.EXT_HEAT_MAP;
@@ -89,7 +89,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
   boolean MINMAXBAR = true;
   int thresh_contig_height = 10;  // in pixels, for calculating where to draw thresholded regions
   int thresh_contig_yoffset = 2;  // in pixels, for calculating where to draw thresholded regions
-  Rectangle2D.Double thresh_coord_box = new Rectangle2D.Double();  // for calculating where to draw thresholded regions
+  Rectangle2D thresh_coord_box = new Rectangle2D();  // for calculating where to draw thresholded regions
   Rectangle thresh_pix_box = new Rectangle();  // for calculating where to draw thresholded regions
 
   Color thresh_color;
@@ -279,7 +279,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
     double offset = scratch_trans.getOffsetY();
 
     //    Rectangle view_pixbox = view.getPixelBox();
-    Rectangle2D.Double view_coordbox = view.getCoordBox();
+    Rectangle2D view_coordbox = view.getCoordBox();
     double xmin = view_coordbox.x;
     double xmax = view_coordbox.x + view_coordbox.width;
     //int beg_index = 0;
@@ -764,7 +764,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 			max_score_threshold = Float.POSITIVE_INFINITY;
 		}
 
-		Rectangle2D.Double view_coordbox = view.getCoordBox();
+		Rectangle2D view_coordbox = view.getCoordBox();
 		double xmin = view_coordbox.x;
 		double xmax = view_coordbox.x + view_coordbox.width;
 		int draw_beg_index;

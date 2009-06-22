@@ -18,7 +18,6 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import java.awt.geom.Rectangle2D;
 
 public class EfficientLabelledGlyph extends EfficientSolidGlyph implements LabelledGlyph  {
 
@@ -26,7 +25,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
   static boolean DEBUG_OPTIMIZED_FILL = false;
   static boolean optimize_child_draw = true;
 
-  static Rectangle2D.Double scratch_cbox = new Rectangle2D.Double();
+  static Rectangle2D scratch_cbox = new Rectangle2D();
 
   static int max_char_ypix = 40; // maximum allowed pixel height of chars
   static int max_char_xpix = 30; // maximum allowed pixel width of chars
@@ -200,7 +199,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
   }
 
 
-  public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible?coord_hitbox.intersects(this):false;
   }
 

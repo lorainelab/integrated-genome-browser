@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.glyph;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import com.affymetrix.genoviz.bioviews.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  A glyph that paints a specified Image when it draws.
@@ -181,7 +180,7 @@ public class BasicImageGlyph extends Glyph {
 	// this isn't going to be very accurate -- really need to back-calculate
 	// apparent coord box based on center coord, img_width, img_height
 	// GAH  3-26-98
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 

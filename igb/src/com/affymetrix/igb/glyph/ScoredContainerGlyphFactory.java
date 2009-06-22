@@ -35,7 +35,6 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.geom.Rectangle2D;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
@@ -92,7 +91,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
     } else { // aseq == vseq, so no transformation needed
       the_graph_syms = makeGraphs(original_container, seq_group);
     }
-    Rectangle2D.Double cbox = map.getCoordBounds();
+    Rectangle2D cbox = map.getCoordBounds();
     for (int q=0; q<the_graph_syms.length; q++) {
       GraphIntervalSym gis = the_graph_syms[q];
       

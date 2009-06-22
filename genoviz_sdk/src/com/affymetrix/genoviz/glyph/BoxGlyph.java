@@ -14,7 +14,7 @@
 package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import java.awt.geom.Rectangle2D;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 /**
  * A glyph that contains children within an outline.
@@ -34,7 +34,7 @@ public class BoxGlyph extends OutlineRectGlyph  {
 	 */
 	public void addChild(GlyphI glyph) {
 		// child.cbox.y is modified, but not child.cbox.height
-		Rectangle2D.Double cbox = glyph.getCoordBox();
+		Rectangle2D cbox = glyph.getCoordBox();
 		double yPosition = this.coordbox.y + yy * this.coordbox.height / 3;
 		if ( 1 == yy ) {
 			yy = 2;

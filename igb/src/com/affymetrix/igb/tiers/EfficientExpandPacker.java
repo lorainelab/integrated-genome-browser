@@ -19,7 +19,6 @@ import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
-import java.awt.geom.Rectangle2D;
 
 public class EfficientExpandPacker extends ExpandPacker {
   boolean DEBUG_PACK = false;
@@ -35,8 +34,8 @@ public class EfficientExpandPacker extends ExpandPacker {
     if (sibs == null || sibs.size() <= 0) { return null; }  // return if nothing to pack
 
     GlyphI child;
-    Rectangle2D.Double cbox;
-    Rectangle2D.Double pbox = tier.getCoordBox();
+    Rectangle2D cbox;
+    Rectangle2D pbox = tier.getCoordBox();
     // resetting height of tier to just spacers
     tier.setCoords(pbox.x, 0, pbox.width, 2 * parent_spacer);
 
@@ -73,10 +72,10 @@ public class EfficientExpandPacker extends ExpandPacker {
       //      System.out.println(child.getCoordBox());
     }
 
-    Rectangle2D.Double newbox = new Rectangle2D.Double();
-    Rectangle2D.Double tempbox = new Rectangle2D.Double();
+    Rectangle2D newbox = new Rectangle2D();
+    Rectangle2D tempbox = new Rectangle2D();  
     child = (GlyphI)sibs.elementAt(0);
-    newbox.setRect(pbox.x, child.getCoordBox().y,
+    newbox.reshape(pbox.x, child.getCoordBox().y, 
                    pbox.width, child.getCoordBox().height);
     sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
@@ -88,16 +87,16 @@ public class EfficientExpandPacker extends ExpandPacker {
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
 	child = (GlyphI)sibs.elementAt(i);
-	Rectangle2D.Double childbox = child.getCoordBox();
-	tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
+	Rectangle2D childbox = child.getCoordBox();
+	tempbox.reshape(newbox.x, childbox.y, newbox.width, childbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
       }
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
 	child = (GlyphI)sibs.elementAt(i);
-	Rectangle2D.Double childbox = child.getCoordBox();
-	tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
+	Rectangle2D childbox = child.getCoordBox();
+	tempbox.reshape(childbox.x, newbox.y, childbox.width, newbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
       }
     }
@@ -131,8 +130,8 @@ public class EfficientExpandPacker extends ExpandPacker {
     TierGlyph tier = (TierGlyph)parent;
     boolean test_tier = tier.getLabel().startsWith("test");
     //    System.out.println("packing child: " + child);
-    Rectangle2D.Double childbox, siblingbox;
-    Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D childbox, siblingbox;
+    Rectangle2D pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
     if (movetype == UP) {
       //      System.out.println("moving up");
@@ -171,7 +170,7 @@ public class EfficientExpandPacker extends ExpandPacker {
 	if (DEBUG_PACK && test_tier)  { System.out.println("checking against: " + sibling); }
         if (child.hit(siblingbox, view) ) {
 	  if (DEBUG_CHECKS)  { System.out.println("hit sib"); }
-	  Rectangle2D.Double cb = child.getCoordBox();
+	  Rectangle2D cb = child.getCoordBox();
 	  this.before.x = cb.x;
 	  this.before.y = cb.y;
 	  this.before.width = cb.width;
@@ -216,8 +215,8 @@ public class EfficientExpandPacker extends ExpandPacker {
 			ViewI view, boolean avoid_sibs) {
     TierGlyph tier = (TierGlyph)parent;
     //    System.out.println("packing child: " + child);
-    Rectangle2D.Double childbox, siblingbox;
-    Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D childbox, siblingbox;
+    Rectangle2D pbox = parent.getCoordBox();
     childbox = child.getCoordBox();
     if (movetype == UP) {
       //      System.out.println("moving up");
@@ -267,7 +266,7 @@ public class EfficientExpandPacker extends ExpandPacker {
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }
         if (child.hit(siblingbox, view) ) {
 	  if (DEBUG_CHECKS)  { System.out.println("hit sib"); }
-	  Rectangle2D.Double cb = child.getCoordBox();
+	  Rectangle2D cb = child.getCoordBox();
 	  this.before.x = cb.x;
 	  this.before.y = cb.y;
 	  this.before.width = cb.width;

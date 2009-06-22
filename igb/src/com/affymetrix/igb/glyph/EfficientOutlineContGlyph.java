@@ -15,11 +15,11 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  A new version of OutlineRectGlyph, 
@@ -102,14 +102,14 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
     if (isMoveChildren()) {
       // center the child vertically in the parent
       // child.cbox.y is modified, but not child.cbox.height)
-      Rectangle2D.Double cbox = glyph.getCoordBox();
+      Rectangle2D cbox = glyph.getCoordBox();
       double ycenter = this.y + this.height/2;
       cbox.y = ycenter - cbox.height/2;
     }
     super.addChild(glyph);
   }
 
-  public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return isVisible ? coord_hitbox.intersects(this) : false;
   }
 

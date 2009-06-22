@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 
 import java.util.Vector;
 import java.util.Hashtable;
@@ -532,8 +531,8 @@ public class NeoAssembler extends NeoContainerWidget
 		consmap.setMapRange(range_start, range_end);
 		consmap.stretchToFit(false, false);
 		alignmap.stretchToFit(false, false);
-		Rectangle2D.Double alignbox = alignmap.getScene().getCoordBox();
-		Rectangle2D.Double viewbox = alignmap.getView().getCoordBox();
+		Rectangle2D alignbox = alignmap.getScene().getCoordBox();
+		Rectangle2D viewbox = alignmap.getView().getCoordBox();
 		if ((viewbox.x < range_start) && (viewbox.x+viewbox.width > range_end)) {
 			// do nothing if alignments won't stretch to edge of NeoAssembler???
 		}
@@ -814,7 +813,7 @@ public class NeoAssembler extends NeoContainerWidget
 			//    can just pack this new alignment glyph below all the
 			//    previous ones packed
 			apacker.pack(cglyph, aglyph, alignmap.getView());
-			Rectangle2D.Double cbox = cglyph.getCoordBox();
+			Rectangle2D cbox = cglyph.getCoordBox();
 			alignmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 			labelmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 		}
@@ -885,7 +884,7 @@ public class NeoAssembler extends NeoContainerWidget
 	public void moveLabels() {
 		align_glyphs = cglyph.getChildren();
 		if (align_glyphs == null) { return; }
-		Rectangle2D.Double acoords;
+		Rectangle2D acoords;
 		AlignmentGlyph align;
 		ArrowGlyph arrow;
 		GlyphI label;
@@ -1535,7 +1534,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 		cglyph.pack(pack_view);
 
-		Rectangle2D.Double cbox = cglyph.getCoordBox();
+		Rectangle2D cbox = cglyph.getCoordBox();
 		alignmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 		labelmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 		moveLabels();
@@ -1602,7 +1601,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 		if (fontControlsGlyphHeight) {
 			align_glyph_height = fontmet.getAscent() + 2;
-			Rectangle2D.Double glyphbox;
+			Rectangle2D glyphbox;
 			if (cons_glyph != null)  {
 				glyphbox = cons_glyph.getCoordBox();
 				cons_glyph.setCoords(glyphbox.x, glyphbox.y,
@@ -1633,7 +1632,7 @@ public class NeoAssembler extends NeoContainerWidget
 			}
 			pack();
 
-			Rectangle2D.Double cbox = cglyph.getCoordBox();
+			Rectangle2D cbox = cglyph.getCoordBox();
 			alignmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 			labelmap.setMapOffset((int)cbox.y, (int)(cbox.y + cbox.height));
 			alignmap.adjustScroller(alignmap.Y);
@@ -2026,7 +2025,7 @@ public class NeoAssembler extends NeoContainerWidget
 		return align_glyphs;
 	}
 
-	public Rectangle2D.Double getCoordBounds() {
+	public Rectangle2D getCoordBounds() {
 		return alignmap.getCoordBounds();
 	}
 
@@ -2209,7 +2208,7 @@ public class NeoAssembler extends NeoContainerWidget
 	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
 		if (evt.getSource() == alignmap) {
 			if (range_listeners.size() > 0)  {
-				Rectangle2D.Double vbox = evt.getCoordBox();
+				Rectangle2D vbox = evt.getCoordBox();
 				NeoRangeEvent nevt = new NeoRangeEvent(this,
 						vbox.x, vbox.x + vbox.width);
 				NeoRangeListener rl;
@@ -2242,15 +2241,15 @@ public class NeoAssembler extends NeoContainerWidget
 		int end = x_coord_end;
 		int start = x_coord_start;
 
-		Rectangle2D.Double rect = alignmap.getCoordBounds();
-		Rectangle2D.Double new_rect = new Rectangle2D.Double( x_coord_start, rect.y, width, rect.height );
+		Rectangle2D rect = alignmap.getCoordBounds();
+		Rectangle2D new_rect = new Rectangle2D( x_coord_start, rect.y, width, rect.height );
 
 		View map_view = alignmap.getView();
 		Enumeration it = align_glyphs.elements();
 		while( it.hasMoreElements() ) {
 			GlyphI residue = (GlyphI)it.nextElement();
 			if (residue.isSelected()){
-				Rectangle2D.Double rec = residue.getCoordBox();
+				Rectangle2D rec = residue.getCoordBox();
 				if (rec.x > x_coord_start) start = (int)rec.x;
 				if ( (rec.x + rec.width) < x_coord_end) end = (int)(rec.x + rec.width);
 			}
@@ -2277,8 +2276,8 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 
 		int width = x_coord_end - x_coord_start;
-		Rectangle2D.Double rect = alignmap.getCoordBounds();
-		Rectangle2D.Double new_rect = new Rectangle2D.Double( x_coord_start, rect.y, width, rect.height );
+		Rectangle2D rect = alignmap.getCoordBounds();
+		Rectangle2D new_rect = new Rectangle2D( x_coord_start, rect.y, width, rect.height );
 
 		View map_view = alignmap.getView();
 		Enumeration it = align_glyphs.elements();

@@ -19,7 +19,6 @@ import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
-import java.awt.geom.Rectangle2D;
 
 public final class GlyphEdgeMatcher  {
 
@@ -97,8 +96,8 @@ public final class GlyphEdgeMatcher  {
     }
 
     // pre-emptively eliminate non 1D overlappers...
-    Rectangle2D.Double qbox = query.getCoordBox();
-    Rectangle2D.Double tbox = target.getCoordBox();
+    Rectangle2D qbox = query.getCoordBox();
+    Rectangle2D tbox = target.getCoordBox();
 
     if (((qbox.x + qbox.width + fuzness) <= tbox.x) || (qbox.x >= (tbox.x + tbox.width + fuzness))) {
       return;

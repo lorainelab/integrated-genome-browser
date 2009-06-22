@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Range;
-import java.awt.geom.Rectangle2D;
 
 public class WrapSequence extends WrapGlyph {
 
@@ -31,7 +30,7 @@ public class WrapSequence extends WrapGlyph {
 	protected int seq_start;
 	protected int seq_end;
 
-	protected Rectangle2D.Double visible_box;
+	protected Rectangle2D visible_box;
 
 	// the first and last visible sequence residue
 	protected int first_visible_residue, last_visible_residue;
@@ -297,7 +296,7 @@ public class WrapSequence extends WrapGlyph {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 
@@ -333,7 +332,7 @@ public class WrapSequence extends WrapGlyph {
 		super.setCoords(x, y, width, height);
 	}
 
-	public void setCoordBox(Rectangle2D.Double coordbox)   {
+	public void setCoordBox(Rectangle2D coordbox)   {
 		stripe_glyph.setCoordBox(coordbox);
 		annot_glyph.setCoordBox(coordbox);
 		font_annot_glyph.setCoordBox(coordbox);

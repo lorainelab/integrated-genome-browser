@@ -19,7 +19,6 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.glyph.*;
-import java.awt.geom.Rectangle2D;
 
 public class QualityBars extends Glyph  {
 
@@ -89,7 +88,7 @@ public class QualityBars extends Glyph  {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 
@@ -137,7 +136,7 @@ public class QualityBars extends Glyph  {
 			sel_glyph.setColor(sel_color);
 			addChild(sel_glyph, 0);
 		}
-		Rectangle2D.Double cb = getCoordBox();
+		Rectangle2D cb = getCoordBox();
 		sel_glyph.setCoords(start,cb.y,end-start + 1,cb.height);
 	}
 

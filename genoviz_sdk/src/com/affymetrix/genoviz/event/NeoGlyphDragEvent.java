@@ -36,7 +36,7 @@ public class NeoGlyphDragEvent extends EventObject {
 	public final static int DRAG_STARTED = 0;
 	public final static int DRAG_IN_PROGRESS = 1;
 	public final static int DRAG_ENDED = 2;
-	//  Rectangle2D.Double prev_glyph_coords = new Rectangle2D();
+	//  Rectangle2D prev_glyph_coords = new Rectangle2D();
 	// EventObject original_event;
 
 	/**

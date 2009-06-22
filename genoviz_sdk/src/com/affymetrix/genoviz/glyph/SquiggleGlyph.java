@@ -15,7 +15,12 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 /**
  *  A glyph that zigzags.

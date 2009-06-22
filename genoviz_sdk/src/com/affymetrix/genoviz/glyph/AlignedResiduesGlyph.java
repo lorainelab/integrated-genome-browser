@@ -24,11 +24,11 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Scene;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.widget.NeoAssembler;
-import java.awt.geom.Rectangle2D;
 
 /**
  *    Base class used in NeoAssembler
@@ -135,7 +135,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 
 	protected boolean setSequence = false;
 	protected boolean setConsensus = false;
-	protected Rectangle2D.Double scratchrect;
+	protected Rectangle2D scratchrect;
 
 	// not sure if these are needed anymore
 	protected int parent_seq_beg, parent_seq_end;
@@ -151,7 +151,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 		super();
 		full_rect = new FillRectGlyph();
 		full_rect.setPacker(null);
-		scratchrect = new Rectangle2D.Double();
+		scratchrect = new Rectangle2D();
 		setResidueFont(default_font);
 	}
 
@@ -371,7 +371,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 
 	public void draw(ViewI view) {
 		Rectangle pixelclipbox = view.getPixelBox();
-		Rectangle2D.Double coordclipbox = view.getCoordBox();
+		Rectangle2D coordclipbox = view.getCoordBox();
 		Graphics g = view.getGraphics();
 		double pixels_per_residue, residues_per_pixel;
 		int visible_ref_beg, visible_ref_end,
@@ -387,7 +387,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 		seq_beg_index = visible_seq_beg - seq_beg;
 		seq_end_index = visible_seq_end - seq_beg;
 
-		scratchrect.setRect(visible_seq_beg,  coordbox.y,
+		scratchrect.reshape(visible_seq_beg,  coordbox.y,
 				visible_seq_span, coordbox.height);
 		view.transformToPixels(scratchrect, pixelbox);
 		pixels_per_residue = ((double)pixelbox.width)/scratchrect.width;
@@ -644,7 +644,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 

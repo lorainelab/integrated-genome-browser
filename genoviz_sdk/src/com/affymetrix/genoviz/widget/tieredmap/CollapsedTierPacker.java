@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.widget.tieredmap;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import java.awt.geom.Rectangle2D;
 
 public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPackerI {
 	public static int ALIGN_TOP = 1000;
@@ -65,8 +64,8 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 	}
 
 	protected void moveOneChild(GlyphI parent, GlyphI child) {
-		Rectangle2D.Double pbox = parent.getCoordBox();
-		Rectangle2D.Double cbox = child.getCoordBox();
+		Rectangle2D pbox = parent.getCoordBox();
+		Rectangle2D cbox = child.getCoordBox();
 
 		if (alignment == ALIGN_TOP) {
 			double top = pbox.y + parent_spacer;
@@ -84,12 +83,12 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 	}
 
 	protected void moveAllChildren(GlyphI parent) {
-		Rectangle2D.Double pbox = parent.getCoordBox();
+		Rectangle2D pbox = parent.getCoordBox();
 		Vector children = parent.getChildren();
 		if (children == null) { return; }
 		double parent_height = parent.getCoordBox().height;
 
-		Rectangle2D.Double cbox;
+		Rectangle2D cbox;
 		GlyphI child;
 
 		if (alignment == ALIGN_TOP) {

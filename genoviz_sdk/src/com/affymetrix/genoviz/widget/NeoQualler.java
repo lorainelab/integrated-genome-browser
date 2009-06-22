@@ -25,7 +25,6 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neoqualler.*;
-import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
 /**
@@ -389,7 +388,7 @@ public class NeoQualler extends NeoContainerWidget
 			baseNum = read_length ;
 		}
 		double xcenter = baseNum;
-		Rectangle2D.Double viewbox = bar_map.getView().getCoordBox();
+		Rectangle2D viewbox = bar_map.getView().getCoordBox();
 		double xstart = xcenter - viewbox.width/2;
 
 		scrollRange((int)xstart);
@@ -410,7 +409,7 @@ public class NeoQualler extends NeoContainerWidget
 	}
 
 	public Range getVisibleRange() {
-		Rectangle2D.Double box = bar_map.getView().calcCoordBox();
+		Rectangle2D box = bar_map.getView().calcCoordBox();
 		return new Range((int)box.x, (int)(box.x + box.width));
 	}
 
@@ -591,7 +590,7 @@ public class NeoQualler extends NeoContainerWidget
 
 	public void setBasesTrimmedLeft(int theBasesTrimmed) {
 		this.leftTrim = theBasesTrimmed;
-		Rectangle2D.Double coordbox = bar_glyph.getCoordBox();
+		Rectangle2D coordbox = bar_glyph.getCoordBox();
 		if (left_trim_glyph != null) {
 			bar_glyph.removeChild(left_trim_glyph);
 		}
@@ -609,7 +608,7 @@ public class NeoQualler extends NeoContainerWidget
 
 	public void setBasesTrimmedRight(int theBasesTrimmed) {
 		this.rightTrim = theBasesTrimmed;
-		Rectangle2D.Double coordbox = bar_glyph.getCoordBox();
+		Rectangle2D coordbox = bar_glyph.getCoordBox();
 		if (right_trim_glyph != null) {
 			bar_glyph.removeChild(right_trim_glyph);
 		}
@@ -631,7 +630,7 @@ public class NeoQualler extends NeoContainerWidget
 	public void viewBoxChanged(NeoViewBoxChangeEvent evt) {
 		if (range_listeners.size() > 0) {
 			if (evt.getSource() == bar_map) {
-				Rectangle2D.Double vbox = evt.getCoordBox();
+				Rectangle2D vbox = evt.getCoordBox();
 				NeoRangeEvent nevt = new NeoRangeEvent(this,
 						vbox.x, vbox.x + vbox.width);
 				NeoRangeListener rl;

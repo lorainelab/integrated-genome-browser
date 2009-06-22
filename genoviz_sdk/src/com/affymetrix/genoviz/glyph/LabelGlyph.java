@@ -17,7 +17,6 @@ import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
-import java.awt.geom.Rectangle2D;
 
 /**
  * A glyph used to label other glyphs.
@@ -55,7 +54,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 	// enclosing coord box contains both the label glyph's coord box and the
 	//    coord box of the glyph it is labeling
-	public Rectangle2D.Double enclosing_coords;
+	public Rectangle2D enclosing_coords;
 
 	// enclosing pixel box contains both the label glyph's pixel box and the
 	//    pixel box of the glyph it is labeling
@@ -63,7 +62,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 	// label_coords is the coord box for just the label's drawn aspect
 	//   (not including any connector the the labeled glyph...)
-	public Rectangle2D.Double label_coords;
+	public Rectangle2D label_coords;
 
 	// labeled_pix is the pixel box for the glyph that LabelGlyph is
 	//   labeling
@@ -97,8 +96,8 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		placement = ABOVE;
 		labeled_pix = new Rectangle();
 		enclosing_pix = new Rectangle();
-		enclosing_coords = new Rectangle2D.Double();
-		label_coords = new Rectangle2D.Double();
+		enclosing_coords = new Rectangle2D();
+		label_coords = new Rectangle2D();
 		pixel_separation = 3;
 
 	}
@@ -180,7 +179,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		int text_width = (null==this.text)?0:fm.stringWidth(this.text);
 		int text_height = (null==this.text)?0:fm.getAscent();
 
-		Rectangle2D.Double view_box = theView.getCoordBox();
+		Rectangle2D view_box = theView.getCoordBox();
 		if (null == this.labeled) {
 			theView.transformToPixels(this.coordbox, this.pixelbox);
 		} else {
@@ -224,13 +223,13 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	}
 
 
-	public boolean intersects(Rectangle2D.Double rect, ViewI view) {
+	public boolean intersects(Rectangle2D rect, ViewI view) {
 		this.calcPixels(view);
 		this.coordbox = view.transformToCoords(this.pixelbox, this.coordbox);
 		return super.intersects(rect, view);
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		calcPixels(view);
 		coordbox = view.transformToCoords(pixelbox, coordbox);
 		return coord_hitbox.intersects(coordbox);
@@ -362,7 +361,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		/* Here we set this.coordbox to that of the labeled glyph.
 		 * This is a reasonable default.
 		 */
-		Rectangle2D.Double lgbox = lg.getCoordBox();
+		Rectangle2D lgbox = lg.getCoordBox();
 
 		/* We favor setCoords() over setCoordBox for speed.
 		 * Also, setting to lg's coordbox causes moving problems,
@@ -415,7 +414,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	 * so that we can add both the labeling (this) and labeled glyph
 	 * to the pickVector.
 	 */
-	public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
+	public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
 			ViewI view)  {
 		if (isVisible && intersects(pickRect, view))  {
 			if (hit(pickRect, view))  {

@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
-import java.awt.geom.Rectangle2D;
 
 public class WrapStripes extends WrapGlyph {
 
@@ -41,7 +40,7 @@ public class WrapStripes extends WrapGlyph {
 	public void draw(ViewI view) {
 
 		Graphics g = view.getGraphics();
-		Rectangle2D.Double visible_box = ((View)view).calcCoordBox();
+		Rectangle2D visible_box = ((View)view).calcCoordBox();
 
 		if (residues_per_stripe > 0) {
 			if (orientation == VERTICAL) {

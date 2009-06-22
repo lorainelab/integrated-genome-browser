@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.RubberBand;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import java.awt.Rectangle;
 import java.awt.Color;
 import java.util.Vector;

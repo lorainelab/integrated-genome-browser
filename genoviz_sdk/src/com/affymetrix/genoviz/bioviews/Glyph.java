@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
@@ -39,9 +38,9 @@ public abstract class Glyph implements GlyphI  {
 	protected static final Color default_fg_color = Color.black;
 	protected static GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
 
-	protected Rectangle2D.Double coordbox;
+	protected Rectangle2D coordbox;
 	protected Scene scene;
-	private   Rectangle2D.Double cb2= null; // used as a temporary variable
+	private   Rectangle2D cb2= null; // used as a temporary variable
 	protected Rectangle pixelbox;
 	protected int min_pixels_width=1;
 	protected int min_pixels_height=1;
@@ -59,7 +58,7 @@ public abstract class Glyph implements GlyphI  {
 
 	public Glyph()
 	{
-		coordbox = new Rectangle2D.Double();
+		coordbox = new Rectangle2D();
 		pixelbox = new Rectangle();
 		min_pixels_width=1;
 		min_pixels_height=1;
@@ -99,7 +98,7 @@ public abstract class Glyph implements GlyphI  {
 	 *  Default for getSelectedRegion() is to return bounding box for the
 	 *     entire glyph
 	 */
-	public Rectangle2D.Double getSelectedRegion() {
+	public Rectangle2D getSelectedRegion() {
 		if (selected) { return getPositiveCoordBox(); }
 		else { return null; }
 	}
@@ -235,7 +234,7 @@ public abstract class Glyph implements GlyphI  {
 		this.setForegroundColor( fg );
 	}
 
-	public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
+	public void pickTraversal(Rectangle2D pickRect, Vector<GlyphI> pickVector,
 			ViewI view)  {
 		if (isVisible && intersects(pickRect, view))  {
 			if (debug)  {
@@ -328,7 +327,7 @@ public abstract class Glyph implements GlyphI  {
 	 * @param view ignored
 	 * @return false
 	 */
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return false;
 	}
 
@@ -341,7 +340,7 @@ public abstract class Glyph implements GlyphI  {
 		return isVisible && rect.intersects(pixelbox);
 	}
 
-	public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
+	public boolean intersects(Rectangle2D rect, ViewI view)  {
 		return isVisible && rect.intersects(getPositiveCoordBox());
 	}
 
@@ -484,10 +483,10 @@ public abstract class Glyph implements GlyphI  {
 			y = y + height;
 			height = -height;
 		}
-		coordbox.setRect(x, y, width, height);
+		coordbox.reshape(x, y, width, height);
 	}
 
-	public Rectangle2D.Double getCoordBox()   {
+	public Rectangle2D getCoordBox()   {
 		return coordbox;
 	}
 
@@ -497,10 +496,10 @@ public abstract class Glyph implements GlyphI  {
 	 */
 	// TODO: remove this method.  Coordbox should always be positive anyway,
 	// but setCoordbox() allows any coorbox to be used.
-	protected final Rectangle2D.Double getPositiveCoordBox() {
+	protected final Rectangle2D getPositiveCoordBox() {
 		if (coordbox.width>=0 && coordbox.height>=0) return coordbox;
 
-		if (cb2==null) {cb2 = new Rectangle2D.Double();}
+		if (cb2==null) {cb2 = new Rectangle2D();}
 
 		if (coordbox.width<0) {
 			System.err.println("*********** WARNING: Found a negative width coord box. **********");
@@ -539,7 +538,7 @@ public abstract class Glyph implements GlyphI  {
 	 * Note that this does not make the assurances of setCoords().
 	 * @see #setCoords
 	 */
-	public void setCoordBox(Rectangle2D.Double coordbox)   {
+	public void setCoordBox(Rectangle2D coordbox)   {
 		this.coordbox = coordbox;
 	}
 

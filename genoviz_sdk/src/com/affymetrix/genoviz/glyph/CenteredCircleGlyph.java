@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.glyph;
 import java.awt.*;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 /**
  *  A glyph that is drawn as a centered circle.

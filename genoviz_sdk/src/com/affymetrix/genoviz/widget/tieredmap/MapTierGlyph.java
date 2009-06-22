@@ -22,7 +22,6 @@ import com.affymetrix.genoviz.event.TierStateChangeListener;
 import com.affymetrix.genoviz.glyph.*;
 
 import com.affymetrix.genoviz.util.GeometryUtils;
-import java.awt.geom.Rectangle2D;
 
 
 // as long as moveRelative and moveAbsolute are used for moving the
@@ -190,7 +189,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			GlyphI child;
 			Rectangle compbox = view.getComponentSizeRect();
 			GeometryUtils.intersection(compbox, pixelbox, pixelbox);
-			Rectangle2D.Double cbox = new Rectangle2D.Double();
+			Rectangle2D cbox = new Rectangle2D();
 			view.transformToCoords(pixelbox, cbox);
 			double a = cbox.x;
 			double b = cbox.x + cbox.width;
@@ -381,7 +380,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		return pixel_hitbox.intersects (this.getPixelBox());
 	}
 
-	public boolean hit (Rectangle2D.Double coord_hitbox, ViewI view) {
+	public boolean hit (Rectangle2D coord_hitbox, ViewI view) {
 
 		if (!isVisible() || !this.hitable)
 			return false;

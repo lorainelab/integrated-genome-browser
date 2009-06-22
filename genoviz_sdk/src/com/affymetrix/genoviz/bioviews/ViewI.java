@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import com.affymetrix.genoviz.awt.NeoCanvas;
-import java.awt.geom.Rectangle2D;
 
 /**
  * A ViewI is an abstract window onto a particular {@link SceneI}.
@@ -127,13 +126,13 @@ public interface ViewI  {
 	 *  sets the coordinate box that bounds the view, in other words the
 	 *  portion of the scene that is visible within this view.
 	 */
-	public void setCoordBox(Rectangle2D.Double coordbox);
+	public void setCoordBox(Rectangle2D coordbox);
 
 	/**
 	 *  returns the coordinate box that bounds the view, in other words the
 	 *  portion of the scene that is visible within this view.
 	 */
-	public Rectangle2D.Double getCoordBox();
+	public Rectangle2D getCoordBox();
 
 	public void setFullView(ViewI full_view);
 	public ViewI getFullView();
@@ -158,7 +157,7 @@ public interface ViewI  {
 	 *    to dst rectangle in pixel (screen) space.
 	 *    @return altered destination Rectangle
 	 */
-	public Rectangle transformToPixels(Rectangle2D.Double src, Rectangle dst);
+	public Rectangle transformToPixels(Rectangle2D src, Rectangle dst);
 
 	/**
 	 *    The view is responsible for mapping coordinates to pixels and
@@ -168,7 +167,7 @@ public interface ViewI  {
 	 *    to dst rectangle in coord space.
 	 *    @return altered destination Rectangle2D
 	 */
-	public Rectangle2D.Double transformToCoords(Rectangle src, Rectangle2D.Double dst);
+	public Rectangle2D transformToCoords(Rectangle src, Rectangle2D dst);
 
 	/**
 	 *

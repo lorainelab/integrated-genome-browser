@@ -16,10 +16,10 @@ package com.affymetrix.genoviz.widget;
 import java.util.*;
 import java.awt.Color;
 
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.event.TierEvent;
 import com.affymetrix.genoviz.event.TierEventListener;
 import com.affymetrix.genoviz.widget.tieredmap.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Tracks tiers on a {@link TieredNeoMap} and shows a legend.
@@ -171,9 +171,9 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 	 */
 	void moveLegendGlyphs() {
 		LegendGlyph lglyph;
-		Rectangle2D.Double tierbox;
-		Rectangle2D.Double mapbox = this.getCoordBounds();
-		Rectangle2D.Double trackbox = map_to_track.getCoordBounds();
+		Rectangle2D tierbox;
+		Rectangle2D mapbox = this.getCoordBounds();
+		Rectangle2D trackbox = map_to_track.getCoordBounds();
 
 		for (int i=0; i<legend_glyphs.size(); i++) {
 			lglyph = legend_glyphs.elementAt(i);

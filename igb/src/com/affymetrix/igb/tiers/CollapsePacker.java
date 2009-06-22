@@ -17,7 +17,6 @@ import java.awt.Rectangle;
 import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
-import java.awt.geom.Rectangle2D;
 
 public final class CollapsePacker implements PaddedPackerI {
   public static final int ALIGN_TOP = 1000;
@@ -30,7 +29,7 @@ public final class CollapsePacker implements PaddedPackerI {
   protected double spacing = 0;
 
   public Rectangle pack(GlyphI parent, ViewI view) {
-    Rectangle2D.Double pbox = parent.getCoordBox();
+    Rectangle2D pbox = parent.getCoordBox();
     Vector children = parent.getChildren();
     double maxHeight = 0;
 
@@ -48,8 +47,8 @@ public final class CollapsePacker implements PaddedPackerI {
     parent.setCoords(pbox.x, pbox.y, pbox.width, maxHeight + (2 * parent_spacer));
     moveAllChildren(parent, view);
 
-    Rectangle2D.Double newbox = new Rectangle2D.Double();
-    newbox.setRect(parent.getCoordBox());
+    Rectangle2D newbox = new Rectangle2D();
+    newbox.reshape(parent.getCoordBox());
     // trying to transform according to tier's internal transform  
     //   (since packing is done base on tier's children)
     if (parent instanceof TransformTierGlyph)  {
@@ -95,8 +94,8 @@ public final class CollapsePacker implements PaddedPackerI {
   }
 
   public Rectangle pack(GlyphI parent, GlyphI child, ViewI view) {
-    Rectangle2D.Double pbox = parent.getCoordBox();
-    Rectangle2D.Double cbox = child.getCoordBox();
+    Rectangle2D pbox = parent.getCoordBox();
+    Rectangle2D cbox = child.getCoordBox();
     
     if (alignment == ALIGN_CENTER) {
       double center = pbox.y + pbox.height / 2;
@@ -106,7 +105,7 @@ public final class CollapsePacker implements PaddedPackerI {
     } else if (alignment == ALIGN_BOTTOM) {
       child.moveAbsolute(cbox.x, pbox.y + parent_spacer + pbox.height - cbox.height );
     } else if (alignment == ALIGN_STRETCH) {
-      child.getCoordBox().setRect(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height);
+      child.getCoordBox().reshape(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height);
     }
     return null;
   }

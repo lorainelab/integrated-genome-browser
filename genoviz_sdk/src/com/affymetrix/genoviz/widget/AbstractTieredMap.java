@@ -24,7 +24,6 @@ import com.affymetrix.genoviz.event.TierStateChangeListener;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Basis for maps that contain horizontal "tiers" of glyphs.
@@ -193,7 +192,7 @@ public abstract class AbstractTieredMap
 			}
 		}
 
-		Rectangle2D.Double mbox = getCoordBounds();
+		Rectangle2D mbox = getCoordBounds();
 
 		double offset;
 		double height = mbox.height;
@@ -225,16 +224,16 @@ public abstract class AbstractTieredMap
 
 		if (stretch_map) {
 			if (tiers.size() <= 0) { return; }
-			Rectangle2D.Double pbox = getCoordBounds();
-			Rectangle2D.Double newbox = null;
+			Rectangle2D pbox = getCoordBounds();
+			Rectangle2D newbox = null;
 			mtg = null;
 
 			for (int i=0; i<tiers.size(); i++) {
 				mtg = tiers.elementAt(i);
 				if ( mtg.getState() == MapTierGlyph.HIDDEN ) continue;
 				else if ( newbox == null ) {
-					newbox = new Rectangle2D.Double();
-					newbox.setRect(pbox.x, mtg.getCoordBox().y,
+					newbox = new Rectangle2D();
+					newbox.reshape(pbox.x, mtg.getCoordBox().y,
 							pbox.width, mtg.getCoordBox().height);
 				}
 				else GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
@@ -298,14 +297,14 @@ public abstract class AbstractTieredMap
 	 */
 	public void setBounds(int axis, int start, int end) {
 		super.setBounds(axis, start, end);
-		Rectangle2D.Double mbox = getScene().getGlyph().getCoordBox();
+		Rectangle2D mbox = getScene().getGlyph().getCoordBox();
 
 		if ((axis != X) || (tiers == null))
 			return;
 
 		for (int i=0; i<tiers.size(); i++) {
 			MapTierGlyph tier = tiers.elementAt(i);
-			Rectangle2D.Double tbox = tier.getCoordBox();
+			Rectangle2D tbox = tier.getCoordBox();
 			tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
 		}
 	}
@@ -462,8 +461,8 @@ public abstract class AbstractTieredMap
 
 			// Deal with the geometries --
 
-			Rectangle2D.Double otherCoords = otherTier.getCoordBox();
-			Rectangle2D.Double ourCoords   = ourTier.getCoordBox();
+			Rectangle2D otherCoords = otherTier.getCoordBox();
+			Rectangle2D ourCoords   = ourTier.getCoordBox();
 
 			ourTier.moveAbsolute(ourCoords.x, otherCoords.y);
 			ourTier.setCoords (ourCoords.x, otherCoords.y,

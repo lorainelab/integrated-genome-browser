@@ -23,7 +23,6 @@ import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.UnibrowControlServlet;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.*;
@@ -97,7 +96,7 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
   }
   
   public void viewBoxChanged(NeoViewBoxChangeEvent e) {
-    Rectangle2D.Double vbox = e.getCoordBox();
+    com.affymetrix.genoviz.bioviews.Rectangle2D vbox = e.getCoordBox();
     setRangeText(vbox.x, vbox.width + vbox.x);
   }
   

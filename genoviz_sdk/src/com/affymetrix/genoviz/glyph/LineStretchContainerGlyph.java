@@ -17,7 +17,6 @@ import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
-import java.awt.geom.Rectangle2D;
 
 public class LineStretchContainerGlyph extends Glyph {
 
@@ -33,7 +32,7 @@ public class LineStretchContainerGlyph extends Glyph {
 		super.addChild(glyph);
 
 		// if first child, then fit to it
-		Rectangle2D.Double cbox = glyph.getCoordBox();
+		Rectangle2D cbox = glyph.getCoordBox();
 		if (getChildren() == null || getChildren().size() <= 1) {
 			this.setCoords(cbox.x, cbox.y, cbox.width, cbox.height);
 		}
@@ -57,7 +56,7 @@ public class LineStretchContainerGlyph extends Glyph {
 		}
 		else {
 			GlyphI child = (GlyphI)child_glyphs.elementAt(0);
-			Rectangle2D.Double childbox = child.getCoordBox();
+			Rectangle2D childbox = child.getCoordBox();
 			this.setCoords(childbox.x, childbox.y, childbox.width, childbox.height);
 			for (int i=1; i<child_glyphs.size(); i++) {
 				child = (GlyphI)child_glyphs.elementAt(i);
@@ -83,7 +82,7 @@ public class LineStretchContainerGlyph extends Glyph {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 

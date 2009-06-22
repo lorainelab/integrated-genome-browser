@@ -29,10 +29,10 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  Intended for dynamically summarizing coverage of a collection of spans.
@@ -199,7 +199,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
     int pbox_yheight = pixelbox.y + pixelbox.height;
     Graphics g = view.getGraphics();
-    Rectangle2D.Double view_coordbox = view.getCoordBox();
+    Rectangle2D view_coordbox = view.getCoordBox();
     double min_xcoord = view_coordbox.x;
     double max_xcoord = view_coordbox.x + view_coordbox.width;
 

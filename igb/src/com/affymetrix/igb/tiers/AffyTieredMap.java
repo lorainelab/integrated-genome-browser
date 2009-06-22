@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.util.GeometryUtils;
 
 import com.affymetrix.genometry.*;
 import java.awt.event.ActionEvent;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -229,7 +228,7 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 
-		Rectangle2D.Double mbox = getCoordBounds();
+		Rectangle2D mbox = getCoordBounds();
 		// assuming all tiers start anchored at 0 when being packed...
 		//   if want to add anchor location stuff back in, refer to
 		//   com.affymetrix.genoviz. widget. TieredNeoMap
@@ -269,8 +268,8 @@ public class AffyTieredMap extends NeoMap {
 			if (tiers.size() <= 0) {
 				return;
 			}
-			Rectangle2D.Double pbox = getCoordBounds();
-			Rectangle2D.Double newbox = null;
+			Rectangle2D pbox = getCoordBounds();
+			Rectangle2D newbox = null;
 			mtg = null;
 
 			for (int i = 0; i < tiers.size(); i++) {
@@ -279,8 +278,8 @@ public class AffyTieredMap extends NeoMap {
 					//	  System.out.println("still trying to hide tier: " + mtg.getLabel());
 					continue;
 				} else if (newbox == null) {
-					newbox = new Rectangle2D.Double();
-					newbox.setRect(pbox.x, mtg.getCoordBox().y,
+					newbox = new Rectangle2D();
+					newbox.reshape(pbox.x, mtg.getCoordBox().y,
 									pbox.width, mtg.getCoordBox().height);
 				} else {
 					GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
@@ -312,13 +311,13 @@ public class AffyTieredMap extends NeoMap {
 	@Override
 	public void setBounds(int axis, int start, int end) {
 		super.setBounds(axis, start, end);
-		Rectangle2D.Double mbox = getScene().getGlyph().getCoordBox();
+		Rectangle2D mbox = getScene().getGlyph().getCoordBox();
 		if ((axis != X) || (tiers == null)) {
 			return;
 		}
 		for (int i = 0; i < tiers.size(); i++) {
 			TierGlyph tier = tiers.elementAt(i);
-			Rectangle2D.Double tbox = tier.getCoordBox();
+			Rectangle2D tbox = tier.getCoordBox();
 			tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
 		}
 	}
@@ -476,7 +475,7 @@ public class AffyTieredMap extends NeoMap {
 		}
 		// should be able to replace many variables calculation here with
 		//    access to view coordbox fields...
-		Rectangle2D.Double prev_view_coords = view.calcCoordBox();
+		Rectangle2D prev_view_coords = view.calcCoordBox();
 		double prev_pixels_per_coord = pixels_per_coord[id]; // should be same as trans.getScale()
 		//double prev_coords_per_pixel = 1/prev_pixels_per_coord;
 		pixels_per_coord[id] = zoom_scale;
@@ -542,7 +541,7 @@ public class AffyTieredMap extends NeoMap {
 		packTiers(false, true, false);
 
 		// BEGIN only section that relies on scene coords
-		Rectangle2D.Double scenebox = scene.getCoordBox();
+		Rectangle2D scenebox = scene.getCoordBox();
 		coord_beg = scenebox.y;
 		coord_size = scenebox.height;
 		coord_end = coord_beg + coord_size;

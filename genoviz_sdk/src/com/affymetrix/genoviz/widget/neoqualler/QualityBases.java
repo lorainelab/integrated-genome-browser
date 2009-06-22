@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
 
 import com.affymetrix.genoviz.glyph.*;
-import java.awt.geom.Rectangle2D;
 
 public class QualityBases extends Glyph  {
 	protected ReadConfidence read_conf;
@@ -93,7 +92,7 @@ public class QualityBases extends Glyph  {
 	public void draw(ViewI view) {
 		int beg, end, i, j;
 		Graphics g = view.getGraphics();
-		Rectangle2D.Double viewbox = view.getCoordBox();
+		Rectangle2D viewbox = view.getCoordBox();
 
 		beg = (int)viewbox.x;
 		end = (int)(viewbox.x + viewbox.width);
@@ -124,7 +123,7 @@ public class QualityBases extends Glyph  {
 			showBases = true;
 		}
 
-		Rectangle2D.Double visible_box = ((View)view).calcCoordBox();
+		Rectangle2D visible_box = ((View)view).calcCoordBox();
 		for (i=(int)visible_box.x; i<(int)(visible_box.x+visible_box.width); i++) {
 			if (i>= read_length) {
 				break;
@@ -200,7 +199,7 @@ public class QualityBases extends Glyph  {
 		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 
@@ -226,7 +225,7 @@ public class QualityBases extends Glyph  {
 			sel_glyph.setColor(sel_color);
 			addChild(sel_glyph, 0);
 		}
-		Rectangle2D.Double cb = getCoordBox();
+		Rectangle2D cb = getCoordBox();
 		sel_glyph.setCoords(start,cb.y,end-start + 1,cb.height);
 	}
 

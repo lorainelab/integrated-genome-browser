@@ -15,12 +15,12 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  A glyph that displays as a centered line and manipulates children to center on the
@@ -55,7 +55,7 @@ public class LineContainerGlyph extends Glyph  {
 	public void addChild(GlyphI glyph) {
 		// child.cbox.y is modified, but not child.cbox.height)
 		// center the children of the LineContainerGlyph on the line
-		Rectangle2D.Double cbox = glyph.getCoordBox();
+		Rectangle2D cbox = glyph.getCoordBox();
 		double ycenter = this.coordbox.y + this.coordbox.height/2;
 		cbox.y = ycenter - cbox.height/2;
 		super.addChild(glyph);
@@ -76,7 +76,7 @@ public class LineContainerGlyph extends Glyph  {
 	//    only for hits though, not for intersection
 	//    THIS BEHAVIOR COMMENTED OUT FOR NOW
 	//
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return isVisible?coord_hitbox.intersects(coordbox):false;
 	}
 

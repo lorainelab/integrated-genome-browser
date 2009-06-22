@@ -14,8 +14,8 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 
 /**
  *    A convenient base class for glyphs that are "solid", meaning any event within 
@@ -52,7 +52,7 @@ public class EfficientSolidGlyph extends EfficientGlyph  {
     return  hitable && isVisible() && pixel_hitbox.intersects(pixelbox);
   }
 
-  public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+  public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
     return hitable && isVisible() && coord_hitbox.intersects(this);
   }
 

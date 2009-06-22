@@ -18,7 +18,6 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
-import java.awt.geom.Rectangle2D;
 
 public class WrapColors extends AnnotationGlyph {
 
@@ -37,7 +36,7 @@ public class WrapColors extends AnnotationGlyph {
 	 */
 	protected Point2D.Double colorCoordPoint2 = new Point2D.Double(0,0);
 
-	protected Rectangle2D.Double visible_box;
+	protected Rectangle2D visible_box;
 
 	protected int y_offset_fudge = 3;
 

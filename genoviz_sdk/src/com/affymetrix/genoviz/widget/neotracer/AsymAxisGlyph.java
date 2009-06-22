@@ -19,7 +19,6 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  * AsymAxisGlyph is a modification of the TraceBaseGlyph
@@ -72,7 +71,7 @@ public class AsymAxisGlyph extends Glyph  {
 	protected Point2D.Double baseCoordPoint = new Point2D.Double(0,0);
 	protected Point2D.Double selCoordPoint = new Point2D.Double(0,0);
 
-	protected Rectangle2D.Double labelCoords = new Rectangle2D.Double();
+	protected Rectangle2D labelCoords = new Rectangle2D();
 	protected Rectangle labelPixels = new Rectangle();
 
 	/*
@@ -103,7 +102,7 @@ public class AsymAxisGlyph extends Glyph  {
 	public void draw(ViewI view) {
 		int beg, end, i, j;
 		Graphics g = view.getGraphics();
-		Rectangle2D.Double viewbox = view.getCoordBox();
+		Rectangle2D viewbox = view.getCoordBox();
 
 		pixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
 		coords_per_base = (double)dataCount/(double)baseCount;

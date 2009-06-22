@@ -25,7 +25,6 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import java.awt.geom.Rectangle2D;
 
 public final class TierLabelManager {
 
@@ -267,8 +266,8 @@ public final class TierLabelManager {
   /** Comparator class needed to sort tiers based on label placement. */
   public final class MinYSorter implements Comparator<GlyphI> {
     public int compare(GlyphI glyph1, GlyphI glyph2) {
-      Rectangle2D.Double box1 = glyph1.getCoordBox();
-      Rectangle2D.Double box2 = glyph2.getCoordBox();
+      Rectangle2D box1 = glyph1.getCoordBox();
+      Rectangle2D box2 = glyph2.getCoordBox();
       if (box1.y < box2.y) { return -1; }
       else if (box1.y > box2.y) { return 1; }
       else { return 0; }

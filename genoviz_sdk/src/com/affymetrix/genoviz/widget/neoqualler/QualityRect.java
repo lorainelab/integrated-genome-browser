@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.widget.neoqualler;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
-import java.awt.geom.Rectangle2D;
 
 public class QualityRect extends Glyph
 {
@@ -52,7 +51,7 @@ public class QualityRect extends Glyph
 		return  pixel_hitbox.intersects(pixelbox);
 	}
 
-	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
+	public boolean hit(Rectangle2D coord_hitbox, ViewI view)  {
 		return coord_hitbox.intersects(coordbox);
 	}
 

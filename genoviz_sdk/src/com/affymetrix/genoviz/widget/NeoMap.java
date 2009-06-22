@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
@@ -28,6 +27,7 @@ import com.affymetrix.genoviz.bioviews.SiblingCoordAvoid;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.bioviews.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.DragMonitor;
@@ -573,7 +573,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 
 		   public int[] getMapRange() {
 			   int[] range = new int[2];
-			   Rectangle2D.Double cb = getCoordBounds();
+			   Rectangle2D cb = getCoordBounds();
 			   if (orient == VERTICAL) {
 				   range[0] = (int) cb.y;
 				   range[1] = (int) (cb.y + cb.height);
@@ -587,7 +587,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 
 		   public int[] getVisibleRange() {
 			   int[] range = new int[2];
-			   Rectangle2D.Double cb = getViewBounds();
+			   Rectangle2D cb = getViewBounds();
 			   if (orient == VERTICAL) {
 				   range[0] = (int) cb.y;
 				   range[1] = (int) (cb.y + cb.height);
@@ -615,7 +615,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 
 		   public int[] getMapOffset() {
 			   int[] range = new int[2];
-			   Rectangle2D.Double cb = getCoordBounds();
+			   Rectangle2D cb = getCoordBounds();
 			   if (orient == VERTICAL) {
 				   range[0] = (int) cb.x;
 				   range[1] = (int) (cb.x + cb.width);
@@ -629,7 +629,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 
 		   public int[] getVisibleOffset() {
 			   int[] range = new int[2];
-			   Rectangle2D.Double cb = getViewBounds();
+			   Rectangle2D cb = getViewBounds();
 			   if (orient == VERTICAL) {
 				   range[0] = (int) cb.x;
 				   range[1] = (int) (cb.x + cb.width);
@@ -712,7 +712,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 					* edge will result in waste of real estate and display ends up
 					* out of sync with h/vscroller
 					*/
-				   Rectangle2D.Double viewbox, scenebox;
+				   Rectangle2D viewbox, scenebox;
 				   scenebox = scene.getCoordBox();
 				   double scene_start, scene_end, view_start, view_end, visible_start;
 				   Rectangle scenepix;
@@ -1037,7 +1037,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			   super.clearWidget();
 			   // create new eveGlyph, set its coords and expansion behavior to old eveGlyph
 			   RootGlyph oldeve = (RootGlyph)scene.getGlyph();
-			   Rectangle2D.Double evebox = oldeve.getCoordBox();
+			   Rectangle2D evebox = oldeve.getCoordBox();
 			   RootGlyph neweve = new RootGlyph();
 			   neweve.setExpansionBehavior(neweve.X, oldeve.getExpansionBehavior(oldeve.X));
 			   neweve.setExpansionBehavior(neweve.Y, oldeve.getExpansionBehavior(oldeve.Y));
@@ -1396,7 +1396,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 			   int direction = evt.getDirection();
 			   if (src == canvas_drag_monitor) {
 
-				   Rectangle2D.Double vbox = getViewBounds();
+				   Rectangle2D vbox = getViewBounds();
 				   String str;
 				   double scroll_to_coord;
 				   int pixels_per_scroll = 10;
@@ -1528,7 +1528,7 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 				   }
 			   }
 			   if (range_listeners.size() > 0) {
-				   Rectangle2D.Double vbox = e.getCoordBox();
+				   Rectangle2D vbox = e.getCoordBox();
 				   NeoRangeEvent nevt = null;
 				   if (orient == VERTICAL) {
 					   nevt = new NeoRangeEvent(this, vbox.y, vbox.y + vbox.height);

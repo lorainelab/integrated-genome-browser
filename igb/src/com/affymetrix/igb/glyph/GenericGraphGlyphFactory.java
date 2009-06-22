@@ -27,7 +27,6 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.geom.Rectangle2D;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
@@ -145,7 +144,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
     GraphStateI gstate = graf.getGraphState();
     IAnnotStyle tier_style = gstate.getTierStyle();
     
-    Rectangle2D.Double cbox = map.getCoordBounds();
+    Rectangle2D cbox = map.getCoordBounds();
     graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
     map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 

@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import java.awt.geom.Rectangle2D;
 
 /**
  * RootGlyph should not be used directly.
@@ -32,7 +31,7 @@ public class RootGlyph extends StretchContainerGlyph {
 	public static final int NO_EXPAND = 4;
 
 	protected int expansion_behavior[] = { NO_EXPAND, NO_EXPAND };
-	//  protected Rectangle2D.Double testbox = new Rectangle2D();
+	//  protected Rectangle2D testbox = new Rectangle2D();
 	protected boolean show_outline = false;
 
 	public void setExpansionBehavior(int axisid, int behavior) {
@@ -48,7 +47,7 @@ public class RootGlyph extends StretchContainerGlyph {
 			super.propagateStretch(child);
 			return;
 		}
-		Rectangle2D.Double childbox = child.getCoordBox();
+		Rectangle2D childbox = child.getCoordBox();
 		if (expansion_behavior[X] == EXPAND) {
 			double xbeg = Math.min(childbox.x, coordbox.x);
 			double xend = Math.max(childbox.x + childbox.width,

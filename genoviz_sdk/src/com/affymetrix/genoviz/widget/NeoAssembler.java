@@ -169,7 +169,7 @@ public class NeoAssembler extends NeoContainerWidget
 	// to previously added glyphs -- NOT YET IMPLEMENTED
 	//   protected boolean grandfatherColorBehavior;
 
-	// default reshape behavior for NeoAssembler is for alignments and consensus
+	// default setRect behavior for NeoAssembler is for alignments and consensus
 	//   to stretch to fit in X, and everything to remain constant in Y
 	protected int reshape_constraint[] = { FITWIDGET, NONE };
 	protected int zoom_behavior[] = { CONSTRAIN_MIDDLE, CONSTRAIN_MIDDLE };
@@ -962,10 +962,10 @@ public class NeoAssembler extends NeoContainerWidget
 	 * because some layout managers still use this method.
 	 *
 	 * <p> Note that we must still call the deprecated
-	 * super.reshape to avoid an infinite loop
+	 * super.setRect to avoid an infinite loop
 	 * due to a bug in Sun's classes.
 	 *
-	 * @deprecated use setBounds (but override reshape).
+	 * @deprecated use setBounds (but override setRect).
 	 */
 	@Deprecated
 		public synchronized void reshape(int x, int y, int width, int height) {
@@ -1785,7 +1785,7 @@ public class NeoAssembler extends NeoContainerWidget
 	}
 
 	/**
-	 * Alignments are affected by reshape behavior along both X and Y dimensions.
+	 * Alignments are affected by setRect behavior along both X and Y dimensions.
 	 * Labels are only affected along Y dimension.
 	 * Consensus and axis are only affected along X dimension.
 	 * @param id should be {@link #X} or {@link #Y}.

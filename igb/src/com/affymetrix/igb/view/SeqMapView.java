@@ -2394,7 +2394,7 @@ public class SeqMapView extends JPanel
         if (size > 0) {
             Rectangle2D rect = new Rectangle2D();
             GlyphI g0 = glyphs.get(0);
-            rect.copyRect(g0.getCoordBox());
+            rect.setRect(g0.getCoordBox());
             for (int i = 1; i < size; i++) {
                 GlyphI g = glyphs.get(i);
                 rect.add(g.getCoordBox());

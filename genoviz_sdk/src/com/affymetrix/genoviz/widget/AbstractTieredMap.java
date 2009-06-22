@@ -233,7 +233,7 @@ public abstract class AbstractTieredMap
 				if ( mtg.getState() == MapTierGlyph.HIDDEN ) continue;
 				else if ( newbox == null ) {
 					newbox = new Rectangle2D();
-					newbox.reshape(pbox.x, mtg.getCoordBox().y,
+					newbox.setRect(pbox.x, mtg.getCoordBox().y,
 							pbox.width, mtg.getCoordBox().height);
 				}
 				else GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);

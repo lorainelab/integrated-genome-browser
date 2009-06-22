@@ -636,7 +636,7 @@ public abstract class GraphGlyph extends Glyph {
 			return;
 		}
 
-		Graphics2D g = (Graphics2D) view.getGraphics();
+		Graphics2D g = view.getGraphics();
 
 		view.transformToPixels(coordbox, pixelbox);
 		Rectangle view_pixbox = view.getPixelBox();

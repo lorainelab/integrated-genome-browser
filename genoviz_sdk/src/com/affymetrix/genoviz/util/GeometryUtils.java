@@ -43,7 +43,7 @@ public class GeometryUtils {
 		double xend = Math.min(src1.x + src1.width, src2.x + src2.width);
 		double ybeg = Math.max(src1.y, src2.y);
 		double yend = Math.min(src1.y + src1.height, src2.y + src2.height);
-		dst.reshape(xbeg, ybeg, xend - xbeg, yend - ybeg);
+		dst.setRect(xbeg, ybeg, xend - xbeg, yend - ybeg);
 		return dst;
 	}
 
@@ -69,7 +69,7 @@ public class GeometryUtils {
 		double xend = Math.max(src1.x + src1.width, src2.x + src2.width);
 		double ybeg = Math.min(src1.y, src2.y);
 		double yend = Math.max(src1.y + src1.height, src2.y + src2.height);
-		dst.reshape(xbeg, ybeg, xend - xbeg, yend - ybeg);
+		dst.setRect(xbeg, ybeg, xend - xbeg, yend - ybeg);
 		return dst;
 	}
 

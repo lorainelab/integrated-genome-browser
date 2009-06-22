@@ -196,7 +196,7 @@ public final class TransformTierGlyph extends TierGlyph {
       }
       if (children != null)  {
 	// recast to pickTraversal() with coord box rather than pixel box
-	pix_rect.reshape(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
+	pix_rect.setRect(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
 	tier_transform.inverseTransform(pix_rect, internal_pickRect);
         GlyphI child;
         int childnum = children.size();

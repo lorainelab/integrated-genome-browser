@@ -48,7 +48,7 @@ public final class CollapsePacker implements PaddedPackerI {
     moveAllChildren(parent, view);
 
     Rectangle2D newbox = new Rectangle2D();
-    newbox.reshape(parent.getCoordBox());
+    newbox.setRect(parent.getCoordBox());
     // trying to transform according to tier's internal transform  
     //   (since packing is done base on tier's children)
     if (parent instanceof TransformTierGlyph)  {
@@ -105,7 +105,7 @@ public final class CollapsePacker implements PaddedPackerI {
     } else if (alignment == ALIGN_BOTTOM) {
       child.moveAbsolute(cbox.x, pbox.y + parent_spacer + pbox.height - cbox.height );
     } else if (alignment == ALIGN_STRETCH) {
-      child.getCoordBox().reshape(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height);
+      child.getCoordBox().setRect(cbox.x, pbox.y + parent_spacer, cbox.width, pbox.height);
     }
     return null;
   }

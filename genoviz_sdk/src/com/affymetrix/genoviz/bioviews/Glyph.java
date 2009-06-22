@@ -118,14 +118,14 @@ public abstract class Glyph implements GlyphI  {
 			System.err.println("called Glyph.drawTraversal() on " + this);
 		}
 		if (draw_order == DRAW_SELF_FIRST) {
-			if (withinView(view) && isVisible) {
+			if (isVisible && (withinView(view) || RectangleIntersectHack(view))) {
 				if (selected) { drawSelected(view); }
 				else { draw(view); }
 				if (children != null) { drawChildren(view); }
 			}
 		}
 		else if (draw_order == DRAW_CHILDREN_FIRST) {
-			if (withinView(view) && isVisible) {
+			if (isVisible && (withinView(view) || RectangleIntersectHack(view))) {
 				if (children != null)  { drawChildren(view); }
 				if (selected) { drawSelected(view); }
 				else { draw(view); }
@@ -134,6 +134,23 @@ public abstract class Glyph implements GlyphI  {
 		if (DEBUG_DT) {
 			System.err.println("leaving Glyph.drawTraversal()");
 		}
+	}
+
+	/**
+	 * Hack needed to make Hairline label glyph visible after removing bioviews.Rectangle2D.intersects.
+	 * Specifically, this handles the case where a 0-width/0-height rectangle intersects another rectangle.
+	 * Is this an intersection or not?  Genoviz says yes, Java SDK says no.
+	 */
+	private boolean RectangleIntersectHack(ViewI view) {
+		Rectangle2D r= this.getPositiveCoordBox();
+		Rectangle2D v = view.getCoordBox();
+		if (r.width == 0 || r.height == 0) {
+			return !((r.x + r.width <= v.x) ||
+				(r.y + r.height <= v.y) ||
+				(r.x >= v.x + v.width) ||
+				(r.y >= v.y + v.height));
+		}
+		return false;
 	}
 
 	protected void drawChildren(ViewI view) {
@@ -483,7 +500,7 @@ public abstract class Glyph implements GlyphI  {
 			y = y + height;
 			height = -height;
 		}
-		coordbox.reshape(x, y, width, height);
+		coordbox.setRect(x, y, width, height);
 	}
 
 	public Rectangle2D getCoordBox()   {
@@ -495,11 +512,14 @@ public abstract class Glyph implements GlyphI  {
 	 *  to an equivalent one with positive width and height.
 	 */
 	// TODO: remove this method.  Coordbox should always be positive anyway,
-	// but setCoordbox() allows any coorbox to be used.
+	// but setCoordbox() allows any coordbox to be used.
 	protected final Rectangle2D getPositiveCoordBox() {
-		if (coordbox.width>=0 && coordbox.height>=0) return coordbox;
+		if (coordbox.width>=0 && coordbox.height>=0) {
+			return coordbox;
+		}
 
-		if (cb2==null) {cb2 = new Rectangle2D();}
+		if (cb2==null) {
+			cb2 = new Rectangle2D();}
 
 		if (coordbox.width<0) {
 			System.err.println("*********** WARNING: Found a negative width coord box. **********");

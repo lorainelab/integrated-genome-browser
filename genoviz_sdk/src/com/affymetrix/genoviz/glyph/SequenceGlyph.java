@@ -152,7 +152,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				seq_end_index = sequence.length();
 			}
 
-			scratchrect.reshape(coordbox.x, visible_seq_beg,
+			scratchrect.setRect(coordbox.x, visible_seq_beg,
 					coordbox.width, visible_seq_span);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = ((LinearTransform)view.getTransform()).getScaleY();
@@ -225,7 +225,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				seq_end_index = sequence.length();
 			}
 
-			scratchrect.reshape(visible_seq_beg,  coordbox.y,
+			scratchrect.setRect(visible_seq_beg,  coordbox.y,
 					visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = ((LinearTransform)view.getTransform()).getScaleX();

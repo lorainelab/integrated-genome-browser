@@ -357,7 +357,7 @@ public class EfficientGlyph extends Rectangle2D implements com.affymetrix.genovi
       y = y + height;
       height = -height;
     }
-    this.reshape(x, y, width, height);
+    this.setRect(x, y, width, height);
 
   }
 

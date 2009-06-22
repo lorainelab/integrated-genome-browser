@@ -316,7 +316,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
     Rectangle2D newbox = new Rectangle2D();
     Rectangle2D tempbox = new Rectangle2D();
     child = (GlyphI)sibs.elementAt(0);
-    newbox.reshape(pbox.x, child.getCoordBox().y,
+    newbox.setRect(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
@@ -329,7 +329,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
       for (int i=1; i<sibs_size; i++) {
 	child = (GlyphI)sibs.elementAt(i);
 	Rectangle2D childbox = child.getCoordBox();
-	tempbox.reshape(newbox.x, childbox.y, newbox.width, childbox.height);
+	tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
       }
     }
@@ -337,7 +337,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
       for (int i=1; i<sibs_size; i++) {
 	child = (GlyphI)sibs.elementAt(i);
 	Rectangle2D childbox = child.getCoordBox();
-	tempbox.reshape(childbox.x, newbox.y, childbox.width, newbox.height);
+	tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
       }
     }

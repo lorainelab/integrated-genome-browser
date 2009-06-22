@@ -32,7 +32,7 @@ public final class GridGlyph extends Glyph {
 
 	@Override
   public void drawTraversal(ViewI view) {
-    coordbox.reshape(view.getCoordBox());
+    coordbox.setRect(view.getCoordBox());
     super.drawTraversal(view);
   }
 
@@ -42,8 +42,8 @@ public final class GridGlyph extends Glyph {
     if (grid_spacing <0) { return; }
 
     // always fit GridGlyph to be same coords as parent
-    //    coordbox.reshape(getParent().getCoordBox());
-    coordbox.reshape(view.getCoordBox());
+    //    coordbox.setRect(getParent().getCoordBox());
+    coordbox.setRect(view.getCoordBox());
 
     Rectangle2D vbox = view.getCoordBox();
 
@@ -63,7 +63,7 @@ public final class GridGlyph extends Glyph {
     double cur_xcoord = ((xmin % grid_spacing) * grid_spacing) + grid_spacing;
     //    System.out.println("cur_xcoord: " + cur_xcoord);
     while (cur_xcoord <= xmax) {
-      gridbox_coords.reshape(cur_xcoord, vbox.y, 1, vbox.height);
+      gridbox_coords.setRect(cur_xcoord, vbox.y, 1, vbox.height);
       view.transformToPixels(gridbox_coords, gridbox_pix);
       g.fillRect(gridbox_pix.x, gridbox_pix.y, 2, gridbox_pix.height);
       cur_xcoord += grid_spacing;

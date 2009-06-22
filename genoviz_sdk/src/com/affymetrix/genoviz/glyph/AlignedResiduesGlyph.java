@@ -387,7 +387,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 		seq_beg_index = visible_seq_beg - seq_beg;
 		seq_end_index = visible_seq_end - seq_beg;
 
-		scratchrect.reshape(visible_seq_beg,  coordbox.y,
+		scratchrect.setRect(visible_seq_beg,  coordbox.y,
 				visible_seq_span, coordbox.height);
 		view.transformToPixels(scratchrect, pixelbox);
 		pixels_per_residue = ((double)pixelbox.width)/scratchrect.width;

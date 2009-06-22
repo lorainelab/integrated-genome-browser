@@ -402,7 +402,7 @@ public class TierGlyph extends SolidGlyph {
     for (int i=0; i<mcount; i++) {
       GlyphI mglyph = middle_glyphs.get(i);
       Rectangle2D mbox = mglyph.getCoordBox();
-      mbox.reshape(mbox.x, coordbox.y, mbox.width, coordbox.height);
+      mbox.setRect(mbox.x, coordbox.y, mbox.width, coordbox.height);
       mglyph.setColor(style.getBackground());
       mglyph.drawTraversal(view);
     }

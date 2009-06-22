@@ -476,7 +476,7 @@ public class View implements ViewI, NeoPaintListener,
 				   }
 			   }
 
-			   prevCoordBox.reshape(coordbox.x, coordbox.y,
+			   prevCoordBox.setRect(coordbox.x, coordbox.y,
 					   coordbox.width, coordbox.height);
 
 			   }

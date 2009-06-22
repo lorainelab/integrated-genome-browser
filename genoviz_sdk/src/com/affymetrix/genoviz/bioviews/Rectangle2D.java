@@ -59,29 +59,29 @@ public class Rectangle2D
 	 * @param height the height of the rectangle
 	 */
 	public Rectangle2D(double x, double y, double width, double height) {
-		this.reshape(x,y,width,height);
+		this.setRect(x,y,width,height);
 	}
 
 	/**
 	 * Reshapes the rectangle.
 	 */
-	public void reshape(double x, double y, double width, double height) {
+	public void setRect(double x, double y, double width, double height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
 	}
 
-	public void reshape(Rectangle2D r) {
-		this.reshape(r.x,r.y,r.width,r.height);
+	public void setRect(Rectangle2D r) {
+		this.setRect(r.x,r.y,r.width,r.height);
 	}
 
 	/**
 	 *  Reshape this rectangle to same coords as r
 	 */
-	public void copyRect(Rectangle2D r) {
-		this.reshape(r);
-	}
+	/*public void copyRect(Rectangle2D r) {
+		this.setRect(r);
+	}*/
 
 	/**
 	 * Checks if two rectangles intersect.

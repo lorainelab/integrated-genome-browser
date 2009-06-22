@@ -32,7 +32,7 @@ public final class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
 
-    Graphics2D g = (Graphics2D) view.getGraphics();
+    Graphics2D g = view.getGraphics();
     
     fixAWTBigRectBug(view, pixelbox);
     

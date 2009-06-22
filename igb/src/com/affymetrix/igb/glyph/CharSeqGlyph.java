@@ -169,7 +169,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 				seq_end_index = residue_length;
 			}
 
-			scratchrect.reshape(visible_seq_beg, coordbox.y,
+			scratchrect.setRect(visible_seq_beg, coordbox.y,
 							visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = ((LinearTransform) view.getTransform()).getScaleX();

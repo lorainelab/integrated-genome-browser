@@ -311,7 +311,7 @@ public class Scene implements SceneI  {
 			expandDamage(gl, x, y, width, height);
 		}
 		else {
-			scratchCoordBox.reshape(prev_selbox.x, prev_selbox.y,
+			scratchCoordBox.setRect(prev_selbox.x, prev_selbox.y,
 					prev_selbox.width, prev_selbox.height);
 			if (debug) {
 				System.out.println("in Scene.select(), prev_selbox NOT null, " +
@@ -462,7 +462,7 @@ public class Scene implements SceneI  {
 
 		if (damageCoordBox == null) {
 			damageCoordBox = new Rectangle2D();
-			damageCoordBox.copyRect(gcoords);
+			damageCoordBox.setRect(gcoords);
 		}
 		else {
 			damageCoordBox.add(gcoords);

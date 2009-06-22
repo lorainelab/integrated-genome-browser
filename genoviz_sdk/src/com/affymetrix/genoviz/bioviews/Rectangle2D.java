@@ -20,7 +20,9 @@ package com.affymetrix.genoviz.bioviews;
  * due to differences when dealing with (almost)real numbers instead of integers.
  * See, for example, intersects(Rectangle2D)
  */
-public class Rectangle2D  {
+public class Rectangle2D
+//extends java.awt.geom.Rectangle2D.Double
+{
 
 	/**
 	 * The x coordinate of the rectangle.
@@ -57,44 +59,13 @@ public class Rectangle2D  {
 	 * @param height the height of the rectangle
 	 */
 	public Rectangle2D(double x, double y, double width, double height) {
-		/*
-		   if ( Double.isNaN( x ) ) {
-		   throw new IllegalArgumentException( "X must be a number." );
-		   }
-		   if ( Double.isNaN( y ) ) {
-		   throw new IllegalArgumentException( "Y must be a number." );
-		   }
-		   if ( Double.isNaN( width ) ) {
-		   throw new IllegalArgumentException( "Width must be a number." );
-		   }
-		   if ( Double.isNaN( height ) ) {
-		   throw new IllegalArgumentException( "Height must be a number." );
-		   }
-		   */
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.reshape(x,y,width,height);
 	}
 
 	/**
 	 * Reshapes the rectangle.
 	 */
 	public void reshape(double x, double y, double width, double height) {
-		/*
-		   if ( Double.isNaN( x ) ) {
-		   throw new IllegalArgumentException( "X must be a number." );
-		   }
-		   if ( Double.isNaN( y ) ) {
-		   throw new IllegalArgumentException( "Y must be a number." );
-		   }
-		   if ( Double.isNaN( width ) ) {
-		   throw new IllegalArgumentException( "Width must be a number." );
-		   }
-		   if ( Double.isNaN( height ) ) {
-		   throw new IllegalArgumentException( "Height must be a number." );
-		   }
-		   */
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -102,67 +73,14 @@ public class Rectangle2D  {
 	}
 
 	public void reshape(Rectangle2D r) {
-		x = r.x;
-		y = r.y;
-		width = r.width;
-		height = r.height;
+		this.reshape(r.x,r.y,r.width,r.height);
 	}
 
 	/**
-	 * Moves the rectangle.
+	 *  Reshape this rectangle to same coords as r
 	 */
-	public void move(double x, double y) {
-		/*
-		   if ( Double.isNaN( x ) ) {
-		   throw new IllegalArgumentException( "X must be a number." );
-		   }
-		   if ( Double.isNaN( y ) ) {
-		   throw new IllegalArgumentException( "Y must be a number." );
-		   }
-		   */
-		this.x = x;
-		this.y = y;
-	}
-
-	/**
-	 * Translates the rectangle.
-	 */
-	public void translate(double x, double y) {
-		/*
-		   if ( Double.isNaN( x ) ) {
-		   throw new IllegalArgumentException( "X must be a number." );
-		   }
-		   if ( Double.isNaN( y ) ) {
-		   throw new IllegalArgumentException( "Y must be a number." );
-		   }
-		   */
-		this.x += x;
-		this.y += y;
-	}
-
-	/**
-	 * Resizes the rectangle.
-	 */
-	public void resize(double width, double height) {
-		/*
-		   if ( Double.isNaN( width ) ) {
-		   throw new IllegalArgumentException( "Width must be a number." );
-		   }
-		   if ( Double.isNaN( height ) ) {
-		   throw new IllegalArgumentException( "Height must be a number." );
-		   }
-		   */
-		this.width = width;
-		this.height = height;
-	}
-
-	/**
-	 * Checks if the specified point lies inside a rectangle.
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 */
-	public boolean inside(double x, double y) {
-		return (x >= this.x) && ((x - this.x) < this.width) && (y >= this.y) && ((y-this.y) < this.height);
+	public void copyRect(Rectangle2D r) {
+		this.reshape(r);
 	}
 
 	/**
@@ -222,14 +140,6 @@ public class Rectangle2D  {
 	 * that contains both the rectangle and the point.
 	 */
 	public void add(double newx, double newy) {
-		/*
-		   if ( Double.isNaN( newx ) ) {
-		   throw new IllegalArgumentException( "Newx must be a number." );
-		   }
-		   if ( Double.isNaN( newy ) ) {
-		   throw new IllegalArgumentException( "Newy must be a number." );
-		   }
-		   */
 		double x1 = Math.min(x, newx);
 		double x2 = Math.max(x + width, newx);
 		double y1 = Math.min(y, newy);
@@ -241,36 +151,9 @@ public class Rectangle2D  {
 	}
 
 	/**
-	 * Grows the rectangle horizontally and vertically.
-	 * e.g. <code>grow(1, 1)</code> causes growth by one in all four directions.
-	 * @param h amount to grow both to the left and to the right.
-	 * @param v amount to grow both up and down.
-	 */
-	public void grow(double h, double v) {
-		/*
-		   if ( Double.isNaN( h ) ) {
-		   throw new IllegalArgumentException( "H must be a number." );
-		   }
-		   if ( Double.isNaN( v ) ) {
-		   throw new IllegalArgumentException( "V must be a number." );
-		   }
-		   */
-		x -= h;
-		y -= v;
-		width += h * 2;
-		height += v * 2;
-	}
-
-	/**
-	 * Determines whether the rectangle is empty.
-	 */
-	public boolean isEmpty() {
-		return (width <= 0) || (height <= 0);
-	}
-
-	/**
 	 * Checks whether two rectangles are equal.
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Rectangle2D) {
 			Rectangle2D r = (Rectangle2D)obj;
@@ -279,19 +162,11 @@ public class Rectangle2D  {
 		return false;
 	}
 
-	/**
-	 *  Reshape this rectangle to same coords as r
-	 */
-	public void copyRect(Rectangle2D r) {
-		x = r.x;
-		y = r.y;
-		width = r.width;
-		height = r.height;
-	}
-
+	
 	/**
 	 * Returns the String representation of this Rectangle2D's values.
 	 */
+	@Override
 	public String toString() {
 		return "GenoViz Rect2D: xmin = " + x + ", xmax = " + (x+width) +
 			", ymin = " + y + ", ymax = " + (y+height);

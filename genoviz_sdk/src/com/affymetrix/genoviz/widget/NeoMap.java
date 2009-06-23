@@ -61,8 +61,10 @@ import javax.swing.JScrollBar;
  *   map.setBackground(new Color(180, 250, 250));
  *   map.resize(500, 200);
  * </pre>
+ *
+ * @version $Id$
  */
-public class NeoMap extends NeoWidget implements NeoWidgetI,
+public class NeoMap extends NeoWidget implements
 	   NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 	/**
 	 * For methods inherited from NeoWidgetI that require a sub-component id.

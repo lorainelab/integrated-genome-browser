@@ -16,12 +16,10 @@ package genoviz.demo;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.event.*;
@@ -33,6 +31,8 @@ import com.affymetrix.genoviz.event.*;
   from other tiers.   On the right hand side of the frame there is a
   TieredLabelMap, which, when registered with the TieredNeoMap, creates labels
   for each tier as they arrive.
+ *
+ * @version $Id$
   */
 
 public class TieredMapDemo extends Applet

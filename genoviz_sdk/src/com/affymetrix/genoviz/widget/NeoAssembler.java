@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.widget.neoassembler.*;
-import java.util.Collections;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -56,6 +55,8 @@ import javax.swing.JSlider;
  * assembly.setBackground(new Color(180, 250, 250));
  * assembly.setSize(500, 200);
  * </pre>
+ *
+ * @version $Id$
  */
 public class NeoAssembler extends NeoContainerWidget
 	implements NeoAssemblerI, NeoViewBoxListener,

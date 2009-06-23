@@ -33,7 +33,6 @@ import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoMapCustomizer;
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
@@ -44,6 +43,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JSlider;
 import javax.swing.WindowConstants;
 
+/**
+ * 
+ * @version $Id$
+ */
 public class NeoMapDemo extends JApplet
 	implements MouseListener, ActionListener,
 			   ItemListener, NeoRubberBandListener

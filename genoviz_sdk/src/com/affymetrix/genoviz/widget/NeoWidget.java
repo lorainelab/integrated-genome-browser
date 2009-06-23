@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
@@ -50,6 +49,8 @@ import java.awt.geom.Rectangle2D;
  * </ul>
  * @see NeoWidgetI
  * for more documentation on methods.
+ *
+ * @version $Id$
  */
 public abstract class NeoWidget extends NeoAbstractWidget
 	implements NeoWidgetI, AdjustmentListener {

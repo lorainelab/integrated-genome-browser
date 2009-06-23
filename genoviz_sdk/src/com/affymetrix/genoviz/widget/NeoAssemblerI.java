@@ -16,12 +16,9 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.util.*;
 
 /**
  * This interface adds functionality for displaying an assembly
@@ -77,6 +74,8 @@ import com.affymetrix.genoviz.util.*;
  * map.updateWidget();
  *
  * </pre>
+ *
+ * @version $Id$
  */
 public interface NeoAssemblerI extends NeoWidgetI {
 

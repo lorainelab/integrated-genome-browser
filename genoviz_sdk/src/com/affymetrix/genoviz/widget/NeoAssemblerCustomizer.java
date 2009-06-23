@@ -17,15 +17,14 @@ import com.affymetrix.genoviz.bioviews.View;
 
 import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
-import java.awt.Event;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ItemEvent;
 
+/**
+ *
+ * @version $Id$
+ */
 public class NeoAssemblerCustomizer
 	extends NeoWidgetICustomizer
 {

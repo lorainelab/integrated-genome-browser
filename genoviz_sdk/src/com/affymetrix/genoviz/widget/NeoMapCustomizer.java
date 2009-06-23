@@ -13,20 +13,17 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.View;
 
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
 import java.awt.Choice;
 import java.awt.Color;
-import java.awt.Event;
-import java.awt.Frame;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ItemEvent;
 
 /**
  * Customizer for a NeoMap for use with NeoMap as a Java bean.
+ *
+ * @version $Id$
  */
 public class NeoMapCustomizer
 	extends NeoWidgetCustomizer

@@ -13,16 +13,16 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.View;
 
 import java.awt.Choice;
-import java.awt.Color;
-import java.awt.Event;
 import java.awt.Label;
-import java.awt.Frame; // Just for main
 import java.awt.Panel; // Just for main
 import java.awt.event.ItemEvent;
 
+/**
+ *
+ * @version $Id$
+ */
 public class NeoQuallerCustomizer
 	extends NeoWidgetICustomizer
 {

@@ -14,9 +14,7 @@
 package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;
 
 import genoviz.demo.adapter.AssemblyAdapter;
@@ -27,7 +25,6 @@ import genoviz.demo.parser.SequenceParser;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -36,6 +33,8 @@ import java.util.*;
  *
  * It adds a button to clear and reload the NeoAssembler.
  * This to check a bug reported by Genentech.
+ *
+ * @version $Id$
  */
 public class NeoAssemblerDemo2 extends Applet {
 

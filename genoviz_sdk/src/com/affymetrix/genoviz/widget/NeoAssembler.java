@@ -1173,10 +1173,10 @@ public class NeoAssembler extends NeoContainerWidget
 	}
 
 	/**
-	 * This implements the selection method portion of NeoMapI.
-	 * That portion of NeoMapI might move to NeoWidgetI
+	 * This implements the selection method portion of NeoMap.
+	 * That portion of NeoMap might move to NeoWidgetI
 	 * or to a new interface of its own.
-	 * @see NeoMapI
+	 * @see NeoMap
 	 */
 	public void setSelectionEvent(int theEvent) {
 		alignmap.setSelectionEvent(theEvent);
@@ -1359,7 +1359,7 @@ public class NeoAssembler extends NeoContainerWidget
 					}
 						 }
 				else if (id == evt.MOUSE_DRAGGED
-						&& NeoMapI.NO_SELECTION != alignmap.getSelectionEvent()) {
+						&& NeoMap.NO_SELECTION != alignmap.getSelectionEvent()) {
 					if (source == alignmap || source == consmap) {
 						NeoMap selmap = (source == alignmap) ? alignmap : consmap;
 						if (select_end != (int)nevt.getCoordX() && sel_glyph != null) {

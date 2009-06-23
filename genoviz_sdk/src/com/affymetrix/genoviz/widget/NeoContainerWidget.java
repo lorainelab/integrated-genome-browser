@@ -93,8 +93,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget
 			) {
 			Object o = e.nextElement();
 			if (o != this) {
-				/*if (o instanceof NeoMapI) {
-				  ((NeoMapI)o).setMapColor(theColor);
+				/*if (o instanceof NeoMap) {
+				  ((NeoMap)o).setMapColor(theColor);
 				}
 				else*/ if (o instanceof NeoWidgetI) {
 					((NeoWidgetI)o).setBackground(theColor);
@@ -255,8 +255,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget
 		else if (widg instanceof NeoWidget) {
 			return ((NeoWidget)widg).getItems(xcoord, ycoord);
 		}
-		else if (widg instanceof NeoMapI) {
-			return ((NeoMapI)widg).getItems(xcoord, ycoord);
+		else if (widg instanceof NeoMap) {
+			return ((NeoMap)widg).getItems(xcoord, ycoord);
 		}
 		else if (widg instanceof NeoContainerWidget) {
 			return ((NeoContainerWidget)widg).getItems(xcoord, ycoord, location);
@@ -265,8 +265,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget
 		   else if (widg instanceof NeoWidget) {
 		   return ((NeoWidget)widg).getItems(xcoord, ycoord);
 		   }
-		   else if (widg instanceof NeoMapI) {
-		   return ((NeoMapI)widg).getItems(xcoord, ycoord);
+		   else if (widg instanceof NeoMap) {
+		   return ((NeoMap)widg).getItems(xcoord, ycoord);
 		   }
 		   else if (widg instanceof NeoContainerWidget) {
 		   return ((NeoContainerWidget)widg).getItems(xcoord, ycoord, location);

@@ -117,14 +117,14 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 		double ourX, ourY, ourWidth, ourHeight;
 		int[] offset = map.getVisibleOffset();
 		switch ( theOrientation ) {
-			case NeoMapI.HORIZONTAL:
+			case NeoMap.HORIZONTAL:
 				ourX = sbox.x;
 				ourWidth = 1;
 				ourY = sbox.y + ( sbox.height * this.topMargin );
 				ourHeight = sbox.height * (1.0 - this.topMargin - this.bottomMargin );
 
 				break;
-			case NeoMapI.VERTICAL:
+			case NeoMap.VERTICAL:
 				ourY = sbox.y;
 				ourHeight = 1;
 				ourX = sbox.x + ( sbox.width * this.topMargin );
@@ -255,7 +255,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
 			int[] offset = map.getVisibleOffset();
 			switch ( this.orientation ) {
-				case NeoMapI.HORIZONTAL:
+				case NeoMap.HORIZONTAL:
 					x = st;
 					width = en - x;
 					y = (int) sbox.y;
@@ -266,7 +266,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 						label.setCoords(x+width*0.5, offset[1] - px.height*1.0, 0,0);
 					}
 					break;
-				case NeoMapI.VERTICAL:
+				case NeoMap.VERTICAL:
 					y = st;
 					height = en - y;
 					x = (int) sbox.x;
@@ -339,12 +339,12 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 				view.transformToCoords(tx, px);
 
 				switch ( this.orientation ) {
-					case NeoMapI.HORIZONTAL:
+					case NeoMap.HORIZONTAL:
 						extraRect.setCoords(vgbox.x, offset[1] - px.height*1.5,
 								vgbox.width, px.height);
 						label.setCoords(vgbox.x+0.5*vgbox.width, offset[1] - px.height*1.0, 0,0);
 						break;
-					case NeoMapI.VERTICAL:
+					case NeoMap.VERTICAL:
 						extraRect.setCoords(offset[1] - px.width*1.25,
 								vgbox.y, px.width,1);
 						label.setCoords(offset[1] - px.width*0.75, vgbox.y+0.5*vgbox.height, 0,0);
@@ -354,13 +354,13 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 
 			double height_scale = 1.0-topMargin-bottomMargin;
 			switch ( this.orientation ) {
-				case NeoMapI.HORIZONTAL:
+				case NeoMap.HORIZONTAL:
 					tg.setCoords( vgbox.x, sbox.y + ( sbox.height * topMargin ),
 							vgbox.width, sbox.height * height_scale );
 					vGlyph.setCoords( vgbox.x, sbox.y + ( sbox.height * topMargin ),
 							vgbox.width, sbox.height * height_scale );
 					break;
-				case NeoMapI.VERTICAL:
+				case NeoMap.VERTICAL:
 					tg.setCoords( sbox.x + ( sbox.width * topMargin ), vgbox.y,
 							sbox.width, vgbox.height * height_scale );
 					vGlyph.setCoords( sbox.x + ( sbox.width * topMargin ), vgbox.y,

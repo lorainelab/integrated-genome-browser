@@ -39,10 +39,10 @@ import com.affymetrix.genoviz.glyph.RootGlyph;
 import javax.swing.JScrollBar;
 
 /**
- * NeoMap is the <strong>implementation</strong> of NeoMapI.
+ * NeoMap is the <strong>implementation</strong> of NeoMap.
  *
  * <p> Documentation for all interface methods can be found in the
- * documentation for NeoMapI.<p>
+ * documentation for NeoMap.<p>
  *
  * <p> This javadoc explains the implementation
  * specific features of this widget concerning event handling and the
@@ -62,8 +62,14 @@ import javax.swing.JScrollBar;
  *   map.resize(500, 200);
  * </pre>
  */
-public class NeoMap extends NeoWidget implements NeoMapI,
+public class NeoMap extends NeoWidget implements NeoWidgetI,
 	   NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
+	/**
+	 * For methods inherited from NeoWidgetI that require a sub-component id.
+	 * For NeoMapI the component <em>is</em> the only sub-component,
+	 * and its id is MAP.
+	 */
+	public static final int MAP = 400;
 
 		   protected int orient;
 
@@ -1227,9 +1233,9 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 		   }
 
 		   /**
-			* @param id must be NeoMapI.MAP
+			* @param id must be NeoMap.MAP
 			* @param col the color for the map background.
-			* @see NeoMapI#MAP
+			* @see NeoMap#MAP
 			*/
 		   public void setBackground(int id, Color col) {
 			   if (id == MAP) {
@@ -1242,9 +1248,9 @@ public class NeoMap extends NeoWidget implements NeoMapI,
 		   }
 
 		   /**
-			* @param id must be NeoMapI.MAP
+			* @param id must be NeoMap.MAP
 			* @return the color of the map background.
-			* @see NeoMapI#MAP
+			* @see NeoMap#MAP
 			*/
 		   public Color getBackground(int id) {
 			   if (id == MAP) {

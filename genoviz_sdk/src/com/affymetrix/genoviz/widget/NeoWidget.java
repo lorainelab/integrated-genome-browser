@@ -816,7 +816,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 	/**
-	 * @see com.affymetrix.genoviz.widget.NeoMapI#select
+	 * @see com.affymetrix.genoviz.widget.NeoMap#select
 	 */
 	public void select(Vector vec, double x, double y,
 			double width, double height) {

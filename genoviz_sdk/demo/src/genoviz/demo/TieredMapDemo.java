@@ -88,7 +88,7 @@ public class TieredMapDemo extends Applet
 		map = new TieredNeoMap(false, false);
 		map.setMapColor ( Color.black );
 		map.setRubberBandBehavior ( false );
-		map.setSelectionEvent ( NeoMapI.ON_MOUSE_DOWN );
+		map.setSelectionEvent ( NeoMap.ON_MOUSE_DOWN );
 		map.setSelectionAppearance ( SceneI.SELECT_NONE );
 		map.setSelectionColor ( selectionColor );
 		map.setMapOffset ( offset_start, offset_end );
@@ -101,7 +101,7 @@ public class TieredMapDemo extends Applet
 		map_pan.add ( map, BorderLayout.CENTER );
 
 		yscroll = new Scrollbar(Scrollbar.VERTICAL);
-		map.setScroller ( NeoMapI.Y, yscroll );
+		map.setScroller ( NeoMap.Y, yscroll );
 		map_pan.add ( yscroll, BorderLayout.EAST );
 
 		frame = new Frame("TieredNeoMap Demo");
@@ -122,7 +122,7 @@ public class TieredMapDemo extends Applet
 		labelmap.setPreferredSize ( new Dimension ( 100, 100 ) );
 		labelmap.setMapColor ( new Color ( 110, 110, 110 ) );
 		labelmap.addMouseListener ( this );
-		labelmap.setScroller ( NeoMapI.Y, yscroll );
+		labelmap.setScroller ( NeoMap.Y, yscroll );
 
 		NeoPanel labelpanel = new NeoPanel();
 		labelpanel.setLayout ( new BorderLayout() );

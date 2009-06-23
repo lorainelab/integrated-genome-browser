@@ -33,7 +33,7 @@ import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoMapI;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoMapCustomizer;
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
@@ -105,7 +105,7 @@ public class NeoMapDemo extends JApplet
     /**
      *  Use the NeoMap's built-in selection behavior.
      */
-    map.setSelectionEvent(NeoMapI.ON_MOUSE_DOWN);
+    map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
 
     /**
      *  Specify selection appearance and color (though map will use defaults if not specified)
@@ -569,7 +569,7 @@ public class NeoMapDemo extends JApplet
       if (theItem == noSelection) {
 	map.deselect(map.getSelected());
 	map.updateWidget();
-	map.setSelectionEvent(NeoMapI.NO_SELECTION);
+	map.setSelectionEvent(NeoMap.NO_SELECTION);
 	// noSelection.setState(true);
 	highlightSelection.setState(false);
 	outlineSelection.setState(false);
@@ -578,7 +578,7 @@ public class NeoMapDemo extends JApplet
 	selectionType = SceneI.SELECT_FILL;
 	map.setSelectionAppearance(selectionType);
 	map.updateWidget();
-	map.setSelectionEvent(NeoMapI.ON_MOUSE_DOWN);
+	map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
 	noSelection.setState(false);
 	// highlightSelection.setState(true);
 	outlineSelection.setState(false);
@@ -587,7 +587,7 @@ public class NeoMapDemo extends JApplet
 	selectionType = SceneI.SELECT_OUTLINE;
 	map.setSelectionAppearance(selectionType);
 	map.updateWidget();
-	map.setSelectionEvent(NeoMapI.ON_MOUSE_DOWN);
+	map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
 	noSelection.setState(false);
 	highlightSelection.setState(false);
 	// outlineSelection.setState(true);
@@ -612,58 +612,58 @@ public class NeoMapDemo extends JApplet
       }
       else if (theItem == fitHorizontallyMenuItem) {
 	if (((JCheckBoxMenuItem)theItem).getState()) {
-	  map.setReshapeBehavior(NeoMapI.X, NeoMapI.FITWIDGET);
+	  map.setReshapeBehavior(NeoMap.X, NeoMap.FITWIDGET);
 	  map.setSize(map.getSize()); // use Component's set/getSize method
 	  map.updateWidget();
 	}
 	else {
-	  map.setReshapeBehavior(NeoMapI.X, NeoMapI.NONE);
+	  map.setReshapeBehavior(NeoMap.X, NeoMap.NONE);
 	}
       }
       else if (theItem == fitVerticallyMenuItem) {
 	if (((JCheckBoxMenuItem)theItem).getState()) {
-	  map.setReshapeBehavior(NeoMapI.Y, NeoMapI.FITWIDGET);
+	  map.setReshapeBehavior(NeoMap.Y, NeoMap.FITWIDGET);
 	  map.setSize(map.getSize()); // use Component's set/getSize method
 	  map.updateWidget();
 	}
 	else {
-	  map.setReshapeBehavior(NeoMapI.Y, NeoMapI.NONE);
+	  map.setReshapeBehavior(NeoMap.Y, NeoMap.NONE);
 	}
       }
       else if (theItem == zoomTopMenuItem) {
 	// zoomTopMenuItem.setState(true);
-	map.setZoomBehavior(NeoMapI.Y, NeoMapI.CONSTRAIN_START);
+	map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_START);
 	zoomMiddleMenuItem.setState(false);
 	zoomBottomMenuItem.setState(false);
       }
       else if (theItem == zoomMiddleMenuItem) {
 	zoomTopMenuItem.setState(false);
 	// zoomMiddleMenuItem.setState(true);
-	map.setZoomBehavior(NeoMapI.Y, NeoMapI.CONSTRAIN_MIDDLE);
+	map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_MIDDLE);
 	zoomBottomMenuItem.setState(false);
       }
       else if (theItem == zoomBottomMenuItem) {
 	zoomTopMenuItem.setState(false);
 	zoomMiddleMenuItem.setState(false);
-	map.setZoomBehavior(NeoMapI.Y, NeoMapI.CONSTRAIN_END);
+	map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_END);
 	// zoomBottomMenuItem.setState(true);
       }
       else if (theItem == zoomLeftMenuItem) {
 	// zoomLeftMenuItem.setState(true);
-	map.setZoomBehavior(NeoMapI.X, NeoMapI.CONSTRAIN_START);
+	map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_START);
 	zoomCenterMenuItem.setState(false);
 	zoomRightMenuItem.setState(false);
       }
       else if (theItem == zoomCenterMenuItem) {
 	zoomLeftMenuItem.setState(false);
-	map.setZoomBehavior(NeoMapI.X, NeoMapI.CONSTRAIN_MIDDLE);
+	map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_MIDDLE);
 	// zoomCenterMenuItem.setState(true);
 	zoomRightMenuItem.setState(false);
       }
       else if (theItem == zoomRightMenuItem) {
 	zoomLeftMenuItem.setState(false);
 	zoomCenterMenuItem.setState(false);
-	map.setZoomBehavior(NeoMapI.X, NeoMapI.CONSTRAIN_END);
+	map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_END);
 	// zoomRightMenuItem.setState(true);
       }
       else if (theItem == sharpPrecisionMenuItem) {

@@ -697,7 +697,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	 * @param diffx the double relative offset along the X axis
 	 * @param diffy the double relative offset along the Y axis
 	 * @see #moveAbsolute
-	 * @see NeoMapI#addItem
+	 * @see NeoMap#addItem
 	 */
 	public void moveRelative(GlyphI glyph, double diffx, double diffy);
 
@@ -713,7 +713,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	 * @param diffx the double relative offset along the X axis
 	 * @param diffy the double relative offset along the Y axis
 	 * @see #moveAbsolute
-	 * @see NeoMapI#addItem
+	 * @see NeoMap#addItem
 	 */
 	public void moveRelative(Vector<GlyphI> glyphs, double diffx, double diffy);
 
@@ -726,7 +726,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	 * @param x the absolute double position along the X axis.
 	 * @param y the absolute double position along the Y axis.
 	 * @see #moveRelative
-	 * @see NeoMapI#addItem
+	 * @see NeoMap#addItem
 	 */
 	public void moveAbsolute(GlyphI glyph, double x, double y);
 
@@ -738,7 +738,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	 * @param x the absolute double position along the X axis.
 	 * @param y the absolute double position along the Y axis.
 	 * @see #moveRelative
-	 * @see NeoMapI#addItem
+	 * @see NeoMap#addItem
 	 */
 	public void moveAbsolute(Vector<GlyphI> glyphs, double x, double y);
 
@@ -961,7 +961,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	 * removes the <code>glyph</code> from this widget
 	 *
 	 * @param glyph the GlyphI to remove
-	 * @see NeoMapI#addItem
+	 * @see NeoMap#addItem
 	 */
 	public void removeItem(GlyphI glyph);
 
@@ -969,7 +969,7 @@ public interface NeoWidgetI extends NeoConstants   {
 	 * Removes all GlyphI's in Vector from this widget
 	 *
 	 * @param glyphs the Vector of GlyphIs to remove
-	 * @see NeoMapI#addItem
+	 * @see NeoMap#addItem
 	 */
 	public void removeItem(Vector<GlyphI> glyphs);
 

@@ -22,7 +22,7 @@ import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.parser.ContentParser;
 import com.affymetrix.genoviz.util.Debug;
-import com.affymetrix.genoviz.widget.NeoMapI;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoWidgetI;
 import org.xml.sax.*;
@@ -33,7 +33,7 @@ import java.io.*;
 import java.util.*;
 
 public class MapHandler extends HandlerBase implements ContentParser {
-	protected NeoMapI       map = new NeoMap( true, false );
+	protected NeoMap       map = new NeoMap( true, false );
 	protected Parser        xmlParser;
 	private Hashtable<String,Integer>       positions = new Hashtable<String,Integer>();
 	private Hashtable       featureTypes = new Hashtable();
@@ -99,15 +99,15 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			Object o ) throws IOException {}
 
 	/**
-	 * sets the widget (in our case a NeoMapI).
+	 * sets the widget (in our case a NeoMap).
 	 */
 	public void setWidget( NeoWidgetI theWidget ) {
 		Debug.inform( "setting widget" );
 
-		if ( theWidget instanceof NeoMapI ) {
+		if ( theWidget instanceof NeoMap ) {
 			Debug.inform( "it's a map" );
 
-			this.map = ( NeoMapI ) theWidget;
+			this.map = ( NeoMap ) theWidget;
 			this.labelFactory = this.map.addFactory( "-glyphtype LabelGlyph" );
 		}
 	}
@@ -120,7 +120,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param theName a unique name.
 	 * @param theMap on which glyphs are to be placed.
 	 */
-	public void addMap( String theName, NeoMapI theMap ) {
+	public void addMap( String theName, NeoMap theMap ) {
 		Debug.inform( "adding map type " + theName );
 		this.maps.put( theName, theMap );
 	}
@@ -150,7 +150,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	public void startElement( String name, AttributeList attributes ) {
 		GlyphI     lastItem = null;
 		LabelGlyph label = null;
-		NeoMapI    nextMap = null;
+		NeoMap    nextMap = null;
 
 		Debug.inform( "Start element:  name=" + name );
 
@@ -239,7 +239,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 			this.map.addAxis( axisOffset );
 		}
-		else if ( null != ( nextMap = ( NeoMapI ) this.maps.get( name ) ) ) {
+		else if ( null != ( nextMap = ( NeoMap ) this.maps.get( name ) ) ) {
 			Debug.inform( "got map alias" );
 
 			if ( null != this.map ) {
@@ -366,7 +366,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param config string to pass to the glyph factory
 	 * @param labelPlacement LEFT, RIGHT, ABOVE, BELOW, or CENTER
 	 */
-	public void defineGlyphStyle( NeoMapI theMap, String name, String config, 
+	public void defineGlyphStyle( NeoMap theMap, String name, String config, 
 			Object labelPlacement ) {
 		if ( null == name ) {
 			throw new NullPointerException( "Need a name to define a glyph style" );
@@ -405,7 +405,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		}
 
 		if ( !mapStack.empty() && null != maps.get( name ) ) {
-			this.map = ( NeoMapI ) mapStack.pop();
+			this.map = ( NeoMap ) mapStack.pop();
 		}
 	}
 

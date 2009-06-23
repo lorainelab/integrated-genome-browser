@@ -67,13 +67,13 @@ public class NeoQuallerCustomizer
 	}
 
 	private void setSelectionEvent() {
-		int method = NeoMapI.NO_SELECTION;
+		int method = NeoMap.NO_SELECTION;
 		String s = this.builtInSelectionChoice.getSelectedItem();
 		if (s.equals("On mouse down")) {
-			method = NeoMapI.ON_MOUSE_DOWN;
+			method = NeoMap.ON_MOUSE_DOWN;
 		}
 		else if (s.equals("On mouse up")) {
-			method = NeoMapI.ON_MOUSE_UP;
+			method = NeoMap.ON_MOUSE_UP;
 		}
 		neoQualler.setSelectionEvent(method);
 		neoQualler.updateWidget();
@@ -100,13 +100,13 @@ public class NeoQuallerCustomizer
 			int current = neoQualler.getSelectionEvent();
 			String currentChoice = "Off";
 			switch (current) {
-				case NeoMapI.NO_SELECTION:
+				case NeoMap.NO_SELECTION:
 					currentChoice = "Off";
 					break;
-				case NeoMapI.ON_MOUSE_DOWN:
+				case NeoMap.ON_MOUSE_DOWN:
 					currentChoice = "On mouse down";
 					break;
-				case NeoMapI.ON_MOUSE_UP:
+				case NeoMap.ON_MOUSE_UP:
 					currentChoice = "On mouse up";
 					break;
 			}

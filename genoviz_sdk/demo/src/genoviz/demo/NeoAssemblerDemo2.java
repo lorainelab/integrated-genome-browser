@@ -198,8 +198,8 @@ public class NeoAssemblerDemo2 extends Applet {
 				else {
 					NeoWidgetI aw = map.getWidget( NeoAssemblerI.ALIGNMENTS );
 					NeoWidgetI lw = map.getWidget( NeoAssemblerI.LABELS );
-					((NeoMapI)aw).setMapOffset( 0, 0 );
-					((NeoMapI)lw).setMapOffset( 0, 0 );
+					((NeoMap)aw).setMapOffset( 0, 0 );
+					((NeoMap)lw).setMapOffset( 0, 0 );
 					assem = loadData(seq_URL, align_URL);
 					map.addData(assem);
 					map.setRange(0, assem.getLength()+1);

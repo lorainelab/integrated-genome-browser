@@ -33,7 +33,7 @@ import com.affymetrix.genoviz.util.*;
  * map.setResidueColor(Color.white);
  * map.setMatchColor(new Color(80, 80, 80));
  * map.setMisMatchColor(new Color(150, 150, 150));
- * map.setSelectionMethod(NeoMapI.ON_MOUSE_DOWN);
+ * map.setSelectionMethod(NeoMap.ON_MOUSE_DOWN);
  *
  * // Suppose we have an alignment like so:
  * //

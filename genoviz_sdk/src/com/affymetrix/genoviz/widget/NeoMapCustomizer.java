@@ -60,13 +60,13 @@ public class NeoMapCustomizer
 	}
 
 	private void setSelectionEvent() {
-		int method = NeoMapI.NO_SELECTION;
+		int method = NeoMap.NO_SELECTION;
 		String s = this.builtInSelectionChoice.getSelectedItem();
 		if (s.equals("On mouse down")) {
-			method = NeoMapI.ON_MOUSE_DOWN;
+			method = NeoMap.ON_MOUSE_DOWN;
 		}
 		else if (s.equals("On mouse up")) {
-			method = NeoMapI.ON_MOUSE_UP;
+			method = NeoMap.ON_MOUSE_UP;
 		}
 		map.setSelectionEvent(method);
 		map.updateWidget();
@@ -110,23 +110,23 @@ public class NeoMapCustomizer
 			int current = map.getSelectionEvent();
 			String currentChoice = "Off";
 			switch (current) {
-				case NeoMapI.NO_SELECTION:
+				case NeoMap.NO_SELECTION:
 					currentChoice = "Off";
 					break;
-				case NeoMapI.ON_MOUSE_DOWN:
+				case NeoMap.ON_MOUSE_DOWN:
 					currentChoice = "On mouse down";
 					break;
-				case NeoMapI.ON_MOUSE_UP:
+				case NeoMap.ON_MOUSE_UP:
 					currentChoice = "On mouse up";
 					break;
 			}
 			loadChoice(builtInSelectionChoice, selectionMethods, currentChoice);
 		}
 
-		int reshapeBehavior = map.getReshapeBehavior(NeoMapI.X);
-		this.reshapingBehaviorX.setState(NeoMapI.FITWIDGET == reshapeBehavior);
-		reshapeBehavior = map.getReshapeBehavior(NeoMapI.Y);
-		this.reshapingBehaviorY.setState(NeoMapI.FITWIDGET == reshapeBehavior);
+		int reshapeBehavior = map.getReshapeBehavior(NeoMap.X);
+		this.reshapingBehaviorX.setState(NeoMap.FITWIDGET == reshapeBehavior);
+		reshapeBehavior = map.getReshapeBehavior(NeoMap.Y);
+		this.reshapingBehaviorY.setState(NeoMap.FITWIDGET == reshapeBehavior);
 
 		this.map = (NeoMap)bean;
 	}

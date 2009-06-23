@@ -27,6 +27,7 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.widget.neoassembler.*;
+import java.util.Collections;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -1142,13 +1143,13 @@ public class NeoAssembler extends NeoContainerWidget
 	 * Should move this method and QuickSorter, InsertionSort classes
 	 *  to a Sorter util class
 	 */
-	protected int getSortedPosition(com.affymetrix.genoviz.util.Comparable elem, Vector vec) {
+	protected int getSortedPosition(Comparable elem, Vector vec) {
 		if (vec == null) {
 			return 0;
 		}
 		int max = vec.size();
 		for (int i=0; i<max; i++) {
-			if (elem.compare((com.affymetrix.genoviz.util.Comparable)vec.elementAt(i)) < 0) {
+			if (elem.compareTo(vec.elementAt(i)) < 0) {
 				return i;
 			}
 		}

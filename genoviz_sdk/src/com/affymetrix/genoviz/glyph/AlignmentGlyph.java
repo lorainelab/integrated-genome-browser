@@ -13,19 +13,16 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import com.affymetrix.genoviz.util.Comparable;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.datamodel.Mapping;
 import com.affymetrix.genoviz.datamodel.SequenceI;
-import com.affymetrix.genoviz.datamodel.NASequenceI;
 import com.affymetrix.genoviz.datamodel.Sequence;
 import com.affymetrix.genoviz.datamodel.NASequence;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.Vector;
@@ -87,7 +84,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	private boolean setReference = false;
 
 	// These are now inherited from AbstractResiduesGlyph!  Leaving them in
-	//   overshadows inherited fields, and causes problems with compare()
+	//   overshadows inherited fields, and causes problems with compareTo()
 	//   (and probably other methods too)  GAH 1-9-98
 	//  int seq_beg, seq_end;
 
@@ -623,7 +620,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		 * 0 if both are of the same size and location;
 		 * &gt; 0 otherwise.
 		 */
-		public int compare(Object obj) {
+		public int compareTo(Object obj) {
 			if (!(obj instanceof AlignmentGlyph)) {
 				// should this throw an IllegalArgument exception???
 				return 0;

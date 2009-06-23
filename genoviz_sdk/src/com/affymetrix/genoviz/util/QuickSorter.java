@@ -18,7 +18,7 @@ import java.util.Vector;
 /**
  * Implements the quicksort algorithm.
  * Sorts Vectors of objects that implement the Comparable interface.
- * The sort is based on Comparable.compare(obj) method.
+ * The sort is based on Comparable.compareTo(obj) method.
  * @see Comparable
  */
 public class QuickSorter {
@@ -45,7 +45,7 @@ public class QuickSorter {
 		}
 		int m, pivot, other;
 		m = (yu+el)/2;
-		if (((Comparable)vect.elementAt(el)).compare(vect.elementAt(yu)) < 0) {
+		if (((Comparable)vect.elementAt(el)).compareTo(vect.elementAt(yu)) < 0) {
 			pivot = el;
 			other = yu;
 		}
@@ -53,8 +53,8 @@ public class QuickSorter {
 			pivot = yu;
 			other = el;
 		}
-		if (((Comparable)vect.elementAt(pivot)).compare(vect.elementAt(m)) < 0) {
-			if (((Comparable)vect.elementAt(m)).compare(vect.elementAt(other)) < 0) {
+		if (((Comparable)vect.elementAt(pivot)).compareTo(vect.elementAt(m)) < 0) {
+			if (((Comparable)vect.elementAt(m)).compareTo(vect.elementAt(other)) < 0) {
 				pivot = m;
 			}
 			else {
@@ -68,10 +68,10 @@ public class QuickSorter {
 		i = el + 1;
 		j = yu - 1;
 		while (true) {
-			while (((Comparable)vect.elementAt(el)).compare(vect.elementAt(i)) < 0) {
+			while (((Comparable)vect.elementAt(el)).compareTo(vect.elementAt(i)) < 0) {
 				i++;
 			}
-			while (((Comparable)vect.elementAt(el)).compare(vect.elementAt(j)) > 0) {
+			while (((Comparable)vect.elementAt(el)).compareTo(vect.elementAt(j)) > 0) {
 				j--;
 			}
 			if (i >= j) {
@@ -97,7 +97,7 @@ public class QuickSorter {
 		for (i = 1; i < vect.size(); i++) {
 			Comparable x = (Comparable)vect.elementAt(i);
 			for (j = i;
-					(j>0) && ((Comparable)vect.elementAt(j-1)).compare(x) > 0;
+					(j>0) && ((Comparable)vect.elementAt(j-1)).compareTo(x) > 0;
 					j--) {
 				vect.setElementAt(vect.elementAt(j-1), j);
 					}

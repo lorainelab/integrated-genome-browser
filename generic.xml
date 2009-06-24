@@ -132,4 +132,10 @@
 		<delete dir="${test.report.dir}" />
 		<delete dir="${report.dir}" />
   </target>
+
+	<target name="check-nullness" description="Check for nullness errors." depends="clean">
+		<mkdir dir="${build.dir}" />
+		<my.javac_checker destdir="${build.dir}"/>
+</target>
+
 </project>

@@ -64,8 +64,19 @@
 	<presetdef name="my.javac">
 		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}">
 			<compilerarg compiler="modern" line="${compiler.args}" />
-    </javac>
+    		</javac>
 	</presetdef>
+
+	<presetdef name="my.javac_checker">
+		<!-- Be sure to name your new javac executable "checker_javac" -->
+		<javac fork="yes" executable="checker_javac" srcdir="${src.dir}" classpath="${classpath}">
+<!--		<javac fork="yes" executable="/home/jnicol1/src/checkers/binary/javac" srcdir="${src.dir}" classpath="${classpath}">-->
+			<compilerarg value="-version"/>
+                	<compilerarg line="-processor checkers.nullness.NullnessChecker"/>
+                	<compilerarg value="-implicit:class"/>
+    		</javac>
+	</presetdef>
+
 
 	<presetdef name="my.javadoc">
 		<javadoc packagenames="*" destdir="${docs.dir}" author="true" version="true" use="true" windowtitle="${name}" maxmemory="128m" access="private" verbose="false" splitindex="false" source="${javadoc.src.version}">

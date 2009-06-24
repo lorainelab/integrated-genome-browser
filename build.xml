@@ -43,6 +43,10 @@
 		<iterate target="compile-tests" />
 	</target>
 
+	<target name="check-nullness" depends="common-init" description="Check all genoviz subprojects for null references not satisfied by contract">
+		<iterate target="check-nullness" />
+	</target>
+
 	<target name="test" depends="common-init" description="Run unit tests for all genoviz subprojects">
 		<iterate target="test" />
 	</target>

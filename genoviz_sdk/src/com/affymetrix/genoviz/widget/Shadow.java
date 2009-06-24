@@ -99,8 +99,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	 * @param destination the map on which the shadow is cast.
 	 * @param theOrientation of the map (HORIZONTAL or VERTICAL).
 	 * @param theColor of the visible glyph.
-	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#HORIZONTAL
-	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#VERTICAL
+	 * @see NeoConstants#HORIZONTAL
+	 * @see NeoConstants#VERTICAL
 	 */
 	public Shadow( NeoMap destination, int theOrientation, Color theColor ) {
 		resetShadow(destination, theOrientation, theColor);

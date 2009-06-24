@@ -251,7 +251,7 @@ public class NeoMap extends NeoWidget implements
 			*
 			* @param hscroll_show determines whether or not to show a horizontal scrollbar.
 			* @param vscroll_show determines whether or not to show a vertical scrollbar.
-			* @param orient must be {@link #HORIZONTAL} or {@link #VERTICAL}.
+			* @param orient must be {@link NeoConstants#HORIZONTAL} or {@link NeoConstants#VERTICAL}.
 			* @param tr LinearTransform for zooming.
 			*/
 		   public NeoMap(boolean hscroll_show, boolean vscroll_show,
@@ -265,15 +265,15 @@ public class NeoMap extends NeoWidget implements
 			*
 			* @param hscroll_show determines whether or not to show a horizontal scrollbar
 			* @param vscroll_show determines whether or not to show a vertical scrollbar
-			* @param orient must be {@link #HORIZONTAL} or {@link #VERTICAL}.
+			* @param orient must be {@link NeoConstants#HORIZONTAL} or {@link NeoConstants#VERTICAL}.
 			* @param tr LinearTransform for zooming
 			* @param hscroll_location can be "North", otherwise "South" is assumed.
 			* @param vscroll_location can be "West", otherwise "East" is assumed.
 			*/
-		   private NeoMap(boolean hscroll_showb, boolean vscroll_show,
+		   private NeoMap(boolean hscroll_show, boolean vscroll_show,
 				   int orient, LinearTransform tr, String hscroll_location, String vscroll_location) {
 			   super();
-			   this.hscroll_show = hscroll_showb;
+			   this.hscroll_show = hscroll_show;
 			   this.vscroll_show = vscroll_show;
 			   this.hscroll_loc = hscroll_location;
 			   this.vscroll_loc = vscroll_location;

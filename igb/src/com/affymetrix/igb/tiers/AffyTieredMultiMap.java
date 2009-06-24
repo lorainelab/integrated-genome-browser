@@ -156,8 +156,8 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    * So far,
    * the only valid combinations are <code>HORIZONTAL</code> with <code>EAST</code>
    * and <code>VERTICAL</code> with <code>NORTH</code>.
-   * @param theOrientation must be {@link #HORIZONTAL} or {@link #VERTICAL}.
-   * @param theSection must be {@link #NORTH}, {@link #EAST}, {@link #CENTER}, or {@link #WEST}.
+   * @param theOrientation must be {@link NeoConstants#HORIZONTAL} or {@link NeoConstants#VERTICAL}.
+   * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
    */
   public void addScroller( int theOrientation, int theSection ) {
     if ( NeoConstants.HORIZONTAL == theOrientation && NeoConstants.EAST == theSection ) {
@@ -187,7 +187,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    * the only valid combinations are <code>X</code> with <code>EAST</code>
    * and <code>Y</code> with <code>NORTH</code>.
    * @param theAxis must be {@link #X} or {@link #Y}.
-   * @param theSection must be {@link #NORTH}, {@link #EAST}, {@link #CENTER}, or {@link #WEST}.
+   * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
    * @param theControl
    */
   public void addZoomer( int theAxis, int theSection, Adjustable theControl ) {
@@ -208,7 +208,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   /**
    * Add a zoomer component to a section.
    * The axis is inferred from the orientation of the zoomer.
-   * @param theSection must be {@link #NORTH}, {@link #EAST}, {@link #CENTER}, or {@link #WEST}.
+   * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
    * @param theControl for zooming
    */
   public void addZoomer( int theSection, AdjustableJSlider theControl ) {

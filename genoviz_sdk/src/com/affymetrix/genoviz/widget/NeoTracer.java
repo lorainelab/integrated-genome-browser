@@ -30,9 +30,22 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
 /**
- * NeoTracer is the <strong>implementation</strong> of NeoTracerI.
- * Documentation for all interface methods can be found in the
- * documentation for NeoTracerI.
+ * Implementers display a chromatogram from a sequencing machine.
+ * The chromatogram is usualy visualized by four traces representing the four bases found in DNA.
+ * Bases "called" from the chromatogram can be displayed along the chromatogram.
+ * Initializing, selecting, highlighting, cropping, and interrogating are provided.
+ *
+ * <p> Example:
+ * <pre>
+ *   URL scfURL = new URL(this.getDocumentBase(), getParameter("scf_file")));
+ *   Trace trace = new Trace(scfURL);
+ *   NeoTracerI tracer = new NeoTracer();
+ *   tracer.setTrace(trace);
+ *   tracer.updateWidget(); // display
+ *   tracer.centerAtBase(44);
+ *   tracer.selectResidues(30,50);
+ *   tracer.clearSelect();
+ * </pre>
  *
  * <p> This javadoc explains the implementation specific features of this widget
  * concerning event handling and the java AWT.
@@ -386,6 +399,13 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.setMaxZoom(id, max);
 	}
 
+	/**
+	 * Adjusts the bounds of the trace and sequence displayed.
+	 * Allows clipping of the displayed sequence.
+	 *
+	 * @param start the integer indicating the starting sample position
+	 * @param end  the integer indicating the final sample position.
+	 */
 	public void setRange(int start, int end) {
 		this.range = new Range(start, end);
 		trace_map.setMapRange(start, end);
@@ -394,6 +414,9 @@ public class NeoTracer extends NeoContainerWidget
 		base_axis.setCoords ( start, box.y, end - start, box.height );
 	}
 
+	/**
+	 * @return the start of the range set by setRange.
+	 */
 	public int getRangeStart() {
 		if (null == this.range) {
 			return 0;
@@ -401,6 +424,9 @@ public class NeoTracer extends NeoContainerWidget
 		return this.range.beg;
 	}
 
+	/**
+	 * @return the end of the range set by setRange.
+	 */
 	public int getRangeEnd() {
 		if (null == this.range) {
 			return 0;
@@ -615,7 +641,6 @@ public class NeoTracer extends NeoContainerWidget
 	 * and added directly to this object.
 	 *
 	 */
-
 	public void setTrace(TraceI trace, int start) {
 		setChromatogram( trace, start );
 		if ( 0 < trace.getBaseCount() ) { // deprecated storage of base calls has been done.
@@ -629,6 +654,12 @@ public class NeoTracer extends NeoContainerWidget
 			addBaseCalls( b, start );
 		}
 	}
+	
+	/**
+	 * @return the Trace set via setTrace.
+	 *
+	 * @see #setTrace
+	 */
 	public TraceI getTrace() {
 		return this.trace;
 	}
@@ -1139,6 +1170,12 @@ public class NeoTracer extends NeoContainerWidget
 		return this.sel_behavior;
 	}
 
+	/**
+	 * Sets whether or not the trace and bases for a given dye are visible.
+	 *
+	 * @param theDye  must be one of A, C, G, T, or N.
+	 * @param isVisible  indicates visibility of <code>theDye</code>
+	 */
 	public void setVisibility(int traceID, boolean visible) {
 		switch (traceID) {
 			case TraceGlyph.A: case TraceGlyph.C: case TraceGlyph.G: case TraceGlyph.T:
@@ -1183,10 +1220,20 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 
+	/**
+	 * Gets the color used for the background
+	 * in the trimmed regions of the trace.
+	 */
 	public Color getTrimColor() {
 		return trim_color;
 	}
 
+	/**
+	 * Specify the background color for the trimmed portion of the trace.
+	 *
+	 * @param  col the Color to be used for the background in the trimmed
+	 *  portion of the trace.
+	 */
 	public void setTrimColor(Color col) {
 		if (col != this.trim_color) {
 			this.trim_color = col;
@@ -1199,6 +1246,13 @@ public class NeoTracer extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * Highlights the left (5') end of the trace.
+	 *
+	 * @param  i the integer (in trace coordinates, not bases)
+	 * specifying where to stop trimming the left end of the trace
+	 * @see #setBasesTrimmedLeft
+	 */
 	public void setLeftTrim(int left_trim_end) {
 		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (left_trim_glyph != null) {
@@ -1211,6 +1265,13 @@ public class NeoTracer extends NeoContainerWidget
 		trace_glyph.addChild(left_trim_glyph);
 	}
 
+	/**
+	 * Highlights the right (3') end of the trace.
+	 *
+	 * @param  i the integer (in trace coordinates, not bases)
+	 * specifying where to start trimming the right end of the trace
+	 * @see #setBasesTrimmedRight
+	 */
 	public void setRightTrim(int right_trim_start) {
 		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
 		if (right_trim_glyph != null) {
@@ -1407,6 +1468,15 @@ public class NeoTracer extends NeoContainerWidget
 
 	private int leftTrim, rightTrim;
 
+	/**
+	 * Highlights the portion of the trace
+	 * corresponding to the first n bases called.
+	 * This can be used to show that some base calls should be trimmed
+	 * from the 5' end due to low quality.
+	 *
+	 * @param theBasesTrimmed how many
+	 * @see #setLeftTrim
+	 */
 	public void setBasesTrimmedLeft(int theBasesTrimmed) {
 
 		this.leftTrim = theBasesTrimmed;
@@ -1438,6 +1508,15 @@ public class NeoTracer extends NeoContainerWidget
 		return this.leftTrim;
 	}
 
+	/**
+	 * Highlights the portion of the trace
+	 * corresponding to the last n bases called.
+	 * This can be used to show that some base calls should be trimmed
+	 * from the 3' end due to low quality.
+	 *
+	 * @param theBasesTrimmed how many
+	 * @see #setRightTrim
+	 */
 	public void setBasesTrimmedRight(int theBasesTrimmed) {
 
 		this.rightTrim = theBasesTrimmed;

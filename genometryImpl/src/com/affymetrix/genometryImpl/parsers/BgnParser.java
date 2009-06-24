@@ -224,8 +224,7 @@ public final class BgnParser implements AnnotationWriter  {
 		}
 
 		if (annotate_seq) {
-			for (int i=0; i<annots.size(); i++) {
-				SeqSymmetry annot = annots.get(i);
+			for (SeqSymmetry annot : annots) {
 				MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
 				chromseq.addAnnotation(annot);
 			}
@@ -294,18 +293,16 @@ public final class BgnParser implements AnnotationWriter  {
 	 *  Writes a list of annotations to a file in BGN format.
 	 *  @param annots  a List of SeqSymmetry objects, preferably implementing SupportsCdsSpan
 	 */
-	public void writeBinary(String file_name, List annots) throws IOException {
+	public void writeBinary(String file_name, List<SeqSymmetry> annots) throws IOException {
 		DataOutputStream dos = null;
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
-			int acount = annots.size();
-			for (int i=0; i<acount; i++) {
-				SeqSymmetry gsym = (SeqSymmetry) annots.get(i);
+			for (SeqSymmetry gsym : annots) {
 				outputBgnFormat(gsym, dos);
 			}
 		}
 		finally {
-			try {dos.close();} catch (Exception e) {}
+			GeneralUtils.safeClose(dos);
 		}
 	}
 

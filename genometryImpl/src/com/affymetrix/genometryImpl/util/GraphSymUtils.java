@@ -97,9 +97,8 @@ public final class GraphSymUtils {
 						new_wcoords = new IntList(initcap);
 					}
 
-					List leaf_syms = SeqUtils.getLeafSyms(mapsym);
-					for (int i=0; i<leaf_syms.size(); i++) {
-						SeqSymmetry leafsym = (SeqSymmetry)leaf_syms.get(i);
+					List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
+					for (SeqSymmetry leafsym : leaf_syms) {
 						SeqSpan fspan = leafsym.getSpan(fromseq);
 						SeqSpan tspan = leafsym.getSpan(toseq);
 						if (fspan == null || tspan == null) { continue; }
@@ -304,40 +303,6 @@ public final class GraphSymUtils {
 		return AnnotatedSeqGroup.getUniqueGraphID(id, seq);
 	}
 
-	/** This is a wrapper around readGraphs() for the case where you expect to
-	 *  have a single GraphSym returned.  This will return only the first graph
-	 *  from the list returned by readGraphs(), or null.
-	 */
-
-	/*public static GraphSym readGraph(InputStream istr, String stream_name, String graph_name, BioSeq seq) throws IOException  {
-	// This method is used only by affy *internal* version of IGB.
-	//TODO: Maybe this should throw an exception if the file contains more than one graph?
-	SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-	AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
-	if (seq != null && seq instanceof MutableAnnotatedBioSeq) {
-	MutableAnnotatedBioSeq gseq = seq_group.getSeq(seq.getID());
-	if (gseq == null)  { seq_group.addSeq( (MutableAnnotatedBioSeq) seq); }
-	else if (gseq != seq)  {
-	throw new RuntimeException("ERROR! graph seq with id: " + seq.getID() +
-	" is not same as seq found in group with id: " + gseq.getID() +
-	" that matches via group.getSeq(id)");
-	}
-	// if seq is already part of AnnotatedSeqGroup, don't need to add to group
-	}
-	List grafs = readGraphs(istr, stream_name, gmodel, seq_group, seq);
-	GraphSym graf = null;
-	if (grafs.size() > 0) {
-	graf = (GraphSym) grafs.get(0);
-	if (graph_name != null) {
-	System.out.println("in GraphSymUtils.readGraph(), renaming graph");
-	System.out.println("   old name: " + graf.getGraphName());
-	System.out.println("   new name: " + graph_name);
-	graf.setGraphName(graph_name);
-	}
-	}
-	return graf;
-	}*/
-
 
 	static List<GraphSym> wrapInList(GraphSym gsym) {
 		List<GraphSym> grafs = null;
@@ -357,29 +322,29 @@ public final class GraphSymUtils {
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
 	 *  @param grafs  a List, empty or null is OK.
 	 */
-	static void processGraphSyms(List grafs, String original_stream_name) {
-		if (grafs != null)  {
-			for (int i=0; i<grafs.size(); i++) {
-				GraphSym gsym = (GraphSym) grafs.get(i);
-				BioSeq gseq = gsym.getGraphSeq();
-				if (gseq != null) {
-					String gid = gsym.getID();
-					String newid = getUniqueGraphID(gid, gseq);
-					//TODO: Instead of re-setting the graph ID, a unique ID should have been used in the constructor
-					if (!(newid.equals(gid))) {
-						gsym.setID(newid);
-					}
+	static void processGraphSyms(List<GraphSym> grafs, String original_stream_name) {
+		if (grafs == null) {
+			return;
+		}
+		for (GraphSym gsym : grafs) {
+			BioSeq gseq = gsym.getGraphSeq();
+			if (gseq != null) {
+				String gid = gsym.getID();
+				String newid = getUniqueGraphID(gid, gseq);
+				//TODO: Instead of re-setting the graph ID, a unique ID should have been used in the constructor
+				if (!(newid.equals(gid))) {
+					gsym.setID(newid);
 				}
-				gsym.lockID();
-				if (gseq instanceof MutableAnnotatedBioSeq)   {
-					((MutableAnnotatedBioSeq)gseq).addAnnotation(gsym);
-				}
+			}
+			gsym.lockID();
+			if (gseq instanceof MutableAnnotatedBioSeq) {
+				((MutableAnnotatedBioSeq) gseq).addAnnotation(gsym);
+			}
 
-				gsym.setProperty("source_url", original_stream_name);
+			gsym.setProperty("source_url", original_stream_name);
 
-				if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
-					gsym = GraphSymUtils.convertTransFragGraph(gsym);
-				}
+			if ((gsym.getGraphName() != null) && (gsym.getGraphName().indexOf("TransFrag") >= 0)) {
+				gsym = GraphSymUtils.convertTransFragGraph(gsym);
 			}
 		}
 	}

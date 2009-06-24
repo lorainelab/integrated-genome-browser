@@ -297,9 +297,7 @@ public final class ScoredIntervalParser {
 				// usually there will be only one IndexedSingletonSym in isyms list,
 				//    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
 				//    so cycle through all isyms
-				int icount = isyms.size();
-				for (int i=0; i<icount; i++) {
-					IndexedSingletonSym child = isyms.get(i);
+				for (IndexedSingletonSym child : isyms) {
 					MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)child.getSpan(0).getBioSeq();
 					List<SinEntry> sin_entries = seq2sinentries.get(aseq);
 					if (sin_entries == null) {
@@ -340,8 +338,8 @@ public final class ScoredIntervalParser {
 				List<SinEntry> entry_list = seq2sinentries.get(aseq);
 				int entry_count = entry_list.size();
 				System.out.println("entry list count: " + entry_count);
-				for (int k=0; k<entry_count; k++) {
-					container.addChild(entry_list.get(k).sym);
+				for (SinEntry entry : entry_list) {
+					container.addChild(entry.sym);
 				}
 				System.out.println("container child count: " + container.getChildCount());
 

@@ -686,8 +686,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			HashMap<SmartAnnotBioSeq,SimpleSymWithProps> seq2container = new HashMap<SmartAnnotBioSeq,SimpleSymWithProps>();
 			HashMap<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
 
-			for (int i=0; i<gfiles.size(); i++) {
-				File gfile = gfiles.get(i);
+			for (File gfile : gfiles) {
 				System.out.println("parsing gff file: " + gfile.getPath());
 
 				GFFParser gff_parser = new GFFParser();

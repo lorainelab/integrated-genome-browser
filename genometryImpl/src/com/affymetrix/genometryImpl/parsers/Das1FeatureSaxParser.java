@@ -563,14 +563,9 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				//  (or "grandparent" container sym if MAKE_TYPE_CONTAINER_SYM
 				seq_group.addToIndex(featid, current_sym);
 				//        if (featlink != null) { current_sym.setProperty("link", featlink); }
-				if (featlink_urls.size() > 0) {
-					int linkcount = featlink_urls.size();
-					for (int i = 0; i < linkcount; i++) {
-						String linkurl = featlink_urls.get(i);
-						//            parent_sym.setProperty("link", linkurl);
+				for (String linkurl : featlink_urls) {
 						current_sym.setProperty("link", linkurl);
 					}
-				}
 				if (feat_label != null && feat_label.trim().length() > 0) {
 					if (featid != null) {
 						//            System.out.println("featid: " + featid);

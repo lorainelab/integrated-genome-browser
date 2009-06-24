@@ -47,7 +47,7 @@ public class NibbleBioSeqTest {
 		NibbleIterator nibber = new NibbleIterator(test_array, test_string.length());
 
 		// Testing that substring is implemented properly
-		System.out.println(test_string.substring(5, 10) + " : " + nibber.substring(5, 10));
+		//System.out.println(test_string.substring(5, 10) + " : " + nibber.substring(5, 10));
 		assertEquals(test_string.substring(5, 10), nibber.substring(5, 10));
 	}
 }

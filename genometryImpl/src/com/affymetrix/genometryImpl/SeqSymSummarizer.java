@@ -42,8 +42,7 @@ public final class SeqSymSummarizer {
 	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id)  {
 		int symcount = syms.size();
 		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
-		for (int i=0; i<symcount; i++) {
-			SeqSymmetry sym = syms.get(i);
+		for (SeqSymmetry sym : syms) {
 			SeqUtils.collectLeafSpans(sym, seq, leaf_spans);
 		}
 		if (leaf_spans.isEmpty()) {
@@ -67,7 +66,6 @@ public final class SeqSymSummarizer {
 		//    System.out.println("SeqSymSummarizer: starting to summarize syms");
 		//    System.out.println("binary depth: " + binary_depth);
 		BioSeq seq = spans.get(0).getBioSeq();
-		//int spancount = spans.size();
 		int span_num = spans.size();
 		int[] starts = new int[span_num];
 		int[] stops = new int[span_num];

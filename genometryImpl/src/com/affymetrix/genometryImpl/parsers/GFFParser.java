@@ -586,9 +586,8 @@ public final class GFFParser implements AnnotationWriter  {
 				psym.removeChildren();
 				Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
 				Collections.sort(child_list, comp);
-				int new_child_count = child_list.size();
-				for (int i=0; i<new_child_count; i++) {
-					psym.addChild(child_list.get(i));
+				for (SeqSymmetry child : child_list) {
+					psym.addChild(child);
 				}
 			}
 		}
@@ -877,66 +876,6 @@ public final class GFFParser implements AnnotationWriter  {
 			}
 			return group_id;
 		}
-
-		/*public static void main(String[] args) {
-			GFFParser test = new GFFParser();
-			String input_file_name = null;
-			String output_file_name = null;
-			//
-			//   if (args.length >= 1)  {
-			//   input_file_name = args[0];
-			//   } else {
-			//   System.out.println("Usage:  java GFFParser <filename>");
-			//   System.exit(0);
-			//   }
-			   
-			input_file_name  = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff/chr21.hg18.gff";
-			//    output_file_name = "out.gff";
-
-			SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-			AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
-
-			// test.setUseStandardFilters(true);
-			//    test.setGffVersion(GFF3);
-			//    test.addFeatureFilter("misc_feature");
-			//    test.addFeatureFilter("tRNA_gene");
-
-			Memer mem = new Memer();
-			System.out.println(mem.toString());
-			List<SeqSymmetry> annots = null;
-			try {
-				File fl = new File(input_file_name);
-				FileInputStream fistr = new FileInputStream(fl);
-				//      annots = test.parse(fistr, seq_group, test.default_create_container_annot);
-				annots = test.parse(fistr, seq_group, false);
-				fistr.close();
-
-				int annots_to_write = 1;
-				for (int i = 0; i < annots_to_write && i < annots.size(); i++) {
-					System.out.println("\nSymmetry #" + (i + 1) +
-							" ------------------------------");
-					SymWithProps sym = (SymWithProps) annots.get(i);
-					SeqUtils.printSymmetry(sym, "  ", true);
-				}
-				System.out.println("------------------------------");
-
-				System.out.println("\nannots: " + annots.size());
-				System.out.println(mem.toString());
-				System.gc();
-				if (output_file_name != null) {
-					System.out.println("writing out annots to: " + output_file_name);
-					FileOutputStream fos = new FileOutputStream(new File(output_file_name));
-					test.writeAnnotations(annots, null, fos);
-					fos.close();
-				}
-			}
-			catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			//    try { Thread.currentThread().sleep(2000); } catch (Exception ex) { }
-			System.out.println(mem.toString());
-			System.out.println("done");
-		}*/
 
 		/**
 		 *  Assumes that the sym being output is of depth = 2 (which UcscPslSyms are).

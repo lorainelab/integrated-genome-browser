@@ -860,9 +860,7 @@ public final class GeneralLoadUtils {
 			}
 		}
 
-		if (requests.size() > 0) {
-			FeatureLoading.processDas2FeatureRequests(requests, true, gmodel, gviewer);
-		}
+		FeatureLoading.processDas2FeatureRequests(requests, true, gmodel, gviewer);
 		return true;
 	}
 

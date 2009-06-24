@@ -67,7 +67,9 @@ public final class Das2Authorization {
 			else log.add("\tMissing '"+usersFile+"' and or '"+restrictedDirectoriesFile+"', aborting.");
 		}
 		//print log and clear
-		printArrayList(log);
+		for (String str : log) {
+			System.out.println(str);
+		}
 		log.clear();
 	}
 
@@ -234,16 +236,6 @@ public final class Das2Authorization {
 		return true;
 	}
 
-	/**Print to System.out the ArrayList*/
-	public static void printArrayList(ArrayList al){
-		if (al == null) {
-			return;
-		}
-		int num = al.size();
-		for (int i = 0; i < num; i++) {
-			System.out.println(al.get(i));
-		}
-	}
 
 	private final class User{
 		//fields

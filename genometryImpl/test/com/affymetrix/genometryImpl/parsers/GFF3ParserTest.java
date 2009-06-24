@@ -55,9 +55,6 @@ public class GFF3ParserTest {
 			List expResult = null;
 			List result = instance.parse(istr, seq_group, true);
 
-			//    for (int i=0; i<result.size(); i++) {
-			//      SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
-			//    }
 			assertEquals(1, result.size());
 
 
@@ -109,9 +106,6 @@ public class GFF3ParserTest {
 			List expResult = null;
 			List result = instance.parse(istr, seq_group, true);
 
-			/*for (int i=0; i<result.size(); i++) {
-				SeqUtils.printSymmetry((SeqSymmetry) result.get(i), "|  ", true);
-			}*/
 			assertEquals(1, result.size());
 		}
 

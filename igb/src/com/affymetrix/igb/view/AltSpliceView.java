@@ -238,10 +238,8 @@ public class AltSpliceView extends JComponent
 
   // takes a list (of SeqSymmetry) and removes any GraphSym's from it.
   List<SeqSymmetry> removeGraphs(List<SeqSymmetry> syms) {
-    int symcount = syms.size();
     ArrayList<SeqSymmetry> v = new ArrayList<SeqSymmetry>(syms.size());
-    for (int i=0; i<symcount; i++) {
-      SeqSymmetry sym = syms.get(i);
+		for (SeqSymmetry sym : syms) {
       if (! (sym instanceof GraphSym)) {
         v.add(sym);
       }

@@ -120,9 +120,8 @@ public final class UniFileFilter extends FileFilter {
 	// Supply argument in lower case
 	String stripCompressionEndings(String name) {
 		if (compression_endings != null) {
-			// The vector is so short that is is ok to use get(i)
-			for (int i=0; i<compression_endings.size(); i++) {
-				name = stripCompressionEnding(name, compression_endings.get(i));
+			for (String ending : compression_endings) {
+				name = stripCompressionEnding(name, ending);
 			}
 		}
 		return name;

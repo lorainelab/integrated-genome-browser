@@ -853,8 +853,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					long tim = timecheck.read();
 					log.add("---------- response time: " + tim / 1000f + "----------");
 				}
-				for (int i = 0; i < log.size(); i++) {
-					System.out.println(log.get(i));
+				for (String str : log) {
+					System.out.println(str);
 				}
 				log.clear();
 			} catch (Exception e) {
@@ -1452,7 +1452,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println("\t<COMMENT>" + comment + "</COMMENT>");
 		pw.println("</LOGIN>");
 		//print and clear log
-		Das2Authorization.printArrayList(log);
+		for (String str : log) {
+			System.out.println(str);
+		}
 		log.clear();
 	}
 

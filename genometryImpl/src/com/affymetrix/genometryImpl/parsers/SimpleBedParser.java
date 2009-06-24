@@ -33,9 +33,7 @@ public final class SimpleBedParser implements AnnotationWriter {
 
 		try {
 			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			int spancount = spanlist.size();
-			for (int i=0; i<spancount; i++) {
-				SeqSpan span = spanlist.get(i);
+			for (SeqSpan span : spanlist) {
 				bw.write(span.getBioSeq().getID());
 				bw.write('\t');
 				bw.write(Integer.toString(span.getMin()));

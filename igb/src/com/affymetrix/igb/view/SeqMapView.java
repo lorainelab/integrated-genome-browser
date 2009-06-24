@@ -2968,8 +2968,7 @@ public class SeqMapView extends JPanel
             popup.add(reload_stylesheet);
         }
 
-        for (int i = 0; i < popup_listeners.size(); i++) {
-            ContextualPopupListener listener = popup_listeners.get(i);
+				for (ContextualPopupListener listener : popup_listeners) {
             listener.popupNotify(popup, selected_syms, sym_used_for_title);
         }
     }

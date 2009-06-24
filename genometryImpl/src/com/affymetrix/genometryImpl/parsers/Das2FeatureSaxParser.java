@@ -231,8 +231,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 		System.out.println("finished parsing das2xml feature doc, number of top-level features: " + result_syms.size());
 		if (REPORT_RESULTS) {
-			for (int i = 0; i < result_syms.size(); i++) {
-				SeqUtils.printSymmetry(result_syms.get(i));
+			for (SeqSymmetry sym : result_syms) {
+				SeqUtils.printSymmetry(sym);
 			}
 		}
 

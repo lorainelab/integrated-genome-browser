@@ -507,8 +507,7 @@ public abstract class SeqUtils {
 			merged_spans.add(span);
 		}
 		Collections.sort(merged_spans, SeqUtils.StartSorter.getInstance());
-		for (int i=0; i<merged_spans.size(); i++) {
-			SeqSpan span = merged_spans.get(i);
+		for (SeqSpan span : merged_spans) {
 			MutableSingletonSeqSymmetry childSym =
 				new MutableSingletonSeqSymmetry(span.getStart(), span.getEnd(), span.getBioSeq());
 			min = Math.min(span.getMin(), min);
@@ -1893,10 +1892,8 @@ private static final void printSymmetry(String indent, SeqSymmetry sym, String s
 	if (print_props && sym instanceof Propertied) {
 		Propertied pp = (Propertied) sym;
 		Map<String,Object> props = pp.getProperties();
-		if (props != null && props.size() > 0) {
-			Iterator<Map.Entry<String,Object>> iter = props.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry<String,Object> entry = iter.next();
+		if (props != null) {
+			for (Map.Entry<String,Object> entry : props.entrySet()) {
 				String key = entry.getKey();
 				Object value = entry.getValue();
 				System.out.println(indent + spacer + key + " --> " + value);

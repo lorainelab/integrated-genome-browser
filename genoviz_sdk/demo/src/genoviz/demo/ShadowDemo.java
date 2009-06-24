@@ -216,25 +216,6 @@ public class ShadowDemo extends Applet
 		seqview.updateWidget();
 	}
 
-	/*
-	   private void addTextAnnotation() {
-	   Object annot =
-	   seqview.addTextColorAnnotation(seqview.getSelectedStart(),
-	   seqview.getSelectedEnd(),
-	   text_annot_color);
-	   annotations.addElement(annot);
-	   seqview.deselect();
-	   seqview.updateWidget();
-	   }
-
-	   private void removeAnnotation() {
-	   if (annotations.size() > 0) {
-	   GlyphI annot = (GlyphI)annotations.lastElement();
-	   seqview.removeAnnotation(annot);
-	   annotations.removeElement(annot);
-	   seqview.updateWidget();
-	   }
-	   }*/
 
 	// sets up a map of size length
 

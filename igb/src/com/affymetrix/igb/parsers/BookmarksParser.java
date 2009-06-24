@@ -216,7 +216,7 @@ public final class BookmarksParser {
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
     List annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false);
     
-    if ((annots != null) && (annots.size() > 0)) {
+    if ((annots != null)) {
       for (int k=0; k<annots.size(); k++) {
         SeqSymmetry annot = (SeqSymmetry)annots.get(k);
         String annotname = "Bookmark "+k;

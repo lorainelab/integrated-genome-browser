@@ -174,7 +174,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	// default setRect behavior for NeoAssembler is for alignments and consensus
 	//   to stretch to fit in X, and everything to remain constant in Y
-	protected int reshape_constraint[] = { FITWIDGET, NONE };
+	protected int reshape_constraint[] = { FITWIDGET, NeoConstants.NONE };
 	protected int zoom_behavior[] = { CONSTRAIN_MIDDLE, CONSTRAIN_MIDDLE };
 
 	private int selection_behavior = SELECT_ALIGNMENTS;

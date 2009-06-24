@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.event.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 
 /**
   This applet, as its name implies, demonstrates some of the capabilities of
@@ -93,7 +94,7 @@ public class TieredMapDemo extends Applet
 		map.setSelectionColor ( selectionColor );
 		map.setMapOffset ( offset_start, offset_end );
 		map.setMapRange  ( seq_start, seq_end );
-		map.setReshapeBehavior ( NeoWidgetI.Y, NeoWidgetI.NONE );
+		map.setReshapeBehavior ( NeoWidgetI.Y, NeoConstants.NONE );
 		map.addMouseListener ( this );
 
 		NeoPanel map_pan = new NeoPanel();
@@ -111,7 +112,7 @@ public class TieredMapDemo extends Applet
 				((screen_size.height-pixel_height)*3)/4);
 		labelmap = new TieredLabelMap(false, false);
 		// an exception will be thrown if the reshape behavior of the map and labelMap are not the same.
-		labelmap.setReshapeBehavior ( NeoWidgetI.Y, NeoWidgetI.NONE );
+		labelmap.setReshapeBehavior ( NeoWidgetI.Y, NeoConstants.NONE );
 		labelmap.setRubberBandBehavior ( false );
 
 		// initializes the popupMenu that will be used to take input for the expansion behavior of the tier.

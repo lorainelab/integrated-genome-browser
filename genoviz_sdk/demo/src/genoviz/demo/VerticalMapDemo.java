@@ -22,6 +22,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.VisibleRange;
@@ -30,12 +31,14 @@ import javax.swing.JScrollBar;
 /**
  *  Demonstrates using the vertical map option
  *  WARNING: currently many glyphs do not display correctly on vertical maps!
+ *
+ * @version $Id$
  */
 public class VerticalMapDemo extends Applet {
 	Panel panel1, panel2;
 
 	public void init() {
-		panel1 = testMap(NeoMap.HORIZONTAL);
+		panel1 = testMap(NeoConstants.HORIZONTAL);
 		//panel2 = testMap(NeoMap.VERTICAL);
 		this.setLayout(new GridLayout(1,2,10,0));
 		this.add(panel1);
@@ -81,7 +84,7 @@ public class VerticalMapDemo extends Applet {
 		selectedRange.addListener( hairline );
 		hairline.label.setFont(new Font("Courier", Font.PLAIN, 20));
 
-		if (orient==NeoMap.HORIZONTAL) {
+		if (orient==NeoConstants.HORIZONTAL) {
 			map.addMouseListener( new MouseAdapter() {
 				@Override
 				public void mouseReleased( MouseEvent e ) {
@@ -99,7 +102,7 @@ public class VerticalMapDemo extends Applet {
 		}
 
 
-		final int axisID = (orient==NeoMap.HORIZONTAL) ? NeoMap.X : NeoMap.Y;
+		final int axisID = (orient==NeoConstants.HORIZONTAL) ? NeoMap.X : NeoMap.Y;
 		NeoRangeListener zoomMidPointSetter = new NeoRangeListener() {
 			public void rangeChanged( NeoRangeEvent e ) {
 				double midPoint = ( e.getVisibleEnd() + e.getVisibleStart() ) / 2.0;

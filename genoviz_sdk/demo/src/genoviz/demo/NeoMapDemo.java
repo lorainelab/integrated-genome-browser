@@ -32,6 +32,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoMapCustomizer;
 import javax.swing.JApplet;
@@ -620,7 +621,7 @@ public class NeoMapDemo extends JApplet
 	  map.updateWidget();
 	}
 	else {
-	  map.setReshapeBehavior(NeoMap.X, NeoMap.NONE);
+	  map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
 	}
       }
       else if (theItem == fitVerticallyMenuItem) {
@@ -630,7 +631,7 @@ public class NeoMapDemo extends JApplet
 	  map.updateWidget();
 	}
 	else {
-	  map.setReshapeBehavior(NeoMap.Y, NeoMap.NONE);
+	  map.setReshapeBehavior(NeoMap.Y, NeoConstants.NONE);
 	}
       }
       else if (theItem == zoomTopMenuItem) {

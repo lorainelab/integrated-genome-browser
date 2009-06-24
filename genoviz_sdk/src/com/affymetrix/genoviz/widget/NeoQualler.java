@@ -240,12 +240,25 @@ public class NeoQualler extends NeoContainerWidget
 		sel_range.addObserver(this);
 	}
 
+	/**
+	 * adjusts the bounds of the quality and sequence displayed.
+	 * allows clipping of the displayed sequence.
+	 * range parameters are in the coordinate system of the sequence,
+	 * i.e. (10,20) is the range between position 10 and 20 in the sequence,
+	 * inclusive.
+	 *
+	 * @param start the integer indicating the starting base position
+	 * @param end the integer indicating the final base position.
+	 */
 	public void setRange(int start, int end) {
 		this.range = new Range(start, end);
 		bar_map.setMapRange(start, end);
 		base_map.setMapRange(start, end);
 	}
 
+	/**
+	 * @return the start of the range set by setRange.
+	 */
 	public int getRangeStart() {
 		if (null == this.range) {
 			return 0;
@@ -253,6 +266,9 @@ public class NeoQualler extends NeoContainerWidget
 		return this.range.beg;
 	}
 
+	/**
+	 * @return the end of the range set by setRange.
+	 */
 	public int getRangeEnd() {
 		if (null == this.range) {
 			return 0;
@@ -341,6 +357,15 @@ public class NeoQualler extends NeoContainerWidget
 		hzoom.setSize(scroll_size, hzoom_height);
 	}
 
+	/**
+	 * Associates a set of confidence scores with this widget.
+	 * ReadConfidence contains the sequence bases and a quality score per base.
+	 *
+	 * @param read_conf the ReadConfidence containing the sequence
+	 *                  and quality scores.
+	 *
+	 * @see ReadConfidence
+	 */
 	public void setReadConfidence(ReadConfidence read_conf) {
 
 		this.read_conf = read_conf;
@@ -385,6 +410,13 @@ public class NeoQualler extends NeoContainerWidget
 		base_map.zoomRange(value);
 	}
 
+	/**
+	 * adjusts the display
+	 * so that the base at <code>baseNum</code> is centered.
+	 *
+	 * @param baseNum the integer index into the sequence of the base
+	 *                to center the display.
+	 */
 	public void centerAtBase(int baseNum) {
 		// if baseNum is too big, set to last base in read
 		if (baseNum > read_length) {
@@ -416,6 +448,12 @@ public class NeoQualler extends NeoContainerWidget
 		return new Range((int)box.x, (int)(box.x + box.width));
 	}
 
+	/**
+	 * selects a region of bases.
+	 *
+	 * @param start the integer index of the starting base of the sequence
+	 * @param end   the integer index of the final base of the sequence
+	 */
 	public void selectBases(int start, int end) {
 		highlightBars(start,end);
 		highlightBases(start,end);
@@ -433,11 +471,24 @@ public class NeoQualler extends NeoContainerWidget
 
 	}
 
+	/**
+	 * highlights a region of the quality display.
+	 *
+	 * @param start the integer starting base position
+	 * @param end   the integer ending base position
+	 *
+	 */
 	public void highlightBars(int start, int end) {
 		bar_glyph.select(start,end);
 		updateWidget();
 	}
 
+	/**
+	 * highlights a region of bases.
+	 *
+	 * @param start the integer index of the starting base of the sequence
+	 * @param end   the integer index of the final base of the sequence
+	 */
 	public void highlightBases(int start, int end) {
 		base_glyph.select(start,end);
 		updateWidget();
@@ -492,6 +543,11 @@ public class NeoQualler extends NeoContainerWidget
 		super.heardMouseEvent(evt);
 	}
 
+	/**
+	 * Clears the bases selected in calls to selectBases.
+	 *
+	 * @see #selectBases
+	 */
 	public void clearSelection() {
 		bar_glyph.clearSelection();
 		base_glyph.clearSelection();
@@ -591,6 +647,13 @@ public class NeoQualler extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * highlights the first n bases called.
+	 * This can be used to show that some base calls should be trimmed
+	 * from the 5' end due to low quality.
+	 *
+	 * @param theBasesTrimmed how many
+	 */
 	public void setBasesTrimmedLeft(int theBasesTrimmed) {
 		this.leftTrim = theBasesTrimmed;
 		Rectangle2D.Double coordbox = bar_glyph.getCoordBox();
@@ -609,6 +672,13 @@ public class NeoQualler extends NeoContainerWidget
 		return this.leftTrim;
 	}
 
+	/**
+	 * highlights last n bases called.
+	 * This can be used to show that some base calls should be trimmed
+	 * from the 3' end due to low quality.
+	 *
+	 * @param theBasesTrimmed how many
+	 */
 	public void setBasesTrimmedRight(int theBasesTrimmed) {
 		this.rightTrim = theBasesTrimmed;
 		Rectangle2D.Double coordbox = bar_glyph.getCoordBox();

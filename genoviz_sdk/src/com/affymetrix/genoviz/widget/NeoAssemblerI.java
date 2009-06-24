@@ -78,22 +78,6 @@ import com.affymetrix.genoviz.event.*;
  * @version $Id$
  */
 public interface NeoAssemblerI extends NeoWidgetI {
-
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#FOREGROUND */
-	public static final int FOREGROUND = AlignedResiduesGlyph.FOREGROUND;
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#BACKGROUND */
-	public static final int BACKGROUND = AlignedResiduesGlyph.BACKGROUND;
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#RESIDUE_BASED */
-	public static int RESIDUE_BASED = AlignedResiduesGlyph.RESIDUE_BASED;;
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#ALIGNMENT_BASED */
-	public static int ALIGNMENT_BASED = AlignedResiduesGlyph.ALIGNMENT_BASED;
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#FIXED_COLOR */
-	public static int FIXED_COLOR = AlignedResiduesGlyph.FIXED_COLOR;
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#NONE */
-	public static int NONE = AlignedResiduesGlyph.NONE;
-	/** @see com.affymetrix.genoviz.glyph.AlignedResiduesGlyph#CALCULATED */
-	public static int CALCULATED = AlignedResiduesGlyph.CALCULATED;
-
 	public static final int UNKNOWN_ASSEMBLY = 0;
 	public static final int NA_ASSEMBLY = 1;
 	public static final int AA_ASSEMBLY = 2;

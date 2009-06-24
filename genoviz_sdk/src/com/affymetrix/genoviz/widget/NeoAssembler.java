@@ -62,19 +62,11 @@ public class NeoAssembler extends NeoContainerWidget
 	implements NeoAssemblerI, NeoViewBoxListener,
 			   ItemSelectable
 {
-
-	public static final int FOREGROUND = AlignedResiduesGlyph.FOREGROUND;
-	public static final int BACKGROUND = AlignedResiduesGlyph.BACKGROUND;
-	public static int RESIDUE_BASED = AlignedResiduesGlyph.RESIDUE_BASED;;
-	public static int ALIGNMENT_BASED = AlignedResiduesGlyph.ALIGNMENT_BASED;
-	public static int FIXED_COLOR = AlignedResiduesGlyph.FIXED_COLOR;
-	public static int NONE = AlignedResiduesGlyph.NONE;
-	public static int CALCULATED = AlignedResiduesGlyph.CALCULATED;
 	public static boolean use_neo_scroll = false;
 	public static boolean use_neo_zoom = false;
 
-	protected int font_color_strategy = FIXED_COLOR;
-	protected int rect_color_strategy = ALIGNMENT_BASED;
+	protected int font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;
+	protected int rect_color_strategy = AlignedResiduesGlyph.ALIGNMENT_BASED;
 
 	public boolean tryUniChild = false;
 

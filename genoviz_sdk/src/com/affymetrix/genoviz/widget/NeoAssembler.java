@@ -108,9 +108,62 @@ import javax.swing.JSlider;
  * @version $Id$
  */
 public class NeoAssembler extends NeoContainerWidget
-	implements NeoAssemblerI, NeoViewBoxListener,
+	implements NeoViewBoxListener,
 			   ItemSelectable
 {
+	public static final int UNKNOWN_ASSEMBLY = 0;
+	public static final int NA_ASSEMBLY = 1;
+	public static final int AA_ASSEMBLY = 2;
+
+	public static final int SELECT_ALIGNMENTS = NO_SELECTION + 1;
+	public static final int SELECT_RESIDUES = NO_SELECTION + 2;
+
+	/**
+	 * component identifier constant for the labels of the individual
+	 * sequences of the assembly.
+	 * @see #getItems
+	 */
+	public static final int LABELS = 6000;
+
+	/**
+	 * component identifier constant for the consensus sequence.
+	 * @see #getItems
+	 */
+	public static final int CONSENSUS = LABELS + 1;
+
+	/**
+	 * component identifier constant for the set of alignment sequences.
+	 * @see #getItems
+	 */
+	public static final int ALIGNMENTS = LABELS + 2;
+
+	/**
+	 * component identifier constant for the horizontal panning axis scroller
+	 * @see #getItems
+	 */
+	public static final int AXIS_SCROLLER = LABELS + 3;
+
+	/**
+	 * component identifier constant for the vertical panning axis scroller
+	 * @see #getItems
+	 */
+	public static final int OFFSET_SCROLLER = LABELS + 4;
+
+	/**
+	 * component identifier constant for other components not part
+	 * of the interface description.
+	 * @see #getItems
+	 * @deprecated NeoAssembler.UNKNOWN used to hide NeoConstants.UNKNOWN
+	 */
+	@Deprecated
+	public static final int UNKNOWN = LABELS + 5;
+
+	/**
+	 * component identifier constant for the consensus label.
+	 * @see #getItems
+	 */
+	public static final int CONSENSUS_LABEL = LABELS + 6;
+	
 	public static boolean use_neo_scroll = false;
 	public static boolean use_neo_zoom = false;
 

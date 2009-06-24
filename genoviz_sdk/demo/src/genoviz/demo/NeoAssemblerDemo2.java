@@ -195,8 +195,8 @@ public class NeoAssemblerDemo2 extends Applet {
 					b.setLabel( "Reload" );
 				}
 				else {
-					NeoWidgetI aw = map.getWidget( NeoAssemblerI.ALIGNMENTS );
-					NeoWidgetI lw = map.getWidget( NeoAssemblerI.LABELS );
+					NeoWidgetI aw = map.getWidget( NeoAssembler.ALIGNMENTS );
+					NeoWidgetI lw = map.getWidget( NeoAssembler.LABELS );
 					((NeoMap)aw).setMapOffset( 0, 0 );
 					((NeoMap)lw).setMapOffset( 0, 0 );
 					assem = loadData(seq_URL, align_URL);

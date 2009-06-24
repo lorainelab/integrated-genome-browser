@@ -29,6 +29,8 @@ import javax.swing.JScrollBar;
 /**
  *  Demo of "shadowing" a NeoSeq on a NeoMap via
  *  RangeChangeEvents and TransientGlyphs
+ *
+ * @version $Id$
  */
 public class ShadowDemo extends Applet
 	implements MouseMotionListener, MouseListener,
@@ -36,7 +38,7 @@ public class ShadowDemo extends Applet
 {
 
 	protected NeoMap  mapview;
-	protected NeoSeqI seqview;
+	protected NeoSeq seqview;
 	protected GlyphI  shadowRect;
 
 	protected Frame mapframe;
@@ -292,7 +294,7 @@ public class ShadowDemo extends Applet
 	 *  Sets up a shadow of the source on the destination
 	 */
 
-	public GlyphI setUpShadowRect (NeoSeqI source, NeoMap destination) {
+	public GlyphI setUpShadowRect (NeoSeq source, NeoMap destination) {
 
 		TransientGlyph tg      = new TransientGlyph();
 		GlyphI         rglyph  = new OutlineRectGlyph();

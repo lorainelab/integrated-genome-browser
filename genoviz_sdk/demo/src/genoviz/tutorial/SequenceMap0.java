@@ -14,26 +14,22 @@
 package genoviz.tutorial;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
-import com.affymetrix.genoviz.datamodel.Range;
 import com.affymetrix.genoviz.widget.NeoSeq;
-import com.affymetrix.genoviz.widget.NeoSeqI;
-import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 
-import java.awt.Component;
-import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.StreamTokenizer;
-import java.util.Hashtable;
 
-import java.util.Vector;
-
+/**
+ *
+ * @version $Id$
+ */
 public class SequenceMap0 extends SimpleMap4 {
 
-	protected NeoSeqI seq = new NeoSeq();
+	protected NeoSeq seq = new NeoSeq();
 	protected Frame seqFrame = null;
 	protected NeoPanel pan = new NeoPanel();
 

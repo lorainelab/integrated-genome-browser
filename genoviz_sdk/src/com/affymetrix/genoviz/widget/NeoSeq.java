@@ -28,9 +28,27 @@ import com.affymetrix.genoviz.widget.neoseq.*;
 import javax.swing.JScrollBar;
 
 /**
- * NeoSeq is an <strong>implementation</strong> of NeoSeqI.
- * Documentation for all interface methods can be found in the
- * documentation for <code>NeoSeqI</code>.
+ * Implementers can display a sequence of residues as letter codes.
+ * Initializing, selecting, highlighting, cropping, and
+ * interrogating are provided.<p>
+ *
+ * Example:<p>
+ *
+ * <pre>
+ * String seq = "AAACGTGGGGGGGGGGGGGGGAAAAAAAAAAAAATTTTTTTTTTTTTTTTTT";
+ * NeoSeqI seqview = new NeoSeq();
+ * seqview.setSequence(seq);
+ * seqview.setStripeColors( { new Color(255,255,255),
+ *                            new Color(200,255,200),
+ *                            new Color(200,200,200) } );
+ * seqview.setStripeOrientation(NeoSeqI.VERTICAL_STRIPES);
+ * seqview.setFontName("Courier");
+ * seqview.setFontSize(10);
+ * seqview.addAnnotation(5,25,Color.magenta);
+ * seqview.addAnnotation(40,45,Color.yellow);
+ * seqview.highlightResidues(3,30);
+ *
+ * </pre>
  *
  * <p> This javadoc explains the implementation specific features
  * of this widget concerning event handling and the java AWT.
@@ -53,9 +71,55 @@ import javax.swing.JScrollBar;
  * @version $Id$
  */
 public class NeoSeq extends NeoContainerWidget
-	implements NeoDragListener, NeoSeqI, Observer, NeoViewBoxListener,
-			   SequenceListener
+	implements NeoDragListener, Observer, NeoViewBoxListener,
+			   SequenceListener, Translatable
 {
+	/**
+	 * component identifier constant for the residue letter display.
+	 * @see #getItems
+	 */
+	public static final int RESIDUES = 9000;
+
+	/**
+	 * component identifier constant for the numeric position display.
+	 * @see #getItems
+	 */
+	public static final int NUMBERS = RESIDUES + 1;
+
+	/**
+	 * component identifier constant for the axis scroller.
+	 * @see #getItems
+	 */
+	public static final int AXIS_SCROLLER = RESIDUES + 2;
+
+	/**
+	 * component identifier constant for other components not part
+	 * of the interface description.
+	 * @see #getItems
+	 *
+	 * @deprecated NeoSeqI.UNKNOWN used to hide NeoConstants.UNKNOWN.
+	 */
+	@Deprecated
+	public static final int UNKNOWN = RESIDUES + 3;
+
+
+	/**
+	 * constant to remove background striping of sequence display.
+	 * @see #setStripeOrientation
+	 */
+	public static final int NO_STRIPES = WrapStripes.NONE;
+
+	/**
+	 * constant to add vertical striping of sequence display (default).
+	 * @see #setStripeOrientation
+	 */
+	public static final int VERTICAL_STRIPES = WrapStripes.VERTICAL;
+
+	/**
+	 * constant to add horizontal striping of sequence display (default).
+	 * @see #setStripeOrientation
+	 */
+	public static final int HORIZONTAL_STRIPES = WrapStripes.HORIZONTAL;
 
 	private boolean editable = false;
 	private GlyphI caret;
@@ -874,14 +938,33 @@ public class NeoSeq extends NeoContainerWidget
 		return getResidueGlyph().addTextColorAnnotation(start, end, color);
 	}
 
+	/**
+	 *  add an outline as an annotation along the sequence.
+	 */
 	public GlyphI addOutlineAnnotation(int start, int end, Color color) {
 		return getResidueGlyph().addOutlineAnnotation(start, end, color);
 	}
 
+	/**
+	 * add an annotation of a particular color on a specified sub-region.
+	 *
+	 * @param start  the integer starting coordinate of the annotation.
+	 * @param end  the integer ending coordinate of the annotation.
+	 * @param color the color of the annotation.
+	 * @return       a tag to associate with the annotation for later reference
+	 *
+	 * @see NeoWidgetI#getColor
+	 */
 	public GlyphI addAnnotation(int start, int end, Color color) {
 		return getResidueGlyph().addAnnotation(start, end, color);
 	}
 
+	/**
+	 * gets the range of an annotation.
+	 *
+	 * @param annotation an item added with the addAnnotation method.
+	 * @return the Range (start to end) of the annotation.
+	 */
 	public Range getAnnotationRange(GlyphI annotation) {
 		Range r = new Range(0,0);
 		if (annotation instanceof AnnotationGlyph) {
@@ -895,6 +978,12 @@ public class NeoSeq extends NeoContainerWidget
 		return r;
 	}
 
+	/**
+	 * gets the start of an annotation.
+	 *
+	 * @param annotation an item added with the addAnnotation method.
+	 * @return the start of the annotation.
+	 */
 	public int getAnnotationStart(GlyphI annotation) {
 		int s = 0;
 		if (annotation instanceof AnnotationGlyph) {
@@ -907,6 +996,12 @@ public class NeoSeq extends NeoContainerWidget
 		return s;
 	}
 
+	/**
+	 * gets the end of an annotation.
+	 *
+	 * @param annotation an item added with the addAnnotation method.
+	 * @return the end of the annotation.
+	 */
 	public int getAnnotationEnd(GlyphI annotation) {
 		int e = 0;
 		if (annotation instanceof AnnotationGlyph) {
@@ -919,6 +1014,11 @@ public class NeoSeq extends NeoContainerWidget
 		return e;
 	}
 
+	/**
+	 * remove an annotation from the sequence.
+	 *
+	 * @param gl  the tag associated with the annotation
+	 */
 	public void removeAnnotation(GlyphI gl) {
 		getResidueGlyph().removeAnnotation(gl);
 	}
@@ -929,6 +1029,15 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * highlight the sequence residues
+	 * between start and end and creates a selection.
+	 *
+	 * @param start  the integer starting coordinate of the highlight
+	 * @param end  the integer ending coordinate of the highlight
+	 *
+	 * @see #getSelectedResidues
+	 */
 	// need to change this so selection doesn't compete with
 	//  annotations -- selection should always be on top???
 	public void highlightResidues(int start, int end) {
@@ -1237,6 +1346,14 @@ public class NeoSeq extends NeoContainerWidget
 		return r;
 	}
 
+	/**
+	 * returns the index of the residue in the sequence
+	 * at the position <code>(xcoord, ycoord)</code> in the display.
+	 *
+	 * @param xcoord the horizontal offset (column) of the residue
+	 * @param ycoord the vertical offset (row) of the residue
+	 * @return  the integer index of the residue in the sequence
+	 */
 	public int getCoordResidue(double xcoord, double ycoord) {
 		Rectangle2D.Double visible_box = residue_map.getView().calcCoordBox();
 
@@ -1304,10 +1421,24 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * get the Java AWT font of the sequence residues.
+	 *
+	 * @return  the java.awt.font used to display sequence residues
+	 */
+	@Override
 	public Font getFont() {
 		return residue_font;
 	}
 
+	/**
+	 * set the display font of the sequence residues.  Proportionate or
+	 * variable width fonts can both be specified.
+	 *
+	 * @param font the Java AWT font to be used to display
+	 * sequence residues
+	 */
+	@Override
 	public void setFont(Font font) {
 		residue_font = font;
 
@@ -1317,24 +1448,52 @@ public class NeoSeq extends NeoContainerWidget
 		calcNumPixelWidth();
 	}
 
+	/**
+	 * get the name of the display font of the sequence residues.
+	 *
+	 * @return the String name of the font to use
+	 */
 	public String getFontName() {
 		return residue_font.getFamily();
 	}
 
+	/**
+	 * set the display font of the sequence residues.  Proportionate or
+	 * variable width fonts can both be specified.
+	 *
+	 * @param name the String name of the font to use
+	 */
 	public void setFontName(String name) {
 		Font new_font = new Font(name, residue_font.getStyle(), residue_font.getSize());
 		setFont(new_font);
 	}
 
+	/**
+	 * get the size (in points) of the font used to display sequence residues.
+	 *
+	 * @return the integer point size of the font
+	 */
 	public int getFontSize() {
 		return residue_font.getSize();
 	}
 
+	/**
+	 * set the font size of the characters used to display the sequence residues.
+	 *
+	 * @param size the integer point size of the font
+	 */
 	public void setFontSize(int size) {
 		Font new_font = new Font(residue_font.getFamily(), residue_font.getStyle(), size);
 		setFont(new_font);
 	}
 
+	/**
+	 * indicate the minimum grouping size with respect to line breaking.
+	 * Lines will be wrapped such that the number of residues on a line
+	 * is a multiple of <code>groupWidth</code>.
+	 *
+	 * @param i the integer minimum grouping size
+	 */
 	public void setResidueMultipleConstraint(int i) {
 		if (i>0) {
 			residue_multiple_constraint = i;
@@ -1344,10 +1503,21 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * retrieves the minimum grouping size with respect to line breaking.
+	 *
+	 * @see #setResidueMultipleConstraint
+	 * @return the integer grouping size
+	 */
 	public int getResidueMultipleConstraint() {
 		return residue_multiple_constraint;
 	}
 
+	/**
+	 * set the width of the striping.
+	 *
+	 * @param width the integer width in pixels of the stripe
+	 */
 	public void setStripeWidth(int i) {
 		if (i >= 0) {
 			residue_stripe_width = i;
@@ -1359,10 +1529,28 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * returns the current width of striping.
+	 *
+	 * @return the integer width of striping.
+	 */
 	public int getStripeWidth() {
 		return residue_stripe_width;
 	}
 
+	/**
+	 * set the orientation of the striping in the display of the sequence residues.
+	 * Striping is used as a background coloring of the residues to make viewing
+	 * the sequence easier.
+	 *
+	 * @param orientation  the constant orientation identifier,
+	 * either NO_STRIPES, VERTICAL_STRIPES, or
+	 * HORIZONTAL_STRIPES.
+	 *
+	 * @see #NO_STRIPES
+	 * @see #VERTICAL_STRIPES
+	 * @see #HORIZONTAL_STRIPES
+	 */
 	public void setStripeOrientation(int i) {
 		switch (i) {
 			case WrapStripes.NONE:
@@ -1378,6 +1566,12 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * returns the current orientation of the striping.
+	 *
+	 * @return the constant orientation identifier,
+	 * either NO_STRIPES, VERTICAL_STRIPES, or HORIZONTAL_STRIPES.
+	 */
 	public int getStripeOrientation() {
 		return getResidueGlyph().getStripeOrientation();
 	}
@@ -1411,6 +1605,11 @@ public class NeoSeq extends NeoContainerWidget
 		offset_scroll.setUnitIncrement(inc);
 	}
 
+	/**
+	 * sets the number of pixels between each letter displayed.
+	 *
+	 * @param size the integer number of pixels between residues
+	 */
 	public void setSpacing(int size) {
 		if (size < 0) {
 			throw new IllegalArgumentException(
@@ -1425,6 +1624,13 @@ public class NeoSeq extends NeoContainerWidget
 		return getResidueGlyph().getSpacing();
 	}
 
+	/**
+	 * sets the colors to use for striping.
+	 * Two or more colors can be specified to alternate among.
+	 *
+	 * @param colors an array of Colors.  default is
+	 *  { Color.white, Color.lightGray }
+	 */
 	public void setStripeColors(Color[] colors) {
 		getResidueGlyph().setStripeColors(colors);
 	}
@@ -1432,12 +1638,21 @@ public class NeoSeq extends NeoContainerWidget
 		return getResidueGlyph().getStripeColors();
 	}
 
+	/**
+	 * Sets the Color of the numbers and residues in the NeoSeq.
+	 * @param theColor the Color to be used for the residues
+	 *                 and the numbers.
+	 */
 	public void setResidueColor(Color color) {
 		getResidueGlyph().setColor(color);
 		getNumGlyph().setColor(color);
 		updateWidget();
 	}
 
+	/**
+	 * Gets the color of the residues and the numbers.
+	 * @return   the Color of the residues and the numbers.
+	 */
 	public Color getResidueColor() {
 		return getResidueGlyph().getColor();
 	}
@@ -1584,6 +1799,9 @@ public class NeoSeq extends NeoContainerWidget
 		return getResidueGlyph().getResidueWidth();
 	}
 
+	/**
+	 *  returns true if a range of residues is currently selected.
+	 */
 	public boolean residuesSelected() {
 		return residues_selected;
 	}
@@ -1729,6 +1947,9 @@ public class NeoSeq extends NeoContainerWidget
 	/**
 	 * Get annotation glyphs that overlap a sequence range.
 	 * Note that this method filters out the glyph used for highlighting.
+	 *
+	 *  @param start   the start of the range to find overlaps
+	 *  @param end     the end of the range to find overlaps
 	 */
 	public Vector<GlyphI> getAnnotationItems(int start, int end) {
 		Vector<GlyphI> resultVec = new Vector<GlyphI>();

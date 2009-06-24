@@ -1345,10 +1345,10 @@ public final class IGB extends Application
     about_text.append(getDocumentationText());
     message_pane.add(new JScrollPane(about_text));
 
-    JButton sfB = new JButton("Go To IGB at SourceForge");
+    JButton sfB = new JButton("Visit Genoviz Project");
     sfB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
-          WebBrowserControl.displayURL("http://sourceforge.net/projects/genoviz/");
+          WebBrowserControl.displayURL("http://genoviz.sourceforge.net");
         }
       } );
     Box buttonP = Box.createHorizontalBox();

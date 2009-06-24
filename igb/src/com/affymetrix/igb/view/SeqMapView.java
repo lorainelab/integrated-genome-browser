@@ -61,6 +61,7 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
@@ -71,7 +72,6 @@ import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
 import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.load.GeneralLoadUtils;
@@ -98,7 +98,7 @@ import javax.swing.*;
 
 /**
  *
- * @UcscVersion $Id$
+ * @version $Id$
  */
 public class SeqMapView extends JPanel
         implements AnnotatedSeqViewer, SymSelectionSource,
@@ -355,7 +355,7 @@ public class SeqMapView extends JPanel
             resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
             NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
             label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
-            label_map.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
+            label_map.setReshapeBehavior(NeoWidgetI.Y, NeoConstants.NONE);
         } else {
             resultSeqMap = new AffyTieredMap(internalXScroller, internalYScroller);
         }
@@ -370,8 +370,8 @@ public class SeqMapView extends JPanel
 
         seqmap = createSeqMap(split_win, label_tiermap, INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
 
-        seqmap.setReshapeBehavior(NeoWidgetI.X, NeoWidgetI.NONE);
-        seqmap.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
+        seqmap.setReshapeBehavior(NeoWidgetI.X, NeoConstants.NONE);
+        seqmap.setReshapeBehavior(NeoWidgetI.Y, NeoConstants.NONE);
 
         seqmap.addComponentListener(new SeqMapViewComponentListener());
 

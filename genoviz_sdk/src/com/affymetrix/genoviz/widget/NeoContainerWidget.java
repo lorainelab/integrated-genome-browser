@@ -24,6 +24,8 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * Supports compositions of widgets into a more complex widget.
+ *
+ * @version $Id$
  */
 public abstract class NeoContainerWidget extends NeoAbstractWidget
 	implements NeoWidgetI{
@@ -608,7 +610,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget
 		int x = e.getX();
 		int y = e.getY();
 
-		int location = UNKNOWN;
+		int location = NeoConstants.UNKNOWN;
 		location = getLocation((NeoWidgetI)source);
 
 		NeoMouseEvent nevt =

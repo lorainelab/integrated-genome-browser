@@ -49,6 +49,8 @@ import javax.swing.JScrollBar;
  *   NeoSeq seq = new NeoSeq();
  *   seq.setSize(500, 200);
  * </pre>
+ *
+ * @version $Id$
  */
 public class NeoSeq extends NeoContainerWidget
 	implements NeoDragListener, NeoSeqI, Observer, NeoViewBoxListener,
@@ -158,8 +160,8 @@ public class NeoSeq extends NeoContainerWidget
 		res_trans.setIntegralInverse(false, true, false, false);
 		num_trans.setIntegralInverse(false, true, false, false);
 
-		residue_map = new NeoMap(false, false, NeoWidgetI.HORIZONTAL, res_trans);
-		num_map = new NeoMap(false, false, NeoWidgetI.HORIZONTAL, num_trans);
+		residue_map = new NeoMap(false, false, NeoConstants.HORIZONTAL, res_trans);
+		num_map = new NeoMap(false, false, NeoConstants.HORIZONTAL, num_trans);
 
 		residue_map.enableDragScrolling(false);
 		residue_canvas = residue_map.getNeoCanvas();
@@ -204,14 +206,14 @@ public class NeoSeq extends NeoContainerWidget
 
 		residue_map.setMapRange(0, 1000);
 		residue_map.setMapOffset(0, 1000);
-		residue_map.setReshapeBehavior(residue_map.X, residue_map.NONE);
-		residue_map.setReshapeBehavior(residue_map.Y, residue_map.NONE);
+		residue_map.setReshapeBehavior(residue_map.X, NeoConstants.NONE);
+		residue_map.setReshapeBehavior(residue_map.Y, NeoConstants.NONE);
 		residue_map.setZoomBehavior(residue_map.Y, residue_map.CONSTRAIN_START);
 
 		num_map.setMapRange(0, 1000);
 		num_map.setMapOffset(0, 1000);
-		num_map.setReshapeBehavior(num_map.X, NONE);
-		num_map.setReshapeBehavior(num_map.Y, NONE);
+		num_map.setReshapeBehavior(num_map.X, NeoConstants.NONE);
+		num_map.setReshapeBehavior(num_map.Y, NeoConstants.NONE);
 		num_map.setZoomBehavior(num_map.Y, num_map.CONSTRAIN_START);
 
 		residue_map.addMouseListener(this);
@@ -1932,12 +1934,12 @@ public class NeoSeq extends NeoContainerWidget
 		Object src = evt.getSource();
 		if (!drag_scrolling_enabled || (src != residue_drag_monitor)) { return; }
 		int direction = evt.getDirection();
-		if (direction != NORTH && direction != SOUTH) { return; }
+		if (direction != NeoConstants.NORTH && direction != NeoConstants.SOUTH) { return; }
 		Rectangle2D.Double mbox = residue_map.getCoordBounds();
 		Rectangle2D.Double vbox = residue_map.getViewBounds();
 		int coord_to_scroll;
 
-		if (direction == NORTH) {
+		if (direction == NeoConstants.NORTH) {
 			coord_to_scroll = (int)(vbox.y - getResiduesPerLine());
 			if (coord_to_scroll < mbox.y) {
 				coord_to_scroll = (int)mbox.y;
@@ -1952,7 +1954,7 @@ public class NeoSeq extends NeoContainerWidget
 			sel_range.notifyObservers();
 			updateWidget();
 		}
-		else if (direction == SOUTH) {
+		else if (direction == NeoConstants.SOUTH) {
 			coord_to_scroll = (int)(vbox.y + getResiduesPerLine());
 			if ((coord_to_scroll + vbox.height) > (mbox.height)) {
 				return;

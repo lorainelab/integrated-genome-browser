@@ -41,6 +41,7 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.view.ContextualPopupListener;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
@@ -50,6 +51,8 @@ import java.awt.geom.Rectangle2D;
  *  This class provides a popup menu for a SeqMapView to allow certain graph manipulations.
  *  It is mostly an obsolete class, since most of the manipulations are now done without
  *  using pop-up menus.
+ *
+ * @version $Id$
  */
 public final class GraphSelectionManager
   implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
@@ -669,10 +672,10 @@ public final class GraphSelectionManager
     trans.setOffsetX(vtrans.getOffsetX());
 
     if (nevt.isControlDown() && ALLOW_HORIZONTAL_SHIFT) {
-      dragger.setConstraint(NeoWidgetI.HORIZONTAL, false);
+      dragger.setConstraint(NeoConstants.HORIZONTAL, false);
     }
     else {
-      dragger.setConstraint(NeoWidgetI.HORIZONTAL, true);
+      dragger.setConstraint(NeoConstants.HORIZONTAL, true);
     }
 
     dragger.addGlyphDragListener(this);

@@ -24,9 +24,14 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.geom.Rectangle2D;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class TierLabelManager {
 
   AffyLabelledTierMap tiermap;
@@ -445,7 +450,7 @@ public final class TierLabelManager {
       GlyphDragger dragger = new GlyphDragger((NeoWidgetI)nevt.getSource());
       dragger.setUseCopy(false);
       dragger.startDrag(gl, nevt);
-      dragger.setConstraint(NeoWidgetI.HORIZONTAL, true);
+      dragger.setConstraint(NeoConstants.HORIZONTAL, true);
     }
   }; // end of mouse listener class
 }

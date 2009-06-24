@@ -36,6 +36,7 @@ import com.affymetrix.genoviz.event.*;
 
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import javax.swing.JScrollBar;
 
 /**
@@ -217,7 +218,7 @@ public class NeoMap extends NeoWidget implements
 			* @param vscroll_show determines whether or not to show a vertical scrollbar.
 			*/
 		   public NeoMap(boolean hscroll_show, boolean vscroll_show) {
-			   this(hscroll_show, vscroll_show, HORIZONTAL,
+			   this(hscroll_show, vscroll_show, NeoConstants.HORIZONTAL,
 					   new LinearTransform());
 		   }
 
@@ -296,8 +297,8 @@ public class NeoMap extends NeoWidget implements
 
 			   zoomer[X] = null;
 			   zoomer[Y] = null;
-			   scale_constraint[X] = NONE;
-			   scale_constraint[Y] = NONE;
+			   scale_constraint[X] = NeoConstants.NONE;
+			   scale_constraint[Y] = NeoConstants.NONE;
 			   zoom_behavior[X] = CONSTRAIN_MIDDLE;
 			   zoom_behavior[Y] = CONSTRAIN_MIDDLE;
 			   zoom_coord[X] = 0;
@@ -562,7 +563,7 @@ public class NeoMap extends NeoWidget implements
 		   public void setMapRange(int start, int end) {
 			   // scene.setCoords() is now handled in setBounds()
 
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   //      this.setBounds(Y,start,end);
 				   this.setFloatBounds(Y,(double)start,(double)end);
 			   }
@@ -582,7 +583,7 @@ public class NeoMap extends NeoWidget implements
 		   public int[] getMapRange() {
 			   int[] range = new int[2];
 			   Rectangle2D.Double cb = getCoordBounds();
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   range[0] = (int) cb.y;
 				   range[1] = (int) (cb.y + cb.height);
 			   }
@@ -596,7 +597,7 @@ public class NeoMap extends NeoWidget implements
 		   public int[] getVisibleRange() {
 			   int[] range = new int[2];
 			   Rectangle2D.Double cb = getViewBounds();
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   range[0] = (int) cb.y;
 				   range[1] = (int) (cb.y + cb.height);
 			   }
@@ -613,7 +614,7 @@ public class NeoMap extends NeoWidget implements
 			*/
 		   public void setMapOffset(int start, int end) {
 			   // scene.setCoords() is now handled in setBounds()
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   this.setBounds(X, start, end);
 			   }
 			   else  {
@@ -624,7 +625,7 @@ public class NeoMap extends NeoWidget implements
 		   public int[] getMapOffset() {
 			   int[] range = new int[2];
 			   Rectangle2D.Double cb = getCoordBounds();
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   range[0] = (int) cb.x;
 				   range[1] = (int) (cb.x + cb.width);
 			   }
@@ -638,7 +639,7 @@ public class NeoMap extends NeoWidget implements
 		   public int[] getVisibleOffset() {
 			   int[] range = new int[2];
 			   Rectangle2D.Double cb = getViewBounds();
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   range[0] = (int) cb.x;
 				   range[1] = (int) (cb.x + cb.width);
 			   }
@@ -824,8 +825,8 @@ public class NeoMap extends NeoWidget implements
 
 		   public AxisGlyph addAxis(int offset) {
 			   AxisGlyph axis = null;
-			   if (orient == VERTICAL) {
-				   axis = new AxisGlyph(VERTICAL);
+			   if (orient == NeoConstants.VERTICAL) {
+				   axis = new AxisGlyph(NeoConstants.VERTICAL);
 				   axis.setCoords(offset-10, scene.getCoordBox().y, 20,
 						   scene.getCoordBox().height);
 			   }
@@ -1175,7 +1176,7 @@ public class NeoMap extends NeoWidget implements
 		   }
 
 		   public int getSelectedStart(GlyphI gl) {
-			   if (orient == VERTICAL)  {
+			   if (orient == NeoConstants.VERTICAL)  {
 				   return (int)Math.round(gl.getSelectedRegion().y);
 			   }
 			   else {
@@ -1184,7 +1185,7 @@ public class NeoMap extends NeoWidget implements
 		   }
 
 		   public int getSelectedEnd(GlyphI gl) {
-			   if (orient == VERTICAL) {
+			   if (orient == NeoConstants.VERTICAL) {
 				   return (int)Math.round(gl.getSelectedRegion().y +
 						   gl.getSelectedRegion().height - 1);
 			   }
@@ -1408,26 +1409,26 @@ public class NeoMap extends NeoWidget implements
 				   String str;
 				   double scroll_to_coord;
 				   int pixels_per_scroll = 10;
-				   if (direction == NORTH) {
+				   if (direction == NeoConstants.NORTH) {
 					   scroll_to_coord =
 						   trans.inverseTransform(LinearTransform.Y, -pixels_per_scroll);
 					   scroll(Y, scroll_to_coord);
 					   updateWidget();
 				   }
-				   else if (direction == SOUTH) {
+				   else if (direction == NeoConstants.SOUTH) {
 					   scroll_to_coord =
 						   trans.inverseTransform(LinearTransform.Y, pixels_per_scroll);
 					   scroll(Y, scroll_to_coord);
 					   updateWidget();
 				   }
-				   else if (direction == EAST) {
+				   else if (direction == NeoConstants.EAST) {
 					   scroll_to_coord =
 						   trans.inverseTransform(LinearTransform.X, pixels_per_scroll);
 					   scroll(X, scroll_to_coord);
 					   updateWidget();
 					   str = "EAST";
 				   }
-				   else if (direction == WEST) {
+				   else if (direction == NeoConstants.WEST) {
 					   scroll_to_coord =
 						   trans.inverseTransform(LinearTransform.X, -pixels_per_scroll);
 					   scroll(X, scroll_to_coord);
@@ -1538,7 +1539,7 @@ public class NeoMap extends NeoWidget implements
 			   if (range_listeners.size() > 0) {
 				   Rectangle2D.Double vbox = e.getCoordBox();
 				   NeoRangeEvent nevt = null;
-				   if (orient == VERTICAL) {
+				   if (orient == NeoConstants.VERTICAL) {
 					   nevt = new NeoRangeEvent(this, vbox.y, vbox.y + vbox.height);
 				   }
 				   else {

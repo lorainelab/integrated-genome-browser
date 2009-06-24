@@ -28,6 +28,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.swing.SixWaySplitPane;
 import java.awt.geom.Rectangle2D;
@@ -35,6 +36,8 @@ import java.awt.geom.Rectangle2D;
 /**
  *  Wraps a AffyTieredMap and another map that has tier labels which
  *    track changes in tiers (size, placement) of AffyTieredMap.
+ *
+ * @version $Id$
  */
 public final class AffyTieredMultiMap extends AffyLabelledTierMap {
 
@@ -157,7 +160,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    * @param theSection must be {@link #NORTH}, {@link #EAST}, {@link #CENTER}, or {@link #WEST}.
    */
   public void addScroller( int theOrientation, int theSection ) {
-    if ( HORIZONTAL == theOrientation && EAST == theSection ) {
+    if ( NeoConstants.HORIZONTAL == theOrientation && NeoConstants.EAST == theSection ) {
       MotionPanel mp = new MotionPanel( theOrientation, X );
       JScrollBar sb = new JScrollBar( JScrollBar.HORIZONTAL );
       this.epan.add( mp, BorderLayout.SOUTH );
@@ -166,7 +169,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
       this.northEastMap.setScroller( X, mp.getPanner( X ) );
       this.northEastMap.setZoomer( X, mp.getZoomer( X ) );
     }
-    else if ( VERTICAL == theOrientation && NORTH == theSection ) {
+    else if ( NeoConstants.VERTICAL == theOrientation && NeoConstants.NORTH == theSection ) {
       JScrollBar sb = new JScrollBar( JScrollBar.VERTICAL );
       this.nepan.add( sb, BorderLayout.EAST );
       if ( null != this.northWestMap ) this.northWestMap.setScroller( Y, sb );
@@ -188,11 +191,11 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    * @param theControl
    */
   public void addZoomer( int theAxis, int theSection, Adjustable theControl ) {
-    if ( X == theAxis && EAST == theSection ) {
+    if ( X == theAxis && NeoConstants.EAST == theSection ) {
       this.extramap.setZoomer( theAxis, theControl );
       this.northEastMap.setZoomer( theAxis, theControl );
     }
-    else if ( Y == theAxis && NORTH == theSection ) {
+    else if ( Y == theAxis && NeoConstants.NORTH == theSection ) {
       if ( null != this.northWestMap ) this.northWestMap.setZoomer( theAxis, theControl );
       this.northMap.setZoomer( theAxis, theControl );
       this.northEastMap.setZoomer( theAxis, theControl );
@@ -510,7 +513,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     axis.setCoords(0, 0, 10001, 20);
     mtg.addChild( axis );
 
-    map.addScroller( HORIZONTAL, EAST );
+    map.addScroller( NeoConstants.HORIZONTAL, NeoConstants.EAST );
     //map.addScroller( VERTICAL, NORTH );
 
     map.repack();

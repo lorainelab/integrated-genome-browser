@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
 import com.affymetrix.genometry.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
@@ -28,6 +29,10 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ *
+ * @version $Id$
+ */
 public class AffyTieredMap extends NeoMap {
 
 	boolean TIME_PACKING = false;
@@ -90,7 +95,7 @@ public class AffyTieredMap extends NeoMap {
 	}
 
 	public AffyTieredMap(boolean hscroll, boolean vscroll) {
-		this(hscroll, vscroll, NeoMap.HORIZONTAL);
+		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
 	}
 
 	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {

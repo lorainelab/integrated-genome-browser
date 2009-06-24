@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.util.NeoConstants;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -39,8 +38,10 @@ import java.util.*;
  * see the javadocs for the implementation class
  * corresponding to each interface.
  * </font></p>
+ *
+ * @version $Id$
  */
-public interface NeoWidgetI extends NeoConstants   {
+public interface NeoWidgetI   {
 
 	/**
 	 * No selection is done by the NeoWidget.

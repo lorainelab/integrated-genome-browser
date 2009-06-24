@@ -51,6 +51,8 @@ import javax.swing.JScrollBar;
  *   qual.setBackground(new Color(180, 250, 250));
  *   qual.resize(500, 250);
  * </pre>
+ *
+ * @version $Id$
  */
 public class NeoQualler extends NeoContainerWidget
 	implements NeoQuallerI, Observer, NeoViewBoxListener  {
@@ -122,7 +124,7 @@ public class NeoQualler extends NeoContainerWidget
 		bar_map.setScaleConstraint(NeoMap.Y, NeoMap.INTEGRAL_COORDS);
 		bar_map.setMapRange(0, 100);
 		bar_map.setMapOffset(0, 100);
-		bar_map.setReshapeBehavior(bar_map.X, NONE);
+		bar_map.setReshapeBehavior(bar_map.X, NeoConstants.NONE);
 		bar_map.setReshapeBehavior(bar_map.Y, FITWIDGET);
 		bar_map.setZoomBehavior(bar_map.Y, bar_map.CONSTRAIN_END);
 		bar_map.setZoomBehavior(bar_map.X, bar_map.CONSTRAIN_MIDDLE);
@@ -132,7 +134,7 @@ public class NeoQualler extends NeoContainerWidget
 
 		base_map.setMapRange(0, 100);
 		base_map.setMapOffset(0, 100);
-		base_map.setReshapeBehavior(base_map.X, base_map.NONE);
+		base_map.setReshapeBehavior(base_map.X, NeoConstants.NONE);
 		base_map.setReshapeBehavior(base_map.Y, base_map.FITWIDGET);
 
 		bar_map.setMaxZoom(bar_map.X, 12);

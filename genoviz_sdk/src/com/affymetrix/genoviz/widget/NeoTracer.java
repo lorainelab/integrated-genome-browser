@@ -29,9 +29,6 @@ import com.affymetrix.genoviz.widget.neotracer.*;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
-class TraceNotSetException extends Exception {};
-class BaseCallsNotSetException extends Exception {};
-
 /**
  * NeoTracer is the <strong>implementation</strong> of NeoTracerI.
  * Documentation for all interface methods can be found in the
@@ -54,6 +51,8 @@ class BaseCallsNotSetException extends Exception {};
  *   trace.setBackground(new Color(180, 250, 250));
  *   trace.resize(500, 250);
  * </pre>
+ *
+ * @version $Id$
  */
 public class NeoTracer extends NeoContainerWidget
 	implements NeoTracerI, Observer, NeoViewBoxListener
@@ -187,14 +186,14 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map.setScaleConstraint(trace_map.Y, trace_map.INTEGRAL_COORDS);
 		trace_map.setMapRange(0, 100);
 		trace_map.setMapOffset(0, 100);
-		trace_map.setReshapeBehavior(trace_map.X, NONE);
+		trace_map.setReshapeBehavior(trace_map.X, NeoConstants.NONE);
 		trace_map.setReshapeBehavior(trace_map.Y, FITWIDGET);
 		trace_map.setZoomBehavior(trace_map.Y, trace_map.CONSTRAIN_END);
 		trace_map.setZoomBehavior(trace_map.X, trace_map.CONSTRAIN_MIDDLE);
 
 		base_map.setMapRange(0, 100);
 		base_map.setMapOffset(0, 100);
-		base_map.setReshapeBehavior(base_map.X, base_map.NONE);
+		base_map.setReshapeBehavior(base_map.X, NeoConstants.NONE);
 		base_map.setReshapeBehavior(base_map.Y, base_map.FITWIDGET);
 
 		trace_map.addMouseListener(this);
@@ -347,8 +346,8 @@ public class NeoTracer extends NeoContainerWidget
 			base_map.setScaleConstraint(base_map.X, base_map.INTEGRAL_PIXELS);
 		}
 		else {
-			trace_map.setScaleConstraint(trace_map.X, trace_map.NONE);
-			base_map.setScaleConstraint(base_map.X, base_map.NONE);
+			trace_map.setScaleConstraint(trace_map.X, NeoConstants.NONE);
+			base_map.setScaleConstraint(base_map.X, NeoConstants.NONE);
 		}
 		zoom(X, 1.0f);
 	}

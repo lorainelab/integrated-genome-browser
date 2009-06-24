@@ -491,7 +491,7 @@ public class NeoAssembler extends NeoContainerWidget
 		axis_glyph.setVisibility(false);
 		consmap.setReshapeBehavior(consmap.X, reshape_constraint[X]);
 
-		consmap.setReshapeBehavior(consmap.Y, consmap.NONE);
+		consmap.setReshapeBehavior(consmap.Y, NeoConstants.NONE);
 		consmap.zoomOffset(align_offset_scale);
 		consmap.scrollOffset(0);
 
@@ -841,7 +841,7 @@ public class NeoAssembler extends NeoContainerWidget
 		//-------- Adding label --------
 
 		StringGlyph sglyph = new StringGlyph( name );
-		sglyph.setPlacement(LEFT);
+		sglyph.setPlacement(NeoConstants.LEFT);
 		sglyph.setFont(label_font);
 		sglyph.setForegroundColor(label_color);
 

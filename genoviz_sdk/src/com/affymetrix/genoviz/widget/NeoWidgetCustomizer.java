@@ -15,12 +15,14 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.*;
 
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.util.Enumeration;
 
 /**
  * Customizer for a NeoWidget for use with NeoWidget as a Java bean.
+ *
+ * @version $Id$
  */
 public class NeoWidgetCustomizer
 	extends NeoWidgetICustomizer
@@ -133,7 +135,7 @@ public class NeoWidgetCustomizer
 				widget.setSize(widget.getSize());
 			}
 			else {
-				widget.setReshapeBehavior(NeoWidgetI.X, NeoWidgetI.NONE);
+				widget.setReshapeBehavior(NeoWidgetI.X, NeoConstants.NONE);
 			}
 			return;
 		}
@@ -144,7 +146,7 @@ public class NeoWidgetCustomizer
 				widget.setSize(widget.getSize());
 			}
 			else {
-				widget.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.NONE);
+				widget.setReshapeBehavior(NeoWidgetI.Y, NeoConstants.NONE);
 			}
 			return;
 		}

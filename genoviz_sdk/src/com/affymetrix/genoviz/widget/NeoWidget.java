@@ -35,6 +35,7 @@ import com.affymetrix.genoviz.event.NeoRubberBandListener;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -1353,7 +1354,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		int y = e.getY();
 
 		NeoMouseEvent nevt =
-			new NeoMouseEvent(e, this, UNKNOWN, e.getCoordX(), e.getCoordY());
+			new NeoMouseEvent(e, this, NeoConstants.UNKNOWN, e.getCoordX(), e.getCoordY());
 		// translating from NeoCanvas pixel location to
 		//     widget pixel location
 		Rectangle bnds = view.getComponent().getBounds();

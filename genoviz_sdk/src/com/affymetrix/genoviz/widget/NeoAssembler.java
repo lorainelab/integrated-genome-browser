@@ -31,10 +31,59 @@ import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
 /**
- * NeoAssembler is an <strong>implementation</strong>
- * of {@link NeoAssemblerI}.
- * Documentation for all interface methods can be found in the
- * documentation for NeoAssemblerI.
+ * This interface adds functionality for displaying an assembly
+ * of multiple sequences.  Initialization, cropping, and alignment
+ * modification are provided.<p>
+ *
+ * Example:<p> <pre>
+ * NeoAssemblerI map = new NeoAssembler();
+ * map.setResidueColor(Color.white);
+ * map.setMatchColor(new Color(80, 80, 80));
+ * map.setMisMatchColor(new Color(150, 150, 150));
+ * map.setSelectionMethod(NeoMap.ON_MOUSE_DOWN);
+ *
+ * // Suppose we have an alignment like so:
+ * //
+ * //               1
+ * //     0123456789012345
+ * //       ACTG ACTGACT     &lt;&lt; Consensus
+ * // Q:  AAACTTGACTGACT     &lt;&lt; a sequence with extra bases
+ * // R:      TG ACT         &lt;&lt; a smaller sequence with gaps
+ *
+ * map.setRange(0, 15);
+ *
+ * // Indicate the complete consensus sequence
+ * // and its start and end in the alignment coordinate system.
+ * //  The first "A" aligns at position 2.
+ * //  The last "T" aligns at position 13.
+ * //  There may be gaps.  These are specified using addAlignedSpan().
+ * Object cons_tag = map.setConsensus(2, 13, "ACTGACTGACT");
+ *
+ * // The sequence from 0..3 in the consensus sequence maps
+ * // to positions 2..5 in the alignment coordinate system.
+ * map.addAlignedSpan(cons_tag, 0, 3, 2, 5);
+ *
+ * // Similarly add the second span.
+ * map.addAlignedSpan(cons_tag, 4, 10, 7, 13);
+ *
+ * // Now add the sequences that align to the consensus.
+ * // The first sequence extends from 0 to 13.
+ * // Gaps and residues can be delayed.
+ * Object seq_tag = map.addSequence(0, 13);
+ * map.setLabel(seq_tag, "Q");
+ * map.setResidues(seq_tag, "AAACTTGACTGACT");
+ * map.addAlignedSpan(seq_tag, 0, 13, 0, 13);
+ *
+ * // Finally, add the smaller sequence with two spans:
+ * seq_tag = map.addSequence(4, 9);
+ * map.setLabel(seq_tag, "R");
+ * map.setResidues(seq_tag, "TGACT");
+ * map.addAlignedSpan(seq_tag, 0, 1, 4, 5);
+ * map.addAlignedSpan(seq_tag, 2, 4, 7, 9);
+ *
+ * map.updateWidget();
+ *
+ * </pre>
  *
  * <p> This javadoc explains the implementation specific features
  * of this widget concerning event handling and the java AWT.
@@ -519,6 +568,14 @@ public class NeoAssembler extends NeoContainerWidget
 		return false;
 	}
 
+	/**
+	 * adjusts the bounds of the assembly displayed.  in practice
+	 * this should be set to range from 0 to one past the length
+	 * of the assembly.
+	 *
+	 * @param start the integer indicating the starting residue position
+	 * @param end   the integer indicating the final residue position.
+	 */
 	public void setRange(int start, int end) {
 		range_start = start;
 		range_end = end+1;
@@ -563,6 +620,18 @@ public class NeoAssembler extends NeoContainerWidget
 		return this.match_char;
 	}
 
+	/**
+	 * add a consensus sequence letters starting at position
+	 * <code>start</code> and ending at <code>end</code> in the alignment
+	 * coordinate system.
+	 *
+	 * @param start the starting position in the alignment coordinate system.
+	 * @param end  the final position in the alignment coordinate system.
+	 *
+	 * @return a <code>Glyph</code> of the consensus sequence.
+	 * Use <code>addAlignedSpan</code> to indicate the alignment of
+	 * the consensus sequence to the alignment coordinate system.
+	 */
 	public GlyphI setConsensus(int start, int end, String residues) {
 		// hiding axis till have a first consensus or sequence  GAH 4-14-99
 		axis_glyph.setVisibility(true);
@@ -619,6 +688,21 @@ public class NeoAssembler extends NeoContainerWidget
 		this.complementIfReversed = flag;
 	}
 
+	/**
+	 *
+	 * add the sequence letters to be associated with <code>seq_tag</code>.
+	 * <code>setResidues</code> allows application controlled delayed loading
+	 * of sequence data.
+	 *
+	 * @param seq_tag an Object (GlyphI) to associate a string of letters.
+	 * Instances of seq_tag are returned from <code>addSequence</code>.
+	 *
+	 * @param residues a String of letters
+	 *
+	 * @return the (possibly new) <code>Glyph</code> for the sequence.
+	 *
+	 * @see #addSequence
+	 */
 	public GlyphI setResidues(GlyphI seq_tag, String residues) {
 		AlignmentGlyph aglyph = (AlignmentGlyph)seq_tag;
 		Sequence seq = new Sequence();
@@ -635,6 +719,28 @@ public class NeoAssembler extends NeoContainerWidget
 		return aglyph;
 	}
 
+	/**
+	 * adds a span to a sequence object.  Each aligned sequence has one
+	 * or more ungapped spans.  <code>addAlignedSpan</code> maps the
+	 * subsequence from <code>seqstart</code> to <code>seqend</code> to
+	 * the alignment coordinate system from <code>alignstart</code> to
+	 * <code>alignend</code>.
+	 *
+	 * @param seq_tag   an Object (GlyphI) to which a new span is added.
+	 *                  instances of seq_tag are returned from
+	 *                  <code>addSequence</code>.
+	 * @param seqstart  the starting residue position in the sequence of this
+	 *                  span.
+	 * @param seqend    the final residue position in the sequence of this span.
+	 * @param refstart  the starting position in the alignment coordinate
+	 *                  system of the first residue of this span.
+	 * @param refend    the final position in the alignment coordinate
+	 *                  system of the last residue of this span.
+	 *
+	 * @return the <code>Glyph</code> of the span.
+	 *
+	 * @see #addSequence
+	 */
 	public GlyphI addAlignedSpan(GlyphI seq_tag, int seqstart, int seqend,
 			int alignstart, int alignend) {
 		AlignedResiduesGlyph gl;
@@ -738,6 +844,23 @@ public class NeoAssembler extends NeoContainerWidget
 		return align_glyph;
 	}
 
+	/**
+	 * adds a new sequence to the alignment
+	 * that extends from <code>start</code> to <code>end</code> in the
+	 * alignment coordinate system.  There may be one or more gaps between
+	 * these bounds as set by <code>addAlignedSpan</code>.
+	 *
+	 * @param start the starting position in the alignment coordinate
+	 *   system of the first residue of this sequence.
+	 * @param end  the final position in the alignment coordinate
+	 *   system of the last residue of this sequence.
+	 *
+	 * @return the <code>Glyph</code> for the sequence.
+	 *
+	 * @see #addAlignedSpan
+	 * @see #setResidues
+	 * @see #setLabel
+	 */
 	public GlyphI addSequence(int start, int end) {
 
 		// hiding axis till have a first consensus or sequence  GAH 4-14-99
@@ -815,6 +938,12 @@ public class NeoAssembler extends NeoContainerWidget
 		return aglyph;
 	}
 
+	/**
+	 * gets the label of an aligned sequence.
+	 *
+	 * @param gl the alignment labeled.
+	 * @return a String containing the label.
+	 */
 	public String getLabel(GlyphI seq_tag) {
 		String label = null;
 		AlignmentGlyph aglyph = (AlignmentGlyph)seq_tag;
@@ -827,6 +956,17 @@ public class NeoAssembler extends NeoContainerWidget
 		return label;
 	}
 
+	/**
+	 * associates a string label with an aligned sequence.  The label is
+	 * displayed adjacent to the sequence alignment display.
+	 *
+	 * @param gl  the <code>GlyphI</code> representing the
+	 *   aligned sequence returned from
+	 *   <code>addSequence</code>
+	 * @param name the <code>String</code> label to display for
+	 *   <code>gl</code>
+	 * @see #addSequence
+	 */
 	public GlyphI setLabel(GlyphI seq_tag, String name) {
 		AlignmentGlyph aglyph = (AlignmentGlyph)seq_tag;
 
@@ -1501,10 +1641,22 @@ public class NeoAssembler extends NeoContainerWidget
 		consmap.scrollRange(value);
 	}
 
+	/**
+	 * returns a <code>boolean</code> indicating whether or not alignments
+	 * are automatically sorted.
+	 *
+	 * @return <code>true</code> if alignments are automatically sorted.
+	 */
 	public boolean getAutoSort() {
 		return auto_sort;
 	}
 
+	/**
+	 * Sets whether or not alignments are to be sorted automatically.
+	 *
+	 * @param sort <code>true</code> indicates that alignments
+	 *   should be automatically sorted.
+	 */
 	public void setAutoSort(boolean sort) {
 		auto_sort = sort;
 		if (auto_sort) {
@@ -1518,6 +1670,9 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 *  Pack (or repack) the aligned sequences
+	 */
 	public void pack()  {
 		if (cglyph == null || alignmap == null)  {
 			return;
@@ -1569,6 +1724,16 @@ public class NeoAssembler extends NeoContainerWidget
 
 
 
+	// should probably be in a NeoResidueI interface?
+	// since it is also needed in NeoSeq, NeoMap, NeoQualler, NeoTracer
+	// at least for NeoAssembler, should throw error if set to anything
+	// other than Courier
+	/**
+	 * sets the font to be used for displaying residue letters.
+	 *
+	 * @param fnt  the Font to use for residue letters
+	 * @see #getResidueFont
+	 */
 	public void setResidueFont(Font fnt) {
 		residue_font = fnt;
 		FontMetrics fontmet =
@@ -1635,6 +1800,12 @@ public class NeoAssembler extends NeoContainerWidget
 
 	}
 
+	/**
+	 * returns the currently set font used for display residue letters.
+	 *
+	 * @return the <code>Font</code> currently set.
+	 * @see #setResidueFont
+	 */
 	public Font getResidueFont() {
 		return residue_font;
 	}
@@ -2043,38 +2214,100 @@ public class NeoAssembler extends NeoContainerWidget
 
 	public GlyphI getAxis () { return axis_glyph; }
 
-	/** Deprecated methods that get/set residue rectangle colors. */
+	/**
+	 * returns the currently set color for displaying residues matching
+	 * the consensus sequence.
+	 *
+	 * @return the <code>Color</code> of matching residues
+	 * @see #setMatchColor
+	 * @deprecated
+	 */
+	@Deprecated
 	public Color getMatchColor() {
 		return getMatchRectColor();
 	}
+
+	/**
+	 * returns the currently set color for displaying residues
+	 * <b>not</b> matching the consensus sequence.
+	 *
+	 * @return the <code>Color</code> of mismatching residues
+	 * @see #setMisMatchColor
+	 * @deprecated
+	 */
+	@Deprecated
 	public Color getMisMatchColor() {
 		return getMisMatchRectColor();
 	}
+
+	@Deprecated
 	public Color getUnrecognizedColor() {
 		return getUnrecognizedRectColor();
 	}
+
+	/**
+	 * returns the currently set default color for displaying residue letters.
+	 *
+	 * @return the <code>Color</code> for displaying residues
+	 * @see #setResidueColor
+	 * @deprecated
+	 */
+	@Deprecated
 	public Color getResidueColor() {
 		return getResidueFontColor();
 	}
+
+	/**
+	 * sets the color to be used for displaying residues matching
+	 * the consensus sequence.
+	 *
+	 * @param col  the <code>Color</code> for matching residues
+	 * @see #getMatchColor
+	 * @deprecated
+	 */
+	@Deprecated
 	public void setMatchColor(Color col) {
 		setMatchFontColor(col);
 	}
+
+	/**
+	 * sets the color to be used for displaying residues <b>not</b> matching
+	 * the consensus sequence.
+	 *
+	 * @param col  the <code>Color</code> for mismatching residues
+	 * @see #getMisMatchColor
+	 * @deprecated
+	 */
 	public void setMisMatchColor(Color col) {
 		setMisMatchRectColor(col);
 	}
+
+	@Deprecated
 	public void setUnrecognizedColor(Color col) {
 		setUnrecognizedRectColor(col);
 	}
+
+	/**
+	 * sets the default color for displaying residue letters.
+	 *
+	 * @param col  the <code>Color</code> to display residues
+	 * @see #getResidueColor
+	 * @deprecated
+	 */
+	@Deprecated
 	public void setResidueColor(Color col) {
 		setResidueFontColor(col);
 	}
+
+	@Deprecated
 	public void setUnalignedBackgroundColor(Color col) {
 		setUnalignedRectColor(col);
 	}
+
+	@Deprecated
 	public void setUnalignedResidueColor(Color col) {
 		setUnalignedFontColor(col);
 	}
-	/** end deprecated methods to get/set residue rectangle colors */
 
 
 	public Color getMatchRectColor() {
@@ -2089,9 +2322,18 @@ public class NeoAssembler extends NeoContainerWidget
 	public Color getResidueFontColor() {
 		return residue_color;
 	}
+
+	/**
+	 * returns the currently set color for displaying the label for each
+	 * aligned sequence.
+	 *
+	 * @return the current label <code>Color</code>
+	 * @see #setLabelColor
+	 */
 	public Color getLabelColor() {
 		return label_color;
 	}
+	
 	public Color getMatchFontColor() {
 		return match_font_color;
 	}
@@ -2176,6 +2418,12 @@ public class NeoAssembler extends NeoContainerWidget
 	}
 
 
+	/**
+	 * sets the color for displaying the label for each aligned sequence.
+	 *
+	 * @param col  the label <code>Color</code>
+	 * @see #getLabelColor
+	 */
 	public void setLabelColor(Color col) {
 		label_color = col;
 	}
@@ -2215,12 +2463,24 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
+	/**
+	 * allows another object to listen for NeoRangeEvents
+	 * generated by implementers.
+	 *
+	 * @param l the listener.
+	 */
 	public void addRangeListener(NeoRangeListener l) {
 		if (!range_listeners.contains(l)) {
 			range_listeners.addElement(l);
 		}
 	}
 
+	/**
+	 * allows another object to stop listening for NeoRangeEvents
+	 * generated by implementers.
+	 *
+	 * @param l the listener.
+	 */
 	public void removeRangeListener(NeoRangeListener l) {
 		range_listeners.removeElement(l);
 	}

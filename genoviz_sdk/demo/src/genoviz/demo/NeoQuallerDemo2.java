@@ -7,7 +7,6 @@ import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.parser.FASTQParser;
 import com.affymetrix.genoviz.widget.NeoQualler;
 import com.affymetrix.genoviz.widget.NeoQuallerCustomizer;
-import com.affymetrix.genoviz.widget.NeoQuallerI;
 
 import java.applet.Applet;
 import java.awt.*;
@@ -18,13 +17,17 @@ import java.awt.event.WindowEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ *
+ * @version $Id$
+ */
 public class NeoQuallerDemo2 extends Applet
 				implements ActionListener, NeoRangeListener {
 
 	NeoPanel widg_pan;
 	ReadConfidence read_conf;
-	NeoQuallerI widget;
-	NeoQuallerI oneClone;
+	NeoQualler widget;
+	NeoQualler oneClone;
 	int pixel_width = 500;
 	int pixel_height = 250;
 	TextField posText;

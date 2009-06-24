@@ -23,23 +23,23 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.parser.PhredParser;
 import com.affymetrix.genoviz.widget.*;
 
+/**
+ *
+ * @Version $Id$
+ */
 public class TutorialQualler extends Applet implements ActionListener {
 	boolean framed = false;
 
 	ReadConfidence read_conf;
-	NeoQuallerI widget;
-	NeoQuallerI oneClone;
+	NeoQualler widget;
+	NeoQualler oneClone;
 	NeoPanel pan;
 
 	int pixel_width = 500;

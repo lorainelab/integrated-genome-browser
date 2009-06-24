@@ -55,7 +55,45 @@ import javax.swing.JScrollBar;
  * @version $Id$
  */
 public class NeoQualler extends NeoContainerWidget
-	implements NeoQuallerI, Observer, NeoViewBoxListener  {
+	implements Observer, NeoViewBoxListener  {
+	/**
+	 * component identifier constant for the quality score histogram display.
+	 * @see #getItems
+	 */
+	public static final int BARS = 8000;
+
+	/**
+	 * component identifier constant for the sequence base (letter) display.
+	 * @see #getItems
+	 */
+	public static final int BASES = BARS + 1;
+
+	/**
+	 * component identifier constant for the panning axis scroller.
+	 * @see #getItems
+	 */
+	public static final int AXIS_SCROLLER = BARS + 1;
+
+	/**
+	 * component identifier constant for the zooming adjustable.
+	 * @see #getItems
+	 */
+	public static final int AXIS_ZOOMER = BARS + 2;
+
+	/**
+	 * component identifier constant for the vertical scaling adjustable.
+	 * @see #getItems
+	 */
+	public static final int OFFSET_ZOOMER = BARS + 3;
+
+	/**
+	 * component identifier constant for other components not part
+	 * of the interface description.
+	 * @see #getItems
+	 * @deprecated NeoQualler.UNKNOWN used to hide NeoConstants.UNKNOWN
+	 */
+	@Deprecated
+	public static final int UNKNOWN = BARS + 4;
 
 	protected static Color default_bar_background = Color.black;
 	protected static Color default_base_background = Color.black;
@@ -178,8 +216,8 @@ public class NeoQualler extends NeoContainerWidget
 
 		// We need to set up a derived view from  each individual NeoMap
 		// within this widget based on corresponding NeoMap within the root.
-		NeoMap root_bar_map = (NeoMap)root.getWidget(NeoQuallerI.BARS);
-		NeoMap root_base_map = (NeoMap)root.getWidget(NeoQuallerI.BASES);
+		NeoMap root_bar_map = (NeoMap)root.getWidget(NeoQualler.BARS);
+		NeoMap root_base_map = (NeoMap)root.getWidget(NeoQualler.BASES);
 		bar_map.setRoot(root_bar_map);
 		base_map.setRoot(root_base_map);
 

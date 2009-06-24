@@ -19,18 +19,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.*;
-import genoviz.demo.datamodel.Assembly;
 
+/**
+ *
+ * @Version $Id$
+ */
 public class NeoQuallerDemo extends Applet
 	implements ActionListener, NeoRangeListener {
 
@@ -39,8 +39,8 @@ public class NeoQuallerDemo extends Applet
 	boolean framed = false;
 
 	ReadConfidence read_conf;
-	NeoQuallerI widget;
-	NeoQuallerI oneClone;
+	NeoQualler widget;
+	NeoQualler oneClone;
 
 	int pixel_width = 500;
 	int pixel_height = 250;

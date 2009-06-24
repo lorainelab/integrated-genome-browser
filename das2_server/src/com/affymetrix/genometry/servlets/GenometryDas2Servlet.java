@@ -1997,13 +1997,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					log.add("return mime type: " + mime_type);
 					OutputStream outstream = response.getOutputStream();
 					try {
-						// need to test and see if creating a new BufferedOutputStream in the
-						//   AnnotationWriter.writeAnnotations implementations is necessary
-						//    because it may incur a performance hit.  Though os is _not_ an instance of
-						//    BufferedOutputStream (at least using jetty server), may still provide its
-						//    own buffering...
 						success = writer.writeAnnotations(syms, seq, annot_type, outstream);
-						outstream.flush();
 					} finally {
 						GeneralUtils.safeClose(outstream);
 					}

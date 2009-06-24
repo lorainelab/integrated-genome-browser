@@ -1141,7 +1141,7 @@ public class NeoTracer extends NeoContainerWidget
 
 	public void setVisibility(int traceID, boolean visible) {
 		switch (traceID) {
-			case A: case C: case G: case T:
+			case TraceGlyph.A: case TraceGlyph.C: case TraceGlyph.G: case TraceGlyph.T:
 				setTraceVisibility(traceID, visible);
 				setBaseVisibility(traceID, visible);
 				break;
@@ -1251,18 +1251,18 @@ public class NeoTracer extends NeoContainerWidget
 		trace = trace.reverseComplement();
 		setChromatogram(trace);
 		// Switch the visibility of complimentary traces.
-		setTraceVisibility( A, getTraceVisibility( A ) ^ getTraceVisibility( T ) );
-		setTraceVisibility( T, getTraceVisibility( A ) ^ getTraceVisibility( T ) );
-		setTraceVisibility( A, getTraceVisibility( A ) ^ getTraceVisibility( T ) );
-		setTraceVisibility( C, getTraceVisibility( C ) ^ getTraceVisibility( G ) );
-		setTraceVisibility( G, getTraceVisibility( C ) ^ getTraceVisibility( G ) );
-		setTraceVisibility( C, getTraceVisibility( C ) ^ getTraceVisibility( G ) );
+		setTraceVisibility( TraceGlyph.A, getTraceVisibility( TraceGlyph.A ) ^ getTraceVisibility( TraceGlyph.T ) );
+		setTraceVisibility( TraceGlyph.T, getTraceVisibility( TraceGlyph.A ) ^ getTraceVisibility( TraceGlyph.T ) );
+		setTraceVisibility( TraceGlyph.A, getTraceVisibility( TraceGlyph.A ) ^ getTraceVisibility( TraceGlyph.T ) );
+		setTraceVisibility( TraceGlyph.C, getTraceVisibility( TraceGlyph.C ) ^ getTraceVisibility( TraceGlyph.G ) );
+		setTraceVisibility( TraceGlyph.G, getTraceVisibility( TraceGlyph.C ) ^ getTraceVisibility( TraceGlyph.G ) );
+		setTraceVisibility( TraceGlyph.C, getTraceVisibility( TraceGlyph.C ) ^ getTraceVisibility( TraceGlyph.G ) );
 
 		// Need to reverse each set of base calls.
-		boolean aViz = getBaseVisibility( A );
-		boolean cViz = getBaseVisibility( C );
-		boolean gViz = getBaseVisibility( G );
-		boolean tViz = getBaseVisibility( T );
+		boolean aViz = getBaseVisibility( TraceGlyph.A );
+		boolean cViz = getBaseVisibility( TraceGlyph.C );
+		boolean gViz = getBaseVisibility( TraceGlyph.G );
+		boolean tViz = getBaseVisibility( TraceGlyph.T );
 		Vector<BaseCalls> newBaseCalls = new Vector<BaseCalls>();
 		Enumeration<BaseCalls> e = base_calls_vector.elements();
 		for (BaseCalls bc : base_calls_vector ) {
@@ -1274,10 +1274,10 @@ public class NeoTracer extends NeoContainerWidget
 		base_calls_vector.addAll(newBaseCalls);
 
 		// Switch the visibility of complimentary bases.
-		setBaseVisibility( A, tViz );
-		setBaseVisibility( T, aViz );
-		setBaseVisibility( C, gViz );
-		setBaseVisibility( G, cViz );
+		setBaseVisibility( TraceGlyph.A, tViz );
+		setBaseVisibility( TraceGlyph.T, aViz );
+		setBaseVisibility( TraceGlyph.C, gViz );
+		setBaseVisibility( TraceGlyph.G, cViz );
 
 		// want to move to "same" location as in previous orientation,
 		// but since rev-comped from previous, need to calculate this

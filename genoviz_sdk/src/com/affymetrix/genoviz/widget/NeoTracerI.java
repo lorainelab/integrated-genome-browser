@@ -43,40 +43,6 @@ import com.affymetrix.genoviz.widget.neotracer.*;
  * </pre>
  */
 public interface NeoTracerI extends NeoWidgetI  {
-
-	// Guaranteeing that traceIDs in NeoTracer
-	// will be indentical to those in TraceGlyph.
-	/**
-	 * Abbreviation for adenine
-	 *
-	 * @see TraceGlyph#A
-	 */
-	public static final int A = TraceGlyph.A;
-	/**
-	 * Abbreviation for cytosine
-	 *
-	 * @see TraceGlyph#C
-	 */
-	public static final int C = TraceGlyph.C;
-	/**
-	 * Abbreviation for guanine
-	 *
-	 * @see TraceGlyph#G
-	 */
-	public static final int G = TraceGlyph.G;
-	/**
-	 * Abbreviation for thymine
-	 *
-	 * @see TraceGlyph#T
-	 */
-	public static final int T = TraceGlyph.T;
-	/**
-	 * Abbreviation for "unknown". I.e. any one of A, C, G, or T.
-	 *
-	 * @see TraceGlyph#N
-	 */
-	public static final int N = TraceGlyph.N;
-
 	/**
 	 * Orientation (Direction) for a trace.
 	 * If orientation is FORWARD,

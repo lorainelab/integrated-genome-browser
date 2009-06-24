@@ -68,8 +68,67 @@ import javax.swing.JScrollBar;
  * @version $Id$
  */
 public class NeoTracer extends NeoContainerWidget
-	implements NeoTracerI, Observer, NeoViewBoxListener
+	implements Observer, NeoViewBoxListener
 {
+	/**
+	 * Orientation (Direction) for a trace.
+	 * If orientation is FORWARD,
+	 * then the trace is shown as originally loaded.
+	 *
+	 * @see #setDirection
+	 */
+	public static final int FORWARD = 1;
+
+	/**
+	 * Orientation (Direction) for a trace.
+	 * If the orientation is REVERSE_COMPLEMENT,
+	 * logical reverse complement is performed on the trace.
+	 * End coord becomes beg coord and vice versa,
+	 * reverse complement of bases are used, and trace colors are also
+	 * complemented.
+	 *
+	 * @see #setDirection
+	 */
+	public static final int REVERSE_COMPLEMENT = 2;
+
+	/**
+	 * component identifier constant for the trace chromogram display
+	 * @see #getItems
+	 */
+	public static final int TRACES = 7000;
+
+	/**
+	 * component identifier constant for the base letter display
+	 * @see #getItems
+	 */
+	public static final int BASES = TRACES + 1;
+
+	/**
+	 * component identifier constant for the panning axis scroller
+	 * @see #getItems
+	 */
+	public static final int AXIS_SCROLLER = TRACES + 1;
+
+	/**
+	 * component identifier constant for the zooming adjustable
+	 * @see #getItems
+	 */
+	public static final int AXIS_ZOOMER = TRACES + 2;
+
+	/**
+	 * component identifier constant for the vertical scaling adjustable
+	 * @see #getItems
+	 */
+	public static final int OFFSET_ZOOMER = TRACES + 3;
+
+	/**
+	 * component identifier constant for other components not part
+	 * of the interface description.
+	 * @see #getItems
+	 * @deprecated NeoTraceI.UNKNOWN used to hide NeoConstants.UNKNOWN
+	 */
+	@Deprecated
+	public static final int UNKNOWN = TRACES + 4;
 
 	//  To allow multiple base calls, this can no longer be static final.
 	private int base_map_pixel_height;
@@ -266,8 +325,8 @@ public class NeoTracer extends NeoContainerWidget
 
 		// We need to set up a derived view from  each individual NeoMap
 		// within this widget based on corresponding NeoMap within the root.
-		NeoMap root_trace_map = (NeoMap)root.getWidget(NeoTracerI.TRACES);
-		NeoMap root_base_map = (NeoMap)root.getWidget(NeoTracerI.BASES);
+		NeoMap root_trace_map = (NeoMap)root.getWidget(NeoTracer.TRACES);
+		NeoMap root_base_map = (NeoMap)root.getWidget(NeoTracer.BASES);
 		trace_map.setRoot(root_trace_map);
 		base_map.setRoot(root_base_map);
 

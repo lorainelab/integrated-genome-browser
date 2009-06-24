@@ -26,9 +26,14 @@ import com.affymetrix.genoviz.datamodel.Trace;
 import com.affymetrix.genoviz.datamodel.TraceI;
 import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.genoviz.widget.neotracer.TraceGlyph;
 import javax.swing.JScrollBar;
 
 
+/**
+ *
+ * @version $Id$
+ */
 public class NeoTracerDemo extends Applet
 	implements ActionListener, NeoRangeListener {
 
@@ -37,8 +42,8 @@ public class NeoTracerDemo extends Applet
 	boolean optScrolling = false, optDamage = false;
 	boolean external_zoomers = false;
 	TraceI trace;
-	public NeoTracerI widget;
-	NeoTracerI oneClone;
+	public NeoTracer widget;
+	NeoTracer oneClone;
 	Adjustable xzoomer, yzoomer;
 	Frame zoomframe = new Frame("Zoom controls");
 
@@ -443,7 +448,7 @@ public class NeoTracerDemo extends Applet
 			}
 		}
 		else if (evtSource == toggleTraceB) {
-			widget.setVisibility(widget.G, !widget.getVisibility(widget.G));
+			widget.setVisibility(TraceGlyph.G, !widget.getVisibility(TraceGlyph.G));
 			widget.updateWidget();
 		}
 		else if (evtSource == clipper) {
@@ -451,11 +456,11 @@ public class NeoTracerDemo extends Applet
 			widget.updateWidget();
 		}
 		else if (evtSource == toggleRevCompB) {
-			if (NeoTracerI.FORWARD == widget.getDirection()) {
-				widget.setDirection(NeoTracerI.REVERSE_COMPLEMENT);
+			if (NeoTracer.FORWARD == widget.getDirection()) {
+				widget.setDirection(NeoTracer.REVERSE_COMPLEMENT);
 			}
 			else {
-				widget.setDirection(NeoTracerI.FORWARD);
+				widget.setDirection(NeoTracer.FORWARD);
 			}
 			widget.updateWidget();
 		}

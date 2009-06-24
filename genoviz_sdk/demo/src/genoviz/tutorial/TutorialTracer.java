@@ -23,17 +23,18 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.*;
 import java.net.*;
-import java.util.*;
 
 import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.genoviz.widget.neotracer.TraceGlyph;
 
+/**
+ *
+ * @version $Id$
+ */
 public class TutorialTracer extends Applet implements ActionListener {
 	TraceI trace;
 	NeoTracer widget;
@@ -364,15 +365,15 @@ public class TutorialTracer extends Applet implements ActionListener {
 			}
 		}
 		else if (evtSource == toggleTraceB) {
-			widget.setVisibility(widget.G, !widget.getVisibility(widget.G));
+			widget.setVisibility(TraceGlyph.G, !widget.getVisibility(TraceGlyph.G));
 			widget.updateWidget();
 		}
 		else if (evtSource == toggleRevCompB) {
-			if (NeoTracerI.FORWARD == widget.getDirection()) {
-				widget.setDirection(NeoTracerI.REVERSE_COMPLEMENT);
+			if (NeoTracer.FORWARD == widget.getDirection()) {
+				widget.setDirection(NeoTracer.REVERSE_COMPLEMENT);
 			}
 			else {
-				widget.setDirection(NeoTracerI.FORWARD);
+				widget.setDirection(NeoTracer.FORWARD);
 			}
 			widget.updateWidget();
 		}

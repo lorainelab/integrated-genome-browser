@@ -54,7 +54,7 @@ import java.awt.geom.Rectangle2D;
  * @version $Id$
  */
 public abstract class NeoWidget extends NeoAbstractWidget
-	implements NeoWidgetI, AdjustmentListener {
+	implements AdjustmentListener {
 
 	private static final boolean DEBUG_SCROLLER_VALUES = false;
 	private static final boolean DEBUG_SCROLL = false;

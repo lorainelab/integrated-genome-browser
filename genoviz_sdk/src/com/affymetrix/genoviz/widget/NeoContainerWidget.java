@@ -27,8 +27,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @version $Id$
  */
-public abstract class NeoContainerWidget extends NeoAbstractWidget
-	implements NeoWidgetI{
+public abstract class NeoContainerWidget extends NeoAbstractWidget {
 
 	// pixelblur is the amount of pixel space leeway given when finding overlaps
 	protected int pixelblur = 2;

@@ -18,17 +18,16 @@ import java.awt.event.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoBufferedComponent;
-
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**
  * Provides basic functionallity for all genoviz Widgets.
+ *
+ * @version
  */
 public abstract class NeoAbstractWidget extends NeoBufferedComponent
-	implements MouseListener, MouseMotionListener, KeyListener {
+	implements NeoWidgetI, MouseListener, MouseMotionListener, KeyListener {
 
 	protected Dimension pref_widg_size = new Dimension(1, 1);
 
@@ -186,7 +185,7 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 	}
 
 	/**
-	 *  Clears all selections by actaually calling {@link #deselect(GlyphI)}
+	 *  Clears all selections by actually calling {@link #deselect(GlyphI)}
 	 *  on each one as well as removing them from the vector of selections.
 	 */
 	public void clearSelected() {
@@ -201,12 +200,6 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 		}
 		selected.removeAllElements();
 	}
-
-	/** Subclasses should implement this. Default does nothing.
-	 *  Implementations should remove selections from the Vector 'selected',
-	 *  in addition to any other tasks specific to those classes.
-	 */
-	public void deselect(GlyphI gl) {}
 
 	public void deselect(Vector vec) {
 		// need to special case if vec argument is ref to same Vector as selected,
@@ -260,36 +253,40 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 	public void mouseDragged(MouseEvent e) { heardMouseEvent(e); }
 	public void mouseMoved(MouseEvent e) { heardMouseEvent(e); }
 
-	public void heardMouseEvent(MouseEvent evt) {
-		// override in subclasses!
-	}
+	public abstract void heardMouseEvent(MouseEvent evt);
 
+	@Override
 	public void addMouseListener(MouseListener l) {
 		if (!mouse_listeners.contains(l)) {
 			mouse_listeners.addElement(l);
 		}
 	}
 
+	@Override
 	public void removeMouseListener(MouseListener l) {
 		mouse_listeners.removeElement(l);
 	}
 
+	@Override
 	public void addMouseMotionListener(MouseMotionListener l) {
 		if (!mouse_motion_listeners.contains(l)) {
 			mouse_motion_listeners.addElement(l);
 		}
 	}
 
+	@Override
 	public void removeMouseMotionListener(MouseMotionListener l) {
 		mouse_motion_listeners.removeElement(l);
 	}
 
+	@Override
 	public void addKeyListener(KeyListener l) {
 		if (!key_listeners.contains(l)) {
 			key_listeners.addElement(l);
 		}
 	}
 
+	@Override
 	public void removeKeyListener(KeyListener l) {
 		key_listeners.removeElement(l);
 	}
@@ -317,13 +314,13 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 			KeyListener kl;
 			for (int i=0; i<key_listeners.size(); i++) {
 				kl = key_listeners.elementAt(i);
-				if (id == e.KEY_PRESSED) {
+				if (id == KeyEvent.KEY_PRESSED) {
 					kl.keyPressed(nevt);
 				}
-				else if (id == e.KEY_RELEASED) {
+				else if (id == KeyEvent.KEY_RELEASED) {
 					kl.keyReleased(nevt);
 				}
-				else if (id == e.KEY_TYPED) {
+				else if (id == KeyEvent.KEY_TYPED) {
 					kl.keyTyped(nevt);
 				}
 			}
@@ -342,19 +339,23 @@ public abstract class NeoAbstractWidget extends NeoBufferedComponent
 	 *  @deprecated use {@link #setBounds(int,int,int,int)}.
 	 */
 	@Deprecated
+	@Override
 		public void reshape(int x, int y, int width, int height) {
 			pref_widg_size.setSize(width, height);
 			super.reshape(x, y, width, height);
 		}
 
+	@Override
 	public Dimension getPreferredSize() {
 		return pref_widg_size;
 	}
 
+	@Override
 	public void setPreferredSize(Dimension d) {
 		pref_widg_size = d;
 	}
 
+	@Override
 	public void setCursor(Cursor cur) {
 		Component comp[] = this.getComponents();
 		for (int i=0; i<comp.length; i++) {

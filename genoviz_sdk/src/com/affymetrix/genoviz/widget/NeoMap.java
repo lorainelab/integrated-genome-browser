@@ -543,12 +543,6 @@ public class NeoMap extends NeoWidget implements
 				   //-----  this is the only place pixel_* should change -----
 				   setPixelBounds();
 				   stretchToFit();
-
-				   // force NeoCanvas to nullify offscreen image, to ensure Image retrieval
-				   // doesn't try to return stale Image
-				   if (canvas.isDoubleBuffered()) {
-					   canvas.nullOffscreenImage();
-				   }
 				   if (view.isBuffered()) {
 					   // do same thing with view???
 				   }
@@ -1354,42 +1348,6 @@ public class NeoMap extends NeoWidget implements
 			   seqmetrics = tkit.getFontMetrics(font_for_max_zoom);
 			   int font_width = seqmetrics.charWidth('C');
 			   setMaxZoom(X, font_width);
-		   }
-
-		   /**
-			* Gets the offscreen Image buffer associated with the map.
-			* <em>Just</em> the map is returned, does not include scrollbars...
-			* This can then be used to generate GIFs of the map.
-			*/
-		   public Image getMapImage() {
-			   Image mi;
-			   if (view.isBuffered()) {
-				   mi = view.getBufferedImage();
-				   return mi;
-			   }
-			   else if (canvas.isDoubleBuffered()) {
-				   mi = canvas.getBufferedImage();
-				   if (mi == null) {
-					   // trying to deal with initialization problem --
-					   // some JVMs call paint() directly when bringing up
-					   // canvas for first time, and since double buffer image is dealt with
-					   // in update(), it stays null till a call to update() is made.
-					   // Therefore if getting a null image, trying to force an
-					   // update->paint to create and draw onto the image buffer
-					   // This works, at least in Cafe 1.8 on Win95 -- GAH 8-26-98
-					   // System.err.println("trying to jump start image");
-					   // Note that this is somewhat inefficient, forcing a double draw.
-					   // However, this conditional should only trigger when an Image is
-					   // requested after a NeoMap first appears, or after reshapes, but
-					   // before any updateWidgets() occur
-					   canvas.update(canvas.getGraphics());
-					   mi = canvas.getBufferedImage();
-				   }
-				   return mi;
-			   }
-			   else { // no image
-				   return null;
-			   }
 		   }
 
 		   /**

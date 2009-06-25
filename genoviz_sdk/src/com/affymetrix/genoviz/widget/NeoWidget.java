@@ -18,7 +18,6 @@ import java.awt.event.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
-import com.affymetrix.genoviz.awt.NeoBufferedComponent;
 
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -132,8 +131,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
 	public NeoWidget() {
-		setOpaque(false);
-		setDoubleBuffered(false);
 
 		this.setScrollIncrementBehavior(X,NO_AUTO_SCROLL_INCREMENT);
 		this.setScrollIncrementBehavior(Y,NO_AUTO_SCROLL_INCREMENT);
@@ -158,35 +155,22 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		if (scroller != null) {
 			if ( scroller[0] != null ) {
 				scroller[0].removeAdjustmentListener(this);
-				if ( scroller[0] instanceof NeoBufferedComponent ) {
-					((NeoBufferedComponent)scroller[0]).nullOffscreenImage();
-				}
 			}
 			if ( scroller[1] != null ) {
 				scroller[1].removeAdjustmentListener(this);
-				if ( scroller[1] instanceof NeoBufferedComponent ) {
-					((NeoBufferedComponent)scroller[1]).nullOffscreenImage();
-				}
 			}
 		}
 		if (zoomer != null) {
 			if ( zoomer[0] != null ) {
 				zoomer[0].removeAdjustmentListener(this);
-				if ( zoomer[0] instanceof NeoBufferedComponent ) {
-					((NeoBufferedComponent)zoomer[0]).nullOffscreenImage();
-				}
 			}
 			if ( zoomer[1] != null ) {
 				zoomer[1].removeAdjustmentListener(this);
-				if ( zoomer[1] instanceof NeoBufferedComponent ) {
-					((NeoBufferedComponent)zoomer[1]).nullOffscreenImage();
-				}
 			}
 		}
 		scroller = null;
 		zoomer = null;
 		if (canvas != null) {
-			canvas.nullOffscreenImage();
 			if ( rband != null ) {
 				canvas.removeMouseListener(rband);
 				canvas.removeMouseMotionListener(rband);

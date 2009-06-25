@@ -38,8 +38,6 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 
 	public NeoContainerWidget() {
 		super();
-		setOpaque(false);
-		setDoubleBuffered(false);
 		//    setOpaque(true);
 		//    setDoubleBuffered(true);
 
@@ -515,15 +513,6 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 			if (widg.getWidget(gl) == widg) { return widg; }
 		}
 		return null;
-	}
-
-	public void setDoubleBuffered ( boolean buffered ) {
-		super.setDoubleBuffered ( buffered );
-		if ( widgets == null ) return;
-		for ( int i = 0; i < widgets.size(); i++ ) {
-			((NeoBufferedComponent)widgets.elementAt(i)).setDoubleBuffered(buffered);
-			if ( widgets.elementAt(i) instanceof NeoWidget ) ((NeoWidget)widgets.elementAt(i)).getView().setBuffered(buffered);
-		}
 	}
 
 	public void removeItem(GlyphI gl) {

@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.awt.NeoBufferedComponent;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
@@ -26,7 +25,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  *
  * @version
  */
-public abstract class NeoAbstractWidget extends NeoBufferedComponent
+public abstract class NeoAbstractWidget extends Container
 	implements NeoWidgetI, MouseListener, MouseMotionListener, KeyListener {
 
 	protected Dimension pref_widg_size = new Dimension(1, 1);

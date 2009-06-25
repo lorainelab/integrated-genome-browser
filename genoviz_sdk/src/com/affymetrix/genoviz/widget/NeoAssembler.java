@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 
@@ -27,6 +26,18 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.widget.neoassembler.*;
+import java.awt.AWTEventMulticaster;
+import java.awt.Adjustable;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.ItemSelectable;
+import java.awt.Toolkit;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -111,6 +122,22 @@ public class NeoAssembler extends NeoContainerWidget
 	implements NeoViewBoxListener,
 			   ItemSelectable
 {
+
+	/**
+	 * Old code assumed that its arguments implemented Comparable, which was only true for AlignmentGlyph.
+	 * This is a hack to work around that.
+	 */
+	private static final Comparator<GlyphI> comparatorHack = new Comparator<GlyphI>() {
+
+					public int compare(GlyphI arg0, GlyphI arg1) {
+						if (arg0 instanceof AlignmentGlyph && arg1 instanceof AlignmentGlyph) {
+							return ((AlignmentGlyph)arg0).compareTo((AlignmentGlyph)arg1);
+						} else {
+							throw new IllegalArgumentException();
+						}
+					}
+	};
+
 	public static final int UNKNOWN_ASSEMBLY = 0;
 	public static final int NA_ASSEMBLY = 1;
 	public static final int AA_ASSEMBLY = 2;
@@ -172,7 +199,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	public boolean tryUniChild = false;
 
-	private static final boolean debug = false;
+	//private static final boolean debug = false;
 
 	protected boolean complementIfReversed = true;
 	protected boolean show_axis = true;
@@ -191,7 +218,7 @@ public class NeoAssembler extends NeoContainerWidget
 	protected StretchContainerGlyph cglyph;
 
 	protected AssemblyPacker apacker;
-	protected Vector align_glyphs;
+	protected Vector<GlyphI> align_glyphs;
 	protected Vector<NeoDataAdapterI> adapters;
 	boolean optimize_scrolling = false;
 	boolean optimize_damage = false;
@@ -636,7 +663,7 @@ public class NeoAssembler extends NeoContainerWidget
 		consmap.setMapRange(range_start, range_end);
 		consmap.stretchToFit(false, false);
 		alignmap.stretchToFit(false, false);
-		Rectangle2D.Double alignbox = alignmap.getScene().getCoordBox();
+		//Rectangle2D.Double alignbox = alignmap.getScene().getCoordBox();
 		Rectangle2D.Double viewbox = alignmap.getView().getCoordBox();
 		if ((viewbox.x < range_start) && (viewbox.x+viewbox.width > range_end)) {
 			// do nothing if alignments won't stretch to edge of NeoAssembler???
@@ -840,7 +867,7 @@ public class NeoAssembler extends NeoContainerWidget
 			if (consensus_complete && ref_seq != null) {
 				AlignmentGlyph seq_glyph;
 				for (int i=0; i<align_glyphs.size(); i++) {
-					seq_glyph = (AlignmentGlyph)align_glyphs.elementAt(i);
+					seq_glyph = (AlignmentGlyph)align_glyphs.get(i);
 					seq_glyph.setReference(ref_seq);
 				}
 			}
@@ -962,7 +989,8 @@ public class NeoAssembler extends NeoContainerWidget
 			else {
 				cglyph.addChild(aglyph);
 				align_glyphs = cglyph.getChildren();
-				QuickSorter.sort(cglyph.getChildren());
+				Collections.sort(align_glyphs, comparatorHack);
+				//QuickSorter.sort(cglyph.getChildren());
 				all_sorted = true;
 			}
 		}
@@ -1077,7 +1105,7 @@ public class NeoAssembler extends NeoContainerWidget
 		ArrowGlyph arrow;
 		GlyphI label;
 		for (int i=0; i<align_glyphs.size(); i++) {
-			align = (AlignmentGlyph)align_glyphs.elementAt(i);
+			align = (AlignmentGlyph)align_glyphs.get(i);
 			label = (GlyphI)labelhash.get(align);
 
 			acoords = align.getCoordBox();
@@ -1293,26 +1321,22 @@ public class NeoAssembler extends NeoContainerWidget
 		for (i=0; i<reflength; i++) {
 			refbuf.append('*');
 		}
-		Vector spans = consensus.getSpans();
-		Span s;
+		Vector<Span> spans = consensus.getSpans();
 		if (spans != null) {
 			int seqindex, refindex;
-			for (i=0; i<spans.size(); i++) {
-				s = (Span)spans.elementAt(i);
+			for (Span s : spans) {
 				refindex = s.ref_start;
-
 				if (seqstring != null) {
-					for (seqindex=s.seq_start;
-							seqindex<seqstring.length() && seqindex<=s.seq_end;
-							seqindex++) {
+					for (seqindex = s.seq_start;
+									seqindex < seqstring.length() && seqindex <= s.seq_end;
+									seqindex++) {
 						try {
 							refbuf.setCharAt(refindex, seqstring.charAt(seqindex));
-						}
-						catch (StringIndexOutOfBoundsException e) {
+						} catch (StringIndexOutOfBoundsException e) {
 							refbuf.setCharAt(refindex, '*');
 						}
 						refindex++;
-							}
+					}
 				}
 			}
 		}
@@ -1715,7 +1739,8 @@ public class NeoAssembler extends NeoContainerWidget
 		if (auto_sort) {
 			if (all_sorted == false) {
 				if (cglyph.getChildren() != null) {
-					QuickSorter.sort(cglyph.getChildren());
+					//QuickSorter.sort(cglyph.getChildren());
+					Collections.sort(cglyph.getChildren(), comparatorHack);
 					pack();
 					all_sorted = true;
 				}
@@ -1957,7 +1982,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 		setRange(0, 0);
 
-		align_glyphs.removeAllElements();
+		align_glyphs.clear();
 		labelhash.clear();
 		arrowhash.clear();
 		ref_seq = null;
@@ -2240,7 +2265,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
-	public Vector getAlignmentGlyphs() {
+	public Vector<GlyphI> getAlignmentGlyphs() {
 		return align_glyphs;
 	}
 
@@ -2553,9 +2578,7 @@ public class NeoAssembler extends NeoContainerWidget
 		Rectangle2D.Double new_rect = new Rectangle2D.Double( x_coord_start, rect.y, width, rect.height );
 
 		View map_view = alignmap.getView();
-		Enumeration it = align_glyphs.elements();
-		while( it.hasMoreElements() ) {
-			GlyphI residue = (GlyphI)it.nextElement();
+		for(GlyphI residue: align_glyphs) {
 			if (residue.isSelected()){
 				Rectangle2D.Double rec = residue.getCoordBox();
 				if (rec.x > x_coord_start) start = (int)rec.x;
@@ -2588,9 +2611,7 @@ public class NeoAssembler extends NeoContainerWidget
 		Rectangle2D.Double new_rect = new Rectangle2D.Double( x_coord_start, rect.y, width, rect.height );
 
 		View map_view = alignmap.getView();
-		Enumeration it = align_glyphs.elements();
-		while( it.hasMoreElements() ) {
-			GlyphI residue = (GlyphI)it.nextElement();
+		for (GlyphI residue : align_glyphs) {
 			if( residue.intersects( new_rect, map_view ) ) {
 				alignmap.select( residue, x_coord_start, x_coord_end );
 			}

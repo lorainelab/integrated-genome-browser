@@ -200,7 +200,7 @@ public class Mapping {
 	/**
 	 * return a Vector of all spans in the mapping.
 	 */
-	public Vector getSpans() {
+	public Vector<Span> getSpans() {
 		return spans;
 	}
 

@@ -13,11 +13,21 @@
 
 package com.affymetrix.genometry.util;
 
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometry.MutableSeqSymmetry;
+import com.affymetrix.genometry.Propertied;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.span.MutableDoubleSeqSpan;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SimpleDerivedSeqSymmetry;
+import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import java.util.*;
-import java.util.List;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
 
 /**
  *  Holds many static methods for manipulating BioSeqs, SeqSpans, and SeqSymmetries
@@ -26,15 +36,9 @@ import com.affymetrix.genometry.symmetry.*;
 public abstract class SeqUtils {
 
 	private static final boolean DEBUG = false;
-	//private static final boolean DEBUG_INTERSECTION = false;
-	//private static final boolean DEBUG_UNION = false;
-	//private static final boolean DEBUG_ROLLUP = false;
 
 	/** Controls the format used for printing spans in {@link #spanToString(SeqSpan)}. */
 	private static final boolean USE_SHORT_FORMAT_FOR_SPANS= true;
-
-	/** Controls the format used for printing spans in {@link #symToString(SeqSymmetry)}. */
-	//private static final boolean USE_SHORT_FORMAT_FOR_SYMS= true;
 
 	/**
 	 * Get depth of the symmetry. (Longest number of recursive calls to getChild()
@@ -59,114 +63,7 @@ public abstract class SeqUtils {
 		return max_child_depth;
 	}
 
-	/**
-	 *  Roll-up, or simplify, a Symmetry hierarchy.
-	 *  If the parent symmetry has only one child, and every span in the child has
-	 *     an equivalent span in the parent, then perform a rollup:
-	 *          detach the grandchild symmetries from the child, attach them
-	 *          to the parent
-	 *  Recurse down through the symmetry doing this.
-	 *  <p>
-	 *  <strong>WARNING -- ASSUMPTIONS</strong>
-	 *  <ul>
-	 *  <li>currently assumes all symmetries in the hierarchy are mutable --
-	 *     may give a ClassCastException if this is not the case...
-	 *  <li>currently assumes there are no symmetries in the hierarchy where
-	 *     one BioSeq appears in multiple SeqSpans (at the same level)
-	 *  </ul>
-	 */
-	/*public static void rollup(MutableSeqSymmetry parent) {
-	  if (parent == null) { return; }
-	  int child_count = parent.getChildCount();
-	  if (child_count == 1) {
-	  MutableSeqSymmetry child = (MutableSeqSymmetry)parent.getChild(0);
-	  if (parent.getSpanCount() == child.getSpanCount()) {
-	  int span_count = child.getSpanCount();
-	  for (int i=0; i<span_count; i++) {
-	  SeqSpan child_span = child.getSpan(i);
-	  BioSeq seq = child_span.getBioSeq();
-	  SeqSpan parent_span = parent.getSpan(seq);
-	  if (!(SeqUtils.spansEqual(child_span, parent_span)))  {
-	  if (DEBUG_ROLLUP)  { System.out.println("failed at span check"); }
-	  return;
-	  }
-	  }
-	// if made it through the for loop without returning, then
-	//   do the actual rollup at this level
-	parent.removeChild(child);
-	int grandchild_count = child.getChildCount();
-	for (int i=0; i<grandchild_count; i++) {
-	MutableSeqSymmetry grandchild = (MutableSeqSymmetry)child.getChild(i);
-	parent.addChild(grandchild);
-	}
-	if (grandchild_count > 0) {
-	// recursively call on again on parent (which now has different children,
-	//    original child has been removed and grandchildren have become
-	//    new children
-	rollup(parent);
-	}
-	  }
-	  }
-	  else {
-	// recursively call on children if have more than one child
-	for (int i=0; i<child_count; i++) {
-	MutableSeqSymmetry child = (MutableSeqSymmetry)parent.getChild(i);
-	rollup(child);
-	}
-	  }
-	  }*/
 
-	/**
-	 *  "Trimming" a MutableSeqSymmetry based on leaf spans.
-	 *  end result is that (recursively) if a parent has span that extends further
-	 *  than the union of all its children, then the parent span is trimmed down
-	 *  to the union of all its children
-	 * <p>
-	 *  Currently assumes that all descendant symmetries are mutable,
-	 *     and that all spans in the symmetries are also mutable,
-	 *     and that there are not multiple spans with same seq in the same symmetry
-	 *<p>
-	 *  WARNING!!! trim() is also being used for post-transformation correction of
-	 *    a bug somewhere in transform methods that ends up getting strand oriention
-	 *    of spans in non-leaf symmetries wrong.  trim() fixes this because all
-	 *    spans in non-leaf symmetries are recursively recalculated based on leaf
-	 *    symmetries/spans via getChildBounds().  Since transform bug does not affect leafs,
-	 *    this corrects the bug.  But _really_ need to fix bug in transform machinery,
-	 *    since not all calls to tranformSymmetry() are followed by trim()... (and
-	 *    a post-operative fix is really inelegant)
-	 */
-	/* public static void trim(MutableSeqSymmetry sym) {
-	   int child_count = sym.getChildCount();
-	   if (child_count <= 0) { return; }
-	   for (int i=0; i<child_count; i++) {
-	   MutableSeqSymmetry child = (MutableSeqSymmetry)sym.getChild(i);
-	   SeqUtils.trim(child);
-	   }
-	   int span_count = sym.getSpanCount();
-	   for (int k=0; k<span_count; k++) {
-	   MutableSeqSpan span = (MutableSeqSpan)sym.getSpan(k);
-	   BioSeq seq = span.getBioSeq();
-	   SeqSpan newspan = getChildBounds(sym, seq);
-	// Throwing a null pointer exception with AnnotMapper during
-	// hg16-hg17 mapping used for exon array. --steve chervitz
-	if(newspan != null) {
-	span.set(newspan.getStart(), newspan.getEnd(), seq);
-	}
-	   }
-	   }*/
-
-
-	/**
-	 *  Like spansEqual() but is strand-insensitive. (Spans can be considered equal
-	 *  even if on different strands.)
-	 */
-	/*public static boolean spansEqualIgnoreStrand(SeqSpan spanA, SeqSpan spanB) {
-	  return (spanA != null &&
-	  spanB != null &&
-	  spanA.getMinDouble() == spanB.getMinDouble() &&
-	  spanA.getMaxDouble() == spanB.getMaxDouble() &&
-	  spanA.getBioSeq() == spanB.getBioSeq());
-	  }*/
 
 	/**
 	 *  Compares two spans, and returns true if they both refer to the same BioSeq and
@@ -191,7 +88,7 @@ public abstract class SeqUtils {
 	}
 
 
-	protected static final MutableSeqSpan mergeHelp(List<SeqSpan> spans, int index) {
+	private static final MutableSeqSpan mergeHelp(List<SeqSpan> spans, int index) {
 		SeqSpan curSpan = spans.get(index);
 		MutableSeqSpan result = new SimpleMutableSeqSpan(curSpan);
 		boolean changed = true;
@@ -245,7 +142,7 @@ public abstract class SeqUtils {
 		return leafSyms;
 	}
 
-	public static final void collectLeafSyms(SeqSymmetry sym, Collection<SeqSymmetry> leafs) {
+	private static final void collectLeafSyms(SeqSymmetry sym, Collection<SeqSymmetry> leafs) {
 		if (sym.getChildCount() == 0) {
 			leafs.add(sym);
 		}
@@ -264,7 +161,7 @@ public abstract class SeqUtils {
 	 *   Extends to ends of BioSeq.
 	 *  @see #inverse(SeqSymmetry, BioSeq, boolean)
 	 */
-	public static final SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq) {
+	private static final SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq) {
 		return inverse(symA, seq, true);
 	}
 
@@ -332,16 +229,6 @@ public abstract class SeqUtils {
 
 
 	/**
-	 *  "Logical" XOR of SeqSymmetries (relative to a particular BioSeq).
-	 */
-	private static final SeqSymmetry xor(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
-		SeqSymmetry unionAB = union(symA, symB, seq);
-		SeqSymmetry interAB = intersection(symA, symB, seq);
-		SeqSymmetry inverseInterAB = inverse(interAB, seq);
-		return intersection( unionAB, inverseInterAB, seq);
-	}
-
-	/**
 	 *  Like a one-sided xor.
 	 *  Creates a SeqSymmetry that contains children for regions covered by symA that
 	 *     are not covered by symB.
@@ -351,6 +238,15 @@ public abstract class SeqUtils {
 		return SeqUtils.intersection(symA, xorSym, seq);
 	}
 
+	/**
+	 *  "Logical" XOR of SeqSymmetries (relative to a particular BioSeq).
+	 */
+	private static final SeqSymmetry xor(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
+		SeqSymmetry unionAB = union(symA, symB, seq);
+		SeqSymmetry interAB = intersection(symA, symB, seq);
+		SeqSymmetry inverseInterAB = inverse(interAB, seq);
+		return intersection( unionAB, inverseInterAB, seq);
+	}
 
 	/**
 	 *  "Logical" OR of SeqSymmetries (relative to a particular BioSeq).
@@ -426,15 +322,11 @@ public abstract class SeqUtils {
 		List<SeqSpan> leavesA = getLeafSpans(mergesymA, seq);
 		List<SeqSpan> leavesB = getLeafSpans(mergesymB, seq);
 
-		int countA = leavesA.size();
-		int countB = leavesB.size();
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
-		for (int i=0; i<countA; i++) {
-			SeqSpan spanA = leavesA.get(i);
+		for (SeqSpan spanA : leavesA) {
 			if (spanA == null) { continue; }
-			for (int k=0; k<countB; k++) {
-				SeqSpan spanB = leavesB.get(k);
+			for (SeqSpan spanB : leavesB) {
 				if (spanB == null) { continue; }
 				if (SeqUtils.overlap(spanA, spanB)) {
 					SeqSpan spanI = SeqUtils.intersection(spanA, spanB);
@@ -451,12 +343,6 @@ public abstract class SeqUtils {
 		if (resultSym.getChildCount() == 0) {
 			return false;
 		}
-		/* testing for merging any overlaps...
-		   List ispans = getLeafSpans(resultSym, seq);
-		   SeqSymmetry merged_results = spanMerger(spans);
-		   List merged_ispans = getLeafSpans(merged_results, seq);
-		   etc.
-		   */
 
 		// now set resultSym to max and min of its children...
 		SeqSpan resultSpan = new SimpleSeqSpan(min, max, seq);
@@ -465,7 +351,7 @@ public abstract class SeqUtils {
 	}
 
 	/** Inner class helper for inverse() method. */
-	static final class StartSorter implements Comparator<SeqSpan> {
+	private static final class StartSorter implements Comparator<SeqSpan> {
 		static StartSorter static_instance = null;
 
 		public static StartSorter getInstance() {
@@ -482,7 +368,7 @@ public abstract class SeqUtils {
 		}
 	}
 
-	protected static final MutableSeqSymmetry spanMerger(List<SeqSpan> spans) {
+	private static final MutableSeqSymmetry spanMerger(List<SeqSpan> spans) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		spanMerger(spans, resultSym);
 		return resultSym;
@@ -551,24 +437,6 @@ public abstract class SeqUtils {
 		return null;
 	}
 
-	/**
-	 *
-	 */
-	public static final SeqSpan getOtherSpan(SeqSymmetry sym, SeqSpan[] spans) {
-		int spanCount = sym.getSpanCount();
-OUTERLOOP:
-		for (int i=0; i<spanCount; i++) {
-			SeqSpan span_to_check = sym.getSpan(i);
-			for (int k=0; k<spans.length; k++) {
-				if (spansEqual(span_to_check, spans[k])) {
-					continue OUTERLOOP;
-				}
-			}
-			return sym.getSpan(i);
-		}
-		return null;
-	}
-
 
 	public static final MutableSeqSymmetry flattenSymmetry(SeqSymmetry sym) {
 		List<SeqSymmetry> leafSyms = SeqUtils.getLeafSyms(sym);
@@ -589,122 +457,6 @@ OUTERLOOP:
 		}
 		return result;
 	}
-
-
-	/**
-	 *  Take a MutableSeqSymmetry and "collapse" it based on abutments of BioSeq seq.
-	 *
-	 *  NOT YET IMPLEMENTED
-	 */
-	//public static boolean mergeSymmetries(MutableSeqSymmetry symset) {
-	/**
-	 * Hmm, this could get messy. Is it even possible to "merge" symmetries based on
-	 *   abutment of spans from one BioSeq?  Because what happens to the spans from other
-	 *   BioSeqs that _don't_ abut?
-	 *
-	 * Maybe need to redefine this as more limited in scope -- can "merge" two symmetries
-	 *   where:
-	 *     for _all_ BioSeqs that spans in the symmetries refer to:
-	 *        the span in each symmetry abut
-	 *        (and in same orientation?  is this even a meaningful question?)
-	 * I think this would work, but it still begs the question of how to deal with
-	 *      the (very common) situation where spans for a particular BioSeq in two
-	 *      symmetries (or more) abut, but other spans in the symmetries for other
-	 *      BioSeqs don't.  Maybe this is not an issue of merging, just something
-	 *      that we need to provide query methods for:
-	 *
-	 *     boolean abuts;
-	 *     abuts = span1.abuts(span2);
-	 *     OR abuts = SeqUtils.abut(span1, span2);
-	 *     abuts = sym1.abut(sym2, seq1);  // any abutments of seq1 betweeen sym1 and sym2
-	 *     OR abuts = SeqUtils.abut(sym1, sym2, seq1)
-	 *
-	 *  (should such methods recurse down if syms are symsets?)
-	 */
-
-	// trying simple version first:
-	//    assume children are already sorted (in ascending order by start coord)
-	//    no recursion for children of children, etc.)
-	// loop through children
-	// for each child symmetry
-	//   check against (all / next) child
-	//   loop through spans of current child
-	//   for each span, retrieve seq
-	//       is nextchild.getSpan(seq) adjacent to span?
-	//       AND result across all spans tested
-	//   if all spans of current and next symmetry are adjacent,
-	//       then merge the two symmetries
-	//
-	// merge children
-	// if all children merge, should child "collapse" into parent?
-	/*  int childcount = symset.getChildCount();
-		for (int cindex = 0; cindex < childcount; cindex++) {
-		SeqSymmetry current = symset.getChild(cindex);
-		}
-		return false;
-		}*/
-
-	/**
-	 *  NOT YET IMPLEMENTED.
-	 *  Given a MutableSeqSymmetry (which can start with just a single SeqSpan),
-	 *    and an initial SeqSymmetry to use for coordinate mapping,
-	 *    attempt to map resultSet coordinates from srcSeq to dstSeq
-	 *
-	 *  Finds path of BioSeqs and SeqSymmetries leading from srcSeq to dstSeq,
-	 *    and calls transformSymmetry(resultSet, SeqSymmetry[] symPath, BioSeq seqPath)
-	 *
-	 * WARNING:
-	 *     if there are multiple paths from srcSeq to dstSeq (by way of
-	 *     SeqSymmetries, starting with initialSym), then will use first path
-	 *     found, which is not guaranteed to be reproducible!
-	 */
-	/*public static final boolean transformSymmetry(MutableSeqSymmetry resultSet,
-	  SeqSymmetry initialSym,
-	  BioSeq srcSeq, BioSeq dstSeq) {
-	  return false;
-	  }*/
-
-
-	/**
-	 *  NOT YET FULLY IMPLEMENTED.
-	 *  recursive depth-first search to try and find path from srcSeq to dstSeq via
-	 *     AnnotatedSeqs and SeqSymmetries
-	 */
-	/*
-	   public static final boolean findPath(AnnotatedBioSeq srcSeq, BioSeq dstSeq,
-	   List<BioSeq> seqPath, List<SeqSymmetry> symmetryPath) {
-	// Vector annots = srcSeq.getAnnotations();
-	int annotCount = srcSeq.getAnnotationCount();
-	for (int i=0; i<annotCount; i++) {
-	// SeqSymmetry annot = (SeqSymmetry)annots.elementAt(i);
-	SeqSymmetry annot = srcSeq.getAnnotation(i);
-	int spanCount = annot.getSpanCount();
-	for (int j=0; j<spanCount; j++) {
-	SeqSpan curSpan = annot.getSpan(j);
-	BioSeq curSeq = curSpan.getBioSeq();
-	if (curSeq == dstSeq) {
-	// SUCCESS!
-	symmetryPath.add(annot);
-	seqPath.add(curSeq);
-	return true;
-	}
-	else {
-	// recurse as part of depth-first search?
-	if (curSeq instanceof AnnotatedBioSeq) {
-	if (findPath((AnnotatedBioSeq)curSeq, dstSeq, seqPath, symmetryPath)) {
-	symmetryPath.add(annot);
-	seqPath.add(srcSeq);
-	return true;
-	}
-	}
-	}
-
-	}
-
-	}
-	return false;
-
-	}*/
 
 
 	/**
@@ -729,18 +481,6 @@ OUTERLOOP:
 		return true;
 	}
 
-	/*
-	   public static final boolean transformSymmetry2(MutableSeqSymmetry resultSet, SeqSymmetry[] symPath) {
-// for each SeqSymmetry mapSym in SeqSymmetry[] symPath
-for (int i=0; i<symPath.length; i++) {
-SeqSymmetry sym = symPath[i];
-boolean success = transformSymmetry2(resultSet, sym, true);
-if (! success) { return false; }
-if (DEBUG) { System.out.print("after symPath entry " + i + ", "); SeqUtils.printSymmetry(resultSet); System.out.println("---\n"); }
-}
-return true;
-}*/
-
 /**
  *  Convenience method for transforming through just on mapSym rather than a path of
  *  multiple mapSyms.  Hides src2dst_recurse boolean, which is mainly for internal use
@@ -756,14 +496,6 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 	return transformSymmetry(resultSym, mapSym, true);
 }
 
-/*
-   public static final boolean transformSymmetry2(MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
-//    return transformSymmetry(resultSym, mapSym, true);
-return transformSymmetry2(resultSym, mapSym, true);
-}*/
-
-public static int unsuccessful_count = 0;
-public static final boolean debug_step3 = false;
 /**
  *  More general version of
  *      transformSymmetry(resultSet,  src2dstSym, srcSeq, dstSeq, rootSeq, src2dst_recurse).
@@ -806,7 +538,7 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 		}
 
 		// is mapSym leaf?  yes
-		else {  // STEP3
+		else {
 			// STEP 3
 			//
 			// GAH 2006-03-28
@@ -886,7 +618,7 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 						success = transformSpan(interSpan, newResSpan, seq, mapSym);
 					}
 
-					if (debug_step3) {
+					if (DEBUG) {
 						System.out.println("in SeqUtils.transformSymmetry(), step3");
 						System.out.print("  span to transform: "); printSpan(respan);
 						System.out.print("  linkSpan:          "); printSpan(linkSpan);
@@ -901,23 +633,14 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 					}
 					else {
 						//                System.out.println("unsuccessful trying to transform span: ");
-						unsuccessful_count++;
+						//unsuccessful_count++;
 						return false;
 					}
-					/*      }
-							else {
-							if (debug_step3)  {
-							System.out.println("in SeqUtils.transformSymmetry(), step3");
-							System.out.print("  linkSpan:          "); printSpan(linkSpan);
-							System.out.println("respan already exists: " + SeqUtils.spanToString(respan));
-							}
-							}
-							*/
 				}
 			}
-		}  // end of STEP 3
+		}
 
-	}   // end of (resultSym leaf? -- yes) branch
+	}
 	return true;
 }
 
@@ -1046,232 +769,6 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 	}
 
 
-/*
-   public static final boolean transformSymmetry2(MutableSeqSymmetry resultSym, SeqSymmetry mapSym,
-   boolean src2dst_recurse) {
-//    System.out.println("called SeqUtils.transformSymmetry2()");
-// is resultSym leaf?  no
-if (resultSym.getChildCount() > 0) {
-// STEP 4
-int resChildCount = resultSym.getChildCount();
-for (int child_index = 0; child_index < resChildCount; child_index++) {
-MutableSeqSymmetry childResSym = (MutableSeqSymmetry)resultSym.getChild(child_index);
-transformSymmetry2(childResSym, mapSym, src2dst_recurse);
-}
-addParentSpans(resultSym, mapSym);  // now run STEP 2...
-}
-// is resultSym leaf?  yes
-else {
-// is mapSym leaf?  no
-if (src2dst_recurse &&
-mapSym.getChildCount() > 0) {
-// STEP 1
-int map_childcount = mapSym.getChildCount();
-//**
-// *  GAH 6-25-2003
-// *  NOT YET IMPLEMENTED
-// *  new attempt at improving performance for mapping syms that have large number of children...
-// *    for each spanA in result sym
-// *       collect List of mapsym children childmapB where
-// *          childmapB.getSpan(panA.getBioSeq()) intersects spanA
-// *          for IntervalSearchSyms, can do this via:
-// *               childlist = sym.getIntersectedSymmetries(spanA) // sortof...
-//
-// first trying just deciding based on
-boolean USE_NEW_STEP1 = true;
-if (USE_NEW_STEP1) {
-List<SeqSymmetry> map_child_list = null;
-// find a seq shared by both (linkseq);
-int res_span_count = resultSym.getSpanCount();
-for (int i=0; i<res_span_count; i++) {
-// hmm, making some assumptions here:
-//   A. any BioSeq used for mapsym child sym (or descendant?) spans will also be used for
-//      a span in parent mapsym
-//   B. either (1) only one span in resultSym will share a seq with a mapSym span,
-//        OR   (2) multiple spans in resultSym share seqs with mapSym spans, but
-//                  for every child of mapSym either all of these seqs are shared or none of them are???
-SeqSpan respan = resultSym.getSpan(i);
-SeqSpan mapspan = mapSym.getSpan(respan.getBioSeq());
-if (mapspan != null) {
-if (mapSym instanceof SearchableSeqSymmetry) {
-map_child_list = ((SearchableSeqSymmetry)mapSym).getOverlappingChildren(respan);
-//                System.out.println("calling SearchableSeqSymmetry.getOverlappingChildren()");
-}
-else {
-map_child_list = SeqUtils.getOverlappingChildren(mapSym, respan);
-//                System.out.println("calling SeqUtils.getOverlappingChildren()");
-}
-break;
-}
-}
-if (map_child_list != null) {
-int new_child_count = map_child_list.size();
-
-NEW_STEP1_LOOP:
-for (int index = 0; index < new_child_count; index++) {  // start of loop through mapSym children
-//            SeqSymmetry map_child_sym = mapSym.getChild(index);
-SeqSymmetry map_child_sym = map_child_list.get(index);
-MutableSeqSymmetry childResult = null;
-// STEP 1a "sit still"
-int spanCount = map_child_sym.getSpanCount();
-for (int spandex=0; spandex < spanCount; spandex++) {
-SeqSpan mapspan = map_child_sym.getSpan(spandex);
-BioSeq seq = mapspan.getBioSeq();
-SeqSpan respan = resultSym.getSpan(seq);
-if (respan != null) {
-	MutableSeqSpan interSpan = (MutableSeqSpan)intersection(respan, mapspan);
-	if (interSpan != null) {
-		if (respan.isForward()) {
-			interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-		}
-		else {
-			interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-		}
-		if (childResult == null) {
-			// GAH 11-18-2003  trying to add DerivedSeqSymmetry tracking to transformSymmetry2
-			// not sure here if should check mapSym or resultSym, so for now propogating symmetry tracking
-			// if _either_ is a DerivedSeqSymmetry
-			if (mapSym instanceof DerivedSeqSymmetry || resultSym instanceof DerivedSeqSymmetry) {
-				// System.out.println("in SeqUtils.transformSymmetry2(), making derived seq symmetry");
-				childResult = new SimpleDerivedSeqSymmetry();
-				if (resultSym instanceof DerivedSeqSymmetry) {
-					SeqSymmetry osym = ((DerivedSeqSymmetry)resultSym).getOriginalSymmetry();
-					if (osym != null) {
-						((DerivedSeqSymmetry)childResult).setOriginalSymmetry(osym);
-					}
-					else {
-						((DerivedSeqSymmetry)childResult).setOriginalSymmetry(resultSym);
-					}
-				}
-				else {
-					((DerivedSeqSymmetry)childResult).setOriginalSymmetry(resultSym);
-				}
-			}
-			else {
-				childResult = new SimpleMutableSeqSymmetry();
-			}
-			//                      childResult = new SimpleMutableSeqSymmetry();
-		}
-		childResult.addSpan(interSpan);
-	}
-}
-}
-if (childResult == null) {
-	//            break STEP1_LOOP;
-	continue;
-}
-// STEP 1b "roll back"
-//  GAH 6-27-2003
-// at this point, already know that both childResult and resultSym are leaf symmetries,
-//   (since childResult was just created and no children have been added to it,
-//    and childResult itself doesn't get added to resultSym till later, so resultSym is still leaf),
-//     so this transformSymmetry call will fall through to STEP3
-// therefore should probably break out STEP3 into its own method, and call directly here rather than
-//       calling transformSymmetry, to avoid confusion
-// actually I think this also implies that src2dst_recurse flag is no longer needed, since
-//    this is the _only_ place that it is called with va = false...
-transformSymmetry2(childResult, resultSym, false);
-// STEP 1c "roll forward"
-//  GAH 6-27-2003
-// at this point, already know that childResult is leaf symmetry, so this transformSymmetry
-//    call will fall through to map_child_sym.getChildCount() test:
-//    if map_child_sym has no children, will fall through to STEP3
-//    if map_child_sym has children, will recurse via STEP1
-transformSymmetry2(childResult, map_child_sym, true);
-resultSym.addChild(childResult);
-}  // end of loop through mapSym children
-}
-} // end of NEW_STEP_1
-else {
-STEP1_LOOP:
-	for (int index = 0; index < map_childcount; index++) {  // start of loop through mapSym children
-		SeqSymmetry map_child_sym = mapSym.getChild(index);
-		MutableSeqSymmetry childResult = null;
-		// STEP 1a "sit still"
-		int spanCount = map_child_sym.getSpanCount();
-		for (int spandex=0; spandex < spanCount; spandex++) {
-			SeqSpan mapspan = map_child_sym.getSpan(spandex);
-			BioSeq seq = mapspan.getBioSeq();
-			SeqSpan respan = resultSym.getSpan(seq);
-			if (respan != null) {
-				MutableSeqSpan interSpan = (MutableSeqSpan)intersection(respan, mapspan);
-				if (interSpan != null) {
-					if (respan.isForward()) {
-						interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-					}
-					else {
-						interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-					}
-					if (childResult == null) { childResult = new SimpleMutableSeqSymmetry(); }
-					childResult.addSpan(interSpan);
-				}
-			}
-		}
-		if (childResult == null) {
-			//            break STEP1_LOOP;
-			continue;
-		}
-		// STEP 1b "roll back"
-		transformSymmetry2(childResult, resultSym, false);
-		// STEP 1c "roll forward"
-		transformSymmetry2(childResult, map_child_sym, true);
-		resultSym.addChild(childResult);
-	}  // end of loop through mapSym children
-}  // end of OLD STEP1
-// STEP 2
-addParentSpans(resultSym, mapSym);
-}
-// is mapSym leaf?  yes
-else {
-	// STEP 3
-	int spanCount = mapSym.getSpanCount();
-	boolean success = false;
-	SeqSpan linkSpan = null;
-	for (int spandex=0; spandex < spanCount; spandex++) {
-		SeqSpan mapspan = mapSym.getSpan(spandex);
-		BioSeq seq = mapspan.getBioSeq();
-		SeqSpan respan = resultSym.getSpan(seq);
-		if (respan != null) {
-			linkSpan = respan;
-			break;
-		}
-	}
-	// if can't find a linker span, then there's a problem...
-	if (linkSpan == null) { System.out.println("Ackkk! Can't find a linker span!!"); return false; }
-	else {  // have a linker span
-		for (int spandex=0; spandex < spanCount; spandex++) {
-			//            SeqSpan mapspan = mapSym.getSpan(spandex);
-			SeqSpan newspan = mapSym.getSpan(spandex);
-			BioSeq seq = newspan.getBioSeq();
-			SeqSpan respan = resultSym.getSpan(seq);
-			if (respan == null) {
-				//              MutableSeqSpan newResSpan = new SimpleMutableSeqSpan();
-				MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
-				success = false;
-				SeqSpan mapSpan = mapSym.getSpan(linkSpan.getBioSeq());
-				MutableSeqSpan interSpan = (MutableSeqSpan)SeqUtils.intersection(linkSpan, mapSpan);
-				if (interSpan != null) {
-					if (linkSpan.isForward()) {
-						interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-					}
-					else {
-						interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-					}
-					success = transformSpan(interSpan, newResSpan, seq, mapSym);
-				}
-				if (success) {
-					resultSym.addSpan(newResSpan);
-				}
-				else { return false; }
-			}
-		}
-	}
-}  // end of STEP 3
-
-}   // end of (resultSym leaf? -- yes) branch
-return true;
-}*/
-
 public static final List<SeqSymmetry> getOverlappingChildren(SeqSymmetry sym, SeqSpan ospan) {
 	int childcount = sym.getChildCount();
 	if (childcount == 0) { return null; }
@@ -1356,12 +853,6 @@ protected static final boolean addParentSpans(MutableSeqSymmetry resultSym, SeqS
 	}  // end of STEP 2 _(if resultChildCount > 0)_
 	return true;
 }
-
-
-/**  Sugar method for using same MutableSeqSpan as both source and destination for transform. */
-/*public static boolean transformSpan(MutableSeqSpan span, BioSeq dstSeq, SeqSymmetry sym) {
-  return transformSpan(span, span, dstSeq, sym);
-  }*/
 
 
 /**
@@ -1524,25 +1015,6 @@ public static final boolean contains(SeqSpan spanA, double point) {
 			(spanA.getMaxDouble() >= point));
 }
 
-/**
- *  Returns true if spanA and spanB are immediately adjacent on the same seq.
- *  for example:
- *        spanX == { seq1, 100, 200 }
- *        spanY == { seq1, 200, 250 }
- *   adjacent(spanX, spanY) = true
- *    note that this method currently does _not_ check to ensure that the SeqSpans
- *    refer to the same BioSeq
- *  NOT YET TESTED
- */
-/*public static final boolean adjacent(SeqSpan spanA, SeqSpan spanB) {
-//
-//return ((spanA.getMax() == (spanB.getMin() + 1) ) ||
-//        (spanB.getMax() == (spanA.getMin() + 1) ) );
-//*
-return (((spanB.getMinDouble() - spanA.getMaxDouble()) < 0.000001)  ||
-((spanA.getMinDouble() - spanB.getMaxDouble()) < 0.00001) );
-
-}*/
 
 /**
  *  Semantic sugar atop overlap().
@@ -1791,14 +1263,6 @@ public static final boolean encompass(boolean AForward, boolean BForward,
 	return true;
 }
 
-/** NOT YET TESTED */
-/*  public static MutableSeqSymmetry copyToMutable(SeqSymmetry sym) {
-	MutableSeqSymmetry mut = new SimpleMutableSeqSymmetry();
-	boolean success = copyToMutable(sym, mut);
-	if (success) { return mut; }
-	else { return null; }
-	}*/
-
 /**
  *  Copies a SeqSymmetry.
  *  Note that this clears all previous data from the MutableSeqSymmetry.
@@ -1855,14 +1319,6 @@ public static final boolean copyToDerived(SeqSymmetry sym, DerivedSeqSymmetry de
 	return true;
 }
 
-
-
-//  public boolean
-
-/** NOT YET TESTED */
-/*  public static final boolean sameOrientation(SeqSpan spanA, SeqSpan spanB) {
-	return (! (spanA.isForward() ^ spanB.isForward()));  // NOT XOR isForward()
-	}*/
 
 public static final void printSpan(SeqSpan span) {
 	System.out.println(spanToString(span));
@@ -1947,140 +1403,13 @@ public static final String symToString(SeqSymmetry sym) {
 	}
 
 	return "sym.getID() is not implemented.";
-	/*
-	   String result = "";
-	   String id = sym.getID();
-
-	   else if (USE_SHORT_FORMAT_FOR_SYMS) {
-	   String sym_class = sym.getClass().getName();
-	   int n = sym_class.lastIndexOf('.');
-	   if (n>0 && n<sym_class.length()) {
-	   sym_class = sym_class.substring(n+1);
-	   }
-	   String hex = Integer.toHexString(sym.hashCode());
-	   if (id == null) {
-	   result = sym_class + " ("+hex+")";
-	   }
-	   else {
-	   result = id + " : " + sym_class + " ("+hex+")";
-	   }
-	   } else {
-	   if (id == null) {
-	   result = sym + ", children: " + sym.getChildCount()
-	   + ", depth: "+ getDepth(sym);
-	   }
-	   else {
-	   result = id + " : " + sym + ", children: " + sym.getChildCount()
-	   + ", depth: "+ getDepth(sym);
-	   }
-	   }
-	   return result;
-
-*/
+	
 }
 
-/*
-   public static String spanToString(SeqSpan span) {
-   if (span == null) { return "Span: null"; }
-   return ("Span: seq = " + span.getBioSeq().getID() +
-//    return ("Span: seq = " + span.getBioSeq() +
-", start = " + span.getStartDouble() + ", end = " + span.getEndDouble() +
-", length = " + span.getLengthDouble() +
-",  forward = " + span.isForward());
-   }
-   */
 
-/**
- * NOT YET IMPLEMENTED.
- */
-/*
-   public static SeqSpan stretchSpan(SeqSpan orig_span, double nstart, double nend) {
-   System.out.println("in stretchSpan(span, double, double) method");
-   System.out.println("WARNING: this method doesn't do anything!");
-   return null;
-   }*/
-
-/**
- *  THIS DOESN'T SEEM TO WORK PROPERLY.    GAH 10-8-2001
- *  FOR NOW, USE CALLS TO SeqUtils.encompass(span, span) INSTEAD
- *  WARNING
- *  stretchSpan has not yet been changed to handle non-integer spans
- */
-/*
-   public static SeqSpan stretchSpan(SeqSpan orig_span, int new_start, int new_end) {
-//    System.out.println("in stretchSpan(span, int, int) method");
-//      System.out.println("STRETCHING: start:{" + new_start + " " + orig_span.getStart() + "} "
-//                        + " end:{" + new_end + " " +  orig_span.getEnd() + "}");
-
-if (new_end < new_start) {
-int temp = new_start;
-new_start = new_end;
-new_end = temp;
-}
-
-int orig_start = orig_span.getStart();
-int orig_end = orig_span.getEnd();
-if (orig_end < orig_start) {
-int temp = orig_start;
-orig_start = orig_end;
-orig_end = temp;
-}
-
-if (new_start < orig_start || new_end > orig_end) {
-if (orig_span.getEnd() < orig_span.getStart()) {
-return new SimpleMutableSeqSpan(
-new_start < orig_start ? new_start : orig_start,
-new_end > orig_end ? new_end : orig_end,
-orig_span.getBioSeq());
-} else {
-return new SimpleMutableSeqSpan(
-new_end > orig_end ? new_end : orig_end,
-new_start < orig_start ? new_start : orig_start,
-orig_span.getBioSeq());
-}
-} else {
-return orig_span;
-}
-}*/
-
-/**
- *  Similar to {@link #getChildBounds(SeqSymmetry, BioSeq)} except recursively descends down to the leaves
- *    to calculate the bounds, rather than just the immediate children.
- *  currently always returns a forward span
- */
-/*public static final SeqSpan getLeafBounds(SeqSymmetry parent, BioSeq seq) {
-  int min = Integer.MAX_VALUE;
-  int max = Integer.MIN_VALUE;
-  MutableSeqSpan result = new SimpleMutableSeqSpan(max, min, seq);
-  getLeafBounds(parent, seq, result);
-  return result;
-  }*/
-
-/**
- *  Helper function for {@link #getLeafBounds(SeqSymmetry, BioSeq)}.
- *  Similar to {@link #getChildBounds(SeqSymmetry, BioSeq)} except
- *    recursively descends down to the leaves
- *    to calculate the bounds, rather than just the immediate children.
- *  Currently always returns a forward span
- */
-/*public static final void getLeafBounds(SeqSymmetry parent, BioSeq seq, MutableSeqSpan result) {
-  int child_count = parent.getChildCount();
-  if (child_count <= 0) {
-  SeqSpan span = parent.getSpan(seq);
-  result.setStart(Math.min(span.getMin(), result.getStart()));
-  result.setEnd(Math.max(span.getMax(), result.getEnd()));
-  }
-  else {
-  for (int i=0; i<child_count; i++) {
-  SeqSymmetry child = parent.getChild(i);
-  getLeafBounds(child, seq, result);
-  }
-  }
-  }*/
-
-public static final int FORWARD = 5555;
-public static final int REVERSE = 5556;
-public static final int MAJORITY_RULE = 5557;
+private static final int FORWARD = 5555;
+private static final int REVERSE = 5556;
+private static final int MAJORITY_RULE = 5557;
 
 public static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq) {
 	return getChildBounds(parent, seq, MAJORITY_RULE);

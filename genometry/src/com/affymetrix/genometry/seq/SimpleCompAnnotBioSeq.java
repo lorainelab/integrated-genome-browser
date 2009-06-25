@@ -13,13 +13,15 @@
 
 package com.affymetrix.genometry.seq;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.DNAUtils;
-import java.util.*;
+
+
+
+//import checkers.nullness.quals.*;
 
 public abstract class SimpleCompAnnotBioSeq
 	extends CompositeNegSeq
-	implements MutableAnnotatedBioSeq {
+	 {
 
 	private static final boolean DEBUG = false;
 	// GAH 8-14-2002: need a residues field in case residues need to be cached
@@ -28,7 +30,6 @@ public abstract class SimpleCompAnnotBioSeq
 	// all residues...
 	private String residues;
 
-	private List<SeqSymmetry> annots;
 
 	public SimpleCompAnnotBioSeq(String id, int length)  {
 		super(id, length);
@@ -38,7 +39,7 @@ public abstract class SimpleCompAnnotBioSeq
 	public String getResidues(int start, int end, char fillchar) {
 		int residue_length = this.getLength();
 		if (start < 0 || residue_length <= 0) {
-			return null;
+			throw new IllegalArgumentException("start: " + start + " residues: " + this.getResidues());
 		}
 
 		// Sanity checks on argument size.
@@ -69,30 +70,7 @@ public abstract class SimpleCompAnnotBioSeq
 		else  { return super.isComplete(start, end); }
 	}
 
-	
 
-	public void addAnnotation(SeqSymmetry annot) {
-		if (null == annots) { annots = new ArrayList<SeqSymmetry>(); }
-		annots.add(annot);
-	}
-
-	public void removeAnnotation(SeqSymmetry annot) {
-		if (null != annots) {
-			annots.remove(annot);
-		}
-	}
-
-	public int getAnnotationCount() {
-		if (null != annots) return annots.size();
-		else return 0;
-	}
-
-	public SeqSymmetry getAnnotation(int index) {
-		if (null != annots && index < annots.size())
-			return annots.get(index);
-		else
-			return null;
-	}
 
 	public void setLength(int length) {
 		setBounds(0, length);  // sets start, end, bounds
@@ -100,8 +78,8 @@ public abstract class SimpleCompAnnotBioSeq
 		// if length does not agree with length of residues, null out residues
 		if ((residues != null) && (residues.length() != length)) {
 			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
-					", seq = " + this.length + ", nulling out residues ****");
-			residues = null;
+					", seq = " + this.length);
+			//residues = null;
 		}
 	}
 

@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
@@ -37,15 +38,12 @@ import java.util.regex.Pattern;
  *
  * @version: $Id$
  */
-public final class SmartAnnotBioSeq extends GeneralBioSeq  {
+public final class SmartAnnotBioSeq extends GeneralBioSeq implements MutableAnnotatedBioSeq  {
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
-	//Map type_name2sym = null;   // also keeping a hash of type _names_ to container annotations
-	//private List<SeqModifiedListener> modified_listeners = null;
-	private AnnotatedSeqGroup seq_group;
-	//private boolean modify_events_enabled = true;
-	//private boolean modification_cached = false;
 
-	//public SmartAnnotBioSeq() { }
+	private AnnotatedSeqGroup seq_group;
+
+	private List<SeqSymmetry> annots;
 
 	public SmartAnnotBioSeq(String seqid, String seqversion, int length) {
 		super(seqid, seqversion, length);
@@ -59,49 +57,12 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		seq_group = group;
 	}
 
-	/*
-	public boolean isSynonymous(String synonym) {
-		if (getID() != null && getID().equals(synonym)) { return true; }
-		else {
-			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-			return (lookup.isSynonym(getID(), synonym));
-		}
-	}
-	 */
-
-	/**
-	 *  Returns the set of type id String's that can be used in
-	 * {@link #getAnnotation(String)}.
-	 */
-	/*public Set<String> getTypeIds() {
-		if (type_id2sym == null) {
-			return Collections.<String>emptySet();
-		} else {
-			return Collections.unmodifiableSet(type_id2sym.keySet());
-		}
-	}*/
-
 	/**
 	 *  returns Map of type id to container sym for annotations of that type
 	 */
 	public Map<String, SymWithProps> getTypeMap() {
 		return type_id2sym;
 	}
-
-
-	/*public Set<String> getGraphTypeIds() {
-		if (type_id2sym == null) {
-			return Collections.<String>emptySet();
-		} else {
-			Set<String> graph_ids = new HashSet<String>();
-			for (String id : type_id2sym.keySet()) {
-				if (type_id2sym.get(id) instanceof GraphSym) {
-					graph_ids.add(id);
-				}
-			}
-			return Collections.unmodifiableSet(graph_ids);
-		}
-	}*/
 
 	/**
 	 *  Returns a top-level symmetry or null.
@@ -129,65 +90,13 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		return results;
 	}
 
-	/*public void addModifiedListener(SeqModifiedListener listener) {
-		if (modified_listeners == null) {
-			modified_listeners = new ArrayList<SeqModifiedListener>();
-		}
-		modified_listeners.add(listener);
-	}
 
-	public void removeModifiedListener(SeqModifiedListener listener) {
-		if (modified_listeners != null) {
-			modified_listeners.remove(listener);
-			if (modified_listeners.isEmpty()) {
-				modified_listeners = null;
-			}
-		}
-	}*/
-
-	/**
-	 *  Toggling notification of listeners to seq modification events.
-	 *  If notification is turned off, then seq modifications will be accumulated
-	 *  and passed as a single modification event when notification is turned back on.
-	 */
-	/*public void setModifyEventsEnabled(boolean b) {
-		modify_events_enabled = b;
-		if (modify_events_enabled && modification_cached) {
-			notifyModified();
-		}
-	}*/
-
-	/*protected void notifyModified()  {
-		if (modified_listeners != null) {
-			if (modify_events_enabled) {
-				SeqModifiedEvent evt = new SeqModifiedEvent(this);
-				notifyModified(evt);
-			} else {
-				modification_cached = true;
-			}
-		}
-	}*/
-
-	//protected void notifyModified(SeqModifiedEvent evt) {
-		/*if (! modify_events_enabled) {
-			throw new RuntimeException("ERROR: SmartAnnotBioSeq.notifyModified() called, but " +
-					"modify_events_enabled flag == false");
-		}*/
-		/*if (modified_listeners != null) {
-			//System.out.println("SeqModifiedEvent occurred on " + this.getID() + " notifying listeners");
-			for (SeqModifiedListener listener : modified_listeners) {
-				listener.seqModified(evt);
-			}
-		}*/
-		//modification_cached = false;
-	//}
 
 	/**
 	 *  Creates an empty top-level container sym.
 	 *  @return an instance of {@link TypeContainerAnnot}
 	 */
 	public synchronized MutableSeqSymmetry addAnnotation(String type) {
-		type = type;
 		if (type_id2sym == null) { 
 			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 		}
@@ -196,8 +105,11 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 		SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
 		container.addSpan(span);
 		type_id2sym.put(type, container);
-		super.addAnnotation(container);
-		//notifyModified();
+		if (annots == null) {
+			annots = new ArrayList<SeqSymmetry>();
+		}
+		annots.add(container);
+
 		return container;
 	}
 
@@ -216,7 +128,6 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			container = addAnnotation(type);
 		}
 		container.addChild(sym);
-		//notifyModified();
 	}
 
 
@@ -251,10 +162,12 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 			if (sym instanceof SymWithProps) {
 				type_id2sym.put(id, (SymWithProps) sym);
 			} else {
-				throw new RuntimeException("n SmartAnnotBioSeq.addAnnotation: sym must be a SymWithProps");
+				throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation: sym must be a SymWithProps");
 			}
-			super.addAnnotation(sym);
-			//notifyModified();
+			if (annots == null) {
+				annots = new ArrayList<SeqSymmetry>();
+			}
+			annots.add(sym);
 			return;
 		}
 		String type = determineMethod(sym);
@@ -274,44 +187,25 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 
 	public synchronized void removeAnnotation(SeqSymmetry annot) {
 		if (! needsContainer(annot)) {
-			super.removeAnnotation(annot);
-			//notifyModified();
-			//      return;
-		}
-		else {
+			if (null != annots) {
+				annots.remove(annot);
+			}
+		} else {
 			String type = determineMethod(annot);
 			if ((type != null) && (getAnnotation(type) != null)) {
-				MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
+				MutableSeqSymmetry container = (MutableSeqSymmetry) getAnnotation(type);
 				if (container == annot) {
 					type_id2sym.remove(type);
-					super.removeAnnotation(annot);
-					//notifyModified();
-					//	  return;
-				}
-				else {
+					if (null != annots) {
+						annots.remove(annot);
+					}
+				} else {
 					container.removeChild(annot);
-					//notifyModified();
 				}
 			}
 		}
 	}
 
-	/*public void removeType(String type) {
-		if ((type != null)) {
-			type = type;
-			MutableSeqSymmetry container = (MutableSeqSymmetry)getAnnotation(type);
-			if (container != null) {
-				type_id2sym.remove(type);
-				super.removeAnnotation(container);
-				//notifyModified();
-			}
-		}
-	}*/
-
-	/*public synchronized void removeAnnotation(int index) {
-		SeqSymmetry annot = getAnnotation(index);
-		removeAnnotation(annot);  // this will handle super call, removal from type2sym, notification, etc.
-	}*/
 
 	/**
 	 * Returns true if the sym is of a type needs to be wrapped in a {@link TypeContainerAnnot}.
@@ -345,10 +239,18 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq  {
 				meth = ((TypedSym)sym).getType();
 			}
 		}
-		if (meth != null) {
-			meth = meth;
-		}
 		return meth;
+	}
+
+	public int getAnnotationCount() {
+		if (null != annots) return annots.size();
+		return 0;
+	}
+
+	public /*@Nullable*/ SeqSymmetry getAnnotation(int index) {
+		if (null != annots && index < annots.size())
+			return annots.get(index);
+		return null;
 	}
 
 	@Override

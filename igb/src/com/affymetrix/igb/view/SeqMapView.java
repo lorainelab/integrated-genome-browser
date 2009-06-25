@@ -1145,23 +1145,7 @@ public class SeqMapView extends JPanel
             //      resultSeqMap.setMapRange(0, viewseq.getLength());
             coord_shift = false;
         } else {
-            /*if (rev_comp) {
-            // setting up genometry for non-identity mapping of seq annotation to view coords...
-            seq2viewSym = new SimpleMutableSeqSymmetry();
-            seq2viewSym.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
-            //if (aseq instanceof GeneralBioSeq && aseq.isComplete()) {
-            // test for aseq.isComplete() --> if true, then has nibble array...
-            //viewseq = ((GeneralBioSeq)aseq).getReverseComplement();
-            //}
-            //else {
-            viewseq = new CompositeNegSeq("view_seq", 0, aseq.getLength());
-            //}
-            seq2viewSym.addSpan(new SimpleSeqSpan(aseq.getLength(), 0, viewseq));
-            ((SimpleCompositeBioSeq)viewseq).setComposition(seq2viewSym);
-            transform_path = new SeqSymmetry[1];
-            transform_path[0] = seq2viewSym;
-            }
-            else {*/
+          
             viewseq = aseq;
             seq2viewSym = null;
             transform_path = null;

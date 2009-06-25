@@ -110,7 +110,6 @@
 		<property name="report.prefix" value="" />
 		<my.cpd>
 			<fileset dir=".">
-				<exclude name="genoviz_lite/**/*.java" />
 				<exclude name="*/test/**/*.java" />
 				<exclude name="*/demo/**/*.java" />
 				<include name="**/*.java" />

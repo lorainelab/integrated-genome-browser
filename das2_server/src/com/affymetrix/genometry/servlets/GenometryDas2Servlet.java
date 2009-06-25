@@ -39,9 +39,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import com.affymetrix.genoviz.util.Timer;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 
 
 /**
@@ -727,7 +724,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//	return;  // screening out anything in filtered directories
 		//      }
 
-		parseAnnotsXml(file_path, annots_filename, annots_map);
+		File annot = new File(file_path + "/" + annots_filename);
+		if (annot.exists()) {
+			System.out.println("Parsing annots xml: " + file_path + "/" + annots_filename);
+			FileInputStream istr = null;
+			try {
+				istr = new FileInputStream(annot);
+				AnnotsParser.parseAnnotsXml(istr, annots_map);
+			} catch (FileNotFoundException ex) {
+				Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(istr);
+			}
+		}
 
 		if (type_name.endsWith(graph_dir_suffix)) {
 			// each file in directory is same annotation type, but for a single seq?
@@ -748,49 +757,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	/**
-	 * If an annots.xml file exists, add its elements to annots_map
-	 * @param file_path - path to annots_filename
-	 * @param annots_filename - name of annots.xml file
-	 * @param annots_map
-	 */
-	private static final void parseAnnotsXml(String file_path, String annots_filename, Map<String,String> annots_map) {
-		File annot = new File(file_path + "/" + annots_filename);
-		if (!annot.exists()) {
-			return;
-		}
-
-		// parse the file.
-		try {
-			System.out.println("Parsing annots xml: " + file_path + "/" + annots_filename);
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(annot);
-			doc.getDocumentElement().normalize();
-
-			NodeList listOfFiles = doc.getElementsByTagName("file");
-
-			int length = listOfFiles.getLength();
-			for (int s = 0; s < length; s++) {
-				Node fileNode = listOfFiles.item(s);
-				if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element fileElement = (Element) fileNode;
-					String filename = fileElement.getAttribute("name");
-					String title = fileElement.getAttribute("title");
-					String desc = fileElement.getAttribute("description");   // not currently used
-
-					if (filename != null) {
-						// We use lower-case here, since filename's case is unimportant.
-						annots_map.put(filename.toLowerCase(), title);
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
+	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {

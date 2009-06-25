@@ -288,8 +288,8 @@ public final class BarParser implements AnnotationWriter  {
 		}
 		return graf;
 	}
-
-	/*public static void main(String[] args) throws Exception {
+/**
+	public static void main(String[] args) throws Exception {
 		String test_file = "c:/data/graph_slice_test/test.bar";
 		if (args.length > 0) {
 			test_file = args[0];
@@ -312,7 +312,7 @@ public final class BarParser implements AnnotationWriter  {
 		//    getSlice(test_file, gmodel, new SimpleSeqSpan(157999267, 158400000, testseq));
 		//    getSlice(test_file, gmodel, new SimpleSeqSpan(158400000, 159000000, testseq));
 		//    getSlice(test_file, gmodel, new SimpleSeqSpan(158500000, 159000000, testseq));
-	}*/
+	}
 
 	public static void testFullRead(String test_file) throws IOException {
 		Timer tim = new Timer();
@@ -333,7 +333,7 @@ public final class BarParser implements AnnotationWriter  {
 		long time_taken = tim.read();
 		SingletonGenometryModel.logInfo("time to fully read file: " + time_taken/1000f);
 	}
-
+**/
 
 
 

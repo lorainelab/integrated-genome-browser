@@ -55,7 +55,7 @@ import java.util.logging.Logger;
  * @version $Id$
  */
 public final class GeneralLoadUtils {
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)
@@ -78,8 +78,8 @@ public final class GeneralLoadUtils {
 
 	private final Map<String, Boolean> version2init;
 
-	// server name-> GenericServer class.
-	final Map<String, GenericServer> discoveredServers;
+	// List of servers.
+	private final List<GenericServer> discoveredServers;
 
 	// versions associated with a given genome.
 	final Map<String, List<GenericVersion>> species2genericVersionList;	// the list of versions associated with the species
@@ -133,12 +133,20 @@ public final class GeneralLoadUtils {
 		this.gviewer = Application.getSingleton().getMapView();
 
 		version2init = new HashMap<String, Boolean>();
-		discoveredServers = new LinkedHashMap<String, GenericServer>();
+		discoveredServers = new ArrayList<GenericServer>();
 		species2genericVersionList = new LinkedHashMap<String, List<GenericVersion>>();
 		versionName2species = new HashMap<String, String>();
 		versionName2versionSet = new HashMap<String, Set<GenericVersion>>();
 	}
 
+	private static GenericServer serverExists(List <GenericServer> servers, String serverName, ServerType serverType) {
+		for (GenericServer gServer : servers) {
+			if (gServer.serverName.equals(serverName) && gServer.serverType == serverType) {
+				return gServer;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Add specified server, finding species and versions associated with it.
@@ -148,40 +156,40 @@ public final class GeneralLoadUtils {
 	 * @return success of server add.
 	 */
 	boolean addServer(String serverName, String serverURL, ServerType serverType) {
-		if (discoveredServers.containsKey(serverName)) {
-			System.out.println("Server " + serverName +" already exists");
+		GenericServer gServer = serverExists(discoveredServers, serverName, serverType);
+		if (gServer != null) {
+			System.out.println("Server " + gServer.toString() +" already exists at " + gServer.URL);
 			return false;
 		}
-
+		
 		try {
 		if (serverType == ServerType.QuickLoad) {
-			GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL);
+			gServer = ServerList.addServer(serverType, serverName, serverURL);
 			if (gServer == null) {
 				return false;
 			}
 			if (!getQuickLoadSpeciesAndVersions(gServer)) {
 				return false;
 			}
-			discoveredServers.put(gServer.serverName, gServer);
-
+			discoveredServers.add(gServer);
 		} else if (serverType == ServerType.DAS) {
 			DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
 			if (server == null) {
 				return false;
 			}
-			GenericServer gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);
+			gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);
 			getDAS1SpeciesAndVersions(gServer);
-			discoveredServers.put(serverName, gServer);
+			discoveredServers.add(gServer);
 
 		} else if (serverType == ServerType.DAS2) {
 			Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
 			if (server == null) {
 				return false;
 			}
-			GenericServer gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
+			gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
 			getDAS2Species(gServer);
 			getDAS2Versions(gServer);
-			discoveredServers.put(serverName, gServer);
+			discoveredServers.add(gServer);
 		}
 		}
 		catch (Exception ex) {
@@ -190,6 +198,7 @@ public final class GeneralLoadUtils {
 		}
 		return true;
 	}
+	
 	/**
 	 * Discover all of the servers and genomes and versions.
 	 */
@@ -203,14 +212,14 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover the list of servers.
 	 */
-	public static synchronized void discoverServersInternal(final Map<String, GenericServer> discoveredServers) {
+	public static synchronized void discoverServersInternal(final List<GenericServer> discoveredServers) {
 		for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
 			Das2ServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
-				if (!discoveredServers.containsKey(serverName)) {
+				if (serverExists(discoveredServers, serverName, ServerType.DAS2) == null) {
 					GenericServer g = new GenericServer(serverName, server.getURI().toString(), ServerType.DAS2, server);
-					discoveredServers.put(serverName, g);
+					discoveredServers.add(g);
 				}
 			}
 		}
@@ -222,9 +231,9 @@ public final class GeneralLoadUtils {
 			DasServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
-				if (!discoveredServers.containsKey(serverName)) {
+				if (serverExists(discoveredServers, serverName, ServerType.DAS) == null) {
 					GenericServer g = new GenericServer(serverName, server.getRootUrl(), ServerType.DAS, server);
-					discoveredServers.put(serverName, g);
+					discoveredServers.add(g);
 				}
 			}
 		}
@@ -233,7 +242,7 @@ public final class GeneralLoadUtils {
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
 		for (GenericServer gServer : ServerList.getServers().values()) {
 			if (gServer.serverType == ServerType.QuickLoad) {
-				discoveredServers.put(gServer.serverName, gServer);
+				discoveredServers.add(gServer);
 			}
 		}
 	}
@@ -242,7 +251,7 @@ public final class GeneralLoadUtils {
 	 * Discover the species and genome versions.
 	 */
 	private synchronized void discoverSpeciesAndVersionsInternal() {
-		for (GenericServer gServer : discoveredServers.values()) {
+		for (GenericServer gServer : discoveredServers) {
 			if (gServer.serverType == ServerType.DAS2) {
 				getDAS2Species(gServer);
 				getDAS2Versions(gServer);

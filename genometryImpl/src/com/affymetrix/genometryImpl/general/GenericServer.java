@@ -27,15 +27,6 @@ public final class GenericServer {
 
     @Override
     public String toString() {
-        switch (serverType) {
-            case DAS2:
-                return this.serverName + " (DAS/2)";
-            case DAS:
-                return this.serverName + " (DAS)";
-            case QuickLoad:
-                return this.serverName + " (Quickload)";
-            default:
-                return this.serverName + " (" + this.serverType + ")";
-        }
+			return this.serverName + "(" + this.serverType.toString() + ")";
     }
 }

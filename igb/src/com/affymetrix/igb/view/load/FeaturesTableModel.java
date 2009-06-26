@@ -2,12 +2,10 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.util.LoadUtils;
-import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -20,23 +18,18 @@ import javax.swing.table.AbstractTableModel;
  * Model for table of features.
  */
 final class FeaturesTableModel extends AbstractTableModel implements ChangeListener {
-
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
-	private static String[] columnNames = { "Choose Load Mode", "Data Set","Data Source", "Data Source Type"};
-	static String[] standardLoadChoices = {"Don't Load", "Region In View"};
-	public static String[] quickloadLoadChoices = {"Don't Load", "Whole Genome"};
-	private final EnumMap<LoadStrategy, String> DASLoadStrategyMap;  // map to a friendly string
-	private final EnumMap<LoadStrategy, String> QuickLoadStrategyMap;  // map to a friendly string
-	private final Map<String, LoadStrategy> reverseDASLoadStrategyMap;  // from friendly string to enum
-	private final Map<String, LoadStrategy> reverseQuickLoadStrategyMap;  // from friendly string to enum
-	private final EnumMap<LoadStatus, String> LoadStatusMap;    // map to a friendly string
+	private static String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
+	static String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString()};
+	public static String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.WHOLE.toString()};
+	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
 	private final AnnotatedBioSeq cur_seq;
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
-	private static final int SERVER_TYPE_COLUMN = 3;
-	private static final int LOAD_STATUS_COLUMN = 4;
+	//private static final int SERVER_TYPE_COLUMN = 3;
+	//private static final int LOAD_STATUS_COLUMN = 4;
 	final List<GenericFeature> features;
 	private final GeneralLoadView glv;
 
@@ -45,31 +38,10 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		this.features = getVisibleFeatures(features);
 		this.cur_seq = cur_seq;
 
-		this.LoadStatusMap = new EnumMap<LoadStatus, String>(LoadStatus.class);
-		this.LoadStatusMap.put(LoadStatus.LOADED, "loaded");
-		this.LoadStatusMap.put(LoadStatus.LOADING, "loading...");
-		this.LoadStatusMap.put(LoadStatus.UNLOADED, "not loaded");
-
-		this.DASLoadStrategyMap = new EnumMap<LoadStrategy, String>(LoadStrategy.class);
-		this.DASLoadStrategyMap.put(LoadStrategy.NO_LOAD, standardLoadChoices[0]);
-		this.DASLoadStrategyMap.put(LoadStrategy.VISIBLE, standardLoadChoices[1]);
 		// Here we map the friendly string back to the LoadStrategy.
-		// Rather than repeating the lines above, we loop over all LoadStrategy elements and take advantage
-		// of the predefined DASLoadStrategyMap.
-		this.reverseDASLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
+		this.reverseLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
 		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
-			this.reverseDASLoadStrategyMap.put(this.DASLoadStrategyMap.get(strategy), strategy);
-		}
-
-		this.QuickLoadStrategyMap = new EnumMap<LoadStrategy, String>(LoadStrategy.class);
-		this.QuickLoadStrategyMap.put(LoadStrategy.NO_LOAD, quickloadLoadChoices[0]);
-		this.QuickLoadStrategyMap.put(LoadStrategy.WHOLE, quickloadLoadChoices[1]);
-		// Here we map the friendky string back to the LoadStrategy.
-		// Rather than repeating the lines above, we loop over all LoadStrategy elements and take advantage
-		// of the predefined QuickLoadStrategyMap.
-		this.reverseQuickLoadStrategyMap = new HashMap<String, LoadStrategy>(3);
-		for (LoadStrategy strategy : EnumSet.allOf(LoadStrategy.class)) {
-			this.reverseQuickLoadStrategyMap.put(this.QuickLoadStrategyMap.get(strategy), strategy);
+			this.reverseLoadStrategyMap.put(strategy.toString(), strategy);
 		}
 	}
 
@@ -126,15 +98,10 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 			return "";
 		}
 		GenericFeature gFeature = features.get(row);
-		ServerType serverType;
 		switch (col) {
 			case LOAD_STRATEGY_COLUMN:
 				// return the load strategy
-				serverType = gFeature.gVersion.gServer.serverType;
-				if (serverType == ServerType.QuickLoad) {
-					return this.QuickLoadStrategyMap.get(gFeature.loadStrategy);
-				}
-				return this.DASLoadStrategyMap.get(gFeature.loadStrategy);
+				return gFeature.loadStrategy.toString();
 			case FEATURE_NAME_COLUMN:
 				// the friendly feature name removes slashes.  Clip it here.
 				if (gFeature.gVersion.gServer.serverType == ServerType.QuickLoad) {
@@ -144,23 +111,14 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 			case SERVER_NAME_COLUMN:
 				// return the friendly server name
 				return gFeature.gVersion.gServer.serverName;
-			case SERVER_TYPE_COLUMN:
+			/*case SERVER_TYPE_COLUMN:
 				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;
-				if (serverType == ServerType.DAS2) {
-					return "DAS/2";
-				}
-				if (serverType == ServerType.DAS) {
-					return "DAS";
-				}
-				if (serverType == ServerType.QuickLoad) {
-					return "Quickload";
-				}
-				return "unknown";
+				return serverType.toString();
 			case LOAD_STATUS_COLUMN:
 				// return the load status
 				LoadStatus ls = gFeature.LoadStatusMap.get(this.cur_seq);
-				return this.LoadStatusMap.get(ls);
+				return this.LoadStatusMap.get(ls);*/
 			default:
 				System.out.println("Shouldn't reach here: " + row + " " + col);
 				return null;
@@ -202,16 +160,12 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 			if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
 				return;	// We can't change strategies once we've loaded the entire genome.
 			}
-			if (!this.QuickLoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
-				// strategy changed.  Update the feature object.
-				gFeature.loadStrategy = this.reverseQuickLoadStrategyMap.get(valueString);
-				updatedStrategy(row, col, gFeature);
-			}
-		} else if (!this.DASLoadStrategyMap.get(gFeature.loadStrategy).equals(valueString)) {
-				// strategy changed.  Update the feature object.
-				gFeature.loadStrategy = this.reverseDASLoadStrategyMap.get(valueString);
-				updatedStrategy(row, col, gFeature);
-			}
+		}
+		if (!gFeature.loadStrategy.toString().equals(valueString)) {
+			// strategy changed.  Update the feature object.
+			gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);
+			updatedStrategy(row, col, gFeature);
+		}
 	}
 
 	/**

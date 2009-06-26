@@ -2,18 +2,55 @@ package com.affymetrix.genometry.util;
 
 public final class LoadUtils {
 	public static enum LoadStrategy {
+		NO_LOAD ("Don't Load"),
+		VISIBLE ("Region In View"),
+		WHOLE ("Whole Genome");
 
-		NO_LOAD, VISIBLE, WHOLE
+		private String name;
+
+		LoadStrategy(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	};
 
 	public static enum LoadStatus {
+		UNLOADED ("Unloaded"),
+		LOADING ("Loading"),
+		LOADED ("Loaded");
 
-		UNLOADED, LOADING, LOADED
+		private String name;
+
+		LoadStatus(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	};
 
 	public static enum ServerType {
+		DAS ("DAS"),
+		DAS2 ("DAS/2"),
+		QuickLoad ("QuickLoad"),
+		Unknown ("Unknown");
 
-		DAS, DAS2, QuickLoad, Unknown
+		private String name;
+
+		ServerType(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	};
 
 	/**

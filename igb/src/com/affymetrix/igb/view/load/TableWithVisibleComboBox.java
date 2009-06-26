@@ -9,7 +9,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -63,11 +62,11 @@ public final class TableWithVisibleComboBox {
   private static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
     private JComboBox comboBoxRender;
-    private JTextField textFieldRender;
+    private JTextField textFieldRender;	// If an entire genome is loaded in, change the combo box to a text field.
 
     public ColumnRenderer() {
       comboBoxRender = new JComboBox();
-      textFieldRender = new JTextField(FeaturesTableModel.quickloadLoadChoices[1]);
+      textFieldRender = new JTextField(LoadStrategy.WHOLE.toString());
       comboBoxRender.setBorder(null);
       textFieldRender.setBorder(null);
     }

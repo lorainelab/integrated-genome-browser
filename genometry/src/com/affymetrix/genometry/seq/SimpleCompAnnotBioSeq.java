@@ -64,8 +64,10 @@ public abstract class SimpleCompAnnotBioSeq
 
 	@Override
 	public boolean isComplete(int start, int end) {
-		if (residues != null) { return true; }
-		else  { return super.isComplete(start, end); }
+		if (residues == null) {
+			return super.isComplete(start, end);
+		}
+		return true;
 	}
 }
 

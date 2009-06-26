@@ -14,14 +14,12 @@ package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
-import javax.swing.*;
 import java.util.zip.GZIPInputStream;
 
 public final class LocalUrlCacher {
@@ -29,7 +27,7 @@ public final class LocalUrlCacher {
 	private static final String cache_content_root = UnibrowPrefsUtil.getAppDataDirectory() + "cache/";
 	private static final String cache_header_root = cache_content_root + "headers/";
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
-	private static boolean DEBUG_CONNECTION = false;
+	private static boolean DEBUG_CONNECTION = true;
 	//static boolean REPORT_LONG_URLS = false;
 	private static boolean CACHE_FILE_URLS = false;
 	//  static Properties long2short_filenames = new Properties();
@@ -46,25 +44,10 @@ public final class LocalUrlCacher {
 	public static final int CONNECT_TIMEOUT = 30000;	// If you can't connect in 30 seconds, fail.
 	public static final int READ_TIMEOUT = 180000;		// If you can't read in 3 minutes, fail.
 
+
 	private static enum CacheType { FILE, CACHED, STALE_CACHE, NOT_CACHED, UNREACHABLE};
 
 	private static boolean offline = false;
-
-	// make sure both content and header directories exist
-
-
-/*	static {
-		File fil = new File(cache_content_root);
-		if (!fil.exists()) {
-			Application.getSingleton().logInfo("creating new content cache directory: " + fil.getAbsolutePath());
-			fil.mkdirs();
-		}
-		File hfil = new File(cache_header_root);
-		if (!hfil.exists()) {
-			Application.getSingleton().logInfo("creating new header cache directory: " + hfil.getAbsolutePath());
-			hfil.mkdirs();
-		}
-	}*/
 
 	/** Sets the cacher to off-line mode, in which case only cached data will
 	 *  be used, will never try to get data from the web.
@@ -245,14 +228,14 @@ public final class LocalUrlCacher {
 					throws IOException {
 		//look to see if a sessionId is present in the headers
 		String sessionId = null;
-		if (headers != null && headers.containsKey("sessionId")) {
-			sessionId = headers.get("sessionId");
-		}
-		//clear headers
 		if (headers != null) {
+			if (headers.containsKey("sessionId")) {
+				sessionId = headers.get("sessionId");
+			}
+			//clear headers
 			headers.clear();
 		}
-
+		
 		// if url is a file url, and not caching files, then just directly return stream
 		if ((!CACHE_FILE_URLS) && isFile(url)) {
 			URL furl = new URL(url);
@@ -486,30 +469,6 @@ public final class LocalUrlCacher {
 	}
 
 	private static InputStream RetrieveFromURL(URLConnection conn, Map<String,String> headers, boolean write_to_cache, File cache_file, File header_cache_file) throws IOException, IOException {
-		InputStream result_stream;
-
-		// populating header Properties (for persisting) and header input Map
-		Map headermap = conn.getHeaderFields();
-		Properties headerprops = new Properties();
-		Iterator heads = headermap.entrySet().iterator();
-		while (heads.hasNext()) {
-			Map.Entry ent = (Map.Entry) heads.next();
-			String key = (String) ent.getKey();
-			// making all header names lower-case
-			List vals = (List) ent.getValue();
-			if (vals.size() > 0) {
-				String val = (String) vals.get(0);
-				if (key == null) {
-					key = HTTP_STATUS_HEADER;
-				} // HTTP status code line has a null key, change so can be stored
-				key = key.toLowerCase();
-				headerprops.setProperty(key, val);
-				if (headers != null) {
-					headers.put(key, val);
-				}
-			}
-		}
-
 		int content_length = -1;
 		InputStream connstr;
 		String contentEncoding = conn.getHeaderField("Content-Encoding");
@@ -522,18 +481,44 @@ public final class LocalUrlCacher {
 			content_length = conn.getContentLength();
 		}
 
-
-		//InputStream connstr = conn.getInputStream();
-		BufferedInputStream bis = new BufferedInputStream(connstr);
-		byte[] content = ReadIntoContentArray(content_length, bis);
-		GeneralUtils.safeClose(bis);
-		GeneralUtils.safeClose(connstr);
-
-		if (write_to_cache) {
-			WriteToCache(content, cache_file, header_cache_file, headerprops);
+		BufferedInputStream bis = null;
+		byte[] content = null;
+		try {
+			bis = new BufferedInputStream(connstr);
+			content = ReadIntoContentArray(content_length, bis);
+			if (write_to_cache) {
+				Properties headerprops = populateHeaderProperties(conn, headers);
+				WriteToCache(content, cache_file, header_cache_file, headerprops);
+			}
+		} finally {
+			GeneralUtils.safeClose(bis);
 		}
-		result_stream = new ByteArrayInputStream(content);
+		
+		InputStream result_stream = new ByteArrayInputStream(content);
 		return result_stream;
+	}
+
+	private static Properties populateHeaderProperties(URLConnection conn, Map<String, String> headers) {
+		// populating header Properties (for persisting) and header input Map
+		Map<String, List<String>> headermap = conn.getHeaderFields();
+		Properties headerprops = new Properties();
+		for (Map.Entry<String, List<String>> ent : headermap.entrySet()) {
+			String key = ent.getKey();
+			// making all header names lower-case
+			List<String> vals = ent.getValue();
+			if (vals.size() > 0) {
+				String val = vals.get(0);
+				if (key == null) {
+					key = HTTP_STATUS_HEADER;
+				} // HTTP status code line has a null key, change so can be stored
+				key = key.toLowerCase();
+				headerprops.setProperty(key, val);
+				if (headers != null) {
+					headers.put(key, val);
+				}
+			}
+		}
+		return headerprops;
 	}
 
 	public static void reportHeaders(String url, Map<String,String> headers) {
@@ -547,90 +532,6 @@ public final class LocalUrlCacher {
 		}
 	}
 
-	/*public static InputStream askAndGetInputStream(String filename, boolean cache_annots_param)
-					throws IOException {
-		return askAndGetInputStream(filename, getPreferredCacheUsage(), cache_annots_param);
-	}*/
-
-	/**
-	 *  Similar to {@link #getInputStream(String)}, but asks the user before
-	 *  downloading anything over the network.
-	 *  @return returns an InputStream or null if the user cancelled or the file
-	 *  is unreachable.
-	 */
-	/*private static InputStream askAndGetInputStream(String filename, int cache_usage_param, boolean cache_annots_param)
-					throws IOException {
-
-		if (offline) {
-			cache_usage_param = ONLY_CACHE;
-		}
-
-		CacheType cache_type = LocalUrlCacher.getLoadType(filename, cache_usage_param);
-
-		String short_filename = "selected file";
-		int index = filename.lastIndexOf('/');
-		if (index > 0) {
-			short_filename = filename.substring(index + 1);
-		}
-
-		if (cache_type == CacheType.FILE) {
-			// just go ahead and load it
-			return LocalUrlCacher.getInputStream(filename, cache_usage_param, cache_annots_param);
-		} else if (cache_type == CacheType.CACHED && !(cache_usage_param == LocalUrlCacher.IGNORE_CACHE)) {
-			// just go ahead and load from cache
-			return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
-		} else if (cache_type == CacheType.UNREACHABLE) {
-			ErrorHandler.errorPanel("File Unreachable",
-							"The requested file can not be found:\n" + filename);
-			return null;
-		} else if (cache_type == CacheType.STALE_CACHE) {
-
-			int choice = 0;
-			if (isJarUrl(filename)) {
-				choice = 0;
-			} else {
-				String[] options = {"Load remote file", "Use local cache", "Cancel"};
-				String message = "The remote file \"" + short_filename +
-								"\"is more recent than the local copy.";
-				choice = JOptionPane.showOptionDialog(null, message, "Load file?",
-								JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-								null, options, options[0]);
-			}
-
-			if (choice == 0) {
-				return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
-			} else if (choice == 1) {
-				return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.ONLY_CACHE, cache_annots_param);
-			} else if (choice == 2) {
-				return null;
-			}
-		} else if (cache_type == CacheType.NOT_CACHED) {
-
-			if (getOffLine()) {
-				ErrorHandler.errorPanel("You are running in off-line mode and this file is not cached locally: " + short_filename);
-				return null;
-			}
-
-			if (isJarUrl(filename)) {
-				return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
-			} else {
-				String[] options = {"OK", "Cancel"};
-				String message = "Load " + short_filename + " from the remote server?";
-
-				int choice = JOptionPane.showOptionDialog(null, message, "Load file?",
-								JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-								null, options, options[0]);
-
-				if (choice == JOptionPane.OK_OPTION) {
-					return LocalUrlCacher.getInputStream(filename, LocalUrlCacher.NORMAL_CACHE, cache_annots_param);
-				} else {
-					return null;
-				}
-			}
-		}
-
-		return null;
-	}*/
 
 	/**
 	 *  Forces flushing of entire cache.

@@ -40,7 +40,7 @@ public class Das2VersionedSource {
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -270,10 +270,9 @@ public class Das2VersionedSource {
 			if (DEBUG) {
 				System.out.println("Das2 Segments Request: " + region_request);
 			}
-			Map<String, String> headers = new LinkedHashMap<String, String>();
-			InputStream response = LocalUrlCacher.getInputStream(region_request, headers);
+			// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
+			InputStream response = LocalUrlCacher.getInputStream(region_request, false);
 
-			// Document doc = DasLoader.getDocument(region_request);
 			Document doc = DasLoader.getDocument(response);
 			Element top_element = doc.getDocumentElement();
 			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
@@ -355,7 +354,8 @@ public class Das2VersionedSource {
 						response = LocalUrlCacher.getInputStream(types_request, LocalUrlCacher.IGNORE_CACHE, false, headers);
 					} //get input stream
 					else {
-						response = LocalUrlCacher.getInputStream(types_request, headers);            //Document doc = DasLoader.getDocument(types_request);
+						// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
+						response = LocalUrlCacher.getInputStream(types_request, false, headers);           
 					}
 					if (response == null) {
 						System.out.println("Types request " + types_request + " was not reachable.");

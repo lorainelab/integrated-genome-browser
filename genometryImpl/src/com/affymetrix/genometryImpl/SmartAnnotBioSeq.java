@@ -18,6 +18,7 @@ import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +40,8 @@ import java.util.regex.Pattern;
  * @version: $Id$
  */
 public final class SmartAnnotBioSeq extends GeneralBioSeq implements MutableAnnotatedBioSeq  {
+	private static final boolean DEBUG = false;
+
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 
 	private AnnotatedSeqGroup seq_group;
@@ -62,6 +65,19 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq implements MutableAnno
 	 */
 	public Map<String, SymWithProps> getTypeMap() {
 		return type_id2sym;
+	}
+
+	public String getVersion() { return version; }
+
+	public void setVersion(String str) { this.version = str; }
+
+	/**
+	 * Returns the number of residues in the sequence as a double.
+	 *
+	 * @return the number of residues in the sequence as a double
+	 */
+	public double getLengthDouble() {
+		return length;
 	}
 
 	/**
@@ -119,7 +135,6 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq implements MutableAnno
 	 *     if doesn't yet exist.
 	 */
 	public synchronized void addAnnotation(SeqSymmetry sym, String type) {
-		type = type;
 		if (type_id2sym == null) { 
 			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 		}
@@ -251,6 +266,94 @@ public final class SmartAnnotBioSeq extends GeneralBioSeq implements MutableAnno
 		if (null != annots && index < annots.size())
 			return annots.get(index);
 		return null;
+	}
+
+	public void setLength(int length) {
+		setBounds(0, length);  // sets start, end, bounds
+
+		// if length does not agree with length of residues, null out residues
+		if ((residues != null) && (residues.length() != length)) {
+			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
+					", seq = " + this.length);
+			//residues = null;
+		}
+	}
+
+	public void setResidues(String residues) {
+		if (DEBUG)  { System.out.println("**** called SimpleCompAnnotBioSeq.setResidues()"); }
+		if (residues.length() != this.length) {
+			System.out.println("********************************");
+			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
+					", seq = " + this.length + " ****");
+			System.out.println("********************************");
+		}
+		this.residues = residues;
+		this.length = residues.length();
+	}
+
+	public void setResiduesProvider(SearchableCharIterator chariter) {
+		if (chariter.getLength() != this.getLength()) {
+			System.out.println("WARNING -- in setResidueProvider, lengths don't match");
+		}
+		residues_provider = chariter;
+	}
+
+	public SearchableCharIterator getResiduesProvider() {
+		return residues_provider;
+	}
+
+	/**
+	 * Returns the integer index of the first residue of the sequence.  Negative
+	 * values are acceptable.  The value returned is undefined if the minimum
+	 * value is set using setBoundsDouble(double, double) to something outside
+	 * of Integer.MIN_VALUE and Integer.MAX_VALUE.
+	 *
+	 * @return the integer index of the first residue of the sequence.
+	 */
+	public int getMin() { return start; }
+
+	/**
+	 * Returns the integer index of the last residue of the sequence.  The
+	 * maximum value must always be greater than the minimum value.  The value
+	 * returned is undefined if the maximum value is set using
+	 * setBoundsDouble(double, double) to something outside of Integer.MIN_VALUE
+	 * and Integer.MAX_VALUE.
+	 *
+	 * @return the integer index of the last residue of the sequence.
+	 */
+	public int getMax() { return end; }
+
+	/**
+	 * Sets the start and end of the sequence as double values.
+	 * <p />
+	 * <em>WARNING:</em> min and max are stored intenally using integers.  If
+	 * min or max are outside of the range Integer.MIN_VALUE and
+	 * Interger.MAX_VALUE, the values will not be stored properly.  The length
+	 * (min - max) is computed and stored as a double before min and max are
+	 * downcast to int.
+	 *
+	 * @param min the index of the first residue of the sequence, as a double.
+	 * @param max the index of the last residue of the sequence, as a double.
+	 */
+	public void setBoundsDouble(double min, double max) {
+		length = max - min;
+		if (min < Integer.MIN_VALUE) { start = Integer.MIN_VALUE + 1; }
+		else { start = (int)min; }
+		if (max > Integer.MAX_VALUE) { end = Integer.MAX_VALUE - 1; }
+		else { end = (int)max; }
+	}
+
+	/**
+	 * Sets the start and end of the sequence
+	 *
+	 * @param min the index of the first residue of the sequence.
+	 * @param max the index of the last residue of the sequence.
+	 */
+	public void setBounds(int min, int max) {
+		start = min;
+		end = max;
+		//    length = end - start;
+		length = (double)end - (double)start;
 	}
 
 	@Override

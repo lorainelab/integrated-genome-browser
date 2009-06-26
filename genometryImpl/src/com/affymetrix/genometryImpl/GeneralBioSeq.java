@@ -13,26 +13,12 @@ import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
 	implements SearchableCharIterator {
 
-	String version;
-	SearchableCharIterator residues_provider;
+	protected String version;
+	protected SearchableCharIterator residues_provider;
 
 	public GeneralBioSeq(String seqid, String seqversion, int length) {
 		super(seqid, length);
 		this.version = seqversion;
-	}
-
-	public String getVersion() { return version; }
-	public void setVersion(String str) { this.version = str; }
-
-	public void setResiduesProvider(SearchableCharIterator chariter) {
-		if (chariter.getLength() != this.getLength()) {
-			System.out.println("WARNING -- in setResidueProvider, lengths don't match");
-		}
-		residues_provider = chariter;
-	}
-
-	public SearchableCharIterator getResiduesProvider() {
-		return residues_provider;
 	}
 
 
@@ -72,14 +58,6 @@ public abstract class GeneralBioSeq extends SimpleCompAnnotBioSeq
 		}
 	}
 
-	/*public boolean isEnd(int pos) {
-		return (pos >= end);
-	}*/
-
-	/*public String substring(int start) {
-		//    System.out.println("called NibbleBioSeq.substring(start)");
-		return substring(start, getLength());
-	}*/
 
 	public String substring(int start, int end) {
 		if (residues_provider == null) {

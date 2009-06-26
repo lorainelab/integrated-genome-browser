@@ -22,13 +22,11 @@ import com.affymetrix.genometry.util.DNAUtils;
 public abstract class SimpleCompAnnotBioSeq
 	extends CompositeNegSeq
 	 {
-
-	private static final boolean DEBUG = false;
 	// GAH 8-14-2002: need a residues field in case residues need to be cached
 	// (rather than derived from composition), or if we choose to store residues here
 	// instead of in composition seqs in case we actually want to compose/cache
 	// all residues...
-	private String residues;
+	protected String residues;
 
 
 	public SimpleCompAnnotBioSeq(String id, int length)  {
@@ -68,31 +66,6 @@ public abstract class SimpleCompAnnotBioSeq
 	public boolean isComplete(int start, int end) {
 		if (residues != null) { return true; }
 		else  { return super.isComplete(start, end); }
-	}
-
-
-
-	public void setLength(int length) {
-		setBounds(0, length);  // sets start, end, bounds
-
-		// if length does not agree with length of residues, null out residues
-		if ((residues != null) && (residues.length() != length)) {
-			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
-					", seq = " + this.length);
-			//residues = null;
-		}
-	}
-
-	public void setResidues(String residues) {
-		if (DEBUG)  { System.out.println("**** called SimpleCompAnnotBioSeq.setResidues()"); }
-		if (residues.length() != this.length) {
-			System.out.println("********************************");
-			System.out.println("*** WARNING!!! lengths disagree: residues = " + residues.length() +
-					", seq = " + this.length + " ****");
-			System.out.println("********************************");
-		}
-		this.residues = residues;
-		this.length = residues.length();
 	}
 }
 

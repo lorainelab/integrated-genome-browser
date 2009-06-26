@@ -37,9 +37,9 @@ public abstract class CompositeNegSeq implements CompositeBioSeq {
 	private static final boolean DEBUG_GET_RESIDUES = false;
 
 	/** The index of the first residue of the sequence. */
-	int start;
+	protected int start;
 	/** The index of the last residue of the sequence. */
-	int end;
+	protected int end;
 	/**
 	 * SeqSymmetry to store the sequence in.
 	 */
@@ -54,7 +54,7 @@ public abstract class CompositeNegSeq implements CompositeBioSeq {
 	/**
 	 * String identifier for the sequence.  This is not guaranteed to be unique.
 	 */
-	private final String id;
+	protected final String id;
 
 
 	public CompositeNegSeq(String id, int length) {
@@ -62,64 +62,6 @@ public abstract class CompositeNegSeq implements CompositeBioSeq {
 		this.length = length;
 		start = 0;
 		end = length;
-	}
-
-	/*public CompositeNegSeq(String id) {
-		this.id = id;
-	}*/
-
-	/**
-	 * Returns the integer index of the first residue of the sequence.  Negative
-	 * values are acceptable.  The value returned is undefined if the minimum
-	 * value is set using setBoundsDouble(double, double) to something outside
-	 * of Integer.MIN_VALUE and Integer.MAX_VALUE.
-	 *
-	 * @return the integer index of the first residue of the sequence.
-	 */
-	public int getMin() { return start; }
-
-	/**
-	 * Returns the integer index of the last residue of the sequence.  The
-	 * maximum value must always be greater than the minimum value.  The value
-	 * returned is undefined if the maximum value is set using
-	 * setBoundsDouble(double, double) to something outside of Integer.MIN_VALUE
-	 * and Integer.MAX_VALUE.
-	 *
-	 * @return the integer index of the last residue of the sequence.
-	 */
-	public int getMax() { return end; }
-
-	/**
-	 * Sets the start and end of the sequence as double values.
-	 * <p />
-	 * <em>WARNING:</em> min and max are stored intenally using integers.  If
-	 * min or max are outside of the range Integer.MIN_VALUE and
-	 * Interger.MAX_VALUE, the values will not be stored properly.  The length
-	 * (min - max) is computed and stored as a double before min and max are
-	 * downcast to int.
-	 *
-	 * @param min the index of the first residue of the sequence, as a double.
-	 * @param max the index of the last residue of the sequence, as a double.
-	 */
-	public void setBoundsDouble(double min, double max) {
-		length = max - min;
-		if (min < Integer.MIN_VALUE) { start = Integer.MIN_VALUE + 1; }
-		else { start = (int)min; }
-		if (max > Integer.MAX_VALUE) { end = Integer.MAX_VALUE - 1; }
-		else { end = (int)max; }
-	}
-
-	/**
-	 * Sets the start and end of the sequence
-	 *
-	 * @param min the index of the first residue of the sequence.
-	 * @param max the index of the last residue of the sequence.
-	 */
-	public void setBounds(int min, int max) {
-		start = min;
-		end = max;
-		//    length = end - start;
-		length = (double)end - (double)start;
 	}
 
 	/**
@@ -182,7 +124,7 @@ public abstract class CompositeNegSeq implements CompositeBioSeq {
 				BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
 				SeqSpan other_comp_span = sym.getSpan(other_seq);
 				MutableSeqSpan ispan = new SimpleMutableSeqSpan();
-				boolean intersects = SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
+				SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
 				MutableSeqSpan other_residue_span = new SimpleMutableSeqSpan();
 				SeqUtils.transformSpan(ispan, other_residue_span, other_seq, sym);
 				boolean opposite_strands = this_comp_span.isForward() ^ other_comp_span.isForward();
@@ -228,14 +170,6 @@ public abstract class CompositeNegSeq implements CompositeBioSeq {
 		this.compose = compose;
 	}
 
-	/**
-	 * Returns the number of residues in the sequence as a double.
-	 *
-	 * @return the number of residues in the sequence as a double
-	 */
-	public double getLengthDouble() {
-		return length;
-	}
 
 	public int getLength() {
 		if (length > Integer.MAX_VALUE) {

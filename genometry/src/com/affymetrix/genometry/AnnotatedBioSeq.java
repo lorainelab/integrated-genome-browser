@@ -13,9 +13,11 @@
 
 package com.affymetrix.genometry;
 
+//import checkers.nullness.quals.*;
+
 public interface AnnotatedBioSeq extends BioSeq {
 	public String getVersion();
 	public int getAnnotationCount();
-	public SeqSymmetry getAnnotation(int index);
+	public /*@Nullable*/ SeqSymmetry getAnnotation(int index);
 
 }

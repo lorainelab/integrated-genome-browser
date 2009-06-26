@@ -295,7 +295,7 @@ public final class IGB extends Application
 
 		String quick_load_url = getQuickLoadUrl();
     SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
-    LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
+    //LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
     //processDasServersList(quick_load_url);    -- not working correctly on http://netaffxdas.affymetrix.com/das/
     //processDas2ServersList(quick_load_url);   -- the processing code was commented out.
 
@@ -625,17 +625,17 @@ public final class IGB extends Application
 			InputStream strm = null;
 			try {
 				System.out.flush();
-				System.out.println("loading user prefs from: " + fileOrURL);
+				
 				File fil = new File(fileOrURL);
 				if (fil.exists()) {
+					System.out.println("loading user prefs from: " + fileOrURL);
 					strm = new FileInputStream(fil);
 					prefs_parser.parse(strm, fil.getCanonicalPath(), prefs_hash);
 				} else {
 					// May be a URL
 					if (fileOrURL.startsWith("http")) {
+						System.out.println("loading user prefs from: " + fileOrURL);
 						LoadPreferencesFromURL(fileOrURL, prefs_parser);
-					} else {
-						System.out.println("could not find prefs file: " + fileOrURL);
 					}
 				}
 			} catch (Exception ex) {

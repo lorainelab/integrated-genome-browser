@@ -27,7 +27,7 @@ public final class LocalUrlCacher {
 	private static final String cache_content_root = UnibrowPrefsUtil.getAppDataDirectory() + "cache/";
 	private static final String cache_header_root = cache_content_root + "headers/";
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
-	private static boolean DEBUG_CONNECTION = true;
+	private static boolean DEBUG_CONNECTION = false;
 	//static boolean REPORT_LONG_URLS = false;
 	private static boolean CACHE_FILE_URLS = false;
 	//  static Properties long2short_filenames = new Properties();
@@ -69,13 +69,6 @@ public final class LocalUrlCacher {
 		return (url.substring(0, 5).compareToIgnoreCase("file:") == 0);
 	}
 
-	private static boolean isJarUrl(String url) {
-		if (url == null || url.length() < 5) {
-			return false;
-		}
-		return (url.substring(0, 4).compareToIgnoreCase("jar:") == 0);
-	}
-
 	/** Returns the local File object for the given URL;
 	 *  you must check File.exists() to determine if the file exists in the cache.
 	 *
@@ -106,92 +99,6 @@ public final class LocalUrlCacher {
 	}
 
 
-	/**
-	 *  Returns the accesibility of the file represented by the URL.
-	 */
-	private static CacheType getLoadType(String url, int cache_option) {
-
-		// if url is a file url, and not caching files, then just directly return stream
-		if (isFile(url)) {
-			try {
-				URI file_url = new URI(url);
-				File f = new File(file_url);
-				Application.getSingleton().logDebug("Checking for existence of: " + f.getPath());
-				if (f.exists()) {
-					return CacheType.FILE;
-				} else {
-					return CacheType.UNREACHABLE;
-				}
-			} catch (URISyntaxException use) {
-				Application.getSingleton().logWarning("URISyntaxException: " + url);
-				return CacheType.FILE;
-			}
-		}
-
-		File cache_file = getCacheFile(cache_content_root, url);
-		boolean cached = cache_file.exists();
-
-		if (offline || cache_option == ONLY_CACHE) {
-			if (cached) {
-				return CacheType.CACHED;
-			} else {
-				return CacheType.NOT_CACHED;
-			}
-		}
-
-		URLConnection conn = null;
-
-		long remote_timestamp = 0;
-		int content_length = -1;
-		String content_type = null;
-		boolean url_reachable = false;
-		boolean has_timestamp = false;
-		// if cache_option == ONLY_CACHE, then don't even try to retrieve from url
-
-		try {
-			URL theurl = new URL(url);
-			conn = theurl.openConnection();
-			conn.setConnectTimeout(CONNECT_TIMEOUT);
-			conn.setReadTimeout(READ_TIMEOUT);
-			// adding a conn.connect() call here to force throwing of error here if can't open connection
-			//    because some method calls on URLConnection like those below don't always throw errors
-			//    when connection can't be opened -- which would end up allowing url_reachable to be set to true
-			///   even when there's no connection
-			conn.connect();
-			if (DEBUG_CONNECTION) {
-				reportHeaders(conn);
-			}
-			remote_timestamp = conn.getLastModified();
-			has_timestamp = (remote_timestamp > 0);
-			content_type = conn.getContentType();
-			content_length = conn.getContentLength();
-			url_reachable = true;
-		} catch (IOException ioe) {
-			url_reachable = false;
-		}
-		conn = null; // there is no close() method for URLConnection
-
-		if (!url_reachable) {
-			if (cached && cache_option != IGNORE_CACHE) {
-				return CacheType.CACHED;
-			} else {
-				return CacheType.UNREACHABLE;
-			}
-		}
-
-		// We have normal cache usage and the remote file is reachable.
-		if (cached) {
-			long local_timestamp = cache_file.lastModified();
-			if ((has_timestamp && (remote_timestamp <= local_timestamp))) {
-				return CacheType.CACHED;
-			} else {
-				return CacheType.STALE_CACHE;
-			}
-		} else {
-			return CacheType.NOT_CACHED;
-		}
-	}
-
 	public static InputStream getInputStream(String url) throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), true);
 	}
@@ -215,16 +122,25 @@ public final class LocalUrlCacher {
 		return getInputStream(url, cache_option, write_to_cache, null);
 	}
 
+	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers)
+					throws IOException {
+		return getInputStream(url, cache_option, write_to_cache, null, false);
+	}
+
 	/**
-	 *  headers arg is a Map which when getInputStream() returns will be populated with any headers returned from the url
+	 * @param url URL to load.
+	 * @param cache_option caching option (should be enum)
+	 * @param write_to_cache Write to cache.
+	 * @param headers a Map which when getInputStream() returns will be populated with any headers returned from the url
 	 *      Each entry will be either: { header name ==> header value }
 	 *        OR if multiple headers have same name, then value of entry will be a List of the header values:
 	 *                                 { header name ==> [header value 1, header value 2, ...] }
-	 *
-	 *
-	 *  headers will get cleared of any entries it had before getting passed as arg
+	 * headers will get cleared of any entries it had before getting passed as arg
+	 * @param fileMayNotExist Don't warn if file doesn't exist.
+	 * @return
+	 * @throws java.io.IOException
 	 */
-	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers)
+	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
 					throws IOException {
 		//look to see if a sessionId is present in the headers
 		String sessionId = null;
@@ -324,14 +240,17 @@ public final class LocalUrlCacher {
 				url_reachable = false;
 			}
 			if (!url_reachable) {
-				Application.getSingleton().logWarning("URL not reachable, status code = " + http_status +
-								": " + url);
+				if (!fileMayNotExist) {
+					Application.getSingleton().logWarning("URL not reachable, status code = " + http_status + ": " + url);
+				}
 				if (headers != null) {
 					headers.put("LocalUrlCacher", URL_NOT_REACHABLE);
 				}
 				// if (! cached) { throw new IOException("URL is not reachable, and is not cached!"); }
 				if (!cache_file.exists()) {
-					Application.getSingleton().logWarning("URL is not reachable, and is not cached!");
+					if (!fileMayNotExist) {
+						Application.getSingleton().logWarning("URL is not reachable, and is not cached!");
+					}
 					return null;
 				}
 			}
@@ -524,9 +443,7 @@ public final class LocalUrlCacher {
 	public static void reportHeaders(String url, Map<String,String> headers) {
 		if (headers != null) {
 			Application.getSingleton().logInfo("   HEADERS for URL: " + url);
-			Iterator heads = headers.entrySet().iterator();
-			while (heads.hasNext()) {
-				Map.Entry ent = (Map.Entry) heads.next();
+			for (Map.Entry<String,String> ent : headers.entrySet()) {
 				Application.getSingleton().logInfo("   key: " + ent.getKey() + ", val: " + ent.getValue());
 			}
 		}
@@ -566,33 +483,6 @@ public final class LocalUrlCacher {
 		UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
 	}
 
-	public static void updateCacheUrlInBackground(final String url) {
-		Runnable r = new Runnable() {
-
-			public void run() {
-				try {
-					updateCacheUrlAndWait(url);
-				} catch (IOException ioe) {
-					// Don't worry about these exceptions.  It only means the cache will remain stale.
-					//Application.getSingleton().logInfo("Problem while trying to update cache for: " + url);
-					//Application.getSingleton().logInfo("Caused by: " + ioe.toString());
-				}
-			}
-		};
-		Thread t = new Thread(r);
-		t.start();
-	}
-
-	private static void updateCacheUrlAndWait(String url) throws IOException {
-		InputStream is = null;
-		try {
-			is = getInputStream(url, NORMAL_CACHE, true);
-			Application.getSingleton().logInfo("Updated cache for: " + url);
-		} finally {
-			GeneralUtils.safeClose(is);
-		}
-	}
-
 	public static void reportHeaders(URLConnection query_con) {
 		try {
 			//      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
@@ -614,18 +504,20 @@ public final class LocalUrlCacher {
 	}
 
 	public static void loadSynonyms(SynonymLookup lookup, String synonym_loc) {
-		Application.getSingleton().logInfo("URL for synonyms: " + synonym_loc);
 		InputStream syn_stream = null;
 		try {
-			syn_stream = LocalUrlCacher.getInputStream(synonym_loc);
+			// Don't cache.  Don't warn user if the synonyms file doesn't exist.
+			syn_stream = LocalUrlCacher.getInputStream(synonym_loc, getPreferredCacheUsage(), false, null, true);
 		} catch (IOException ioe) {
 			GeneralUtils.safeClose(syn_stream);
 		}
 
 		if (syn_stream == null) {
-			Application.getSingleton().logWarning("Unable to load synonym data from: " + synonym_loc);
+			//Application.getSingleton().logWarning("Unable to load synonym data from: " + synonym_loc);
 			return;
 		}
+
+		Application.getSingleton().logInfo("Synonyms found at: " + synonym_loc);
 
 		try {
 			lookup.loadSynonyms(syn_stream);

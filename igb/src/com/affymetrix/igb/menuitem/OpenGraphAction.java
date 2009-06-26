@@ -44,12 +44,6 @@ public final class OpenGraphAction extends AbstractAction {
   FileTracker load_dir_tracker;
   SeqMapView gviewer;
 
-  /*
-  public OpenGraphAction(SeqMapView gview, FileTracker ft) {
-    this.gviewer = gview;
-    this.load_dir_tracker = ft;
-  }*/
-
   public void actionPerformed(ActionEvent e) {
     // allowing for multiple file selection, so may have multiple graphs
     BioSeq aseq = gmodel.getSelectedSeq();
@@ -90,10 +84,9 @@ public final class OpenGraphAction extends AbstractAction {
           this,
           false, false);
         monitor.showDialogEventually();
-        List<GraphSym> graphs = null;
         try {
           AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
-          graphs = loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
+          loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
         } catch (final Throwable t) { // catch Out-Of-Memory Errors, etc.
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -144,9 +137,9 @@ public final class OpenGraphAction extends AbstractAction {
   throws IOException, OutOfMemoryError {
     List<GraphSym> graphs = Collections.<GraphSym>emptyList();
     if (aseq != null) {
-      for (int i=0; i<files.length; i++) {
-        if (monitor != null) {monitor.setMessageEventually("Loading graph from: "+files[i].getPath());}
-        graphs = loadGraphFile(files[i], seq_group, aseq);
+			for (URL file : files) {
+        if (monitor != null) {monitor.setMessageEventually("Loading graph from: "+file.getPath());}
+        graphs = loadGraphFile(file, seq_group, aseq);
         if (update_viewer && ! graphs.isEmpty()) {updateViewer(gviewer);}
       }
     }
@@ -164,7 +157,7 @@ public final class OpenGraphAction extends AbstractAction {
       }
       if (Application.CACHE_GRAPHS)  {
         String graph_url = furl.toExternalForm();
-        System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
+        //System.out.println("in OpenGraphAction.loadGraphFile(), url external form: " + graph_url);
         fis = LocalUrlCacher.getInputStream(graph_url);
       }
       else {
@@ -174,14 +167,16 @@ public final class OpenGraphAction extends AbstractAction {
       graphs = GraphSymUtils.readGraphs(fis, furl.toExternalForm(), gmodel, seq_group);
       
       String graph_name = getGraphNameForURL(furl);
+
+			int graphSize = graphs.size();
       // Now set the graph names (either the URL or the filename, possibly with an integer appended)
-     for (int i = 0; i < graphs.size(); i++) {
+     for (int i = 0; i < graphSize; i++) {
 				GraphSym gg = graphs.get(i);
 
 				IAnnotStyle style = gg.getGraphState().getTierStyle();
 
 				String name = graph_name;
-				if (graphs.size() > 1) {
+				if (graphSize > 1) {
 					name = name + " " + (i + 1);
 				}
 				if (style.getHumanName().equals(gg.getID())) {
@@ -252,9 +247,9 @@ public final class OpenGraphAction extends AbstractAction {
       chooser.addChoosableFileFilter(new UniFileFilter("sgr"));
       HashSet<String> all_known_endings = new HashSet<String>();
       javax.swing.filechooser.FileFilter[] filters = chooser.getChoosableFileFilters();
-      for (int i=0; i<filters.length; i++) {
-        if (filters[i] instanceof UniFileFilter) {
-          UniFileFilter uff = (UniFileFilter) filters[i];
+			for (javax.swing.filechooser.FileFilter filter : filters) {
+        if (filter instanceof UniFileFilter) {
+          UniFileFilter uff = (UniFileFilter) filter;
           uff.addCompressionEndings(GeneralUtils.compression_endings);
           all_known_endings.addAll(uff.getExtensions());
         }

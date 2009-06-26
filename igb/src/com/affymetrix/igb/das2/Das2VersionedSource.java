@@ -40,7 +40,7 @@ public class Das2VersionedSource {
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -365,7 +365,7 @@ public class Das2VersionedSource {
 					Element top_element = doc.getDocumentElement();
 					NodeList typelist = doc.getElementsByTagName("TYPE");
 					// System.out.println("types: " + typelist.getLength());
-					int typeCounter = 0;
+					//int typeCounter = 0;
 
 					getTypeList(typelist, types_request);
 

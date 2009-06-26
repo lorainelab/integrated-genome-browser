@@ -17,8 +17,9 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq;
+import com.affymetrix.genometry.seq.CompositeNegSeq;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,13 +41,19 @@ import java.util.regex.Pattern;
  *
  * @version: $Id$
  */
-public final class SmartAnnotBioSeq extends SimpleCompAnnotBioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
 	private String version;
 	private SearchableCharIterator residues_provider;
+	// GAH 8-14-2002: need a residues field in case residues need to be cached
+	// (rather than derived from composition), or if we choose to store residues here
+	// instead of in composition seqs in case we actually want to compose/cache
+	// all residues...
+	private String residues;
+
 
 	public SmartAnnotBioSeq(String seqid, String seqversion, int length) {
 		//super(seqid, seqversion, length);
@@ -245,8 +252,7 @@ public final class SmartAnnotBioSeq extends SimpleCompAnnotBioSeq implements Mut
 			if (type_id2sym == null) { 
 				type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 			}
-			String id = sym.getID();
-			if (id == null) {
+			if (sym.getID() == null) {
 				System.out.println("WARNING: ID is null!!!  sym: " + sym);
 				throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation, sym.getID() == null && (! needsContainer(sym)), this should never happen!");
 			}
@@ -349,16 +355,39 @@ public final class SmartAnnotBioSeq extends SimpleCompAnnotBioSeq implements Mut
 	 */
 	@Override
 	public String getResidues(int start, int end, char fillchar) {
-		String result = null;
-		if (residues_provider == null)  {
+		if (residues_provider == null) {
 			// fall back on SimpleCompAnnotSeq (which will try both residues var and composition to provide residues)
 			//      result = super.getResidues(start, end, fillchar);
-			result = super.getResidues(start, end, '-');
+			return getResiduesNoProvider(start, end, '-');
+		}
+		return residues_provider.substring(start, end);
+	}
+	private String getResiduesNoProvider(int start, int end, char fillchar) {
+		int residue_length = this.getLength();
+		if (start < 0 || residue_length <= 0) {
+			throw new IllegalArgumentException("start: " + start + " residues: " + this.getResidues());
+		}
+
+		// Sanity checks on argument size.
+		start = Math.min(start, residue_length);
+		end = Math.min(end, residue_length);
+		if (start <= end) {
+			end = Math.min(end, start+residue_length);
 		}
 		else {
-			result = residues_provider.substring(start, end);
+			start = Math.min(start, end+residue_length);
 		}
-		return result;
+
+		if (residues == null) {
+			return super.getResidues(start, end, fillchar);
+		}
+
+		if (start <= end) {
+			return residues.substring(start, end);
+		}
+
+		// start > end -- that means reverse complement.
+		return DNAUtils.reverseComplement(residues.substring(end, start));
 	}
 	public void setResidues(String residues) {
 		if (DEBUG)  { System.out.println("**** called SimpleCompAnnotBioSeq.setResidues()"); }
@@ -372,10 +401,19 @@ public final class SmartAnnotBioSeq extends SimpleCompAnnotBioSeq implements Mut
 		this.length = residues.length();
 	}
 
+	/**
+	 * It's assumed that if there are residues, this is complete.
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	@Override
 	public boolean isComplete(int start, int end) {
 		if (residues_provider == null) {
-			 return super.isComplete(start, end);
+			if (residues == null) {
+				return super.isComplete(start, end);
+			}
+			return true;
 		}
 		return true;
 	}

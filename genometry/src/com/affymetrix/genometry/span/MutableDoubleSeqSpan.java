@@ -16,15 +16,17 @@ package com.affymetrix.genometry.span;
 import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 
-public final class MutableDoubleSeqSpan extends DoubleSeqSpan implements MutableSeqSpan {
+public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
+	protected double start;
+	protected double end;
+	protected BioSeq seq;
 
 	public MutableDoubleSeqSpan(double start, double end, BioSeq seq) {
-		super(start, end, seq);
+		this.start = start;
+		this.end = end;
+		this.seq = seq;
 	}
 
-	/*public MutableDoubleSeqSpan(SeqSpan span) {
-		this(span.getStartDouble(), span.getEndDouble(), span.getBioSeq());
-	}*/
 
 	public MutableDoubleSeqSpan()  {
 		this(0, 0, null);
@@ -71,6 +73,79 @@ public final class MutableDoubleSeqSpan extends DoubleSeqSpan implements Mutable
 
 	public void setEndDouble(double end) {
 		this.end = end;
+	}
+
+	public boolean isIntegral() {
+		return false;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	public int getStart() {
+		return (int)start;
+	}
+
+	public int getEnd() {
+		return (int)end;
+	}
+
+	public int getMin() {
+		return (int)getMinDouble();
+	}
+
+	public int getMax() {
+		return (int)getMaxDouble();
+	}
+
+	/**
+	 * Using a "real-number" coordinate representation, such that
+	 *   integer numbers fall <em>between</em> bases.  Thus a sequence span
+	 *   covering ACTG would now have for example start = 0, end = 4, with length = 4
+	 *   (but still designated A = base 0
+	 *                         C = base 1
+	 *                         G = base 2
+	 *                         T = base 3)
+	 */
+	public int getLength() {
+		double dl = getLengthDouble();
+		if (dl > Integer.MAX_VALUE)  {
+			return (Integer.MAX_VALUE - 1);
+		}
+		else  {
+			return (int)dl;
+		}
+	}
+
+	public BioSeq getBioSeq() {
+		return seq;
+	}
+
+	public boolean isForward() {
+		return (end >= start);
+	}
+
+
+	public double getMinDouble() {
+		return (start < end ? start : end);
+	}
+
+	public double getMaxDouble() {
+		return (end > start ? end : start);
+	}
+
+	public double getStartDouble() {
+		return start;
+	}
+
+	public double getEndDouble() {
+		return end;
+	}
+
+	public double getLengthDouble() {
+		return (end > start ? end-start : start-end);
 	}
 
 }

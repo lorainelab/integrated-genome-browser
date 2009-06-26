@@ -25,38 +25,6 @@ public abstract class SimpleSeqSymmetry implements SeqSymmetry {
 	protected List<SeqSpan> spans;
 	protected List<SeqSymmetry> children = null;
 
-	public SimpleSeqSymmetry() {
-	}
-
-	/*public SimpleSeqSymmetry(SeqSpan[] span_array) {
-	  this();
-	  if (span_array != null && span_array.length > 0) {
-	  this.spans = new ArrayList<SeqSpan>();
-	// ? spans = Arrays.asList(span_array);
-	for (int i=0; i<span_array.length; i++) {
-	spans.add(span_array[i]);
-	}
-	  }
-	  }*/
-
-	/*public SimpleSeqSymmetry(SeqSpan spanA, SeqSpan spanB, SeqSpan[] cspans1, SeqSpan[] cspans2) {
-	  spans = new ArrayList<SeqSpan>(2);
-	  spans.add(spanA);
-	  spans.add(spanB);
-	  children = new ArrayList<SeqSymmetry>(2);
-	  for (int i=0; i<cspans1.length; i++) {
-	  SeqSpan span1 = cspans1[i];
-	  SeqSpan span2 = cspans2[i];
-	  SeqSymmetry childsym = new EfficientPairSeqSymmetry(span1, span2);
-	  children.add(childsym);
-	  }
-	}
-
-	public SimpleSeqSymmetry(List<SeqSpan> spans) {
-	this();
-	this.spans = spans;
-	}*/
-
 	public SeqSpan getSpan(BioSeq seq) {
 		if (spans == null) {
 			return null;

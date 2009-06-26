@@ -29,15 +29,6 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 	protected SeqSymmetry parent;
 	protected String id;
 
-	/*public EfficientPairSeqSymmetry(List<SeqSpan> spans) {
-	  this(spans.get(0), spans.get(1));
-	}
-
-	public EfficientPairSeqSymmetry(SeqSpan spanA, SeqSpan spanB) {
-	this(spanA.getStart(), spanA.getEnd(), spanA.getBioSeq(),
-	spanB.getStart(), spanB.getEnd(), spanB.getBioSeq());
-	}*/
-
 	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB) {
 		this.startA = startA;
 		this.startB = startB;
@@ -46,11 +37,6 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 		this.seqA = seqA;
 		this.seqB = seqB;
 	}
-
-	/*public EfficientPairSeqSymmetry(SeqSymmetry parent, int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB) {
-	  this(startA, endA, seqA, startB, endB, seqB);
-	  this.parent = parent;
-	  }*/
 
 	public SeqSpan getSpan(BioSeq seq) {
 		if (seqA == seq) { return new SimpleSeqSpan(startA, endA, seqA); }
@@ -106,38 +92,6 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 		return false;
 	}
 
-	/*public void setSpan(int index, SeqSpan span) {
-	  if (index == 0) {
-	  startA = span.getStart();
-	  endA = span.getEnd();
-	  seqA = span.getBioSeq();
-	  }
-	  else if (index == 1) {
-	  startB = span.getStart();
-	  endB = span.getEnd();
-	  seqB = span.getBioSeq();
-	  } else {
-	  throw new RuntimeException(
-	  "EfficientPairSeqSymmetry.setSpan requires an index of 0 or 1");
-	  }
-	  }*/
-
-	/* public void setSpan(int index, int start, int end, BioSeq seq) {
-	   if (index == 0) {
-	   startA = start;
-	   endA = end;
-	   seqA = seq;
-	   return;
-	   } else if (index == 1) {
-	   startB = start;
-	   endB = end;
-	   seqB = seq;
-	   return;
-	   } else {
-	   throw new RuntimeException(
-	   "EfficientPairSeqSymmetry.setSpan requires an index of 0 or 1");
-	   }
-	   }*/
 
 	public int getChildCount() {
 		if (null != children)

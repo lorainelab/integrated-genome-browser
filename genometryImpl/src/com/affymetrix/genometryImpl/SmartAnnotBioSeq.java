@@ -13,13 +13,17 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.CompositeBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.seq.CompositeNegSeq;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.DNAUtils;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -29,19 +33,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *   Extends GeneralBioSeq to add "retrieve top-level feature by 'method'/'type'".
- *
- *   Also imposes structure in the top two levels of annotation hierarchy.
- *   First level for a given type is a container symmetry with that type;
- *   second level is still containers, broken down by location, and dependent on how
- *      the annotatations were loaded.
- *
- *   Also adds reference to AnnotatedSeqGroup (getSeqGroup()), and
- *     isSynonymous() method.
- *
  * @version: $Id$
  */
-public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public final class SmartAnnotBioSeq implements CompositeBioSeq, MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private AnnotatedSeqGroup seq_group;
@@ -53,12 +47,39 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 	// instead of in composition seqs in case we actually want to compose/cache
 	// all residues...
 	private String residues;
+	private static final boolean DEBUG_GET_RESIDUES = false;
+
+	/** The index of the first residue of the sequence. */
+	private int start;
+	/** The index of the last residue of the sequence. */
+	private int end;
+	/**
+	 * SeqSymmetry to store the sequence in.
+	 */
+	private SeqSymmetry compose;
+
+	/**
+	 * Length of the sequence, stored as a double.  The value is always an
+	 * integer and much of the functionality of this class and its sub-classes
+	 * is lost if the length is greater than Integer.INT_MAX.
+	 */
+	private double length = 0;
+	/**
+	 * String identifier for the sequence.  This is not guaranteed to be unique.
+	 */
+	private final String id;
 
 
 	public SmartAnnotBioSeq(String seqid, String seqversion, int length) {
-		//super(seqid, seqversion, length);
-				super(seqid, length);
+		this.id = seqid;
+		this.length = length;
+		start = 0;
+		end = length;
 		this.version = seqversion;
+	}
+
+	public String getID() {
+		return id;
 	}
 
 	public AnnotatedSeqGroup getSeqGroup() {
@@ -68,6 +89,13 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 		seq_group = group;
 	}
 
+	public SeqSymmetry getComposition() {
+		return compose;
+	}
+
+	public void setComposition(SeqSymmetry compose) {
+		this.compose = compose;
+	}
 	/**
 	 *  returns Map of type id to container sym for annotations of that type
 	 */
@@ -87,6 +115,14 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 		return length;
 	}
 
+
+	public int getLength() {
+		if (length > Integer.MAX_VALUE) {
+			return Integer.MAX_VALUE - 1;
+		} else {
+			return (int) length;
+		}
+	}
 
 	public void setLength(int length) {
 		setBounds(0, length);  // sets start, end, bounds
@@ -349,11 +385,28 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 		residues_provider = chariter;
 	}
 
+	/**
+	 * Returns all residues on the sequence.
+	 *
+	 * @return a String containing all residues on the sequence.
+	 */
+	public String getResidues() {
+		return this.getResidues(start, end);
+	}
+
+	/**
+	 * Returns all residues on the sequence.
+	 *
+	 * @return a String containing all residues on the sequence
+	 */
+	public String getResidues(int start, int end) {
+		return getResidues(start, end, ' ');
+	}
+		
 	/** Gets residues.
 	 *  @param fillchar  Character to use for missing residues;
 	 *     warning: this parameter is used only if {@link #getResiduesProvider()} is null.
 	 */
-	@Override
 	public String getResidues(int start, int end, char fillchar) {
 		if (residues_provider == null) {
 			// fall back on SimpleCompAnnotSeq (which will try both residues var and composition to provide residues)
@@ -379,7 +432,7 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 		}
 
 		if (residues == null) {
-			return super.getResidues(start, end, fillchar);
+			return getResiduesFromComposition(start, end, fillchar);
 		}
 
 		if (start <= end) {
@@ -388,6 +441,85 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 
 		// start > end -- that means reverse complement.
 		return DNAUtils.reverseComplement(residues.substring(end, start));
+	}
+	/**
+	 * Returns the residues on the sequence between start and end using the
+	 * fillchar to fill any gaps in the sequence.  Unknown if this implementation
+	 * is inclusive or exclusive on start and end.
+	 *
+	 * @param  start    the start index (inclusive?)
+	 * @param  end      the end index (exclusive?)
+	 * @param  fillchar the character to fill empty residues in the sequence with.
+	 * @return          a String containing residues between start and end.
+	 */
+	private String getResiduesFromComposition(int res_start, int res_end, char fillchar) {
+			SeqSpan residue_span = new SimpleSeqSpan(res_start, res_end, this);
+			int reslength = Math.abs(res_end - res_start);
+			char[] char_array = new char[reslength];
+			java.util.Arrays.fill(char_array, fillchar);
+			SeqSymmetry rootsym = this.getComposition();
+			if (rootsym != null) {
+				// adjusting index into array to compensate for possible seq start < 0
+				//int array_offset = -start;
+				getResiduesFromComposition(residue_span, rootsym, char_array);
+				// Note that new String(char[]) causes the allocation of a second char array
+			}
+			return new String(char_array);
+		}
+
+	/**
+	 * Function for finding residues.  This function is a bit of a mess:
+	 * the implementation is more confusing than it needs to be.
+	 *
+	 * @param this_residue_span the SeqSpan to find residues on
+	 * @param sym               the SeqSymmetry to search for residues
+	 * @param residues          the character array to be filled with residues
+	 */
+	private void getResiduesFromComposition(SeqSpan this_residue_span, SeqSymmetry sym, char[] residues) {
+		int symCount = sym.getChildCount();
+		if (symCount == 0) {
+			SeqSpan this_comp_span = sym.getSpan(this);
+			if (this_comp_span == null || !SeqUtils.intersects(this_comp_span, this_residue_span)) {
+				return;
+			}
+			BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
+			SeqSpan other_comp_span = sym.getSpan(other_seq);
+			MutableSeqSpan ispan = new SimpleMutableSeqSpan();
+			SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
+			MutableSeqSpan other_residue_span = new SimpleMutableSeqSpan();
+			SeqUtils.transformSpan(ispan, other_residue_span, other_seq, sym);
+			boolean opposite_strands = this_comp_span.isForward() ^ other_comp_span.isForward();
+			boolean resultForward = opposite_strands ^ this_residue_span.isForward();
+			String spanResidues;
+			if (resultForward) {
+				spanResidues = other_seq.getResidues(other_residue_span.getMin(), other_residue_span.getMax());
+			} else {
+				spanResidues = other_seq.getResidues(other_residue_span.getMax(), other_residue_span.getMin());
+			}
+			if (spanResidues != null) {
+				if (DEBUG_GET_RESIDUES) {
+					System.out.println(spanResidues.substring(0, 15) + "..." + spanResidues.substring(spanResidues.length() - 15));
+					System.out.println("desired span: " + SeqUtils.spanToString(this_residue_span));
+					System.out.println("child residue span: " + SeqUtils.spanToString(this_comp_span));
+					System.out.println("intersect(child_span, desired_span): " + SeqUtils.spanToString(ispan));
+					System.out.println("other seq span: " + SeqUtils.spanToString(other_residue_span));
+					System.out.println("opposite strands: " + opposite_strands);
+					System.out.println("result forward: " + resultForward);
+					System.out.println("start < end: " + (other_residue_span.getStart() < other_residue_span.getEnd()));
+					System.out.println("");
+				}
+				int offset = ispan.getMin() - this_residue_span.getMin();
+				for (int j = 0; j < spanResidues.length(); j++) {
+					residues[offset + j] = spanResidues.charAt(j);
+				}
+			}
+		} else {
+			// recurse to children
+			for (int i = 0; i < symCount; i++) {
+				SeqSymmetry childSym = sym.getChild(i);
+				getResiduesFromComposition(this_residue_span, childSym, residues);
+			}
+		}
 	}
 	public void setResidues(String residues) {
 		if (DEBUG)  { System.out.println("**** called SimpleCompAnnotBioSeq.setResidues()"); }
@@ -402,35 +534,71 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 	}
 
 	/**
-	 * It's assumed that if there are residues, this is complete.
-	 * @param start
-	 * @param end
-	 * @return
+	 * Returns true if all residues on the sequence are available.
+	 *
+	 * @return true if all residues on the sequence are available.
+	 */
+		public boolean isComplete() {
+			return isComplete(start, end);
+		}
+	/**
+	 * Returns true if all residues between start and end are available.  Unknown
+	 * if implementations of this function are inclusive or exclusive on start
+	 * and end.
+	 * <p />
+	 * <em>WARNING:</em> This implementation is flawed.  It only verifies that
+	 * all SeqSymmetrys are complete, not that the SeqSymmetrys completely
+	 * cover the range in question.
+	 *
+	 * @param  start the start index (inclusive?)
+	 * @param  end   the end index (exclusive?)
+	 * @return       true if all residues betwen start and end are available
 	 */
 	@Override
 	public boolean isComplete(int start, int end) {
 		if (residues_provider == null) {
 			if (residues == null) {
-				return super.isComplete(start, end);
+				// assuming that if all sequences the composite is composed of are
+				//    complete, then composite is also complete
+				//    [which is an invalid assumption! Because that further assumes that composed seq
+				//     is fully covered by the sequences that it is composed from...]
+				SeqSymmetry rootsym = this.getComposition();
+				if (rootsym == null) {
+					return false;
+				}
+
+				int comp_count = rootsym.getChildCount();
+				if (comp_count == 0) {
+					BioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
+					return other_seq.isComplete(start, end);
+				}
+
+				for (int i = 0; i < comp_count; i++) {
+					SeqSymmetry comp_sym = rootsym.getChild(i);
+					BioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
+					if (!other_seq.isComplete()) {
+						return false;
+					}
+				}
+				return true;
 			}
 			return true;
 		}
 		return true;
 	}
 
-
 	public char charAt(int pos) {
 		if (residues_provider == null) {
-			String str = super.getResidues(pos, pos+1, '-');
-			if (str == null) { return '-'; }
-			return str.charAt(0);
+				String str = this.getResidues(pos, pos+1, '-');
+				if (str == null) { return '-'; }
+				return str.charAt(0);	
 		}
 		return residues_provider.charAt(pos);
 	}
 
 	public String substring(int start, int end) {
 		if (residues_provider == null) {
-			return super.getResidues(start, end);
+			return this.getResidues(start, end);
 		}
 		return residues_provider.substring(start, end);
 	}
@@ -442,9 +610,6 @@ public final class SmartAnnotBioSeq extends CompositeNegSeq implements MutableAn
 		return residues_provider.indexOf(str, fromIndex);
 	}
 	
-	
-
-
 
 	@Override
 		public String toString() {

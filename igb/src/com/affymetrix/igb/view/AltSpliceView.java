@@ -36,21 +36,21 @@ public class AltSpliceView extends JComponent
 		SymSelectionListener, SeqSelectionListener,
                 TierLabelManager.PopupListener {
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  boolean CONTROLS_ON_SIDE = false;
-  SeqMapView original_view;
-  SeqMapView spliced_view;
-  OrfAnalyzer2 orf_analyzer;
-  JTextField buffer_sizeTF;
-  JCheckBox slice_by_selectionCB;
-  List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
-  AnnotatedBioSeq last_seq_changed = null;
-  boolean pending_sequence_change = false;
-  boolean pending_selection_change = false;
-  boolean slice_by_selection_on = true;
+  private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  private boolean CONTROLS_ON_SIDE = false;
+  private SeqMapView original_view;
+  private SeqMapView spliced_view;
+  private OrfAnalyzer2 orf_analyzer;
+  private JTextField buffer_sizeTF;
+  private JCheckBox slice_by_selectionCB;
+  private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
+  private AnnotatedBioSeq last_seq_changed = null;
+  private boolean pending_sequence_change = false;
+  private boolean pending_selection_change = false;
+  private boolean slice_by_selection_on = true;
 
   class AltSpliceSeqMapView extends SeqMapView {
-    public AltSpliceSeqMapView(boolean b) {
+    private AltSpliceSeqMapView(boolean b) {
       super();
       init(b, false, true);
       if (tier_manager != null) {
@@ -218,17 +218,17 @@ public class AltSpliceView extends JComponent
     slice_by_selection_on = b;
   }
 
-  public boolean getSliceBySelection() { return slice_by_selection_on; }
+  //public boolean getSliceBySelection() { return slice_by_selection_on; }
 
 
-  public int getSliceBuffer() { return spliced_view.getSliceBuffer(); }
+  private int getSliceBuffer() { return spliced_view.getSliceBuffer(); }
 
-  public void setSliceBuffer(int buf_size, boolean refresh) {
+  private void setSliceBuffer(int buf_size, boolean refresh) {
     spliced_view.setSliceBuffer(buf_size, refresh);
     orf_analyzer.redoOrfs();
   }
 
-  public void sliceAndDice(List<SeqSymmetry> syms) {
+  private void sliceAndDice(List<SeqSymmetry> syms) {
     //    System.out.println("called AltSpliceView.sliceAndDice() " + syms.size());
     if (syms.size() > 0) {
       spliced_view.sliceAndDice(syms);

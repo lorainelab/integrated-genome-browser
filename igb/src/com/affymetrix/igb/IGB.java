@@ -358,54 +358,10 @@ public final class IGB extends Application
 
   public IGB() { }
 
-  /**
-   * Adds the DAS servers from the URL gl_url to the
-   *  persistent list managed by DasDiscovery.  If the file doesn't exist,
-   *  or can't be loaded, a warning is printed to stdout, but that is all,
-   *  since it isn't a fatal error.
-   *  Meant to replace QuickLoadView2.processDasServerList()
-   *  @param ql_url The root URL for the QuickLoad server, ending with "/".
-   */
-  /*public static void processDasServersList(String ql_url) {
-    String server_loc_list = ql_url + "das_servers.txt";
-    try {
-      System.out.println("Trying to load DAS Server list: " + server_loc_list);
-      DasDiscovery.addServersFromTabFile(server_loc_list);
-    }
-    catch (Exception ex) {
-      System.out.println("WARNING: Failed to load DAS Server list: " + ex);
-    }
-  }*/
-/*
-  public static void processDas2ServersList(String ql_url) {
-    String server_loc_list = ql_url + "das2_servers.txt";
-    try {
-      System.out.println("Trying to load DAS2 Server list: " + server_loc_list);
-      Das2Discovery.addServersFromTabFile(server_loc_list);
-    }
-    catch (Exception ex) {
-      System.out.println("WARNING: Failed to load DAS2 Server list: " + ex);
-    }
-  }*/
-
-
-  /*public static boolean isSequenceAccessible() {
-    //return UnibrowPrefsUtil.getBooleanParam(PREF_SEQUENCE_ACCESSIBLE, default_sequence_accessible);
-    return default_sequence_accessible;
-  }*/
-
   public SeqMapView getMapView() {
     return map_view;
   }
 
-  // currently not needed
-  //public QuickLoaderView getQuickLoaderView() {
-  //  return quickload_view;
-  //}
-
- /* public static Application getSingleton() {
-    return singleton_igb;
-  }*/
 
   //public JMenuBar getMenuBar() { return mbar; }
   public JFrame getFrame() { return frm; }
@@ -565,41 +521,6 @@ public final class IGB extends Application
 		}
 	}
 
-	/**
-	 *  Attempts to load the web-based XML default preferences file from the
-	 *  local cache.  If this file is not in the cache, will skip
-	 *  it and will NOT try to read it from the web.  (This is to prevent slowing
-	 *  down the start-up process.)  Regardless of whether the file was actualy read,
-	 *  will then spawn a background thread that will try to create or update
-	 *  the local cached copy of this preferences file so it will be available
-	 *  the next time the program runs.
-	 *
-	 */
-	/*private static void loadDefaultWebBasedPrefs(XmlPrefsParser prefs_parser, Map<String, Map> prefs_hash) {
-		String web_prefs_url = WEB_PREFS_URL;
-		InputStream is = null;
-		try {
-			is = LocalUrlCacher.getInputStream(web_prefs_url, LocalUrlCacher.ONLY_CACHE, true);
-		} catch (IOException ioe) {
-			System.out.println("There is no cached copy of the web preferences file " + web_prefs_url);
-			is = null;
-		}
-
-		if (is != null) {
-			try {
-				prefs_parser.parse(is, web_prefs_url, prefs_hash);
-				System.out.println("Loading default prefs from url: " + web_prefs_url);
-			} catch (Exception ex) {
-				System.out.println("Problem parsing prefs from url: " + web_prefs_url);
-				System.out.println("Caused by: " + ex.toString());
-			} finally {
-				GeneralUtils.safeClose(is);
-			}
-		}
-
-		LocalUrlCacher.updateCacheUrlInBackground(web_prefs_url);
-	}*/
-
 	private static void LoadPreferencesFromURL(String prefs_url, XmlPrefsParser prefs_parser) {
 		InputStream prefs_url_stream = null;
 		try {
@@ -689,16 +610,7 @@ public final class IGB extends Application
   private void init() {
     frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
     RepaintManager rm = RepaintManager.currentManager(frm);
-    /*
-    if (REPLACE_REPAINT_MANAGER) {
-      RepaintManager new_manager = new IgbRepaintManager();
-      new_manager.setDoubleBufferMaximumSize(new Dimension(4096, 768));
-      RepaintManager.setCurrentManager(new_manager);
-      //	RepaintManager.setCurrentManager(new DiagnosticRepaintManager());
-    }
-    else {
-    }
-    */
+    
     GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     // hardwiring to switch to using multiple windows for main map if there are 4 or more screens
     GraphicsDevice[] devices = genv.getScreenDevices();
@@ -921,24 +833,7 @@ public final class IGB extends Application
       splitpane.setBottomComponent(tab_pane);
     }
 
-    /*if (USE_OVERVIEW) {
-      //      overview = new SeqMapView(true);
-      overview = new OverView(false);
-      gmodel.addSeqSelectionListener(overview);
-      gmodel.addGroupSelectionListener(overview);
-      gmodel.addSymSelectionListener(overview);
-      overview.setFrame(frm);
-      JSplitPane oversplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-      //oversplit.setOneTouchExpandable(true);		// confusing to new users
-      oversplit.setDividerSize(8);
-      oversplit.setDividerLocation(100);
-      oversplit.setTopComponent(overview);
-      oversplit.setBottomComponent(splitpane);
-      cpane.add("Center", oversplit);
-    }
-    else {*/
       cpane.add("Center", splitpane);
-    //}
 
     // Using JTabbedPane.SCROLL_TAB_LAYOUT makes it impossible to add a
     // pop-up menu (or any other mouse listener) on the tab handles.

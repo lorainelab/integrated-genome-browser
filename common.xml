@@ -70,7 +70,6 @@
 	<presetdef name="my.javac_checker">
 		<!-- Be sure to name your new javac executable "javac_checker" -->
 		<javac fork="yes" executable="javac_checker" srcdir="${src.dir}" classpath="${classpath}">
-<!--		<javac fork="yes" executable="/home/jnicol1/src/checkers/binary/javac" srcdir="${src.dir}" classpath="${classpath}">-->
 			<compilerarg value="-version"/>
                 	<compilerarg line="-processor checkers.nullness.NullnessChecker"/>
                 	<compilerarg value="-implicit:class"/>

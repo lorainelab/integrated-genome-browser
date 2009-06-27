@@ -17,8 +17,8 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -26,20 +26,9 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class QuickLoadServerModel {
-  //private static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
-  //private static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
-  //static String ENCODE_FILE_NAME = "encodeRegions.bed";
-  //static String ENCODE_FILE_NAME2 = "encode.bed";
-	//static public String GENOME_SEQ_ID = "genome";
-  //static public String ENCODE_REGIONS_ID = "encode_regions";
-	//static public boolean build_virtual_genome = true;
-  //static public boolean build_virtual_encode = true;
-
-  //private static boolean CACHE_RESIDUES_DEFAULT = true;
-  //private static final boolean CACHE_ANNOTS_DEFAULT = true;
   private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 
-  private SingletonGenometryModel gmodel;
+  private final SingletonGenometryModel gmodel;
 
   private static final Pattern tab_regex = Pattern.compile("\t");
 
@@ -52,20 +41,11 @@ public final class QuickLoadServerModel {
   // A map from String genome name to a List of filenames on the server for that group
   private final Map<String,List<String>> genome2file_names = new HashMap<String,List<String>>();
 
-	//private static final boolean allow_reinitialization = false;
-
   private static final Map<String,QuickLoadServerModel> url2quickload = new HashMap<String,QuickLoadServerModel>();
 
-  /**
-   *  Map of AnnotatedSeqGroup to a load state map.
-   *  Each load state map is a map of an annotation type name to Boolean for
-   *  whether it has already been loaded or not
-   */
-  //static Map<AnnotatedSeqGroup,Map<String,Boolean>> group2states = new HashMap<AnnotatedSeqGroup,Map<String,Boolean>>();
 
   
   public void clear() {
-    //group2states.clear();
     genome_names.clear();
     group2name.clear();
     genome2init.clear();
@@ -79,10 +59,7 @@ public final class QuickLoadServerModel {
     if (! root_url.endsWith("/")) {
       root_url = root_url + "/";
     }
-    List xxx = loadGenomeNames();
-    if (xxx == null || xxx.isEmpty()) {
-      // do what?
-    }
+    loadGenomeNames();
   }
 
 
@@ -153,9 +130,8 @@ public final class QuickLoadServerModel {
   private boolean loadAnnotationNames(String genome_name) {
 	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		String genome_root = root_url + genome_name + "/";
-		//AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
 		Application.getApplicationLogger().fine("loading list of available annotations for genome: " + genome_name);
-		String filename = genome_root + "annots.txt";		
+		String filename = genome_root + IGBConstants.annotsTxt;
 
 		// Make a new list of filenames, in case this is being re-initialized
 		// If this search fails, then we're just returning an empty list.
@@ -179,7 +155,6 @@ public final class QuickLoadServerModel {
 				if (fields.length >= 1) {
 					String annot_file_name = fields[0];
 					if (annot_file_name == null || annot_file_name.length()==0) {
-						//System.out.println("Quickload WARNING: empty file name detected.");
 						continue;
 					}
 					file_names.add(annot_file_name);
@@ -197,49 +172,48 @@ public final class QuickLoadServerModel {
   }
 
   private boolean loadSeqInfo(String genome_name) {
+		String liftAll = IGBConstants.liftAllLft;
+		String modChromInfo = IGBConstants.modChromInfoTxt;
 	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
     boolean success = false;
     String genome_root = root_url + genome_name + "/";
-    //AnnotatedSeqGroup group = gmodel.getSeqGroup(genome_name);
     Application.getApplicationLogger().fine("loading list of chromosomes for genome: " + genome_name);
     InputStream lift_stream = null;
     InputStream cinfo_stream = null;
     try {
 
-      Application.getApplicationLogger().fine("lift URL: " + genome_root + "liftAll.lft");
-      String lift_path = genome_root + "liftAll.lft";
+      Application.getApplicationLogger().fine("lift URL: " + genome_root + liftAll);
+      String lift_path = genome_root + liftAll;
       try {
-        lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots());
+				// don't warn about this file, since we'll look for modChromInfo file
+        lift_stream = LocalUrlCacher.getInputStream(lift_path, getCacheAnnots(), null, true);
       }
       catch (Exception ex) {
-        Application.getApplicationLogger().fine("couldn't find lift file, looking instead for mod_chromInfo file");
+				// exception can be ignored, since we'll look for modChromInfo file.
+        Application.getApplicationLogger().fine("couldn't find " + liftAll +", looking instead for " + modChromInfo);
         lift_stream = null;
       }
       if (lift_stream == null) {
+				String cinfo_path = genome_root + modChromInfo;
         try {
-					String cinfo_path = genome_root + "mod_chromInfo.txt";
-          cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path,  getCacheAnnots());
+          cinfo_stream = LocalUrlCacher.getInputStream(cinfo_path,  getCacheAnnots(), null, false);
         }
         catch (Exception ex) {
-          System.err.println("ERROR: could find neither liftAll.txt nor mod_chromInfo.txt files");
+          System.err.println("ERROR: could find neither " + lift_path + " nor " + cinfo_path);
+					ex.printStackTrace();
           cinfo_stream = null;
         }
       }
 
       boolean annot_contigs = false;
       if (lift_stream != null) {
-        //LiftParser lift_loader = new LiftParser();
         LiftParser.parse(lift_stream, gmodel, genome_name, annot_contigs);
         success = true;
       }
       else if (cinfo_stream != null) {
-        //ChromInfoParser chrominfo_loader = new ChromInfoParser();
         ChromInfoParser.parse(cinfo_stream, gmodel, genome_name);
         success = true;
       }
-      //Application.getApplicationLogger().fine("group: " + (group == null ? null : group.getID()) + ", " + group);
-      //      gmodel.setSelectedSeqGroup(group);
-     // if (build_virtual_genome && group != null) {  addGenomeVirtualSeq(group); }
     }
     catch (Exception ex) {
       ErrorHandler.errorPanel("ERROR", "Error loading data for genome '"+ genome_name +"'", ex);
@@ -252,26 +226,25 @@ public final class QuickLoadServerModel {
   }
 
 
-  private List<String> loadGenomeNames() {
-    ArrayList<String> glist = null;
+  private void loadGenomeNames() {
+		String contentsTxt = IGBConstants.contentsTxt;
 		InputStream istr = null;
 		InputStreamReader ireader = null;
 		BufferedReader br = null;
     try {
       try {
-        istr = LocalUrlCacher.getInputStream(root_url + "contents.txt", getCacheAnnots());
+        istr = LocalUrlCacher.getInputStream(root_url + contentsTxt, getCacheAnnots());
       } catch (Exception e) {
-        System.out.println("ERROR: Couldn't open '"+root_url+"contents.txt\n:  "+e.toString());
+        System.out.println("ERROR: Couldn't open '"+root_url+ contentsTxt +"\n:  "+e.toString());
         istr = null; // dealt with below
       }
       if (istr == null) {
-        System.out.println("Could not load QuickLoad contents from\n" + root_url + "contents.txt");
-        return Collections.<String>emptyList();
+        System.out.println("Could not load QuickLoad contents from\n" + root_url + contentsTxt);
+        return;
       }
       ireader = new InputStreamReader(istr);
       br = new BufferedReader(ireader);
       String line;
-      glist = new ArrayList<String>();
       while ((line = br.readLine()) != null) {
         AnnotatedSeqGroup group = null;
         String[] fields = tab_regex.split(line);
@@ -282,11 +255,9 @@ public final class QuickLoadServerModel {
 						System.out.println("Found blank QuickLoad genome -- skipping");
 						continue;
 					}
-          glist.add(genome_name);
           group = this.getSeqGroup(genome_name);  // returns existing group if found, otherwise creates a new group
           genome_names.add(genome_name);
           group2name.put(group, genome_name);
-          // Application.getApplicationLogger().fine("added genome, name = " + line + ", group = " + group.getID() + ", " + group);
         }
         // if quickload server has description, and group is new or doesn't yet have description, add description to group
         if ((fields.length >= 2) && (group.getDescription() == null)) {
@@ -302,7 +273,6 @@ public final class QuickLoadServerModel {
 			GeneralUtils.safeClose(ireader);
 			GeneralUtils.safeClose(br);
 		}
-    return glist;
   }
 
     @Override

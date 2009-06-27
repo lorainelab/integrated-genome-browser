@@ -111,6 +111,10 @@ public final class LocalUrlCacher {
 					throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, headers);
 	}
+	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
+					throws IOException {
+		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, headers, fileMayNotExist);
+	}
 
 	public static InputStream getInputStream(String url, boolean write_to_cache)
 					throws IOException {

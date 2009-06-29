@@ -17,7 +17,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
@@ -189,19 +189,19 @@ final class SeqMapViewActionListener implements ActionListener {
       //map.updateWidget();
     } else if (command.equals(SCROLL_LEFT)) {
       int[] visible =  seqmap.getVisibleRange();
-      seqmap.scroll(NeoWidgetI.X, visible[0]+ (visible[1]-visible[0])/10 );
+      seqmap.scroll(NeoAbstractWidget.X, visible[0]+ (visible[1]-visible[0])/10 );
       seqmap.updateWidget();
     } else if (command.equals(SCROLL_RIGHT)) {
       int[] visible =  seqmap.getVisibleRange();
-      seqmap.scroll(NeoWidgetI.X, visible[0]- (visible[1]-visible[0])/10 );
+      seqmap.scroll(NeoAbstractWidget.X, visible[0]- (visible[1]-visible[0])/10 );
       seqmap.updateWidget();
     } else if (command.equals(SCROLL_UP)) {
       int[] visible =  seqmap.getVisibleOffset();
-      seqmap.scroll(NeoWidgetI.Y, visible[0]+ (visible[1]-visible[0])/10 );
+      seqmap.scroll(NeoAbstractWidget.Y, visible[0]+ (visible[1]-visible[0])/10 );
       seqmap.updateWidget();
     } else if (command.equals(SCROLL_DOWN)) {
       int[] visible =  seqmap.getVisibleOffset();
-      seqmap.scroll(NeoWidgetI.Y, visible[0]- (visible[1]-visible[0])/10 );
+      seqmap.scroll(NeoAbstractWidget.Y, visible[0]- (visible[1]-visible[0])/10 );
       seqmap.updateWidget();
     }
   }

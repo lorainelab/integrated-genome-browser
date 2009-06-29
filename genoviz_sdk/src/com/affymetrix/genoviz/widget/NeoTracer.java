@@ -975,13 +975,13 @@ public class NeoTracer extends NeoContainerWidget
 		return p.x;
 	}
 
-	public int getLocation(NeoWidgetI widg) {
+	public int getLocation(NeoAbstractWidget widg) {
 		if (widg == trace_map) { return TRACES; }
 		else if (widg == base_map) { return BASES; }
 		throw new IllegalArgumentException("unknown widget");
 	}
 
-	public NeoWidgetI getWidget(int location) {
+	public NeoAbstractWidget getWidget(int location) {
 		if (location == TRACES) { return trace_map; }
 		else if (location == BASES) { return base_map; }
 		throw new IllegalArgumentException(
@@ -1793,17 +1793,17 @@ public class NeoTracer extends NeoContainerWidget
 	 * adjustable responsible for scrolling.
 	 * The caller is responsible for adding the Adjustable to the user interface.
 	 *
-	 * @param axisid Either NeoWidgetI.X or NeoWidgetI.Y
+	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
 	public void setScroller(int axisid, Adjustable adj){
-		if (!(NeoWidgetI.X == axisid || NeoWidgetI.Y == axisid)) {
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
-					"Can set zoomer for X ("+NeoWidgetI.X
-					+") or Y ("+NeoWidgetI.Y+") axis. "
+					"Can set zoomer for X ("+NeoAbstractWidget.X
+					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
 		}
 		trace_map.setScroller(axisid, adj);
-		if (axisid == NeoWidgetI.X) {
+		if (axisid == NeoAbstractWidget.X) {
 			base_map.setScroller(axisid, adj);
 		}
 	}
@@ -1814,17 +1814,17 @@ public class NeoTracer extends NeoContainerWidget
 	 * The caller is responsible for adding the Adjustable to the user interface.
 	 * Overriding NeoContainerWidget.setZoomer() to prevent zooming base_map
 	 * in Y direction.
-	 * @param axisid Either NeoWidgetI.X or NeoWidgetI.Y
+	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
 	public void setZoomer(int axisid, Adjustable adj) {
-		if (!(NeoWidgetI.X == axisid || NeoWidgetI.Y == axisid)) {
+		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
-					"Can set zoomer for X ("+NeoWidgetI.X
-					+") or Y ("+NeoWidgetI.Y+") axis. "
+					"Can set zoomer for X ("+NeoAbstractWidget.X
+					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
 		}
 		trace_map.setZoomer(axisid, adj);
-		if (axisid == NeoWidgetI.X) {
+		if (axisid == NeoAbstractWidget.X) {
 			base_map.setZoomer(axisid, adj);
 		}
 	}

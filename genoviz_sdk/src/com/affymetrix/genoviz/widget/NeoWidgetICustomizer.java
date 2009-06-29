@@ -46,7 +46,7 @@ public class NeoWidgetICustomizer
 	extends Panel
 	implements Customizer, ItemListener {
 
-	protected NeoWidgetI widgeti;
+	protected NeoAbstractWidget widgeti;
 	protected GridBagLayout layout;
 	protected GridBagConstraints labelConstraints = new GridBagConstraints();
 	protected GridBagConstraints valueConstraints = new GridBagConstraints();
@@ -178,12 +178,12 @@ public class NeoWidgetICustomizer
 		}
 		else if (evtSource == this.scrollingIncrBehavior) {
 			if(this.scrollingIncrBehavior.getState()) {
-				widgeti.setScrollIncrementBehavior(NeoWidgetI.X,
-						NeoWidgetI.AUTO_SCROLL_INCREMENT);
+				widgeti.setScrollIncrementBehavior(NeoAbstractWidget.X,
+						NeoAbstractWidget.AUTO_SCROLL_INCREMENT);
 			}
 			else {
-				widgeti.setScrollIncrementBehavior(NeoWidgetI.X,
-						NeoWidgetI.NO_AUTO_SCROLL_INCREMENT);
+				widgeti.setScrollIncrementBehavior(NeoAbstractWidget.X,
+						NeoAbstractWidget.NO_AUTO_SCROLL_INCREMENT);
 			}
 			return;
 		}
@@ -199,10 +199,10 @@ public class NeoWidgetICustomizer
 					new Boolean(this.bandingBehavior.getState()));
 		}
 		else if (evtSource == this.zoomingXChoice) {
-			setScaleConstraint( NeoWidgetI.X, this.zoomingXChoice.getSelectedItem());
+			setScaleConstraint( NeoAbstractWidget.X, this.zoomingXChoice.getSelectedItem());
 		}
 		else if (evtSource == this.zoomingYChoice) {
-			setScaleConstraint( NeoWidgetI.Y, this.zoomingYChoice.getSelectedItem());
+			setScaleConstraint( NeoAbstractWidget.Y, this.zoomingYChoice.getSelectedItem());
 		}
 	}
 
@@ -234,15 +234,15 @@ public class NeoWidgetICustomizer
 		int constraint = 0;
 		if (theChoice.equalsIgnoreCase("Top")
 				|| theChoice.equalsIgnoreCase("Left")) {
-			widgeti.setZoomBehavior(theAxis, NeoWidgetI.CONSTRAIN_START);
+			widgeti.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_START);
 				}
 		else if (theChoice.equalsIgnoreCase("Center")
 				|| theChoice.equalsIgnoreCase("Middle")) {
-			widgeti.setZoomBehavior(theAxis, NeoWidgetI.CONSTRAIN_MIDDLE);
+			widgeti.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_MIDDLE);
 				}
 		else if (theChoice.equalsIgnoreCase("Bottom")
 				|| theChoice.equalsIgnoreCase("Right")) {
-			widgeti.setZoomBehavior(theAxis, NeoWidgetI.CONSTRAIN_END);
+			widgeti.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_END);
 				}
 	}
 
@@ -256,11 +256,11 @@ public class NeoWidgetICustomizer
 		secretary.removePropertyChangeListener(listener);
 	}
 	public void setObject(Object bean) {
-		if (bean instanceof NeoWidgetI) {
-			this.widgeti = (NeoWidgetI)bean;
+		if (bean instanceof NeoAbstractWidget) {
+			this.widgeti = (NeoAbstractWidget)bean;
 		}
 		else {
-			throw new IllegalArgumentException("need a NeoWidgetI");
+			throw new IllegalArgumentException("need a NeoAbstractWidget");
 		}
 
 		// Background

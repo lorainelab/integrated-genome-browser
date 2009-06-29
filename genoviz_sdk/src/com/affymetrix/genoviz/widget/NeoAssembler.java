@@ -1366,7 +1366,7 @@ public class NeoAssembler extends NeoContainerWidget
 		return max;
 	}
 
-	public int getLocation(NeoWidgetI widg) {
+	public int getLocation(NeoAbstractWidget widg) {
 		if (widg == labelmap) { return LABELS; }
 		else if (widg == alignmap) { return ALIGNMENTS; }
 		else if (widg == consmap) { return CONSENSUS; }
@@ -1374,7 +1374,7 @@ public class NeoAssembler extends NeoContainerWidget
 		throw new IllegalArgumentException("unknown widget");
 	}
 
-	public NeoWidgetI getWidget(int location) {
+	public NeoAbstractWidget getWidget(int location) {
 		if (location == LABELS) { return labelmap; }
 		else if (location == ALIGNMENTS) { return alignmap; }
 		else if (location == CONSENSUS) { return consmap; }
@@ -1384,7 +1384,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	/**
 	 * This implements the selection method portion of NeoMap.
-	 * That portion of NeoMap might move to NeoWidgetI
+	 * That portion of NeoMap might move to NeoAbstractWidget
 	 * or to a new interface of its own.
 	 * @see NeoMap
 	 */
@@ -1834,7 +1834,7 @@ public class NeoAssembler extends NeoContainerWidget
 		if (fontControlsMaxZoom) {
 			int font_width =
 				GeneralUtils.getMaxCharWidth(fnt, DNAUtils.getAllowedDNACharacters());
-			setMaxZoom(NeoWidgetI.X, font_width);
+			setMaxZoom(NeoAbstractWidget.X, font_width);
 		}
 
 		if (fontControlsGlyphHeight) {
@@ -1935,14 +1935,14 @@ public class NeoAssembler extends NeoContainerWidget
 	}
 
 	public void setMaxZoom(int axisid, double scale) {
-		if (axisid == NeoWidgetI.X) {
+		if (axisid == NeoAbstractWidget.X) {
 			consmap.setMaxZoom(axisid, scale);
 			alignmap.setMaxZoom(axisid, scale);
 			alignmap.adjustZoomer(axisid);
 		}
 		else {
 			throw new IllegalArgumentException("NeoAssembler.setMaxZoom() " +
-					"will only adjust max zoom along NeoWidgetI.X");
+					"will only adjust max zoom along NeoAbstractWidget.X");
 		}
 	}
 
@@ -2000,7 +2000,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @param behavior {@link #CONSTRAIN_START},
 	 *                 {@link #CONSTRAIN_MIDDLE}, or
 	 *                 {@link #CONSTRAIN_END}.
-	 * @see NeoWidgetI
+	 * @see NeoAbstractWidget
 	 */
 	public void setZoomBehavior(int id, int behavior) {
 		zoom_behavior[id] = behavior;

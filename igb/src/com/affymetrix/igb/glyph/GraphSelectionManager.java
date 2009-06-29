@@ -87,8 +87,8 @@ public final class GraphSelectionManager
   GraphGlyph second_current_graph = null;
 
   // The current_source will be the AffyTieredMap of the SeqMapView
-  //  final NeoWidgetI current_source;
-  NeoWidgetI current_source;
+  //  final NeoAbstractWidget current_source;
+  NeoAbstractWidget current_source;
 
   //  boolean scaling_graph = true;
   boolean scaling_graph = false;
@@ -154,7 +154,7 @@ public final class GraphSelectionManager
   /** A constructor to use if there is no SeqMapView.  Note that graph arithmetic
    *  operations will not be allowed in this case.
    */
-  public GraphSelectionManager(NeoWidgetI source) {
+  public GraphSelectionManager(NeoAbstractWidget source) {
     this();
     gviewer = null;
     current_source = source;
@@ -440,7 +440,7 @@ public final class GraphSelectionManager
    *  tier in the source which is a tier map, then delete the tier as well.
    *  If the graph's symmetry is in a mutalbe bio seq, remove it from there.
    */
-  void deleteGraph(NeoWidgetI source, GraphGlyph gl) {
+  void deleteGraph(NeoAbstractWidget source, GraphGlyph gl) {
     source.removeItem(gl);
     // clean-up references to the graph, allowing garbage-collection, etc.
     gmodel.clearSelectedSymmetries(this);
@@ -625,7 +625,7 @@ public final class GraphSelectionManager
     //    System.out.println("dragging mouse");
     if (! (evt instanceof NeoMouseEvent)) { return; }
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
-    NeoWidgetI widg = (NeoWidgetI)nevt.getSource();
+    NeoAbstractWidget widg = (NeoAbstractWidget)nevt.getSource();
     if (scaling_graph)  {
       Rectangle2D.Double bbox = graph_to_scale.getCoordBox();
       double coord_diff = start_mouse_ycoord - nevt.getCoordY();
@@ -655,7 +655,7 @@ public final class GraphSelectionManager
         widg.toFrontOfSiblings(gl);
       }
     }
-    dragger = new GlyphDragger((NeoWidgetI)nevt.getSource());
+    dragger = new GlyphDragger((NeoAbstractWidget)nevt.getSource());
     dragger.setUseCopy(false);
 
     LinearTransform trans = new LinearTransform();
@@ -741,7 +741,7 @@ public final class GraphSelectionManager
   public void popupNotify(JPopupMenu the_popup, List selected_syms, SeqSymmetry primary_sym) {
     
     if (current_source == null) {
-      // if there is no NeoWidgetI set for the current_source, then we cannot convert
+      // if there is no NeoAbstractWidget set for the current_source, then we cannot convert
       // selected symmetries into GlyphI's, so there is no point in adding items to
       // a popup menu.
       return;

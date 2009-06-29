@@ -37,7 +37,7 @@ public final class MinScoreThresholder extends JPanel
   static int frm_height = 200;
   //  SmartGraphGlyph sgg;
   List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
-  NeoWidgetI widg;
+  NeoAbstractWidget widg;
   JSlider tslider;
   JTextField minscoreTF;
   float thresh_min = -500;
@@ -45,7 +45,7 @@ public final class MinScoreThresholder extends JPanel
   float minscore_thresh = 0;
   float sliders_per_score = 0;
 
-  static MinScoreThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
+  static MinScoreThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoAbstractWidget widg) {
     MinScoreThresholder dthresher = new MinScoreThresholder(sgg, widg);
     JFrame frm = new JFrame("Graph Score Threshold Control");
     Container cpane = frm.getContentPane();
@@ -65,12 +65,12 @@ public final class MinScoreThresholder extends JPanel
     return dthresher;
   }
 
-  public MinScoreThresholder(SmartGraphGlyph gl, NeoWidgetI w) {
+  public MinScoreThresholder(SmartGraphGlyph gl, NeoAbstractWidget w) {
     this(w);
     setGraph(gl);
   }
 
-  public MinScoreThresholder(NeoWidgetI w) {
+  public MinScoreThresholder(NeoAbstractWidget w) {
     widg = w;
 
     tslider = new JSlider(JSlider.HORIZONTAL);

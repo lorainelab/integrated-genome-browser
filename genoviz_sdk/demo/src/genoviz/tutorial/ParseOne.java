@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.datamodel.Sequence;
 import com.affymetrix.genoviz.parser.ContentParser;
 import com.affymetrix.genoviz.parser.FastaSequenceParser;
 import com.affymetrix.genoviz.widget.NeoSeq;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.awt.NeoPanel;
 
 import java.applet.Applet;
@@ -29,7 +29,7 @@ import java.net.MalformedURLException;
 
 public class ParseOne extends Applet {
 
-	protected NeoWidgetI widget;
+	protected NeoAbstractWidget widget;
 	protected ContentParser parser;
 	protected NeoPanel pan;
 

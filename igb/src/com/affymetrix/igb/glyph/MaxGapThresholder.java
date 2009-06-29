@@ -25,7 +25,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 
 
 public final class MaxGapThresholder extends JPanel
@@ -35,7 +35,7 @@ public final class MaxGapThresholder extends JPanel
   static int frm_height = 200;
 
   List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
-  NeoWidgetI widg;
+  NeoAbstractWidget widg;
   JSlider tslider;
   JTextField maxgapTF;
   int default_thresh_max = 250;
@@ -52,7 +52,7 @@ public final class MaxGapThresholder extends JPanel
   int tf_min_ypix = 20;
   int tf_max_ypix = 25;
 
-  static MaxGapThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
+  static MaxGapThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoAbstractWidget widg) {
     MaxGapThresholder dthresher = new MaxGapThresholder(sgg, widg);
     JFrame frm = new JFrame("Graph MaxGap Threshold Control");
     Container cpane = frm.getContentPane();
@@ -72,12 +72,12 @@ public final class MaxGapThresholder extends JPanel
     return dthresher;
   }
 
-  public MaxGapThresholder(SmartGraphGlyph gl, NeoWidgetI w) {
+  public MaxGapThresholder(SmartGraphGlyph gl, NeoAbstractWidget w) {
     this(w);
     setGraph(gl);
   }
 
-  public MaxGapThresholder(NeoWidgetI w) {
+  public MaxGapThresholder(NeoAbstractWidget w) {
     widg = w;
 
     tslider = new JSlider(JSlider.HORIZONTAL);

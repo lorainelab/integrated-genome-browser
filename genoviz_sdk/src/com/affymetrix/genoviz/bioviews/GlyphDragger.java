@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragEvent;
 import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
 
 /**
@@ -57,7 +57,7 @@ public class GlyphDragger
 	Point2D.Double cur_point = new Point2D.Double(0, 0);
 
 	GlyphI dragged_glyph;
-	NeoWidgetI widget;
+	NeoAbstractWidget widget;
 	Vector<NeoGlyphDragListener> drag_listeners = new Vector<NeoGlyphDragListener>();
 	boolean force_within_parent = false;
 
@@ -66,8 +66,8 @@ public class GlyphDragger
 	//    View transform
 	LinearTransform trans;
 
-	//  public GlyphDragger(NeoWidgetI widg, GlyphI gl, NeoMouseEvent nevt) {
-	public GlyphDragger(NeoWidgetI widg) {
+	//  public GlyphDragger(NeoAbstractWidget widg, GlyphI gl, NeoMouseEvent nevt) {
+	public GlyphDragger(NeoAbstractWidget widg) {
 		this.widget = widg;
 		constrained[HORIZ] = false;
 		constrained[VERT] = false;

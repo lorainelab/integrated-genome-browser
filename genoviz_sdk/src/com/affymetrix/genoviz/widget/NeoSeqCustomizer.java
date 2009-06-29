@@ -134,12 +134,12 @@ public class NeoSeqCustomizer
 		else if (evtSource == this.scrollingIncrBehavior) {
 			int i = this.scrollingIncrBehavior.getSelectedIndex();
 			if (0 == i) {
-				neoSeq.setScrollIncrementBehavior(NeoWidgetI.Y,
-						NeoWidgetI.AUTO_SCROLL_INCREMENT);
+				neoSeq.setScrollIncrementBehavior(NeoAbstractWidget.Y,
+						NeoAbstractWidget.AUTO_SCROLL_INCREMENT);
 			}
 			else {
-				neoSeq.setScrollIncrementBehavior(NeoWidgetI.Y,
-						NeoWidgetI.NO_AUTO_SCROLL_INCREMENT);
+				neoSeq.setScrollIncrementBehavior(NeoAbstractWidget.Y,
+						NeoAbstractWidget.NO_AUTO_SCROLL_INCREMENT);
 				i = Integer.parseInt(this.scrollingIncrBehavior.getSelectedItem());
 				neoSeq.setScrollIncrement(i);
 			}
@@ -279,12 +279,12 @@ public class NeoSeqCustomizer
 		scrollingIncrBehavior.addItem("Autoincrement");
 		int[] incr = { 1, 5, 10, 15, 20, 25 };
 		loadIntegerChoice(scrollingIncrBehavior, incr);
-		int id = neoSeq.getScrollIncrementBehavior(NeoWidgetI.X);
-		if (NeoWidgetI.AUTO_SCROLL_INCREMENT == id) {
+		int id = neoSeq.getScrollIncrementBehavior(NeoAbstractWidget.X);
+		if (NeoAbstractWidget.AUTO_SCROLL_INCREMENT == id) {
 			scrollingIncrBehavior.select(0);
 		}
 		else {
-			id = NeoWidgetI.AUTO_SCROLL_INCREMENT;
+			id = NeoAbstractWidget.AUTO_SCROLL_INCREMENT;
 			scrollingIncrBehavior.select(1);
 		}
 

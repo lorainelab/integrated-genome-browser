@@ -447,7 +447,7 @@ public final class TierLabelManager {
 
     void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
       dragging_label = gl;
-      GlyphDragger dragger = new GlyphDragger((NeoWidgetI)nevt.getSource());
+      GlyphDragger dragger = new GlyphDragger((NeoAbstractWidget)nevt.getSource());
       dragger.setUseCopy(false);
       dragger.startDrag(gl, nevt);
       dragger.setConstraint(NeoConstants.HORIZONTAL, true);

@@ -469,13 +469,13 @@ public class NeoQualler extends NeoContainerWidget
 		return;
 	}
 
-	public int getLocation(NeoWidgetI widg) {
+	public int getLocation(NeoAbstractWidget widg) {
 		if (widg == bar_map) { return BARS; }
 		else if (widg == base_map) { return BASES; }
 		throw new IllegalArgumentException("unknown widget");
 	}
 
-	public NeoWidgetI getWidget(int location) {
+	public NeoAbstractWidget getWidget(int location) {
 		if (location == BARS) { return bar_map; }
 		else if (location == BASES) { return base_map; }
 		throw new IllegalArgumentException("can only get BARS or BASES.");

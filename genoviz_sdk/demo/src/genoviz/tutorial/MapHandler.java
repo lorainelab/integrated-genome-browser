@@ -23,7 +23,7 @@ import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.parser.ContentParser;
 import com.affymetrix.genoviz.util.Debug;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import org.xml.sax.*;
 import javax.xml.parsers.*;
 import java.io.*;
@@ -102,7 +102,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	/**
 	 * sets the widget (in our case a NeoMap).
 	 */
-	public void setWidget( NeoWidgetI theWidget ) {
+	public void setWidget( NeoAbstractWidget theWidget ) {
 		Debug.inform( "setting widget" );
 
 		if ( theWidget instanceof NeoMap ) {

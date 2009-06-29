@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import javax.swing.*;
 import java.awt.Dimension;
@@ -27,7 +27,7 @@ public final class MotionPanel extends JPanel {
   /** Creates a new panel
    * with zooming and panning along the same axis.
    * @param theOrientation {@link SwingConstants#HORIZONTAL} or {@link SwingConstants#VERTICAL} 
-   * @param thePanAxis {@link NeoWidgetI#PRIMARY_AXIS}, {@link NeoWidgetI#SECONDARY_AXIS}, or null.
+   * @param thePanAxis {@link NeoAbstractWidget#PRIMARY_AXIS}, {@link NeoAbstractWidget#SECONDARY_AXIS}, or null.
    * If null then puts in two shims instead of scrollbar and slider.
    */
   public MotionPanel( int theOrientation, int thePanAxis ) {
@@ -36,9 +36,9 @@ public final class MotionPanel extends JPanel {
   
   /** Creates a new panel.
    * @param theOrientation {@link SwingConstants#HORIZONTAL} or {@link SwingConstants#VERTICAL} 
-   * @param thePanAxis {@link NeoWidgetI#PRIMARY_AXIS}, {@link NeoWidgetI#SECONDARY_AXIS}, or -1.
+   * @param thePanAxis {@link NeoAbstractWidget#PRIMARY_AXIS}, {@link NeoAbstractWidget#SECONDARY_AXIS}, or -1.
    * If null then puts a shim in instead of a scrollbar.
-   * @param theZoomAxis {@link NeoWidgetI#PRIMARY_AXIS}, {@link NeoWidgetI#SECONDARY_AXIS}, or -1.
+   * @param theZoomAxis {@link NeoAbstractWidget#PRIMARY_AXIS}, {@link NeoAbstractWidget#SECONDARY_AXIS}, or -1.
    * If -1 then puts a shim in instead of a slider.
    */
   public MotionPanel( int theOrientation, int thePanAxis, int theZoomAxis ) {
@@ -78,11 +78,11 @@ public final class MotionPanel extends JPanel {
   private JScrollBar sScroller;
   private void setPanAxis( int theAxis ) {
     switch ( theAxis ) {
-      case NeoWidgetI.PRIMARY_AXIS:
+      case NeoAbstractWidget.PRIMARY_AXIS:
         this.pScroller = new JScrollBar( this.orientation );
         add( this.pScroller );
         break;
-      case NeoWidgetI.SECONDARY_AXIS:
+      case NeoAbstractWidget.SECONDARY_AXIS:
         this.sScroller = new JScrollBar( this.orientation );
         add( this.sScroller );
         break;
@@ -90,18 +90,18 @@ public final class MotionPanel extends JPanel {
         add( new Shim() );
         break;
       default:
-        throw new IllegalArgumentException( "Axis must be NeoWidgetI.PRIMARY_AXIS or NeoWidgetI.SECONDARY_AXIS. Found " + theAxis );
+        throw new IllegalArgumentException( "Axis must be NeoAbstractWidget.PRIMARY_AXIS or NeoAbstractWidget.SECONDARY_AXIS. Found " + theAxis );
     }
   }
   private AdjustableJSlider pZoomer;
   private AdjustableJSlider sZoomer;
   private void setZoomAxis( int theAxis ) {
     switch ( theAxis ) {
-      case NeoWidgetI.PRIMARY_AXIS:
+      case NeoAbstractWidget.PRIMARY_AXIS:
         this.pZoomer = new AdjustableJSlider( this.orientation );
         add( this.pZoomer );
         break;
-      case NeoWidgetI.SECONDARY_AXIS:
+      case NeoAbstractWidget.SECONDARY_AXIS:
         this.sZoomer = new AdjustableJSlider( this.orientation );
         add( this.sZoomer );
         break;
@@ -109,15 +109,15 @@ public final class MotionPanel extends JPanel {
         add( new Shim() );
         break;
       default:
-        throw new IllegalArgumentException( "Axis must be NeoWidgetI.PRIMARY_AXIS or NeoWidgetI.SECONDARY_AXIS. Found " + theAxis );
+        throw new IllegalArgumentException( "Axis must be NeoAbstractWidget.PRIMARY_AXIS or NeoAbstractWidget.SECONDARY_AXIS. Found " + theAxis );
     }
   }
 
   public AdjustableJSlider getZoomer( int theAxis ) {
     switch ( theAxis ) {
-      case NeoWidgetI.PRIMARY_AXIS:
+      case NeoAbstractWidget.PRIMARY_AXIS:
         return this.pZoomer;
-      case NeoWidgetI.SECONDARY_AXIS:
+      case NeoAbstractWidget.SECONDARY_AXIS:
         return this.sZoomer;
     }
     return null;
@@ -133,9 +133,9 @@ public final class MotionPanel extends JPanel {
 
   public JScrollBar getPanner( int theAxis ) {
     switch ( theAxis ) {
-      case NeoWidgetI.PRIMARY_AXIS:
+      case NeoAbstractWidget.PRIMARY_AXIS:
         return this.pScroller;
-      case NeoWidgetI.SECONDARY_AXIS:
+      case NeoAbstractWidget.SECONDARY_AXIS:
         return this.sScroller;
     }
     return null;
@@ -145,7 +145,7 @@ public final class MotionPanel extends JPanel {
   public static void main( String[] argv ) {
     JFrame f = new JFrame( "Motion Panel" );
     java.awt.Container c = f.getContentPane();
-    c.add( new MotionPanel( SwingConstants.HORIZONTAL, NeoWidgetI.PRIMARY_AXIS ) );
+    c.add( new MotionPanel( SwingConstants.HORIZONTAL, NeoAbstractWidget.PRIMARY_AXIS ) );
     f.setDefaultCloseOperation( f.EXIT_ON_CLOSE );
     f.setSize( 300, 100 );
     f.setVisible(true);

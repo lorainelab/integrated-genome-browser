@@ -226,7 +226,7 @@ public interface GlyphI extends NeoConstants  {
 	 * Widgets can have different <em>selection styles</em>.
 	 * Choosing a selection style for a widget may change how
 	 * glyphs are "highlighted", or shown to be selected.
-	 * Selection style is set with {@link com.affymetrix.genoviz.widget.NeoWidgetI#setSelectionAppearance}.
+	 * Selection style is set with {@link com.affymetrix.genoviz.widget.NeoAbstractWidget#setSelectionAppearance}.
 	 * Note that a NeoWidget can have only one selection style
 	 * at a time.
 	 * <p>

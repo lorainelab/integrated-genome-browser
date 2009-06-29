@@ -68,7 +68,7 @@ import javax.swing.JScrollBar;
 public class NeoMap extends NeoWidget implements
 	   NeoDragListener, NeoViewBoxListener, NeoRubberBandListener, ComponentListener {
 	/**
-	 * For methods inherited from NeoWidgetI that require a sub-component id.
+	 * For methods inherited from NeoAbstractWidget that require a sub-component id.
 	 * For NeoMapI the component <em>is</em> the only sub-component,
 	 * and its id is MAP.
 	 */

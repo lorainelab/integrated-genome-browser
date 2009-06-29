@@ -121,32 +121,32 @@ public class NeoWidgetCustomizer
 			return;
 		}
 		else if (evtSource == this.zoomingXChoice) {
-			setScaleConstraint( NeoWidgetI.X, this.zoomingXChoice.getSelectedItem());
+			setScaleConstraint( NeoAbstractWidget.X, this.zoomingXChoice.getSelectedItem());
 			return;
 		}
 		else if (evtSource == this.zoomingYChoice) {
-			setScaleConstraint( NeoWidgetI.Y, this.zoomingYChoice.getSelectedItem());
+			setScaleConstraint( NeoAbstractWidget.Y, this.zoomingYChoice.getSelectedItem());
 			return;
 		}
 		else if (evtSource == this.reshapingBehaviorX) {
 			if (((Checkbox)evtSource).getState()) {
-				widget.setReshapeBehavior(NeoWidgetI.X, NeoWidgetI.FITWIDGET);
+				widget.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
 				widget.updateWidget();
 				widget.setSize(widget.getSize());
 			}
 			else {
-				widget.setReshapeBehavior(NeoWidgetI.X, NeoConstants.NONE);
+				widget.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
 			}
 			return;
 		}
 		else if (evtSource == this.reshapingBehaviorY) {
 			if (((Checkbox)evtSource).getState()) {
-				widget.setReshapeBehavior(NeoWidgetI.Y, NeoWidgetI.FITWIDGET);
+				widget.setReshapeBehavior(NeoAbstractWidget.Y, NeoAbstractWidget.FITWIDGET);
 				widget.updateWidget();
 				widget.setSize(widget.getSize());
 			}
 			else {
-				widget.setReshapeBehavior(NeoWidgetI.Y, NeoConstants.NONE);
+				widget.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 			}
 			return;
 		}
@@ -179,15 +179,15 @@ public class NeoWidgetCustomizer
 		int constraint = 0;
 		if (theChoice.equalsIgnoreCase("Top")
 				|| theChoice.equalsIgnoreCase("Left")) {
-			widget.setZoomBehavior(theAxis, NeoWidgetI.CONSTRAIN_START);
+			widget.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_START);
 				}
 		else if (theChoice.equalsIgnoreCase("Center")
 				|| theChoice.equalsIgnoreCase("Middle")) {
-			widget.setZoomBehavior(theAxis, NeoWidgetI.CONSTRAIN_MIDDLE);
+			widget.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_MIDDLE);
 				}
 		else if (theChoice.equalsIgnoreCase("Bottom")
 				|| theChoice.equalsIgnoreCase("Right")) {
-			widget.setZoomBehavior(theAxis, NeoWidgetI.CONSTRAIN_END);
+			widget.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_END);
 				}
 	}
 
@@ -204,7 +204,7 @@ public class NeoWidgetCustomizer
 		}
 
 		// Scrolling
-		int id = widget.getScrollIncrementBehavior(NeoWidgetI.X);
+		int id = widget.getScrollIncrementBehavior(NeoAbstractWidget.X);
 		scrollingIncrBehavior.setState(NeoWidget.AUTO_SCROLL_INCREMENT == id);
 
 		// Selection is set in super.setObject().
@@ -213,19 +213,19 @@ public class NeoWidgetCustomizer
 		this.bandingBehavior.setState(widget.getRubberBandBehavior());
 
 		// Zoom
-		int zoomBehavior = widget.getZoomBehavior(NeoWidgetI.X);
+		int zoomBehavior = widget.getZoomBehavior(NeoAbstractWidget.X);
 		switch (zoomBehavior) {
-			case NeoWidgetI.CONSTRAIN_START:
+			case NeoAbstractWidget.CONSTRAIN_START:
 				zoomingXChoice.addItem("Left");
 				zoomingXChoice.addItem("Center");
 				zoomingXChoice.addItem("Right");
 				break;
-			case NeoWidgetI.CONSTRAIN_MIDDLE:
+			case NeoAbstractWidget.CONSTRAIN_MIDDLE:
 				zoomingXChoice.addItem("Center");
 				zoomingXChoice.addItem("Left");
 				zoomingXChoice.addItem("Right");
 				break;
-			case NeoWidgetI.CONSTRAIN_END:
+			case NeoAbstractWidget.CONSTRAIN_END:
 				zoomingXChoice.addItem("Right");
 				zoomingXChoice.addItem("Center");
 				zoomingXChoice.addItem("Left");
@@ -236,19 +236,19 @@ public class NeoWidgetCustomizer
 				zoomingXChoice.addItem("Right");
 				break;
 		}
-		zoomBehavior = widget.getZoomBehavior(NeoWidgetI.Y);
+		zoomBehavior = widget.getZoomBehavior(NeoAbstractWidget.Y);
 		switch (zoomBehavior) {
-			case NeoWidgetI.CONSTRAIN_START:
+			case NeoAbstractWidget.CONSTRAIN_START:
 				zoomingYChoice.addItem("Top");
 				zoomingYChoice.addItem("Middle");
 				zoomingYChoice.addItem("Bottom");
 				break;
-			case NeoWidgetI.CONSTRAIN_MIDDLE:
+			case NeoAbstractWidget.CONSTRAIN_MIDDLE:
 				zoomingYChoice.addItem("Middle");
 				zoomingYChoice.addItem("Top");
 				zoomingYChoice.addItem("Bottom");
 				break;
-			case NeoWidgetI.CONSTRAIN_END:
+			case NeoAbstractWidget.CONSTRAIN_END:
 				zoomingYChoice.addItem("Bottom");
 				zoomingYChoice.addItem("Middle");
 				zoomingYChoice.addItem("Top");

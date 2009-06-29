@@ -27,7 +27,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import com.affymetrix.genoviz.bioviews.Glyph;
@@ -355,7 +355,7 @@ public class SeqMapView extends JPanel
             resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
             NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
             label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
-            label_map.setReshapeBehavior(NeoWidgetI.Y, NeoConstants.NONE);
+            label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
         } else {
             resultSeqMap = new AffyTieredMap(internalXScroller, internalYScroller);
         }
@@ -370,8 +370,8 @@ public class SeqMapView extends JPanel
 
         seqmap = createSeqMap(split_win, label_tiermap, INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
 
-        seqmap.setReshapeBehavior(NeoWidgetI.X, NeoConstants.NONE);
-        seqmap.setReshapeBehavior(NeoWidgetI.Y, NeoConstants.NONE);
+        seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
+        seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 
         seqmap.addComponentListener(new SeqMapViewComponentListener());
 
@@ -2293,8 +2293,8 @@ public class SeqMapView extends JPanel
         //    double start = (int)cbox.x;
         //    double start = start_coord;
 
-        seqmap.zoom(NeoWidgetI.X, pix_per_coord);
-        seqmap.scroll(NeoWidgetI.X, start_coord);
+        seqmap.zoom(NeoAbstractWidget.X, pix_per_coord);
+        seqmap.scroll(NeoAbstractWidget.X, start_coord);
 
         if (map_auto_scroller == null) {
             map_auto_scroller = new ActionListener() {
@@ -2306,7 +2306,7 @@ public class SeqMapView extends JPanel
                     //	    if ((scrollpos + vbox.width) > (mbox.x + mbox.width))  {
                     if ((scrollpos + vbox.width) > end_coord) {
                         if (cycle) {
-                            seqmap.scroll(NeoWidgetI.X, start_coord);
+                            seqmap.scroll(NeoAbstractWidget.X, start_coord);
                             seqmap.updateWidget();
                         } else {
                             // end of sequence reached, so stop scrolling
@@ -2315,7 +2315,7 @@ public class SeqMapView extends JPanel
                             map_auto_scroller = null;
                         }
                     } else {
-                        seqmap.scroll(NeoWidgetI.X, scrollpos);
+                        seqmap.scroll(NeoAbstractWidget.X, scrollpos);
                         seqmap.updateWidget();
                     }
                 }
@@ -2346,9 +2346,9 @@ public class SeqMapView extends JPanel
         double coord_width = smax - smin;
         double pixel_width = seqmap.getView().getPixelBox().width;
         double pixels_per_coord = pixel_width / coord_width; // can be Infinity, but the Math.min() takes care of that
-        pixels_per_coord = Math.min(pixels_per_coord, seqmap.getMaxZoom(NeoWidgetI.X));
-        seqmap.zoom(NeoWidgetI.X, pixels_per_coord);
-        seqmap.scroll(NeoWidgetI.X, smin);
+        pixels_per_coord = Math.min(pixels_per_coord, seqmap.getMaxZoom(NeoAbstractWidget.X));
+        seqmap.zoom(NeoAbstractWidget.X, pixels_per_coord);
+        seqmap.scroll(NeoAbstractWidget.X, smin);
         seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (smin + smax) / 2);
         seqmap.updateWidget();
     }
@@ -2395,11 +2395,11 @@ public class SeqMapView extends JPanel
     private void zoomToRectangle(Rectangle2D.Double rect) {
         if (rect != null) {
             double desired_width = Math.min(rect.width * 1.1f, aseq.getLength() * 1.0f);
-            seqmap.zoom(NeoWidgetI.X, Math.min(
+            seqmap.zoom(NeoAbstractWidget.X, Math.min(
                     seqmap.getView().getPixelBox().width / desired_width,
-                    seqmap.getMaxZoom(NeoWidgetI.X)));
-            seqmap.scroll(NeoWidgetI.X, -(seqmap.getVisibleRange()[0]));
-            seqmap.scroll(NeoWidgetI.X, (rect.x - rect.width * 0.05));
+                    seqmap.getMaxZoom(NeoAbstractWidget.X)));
+            seqmap.scroll(NeoAbstractWidget.X, -(seqmap.getVisibleRange()[0]));
+            seqmap.scroll(NeoAbstractWidget.X, (rect.x - rect.width * 0.05));
             seqmap.setZoomBehavior(AffyTieredMap.X, AffyTieredMap.CONSTRAIN_COORD, (rect.x + rect.width / 2));
             seqmap.setZoomBehavior(AffyTieredMap.Y, AffyTieredMap.CONSTRAIN_COORD, (rect.y + rect.height / 2));
             seqmap.updateWidget();

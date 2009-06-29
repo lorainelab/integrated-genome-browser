@@ -18,12 +18,12 @@ import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.Vector;
 
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.geom.Point2D;
 
 /**
  * A mouse event occurring over a NeoWidget.
- * (Actually anything implementing {@link NeoWidgetI}.)
+ * (Actually anything implementing {@link NeoAbstractWidget}.)
  * NeoMouseEvent provides methods for querying
  * the widget coordinates and widget location of a mouse event.
  * Also for retrieving glyphs under the event's coordinates.
@@ -115,8 +115,8 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 	public Vector getItems() {
 		if (cached_items == null) {
 			Object src = getSource();
-			if (! (src instanceof NeoWidgetI)) { return null; }
-			cached_items = ((NeoWidgetI)src).getItems(getCoordX(), getCoordY(), getLocation());
+			if (! (src instanceof NeoAbstractWidget)) { return null; }
+			cached_items = ((NeoAbstractWidget)src).getItems(getCoordX(), getCoordY(), getLocation());
 		}
 		return cached_items;
 	}

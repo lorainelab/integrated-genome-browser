@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -29,7 +29,7 @@ import javax.swing.event.ChangeEvent;
 public final class PercentThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
-  NeoWidgetI widg;
+  NeoAbstractWidget widg;
   JSlider min_percent_slider;
   JSlider max_percent_slider;
   JTextField min_perT;
@@ -69,7 +69,7 @@ public final class PercentThresholder extends JPanel
   float prev_max;
   float slider_label_offset = 50.0f;
 
-  static PercentThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
+  static PercentThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoAbstractWidget widg) {
     //    PercentThresholder thresher = new PercentThresholder(sgg, widg);
     PercentThresholder thresher = new PercentThresholder(widg);
     List<SmartGraphGlyph> glist = new ArrayList<SmartGraphGlyph>();
@@ -93,7 +93,7 @@ public final class PercentThresholder extends JPanel
     return thresher;
   }
 
-  public PercentThresholder(NeoWidgetI w) {
+  public PercentThresholder(NeoAbstractWidget w) {
     super();
     widg = w;
     float current_max_percent = 100;

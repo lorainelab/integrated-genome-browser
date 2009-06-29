@@ -38,7 +38,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 /**
- * Abstract implementation of NeoWidgetI.
+ * Abstract implementation of NeoAbstractWidget.
  * NeoWidget is abstract -- currently does not implement at least:<ul>
  * <li> addItem(obj, obj);
  * <li> configure(str);
@@ -47,7 +47,7 @@ import java.awt.geom.Rectangle2D;
  * <li> configure(obj, hash);
  * <li> removeItem(obj);
  * </ul>
- * @see NeoWidgetI
+ * @see NeoAbstractWidget
  * for more documentation on methods.
  *
  * @version $Id$
@@ -183,7 +183,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	/* These are the methods that have NOT been moved from NeoMap
 	 * into NeoWidget for one reason or another, yet are still
-	 * spec'ed in the NeoWidgetI.
+	 * spec'ed in the NeoAbstractWidget.
 	 */
 	public void stretchToFit(boolean xstretch, boolean ystretch) {
 		System.out.println("NeoWidget.stretchToFit() not yet implemented");
@@ -234,7 +234,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * This method should be overridden
 	 * by subclasses supporting layout configuration.
 	 *
-	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#configureLayout
+	 * @see com.affymetrix.genoviz.widget.NeoAbstractWidget#configureLayout
 	 */
 	public void configureLayout(int component, int placement) {
 		return;
@@ -246,7 +246,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * by subclasses supporting placement options.
 	 *
 	 * @return PLACEMENT_NONE
-	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#getPlacement
+	 * @see com.affymetrix.genoviz.widget.NeoAbstractWidget#getPlacement
 	 */
 	public int getPlacement(int component) {
 		return PLACEMENT_NONE;
@@ -348,7 +348,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * A fuzz factor, in pixels, is added around the point.
 	 *
 	 * @return the overlapping glyphs
-	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#setPixelFuzziness
+	 * @see com.affymetrix.genoviz.widget.NeoAbstractWidget#setPixelFuzziness
 	 */
 	public Vector<GlyphI> getItems(double x, double y) {
 		Rectangle2D.Double coordrect = new Rectangle2D.Double(x, y, 1, 1);
@@ -367,9 +367,9 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 
-	public NeoWidgetI getWidget(int location) { return this; }
+	public NeoAbstractWidget getWidget(int location) { return this; }
 
-	public NeoWidgetI getWidget(GlyphI gl) {
+	public NeoAbstractWidget getWidget(GlyphI gl) {
 		if (gl.getScene() == this.scene) { return this; }
 		return null;
 	}
@@ -792,7 +792,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	/**
 	 * adds an object to the selection.
-	 * @see com.affymetrix.genoviz.widget.NeoWidgetI#select
+	 * @see com.affymetrix.genoviz.widget.NeoAbstractWidget#select
 	 */
 	public void select(GlyphI g) {
 		scene.select(g);

@@ -17,7 +17,7 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -62,7 +62,7 @@ public final class GraphScoreThreshSetter extends JPanel
 //  boolean thresh_is_min = true;
 	private List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
 	//private Map flipped_hash = new HashMap();
-	private NeoWidgetI widg;
+	private NeoAbstractWidget widg;
 	private GraphVisibleBoundsSetter per_info_provider;
 	private MaxGapThresholder max_gap_thresher;
 	private MinRunThresholder min_run_thresher;

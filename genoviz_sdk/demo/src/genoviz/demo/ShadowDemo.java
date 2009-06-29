@@ -350,7 +350,7 @@ public class ShadowDemo extends Applet
 
 
 		shadowRect.getCoordBox().x = newShadowLoc;
-		mapview.setZoomBehavior ( NeoWidgetI.X, NeoWidgetI.CONSTRAIN_COORD,
+		mapview.setZoomBehavior ( NeoAbstractWidget.X, NeoAbstractWidget.CONSTRAIN_COORD,
 				mouseCurrentLoc - mouse_offset );
 		// Update the new "base" of the mouse location
 

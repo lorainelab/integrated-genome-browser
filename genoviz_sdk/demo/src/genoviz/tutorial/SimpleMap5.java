@@ -15,7 +15,7 @@ package genoviz.tutorial;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.parser.*;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 
 import java.applet.Applet;
 import java.awt.BorderLayout;
@@ -45,7 +45,7 @@ public class SimpleMap5 extends Applet {
 		this.pan.removeAll();
 		this.pan.invalidate();
 		try {
-			NeoWidgetI widget = (NeoWidgetI) parser.importContent
+			NeoAbstractWidget widget = (NeoAbstractWidget) parser.importContent
 				(new StringReader(theString));
 			this.pan.add( "Center", (Component) widget );
 			this.pan.validate();

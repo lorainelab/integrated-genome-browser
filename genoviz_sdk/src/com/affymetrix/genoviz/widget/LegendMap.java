@@ -92,7 +92,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 		MapTierGlyph mtg = evt.getTier();
 		int type = evt.getType();
 
-		if ( getReshapeBehavior(NeoWidgetI.Y) != map_to_track.getReshapeBehavior(NeoWidgetI.Y) )  {
+		if ( getReshapeBehavior(NeoAbstractWidget.Y) != map_to_track.getReshapeBehavior(NeoAbstractWidget.Y) )  {
 			throw new RuntimeException ( "TieredLabelMap and LabelMap do not have the same reshape behavior." );
 		}
 

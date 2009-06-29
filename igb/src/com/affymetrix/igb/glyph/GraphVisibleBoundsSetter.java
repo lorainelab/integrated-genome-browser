@@ -27,7 +27,7 @@ import javax.swing.event.ChangeEvent;
 import java.text.DecimalFormat;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genoviz.widget.NeoWidgetI;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import java.text.ParseException;
 
@@ -36,7 +36,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 
 	private static DecimalFormat val_format;
 	private static DecimalFormat per_format;
-	private NeoWidgetI widg;
+	private NeoAbstractWidget widg;
 	private JSlider min_percent_slider;
 	private JSlider max_percent_slider;
 	private JSlider min_val_slider;
@@ -116,7 +116,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private boolean show_min_and_max = false;
 	private boolean includePercentileControls = true;
 
-	static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoWidgetI widg) {
+	static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
 		//    GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(sgg, widg);
 		GraphVisibleBoundsSetter thresher = new GraphVisibleBoundsSetter(widg);
 		List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
@@ -141,11 +141,11 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		return thresher;
 	}
 
-	public GraphVisibleBoundsSetter(NeoWidgetI w) {
+	public GraphVisibleBoundsSetter(NeoAbstractWidget w) {
 		this(w, true);
 	}
 
-	private GraphVisibleBoundsSetter(NeoWidgetI w, boolean includePercentileControls) {
+	private GraphVisibleBoundsSetter(NeoAbstractWidget w, boolean includePercentileControls) {
 		super();
 		this.includePercentileControls = includePercentileControls;
 

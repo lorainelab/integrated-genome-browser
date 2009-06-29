@@ -953,7 +953,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * @param color the color of the annotation.
 	 * @return       a tag to associate with the annotation for later reference
 	 *
-	 * @see NeoWidgetI#getColor
+	 * @see NeoAbstractWidget#getColor
 	 */
 	public GlyphI addAnnotation(int start, int end, Color color) {
 		return getResidueGlyph().addAnnotation(start, end, color);
@@ -1224,7 +1224,7 @@ public class NeoSeq extends NeoContainerWidget
 		return;
 	}
 
-	public int getLocation(NeoWidgetI widg) {
+	public int getLocation(NeoAbstractWidget widg) {
 		if (widg == residue_map) {
 			return RESIDUES;
 		}
@@ -1235,7 +1235,7 @@ public class NeoSeq extends NeoContainerWidget
 				"widget is located at neither RESIDUES or NUMBERS.");
 	}
 
-	public NeoWidgetI getWidget(int location) {
+	public NeoAbstractWidget getWidget(int location) {
 		if (location == RESIDUES) {
 			return residue_map;
 		}

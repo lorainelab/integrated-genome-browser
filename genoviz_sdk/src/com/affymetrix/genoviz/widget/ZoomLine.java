@@ -62,7 +62,7 @@ public class ZoomLine implements NeoWidgetListener {
 				Enumeration clients = ZoomLine.this.maps.keys();
 				while ( clients.hasMoreElements() ) {
 					Object o = clients.nextElement();
-					NeoWidgetI w = ( NeoWidgetI ) o;
+					NeoAbstractWidget w = ( NeoAbstractWidget ) o;
 					w.setZoomBehavior( NeoMap.X, NeoMap.CONSTRAIN_COORD, midPoint );
 					w.updateWidget();
 				}

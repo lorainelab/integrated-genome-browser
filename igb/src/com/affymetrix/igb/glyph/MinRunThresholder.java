@@ -33,7 +33,7 @@ public final class MinRunThresholder extends JPanel
   static int frm_height = 200;
   //  SmartGraphGlyph sgg;
   List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
-  NeoWidgetI widg;
+  NeoAbstractWidget widg;
   JSlider tslider;
   JTextField minrunTF;
   int default_thresh_min = 0;
@@ -49,7 +49,7 @@ public final class MinRunThresholder extends JPanel
   int tf_min_ypix = 20;
   int tf_max_ypix = 25;
 
-  static MinRunThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoWidgetI widg) {
+  static MinRunThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoAbstractWidget widg) {
     MinRunThresholder dthresher = new MinRunThresholder(sgg, widg);
     JFrame frm = new JFrame("Graph MinRun Threshold Control");
     Container cpane = frm.getContentPane();
@@ -68,12 +68,12 @@ public final class MinRunThresholder extends JPanel
     return dthresher;
   }
 
-  public MinRunThresholder(SmartGraphGlyph gl, NeoWidgetI w) {
+  public MinRunThresholder(SmartGraphGlyph gl, NeoAbstractWidget w) {
     this(w);
     setGraph(gl);
   }
 
-  public MinRunThresholder(NeoWidgetI w) {
+  public MinRunThresholder(NeoAbstractWidget w) {
     widg = w;
 
     tslider = new JSlider(JSlider.HORIZONTAL);

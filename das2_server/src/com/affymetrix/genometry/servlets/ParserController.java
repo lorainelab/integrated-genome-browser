@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *  Trying to make a central repository for parsers.

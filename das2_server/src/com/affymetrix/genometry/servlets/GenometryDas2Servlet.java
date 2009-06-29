@@ -37,7 +37,7 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
-import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genometryImpl.util.Timer;
 
 
 

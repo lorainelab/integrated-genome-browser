@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D;
  * See SceneI for better documentation of methods.
  */
 public class Scene implements SceneI  {
-	private static final boolean DEBUG_EVENTS = false;
+	//private static final boolean DEBUG_EVENTS = false;
 	private static final boolean debug = false;
 
 	protected GlyphI eveGlyph;
@@ -87,10 +87,11 @@ public class Scene implements SceneI  {
 	 * @param glyph the new RootGlyph
 	 */
 	public void setGlyph(GlyphI glyph) {
-		eveGlyph = glyph;
 		if (glyph == null) {
+			eveGlyph = new RootGlyph();
 			return;
 		}
+		eveGlyph = glyph;
 		eveGlyph.setScene(this);
 		maxDamage();
 	}
@@ -154,26 +155,13 @@ public class Scene implements SceneI  {
 		return views;
 	}
 
-	/*  Styles not yet implemented
-		public void setStyle(StyleI style) {
-		this.style = style;
-		}
-		*/
-
-	/*  Styles not yet implemented
-		public StyleI getStyle()  {
-		return style;
-		}
-		*/
 
 	/**
 	 * Draws all views on all canvases.
 	 */
 	public void draw()  {
-		int i = 0;
-		while (i < views.size())  {
-			(views.elementAt(i)).draw();
-			i++;
+		for (ViewI view : views) {
+			view.draw();
 		}
 		clearDamage();
 	}
@@ -190,15 +178,11 @@ public class Scene implements SceneI  {
 	 * Draw one canvas.
 	 */
 	public void draw(Component c, Graphics2D g)  {
-		ViewI view;
-		int i = 0;
-		while (i < views.size())  {
-			view = views.elementAt(i);
+		for (ViewI view : views) {
 			if (view.getComponent() == c)  {
 				view.setGraphics (g);
 				view.draw();
 			}
-			i++;
 		}
 		// This will cause problems when trying to do damage control across
 		// views on multiple canvases!!!  11-17-97

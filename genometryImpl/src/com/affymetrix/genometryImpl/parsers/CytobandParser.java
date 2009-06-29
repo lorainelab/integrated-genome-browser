@@ -149,7 +149,7 @@ public final class CytobandParser implements AnnotationWriter  {
 	public static final String BAND_STALK = "stalk";
 	public static final String BAND_ACEN = "acen";
 
-	public static float parseScore(String s) {
+	private static float parseScore(String s) {
 		if ("gneg".equals(s)) {
 			return GNEG_SCORE;
 		} else if ("gvar".equals(s)) {

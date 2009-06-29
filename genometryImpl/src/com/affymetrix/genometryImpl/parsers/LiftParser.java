@@ -128,7 +128,7 @@ public final class LiftParser {
 					comp = new SimpleSymWithProps();
 					((SimpleSymWithProps) comp).setProperty("method", "contigs");
 					if (SET_COMPOSITION) {
-						((CompositeBioSeq) chrom).setComposition(comp);
+						chrom.setComposition(comp);
 					}
 					if (annotate_seq) {
 						chrom.addAnnotation(comp);
@@ -145,10 +145,7 @@ public final class LiftParser {
 			SingletonGenometryModel.logDebug("reached end of lift file");
 		}
 
-		Collection<SmartAnnotBioSeq> chroms = seq_group.getSeqList();
-		Iterator iter = chroms.iterator();
-		while (iter.hasNext()) {
-			CompositeBioSeq chrom = (CompositeBioSeq) iter.next();
+		for (CompositeBioSeq chrom : seq_group.getSeqList()) {
 			MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();
 			if (comp != null && SET_COMPOSITION) {
 				SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);

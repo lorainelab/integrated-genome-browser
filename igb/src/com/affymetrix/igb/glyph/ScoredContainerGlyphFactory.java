@@ -13,6 +13,18 @@
 
 package com.affymetrix.igb.glyph;
 
+
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
+import java.util.*;
+
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.DerivedSeqSymmetry;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.util.SeqUtils;
+
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSym;
@@ -20,22 +32,16 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import java.util.*;
-
-import com.affymetrix.genoviz.bioviews.*;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
-
-import com.affymetrix.igb.tiers.*;
-import com.affymetrix.genometryImpl.util.FloatList;
-import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.genometryImpl.util.IntList;
+import com.affymetrix.genometryImpl.util.FloatList;
+
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.geom.Rectangle2D;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
@@ -73,15 +79,16 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
     if (DEBUG)  { System.out.println("&&&&& exiting ScoredContainerGlyphFactory"); }
   }
   
-  public void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map)  {
-    
+  private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map)  {
     AnnotatedBioSeq aseq = smv.getAnnotatedSeq();
     if (DEBUG)  { System.out.println("   creating graphs on seq: " + aseq.getID()); }
-    BioSeq vseq = smv.getViewSeq();
-    AffyTieredMap map = smv.getSeqMap();
     if (original_container.getSpan(aseq) == null) {
       return;
     }
+
+		BioSeq vseq = smv.getViewSeq();
+    AffyTieredMap map = smv.getSeqMap();
+    
     GraphIntervalSym[] the_graph_syms = null;
     DerivedSeqSymmetry derived_sym = null;
     AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
@@ -93,49 +100,20 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
       the_graph_syms = makeGraphs(original_container, seq_group);
     }
     Rectangle2D.Double cbox = map.getCoordBounds();
-    for (int q=0; q<the_graph_syms.length; q++) {
-      GraphIntervalSym gis = the_graph_syms[q];
-      
-      SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis, gis.getGraphState());
-      graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
-      GraphStateI gstate = graph_glyph.getGraphState();
-      
-      IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
-      graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-      
-      map.setDataModelFromOriginalSym(graph_glyph, gis); // has side-effect of graph_glyph.setInfo(graf)
-      
-      // Allow floating glyphs ONLY when combo style is null.
-      // (Combo graphs cannot yet float.)
-      if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
-        graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-        GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
-        smv.getPixelFloaterGlyph().addChild(graph_glyph);
-      } else {
-        if (gstate.getComboStyle() != null) {
-          tier_style = gstate.getComboStyle();
-        }
-        int tier_direction = TierGlyph.DIRECTION_FORWARD;
-        if (GraphSym.GRAPH_STRAND_MINUS.equals(gis.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-          tier_direction = TierGlyph.DIRECTION_REVERSE;
-        }
-        TierGlyph tglyph = smv.getGraphTier(tier_style, tier_direction);
-        tglyph.addChild(graph_glyph);
-        tglyph.pack(map.getView());
-      }
+		
+		for (GraphIntervalSym gis : the_graph_syms) {
+			displayGraphSym(gis, cbox, map, smv);
     }
     
     if (update_map) {
       map.packTiers(false, true, false);
       map.stretchToFit(false, false);
-    }
-    if (update_map) {
       map.updateWidget();
     }
     return;
   }
   
-  static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
+  private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
     int score_count = container.getScoreCount();
     ArrayList<GraphIntervalSym> results = null;
     if (separate_by_strand) {
@@ -166,7 +144,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   }
   
   
-  public static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym, 
+  private static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym,
       AnnotatedSeqGroup seq_group, BioSeq seq) {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
     
@@ -202,7 +180,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   
   // strands should be one of '+', '-' or '.'
   // name -- should be a score name in the original ScoredContainerSym
-  static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name, 
+  private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
       AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent.getOriginalSymmetry();
     
@@ -259,4 +237,32 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
     }
     return gsym;
   }
+
+
+	private static void displayGraphSym(GraphIntervalSym gis, Double cbox, AffyTieredMap map, SeqMapView smv) {
+		SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis, gis.getGraphState());
+		graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
+		GraphStateI gstate = graph_glyph.getGraphState();
+		IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
+		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
+		map.setDataModelFromOriginalSym(graph_glyph, gis); // has side-effect of graph_glyph.setInfo(graf)
+		// Allow floating glyphs ONLY when combo style is null.
+		// (Combo graphs cannot yet float.)
+		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
+			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
+			GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
+			smv.getPixelFloaterGlyph().addChild(graph_glyph);
+		} else {
+			if (gstate.getComboStyle() != null) {
+				tier_style = gstate.getComboStyle();
+			}
+			int tier_direction = TierGlyph.DIRECTION_FORWARD;
+			if (GraphSym.GRAPH_STRAND_MINUS.equals(gis.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+				tier_direction = TierGlyph.DIRECTION_REVERSE;
+			}
+			TierGlyph tglyph = smv.getGraphTier(tier_style, tier_direction);
+			tglyph.addChild(graph_glyph);
+			tglyph.pack(map.getView());
+		}
+	}
 }

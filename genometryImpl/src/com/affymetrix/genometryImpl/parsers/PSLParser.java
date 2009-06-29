@@ -100,7 +100,9 @@ public final class PSLParser implements AnnotationWriter  {
 			boolean annotate_query, boolean annotate_target, boolean annotate_other)
 		throws IOException {
 
-		System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
+		if (DEBUG) {
+			System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
+		}
 		ArrayList<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 
 		// Make temporary seq groups for any unspecified group.

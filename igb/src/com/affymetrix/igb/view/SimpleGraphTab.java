@@ -12,34 +12,37 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.util.ErrorHandler;
+
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.igb.Application;
+
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.style.*;
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
+import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.genometryImpl.style.GraphStateI;
-import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
-import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
 import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;
 import com.affymetrix.genometryImpl.util.FloatTransformer.LogTransform;
+
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
+import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
+import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -338,7 +341,6 @@ public final class SimpleGraphTab extends JPanel
 		boolean all_show_label = false;
 		boolean any_are_combined = false; // are any selections inside a combined tier
 		boolean all_are_combined = false; // are all selections inside (a) combined tier(s)
-		boolean any_are_not_combined = false; // are any selections not inside a combined tier
 		boolean all_are_smart_glyphs = false; // all implement SmartGraphGlyph
 
 		// Take the first glyph in the list as a prototype
@@ -358,7 +360,6 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
 			any_are_combined = this_one_is_combined;
 			all_are_combined = this_one_is_combined;
-			any_are_not_combined = !this_one_is_combined;
 			all_are_smart_glyphs = (first_glyph instanceof SmartGraphGlyph);
 		}
 
@@ -371,8 +372,7 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
 			any_are_combined = any_are_combined || this_one_is_combined;
 			all_are_combined = all_are_combined && this_one_is_combined;
-			any_are_not_combined = any_are_not_combined || !this_one_is_combined;
-			all_are_smart_glyphs = all_are_smart_glyphs && (first_glyph instanceof SmartGraphGlyph);
+			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof SmartGraphGlyph);
 
 			if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
 				graph_style = -1;
@@ -460,7 +460,7 @@ public final class SimpleGraphTab extends JPanel
 		//combineB.setSelected(all_are_combined);
 		//splitB.setSelected(any_are_not_combined);
 
-		combineB.setEnabled(any_are_not_combined && grafs.size() >= 2);
+		combineB.setEnabled(!all_are_combined && grafs.size() >= 2);
 		splitB.setEnabled(any_are_combined);
 		addB.setEnabled(grafs.size() == 2);
 		subB.setEnabled(grafs.size() == 2);

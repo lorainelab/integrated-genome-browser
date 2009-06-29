@@ -239,7 +239,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>das2_server/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genoviz_sdk/src:genometry/src:genometryImpl/src</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometry/src:genometryImpl/src</classpath>
                 <built-to>dist/das2server.jar</built-to>
                 <javadoc-built-to>documentation/api-docs</javadoc-built-to>
                 <source-level>1.5</source-level>
@@ -251,7 +251,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>genometryImpl/src</package-root>
-                <classpath mode="compile">genoviz_sdk/src:genometry/src</classpath>
+                <classpath mode="compile">genometry/src</classpath>
                 <built-to>dist/genometryImpl.jar</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

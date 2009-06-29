@@ -90,6 +90,7 @@
 			<fileset dir="${dist.dir}">
 				<include name="*.jar" />
 				<exclude name="igb.jar" />
+				<exclude name="genoviz.jar" />
 			</fileset>
 		</copy>
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" />

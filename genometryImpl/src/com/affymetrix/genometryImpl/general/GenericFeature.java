@@ -28,12 +28,7 @@ public final class GenericFeature {
 	 * @param gVersion
 	 */
 	public GenericFeature(String featureName, GenericVersion gVersion) {
-		this.featureName = featureName;
-		this.featureProps = null;
-		this.gVersion = gVersion;
-		this.visible = false;
-		this.loadStrategy = LoadStrategy.NO_LOAD;
-		this.LoadStatusMap = new HashMap<AnnotatedBioSeq, LoadStatus>();
+		this(featureName, null, gVersion);
 	}
 	
 	/**
@@ -45,9 +40,22 @@ public final class GenericFeature {
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
-		this.visible = false;
-		this.loadStrategy = LoadStrategy.NO_LOAD;
+		if (shouldAutoLoad(featureName)) {
+			this.visible = true;
+			this.loadStrategy = LoadStrategy.WHOLE;
+		} else {
+			this.visible = false;
+			this.loadStrategy = LoadStrategy.NO_LOAD;
+		}
 		this.LoadStatusMap = new HashMap<AnnotatedBioSeq, LoadStatus>();
+	}
+
+	/**
+	 * @param name name of feature
+	 * @return true if feature should be loaded automatically
+	 */
+	private static boolean shouldAutoLoad(String name) {
+		return (name.equalsIgnoreCase("__cytobands") || name.equalsIgnoreCase("refseq"));
 	}
 
 	@Override
@@ -63,7 +71,5 @@ public final class GenericFeature {
 		int lastSlash = this.featureName.lastIndexOf("/");
 		return this.featureName.substring(lastSlash + 1,featureName.length());
 
-	}
-
-	
+	}	
 }

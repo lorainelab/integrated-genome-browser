@@ -142,8 +142,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		// This cell is only editable if the feature isn't already fully loaded.
 		GenericFeature gFeature = features.get(row);
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
-		return ((serverType == ServerType.DAS || serverType == ServerType.DAS2) ||
-						(serverType == ServerType.QuickLoad && gFeature.loadStrategy != LoadStrategy.WHOLE));
+		return (gFeature.loadStrategy != LoadStrategy.WHOLE && serverType != ServerType.Unknown);
 	}
 
 	@Override
@@ -154,13 +153,10 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 
 		String valueString = value.toString();
 		GenericFeature gFeature = features.get(row);
-		ServerType serverType = gFeature.gVersion.gServer.serverType;
-
-		if (serverType == ServerType.QuickLoad) {
-			if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+	
+		if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
 				return;	// We can't change strategies once we've loaded the entire genome.
 			}
-		}
 		if (!gFeature.loadStrategy.toString().equals(valueString)) {
 			// strategy changed.  Update the feature object.
 			gFeature.loadStrategy = this.reverseLoadStrategyMap.get(valueString);

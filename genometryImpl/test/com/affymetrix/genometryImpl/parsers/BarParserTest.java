@@ -153,7 +153,7 @@ public class BarParserTest {
 			BarFileHeader h =BarParser.parseBarHeader(dis);
 			float exp_version =2.0f;
 			float version=h.version;
-			assertEquals(exp_version,version);
+			assertEquals(exp_version,version,0.001);
 			assertEquals(1,h.seq_count);
 			
 			int [] val_types=h.val_types;

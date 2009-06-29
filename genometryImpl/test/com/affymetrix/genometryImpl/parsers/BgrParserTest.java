@@ -6,38 +6,26 @@
 package com.affymetrix.genometryImpl.parsers;
 
 
-import com.affymetrix.genometryImpl.util.FloatList;
-
-import com.affymetrix.genometryImpl.util.IntList;
-
-import java.util.Map;
-
-import java.util.HashMap;
 
 
 
 import com.affymetrix.genometryImpl.GraphSym;
-
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.io.ByteArrayInputStream;
-
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
-import java.io.BufferedInputStream;
+
 import java.io.BufferedOutputStream;
+
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+
 import java.util.List;
 import org.junit.After;
 import org.junit.Before;
@@ -50,12 +38,8 @@ import static org.junit.Assert.*;
  */
 public class BgrParserTest {
 
-/**
-    public BgrParserTest() {
 
-    }
- * **/
-    
+/**
      @Test
      //Creates a Bgr format file
     public void CreateBgrFile() throws IOException {
@@ -86,7 +70,7 @@ public class BgrParserTest {
             BgrParser.writeBgrFormat(results.get(0), dos);
             dos.close();
          }
-
+**/
 
 
     @Before
@@ -114,22 +98,39 @@ public class BgrParserTest {
 		boolean ensure_unique_id = true;
 
 		GraphSymFloat gr0 =BgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
-        istr.close();
-        //List<GraphSym> results = SgrParser.parse(istr, stream_name, group, annot_seq, ensure_unique_id);
-
-		//assertEquals(1, results.size());
-		//GraphSym gr0 = results.get(0);
-
+    istr.close();
+        
 		assertEquals("16", gr0.getGraphSeq().getID());
 		assertEquals(2, gr0.getPointCount());
 		assertEquals(0.128646, gr0.getGraphYCoord(0), 0.01);
 		assertEquals(0.363933, gr0.getGraphYCoord(1), 0.01);
 		assertEquals(948026, gr0.getGraphXCoords()[1]);
+		assertEquals(948025,gr0.getGraphXCoords()[0]);
 
         
 		
        
     }
+		@Test
+		public void testwriteBgrFormat() throws Exception{
+			String string =
+							"16	948025	0.128646\n" +
+							"16	948026	0.363933\n";
+
+
+    InputStream istr = new ByteArrayInputStream(string.getBytes());
+
+		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
+		boolean annot_seq = true;
+		String stream_name = "test_file";
+		boolean ensure_unique_id = true;
+    List<GraphSym> results = SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		boolean result1 =BgrParser.writeBgrFormat(results.get(0),outstream);
+		assertEquals(true,result1);
+		
+    
+		}
 
 
  }

@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 
 /**

@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.util.Timer;
-import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class LiftParser {
 

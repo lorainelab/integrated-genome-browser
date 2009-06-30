@@ -406,13 +406,10 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 *        in Unibrow symhash (based on id hashing)
 		 */
 		if (featgroup != null) {
-			filter =
-							(feattype != null ||
-							((getGroupSymmetryForType(feattype, featgroup) == null) && (!seq_group.findSyms(featgroup).isEmpty())));
+			filter = getGroupSymmetryForType(feattype, featgroup) == null &&
+							!seq_group.findSyms(featgroup).isEmpty();
 		} else {
-			filter =
-							(feattype != null ||
-							(!seq_group.findSyms(featid).isEmpty()));
+			filter =	!seq_group.findSyms(featid).isEmpty();
 		}
 
 		if (filter) {
@@ -473,121 +470,132 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 			if (featgroup != null) {  // if there is a group id, add annotation to parent annotation
 
-				//    MutableSingletonSeqSymmetry parent_sym = null;
-				SingletonSymWithProps parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
-
-				if (parent_sym == null) {
-					groupcount++;
-					//        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
-					parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
-					if (featgroup_label != null && featgroup_label.trim().length() > 0) {
-						parent_sym.setProperty(DAS_GROUP_ID, featgroup);
-						parent_sym.setProperty("id", featgroup_label);
-					} else {
-						//parent_sym.setProperty("das_group_id", featgroup);
-						parent_sym.setProperty("id", featgroup);
-					}
-					if (feattype != null) {
-						parent_sym.setProperty("method", feattype);
-					}
-					putGroupSymmetryForType(feattype, featgroup, parent_sym);
-					seq_group.addToIndex(featgroup, parent_sym);
-					if (grandparent_sym != null) {
-						grandparent_sym.addChild(parent_sym);
-					} else {
-						aseq.addAnnotation(parent_sym);
-					}
-					result_syms.add(parent_sym);
-				} else {
-					SeqUtils.encompass((SeqSpan) parent_sym, (SeqSpan) current_sym, unionSpan);
-					parent_sym.set(unionSpan.getStart(), unionSpan.getEnd(), aseq);
-				}
-				parent_sym.addChild(current_sym);
-				if (feat_notes != null) {
-					for (String key : feat_notes.keySet()) {
-						current_sym.setProperty(key, feat_notes.get(key));
-					}
-				}
-				if (group_notes != null) {
-					for (String key : group_notes.keySet()) {
-						// for now, adding notes to parent instead of child...
-						parent_sym.setProperty(key, group_notes.get(key));
-					}
-				}
-				/*
-				if (featlink != null) {
-				//        System.out.println("setting link: " + featlink);
-				parent_sym.setProperty("link", featlink);
-				}
-				 */
-				if (featlink_urls.size() > 0) {
-					Object prev_links = parent_sym.getProperty("link");
-					Map<String, String> links_hash = null;
-					String prev_link = null;
-
-					if (prev_links instanceof String) {
-						prev_link = (String) prev_links;
-					} else if (prev_links instanceof Map) {
-						links_hash = (Map<String, String>) prev_links;
-					}
-					int linkcount = featlink_urls.size();
-					if (linkcount == 1 &&
-									((prev_links == null) ||
-									((prev_link != null) && prev_link.equals(featlink_urls.get(0))))) {
-						parent_sym.setProperty("link", featlink_urls.get(0));
-						if (featlink_names.size() > 0) {
-							parent_sym.setProperty("link_name", featlink_names.get(0));
-						} else {
-							parent_sym.setProperty("link_name", featlink_urls.get(0));
-						}
-					} else {
-						if (links_hash == null) {
-							links_hash = new HashMap<String, String>();
-							parent_sym.setProperty("link", links_hash);
-							if (prev_link != null) {
-								//                links_list.add(prev_link);
-								links_hash.put(prev_link, prev_link);
-							}
-						}
-						for (int i = 0; i < linkcount; i++) {
-							String linkurl = featlink_urls.get(i);
-							//              links_list.add(linkurl);
-							String linkname = featlink_names.get(i);
-							links_hash.put(linkname, linkurl);
-						}
-					}
-				}
+				addAnnotToParent(grandparent_sym);
 			} else {  // if no group id, then no parent sym
 				//  so add annotation directly to AnnotatedBioSeq
 				//  (or "grandparent" container sym if MAKE_TYPE_CONTAINER_SYM
-				seq_group.addToIndex(featid, current_sym);
-				//        if (featlink != null) { current_sym.setProperty("link", featlink); }
-				for (String linkurl : featlink_urls) {
-						current_sym.setProperty("link", linkurl);
-					}
-				if (feat_label != null && feat_label.trim().length() > 0) {
-					if (featid != null) {
-						//            System.out.println("featid: " + featid);
-						current_sym.setProperty(DAS_FEATURE_ID, featid);
-					}
-					current_sym.setProperty("id", feat_label);
-				} else if (featid != null) {
-					//parent_sym.setProperty("das_group_id", featgroup);
-					current_sym.setProperty("id", featid);
-				}
-				if (feattype != null) {
-					current_sym.setProperty("method", feattype);
-				}
-				if (grandparent_sym != null) {
-					grandparent_sym.addChild(current_sym);
-				} else {
-					aseq.addAnnotation(current_sym);
-				}
-				result_syms.add(current_sym);
+				addAnnotToBioSeq(grandparent_sym);
 			}
 		}
 
 	}
+
+	private void addAnnotToParent(SimpleSymWithProps grandparent_sym) {
+		// if there is a group id, add annotation to parent annotation
+		//    MutableSingletonSeqSymmetry parent_sym = null;
+		SingletonSymWithProps parent_sym = (SingletonSymWithProps) getGroupSymmetryForType(feattype, featgroup);
+		if (parent_sym == null) {
+			groupcount++;
+			//        parent_sym = new MutableSingletonSeqSymmetry(current_sym.getStart(), current_sym.getEnd(), aseq);
+			parent_sym = new SingletonSymWithProps(current_sym.getStart(), current_sym.getEnd(), aseq);
+			if (featgroup_label != null && featgroup_label.trim().length() > 0) {
+				parent_sym.setProperty(DAS_GROUP_ID, featgroup);
+				parent_sym.setProperty("id", featgroup_label);
+			} else {
+				//parent_sym.setProperty("das_group_id", featgroup);
+				parent_sym.setProperty("id", featgroup);
+			}
+			if (feattype != null) {
+				parent_sym.setProperty("method", feattype);
+			}
+			putGroupSymmetryForType(feattype, featgroup, parent_sym);
+			seq_group.addToIndex(featgroup, parent_sym);
+			if (grandparent_sym != null) {
+				grandparent_sym.addChild(parent_sym);
+			} else {
+				aseq.addAnnotation(parent_sym);
+			}
+			result_syms.add(parent_sym);
+		} else {
+			SeqUtils.encompass((SeqSpan) parent_sym, (SeqSpan) current_sym, unionSpan);
+			parent_sym.set(unionSpan.getStart(), unionSpan.getEnd(), aseq);
+		}
+		parent_sym.addChild(current_sym);
+		if (feat_notes != null) {
+			for (String key : feat_notes.keySet()) {
+				current_sym.setProperty(key, feat_notes.get(key));
+			}
+		}
+		if (group_notes != null) {
+			for (String key : group_notes.keySet()) {
+				// for now, adding notes to parent instead of child...
+				parent_sym.setProperty(key, group_notes.get(key));
+			}
+		}
+		/*
+		if (featlink != null) {
+		//        System.out.println("setting link: " + featlink);
+		parent_sym.setProperty("link", featlink);
+		}
+		 */
+		if (featlink_urls.size() > 0) {
+			Object prev_links = parent_sym.getProperty("link");
+			Map<String, String> links_hash = null;
+			String prev_link = null;
+			if (prev_links instanceof String) {
+				prev_link = (String) prev_links;
+			} else if (prev_links instanceof Map) {
+				links_hash = (Map<String, String>) prev_links;
+			}
+			int linkcount = featlink_urls.size();
+			if (linkcount == 1 && ((prev_links == null) || ((prev_link != null) && prev_link.equals(featlink_urls.get(0))))) {
+				parent_sym.setProperty("link", featlink_urls.get(0));
+				if (featlink_names.size() > 0) {
+					parent_sym.setProperty("link_name", featlink_names.get(0));
+				} else {
+					parent_sym.setProperty("link_name", featlink_urls.get(0));
+				}
+			} else {
+				if (links_hash == null) {
+					links_hash = new HashMap<String, String>();
+					parent_sym.setProperty("link", links_hash);
+					if (prev_link != null) {
+						//                links_list.add(prev_link);
+						links_hash.put(prev_link, prev_link);
+					}
+				}
+				for (int i = 0; i < linkcount; i++) {
+					String linkurl = featlink_urls.get(i);
+					//              links_list.add(linkurl);
+					String linkname = featlink_names.get(i);
+					links_hash.put(linkname, linkurl);
+				}
+			}
+		}
+	}
+
+
+	private void addAnnotToBioSeq(SimpleSymWithProps grandparent_sym) {
+		// if no group id, then no parent sym
+		//  so add annotation directly to AnnotatedBioSeq
+		//  (or "grandparent" container sym if MAKE_TYPE_CONTAINER_SYM
+		seq_group.addToIndex(featid, current_sym);
+		//        if (featlink != null) { current_sym.setProperty("link", featlink); }
+		for (String linkurl : featlink_urls) {
+			current_sym.setProperty("link", linkurl);
+		}
+		if (feat_label != null && feat_label.trim().length() > 0) {
+			if (featid != null) {
+				//            System.out.println("featid: " + featid);
+				current_sym.setProperty(DAS_FEATURE_ID, featid);
+			}
+			current_sym.setProperty("id", feat_label);
+		} else if (featid != null) {
+			//parent_sym.setProperty("das_group_id", featgroup);
+			current_sym.setProperty("id", featid);
+		}
+		if (feattype != null) {
+			current_sym.setProperty("method", feattype);
+		}
+		if (grandparent_sym != null) {
+			grandparent_sym.addChild(current_sym);
+		} else {
+			aseq.addAnnotation(current_sym);
+		}
+		result_syms.add(current_sym);
+	}
+
+	
 
 	/*
 	 *  According to SAX2 spec, parsers can split up character content any
@@ -872,4 +880,5 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 		return success;
 	}
+
 }

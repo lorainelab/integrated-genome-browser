@@ -86,9 +86,8 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	static final String LINK = "LINK";
 	static final String NOTE = "NOTE";
 	SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-	boolean MAKE_TYPE_CONTAINER_SYM = true;
+	//boolean MAKE_TYPE_CONTAINER_SYM = true;
 	boolean READER_DOES_INTERNING = false;
-	boolean FILTER_OUT_BY_ID = true;
 
 	// Whether to keep the content of the <NOTE> elements.
 	// <NOTE>s that have a "key=value" structure are always kept, but this
@@ -137,27 +136,27 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		//    filter_hash.put("estOrientInfo", "estOrientInfo");
 	}
 
-	public Das1FeatureSaxParser(boolean make_container_syms) {
+	/*public Das1FeatureSaxParser(boolean make_container_syms) {
 		this();
 		MAKE_TYPE_CONTAINER_SYM = make_container_syms;
-	}
+	}*/
 
 	/**  Sets whether or not to try to prevent duplicate annotations by using
 	 *      the Unibrow.getSymHash() global symmetry hash.  If symmetry already
 	 *      in symhash has same id (key to symhash) then don't add new annotation.
 	 *  @param filter_out_by_id
 	 */
-	public void setFilterOutById(boolean filter_out_by_id) {
+	/*public void setFilterOutById(boolean filter_out_by_id) {
 		FILTER_OUT_BY_ID = filter_out_by_id;
-	}
+	}*/
 
-	public void addFeatureFilter(String feat_str) {
+	/*public void addFeatureFilter(String feat_str) {
 		filter_hash.put(feat_str, feat_str);
-	}
+	}*/
 
-	public void removeFeatureFilter(String feat_str) {
+	/*public void removeFeatureFilter(String feat_str) {
 		filter_hash.remove(feat_str);
-	}
+	}*/
 
 	public List parse(InputStream istr, AnnotatedSeqGroup seq_group)
 					throws IOException {
@@ -408,12 +407,12 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 */
 		if (featgroup != null) {
 			filter =
-							(((feattype != null) && (filter_hash.get(feattype) != null)) ||
-							(FILTER_OUT_BY_ID && (getGroupSymmetryForType(feattype, featgroup) == null) && (!seq_group.findSyms(featgroup).isEmpty())));
+							(feattype != null ||
+							((getGroupSymmetryForType(feattype, featgroup) == null) && (!seq_group.findSyms(featgroup).isEmpty())));
 		} else {
 			filter =
-							(((feattype != null) && (filter_hash.get(feattype) != null)) ||
-							(FILTER_OUT_BY_ID && (!seq_group.findSyms(featid).isEmpty())));
+							(feattype != null ||
+							(!seq_group.findSyms(featid).isEmpty()));
 		}
 
 		if (filter) {
@@ -453,7 +452,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 			//    SymWithProps grandparent_sym = null;
 			SimpleSymWithProps grandparent_sym = null;
-			if (feattype != null && MAKE_TYPE_CONTAINER_SYM) {
+			if (feattype != null) {
 				grandparent_sym = (SimpleSymWithProps) typehash.get(feattype);
 				if (grandparent_sym == null) {
 					//        grandparent_sym =
@@ -493,7 +492,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					}
 					putGroupSymmetryForType(feattype, featgroup, parent_sym);
 					seq_group.addToIndex(featgroup, parent_sym);
-					if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) {
+					if (grandparent_sym != null) {
 						grandparent_sym.addChild(parent_sym);
 					} else {
 						aseq.addAnnotation(parent_sym);
@@ -579,7 +578,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				if (feattype != null) {
 					current_sym.setProperty("method", feattype);
 				}
-				if (MAKE_TYPE_CONTAINER_SYM && (grandparent_sym != null)) {
+				if (grandparent_sym != null) {
 					grandparent_sym.addChild(current_sym);
 				} else {
 					aseq.addAnnotation(current_sym);

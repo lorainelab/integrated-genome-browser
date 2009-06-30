@@ -13,10 +13,6 @@
 
 package com.affymetrix.genometryImpl.das2;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -26,28 +22,23 @@ import java.util.List;
 public final class Das2RequestLog {
 
 	boolean ECHO_LOG_TO_SYS_OUT = true;
-	private List<String> status_strings = new ArrayList<String>();
+	//private List<String> status_strings = new ArrayList<String>();
 
 	boolean success = false;
-	Exception exception = null;
-	int httpResponseCode;
-	String httpResponseMsg;
+	//Exception exception = null;
+	//int httpResponseCode;
+	//String httpResponseMsg;
 
-	public Das2RequestLog() {
-	}
 
 	/** Gets any Exception that was stored by {@link #setException(Exception)}. */
-	public Exception getException() {
+	/*public Exception getException() {
 		return this.exception;
-	}
+	}*/
 
-	public void setException(Exception exception) {
+	/*public void setException(Exception exception) {
 		this.exception = exception;
-		addLogMessage("Exception occurred at this point: " + exception.toString());
-		if (ECHO_LOG_TO_SYS_OUT) {
-			exception.printStackTrace(System.out);
-		}
-	}
+		exception.printStackTrace(System.out);
+	}*/
 
 	/** Returns the value that was stored by {@link #setSuccess(boolean)}. */
 	public boolean getSuccess() {
@@ -59,31 +50,31 @@ public final class Das2RequestLog {
 	}
 
 	/** Returns the value that was stored by {@link #setHttpResponse(int,String)}. */
-	public int getHttpResponseCode() {
+	/*public int getHttpResponseCode() {
 		return httpResponseCode;
-	}
+	}*/
 
 	/** Returns the message that was stored by {@link #setHttpResponse(int,String)}. */
-	public String getHttpResponseMsg() {
+	/*public String getHttpResponseMsg() {
 		return httpResponseMsg;
-	}
+	}*/
 
-	public void setHttpResponse(int code, String msg) {
+	/*public void setHttpResponse(int code, String msg) {
 		httpResponseCode = code;
 		httpResponseMsg = msg;
-	}
+	}*/
 
 	/** Adds a message string to a log.  May also echo that String to System.out,
 	 *  depending on the flat {@link #ECHO_LOG_TO_SYS_OUT}.
 	 */
-	public void addLogMessage(String s) {
-		status_strings.add(s);
+	/*public void addLogMessage(String s) {
+		//status_strings.add(s);
 		if (ECHO_LOG_TO_SYS_OUT) {
 			System.out.println(s);
 		}
-	}
+	}*/
 
-	public void printLogMessages(PrintStream stream) {
+	/*public void printLogMessages(PrintStream stream) {
 		Iterator iter = status_strings.iterator();
 		while (iter.hasNext()) {
 			String s = (String) iter.next();
@@ -93,5 +84,5 @@ public final class Das2RequestLog {
 			System.out.println("And there was an exception!");
 			exception.printStackTrace(stream);
 		}
-	}
+	}*/
 }

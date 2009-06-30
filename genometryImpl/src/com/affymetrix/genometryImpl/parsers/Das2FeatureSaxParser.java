@@ -637,7 +637,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  writes out annotations in DAS/2 feature XML, but wraps them in a <WRITEBACK> element?
 	 */
-	public boolean writeBackAnnotations(java.util.Collection syms, BioSeq seq, String type, OutputStream outstream) {
+	/*public boolean writeBackAnnotations(java.util.Collection syms, BioSeq seq, String type, OutputStream outstream) {
 		//  does not use seq arg, but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
 		boolean success = true;
@@ -669,7 +669,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			GeneralUtils.safeClose(pw);
 		}
 		return success;
-	}
+	}*/
 
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
@@ -932,11 +932,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	String rng = seqrng.substring(sindex + 1);
 	return getLocationSpan(seqid, rng, group);
 	}*/
-	public static String getLocationSeqId(String seqrng) {
+	/*public static String getLocationSeqId(String seqrng) {
 		int sindex = seqrng.lastIndexOf("/");
 		String seqid = seqrng.substring(0, sindex);
 		return seqid;
-	}
+	}*/
 
 	/**
 	 *  A temporary hack.

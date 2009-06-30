@@ -208,7 +208,7 @@ public final class UrlToFileName {
   /**
    *  a main() for testing purposes
    */
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     String test_urls[] = null;
     if (args.length > 0) {  test_urls = args; }
     else { test_urls = default_test_urls; }
@@ -219,7 +219,7 @@ public final class UrlToFileName {
       System.out.println("encode(url):          " + encode(test_url));;
       System.out.println("decode(encode(url)):  " + decode(encode(test_url)));
     }
-  }
+  }*/
 
 
 

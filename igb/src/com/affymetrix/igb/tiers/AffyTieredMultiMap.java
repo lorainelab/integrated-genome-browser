@@ -483,7 +483,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   /**
    *  Main for testing.
    */
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     AffyTieredMultiMap map = new AffyTieredMultiMap();
 
     map.setMapRange(0, 10000);
@@ -529,6 +529,6 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
       }
     } );
     frm.setVisible(true);
-  }
+  }*/
 
 }

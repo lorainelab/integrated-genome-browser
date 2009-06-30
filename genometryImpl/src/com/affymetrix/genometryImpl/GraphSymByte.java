@@ -32,9 +32,9 @@ public final class GraphSymByte extends GraphSym {
 	 *  @param x an array of int, or null.
 	 *  @param y must be an array of int of same length as x, or null if x is null.
 	 */
-	public void setCoords(int[] x, Object y) {
+	/*public void setCoords(int[] x, Object y) {
 		setCoords(x, (byte[]) y);
-	}
+	}*/
 
 	/**
 	 *  Sets the x and y coordinates.

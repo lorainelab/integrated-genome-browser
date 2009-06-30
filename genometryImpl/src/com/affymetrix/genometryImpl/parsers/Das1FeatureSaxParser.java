@@ -658,7 +658,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		prev_chars = true;
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		//boolean use_viewer = true;
 		Das1FeatureSaxParser test = new Das1FeatureSaxParser();
 		try {
@@ -687,7 +687,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
+	}*/
 
 // trying to parse integers without having to make lots 'o new Strings...
 //

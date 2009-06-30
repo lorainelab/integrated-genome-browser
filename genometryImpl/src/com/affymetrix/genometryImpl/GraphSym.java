@@ -62,7 +62,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		this.gid = id;
 	}
 
-	public abstract void setCoords(int[] x, Object y);
+	//public abstract void setCoords(int[] x, Object y);
 
 	public void lockID() {
 		setLockID(true);

@@ -114,11 +114,11 @@ public final class TableSorter2 extends AbstractTableModel {
     setTableModel(tableModel);
   }
   
-  public TableSorter2(TableModel tableModel, JTableHeader tableHeader) {
+  /*public TableSorter2(TableModel tableModel, JTableHeader tableHeader) {
     this();
     setTableHeader(tableHeader);
     setTableModel(tableModel);
-  }
+  }*/
   
   private void clearSortingState() {
     viewToModel = null;

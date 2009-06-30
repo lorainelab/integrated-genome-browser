@@ -501,9 +501,9 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
    * false otherwise.
    * @deprecated use {@link #setSelected(boolean)} instead.
    */
-  public void select(boolean selected) {
+  /*public void select(boolean selected) {
     setSelected(selected);
-  }
+  }*/
 
   /**
    * Selects the glyph if it is selectable.

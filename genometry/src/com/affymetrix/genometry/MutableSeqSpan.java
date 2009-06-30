@@ -28,6 +28,6 @@ public interface MutableSeqSpan extends SeqSpan  {
 
 	public void setStartDouble(double start);
 	public void setEndDouble(double end);
-	public void setCoordsDouble(double start, double end);
+	//public void setCoordsDouble(double start, double end);
 	public void setDouble(double start, double end, BioSeq seq);
 }

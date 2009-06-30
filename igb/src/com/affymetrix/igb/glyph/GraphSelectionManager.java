@@ -154,12 +154,12 @@ public final class GraphSelectionManager
   /** A constructor to use if there is no SeqMapView.  Note that graph arithmetic
    *  operations will not be allowed in this case.
    */
-  public GraphSelectionManager(NeoAbstractWidget source) {
+  /*public GraphSelectionManager(NeoAbstractWidget source) {
     this();
     gviewer = null;
     current_source = source;
     frm = Application.getSingleton().getFrame();
-  }
+  }*/
 
   protected GraphSelectionManager() {
     popup = new JPopupMenu();

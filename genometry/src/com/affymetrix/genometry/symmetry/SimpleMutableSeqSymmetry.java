@@ -38,12 +38,12 @@ public class SimpleMutableSeqSymmetry extends SimpleSeqSymmetry implements Mutab
 		}
 	}
 
-	public void setSpan(int index, SeqSpan span) {
+	/*public void setSpan(int index, SeqSpan span) {
 		if (spans == null) {
 			spans = new ArrayList<SeqSpan>();
 		}
 		spans.set(index, span);
-	}
+	}*/
 
 	public void addChild(SeqSymmetry sym) {
 		if (children == null) {

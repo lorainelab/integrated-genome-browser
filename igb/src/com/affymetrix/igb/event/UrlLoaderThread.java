@@ -43,7 +43,7 @@ public final class UrlLoaderThread extends Thread {
   /** A convenience method that makes it easier to get an instance for loading
    *  a <i>single</i> URL.  For loading multiple URLs, use the main constructor.
    */
-  public static UrlLoaderThread getUrlLoaderThread(SeqMapView smv, URL das_url, String file_extension, String tier_name) {
+  /*public static UrlLoaderThread getUrlLoaderThread(SeqMapView smv, URL das_url, String file_extension, String tier_name) {
     URL[] das_urls = new URL[1];
     das_urls[0] = das_url;
     String[] tier_names = null;
@@ -51,7 +51,7 @@ public final class UrlLoaderThread extends Thread {
     String[] file_extensions = null;
     if (file_extensions != null) {file_extensions = new String[] {file_extension};}
     return new UrlLoaderThread(smv, das_urls, file_extensions, tier_names);
-  }
+  }*/
 
   /**
    *  Creates a thread that can be used to load data.

@@ -104,12 +104,12 @@ public final class Das2ServerInfo  {
 	 *  If multiple sources in this server have the same name, then this method will only 
 	 *     return one of the sources that match
 	 */
-	public Das2Source getSource(String id) {
+	/*public Das2Source getSource(String id) {
 		if (!initialized) { initialize(); }
 		Das2Source source = sources.get(id);
 		if (source == null) { source = name2source.get(id); }
 		return source;
-	}
+	}*/
 
 	/**
 	 *  getVersionedSource()
@@ -145,7 +145,7 @@ public final class Das2ServerInfo  {
 		return results;
 	}
 
-	public Das2VersionedSource getVersionedSource(String version_id) {
+	/*public Das2VersionedSource getVersionedSource(String version_id) {
 		Iterator siter = this.getSources().values().iterator();
 		while (siter.hasNext()) {
 			Das2Source source = (Das2Source)siter.next();
@@ -155,10 +155,10 @@ public final class Das2ServerInfo  {
 			}
 		}
 		return null;
-	}
+	}*/
         
         // Determine the version of the Das2Server.  If there are problems retrieving this, just return null.
-        public static Das2VersionedSource GetDas2Version(String server_url, String source_id, String version_id,
+        /*public static Das2VersionedSource GetDas2Version(String server_url, String source_id, String version_id,
           String default_server_url, String default_source_url, String default_version_uri) {
             Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
             if (server == null) {
@@ -199,7 +199,7 @@ public final class Das2ServerInfo  {
                 }
             }
             return version;
-        }
+        }*/
 
 
 //	public String getDescription() { return description; }
@@ -431,12 +431,12 @@ public final class Das2ServerInfo  {
 				//		System.out.println("$$$$ Coordinates URI: " + coords_uri);
 				}
 			}
-			Das2VersionedSource vsource;
+			/*Das2VersionedSource vsource;
 			if (caps.get(Das2WritebackVersionedSource.WRITEBACK_CAP_QUERY) != null) {
 				vsource = new Das2WritebackVersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
-			} else {
-				vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
-			}
+			} else {*/
+				Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
+			//}
 			Iterator<Das2Capability> capiter = caps.values().iterator();
 			while (capiter.hasNext()) {
 				Das2Capability cap = capiter.next();

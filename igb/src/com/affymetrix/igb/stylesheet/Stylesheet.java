@@ -51,9 +51,9 @@ public final class Stylesheet implements Cloneable, XmlAppender {
   public Stylesheet() {
   }
 
-  public void importFromURL(String url) {
+  /*public void importFromURL(String url) {
     throw new RuntimeException("import not implemented");
-  }
+  }*/
 
   public StyleElement getStyleByName(String name) {
     return stylename2styleElement.get(name);
@@ -83,7 +83,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     }
   }
 
-  public static StyleElement easyClone(StyleElement original) {
+  /*public static StyleElement easyClone(StyleElement original) {
     try {
       StyleElement cloned = (StyleElement) original.clone();
       return cloned;
@@ -91,7 +91,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
       // Never happens !
       throw new RuntimeException(e);
     }
-  }
+  }*/
 
   /**
    *  Tries to find a styleElement for the given seq symmetry.

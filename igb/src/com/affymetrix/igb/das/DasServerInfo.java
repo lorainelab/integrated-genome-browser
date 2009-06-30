@@ -75,12 +75,12 @@ public final class DasServerInfo {
 		return capabilities;
 	}
 
-	public String getCapability(String cap) {
+	/*public String getCapability(String cap) {
 		if (!initialized) {
 			initialize();
 		}
 		return capabilities.get(cap);
-	}
+	}*/
 
 	public Map<String, DasSource> getDataSources() {
 		if (!initialized) {
@@ -101,8 +101,8 @@ public final class DasServerInfo {
 		sources.put(ds.getID(), ds);
 	}
 
-	protected void setDescription(String desc) {
-	}
+	/*protected void setDescription(String desc) {
+	}*/
 
 	/**
 	 * Return true if successfully initialized.

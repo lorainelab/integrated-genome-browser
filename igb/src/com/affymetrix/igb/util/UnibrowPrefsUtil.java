@@ -383,7 +383,7 @@ import javax.swing.*;
 
  
 
-  public static String getLocation(String name, String default_value) {
+  /*public static String getLocation(String name, String default_value) {
 
     if (name == null) {return null;}
     String str = getLocationsNode().get(name, null);
@@ -397,7 +397,7 @@ import javax.swing.*;
     }
 
     return str;
-  }
+  }*/
 
 
   /** Returns the location of the application data directory.
@@ -423,7 +423,7 @@ import javax.swing.*;
   /** Will issue a stern warning message the first time a BackingStoreException
    *  is passed to this method, but will be silent about all future ones.
    */
-  public static void handleBSE(Component parent, BackingStoreException bse) {
+  /*public static void handleBSE(Component parent, BackingStoreException bse) {
     if (bse_already_warned_once) {
       return;
     } else {
@@ -435,7 +435,7 @@ import javax.swing.*;
       bse_already_warned_once = true;
     }
     System.out.println("BackingStoreException: "+bse.getMessage());
-  }
+  }*/
 
   /**
    *  Stores a color preference, encoded as a String.
@@ -466,9 +466,9 @@ import javax.swing.*;
     return result;
   }
 
-  public static JCheckBox createCheckBox(String title, final String pref_name, boolean default_val) {
+  /*public static JCheckBox createCheckBox(String title, final String pref_name, boolean default_val) {
     return createCheckBox(title, getTopNode(), pref_name, default_val);
-  }
+  }*/
 
   /**
    *  Creates a JCheckBox associated with a boolean preference.

@@ -120,14 +120,14 @@ public final class Bookmark implements Serializable {
     if (DEBUG) System.out.println("Finished parsing");
   }
   
-  public static final String IGB_GRAPHS_PRAGMA = "##IGB-graphs ";
+  /*public static final String IGB_GRAPHS_PRAGMA = "##IGB-graphs ";
   
   public static void parseIGBGraphsPragma(Map<String,String[]> map, String line, boolean use_url_decoding) {
     if (line.startsWith(IGB_GRAPHS_PRAGMA)) {
       String graph_props = line.substring(IGB_GRAPHS_PRAGMA.length());
       parseParametersFromQuery(map, graph_props, use_url_decoding);
     }
-  }
+  }*/
   
   /**
    *  Adds a key->value mapping to a map where the key will map to

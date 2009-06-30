@@ -17,7 +17,7 @@ public interface MutableSeqSymmetry extends SeqSymmetry  {
 
 	public void addSpan(SeqSpan span);
 	public void removeSpan(SeqSpan span);
-	public void setSpan(int index, SeqSpan span);
+	//public void setSpan(int index, SeqSpan span);
 
 	public void addChild(SeqSymmetry sym);
 	public void removeChild(SeqSymmetry sym);

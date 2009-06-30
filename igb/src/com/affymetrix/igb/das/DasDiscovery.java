@@ -54,17 +54,17 @@ public final class DasDiscovery {
   /** Forget about all known DAS servers. Next call to getDasServers will
    *  re-generate a list based on persistent Preferences.
    */
-  public static void reset() {
+  /*public static void reset() {
     // note: there is no need-to re-get the list from the QuickLoad server, since
     // everything added that way, or any other way, will have become persistent.
     das_servers = null;
-  }
+  }*/
 
   /**
    *  Reads a tab-formatted list of DAS servers and adds the servers to
    *  the persistent list of known servers.
    */
-  public static void addServersFromTabFile(String server_loc_list) throws IOException {
+  /*public static void addServersFromTabFile(String server_loc_list) throws IOException {
     // System.out.println("------------ Adding servers from tab format file :"+server_loc_list);
     InputStream is = null;
     BufferedReader br = null;
@@ -88,7 +88,7 @@ public final class DasDiscovery {
       try {br.close();} catch (Exception ioe) {}
       try {is.close();} catch (Exception ioe) {}
     }
-  }
+  }*/
 
   /*public static Preferences getPreferencesNode() {
     return UnibrowPrefsUtil.getTopNode().node("DAS Servers");

@@ -58,11 +58,11 @@ public final class Das2Type {
   public String getDerivation() { return derivation; }  // source attribute, but getSource() clashes with getVersionedSource();
   public String getInfoUrl() { return info_url; }
   public Map<String, String> getProps() { return props; }
-  public String getProperty(String key) { 
+  /*public String getProperty(String key) {
     String val = null;
     if (props != null) { val = props.get(key); }
     return val;
-  }
+  }*/
   public Map getFormats() { return formats; }
   //  public Map getParents() { return parents; }
 }

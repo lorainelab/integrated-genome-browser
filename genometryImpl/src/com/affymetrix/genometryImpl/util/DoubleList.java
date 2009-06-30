@@ -41,14 +41,14 @@ public final class DoubleList {
 		this(10);
 	}
 
-	public void trimToSize() {
+	/*public void trimToSize() {
 		int oldCapacity = primData.length;
 		if (size < oldCapacity) {
 			double oldData[] = primData;
 			primData = new double[size];
 			System.arraycopy(oldData, 0, primData, 0, size);
 		}
-	}
+	}*/
 
 	public void ensureCapacity(int minCapacity) {
 		int oldCapacity = primData.length;
@@ -84,11 +84,11 @@ public final class DoubleList {
 			}
 		}
 
-	public double[] copyToArray() {
+	/*public double[] copyToArray() {
 		double[] result = new double[size];
 		System.arraycopy(primData, 0, result, 0, size);
 		return result;
-	}
+	}*/
 
 	// WARNING -- this array may be bigger than 
 	//    this.size(), and any entries beyond this.doubleData[size()-1] are 
@@ -117,7 +117,7 @@ public final class DoubleList {
 		return true;
 	}
 
-	public void add(int index, double val) {
+	/*public void add(int index, double val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -126,10 +126,10 @@ public final class DoubleList {
 		System.arraycopy(primData, index, primData, index + 1, size - index);
 		primData[index] = val;
 		size++;
-	}
+	}*/
 
 	// returns value that was removed
-	public double remove(int index) {
+	/*public double remove(int index) {
 		double oldValue = primData[index];
 
 		int numMoved = size - index - 1;
@@ -138,12 +138,12 @@ public final class DoubleList {
 		}
 		size--;
 		return oldValue;
-	}
+	}*/
 
-	public void clear() {
+	/*public void clear() {
 		//    for (int i = 0; i < size; i++)
 		//      primData[i] = 0;
 		size = 0;
-	}
+	}*/
 
 }

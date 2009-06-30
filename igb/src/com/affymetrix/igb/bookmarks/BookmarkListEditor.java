@@ -129,10 +129,10 @@ public final class BookmarkListEditor {
    *  For example, returns false if the BookmarkList represents a separator
    *  because there isn't any meaningful way to edit a separator.
    */
-  public boolean canEdit(BookmarkList bl) {
+  /*public boolean canEdit(BookmarkList bl) {
     Object o = bl.getUserObject();
     return (o instanceof String || o instanceof Bookmark);
-  }
+  }*/
   
   public void openDialog(BookmarkList bl) {
     this.setBookmarkList(bl);

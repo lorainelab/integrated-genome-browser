@@ -44,7 +44,7 @@ public final class BookmarkIcon implements Icon {
 
     public static final BookmarkIcon UNIBROW_CONTROL_ICON = getRectangleIcon(6,6);
     public static final BookmarkIcon EXTERNAL_ICON = getDiamondIcon(6,6);
-    public static final BookmarkIcon SEPARATOR_ICON = getRectangleIcon(6,2);
+    //public static final BookmarkIcon SEPARATOR_ICON = getRectangleIcon(6,2);
     
     public static BookmarkIcon getRectangleIcon(int width, int height) {
       int[] x = {0, width, width, 0};
@@ -61,7 +61,7 @@ public final class BookmarkIcon implements Icon {
     /** Creates an Icon.
      *  @param style  {@link #UNIBROW_CONTROL} or {@link #EXTERNAL}
      */
-    public BookmarkIcon getBookmarkIcon(int style) {
+    /*public BookmarkIcon getBookmarkIcon(int style) {
         if (style == UNIBROW_CONTROL) {
           return UNIBROW_CONTROL_ICON;
         } else if (style == EXTERNAL) {
@@ -69,7 +69,7 @@ public final class BookmarkIcon implements Icon {
         } else { // style == SEPARATOR
           return SEPARATOR_ICON;
         }
-    }
+    }*/
 
     public int getIconHeight() {
         return height;

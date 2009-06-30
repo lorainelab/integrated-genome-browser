@@ -185,9 +185,9 @@ public final class TierLabelManager {
   }
   
   /** Gets the index of a given tier. Note that is a TierGlyph, not a TierLabelGlyph. */
-  public int getTierIndex(TierGlyph atier) {
+  /*public int getTierIndex(TierGlyph atier) {
     return tiermap.getTierIndex(atier);
-  }
+  }*/
   
   /** Restores multiple hidden tiers and then repacks.
    *  @param tier_labels  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
@@ -342,9 +342,9 @@ public final class TierLabelManager {
     popup_listeners.add(p);
   }
   
-  public void removePopupListener(PopupListener p) {
+  /*public void removePopupListener(PopupListener p) {
     popup_listeners.remove(p);
-  }
+  }*/
 
   /** Removes all elements from the popup, then notifies all {@link TierLabelManager.PopupListener}
    *  objects (which may add items to the menu), then displays the popup

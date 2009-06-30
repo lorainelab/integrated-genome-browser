@@ -186,7 +186,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
 
-  public static void report(String str, GraphState state, GraphGlyph graph_glyph) {
+  /*public static void report(String str, GraphState state, GraphGlyph graph_glyph) {
     if (DEBUG) {
       System.out.println(str + ": " +
 			 ", sheight = " + state.getTierStyle().getHeight() +
@@ -197,5 +197,5 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
 			 ", pointmin = " + graph_glyph.getGraphMinY() +
 			 ", pointmax = " + graph_glyph.getGraphMaxY());
     }
-  }
+  }*/
 }

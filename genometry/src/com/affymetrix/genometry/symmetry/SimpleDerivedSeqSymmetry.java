@@ -15,7 +15,6 @@ package com.affymetrix.genometry.symmetry;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
 
 public final class SimpleDerivedSeqSymmetry extends SimpleMutableSeqSymmetry 
 	implements DerivedSeqSymmetry  {
@@ -26,10 +25,10 @@ public final class SimpleDerivedSeqSymmetry extends SimpleMutableSeqSymmetry
 		super();
 	}
 
-	public SimpleDerivedSeqSymmetry(SeqSymmetry sym) {
+	/*public SimpleDerivedSeqSymmetry(SeqSymmetry sym) {
 		super();
 		SeqUtils.copyToDerived(sym, this);
-	}
+	}*/
 
 	public SeqSymmetry getOriginalSymmetry() {
 		return original_sym;

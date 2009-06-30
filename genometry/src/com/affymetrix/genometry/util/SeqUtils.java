@@ -257,11 +257,11 @@ public abstract class SeqUtils {
 		return resultSym;
 	}
 
-	public static final MutableSeqSymmetry union(List<SeqSymmetry> syms, BioSeq seq) {
+	/*public static final MutableSeqSymmetry union(List<SeqSymmetry> syms, BioSeq seq) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		union(syms, resultSym, seq);
 		return resultSym;
-	}
+	}*/
 
 	/**
 	 *  "Logical" OR of list of SeqSymmetries (relative to a particular BioSeq).
@@ -438,7 +438,7 @@ public abstract class SeqUtils {
 	}
 
 
-	public static final MutableSeqSymmetry flattenSymmetry(SeqSymmetry sym) {
+	/*public static final MutableSeqSymmetry flattenSymmetry(SeqSymmetry sym) {
 		List<SeqSymmetry> leafSyms = SeqUtils.getLeafSyms(sym);
 		MutableSeqSymmetry result = new SimpleMutableSeqSymmetry();
 		//  spans in result should be same as input
@@ -456,7 +456,7 @@ public abstract class SeqUtils {
 			result.addChild(child);
 		}
 		return result;
-	}
+	}*/
 
 
 	/**
@@ -1010,10 +1010,10 @@ public static final boolean contains(SeqSpan spanA, SeqSpan spanB) {
 			(spanA.getMaxDouble() >= spanB.getMaxDouble()) );
 }
 
-public static final boolean contains(SeqSpan spanA, double point) {
+/*public static final boolean contains(SeqSpan spanA, double point) {
 	return ((spanA.getMinDouble() <= point) &&
 			(spanA.getMaxDouble() >= point));
-}
+}*/
 
 
 /**
@@ -1108,11 +1108,11 @@ public static final boolean intersection(SeqSpan spanA, SeqSpan spanB, MutableSe
  *     new MutableSeqSpan creation -- to avoid, use union(span, span, mutspan) instead
  *
  */
-public static final SeqSpan union(SeqSpan spanA, SeqSpan spanB) {
+/*public static final SeqSpan union(SeqSpan spanA, SeqSpan spanB) {
 	return union(spanA, spanB, true);
-}
+}*/
 
-public static final SeqSpan union(SeqSpan spanA, SeqSpan spanB, boolean use_strict_overlap) {
+/*public static final SeqSpan union(SeqSpan spanA, SeqSpan spanB, boolean use_strict_overlap) {
 	//    MutableSeqSpan dstSpan = new SimpleMutableSeqSpan();
 	MutableSeqSpan dstSpan = new MutableDoubleSeqSpan();
 	if (union(spanA, spanB, dstSpan)) {
@@ -1121,7 +1121,7 @@ public static final SeqSpan union(SeqSpan spanA, SeqSpan spanB, boolean use_stri
 	else {
 		return null;
 	}
-}
+}*/
 
 
 
@@ -1141,9 +1141,9 @@ public static final SeqSpan union(SeqSpan spanA, SeqSpan spanB, boolean use_stri
  *    maybe make this a boolean arg to the method?
  *
  */
-public static final boolean union(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan) {
+/*public static final boolean union(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan dstSpan) {
 	return union(spanA, spanB, dstSpan, true);
-}
+}*/
 
 /**
  * Variant of making union of two spans,
@@ -1194,7 +1194,7 @@ public static final boolean union(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan d
  *  Performance issues:
  *    new MutableSeqSpan creation -- to avoid, use encompass(span, span, mutspan) instead
  */
-public static final SeqSpan encompass(SeqSpan spanA, SeqSpan spanB) {
+/*public static final SeqSpan encompass(SeqSpan spanA, SeqSpan spanB) {
 	MutableSeqSpan dstSpan = new MutableDoubleSeqSpan();
 	if (encompass(spanA, spanB, dstSpan)) {
 		return dstSpan;
@@ -1202,7 +1202,7 @@ public static final SeqSpan encompass(SeqSpan spanA, SeqSpan spanB) {
 	else {
 		return null;
 	}
-}
+}*/
 
 /**
  *  More efficient method to retrieve "encompass" of two spans.
@@ -1459,7 +1459,7 @@ private static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq, int 
 	return cbSpan;
 }
 
-public static final int[] collectCounts(AnnotatedBioSeq aseq) {
+/*public static final int[] collectCounts(AnnotatedBioSeq aseq) {
 	int annotCount = aseq.getAnnotationCount();
 	int[] countArray = {0, 0};
 	for (int i=0; i<annotCount; i++) {
@@ -1468,9 +1468,9 @@ public static final int[] collectCounts(AnnotatedBioSeq aseq) {
 		collectCounts(sym, countArray);
 	}
 	return countArray;
-}
+}*/
 
-private static final void collectCounts(SeqSymmetry sym, int[] countArray) {
+/*private static final void collectCounts(SeqSymmetry sym, int[] countArray) {
 	int spanCount = sym.getSpanCount();
 	countArray[1] += spanCount;
 	int childCount = sym.getChildCount();
@@ -1479,7 +1479,7 @@ private static final void collectCounts(SeqSymmetry sym, int[] countArray) {
 		SeqSymmetry child = sym.getChild(i);
 		collectCounts(child, countArray);
 	}
-}
+}*/
 
 public static final String getResidues(SeqSymmetry sym, BioSeq seq) {
 	String result = null;

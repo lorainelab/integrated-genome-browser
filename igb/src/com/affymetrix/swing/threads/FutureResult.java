@@ -111,7 +111,7 @@ public final class FutureResult {
    * @exception InvocationTargetException if the operation
    * producing the value encountered an exception.
    **/
-  public synchronized Object timedGet(long msecs) 
+  /*public synchronized Object timedGet(long msecs)
     throws TimeoutException, InterruptedException, InvocationTargetException {
     long startTime = (msecs <= 0)? 0 : System.currentTimeMillis();
     long waitTime = msecs;
@@ -128,7 +128,7 @@ public final class FutureResult {
         }
       }
     }
-  }
+  }*/
 
   /**
    * Set the reference, and signal that it is ready. It is not
@@ -177,9 +177,9 @@ public final class FutureResult {
    * Access the reference, even if not ready
    * @return current value
    **/
-  public synchronized Object peek() {
+  /*public synchronized Object peek() {
     return value_; 
-  }
+  }*/
 
 
   /**
@@ -189,11 +189,11 @@ public final class FutureResult {
    * when you know that no other object is depending on the
    * properties of this FutureResult.
    **/
-  public synchronized void clear() {
+  /*public synchronized void clear() {
     value_ = null;
     exception_ = null;
     ready_ = false;
-  }
+  }*/
 
 }
 

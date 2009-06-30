@@ -114,11 +114,11 @@ public final class IntList {
 	 *  Replaces value at index.
 	 *  Returns previous value at index.
 	 */
-	public int set(int index, int val) {
+	/*public int set(int index, int val) {
 		int oldValue = primData[index];
 		primData[index] = val;
 		return oldValue;
-	}
+	}*/
 
 	public boolean add(int i) {
 		ensureCapacity(size + 1); 
@@ -126,7 +126,7 @@ public final class IntList {
 		return true;
 	}
 
-	public void add(int index, int val) {
+	/*public void add(int index, int val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -136,10 +136,10 @@ public final class IntList {
 				size - index);
 		primData[index] = val;
 		size++;
-	}
+	}*/
 
 	// returns value that was removed
-	public int remove(int index) {
+	/*public int remove(int index) {
 		int oldValue = primData[index];
 
 		int numMoved = size - index - 1;
@@ -148,12 +148,12 @@ public final class IntList {
 		}
 		size--;
 		return oldValue;
-	}
+	}*/
 
-	public void clear() {
+	/*public void clear() {
 		//    for (int i = 0; i < size; i++)
 		//      primData[i] = 0;
 		size = 0;
-	}
+	}*/
 
 }

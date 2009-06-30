@@ -213,10 +213,10 @@ public final class MaxGapThresholder extends JPanel
     }
   }
 
-  public void deleteGraph(GraphGlyph gl) {
+  /*public void deleteGraph(GraphGlyph gl) {
     graphs.remove(gl);
     setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
-  }
+  }*/
 
   public void focusGained(FocusEvent e) {
   }

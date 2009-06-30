@@ -27,10 +27,10 @@ public final class SimplePairSeqSymmetry implements SeqSymmetry {
 	protected SeqSpan spanA;
 	protected SeqSpan spanB;
 
-	public SimplePairSeqSymmetry(List<SeqSpan> spans) {
+	/*public SimplePairSeqSymmetry(List<SeqSpan> spans) {
 		spanA = spans.get(0);
 		spanB = spans.get(1);
-	}
+	}*/
 
 	public SimplePairSeqSymmetry(SeqSpan spanA, SeqSpan spanB) {
 		this.spanA = spanA;

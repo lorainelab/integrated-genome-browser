@@ -91,11 +91,11 @@ public final class Das2Source {
    *  Return the Das2VersionedSource object for the DAS/2 versioned source
    *  Will return null if this Das2Source has no Das2VersionedSource with that id or name
    */
-  public synchronized Das2VersionedSource getVersion(String id) {
+  /*public synchronized Das2VersionedSource getVersion(String id) {
     Das2VersionedSource version = versions.get(id);
     if (version == null) { version = name2version.get(id); }
     return version;
-  }
+  }*/
 
   public synchronized void addVersion(Das2VersionedSource version) {
     versions.put(version.getID(), version);

@@ -292,9 +292,9 @@ public final class GraphSymUtils {
 	/**
 	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,AnnotatedSeqGroup)}.
 	 */
-	public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
+	/*public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
 		return AnnotatedSeqGroup.getUniqueGraphID(id, seq_group);
-	}
+	}*/
 
 	/**
 	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
@@ -431,7 +431,7 @@ public final class GraphSymUtils {
   dos.writeBytes(val);
   }*/
 
-	public static HashMap<String, String> readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
+	/*public static HashMap<String, String> readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
 		HashMap<String,String> tvpairs = new HashMap<String,String>(pair_count);
 		if (DEBUG_READ) { System.out.println("seq tagval count: " + pair_count); }
 		for (int i=0; i<pair_count; i++) {
@@ -450,7 +450,7 @@ public final class GraphSymUtils {
 			if (DEBUG_READ)  { System.out.println("    tag = " + tag + ", val = " + val); }
 		}
 		return tvpairs;
-	}
+	}*/
 
 	/**
 	 *  Calculate percentile rankings of graph values.

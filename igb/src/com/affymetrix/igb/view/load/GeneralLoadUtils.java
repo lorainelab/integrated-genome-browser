@@ -121,13 +121,13 @@ public final class GeneralLoadUtils {
 	}
 
 	//public boolean allow_reinitialization = true;
-	public void clear() {
+	/*public void clear() {
 		version2init.clear();
 		discoveredServers.clear();
 		species2genericVersionList.clear();
 		versionName2species.clear();
 		versionName2versionSet.clear();
-	}
+	}*/
 
 	public GeneralLoadUtils() {
 		this.gviewer = Application.getSingleton().getMapView();

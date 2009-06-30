@@ -105,11 +105,11 @@ public final class FloatList {
 
 	// replaces value at index
 	// returns previous value at index
-	public float set(int index, float val) {
+	/*public float set(int index, float val) {
 		float oldValue = primData[index];
 		primData[index] = val;
 		return oldValue;
-	}
+	}*/
 
 	public boolean add(float i) {
 		ensureCapacity(size + 1); 
@@ -117,7 +117,7 @@ public final class FloatList {
 		return true;
 	}
 
-	public void add(int index, float val) {
+	/*public void add(int index, float val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -127,10 +127,10 @@ public final class FloatList {
 				size - index);
 		primData[index] = val;
 		size++;
-	}
+	}*/
 
 	// returns value that was removed
-	public float remove(int index) {
+	/*public float remove(int index) {
 		float oldValue = primData[index];
 
 		int numMoved = size - index - 1;
@@ -139,12 +139,12 @@ public final class FloatList {
 		}
 		size--;
 		return oldValue;
-	}
+	}*/
 
-	public void clear() {
+	/*public void clear() {
 		//    for (int i = 0; i < size; i++)
 		//      primData[i] = 0;
 		size = 0;
-	}
+	}*/
 
 }

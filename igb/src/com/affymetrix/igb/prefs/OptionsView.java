@@ -176,9 +176,9 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
     }
   }
 
-  public void destroy() {
+  /*public void destroy() {
     removeAll();
-  }
+  }*/
 
   /** A main method for testing. */
   /*public static void main(String[] args) throws Exception {

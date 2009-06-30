@@ -35,7 +35,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
     
   // protected so that you are forced to use one of the provided constructors
-  protected BookmarkList() {
+  /*protected BookmarkList() {
   }
   
   protected BookmarkList(Object o) {
@@ -44,7 +44,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
 
   protected BookmarkList(Object o, boolean allows_children) {
     super(o, allows_children);
-  }
+  }*/
  
   public BookmarkList(String s) {
     super(s, true);
@@ -165,7 +165,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   }
 
   // not a public method.  Use printText(PrintStream)
-  void printTextRecursively(PrintStream out, String indent) {
+  private void printTextRecursively(PrintStream out, String indent) {
     out.println(indent+"Bookmark List: '"+this.toString()+"'  length: "+this.getChildCount());
     Enumeration e = children();
     while (e.hasMoreElements()) {
@@ -217,7 +217,7 @@ public final class BookmarkList extends DefaultMutableTreeNode {
    *  preserve the nested heirarchy.  The format matches the format
    *  used by earlier versions of Unibrow.
    */
-  public static void exportAsSimpleHTML(BookmarkList list, File fil) throws IOException {
+  /*public static void exportAsSimpleHTML(BookmarkList list, File fil) throws IOException {
     FileWriter fw = null;
     BufferedWriter bw = null;
     try {
@@ -239,10 +239,10 @@ public final class BookmarkList extends DefaultMutableTreeNode {
       if (bw != null) {bw.close();}
       if (fw != null) {fw.close();}
     }
-  }
+  }*/
 
-  // Not a public method.  Used by exportAsSimpleHTML
-  static void exportAsSimpleHTML_recursive(BookmarkList sub_list, Writer bw) throws IOException {
+  // Used by exportAsSimpleHTML
+  private static void exportAsSimpleHTML_recursive(BookmarkList sub_list, Writer bw) throws IOException {
     Enumeration e = sub_list.children();
     while (e.hasMoreElements()) {
       BookmarkList btn = (BookmarkList) e.nextElement();
@@ -261,8 +261,8 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     }
   }
   
-  // Not a public method.  Used by exportAsNetscapeHTML
-  static void exportAsNetscapeHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
+  // Used by exportAsNetscapeHTML
+  private static void exportAsNetscapeHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
     // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
     Enumeration e = list.children();
     int i=0;

@@ -161,11 +161,11 @@ public abstract class Application {
       frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
   }
 
-  public static void informPanel(String message) {
+  /*public static void informPanel(String message) {
     Application app = getSingleton();
     JFrame frame = (app==null) ? null : app.getFrame();
     JOptionPane.showMessageDialog(frame, message, "Inform", JOptionPane.INFORMATION_MESSAGE);
-  }
+  }*/
 
   public abstract Logger getLogger();
 

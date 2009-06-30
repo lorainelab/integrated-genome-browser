@@ -36,13 +36,13 @@ public final class Memer {
 	 * Checks memory and prints a message if the total memory usage has changed
 	 * since the last time this was called.
 	 */
-	public void checkMemory() {
+	/*public void checkMemory() {
 		currCheck = rt.totalMemory();
 		if (prevCheck != currCheck) {
 			printMemory();
 			prevCheck = currCheck;
 		}
-	}
+	}*/
 
 	/**
 	 * Refreshes this object's data from the Runtime.

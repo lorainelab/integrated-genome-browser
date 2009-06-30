@@ -25,12 +25,12 @@ public final class DNAUtils {
 	 * @param s a string of nucleotide codes.
 	 * @return the complementary codes.
 	 */
-	public static String complement(String s) {
+	/*public static String complement(String s) {
 		if (s == null)  { return null; }
 		StringBuffer buf = new StringBuffer(s);
 		DNAUtils.complementBuffer(buf);
 		return buf.toString();
-	}
+	}*/
 
 	/**
 	 * Determines the reverse complement of a sequence of nucleotides.
@@ -68,7 +68,7 @@ public final class DNAUtils {
 	 * @param sb  nucleotide codes.
 	 * @return the complementary codes in reverse order in a new String.
 	 */
-	public static String getReverseComplement(CharSequence sb) {
+	/*public static String getReverseComplement(CharSequence sb) {
 		if ( sb == null ) { return null; }
 		int length = sb.length();
 		char[] sbRC = new char[length];
@@ -78,7 +78,7 @@ public final class DNAUtils {
 		}
 
 		return new String(sbRC);
-	}
+	}*/
 
 
 
@@ -90,13 +90,13 @@ public final class DNAUtils {
 	 *            with its complementary code.
 	 * @see #complement
 	 */
-	protected static void complementBuffer(StringBuffer buf) {
+	/*protected static void complementBuffer(StringBuffer buf) {
 		char base;
 		for (int i=0; i<buf.length(); i++) {
 			base = buf.charAt(i);
 			buf.setCharAt(i, complementChar(base));
 		}
-	}
+	}*/
 
 	/**
 	 * Determines the (un-complemented) reverse of a sequence of nucleotides.
@@ -104,16 +104,16 @@ public final class DNAUtils {
 	 * @param s a string of nucleotide codes.
 	 * @return the codes in reverse order.
 	 */
-	public static String reverse(String s) {
+	/*public static String reverse(String s) {
 		if (s == null) { return null; }
 		StringBuffer buf = new StringBuffer(s.length());
 		for (int i=s.length()-1; i>=0; i--) {
 			buf.append(s.charAt(i));
 		}
 		return buf.toString();
-	}
+	}*/
 
-	public static char complementChar(char b) {
+	private static char complementChar(char b) {
 
 		switch (b) {
 			case 'A': return 'T';

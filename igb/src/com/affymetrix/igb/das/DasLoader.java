@@ -79,13 +79,13 @@ public abstract class DasLoader {
 	 *
 	 * Unknown if this is still needed, as we are no longer guaranteed to be using Xerces-j.
    */
-	public static void doNotDeferNodeExpansion(DocumentBuilderFactory factory) {
+	/*public static void doNotDeferNodeExpansion(DocumentBuilderFactory factory) {
 		try {
 			factory.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
   /** Opens an XML document, using {@link #nonValidatingFactory()}. */
   public static Document getDocument(String url)
@@ -129,7 +129,7 @@ public abstract class DasLoader {
    *  Returns a Map where keys are String labels and values are SeqSpan's.
    *  Looks for <gff><segment id="..."> where the id's are in the given seq_group.
    */
-  public static Map<String,SeqSpan> parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
+  /*public static Map<String,SeqSpan> parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
     if (DEBUG) System.out.println("========= Parsing term query");
     Map<String,SeqSpan> segment_hash = new HashMap<String,SeqSpan>();
 
@@ -167,7 +167,7 @@ public abstract class DasLoader {
       }
     }
     return segment_hash;
-  }
+  }*/
 
   /**
    *  Returns a List of String's which are the id's of the segments.

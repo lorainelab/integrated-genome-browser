@@ -50,9 +50,9 @@ public final class UniFileFilter extends FileFilter {
 		}
 	}
 
-	public UniFileFilter(String[] filters) {
+	/*public UniFileFilter(String[] filters) {
 		this(filters, null);
-	}
+	}*/
 
 	/**
 	 *  This is the full constructor.

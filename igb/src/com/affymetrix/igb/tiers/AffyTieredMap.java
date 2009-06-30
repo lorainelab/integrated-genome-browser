@@ -135,7 +135,7 @@ public class AffyTieredMap extends NeoMap {
 		tiers.insertElementAt(mtg, tier_index);
 	}
 
-	public TierGlyph getTier(String tier_name) {
+	/*public TierGlyph getTier(String tier_name) {
 		for (int i = 0; i < tiers.size(); i++) {
 			TierGlyph tgl = tiers.get(i);
 			if (tier_name.equals(tgl.getLabel())) {
@@ -143,7 +143,7 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 		return null;
-	}
+	}*/
 
 	/** Returns the index of the requested TierGlyph in the map,
 	 *  or -1 if it isn't included. The test is based on "==", not equals().
@@ -353,7 +353,7 @@ public class AffyTieredMap extends NeoMap {
 		tiers.removeElement(toRemove);
 	}
 
-	protected boolean hasFixedTier() {
+	/*protected boolean hasFixedTier() {
 		int tierCount = tiers.size();
 		for (int i = 0; i < tierCount; i++) {
 			TierGlyph mtg = tiers.elementAt(i);
@@ -365,7 +365,7 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 		return false;
-	}
+	}*/
 
 	@Override
 	public void stretchToFit(boolean fitx, boolean fity) {

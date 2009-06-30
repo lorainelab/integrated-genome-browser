@@ -22,10 +22,10 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	int base_coord;
 	int numeric_id;
 
-	public EfficientSnpSym(SeqSymmetry sym_parent, int coord, int nid) {
+	/*public EfficientSnpSym(SeqSymmetry sym_parent, int coord, int nid) {
 		this(sym_parent, coord);
 		numeric_id = nid;
-	}
+	}*/
 
 	public EfficientSnpSym(SeqSymmetry sym_parent, int coord) {
 		parent = sym_parent;

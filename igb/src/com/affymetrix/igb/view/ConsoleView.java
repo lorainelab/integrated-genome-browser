@@ -143,7 +143,7 @@ public final class ConsoleView {
    *  This sort of use of the code is allowed (even without attribution).
    *  See the preface of their book for details.
    */
-  private static class JTextAreaOutputStream extends OutputStream {
+  private static final class JTextAreaOutputStream extends OutputStream {
     JTextArea ta;
     PrintStream original;
     char[] temp_char_array = new char[1];

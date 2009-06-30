@@ -45,13 +45,13 @@ public final class QuickLoadServerModel {
 
 
   
-  public void clear() {
+  /*public void clear() {
     genome_names.clear();
     group2name.clear();
     genome2init.clear();
     genome2file_names.clear();
     url2quickload.clear();
-  }
+  }*/
 
   public QuickLoadServerModel(SingletonGenometryModel gmodel, String url) {
     this.gmodel = gmodel;

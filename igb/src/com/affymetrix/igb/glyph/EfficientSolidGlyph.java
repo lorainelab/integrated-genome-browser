@@ -46,11 +46,11 @@ public class EfficientSolidGlyph extends EfficientGlyph  {
     this.hitable = hitable;
   }
 
-  public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
+  /*public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
     return  hitable && isVisible() && pixel_hitbox.intersects(pixelbox);
-  }
+  }*/
 
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
     return hitable && isVisible() && coord_hitbox.intersects(this);

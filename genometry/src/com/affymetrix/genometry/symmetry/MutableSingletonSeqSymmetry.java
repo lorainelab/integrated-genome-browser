@@ -45,19 +45,19 @@ public class MutableSingletonSeqSymmetry
 	 *  Constructor.
 	 *  @param parent  This parameter is ignored.
 	 */
-	public MutableSingletonSeqSymmetry(SeqSymmetry parent, int start, int end, BioSeq seq) {
+	/*public MutableSingletonSeqSymmetry(SeqSymmetry parent, int start, int end, BioSeq seq) {
 		super(start, end, seq);
 		// ignoring parent
-	}
+	}*/
 
 	/**
 	 *  Constructor.
 	 *  @param parent  This parameter is ignored.
 	 */
-	public MutableSingletonSeqSymmetry(CharSequence id, SeqSymmetry parent, int start, int end, BioSeq seq) {
+	/*public MutableSingletonSeqSymmetry(CharSequence id, SeqSymmetry parent, int start, int end, BioSeq seq) {
 		this(parent, start, end, seq);
 		this.id = id;
-	}
+	}*/
 
 	public void addChild(SeqSymmetry sym) {
 		if (children == null) {
@@ -105,9 +105,9 @@ public class MutableSingletonSeqSymmetry
 	 * and then changes the span, we won't know about it since we aren't actually
 	 * setting the span, but rather copying its start and end.
 	 */
-	public void setSpan(int index, SeqSpan span) {
+	/*public void setSpan(int index, SeqSpan span) {
 		throw new RuntimeException("Operation Not Allowed. Can't set the span of a SingletonSeqSymmetry.");
-	}
+	}*/
 
 	public String getID() { return id.toString(); }
 
@@ -116,11 +116,11 @@ public class MutableSingletonSeqSymmetry
 	 *  This method is not thread-safe if you try to access the
 	 *  children while sorting is happening.
 	 */
-	public void sortChildren(Comparator<SeqSymmetry> comp)  {
+	/*public void sortChildren(Comparator<SeqSymmetry> comp)  {
 		if (children == null) {
 			return;
 		}
 		Collections.sort(children, comp);
-	}
+	}*/
 }
 

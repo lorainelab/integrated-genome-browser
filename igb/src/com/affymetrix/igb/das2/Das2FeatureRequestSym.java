@@ -116,9 +116,9 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
   public void removeSpan(SeqSpan span) {
     throw new RuntimeException("Can't remove span from Das2FeatureRequestSym directly!");
   }
-  public void setSpan(int index, SeqSpan span) {
+  /*public void setSpan(int index, SeqSpan span) {
     throw new RuntimeException("Can't set span for Das2FeatureRequestSym directly!");
-  }
+  }*/
   public void removeSpans() {
     throw new RuntimeException("Can't remove spans from Das2FeatureRequestSym directly!");
   }

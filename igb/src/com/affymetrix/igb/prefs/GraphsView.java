@@ -103,9 +103,9 @@ public final class GraphsView extends JPanel implements IPrefEditorComponent  {
     validate();
   }
 
-  public void destroy() {
+  /*public void destroy() {
     removeAll();
-  }
+  }*/
 
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {

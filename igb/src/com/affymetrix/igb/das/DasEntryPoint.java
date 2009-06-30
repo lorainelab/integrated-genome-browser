@@ -53,7 +53,7 @@ public final class DasEntryPoint {
   public String getID() {  return entry_id; }  // or should ID be a URI?
   public String getDescription() { return description; }
   public String getSeqType() { return seqtype; }  // or should ID be a URI?
-  public boolean hasSubParts() { return has_subparts; }
+  //public boolean hasSubParts() { return has_subparts; }
   public SeqSpan getSegment() {
     if (segment_span == null) {
       initEntryPoint();

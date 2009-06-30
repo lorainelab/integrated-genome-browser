@@ -41,9 +41,9 @@ public final class VerticalGraphLabels extends SolidGlyph {
     }
   }
 
-  public void addLabel(String label) {
+  /*public void addLabel(String label) {
     labels.add(label);
-  }
+  }*/
 
 	@Override
   public void draw(ViewI view) {

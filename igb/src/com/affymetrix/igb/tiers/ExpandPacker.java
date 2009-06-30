@@ -23,7 +23,7 @@ import java.awt.geom.Rectangle2D;
 public class ExpandPacker implements PaddedPackerI, NeoConstants  {
 
   // BEGIN from AbstractCoordPacker
-  protected boolean DEBUG = true;
+  //protected boolean DEBUG = true;
   protected boolean DEBUG_CHECKS = false;
   protected double coord_fuzziness = 1;
   protected double spacing = 2;
@@ -189,9 +189,9 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     STRETCH_HORIZONTAL = b;
   }
   
-  public boolean getStretchHorizontal(boolean b) {
+  /*public boolean getStretchHorizontal(boolean b) {
     return STRETCH_HORIZONTAL;
-  }
+  }*/
 
   public Rectangle pack(GlyphI parent, ViewI view) {
     //    System.out.println("begin ExpandPacker.pack(glyph, view)");

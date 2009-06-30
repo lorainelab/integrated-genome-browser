@@ -101,7 +101,7 @@ public final class XmlStylesheetParser {
     return user_stylesheet;
   }
 
-  public Stylesheet parse(File fl) throws IOException {
+  /*public Stylesheet parse(File fl) throws IOException {
     FileInputStream fistr = null;
     BufferedInputStream bistr = null;
     try {
@@ -114,7 +114,7 @@ public final class XmlStylesheetParser {
 			GeneralUtils.safeClose(fistr);
     }
     return stylesheet;
-  }
+  }*/
 
   public Stylesheet parse(InputStream istr) throws IOException {
     InputSource insrc = new InputSource(istr);

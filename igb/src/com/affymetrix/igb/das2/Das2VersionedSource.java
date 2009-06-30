@@ -72,10 +72,10 @@ public class Das2VersionedSource {
      *  To maintain backward compatibility, keeping constuctor with no coords_uri argument,
      *   but it just acts as a pass-through to the constructor that takes a coords_uri argument
      */
-    public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name,
+    /*public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name,
             String href, String description, boolean init) {
         this(das_source, vers_uri, null, name, href, description, init);
-    }
+    }*/
 
     public Das2VersionedSource(Das2Source das_source, URI vers_uri, URI coords_uri, String name,
             String href, String description, boolean init) {

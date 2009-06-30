@@ -71,9 +71,9 @@ public final class Das2Region {
 
     // public boolean getResidues(SeqSpan span)  {
     /** return a BioSeq (or maybe a CharSeqIterator that can be used for composition of aseq?) */
-    public BioSeq getResidues(SeqSpan span) {
+    /*public BioSeq getResidues(SeqSpan span) {
         return null;
-    }
+    }*/
 
     public URI getURI() {
         return region_uri;
@@ -120,7 +120,7 @@ public final class Das2Region {
      *  at {@link Das2FeatureRequestSym#getLog()} for more details of the results.
      *
      */
-    public boolean getFeatures(Das2FeatureRequestSym request_sym) {
+    /*public boolean getFeatures(Das2FeatureRequestSym request_sym) {
         boolean success = true;
         Das2RequestLog request_log = request_sym.getLog();
         SeqSpan overlap_span = request_sym.getOverlapSpan();
@@ -198,7 +198,7 @@ public final class Das2Region {
 				}
         request_log.setSuccess(success);
         return success;
-    }
+    }*/
 
     /**
      *   Converts a SeqSpan to a DAS2 region String.

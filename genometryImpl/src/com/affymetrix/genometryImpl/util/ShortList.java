@@ -85,11 +85,11 @@ public final class ShortList {
 			}
 		}
 
-	public short[] copyToArray() {
+	/*public short[] copyToArray() {
 		short[] result = new short[size];
 		System.arraycopy(primData, 0, result, 0, size);
 		return result;
-	}
+	}*/
 
 	/**
 	 * Get direct access to the internal data array.
@@ -111,11 +111,11 @@ public final class ShortList {
 	 *  Replaces value at index.
 	 *  Returns previous value at index.
 	 */
-	public short set(int index, short val) {
+	/*public short set(int index, short val) {
 		short oldValue = primData[index];
 		primData[index] = val;
 		return oldValue;
-	}
+	}*/
 
 	public boolean add(short i) {
 		ensureCapacity(size + 1); 
@@ -123,7 +123,7 @@ public final class ShortList {
 		return true;
 	}
 
-	public void add(int index, short val) {
+	/*public void add(int index, short val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -133,10 +133,10 @@ public final class ShortList {
 				size - index);
 		primData[index] = val;
 		size++;
-	}
+	}*/
 
 	// returns value that was removed
-	public short remove(short index) {
+	/*public short remove(short index) {
 		short oldValue = primData[index];
 
 		int numMoved = size - index - 1;
@@ -145,12 +145,12 @@ public final class ShortList {
 		}
 		size--;
 		return oldValue;
-	}
+	}*/
 
-	public void clear() {
+	/*public void clear() {
 		//    for (int i = 0; i < size; i++)
 		//      primData[i] = 0;
 		size = 0;
-	}
+	}*/
 
 }

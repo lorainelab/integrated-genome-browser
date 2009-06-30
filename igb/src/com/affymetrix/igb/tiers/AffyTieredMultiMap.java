@@ -190,7 +190,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
    * @param theControl
    */
-  public void addZoomer( int theAxis, int theSection, Adjustable theControl ) {
+  /*public void addZoomer( int theAxis, int theSection, Adjustable theControl ) {
     if ( X == theAxis && NeoConstants.EAST == theSection ) {
       this.extramap.setZoomer( theAxis, theControl );
       this.northEastMap.setZoomer( theAxis, theControl );
@@ -203,7 +203,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     else {
       throw new IllegalArgumentException( "Only support X with EAST and Y with NORTH." );
     }
-  }
+  }*/
 
   /**
    * Add a zoomer component to a section.
@@ -211,7 +211,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
    * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
    * @param theControl for zooming
    */
-  public void addZoomer( int theSection, AdjustableJSlider theControl ) {
+  /*public void addZoomer( int theSection, AdjustableJSlider theControl ) {
     int orientation = theControl.getOrientation();
     switch ( orientation ) {
       case Adjustable.HORIZONTAL:
@@ -219,7 +219,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
       case Adjustable.VERTICAL:
         addZoomer( Y, theSection, theControl ); break;
     }
-  }
+  }*/
 
   public void clearWidget() {
   /*
@@ -277,10 +277,10 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     extramap_inset = inset;
   }
 
-  public void setExtraMapRange( int x, int y ) {
+  /*public void setExtraMapRange( int x, int y ) {
     this.extramap.setMapRange( x, y );
     this.northEastMap.setMapRange( x, y );
-  }
+  }*/
 
   public double getExtraMapInset() { return extramap_inset; }
 
@@ -305,10 +305,10 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
 //  }
 
 
-  public void addNorthEastTier( TierGlyph theTier ) {
+  /*public void addNorthEastTier( TierGlyph theTier ) {
     this.northEastMap.addTier( theTier );
     this.northEastMap.updateWidget();
-  }
+  }*/
 
   /**
    * Adds a tier to the map, generates a label for it,
@@ -445,14 +445,14 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
   /**
    * Put the axis on the north map.
    */
-  public AxisGlyph addHeaderAxis() {
+  /*public AxisGlyph addHeaderAxis() {
     northMap.setMapOffset(0, 20);
     AxisGlyph ag = this.northMap.addAxis( 10 );    
     SeqMapView.setAxisFormatFromPrefs(ag);
     northMap.stretchToFit(true, true);
     northMap.updateWidget(true);
     return ag;
-  }
+  }*/
 
   public void setMapRange( int theStart, int theEnd ) {
     super.setMapRange( theStart, theEnd );

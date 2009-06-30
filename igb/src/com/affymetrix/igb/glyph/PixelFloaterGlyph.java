@@ -87,9 +87,9 @@ public final class PixelFloaterGlyph extends Glyph  {
     }
   }
 
-  public boolean intersects(Rectangle rect)  {
+  /*public boolean intersects(Rectangle rect)  {
     return isVisible;
-  }
+  }*/
   public boolean intersects(Rectangle2D.Double rect, ViewI view)  {
     return isVisible;
   }

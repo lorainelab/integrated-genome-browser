@@ -60,10 +60,10 @@ public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpa
 		this.seq = seq;
 	}
 
-	public void setCoordsDouble(double start, double end) {
+	/*public void setCoordsDouble(double start, double end) {
 		this.start = (int)start;
 		this.end = (int)end;
-	}
+	}*/
 
 	public void setStartDouble(double start) {
 		this.start = (int)start;

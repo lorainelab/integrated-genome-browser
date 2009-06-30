@@ -255,7 +255,7 @@ public final class TransformTierGlyph extends TierGlyph {
    *  WARNING - NOT YET TESTED
    *  This may very well not work at all!
    */
-  public void getChildTransform(LinearTransform trans) {
+  /*public void getChildTransform(LinearTransform trans) {
     //    LinearTransform vt = (LinearTransform)view.getTransform();
     // mostly copied from drawChildren() ...
     // keep same X scale and offset, but concatenate internal Y transform
@@ -267,7 +267,7 @@ public final class TransformTierGlyph extends TierGlyph {
 
     trans.setScaleY(trans2D.getScaleY());
     trans.setOffsetY(trans2D.getTranslateY());
-  }
+  }*/
 
 
 }

@@ -473,7 +473,7 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
    *  Gets an instance of TierPrefsView wrapped in a JFrame, useful
    *  as a pop-up dialog for setting annotation styles.
    */
-  public static JFrame showFrame() {
+  /*public static JFrame showFrame() {
     if (static_frame == null) {
       static_frame = new JFrame(WINDOW_NAME);
       static_instance = new TierPrefsView(false, false);
@@ -494,7 +494,7 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
 
     static_frame.setVisible(true);
     return static_frame;
-  }
+  }*/
 
   /** Used for testing.  Opens a window with the TierPrefsView in it. */
   public static void main(String[] args) {

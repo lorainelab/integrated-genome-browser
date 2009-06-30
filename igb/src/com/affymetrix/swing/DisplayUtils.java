@@ -68,7 +68,7 @@ public final class DisplayUtils {
    * Adapted from "Swing Hacks" by Joshua Marinacci and Chris Adamson, 
    *    copyright 2005 O'Reilly Media, ISBN 0-596-00907-0
    */
-  public static final void adjustColumnPreferredWidths(JTable table, boolean include_headers) {
+  /*public static final void adjustColumnPreferredWidths(JTable table, boolean include_headers) {
       // strategy - get max width for cells in column and
       // make that the preferred width
       TableColumnModel columnModel = table.getColumnModel();
@@ -77,7 +77,7 @@ public final class DisplayUtils {
           int maxwidth = getMaxWidth(table, col, include_headers, column);
           column.setPreferredWidth(maxwidth);
       }
-  }
+  }*/
 
 
   /**

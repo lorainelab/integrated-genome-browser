@@ -17,7 +17,7 @@ package com.affymetrix.igb.das2;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+//import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 //import com.affymetrix.igb.util.*;
 
 public final class Das2Discovery {
@@ -62,7 +62,7 @@ public final class Das2Discovery {
 
   public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
 
-  public static void addServersFromTabFile(String server_loc_url) {
+  //public static void addServersFromTabFile(String server_loc_url) {
     // System.out.println("------------ Adding servers from tab format file :"+server_loc_list);
     /*
     InputStream is = null;
@@ -89,7 +89,7 @@ public final class Das2Discovery {
       try {is.close();} catch (Exception ioe) {}
     }
     */
-  }
+  //}
 
   /**
    *  Given an id string which should be the resolvable root URL for a DAS/2 server
@@ -146,9 +146,9 @@ public final class Das2Discovery {
    *  if (try_unloaded_servers) then force retrieval of versioned sources info for
    *       all known servers, otherwise only check versioned sources whose info is already loaded
    */
-  public static List<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+  /*public static List<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
     return getVersionedSources(group, try_unloaded_servers, null);
-  }
+  }*/
 
   /**
    *  Given an AnnotatedSeqGroup, return a list of Das2VersionedSources that
@@ -158,7 +158,7 @@ public final class Das2Discovery {
    *  CAPABILITY arg specified a capability that the versioned source must have to be included in the returned list
    *       if CAPABILITY is null, then no capability filter is applied
    */
-  public static List<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers, String capability) {
+  /*public static List<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group, boolean try_unloaded_servers, String capability) {
         List<Das2VersionedSource> matches = new ArrayList<Das2VersionedSource>();
         if (group == null) {
             return matches;
@@ -186,7 +186,7 @@ public final class Das2Discovery {
         }
 
         return matches;
-    }
+    }*/
 
 
   /**
@@ -195,7 +195,7 @@ public final class Das2Discovery {
    *  if (try_unloaded_servers) then force search of
    *       all known servers, otherwise only check info that is already loaded??
    */
-  public static List<Das2Source> getSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+  /*public static List<Das2Source> getSources(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
     List<Das2VersionedSource> vsources = getVersionedSources(group, try_unloaded_servers);
     Set<Das2Source> sourceset = new LinkedHashSet<Das2Source>(vsources.size());
     for (Das2VersionedSource version : vsources) {
@@ -204,7 +204,7 @@ public final class Das2Discovery {
     }
     List<Das2Source> results = new ArrayList<Das2Source>(sourceset);
     return results;
-  }
+  }*/
 
   /**
    *  Given an AnnotatedSeqGroup, return a list of Das2ServerInfos that have at least one Das2Source that has
@@ -213,7 +213,7 @@ public final class Das2Discovery {
    *  if (try_unloaded_servers) then force search of
    *       all known servers, otherwise only check info that is already loaded??
    */
-  public static List getServers(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
+  /*public static List getServers(AnnotatedSeqGroup group, boolean try_unloaded_servers) {
     List<Das2VersionedSource> vsources = getVersionedSources(group, try_unloaded_servers);
     Set<Das2ServerInfo> serverset = new LinkedHashSet<Das2ServerInfo>(vsources.size());
     for (Das2VersionedSource version : vsources) {
@@ -222,7 +222,7 @@ public final class Das2Discovery {
     }
     List<Das2ServerInfo> results = new ArrayList<Das2ServerInfo>(serverset);
     return results;
-  }
+  }*/
 
 
   /** NOT YET IMPLEMENTED

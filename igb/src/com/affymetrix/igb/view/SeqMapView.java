@@ -173,11 +173,11 @@ public class SeqMapView extends JPanel
      *     JPanel is nested within this (with BorderLayout, map_container_panel at
      *     "Center"), and xzoomer is put in this at "North", don't see slowdown
      */
-    protected boolean NEO_XZOOMER = false;
-    protected boolean NEO_YZOOMER = false;
+    //protected boolean NEO_XZOOMER = false;
+    //protected boolean NEO_YZOOMER = false;
     protected boolean INTERNAL_XSCROLLER = true;
     protected boolean INTERNAL_YSCROLLER = true;
-    protected boolean XZOOMER_IN_MAP_CONTAINER = false;
+    //protected boolean XZOOMER_IN_MAP_CONTAINER = false;
     JFrame frm;
     protected AffyTieredMap seqmap;
     UnibrowHairline hairline = null;
@@ -2425,13 +2425,13 @@ public class SeqMapView extends JPanel
         seqmap.updateWidget();
     }
 
-    public void clampToGlyph(GlyphI gl) {
+    /*public void clampToGlyph(GlyphI gl) {
         zoomToGlyph(gl);
         Rectangle2D.Double vbox = seqmap.getViewBounds();
         seqmap.setMapRange((int) (vbox.x), (int) (vbox.x + vbox.width));
         seqmap.stretchToFit(false, false); // to adjust scrollers and zoomers
         seqmap.updateWidget();
-    }
+    }*/
 
     /** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
     private String getUcscGenomeVersion() {
@@ -2496,7 +2496,7 @@ public class SeqMapView extends JPanel
         }
     }
 
-    public void invokeEnsemblView() {
+    /*public void invokeEnsemblView() {
         // links to Ensembl look like this:
         // http://www.ensembl.org/Homo_sapiens/contigview?chr={chromosome number}&region=&start={start base position}&end={end base position}
 
@@ -2517,12 +2517,12 @@ public class SeqMapView extends JPanel
         } else {
             Application.errorPanel("Can't invoke hyperlink for region=" + region);
         }
-    }
+    }*/
 
     /**
      * Invokes a link to the toronto database of genomic variants.
      */
-    public void invokeTorontoView() {
+    /*public void invokeTorontoView() {
         // links to Toronto look like this:
         // "http://projects.tcag.ca/variation/cgi-bin/gbrowse/hg17?name=chr1:13108649..13311697";
 
@@ -2535,7 +2535,7 @@ public class SeqMapView extends JPanel
         } else {
             Application.errorPanel("Can't invoke hyperlink for version=" + version + ",  region=" + region);
         }
-    }
+    }*/
 
 		/**
 		 * Do edge matching.  If query_glyphs is empty, clear all edges.
@@ -3000,9 +3000,9 @@ public class SeqMapView extends JPanel
         popup_listeners.add(listener);
     }
 
-    public void removePopupListener(ContextualPopupListener listener) {
+    /*public void removePopupListener(ContextualPopupListener listener) {
         popup_listeners.remove(listener);
-    }
+    }*/
 
     public List<ContextualPopupListener> getPopupListeners() {
         return Collections.<ContextualPopupListener>unmodifiableList(popup_listeners);
@@ -3086,11 +3086,11 @@ public class SeqMapView extends JPanel
      *  Could be used in future to clean-up all references to the given
      *  graph state and any tiers created for it.
      */
-    public void removeTier(TierGlyph tier) {
+    /*public void removeTier(TierGlyph tier) {
         //getSeqMap().removeTier(tier);
         tier.removeAllChildren();
         tier.setState(TierGlyph.HIDDEN);
-    }
+    }*/
 
     /**
      *  Returns a forward and reverse tier for the given method, creating them if they don't
@@ -3231,7 +3231,7 @@ public class SeqMapView extends JPanel
         setAnnotatedSeq(newseq);
     }
 
-    public JMenu getNavigationMenu(String menu_name) {
+    /*public JMenu getNavigationMenu(String menu_name) {
         if (navigation_menu == null) {
             navigation_menu = new JMenu(menu_name);
             navigation_menu.add(new JMenuItem(action_listener.zoom_out_fully_action));
@@ -3244,7 +3244,7 @@ public class SeqMapView extends JPanel
             navigation_menu.add(new JMenuItem(action_listener.zoom_out_y_action));
         }
         return navigation_menu;
-    }
+    }*/
 
  
 

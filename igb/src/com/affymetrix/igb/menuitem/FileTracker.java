@@ -33,9 +33,9 @@ public final class FileTracker {
   /** A FileTracker used by the QueryFrame for loading/saving control graph
    *  tab separated files.
    */
-  public final static FileTracker CONTROL_GRAPH_DIR_TRACKER 
+ /* public final static FileTracker CONTROL_GRAPH_DIR_TRACKER
     = new FileTracker(UnibrowPrefsUtil.CONTROL_GRAPH_DIRECTORY);
-    
+   */
   private FileTracker(String name) {
     this.name = name;
   }

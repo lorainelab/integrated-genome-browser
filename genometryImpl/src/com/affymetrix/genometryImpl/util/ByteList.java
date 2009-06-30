@@ -64,13 +64,13 @@ public final class ByteList {
 		}
 	}
 
-	public int size() {
+	/*public int size() {
 		return size;
-	}
+	}*/
 
-	public boolean isEmpty() {
+	/*public boolean isEmpty() {
 		return size == 0;
-	}
+	}*/
 
 	@Override
 		public Object clone() {
@@ -85,11 +85,11 @@ public final class ByteList {
 			}
 		}
 
-	public byte[] copyToArray() {
+	/*public byte[] copyToArray() {
 		byte[] result = new byte[size];
 		System.arraycopy(primData, 0, result, 0, size);
 		return result;
-	}
+	}*/
 
 	/**
 	 * Get direct access to the internal data array.
@@ -111,11 +111,11 @@ public final class ByteList {
 	 *  Replaces value at index.
 	 *  Returns previous value at index.
 	 */
-	public byte set(int index, byte val) {
+	/*public byte set(int index, byte val) {
 		byte oldValue = primData[index];
 		primData[index] = val;
 		return oldValue;
-	}
+	}*/
 
 	public boolean add(byte i) {
 		ensureCapacity(size + 1); 
@@ -123,7 +123,7 @@ public final class ByteList {
 		return true;
 	}
 
-	public void add(int index, byte val) {
+	/*public void add(int index, byte val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -132,10 +132,10 @@ public final class ByteList {
 		System.arraycopy(primData, index, primData, index + 1, size - index);
 		primData[index] = val;
 		size++;
-	}
+	}*/
 
 	// returns value that was removed
-	public byte remove(byte index) {
+	/*public byte remove(byte index) {
 		byte oldValue = primData[index];
 
 		int numMoved = size - index - 1;
@@ -144,12 +144,12 @@ public final class ByteList {
 		}
 		size--;
 		return oldValue;
-	}
+	}*/
 
-	public void clear() {
+	/*public void clear() {
 		//    for (int i = 0; i < size; i++)
 		//      primData[i] = 0;
 		size = 0;
-	}
+	}*/
 
 }

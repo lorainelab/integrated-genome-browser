@@ -538,13 +538,6 @@ public final class GeneralLoadUtils {
 			}
 		}
 	}
-
-	/** Returns true if the given genome has already been initialized via initGenome(String). */
-	/*public boolean isInitialized(final String genome_name) {
-		Boolean b = version2init.get(genome_name);
-		return (Boolean.TRUE.equals(b));
-	}*/
-
 	
 
 	/**
@@ -563,6 +556,9 @@ public final class GeneralLoadUtils {
 		AnnotatedSeqGroup group = loadChromInfo(gVersions);
 		if (group == null) {
 			return false;
+		}
+		if (DEBUG) {
+			System.out.println("Group has :" + group.getSeqCount() + " chromosomes");
 		}
 
 		addGenomeVirtualSeq(group, default_genome_min, DEBUG_VIRTUAL_GENOME);
@@ -607,10 +603,6 @@ public final class GeneralLoadUtils {
 	 */
 	private static AnnotatedSeqGroup loadChromInfo(GenericVersion gVersion) {
 		AnnotatedSeqGroup group = null;
-		
-		//System.out.println("group: " + (group == null ? null : group.getID()) + ", " + group);
-		Application.getApplicationLogger().fine("loading list of chromosomes for genome: " + gVersion.versionName);
-		//Application.getApplicationLogger().fine("group: " + (group == null ? null : group.getID()) + ", " + group);
 
 		// discover genomes from server
 		if (gVersion.gServer == null) {

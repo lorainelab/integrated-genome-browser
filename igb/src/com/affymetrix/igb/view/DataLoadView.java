@@ -65,6 +65,7 @@ public class DataLoadView extends JComponent  {
 	}	
 }
 
+
 class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 
   static boolean DEBUG_EVENTS = false;
@@ -73,33 +74,35 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 
   JTable seqtable;
   AnnotatedBioSeq selected_seq = null;
+	AnnotatedSeqGroup previousGroup = null;
+	int previousSeqCount = 0;
   ListSelectionModel lsm;
   //JLabel genomeL;
   //JComboBox genomeCB;
 
   public SeqGroupView() {
-    seqtable = new JTable();
-    seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-	SeqGroupTableModel mod = new SeqGroupTableModel(null);
-    seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
-   
-    JScrollPane scroller = new JScrollPane(seqtable);
-    scroller.setBorder(BorderFactory.createCompoundBorder(
-    scroller.getBorder(),
-    BorderFactory.createEmptyBorder(0,2,0,2)));
+		seqtable = new JTable();
+		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    //this.add(genomeCB);
-    this.add(Box.createRigidArea(new Dimension(0, 5)));
-    this.add(scroller);
+		SeqGroupTableModel mod = new SeqGroupTableModel(null);
+		seqtable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
 
-    this.setBorder(BorderFactory.createTitledBorder("Current Sequence"));
-    gmodel.addGroupSelectionListener(this);
-    gmodel.addSeqSelectionListener(this);
-    lsm = seqtable.getSelectionModel(); 
-    lsm.addListSelectionListener(this);
-  }
+		JScrollPane scroller = new JScrollPane(seqtable);
+		scroller.setBorder(BorderFactory.createCompoundBorder(
+						scroller.getBorder(),
+						BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		//this.add(genomeCB);
+		this.add(Box.createRigidArea(new Dimension(0, 5)));
+		this.add(scroller);
+
+		this.setBorder(BorderFactory.createTitledBorder("Current Sequence"));
+		gmodel.addGroupSelectionListener(this);
+		gmodel.addSeqSelectionListener(this);
+		lsm = seqtable.getSelectionModel();
+		lsm.addListSelectionListener(this);
+	}
 
   String most_recent_seq_id = null;
 
@@ -115,6 +118,10 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
     	  System.out.println("  seq count: " + group.getSeqCount());
       }
     }
+
+		warnAboutNewlyAddedChromosomes(previousGroup, previousSeqCount, group);
+		previousGroup = group;
+		previousSeqCount = group == null ? 0 : group.getSeqCount();
 
     SeqGroupTableModel mod = new SeqGroupTableModel(group);
     selected_seq = null;
@@ -139,6 +146,21 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
       }
     }
   }
+
+	private static void warnAboutNewlyAddedChromosomes(AnnotatedSeqGroup previousGroup, int previousSeqCount, AnnotatedSeqGroup group) {
+		if (previousGroup != null && previousGroup == group) {
+			if (previousSeqCount > group.getSeqCount()) {
+				System.out.println("WARNING: chromosomes have been added");
+				if (previousSeqCount < group.getSeqCount()) {
+					System.out.print("New chromosomes:");
+					for (int i = previousSeqCount; i < group.getSeqCount(); i++) {
+						System.out.print(" " + group.getSeq(i).getID());
+					}
+					System.out.println();
+				}
+			}
+		}
+	}
 
   public void seqSelectionChanged(SeqSelectionEvent evt) {
 		if (SeqGroupView.DEBUG_EVENTS) {
@@ -203,7 +225,6 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
 }
-
 class TrackInfoView extends JComponent implements FeatureSelectionListener {
 	
 	static boolean DEBUG_EVENTS = false;

@@ -2,6 +2,7 @@ package com.affymetrix.igb.general;
 
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.igb.das.DasServerInfo;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -72,6 +73,12 @@ public final class ServerList {
                 //url2server.put(url, server);
                 return server;
             }
+						/*if (serverType == ServerType.DAS) {
+							DasServerInfo info = new DasServerInfo(url, name);
+							server = new GenericServer(name, root_url, serverType, info);
+							name2server.put(name, server);
+							return server;
+						}*/
         } catch (Exception e) {
             System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
             e.printStackTrace(System.out);

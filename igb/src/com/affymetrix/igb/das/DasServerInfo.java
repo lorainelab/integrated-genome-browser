@@ -15,20 +15,20 @@ package com.affymetrix.igb.das;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import java.net.*;
 import java.util.*;
-import java.util.regex.*;
+//import java.util.regex.*;
 import org.w3c.dom.*;
 
 public final class DasServerInfo {
 
 	static boolean REPORT_SOURCES = false;
 	static boolean REPORT_CAPS = true;
-	static Pattern cap_splitter = Pattern.compile("; *");
-	static Pattern name_version_splitter = Pattern.compile("/");
+	//static Pattern cap_splitter = Pattern.compile("; *");
+	//static Pattern name_version_splitter = Pattern.compile("/");
 	String root_url;
-	String das_version;
+	//String das_version;
 	String name;
 	String description;
-	Map<String, String> capabilities = new LinkedHashMap<String, String>();  // using LinkedHashMap for predictable iteration
+	//Map<String, String> capabilities = new LinkedHashMap<String, String>();  // using LinkedHashMap for predictable iteration
 	Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	boolean initialized = false;
 
@@ -36,16 +36,16 @@ public final class DasServerInfo {
 	 *  @param init  whether or not to initialize the data right away.  If false
 	 *    will not contact the server to initialize data until needed.
 	 */
-	public DasServerInfo(String url, String name, boolean init) {
+	public DasServerInfo(String url, String name) {
 		root_url = url;
 		this.name = name;
 		// all trailing "/" chars are stripped off the end if present
 		while (root_url.endsWith("/")) {
 			root_url = root_url.substring(0, root_url.length() - 1);
 		}
-		if (init) {
+		/*if (init) {
 			initialize();
-		}
+		}*/
 	}
 
 	/** Returns the root URL String.  Will not have any trailing "/" at the end. */
@@ -53,27 +53,27 @@ public final class DasServerInfo {
 		return root_url;
 	}
 
-	public String getName() {
+	/*public String getName() {
 		return name;
-	}
+	}*/
 
-	public String getDasVersion() {
+	/*public String getDasVersion() {
 		if (!initialized) {
 			initialize();
 		}
 		return das_version;
-	}
+	}*/
 
-	public String getDescription() {
+	/*public String getDescription() {
 		return description;
-	}
+	}*/
 
-	public Map getCapabilities() {
+	/*public Map getCapabilities() {
 		if (!initialized) {
 			initialize();
 		}
 		return capabilities;
-	}
+	}*/
 
 	/*public String getCapability(String cap) {
 		if (!initialized) {
@@ -89,15 +89,15 @@ public final class DasServerInfo {
 		return sources;
 	}
 
-	protected void setCapability(String cap, String version) {
+	/*private void setCapability(String cap, String version) {
 		capabilities.put(cap, version);
-	}
+	}*/
 
-	protected void setDasVersion(String version) {
+	/*private void setDasVersion(String version) {
 		das_version = version;
-	}
+	}*/
 
-	protected void addDataSource(DasSource ds) {
+	private void addDataSource(DasSource ds) {
 		sources.put(ds.getID(), ds);
 	}
 
@@ -109,7 +109,7 @@ public final class DasServerInfo {
 	 * see DAS specification for returned XML format in response to "dsn" command:
 	 *      http://biodas.org/documents/spec.html
 	 */
-	public boolean initialize() {
+	public void initialize() {
 		//TODO: think about whether this needs synchronization.
 		//TODO: clean-up streams in finally block
 		try {
@@ -128,13 +128,13 @@ public final class DasServerInfo {
 			String das_status = request_con.getHeaderField("X-DAS-Status");
 			String das_capabilities = request_con.getHeaderField("X-DAS-Capabilities");
 
-			setDasVersion(das_version);
+			//setDasVersion(das_version);
 
 			System.out.println("DAS server version: " + das_version + ", status: " + das_status);
 			if (REPORT_CAPS) {
 				System.out.println("DAS capabilities: " + das_capabilities);
 			}
-			if (das_capabilities != null) {
+			/*if (das_capabilities != null) {
 				String[] cap_array = cap_splitter.split(das_capabilities);
 				for (int i = 0; i < cap_array.length; i++) {
 					String tagval = cap_array[i];
@@ -146,7 +146,7 @@ public final class DasServerInfo {
 						System.out.println("cap: " + cap_name + ", version: " + cap_version);
 					}
 				}
-			}
+			}*/
 			Document doc = DasLoader.getDocument(request_con);
 
 			Element top_element = doc.getDocumentElement();
@@ -165,10 +165,9 @@ public final class DasServerInfo {
 		} catch (Exception ex) {
 			System.out.println("Error initializing DAS server info for\n" + root_url);
 			ex.printStackTrace();
-			return false;
+			return;
 		}
 		initialized = true;
-		return initialized;
 	}
 
 	private void parseDSNElement(Element dsn) throws DOMException {

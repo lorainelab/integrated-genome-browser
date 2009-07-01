@@ -11,6 +11,9 @@ public final class GenericServer {
     public final String URL;          // URL/file that points to the server.
     public final ServerType serverType;
     public final Object serverObj;    // Das2ServerInfo, DasServerInfo, ..., QuickLoad?
+		public final boolean enabled;			// Is this server enabled?
+		public final String login;				// Defaults to ""
+		public final String password;			// Defaults to ""
 
     /**
      * @param serverName
@@ -23,6 +26,9 @@ public final class GenericServer {
         this.URL = URL;
         this.serverType = serverType;
         this.serverObj = serverObj;
+				this.enabled = true;		// always enabled, currently
+				this.login = "";				// to be used by DAS/2 authentication
+				this.password = "";			// to be used by DAS/2 authentication
     }
 
     @Override

@@ -52,7 +52,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
@@ -129,6 +128,7 @@ public final class IGB extends Application
   static Map<String,Map> prefs_hash;
   static String[] main_args;
   static Map<Component,Frame> comp2window = new HashMap<Component,Frame>();
+
   Map<Component,PluginInfo> comp2plugin = new HashMap<Component,PluginInfo>();
   Map<Component,JCheckBoxMenuItem> comp2menu_item = new HashMap<Component,JCheckBoxMenuItem>();
 
@@ -224,7 +224,7 @@ public final class IGB extends Application
 
   //static String rest_file = "rest_enzymes"; // located in same directory as this class
 
-  private static boolean initialized = false;
+  //private static boolean initialized = false;
 
   /**
    * Start the program.
@@ -293,47 +293,51 @@ public final class IGB extends Application
 
 		singleton_igb.init();
 
-		String quick_load_url = getQuickLoadUrl();
-    SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
-    //LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
-    //processDasServersList(quick_load_url);    -- not working correctly on http://netaffxdas.affymetrix.com/das/
-    //processDas2ServersList(quick_load_url);   -- the processing code was commented out.
+		//String quick_load_url = getQuickLoadUrl();
+		//SynonymLookup dlookup = SynonymLookup.getDefaultLookup();
+		//LocalUrlCacher.loadSynonyms(dlookup, quick_load_url + "synonyms.txt");
+		//processDasServersList(quick_load_url);    -- not working correctly on http://netaffxdas.affymetrix.com/das/
+		//processDas2ServersList(quick_load_url);   -- the processing code was commented out.
 
-
-
-    // If the command line contains a parameter "-href http://..." where
-    // the URL is a valid IGB control bookmark, then go to that bookmark.
-    final String url = get_arg("-href", args);
-    if (url != null && url.length() > 0) {
-      try {
-        final Bookmark bm = new Bookmark(null, url);
-        if (bm.isUnibrowControl()) {
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              System.out.println("Loading bookmark: "+url);
-              BookmarkController.viewBookmark(singleton_igb, bm);
-            }
-          });
-        } else {
-          System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
-        }
-      } catch (MalformedURLException mue) {
-        mue.printStackTrace(System.err);
-      }
-    }
+		goToBookmark(args);
+		
    } catch (Exception e) {
      e.printStackTrace();
      System.exit(1);
    }
   }
 
-	// this one is set by the user in the igb_prefs file.  It can be null
-	// we sort-of hope to phase this out
-	private static String getUrlFromPrefsFile() {
-		return (String) IGB.getIGBPrefs().get("QuickLoadUrl");
+		private static void goToBookmark(String[] args) {
+		// If the command line contains a parameter "-href http://..." where
+		// the URL is a valid IGB control bookmark, then go to that bookmark.
+		final String url = get_arg("-href", args);
+		if (url != null && url.length() > 0) {
+			try {
+				final Bookmark bm = new Bookmark(null, url);
+				if (bm.isUnibrowControl()) {
+					SwingUtilities.invokeLater(new Runnable() {
+
+						public void run() {
+							System.out.println("Loading bookmark: " + url);
+							BookmarkController.viewBookmark(singleton_igb, bm);
+						}
+					});
+				} else {
+					System.out.println("ERROR: URL given with -href argument is not a valid bookmark: \n" + url);
+				}
+			} catch (MalformedURLException mue) {
+				mue.printStackTrace(System.err);
+			}
+		}
 	}
 
-	private static String getUrlLastUsed() {
+	// this one is set by the user in the igb_prefs file.  It can be null
+	// we sort-of hope to phase this out
+	/*private static String getUrlFromPrefsFile() {
+		return (String) IGB.getIGBPrefs().get("QuickLoadUrl");
+	}*/
+
+	/*private static String getUrlLastUsed() {
 		final String PREF_LAST_QUICKLOAD_URL = "QuickLoad: Last URL";
 		final String DEFAULT_QUICKLOAD_URL = "http://netaffxdas.affymetrix.com/quickload_data/";
 		String url = UnibrowPrefsUtil.getLocationsNode().get(PREF_LAST_QUICKLOAD_URL, DEFAULT_QUICKLOAD_URL);
@@ -342,21 +346,21 @@ public final class IGB extends Application
 		}
 
 		return url;
-	}
+	}*/
 
 	// equivalent to getURLLastUsed()
 	// modified to first look if one was specified in the igb_prefs.xml
 	// TODO -- need to iterate over all servers, all server types, etc.
-	private static String getQuickLoadUrl() {
+	/*private static String getQuickLoadUrl() {
 		String u = getUrlFromPrefsFile();
 		if (u != null) {
 			return u;
 		}
 		return getUrlLastUsed();
-	}
+	}*/
 
 
-  public IGB() { }
+  //public IGB() { }
 
   public SeqMapView getMapView() {
     return map_view;
@@ -451,7 +455,7 @@ public final class IGB extends Application
    *  Returns IGB prefs hash
    *  If prefs haven't been loaded yet, will force loading of prefs
    */
-  private static Map getIGBPrefs() {
+  private static Map<String,Map> getIGBPrefs() {
       if (prefs_hash != null) {
           return prefs_hash;
       }
@@ -460,6 +464,8 @@ public final class IGB extends Application
       XmlPrefsParser prefs_parser = new XmlPrefsParser();
       
       LoadDefaultPrefsFromJar(prefs_parser);
+
+			LoadDefaultAPIPrefsFromJar();
 
       LoadWebPrefs(prefs_parser);
       
@@ -483,8 +489,10 @@ public final class IGB extends Application
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}
+	}
 
 
+	private static void LoadDefaultAPIPrefsFromJar() {
 		// Return if there are not already Preferences defined.  (Since we define keystroke shortcuts, this is a reasonable test.)
 		try {
 			if ((UnibrowPrefsUtil.getTopNode()).nodeExists("keystrokes")) {
@@ -493,7 +501,8 @@ public final class IGB extends Application
 		} catch (BackingStoreException ex) {
 		}
 
-			/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
+		InputStream default_prefs_stream = null;
+		/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
 		try {
 			default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.DEFAULT_PREFS_API_RESOURCE);
 			System.out.println("Default User preferences were not found.  loading default User preferencess from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
@@ -505,8 +514,8 @@ public final class IGB extends Application
 		} finally {
 			GeneralUtils.safeClose(default_prefs_stream);
 		}
-		
 	}
+
 
 	private static void LoadWebPrefs(XmlPrefsParser prefs_parser) {
 		// If a particular web prefs file was specified, then load it.
@@ -897,7 +906,7 @@ public final class IGB extends Application
     // Therefore start listening for http requests only after all set-up is done.
     startControlServer();
 
-    initialized = true;
+    //initialized = true;
   }
 
 	private void fileMenu() {

@@ -13,26 +13,26 @@
 
 package com.affymetrix.igb.das;
 
-import java.io.*;
+//import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.affymetrix.igb.util.LocalUrlCacher;
+//import com.affymetrix.igb.util.LocalUrlCacher;
 //import com.affymetrix.igb.util.UnibrowPrefsUtil;
 //import java.util.prefs.*;
 
 public final class DasDiscovery {
 
   static Map<String,DasServerInfo> das_servers;
-  static Pattern tab_splitter = Pattern.compile("\t");
+  //static Pattern tab_splitter = Pattern.compile("\t");
 
-  static int DAS_NAME = 0;
-  static int DAS_URI = 1;
-  static int INFO_URI = 2;
+  //static int DAS_NAME = 0;
+  //static int DAS_URI = 1;
+  //static int INFO_URI = 2;
 
-  public final static String KEY_NAME = "name";
-  public final static String KEY_URL = "url";
-  public final static String KEY_ENABLED = "enabled";
+  //public final static String KEY_NAME = "name";
+  //public final static String KEY_URL = "url";
+  //public final static String KEY_ENABLED = "enabled";
 
   /**
    *  Gets a Map of DAS servers.
@@ -147,7 +147,7 @@ public final class DasDiscovery {
       server = new DasServerInfo(url, preferred_name, false);
       das_servers.put(preferred_name, server);
     }*/
-		server = new DasServerInfo(url, name, false);
+		server = new DasServerInfo(url, name);
 		das_servers.put(name, server);
 		return server;
   }

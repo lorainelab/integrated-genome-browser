@@ -41,7 +41,7 @@ import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
 	/**

@@ -129,7 +129,7 @@ public class Das1FeatureSaxParserTest {
 
 			// There is more than one link, so it gets put in a Map
 
-			Map links = (Map) sym.getProperty("link");
+			Map<String,String> links = (Map<String,String>) sym.getProperty("link");
 			assertEquals(2, links.size());
 
 			String key1 = "Link to UCSC Browser";

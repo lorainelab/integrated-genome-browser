@@ -371,13 +371,12 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *
 	 *  @return a SeqSymmetry or null.
 	 */
-	public Object getGroupSymmetryForType(String feattype, String featgroup) {
-		Map map = (Map) grouphash.get(feattype);
+	private Object getGroupSymmetryForType(String feattype, String featgroup) {
+		Map<String,Object> map = grouphash.get(feattype);
 		if (map == null) {
 			return null;
-		} else {
-			return map.get(featgroup);
 		}
+		return map.get(featgroup);
 	}
 
 	/**
@@ -387,7 +386,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *
 	 *  @return the Object previously stored for that type and group, or null.
 	 */
-	public Object putGroupSymmetryForType(String feattype, String featgroup, Object o) {
+	private Object putGroupSymmetryForType(String feattype, String featgroup, Object o) {
 		Map<String, Object> map = grouphash.get(feattype);
 		if (map == null) {
 			map = new HashMap<String, Object>();
@@ -396,7 +395,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		return map.put(featgroup, o);
 	}
 
-	public void addFeature() {
+	private void addFeature() {
 		boolean filter = false;
 
 		/*
@@ -698,7 +697,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 //    public static int parseInt(String s, int radix)
 // assuming only ISO-LATIN numbers
 // 0..9 is 0x0030..0x0039 Unicode
-	public static int parseInt(char[] chars, int start, int length) {
+	private static int parseInt(char[] chars, int start, int length) {
 		int radix = 10;
 		int result = 0;
 		boolean negative = false;
@@ -744,7 +743,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 	}
 
-	public static void writeDasFeatHeader(SeqSpan qspan, PrintWriter pw) {
+	private static void writeDasFeatHeader(SeqSpan qspan, PrintWriter pw) {
 		BioSeq aseq = qspan.getBioSeq();
 		String seq_id = aseq.getID();
 		int start = qspan.getMin();
@@ -760,7 +759,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 						" stop=\"" + stop + "\" version=\"" + version + "\" >");
 	}
 
-	public static void writeDasFeatFooter(PrintWriter pw) {
+	private static void writeDasFeatFooter(PrintWriter pw) {
 		pw.println("</SEGMENT>");
 		pw.println("</GFF>");
 		pw.println("</DASGFF>");
@@ -773,7 +772,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	static final String DAS_GROUP_ID = "das_group_id";
 	static final String DAS_FEATURE_ID = "das_feature_id";
 
-	public static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
+	private static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
 		if (feat_type == null) {
 			feat_type = SmartAnnotBioSeq.determineMethod(annot);
 		}

@@ -86,9 +86,9 @@ public final class CytobandParser implements AnnotationWriter  {
 				String seq_name = null;
 				String annot_name = null;
 				String band = null;
-				int min, max;
-				float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-				boolean forward;
+				//int min, max;
+				//float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
+				//boolean forward;
 
 				if (field_count < 4) {
 					throw new IOException("Line has wrong number of data columns.");

@@ -166,7 +166,17 @@ public final class LocalUrlCacher {
 			if (sessionId != null) {
 				huc.setRequestProperty("Cookie", sessionId);
 			}
-			InputStream fstr = huc.getInputStream();
+
+			InputStream fstr = null;
+			try {
+				fstr = huc.getInputStream();
+			}
+			catch (FileNotFoundException ex) {
+				if (fileMayNotExist) {
+					System.out.println("Couldn't find file " + url + " but that's probably fine.");
+					return null;	// We don't care if the file doesn't exist.
+				}
+			}
 			//Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
 			return fstr;
 		}

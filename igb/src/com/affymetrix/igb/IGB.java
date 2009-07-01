@@ -592,21 +592,21 @@ public final class IGB extends Application
 	private static void LoadServerPrefs(Preferences prefServers, ServerType serverType) {
 		try {
 			for (String serverURL : prefServers.keys()) {
-          //String server_type = el.getAttribute("type").toLowerCase();
-				String server_name = prefServers.get(serverURL,"value");
+				//String server_type = el.getAttribute("type").toLowerCase();
+				String server_name = prefServers.get(serverURL, "value");
 				serverURL = URLDecoder.decode(serverURL, "UTF-8");
 
-					System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
-					if (serverType == ServerType.QuickLoad) {
-						ServerList.addServer(ServerType.QuickLoad,server_name, serverURL);
-					} else if (serverType == ServerType.DAS) {
+				System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
+				if (serverType == ServerType.QuickLoad) {
+					ServerList.addServer(ServerType.QuickLoad, server_name, serverURL);
+				} else if (serverType == ServerType.DAS) {
 //						DasDiscovery.addDasServer(server_name, serverURL);
-						ServerList.addServer(ServerType.DAS,server_name, serverURL);
-					} else {
-						if (Das2Discovery.getDas2Server(serverURL) == null) {
-                  Das2Discovery.addDas2Server(server_name, serverURL);
-              }
+					ServerList.addServer(ServerType.DAS, server_name, serverURL);
+				} else {
+					if (Das2Discovery.getDas2Server(serverURL) == null) {
+						Das2Discovery.addDas2Server(server_name, serverURL);
 					}
+				}
 			}
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, null, ex);

@@ -25,6 +25,7 @@ import com.affymetrix.igb.view.QuickLoadServerModel;
 import com.affymetrix.igb.view.SeqMapView;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,11 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
 	/**
@@ -109,11 +112,11 @@ public final class FeatureLoading {
 			try {
 				URL quickloadURL = new URL((String) gVersion.gServer.serverObj);
 				if (DEBUG) {
-				System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String)gVersion.gServer.serverObj);
-			}
+					System.out.println("Discovering Quickload features for " + gVersion.versionName + ". URL:" + (String) gVersion.gServer.serverObj);
+				}
 
 				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
-				List<String> featureNames = quickloadServer.getFilenames(gVersion.versionName);
+				List<String> featureNames = quickloadServer.getTypes(gVersion.versionName);
 				for (String featureName : featureNames) {
 					if (featureName == null || featureName.length() == 0) {
 						System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
@@ -233,12 +236,10 @@ public final class FeatureLoading {
 	}
 
 	public static boolean loadQuickLoadAnnotations(final GenericFeature gFeature) throws OutOfMemoryError {
-		final String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionID + "/" + gFeature.featureName;
-		if (DEBUG) {
-			System.out.println("need to load: " + annot_url);
+		final String fileName = determineQuickLoadFileName(gFeature);
+		if (fileName.length() == 0) {
+			return false;
 		}
-		Application.getSingleton().setNotLockedUpStatus("Loading " + gFeature.toString());
-		Application.getApplicationLogger().fine("need to load: " + annot_url);
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
 
@@ -246,7 +247,7 @@ public final class FeatureLoading {
 
 			public Object doInBackground() {
 				try {
-				loadQuickLoadFeature(annot_url, gFeature);
+				loadQuickLoadFeature(fileName, gFeature);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -262,15 +263,41 @@ public final class FeatureLoading {
 		return true;
 
 	}
-	
-	private static boolean loadQuickLoadFeature(String annot_url, GenericFeature gFeature) throws OutOfMemoryError {
+
+	private static String determineQuickLoadFileName(final GenericFeature gFeature) {
+		URL quickloadURL = null;
+		try {
+			quickloadURL = new URL((String) gFeature.gVersion.gServer.serverObj);
+		} catch (MalformedURLException ex) {
+			ex.printStackTrace();
+			return "";
+		}
+
+		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
+		Map<String,String> annotsMap = quickloadServer.getAnnotsMap(gFeature.gVersion.versionID);
+		
+		// Linear search, but over a very small list.
+		for (Map.Entry<String,String> entry : annotsMap.entrySet()) {
+			if (entry.getValue().equals(gFeature.featureName)) {
+				return  entry.getKey();
+			}
+		}
+		return "";
+	}
+
+	private static boolean loadQuickLoadFeature(final String fileName, GenericFeature gFeature) throws OutOfMemoryError {
 		InputStream istr = null;
 		BufferedInputStream bis = null;
+		final String annot_url = gFeature.gVersion.gServer.URL + gFeature.gVersion.versionID + "/" + fileName;
+
+		if (DEBUG) {
+			System.out.println("need to load: " + annot_url);
+		}
 		try {
 			istr = LocalUrlCacher.getInputStream(annot_url, true);
 			if (istr != null) {
 				bis = new BufferedInputStream(istr);
-				if (GraphSymUtils.isAGraphFilename(gFeature.featureName)) {
+				if (GraphSymUtils.isAGraphFilename(fileName)) {
 					URL url = new URL(annot_url);
 					List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 					if (graphs != null) {
@@ -279,7 +306,7 @@ public final class FeatureLoading {
 						gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
 					}
 				} else {
-					LoadFileAction.load(Application.getSingleton().getFrame(), bis, gFeature.featureName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+					LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 				}
 				return true;
 			}

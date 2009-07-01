@@ -46,7 +46,7 @@ public final class ServerList {
      */
     public static GenericServer addServer(ServerType serverType, String name, String url) {
         if (name2url.get(name) == null) {
-            name2url.put(url, name);
+            name2url.put(name, url);
             return initServer(serverType, url, name);
         } else {
             return null;

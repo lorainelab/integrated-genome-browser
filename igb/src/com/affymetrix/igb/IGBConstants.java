@@ -41,6 +41,7 @@ public abstract class IGBConstants {
 	//QuickLoad filenames
 	public static final String contentsTxt = "contents.txt";
 	public static final String annotsTxt = "annots.txt";
+	public static final String annotsXml = "annots.xml";
 	public static final String liftAllLft = "liftAll.lft";
 	public static final String modChromInfoTxt = "mod_chromInfo.txt";
 

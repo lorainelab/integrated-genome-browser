@@ -67,7 +67,9 @@ public final class BgnParser implements AnnotationWriter  {
 	ArrayList<String> chromosomes = new ArrayList<String>();
 
 	public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) throws IOException {
-		System.out.println("loading file: " + file_name);
+		if (DEBUG) {
+			System.out.println("loading file: " + file_name);
+		}
 		File fil = new File(file_name);
 		long blength = fil.length();
 		FileInputStream fis = null;
@@ -76,7 +78,7 @@ public final class BgnParser implements AnnotationWriter  {
 			fis = new FileInputStream(fil);
 			result = parse(fis, annot_type, seq_group, blength, true);
 		} finally {
-			if (fis != null) {try {fis.close();} catch (Exception e) {}}
+			GeneralUtils.safeClose(fis);
 		}
 		return result;
 	}
@@ -109,7 +111,7 @@ public final class BgnParser implements AnnotationWriter  {
 
 		int total_exon_count = 0;
 		int count = 0;
-		int same_count = 0;
+		//int same_count = 0;
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		DataInputStream dis = null;
 		boolean reached_EOF = false;
@@ -153,10 +155,10 @@ public final class BgnParser implements AnnotationWriter  {
 					boolean forward = (strand.equals("+") || (strand.equals("++")));
 					int tmin = dis.readInt();
 					int tmax = dis.readInt();
-					int tlength = tmax - tmin;
+					//int tlength = tmax - tmin;
 					int cmin = dis.readInt();
 					int cmax = dis.readInt();
-					int clength = cmax - cmin;
+					//int clength = cmax - cmin;
 					int ecount = dis.readInt();
 					int[] emins = new int[ecount];
 					int[] emaxs = new int[ecount];
@@ -368,7 +370,7 @@ public final class BgnParser implements AnnotationWriter  {
 				int tlength = tmax - tmin;
 				int cmin = Integer.parseInt(cdsStart);
 				int cmax = Integer.parseInt(cdsEnd);
-				int clength = cmax - cmin;
+				//int clength = cmax - cmin;
 				int ecount = Integer.parseInt(exonCount);
 				String[] emins = emin_regex.split(exonStarts);
 				String[] emaxs = emax_regex.split(exonEnds);

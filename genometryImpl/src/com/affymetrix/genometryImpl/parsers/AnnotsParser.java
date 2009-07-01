@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -38,8 +37,8 @@ public abstract class AnnotsParser {
 					String desc = fileElement.getAttribute("description");   // not currently used
 
 					if (filename != null) {
-						// We use lower-case here, since filename's case is unimportant.
-						annots_map.put(filename.toLowerCase(), title);
+						// filename's case is now important, since we may be loading this file locally (in QuickLoad).
+						annots_map.put(filename, title);
 					}
 				}
 			}

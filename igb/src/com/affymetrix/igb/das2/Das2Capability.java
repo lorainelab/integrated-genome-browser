@@ -8,6 +8,7 @@ public final class Das2Capability {
   URI root_uri;
   Map formats;
   Das2VersionedSource version;
+	static Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<String,Das2VersionedSource>();
 
   public Das2Capability(String cap_type, URI cap_root, Map cap_formats) {
     type = cap_type;
@@ -19,6 +20,7 @@ public final class Das2Capability {
     version = vsource;
   }
 
+	public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
   public Das2VersionedSource getVersionedSource() { return version; }
   public String getType() { return type; }
   public URI getRootURI() { return root_uri; }

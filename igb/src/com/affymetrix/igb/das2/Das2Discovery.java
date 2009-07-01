@@ -15,7 +15,7 @@ package com.affymetrix.igb.das2;
 
 //import java.io.*;
 import java.util.*;
-import java.util.regex.*;
+//import java.util.regex.*;
 
 //import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 //import com.affymetrix.igb.util.*;
@@ -32,9 +32,9 @@ public final class Das2Discovery {
   static Map<String,String> name2url = new LinkedHashMap<String,String>();
   static Map<String,Das2ServerInfo> name2server = new LinkedHashMap<String,Das2ServerInfo>();
   static Map<String,Das2ServerInfo> url2server = new LinkedHashMap<String,Das2ServerInfo>();
-  static Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<String,Das2VersionedSource>();
+  //static Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<String,Das2VersionedSource>();
 
-  static {
+  /*static {
     //name2url.put("NetAffx", "http://netaffxdas.affymetrix.com/das2/genome");
     //    name2url.put("localhost", "http://localhost:9092/das2/genome");
     //    name2url.put("biopackages", "http://das.biopackages.net/das/genome");
@@ -46,7 +46,7 @@ public final class Das2Discovery {
     //    name2url.put("riva",  "http://riva.ev.affymetrix.com:9092/das2/genome");
     //    name2url.put("bad test", "http://this.is.a.test/hmmm");
     initServers();
-  }
+  }*/
 
   /**
    *  Gets a Map of DAS2 servers.
@@ -60,7 +60,7 @@ public final class Das2Discovery {
     return name2url;
   }*/
 
-  public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
+  //public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
 
   //public static void addServersFromTabFile(String server_loc_url) {
     // System.out.println("------------ Adding servers from tab format file :"+server_loc_list);
@@ -102,12 +102,12 @@ public final class Das2Discovery {
     return server;
   }
 
-  private static void initServers() {
+  /*private static void initServers() {
       for (String name : name2url.keySet()) {
           String url = name2url.get(name);
           initServer(url, name);
     }
-  }
+  }*/
 
   public static Das2ServerInfo addDas2Server(String name, String url)  {
       if (name2url.get(name) == null) {
@@ -119,7 +119,7 @@ public final class Das2Discovery {
   }
 
 
-  protected static Das2ServerInfo initServer(String url, String name) {
+  private static Das2ServerInfo initServer(String url, String name) {
     Das2ServerInfo server = null;
     try {
       server = new Das2ServerInfo(url, name, false);

@@ -142,7 +142,7 @@ public class Das2VersionedSource {
         capabilities.put(cap.getType(), cap);
         cap.setVersionedSource(this);
         //    System.out.println("Adding to cap map: " + cap.getRootURI().toString() + "  ,  version: " + this.getID());
-        Das2Discovery.getCapabilityMap().put(cap.getRootURI().toString(), this);
+        Das2Capability.getCapabilityMap().put(cap.getRootURI().toString(), this);
     }
 
     public Das2Capability getCapability(String type) {

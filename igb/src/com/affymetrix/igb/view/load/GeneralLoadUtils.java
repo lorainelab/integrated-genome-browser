@@ -232,7 +232,7 @@ public final class GeneralLoadUtils {
 		// TODO -- get chromosome info
 		for (GenericServer gServer : ServerList.getServers().values()) {
 			if (gServer.serverType == ServerType.DAS) {
-				if (serverExists(discoveredServers, gServer.serverName, ServerType.DAS) == null) {
+				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);
 				}
 			}
@@ -252,7 +252,7 @@ public final class GeneralLoadUtils {
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
 		for (GenericServer gServer : ServerList.getServers().values()) {
 			if (gServer.serverType == ServerType.QuickLoad) {
-				if (serverExists(discoveredServers, gServer.serverName, ServerType.QuickLoad) == null) {
+				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);
 				}
 			}

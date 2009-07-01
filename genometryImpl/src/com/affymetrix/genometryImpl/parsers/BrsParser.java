@@ -80,10 +80,10 @@ public final class BrsParser implements AnnotationWriter  {
 	int max_genes = 50000;  // guesstimate...
 	ArrayList chromosomes = new ArrayList();
 
-	public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+	public List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		System.out.println("loading file: " + file_name);
-		List result = null;
+		List<SeqSymmetry> result = null;
 		FileInputStream fis = null;
 		try {
 			File fil = new File(file_name);
@@ -96,12 +96,12 @@ public final class BrsParser implements AnnotationWriter  {
 		return result;
 	}
 
-	public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
+	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		return parse(istr, annot_type, seq_group, true);
 	}
 
-	public List parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
 		throws IOException {
 		return parse(istr, annot_type, seq_group, annotate_seq, -1);
 	}

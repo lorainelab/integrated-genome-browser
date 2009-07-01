@@ -7,6 +7,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.SeqSymmetry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +17,6 @@ import java.io.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SymWithProps;
 
@@ -50,7 +50,7 @@ public class Das1FeatureSaxParserTest {
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 			Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
 
-			List results = null;
+			List<SeqSymmetry> results = null;
 			try {
 				istr = new FileInputStream(test_file_name_1);
 				assertNotNull(istr);

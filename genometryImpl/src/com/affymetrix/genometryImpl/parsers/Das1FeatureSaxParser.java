@@ -158,7 +158,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		filter_hash.remove(feat_str);
 	}*/
 
-	public List parse(InputStream istr, AnnotatedSeqGroup seq_group)
+	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group)
 					throws IOException {
 		InputSource isrc = new InputSource(istr);
 		return parse(isrc, seq_group);

@@ -188,7 +188,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *   which in turn is directly attached to the seq as an annotation (giving two levels of additional
 	 *   annotation hierarchy)
 	 */
-	public List parse(InputSource isrc, String uri, AnnotatedSeqGroup group, boolean annot_seq) throws IOException, SAXException {
+	public List<SeqSymmetry> parse(InputSource isrc, String uri, AnnotatedSeqGroup group, boolean annot_seq) throws IOException, SAXException {
 		clearAll();
 		try {
 			//      URI source_uri = new URI(isrc.getSystemId());

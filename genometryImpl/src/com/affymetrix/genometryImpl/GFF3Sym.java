@@ -12,9 +12,6 @@
  */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.UcscGffSym;
-import com.affymetrix.genometryImpl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 import com.affymetrix.genometry.*;
 
@@ -26,6 +23,8 @@ import java.util.regex.*;
  *  A sym to efficiently store GFF version 3 annotations.
  *
  *  See http://song.sourceforge.net/gff3.shtml
+ *
+ * @version $Id$
  */
 public class GFF3Sym extends SingletonSymWithProps implements Scored {
 
@@ -37,6 +36,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 	public static final String FEATURE_TYPE_MRNA = "mrna";
 	public static final String FEATURE_TYPE_EXON = "exon";
 	public static final String FEATURE_TYPE_CDS = "cds";
+	public static final String FEATURE_TYPE_CHROMOSOME = "chromosome";
 
 	// Assuming that these ontology types are not case-sensitive
 	public static final String SOFA_GENE = "SO:0000704";
@@ -310,6 +310,9 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 		}
 		if (FEATURE_TYPE_CDS.equalsIgnoreCase(s)) {
 			return FEATURE_TYPE_CDS;
+		}
+		if (FEATURE_TYPE_CHROMOSOME.equalsIgnoreCase(s)) {
+			return FEATURE_TYPE_CHROMOSOME;
 		}
 
 		if (SOFA_GENE.equalsIgnoreCase(s)) {

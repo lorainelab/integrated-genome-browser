@@ -27,8 +27,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 
 import org.xml.sax.InputSource;
@@ -46,6 +44,10 @@ import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import org.xml.sax.SAXException;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class LoadFileAction {
 
   JFrame gviewerFrame;
@@ -473,7 +475,7 @@ public final class LoadFileAction {
           String default_type = stream_name.substring(0, stream_name.indexOf(".ead"));
           parser.parse(str, selected_group, true, default_type);
           return input_seq;
-      } else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf") || lcname.endsWith(".gff3")) {
+      } else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
           // assume it's GFF1, GFF2, GTF, or GFF3 format
           GFFParser parser = new GFFParser();
           parser.setUseStandardFilters(true);
@@ -487,7 +489,13 @@ public final class LoadFileAction {
           }
           parser.parse(str, annot_type, selected_group, false);
           return null;
-      } else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
+      } else if (lcname.endsWith(".gff3")) {
+			/* Force parcing as GFF3 */
+			GFF3Parser parser = new GFF3Parser();
+			String annot_type = stream_name.substring(0, stream_name.indexOf(".gff3"));
+			parser.parse(str, annot_type, selected_group);
+			return input_seq;
+	  } else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
           List<SmartAnnotBioSeq> seqs = FastaParser.parseAll(str, selected_group);
           if (input_seq != null && seqs.contains(input_seq)) {
               return input_seq;

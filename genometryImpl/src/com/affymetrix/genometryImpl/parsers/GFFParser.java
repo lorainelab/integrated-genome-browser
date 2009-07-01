@@ -80,6 +80,8 @@ import com.affymetrix.genometryImpl.SymWithProps;
  *     semantics of some of the GFF types (exon, CDS, CDS_insert, etc.) and
  *     can build appropriate genometry models
  *</pre>
+ *
+ * @version $Id$
  */
 public final class GFFParser implements AnnotationWriter  {
 	public static final int VERSION_UNKNOWN = 0;
@@ -330,7 +332,7 @@ public final class GFFParser implements AnnotationWriter  {
 
 				if (fields != null && fields.length >= 8) {
 					line_count++;
-					if ((line_count % 10000) == 0) { System.out.println("" + line_count + " lines processed"); }
+					if (DEBUG && (line_count % 10000) == 0) { System.out.println("" + line_count + " lines processed"); }
 					String feature_type = fields[2].intern();
 
 					// if feature_type is present in fail_filter_hash, skip this line
@@ -778,6 +780,7 @@ public final class GFFParser implements AnnotationWriter  {
 			addFeatureFilter("cluster");
 			addFeatureFilter("psr");
 			addFeatureFilter("link");
+			addFeatureFilter("chromosome");
 
 			if (DEBUG) {
 			System.out.println("group tag: transcript_id");

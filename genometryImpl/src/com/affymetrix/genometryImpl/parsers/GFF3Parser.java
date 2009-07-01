@@ -33,8 +33,11 @@ import java.util.regex.*;
  *
  *  See http://song.sourceforge.net/gff3.shtml.
  *</pre>
+ *
+ * @version $Id$
  */
 public final class GFF3Parser {
+	private static final boolean DEBUG = false;
 	public static final int GFF3 = 3;
 
 	// Any tag name beginning with a capital letter must be one of the reserved names.
@@ -63,7 +66,7 @@ public final class GFF3Parser {
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
+	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 
@@ -80,7 +83,7 @@ public final class GFF3Parser {
 	 */
 	public List<SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
 		throws IOException {
-		System.out.println("starting GFF3 parse.");
+		if (DEBUG) { System.out.println("starting GFF3 parse."); }
 
 		int line_count = 0;
 
@@ -114,9 +117,10 @@ public final class GFF3Parser {
 				if (line.startsWith("#")) { continue; }
 				String fields[] = line_regex.split(line);
 
-				if (fields != null && fields.length >= 8) {
+				if (fields==null || fields.length < 8) { continue; }
+				
 					line_count++;
-					if ((line_count % 10000) == 0) { System.out.println("" + line_count + " lines processed"); }
+					if (DEBUG && (line_count % 10000) == 0) { System.out.println("" + line_count + " lines processed"); }
 
 					String seq_name = fields[0].intern();
 					String source;
@@ -137,6 +141,17 @@ public final class GFF3Parser {
 
 					float score = GFF3Sym.UNKNOWN_SCORE;
 					if (! ".".equals(score_str)) { score = Float.parseFloat(score_str); }
+
+					/* 
+					 * Found a chromosome in the file.  Do an addSeq and set the
+					 * length because we can.  Also, break out of this iteration
+					 * of the loop: we do not want to create an annotation for
+					 * the chromosome.
+					 */
+					if (GFF3Sym.FEATURE_TYPE_CHROMOSOME.equals(feature_type)) {
+						seq_group.addSeq(seq_name, coord_b);
+						continue;
+					}
 
 					MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
 					if (seq == null) {
@@ -192,7 +207,6 @@ public final class GFF3Parser {
 							}
 						}
 					}
-				}
 			}
 		} finally {
 			br.close();

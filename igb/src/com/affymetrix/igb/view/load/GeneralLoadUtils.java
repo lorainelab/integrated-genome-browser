@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
@@ -173,11 +172,15 @@ public final class GeneralLoadUtils {
 			}
 			discoveredServers.add(gServer);
 		} else if (serverType == ServerType.DAS) {
-			DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
+			/*DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
 			if (server == null) {
 				return false;
 			}
-			gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);
+			gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);*/
+			gServer = ServerList.addServer(serverType, serverName, serverURL);
+			if (gServer == null) {
+				return false;
+			}
 			getDAS1SpeciesAndVersions(gServer);
 			discoveredServers.add(gServer);
 
@@ -227,7 +230,14 @@ public final class GeneralLoadUtils {
 		// Discover DAS servers
 		// TODO -- strip out descriptions and make synonyms with DAS/2
 		// TODO -- get chromosome info
-		for (Map.Entry<String, DasServerInfo> entry : DasDiscovery.getDasServers().entrySet()) {
+		for (GenericServer gServer : ServerList.getServers().values()) {
+			if (gServer.serverType == ServerType.DAS) {
+				if (serverExists(discoveredServers, gServer.serverName, ServerType.DAS) == null) {
+					discoveredServers.add(gServer);
+				}
+			}
+		}
+		/*for (Map.Entry<String, DasServerInfo> entry : DasDiscovery.getDasServers().entrySet()) {
 			DasServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
@@ -236,13 +246,15 @@ public final class GeneralLoadUtils {
 					discoveredServers.add(g);
 				}
 			}
-		}
+		}*/
 
 		// Discover Quickload servers
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
 		for (GenericServer gServer : ServerList.getServers().values()) {
 			if (gServer.serverType == ServerType.QuickLoad) {
-				discoveredServers.add(gServer);
+				if (serverExists(discoveredServers, gServer.serverName, ServerType.QuickLoad) == null) {
+					discoveredServers.add(gServer);
+				}
 			}
 		}
 	}

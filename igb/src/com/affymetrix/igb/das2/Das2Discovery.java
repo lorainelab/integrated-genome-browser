@@ -22,13 +22,13 @@ import java.util.regex.*;
 
 public final class Das2Discovery {
 
-    static Pattern tab_splitter = Pattern.compile("\t");
-    static int DAS_NAME = 0;
-    static int DAS_URI = 1;
-    static int INFO_URI = 2;
+    //static Pattern tab_splitter = Pattern.compile("\t");
+    //static int DAS_NAME = 0;
+    //static int DAS_URI = 1;
+    //static int INFO_URI = 2;
 
   //  static public String DEFAULT_DAS2_SERVER_NAME = "localhost";
-  static public String DEFAULT_DAS2_SERVER_NAME = "NetAffx";
+  //static public String DEFAULT_DAS2_SERVER_NAME = "NetAffx";
   static Map<String,String> name2url = new LinkedHashMap<String,String>();
   static Map<String,Das2ServerInfo> name2server = new LinkedHashMap<String,Das2ServerInfo>();
   static Map<String,Das2ServerInfo> url2server = new LinkedHashMap<String,Das2ServerInfo>();
@@ -56,9 +56,9 @@ public final class Das2Discovery {
     return name2server;
   }
 
-  public static Map<String,String> getDas2Urls() {
+  /*public static Map<String,String> getDas2Urls() {
     return name2url;
-  }
+  }*/
 
   public static Map<String,Das2VersionedSource> getCapabilityMap() { return cap2version; }
 
@@ -102,7 +102,7 @@ public final class Das2Discovery {
     return server;
   }
 
-  protected static void initServers() {
+  private static void initServers() {
       for (String name : name2url.keySet()) {
           String url = name2url.get(name);
           initServer(url, name);

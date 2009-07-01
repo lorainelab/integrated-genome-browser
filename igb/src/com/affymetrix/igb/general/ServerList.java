@@ -73,12 +73,12 @@ public final class ServerList {
                 //url2server.put(url, server);
                 return server;
             }
-						/*if (serverType == ServerType.DAS) {
+						if (serverType == ServerType.DAS) {
 							DasServerInfo info = new DasServerInfo(url, name);
 							server = new GenericServer(name, root_url, serverType, info);
 							name2server.put(name, server);
 							return server;
-						}*/
+						}
         } catch (Exception e) {
             System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
             e.printStackTrace(System.out);

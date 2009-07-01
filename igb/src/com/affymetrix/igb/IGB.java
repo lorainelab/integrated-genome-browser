@@ -55,7 +55,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
-import com.affymetrix.igb.das.DasDiscovery;
 import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.menuitem.*;
 import com.affymetrix.igb.view.*;
@@ -601,7 +600,8 @@ public final class IGB extends Application
 					if (serverType == ServerType.QuickLoad) {
 						ServerList.addServer(ServerType.QuickLoad,server_name, serverURL);
 					} else if (serverType == ServerType.DAS) {
-						DasDiscovery.addDasServer(server_name, serverURL);
+//						DasDiscovery.addDasServer(server_name, serverURL);
+						ServerList.addServer(ServerType.DAS,server_name, serverURL);
 					} else {
 						if (Das2Discovery.getDas2Server(serverURL) == null) {
                   Das2Discovery.addDas2Server(server_name, serverURL);

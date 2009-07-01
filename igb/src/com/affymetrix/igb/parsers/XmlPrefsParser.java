@@ -14,7 +14,6 @@ package com.affymetrix.igb.parsers;
 
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das.DasDiscovery;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -226,9 +225,10 @@ public final class XmlPrefsParser {
 						String tag = el.getAttribute("tag");
 						the_name = tag;
 						val = el.getAttribute("val");
-						prefs_hash.put(tag, val);
 						if (tag.equals("QuickLoadUrl")) {
-							System.out.println("added QuickLoadUrl to prefs: " + val);
+							System.out.println("WARNING: QuickLoadUrl is no longer supported.  Use <server> specifier instead");
+						} else {
+							prefs_hash.put(tag, val);
 						}
 					} else if (name.equalsIgnoreCase("boolean")) {
 						String tag = el.getAttribute("tag");
@@ -262,7 +262,9 @@ public final class XmlPrefsParser {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
 						//das_servers.put(server_name, server_url);
-						DasDiscovery.addDasServer(server_name, server_url);
+						//DasDiscovery.addDasServer(server_name, server_url);
+						ServerList.addServer(ServerType.DAS, server_name, server_url);
+						SourceTableModel.add(server_name, server_url, ServerType.DAS.toString());
 					} else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
@@ -271,6 +273,7 @@ public final class XmlPrefsParser {
 								System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
 							}
 							Das2Discovery.addDas2Server(server_name, server_url);
+							SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
 						}
 					} else if (name.equalsIgnoreCase("server")) {
 						// new generic server format
@@ -281,16 +284,17 @@ public final class XmlPrefsParser {
 							System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url);
 						}
 						if (server_type.equalsIgnoreCase("das")) {
-							DasDiscovery.addDasServer(server_name, server_url);
-							SourceTableModel.add(server_name, server_url, "DAS");
+							//DasDiscovery.addDasServer(server_name, server_url);
+							ServerList.addServer(ServerType.DAS, server_name, server_url);
+							SourceTableModel.add(server_name, server_url, ServerType.DAS.toString());
 						} else if (server_type.equalsIgnoreCase("das2")) {
 							if (Das2Discovery.getDas2Server(server_url) == null) {
 								Das2Discovery.addDas2Server(server_name, server_url);
-								SourceTableModel.add(server_name, server_url, "DAS2");
+								SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
 							}
 						} else if (server_type.equalsIgnoreCase("quickload")) {
 							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
-							SourceTableModel.add(server_name, server_url, "QuickLoad");
+							SourceTableModel.add(server_name, server_url, ServerType.QuickLoad.toString());
 						}
 
 					}

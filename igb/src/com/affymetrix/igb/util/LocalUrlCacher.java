@@ -173,7 +173,7 @@ public final class LocalUrlCacher {
 			}
 			catch (FileNotFoundException ex) {
 				if (fileMayNotExist) {
-					System.out.println("Couldn't find file " + url + " but that's probably fine.");
+					System.out.println("Couldn't find file " + url + ", but it's optional.");
 					return null;	// We don't care if the file doesn't exist.
 				}
 			}

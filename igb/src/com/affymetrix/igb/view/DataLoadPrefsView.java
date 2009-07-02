@@ -12,6 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -265,9 +266,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 		// ServerBox3
 		final Vector<String> serverTypes = new Vector<String>(3);
-		serverTypes.add("QuickLoad");
-		serverTypes.add("DAS2");
-		serverTypes.add("DAS");
+		serverTypes.add(ServerType.QuickLoad.toString());
+		serverTypes.add(ServerType.DAS2.toString());
+		serverTypes.add(ServerType.DAS.toString());
 		final JComboBox serverTypeCB = new JComboBox(serverTypes);
 		serverTypeCB.setMaximumSize(new Dimension(serverTypeCB.getPreferredSize()));
 		serverTypeCB.setAlignmentX(0.0f);
@@ -299,7 +300,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		serverTypeCB.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				String serverType = (String)serverTypeCB.getSelectedItem();
-				browse_for_QuickLoad_fileB.setVisible(serverType.equals("QuickLoad"));
+				browse_for_QuickLoad_fileB.setVisible(serverType.equals(ServerType.QuickLoad.toString()));
 			}
 		});
 		addServerB.addActionListener(new ActionListener() {
@@ -323,7 +324,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			ErrorHandler.errorPanel("Blank server name","Server name must be specified",this);
 			return;
 		}
-		if (serverType.equals("QuickLoad")) {
+		if (serverType.equals(ServerType.QuickLoad.toString())) {
 			File f = new File(DirectoryOrURL);
 			if (f.isDirectory()) {
 				try {
@@ -331,8 +332,8 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 				addToPreferences(url.toString(), serverType, serverName);
 				}
 				catch (MalformedURLException ex) {
-					String errorTitle = "Invalid URL" + (serverType.equals("QuickLoad") ? "/Directory" : "");
-			String errorMessage = "'file://" + f + "' is not a valid QuickLoad directory";
+					String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? "/Directory" : "");
+			String errorMessage = "'file://" + f + "' is not a valid " + ServerType.QuickLoad.toString() + " directory";
 			ErrorHandler.errorPanel(errorTitle,errorMessage,this);
 			return;
 				}
@@ -345,10 +346,10 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			URL url = new URL(DirectoryOrURL);
 			addToPreferences(DirectoryOrURL, serverType, serverName);
 		} catch (MalformedURLException ex) {
-			String errorTitle = "Invalid URL" + (serverType.equals("QuickLoad") ? "/Directory" : "");
+			String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? "/Directory" : "");
 			String errorMessage =
 							"'" + DirectoryOrURL + "' is not a valid URL"
-							+ (serverType.equals("QuickLoad") ? " or directory" : "");
+							+ (serverType.equals(ServerType.QuickLoad.toString()) ? " or directory" : "");
 			ErrorHandler.errorPanel(errorTitle,errorMessage,this);
 			return;
 		}

@@ -3,86 +3,96 @@ package com.affymetrix.igb.general;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.das.DasServerInfo;
+import com.affymetrix.igb.das2.Das2ServerInfo;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public final class ServerList {
+	static Map<String, String> url2Name = new LinkedHashMap<String, String>();
+	static Map<GenericServer, String> server2Name = new LinkedHashMap<GenericServer, String>();
+	static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 
-    // Currently just has list of Quickload servers.  Eventually will add DAS and DAS/2 servers here.
-    static Map<String, String> name2url = new LinkedHashMap<String, String>();
-    static Map<String, GenericServer> name2server = new LinkedHashMap<String, GenericServer>();
-    //static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
+	/**
+	 *  Map is from Strings (server names) to generic servers.
+	 */
+	public static Set<GenericServer> getServers() {
+		return server2Name.keySet();
+	}
 
-    /**
-     *  Map is from Strings (server names) to generic servers.
-     */
-    public static Map<String, GenericServer> getServers() {
-        return name2server;
-    }
+	/*public static Map<String, String> getUrls() {
+	return url2Name;
+	}*/
+	/**
+	 *  Given an URLorName string which should be the resolvable root URL
+	 *  (but may optionally be the server name)
+	 *  Return the GenericServer object.  (This could be non-unique if passed a name.)
+	 */
+	public static GenericServer getServer(String URLorName) {
+		GenericServer server = url2server.get(URLorName);
+		if (server == null) {
+			for (GenericServer gServer : server2Name.keySet()) {
+				if (gServer.serverName.equals(URLorName)) {
+					return gServer;
+				}
+			}
+		}
+		return server;
+	}
 
-    public static Map<String, String> getUrls() {
-        return name2url;
-    }
+	/**
+	 *
+	 * @param serverType
+	 * @param name
+	 * @param url
+	 * @return
+	 */
+	public static GenericServer addServer(ServerType serverType, String name, String url) {
 
-    /**
-     *  Given an id string which should be the resolvable root URL
-     *     (but may optionally be the server name)
-     *  Return the GenericServer object
-     */
-    /*public static GenericServer getServer(String id) {
-        GenericServer server = url2server.get(id);
-        if (server == null) {
-            server = name2server.get(id);
-        }
-        return server;
-    }*/
+		if (url2Name.get(url) == null) {
+			url2Name.put(url, name);
+			return initServer(serverType, url, name);
+		}
+		return null;
+	}
 
-    /**
-     * 
-     * @param serverType
-     * @param name
-     * @param url
-     * @return
-     */
-    public static GenericServer addServer(ServerType serverType, String name, String url) {
-        if (name2url.get(name) == null) {
-            name2url.put(name, url);
-            return initServer(serverType, url, name);
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * Initialize the server.
+	 * @param serverType
+	 * @param url
+	 * @param name
+	 * @return
+	 */
+	private static GenericServer initServer(ServerType serverType, String url, String name) {
+		GenericServer server = null;
+		try {
+			if (serverType == ServerType.Unknown) {
+				return null;
+			}
+			
+			if (serverType == ServerType.QuickLoad) {
+				String root_url = url;
+				if (!root_url.endsWith("/")) {
+					root_url = root_url + "/";
+				}
+				server = new GenericServer(name, root_url, serverType, root_url);
+			}
+			if (serverType == ServerType.DAS) {
+				DasServerInfo info = new DasServerInfo(url, name);
+				server = new GenericServer(name, info.getRootUrl(), serverType, info);
+			}
+			if (serverType == ServerType.DAS2) {
+				Das2ServerInfo info = new Das2ServerInfo(url, name, false);
+				server = new GenericServer(name, info.getURI().toString(), serverType, info);
+			}
+			server2Name.put(server, name);
+			url2server.put(url, server);
+			return server;
 
-    /**
-     * Initialize the server.  Currently only supports Quickload.
-     * @param serverType
-     * @param url
-     * @param name
-     * @return
-     */
-    protected static GenericServer initServer(ServerType serverType, String url, String name) {
-        GenericServer server = null;
-        try {
-            String root_url = url;
-            if (! root_url.endsWith("/")) {
-                root_url = root_url + "/";
-            }
-            if (serverType == ServerType.QuickLoad) {
-                server = new GenericServer(name, root_url, serverType, root_url);
-                name2server.put(name, server);
-                //url2server.put(url, server);
-                return server;
-            }
-						if (serverType == ServerType.DAS) {
-							DasServerInfo info = new DasServerInfo(url, name);
-							server = new GenericServer(name, root_url, serverType, info);
-							name2server.put(name, server);
-							return server;
-						}
-        } catch (Exception e) {
-            System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
-            e.printStackTrace(System.out);
-        }
-        return server;
-    }
+		} catch (Exception e) {
+			System.out.println("WARNING: Could not initialize " + serverType + " server with address: " + url);
+			e.printStackTrace(System.out);
+		}
+		return server;
+	}
 }

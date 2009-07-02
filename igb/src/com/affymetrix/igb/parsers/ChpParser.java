@@ -30,15 +30,16 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.das2.Das2Region;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2VersionedSource;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.genometry.LazyChpSym;
 import com.affymetrix.igb.menuitem.OpenGraphAction;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
@@ -171,8 +172,14 @@ public final class ChpParser {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
-    Map das_servers = Das2Discovery.getDas2Servers();
-    Das2ServerInfo server = (Das2ServerInfo)das_servers.get(LazyChpSym.PROBESET_SERVER_NAME);
+		GenericServer gServer = ServerList.getServer(LazyChpSym.PROBESET_SERVER_NAME);
+    // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
+    if (gServer == null) {
+      Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);
+      return null;
+    }
+		Das2ServerInfo server = (Das2ServerInfo)gServer.serverObj;
+    
     // Don't make any LazyChpSyms if can't find the appropriate genome on the DAS/2 server
     if (server == null) {
       Application.errorPanel("Couldn't find server to retrieve location data for CHP file, server = " + LazyChpSym.PROBESET_SERVER_NAME);

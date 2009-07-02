@@ -4,7 +4,6 @@ import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -183,9 +182,9 @@ public abstract class PrefsLoader {
 	 */
 	private static void LoadServerPrefs() {
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		LoadServerPrefs(prefServers.node("QuickLoad"),ServerType.QuickLoad);
-		LoadServerPrefs(prefServers.node("DAS"),ServerType.DAS);
-		LoadServerPrefs(prefServers.node("DAS2"),ServerType.DAS2);
+		LoadServerPrefs(prefServers.node(ServerType.QuickLoad.toString()),ServerType.QuickLoad);
+		LoadServerPrefs(prefServers.node(ServerType.DAS.toString()),ServerType.DAS);
+		LoadServerPrefs(prefServers.node(ServerType.DAS2.toString()),ServerType.DAS2);
 	}
 
 	private static void LoadServerPrefs(Preferences prefServers, ServerType serverType) {
@@ -200,16 +199,12 @@ public abstract class PrefsLoader {
 				}
 
 				System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
-				if (serverType == ServerType.QuickLoad) {
-					ServerList.addServer(ServerType.QuickLoad, server_name, serverURL);
-				} else if (serverType == ServerType.DAS) {
-//						DasDiscovery.addDasServer(server_name, serverURL);
-					ServerList.addServer(ServerType.DAS, server_name, serverURL);
-				} else {
-					if (Das2Discovery.getDas2Server(serverURL) == null) {
-						Das2Discovery.addDas2Server(server_name, serverURL);
-					}
+				if (serverType == ServerType.Unknown) {
+					System.out.println("WARNING: this server has an unknown type.  Skipping");
+					continue;
 				}
+
+				ServerList.addServer(serverType, server_name, serverURL);
 			}
 		} catch (BackingStoreException ex) {
 			Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, null, ex);

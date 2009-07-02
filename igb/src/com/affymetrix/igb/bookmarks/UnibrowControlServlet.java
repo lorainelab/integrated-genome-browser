@@ -20,13 +20,16 @@ import java.util.regex.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.general.FeatureLoading;
+import com.affymetrix.igb.general.ServerList;
 
 /**
  *  A way of allowing IGB to be controlled via hyperlinks.
@@ -207,10 +210,12 @@ public final class UnibrowControlServlet {
 			//
 			if (use_optimizer) {
 				try {
-					Das2ServerInfo server = Das2Discovery.getDas2Server(das2_server_url);
-					if (server == null) {
-						server = Das2Discovery.addDas2Server(das2_server_url, das2_server_url);
+					GenericServer gServer = ServerList.getServer(das2_server_url);
+					if (gServer == null) {
+						gServer = ServerList.addServer(ServerType.DAS2, das2_server_url, das2_server_url);
 					}
+					Das2ServerInfo server = (Das2ServerInfo)gServer.serverObj;
+
 					if (DEBUG_DAS2_LOAD) {
 						System.out.println("     server: " + server.getID());
 					}

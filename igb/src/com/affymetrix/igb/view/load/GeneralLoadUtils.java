@@ -24,7 +24,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
-import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.das2.Das2Region;
 import com.affymetrix.igb.das2.Das2ServerInfo;
@@ -185,11 +184,12 @@ public final class GeneralLoadUtils {
 			discoveredServers.add(gServer);
 
 		} else if (serverType == ServerType.DAS2) {
-			Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
-			if (server == null) {
+			//Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
+			gServer = ServerList.addServer(serverType, serverName, serverURL);
+			if (gServer == null) {
 				return false;
 			}
-			gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
+			//gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
 			getDAS2Species(gServer);
 			getDAS2Versions(gServer);
 			discoveredServers.add(gServer);
@@ -216,7 +216,7 @@ public final class GeneralLoadUtils {
 	 * Discover the list of servers.
 	 */
 	public static synchronized void discoverServersInternal(final List<GenericServer> discoveredServers) {
-		for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
+		/*for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
 			Das2ServerInfo server = entry.getValue();
 			String serverName = entry.getKey();
 			if (server != null && serverName != null) {
@@ -225,12 +225,23 @@ public final class GeneralLoadUtils {
 					discoveredServers.add(g);
 				}
 			}
+		}*/
+		/*for (GenericServer gServer : ServerList.getServers()) {
+			System.out.println("Discovering server... " + gServer);
+		}*/
+
+		for (GenericServer gServer : ServerList.getServers()) {
+			if (gServer.serverType == ServerType.DAS2) {
+				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
+					discoveredServers.add(gServer);
+				}
+			}
 		}
 
 		// Discover DAS servers
 		// TODO -- strip out descriptions and make synonyms with DAS/2
 		// TODO -- get chromosome info
-		for (GenericServer gServer : ServerList.getServers().values()) {
+		for (GenericServer gServer : ServerList.getServers()) {
 			if (gServer.serverType == ServerType.DAS) {
 				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);
@@ -250,7 +261,7 @@ public final class GeneralLoadUtils {
 
 		// Discover Quickload servers
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
-		for (GenericServer gServer : ServerList.getServers().values()) {
+		for (GenericServer gServer : ServerList.getServers()) {
 			if (gServer.serverType == ServerType.QuickLoad) {
 				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);
@@ -495,8 +506,8 @@ public final class GeneralLoadUtils {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		for (GenericVersion gVersion : this.versionName2versionSet.get(versionName)) {
-					featureList.addAll(gVersion.features);
-				}
+			featureList.addAll(gVersion.features);
+		}
 		return featureList;
 	}
 
@@ -600,7 +611,7 @@ public final class GeneralLoadUtils {
 	private static AnnotatedSeqGroup loadChromInfo(List<GenericVersion> gVersions) {
 		for (GenericVersion gVersion : gVersions) {
 			if (DEBUG) {
-				System.out.println("loading list of chromosomes for genome version: " + gVersion.versionName + " from server " + gVersion.gServer.serverName);
+				System.out.println("loading list of chromosomes for genome version: " + gVersion.versionName + " from server " + gVersion.gServer);
 			}
 			AnnotatedSeqGroup group = loadChromInfo(gVersion);
 			if (group != null) {

@@ -209,11 +209,11 @@ public final class GeneralLoadView extends JComponent
 	 */
 	public boolean addServer(String serverName, String serverURL, String serverType) {
 		boolean successful = false;
-		if (serverType.equals("QuickLoad")) {
+		if (serverType.equals(ServerType.QuickLoad.toString())) {
 			successful = this.glu.addServer(serverName, serverURL, ServerType.QuickLoad);
-		} else if (serverType.equals("DAS")) {
+		} else if (serverType.equals(ServerType.DAS.toString())) {
 			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS);
-		} else if (serverType.equals("DAS2")) {
+		} else if (serverType.equals(ServerType.DAS2.toString())) {
 			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS2);
 		}
 		if (!successful) {

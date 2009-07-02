@@ -28,7 +28,6 @@ import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
-import com.affymetrix.igb.das2.Das2Discovery;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.SourceTableModel;
 
@@ -258,23 +257,15 @@ public final class XmlPrefsParser {
 						prefs_hash.put(name.trim(), val);
 					//          System.out.println(tag + ",   " + val);
 					} else if (name.equalsIgnoreCase("dasserver") || name.equalsIgnoreCase("das_server")) {
-						//Map das_servers = getNamedMap(prefs_hash, DAS_SERVERS);
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
-						//das_servers.put(server_name, server_url);
-						//DasDiscovery.addDasServer(server_name, server_url);
 						ServerList.addServer(ServerType.DAS, server_name, server_url);
 						SourceTableModel.add(server_name, server_url, ServerType.DAS.toString());
 					} else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
-						if (Das2Discovery.getDas2Server(server_url) == null) {
-							if (IGBConstants.DEBUG) {
-								System.out.println("XmlPrefsParser adding DAS/2 server: " + server_name + ",  " + server_url);
-							}
-							Das2Discovery.addDas2Server(server_name, server_url);
-							SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
-						}
+						ServerList.addServer(ServerType.DAS2, server_name, server_url);
+						SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
 					} else if (name.equalsIgnoreCase("server")) {
 						// new generic server format
 						String server_type = el.getAttribute("type").toLowerCase();
@@ -283,20 +274,16 @@ public final class XmlPrefsParser {
 						if (IGBConstants.DEBUG) {
 							System.out.println("XmlPrefsParser adding " + server_type + " server: " + server_name + ",  " + server_url);
 						}
-						if (server_type.equalsIgnoreCase("das")) {
-							//DasDiscovery.addDasServer(server_name, server_url);
+						if (server_type.equalsIgnoreCase(ServerType.DAS.toString())) {
 							ServerList.addServer(ServerType.DAS, server_name, server_url);
 							SourceTableModel.add(server_name, server_url, ServerType.DAS.toString());
-						} else if (server_type.equalsIgnoreCase("das2")) {
-							if (Das2Discovery.getDas2Server(server_url) == null) {
-								Das2Discovery.addDas2Server(server_name, server_url);
-								SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
-							}
-						} else if (server_type.equalsIgnoreCase("quickload")) {
+						} else if (server_type.equalsIgnoreCase(ServerType.DAS2.toString())) {
+							ServerList.addServer(ServerType.DAS2, server_name, server_url);
+							SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
+						} else if (server_type.equalsIgnoreCase(ServerType.QuickLoad.toString())) {
 							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
 							SourceTableModel.add(server_name, server_url, ServerType.QuickLoad.toString());
 						}
-
 					}
 				} catch (Exception nfe) {
 					System.err.println("ERROR setting preference '" + the_name + "':");

@@ -48,16 +48,7 @@ public final class QuickLoadServerModel {
   private static final Map<String,QuickLoadServerModel> url2quickload = new HashMap<String,QuickLoadServerModel>();
 
 
-  
-  /*public void clear() {
-    genome_names.clear();
-    group2name.clear();
-    genome2init.clear();
-    genome2annotsMap.clear();
-    url2quickload.clear();
-  }*/
-
-  public QuickLoadServerModel(SingletonGenometryModel gmodel, String url) {
+  private QuickLoadServerModel(SingletonGenometryModel gmodel, String url) {
     this.gmodel = gmodel;
     root_url = url;
     if (! root_url.endsWith("/")) {
@@ -108,7 +99,7 @@ public final class QuickLoadServerModel {
 	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		if (genome2init.get(genome_name) != Boolean.TRUE) {
 			initGenome(genome_name);
-			loadAnnotationNames(genome_name);
+			//loadAnnotationNames(genome_name);
 		}
     List<String> typeNames = new ArrayList<String>();
 		typeNames.addAll(genome2annotsMap.get(genome_name).values());
@@ -118,14 +109,15 @@ public final class QuickLoadServerModel {
     return typeNames;
   }
   
-  private void initGenome(String genome_name) {
+	private void initGenome(String genome_name) {
 		Application.getApplicationLogger().fine("initializing data for genome: " + genome_name);
-		boolean seq_init = loadSeqInfo(genome_name);
-		boolean annot_init = loadAnnotationNames(genome_name);
-		if (seq_init && annot_init) {
+		if (loadSeqInfo(genome_name) && loadAnnotationNames(genome_name)) {
 			genome2init.put(genome_name, Boolean.TRUE);
+			return;
 		}
-		Map<String,String> type2FileName = genome2annotsMap.get(genome_name);
+
+		// Clear the type list if something went wrong.
+		Map<String, String> type2FileName = genome2annotsMap.get(genome_name);
 		if (type2FileName != null) {
 			type2FileName.clear();
 		}
@@ -166,7 +158,7 @@ public final class QuickLoadServerModel {
 			istr = LocalUrlCacher.getInputStream(filename, false, null, true);
 			if (istr == null) {
 				// exception can be ignored, since we'll look for modChromInfo file.
-        Application.getApplicationLogger().info("couldn't find " + filename);
+        //Application.getApplicationLogger().info("couldn't find " + filename + ", but it's optional.");
 				// Search failed.  That's fine, since there's a backup test for annots.txt.
 				return false;
 			}
@@ -208,6 +200,7 @@ public final class QuickLoadServerModel {
 						continue;
 					}
 					type2FileName.put(annot_file_name, annot_file_name); // We don't have a friendly type name for this file.
+					//System.out.println("Adding type: " + annot_file_name);
 				}
 			}
 			return true;

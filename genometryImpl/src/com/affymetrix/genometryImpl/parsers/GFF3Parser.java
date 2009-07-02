@@ -66,7 +66,7 @@ public final class GFF3Parser {
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
+	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 
@@ -81,18 +81,18 @@ public final class GFF3Parser {
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
 	 *  given seq group.
 	 */
-	public List<SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
+	public List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		if (DEBUG) { System.out.println("starting GFF3 parse."); }
 
 		int line_count = 0;
 
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<GFF3Sym> results = new ArrayList<GFF3Sym>();
 
 		String line = null;
 
-		Map<String,SeqSymmetry> id2sym = new HashMap<String,SeqSymmetry>();
-		ArrayList<SeqSymmetry> all_syms = new ArrayList<SeqSymmetry>();
+		Map<String,GFF3Sym> id2sym = new HashMap<String,GFF3Sym>();
+		ArrayList<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
 		String track_name = null;
 
 		try {
@@ -187,7 +187,7 @@ public final class GFF3Parser {
 					} else {
 						// put it in the id2sym hash, or merge it with an existing item already in the hash
 
-						GFF3Sym old_sym = (GFF3Sym) id2sym.get(the_id);
+						GFF3Sym old_sym = id2sym.get(the_id);
 						if (old_sym == null) {
 							id2sym.put(the_id, sym);
 							all_syms.add(sym);
@@ -212,9 +212,7 @@ public final class GFF3Parser {
 			br.close();
 		}
 
-		Iterator iter = all_syms.iterator();
-		while (iter.hasNext()) {
-			GFF3Sym sym = (GFF3Sym) iter.next();
+		for (GFF3Sym sym : all_syms) {
 			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 
 
@@ -234,7 +232,7 @@ public final class GFF3Parser {
 					if ("-".equals(parent_id)) {
 						throw new IOException("Parent ID cannot be '-'");
 					}
-					GFF3Sym parent_sym = (GFF3Sym) id2sym.get(parent_id);
+					GFF3Sym parent_sym = id2sym.get(parent_id);
 					if (parent_sym == null) {
 						throw new IOException("No parent found with ID: " + parent_id);
 					} else if (parent_sym == sym) {
@@ -256,9 +254,7 @@ public final class GFF3Parser {
 		//Loop over the top-level annotations and add them to the bioseq.
 		// (this can't be done in the loop above if we also want to resort children)
 
-		Iterator iter2 = results.iterator();
-		while (iter2.hasNext()) {
-			GFF3Sym s = (GFF3Sym) iter2.next();
+		for(GFF3Sym s : results) {
 			MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) s.getBioSeq();
 			// I want to sort the Exons, but not other children.
 			//s.sortChildren(SeqSpanStartComparator.getComparator(true));

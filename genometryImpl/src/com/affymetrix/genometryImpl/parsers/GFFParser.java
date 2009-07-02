@@ -267,17 +267,17 @@ public final class GFFParser implements AnnotationWriter  {
 
 	boolean use_track_lines = true;
 
-	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
+	public List<? extends SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
 		throws IOException {
 		return this.parse(istr, ".", seq_group, create_container_annot);
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
+	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
 		throws IOException {
 		return this.parse(istr, default_source, seq_group, create_container_annot, true);
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
+	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
 			boolean create_container_annot, boolean annotate_seq)
 		throws IOException {
 		if (DEBUG) {

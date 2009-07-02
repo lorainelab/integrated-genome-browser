@@ -260,12 +260,10 @@ public final class XmlPrefsParser {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
 						ServerList.addServer(ServerType.DAS, server_name, server_url);
-						SourceTableModel.add(server_name, server_url, ServerType.DAS.toString());
 					} else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
 						ServerList.addServer(ServerType.DAS2, server_name, server_url);
-						SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
 					} else if (name.equalsIgnoreCase("server")) {
 						// new generic server format
 						String server_type = el.getAttribute("type").toLowerCase();
@@ -276,13 +274,10 @@ public final class XmlPrefsParser {
 						}
 						if (server_type.equalsIgnoreCase(ServerType.DAS.toString())) {
 							ServerList.addServer(ServerType.DAS, server_name, server_url);
-							SourceTableModel.add(server_name, server_url, ServerType.DAS.toString());
 						} else if (server_type.equalsIgnoreCase(ServerType.DAS2.toString())) {
 							ServerList.addServer(ServerType.DAS2, server_name, server_url);
-							SourceTableModel.add(server_name, server_url, ServerType.DAS2.toString());
 						} else if (server_type.equalsIgnoreCase(ServerType.QuickLoad.toString())) {
 							ServerList.addServer(ServerType.QuickLoad, server_name, server_url);
-							SourceTableModel.add(server_name, server_url, ServerType.QuickLoad.toString());
 						}
 					}
 				} catch (Exception nfe) {

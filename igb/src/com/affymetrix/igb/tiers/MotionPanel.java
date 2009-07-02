@@ -142,12 +142,12 @@ public final class MotionPanel extends JPanel {
   }
 
   /** for testing only */
-  public static void main( String[] argv ) {
+ /* public static void main( String[] argv ) {
     JFrame f = new JFrame( "Motion Panel" );
     java.awt.Container c = f.getContentPane();
     c.add( new MotionPanel( SwingConstants.HORIZONTAL, NeoAbstractWidget.PRIMARY_AXIS ) );
     f.setDefaultCloseOperation( f.EXIT_ON_CLOSE );
     f.setSize( 300, 100 );
     f.setVisible(true);
-  }
+  }*/
 }

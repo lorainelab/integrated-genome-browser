@@ -69,7 +69,7 @@ public final class RoundRectMaskGlyph extends EfficientGlyph  {
     Area a = new Area(s.getFrame());
     a.subtract(new Area(s));
 
-    Graphics2D g2 = (Graphics2D) view.getGraphics();
+    Graphics2D g2 = view.getGraphics();
     g2.setColor(fillColor);
     g2.fill(a);
 

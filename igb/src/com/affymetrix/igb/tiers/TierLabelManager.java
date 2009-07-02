@@ -60,13 +60,10 @@ public final class TierLabelManager {
   
   /** Returns a list of TierGlyph items representing the selected tiers. */
   public List<TierGlyph> getSelectedTiers() {
-    List<GlyphI> selected_labels = getSelectedTierLabels();
-    int sel_count = selected_labels.size();
     List<TierGlyph> selected_tiers = new ArrayList<TierGlyph>();
 
-    for (int i=0; i<sel_count; i++) {
-      // TierGlyph should be data model for tier label, access via lable.getInfo()
-      GlyphI tlg = selected_labels.get(i);
+		for (GlyphI tlg : (List<GlyphI>)getSelectedTierLabels()) {
+      // TierGlyph should be data model for tier label, access via label.getInfo()
       TierGlyph tier = (TierGlyph)tlg.getInfo();
       selected_tiers.add(tier);
     }
@@ -112,7 +109,7 @@ public final class TierLabelManager {
     }
 
     List<TierLabelGlyph> labels = getAllTierLabels();
-    boolean selections_changed = false;
+    //boolean selections_changed = false;
     
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
     
@@ -146,11 +143,11 @@ public final class TierLabelManager {
           if (tierlabel.isSelected()) {
             if (! symmetries.contains(sym)) {
               symmetries.add(sym);
-              selections_changed = true;
+              //selections_changed = true;
             }
           } else if (symmetries.contains(sym)) {
             symmetries.remove(sym);
-            selections_changed = true;
+            //selections_changed = true;
           }
         }
       }
@@ -174,7 +171,7 @@ public final class TierLabelManager {
   public static List<GraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
     ArrayList<GraphGlyph> result = new ArrayList<GraphGlyph>();
     TierGlyph tier = (TierGlyph) tlg.getInfo();
-    IAnnotStyle style = tier.getAnnotStyle();
+    //IAnnotStyle style = tier.getAnnotStyle();
     int child_count = tier.getChildCount();
     if ( child_count > 0 && tier.getChild(0) instanceof GraphGlyph) {
       for (int j=0; j<child_count; j++) {
@@ -196,9 +193,7 @@ public final class TierLabelManager {
    *  @see #repackTheTiers(boolean, boolean)
    */
   public void showTiers(List<TierLabelGlyph> tier_labels, boolean full_repack, boolean fit_y) {
-    Iterator<TierLabelGlyph> iter = tier_labels.iterator();
-    while (iter.hasNext()) {
-      TierLabelGlyph g = iter.next();
+		for (TierLabelGlyph g : tier_labels) {
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
         tier.getAnnotStyle().setShow(true);
@@ -212,10 +207,8 @@ public final class TierLabelManager {
    *  @param tier_labels  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    *  @param fit_y  Whether to change the zoom to fit all the tiers in the view
    */
-  public void hideTiers(List tier_labels, boolean full_repack, boolean fit_y) {
-    Iterator iter = tier_labels.iterator();
-    while (iter.hasNext()) {
-      GlyphI g = (GlyphI) iter.next();
+  public void hideTiers(List<GlyphI> tier_labels, boolean full_repack, boolean fit_y) {
+		for (GlyphI g : tier_labels) {
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
         tier.getAnnotStyle().setShow(false);
@@ -226,8 +219,7 @@ public final class TierLabelManager {
   }
   
   void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed, boolean full_repack, boolean fit_y) {
-    for (int i=0; i<tier_labels.size(); i++) {
-      TierLabelGlyph tlg = tier_labels.get(i);
+		for (TierLabelGlyph tlg : tier_labels) {
       IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
       if (style.getExpandable()) {
         style.setCollapsed(collapsed);
@@ -237,14 +229,13 @@ public final class TierLabelManager {
         if (collapsed) {
           List<GraphGlyph> graphs = getContainedGraphs(tlg);
           double tier_height = style.getHeight();
-          for (int j=0; j<graphs.size(); j++) {
-            GraphGlyph graph = graphs.get(j);
+					for (GraphGlyph graph : graphs) {
             graph.getGraphState().getTierStyle().setHeight(tier_height);
           }
         }
-        
-        for (int j=0; j<tlg.getReferenceTier().getScene().getViews().size(); j++) {
-          tlg.getReferenceTier().pack(tlg.getReferenceTier().getScene().getViews().get(j));
+
+				for (ViewI v : tlg.getReferenceTier().getScene().getViews()) {
+          tlg.getReferenceTier().pack(v);
         }
       }
     }
@@ -352,9 +343,8 @@ public final class TierLabelManager {
    */
   public void doPopup(MouseEvent e) {
     popup.removeAll();
-    
-    for (int i=popup_listeners.size() -1 ; i >= 0; i--) {
-      PopupListener pl = popup_listeners.get(i);
+
+		for (PopupListener pl : popup_listeners) {
       pl.popupNotify(popup, this);
     }
     

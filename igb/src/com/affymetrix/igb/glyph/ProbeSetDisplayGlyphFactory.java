@@ -25,6 +25,7 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -105,7 +106,8 @@ the probeset, probe and pieces of probes
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    String meth = SeqMapView.determineMethod(sym);
+    String meth = SmartAnnotBioSeq.determineMethod(sym);
+	//					SeqMapView.determineMethod(sym);
     if (meth == null) {
       meth = "unknown";
     } else { // strip off the " netaffx consensus" ending
@@ -355,7 +357,7 @@ the probeset, probe and pieces of probes
         return;
       }
     }
-    String meth = SeqMapView.determineMethod(probeset);
+    String meth = SmartAnnotBioSeq.determineMethod(probeset);
     DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
     SeqUtils.transformSymmetry(probeset_sym, consensus_sym);
     // Note that the transformation generates a probeset_sym of depth 3
@@ -462,6 +464,7 @@ the probeset, probe and pieces of probes
   }
 
   /** @deprecated Not tested with AnnotStyle mechanism */
+	@Deprecated
   void makeFloatingProbesetGlyph(Color probeset_color, SeqSpan span, String probeset_id,
     DerivedSeqSymmetry probeset_sym, SeqSymmetry transformed_probeset_sym) {
       GlyphI another_probeset_glyph = null;

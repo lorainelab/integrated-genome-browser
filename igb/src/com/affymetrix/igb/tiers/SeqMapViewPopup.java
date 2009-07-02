@@ -249,8 +249,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     // might make sense.  But at the moment it seems faster to use a List
     List<IAnnotStyle> styles = new ArrayList<IAnnotStyle>(tier_label_glyphs.size());
 
-    for (int i=0; i<tier_label_glyphs.size(); i++) {
-      TierLabelGlyph tlg = tier_label_glyphs.get(i);
+		for (TierLabelGlyph tlg : tier_label_glyphs) {
       TierGlyph tier = tlg.getReferenceTier();
       IAnnotStyle tps = tier.getAnnotStyle();
       if (tps != null && ! styles.contains(tps)) styles.add(tps);

@@ -415,11 +415,11 @@ public final class LoadFileAction {
           return input_seq;
       } else if (lcname.endsWith(".das") || lcname.endsWith(".dasxml")) {
           Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
-          List results = parser.parse(str, selected_group);
+          List<SeqSymmetry> results = parser.parse(str, selected_group);
           return getFirstSeq(results);
       } else if (lcname.endsWith(".das2xml")) {
           Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
-          List results = parser.parse(new InputSource(str), stream_name, selected_group, true);
+          List<SeqSymmetry> results = parser.parse(new InputSource(str), stream_name, selected_group, true);
           return getFirstSeq(results);
       } else if (lcname.endsWith(".map")) {
           ScoredMapParser parser = new ScoredMapParser();
@@ -451,7 +451,7 @@ public final class LoadFileAction {
       } else if (lcname.endsWith(".brs")) {
           BrsParser parser = new BrsParser();
           String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-          List alist = parser.parse(str, annot_type, selected_group);
+          List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group);
           return input_seq;
       } else if (lcname.endsWith(".bsnp")) {
           //BsnpParser parser = new BsnpParser();
@@ -572,10 +572,10 @@ public final class LoadFileAction {
 
 
   /** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
-  private static MutableAnnotatedBioSeq getFirstSeq(List syms) {
+  private static MutableAnnotatedBioSeq getFirstSeq(List<SeqSymmetry> syms) {
     MutableAnnotatedBioSeq first_seq = null;
     if (syms != null && ! syms.isEmpty()) {
-      SeqSymmetry fsym = (SeqSymmetry) syms.get(0);
+      SeqSymmetry fsym = syms.get(0);
       SeqSpan fspan = fsym.getSpan(0);
       first_seq = (MutableAnnotatedBioSeq) fspan.getBioSeq();
     }

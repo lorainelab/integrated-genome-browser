@@ -572,8 +572,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 	 */
 	public void setResidueFont(Font f) {
 		residue_font = f;
-		FontMetrics fontmet =
-			Toolkit.getDefaultToolkit().getFontMetrics(residue_font);
+		FontMetrics fontmet = GeneralUtils.getFontMetrics(residue_font);
 		font_width = fontmet.charWidth('G');
 		font_height = fontmet.getAscent(); // Descent not needed for capital letters
 		monospace = GeneralUtils.isReallyMonospaced(residue_font,

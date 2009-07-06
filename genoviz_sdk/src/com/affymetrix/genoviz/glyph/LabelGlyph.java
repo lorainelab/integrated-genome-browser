@@ -16,6 +16,7 @@ package com.affymetrix.genoviz.glyph;
 import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
@@ -171,7 +172,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 
 		FontMetrics fm;
 		if ( null == theView.getGraphics() ) {
-			fm = Toolkit.getDefaultToolkit().getFontMetrics( getFont() );
+			fm = GeneralUtils.getFontMetrics(getFont());
 		}
 		else {
 			fm = theView.getGraphics().getFontMetrics();

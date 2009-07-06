@@ -213,7 +213,8 @@ public class NeoAssembler extends NeoContainerWidget
 	protected NeoMap alignmap, labelmap, consmap, conslabelmap;
 	protected Scene align_scene, label_scene, cons_scene;
 	// currently no vertical zooming, so no need for internal vzoom
-	protected Adjustable hscroll, vscroll, hzoom;
+	protected JScrollBar hscroll, vscroll;
+  protected Adjustable hzoom;
 
 	protected StretchContainerGlyph cglyph;
 
@@ -369,15 +370,14 @@ public class NeoAssembler extends NeoContainerWidget
 		cons_height = 40;
 		label_width = 100;
 		align_offset = 0;
-		FontMetrics fontmet =
-			Toolkit.getDefaultToolkit().getFontMetrics(residue_font);
-		int font_width = fontmet.charWidth('C');
+		FontMetrics fontmet = GeneralUtils.getFontMetrics(residue_font);
+		//int font_width = fontmet.charWidth('C');
 		align_glyph_height = fontmet.getAscent()+2;
 		align_offset_scale = 1;
 		align_pixel_spacing = 1;
 		align_spacing = align_pixel_spacing;
 		align_num = 0;
-		align_glyphs = new Vector();
+		align_glyphs = new Vector<GlyphI>();
 
 		alignmap = new NeoMap(false, false);
 		labelmap = new NeoMap(false, false);
@@ -465,7 +465,7 @@ public class NeoAssembler extends NeoContainerWidget
 		alignmap.addViewBoxListener(this);
 
 		// To increase the vertical scroll increment from 1 pixel to the size of font height HARI 2/3/2000
-		label_font_height = Toolkit.getDefaultToolkit().getFontMetrics(label_font).getHeight();
+		label_font_height = GeneralUtils.getFontMetrics(label_font).getHeight();
 		vscroll.setUnitIncrement(label_font_height);
 
 		/**
@@ -477,7 +477,7 @@ public class NeoAssembler extends NeoContainerWidget
 			public void componentResized(ComponentEvent e) {
 				int [] visible_offset = labelmap.getVisibleOffset();
 				double scale = ((LinearTransform)alignmap.getView().getTransform()).getScaleY();
-				int font_height = getToolkit().getFontMetrics(residue_font).getHeight();
+				int font_height = GeneralUtils.getFontMetrics(residue_font).getHeight();
 				int visible_map_height = visible_offset[1] - visible_offset[0];
 				//visible_map_height is in coords
 				visible_map_height = (int)(visible_map_height-(font_height/scale));
@@ -1814,8 +1814,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 */
 	public void setResidueFont(Font fnt) {
 		residue_font = fnt;
-		FontMetrics fontmet =
-			Toolkit.getDefaultToolkit().getFontMetrics(residue_font);
+		FontMetrics fontmet = GeneralUtils.getFontMetrics(residue_font);
 		if (cons_glyph != null)  { cons_glyph.setResidueFont(residue_font); }
 		Object child;
 		ResiduesGlyphI rglyph;
@@ -2632,7 +2631,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * If the given Adjustable is not an instance of Component,
 	 * the call will be ignored.
 	 */
-	public void setHorizontalScroller (Adjustable scroller) {
+	public void setHorizontalScroller(JScrollBar scroller) {
 
 		if (!(scroller instanceof Component) || (scroller == null))
 			return;
@@ -2655,7 +2654,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * If the given Adjustable is not an instance of Component,
 	 * the call will be ignored.
 	 */
-	public void setVerticalScroller (Adjustable scroller) {
+	public void setVerticalScroller(JScrollBar scroller) {
 
 		if (!(scroller instanceof Component) || (scroller == null))
 			return;

@@ -16,11 +16,11 @@ package com.affymetrix.genoviz.widget;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.*;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JScrollBar;
 
 /**
  * Supports compositions of widgets into a more complex widget.
@@ -368,7 +368,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 * @see NeoAbstractWidget#setScroller
 	 */
 	//  public void setScroller(int axisid, NeoAdjustable adj) {
-	public void setScroller(int axisid, Adjustable adj) {
+	public void setScroller(int axisid, JScrollBar adj) {
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid))
 			throw new IllegalArgumentException(
 					"Can set Scroller for X ("+NeoAbstractWidget.X

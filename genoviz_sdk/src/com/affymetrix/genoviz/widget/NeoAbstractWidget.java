@@ -20,6 +20,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JScrollBar;
 
 /**
  * Represents basic funcionality for all Widgets.
@@ -299,33 +300,34 @@ public abstract class NeoAbstractWidget extends Container
 	 * @param datamodel an arbitrary  Object
 	 * @see #getDataModel
 	 */
-	public void setDataModel(GlyphI glyph, Object datamodel) {
-		// glyph to datamodel must be one-to-one
-		// datamodel to glyph can be one-to-many
+  @SuppressWarnings("unchecked")
+  public void setDataModel(GlyphI glyph, Object datamodel) {
+    // glyph to datamodel must be one-to-one
+    // datamodel to glyph can be one-to-many
 
-		glyph_hash.put(glyph, datamodel);
-		glyph.setInfo(datamodel);
+    glyph_hash.put(glyph, datamodel);
+    glyph.setInfo(datamodel);
 
-		// more than one glyph may be associated with the same datamodel!
-		// therefore check and see if already a glyph associated with this datamodel
-		// if so, create a Vector and add glyphs to it (or extend the pre-exisiting one)
-		Object previous = model_hash.get(datamodel);
-		if (previous == null) {
-			model_hash.put(datamodel, glyph);
-		}
-		else {
-			models_have_multiple_glyphs = true;
-			if (previous instanceof Vector) {
-				((Vector)previous).addElement(glyph);
-			}
-			else {
-				Vector<GlyphI> glyphs = new Vector<GlyphI>();
-				glyphs.addElement((GlyphI) previous);
-				glyphs.addElement(glyph);
-				model_hash.put(datamodel, glyphs);
-			}
-		}
-	}
+    // more than one glyph may be associated with the same datamodel!
+    // therefore check and see if already a glyph associated with this datamodel
+    // if so, create a Vector and add glyphs to it (or extend the pre-exisiting one)
+    Object previous = model_hash.get(datamodel);
+    if (previous == null) {
+      model_hash.put(datamodel, glyph);
+    }
+    else {
+      models_have_multiple_glyphs = true;
+      if (previous instanceof Vector) {
+        ((Vector<GlyphI>) previous).addElement(glyph);
+      }
+      else {
+        Vector<GlyphI> glyphs = new Vector<GlyphI>();
+        glyphs.addElement((GlyphI) previous);
+        glyphs.addElement(glyph);
+        model_hash.put(datamodel, glyphs);
+      }
+    }
+  }
 
 	/**
 	 * Retrieve the datamodel associated with the glyph.  This facilitates
@@ -645,6 +647,15 @@ public abstract class NeoAbstractWidget extends Container
 	}
 
 
+  /**
+   * Indicates whether a given glyph is selected.
+   * @param g The glyph to check for selected status.
+   * @return <code>true</code> if the glyph is selected, else <code>false</code>.
+   */
+  public boolean isSelected(GlyphI g) {
+    return selected.contains(g);
+  }
+  
 	/**
 	 * adds <code>glyph</code> to the list of selected glyphs for this
 	 * widget.  Selected glyphs will be displayed differently than
@@ -1005,7 +1016,7 @@ public abstract class NeoAbstractWidget extends Container
 	 *            to be associated with the axis.
 	 *            Typically this will be a scrollbar.
 	 */
-	public abstract void setScroller(int id, Adjustable adj);
+	public abstract void setScroller(int id, JScrollBar adj);
 
 	/**
 	 * scrolls this widget along the specified axis.

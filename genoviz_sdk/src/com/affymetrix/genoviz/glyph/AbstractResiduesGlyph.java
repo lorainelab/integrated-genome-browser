@@ -15,7 +15,7 @@ package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -60,8 +60,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 	}
 
 	public void setResidueFont(Font fnt) {
-		String fam = fnt.getFamily().toLowerCase();
-		fontmet = Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+		fontmet = GeneralUtils.getFontMetrics(fnt);
 		// change font
 		this.style = stylefactory.getStyle( style.getForegroundColor(), style.getBackgroundColor(), fnt );
 

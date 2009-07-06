@@ -36,6 +36,8 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
+import javax.swing.JScrollBar;
+import javax.swing.JSlider;
 
 /**
  * Abstract implementation of NeoAbstractWidget.
@@ -111,7 +113,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	protected double coords_per_pixel[] = new double[2];
 
-	protected Adjustable scroller[] = new Adjustable[2];
+	protected JScrollBar scroller[] = new JScrollBar[2];
 	protected Adjustable zoomer[] = new Adjustable[2];
 
 	protected RubberBand rband;
@@ -197,16 +199,16 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		int newbehavior = 0;
 		RootGlyph rglyph = (RootGlyph)scene.getGlyph();
 		if (id == X) {
-			newid = rglyph.X;
+			newid = RootGlyph.X;
 		}
 		else if (id == Y) {
-			newid = rglyph.Y;
+			newid = RootGlyph.Y;
 		}
 		if (behavior == EXPAND) {
-			newbehavior = rglyph.EXPAND;
+			newbehavior = RootGlyph.EXPAND;
 		}
 		else if (behavior == NO_EXPAND) {
-			newbehavior = rglyph.NO_EXPAND;
+			newbehavior = RootGlyph.NO_EXPAND;
 		}
 		rglyph.setExpansionBehavior(newid, newbehavior);
 	}
@@ -471,7 +473,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 
-	public void setScroller(int id, Adjustable adj) {
+	public void setScroller(int id, JScrollBar adj) {
 		if (adj == null) {
 			throw new IllegalArgumentException("NeoWidget.setScroller() requires " +
 					"an Adjustable argument, was passed a null instead");
@@ -598,95 +600,92 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 
 	public void adjustScroller(int id) {
-		if (scroller[id] == null) { return; }
-		// GAH 1-15-2004
-		// trying same trick as in adjustZoomer(), supressing event kickback changing
-		//   original scroll value
-		// not sure how necessary this suppression is with adjustScroller(), could just
-		//   be a problem with adjustZoomer(), but trying for now -- need to watch
-		//   for any side effects...
-		scroller[id].removeAdjustmentListener(this);
+    if (scroller[id] == null) { return; }
 
-		double coord_beg, coord_end, coord_size;
+    boolean zoomerIsAdjusting = false;
+    if (zoomer[id] instanceof JSlider) {
+      zoomerIsAdjusting = ((JSlider) zoomer[id]).getValueIsAdjusting();
+    }
+
+    // GAH 1-15-2004
+    // trying same trick as in adjustZoomer(), supressing event kickback changing
+    //   original scroll value
+    // not sure how necessary this suppression is with adjustScroller(), could just
+    //   be a problem with adjustZoomer(), but trying for now -- need to watch
+    //   for any side effects...
+    scroller[id].removeAdjustmentListener(this);
+
+    double coord_beg, coord_end, coord_size;
 		Rectangle2D.Double scenebox = scene.getCoordBox();
-		if (id == X)  {
-			pixel_offset[id] = -1 * trans.getOffsetX();
-			coord_beg = scenebox.x;
-			coord_size = scenebox.width;
-		}
-		else {
-			coord_beg = scenebox.y;
-			coord_size = scenebox.height;
-			pixel_offset[id] = -1 * trans.getOffsetY();
+    if (id == X)  {
+      pixel_offset[id] = -1 * trans.getOffsetX();
+      coord_beg = scenebox.x;
+      coord_size = scenebox.width;
+    }
+    else {
+      coord_beg = scenebox.y;
+      coord_size = scenebox.height;
+      pixel_offset[id] = -1 * trans.getOffsetY();
 
-		}
-		coord_end = coord_beg + coord_size;
+    }
+    coord_end = coord_beg + coord_size;
 
-		double coord_offset = pixel_offset[id] * coords_per_pixel[id];
-		double visible_coords = coords_per_pixel[id] * pixel_size[id];
+    double coord_offset = pixel_offset[id] * coords_per_pixel[id];
+    double visible_coords = coords_per_pixel[id] * pixel_size[id];
 
-		/* if there is more visible than the maximum coordinate size, max out
-		 *   the scrollbar so that it can't send any adjustment events
-		 *   this uses a trick/bug that Scrollbar and NeoScrollbar both have,
-		 *   namely that setting max and min to 0 will make the thumb the full
-		 *   size of the scrollbar gutter
-		 * BUT, setting value, max and min to 0 screws up in some situations
-		 *   where coord_beg != 0.  (bug tracking # 24.5, from JM)
-		 *   Trying setValues(coord_beg, 1, coord_beg, coord_beg) instead --
-		 *      works for at least NeoMapDemo, and fixes bug   GAH 1-17-98
-		 */
-		if (coord_size < visible_coords) {
-			if (DEBUG_SCROLLER_VALUES) {
-				System.err.println("setting scroller values with " +
-						"coord_size=" + coord_size +
-						" < visible_coord=" + visible_coords);
-			}
-			scroller[id].setMinimum((int)coord_beg);
-			scroller[id].setMaximum((int)coord_beg);
-			scroller[id].setValue((int)coord_beg);
-			scroller[id].setVisibleAmount(1);
-		}
-		else {
-			if (DEBUG_SCROLLER_VALUES) {
-				if (id == Y)  System.out.println(
-						"Setting Y scroll for " +
-						GeneralUtils.toObjectString(this) +
-						", value: " + (int)coord_offset +
-						", visible: " + (int)visible_coords +
-						", min: " + (int)coord_beg +
-						", max: " + (int)coord_end );
-			}
-			scroller[id].setMinimum((int)coord_beg);
-			scroller[id].setMaximum((int)coord_end);
-			scroller[id].setValue((int)coord_offset);
-			scroller[id].setVisibleAmount((int)visible_coords);
-		}
+    /* If there would be more visible than the maximum coordinate size, max out
+     *   the scrollbar.
+     */
+    if (coord_size < visible_coords) {
+      if (DEBUG_SCROLLER_VALUES) {
+        System.err.println("setting scroller values with " +
+            "coord_size=" + coord_size +
+            " < visible_coord=" + visible_coords);
+      }
+      scroller[id].getModel().setRangeProperties(
+        scroller[id].getMinimum(), scroller[id].getMaximum() - scroller[id].getMinimum(),
+        scroller[id].getMinimum(), scroller[id].getMaximum(), zoomerIsAdjusting);
+    }
+    else {
+      if (DEBUG_SCROLLER_VALUES) {
+        if (id == Y)  System.out.println(
+            "Setting Y scroll for " +
+            GeneralUtils.toObjectString(this) +
+            ", value: " + (int)coord_offset +
+            ", visible: " + (int)visible_coords +
+            ", min: " + (int)coord_beg +
+            ", max: " + (int)coord_end );
+      }
+      scroller[id].getModel().setRangeProperties(
+        (int) coord_offset, (int) visible_coords,
+        (int) coord_beg, (int) coord_end, zoomerIsAdjusting);
+    }
 
-		if (scroll_behavior[id] == AUTO_SCROLL_INCREMENT) {
-			if (coords_per_pixel[id] > 1) {
-				scroller[id].setUnitIncrement((int)coords_per_pixel[id]);
-				scroller[id].setBlockIncrement((int)(5*coords_per_pixel[id]));
-			}
-			else {
-				scroller[id].setUnitIncrement(1);
-				scroller[id].setBlockIncrement(5);
-			}
-		}
-		else if (scroll_behavior[id] == AUTO_SCROLL_HALF_PAGE)  {
-			if (coords_per_pixel[id] > 1) {
-				scroller[id].setUnitIncrement((int)(5*coords_per_pixel[id]));
-				if (id == X) { scroller[id].setBlockIncrement((int)(getViewBounds().width/2)); }
-				else if (id == Y)  { scroller[id].setBlockIncrement((int)(getViewBounds().height/2)); }
-			}
-			else {
-				scroller[id].setUnitIncrement(1);
-				scroller[id].setBlockIncrement(5);
-			}
-		}
-		scroller[id].addAdjustmentListener(this);
-	}
+    if (scroll_behavior[id] == AUTO_SCROLL_INCREMENT) {
+      if (coords_per_pixel[id] > 1) {
+        scroller[id].setUnitIncrement((int)coords_per_pixel[id]);
+        scroller[id].setBlockIncrement((int)(5*coords_per_pixel[id]));
+      }
+      else {
+        scroller[id].setUnitIncrement(1);
+        scroller[id].setBlockIncrement(5);
+      }
+    }
+    else if (scroll_behavior[id] == AUTO_SCROLL_HALF_PAGE)  {
+      if (coords_per_pixel[id] > 1) {
+        scroller[id].setUnitIncrement((int)(5*coords_per_pixel[id]));
+        if (id == X) { scroller[id].setBlockIncrement((int)(getViewBounds().width/2)); }
+        else if (id == Y)  { scroller[id].setBlockIncrement((int)(getViewBounds().height/2)); }
+      }
+      else {
+        scroller[id].setUnitIncrement(1);
+        scroller[id].setBlockIncrement(5);
+      }
+    }
+    scroller[id].addAdjustmentListener(this);
+  }
 
-	public void adjustZoomer(int id) {
+  public void adjustZoomer(int id) {
 		if (zoomer[id] == null) { return; }
 		if (pixels_per_coord[id] == zoomer_value[id]) { return; }
 		// GAH 1-15-2004  trying to deal with problem where precisely setting zoom to Z
@@ -954,6 +953,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * @param datamodel being visualized.
 	 * @return a Vector of all the glyphs tied to the given data model.
 	 */
+  @SuppressWarnings("unchecked")
 	public Vector<GlyphI> getItems(Object datamodel) {
 		Collections.singletonList(datamodel);
 		Object result = model_hash.get(datamodel);

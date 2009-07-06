@@ -163,7 +163,63 @@ public class NeoMap extends NeoWidget implements
 			   setRoot(rootmap);
 		   }
 
-		   public void setRoot(NeoMap root) {
+  /**The mouse wheel listener that updates the scroll and zoom of the component.
+   * Ideally mouse scrolling and zooming would be independent of slider and scrollbar presence or position.
+   * However, zoom values are exponential, so small unit increments cause larger zooms than large unit increments;
+   * this was apparently created to work with linear slider and scrollbar increments.
+   * Creating an independent scroll and zoom would involve either reverse-transforming the current zoom exponentially,
+   * adding a zoom increment, and then transforming it back exponentially; or creating a separate linear mouse wheel
+   * zoom value and transforming it exponentially one way, which would also require keeping that zoom value up-to-date
+   * with slider and scrollbar values.
+   * This implementation therefore takes a third approach: the presence of zoomer and scroller objects
+   * (e.g. sliders and scrollbars) are assumed, and their values are manipulated and fake events are generated.
+   * If sliders and scrollbars are removed, then this implementation must be changed or non-visual implementations of
+   * {@link Adjustable} must be put in their place.
+   */
+  private final MouseWheelListener mouseWheelListener=new MouseWheelListener() {
+
+        public void mouseWheelMoved(final MouseWheelEvent mouseWheelEvent) {
+          final Adjustable adjustable;  //we'll determine the corresponding adjustable object (e.g. slider or scrollbar)
+          final int direction;  //we'll determine the direction to scroll or zoom in relation to the rotation
+            //see if the command key was pressed (Ctrl for Windows, Command for Apple)
+          final boolean isCommandKey=(mouseWheelEvent.getModifiers()&Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())!=0;
+          final boolean isAltKey=mouseWheelEvent.isAltDown(); //see if the alt key is pressed
+          if(isCommandKey && isAltKey) {  //ignore Ctrl and Alt both being pressed at the same time
+            return;
+          }
+          if(isCommandKey) {  //Ctrl+wheel
+            adjustable=zoomer[X]; //zoom horizontally
+            direction=-1; //zoom in the opposite direction of the rotation
+          } else if(isAltKey) {  //Alt+wheel
+            adjustable=zoomer[Y]; //zoom vertically
+            direction=-1; //zoom in the opposite direction of the rotation
+          } else {  //non-modified wheel
+            adjustable=scroller[Y]; //scroll vertically
+            direction=1; //scroll in the opposite direction of the rotation
+          }
+          if(adjustable==null) {  //if there is no adjustable for this action
+            return; //ignore the mouse wheel movement
+          }
+          final int oldValue=adjustable.getValue(); //get the old value
+          final int newValue; //we'll determine the new value
+          switch(mouseWheelEvent.getScrollType()) { //check the wheel scroll type
+            case MouseWheelEvent.WHEEL_UNIT_SCROLL:
+              newValue=oldValue+mouseWheelEvent.getUnitsToScroll()*adjustable.getUnitIncrement()*direction;  //adjust the value by the correct number of units in the correct direction
+              break;
+            case MouseWheelEvent.WHEEL_BLOCK_SCROLL:
+              newValue=oldValue+mouseWheelEvent.getWheelRotation()*adjustable.getBlockIncrement()*direction;  //adjust the value by the correct number of block units in the correct direction
+              break;
+            default:
+             throw new AssertionError("Unrecognized mouse wheel scroll type: "+mouseWheelEvent.getScrollType());
+          }
+          adjustable.setValue(newValue);  //update the adjustable value, because the event listener may ask the adjustable for its new value rather than just going with what the event says
+            //create a dummy event for the adjustable
+          final AdjustmentEvent adjustmentEvent = new AdjustmentEvent(adjustable, AdjustmentEvent.ADJUSTMENT_VALUE_CHANGED, AdjustmentEvent.TRACK, newValue);
+          adjustmentValueChanged(adjustmentEvent);  //fire a dummy event supposedly from the adjustable so that the component can update the zoom or scroll
+        }
+      };
+
+      public void setRoot(NeoMap root) {
 			   // Now need to replace Scene and View with root's Scene, and a
 			   //   new View onto root's Scene
 			   canvas.removeNeoPaintListener(view);
@@ -260,113 +316,114 @@ public class NeoMap extends NeoWidget implements
 			   this(hscroll_show, vscroll_show, orient, tr, hscroll_default_loc, vscroll_default_loc);
 		   }
 
-		   /**
-			* constructs a map with the given configuration.
-			*
-			* @param hscroll_show determines whether or not to show a horizontal scrollbar
-			* @param vscroll_show determines whether or not to show a vertical scrollbar
-			* @param orient must be {@link NeoConstants#HORIZONTAL} or {@link NeoConstants#VERTICAL}.
-			* @param tr LinearTransform for zooming
-			* @param hscroll_location can be "North", otherwise "South" is assumed.
-			* @param vscroll_location can be "West", otherwise "East" is assumed.
-			*/
-		   private NeoMap(boolean hscroll_show, boolean vscroll_show,
-				   int orient, LinearTransform tr, String hscroll_location, String vscroll_location) {
-			   super();
-			   this.hscroll_show = hscroll_show;
-			   this.vscroll_show = vscroll_show;
-			   this.hscroll_loc = hscroll_location;
-			   this.vscroll_loc = vscroll_location;
-			   this.orient = orient;
+  /**
+   * constructs a map with the given configuration.
+   *
+   * @param hscroll_show determines whether or not to show a horizontal scrollbar
+   * @param vscroll_show determines whether or not to show a vertical scrollbar
+   * @param orient must be {@link NeoConstants#HORIZONTAL} or {@link NeoConstants#VERTICAL}.
+   * @param tr LinearTransform for zooming
+   * @param hscroll_location can be "North", otherwise "South" is assumed.
+   * @param vscroll_location can be "West", otherwise "East" is assumed.
+   */
+  private NeoMap(boolean hscroll_show, boolean vscroll_show,
+    int orient, LinearTransform tr, String hscroll_location, String vscroll_location) {
+    super();
+    this.hscroll_show = hscroll_show;
+    this.vscroll_show = vscroll_show;
+    this.hscroll_loc = hscroll_location;
+    this.vscroll_loc = vscroll_location;
+    this.orient = orient;
 
-			   this.trans = tr;
+    this.trans = tr;
 
-			   scene = new Scene();
-			   canvas = new NeoCanvas();
-			   enableDragScrolling(drag_scrolling_enabled);
+    scene = new Scene();
+    canvas = new NeoCanvas();
+    canvas.setOpaque(true);
+    enableDragScrolling(drag_scrolling_enabled);
 
-			   default_factory = new MapGlyphFactory(orient);
-			   default_factory.setScene(scene);
+    default_factory = new MapGlyphFactory(orient);
+    default_factory.setScene(scene);
 
-			     // GAH 2/25/2009
-			     //  switched to using JScrollBar
-			     //  previous problems with Swing JScrollBar (and I think AWT Scrollbar as well)
-			     //      seem to have been resolved as of JDK 1.5
-			     setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
-			     setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
+    setRangeScroller(new JScrollBar(JScrollBar.HORIZONTAL));
+    setOffsetScroller(new JScrollBar(JScrollBar.VERTICAL));
 
-			   zoomer[X] = null;
-			   zoomer[Y] = null;
-			   scale_constraint[X] = NeoConstants.NONE;
-			   scale_constraint[Y] = NeoConstants.NONE;
-			   zoom_behavior[X] = CONSTRAIN_MIDDLE;
-			   zoom_behavior[Y] = CONSTRAIN_MIDDLE;
-			   zoom_coord[X] = 0;
-			   zoom_coord[Y] = 0;
+    zoomer[X] = null;
+    zoomer[Y] = null;
+    scale_constraint[X] = NeoConstants.NONE;
+    scale_constraint[Y] = NeoConstants.NONE;
+    zoom_behavior[X] = CONSTRAIN_MIDDLE;
+    zoom_behavior[Y] = CONSTRAIN_MIDDLE;
+    zoom_coord[X] = 0;
+    zoom_coord[Y] = 0;
 
-			   setMapRange(0,100);
-			   setMapOffset(0,100);
+    setMapRange(0, 100);
+    setMapOffset(0, 100);
 
-			   view = new View(scene);
-			   scene.addView(view);
-			   view.setComponent(canvas);
-			   view.setTransform(trans);
+    view = new View(scene);
+    scene.addView(view);
+    view.setComponent(canvas);
+    view.setTransform(trans);
 
-			   setPixelBounds();
+    setPixelBounds();
 
-			   Toolkit tkit = Toolkit.getDefaultToolkit();
-			   seqmetrics = tkit.getFontMetrics(font_for_max_zoom);
-			   max_pixels_per_coord[X] = seqmetrics.charWidth('C');
+    seqmetrics = GeneralUtils.getFontMetrics(font_for_max_zoom);
+    max_pixels_per_coord[X] = seqmetrics.charWidth('C');
 
-			   max_pixels_per_coord[Y] = 10;
-			   min_pixels_per_coord[X] = min_pixels_per_coord[Y] = 0.01f;
+    max_pixels_per_coord[Y] = 10;
+    min_pixels_per_coord[X] = min_pixels_per_coord[Y] = 0.01f;
 
-			   initComponentLayout();
+    initComponentLayout();
 
-			   /*
-				* checking for whether these scrollbars are used
-				* (should really default to AUTO_SCROLL_INCREMENT anyway
-				*  and reset in widgets that don't want it [like NeoSeq] )
-				*/
-			   if (hscroll_show && scroller[X] instanceof Component)  {
-				   setScrollIncrementBehavior(X, AUTO_SCROLL_INCREMENT);
-			   }
+    /*
+     * checking for whether these scrollbars are used
+     * (should really default to AUTO_SCROLL_INCREMENT anyway
+     *  and reset in widgets that don't want it [like NeoSeq] )
+     */
+    if (hscroll_show && scroller[X] instanceof Component) {
+      setScrollIncrementBehavior(X, AUTO_SCROLL_INCREMENT);
+    }
 
-			   if (vscroll_show && scroller[Y] instanceof Component)  {
-				   setScrollIncrementBehavior(Y, AUTO_SCROLL_INCREMENT);
-			   }
+    if (vscroll_show && scroller[Y] instanceof Component) {
+      setScrollIncrementBehavior(Y, AUTO_SCROLL_INCREMENT);
+    }
 
-			   factory_hash = new Hashtable<String,MapGlyphFactory>();
-			   glyph_hash = new Hashtable<GlyphI,Object>();
-			   model_hash = new Hashtable<Object,Object>();
+    factory_hash = new Hashtable<String, MapGlyphFactory>();
+    glyph_hash = new Hashtable<GlyphI, Object>();
+    model_hash = new Hashtable<Object, Object>();
 
-			   // defaults to black background!!!
-			   setBackground(default_panel_background);
-			   setForeground(default_panel_foreground);
-			   setMapColor(default_map_background);
+    // defaults to black background!!!
+    setBackground(default_panel_background);
+    setForeground(default_panel_foreground);
+    setMapColor(default_map_background);
 
-			   // Set up and activate a default rubber band.
-			   RubberBand defaultBand = new RubberBand(canvas);
-			   defaultBand.setColor(Color.blue);
-			   setRubberBand( defaultBand );
+    // Set up and activate a default rubber band.
+    RubberBand defaultBand = new RubberBand(canvas);
+    defaultBand.setColor(Color.blue);
+    setRubberBand(defaultBand);
 
-			   // view listens to canvas for repaint and AWT events
-			   canvas.addNeoPaintListener(view);
-			   canvas.addMouseListener(view);
-			   canvas.addMouseMotionListener(view);
-			   canvas.addKeyListener(view);
-			   canvas.addComponentListener(this);
+    // view listens to canvas for repaint and AWT events
+    canvas.addNeoPaintListener(view);
+    canvas.addMouseListener(view);
+    canvas.addMouseMotionListener(view);
+    //TODO we're short-circuiting the normal sequence of Genoviz events by listening directly to the canvas for mouse wheel events;
+    //when it is important to know the mouse location, e.g. to position the center of zoom, we'll have to route them through the
+    //view to transform pixel coordinates to view coordinates, or revamp the whole sequence of events altogether so that
+    //such transformation occurs somewhere else
+    canvas.addMouseWheelListener(mouseWheelListener); //listen for the mouse wheel so that we can scroll and zoom
 
-			   // map listens to view for view box change events, mouse events, key events
-			   view.addPostDrawViewListener(this);
-			   view.addMouseListener(this);
-			   view.addMouseMotionListener(this);
-			   view.addKeyListener(this);
+    canvas.addKeyListener(view);
+    canvas.addComponentListener(this);
 
-			   // Set a default NullPacker so that the packer property can work in a bean box.
-			   setPacker(new SiblingCoordAvoid());
+    // map listens to view for view box change events, mouse events, key events
+    view.addPostDrawViewListener(this);
+    view.addMouseListener(this);
+    view.addMouseMotionListener(this);
+    view.addKeyListener(this);
 
-		   }
+    // Set a default NullPacker so that the packer property can work in a bean box.
+    setPacker(new SiblingCoordAvoid());
+  }
 
 		   /**
 			* Lay out the Components contained within this NeoMap.
@@ -543,9 +600,6 @@ public class NeoMap extends NeoWidget implements
 				   //-----  this is the only place pixel_* should change -----
 				   setPixelBounds();
 				   stretchToFit();
-				   if (view.isBuffered()) {
-					   // do same thing with view???
-				   }
 			   }
 		   }
 
@@ -679,8 +733,8 @@ public class NeoMap extends NeoWidget implements
 				*   must be taken into account)
 				*/
 			   // not sure if setPixelBox() call is needed...
-			   view.setPixelBox(new Rectangle(0, 0, canvas.getSize().width, canvas.getSize().height));
-			   trans = calcFittedTransform();  // GAH 4-10-2002
+         setPixelBounds();
+         trans = calcFittedTransform();  // GAH 4-10-2002
 			   view.setTransform(trans);
 			   view.setComponent(canvas);
 
@@ -974,15 +1028,15 @@ public class NeoMap extends NeoWidget implements
 			* with setZoomer() to have a more general
 			* setAdjustable(int id, Adjustable adj) method. 
 			*/
-		   public void setRangeScroller(Adjustable nscroll) {
+		   public void setRangeScroller(JScrollBar nscroll) {
 			   setScroller(X, nscroll);
 		   }
 
-		   public void setOffsetScroller(Adjustable nscroll) {
+		   public void setOffsetScroller(JScrollBar nscroll) {
 			   setScroller(Y, nscroll);
 		   }
 
-		   public Adjustable getScroller(int id) {
+		   public JScrollBar getScroller(int id) {
 			   //  public NeoAdjustable getScroller(int id) {
 			   return scroller[id];
 			   }
@@ -1032,6 +1086,11 @@ public class NeoMap extends NeoWidget implements
 
 		   //  also need to add a removeFactory method...
 
+       /** Creates a new RootGlyph. Called from ClearWidget. */
+       protected RootGlyph createRootGlyph() {
+         return new RootGlyph();
+       }
+
 		   /**
 			* Removes all glyphs.
 			* However, factories, dataadapters, coord bounds, etc. remain.
@@ -1041,7 +1100,7 @@ public class NeoMap extends NeoWidget implements
 			   // create new eveGlyph, set its coords and expansion behavior to old eveGlyph
 			   RootGlyph oldeve = (RootGlyph)scene.getGlyph();
 			   Rectangle2D.Double evebox = oldeve.getCoordBox();
-			   RootGlyph neweve = new RootGlyph();
+			   RootGlyph neweve = createRootGlyph();
 			   neweve.setExpansionBehavior(neweve.X, oldeve.getExpansionBehavior(oldeve.X));
 			   neweve.setExpansionBehavior(neweve.Y, oldeve.getExpansionBehavior(oldeve.Y));
 			   neweve.setCoords(evebox.x, evebox.y, evebox.width, evebox.height);
@@ -1132,12 +1191,10 @@ public class NeoMap extends NeoWidget implements
 				  only implementing first alternative for now
 				  */
 			   if (optimize_damage || optimize_scrolling || optimize_transients) {
-				   canvas.setDoubleBuffered(false);
 				   canvas.setOpaque(false);
 				   view.setBuffered(true);
 			   }
 			   else {
-				   canvas.setDoubleBuffered(true);
 				   canvas.setOpaque(true);
 				   view.setBuffered(false);
 			   }
@@ -1344,8 +1401,7 @@ public class NeoMap extends NeoWidget implements
 			*/
 		   public void setMaxZoomToFont(Font fnt) {
 			   font_for_max_zoom = fnt;
-			   Toolkit tkit = Toolkit.getDefaultToolkit();
-			   seqmetrics = tkit.getFontMetrics(font_for_max_zoom);
+         seqmetrics = GeneralUtils.getFontMetrics(font_for_max_zoom);
 			   int font_width = seqmetrics.charWidth('C');
 			   setMaxZoom(X, font_width);
 		   }

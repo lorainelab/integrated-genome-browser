@@ -12,17 +12,14 @@
  */
 
 package com.affymetrix.genoviz.widget.neoseq;
-import com.affymetrix.genoviz.glyph.*;
 
 import java.awt.*;
-import java.io.*;
-import java.lang.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Translatable;
+import com.affymetrix.genoviz.util.GeneralUtils;
 
 /**
  * your basic Glyph that wraps around to a new "line" when it extends far enough.
@@ -264,7 +261,7 @@ public abstract class WrapGlyph extends Glyph implements Translatable  {
 
 	public void setFont(Font seqfont) {
 		this.seqfont = seqfont;
-		seqfontmetrics = Toolkit.getDefaultToolkit().getFontMetrics(seqfont);
+		seqfontmetrics = GeneralUtils.getFontMetrics(seqfont);
 		font_width = seqfontmetrics.charWidth('A');
 		font_width = (seqfontmetrics.charWidth('C') > font_width)
 			? seqfontmetrics.charWidth('C') : font_width;

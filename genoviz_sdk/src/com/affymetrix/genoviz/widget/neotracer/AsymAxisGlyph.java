@@ -19,6 +19,7 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -41,7 +42,7 @@ public class AsymAxisGlyph extends Glyph  {
 	protected static Color numColor = Color.lightGray;
 
 	protected static Font fnt = new Font("Helvetica", Font.PLAIN, 12);
-	protected static FontMetrics fntmet = Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+	protected static FontMetrics fntmet = GeneralUtils.getFontMetrics(fnt);
 	protected static int fntWidth = fntmet.charWidth('C');
 	protected static int fntXOffset = fntWidth/2;
 	protected static int fntHeight = fntmet.getHeight();

@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.Vector;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
@@ -79,7 +80,7 @@ public class AxisGlyph extends Glyph {
 	 */
 	protected final void internalSetFont(Font f) {
 		this.label_font = f;
-		FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(f);
+		FontMetrics fm = GeneralUtils.getFontMetrics(f);
 		if (VERTICAL == this.orient) {
 			labelThickness = fm.stringWidth("000000");
 		}
@@ -158,6 +159,7 @@ public class AxisGlyph extends Glyph {
 	}
 
 	//TODO: use a Range object for the range
+  @SuppressWarnings("unchecked")
 	public void selectRange ( int[] range ) {
 		if ( range.length != 2 ) {
 			System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );

@@ -136,7 +136,8 @@ public class NeoTracer extends NeoContainerWidget
 	protected NeoMap trace_map;
 	protected NeoMap base_map;
 
-	protected Adjustable hscroll, hzoom, vzoom;
+	protected JScrollBar hscroll;
+  protected Adjustable hzoom, vzoom;
 
 	// locations for scrollbars, consensus, and labels
 	protected int hscroll_loc = PLACEMENT_BOTTOM;
@@ -204,7 +205,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * @param vzoom for zooming vertically
 	 * respectively.
 	 */
-	public NeoTracer (Adjustable scroller, Adjustable hzoom, Adjustable vzoom) {
+	public NeoTracer(JScrollBar scroller, Adjustable hzoom, Adjustable vzoom) {
 		this (true, true, true);
 		setScroller(scroller);
 		setHorizontalZoomer (hzoom);
@@ -1639,7 +1640,7 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 
-	public void setRangeScroller( Adjustable scroll ) {
+	public void setRangeScroller(JScrollBar scroll ) {
 		trace_map.setRangeScroller(scroll);
 		base_map.setRangeScroller(scroll);
 	}
@@ -1795,7 +1796,7 @@ public class NeoTracer extends NeoContainerWidget
 	 *
 	 * @param axisid Either NeoAbstractWidget.X or NeoAbstractWidget.Y
 	 */
-	public void setScroller(int axisid, Adjustable adj){
+	public void setScroller(int axisid, JScrollBar adj){
 		if (!(NeoAbstractWidget.X == axisid || NeoAbstractWidget.Y == axisid)) {
 			throw new IllegalArgumentException(
 					"Can set zoomer for X ("+NeoAbstractWidget.X
@@ -1847,7 +1848,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * the call will be ignored.
 	 * @see #setScroller(int,Adjustable)
 	 */
-	public void setScroller (Adjustable scroller) {
+	public void setScroller(JScrollBar scroller) {
 
 		if (!(scroller instanceof Component) ||
 				(scroller == null) ||
@@ -1858,7 +1859,7 @@ public class NeoTracer extends NeoContainerWidget
 		hscroll = scroller;
 		add ((Component)hscroll);
 
-		setRangeScroller (hscroll);
+		setRangeScroller(hscroll);
 	}
 
 	/**

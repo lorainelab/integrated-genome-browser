@@ -75,10 +75,28 @@ public class LinearTransform implements TransformI  {
 	 * @param pixel_box coordinates of the pixel space to which you are mapping.
 	 */
 	public void fit(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
-		xscale = (double)pixel_box.width / coord_box.width;
-		yscale = (double)pixel_box.height / coord_box.height;
-		xoffset = (double)pixel_box.x - xscale * coord_box.x;
-		yoffset = (double)pixel_box.y - yscale * coord_box.y;
+    fit(coord_box, pixel_box, true, true);
+  }
+
+  /**
+   * Sets the transform's scales and offsets such that the coord_box's space is
+   * mapped to the pixel_box's space.  For example, to map a whole Scene to a
+   * view, with no zooming, the coord_box would be the coordinate bounds of
+   * the Scene, and the pixel_box the size of the NeoCanvas holding the View.
+   * @param coord_box the coordinates of the Scene
+   * @param pixel_box coordinates of the pixel space to which you are mapping.
+   * @param fitx whether to perform a fit in the x axis
+   * @param fity whether to perform a fit in the y axis
+   */
+  public void fit(Rectangle2D.Double coord_box, Rectangle pixel_box, boolean fitx, boolean fity)  {
+    if (fitx) {
+  		xscale = (double)pixel_box.width / coord_box.width;
+	  	xoffset = (double)pixel_box.x - xscale * coord_box.x;
+    }
+    if (fity) {
+  		yscale = (double)pixel_box.height / coord_box.height;
+	  	yoffset = (double)pixel_box.y - yscale * coord_box.y;
+    }
 	}
 
 	/**

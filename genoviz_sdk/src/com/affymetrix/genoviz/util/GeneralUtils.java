@@ -14,6 +14,7 @@
 package com.affymetrix.genoviz.util;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
@@ -115,6 +116,19 @@ public final class GeneralUtils  {
 		return cm;
 	}
 
+  /**
+   * A simple way to get a FontMetrics object without calling the
+   * deprecated method Toolkit.getFontMetrics(Font).
+   * Use Graphics.getFontMetrics() instead whenever possible, but this
+   * will work just as well as Toolkit.getFontMetrics(Font).
+   */
+  public static FontMetrics getFontMetrics(Font fnt) {
+    BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    Graphics g = GraphicsEnvironment.getLocalGraphicsEnvironment().createGraphics(img);
+    return g.getFontMetrics(fnt);
+    // return Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+  }
+
 	/**
 	 *  determines whether for the given character set a font is monospaced
 	 *    (characters are all of same pixel width)
@@ -128,8 +142,7 @@ public final class GeneralUtils  {
 	 *  false if any of them are not equivalent to each other
 	 */
 	public static boolean isReallyMonospaced(Font fnt, char[] chars) {
-		FontMetrics fontmet =
-			Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+		FontMetrics fontmet = getFontMetrics(fnt);
 		String name = fnt.getName();
 		if ((!name.equals("Courier")) &&
 				(!name.equals("Monospaced"))) {
@@ -161,8 +174,7 @@ public final class GeneralUtils  {
 	 *  characters using a particular Font
 	 */
 	public static int getMaxCharWidth(Font fnt, char[] chars) {
-		FontMetrics fontmet =
-			Toolkit.getDefaultToolkit().getFontMetrics(fnt);
+		FontMetrics fontmet = getFontMetrics(fnt);
 		int width = 0;
 		for (int i=0; i<chars.length; i++) {
 			width = Math.max(width, fontmet.charWidth(chars[i]));

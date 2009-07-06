@@ -142,7 +142,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	protected Selection sel_range;
 
-	protected Adjustable offset_scroll;
+	protected JScrollBar offset_scroll;
 
 	// locations for scrollbars, consensus, and labels
 	protected int offset_scroll_loc = PLACEMENT_RIGHT;
@@ -1404,8 +1404,7 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 	protected void calcNumPixelWidth() {
-		FontMetrics fontmet =
-			Toolkit.getDefaultToolkit().getFontMetrics(residue_font);
+		FontMetrics fontmet = GeneralUtils.getFontMetrics(residue_font);
 		int font_width = fontmet.charWidth('C');
 
 		int chars = (int) Math.log(Math.abs(this.seq.getLength()));
@@ -2129,7 +2128,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * the given Adjustable isn't an instance of Component, the call
 	 * will be ignored.
 	 */
-	public void setScroller (Adjustable scroller) {
+	public void setScroller(JScrollBar scroller) {
 
 		if (!(scroller instanceof Component) || (scroller == null))
 			return;
@@ -2139,7 +2138,7 @@ public class NeoSeq extends NeoContainerWidget
 		add ((Component)scroller);
 
 		residue_map.setOffsetScroller(offset_scroll);
-		num_map.setOffsetScroller    (offset_scroll);
+		num_map.setOffsetScroller(offset_scroll);
 	}
 
 	/**

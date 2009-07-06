@@ -23,6 +23,7 @@ import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 
+@SuppressWarnings(value="deprecation")
 public class DragMonitor
 	implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
 
@@ -36,7 +37,7 @@ public class DragMonitor
 
 	protected int time_count = 0;
 
-	public DragMonitor(NeoCanvas can) {
+  public DragMonitor(NeoCanvas can) {
 		this.can = can;
 		can.addMouseListener(this);
 		can.addMouseMotionListener(this);

@@ -512,6 +512,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
    * @param selected true if the glyph is to be selected,
    * false otherwise.
    */
+	@Deprecated
   public void setSelected(boolean selected) {
     if (this.selectable) {
       this.selected = selected;

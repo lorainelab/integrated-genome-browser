@@ -508,7 +508,7 @@ the probeset, probe and pieces of probes
  //       }
  //     }
 
-      String meth = SeqMapView.determineMethod(probeset_sym.getOriginalSymmetry());
+      String meth = SmartAnnotBioSeq.determineMethod(probeset_sym.getOriginalSymmetry());
       if (meth==null) {meth = "unknown";}
       TierGlyph[] tiers = gviewer.getTiers(meth, false, null);
       if (span.isForward()) {

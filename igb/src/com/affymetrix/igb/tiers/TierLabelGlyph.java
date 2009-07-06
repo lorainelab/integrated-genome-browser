@@ -234,22 +234,4 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
     public Font getFont() {
         return this.fnt;
     }
-
-    /**
-     * @deprecated use {@link #setForegroundColor}.
-     * Also see {@link #setBackgroundColor}.
-     */
-    @Override
-    public void setColor(Color c) {
-        setForegroundColor(c);
-    }
-
-    /**
-     * @deprecated use {@link #getForegroundColor}.
-     * Also see {@link #setBackgroundColor}.
-     */
-    @Override
-    public Color getColor() {
-        return getForegroundColor();
-    }
 }

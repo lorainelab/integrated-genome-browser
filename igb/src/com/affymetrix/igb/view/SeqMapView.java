@@ -1521,13 +1521,6 @@ public class SeqMapView extends JPanel
         }
     }
 
-    /**
-     * @deprecated Use {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}.
-     */
-    public static String determineMethod(SeqSymmetry sym) {
-        return SmartAnnotBioSeq.determineMethod(sym);
-    }
-
     // We only need a single GraphGlyphFactory because all graph properties
     // are in the GraphState object.
     GenericGraphGlyphFactory graph_factory = null;

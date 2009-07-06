@@ -2356,6 +2356,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @see #getMisMatchColor
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setMisMatchColor(Color col) {
 		setMisMatchRectColor(col);
 	}

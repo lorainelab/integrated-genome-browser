@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.FloatList;
@@ -63,7 +64,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
       if (DEBUG)  {System.out.println("&&&&& in ScoredContainerGlyphFactory, attach graphs: " + attach_graphs); }
       // first draw the little rectangle that will go in an annotation tier
       // and be used to select regions for the pivot view
-      MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory(SeqMapView.determineMethod(sym));
+      MapViewGlyphFactoryI annotation_factory = smv.getAnnotationGlyphFactory(SmartAnnotBioSeq.determineMethod(sym));
       if (annotation_factory != null) {
         annotation_factory.createGlyph(sym, smv);
       }

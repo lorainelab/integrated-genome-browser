@@ -29,6 +29,7 @@
                             <entry key="Open Current Tab in New Window" value="ctrl N"/>
                             <entry key="SCROLL_RIGHT" value=""/>
                             <entry key="ZOOM_IN_Y" value=""/>
+														<entry key="Center at selected" value=""/>
                             <entry key="Select parent" value="ctrl A"/>
                             <entry key="ZOOM_OUT_X" value=""/>
                             <entry key="Web Links Manager / Edit..." value=""/>

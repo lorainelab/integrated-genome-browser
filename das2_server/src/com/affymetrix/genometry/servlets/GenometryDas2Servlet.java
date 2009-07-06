@@ -87,49 +87,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String LIMITED_FEATURE_QUERIES_EXPLANATION =
 		"See http://netaffxdas.affymetrix.com/das2 for supported feature queries.";
 
-	/* The long versions of these error messages appears to cause problems for Apache.
-	   Specifically, they cause Apache to display an uninformative 502 Bad Gateway error
-	   page because it deems the http header 'syntactically invalid'.
-	   I suspect that the presence of multiple lines and/or blank lines is specically to blame.
-	   To be safe, we're now using very succinct, single-line messages containing a pointer to
-	   a web page which contains additional information to help guide the user about
-	   acceptable queries.  - SteveC 15 Apr 2008
-	   */
-	/*private static String SERVER_SYNTAX_EXPLANATION_LONG =
-	  "The Genometry DAS/2 server always uses a standard URI syntax for DAS/2 query URIs,\n\n" +
-	  " and enforces this by specifying URIs in the SOURCES doc according to this standard:\n" +
-	  "    das_server_root/genome_name/capability_name[?query_parameters]";*/
-	/*private static String LIMITED_FEATURE_QUERIES_EXPLANATION_LONG =
-	  "The Genometry DAS/2 server currently does not support the full range of \n" +
-	  "DAS/2 feature queries and feature filters required by the DAS/2 specification. \n" +
-	  "To allow the Genometry DAS/2 server to still comply with the specification, \n" +
-	  "the server considers responses to any feature query it does not support as \n" +
-	  "being 'too large'.  Therefore it responds with an error message with HTTP \n" +
-	  "status code 413 'Request Entity Too Large', which is allowed by the DAS/2 spec \n" +
-	  "when the server considers the response too large.\n\n" +
-	  "Currently for the Genometry server to send a useful response containing features, \n" +
-	  "  the feature query string must contain: \n" +
-	  "     1 type filter \n" +
-	  "     1 segment filter \n" +
-	  "     1 overlaps filter \n" +
-	  "     0 or 1 inside filter \n" +
-	  "     0 or 1 format parameter \n" +
-	  "     0 other filters/parameters \n";*/
-	/**
-	 *  For sorting
-	 */
-	/*private static String[] months = {"Jan",
-	  "Feb",
-	  "Mar",
-	  "Apr",
-	  "May",
-	  "Jun",
-	  "Jul",
-	  "Aug",
-	  "Sep",
-	  "Oct",
-	  "Nov",
-	  "Dec"};*/
 	private static Map<String,Das2Coords> genomeid2coord;
 
 
@@ -274,11 +231,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static String synonym_file;
 	private static String types_xslt_file;
 	private static String org_order_filename;
-	/**
-	 *  Map of commands to plugins, for extending DAS server to
-	 *     recognize additional commands.
-	 */
-	//Map command2plugin = new HashMap();
 
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 	private static final Pattern tagval_splitter = Pattern.compile("=");
@@ -295,22 +247,18 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 */
 	private static Map<String,List<AnnotatedSeqGroup>> organisms = new LinkedHashMap<String,List<AnnotatedSeqGroup>>();
 
-	// specifying a template for chromosome seqs constructed in lift and chromInfo parsers
-	//  MutableAnnotatedBioSeq template_seq = new NibbleBioSeq();
-	//private MutableAnnotatedBioSeq template_seq = new SmartAnnotBioSeq();
-	//LiftParser lift_parser = new LiftParser(template_seq);
-	//ChromInfoParser chrom_parser = new ChromInfoParser(template_seq);
-	//private ArrayList<String> log = new ArrayList<String>(100);
-	//  HashMap directory_filter = new HashMap();
+
 	private Map<String,Class> output_registry = new HashMap<String,Class>();
-	//  DateFormat date_formatter = DateFormat.getDateTimeInstance();
+	
 	private final SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private long date_initialized = 0;
 	private String date_init_string = null;
 	private Map<AnnotatedSeqGroup,Map<String,String>> genome2graphfiles = new LinkedHashMap<AnnotatedSeqGroup,Map<String,String>>();
+	// mapping to graph files when there is one file for all seqs
 	private Map<AnnotatedSeqGroup,Map<String,String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup,Map<String,String>>();
-	//  Map graph_name2file = new LinkedHashMap();  // mapping to graph files when there is one file for all seqs
-	//  Map graph_name2dir = new LinkedHashMap();   // mapping to graph directories when multiple files under dir, one for each seq
+	// mapping to graph directories when multiple files under dir, one for each seq
+	//  Map graph_name2file = new LinkedHashMap();  
+	//  Map graph_name2dir = new LinkedHashMap();   
 	private ArrayList<String> graph_formats = new ArrayList<String>();
 	private Transformer types_transformer;
 	private boolean DEFAULT_USE_TYPES_XSLT = true;
@@ -660,6 +608,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix) {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
+
+		if (file_name.startsWith(".")) {
+			// hidden directory or file.  Ignore.
+			System.out.println("Ignoring hidden " +
+							(current_file.isDirectory() ? "directory " : "file ") +
+							file_path);
+			return;
+		}
+
+		
 		String type_name;
 		String new_type_prefix;
 		if (type_prefix == null) {  // special-casing for top level genome directory, don't want genome name added to type name path

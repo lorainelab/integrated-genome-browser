@@ -68,12 +68,12 @@ public final class GFF3Parser {
 	 */
 	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group)
 		throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
+			BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 
-		// Note that the parse(BufferedReader) method will call br.close(), so
-		// don't worry about it.
-		return parse(br, default_source, seq_group);
-	}
+			// Note that the parse(BufferedReader) method will call br.close(), so
+			// don't worry about it.
+			return parse(br, default_source, seq_group);
+		}
 
 	boolean use_track_lines = true;
 
@@ -83,42 +83,42 @@ public final class GFF3Parser {
 	 */
 	public List<? extends SeqSymmetry> parse(BufferedReader br, String default_source, AnnotatedSeqGroup seq_group)
 		throws IOException {
-		if (DEBUG) { System.out.println("starting GFF3 parse."); }
+			if (DEBUG) { System.out.println("starting GFF3 parse."); }
 
-		int line_count = 0;
+			int line_count = 0;
 
-		List<GFF3Sym> results = new ArrayList<GFF3Sym>();
+			List<GFF3Sym> results = new ArrayList<GFF3Sym>();
 
-		String line = null;
+			String line = null;
 
-		Map<String,GFF3Sym> id2sym = new HashMap<String,GFF3Sym>();
-		ArrayList<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
-		String track_name = null;
+			Map<String,GFF3Sym> id2sym = new HashMap<String,GFF3Sym>();
+			ArrayList<GFF3Sym> all_syms = new ArrayList<GFF3Sym>();
+			String track_name = null;
 
-		try {
-			Thread thread = Thread.currentThread();
-			while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
-				if (line == null) { continue; }
-				if ("###".equals(line)) {
-					// This directive signals that we can process all parent-child relationships up to this point.
-					// But there is not much benefit in doing so.
-					continue;
-				}
-				if ("##FASTA".equals(line)) {
-					break;
-				}
-				if (line.startsWith("##track")) {
-					track_line_parser.parseTrackLine(line);
-					TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_source);
-					track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-					continue;
-				}
-				if (line.startsWith("##")) { processDirective(line); continue; }
-				if (line.startsWith("#")) { continue; }
-				String fields[] = line_regex.split(line);
+			try {
+				Thread thread = Thread.currentThread();
+				while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
+					if (line == null) { continue; }
+					if ("###".equals(line)) {
+						// This directive signals that we can process all parent-child relationships up to this point.
+						// But there is not much benefit in doing so.
+						continue;
+					}
+					if ("##FASTA".equals(line)) {
+						break;
+					}
+					if (line.startsWith("##track")) {
+						track_line_parser.parseTrackLine(line);
+						TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_source);
+						track_name = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+						continue;
+					}
+					if (line.startsWith("##")) { processDirective(line); continue; }
+					if (line.startsWith("#")) { continue; }
+					String fields[] = line_regex.split(line);
 
-				if (fields==null || fields.length < 8) { continue; }
-				
+					if (fields==null || fields.length < 8) { continue; }
+
 					line_count++;
 					if (DEBUG && (line_count % 10000) == 0) { System.out.println("" + line_count + " lines processed"); }
 
@@ -177,7 +177,7 @@ public final class GFF3Parser {
 					   The ID attributes are only mandatory for those features that have children,
 					   or for those that span multiple lines.  The IDs do not have meaning outside
 					   the file in which they reside.
-					   */
+					 */
 					String the_id = (String) sym.getProperty(GFF3_ID); // NOT: sym.getID()
 					if (the_id == null) {
 						all_syms.add(sym);
@@ -207,65 +207,65 @@ public final class GFF3Parser {
 							}
 						}
 					}
-			}
-		} finally {
-			br.close();
-		}
-
-		for (GFF3Sym sym : all_syms) {
-			String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
-
-
-			String id = sym.getID();
-			if (id != null && ! "-".equals(id)) {
-				seq_group.addToIndex(id, sym);
+				}
+			} finally {
+				br.close();
 			}
 
-			if (parent_ids.length == 0) {
-				// If no parents, then it is top-level
-				results.add(sym);
-			} else {
-				// Else, add this as a child to *each* parent in its parent list.
-				// It is an error if the parent doesn't exist.
-				for (int i=0; i<parent_ids.length; i++) {
-					String parent_id = parent_ids[i];
-					if ("-".equals(parent_id)) {
-						throw new IOException("Parent ID cannot be '-'");
-					}
-					GFF3Sym parent_sym = id2sym.get(parent_id);
-					if (parent_sym == null) {
-						throw new IOException("No parent found with ID: " + parent_id);
-					} else if (parent_sym == sym) {
-						throw new IOException("Parent and child are the same for ID: " + parent_id);
-					} else {
-						parent_sym.addChild(sym);
+			for (GFF3Sym sym : all_syms) {
+				String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 
-						// I'm not sure about this.
-						// In Genometry, parent span usually encompasses spans of all children.
-						// In GFF3, that isn't really required.
-						//SeqUtils.encompass(parent_sym, sym, parent_sym);
+
+				String id = sym.getID();
+				if (id != null && ! "-".equals(id)) {
+					seq_group.addToIndex(id, sym);
+				}
+
+				if (parent_ids.length == 0) {
+					// If no parents, then it is top-level
+					results.add(sym);
+				} else {
+					// Else, add this as a child to *each* parent in its parent list.
+					// It is an error if the parent doesn't exist.
+					for (int i=0; i<parent_ids.length; i++) {
+						String parent_id = parent_ids[i];
+						if ("-".equals(parent_id)) {
+							throw new IOException("Parent ID cannot be '-'");
+						}
+						GFF3Sym parent_sym = id2sym.get(parent_id);
+						if (parent_sym == null) {
+							throw new IOException("No parent found with ID: " + parent_id);
+						} else if (parent_sym == sym) {
+							throw new IOException("Parent and child are the same for ID: " + parent_id);
+						} else {
+							parent_sym.addChild(sym);
+
+							// I'm not sure about this.
+							// In Genometry, parent span usually encompasses spans of all children.
+							// In GFF3, that isn't really required.
+							//SeqUtils.encompass(parent_sym, sym, parent_sym);
+						}
 					}
 				}
 			}
+			// hashtable no longer needed
+			id2sym.clear();
+
+			//Loop over the top-level annotations and add them to the bioseq.
+			// (this can't be done in the loop above if we also want to resort children)
+
+			for(GFF3Sym s : results) {
+				MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) s.getBioSeq();
+				// I want to sort the Exons, but not other children.
+				//s.sortChildren(SeqSpanStartComparator.getComparator(true));
+				seq.addAnnotation(s);
+			}
+
+			System.out.print("Finished parsing GFF3.");
+			System.out.print("  line count: " + line_count);
+			System.out.println("  result count: " + results.size());
+			return results;
 		}
-		// hashtable no longer needed
-		id2sym.clear();
-
-		//Loop over the top-level annotations and add them to the bioseq.
-		// (this can't be done in the loop above if we also want to resort children)
-
-		for(GFF3Sym s : results) {
-			MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) s.getBioSeq();
-			// I want to sort the Exons, but not other children.
-			//s.sortChildren(SeqSpanStartComparator.getComparator(true));
-			seq.addAnnotation(s);
-		}
-
-		System.out.print("Finished parsing GFF3.");
-		System.out.print("  line count: " + line_count);
-		System.out.println("  result count: " + results.size());
-		return results;
-	}
 
 
 	static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");

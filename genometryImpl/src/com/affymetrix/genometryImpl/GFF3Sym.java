@@ -143,8 +143,8 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 	}
 
 	static final List bad_prop_names = Arrays.asList(new String[] {
-		"feature_type", "type", "score", "frame"
-	});
+			"feature_type", "type", "score", "frame"
+			});
 
 	/**
 	 *  Overriden such that certain properties will be stored more efficiently.

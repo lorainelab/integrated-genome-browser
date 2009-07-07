@@ -62,11 +62,10 @@ public class GFF3ParserTest {
 			assertEquals(999, gene.getSpan(0).getStart());
 			assertEquals(9000, gene.getSpan(0).getEnd());
 
-			assertEquals(4, gene.getChildCount());
-			GFF3Sym  binding_site = (GFF3Sym) gene.getChild(0);
-			GFF3Sym mRNA1 = (GFF3Sym) gene.getChild(1);
-			GFF3Sym mRNA2 = (GFF3Sym) gene.getChild(2);
-			GFF3Sym mRNA3 = (GFF3Sym) gene.getChild(3);
+			assertEquals(3, gene.getChildCount());
+			GFF3Sym mRNA1 = (GFF3Sym) gene.getChild(0);
+			GFF3Sym mRNA2 = (GFF3Sym) gene.getChild(1);
+			GFF3Sym mRNA3 = (GFF3Sym) gene.getChild(2);
 
 			assertEquals("EDEN.1", mRNA1.getProperty(GFF3Parser.GFF3_NAME));
 

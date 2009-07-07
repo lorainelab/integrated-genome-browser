@@ -59,6 +59,21 @@ public final class GFF3Parser {
 	private static final boolean use_track_lines = true;
 	private TrackLineParser track_line_parser = new TrackLineParser();
 
+	private static final Set<String> IGNORABLE_TYPES;
+	private static final Set<String> seenTypes = Collections.<String>synchronizedSet(new HashSet<String>());
+
+	static {
+		Set<String> types = new HashSet<String>();
+
+		types.add("tf_binding_site");
+		types.add("protein");
+
+		IGNORABLE_TYPES = Collections.<String>unmodifiableSet(types);
+	}
+
+	/** Contains a list of parent ids which have been ignored */
+	private Set<String> bad_parents = new HashSet<String>();
+
 	public GFF3Parser() {
 	}
 
@@ -151,6 +166,19 @@ public final class GFF3Parser {
 						continue;
 					}
 
+					if (IGNORABLE_TYPES.contains(feature_type.toLowerCase())) {
+						String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, attributes_field);
+						if (ids.length > 0) {
+							bad_parents.add(ids[0]);
+						}
+						synchronized (seenTypes) {
+							if (seenTypes.add(feature_type.toLowerCase())) {
+								System.out.println("Ignoring GFF3 type '" + feature_type + "'");
+							}
+						}
+						continue;
+					}
+
 					MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
 					if (seq == null) {
 						seq = seq_group.addSeq(seq_name, 0);
@@ -215,17 +243,22 @@ public final class GFF3Parser {
 							throw new IOException("Parent ID cannot be '-'");
 						}
 						GFF3Sym parent_sym = id2sym.get(parent_id);
-						if (parent_sym == null) {
+						if (bad_parents.contains(parent_id)) {
+							/*
+							 * bad_parents list contains ignored parents.  Child
+							 * ids are added to the bad_parents list since we are
+							 * ignoring them too.
+							 */
+							String[] ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_ID, sym.getAttributes());
+							if (ids.length > 0) {
+								bad_parents.add(ids[0]);
+							}
+						} else if (parent_sym == null) {
 							throw new IOException("No parent found with ID: " + parent_id);
 						} else if (parent_sym == sym) {
 							throw new IOException("Parent and child are the same for ID: " + parent_id);
 						} else {
 							parent_sym.addChild(sym);
-
-							// I'm not sure about this.
-							// In Genometry, parent span usually encompasses spans of all children.
-							// In GFF3, that isn't really required.
-							//SeqUtils.encompass(parent_sym, sym, parent_sym);
 						}
 					}
 				}

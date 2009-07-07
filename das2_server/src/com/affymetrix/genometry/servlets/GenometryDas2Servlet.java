@@ -651,7 +651,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				return;
 			}
 
-			if (!annots_map.isEmpty() && !annots_map.containsKey(file_name.toLowerCase()) && !annots_map.containsKey(stripName.toLowerCase())) {
+			if (!annots_map.isEmpty() && !annots_map.containsKey(file_name) && !annots_map.containsKey(stripName)) {
 				// we have loaded in an annots.xml file, but yet this file is not in it and should be ignored.
 				return;
 			}

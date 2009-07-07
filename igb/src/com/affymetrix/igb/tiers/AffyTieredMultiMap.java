@@ -181,45 +181,6 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     }
   }
 
-  /**
-   * Add a zoomer to a section.
-   * So far,
-   * the only valid combinations are <code>X</code> with <code>EAST</code>
-   * and <code>Y</code> with <code>NORTH</code>.
-   * @param theAxis must be {@link #X} or {@link #Y}.
-   * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
-   * @param theControl
-   */
-  /*public void addZoomer( int theAxis, int theSection, Adjustable theControl ) {
-    if ( X == theAxis && NeoConstants.EAST == theSection ) {
-      this.extramap.setZoomer( theAxis, theControl );
-      this.northEastMap.setZoomer( theAxis, theControl );
-    }
-    else if ( Y == theAxis && NeoConstants.NORTH == theSection ) {
-      if ( null != this.northWestMap ) this.northWestMap.setZoomer( theAxis, theControl );
-      this.northMap.setZoomer( theAxis, theControl );
-      this.northEastMap.setZoomer( theAxis, theControl );
-    }
-    else {
-      throw new IllegalArgumentException( "Only support X with EAST and Y with NORTH." );
-    }
-  }*/
-
-  /**
-   * Add a zoomer component to a section.
-   * The axis is inferred from the orientation of the zoomer.
-   * @param theSection must be {@link NeoConstants#NORTH}, {@link NeoConstants#EAST}, {@link NeoConstants#CENTER}, or {@link NeoConstants#WEST}.
-   * @param theControl for zooming
-   */
-  /*public void addZoomer( int theSection, AdjustableJSlider theControl ) {
-    int orientation = theControl.getOrientation();
-    switch ( orientation ) {
-      case Adjustable.HORIZONTAL:
-        addZoomer( X, theSection, theControl ); break;
-      case Adjustable.VERTICAL:
-        addZoomer( Y, theSection, theControl ); break;
-    }
-  }*/
 
   public void clearWidget() {
   /*

@@ -268,44 +268,4 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
 		}
 	}
 
-  /**
-   *  main for testing AffyLabelledTierMap
-   */
-  /*public static void main(String[] args) {
-    AffyLabelledTierMap map = new AffyLabelledTierMap();
-
-    AdjustableJSlider xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
-    AdjustableJSlider yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
-    map.setZoomer(NeoMap.X, xzoomer);
-    map.setZoomer(NeoMap.Y, yzoomer);
-
-    map.setMapRange(0, 10000);
-    map.setMapOffset(0, 1000);
-    map.addAxis(500);
-
-    TierGlyph mtg = new TierGlyph();
-    mtg.setCoords(0, 0, 1000, 200);
-    mtg.setFillColor(Color.red);
-    map.addTier(mtg);
-    mtg = new TierGlyph();
-    mtg.setCoords(0, 0, 1000, 400);
-    mtg.setFillColor(Color.orange);
-    map.addTier(mtg);
-    map.repack();
-    
-    JFrame frm = new JFrame("AffyLabelledTierMap.main() test");
-    Container cpane = frm.getContentPane();
-    cpane.setLayout(new BorderLayout());
-    cpane.add("Center", map);
-    cpane.add("North", xzoomer);
-    cpane.add("West", yzoomer);
-    frm.setSize(600, 400);
-    frm.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) {
-	System.exit(0);
-      }
-    } );
-    frm.setVisible(true);
-  }*/
-
 }

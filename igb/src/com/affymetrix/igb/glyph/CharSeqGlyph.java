@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -207,7 +208,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 		g.setFont(getResidueFont());
 		g.setColor(getForegroundColor());
-		fontmet = Toolkit.getDefaultToolkit().getFontMetrics(getResidueFont());
+		fontmet = GeneralUtils.getFontMetrics(getResidueFont());
 
 		if (this.font_width < pixelsPerBase) { // Ample room to draw residue letters.
 			for (int i = seqBegIndex; i < seqEndIndex; i++) {

@@ -52,12 +52,12 @@ public final class GFF3Parser {
 	public static final String GFF3_DBXREF = "Dbxref";
 	public static final String GFF3_ONTOLOGY_TERM = "Ontology_term";
 
-	int gff_version = GFF3;
-
 	// Must be exactly one tab between each column; not spaces or multiple tabs.
-	static final Pattern line_regex = Pattern.compile("\\t");
+	private static final Pattern line_regex = Pattern.compile("\\t");
+	private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
 
-	TrackLineParser track_line_parser = new TrackLineParser();
+	private boolean use_track_lines = true;
+	private TrackLineParser track_line_parser = new TrackLineParser();
 
 	public GFF3Parser() {
 	}
@@ -74,8 +74,6 @@ public final class GFF3Parser {
 			// don't worry about it.
 			return parse(br, default_source, seq_group);
 		}
-
-	boolean use_track_lines = true;
 
 	/**
 	 *  Parses GFF3 format and adds annotations to the appropriate seqs on the
@@ -267,15 +265,12 @@ public final class GFF3Parser {
 			return results;
 		}
 
-
-	static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
-
 	/**
 	 *  Process directive lines in the input, which are lines beginning with "##".
 	 *  Directives that are not understood are treated as comments.
 	 *  Directives that are understood include "##gff-version", which must match "3".
 	 */
-	void processDirective(String line) throws IOException {
+	public void processDirective(String line) throws IOException {
 		Matcher m = directive_version.matcher(line);
 		if (m.matches()) {
 			String vstr = m.group(1).trim();
@@ -301,7 +296,7 @@ public final class GFF3Parser {
 	 *  sym1; but the specification requires that all parts of the group have
 	 *  identical attributes.
 	 */
-	static GFF3Sym groupSyms(String id, GFF3Sym sym1, GFF3Sym sym2) {
+	private static GFF3Sym groupSyms(String id, GFF3Sym sym1, GFF3Sym sym2) {
 		char strand = '.';
 		if (sym1.isForward()) {
 			strand = '+';

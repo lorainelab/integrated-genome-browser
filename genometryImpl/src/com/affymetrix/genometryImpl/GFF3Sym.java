@@ -44,12 +44,21 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 	public static final String SOFA_EXON = "SO:0000147";
 	public static final String SOFA_CDS = "SO:0000316";
 
-	String source;
-	String method;
+	private static final Pattern equalsP = Pattern.compile("=");
+	private static final Pattern commaP = Pattern.compile(",");
+
+	private static final String[] EMPTY_RESULT = new String[0];
+
+	private static final List<String> bad_prop_names = Arrays.asList(new String[] {
+			"feature_type", "type", "score", "frame"
+			});
+
+	private String source;
+	private String method;
 	public String feature_type;
-	float score;
-	char frame;
-	String attributes;
+	private float score;
+	private char frame;
+	private String attributes;
 
 	/**
 	 * Constructor.
@@ -123,6 +132,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 	public char getFrame()  { return frame; }
 	public String getAttributes() { return attributes; }
 
+	@Override
 	public Object getProperty(String name) {
 		if (name.equals("source") && source != null) { return source; }
 		else if (name.equals("method")) { return method; }
@@ -142,15 +152,12 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 		}
 	}
 
-	static final List bad_prop_names = Arrays.asList(new String[] {
-			"feature_type", "type", "score", "frame"
-			});
-
 	/**
 	 *  Overriden such that certain properties will be stored more efficiently.
 	 *  Setting certain properties this way is not supported:
 	 *  these include "attributes", "score" and "frame".
 	 */
+	@Override
 	public boolean setProperty(String name, Object val) {
 		String lc_name = name.toLowerCase();
 		if (name.equals("id")) {
@@ -191,10 +198,12 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 		return super.setProperty(name, val);
 	}
 
+	@Override
 	public Map<String,Object> getProperties() {
 		return cloneProperties();
 	}
 
+	@Override
 	public Map<String,Object> cloneProperties() {
 		Map<String,Object> tprops = super.cloneProperties();
 		if (tprops == null) {
@@ -237,10 +246,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 		}
 	}
 
-	static final Pattern equalsP = Pattern.compile("=");
-	static final Pattern commaP = Pattern.compile(",");
-
-	public static void addAllAttributesFromGFF3(Map<String,Object> m, String attributes) {
+	private static void addAllAttributesFromGFF3(Map<String,Object> m, String attributes) {
 		if (attributes == null) {
 			return;
 		}
@@ -265,8 +271,6 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 			}
 		}
 	}
-
-	static final String[] EMPTY_RESULT = new String[0];
 
 	/** Returns a non-null String[]. */
 	public static String[] getGFF3PropertyFromAttributes(String prop_name, String attributes) {
@@ -331,6 +335,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 		return s.intern();
 	}
 
+	@Override
 	public String toString() {
 		return "GFF3Sym: ID = '" + getProperty(GFF3Parser.GFF3_ID) + "'  type=" + feature_type
 			+ " children=" + getChildCount();
@@ -346,6 +351,7 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 			super(seq, source, feature_type, a, b, score, strand, frame, attributes);
 		}
 
+		@Override
 		public boolean isMultiLine() {
 			return true;
 		}

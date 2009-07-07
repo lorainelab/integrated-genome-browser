@@ -119,7 +119,6 @@ public class GFF3ParserTest {
 			GFF3Parser instance = new GFF3Parser();
 
 			instance.processDirective("##gff-version 3");
-			assertEquals(3, instance.gff_version);
 
 			// Setting to gff-version 2 should throw an exception
 			Exception e = null;

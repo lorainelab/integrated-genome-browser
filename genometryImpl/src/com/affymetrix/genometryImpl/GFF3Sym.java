@@ -13,7 +13,6 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
-import com.affymetrix.genometry.*;
 
 import java.net.URLDecoder;
 import java.util.*;
@@ -26,7 +25,8 @@ import java.util.regex.*;
  *
  * @version $Id$
  */
-public class GFF3Sym extends SingletonSymWithProps implements Scored {
+public final class GFF3Sym extends SimpleSymWithProps implements Scored {
+	private String id;
 
 	public static final char UNKNOWN_FRAME = UcscGffSym.UNKNOWN_FRAME;
 	public static final String UNKNOWN_SOURCE = ".";
@@ -70,21 +70,9 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 	 * @param b  The coordinate in column 5 of the GFF file.
 	 * @param attributes   Attributes, formatted in GFF3 style.
 	 */
-	public GFF3Sym(BioSeq seq, String source, String feature_type, int a, int b,
-			float score, char strand, char frame, String attributes) {
-		super(0, 0, seq);
-
-		// GFF spec says coord_A <= coord_B, but this is not always obeyed
-		int max = Math.max(a, b);
-		int min = Math.min(a, b);
-		// convert from base-1 numbering to interbase-0 numbering
-		min--;
-
-		if (strand == '-') {
-			setCoords(max, min);
-		} else {
-			setCoords(min, max);
-		}
+	public GFF3Sym(String source, String feature_type,
+			float score, char frame, String attributes) {
+		super();
 
 		if (! UNKNOWN_SOURCE.equals(source)) {
 			this.source = source;
@@ -339,21 +327,5 @@ public class GFF3Sym extends SingletonSymWithProps implements Scored {
 	public String toString() {
 		return "GFF3Sym: ID = '" + getProperty(GFF3Parser.GFF3_ID) + "'  type=" + feature_type
 			+ " children=" + getChildCount();
-	}
-
-	public boolean isMultiLine() {
-		return false;
-	}
-
-	public static final class MultiLineGFF3Sym extends GFF3Sym {
-		public MultiLineGFF3Sym(BioSeq seq, String source, String feature_type, int a, int b,
-				float score, char strand, char frame, String attributes) {
-			super(seq, source, feature_type, a, b, score, strand, frame, attributes);
-		}
-
-		@Override
-		public boolean isMultiLine() {
-			return true;
-		}
 	}
 }

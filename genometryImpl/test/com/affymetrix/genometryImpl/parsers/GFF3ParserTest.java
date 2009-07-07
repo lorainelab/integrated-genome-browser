@@ -79,10 +79,7 @@ public class GFF3ParserTest {
 
 			GFF3Sym cds_group1 = (GFF3Sym) mRNA1.getChild(4);
 			assertEquals(GFF3Sym.FEATURE_TYPE_CDS, cds_group1.getFeatureType());
-			assertEquals(cds_group1.getChildCount(), 4);
-
-			GFF3Sym cds1 = (GFF3Sym) cds_group1.getChild(0);
-			assertEquals(GFF3Sym.FEATURE_TYPE_CDS + "-part", cds1.getFeatureType());
+			assertEquals(cds_group1.getSpanCount(), 4);
 
 			istr.close();
 		}

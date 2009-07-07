@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GFF3Sym;
 
@@ -56,7 +56,7 @@ public final class GFF3Parser {
 	private static final Pattern line_regex = Pattern.compile("\\t");
 	private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
 
-	private boolean use_track_lines = true;
+	private static final boolean use_track_lines = true;
 	private TrackLineParser track_line_parser = new TrackLineParser();
 
 	public GFF3Parser() {
@@ -156,19 +156,16 @@ public final class GFF3Parser {
 						seq = seq_group.addSeq(seq_name, 0);
 					}
 
-					GFF3Sym sym = new GFF3Sym(seq, source, feature_type, coord_a, coord_b,
-							score, strand_char, frame_char,
-							attributes_field);
+					/* Subtract 1 from min, translating 1-base to interbase */
+					final int min = Math.min(coord_a, coord_b) - 1;
+					final int max   = Math.max(coord_a, coord_b);
 
-					if (use_track_lines && track_name != null) {
-						sym.setProperty("method", track_name);
-					} else {
-						sym.setProperty("method", source);
-					}
-
-					int max = sym.getMax();
 					if (max > seq.getLength()) { seq.setLength(max); }
 
+					SimpleSeqSpan span = new SimpleSeqSpan(
+							strand_char != '-' ? min : max,
+							strand_char != '-' ? max : min,
+							seq);
 
 					/*
 					   From GFF3 spec:
@@ -176,34 +173,17 @@ public final class GFF3Parser {
 					   or for those that span multiple lines.  The IDs do not have meaning outside
 					   the file in which they reside.
 					 */
-					String the_id = (String) sym.getProperty(GFF3_ID); // NOT: sym.getID()
-					if (the_id == null) {
+					String the_id = GFF3Sym.getIdFromGFF3Attributes(attributes_field);
+					GFF3Sym old_sym = id2sym.get(the_id);
+					if (the_id == null || the_id.equals("null") || "-".equals(the_id)) {
+						GFF3Sym sym = createSym(source, feature_type, score, frame_char, attributes_field, span, track_name);
 						all_syms.add(sym);
-					} else if (the_id.equals("null") || "-".equals(the_id)) {
-						// probably never happens, but just being safe.....
+					} else if (old_sym == null) {
+						GFF3Sym sym = createSym(source, feature_type, score, frame_char, attributes_field, span, track_name);
 						all_syms.add(sym);
+						id2sym.put(the_id, sym);
 					} else {
-						// put it in the id2sym hash, or merge it with an existing item already in the hash
-
-						GFF3Sym old_sym = id2sym.get(the_id);
-						if (old_sym == null) {
-							id2sym.put(the_id, sym);
-							all_syms.add(sym);
-						} else {
-							if (old_sym.isMultiLine()) {
-								// if a group symmetry with the same ID already exists,
-								// just add this as a child of it.
-								old_sym.addChild(sym);
-								SeqUtils.encompass(old_sym, sym, old_sym);
-							} else {
-								// Create a group symmetry, with the both existing symmetries as children
-								GFF3Sym group_sym = groupSyms(the_id, old_sym, sym);
-								// Put the group symmetry in the id2sym hash, and also
-								// put the group symmetry in the all_syms list, replacing the one that was there.
-								id2sym.put(the_id, group_sym);
-								all_syms.set(all_syms.indexOf(old_sym), group_sym);
-							}
-						}
+						old_sym.addSpan(span);
 					}
 				}
 			} finally {
@@ -213,7 +193,6 @@ public final class GFF3Parser {
 			for (GFF3Sym sym : all_syms) {
 				String[] parent_ids = GFF3Sym.getGFF3PropertyFromAttributes(GFF3_PARENT, sym.getAttributes());
 
-
 				String id = sym.getID();
 				if (id != null && ! "-".equals(id)) {
 					seq_group.addToIndex(id, sym);
@@ -222,6 +201,11 @@ public final class GFF3Parser {
 				if (parent_ids.length == 0) {
 					// If no parents, then it is top-level
 					results.add(sym);
+					/* Do we really need to do for every span? */
+					for(int i=0; i<sym.getSpanCount(); i++) {
+						MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) sym.getSpanSeq(i);
+						seq.addAnnotation(sym);
+					}
 				} else {
 					// Else, add this as a child to *each* parent in its parent list.
 					// It is an error if the parent doesn't exist.
@@ -249,16 +233,6 @@ public final class GFF3Parser {
 			// hashtable no longer needed
 			id2sym.clear();
 
-			//Loop over the top-level annotations and add them to the bioseq.
-			// (this can't be done in the loop above if we also want to resort children)
-
-			for(GFF3Sym s : results) {
-				MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) s.getBioSeq();
-				// I want to sort the Exons, but not other children.
-				//s.sortChildren(SeqSpanStartComparator.getComparator(true));
-				seq.addAnnotation(s);
-			}
-
 			System.out.print("Finished parsing GFF3.");
 			System.out.print("  line count: " + line_count);
 			System.out.println("  result count: " + results.size());
@@ -281,39 +255,14 @@ public final class GFF3Parser {
 		}
 	}
 
-
-	/**
-	 *  Utility to group GFF3 features that were specified on several lines with the same ID.
-	 *  Lines with the same ID are supposed to represent different parts of the same feature.
-	 *  CDS features are usually expressed this way.
-	 *  All properties specified on separate lines, except start, stop and frame,
-	 *  are supposed to be equivalent on all lines.
-	 *  In Genometry, we need to create a parent symmetry to hold the individual
-	 *  pieces.  This parent symmetry will be a MultiLineGFF3Sym with the type as specified
-	 *  (such as "cds") and the two given sym's will become its children with "-part"
-	 *  attended to their type (such as "cds-type").
-	 *  The attributes of the group symmetry will be taken from the attributes of
-	 *  sym1; but the specification requires that all parts of the group have
-	 *  identical attributes.
-	 */
-	private static GFF3Sym groupSyms(String id, GFF3Sym sym1, GFF3Sym sym2) {
-		char strand = '.';
-		if (sym1.isForward()) {
-			strand = '+';
+	private static GFF3Sym createSym(String source, String feature_type, float score, char frame_char, String attributes_field, SimpleSeqSpan span, String track_name) {
+		GFF3Sym sym = new GFF3Sym(source, feature_type, score, frame_char, attributes_field);
+		sym.addSpan(span);
+		if (use_track_lines && track_name != null) {
+			sym.setProperty("method", track_name);
 		} else {
-			strand = '-';
+			sym.setProperty("method", source);
 		}
-		String type = sym1.getFeatureType();
-		GFF3Sym parent = new GFF3Sym.MultiLineGFF3Sym(
-				sym1.getBioSeq(), sym1.getSource(), type,
-				Math.min(sym1.getMin(), sym2.getMin()) + 1, Math.max(sym1.getMax(), sym2.getMax()),
-				GFF3Sym.UNKNOWN_SCORE, strand, GFF3Sym.UNKNOWN_FRAME, sym1.getAttributes());
-		parent.setProperty("method", sym1.getProperty("method"));
-		sym1.feature_type = type + "-part";
-		sym2.feature_type = type + "-part";
-		parent.addChild(sym1);
-		parent.addChild(sym2);
-
-		return parent;
+		return sym;
 	}
 }

@@ -24,6 +24,7 @@ import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants;
+import javax.swing.JScrollBar;
 
 /**
   This applet, as its name implies, demonstrates some of the capabilities of
@@ -48,7 +49,7 @@ public class TieredMapDemo extends Applet
 	final Color selectionColor = Color.red;
 
 	TieredNeoMap map;
-	Scrollbar yscroll;
+	JScrollBar yscroll;
 	MapTierGlyph axisTier, squiggleTier, fillrectTier, roundrectTier, selectedTier;   // The tiers being used
 	// Factories that maintain the type of glyph that is necessary for making glyphs.
 	MapGlyphFactory squiggleFactory, fillRectFactory, roundRectFactory;
@@ -101,7 +102,7 @@ public class TieredMapDemo extends Applet
 		map_pan.setLayout ( new BorderLayout() );
 		map_pan.add ( map, BorderLayout.CENTER );
 
-		yscroll = new Scrollbar(Scrollbar.VERTICAL);
+		yscroll = new JScrollBar(JScrollBar.VERTICAL);
 		map.setScroller ( NeoMap.Y, yscroll );
 		map_pan.add ( yscroll, BorderLayout.EAST );
 

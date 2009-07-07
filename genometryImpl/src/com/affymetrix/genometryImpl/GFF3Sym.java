@@ -12,6 +12,11 @@
  */
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 
 import java.net.URLDecoder;
@@ -25,7 +30,7 @@ import java.util.regex.*;
  *
  * @version $Id$
  */
-public final class GFF3Sym extends SimpleSymWithProps implements Scored {
+public final class GFF3Sym extends SimpleSymWithProps implements Scored, SupportsCdsSpan {
 	private String id;
 
 	public static final char UNKNOWN_FRAME = UcscGffSym.UNKNOWN_FRAME;
@@ -327,5 +332,49 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored {
 	public String toString() {
 		return "GFF3Sym: ID = '" + getProperty(GFF3Parser.GFF3_ID) + "'  type=" + feature_type
 			+ " children=" + getChildCount();
+	}
+
+	public boolean hasCdsSpan() {
+		for(SeqSymmetry child : children) {
+			if (isCdsSym(child)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isCdsSym(SeqSymmetry sym) {
+		if (sym instanceof GFF3Sym && ((GFF3Sym) sym).getFeatureType().equals(GFF3Sym.FEATURE_TYPE_CDS)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * TODO: this does not take into account multiple CDS for a single mRNA nor
+	 *       does it make use of the 5' and 3' UTR.
+	 *
+	 * @return A single SeqSpan covering the CDS region.
+	 */
+	public SeqSpan getCdsSpan() {
+		MutableSeqSpan span = null;
+		for(SeqSymmetry child : children) {
+			if (isCdsSym(child)) {
+				for(int i = 0; i < child.getSpanCount(); i++) {
+					if (span == null) {
+						span = new SimpleMutableSeqSpan(child.getSpan(i));
+					} else {
+						SeqUtils.encompass(child.getSpan(i), span, span);
+					}
+				}
+			}
+		}
+
+		if (span == null) {
+			throw new IllegalArgumentException("This Symmetry does not have a CDS");
+		}
+
+		return span;
 	}
 }

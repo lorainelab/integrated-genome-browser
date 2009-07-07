@@ -13,17 +13,12 @@
 
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.SupportsCdsSpan;
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.Scored;
-import com.affymetrix.genometryImpl.GFF3Sym;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
 import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
@@ -37,6 +32,10 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
+/**
+ *
+ * @version $Id$
+ */
 public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   static boolean DEBUG = false;
   static boolean SET_PARENT_INFO = true;
@@ -120,10 +119,12 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     setMapView(smv);
     //AffyTieredMap map = gviewer.getSeqMap();
 
+	/*
     if (sym instanceof GFF3Sym) {
       GFF3GlyphFactory.getInstance().createGlyph(sym, smv, next_to_axis);
       return;
     }
+	 */
 
     String meth = SmartAnnotBioSeq.determineMethod(sym);
 
@@ -172,10 +173,12 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
                              TierGlyph ftier, TierGlyph rtier,
                              int desired_leaf_depth) {
 
+	  /*
     if (sym instanceof GFF3Sym) {
       GFF3GlyphFactory.getInstance().createGlyph(sym, gviewer);
       return;
     }
+	   */
 
     int depth = getDepth(sym);
     if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {

@@ -363,7 +363,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("\tFound and loading " + p);
 
 			//load file
-			HashMap<String, String> prop = loadFileIntoHashMap(p);
+			HashMap<String, String> prop = loadServletParametersIntoHashMap(p);
 			if (prop == null) {
 				System.out.println("\tERROR: loading " + p + " file, aborting.");
 				return false;
@@ -411,7 +411,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * Skips blank lines and those starting with a '#'
 	 * @return null if an exception in thrown
 	 * */
-	private static final HashMap<String, String> loadFileIntoHashMap(File file) {
+	private static final HashMap<String, String> loadServletParametersIntoHashMap(File file) {
 		BufferedReader in = null;
 		HashMap<String, String> names = null;
 		try {
@@ -662,8 +662,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 
 			// current file is not a directory, so try and recognize as annotation file
-			System.out.println("^^^^^^^^^^^^ Loading annots of type: " + stripName);
-			ParserController.parse(istr, annots_map, stripName, gmodel, genome);
+			System.out.println("^^^^^^^^^^^^ Loading annots of type: " + type_name);
+			ParserController.parse(istr, annots_map, type_name, gmodel, genome);
 
 		} catch (FileNotFoundException ex) {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, null, ex);

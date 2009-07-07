@@ -156,6 +156,9 @@ public final class ParserController {
 			Map<String, String> annots_map, String stream_name, String extension) {
 		// Check if this was in the annots mapping.
 		if (annots_map != null && !annots_map.isEmpty()) {
+			if (annots_map.containsKey(stream_name)) {
+				return annots_map.get(stream_name);
+			}
 			if (annots_map.containsKey(stream_name.toLowerCase())) {
 				return annots_map.get(stream_name.toLowerCase());
 			}

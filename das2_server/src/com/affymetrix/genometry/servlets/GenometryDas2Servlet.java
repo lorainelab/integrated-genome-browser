@@ -681,6 +681,15 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix) {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
+
+		if (file_name.startsWith(".")) {
+			// hidden directory or file.  Ignore.
+			System.out.println("Ignoring hidden " +
+							(current_file.isDirectory() ? "directory " : "file ") +
+							file_path);
+			return;
+		}
+
 		String type_name;
 		String new_type_prefix;
 		if (type_prefix == null) {  // special-casing for top level genome directory, don't want genome name added to type name path
@@ -707,7 +716,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return;
 		}
 
-		if (!annots_map.isEmpty() && !annots_map.containsKey(file_name.toLowerCase())) {
+		if (!annots_map.isEmpty() && !annots_map.containsKey(file_name)) {
 			// we have loaded in an annots.xml file, but yet this file is not in it and should be ignored.
 			return;
 		}
@@ -738,7 +747,21 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//	return;  // screening out anything in filtered directories
 		//      }
 
-		parseAnnotsXml(file_path, annots_filename, annots_map);
+
+		File annot = new File(file_path + "/" + annots_filename);
+		if (annot.exists()) {
+			System.out.println("Parsing annots xml: " + file_path + "/" + annots_filename);
+			FileInputStream istr = null;
+			try {
+				istr = new FileInputStream(annot);
+				AnnotsParser.parseAnnotsXml(istr, annots_map);
+			} catch (FileNotFoundException ex) {
+				Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(istr);
+			}
+		}
+
 
 		if (type_name.endsWith(graph_dir_suffix)) {
 			// each file in directory is same annotation type, but for a single seq?
@@ -756,44 +779,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				File child_file = new File(current_file, child_file_name);
 				loadAnnotsFromFile(child_file, genome, new_type_prefix);
 			}
-		}
-	}
-
-	// If an annots.xml file exists, add its elements to annots_map
-	private static final void parseAnnotsXml(String file_path, String annots_filename, Map<String,String> annots_map) {
-		File annot = new File(file_path + "/" + annots_filename);
-		if (!annot.exists()) {
-			return;
-		}
-
-		// parse the file.
-		try {
-			System.out.println("Parsing annots xml: " + file_path + "/" + annots_filename);
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(annot);
-			doc.getDocumentElement().normalize();
-
-			NodeList listOfFiles = doc.getElementsByTagName("file");
-
-			int length = listOfFiles.getLength();
-			for (int s = 0; s < length; s++) {
-				Node fileNode = listOfFiles.item(s);
-				if (fileNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element fileElement = (Element) fileNode;
-					String filename = fileElement.getAttribute("name");
-					String title = fileElement.getAttribute("title");
-					String desc = fileElement.getAttribute("description");   // not currently used
-
-					if (filename != null) {
-						// We use lower-case here, since filename's case is unimportant.
-						annots_map.put(filename.toLowerCase(), title);
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
 		}
 	}
 

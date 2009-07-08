@@ -274,7 +274,7 @@
             <compilation-unit>
                 <package-root>das2_server/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar;/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src;genometryImpl/src</classpath>
                 <built-to>das2_server/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

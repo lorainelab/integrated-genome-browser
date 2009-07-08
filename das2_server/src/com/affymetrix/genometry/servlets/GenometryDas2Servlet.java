@@ -36,6 +36,8 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.Optimize;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
 
@@ -77,9 +79,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final boolean ADD_VERSION_TO_CONTENT_TYPE = false;
 	private static final boolean USE_CREATED_ATT = true;
 	private static boolean WINDOWS_OS_TEST = false;
-	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
-	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
-	private static final Pattern interval_splitter = Pattern.compile(":");
+
 	private static final String SERVER_SYNTAX_EXPLANATION =
 		"See http://netaffxdas.affymetrix.com/das2 for proper query syntax.";
 	private static final String LIMITED_FEATURE_QUERIES_EXPLANATION =
@@ -269,9 +269,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *  on the command line.  For example "java -Dgenometry_server_dir=/home/me/mydir/ ...".
 	 */
 	private  static String data_root;
-	private static String synonym_file;
+
 	private static String types_xslt_file;
-	private static String org_order_filename;
+
 	/**
 	 *  Map of commands to plugins, for extending DAS server to
 	 *     recognize additional commands.
@@ -281,7 +281,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
 	private static final Pattern tagval_splitter = Pattern.compile("=");
 
-	private static final String graph_dir_suffix = ".graphs.seqs";
+
 
 	/**
 	 *  Top level data structure that holds all the genome models
@@ -314,8 +314,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private boolean use_types_xslt;
 	private Das2Authorization dasAuthorization;
 
-	private static final String annots_filename = "annots.xml"; // potential file for annots parsing
-	private static Map<String,String> annots_map = new LinkedHashMap<String,String>();    // hash of file names and titles
+	private static String synonym_file;
+	private static String org_order_filename;
 
 	@Override
 		public void init() throws ServletException {
@@ -348,11 +348,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 				initFormats(output_registry, graph_formats);
 
-				loadSynonyms();
+				ServerUtils.loadSynonyms(synonym_file);
 
 				loadGenomes();
 
-				printGenomes(organisms);
+				ServerUtils.printGenomes(organisms);
 
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -517,20 +517,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		graph_formats.add("bar");
 	}
 
-	private static final void loadSynonyms() {
-		File synfile = new File(synonym_file);
-		if (synfile.exists()) {
-			System.out.println("DAS server synonym file found, loading synonyms");
-			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
-			try {
-				lookup.loadSynonyms(new FileInputStream(synfile));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} else {
-			System.out.println("DAS server synonym file not found, therefore not using synonyms");
-		}
-	}
 
 	private final void loadGenomes() throws IOException {
 		// get list of all directories in data root
@@ -566,8 +552,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		// sort genomes based on "organism_order.txt" config file if present
-		sortGenomes();
+		
+		ServerUtils.sortGenomes(organisms, org_order_filename);
 	}
 
 	private final void loadGenome(File genome_directory, String organism) throws IOException {
@@ -575,7 +561,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		String genome_version = genome_directory.getName();
 		System.out.println("loading data for genome: " + genome_version);
 
-		parseChromosomeData(genome_directory, genome_version);
+		ServerUtils.parseChromosomeData(genome_directory, genome_version);
 
 		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
 		if (genome == null) {
@@ -595,197 +581,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String,String> graph_name2file = genome2graphfiles.get(genome);
-		loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file);
+		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file);
 
 		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
 	}
 
-	private static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
-		String genome_path = genome_directory.getAbsolutePath();
-		File chrom_info_file = new File(genome_path + "/mod_chromInfo.txt");
-		if (chrom_info_file.exists()) {
-			System.out.println("parsing in chromosome data from mod_chromInfo file for genome: " + genome_version);
-			InputStream chromstream = new FileInputStream(chrom_info_file);
-			ChromInfoParser.parse(chromstream, gmodel, genome_version);
-			GeneralUtils.safeClose(chromstream);
-		} else {
-			System.out.println("couldn't find mod_chromInfo file for genome: " + genome_version);
-			System.out.println("looking for lift file instead");
-			File lift_file = new File(genome_path + "/liftAll.lft");
-			if (lift_file.exists()) {
-				System.out.println("parsing in chromosome data from liftAll file for genome: " + genome_version);
-				InputStream liftstream = new FileInputStream(lift_file);
-				LiftParser.parse(liftstream, gmodel, genome_version);
-				GeneralUtils.safeClose(liftstream);
-			} else {
-				System.out.println("couldn't find liftAll or mod_chromInfo file for genome!!! " + genome_version);
-			}
-		}
-	}
 
-	/** sorts genomes and versions within genomes */
-	private static final void sortGenomes() {
-		// sort genomes based on "organism_order.txt" config file if present
-		// get Map.Entry for organism, sort based on order in organism_order.txt,
-		//    put in order in new LinkedHashMap(), then replace as organisms field
-		File org_order_file = new File(org_order_filename);
-		if (SORT_SOURCES_BY_ORGANISM && org_order_file.exists()) {
-			Comparator<String> org_comp = new MatchToListComparator(org_order_filename);
-			List<String> orglist = new ArrayList<String>(organisms.keySet());
-			Collections.sort(orglist, org_comp);
-			Map<String,List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String,List<AnnotatedSeqGroup>>();
-			for (String org: orglist) {
-				//	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
-				sorted_organisms.put(org, organisms.get(org));
-			}
-			organisms = sorted_organisms;
-		}
-		if (SORT_VERSIONS_BY_DATE_CONVENTION) {
-			Comparator<AnnotatedSeqGroup> date_comp = new GenomeVersionDateComparator();
-			for (List<AnnotatedSeqGroup> versions : organisms.values()) {
-				Collections.sort(versions, date_comp);
-			}
-		}
-	}
-
-
-	/*private static final void loadAnnotsFromUrl(String url, String annot_name, AnnotatedSeqGroup genome) {
-	  InputStream istr = null;
-	  try {
-	  URL annot_url = new URL(url);
-	  istr = new BufferedInputStream(annot_url.openStream());
-	// may need to trim down url_name here, but how much?
-	loadAnnotsFromStream(istr, annot_name, genome);
-	} catch (Exception ex) {
-	ex.printStackTrace();
-	} finally {
-	GeneralUtils.safeClose(istr);
-	}
-	}*/
-
-	private static final void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
-		ParserController.parse(istr, annots_map, stream_name, gmodel, genome);
-	}
-
-
-	/**
-	 *   If current_file is directory:
-	 *       if ".seqs" suffix, then handle as graphs
-	 *       otherwise recursively call on each child files;
-	 *   if not directory, see if can parse as annotation file.
-	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
-	 */
-	private static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
-							Map<String,String> graph_name2dir,
-							Map<String,String> graph_name2file) {
-		String file_name = current_file.getName();
-		String file_path = current_file.getPath();
-
-		if (file_name.startsWith(".")) {
-			// hidden directory or file.  Ignore.
-			System.out.println("Ignoring hidden " +
-							(current_file.isDirectory() ? "directory " : "file ") +
-							file_path);
-			return;
-		}
-
-		String type_name;
-		String new_type_prefix;
-		if (type_prefix == null) {  // special-casing for top level genome directory, don't want genome name added to type name path
-			type_name = file_name;
-			new_type_prefix = "";
-		} else {
-			type_name = type_prefix + file_name;
-			new_type_prefix = type_name + "/";
-		}
-
-		// if current file is directory, then descend down into child files
-		if (current_file.isDirectory()) {
-			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file);
-			return;
-		}
-
-		if (type_name.endsWith(".bar")) {
-			// String file_path = current_file.getPath();
-			// special casing so bar files are seen in types request, but not parsed in on startup
-			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
-			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
-			graph_name2file.put(type_name, file_path);
-			return;
-		}
-
-		if (!annots_map.isEmpty() && !annots_map.containsKey(file_name)) {
-			// we have loaded in an annots.xml file, but yet this file is not in it and should be ignored.
-			return;
-		}
-
-		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
-			// for loading annotations, ignore the genome sequence data files
-			return;
-		}
-
-		// current file is not a directory, so try and recognize as annotation file
-		InputStream istr = null;
-		try {
-			istr = new BufferedInputStream(new FileInputStream(current_file));
-			System.out.println("^^^^^^^^^^^^ Loading annots of type: " + type_name);
-			loadAnnotsFromStream(istr, type_name, genome);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(istr);
-		}
-	}
-
-
-
-	private static final void loadAnnotsFromDir(
-					String type_name,
-					String file_path,
-					AnnotatedSeqGroup genome,
-					File current_file,
-					String new_type_prefix,
-					Map<String,String> graph_name2dir,
-					Map<String,String> graph_name2file) {
-		//      if (directory_filter.get(file_name) != null) {
-		//	System.out.println("filtering out directory: " + current_file);
-		//	return;  // screening out anything in filtered directories
-		//      }
-
-
-		File annot = new File(file_path + "/" + annots_filename);
-		if (annot.exists()) {
-			System.out.println("Parsing annots xml: " + file_path + "/" + annots_filename);
-			FileInputStream istr = null;
-			try {
-				istr = new FileInputStream(annot);
-				AnnotsParser.parseAnnotsXml(istr, annots_map);
-			} catch (FileNotFoundException ex) {
-				Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(istr);
-			}
-		}
-
-
-		if (type_name.endsWith(graph_dir_suffix)) {
-			// each file in directory is same annotation type, but for a single seq?
-			// assuming bar files for now, each with starting with seq id?
-			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
-			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
-			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
-			graph_name2dir.put(graph_name, file_path);
-		} else {
-			//System.out.println("checking for annotations in directory: " + current_file);
-			String[] child_file_names = current_file.list();
-			Arrays.sort(child_file_names);
-			for (String child_file_name : child_file_names) {
-				File child_file = new File(current_file, child_file_name);
-				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file);
-			}
-		}
-	}
 
 	@Override
 		public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -946,7 +748,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("too many range params, aborting");
 			return;
 		} else if (ranges.size() == 1) {
-			span = getLocationSpan(seqname, ranges.get(0), genome);
+			span = ServerUtils.getLocationSpan(seqname, ranges.get(0), genome);
 		}
 		if (formats.size() > 1) {
 			System.out.println("too many format params, aborting");
@@ -1608,7 +1410,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					} /* support for single name, single format, no other filters */
 			else if (names != null && names.size() == 1) {
 				String name = names.get(0);
-				result = DetermineResult(name, genome);
+				result = ServerUtils.FindNameInGenome(name, genome);
 				if (types.size() > 0) {
 					// make sure result syms are of one of the specified types
 					/*  NOT DONE YET
@@ -1649,12 +1451,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				//    (therefore any annotation on the seq passes overlap filter)
 				//     then want all getLocationSpan will return bounds of seq as overlap
 
-				overlap_span = getLocationSpan(seqid, overlap, genome);
+				overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 				if (overlap_span != null) {
 					System.out.println("   overlap_span: " + SeqUtils.spanToString(overlap_span));
 					if (insides.size() == 1) {
 						String inside = insides.get(0);
-						inside_span = getLocationSpan(seqid, inside, genome);
+						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
 						if (inside_span != null) {
 							System.out.println("   inside_span: " + SeqUtils.spanToString(inside_span));
 						}
@@ -1678,7 +1480,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					timecheck.start();
 
 					/** this is the main call to retrieve symmetries meeting query constraints */
-					result = GenometryDas2Servlet.getIntersectedSymmetries(overlap_span, query_type);
+					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
 
 
 					if (result == null) {
@@ -1688,7 +1490,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					System.out.println("  time for range query: " + (timecheck.read()) / 1000f);
 
 					if (inside_span != null) {
-						result = SpecifiedInsideSpan(inside_span, oseq, result, query_type);
+						result = ServerUtils.SpecifiedInsideSpan(inside_span, oseq, result, query_type);
 					}
 					}
 				} else {
@@ -1784,38 +1586,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		// if an inside_span specified, then filter out intersected symmetries based on this:
-		//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-		private static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List<SeqSymmetry> result, String query_type) {
-			int inside_min = inside_span.getMin();
-			int inside_max = inside_span.getMax();
-			BioSeq iseq = inside_span.getBioSeq();
-			System.out.println("*** trying to apply inside_span constraints ***");
-			if (iseq != oseq) {
-				System.out.println("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
-				// if different seqs, then no feature can pass constraint...
-				//   hmm, this might not strictly be true based on genometry...
-				result = Collections.<SeqSymmetry>emptyList();
-			} else {
-				Timer timecheck = new Timer();
-				timecheck.start();
-				MutableSeqSpan testspan = new SimpleMutableSeqSpan();
-				List orig_result = result;
-				int rcount = orig_result.size();
-				result = new ArrayList<SeqSymmetry>(rcount);
-				for (int i = 0; i < rcount; i++) {
-					SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
-					// fill in testspan with span values for sym (on aseq)
-					sym.getSpan(iseq, testspan);
-					if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
-						result.add(sym);
-					}
-				}
-				System.out.println("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
-				System.out.println("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
-			}
-			return result;
-		}
+	
 
 		private static final void OutputTheAnnotations(
 						Class writerclass,
@@ -1853,44 +1624,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		private static final List<SeqSymmetry> DetermineResult(String name, AnnotatedSeqGroup genome) {
-			// GAH 11-2006
-			//   need to enhance this to support multiple name parameters OR'd together
-			//   DAS/2 specification defines glob-style searches:
-			//   The string searches may be exact matches, substring, prefix or suffix searches.
-			//   The query type depends on if the search value starts and/or ends with a '*'.
-			//
-			//    ABC -- field exactly matches "ABC"
-			//    *ABC -- field ends with "ABC"
-			//    ABC* -- field starts with "ABC"
-			//    *ABC* -- field contains the substring "ABC"
-			boolean glob_start = name.startsWith("*");
-			boolean glob_end = name.endsWith("*");
-
-			List<SeqSymmetry> result = null;
-			Pattern name_pattern = null;
-			if (glob_start || glob_end) {
-				String name_regex = name.toLowerCase();
-				if (glob_start) {
-					// do replacement of first "*" with ".*" ?
-					name_regex = ".*" + name_regex.substring(1);
-				}
-				if (glob_end) {
-					// do replacement of last "*" with ".*" ?
-					name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
-				}
-				System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
-				name_pattern = Pattern.compile(name_regex);
-				result = genome.findSyms(name_pattern);
-				//	   Collections.sort(result, new SeqSymIdComparator());
-				System.out.println("!!!! regex matches: " + result.size());
-			} else {
-				// ABC -- field exactly matches "ABC"
-				result = genome.findSyms(name);
-			}
-			return result;
-		}
-
+		
 		private static final String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
 			//	query_type = (String)types.get(0);
 			String query_type = URLDecoder.decode(full_type_uri);
@@ -1909,48 +1643,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return query_type;
 		}
 
-		/**
-		 *  Differs from Das2FeatureSaxParser.getLocationSpan():
-		 *     Won't add unrecognized seqids or null groups
-		 *     If rng is null or "", will set to span to [0, seq.getLength()]
-		 */
-		private static final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
-			if (seqid == null || group == null) {
-				return null;
-			}
-			BioSeq seq = group.getSeq(seqid);
-			if (seq == null) {
-				return null;
-			}
-			int min;
-			int max;
-			boolean forward = true;
-			if (rng == null) {
-				min = 0;
-				max = seq.getLength();
-			} else {
-				try {
-					String[] subfields = interval_splitter.split(rng);
-					min = Integer.parseInt(subfields[0]);
-					max = Integer.parseInt(subfields[1]);
-					if (subfields.length >= 3) {  // in DAS/2 strandedness is not allowed for range query params, but accepting it here
-						if (subfields[2].equals("-1")) {
-							forward = false;
-						}
-					}
-				} catch (Exception ex) {
-					System.out.println("Problem parsing a query parameter range filter: " + rng);
-					return null;
-				}
-			}
-			SeqSpan span;
-			if (forward) {
-				span = new SimpleSeqSpan(min, max, seq);
-			} else {
-				span = new SimpleSeqSpan(max, min, seq);
-			}
-			return span;
-		}
+	
 
 		private static final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
 				String annot_type,
@@ -1987,30 +1680,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				success = false;
 			}
 			return success;
-		}
-
-		/**
-		 *
-		 *  Currently assumes:
-		 *    query_span's seq is a SmartAnnotBioSeq (which implies top-level annots are TypeContainerAnnots)
-		 *    only one IntervalSearchSym child for each TypeContainerAnnot
-		 *  Should expand soon so results can be returned from multiple IntervalSearchSyms children
-		 *      of the TypeContainerAnnot
-		 */
-		private static final List<SeqSymmetry> getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
-			SmartAnnotBioSeq seq = (SmartAnnotBioSeq) query_span.getBioSeq();
-			SymWithProps container = seq.getAnnotation(annot_type);
-			if (container != null) {
-				int annot_count = container.getChildCount();
-				for (int i = 0; i < annot_count; i++) {
-					SeqSymmetry sym = container.getChild(i);
-					if (sym instanceof SearchableSeqSymmetry) {
-						SearchableSeqSymmetry target_sym = (SearchableSeqSymmetry) sym;
-						return target_sym.getOverlappingChildren(query_span);
-					}
-				}
-			}
-			return Collections.<SeqSymmetry>emptyList();
 		}
 
 		private static final void printXmlDeclaration(PrintWriter pw) {
@@ -2054,17 +1723,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		// Print out the genomes
-		private static final void printGenomes(Map<String,List<AnnotatedSeqGroup>> organisms) {
-			for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
-				String org = ent.getKey();
-				System.out.println("Organism: " + org);
-				for (AnnotatedSeqGroup version : ent.getValue()) {
-					System.out.println("    Genome version: " + version.getID() 
-							+ ", organism: " + version.getOrganism()
-							+ ", seq count: " + version.getSeqCount());
-				}
-			}
-		}
+		
 
 	}

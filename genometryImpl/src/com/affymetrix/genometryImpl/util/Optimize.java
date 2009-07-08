@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.servlets;
+package com.affymetrix.genometryImpl.util;
 
 import java.util.ArrayList;
 import com.affymetrix.genometry.SeqSymmetry;
@@ -8,8 +8,10 @@ import com.affymetrix.genometryImpl.IntervalSearchSym;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 
-abstract class Optimize {
-	static final void Genome(AnnotatedSeqGroup genome) {
+public abstract class Optimize {
+	private static final boolean DEBUG = false;
+	
+	public static final void Genome(AnnotatedSeqGroup genome) {
 		System.out.println("******** optimizing genome:  " + genome.getID() + "  ********");
 		/** third, replace top-level annotation SeqSymmetries with IntervalSearchSyms */
 		for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
@@ -40,7 +42,7 @@ abstract class Optimize {
 	 *
 	 */
 	private static final void Seq(SmartAnnotBioSeq aseq) {
-		if (GenometryDas2Servlet.DEBUG) {
+		if (DEBUG) {
 			System.out.println("optimizing seq = " + aseq.getID());
 		}
 		int annot_count = aseq.getAnnotationCount();
@@ -58,7 +60,7 @@ abstract class Optimize {
 	}
 
 	private static final void TypeContainer(TypeContainerAnnot container, SmartAnnotBioSeq aseq) {
-		if (GenometryDas2Servlet.DEBUG) {
+		if (DEBUG) {
 			System.out.println("optimizing type container: " + container.getProperty("method") +
 					", depth = " + SeqUtils.getDepth(container));
 		}
@@ -96,7 +98,7 @@ abstract class Optimize {
 			container.addChild(search_sym);
 		}
 		//    if (MAKE_LANDSCAPES) { makeLandscapes(aseq); }
-		if (GenometryDas2Servlet.DEBUG) {
+		if (DEBUG) {
 			System.out.println("finished optimizing container: " + container.getProperty("method") +
 					", depth = " + SeqUtils.getDepth(container));
 		}

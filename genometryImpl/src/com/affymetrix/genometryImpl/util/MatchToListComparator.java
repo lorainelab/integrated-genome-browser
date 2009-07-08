@@ -1,6 +1,5 @@
-package com.affymetrix.genometry.servlets;
+package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.*;
 import java.util.*;
 

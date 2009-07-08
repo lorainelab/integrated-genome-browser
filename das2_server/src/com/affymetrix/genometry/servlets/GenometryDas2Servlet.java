@@ -38,10 +38,6 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
 
 /**
  *  experimental genometry-based DAS2 server
@@ -597,7 +593,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// second: search genome directory for annotation files to load
 		// (and recursively descend through subdirectories doing same)
-		loadAnnotsFromFile(genome_directory, genome, null);
+		Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
+		Map<String,String> graph_name2file = genome2graphfiles.get(genome);
+		loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file);
 
 		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
@@ -678,7 +676,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *   if not directory, see if can parse as annotation file.
 	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
-	private final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix) {
+	private static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
+							Map<String,String> graph_name2dir,
+							Map<String,String> graph_name2file) {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
 
@@ -702,7 +702,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// if current file is directory, then descend down into child files
 		if (current_file.isDirectory()) {
-			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix);
+			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file);
 			return;
 		}
 
@@ -711,7 +711,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			// special casing so bar files are seen in types request, but not parsed in on startup
 			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
 			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
-			Map<String,String> graph_name2file = genome2graphfiles.get(genome);
 			graph_name2file.put(type_name, file_path);
 			return;
 		}
@@ -741,7 +740,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 
-	private final void loadAnnotsFromDir(String type_name, String file_path, AnnotatedSeqGroup genome, File current_file, String new_type_prefix) {
+	private static final void loadAnnotsFromDir(
+					String type_name,
+					String file_path,
+					AnnotatedSeqGroup genome,
+					File current_file,
+					String new_type_prefix,
+					Map<String,String> graph_name2dir,
+					Map<String,String> graph_name2file) {
 		//      if (directory_filter.get(file_name) != null) {
 		//	System.out.println("filtering out directory: " + current_file);
 		//	return;  // screening out anything in filtered directories
@@ -769,7 +775,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
-			Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
 			graph_name2dir.put(graph_name, file_path);
 		} else {
 			//System.out.println("checking for annotations in directory: " + current_file);
@@ -777,14 +782,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Arrays.sort(child_file_names);
 			for (String child_file_name : child_file_names) {
 				File child_file = new File(current_file, child_file_name);
-				loadAnnotsFromFile(child_file, genome, new_type_prefix);
+				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file);
 			}
 		}
 	}
-
-	/*private final List getLog() {
-	  return log;
-	  }*/
 
 	@Override
 		public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -812,8 +813,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return date_initialized;
 		}
 
-	//  public void service(HttpServletRequest request, HttpServletResponse response)
-	//    throws ServletException, IOException {
 	@Override
 		public void doGet(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
@@ -847,9 +846,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 	private final void HandleDas2Request(String path_info, HttpServletResponse response, HttpServletRequest request, String request_url) throws IOException {
-
-		//    PrintWriter pw = response.getWriter();
-		//    addDasHeaders(response);
 		if (path_info == null || path_info.trim().length() == 0) {
 			System.out.println("Unknown or missing DAS2 command");
 			response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
@@ -1970,7 +1966,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				} else {
 					AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
 					String mime_type = writer.getMimeType();
-					//	String xbase = request.getRequestURL().toString();
 
 					if (writer instanceof Das2FeatureSaxParser) {
 						((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));

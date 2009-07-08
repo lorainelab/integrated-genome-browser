@@ -1693,7 +1693,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					System.out.println("  ***** query combination not supported, throwing an error");
 				}
 					}
-			OutputTheAnnotations(output_format, response, result, outseq, query_type, xbase);
+		Class writerclass = output_registry.get(output_format);
+			OutputTheAnnotations(writerclass, output_format, response, result, outseq, query_type, xbase);
 
 		}
 
@@ -1719,7 +1720,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
 			System.out.println("####    file:  " + file_path);
-			OutputGraphSlice(file_path, span, type, xbase, response);
+			Class writerclass = output_registry.get("bar");
+			OutputGraphSlice(writerclass, file_path, span, type, xbase, response);
 		}
 
 		private static final String DetermineFilePath(Map<String,String> graph_name2dir, Map<String,String> graph_name2file, String graph_name, String seqid) {
@@ -1749,7 +1751,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return file_path;
 		}
 
-		private final void OutputGraphSlice(String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
+		private static final void OutputGraphSlice(
+						Class writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
 			GraphSym graf = null;
 			try {
 				graf = BarParser.getSlice(file_path, gmodel, span);
@@ -1760,7 +1763,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				ArrayList<SeqSymmetry> gsyms = new ArrayList<SeqSymmetry>();
 				gsyms.add(graf);
 				System.out.println("#### returning graph slice in bar format");
-				outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, "bar");
+				outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, writerclass, "bar");
 			} else {
 				// couldn't generate a GraphSym, so return an error?
 				System.out.println("####### problem with retrieving graph slice ########");
@@ -1777,7 +1780,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// if an inside_span specified, then filter out intersected symmetries based on this:
 		//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-		private final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List<SeqSymmetry> result, String query_type) {
+		private static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List<SeqSymmetry> result, String query_type) {
 			int inside_min = inside_span.getMin();
 			int inside_max = inside_span.getMax();
 			BioSeq iseq = inside_span.getBioSeq();
@@ -1808,7 +1811,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return result;
 		}
 
-		private final void OutputTheAnnotations(String output_format, HttpServletResponse response, List<SeqSymmetry> result, BioSeq outseq, String query_type, String xbase) {
+		private static final void OutputTheAnnotations(
+						Class writerclass,
+						String output_format,
+						HttpServletResponse response,
+						List<SeqSymmetry> result,
+						BioSeq outseq,
+						String query_type,
+						String xbase) {
 			try {
 				Timer timecheck = new Timer();
 				timecheck.start();
@@ -1824,7 +1834,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 								response.SC_REQUEST_ENTITY_TOO_LARGE,
 								"Query could not be handled. " + LIMITED_FEATURE_QUERIES_EXPLANATION);
 					} else {
-						outputAnnotations(result, outseq, query_type, xbase, response, output_format);
+						outputAnnotations(result, outseq, query_type, xbase, response, writerclass, output_format);
 					}
 					long tim = timecheck.read();
 					System.out.println("  time for buffered output of results: " + tim / 1000f);
@@ -1898,7 +1908,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		 *     Won't add unrecognized seqids or null groups
 		 *     If rng is null or "", will set to span to [0, seq.getLength()]
 		 */
-		private final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
+		private static final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
 			if (seqid == null || group == null) {
 				return null;
 			}
@@ -1936,15 +1946,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			return span;
 		}
 
-		private final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
+		private static final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
 				String annot_type,
 				String xbase, HttpServletResponse response,
+				Class writerclass,
 				String format) {
 			boolean success = true;
 			try {
-				//    AnnotationWriter writer = (AnnotationWriter)output_registry.get(format);
-				// or should this be done by class:
-				Class writerclass = output_registry.get(format);
 				if (writerclass == null) {
 					System.out.println("no AnnotationWriter found for format: " + format);
 					response.setStatus(response.SC_BAD_REQUEST);
@@ -2016,7 +2024,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		final void setXmlBase(String xbase) {
+		static final void setXmlBase(String xbase) {
 			xml_base = xbase;
 			String trimmed_xml_base;
 			if (xml_base.endsWith("/")) {
@@ -2033,7 +2041,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		/** getXmlBase() should no longer depend on request, should always be set via setXmlBase()
 		  when servlet starts up -- need to remove request arg soon
 		  */
-		private final String getXmlBase(HttpServletRequest request) {
+		private static final String getXmlBase(HttpServletRequest request) {
 			if (xml_base != null) {
 				return xml_base;
 			} else {

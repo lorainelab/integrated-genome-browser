@@ -603,7 +603,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Optimize.Genome(genome);
 	}
 
-	private final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
+	private static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
 		String genome_path = genome_directory.getAbsolutePath();
 		File chrom_info_file = new File(genome_path + "/mod_chromInfo.txt");
 		if (chrom_info_file.exists()) {
@@ -854,9 +854,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("Unknown or missing DAS2 command");
 			response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
 		} else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
-			handleSourcesRequest(request, response);
+			handleSourcesRequest(request, response, date_init_string);
 		} else if (path_info.endsWith(login_query)) {
-			handleLoginRequest(request, response);
+			handleLoginRequest(this.dasAuthorization, request, response);
 		} else {
 			AnnotatedSeqGroup genome = getGenome(request);
 			// System.out.println("Genome version: '"+ genome.getID() + "'");
@@ -889,7 +889,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * Extracts name of (versioned?) genome from servlet request,
 	 *    and uses to retrieve AnnotatedSeqGroup (genome) from SingletonGenometryModel
 	 */
-	private final AnnotatedSeqGroup getGenome(HttpServletRequest request) {
+	private static final AnnotatedSeqGroup getGenome(HttpServletRequest request) {
 		String path_info = request.getPathInfo();
 		if (path_info == null) {
 			return null;
@@ -911,7 +911,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @param response
 	 * @throws java.io.IOException
 	 */
-	private final void handleSequenceRequest(HttpServletRequest request, HttpServletResponse response)
+	private static final void handleSequenceRequest(HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 		String path_info = request.getPathInfo();
 		String query = request.getQueryString();
@@ -979,7 +979,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private final void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	private static final void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		/*if (ranges.size() != 0) {
 			// A ranged request for a bnib.  Not supported.
 			PrintWriter pw = response.getWriter();
@@ -1024,7 +1024,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @throws java.io.IOException
 	 */
 	@Deprecated
-	private final void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
+	private static final void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
 		throws IOException {
 		String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".fa";
 		File seqfile = new File(file_name);
@@ -1090,7 +1090,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private final void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response)
+	private static final void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response, String date_init_string)
 		throws IOException {
 		System.out.println("received data source query");
 		setContentType(response, SOURCES_CONTENT_TYPE);
@@ -1155,7 +1155,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println("</SOURCES>");
 	}
 
-	private final void handleSegmentsRequest(HttpServletRequest request, HttpServletResponse response)
+	private static final void handleSegmentsRequest(HttpServletRequest request, HttpServletResponse response)
 		throws IOException {
 		System.out.println("Received region query");
 		AnnotatedSeqGroup genome = getGenome(request);
@@ -1214,7 +1214,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			response.setStatus(response.SC_BAD_REQUEST);
 			return;
 		}
-		HashMap userAuthorizedResources = getUserAuthorizedResources(request);
+		HashMap<String,HashSet<String>> userAuthorizedResources = getUserAuthorizedResources(dasAuthorization, request);
 
 		//    response.setContentType(TYPES_CONTENT_TYPE);
 		setContentType(response, TYPES_CONTENT_TYPE);
@@ -1253,16 +1253,18 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private final HashMap getUserAuthorizedResources(HttpServletRequest request) {
+	private static final HashMap<String,HashSet<String>> getUserAuthorizedResources(
+					Das2Authorization dasAuthorization,
+					HttpServletRequest request) {
 		//fetch Session object and userAccessibleDirectories?
-		HashMap userAuthorizedResources = null;
+		HashMap<String,HashSet<String>> userAuthorizedResources = null;
 		if (dasAuthorization.isAuthorizing()) {
 			System.out.println("\tDas authorization in effect ");
 			HttpSession userSession = request.getSession(false);
 			if (userSession != null) {
 				Object obj = userSession.getAttribute("authorizedResources");
 				if (obj != null) {
-					userAuthorizedResources = (HashMap) obj;
+					userAuthorizedResources = (HashMap<String,HashSet<String>>) obj;
 					System.out.println("\t\tFound 'authorizedResources'");
 				} else {
 					System.out.println("\t\tCould not fetch 'authorizedResources' from user session");
@@ -1337,7 +1339,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void writeTypesXML(
-			PrintWriter pw, String xbase, String genome_id, Map<String,List<String>> types_hash, HashMap userAuthorizedResources, Das2Authorization dasAuthorization) {
+			PrintWriter pw,
+			String xbase,
+			String genome_id,
+			Map<String,List<String>> types_hash,
+			HashMap<String,HashSet<String>> userAuthorizedResources,
+			Das2Authorization dasAuthorization) {
 		printXmlDeclaration(pw);
 		//    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
 		pw.println("<TYPES ");
@@ -1361,7 +1368,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					continue;
 				}
 			}
-			List formats = (List) types_hash.get(feat_type);
+			List<String> formats = types_hash.get(feat_type);
 			String feat_type_encoded = URLEncoder.encode(feat_type);
 			// URLEncoding replaces slashes, want to keep those...
 			feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
@@ -1379,7 +1386,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + title + "\" >");
 			if ((formats != null) && (!formats.isEmpty())) {
 				for (int k = 0; k < formats.size(); k++) {
-					String format = (String) formats.get(k);
+					String format = formats.get(k);
 					pw.println("       <FORMAT name=\"" + format + "\" />");
 				}
 			}
@@ -1394,7 +1401,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * This is basically a call to see if login capabilities are implemented.
 	 * If parameters are supplied, the method attempts to authenticate the user, if OK an HTTPSession object is created 
 	 * for the user and a JSESSIONID is attached to the xml response as a cookie.*/
-	private final void handleLoginRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private static final void handleLoginRequest(
+					Das2Authorization dasAuthorization,
+					HttpServletRequest request,
+					HttpServletResponse response) throws IOException {
 		System.out.println("Received login request");
 		String comment;
 		boolean authorized;
@@ -1661,7 +1671,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							(graph_name2file.get(query_type) != null) ||
 							// (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
 							(query_type.endsWith(".bar"))) {
-						handleGraphRequest(xbase, response, query_type, overlap_span);
+						handleGraphRequest(output_registry, xbase, response, query_type, overlap_span);
 						return;
 							}
 
@@ -1705,7 +1715,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		 *     if not 2), then
 		 *        3) tries to directly access file
 		 */
-		private final void handleGraphRequest(String xbase, HttpServletResponse response,
+		private final void handleGraphRequest(Map<String,Class> output_registry, String xbase, HttpServletResponse response,
 				String type, SeqSpan span) {
 			System.out.println("#### handling graph request");
 			SmartAnnotBioSeq seq = (SmartAnnotBioSeq) span.getBioSeq();

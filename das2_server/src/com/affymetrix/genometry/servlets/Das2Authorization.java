@@ -244,6 +244,7 @@ public final class Das2Authorization {
 		private User (String encryptedPassword) {
 			this.encryptedPassword = encryptedPassword;
 		}
+		@Override
 		public String toString() {
 			return authorizedDirectories.toString();
 		}
@@ -258,7 +259,7 @@ public final class Das2Authorization {
 
 	/**Looks to see if resource is 1st even restricted and 2nd if resource is contained
 	 * in userAccessibleDirectories.*/
-	public boolean showResource(HashMap userAccessibleDirectories, String versionedGenomeDirectory, String requestedResource){
+	public boolean showResource(HashMap<String,HashSet<String>> userAccessibleDirectories, String versionedGenomeDirectory, String requestedResource){
 		//does the versionedGenomeDirectory contain any restrictedDirectories?
 		if (restrictedDirectories.containsKey(versionedGenomeDirectory) == false) return true;
 
@@ -273,7 +274,7 @@ public final class Das2Authorization {
 		//do they have any permitted directories?
 		if (userAccessibleDirectories == null) return false;
 		//get user dirs
-		HashSet userPermittedDirs = (HashSet)userAccessibleDirectories.get(versionedGenomeDirectory);
+		HashSet<String> userPermittedDirs = userAccessibleDirectories.get(versionedGenomeDirectory);
 
 		if (userPermittedDirs != null && userPermittedDirs.contains(t[0])) return true;
 		return false;

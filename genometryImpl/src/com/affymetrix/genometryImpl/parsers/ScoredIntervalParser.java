@@ -543,7 +543,7 @@ public final class ScoredIntervalParser {
 		}
 		return true;
 	}
-
+/**
 	public static void main(String[] args) {
 		String test_file = System.getProperty("user.dir") + "/testdata/sin/test1.sin";
 		String test_name = "name_testing";
@@ -557,6 +557,7 @@ public final class ScoredIntervalParser {
 		catch (Exception ex) { ex.printStackTrace(); }
 		System.out.println("done testing ScoredMapParser");
 	}
+ * **/
 
 	/** For sorting of sin lines. */
 	public final class SinEntry {

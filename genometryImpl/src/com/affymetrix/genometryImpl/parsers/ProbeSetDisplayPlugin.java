@@ -1,22 +1,14 @@
-package com.affymetrix.genometry.servlets;
+package com.affymetrix.genometryImpl.parsers;
 
 import java.io.*;
-//import java.net.*;
 import java.util.*;
-//import javax.servlet.*;
-//import javax.servlet.http.*;
-//import java.text.DateFormat;
 
-
-import com.affymetrix.genometry.*;
-//import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
-//import com.affymetrix.igb.genometry.*;
-//import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.parsers.*;
 
-//public final class ProbeSetDisplayPlugin implements DasCommandPlugin, AnnotationWriter {
 public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	static final String CONSENSUS_TYPE = "netaffx consensus";
 	static final String PROBESET_TYPE = "netaffx probesets";

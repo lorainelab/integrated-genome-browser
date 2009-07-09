@@ -364,7 +364,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			System.out.println("\tFound and loading " + p);
 
 			//load file
-			HashMap<String, String> prop = loadFileIntoHashMap(p);
+			HashMap<String, String> prop = ServerUtils.loadFileIntoHashMap(p);
 			if (prop == null) {
 				System.out.println("\tERROR: loading " + p + " file, aborting.");
 				return false;
@@ -408,36 +408,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return true;
 	}
 
-	/**Loads a file's lines into a hash first column is the key, second the value.
-	 * Skips blank lines and those starting with a '#'
-	 * @return null if an exception in thrown
-	 * */
-	private static final HashMap<String, String> loadFileIntoHashMap(File file) {
-		BufferedReader in = null;
-		HashMap<String, String> names = null;
-		try {
-			names = new HashMap<String, String>();
-			in = new BufferedReader(new FileReader(file));
-			String line;
-			String[] keyValue;
-			while ((line = in.readLine()) != null) {
-				line = line.trim();
-				if (line.length() == 0 || line.startsWith("#")) {
-					continue;
-				}
-				keyValue = line.split("\\s+");
-				if (keyValue.length < 2) {
-					continue;
-				}
-				names.put(keyValue[0], keyValue[1]);
-			}            
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(in);
-		}
-		return names;
-	}
+	
 
 	private static final void initFormats(Map<String,Class> output_registry, ArrayList<String> graph_formats) {
 		// Alternatives: (for now trying option B)

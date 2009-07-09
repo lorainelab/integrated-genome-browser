@@ -15,15 +15,18 @@ import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +70,37 @@ public abstract class ServerUtils {
 				System.out.println("couldn't find liftAll or mod_chromInfo file for genome!!! " + genome_version);
 			}
 		}
+	}
+
+	/**Loads a file's lines into a hash first column is the key, second the value.
+	 * Skips blank lines and those starting with a '#'
+	 * @return null if an exception in thrown
+	 * */
+	public static final HashMap<String, String> loadFileIntoHashMap(File file) {
+		BufferedReader in = null;
+		HashMap<String, String> names = null;
+		try {
+			names = new HashMap<String, String>();
+			in = new BufferedReader(new FileReader(file));
+			String line;
+			String[] keyValue;
+			while ((line = in.readLine()) != null) {
+				line = line.trim();
+				if (line.length() == 0 || line.startsWith("#")) {
+					continue;
+				}
+				keyValue = line.split("\\s+");
+				if (keyValue.length < 2) {
+					continue;
+				}
+				names.put(keyValue[0], keyValue[1]);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(in);
+		}
+		return names;
 	}
 
 	public static final void loadSynonyms(String synonym_file) {

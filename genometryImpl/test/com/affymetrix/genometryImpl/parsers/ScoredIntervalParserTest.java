@@ -1,0 +1,129 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.affymetrix.genometryImpl.parsers;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.IndexedSingletonSym;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser.SinEntry;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author auser
+ */
+public class ScoredIntervalParserTest {
+
+
+	public ScoredIntervalParserTest() {
+	}
+
+	@Before
+	public void setUp() {
+	}
+
+	@After
+	public void tearDown() {
+	}
+
+	@Test
+	public void testParseFromFile() throws IOException {
+		String filename = "test/data/egr/test1.egr";
+		assertTrue(new File(filename).exists());
+
+		InputStream istr = new FileInputStream(filename);
+		assertNotNull(istr);
+		String stream_name = "chr1.1";
+		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+
+		try {
+			ScoredIntervalParser tester = new ScoredIntervalParser();
+			tester.parse(istr, stream_name, seq_group);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		System.out.println("done testing ScoredIntervalParser");
+		String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
+		assertEquals(stream_name, unique_container_name);		
+	}
+
+	@Test
+	public void testMakeNewSeq() {
+
+		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+		String seqid = "chr1";
+
+		MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+		ScoredIntervalParser ins = new ScoredIntervalParser();
+
+		aseq = ins.makeNewSeq(seqid, seq_group);
+		assertEquals(100208700,aseq.getLength());
+		assertEquals("Test Seq Group", aseq.getVersion());
+		assertEquals("chr1",aseq.getID());
+		}
+
+	@Test
+	public void testwriteEgrFormat() throws IOException {
+		String string ="# genome_version = H_sapiens_Mar_2006\n"+
+                   "# score0 = NormDiff\n" +
+                   "chr1	10015038	10016039	.	25.0\n" +
+									 "chr1	100004630	100005175	.	6.0\n" +
+                   "chr1	100087772	100088683	.	13.0\n" +
+									 "chr1	100207533	100208700	.	230.0\n";
+
+		InputStream istr = new ByteArrayInputStream(string.getBytes());
+		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
+		String stream_name = "chr1";			
+		ScoredIntervalParser tester = new ScoredIntervalParser();
+		tester.parse(istr, stream_name, seq_group);
+		assertEquals(1, seq_group.getSeqCount());
+		SmartAnnotBioSeq aseq = seq_group.getSeq(0);
+		assertEquals("chr1",aseq.getID());		
+	  ScoredContainerSym symI = (ScoredContainerSym) aseq.getAnnotation(0);
+		assertEquals("chr1.1",symI.getID());
+		assertEquals(2,aseq.getAnnotationCount());
+		GraphIntervalSym result = symI.makeGraphSym("NormDiff", seq_group);
+		assertEquals(4, result.getChildCount());
+		String genome_version = "H_sapiens_Mar_2006";
+		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+		Boolean out = ScoredIntervalParser.writeEgrFormat(result, genome_version, outstream);		
+		assertEquals(true, out);
+		assertEquals(string,outstream.toString());
+
+
+			
+
+	}
+
+	
+	
+}
+

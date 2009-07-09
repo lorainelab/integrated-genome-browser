@@ -579,6 +579,9 @@ public final class IGB extends Application
 		PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
 		plugins_info.add(selection_info);
 
+		PluginInfo search = new PluginInfo(SearchView.class.getName(), "Search", true);
+		plugins_info.add(search);
+
 
 		plugins_info.addAll(getPluginsFromXmlPrefs(PrefsLoader.getIGBPrefs(main_args)));
 
@@ -1283,10 +1286,6 @@ public final class IGB extends Application
 		}
 		if (USE_GRAPH_ADJUSTER) {
 			PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true);
-			plugin_list.add(pi);
-		}
-		if (USE_PATTERN_SEARCHER) {
-			PluginInfo pi = new PluginInfo(SeqSearchView.class.getName(), "Pattern Search", true);
 			plugin_list.add(pi);
 		}
 		if (USE_NAME_SEARCHER) {

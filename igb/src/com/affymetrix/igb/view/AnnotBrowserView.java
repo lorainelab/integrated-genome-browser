@@ -331,20 +331,6 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     AnnotatedSeqGroup.removeSymMapChangeListener(this);
     if (lsm != null) {lsm.removeListSelectionListener(list_selection_listener);}
   }
-  
-  /** Main method for testing visual layout. */
-  /*public static void main(String[] args) {
-    AnnotBrowserView testview = new AnnotBrowserView();
-    JFrame frm = new JFrame();
-    Container cpane = frm.getContentPane();
-    cpane.setLayout(new BorderLayout());
-    cpane.add("Center", testview);
-    frm.setSize(new Dimension(400, 400));
-    frm.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) { System.exit(0);}
-    });
-    frm.setVisible(true);
-  }*/
 
   // implementation of IPlugin
   public void putPluginProperty(Object key, Object value) {

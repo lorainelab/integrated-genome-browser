@@ -23,6 +23,7 @@ import java.net.URI.*;
 //import java.util.regex.*;
 
 import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -40,7 +41,7 @@ public class Das2VersionedSource {
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -471,8 +472,8 @@ public class Das2VersionedSource {
      *       For now, trying to just add features directly to seq...)
      *   For now, not allowing combination with any other filters
      */
-    public synchronized List getFeaturesByName(String name, boolean annotate_seq) {
-		List feats = null;
+    public synchronized List<SeqSymmetry> getFeaturesByName(String name, boolean annotate_seq) {
+		List<SeqSymmetry> feats = null;
 		InputStream istr = null;
 		BufferedInputStream bis = null;
 		try {
@@ -493,7 +494,6 @@ public class Das2VersionedSource {
 			query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			istr = query_con.getInputStream();
 			bis = new BufferedInputStream(istr);
-			//      feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), false);
 			feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), annotate_seq);
 			int feat_count = feats.size();
 			System.out.println("parsed query results, annot count = " + feat_count);

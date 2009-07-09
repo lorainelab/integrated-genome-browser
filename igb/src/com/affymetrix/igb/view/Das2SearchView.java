@@ -13,6 +13,7 @@ import javax.swing.EditableComboBox;
 import com.affymetrix.igb.*;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -153,7 +154,7 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 	}
 
 	private List searchFeaturesByName(String name, Das2VersionedSource version) {
-		List feats = version.getFeaturesByName(name, false);
+		List<SeqSymmetry> feats = version.getFeaturesByName(name, false);
 		MutableComboBoxModel mcb = (MutableComboBoxModel) searchCB.getModel();
 		mcb.addElement(name);
 

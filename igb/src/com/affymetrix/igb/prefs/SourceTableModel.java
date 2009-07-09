@@ -2,15 +2,10 @@ package com.affymetrix.igb.prefs;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -30,11 +25,10 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	private void init() {
 		this.servers.clear();
-		this.servers.addAll(ServerList.getServers());
+		this.servers.addAll(ServerList.getAllServers());
 	}
 
 	public int getRowCount() {
-		//return servers.size();
 		return servers.size();
 	}
 
@@ -51,6 +45,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 				return servers.get(rowIndex).serverType;
 			case 2:
 				return servers.get(rowIndex).URL;
+			/*case 3:
+				return servers.get(rowIndex).enabled;*/
 			default:
 				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
 		}

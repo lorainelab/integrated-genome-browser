@@ -4,6 +4,7 @@ import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,10 +14,17 @@ public final class ServerList {
 	static Map<GenericServer, String> server2Name = new LinkedHashMap<GenericServer, String>();
 	static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
 
-	/**
-	 *  Map is from Strings (server names) to generic servers.
-	 */
-	public static Set<GenericServer> getServers() {
+	public static Set<GenericServer> getEnabledServers() {
+		Set<GenericServer> serverList = new HashSet<GenericServer>();
+		for (GenericServer gServer : server2Name.keySet()) {
+			if (gServer.enabled) {
+				serverList.add(gServer);
+			}
+		}
+		return serverList;
+	}
+
+	public static Set<GenericServer> getAllServers() {
 		return server2Name.keySet();
 	}
 

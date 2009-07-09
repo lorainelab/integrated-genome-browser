@@ -226,11 +226,11 @@ public final class GeneralLoadUtils {
 				}
 			}
 		}*/
-		/*for (GenericServer gServer : ServerList.getServers()) {
+		/*for (GenericServer gServer : ServerList.getEnabledServers()) {
 			System.out.println("Discovering server... " + gServer);
 		}*/
 
-		for (GenericServer gServer : ServerList.getServers()) {
+		for (GenericServer gServer : ServerList.getEnabledServers()) {
 			if (gServer.serverType == ServerType.DAS2) {
 				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);
@@ -241,7 +241,7 @@ public final class GeneralLoadUtils {
 		// Discover DAS servers
 		// TODO -- strip out descriptions and make synonyms with DAS/2
 		// TODO -- get chromosome info
-		for (GenericServer gServer : ServerList.getServers()) {
+		for (GenericServer gServer : ServerList.getEnabledServers()) {
 			if (gServer.serverType == ServerType.DAS) {
 				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);
@@ -261,7 +261,7 @@ public final class GeneralLoadUtils {
 
 		// Discover Quickload servers
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
-		for (GenericServer gServer : ServerList.getServers()) {
+		for (GenericServer gServer : ServerList.getEnabledServers()) {
 			if (gServer.serverType == ServerType.QuickLoad) {
 				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
 					discoveredServers.add(gServer);

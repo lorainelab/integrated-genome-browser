@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.igb.IGBConstants;
 import java.io.Serializable;
 import java.net.*;
 import java.util.*;
@@ -108,9 +109,11 @@ public final class Bookmark implements Serializable {
         }
 
         if (use_url_decoding) try {
-          key = URLDecoder.decode(key, "UTF-8");
-          value = URLDecoder.decode(value, "UTF-8");
-        } catch (java.io.UnsupportedEncodingException e) {}
+          key = URLDecoder.decode(key, IGBConstants.UTF8);
+          value = URLDecoder.decode(value, IGBConstants.UTF8);
+        } catch (java.io.UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 
         addToMap(map, key, value);
 

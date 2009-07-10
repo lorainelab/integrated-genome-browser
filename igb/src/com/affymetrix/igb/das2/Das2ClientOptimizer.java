@@ -52,6 +52,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  *  Chain together with a CompositeOptimizer?
  *
  */
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -66,7 +67,6 @@ public final class Das2ClientOptimizer {
     private static final boolean DEBUG_HEADERS = false;
     private static final boolean OPTIMIZE_FORMAT = true;
     private static final boolean SHOW_DAS_QUERY_GENOMETRY = false;
-    private static final String UTF8 = "UTF-8";
     /**
      *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
      *  out into a separate query field, "segment", that applies to all location-based filters in the query
@@ -343,8 +343,8 @@ public final class Das2ClientOptimizer {
             String feature_query = request_root + "?" + query_part;
             if (DEBUG) {
                 System.out.println("feature query URL:  " + feature_query);
-                System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, UTF8));
-                System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, UTF8));
+                System.out.println("url-encoded query URL:  " + URLEncoder.encode(feature_query, IGBConstants.UTF8));
+                System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, IGBConstants.UTF8));
 
             }
             boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, gmodel, request_sym);
@@ -362,31 +362,31 @@ public final class Das2ClientOptimizer {
         if (Das2Region.USE_SEGMENT) {
             buf.append("segment=");
             if (Das2Region.USE_SEGMENT_URI) {
-                buf.append(URLEncoder.encode(region.getID(), UTF8));
+                buf.append(URLEncoder.encode(region.getID(), IGBConstants.UTF8));
             } else {
-                buf.append(URLEncoder.encode(region.getName(), UTF8));
+                buf.append(URLEncoder.encode(region.getName(), IGBConstants.UTF8));
             }
             buf.append(";");
         }
 
         buf.append("overlaps=");
-        buf.append(URLEncoder.encode(overlap_filter, UTF8));
+        buf.append(URLEncoder.encode(overlap_filter, IGBConstants.UTF8));
         buf.append(";");
         if (inside_filter != null) {
             buf.append("inside=");
-            buf.append(URLEncoder.encode(inside_filter, UTF8));
+            buf.append(URLEncoder.encode(inside_filter, IGBConstants.UTF8));
             buf.append(";");
         }
         buf.append("type=");
         if (Das2Region.USE_TYPE_URI) {
-            buf.append(URLEncoder.encode(type.getID(), UTF8));
+            buf.append(URLEncoder.encode(type.getID(), IGBConstants.UTF8));
         } else {
             buf.append(type.getName());
         }
         if (OPTIMIZE_FORMAT && format != null) {
             buf.append(";");
             buf.append("format=");
-            buf.append(URLEncoder.encode(format, UTF8));
+            buf.append(URLEncoder.encode(format, IGBConstants.UTF8));
         }
         String query_part = buf.toString();
 

@@ -45,6 +45,8 @@ public abstract class IGBConstants {
 	public static final String liftAllLft = "liftAll.lft";
 	public static final String modChromInfoTxt = "mod_chromInfo.txt";
 
+	public static final String UTF8 = "UTF-8";
+
     /*
    * This is not the best way to do this -- It just requires the least
    * change to the current code base.

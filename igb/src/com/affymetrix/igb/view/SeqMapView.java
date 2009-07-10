@@ -689,7 +689,7 @@ public class SeqMapView extends JPanel
 					cgl = new FillRectGlyph();
 					cgl.setColor(c3);
 				} else {
-					if (viewseq.getID().equals(GeneralLoadUtils.GENOME_SEQ_ID)) {
+					if (viewseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 						// hide axis numbering
 						axis.setLabelFormat(AxisGlyph.NO_LABELS);
 						cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
@@ -699,7 +699,7 @@ public class SeqMapView extends JPanel
 						}
 						((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
 						cgl.setColor(axis.getForegroundColor());
-					} else if (viewseq.getID().equals(GeneralLoadUtils.ENCODE_REGIONS_ID)) {
+					} else if (viewseq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
 						cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
 						String label = childsym.getID();
 						if (label != null) {

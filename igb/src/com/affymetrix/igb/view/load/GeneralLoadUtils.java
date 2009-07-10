@@ -21,6 +21,7 @@ import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das.DasFeatureLoader;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das.DasSource;
@@ -67,10 +68,8 @@ public final class GeneralLoadUtils {
 
 	//public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
 	//public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
-	final static String ENCODE_FILE_NAME = "encodeRegions.bed";
-	final static String ENCODE_FILE_NAME2 = "encode.bed";
-	public final static String GENOME_SEQ_ID = "genome";                // user here and in SeqMapView
-	public final static String ENCODE_REGIONS_ID = "encode_regions";    // used in SeqMapView
+	//final static String ENCODE_FILE_NAME = "encodeRegions.bed";
+	//final static String ENCODE_FILE_NAME2 = "encode.bed";
 	//static boolean CACHE_RESIDUES_DEFAULT = false;
 	//static boolean CACHE_ANNOTS_DEFAULT = true;
 
@@ -682,7 +681,7 @@ public final class GeneralLoadUtils {
 		if (DEBUG) {
 			System.out.println("$$$$$ adding virtual genome seq to seq group");
 		}
-		if (group.getSeq(GENOME_SEQ_ID) != null) {
+		if (group.getSeq(IGBConstants.GENOME_SEQ_ID) != null) {
 			return; // return if we've already created the virtual genome
 		}
 
@@ -690,7 +689,7 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		SmartAnnotBioSeq genome_seq = group.addSeq(GENOME_SEQ_ID, 0);
+		SmartAnnotBioSeq genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
 		for (int i = 0; i < chrom_count; i++) {
 			BioSeq chrom_seq = group.getSeq(i);
 			if (chrom_seq == genome_seq) {

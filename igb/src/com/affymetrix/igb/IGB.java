@@ -570,18 +570,16 @@ public final class IGB extends Application
 				exit();
 			}
 		});
-		//    frm.resize(1000, 750);
 		frm.setVisible(true);
 
-		PluginInfo dataload = new PluginInfo(DataLoadView.class.getName(), "Data Access", true);
-		plugins_info.add(dataload);
-
-		PluginInfo selection_info = new PluginInfo(SymTableView.class.getName(), "Selection Info", true);
-		plugins_info.add(selection_info);
-
-		PluginInfo search = new PluginInfo(SearchView.class.getName(), "Search", true);
-		plugins_info.add(search);
-
+		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), "Data Access", true));
+		plugins_info.add(new PluginInfo(SymTableView.class.getName(), "Selection Info", true));
+		plugins_info.add(new PluginInfo(SearchView.class.getName(), "Search", true));
+		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true));
+		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
+		plugins_info.add(new PluginInfo(Das2SearchView.class.getName(), "Name Search", true));
+		plugins_info.add(new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true));
+		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true));
 
 		plugins_info.addAll(getPluginsFromXmlPrefs(PrefsLoader.getIGBPrefs(main_args)));
 
@@ -1255,53 +1253,7 @@ public final class IGB extends Application
 	private List<PluginInfo> getPluginsFromXmlPrefs(Map prefs_hash) {
 		ArrayList<PluginInfo> plugin_list = new ArrayList<PluginInfo>(16);
 
-		boolean USE_ANNOT_BROWSER = false;
-		boolean USE_SLICE_VIEW = true;
-		boolean USE_GRAPH_ADJUSTER = true;
-		boolean USE_PATTERN_SEARCHER = true;
-		boolean USE_NAME_SEARCHER = true;
-		boolean USE_RESTRICTION_MAPPER = false;
-		if (prefs_hash.get("USE_GRAPH_ADJUSTER") != null) {
-			USE_GRAPH_ADJUSTER = ((Boolean) prefs_hash.get("USE_GRAPH_ADJUSTER")).booleanValue();
-		}
-		if (prefs_hash.get("USE_SLICE_VIEW") != null) {
-			USE_SLICE_VIEW = ((Boolean) prefs_hash.get("USE_SLICE_VIEW")).booleanValue();
-		}
-		if (prefs_hash.get("USE_RESTRICTION_MAPPER") != null) {
-			USE_RESTRICTION_MAPPER = ((Boolean) prefs_hash.get("USE_RESTRICTION_MAPPER")).booleanValue();
-		}
-		if (prefs_hash.get("USE_PATTERN_SEARCHER") != null) {
-			USE_PATTERN_SEARCHER = ((Boolean) prefs_hash.get("USE_PATTERN_SEARCHER")).booleanValue();
-		}
-		if (prefs_hash.get("USE_NAME_SEARCHER") != null) {
-			USE_NAME_SEARCHER = ((Boolean) prefs_hash.get("USE_NAME_SEARCHER")).booleanValue();
-		}
-		if (prefs_hash.get("USE_ANNOT_BROWSER") != null) {
-			USE_ANNOT_BROWSER = ((Boolean) prefs_hash.get("USE_ANNOT_BROWSER")).booleanValue();
-		}
 
-		if (USE_SLICE_VIEW) {
-			PluginInfo pi = new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true);
-			plugin_list.add(pi);
-		}
-		if (USE_GRAPH_ADJUSTER) {
-			PluginInfo pi = new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true);
-			plugin_list.add(pi);
-		}
-		if (USE_NAME_SEARCHER) {
-			PluginInfo pi = new PluginInfo(Das2SearchView.class.getName(), "Name Search", true);
-			plugin_list.add(pi);
-		}
-
-		if (USE_ANNOT_BROWSER) {
-			PluginInfo pi = new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true);
-			plugin_list.add(pi);
-		}
-
-		if (USE_RESTRICTION_MAPPER) {
-			PluginInfo pi = new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true);
-			plugin_list.add(pi);
-		}
 
 		Map<String, PluginInfo> other_plugins = XmlPrefsParser.getNamedMap(prefs_hash, XmlPrefsParser.PLUGINS);
 		for (PluginInfo pi : other_plugins.values()) {

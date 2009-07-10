@@ -47,6 +47,9 @@ public abstract class IGBConstants {
 
 	public static final String UTF8 = "UTF-8";
 
+	public final static String GENOME_SEQ_ID = "genome";
+	public final static String ENCODE_REGIONS_ID = "encode_regions";
+
     /*
    * This is not the best way to do this -- It just requires the least
    * change to the current code base.

@@ -193,7 +193,7 @@ public abstract class PrefsLoader {
 				//String server_type = el.getAttribute("type").toLowerCase();
 				String server_name = prefServers.get(serverURL, "value");
 				try {
-					serverURL = URLDecoder.decode(serverURL, "UTF-8");
+					serverURL = URLDecoder.decode(serverURL, IGBConstants.UTF8);
 				} catch (UnsupportedEncodingException ex) {
 					Logger.getLogger(PrefsLoader.class.getName()).log(Level.SEVERE, null, ex);
 				}

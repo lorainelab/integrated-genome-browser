@@ -28,13 +28,10 @@ public final class LocalUrlCacher {
 	private static final String cache_header_root = cache_content_root + "headers/";
 	private static final String HTTP_STATUS_HEADER = "HTTP_STATUS";
 	private static boolean DEBUG_CONNECTION = false;
-	//static boolean REPORT_LONG_URLS = false;
 	private static boolean CACHE_FILE_URLS = false;
-	//  static Properties long2short_filenames = new Properties();
 	public static final int IGNORE_CACHE = 100;
 	public static final int ONLY_CACHE = 101;
 	public static final int NORMAL_CACHE = 102;
-	//public static int long_file_count = 0;
 
 	// the "quickload" part of the constant value is there for historical reasons
 	public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
@@ -43,7 +40,6 @@ public final class LocalUrlCacher {
 
 	public static final int CONNECT_TIMEOUT = 30000;	// If you can't connect in 30 seconds, fail.
 	public static final int READ_TIMEOUT = 180000;		// If you can't read in 3 minutes, fail.
-
 
 	private static enum CacheType { FILE, CACHED, STALE_CACHE, NOT_CACHED, UNREACHABLE};
 
@@ -128,7 +124,7 @@ public final class LocalUrlCacher {
 
 	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers)
 					throws IOException {
-		return getInputStream(url, cache_option, write_to_cache, null, false);
+		return getInputStream(url, cache_option, write_to_cache, headers, false);
 	}
 
 	/**
@@ -158,27 +154,8 @@ public final class LocalUrlCacher {
 		
 		// if url is a file url, and not caching files, then just directly return stream
 		if ((!CACHE_FILE_URLS) && isFile(url)) {
-			URL furl = new URL(url);
-			URLConnection huc = furl.openConnection();
-			huc.setConnectTimeout(CONNECT_TIMEOUT);
-			huc.setReadTimeout(READ_TIMEOUT);
-			//set sessionId
-			if (sessionId != null) {
-				huc.setRequestProperty("Cookie", sessionId);
-			}
-
-			InputStream fstr = null;
-			try {
-				fstr = huc.getInputStream();
-			}
-			catch (FileNotFoundException ex) {
-				if (fileMayNotExist) {
-					System.out.println("Couldn't find file " + url + ", but it's optional.");
-					return null;	// We don't care if the file doesn't exist.
-				}
-			}
 			//Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
-			return fstr;
+			return getUncachedFileStream(url, sessionId, fileMayNotExist);
 		}
 
 
@@ -234,10 +211,8 @@ public final class LocalUrlCacher {
 					reportHeaders(conn);
 				}
 
-				//content_type = conn.getContentType();
 				remote_timestamp = conn.getLastModified();
 
-				//	String remote_date = DateFormat.getDateTimeInstance().format(new Date(remote_timestamp)); ;
 				if (conn instanceof HttpURLConnection) {
 					HttpURLConnection hcon = (HttpURLConnection) conn;
 					http_status = hcon.getResponseCode();
@@ -269,7 +244,7 @@ public final class LocalUrlCacher {
 				}
 			}
 		}
-		//	System.out.println("cached = " + cached + " :  " + url);
+		
 		// if cache_option == IGNORE_CACHE, then don't even try to retrieve from cache
 		if (cache_file.exists() && (cache_option != IGNORE_CACHE)) {
 			result_stream = TryToRetrieveFromCache(url_reachable, http_status, cache_file, remote_timestamp, local_timestamp, url, cache_option, result_stream, headers, header_cache_file);
@@ -291,72 +266,108 @@ public final class LocalUrlCacher {
 		return result_stream;
 	}
 
+		private static InputStream getUncachedFileStream(String url, String sessionId, boolean fileMayNotExist) throws MalformedURLException, IOException {
+		URL furl = new URL(url);
+		URLConnection huc = furl.openConnection();
+		huc.setConnectTimeout(CONNECT_TIMEOUT);
+		huc.setReadTimeout(READ_TIMEOUT);
+		//set sessionId
+		if (sessionId != null) {
+			huc.setRequestProperty("Cookie", sessionId);
+		}
+		InputStream fstr = null;
+		try {
+			fstr = huc.getInputStream();
+		} catch (FileNotFoundException ex) {
+			if (fileMayNotExist) {
+				System.out.println("Couldn't find file " + url + ", but it's optional.");
+				return null; // We don't care if the file doesn't exist.
+			}
+		}
+		//Application.getSingleton().logInfo("URL is file url, so not caching: " + furl);
+		return fstr;
+	}
+
+
 	private static byte[] ReadIntoContentArray(int content_length, BufferedInputStream bis) throws IOException {
-		byte[] content = null;
-		if (content_length >= 0) {
-			// if content_length header was set, can load based on length
-			content = new byte[content_length];
-			//      int bytes_read = bis.read(content, 0, content_length);
-			int total_bytes_read = 0;
-			while (total_bytes_read < content_length) {
-				int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
-				total_bytes_read += bytes_read;
-			}
-			if (total_bytes_read != content_length) {
-				Application.getSingleton().logWarning("Bytes read not same as content length");
-				System.out.println("Bytes read not same as content length");
-			}
-		} else {
-			if (DEBUG_CONNECTION) {
-				System.out.println("No content length header, so doing piecewise loading");
-				Application.getSingleton().logDebug("No content length header, so doing piecewise loading");
-			}
+		if (content_length < 0) {
+			return loadContentInChunks(bis);
+		}
 
-			// if no content_length header, then need to load a chunk at a time
-			//   till find end, then piece back together into content byte array
-			//   Note, must set initial capacity to 1000 to avoid stream loading interruption.
-			ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
-			IntList byte_counts = new IntList(100);
-			int chunk_count = 0;
-			int chunk_size = 256 * 256; // reading in 64KB chunks
-			int total_byte_count = 0;
-			int bytes_read = 0;
-			while (bytes_read != -1) {
-				// if bytes_read == -1, then end of data reached
-				byte[] chunk = new byte[chunk_size];
-				bytes_read = bis.read(chunk, 0, chunk_size);
-				if (DEBUG_CONNECTION) {
-					Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
-					System.out.println("   chunk: " + chunk_count + ", byte count: " + bytes_read);
-				}
-				if (bytes_read > 0) {
-					// want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
-					total_byte_count += bytes_read;
-					chunks.add(chunk);
-					byte_counts.add(bytes_read);
-				}
-				chunk_count++;
-			}
-			if (DEBUG_CONNECTION) {
-				Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
-				System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
-			}
-
-			content_length = total_byte_count;
-			content = new byte[content_length];
-			total_byte_count = 0;
-			for (int i = 0; i < chunks.size(); i++) {
-				byte[] chunk = chunks.get(i);
-				int byte_count = byte_counts.get(i);
-				if (byte_count > 0) {
-					System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
-					total_byte_count += byte_count;
-				}
-			}
-			chunks = null;
+		// if content_length header was set, can load based on length
+		byte[] content = new byte[content_length];
+		int total_bytes_read = 0;
+		while (total_bytes_read < content_length) {
+			int bytes_read = bis.read(content, total_bytes_read, content_length - total_bytes_read);
+			total_bytes_read += bytes_read;
+		}
+		if (total_bytes_read != content_length) {
+			Application.getSingleton().logWarning("Bytes read not same as content length");
+			System.out.println("Bytes read not same as content length");
 		}
 		return content;
 	}
+
+
+	/**
+	 * if no content_length header, then need to load a chunk at a time
+	 * till find end, then piece back together into content byte array
+	 * Note, must set initial capacity to 1000 to avoid stream loading interruption.
+	 * @param bis
+	 * @param content_length
+	 * @param content
+	 * @return
+	 * @throws IOException
+	 */
+	private static byte[] loadContentInChunks(BufferedInputStream bis) throws IOException {
+		if (DEBUG_CONNECTION) {
+			System.out.println("No content length header, so doing piecewise loading");
+			Application.getSingleton().logDebug("No content length header, so doing piecewise loading");
+		}
+		byte[] content = null;
+		ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
+		IntList byte_counts = new IntList(100);
+		int chunk_count = 0;
+		int chunk_size = 256 * 256; // reading in 64KB chunks
+		int total_byte_count = 0;
+		int bytes_read = 0;
+		while (bytes_read != -1) {
+			// if bytes_read == -1, then end of data reached
+			byte[] chunk = new byte[chunk_size];
+			bytes_read = bis.read(chunk, 0, chunk_size);
+			if (DEBUG_CONNECTION) {
+				Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
+				if (bytes_read != chunk_size) {
+					System.out.println("chunk: " + chunk_count + ", byte count: " + bytes_read);
+				}
+			}
+			if (bytes_read > 0) {
+				// want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
+				total_byte_count += bytes_read;
+				chunks.add(chunk);
+				byte_counts.add(bytes_read);
+			}
+			chunk_count++;
+		}
+		if (DEBUG_CONNECTION) {
+			Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+			System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+		}
+		int content_length = total_byte_count;
+		content = new byte[content_length];
+		total_byte_count = 0;
+		for (int i = 0; i < chunks.size(); i++) {
+			byte[] chunk = chunks.get(i);
+			int byte_count = byte_counts.get(i);
+			if (byte_count > 0) {
+				System.arraycopy(chunk, 0, content, total_byte_count, byte_count);
+				total_byte_count += byte_count;
+			}
+		}
+		chunks = null;
+		return content;
+	}
+
 
 	private static InputStream TryToRetrieveFromCache(boolean url_reachable, int http_status, File cache_file, long remote_timestamp, long local_timestamp, String url, int cache_option, InputStream result_stream, Map headers, File header_cache_file) throws IOException, FileNotFoundException {
 		if (url_reachable) {
@@ -407,8 +418,11 @@ public final class LocalUrlCacher {
 		String contentEncoding = conn.getHeaderField("Content-Encoding");
 		boolean isGZipped = contentEncoding == null ? false : "gzip".equalsIgnoreCase(contentEncoding);
 		if (isGZipped) {
+			// unknown content length, stick with -1
 			connstr = new GZIPInputStream(conn.getInputStream());
-		// unknown content length, stick with -1
+			if (DEBUG_CONNECTION) {
+				System.out.println("gzipped stream, so ignoring reported content length of " + conn.getContentLength());
+			}
 		} else {
 			connstr = conn.getInputStream();
 			content_length = conn.getContentLength();
@@ -420,6 +434,7 @@ public final class LocalUrlCacher {
 			bis = new BufferedInputStream(connstr);
 			content = ReadIntoContentArray(content_length, bis);
 			if (write_to_cache) {
+				System.out.println("about to write to cache");
 				Properties headerprops = populateHeaderProperties(conn, headers);
 				WriteToCache(content, cache_file, header_cache_file, headerprops);
 			}
@@ -431,24 +446,25 @@ public final class LocalUrlCacher {
 		return result_stream;
 	}
 
+	// populating header Properties (for persisting) and header input Map
 	private static Properties populateHeaderProperties(URLConnection conn, Map<String, String> headers) {
-		// populating header Properties (for persisting) and header input Map
 		Map<String, List<String>> headermap = conn.getHeaderFields();
 		Properties headerprops = new Properties();
 		for (Map.Entry<String, List<String>> ent : headermap.entrySet()) {
 			String key = ent.getKey();
 			// making all header names lower-case
 			List<String> vals = ent.getValue();
-			if (vals.size() > 0) {
-				String val = vals.get(0);
-				if (key == null) {
-					key = HTTP_STATUS_HEADER;
-				} // HTTP status code line has a null key, change so can be stored
-				key = key.toLowerCase();
-				headerprops.setProperty(key, val);
-				if (headers != null) {
-					headers.put(key, val);
-				}
+			if (vals.isEmpty()) {
+				continue;
+			}
+			String val = vals.get(0);
+			if (key == null) {
+				key = HTTP_STATUS_HEADER;
+			} // HTTP status code line has a null key, change so can be stored
+			key = key.toLowerCase();
+			headerprops.setProperty(key, val);
+			if (headers != null) {
+				headers.put(key, val);
 			}
 		}
 		return headerprops;

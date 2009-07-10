@@ -284,10 +284,7 @@ public final class SearchView extends JComponent implements ActionListener {
 				Application.errorPanel("Residues for seq not available, search aborted");
 				return;
 			}
-			int residue_offset = 0;
-			if (vseq instanceof SmartAnnotBioSeq) {
-				residue_offset = ((SmartAnnotBioSeq) vseq).getMin();
-			}
+			int residue_offset = ((SmartAnnotBioSeq) vseq).getMin();
 
 			TransformTierGlyph axis_tier = gviewer.getAxisTier();
 			GlyphI seq_glyph = findSeqGlyph(axis_tier);

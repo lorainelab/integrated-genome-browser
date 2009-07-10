@@ -26,6 +26,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.*;
@@ -67,8 +68,8 @@ public class AltSpliceView extends JComponent
 				super.setAnnotatedSeq(seq, preserve_selection, false);
 			} else {
 				this.clear();
-				this.aseq = seq;
-				this.viewseq = seq;
+				this.aseq = (SmartAnnotBioSeq)seq;
+				this.viewseq = (SmartAnnotBioSeq)seq;
 			}
 		}
 

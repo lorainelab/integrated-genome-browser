@@ -167,7 +167,7 @@ public class SeqMapView extends JPanel
 	JFrame frm;
 	protected AffyTieredMap seqmap;
 	UnibrowHairline hairline = null;
-	AnnotatedBioSeq aseq;
+	SmartAnnotBioSeq aseq;
 	/**
 	 *  a virtual sequence that maps the AnnotatedBioSeq aseq to the map coordinates.
 	 *  if the mapping is identity, then:
@@ -177,7 +177,7 @@ public class SeqMapView extends JPanel
 	 *     vseq.getComposition().getSpan(aseq) = SeqSpan(aseq.getLength(), 0, aseq);
 	 *
 	 */
-	BioSeq viewseq;
+	SmartAnnotBioSeq viewseq;
 	// mapping of annotated seq to virtual "view" seq
 	MutableSeqSymmetry seq2viewSym;
 	SeqSymmetry[] transform_path;
@@ -655,123 +655,89 @@ public class SeqMapView extends JPanel
 		seq_glyph.setShowBackground(false);
 		seq_glyph.setHitable(false);
 		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-//    seq_glyph.setCoords(viewseq.getMin(), 0, viewseq.getLength(), 10);
-		if (viewseq instanceof SmartAnnotBioSeq) {
-			SmartAnnotBioSeq compseq = (SmartAnnotBioSeq) viewseq;
-			seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
-		} else {
-			seq_glyph.setCoords(0, 0, viewseq.getLength(), 10);
-		}
-		//    System.out.println("seq glyph coords: " + seq_glyph.getCoordBox());
+
+		SmartAnnotBioSeq compseq = viewseq;
+		seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
 
 		axis_tier.addChild(seq_glyph);
 
 		// need to change this to get residues from viewseq! (to take account of reverse complement,
 		//    coord shift, slice'n'dice, etc.
 		// but first, need to fix CompositeBioSeq.isComplete() implementations...
-		if (viewseq instanceof SearchableCharIterator) {
-			// currently only GeneralBioSeq implements CharacterIterator
-			seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
-		} else {
-			String residues = viewseq.getResidues();
-			if (residues != null) {
-				seq_glyph.setResidues(residues);
-			}
-		}
-		if (viewseq instanceof CompositeBioSeq) {
-			SeqSymmetry compsym = ((CompositeBioSeq) viewseq).getComposition();
-			if (compsym != null) {
-				int compcount = compsym.getChildCount();
-				// create a color, c3, in between the foreground and background colors
-				Color c1 = axis.getForegroundColor();
-				Color c2 = axis.getBackgroundColor();
-				Color c3 = new Color(
-								(c1.getRed() + 2 * c2.getRed()) / 3,
-								(c1.getGreen() + 2 * c2.getGreen()) / 3,
-								(c1.getBlue() + 2 * c2.getBlue()) / 3);
+		// currently only GeneralBioSeq implements CharacterIterator
+		seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
 
-				for (int i = 0; i < compcount; i++) {
-					// Make glyphs for contigs
-					SeqSymmetry childsym = compsym.getChild(i);
-					SeqSpan childspan = childsym.getSpan(viewseq);
-					SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
+		SeqSymmetry compsym = ((CompositeBioSeq) viewseq).getComposition();
+		if (compsym != null) {
+			int compcount = compsym.getChildCount();
+			// create a color, c3, in between the foreground and background colors
+			Color c1 = axis.getForegroundColor();
+			Color c2 = axis.getBackgroundColor();
+			Color c3 = new Color(
+							(c1.getRed() + 2 * c2.getRed()) / 3,
+							(c1.getGreen() + 2 * c2.getGreen()) / 3,
+							(c1.getBlue() + 2 * c2.getBlue()) / 3);
 
-					GlyphI cgl;
-					if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
-						cgl = new FillRectGlyph();
-						cgl.setColor(c3);
-					} else {
-						if (viewseq.getID().equals(GeneralLoadUtils.GENOME_SEQ_ID)) {
-							// hide axis numbering
-							axis.setLabelFormat(AxisGlyph.NO_LABELS);
-							cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-							String label = ospan.getBioSeq().getID();
-							if (label.toLowerCase().startsWith("chr")) {
-								label = label.substring(3);
-							}
-							((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
-							cgl.setColor(axis.getForegroundColor());
-						} else if (viewseq.getID().equals(GeneralLoadUtils.ENCODE_REGIONS_ID)) {
-							cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-							String label = childsym.getID();
-							if (label != null) {
-								((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
-							}
-							cgl.setColor(axis.getForegroundColor());
-						} else {
-							cgl = new OutlineRectGlyph();
-							cgl.setColor(axis.getForegroundColor());
+			for (int i = 0; i < compcount; i++) {
+				// Make glyphs for contigs
+				SeqSymmetry childsym = compsym.getChild(i);
+				SeqSpan childspan = childsym.getSpan(viewseq);
+				SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
+
+				GlyphI cgl;
+				if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
+					cgl = new FillRectGlyph();
+					cgl.setColor(c3);
+				} else {
+					if (viewseq.getID().equals(GeneralLoadUtils.GENOME_SEQ_ID)) {
+						// hide axis numbering
+						axis.setLabelFormat(AxisGlyph.NO_LABELS);
+						cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+						String label = ospan.getBioSeq().getID();
+						if (label.toLowerCase().startsWith("chr")) {
+							label = label.substring(3);
 						}
+						((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+						cgl.setColor(axis.getForegroundColor());
+					} else if (viewseq.getID().equals(GeneralLoadUtils.ENCODE_REGIONS_ID)) {
+						cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+						String label = childsym.getID();
+						if (label != null) {
+							((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+						}
+						cgl.setColor(axis.getForegroundColor());
+					} else {
+						cgl = new OutlineRectGlyph();
+						cgl.setColor(axis.getForegroundColor());
 					}
-					//	    cgl.setCoords(childspan.getMin(), 0,
-					//			  childspan.getMax()-childspan.getMin(), 10);
-					cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
-					// System.out.println("comp coords: " + cgl.getCoordBox());
-
-					// calling cgl.setInfo()
-					//   allows info to be seen in selection table
-					//   allows easily selecting sequence for contig
-					//   allows slicing on contig
-					//   Slicing may require lots of memory, so this may be a bad idea.
-					//cgl.setInfo(childsym);
-
-					// also note that "Load residues in view" produces additional
-					// contig-like glyphs that can partially hide these glyphs.
-					seq_glyph.addChild(cgl);
 				}
+
+				cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
+
+				// also note that "Load residues in view" produces additional
+				// contig-like glyphs that can partially hide these glyphs.
+				seq_glyph.addChild(cgl);
 			}
 		}
-//    resultSeqMap.repack();
+
 		return axis_tier;
 	}
 
 	public EfficientSolidGlyph makeCytobandGlyph() {
-		if (getAnnotatedSeq() instanceof SmartAnnotBioSeq) {
-			SmartAnnotBioSeq sma = (SmartAnnotBioSeq) getAnnotatedSeq();
-			//      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
-			SymWithProps cyto_annots = null;
-			List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
-			if (cyto_tiers.size() > 0) {
-				cyto_annots = (SymWithProps) cyto_tiers.get(0);
-				//	SeqUtils.printSymmetry(cyto_annots);
+		SmartAnnotBioSeq sma = (SmartAnnotBioSeq) getAnnotatedSeq();
+		//      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
+		SymWithProps cyto_annots = null;
+		List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
+		if (cyto_tiers.size() > 0) {
+			cyto_annots = (SymWithProps) cyto_tiers.get(0);
+			//	SeqUtils.printSymmetry(cyto_annots);
 			}
 
-			if (cyto_annots instanceof TypeContainerAnnot) {
-				TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
-				return makeCytobandGlyph(cyto_container);
-			}
-		} else {
-			for (int i = 0; i < getAnnotatedSeq().getAnnotationCount(); i++) {
-				SeqSymmetry annotSym = getAnnotatedSeq().getAnnotation(i);
-				if (annotSym instanceof TypeContainerAnnot) {
-					TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
-
-					if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
-						return makeCytobandGlyph(tca);
-					}
-				}
-			}
+		if (cyto_annots instanceof TypeContainerAnnot) {
+			TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
+			return makeCytobandGlyph(cyto_container);
 		}
+
 		return null;
 	}
 
@@ -939,8 +905,8 @@ public class SeqMapView extends JPanel
 	 *  Clears the graphs, and reclaims some memory.
 	 */
 	public void clearGraphs() {
-		if (aseq instanceof MutableAnnotatedBioSeq) {
-			MutableAnnotatedBioSeq mseq = (MutableAnnotatedBioSeq) aseq;
+		if (aseq != null) {
+			SmartAnnotBioSeq mseq = aseq;
 			int acount = mseq.getAnnotationCount();
 			for (int i = acount - 1; i >= 0; i--) {
 				SeqSymmetry annot = mseq.getAnnotation(i);
@@ -1056,7 +1022,7 @@ public class SeqMapView extends JPanel
 		pixel_floater_glyph.setParent(null);
 		seqmap.addItem(pixel_floater_glyph);
 
-		aseq = seq;
+		aseq = (SmartAnnotBioSeq)seq;
 
 		// if shifting coords, then seq2viewSym and viewseq are already taken care of,
 		//   but reset coord_shift to false...
@@ -1072,12 +1038,10 @@ public class SeqMapView extends JPanel
 			transform_path = null;
 			//}
 		}
-		if (viewseq instanceof SmartAnnotBioSeq) {
-			SmartAnnotBioSeq compnegseq = (SmartAnnotBioSeq) viewseq;
-			seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
-		} else {
-			seqmap.setMapRange(0, viewseq.getLength());
-		}
+
+		SmartAnnotBioSeq compnegseq = viewseq;
+		seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
+
 
 		// The hairline needs to be among the first glyphs added,
 		// to keep it from interfering with selection of other glyphs.
@@ -1196,26 +1160,26 @@ public class SeqMapView extends JPanel
 	}
 
 	protected String getVersionInfo(BioSeq seq) {
+		if (seq == null) {
+			return null;
+		}
 		String version_info = null;
-		if (seq instanceof SmartAnnotBioSeq) {
-			if (((SmartAnnotBioSeq) seq).getSeqGroup() != null) {
-				AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
-				if (group.getDescription() != null) {
-					version_info = group.getDescription();
-				} else {
-					version_info = group.getID();
-				}
+		if (((SmartAnnotBioSeq) seq).getSeqGroup() != null) {
+			AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
+			if (group.getDescription() != null) {
+				version_info = group.getDescription();
+			} else {
+				version_info = group.getID();
 			}
-			if (version_info == null) {
-				version_info = ((SmartAnnotBioSeq) seq).getVersion();
-			}
+		}
+		if (version_info == null) {
+			version_info = ((SmartAnnotBioSeq) seq).getVersion();
 		}
 		if ("hg17".equals(version_info)) {
 			version_info = "hg17 = NCBI35";
 		} else if ("hg18".equals(version_info)) {
 			version_info = "hg18 = NCBI36";
 		}
-
 		return version_info;
 	}
 
@@ -1398,11 +1362,11 @@ public class SeqMapView extends JPanel
 			}
 		}
 
-		if (aseq instanceof CompositeBioSeq &&
+		if (aseq != null &&
 						((CompositeBioSeq) aseq).getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 			//   addLeafsToTier(), addToTier(), etc. into mapping from compositon sequences
-			AnnotatedBioSeq cached_aseq = aseq;
+			SmartAnnotBioSeq cached_aseq = aseq;
 			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
 			SeqSymmetry[] cached_path = transform_path;
 
@@ -1415,12 +1379,12 @@ public class SeqMapView extends JPanel
 				//      for (int i=0; i<1; i++) {
 				SeqSymmetry csym = comp.getChild(i);
 				// return seq in a symmetry span that _doesn't_ match aseq
-				BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
+				SmartAnnotBioSeq cseq = (SmartAnnotBioSeq)SeqUtils.getOtherSeq(csym, cached_aseq);
 				if (DEBUG_COMP) {
 					System.out.println(" other seq: " + cseq.getID() + ",  " + cseq);
 				}
-				if (cseq instanceof AnnotatedBioSeq) {
-					aseq = (AnnotatedBioSeq) cseq;
+				if (cseq != null) {
+					aseq = cseq;
 					if (cached_seq2viewSym == null) {
 						transform_path = new SeqSymmetry[1];
 						transform_path[0] = csym;

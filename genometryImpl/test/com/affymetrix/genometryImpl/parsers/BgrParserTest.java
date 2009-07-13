@@ -99,7 +99,7 @@ public class BgrParserTest {
 
 		GraphSymFloat gr0 =BgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
     istr.close();
-        
+       
 		assertEquals("16", gr0.getGraphSeq().getID());
 		assertEquals(2, gr0.getPointCount());
 		assertEquals(0.128646, gr0.getGraphYCoord(0), 0.01);

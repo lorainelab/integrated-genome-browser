@@ -5,7 +5,7 @@
 package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.Arm;
 import com.affymetrix.genometryImpl.parsers.CytobandParser.CytobandSym;
 import java.io.ByteArrayInputStream;
@@ -104,7 +104,7 @@ public class CytobandParserTest {
 		syms = instance.parse(istr, seq_group, annot_seq);
 
 
-		SmartAnnotBioSeq seq = seq_group.getSeq("chr1");
+		BioSeq seq = seq_group.getSeq("chr1");
 		String type = "test_type";
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -131,7 +131,7 @@ public class CytobandParserTest {
 		boolean annot_seq = true;
 		CytobandParser instance = new CytobandParser();
 		List<SeqSymmetry> result = instance.parse(istr, seq_group, annot_seq);
-		SmartAnnotBioSeq aseq = seq_group.getSeq(0);
+		BioSeq aseq = seq_group.getSeq(0);
 		CytobandSym sym = (CytobandSym) result.get(2);
 		CytobandParser.writeCytobandFormat(out, sym, aseq);
 		assertEquals("chr1\t39600000\t43900000\tp34.2\tgpos25\n", out.toString());

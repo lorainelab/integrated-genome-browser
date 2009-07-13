@@ -21,7 +21,7 @@ import java.text.*;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
@@ -46,8 +46,8 @@ public final class FastaParser {
 	 * Returns the List of sequences that were read from the file, which will be
 	 * a subset of the sequences in the group.
 	 */
-	public static List<SmartAnnotBioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		ArrayList<SmartAnnotBioSeq> seqlist = new ArrayList<SmartAnnotBioSeq>();
+	public static List<BioSeq> parseAll(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+		ArrayList<BioSeq> seqlist = new ArrayList<BioSeq>();
 		//int line_count = 0;
 		BufferedReader br = null;
 		Matcher matcher = header_regex.matcher("");
@@ -93,7 +93,7 @@ public final class FastaParser {
 				buf = null; // immediately allow the gc to use this memory
 				residues = residues.trim();
 
-				SmartAnnotBioSeq seq = group.getSeq(seqid);
+				BioSeq seq = group.getSeq(seqid);
 				if (seq == null && seqid.indexOf(' ') > 0) {
 					// It's possible that the header has additional info past the chromosome name.  If so, remove and try again.
 					String name = seqid.substring(0, seqid.indexOf(' '));
@@ -120,8 +120,8 @@ public final class FastaParser {
 	}
 
 
-	public static SmartAnnotBioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
-		List <SmartAnnotBioSeq> bioList = parseAll(istr,group);
+	public static BioSeq parseSingle(InputStream istr, AnnotatedSeqGroup group) throws IOException {
+		List <BioSeq> bioList = parseAll(istr,group);
 		if (bioList == null)
 			return null;
 		return bioList.get(0);
@@ -185,7 +185,7 @@ public final class FastaParser {
 	 *  Parse an input stream, creating a single new BioSeq.
 	 *  @param istr an InputStream that will be read and then closed
 	 */
-	public static SmartAnnotBioSeq parse(InputStream istr) throws IOException {
+	public static BioSeq parse(InputStream istr) throws IOException {
 		return FastaParser.parse(istr, null);
 	}
 
@@ -197,7 +197,7 @@ public final class FastaParser {
 	 *   residues into.  If not null, then the sequence in the file must have a name
 	 *   that is synonymous with aseq.
 	 */
-	private static SmartAnnotBioSeq parse(InputStream istr, SmartAnnotBioSeq aseq) {
+	private static BioSeq parse(InputStream istr, BioSeq aseq) {
 		return FastaParser.parse(istr, aseq, -1);
 	}
 
@@ -206,7 +206,7 @@ public final class FastaParser {
 	//   white space, name header, etc.), but probably no more than 10% greater than actual size, which
 	//   is a lot better than aforementioned memory spike, which can temporarily double the amount of
 	//   memory needed
-	public static SmartAnnotBioSeq parse(InputStream istr, SmartAnnotBioSeq aseq,
+	public static BioSeq parse(InputStream istr, BioSeq aseq,
 			int max_seq_length) {
 		return FastaParser.oldparse(istr, aseq, max_seq_length);
 	}
@@ -222,7 +222,7 @@ public final class FastaParser {
 	 *   residues into.  If not null, then the sequence in the file must have a name
 	 *   that is synonymous with aseq.
 	 */
-	private static SmartAnnotBioSeq oldparse(InputStream istr, SmartAnnotBioSeq aseq,
+	private static BioSeq oldparse(InputStream istr, BioSeq aseq,
 			int max_seq_length) {
 		boolean use_buffer_directly = false;
 		boolean fixed_length_buffer = false;
@@ -239,7 +239,7 @@ public final class FastaParser {
 
 		com.affymetrix.genometryImpl.util.Timer tim = new com.affymetrix.genometryImpl.util.Timer();
 		tim.start();
-		SmartAnnotBioSeq seq = aseq;
+		BioSeq seq = aseq;
 		String seqid = ("unknown");
 		// maybe guesstimate size of buffer needed based on file size???
 		StringBuffer buf;
@@ -342,7 +342,7 @@ public final class FastaParser {
 		System.out.println("id: " + seqid);
 		//    System.out.println("residues: " + residues.length());
 		if (seq == null) {
-			seq = new SmartAnnotBioSeq(seqid, seqid, residues.length());
+			seq = new BioSeq(seqid, seqid, residues.length());
 			seq.setResidues(residues);
 		}
 		else {  // try to merge with existing seq

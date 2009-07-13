@@ -15,7 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -72,7 +72,7 @@ public final class XmlStylesheetGlyphFactory implements MapViewGlyphFactoryI {
       if (sym.getSpanCount() == 0)  { return; }
     // I'm assuming that for container glyphs, the container method is the
     // same as the contained items method
-    String meth = SmartAnnotBioSeq.determineMethod(sym);
+    String meth = BioSeq.determineMethod(sym);
 
     // shortcut for delegating to other factories
     //    (or at least GenericAnnotGlyphFactory via AssociationElement...)

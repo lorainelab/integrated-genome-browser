@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,7 +43,7 @@ final class WiggleData {
 		Point3D largest = data.get(dataSize - 1);
 		int largest_x = largest.x + largest.w;
 
-		SmartAnnotBioSeq seq = seq_group.addSeq(seq_id, largest_x);
+		BioSeq seq = seq_group.addSeq(seq_id, largest_x);
 
 		for (int i=0; i<dataSize; i++) {
 			Point3D p = data.get(i);

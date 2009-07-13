@@ -31,7 +31,7 @@ import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.util.IntList;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
@@ -168,8 +168,8 @@ public final class OrfAnalyzer2 extends JComponent
     //    int reside_offset = span_start;
     int residue_offset = 0;
 
-    if (vseq instanceof SmartAnnotBioSeq) {
-      residue_offset = ((SmartAnnotBioSeq)vseq).getMin();
+    if (vseq instanceof BioSeq) {
+      residue_offset = ((BioSeq)vseq).getMin();
     }
 
     AffyTieredMap map = smv.getSeqMap();
@@ -182,10 +182,10 @@ public final class OrfAnalyzer2 extends JComponent
     }
 
     String residues = null;
-    SmartAnnotBioSeq nibseq = null;
-    boolean use_nibseq = (vseq instanceof SmartAnnotBioSeq);
+    BioSeq nibseq = null;
+    boolean use_nibseq = (vseq instanceof BioSeq);
     if (use_nibseq)  {
-      nibseq = (SmartAnnotBioSeq)vseq;  // vseq is a NibbleBioSeq, therefore also a CharacterIterator
+      nibseq = (BioSeq)vseq;  // vseq is a NibbleBioSeq, therefore also a CharacterIterator
     }
     else {
       residues = vseq.getResidues();

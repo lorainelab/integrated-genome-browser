@@ -9,7 +9,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 
 public class SeqUtilsTest {
@@ -21,8 +21,8 @@ public class SeqUtilsTest {
 
 	@Before
 		public void setUp() throws Exception {
-			seqA = new SmartAnnotBioSeq("Seq A", "version", 1000000);
-			seqB = new SmartAnnotBioSeq("Seq B", "version", 1000000);
+			seqA = new BioSeq("Seq A", "version", 1000000);
+			seqB = new BioSeq("Seq B", "version", 1000000);
 		}
 
 	@After
@@ -199,8 +199,8 @@ public class SeqUtilsTest {
 	@Test
 		public void testTransformSymmetry() {
 			//System.out.println("transformSymmetry");
-			SmartAnnotBioSeq annot_seq = new SmartAnnotBioSeq("annot", "version", 1000000);
-			SmartAnnotBioSeq view_seq = new SmartAnnotBioSeq("view_seq", "version", 1000000);
+			BioSeq annot_seq = new BioSeq("annot", "version", 1000000);
+			BioSeq view_seq = new BioSeq("view_seq", "version", 1000000);
 
 			// First create a slicing transforming symmetry such that
 			// region from 500-600 in seqA get transformed to region 0-100 in seqB

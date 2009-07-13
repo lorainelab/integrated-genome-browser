@@ -19,7 +19,7 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.Timer;
 
 public final class BgrParser {
@@ -134,7 +134,7 @@ public final class BgrParser {
 			count++;
 		}
 
-		SmartAnnotBioSeq seq = seq_group.getSeq(seq_name);
+		BioSeq seq = seq_group.getSeq(seq_name);
 		if (seq == null) {
 			//System.out.println("seq not found, creating new seq: '"+seq_name+"'");
 			seq = seq_group.addSeq(seq_name, largest_x);

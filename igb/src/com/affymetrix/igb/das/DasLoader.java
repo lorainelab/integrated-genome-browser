@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
@@ -148,7 +148,7 @@ public abstract class DasLoader {
             Element seg_elem = (Element)gff_child;
             String id = seg_elem.getAttribute("id");
             if (id != null) {
-              SmartAnnotBioSeq segmentseq = seq_group.getSeq(id);
+              BioSeq segmentseq = seq_group.getSeq(id);
               if (segmentseq != null) {
                 int start = Integer.parseInt(seg_elem.getAttribute("start"));
                 int end = Integer.parseInt(seg_elem.getAttribute("end"));

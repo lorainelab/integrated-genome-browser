@@ -5,7 +5,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.IntervalSearchSym;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 
 public abstract class Optimize {
@@ -14,7 +14,7 @@ public abstract class Optimize {
 	public static final void Genome(AnnotatedSeqGroup genome) {
 		System.out.println("******** optimizing genome:  " + genome.getID() + "  ********");
 		/** third, replace top-level annotation SeqSymmetries with IntervalSearchSyms */
-		for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
+		for (BioSeq aseq : genome.getSeqList()) {
 			Optimize.Seq(aseq);
 		}
 	}
@@ -41,13 +41,13 @@ public abstract class Optimize {
 	 *       if found so there is only one top-level annotation per type for each seq
 	 *
 	 */
-	private static final void Seq(SmartAnnotBioSeq aseq) {
+	private static final void Seq(BioSeq aseq) {
 		if (DEBUG) {
 			System.out.println("optimizing seq = " + aseq.getID());
 		}
 		int annot_count = aseq.getAnnotationCount();
 		for (int i = annot_count - 1; i >= 0; i--) {
-			// annot should be a TypeContainerAnnot (if seq is a SmartAnnotBioSeq)
+			// annot should be a TypeContainerAnnot (if seq is a BioSeq)
 			SeqSymmetry annot = aseq.getAnnotation(i);
 			if (annot instanceof TypeContainerAnnot) {
 				TypeContainerAnnot container = (TypeContainerAnnot) annot;
@@ -59,7 +59,7 @@ public abstract class Optimize {
 		}
 	}
 
-	private static final void TypeContainer(TypeContainerAnnot container, SmartAnnotBioSeq aseq) {
+	private static final void TypeContainer(TypeContainerAnnot container, BioSeq aseq) {
 		if (DEBUG) {
 			System.out.println("optimizing type container: " + container.getProperty("method") +
 					", depth = " + SeqUtils.getDepth(container));

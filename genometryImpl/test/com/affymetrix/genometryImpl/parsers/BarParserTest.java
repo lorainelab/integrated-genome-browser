@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -169,7 +169,7 @@ public class BarParserTest {
 			String filename = "test/data/bar/small.bar";
 			SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test_group");
-			SmartAnnotBioSeq aseq = seq_group.addSeq("chr15_random",1881177);
+			BioSeq aseq = seq_group.addSeq("chr15_random",1881177);
 			GraphSymFloat gr0 = BarParser.getSlice(filename,gmodel,new SimpleSeqSpan(1880135,1880205,aseq));
 		  assertEquals("chr15_random", gr0.getGraphSeq().getID());
 		  assertEquals(2, gr0.getPointCount());

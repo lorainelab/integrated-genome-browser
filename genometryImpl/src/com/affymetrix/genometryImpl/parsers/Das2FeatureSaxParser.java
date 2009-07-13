@@ -24,7 +24,7 @@ import org.xml.sax.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -551,7 +551,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				SeqSpan span = feat_locs.get(i);
 				MutableAnnotatedBioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
-				MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a SmartAnnotBioSeq
+				MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
 				if ((aseq != null) && (seq == aseq)) {
 					result_syms.add(featsym);
 					if (add_to_sym_hash) {
@@ -700,8 +700,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			pw.println("    xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 			if (getBaseURI() != null) {
 				String genome_id = "";
-				if (seq instanceof SmartAnnotBioSeq) {
-					genome_id = ((SmartAnnotBioSeq) seq).getSeqGroup().getID();
+				if (seq instanceof BioSeq) {
+					genome_id = ((BioSeq) seq).getSeqGroup().getID();
 				}
 				String xbase = getBaseURI().toString() + genome_id + "/";
 				//	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
@@ -739,7 +739,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		//	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		String feat_name = null;
 		if (feat_type == null) {
-			feat_type = SmartAnnotBioSeq.determineMethod(annot);
+			feat_type = BioSeq.determineMethod(annot);
 		}
 		String feat_id = getChildID(annot, parent_id, parent_index);
 		String feat_title = null;
@@ -969,7 +969,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		MutableAnnotatedBioSeq seq;
 		// need to revisit what to do if group == null
 		if (group == null) {
-			seq = new SmartAnnotBioSeq(seqid, "", max);
+			seq = new BioSeq(seqid, "", max);
 		} else {
 			if (ADD_NEW_SEQS_TO_GROUP) {
 				// this will both create the seq and stretch its length if necessary.
@@ -977,7 +977,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			} else {
 				seq = group.getSeq(seqid);
 				if (seq == null) {
-					seq = new SmartAnnotBioSeq(seqid, "", max);
+					seq = new BioSeq(seqid, "", max);
 				}
 			}
 		}

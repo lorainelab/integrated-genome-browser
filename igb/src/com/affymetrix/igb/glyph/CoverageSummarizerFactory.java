@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.tiers.*;
@@ -63,7 +63,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
   public void createGlyph(SeqSymmetry sym, SeqMapView gviewer) {
     //SeqSpan span = sym.getSpan(0);
 
-    String meth = SmartAnnotBioSeq.determineMethod(sym);
+    String meth = BioSeq.determineMethod(sym);
     IAnnotStyleExtended annot_style = AnnotStyle.getInstance(meth , false);
 
     if (meth != null) {

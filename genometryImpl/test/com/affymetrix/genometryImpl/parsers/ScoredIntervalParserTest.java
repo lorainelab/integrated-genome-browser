@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser.SinEntry;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.io.BufferedInputStream;
@@ -105,7 +105,7 @@ public class ScoredIntervalParserTest {
 		ScoredIntervalParser tester = new ScoredIntervalParser();
 		tester.parse(istr, stream_name, seq_group);
 		assertEquals(1, seq_group.getSeqCount());
-		SmartAnnotBioSeq aseq = seq_group.getSeq(0);
+		BioSeq aseq = seq_group.getSeq(0);
 		assertEquals("chr1",aseq.getID());		
 	  ScoredContainerSym symI = (ScoredContainerSym) aseq.getAnnotation(0);
 		assertEquals("chr1.1",symI.getID());

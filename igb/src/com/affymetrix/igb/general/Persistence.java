@@ -6,7 +6,7 @@ import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -33,8 +33,8 @@ public final class Persistence {
 	 */
 	public static void saveCurrentView(SeqMapView gviewer) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (gmodel.getSelectedSeq() instanceof SmartAnnotBioSeq) {
-			SmartAnnotBioSeq seq = (SmartAnnotBioSeq) gmodel.getSelectedSeq();
+		if (gmodel.getSelectedSeq() instanceof BioSeq) {
+			BioSeq seq = (BioSeq) gmodel.getSelectedSeq();
 			saveGroupSelection(group);
 			saveSeqSelection(seq);
 			saveSeqVisibleSpan(gviewer);
@@ -75,7 +75,7 @@ public final class Persistence {
 	 *  Using Preferences node: [igb_root_pref]/genomes/[group_id], {SELECTED_SEQ_PREF ==> seq_id }
 	 *  Using UnibrowPrefUtils to convert node names if they are too long
 	 */
-	public static void saveSeqSelection(SmartAnnotBioSeq seq) {
+	public static void saveSeqSelection(BioSeq seq) {
 		if (seq == null) {
 			return;
 		}
@@ -92,7 +92,7 @@ public final class Persistence {
 	 * @param group
 	 * @return
 	 */
-	public static SmartAnnotBioSeq restoreSeqSelection(AnnotatedSeqGroup group) {
+	public static BioSeq restoreSeqSelection(AnnotatedSeqGroup group) {
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);
 		//  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy
@@ -101,7 +101,7 @@ public final class Persistence {
 			return null;
 		}
 		
-		SmartAnnotBioSeq seq = group.getSeq(seq_id);
+		BioSeq seq = group.getSeq(seq_id);
 		if (DEBUG) {
 		System.out.println("Persistence: seq_id is "+ seq_id + ". seq is " + seq);
 		}
@@ -127,8 +127,8 @@ public final class Persistence {
 		SeqSpan visible_span = gviewer.getVisibleSpan();
 		if (visible_span != null) {
 			MutableAnnotatedBioSeq seq = visible_span.getBioSeq();
-			if (seq instanceof SmartAnnotBioSeq) {
-				AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
+			if (seq instanceof BioSeq) {
+				AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
 				Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 				Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
 				Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
@@ -145,11 +145,11 @@ public final class Persistence {
 	 */
 	public static SeqSpan restoreSeqVisibleSpan(SeqMapView gviewer) {
 		MutableAnnotatedBioSeq seq = gviewer.getViewSeq();
-		if (!(seq instanceof SmartAnnotBioSeq)) {
+		if (!(seq instanceof BioSeq)) {
 			return null;
 		}
 
-		AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
+		AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
 		Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");

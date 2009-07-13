@@ -38,8 +38,8 @@ public class AnnotatedSeqGroup {
 	private String source; //as in Das2 server name
 	final private List<GenericVersion> gVersions = new ArrayList<GenericVersion>();
 	private boolean use_synonyms;
-	final private Map<String, SmartAnnotBioSeq> id2seq;
-	private ArrayList<SmartAnnotBioSeq> seqlist; //lazy copy of id2seq.values()
+	final private Map<String, BioSeq> id2seq;
+	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,ArrayList<SeqSymmetry>> id2sym_hash;
 	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
@@ -52,9 +52,9 @@ public class AnnotatedSeqGroup {
 	public AnnotatedSeqGroup(String gid) {
 		id = gid;
 		use_synonyms = true;
-		id2seq = Collections.<String, SmartAnnotBioSeq>synchronizedMap(new LinkedHashMap<String, SmartAnnotBioSeq>());
+		id2seq = Collections.<String, BioSeq>synchronizedMap(new LinkedHashMap<String, BioSeq>());
 		id2seq_dirty_bit = false;
-		seqlist = new ArrayList<SmartAnnotBioSeq>();
+		seqlist = new ArrayList<BioSeq>();
 		id2sym_hash = new TreeMap<String,ArrayList<SeqSymmetry>>();
 	}
 
@@ -127,17 +127,17 @@ public class AnnotatedSeqGroup {
 	}
 
 	/**
-	 *  Returns a List of SmartAnnotBioSeq objects.
+	 *  Returns a List of BioSeq objects.
 	 *  Will not return null.  The list is in the same order as in
 	 *  {@link #getSeq(int)}.
 	 */
-	public List<SmartAnnotBioSeq> getSeqList() {
+	public List<BioSeq> getSeqList() {
 		if (id2seq_dirty_bit) {
 			// lazily keep the seqlist up-to-date
-			seqlist = new ArrayList<SmartAnnotBioSeq>(id2seq.values());
+			seqlist = new ArrayList<BioSeq>(id2seq.values());
 			id2seq_dirty_bit = false;
 		}
-		return Collections.<SmartAnnotBioSeq>unmodifiableList(seqlist);
+		return Collections.<BioSeq>unmodifiableList(seqlist);
 	}
 
 	/**
@@ -149,16 +149,16 @@ public class AnnotatedSeqGroup {
 	   Iterator iter = seq_list.iterator();
 	   while (iter.hasNext()) {
 	   MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
-	   if (seq instanceof SmartAnnotBioSeq) {
-	   ((SmartAnnotBioSeq) seq).removeType(type.toLowerCase());
+	   if (seq instanceof BioSeq) {
+	   ((BioSeq) seq).removeType(type.toLowerCase());
 	   }
 	   }
 	   }*/
 	/**
 	 *  Returns the sequence at the given position in the sequence list.
 	 */
-	public SmartAnnotBioSeq getSeq(int index) {
-		final List<SmartAnnotBioSeq> seq_list = getSeqList();
+	public BioSeq getSeq(int index) {
+		final List<BioSeq> seq_list = getSeqList();
 		if (index < seq_list.size()) {
 			return seq_list.get(index);
 		}
@@ -184,11 +184,11 @@ public class AnnotatedSeqGroup {
 	/** Gets a sequence based on its name, possibly taking synonyms into account.
 	 *  See {@link #setUseSynonyms(boolean)}.
 	 *
-	 * @param synonym the string identifier of the requested SmartAnnotBioSeq
-	 * @return a SmartAnnotBioSeq for the give synonym or null
+	 * @param synonym the string identifier of the requested BioSeq
+	 * @return a BioSeq for the give synonym or null
 	 */
-	public SmartAnnotBioSeq getSeq(String synonym) {
-		SmartAnnotBioSeq aseq = id2seq.get(synonym);
+	public BioSeq getSeq(String synonym) {
+		BioSeq aseq = id2seq.get(synonym);
 		if (use_synonyms && aseq == null) {
 			/*
 			 * Try and find a synonym.
@@ -216,13 +216,13 @@ public class AnnotatedSeqGroup {
 	 *    or null if none is found.
 	 * PRECONDITION: sym != null.
 	 */
-	public SmartAnnotBioSeq getSeq(SeqSymmetry sym) {
+	public BioSeq getSeq(SeqSymmetry sym) {
 		final int spancount = sym.getSpanCount();
 		for (int i = 0; i < spancount; i++) {
 			SeqSpan span = sym.getSpan(i);
 			MutableAnnotatedBioSeq seq1 = span.getBioSeq();
 			String seqid = seq1.getID();
-			SmartAnnotBioSeq seq2 = id2seq.get(seqid);
+			BioSeq seq2 = id2seq.get(seqid);
 			if ((seq2 != null) && (seq1 == seq2)) {
 				return seq2;
 			}
@@ -235,31 +235,31 @@ public class AnnotatedSeqGroup {
 	}
 
 	/**
-	 *  Returns the SmartAnnotBioSeq with the given id (or synonym), creating it if necessary,
+	 *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
 	 *  and increasing its length to the given value if necessary.
 	 */
-	public SmartAnnotBioSeq addSeq(String seqid, int length) {
+	public BioSeq addSeq(String seqid, int length) {
 		if (seqid == null) {
 			throw new NullPointerException();
 		}
 
-		SmartAnnotBioSeq aseq = getSeq(seqid);
+		BioSeq aseq = getSeq(seqid);
 		if (aseq != null) {
 			if (aseq.getLength() < length) {
 				aseq.setLength(length);
 			}
 		} else {
-			aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
+			aseq = new BioSeq(seqid, this.getID(), length);
 			this.addSeq(aseq);
 		}
 		return aseq;
 	}
 
 	/**
-	 * Adds the SmartAnnotBioSeq to the group.
+	 * Adds the BioSeq to the group.
 	 */
-	final public void addSeq(SmartAnnotBioSeq seq) {
-		final SmartAnnotBioSeq oldseq = id2seq.get(seq.getID());
+	final public void addSeq(BioSeq seq) {
+		final BioSeq oldseq = id2seq.get(seq.getID());
 		if (oldseq == null) {
 			id2seq_dirty_bit = true;
 			id2seq.put(seq.getID(), seq);
@@ -407,7 +407,7 @@ public class AnnotatedSeqGroup {
 	 */
 	final public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
 		String result = id;
-		for (SmartAnnotBioSeq seq : seq_group.getSeqList()) {
+		for (BioSeq seq : seq_group.getSeqList()) {
 			result = getUniqueGraphID(result, seq);
 		}
 		return result;
@@ -423,13 +423,13 @@ public class AnnotatedSeqGroup {
 		if (id == null) {
 			return null;
 		}
-		if (!(seq instanceof SmartAnnotBioSeq) && !(seq instanceof MutableAnnotatedBioSeq)) {
-			// if not a SmartAnnotBioSeq or MutableAnnotatedBioSeq, just return original ID for now.
+		if (!(seq instanceof BioSeq) && !(seq instanceof MutableAnnotatedBioSeq)) {
+			// if not a BioSeq or MutableAnnotatedBioSeq, just return original ID for now.
 			return id;
 		}
 
-		if (seq instanceof SmartAnnotBioSeq) {
-			final SmartAnnotBioSeq sab = (SmartAnnotBioSeq) seq;
+		if (seq instanceof BioSeq) {
+			final BioSeq sab = (BioSeq) seq;
 			int prevcount = 0;
 			String newid = id;
 			while (sab.getAnnotation(newid) != null) {

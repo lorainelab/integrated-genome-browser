@@ -19,7 +19,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
@@ -383,7 +383,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 			SeqSymmetry tcluster_exemplar = null;
 			if (seqs.size() > 0) {
-				SmartAnnotBioSeq aseq = group.getSeq(0);
+				BioSeq aseq = group.getSeq(0);
 				SymWithProps typesym = aseq.getAnnotation(annot_type);
 				SeqSymmetry container = typesym.getChild(0);
 				tcluster_exemplar = container.getChild(0);
@@ -392,7 +392,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			writeEadHeader(tcluster_exemplar, annot_type, seqs, dos);
 
 			for (int i=0; i<scount; i++) {
-				SmartAnnotBioSeq aseq = group.getSeq(i);
+				BioSeq aseq = group.getSeq(i);
 				SymWithProps typesym = aseq.getAnnotation(annot_type);
 				// transcript clusters should be third level down in hierarchy:
 				//    1) type container
@@ -428,7 +428,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 */
 	protected void writeEadHeader(SeqSymmetry tcluster_exemplar, String annot_type, List seqs, DataOutputStream dos) throws IOException {
 		// extract example EfficientProbesetSymA from an annotated seq in group
-		SmartAnnotBioSeq seq0 = (SmartAnnotBioSeq)seqs.get(0);
+		BioSeq seq0 = (BioSeq)seqs.get(0);
 		AnnotatedSeqGroup group = seq0.getSeqGroup();
 		/*
 		   String transcript_cluster_prefix = (String)typesym.getProperty("transcript_cluster_prefix");
@@ -683,7 +683,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				gfiles.add(gff_file);
 			}
 			int printcount = 0;
-			HashMap<SmartAnnotBioSeq,SimpleSymWithProps> seq2container = new HashMap<SmartAnnotBioSeq,SimpleSymWithProps>();
+			HashMap<BioSeq,SimpleSymWithProps> seq2container = new HashMap<BioSeq,SimpleSymWithProps>();
 			HashMap<MutableAnnotatedBioSeq,SharedProbesetInfo> seq2info = new HashMap<MutableAnnotatedBioSeq,SharedProbesetInfo>();
 
 			for (File gfile : gfiles) {
@@ -709,7 +709,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				for (int tindex=0; tindex < tcount; tindex++) {
 					SymWithProps tcluster = (SymWithProps)annots.get(tindex);
 					SeqSpan tspan = tcluster.getSpan(0);
-					SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) tspan.getBioSeq();
+					BioSeq aseq = (BioSeq) tspan.getBioSeq();
 
 					SharedProbesetInfo shared_info = seq2info.get(aseq);
 					if (shared_info == null) {
@@ -801,8 +801,8 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			}
 			System.gc();
 
-			for (Map.Entry<SmartAnnotBioSeq,SimpleSymWithProps> ent : seq2container.entrySet()) {
-				SmartAnnotBioSeq aseq = ent.getKey();
+			for (Map.Entry<BioSeq,SimpleSymWithProps> ent : seq2container.entrySet()) {
+				BioSeq aseq = ent.getKey();
 				SeqSymmetry container = ent.getValue();
 				aseq.addAnnotation(container, annot_type);
 			}

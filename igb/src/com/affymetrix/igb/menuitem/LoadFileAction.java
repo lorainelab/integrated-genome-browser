@@ -31,7 +31,7 @@ import javax.swing.*;
 import org.xml.sax.InputSource;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
 import com.affymetrix.genometryImpl.parsers.gchp.ChromLoadPolicy;
@@ -456,7 +456,7 @@ public final class LoadFileAction {
 			parser.parse(str, annot_type, selected_group);
 			return input_seq;
 		} else if (lcname.endsWith(".fa") || lcname.endsWith(".fas") || lcname.endsWith(".fasta")) {
-			List<SmartAnnotBioSeq> seqs = FastaParser.parseAll(str, selected_group);
+			List<BioSeq> seqs = FastaParser.parseAll(str, selected_group);
 			if (input_seq != null && seqs.contains(input_seq)) {
 				return input_seq;
 			} else if (!seqs.isEmpty()) {
@@ -465,8 +465,8 @@ public final class LoadFileAction {
 				return null;
 			}
 		} else if (lcname.endsWith(".bnib")) {
-			if (input_seq == null || input_seq instanceof SmartAnnotBioSeq) {
-				SmartAnnotBioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+			if (input_seq == null || input_seq instanceof BioSeq) {
+				BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
 				if (aseq != gmodel.getSelectedSeq()) {
 					//TODO: maybe set the current seq to this seq
 					Application.getSingleton().logWarning("This is not the currently-selected sequence.");

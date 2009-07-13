@@ -239,7 +239,7 @@ public class BedParserTest {
 
 			// Now we have read the data into "syms", so let's try writing it.
 
-			SmartAnnotBioSeq seq = group.getSeq("chr2L");
+			BioSeq seq = group.getSeq("chr2L");
 			String type = "test_type";
 			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 
@@ -278,7 +278,7 @@ public class BedParserTest {
 
 			// Now we have read the data into "syms", so let's try writing it.
 
-			SmartAnnotBioSeq seq = group.getSeq("chr1");
+			BioSeq seq = group.getSeq("chr1");
 			String type = "test_type";
 			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 

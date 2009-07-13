@@ -6,7 +6,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.parsers.FastaParser;
 import com.affymetrix.genometryImpl.parsers.NibbleResiduesParser;
@@ -36,7 +36,7 @@ public final class ResidueLoading {
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
 	public static boolean getResidues(
-					Set<GenericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, SmartAnnotBioSeq aseq, SeqSpan span) {
+					Set<GenericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
 
 		boolean partial_load = (min > 0 || max < aseq.getLength());	// Are we only asking for part of the sequence?
 		
@@ -306,7 +306,7 @@ public final class ResidueLoading {
 		 * Add residues to composition (full sequence loaded).
 		 * @param aseq
 		 */
-		private static void AddResiduesToComposition(SmartAnnotBioSeq aseq) {
+		private static void AddResiduesToComposition(BioSeq aseq) {
 			if (aseq.getResiduesProvider() != null) {
 				SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
 				AddResiduesToComposition(aseq, span);
@@ -317,8 +317,8 @@ public final class ResidueLoading {
 			AddResiduesToComposition(aseq, residues, span);
 		}
 		
-		private static void AddResiduesToComposition(SmartAnnotBioSeq aseq, SeqSpan span) {
-			SmartAnnotBioSeq subseq = new SmartAnnotBioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
+		private static void AddResiduesToComposition(BioSeq aseq, SeqSpan span) {
+			BioSeq subseq = new BioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
 
         SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);
         SeqSpan span2 = span;
@@ -351,8 +351,8 @@ public final class ResidueLoading {
 		 * @param residues
 		 * @param span
 		 */
-    private static void AddResiduesToComposition(SmartAnnotBioSeq aseq, String residues, SeqSpan span) {
-        SmartAnnotBioSeq subseq = new SmartAnnotBioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
+    private static void AddResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
+        BioSeq subseq = new BioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
 				subseq.setResidues(residues);
 
         SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);

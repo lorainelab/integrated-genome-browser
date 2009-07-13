@@ -19,7 +19,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -136,8 +136,8 @@ public final class BarParser implements AnnotationWriter  {
 
 		//    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
 		AnnotatedSeqGroup seq_group;
-		if (aseq instanceof SmartAnnotBioSeq) {
-			seq_group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
+		if (aseq instanceof BioSeq) {
+			seq_group = ((BioSeq)aseq).getSeqGroup();
 		}
 		else {
 			seq_group = gmodel.getSelectedSeqGroup();
@@ -481,7 +481,7 @@ CHUNK_LOOP:
 				int total_points = seq_header.data_point_count;
 				Map<String,String> seq_tagvals = seq_header.tagvals;
 				//      MutableAnnotatedBioSeq seq = seq_header.aseq;
-				SmartAnnotBioSeq seq = (SmartAnnotBioSeq)seq_header.aseq;
+				BioSeq seq = (BioSeq)seq_header.aseq;
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
 				}
@@ -762,7 +762,7 @@ CHUNK_LOOP:
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 			//TODO: Convert this to the standard way of getting synomous sequences,
 			// but we may have to check for extra bar-specific synonyms involving seq group and version
-			for (SmartAnnotBioSeq testseq : seq_group.getSeqList()) {
+			for (BioSeq testseq : seq_group.getSeqList()) {
 				// testing both seq id and version id (if version id is available)
 				if (lookup.isSynonym(testseq.getID(), seqname)) {
 					// GAH 1-23-2005
@@ -868,8 +868,8 @@ CHUNK_LOOP:
 		// should check to make sure seq is same as graf.getGraphSeq()??
 
 		AnnotatedSeqGroup group = null;
-		if (seq instanceof SmartAnnotBioSeq) {
-			group = ((SmartAnnotBioSeq)seq).getSeqGroup();
+		if (seq instanceof BioSeq) {
+			group = ((BioSeq)seq).getSeqGroup();
 		}
 		String groupid = group.getID();
 		String version = groupid;

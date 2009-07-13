@@ -20,7 +20,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -212,11 +212,11 @@ public final class RestrictionControlView extends JComponent
 		}
 		int residue_offset = 0;
 		String residues = null;
-		SmartAnnotBioSeq nibseq = null;
-		boolean use_nibseq = (vseq instanceof SmartAnnotBioSeq);
+		BioSeq nibseq = null;
+		boolean use_nibseq = (vseq instanceof BioSeq);
 		if (use_nibseq) {
-			nibseq = (SmartAnnotBioSeq) vseq;
-			residue_offset = ((SmartAnnotBioSeq) vseq).getMin();
+			nibseq = (BioSeq) vseq;
+			residue_offset = ((BioSeq) vseq).getMin();
 		} else {
 			residues = vseq.getResidues();
 		}

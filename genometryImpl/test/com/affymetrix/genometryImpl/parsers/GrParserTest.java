@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 
 import com.affymetrix.genometryImpl.GraphSymFloat;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 
@@ -27,7 +27,7 @@ public class GrParserTest {
 		String stream_name = "test_file";
 		boolean ensure_unique_id = true;
 
-		SmartAnnotBioSeq aseq = group.addSeq(stream_name, 1000);
+		BioSeq aseq = group.addSeq(stream_name, 1000);
 
 		GraphSymFloat gr0 = GrParser.parse(istr, aseq, filename, ensure_unique_id);
 
@@ -54,7 +54,7 @@ public class GrParserTest {
 		boolean ensure_unique_id = true;
 
 
-		SmartAnnotBioSeq aseq = group.addSeq(stream_name, 1000);
+		BioSeq aseq = group.addSeq(stream_name, 1000);
 
 
 		GraphSymFloat gr0 = GrParser.parse(istr, aseq, stream_name, ensure_unique_id);

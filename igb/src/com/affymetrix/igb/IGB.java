@@ -40,7 +40,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -1283,8 +1283,8 @@ public final class IGB extends Application
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
-		if ((prev_selected_group != selected_group) && (prev_selected_seq instanceof SmartAnnotBioSeq)) {
-			Persistence.saveSeqSelection((SmartAnnotBioSeq) prev_selected_seq);
+		if ((prev_selected_group != selected_group) && (prev_selected_seq instanceof BioSeq)) {
+			Persistence.saveSeqSelection((BioSeq) prev_selected_seq);
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_group = selected_group;

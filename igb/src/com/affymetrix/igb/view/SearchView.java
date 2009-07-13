@@ -19,7 +19,7 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
@@ -104,7 +104,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (group != null) {
 			sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID);	// put this at top of list
-			for (SmartAnnotBioSeq seq : group.getSeqList()) {
+			for (BioSeq seq : group.getSeqList()) {
 				if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 					continue;
 				}
@@ -190,11 +190,11 @@ System.out.println("Action: " + evt.toString());
 				Application.errorPanel("Residues for seq not available, search aborted");
 				return;
 			}
-			int residue_offset = ((SmartAnnotBioSeq) vseq).getMin();
+			int residue_offset = ((BioSeq) vseq).getMin();
 
 			TransformTierGlyph axis_tier = gviewer.getAxisTier();
 			GlyphI seq_glyph = findSeqGlyph(axis_tier);
-			regexTF(tim, (SmartAnnotBioSeq)vseq, residue_offset, seq_glyph, axis_tier, map);
+			regexTF(tim, (BioSeq)vseq, residue_offset, seq_glyph, axis_tier, map);
 			}
 		}
 		/*if (src == idsearchTF) {
@@ -218,7 +218,7 @@ System.out.println("Action: " + evt.toString());
 		return null;
 	}
 
-	private final void regexTF(Timer tim,SmartAnnotBioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
+	private final void regexTF(Timer tim,BioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
 		if (searchTF.getText().length() == 0) {
 			hitCountL.setText(" No hits");
 			return;

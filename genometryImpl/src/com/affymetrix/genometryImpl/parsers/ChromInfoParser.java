@@ -18,11 +18,11 @@ import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 public final class ChromInfoParser {
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	//static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
+	//static MutableAnnotatedBioSeq default_seq_template = new BioSeq();
 
 	//MutableAnnotatedBioSeq template_seq = default_seq_template;
 
@@ -50,7 +50,7 @@ public final class ChromInfoParser {
 			String chrom_name = fields[0];
 
 			int chrLength = Integer.parseInt(fields[1]);
-			SmartAnnotBioSeq chrom = seq_group.getSeq(chrom_name);
+			BioSeq chrom = seq_group.getSeq(chrom_name);
 			if (chrom == null) {  // if chrom already in seq group, then don't add to list
 				chrom = seq_group.addSeq(chrom_name, chrLength);
 				chrom.setVersion(genome_version);

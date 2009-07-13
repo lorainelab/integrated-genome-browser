@@ -30,7 +30,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 
 /**
@@ -749,8 +749,8 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		int start = qspan.getMin();
 		int stop = qspan.getMax();
 		String version = "unknown";
-		if (aseq instanceof SmartAnnotBioSeq) {
-			version = ((SmartAnnotBioSeq) aseq).getVersion();
+		if (aseq instanceof BioSeq) {
+			version = ((BioSeq) aseq).getVersion();
 		}
 		pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
 		pw.println("<DASGFF>");
@@ -774,7 +774,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 	private static void writeDasFeature(SeqSymmetry annot, MutableAnnotatedBioSeq aseq, String feat_type, PrintWriter pw) {
 		if (feat_type == null) {
-			feat_type = SmartAnnotBioSeq.determineMethod(annot);
+			feat_type = BioSeq.determineMethod(annot);
 		}
 		String group_id = "unknown";
 		if (annot instanceof SymWithProps) {

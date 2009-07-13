@@ -56,7 +56,7 @@ public final class LazyChpSym extends ScoredContainerSym {
   // public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
 
   //  static Map genome2chp;
-  SmartAnnotBioSeq aseq;
+  BioSeq aseq;
 
   /**
    *  map of probeset integer IDs to probeset result data, for probesets whose name/id can be
@@ -107,7 +107,7 @@ public final class LazyChpSym extends ScoredContainerSym {
   /**
    *  Assumes entries_with_int_id is already sorted by int id
    */
-  public LazyChpSym(SmartAnnotBioSeq seq, String array_type, Map id2data, Map name2data, List entries_with_int_id) {
+  public LazyChpSym(BioSeq seq, String array_type, Map id2data, Map name2data, List entries_with_int_id) {
     this.aseq = seq;
     this.chp_array_type = array_type;
     this.probeset_id2data = id2data;

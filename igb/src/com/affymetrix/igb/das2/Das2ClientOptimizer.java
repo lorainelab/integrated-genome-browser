@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -85,7 +85,7 @@ public final class Das2ClientOptimizer {
 
     // input is a single Das2FeatureRequestSym
     // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input request,
-    //    based on current state of SingletonGenometryModel/AnnotatedSeqGroup/SmartAnnotBioSeq
+    //    based on current state of SingletonGenometryModel/AnnotatedSeqGroup/BioSeq
     //    annotations --
     //    Could this strategy handle persistent caching??   Would need to redirect to
     //      file:// URLs on disk, but how to deal with proper setting of headers???
@@ -111,7 +111,7 @@ public final class Das2ClientOptimizer {
         //int omax = overlap_span.getMax();
         SeqSymmetry split_query = null;
 
-        if (!(seq instanceof SmartAnnotBioSeq)) {
+        if (!(seq instanceof BioSeq)) {
             System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is NOT a SmartAnnotBioSeq!");
             output_requests.add(request_sym);
         } else {
@@ -147,9 +147,9 @@ public final class Das2ClientOptimizer {
 
     private static SeqSymmetry OptimizeDas2Query(MutableAnnotatedBioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
         SeqSymmetry split_query = null;
-        SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) seq;
+        BioSeq aseq = (BioSeq) seq;
         MutableSeqSymmetry cont_sym;
-        // this should work even for graphs, now that graphs are added to SmartAnnotBioSeq's type hash (with id as type)
+        // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
         cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
         // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
         if (cont_sym == null && typeid.endsWith(".bar")) {
@@ -192,7 +192,7 @@ public final class Das2ClientOptimizer {
     }
 
 
-    private static SeqSymmetry SplitQuery(ArrayList<SeqSymmetry> qnewlist, ArrayList<SeqSymmetry> qoldlist, SmartAnnotBioSeq aseq, SeqSymmetry split_query, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
+    private static SeqSymmetry SplitQuery(ArrayList<SeqSymmetry> qnewlist, ArrayList<SeqSymmetry> qoldlist, BioSeq aseq, SeqSymmetry split_query, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
         split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list
@@ -244,7 +244,7 @@ public final class Das2ClientOptimizer {
 
 
     private static void splitIntoSubSpans(
-            SeqSymmetry split_query, SmartAnnotBioSeq aseq, int first_within_min, int last_within_max, Das2RequestLog request_log, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests, String typeid) {
+            SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2RequestLog request_log, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests, String typeid) {
         int split_count = split_query.getChildCount();
         int cur_within_min;
         int cur_within_max;
@@ -621,10 +621,10 @@ public final class Das2ClientOptimizer {
         Das2RequestLog request_log = request_sym.getLog();
 
         System.out.println("adding a child GraphSym to parent graph");
-        SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) cgraf.getGraphSeq();
+        BioSeq aseq = (BioSeq) cgraf.getGraphSeq();
         // check and see if parent graph already exists
-        //    String id = cgraf.getGraphName();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
-        //    String id = cgraf.getID();  // grafs can be retrieved from SmartAnnotBioSeq by treating their ID as type
+        //    String id = cgraf.getGraphName();  // grafs can be retrieved from BioSeq by treating their ID as type
+        //    String id = cgraf.getID();  // grafs can be retrieved from BioSeq by treating their ID as type
         Das2Type type = request_sym.getDas2Type();
         String id = type.getID();
         String name = type.getName();

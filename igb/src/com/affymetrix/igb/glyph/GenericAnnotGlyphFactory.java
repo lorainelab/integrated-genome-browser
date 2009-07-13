@@ -108,7 +108,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       System.out.println("called GenericAnnotGlyphFactory.createGlyph(sym,smv), " +
 			 "annotated_seq = " + aseq.getID() + ", view_seq = " + vseq.getID() + ", " + (aseq == vseq));
       if (aseq != vseq) {
-	SeqSymmetry comp = ((SmartAnnotBioSeq)vseq).getComposition();
+	SeqSymmetry comp = ((BioSeq)vseq).getComposition();
 	SeqUtils.printSymmetry(comp);
       }
     }
@@ -126,7 +126,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     }
 	 */
 
-    String meth = SmartAnnotBioSeq.determineMethod(sym);
+    String meth = BioSeq.determineMethod(sym);
 
     if (meth != null) {
       IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(meth);

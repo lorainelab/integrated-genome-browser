@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.List;
 
@@ -58,12 +58,12 @@ public class FastaParserTest {
 
 			//FastaParser instance = new FastaParser();
 
-			List<SmartAnnotBioSeq> seqs = FastaParser.parseAll(istr_1, seq_group);
+			List<BioSeq> seqs = FastaParser.parseAll(istr_1, seq_group);
 
 			assertEquals(1, seqs.size());
 			assertEquals(1, seq_group.getSeqCount());
 
-			SmartAnnotBioSeq seq = seqs.get(0);
+			BioSeq seq = seqs.get(0);
 			assertEquals("chrQ", seq.getID());
 
 			seqs = FastaParser.parseAll(istr_2, seq_group);
@@ -90,7 +90,7 @@ public class FastaParserTest {
 			InputStream istr = new FileInputStream(filename);
 			assertNotNull(istr);
 
-			SmartAnnotBioSeq result = FastaParser.parse(istr);
+			BioSeq result = FastaParser.parse(istr);
 
 			assertEquals("chrQ", result.getID());
 			assertEquals(33, result.getLength());

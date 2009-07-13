@@ -33,7 +33,7 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -61,7 +61,7 @@ public final class GeneralLoadView extends JComponent
 	private static final String GENOME_SEQ_ID = "genome";
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
 	private AnnotatedSeqGroup curGroup = null;
-	private SmartAnnotBioSeq curSeq = null;
+	private BioSeq curSeq = null;
 	private JComboBox kingdomCB;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
@@ -305,7 +305,7 @@ public final class GeneralLoadView extends JComponent
 		initVersion(versionName);
 
 		// Select the persistent chromosome, and restore the span.
-		SmartAnnotBioSeq seq = Persistence.restoreSeqSelection(group);
+		BioSeq seq = Persistence.restoreSeqSelection(group);
 		if (seq == null) {
 			seq = group.getSeq(0);
 		}
@@ -348,7 +348,7 @@ public final class GeneralLoadView extends JComponent
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 
 
-		final SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq)gmodel.getSelectedSeq();
+		final BioSeq curSeq = (BioSeq)gmodel.getSelectedSeq();
 		// Use a SwingWorker to avoid locking up the GUI.
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 
@@ -396,7 +396,7 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Visible load request span: " + request_span.getStart() + " " + request_span.getEnd());
 		}
 
-		SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq)gmodel.getSelectedSeq();
+		BioSeq curSeq = (BioSeq)gmodel.getSelectedSeq();
 
 		// Load any features that have a visible strategy and haven't already been loaded.
 		String genomeVersionName = (String) versionCB.getSelectedItem();
@@ -620,7 +620,7 @@ public final class GeneralLoadView extends JComponent
 	 * @param evt
 	 */
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		SmartAnnotBioSeq aseq = (SmartAnnotBioSeq) evt.getSelectedSeq();
+		BioSeq aseq = (BioSeq) evt.getSelectedSeq();
 
 		if (DEBUG_EVENTS) {
 			System.out.println("GeneralLoadView.seqSelectionChanged() called, aseq: " + (aseq == null ? null : aseq.getID()));
@@ -726,7 +726,7 @@ public final class GeneralLoadView extends JComponent
 	 */
 	void createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
-		SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq) gmodel.getSelectedSeq();
+		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
 		}
@@ -777,7 +777,7 @@ public final class GeneralLoadView extends JComponent
 	 * @param versionName
 	 */
 	private void loadWholeRangeFeatures(String versionName) {
-		SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq) gmodel.getSelectedSeq();
+		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
 		for (GenericFeature gFeature : this.glu.getFeatures(versionName)) {
 			if (gFeature.loadStrategy != LoadStrategy.WHOLE) {
 				continue;
@@ -813,7 +813,7 @@ public final class GeneralLoadView extends JComponent
 		// Don't allow buttons for a full genome sequence
 		boolean enabled = !IsGenomeSequence();
 		if (enabled) {
-			SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq) gmodel.getSelectedSeq();
+			BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
 			enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" versionName
 				List<GenericVersion> gVersions = curSeq.getSeqGroup().getVersions();
@@ -857,7 +857,7 @@ public final class GeneralLoadView extends JComponent
 
 	boolean IsGenomeSequence() {
 		// hardwiring names for genome and encode virtual seqs, need to generalize this
-		SmartAnnotBioSeq curSeq = (SmartAnnotBioSeq) gmodel.getSelectedSeq();
+		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
 		final String seqID = curSeq == null ? null : curSeq.getID();
 		return (seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID));
 	}

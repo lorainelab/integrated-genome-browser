@@ -15,7 +15,7 @@ package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.ArrayList;
@@ -140,13 +140,13 @@ public class MatchElement implements DrawableElement {
     }
     
     else if (MATCH_BY_EXACT_METHOD.equals(match_test)) {
-      if (match_param.equals( SmartAnnotBioSeq.determineMethod(sym) ))  {
+      if (match_param.equals( BioSeq.determineMethod(sym) ))  {
         result = true;
       }
     }
 
     else if (MATCH_BY_METHOD_REGEX.equals(match_test) && match_regex != null) {
-      if (match_regex.matcher(SmartAnnotBioSeq.determineMethod(sym)).matches())  {
+      if (match_regex.matcher(BioSeq.determineMethod(sym)).matches())  {
         result = true;
       }
     }

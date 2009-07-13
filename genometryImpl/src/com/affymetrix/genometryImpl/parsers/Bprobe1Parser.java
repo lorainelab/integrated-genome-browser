@@ -17,7 +17,7 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
@@ -222,14 +222,14 @@ public final class Bprobe1Parser implements AnnotationWriter {
 
 	/**
 	 *  Assumptions:
-	 *      seq is SmartAnnotBioSeq
+	 *      seq is BioSeq
 	 *      all syms in collection are EfficientProbesetSymA
 	 *      all syms share same probe_length, id_prefix
 	 */
 	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq aseq,
 			String type, OutputStream outstream) {
 		boolean success = false;
-		AnnotatedSeqGroup group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
+		AnnotatedSeqGroup group = ((BioSeq)aseq).getSeqGroup();
 		String groupid = group.getID();
 		//    String version = groupid;
 		String seqid = aseq.getID();

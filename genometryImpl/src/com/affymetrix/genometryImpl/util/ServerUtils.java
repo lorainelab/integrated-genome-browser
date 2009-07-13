@@ -9,7 +9,7 @@ import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -383,13 +383,13 @@ public abstract class ServerUtils {
 	/**
 		 *
 		 *  Currently assumes:
-		 *    query_span's seq is a SmartAnnotBioSeq (which implies top-level annots are TypeContainerAnnots)
+		 *    query_span's seq is a BioSeq (which implies top-level annots are TypeContainerAnnots)
 		 *    only one IntervalSearchSym child for each TypeContainerAnnot
 		 *  Should expand soon so results can be returned from multiple IntervalSearchSyms children
 		 *      of the TypeContainerAnnot
 		 */
 		public static final List<SeqSymmetry> getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
-			SmartAnnotBioSeq seq = (SmartAnnotBioSeq) query_span.getBioSeq();
+			BioSeq seq = (BioSeq) query_span.getBioSeq();
 			SymWithProps container = seq.getAnnotation(annot_type);
 			if (container != null) {
 				int annot_count = container.getChildCount();
@@ -447,9 +447,9 @@ public abstract class ServerUtils {
 	}
 
 	// iterate over seqs to collect annotation types
-	private static final Map<String,List<String>> getGenomeTypes(List<SmartAnnotBioSeq> seqList) {
+	private static final Map<String,List<String>> getGenomeTypes(List<BioSeq> seqList) {
 		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
-		for (SmartAnnotBioSeq aseq : seqList) {
+		for (BioSeq aseq : seqList) {
 			if (aseq.getTypeList() == null) {
 				continue;
 			}

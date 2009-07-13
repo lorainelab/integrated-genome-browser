@@ -1,7 +1,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -82,10 +82,10 @@ public final class DeletionGlyph extends SolidGlyph {
     boolean already_left_extended = false;
     // some sanity checks
     if (annotseq == coordseq)  { return; }
-    if (! (coordseq instanceof SmartAnnotBioSeq)) { return; }
+    if (! (coordseq instanceof BioSeq)) { return; }
 
     // symmetry representing composition of view seq from slices of annnoted seqs
-    SeqSymmetry viewsym = ((SmartAnnotBioSeq)coordseq).getComposition(); 
+    SeqSymmetry viewsym = ((BioSeq)coordseq).getComposition();
     SeqSpan viewedges = viewsym.getSpan(annotseq);
 
     for (SeqSymmetry child : outside_children)  {  

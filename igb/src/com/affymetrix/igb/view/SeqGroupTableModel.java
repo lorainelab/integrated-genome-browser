@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import javax.swing.table.AbstractTableModel;
 
 final class SeqGroupTableModel extends AbstractTableModel {
@@ -22,7 +22,7 @@ final class SeqGroupTableModel extends AbstractTableModel {
 
 	public Object getValueAt(int row, int col) {
 		if (group != null) {
-			SmartAnnotBioSeq seq = group.getSeq(row);
+			BioSeq seq = group.getSeq(row);
 			if (col == 0) {
 				return seq.getID();
 			} else if (col == 1) {

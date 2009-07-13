@@ -26,7 +26,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Optimize;
@@ -895,7 +895,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println("    " + URID + "=\"" + segments_uri + "\" >");
 
 
-		for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
+		for (BioSeq aseq : genome.getSeqList()) {
 			String refatt = "";
 			if (coords != null) {
 				// GAH 11-2006
@@ -1365,7 +1365,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		private final void handleGraphRequest(Map<String,Class> output_registry, String xbase, HttpServletResponse response,
 				String type, SeqSpan span) {
 			System.out.println("#### handling graph request");
-			SmartAnnotBioSeq seq = (SmartAnnotBioSeq) span.getBioSeq();
+			BioSeq seq = (BioSeq) span.getBioSeq();
 			String seqid = seq.getID();
 			AnnotatedSeqGroup genome = seq.getSeqGroup();
 			System.out.println("#### type: " + type + ", genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));

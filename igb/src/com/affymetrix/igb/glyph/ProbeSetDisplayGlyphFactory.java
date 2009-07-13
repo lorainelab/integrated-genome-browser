@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -106,7 +106,7 @@ the probeset, probe and pieces of probes
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    String meth = SmartAnnotBioSeq.determineMethod(sym);
+    String meth = BioSeq.determineMethod(sym);
 	//					SeqMapView.determineMethod(sym);
     if (meth == null) {
       meth = "unknown";
@@ -357,7 +357,7 @@ the probeset, probe and pieces of probes
         return;
       }
     }
-    String meth = SmartAnnotBioSeq.determineMethod(probeset);
+    String meth = BioSeq.determineMethod(probeset);
     DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
     SeqUtils.transformSymmetry(probeset_sym, consensus_sym);
     // Note that the transformation generates a probeset_sym of depth 3
@@ -508,7 +508,7 @@ the probeset, probe and pieces of probes
  //       }
  //     }
 
-      String meth = SmartAnnotBioSeq.determineMethod(probeset_sym.getOriginalSymmetry());
+      String meth = BioSeq.determineMethod(probeset_sym.getOriginalSymmetry());
       if (meth==null) {meth = "unknown";}
       TierGlyph[] tiers = gviewer.getTiers(meth, false, null);
       if (span.isForward()) {

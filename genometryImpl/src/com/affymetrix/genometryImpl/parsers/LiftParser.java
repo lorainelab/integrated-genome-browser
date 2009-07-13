@@ -24,7 +24,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
@@ -39,7 +39,7 @@ public final class LiftParser {
 	private static final int CHROM_LENGTH = 4;
 	private static final int CONTIG_NAME_SUBFIELD = 1;
 
-	//static MutableAnnotatedBioSeq default_seq_template = new SmartAnnotBioSeq();
+	//static MutableAnnotatedBioSeq default_seq_template = new BioSeq();
 	//MutableAnnotatedBioSeq template_seq = default_seq_template;
 
 	private static final boolean SET_COMPOSITION = true;
@@ -110,13 +110,13 @@ public final class LiftParser {
 				String splitname[] = re_name.split(tempname);
 				String contig_name = splitname[CONTIG_NAME_SUBFIELD];
 				// experimenting with constructing virtual sequences by using chromosomes as contigs
-				SmartAnnotBioSeq contig = seq_group.getSeq(contig_name);
+				BioSeq contig = seq_group.getSeq(contig_name);
 				if (contig == null) {
-					contig = new SmartAnnotBioSeq(contig_name, "", match_length);
+					contig = new BioSeq(contig_name, "", match_length);
 				}
 
 				contig_count++;
-				SmartAnnotBioSeq chrom = seq_group.getSeq(chrom_name);
+				BioSeq chrom = seq_group.getSeq(chrom_name);
 				if (chrom == null) {
 					chrom_count++;
 					chrom = seq_group.addSeq(chrom_name, chrom_length);
@@ -145,7 +145,7 @@ public final class LiftParser {
 			SingletonGenometryModel.logDebug("reached end of lift file");
 		}
 
-		for (SmartAnnotBioSeq chrom : seq_group.getSeqList()) {
+		for (BioSeq chrom : seq_group.getSeqList()) {
 			MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();
 			if (comp != null && SET_COMPOSITION) {
 				SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);

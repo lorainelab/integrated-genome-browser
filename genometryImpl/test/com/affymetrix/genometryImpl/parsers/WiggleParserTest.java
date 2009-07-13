@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.Scored;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import java.io.*;
 import java.util.*;
@@ -46,7 +46,7 @@ public class WiggleParserTest {
 
 			GraphSym gr0 = (GraphSym) results.get(0);
 
-			SmartAnnotBioSeq seq = (SmartAnnotBioSeq) gr0.getGraphSeq();
+			BioSeq seq = (BioSeq) gr0.getGraphSeq();
 
 			// BED format
 			assertTrue(gr0 instanceof GraphIntervalSym);

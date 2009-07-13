@@ -17,7 +17,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.genometryImpl.GFF3Sym;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
@@ -101,7 +101,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
    */
   public DrawableElement getDrawableForSym(SeqSymmetry sym) {
     if (DEBUG) {
-      System.out.println("|||||||||||| in StyleSheet.getDrawableForSym(), method: " + SmartAnnotBioSeq.determineMethod(sym));
+      System.out.println("|||||||||||| in StyleSheet.getDrawableForSym(), method: " + BioSeq.determineMethod(sym));
       System.out.println("sym: " + sym);
     }
     DrawableElement drawable = null;
@@ -127,7 +127,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
       }
     }
     if (drawable == null) {
-      drawable = getAssociationForMethod(SmartAnnotBioSeq.determineMethod(sym));
+      drawable = getAssociationForMethod(BioSeq.determineMethod(sym));
       if (DEBUG)  { System.out.println("      trying getAssociationForMethod(), result: " + drawable); }
     }
     if (drawable == null) {

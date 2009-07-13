@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * @version: $Id$
  */
-public class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private AnnotatedSeqGroup seq_group;
@@ -56,7 +56,7 @@ public class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, SearchableCharI
 	private final String id;
 
 
-	public SmartAnnotBioSeq(String seqid, String seqversion, int length) {
+	public BioSeq(String seqid, String seqversion, int length) {
 		this.id = seqid;
 		this.length = length;
 		start = 0;

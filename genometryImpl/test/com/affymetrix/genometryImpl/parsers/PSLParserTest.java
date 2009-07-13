@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class PSLParserTest {
 
 			// Now we have read the data into "syms", so let's try writing it.
 
-			SmartAnnotBioSeq seq = group.getSeq("chr1");
+			BioSeq seq = group.getSeq("chr1");
 			String type = "test_type";
 			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 

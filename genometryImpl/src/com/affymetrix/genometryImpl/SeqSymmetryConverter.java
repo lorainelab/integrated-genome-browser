@@ -97,7 +97,7 @@ public final class SeqSymmetryConverter {
 			curlength += child_tspan.getLength();
 		}
 
-		SmartAnnotBioSeq queryseq = new SmartAnnotBioSeq(qname, qname, curlength);
+		BioSeq queryseq = new BioSeq(qname, qname, curlength);
 		SeqSpan qspan = new SimpleSeqSpan(0, curlength, queryseq);
 
 		UcscPslSym pslsym = new UcscPslSym(type, -1, -1, -1, -1,

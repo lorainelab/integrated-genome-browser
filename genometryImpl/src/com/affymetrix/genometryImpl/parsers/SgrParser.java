@@ -8,7 +8,7 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -176,7 +176,7 @@ public final class SgrParser {
 	private static void createResults(Map<String, IntList> xhash, AnnotatedSeqGroup seq_group, Map<String, FloatList> yhash, String gid, ArrayList<GraphSym> results) {
 		for (Map.Entry<String, IntList> keyval : xhash.entrySet()) {
 			String seqid = keyval.getKey();
-			SmartAnnotBioSeq aseq = seq_group.getSeq(seqid);
+			BioSeq aseq = seq_group.getSeq(seqid);
 			IntList xlist = keyval.getValue();
 			FloatList ylist = yhash.get(seqid);
 			if (aseq == null) {

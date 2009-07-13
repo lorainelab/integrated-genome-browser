@@ -21,7 +21,7 @@ import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
@@ -130,7 +130,7 @@ public final class BrptParser {
 				MutableSeqSymmetry psym = id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					seq = new SmartAnnotBioSeq(seqid, seqid, 1000000000);
+					seq = new BioSeq(seqid, seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);

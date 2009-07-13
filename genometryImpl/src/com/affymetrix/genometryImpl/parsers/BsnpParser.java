@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.EfficientSnpSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.Timer;
 
@@ -161,7 +161,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 			GFFParser gff_parser = new GFFParser();
 			gff_parser.parse(istr, seq_group, true);
 			int problem_count = 0;
-			for (SmartAnnotBioSeq aseq : seq_group.getSeqList()) {
+			for (BioSeq aseq : seq_group.getSeqList()) {
 				int acount = aseq.getAnnotationCount();
 				String seqid = aseq.getID();
 				System.out.println("seq = " + seqid + ", annots = " + acount);
@@ -170,7 +170,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				// need to debug this eventually...
 				if (acount >= 1) { 
 					SimpleSymWithProps new_psym = new SimpleSymWithProps();
-					MutableAnnotatedBioSeq seq = new SmartAnnotBioSeq(seqid, aseq.getVersion(), 1000000000);
+					MutableAnnotatedBioSeq seq = new BioSeq(seqid, aseq.getVersion(), 1000000000);
 					new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					for (int k=0; k<acount; k++) {
@@ -216,7 +216,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				MutableSeqSymmetry psym = (MutableSeqSymmetry)id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					MutableAnnotatedBioSeq seq = new SmartAnnotBioSeq(seqid, seqid, 1000000000);
+					MutableAnnotatedBioSeq seq = new BioSeq(seqid, seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);

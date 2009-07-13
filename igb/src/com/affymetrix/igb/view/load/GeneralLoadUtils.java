@@ -12,7 +12,7 @@ import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -586,7 +586,7 @@ public final class GeneralLoadUtils {
 		for (GenericVersion gVersion : gVersions) {
 			// Initialize all the servers with unloaded status of the feature/chromosome combinations.
 			for (GenericFeature gFeature : gVersion.features) {
-				for (SmartAnnotBioSeq sabq : group.getSeqList()) {
+				for (BioSeq sabq : group.getSeqList()) {
 					// Add chromosome sequences to feature
 					if (!gFeature.LoadStatusMap.containsKey(sabq)) {
 						gFeature.LoadStatusMap.put(sabq, LoadStatus.UNLOADED);
@@ -687,7 +687,7 @@ public final class GeneralLoadUtils {
 			return;
 		}
 
-		SmartAnnotBioSeq genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
+		BioSeq genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
 		for (int i = 0; i < chrom_count; i++) {
 			MutableAnnotatedBioSeq chrom_seq = group.getSeq(i);
 			if (chrom_seq == genome_seq) {
@@ -723,7 +723,7 @@ public final class GeneralLoadUtils {
 		return true;
 	}
 
-	private static void addSeqToVirtualGenome(SmartAnnotBioSeq genome_seq, MutableAnnotatedBioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
+	private static void addSeqToVirtualGenome(BioSeq genome_seq, MutableAnnotatedBioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
 		double glength = genome_seq.getLengthDouble();
 		int clength = chrom.getLength();
 		int spacer = (clength > 5000000) ? 5000000 : 100000;
@@ -854,7 +854,7 @@ public final class GeneralLoadUtils {
 	 */
 	private boolean loadDAS2Annotations(
 					MutableAnnotatedBioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, MutableAnnotatedBioSeq visible_seq, SeqSpan overlap) {
-		if (!(selected_seq instanceof SmartAnnotBioSeq)) {
+		if (!(selected_seq instanceof BioSeq)) {
 			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
 			return false;
 		}
@@ -894,7 +894,7 @@ public final class GeneralLoadUtils {
 	 * @param span	-- may be null, if the entire sequence is requested.
 	 * @return true if succeeded.
 	 */
-	boolean loadResidues(String genomeVersionName, SmartAnnotBioSeq aseq, int min, int max, SeqSpan span) {
+	boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		if (DEBUG) {
 			System.out.println("processing request to load residues for sequence: " + seq_name);

@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 /**
  *  
@@ -39,7 +39,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
    *  {@link #getSeq(int)}.
    */
     @Override
-  public List<SmartAnnotBioSeq> getSeqList() {
+  public List<BioSeq> getSeqList() {
     ensureSeqsLoaded();
     return super.getSeqList();
   }
@@ -47,7 +47,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
   /**
    *  Returns the sequence at the given position in the sequence list.
    */
-  public SmartAnnotBioSeq getSeq(int index) {
+  public BioSeq getSeq(int index) {
     ensureSeqsLoaded();
     return super.getSeq(index);
   }
@@ -62,7 +62,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
   /** Gets a sequence based on its name, possibly taking synonyms into account.
    *  See {@link #setUseSynonyms(boolean)}.
    */
-  public SmartAnnotBioSeq getSeq(String synonym) {
+  public BioSeq getSeq(String synonym) {
     ensureSeqsLoaded();
     return super.getSeq(synonym);
 
@@ -74,7 +74,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
    *  @return the first sequence it finds (by iterating through sym's spans),
    *    or null if none is found.
    */
-  public SmartAnnotBioSeq getSeq(SeqSymmetry sym) {
+  public BioSeq getSeq(SeqSymmetry sym) {
     ensureSeqsLoaded();
     return super.getSeq(sym);
   }
@@ -84,11 +84,11 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
    *  and increasing its length to the given value if necessary.
    */
     @Override
-  public SmartAnnotBioSeq addSeq(String seqid, int length) {
+  public BioSeq addSeq(String seqid, int length) {
     if (seqid == null) {
       throw new NullPointerException();
     }
-    SmartAnnotBioSeq aseq;
+    BioSeq aseq;
     // calling super.getSeq() to avoid ensureSeqsLoaded() calls??
     aseq = super.getSeq(seqid);
     if (aseq != null) {
@@ -97,7 +97,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
       }
     }
     else {
-      aseq = new SmartAnnotBioSeq(seqid, this.getID(), length);
+      aseq = new BioSeq(seqid, this.getID(), length);
       this.addSeq(aseq);
     }
     return aseq;

@@ -20,7 +20,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class NibbleResiduesParser {
@@ -33,8 +33,8 @@ public final class NibbleResiduesParser {
 	 *  MutableAnnotatedBioSeq does exist that is not of the type NibbleBioSeq, an exception
 	 *  will be thrown.
 	 */
-	public static SmartAnnotBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
-		SmartAnnotBioSeq result_seq = null;
+	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
+		BioSeq result_seq = null;
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
 		try {
@@ -54,7 +54,7 @@ public final class NibbleResiduesParser {
 			int num_residues = dis.readInt();
 			//      System.out.println("length: " + num_residues);
 
-			SmartAnnotBioSeq existing_seq = seq_group.getSeq(name);
+			BioSeq existing_seq = seq_group.getSeq(name);
 			if (existing_seq != null) {
 				result_seq = existing_seq;
 			} else {
@@ -74,7 +74,7 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
-	private static void SetResiduesIterator(int num_residues, DataInputStream dis, SmartAnnotBioSeq result_seq) throws IOException {
+	private static void SetResiduesIterator(int num_residues, DataInputStream dis, BioSeq result_seq) throws IOException {
 		byte[] nibble_array = new byte[num_residues / 2 + num_residues % 2];
 
 		dis.readFully(nibble_array);

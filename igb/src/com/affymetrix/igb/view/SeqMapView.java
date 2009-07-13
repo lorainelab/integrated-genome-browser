@@ -47,7 +47,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.parsers.CytobandParser;
@@ -164,7 +164,7 @@ public class SeqMapView extends JPanel
 	JFrame frm;
 	protected AffyTieredMap seqmap;
 	UnibrowHairline hairline = null;
-	SmartAnnotBioSeq aseq;
+	BioSeq aseq;
 	/**
 	 *  a virtual sequence that maps the MutableAnnotatedBioSeq aseq to the map coordinates.
 	 *  if the mapping is identity, then:
@@ -174,7 +174,7 @@ public class SeqMapView extends JPanel
 	 *     vseq.getComposition().getSpan(aseq) = SeqSpan(aseq.getLength(), 0, aseq);
 	 *
 	 */
-	SmartAnnotBioSeq viewseq;
+	BioSeq viewseq;
 	// mapping of annotated seq to virtual "view" seq
 	MutableSeqSymmetry seq2viewSym;
 	SeqSymmetry[] transform_path;
@@ -653,18 +653,18 @@ public class SeqMapView extends JPanel
 		seq_glyph.setHitable(false);
 		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
 
-		SmartAnnotBioSeq compseq = viewseq;
+		BioSeq compseq = viewseq;
 		seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
 
 		axis_tier.addChild(seq_glyph);
 
 		// need to change this to get residues from viewseq! (to take account of reverse complement,
 		//    coord shift, slice'n'dice, etc.
-		// but first, need to fix SmartAnnotBioSeq.isComplete() implementations...
+		// but first, need to fix BioSeq.isComplete() implementations...
 		// currently only GeneralBioSeq implements CharacterIterator
 		seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
 
-		SeqSymmetry compsym = ((SmartAnnotBioSeq) viewseq).getComposition();
+		SeqSymmetry compsym = ((BioSeq) viewseq).getComposition();
 		if (compsym != null) {
 			int compcount = compsym.getChildCount();
 			// create a color, c3, in between the foreground and background colors
@@ -721,7 +721,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public EfficientSolidGlyph makeCytobandGlyph() {
-		SmartAnnotBioSeq sma = (SmartAnnotBioSeq) getAnnotatedSeq();
+		BioSeq sma = (BioSeq) getAnnotatedSeq();
 		//      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
 		SymWithProps cyto_annots = null;
 		List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
@@ -903,7 +903,7 @@ public class SeqMapView extends JPanel
 	 */
 	public void clearGraphs() {
 		if (aseq != null) {
-			SmartAnnotBioSeq mseq = aseq;
+			BioSeq mseq = aseq;
 			int acount = mseq.getAnnotationCount();
 			for (int i = acount - 1; i >= 0; i--) {
 				SeqSymmetry annot = mseq.getAnnotation(i);
@@ -1019,7 +1019,7 @@ public class SeqMapView extends JPanel
 		pixel_floater_glyph.setParent(null);
 		seqmap.addItem(pixel_floater_glyph);
 
-		aseq = (SmartAnnotBioSeq)seq;
+		aseq = (BioSeq)seq;
 
 		// if shifting coords, then seq2viewSym and viewseq are already taken care of,
 		//   but reset coord_shift to false...
@@ -1036,7 +1036,7 @@ public class SeqMapView extends JPanel
 			//}
 		}
 
-		SmartAnnotBioSeq compnegseq = viewseq;
+		BioSeq compnegseq = viewseq;
 		seqmap.setMapRange(compnegseq.getMin(), compnegseq.getMax());
 
 
@@ -1161,8 +1161,8 @@ public class SeqMapView extends JPanel
 			return null;
 		}
 		String version_info = null;
-		if (((SmartAnnotBioSeq) seq).getSeqGroup() != null) {
-			AnnotatedSeqGroup group = ((SmartAnnotBioSeq) seq).getSeqGroup();
+		if (((BioSeq) seq).getSeqGroup() != null) {
+			AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
 			if (group.getDescription() != null) {
 				version_info = group.getDescription();
 			} else {
@@ -1170,7 +1170,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 		if (version_info == null) {
-			version_info = ((SmartAnnotBioSeq) seq).getVersion();
+			version_info = ((BioSeq) seq).getVersion();
 		}
 		if ("hg17".equals(version_info)) {
 			version_info = "hg17 = NCBI35";
@@ -1360,14 +1360,14 @@ public class SeqMapView extends JPanel
 		}
 
 		if (aseq != null &&
-						((SmartAnnotBioSeq) aseq).getComposition() != null) {
+						((BioSeq) aseq).getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 			//   addLeafsToTier(), addToTier(), etc. into mapping from compositon sequences
-			SmartAnnotBioSeq cached_aseq = aseq;
+			BioSeq cached_aseq = aseq;
 			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
 			SeqSymmetry[] cached_path = transform_path;
 
-			SeqSymmetry comp = ((SmartAnnotBioSeq) aseq).getComposition();
+			SeqSymmetry comp = ((BioSeq) aseq).getComposition();
 			// assuming a two-level deep composition hierarchy for now...
 			//   need to make more recursive at some point...
 			//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
@@ -1376,7 +1376,7 @@ public class SeqMapView extends JPanel
 				//      for (int i=0; i<1; i++) {
 				SeqSymmetry csym = comp.getChild(i);
 				// return seq in a symmetry span that _doesn't_ match aseq
-				SmartAnnotBioSeq cseq = (SmartAnnotBioSeq)SeqUtils.getOtherSeq(csym, cached_aseq);
+				BioSeq cseq = (BioSeq)SeqUtils.getOtherSeq(csym, cached_aseq);
 				if (DEBUG_COMP) {
 					System.out.println(" other seq: " + cseq.getID() + ",  " + cseq);
 				}
@@ -1434,7 +1434,7 @@ public class SeqMapView extends JPanel
 	private void addAnnotationGlyphs(SeqSymmetry annotSym) {
 		// Map symmetry subclass or method type to a factory, and call factory to make glyphs
 		MapViewGlyphFactoryI factory = null;
-		String meth = SmartAnnotBioSeq.determineMethod(annotSym);
+		String meth = BioSeq.determineMethod(annotSym);
 		//    System.out.println("adding annotation glyphs for method: " + meth);
 
 		if (annotSym instanceof ScoredContainerSym) {
@@ -1909,7 +1909,7 @@ public class SeqMapView extends JPanel
 		}
 
 		slice_symmetry = sym;
-		viewseq = new SmartAnnotBioSeq("view_seq", "", aseq.getLength());
+		viewseq = new BioSeq("view_seq", "", aseq.getLength());
 		//viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
 
 		// rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
@@ -1982,8 +1982,8 @@ public class SeqMapView extends JPanel
 		seq2viewSym.addSpan(seq_span);
 		seq2viewSym.addSpan(view_span);
 
-		((SmartAnnotBioSeq) viewseq).setComposition(seq2viewSym);
-		((SmartAnnotBioSeq) viewseq).setBounds(view_span.getMin(), view_span.getMax());
+		((BioSeq) viewseq).setComposition(seq2viewSym);
+		((BioSeq) viewseq).setBounds(view_span.getMin(), view_span.getMax());
 		transform_path = new SeqSymmetry[1];
 		transform_path[0] = seq2viewSym;
 		slicing_in_effect = true;
@@ -2236,9 +2236,9 @@ public class SeqMapView extends JPanel
 	}
 
 	public void unclamp() {
-		if (viewseq instanceof SmartAnnotBioSeq) {
-			int min = ((SmartAnnotBioSeq) viewseq).getMin();
-			int max = ((SmartAnnotBioSeq) viewseq).getMax();
+		if (viewseq instanceof BioSeq) {
+			int min = ((BioSeq) viewseq).getMin();
+			int max = ((BioSeq) viewseq).getMax();
 			seqmap.setMapRange(min, max);
 		} else {
 			seqmap.setMapRange(0, viewseq.getLength());
@@ -2257,10 +2257,10 @@ public class SeqMapView extends JPanel
 	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
 	private String getUcscGenomeVersion() {
 		String ucsc_version = null;
-		if (aseq instanceof SmartAnnotBioSeq && !slicing_in_effect) {
+		if (aseq instanceof BioSeq && !slicing_in_effect) {
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-			String version = ((SmartAnnotBioSeq) aseq).getVersion();
+			String version = ((BioSeq) aseq).getVersion();
 			Collection<String> syns = lookup.getSynonyms(version);
 
 			if (syns == null) {
@@ -2310,8 +2310,8 @@ public class SeqMapView extends JPanel
 			WebBrowserControl.displayURLEventually(ucsc_url);
 		} else {
 			String genomeVersion = aseq.getID();
-			if (aseq instanceof SmartAnnotBioSeq) {
-				genomeVersion = ((SmartAnnotBioSeq) aseq).getVersion();
+			if (aseq instanceof BioSeq) {
+				genomeVersion = ((BioSeq) aseq).getVersion();
 			}
 			Application.errorPanel("Don't have UCSC information for genome " + genomeVersion);
 		}
@@ -2962,8 +2962,8 @@ public class SeqMapView extends JPanel
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup current_group = null;
 		AnnotatedSeqGroup new_group = evt.getSelectedGroup();
-		if (aseq instanceof SmartAnnotBioSeq) {
-			current_group = ((SmartAnnotBioSeq) aseq).getSeqGroup();
+		if (aseq instanceof BioSeq) {
+			current_group = ((BioSeq) aseq).getSeqGroup();
 		}
 
 		if (Application.DEBUG_EVENTS) {

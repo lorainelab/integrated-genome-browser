@@ -31,7 +31,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -353,14 +353,14 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     
     protected void setValue(Object value) {
       SeqSymmetry sym = (SeqSymmetry) value;
-      super.setValue(SmartAnnotBioSeq.determineMethod(sym));
+      super.setValue(BioSeq.determineMethod(sym));
     }
   }
 
-  /** A Comparator that compares based on {@link SmartAnnotBioSeq#determineMethod(SeqSymmetry)}. */
+  /** A Comparator that compares based on {@link BioSeq#determineMethod(SeqSymmetry)}. */
   public static class SeqSymmetryMethodComparator implements Comparator<SeqSymmetry> {
     public int compare(SeqSymmetry s1, SeqSymmetry s2) {
-      return SmartAnnotBioSeq.determineMethod(s1).compareTo(SmartAnnotBioSeq.determineMethod(s2));
+      return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
     }
   }
   

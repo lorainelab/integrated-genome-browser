@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -199,7 +199,7 @@ public final class ChpParser {
     List<LazyChpSym> results = new ArrayList<LazyChpSym>();
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
-      SmartAnnotBioSeq aseq = group.getSeq(i);
+      BioSeq aseq = group.getSeq(i);
       //String seqid = aseq.getID();
       // Don't make LazyChpSym if can't find sequence on DAS/2 server
       Das2Region das_segment = vsource.getSegment(aseq);

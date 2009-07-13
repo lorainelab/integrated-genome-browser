@@ -5,11 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class SmartAnnotBioSeqTest {
-static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version", 0);
-	static final SmartAnnotBioSeq seq_len     = new SmartAnnotBioSeq("len", "version", 500);
+public class BioSeqTest {
+static final BioSeq seq         = new BioSeq("seq", "version", 0);
+	static final BioSeq seq_len     = new BioSeq("len", "version", 500);
 
-	public SmartAnnotBioSeqTest() {
+	public BioSeqTest() {
 	}
 
 	@Before
@@ -64,7 +64,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	 */
 	private void constructorTest(String id, String version, String err_msg) {
 		try {
-			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq(id, version, 0);
+			BioSeq testseq = new BioSeq(id, version, 0);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}
@@ -74,7 +74,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	 */
 	private void constructorTest(String id, String version, int len, String err_msg) {
 		try {
-			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq(id, version, len);
+			BioSeq testseq = new BioSeq(id, version, len);
 			fail(err_msg);
 		} catch (IllegalArgumentException e) { }
 	}
@@ -85,7 +85,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	 */
 	@Test
 		public void testSetBounds1() {
-			SmartAnnotBioSeq testseq  = new SmartAnnotBioSeq("testseq", "version", 1000);
+			BioSeq testseq  = new BioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -107,7 +107,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	/*
 	@Test
 		public void testSetBounds2() {
-			SmartAnnotBioSeq testseq  = new SmartAnnotBioSeq("testseq", "version", 1000);
+			BioSeq testseq  = new BioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -125,7 +125,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	/*
 	@Test
 		public void testSetBounds3() {
-			SmartAnnotBioSeq testseq  = new SmartAnnotBioSeq("testseq", "version", 1000);
+			BioSeq testseq  = new BioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -143,7 +143,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	 */
 	@Test
 		public void testSetBounds4() {
-			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq("testseq", "version", 1000);
+			BioSeq testseq = new BioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -174,7 +174,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	/*
 	@Test
 		public void testSetBoundsDouble1() {
-			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq("testseq", "version", 1000);
+			BioSeq testseq = new BioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());
@@ -185,7 +185,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 				fail("setBoundsDouble(double, double) failed:" + e.getMessage());
 			}
 
-			// These will not work until SmartAnnotBioSeq is fixed
+			// These will not work until BioSeq is fixed
 			// assertEquals((double)testseq.getMin(), 3.14159e42d, 0.00001d);
 			// assertEquals((double)testseq.getMax(), 3.14159e45d, 0.00001d); 
 
@@ -200,7 +200,7 @@ static final SmartAnnotBioSeq seq         = new SmartAnnotBioSeq("seq", "version
 	 */
 	@Test
 		public void testSetBoundsDouble2() {
-			SmartAnnotBioSeq testseq = new SmartAnnotBioSeq("testseq", "version", 1000);
+			BioSeq testseq = new BioSeq("testseq", "version", 1000);
 
 			assertEquals(   0, testseq.getMin());
 			assertEquals(1000, testseq.getMax());

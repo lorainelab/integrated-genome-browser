@@ -13,7 +13,9 @@
 
 package com.affymetrix.genometry;
 
-public interface MutableAnnotatedBioSeq extends AnnotatedBioSeq, MutableBioSeq {
+public interface MutableAnnotatedBioSeq extends AnnotatedBioSeq {
+	public void setLength(int length);
+	public void setResidues(String residues);
 
 	public void addAnnotation(SeqSymmetry annot);
 	public void removeAnnotation(SeqSymmetry annot);

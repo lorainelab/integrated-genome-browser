@@ -1,16 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
@@ -34,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * @version: $Id$
  */
-public final class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private AnnotatedSeqGroup seq_group;
@@ -230,7 +217,7 @@ public final class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, Searchabl
 	 *  Creates an empty top-level container sym.
 	 *  @return an instance of {@link TypeContainerAnnot}
 	 */
-	public synchronized MutableSeqSymmetry addAnnotation(String type) {
+	private synchronized TypeContainerAnnot addAnnotation(String type) {
 		if (type_id2sym == null) { 
 			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 		}

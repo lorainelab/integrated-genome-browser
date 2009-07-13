@@ -94,7 +94,9 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	}
 
 	/** Retrieves the property called "id". */
+	@Override
 	public String getID() { return (String)getProperty("id"); }
+	
 	public void setID(String id) { setProperty("id", id); }
 
 	public boolean setProperty(String name, Object val) {
@@ -115,16 +117,16 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 		return props.get(name);
 	}
 
-	public void removeProperty(String name) {
+	/*public void removeProperty(String name) {
 		if (props != null) {
 			props.remove(name);
 		}
-	}
+	}*/
 
 	/** Prints all the properties to System out.
 	 *  Mainly for debugging.
 	 */
-	public void printProps() {
+	/*public void printProps() {
 		if (props == null) { System.out.println("no props"); return; }
 		Set keys = props.keySet();
 		Iterator iter = keys.iterator();
@@ -132,7 +134,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 			String key = (String)iter.next();
 			System.out.println(key + " --> " + props.get(key));
 		}
-	}
+	}*/
 
 	/**
 	 *  Converts some Strings to more memory-efficient objects.
@@ -142,7 +144,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	 *  If it is a one-character string, it is converted to a Character.
 	 *  If it is a String representing an Integer, then an Integer is returned.
 	 */
-	static public Object convertToObject(Object val) {
+	private static Object convertToObject(Object val) {
 		Object result = val;
 		if (val instanceof String) {
 			String str = (String) val;

@@ -434,7 +434,6 @@ public final class LocalUrlCacher {
 			bis = new BufferedInputStream(connstr);
 			content = ReadIntoContentArray(content_length, bis);
 			if (write_to_cache) {
-				System.out.println("about to write to cache");
 				Properties headerprops = populateHeaderProperties(conn, headers);
 				WriteToCache(content, cache_file, header_cache_file, headerprops);
 			}

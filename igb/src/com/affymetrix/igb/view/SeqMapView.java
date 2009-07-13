@@ -14,7 +14,6 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.CompositeBioSeq;
 import com.affymetrix.genometry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
@@ -663,11 +662,11 @@ public class SeqMapView extends JPanel
 
 		// need to change this to get residues from viewseq! (to take account of reverse complement,
 		//    coord shift, slice'n'dice, etc.
-		// but first, need to fix CompositeBioSeq.isComplete() implementations...
+		// but first, need to fix SmartAnnotBioSeq.isComplete() implementations...
 		// currently only GeneralBioSeq implements CharacterIterator
 		seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
 
-		SeqSymmetry compsym = ((CompositeBioSeq) viewseq).getComposition();
+		SeqSymmetry compsym = ((SmartAnnotBioSeq) viewseq).getComposition();
 		if (compsym != null) {
 			int compcount = compsym.getChildCount();
 			// create a color, c3, in between the foreground and background colors
@@ -1363,14 +1362,14 @@ public class SeqMapView extends JPanel
 		}
 
 		if (aseq != null &&
-						((CompositeBioSeq) aseq).getComposition() != null) {
+						((SmartAnnotBioSeq) aseq).getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 			//   addLeafsToTier(), addToTier(), etc. into mapping from compositon sequences
 			SmartAnnotBioSeq cached_aseq = aseq;
 			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
 			SeqSymmetry[] cached_path = transform_path;
 
-			SeqSymmetry comp = ((CompositeBioSeq) aseq).getComposition();
+			SeqSymmetry comp = ((SmartAnnotBioSeq) aseq).getComposition();
 			// assuming a two-level deep composition hierarchy for now...
 			//   need to make more recursive at some point...
 			//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)

@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.CompositeBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.MutableSeqSymmetry;
@@ -36,7 +35,7 @@ import java.util.regex.Pattern;
 /**
  * @version: $Id$
  */
-public final class SmartAnnotBioSeq implements CompositeBioSeq, MutableAnnotatedBioSeq, SearchableCharIterator {
+public final class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private AnnotatedSeqGroup seq_group;

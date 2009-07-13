@@ -69,7 +69,7 @@ public final class LiftParser {
 
 	/**
 	 *  Reads lift-format from the input stream.
-	 *  @return  A Map with chromosome ids as keys, and CompositeBioSeqs representing
+	 *  @return  A Map with chromosome ids as keys, and SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file as values.
 	 */
 	public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version) throws IOException {
@@ -79,7 +79,7 @@ public final class LiftParser {
 	/**
 	 *  Reads lift-format from the input stream and creates a new AnnotatedSeqGroup.
 	 *  The new AnnotatedSeqGroup will be inserted into the GenometryModel.
-	 *  @return an AnnotatedSeqGroup containing CompositeBioSeqs representing
+	 *  @return an AnnotatedSeqGroup containing SmartAnnotBioSeqs representing
 	 *     chromosomes in the lift file.
 	 */
 	public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
@@ -145,7 +145,7 @@ public final class LiftParser {
 			SingletonGenometryModel.logDebug("reached end of lift file");
 		}
 
-		for (CompositeBioSeq chrom : seq_group.getSeqList()) {
+		for (SmartAnnotBioSeq chrom : seq_group.getSeqList()) {
 			MutableSeqSymmetry comp = (MutableSeqSymmetry) chrom.getComposition();
 			if (comp != null && SET_COMPOSITION) {
 				SeqSpan chromspan = SeqUtils.getChildBounds(comp, chrom);

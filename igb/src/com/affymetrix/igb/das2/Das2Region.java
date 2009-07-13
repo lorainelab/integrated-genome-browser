@@ -35,7 +35,7 @@ public final class Das2Region {
     String name;
     int length;
     String info_url;  // doc_href
-    //  List assembly;  // or should this be a SeqSymmetry??   // or composition of CompositeBioSeq??
+    //  List assembly;  // or should this be a SeqSymmetry??   // or composition of SmartAnnotBioSeq??
     SeqSpan segment_span;
     MutableAnnotatedBioSeq aseq;
     Das2VersionedSource versioned_source;

@@ -31,7 +31,7 @@ public final class DasEntryPoint {
   int stop;
   boolean forward = true;
 
-  // still need to figure out matching up entry point to AnnotatedBioSeq in genometry model
+  // still need to figure out matching up entry point to MutableAnnotatedBioSeq in genometry model
   public DasEntryPoint(DasSource source, String id) {
     entry_id = id;
     das_source = source;

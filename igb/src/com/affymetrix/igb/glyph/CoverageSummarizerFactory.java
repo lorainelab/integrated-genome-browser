@@ -85,8 +85,8 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
       
       AffyTieredMap map = gviewer.getSeqMap();
 
-      BioSeq annotseq = gviewer.getAnnotatedSeq();
-      BioSeq coordseq = gviewer.getViewSeq();
+      MutableAnnotatedBioSeq annotseq = gviewer.getAnnotatedSeq();
+      MutableAnnotatedBioSeq coordseq = gviewer.getViewSeq();
       SeqSymmetry tsym = sym;
       // transform symmetry to coordseq if annotseq != coordseq, like in the slice viewer
       if (annotseq != coordseq) {

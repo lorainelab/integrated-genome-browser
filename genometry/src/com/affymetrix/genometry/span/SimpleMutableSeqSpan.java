@@ -13,13 +13,13 @@
 
 package com.affymetrix.genometry.span;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 
 public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpan {
 
-	public SimpleMutableSeqSpan(int start, int end, BioSeq seq) {
+	public SimpleMutableSeqSpan(int start, int end, MutableAnnotatedBioSeq seq) {
 		super(start, end, seq);
 	}
 
@@ -31,7 +31,7 @@ public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpa
 		this(0, 0, null);
 	}
 
-	public void set(int start, int end, BioSeq seq) {
+	public void set(int start, int end, MutableAnnotatedBioSeq seq) {
 		this.start = start;
 		this.end = end;
 		this.seq = seq;
@@ -50,11 +50,11 @@ public class SimpleMutableSeqSpan extends SimpleSeqSpan implements MutableSeqSpa
 		this.end = end;
 	}
 
-	public void setBioSeq(BioSeq seq) {
+	public void setBioSeq(MutableAnnotatedBioSeq seq) {
 		this.seq = seq;
 	}
 
-	public void setDouble(double start, double end, BioSeq seq) {
+	public void setDouble(double start, double end, MutableAnnotatedBioSeq seq) {
 		this.start = (int)start;
 		this.end = (int)end;
 		this.seq = seq;

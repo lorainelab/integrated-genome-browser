@@ -1,7 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
@@ -691,7 +689,7 @@ public final class GeneralLoadUtils {
 
 		SmartAnnotBioSeq genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
 		for (int i = 0; i < chrom_count; i++) {
-			BioSeq chrom_seq = group.getSeq(i);
+			MutableAnnotatedBioSeq chrom_seq = group.getSeq(i);
 			if (chrom_seq == genome_seq) {
 				continue;
 			}
@@ -708,7 +706,7 @@ public final class GeneralLoadUtils {
 		double seq_bounds = 0.0;
 
 		for (int i = 0; i < chrom_count; i++) {
-			BioSeq chrom_seq = group.getSeq(i);
+			MutableAnnotatedBioSeq chrom_seq = group.getSeq(i);
 			int clength = chrom_seq.getLength();
 			int spacer = (clength > 5000000) ? 5000000 : 100000;
 			seq_bounds += clength + spacer;
@@ -725,7 +723,7 @@ public final class GeneralLoadUtils {
 		return true;
 	}
 
-	private static void addSeqToVirtualGenome(SmartAnnotBioSeq genome_seq, BioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
+	private static void addSeqToVirtualGenome(SmartAnnotBioSeq genome_seq, MutableAnnotatedBioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
 		double glength = genome_seq.getLengthDouble();
 		int clength = chrom.getLength();
 		int spacer = (clength > 5000000) ? 5000000 : 100000;
@@ -761,7 +759,7 @@ public final class GeneralLoadUtils {
 	 * @param gFeature
 	 * @return
 	 */
-	boolean loadAndDisplayAnnotations(GenericFeature gFeature, AnnotatedBioSeq cur_seq, FeaturesTableModel model) {
+	boolean loadAndDisplayAnnotations(GenericFeature gFeature, MutableAnnotatedBioSeq cur_seq, FeaturesTableModel model) {
 
 		// We don't validate previous load status.  It's assumed that we want to reload the feature.
 
@@ -833,7 +831,7 @@ public final class GeneralLoadUtils {
 		return false;
 	}
 
-	private static void SetLoadStatus(GenericFeature gFeature, AnnotatedBioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
+	private static void SetLoadStatus(GenericFeature gFeature, MutableAnnotatedBioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
 		gFeature.LoadStatusMap.put(aseq, ls);
 		model.fireTableDataChanged();
 

@@ -23,7 +23,7 @@ public interface SeqSpan {
 	public int getMax();
 	public int getLength();
 	public boolean isForward();
-	public BioSeq getBioSeq();
+	public MutableAnnotatedBioSeq getBioSeq();
 	// boolean isReverse();
 	/*
 	   public int getStrand()

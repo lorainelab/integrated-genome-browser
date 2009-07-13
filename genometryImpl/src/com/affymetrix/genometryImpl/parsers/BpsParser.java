@@ -401,7 +401,7 @@ public final class BpsParser implements AnnotationWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
 		//    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
 		boolean success = true;
@@ -417,7 +417,7 @@ public final class BpsParser implements AnnotationWriter  {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
 					}
 					else {
-						BioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
+						MutableAnnotatedBioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}

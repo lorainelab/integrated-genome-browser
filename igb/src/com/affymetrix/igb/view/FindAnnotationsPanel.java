@@ -324,12 +324,12 @@ final class FindAnnotationsPanel extends JPanel {
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     if (group != null) {
       for (int i=0; i<group.getSeqCount(); i++) {
-        BioSeq seq = group.getSeq(i);
+        MutableAnnotatedBioSeq seq = group.getSeq(i);
         sequence_CB.addItem(seq.getID());
       }
     }
     
-    BioSeq selected_seq = gmodel.getSelectedSeq();
+    MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
     if (selected_seq != null) {
       sequence_CB.setSelectedItem(selected_seq.getID());
     }    
@@ -383,7 +383,7 @@ final class FindAnnotationsPanel extends JPanel {
 
   SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-  public boolean filterBySequence(BioSeq seq) {
+  public boolean filterBySequence(MutableAnnotatedBioSeq seq) {
     if (seq == null) {
       return false;
     }
@@ -488,7 +488,7 @@ final class FindAnnotationsPanel extends JPanel {
           SeqSpan span = sym.getSpan(i);
           if (span == null) continue;
 
-          BioSeq seq = span.getBioSeq();
+          MutableAnnotatedBioSeq seq = span.getBioSeq();
           if (filterBySequence(seq)) /* (seq_list.contains(seq)*/ {
         
 //        if (filterBySpan(span)) {

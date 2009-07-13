@@ -24,18 +24,18 @@ import com.affymetrix.genometry.*;
  */
 public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
 	boolean ascending;
-	BioSeq seq;
+	MutableAnnotatedBioSeq seq;
 
 	/** Constructor.
 	 *  @param s  sequence to base the sorting on
 	 *  @param b  true to sort ascending, false for descending
 	 */
-	public SeqSymMinComparator(BioSeq s, boolean b) {
+	public SeqSymMinComparator(MutableAnnotatedBioSeq s, boolean b) {
 		this.seq = s;
 		this.ascending = b;
 	}
 
-	public void reset(BioSeq s, boolean b) {
+	public void reset(MutableAnnotatedBioSeq s, boolean b) {
 		this.seq = s;
 		this.ascending = b;
 	}

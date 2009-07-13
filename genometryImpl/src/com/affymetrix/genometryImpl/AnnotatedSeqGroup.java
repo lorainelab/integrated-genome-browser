@@ -16,8 +16,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
@@ -221,7 +220,7 @@ public class AnnotatedSeqGroup {
 		final int spancount = sym.getSpanCount();
 		for (int i = 0; i < spancount; i++) {
 			SeqSpan span = sym.getSpan(i);
-			BioSeq seq1 = span.getBioSeq();
+			MutableAnnotatedBioSeq seq1 = span.getBioSeq();
 			String seqid = seq1.getID();
 			SmartAnnotBioSeq seq2 = id2seq.get(seqid);
 			if ((seq2 != null) && (seq1 == seq2)) {
@@ -420,12 +419,12 @@ public class AnnotatedSeqGroup {
 	 *     currently on the seq.
 	 *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
 	 */
-	final public static String getUniqueGraphID(String id, BioSeq seq) {
+	final public static String getUniqueGraphID(String id, MutableAnnotatedBioSeq seq) {
 		if (id == null) {
 			return null;
 		}
-		if (!(seq instanceof SmartAnnotBioSeq) && !(seq instanceof AnnotatedBioSeq)) {
-			// if not a SmartAnnotBioSeq or AnnotatedBioSeq, just return original ID for now.
+		if (!(seq instanceof SmartAnnotBioSeq) && !(seq instanceof MutableAnnotatedBioSeq)) {
+			// if not a SmartAnnotBioSeq or MutableAnnotatedBioSeq, just return original ID for now.
 			return id;
 		}
 
@@ -440,8 +439,8 @@ public class AnnotatedSeqGroup {
 			return newid;
 		}
 
-		// AnnotatedBioSeq -- can't do getAnnotation on String
-		final AnnotatedBioSeq aseq = (AnnotatedBioSeq) seq;
+		// MutableAnnotatedBioSeq -- can't do getAnnotation on String
+		final MutableAnnotatedBioSeq aseq = seq;
 		int prevcount = 0;
 
 		String newid = id;
@@ -457,7 +456,7 @@ public class AnnotatedSeqGroup {
 	// potentially O(N^2) performance, but this is just a fallback -- most
 	//      seqs that GraphSyms are being attached to will be SmartAnnotBioSeqs and dealt with
 	//      in the other branch of the conditional
-	final private static boolean findGraphSym(AnnotatedBioSeq aseq, String id) {
+	final private static boolean findGraphSym(MutableAnnotatedBioSeq aseq, String id) {
 		final int count = aseq.getAnnotationCount();	// otherwise the loop will recalculate this every time.
 		for (int i = 0; i < count; i++) {
 			SeqSymmetry sym = aseq.getAnnotation(i);

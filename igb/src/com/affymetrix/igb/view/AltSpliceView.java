@@ -44,7 +44,7 @@ public class AltSpliceView extends JComponent
 	private JTextField buffer_sizeTF;
 	private JCheckBox slice_by_selectionCB;
 	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
-	private AnnotatedBioSeq last_seq_changed = null;
+	private MutableAnnotatedBioSeq last_seq_changed = null;
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
@@ -62,7 +62,7 @@ public class AltSpliceView extends JComponent
 		}
 
 		@Override
-		public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
+		public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
 			if (coord_shift) {
 				// ignore the preserve_view parameter, always pretend it is false in the splice view
 				super.setAnnotatedSeq(seq, preserve_selection, false);
@@ -202,7 +202,7 @@ public class AltSpliceView extends JComponent
 		if (Application.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
-		AnnotatedBioSeq newseq = gmodel.getSelectedSeq();
+		MutableAnnotatedBioSeq newseq = gmodel.getSelectedSeq();
 		if (last_seq_changed != newseq) {
 			last_seq_changed = newseq;
 			if (this.isShowing() && slice_by_selection_on) {

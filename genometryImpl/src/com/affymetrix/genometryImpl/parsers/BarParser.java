@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
@@ -122,7 +121,7 @@ public final class BarParser implements AnnotationWriter  {
 		tim.start();
 		//boolean USE_RANDOM_ACCESS = false;
 		GraphSymFloat graf = null;
-		BioSeq aseq = span.getBioSeq();
+		MutableAnnotatedBioSeq aseq = span.getBioSeq();
 		String seq_name = aseq.getID();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
@@ -247,7 +246,7 @@ public final class BarParser implements AnnotationWriter  {
 
 			// making GraphSym because bar writer takes GraphSym list as argument
 			//      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-			//      BioSeq gseq = gmodel.getSelectedSeq();
+			//      MutableAnnotatedBioSeq gseq = gmodel.getSelectedSeq();
 			//      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
 			//      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
 
@@ -855,9 +854,9 @@ CHUNK_LOOP:
 
 	/**
 	 * Writes bar format.
-	 * Assumes syms size is one and single sym is a GraphSym with same BioSeq as seq
+	 * Assumes syms size is one and single sym is a GraphSym with same MutableAnnotatedBioSeq as seq
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream ostr) {
 		boolean success = false;
 		BufferedOutputStream bos = new BufferedOutputStream(ostr);
@@ -940,7 +939,7 @@ CHUNK_LOOP:
 
 	public String getMimeType() { return "binary/bar"; }
 
-	public static void checkSeqLength(BioSeq seq, int[] xcoords) {
+	public static void checkSeqLength(MutableAnnotatedBioSeq seq, int[] xcoords) {
 		if (seq instanceof MutableAnnotatedBioSeq) {
 			MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq;
 			int xcount = xcoords.length;

@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SearchableSeqSymmetry;
 import com.affymetrix.genometry.SeqSpan;
@@ -313,7 +313,7 @@ public abstract class ServerUtils {
 			if (seqid == null || group == null) {
 				return null;
 			}
-			BioSeq seq = group.getSeq(seqid);
+			MutableAnnotatedBioSeq seq = group.getSeq(seqid);
 			if (seq == null) {
 				return null;
 			}
@@ -349,10 +349,10 @@ public abstract class ServerUtils {
 
 			// if an inside_span specified, then filter out intersected symmetries based on this:
 		//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-		public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, BioSeq oseq, List<SeqSymmetry> result, String query_type) {
+		public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, MutableAnnotatedBioSeq oseq, List<SeqSymmetry> result, String query_type) {
 			int inside_min = inside_span.getMin();
 			int inside_max = inside_span.getMax();
-			BioSeq iseq = inside_span.getBioSeq();
+			MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
 			System.out.println("*** trying to apply inside_span constraints ***");
 			if (iseq != oseq) {
 				System.out.println("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());

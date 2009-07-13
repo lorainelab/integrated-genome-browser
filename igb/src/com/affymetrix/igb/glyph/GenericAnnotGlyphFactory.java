@@ -102,8 +102,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
-    BioSeq aseq = smv.getAnnotatedSeq();
-    BioSeq vseq = smv.getViewSeq();
+    MutableAnnotatedBioSeq aseq = smv.getAnnotatedSeq();
+    MutableAnnotatedBioSeq vseq = smv.getViewSeq();
     if (SeqMapView.DEBUG_COMP)  {
       System.out.println("called GenericAnnotGlyphFactory.createGlyph(sym,smv), " +
 			 "annotated_seq = " + aseq.getID() + ", view_seq = " + vseq.getID() + ", " + (aseq == vseq));
@@ -262,8 +262,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
   throws java.lang.InstantiationException, java.lang.IllegalAccessException {
 
     AffyTieredMap map = gviewer.getSeqMap();
-    BioSeq annotseq = gviewer.getAnnotatedSeq();
-    BioSeq coordseq = gviewer.getViewSeq();
+    MutableAnnotatedBioSeq annotseq = gviewer.getAnnotatedSeq();
+    MutableAnnotatedBioSeq coordseq = gviewer.getViewSeq();
     SeqSymmetry sym = insym;
     boolean same_seq = (annotseq == coordseq);
 
@@ -441,8 +441,8 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
     throws java.lang.InstantiationException, java.lang.IllegalAccessException {
 
     AffyTieredMap map = gviewer.getSeqMap();
-    BioSeq annotseq = gviewer.getAnnotatedSeq();
-    BioSeq coordseq = gviewer.getViewSeq();
+    MutableAnnotatedBioSeq annotseq = gviewer.getAnnotatedSeq();
+    MutableAnnotatedBioSeq coordseq = gviewer.getViewSeq();
     SeqSymmetry sym = insym;
     boolean same_seq = (annotseq == coordseq);
 

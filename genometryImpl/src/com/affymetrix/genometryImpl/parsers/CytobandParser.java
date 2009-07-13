@@ -175,7 +175,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		}
 	}
 
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
 		System.out.println("in CytobandParser.writeAnnotations()");
 		boolean success = true;
@@ -195,7 +195,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		return success;
 	}
 
-	public static void writeCytobandFormat(Writer out, SeqSymmetry sym, BioSeq seq)
+	public static void writeCytobandFormat(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
 		throws IOException  {
 		if (sym instanceof CytobandSym) {
 			CytobandSym cytosym = (CytobandSym)sym;
@@ -224,7 +224,7 @@ public final class CytobandParser implements AnnotationWriter  {
 	public final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
 		String band;
 
-		public CytobandSym(int start, int end, BioSeq seq, String name, String band) {
+		public CytobandSym(int start, int end, MutableAnnotatedBioSeq seq, String name, String band) {
 			super(start, end, seq);
 			this.band = band;
 			this.id = name;

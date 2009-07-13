@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
@@ -168,7 +166,7 @@ public class SeqMapView extends JPanel
 	UnibrowHairline hairline = null;
 	SmartAnnotBioSeq aseq;
 	/**
-	 *  a virtual sequence that maps the AnnotatedBioSeq aseq to the map coordinates.
+	 *  a virtual sequence that maps the MutableAnnotatedBioSeq aseq to the map coordinates.
 	 *  if the mapping is identity, then:
 	 *     vseq == aseq OR
 	 *     vseq.getComposition().getSpan(aseq) = SeqSpan(0, aseq.getLength(), aseq)
@@ -923,7 +921,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Sets the sequence; if null, has the same effect as calling clear(). */
-	public void setAnnotatedSeq(AnnotatedBioSeq seq) {
+	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq) {
 		if ((seq == this.aseq) && (seq != null)) {
 			// if the seq is not changing, try to preserve current view
 			setAnnotatedSeq(seq, false, true);
@@ -939,12 +937,12 @@ public class SeqMapView extends JPanel
 	 *       // both x and y direction.
 	 *       [GAH: temporarily changed to preserve scale in only the x direction]
 	 */
-	public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
+	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
 		//    setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
 		setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
 	}
 
-	public void setAnnotatedSeq(AnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
+	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
 		//   want to optimize for several situations:
 		//       a) merging newly loaded data with existing data (adding more annotations to
 		//           existing AnnotatedBioSeq) -- would like to avoid recreation and repacking
@@ -952,7 +950,7 @@ public class SeqMapView extends JPanel
 		//       b) reverse complementing existing AnnotatedBioSeq
 		//       c) coord shifting existing AnnotatedBioSeq
 		//   in all these cases:
-		//       "new" AnnotatedBioSeq == old AnnotatedBioSeq
+		//       "new" MutableAnnotatedBioSeq == old AnnotatedBioSeq
 		//       existing glyphs could be reused (in (b) they'd have to be "flipped")
 		//       should preserve selection
 		//       should preserve view (x/y scale/offset) (in (b) would preserve "flipped" view)
@@ -1158,7 +1156,7 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	protected String getVersionInfo(BioSeq seq) {
+	protected String getVersionInfo(MutableAnnotatedBioSeq seq) {
 		if (seq == null) {
 			return null;
 		}
@@ -1182,7 +1180,7 @@ public class SeqMapView extends JPanel
 		return version_info;
 	}
 
-	protected void setTitleBar(AnnotatedBioSeq seq) {
+	protected void setTitleBar(MutableAnnotatedBioSeq seq) {
 		Pattern pattern = Pattern.compile("chr([0-9XYM]*)");
 		if (frm != null) {
 			StringBuffer title = new StringBuffer(128);
@@ -1241,7 +1239,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
-	 *  Find min and max of annotations along AnnotatedBioSeq aseq.
+	 *  Find min and max of annotations along MutableAnnotatedBioSeq aseq.
 	 *<p>
 	 *  takes a boolean argument for whether to excludes GraphSym bounds
 	 *    (actual bounds of GraphSyms are currently problematic, but if (!exclude_graphs) then
@@ -1296,7 +1294,7 @@ public class SeqMapView extends JPanel
 	 *  @param min  an initial minimum value.
 	 *  @param max  an initial maximum value.
 	 */
-	private static final int[] getAnnotationBounds(BioSeq seq, TypeContainerAnnot tca, boolean exclude_graphs, int min, int max) {
+	private static final int[] getAnnotationBounds(MutableAnnotatedBioSeq seq, TypeContainerAnnot tca, boolean exclude_graphs, int min, int max) {
 		int[] min_max = new int[2];
 		min_max[0] = min;
 		min_max[1] = max;
@@ -1492,7 +1490,7 @@ public class SeqMapView extends JPanel
 
 	}
 
-	public AnnotatedBioSeq getAnnotatedSeq() {
+	public MutableAnnotatedBioSeq getAnnotatedSeq() {
 		return aseq;
 	}
 
@@ -1501,11 +1499,11 @@ public class SeqMapView extends JPanel
 	 *  Note: {@link #getViewSeq()} and {@link #getAnnotatedSeq()} may return
 	 *  different BioSeq's !
 	 *  This allows for reverse complement, coord shifting, seq slicing, etc.
-	 *  Returns BioSeq that is the SeqMapView's _view_ onto the
-	 *     AnnotatedBioSeq returned by getAnnotatedSeq()
+	 *  Returns MutableAnnotatedBioSeq that is the SeqMapView's _view_ onto the
+	 *     MutableAnnotatedBioSeq returned by getAnnotatedSeq()
 	 *  @see #getTransformPath()
 	 */
-	public BioSeq getViewSeq() {
+	public MutableAnnotatedBioSeq getViewSeq() {
 		return viewseq;
 	}
 
@@ -1526,7 +1524,7 @@ public class SeqMapView extends JPanel
 		return transformForViewSeq(insym, getAnnotatedSeq());
 	}
 
-	public SeqSymmetry transformForViewSeq(SeqSymmetry insym, BioSeq seq_to_compare) {
+	public SeqSymmetry transformForViewSeq(SeqSymmetry insym, MutableAnnotatedBioSeq seq_to_compare) {
 		SeqSymmetry result_sym = insym;
 		//    if (getAnnotatedSeq() != getViewSeq()) {
 		if (seq_to_compare != getViewSeq()) {
@@ -2149,10 +2147,10 @@ public class SeqMapView extends JPanel
 	}
 
 	public void zoomTo(SeqSpan span) {
-		BioSeq zseq = span.getBioSeq();
+		MutableAnnotatedBioSeq zseq = span.getBioSeq();
 		if ((zseq instanceof MutableAnnotatedBioSeq) &&
 						(zseq != this.getAnnotatedSeq())) {
-			gmodel.setSelectedSeq((MutableAnnotatedBioSeq) zseq);
+			gmodel.setSelectedSeq(zseq);
 		}
 		zoomTo(span.getMin(), span.getMax());
 	}
@@ -2983,7 +2981,7 @@ public class SeqMapView extends JPanel
 		if (Application.DEBUG_EVENTS) {
 			System.out.println("SeqMapView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
-		final AnnotatedBioSeq newseq = evt.getSelectedSeq();
+		final MutableAnnotatedBioSeq newseq = evt.getSelectedSeq();
 		// Don't worry if newseq is null, setAnnotatedSeq can handle that
 		// (It can also handle the case where newseq is same as old seq.)
 

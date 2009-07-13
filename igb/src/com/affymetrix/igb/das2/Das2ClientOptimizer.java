@@ -602,7 +602,7 @@ public final class Das2ClientOptimizer {
         // on one thread when might be rendering based on aseq in event thread...
         // or maybe should just make addAnnotation() a synchronized method
         if (no_graphs) {
-            // if graphs, then adding to annotation bioseq is already handled by addChildGraph() method
+            // if graphs, then adding to annotation MutableAnnotatedBioSeq is already handled by addChildGraph() method
             synchronized (aseq) {
                 aseq.addAnnotation(request_sym);
             }

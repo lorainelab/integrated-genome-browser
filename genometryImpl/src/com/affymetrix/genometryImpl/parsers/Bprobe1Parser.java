@@ -226,7 +226,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	 *      all syms in collection are EfficientProbesetSymA
 	 *      all syms share same probe_length, id_prefix
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq aseq,
 			String type, OutputStream outstream) {
 		boolean success = false;
 		AnnotatedSeqGroup group = ((SmartAnnotBioSeq)aseq).getSeqGroup();
@@ -329,7 +329,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			dos.writeInt(seq_count);
 			Iterator iter = seq_group.getSeqList().iterator();
 			while (iter.hasNext()) {
-				AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+				MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)iter.next();
 				String seqid = aseq.getID();
 				int seq_length = aseq.getLength();
 				int container_count = aseq.getAnnotationCount();
@@ -355,7 +355,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			}
 			iter = seq_group.getSeqList().iterator();
 			while (iter.hasNext()) {
-				AnnotatedBioSeq aseq = (AnnotatedBioSeq)iter.next();
+				MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)iter.next();
 				int container_count = aseq.getAnnotationCount();
 				//        System.out.println("seqid: " + aseq.getID() + ", annot count: " + annot_count );
 				for (int i=0; i<container_count; i++) {
@@ -393,8 +393,8 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	}
 
 
-	//  protected static void writeProbeset(EfficientPrebesetSymA psym, BioSeq aseq, DataOutputStream dos) throws IOException {
-	protected static void writeProbeset(SeqSymmetry psym, BioSeq aseq, DataOutputStream dos) throws IOException {
+	//  protected static void writeProbeset(EfficientPrebesetSymA psym, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
+	protected static void writeProbeset(SeqSymmetry psym, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
 		SeqSpan pspan = psym.getSpan(aseq);
 		int child_count = psym.getChildCount();
 		int intid;

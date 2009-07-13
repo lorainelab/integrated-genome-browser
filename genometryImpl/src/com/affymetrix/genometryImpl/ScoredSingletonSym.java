@@ -14,13 +14,13 @@
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.Scored;
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
 
 public final class ScoredSingletonSym extends SingletonSeqSymmetry implements Scored {
 	float score;
 
-	public ScoredSingletonSym(int start, int end, BioSeq seq, float score) {
+	public ScoredSingletonSym(int start, int end, MutableAnnotatedBioSeq seq, float score) {
 		super(start, end, seq);
 		this.score = score;
 	}

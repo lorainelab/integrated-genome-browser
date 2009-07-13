@@ -70,7 +70,7 @@ public final class UcscGffSym extends SingletonSymWithProps implements Scored {
 	 * @param convert_base Whether to convert from base-1 to interbase-0
 	 *   numbering; this IS necessary with typical GFF files.
 	 */
-	public UcscGffSym(BioSeq seq, String source, String feature_type, int a, int b,
+	public UcscGffSym(MutableAnnotatedBioSeq seq, String source, String feature_type, int a, int b,
 			float score, char strand, char frame, String group_field,
 			boolean convert_base) {
 		super(0, 0, seq);

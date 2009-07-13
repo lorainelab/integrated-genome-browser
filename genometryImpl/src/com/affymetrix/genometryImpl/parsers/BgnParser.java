@@ -270,7 +270,7 @@ public final class BgnParser implements AnnotationWriter  {
 			cspan = tspan;
 			name = gsym.getID();
 		}
-		BioSeq seq = tspan.getBioSeq();
+		MutableAnnotatedBioSeq seq = tspan.getBioSeq();
 		dos.writeUTF(name);
 		dos.writeUTF(seq.getID());
 		if (tspan.isForward()) { dos.writeUTF("+"); }
@@ -454,7 +454,7 @@ test.convertTextToBinary(text_file, bin_file, null);
  *  Implementing AnnotationWriter interface to write out annotations
  *    to an output stream as "binary UCSC gene" (.bgn)
  **/
-public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 		String type, OutputStream outstream) {
 	System.out.println("in BgnParser.writeAnnotations()");
 	boolean success = true;

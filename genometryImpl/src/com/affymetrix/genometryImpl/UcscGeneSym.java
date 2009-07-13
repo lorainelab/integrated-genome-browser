@@ -60,12 +60,12 @@ public final class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan,
 	boolean forward;
 	int[] emins;
 	int[] emaxs;
-	BioSeq seq;
+	MutableAnnotatedBioSeq seq;
 	String type;
 	Map<String,Object> props;
 
 	public UcscGeneSym(String type, String geneName, String name,
-			BioSeq seq, boolean forward, int txMin, int txMax,
+			MutableAnnotatedBioSeq seq, boolean forward, int txMin, int txMax,
 			int cdsMin, int cdsMax, int[] emins, int[] emaxs
 			) {
 		this.type = type;
@@ -99,7 +99,7 @@ public final class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan,
 	 *  SeqSymmetry implementation.
 	 */
 	public String getID() { return name; }
-	public SeqSpan getSpan(BioSeq bs) {
+	public SeqSpan getSpan(MutableAnnotatedBioSeq bs) {
 		if (bs.equals(this.seq)) {
 			return this;
 		}
@@ -113,7 +113,7 @@ public final class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan,
 		else { return null; }
 	}
 
-	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
+	public boolean getSpan(MutableAnnotatedBioSeq bs, MutableSeqSpan span) {
 		if (bs.equals(this.seq)) {
 			if (forward) {
 				span.set(txMin, txMax, seq);
@@ -139,7 +139,7 @@ public final class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan,
 		else { return false; }
 	}
 	public int getSpanCount() { return 1; }
-	public BioSeq getSpanSeq(int index) {
+	public MutableAnnotatedBioSeq getSpanSeq(int index) {
 		if (index == 0) { return seq; }
 		else { return null; }
 	}
@@ -160,7 +160,7 @@ public final class UcscGeneSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan,
 	public int getMax() { return txMax; }
 	public int getLength() { return (txMax - txMin); }
 	public boolean isForward() { return forward; }
-	public BioSeq getBioSeq() { return seq; }
+	public MutableAnnotatedBioSeq getBioSeq() { return seq; }
 	public double getStartDouble() { return (double)getStart(); }
 	public double getEndDouble() { return (double)getEnd(); }
 	public double getMaxDouble() { return (double)getMax(); }

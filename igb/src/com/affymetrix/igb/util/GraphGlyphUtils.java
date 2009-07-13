@@ -117,7 +117,7 @@ public final class GraphGlyphUtils {
    */
   /*
   public static GraphGlyph displayMultiGraph(List grafs,
-					     AnnotatedBioSeq aseq, AffyTieredMap map,
+					     MutableAnnotatedBioSeq aseq, AffyTieredMap map,
 					     List cols, double graph_yloc, double graph_height,
 					     boolean use_floater) {
     System.out.println("trying to make SmartGraphGlyph for sliding window stats");

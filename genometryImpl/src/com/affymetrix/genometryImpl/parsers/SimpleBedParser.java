@@ -23,7 +23,7 @@ public final class SimpleBedParser implements AnnotationWriter {
 
 	public String getMimeType() { return "text/plain"; }
 
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) throws IOException {
 		boolean success;
 		ArrayList<SeqSpan> spanlist = new ArrayList<SeqSpan>(syms.size());  // initialize to number of top-level syms, won't be lower...

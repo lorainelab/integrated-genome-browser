@@ -124,9 +124,9 @@ public final class PSLParser implements AnnotationWriter  {
 		boolean in_bottom_of_link_psl = false;
 
 		// the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
-		Map<BioSeq,Map<String,SimpleSymWithProps>> target2types = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>();
-		Map<BioSeq,Map<String,SimpleSymWithProps>> query2types = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>();
-		Map<BioSeq,Map<String,SimpleSymWithProps>> other2types = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>();
+		Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> target2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>>();
+		Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> query2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>>();
+		Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> other2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>>();
 
 		int line_count = 0;
 		//    MutableAnnotatedBioSeq seq = aseq;
@@ -431,7 +431,7 @@ public final class PSLParser implements AnnotationWriter  {
 		return results;
 	}
 
-	static void createContainerAnnot(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
+	static void createContainerAnnot(Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
 		//    If using a container sym, need to first hash (seq2types) from
 		//    seq to another hash (type2csym) of types to container sym
 		//    System.out.println("in createContainerAnnot, type: " + type);
@@ -461,7 +461,7 @@ public final class PSLParser implements AnnotationWriter  {
 	}
 
 
-	public List<Object> calcChildren(BioSeq qseq, BioSeq tseq, boolean qforward, boolean tforward,
+	public List<Object> calcChildren(MutableAnnotatedBioSeq qseq, MutableAnnotatedBioSeq tseq, boolean qforward, boolean tforward,
 			String[] blocksize_strings,
 			String[] qstart_strings, String[] tstart_strings) {
 		int childCount = blocksize_strings.length;
@@ -537,7 +537,7 @@ public final class PSLParser implements AnnotationWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "PSL" format
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
 		return writeAnnotations(syms, seq, false, type, null, outstream);
 	}
@@ -545,7 +545,7 @@ public final class PSLParser implements AnnotationWriter  {
 	/**
 	 *  This version of the method is able to write out track lines
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			boolean writeTrackLines, String type,
 			String description, OutputStream outstream) {
 		boolean success = true;
@@ -572,7 +572,7 @@ public final class PSLParser implements AnnotationWriter  {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq, seq);
 					}
 					else {
-						BioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
+						MutableAnnotatedBioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq, seq2);
 					}
 				}

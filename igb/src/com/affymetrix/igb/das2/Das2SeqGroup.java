@@ -80,7 +80,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
   }
 
   /**
-   *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
+   *  Returns the MutableAnnotatedBioSeq with the given id (or synonym), creating it if necessary,
    *  and increasing its length to the given value if necessary.
    */
     @Override

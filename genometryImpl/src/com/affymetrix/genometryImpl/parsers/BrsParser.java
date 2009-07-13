@@ -257,7 +257,7 @@ public final class BrsParser implements AnnotationWriter  {
 	public void outputBrsFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan = gsym.getCdsSpan();
-		BioSeq seq = tspan.getBioSeq();
+		MutableAnnotatedBioSeq seq = tspan.getBioSeq();
 		dos.writeUTF(gsym.getGeneName());
 		dos.writeUTF(gsym.getName());
 		dos.writeUTF(seq.getID());
@@ -559,7 +559,7 @@ public static void main(String[] args) {
  *  Implementing AnnotationWriter interface to write out annotations
  *    to an output stream as "binary UCSC refseq gene". File extension ".brs".
  **/
-public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 		String type, OutputStream outstream) {
 	System.out.println("in BrsParser.writeAnnotations()");
 	boolean success = true;

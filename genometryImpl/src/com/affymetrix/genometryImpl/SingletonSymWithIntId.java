@@ -24,7 +24,7 @@ public final class SingletonSymWithIntId extends MutableSingletonSeqSymmetry imp
 	int nid;
 	String id_prefix;
 
-	public SingletonSymWithIntId(int start, int end, BioSeq seq, String id_prefix, int nid) {
+	public SingletonSymWithIntId(int start, int end, MutableAnnotatedBioSeq seq, String id_prefix, int nid) {
 		super(start, end, seq);
 		this.id_prefix = id_prefix;
 		this.nid = nid;

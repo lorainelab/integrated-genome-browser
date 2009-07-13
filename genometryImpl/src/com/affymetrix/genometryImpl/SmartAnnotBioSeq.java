@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.MutableSeqSymmetry;
@@ -482,7 +481,7 @@ public final class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, Searchabl
 			if (this_comp_span == null || !SeqUtils.intersects(this_comp_span, this_residue_span)) {
 				return;
 			}
-			BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
+			MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
 			SeqSpan other_comp_span = sym.getSpan(other_seq);
 			MutableSeqSpan ispan = new SimpleMutableSeqSpan();
 			SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
@@ -569,13 +568,13 @@ public final class SmartAnnotBioSeq implements MutableAnnotatedBioSeq, Searchabl
 
 				int comp_count = rootsym.getChildCount();
 				if (comp_count == 0) {
-					BioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
+					MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
 					return other_seq.isComplete(start, end);
 				}
 
 				for (int i = 0; i < comp_count; i++) {
 					SeqSymmetry comp_sym = rootsym.getChild(i);
-					BioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
+					MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
 					if (!other_seq.isComplete()) {
 						return false;
 					}

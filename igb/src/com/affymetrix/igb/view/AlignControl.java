@@ -99,7 +99,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
     System.out.println("Other span: " + other_span);
 
     SeqUtils.printSpan(other_span);
-    BioSeq other_seq = other_span.getBioSeq();
+    MutableAnnotatedBioSeq other_seq = other_span.getBioSeq();
     String seqid = other_seq.getID();
     String version = "unknown";
     /*
@@ -170,7 +170,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
         int spancount = annot_sym.getSpanCount();
         for (int i = 0; i < spancount; i++) {
             SeqSpan ospan = annot_sym.getSpan(i);
-            BioSeq oseq = ospan.getBioSeq();
+            MutableAnnotatedBioSeq oseq = ospan.getBioSeq();
             if (!SeqUtils.spansEqual(curspan, ospan)) {
                 if (oseq.getID().startsWith("chr")) {
                     // found a other_span != curspan and likely on a chromosome, so use it
@@ -209,7 +209,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
       int spancount = selected_sym.getSpanCount();
       int chrom_count = 0;
       for (int i=0; i<spancount; i++) {
-	BioSeq bseq = selected_sym.getSpan(i).getBioSeq();
+	MutableAnnotatedBioSeq bseq = selected_sym.getSpan(i).getBioSeq();
 	if (bseq.getID().startsWith("chr")) {
 	  chrom_count++;
 	}

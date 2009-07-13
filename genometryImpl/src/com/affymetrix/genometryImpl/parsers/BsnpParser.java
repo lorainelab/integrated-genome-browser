@@ -113,7 +113,7 @@ public abstract class BsnpParser {
 			dos.writeInt(pcount);  // how many seqs there are
 			for (int i=0; i<pcount; i++) {
 				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
+				MutableAnnotatedBioSeq seq = parent.getSpanSeq(0);
 				String seqid = seq.getID();
 				int snp_count = parent.getChildCount();
 				dos.writeUTF(seqid);
@@ -123,7 +123,7 @@ public abstract class BsnpParser {
 			int total_snp_count = 0;
 			for (int i=0; i<pcount; i++) {
 				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
+				MutableAnnotatedBioSeq seq = parent.getSpanSeq(0);
 				int snp_count = parent.getChildCount();
 				ArrayList<SeqSymmetry> snps = new ArrayList<SeqSymmetry>(snp_count);
 				for (int k=0; k<snp_count; k++) {
@@ -378,7 +378,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 
 
 	// Annotationwriter implementation
-	//  public boolean writeAnnotations(Collection syms, BioSeq seq,
+	//  public boolean writeAnnotations(Collection syms, MutableAnnotatedBioSeq seq,
 	//                                  String type, OutputStream outstream) {
 	//  }
 	// public String getMimeType()  { return "binary/bsnp"; }

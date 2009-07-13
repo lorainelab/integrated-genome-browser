@@ -49,7 +49,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
   //     uses TypeContainerAnnot instead.  So for now make parent the TypeContainerAnnot
   //  Das2ContainerAnnot parent_container;
   TypeContainerAnnot parent_container;
-  BioSeq aseq;
+  MutableAnnotatedBioSeq aseq;
   MutableSeqSpan sum_child_spans;
   String format;
 
@@ -132,7 +132,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
     else { return null; }
   }
 
-  public SeqSpan getSpan(BioSeq seq) {
+  public SeqSpan getSpan(MutableAnnotatedBioSeq seq) {
     if (seq == aseq) { return sum_child_spans; }
     else { return null; }
   }
@@ -144,7 +144,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
     return true;
   }
 
-  public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
+  public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span) {
     SeqSpan vspan = getSpan(seq);
     if (vspan == null) { return false; }
     span.set(vspan.getStart(), vspan.getEnd(), aseq);

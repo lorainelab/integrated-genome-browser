@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
@@ -21,7 +21,7 @@ public final class GenericFeature {
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
 	public boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
-	public Map<AnnotatedBioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
+	public Map<MutableAnnotatedBioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
 
 	/**
 	 * @param featureName
@@ -47,7 +47,7 @@ public final class GenericFeature {
 			this.visible = false;
 			this.loadStrategy = LoadStrategy.NO_LOAD;
 		}
-		this.LoadStatusMap = new HashMap<AnnotatedBioSeq, LoadStatus>();
+		this.LoadStatusMap = new HashMap<MutableAnnotatedBioSeq, LoadStatus>();
 	}
 
 	/**

@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 
 /**
  *  A SeqSymmetry for holding floating-point graph data.
@@ -22,7 +22,7 @@ public class GraphSymFloat extends GraphSym {
 
 	private float[] float_y;
 
-	public GraphSymFloat(int[] x, float[] y, String id, BioSeq seq) {
+	public GraphSymFloat(int[] x, float[] y, String id, MutableAnnotatedBioSeq seq) {
 		super(x, id, seq);
 		setCoords(x, y);
 	}

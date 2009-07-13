@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSymByte;
 import com.affymetrix.genometryImpl.GraphSymFloat;
@@ -96,7 +96,7 @@ public final class AffySingleChromData {
 	}
 
 	/** Creates GraphSyms that can be added as annotations to the BioSeq. */
-	public List<SeqSymmetry> makeGraphs(AnnotatedBioSeq seq) throws IOException {
+	public List<SeqSymmetry> makeGraphs(MutableAnnotatedBioSeq seq) throws IOException {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(columns.size());
 
 		ArrayList<CharSequence> probeSetNames = (ArrayList<CharSequence>) columns.get(0).getData();

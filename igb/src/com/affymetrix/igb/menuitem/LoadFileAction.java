@@ -526,7 +526,7 @@ public final class LoadFileAction {
 		}
 	}
 
-	/** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
+	/** Returns the first MutableAnnotatedBioSeq on the first SeqSymmetry in the given list, or null. */
 	private static MutableAnnotatedBioSeq getFirstSeq(List<SeqSymmetry> syms) {
 		MutableAnnotatedBioSeq first_seq = null;
 		if (syms != null && !syms.isEmpty()) {

@@ -509,7 +509,7 @@ public final class ScoredIntervalParser {
 			bos = new BufferedOutputStream(ostr);
 			dos = new DataOutputStream(bos);
 
-			BioSeq seq = graf.getGraphSeq();
+			MutableAnnotatedBioSeq seq = graf.getGraphSeq();
 			String seq_id = (seq == null ? "." : seq.getID());
 
 			String human_name = graf.getGraphState().getTierStyle().getHumanName();

@@ -35,7 +35,7 @@ import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -1289,10 +1289,10 @@ public final class IGB extends Application
 		}
 		prev_selected_group = selected_group;
 	}
-	AnnotatedBioSeq prev_selected_seq = null;
+	MutableAnnotatedBioSeq prev_selected_seq = null;
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		AnnotatedBioSeq selected_seq = evt.getSelectedSeq();
+		MutableAnnotatedBioSeq selected_seq = evt.getSelectedSeq();
 		if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
 			//      System.out.println("----------- saving visible span selection for seq: " + prev_selected_seq.getID());
 			Persistence.saveSeqVisibleSpan(map_view);

@@ -17,9 +17,9 @@ import com.affymetrix.genometry.*;
 
 
 public interface AnnotatedSeqViewer {
-  public void setAnnotatedSeq(AnnotatedBioSeq seq);
-  public void setAnnotatedSeq(AnnotatedBioSeq seq, 
+  public void setAnnotatedSeq(MutableAnnotatedBioSeq seq);
+  public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, 
 			      boolean preserve_selection, 
 			      boolean preserve_view);
-  public AnnotatedBioSeq getAnnotatedSeq();
+  public MutableAnnotatedBioSeq getAnnotatedSeq();
 }

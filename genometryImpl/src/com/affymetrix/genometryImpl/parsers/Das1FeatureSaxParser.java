@@ -679,7 +679,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			SeqUtils.printSymmetry(first_sym);
 
 		//      if (use_viewer) {
-		//        AnnotatedBioSeq seq = (AnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
+		//        MutableAnnotatedBioSeq seq = (AnnotatedBioSeq) first_sym.getSpan(0).getBioSeq();
 		//        GenometryViewer viewer = GenometryViewer.displaySeq(seq, false);
 		//        viewer.setAnnotatedSeq(seq);
 		//      }
@@ -744,7 +744,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	}
 
 	private static void writeDasFeatHeader(SeqSpan qspan, PrintWriter pw) {
-		BioSeq aseq = qspan.getBioSeq();
+		MutableAnnotatedBioSeq aseq = qspan.getBioSeq();
 		String seq_id = aseq.getID();
 		int start = qspan.getMin();
 		int stop = qspan.getMax();
@@ -772,7 +772,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	static final String DAS_GROUP_ID = "das_group_id";
 	static final String DAS_FEATURE_ID = "das_feature_id";
 
-	private static void writeDasFeature(SeqSymmetry annot, BioSeq aseq, String feat_type, PrintWriter pw) {
+	private static void writeDasFeature(SeqSymmetry annot, MutableAnnotatedBioSeq aseq, String feat_type, PrintWriter pw) {
 		if (feat_type == null) {
 			feat_type = SmartAnnotBioSeq.determineMethod(annot);
 		}
@@ -854,7 +854,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "DASGFF" XML format
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 					String type, OutputStream outstream) {
 		boolean success = true;
 		// for now, assume bounds of query are min/max of syms...

@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 
 /**
  *  A SeqSymmetry for holding integer-based graph data.
@@ -22,7 +22,7 @@ public final class GraphSymInt extends GraphSym {
 
 	private int[] int_y;
 
-	public GraphSymInt(int[] x, int[] y, String id, BioSeq seq) {
+	public GraphSymInt(int[] x, int[] y, String id, MutableAnnotatedBioSeq seq) {
 		super(x, id, seq);
 		setCoords(x, y);
 	}

@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 
@@ -24,7 +24,7 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 public final class GraphIntervalSym extends GraphSymFloat {
 	int wcoords[];
 
-	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, BioSeq seq) {
+	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, MutableAnnotatedBioSeq seq) {
 		super(x,y,id,seq);
 		this.wcoords = width;
 

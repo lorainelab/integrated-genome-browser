@@ -22,7 +22,7 @@ import java.lang.Object.*;
 import java.net.URI.*;
 //import java.util.regex.*;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -206,13 +206,13 @@ public class Das2VersionedSource {
      *  assumes there is only one region for each seq
      *    may want to change this to return a list of regions instead
      **/
-    public Das2Region getSegment(BioSeq seq) {
+    public Das2Region getSegment(MutableAnnotatedBioSeq seq) {
         // should probably make a region2seq hash, but for now can just iterate through regions
         Das2Region result = null;
         Iterator iter = getSegments().values().iterator();
         while (iter.hasNext()) {
             Das2Region region = (Das2Region) iter.next();
-            BioSeq region_seq = region.getAnnotatedSeq();
+            MutableAnnotatedBioSeq region_seq = region.getAnnotatedSeq();
             if (region_seq == seq) {
                 result = region;
                 break;

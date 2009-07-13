@@ -195,7 +195,7 @@ public class BedParserTest {
 			Writer out = new StringWriter();
 
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-			BioSeq seq = group.addSeq("chr12", 500000);
+			MutableAnnotatedBioSeq seq = group.addSeq("chr12", 500000);
 			SeqSpan span = new SimpleSeqSpan(500,800,seq);
 			SeqSpan[] span_array = new SeqSpan[] {span};
 			SimpleMutableSeqSymmetry sym = new SimpleMutableSeqSymmetry();

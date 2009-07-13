@@ -13,8 +13,7 @@
 
 package com.affymetrix.genometry.util;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.DerivedSeqSymmetry;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.MutableSeqSymmetry;
@@ -66,7 +65,7 @@ public abstract class SeqUtils {
 
 
 	/**
-	 *  Compares two spans, and returns true if they both refer to the same BioSeq and
+	 *  Compares two spans, and returns true if they both refer to the same MutableAnnotatedBioSeq and
 	 *      their starts and equal and their ends are equal.
 	 */
 	public static final boolean spansEqual(SeqSpan spanA, SeqSpan spanB) {
@@ -115,13 +114,13 @@ public abstract class SeqUtils {
 	}
 
 
-	public static final List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
+	public static final List<SeqSpan> getLeafSpans(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 		ArrayList<SeqSpan> leafSpans = new ArrayList<SeqSpan>();
 		collectLeafSpans(sym, seq, leafSpans);
 		return leafSpans;
 	}
 
-	public static final void collectLeafSpans(SeqSymmetry sym, BioSeq seq, Collection<SeqSpan> leafs) {
+	public static final void collectLeafSpans(SeqSymmetry sym, MutableAnnotatedBioSeq seq, Collection<SeqSpan> leafs) {
 		if (sym.getChildCount() == 0) {
 			SeqSpan span = sym.getSpan(seq);
 			if (span != null) {
@@ -161,7 +160,7 @@ public abstract class SeqUtils {
 	 *   Extends to ends of BioSeq.
 	 *  @see #inverse(SeqSymmetry, BioSeq, boolean)
 	 */
-	private static final SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq) {
+	private static final SeqSymmetry inverse(SeqSymmetry symA, MutableAnnotatedBioSeq seq) {
 		return inverse(symA, seq, true);
 	}
 
@@ -170,7 +169,7 @@ public abstract class SeqUtils {
 	 *
 	 *  @param include_ends indicates whether to extend to ends of BioSeq
 	 */
-	private static final SeqSymmetry inverse(SeqSymmetry symA, BioSeq seq, boolean include_ends) {
+	private static final SeqSymmetry inverse(SeqSymmetry symA, MutableAnnotatedBioSeq seq, boolean include_ends) {
 		// put leaf syms in list
 		List<SeqSpan> spans = SeqUtils.getLeafSpans(symA, seq);
 
@@ -233,7 +232,7 @@ public abstract class SeqUtils {
 	 *  Creates a SeqSymmetry that contains children for regions covered by symA that
 	 *     are not covered by symB.
 	 */
-	public static final SeqSymmetry exclusive(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
+	public static final SeqSymmetry exclusive(SeqSymmetry symA, SeqSymmetry symB, MutableAnnotatedBioSeq seq) {
 		SeqSymmetry xorSym = xor(symA, symB, seq);
 		return SeqUtils.intersection(symA, xorSym, seq);
 	}
@@ -241,7 +240,7 @@ public abstract class SeqUtils {
 	/**
 	 *  "Logical" XOR of SeqSymmetries (relative to a particular BioSeq).
 	 */
-	private static final SeqSymmetry xor(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
+	private static final SeqSymmetry xor(SeqSymmetry symA, SeqSymmetry symB, MutableAnnotatedBioSeq seq) {
 		SeqSymmetry unionAB = union(symA, symB, seq);
 		SeqSymmetry interAB = intersection(symA, symB, seq);
 		SeqSymmetry inverseInterAB = inverse(interAB, seq);
@@ -251,13 +250,13 @@ public abstract class SeqUtils {
 	/**
 	 *  "Logical" OR of SeqSymmetries (relative to a particular BioSeq).
 	 */
-	public static final MutableSeqSymmetry union(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
+	public static final MutableSeqSymmetry union(SeqSymmetry symA, SeqSymmetry symB, MutableAnnotatedBioSeq seq) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		union(symA, symB, resultSym, seq);
 		return resultSym;
 	}
 
-	/*public static final MutableSeqSymmetry union(List<SeqSymmetry> syms, BioSeq seq) {
+	/*public static final MutableSeqSymmetry union(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		union(syms, resultSym, seq);
 		return resultSym;
@@ -266,7 +265,7 @@ public abstract class SeqUtils {
 	/**
 	 *  "Logical" OR of list of SeqSymmetries (relative to a particular BioSeq).
 	 */
-	public static final boolean union(List<SeqSymmetry> syms, MutableSeqSymmetry resultSym, BioSeq seq) {
+	public static final boolean union(List<SeqSymmetry> syms, MutableSeqSymmetry resultSym, MutableAnnotatedBioSeq seq) {
 		resultSym.clear();
 		List<SeqSymmetry> leaves = new ArrayList<SeqSymmetry>();
 		for (SeqSymmetry sym : syms) {
@@ -287,7 +286,7 @@ public abstract class SeqUtils {
 	 *  "Logical" OR of SeqSymmetries (relative to a particular BioSeq).
 	 */
 	public static final boolean union(SeqSymmetry symA, SeqSymmetry symB,
-			MutableSeqSymmetry resultSym, BioSeq seq) {
+			MutableSeqSymmetry resultSym, MutableAnnotatedBioSeq seq) {
 		resultSym.clear();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
 		collectLeafSpans(symA, seq, spans);
@@ -299,7 +298,7 @@ public abstract class SeqUtils {
 	/**
 	 *  "Logical" AND of SeqSymmetries (relative to a particular BioSeq).
 	 */
-	public static final MutableSeqSymmetry intersection(SeqSymmetry symA, SeqSymmetry symB, BioSeq seq) {
+	public static final MutableSeqSymmetry intersection(SeqSymmetry symA, SeqSymmetry symB, MutableAnnotatedBioSeq seq) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		intersection(symA, symB, resultSym, seq);
 		return resultSym;
@@ -310,7 +309,7 @@ public abstract class SeqUtils {
 	 */
 	public static final boolean intersection(SeqSymmetry symA, SeqSymmetry symB,
 			MutableSeqSymmetry resultSym,
-			BioSeq seq) {
+			MutableAnnotatedBioSeq seq) {
 		// Need to merge spans of symA with each other
 		// and symB with each other (in case symA has overlapping
 		// spans within itself, for example)
@@ -400,7 +399,7 @@ public abstract class SeqUtils {
 			max = Math.max(span.getMax(), max);
 			resultSym.addChild(childSym);
 		}
-		BioSeq seq;
+		MutableAnnotatedBioSeq seq;
 		if (merged_spans.size() > 0) { seq = (merged_spans.get(0)).getBioSeq(); }
 		else { seq = null; }
 		SeqSpan resultSpan = new SimpleSeqSpan(min, max, seq);
@@ -423,13 +422,13 @@ public abstract class SeqUtils {
 	}
 
 	/**
-	 *  Returns the first BioSeq in the SeqSymmetry that is NOT
+	 *  Returns the first MutableAnnotatedBioSeq in the SeqSymmetry that is NOT
 	 *  equivalent to the given BioSeq.  (Compared using '=='.)
 	 */
-	public static final BioSeq getOtherSeq(SeqSymmetry sym, BioSeq seq) {
+	public static final MutableAnnotatedBioSeq getOtherSeq(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 		int spanCount = sym.getSpanCount();
 		for (int i=0; i<spanCount; i++) {
-			BioSeq testseq = sym.getSpan(i).getBioSeq();
+			MutableAnnotatedBioSeq testseq = sym.getSpan(i).getBioSeq();
 			if (testseq != seq) {
 				return testseq;
 			}
@@ -552,14 +551,14 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 
 			// WARNING: still need to switch to using mutable SeqSpan args for efficiency
 
-			// find a linker span first -- a span in resSym that has same BioSeq as
+			// find a linker span first -- a span in resSym that has same MutableAnnotatedBioSeq as
 			//    a span in mapSym
 			SeqSpan linkSpan = null;
 			SeqSpan mapSpan = null;
 			for (int spandex=0; spandex < spanCount; spandex++) {
 				//          SeqSpan mapspan = mapSym.getSpan(spandex);
 				mapSpan = mapSym.getSpan(spandex);
-				BioSeq seq = mapSpan.getBioSeq();
+				MutableAnnotatedBioSeq seq = mapSpan.getBioSeq();
 				SeqSpan respan = resultSym.getSpan(seq);
 				if (respan != null) {
 					linkSpan = respan;
@@ -575,13 +574,13 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 			}
 
 			// for each spanX in mapSym that has no SeqSpan in resultSym with same
-			//    BioSeq seqY
+			//    MutableAnnotatedBioSeq seqY
 			else {  // have a linker span
 				MutableSeqSpan interSpan = null;
 				for (int spandex=0; spandex < spanCount; spandex++) {
 					//            SeqSpan mapSpan = mapSym.getSpan(spandex);
 					SeqSpan newspan = mapSym.getSpan(spandex);
-					BioSeq seq = newspan.getBioSeq();
+					MutableAnnotatedBioSeq seq = newspan.getBioSeq();
 					SeqSpan respan = resultSym.getSpan(seq);
 					//            if (respan == null) {
 					//      MutableSeqSpan newResSpan = (MutableSeqSpan)respan;
@@ -672,7 +671,7 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 			// WARNING: still need to switch to using mutable SeqSpan args for efficiency
 			for (int spandex = 0; spandex < spanCount; spandex++) {
 				SeqSpan mapspan = map_child_sym.getSpan(spandex);
-				BioSeq seq = mapspan.getBioSeq();
+				MutableAnnotatedBioSeq seq = mapspan.getBioSeq();
 				//            System.out.println(seq.getID());
 				if (DEBUG) {
 					System.out.print("MapSpan -- ");
@@ -774,7 +773,7 @@ public static final List<SeqSymmetry> getOverlappingChildren(SeqSymmetry sym, Se
 	if (childcount == 0) { return null; }
 	else {
 		List<SeqSymmetry> results = null;
-		BioSeq oseq = ospan.getBioSeq();
+		MutableAnnotatedBioSeq oseq = ospan.getBioSeq();
 		for (int i=0; i<childcount; i++) {
 			SeqSymmetry child = sym.getChild(i);
 			SeqSpan cspan = child.getSpan(oseq);
@@ -798,12 +797,12 @@ protected static final boolean addParentSpans(MutableSeqSymmetry resultSym, SeqS
 	//      could "collapse up" by moving any spans in child that aren't in
 	//      parent up to parent, and removing child
 	if (resultChildCount > 0) {
-		// for now, only worry about SeqSpans corresponding to (having same BioSeq as)
+		// for now, only worry about SeqSpans corresponding to (having same MutableAnnotatedBioSeq as)
 		//    SeqSpans in _mapSym_ (rather than subMapSyms or subResSyms)
 		int mapSpanCount = mapSym.getSpanCount();
 		for (int spandex=0; spandex < mapSpanCount; spandex++) {
 			SeqSpan mapSpan = mapSym.getSpan(spandex);
-			BioSeq mapSeq = mapSpan.getBioSeq();
+			MutableAnnotatedBioSeq mapSeq = mapSpan.getBioSeq();
 			SeqSpan resSpan = resultSym.getSpan(mapSeq);
 
 			// if no span in resultSym with same BioSeq, then need to create one based
@@ -856,21 +855,21 @@ protected static final boolean addParentSpans(MutableSeqSymmetry resultSym, SeqS
 
 
 /**
- *  Given a source SeqSpan srcSpan (which refers to a BioSeq srcSeq), a destination BioSeq dstSeq,
+ *  Given a source SeqSpan srcSpan (which refers to a MutableAnnotatedBioSeq srcSeq), a destination MutableAnnotatedBioSeq dstSeq,
  *     and a SeqSymmetry sym that maps a span on srcSeq to a span on dstSeq, calculate and
- *     return the SeqSpan dstSpan on BioSeq dstSeq that corresponds to the SeqSpan srcSpan on
- *     BioSeq srcSeq.
+ *     return the SeqSpan dstSpan on MutableAnnotatedBioSeq dstSeq that corresponds to the SeqSpan srcSpan on
+ *     MutableAnnotatedBioSeq srcSeq.
  *
  *  Assumptions:
  *       no splitting of one span into multiple spans -- this is handled by transformSymmetry() methods
- *       never more than one SeqSpan with a given BioSeq in the same SeqSymmetry
- *           (no BioSeq duplications in SeqSymmetry)
+ *       never more than one SeqSpan with a given MutableAnnotatedBioSeq in the same SeqSymmetry
+ *           (no MutableAnnotatedBioSeq duplications in SeqSymmetry)
  *       linearity
  *
  *  note that srcSpan and dstSpan may well be the same object...
  */
 public static final boolean transformSpan(SeqSpan srcSpan, MutableSeqSpan dstSpan,
-		BioSeq dstSeq, SeqSymmetry sym) {
+		MutableAnnotatedBioSeq dstSeq, SeqSymmetry sym) {
 
 	// to increase efficiency of "compressed" SeqSymmetry implementations,
 	//    should probably really do span = sym.getSpan(seq, scratch_mutable_span)...
@@ -881,7 +880,7 @@ public static final boolean transformSpan(SeqSpan srcSpan, MutableSeqSpan dstSpa
 	if (span1 == null || span2 == null) { return false; }
 
 	// check to see that the span being transformed overlaps the span with
-	//   same BioSeq in the given SeqSymmetry
+	//   same MutableAnnotatedBioSeq in the given SeqSymmetry
 	if (! overlap(srcSpan, span1)) {
 		//      System.out.println("no overlap: ");
 		return false;
@@ -1246,7 +1245,7 @@ public static final boolean encompass(SeqSpan spanA, SeqSpan spanB, MutableSeqSp
 
 public static final boolean encompass(boolean AForward, boolean BForward,
 		double AMin, double AMax, double BMin, double BMax,
-		BioSeq seq, MutableSeqSpan dstSpan) {
+		MutableAnnotatedBioSeq seq, MutableSeqSpan dstSpan) {
 
 	double start, end;
 	if (AForward) {
@@ -1376,7 +1375,7 @@ private static final java.text.DecimalFormat span_format = new java.text.Decimal
 public static final String spanToString(SeqSpan span) {
 	if (USE_SHORT_FORMAT_FOR_SPANS) {
 		if (span == null) { return "Span: null"; }
-		BioSeq seq = span.getBioSeq();
+		MutableAnnotatedBioSeq seq = span.getBioSeq();
 		return ((seq == null ? "nullseq" : seq.getID()) + ": [" +
 				span_format.format(span.getMin()) + " - " + span_format.format(span.getMax()) +
 				"] (" +
@@ -1411,11 +1410,11 @@ private static final int FORWARD = 5555;
 private static final int REVERSE = 5556;
 private static final int MAJORITY_RULE = 5557;
 
-public static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq) {
+public static final SeqSpan getChildBounds(SeqSymmetry parent, MutableAnnotatedBioSeq seq) {
 	return getChildBounds(parent, seq, MAJORITY_RULE);
 }
 
-private static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq, int orientation) {
+private static final SeqSpan getChildBounds(SeqSymmetry parent, MutableAnnotatedBioSeq seq, int orientation) {
 	int rev_count = 0;
 	int for_count = 0;
 	SeqSpan cbSpan = null;
@@ -1459,7 +1458,7 @@ private static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq, int 
 	return cbSpan;
 }
 
-/*public static final int[] collectCounts(AnnotatedBioSeq aseq) {
+/*public static final int[] collectCounts(MutableAnnotatedBioSeq aseq) {
 	int annotCount = aseq.getAnnotationCount();
 	int[] countArray = {0, 0};
 	for (int i=0; i<annotCount; i++) {
@@ -1481,7 +1480,7 @@ private static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq, int 
 	}
 }*/
 
-public static final String getResidues(SeqSymmetry sym, BioSeq seq) {
+public static final String getResidues(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 	String result = null;
 	int childcount = sym.getChildCount();
 	if (childcount > 0) {

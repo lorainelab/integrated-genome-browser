@@ -45,10 +45,10 @@ public class UcscPslSym
 	boolean overlapping_query_coords = false;
 	boolean overlapping_target_coords = false;
 
-	BioSeq queryseq;
+	MutableAnnotatedBioSeq queryseq;
 	int qmin;
 	int qmax;
-	BioSeq targetseq;
+	MutableAnnotatedBioSeq targetseq;
 	int tmin;
 	int tmax;
 	int[] blockSizes;
@@ -69,10 +69,10 @@ public class UcscPslSym
 			int tNumInsert,
 			int tBaseInsert,
 			boolean same_orientation,
-			BioSeq queryseq,
+			MutableAnnotatedBioSeq queryseq,
 			int qmin,
 			int qmax,
-			BioSeq targetseq,
+			MutableAnnotatedBioSeq targetseq,
 			int tmin,
 			int tmax,
 			int blockcount,  // now ignored, uses blockSizes.length
@@ -128,7 +128,7 @@ public class UcscPslSym
 	/** Always returns 2. */
 	public int getSpanCount() { return 2; }
 
-	public SeqSpan getSpan(BioSeq bs) {
+	public SeqSpan getSpan(MutableAnnotatedBioSeq bs) {
 		SeqSpan span = null;
 		if (bs.equals(targetseq)) {
 			if (same_orientation) { span = new SimpleSeqSpan(tmin, tmax, targetseq); }
@@ -140,7 +140,7 @@ public class UcscPslSym
 		return span;
 	}
 
-	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
+	public boolean getSpan(MutableAnnotatedBioSeq bs, MutableSeqSpan span) {
 		if (bs.equals(targetseq)) {
 			if (same_orientation) { span.set(tmin, tmax, targetseq); }
 			else { span.set(tmax, tmin, targetseq); }
@@ -175,7 +175,7 @@ public class UcscPslSym
 		return span;
 	}
 
-	public BioSeq getSpanSeq(int index) {
+	public MutableAnnotatedBioSeq getSpanSeq(int index) {
 		if (index == QUERY_INDEX) { return queryseq; }
 		else if (index == TARGET_INDEX) { return targetseq; }
 		return null;
@@ -183,7 +183,7 @@ public class UcscPslSym
 
 	public int getChildCount() { return blockSizes.length; }
 
-	public boolean getChildSpan(int child_index, BioSeq span_seq, MutableSeqSpan mutspan) {
+	public boolean getChildSpan(int child_index, MutableAnnotatedBioSeq span_seq, MutableSeqSpan mutspan) {
 		boolean success = false;
 		if (span_seq == queryseq) {
 			mutspan.set(qmins[child_index], qmins[child_index]+blockSizes[child_index], queryseq);
@@ -277,10 +277,10 @@ public class UcscPslSym
 	public int getTargetNumInserts() { return tNumInsert; }
 	public int getTargetBaseInserts() { return tBaseInsert; }
 	public boolean getSameOrientation() { return same_orientation; }
-	public BioSeq getQuerySeq() { return queryseq; }
+	public MutableAnnotatedBioSeq getQuerySeq() { return queryseq; }
 	public int getQueryMin() { return qmin; }
 	public int getQueryMax() { return qmax; }
-	public BioSeq getTargetSeq() { return targetseq; }
+	public MutableAnnotatedBioSeq getTargetSeq() { return targetseq; }
 	public int getTargetMin() { return tmin; }
 	public int getTargetMax() { return tmax; }
 
@@ -510,10 +510,10 @@ public class UcscPslSym
 					qNumInsert, // int tNumInsert,
 					qBaseInsert, // int tBaseInsert,
 					same_orientation, // boolean same_orientation,
-					targetseq, // BioSeq queryseq,
+					targetseq, // MutableAnnotatedBioSeq queryseq,
 					tmin, // int qmin,
 					tmax, // int qmax,
-					queryseq, // BioSeq targetseq,
+					queryseq, // MutableAnnotatedBioSeq targetseq,
 					qmin, // int tmin,
 					qmax, // int tmax,
 					blockSizes.length, // int blockcount

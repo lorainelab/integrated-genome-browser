@@ -128,7 +128,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
 			int[] newmins = new int[spancount];
 			int[] newmaxs = new int[spancount];
-			BioSeq firstseq = (spanlist.get(0)).getBioSeq();
+			MutableAnnotatedBioSeq firstseq = (spanlist.get(0)).getBioSeq();
 			for (int i = 0; i < spancount; i++) {
 				SeqSpan span = spanlist.get(i);
 				newmins[i] = span.getMin();

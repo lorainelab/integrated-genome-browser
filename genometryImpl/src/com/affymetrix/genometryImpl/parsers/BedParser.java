@@ -92,7 +92,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 
 	protected Map<String,Integer> name_counts = new HashMap<String,Integer>();
 	List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+	Map<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
 	boolean annotate_seq = true;
 	boolean create_container_annot = false;
 	String default_type = null;
@@ -125,13 +125,13 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 		}
 		/*
 		 *  seq2types is hash for making container syms (if create_container_annot == true)
-		 *  each entry in hash is: BioSeq ==> type2psym hash
+		 *  each entry in hash is: MutableAnnotatedBioSeq ==> type2psym hash
 		 *     Each type2csym is hash where each entry is "type" ==> container_sym
 		 *  so two-step process to find container sym for a particular type on a particular seq:
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
+		seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
 		symlist = new ArrayList<SeqSymmetry>();
 		name_counts = new HashMap<String,Integer>();
 		annotate_seq = annot_seq;
@@ -437,7 +437,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	}
 
 
-	public static void writeBedFormat(Writer wr, List<SeqSymmetry> syms, BioSeq seq)
+	public static void writeBedFormat(Writer wr, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)
 		throws IOException  {
 		for (SeqSymmetry sym : syms) {
 			writeBedFormat(wr, sym, seq);
@@ -449,7 +449,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	public static void writeBedFormat(Writer out, SeqSymmetry sym, BioSeq seq)
+	public static void writeBedFormat(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
@@ -476,7 +476,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	}
 
 
-	private static void writeOutFile(Writer out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
+	private static void writeOutFile(Writer out, MutableAnnotatedBioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
 		out.write(seq.getID());
 		out.write('\t');
 		int min = span.getMin();
@@ -517,7 +517,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 
 
 
-	private static void writeOutChildren(Writer out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
+	private static void writeOutChildren(Writer out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, MutableAnnotatedBioSeq seq) throws IOException {
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
 			out.write(propsym.getProperty("cds min").toString());
@@ -560,7 +560,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "BED" format.
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
 		if (DEBUG){
 			System.out.println("in BedParser.writeAnnotations()");

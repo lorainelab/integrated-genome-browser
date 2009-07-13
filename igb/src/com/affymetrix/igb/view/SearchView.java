@@ -15,7 +15,6 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -184,7 +183,7 @@ System.out.println("Action: " + evt.toString());
 			Timer tim = new Timer();
 
 			NeoMap map = gviewer.getSeqMap();
-			BioSeq vseq = gviewer.getViewSeq();
+			MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
 			if (vseq == null || !vseq.isComplete()) {
 				hitCountL.setText(" No hits");
 

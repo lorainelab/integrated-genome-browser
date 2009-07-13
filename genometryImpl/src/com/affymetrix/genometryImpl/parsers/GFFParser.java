@@ -288,7 +288,7 @@ public final class GFFParser implements AnnotationWriter  {
 		int group_count = 0;
 		number_of_duplicate_warnings = 0;
 
-		Map<BioSeq,Map<String,SimpleSymWithProps>> seq2meths = new HashMap<BioSeq,Map<String,SimpleSymWithProps>>(); // see getContainer()
+		Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> seq2meths = new HashMap<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>>(); // see getContainer()
 		Map<String,SingletonSymWithProps> group_hash = new HashMap<String,SingletonSymWithProps>();
 		gff3_id_hash = new HashMap<String,Object>();
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
@@ -383,7 +383,7 @@ public final class GFFParser implements AnnotationWriter  {
 					if (max > seq.getLength()) { seq.setLength(max); }
 
 					// add syms to a results List during parsing,
-					// then add group syms to AnnotatedBioSeq after entire parse is done.
+					// then add group syms to MutableAnnotatedBioSeq after entire parse is done.
 
 					if (use_hierarchy) {
 						if (hier_parents == null) {
@@ -536,13 +536,13 @@ public final class GFFParser implements AnnotationWriter  {
 		 *  Retrieves (and/or creates) a container symmetry based on the BioSeq
 		 *    and the method.
 		 *  When a new container is created, it is also added to the BioSeq.
-		 *  Each entry in seq2meths maps a BioSeq to a Map called "meth2csym".
+		 *  Each entry in seq2meths maps a MutableAnnotatedBioSeq to a Map called "meth2csym".
 		 *  Each meth2csym is hash where each entry maps a "method/source" to a container Symmetry.
 		 *  It is a two-step process to find container sym for a particular meth on a particular seq:
 		 *    Map meth2csym = (Map)seq2meths.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
 		 */
-		static SimpleSymWithProps getContainer(Map<BioSeq,Map<String,SimpleSymWithProps>> seq2meths,
+		static SimpleSymWithProps getContainer(Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> seq2meths,
 				MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq) {
 
 			Map<String,SimpleSymWithProps> meth2csym = seq2meths.get(seq);
@@ -568,9 +568,9 @@ public final class GFFParser implements AnnotationWriter  {
 		/**
 		 *  Resorts child syms of a mutable symmetry in either ascending order if
 		 *   sym's span on sortseq is forward, or descending if sym's span on sortseq is reverse,
-		 *   based on child sym's span's start position on BioSeq sortseq.
+		 *   based on child sym's span's start position on MutableAnnotatedBioSeq sortseq.
 		 */
-		public static void resortChildren(MutableSeqSymmetry psym, BioSeq sortseq)  {
+		public static void resortChildren(MutableSeqSymmetry psym, MutableAnnotatedBioSeq sortseq)  {
 			SeqSpan pspan = psym.getSpan(sortseq);
 			boolean ascending = pspan.isForward();
 			//    System.out.println("sortseq: " + sortseq.getID() + ", child list: " + child_count);
@@ -883,9 +883,9 @@ public final class GFFParser implements AnnotationWriter  {
 		/**
 		 *  Assumes that the sym being output is of depth = 2 (which UcscPslSyms are).
 		 */
-		public static void outputGffFormat(SymWithProps psym, BioSeq seq, Writer wr)
+		public static void outputGffFormat(SymWithProps psym, MutableAnnotatedBioSeq seq, Writer wr)
 			throws IOException {
-			//  public static void outputGffFormat(UcscPslSym psym, BioSeq seq, Writer wr) throws IOException  {
+			//  public static void outputGffFormat(UcscPslSym psym, MutableAnnotatedBioSeq seq, Writer wr) throws IOException  {
 			int childcount = psym.getChildCount();
 			String meth = (String)psym.getProperty("source");
 			if (meth == null) { meth = (String)psym.getProperty("type"); }
@@ -965,7 +965,7 @@ public final class GFFParser implements AnnotationWriter  {
 						}
 						SeqSymmetry sym = (SeqSymmetry)iterator.next();
 						SeqSpan span = sym.getSpan(0);
-						BioSeq seq = span.getBioSeq();
+						MutableAnnotatedBioSeq seq = span.getBioSeq();
 						if (sym instanceof SymWithProps) {
 							outputGffFormat((SymWithProps)sym, seq, bw);
 						}
@@ -989,7 +989,7 @@ public final class GFFParser implements AnnotationWriter  {
 			 *    to an output stream as "GFF" format.
 			 *  @param type  currently ignored
 			 **/
-			public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+			public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 					String type, OutputStream outstream) {
 				boolean success = true;
 				if (DEBUG) {

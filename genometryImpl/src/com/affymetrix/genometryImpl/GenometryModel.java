@@ -12,8 +12,6 @@
  */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.AnnotatedBioSeq;
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
@@ -35,7 +33,7 @@ public abstract class GenometryModel {
 	/**
 	 * Ann's comment: There is a lot of logic related to selection of
 	 * SeqSymmetry objects. It appears that SeqSymmetry on many different
-	 * BioSeq objects can be selected simultaneously. Why? What does
+	 * MutableAnnotatedBioSeq objects can be selected simultaneously. Why? What does
 	 * selection mean in this context?
 	 */
 
@@ -45,7 +43,7 @@ public abstract class GenometryModel {
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
 	// maps sequences to lists of selected symmetries
-	Map<AnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<AnnotatedBioSeq,List<SeqSymmetry>>();
+	Map<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
 
 	final List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
 	final List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
@@ -124,7 +122,7 @@ public abstract class GenometryModel {
 
 	/*public void removeSeqGroup(AnnotatedSeqGroup group) {
 		seq_groups.remove(group.getID());
-		for (BioSeq seq : group.getSeqList()) {
+		for (MutableAnnotatedBioSeq seq : group.getSeqList()) {
 			seq2selectedSymsHash.remove(seq);
 		}
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
@@ -238,7 +236,7 @@ public abstract class GenometryModel {
 		}
 
 		selected_seq = seq;
-		ArrayList<AnnotatedBioSeq> slist = new ArrayList<AnnotatedBioSeq>();
+		ArrayList<MutableAnnotatedBioSeq> slist = new ArrayList<MutableAnnotatedBioSeq>();
 		slist.add(selected_seq);
 		fireSeqSelectionEvent(src, slist);
 	}
@@ -263,7 +261,7 @@ public abstract class GenometryModel {
 	 *       for example in IGB some listeners assume main SeqMapView has been
 	 *       notified first)
 	 */
-	void fireSeqSelectionEvent(Object src, List<AnnotatedBioSeq> slist) {
+	void fireSeqSelectionEvent(Object src, List<MutableAnnotatedBioSeq> slist) {
 		SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
 		synchronized (seq_selection_listeners) {
 			// the "synchronized" block, by itself, doesn't seem to be enough,
@@ -311,7 +309,7 @@ public abstract class GenometryModel {
 	 */
 	/*public List<AnnotatedBioSeq> getSequencesWithSelections() {
 		Set<AnnotatedBioSeq> sequences = new HashSet<AnnotatedBioSeq>();
-		for (AnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
+		for (MutableAnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
 			List<SeqSymmetry> list = seq2selectedSymsHash.get(seq);
 			if (! list.isEmpty()) {
 				sequences.add(seq);
@@ -469,7 +467,7 @@ public abstract class GenometryModel {
 	 *  Get the list of selected symmetries on the specified sequence.
 	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
 	 */
-	public List<SeqSymmetry> getSelectedSymmetries(AnnotatedBioSeq seq) {
+	public List<SeqSymmetry> getSelectedSymmetries(MutableAnnotatedBioSeq seq) {
 		List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
 		if (selections == null) {
 			selections = new ArrayList<SeqSymmetry>();

@@ -88,7 +88,7 @@ public final class BrptParser {
 			dos.writeInt(pcount);  // how many seqs there are
 			for (int i=0; i<pcount; i++) {
 				SeqSymmetry parent = parents.get(i);
-				BioSeq seq = parent.getSpanSeq(0);
+				MutableAnnotatedBioSeq seq = parent.getSpanSeq(0);
 				String seqid = seq.getID();
 				int rpt_count = parent.getChildCount();
 				dos.writeUTF(seqid);
@@ -281,7 +281,7 @@ public final class BrptParser {
 
 
 	// Annotationwriter implementation
-	//  public boolean writeAnnotations(Collection syms, BioSeq seq,
+	//  public boolean writeAnnotations(Collection syms, MutableAnnotatedBioSeq seq,
 	//                                  String type, OutputStream outstream) {
 	//  }
 	// public String getMimeType()  { return "binary/brpt"; }

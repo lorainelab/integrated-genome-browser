@@ -14,7 +14,7 @@
 package com.affymetrix.genometry.symmetry;
 
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.MutableSeqSpan;
 import java.util.List;
@@ -37,7 +37,7 @@ public final class SimplePairSeqSymmetry implements SeqSymmetry {
 		this.spanB = spanB;
 	}
 
-	public SeqSpan getSpan(BioSeq seq) {
+	public SeqSpan getSpan(MutableAnnotatedBioSeq seq) {
 		if (spanA.getBioSeq() == seq) { return spanA; }
 		else if (spanB.getBioSeq() == seq) { return spanB; }
 		else  { return null; }
@@ -53,13 +53,13 @@ public final class SimplePairSeqSymmetry implements SeqSymmetry {
 		else { return null; }
 	}
 
-	public BioSeq getSpanSeq(int i) {
+	public MutableAnnotatedBioSeq getSpanSeq(int i) {
 		if (i == 0) { return spanA.getBioSeq(); }
 		else if (i == 1) { return spanB.getBioSeq(); }
 		else { return null; }
 	}
 
-	public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
+	public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span) {
 		if (seq == spanA.getBioSeq()) {
 			span.setStart(spanA.getStart());
 			span.setEnd(spanA.getEnd());

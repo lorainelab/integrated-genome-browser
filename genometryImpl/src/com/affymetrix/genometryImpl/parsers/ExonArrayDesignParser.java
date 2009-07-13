@@ -323,7 +323,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *    Level 3: probeset annots (EfficieentProbesetSymA)
 	 *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq aseq,
 			String type, OutputStream outstream) throws IOException {
 		boolean success = false;
 		DataOutputStream dos = null;
@@ -337,7 +337,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			//     Genometry DAS/2 servlet
 			//     (when running in Jetty -- possibly conflicts with Jetty's donwstream buffering of HTTP responses?)
 			else { dos = new DataOutputStream(outstream); }
-			List<BioSeq> oneseq = new ArrayList<BioSeq>();
+			List<MutableAnnotatedBioSeq> oneseq = new ArrayList<MutableAnnotatedBioSeq>();
 			oneseq.add(aseq);
 			SeqSymmetry tcluster_exemplar = null;
 
@@ -473,7 +473,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *  write out a seq data section
 	 *  assumes syms in collection contain span on aseq
 	 */
-	protected static void writeSeqWithAnnots(java.util.Collection syms, BioSeq aseq, DataOutputStream dos) throws IOException {
+	protected static void writeSeqWithAnnots(java.util.Collection syms, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
 		String seqid = aseq.getID();
 		System.out.println("seqid: " + seqid + ", annot count: " + syms.size() );
 		dos.writeUTF(seqid);
@@ -550,7 +550,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		SeqSpan pspan = psym.getSpan(0);
 		int child_count = psym.getChildCount();
 		int intid = psym.getIntID();
-		// BioSeq aseq = pspan.getBioSeq();
+		// MutableAnnotatedBioSeq aseq = pspan.getBioSeq();
 		dos.writeInt(intid);  // probeset id representated as an integer
 		// sign of strnad_and_count indicates forward (+) or reverse (-) strand
 		byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
@@ -684,7 +684,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			}
 			int printcount = 0;
 			HashMap<SmartAnnotBioSeq,SimpleSymWithProps> seq2container = new HashMap<SmartAnnotBioSeq,SimpleSymWithProps>();
-			HashMap<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
+			HashMap<MutableAnnotatedBioSeq,SharedProbesetInfo> seq2info = new HashMap<MutableAnnotatedBioSeq,SharedProbesetInfo>();
 
 			for (File gfile : gfiles) {
 				System.out.println("parsing gff file: " + gfile.getPath());

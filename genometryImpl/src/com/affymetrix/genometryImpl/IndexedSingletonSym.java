@@ -30,7 +30,7 @@ public final class IndexedSingletonSym extends SingletonSeqSymmetry implements I
 
 	/** Constructor. Be sure to also call {@link #setParent} and {@link #setIndex}.
 	*/
-	public IndexedSingletonSym(int start, int end, BioSeq seq)  {
+	public IndexedSingletonSym(int start, int end, MutableAnnotatedBioSeq seq)  {
 		super(start, end, seq);
 	}
 

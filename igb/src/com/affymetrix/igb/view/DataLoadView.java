@@ -73,7 +73,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
   static final String NO_GENOME = "No Genome Selected";
 
   JTable seqtable;
-  AnnotatedBioSeq selected_seq = null;
+  MutableAnnotatedBioSeq selected_seq = null;
 	AnnotatedSeqGroup previousGroup = null;
 	int previousSeqCount = 0;
   ListSelectionModel lsm;
@@ -232,7 +232,7 @@ class TrackInfoView extends JComponent implements FeatureSelectionListener {
 	static final String NO_TRACK = "No Track Selected";
 	
 	JTable trackPropTable;
-	AnnotatedBioSeq selected_track = null;
+	MutableAnnotatedBioSeq selected_track = null;
 	ListSelectionModel lsm;
 
 	public TrackInfoView() {

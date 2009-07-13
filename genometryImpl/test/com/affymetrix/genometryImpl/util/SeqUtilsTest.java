@@ -13,8 +13,8 @@ import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 
 
 public class SeqUtilsTest {
-	AnnotatedBioSeq seqA;
-	AnnotatedBioSeq seqB;
+	MutableAnnotatedBioSeq seqA;
+	MutableAnnotatedBioSeq seqB;
 
 	public SeqUtilsTest() {
 	}
@@ -33,7 +33,7 @@ public class SeqUtilsTest {
 		public void testUnion() {
 			//System.out.println("union");
 
-			BioSeq seq = seqA;
+			MutableAnnotatedBioSeq seq = seqA;
 			SeqSymmetry symA;
 			SeqSymmetry symB;
 			MutableSeqSymmetry result;
@@ -119,7 +119,7 @@ public class SeqUtilsTest {
 	//    
 	//    SeqSymmetry symA = null;
 	//    SeqSymmetry symB = null;
-	//    BioSeq seq = null;
+	//    MutableAnnotatedBioSeq seq = null;
 	//    
 	//    MutableSeqSymmetry expResult = null;
 	//    MutableSeqSymmetry result = SeqUtils.intersection(symA, symB, seq);
@@ -199,8 +199,8 @@ public class SeqUtilsTest {
 	@Test
 		public void testTransformSymmetry() {
 			//System.out.println("transformSymmetry");
-			AnnotatedBioSeq annot_seq = new SmartAnnotBioSeq("annot", "version", 1000000);
-			AnnotatedBioSeq view_seq = new SmartAnnotBioSeq("view_seq", "version", 1000000);
+			SmartAnnotBioSeq annot_seq = new SmartAnnotBioSeq("annot", "version", 1000000);
+			SmartAnnotBioSeq view_seq = new SmartAnnotBioSeq("view_seq", "version", 1000000);
 
 			// First create a slicing transforming symmetry such that
 			// region from 500-600 in seqA get transformed to region 0-100 in seqB

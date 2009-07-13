@@ -30,7 +30,7 @@ public final class NibbleResiduesParser {
 	 *  The sequence will get added to the existing NibbleBioSeq found by
 	 *  seq_group.getSeq(name), where the name comes from data in the file.
 	 *  If such a NibbleBioSeq doesn't exist, it will be created, but if a
-	 *  BioSeq does exist that is not of the type NibbleBioSeq, an exception
+	 *  MutableAnnotatedBioSeq does exist that is not of the type NibbleBioSeq, an exception
 	 *  will be thrown.
 	 */
 	public static SmartAnnotBioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {

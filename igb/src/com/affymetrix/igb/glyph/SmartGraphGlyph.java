@@ -22,7 +22,7 @@ import java.util.*;
 import java.awt.geom.Point2D;
 
 import com.affymetrix.igb.*;
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSymmetry;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
@@ -731,7 +731,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
    *   populate regions_parent with child SeqSymmetries for each region that passes threshold,
    *
    */
-  void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
+  void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, MutableAnnotatedBioSeq aseq) {
   /*
 		 *  Should really eventually move the SeqSymmetry stuff out of this class, maybe have
 		 *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or

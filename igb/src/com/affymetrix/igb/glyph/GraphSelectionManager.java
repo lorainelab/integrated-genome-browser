@@ -449,9 +449,9 @@ public final class GraphSelectionManager
     GraphSym gsym = null;
     if (info instanceof GraphSym) {
       gsym = (GraphSym) info;
-      AnnotatedBioSeq aseq = (AnnotatedBioSeq) gsym.getGraphSeq();
+      MutableAnnotatedBioSeq aseq = gsym.getGraphSeq();
       if (aseq instanceof MutableAnnotatedBioSeq) {
-        MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
+        MutableAnnotatedBioSeq mut = aseq;
         mut.removeAnnotation(gsym);
       }
     }

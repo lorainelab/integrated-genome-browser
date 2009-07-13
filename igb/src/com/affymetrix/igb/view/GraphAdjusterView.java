@@ -23,7 +23,6 @@ import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometry.AnnotatedBioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -112,9 +111,9 @@ public final class GraphAdjusterView {
   public static void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
     //System.out.println("deleting graph: " + gsym);
 
-    AnnotatedBioSeq aseq = (AnnotatedBioSeq)gsym.getGraphSeq();
+    MutableAnnotatedBioSeq aseq = gsym.getGraphSeq();
     if (aseq instanceof MutableAnnotatedBioSeq) {
-      MutableAnnotatedBioSeq mut = (MutableAnnotatedBioSeq) aseq;
+      MutableAnnotatedBioSeq mut = aseq;
       mut.removeAnnotation(gsym);
     }
 

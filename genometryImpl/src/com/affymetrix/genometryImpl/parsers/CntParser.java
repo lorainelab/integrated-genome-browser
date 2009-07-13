@@ -189,7 +189,7 @@ public final class CntParser {
 	Map<String,Object> thing = new HashMap<String,Object>();
 	Map<String,Object> thing2 = new HashMap<String,Object>();
 
-	FloatList[] getFloatsForSeq(BioSeq seq, int numScores) {
+	FloatList[] getFloatsForSeq(MutableAnnotatedBioSeq seq, int numScores) {
 		FloatList[] floats = (FloatList[]) thing.get(seq.getID());
 
 		if (floats == null) {
@@ -203,7 +203,7 @@ public final class CntParser {
 		return floats;
 	}
 
-	IntList getXCoordsForSeq(BioSeq seq) {
+	IntList getXCoordsForSeq(MutableAnnotatedBioSeq seq) {
 		IntList xcoords = (IntList) thing2.get(seq.getID());
 
 		if (xcoords == null) {

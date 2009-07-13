@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.awt.Color;
 
-import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
@@ -343,7 +342,7 @@ public final class WiggleParser {
 		int xpos[] = graf.getGraphXCoords();
 		int widths[] = graf.getGraphWidthCoords();
 
-		BioSeq seq = graf.getGraphSeq();
+		MutableAnnotatedBioSeq seq = graf.getGraphSeq();
 		String seq_id = (seq == null ? "." : seq.getID());
 		String human_name = graf.getGraphState().getTierStyle().getHumanName();
 		String gname = graf.getGraphName();

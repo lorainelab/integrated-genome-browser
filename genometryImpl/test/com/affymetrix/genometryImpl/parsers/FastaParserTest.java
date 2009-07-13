@@ -3,8 +3,6 @@ package com.affymetrix.genometryImpl.parsers;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometry.BioSeq;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
 import java.io.*;

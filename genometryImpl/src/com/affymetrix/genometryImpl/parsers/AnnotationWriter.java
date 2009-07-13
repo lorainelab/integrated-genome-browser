@@ -20,7 +20,7 @@ import com.affymetrix.genometry.*;
 
 public interface AnnotationWriter {
 
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) throws IOException;
 
 	public String getMimeType();

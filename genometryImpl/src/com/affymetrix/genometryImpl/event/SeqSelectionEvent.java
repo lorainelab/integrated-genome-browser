@@ -14,11 +14,11 @@
 package com.affymetrix.genometryImpl.event;
 
 import java.util.*;
-import com.affymetrix.genometry.AnnotatedBioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 
 public final class SeqSelectionEvent extends EventObject {
-	List<AnnotatedBioSeq> selected_seqs;
-	AnnotatedBioSeq primary_selection = null;
+	List<MutableAnnotatedBioSeq> selected_seqs;
+	MutableAnnotatedBioSeq primary_selection = null;
 	static final long serialVersionUID = 1L;
 
 	/**
@@ -27,18 +27,18 @@ public final class SeqSelectionEvent extends EventObject {
 	 *  @param seqs a List of AnnotatedBioSeq's that have been selected.
 	 *   (If null, will default to {@link Collections#EMPTY_LIST}.)
 	 */
-	public SeqSelectionEvent(Object src, List<AnnotatedBioSeq> seqs) {
+	public SeqSelectionEvent(Object src, List<MutableAnnotatedBioSeq> seqs) {
 		super(src);
 		this.selected_seqs = seqs;
-		if (selected_seqs == null) { selected_seqs = Collections.<AnnotatedBioSeq>emptyList(); }
+		if (selected_seqs == null) { selected_seqs = Collections.<MutableAnnotatedBioSeq>emptyList(); }
 		if (selected_seqs.size() > 0) {
 			primary_selection = selected_seqs.get(0);
 		}
 	}
 
-	public SeqSelectionEvent(Object src, AnnotatedBioSeq seq) {
+	public SeqSelectionEvent(Object src, MutableAnnotatedBioSeq seq) {
 		super(src);
-		selected_seqs = new ArrayList<AnnotatedBioSeq>(1);
+		selected_seqs = new ArrayList<MutableAnnotatedBioSeq>(1);
 		if (seq != null) {
 			primary_selection = seq;
 			selected_seqs.add(seq);
@@ -54,9 +54,9 @@ public final class SeqSelectionEvent extends EventObject {
 	}
 
 	/** Gets the first entry in the list {@link #getSelectedSeqs()}.
-	 *  @return an AnnotatedBioSeq or null.
+	 *  @return an MutableAnnotatedBioSeq or null.
 	 */
-	public AnnotatedBioSeq getSelectedSeq() {
+	public MutableAnnotatedBioSeq getSelectedSeq() {
 		return primary_selection;
 	}
 

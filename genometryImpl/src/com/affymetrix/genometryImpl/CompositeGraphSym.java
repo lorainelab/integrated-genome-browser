@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import java.util.*;
 
@@ -16,7 +16,7 @@ import java.util.*;
  */
 public final class CompositeGraphSym extends GraphSymFloat {
 
-	public CompositeGraphSym(String id, BioSeq seq) {
+	public CompositeGraphSym(String id, MutableAnnotatedBioSeq seq) {
 		super(null, null, id, seq);
 	}
 

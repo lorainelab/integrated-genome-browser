@@ -33,7 +33,7 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	}
 
 	/*
-	   public EfficientSnpSym(int base_coord, BioSeq seq, String id_prefix, int numeric_id) {
+	   public EfficientSnpSym(int base_coord, MutableAnnotatedBioSeq seq, String id_prefix, int numeric_id) {
 	   this.base_coord = base_coord;
 	   this.seq = seq;
 	   this.id_prefix = id_prefix;
@@ -43,7 +43,7 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 
 	/* SeqSymmetry implementation */
 
-	public SeqSpan getSpan(BioSeq bs) {
+	public SeqSpan getSpan(MutableAnnotatedBioSeq bs) {
 		if (this.getBioSeq() == bs) { return this; }
 		else { return null; }
 	}
@@ -55,12 +55,12 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 		else { return null; }
 	}
 
-	public BioSeq getSpanSeq(int i) {
+	public MutableAnnotatedBioSeq getSpanSeq(int i) {
 		if (i == 0) { return this.getBioSeq(); }
 		else { return null; }
 	}
 
-	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
+	public boolean getSpan(MutableAnnotatedBioSeq bs, MutableSeqSpan span) {
 		if (this.getBioSeq() == bs) {
 			span.setStart(this.getStart());
 			span.setEnd(this.getEnd());
@@ -96,7 +96,7 @@ public final class EfficientSnpSym implements SeqSymmetry, SeqSpan {
 	public int getMax() { return (base_coord + 1); }
 	public int getLength() { return 1; }
 	public boolean isForward() { return true; }
-	public BioSeq getBioSeq() { return parent.getSpanSeq(0); }
+	public MutableAnnotatedBioSeq getBioSeq() { return parent.getSpanSeq(0); }
 	public double getStartDouble() { return (double)getStart(); }
 	public double getEndDouble() { return (double)getEnd(); }
 	public double getMinDouble() { return (double)getMin(); }

@@ -14,7 +14,7 @@
 package com.affymetrix.genometry.symmetry;
 
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class SingletonSeqSymmetry extends LeafSingletonSymmetry  implements SeqS
 		super(span);
 	}
 
-	public SingletonSeqSymmetry(int start, int end, BioSeq seq) {
+	public SingletonSeqSymmetry(int start, int end, MutableAnnotatedBioSeq seq) {
 		super(start, end, seq);
 	}
 

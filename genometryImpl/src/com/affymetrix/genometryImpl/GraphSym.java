@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.BioSeq;
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -32,7 +32,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
 
 	int xcoords[];
-	BioSeq graph_original_seq;
+	MutableAnnotatedBioSeq graph_original_seq;
 	String gid;
 
 	/**
@@ -46,7 +46,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	/** Constructor.  Subclasses should provide a constructor that specifies the
 	 *  y-coordinate array.
 	 */
-	protected GraphSym(int[] x, String id, BioSeq seq) {
+	protected GraphSym(int[] x, String id, MutableAnnotatedBioSeq seq) {
 		super();
 		this.graph_original_seq = seq;
 
@@ -135,7 +135,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Get the seq that the graph's xcoords are specified in
 	 */
-	public BioSeq getGraphSeq() {
+	public MutableAnnotatedBioSeq getGraphSeq() {
 		return graph_original_seq;
 	}
 

@@ -27,7 +27,6 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SmartAnnotBioSeq;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Optimize;
@@ -199,7 +198,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 	}
-	private static final String DAS2_VERSION = "2.0";
+	//private static final String DAS2_VERSION = "2.0";
 	private static final String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
 	private static final String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
 	private static final String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
@@ -474,7 +473,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				}
 			}
 		}
-
 		
 		ServerUtils.sortGenomes(organisms, org_order_filename);
 	}
@@ -641,7 +639,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		ArrayList<String> ranges = new ArrayList<String>();
 		String[] query_array = query_splitter.split(query);
 		String format = "";
-		boolean all_params_known = true;
+		//boolean all_params_known = true;
 
 		for (int i = 0; i < query_array.length; i++) {
 			String tagval = query_array[i];
@@ -653,9 +651,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				formats.add(val);
 			} else if (tag.equals("range")) {
 				ranges.add(val);
-			} else {
-				all_params_known = false;
 			}
+			//else {
+				//all_params_known = false;
+			//}
 		}
 
 		AnnotatedSeqGroup genome = getGenome(request);
@@ -815,7 +814,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		throws IOException {
 		System.out.println("received data source query");
 		response.setContentType(SOURCES_CONTENT_TYPE);
-		//    addDasHeaders(response);
 		PrintWriter pw = response.getWriter();
 
 		String xbase = getXmlBase(request);
@@ -829,7 +827,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 		// other elements to add:
 
-		//    Map genomes = gmodel.getSeqGroups();
 		for (Map.Entry<String,List<AnnotatedSeqGroup>> oentry : organisms.entrySet()) {
 			String org = oentry.getKey();
 			List<AnnotatedSeqGroup> versions = oentry.getValue();
@@ -883,7 +880,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Das2Coords coords = genomeid2coord.get(genome.getID());
 
 		response.setContentType(SEGMENTS_CONTENT_TYPE);
-		// addDasHeaders(response);
+
 		PrintWriter pw = response.getWriter();
 		printXmlDeclaration(pw);
 
@@ -936,9 +933,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		HashMap<String,HashSet<String>> userAuthorizedResources = getUserAuthorizedResources(dasAuthorization, request);
 
 		response.setContentType(TYPES_CONTENT_TYPE);
-		//    addDasHeaders(response);
 
-		Map<String,List<String>> types_hash = GenometryDas2Servlet.getTypes(genome, genome2graphfiles, genome2graphdirs, graph_formats);
+		Map<String,List<String>> types_hash = 
+						ServerUtils.getTypes(
+						genome,
+						genome2graphfiles.get(genome),
+						genome2graphdirs.get(genome),
+						graph_formats);
 
 		ByteArrayOutputStream buf = null;
 		PrintWriter pw = null;
@@ -994,65 +995,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	/**
-	 *  Gets the list of types of annotations for a given genome version.
-	 *  Assuming top-level annotations hold type info in property "method" or "meth".
-	 *  @return a Map where keys are feature type Strings and values
-	 *    are non-null Lists of preferred format Strings
-	 *
-	 *  may want to cache this info (per versioned source) at some point...
-	 */
-	private static final Map<String,List<String>> getTypes(
-			AnnotatedSeqGroup genome, Map genome2graphfiles, Map genome2graphdirs, ArrayList<String> graph_formats) {
-		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
-
-		AddSeqsToTypes(genome, genome_types);
-
-		// adding in any graph files as additional types (with type id = file name)
-		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
-		//    show up in seq.getTypes(), but without actually being loaded??
-		Map graph_name2file = (Map) genome2graphfiles.get(genome);
-		Iterator giter = graph_name2file.keySet().iterator();
-		while (giter.hasNext()) {
-			String gname = (String) giter.next();
-			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
-		}
-
-		Map graph_name2dir = (Map) genome2graphdirs.get(genome);
-		giter = graph_name2dir.keySet().iterator();
-		while (giter.hasNext()) {
-			String gname = (String) giter.next();
-			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
-		}
-
-		return genome_types;
-			}
-
-	// iterate over seqs to collect annotation types
-	private static final void AddSeqsToTypes(AnnotatedSeqGroup genome, Map<String,List<String>> genome_types) {
-		for (SmartAnnotBioSeq aseq : genome.getSeqList()) {
-			Map<String, SymWithProps> typeid2sym = aseq.getTypeMap();
-			if (typeid2sym != null) {
-				Iterator titer = typeid2sym.keySet().iterator();
-				while (titer.hasNext()) {
-					String type = (String) titer.next();
-					List<String> flist = Collections.<String>emptyList();
-					if (genome_types.get(type) == null) {
-						SymWithProps tannot = aseq.getAnnotation(type);
-
-						SymWithProps first_child = (SymWithProps) tannot.getChild(0);
-						if (first_child != null) {
-							List formats = (List) first_child.getProperty("preferred_formats");
-							if (formats != null) {
-								flist = formats;
-							}
-						}
-						genome_types.put(type, flist);
-					}
-				}
-			}
-		}
-	}
+	
 
 	private static final void writeTypesXML(
 			PrintWriter pw,

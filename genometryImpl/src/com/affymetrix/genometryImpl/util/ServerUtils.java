@@ -417,4 +417,59 @@ public abstract class ServerUtils {
 			}
 		}
 
+		/**
+	 *  Gets the list of types of annotations for a given genome version.
+	 *  Assuming top-level annotations hold type info in property "method" or "meth".
+	 *  @return a Map where keys are feature type Strings and values
+	 *    are non-null Lists of preferred format Strings
+	 *
+	 *  may want to cache this info (per versioned source) at some point...
+	 */
+	public static final Map<String, List<String>> getTypes(
+					AnnotatedSeqGroup genome,
+					Map<String, String> graph_name2file,
+					Map<String, String> graph_name2dir,
+					ArrayList<String> graph_formats) {
+		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
+
+		// adding in any graph files as additional types (with type id = file name)
+		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
+		//    show up in seq.getTypes(), but without actually being loaded??
+		for (String gname : graph_name2file.keySet()) {
+			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+		}
+
+		for (String gname : graph_name2dir.keySet()) {
+			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+		}
+
+		return genome_types;
+	}
+
+	// iterate over seqs to collect annotation types
+	private static final Map<String,List<String>> getGenomeTypes(List<SmartAnnotBioSeq> seqList) {
+		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
+		for (SmartAnnotBioSeq aseq : seqList) {
+			if (aseq.getTypeList() == null) {
+				continue;
+			}
+			for (String type : aseq.getTypeList()) {
+				if (genome_types.get(type) != null) {
+					continue;
+				}
+				List<String> flist = Collections.<String>emptyList();
+				SymWithProps tannot = aseq.getAnnotation(type);
+				SymWithProps first_child = (SymWithProps) tannot.getChild(0);
+				if (first_child != null) {
+					List formats = (List) first_child.getProperty("preferred_formats");
+					if (formats != null) {
+						flist = formats;
+					}
+				}
+				genome_types.put(type, flist);
+			}
+		}
+		return genome_types;
+	}
+
 }

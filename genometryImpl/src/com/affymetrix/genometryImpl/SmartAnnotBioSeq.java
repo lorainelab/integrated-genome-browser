@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,10 +98,10 @@ public final class SmartAnnotBioSeq implements CompositeBioSeq, MutableAnnotated
 		this.compose = compose;
 	}
 	/**
-	 *  returns Map of type id to container sym for annotations of that type
+	 *  returns Set of type ids
 	 */
-	public Map<String, SymWithProps> getTypeMap() {
-		return type_id2sym;
+	public Set<String> getTypeList() {
+		return type_id2sym.keySet();
 	}
 
 	public String getVersion() { return version; }

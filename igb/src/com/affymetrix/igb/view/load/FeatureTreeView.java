@@ -8,7 +8,13 @@ import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.IGB;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Rectangle2D;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,9 +23,12 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.MouseInputListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -69,9 +78,16 @@ public final class FeatureTreeView extends JComponent {
       DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer) tcr;
       dtcr.setLeafIcon(null);
     }
+
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
     tree.setEditable(false);
+    TreeMouseListener tree_mouse_listener = new TreeMouseListener();
+    tree.addMouseListener(tree_mouse_listener);
+    tree.addMouseMotionListener(tree_mouse_listener);
+
+    // tree.addMouseMotionListener(tree_mouse_listener)
+
 
     tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -102,6 +118,7 @@ public final class FeatureTreeView extends JComponent {
 
     check_tree_manager = new CheckTreeManager(tree, false, only_leaf_nodes);
     check_tree_manager.getSelectionModel().addTreeSelectionListener(tree_check_listener);
+
 
 
     tree_scroller = new JScrollPane(tree);
@@ -286,6 +303,94 @@ public final class FeatureTreeView extends JComponent {
         validNode = currentNode.getPreviousSibling();
       }
       return validNode;
+    }
+  }
+
+  class TreeMouseListener implements MouseListener, MouseMotionListener {
+
+    private Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+    private Cursor defaultCursor;
+
+    public TreeMouseListener() {
+      defaultCursor = tree.getCursor();
+    }
+
+    private GenericServer getServerAt(int x, int y) {
+
+      TreePath path = tree.getClosestPathForLocation(x, y);
+      if (path == null) {
+        return null;
+      }
+
+      DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+      if (node == null) {
+        return null;
+      }
+
+
+
+      Object nodeData = node.getUserObject();
+      if (nodeData instanceof GenericServer) {
+        GenericServer gServer = (GenericServer) nodeData;
+
+        Rectangle bounds = tree.getPathBounds(path);
+
+        Rectangle2D linkBound = tree.getFontMetrics(tree.getFont()).getStringBounds(gServer.serverName, tree.getGraphics());
+        bounds.width = (int) linkBound.getWidth();
+        if (gServer.friendlyURL != null) {
+          if (gServer.friendlyIcon != null) {
+            bounds.x += gServer.friendlyIcon.getIconWidth() + 1;
+          } else {
+            bounds.x += 16;
+          }
+
+          if (bounds.contains(x, y)) {
+            return gServer;
+          }
+
+        }
+      }
+      return null;
+
+    }
+
+    public void mouseClicked(MouseEvent e) {
+
+      int x = e.getX();
+      int y = e.getY();
+      GenericServer gServer = getServerAt(x, y);
+      if (gServer != null && gServer.friendlyURL != null) {
+        com.affymetrix.igb.util.WebBrowserControl.displayURLEventually(gServer.friendlyURL.toString());
+      }
+    }
+
+    public void mouseMoved(MouseEvent e) {
+      int x = e.getX();
+      int y = e.getY();
+      GenericServer gServer = getServerAt(x, y);
+      if (gServer != null) {
+        tree.setCursor(handCursor);
+      } else {
+        if (tree.getCursor() != defaultCursor) {
+          tree.setCursor(defaultCursor);
+        }
+      }
+
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mouseDragged(MouseEvent e) {
     }
   }
 

@@ -320,11 +320,11 @@
                     <node name="x-java">
                         <node name="CodeStyle">
                             <node name="project">
-                                <property name="spaces-per-tab" value="2"/>
+                                <property name="spaces-per-tab" value="4"/>
                                 <property name="expand-tabs" value="false"/>
                                 <property name="text-limit-width" value="80"/>
-                                <property name="indent-shift-width" value="2"/>
-                                <property name="tab-size" value="2"/>
+                                <property name="indent-shift-width" value="4"/>
+                                <property name="tab-size" value="4"/>
                             </node>
                         </node>
                     </node>
@@ -332,12 +332,12 @@
                 <node name="CodeStyle">
                     <node name="project">
                         <property name="spaces-per-tab" value="4"/>
-                        <property name="expand-tabs" value="true"/>
+                        <property name="expand-tabs" value="false"/>
                         <property name="text-limit-width" value="80"/>
                         <property name="indent-shift-width" value="4"/>
                         <property name="tab-size" value="4"/>
                     </node>
-                    <property name="usedProfile" value="default"/>
+                    <property name="usedProfile" value="project"/>
                 </node>
             </module>
         </preferences>

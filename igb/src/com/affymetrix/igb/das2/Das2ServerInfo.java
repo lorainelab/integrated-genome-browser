@@ -28,25 +28,25 @@ import com.affymetrix.igb.util.SimpleAuthenticator;
 //import com.affymetrix.igb.util.*;
 
 public final class Das2ServerInfo  {
-  static boolean DEBUG_SOURCES_QUERY = false;
+  private static boolean DEBUG_SOURCES_QUERY = false;
 
-	protected static String SOURCES_QUERY = "sequence";
+	private static String SOURCES_QUERY = "sequence";
 
-	protected URI server_uri;
-	protected String das_version;
-	protected String name;
-	protected Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
-	protected Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
-	protected boolean initialized = false;
+	private URI server_uri;
+	private String das_version;
+	private String name;
+	private Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
+	private Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
+	private boolean initialized = false;
 	private String sessionId = null; //used to store a session id following authentication with a DAS2 server
 
-	static String URID = "uri";
-	static String ID = "id";
-	static String TITLE = "title";
-	static String NAME = "name";
-	static String TYPE = "type";
-	static String QUERY_URI = "query_uri";
-	static String QUERY_ID = "query_id";
+	private static String URID = "uri";
+	private static String ID = "id";
+	private static String TITLE = "title";
+	private static String NAME = "name";
+	private static String TYPE = "type";
+	private static String QUERY_URI = "query_uri";
+	private static String QUERY_ID = "query_id";
 
 	/** Creates an instance of Das2ServerInfo for the given DAS2 server.
 	 *  @param init  whether or not to initialize the data right away.  If false
@@ -84,7 +84,7 @@ public final class Das2ServerInfo  {
 	}
 
 	/** DAS/2 version is not currently used */
-	protected void setDasVersion(String version) {
+	private void setDasVersion(String version) {
 		das_version = version;
 	}
 
@@ -94,7 +94,7 @@ public final class Das2ServerInfo  {
 		return das_version;
 	}
 
-	protected void addDataSource(Das2Source ds) {
+	private void addDataSource(Das2Source ds) {
 		sources.put(ds.getID(), ds);
 		name2source.put(ds.getName(), ds);
 	}
@@ -207,7 +207,7 @@ public final class Das2ServerInfo  {
 
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
-	public synchronized void login(){
+	private synchronized void login(){
 		ArrayList<String> log = new ArrayList<String>();
 		//log.add("Attempting login to server: "+server_uri);
 		try{
@@ -278,7 +278,7 @@ public final class Das2ServerInfo  {
 	/**
 	 * Return true if successfully initialized.
 	 */
-	public synchronized boolean initialize() {
+	private synchronized boolean initialize() {
 		InputStream response = null;
 		try {
 			if (server_uri == null) { return false; }

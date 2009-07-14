@@ -20,17 +20,17 @@ import org.w3c.dom.*;
 
 public final class DasServerInfo {
 
-	static boolean REPORT_SOURCES = false;
-	static boolean REPORT_CAPS = true;
+	private static final boolean REPORT_SOURCES = false;
+	private static final boolean REPORT_CAPS = true;
 	//static Pattern cap_splitter = Pattern.compile("; *");
 	//static Pattern name_version_splitter = Pattern.compile("/");
-	String root_url;
+	private String root_url;
 	//String das_version;
-	String name;
-	String description;
+	private String name;
+	private String description;
 	//Map<String, String> capabilities = new LinkedHashMap<String, String>();  // using LinkedHashMap for predictable iteration
-	Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
-	boolean initialized = false;
+	private Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
+	private boolean initialized = false;
 
 	/** Creates an instance of DasServerInfo for the given DAS server.
 	 *  @param init  whether or not to initialize the data right away.  If false
@@ -109,7 +109,7 @@ public final class DasServerInfo {
 	 * see DAS specification for returned XML format in response to "dsn" command:
 	 *      http://biodas.org/documents/spec.html
 	 */
-	public void initialize() {
+	private void initialize() {
 		//TODO: think about whether this needs synchronization.
 		//TODO: clean-up streams in finally block
 		try {

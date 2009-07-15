@@ -569,10 +569,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 	private final void HandleDas2Request(String path_info, HttpServletResponse response, HttpServletRequest request, String request_url) throws IOException {
-		if (path_info == null || path_info.trim().length() == 0) {
-			System.out.println("Unknown or missing DAS2 command");
-			response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
-		} else if (path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
+		if (path_info == null || path_info.trim().length() == 0 || path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
 			handleSourcesRequest(request, response, date_init_string);
 		} else if (path_info.endsWith(login_query)) {
 			handleLoginRequest(this.dasAuthorization, request, response);

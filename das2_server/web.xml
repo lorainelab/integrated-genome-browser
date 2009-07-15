@@ -11,9 +11,9 @@
 		<param-value>admin@example.com</param-value>
 	</context-param>
 
-	<!--                                                               -->
-	<!-- genome in URL does not exist but something is required there  -->
-	<!--                                                               -->
+	<!--                                                                  -->
+	<!-- the '/genome' at the end of xml_base matches the servlet-mapping -->
+	<!--                                                                  -->
 	<context-param>
 		<param-name>xml_base</param-name>
 		<param-value>http://www.example.com:8080/das2/genome</param-value>
@@ -27,7 +27,7 @@
 
 	<servlet-mapping>
 		<servlet-name>GenometryDas2Servlet</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/genome</url-pattern>
 	</servlet-mapping>
 
 	<filter>

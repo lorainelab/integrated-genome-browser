@@ -11,6 +11,7 @@ import com.affymetrix.genometry.util.DNAUtils;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +87,9 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	 *  returns Set of type ids
 	 */
 	public Set<String> getTypeList() {
+		if (type_id2sym == null) {
+			return Collections.<String>emptySet();
+		}
 		return type_id2sym.keySet();
 	}
 

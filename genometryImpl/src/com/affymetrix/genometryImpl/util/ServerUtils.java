@@ -450,9 +450,6 @@ public abstract class ServerUtils {
 	private static final Map<String,List<String>> getGenomeTypes(List<BioSeq> seqList) {
 		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
 		for (BioSeq aseq : seqList) {
-			if (aseq.getTypeList() == null) {
-				continue;
-			}
 			for (String type : aseq.getTypeList()) {
 				if (genome_types.get(type) != null) {
 					continue;

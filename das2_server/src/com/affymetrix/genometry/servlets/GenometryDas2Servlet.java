@@ -478,16 +478,23 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private final void loadGenome(File genome_directory, String organism) throws IOException {
-		// first, create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
 		String genome_version = genome_directory.getName();
+
+		if (genome_version.startsWith(".")) {
+			// hidden directory or file.  Ignore.
+			System.out.println("Ignoring hidden directory " + genome_directory.getPath());
+			return;
+		}
+
 		System.out.println("loading data for genome: " + genome_version);
 
+		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
 		ServerUtils.parseChromosomeData(genome_directory, genome_version);
 
 		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_version);
 		if (genome == null) {
-			return;
-		}  // bail out if genome didn't get added to AnnotatedSeqGroups
+			return;	// bail out if genome didn't get added to AnnotatedSeqGroups
+		}
 		genome2graphdirs.put(genome, new LinkedHashMap<String, String>());
 		genome2graphfiles.put(genome, new LinkedHashMap<String, String>());
 		genome.setOrganism(organism);
@@ -498,13 +505,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 		versions.add(genome);
 
-		// second: search genome directory for annotation files to load
+		// search genome directory for annotation files to load
 		// (and recursively descend through subdirectories doing same)
 		Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String,String> graph_name2file = genome2graphfiles.get(genome);
 		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file);
 
-		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
+		// optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
 	}
 
@@ -575,15 +582,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			handleLoginRequest(this.dasAuthorization, request, response);
 		} else {
 			AnnotatedSeqGroup genome = getGenome(request);
-			// System.out.println("Genome version: '"+ genome.getID() + "'");
 			if (genome == null) {
 				System.out.println("Unknown genome version");
-				//        response.setStatus(response.SC_BAD_REQUEST);
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
 			} else {
 				String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
 				System.out.println("das2 command: " + das_command);
-				//        DasCommandPlugin plugin = (DasCommandPlugin)command2plugin.get(das_command);
 				if (das_command.equals(segments_query)) {
 					handleSegmentsRequest(request, response);
 				} else if (das_command.equals(types_query)) {
@@ -612,7 +616,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 		int last_slash = path_info.lastIndexOf('/');
 		int prev_slash = path_info.lastIndexOf('/', last_slash - 1);
-		//    System.out.println("last_slash: " + last_slash + ",  prev_slash: " + prev_slash);
 		String genome_name = path_info.substring(prev_slash + 1, last_slash);
 		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_name);
 		if (genome == null) {
@@ -636,7 +639,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		ArrayList<String> ranges = new ArrayList<String>();
 		String[] query_array = query_splitter.split(query);
 		String format = "";
-		//boolean all_params_known = true;
 
 		for (int i = 0; i < query_array.length; i++) {
 			String tagval = query_array[i];
@@ -649,15 +651,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			} else if (tag.equals("range")) {
 				ranges.add(val);
 			}
-			//else {
-				//all_params_known = false;
-			//}
 		}
 
 		AnnotatedSeqGroup genome = getGenome(request);
 		System.out.println("Organism: " + genome.getOrganism());
 		System.out.println("ID: " + genome.getID());
-		//PrintWriter pw = response.getWriter();
 		String org_name = genome.getOrganism();
 		String version_name = genome.getID();
 		String seqname = path_info.substring(path_info.lastIndexOf("/") + 1);
@@ -677,7 +675,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			format = formats.get(0);
 		}
 
-		//pw.println("Stub for handling sequence residues request, currently not implemented");
 		// PhaseI: retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
 			retrieveBNIB(ranges, org_name, version_name, seqname, format, response, request);
@@ -1002,7 +999,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			HashMap<String,HashSet<String>> userAuthorizedResources,
 			Das2Authorization dasAuthorization) {
 		printXmlDeclaration(pw);
-		//    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
 		pw.println("<TYPES ");
 		pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
 		pw.println("    xml:base=\"" + xbase + "\" >");
@@ -1026,13 +1022,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String feat_type_encoded = URLEncoder.encode(feat_type);
 			// URLEncoding replaces slashes, want to keep those...
 			feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
-			/*if (DEBUG) {
-			  System.out.println("feat_type: " + feat_type + ", formats: " + formats);
-			  }*/
-			/*pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + feat_type +
-			  "\" " + SO_ACCESSION + "=\"" + default_onto_term + "\" " + ONTOLOGY + "=\"" + default_onto_uri + "\" >");
-			  */
-			// Not currently using accession or ontology
 
 			// Title may be stored in annots.xml file.
 			String title = feat_type;
@@ -1164,16 +1153,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			return;
 		}
-		//    addDasHeaders(response);
-		//String path_info = request.getPathInfo();
 		String query = request.getQueryString();
 		String xbase = getXmlBase(request);
 		String output_format = default_feature_format;
 		String query_type = null;
 		SeqSpan overlap_span = null;
 		SeqSpan inside_span = null;
-		//SeqSpan contain_span = null;
-		//SeqSpan identical_span = null;
 
 		List<SeqSymmetry> result = null;
 		MutableAnnotatedBioSeq outseq = null;
@@ -1203,7 +1188,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			//   the response should be a FEATURES doc with zero features.
 
 			String[] query_array = query_splitter.split(query);
-			//boolean has_segment = false;
 			boolean known_query = true;
 			for (int i = 0; i < query_array.length; i++) {
 				String tagval = query_array[i];

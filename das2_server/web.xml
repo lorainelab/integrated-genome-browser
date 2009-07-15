@@ -27,7 +27,7 @@
 
 	<servlet-mapping>
 		<servlet-name>GenometryDas2Servlet</servlet-name>
-		<url-pattern>/genome</url-pattern>
+		<url-pattern>/genome*</url-pattern>
 	</servlet-mapping>
 
 	<filter>

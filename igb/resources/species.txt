@@ -41,6 +41,7 @@ Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	M_tuberculosis_h37Rv_s
 Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna1
 Oryza sativa	Rice	O_sativa	O_sativa_Jan_2007	O_sativa_Jan_2009	O_sativa_Jun_2009
 Oryzias latipes	Medaka	O_latipes	oryLat2
+Ostreococcus lucimarinus	O_lucimarinus_Apr_2007
 Pan troglodytes	Chimp	P_troglodytes	panTro1	panTro2
 Petromyzon marinus	Lamprey	P_marinus	petMar1
 Plasmodium falciparum	P. falciparum	P_falciparum	P_falciparum_Jul_2007	Pfalciparum_3D7_plasmoDB-5.4
@@ -51,6 +52,7 @@ Rattus norvegicus	Rat	R_norvegicus	R_norvegicus_Jan_2003	R_norvegicus_Jun_2003	R
 Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	yeast_feb2006_37_1d	yeast_may2008	S_cerevisiae_feb_2006	S_cerevisiae_Jul_2007	S_cerevisiae_Apr_2008	S_cerevisiae_may_2008	yeast_2005Jan	yeast_Ver1
 Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	S_pombe_Apr_2007	S_pombe_sep_2007	pombe_sep-2007
 Sodalis glossinidius	S_glossinidius	S_glossinidius_Jan_2006
+Sorghum bicolor	Sorghum	S_bicolor_Mar_2008   
 Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur1	strPur2
 Taeniopygia guttata	Zebra Finch	taeGut1
 Takifugu rubripes	Fugu	fr1	fr2

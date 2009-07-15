@@ -15,16 +15,11 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 
-import com.affymetrix.genometry.*;
+import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
 
 public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	implements SymWithProps {
-
-	/** When this option is true, the convertToObject() method will automatically
-	 *  be applied to property values in setProperty().
-	 */
-	static boolean OPT_CONVERT_OBJECTS = false;
 
 	/** Set this property to Boolean.TRUE to indicate that the Symmetry is being
 	 *  used simply to group other Symmetry's together, and that this Symmetry
@@ -85,7 +80,7 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	/** Sets the properties to the given Map.
 	 *  This does not copy the properties, but rather maintains a reference
 	 *  to the actual Map passed-in.
-	 *  @param propmap  a Map of String's to String's.  This class is designed to not throw exceptions
+	 *  @param propmap  a Map of Strings to Strings.  This class will not throw exceptions
 	 *  if the map is null.
 	 */
 	public boolean setProperties(Map<String,Object> propmap) {
@@ -104,66 +99,13 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 		if (props == null) {
 			props = new HashMap<String,Object>();
 		}
-		if (OPT_CONVERT_OBJECTS) {
-			props.put(name, convertToObject(val));
-		} else {
-			props.put(name, val);
-		}
+		props.put(name, val);
 		return true;
 	}
 
 	public Object getProperty(String name) {
 		if (props == null) { return null; }
 		return props.get(name);
-	}
-
-	/*public void removeProperty(String name) {
-		if (props != null) {
-			props.remove(name);
-		}
-	}*/
-
-	/** Prints all the properties to System out.
-	 *  Mainly for debugging.
-	 */
-	/*public void printProps() {
-		if (props == null) { System.out.println("no props"); return; }
-		Set keys = props.keySet();
-		Iterator iter = keys.iterator();
-		while (iter.hasNext()) {
-			String key = (String)iter.next();
-			System.out.println(key + " --> " + props.get(key));
-		}
-	}*/
-
-	/**
-	 *  Converts some Strings to more memory-efficient objects.
-	 *  This can be useful in reducing the amount of memory required to store
-	 *  the properties mappings.
-	 *  If the given value is not a String, it is left alone.
-	 *  If it is a one-character string, it is converted to a Character.
-	 *  If it is a String representing an Integer, then an Integer is returned.
-	 */
-	private static Object convertToObject(Object val) {
-		Object result = val;
-		if (val instanceof String) {
-			String str = (String) val;
-			if ("".equals(str)) {
-				result = "";
-			}
-			else if (str.length() == 1) {
-				return new Character(str.charAt(0));
-			}
-			else if (Character.isDigit(str.charAt(0))) {
-				Integer the_int = null;
-				try {
-					the_int =  new Integer(str);
-				}
-				catch (NumberFormatException e) { the_int = null; }
-				if (the_int != null) { result = the_int; }
-			}
-		}
-		return result;
 	}
 
 }

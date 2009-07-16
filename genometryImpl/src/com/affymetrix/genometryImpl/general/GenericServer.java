@@ -43,7 +43,7 @@ public final class GenericServer {
     this.friendlyURL = null;
 //    try {
 //      // to be used by DAS/2 authentication
-//      friendlyURL = new java.net.URL("http://www.google.com");
+//      friendlyURL = new java.net.URL("http://www.life.com");
 //      java.net.URL imgURL = new java.net.URL("http://www.lawhelp.org/content/images/icons/g-life.gif");
 //      if (imgURL != null) {
 //        friendlyIcon = new ImageIcon(imgURL);

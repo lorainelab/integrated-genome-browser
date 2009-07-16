@@ -667,7 +667,7 @@ public final class GeneralLoadView extends JComponent
 
 		Application.getSingleton().setNotLockedUpStatus("Loading features");
 
-		createFeaturesTable();
+		createFeaturesTable(true);
 		loadWholeRangeFeatures(versionName);
 		Application.getSingleton().setStatus("",false);
 	}
@@ -724,7 +724,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Create the table with the list of features and their status.
 	 */
-	void createFeaturesTable() {
+	void createFeaturesTable(boolean refreshTree) {
 		String versionName = (String) this.versionCB.getSelectedItem();
 		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
 		if (DEBUG_EVENTS) {
@@ -735,12 +735,14 @@ public final class GeneralLoadView extends JComponent
 		if (DEBUG_EVENTS) {
 			System.out.println("features for " + versionName + ": " + features.toString());
 		}
-		if (features == null || features.isEmpty()) {
-			clearFeaturesTable();
-			this.feature_tree_view.clearTreeView();
-			return;
+		if(refreshTree) {
+			if (features == null || features.isEmpty()) {
+				clearFeaturesTable();
+				this.feature_tree_view.clearTreeView();
+				return;
+			}
+			this.feature_tree_view.initOrRefreshTree(features);
 		}
-		this.feature_tree_view.initOrRefreshTree(features);
 
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating table with features: " + features.toString());

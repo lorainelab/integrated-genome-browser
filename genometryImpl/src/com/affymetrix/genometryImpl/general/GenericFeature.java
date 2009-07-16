@@ -5,6 +5,7 @@ import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public final class GenericFeature {
 	public boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public Map<MutableAnnotatedBioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
+	public URL friendlyURL = null;			// friendly URL that users may look at.
 
 	/**
 	 * @param featureName
@@ -55,7 +57,9 @@ public final class GenericFeature {
 	 * @return true if feature should be loaded automatically
 	 */
 	private static boolean shouldAutoLoad(String name) {
-		return (name.equalsIgnoreCase("__cytobands") || name.equalsIgnoreCase("refseq"));
+		String lowerCaseName = name.toLowerCase().trim();
+		return (lowerCaseName.startsWith("__cytobands") || lowerCaseName.endsWith("cytobands") ||
+				lowerCaseName.startsWith("refseq") || lowerCaseName.endsWith("refseq"));
 	}
 
 	@Override

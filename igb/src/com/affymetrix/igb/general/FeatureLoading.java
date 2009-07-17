@@ -41,7 +41,7 @@ import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
 
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
 	/**
@@ -296,7 +296,8 @@ public final class FeatureLoading {
 		try {
 			istr = LocalUrlCacher.getInputStream(annot_url, true);
 			if (istr != null) {
-				bis = new BufferedInputStream(istr);
+				IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
+				style.setHumanName(gFeature.featureName);
 				if (GraphSymUtils.isAGraphFilename(fileName)) {
 					URL url = new URL(annot_url);
 					List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
@@ -306,6 +307,7 @@ public final class FeatureLoading {
 						gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
 					}
 				} else {
+					bis = new BufferedInputStream(istr);
 					LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
 				}
 				return true;

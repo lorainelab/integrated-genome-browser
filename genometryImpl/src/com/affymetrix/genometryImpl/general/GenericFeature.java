@@ -64,16 +64,11 @@ public final class GenericFeature {
 
 	@Override
 	public String toString() {
-		if (this.gVersion.gServer.serverType == ServerType.QuickLoad) {
-			return LoadUtils.stripFilenameExtensions(this.featureName);
-		}
-
 		// remove all but the last "/", since these will be represented in a friendly tree view.
 		if (!this.featureName.contains("/"))
 			return this.featureName;
 
 		int lastSlash = this.featureName.lastIndexOf("/");
 		return this.featureName.substring(lastSlash + 1,featureName.length());
-
 	}	
 }

@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
@@ -96,18 +97,18 @@ public final class QuickLoadServerModel {
    *  The list may (rarely) be empty, but never null.
    */
   public List<String> getTypes(String genome_name) {
-	  genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
+		genome_name = LOOKUP.findMatchingSynonym(genome_names, genome_name);
 		if (genome2init.get(genome_name) != Boolean.TRUE) {
 			initGenome(genome_name);
 			//loadAnnotationNames(genome_name);
 		}
-    List<String> typeNames = new ArrayList<String>();
+		List<String> typeNames = new ArrayList<String>();
 		typeNames.addAll(genome2annotsMap.get(genome_name).values());
-    if (typeNames == null) {
+		if (typeNames == null) {
 			return Collections.<String>emptyList();
 		}
-    return typeNames;
-  }
+		return typeNames;
+	}
   
 	private void initGenome(String genome_name) {
 		Application.getApplicationLogger().fine("initializing data for genome: " + genome_name);
@@ -199,8 +200,9 @@ public final class QuickLoadServerModel {
 					if (annot_file_name == null || annot_file_name.length() == 0) {
 						continue;
 					}
-					type2FileName.put(annot_file_name, annot_file_name); // We don't have a friendly type name for this file.
-					//System.out.println("Adding type: " + annot_file_name);
+					String friendlyName = LoadUtils.stripFilenameExtensions(annot_file_name);
+					type2FileName.put(annot_file_name, friendlyName);
+					//System.out.println("Adding file, type: " + annot_file_name + ", " + friendlyName);
 				}
 			}
 			return true;

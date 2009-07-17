@@ -41,8 +41,6 @@ import javax.swing.tree.TreePath;
 //import skt.swing.tree.check.CheckTreeManager;
 //import skt.swing.tree.check.TreePathSelectable;
 
-
-
 /**
  * View of genome features as a tree.
  */
@@ -209,7 +207,7 @@ public final class FeatureTreeView extends JComponent {
 			serverRoot.setUserObject(new TreeNodeUserInfo(server));
 
 			for (GenericFeature feature : features) {
-				if (/*!feature.visible &&*/ feature.gVersion.gServer.equals(server)) {
+				if (/*!feature.visible &&*/feature.gVersion.gServer.equals(server)) {
 					addOrFindNode(serverRoot, feature, feature.featureName);
 				}
 			}
@@ -431,8 +429,6 @@ public final class FeatureTreeView extends JComponent {
 	 * http://www.experts-exchange.com/Programming/Languages/Java/Q_23851420.html
 	 *
 	 */
-
-
 	class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		private JCheckBox leafCheckBox = new JCheckBox();
@@ -472,11 +468,7 @@ public final class FeatureTreeView extends JComponent {
 				int row,
 				boolean hasFocus) {
 
-			Component defaultRender =
-					super.getTreeCellRendererComponent(
-					tree, value, sel,
-					expanded, leaf, row,
-					hasFocus);
+
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 			Object nodeData = node.getUserObject();
@@ -486,10 +478,29 @@ public final class FeatureTreeView extends JComponent {
 			}
 
 
-			if (nodeGeneric instanceof GenericServer &&
-					((GenericServer) nodeGeneric).friendlyIcon != null) {
-				setIcon(((GenericServer) nodeGeneric).friendlyIcon);
-			} else if (leaf && nodeGeneric instanceof GenericFeature) {
+			if (nodeGeneric instanceof GenericServer) {
+				GenericServer gServer = (GenericServer) nodeGeneric;
+				String serverNameString = "";
+
+				if (gServer.friendlyURL != null) {
+					serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
+				} else {
+					serverNameString = "<b>" + gServer.serverName + "</b>";
+				}
+
+				serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
+
+				if (((GenericServer) nodeGeneric).friendlyIcon != null) {
+					setIcon(((GenericServer) nodeGeneric).friendlyIcon);
+				}
+
+				return super.getTreeCellRendererComponent(
+						tree, serverNameString, sel,
+						expanded, leaf, row,
+						hasFocus);
+			
+			}
+			else if (leaf && nodeGeneric instanceof GenericFeature) {
 
 				String featureName = ((GenericFeature) nodeGeneric).featureName;
 				String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
@@ -509,7 +520,10 @@ public final class FeatureTreeView extends JComponent {
 				return leafCheckBox;
 			}
 
-			return defaultRender;
+			return super.getTreeCellRendererComponent(
+					tree, value, sel,
+					expanded, leaf, row,
+					hasFocus);
 		}
 	}
 
@@ -564,7 +578,7 @@ public final class FeatureTreeView extends JComponent {
 						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
 					}
 					if (nodeData instanceof GenericFeature) {
-						((GenericFeature)nodeData).visible = true;
+						((GenericFeature) nodeData).visible = true;
 						glv.createFeaturesTable(false);
 					}
 					//TreePath path = new TreePath(editedNode.getPath());
@@ -606,6 +620,7 @@ public final class FeatureTreeView extends JComponent {
 			this.selected = selected;
 			this.genericObject = genericObject;
 		}
+
 		@Override
 		public String toString() {
 			return genericObject.toString();

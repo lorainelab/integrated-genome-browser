@@ -16,14 +16,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -358,9 +362,11 @@ public final class FeatureTreeView extends JComponent {
 			if (nodeData instanceof GenericServer) {
 				GenericServer gServer = (GenericServer) nodeData;
 
-				Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
-				bounds.width = (int) linkBound.getWidth();
 				if (gServer.friendlyURL != null) {
+
+					Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
+					bounds.width = (int) linkBound.getWidth();
+
 					if (gServer.friendlyIcon != null) {
 						bounds.x += gServer.friendlyIcon.getIconWidth() + 1;
 					} else {
@@ -374,6 +380,22 @@ public final class FeatureTreeView extends JComponent {
 				}
 			} else if (nodeData instanceof GenericFeature) {
 				GenericFeature gFeature = (GenericFeature) nodeData;
+
+//				//this is for test if link works.
+//				try {
+//					gFeature.friendlyURL = new URL("http://www.google.com");
+//				} catch (MalformedURLException ex) {
+//					Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
+//				}
+				if (gFeature.friendlyURL != null) {
+					int iconWidth = 10 + 2*4;
+					bounds.x += bounds.width - iconWidth;
+					bounds.width = iconWidth;
+					if (bounds.contains(x, y)) {
+						return gFeature.friendlyURL;
+					}
+
+				}
 
 			}
 
@@ -452,6 +474,7 @@ public final class FeatureTreeView extends JComponent {
 			selectionBackground = UIManager.getColor("Tree.selectionBackground");
 			textForeground = UIManager.getColor("Tree.textForeground");
 			textBackground = UIManager.getColor("Tree.textBackground");
+
 		}
 
 		public JCheckBox getLeafFeatureRenderer() {
@@ -471,15 +494,15 @@ public final class FeatureTreeView extends JComponent {
 
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-			Object nodeData = node.getUserObject();
-			Object nodeGeneric = nodeData;
-			if (nodeData instanceof TreeNodeUserInfo) {
-				nodeGeneric = ((TreeNodeUserInfo) nodeData).genericObject;
+			Object nodeUObject = node.getUserObject();
+			Object genericData = nodeUObject;
+			if (nodeUObject instanceof TreeNodeUserInfo) {
+				genericData = ((TreeNodeUserInfo) nodeUObject).genericObject;
 			}
 
 
-			if (nodeGeneric instanceof GenericServer) {
-				GenericServer gServer = (GenericServer) nodeGeneric;
+			if (genericData instanceof GenericServer) {
+				GenericServer gServer = (GenericServer) genericData;
 				String serverNameString = "";
 
 				if (gServer.friendlyURL != null) {
@@ -490,25 +513,46 @@ public final class FeatureTreeView extends JComponent {
 
 				serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
 
-				if (((GenericServer) nodeGeneric).friendlyIcon != null) {
-					setIcon(((GenericServer) nodeGeneric).friendlyIcon);
+				if (((GenericServer) genericData).friendlyIcon != null) {
+					setIcon(((GenericServer) genericData).friendlyIcon);
 				}
 
 				return super.getTreeCellRendererComponent(
 						tree, serverNameString, sel,
 						expanded, leaf, row,
 						hasFocus);
-			
-			}
-			else if (leaf && nodeGeneric instanceof GenericFeature) {
 
-				String featureName = ((GenericFeature) nodeGeneric).featureName;
-				String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
+			} else if (leaf && genericData instanceof GenericFeature) {
 
-				leafCheckBox.setText(featureRight);
-				leafCheckBox.setSelected(((TreeNodeUserInfo) nodeData).selected);
+				// You must call super before each return.
+				super.getTreeCellRendererComponent(
+						tree, value, sel,
+						expanded, leaf, row,
+						hasFocus);
 
-				leafCheckBox.setEnabled(tree.isEnabled() && !((TreeNodeUserInfo) nodeData).selected);
+				GenericFeature gFeature = (GenericFeature) genericData;
+				boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
+
+				String featureName = gFeature.featureName;
+				String featureText = featureName.substring(featureName.indexOf(path_separator) + 1);
+
+				featureText = "<html>" + featureText;
+
+				if (gFeature.friendlyURL != null)
+				{
+					java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");
+
+					if (imgURL != null) {
+						ImageIcon infoIcon = new ImageIcon(imgURL);
+						featureText += " <img src='" + infoIcon + "' width='10' height='10'/>";
+					}
+
+				}
+
+				leafCheckBox.setText(featureText);
+				leafCheckBox.setSelected(isChecked);
+
+				leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
 
 				if (selected) {
 					leafCheckBox.setForeground(selectionForeground);
@@ -551,7 +595,7 @@ public final class FeatureTreeView extends JComponent {
 
 						Rectangle r = thetree.getPathBounds(path);
 						int x = mouseEvent.getX() - r.x;
-						int y = mouseEvent.getY() - r.y;
+						//int y = mouseEvent.getY() - r.y;
 
 						JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 						checkbox.setText("");
@@ -560,7 +604,7 @@ public final class FeatureTreeView extends JComponent {
 					}
 				}
 			}
-			System.out.println("1. isCellEditable: " + Boolean.toString(returnValue));
+			//System.out.println("1. isCellEditable: " + Boolean.toString(returnValue));
 			return returnValue;
 		}
 
@@ -572,7 +616,7 @@ public final class FeatureTreeView extends JComponent {
 			ItemListener itemListener = new ItemListener() {
 
 				public void itemStateChanged(ItemEvent itemEvent) {
-					System.out.println("3.itemStateChanged:	 " + itemEvent.toString());
+					//System.out.println("3.itemStateChanged:	 " + itemEvent.toString());
 					Object nodeData = editedNode.getUserObject();
 					if (nodeData instanceof TreeNodeUserInfo) {
 						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
@@ -591,7 +635,7 @@ public final class FeatureTreeView extends JComponent {
 			if (editor instanceof JCheckBox) {
 				((JCheckBox) editor).addItemListener(itemListener);
 			}
-			System.out.println("2. getTreeCellEditorComponent: " + editor.toString());
+			//System.out.println("2. getTreeCellEditorComponent: " + editor.toString());
 			return editor;
 		}
 
@@ -599,9 +643,9 @@ public final class FeatureTreeView extends JComponent {
 			JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 			Object nodeData = editedNode.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
-				((TreeNodeUserInfo) nodeData).setSelected(checkbox.isSelected());
+				((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
 			}
-			System.out.println("4. getCellEditorValue: " + nodeData);
+			//System.out.println("4. getCellEditorValue: " + nodeData);
 			return nodeData;
 		}
 	}
@@ -609,15 +653,15 @@ public final class FeatureTreeView extends JComponent {
 	static class TreeNodeUserInfo {
 
 		private final Object genericObject;
-		private boolean selected;
+		private boolean checked;
 
 		public TreeNodeUserInfo(Object genericObject) {
-			this.selected = false;
+			this.checked = false;
 			this.genericObject = genericObject;
 		}
 
-		public TreeNodeUserInfo(Object genericObject, boolean selected) {
-			this.selected = selected;
+		public TreeNodeUserInfo(Object genericObject, boolean checked) {
+			this.checked = checked;
 			this.genericObject = genericObject;
 		}
 
@@ -626,14 +670,14 @@ public final class FeatureTreeView extends JComponent {
 			return genericObject.toString();
 		}
 
-		public void setSelected(boolean newValue) {
-			if (!selected) {
-				selected = newValue;
+		public void setChecked(boolean newValue) {
+			if (!checked) {
+				checked = newValue;
 			}
 		}
 
-		public boolean isSelected() {
-			return selected;
+		public boolean isChecked() {
+			return checked;
 		}
 	}
 }

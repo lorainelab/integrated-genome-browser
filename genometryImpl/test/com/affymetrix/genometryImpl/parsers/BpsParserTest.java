@@ -93,6 +93,50 @@ public class BpsParserTest {
 	}
 	
 
+	/**
+	 * Test indexing code.
+	 */
+	@Test
+	public void testIndexing() {
+		String string =
+		"70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr1	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n" +
+		"71	0	0	0	0	0	2	176	+	EL049618	71	0	71	chr1	30432563	457618	457865	3	9,36,26,	0,9,45,	457618,457715,457839,\n" +
+		"70	1	0	0	0	0	2	165	+	EL049618	71	0	71	chr2	30432563	455031	455267	3	9,36,26,	0,9,45,	455031,455111,455241,\n" +
+		"71	0	0	0	0	0	2	176	+	EL049500	71	0	71	chr1	30432563	457617	457864	3	9,36,26,	0,9,45,	457617,457714,457838,\n"
+				;
+
+
+		InputStream istr = new ByteArrayInputStream(string.getBytes());
+		DataInputStream dis = new DataInputStream(istr);
+
+		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+		boolean annot_seq = true;
+
+		List<SeqSymmetry> syms = null;
+		try {
+			PSLParser parser = new PSLParser();
+			syms = parser.parse(istr, "stream_test", group, group, annot_seq, true);
+		} catch (IOException ex) {
+			Logger.getLogger(BpsParserTest.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+		assertEquals(4, syms.size());	// precisely 4 symmetries.
+
+		BioSeq seq = group.getSeq("chr1");
+
+		List<UcscPslSym> pslSyms = new ArrayList<UcscPslSym>(syms.size());
+		for (SeqSymmetry sym : syms) {
+			pslSyms.add((UcscPslSym)sym);
+		}
+
+		BpsParser instance = new BpsParser();
+		List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(pslSyms, seq);
+
+		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
+
+		assertEquals(457617, sortedSyms.get(1).getTargetMin());	// the middle symmetry (after sorting) should have a start coord of 457617.
+		
+	}
 
 	/**
 	 * Test of getMimeType method.

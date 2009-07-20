@@ -70,7 +70,7 @@ public class ScoredIntervalParserTest {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		System.out.println("done testing ScoredIntervalParser");
+		//System.out.println("done testing ScoredIntervalParser");
 		String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
 		assertEquals(stream_name, unique_container_name);		
 	}

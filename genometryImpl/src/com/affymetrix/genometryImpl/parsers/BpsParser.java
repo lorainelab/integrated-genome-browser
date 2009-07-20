@@ -24,6 +24,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.UcscPslComparator;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
@@ -401,7 +402,7 @@ public final class BpsParser implements AnnotationWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
 		//    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
 		boolean success = true;
@@ -433,6 +434,61 @@ public final class BpsParser implements AnnotationWriter  {
 			GeneralUtils.safeClose(dos);
 		}
 		return success;
+	}
+
+	/**
+	 * Write out PSL annotations as binary PSL.
+	 * This file is for a specific chromosome, and is sorted by start field.
+	 * Later this may also write out indexes for each line.
+	 * (If so, there would be int[] arrays for start and end, and a long[] array for file pointers.)
+	 * @param syms
+	 * @param seq
+	 * @param outstream
+	 * @return
+	 */
+	public boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream) {
+		// Sort by start.
+		UcscPslSymStartComparator UCSCcomp = new UcscPslSymStartComparator();
+		Collections.sort(syms,UCSCcomp);
+
+		DataOutputStream dos = null;
+		try {
+			dos = new DataOutputStream(new BufferedOutputStream(outstream));
+			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq);
+			for (UcscPslSym sym : symList) {
+				sym.outputBpsFormat(dos);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		finally {
+			GeneralUtils.safeClose(dos);
+		}
+		return true;
+	}
+
+	public List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq) {
+		// Sort by start.
+		UcscPslSymStartComparator UCSCcomp = new UcscPslSymStartComparator();
+		Collections.sort(syms, UCSCcomp);
+
+		List<UcscPslSym> results = new ArrayList<UcscPslSym>();
+		for (UcscPslSym sym : syms) {
+			if (sym.getTargetSeq() != seq) {
+				continue;
+			}
+			// add the lines specifically with TargetSeq ID == seq ID.
+			results.add(sym);
+		}
+		return results;
+	}
+
+	private final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
+		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
+			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
+		}
 	}
 
 	/**

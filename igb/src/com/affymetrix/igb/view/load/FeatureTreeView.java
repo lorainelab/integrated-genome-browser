@@ -1,8 +1,8 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,13 +16,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -42,8 +39,6 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-//import skt.swing.tree.check.CheckTreeManager;
-//import skt.swing.tree.check.TreePathSelectable;
 
 /**
  * View of genome features as a tree.
@@ -55,8 +50,6 @@ public final class FeatureTreeView extends JComponent {
 	private DefaultMutableTreeNode treetop = null;
 	private static final String path_separator = "/";
 	private static final Pattern path_separator_regex = Pattern.compile(path_separator);
-//	private CheckTreeManager check_tree_manager; // manager for tree with checkboxes
-//	private final TreeCheckListener tree_check_listener = new TreeCheckListener();
 	private final GeneralLoadView glv;
 	private TreePath selectedPath;
 	private TreeCellRenderer tcr;
@@ -76,61 +69,18 @@ public final class FeatureTreeView extends JComponent {
 
 		tree = new JTree();
 		tcr = new FeatureTreeCellRenderer();
-
 		tree.setCellRenderer(tcr);
 
 		tce = new FeatureTreeCellEditor();
 		tree.setCellEditor(tce);
 		tree.setEditable(true);
 
-
-//		//if possible, hide leaf icons (since have checkboxes too)
-//		if (tcr instanceof DefaultTreeCellRenderer) {
-//			DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer) tcr;
-//			dtcr.setLeafIcon(null);
-//		}
-
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
-		//tree.setEditable(false);
+
 		TreeMouseListener tree_mouse_listener = new TreeMouseListener();
 		tree.addMouseListener(tree_mouse_listener);
 		tree.addMouseMotionListener(tree_mouse_listener);
-
-		// tree.addMouseMotionListener(tree_mouse_listener)
-
-
-		//tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-
-		//add a tree selection listener to the data access tree
-//		tree.addTreeSelectionListener(new TreeSelectionListener() {
-//
-//			public void valueChanged(TreeSelectionEvent e) {
-//				DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-//				if (node == null) {
-//					return;
-//				}
-//				if (node.isLeaf()) {
-//					//trigger the event
-//					SingletonGenometryModel.getGenometryModel().setSelectedFeature(e.getPath());
-//				}
-//			}
-//		});
-
-
-//		// Only put checkboxes on leaf nodes.
-//		TreePathSelectable only_leaf_nodes = new TreePathSelectable() {
-//
-//			public boolean isSelectable(TreePath path) {
-//				DefaultMutableTreeNode last_node = (DefaultMutableTreeNode) path.getLastPathComponent();
-//				return !last_node.getAllowsChildren();
-//			}
-//		};
-
-		//check_tree_manager = new CheckTreeManager(tree, false, only_leaf_nodes);
-		//check_tree_manager.getSelectionModel().addTreeSelectionListener(tree_check_listener);
-
-
 
 		tree_scroller = new JScrollPane(tree);
 		//tree_scroller.setMinimumSize(new Dimension(300, 0));
@@ -162,7 +112,7 @@ public final class FeatureTreeView extends JComponent {
 		if (selectedPath != null) {
 			selectedPath = null;
 			return;
-		// Don't want to re-create tree when we have a selected node.
+			// Don't want to re-create tree when we have a selected node.
 		}
 		DefaultMutableTreeNode root = CreateTree(features);
 		//this.setVisible(root != null && (root.getChildCount() > 0));
@@ -170,22 +120,6 @@ public final class FeatureTreeView extends JComponent {
 		TreeModel tmodel = new DefaultTreeModel(treetop, true);
 		tree.setModel(tmodel);
 
-//		// Sometimes the text of the nodes is too small.  This is a hack to deal with that.
-//		if (tcr instanceof DefaultTreeCellRenderer) {
-//			DefaultTreeCellRenderer dtcr = (DefaultTreeCellRenderer) tcr;
-//
-//			// determine longest component name (similar to tree depth, but more useful here).
-//			int preferredSize = 0;
-//			for (GenericFeature gFeature : features) {
-//				preferredSize = Math.max(preferredSize, gFeature.toString().length());
-//			}
-//			preferredSize += 100;	//hack
-//			preferredSize = Math.max(200, preferredSize);	// 200 is reasonable even for a small tree.
-//
-//			dtcr.setPreferredSize(new Dimension(preferredSize, 20));
-//			dtcr.setMaximumSize(dtcr.getPreferredSize());
-//
-//		}
 		tree_scroller.invalidate();
 	}
 
@@ -269,66 +203,6 @@ public final class FeatureTreeView extends JComponent {
 		addOrFindNode(newNode, feature, featureRight);
 	}
 
-	/**
-	 * Remove node and move it to features table, if it's checked.
-	 */
-//
-//	class TreeCheckListener implements TreeSelectionListener {
-//
-//		public void valueChanged(TreeSelectionEvent evt) {
-//			TreePath path = evt.getPath();
-//			DefaultMutableTreeNode tnode = (DefaultMutableTreeNode) path.getLastPathComponent();
-//			GenericFeature gFeature = (GenericFeature) tnode.getUserObject();
-//			if (!gFeature.visible) {
-//				if (gFeature.loadStrategy == LoadStrategy.NO_LOAD) {
-//					if (gFeature.gVersion.gServer.serverType == ServerType.DAS ||
-//							gFeature.gVersion.gServer.serverType == ServerType.DAS2) {
-//						gFeature.loadStrategy = LoadStrategy.VISIBLE;	// Put in "load region in view" by default in DAS/1 and DAS/2
-//					}
-//				}
-//				gFeature.visible = true;
-//			}
-//
-//			// Remove the node.
-//			DefaultMutableTreeNode validNode = getNextValidNode(tnode);
-//			TreePath validPath = null;
-//			tnode.removeFromParent();
-//
-//			//  Select the next valid node, if one exists.
-//			if (validNode != null) {
-//				validPath = new TreePath(validNode);
-//				selectedPath = validPath;
-//				tree.expandPath(selectedPath);
-//				tree.setSelectionPath(selectedPath);
-//				tree.scrollPathToVisible(selectedPath);
-//			} else {
-//				selectedPath = null;
-//			}
-//
-//			tree.updateUI();
-//
-//
-//			// Need to trigger a change in the Features Table.
-//			glv.createFeaturesTable();
-//		}
-//
-//		/**
-//		 * Find the next valid node.  Note that if there are no leaf nodes, we must return null.
-//		 * @param currentNode
-//		 * @return
-//		 */
-//		private DefaultMutableTreeNode getNextValidNode(DefaultMutableTreeNode currentNode) {
-//			if (currentNode == null) {
-//				return null;
-//			}
-//			DefaultMutableTreeNode validNode = currentNode.getNextSibling();
-//			if (validNode == null) {
-//				validNode = currentNode.getPreviousSibling();
-//			}
-//			return validNode;
-//		}
-//	}
-//
 	class TreeMouseListener implements MouseListener, MouseMotionListener {
 
 		private Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -388,7 +262,7 @@ public final class FeatureTreeView extends JComponent {
 //					Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
 //				}
 				if (gFeature.friendlyURL != null) {
-					int iconWidth = 10 + 2*4;
+					int iconWidth = 10 + 2 * 4;
 					bounds.x += bounds.width - iconWidth;
 					bounds.width = iconWidth;
 					if (bounds.contains(x, y)) {
@@ -454,8 +328,8 @@ public final class FeatureTreeView extends JComponent {
 	class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		private JCheckBox leafCheckBox = new JCheckBox();
-		private Color selectionBorderColor,  selectionForeground;
-		private Color selectionBackground,  textForeground,  textBackground;
+		private Color selectionBorderColor, selectionForeground;
+		private Color selectionBackground, textForeground, textBackground;
 
 		public FeatureTreeCellRenderer() {
 			Font fontValue;
@@ -465,15 +339,22 @@ public final class FeatureTreeView extends JComponent {
 			}
 
 			setLeafIcon(null);
-
-			Boolean drawsFocusBorderAroundIcon = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
-			leafCheckBox.setFocusPainted((drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue()));
-
+			
 			selectionBorderColor = UIManager.getColor("Tree.selectionBorderColor");
 			selectionForeground = UIManager.getColor("Tree.selectionForeground");
 			selectionBackground = UIManager.getColor("Tree.selectionBackground");
 			textForeground = UIManager.getColor("Tree.textForeground");
 			textBackground = UIManager.getColor("Tree.textBackground");
+
+			Boolean drawsFocusBorderAroundIcon = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
+			leafCheckBox.setFocusPainted((drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue()));
+			
+			String osName = (String) java.security.AccessController.doPrivileged(
+					new sun.security.action.GetPropertyAction("os.name"));
+			if (osName != null && osName.indexOf("Windows") != -1) {
+				leafCheckBox.setBorderPaintedFlat(true);
+				leafCheckBox.setBorder(new DashedBorder(selectionBorderColor));
+			}
 
 		}
 
@@ -538,8 +419,7 @@ public final class FeatureTreeView extends JComponent {
 
 				featureText = "<html>" + featureText;
 
-				if (gFeature.friendlyURL != null)
-				{
+				if (gFeature.friendlyURL != null) {
 					java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");
 
 					if (imgURL != null) {
@@ -557,9 +437,11 @@ public final class FeatureTreeView extends JComponent {
 				if (selected) {
 					leafCheckBox.setForeground(selectionForeground);
 					leafCheckBox.setBackground(selectionBackground);
+					leafCheckBox.setBorderPainted(true);
 				} else {
 					leafCheckBox.setForeground(textForeground);
 					leafCheckBox.setBackground(textBackground);
+					leafCheckBox.setBorderPainted(false);
 				}
 				return leafCheckBox;
 			}

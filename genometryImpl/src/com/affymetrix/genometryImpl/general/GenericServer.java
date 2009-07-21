@@ -76,9 +76,8 @@ public final class GenericServer {
 				tempURL = tempURL.substring(0, tempURL.length() - 4);
 			}
 		} else if (serverType.equals(ServerType.DAS2)) {
-			if (tempURL.endsWith("/genome")) {
-				tempURL = tempURL.substring(0, tempURL.length() - 7);
-			}
+			// Remove the last section (e.g., "/genome" or "/das2")
+			tempURL = tempURL.substring(0, tempURL.lastIndexOf("/"));
 		}
 		try {
 			tempFriendlyURL = new URL(tempURL);

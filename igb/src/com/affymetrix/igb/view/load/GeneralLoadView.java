@@ -60,6 +60,7 @@ public final class GeneralLoadView extends JComponent
 	private static final String SELECT_GENOME = "Genome Version";
 	private static final String GENOME_SEQ_ID = "genome";
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
+	private static final String CHOOSE = "Choose";
 	private AnnotatedSeqGroup curGroup = null;
 	private BioSeq curSeq = null;
 	private JComboBox kingdomCB;
@@ -102,7 +103,8 @@ public final class GeneralLoadView extends JComponent
 
 		speciesCB.setEnabled(false);
 		speciesCB.setEditable(false);
-		choicePanel.add(new JLabel("Choose:"));
+		speciesCB.setToolTipText(CHOOSE + " " + SELECT_SPECIES);
+		choicePanel.add(new JLabel(CHOOSE + ":"));
 		choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(speciesCB);
 		//choicePanel.add(Box.createHorizontalGlue());
@@ -113,6 +115,7 @@ public final class GeneralLoadView extends JComponent
 		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);
 		versionCB.setEditable(false);
+		versionCB.setToolTipText(CHOOSE + " " + SELECT_GENOME);
 		//choicePanel.add(new JLabel("Genome Version:"));
 		//choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(versionCB);

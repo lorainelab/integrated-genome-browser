@@ -254,7 +254,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	@Override
 	public void init() throws ServletException {
-		System.out.println("Called GenometryDas2Servlet.init()");
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException ex) {
@@ -262,8 +261,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 		//attempt to load fields from System.properties or file
 		if (loadAndSetFields() == false) {
-			System.out.println("FAILED to init() GenometryDas2Servlet, aborting!");
-			return;
+			throw new ServletException("FAILED to init() GenometryDas2Servlet, aborting!");
 		}
 
 		try {
@@ -275,11 +273,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				types_transformer = transFact.newTransformer(type_xslt);
 			}
 
-			System.out.println("GenometryDas2Servlet version: " + RELEASE_VERSION);
 			if (!(new File(data_root)).isDirectory()) {
 				throw new ServletException("Aborting: Specified directory does not exist: '" + data_root + "'");
 			}
-			System.out.println("Starting GenometryDas2Servlet in directory: '" + data_root + "'");
 
 			initFormats(output_registry, graph_formats);
 
@@ -295,9 +291,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//instantiate DasAuthorization
 		dasAuthorization = new Das2Authorization(new File(data_root));
 
-		System.out.println("finished with GenometryDas2Servlet.init()");
 		date_initialized = System.currentTimeMillis();
 		date_init_string = date_formatter.format(new Date(date_initialized));
+		System.out.println("GenometryDas2Servlet " + RELEASE_VERSION + " alive, serving '" + data_root + "'");
 	}
 
 	/**
@@ -511,11 +507,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	@Override
 	public long getLastModified(HttpServletRequest request) {
-		System.out.println("getLastModified() called");
-		String path_info = request.getPathInfo();
-		String query = request.getQueryString();
-		System.out.println("   path: " + path_info);
-		System.out.println("   query: " + query);
 		return date_initialized;
 	}
 
@@ -527,21 +518,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			timecheck = new Timer();
 			timecheck.start();
 		}
-		System.out.println("*************** Genometry Das2 Servlet ***************");
-		System.out.println(date_formatter.format(new Date(System.currentTimeMillis())));
-		//    Memer mem = new Memer();
-		//    mem.printMemory();
 		String path_info = request.getPathInfo();
-		String query = request.getQueryString();
 		String request_url = request.getRequestURL().toString();
-		System.out.println("HttpServletResponse buffer size: " + response.getBufferSize());
-		System.out.println("path_info: " + path_info);
-		System.out.println("url: " + request_url);
-		System.out.println("query: " + query);
-		System.out.println("path translated = " + request.getPathTranslated());
-		System.out.println("context path = " + request.getContextPath());
-		System.out.println("request uri = " + request.getRequestURI());
-		System.out.println("servlet path = " + request.getServletPath());
 
 		HandleDas2Request(path_info, response, request, request_url);
 

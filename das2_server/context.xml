@@ -18,5 +18,5 @@
 	    directory="${catalina.home}/logs/"
 	    prefix="das2_access-"
 	    suffix=".log"
-	    pattern='%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i %Dms' />
+	    pattern='%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i" %Dms' />
 </Context>

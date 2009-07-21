@@ -38,10 +38,10 @@ public final class GenericServer {
 		this.login = login;				// to be used by DAS/2 authentication
 		this.password = password;			// to be used by DAS/2 authentication
 
-		this.friendlyIcon = null;
-
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
-		
+
+		this.friendlyIcon = determineFriendlyIcon(this.friendlyURL);
+
 //    try {
 //      // to be used by DAS/2 authentication
 //      friendlyURL = new java.net.URL("http://www.life.com");
@@ -86,4 +86,32 @@ public final class GenericServer {
 		}
 		return tempFriendlyURL;
 	}
+
+	private static ImageIcon determineFriendlyIcon(URL friendlyURL) {
+		if (friendlyURL == null) {
+			return null;
+		}
+
+		URL iconURL = null;
+		try {
+			String iconString = friendlyURL.toString() + "/favicon.ico";
+			iconURL = new URL(iconString);
+		} catch (Exception ex) {
+			// Ignore an exception here, since this is only for making a pretty UI.
+		}
+		if (iconURL == null) {
+			return null;
+		}
+
+		ImageIcon friendlyIcon = null;
+		try {
+			friendlyIcon = new ImageIcon(iconURL);
+		}
+		catch (Exception ex) {
+			// Ignore an exception here, since this is only for making a pretty UI.
+		}
+
+		return friendlyIcon;
+	}
+	
 }

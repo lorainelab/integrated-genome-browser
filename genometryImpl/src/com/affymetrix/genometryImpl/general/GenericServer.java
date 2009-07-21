@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
-import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.ImageIcon;
 
@@ -17,7 +16,7 @@ public final class GenericServer {
 	public final boolean enabled;			// Is this server enabled?
 	public final String login;				// Defaults to ""
 	public final String password;			// Defaults to ""
-	public URL friendlyURL;			// friendly URL that users may look at.
+	public final URL friendlyURL;			// friendly URL that users may look at.
 	public ImageIcon friendlyIcon;		// friendly icon that users may look at.
 
 	/**
@@ -40,7 +39,9 @@ public final class GenericServer {
 		this.password = password;			// to be used by DAS/2 authentication
 
 		this.friendlyIcon = null;
-		this.friendlyURL = null;
+
+		this.friendlyURL = determineFriendlyURL(URL, serverType);
+		
 //    try {
 //      // to be used by DAS/2 authentication
 //      friendlyURL = new java.net.URL("http://www.life.com");
@@ -59,5 +60,31 @@ public final class GenericServer {
 	@Override
 	public String toString() {
 		return serverName;
+	}
+
+	private static URL determineFriendlyURL(String URL, ServerType serverType) {
+		if (URL == null) {
+			return null;
+		}
+		String tempURL = URL;
+		URL tempFriendlyURL = null;
+		if (tempURL.endsWith("/")) {
+			tempURL = tempURL.substring(0, tempURL.length() - 1);
+		}
+		if (serverType.equals(ServerType.DAS)) {
+			if (tempURL.endsWith("/dsn")) {
+				tempURL = tempURL.substring(0, tempURL.length() - 4);
+			}
+		} else if (serverType.equals(ServerType.DAS2)) {
+			if (tempURL.endsWith("/genome")) {
+				tempURL = tempURL.substring(0, tempURL.length() - 7);
+			}
+		}
+		try {
+			tempFriendlyURL = new URL(tempURL);
+		} catch (Exception ex) {
+			// Ignore an exception here, since this is only for making a pretty UI.
+		}
+		return tempFriendlyURL;
 	}
 }

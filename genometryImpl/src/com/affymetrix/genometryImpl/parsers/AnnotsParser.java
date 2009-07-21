@@ -35,6 +35,7 @@ public abstract class AnnotsParser {
 					String filename = fileElement.getAttribute("name");
 					String title = fileElement.getAttribute("title");
 					String desc = fileElement.getAttribute("description");   // not currently used
+					String friendlyURL = fileElement.getAttribute("URL");
 
 					if (filename != null) {
 						// filename's case is now important, since we may be loading this file locally (in QuickLoad).

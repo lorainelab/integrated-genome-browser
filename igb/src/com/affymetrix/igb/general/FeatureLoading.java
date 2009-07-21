@@ -28,20 +28,17 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
 
 public final class FeatureLoading {
 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
 	/**

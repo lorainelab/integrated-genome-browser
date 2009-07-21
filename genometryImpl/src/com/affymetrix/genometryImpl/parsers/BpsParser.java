@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.nio.channels.FileChannel;
 
 public final class BpsParser implements AnnotationWriter  {
 
@@ -436,6 +437,41 @@ public final class BpsParser implements AnnotationWriter  {
 		return success;
 	}
 
+
+	public boolean writeIndexedAnnotations(List<UcscPslSym> syms, BioSeq seq, String type, FileOutputStream fos,
+			int min[], int max[], long[] fileIndices, boolean minOrMax) throws IOException {
+		//if (DEBUG){
+			System.out.println("in BpsParser.writeIndexedAnnotations()");
+		//}
+		DataOutputStream dos = null;
+		try {
+			dos = new DataOutputStream(fos);
+			FileChannel fChannel = fos.getChannel();
+			int index = 0;
+			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq);
+			min = new int[symList.size()];
+			max = new int[symList.size()];
+			fileIndices = new long[symList.size()];
+			
+			for (UcscPslSym sym : symList) {
+				min[index] = sym.getTargetMin();
+				max[index] = sym.getTargetMax();
+				fileIndices[index] = fChannel.position();
+				//if (DEBUG){
+				System.out.println("min,max,pos: " + min[index] + " " + max[index] + " " + fileIndices[index]);
+				//}
+				index++;
+				sym.outputBpsFormat(dos);
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+
 	/**
 	 * Write out PSL annotations as binary PSL.
 	 * This file is for a specific chromosome, and is sorted by start field.
@@ -479,7 +515,7 @@ public final class BpsParser implements AnnotationWriter  {
 			if (sym.getTargetSeq() != seq) {
 				continue;
 			}
-			// add the lines specifically with TargetSeq ID == seq ID.
+			// add the lines specifically with Target seq == seq.
 			results.add(sym);
 		}
 		return results;

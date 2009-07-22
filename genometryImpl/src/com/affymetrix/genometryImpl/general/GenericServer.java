@@ -1,9 +1,16 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import javax.swing.ImageIcon;
+import net.sf.image4j.codec.ico.ICODecoder;
+import net.sf.image4j.codec.ico.ICOImage;
 
+//import net.sf.image4j.codec.ico.*;
 /**
  * A class that's useful for visualizing a generic server.
  */
@@ -42,17 +49,16 @@ public final class GenericServer {
 
 		this.friendlyIcon = determineFriendlyIcon(this.friendlyURL);
 
+//	  System.out.print(serverName + serverType+":");
+//	  System.out.println(friendlyIcon);
 //    try {
-//      // to be used by DAS/2 authentication
-//      friendlyURL = new java.net.URL("http://www.life.com");
 //      java.net.URL imgURL = new java.net.URL("http://www.lawhelp.org/content/images/icons/g-life.gif");
 //      if (imgURL != null) {
 //        friendlyIcon = new ImageIcon(imgURL);
 //      } else {
 //        System.err.println("Couldn't find file: server.ico");
 //      }
-//    } catch (MalformedURLException ex) {
-//      friendlyURL = null;
+//    } catch (java.net.MalformedURLException ex) {
 //      ex.printStackTrace();
 //    }
 	}
@@ -92,6 +98,7 @@ public final class GenericServer {
 			return null;
 		}
 
+		// Step 1. getting IconURL
 		URL iconURL = null;
 		try {
 			String iconString = friendlyURL.toString() + "/favicon.ico";
@@ -103,15 +110,49 @@ public final class GenericServer {
 			return null;
 		}
 
-		ImageIcon friendlyIcon = null;
+		// Step 2. loading the icon and find a proper icon
+		InputStream iconStream = null;
+		BufferedImage icon = null;
 		try {
-			friendlyIcon = new ImageIcon(iconURL);
-		}
-		catch (Exception ex) {
-			// Ignore an exception here, since this is only for making a pretty UI.
+			iconStream = iconURL.openStream();
+			if (iconStream == null) {
+				return null;
+			}
+			List<ICOImage> icoImages = ICODecoder.readExt(iconStream);
+			int maxColorDepth = 0;
+			for (ICOImage icoImage : icoImages) {
+				int colorDepth = icoImage.getColourDepth();
+				int width = icoImage.getWidth();
+				if (width == 16 && maxColorDepth < colorDepth) {
+					icon = icoImage.getImage();
+					maxColorDepth = colorDepth;
+				}
+			}
+			if (icon == null && !icoImages.isEmpty()) {
+				icon = icoImages.get(0).getImage();
+			}
+
+		} catch (IOException ex) {
+			return null;
+		} finally {
+			if (iconStream != null) {
+				try {
+					iconStream.close();
+				} catch (IOException ex) {
+					// Ignore an exception here, since this is only for making a pretty UI.
+				}
+			}
 		}
 
+		// step 3. create the imageIcon instance
+		ImageIcon friendlyIcon = null;
+		try {
+			if (icon != null) {
+				friendlyIcon = new ImageIcon(icon);
+			}
+		} catch (Exception ex) {
+			// Ignore an exception here, since this is only for making a pretty UI.
+		}
 		return friendlyIcon;
 	}
-	
 }

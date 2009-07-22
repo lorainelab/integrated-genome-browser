@@ -383,6 +383,7 @@ public final class FeatureTreeView extends JComponent {
 
 
 			if (genericData instanceof GenericServer) {
+
 				GenericServer gServer = (GenericServer) genericData;
 				String serverNameString = "";
 
@@ -393,15 +394,17 @@ public final class FeatureTreeView extends JComponent {
 				}
 
 				serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
-
-				if (((GenericServer) genericData).friendlyIcon != null) {
-					setIcon(((GenericServer) genericData).friendlyIcon);
-				}
-
-				return super.getTreeCellRendererComponent(
+				
+				super.getTreeCellRendererComponent(
 						tree, serverNameString, sel,
 						expanded, leaf, row,
 						hasFocus);
+
+				if (gServer.friendlyIcon != null) {
+					setIcon(gServer.friendlyIcon);
+				}
+
+				return this;
 
 			} else if (leaf && genericData instanceof GenericFeature) {
 

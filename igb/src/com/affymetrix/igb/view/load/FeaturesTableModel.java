@@ -110,7 +110,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 				return gFeature.featureName;
 			case SERVER_NAME_COLUMN:
 				// return the friendly server name
-				return gFeature.gVersion.gServer.serverName;
+				return gFeature.gVersion.gServer.serverName + " (" + gFeature.gVersion.gServer.serverType + ")";
 			/*case SERVER_TYPE_COLUMN:
 				// return the server type
 				serverType = gFeature.gVersion.gServer.serverType;

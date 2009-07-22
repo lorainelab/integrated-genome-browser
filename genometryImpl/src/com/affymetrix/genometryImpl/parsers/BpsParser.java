@@ -438,8 +438,18 @@ public final class BpsParser implements AnnotationWriter  {
 	}
 
 
-	public boolean writeIndexedAnnotations(List<UcscPslSym> syms, BioSeq seq, String type, FileOutputStream fos,
-			int min[], int max[], long[] fileIndices, boolean minOrMax) throws IOException {
+	/**
+	 * Create a file of annotations, and index its entries.
+	 * @param syms -- a sorted list of annotations (on one chromosome)
+	 * @param fos -- stream to write file to.
+	 * @param min -- int array of TargetMins in annotation list.
+	 * @param max -- int array of TargetMaxes in annotation list.
+	 * @param fileIndices -- long array of file pointers in annotation list.
+	 * @return -- success or failure
+	 * @throws IOException
+	 */
+	public boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
+			int min[], int max[], long[] fileIndices) throws IOException {
 		//if (DEBUG){
 			System.out.println("in BpsParser.writeIndexedAnnotations()");
 		//}
@@ -448,12 +458,8 @@ public final class BpsParser implements AnnotationWriter  {
 			dos = new DataOutputStream(fos);
 			FileChannel fChannel = fos.getChannel();
 			int index = 0;
-			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq);
-			min = new int[symList.size()];
-			max = new int[symList.size()];
-			fileIndices = new long[symList.size()];
 			
-			for (UcscPslSym sym : symList) {
+			for (UcscPslSym sym : syms) {
 				min[index] = sym.getTargetMin();
 				max[index] = sym.getTargetMax();
 				fileIndices[index] = fChannel.position();
@@ -474,7 +480,7 @@ public final class BpsParser implements AnnotationWriter  {
 
 	/**
 	 * Write out PSL annotations as binary PSL.
-	 * This file is for a specific chromosome, and is sorted by start field.
+	 * This file is for a specific chromosome, and is sorted by end field.
 	 * Later this may also write out indexes for each line.
 	 * (If so, there would be int[] arrays for start and end, and a long[] array for file pointers.)
 	 * @param syms
@@ -482,15 +488,11 @@ public final class BpsParser implements AnnotationWriter  {
 	 * @param outstream
 	 * @return
 	 */
-	public boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream) {
-		// Sort by start.
-		UcscPslSymStartComparator UCSCcomp = new UcscPslSymStartComparator();
-		Collections.sort(syms,UCSCcomp);
-
+	public boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream, Comparator<UcscPslSym> UCSCcomp) {
 		DataOutputStream dos = null;
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
-			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq);
+			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq, UCSCcomp);
 			for (UcscPslSym sym : symList) {
 				sym.outputBpsFormat(dos);
 			}
@@ -505,9 +507,13 @@ public final class BpsParser implements AnnotationWriter  {
 		return true;
 	}
 
-	public List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq) {
-		// Sort by start.
-		UcscPslSymStartComparator UCSCcomp = new UcscPslSymStartComparator();
+	/**
+	 * Returns annotationsfor specific chromosome.
+	 * @param syms
+	 * @param seq
+	 * @return
+	 */
+	public List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, Comparator<UcscPslSym> UCSCcomp) {
 		Collections.sort(syms, UCSCcomp);
 
 		List<UcscPslSym> results = new ArrayList<UcscPslSym>();
@@ -521,15 +527,10 @@ public final class BpsParser implements AnnotationWriter  {
 		return results;
 	}
 
-	private final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
-		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
-			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
-		}
-	}
-
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
 	public String getMimeType() { return "binary/bps"; }
 }
+

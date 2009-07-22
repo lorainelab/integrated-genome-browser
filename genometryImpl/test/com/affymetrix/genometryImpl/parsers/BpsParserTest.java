@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -16,10 +15,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -130,12 +132,107 @@ public class BpsParserTest {
 		}
 
 		BpsParser instance = new BpsParser();
-		List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(pslSyms, seq);
+		Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+		List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(pslSyms, seq, USCCCompare);
 
 		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
 
 		assertEquals(457617, sortedSyms.get(1).getTargetMin());	// the middle symmetry (after sorting) should have a start coord of 457617.
 		
+	}
+
+
+	/**
+	 * Test indexing code.
+	 */
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testIndexing2() {
+
+		FileInputStream istr = null;
+		try {
+			String filename = "test/data/bps/test1.bps";
+			String testFileName = "test/data/bps/testNEW.bps";
+			assertTrue(new File(filename).exists());
+			
+			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+			
+			List<UcscPslSym> syms = null;
+			syms = BpsParser.parse(filename, "stream_test", group);
+
+			BioSeq seq = group.getSeq("chr1");
+			
+			BpsParser instance = new BpsParser();
+			Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+
+			assertEquals(15,sortedSyms.size());
+
+			int[] min = new int[sortedSyms.size()];
+			int[] max = new int[sortedSyms.size()];
+			long[] filePos = new long[sortedSyms.size()];
+			FileOutputStream fos = null;
+			fos = new FileOutputStream(testFileName);
+			instance.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
+
+			assertEquals(min.length, max.length);
+			assertEquals(min.length, filePos.length);
+			assertEquals(sortedSyms.size(), min.length);
+
+			System.out.println("First row: " + min[0] + " " + max[0] + " " + filePos[0]);
+
+			System.out.println("Last row:" + min[min.length - 1] + " " + max[max.length - 1] + " " + filePos[filePos.length -1]);
+
+			testOutputIndexedSymmetries(min,max,filePos);
+
+			File testFile = new File(testFileName);
+			if (testFile.exists()) {
+				testFile.delete();
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(BpsParserTest.class.getName()).log(Level.SEVERE, null, ex);
+			fail();
+		}
+	}
+
+
+	private void testOutputIndexedSymmetries(int [] min, int [] max, long [] pos){
+		int minPos = searchAndBacktrack(min, 2455539);
+		System.out.println("val: " + min[minPos] + " " + max[minPos] + " " + pos[minPos]);
+
+		minPos = searchAndBacktrack(min, 2455600);
+		System.out.println("position: " + minPos);
+	}
+	
+	/**
+	 * Binary search in array, and backtrack if necessary
+	 * (since binarySearch is not guaranteed to return lowest index of equal elements)
+	 * @param min
+	 * @param element
+	 * @return new
+	 */
+	private int searchAndBacktrack(int[] min, int element) {
+		int minPos = Arrays.binarySearch(min, element);
+		while (minPos > 0) {
+			if (min[minPos - 1] == min[minPos]) {
+				minPos--;
+			} else {
+				break;
+			}
+		}
+		return minPos;
+	}
+
+	private final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
+		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
+			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
+		}
+	}
+
+	private final class UcscPslSymEndComparator implements Comparator<UcscPslSym> {
+		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
+			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
+		}
 	}
 
 	/**

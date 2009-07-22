@@ -288,7 +288,7 @@
             <compilation-unit>
                 <package-root>genometryImpl/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">usr/share/junit/junit.jar;usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src;genometryImpl/src;ext/image4j.jar</classpath>
+                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src;genometryImpl/src;ext/image4j.jar</classpath>
                 <built-to>genometryImpl/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

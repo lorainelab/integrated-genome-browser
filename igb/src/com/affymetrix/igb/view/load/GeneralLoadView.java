@@ -458,8 +458,9 @@ public final class GeneralLoadView extends JComponent
 		// Populate the versionName CB
 		refreshVersionCB(speciesName);
 
+		// TODO: Investigate threading issues with this code.  If the server responds slowly when setting the genome, the sequence cannot be selected.
 		// Set the selected seq group if there's only one possible choice for the versionName.
-		if (!speciesName.equals(SELECT_SPECIES) && this.glu.species2genericVersionList != null) {
+		/*if (!speciesName.equals(SELECT_SPECIES) && this.glu.species2genericVersionList != null) {
 			if (versionCB.getItemCount() == 2) {
 				// There is precisely one genome versionName, and the versionCB has precisely one genome versionName (and the SELECT option)
 				List<GenericVersion> versionList = this.glu.species2genericVersionList.get(speciesName);
@@ -474,7 +475,7 @@ public final class GeneralLoadView extends JComponent
 					return;
 				}
 			}
-		}
+		}*/
 
 		if (gmodel.getSelectedSeqGroup() != null) {
 			gmodel.setSelectedSeqGroup(null);

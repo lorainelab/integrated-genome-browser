@@ -787,7 +787,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	private static final void handleSegmentsRequest(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		System.out.println("Received region query");
 		AnnotatedSeqGroup genome = getGenome(request);
 		// genome null check already handled, so if it get this far the genome is non-null
 		Das2Coords coords = genomeid2coord.get(genome.getID());
@@ -973,8 +972,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			if (password != null) {
 				encrypted = Das2Authorization.encrypt(password);
 			}
-			System.out.println("\tName: " + userName);
-			System.out.println("\tEncryptedPassword: " + encrypted);
+			System.out.print("Authenticating " + userName + "...");
 
 			//look up to see if match
 			HashMap authorizedResources = dasAuthorization.validate(userName, password);
@@ -983,10 +981,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				HttpSession session = request.getSession(true);
 				session.setAttribute("authorizedResources", authorizedResources);
 				session.setMaxInactiveInterval(259200); //72hrs
-				System.out.println("\tSet HashMap in user session " + authorizedResources);
+				System.out.println("successful");
 				comment = "Logged in.";
 				authorized = true;
 			} else {
+				System.out.println("failed");
 				comment = "Failed to log in, either the user doesn't exist or the password is incorrect.";
 				authorized = false;
 			}
@@ -1059,7 +1058,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *
 	 */
 	private final void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("received features request");
 
 		AnnotatedSeqGroup genome = getGenome(request);
 		if (genome == null) {
@@ -1135,13 +1133,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				String type_full_uri = types.get(0);
 				query_type = getInternalType(type_full_uri, genome);
 
-				System.out.println("   query type: " + query_type);
-
 				String overlap = null;
 				if (overlaps.size() == 1) {
 					overlap = overlaps.get(0);
 				}
-				System.out.println("overlaps val = " + overlap);
 				// if overlap string is null (no overlap parameter), then no overlap filter --
 				///   which is the equivalent of any annot on seq passing overlap filter --
 				//    which is same as an overlap filter with range = [0, seq.length]
@@ -1150,13 +1145,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 				overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 				if (overlap_span != null) {
-					System.out.println("   overlap_span: " + SeqUtils.spanToString(overlap_span));
 					if (insides.size() == 1) {
 						String inside = insides.get(0);
 						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
-						if (inside_span != null) {
-							System.out.println("   inside_span: " + SeqUtils.spanToString(inside_span));
-						}
 					}
 
 					//	if (query_type.endsWith(".bar")) {
@@ -1180,7 +1171,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					if (result == null) {
 						result = Collections.<SeqSymmetry>emptyList();
 					}
-					System.out.println("  overlapping annotations of type " + query_type + ": " + result.size());
 
 					if (inside_span != null) {
 						result = ServerUtils.SpecifiedInsideSpan(inside_span, oseq, result, query_type);
@@ -1224,7 +1214,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String[] tagval_array = tagval_splitter.split(tagval);
 			String tag = tagval_array[0];
 			String val = tagval_array[1];
-			System.out.println("tag = " + tag + ", val = " + val);
 			if (tag.equals("format")) {
 				formats.add(val);
 			} else if (tag.equals("type")) {
@@ -1272,11 +1261,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 */
 	private final void handleGraphRequest(Map<String, Class> output_registry, String xbase, HttpServletResponse response,
 			String type, SeqSpan span) {
-		System.out.println("#### handling graph request");
 		BioSeq seq = (BioSeq) span.getBioSeq();
 		String seqid = seq.getID();
 		AnnotatedSeqGroup genome = seq.getSeqGroup();
-		System.out.println("#### type: " + type + ", genome: " + genome.getID() + ", span: " + SeqUtils.spanToString(span));
 		// use bar parser to extract just the overlap slice from the graph
 		String graph_name = type;   // for now using graph_name as graph type
 
@@ -1284,7 +1271,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 
 		String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
-		System.out.println("####    file:  " + file_path);
 		Class writerclass = output_registry.get("bar");
 		OutputGraphSlice(writerclass, file_path, span, type, xbase, response);
 	}
@@ -1352,8 +1338,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String query_type,
 			String xbase) {
 		try {
-			System.out.println("return format: " + output_format);
-
 			if (DEBUG) {
 				response.setContentType("text/html");
 				PrintWriter pw = response.getWriter();
@@ -1407,7 +1391,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				}
 				response.setContentType(mime_type);
 
-				System.out.println("return mime type: " + mime_type);
 				OutputStream outstream = response.getOutputStream();
 				try {
 					success = writer.writeAnnotations(syms, seq, annot_type, outstream);

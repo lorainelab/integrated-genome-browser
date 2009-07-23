@@ -12,7 +12,6 @@ public abstract class Optimize {
 	private static final boolean DEBUG = false;
 	
 	public static final void Genome(AnnotatedSeqGroup genome) {
-		System.out.println("******** optimizing genome:  " + genome.getID() + "  ********");
 		/** third, replace top-level annotation SeqSymmetries with IntervalSearchSyms */
 		for (BioSeq aseq : genome.getSeqList()) {
 			Optimize.Seq(aseq);

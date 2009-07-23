@@ -213,7 +213,6 @@ public abstract class ServerUtils {
 		InputStream istr = null;
 		try {
 			istr = new BufferedInputStream(new FileInputStream(current_file));
-			System.out.println("^^^^^^^^^^^^ Loading annots of type: " + type_name);
 			loadAnnotsFromStream(istr, type_name, genome);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -234,7 +233,6 @@ public abstract class ServerUtils {
 					Map<String,String> graph_name2file) {
 		File annot = new File(file_path + "/" + annots_filename);
 		if (annot.exists()) {
-			System.out.println("Parsing annots xml: " + file_path + "/" + annots_filename);
 			FileInputStream istr = null;
 			try {
 				istr = new FileInputStream(annot);

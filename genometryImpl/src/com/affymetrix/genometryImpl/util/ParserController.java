@@ -22,7 +22,6 @@ public final class ParserController {
 		int sindex = stream_name.lastIndexOf("/");
 		if (sindex >= 0) {
 			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-			System.out.println("type prefix: " + type_prefix + ", full name: " + stream_name);
 		}
 		try {
 			if (instr instanceof BufferedInputStream) {

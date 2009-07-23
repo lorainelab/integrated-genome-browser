@@ -293,7 +293,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		date_initialized = System.currentTimeMillis();
 		date_init_string = date_formatter.format(new Date(date_initialized));
-		System.out.println("GenometryDas2Servlet " + RELEASE_VERSION + " alive, serving '" + data_root + "'");
+		System.out.println("GenometryDas2Servlet " + RELEASE_VERSION + ", dir: '" + data_root + "', url: '" + xml_base + "'");
 	}
 
 	/**
@@ -365,11 +365,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 
-		//print values
-		System.out.println("\t\tgenometry_server_dir\t" + genometry_server_dir);
-		System.out.println("\t\txml_base\t" + xml_base);
-		System.out.println("\t\tmaintainer_email\t" + maintainer_email);
-
 		//set data root
 		// Note adding an extra "/" at the end of genometry_server_dir just to be certain
 		// there is one there.  If it ends up with two "/" characters, that hurts nothing
@@ -380,8 +375,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		types_xslt_file = data_root + "types.xslt";
 		org_order_filename = data_root + "organism_order.txt";
 
-		//set xml base
-		System.out.println("setting xml_base: " + xml_base);
 		setXmlBase(xml_base);
 
 		return true;
@@ -463,7 +456,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	private final void loadGenome(File genome_directory, String organism) throws IOException {
 		String genome_version = genome_directory.getName();
-		System.out.println("loading data for genome: " + genome_version);
 
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
 		ServerUtils.parseChromosomeData(genome_directory, genome_version);
@@ -1482,7 +1474,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 		sources_query_no_slash = trimmed_xml_base.substring(trimmed_xml_base.lastIndexOf("/"));
 		sources_query_with_slash = sources_query_no_slash + "/";
-		System.out.println("*** xml_base: " + xml_base);
 	}
 
 	/** getXmlBase() should no longer depend on request, should always be set via setXmlBase()

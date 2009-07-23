@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import com.affymetrix.genometryImpl.util.Timer;
 
 /**
  *  genometry-based DAS2 server
@@ -64,7 +63,6 @@ import com.affymetrix.genometryImpl.util.Timer;
 public final class GenometryDas2Servlet extends HttpServlet {
 	static final boolean DEBUG = false;
 	private static final String RELEASE_VERSION = "2.6";
-	private static final boolean TIME_RESPONSES = true;
 	private static final boolean USE_CREATED_ATT = true;
 	private static boolean WINDOWS_OS_TEST = false;
 	private static final String SERVER_SYNTAX_EXPLANATION =
@@ -508,20 +506,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		Timer timecheck = null;
-		if (TIME_RESPONSES) {
-			timecheck = new Timer();
-			timecheck.start();
-		}
 		String path_info = request.getPathInfo();
 		String request_url = request.getRequestURL().toString();
 
 		HandleDas2Request(path_info, response, request, request_url);
-
-		if (TIME_RESPONSES) {
-			long tim = timecheck.read();
-			System.out.println("---------- response time: " + tim / 1000f + "----------");
-		}
 	}
 
 	private final void HandleDas2Request(String path_info, HttpServletResponse response, HttpServletRequest request, String request_url) throws IOException {
@@ -1193,9 +1181,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					MutableAnnotatedBioSeq oseq = overlap_span.getBioSeq();
 					outseq = oseq;
 
-					Timer timecheck = new Timer();
-					timecheck.start();
-
 					/** this is the main call to retrieve symmetries meeting query constraints */
 					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
 
@@ -1204,7 +1189,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						result = Collections.<SeqSymmetry>emptyList();
 					}
 					System.out.println("  overlapping annotations of type " + query_type + ": " + result.size());
-					System.out.println("  time for range query: " + (timecheck.read()) / 1000f);
 
 					if (inside_span != null) {
 						result = ServerUtils.SpecifiedInsideSpan(inside_span, oseq, result, query_type);
@@ -1377,8 +1361,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String query_type,
 			String xbase) {
 		try {
-			Timer timecheck = new Timer();
-			timecheck.start();
 			System.out.println("return format: " + output_format);
 
 			if (DEBUG) {
@@ -1393,11 +1375,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				} else {
 					outputAnnotations(result, outseq, query_type, xbase, response, writerclass, output_format);
 				}
-				long tim = timecheck.read();
-				System.out.println("  time for buffered output of results: " + tim / 1000f);
-				timecheck.start();
-				tim = timecheck.read();
-				System.out.println("  time for closing output: " + tim / 1000f);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

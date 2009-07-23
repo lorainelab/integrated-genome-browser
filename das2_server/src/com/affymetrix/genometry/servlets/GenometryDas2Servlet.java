@@ -524,7 +524,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
 			} else {
 				String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
-				System.out.println("das2 command: " + das_command);
 				if (das_command.equals(segments_query)) {
 					handleSegmentsRequest(request, response);
 				} else if (das_command.equals(types_query)) {
@@ -532,7 +531,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				} else if (das_command.equals(features_query)) {
 					handleFeaturesRequest(request, response);
 				} else if (genome.getSeq(das_command) != null) {
-					System.out.println("handling seq request: " + request_url);
 					handleSequenceRequest(request, response);
 				} else {
 					System.out.println("DAS2 request not recognized, setting HTTP status header to 400, BAD_REQUEST");
@@ -585,8 +583,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		String path_info = request.getPathInfo();
 		AnnotatedSeqGroup genome = getGenome(request);
-		System.out.println("Organism: " + genome.getOrganism());
-		System.out.println("ID: " + genome.getID());
 		String org_name = genome.getOrganism();
 		String version_name = genome.getID();
 		String seqname = path_info.substring(path_info.lastIndexOf("/") + 1);
@@ -630,7 +626,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// range requests are ignored.  The entire sequence is returned.
 
 		String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".bnib";
-		System.out.println("seq request mapping to file: " + file_name);
 		File seqfile = new File(file_name);
 		if (seqfile.exists()) {
 			byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
@@ -731,7 +726,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	private static final void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response, String date_init_string)
 			throws IOException {
-		System.out.println("received data source query");
 		response.setContentType(SOURCES_CONTENT_TYPE);
 		PrintWriter pw = response.getWriter();
 
@@ -842,7 +836,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final void handleTypesRequest(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 
-		System.out.println("Received types request");
 		AnnotatedSeqGroup genome = getGenome(request);
 		if (genome == null) {
 			System.out.println("Unknown genome version");
@@ -970,7 +963,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Das2Authorization dasAuthorization,
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-		System.out.println("Received login request");
 		String comment;
 		boolean authorized;
 		if (dasAuthorization.isAuthorizing()) {
@@ -1212,7 +1204,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String[] tagval_array = tagval_splitter.split(tagval);
 			String tag = tagval_array[0];
 			String val = tagval_array[1];
-			System.out.println("tag = " + tag + ", val = " + val);
 			if (tag.equals("format")) {
 				formats.add(val);
 			} else if (tag.equals("range")) {

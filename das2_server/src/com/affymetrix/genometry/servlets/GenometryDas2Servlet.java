@@ -441,6 +441,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		for (File org : orgs) {
 			if (!org.isDirectory()) {
 				continue;
+			} else if (org.getName().startsWith(".")) {
+				System.out.println("Ignoring hidden directory " + org.getPath());
+				continue;
 			}
 			for (File version : org.listFiles()) {
 				if (!version.isDirectory()) {

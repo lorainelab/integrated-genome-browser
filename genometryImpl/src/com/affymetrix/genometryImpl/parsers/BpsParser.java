@@ -480,13 +480,11 @@ public final class BpsParser implements AnnotationWriter  {
 
 	/**
 	 * Write out PSL annotations as binary PSL.
-	 * This file is for a specific chromosome, and is sorted by end field.
-	 * Later this may also write out indexes for each line.
-	 * (If so, there would be int[] arrays for start and end, and a long[] array for file pointers.)
-	 * @param syms
-	 * @param seq
-	 * @param outstream
-	 * @return
+	 * This file is for a specific chromosome, and is sorted by the given comparator.
+	 * @param syms - original list of annotations
+	 * @param seq - specific chromosome
+	 * @param outstream - stream to write to
+	 * @return - success or failure
 	 */
 	public boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream, Comparator<UcscPslSym> UCSCcomp) {
 		DataOutputStream dos = null;
@@ -508,10 +506,11 @@ public final class BpsParser implements AnnotationWriter  {
 	}
 
 	/**
-	 * Returns annotationsfor specific chromosome.
-	 * @param syms
-	 * @param seq
-	 * @return
+	 * Returns annotations for specific chromosome, sorted by comparator.
+	 * @param syms - original list of annotations
+	 * @param seq - specific chromosome
+	 * @param UCSCcomp - comparator
+	 * @return - sorted list of annotations
 	 */
 	public List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, Comparator<UcscPslSym> UCSCcomp) {
 		Collections.sort(syms, UCSCcomp);

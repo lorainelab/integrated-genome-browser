@@ -1,11 +1,13 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.SeqSpan;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
@@ -197,39 +199,107 @@ public class BpsParserTest {
 
 
 	private void testOutputIndexedSymmetries(int [] min, int [] max, long [] pos){
-		int minPos = searchAndBacktrack(min, 2455539);
+		int [] overlapRange = new int[2];
+		int [] outputRange = new int[2];
+		overlapRange[0] = 2455539;
+		overlapRange[1] = 2455600;
+		findMaxOverlap(overlapRange, outputRange, min, max);
+		
+		int minPos = outputRange[0];
 		System.out.println("val: " + min[minPos] + " " + max[minPos] + " " + pos[minPos]);
 
-		minPos = searchAndBacktrack(min, 2455600);
+		minPos = outputRange[1];
 		System.out.println("position: " + minPos);
 	}
 	
 	/**
-	 * Binary search in array, and backtrack if necessary
-	 * (since binarySearch is not guaranteed to return lowest index of equal elements)
-	 * @param min
-	 * @param element
-	 * @return new
+	 * Find the maximum overlap given a range.
+	 * @param insideRange -- an array of length 2, with a start and end coordinate.
+	 * @param outputRange -- an outputted array of length 2, with a start position (from min[] array) and an end position (from max[] array).
+	 * @param min -- array of min points.
+	 * @param max -- array of max points.
 	 */
-	private int searchAndBacktrack(int[] min, int element) {
-		int minPos = Arrays.binarySearch(min, element);
-		while (minPos > 0) {
-			if (min[minPos - 1] == min[minPos]) {
-				minPos--;
+	private static void findMaxOverlap(int [] overlapRange, int [] outputRange, int [] min, int [] max) {
+		// Find minimum index of min[] array that is >= start range.
+		int tempPos = Arrays.binarySearch(min, overlapRange[0]);
+		if (tempPos >= 0) {
+			tempPos = backTrack(min, tempPos);
+		} else {
+			// This means the start element was not found in the array.  Translate back to "insertion point", which is:
+			//the index of the first element greater than the key, or min.length, if all elements in the list are less than the specified key.
+			tempPos = (-(tempPos-1));
+
+			// Don't go past array limit.
+			tempPos = Math.min(min.length - 1, tempPos);
+		}
+		outputRange[0] = tempPos;
+
+
+		// That means find maximum index of max[] array that is <= end range.
+		tempPos = Arrays.binarySearch(max, overlapRange[1]);
+		if (tempPos >= 0) {
+			tempPos = forwardtrack(max, tempPos);
+		} else  {
+			// This means the end element was not found in the array.  Translate back to "insertion point", which is:
+			//the index of the first element greater than the key, or min.length, if all elements in the list are less than the specified key.
+			tempPos = (-(tempPos-1));
+
+			// But here, we want to backtrack to the element less than the key.
+			tempPos--;
+			if (tempPos > 0) {
+				tempPos = backTrack(max,tempPos);
+			}
+
+			// Don't go past array limit
+			tempPos = Math.max(0, tempPos);
+		}
+		outputRange[1] = tempPos;
+	}
+
+
+	/**
+	 * backtrack if necessary
+	 * (since binarySearch is not guaranteed to return lowest index of equal elements)
+	 * @param arr
+	 * @param pos
+	 * @return lowest index of equal elements
+	 */
+	private static int backTrack(int[] arr, int pos) {
+		while (pos > 0) {
+			if (arr[pos - 1] == arr[pos]) {
+				pos--;
 			} else {
 				break;
 			}
 		}
-		return minPos;
+		return pos;
 	}
 
-	private final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
+	/**
+	 * forward-track if necessary
+	 * (since binarySearch is not guaranteed to return highest index of equal elements)
+	 * @param arr
+	 * @param pos
+	 * @return highest index of equal elements
+	 */
+	private static int forwardtrack(int[] arr, int pos) {
+		while (pos < arr.length - 1) {
+			if (arr[pos + 1] == arr[pos]) {
+				pos++;
+			} else {
+				break;
+			}
+		}
+		return pos;
+	}
+
+	private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
 			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
 		}
 	}
 
-	private final class UcscPslSymEndComparator implements Comparator<UcscPslSym> {
+	private static final class UcscPslSymEndComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
 			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
 		}

@@ -28,7 +28,9 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
@@ -422,29 +424,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//           else try to parse and annotate seqs based on file suffix (.xyz)
 
 		File top_level = new File(data_root);
-		if (!top_level.exists()) {
-			throw new IOException("File does not exist: '" + top_level + "'");
+		if (!top_level.exists() && !top_level.isDirectory()) {
+			throw new IOException("'" + top_level + "' does not exist or is not a directory");
 		}
-		File[] orgs = top_level.listFiles();
-		if (orgs == null || orgs.length == 0) {
-			throw new IOException("Directory has no contents: '" + top_level + "'");
-		}
-		for (File org : orgs) {
-			if (!org.isDirectory()) {
-				continue;
-			} else if (org.getName().startsWith(".")) {
-				System.out.println("Ignoring hidden directory " + org.getPath());
-				continue;
-			}
-			for (File version : org.listFiles()) {
-				if (!version.isDirectory()) {
-					continue;
-				}
-				if (version.getName().startsWith(".")) {
-					// hidden directory or file.  Ignore.
-					System.out.println("Ignoring hidden directory " + version.getPath());
-					continue;
-				}
+
+		FileFilter filter = new HiddenFileFilter(new DirectoryFilter());
+		for (File org : top_level.listFiles(filter)) {
+			for (File version : org.listFiles(filter)) {
 				loadGenome(version, org.getName());
 			}
 		}

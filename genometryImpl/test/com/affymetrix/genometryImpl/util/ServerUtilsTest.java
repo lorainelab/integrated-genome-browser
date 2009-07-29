@@ -72,40 +72,29 @@ public class ServerUtilsTest {
 		assertNotNull(seq);
 	}
 	
-	/*@Test
-	public void testOutputSpan() {
-		String seqid="";
-		String query_type="";
-		String overlap = null;
+	@Test
+	public void testOverlapAndInsideSpan() {
+		String seqid="chr1";
+		String query_type="mRNA1.sm";
+		String overlap = "27:11200177";
 		List<SeqSymmetry> result = null;
-		AnnotatedSeqGroup genome = null;
 
 		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 		assertNotNull(overlap_span);
+		assertEquals(27,overlap_span.getMin());
+		assertEquals(11200177,overlap_span.getMax());
 
 		result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
-	}*/
+		assertNotNull(result);
+		assertEquals(385,result.size());
 
-	/*@Test
-	public void testOutputSpanWithInsideSpan() {
-		String seqid="";
-		String query_type="";
-		String overlap = null;
-		List<SeqSymmetry> result = null;
-		AnnotatedSeqGroup genome = null;
-
-		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
-		assertNotNull(overlap_span);
-
-		result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
-
-		String inside="";
+		String inside = "5000:4600000";
 		SeqSpan inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
-
 		assertNotNull(inside_span);
+		assertEquals(5000,inside_span.getMin());
+		assertEquals(4600000,inside_span.getMax());
 
-		BioSeq oseq = (BioSeq) overlap_span.getBioSeq();
-		result = ServerUtils.SpecifiedInsideSpan(inside_span, oseq, result, query_type);
+		result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
+		assertEquals(139, result.size());
 	}
-*/
 }

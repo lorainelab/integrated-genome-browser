@@ -506,7 +506,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} else {
 			AnnotatedSeqGroup genome = getGenome(request);
 			if (genome == null) {
-				System.out.println("Unknown genome version");
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
 			} else {
 				String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
@@ -540,7 +539,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		String genome_name = path_info.substring(prev_slash + 1, last_slash);
 		AnnotatedSeqGroup genome = gmodel.getSeqGroup(genome_name);
 		if (genome == null) {
-			System.out.println("unknown genome version: '" + genome_name + "'");
+			System.out.println("unknown genome version: '" + genome_name + "' with request: " + request.getPathInfo());
 		}
 		return genome;
 	}
@@ -823,7 +822,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		AnnotatedSeqGroup genome = getGenome(request);
 		if (genome == null) {
-			System.out.println("Unknown genome version");
 			response.setStatus(response.SC_BAD_REQUEST);
 			return;
 		}
@@ -1047,7 +1045,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		AnnotatedSeqGroup genome = getGenome(request);
 		if (genome == null) {
-
 			return;
 		}
 		String query = request.getQueryString();
@@ -1147,8 +1144,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						return;
 					}
 
-					MutableAnnotatedBioSeq oseq = overlap_span.getBioSeq();
-					outseq = oseq;
+					outseq = overlap_span.getBioSeq();
 
 					/** this is the main call to retrieve symmetries meeting query constraints */
 					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
@@ -1159,7 +1155,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					}
 
 					if (inside_span != null) {
-						result = ServerUtils.SpecifiedInsideSpan(inside_span, oseq, result, query_type);
+						result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
 					}
 				}
 			} else {

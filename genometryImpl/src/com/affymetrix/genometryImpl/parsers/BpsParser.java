@@ -464,7 +464,7 @@ public final class BpsParser implements AnnotationWriter  {
 				max[index] = sym.getTargetMax();
 				fileIndices[index] = fChannel.position();
 				//if (DEBUG){
-				System.out.println("min,max,pos: " + min[index] + " " + max[index] + " " + fileIndices[index]);
+				//System.out.println("min,max,pos: " + min[index] + " " + max[index] + " " + fileIndices[index]);
 				//}
 				index++;
 				sym.outputBpsFormat(dos);

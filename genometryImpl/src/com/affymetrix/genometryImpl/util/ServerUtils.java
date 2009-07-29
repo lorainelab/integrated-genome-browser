@@ -337,11 +337,11 @@ public abstract class ServerUtils {
 
 			// if an inside_span specified, then filter out intersected symmetries based on this:
 		//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-		public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, MutableAnnotatedBioSeq oseq, List<SeqSymmetry> result, String query_type) {
+		public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, List<SeqSymmetry> result, String query_type) {
 			int inside_min = inside_span.getMin();
 			int inside_max = inside_span.getMax();
 			MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
-			System.out.println("*** trying to apply inside_span constraints ***");
+			/*System.out.println("*** trying to apply inside_span constraints ***");
 			if (iseq != oseq) {
 				System.out.println("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
 				// if different seqs, then no feature can pass constraint...
@@ -350,12 +350,14 @@ public abstract class ServerUtils {
 			} else {
 				Timer timecheck = new Timer();
 				timecheck.start();
-				MutableSeqSpan testspan = new SimpleMutableSeqSpan();
-				List orig_result = result;
+				*/
+			MutableSeqSpan testspan = new SimpleMutableSeqSpan();
+				List<SeqSymmetry> orig_result = result;
 				int rcount = orig_result.size();
 				result = new ArrayList<SeqSymmetry>(rcount);
-				for (int i = 0; i < rcount; i++) {
-					SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
+				for (SeqSymmetry sym : orig_result) {
+				//for (int i = 0; i < rcount; i++) {
+				//	SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
 					// fill in testspan with span values for sym (on aseq)
 					sym.getSpan(iseq, testspan);
 					if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
@@ -363,8 +365,8 @@ public abstract class ServerUtils {
 					}
 				}
 				System.out.println("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
-				System.out.println("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
-			}
+				//System.out.println("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
+			//}
 			return result;
 		}
 

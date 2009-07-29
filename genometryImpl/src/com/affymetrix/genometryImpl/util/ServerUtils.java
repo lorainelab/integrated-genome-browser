@@ -50,8 +50,7 @@ public abstract class ServerUtils {
 
 
 	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
-		String genome_path = genome_directory.getAbsolutePath();
-		File chrom_info_file = new File(genome_path + "/mod_chromInfo.txt");
+		File chrom_info_file = new File(genome_directory, "mod_chromInfo.txt");
 		if (chrom_info_file.exists()) {
 			System.out.println("parsing in chromosome data from mod_chromInfo file for genome: " + genome_version);
 			InputStream chromstream = new FileInputStream(chrom_info_file);
@@ -60,7 +59,7 @@ public abstract class ServerUtils {
 		} else {
 			System.out.println("couldn't find mod_chromInfo file for genome: " + genome_version);
 			System.out.println("looking for lift file instead");
-			File lift_file = new File(genome_path + "/liftAll.lft");
+			File lift_file = new File(genome_directory, "liftAll.lft");
 			if (lift_file.exists()) {
 				System.out.println("parsing in chromosome data from liftAll file for genome: " + genome_version);
 				InputStream liftstream = new FileInputStream(lift_file);
@@ -166,14 +165,6 @@ public abstract class ServerUtils {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
 
-		if (file_name.startsWith(".")) {
-			// hidden directory or file.  Ignore.
-			System.out.println("Ignoring hidden " +
-							(current_file.isDirectory() ? "directory " : "file ") +
-							file_path);
-			return;
-		}
-
 		String type_name;
 		String new_type_prefix;
 		if (type_prefix == null) {  // special-casing for top level genome directory, don't want genome name added to type name path
@@ -231,7 +222,7 @@ public abstract class ServerUtils {
 					String new_type_prefix,
 					Map<String,String> graph_name2dir,
 					Map<String,String> graph_name2file) {
-		File annot = new File(file_path + "/" + annots_filename);
+		File annot = new File(current_file, annots_filename);
 		if (annot.exists()) {
 			FileInputStream istr = null;
 			try {
@@ -254,10 +245,9 @@ public abstract class ServerUtils {
 			graph_name2dir.put(graph_name, file_path);
 		} else {
 			//System.out.println("checking for annotations in directory: " + current_file);
-			String[] child_file_names = current_file.list();
-			Arrays.sort(child_file_names);
-			for (String child_file_name : child_file_names) {
-				File child_file = new File(current_file, child_file_name);
+			File[] child_files = current_file.listFiles(new HiddenFileFilter());
+			Arrays.sort(child_files);
+			for (File child_file : child_files) {
 				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file);
 			}
 		}

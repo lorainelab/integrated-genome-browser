@@ -59,7 +59,6 @@ public class StringVersionDateComparator implements Comparator<String> {
 		String monthA = parts1[count1 - 2];
 		String monthB = parts2[count2 - 2];
 
-		System.out.println("ym:" + year1 + " " + monthA + " : ym " +year2 + " " + monthB );
 		int month1 = months.indexOf(monthA);
 		int month2 = months.indexOf(monthB);
 		if (month1 == -1 && month2 == -1) {

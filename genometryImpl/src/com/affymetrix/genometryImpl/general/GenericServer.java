@@ -10,7 +10,6 @@ import javax.swing.ImageIcon;
 import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
 
-//import net.sf.image4j.codec.ico.*;
 /**
  * A class that's useful for visualizing a generic server.
  */
@@ -49,19 +48,6 @@ public final class GenericServer {
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 
 		this.friendlyIcon = determineFriendlyIcon(this.friendlyURL);
-
-//	  System.out.print(serverName + serverType+":");
-//	  System.out.println(friendlyIcon);
-//    try {
-//      java.net.URL imgURL = new java.net.URL("http://www.lawhelp.org/content/images/icons/g-life.gif");
-//      if (imgURL != null) {
-//        friendlyIcon = new ImageIcon(imgURL);
-//      } else {
-//        System.err.println("Couldn't find file: server.ico");
-//      }
-//    } catch (java.net.MalformedURLException ex) {
-//      ex.printStackTrace();
-//    }
 	}
 
 	@Override

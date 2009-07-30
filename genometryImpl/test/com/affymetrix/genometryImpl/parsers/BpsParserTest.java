@@ -229,12 +229,11 @@ public class BpsParserTest {
 			instance.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
 			GeneralUtils.safeClose(fos);
 
-			String overlap = "27:11200177";
-			List<SeqSymmetry> result = null;
+			String overlap = "90000:11200177";
 
 			SeqSpan overlap_span = ServerUtils.getLocationSpan("chr1", overlap, group);
 			assertNotNull(overlap_span);
-			assertEquals(27, overlap_span.getMin());
+			assertEquals(90000, overlap_span.getMin());
 			assertEquals(11200177, overlap_span.getMax());
 
 			int[] overlapRange = new int[2];
@@ -244,25 +243,23 @@ public class BpsParserTest {
 
 			IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
 
-			System.out.println("First row: " + min[0] + " " + max[0] + " " + filePos[0]);
-
-			System.out.println("Last row:" + min[min.length - 1] + " " + max[max.length - 1] + " " + filePos[filePos.length -1]);
-
 			int minPos = outputRange[0];
-			System.out.println("val: " + min[minPos] + " " + max[minPos] + " " + filePos[minPos]);
 
 			int maxPos = outputRange[1];
 			System.out.println("val: " + min[maxPos] + " " + max[maxPos] + " " + filePos[maxPos]);
 
 
 			FileInputStream fis = new FileInputStream(testFileName);
+
 			byte[] bytes = IndexingUtils.getIndexedAnnotations(fis,filePos[minPos], (int)(filePos[maxPos] - filePos[minPos]));
+			assertEquals((int)(filePos[maxPos] - filePos[minPos]), bytes.length);
 			GeneralUtils.safeClose(fis);
 			
 			File testFile = new File(testFileName);
 			if (testFile.exists()) {
 				testFile.delete();
 			}
+
 
 			System.out.println("bytes size: " + bytes.length);
 
@@ -310,20 +307,18 @@ public class BpsParserTest {
 	private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
 			int comp = ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
-			if (comp != 0) {
-				return comp;
-			}
-			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
+			return comp != 0 ?
+				comp :
+				((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
 		}
 	}
 
 	private static final class UcscPslSymEndComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
 			int comp = ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
-			if (comp != 0) {
-				return comp;
-			}
-			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
+			return comp != 0 ?
+				comp :
+				((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
 		}
 	}
 

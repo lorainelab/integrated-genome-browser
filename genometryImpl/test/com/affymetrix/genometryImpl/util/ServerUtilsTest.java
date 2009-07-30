@@ -80,12 +80,12 @@ public class ServerUtilsTest {
 	public void testOverlapAndInsideSpan() {
 		String seqid="chr1";
 		String query_type="mRNA1.sm";
-		String overlap = "27:11200177";
+		String overlap = "90000:11200177";
 		List<SeqSymmetry> result = null;
 
 		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 		assertNotNull(overlap_span);
-		assertEquals(27,overlap_span.getMin());
+		assertEquals(90000,overlap_span.getMin());
 		assertEquals(11200177,overlap_span.getMax());
 
 		result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
@@ -105,24 +105,24 @@ public class ServerUtilsTest {
 					System.out.println("i, " + i + " sym: " + sym.getID() + " min:" + sym.getTargetMin() + " max:" + sym.getTargetMax());
 				}
 			}
-		assertEquals(385,result.size());
+		assertEquals(384,result.size());
 
-		String inside = "5000:4600000";
+		String inside = "92000:4600000";
 		SeqSpan inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
 		assertNotNull(inside_span);
-		assertEquals(5000,inside_span.getMin());
+		assertEquals(92000,inside_span.getMin());
 		assertEquals(4600000,inside_span.getMax());
 
 		result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
-		assertEquals(139, result.size());
+		assertEquals(138, result.size());
 	}
-private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
+	
+	private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
 			int comp = ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
-			if (comp != 0) {
-				return comp;
-			}
-			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
+			return comp != 0 ?
+				comp :
+				((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
 		}
 	}
 }

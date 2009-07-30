@@ -34,6 +34,7 @@ import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -46,6 +47,9 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
@@ -549,13 +553,17 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		// Add versionName names to combo boxes.
-		// Since the same versionName name may occur on multiple servers, we use sets
-		// to eliminate the redundant elements.
-		SortedSet<String> versionNames = new TreeSet<String>();
-		for (GenericVersion gVersion : this.glu.species2genericVersionList.get(speciesName)) {
-			versionNames.add(gVersion.versionName);
+
+		List<String> versionNames = new ArrayList<String>();
+		for(GenericVersion gVersion : this.glu.species2genericVersionList.get(speciesName)) {
+			// the same versionName name may occur on multiple servers
+			if (!versionNames.contains(gVersion.versionName)) {
+				versionNames.add(gVersion.versionName);
+			}
 		}
 
+		Collections.sort(versionNames, new StringVersionDateComparator());	// Sort the versions (by date)
+		
 		for (String versionName : versionNames) {
 			versionCB.addItem(versionName);
 		}

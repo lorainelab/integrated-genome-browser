@@ -1,8 +1,9 @@
 === REQUIREMENTS ===
 
 	- Java 5+, 64-bit recommended (http://java.sun.com/)
-	- Aapche Tomcat 5.5+ (http://apache.tomcat.org/)
+	- Apache Tomcat 5.5+ (http://apache.tomcat.org/)
 	- Subversion client (Optional, for accessing example data set)
+	- MySQL database (http://mysql.com)
 
 
 === CONFIGURATION ===
@@ -10,9 +11,24 @@
 == The web.xml file ==
 The web.xml file in the das2/WEB-INF directory must be properly configured before the das2 servlet will run. A list of the context parameters from the web.xml is below:
 
+To run in "classic" file system mode (see das2_server/web_classic.xml):
+  * genometry_load_annotations_from_db - set to 'false'
 	* genometry_server_dir - Path to the data files
 	* maintainer_email - Email address of the server's maintainer
 	* xml_base - URL that the server will answer to
+	
+To run in "database" mode (see das2_server/web.xml):
+  * genometry_load_annotations_from_db - set to 'true'
+  * genometry_db_annotation_dir - Path to the annotation data files managed by the db
+
+== The context.xml file ==
+
+To run in "classic" file system mode (see das2_server/context_classic.xml):
+  * <Valve> - to configure logging
+
+To run in "database" file system mode (see das2_server/context.xml):
+  * <Resource> - configures the MySQL database.  Change the username, password to match the installed database.
+  * <Realm> - configures the MySQL tables to manage users and passwords.  Change the username, password to match the installed database.
 
 A sample data directory can be checked out using subversion from https://svn.transvar.org/repos/genomes/trunk/pub/das.  Many data files in the data directory are compressed with gzip and must be decompressed before they can be read by the server.  The total size of the data directory after decompression is approximately 1GB.
 
@@ -40,3 +56,9 @@ The das2 servlet can be installed by copying the entire das2 directory to tomcat
 	* Debian: /var/lib/tomcat5.5/webapps/
 
 The das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.
+
+MySQL Database
+  * Install MySQL Server, Create a database user account
+  * Run genoviz.sql to create genoviz database
+  
+

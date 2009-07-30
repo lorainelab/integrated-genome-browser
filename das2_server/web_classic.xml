@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+<web-app>
+
+  <context-param>
+    <param-name>genometry_load_annotations_from_db</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  
+	<context-param>
+		<param-name>genometry_db_annotation_dir</param-name>
+		<param-value>c:/apache/tomcat5.5/Das2ManagedData</param-value>
+	</context-param>
+  
+	<context-param>
+		<param-name>genometry_server_dir</param-name>
+		<param-value>c:/apache/tomcat5.5/Das2Data</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>maintainer_email</param-name>
+		<param-value>tony.disera@hci.utah.edu</param-value>
+	</context-param>
+
+	<!--                                                               -->
+	<!-- genome in URL does not exist but something is required there  -->
+	<!--                                                               -->
+	<context-param>
+		<param-name>xml_base</param-name>
+		<param-value>http://localhost:8080/DAS2/das2</param-value>
+	</context-param>
+	
+	<!-- Listener to obtain Hibernate session  --> 
+  <listener>
+    <listener-class>com.affymetrix.genometry.servlets.das2manager.HibernateAppListener</listener-class>
+  </listener>	
+  
+	<servlet>
+		<servlet-name>Das2ManagerServlet</servlet-name>
+		<servlet-class>com.affymetrix.genometry.servlets.das2manager.Das2ManagerServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>GenometryDas2Servlet</servlet-name>
+		<servlet-class>com.affymetrix.genometry.servlets.GenometryDas2Servlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Das2ManagerServlet</servlet-name>
+		<url-pattern>/manager</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>Das2ManagerServlet</servlet-name>
+		<url-pattern>/manager/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>Das2Manager.swf</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>AC_OETags.js</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/Das2Manager.swf</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>GenometryDas2Servlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+
+	<filter>
+	<filter-name>Compress</filter-name>
+		<filter-class>com.affymetrix.genometry.servlets.GZIPFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>Compress</filter-name>
+		<servlet-name>GenometryDas2Servlet</servlet-name>
+	</filter-mapping>
+	
+	<!-- Session timeout set to 4 hours -->
+	<session-config>
+		<session-timeout>240</session-timeout>
+	</session-config>
+	
+
+</web-app>

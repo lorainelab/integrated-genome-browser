@@ -25,7 +25,8 @@ public final class Das2Authorization {
 	private static final String md5Salt = "TheGreatSaltLake";
 	private ArrayList<String> log = new ArrayList<String>();
 	private boolean authorizing = false;
-	private Pattern separator = Pattern.compile(File.separator);
+	//private Pattern separator = Pattern.compile(File.separator);
+	private Pattern separator;
 
 
 
@@ -267,6 +268,15 @@ public final class Das2Authorization {
 		//get global restricted directories under versionedGenome
 		HashSet restrictedDirs = restrictedDirectories.get(versionedGenomeDirectory);
 		//split requestedResource by the file separator
+		
+    // To work with \ file separator, need to escape
+    if (File.separator.equals("\\")) {
+      separator = separator.compile("\\\\");
+    } else {
+      separator = separator.compile(File.separator);
+    }
+
+		
 		String[] t = separator.split(requestedResource);
 		if (restrictedDirs.contains(t[0]) == false) return true;
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="@jnlp.codebase@" href="igb.jnlp">
+	<information>
+		<title>IGB @jnlp.version@</title>
+		<vendor>Genoviz Project</vendor>
+		<homepage href="http://genoviz.sourceforge.net/" />
+		<description>Integrated Genome Browser (@jnlp.version@)</description>
+		<icon href="@jnlp.icon.name@"/>
+		<icon kind="splash" href="@jnlp.splashicon.name@"/>
+		<offline-allowed/>
+	</information>
+	<security>
+		<all-permissions/>
+	</security>
+	<resources>
+		<j2se version="1.6+" initial-heap-size="32m" max-heap-size="1024m"/>
+		<jar href="igb.jar" main="true" />
+		<jar href="affx_fusion.jar" />
+		<jar href="freehep-2.1.1.jar" download="lazy" />
+		<jar href="genometry.jar" />
+		<jar href="genometryImpl.jar" />
+		<jar href="genoviz.jar" />
+		<jar href="jlfgr-1_0.jar" />
+		<jar href="myswing.jar" />
+		<jar href="image4j.jar" />
+	</resources>
+	<application-desc main-class="com.affymetrix.igb.IGB" />
+</jnlp>

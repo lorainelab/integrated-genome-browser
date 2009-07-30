@@ -20,7 +20,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SeqSymMinComparator;
+import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.EfficientSnpSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;

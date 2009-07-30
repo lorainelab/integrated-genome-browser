@@ -11,19 +11,18 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometryImpl;
+package com.affymetrix.genometryImpl.comparator;
 
 import java.util.Comparator;
 import com.affymetrix.genometry.*;
 
 /**
- *  Sorts SeqSymmetries based on {@link SeqSpan#getStart()}.
- *  Value of {@link SeqSpan#getEnd()} is ignored.
+ *  Sorts SeqSymmetries based first on {@link SeqSpan#getMin()},
+ *   then on {@link SeqSpan#getMax()}.
  *
- *  @see  SeqSymMinComparator
- *  @see  SeqSymStartComparator
+ *  @see SeqSymStartComparator
  */
-public final class SeqSymStartComparator implements Comparator<SeqSymmetry> {
+public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
 	boolean ascending;
 	MutableAnnotatedBioSeq seq;
 
@@ -31,7 +30,7 @@ public final class SeqSymStartComparator implements Comparator<SeqSymmetry> {
 	 *  @param s  sequence to base the sorting on
 	 *  @param b  true to sort ascending, false for descending
 	 */
-	public SeqSymStartComparator(MutableAnnotatedBioSeq s, boolean b) {
+	public SeqSymMinComparator(MutableAnnotatedBioSeq s, boolean b) {
 		this.seq = s;
 		this.ascending = b;
 	}
@@ -42,17 +41,28 @@ public final class SeqSymStartComparator implements Comparator<SeqSymmetry> {
 	}
 
 	public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
-		final SeqSpan span1 = sym1.getSpan(seq);
-		final SeqSpan span2 = sym2.getSpan(seq);
+		SeqSpan span1 = sym1.getSpan(seq);
+		SeqSpan span2 = sym2.getSpan(seq);
+		final int min1 = span1.getMin();
+		final int min2 = span2.getMin();
 		if (ascending) {
-			if (span1.getStart() < span2.getStart()) { return -1; }
-			else if (span1.getStart() > span2.getStart()) { return 1; }
+			if (min1 < min2) { return -1; }
+			else if (min1 > min2) { return 1; }
+			final int max1 = span1.getMax();
+			final int max2 = span2.getMax();
+			if (max1 < max2) { return -1; }
+			else if (max1 > max2) { return 1; }
 			else { return 0; }
 		}
 		else {
-			if (span1.getStart() > span2.getStart()) { return -1; }
-			else if (span1.getStart() < span2.getStart()) { return 1; }
+			if (min1 > min2) { return -1; }
+			else if (min1 < min2) { return 1; }
+			final int max1 = span1.getMax();
+			final int max2 = span2.getMax();
+			if (max1 > max2) { return -1; }
+			else if (max1 < max2) { return 1; }
 			else { return 0; }
 		}
 	}
+
 }

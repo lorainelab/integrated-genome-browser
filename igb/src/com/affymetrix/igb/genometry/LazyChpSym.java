@@ -1,5 +1,6 @@
 package com.affymetrix.igb.genometry;
 
+import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
 import java.util.List;

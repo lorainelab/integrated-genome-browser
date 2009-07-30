@@ -42,7 +42,7 @@ import com.affymetrix.genometry.symmetry.SimplePairSeqSymmetry;
 import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.ScoredContainerSym;

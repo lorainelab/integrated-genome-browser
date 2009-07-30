@@ -17,7 +17,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.das2.Das2FeatureComparator;
+import com.affymetrix.genometryImpl.comparator.Das2FeatureComparator;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;

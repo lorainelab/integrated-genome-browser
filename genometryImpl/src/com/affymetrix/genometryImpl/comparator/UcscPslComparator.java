@@ -11,8 +11,9 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometryImpl;
+package com.affymetrix.genometryImpl.comparator;
 
+import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometry.SeqSymmetry;
 import java.util.Comparator;
 

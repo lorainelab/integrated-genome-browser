@@ -11,6 +11,9 @@ import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -197,13 +200,103 @@ public class BpsParserTest {
 		}
 	}
 
+	@Test
+	public void testIndexing3() {
+		FileInputStream istr = null;
+		try {
+			String filename = "test/data/bps/mRNA1.mm.bps";
+			String testFileName = "test/data/bps/mRNA1_test.mm.bps";
+			assertTrue(new File(filename).exists());
+
+			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
+
+			List<UcscPslSym> syms = null;
+			syms = BpsParser.parse(filename, "stream_test", group);
+
+			BioSeq seq = group.getSeq("chr1");
+
+			BpsParser instance = new BpsParser();
+			Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+
+			System.out.println("sortedSyms size:" + sortedSyms.size());
+
+			int[] min = new int[sortedSyms.size()];
+			int[] max = new int[sortedSyms.size()];
+			long[] filePos = new long[sortedSyms.size()];
+			FileOutputStream fos = null;
+			fos = new FileOutputStream(testFileName);
+			instance.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
+			GeneralUtils.safeClose(fos);
+
+			String overlap = "27:11200177";
+			List<SeqSymmetry> result = null;
+
+			SeqSpan overlap_span = ServerUtils.getLocationSpan("chr1", overlap, group);
+			assertNotNull(overlap_span);
+			assertEquals(27, overlap_span.getMin());
+			assertEquals(11200177, overlap_span.getMax());
+
+			int[] overlapRange = new int[2];
+			int[] outputRange = new int[2];
+			overlapRange[0] = overlap_span.getMin();
+			overlapRange[1] = overlap_span.getMax();
+
+			IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+
+			System.out.println("First row: " + min[0] + " " + max[0] + " " + filePos[0]);
+
+			System.out.println("Last row:" + min[min.length - 1] + " " + max[max.length - 1] + " " + filePos[filePos.length -1]);
+
+			int minPos = outputRange[0];
+			System.out.println("val: " + min[minPos] + " " + max[minPos] + " " + filePos[minPos]);
+
+			int maxPos = outputRange[1];
+			System.out.println("val: " + min[maxPos] + " " + max[maxPos] + " " + filePos[maxPos]);
+
+
+			FileInputStream fis = new FileInputStream(testFileName);
+			byte[] bytes = IndexingUtils.getIndexedAnnotations(fis,filePos[minPos], (int)(filePos[maxPos] - filePos[minPos]));
+			GeneralUtils.safeClose(fis);
+			
+			File testFile = new File(testFileName);
+			if (testFile.exists()) {
+				testFile.delete();
+			}
+
+			System.out.println("bytes size: " + bytes.length);
+
+			InputStream newIstr = new ByteArrayInputStream(bytes);
+			DataInputStream dis = new DataInputStream(newIstr);
+
+			List <UcscPslSym> results = BpsParser.parse(dis, "BPS", (AnnotatedSeqGroup) null, group, false, true);
+
+			System.out.println("New: results size: " + results.size());
+			for (int i=0;i<results.size();i++) {
+				if (i<3 || i > (results.size() - 3)) {
+					UcscPslSym sym = results.get(i);
+					System.out.println("i, " + i + " sym: " + sym.getID() + " min:" + sym.getTargetMin() + " max:" + sym.getTargetMax());
+				}
+			}
+			
+			
+			// Read from file.
+			
+
+
+		} catch (Exception ex) {
+			Logger.getLogger(BpsParserTest.class.getName()).log(Level.SEVERE, null, ex);
+			fail();
+		}
+	}
+
 
 	private void testOutputIndexedSymmetries(int [] min, int [] max, long [] pos){
 		int [] overlapRange = new int[2];
 		int [] outputRange = new int[2];
 		overlapRange[0] = 2455539;
 		overlapRange[1] = 2455600;
-		findMaxOverlap(overlapRange, outputRange, min, max);
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
 		
 		int minPos = outputRange[0];
 		System.out.println("val: " + min[minPos] + " " + max[minPos] + " " + pos[minPos]);
@@ -212,96 +305,25 @@ public class BpsParserTest {
 		System.out.println("position: " + minPos);
 	}
 	
-	/**
-	 * Find the maximum overlap given a range.
-	 * @param insideRange -- an array of length 2, with a start and end coordinate.
-	 * @param outputRange -- an outputted array of length 2, with a start position (from min[] array) and an end position (from max[] array).
-	 * @param min -- array of min points.
-	 * @param max -- array of max points.
-	 */
-	private static void findMaxOverlap(int [] overlapRange, int [] outputRange, int [] min, int [] max) {
-		// Find minimum index of min[] array that is >= start range.
-		int tempPos = Arrays.binarySearch(min, overlapRange[0]);
-		if (tempPos >= 0) {
-			tempPos = backTrack(min, tempPos);
-		} else {
-			// This means the start element was not found in the array.  Translate back to "insertion point", which is:
-			//the index of the first element greater than the key, or min.length, if all elements in the list are less than the specified key.
-			tempPos = (-(tempPos-1));
-
-			// Don't go past array limit.
-			tempPos = Math.min(min.length - 1, tempPos);
-		}
-		outputRange[0] = tempPos;
-
-
-		// That means find maximum index of max[] array that is <= end range.
-		tempPos = Arrays.binarySearch(max, overlapRange[1]);
-		if (tempPos >= 0) {
-			tempPos = forwardtrack(max, tempPos);
-		} else  {
-			// This means the end element was not found in the array.  Translate back to "insertion point", which is:
-			//the index of the first element greater than the key, or min.length, if all elements in the list are less than the specified key.
-			tempPos = (-(tempPos-1));
-
-			// But here, we want to backtrack to the element less than the key.
-			tempPos--;
-			if (tempPos > 0) {
-				tempPos = backTrack(max,tempPos);
-			}
-
-			// Don't go past array limit
-			tempPos = Math.max(0, tempPos);
-		}
-		outputRange[1] = tempPos;
-	}
-
-
-	/**
-	 * backtrack if necessary
-	 * (since binarySearch is not guaranteed to return lowest index of equal elements)
-	 * @param arr
-	 * @param pos
-	 * @return lowest index of equal elements
-	 */
-	private static int backTrack(int[] arr, int pos) {
-		while (pos > 0) {
-			if (arr[pos - 1] == arr[pos]) {
-				pos--;
-			} else {
-				break;
-			}
-		}
-		return pos;
-	}
-
-	/**
-	 * forward-track if necessary
-	 * (since binarySearch is not guaranteed to return highest index of equal elements)
-	 * @param arr
-	 * @param pos
-	 * @return highest index of equal elements
-	 */
-	private static int forwardtrack(int[] arr, int pos) {
-		while (pos < arr.length - 1) {
-			if (arr[pos + 1] == arr[pos]) {
-				pos++;
-			} else {
-				break;
-			}
-		}
-		return pos;
-	}
+	
 
 	private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
-			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
+			int comp = ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
+			if (comp != 0) {
+				return comp;
+			}
+			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
 		}
 	}
 
 	private static final class UcscPslSymEndComparator implements Comparator<UcscPslSym> {
 		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
-			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
+			int comp = ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
+			if (comp != 0) {
+				return comp;
+			}
+			return ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
 		}
 	}
 

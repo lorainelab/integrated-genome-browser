@@ -23,7 +23,7 @@ import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
 import com.affymetrix.genometry.util.*;
 import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;

@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
-import com.affymetrix.genometryImpl.SeqSpanComparator;
+import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;

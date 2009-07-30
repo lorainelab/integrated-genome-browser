@@ -5,6 +5,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import java.io.BufferedInputStream;
@@ -13,6 +14,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,6 +90,21 @@ public class ServerUtilsTest {
 
 		result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
 		assertNotNull(result);
+		
+		List<UcscPslSym> tempResult = new ArrayList<UcscPslSym>(result.size());
+		for(SeqSymmetry res : result) {
+			tempResult.add((UcscPslSym)res);
+		}
+
+		Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+		Collections.sort(tempResult,USCCCompare);
+		System.out.println("Old:results size: " + tempResult.size());
+			for (int i=0;i<tempResult.size();i++) {
+				if (i<3 || i > (tempResult.size() - 3)) {
+					UcscPslSym sym = tempResult.get(i);
+					System.out.println("i, " + i + " sym: " + sym.getID() + " min:" + sym.getTargetMin() + " max:" + sym.getTargetMax());
+				}
+			}
 		assertEquals(385,result.size());
 
 		String inside = "5000:4600000";
@@ -96,5 +115,14 @@ public class ServerUtilsTest {
 
 		result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
 		assertEquals(139, result.size());
+	}
+private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
+		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
+			int comp = ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
+			if (comp != 0) {
+				return comp;
+			}
+			return ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
+		}
 	}
 }

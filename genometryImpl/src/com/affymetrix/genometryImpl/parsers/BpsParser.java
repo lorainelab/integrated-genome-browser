@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.util.Timer;
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometryImpl.UcscPslComparator;
+import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -29,7 +29,11 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class BpsParser implements AnnotationWriter  {
 
@@ -464,7 +468,9 @@ public final class BpsParser implements AnnotationWriter  {
 				max[index] = sym.getTargetMax();
 				fileIndices[index] = fChannel.position();
 				//if (DEBUG){
-				//System.out.println("min,max,pos: " + min[index] + " " + max[index] + " " + fileIndices[index]);
+				if (fileIndices[index] > 52174 && fileIndices[index] < 52178) {
+					System.out.println("index, min,max,pos: " + index + " " + min[index] + " " + max[index] + " " + fileIndices[index]);
+				}
 				//}
 				index++;
 				sym.outputBpsFormat(dos);

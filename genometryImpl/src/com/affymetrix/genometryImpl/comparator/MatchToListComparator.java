@@ -1,5 +1,6 @@
-package com.affymetrix.genometryImpl.util;
+package com.affymetrix.genometryImpl.comparator;
 
+import com.affymetrix.genometryImpl.util.*;
 import java.io.*;
 import java.util.*;
 

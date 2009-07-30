@@ -13,6 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import java.util.*;
 
 import com.affymetrix.genometry.*;

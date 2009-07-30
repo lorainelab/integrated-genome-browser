@@ -1,5 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
+import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.MutableSeqSpan;
 import com.affymetrix.genometry.SearchableSeqSymmetry;

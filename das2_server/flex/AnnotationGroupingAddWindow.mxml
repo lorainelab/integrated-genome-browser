@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	title="{'Add annotation folder to ' + parentName}"
+	showCloseButton="true" 
+	width="436" 
+	height="92"
+	verticalGap="0"
+	close="closeWindow()"
+	titleIcon="{parentApplication.iconAnnotationGrouping}"
+	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
+ 	
+    <mx:HTTPService             
+      id="addAnnotationGrouping" 
+      url="manager/annotationGroupingAdd"
+      resultFormat="e4x"
+      result="onAddAnnotationGrouping(event)"
+      fault="parentApplication.onFailHttpRequest('Failed to add annotation folder', event)"
+      method="POST"
+      useProxy="false">
+      <mx:request>
+         <name>{annotationGroupingName.text}</name>
+         <idGenomeVersion>{idGenomeVersion}</idGenomeVersion>
+         <idParentAnnotationGrouping>{idParentAnnotationGrouping}</idParentAnnotationGrouping>
+      </mx:request>
+    </mx:HTTPService> 
+    
+       
+    <mx:Script>
+	<![CDATA[
+	
+	import mx.managers.PopUpManager;
+	import mx.rpc.events.ResultEvent;
+	import mx.controls.Alert;
+	
+	[Bindable]
+	public var idGenomeVersion:Object = null;
+	[Bindable]
+	public var idParentAnnotationGrouping:Object = null;
+	[Bindable]
+	public var parentName:Object = null;
+
+   	private function onAddAnnotationGrouping(event:ResultEvent):void {
+		if (addAnnotationGrouping.lastResult.name() == "SUCCESS") {			
+			closeWindow();
+			var itemToSelect:XML = new XML(
+			   "<AnnotationGrouping " +
+			     "idAnnotationGrouping='" + addAnnotationGrouping.lastResult.@idAnnotationGrouping + "'" +
+			    "/>");
+			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
+		} else if (addAnnotationGrouping.lastResult.name() == "Error") {
+			Alert.show(addAnnotationGrouping.lastResult.@message);
+		} else {
+			Alert.show("An error occurred while adding annotation folder");				
+		}		
+	}
+
+   
+    private function closeWindow():void {
+		PopUpManager.removePopUp(this);		
+	}
+	
+	]]>
+    </mx:Script>
+    
+	<mx:HBox styleName="panelBody" width="100%" paddingTop="4">
+		<mx:Label text="Name:"/>
+		<mx:TextInput id="annotationGroupingName" width="100%"/>
+	</mx:HBox>
+
+	<mx:ControlBar horizontalAlign="right">
+		<mx:Button id="saveButton"  
+			enabled="{annotationGroupingName.text != null ? true : false}" 
+			icon="{parentApplication.iconSave}" 
+			disabledIcon="{parentApplication.iconSaveDisabled}" 
+			label="Save"
+			click="{addAnnotationGrouping.send()}"/>
+		<mx:Button id="cancelButton" label="Cancel" click="closeWindow()"/>
+	</mx:ControlBar>
+</mx:TitleWindow>

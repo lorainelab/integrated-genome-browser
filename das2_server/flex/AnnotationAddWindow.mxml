@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	title="{'Add annotation to ' + parentName}"
+	showCloseButton="true" 
+	width="462" 
+	height="118" 
+	close="closeWindow()"
+	titleIcon="{parentApplication.iconAnnotation}"
+	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
+
+ 	
+    <mx:HTTPService             
+      id="addAnnotation" 
+      url="manager/annotationAdd"
+      resultFormat="e4x"
+      result="onAddAnnotation(event)"
+      fault="parentApplication.onFailHttpRequest('Failed to add annotation', event)"
+      method="POST"
+      useProxy="false">
+      <mx:request>
+         <name>{annotationName.text}</name>
+         <idGenomeVersion>{idGenomeVersion}</idGenomeVersion>
+         <idAnnotationGrouping>{idAnnotationGrouping}</idAnnotationGrouping>
+         <codeVisibility>{visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : ''}</codeVisibility>
+         <idSecurityGroup>{this.annotationSecurityGroupCombo.selectedItem != null ? annotationSecurityGroupCombo.selectedItem.@id : ''}</idSecurityGroup>
+      </mx:request>
+    </mx:HTTPService> 
+    
+       
+    <mx:Script>
+	<![CDATA[
+	
+	import mx.managers.PopUpManager;
+	import mx.rpc.events.ResultEvent;
+	import mx.controls.Alert;
+	
+	[Bindable]
+	public var idGenomeVersion:Object = null;
+	[Bindable]
+	public var idAnnotationGrouping:Object = null;
+	[Bindable]
+	public var parentName:Object = null;
+	
+	
+	public function init():void {
+		for each(var item:Object in parentApplication.dictionaryVisibility) {
+			if (item.@id == 'PUBLIC') {
+				this.visibilityCombo.selectedItem = item;
+				break;
+			}
+		}
+	}
+	
+	private function changeState():void {
+		if (this.visibilityCombo.selectedItem == null) {
+			this.currentState == "";
+		} else if(this.visibilityCombo.selectedItem.@id == "MEM" || this.visibilityCombo.selectedItem.@id == "MEMCOL") {
+			this.currentState = "GroupVisibilityState";
+		} else {
+			this.currentState = "";
+		}
+	}
+
+   	private function onAddAnnotation(event:ResultEvent):void {
+		if (addAnnotation.lastResult.name() == "SUCCESS") {			
+			closeWindow();
+			var itemToSelect:XML = new XML(
+			   "<Annotation " +
+			     "idAnnotation='" + addAnnotation.lastResult.@idAnnotation + "'" +
+			     "idAnnotationGrouping='" + addAnnotation.lastResult.@idAnnotationGrouping  + "'" +
+			     "idGenomeVersion='" + addAnnotation.lastResult.@idGenomeVersion  + "'" +
+			    "/>");
+			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
+		} else if (addAnnotation.lastResult.name() == "Error") {
+			Alert.show(addAnnotation.lastResult.@message);
+		} else {
+			Alert.show("An error occurred while adding annotation");				
+		}		
+	}
+
+   
+    private function closeWindow():void {
+		PopUpManager.removePopUp(this);		
+	}
+	
+	]]>
+    </mx:Script>
+    
+    	    <mx:states>
+        <mx:State name="GroupVisibilityState">
+            <mx:AddChild  relativeTo="{mainBody}" position="lastChild">
+                <mx:VBox width="100%" verticalGap="0">
+                	<mx:HBox width="100%" horizontalGap="0" id="hbox2">
+                		<mx:Label text="User Group:" width="90"/>
+                		<mx:ComboBox id="annotationSecurityGroupCombo" dataProvider="{parentApplication.dictionarySecurityGroup}" width="100%" labelField="@name"></mx:ComboBox>
+                	</mx:HBox>
+                </mx:VBox>
+            </mx:AddChild>
+            <mx:SetProperty name="height" value="144"/>
+            <mx:SetProperty target="{saveButton}" name="enabled">
+                <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationSecurityGroupCombo.selectedItem != null &amp;&amp; annotationSecurityGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
+            </mx:SetProperty>
+        </mx:State>
+    </mx:states>
+    <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%" verticalGap="4">
+		<mx:HBox width="100%" horizontalGap="0">
+			<mx:Label text="Name:" width="90"/>
+			<mx:TextInput id="annotationName" width="100%"/>
+		</mx:HBox>
+
+	
+		<mx:HBox width="100%" horizontalGap="0">
+			<mx:Label text="Visibility:" width="90"/>
+			<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="changeState()"></mx:ComboBox>							        	
+		</mx:HBox>
+    	
+    </mx:VBox>
+	
+	<mx:ControlBar horizontalAlign="right">
+		<mx:Button id="saveButton"  
+			enabled="{annotationName.text != null ? true : false}" 
+			icon="{parentApplication.iconSave}" 
+			disabledIcon="{parentApplication.iconSaveDisabled}" 
+			label="Save"
+			click="{addAnnotation.send()}"/>
+		<mx:Button id="cancelButton" label="Cancel" click="closeWindow()"/>
+	</mx:ControlBar>
+	
+
+</mx:TitleWindow>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:util="util.*"
+	width="100%" height="100%"
+	title="Configure DAS2 Server"> 
+	<mx:VBox width="100%" height="100%" paddingLeft="4" paddingBottom="4" paddingRight="4" paddingTop="4">
+		<mx:Label text="Standard properties:" fontWeight="bold"/>
+		<mx:HBox width="100%">
+			<mx:Label text="DAS2 Annotation directory:" width="154"/>
+			<mx:TextInput width="100%"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Label text="DAS2 Server name:" width="154"/>
+			<mx:TextInput width="100%"/>
+		</mx:HBox>
+		<mx:Button label="Save properties" icon="@Embed(source='assets/save.png')"/>
+		<mx:Spacer height="30"/>
+		<mx:HRule width="100%"/>
+		<mx:Label text="Import Existing DAS2 Annotations:" fontWeight="bold"/>
+		<mx:HBox width="100%" verticalAlign="middle">
+			<mx:Label text="Input directory:" width="130"/>
+			<mx:TextInput width="100%"/>
+		</mx:HBox>
+		<mx:HBox width="100%" verticalAlign="middle">
+			<mx:Label text="Output directory:" width="130"/>
+			<mx:TextInput width="100%"/>
+		</mx:HBox>
+		<mx:HBox width="100%" verticalAlign="middle">
+			<mx:Label text="File management:" width="130"/>
+			<mx:VBox width="100%" height="100%">
+				<mx:CheckBox label="Copy annotations"/>
+				<mx:HBox width="100%" verticalAlign="middle">
+					<mx:CheckBox label="Move annotations (to conserve space)"/>
+					<mx:Label text="Temporary directory:"/>
+					<mx:TextInput width="100%"/>
+				</mx:HBox>
+			</mx:VBox>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Button label="Verify import" icon="@Embed(source='assets/tick.png')"/>
+			<mx:Button label="Import" icon="@Embed(source='assets/database_lightning.png')"/>
+		</mx:HBox>
+	</mx:VBox>
+	
+</mx:Panel>

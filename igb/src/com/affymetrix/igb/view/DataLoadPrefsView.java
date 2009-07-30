@@ -13,18 +13,25 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
+import com.affymetrix.igb.prefs.SourceCellRenderer;
 import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
+
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -38,7 +45,13 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -63,6 +76,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 	//private static final String DASTitle = "Add Server File";
 
 	private final GeneralLoadView glv;
+	
+	private SourceTableModel sourceTableModel = null;
+	private JButton removeServerButton = null;
 
   static {
     String norm = "Normal Usage";
@@ -217,11 +233,84 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
   }
 
 	private void addSourcesBox() {
+		
 		final Box sourceBox = Box.createVerticalBox();
 		sourceBox.setBorder(new TitledBorder("Current Servers"));
-		final JTable table = new JTable(new SourceTableModel());
+
+
+		
+		sourceTableModel = new SourceTableModel();
+		final JTable table = new JTable(sourceTableModel);
+		
+		
+		TableColumn column = null;
+		for (int i = 0; i < table.getModel().getColumnCount(); i++) {
+		    column = table.getColumnModel().getColumn(i);
+		    if (i == SourceTableModel.ENABLED) {
+		    	column.setPreferredWidth(30);
+		    } else if (i == SourceTableModel.NAME) {
+		    	column.setPreferredWidth(100);
+		    } else if (i == SourceTableModel.URL) {
+		        column.setPreferredWidth(300); 
+		    } else {
+		        column.setPreferredWidth(50);
+		    }
+		    
+		    if (i == SourceTableModel.PASSWORD) {
+		    	JPasswordField password = new JPasswordField();        
+				password.setBorder( new LineBorder(Color.BLACK) );        
+				TableCellEditor editor = new DefaultCellEditor(password);        
+				column.setCellEditor( editor );		    	
+		    }
+				
+			if (i != SourceTableModel.ENABLED) {
+		    	column.setCellRenderer(new SourceCellRenderer());
+		    }
+		}
+		
+		table.getSelectionModel().addListSelectionListener(
+		        new ListSelectionListener() {
+		            public void valueChanged(ListSelectionEvent event) {
+		                int viewRow = table.getSelectedRow();
+		                if (viewRow < 0) {
+		                	removeServerButton.setEnabled(false);
+		                } else {
+		                	removeServerButton.setEnabled(true);
+		                }
+		            }
+		        }
+		);
+
+		
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		sourceBox.add(new JScrollPane(table));
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+		sourceBox.add(scrollPane);
+		
+		sourceBox.add(Box.createRigidArea(new Dimension(0, 5)));
+		
+		ActionListener remove_server_entry = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object url        = table.getModel().getValueAt(table.getSelectedRow(), SourceTableModel.URL);
+				Object serverType = table.getModel().getValueAt(table.getSelectedRow(), SourceTableModel.TYPE);
+				Object serverName = table.getModel().getValueAt(table.getSelectedRow(), SourceTableModel.NAME);
+				
+				removePreference(url.toString(), serverType.toString(), serverName.toString());
+			}
+		};
+		
+		Box buttonBox = Box.createHorizontalBox();
+		buttonBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+		buttonBox.add(Box.createRigidArea(new Dimension(10, 0)));
+		removeServerButton = new JButton("Remove");
+		removeServerButton.setEnabled(false);
+		removeServerButton.addActionListener(remove_server_entry);
+		removeServerButton.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+		buttonBox.add(removeServerButton);
+		sourceBox.add(buttonBox);
+
+
+		
 		this.add(sourceBox);
 	}
 
@@ -238,7 +327,10 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		final JTextField serverTF = new JTextField("",50);
 		serverTF.setMaximumSize(new Dimension(serverTF.getPreferredSize()));
 		serverTF.setAlignmentX(Component.CENTER_ALIGNMENT);
-		final JLabel serverLabel = new JLabel("Server URL   ");
+		final JLabel serverLabel = new JLabel("Server URL");
+		serverLabel.setPreferredSize(new Dimension(80,serverLabel.getPreferredSize().height));
+		serverLabel.setMaximumSize(new Dimension(80,serverLabel.getPreferredSize().height));
+		serverLabel.setMinimumSize(new Dimension(80,serverLabel.getPreferredSize().height));
 		serverLabel.setAlignmentX(0.0f);
 		serverLabel.setLabelFor(serverTF);
 		serverBox1.add(serverLabel);
@@ -256,30 +348,73 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		final Box serverBox2 = Box.createHorizontalBox();
 		serverBox2.setAlignmentX(0.0f);
 		final JTextField serverNameTF = new JTextField("",50);
-		serverNameTF.setMaximumSize(new Dimension(serverNameTF.getPreferredSize()));
+		serverNameTF.setMaximumSize(new Dimension(serverTF.getPreferredSize()));
 		serverNameTF.setAlignmentX(Component.CENTER_ALIGNMENT);
-		final JLabel serverNameLabel = new JLabel("Server name ");
+		final JLabel serverNameLabel = new JLabel("Server name");
+		serverNameLabel.setPreferredSize(new Dimension(80,serverNameLabel.getPreferredSize().height));
+		serverNameLabel.setMaximumSize(new Dimension(80,serverNameLabel.getPreferredSize().height));
+		serverNameLabel.setMinimumSize(new Dimension(80,serverNameLabel.getPreferredSize().height));
 		serverNameLabel.setAlignmentX(0.0f);
 		serverNameLabel.setLabelFor(serverNameTF);
 		serverBox2.add(serverNameLabel);
 		serverBox2.add(serverNameTF);
 
+
+		
 		// ServerBox3
+		final Box serverBox3 = Box.createHorizontalBox();
+		serverBox3.setAlignmentX(0.0f);
 		final Vector<String> serverTypes = new Vector<String>(3);
 		serverTypes.add(ServerType.QuickLoad.toString());
 		serverTypes.add(ServerType.DAS2.toString());
 		serverTypes.add(ServerType.DAS.toString());
 		final JComboBox serverTypeCB = new JComboBox(serverTypes);
-		serverTypeCB.setMaximumSize(new Dimension(serverTypeCB.getPreferredSize()));
-		serverTypeCB.setAlignmentX(0.0f);
-		final JLabel serverTypeLabel = new JLabel("Server type");
-		serverTypeLabel.setLabelFor(serverTypeCB);
+		serverTypeCB.setPreferredSize(new Dimension(100,serverTypeCB.getPreferredSize().height));
+		serverTypeCB.setMaximumSize(new Dimension(100,serverTypeCB.getPreferredSize().height));
+		serverTypeCB.setMinimumSize(new Dimension(100,serverTypeCB.getPreferredSize().height));
+		serverTypeCB.setAlignmentX(Component.CENTER_ALIGNMENT);
+		final JLabel serverTypeLabel = new JLabel("Server type ");
+		serverTypeLabel.setPreferredSize(new Dimension(80,serverTypeLabel.getPreferredSize().height));
+		serverTypeLabel.setMaximumSize(new Dimension(80,serverTypeLabel.getPreferredSize().height));
+		serverTypeLabel.setMinimumSize(new Dimension(80,serverTypeLabel.getPreferredSize().height));
 		serverTypeLabel.setAlignmentX(0.0f);
-		final Box serverBox3 = new Box(BoxLayout.X_AXIS);
-		serverBox3.setAlignmentX(0.0f);
+		serverTypeLabel.setLabelFor(serverTypeCB);
 		serverBox3.add(serverTypeLabel);
 		serverBox3.add(serverTypeCB);
+		
+		
+		// ServerBox for login
+		final Box serverBoxLogin = Box.createHorizontalBox();
+		serverBoxLogin.setAlignmentX(0.0f);
+		final JTextField serverLoginTF = new JTextField("",20);
+		serverLoginTF.setMaximumSize(new Dimension(serverLoginTF.getPreferredSize()));
+		serverLoginTF.setAlignmentX(Component.CENTER_ALIGNMENT);
+		final JLabel serverLoginLabel = new JLabel("Login");
+		serverLoginLabel.setPreferredSize(new Dimension(80,serverLoginLabel.getPreferredSize().height));
+		serverLoginLabel.setMaximumSize(new Dimension(80,serverLoginLabel.getPreferredSize().height));
+		serverLoginLabel.setMinimumSize(new Dimension(80,serverLoginLabel.getPreferredSize().height));
+		serverLoginLabel.setAlignmentX(0.0f);
+		serverLoginLabel.setLabelFor(serverLoginTF);
+		serverBoxLogin.add(serverLoginLabel);
+		serverBoxLogin.add(serverLoginTF);
+		
+		// ServerBox for password
+		final Box serverBoxPassword = Box.createHorizontalBox();
+		serverBoxPassword.setAlignmentX(0.0f);
+		final JPasswordField serverPasswordTF = new JPasswordField("",20);
+		serverPasswordTF.setMaximumSize(new Dimension(serverPasswordTF.getPreferredSize()));
+		serverPasswordTF.setAlignmentX(Component.CENTER_ALIGNMENT);
+		final JLabel serverPasswordLabel = new JLabel("Password");
+		serverPasswordLabel.setPreferredSize(new Dimension(80,serverPasswordLabel.getPreferredSize().height));
+		serverPasswordLabel.setMaximumSize(new Dimension(80,serverPasswordLabel.getPreferredSize().height));
+		serverPasswordLabel.setMinimumSize(new Dimension(80,serverPasswordLabel.getPreferredSize().height));
+		serverPasswordLabel.setAlignmentX(0.0f);
+		serverPasswordLabel.setLabelFor(serverPasswordTF);
+		serverBoxPassword.add(serverPasswordLabel);
+		serverBoxPassword.add(serverPasswordTF);
 
+
+		
 		// ServerBox4
 		final JButton addServerB = new JButton("Add");
 		addServerB.setAlignmentX(0.0f);
@@ -290,6 +425,8 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		serverBox.add(serverBox1);
 		serverBox.add(serverBox2);
 		serverBox.add(serverBox3);
+		serverBox.add(serverBoxLogin);
+		serverBox.add(serverBoxPassword);
 		serverBox.add(serverBox4);
 		serverBox.setAlignmentX(0.0f);
 		this.add(serverBox);
@@ -305,7 +442,14 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		});
 		addServerB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				addServer(serverTF.getText(), (String)serverTypeCB.getSelectedItem(),serverNameTF.getText());
+				// Add the server to IGB
+				addServer(serverTF.getText(), (String)serverTypeCB.getSelectedItem(),serverNameTF.getText(), serverLoginTF.getText(), serverPasswordTF.getText());
+				
+				// New clear out the server fields in the add panel
+				serverTF.setText("");
+				serverNameTF.setText("");
+				serverLoginTF.setText("");
+				serverPasswordTF.setText("");
 			}
 		});
 
@@ -319,7 +463,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		});
 	}
 
-	private void addServer(String DirectoryOrURL, String serverType, String serverName) {
+	private void addServer(String DirectoryOrURL, String serverType, String serverName, String login, String password) {
 		if (serverName == null || serverName.length() == 0) {
 			ErrorHandler.errorPanel("Blank server name","Server name must be specified",this);
 			return;
@@ -329,7 +473,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			if (f.isDirectory()) {
 				try {
 				URL url = new URL(f.toString());
-				addToPreferences(url.toString(), serverType, serverName);
+				addToPreferences(url.toString(), serverType, serverName, login, password);
 				}
 				catch (MalformedURLException ex) {
 					String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? "/Directory" : "");
@@ -344,7 +488,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		try {
 			// it's a URL, hopefully
 			URL url = new URL(DirectoryOrURL);
-			addToPreferences(DirectoryOrURL, serverType, serverName);
+			addToPreferences(DirectoryOrURL, serverType, serverName, login, password);
 		} catch (MalformedURLException ex) {
 			String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? "/Directory" : "");
 			String errorMessage =
@@ -354,27 +498,52 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			return;
 		}
 	}
-
+	
 	/**
 	 * Add the URL/Directory and server name to the preferences.
 	 * @param DirectoryOrURL
 	 * @param serverType
 	 * @param serverName
 	 */
-	private void addToPreferences(String DirectoryOrURL, String serverType, String serverName) {
+	private void addToPreferences(String DirectoryOrURL, String serverType, String serverName, String login, String password) {
 		// Add to GeneralLoadView and validate
-		if (!this.glv.addServer(serverName, DirectoryOrURL, serverType)) {
+		if (!this.glv.addServer(serverName, DirectoryOrURL, serverType, login, password)) {
 			ErrorHandler.errorPanel(
 							"Error loading server",
 							serverType + " server " + serverName + " at " + DirectoryOrURL + " was not successfully loaded.\nPlease check that directory/URL is valid, and you have a working network connection.");
 			return;
 		}
-
+		
+		sourceTableModel.init();
+		removeServerButton.setEnabled(false);
 
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
 		Preferences individualServerPref = prefServers.node(serverType);
 		try {
+		  // Set a key-value pair of server URL and server name
 			individualServerPref.put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), serverName);
+			
+			// Create a 'login' node underneath DAS2 and save the key-value pair of server url
+			// and login
+			individualServerPref.node("login").put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), login);
+			
+			// Encrypt the password
+			String passwordEncrypted = "";
+			StringEncrypter encrypter = null;
+			try {
+				encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
+				passwordEncrypted = encrypter.encrypt(password);
+			} catch (Exception e) {
+			}
+			
+      // Create a 'password' node underneath DAS2 and save the key-value pair of server url
+      // and encrypted password
+			individualServerPref.node("password").put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), passwordEncrypted);
+			
+      // Create an 'enabled' node underneath DAS2 and save the key-value pair of server url
+      // and enabled (true)
+      individualServerPref.node("enabled").put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), "true");
+      
 			individualServerPref.flush();
 			// Add to GeneralLoadView
 		} catch (BackingStoreException ex) {
@@ -385,6 +554,24 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		
 		serverDialog(serverName,DirectoryOrURL);
 	}
+	
+	private void removePreference(String DirectoryOrURL, String serverType, String serverName) {
+		
+		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
+		Preferences individualServerPref = prefServers.node(serverType);
+		try {
+			individualServerPref.remove(URLEncoder.encode(DirectoryOrURL, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+				Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
+		}	
+		
+		
+		this.glv.removeServer(serverName, DirectoryOrURL, serverType);
+
+		sourceTableModel.init();
+
+	}
+	
 
 	private void serverDialog(String serverName, String DirectoryOrURL) {
 		JOptionPane.showMessageDialog(null,
@@ -543,4 +730,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
     DataLoadPrefsView p = new DataLoadPrefsView();
     PreferencesPanel.testPanel(p);
   }*/
+  
+  
+
+  
+  
 }

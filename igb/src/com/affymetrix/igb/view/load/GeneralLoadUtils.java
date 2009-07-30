@@ -143,6 +143,7 @@ public final class GeneralLoadUtils {
 		return null;
 	}
 
+	
 	/**
 	 * Add specified server, finding species and versions associated with it.
 	 * @param serverName
@@ -150,7 +151,7 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	boolean addServer(String serverName, String serverURL, ServerType serverType) {
+	boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
 		GenericServer gServer = serverExists(discoveredServers, serverName, serverType);
 		if (gServer != null) {
 			System.out.println("Server " + gServer.toString() +" already exists at " + gServer.URL);
@@ -182,22 +183,53 @@ public final class GeneralLoadUtils {
 
 		} else if (serverType == ServerType.DAS2) {
 			//Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
-			gServer = ServerList.addServer(serverType, serverName, serverURL);
+			gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
 			if (gServer == null) {
 				return false;
 			}
 			//gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
+			discoveredServers.add(gServer);
 			getDAS2Species(gServer);
 			getDAS2Versions(gServer);
-			discoveredServers.add(gServer);
 		}
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
+		
+		// We just added a server, so reset the init flag on the versions
+		// so that the types requests are reissued.
+		version2init.clear();
+		
 		return true;
 	}
+	
+	/**
+	 * Remove specified server.
+	 * @param serverName
+	 * @param serverURL
+	 * @param serverType
+	 * @return success if server removed
+	 */
+	boolean removeServer(String serverName, String serverURL, ServerType serverType) {
+
+		// Try to remove from discoveredServers.  If it is disabled, it is not
+		// in this list.
+		GenericServer gServer = serverExists(discoveredServers, serverName, serverType);
+		if (gServer == null) {
+			System.out.println("Server " + serverName +" does not exist");
+		} else {
+			discoveredServers.remove(gServer);			
+		}
+
+		// Remove from ServerList
+		ServerList.removeServer(serverURL);
+		
+		return true;
+	}
+
+	
 	
 	/**
 	 * Discover all of the servers and genomes and versions.
@@ -208,6 +240,7 @@ public final class GeneralLoadUtils {
 		discoverServersInternal(discoveredServers);
 		discoverSpeciesAndVersionsInternal();
 	}
+
 
 	/**
 	 * Discover the list of servers.

@@ -57,11 +57,37 @@ public final class ServerList {
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url) {
 
+		return addServer(serverType, name, url, null, null);
+	}
+	
+	/**
+	 *
+	 * @param serverType
+	 * @param name
+	 * @param url
+	 * @param username
+	 * @param password
+	 * @return
+	 */
+	public static GenericServer addServer(ServerType serverType, String name, String url, String username, String password) {
+
 		if (url2Name.get(url) == null) {
 			url2Name.put(url, name);
-			return initServer(serverType, url, name);
+			return initServer(serverType, url, name, username, password);
 		}
 		return null;
+	}
+	
+	/**
+	 * Remove a server.
+	 * @param url
+	 * @return
+	 */
+	public static void removeServer(String url) {
+		GenericServer server = url2server.get(url);
+		url2Name.remove(url);
+		server2Name.remove(server);
+		url2server.remove(url);
 	}
 
 	/**
@@ -71,12 +97,13 @@ public final class ServerList {
 	 * @param name
 	 * @return
 	 */
-	private static GenericServer initServer(ServerType serverType, String url, String name) {
+	private static GenericServer initServer(ServerType serverType, String url, String name, String username, String password) {
 		GenericServer server = null;
 		try {
 			if (serverType == ServerType.Unknown) {
 				return null;
 			}
+
 			
 			if (serverType == ServerType.QuickLoad) {
 				String root_url = url;
@@ -91,7 +118,7 @@ public final class ServerList {
 			}
 			if (serverType == ServerType.DAS2) {
 				Das2ServerInfo info = new Das2ServerInfo(url, name, false);
-				server = new GenericServer(name, info.getURI().toString(), serverType, info);
+				server = new GenericServer(name, info.getURI().toString(), serverType, true, username, password, info);
 			}
 			server2Name.put(server, name);
 			url2server.put(url, server);

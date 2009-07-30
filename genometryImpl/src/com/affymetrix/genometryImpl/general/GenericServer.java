@@ -16,15 +16,16 @@ import net.sf.image4j.codec.ico.ICOImage;
  */
 public final class GenericServer {
 
-	public final String serverName;   // name of the server.
-	public final String URL;          // URL/file that points to the server.
-	public final ServerType serverType;
+	public String serverName;   // name of the server.
+	public String URL;          // URL/file that points to the server.
+	public ServerType serverType;
+	public String login;				// Defaults to ""
+	public String password;			// Defaults to ""
+	public boolean enabled;			// Is this server enabled?
 	public final Object serverObj;    // Das2ServerInfo, DasServerInfo, ..., QuickLoad?
-	public final boolean enabled;			// Is this server enabled?
-	public final String login;				// Defaults to ""
-	public final String password;			// Defaults to ""
 	public final URL friendlyURL;			// friendly URL that users may look at.
 	public ImageIcon friendlyIcon;		// friendly icon that users may look at.
+	public int  loginAttempts = 0;
 
 	/**
 	 * @param serverName

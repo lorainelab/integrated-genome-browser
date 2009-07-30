@@ -174,7 +174,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Discover servers, species, etc., asynchronously.
 	 */
-	private void populateSpeciesData() {
+	public void populateSpeciesData() {
 		Application.getSingleton().setNotLockedUpStatus("Loading servers...");
 
 		Executor vexec = Executors.newSingleThreadExecutor();
@@ -210,14 +210,14 @@ public final class GeneralLoadView extends JComponent
 	 * @param serverURL
 	 * @param serverType
 	 */
-	public boolean addServer(String serverName, String serverURL, String serverType) {
+	public boolean addServer(String serverName, String serverURL, String serverType, String login, String password) {
 		boolean successful = false;
 		if (serverType.equals(ServerType.QuickLoad.toString())) {
-			successful = this.glu.addServer(serverName, serverURL, ServerType.QuickLoad);
+			successful = this.glu.addServer(serverName, serverURL, ServerType.QuickLoad, null, null);
 		} else if (serverType.equals(ServerType.DAS.toString())) {
-			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS);
+			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS, null, null);
 		} else if (serverType.equals(ServerType.DAS2.toString())) {
-			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS2);
+			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS2, login, password);
 		}
 		if (!successful) {
 			return false;
@@ -230,6 +230,21 @@ public final class GeneralLoadView extends JComponent
 		speciesCB.setSelectedItem(SELECT_SPECIES);
 		gmodel.setSelectedSeqGroup(null);
 
+		return true;
+	}
+	
+	public boolean removeServer(String serverName, String serverURL, String serverType) {
+		boolean successful = false;
+		if (serverType.equals(ServerType.QuickLoad.toString())) {
+			successful = this.glu.removeServer(serverName, serverURL, ServerType.QuickLoad);
+		} else if (serverType.equals(ServerType.DAS.toString())) {
+			successful = this.glu.removeServer(serverName, serverURL, ServerType.DAS);
+		} else if (serverType.equals(ServerType.DAS2.toString())) {
+			successful = this.glu.removeServer(serverName, serverURL, ServerType.DAS2);
+		}
+		if (!successful) {
+			return false;
+		}
 		return true;
 	}
 

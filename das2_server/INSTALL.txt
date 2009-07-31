@@ -10,11 +10,11 @@ There are two ways to configure the DAS2 server:
                   DAS2 server running in classic mode. 
                                     
  - Database mode. The annotations are managed via entries in the database.  A
-                  web-based tool allows annotations to be easily added, 
+                  web-based tool (DAS2 Manager) allows annotations to be easily added, 
                   described, and organized.  Through the tool, users and
-                  groups are managed and annotations marked as private are
-                  regulated in DAS2 server so that only authorized
-                  users can gain access to these resources.
+                  groups are managed and annotation security is specified.
+                  Access to annotations is brokered by the DAS2 server so that 
+                  only authorized users can gain access to these resources.
                   
                   To build the system to run in database mode, in addition to 
                   running the normal targets ('clean', 'all'), run the 'flex' target
@@ -65,6 +65,9 @@ To run in classic mode (see example in das2_server/web_classic.xml):
 To run in database mode (see example in das2_server/web.xml):
   * genometry_load_annotations_from_db - set to 'true'
   * genometry_db_annotation_dir - Path to the annotation data files managed by the db
+      IMPORTANT:  Do NOT set this directory to the Path to the data files
+      used in classic mode (genometry_server_dir).  Instead specify a new
+      directory under which the annotation files will be stored.
   * maintainer_email (see above)
   * xml_base (see above)
   
@@ -72,9 +75,11 @@ To run in database mode (see example in das2_server/web.xml):
 To run in classic mode (see example in das2_server/context_classic.xml):
   * <Valve> - to configure logging
 
-To run in database" mode (see example in das2_server/context.xml):
-  * <Resource> - configures the MySQL database.  Change the username, password to match the installed database.
-  * <Realm> - configures the MySQL tables to manage users and passwords.  Change the username, password to match the installed database.
+To run in database mode (see example in das2_server/context.xml):
+  * <Resource> - configures the MySQL database.  
+        Change the username, password to match the installed database.
+  * <Realm> - configures the MySQL tables to manage users and passwords.  
+       Change the username, password to match the installed database.
 
 == Configuring tomcat ==
 
@@ -92,7 +97,23 @@ Note that 2GB of RAM is the maximum available when using a 32-bit Java Virtual M
 
 === INSTALLATION ===
 
-The das2 servlet can be installed by copying the entire das2 directory to tomcat's webapps directory.  Most tomcat servers are configured to detect new or updated web applications and will deploy them automatically.  Common locations for the webapps directory are:
+The das2 servlet can be installed by copying the entire das2 directory to tomcat's 
+webapps directory.  
+
+* In order to build a das2 webapp, run the Ant build script
+  with the target 'webapp' (for db mode) or 'webapp-classic' (for classic mode).
+* Copy the contents of dist/webapp to the tomcat webapps directory under a 
+  directory called DAS2 (or whatever webapp name you wish to call it).  
+  IMPORTANT - For db mode, make sure the .js, .html, and .swf files in the webapp
+  directory are copied.  These files comprise the DAS2 Manager tool, a Flex 
+  application. 
+* Copy all .jar files from ext to the tomcat webapps das2 directory.
+  IMPORTANT - There are new jars that are required to run in database mode,
+  so make sure all of the .jars are copied.
+
+Most tomcat servers are configured to detect new or updated 
+web applications and will deploy them automatically.  Common locations for the 
+webapps directory are:
 
 	* RedHat: /var/lib/tomcat5/webapps/
 	* Debian: /var/lib/tomcat5.5/webapps/
@@ -102,7 +123,7 @@ The servlet must be reloaded before it will register any changes.  However,
 in database mode, use the 'Reload DAS2 Server' link in the web-based DAS2 Manager
 tool to refresh DAS2.
 
-MySQL Database
+MySQL Database (required when running DAS2 server in database mode)
   * Install MySQL Server, create a database user account
   * Modify the context.xml (see instructions above) to use the correct database
     username and password.
@@ -114,4 +135,10 @@ MySQL Database
 Once the DAS2 server is deployed and running under tomcat, enter the 
 following URL from the browser to launch DB Manager:
   http://yourhost:yourport/DAS2/manager  
+
+Login with the username 'admin' and the password 'admin'.  Click on 
+the Users and Groups link and add yourself as a user.  If you are an admin,
+click the 'Admin' radio button.  Now try the URL again to make sure you
+can login.  Delete the default 'admin' user now that you have set yourself up
+as a user.
 

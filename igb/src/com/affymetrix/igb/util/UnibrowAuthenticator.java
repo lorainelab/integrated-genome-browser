@@ -96,7 +96,7 @@ public final class UnibrowAuthenticator extends Authenticator  {
 	} else {
 		// Otherwise, present the login dialog for the user to
 		// type in the login and password.
-	    int result = JOptionPane.showOptionDialog(frm, message_panel, "Enter Network Password", 
+	    int result = JOptionPane.showOptionDialog(frm, message_panel, "Login", 
 						      JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, 
 						      null, null, null );
 
@@ -108,7 +108,12 @@ public final class UnibrowAuthenticator extends Authenticator  {
 	      char[] user_password = passwordTF.getPassword();
 	      auth = new PasswordAuthentication(user_name, user_password);
 	    } else if (result == JOptionPane.CANCEL_OPTION) {
-
+	      // Bump up the login attempts so that user is
+	      // no longer presented with login dialog after pressing
+	      // cancel.
+	      if (server != null) {
+	        server.loginAttempts = 3;
+	      }
 	    }		
 	}
     return auth;

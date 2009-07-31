@@ -32,7 +32,7 @@
 
   <target name="compile" depends="common-init">
 		<mkdir dir="${build.dir}" />
-		<my.javac destdir="${build.dir}" />
+		<my.javac destdir="${build.dir}"/>
 		<copy todir="${build.dir}" filtering="true">
 			<fileset dir="${rsrc.dir}" excludes="**/*.gif"/>
 		</copy>

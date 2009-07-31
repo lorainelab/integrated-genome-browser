@@ -1,13 +1,25 @@
 package com.affymetrix.genometryImpl.util;
 
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.*;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.BgnParser;
+import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
+import com.affymetrix.genometryImpl.parsers.BpsParser;
+import com.affymetrix.genometryImpl.parsers.BrsParser;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.parsers.Das1FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
+import com.affymetrix.genometryImpl.parsers.GFFParser;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
+
 
 
 /**
@@ -152,7 +164,7 @@ public final class ParserController {
        }
        */
 
-    return results;
+      return results;
       }
 
   // return an annotation type.

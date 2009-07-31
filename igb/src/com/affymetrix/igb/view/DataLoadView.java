@@ -30,7 +30,6 @@ import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 public class DataLoadView extends JComponent  { 
-	
 	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
 	GeneralLoadView general_load_view;
@@ -67,6 +66,7 @@ public class DataLoadView extends JComponent  {
 
 
 class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
+	private static final String CHOOSESEQ = "Select a chromosome sequence";
 
   static boolean DEBUG_EVENTS = false;
   static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -82,6 +82,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 
   public SeqGroupView() {
 		seqtable = new JTable();
+		seqtable.setToolTipText(CHOOSESEQ);
 		seqtable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		SeqGroupTableModel mod = new SeqGroupTableModel(null);

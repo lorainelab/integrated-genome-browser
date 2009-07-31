@@ -360,7 +360,9 @@ public class SeqMapView extends JPanel
 		Adjustable yzoomer;
 
 		xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+		((JSlider)xzoomer).setToolTipText("Horizontal zoom");
 		yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+		((JSlider)yzoomer).setToolTipText("Vertical zoom");
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);

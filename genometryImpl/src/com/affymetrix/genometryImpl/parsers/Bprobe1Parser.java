@@ -81,12 +81,14 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	public String getTypePrefix() { return type_prefix; }
 
 	public List parse(InputStream istr, AnnotatedSeqGroup group,
-			boolean annotate_seq, String default_type) throws IOException {
-		return parse(istr, group, annotate_seq, default_type, false);
+			boolean annotate_seq, String default_type, 
+			Integer annot_id) throws IOException {
+		return parse(istr, group, annotate_seq, default_type, false, annot_id);
 	}
 
 	public List parse(InputStream istr, AnnotatedSeqGroup group,
-			boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
+			boolean annotate_seq, String default_type, boolean populate_id_hash,
+			Integer annot_id) throws IOException {
 		System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
 		BufferedInputStream bis;
 		Map<String,Object> tagvals = new LinkedHashMap<String,Object>();
@@ -183,6 +185,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 				container_sym.setProperty("method", annot_type);
 				container_sym.setProperty("preferred_formats", pref_list);
 				container_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+        container_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 
 				for (int i = 0; i < probeset_count; i++) {
 					int nid = dis.readInt();
@@ -306,7 +309,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			System.out.println("parsing gff file: " + gff_file);
 			GFFParser gff_parser = new GFFParser();
 			BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
-			annots = gff_parser.parse(bis, seq_group, false);
+			annots = gff_parser.parse(bis, seq_group, false, null);
 			bis.close();
 		}
 		catch (Exception ex) { ex.printStackTrace(); }

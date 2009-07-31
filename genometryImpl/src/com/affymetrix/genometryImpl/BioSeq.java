@@ -237,6 +237,33 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 
 		return container;
 	}
+	
+
+
+	/**
+	 *  Creates an empty top-level container sym that has an annot_id
+	 *  @return an instance of {@link TypeContainerAnnot}
+	 */
+	private synchronized TypeContainerAnnot addAnnotation(String type, Integer annot_id) {
+		if (type_id2sym == null) { 
+			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
+		}
+		TypeContainerAnnot container = new TypeContainerAnnot(type);
+		container.setProperty("method", type);
+	    if (annot_id != null) {
+	    	container.setProperty(container.ANNOT_ID, annot_id);      
+		}
+		SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
+		container.addSpan(span);
+		type_id2sym.put(type, container);
+		if (annots == null) {
+			annots = new ArrayList<SeqSymmetry>();
+		}
+		annots.add(container);
+
+		return container;
+	}
+		
 
 	/**
 	 *  Adds an annotation as a child of the top-level container sym
@@ -249,7 +276,16 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 		}
 		MutableSeqSymmetry container = (MutableSeqSymmetry) type_id2sym.get(type);
 		if (container == null) {
-			container = addAnnotation(type);
+			Integer annot_id = null;
+			if (sym instanceof SymWithProps) {
+				Object aid = SymWithProps.class.cast(sym).getProperty(SimpleSymWithProps.ANNOT_ID);
+				if (aid instanceof String) {
+					annot_id = new Integer(Integer.parseInt((String)aid));
+				} else if (aid instanceof Integer) {
+					annot_id = (Integer)aid;
+				}
+			}
+			container = addAnnotation(type, annot_id);
 		}
 		container.addChild(sym);
 	}

@@ -135,7 +135,7 @@ public final class BpsParser implements AnnotationWriter  {
 			AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Group");
 
 			String bin_file = args[0];
-			List syms = parse(bin_file, default_annot_type, seq_group);
+			List syms = parse(bin_file, default_annot_type, seq_group, null);
 			int symcount = syms.size();
 			SingletonGenometryModel.logInfo("total sym count: " + symcount);
 			int[] blockcount = new int[100];
@@ -164,7 +164,7 @@ public final class BpsParser implements AnnotationWriter  {
 	}
 
 
-	public static List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+	public static List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group, Integer annot_id)
 		throws IOException {
 		SingletonGenometryModel.logInfo("loading file: " + file_name);
 		List results = null;
@@ -186,7 +186,7 @@ public final class BpsParser implements AnnotationWriter  {
 			else {
 				dis = new DataInputStream(bis);
 			}
-			results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
+			results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true, annot_id);
 		}
 		finally {
 			GeneralUtils.safeClose(dis);
@@ -201,7 +201,7 @@ public final class BpsParser implements AnnotationWriter  {
 	 */
 	public static List<UcscPslSym> parse(DataInputStream dis, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-			boolean annot_query, boolean annot_target)
+			boolean annot_query, boolean annot_target, Integer annot_id)
 		throws IOException {
 
 		// make temporary seq groups to avoid null pointers later
@@ -292,6 +292,7 @@ public final class BpsParser implements AnnotationWriter  {
 						query_parent_sym.setProperty("method", annot_type);
 						query_parent_sym.setProperty("preferred_formats", pref_list);
 						query_parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+            query_parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 						queryseq.addAnnotation(query_parent_sym);
 						query2sym.put(qname, query_parent_sym);
 					}
@@ -307,6 +308,7 @@ public final class BpsParser implements AnnotationWriter  {
 						target_parent_sym.setProperty("method", annot_type);
 						target_parent_sym.setProperty("preferred_formats", pref_list);
 						target_parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+						target_parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 						targetseq.addAnnotation(target_parent_sym);
 						target2sym.put(tname, target_parent_sym);
 					}
@@ -371,7 +373,7 @@ public final class BpsParser implements AnnotationWriter  {
 			}
 			PSLParser parser = new PSLParser();
 			// don't bother annotating the sequences, just get the list of syms
-			results = parser.parse(istr, file_name, null, null, false, false);
+			results = parser.parse(istr, file_name, null, null, false, false, null);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

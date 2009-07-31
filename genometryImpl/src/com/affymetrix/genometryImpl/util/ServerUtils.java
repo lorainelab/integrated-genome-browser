@@ -10,6 +10,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -254,6 +255,75 @@ public abstract class ServerUtils {
 			}
 		}
 	}
+	
+
+
+	/**
+	 *   If current_file is directory:
+	 *       if ".seqs" suffix, then handle as graphs
+	 *       otherwise recursively call on each child files;
+	 *   if not directory, see if can parse as annotation file.
+	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
+	 */
+	public static final void loadDBAnnotsFromFile(File current_file, 
+			AnnotatedSeqGroup genome, 
+			String type_prefix, 
+			Integer annot_id,
+			Map<String,String> graph_name2file,
+			Map<String,Integer> graph_name_for_file2annot_id) {
+		String file_name = current_file.getName();
+		String file_path = current_file.getPath();
+
+
+
+		if (file_name != null && file_name.endsWith(".bar")) {
+			// String file_path = current_file.getPath();
+			// special casing so bar files are seen in types request, but not parsed in on startup
+			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
+			System.out.println("@@@ adding graph file to types: " + type_prefix + ", path: " + file_path);
+			graph_name2file.put(type_prefix, file_path);
+
+			graph_name_for_file2annot_id.put(type_prefix, annot_id);
+
+			return;
+		}
+
+
+		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
+			// for loading annotations, ignore the genome sequence data files
+			return;
+		}
+
+		// current file is not a directory, so try and recognize as annotation file
+		InputStream istr = null;
+		try {
+			istr = new BufferedInputStream(new FileInputStream(current_file));
+			System.out.println("^^^^^^^^^^^^ Loading annots of type: " + type_prefix);
+			ParserController.parse(istr, annots_map, current_file.getName(), gmodel, genome, type_prefix, false, annot_id);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+	}
+
+
+	public static final void loadDBAnnotsFromDir(String type_name, 
+			String file_path, 
+			AnnotatedSeqGroup genome, 
+			File current_file, 
+			Integer annot_id,
+			Map<String,String> graph_name2dir,
+			Map<String,Integer> graph_name_for_dir2annot_id) {
+		// each file in directory is same annotation type, but for a single seq?
+		// assuming bar files for now, each with starting with seq id?
+		//  String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
+		System.out.println("@@@ adding graph directory to types: " + type_name + ", path: " + file_path);
+		graph_name2dir.put(type_name, file_path);
+
+		graph_name_for_dir2annot_id.put(type_name, annot_id);
+	}
+
 
 	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
 			// GAH 11-2006
@@ -421,25 +491,64 @@ public abstract class ServerUtils {
 					AnnotatedSeqGroup genome,
 					Map<String, String> graph_name2file,
 					Map<String, String> graph_name2dir,
-					ArrayList<String> graph_formats) {
-		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
+					Map graph_name_file2annot_id,
+					Map graph_name_dir2annot_id,
+					ArrayList<String> graph_formats,
+					boolean genometry_load_annotations_from_db,
+					Map <Integer, ?> authorized_annot_ids) {
+		Map<String, List<String>> genome_types = getGenomeTypes(genome, genometry_load_annotations_from_db, authorized_annot_ids);
 
 		// adding in any graph files as additional types (with type id = file name)
 		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
 		//    show up in seq.getTypes(), but without actually being loaded??
 		for (String gname : graph_name2file.keySet()) {
-			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+			Integer annot_id = (Integer)graph_name_file2annot_id.get(gname);
+			
+			boolean show = true;
+			// When the annotation is loaded from the db, block access if
+			// annotation is not authorized for this user.  When annotation
+			// is loaded directly from file system, all annotations are
+			// shown.
+			if (genometry_load_annotations_from_db) {
+				show = false;
+				if (authorized_annot_ids != null) {        
+					show = authorized_annot_ids.containsKey(annot_id);
+				}
+				//System.out.println((show ? "Showing  " : "Blocking ") + " Annotation " + gname + " ID=" + annot_id);
+			}
+			
+			if (show) {
+				genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?				
+			}
 		}
 
 		for (String gname : graph_name2dir.keySet()) {
-			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+			Integer annot_id = (Integer)graph_name_dir2annot_id.get(gname);
+
+			boolean show = true;
+			// When the annotation is loaded from the db, block access if
+			// annotation is not authorized for this user.  When annotation
+			// is loaded directly from file system, all annotations are
+			// shown.
+			if (genometry_load_annotations_from_db) {
+				show = false;
+				if (authorized_annot_ids != null) {        
+					show = authorized_annot_ids.containsKey(annot_id);
+				}
+				//System.out.println((show ? "Showing  " : "Blocking ") + " Annotation " + gname + " ID=" + annot_id);
+			}
+
+			if (show) {
+				genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+			}
 		}
 
 		return genome_types;
 	}
 
 	// iterate over seqs to collect annotation types
-	private static final Map<String,List<String>> getGenomeTypes(List<BioSeq> seqList) {
+	private static final Map<String,List<String>> getGenomeTypes(AnnotatedSeqGroup genome, boolean genometry_load_annotations_from_db, Map<Integer, ?> authorized_annot_ids) {
+		List<BioSeq> seqList = genome.getSeqList();
 		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
 		for (BioSeq aseq : seqList) {
 			for (String type : aseq.getTypeList()) {
@@ -455,7 +564,23 @@ public abstract class ServerUtils {
 						flist = formats;
 					}
 				}
-				genome_types.put(type, flist);
+				Object annot_id = tannot.getProperty(SimpleSymWithProps.ANNOT_ID);
+				
+		        boolean show = true;
+		        // When the annotation is loaded from the db, block access if
+		        // annotation is not authorized for this user.  When annotation
+		        // is loaded directly from file system, all annotations are
+		        // shown.
+		        if (genometry_load_annotations_from_db) {
+		          show = false;
+		          if (authorized_annot_ids != null) {        
+						show = authorized_annot_ids.containsKey(annot_id);
+		          }
+		          //System.out.println((show ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + annot_id);
+		        }
+		        if (show) {
+					genome_types.put(type, flist);
+		        }
 			}
 		}
 		return genome_types;

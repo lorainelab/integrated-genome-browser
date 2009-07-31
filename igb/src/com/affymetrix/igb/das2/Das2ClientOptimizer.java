@@ -508,20 +508,20 @@ public final class Das2ClientOptimizer {
         } else if (content_subtype.equals("bed")) {
 			AddParsingLogMessage(request_log, content_subtype);
             BedParser parser = new BedParser();
-			feats = parser.parse(bis, gmodel, seq_group, false, type.getID(), false);
+			feats = parser.parse(bis, gmodel, seq_group, false, type.getID(), false, null);
         } else if (content_subtype.equals("bgn")) {
             AddParsingLogMessage(request_log, content_subtype);
             BgnParser parser = new BgnParser();
-            feats = parser.parse(bis, type.getID(), seq_group, -1, false);
+            feats = parser.parse(bis, type.getID(), seq_group, -1, false, null);
         } else if (content_subtype.equals("bps")) {
             AddParsingLogMessage(request_log, content_subtype);
             DataInputStream dis = new DataInputStream(bis);
-            feats = BpsParser.parse(dis, type.getID(), null, seq_group, false, false);
+            feats = BpsParser.parse(dis, type.getID(), null, seq_group, false, false, null);
         } else if (content_subtype.equals("brs")) {
             AddParsingLogMessage(request_log, content_subtype);
             BrsParser parser = new BrsParser();
             DataInputStream dis = new DataInputStream(bis);
-            feats = parser.parse(dis, type.getID(), seq_group, false);
+            feats = parser.parse(dis, type.getID(), seq_group, false, null);
         } else if (content_subtype.equals("bar")) {
             AddParsingLogMessage(request_log, content_subtype);
             feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
@@ -529,15 +529,15 @@ public final class Das2ClientOptimizer {
             AddParsingLogMessage(request_log, content_subtype);
             Bprobe1Parser bp1_reader = new Bprobe1Parser();
             // parsing probesets in bp2 format, also adding probeset ids
-            feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false);
+            feats = bp1_reader.parse(bis, seq_group, false, type.getName(), false, null);
         } else if (content_subtype.equals("ead")) {
             AddParsingLogMessage(request_log, content_subtype);
             ExonArrayDesignParser parser = new ExonArrayDesignParser();
-            feats = parser.parse(bis, seq_group, false, type.getName());
+            feats = parser.parse(bis, seq_group, false, type.getName(), null);
         } else if (content_subtype.equals("gff")) {
             AddParsingLogMessage(request_log, content_subtype);
             GFFParser parser = new GFFParser();
-            feats = parser.parse(bis, ".", seq_group, false, false);
+            feats = parser.parse(bis, ".", seq_group, false, false, null);
         } else if (content_subtype.equals("link.psl")) {
             AddParsingLogMessage(request_log, content_subtype);
             // reference to LoadFileAction.ParsePSL
@@ -546,11 +546,11 @@ public final class Das2ClientOptimizer {
             parser.enableSharedQueryTarget(true);
             // annotate _target_ (which is chromosome for consensus annots, and consensus seq for probeset annots
             // why is annotate_target parameter below set to false?
-            feats = parser.parse(bis, type.getName(), null, seq_group, null, false, false, false); // do not annotate_other (not applicable since not PSL3)
+            feats = parser.parse(bis, type.getName(), null, seq_group, null, false, false, false, null); // do not annotate_other (not applicable since not PSL3)
         } else if (content_subtype.equals("cyt")) {
             AddParsingLogMessage(request_log, content_subtype);
             CytobandParser parser = new CytobandParser();
-            feats = parser.parse(bis, seq_group, false);
+            feats = parser.parse(bis, seq_group, false, null);
         } else if (content_subtype.equals("psl")) {
             AddParsingLogMessage(request_log, content_subtype);
             // reference to LoadFileAction.ParsePSL
@@ -559,7 +559,7 @@ public final class Das2ClientOptimizer {
             // annotate target sequence
 
             DataInputStream dis = new DataInputStream(bis);
-            parser.parse(dis, type.getName(), null, seq_group, null, false, true, false);
+            parser.parse(dis, type.getName(), null, seq_group, null, false, true, false, null);
             // Note that here we specifically ignore the output of parser.parse, because it's already been added to the seq_group.
             // Otherwise we double-count and add multiple tiers.
         } else {

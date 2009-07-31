@@ -117,7 +117,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 
 	public List<SeqSymmetry> parse(InputStream istr,  GenometryModel gmodel,
 			AnnotatedSeqGroup group, boolean annot_seq,
-			String stream_name, boolean create_container)
+			String stream_name, boolean create_container, Integer annot_id)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("BED parser called, annotate seq: " + annotate_seq +
@@ -150,13 +150,13 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 		}
 		DataInputStream dis = new DataInputStream(bis);
 		addParserListener(this);
-		parseWithEvents(dis, gmodel, group, default_type);
+		parseWithEvents(dis, gmodel, group, default_type, annot_id);
 		removeParserListener(this);
 		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 
-	public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
+	public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type, Integer annot_id)
 		throws IOException  {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -323,7 +323,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 
 					// if there are any ParserListeners registered, notify them of parse
 					for (ParserListener pl : parse_listeners) {
-						pl.annotationParsed(bedline_sym);
+						pl.annotationParsed(bedline_sym, annot_id);
 					}
 					if (annot_name != null) {
 						seq_group.addToIndex(annot_name, bedline_sym);
@@ -371,7 +371,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	 * for BedParser this is intended only for internal callbacks, and thus should
 	 * never be called from outside of BedParser.
 	 */
-	public void annotationParsed(SeqSymmetry bedline_sym) {
+	public void annotationParsed(SeqSymmetry bedline_sym, Integer annot_id) {
 		symlist.add(bedline_sym);
 		if (annotate_seq) {
 			MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
@@ -390,6 +390,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 					parent_sym.setProperty("method", type);
 					parent_sym.setProperty("preferred_formats", pref_list);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
 					parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+          parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 					seq.addAnnotation(parent_sym);
 					type2csym.put(type, parent_sym);
 				}

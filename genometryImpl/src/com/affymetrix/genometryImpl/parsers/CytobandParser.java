@@ -58,9 +58,9 @@ public final class CytobandParser implements AnnotationWriter  {
 	public CytobandParser() {
 	}
 
-	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
+	public void parse(InputStream dis, AnnotatedSeqGroup seq_group, Integer annot_id)
 		throws IOException  {
-		parse(dis, seq_group, true);
+		parse(dis, seq_group, true, annot_id);
 	}
 
 	/**
@@ -68,7 +68,7 @@ public final class CytobandParser implements AnnotationWriter  {
 	 *    to the seq (and if seq is a SmartAnnotBioSeq, it will in turn create a TypeContainerSym as parent of the
 	 *    single SymWithProps)
 	 */
-	public List<SeqSymmetry> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+	public List<SeqSymmetry> parse(InputStream dis, AnnotatedSeqGroup seq_group, boolean annotate_seq, Integer annot_id)
 		throws IOException  {
 
 		int band_alternator = 1; // toggles dark/light when band color is missing
@@ -131,6 +131,7 @@ public final class CytobandParser implements AnnotationWriter  {
 						parent_sym.setProperty("method", CYTOBAND_TIER_NAME);
 						parent_sym.setProperty("preferred_formats", pref_list);
 						parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+            parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 						seq2csym.put(seq, parent_sym);
 						seq.addAnnotation(parent_sym);
 					}

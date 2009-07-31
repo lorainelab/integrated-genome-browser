@@ -347,7 +347,7 @@ public final class LoadFileAction {
 
 		if (lcname.endsWith(".cyt")) {
 			CytobandParser parser = new CytobandParser();
-			parser.parse(str, selected_group);
+			parser.parse(str, selected_group, null);
 			return input_seq;
 		} else if (lcname.endsWith(".cnt")) {
 			CntParser parser = new CntParser();
@@ -396,23 +396,23 @@ public final class LoadFileAction {
 		} else if (lcname.endsWith(".bps")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bps"));
 			DataInputStream dis = new DataInputStream(str);
-			BpsParser.parse(dis, annot_type, null, selected_group, false, true);
+			BpsParser.parse(dis, annot_type, null, selected_group, false, true, null);
 			return input_seq;
 		} else if (lcname.endsWith(".bed")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bed"));
 			BedParser parser = new BedParser();
 			// really need to switch create_container (last argument) to true soon!
-			parser.parse(str, gmodel, selected_group, true, annot_type, false);
+			parser.parse(str, gmodel, selected_group, true, annot_type, false, null);
 			return input_seq;
 		} else if (lcname.endsWith(".bgn")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 			BgnParser parser = new BgnParser();
-			parser.parse(str, annot_type, selected_group, -1, true);
+			parser.parse(str, annot_type, selected_group, -1, true, null);
 			return input_seq;
 		} else if (lcname.endsWith(".brs")) {
 			BrsParser parser = new BrsParser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group);
+			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group, null);
 			return input_seq;
 		} else if (lcname.endsWith(".bsnp")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));
@@ -428,12 +428,12 @@ public final class LoadFileAction {
 		} else if (lcname.endsWith(".bp1") || lcname.endsWith(".bp2")) {
 			Bprobe1Parser parser = new Bprobe1Parser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bp"));
-			parser.parse(str, selected_group, true, annot_type, true);
+			parser.parse(str, selected_group, true, annot_type, true, null);
 			return input_seq;
 		} else if (lcname.endsWith(".ead")) {
 			ExonArrayDesignParser parser = new ExonArrayDesignParser();
 			String default_type = stream_name.substring(0, stream_name.indexOf(".ead"));
-			parser.parse(str, selected_group, true, default_type);
+			parser.parse(str, selected_group, true, default_type, null);
 			return input_seq;
 		} else if (lcname.endsWith(".gff") || lcname.endsWith(".gtf")) {
 			// assume it's GFF1, GFF2, GTF, or GFF3 format
@@ -447,7 +447,7 @@ public final class LoadFileAction {
 			if (index > 0) {
 				annot_type = stream_name.substring(0, index);
 			}
-			parser.parse(str, annot_type, selected_group, false);
+			parser.parse(str, annot_type, selected_group, false, null);
 			return null;
 		} else if (lcname.endsWith(".gff3")) {
 			/* Force parcing as GFF3 */
@@ -518,11 +518,11 @@ public final class LoadFileAction {
 		boolean annotate_other = psl_option == 2;
 
 		if (annotate_query) {
-			parser.parse(str, stream_name, selected_group, null, null, annotate_query, annotate_target, annotate_other);
+			parser.parse(str, stream_name, selected_group, null, null, annotate_query, annotate_target, annotate_other, null);
 		} else if (annotate_target) {
-			parser.parse(str, stream_name, null, selected_group, null, annotate_query, annotate_target, annotate_other);
+			parser.parse(str, stream_name, null, selected_group, null, annotate_query, annotate_target, annotate_other, null);
 		} else if (annotate_other) {
-			parser.parse(str, stream_name, null, null, selected_group, annotate_query, annotate_target, annotate_other);
+			parser.parse(str, stream_name, null, null, selected_group, annotate_query, annotate_target, annotate_other, null);
 		}
 	}
 

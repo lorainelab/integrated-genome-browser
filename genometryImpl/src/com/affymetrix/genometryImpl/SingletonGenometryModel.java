@@ -28,6 +28,11 @@ public final class SingletonGenometryModel extends GenometryModel {
 	public static SingletonGenometryModel getGenometryModel() {
 		return smodel;
 	}
+	
+	public static SingletonGenometryModel refreshGenometryModel() {
+		smodel = new SingletonGenometryModel();
+		return smodel;
+	}
 
 	static Logger default_logger = Logger.getLogger(SingletonGenometryModel.class.getName());
 	static Logger logger = default_logger;

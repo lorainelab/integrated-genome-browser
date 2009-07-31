@@ -16,5 +16,5 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometry.SeqSymmetry;
 
 public interface ParserListener {
-	public void annotationParsed(SeqSymmetry sym);
+	public void annotationParsed(SeqSymmetry sym, Integer annot_id);
 }

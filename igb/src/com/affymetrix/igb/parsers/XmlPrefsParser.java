@@ -263,7 +263,9 @@ public final class XmlPrefsParser {
 					} else if (name.equalsIgnoreCase("das2server") || name.equalsIgnoreCase("das2_server")) {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
-						ServerList.addServer(ServerType.DAS2, server_name, server_url);
+						String login = el.getAttribute("login");
+						String password = el.getAttribute("password");
+						ServerList.addServer(ServerType.DAS2, server_name, server_url, login, password);
 					} else if (name.equalsIgnoreCase("server")) {
 						// new generic server format
 						String server_type = el.getAttribute("type").toLowerCase();

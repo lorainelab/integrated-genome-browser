@@ -76,7 +76,7 @@ public final class BgnParser implements AnnotationWriter  {
 		List result;
 		try {
 			fis = new FileInputStream(fil);
-			result = parse(fis, annot_type, seq_group, blength, true);
+			result = parse(fis, annot_type, seq_group, blength, true, null);
 		} finally {
 			GeneralUtils.safeClose(fis);
 		}
@@ -90,7 +90,7 @@ public final class BgnParser implements AnnotationWriter  {
 	 *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
 	 */
 	public List parse(InputStream istr, String annot_type,
-			AnnotatedSeqGroup seq_group, long blength, boolean annotate_seq) throws IOException {
+			AnnotatedSeqGroup seq_group, long blength, boolean annotate_seq, Integer annot_id) throws IOException {
 
 		if (seq_group == null) {
 			throw new IllegalArgumentException("BgnParser called with seq_group null.");
@@ -196,6 +196,7 @@ public final class BgnParser implements AnnotationWriter  {
 							//              System.out.println("method: " + annot_type);
 							parent_sym.setProperty("preferred_formats", pref_list);
 							parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+              parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 							annots.add(parent_sym);
 							chrom2sym.put(chrom_name, parent_sym);
 						}

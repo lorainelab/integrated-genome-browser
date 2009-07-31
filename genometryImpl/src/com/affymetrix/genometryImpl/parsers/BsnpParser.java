@@ -159,7 +159,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		try {
 			GFFParser gff_parser = new GFFParser();
-			gff_parser.parse(istr, seq_group, true);
+			gff_parser.parse(istr, seq_group, true, null);
 			int problem_count = 0;
 			for (BioSeq aseq : seq_group.getSeqList()) {
 				int acount = aseq.getAnnotationCount();

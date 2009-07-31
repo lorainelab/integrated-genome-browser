@@ -80,7 +80,7 @@ public final class BrsParser implements AnnotationWriter  {
 	int max_genes = 50000;  // guesstimate...
 	ArrayList chromosomes = new ArrayList();
 
-	public List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+	public List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group, Integer annot_id)
 		throws IOException {
 		System.out.println("loading file: " + file_name);
 		List<SeqSymmetry> result = null;
@@ -89,28 +89,28 @@ public final class BrsParser implements AnnotationWriter  {
 			File fil = new File(file_name);
 			long blength = fil.length();
 			fis = new FileInputStream(fil);
-			result = parse(fis, annot_type, seq_group, true, blength);
+			result = parse(fis, annot_type, seq_group, true, blength, annot_id);
 		} finally {
 			if (fis != null) {try { fis.close(); } catch (Exception e) {}}
 		}
 		return result;
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group)
+	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, Integer annot_id)
 		throws IOException {
-		return parse(istr, annot_type, seq_group, true);
+		return parse(istr, annot_type, seq_group, true, annot_id);
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq)
+	public List<SeqSymmetry> parse(InputStream istr, String annot_type, AnnotatedSeqGroup seq_group, boolean annotate_seq, Integer annot_id)
 		throws IOException {
-		return parse(istr, annot_type, seq_group, annotate_seq, -1);
+		return parse(istr, annot_type, seq_group, annotate_seq, -1, annot_id);
 	}
 
 	/**
 	 *  @param blength  buffer length, if unknown use -1;
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
-			AnnotatedSeqGroup seq_group, boolean annotate_seq, long blength)
+			AnnotatedSeqGroup seq_group, boolean annotate_seq, long blength, Integer annot_id)
 		throws IOException {
 		Timer tim = new Timer();
 		tim.start();
@@ -201,6 +201,7 @@ public final class BrsParser implements AnnotationWriter  {
 							parent_sym.setProperty("method", annot_type);
 							parent_sym.setProperty("preferred_formats", pref_list);
 							parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+              parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 							annots.add(parent_sym);
 							chrom2sym.put(chrom_name, parent_sym);
 						}

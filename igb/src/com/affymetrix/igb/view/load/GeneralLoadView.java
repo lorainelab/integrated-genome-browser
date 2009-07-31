@@ -130,19 +130,21 @@ public final class GeneralLoadView extends JComponent
 		buttonPanel.setLayout(new GridLayout(1, 3));
 
 		all_residuesB = new JButton("Load All Sequence");
+		all_residuesB.setToolTipText("Load nucleotide sequence");
 		all_residuesB.setMaximumSize(all_residuesB.getPreferredSize());
 		all_residuesB.setEnabled(false);
 		all_residuesB.addActionListener(this);
 		buttonPanel.add(all_residuesB);
 		partial_residuesB = new JButton("Load Sequence in View");
+		partial_residuesB.setToolTipText("Load partial nucleotide sequence");
 		partial_residuesB.setMaximumSize(partial_residuesB.getPreferredSize());
 		partial_residuesB.setEnabled(false);
-		//if (IGB.ALLOW_PARTIAL_SEQ_LOADING) {
 		
 		partial_residuesB.addActionListener(this);
 		buttonPanel.add(partial_residuesB);
 		//}
 		refresh_dataB = new JButton("Refresh Data");
+		refresh_dataB.setToolTipText("Load data sets currently in view");
 		refresh_dataB.setMaximumSize(refresh_dataB.getPreferredSize());
 		refresh_dataB.setEnabled(false);
 		refresh_dataB.addActionListener(this);

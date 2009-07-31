@@ -40,7 +40,7 @@
                             <entry key="Sliced View (With Labels)" value=""/>
                             <entry key="Exit" value="ctrl Q"/>
                             <entry key="Web Links Manager / Configure Web Links" value=""/>
-                            <entry key="Zoom to selected" value="alt Z"/>
+                            <entry key="Zoom to selected" value="ctrl Z"/>
                             <entry key="Adjust edge match fuzziness" value=""/>
                             <entry key="Unclamp" value=""/>
                             <entry key="Open Tabbed Panes in New Window" value="ctrl T"/>

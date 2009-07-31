@@ -36,8 +36,8 @@ public final class LoadUtils {
 	};
 
 	public static enum ServerType {
-		DAS ("DAS"),
 		DAS2 ("DAS2"),
+		DAS ("DAS"),
 		QuickLoad ("QuickLoad"),
 		Unknown ("Unknown");
 

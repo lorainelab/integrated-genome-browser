@@ -1,8 +1,7 @@
 package com.affymetrix.genometryImpl.comparator;
 
-import java.util.*;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import java.util.Comparator;
 
 public final class GenomeVersionDateComparator implements Comparator<AnnotatedSeqGroup> {
 	private static Comparator<String> stringComp = new StringVersionDateComparator();

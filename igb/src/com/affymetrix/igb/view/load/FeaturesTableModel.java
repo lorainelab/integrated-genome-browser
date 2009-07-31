@@ -6,6 +6,8 @@ import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	//private static final int LOAD_STATUS_COLUMN = 4;
 	final List<GenericFeature> features;
 	private final GeneralLoadView glv;
+	private featureTableComparator visibleFeatureComp = new featureTableComparator();
 
 	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, MutableAnnotatedBioSeq cur_seq) {
 		this.glv = glv;
@@ -50,7 +53,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	 * @param features
 	 * @return
 	 */
-	private static List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
+	private List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
 		if (features == null) {
 			return null;
 		}
@@ -60,8 +63,28 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 				visibleFeatures.add(gFeature);
 			}
 		}
+
+		Collections.sort(visibleFeatures,visibleFeatureComp);
+
+
+		// Also sort these features so the features to be loaded are at the top.
+
 		return visibleFeatures;
 	}
+
+	private final class featureTableComparator implements Comparator<GenericFeature> {
+	public int compare(GenericFeature feature1, GenericFeature feature2) {
+		if (feature1.loadStrategy != feature2.loadStrategy) {
+			return (feature1.loadStrategy.compareTo(feature2.loadStrategy));
+		}
+		if (feature1.featureName.compareTo(feature2.featureName) != 0) {
+			return feature1.featureName.compareTo(feature2.featureName);
+		}
+		return feature1.gVersion.gServer.serverType.compareTo(
+					feature2.gVersion.gServer.serverType);
+	}
+}
+
 
 
 	public GenericFeature getFeature(int row) {

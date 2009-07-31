@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
 
@@ -587,7 +588,7 @@ public final class GFFParser implements AnnotationWriter  {
 					}
 				}
 				psym.removeChildren();
-				Comparator<SeqSymmetry> comp = new SeqSymStartComparator(sortseq, ascending);
+				Comparator<SeqSymmetry> comp = new SeqSymStartComparator((BioSeq)sortseq, ascending);
 				Collections.sort(child_list, comp);
 				for (SeqSymmetry child : child_list) {
 					psym.addChild(child);

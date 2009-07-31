@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -553,6 +554,8 @@ public final class GeneralLoadUtils {
 				serverList.add(gFeature.gVersion.gServer);
 			}
 		}
+		// make sure these servers always have the same order
+		Collections.sort(serverList);
 		return serverList;
 	}
 

@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -7,8 +8,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
+import javax.swing.ImageIcon;
+import net.sf.image4j.codec.ico.ICODecoder;
+import net.sf.image4j.codec.ico.ICOImage;
 
 public final class GeneralUtils {
 
@@ -97,4 +103,67 @@ public final class GeneralUtils {
 		return istr;
 	}
 
+
+	/**
+	 * Get a favicon from the URL.
+	 * @param iconString
+	 * @return
+	 */
+	public static ImageIcon determineFriendlyIcon(String iconString) {
+		// Step 1. getting IconURL
+		URL iconURL = null;
+		try {
+			iconURL = new URL(iconString);
+		} catch (Exception ex) {
+			// Ignore an exception here, since this is only for making a pretty UI.
+		}
+		if (iconURL == null) {
+			return null;
+		}
+
+		// Step 2. loading the icon and find a proper icon
+		InputStream iconStream = null;
+		BufferedImage icon = null;
+		try {
+			iconStream = iconURL.openStream();
+			if (iconStream == null) {
+				return null;
+			}
+			List<ICOImage> icoImages = ICODecoder.readExt(iconStream);
+			int maxColorDepth = 0;
+			for (ICOImage icoImage : icoImages) {
+				int colorDepth = icoImage.getColourDepth();
+				int width = icoImage.getWidth();
+				if (width == 16 && maxColorDepth < colorDepth) {
+					icon = icoImage.getImage();
+					maxColorDepth = colorDepth;
+				}
+			}
+			if (icon == null && !icoImages.isEmpty()) {
+				icon = icoImages.get(0).getImage();
+			}
+
+		} catch (IOException ex) {
+			return null;
+		} finally {
+			if (iconStream != null) {
+				try {
+					iconStream.close();
+				} catch (IOException ex) {
+					// Ignore an exception here, since this is only for making a pretty UI.
+				}
+			}
+		}
+
+		// step 3. create the imageIcon instance
+		ImageIcon friendlyIcon = null;
+		try {
+			if (icon != null) {
+				friendlyIcon = new ImageIcon(icon);
+			}
+		} catch (Exception ex) {
+			// Ignore an exception here, since this is only for making a pretty UI.
+		}
+		return friendlyIcon;
+	}
 }

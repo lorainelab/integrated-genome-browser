@@ -77,7 +77,7 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 
 	public void initForSearching(MutableAnnotatedBioSeq seq) {
 		search_seq = seq;
-		comp = new SeqSymMinComparator(search_seq, true);
+		comp = new SeqSymMinComparator((BioSeq)search_seq, true);
 
 		// make sure child symmetries are sorted by ascending min along search_seq
 		// to avoid unecessary sort, first go through child list and see if it's

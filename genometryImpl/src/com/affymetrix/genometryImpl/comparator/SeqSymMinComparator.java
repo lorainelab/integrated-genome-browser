@@ -1,20 +1,9 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genometryImpl.comparator;
 
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.util.Comparator;
-import com.affymetrix.genometry.*;
 
 /**
  *  Sorts SeqSymmetries based first on {@link SeqSpan#getMin()},
@@ -24,18 +13,18 @@ import com.affymetrix.genometry.*;
  */
 public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
 	boolean ascending;
-	MutableAnnotatedBioSeq seq;
+	BioSeq seq;
 
 	/** Constructor.
 	 *  @param s  sequence to base the sorting on
 	 *  @param b  true to sort ascending, false for descending
 	 */
-	public SeqSymMinComparator(MutableAnnotatedBioSeq s, boolean b) {
+	public SeqSymMinComparator(BioSeq s, boolean b) {
 		this.seq = s;
 		this.ascending = b;
 	}
 
-	public void reset(MutableAnnotatedBioSeq s, boolean b) {
+	public void reset(BioSeq s, boolean b) {
 		this.seq = s;
 		this.ascending = b;
 	}
@@ -46,23 +35,14 @@ public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
 		final int min1 = span1.getMin();
 		final int min2 = span2.getMin();
 		if (ascending) {
-			if (min1 < min2) { return -1; }
-			else if (min1 > min2) { return 1; }
-			final int max1 = span1.getMax();
-			final int max2 = span2.getMax();
-			if (max1 < max2) { return -1; }
-			else if (max1 > max2) { return 1; }
-			else { return 0; }
+			if (min1 != min2) {
+				return ((Integer) min1).compareTo(min2);
+			}
+			return ((Integer) span1.getMax()).compareTo(span2.getMax());
 		}
-		else {
-			if (min1 > min2) { return -1; }
-			else if (min1 < min2) { return 1; }
-			final int max1 = span1.getMax();
-			final int max2 = span2.getMax();
-			if (max1 > max2) { return -1; }
-			else if (max1 < max2) { return 1; }
-			else { return 0; }
+		if (min2 != min1) {
+			return ((Integer) min2).compareTo(min1);
 		}
+		return ((Integer) span2.getMax()).compareTo(span1.getMax());
 	}
-
 }

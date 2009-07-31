@@ -6,8 +6,6 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *  Trying to make a central repository for parsers.
@@ -131,21 +129,8 @@ public final class ParserController {
 			GeneralUtils.safeClose(str);
 		}
 
-		// Now, enter the new SeqSymmetrys into the global SeqSymmetry
-		// index, to make it easier to search for them later on:
-		/*
-		   if (results != null) {
-		   Iterator iterator = results.iterator();
-		   SeqSymmetry nextSeqSym = null;
-		   while (iterator.hasNext()) {
-		   nextSeqSym = (SeqSymmetry) iterator.next();
-		   ParserController.globalSeqSymmetryIndex.registerSeqSymmetry(nextSeqSym);
-		   }
-		   }
-		   */
-
 		return results;
-			}
+	}
 
 	// return an annotation type.
 	// This is either:
@@ -169,11 +154,5 @@ public final class ParserController {
 
 		// Strip off the extension.
 		return stream_name.substring(0, stream_name.lastIndexOf(extension));
-			}
-	/**
-	 * finds all SeqSymmetry objects having a particular Type and ID.
-	 */
-	//  public static SeqSymmetry[] findMatchingSeqSyms(String type, String ID) {
-	//    return ParserController.globalSeqSymmetryIndex.getAllSeqSymsByTypeAndID(type, ID);
-	//  }
+	}
 }

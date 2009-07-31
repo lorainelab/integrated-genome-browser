@@ -13,7 +13,10 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
+import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import java.io.BufferedInputStream;
@@ -21,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -149,10 +153,6 @@ public abstract class ServerUtils {
 		}
 	}
 
-	private static final void loadAnnotsFromStream(InputStream istr, String stream_name, AnnotatedSeqGroup genome) {
-		ParserController.parse(istr, annots_map, stream_name, gmodel, genome);
-	}
-
 
 	/**
 	 *   If current_file is directory:
@@ -201,19 +201,77 @@ public abstract class ServerUtils {
 			// for loading annotations, ignore the genome sequence data files
 			return;
 		}
-
+		
 		// current file is not a directory, so try and recognize as annotation file
+
+		List results = loadAnnotFile(current_file, type_name, genome);
+		//optimizeAndIndex(current_file, type_name, genome, results);
+	}
+
+
+	private static void optimizeAndIndex(File file, String typeName, AnnotatedSeqGroup genome, List results) {
+		if (!typeName.endsWith(".psl") ||
+				typeName.endsWith("link.psl") ||
+				!typeName.endsWith(".bps")) {
+			// only optimize PSL (but not link.psl) and BPS files
+			return;
+		}
+
+		if (isOptimizedDir(file, genome)) {
+			System.out.println(typeName + " already optimized, skipping.");
+			return;
+		}
+
+		BpsParser bps = new BpsParser();
+		UcscPslComparator comp = new UcscPslComparator();
+		
+		// Split by chromosome, and write out files.
+		for (BioSeq seq : genome.getSeqList()) {
+			String fileName = "";
+			List <UcscPslSym> result =
+					bps.getSortedAnnotationsForChrom(results, seq, comp);
+			int [] min = new int[result.size()];
+			int [] max = new int[result.size()];
+			long [] filePos = new long[result.size() + 1];
+			FileOutputStream fos;
+			try {
+				fos = new FileOutputStream(fileName);
+				bps.writeIndexedAnnotations(result, fos, min, max, filePos);
+			} catch (Exception ex) {
+				// TODO: will need to reset the .optimized directory
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
+			}
+
+			// TODO: need to create class container for chr,min,max,filePos,
+			// and then add those to a hash at the genome level.
+		}
+
+		
+	}
+
+	private static boolean isOptimizedDir(File file, AnnotatedSeqGroup genome) {
+		String optimizedDirectory = ".optimized";
+		// Make sure the appropriate .optimized/species/version/chr directory exists.
+		// If not, create it.
+		// If it does exist, and its timestamp is newer than this file, then we can skip.
+		long lastMod = file.lastModified();
+		String dirName = optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID();
+		return false;
+	}
+
+	private static List loadAnnotFile(File current_file, String type_name, AnnotatedSeqGroup genome) {
 		InputStream istr = null;
+		List results = null;
 		try {
 			istr = new BufferedInputStream(new FileInputStream(current_file));
-			loadAnnotsFromStream(istr, type_name, genome);
+			results = ParserController.parse(istr, annots_map, type_name, gmodel, genome);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(istr);
 		}
+		return results;
 	}
-
 
 
 	public static final void loadAnnotsFromDir(
@@ -460,5 +518,4 @@ public abstract class ServerUtils {
 		}
 		return genome_types;
 	}
-
 }

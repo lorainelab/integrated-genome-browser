@@ -252,8 +252,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static String synonym_file;
 	private static String org_order_filename;
 
-	private static String optimizedDirectory = ".optimized";
-
 	@Override
 	public void init() throws ServletException {
 		try {

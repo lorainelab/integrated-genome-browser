@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
@@ -99,15 +100,9 @@ public class ServerUtilsTest {
 			tempResult.add((UcscPslSym)res);
 		}
 
-		Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
-		Collections.sort(tempResult,USCCCompare);
-		/*System.out.println("Old:results size: " + tempResult.size());
-			for (int i=0;i<tempResult.size();i++) {
-				if (i<3 || i > (tempResult.size() - 3)) {
-					UcscPslSym sym = tempResult.get(i);
-					System.out.println("i, " + i + " sym: " + sym.getID() + " min:" + sym.getTargetMin() + " max:" + sym.getTargetMax());
-				}
-			}*/
+		Comparator<UcscPslSym> UCSCCompare = new UcscPslComparator();
+		Collections.sort(tempResult,UCSCCompare);
+		
 		assertEquals(384,tempResult.size());
 		assertEquals(136731, tempResult.get(0).getTargetMin());
 		assertEquals(137967, tempResult.get(0).getTargetMax());
@@ -139,10 +134,8 @@ public class ServerUtilsTest {
 			BioSeq seq = group.getSeq("chr1");
 
 			BpsParser instance = new BpsParser();
-			Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
 			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
-
-			//System.out.println("sortedSyms size:" + sortedSyms.size());
 
 			int[] min = new int[sortedSyms.size()];
 			int[] max = new int[sortedSyms.size()];
@@ -188,29 +181,12 @@ public class ServerUtilsTest {
 
 			List <UcscPslSym> result = BpsParser.parse(dis, "BPS", (AnnotatedSeqGroup) null, group, false, true);
 
-			/*System.out.println("New: results size: " + results.size());
-			for (int i=0;i<results.size();i++) {
-				if (i<3 || i > (results.size() - 3)) {
-					UcscPslSym sym = results.get(i);
-					System.out.println("i, " + i + " sym: " + sym.getID() + " min:" + sym.getTargetMin() + " max:" + sym.getTargetMax());
-				}
-			}*/
 			assertEquals(384, result.size());
 			assertEquals(136731, result.get(0).getTargetMin());
 			assertEquals(137967, result.get(0).getTargetMax());
 		} catch (Exception ex) {
 			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();
-		}
-	}
-
-	
-	private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
-		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
-			int comp = ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
-			return comp != 0 ?
-				comp :
-				((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
 		}
 	}
 }

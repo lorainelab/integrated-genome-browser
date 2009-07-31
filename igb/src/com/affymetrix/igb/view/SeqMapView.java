@@ -241,7 +241,7 @@ public class SeqMapView extends JPanel
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
-	JButton refreshB = new JButton("Refresh Data");
+	//JButton refreshB = new JButton("Refresh Data");
 	SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static Font axisFont = new Font("Courier", Font.BOLD, 12);
@@ -345,6 +345,7 @@ public class SeqMapView extends JPanel
 		seqmap.setMapColor(Color.BLACK);
 
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
+
 
 		action_listener = new SeqMapViewActionListener(this);
 		mouse_listener = new SeqMapViewMouseListener(this);

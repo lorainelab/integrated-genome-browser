@@ -9,6 +9,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -128,7 +129,7 @@ public class BpsParserTest {
 		}
 
 		BpsParser instance = new BpsParser();
-		Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+		Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
 		List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(pslSyms, seq, USCCCompare);
 
 		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
@@ -159,7 +160,7 @@ public class BpsParserTest {
 			BioSeq seq = group.getSeq("chr1");
 			
 			BpsParser instance = new BpsParser();
-			Comparator<UcscPslSym> USCCCompare = new UcscPslSymStartComparator();
+			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
 			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
 
 			assertEquals(15,sortedSyms.size());
@@ -202,16 +203,7 @@ public class BpsParserTest {
 		//System.out.println("position: " + minPos);
 	}
 	
-	
 
-	private static final class UcscPslSymStartComparator implements Comparator<UcscPslSym> {
-		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
-			int comp = ((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
-			return comp != 0 ?
-				comp :
-				((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
-		}
-	}
 
 	/**
 	 * Test of getMimeType method.

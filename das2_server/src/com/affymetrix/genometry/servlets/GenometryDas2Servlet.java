@@ -252,6 +252,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static String synonym_file;
 	private static String org_order_filename;
 
+	private static String optimizedDirectory = ".optimized";
+
 	@Override
 	public void init() throws ServletException {
 		try {
@@ -260,7 +262,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		//attempt to load fields from System.properties or file
-		if (loadAndSetFields() == false) {
+		if (!loadAndSetFields()) {
 			throw new ServletException("FAILED to init() GenometryDas2Servlet, aborting!");
 		}
 
@@ -323,16 +325,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		if (genometry_server_dir == null || maintainer_email == null || xml_base == null) {
 			//look for file
 			File p = new File("genometryDas2ServletParameters.txt");
-			if (p.exists() == false) {
+			if (!p.exists()) {
 				System.out.println("\tLooking for but couldn't find " + p);
 				File dir = new File(System.getProperty("user.dir"));
 				p = new File(dir, "genometryDas2ServletParameters.txt");
 				//look for it in the users home
-				if (p.exists() == false) {
+				if (!p.exists()) {
 					System.out.println("\tLooking for but couldn't find " + p);
 					dir = new File(System.getProperty("user.home"));
 					p = new File(dir, "genometryDas2ServletParameters.txt");
-					if (p.exists() == false) {
+					if (!p.exists()) {
 						System.out.println("\tLooking for but couldn't find " + p);
 						System.out.println("\tERROR: Failed to load fields from " +
 								"System.properties or from the 'genometryDas2ServletParameters.txt' file.");
@@ -381,14 +383,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void initFormats(Map<String, Class> output_registry, ArrayList<String> graph_formats) {
-		// Alternatives: (for now trying option B)
-		//   A. hashing to AnnotationWriter object:
-		//        output_registry.put("bps", new BpsParser());
-		//        output_registry.put("psl", new PSLParser())
-		//   B. hashing to AnnotationWriter Class object rather than instance of a writer object:
 		output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
 		output_registry.put("bps", BpsParser.class);
-		//      id2mime.put("bps", "binary/
 		output_registry.put("psl", PSLParser.class);
 		output_registry.put("dasgff", Das1FeatureSaxParser.class);
 		output_registry.put("dasxml", Das1FeatureSaxParser.class);
@@ -396,9 +392,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		output_registry.put("simplebed", SimpleBedParser.class);
 		output_registry.put("bgn", BgnParser.class);
 		output_registry.put("brs", BrsParser.class);
-		// GFFParser.
 		output_registry.put("gff", GFFParser.class);
-		//      output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
 		output_registry.put("das2feature", Das2FeatureSaxParser.class);
 		output_registry.put("das2xml", Das2FeatureSaxParser.class);
 		output_registry.put("bar", BarParser.class);
@@ -904,9 +898,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		List<String> sorted_types_list = new ArrayList<String>(types_hash.keySet());
 		Collections.sort(sorted_types_list);
-		Iterator types_iter = sorted_types_list.iterator();
-		while (types_iter.hasNext()) {
-			String feat_type = (String) types_iter.next();
+		for (String feat_type : sorted_types_list) {
 			//check if authorizing particular types
 			if (dasAuthorization.isAuthorizing()) {
 				boolean showType = dasAuthorization.showResource(userAuthorizedResources, genome_id, feat_type);
@@ -927,8 +919,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + title + "\" >");
 			if ((formats != null) && (!formats.isEmpty())) {
-				for (int k = 0; k < formats.size(); k++) {
-					String format = formats.get(k);
+				for (String format : formats) {
 					pw.println("       <FORMAT name=\"" + format + "\" />");
 				}
 			}
@@ -1259,20 +1250,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	private static final String DetermineFilePath(Map<String, String> graph_name2dir, Map<String, String> graph_name2file, String graph_name, String seqid) {
 		// for now using graph_name as graph type
-		boolean use_graph_dir = false;
 		String file_path = graph_name2dir.get(graph_name);
 		if (file_path != null) {
-			use_graph_dir = true;
-		}
-		if (file_path == null) {
-			file_path = graph_name2file.get(graph_name);
-		}
-		if (file_path == null) {
-			file_path = graph_name;
-		}
-		if (use_graph_dir) {
 			file_path += "/" + seqid + ".bar";
+		} else {
+			file_path = graph_name2file.get(graph_name);
+			if (file_path == null) {
+				file_path = graph_name;
+			}
 		}
+
 		if (file_path.startsWith("file:")) {
 			// if file_path is URI string, strip off "file:" prefix
 			if (WINDOWS_OS_TEST) {

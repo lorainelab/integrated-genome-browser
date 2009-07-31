@@ -213,15 +213,6 @@ public class BpsParserTest {
 		}
 	}
 
-	private static final class UcscPslSymEndComparator implements Comparator<UcscPslSym> {
-		public int compare(UcscPslSym sym1, UcscPslSym sym2) {
-			int comp = ((Integer)sym1.getTargetMax()).compareTo(sym2.getTargetMax());
-			return comp != 0 ?
-				comp :
-				((Integer)sym1.getTargetMin()).compareTo(sym2.getTargetMin());
-		}
-	}
-
 	/**
 	 * Test of getMimeType method.
 	 */

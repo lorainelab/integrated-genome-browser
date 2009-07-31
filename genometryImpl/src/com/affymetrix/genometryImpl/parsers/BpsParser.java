@@ -29,14 +29,10 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class BpsParser implements AnnotationWriter  {
-
+	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bps");
@@ -449,31 +445,28 @@ public final class BpsParser implements AnnotationWriter  {
 	 * @param min -- int array of TargetMins in annotation list.
 	 * @param max -- int array of TargetMaxes in annotation list.
 	 * @param fileIndices -- long array of file pointers in annotation list.
+	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
 	 * @return -- success or failure
 	 * @throws IOException
 	 */
 	public boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
 			int min[], int max[], long[] fileIndices) throws IOException {
-		//if (DEBUG){
+		if (DEBUG){
 			System.out.println("in BpsParser.writeIndexedAnnotations()");
-		//}
+		}
 		DataOutputStream dos = null;
 		try {
 			dos = new DataOutputStream(fos);
 			FileChannel fChannel = fos.getChannel();
 			int index = 0;
+			fileIndices[index] = 0;
 			
 			for (UcscPslSym sym : syms) {
 				min[index] = sym.getTargetMin();
 				max[index] = sym.getTargetMax();
-				fileIndices[index] = fChannel.position();
-				//if (DEBUG){
-				if (fileIndices[index] > 52174 && fileIndices[index] < 52178) {
-					System.out.println("index, min,max,pos: " + index + " " + min[index] + " " + max[index] + " " + fileIndices[index]);
-				}
-				//}
 				index++;
 				sym.outputBpsFormat(dos);
+				fileIndices[index] = fChannel.position();
 			}
 		}
 		catch (Exception ex) {

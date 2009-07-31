@@ -21,7 +21,6 @@ public class IndexingUtils {
 	 * @return
 	 */
 	public static byte[] getIndexedAnnotations(FileInputStream fis, long filePosStart, int length) {
-		System.out.println("Opening buffer with " + filePosStart + " " + length);
 		byte[] contentsOnly = null;
 		try {
 			FileChannel fc = fis.getChannel();
@@ -42,18 +41,20 @@ public class IndexingUtils {
 	 * @param max -- array of max points.
 	 */
 	public static void findMaxOverlap(int [] overlapRange, int [] outputRange, int [] min, int [] max) {
-		// Find minimum index of min[] array that is >= start range.
 		int tempPos = findMinimaGreaterOrEqual(min, overlapRange[0]);
 		outputRange[0] = tempPos;
 
-		// Find maximum index of min[] array that is <= end range.
 		tempPos = findMaximaLessOrEqual(min, overlapRange[1]);
-		System.out.println("val: " + min[tempPos] + " " + max[tempPos]);
 		outputRange[1] = tempPos;
 	}
 
 
-
+	/**
+	 * Find minimum index of min[] array that is >= start range.
+	 * @param min
+	 * @param elt
+	 * @return
+	 */
 	private static int findMinimaGreaterOrEqual(int[] min, int elt) {
 		int tempPos = Arrays.binarySearch(min, elt);
 		if (tempPos >= 0) {
@@ -68,7 +69,12 @@ public class IndexingUtils {
 		return tempPos;
 	}
 
-
+	/**
+	 * Find maximum index of min[] array that is <= end range.
+	 * @param min
+	 * @param elt
+	 * @return
+	 */
 	private static int findMaximaLessOrEqual(int[] min, int elt) {
 		int tempPos = Arrays.binarySearch(min, elt);
 		if (tempPos >= 0) {

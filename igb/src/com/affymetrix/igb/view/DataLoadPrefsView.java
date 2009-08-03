@@ -235,7 +235,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 	private void addSourcesBox() {
 		
 		final Box sourceBox = Box.createVerticalBox();
-		sourceBox.setBorder(new TitledBorder("Current Servers"));
+		sourceBox.setBorder(new TitledBorder("Current Servers       (To edit, double-click on cell)"));
 
 
 		

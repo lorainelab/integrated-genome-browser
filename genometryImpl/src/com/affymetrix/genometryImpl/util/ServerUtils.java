@@ -210,12 +210,20 @@ public abstract class ServerUtils {
 	}
 
 
-	private static void optimizeAndIndex(File file, String typeName, AnnotatedSeqGroup genome, List results) {
+	private void optimizeAndIndex(File file, String typeName, AnnotatedSeqGroup genome, List results) {
 		if (!typeName.endsWith(".psl") ||
 				typeName.endsWith("link.psl") ||
 				!typeName.endsWith(".bps")) {
 			// only optimize PSL (but not link.psl) and BPS files
 			return;
+		}
+
+		// Remove the symmetries from the genome.
+		for (BioSeq seq : genome.getSeqList()) {
+			for (int i=0;i<results.size();i++) {
+				SeqSymmetry sym= (SeqSymmetry)results.get(i);
+				seq.removeAnnotation(sym);	// remove it if it's in the seq.
+			}
 		}
 
 		if (isOptimizedDir(file, genome)) {
@@ -231,13 +239,11 @@ public abstract class ServerUtils {
 			String fileName = "";
 			List <UcscPslSym> result =
 					bps.getSortedAnnotationsForChrom(results, seq, comp);
-			int [] min = new int[result.size()];
-			int [] max = new int[result.size()];
-			long [] filePos = new long[result.size() + 1];
+			optimizedClass oC = new optimizedClass(results, new File(fileName));
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(fileName);
-				bps.writeIndexedAnnotations(result, fos, min, max, filePos);
+				bps.writeIndexedAnnotations(result, fos, oC.min, oC.max, oC.filePos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
@@ -246,8 +252,6 @@ public abstract class ServerUtils {
 			// TODO: need to create class container for chr,min,max,filePos,
 			// and then add those to a hash at the genome level.
 		}
-
-		
 	}
 
 	private static boolean isOptimizedDir(File file, AnnotatedSeqGroup genome) {
@@ -272,6 +276,20 @@ public abstract class ServerUtils {
 			GeneralUtils.safeClose(istr);
 		}
 		return results;
+	}
+
+	public class optimizedClass {
+		public File file;
+		public int [] min;
+		public int [] max;
+		public long [] filePos;
+
+		public optimizedClass(List <UcscPslSym> result, File file) {
+			min = new int[result.size()];
+			max = new int[result.size()];
+			filePos = new long[result.size() + 1];
+			this.file = file;
+		}
 	}
 
 

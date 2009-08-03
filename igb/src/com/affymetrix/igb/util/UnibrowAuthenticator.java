@@ -93,8 +93,14 @@ public final class UnibrowAuthenticator extends Authenticator  {
 	if (server != null && server.loginAttempts == 1 && 
         login != null && !login.equals("") && password != null && !password.equals("")) {
     	auth = new PasswordAuthentication(this.login,  new String(this.password).toCharArray());    		
-	} else {
-		// Otherwise, present the login dialog for the user to
+	} else if (server != null && server.loginAttempts == 1) {
+	  // The login and password were not provided in preferences,
+	  // so just login as guest
+	  auth = new PasswordAuthentication("guest", new String("guest").toCharArray());
+	}
+	  else {
+		// IGB couldn't login with the supplied login and password or the guest login
+	  // and password, so present the login dialog for the user to
 		// type in the login and password.
 	    int result = JOptionPane.showOptionDialog(frm, message_panel, "Login", 
 						      JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, 

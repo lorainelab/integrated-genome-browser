@@ -1,10 +1,8 @@
 package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +40,7 @@ public final class GenericFeature {
 		this.featureName = featureName;
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
-		if (shouldAutoLoad(featureName)) {
+		if (shouldAutoLoad(featureProps)) {
 			this.visible = true;
 			this.loadStrategy = LoadStrategy.WHOLE;
 		} else {
@@ -53,13 +51,13 @@ public final class GenericFeature {
 	}
 
 	/**
-	 * @param name name of feature
+	 * @param featureProps feature properties
 	 * @return true if feature should be loaded automatically
 	 */
-	private static boolean shouldAutoLoad(String name) {
-		String lowerCaseName = name.toLowerCase().trim();
-		return (lowerCaseName.startsWith("__cytobands") || lowerCaseName.endsWith("cytobands") ||
-				lowerCaseName.startsWith("refseq") || lowerCaseName.endsWith("refseq"));
+	private static boolean shouldAutoLoad(Map<String,String> featureProps) {
+		return (featureProps != null &&
+				featureProps.containsKey("load_hint") &&
+				featureProps.get("load_hint").equals("Whole Sequence"));
 	}
 
 	@Override

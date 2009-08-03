@@ -497,7 +497,7 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
   }*/
 
   /** Used for testing.  Opens a window with the TierPrefsView in it. */
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
 
     TierPrefsView t = new TierPrefsView();
 
@@ -521,7 +521,7 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
 
     f.setSize(800, 800);
     f.setVisible(true);
-  }
+  }*/
 
   public String getName() {
     return "Tiers";

@@ -80,12 +80,12 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	public void setTypePrefix(String prefix) { type_prefix = prefix; }
 	public String getTypePrefix() { return type_prefix; }
 
-	public List parse(InputStream istr, AnnotatedSeqGroup group,
+	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
 			boolean annotate_seq, String default_type) throws IOException {
 		return parse(istr, group, annotate_seq, default_type, false);
 	}
 
-	public List parse(InputStream istr, AnnotatedSeqGroup group,
+	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
 			boolean annotate_seq, String default_type, boolean populate_id_hash) throws IOException {
 		System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
 		BufferedInputStream bis;

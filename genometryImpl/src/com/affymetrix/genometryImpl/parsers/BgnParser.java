@@ -89,7 +89,7 @@ public final class BgnParser implements AnnotationWriter  {
 	 *  @param blength  Byte Buffer Length.
 	 *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
 	 */
-	public List parse(InputStream istr, String annot_type,
+	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup seq_group, long blength, boolean annotate_seq) throws IOException {
 
 		if (seq_group == null) {

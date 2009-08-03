@@ -230,6 +230,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			ex.printStackTrace();
 		}
 		System.out.println("finished parsing das2xml feature doc, number of top-level features: " + result_syms.size());
+		if (dup_count > 0) {
+			System.out.println("Warning: found " + dup_count + " duplicate feature ID" + 
+					(dup_count > 1 ? "s" : "")	// grammar for user-friendliness
+					);
+		}
 		if (REPORT_RESULTS) {
 			for (SeqSymmetry sym : result_syms) {
 				SeqUtils.printSymmetry(sym);
@@ -449,6 +454,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  implementing sax content handler interface.
 	 */
+	@SuppressWarnings("unchecked")
 	public void endElement(String uri, String name, String qname) {
 		if (DEBUG) {
 			System.out.println("end element: " + name);
@@ -510,7 +516,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		//   (ids _should_ be unique, but want to make sure)
 		if (id2sym.get(feat_id) != null) {
 			dup_count++;
-			System.out.println("WARNING, duplicate feature id: " + feat_id);
+			if (DEBUG) {
+				System.out.println("WARNING, duplicate feature id: " + feat_id);
+			}
 			return;
 		}
 		//SimpleDas2Feature featsym = new SimpleDas2Feature(new URI(feat_id), feat_type, feat_name, feat_parent_id,

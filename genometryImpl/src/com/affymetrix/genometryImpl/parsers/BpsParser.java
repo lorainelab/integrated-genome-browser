@@ -449,7 +449,7 @@ public final class BpsParser implements AnnotationWriter  {
 	 * @return -- success or failure
 	 * @throws IOException
 	 */
-	public boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
+	public static boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
 			int min[], int max[], long[] fileIndices) throws IOException {
 		if (DEBUG){
 			System.out.println("in BpsParser.writeIndexedAnnotations()");
@@ -485,11 +485,11 @@ public final class BpsParser implements AnnotationWriter  {
 	 * @param outstream - stream to write to
 	 * @return - success or failure
 	 */
-	public boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream, Comparator<UcscPslSym> UCSCcomp) {
+	public static boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream, Comparator<UcscPslSym> UCSCcomp) {
 		DataOutputStream dos = null;
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
-			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq, UCSCcomp);
+			List<UcscPslSym> symList = getSortedAnnotationsForChrom(syms, seq, UCSCcomp);
 			for (UcscPslSym sym : symList) {
 				sym.outputBpsFormat(dos);
 			}
@@ -511,7 +511,7 @@ public final class BpsParser implements AnnotationWriter  {
 	 * @param UCSCcomp - comparator
 	 * @return - sorted list of annotations
 	 */
-	public List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, Comparator<UcscPslSym> UCSCcomp) {
+	public static List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, Comparator<UcscPslSym> UCSCcomp) {
 		Collections.sort(syms, UCSCcomp);
 
 		List<UcscPslSym> results = new ArrayList<UcscPslSym>();

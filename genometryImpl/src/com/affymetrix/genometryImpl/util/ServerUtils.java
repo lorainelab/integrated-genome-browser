@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * Utils for DAS/2 and other servers.
  */
 public abstract class ServerUtils {
-	private static final String annots_filename = "annots.xml"; // potential file for annots parsing
+	private static final String annots_filename = "annots.xml"; // potential originalFile for annots parsing
 	private static final String graph_dir_suffix = ".graphs.seqs";
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
 	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
@@ -52,7 +52,7 @@ public abstract class ServerUtils {
 
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
-	private static Map<String,String> annots_map = new LinkedHashMap<String,String>();    // hash of file names and titles
+	private static Map<String,String> annots_map = new LinkedHashMap<String,String>();    // hash of originalFile names and titles
 
 
 	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
@@ -77,7 +77,7 @@ public abstract class ServerUtils {
 		}
 	}
 
-	/**Loads a file's lines into a hash first column is the key, second the value.
+	/**Loads a originalFile's lines into a hash first column is the key, second the value.
 	 * Skips blank lines and those starting with a '#'
 	 * @return null if an exception in thrown
 	 * */
@@ -125,12 +125,12 @@ public abstract class ServerUtils {
 
 
 	/** sorts genomes and versions within genomes
-	 *  sort genomes based on "organism_order.txt" config file if present
+	 *  sort genomes based on "organism_order.txt" config originalFile if present
 	 * @param organisms
 	 * @param org_order_filename
 	 */
 	public static final void sortGenomes(Map<String,List<AnnotatedSeqGroup>> organisms, String org_order_filename) {
-		// sort genomes based on "organism_order.txt" config file if present
+		// sort genomes based on "organism_order.txt" config originalFile if present
 		// get Map.Entry for organism, sort based on order in organism_order.txt,
 		//    put in order in new LinkedHashMap(), then replace as organisms field
 		File org_order_file = new File(org_order_filename);
@@ -158,7 +158,7 @@ public abstract class ServerUtils {
 	 *   If current_file is directory:
 	 *       if ".seqs" suffix, then handle as graphs
 	 *       otherwise recursively call on each child files;
-	 *   if not directory, see if can parse as annotation file.
+	 *   if not directory, see if can parse as annotation originalFile.
 	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
 	public static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
@@ -177,7 +177,7 @@ public abstract class ServerUtils {
 			new_type_prefix = type_name + "/";
 		}
 
-		// if current file is directory, then descend down into child files
+		// if current originalFile is directory, then descend down into child files
 		if (current_file.isDirectory()) {
 			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file);
 			return;
@@ -186,14 +186,14 @@ public abstract class ServerUtils {
 		if (type_name.endsWith(".bar")) {
 			// String file_path = current_file.getPath();
 			// special casing so bar files are seen in types request, but not parsed in on startup
-			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
+			//    (because using graph slicing so don't have to pull all bar originalFile graphs into memory)
 			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
 			graph_name2file.put(type_name, file_path);
 			return;
 		}
 
 		if (!annots_map.isEmpty() && !annots_map.containsKey(file_name)) {
-			// we have loaded in an annots.xml file, but yet this file is not in it and should be ignored.
+			// we have loaded in an annots.xml originalFile, but yet this originalFile is not in it and should be ignored.
 			return;
 		}
 
@@ -202,47 +202,51 @@ public abstract class ServerUtils {
 			return;
 		}
 		
-		// current file is not a directory, so try and recognize as annotation file
+		// current originalFile is not a directory, so try and recognize as annotation originalFile
 
+		System.out.println("loading annotations of " + current_file.getName());
 		List results = loadAnnotFile(current_file, type_name, genome);
-		//optimizeAndIndex(current_file, type_name, genome, results);
+		//optimizeAndIndex(current_file, genome, results);
 	}
 
 
-	private void optimizeAndIndex(File file, String typeName, AnnotatedSeqGroup genome, List results) {
-		if (!typeName.endsWith(".psl") ||
-				typeName.endsWith("link.psl") ||
-				!typeName.endsWith(".bps")) {
+	private static void optimizeAndIndex(File file, AnnotatedSeqGroup genome, List results) {
+		String fileName = file.getName().toLowerCase();
+		if ((!fileName.endsWith(".psl") || fileName.endsWith("link.psl"))
+				&& !fileName.endsWith(".bps")) {
+			//System.out.println("skipping with filename " + fileName);
 			// only optimize PSL (but not link.psl) and BPS files
 			return;
 		}
 
 		// Remove the symmetries from the genome.
-		for (BioSeq seq : genome.getSeqList()) {
+		/*for (BioSeq seq : genome.getSeqList()) {
 			for (int i=0;i<results.size();i++) {
 				SeqSymmetry sym= (SeqSymmetry)results.get(i);
 				seq.removeAnnotation(sym);	// remove it if it's in the seq.
 			}
-		}
+		}*/
 
-		if (isOptimizedDir(file, genome)) {
-			System.out.println(typeName + " already optimized, skipping.");
-			return;
-		}
 
-		BpsParser bps = new BpsParser();
 		UcscPslComparator comp = new UcscPslComparator();
 		
 		// Split by chromosome, and write out files.
 		for (BioSeq seq : genome.getSeqList()) {
-			String fileName = "";
-			List <UcscPslSym> result =
-					bps.getSortedAnnotationsForChrom(results, seq, comp);
-			optimizedClass oC = new optimizedClass(results, new File(fileName));
+			String dirName = optimizedDirName(genome, seq);
+			if (isOptimizedDir(dirName, file)) {
+				System.out.println(fileName + " already optimized, skipping.");
+				return;
+			}
+			fileName = optimizedFileName(fileName, genome, seq);
+			System.out.println("Filename is: " + fileName);
+
+			List<UcscPslSym> result =
+					BpsParser.getSortedAnnotationsForChrom(results, seq, comp);
+			//optimizedClass oC = new optimizedClass(results, new File(fileName));
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(fileName);
-				bps.writeIndexedAnnotations(result, fos, oC.min, oC.max, oC.filePos);
+				//BpsParser.writeIndexedAnnotations(result, fos, oC.min, oC.max, oC.filePos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
@@ -253,13 +257,31 @@ public abstract class ServerUtils {
 		}
 	}
 
-	private static boolean isOptimizedDir(File file, AnnotatedSeqGroup genome) {
+	private static String optimizedFileName(String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
+		String replacedFileName = GeneralUtils.stripEndings(fileName) + ".bps";
+		return optimizedDirName(genome, seq) + "/" + replacedFileName;
+	}
+	private static String optimizedDirName(AnnotatedSeqGroup genome, BioSeq seq) {
 		String optimizedDirectory = ".optimized";
+		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
+	}
+
+	private static boolean isOptimizedDir(String dirName, File originalFile) {
 		// Make sure the appropriate .optimized/species/version/chr directory exists.
 		// If not, create it.
-		// If it does exist, and its timestamp is newer than this file, then we can skip.
-		long lastMod = file.lastModified();
-		String dirName = optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID();
+		File newFile = new File(dirName);
+		if (!newFile.exists()) {
+			if (!new File(dirName).mkdirs()) {
+				System.out.println("ERROR: Couldn't create directory: " + dirName);
+				System.exit(-1);
+			} else {
+				System.out.println("Created new directory: " + dirName);
+				return false;
+			}
+		}
+
+		// If it does exist, and its timestamp is newer than this originalFile, then we can skip.
+		long lastMod = originalFile.lastModified();
 		return false;
 	}
 
@@ -277,7 +299,7 @@ public abstract class ServerUtils {
 		return results;
 	}
 
-	public class optimizedClass {
+	private static class optimizedClass {
 		public File file;
 		public int [] min;
 		public int [] max;
@@ -315,7 +337,7 @@ public abstract class ServerUtils {
 
 
 		if (type_name.endsWith(graph_dir_suffix)) {
-			// each file in directory is same annotation type, but for a single seq?
+			// each originalFile in directory is same annotation type, but for a single seq?
 			// assuming bar files for now, each with starting with seq id?
 			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
@@ -500,7 +522,7 @@ public abstract class ServerUtils {
 					ArrayList<String> graph_formats) {
 		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
 
-		// adding in any graph files as additional types (with type id = file name)
+		// adding in any graph files as additional types (with type id = originalFile name)
 		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
 		//    show up in seq.getTypes(), but without actually being loaded??
 		for (String gname : graph_name2file.keySet()) {

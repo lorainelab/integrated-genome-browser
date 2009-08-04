@@ -44,16 +44,14 @@ import java.util.regex.Pattern;
  * Utils for DAS/2 and other servers.
  */
 public abstract class ServerUtils {
+
 	private static final String annots_filename = "annots.xml"; // potential originalFile for annots parsing
 	private static final String graph_dir_suffix = ".graphs.seqs";
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
 	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
 	private static final Pattern interval_splitter = Pattern.compile(":");
-
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-
-	private static Map<String,String> annots_map = new LinkedHashMap<String,String>();    // hash of originalFile names and titles
-
+	private static Map<String, String> annots_map = new LinkedHashMap<String, String>();    // hash of originalFile names and titles
 
 	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
 		File chrom_info_file = new File(genome_directory, "mod_chromInfo.txt");
@@ -123,13 +121,12 @@ public abstract class ServerUtils {
 		}
 	}
 
-
 	/** sorts genomes and versions within genomes
 	 *  sort genomes based on "organism_order.txt" config originalFile if present
 	 * @param organisms
 	 * @param org_order_filename
 	 */
-	public static final void sortGenomes(Map<String,List<AnnotatedSeqGroup>> organisms, String org_order_filename) {
+	public static final void sortGenomes(Map<String, List<AnnotatedSeqGroup>> organisms, String org_order_filename) {
 		// sort genomes based on "organism_order.txt" config originalFile if present
 		// get Map.Entry for organism, sort based on order in organism_order.txt,
 		//    put in order in new LinkedHashMap(), then replace as organisms field
@@ -138,8 +135,8 @@ public abstract class ServerUtils {
 			Comparator<String> org_comp = new MatchToListComparator(org_order_filename);
 			List<String> orglist = new ArrayList<String>(organisms.keySet());
 			Collections.sort(orglist, org_comp);
-			Map<String,List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String,List<AnnotatedSeqGroup>>();
-			for (String org: orglist) {
+			Map<String, List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String, List<AnnotatedSeqGroup>>();
+			for (String org : orglist) {
 				//	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
 				sorted_organisms.put(org, organisms.get(org));
 			}
@@ -153,7 +150,6 @@ public abstract class ServerUtils {
 		}
 	}
 
-
 	/**
 	 *   If current_file is directory:
 	 *       if ".seqs" suffix, then handle as graphs
@@ -162,8 +158,9 @@ public abstract class ServerUtils {
 	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
 	public static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
-							Map<String,String> graph_name2dir,
-							Map<String,String> graph_name2file) {
+			Map<String, String> graph_name2dir,
+			Map<String, String> graph_name2file,
+			String dataRoot) {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
 
@@ -179,7 +176,7 @@ public abstract class ServerUtils {
 
 		// if current originalFile is directory, then descend down into child files
 		if (current_file.isDirectory()) {
-			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file);
+			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
 			return;
 		}
 
@@ -201,68 +198,70 @@ public abstract class ServerUtils {
 			// for loading annotations, ignore the genome sequence data files
 			return;
 		}
-		
+
 		// current originalFile is not a directory, so try and recognize as annotation originalFile
 
 		System.out.println("loading annotations of " + current_file.getName());
 		List results = loadAnnotFile(current_file, type_name, genome);
-		//optimizeAndIndex(current_file, genome, results);
+
+		//Map<BioSeq, optimizedClass> seqToOptimized = new HashMap<BioSeq, optimizedClass>();
+		//optimizeAndIndex(dataRoot, current_file, genome, results, seqToOptimized);
 	}
 
-
-	private static void optimizeAndIndex(File file, AnnotatedSeqGroup genome, List results) {
-		String fileName = file.getName().toLowerCase();
-		if ((!fileName.endsWith(".psl") || fileName.endsWith("link.psl"))
-				&& !fileName.endsWith(".bps")) {
+	private static void optimizeAndIndex(String dataRoot, File file, AnnotatedSeqGroup genome, 
+			List originalPslSyms,
+			Map<BioSeq, optimizedClass> seqToOptimized) {
+		String optimizedName = file.getName().toLowerCase();
+		if ((!optimizedName.endsWith(".psl") || optimizedName.endsWith("link.psl")) && !optimizedName.endsWith(".bps")) {
 			//System.out.println("skipping with filename " + fileName);
 			// only optimize PSL (but not link.psl) and BPS files
 			return;
 		}
+		optimizedName = GeneralUtils.stripEndings(optimizedName) + ".bps";
 
 		// Remove the symmetries from the genome.
-		/*for (BioSeq seq : genome.getSeqList()) {
-			for (int i=0;i<results.size();i++) {
-				SeqSymmetry sym= (SeqSymmetry)results.get(i);
+		for (BioSeq seq : genome.getSeqList()) {
+			for (int i = 0; i < originalPslSyms.size(); i++) {
+				SeqSymmetry sym = (SeqSymmetry) originalPslSyms.get(i);
 				seq.removeAnnotation(sym);	// remove it if it's in the seq.
 			}
-		}*/
-
+		}
 
 		UcscPslComparator comp = new UcscPslComparator();
-		
+
 		// Split by chromosome, and write out files.
 		for (BioSeq seq : genome.getSeqList()) {
-			String dirName = optimizedDirName(genome, seq);
+			String dirName = optimizedDirName(dataRoot, genome, seq);
 			if (isOptimizedDir(dirName, file)) {
-				System.out.println(fileName + " already optimized, skipping.");
+				System.out.println(optimizedName + " already optimized, skipping.");
 				return;
 			}
-			fileName = optimizedFileName(fileName, genome, seq);
-			System.out.println("Filename is: " + fileName);
+			String fileName = optimizedFileName(dataRoot, optimizedName, genome, seq);
+			//System.out.println("Filename is: " + fileName);
 
-			List<UcscPslSym> result =
-					BpsParser.getSortedAnnotationsForChrom(results, seq, comp);
-			//optimizedClass oC = new optimizedClass(results, new File(fileName));
+			List<UcscPslSym> sortedPslSyms =
+					BpsParser.getSortedAnnotationsForChrom(originalPslSyms, seq, comp);
+			optimizedClass oC = new optimizedClass(sortedPslSyms, new File(fileName));
+			seqToOptimized.put(seq, oC);
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(fileName);
-				//BpsParser.writeIndexedAnnotations(result, fos, oC.min, oC.max, oC.filePos);
+				BpsParser.writeIndexedAnnotations(sortedPslSyms, fos, oC.min, oC.max, oC.filePos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
-			// TODO: need to create class container for chr,min,max,filePos,
-			// and then add those to a hash at the genome level.
+			// TODO: need to add a <typeName/chr,optimizedClass> hashMap.
 		}
 	}
 
-	private static String optimizedFileName(String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
-		String replacedFileName = GeneralUtils.stripEndings(fileName) + ".bps";
-		return optimizedDirName(genome, seq) + "/" + replacedFileName;
+	private static String optimizedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
+		return optimizedDirName(dataRoot, genome, seq) + "/" + fileName;
 	}
-	private static String optimizedDirName(AnnotatedSeqGroup genome, BioSeq seq) {
-		String optimizedDirectory = ".optimized";
+
+	private static String optimizedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
+		String optimizedDirectory = dataRoot + "/.optimized";
 		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
 	}
 
@@ -280,7 +279,7 @@ public abstract class ServerUtils {
 			}
 		}
 
-		// If it does exist, and its timestamp is newer than this originalFile, then we can skip.
+		// TODO: If it does exist, and its timestamp is newer than this originalFile, then we can skip.
 		long lastMod = originalFile.lastModified();
 		return false;
 	}
@@ -299,13 +298,13 @@ public abstract class ServerUtils {
 		return results;
 	}
 
-	private static class optimizedClass {
+	public static class optimizedClass {
 		public File file;
-		public int [] min;
-		public int [] max;
-		public long [] filePos;
+		public int[] min;
+		public int[] max;
+		public long[] filePos;
 
-		public optimizedClass(List <UcscPslSym> result, File file) {
+		public optimizedClass(List<UcscPslSym> result, File file) {
 			min = new int[result.size()];
 			max = new int[result.size()];
 			filePos = new long[result.size() + 1];
@@ -313,15 +312,15 @@ public abstract class ServerUtils {
 		}
 	}
 
-
 	public static final void loadAnnotsFromDir(
-					String type_name,
-					String file_path,
-					AnnotatedSeqGroup genome,
-					File current_file,
-					String new_type_prefix,
-					Map<String,String> graph_name2dir,
-					Map<String,String> graph_name2file) {
+			String type_name,
+			String file_path,
+			AnnotatedSeqGroup genome,
+			File current_file,
+			String new_type_prefix,
+			Map<String, String> graph_name2dir,
+			Map<String, String> graph_name2file,
+			String dataRoot) {
 		File annot = new File(current_file, annots_filename);
 		if (annot.exists()) {
 			FileInputStream istr = null;
@@ -348,166 +347,163 @@ public abstract class ServerUtils {
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
 			Arrays.sort(child_files);
 			for (File child_file : child_files) {
-				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file);
+				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
 			}
 		}
 	}
 
 	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
-			// GAH 11-2006
-			//   need to enhance this to support multiple name parameters OR'd together
-			//   DAS/2 specification defines glob-style searches:
-			//   The string searches may be exact matches, substring, prefix or suffix searches.
-			//   The query type depends on if the search value starts and/or ends with a '*'.
-			//
-			//    ABC -- field exactly matches "ABC"
-			//    *ABC -- field ends with "ABC"
-			//    ABC* -- field starts with "ABC"
-			//    *ABC* -- field contains the substring "ABC"
-			boolean glob_start = name.startsWith("*");
-			boolean glob_end = name.endsWith("*");
+		// GAH 11-2006
+		//   need to enhance this to support multiple name parameters OR'd together
+		//   DAS/2 specification defines glob-style searches:
+		//   The string searches may be exact matches, substring, prefix or suffix searches.
+		//   The query type depends on if the search value starts and/or ends with a '*'.
+		//
+		//    ABC -- field exactly matches "ABC"
+		//    *ABC -- field ends with "ABC"
+		//    ABC* -- field starts with "ABC"
+		//    *ABC* -- field contains the substring "ABC"
+		boolean glob_start = name.startsWith("*");
+		boolean glob_end = name.endsWith("*");
 
-			List<SeqSymmetry> result = null;
-			Pattern name_pattern = null;
-			if (glob_start || glob_end) {
-				String name_regex = name.toLowerCase();
-				if (glob_start) {
-					// do replacement of first "*" with ".*" ?
-					name_regex = ".*" + name_regex.substring(1);
-				}
-				if (glob_end) {
-					// do replacement of last "*" with ".*" ?
-					name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
-				}
-				System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
-				name_pattern = Pattern.compile(name_regex);
-				result = genome.findSyms(name_pattern);
-				//	   Collections.sort(result, new SeqSymIdComparator());
-				System.out.println("!!!! regex matches: " + result.size());
-			} else {
-				// ABC -- field exactly matches "ABC"
-				result = genome.findSyms(name);
+		List<SeqSymmetry> result = null;
+		Pattern name_pattern = null;
+		if (glob_start || glob_end) {
+			String name_regex = name.toLowerCase();
+			if (glob_start) {
+				// do replacement of first "*" with ".*" ?
+				name_regex = ".*" + name_regex.substring(1);
 			}
-			return result;
+			if (glob_end) {
+				// do replacement of last "*" with ".*" ?
+				name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
+			}
+			System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
+			name_pattern = Pattern.compile(name_regex);
+			result = genome.findSyms(name_pattern);
+			//	   Collections.sort(sortedPslSyms, new SeqSymIdComparator());
+			System.out.println("!!!! regex matches: " + result.size());
+		} else {
+			// ABC -- field exactly matches "ABC"
+			result = genome.findSyms(name);
 		}
-
-
-		/**
-		 *  Differs from Das2FeatureSaxParser.getLocationSpan():
-		 *     Won't add unrecognized seqids or null groups
-		 *     If rng is null or "", will set to span to [0, seq.getLength()]
-		 */
-		public static final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
-			if (seqid == null || group == null) {
-				return null;
-			}
-			MutableAnnotatedBioSeq seq = group.getSeq(seqid);
-			if (seq == null) {
-				return null;
-			}
-			int min;
-			int max;
-			boolean forward = true;
-			if (rng == null) {
-				min = 0;
-				max = seq.getLength();
-			} else {
-				try {
-					String[] subfields = interval_splitter.split(rng);
-					min = Integer.parseInt(subfields[0]);
-					max = Integer.parseInt(subfields[1]);
-					if (subfields.length >= 3) {  // in DAS/2 strandedness is not allowed for range query params, but accepting it here
-						if (subfields[2].equals("-1")) {
-							forward = false;
-						}
-					}
-				} catch (Exception ex) {
-					System.out.println("Problem parsing a query parameter range filter: " + rng);
-					return null;
-				}
-			}
-			SeqSpan span;
-			if (forward) {
-				span = new SimpleSeqSpan(min, max, seq);
-			} else {
-				span = new SimpleSeqSpan(max, min, seq);
-			}
-			return span;
-		}
-
-			// if an inside_span specified, then filter out intersected symmetries based on this:
-		//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-		public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, List<SeqSymmetry> result, String query_type) {
-			int inside_min = inside_span.getMin();
-			int inside_max = inside_span.getMax();
-			MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
-			/*System.out.println("*** trying to apply inside_span constraints ***");
-			if (iseq != oseq) {
-				System.out.println("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
-				// if different seqs, then no feature can pass constraint...
-				//   hmm, this might not strictly be true based on genometry...
-				result = Collections.<SeqSymmetry>emptyList();
-			} else {
-				Timer timecheck = new Timer();
-				timecheck.start();
-				*/
-			MutableSeqSpan testspan = new SimpleMutableSeqSpan();
-				List<SeqSymmetry> orig_result = result;
-				int rcount = orig_result.size();
-				result = new ArrayList<SeqSymmetry>(rcount);
-				for (SeqSymmetry sym : orig_result) {
-				//for (int i = 0; i < rcount; i++) {
-				//	SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
-					// fill in testspan with span values for sym (on aseq)
-					sym.getSpan(iseq, testspan);
-					if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
-						result.add(sym);
-					}
-				}
-				System.out.println("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
-				//System.out.println("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
-			//}
-			return result;
-		}
+		return result;
+	}
 
 	/**
-		 *
-		 *  Currently assumes:
-		 *    query_span's seq is a BioSeq (which implies top-level annots are TypeContainerAnnots)
-		 *    only one IntervalSearchSym child for each TypeContainerAnnot
-		 *  Should expand soon so results can be returned from multiple IntervalSearchSyms children
-		 *      of the TypeContainerAnnot
-		 */
-		public static final List<SeqSymmetry> getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
-			BioSeq seq = (BioSeq) query_span.getBioSeq();
-			SymWithProps container = seq.getAnnotation(annot_type);
-			if (container != null) {
-				int annot_count = container.getChildCount();
-				for (int i = 0; i < annot_count; i++) {
-					SeqSymmetry sym = container.getChild(i);
-					if (sym instanceof SearchableSeqSymmetry) {
-						SearchableSeqSymmetry target_sym = (SearchableSeqSymmetry) sym;
-						return target_sym.getOverlappingChildren(query_span);
+	 *  Differs from Das2FeatureSaxParser.getLocationSpan():
+	 *     Won't add unrecognized seqids or null groups
+	 *     If rng is null or "", will set to span to [0, seq.getLength()]
+	 */
+	public static final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
+		if (seqid == null || group == null) {
+			return null;
+		}
+		MutableAnnotatedBioSeq seq = group.getSeq(seqid);
+		if (seq == null) {
+			return null;
+		}
+		int min;
+		int max;
+		boolean forward = true;
+		if (rng == null) {
+			min = 0;
+			max = seq.getLength();
+		} else {
+			try {
+				String[] subfields = interval_splitter.split(rng);
+				min = Integer.parseInt(subfields[0]);
+				max = Integer.parseInt(subfields[1]);
+				if (subfields.length >= 3) {  // in DAS/2 strandedness is not allowed for range query params, but accepting it here
+					if (subfields[2].equals("-1")) {
+						forward = false;
 					}
 				}
+			} catch (Exception ex) {
+				System.out.println("Problem parsing a query parameter range filter: " + rng);
+				return null;
 			}
-			return Collections.<SeqSymmetry>emptyList();
 		}
+		SeqSpan span;
+		if (forward) {
+			span = new SimpleSeqSpan(min, max, seq);
+		} else {
+			span = new SimpleSeqSpan(max, min, seq);
+		}
+		return span;
+	}
 
-	// Print out the genomes
-		public static final void printGenomes(Map<String,List<AnnotatedSeqGroup>> organisms) {
-			for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
-				String org = ent.getKey();
-				System.out.println("Organism: " + org);
-				for (AnnotatedSeqGroup version : ent.getValue()) {
-					System.out.println("    Genome version: " + version.getID()
-							+ ", organism: " + version.getOrganism()
-							+ ", seq count: " + version.getSeqCount());
+	// if an inside_span specified, then filter out intersected symmetries based on this:
+	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
+	public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, List<SeqSymmetry> result, String query_type) {
+		int inside_min = inside_span.getMin();
+		int inside_max = inside_span.getMax();
+		MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
+		/*System.out.println("*** trying to apply inside_span constraints ***");
+		if (iseq != oseq) {
+		System.out.println("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
+		// if different seqs, then no feature can pass constraint...
+		//   hmm, this might not strictly be true based on genometry...
+		sortedPslSyms = Collections.<SeqSymmetry>emptyList();
+		} else {
+		Timer timecheck = new Timer();
+		timecheck.start();
+		 */
+		MutableSeqSpan testspan = new SimpleMutableSeqSpan();
+		List<SeqSymmetry> orig_result = result;
+		int rcount = orig_result.size();
+		result = new ArrayList<SeqSymmetry>(rcount);
+		for (SeqSymmetry sym : orig_result) {
+			//for (int i = 0; i < rcount; i++) {
+			//	SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
+			// fill in testspan with span values for sym (on aseq)
+			sym.getSpan(iseq, testspan);
+			if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
+				result.add(sym);
+			}
+		}
+		System.out.println("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
+		//System.out.println("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
+		//}
+		return result;
+	}
+
+	/**
+	 *
+	 *  Currently assumes:
+	 *    query_span's seq is a BioSeq (which implies top-level annots are TypeContainerAnnots)
+	 *    only one IntervalSearchSym child for each TypeContainerAnnot
+	 *  Should expand soon so originalPslSyms can be returned from multiple IntervalSearchSyms children
+	 *      of the TypeContainerAnnot
+	 */
+	public static final List<SeqSymmetry> getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
+		BioSeq seq = (BioSeq) query_span.getBioSeq();
+		SymWithProps container = seq.getAnnotation(annot_type);
+		if (container != null) {
+			int annot_count = container.getChildCount();
+			for (int i = 0; i < annot_count; i++) {
+				SeqSymmetry sym = container.getChild(i);
+				if (sym instanceof SearchableSeqSymmetry) {
+					SearchableSeqSymmetry target_sym = (SearchableSeqSymmetry) sym;
+					return target_sym.getOverlappingChildren(query_span);
 				}
 			}
 		}
+		return Collections.<SeqSymmetry>emptyList();
+	}
 
-		/**
+	// Print out the genomes
+	public static final void printGenomes(Map<String, List<AnnotatedSeqGroup>> organisms) {
+		for (Map.Entry<String, List<AnnotatedSeqGroup>> ent : organisms.entrySet()) {
+			String org = ent.getKey();
+			System.out.println("Organism: " + org);
+			for (AnnotatedSeqGroup version : ent.getValue()) {
+				System.out.println("    Genome version: " + version.getID() + ", organism: " + version.getOrganism() + ", seq count: " + version.getSeqCount());
+			}
+		}
+	}
+
+	/**
 	 *  Gets the list of types of annotations for a given genome version.
 	 *  Assuming top-level annotations hold type info in property "method" or "meth".
 	 *  @return a Map where keys are feature type Strings and values
@@ -516,10 +512,10 @@ public abstract class ServerUtils {
 	 *  may want to cache this info (per versioned source) at some point...
 	 */
 	public static final Map<String, List<String>> getTypes(
-					AnnotatedSeqGroup genome,
-					Map<String, String> graph_name2file,
-					Map<String, String> graph_name2dir,
-					ArrayList<String> graph_formats) {
+			AnnotatedSeqGroup genome,
+			Map<String, String> graph_name2file,
+			Map<String, String> graph_name2dir,
+			ArrayList<String> graph_formats) {
 		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
 
 		// adding in any graph files as additional types (with type id = originalFile name)
@@ -537,8 +533,8 @@ public abstract class ServerUtils {
 	}
 
 	// iterate over seqs to collect annotation types
-	private static final Map<String,List<String>> getGenomeTypes(List<BioSeq> seqList) {
-		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
+	private static final Map<String, List<String>> getGenomeTypes(List<BioSeq> seqList) {
+		Map<String, List<String>> genome_types = new LinkedHashMap<String, List<String>>();
 		for (BioSeq aseq : seqList) {
 			for (String type : aseq.getTypeList()) {
 				if (genome_types.get(type) != null) {

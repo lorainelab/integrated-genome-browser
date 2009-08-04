@@ -281,7 +281,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			ServerUtils.loadSynonyms(synonym_file);
 
-			loadGenomes();
+			loadGenomes(data_root, organisms, org_order_filename);
 
 			ServerUtils.printGenomes(organisms);
 
@@ -402,7 +402,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		graph_formats.add("bar");
 	}
 
-	private final void loadGenomes() throws IOException {
+	private final void loadGenomes(String dataRoot,
+			Map<String, List<AnnotatedSeqGroup>> organisms,
+			String org_order_filename) throws IOException {
 		// get list of all directories in data root
 		// each directory corresponds to a different organism
 		//    organism_name = directory name
@@ -415,7 +417,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//           if directory, recurse in
 		//           else try to parse and annotate seqs based on file suffix (.xyz)
 
-		File top_level = new File(data_root);
+		File top_level = new File(dataRoot);
 		if (!top_level.exists() && !top_level.isDirectory()) {
 			throw new IOException("'" + top_level + "' does not exist or is not a directory");
 		}
@@ -423,14 +425,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		FileFilter filter = new HiddenFileFilter(new DirectoryFilter());
 		for (File org : top_level.listFiles(filter)) {
 			for (File version : org.listFiles(filter)) {
-				loadGenome(version, org.getName());
+				loadGenome(version, org.getName(), dataRoot);
 			}
 		}
 
 		ServerUtils.sortGenomes(organisms, org_order_filename);
 	}
 
-	private final void loadGenome(File genome_directory, String organism) throws IOException {
+	private final void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
 		String genome_version = genome_directory.getName();
 
 		// create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
@@ -454,7 +456,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
-		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file);
+		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file, dataRoot);
 
 		// optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);

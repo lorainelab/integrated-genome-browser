@@ -21,6 +21,8 @@ import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -433,38 +435,21 @@ public abstract class ServerUtils {
 		return span;
 	}
 
-	// if an inside_span specified, then filter out intersected symmetries based on this:
-	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-	public static final List<SeqSymmetry> SpecifiedInsideSpan(SeqSpan inside_span, List<SeqSymmetry> result, String query_type) {
-		int inside_min = inside_span.getMin();
-		int inside_max = inside_span.getMax();
-		MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
-		/*System.out.println("*** trying to apply inside_span constraints ***");
-		if (iseq != oseq) {
-		System.out.println("Problem with applying inside_span constraint, different seqs: iseq = " + iseq.getID() + ", oseq = " + oseq.getID());
-		// if different seqs, then no feature can pass constraint...
-		//   hmm, this might not strictly be true based on genometry...
-		sortedPslSyms = Collections.<SeqSymmetry>emptyList();
-		} else {
-		Timer timecheck = new Timer();
-		timecheck.start();
-		 */
-		MutableSeqSpan testspan = new SimpleMutableSeqSpan();
-		List<SeqSymmetry> orig_result = result;
-		int rcount = orig_result.size();
-		result = new ArrayList<SeqSymmetry>(rcount);
-		for (SeqSymmetry sym : orig_result) {
-			//for (int i = 0; i < rcount; i++) {
-			//	SeqSymmetry sym = (SeqSymmetry) orig_result.get(i);
-			// fill in testspan with span values for sym (on aseq)
-			sym.getSpan(iseq, testspan);
-			if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
-				result.add(sym);
-			}
-		}
-		System.out.println("  overlapping annotations of type " + query_type + " that passed inside_span constraints: " + result.size());
-		//System.out.println("  time for inside_span filtering: " + (timecheck.read()) / 1000f);
+	/** this is the main call to retrieve symmetries meeting query constraints */
+	public static List<SeqSymmetry> getIntersectedSymmetries(SeqSpan overlap_span, String query_type, SeqSpan inside_span) {
+		List<SeqSymmetry> result = null;
+		/*if (query_type.endsWith(".bps")) {
+			//System.out.println("Trying to service " + query_type + " with an indexed query.");
+			result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, min, max, annots_filename, filePos, null);
+		} else {*/
+			result = ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
 		//}
+		if (result == null) {
+			result = Collections.<SeqSymmetry>emptyList();
+		}
+		if (inside_span != null) {
+			result = ServerUtils.specifiedInsideSpan(inside_span, result);
+		}
 		return result;
 	}
 
@@ -476,7 +461,7 @@ public abstract class ServerUtils {
 	 *  Should expand soon so originalPslSyms can be returned from multiple IntervalSearchSyms children
 	 *      of the TypeContainerAnnot
 	 */
-	public static final List<SeqSymmetry> getIntersectedSymmetries(SeqSpan query_span, String annot_type) {
+	public static final List<SeqSymmetry> getOverlappedSymmetries(SeqSpan query_span, String annot_type) {
 		BioSeq seq = (BioSeq) query_span.getBioSeq();
 		SymWithProps container = seq.getAnnotation(annot_type);
 		if (container != null) {
@@ -491,6 +476,56 @@ public abstract class ServerUtils {
 		}
 		return Collections.<SeqSymmetry>emptyList();
 	}
+
+	// if an inside_span specified, then filter out intersected symmetries based on this:
+	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
+	public static final <SymExtended extends SeqSymmetry> List<SymExtended> specifiedInsideSpan(SeqSpan inside_span, List<SymExtended> result) {
+		int inside_min = inside_span.getMin();
+		int inside_max = inside_span.getMax();
+		MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
+		MutableSeqSpan testspan = new SimpleMutableSeqSpan();
+		List<SymExtended> orig_result = result;
+		int rcount = orig_result.size();
+		result = new ArrayList<SymExtended>(rcount);
+		for (SymExtended sym : orig_result) {
+			// fill in testspan with span values for sym (on aseq)
+			sym.getSpan(iseq, testspan);
+			if ((testspan.getMin() >= inside_min) && (testspan.getMax() <= inside_max)) {
+				result.add(sym);
+			}
+		}
+		System.out.println("  overlapping annotations that passed inside_span constraints: " + result.size());
+		return result;
+	}
+
+	public static List<UcscPslSym> getIndexedOverlappedSymmetries(SeqSpan overlap_span, int[] min, int[] max, String testFileName, long[] filePos, AnnotatedSeqGroup group) throws FileNotFoundException, IOException {
+		FileInputStream fis = null;
+		InputStream newIstr = null;
+		DataInputStream dis = null;
+		try {
+			int[] overlapRange = new int[2];
+			int[] outputRange = new int[2];
+			overlapRange[0] = overlap_span.getMin();
+			overlapRange[1] = overlap_span.getMax();
+			IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+			int minPos = outputRange[0];
+			// We add 1 to the maxPos index.
+			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
+			int maxPos = outputRange[1] + 1;
+			fis = new FileInputStream(testFileName);
+			byte[] bytes = IndexingUtils.getIndexedAnnotations(fis, filePos[minPos], (int) (filePos[maxPos] - filePos[minPos]));
+			//assertEquals((int) (filePos[maxPos] - filePos[minPos]), bytes.length);
+			newIstr = new ByteArrayInputStream(bytes);
+			dis = new DataInputStream(newIstr);
+
+			return BpsParser.parse(dis, "BPS", (AnnotatedSeqGroup) null, group, false, true);
+		} finally {
+			GeneralUtils.safeClose(fis);
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(newIstr);
+		}
+	}
+
 
 	// Print out the genomes
 	public static final void printGenomes(Map<String, List<AnnotatedSeqGroup>> organisms) {

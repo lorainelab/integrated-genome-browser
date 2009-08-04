@@ -296,6 +296,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		System.out.println("GenometryDas2Servlet " + RELEASE_VERSION + ", dir: '" + data_root + "', url: '" + xml_base + "'");
 	}
 
+
 	/**
 	 * Attempts to load the genometry_server_dir, maintainer_email, and the
 	 * xml_base from the servlet context, System.properties or from a
@@ -1138,16 +1139,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					outseq = overlap_span.getBioSeq();
 
 					/** this is the main call to retrieve symmetries meeting query constraints */
-					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
-
-
-					if (result == null) {
-						result = Collections.<SeqSymmetry>emptyList();
-					}
-
-					if (inside_span != null) {
-						result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
-					}
+					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}
 			} else {
 				// any query combination not recognized above may  be correct based on DAS/2 spec

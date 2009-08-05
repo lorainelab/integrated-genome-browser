@@ -151,7 +151,8 @@ public class ServerUtilsTest {
 			assertEquals(11200177, overlap_span.getMax());
 			assertEquals(overlap_span.getBioSeq(), seq);
 
-			List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, min, max, testFileName, filePos, group);
+			File testFile = new File(testFileName);
+			List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, min, max, testFile, filePos, group);
 			
 			assertEquals(384, result.size());
 			assertEquals(136731, result.get(0).getTargetMin());
@@ -166,8 +167,7 @@ public class ServerUtilsTest {
 
 			result = ServerUtils.specifiedInsideSpan(inside_span, result);
 			assertEquals(138, result.size());
-
-			File testFile = new File(testFileName);
+			
 			if (testFile.exists()) {
 				testFile.delete();
 			}

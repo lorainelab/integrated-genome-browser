@@ -210,13 +210,13 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 		g.setColor(getForegroundColor());
 		fontmet = GeneralUtils.getFontMetrics(getResidueFont());
 
+		String str = residue_provider.substring(seqBegIndex, seqEndIndex);
 		if (this.font_width < pixelsPerBase) { // Ample room to draw residue letters.
-			for (int i = seqBegIndex; i < seqEndIndex; i++) {
-				double f = i - seqBegIndex;
-				String str = String.valueOf(residue_provider.charAt(i));
-				if (str != null) {
-					g.drawString(str,
-									(pixelStart + (int) (f * pixelsPerBase)),
+			for (int i = 0; i < str.length(); i++) {
+				String c = String.valueOf(str.charAt(i));
+				if (c != null) {
+					g.drawString(c,
+									(pixelStart + (int) (i * pixelsPerBase)),
 									baseline);
 				}
 			}
@@ -225,7 +225,6 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 						) { // pixelsPerBase matches the font width.
 			// Draw the whole string in one go.
 
-			String str = residue_provider.substring(seqBegIndex, seqEndIndex);
 			if (str != null) {
 				g.drawString(str, pixelStart, baseline);
 			}

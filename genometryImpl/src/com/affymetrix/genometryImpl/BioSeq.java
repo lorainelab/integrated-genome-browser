@@ -388,7 +388,7 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	public SearchableCharIterator getResiduesProvider() {
 		return residues_provider;
 	}
-	public void setResiduesProvider(SearchableCharIterator chariter) {
+	public <S extends SearchableCharIterator> void setResiduesProvider(S chariter) {
 		if (chariter.getLength() != this.getLength()) {
 			System.out.println("WARNING -- in setResidueProvider, lengths don't match");
 		}
@@ -595,15 +595,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 			return true;
 		}
 		return true;
-	}
-
-	public char charAt(int pos) {
-		if (residues_provider == null) {
-				String str = this.getResidues(pos, pos+1, '-');
-				if (str == null) { return '-'; }
-				return str.charAt(0);	
-		}
-		return residues_provider.charAt(pos);
 	}
 
 	public String substring(int start, int end) {

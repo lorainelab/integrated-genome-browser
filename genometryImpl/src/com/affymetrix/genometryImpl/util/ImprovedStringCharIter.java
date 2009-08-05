@@ -11,10 +11,6 @@ public final class ImprovedStringCharIter implements SearchableCharIterator {
 		return src.substring(start, end);
 	}
 
-	public char charAt(int pos) {
-		return src.charAt(pos);
-	}
-
 	public int indexOf(String searchString, int offset) {
 		return src.indexOf(searchString, offset);
 	}

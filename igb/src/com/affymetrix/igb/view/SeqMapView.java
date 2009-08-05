@@ -665,9 +665,9 @@ public class SeqMapView extends JPanel
 		//    coord shift, slice'n'dice, etc.
 		// but first, need to fix BioSeq.isComplete() implementations...
 		// currently only GeneralBioSeq implements CharacterIterator
-		seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
+		seq_glyph.setResiduesProvider(viewseq, viewseq.getLength());
 
-		SeqSymmetry compsym = ((BioSeq) viewseq).getComposition();
+		SeqSymmetry compsym = viewseq.getComposition();
 		if (compsym != null) {
 			int compcount = compsym.getChildCount();
 			// create a color, c3, in between the foreground and background colors

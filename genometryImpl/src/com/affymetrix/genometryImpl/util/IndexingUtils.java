@@ -1,10 +1,13 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometry.SeqSymmetry;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +16,30 @@ import java.util.logging.Logger;
  * @author jnicol
  */
 public class IndexingUtils {
+	public static class IndexedSyms {
+		public File file;
+		public int[] min;
+		public int[] max;
+		public long[] filePos;
+		public String typeName;
+		public Class outputClass;
+
+		public IndexedSyms(List<? extends SeqSymmetry> result, File file, String typeName, Class outputClass) {
+			min = new int[result.size()];
+			max = new int[result.size()];
+			filePos = new long[result.size() + 1];
+			this.file = file;
+			this.typeName = typeName;
+			this.outputClass = outputClass;
+		}
+	}
+
+	public static boolean isIndexable(String fileName) {
+		// only optimize PSL (but not link.psl) and BPS files
+		return (fileName.endsWith(".bps") ||
+				(fileName.endsWith(".psl") && !(fileName.endsWith("link.psl"))));
+	}
+
 	/**
 	 * Get "length" annotations from filePosStart
 	 * @param fis

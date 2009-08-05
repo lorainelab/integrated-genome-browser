@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -206,20 +207,20 @@ public abstract class ServerUtils {
 		System.out.println("loading annotations of " + current_file.getName());
 		List results = loadAnnotFile(current_file, type_name, genome);
 
-		//Map<BioSeq, optimizedClass> seqToOptimized = new HashMap<BioSeq, optimizedClass>();
-		//optimizeAndIndex(dataRoot, current_file, genome, results, seqToOptimized);
+		//optimizeAndIndex(dataRoot, current_file, genome, results);
 	}
 
 	private static void optimizeAndIndex(String dataRoot, File file, AnnotatedSeqGroup genome, 
-			List originalPslSyms,
-			Map<BioSeq, optimizedClass> seqToOptimized) {
+			List originalPslSyms) {
+
+		String typeName = GeneralUtils.stripEndings(file.getName());
 		String optimizedName = file.getName().toLowerCase();
-		if ((!optimizedName.endsWith(".psl") || optimizedName.endsWith("link.psl")) && !optimizedName.endsWith(".bps")) {
-			//System.out.println("skipping with filename " + fileName);
-			// only optimize PSL (but not link.psl) and BPS files
+
+		if (!IndexingUtils.isIndexable(optimizedName)) {
 			return;
 		}
-		optimizedName = GeneralUtils.stripEndings(optimizedName) + ".bps";
+
+		optimizedName = GeneralUtils.stripEndings(typeName) + ".bps";
 
 		// Remove the symmetries from the genome.
 		for (BioSeq seq : genome.getSeqList()) {
@@ -230,6 +231,7 @@ public abstract class ServerUtils {
 		}
 
 		UcscPslComparator comp = new UcscPslComparator();
+
 
 		// Split by chromosome, and write out files.
 		for (BioSeq seq : genome.getSeqList()) {
@@ -243,8 +245,9 @@ public abstract class ServerUtils {
 
 			List<UcscPslSym> sortedPslSyms =
 					BpsParser.getSortedAnnotationsForChrom(originalPslSyms, seq, comp);
-			optimizedClass oC = new optimizedClass(sortedPslSyms, new File(fileName));
-			seqToOptimized.put(seq, oC);
+			IndexedSyms oC = new IndexedSyms(sortedPslSyms, new File(fileName), typeName, BpsParser.class);
+			seq.addIndexedSyms(typeName, oC);
+			
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(fileName);
@@ -254,7 +257,7 @@ public abstract class ServerUtils {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			}
 
-			// TODO: need to add a <typeName/chr,optimizedClass> hashMap.
+			// TODO: need to add a <typeName/chr,indexedList> hashMap.
 		}
 	}
 
@@ -263,7 +266,7 @@ public abstract class ServerUtils {
 	}
 
 	private static String optimizedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
-		String optimizedDirectory = dataRoot + "/.optimized";
+		String optimizedDirectory = dataRoot + ".optimized";
 		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
 	}
 
@@ -300,19 +303,7 @@ public abstract class ServerUtils {
 		return results;
 	}
 
-	public static class optimizedClass {
-		public File file;
-		public int[] min;
-		public int[] max;
-		public long[] filePos;
-
-		public optimizedClass(List<UcscPslSym> result, File file) {
-			min = new int[result.size()];
-			max = new int[result.size()];
-			filePos = new long[result.size() + 1];
-			this.file = file;
-		}
-	}
+	
 
 	public static final void loadAnnotsFromDir(
 			String type_name,
@@ -473,13 +464,25 @@ public abstract class ServerUtils {
 					return target_sym.getOverlappingChildren(query_span);
 				}
 			}
+		} else {
+			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
+			if (iSyms != null) {
+				return getIndexedOverlappedSymmetries(
+						query_span,
+						iSyms.min,
+						iSyms.max,
+						iSyms.file,
+						iSyms.filePos,
+						seq.getSeqGroup());
+			}
 		}
 		return Collections.<SeqSymmetry>emptyList();
 	}
 
 	// if an inside_span specified, then filter out intersected symmetries based on this:
 	//    don't return symmetries with a min < inside_span.min() or max > inside_span.max()  (even if they overlap query interval)s
-	public static final <SymExtended extends SeqSymmetry> List<SymExtended> specifiedInsideSpan(SeqSpan inside_span, List<SymExtended> result) {
+	public static final <SymExtended extends SeqSymmetry> List<SymExtended> specifiedInsideSpan(
+			SeqSpan inside_span, List<SymExtended> result) {
 		int inside_min = inside_span.getMin();
 		int inside_max = inside_span.getMax();
 		MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
@@ -498,7 +501,23 @@ public abstract class ServerUtils {
 		return result;
 	}
 
-	public static List<UcscPslSym> getIndexedOverlappedSymmetries(SeqSpan overlap_span, int[] min, int[] max, String testFileName, long[] filePos, AnnotatedSeqGroup group) throws FileNotFoundException, IOException {
+	/**
+	 * Get the list of symmetries.
+	 * @param overlap_span
+	 * @param min - array of min values
+	 * @param max - array of max values
+	 * @param indexedFile - indexed file to read from
+	 * @param filePos - array of indexed file positions
+	 * @param group
+	 * @return
+	 */
+	public static List getIndexedOverlappedSymmetries(
+			SeqSpan overlap_span,
+			int[] min,
+			int[] max,
+			File indexedFile,
+			long[] filePos,
+			AnnotatedSeqGroup group) {
 		FileInputStream fis = null;
 		InputStream newIstr = null;
 		DataInputStream dis = null;
@@ -512,14 +531,18 @@ public abstract class ServerUtils {
 			// We add 1 to the maxPos index.
 			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
 			int maxPos = outputRange[1] + 1;
-			fis = new FileInputStream(testFileName);
+			fis = new FileInputStream(indexedFile);
 			byte[] bytes = IndexingUtils.getIndexedAnnotations(fis, filePos[minPos], (int) (filePos[maxPos] - filePos[minPos]));
 			//assertEquals((int) (filePos[maxPos] - filePos[minPos]), bytes.length);
 			newIstr = new ByteArrayInputStream(bytes);
 			dis = new DataInputStream(newIstr);
 
 			return BpsParser.parse(dis, "BPS", (AnnotatedSeqGroup) null, group, false, true);
-		} finally {
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+		finally {
 			GeneralUtils.safeClose(fis);
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(newIstr);
@@ -553,6 +576,8 @@ public abstract class ServerUtils {
 			ArrayList<String> graph_formats) {
 		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
 
+		//Map<String, List<String>> optimizedGenomeTypes = getIndexedGenomeTypes();
+
 		// adding in any graph files as additional types (with type id = originalFile name)
 		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
 		//    show up in seq.getTypes(), but without actually being loaded??
@@ -585,6 +610,20 @@ public abstract class ServerUtils {
 					}
 				}
 				genome_types.put(type, flist);
+			}
+			for (String type : aseq.getIndexedTypeList()) {
+				if (genome_types.get(type) != null) {
+					continue;
+				}
+				IndexedSyms iSyms = aseq.getIndexedSym(type);
+				List<String> flist = new ArrayList<String>();
+				// TODO -- make this generic for different parsers with an interface
+				if (iSyms.outputClass == BpsParser.class) {
+					flist.add("bps");
+				} else {
+					System.out.println("Unexpected indexed type: " + iSyms.outputClass.toString());
+				}
+
 			}
 		}
 		return genome_types;

@@ -446,11 +446,10 @@ public final class BpsParser implements AnnotationWriter  {
 	 * @param max -- int array of TargetMaxes in annotation list.
 	 * @param fileIndices -- long array of file pointers in annotation list.
 	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
-	 * @return -- success or failure
-	 * @throws IOException
+	 * @return -- success or failures
 	 */
 	public static boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
-			int min[], int max[], long[] fileIndices) throws IOException {
+			int min[], int max[], long[] fileIndices) {
 		if (DEBUG){
 			System.out.println("in BpsParser.writeIndexedAnnotations()");
 		}

@@ -11,13 +11,9 @@ import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -156,12 +152,6 @@ public class ServerUtilsTest {
 			assertEquals(overlap_span.getBioSeq(), seq);
 
 			List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, min, max, testFileName, filePos, group);
-
-			File testFile = new File(testFileName);
-			if (testFile.exists()) {
-				testFile.delete();
-			}
-
 			
 			assertEquals(384, result.size());
 			assertEquals(136731, result.get(0).getTargetMin());
@@ -177,6 +167,10 @@ public class ServerUtilsTest {
 			result = ServerUtils.specifiedInsideSpan(inside_span, result);
 			assertEquals(138, result.size());
 
+			File testFile = new File(testFileName);
+			if (testFile.exists()) {
+				testFile.delete();
+			}
 
 		} catch (Exception ex) {
 			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);

@@ -9,9 +9,11 @@ import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.DNAUtils;
 import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +24,10 @@ import java.util.regex.Pattern;
 /**
  * @version: $Id$
  */
-public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
+	private Map<String, IndexedSyms> type_id2indexedsym = new HashMap<String, IndexedSyms>();
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
 	private String version;
@@ -327,6 +330,23 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Add an indexed collection to id2indexedsym.
+	 * @param type ID string.
+	 * @param value indexedSyms to add to the hash.
+	 */
+	public final void addIndexedSyms(String type, IndexedSyms value) {
+		type_id2indexedsym.put(type,value);
+	}
+
+	public final Set<String> getIndexedTypeList() {
+		return type_id2indexedsym.keySet();
+	}
+
+	public final IndexedSyms getIndexedSym(String type) {
+		return type_id2indexedsym.get(type);
 	}
 
 

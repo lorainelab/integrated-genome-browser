@@ -61,6 +61,7 @@ public final class ParserController {
 				String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
 				// assume binary psl format
 				DataInputStream dis = new DataInputStream(str);
+				IndexWriter iWriter = new BpsParser();
 				//BpsParser psl_reader = new BpsParser();
 				results = BpsParser.parse(dis, annot_type, null, seq_group, false, true);
 			} else if (stream_name.endsWith(".bgn")) {

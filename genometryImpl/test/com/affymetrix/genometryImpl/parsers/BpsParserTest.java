@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -160,8 +161,7 @@ public class BpsParserTest {
 			BioSeq seq = group.getSeq("chr1");
 		
 			IndexWriter iWriter = new BpsParser();
-			Comparator<UcscPslSym> USCCCompare = iWriter.getComparator();
-			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, iWriter.getComparator());
 
 			assertEquals(15,sortedSyms.size());
 
@@ -170,7 +170,9 @@ public class BpsParserTest {
 			long[] filePos = new long[sortedSyms.size() + 1];
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, iWriter, fos, min, max, filePos);
+			File testFile = new File(testFileName);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms, testFile, "test", iWriter);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, iSyms, fos);
 
 			assertEquals(min.length, max.length);
 			assertEquals(min.length + 1, filePos.length);
@@ -178,7 +180,6 @@ public class BpsParserTest {
 
 			testOutputIndexedSymmetries(min,max,filePos);
 
-			File testFile = new File(testFileName);
 			if (testFile.exists()) {
 				testFile.delete();
 			}

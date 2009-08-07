@@ -13,11 +13,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
-import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
@@ -216,13 +212,17 @@ public abstract class ServerUtils {
 			List originalSyms) {
 
 		String originalFileName = file.getName();
-		if (!IndexingUtils.isIndexable(originalFileName)) {
-			return;
-		}
 		String extension = originalFileName.substring(originalFileName.lastIndexOf("."),
 				originalFileName.length());
 		String typeName = ParserController.GetAnnotType(annots_map, originalFileName, extension);
-		
+
+		IndexWriter iWriter = ParserController.getIndexWriter(typeName);
+
+		if (iWriter == null) {
+			// Not yet indexable
+			return;
+		}
+				
 		System.out.println("Optimizing " + originalFileName);
 
 		// Remove the symmetries from the genome.
@@ -230,11 +230,6 @@ public abstract class ServerUtils {
 			seq.removeAnnotations(typeName);
 		}
 
-		IndexWriter iWriter = ParserController.getIndexWriter(typeName);
-
-		if (iWriter == null) {
-			System.out.println("ERROR: Couldn't find index writer for" + typeName );
-		}
 		writeIndexedFiles(
 				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
 	}
@@ -247,17 +242,19 @@ public abstract class ServerUtils {
 				return;
 			}
 			String tempFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
-			List<SeqSymmetry> sortedPslSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator());
-			IndexedSyms oC = new IndexedSyms(
-					sortedPslSyms, new File(tempFileName), typeName, iWriter);
-			seq.addIndexedSyms(typeName, oC);
-			FileOutputStream fos;
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator());
+			IndexedSyms iSyms = new IndexedSyms(
+					sortedSyms, new File(tempFileName), typeName, iWriter);
+			seq.addIndexedSyms(typeName, iSyms);
+			FileOutputStream fos = null;
 			try {
 				fos = new FileOutputStream(tempFileName);
-				IndexingUtils.writeIndexedAnnotations(sortedPslSyms, iWriter, fos, oC.min, oC.max, oC.filePos);
+				IndexingUtils.writeIndexedAnnotations(sortedSyms, iSyms, fos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(fos);
 			}
 		}
 	}
@@ -289,9 +286,6 @@ public abstract class ServerUtils {
 		return false;
 	}
 
-
-
-	
 
 	private static List loadAnnotFile(File current_file, String type_name, AnnotatedSeqGroup genome) {
 		InputStream istr = null;
@@ -378,7 +372,7 @@ public abstract class ServerUtils {
 			System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
 			name_pattern = Pattern.compile(name_regex);
 			result = genome.findSyms(name_pattern);
-			//	   Collections.sort(sortedPslSyms, new SeqSymIdComparator());
+			//	   Collections.sort(sortedSyms, new SeqSymIdComparator());
 			System.out.println("!!!! regex matches: " + result.size());
 		} else {
 			// ABC -- field exactly matches "ABC"
@@ -473,10 +467,7 @@ public abstract class ServerUtils {
 			if (iSyms != null) {
 				return getIndexedOverlappedSymmetries(
 						query_span,
-						iSyms.min,
-						iSyms.max,
-						iSyms.file,
-						iSyms.filePos,
+						iSyms,
 						seq.getSeqGroup());
 			}
 		}
@@ -517,10 +508,7 @@ public abstract class ServerUtils {
 	 */
 	public static List getIndexedOverlappedSymmetries(
 			SeqSpan overlap_span,
-			int[] min,
-			int[] max,
-			File indexedFile,
-			long[] filePos,
+			IndexedSyms iSyms,
 			AnnotatedSeqGroup group) {
 		FileInputStream fis = null;
 		InputStream newIstr = null;
@@ -530,18 +518,19 @@ public abstract class ServerUtils {
 			int[] outputRange = new int[2];
 			overlapRange[0] = overlap_span.getMin();
 			overlapRange[1] = overlap_span.getMax();
-			IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+			IndexingUtils.findMaxOverlap(overlapRange, outputRange, iSyms.min, iSyms.max);
 			int minPos = outputRange[0];
 			// We add 1 to the maxPos index.
 			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
 			int maxPos = outputRange[1] + 1;
-			fis = new FileInputStream(indexedFile);
-			byte[] bytes = IndexingUtils.getIndexedAnnotations(fis, filePos[minPos], (int) (filePos[maxPos] - filePos[minPos]));
+			fis = new FileInputStream(iSyms.file);
+			byte[] bytes = IndexingUtils.getIndexedAnnotations(
+					fis, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
 			//assertEquals((int) (filePos[maxPos] - filePos[minPos]), bytes.length);
 			newIstr = new ByteArrayInputStream(bytes);
 			dis = new DataInputStream(newIstr);
 
-			return BpsParser.parse(dis, "BPS", (AnnotatedSeqGroup) null, group, false, true);
+			return iSyms.iWriter.parse(dis, "BPS", group);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

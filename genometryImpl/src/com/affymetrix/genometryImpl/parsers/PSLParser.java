@@ -29,6 +29,8 @@ import com.affymetrix.genometryImpl.Psl3Sym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class PSLParser implements IndexWriter  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
@@ -603,6 +605,21 @@ public final class PSLParser implements IndexWriter  {
 	public int getMax(SeqSymmetry sym) {
 		return ((UcscPslSym)sym).getTargetMax();
 	}
+	public List<String> getFormatPrefList() {
+		return PSLParser.psl_pref_list;
+	}
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+		try {
+			return this.parse(dis, annot_type, null, group, null, false, true, false);
+		} catch (IOException ex) {
+			Logger.getLogger(PSLParser.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+
+	public void setTrackNamePrefix(String prefix) { track_name_prefix = prefix; }
+	public String getTrackNamePrefix() { return track_name_prefix; }
+
 
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
@@ -610,12 +627,6 @@ public final class PSLParser implements IndexWriter  {
 	 **/
 	public String getMimeType() { return "text/plain"; }
 
-	public void setTrackNamePrefix(String prefix) { track_name_prefix = prefix; }
-	public String getTrackNamePrefix() { return track_name_prefix; }
-
-	public List<String> getFormatPrefList() {
-		return PSLParser.psl_pref_list;
-	}
 
 }
 

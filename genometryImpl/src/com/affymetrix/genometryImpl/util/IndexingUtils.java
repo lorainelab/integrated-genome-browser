@@ -61,8 +61,10 @@ public class IndexingUtils {
 	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
 	 * @return -- success or failures
 	 */
-	public static boolean writeIndexedAnnotations(List<SeqSymmetry> syms, IndexWriter iWriter, FileOutputStream fos,
-			int min[], int max[], long[] fileIndices) {
+	public static boolean writeIndexedAnnotations(
+			List<SeqSymmetry> syms,
+			IndexedSyms iSyms,
+			FileOutputStream fos) {
 		if (DEBUG){
 			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 		}
@@ -71,20 +73,13 @@ public class IndexingUtils {
 			dos = new DataOutputStream(fos);
 			FileChannel fChannel = fos.getChannel();
 			int index = 0;
-			fileIndices[index] = 0;
-
+			iSyms.filePos[index] = 0;
 			for (SeqSymmetry sym : syms) {
-				if (sym instanceof UcscPslSym) {
-					min[index] = ((UcscPslSym)sym).getTargetMin();
-					max[index] = ((UcscPslSym)sym).getTargetMax();
-					// TODO: indexed classes need an interface that outputs a single line
-				} else {
-					// TODO: handle general SeqSymmetry
-					System.out.println("Shouldn't be here!");
-				}
-				iWriter.writeSymmetry(sym, dos);
+				iSyms.min[index] = iSyms.iWriter.getMin(sym);
+				iSyms.max[index] = iSyms.iWriter.getMax(sym);
+				iSyms.iWriter.writeSymmetry(sym, dos);
 				index++;
-				fileIndices[index] = fChannel.position();
+				iSyms.filePos[index] = fChannel.position();
 			}
 		}
 		catch (Exception ex) {

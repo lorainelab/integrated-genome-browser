@@ -1,6 +1,8 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Comparator;
@@ -20,6 +22,12 @@ public interface IndexWriter extends AnnotationWriter {
 	 * @throws IOException
 	 */
 	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException;
+
+	/**
+	 * Parse the given stream, returning a list of SeqSymmetries.
+	 * @return list of SeqSymmetries.
+	 */
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group);
 
 	/**
 	 * Get a comparator for the class.

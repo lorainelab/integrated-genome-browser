@@ -28,6 +28,8 @@ import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class BpsParser implements IndexWriter  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
@@ -452,14 +454,23 @@ public final class BpsParser implements IndexWriter  {
 	public int getMax(SeqSymmetry sym) {
 		return ((UcscPslSym)sym).getTargetMax();
 	}
+	public List<String> getFormatPrefList() {
+		return BpsParser.pref_list;
+	}
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+		try {
+			return BpsParser.parse(dis, annot_type, null, group, false, true);
+		} catch (IOException ex) {
+			Logger.getLogger(BpsParser.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
 	public String getMimeType() { return "binary/bps"; }
 
-	public List<String> getFormatPrefList() {
-		return BpsParser.pref_list;
-	}
+
 }
 

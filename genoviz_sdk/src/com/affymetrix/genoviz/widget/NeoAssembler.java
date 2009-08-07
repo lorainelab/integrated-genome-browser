@@ -1353,7 +1353,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * Should move this method and QuickSorter, InsertionSort classes
 	 *  to a Sorter util class
 	 */
-	protected int getSortedPosition(Comparable elem, Vector vec) {
+	protected int getSortedPosition(Comparable elem, Vector<GlyphI> vec) {
 		if (vec == null) {
 			return 0;
 		}

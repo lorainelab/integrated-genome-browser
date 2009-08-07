@@ -481,8 +481,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		if (result instanceof Vector) {
 			return (Vector)result;
 		} else {
-			Vector vec = new Vector();
-			vec.addElement(result);
+			Vector<GlyphI> vec = new Vector<GlyphI>();
+			vec.addElement((GlyphI)result);
 			return vec;
 		}
 	}

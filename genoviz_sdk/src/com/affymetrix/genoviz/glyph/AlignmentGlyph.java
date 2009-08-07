@@ -33,7 +33,7 @@ import java.util.Enumeration;
  * @author Gregg Helt
  */
 public class AlignmentGlyph extends AbstractResiduesGlyph
-	implements Comparable {
+	implements Comparable<AlignmentGlyph> {
 
 	public boolean debugdraw = false;
 
@@ -172,7 +172,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		arrow.setCoords(x, y, width, height);
 		arrow.setForward(forward);
 
-		Vector subGlyphs = arrow.getChildren();
+		Vector<GlyphI> subGlyphs = arrow.getChildren();
 		if (null != subGlyphs){
 			for (int k = 0; k<subGlyphs.size(); k++){
 				SolidGlyph sg = (SolidGlyph)(subGlyphs.elementAt(k));
@@ -614,18 +614,13 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			}
 
 		/**
-		 * @param obj is another sequence to be compared with this one.
+		 * @param otherseq is another sequence to be compared with this one.
 		 * @return &lt; 0 if this sequence starts before the other,
 		 * or if they start at same position but, this is shorter than the other;
 		 * 0 if both are of the same size and location;
 		 * &gt; 0 otherwise.
 		 */
-		public int compareTo(Object obj) {
-			if (!(obj instanceof AlignmentGlyph)) {
-				// should this throw an IllegalArgument exception???
-				return 0;
-			}
-			AlignmentGlyph otherseq = (AlignmentGlyph)obj;
+		public int compareTo(AlignmentGlyph otherseq) {
 			if (seq_beg < otherseq.seq_beg) {
 				return -1;
 			}

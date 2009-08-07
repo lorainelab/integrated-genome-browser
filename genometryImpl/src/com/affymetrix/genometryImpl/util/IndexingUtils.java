@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
@@ -44,25 +45,18 @@ public class IndexingUtils {
 		}
 	}
 
-	public static boolean isIndexable(String fileName) {
-		// only optimize PSL (but not link.psl) and BPS files
-		return (fileName.endsWith(".bps") ||
-				(fileName.endsWith(".psl") && !(fileName.endsWith("link.psl"))));
-	}
 
-
-		/**
+	/**
 	 * Create a file of annotations, and index its entries.
 	 * @param syms -- a sorted list of annotations (on one chromosome)
-	 * @param fos -- stream to write file to.
-	 * @param min -- int array of TargetMins in annotation list.
-	 * @param max -- int array of TargetMaxes in annotation list.
-	 * @param fileIndices -- long array of file pointers in annotation list.
-	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
-	 * @return -- success or failures
+	 * @param seq -- the chromosome
+	 * @param iSyms
+	 * @param fos
+	 * @return - success or failure
 	 */
 	public static boolean writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
+			MutableAnnotatedBioSeq seq,
 			IndexedSyms iSyms,
 			FileOutputStream fos) {
 		if (DEBUG){
@@ -77,7 +71,7 @@ public class IndexingUtils {
 			for (SeqSymmetry sym : syms) {
 				iSyms.min[index] = iSyms.iWriter.getMin(sym);
 				iSyms.max[index] = iSyms.iWriter.getMax(sym);
-				iSyms.iWriter.writeSymmetry(sym, dos);
+				iSyms.iWriter.writeSymmetry(sym, seq, dos);
 				index++;
 				iSyms.filePos[index] = fChannel.position();
 			}

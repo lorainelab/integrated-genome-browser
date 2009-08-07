@@ -253,7 +253,7 @@ public final class BgnParser implements AnnotationWriter  {
 	 *  probably not the best format to use, but since that can still be useful,
 	 *  this routine will treat the entire span as the CDS.
 	 */
-	public void outputBgnFormat(SeqSymmetry gsym, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry gsym, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan;
 		String name;
@@ -300,7 +300,7 @@ public final class BgnParser implements AnnotationWriter  {
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
 			for (SeqSymmetry gsym : annots) {
-				outputBgnFormat(gsym, dos);
+				writeSymmetry(gsym, dos);
 			}
 		}
 		finally {
@@ -390,7 +390,7 @@ public final class BgnParser implements AnnotationWriter  {
 					System.out.println("EXON COUNTS DON'T MATCH UP FOR " + name + " !!!");
 				}
 				else {
-					int spliced_length = 0;
+					//int spliced_length = 0;
 					for (int i=0; i<ecount; i++) {
 						int emin = Integer.parseInt(emins[i]);
 						if (write_from_text) { dos.writeInt(emin); }
@@ -466,7 +466,7 @@ public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableA
 			if (! (sym instanceof UcscGeneSym)) {
 				System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
 			}
-			outputBgnFormat((UcscGeneSym)sym, dos);
+			writeSymmetry((UcscGeneSym)sym, dos);
 		}
 		dos.flush();
 	}

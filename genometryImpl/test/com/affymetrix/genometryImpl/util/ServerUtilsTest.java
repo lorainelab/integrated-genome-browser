@@ -121,7 +121,6 @@ public class ServerUtilsTest {
 
 	@Test
 	public void testIndexing() {
-		//FileInputStream istr = null;
 		try {
 			String filename = "test/data/bps/mRNA1.mm.bps";
 			String testFileName = "test/data/bps/mRNA1_test.mm.bps";
@@ -143,7 +142,7 @@ public class ServerUtilsTest {
 
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, iSyms, fos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
 			GeneralUtils.safeClose(fos);
 
 			String overlap = "90000:11200177";

@@ -17,9 +17,6 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-
-//import com.affymetrix.genometryImpl.util.Memer;
-
 import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
@@ -594,7 +591,7 @@ public final class PSLParser implements IndexWriter  {
 		return comp;
 	}
 
-	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, DataOutputStream dos) throws IOException {
 		Writer bw = null;
 		try {
 			bw = new BufferedWriter(new OutputStreamWriter(dos));

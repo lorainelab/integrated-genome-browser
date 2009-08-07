@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.DataInputStream;
@@ -18,10 +19,13 @@ import java.util.List;
 public interface IndexWriter extends AnnotationWriter {
 	/**
 	 * Write a single symmetry to the file.
+	 * It is assumed that the file only uses one chromosome.
+	 * @param sym
+	 * @param seq - necessary for backwards compatibility.
 	 * @param dos
 	 * @throws IOException
 	 */
-	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException;
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, DataOutputStream dos) throws IOException;
 
 	/**
 	 * Parse the given stream, returning a list of SeqSymmetries.

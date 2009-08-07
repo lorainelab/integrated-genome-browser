@@ -250,7 +250,7 @@ public abstract class ServerUtils {
 			FileOutputStream fos = null;
 			try {
 				fos = new FileOutputStream(tempFileName);
-				IndexingUtils.writeIndexedAnnotations(sortedSyms, iSyms, fos);
+				IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);

@@ -440,7 +440,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	public static void writeBedFormat(Writer wr, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)
 		throws IOException  {
 		for (SeqSymmetry sym : syms) {
-			writeBedFormat(wr, sym, seq);
+			writeSymmetry(wr, sym, seq);
 		}
 	}
 
@@ -449,7 +449,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	public static void writeBedFormat(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
+	public static void writeSymmetry(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
@@ -572,7 +572,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 			Iterator iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry sym = (SeqSymmetry)iterator.next();
-				writeBedFormat(bw, sym, seq);
+				writeSymmetry(bw, sym, seq);
 			}
 			bw.flush();
 		}

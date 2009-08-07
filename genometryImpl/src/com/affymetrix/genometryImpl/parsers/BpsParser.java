@@ -22,6 +22,7 @@ import com.affymetrix.genometry.*;
 import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
@@ -425,7 +426,7 @@ public final class BpsParser implements IndexWriter  {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}
-				this.writeSymmetry(sym,dos);
+				this.writeSymmetry(sym,seq,dos);
 			}
 			dos.flush();
 		}
@@ -443,7 +444,7 @@ public final class BpsParser implements IndexWriter  {
 		return comp;
 	}
 	
-	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, DataOutputStream dos) throws IOException {
 		((UcscPslSym)sym).outputBpsFormat(dos);
 	}
 

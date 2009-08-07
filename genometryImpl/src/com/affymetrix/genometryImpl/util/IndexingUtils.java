@@ -1,12 +1,19 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.UcscPslSym;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +23,8 @@ import java.util.logging.Logger;
  * @author jnicol
  */
 public class IndexingUtils {
+	private static final boolean DEBUG = false;
+
 	public static class IndexedSyms {
 		public File file;
 		public int[] min;
@@ -38,6 +47,72 @@ public class IndexingUtils {
 		// only optimize PSL (but not link.psl) and BPS files
 		return (fileName.endsWith(".bps") ||
 				(fileName.endsWith(".psl") && !(fileName.endsWith("link.psl"))));
+	}
+
+		/**
+	 * Create a file of annotations, and index its entries.
+	 * @param syms -- a sorted list of annotations (on one chromosome)
+	 * @param fos -- stream to write file to.
+	 * @param min -- int array of TargetMins in annotation list.
+	 * @param max -- int array of TargetMaxes in annotation list.
+	 * @param fileIndices -- long array of file pointers in annotation list.
+	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
+	 * @return -- success or failures
+	 */
+	public static boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
+			int min[], int max[], long[] fileIndices) {
+		if (DEBUG){
+			System.out.println("in BpsParser.writeIndexedAnnotations()");
+		}
+		DataOutputStream dos = null;
+		try {
+			dos = new DataOutputStream(fos);
+			FileChannel fChannel = fos.getChannel();
+			int index = 0;
+			fileIndices[index] = 0;
+
+			for (UcscPslSym sym : syms) {
+				min[index] = sym.getTargetMin();
+				max[index] = sym.getTargetMax();
+				index++;
+				sym.outputBpsFormat(dos);
+				fileIndices[index] = fChannel.position();
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+
+	/**
+	 * Returns annotations for specific chromosome, sorted by comparator.
+	 * Class cannot be generic, since symmetries could be UcscPslSyms or SeqSymmetries.
+	 * @param syms - original list of annotations
+	 * @param seq - specific chromosome
+	 * @param comp - comparator
+	 * @return - sorted list of annotations
+	 */
+	@SuppressWarnings("unchecked")
+	public static List getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
+		Collections.sort(syms, comp);
+
+		List results = new ArrayList();
+		for (int i=0;i<syms.size();i++) {
+			Object sym = syms.get(i);
+			if (sym instanceof UcscPslSym) {
+				// add the lines specifically with Target seq == seq.
+				if (((UcscPslSym)sym).getTargetSeq() == seq) {
+					results.add(sym);
+				}
+				continue;
+			}
+			// sym is instance of SeqSymmetry.
+			//TODO
+		}
+		return results;
 	}
 
 	/**

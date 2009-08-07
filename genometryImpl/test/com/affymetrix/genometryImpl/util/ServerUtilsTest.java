@@ -134,14 +134,14 @@ public class ServerUtilsTest {
 			BioSeq seq = group.getSeq(seqid);
 
 			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-			List<UcscPslSym> sortedSyms = BpsParser.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+			List<UcscPslSym> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
 
 			int[] min = new int[sortedSyms.size()];
 			int[] max = new int[sortedSyms.size()];
 			long[] filePos = new long[sortedSyms.size() + 1];
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
-			BpsParser.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
 			GeneralUtils.safeClose(fos);
 
 			String overlap = "90000:11200177";

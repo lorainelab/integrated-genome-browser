@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
@@ -213,51 +214,46 @@ public abstract class ServerUtils {
 	private static void optimizeAndIndex(String dataRoot, File file, AnnotatedSeqGroup genome, 
 			List originalPslSyms) {
 
-		String typeName = GeneralUtils.stripEndings(file.getName());
-		String optimizedName = file.getName().toLowerCase();
-
-		if (!IndexingUtils.isIndexable(optimizedName)) {
+		String originalFileName = file.getName();
+		if (!IndexingUtils.isIndexable(originalFileName)) {
 			return;
 		}
+		String extension = originalFileName.substring(originalFileName.lastIndexOf("."),
+				originalFileName.length());
+		String typeName = ParserController.GetAnnotType(annots_map, originalFileName, extension);
 
-		optimizedName = GeneralUtils.stripEndings(typeName) + ".bps";
+	
+		
+		System.out.println("Optimizing " + originalFileName);
 
 		// Remove the symmetries from the genome.
 		for (BioSeq seq : genome.getSeqList()) {
-			for (int i = 0; i < originalPslSyms.size(); i++) {
-				SeqSymmetry sym = (SeqSymmetry) originalPslSyms.get(i);
-				seq.removeAnnotation(sym);	// remove it if it's in the seq.
-			}
+			seq.removeAnnotations(typeName);
 		}
 
 		UcscPslComparator comp = new UcscPslComparator();
-
-
 		// Split by chromosome, and write out files.
 		for (BioSeq seq : genome.getSeqList()) {
 			String dirName = optimizedDirName(dataRoot, genome, seq);
 			if (isOptimizedDir(dirName, file)) {
-				System.out.println(optimizedName + " already optimized, skipping.");
+				System.out.println(originalFileName + " already optimized, skipping.");
 				return;
 			}
-			String fileName = optimizedFileName(dataRoot, optimizedName, genome, seq);
-			//System.out.println("Filename is: " + fileName);
+			String tempFileName = optimizedFileName(dataRoot, originalFileName, genome, seq);
 
 			List<UcscPslSym> sortedPslSyms =
-					BpsParser.getSortedAnnotationsForChrom(originalPslSyms, seq, comp);
-			IndexedSyms oC = new IndexedSyms(sortedPslSyms, new File(fileName), typeName, BpsParser.class);
+					IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, comp);
+			IndexedSyms oC = new IndexedSyms(sortedPslSyms, new File(tempFileName), typeName, BpsParser.class);
 			seq.addIndexedSyms(typeName, oC);
 			
 			FileOutputStream fos;
 			try {
-				fos = new FileOutputStream(fileName);
-				BpsParser.writeIndexedAnnotations(sortedPslSyms, fos, oC.min, oC.max, oC.filePos);
+				fos = new FileOutputStream(tempFileName);
+				IndexingUtils.writeIndexedAnnotations(sortedPslSyms, fos, oC.min, oC.max, oC.filePos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			}
-
-			// TODO: need to add a <typeName/chr,indexedList> hashMap.
 		}
 	}
 
@@ -623,7 +619,7 @@ public abstract class ServerUtils {
 				} else {
 					System.out.println("Unexpected indexed type: " + iSyms.outputClass.toString());
 				}
-
+				genome_types.put(type, flist);
 			}
 		}
 		return genome_types;

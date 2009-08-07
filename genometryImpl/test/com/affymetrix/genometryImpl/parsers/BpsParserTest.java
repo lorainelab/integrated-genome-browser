@@ -128,9 +128,8 @@ public class BpsParserTest {
 			pslSyms.add((UcscPslSym)sym);
 		}
 
-		BpsParser instance = new BpsParser();
 		Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-		List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(pslSyms, seq, USCCCompare);
+		List<UcscPslSym> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(pslSyms, seq, USCCCompare);
 
 		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
 
@@ -159,9 +158,8 @@ public class BpsParserTest {
 
 			BioSeq seq = group.getSeq("chr1");
 			
-			BpsParser instance = new BpsParser();
 			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+			List<UcscPslSym> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
 
 			assertEquals(15,sortedSyms.size());
 
@@ -170,7 +168,7 @@ public class BpsParserTest {
 			long[] filePos = new long[sortedSyms.size() + 1];
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
-			instance.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
 
 			assertEquals(min.length, max.length);
 			assertEquals(min.length + 1, filePos.length);

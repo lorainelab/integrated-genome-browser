@@ -7,7 +7,9 @@
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" />
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
+<server type="das2" name="Utah" url="http://bioserver.hci.utah.edu:8080/DAS2/das2" />
 
+<server type="das2" name="Bioviz_local" url="http://127.0.0.1:8080/das2/genome" />
 
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
 <boolean tag="USE_SLICE_VIEW" val="true" />

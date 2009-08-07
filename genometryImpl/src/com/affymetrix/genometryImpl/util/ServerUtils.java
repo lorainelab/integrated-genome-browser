@@ -216,9 +216,10 @@ public abstract class ServerUtils {
 				originalFileName.length());
 		String typeName = ParserController.GetAnnotType(annots_map, originalFileName, extension);
 
-		IndexWriter iWriter = ParserController.getIndexWriter(typeName);
+		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
 		if (iWriter == null) {
+			System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
 		}
@@ -426,13 +427,8 @@ public abstract class ServerUtils {
 
 	/** this is the main call to retrieve symmetries meeting query constraints */
 	public static List<SeqSymmetry> getIntersectedSymmetries(SeqSpan overlap_span, String query_type, SeqSpan inside_span) {
-		List<SeqSymmetry> result = null;
-		/*if (query_type.endsWith(".bps")) {
-			//System.out.println("Trying to service " + query_type + " with an indexed query.");
-			result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, min, max, annots_filename, filePos, null);
-		} else {*/
-			result = ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
-		//}
+		List<SeqSymmetry> result =
+				ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
 		if (result == null) {
 			result = Collections.<SeqSymmetry>emptyList();
 		}
@@ -463,6 +459,7 @@ public abstract class ServerUtils {
 				}
 			}
 		} else {
+			// Couldn't find it.  See if it's been indexed.
 			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
 			if (iSyms != null) {
 				return getIndexedOverlappedSymmetries(
@@ -568,8 +565,6 @@ public abstract class ServerUtils {
 			Map<String, String> graph_name2dir,
 			ArrayList<String> graph_formats) {
 		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
-
-		//Map<String, List<String>> optimizedGenomeTypes = getIndexedGenomeTypes();
 
 		// adding in any graph files as additional types (with type id = originalFile name)
 		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs

@@ -595,7 +595,13 @@ public final class PSLParser implements IndexWriter  {
 	}
 
 	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException {
-		((UcscPslSym)sym).writeSymmetry(dos);
+		Writer bw = null;
+		try {
+			bw = new BufferedWriter(new OutputStreamWriter(dos));
+			((UcscPslSym) sym).outputPslFormat(bw);
+		} finally {
+			bw.flush();
+		}
 	}
 
 	public int getMin(SeqSymmetry sym) {

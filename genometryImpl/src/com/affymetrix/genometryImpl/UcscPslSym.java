@@ -431,7 +431,7 @@ public class UcscPslSym
 		}
 	}
 
-	public void writeSymmetry(DataOutputStream dos) throws IOException  {
+	public void outputBpsFormat(DataOutputStream dos) throws IOException  {
 		dos.writeInt(matches);
 		dos.writeInt(mismatches);
 		dos.writeInt(repmatches);

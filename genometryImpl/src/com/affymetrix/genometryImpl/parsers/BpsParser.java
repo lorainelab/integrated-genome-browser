@@ -391,7 +391,7 @@ public final class BpsParser implements IndexWriter  {
 			int symcount = syms.size();
 			for (int i=0; i<symcount; i++) {
 				UcscPslSym psl = (UcscPslSym)syms.get(i);
-				psl.writeSymmetry(dos);
+				psl.outputBpsFormat(dos);
 			}
 			dos.close();
 		}
@@ -444,7 +444,7 @@ public final class BpsParser implements IndexWriter  {
 	}
 	
 	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException {
-		((UcscPslSym)sym).writeSymmetry(dos);
+		((UcscPslSym)sym).outputBpsFormat(dos);
 	}
 
 	public int getMin(SeqSymmetry sym) {

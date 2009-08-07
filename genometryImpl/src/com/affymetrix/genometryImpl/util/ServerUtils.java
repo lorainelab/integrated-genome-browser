@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
@@ -212,7 +213,7 @@ public abstract class ServerUtils {
 	}
 
 	private static void optimizeAndIndex(String dataRoot, File file, AnnotatedSeqGroup genome, 
-			List originalPslSyms) {
+			List originalSyms) {
 
 		String originalFileName = file.getName();
 		if (!IndexingUtils.isIndexable(originalFileName)) {
@@ -221,8 +222,6 @@ public abstract class ServerUtils {
 		String extension = originalFileName.substring(originalFileName.lastIndexOf("."),
 				originalFileName.length());
 		String typeName = ParserController.GetAnnotType(annots_map, originalFileName, extension);
-
-	
 		
 		System.out.println("Optimizing " + originalFileName);
 
@@ -231,43 +230,48 @@ public abstract class ServerUtils {
 			seq.removeAnnotations(typeName);
 		}
 
-		UcscPslComparator comp = new UcscPslComparator();
-		// Split by chromosome, and write out files.
+		IndexWriter iWriter = ParserController.getIndexWriter(typeName);
+
+		if (iWriter == null) {
+			System.out.println("ERROR: Couldn't find index writer for" + typeName );
+		}
+		writeIndexedFiles(
+				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
+	}
+
+	private static void writeIndexedFiles(AnnotatedSeqGroup genome, String dataRoot, File file, String originalFileName, List originalPslSyms, IndexWriter iWriter, String typeName) {
 		for (BioSeq seq : genome.getSeqList()) {
-			String dirName = optimizedDirName(dataRoot, genome, seq);
-			if (isOptimizedDir(dirName, file)) {
+			String dirName = indexedDirName(dataRoot, genome, seq);
+			if (isIndexedDir(dirName, file)) {
 				System.out.println(originalFileName + " already optimized, skipping.");
 				return;
 			}
-			String tempFileName = optimizedFileName(dataRoot, originalFileName, genome, seq);
-
-			List<UcscPslSym> sortedPslSyms =
-					IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, comp);
-			IndexedSyms oC = new IndexedSyms(sortedPslSyms, new File(tempFileName), typeName, BpsParser.class);
+			String tempFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
+			List<SeqSymmetry> sortedPslSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator());
+			IndexedSyms oC = new IndexedSyms(
+					sortedPslSyms, new File(tempFileName), typeName, iWriter);
 			seq.addIndexedSyms(typeName, oC);
-			
 			FileOutputStream fos;
 			try {
 				fos = new FileOutputStream(tempFileName);
-				IndexingUtils.writeIndexedAnnotations(sortedPslSyms, fos, oC.min, oC.max, oC.filePos);
+				IndexingUtils.writeIndexedAnnotations(sortedPslSyms, iWriter, fos, oC.min, oC.max, oC.filePos);
 			} catch (Exception ex) {
 				// TODO: will need to reset the .optimized directory
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 	}
-
-	private static String optimizedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
-		return optimizedDirName(dataRoot, genome, seq) + "/" + fileName;
+	private static String indexedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
+		return indexedDirName(dataRoot, genome, seq) + "/" + fileName;
 	}
 
-	private static String optimizedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
-		String optimizedDirectory = dataRoot + ".optimized";
+	private static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
+		String optimizedDirectory = dataRoot + ".indexed";
 		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
 	}
 
-	private static boolean isOptimizedDir(String dirName, File originalFile) {
-		// Make sure the appropriate .optimized/species/version/chr directory exists.
+	private static boolean isIndexedDir(String dirName, File originalFile) {
+		// Make sure the appropriate .indexed/species/version/chr directory exists.
 		// If not, create it.
 		File newFile = new File(dirName);
 		if (!newFile.exists()) {
@@ -284,6 +288,10 @@ public abstract class ServerUtils {
 		long lastMod = originalFile.lastModified();
 		return false;
 	}
+
+
+
+	
 
 	private static List loadAnnotFile(File current_file, String type_name, AnnotatedSeqGroup genome) {
 		InputStream istr = null;
@@ -445,7 +453,7 @@ public abstract class ServerUtils {
 	 *  Currently assumes:
 	 *    query_span's seq is a BioSeq (which implies top-level annots are TypeContainerAnnots)
 	 *    only one IntervalSearchSym child for each TypeContainerAnnot
-	 *  Should expand soon so originalPslSyms can be returned from multiple IntervalSearchSyms children
+	 *  Should expand soon so originalSyms can be returned from multiple IntervalSearchSyms children
 	 *      of the TypeContainerAnnot
 	 */
 	public static final List<SeqSymmetry> getOverlappedSymmetries(SeqSpan query_span, String annot_type) {
@@ -613,12 +621,7 @@ public abstract class ServerUtils {
 				}
 				IndexedSyms iSyms = aseq.getIndexedSym(type);
 				List<String> flist = new ArrayList<String>();
-				// TODO -- make this generic for different parsers with an interface
-				if (iSyms.outputClass == BpsParser.class) {
-					flist.add("bps");
-				} else {
-					System.out.println("Unexpected indexed type: " + iSyms.outputClass.toString());
-				}
+				flist.addAll(iSyms.iWriter.getFormatPrefList());
 				genome_types.put(type, flist);
 			}
 		}

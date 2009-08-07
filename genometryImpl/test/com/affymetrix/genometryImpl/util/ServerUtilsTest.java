@@ -9,6 +9,7 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -133,15 +134,15 @@ public class ServerUtilsTest {
 
 			BioSeq seq = group.getSeq(seqid);
 
-			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-			List<UcscPslSym> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+			IndexWriter iWriter = new BpsParser();
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, iWriter.getComparator());
 
 			int[] min = new int[sortedSyms.size()];
 			int[] max = new int[sortedSyms.size()];
 			long[] filePos = new long[sortedSyms.size() + 1];
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, iWriter, fos, min, max, filePos);
 			GeneralUtils.safeClose(fos);
 
 			String overlap = "90000:11200177";

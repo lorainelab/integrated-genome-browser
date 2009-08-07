@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.util;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,15 +32,15 @@ public class IndexingUtils {
 		public int[] max;
 		public long[] filePos;
 		public String typeName;
-		public Class outputClass;
+		public IndexWriter iWriter;
 
-		public IndexedSyms(List<? extends SeqSymmetry> result, File file, String typeName, Class outputClass) {
+		public IndexedSyms(List<SeqSymmetry> result, File file, String typeName, IndexWriter iWriter) {
 			min = new int[result.size()];
 			max = new int[result.size()];
 			filePos = new long[result.size() + 1];
 			this.file = file;
 			this.typeName = typeName;
-			this.outputClass = outputClass;
+			this.iWriter = iWriter;
 		}
 	}
 
@@ -48,6 +49,7 @@ public class IndexingUtils {
 		return (fileName.endsWith(".bps") ||
 				(fileName.endsWith(".psl") && !(fileName.endsWith("link.psl"))));
 	}
+
 
 		/**
 	 * Create a file of annotations, and index its entries.
@@ -59,10 +61,10 @@ public class IndexingUtils {
 	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
 	 * @return -- success or failures
 	 */
-	public static boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
+	public static boolean writeIndexedAnnotations(List<SeqSymmetry> syms, IndexWriter iWriter, FileOutputStream fos,
 			int min[], int max[], long[] fileIndices) {
 		if (DEBUG){
-			System.out.println("in BpsParser.writeIndexedAnnotations()");
+			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 		}
 		DataOutputStream dos = null;
 		try {
@@ -71,11 +73,17 @@ public class IndexingUtils {
 			int index = 0;
 			fileIndices[index] = 0;
 
-			for (UcscPslSym sym : syms) {
-				min[index] = sym.getTargetMin();
-				max[index] = sym.getTargetMax();
+			for (SeqSymmetry sym : syms) {
+				if (sym instanceof UcscPslSym) {
+					min[index] = ((UcscPslSym)sym).getTargetMin();
+					max[index] = ((UcscPslSym)sym).getTargetMax();
+					// TODO: indexed classes need an interface that outputs a single line
+				} else {
+					// TODO: handle general SeqSymmetry
+					System.out.println("Shouldn't be here!");
+				}
+				iWriter.writeSymmetry(sym, dos);
 				index++;
-				sym.outputBpsFormat(dos);
 				fileIndices[index] = fChannel.position();
 			}
 		}
@@ -96,12 +104,12 @@ public class IndexingUtils {
 	 * @return - sorted list of annotations
 	 */
 	@SuppressWarnings("unchecked")
-	public static List getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
+	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
 		Collections.sort(syms, comp);
 
-		List results = new ArrayList();
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (int i=0;i<syms.size();i++) {
-			Object sym = syms.get(i);
+			SeqSymmetry sym = (SeqSymmetry)syms.get(i);
 			if (sym instanceof UcscPslSym) {
 				// add the lines specifically with Target seq == seq.
 				if (((UcscPslSym)sym).getTargetSeq() == seq) {

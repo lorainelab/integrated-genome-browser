@@ -132,6 +132,17 @@ public final class ParserController {
 		return results;
 	}
 
+	public static IndexWriter getIndexWriter(String stream_name) {
+		if (stream_name.endsWith((".bps"))) {
+			return new BpsParser();
+		}
+		if (stream_name.endsWith("psl") && !stream_name.endsWith("link.psl")) {
+			return new PSLParser();
+		}
+		return null;
+		
+	}
+
 	// return an annotation type.
 	// This is either:
 	// 1.  A type name contained in the annots_map hash table.

@@ -19,19 +19,18 @@ import java.util.*;
 import com.affymetrix.genometryImpl.util.Timer;
 
 import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.nio.channels.FileChannel;
 
-public final class BpsParser implements AnnotationWriter  {
+public final class BpsParser implements IndexWriter  {
+	private static final UcscPslComparator comp = new UcscPslComparator();
 	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
 	static {
@@ -61,6 +60,8 @@ public final class BpsParser implements AnnotationWriter  {
 	 */
 	static String psl_input_dir = user_dir + "/moredata/Drosophila_Jan_2003/";
 	static String bps_output_dir = user_dir + "/query_server_dro/Drosophila_Jan_2003/";
+
+	
 
 	/*  PSL format fields (from UcscPslSym)
 		int matches;
@@ -328,7 +329,6 @@ public final class BpsParser implements AnnotationWriter  {
 		}
 		else {
 			tim.start();
-			UcscPslComparator comp = new UcscPslComparator();
 			Collections.sort(results, comp);
 			if (REPORT_LOAD_STATS) {
 				SingletonGenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
@@ -389,7 +389,7 @@ public final class BpsParser implements AnnotationWriter  {
 			int symcount = syms.size();
 			for (int i=0; i<symcount; i++) {
 				UcscPslSym psl = (UcscPslSym)syms.get(i);
-				psl.outputBpsFormat(dos);
+				psl.writeSymmetry(dos);
 			}
 			dos.close();
 		}
@@ -423,7 +423,7 @@ public final class BpsParser implements AnnotationWriter  {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}
-				((UcscPslSym)sym).outputBpsFormat(dos);
+				this.writeSymmetry(sym,dos);
 			}
 			dos.flush();
 		}
@@ -437,11 +437,29 @@ public final class BpsParser implements AnnotationWriter  {
 		return success;
 	}
 
+	public Comparator getComparator() {
+		return comp;
+	}
+	
+	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException {
+		((UcscPslSym)sym).writeSymmetry(dos);
+	}
 
+	public int getMin(SeqSymmetry sym) {
+		return ((UcscPslSym)sym).getTargetMin();
+	}
+
+	public int getMax(SeqSymmetry sym) {
+		return ((UcscPslSym)sym).getTargetMax();
+	}
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
 	public String getMimeType() { return "binary/bps"; }
+
+	public List<String> getFormatPrefList() {
+		return BpsParser.pref_list;
+	}
 }
 

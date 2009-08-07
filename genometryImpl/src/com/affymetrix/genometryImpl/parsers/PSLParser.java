@@ -28,9 +28,10 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.Psl3Sym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
+import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 
-public final class PSLParser implements AnnotationWriter  {
-
+public final class PSLParser implements IndexWriter  {
+	private static final UcscPslComparator comp = new UcscPslComparator();
 	static List<String> psl_pref_list = Arrays.asList("psl");
 	static List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");
 	static List<String> psl3_pref_list = Arrays.asList("psl3", "bps", "psl");
@@ -587,6 +588,22 @@ public final class PSLParser implements AnnotationWriter  {
 		return success;
 	}
 
+	public Comparator getComparator() {
+		return comp;
+	}
+
+	public void writeSymmetry(SeqSymmetry sym, DataOutputStream dos) throws IOException {
+		((UcscPslSym)sym).writeSymmetry(dos);
+	}
+
+	public int getMin(SeqSymmetry sym) {
+		return ((UcscPslSym)sym).getTargetMin();
+	}
+
+	public int getMax(SeqSymmetry sym) {
+		return ((UcscPslSym)sym).getTargetMax();
+	}
+
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "PSL" format
@@ -595,6 +612,10 @@ public final class PSLParser implements AnnotationWriter  {
 
 	public void setTrackNamePrefix(String prefix) { track_name_prefix = prefix; }
 	public String getTrackNamePrefix() { return track_name_prefix; }
+
+	public List<String> getFormatPrefList() {
+		return PSLParser.psl_pref_list;
+	}
 
 }
 

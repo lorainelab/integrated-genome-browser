@@ -128,12 +128,14 @@ public class BpsParserTest {
 			pslSyms.add((UcscPslSym)sym);
 		}
 
-		Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-		List<UcscPslSym> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(pslSyms, seq, USCCCompare);
+		BpsParser bps = new BpsParser();
+			Comparator<UcscPslSym> USCCCompare = bps.getComparator();
+		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+				pslSyms, seq, USCCCompare);
 
 		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
 
-		assertEquals(457617, sortedSyms.get(1).getTargetMin());	// the middle symmetry (after sorting) should have a start coord of 457617.
+		assertEquals(457617, ((UcscPslSym)sortedSyms.get(1)).getTargetMin());	// the middle symmetry (after sorting) should have a start coord of 457617.
 		
 	}
 
@@ -145,7 +147,6 @@ public class BpsParserTest {
 	@SuppressWarnings("unchecked")
 	public void testIndexing2() {
 
-		FileInputStream istr = null;
 		try {
 			String filename = "test/data/bps/test1.bps";
 			String testFileName = "test/data/bps/testNEW.bps";
@@ -157,9 +158,10 @@ public class BpsParserTest {
 			syms = BpsParser.parse(filename, "stream_test", group);
 
 			BioSeq seq = group.getSeq("chr1");
-			
-			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-			List<UcscPslSym> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+		
+			IndexWriter iWriter = new BpsParser();
+			Comparator<UcscPslSym> USCCCompare = iWriter.getComparator();
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
 
 			assertEquals(15,sortedSyms.size());
 
@@ -168,7 +170,7 @@ public class BpsParserTest {
 			long[] filePos = new long[sortedSyms.size() + 1];
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, iWriter, fos, min, max, filePos);
 
 			assertEquals(min.length, max.length);
 			assertEquals(min.length + 1, filePos.length);

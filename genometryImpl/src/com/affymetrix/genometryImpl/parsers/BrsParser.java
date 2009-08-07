@@ -219,7 +219,7 @@ public final class BrsParser implements AnnotationWriter  {
 
 		if (annotate_seq) {
 			for (SeqSymmetry annot : annots) {
-				MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+				MutableAnnotatedBioSeq chromseq = annot.getSpan(0).getBioSeq();
 				chromseq.addAnnotation(annot);
 			}
 		}

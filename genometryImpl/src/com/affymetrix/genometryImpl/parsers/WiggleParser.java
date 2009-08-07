@@ -155,7 +155,7 @@ public final class WiggleParser {
 
 		if (annotate_seq) {
 			for (GraphSym graf : grafs) {
-				MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) graf.getGraphSeq();
+				MutableAnnotatedBioSeq seq = graf.getGraphSeq();
 				seq.addAnnotation(graf);
 			}
 		}

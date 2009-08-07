@@ -941,7 +941,7 @@ CHUNK_LOOP:
 
 	public static void checkSeqLength(MutableAnnotatedBioSeq seq, int[] xcoords) {
 		if (seq instanceof MutableAnnotatedBioSeq) {
-			MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)seq;
+			MutableAnnotatedBioSeq aseq = seq;
 			int xcount = xcoords.length;
 			if (xcount > 0 && (xcoords[xcount-1] > aseq.getLength())) {
 				aseq.setLength(xcoords[xcount-1]);

@@ -499,7 +499,7 @@ public final class GFFParser implements AnnotationWriter  {
 			Iterator iter = results.iterator();
 			while (iter.hasNext()) {
 				SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
-				MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) sym.getBioSeq();
+				MutableAnnotatedBioSeq seq = sym.getBioSeq();
 
 				if (USE_GROUPING && sym.getChildCount() > 0) {
 					// stretch sym to bounds of all children

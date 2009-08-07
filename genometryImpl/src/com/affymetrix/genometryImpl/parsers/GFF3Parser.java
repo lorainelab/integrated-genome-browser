@@ -231,7 +231,7 @@ public final class GFF3Parser {
 					results.add(sym);
 					/* Do we really need to do for every span? */
 					for(int i=0; i<sym.getSpanCount(); i++) {
-						MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) sym.getSpanSeq(i);
+						MutableAnnotatedBioSeq seq = sym.getSpanSeq(i);
 						seq.addAnnotation(sym);
 					}
 				} else {

@@ -338,7 +338,7 @@ public final class GraphSymUtils {
 			}
 			gsym.lockID();
 			if (gseq instanceof MutableAnnotatedBioSeq) {
-				((MutableAnnotatedBioSeq) gseq).addAnnotation(gsym);
+				gseq.addAnnotation(gsym);
 			}
 
 			gsym.setProperty("source_url", original_stream_name);

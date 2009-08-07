@@ -137,7 +137,7 @@ public final class BrptParser {
 					parent_syms.add(psym);
 				}
 				else {
-					seq = (MutableAnnotatedBioSeq)psym.getSpanSeq(0);
+					seq = psym.getSpanSeq(0);
 				}
 				int min = Integer.parseInt(fields[6]);
 				int max = Integer.parseInt(fields[7]);

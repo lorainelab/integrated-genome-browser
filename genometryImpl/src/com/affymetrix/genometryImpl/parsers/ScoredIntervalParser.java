@@ -298,7 +298,7 @@ public final class ScoredIntervalParser {
 				//    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
 				//    so cycle through all isyms
 				for (IndexedSingletonSym child : isyms) {
-					MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)child.getSpan(0).getBioSeq();
+					MutableAnnotatedBioSeq aseq = child.getSpan(0).getBioSeq();
 					List<SinEntry> sin_entries = seq2sinentries.get(aseq);
 					if (sin_entries == null) {
 						sin_entries = new ArrayList<SinEntry>();

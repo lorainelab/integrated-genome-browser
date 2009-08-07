@@ -374,7 +374,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	public void annotationParsed(SeqSymmetry bedline_sym) {
 		symlist.add(bedline_sym);
 		if (annotate_seq) {
-			MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
+			MutableAnnotatedBioSeq seq = bedline_sym.getSpan(0).getBioSeq();
 			if (create_container_annot) {
 				String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				if (type == null) { type = default_type; }

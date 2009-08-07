@@ -136,7 +136,7 @@ public final class ParserController {
 	// This is either:
 	// 1.  A type name contained in the annots_map hash table.
 	// 2.  (Default) The stream name with the extension stripped off.
-	private static String GetAnnotType(
+	public static String GetAnnotType(
 			Map<String, String> annots_map, String stream_name, String extension) {
 		// Check if this was in the annots mapping.
 		if (annots_map != null && !annots_map.isEmpty()) {

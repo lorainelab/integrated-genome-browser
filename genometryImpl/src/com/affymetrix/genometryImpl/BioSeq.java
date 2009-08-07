@@ -199,7 +199,8 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	 *     so GraphSyms can be retrieved with graph id given as type
 	 */
 	public SymWithProps getAnnotation(String type) {
-		if (type_id2sym == null) { return null; }	
+		if (type_id2sym == null) {
+			return null; }
 		return type_id2sym.get(type);
 	}
 
@@ -209,7 +210,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 			Matcher match = regex.matcher("");
 			for (Map.Entry<String, SymWithProps> entry : type_id2sym.entrySet()) {
 				String type = entry.getKey();
-				// System.out.println("  type: " + type);
 				if (match.reset(type).matches()) {
 					results.add(entry.getValue());
 				}
@@ -218,6 +218,16 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		return results;
 	}
 
+	/*public List<SymWithProps> getAnnotations() {
+		List<SymWithProps> results = new ArrayList<SymWithProps>();
+		if (type_id2sym != null) {
+			for (Map.Entry<String, SymWithProps> entry : type_id2sym.entrySet()) {
+				results.add(entry.getValue());
+			}
+		}
+		return results;
+	}
+*/
 
 
 	/**
@@ -225,9 +235,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	 *  @return an instance of {@link TypeContainerAnnot}
 	 */
 	private synchronized TypeContainerAnnot addAnnotation(String type) {
-		if (type_id2sym == null) { 
-			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
-		}
 		TypeContainerAnnot container = new TypeContainerAnnot(type);
 		container.setProperty("method", type);
 		SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
@@ -329,6 +336,17 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 					container.removeChild(annot);
 				}
 			}
+		}
+	}
+
+	public final void removeAnnotations(String type) {
+		SymWithProps sym = this.getAnnotation(type);
+		this.removeAnnotation(sym);
+		if (sym instanceof TypeContainerAnnot) {
+			// TODO: Investigate removeAnnotation when the sym is a TypeContainerAnnot.
+			TypeContainerAnnot tca = (TypeContainerAnnot)sym;
+			tca.clear();
+			type_id2sym.remove(type);
 		}
 	}
 

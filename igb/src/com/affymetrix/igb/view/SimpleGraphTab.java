@@ -847,7 +847,7 @@ public final class SimpleGraphTab extends JPanel
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
 
 				if (newsym != null) {
-					MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+					MutableAnnotatedBioSeq aseq = newsym.getGraphSeq();
 					aseq.addAnnotation(newsym);
 					gviewer.setAnnotatedSeq(aseq, true, true);
 					//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);

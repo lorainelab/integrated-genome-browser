@@ -214,7 +214,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
         String seq_name = (String) seqtable.getModel().getValueAt(srow, 0);
         selected_seq = gmodel.getSelectedSeqGroup().getSeq(seq_name);
         if (selected_seq != gmodel.getSelectedSeq()) {
-          gmodel.setSelectedSeq( (MutableAnnotatedBioSeq) selected_seq);
+          gmodel.setSelectedSeq(selected_seq);
         }
       }
     }

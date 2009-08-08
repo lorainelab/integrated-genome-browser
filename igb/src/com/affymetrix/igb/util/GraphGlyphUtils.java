@@ -269,7 +269,7 @@ public final class GraphGlyphUtils {
         symbol + " (" + graphB.getLabel() + ")";
     
     MutableAnnotatedBioSeq aseq =
-        (MutableAnnotatedBioSeq)((GraphSym)graphA.getInfo()).getGraphSeq();
+        ((GraphSym)graphA.getInfo()).getGraphSeq();
     newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
     GraphSymFloat newsym;
     if (graphA.getWCoords() == null) {

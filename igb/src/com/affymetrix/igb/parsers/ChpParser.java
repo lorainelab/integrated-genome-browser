@@ -426,7 +426,7 @@ public final class ChpParser {
 	  match_count++;
 	  SeqSymmetry prev_sym = syms.get(0);
 	  SeqSpan span = prev_sym.getSpan(0);
-	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	  MutableAnnotatedBioSeq aseq = span.getBioSeq();
 	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	  isym.setID(id);
 	  OneScoreEntry sentry = new OneScoreEntry(isym, val);
@@ -464,7 +464,7 @@ public final class ChpParser {
 	  for (int k=0; k<scount; k++) {
 	    SeqSymmetry prev_sym = syms.get(k);
 	    SeqSpan span = prev_sym.getSpan(0);
-	    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	    MutableAnnotatedBioSeq aseq = span.getBioSeq();
 	    IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	    isym.setID(id);
 	    OneScoreEntry sentry = new OneScoreEntry(isym, val);

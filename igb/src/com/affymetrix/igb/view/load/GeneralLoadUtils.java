@@ -802,7 +802,7 @@ public final class GeneralLoadUtils {
 		SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 
 		MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
-		MutableAnnotatedBioSeq visible_seq = (MutableAnnotatedBioSeq) gviewer.getViewSeq();
+		MutableAnnotatedBioSeq visible_seq = gviewer.getViewSeq();
 		if (selected_seq == null || visible_seq == null) {
 			//      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
 			//System.out.println("@@@@@ selected chrom: " + selected_seq);

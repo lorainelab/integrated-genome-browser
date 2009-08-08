@@ -549,7 +549,7 @@ public final class GraphSelectionManager
     else {
       GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
       
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+      MutableAnnotatedBioSeq aseq = newsym.getGraphSeq();
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
       //GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);

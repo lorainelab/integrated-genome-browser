@@ -103,7 +103,7 @@ public final class Das2ClientOptimizer {
         // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
         SeqSymmetry overlap_sym = request_sym.getOverlapSym();
         SeqSpan overlap_span = request_sym.getOverlapSpan();
-        MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) overlap_span.getBioSeq();
+        MutableAnnotatedBioSeq seq = overlap_span.getBioSeq();
         Das2Region region = request_sym.getRegion();
         Das2Type type = request_sym.getDas2Type();
         String typeid = type.getID();

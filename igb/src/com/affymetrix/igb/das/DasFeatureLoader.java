@@ -59,7 +59,7 @@ public final class DasFeatureLoader {
 	 */
 	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
 		String das_root = gFeature.gVersion.gServer.URL;
-		MutableAnnotatedBioSeq current_seq = (MutableAnnotatedBioSeq) gviewer.getViewSeq();
+		MutableAnnotatedBioSeq current_seq = gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();
 
 		try {

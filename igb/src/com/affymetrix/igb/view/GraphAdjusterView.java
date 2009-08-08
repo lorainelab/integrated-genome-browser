@@ -85,7 +85,7 @@ public final class GraphAdjusterView {
         newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
       }
 
-      ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
+      newgraf.getGraphSeq().addAnnotation(newgraf);
       newgrafs.add(newgraf);
     }
     return newgrafs;

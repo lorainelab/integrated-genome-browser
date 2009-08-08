@@ -103,7 +103,7 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 	public void displaySearchResult(SimpleDas2Feature feat) {
 		System.out.println("displaying result of name search: " + feat);
 		SeqSpan span = feat.getSpan(0);
-		MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) span.getBioSeq();
+		MutableAnnotatedBioSeq seq = span.getBioSeq();
 		if (gmodel.getSelectedSeq() != seq) {
 			gmodel.setSelectedSeq(seq);
 		}

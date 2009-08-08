@@ -532,7 +532,7 @@ public final class LoadFileAction {
 		if (syms != null && !syms.isEmpty()) {
 			SeqSymmetry fsym = syms.get(0);
 			SeqSpan fspan = fsym.getSpan(0);
-			first_seq = (MutableAnnotatedBioSeq) fspan.getBioSeq();
+			first_seq = fspan.getBioSeq();
 		}
 		return first_seq;
 	}

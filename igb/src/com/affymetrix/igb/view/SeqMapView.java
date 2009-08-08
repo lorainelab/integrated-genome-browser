@@ -1363,14 +1363,14 @@ public class SeqMapView extends JPanel
 		}
 
 		if (aseq != null &&
-						((BioSeq) aseq).getComposition() != null) {
+						aseq.getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 			//   addLeafsToTier(), addToTier(), etc. into mapping from compositon sequences
 			BioSeq cached_aseq = aseq;
 			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
 			SeqSymmetry[] cached_path = transform_path;
 
-			SeqSymmetry comp = ((BioSeq) aseq).getComposition();
+			SeqSymmetry comp = aseq.getComposition();
 			// assuming a two-level deep composition hierarchy for now...
 			//   need to make more recursive at some point...
 			//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
@@ -1985,8 +1985,8 @@ public class SeqMapView extends JPanel
 		seq2viewSym.addSpan(seq_span);
 		seq2viewSym.addSpan(view_span);
 
-		((BioSeq) viewseq).setComposition(seq2viewSym);
-		((BioSeq) viewseq).setBounds(view_span.getMin(), view_span.getMax());
+		viewseq.setComposition(seq2viewSym);
+		viewseq.setBounds(view_span.getMin(), view_span.getMax());
 		transform_path = new SeqSymmetry[1];
 		transform_path[0] = seq2viewSym;
 		slicing_in_effect = true;
@@ -2240,8 +2240,8 @@ public class SeqMapView extends JPanel
 
 	public void unclamp() {
 		if (viewseq instanceof BioSeq) {
-			int min = ((BioSeq) viewseq).getMin();
-			int max = ((BioSeq) viewseq).getMax();
+			int min = viewseq.getMin();
+			int max = viewseq.getMax();
 			seqmap.setMapRange(min, max);
 		} else {
 			seqmap.setMapRange(0, viewseq.getLength());
@@ -2263,7 +2263,7 @@ public class SeqMapView extends JPanel
 		if (aseq instanceof BioSeq && !slicing_in_effect) {
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-			String version = ((BioSeq) aseq).getVersion();
+			String version = aseq.getVersion();
 			Collection<String> syns = lookup.getSynonyms(version);
 
 			if (syns == null) {
@@ -2314,7 +2314,7 @@ public class SeqMapView extends JPanel
 		} else {
 			String genomeVersion = aseq.getID();
 			if (aseq instanceof BioSeq) {
-				genomeVersion = ((BioSeq) aseq).getVersion();
+				genomeVersion = aseq.getVersion();
 			}
 			Application.errorPanel("Don't have UCSC information for genome " + genomeVersion);
 		}
@@ -2966,7 +2966,7 @@ public class SeqMapView extends JPanel
 		AnnotatedSeqGroup current_group = null;
 		AnnotatedSeqGroup new_group = evt.getSelectedGroup();
 		if (aseq instanceof BioSeq) {
-			current_group = ((BioSeq) aseq).getSeqGroup();
+			current_group = aseq.getSeqGroup();
 		}
 
 		if (Application.DEBUG_EVENTS) {

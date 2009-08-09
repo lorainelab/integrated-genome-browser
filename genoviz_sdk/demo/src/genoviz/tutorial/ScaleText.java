@@ -51,7 +51,7 @@ public class ScaleText  extends SolidGlyph {
 			fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
 		}
 
-		int space = (int)((bbox.width - fm.stringWidth(text))/2);
+		int space = (bbox.width - fm.stringWidth(text))/2;
 
 		g.setFont(font);
 		g.setColor( this.getBackgroundColor() );
@@ -60,8 +60,8 @@ public class ScaleText  extends SolidGlyph {
 		g.drawLine(bbox.x+bbox.width, bbox.y, bbox.x+bbox.width, bbox.y+bbox.height);
 
 		if (count < 8) {
-			g.drawLine(bbox.x, bbox.y+(int)(bbox.height/2),
-					bbox.x+bbox.width, bbox.y+(int)(bbox.height/2));
+			g.drawLine(bbox.x, bbox.y+(bbox.height/2),
+					bbox.x+bbox.width, bbox.y+(bbox.height/2));
 		}
 		else {
 			g.drawString(text,bbox.x+space, bbox.y+bbox.height-4);

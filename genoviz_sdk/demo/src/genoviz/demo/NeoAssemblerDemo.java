@@ -166,7 +166,7 @@ public class NeoAssemblerDemo extends Applet
 		}
 
 		map.setLabelsBackground(nicePaleBlue);
-		((NeoAssembler)map).setDamageOptimized(optimize_damage);
+		map.setDamageOptimized(optimize_damage);
 		map.setAutoSort(false);
 
 		// Use the NeoAssembler's built-in selection methods.
@@ -269,7 +269,7 @@ public class NeoAssemblerDemo extends Applet
 
 		align_start = ((Span)spans.elementAt(0)).ref_start;
 		align_end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
-		align_length = (int)Math.abs(align_end-align_start)+1;
+		align_length = Math.abs(align_end-align_start)+1;
 
 		String seq_string = align.getSequence().getResidues();
 		StringBuffer sb = new StringBuffer(align_length);
@@ -341,7 +341,7 @@ public class NeoAssemblerDemo extends Applet
 		// color coding particular alignments (based on source, for example)
 		if (name.startsWith("GEO")) {
 			map.setLabelColor(Color.blue);
-			((GlyphI)seqtag).setColor(Color.blue);
+			seqtag.setColor(Color.blue);
 		}
 		else {
 			map.setLabelColor(Color.black);

@@ -235,7 +235,7 @@ public class SimpleMap0 extends Applet implements ActionListener {
 		int token = theTokens.nextToken();
 		if (StreamTokenizer.TT_NUMBER == token) {
 			begin = (int) theTokens.nval;
-			token = (int) theTokens.nextToken();
+			token = theTokens.nextToken();
 			if (StreamTokenizer.TT_NUMBER == token) {
 				end = (int) theTokens.nval;
 				return new Range(begin, end);
@@ -262,7 +262,7 @@ public class SimpleMap0 extends Applet implements ActionListener {
 		int token = theTokens.nextToken();
 		if (StreamTokenizer.TT_NUMBER == token) {
 			r[0] = (int) theTokens.nval;
-			token = (int) theTokens.nextToken();
+			token = theTokens.nextToken();
 			if (StreamTokenizer.TT_NUMBER == token) {
 				r[1] = (int) theTokens.nval;
 				return r;

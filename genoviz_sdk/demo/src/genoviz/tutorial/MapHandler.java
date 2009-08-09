@@ -400,7 +400,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 			if ( name.equals( "chromosome" ) ) {  // temporary
 				p.setPacker( new SiblingCoordAvoid() );
-				ViewI view = ( ( NeoMap ) this.map ).getView();
+				ViewI view = this.map.getView();
 			}
 		}
 

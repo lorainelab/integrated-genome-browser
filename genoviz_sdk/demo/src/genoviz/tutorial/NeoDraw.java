@@ -254,7 +254,7 @@ public class NeoDraw extends JApplet
     if (theEvent.getID() == NeoRubberBandEvent.BAND_END
 	&& map.NO_SELECTION != map.getSelectionEvent())
       {
-	NeoRubberBandEvent bandevent = (NeoRubberBandEvent)theEvent;
+	NeoRubberBandEvent bandevent = theEvent;
 	Rectangle pixelBox = bandevent.getPixelBox();
 	pixelBox.setSize(pixelBox.width+1, pixelBox.height+1);
 	int fuzziness = map.getPixelFuzziness();

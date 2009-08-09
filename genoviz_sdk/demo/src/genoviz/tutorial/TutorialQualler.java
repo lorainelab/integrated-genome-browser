@@ -308,7 +308,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 			}
 		}
 		else if (evtSource == cloneButton) {
-			oneClone = new NeoQualler((NeoQualler)widget);
+			oneClone = new NeoQualler(widget);
 			oneClone.addMouseListener(this.mouser);
 
 			remove((Component)widget);

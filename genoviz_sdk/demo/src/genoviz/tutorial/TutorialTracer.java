@@ -243,7 +243,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 			propFrame.show();
 		}
 		super.start();
-		NeoTracer nt = (NeoTracer)widget;
+		NeoTracer nt = widget;
 
 	}
 
@@ -344,7 +344,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 		}
 		else if (evtSource == optScrollingB) {
 			optScrolling = !optScrolling;
-			((NeoTracer)widget).setScrollingOptimized(optScrolling);
+			widget.setScrollingOptimized(optScrolling);
 			widget.updateWidget();
 			if (optScrolling) {
 				optScrollingB.setLabel("Opt Scrolling");
@@ -355,7 +355,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 		}
 		else if (evtSource == optDamageB) {
 			optDamage = !optDamage;
-			((NeoTracer)widget).setDamageOptimized(optDamage);
+			widget.setDamageOptimized(optDamage);
 			widget.updateWidget();
 			if (optDamage) {
 				optDamageB.setLabel("Opt Damage");

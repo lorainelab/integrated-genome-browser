@@ -291,7 +291,7 @@ public class NeoQuallerDemo extends Applet
 	}
 
 	public void cloneWidget() {
-		oneClone = new NeoQualler((NeoQualler)widget);
+		oneClone = new NeoQualler(widget);
 		if (clone_in_same_frame) {
 			widg_pan.remove((Component)widget);
 			widg_pan.setLayout(new GridLayout(0, 1));

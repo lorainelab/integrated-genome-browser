@@ -13,11 +13,7 @@
 
 package com.affymetrix.genoviz.datamodel;
 
-import com.affymetrix.genoviz.util.Debug;
-
-import java.lang.String;
 import java.util.Vector;
-import java.util.StringTokenizer;
 
 /**
  * models a set of scores indicating the confidence
@@ -68,8 +64,10 @@ public class ReadConfidence
 	 * @param theNewBases the array of bases to assign.
 	 */
 	public void setBaseArray(char[] theNewBases) {
-		Debug.test( null != qualityVector,
-				"Tried to set bases without quality scores.");
+		if (qualityVector == null) {
+			System.out.println("Tried to set bases without quality scores.");
+		}
+				
 		int ourBases = Math.min( theNewBases.length, this.qualityVector.size() );
 		if ( theNewBases.length < this.qualityVector.size() ) {
 			System.err.println("setBaseArray: Not enough bases. Filling in with \"-\".");

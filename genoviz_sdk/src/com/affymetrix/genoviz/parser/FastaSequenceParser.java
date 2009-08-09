@@ -15,9 +15,6 @@ package com.affymetrix.genoviz.parser;
 
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Sequence;
-
-import com.affymetrix.genoviz.util.Debug;
-
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Vector;

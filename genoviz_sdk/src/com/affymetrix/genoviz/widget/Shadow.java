@@ -22,8 +22,6 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 
-import com.affymetrix.genoviz.util.Debug;
-
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -107,7 +105,9 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	}
 
 	public void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
-		Debug.test( this.topMargin + this.bottomMargin < 1.0, "Margins too large." );
+		if (this.topMargin + this.bottomMargin >= 1.0) {
+			System.out.println("Margins too large." );
+		}
 
 		this.map = destination;
 

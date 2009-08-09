@@ -20,7 +20,6 @@ import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.parser.*;
-import com.affymetrix.genoviz.util.Debug;
 import com.affymetrix.genoviz.widget.NeoMap;
 
 import java.awt.Adjustable;
@@ -32,7 +31,6 @@ import java.io.StreamTokenizer;
 import java.io.Reader;
 import java.io.InputStreamReader;
 import java.io.FileReader;
-import java.io.StringReader;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Stack;
@@ -132,7 +130,7 @@ public class NarcissusParser implements ContentParser {
 	private void parseInputStream(Reader theStream) throws IOException {
 
 		if (null != this.map) {
-			Debug.inform("clearing old widget");
+			System.out.println("clearing old widget");
 			this.map.clearWidget();
 			this.map.updateWidget();
 		}
@@ -423,7 +421,6 @@ public class NarcissusParser implements ContentParser {
 	 * for testing.
 	 */
 	public static void main(String argv[]) {
-		Debug.setLevel(Debug.INFORM);
 		ContentParser p = new NarcissusParser();
 		try {
 			String s = "http://roma/~eric/dna.fasta";
@@ -437,11 +434,11 @@ public class NarcissusParser implements ContentParser {
 				p.exportContent(System.out, o);
 			}
 			else {
-				Debug.warn( "nothing?" );
+				System.out.println( "nothing?" );
 			}
 		}
 		catch ( Exception e ) {
-			Debug.warn( e.toString() );
+			e.printStackTrace();
 		}
 	}
 	/* */

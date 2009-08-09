@@ -16,8 +16,6 @@ package com.affymetrix.genoviz.parser;
 import com.affymetrix.genoviz.datamodel.ReadConfidence;
 import com.affymetrix.genoviz.datamodel.BaseConfidence;
 
-import com.affymetrix.genoviz.util.Debug;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.InputStreamReader;
@@ -25,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 /**
  * converts between a PHD format file and a {@link ReadConfidence} data model.

@@ -32,8 +32,6 @@ import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoAssembler;
 import com.affymetrix.genoviz.widget.NeoAssemblerCustomizer;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.util.Memer;
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.glyph.AlignmentGlyph;
 import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
@@ -94,8 +92,8 @@ public class NeoAssemblerDemo extends Applet
 	boolean consensus_added = false;
 
 	// For debugging
-	Memer memcheck;
-	Timer tm;
+	//Memer memcheck;
+	//Timer tm;
 
 	// Start add sequences to the assembly view with second sequence in
 	//    assembly (first is consensus);
@@ -155,8 +153,8 @@ public class NeoAssemblerDemo extends Applet
 
 		going = true;
 
-		if (isMemed)  { memcheck = new Memer(); }
-		if (isTimed)  { tm = new Timer(); }
+		//if (isMemed)  { memcheck = new Memer(); }
+		//if (isTimed)  { tm = new Timer(); }
 
 		map = new NeoAssembler(use_internal_zoomer);
 		if (!use_internal_zoomer) {
@@ -178,20 +176,20 @@ public class NeoAssemblerDemo extends Applet
 		consensus = assem.getConsensus();
 		Vector aligns = assem.getAlignments();
 
-		if (isMemed)  { memcheck.printMemory(); }
+		//if (isMemed)  { memcheck.printMemory(); }
 
 		//----------- setting up alignment map info ------------
 		addConsensus();
 		if (show_half_first) {
-			if (isTimed)  { tm.start(); }
+			//if (isTimed)  { tm.start(); }
 			int half = aligns.size()/2;
 			for (int i=1; i<half; i++) {
 				addNext();
 			}
-			if (isTimed)  { tm.print(); }
+			//if (isTimed)  { tm.print(); }
 		}
 
-		if (isMemed)  { memcheck.printMemory(); }
+		//if (isMemed)  { memcheck.printMemory(); }
 
 		mapframe = new Frame("genoviz NeoAssembler Demo");
 		setupMenus(mapframe);

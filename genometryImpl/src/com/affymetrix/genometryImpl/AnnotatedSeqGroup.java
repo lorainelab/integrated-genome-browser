@@ -489,10 +489,12 @@ public class AnnotatedSeqGroup {
 	 * @param sym
 	 */
 	final public void removeSymmetry(SeqSymmetry sym) {
-		for (List<SeqSymmetry> seqList : id2sym_hash.values()) {
-			if (seqList.contains(sym)) {
-				seqList.remove(sym);
-			}
+		if (sym == null || sym.getID() == null) {
+			return;
+		}
+		List<SeqSymmetry> symList = id2sym_hash.get(sym.getID().toLowerCase());
+		if (symList != null && symList.contains(sym)) {
+			symList.remove(sym);
 		}
 	}
 }

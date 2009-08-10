@@ -43,12 +43,12 @@ public final class ParserController {
 					annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
 					parser.setIsLinkPsl(true);
 					parser.enableSharedQueryTarget(true);
+					parser.setCreateContainerAnnot(true); // is this needed?
 				}
 				if (type_prefix != null) {
 					parser.setTrackNamePrefix(type_prefix);
 				}
-				parser.setCreateContainerAnnot(true); // is this needed?
-				//	parser.setCreateContainerAnnot(false); // is this needed?
+
 				results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);  // annotate target
 			} else if (stream_name.endsWith(".bed")) {
 				System.out.println("loading via BedParser: " + stream_name);

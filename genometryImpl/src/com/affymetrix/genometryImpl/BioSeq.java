@@ -319,15 +319,16 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	}
 
 	public synchronized void removeAnnotation(SeqSymmetry annot) {
+		if (annot != null) {
+			this.getSeqGroup().removeSymmetry(annot);
+		}
 		if (! needsContainer(annot)) {
 			if (null != annots) {
 				annots.remove(annot);
-				this.getSeqGroup().removeSymmetry(annot);
 			}
 		} else {
 			String type = determineMethod(annot);
 			if ((type != null) && (getAnnotation(type) != null)) {
-				this.getSeqGroup().removeSymmetry(annot);
 				MutableSeqSymmetry container = (MutableSeqSymmetry) getAnnotation(type);
 				if (container == annot) {
 					type_id2sym.remove(type);
@@ -347,7 +348,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	 */
 	public final void removeAnnotations(String type) {
 		SymWithProps sym = this.getAnnotation(type);
-		this.removeAnnotation(sym);
 		
 		if (sym instanceof TypeContainerAnnot) {
 			// TODO: Investigate removeAnnotation() when the sym is a TypeContainerAnnot.
@@ -356,10 +356,17 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 			}
 			
 			TypeContainerAnnot tca = (TypeContainerAnnot)sym;
+
+			int symCount=sym.getChildCount();
+			for (int i=0;i<symCount;i++) {
+				SeqSymmetry symChild = tca.getChild(i);
+				this.removeAnnotation(symChild);
+			}
 			tca.clear();
 
 			type_id2sym.remove(type);
 		}
+		this.removeAnnotation(sym);
 	}
 
 	/**

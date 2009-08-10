@@ -45,6 +45,9 @@ public abstract class Optimize {
 			System.out.println("optimizing seq = " + aseq.getID());
 		}
 		int annot_count = aseq.getAnnotationCount();
+		if (DEBUG) {
+			System.out.println("annotation count: " + annot_count);
+		}
 		for (int i = annot_count - 1; i >= 0; i--) {
 			// annot should be a TypeContainerAnnot (if seq is a BioSeq)
 			SeqSymmetry annot = aseq.getAnnotation(i);

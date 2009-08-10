@@ -483,4 +483,16 @@ public class AnnotatedSeqGroup {
 			id2sym_hash.put(key,seq_list);
 		}
 	}
+
+	/**
+	 * Remove symmetry from seq group.
+	 * @param sym
+	 */
+	final public void removeSymmetry(SeqSymmetry sym) {
+		for (List<SeqSymmetry> seqList : id2sym_hash.values()) {
+			if (seqList.contains(sym)) {
+				seqList.remove(sym);
+			}
+		}
+	}
 }

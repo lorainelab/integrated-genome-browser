@@ -898,8 +898,8 @@ public class SeqMapView extends JPanel
 	 *  Specifically, NeoMap.removeItem(GlyphI gl) need to recursively remove child glyphs from
 	 *     objects such as the Hashtable in NeoMap that maps data models to glyphs
 	 *  Also, should really be removing not just GraphGlyphs (and their parent
-	 *     PixelFloaterGlyphs and TierGlyphs), but also should remove GraphSyms from
-	 *     AnnotatedBioSeq, which currently I'm not doing
+	 *     PixelFloaterGlyphs and TierGlyphs)
+
 	 */
 	/**
 	 *  Clears the graphs, and reclaims some memory.
@@ -911,7 +911,7 @@ public class SeqMapView extends JPanel
 			for (int i = acount - 1; i >= 0; i--) {
 				SeqSymmetry annot = mseq.getAnnotation(i);
 				if (annot instanceof GraphSym) {
-					mseq.removeAnnotation(annot);
+					mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
 				}
 			}
 		} else {

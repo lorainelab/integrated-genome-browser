@@ -322,10 +322,12 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		if (! needsContainer(annot)) {
 			if (null != annots) {
 				annots.remove(annot);
+				this.getSeqGroup().removeSymmetry(annot);
 			}
 		} else {
 			String type = determineMethod(annot);
 			if ((type != null) && (getAnnotation(type) != null)) {
+				this.getSeqGroup().removeSymmetry(annot);
 				MutableSeqSymmetry container = (MutableSeqSymmetry) getAnnotation(type);
 				if (container == annot) {
 					type_id2sym.remove(type);
@@ -339,13 +341,23 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		}
 	}
 
+	/**
+	 * Remove annotations of this type.  Make it possible to reclaim resources for its SeqSymmetry.
+	 * @param type
+	 */
 	public final void removeAnnotations(String type) {
 		SymWithProps sym = this.getAnnotation(type);
 		this.removeAnnotation(sym);
+		
 		if (sym instanceof TypeContainerAnnot) {
-			// TODO: Investigate removeAnnotation when the sym is a TypeContainerAnnot.
+			// TODO: Investigate removeAnnotation() when the sym is a TypeContainerAnnot.
+			if (annots != null) {
+				annots.remove(sym);
+			}
+			
 			TypeContainerAnnot tca = (TypeContainerAnnot)sym;
 			tca.clear();
+
 			type_id2sym.remove(type);
 		}
 	}

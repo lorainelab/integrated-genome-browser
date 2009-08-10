@@ -549,7 +549,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		ArrayList<String> formats = new ArrayList<String>();
 		ArrayList<String> ranges = new ArrayList<String>();
 
-		splitSequenceQuery(URLDecoder.decode(request.getQueryString()), formats, ranges);
+		splitSequenceQuery(GeneralUtils.URLDecode(request.getQueryString()), formats, ranges);
 
 		if (ranges.size() > 1) {
 			System.out.println("too many range params, aborting");
@@ -910,7 +910,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				}
 			}
 			List<String> formats = types_hash.get(feat_type);
-			String feat_type_encoded = URLEncoder.encode(feat_type);
+			String feat_type_encoded = GeneralUtils.URLEncode(feat_type);
 			// URLEncoding replaces slashes, want to keep those...
 			feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
 
@@ -1068,7 +1068,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Map<String, ArrayList<String>> props = new HashMap<String, ArrayList<String>>();
 
 			boolean known_query =
-					splitFeaturesQuery(URLDecoder.decode(query), formats, types, segments, overlaps, insides, excludes, names, coordinates, links, notes, props);
+					splitFeaturesQuery(GeneralUtils.URLDecode(query), formats, types, segments, overlaps, insides, excludes, names, coordinates, links, notes, props);
 
 			if (formats.size() == 1) {
 				output_format = formats.get(0);
@@ -1317,7 +1317,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
-		String query_type = URLDecoder.decode(full_type_uri);
+		String query_type = GeneralUtils.URLDecode(full_type_uri);
 		// using end of URI for internal typeid if type is given as full URI
 		//    (as it should according to DAS/2 spec)
 		//    special-case exception is when need to know full URL for locating graph data,

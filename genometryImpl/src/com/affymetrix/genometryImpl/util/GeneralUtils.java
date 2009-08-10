@@ -8,8 +8,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 import javax.swing.ImageIcon;
@@ -17,6 +22,7 @@ import net.sf.image4j.codec.ico.ICODecoder;
 import net.sf.image4j.codec.ico.ICOImage;
 
 public final class GeneralUtils {
+	public static final String UTF8 = "UTF-8";
 
 	/**
 	 * Safely close a Closeable object.  If it doesn't exist, return.
@@ -165,5 +171,23 @@ public final class GeneralUtils {
 			// Ignore an exception here, since this is only for making a pretty UI.
 		}
 		return friendlyIcon;
+	}
+
+	public static String URLEncode(String s) {
+		try {
+			return URLEncoder.encode(s, UTF8);
+		} catch (UnsupportedEncodingException ex) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
+			throw new IllegalArgumentException(ex);
+		}
+	}
+
+	public static String URLDecode(String s) {
+		try {
+			return URLDecoder.decode(s, UTF8);
+		} catch (UnsupportedEncodingException ex) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
+			throw new IllegalArgumentException(ex);
+		}
 	}
 }

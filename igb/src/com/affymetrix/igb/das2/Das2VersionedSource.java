@@ -32,6 +32,8 @@ import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
+import static com.affymetrix.igb.IGBConstants.UTF8;
+
 /**
  *
  *  started with com.affymetrix.igb.das.DasSource and modified
@@ -481,7 +483,7 @@ public class Das2VersionedSource {
 			String request_root = featcap.getRootURI().toString();
 			String nameglob = name;
 			if (Das2Region.URL_ENCODE_QUERY) {
-				nameglob = URLEncoder.encode(nameglob, "UTF-8");
+				nameglob = URLEncoder.encode(nameglob, UTF8);
 			}
 			String feature_query = request_root + "?name=" + nameglob;
 			if (DEBUG) {

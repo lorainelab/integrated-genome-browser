@@ -19,7 +19,8 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
+
+import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  *
@@ -154,13 +155,13 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		Preferences individualServerPref = prefServers.node(existingServerType);
 		try {
 			// Remove the entry from the key-value pair
-			individualServerPref.remove(URLEncoder.encode(existingDirectoryOrURL, "UTF-8"));
+			individualServerPref.remove(URLEncoder.encode(existingDirectoryOrURL, UTF8));
 			
 			// Now add the key-value pair of URL and server name
-			individualServerPref.put(URLEncoder.encode(server.URL, "UTF-8"), server.serverName);
+			individualServerPref.put(URLEncoder.encode(server.URL, UTF8), server.serverName);
 			
 			// Under a child node called 'login' add the key-value pair of URL and login
-			individualServerPref.node("login").put(URLEncoder.encode(server.URL, "UTF-8"), server.login != null ? server.login : "");
+			individualServerPref.node("login").put(URLEncoder.encode(server.URL, UTF8), server.login != null ? server.login : "");
 
 			// Encrypt the password
 			String passwordEncrypted = "";
@@ -172,10 +173,10 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			}
 			
 			// Under a child node called 'password' add the key-value pair of URL and encrypted password
-			individualServerPref.node("password").put(URLEncoder.encode(server.URL, "UTF-8"), passwordEncrypted);
+			individualServerPref.node("password").put(URLEncoder.encode(server.URL, UTF8), passwordEncrypted);
 
 			// Under a child node called 'enabled' add the key-value pair of URL and enabled boolean
-			individualServerPref.node("enabled").put(URLEncoder.encode(server.URL, "UTF-8"), new Boolean(server.enabled).toString());
+			individualServerPref.node("enabled").put(URLEncoder.encode(server.URL, UTF8), new Boolean(server.enabled).toString());
 			
 			individualServerPref.flush();
 			

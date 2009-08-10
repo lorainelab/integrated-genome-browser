@@ -13,10 +13,11 @@
 
 package com.affymetrix.igb.bookmarks;
 
-import com.affymetrix.igb.IGBConstants;
 import java.io.Serializable;
 import java.net.*;
 import java.util.*;
+
+import static com.affymetrix.igb.IGBConstants.UTF8;
 
 
 /**
@@ -109,8 +110,8 @@ public final class Bookmark implements Serializable {
         }
 
         if (use_url_decoding) try {
-          key = URLDecoder.decode(key, IGBConstants.UTF8);
-          value = URLDecoder.decode(value, IGBConstants.UTF8);
+          key = URLDecoder.decode(key, UTF8);
+          value = URLDecoder.decode(value, UTF8);
         } catch (java.io.UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
@@ -216,20 +217,20 @@ public final class Bookmark implements Serializable {
         String[] values = (String[]) o;
         for (int i=0; i<values.length; i++) {
           if (i>0) {sb.append('&');}
-          sb.append(URLEncoder.encode(key, "UTF-8"));
+          sb.append(URLEncoder.encode(key, UTF8));
           String val = values[i];
           if (val != null && val.length()>0) {
             sb.append('=');
-            sb.append(URLEncoder.encode(values[i], "UTF-8"));
+            sb.append(URLEncoder.encode(values[i], UTF8));
           }
         }
       } else {
-        sb.append(URLEncoder.encode(key, "UTF-8"));
+        sb.append(URLEncoder.encode(key, UTF8));
         if (o != null) {
           String value = o.toString();
           if (value.length()>0) {
             sb.append('=');
-            sb.append(URLEncoder.encode(value, "UTF-8"));
+            sb.append(URLEncoder.encode(value, UTF8));
           }
         }
       }

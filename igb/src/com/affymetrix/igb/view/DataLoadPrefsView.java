@@ -13,9 +13,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometry.util.LoadUtils.ServerType;
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -31,7 +29,6 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.*;
@@ -50,8 +47,9 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  *
@@ -521,11 +519,11 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		Preferences individualServerPref = prefServers.node(serverType);
 		try {
 		  // Set a key-value pair of server URL and server name
-			individualServerPref.put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), serverName);
+			individualServerPref.put(URLEncoder.encode(DirectoryOrURL, UTF8), serverName);
 			
 			// Create a 'login' node underneath DAS2 and save the key-value pair of server url
 			// and login
-			individualServerPref.node("login").put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), login);
+		individualServerPref.node("login").put(URLEncoder.encode(DirectoryOrURL, UTF8), login);
 			
 			// Encrypt the password
 			String passwordEncrypted = "";
@@ -538,11 +536,11 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			
       // Create a 'password' node underneath DAS2 and save the key-value pair of server url
       // and encrypted password
-			individualServerPref.node("password").put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), passwordEncrypted);
+			individualServerPref.node("password").put(URLEncoder.encode(DirectoryOrURL, UTF8), passwordEncrypted);
 			
       // Create an 'enabled' node underneath DAS2 and save the key-value pair of server url
       // and enabled (true)
-      individualServerPref.node("enabled").put(URLEncoder.encode(DirectoryOrURL, "UTF-8"), "true");
+      individualServerPref.node("enabled").put(URLEncoder.encode(DirectoryOrURL, UTF8), "true");
       
 			individualServerPref.flush();
 			// Add to GeneralLoadView
@@ -560,7 +558,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
 		Preferences individualServerPref = prefServers.node(serverType);
 		try {
-			individualServerPref.remove(URLEncoder.encode(DirectoryOrURL, "UTF-8"));
+			individualServerPref.remove(URLEncoder.encode(DirectoryOrURL, UTF8));
 		} catch (UnsupportedEncodingException e) {
 				Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
 		}	

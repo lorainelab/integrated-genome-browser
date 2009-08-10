@@ -205,7 +205,7 @@ public abstract class ServerUtils {
 		System.out.println("loading annotations of " + current_file.getName());
 		List results = loadAnnotFile(current_file, type_name, genome);
 
-		//optimizeAndIndex(dataRoot, current_file, genome, results);
+		optimizeAndIndex(dataRoot, current_file, genome, results);
 	}
 
 	private static void optimizeAndIndex(String dataRoot, File file, AnnotatedSeqGroup genome, 
@@ -219,7 +219,7 @@ public abstract class ServerUtils {
 		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
 		if (iWriter == null) {
-			System.out.println("Type " + typeName + " is not optimizable");
+			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
 		}
@@ -462,6 +462,7 @@ public abstract class ServerUtils {
 			// Couldn't find it.  See if it's been indexed.
 			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
 			if (iSyms != null) {
+				System.out.println("Returning indexed symmetries!");
 				return getIndexedOverlappedSymmetries(
 						query_span,
 						iSyms,

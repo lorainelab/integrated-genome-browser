@@ -21,7 +21,6 @@ import javax.xml.transform.TransformerException;
 import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSpan;
 import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;

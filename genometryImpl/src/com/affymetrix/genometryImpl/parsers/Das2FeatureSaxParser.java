@@ -326,7 +326,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			feat_id_att = atts.getValue(ID);
 		} // for backward-compatibility
 		try {
-			feat_id = URLDecoder.decode(current_base_uri.resolve(feat_id_att).toString());
+			feat_id = GeneralUtils.URLDecode(current_base_uri.resolve(feat_id_att).toString());
 		} catch (IllegalArgumentException ioe) {
 			throw new SAXException("Feature id uses illegal characters: '" + feat_id_att + "'");
 		}
@@ -339,7 +339,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			feat_type_att = atts.getValue(TYPEURI);
 		} // for backward-compatibility
 		try {
-			feat_type = URLDecoder.decode(current_base_uri.resolve(feat_type_att).toString());
+			feat_type = GeneralUtils.URLDecode(current_base_uri.resolve(feat_type_att).toString());
 		} catch (IllegalArgumentException ioe) {
 			throw new SAXException("Feature type uses illegal characters: '" + feat_type_att + "'");
 		}
@@ -364,7 +364,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 		String seqid;
 		try {
-			seqid = URLDecoder.decode(current_base_uri.resolve(seqid_att).toString());
+			seqid = GeneralUtils.URLDecode(current_base_uri.resolve(seqid_att).toString());
 		} catch (IllegalArgumentException ioe) {
 			throw new SAXException("Segment id uses illegal characters: '" + seqid_att + "'");
 		}
@@ -386,7 +386,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				feat_parent_id = atts.getValue(ID);
 			}
 			try {
-				feat_parent_id = URLDecoder.decode(current_base_uri.resolve(feat_parent_id).toString());
+				feat_parent_id = GeneralUtils.URLDecode(current_base_uri.resolve(feat_parent_id).toString());
 			} catch (IllegalArgumentException ioe) {
 				throw new SAXException("Parent id uses illegal characters: '" + feat_parent_id + "'");
 			}
@@ -401,7 +401,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			part_id = atts.getValue(ID);
 		}
 		try {
-			part_id = URLDecoder.decode(current_base_uri.resolve(part_id).toString());
+			part_id = GeneralUtils.URLDecode(current_base_uri.resolve(part_id).toString());
 		} catch (IllegalArgumentException ioe) {
 			throw new SAXException("Part id uses illegal characters: '" + part_id + "'");
 		}
@@ -772,13 +772,13 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 		// print <FEATURE ...> line
 		pw.print("  <FEATURE uri=\"");
-		pw.print(URLEncoder.encode(feat_id));
+		pw.print(GeneralUtils.URLEncode(feat_id));
 		if (feat_title != null) {
 			pw.print("\" title=\"");
 			pw.print(feat_title);
 		}
 		pw.print("\" type=\"");
-		pw.print(URLEncoder.encode(feat_type));
+		pw.print(GeneralUtils.URLEncode(feat_type));
 		pw.print("\" >");
 		pw.println();
 
@@ -807,7 +807,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				span = mspan;
 			}
 			pw.print("     <LOC segment=\"");
-			pw.print(URLEncoder.encode(span.getBioSeq().getID()));
+			pw.print(GeneralUtils.URLEncode(span.getBioSeq().getID()));
 			pw.print("\" range=\"");
 			String range = getRangeString(span);
 			pw.print(range);
@@ -831,7 +831,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			pw.print("     <PARENT ");
 			pw.print(URID);
 			pw.print("=\"");
-			pw.print(URLEncoder.encode(parent_id));
+			pw.print(GeneralUtils.URLEncode(parent_id));
 			pw.print("\" />");
 			pw.println();
 		}
@@ -845,7 +845,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				pw.print("     <PART ");
 				pw.print(URID);
 				pw.print("=\"");
-				pw.print(URLEncoder.encode(child_id));
+				pw.print(GeneralUtils.URLEncode(child_id));
 				pw.print("\" />");
 				pw.println();
 			}

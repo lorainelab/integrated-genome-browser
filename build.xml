@@ -14,8 +14,7 @@
 
 		<!-- Locations of subprojets -->
 		<property name="genoviz"       value="${basedir}/genoviz_sdk" />
-		<property name="genometry"     value="${basedir}/genometry" />
-		<property name="genometryImpl" value="${basedir}/genometryImpl" />
+		<property name="genometry"     value="${basedir}/genometryImpl" />
 		<property name="igb"           value="${basedir}/igb" />
 		<property name="das2server"    value="${basedir}/das2_server" />
 
@@ -26,7 +25,7 @@
 		<property name="docs.dir"   value="${basedir}/documentation/api-docs" />
 		<property name="report.dir" value="${basedir}/reports" />
 
-		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${genometryImpl}/src:${genometryImpl}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test" />
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test" />
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
@@ -289,9 +288,6 @@
 				<!-- multiple dirsets ensure dependency ordering -->
 				<dirset dir="${basedir}">
 					<include name="genoviz_sdk" />
-					<include name="genometry" />
-				</dirset>
-				<dirset dir="${basedir}">
 					<include name="genometryImpl" />
 				</dirset>
 				<dirset dir="${basedir}">

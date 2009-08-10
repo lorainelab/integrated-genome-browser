@@ -18,7 +18,6 @@
 		<jar href="affx_fusion.jar" />
 		<jar href="freehep-2.1.1.jar" download="lazy" />
 		<jar href="genometry.jar" />
-		<jar href="genometryImpl.jar" />
 		<jar href="genoviz.jar" />
 		<jar href="jlfgr-1_0.jar" />
 		<jar href="myswing.jar" />

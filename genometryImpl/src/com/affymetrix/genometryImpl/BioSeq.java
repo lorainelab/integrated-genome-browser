@@ -343,10 +343,11 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	}
 
 	/**
-	 * Remove annotations of this type.  Make it possible to reclaim resources for its SeqSymmetry.
+	 * Remove this type from the BioSeq.
+	 * Make it possible to reclaim resources for its SeqSymmetry.
 	 * @param type
 	 */
-	public final void removeAnnotations(String type) {
+	public final void removeTypes(String type) {
 		SymWithProps sym = this.getAnnotation(type);
 		
 		if (sym instanceof TypeContainerAnnot) {
@@ -356,17 +357,10 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 			}
 			
 			TypeContainerAnnot tca = (TypeContainerAnnot)sym;
-
-			int symCount=sym.getChildCount();
-			for (int i=0;i<symCount;i++) {
-				SeqSymmetry symChild = tca.getChild(i);
-				this.removeAnnotation(symChild);
-			}
 			tca.clear();
 
 			type_id2sym.remove(type);
 		}
-		this.removeAnnotation(sym);
 	}
 
 	/**

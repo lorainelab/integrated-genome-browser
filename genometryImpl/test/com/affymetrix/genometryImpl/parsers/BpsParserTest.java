@@ -171,7 +171,7 @@ public class BpsParserTest {
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
 			File testFile = new File(testFileName);
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms, testFile, "test", iWriter);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", iWriter);
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
 
 			assertEquals(min.length, max.length);

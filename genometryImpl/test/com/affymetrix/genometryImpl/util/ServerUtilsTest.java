@@ -138,7 +138,7 @@ public class ServerUtilsTest {
 			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, iWriter.getComparator());
 
 			File testFile = new File(testFileName);
-			IndexedSyms iSyms = new IndexedSyms(sortedSyms, testFile, query_type, iWriter);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
 
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);

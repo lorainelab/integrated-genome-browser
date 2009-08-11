@@ -224,13 +224,20 @@ public abstract class ServerUtils {
 			return;
 		}
 				
-		System.out.println("Optimizing " + originalFileName);
+		System.out.println("Indexing " + originalFileName);
 
 		// Remove the symmetries from the genome.
+		int symSize = originalSyms.size();
 		for (BioSeq seq : genome.getSeqList()) {
-			seq.removeAnnotations(typeName);
+			for (int i=0;i<symSize;i++) {
+				SeqSymmetry sym = (SeqSymmetry)originalSyms.get(i);
+				seq.removeAnnotation(sym);
+			}
 		}
-
+		for (BioSeq seq : genome.getSeqList()) {
+			seq.removeTypes(typeName);
+		}
+		
 		writeIndexedFiles(
 				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
 	}
@@ -245,7 +252,7 @@ public abstract class ServerUtils {
 			String tempFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
 			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator());
 			IndexedSyms iSyms = new IndexedSyms(
-					sortedSyms, new File(tempFileName), typeName, iWriter);
+					sortedSyms.size(), new File(tempFileName), typeName, iWriter);
 			seq.addIndexedSyms(typeName, iSyms);
 			FileOutputStream fos = null;
 			try {
@@ -462,7 +469,6 @@ public abstract class ServerUtils {
 			// Couldn't find it.  See if it's been indexed.
 			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
 			if (iSyms != null) {
-				System.out.println("Returning indexed symmetries!");
 				return getIndexedOverlappedSymmetries(
 						query_span,
 						iSyms,

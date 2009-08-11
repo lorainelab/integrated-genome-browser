@@ -35,10 +35,10 @@ public class IndexingUtils {
 		public String typeName;
 		public IndexWriter iWriter;
 
-		public IndexedSyms(List<SeqSymmetry> result, File file, String typeName, IndexWriter iWriter) {
-			min = new int[result.size()];
-			max = new int[result.size()];
-			filePos = new long[result.size() + 1];
+		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
+			min = new int[resultSize];
+			max = new int[resultSize];
+			filePos = new long[resultSize + 1];
 			this.file = file;
 			this.typeName = typeName;
 			this.iWriter = iWriter;

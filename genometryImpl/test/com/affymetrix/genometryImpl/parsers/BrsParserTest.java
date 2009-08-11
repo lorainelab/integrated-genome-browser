@@ -43,7 +43,7 @@ public class BrsParserTest {
 	String versionString = "genomeVersion";
 	AnnotatedSeqGroup genome = null;
 	private List<SeqSymmetry> results = null;
-	private BgnParser parser = new BgnParser();
+	private BrsParser parser = new BrsParser();
 
 	@Before
 	public void setUp() {
@@ -62,6 +62,7 @@ public class BrsParserTest {
 				istr.close();
 			} catch (IOException ex) {
 				Logger.getLogger(BrsParserTest.class.getName()).log(Level.SEVERE, null, ex);
+				fail();
 			}
 		}
 	}
@@ -73,7 +74,7 @@ public class BrsParserTest {
 	}
 
 
-	@Test
+	/*@Test
 	public void TestIndexing() {
 		try {
 			String testFileName = "test/data/brs/testOUT.brs";
@@ -117,5 +118,5 @@ public class BrsParserTest {
 			fail();
 		}
 
-	}
+	}*/
 }

@@ -233,24 +233,34 @@ public abstract class ServerUtils {
 				
 		System.out.println("Indexing " + originalFileName);
 
-		// Remove the symmetries from the genome.
+		removeSymmetriesFromGenome(originalSyms, genome, typeName);
+
+		determineIndexes(
+				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
+	}
+
+	/**
+	 * Remove the symmetries from the genome, since these are about to be indexed.
+	 * @param originalSyms
+	 * @param genome
+	 * @param typeName
+	 */
+	private static void removeSymmetriesFromGenome(List originalSyms, AnnotatedSeqGroup genome, String typeName) {
 		int symSize = originalSyms.size();
 		for (BioSeq seq : genome.getSeqList()) {
-			for (int i=0;i<symSize;i++) {
-				SeqSymmetry sym = (SeqSymmetry)originalSyms.get(i);
+			for (int i = 0; i < symSize; i++) {
+				SeqSymmetry sym = (SeqSymmetry) originalSyms.get(i);
 				seq.removeAnnotation(sym);
 			}
 		}
 		for (BioSeq seq : genome.getSeqList()) {
 			seq.removeTypes(typeName);
 		}
-		
-		writeIndexedFiles(
-				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
 	}
 
+
 	/**
-	 * Sort symmetries and write out to disk, and store indexes in memory.
+	 * Generate indexes (and indexed files, if necessary).
 	 * @param genome
 	 * @param dataRoot
 	 * @param file
@@ -259,33 +269,68 @@ public abstract class ServerUtils {
 	 * @param iWriter
 	 * @param typeName
 	 */
-	private static void writeIndexedFiles(AnnotatedSeqGroup genome, String dataRoot, File file, String originalFileName, List originalPslSyms, IndexWriter iWriter, String typeName) {
+	private static void determineIndexes(AnnotatedSeqGroup genome, String dataRoot, File file, String originalFileName, List originalPslSyms, IndexWriter iWriter, String typeName) {
 		for (BioSeq seq : genome.getSeqList()) {
+			IndexedSyms iSyms = null;
 			String dirName = indexedDirName(dataRoot, genome, seq);
-			if (isIndexedDir(dirName, file)) {
-				System.out.println(originalFileName + " already optimized, skipping.");
-				// TODO: will need to get the indexes back into memory.
-				return;
+			String indexedAnnotationsFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
+			String indexesFileName = indexesFileName(dataRoot, originalFileName, genome, seq);
+			File indexesFile = new File(indexesFileName);
+			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
+
+			createDirIfNecessary(dirName);
+
+			if (isAlreadyIndexed(indexesFile, indexedAnnotationsFile, file)) {
+				System.out.println(indexedAnnotationsFileName + " already indexed.  Reading in indexes from file");
+
+				iSyms = IndexingUtils.readIndexes(indexesFile, indexedAnnotationsFile, typeName, iWriter);
+				seq.addIndexedSyms(typeName, iSyms);
+				continue;
 			}
-			String tempFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
-			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator(seq));
-			IndexedSyms iSyms = new IndexedSyms(
-					sortedSyms.size(), new File(tempFileName), typeName, iWriter);
-			seq.addIndexedSyms(typeName, iSyms);
-			FileOutputStream fos = null;
-			try {
-				fos = new FileOutputStream(tempFileName);
-				IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
-			} catch (Exception ex) {
-				// TODO: will need to reset the .optimized directory
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(fos);
-			}
+			
+			IndexAndWriteFiles(originalPslSyms, seq, iWriter, indexedAnnotationsFile, typeName, iSyms, indexedAnnotationsFileName, indexesFileName);
 		}
 	}
+
+	/**
+	 * Sort symmetries and write out to disk, and store indexes in memory.
+	 * @param originalPslSyms
+	 * @param seq
+	 * @param iWriter
+	 * @param indexedAnnotationsFile
+	 * @param typeName
+	 * @param iSyms
+	 * @param indexedAnnotationsFileName
+	 * @param indexesFileName
+	 */
+	private static void IndexAndWriteFiles(List originalPslSyms, BioSeq seq, IndexWriter iWriter, File indexedAnnotationsFile, String typeName, IndexedSyms iSyms, String indexedAnnotationsFileName, String indexesFileName) {
+		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator(seq));
+		iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
+		seq.addIndexedSyms(typeName, iSyms);
+		FileOutputStream fos = null;
+		FileOutputStream fos2 = null;
+		try {
+			fos = new FileOutputStream(indexedAnnotationsFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
+			fos2 = new FileOutputStream(indexesFileName);
+			IndexingUtils.writeIndexes(iSyms, fos2);
+		} catch (Exception ex) {
+			// TODO: will need to reset the .optimized directory
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(fos);
+			GeneralUtils.safeClose(fos2);
+		}
+	}
+
+
+	// filename of indexed annotations.
 	private static String indexedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
 		return indexedDirName(dataRoot, genome, seq) + "/" + fileName;
+	}
+	// filename of indexes.  (Used for rebooting server).
+	private static String indexesFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
+		return indexedDirName(dataRoot, genome, seq) + "/" + "IDX_" + fileName;
 	}
 
 	private static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
@@ -293,7 +338,7 @@ public abstract class ServerUtils {
 		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
 	}
 
-	private static boolean isIndexedDir(String dirName, File originalFile) {
+	private static void createDirIfNecessary(String dirName) {
 		// Make sure the appropriate .indexed/species/version/chr directory exists.
 		// If not, create it.
 		File newFile = new File(dirName);
@@ -303,13 +348,21 @@ public abstract class ServerUtils {
 				System.exit(-1);
 			} else {
 				System.out.println("Created new directory: " + dirName);
-				return false;
 			}
 		}
+	}
 
-		// TODO: If it does exist, and its timestamp is newer than this originalFile, then we can skip.
-		long lastMod = originalFile.lastModified();
-		return false;
+	/**
+	 * See if the file has already been indexed.
+	 * @param indexesFileName
+	 * @param indexedAnnotationsFile
+	 * @param originalFile
+	 * @return true if already indexed.
+	 */
+	private static boolean isAlreadyIndexed(File indexesFile, File indexedAnnotationsFile, File originalFile) {
+		return indexesFile.exists() && indexedAnnotationsFile.exists() &&
+				(indexesFile.lastModified() > indexedAnnotationsFile.lastModified()) &&
+				(indexedAnnotationsFile.lastModified() > originalFile.lastModified());
 	}
 
 

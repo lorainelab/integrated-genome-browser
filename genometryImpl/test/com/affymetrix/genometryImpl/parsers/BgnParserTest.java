@@ -60,14 +60,6 @@ public class BgnParserTest {
 	@Test
 	public void TestParseBgn() throws Exception {
 		assertTrue(results != null);
-		int i = 0;
-		for (SeqSymmetry sym : results) {
-			if (sym == null) {
-				i++;
-			}
-		}
-		System.out.println(i + " symmetries are null");
-		assertEquals(0, i);
 		assertEquals(6010, results.size());
 	}
 

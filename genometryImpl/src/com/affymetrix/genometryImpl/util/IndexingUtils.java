@@ -5,6 +5,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -84,6 +85,80 @@ public class IndexingUtils {
 		return true;
 	}
 
+	/**
+	 * Writes out the indexes (for later server reboots).
+	 * @param iSyms
+	 * @param fos
+	 * @return - success or failure
+	 */
+	public static boolean writeIndexes(
+			IndexedSyms iSyms,
+			FileOutputStream fos) {
+		if (DEBUG){
+			System.out.println("in IndexingUtils.writeIndexes()");
+		}
+		DataOutputStream dos = null;
+		try {
+			dos = new DataOutputStream(fos);
+			int indexSymsSize = iSyms.min.length;
+			dos.writeInt(indexSymsSize);	// used to determine iSyms size.
+			for (int i=0;i<indexSymsSize;i++) {
+				if (i < iSyms.min.length) {
+					dos.writeInt(iSyms.min[i]);
+					dos.writeInt(iSyms.max[i]);
+				}
+				dos.writeLong(iSyms.filePos[i]);
+			}
+			dos.writeLong(iSyms.filePos[indexSymsSize]);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Reads the indexes from a file.
+	 * @param indexesFile - file to read
+	 * @param typeName - passed in to IndexedSyms
+	 * @param iWriter - passed in to IndexedSyms
+	 * @return indexedSyms data structure.
+	 */
+	public static IndexedSyms readIndexes(
+			File indexesFile,
+			File indexedAnnotationFile,
+			String typeName,
+			IndexWriter iWriter) {
+		if (DEBUG){
+			System.out.println("in IndexingUtils.readIndexes()");
+		}
+		FileInputStream fis = null;
+		DataInputStream bis = null;
+
+		IndexedSyms iSyms = null;
+		try {
+			fis = new FileInputStream(indexesFile);
+			bis = new DataInputStream(fis);
+			int indexSymsSize = bis.readInt();	// determine number of rows.
+			iSyms = new IndexedSyms(indexSymsSize, indexedAnnotationFile, typeName, iWriter);
+			for (int i=0;i<indexSymsSize;i++) {
+				iSyms.min[i] = bis.readInt();
+				iSyms.max[i] = bis.readInt();
+				iSyms.filePos[i] = bis.readLong();
+			}
+			iSyms.filePos[indexSymsSize] = bis.readLong();
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return iSyms;
+		} finally {
+			GeneralUtils.safeClose(bis);
+			GeneralUtils.safeClose(fis);
+		}
+		return iSyms;
+	}
+
 
 	/**
 	 * Returns annotations for specific chromosome, sorted by comparator.
@@ -95,8 +170,9 @@ public class IndexingUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		for (int i=0;i<syms.size();i++) {
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(10000);
+		int symSize = syms.size();
+		for (int i=0;i<symSize;i++) {
 			SeqSymmetry sym = (SeqSymmetry)syms.get(i);
 			if (sym instanceof UcscPslSym) {
 				// add the lines specifically with Target seq == seq.

@@ -32,38 +32,29 @@ public final class ParserController {
 				Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
 				// need to modify Das1FeatureSaxParser to return a list of "transcript-level" annotation syms
 				parser = null;
-			} else if (stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) {
-				System.out.println("loading via PslParser: " + stream_name);
-				String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
-				// assume it's PSL format
+			} else if (stream_name.endsWith(".link.psl"))  {
+				System.out.println("loading link.psl via PslParser: " + stream_name);
+				String annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
 				// assume that want to annotate target seqs, and that these are the seqs
 				//    represented in seq_group
 				PSLParser parser = new PSLParser();
-				if (stream_name.endsWith(".link.psl")) {
-					annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
-					parser.setIsLinkPsl(true);
-					parser.enableSharedQueryTarget(true);
-					parser.setCreateContainerAnnot(true); // is this needed?
-				}
+				annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
+				parser.setIsLinkPsl(true);
+				parser.enableSharedQueryTarget(true);
+				parser.setCreateContainerAnnot(true); // is this needed?
 				if (type_prefix != null) {
 					parser.setTrackNamePrefix(type_prefix);
 				}
 
-				results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);  // annotate target
-			} else if (stream_name.endsWith(".bed")) {
+				 // annotate target
+				results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);
+			}
+			else if (stream_name.endsWith(".bed")) {
 				System.out.println("loading via BedParser: " + stream_name);
 				String annot_type = GetAnnotType(annots_map, stream_name, ".bed");
 				BedParser parser = new BedParser();
 				// specifying via boolean arg that BedParser should build container syms
 				results = parser.parse(str, gmodel, seq_group, true, annot_type, true);
-			} else if (stream_name.endsWith(".bps")) {
-				System.out.println("loading via BpsParser: " + stream_name);
-				String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
-				// assume binary psl format
-				DataInputStream dis = new DataInputStream(str);
-				IndexWriter iWriter = new BpsParser();
-				//BpsParser psl_reader = new BpsParser();
-				results = BpsParser.parse(dis, annot_type, null, seq_group, false, true);
 			} else if (stream_name.endsWith(".bgn")) {
 				System.out.println("loading via BgnParser: " + stream_name);
 				BgnParser gene_reader = new BgnParser();
@@ -120,7 +111,30 @@ public final class ParserController {
 
 				// parsing a graph
 				results = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group);
-			} else {
+			}
+
+			// INDEXED files -- don't annotate
+
+			else if (stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) {
+				System.out.println("loading via PslParser: " + stream_name);
+				String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
+
+				DataInputStream dis = new DataInputStream(str);
+				IndexWriter iWriter = new PSLParser();
+				if (type_prefix != null) {
+					((PSLParser)iWriter).setTrackNamePrefix(type_prefix);
+				}
+				results = iWriter.parse(dis, annot_type, seq_group);
+			} else if (stream_name.endsWith(".bps")) {
+				System.out.println("loading via BpsParser: " + stream_name);
+				String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
+				DataInputStream dis = new DataInputStream(str);
+				IndexWriter iWriter = new BpsParser();	
+				results = iWriter.parse(dis, annot_type, seq_group);
+			} 
+
+			
+			else {
 				System.out.println("Can't parse, format not recognized: " + stream_name);
 			}
 		} catch (Exception ex) {

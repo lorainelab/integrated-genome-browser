@@ -460,7 +460,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	}
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return BpsParser.parse(dis, annot_type, null, group, false, true);
+			return BpsParser.parse(dis, annot_type, null, group, false, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BpsParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

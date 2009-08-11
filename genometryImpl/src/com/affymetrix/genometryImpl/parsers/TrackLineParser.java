@@ -16,7 +16,6 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.style.*;
 import java.awt.Color;
-import java.io.File;
 
 import java.util.*;
 import java.util.regex.*;
@@ -133,7 +132,7 @@ public final class TrackLineParser {
 	 *  A default track name must be provided in case none is specified by the
 	 *  track line itself.
 	 */
-	static IAnnotStyle createAnnotStyle(AnnotatedSeqGroup seq_group, Map<String,String> track_hash, String default_track_name) {
+	static IAnnotStyle createAnnotStyle(Map<String,String> track_hash, String default_track_name) {
 		String name = track_hash.get(NAME);
 		
 		//this will create the correct track name for IGB to display the track correctly
@@ -167,7 +166,7 @@ public final class TrackLineParser {
 			track_hash.put(NAME, default_track_name);
 			name = default_track_name;
 		}
-		StateProvider provider = seq_group.getStateProvider();
+		StateProvider provider = AnnotatedSeqGroup.getStateProvider();
 		IAnnotStyle style = provider.getAnnotStyle(name);
 		applyTrackProperties(track_hash, style);
 		return style;

@@ -158,15 +158,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 						}
 					} else {
 						track_line_parser.parseTrackLine(line, track_name_prefix);
-						AnnotatedSeqGroup seq_group;
-						if (annotate_query) {
-							seq_group = query_group;
-						} else if (annotate_target) {
-							seq_group = target_group;
-						} else {
-							seq_group = other_group;
-						}
-						TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), annot_type);
+						TrackLineParser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), annot_type);
 					}
 					// You can later get the track properties with getCurrentTrackHash();
 					continue;
@@ -385,14 +377,13 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 						(shared_query_target && is_link_psl)) {  // force annotation of target if query and target are shared and file is ".link.psl" format
 					if (create_container_annot) {
 						createContainerAnnot(target2types, tseq, type, sym, is_psl3, is_link_psl);
-					}
-					else {
+					} else {
 						tseq.addAnnotation(sym);
 					}
-					if (! in_bottom_of_link_psl) {
+					if (!in_bottom_of_link_psl) {
 						target_group.addToIndex(sym.getID(), sym);
 					}
-						}
+				}
 
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
@@ -613,7 +604,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 	}
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse(dis, annot_type, null, group, null, false, true, false);
+			return this.parse(dis, annot_type, null, group, null, false, false, false);
 		} catch (IOException ex) {
 			Logger.getLogger(PSLParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

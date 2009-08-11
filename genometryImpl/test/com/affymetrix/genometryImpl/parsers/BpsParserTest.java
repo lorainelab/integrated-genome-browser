@@ -166,20 +166,17 @@ public class BpsParserTest {
 
 			assertEquals(15,sortedSyms.size());
 
-			int[] min = new int[sortedSyms.size()];
-			int[] max = new int[sortedSyms.size()];
-			long[] filePos = new long[sortedSyms.size() + 1];
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(testFileName);
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", iWriter);
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
 
-			assertEquals(min.length, max.length);
-			assertEquals(min.length + 1, filePos.length);
-			assertEquals(sortedSyms.size(), min.length);
+			assertEquals(iSyms.min.length, iSyms.max.length);
+			assertEquals(iSyms.min.length + 1, iSyms.filePos.length);
+			assertEquals(sortedSyms.size(), iSyms.min.length);
 
-			testOutputIndexedSymmetries(min,max,filePos);
+			testOutputIndexedSymmetries(iSyms.min,iSyms.max,iSyms.filePos);
 
 			if (testFile.exists()) {
 				testFile.delete();

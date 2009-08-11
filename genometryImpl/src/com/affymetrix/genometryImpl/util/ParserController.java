@@ -55,12 +55,6 @@ public final class ParserController {
 				BedParser parser = new BedParser();
 				// specifying via boolean arg that BedParser should build container syms
 				results = parser.parse(str, gmodel, seq_group, true, annot_type, true);
-			} else if (stream_name.endsWith(".bgn")) {
-				System.out.println("loading via BgnParser: " + stream_name);
-				BgnParser gene_reader = new BgnParser();
-				String annot_type = GetAnnotType(annots_map, stream_name, ".bgn");
-				//	String annot_type =  "das_" + stream_name.substring(0, stream_name.lastIndexOf(".bgn"));
-				results = gene_reader.parse(str, annot_type, seq_group, -1, true);
 			} else if (stream_name.endsWith(".brs")) {
 				System.out.println("loading via BrsParser: " + stream_name);
 				BrsParser refseq_reader = new BrsParser();
@@ -112,28 +106,9 @@ public final class ParserController {
 				// parsing a graph
 				results = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group);
 			}
-
-			// INDEXED files -- don't annotate
-
-			else if (stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) {
-				System.out.println("loading via PslParser: " + stream_name);
-				String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
-
-				DataInputStream dis = new DataInputStream(str);
-				IndexWriter iWriter = new PSLParser();
-				if (type_prefix != null) {
-					((PSLParser)iWriter).setTrackNamePrefix(type_prefix);
-				}
-				results = iWriter.parse(dis, annot_type, seq_group);
-			} else if (stream_name.endsWith(".bps")) {
-				System.out.println("loading via BpsParser: " + stream_name);
-				String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
-				DataInputStream dis = new DataInputStream(str);
-				IndexWriter iWriter = new BpsParser();	
-				results = iWriter.parse(dis, annot_type, seq_group);
-			} 
-
-			
+			else if (ParserController.getIndexWriter(stream_name) != null) {
+				results = parseIndexed(stream_name, annots_map, str, type_prefix, seq_group);
+			}
 			else {
 				System.out.println("Can't parse, format not recognized: " + stream_name);
 			}
@@ -147,12 +122,54 @@ public final class ParserController {
 		return results;
 	}
 
+
+	/**
+	 * Parsing indexed files; don't annotate.
+	 * @param stream_name
+	 * @param annots_map
+	 * @param str
+	 * @param type_prefix
+	 * @param seq_group
+	 * @return
+	 */
+	private static List parseIndexed(String stream_name, Map<String, String> annots_map, InputStream str, String type_prefix, AnnotatedSeqGroup seq_group) {
+		List results = null;
+		if (stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) {
+			System.out.println("loading via PslParser: " + stream_name);
+			String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
+			DataInputStream dis = new DataInputStream(str);
+			IndexWriter iWriter = new PSLParser();
+			if (type_prefix != null) {
+				((PSLParser) iWriter).setTrackNamePrefix(type_prefix);
+			}
+			results = iWriter.parse(dis, annot_type, seq_group);
+		} else if (stream_name.endsWith(".bps")) {
+			System.out.println("loading via BpsParser: " + stream_name);
+			String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
+			DataInputStream dis = new DataInputStream(str);
+			IndexWriter iWriter = new BpsParser();
+			results = iWriter.parse(dis, annot_type, seq_group);
+		} else if (stream_name.endsWith(".bgn")) {
+			System.out.println("loading via BgnParser: " + stream_name);
+			IndexWriter iWriter = new BgnParser();
+			String annot_type = GetAnnotType(annots_map, stream_name, ".bgn");
+			DataInputStream dis = new DataInputStream(str);
+			results = iWriter.parse(dis, annot_type, seq_group);
+		}
+		return results;
+	}
+
+
+
 	public static IndexWriter getIndexWriter(String stream_name) {
 		if (stream_name.endsWith((".bps"))) {
 			return new BpsParser();
 		}
 		if (stream_name.endsWith("psl") && !stream_name.endsWith("link.psl")) {
 			return new PSLParser();
+		}
+		if (stream_name.endsWith(".bgn")) {
+			return new BgnParser();
 		}
 		return null;
 		

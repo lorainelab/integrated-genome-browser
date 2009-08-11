@@ -5,6 +5,7 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,8 +95,6 @@ public class IndexingUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
-		Collections.sort(syms, comp);
-
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
 		for (int i=0;i<syms.size();i++) {
 			SeqSymmetry sym = (SeqSymmetry)syms.get(i);
@@ -107,11 +106,14 @@ public class IndexingUtils {
 				continue;
 			}
 			// sym is instance of SeqSymmetry.
-			if (sym.getSpan(seq).getBioSeq() == seq) {
+			if (sym.getSpan(seq) != null && sym.getSpan(seq).getBioSeq() == seq) {
 				// add the lines specifically with seq.
 				results.add(sym);
 			}
 		}
+		
+		Collections.sort(results, comp);
+
 		return results;
 	}
 

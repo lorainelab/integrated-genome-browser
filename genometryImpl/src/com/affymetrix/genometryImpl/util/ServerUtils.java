@@ -205,10 +205,17 @@ public abstract class ServerUtils {
 		System.out.println("loading annotations of " + current_file.getName());
 		List results = loadAnnotFile(current_file, type_name, genome);
 
-		optimizeAndIndex(dataRoot, current_file, genome, results);
+		indexTheFile(dataRoot, current_file, genome, results);
 	}
 
-	private static void optimizeAndIndex(String dataRoot, File file, AnnotatedSeqGroup genome, 
+	/**
+	 * Index the file, if possible.
+	 * @param dataRoot
+	 * @param file
+	 * @param genome
+	 * @param originalSyms
+	 */
+	private static void indexTheFile(String dataRoot, File file, AnnotatedSeqGroup genome,
 			List originalSyms) {
 
 		String originalFileName = file.getName();
@@ -242,11 +249,22 @@ public abstract class ServerUtils {
 				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
 	}
 
+	/**
+	 * Sort symmetries and write out to disk, and store indexes in memory.
+	 * @param genome
+	 * @param dataRoot
+	 * @param file
+	 * @param originalFileName
+	 * @param originalPslSyms
+	 * @param iWriter
+	 * @param typeName
+	 */
 	private static void writeIndexedFiles(AnnotatedSeqGroup genome, String dataRoot, File file, String originalFileName, List originalPslSyms, IndexWriter iWriter, String typeName) {
 		for (BioSeq seq : genome.getSeqList()) {
 			String dirName = indexedDirName(dataRoot, genome, seq);
 			if (isIndexedDir(dirName, file)) {
 				System.out.println(originalFileName + " already optimized, skipping.");
+				// TODO: will need to get the indexes back into memory.
 				return;
 			}
 			String tempFileName = indexedFileName(dataRoot, originalFileName, genome, seq);

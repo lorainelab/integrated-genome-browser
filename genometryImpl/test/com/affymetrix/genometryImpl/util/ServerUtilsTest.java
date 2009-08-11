@@ -135,7 +135,8 @@ public class ServerUtilsTest {
 			BioSeq seq = group.getSeq(seqid);
 
 			IndexWriter iWriter = new BpsParser();
-			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, iWriter.getComparator());
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+					syms, seq, iWriter.getComparator(seq));
 
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);

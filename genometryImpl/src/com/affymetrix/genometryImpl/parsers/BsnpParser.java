@@ -130,7 +130,7 @@ public abstract class BsnpParser {
 					// need to make sure SNPs are written out in sorted order!
 					snps.add(parent.getChild(k));
 				}
-				Collections.sort(snps, new SeqSymMinComparator((BioSeq)seq, true));
+				Collections.sort(snps, new SeqSymMinComparator((BioSeq)seq));
 				for (int k=0; k<snp_count; k++) {
 					EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
 					int base_coord = snp.getSpan(0).getMin();

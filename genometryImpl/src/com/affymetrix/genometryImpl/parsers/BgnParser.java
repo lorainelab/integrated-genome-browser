@@ -15,22 +15,27 @@ package com.affymetrix.genometryImpl.parsers;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-
+import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometry.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.UcscGeneSym;
 import com.affymetrix.genometryImpl.SupportsCdsSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
 /**
  *  Just like refFlat table format, except no geneName field (just name field).
  */
-public final class BgnParser implements AnnotationWriter  {
+public final class BgnParser implements AnnotationWriter, IndexWriter  {
 	boolean use_byte_buffer = true;
 	boolean write_from_text = true;
 	static final boolean DEBUG = false;
@@ -40,9 +45,9 @@ public final class BgnParser implements AnnotationWriter  {
 		pref_list.add("bgn");
 	}
 
-	static String default_annot_type = "genepred";
+	//static String default_annot_type = "genepred";
 	//  static String default_annot_type = "refflat-test";
-	static String user_dir = System.getProperty("user.dir");
+	//static String user_dir = System.getProperty("user.dir");
 
 	// mod_chromInfo.txt is same as chromInfo.txt, except entries have been arranged so
 	//   that all random, etc. bits are at bottom
@@ -66,7 +71,18 @@ public final class BgnParser implements AnnotationWriter  {
 
 	ArrayList<String> chromosomes = new ArrayList<String>();
 
-	public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) throws IOException {
+
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+		try {
+			return this.parse(dis, annot_type, group, 0, false);
+		} catch (IOException ex) {
+			Logger.getLogger(BgnParser.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+
+
+	/*public List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group) throws IOException {
 		if (DEBUG) {
 			System.out.println("loading file: " + file_name);
 		}
@@ -81,7 +97,7 @@ public final class BgnParser implements AnnotationWriter  {
 			GeneralUtils.safeClose(fis);
 		}
 		return result;
-	}
+	}*/
 
 	/**
 	 *  The main parsing routine.
@@ -128,7 +144,7 @@ public final class BgnParser implements AnnotationWriter  {
 			else {
 				dis = new DataInputStream(bis);
 			}
-			if (true) {
+			//if (true) {
 				/*
 				 *  "while (dis.available() > 0)" loop is not a good alternative
 				 *     when retrieving the data from a slow InputStream -- for example, over a
@@ -205,7 +221,7 @@ public final class BgnParser implements AnnotationWriter  {
 					total_exon_count += ecount;
 					count++;
 				}
-			}
+		//	}
 		}
 		catch (EOFException ex) {
 			// System.out.println("end of file reached, file successfully loaded");
@@ -253,7 +269,7 @@ public final class BgnParser implements AnnotationWriter  {
 	 *  probably not the best format to use, but since that can still be useful,
 	 *  this routine will treat the entire span as the CDS.
 	 */
-	public void writeSymmetry(SeqSymmetry gsym, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry gsym, MutableAnnotatedBioSeq targetSeq, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan;
 		String name;
@@ -300,7 +316,7 @@ public final class BgnParser implements AnnotationWriter  {
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
 			for (SeqSymmetry gsym : annots) {
-				writeSymmetry(gsym, dos);
+				writeSymmetry(gsym, null, dos);
 			}
 		}
 		finally {
@@ -338,7 +354,6 @@ public final class BgnParser implements AnnotationWriter  {
 			else {
 				dis = new DataInputStream(bis);
 			}
-			String line;
 
 			if (write_from_text) {
 				File outfile = new File(bin_file);
@@ -347,78 +362,86 @@ public final class BgnParser implements AnnotationWriter  {
 				dos = new DataOutputStream(bos);
 			}
 
-			while ((line = dis.readLine()) != null) {
-				count++;
-				String[] fields = line_regex.split(line);
-				String name = fields[0];
-				//        name_hash.put(name, null);
-				String chrom = fields[1];
-				if (seq_group != null && seq_group.getSeq(chrom) == null) {
-					System.out.println("sequence not recognized, ignoring: " + chrom);
-					continue;
-				}
-				String strand = fields[2];
-				String txStart = fields[3];  // min base of transcript on genome
-				String txEnd = fields[4];  // max base of transcript on genome
-				String cdsStart = fields[5];  // min base of CDS on genome
-				String cdsEnd = fields[6];  // max base of CDS on genome
-				String exonCount = fields[7]; // number of exons
-				String exonStarts = fields[8];
-				String exonEnds = fields[9];
-				int tmin = Integer.parseInt(txStart);
-				int tmax = Integer.parseInt(txEnd);
-				int tlength = tmax - tmin;
-				int cmin = Integer.parseInt(cdsStart);
-				int cmax = Integer.parseInt(cdsEnd);
-				//int clength = cmax - cmin;
-				int ecount = Integer.parseInt(exonCount);
-				String[] emins = emin_regex.split(exonStarts);
-				String[] emaxs = emax_regex.split(exonEnds);
-
-				if (write_from_text) {
-					dos.writeUTF(name);
-					dos.writeUTF(chrom);
-					dos.writeUTF(strand);
-					dos.writeInt(tmin);
-					dos.writeInt(tmax);
-					dos.writeInt(cmin);
-					dos.writeInt(cmax);
-					dos.writeInt(ecount);
-				}
-
-				if (ecount != emins.length || ecount != emaxs.length) {
-					System.out.println("EXON COUNTS DON'T MATCH UP FOR " + name + " !!!");
-				}
-				else {
-					//int spliced_length = 0;
-					for (int i=0; i<ecount; i++) {
-						int emin = Integer.parseInt(emins[i]);
-						if (write_from_text) { dos.writeInt(emin); }
-					}
-					for (int i=0; i<ecount; i++) {
-						int emax = Integer.parseInt(emaxs[i]);
-						if (write_from_text) { dos.writeInt(emax); }
-					}
-				}
-				if (tlength >= 500000) {
-					biguns++;
-				}
-
-				total_exon_count += ecount;
-				max_exons = Math.max(max_exons, ecount);
-				max_tlength = Math.max(max_tlength, tlength);
-			}
+			writeLines(dis, count, seq_group, dos, biguns, total_exon_count, max_exons, max_tlength, tim, flength, max_spliced_length, big_spliced);
 
 			if (write_from_text) {
 				dos.flush();
 				dos.close();
 			}
+
+			
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(dos);
+		}
+		
+	}
+
+	private void writeLines(DataInputStream dis, int count, AnnotatedSeqGroup seq_group, DataOutputStream dos, int biguns, int total_exon_count, int max_exons, int max_tlength, Timer tim, long flength, int max_spliced_length, int big_spliced) throws NumberFormatException, IOException {
+		String line = null;
+		while ((line = dis.readLine()) != null) {
+			count++;
+			String[] fields = line_regex.split(line);
+			String name = fields[0];
+			//        name_hash.put(name, null);
+			String chrom = fields[1];
+			if (seq_group != null && seq_group.getSeq(chrom) == null) {
+				System.out.println("sequence not recognized, ignoring: " + chrom);
+				continue;
+			}
+			String strand = fields[2];
+			String txStart = fields[3]; // min base of transcript on genome
+			String txEnd = fields[4]; // max base of transcript on genome
+			String cdsStart = fields[5]; // min base of CDS on genome
+			String cdsEnd = fields[6]; // max base of CDS on genome
+			String exonCount = fields[7]; // number of exons
+			String exonStarts = fields[8];
+			String exonEnds = fields[9];
+			int tmin = Integer.parseInt(txStart);
+			int tmax = Integer.parseInt(txEnd);
+			int tlength = tmax - tmin;
+			int cmin = Integer.parseInt(cdsStart);
+			int cmax = Integer.parseInt(cdsEnd);
+			//int clength = cmax - cmin;
+			int ecount = Integer.parseInt(exonCount);
+			String[] emins = emin_regex.split(exonStarts);
+			String[] emaxs = emax_regex.split(exonEnds);
+			if (write_from_text) {
+				dos.writeUTF(name);
+				dos.writeUTF(chrom);
+				dos.writeUTF(strand);
+				dos.writeInt(tmin);
+				dos.writeInt(tmax);
+				dos.writeInt(cmin);
+				dos.writeInt(cmax);
+				dos.writeInt(ecount);
+			}
+			if (ecount != emins.length || ecount != emaxs.length) {
+				System.out.println("EXON COUNTS DON'T MATCH UP FOR " + name + " !!!");
+			} else {
+				//int spliced_length = 0;
+				for (int i = 0; i < ecount; i++) {
+					int emin = Integer.parseInt(emins[i]);
+					if (write_from_text) {
+						dos.writeInt(emin);
+					}
+				}
+				for (int i = 0; i < ecount; i++) {
+					int emax = Integer.parseInt(emaxs[i]);
+					if (write_from_text) {
+						dos.writeInt(emax);
+					}
+				}
+			}
+			if (tlength >= 500000) {
+				biguns++;
+			}
+			total_exon_count += ecount;
+			max_exons = Math.max(max_exons, ecount);
+			max_tlength = Math.max(max_tlength, tlength);
 		}
 		if (DEBUG) {
 			System.out.println("load time: " + tim.read() / 1000f);
@@ -431,6 +454,8 @@ public final class BgnParser implements AnnotationWriter  {
 			System.out.println("spliced transcripts > 65000: " + big_spliced);
 		}
 	}
+
+
 
 	/** For testing. */
 	/*
@@ -466,7 +491,7 @@ public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableA
 			if (! (sym instanceof UcscGeneSym)) {
 				System.err.println("trying to output non-UcscGeneSym as UcscGeneSym!");
 			}
-			writeSymmetry((UcscGeneSym)sym, dos);
+			writeSymmetry((UcscGeneSym)sym, null, dos);
 		}
 		dos.flush();
 	}
@@ -477,12 +502,31 @@ public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableA
 	return success;
 }
 
-/**
- *  Implementing AnnotationWriter interface to write out annotations
- *    to an output stream as "binary UCSC gene".
- **/
-public String getMimeType() { return "binary/bgn"; }
+	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+		return new SeqSymMinComparator((BioSeq)seq);
+	}
 
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		SeqSpan span = sym.getSpan(seq);
+		return span.getMin();
+	}
+
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		SeqSpan span = sym.getSpan(seq);
+		return span.getMax();
+	}
+
+	public List<String> getFormatPrefList() {
+		return BgnParser.pref_list;
+	}
+
+	/**
+	 *  Implementing AnnotationWriter interface to write out annotations
+	 *    to an output stream as "binary UCSC gene".
+	 **/
+	public String getMimeType() {
+		return "binary/bgn";
+	}
 
 
 }

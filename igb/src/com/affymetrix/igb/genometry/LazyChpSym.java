@@ -289,7 +289,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 
 		int symcount = symlist.size();
 		// should the syms be sorted here??
-		Collections.sort(symlist, new SeqSymMinComparator(aseq, true));
+		Collections.sort(symlist, new SeqSymMinComparator(aseq));
 
 		// Iterate through probeset annotations, if possible do integer id binary search,
 		//     otherwise do hash for string ID

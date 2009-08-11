@@ -69,8 +69,8 @@ public class IndexingUtils {
 			int index = 0;
 			iSyms.filePos[index] = 0;
 			for (SeqSymmetry sym : syms) {
-				iSyms.min[index] = iSyms.iWriter.getMin(sym);
-				iSyms.max[index] = iSyms.iWriter.getMax(sym);
+				iSyms.min[index] = iSyms.iWriter.getMin(sym, seq);
+				iSyms.max[index] = iSyms.iWriter.getMax(sym, seq);
 				iSyms.iWriter.writeSymmetry(sym, seq, dos);
 				index++;
 				iSyms.filePos[index] = fChannel.position();
@@ -107,7 +107,10 @@ public class IndexingUtils {
 				continue;
 			}
 			// sym is instance of SeqSymmetry.
-			//TODO
+			if (sym.getSpan(seq).getBioSeq() == seq) {
+				// add the lines specifically with seq.
+				results.add(sym);
+			}
 		}
 		return results;
 	}

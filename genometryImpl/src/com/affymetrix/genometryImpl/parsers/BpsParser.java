@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class BpsParser implements IndexWriter  {
+public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
 	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
@@ -440,7 +440,7 @@ public final class BpsParser implements IndexWriter  {
 		return success;
 	}
 
-	public Comparator getComparator() {
+	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
 		return comp;
 	}
 	
@@ -448,11 +448,11 @@ public final class BpsParser implements IndexWriter  {
 		((UcscPslSym)sym).outputBpsFormat(dos);
 	}
 
-	public int getMin(SeqSymmetry sym) {
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 		return ((UcscPslSym)sym).getTargetMin();
 	}
 
-	public int getMax(SeqSymmetry sym) {
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 		return ((UcscPslSym)sym).getTargetMax();
 	}
 	public List<String> getFormatPrefList() {

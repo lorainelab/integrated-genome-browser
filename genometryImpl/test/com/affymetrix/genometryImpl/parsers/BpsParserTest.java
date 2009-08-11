@@ -130,7 +130,7 @@ public class BpsParserTest {
 		}
 
 		BpsParser bps = new BpsParser();
-			Comparator<UcscPslSym> USCCCompare = bps.getComparator();
+			Comparator<UcscPslSym> USCCCompare = bps.getComparator(seq);
 		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
 				pslSyms, seq, USCCCompare);
 
@@ -161,7 +161,8 @@ public class BpsParserTest {
 			BioSeq seq = group.getSeq("chr1");
 		
 			IndexWriter iWriter = new BpsParser();
-			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(syms, seq, iWriter.getComparator());
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+					syms, seq, iWriter.getComparator(seq));
 
 			assertEquals(15,sortedSyms.size());
 

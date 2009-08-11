@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class PSLParser implements IndexWriter  {
+public final class PSLParser implements AnnotationWriter, IndexWriter  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
 	static List<String> psl_pref_list = Arrays.asList("psl");
 	static List<String> link_psl_pref_list = Arrays.asList("link.psl", "bps", "psl");
@@ -587,7 +587,7 @@ public final class PSLParser implements IndexWriter  {
 		return success;
 	}
 
-	public Comparator getComparator() {
+	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
 		return comp;
 	}
 
@@ -601,11 +601,11 @@ public final class PSLParser implements IndexWriter  {
 		}
 	}
 
-	public int getMin(SeqSymmetry sym) {
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 		return ((UcscPslSym)sym).getTargetMin();
 	}
 
-	public int getMax(SeqSymmetry sym) {
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
 		return ((UcscPslSym)sym).getTargetMax();
 	}
 	public List<String> getFormatPrefList() {

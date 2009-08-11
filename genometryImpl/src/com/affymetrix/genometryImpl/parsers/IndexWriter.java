@@ -16,7 +16,7 @@ import java.util.List;
  * 2.  The ability to sort its symmetries.
  * @author jnicol
  */
-public interface IndexWriter extends AnnotationWriter {
+public interface IndexWriter {
 	/**
 	 * Write a single symmetry to the file.
 	 * It is assumed that the file only uses one chromosome.
@@ -37,21 +37,21 @@ public interface IndexWriter extends AnnotationWriter {
 	 * Get a comparator for the class.
 	 * @return comparator.
 	 */
-	public Comparator getComparator();
+	public Comparator getComparator(MutableAnnotatedBioSeq seq);
 
 	/**
 	 * Get the minimum of a given symmetry.
 	 * @param sym
 	 * @return
 	 */
-	public int getMin(SeqSymmetry sym);
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq);
 
 	/**
 	 * Get the maximum of a given symmetry.
 	 * @param sym
 	 * @return
 	 */
-	public int getMax(SeqSymmetry sym);
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq);
 
 	/**
 	 * Get the preferred formats.

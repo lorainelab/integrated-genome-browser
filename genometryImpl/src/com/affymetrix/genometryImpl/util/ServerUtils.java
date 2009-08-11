@@ -250,7 +250,7 @@ public abstract class ServerUtils {
 				return;
 			}
 			String tempFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
-			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator());
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator(seq));
 			IndexedSyms iSyms = new IndexedSyms(
 					sortedSyms.size(), new File(tempFileName), typeName, iWriter);
 			seq.addIndexedSyms(typeName, iSyms);

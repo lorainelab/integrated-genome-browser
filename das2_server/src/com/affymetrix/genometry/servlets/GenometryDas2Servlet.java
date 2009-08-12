@@ -460,6 +460,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
+
+		// Garbage collection after initialization
+		// only needed for debugging purposes (to see how much memory is actually used in initialization)
+		System.gc();
 	}
 
 	@Override

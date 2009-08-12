@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -45,7 +46,7 @@ import java.util.regex.Pattern;
  * Utils for DAS/2 and other servers.
  */
 public abstract class ServerUtils {
-
+	private static final boolean DEBUG = false;
 	private static final String annots_filename = "annots.xml"; // potential originalFile for annots parsing
 	private static final String graph_dir_suffix = ".graphs.seqs";
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
@@ -202,6 +203,7 @@ public abstract class ServerUtils {
 
 		// current originalFile is not a directory, so try and recognize as annotation originalFile
 
+
 		System.out.println("loading annotations of " + current_file.getName());
 		List results = loadAnnotFile(current_file, type_name, genome);
 
@@ -230,11 +232,10 @@ public abstract class ServerUtils {
 			// Not yet indexable
 			return;
 		}
-				
-		System.out.println("Indexing " + originalFileName);
-
+		System.out.println("Indexing -- clearing symmetries");
 		removeSymmetriesFromGenome(originalSyms, genome, typeName);
 
+		System.out.println("Indexing " + originalFileName);
 		determineIndexes(
 				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
 	}
@@ -281,8 +282,9 @@ public abstract class ServerUtils {
 			createDirIfNecessary(dirName);
 
 			if (isAlreadyIndexed(indexesFile, indexedAnnotationsFile, file)) {
-				System.out.println(indexedAnnotationsFileName + " already indexed.  Reading in indexes from file");
-
+				if (DEBUG) {
+					System.out.println(indexedAnnotationsFileName + " already indexed.");
+				}
 				iSyms = IndexingUtils.readIndexes(indexesFile, indexedAnnotationsFile, typeName, iWriter);
 				seq.addIndexedSyms(typeName, iSyms);
 				continue;
@@ -312,6 +314,7 @@ public abstract class ServerUtils {
 		try {
 			fos = new FileOutputStream(indexedAnnotationsFileName);
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
+
 			fos2 = new FileOutputStream(indexesFileName);
 			IndexingUtils.writeIndexes(iSyms, fos2);
 		} catch (Exception ex) {
@@ -361,7 +364,7 @@ public abstract class ServerUtils {
 	 */
 	private static boolean isAlreadyIndexed(File indexesFile, File indexedAnnotationsFile, File originalFile) {
 		return indexesFile.exists() && indexedAnnotationsFile.exists() &&
-				(indexesFile.lastModified() > indexedAnnotationsFile.lastModified()) &&
+				(indexesFile.lastModified() > originalFile.lastModified()) &&
 				(indexedAnnotationsFile.lastModified() > originalFile.lastModified());
 	}
 

@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class IndexingUtils {
 	private static final boolean DEBUG = false;
-
+	private static int symsPerIndex = 10;	// symmetries per index.  Otherwise even the indexing is pretty large.
 	public static class IndexedSyms {
 		public File file;
 		public int[] min;
@@ -70,10 +72,11 @@ public class IndexingUtils {
 			FileChannel fChannel = fos.getChannel();
 			int index = 0;
 			iSyms.filePos[index] = 0;
+			IndexWriter iWriter = iSyms.iWriter;
 			for (SeqSymmetry sym : syms) {
-				iSyms.min[index] = iSyms.iWriter.getMin(sym, seq);
-				iSyms.max[index] = iSyms.iWriter.getMax(sym, seq);
-				iSyms.iWriter.writeSymmetry(sym, seq, dos);
+				iSyms.min[index] = iWriter.getMin(sym, seq);
+				iSyms.max[index] = iWriter.getMax(sym, seq);
+				iWriter.writeSymmetry(sym, seq, dos);
 				index++;
 				iSyms.filePos[index] = fChannel.position();
 			}
@@ -172,8 +175,8 @@ public class IndexingUtils {
 	public static List<SeqSymmetry> getSortedAnnotationsForChrom(List syms, BioSeq seq, Comparator comp) {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(10000);
 		int symSize = syms.size();
-		for (int i=0;i<symSize;i++) {
-			SeqSymmetry sym = (SeqSymmetry)syms.get(i);
+		for (int i = 0; i < symSize; i++) {
+			SeqSymmetry sym = (SeqSymmetry) syms.get(i);
 			if (sym instanceof UcscPslSym) {
 				// add the lines specifically with Target seq == seq.
 				if (((UcscPslSym)sym).getTargetSeq() == seq) {
@@ -182,12 +185,12 @@ public class IndexingUtils {
 				continue;
 			}
 			// sym is instance of SeqSymmetry.
-			if (sym.getSpan(seq) != null && sym.getSpan(seq).getBioSeq() == seq) {
+			if (sym.getSpan(seq) != null) {
 				// add the lines specifically with seq.
 				results.add(sym);
 			}
 		}
-		
+
 		Collections.sort(results, comp);
 
 		return results;

@@ -38,7 +38,6 @@ public final class ParserController {
 				// assume that want to annotate target seqs, and that these are the seqs
 				//    represented in seq_group
 				PSLParser parser = new PSLParser();
-				annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
 				parser.setIsLinkPsl(true);
 				parser.enableSharedQueryTarget(true);
 				parser.setCreateContainerAnnot(true); // is this needed?

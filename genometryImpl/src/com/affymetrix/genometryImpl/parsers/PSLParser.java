@@ -78,21 +78,21 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 	/**
 	 *  Parse.
 	 *  The most common parameters are:
-	 *     annotate_query = false;
-	 *     annotate_target = true;
-	 *     annotate_other = false.
+	 *     annotate = false;
+	 *     annotate = true;
+	 *     annotate = false.
 	 *
 	 *  @param istr             An input stream
 	 *  @param annot_type       The method name for the annotation to load from the file, if the track line is missing;
 	 *                          if there is a track line in the file, the name from the track line will be used instead.
-	 *  @param query_group      An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
+	 *  @param annGroup      An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
 	 *                          Null is ok; this will cause a temporary AnnotatedSeqGroup to be created.
-	 *  @param target_group      An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
-	 *  @param other_group      An AnnotatedSeqGroup (or null) to look for other SeqSymmetries in (in PSL3 format) and add SeqSymmetries to.
+	 *  @param annGroup      An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
+	 *  @param annGroup      An AnnotatedSeqGroup (or null) to look for other SeqSymmetries in (in PSL3 format) and add SeqSymmetries to.
 	 *                          This parameter is ignored if the file is not in psl3 format.
-	 *  @param annotate_query   if true, then alignment SeqSymmetries are added to query seq as annotations
-	 *  @param annotate_target  if true, then alignment SeqSymmetries are added to target seq as annotations
-	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
+	 *  @param annotate   if true, then alignment SeqSymmetries are added to query seq as annotations
+	 *  @param annotate  if true, then alignment SeqSymmetries are added to target seq as annotations
+	 *  @param annotate   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
 	 *
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
@@ -251,16 +251,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 					continue;
 				}
 
-				MutableAnnotatedBioSeq qseq = query_group.getSeq(qname);
-				if (qseq == null)  {
-					// Doing a new String() here gives a > 4X reduction in
-					//    memory requirements!  Possible reason: Regex machinery when it splits a String into
-					//    an array of Strings may use same underlying character array, so essentially
-					//    end up holding a pointer to a character array containing the whole input file ???
-					//
-					qseq = query_group.addSeq(new String(qname), qsize);
-				}
-				if (qseq.getLength() < qsize) { qseq.setLength(qsize); }
+				MutableAnnotatedBioSeq qseq = determineQuerySeq(query_group, qname, qsize);
 
 
 				MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
@@ -299,17 +290,18 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 				if (type == null) { type = annot_type; }
 
 				UcscPslSym sym = null;
-				boolean is_psl3 = false;
+
+				// a "+" or "-" in first field after tmins indicates that it's a Psl3 format
+				boolean is_psl3 = fields.length > findex &&
+						(fields[findex].equals("+") || fields[findex].equals("-"));
+
+
 				// trying to handle parsing of extended PSL format for three sequence alignment
 				//     (putting into a Psl3Sym)
 				// extra fields (immediately after tmins), based on Psl3Sym.outputPsl3Format:
 				// same_other_orientation  otherseq_id  otherseq_length  other_min other_max omins
 				//    (but omins doesn't have weirdness that qmins/tmins does when orientation = "-")
-				if (fields.length > findex &&
-						(fields[findex].equals("+") || fields[findex].equals("-")) ) {
-					// a "+" or "-" in first field after tmins indicates that it's a Psl3 format
-					is_psl3 = true;
-
+				if (is_psl3) {
 					String otherstrand_string = fields[findex++];
 					boolean other_same_orientation = otherstrand_string.equals("+");
 					String oname = fields[findex++];
@@ -333,15 +325,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 							same_orientation, other_same_orientation,
 							qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax,
 							blockcount, blocksizes, qmins, tmins, omins);
-
-					if (annotate_other) {
-						if (create_container_annot) {
-							createContainerAnnot(other2types, oseq, type, sym, is_psl3, is_link_psl);
-						} else {
-							oseq.addAnnotation(sym);
-						}
-						other_group.addToIndex(sym.getID(), sym);
-					}
+					annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
 						}
 				else {
 					sym = new UcscPslSym(type, match, mismatch, repmatch, n_count,
@@ -363,27 +347,12 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 						}
 					}
 				}
+				
+				annotate(annotate_query,
+						create_container_annot, is_link_psl, query2types, qseq, type, sym, is_psl3, query_group);
+				annotateTarget(annotate_target || (shared_query_target && is_link_psl),
+						create_container_annot, is_link_psl, target2types, tseq, type, sym, is_psl3, in_bottom_of_link_psl, target_group);
 
-				if (annotate_query) {
-					if (create_container_annot) {
-						createContainerAnnot(query2types,qseq,type,sym,is_psl3, is_link_psl);
-					} else {
-						qseq.addAnnotation(sym);
-					}
-					query_group.addToIndex(sym.getID(), sym);
-				}
-
-				if (annotate_target ||
-						(shared_query_target && is_link_psl)) {  // force annotation of target if query and target are shared and file is ".link.psl" format
-					if (create_container_annot) {
-						createContainerAnnot(target2types, tseq, type, sym, is_psl3, is_link_psl);
-					} else {
-						tseq.addAnnotation(sym);
-					}
-					if (!in_bottom_of_link_psl) {
-						target_group.addToIndex(sym.getID(), sym);
-					}
-				}
 
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
@@ -413,16 +382,58 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 			System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
 					", child count: " + total_child_count);
 		}
-		/*
-		   if (results.size() == 0) {
-		   throw new IOException("The PSL file contianed no annotations.  "+
-		   "Check that the file is properly-formatted, using TABs rather than spaces.");
-		   }
-		   */
+
 		return results;
 	}
 
-	static void createContainerAnnot(Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
+
+	private static MutableAnnotatedBioSeq determineQuerySeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
+		MutableAnnotatedBioSeq qseq = query_group.getSeq(qname);
+		if (qseq == null) {
+			// Doing a new String() here gives a > 4X reduction in
+			//    memory requirements!  Possible reason: Regex machinery when it splits a String into
+			//    an array of Strings may use same underlying character array, so essentially
+			//    end up holding a pointer to a character array containing the whole input file ???
+			//
+			qseq = query_group.addSeq(new String(qname), qsize);
+		}
+		if (qseq.getLength() < qsize) {
+			qseq.setLength(qsize);
+		}
+		return qseq;
+	}
+
+
+	private static void annotate(
+			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, AnnotatedSeqGroup annGroup) {
+		if (annotate) {
+			if (create_container_annot) {
+				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl);
+			} else {
+				seq.addAnnotation(sym);
+			}
+			annGroup.addToIndex(sym.getID(), sym);
+		}
+	}
+
+
+	private static void annotateTarget(
+			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, AnnotatedSeqGroup annGroup) {
+		if (annotate) {
+			// force annotation of target if query and target are shared and file is ".link.psl" format
+			if (create_container_annot) {
+				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl);
+			} else {
+				seq.addAnnotation(sym);
+			}
+			if (!in_bottom_of_link_psl) {
+				annGroup.addToIndex(sym.getID(), sym);
+			}
+		}
+	}
+
+
+	private static void createContainerAnnot(Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
 		//    If using a container sym, need to first hash (seq2types) from
 		//    seq to another hash (type2csym) of types to container sym
 		//    System.out.println("in createContainerAnnot, type: " + type);
@@ -452,7 +463,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 	}
 
 
-	public List<Object> calcChildren(MutableAnnotatedBioSeq qseq, MutableAnnotatedBioSeq tseq, boolean qforward, boolean tforward,
+	private static List<Object> calcChildren(MutableAnnotatedBioSeq qseq, MutableAnnotatedBioSeq tseq, boolean qforward, boolean tforward,
 			String[] blocksize_strings,
 			String[] qstart_strings, String[] tstart_strings) {
 		int childCount = blocksize_strings.length;
@@ -523,6 +534,9 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 		results.add(tmins);
 		return results;
 	}
+
+
+	
 
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
@@ -620,7 +634,5 @@ public final class PSLParser implements AnnotationWriter, IndexWriter  {
 	 *    to an output stream as "PSL" format
 	 **/
 	public String getMimeType() { return "text/plain"; }
-
-
 }
 

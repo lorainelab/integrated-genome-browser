@@ -423,48 +423,18 @@ public class AnnotatedSeqGroup {
 		if (id == null) {
 			return null;
 		}
-		if (!(seq instanceof BioSeq) && !(seq instanceof MutableAnnotatedBioSeq)) {
-			// if not a BioSeq or MutableAnnotatedBioSeq, just return original ID for now.
+		if (seq == null) {
 			return id;
 		}
 
-		if (seq instanceof BioSeq) {
-			final BioSeq sab = (BioSeq) seq;
-			int prevcount = 0;
-			String newid = id;
-			while (sab.getAnnotation(newid) != null) {
-				prevcount++;
-				newid = id + "." + prevcount;
-			}
-			return newid;
-		}
-
-		// MutableAnnotatedBioSeq -- can't do getAnnotation on String
-		final MutableAnnotatedBioSeq aseq = seq;
+		final BioSeq sab = (BioSeq) seq;
 		int prevcount = 0;
-
 		String newid = id;
-		while (findGraphSym(aseq, newid)) {
+		while (sab.getAnnotation(newid) != null) {
 			prevcount++;
 			newid = id + "." + prevcount;
 		}
 		return newid;
-	}
-
-	// check every annotation on seq, but assume graphs are directly attached to seq, so
-	//   don't have to do recursive descent into children?
-	// potentially O(N^2) performance, but this is just a fallback -- most
-	//      seqs that GraphSyms are being attached to will be SmartAnnotBioSeqs and dealt with
-	//      in the other branch of the conditional
-	final private static boolean findGraphSym(MutableAnnotatedBioSeq aseq, String id) {
-		final int count = aseq.getAnnotationCount();	// otherwise the loop will recalculate this every time.
-		for (int i = 0; i < count; i++) {
-			SeqSymmetry sym = aseq.getAnnotation(i);
-			if ((sym instanceof GraphSym) && (id.equals(sym.getID()))) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 

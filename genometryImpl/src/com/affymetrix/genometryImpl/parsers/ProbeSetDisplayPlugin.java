@@ -9,7 +9,7 @@ import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.SymWithProps;
 
 public final class ProbeSetDisplayPlugin implements AnnotationWriter {
-	static final String CONSENSUS_TYPE = "netaffx consensus";
+	public static final String CONSENSUS_TYPE = "netaffx consensus";
 	static final String PROBESET_TYPE = "netaffx probesets";
 	static final String CROSSHYB_TYPE = "netaffx crosshyb";
 	static final String POLY_A_STACKS_TYPE = "netaffx poly_a_stacks";
@@ -65,54 +65,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 		Set<SeqSymmetry> crossHybProbes = new HashSet<SeqSymmetry>();
 		Set<SeqSymmetry> polyASites = new HashSet<SeqSymmetry>();
 		Set<SeqSymmetry> polyAStacks = new HashSet<SeqSymmetry>();
-
-		Iterator iter = consensus_syms.iterator();
-		while (iter.hasNext()) {
-			SeqSymmetry current_c2g = (SeqSymmetry) iter.next();
-			// 2. For each consensus sequence symmetry, get the
-			//    corresponding consensus BioSeq
-			MutableAnnotatedBioSeq cseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
-			if (cseq instanceof MutableAnnotatedBioSeq) {
-				MutableAnnotatedBioSeq aseq = cseq;
-				int maxm = aseq.getAnnotationCount();
-				for (int m=0; m<maxm; m++) {
-					SeqSymmetry container = aseq.getAnnotation(m);
-					for (int cindex=0; cindex<container.getChildCount(); cindex++) {
-						// 3. For each consensus seq, get all of its annotations and collate
-						// them by type
-						//          SeqSymmetry cons_annot = aseq.getAnnotation(m);
-						SeqSymmetry cons_annot = container.getChild(cindex);
-						if (cons_annot instanceof SymWithProps) {
-							Set<SeqSymmetry> probesetsFound = null;
-							SymWithProps cons_sym = (SymWithProps) cons_annot;
-							String type = (String) cons_sym.getProperty("method");
-							if (type.equalsIgnoreCase(probeset_type)) {
-								probesetsFound = probesets;
-							}
-							else if (type.equalsIgnoreCase(CROSSHYB_TYPE)) {
-								probesetsFound = crossHybProbes;
-							}
-							else if (type.equalsIgnoreCase(poly_a_sites_type)) {
-								probesetsFound = polyASites;
-							}
-							else if (type.equalsIgnoreCase(poly_a_stacks_type)) {
-								probesetsFound = polyAStacks;
-							}
-
-							int childCount = cons_sym.getChildCount();
-							for (int n=0; n<childCount; n++) {
-								SeqSymmetry cons_child = cons_annot.getChild(n);
-								// assume for now all annotations of consensus seqs are wanted
-								//   (they're either probeset2consensus or xhyb2consensus)
-								if (probesetsFound != null) {
-									probesetsFound.add(cons_child);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		findProbeSets(consensus_syms, genome_seq, probeset_type, probesets, crossHybProbes, poly_a_sites_type, polyASites, poly_a_stacks_type, polyAStacks);
 
 		PSLParser psl_parser = new PSLParser();
 
@@ -122,6 +75,56 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 		writePSLTrack(psl_parser, polyAStacks,    genome_seq, poly_a_stacks_type, "Poly-A Stacks", outstream);
 		writePSLTrack(psl_parser, crossHybProbes, genome_seq, CROSSHYB_TYPE,      "Cross-Hybridized Probes", outstream);
 	}
+
+
+	private static void findProbeSets(Collection<SeqSymmetry> consensus_syms, MutableAnnotatedBioSeq genome_seq, String probeset_type, Set<SeqSymmetry> probesets, Set<SeqSymmetry> crossHybProbes, String poly_a_sites_type, Set<SeqSymmetry> polyASites, String poly_a_stacks_type, Set<SeqSymmetry> polyAStacks) {
+		for (SeqSymmetry current_c2g : consensus_syms) {
+			// 2. For each consensus sequence symmetry, get the
+			//    corresponding consensus BioSeq
+			MutableAnnotatedBioSeq cseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
+			if (cseq == null) {
+				continue;
+			}
+			MutableAnnotatedBioSeq aseq = cseq;
+			int maxm = aseq.getAnnotationCount();
+			for (int m = 0; m < maxm; m++) {
+				SeqSymmetry container = aseq.getAnnotation(m);
+				for (int cindex = 0; cindex < container.getChildCount(); cindex++) {
+					// 3. For each consensus seq, get all of its annotations and collate
+					// them by type
+					//          SeqSymmetry cons_annot = aseq.getAnnotation(m);
+					SeqSymmetry cons_annot = container.getChild(cindex);
+					if (cons_annot instanceof SymWithProps) {
+						findProbeSet(cons_annot, probeset_type, probesets, crossHybProbes, poly_a_sites_type, polyASites, poly_a_stacks_type, polyAStacks);
+					}
+				}
+			}
+		}
+	}
+
+
+	private static void findProbeSet(SeqSymmetry cons_annot, String probeset_type, Set<SeqSymmetry> probesets, Set<SeqSymmetry> crossHybProbes, String poly_a_sites_type, Set<SeqSymmetry> polyASites, String poly_a_stacks_type, Set<SeqSymmetry> polyAStacks) {
+		Set<SeqSymmetry> probesetsFound = null;
+		SymWithProps cons_sym = (SymWithProps) cons_annot;
+		String type = (String) cons_sym.getProperty("method");
+		if (type.equalsIgnoreCase(probeset_type)) {
+			probesetsFound = probesets;
+		} else if (type.equalsIgnoreCase(CROSSHYB_TYPE)) {
+			probesetsFound = crossHybProbes;
+		} else if (type.equalsIgnoreCase(poly_a_sites_type)) {
+			probesetsFound = polyASites;
+		} else if (type.equalsIgnoreCase(poly_a_stacks_type)) {
+			probesetsFound = polyAStacks;
+		}
+		int childCount = cons_sym.getChildCount();
+		for (int n = 0; n < childCount; n++) {
+			SeqSymmetry cons_child = cons_annot.getChild(n);
+			// assume for now all annotations of consensus seqs are wanted
+			//   (they're either probeset2consensus or xhyb2consensus)
+			probesetsFound.add(cons_child);
+		}
+	}
+
 
 
 	public static void writePSLTrack(PSLParser parser, Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type,
@@ -139,17 +142,14 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 
 	// implementation of AnnotationWriter    
 	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) throws IOException {
-		boolean success = true;
 		String array_name = getArrayNameFromRequestedType(type);
 		System.out.println("in ProbesetDisplayPlugin.writeAnnotations(), array_name: " + array_name);
-		if (array_name == null) {
-			success = false;
-		} else if (! (seq instanceof MutableAnnotatedBioSeq) ) {
-			success = false;
-		} else {
-			collectAndWriteAnnotations(syms, seq, array_name, outstream);
+		if (array_name == null || seq == null) {
+			return false;
 		}
-		return success;
+		collectAndWriteAnnotations(syms, seq, array_name, outstream);
+
+		return true;
 	}
 
 }

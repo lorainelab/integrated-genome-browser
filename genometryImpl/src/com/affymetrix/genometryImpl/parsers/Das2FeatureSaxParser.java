@@ -123,22 +123,22 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**  list of SeqSpans specifying feature locations */
 	List<SeqSpan> feat_locs = new ArrayList<SeqSpan>();
 	//  List feat_aligns = new ArrayList();  // alignments are now merged with locations
-	List feat_xids = new ArrayList();
+	//List feat_xids = new ArrayList();
 	/**
 	 *  map of child feature id to either:
 	 *      itself  (if child feature not parsed yet), or
 	 *      child feature object (if child feature already parsed)
 	 */
-	Map feat_parts = new LinkedHashMap();
-	Map feat_props = null;
+	Map<String, Object> feat_parts = new LinkedHashMap<String, Object>();
+	Map<String, Object> feat_props = null;
 	/**
 	 *  lists for builtin feature properties
 	 *  not using yet (but clearing in clearFeature() just in case)
 	 */
-	List feat_notes = new ArrayList();
-	List feat_aliass = new ArrayList();
-	List feat_phases = new ArrayList();
-	List feat_scores = new ArrayList();
+	//List feat_notes = new ArrayList();
+	//List feat_aliass = new ArrayList();
+	//List feat_phases = new ArrayList();
+	//List feat_scores = new ArrayList();
 	/**
 	 *  List of feature jsyms resulting from parse
 	 */
@@ -146,11 +146,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	/**
 	 *  Need mapping so can connect parents and children after sym has already been created
 	 */
-	Map id2sym = new HashMap();
+	Map<String,MutableSeqSymmetry> id2sym = new HashMap<String,MutableSeqSymmetry>();
 	/**
 	 *  Mapping of parent sym to map of child ids to connect parents and children.
 	 */
-	Map parent2parts = new HashMap();
+	Map<SeqSymmetry,Map<String, Object>> parent2parts = new HashMap<SeqSymmetry,Map<String, Object>>();
 
 	/*
 	 *  need mapping of parent id to child count for efficiently figuring out when
@@ -410,7 +410,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		 *  If child sym found then map part_id to child sym in feat_parts
 		 *  If child sym not found then map part_id to itself, and swap in child sym later when it's created
 		 */
-		SeqSymmetry child_sym = (SeqSymmetry) id2sym.get(part_id);
+		SeqSymmetry child_sym = id2sym.get(part_id);
 		if (child_sym == null) {
 			feat_parts.put(part_id, part_id);
 		} else {
@@ -437,14 +437,14 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		feat_doc_href = null;
 
 		feat_locs.clear();
-		feat_xids.clear();
+		//feat_xids.clear();
 		// making new feat_parts map because ref to old feat_parts map may be held for parent/child resolution
-		feat_parts = new LinkedHashMap();
+		feat_parts = new LinkedHashMap<String, Object>();
 
-		feat_notes.clear();
-		feat_aliass.clear();
-		feat_phases.clear();
-		feat_scores.clear();
+		//feat_notes.clear();
+		//feat_aliass.clear();
+		//feat_phases.clear();
+		//feat_scores.clear();
 		feat_props = null;
 		//    feat_prop_content = "";
 		feat_prop_key = null;
@@ -473,7 +473,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			//   should probably move this stuff up to the startElement() conditional for clarity,
 			//   then can make feat_prop_key and feat_prop_val local to method
 			if (feat_props == null) {
-				feat_props = new HashMap();
+				feat_props = new HashMap<String, Object>();
 			}
 			Object prev = feat_props.get(feat_prop_key);
 			if (prev == null) {
@@ -575,10 +575,10 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				}
 			}
 		} else {
-			MutableSeqSymmetry parent = (MutableSeqSymmetry) id2sym.get(feat_parent_id);
+			MutableSeqSymmetry parent = id2sym.get(feat_parent_id);
 			if (parent != null) {
 				// add child to parent parts map
-				LinkedHashMap parent_parts = (LinkedHashMap) parent2parts.get(parent);
+				Map<String, Object> parent_parts = parent2parts.get(parent);
 				if (parent_parts == null) {
 					System.out.println("WARNING: no parent_parts found for parent, id=" + feat_parent_id);
 				} else {
@@ -593,9 +593,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 	}
 
-	protected boolean childrenReady(MutableSeqSymmetry parent_sym) {
-		LinkedHashMap parts = (LinkedHashMap) parent2parts.get(parent_sym);
-		Iterator citer = parts.values().iterator();
+	protected boolean childrenReady(SeqSymmetry parent_sym) {
+		Map<String, Object> parts = parent2parts.get(parent_sym);
+		Iterator<Object> citer = parts.values().iterator();
 		boolean all_child_syms = true;
 		while (citer.hasNext()) {
 			Object val = citer.next();
@@ -609,11 +609,11 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 	protected void addChildren(MutableSeqSymmetry parent_sym) {
 		// get parts
-		LinkedHashMap parts = (LinkedHashMap) parent2parts.get(parent_sym);
-		Iterator citer = parts.entrySet().iterator();
+		Map<String, Object> parts = parent2parts.get(parent_sym);
+		Iterator<Map.Entry<String, Object>> citer = parts.entrySet().iterator();
 		while (citer.hasNext()) {
-			Map.Entry keyval = (Map.Entry) citer.next();
-			String child_id = (String) keyval.getKey();
+			Map.Entry<String, Object> keyval = citer.next();
+			String child_id = keyval.getKey();
 			SeqSymmetry child_sym = (SeqSymmetry) keyval.getValue();
 			if (child_sym instanceof SymWithProps) {
 				String child_type = (String) ((SymWithProps) child_sym).getProperty("type");
@@ -683,7 +683,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "DASGFF" XML format.
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) {
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) {
 		// Das2FeatureSaxParser.writeAnnotations() does not use seq arg, since now writing out all spans
 		//  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
@@ -719,9 +719,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 
 			MutableSeqSpan mspan = new SimpleMutableSeqSpan();
-			Iterator iterator = syms.iterator();
+			Iterator<SeqSymmetry> iterator = syms.iterator();
 			while (iterator.hasNext()) {
-				SeqSymmetry annot = (SeqSymmetry) iterator.next();
+				SeqSymmetry annot = iterator.next();
 				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs
 				//	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
 				writeDasFeature(annot, null, 0, type, pw, mspan);

@@ -865,9 +865,9 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		try {
 			PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
 			Das1FeatureSaxParser.writeDasFeatHeader(qspan, pw);
-			Iterator iterator = syms.iterator();
+			Iterator<SeqSymmetry> iterator = syms.iterator();
 			while (iterator.hasNext()) {
-				SeqSymmetry annot = (SeqSymmetry) iterator.next();
+				SeqSymmetry annot = iterator.next();
 				Das1FeatureSaxParser.writeDasFeature(annot, seq, type, pw);
 			}
 			//      System.out.println("annot returned: " + annot_count);

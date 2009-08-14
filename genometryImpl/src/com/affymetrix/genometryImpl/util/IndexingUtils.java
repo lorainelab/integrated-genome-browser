@@ -7,12 +7,14 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -85,7 +87,54 @@ public class IndexingUtils {
 			ex.printStackTrace();
 			return false;
 		}
+		
 		return true;
+	}
+
+	/**
+	 * Create a file of annotations, and index its entries.
+	 * @param syms -- a sorted list of annotations (on one chromosome)
+	 * @param seq -- the chromosome
+	 * @param iSyms
+	 * @param fos
+	 * @return - success or failure
+	 */
+	public static boolean writeIndexedAnnotations(
+			List<SeqSymmetry> syms,
+			MutableAnnotatedBioSeq seq,
+			IndexedSyms iSyms
+			) {
+		ObjectOutputStream oos = null;
+		try {
+			if (DEBUG) {
+				System.out.println("in IndexingUtils.writeIndexedAnnotations()");
+			}
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			int index = 0;
+			long currentFilePos = 0;
+			IndexWriter iWriter = iSyms.iWriter;
+			for (SeqSymmetry sym : syms) {
+				iSyms.min[index] = iWriter.getMin(sym, seq);
+				iSyms.max[index] = iWriter.getMax(sym, seq);
+				oos.writeObject(sym);
+				byte [] buf = baos.toByteArray();
+				index++;
+				currentFilePos += buf.length;
+				baos.reset();
+				iSyms.filePos[index] = currentFilePos;
+			}
+			return true;
+		} catch (Exception ex) {
+			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			try {
+				oos.close();
+			} catch (IOException ex) {
+				Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -138,6 +187,7 @@ public class IndexingUtils {
 		}
 		FileInputStream fis = null;
 		DataInputStream bis = null;
+		BufferedInputStream d = null;
 
 		IndexedSyms iSyms = null;
 		try {

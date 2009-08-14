@@ -232,8 +232,8 @@ public abstract class ServerUtils {
 			// Not yet indexable
 			return;
 		}
-		System.out.println("Indexing -- clearing symmetries");
-		removeSymmetriesFromGenome(originalSyms, genome, typeName);
+		//System.out.println("Indexing -- clearing symmetries");
+		//removeSymmetriesFromGenome(originalSyms, genome, typeName);
 
 		System.out.println("Indexing " + originalFileName);
 		determineIndexes(

@@ -204,10 +204,9 @@ public abstract class ServerUtils {
 		// current originalFile is not a directory, so try and recognize as annotation originalFile
 
 
-		System.out.println("loading annotations of " + current_file.getName());
-		List results = loadAnnotFile(current_file, type_name, genome);
+		//System.out.println("loading annotations of " + current_file.getName());
 
-		indexTheFile(dataRoot, current_file, genome, results);
+		indexOrLoadFile(dataRoot, current_file, type_name, genome);
 	}
 
 	/**
@@ -217,8 +216,7 @@ public abstract class ServerUtils {
 	 * @param genome
 	 * @param originalSyms
 	 */
-	private static void indexTheFile(String dataRoot, File file, AnnotatedSeqGroup genome,
-			List originalSyms) {
+	private static void indexOrLoadFile(String dataRoot, File file, String type_name, AnnotatedSeqGroup genome) {
 
 		String originalFileName = file.getName();
 		String extension = originalFileName.substring(originalFileName.lastIndexOf("."),
@@ -228,6 +226,7 @@ public abstract class ServerUtils {
 		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
 		if (iWriter == null) {
+			loadAnnotFile(file, type_name, genome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
@@ -235,9 +234,28 @@ public abstract class ServerUtils {
 		//System.out.println("Indexing -- clearing symmetries");
 		//removeSymmetriesFromGenome(originalSyms, genome, typeName);
 
+		AnnotatedSeqGroup tempGenome = tempGenome(genome);
+		List originalSyms = loadAnnotFile(file, type_name, tempGenome, true);
 		System.out.println("Indexing " + originalFileName);
 		determineIndexes(
-				genome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
+				tempGenome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
+	}
+
+	/**
+	 * Create a temporary shallow-copy genome, to avoid any side-effects.
+	 * @param oldGenome
+	 * @return
+	 */
+	private static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
+		AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup(oldGenome.getID());
+		tempGenome.setOrganism(oldGenome.getOrganism());
+		if (oldGenome == null) {
+			return tempGenome;
+		}
+		for (BioSeq seq : oldGenome.getSeqList()) {
+			tempGenome.addSeq(seq.getID(), seq.getLength());
+		}
+		return tempGenome;
 	}
 
 	/**
@@ -369,12 +387,16 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String type_name, AnnotatedSeqGroup genome) {
+	private static List loadAnnotFile(File current_file, String type_name, AnnotatedSeqGroup genome, boolean isIndexed) {
 		InputStream istr = null;
 		List results = null;
 		try {
 			istr = new BufferedInputStream(new FileInputStream(current_file));
-			results = ParserController.parse(istr, annots_map, type_name, gmodel, genome);
+			if (!isIndexed) {
+				results = ParserController.parse(istr, annots_map, type_name, gmodel, genome);
+			} else {
+				results = ParserController.parseIndexed(istr, annots_map, type_name, genome);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {

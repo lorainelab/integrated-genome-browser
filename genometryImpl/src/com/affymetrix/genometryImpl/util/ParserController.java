@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
 
@@ -100,9 +99,6 @@ public final class ParserController {
 				// parsing a graph
 				results = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group);
 			}
-			else if (ParserController.getIndexWriter(stream_name) != null) {
-				results = parseIndexed(stream_name, annots_map, str, type_prefix, seq_group);
-			}
 			else {
 				System.out.println("Can't parse, format not recognized: " + stream_name);
 			}
@@ -126,54 +122,42 @@ public final class ParserController {
 	 * @param seq_group
 	 * @return
 	 */
-	private static List parseIndexed(String stream_name, Map<String, String> annots_map, InputStream str, String type_prefix, AnnotatedSeqGroup seq_group) {
-		AnnotatedSeqGroup tempGenome = tempGenome(seq_group);	// avoid any side-effects caused by parsing
+	public static List parseIndexed(InputStream str, Map<String, String> annots_map, String stream_name, AnnotatedSeqGroup seq_group) {
 
 		DataInputStream dis = new DataInputStream(str);
 		if (stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) {
+			String type_prefix = null;
+		int sindex = stream_name.lastIndexOf("/");
+		if (sindex >= 0) {
+			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
+		}
 			System.out.println("loading via PslParser: " + stream_name);
 			String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
 			IndexWriter iWriter = new PSLParser();
 			if (type_prefix != null) {
 				((PSLParser) iWriter).setTrackNamePrefix(type_prefix);
 			}
-			return iWriter.parse(dis, annot_type, tempGenome);
+			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".bps")) {
 			System.out.println("loading via BpsParser: " + stream_name);
 			String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
 			IndexWriter iWriter = new BpsParser();
-			return iWriter.parse(dis, annot_type, tempGenome);
+			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".bgn")) {
 			System.out.println("loading via BgnParser: " + stream_name);
 			IndexWriter iWriter = new BgnParser();
 			String annot_type = GetAnnotType(annots_map, stream_name, ".bgn");
-			return iWriter.parse(dis, annot_type, tempGenome);
+			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".brs")) {
 			System.out.println("loading via BrsParser: " + stream_name);
 			IndexWriter iWriter = new BrsParser();
 			String annot_type = GetAnnotType(annots_map, stream_name, ".brs");
-			return iWriter.parse(dis, annot_type, tempGenome);
+			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		return null;
-	}
-
-	/**
-	 * Create a temporary shallow-copy genome, to avoid any side-effects.
-	 * @param oldGenome
-	 * @return
-	 */
-	private static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
-		AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup("tempGenome");
-		if (oldGenome == null) {
-			return tempGenome;
-		}
-		for (BioSeq seq : oldGenome.getSeqList()) {
-			tempGenome.addSeq(seq.getID(), seq.getLength());
-		}
-		return tempGenome;
 	}
 
 

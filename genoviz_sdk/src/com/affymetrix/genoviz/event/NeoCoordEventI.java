@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.event;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.awt.geom.Point2D;
 import java.util.EventObject;
 import java.util.Vector;
@@ -63,6 +64,6 @@ public interface NeoCoordEventI {
 	 * @return a Vector of GlyphIs whose coord bounds contain the
 	 * coord location of the event.
 	 */
-	public Vector getItems();
+	public Vector<GlyphI> getItems();
 
 }

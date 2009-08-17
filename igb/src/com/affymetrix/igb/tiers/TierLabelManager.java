@@ -408,7 +408,7 @@ public final class TierLabelManager {
         if (! preserve_selections ) {
           labelmap.clearSelected();
         }
-        Vector selected = nevt.getItems();
+        Vector<GlyphI> selected = nevt.getItems();
         labelmap.select(selected);
         doGraphSelections(labelmap);
 //        labelmap.updateWidget();

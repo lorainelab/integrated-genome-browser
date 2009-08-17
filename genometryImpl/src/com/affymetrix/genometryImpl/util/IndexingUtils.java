@@ -57,19 +57,21 @@ public class IndexingUtils {
 	 * @param syms -- a sorted list of annotations (on one chromosome)
 	 * @param seq -- the chromosome
 	 * @param iSyms
-	 * @param fos
+	 * @param indexedAnnotationsFileName
 	 * @return - success or failure
 	 */
-	public static boolean writeIndexedAnnotations(
+	/*public static boolean writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
 			MutableAnnotatedBioSeq seq,
 			IndexedSyms iSyms,
-			FileOutputStream fos) {
+			String indexedAnnotationsFileName) {
 		if (DEBUG){
 			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 		}
+		FileOutputStream fos = null;
 		DataOutputStream dos = null;
 		try {
+			fos = new FileOutputStream(indexedAnnotationsFileName);
 			dos = new DataOutputStream(fos);
 			FileChannel fChannel = fos.getChannel();
 			int index = 0;
@@ -86,10 +88,13 @@ public class IndexingUtils {
 		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
+		} finally {
+			GeneralUtils.safeClose(dos);
+			GeneralUtils.safeClose(fos);
 		}
 		
 		return true;
-	}
+	}*/
 
 	/**
 	 * Create a file of annotations, and index its entries.
@@ -102,56 +107,76 @@ public class IndexingUtils {
 	public static boolean writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
 			MutableAnnotatedBioSeq seq,
-			IndexedSyms iSyms
-			) {
-		ObjectOutputStream oos = null;
+			IndexedSyms iSyms,
+			String indexesFileName) {
+		//ObjectOutputStream oos = null;
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		DataOutputStream dos = null;
+
 		try {
 			if (DEBUG) {
 				System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 			}
+
+			// Determine file positions and create iSyms array.
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			oos = new ObjectOutputStream(baos);
+			//oos = new ObjectOutputStream(baos);
 			int index = 0;
 			long currentFilePos = 0;
 			IndexWriter iWriter = iSyms.iWriter;
 			for (SeqSymmetry sym : syms) {
 				iSyms.min[index] = iWriter.getMin(sym, seq);
 				iSyms.max[index] = iWriter.getMax(sym, seq);
-				oos.writeObject(sym);
-				byte [] buf = baos.toByteArray();
+				iWriter.writeSymmetry(sym, seq, baos);
+				//oos.writeObject(sym);
+				baos.flush();
+				byte[] buf = baos.toByteArray();
 				index++;
 				currentFilePos += buf.length;
+				
 				baos.reset();
 				iSyms.filePos[index] = currentFilePos;
 			}
+			GeneralUtils.safeClose(baos);
+
+			// Actually write out to file.
+			fos = new FileOutputStream(indexesFileName);
+			bos = new BufferedOutputStream(fos);
+			dos = new DataOutputStream(bos);
+			for (SeqSymmetry sym : syms) {
+				iWriter.writeSymmetry(sym, seq, dos);
+			}
+
 			return true;
 		} catch (Exception ex) {
 			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
+			return false;
 		} finally {
-			try {
-				oos.close();
-			} catch (IOException ex) {
-				Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
-			}
+			//GeneralUtils.safeClose(oos);
+			GeneralUtils.safeClose(fos);
+			GeneralUtils.safeClose(dos);
+			GeneralUtils.safeClose(bos);
 		}
-		return false;
 	}
 
 	/**
 	 * Writes out the indexes (for later server reboots).
 	 * @param iSyms
-	 * @param fos
+	 * @param indexesFileName
 	 * @return - success or failure
 	 */
 	public static boolean writeIndexes(
 			IndexedSyms iSyms,
-			FileOutputStream fos) {
+			String indexesFileName) {
 		if (DEBUG){
 			System.out.println("in IndexingUtils.writeIndexes()");
 		}
+		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try {
+			fos = new FileOutputStream(indexesFileName);
 			bos = new BufferedOutputStream(fos);
 			dos = new DataOutputStream(bos);
 			int indexSymsSize = iSyms.min.length;
@@ -164,11 +189,14 @@ public class IndexingUtils {
 				dos.writeLong(iSyms.filePos[i]);
 			}
 			dos.writeLong(iSyms.filePos[indexSymsSize]);
-			dos.flush();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
+		} finally {
+			GeneralUtils.safeClose(dos);
+			GeneralUtils.safeClose(bos);
+			GeneralUtils.safeClose(fos);
 		}
 		return true;
 	}

@@ -444,7 +444,13 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		return comp;
 	}
 	
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+		DataOutputStream dos = null;
+		if (os instanceof DataOutputStream) {
+			dos = (DataOutputStream)os;
+		} else {
+			dos = new DataOutputStream(os);
+		}
 		((UcscPslSym)sym).outputBpsFormat(dos);
 	}
 

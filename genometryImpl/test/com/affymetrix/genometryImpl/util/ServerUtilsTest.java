@@ -15,7 +15,6 @@ import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -141,10 +140,7 @@ public class ServerUtilsTest {
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
 
-			FileOutputStream fos = null;
-			fos = new FileOutputStream(testFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
-			GeneralUtils.safeClose(fos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
 
 			String overlap = "90000:11200177";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
@@ -155,7 +151,7 @@ public class ServerUtilsTest {
 
 			
 			List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(
-					overlap_span, iSyms, group);
+					overlap_span, iSyms, "testOUT", group);
 			
 			assertEquals(384, result.size());
 			assertEquals(136731, result.get(0).getTargetMin());

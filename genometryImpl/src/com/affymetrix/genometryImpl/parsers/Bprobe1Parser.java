@@ -69,7 +69,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  */
 public final class Bprobe1Parser implements AnnotationWriter {
 
-	static boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bp2");

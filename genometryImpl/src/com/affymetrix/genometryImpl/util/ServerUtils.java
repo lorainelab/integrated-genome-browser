@@ -19,14 +19,12 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +44,7 @@ import java.util.regex.Pattern;
  * Utils for DAS/2 and other servers.
  */
 public abstract class ServerUtils {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final String annots_filename = "annots.xml"; // potential originalFile for annots parsing
 	private static final String graph_dir_suffix = ".graphs.seqs";
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
@@ -256,9 +254,8 @@ public abstract class ServerUtils {
 		return tempGenome;
 	}
 
-
 	/**
-	 * Generate indexes (and indexed files, if necessary).
+	 * Generate indexes.
 	 * @param genome
 	 * @param dataRoot
 	 * @param file
@@ -273,58 +270,22 @@ public abstract class ServerUtils {
 			if (tempSeq == null) {
 				continue;	// ignore; this is a seq that was added during parsing.
 			}
-			
+
 			IndexedSyms iSyms = null;
 			String dirName = indexedDirName(dataRoot, tempGenome, tempSeq);
 			String indexedAnnotationsFileName = indexedFileName(dataRoot, originalFileName, tempGenome, tempSeq);
-			String indexesFileName = indexesFileName(dataRoot, originalFileName, tempGenome, tempSeq);
-			File indexesFile = new File(indexesFileName);
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 
 			createDirIfNecessary(dirName);
 
-			if (isAlreadyIndexed(indexesFile, indexedAnnotationsFile, file)) {
-				if (DEBUG) {
-					System.out.println(indexedAnnotationsFileName + " already indexed.");
-				}
-				iSyms = IndexingUtils.readIndexes(indexesFile, indexedAnnotationsFile, typeName, iWriter);
-				originalSeq.addIndexedSyms(typeName, iSyms);
-				continue;
-			}
-			
-			IndexAndWriteFiles(loadedSyms, originalSeq, tempSeq, iWriter, indexedAnnotationsFile, typeName, iSyms, indexedAnnotationsFileName, indexesFileName);
-		}
-	}
-
-	/**
-	 * Sort symmetries and write out to disk, and store indexes in memory.
-	 * @param loadedSyms
-	 * @param originalSeq
-	 * @param iWriter
-	 * @param indexedAnnotationsFile
-	 * @param typeName
-	 * @param iSyms
-	 * @param indexedAnnotationsFileName
-	 * @param indexesFileName
-	 */
-	private static void IndexAndWriteFiles(List originalPslSyms, BioSeq originalSeq, BioSeq tempSeq, IndexWriter iWriter, File indexedAnnotationsFile, String typeName, IndexedSyms iSyms, String indexedAnnotationsFileName, String indexesFileName) {
-		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, tempSeq, iWriter.getComparator(tempSeq));
-		iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
-		originalSeq.addIndexedSyms(typeName, iSyms);	// add these to original
-		FileOutputStream fos = null;
-		FileOutputStream fos2 = null;
-		try {
-			fos = new FileOutputStream(indexedAnnotationsFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, fos);
-
-			fos2 = new FileOutputStream(indexesFileName);
-			IndexingUtils.writeIndexes(iSyms, fos2);
-		} catch (Exception ex) {
-			// TODO: will need to reset the .optimized directory
-			Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			GeneralUtils.safeClose(fos);
-			GeneralUtils.safeClose(fos2);
+			// Sort symmetries for this specific chromosome.
+			List<SeqSymmetry> sortedSyms =
+					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
+			iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
+			// add symmetries to the chromosome (used by types request)
+			originalSeq.addIndexedSyms(typeName, iSyms);
+			// Write the annotations out to a file.
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, indexedAnnotationsFileName);
 		}
 	}
 
@@ -333,11 +294,6 @@ public abstract class ServerUtils {
 	private static String indexedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
 		return indexedDirName(dataRoot, genome, seq) + "/" + fileName;
 	}
-	// filename of indexes.  (Used for rebooting server).
-	private static String indexesFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
-		return indexedDirName(dataRoot, genome, seq) + "/" + "IDX_" + fileName;
-	}
-
 	private static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
 		String optimizedDirectory = dataRoot + ".indexed";
 		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
@@ -355,19 +311,6 @@ public abstract class ServerUtils {
 				System.out.println("Created new directory: " + dirName);
 			}
 		}
-	}
-
-	/**
-	 * See if the file has already been indexed.
-	 * @param indexesFileName
-	 * @param indexedAnnotationsFile
-	 * @param originalFile
-	 * @return true if already indexed.
-	 */
-	private static boolean isAlreadyIndexed(File indexesFile, File indexedAnnotationsFile, File originalFile) {
-		return indexesFile.exists() && indexedAnnotationsFile.exists() &&
-				(indexesFile.lastModified() > originalFile.lastModified()) &&
-				(indexedAnnotationsFile.lastModified() > originalFile.lastModified());
 	}
 
 
@@ -552,6 +495,7 @@ public abstract class ServerUtils {
 				return getIndexedOverlappedSymmetries(
 						query_span,
 						iSyms,
+						annot_type,
 						seq.getSeqGroup());
 			}
 		}
@@ -593,6 +537,7 @@ public abstract class ServerUtils {
 	public static List getIndexedOverlappedSymmetries(
 			SeqSpan overlap_span,
 			IndexedSyms iSyms,
+			String annot_type,
 			AnnotatedSeqGroup group) {
 		FileInputStream fis = null;
 		InputStream newIstr = null;
@@ -614,7 +559,7 @@ public abstract class ServerUtils {
 			newIstr = new ByteArrayInputStream(bytes);
 			dis = new DataInputStream(newIstr);
 
-			return iSyms.iWriter.parse(dis, "BPS", group);
+			return iSyms.iWriter.parse(dis, annot_type, group);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;

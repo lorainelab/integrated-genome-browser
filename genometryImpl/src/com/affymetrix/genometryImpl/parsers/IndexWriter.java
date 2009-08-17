@@ -4,8 +4,8 @@ import com.affymetrix.genometry.MutableAnnotatedBioSeq;
 import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public interface IndexWriter {
 	 * @param dos
 	 * @throws IOException
 	 */
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, DataOutputStream dos) throws IOException;
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException;
 
 	/**
 	 * Parse the given stream, returning a list of SeqSymmetries.

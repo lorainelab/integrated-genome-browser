@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.Psl3Sym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,21 +76,21 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	/**
 	 *  Parse.
 	 *  The most common parameters are:
-	 *     annotate = false;
-	 *     annotate = true;
-	 *     annotate = false.
+	 *     annotate_query = false;
+	 *     annotate_target = true;
+	 *     annotate_other = false.
 	 *
 	 *  @param istr             An input stream
 	 *  @param annot_type       The method name for the annotation to load from the file, if the track line is missing;
 	 *                          if there is a track line in the file, the name from the track line will be used instead.
-	 *  @param annGroup      An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
+	 *  @param query_group      An AnnotatedSeqGroup (or null) to look for query SeqSymmetries in and add SeqSymmetries to.
 	 *                          Null is ok; this will cause a temporary AnnotatedSeqGroup to be created.
-	 *  @param annGroup      An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
-	 *  @param annGroup      An AnnotatedSeqGroup (or null) to look for other SeqSymmetries in (in PSL3 format) and add SeqSymmetries to.
+	 *  @param target_group     An AnnotatedSeqGroup (or null) to look for target SeqSymmetries in and add SeqSymmetries to.
+	 *  @param other_group      An AnnotatedSeqGroup (or null) to look for other SeqSymmetries in (in PSL3 format) and add SeqSymmetries to.
 	 *                          This parameter is ignored if the file is not in psl3 format.
-	 *  @param annotate   if true, then alignment SeqSymmetries are added to query seq as annotations
-	 *  @param annotate  if true, then alignment SeqSymmetries are added to target seq as annotations
-	 *  @param annotate   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
+	 *  @param annotate_query   if true, then alignment SeqSymmetries are added to query seq as annotations
+	 *  @param annotate_target  if true, then alignment SeqSymmetries are added to target seq as annotations
+	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
 	 *
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
@@ -142,7 +143,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 				if (line.trim().length() == 0 || line.startsWith("#") ||
 						line.startsWith("match\t") || line.startsWith("-------")) {
 					continue;
-				} else if (line.startsWith("track")) {
+				}
+				if (line.startsWith("track")) {
 					// Always parse the track line, but
 					// only set the AnnotStyle properties from it
 					// if this is NOT a ".link.psl" file.
@@ -259,7 +261,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			ioe.initCause(e);
 			throw ioe;
 		} finally {
-			br.close();
+			GeneralUtils.safeClose(br);
 		}
 		if (DEBUG) {
 			System.out.println("finished parsing PSL file, annot count: " + total_annot_count +
@@ -286,7 +288,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return findex;
 	}
 
-	private static MutableAnnotatedBioSeq determineQuerySeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
+	private static MutableAnnotatedBioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
 		MutableAnnotatedBioSeq qseq = query_group.getSeq(qname);
 		if (qseq == null) {
 			// Doing a new String() here gives a > 4X reduction in
@@ -303,7 +305,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private SeqSymmetry determineSym(AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> target2types, ArrayList<SeqSymmetry> results) throws NumberFormatException {
-		MutableAnnotatedBioSeq qseq = determineQuerySeq(query_group, qname, qsize);
+		MutableAnnotatedBioSeq qseq = determineSeq(query_group, qname, qsize);
 		MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
 		boolean shared_query_target = false;
 		if (tseq == null) {
@@ -355,13 +357,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			for (int i = 0; i < childcount; i++) {
 				omins[i] = Integer.parseInt(o_min_array[i]);
 			}
-			MutableAnnotatedBioSeq oseq = other_group.getSeq(oname);
-			if (oseq == null) {
-				oseq = other_group.addSeq(new String(oname), osize);
-			}
-			if (oseq.getLength() < osize) {
-				oseq.setLength(osize);
-			}
+			MutableAnnotatedBioSeq oseq = determineSeq(other_group,oname,osize);
+
 			sym = new Psl3Sym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, other_same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax, blockcount, blocksizes, qmins, tmins, omins);
 			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
 		} else {
@@ -418,7 +415,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		}
 	}
 
-	private static void createContainerAnnot(Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
+	private static void createContainerAnnot(
+			Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
 		//    If using a container sym, need to first hash (seq2types) from
 		//    seq to another hash (type2csym) of types to container sym
 		//    System.out.println("in createContainerAnnot, type: " + type);
@@ -574,10 +572,10 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return comp;
 	}
 
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
 		Writer bw = null;
 		try {
-			bw = new BufferedWriter(new OutputStreamWriter(dos));
+			bw = new BufferedWriter(new OutputStreamWriter(os));
 			((UcscPslSym) sym).outputPslFormat(bw);
 		} finally {
 			bw.flush();

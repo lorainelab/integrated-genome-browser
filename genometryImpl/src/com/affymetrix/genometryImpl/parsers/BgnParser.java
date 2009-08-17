@@ -269,7 +269,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter  {
 	 *  probably not the best format to use, but since that can still be useful,
 	 *  this routine will treat the entire span as the CDS.
 	 */
-	public void writeSymmetry(SeqSymmetry gsym, MutableAnnotatedBioSeq targetSeq, DataOutputStream dos) throws IOException {
+	public void writeSymmetry(SeqSymmetry gsym, MutableAnnotatedBioSeq targetSeq, OutputStream os) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan;
 		String name;
@@ -287,6 +287,12 @@ public final class BgnParser implements AnnotationWriter, IndexWriter  {
 			name = gsym.getID();
 		}
 		MutableAnnotatedBioSeq seq = tspan.getBioSeq();
+		DataOutputStream dos = null;
+		if (os instanceof DataOutputStream) {
+			dos = (DataOutputStream)os;
+		} else {
+			dos = new DataOutputStream(os);
+		}
 		dos.writeUTF(name);
 		dos.writeUTF(seq.getID());
 		if (tspan.isForward()) { dos.writeUTF("+"); }

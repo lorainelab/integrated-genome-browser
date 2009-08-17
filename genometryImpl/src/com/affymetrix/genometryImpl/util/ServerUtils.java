@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
  * Utils for DAS/2 and other servers.
  */
 public abstract class ServerUtils {
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final String annots_filename = "annots.xml"; // potential originalFile for annots parsing
 	private static final String graph_dir_suffix = ".graphs.seqs";
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
@@ -214,7 +214,7 @@ public abstract class ServerUtils {
 	 * @param dataRoot
 	 * @param file
 	 * @param genome
-	 * @param originalSyms
+	 * @param loadedSyms
 	 */
 	private static void indexOrLoadFile(String dataRoot, File file, String type_name, AnnotatedSeqGroup genome) {
 
@@ -231,14 +231,12 @@ public abstract class ServerUtils {
 			// Not yet indexable
 			return;
 		}
-		//System.out.println("Indexing -- clearing symmetries");
-		//removeSymmetriesFromGenome(originalSyms, genome, typeName);
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
-		List originalSyms = loadAnnotFile(file, type_name, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, type_name, tempGenome, true);
 		System.out.println("Indexing " + originalFileName);
-		determineIndexes(
-				tempGenome, dataRoot, file, originalFileName, originalSyms, iWriter, typeName);
+		determineIndexes(genome,
+				tempGenome, dataRoot, file, originalFileName, loadedSyms, iWriter, typeName);
 	}
 
 	/**
@@ -258,25 +256,6 @@ public abstract class ServerUtils {
 		return tempGenome;
 	}
 
-	/**
-	 * Remove the symmetries from the genome, since these are about to be indexed.
-	 * @param originalSyms
-	 * @param genome
-	 * @param typeName
-	 */
-	private static void removeSymmetriesFromGenome(List originalSyms, AnnotatedSeqGroup genome, String typeName) {
-		int symSize = originalSyms.size();
-		for (BioSeq seq : genome.getSeqList()) {
-			for (int i = 0; i < symSize; i++) {
-				SeqSymmetry sym = (SeqSymmetry) originalSyms.get(i);
-				seq.removeAnnotation(sym);
-			}
-		}
-		for (BioSeq seq : genome.getSeqList()) {
-			seq.removeTypes(typeName);
-		}
-	}
-
 
 	/**
 	 * Generate indexes (and indexed files, if necessary).
@@ -284,16 +263,21 @@ public abstract class ServerUtils {
 	 * @param dataRoot
 	 * @param file
 	 * @param originalFileName
-	 * @param originalPslSyms
+	 * @param loadedSyms
 	 * @param iWriter
 	 * @param typeName
 	 */
-	private static void determineIndexes(AnnotatedSeqGroup genome, String dataRoot, File file, String originalFileName, List originalPslSyms, IndexWriter iWriter, String typeName) {
-		for (BioSeq seq : genome.getSeqList()) {
+	private static void determineIndexes(AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome, String dataRoot, File file, String originalFileName, List loadedSyms, IndexWriter iWriter, String typeName) {
+		for (BioSeq originalSeq : originalGenome.getSeqList()) {
+			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
+			if (tempSeq == null) {
+				continue;	// ignore; this is a seq that was added during parsing.
+			}
+			
 			IndexedSyms iSyms = null;
-			String dirName = indexedDirName(dataRoot, genome, seq);
-			String indexedAnnotationsFileName = indexedFileName(dataRoot, originalFileName, genome, seq);
-			String indexesFileName = indexesFileName(dataRoot, originalFileName, genome, seq);
+			String dirName = indexedDirName(dataRoot, tempGenome, tempSeq);
+			String indexedAnnotationsFileName = indexedFileName(dataRoot, originalFileName, tempGenome, tempSeq);
+			String indexesFileName = indexesFileName(dataRoot, originalFileName, tempGenome, tempSeq);
 			File indexesFile = new File(indexesFileName);
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 
@@ -304,18 +288,18 @@ public abstract class ServerUtils {
 					System.out.println(indexedAnnotationsFileName + " already indexed.");
 				}
 				iSyms = IndexingUtils.readIndexes(indexesFile, indexedAnnotationsFile, typeName, iWriter);
-				seq.addIndexedSyms(typeName, iSyms);
+				originalSeq.addIndexedSyms(typeName, iSyms);
 				continue;
 			}
 			
-			IndexAndWriteFiles(originalPslSyms, seq, iWriter, indexedAnnotationsFile, typeName, iSyms, indexedAnnotationsFileName, indexesFileName);
+			IndexAndWriteFiles(loadedSyms, originalSeq, tempSeq, iWriter, indexedAnnotationsFile, typeName, iSyms, indexedAnnotationsFileName, indexesFileName);
 		}
 	}
 
 	/**
 	 * Sort symmetries and write out to disk, and store indexes in memory.
-	 * @param originalPslSyms
-	 * @param seq
+	 * @param loadedSyms
+	 * @param originalSeq
 	 * @param iWriter
 	 * @param indexedAnnotationsFile
 	 * @param typeName
@@ -323,15 +307,15 @@ public abstract class ServerUtils {
 	 * @param indexedAnnotationsFileName
 	 * @param indexesFileName
 	 */
-	private static void IndexAndWriteFiles(List originalPslSyms, BioSeq seq, IndexWriter iWriter, File indexedAnnotationsFile, String typeName, IndexedSyms iSyms, String indexedAnnotationsFileName, String indexesFileName) {
-		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, seq, iWriter.getComparator(seq));
+	private static void IndexAndWriteFiles(List originalPslSyms, BioSeq originalSeq, BioSeq tempSeq, IndexWriter iWriter, File indexedAnnotationsFile, String typeName, IndexedSyms iSyms, String indexedAnnotationsFileName, String indexesFileName) {
+		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(originalPslSyms, tempSeq, iWriter.getComparator(tempSeq));
 		iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
-		seq.addIndexedSyms(typeName, iSyms);
+		originalSeq.addIndexedSyms(typeName, iSyms);	// add these to original
 		FileOutputStream fos = null;
 		FileOutputStream fos2 = null;
 		try {
 			fos = new FileOutputStream(indexedAnnotationsFileName);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, fos);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, fos);
 
 			fos2 = new FileOutputStream(indexesFileName);
 			IndexingUtils.writeIndexes(iSyms, fos2);
@@ -431,8 +415,8 @@ public abstract class ServerUtils {
 
 
 		if (type_name.endsWith(graph_dir_suffix)) {
-			// each originalFile in directory is same annotation type, but for a single seq?
-			// assuming bar files for now, each with starting with seq id?
+			// each originalFile in directory is same annotation type, but for a single originalSeq?
+			// assuming bar files for now, each with starting with originalSeq id?
 			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
@@ -488,7 +472,7 @@ public abstract class ServerUtils {
 	/**
 	 *  Differs from Das2FeatureSaxParser.getLocationSpan():
 	 *     Won't add unrecognized seqids or null groups
-	 *     If rng is null or "", will set to span to [0, seq.getLength()]
+	 *     If rng is null or "", will set to span to [0, originalSeq.getLength()]
 	 */
 	public static final SeqSpan getLocationSpan(String seqid, String rng, AnnotatedSeqGroup group) {
 		if (seqid == null || group == null) {
@@ -544,9 +528,9 @@ public abstract class ServerUtils {
 	/**
 	 *
 	 *  Currently assumes:
-	 *    query_span's seq is a BioSeq (which implies top-level annots are TypeContainerAnnots)
+	 *    query_span's originalSeq is a BioSeq (which implies top-level annots are TypeContainerAnnots)
 	 *    only one IntervalSearchSym child for each TypeContainerAnnot
-	 *  Should expand soon so originalSyms can be returned from multiple IntervalSearchSyms children
+	 *  Should expand soon so loadedSyms can be returned from multiple IntervalSearchSyms children
 	 *      of the TypeContainerAnnot
 	 */
 	public static final List<SeqSymmetry> getOverlappedSymmetries(SeqSpan query_span, String annot_type) {
@@ -671,7 +655,7 @@ public abstract class ServerUtils {
 
 		// adding in any graph files as additional types (with type id = originalFile name)
 		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
-		//    show up in seq.getTypes(), but without actually being loaded??
+		//    show up in originalSeq.getTypes(), but without actually being loaded??
 		for (String gname : graph_name2file.keySet()) {
 			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
 		}

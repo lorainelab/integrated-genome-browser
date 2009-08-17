@@ -149,9 +149,11 @@ public class IndexingUtils {
 		if (DEBUG){
 			System.out.println("in IndexingUtils.writeIndexes()");
 		}
+		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try {
-			dos = new DataOutputStream(fos);
+			bos = new BufferedOutputStream(fos);
+			dos = new DataOutputStream(bos);
 			int indexSymsSize = iSyms.min.length;
 			dos.writeInt(indexSymsSize);	// used to determine iSyms size.
 			for (int i=0;i<indexSymsSize;i++) {
@@ -162,6 +164,7 @@ public class IndexingUtils {
 				dos.writeLong(iSyms.filePos[i]);
 			}
 			dos.writeLong(iSyms.filePos[indexSymsSize]);
+			dos.flush();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -186,26 +189,30 @@ public class IndexingUtils {
 			System.out.println("in IndexingUtils.readIndexes()");
 		}
 		FileInputStream fis = null;
-		DataInputStream bis = null;
-		BufferedInputStream d = null;
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		
 
 		IndexedSyms iSyms = null;
 		try {
 			fis = new FileInputStream(indexesFile);
-			bis = new DataInputStream(fis);
-			int indexSymsSize = bis.readInt();	// determine number of rows.
+			bis = new BufferedInputStream(fis);
+			dis = new DataInputStream(bis);
+			
+			int indexSymsSize = dis.readInt();	// determine number of rows.
 			iSyms = new IndexedSyms(indexSymsSize, indexedAnnotationFile, typeName, iWriter);
 			for (int i=0;i<indexSymsSize;i++) {
-				iSyms.min[i] = bis.readInt();
-				iSyms.max[i] = bis.readInt();
-				iSyms.filePos[i] = bis.readLong();
+				iSyms.min[i] = dis.readInt();
+				iSyms.max[i] = dis.readInt();
+				iSyms.filePos[i] = dis.readLong();
 			}
-			iSyms.filePos[indexSymsSize] = bis.readLong();
+			iSyms.filePos[indexSymsSize] = dis.readLong();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
 			return iSyms;
 		} finally {
+			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(fis);
 		}

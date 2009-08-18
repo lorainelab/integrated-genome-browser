@@ -1,28 +1,21 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
-import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.parsers.XmlPrefsParser;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.StringEncrypter;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -72,7 +65,7 @@ public abstract class PrefsLoader {
 
       LoadFileOrURLPrefs(prefs_list, prefs_parser);
 
-			LoadServerPrefs();
+			ServerList.LoadServerPrefs();
 
       return prefs_hash;
   }
@@ -177,73 +170,6 @@ public abstract class PrefsLoader {
 		}
 	}
 
-
-	/**
-	 * Load preferences from Java-based Preference nodes.
-	 * We're only loading servers here, but eventually, all the preferences will be loaded in this fashion.
-	 */
-	public static void LoadServerPrefs() {
-		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		LoadServerPrefs(prefServers.node(ServerType.QuickLoad.toString()),ServerType.QuickLoad);
-		LoadServerPrefs(prefServers.node(ServerType.DAS.toString()),ServerType.DAS);
-		LoadServerPrefs(prefServers.node(ServerType.DAS2.toString()),ServerType.DAS2);
-	}
-
-	private static void LoadServerPrefs(Preferences prefServers, ServerType serverType) {
-		try {
-			for (String serverURL : prefServers.keys()) {
-				//String server_type = el.getAttribute("type").toLowerCase();
-				String server_name = prefServers.get(serverURL, "value");
-				
-				// Get the login and encrypted password associated with the server URL
-				String login = prefServers.node("login").get(serverURL, "value");
-				if (login.equals("")) {
-					login = null;
-				}
-				String password = prefServers.node("password").get(serverURL, "value");
-				// Get the enabled flag associated with the server URL
-				String enabled = prefServers.node("enabled").get(serverURL, "value");
-
-				
-				try {
-					serverURL = URLDecoder.decode(serverURL, IGBConstants.UTF8);
-				} catch (UnsupportedEncodingException ex) {
-					Logger.getLogger(PrefsLoader.class.getName()).log(Level.SEVERE, null, ex);
-				}
-				
-				// Decrypt the password. 
-				String passwordDecrypted = null;
-				if (!password.equals("")) {
-					StringEncrypter encrypter = null;
-					try {
-						encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-						passwordDecrypted = encrypter.decrypt(password);
-					} catch (Exception e) {
-						System.out.println(e.toString());
-					}					
-				}
-
-
-				System.out.println("Adding " + server_name + ":" + serverURL + " " + serverType);
-				if (serverType == ServerType.Unknown) {
-					System.out.println("WARNING: this server has an unknown type.  Skipping");
-					continue;
-				}
-
-				// Add the server
-				GenericServer server = ServerList.addServer(serverType, server_name, serverURL, login, passwordDecrypted);
-
-				// Now set the enabled flag on the server
-				if (server != null) {
-					if (enabled != null && !enabled.equals("value")) {
-						server.enabled = enabled.equals("true") ? true : false;
-					}					
-				}
-			}
-		} catch (BackingStoreException ex) {
-			Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
 
 	 /**
    * Parse the command line arguments.  Find out what prefs file to use.

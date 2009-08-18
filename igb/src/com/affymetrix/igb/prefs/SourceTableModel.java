@@ -3,24 +3,14 @@ package com.affymetrix.igb.prefs;
 import com.affymetrix.genometry.util.LoadUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.StringEncrypter;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.view.DataLoadPrefsView;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
 
 import javax.swing.table.AbstractTableModel;
 
-import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  *
@@ -55,7 +45,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		return servers.size();
 	}
 	
-    public Class getColumnClass(int c) {
+	@Override
+    public Class<?> getColumnClass(int c) {
 		switch (c) {
 		case ENABLED:
 			return Boolean.class;
@@ -99,11 +90,13 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		}
 	}
 
+	@Override
     public boolean isCellEditable(int row, int col) {
         return true;
     }
     
 
+	@Override
     public void setValueAt(Object value, int row, int col) {
         GenericServer server = servers.get(row);
         String existingDirectoryOrURL = server.URL;
@@ -151,53 +144,15 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	private void changePreference(String existingDirectoryOrURL, String existingServerType, GenericServer server) {
 
-		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		Preferences individualServerPref = prefServers.node(existingServerType);
-		try {
-			// Remove the entry from the key-value pair
-			individualServerPref.remove(URLEncoder.encode(existingDirectoryOrURL, UTF8));
-			
-			// Now add the key-value pair of URL and server name
-			individualServerPref.put(URLEncoder.encode(server.URL, UTF8), server.serverName);
-			
-			// Under a child node called 'login' add the key-value pair of URL and login
-			individualServerPref.node("login").put(URLEncoder.encode(server.URL, UTF8), server.login != null ? server.login : "");
-
-			// Encrypt the password
-			String passwordEncrypted = "";
-			StringEncrypter encrypter = null;
-			try {
-				encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-				passwordEncrypted = encrypter.encrypt(server.password != null ? server.password : "");
-			} catch (Exception e) {
-			}
-			
-			// Under a child node called 'password' add the key-value pair of URL and encrypted password
-			individualServerPref.node("password").put(URLEncoder.encode(server.URL, UTF8), passwordEncrypted);
-
-			// Under a child node called 'enabled' add the key-value pair of URL and enabled boolean
-			individualServerPref.node("enabled").put(URLEncoder.encode(server.URL, UTF8), new Boolean(server.enabled).toString());
-			
-			individualServerPref.flush();
-			
-		} catch (BackingStoreException ex) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
+		if (!existingDirectoryOrURL.equals(server.URL)) {
+			ServerList.removeServerFromPrefs(server.URL);
 		}
+		ServerList.addServerToPrefs(server);
+		
 		this.fireTableDataChanged();
 		
 		
 	}
-	
-
-	private GenericServer getServer(int row) {
-		return servers.get(row);
-	}
-
-
-
-
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		/* It is easier to rebuild than try and find out what changed */

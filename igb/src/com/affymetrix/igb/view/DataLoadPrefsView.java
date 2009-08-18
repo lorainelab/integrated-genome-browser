@@ -19,6 +19,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.SourceCellRenderer;
 import com.affymetrix.igb.prefs.SourceTableModel;
@@ -34,13 +35,8 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -49,7 +45,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
-import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  *
@@ -262,10 +257,10 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 					public void valueChanged(ListSelectionEvent event) {
 						int viewRow = table.getSelectedRow();
-						if (viewRow < 0) {
-							removeServerButton.setEnabled(false);
-						} else {
+						if (viewRow >= 0 && ServerList.inServerPrefs((String)table.getValueAt(viewRow, SourceTableModel.URL))) {
 							removeServerButton.setEnabled(true);
+						} else {
+							removeServerButton.setEnabled(false);
 						}
 					}
 				});
@@ -524,59 +519,26 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		sourceTableModel.init();
 		removeServerButton.setEnabled(false);
 
-		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		Preferences individualServerPref = prefServers.node(serverType);
+		boolean authEnabled = (login != null && password != null) && !(login.isEmpty() || password.isEmpty());
+		
+		// Encrypt the password
+		String passwordEncrypted = "";
+		StringEncrypter encrypter = null;
 		try {
-			// Set a key-value pair of server URL and server name
-			individualServerPref.put(URLEncoder.encode(DirectoryOrURL, UTF8), serverName);
-
-			// Create a 'login' node underneath DAS2 and save the key-value pair of server url
-			// and login
-			individualServerPref.node("login").put(URLEncoder.encode(DirectoryOrURL, UTF8), login);
-
-			// Encrypt the password
-			String passwordEncrypted = "";
-			StringEncrypter encrypter = null;
-			try {
-				encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-				passwordEncrypted = encrypter.encrypt(password);
-			} catch (Exception e) {
-			}
-
-			// Create a 'password' node underneath DAS2 and save the key-value pair of server url
-			// and encrypted password
-			individualServerPref.node("password").put(URLEncoder.encode(DirectoryOrURL, UTF8), passwordEncrypted);
-
-			// Create an 'enabled' node underneath DAS2 and save the key-value pair of server url
-			// and enabled (true)
-			individualServerPref.node("enabled").put(URLEncoder.encode(DirectoryOrURL, UTF8), "true");
-
-			individualServerPref.flush();
-			// Add to GeneralLoadView
-		} catch (BackingStoreException ex) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
+			encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
+			passwordEncrypted = encrypter.encrypt(password);
+		} catch (Exception e) {
 		}
+
+		ServerList.addServerToPrefs(DirectoryOrURL, serverName, ServerType.valueOf(serverType), authEnabled, login, passwordEncrypted, true);
 
 		serverDialog(serverName, DirectoryOrURL);
 	}
 
 	private void removePreference(String DirectoryOrURL, String serverType, String serverName) {
-
-		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		Preferences individualServerPref = prefServers.node(serverType);
-		try {
-			individualServerPref.remove(URLEncoder.encode(DirectoryOrURL, UTF8));
-		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
-		}
-
-
+		ServerList.removeServerFromPrefs(DirectoryOrURL);
 		this.glv.removeServer(serverName, DirectoryOrURL, serverType);
-
 		sourceTableModel.init();
-
 	}
 
 	private void serverDialog(String serverName, String DirectoryOrURL) {

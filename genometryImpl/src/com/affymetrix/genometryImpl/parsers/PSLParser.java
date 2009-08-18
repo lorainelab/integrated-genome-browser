@@ -45,6 +45,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	static Pattern non_digit = Pattern.compile("[^0-9-]");
 	TrackLineParser track_line_parser = new TrackLineParser();
 	String track_name_prefix = null;
+	private static String newLine = System.getProperty("line.separator");	// system-independent newline
 
 	public PSLParser() {
 		super();
@@ -127,8 +128,6 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>>();
 
 		int line_count = 0;
-		//    MutableAnnotatedBioSeq seq = aseq;
-		//    Hashtable query_seq_hash = new Hashtable();
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
 		String line = null;
 		int childcount = 0;
@@ -182,10 +181,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 				int q_gap_bases = Integer.parseInt(fields[findex++]);
 				int t_gap_count = Integer.parseInt(fields[findex++]);
 				int t_gap_bases = Integer.parseInt(fields[findex++]);
-				//            boolean qforward = (fields[findex++].equals("+"));
 				String strandstring = fields[findex++];
 				boolean same_orientation = true;
-				//        boolean tmins_flipped = (strandstring.length() > 1);
 				boolean qforward = true;
 				boolean tforward = true;
 				if (strandstring.length() == 1) {
@@ -528,11 +525,11 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			boolean writeTrackLines, String type,
 			String description, OutputStream outstream) {
 		try {
-			//    response.setContentType("text/psl");
-			//    PrintWriter pw = outstream.getWriter();
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			
-			writeTrackLine(writeTrackLines, bw, type, description);
+
+			if (writeTrackLines) {
+				bw.write(trackLine(type,description));
+			}
 
 			for (SeqSymmetry sym : syms) {
 				if (!(sym instanceof UcscPslSym)) {
@@ -555,18 +552,19 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return true;
 	}
 
-	private static void writeTrackLine(boolean writeTrackLines, BufferedWriter bw, String type, String description) throws IOException {
-		if (writeTrackLines) {
-			bw.write("track");
-			if (type != null) {
-				bw.write(" name=\"" + type + "\"");
-			}
-			if (description != null) {
-				bw.write(" description=\"" + description + "\"");
-			}
-			bw.newLine();
+
+	public static String trackLine(String type, String description) {
+		String trackLine = "track";
+		if (type != null) {
+			trackLine += " name=\"" + type + "\"";
 		}
+		if (description != null) {
+			trackLine += " description=\"" + description + "\"";
+		}
+		trackLine += newLine;
+		return trackLine;
 	}
+
 
 	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
 		return comp;

@@ -49,7 +49,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	 *  Step 2, 3, 4 handled as output issue...
 	 *
 	 */
-	public static void collectAndWriteAnnotations(Collection<SeqSymmetry> consensus_syms, MutableAnnotatedBioSeq genome_seq, String array_name,
+	public static void collectAndWriteAnnotations(Collection<SeqSymmetry> consensus_syms, boolean writeConsensus, MutableAnnotatedBioSeq genome_seq, String array_name,
 			OutputStream outstream) {
 
 		String array_name_prefix = "";
@@ -69,7 +69,9 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 
 		PSLParser psl_parser = new PSLParser();
 
-		writePSLTrack(psl_parser, consensus_syms, genome_seq, requested_type,    "Consensus Sequences", outstream);
+		if (writeConsensus) {
+			writePSLTrack(psl_parser, consensus_syms, genome_seq, requested_type,    "Consensus Sequences", outstream);
+		}
 		writePSLTrack(psl_parser, probesets,      genome_seq, probeset_type,     "Probe Sets", outstream);
 		writePSLTrack(psl_parser, polyASites,     genome_seq, poly_a_sites_type, "Poly-A Sites", outstream);
 		writePSLTrack(psl_parser, polyAStacks,    genome_seq, poly_a_stacks_type, "Poly-A Stacks", outstream);
@@ -81,18 +83,16 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 		for (SeqSymmetry current_c2g : consensus_syms) {
 			// 2. For each consensus sequence symmetry, get the
 			//    corresponding consensus BioSeq
-			MutableAnnotatedBioSeq cseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
-			if (cseq == null) {
+			MutableAnnotatedBioSeq aseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
+			if (aseq == null) {
 				continue;
 			}
-			MutableAnnotatedBioSeq aseq = cseq;
 			int maxm = aseq.getAnnotationCount();
 			for (int m = 0; m < maxm; m++) {
 				SeqSymmetry container = aseq.getAnnotation(m);
 				for (int cindex = 0; cindex < container.getChildCount(); cindex++) {
 					// 3. For each consensus seq, get all of its annotations and collate
 					// them by type
-					//          SeqSymmetry cons_annot = aseq.getAnnotation(m);
 					SeqSymmetry cons_annot = container.getChild(cindex);
 					if (cons_annot instanceof SymWithProps) {
 						findProbeSet(cons_annot, probeset_type, probesets, crossHybProbes, poly_a_sites_type, polyASites, poly_a_stacks_type, polyAStacks);
@@ -147,7 +147,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 		if (array_name == null || seq == null) {
 			return false;
 		}
-		collectAndWriteAnnotations(syms, seq, array_name, outstream);
+		collectAndWriteAnnotations(syms, true, seq, array_name, outstream);
 
 		return true;
 	}

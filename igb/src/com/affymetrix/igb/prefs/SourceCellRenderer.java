@@ -1,5 +1,6 @@
 package com.affymetrix.igb.prefs;
 
+import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import java.awt.Color;
 import java.awt.Component;
 
@@ -16,6 +17,7 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class SourceCellRenderer extends JLabel implements TableCellRenderer {
+	private static final long serialVersionUID = -5433598077871623855l;
 	
 	public SourceCellRenderer() {
 		setOpaque(true);
@@ -32,7 +34,7 @@ public class SourceCellRenderer extends JLabel implements TableCellRenderer {
 		}
 
 		Boolean enabled = Boolean.class.cast(table.getModel().getValueAt(
-		        rowIndex, SourceTableModel.ENABLED)); 
+		        rowIndex, SourceColumn.Enabled.ordinal()));
 
 		setText(value != null ? value.toString() : "");
 		this.setForeground(enabled ? Color.BLACK : Color.GRAY);
@@ -42,8 +44,12 @@ public class SourceCellRenderer extends JLabel implements TableCellRenderer {
 	}
 
     // The following methods override the defaults for performance reasons
+	@Override
     public void validate() {}
+	@Override
     public void revalidate() {}
+	@Override
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
+	@Override
     public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
 }

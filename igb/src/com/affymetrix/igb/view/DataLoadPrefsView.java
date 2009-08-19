@@ -23,6 +23,7 @@ import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.prefs.SourceCellRenderer;
 import com.affymetrix.igb.prefs.SourceTableModel;
+import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
@@ -51,6 +52,7 @@ import javax.swing.table.TableColumn;
  * @version $Id$
  */
 public final class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
+	private static final long serialVersionUID = -2897919705543641511l;
 
 	private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
 	private static Map<String, Integer> cache_usage_options;
@@ -226,29 +228,35 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		sourceTableModel = new SourceTableModel();
 		final JTable table = new JTable(sourceTableModel);
 
-
-		TableColumn column = null;
-		for (int i = 0; i < table.getModel().getColumnCount(); i++) {
-			column = table.getColumnModel().getColumn(i);
-			if (i == SourceTableModel.ENABLED) {
-				column.setPreferredWidth(30);
-			} else if (i == SourceTableModel.NAME) {
-				column.setPreferredWidth(100);
-			} else if (i == SourceTableModel.URL) {
-				column.setPreferredWidth(300);
-			} else {
-				column.setPreferredWidth(50);
-			}
-
-			if (i == SourceTableModel.PASSWORD) {
-				JPasswordField password = new JPasswordField();
-				password.setBorder(new LineBorder(Color.BLACK));
-				TableCellEditor editor = new DefaultCellEditor(password);
-				column.setCellEditor(editor);
-			}
-
-			if (i != SourceTableModel.ENABLED) {
-				column.setCellRenderer(new SourceCellRenderer());
+		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements(); ) {
+			TableColumn column = e.nextElement();
+			
+			SourceColumn current = SourceColumn.valueOf((String)column.getHeaderValue());
+			switch (current) {
+				case Name:
+					column.setPreferredWidth(100);
+					column.setCellRenderer(new SourceCellRenderer());
+					break;
+				case URL:
+					column.setPreferredWidth(300);
+					column.setCellRenderer(new SourceCellRenderer());
+					break;
+				case Enabled:
+					column.setPreferredWidth(30);
+					break;
+				case Password:
+					column.setPreferredWidth(50);
+					column.setCellRenderer(new SourceCellRenderer());
+					
+					JPasswordField password = new JPasswordField();
+					password.setBorder(new LineBorder(Color.BLACK));
+					TableCellEditor editor = new DefaultCellEditor(password);
+					column.setCellEditor(editor);
+					break;
+				default:
+					column.setPreferredWidth(50);
+					column.setCellRenderer(new SourceCellRenderer());
+					break;
 			}
 		}
 
@@ -257,7 +265,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 					public void valueChanged(ListSelectionEvent event) {
 						int viewRow = table.getSelectedRow();
-						if (viewRow >= 0 && ServerList.inServerPrefs((String)table.getValueAt(viewRow, SourceTableModel.URL))) {
+						if (viewRow >= 0 && ServerList.inServerPrefs((String)table.getValueAt(viewRow, SourceColumn.URL.ordinal()))) {
 							removeServerButton.setEnabled(true);
 						} else {
 							removeServerButton.setEnabled(false);
@@ -276,9 +284,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		ActionListener remove_server_entry = new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				Object url = table.getModel().getValueAt(table.getSelectedRow(), SourceTableModel.URL);
-				Object serverType = table.getModel().getValueAt(table.getSelectedRow(), SourceTableModel.TYPE);
-				Object serverName = table.getModel().getValueAt(table.getSelectedRow(), SourceTableModel.NAME);
+				Object url = table.getModel().getValueAt(table.getSelectedRow(), SourceColumn.URL.ordinal());
+				Object serverType = table.getModel().getValueAt(table.getSelectedRow(), SourceColumn.Type.ordinal());
+				Object serverName = table.getModel().getValueAt(table.getSelectedRow(), SourceColumn.Name.ordinal());
 
 				removePreference(url.toString(), serverType.toString(), serverName.toString());
 			}

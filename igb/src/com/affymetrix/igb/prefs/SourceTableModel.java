@@ -18,18 +18,10 @@ import javax.swing.table.AbstractTableModel;
  * @version $Id$
  */
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
-	static final long serialVersionUID = 1l;
-	static final String[] headings = {"Name", "Type", "URL", "Login", "Password", "Enabled"};
-	
-	public static final int NAME     = 0;
-	public static final int TYPE     = 1;
-	public static final int URL      = 2;
-	public static final int LOGIN    = 3;
-	public static final int PASSWORD = 4;
-	public static final int ENABLED  = 5;
-	
-	
+	private static final long serialVersionUID = 1l;
 	private List<GenericServer> servers = new ArrayList<GenericServer>();
+
+	public static enum SourceColumn { Name, Type, URL, Login, Password, Enabled };
 
 	public SourceTableModel() {
 		init();
@@ -47,43 +39,33 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	
 	@Override
     public Class<?> getColumnClass(int c) {
-		switch (c) {
-		case ENABLED:
-			return Boolean.class;
-		case NAME:
-			return String.class;
-		case TYPE:
-			return String.class;
-		case URL:
-			return String.class;
-		case LOGIN:
-			return String.class;
-		case PASSWORD:
-			return String.class;
-		default:
-			throw new IllegalArgumentException("col " + c + " is out of range");
-	}
+		switch (SourceColumn.valueOf(this.getColumnName(c))) {
+			case Enabled:
+				return Boolean.class;
+			default:
+				return String.class;
+		}
     }
 
 
-	public int getColumnCount() { return 6; }
+	public int getColumnCount() { return SourceColumn.values().length; }
 
 	@Override
-	public String getColumnName(int col) { return headings[col]; }
+	public String getColumnName(int col) { return SourceColumn.values()[col].toString(); }
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch (columnIndex) {
-			case ENABLED:
+		switch (SourceColumn.valueOf(this.getColumnName(columnIndex))) {
+			case Enabled:
 				return servers.get(rowIndex).enabled;
-			case NAME:
+			case Name:
 				return servers.get(rowIndex).serverName;
-			case TYPE:
+			case Type:
 				return servers.get(rowIndex).serverType;
 			case URL:
 				return servers.get(rowIndex).URL;
-			case LOGIN:
+			case Login:
 				return servers.get(rowIndex).login;
-			case PASSWORD:
+			case Password:
 				return servers.get(rowIndex).password != null && !servers.get(rowIndex).password.equals("") ? "****" : ""; 				
 			default:
 				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
@@ -92,7 +74,8 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	@Override
     public boolean isCellEditable(int row, int col) {
-		return col != TYPE && ServerList.inServerPrefs(servers.get(row).URL);
+		SourceColumn c = SourceColumn.valueOf(this.getColumnName(col));
+		return c != SourceColumn.Type && ServerList.inServerPrefs(servers.get(row).URL);
     }
     
 
@@ -100,18 +83,15 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
     public void setValueAt(Object value, int row, int col) {
         GenericServer server = servers.get(row);
         String existingDirectoryOrURL = server.URL;
-        String existingServerType = server.serverType.toString();
         
-        switch (col) {
-        case ENABLED:
+        switch (SourceColumn.valueOf(this.getColumnName(col))) {
+        case Enabled:
 			server.enabled = Boolean.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case NAME:
+			break;
+		case Name:
 			server.serverName = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case TYPE:
+			break;
+		case Type:
 			if (server.serverType.equals(LoadUtils.ServerType.QuickLoad)) {
 				server.serverType = LoadUtils.ServerType.QuickLoad;
 			} else if  (server.serverType.equals(LoadUtils.ServerType.DAS)) {
@@ -119,30 +99,26 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			} else if  (server.serverType.equals(LoadUtils.ServerType.DAS2)) {
 				server.serverType = LoadUtils.ServerType.DAS2;
 			}
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
+			break;
 		case URL:
 			server.URL = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case LOGIN:
+			break;
+		case Login:
 			server.login = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case PASSWORD:
+			break;
+		case Password:
 			server.password = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
+			break;
 		
 		default:
 			throw new IllegalArgumentException("columnIndex " + col + " is out of range");
         }
         
-
+		changePreference(existingDirectoryOrURL, server);
     }
     
 
-	private void changePreference(String existingDirectoryOrURL, String existingServerType, GenericServer server) {
+	private void changePreference(String existingDirectoryOrURL, GenericServer server) {
 
 		if (!existingDirectoryOrURL.equals(server.URL)) {
 			ServerList.removeServerFromPrefs(server.URL);

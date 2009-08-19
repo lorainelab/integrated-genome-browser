@@ -115,6 +115,10 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 			probesetsFound = polyASites;
 		} else if (type.equalsIgnoreCase(poly_a_stacks_type)) {
 			probesetsFound = polyAStacks;
+		} else {
+			System.out.println("findProbeSet: ERROR: couldn't find type:---" + type +"---");
+			System.out.println("types are:" + probeset_type +","+CROSSHYB_TYPE+","+poly_a_sites_type+","+poly_a_stacks_type+",");
+			return;
 		}
 		int childCount = cons_sym.getChildCount();
 		for (int n = 0; n < childCount; n++) {

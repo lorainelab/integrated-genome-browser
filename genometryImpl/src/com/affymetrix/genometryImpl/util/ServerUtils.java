@@ -269,19 +269,19 @@ public abstract class ServerUtils {
 			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String stream_name) {
 
 		String extension = "";
-		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension);
-		String returnTypeName = typeName;
 		if (stream_name.endsWith(".link.psl")) {
 			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
 				stream_name.length());
-
-			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
-			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
 		} else {
 			extension = stream_name.substring(stream_name.lastIndexOf("."),
 				stream_name.length());
 		}
-		
+		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension);
+		String returnTypeName = typeName;
+		if (stream_name.endsWith(".link.psl")) {
+			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
+			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
+		}
 
 		for (BioSeq originalSeq : originalGenome.getSeqList()) {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());

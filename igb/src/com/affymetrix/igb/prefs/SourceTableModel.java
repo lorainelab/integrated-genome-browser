@@ -92,7 +92,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 
 	@Override
     public boolean isCellEditable(int row, int col) {
-        return true;
+		return col != TYPE && ServerList.inServerPrefs(servers.get(row).URL);
     }
     
 

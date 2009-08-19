@@ -11,7 +11,7 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry.util;
+package com.affymetrix.genometryImpl.util;
 
 /**
  * A collection of constants and static methods

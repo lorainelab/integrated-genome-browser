@@ -15,8 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 
 public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	implements SymWithProps {

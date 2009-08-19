@@ -16,9 +16,8 @@ package com.affymetrix.genometryImpl;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 
 /**
  *  A symmetry that supports efficient retrieval of a subset of child

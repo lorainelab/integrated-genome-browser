@@ -11,13 +11,13 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry.symmetry;
+package com.affymetrix.genometryImpl.symmetry;
 
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import java.util.List;
 
 public final class EfficientPairSeqSymmetry implements SeqSymmetry {

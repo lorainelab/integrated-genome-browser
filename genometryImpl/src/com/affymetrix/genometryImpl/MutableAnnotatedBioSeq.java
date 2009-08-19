@@ -11,7 +11,8 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry;
+package com.affymetrix.genometryImpl;
+
 
 public interface MutableAnnotatedBioSeq {
 

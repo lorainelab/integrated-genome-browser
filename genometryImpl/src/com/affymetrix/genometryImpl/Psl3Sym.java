@@ -16,9 +16,8 @@ package com.affymetrix.genometryImpl;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public final class Psl3Sym extends UcscPslSym {
 	static int OTHER_INDEX = 2;

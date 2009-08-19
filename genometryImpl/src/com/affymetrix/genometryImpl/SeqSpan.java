@@ -11,7 +11,9 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry;
+package com.affymetrix.genometryImpl;
+
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 
 /**
  * Implementations model a contiguous section of a {@link BioSeq}.

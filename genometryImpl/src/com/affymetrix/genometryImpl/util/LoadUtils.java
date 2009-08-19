@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.util;
+package com.affymetrix.genometryImpl.util;
 
 public final class LoadUtils {
 	public static enum LoadStrategy {

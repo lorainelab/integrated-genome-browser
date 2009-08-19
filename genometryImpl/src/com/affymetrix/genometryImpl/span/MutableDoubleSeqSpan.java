@@ -11,10 +11,10 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry.span;
+package com.affymetrix.genometryImpl.span;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.MutableSeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
 
 public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 	protected double start;

@@ -13,16 +13,17 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
 import java.util.List;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-//import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.LocalUrlCacher;

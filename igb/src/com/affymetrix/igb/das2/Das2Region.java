@@ -12,18 +12,12 @@
  */
 package com.affymetrix.igb.das2;
 
-import java.io.*;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.net.*;
-//import java.util.*;
-import java.util.List;
-import org.xml.sax.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.das2.Das2RequestLog;
-import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 public final class Das2Region {
 

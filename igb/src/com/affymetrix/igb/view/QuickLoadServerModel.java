@@ -12,7 +12,7 @@
 */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;

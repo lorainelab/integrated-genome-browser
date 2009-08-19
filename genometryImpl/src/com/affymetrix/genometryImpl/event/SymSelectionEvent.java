@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.event;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.util.*;
 
 public final class SymSelectionEvent extends EventObject {

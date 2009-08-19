@@ -1,8 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
 import java.util.ArrayList;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.IntervalSearchSym;
 import com.affymetrix.genometryImpl.BioSeq;

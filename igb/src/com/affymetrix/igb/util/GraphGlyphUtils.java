@@ -13,12 +13,12 @@
 
 package com.affymetrix.igb.util;
 
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.Color;
 import java.awt.Rectangle;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;

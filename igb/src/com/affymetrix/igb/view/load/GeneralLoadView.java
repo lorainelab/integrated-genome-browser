@@ -26,11 +26,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
 
-import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
-import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -49,7 +49,6 @@ import com.affymetrix.igb.view.SeqMapView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;

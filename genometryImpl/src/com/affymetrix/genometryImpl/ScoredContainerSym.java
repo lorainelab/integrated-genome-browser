@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;

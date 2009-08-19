@@ -13,10 +13,9 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.EfficientPairSeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.EfficientPairSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import java.util.*;
 import java.io.*;

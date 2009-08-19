@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -25,7 +27,6 @@ import java.text.DecimalFormat;
 //import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genoviz.bioviews.LinearTransform;

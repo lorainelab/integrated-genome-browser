@@ -11,10 +11,10 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry.span;
+package com.affymetrix.genometryImpl.span;
 
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 
 public class SimpleSeqSpan implements SeqSpan, Cloneable {
 	protected int start;

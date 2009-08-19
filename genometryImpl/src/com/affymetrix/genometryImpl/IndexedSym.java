@@ -12,7 +12,6 @@
  */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.*;
 
 public interface IndexedSym extends SeqSymmetry {
 	public void setParent(ScoredContainerSym parent);

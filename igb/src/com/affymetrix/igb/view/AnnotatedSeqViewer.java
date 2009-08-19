@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.*;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 
 
 public interface AnnotatedSeqViewer {

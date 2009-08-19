@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;

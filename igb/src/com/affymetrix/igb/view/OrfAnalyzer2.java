@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -25,7 +27,6 @@ import javax.swing.event.ChangeEvent;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genometry.*;
 import com.affymetrix.igb.tiers.*;
 
 import com.affymetrix.igb.Application;

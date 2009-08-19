@@ -12,8 +12,7 @@
  */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import java.util.*;
 
 /**

@@ -13,19 +13,18 @@
 
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.net.MalformedURLException;
 import com.affymetrix.igb.bookmarks.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-//import com.affymetrix.genometryImpl.parsers.*;
 
 /**
  *  A class for reading and parsing a file of Bookmarks.

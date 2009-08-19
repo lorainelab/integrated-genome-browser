@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.awt.*;
@@ -20,11 +21,9 @@ import java.util.*;
 
 import com.affymetrix.genoviz.bioviews.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.symmetry.SimpleDerivedSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleDerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;

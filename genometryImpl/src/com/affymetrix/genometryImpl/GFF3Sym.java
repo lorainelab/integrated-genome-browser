@@ -12,11 +12,8 @@
  */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;

@@ -13,12 +13,13 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.util.*;
 import java.util.List;
 import java.awt.event.*;
 import javax.swing.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;

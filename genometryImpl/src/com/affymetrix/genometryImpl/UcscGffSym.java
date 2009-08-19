@@ -15,7 +15,6 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import java.util.*;
-import com.affymetrix.genometry.*;
 import java.util.regex.*;
 
 /**

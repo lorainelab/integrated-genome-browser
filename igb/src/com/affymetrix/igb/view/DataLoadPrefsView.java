@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;

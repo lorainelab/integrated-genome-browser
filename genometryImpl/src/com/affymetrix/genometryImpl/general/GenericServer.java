@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.general;
 
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.net.URL;
 import javax.swing.ImageIcon;

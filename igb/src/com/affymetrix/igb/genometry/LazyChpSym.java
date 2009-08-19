@@ -1,12 +1,11 @@
 package com.affymetrix.igb.genometry;
 
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
 import java.util.List;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 //import com.affymetrix.igb.das2.*;

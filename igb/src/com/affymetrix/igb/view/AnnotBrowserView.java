@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.*;
@@ -22,7 +24,6 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;

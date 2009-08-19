@@ -12,15 +12,17 @@
  */
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import java.util.regex.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.das2.*;

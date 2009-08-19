@@ -11,7 +11,11 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry;
+package com.affymetrix.genometryImpl;
+
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 
 /**
  * Implementations model a collection of {@link SeqSpan}s.

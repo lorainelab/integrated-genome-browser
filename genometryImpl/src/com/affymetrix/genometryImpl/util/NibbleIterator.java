@@ -1,7 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometry.util.DNAUtils;
-
 public final class NibbleIterator implements SearchableCharIterator {
 	private int length;
 	private byte[] nibble_array;

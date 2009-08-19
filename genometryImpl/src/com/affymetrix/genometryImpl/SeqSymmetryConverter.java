@@ -13,8 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 /**
  *  Routines to convert generic SeqSymmetrys to PSL SeqSymmetrys.

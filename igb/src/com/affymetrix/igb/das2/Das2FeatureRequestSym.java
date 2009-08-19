@@ -13,9 +13,8 @@
 
 package com.affymetrix.igb.das2;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
 

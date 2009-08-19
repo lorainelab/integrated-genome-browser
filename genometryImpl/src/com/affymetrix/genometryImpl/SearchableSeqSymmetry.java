@@ -11,13 +11,10 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometry;
+package com.affymetrix.genometryImpl;
 
-/**
- *  a symmetry derived from another "original" symmetry.
- *  It maintains a reference back to that original symmetry.
- */
-public interface DerivedSeqSymmetry extends MutableSeqSymmetry {
-	public SeqSymmetry getOriginalSymmetry();
-	public void setOriginalSymmetry(SeqSymmetry sym);
+import java.util.List;
+
+public interface SearchableSeqSymmetry   {
+	public List<SeqSymmetry> getOverlappingChildren(SeqSpan span);
 }

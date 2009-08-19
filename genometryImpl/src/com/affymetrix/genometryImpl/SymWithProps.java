@@ -13,9 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.Propertied;
-import com.affymetrix.genometry.SeqSymmetry;
-
 
 /** A SeqSymmetry with Properties. */
 public interface SymWithProps extends Propertied, SeqSymmetry {

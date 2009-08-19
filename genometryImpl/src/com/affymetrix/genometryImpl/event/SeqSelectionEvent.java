@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.event;
 
 import java.util.*;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 
 public final class SeqSelectionEvent extends EventObject {
 	List<MutableAnnotatedBioSeq> selected_seqs;

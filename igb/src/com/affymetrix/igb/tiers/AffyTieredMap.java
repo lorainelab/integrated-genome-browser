@@ -12,13 +12,14 @@
  */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;

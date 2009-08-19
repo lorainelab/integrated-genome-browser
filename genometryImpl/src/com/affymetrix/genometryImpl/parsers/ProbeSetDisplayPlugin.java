@@ -3,9 +3,9 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SymWithProps;
 
 public final class ProbeSetDisplayPlugin implements AnnotationWriter {

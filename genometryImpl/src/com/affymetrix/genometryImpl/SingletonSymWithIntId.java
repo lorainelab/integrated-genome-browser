@@ -13,11 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.IntId;
-import java.util.*;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 
 
 public final class SingletonSymWithIntId extends MutableSingletonSeqSymmetry implements IntId {

@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.parsers;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.ByteArrayInputStream;

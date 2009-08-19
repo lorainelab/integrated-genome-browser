@@ -339,15 +339,15 @@ final class FindAnnotationsPanel extends JPanel {
   }
     
   /** Returns a Set of IDs */
-  public Set searchForID(AnnotatedSeqGroup group) {
-    Set results;
+  public Set<String> searchForID(AnnotatedSeqGroup group) {
+    Set<String> results;
     
     if (ID_all_RB.isSelected()) {
      results = group.getSymmetryIDs();
     
     } else if (ID_exact_RB.isSelected()) {
 
-      results = new HashSet();
+      results = new HashSet<String>();
       results.add(ID_exact_TF.getText());
 
     } else if (ID_starts_with_RB.isSelected()) {
@@ -373,7 +373,7 @@ final class FindAnnotationsPanel extends JPanel {
       } catch (PatternSyntaxException pse) {
         
         ErrorHandler.errorPanel("Bad Regex", "Invalid Regular Expression: " + pattern_string, pse);
-        results = Collections.EMPTY_SET;
+        results = Collections.<String>emptySet();
       }
       
       
@@ -396,7 +396,8 @@ final class FindAnnotationsPanel extends JPanel {
       // When "All sequences" is selected, what we really want to see
       // is all sequences in the current seq group.  Not really all sequences.
 
-      return gmodel.getSelectedSeqGroup().getSeqList().contains(seq);
+		/* TODO: fix MutableAnnotBioSeq/BioSeq mismatch */
+		return gmodel.getSelectedSeqGroup().getSeqList().contains(seq);
 
     } else if (SEQ_name_RB.isSelected()) {
       
@@ -415,12 +416,12 @@ final class FindAnnotationsPanel extends JPanel {
 
   MutableSeqSpan span_1 = new SimpleMutableSeqSpan();
   
-  protected Set findIDsStartToEnd(AnnotatedSeqGroup seq_group, String start, String end) {
+  protected Set<String> findIDsStartToEnd(AnnotatedSeqGroup seq_group, String start, String end) {
     if (seq_group == null) {
-      return Collections.EMPTY_SET;
+      return Collections.<String>emptySet();
     }
 
-    Set sym_ids;
+    Set<String> sym_ids;
     // if end<start, then switch the order of the search,
     // but don't do that if start or end is blank, because 
     // "a" to "" is different from "" to "a" and both searches are valid
@@ -433,30 +434,30 @@ final class FindAnnotationsPanel extends JPanel {
     return sym_ids;
   }
   
-  List<SeqSymmetry> findByIDs(AnnotatedSeqGroup seq_group, Collection sym_ids) {
+  List<SeqSymmetry> findByIDs(AnnotatedSeqGroup seq_group, Collection<String> sym_ids) {
     List<SeqSymmetry> the_list = new ArrayList<SeqSymmetry>();
 
-    Iterator sym_iter = sym_ids.iterator();
+    Iterator<String> sym_iter = sym_ids.iterator();
     while (sym_iter.hasNext() && the_list.size() < AnnotBrowserView.THE_LIMIT) {
-      String key = (String) sym_iter.next();
+      String key = sym_iter.next();
       the_list.addAll(seq_group.findSyms(key));
     }
     
     return the_list;
   }
 
-  Set findIDsByRegex(AnnotatedSeqGroup seq_group, String regex) throws PatternSyntaxException {
+  Set<String> findIDsByRegex(AnnotatedSeqGroup seq_group, String regex) throws PatternSyntaxException {
     Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
     Matcher matcher = pattern.matcher("");
     
-    Set matched_ids = new HashSet();
+    Set<String> matched_ids = new HashSet<String>();
     
-    Set all_ids = seq_group.getSymmetryIDs();
-    Iterator iterator = all_ids.iterator();
+    Set<String> all_ids = seq_group.getSymmetryIDs();
+    Iterator<String> iterator = all_ids.iterator();
     
     int i=0;
     while (iterator.hasNext()) {
-      String id = (String) iterator.next();
+      String id = iterator.next();
       i++;
     matcher.reset(id);
       if (matcher.matches()) {
@@ -467,24 +468,22 @@ final class FindAnnotationsPanel extends JPanel {
     return matched_ids;
   }
 
-  public List searchForSyms(AnnotatedSeqGroup seq_group) {
-    List results = new ArrayList();
+  public List<AnnotBrowserView.SearchResult> searchForSyms(AnnotatedSeqGroup seq_group) {
+    List<AnnotBrowserView.SearchResult> results = new ArrayList<AnnotBrowserView.SearchResult>();
 
     if (seq_group == null) {
       return results;
     }
 
-    Set sym_ids = searchForID(seq_group);
-
-    List entries = new ArrayList(sym_ids);
+    Set<String> sym_ids = searchForID(seq_group);
     
-    Iterator iter = sym_ids.iterator();
+    Iterator<String> iter = sym_ids.iterator();
     while (iter.hasNext() && results.size() < AnnotBrowserView.THE_LIMIT) {
-      String key = (String) iter.next();
-      List the_list = seq_group.findSyms(key);
+      String key = iter.next();
+      List<SeqSymmetry> the_list = seq_group.findSyms(key);
       
       for (int k=0; k<the_list.size(); k++) {
-        SeqSymmetry sym = (SeqSymmetry) the_list.get(k);
+        SeqSymmetry sym = the_list.get(k);
 
         int span_count = sym.getSpanCount();
         for (int i=0; i<span_count; i++) {

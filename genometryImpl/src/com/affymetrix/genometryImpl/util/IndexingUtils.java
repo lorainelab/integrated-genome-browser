@@ -38,6 +38,7 @@ public class IndexingUtils {
 		public File file;
 		public int[] min;
 		public int[] max;
+		public String[] id;
 		public long[] filePos;
 		public String typeName;
 		public IndexWriter iWriter;
@@ -45,6 +46,7 @@ public class IndexingUtils {
 		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
 			min = new int[resultSize];
 			max = new int[resultSize];
+			id = new String[resultSize];
 			filePos = new long[resultSize + 1];
 			this.file = file;
 			this.typeName = typeName;
@@ -89,6 +91,7 @@ public class IndexingUtils {
 		for (SeqSymmetry sym : syms) {
 			iSyms.min[index] = iWriter.getMin(sym, seq);
 			iSyms.max[index] = iWriter.getMax(sym, seq);
+			iSyms.id[index] = sym.getID();
 			iWriter.writeSymmetry(sym, seq, baos);
 			baos.flush();
 			byte[] buf = baos.toByteArray();

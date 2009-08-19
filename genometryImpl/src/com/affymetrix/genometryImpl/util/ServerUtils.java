@@ -301,6 +301,7 @@ public abstract class ServerUtils {
 					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
 			iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 			// add symmetries to the chromosome (used by types request)
+			// TODO: use this for names request
 			originalSeq.addIndexedSyms(returnTypeName, iSyms);
 			// Write the annotations out to a file.
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, indexedAnnotationsFileName);

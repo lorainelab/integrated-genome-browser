@@ -210,7 +210,7 @@ public final class OpenGraphAction extends AbstractAction {
       if (index > 0) {
         String last_name = name.substring(index+1);
         if (last_name.length()>0) { 
-          name = URLDecoder.decode(last_name); 
+          name = GeneralUtils.URLDecode(last_name);
         }
       }
     }

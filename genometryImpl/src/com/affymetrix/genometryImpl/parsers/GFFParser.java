@@ -619,7 +619,9 @@ public final class GFFParser implements AnnotationWriter  {
 				String vstr = m.group(1).trim();
 				try {
 					int vers = (int)(Float.parseFloat(vstr));
-					System.out.println("parsing GFF, setting version to: " + vers);
+					if (DEBUG) {
+						System.out.println("parsing GFF, setting version to: " + vers);
+					}
 					setGffVersion(vers);
 				}
 				catch (Exception ex) {
@@ -947,83 +949,81 @@ public final class GFFParser implements AnnotationWriter  {
 			}
 			}
 
-
-			// assumes that seqid for outputting in GFF format is id of sym's first span's BioSeq
-			// currently type is ignored
-			public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
-				boolean success = true;
-				int count = 0;
-				if (DEBUG) {
-				System.out.println("in GFFParser.writeAnnotations()");
-				}
-				try {
-					Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-					Iterator iterator = syms.iterator();
-					while (iterator.hasNext()) {
-						count++;
-						if (count % 1000 == 0) {
-							System.out.println("output count: " + count);
-						}
-						SeqSymmetry sym = (SeqSymmetry)iterator.next();
-						SeqSpan span = sym.getSpan(0);
-						MutableAnnotatedBioSeq seq = span.getBioSeq();
-						if (sym instanceof SymWithProps) {
-							outputGffFormat((SymWithProps)sym, seq, bw);
-						}
-						else {
-							System.err.println("sym is not instance of SymWithProps");
-						}
-					}
-					bw.flush();
-				}
-				catch (Exception ex) {
-					ex.printStackTrace();
-					success = false;
-				}
-				System.out.println("total line count: " + count);
-				return success;
-			}
-
-
-			/**
-			 *  Implementing AnnotationWriter interface to write out annotations
-			 *    to an output stream as "GFF" format.
-			 *  @param type  currently ignored
-			 **/
-			public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
-					String type, OutputStream outstream) {
-				boolean success = true;
-				if (DEBUG) {
-				System.out.println("in GFFParser.writeAnnotations()");
-				}
-				try {
-					Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
-					Iterator iterator = syms.iterator();
-					while (iterator.hasNext()) {
-						SeqSymmetry sym = (SeqSymmetry)iterator.next();
-						if (sym instanceof SymWithProps) {
-							outputGffFormat((SymWithProps)sym, seq, bw);
-						}
-						else {
-							System.err.println("sym is not instance of SymWithProps");
-						}
-					}
-					bw.flush();
-				}
-				catch (Exception ex) {
-					ex.printStackTrace();
-					success = false;
-				}
-				return success;
-			}
-
-			/**
-			 *  Implementing AnnotationWriter interface to write out annotations
-			 *    to an output stream as "GFF" format.
-			 **/
-			public String getMimeType() { return "text/plain"; }
-
-			public void setUseDefaultSource(boolean useDefaultSource) {
-				this.useDefaultSource = useDefaultSource;
-			}
+	// assumes that seqid for outputting in GFF format is id of sym's first span's BioSeq
+	// currently type is ignored
+	public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
+		boolean success = true;
+		int count = 0;
+		if (DEBUG) {
+			System.out.println("in GFFParser.writeAnnotations()");
 		}
+		try {
+			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+			Iterator iterator = syms.iterator();
+			while (iterator.hasNext()) {
+				count++;
+				if (DEBUG) {
+					if (count % 1000 == 0) {
+						System.out.println("output count: " + count);
+					}
+				}
+				SeqSymmetry sym = (SeqSymmetry) iterator.next();
+				SeqSpan span = sym.getSpan(0);
+				MutableAnnotatedBioSeq seq = span.getBioSeq();
+				if (sym instanceof SymWithProps) {
+					outputGffFormat((SymWithProps) sym, seq, bw);
+				} else {
+					System.err.println("sym is not instance of SymWithProps");
+				}
+			}
+			bw.flush();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			success = false;
+		}
+		System.out.println("total line count: " + count);
+		return success;
+	}
+
+	/**
+	 *  Implementing AnnotationWriter interface to write out annotations
+	 *    to an output stream as "GFF" format.
+	 *  @param type  currently ignored
+	 **/
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+			String type, OutputStream outstream) {
+		boolean success = true;
+		if (DEBUG) {
+			System.out.println("in GFFParser.writeAnnotations()");
+		}
+		try {
+			Writer bw = new BufferedWriter(new OutputStreamWriter(outstream));
+			Iterator iterator = syms.iterator();
+			while (iterator.hasNext()) {
+				SeqSymmetry sym = (SeqSymmetry) iterator.next();
+				if (sym instanceof SymWithProps) {
+					outputGffFormat((SymWithProps) sym, seq, bw);
+				} else {
+					System.err.println("sym is not instance of SymWithProps");
+				}
+			}
+			bw.flush();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			success = false;
+		}
+		return success;
+	}
+
+	/**
+	 *  Implementing AnnotationWriter interface to write out annotations
+	 *    to an output stream as "GFF" format.
+	 **/
+	public String getMimeType() {
+		return "text/plain";
+	}
+
+	public void setUseDefaultSource(boolean useDefaultSource) {
+		this.useDefaultSource = useDefaultSource;
+	}
+}

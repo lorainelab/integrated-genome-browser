@@ -164,7 +164,6 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 				// filtering out header lines (and any other line that doesn't start with a first field of all digits)
 				String field0 = fields[0];
 				boolean non_digits_present = non_digit.matcher(field0).find(0);
-				//        System.out.println("field0: " + field0 + ", nondigits_present: " + non_digits_present);
 				if (non_digits_present) {
 					continue;
 				}
@@ -589,6 +588,9 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	public List<String> getFormatPrefList() {
+		if (is_link_psl) {
+			return PSLParser.link_psl_pref_list;
+		}
 		return PSLParser.psl_pref_list;
 	}
 

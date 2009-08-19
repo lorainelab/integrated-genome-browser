@@ -17,6 +17,8 @@ import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -207,6 +209,7 @@ public abstract class ServerUtils {
 		indexOrLoadFile(dataRoot, current_file, type_name, genome);
 	}
 
+
 	/**
 	 * Index the file, if possible.
 	 * @param dataRoot
@@ -214,27 +217,24 @@ public abstract class ServerUtils {
 	 * @param genome
 	 * @param loadedSyms
 	 */
-	private static void indexOrLoadFile(String dataRoot, File file, String type_name, AnnotatedSeqGroup genome) {
+	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, AnnotatedSeqGroup genome) {
 
 		String originalFileName = file.getName();
-		String extension = originalFileName.substring(originalFileName.lastIndexOf("."),
-				originalFileName.length());
-		String typeName = ParserController.GetAnnotType(annots_map, originalFileName, extension);
 
 		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
 		if (iWriter == null) {
-			loadAnnotFile(file, type_name, genome, false);
+			loadAnnotFile(file, stream_name, genome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
 		}
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
-		List loadedSyms = loadAnnotFile(file, type_name, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, stream_name, tempGenome, true);
 		System.out.println("Indexing " + originalFileName);
 		determineIndexes(genome,
-				tempGenome, dataRoot, file, originalFileName, loadedSyms, iWriter, typeName);
+				tempGenome, dataRoot, file, loadedSyms, iWriter, stream_name);
 	}
 
 	/**
@@ -264,7 +264,25 @@ public abstract class ServerUtils {
 	 * @param iWriter
 	 * @param typeName
 	 */
-	private static void determineIndexes(AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome, String dataRoot, File file, String originalFileName, List loadedSyms, IndexWriter iWriter, String typeName) {
+	private static void determineIndexes(
+			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome, 
+			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String stream_name) {
+
+		String extension = "";
+		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension);
+		String returnTypeName = typeName;
+		if (stream_name.endsWith(".link.psl")) {
+			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
+				stream_name.length());
+
+			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
+			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
+		} else {
+			extension = stream_name.substring(stream_name.lastIndexOf("."),
+				stream_name.length());
+		}
+		
+
 		for (BioSeq originalSeq : originalGenome.getSeqList()) {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
 			if (tempSeq == null) {
@@ -273,7 +291,7 @@ public abstract class ServerUtils {
 
 			IndexedSyms iSyms = null;
 			String dirName = indexedDirName(dataRoot, tempGenome, tempSeq);
-			String indexedAnnotationsFileName = indexedFileName(dataRoot, originalFileName, tempGenome, tempSeq);
+			String indexedAnnotationsFileName = indexedFileName(dataRoot, file.getName(), tempGenome, tempSeq);
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 
 			createDirIfNecessary(dirName);
@@ -283,7 +301,7 @@ public abstract class ServerUtils {
 					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
 			iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 			// add symmetries to the chromosome (used by types request)
-			originalSeq.addIndexedSyms(typeName, iSyms);
+			originalSeq.addIndexedSyms(returnTypeName, iSyms);
 			// Write the annotations out to a file.
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, indexedAnnotationsFileName);
 		}
@@ -314,15 +332,15 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String type_name, AnnotatedSeqGroup genome, boolean isIndexed) {
+	private static List loadAnnotFile(File current_file, String stream_name, AnnotatedSeqGroup genome, boolean isIndexed) {
 		InputStream istr = null;
 		List results = null;
 		try {
 			istr = new BufferedInputStream(new FileInputStream(current_file));
 			if (!isIndexed) {
-				results = ParserController.parse(istr, annots_map, type_name, gmodel, genome);
+				results = ParserController.parse(istr, annots_map, stream_name, gmodel, genome);
 			} else {
-				results = ParserController.parseIndexed(istr, annots_map, type_name, genome);
+				results = ParserController.parseIndexed(istr, annots_map, stream_name, genome);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -553,10 +571,15 @@ public abstract class ServerUtils {
 			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
 			int maxPos = outputRange[1] + 1;
 			fis = new FileInputStream(iSyms.file);
-			byte[] bytes = IndexingUtils.getIndexedAnnotations(
+			byte[] bytes = IndexingUtils.readBytesFromFile(
 					fis, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
-			//assertEquals((int) (filePos[maxPos] - filePos[minPos]), bytes.length);
-			newIstr = new ByteArrayInputStream(bytes);
+
+			if (iSyms.iWriter instanceof PSLParser && iSyms.file.getName().endsWith(".link.psl")) {
+				String indexesFileName = iSyms.file.getAbsolutePath();
+				newIstr = readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
+			} else {
+				newIstr = new ByteArrayInputStream(bytes);
+			}
 			dis = new DataInputStream(newIstr);
 
 			return iSyms.iWriter.parse(dis, annot_type, group);
@@ -569,6 +592,47 @@ public abstract class ServerUtils {
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(newIstr);
 		}
+	}
+
+
+	// special case for link.psl files
+	// we need to append the track name, and the probesets
+	private static ByteArrayInputStream readAdditionalLinkPSLIndex(
+			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
+		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
+		secondIndexesFileName += ".link2.psl";
+		
+		File secondIndexesFile = new File(secondIndexesFileName);
+		int bytes2Len = (int) secondIndexesFile.length();
+		byte[] bytes0 = PSLParser.trackLine(annot_type, "Consensus Sequences").getBytes();
+		// Determine overall length
+		int bytes0Len = bytes0.length;
+		int bytes1Len = bytes1.length;
+		byte[] combinedByteArr = new byte[bytes0Len + bytes1Len + bytes2Len];
+
+		// Copy in arrays.
+		// copy 0th byte array (trackLine)
+		System.arraycopy(bytes0, 0, combinedByteArr, 0, bytes0Len);
+		bytes0 = null;	// now unused
+
+		// copy 1st byte array (consensus syms)
+		System.arraycopy(bytes1, 0, combinedByteArr, bytes0Len, bytes1Len);
+		bytes1 = null;	// now unused
+
+		// copy 2nd byte array (probeset syms)
+		FileInputStream fis = null;
+		byte[] bytes2 = null;
+		try {
+			fis = new FileInputStream(secondIndexesFileName);
+			bytes2 = IndexingUtils.readBytesFromFile(
+					fis, 0, bytes2Len);
+		} finally {
+			GeneralUtils.safeClose(fis);
+		}
+		System.arraycopy(bytes2, 0, combinedByteArr, bytes0Len + bytes1Len, bytes2Len);
+		bytes2 = null;	// now unused
+
+		return new ByteArrayInputStream(combinedByteArr);
 	}
 
 

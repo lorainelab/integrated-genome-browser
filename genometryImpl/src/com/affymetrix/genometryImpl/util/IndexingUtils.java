@@ -5,6 +5,8 @@ import com.affymetrix.genometry.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,16 +14,15 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +33,7 @@ import java.util.logging.Logger;
  */
 public class IndexingUtils {
 	private static final boolean DEBUG = false;
-	private static int symsPerIndex = 10;	// symmetries per index.  Otherwise even the indexing is pretty large.
+
 	public static class IndexedSyms {
 		public File file;
 		public int[] min;
@@ -57,50 +58,6 @@ public class IndexingUtils {
 	 * @param syms -- a sorted list of annotations (on one chromosome)
 	 * @param seq -- the chromosome
 	 * @param iSyms
-	 * @param indexedAnnotationsFileName
-	 * @return - success or failure
-	 */
-	/*public static boolean writeIndexedAnnotations(
-			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq,
-			IndexedSyms iSyms,
-			String indexedAnnotationsFileName) {
-		if (DEBUG){
-			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
-		}
-		FileOutputStream fos = null;
-		DataOutputStream dos = null;
-		try {
-			fos = new FileOutputStream(indexedAnnotationsFileName);
-			dos = new DataOutputStream(fos);
-			FileChannel fChannel = fos.getChannel();
-			int index = 0;
-			iSyms.filePos[index] = 0;
-			IndexWriter iWriter = iSyms.iWriter;
-			for (SeqSymmetry sym : syms) {
-				iSyms.min[index] = iWriter.getMin(sym, seq);
-				iSyms.max[index] = iWriter.getMax(sym, seq);
-				iWriter.writeSymmetry(sym, seq, dos);
-				index++;
-				iSyms.filePos[index] = fChannel.position();
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		} finally {
-			GeneralUtils.safeClose(dos);
-			GeneralUtils.safeClose(fos);
-		}
-		
-		return true;
-	}*/
-
-	/**
-	 * Create a file of annotations, and index its entries.
-	 * @param syms -- a sorted list of annotations (on one chromosome)
-	 * @param seq -- the chromosome
-	 * @param iSyms
 	 * @param fos
 	 * @return - success or failure
 	 */
@@ -109,51 +66,84 @@ public class IndexingUtils {
 			MutableAnnotatedBioSeq seq,
 			IndexedSyms iSyms,
 			String indexesFileName) {
-		//ObjectOutputStream oos = null;
-		FileOutputStream fos = null;
-		BufferedOutputStream bos = null;
-		DataOutputStream dos = null;
+		if (DEBUG) {
+			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
+		}
 
 		try {
-			if (DEBUG) {
-				System.out.println("in IndexingUtils.writeIndexedAnnotations()");
-			}
-
-			// Determine file positions and create iSyms array.
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			//oos = new ObjectOutputStream(baos);
-			int index = 0;
-			long currentFilePos = 0;
-			IndexWriter iWriter = iSyms.iWriter;
-			for (SeqSymmetry sym : syms) {
-				iSyms.min[index] = iWriter.getMin(sym, seq);
-				iSyms.max[index] = iWriter.getMax(sym, seq);
-				iWriter.writeSymmetry(sym, seq, baos);
-				//oos.writeObject(sym);
-				baos.flush();
-				byte[] buf = baos.toByteArray();
-				index++;
-				currentFilePos += buf.length;
-				
-				baos.reset();
-				iSyms.filePos[index] = currentFilePos;
-			}
-			GeneralUtils.safeClose(baos);
-
-			// Actually write out to file.
-			fos = new FileOutputStream(indexesFileName);
-			bos = new BufferedOutputStream(fos);
-			dos = new DataOutputStream(bos);
-			for (SeqSymmetry sym : syms) {
-				iWriter.writeSymmetry(sym, seq, dos);
-			}
-
+			createIndexArray(iSyms, syms, seq);
+			writeIndex(iSyms, indexesFileName, syms, seq);
 			return true;
 		} catch (Exception ex) {
 			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
 			return false;
+		}
+	}
+
+	// Determine file positions and create iSyms array.
+	private static void createIndexArray(IndexedSyms iSyms, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int index = 0;
+		long currentFilePos = 0;
+		IndexWriter iWriter = iSyms.iWriter;
+		for (SeqSymmetry sym : syms) {
+			iSyms.min[index] = iWriter.getMin(sym, seq);
+			iSyms.max[index] = iWriter.getMax(sym, seq);
+			iWriter.writeSymmetry(sym, seq, baos);
+			baos.flush();
+			byte[] buf = baos.toByteArray();
+			baos.reset();
+			index++;
+			currentFilePos += buf.length;
+			iSyms.filePos[index] = currentFilePos;
+		}
+		GeneralUtils.safeClose(baos);
+	}
+
+
+	// Actually write out indexes to file (for one chromosome).
+	private static void writeIndex(IndexedSyms iSyms, String indexesFileName, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) throws IOException {
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		DataOutputStream dos = null;
+		try {
+			fos = new FileOutputStream(indexesFileName);
+			bos = new BufferedOutputStream(fos);
+			dos = new DataOutputStream(bos);
+			IndexWriter iWriter = iSyms.iWriter;
+			for (SeqSymmetry sym : syms) {
+				iWriter.writeSymmetry(sym, seq, dos);
+			}
+			if (iWriter instanceof PSLParser && indexesFileName.toLowerCase().endsWith(".link.psl")) {
+				writeAdditionalLinkPSLIndex(indexesFileName, syms, seq, iSyms.typeName);
+			}
 		} finally {
-			//GeneralUtils.safeClose(oos);
+			GeneralUtils.safeClose(fos);
+			GeneralUtils.safeClose(dos);
+			GeneralUtils.safeClose(bos);
+		}
+	}
+
+	// if it's a link.psl file, there is special-casing.
+	// We need to write out the remainder of the annotations as a special file ("...link2.psl")
+	private static void writeAdditionalLinkPSLIndex(
+			String indexesFileName, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String typeName) throws FileNotFoundException {
+		if (DEBUG) {
+			System.out.println("in IndexingUtils.writeAdditionalLinkPSLIndex()");
+		}
+
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		DataOutputStream dos = null;
+		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
+		secondIndexesFileName += ".link2.psl";
+		try {
+			fos = new FileOutputStream(secondIndexesFileName);
+			bos = new BufferedOutputStream(fos);
+			dos = new DataOutputStream(bos);
+			// Write everything but the consensus sequence.
+			ProbeSetDisplayPlugin.collectAndWriteAnnotations(syms, false, seq, typeName, dos);
+		} finally {
 			GeneralUtils.safeClose(fos);
 			GeneralUtils.safeClose(dos);
 			GeneralUtils.safeClose(bos);
@@ -212,6 +202,7 @@ public class IndexingUtils {
 			File indexesFile,
 			File indexedAnnotationFile,
 			String typeName,
+			String streamName,
 			IndexWriter iWriter) {
 		if (DEBUG){
 			System.out.println("in IndexingUtils.readIndexes()");
@@ -219,7 +210,6 @@ public class IndexingUtils {
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 		DataInputStream dis = null;
-		
 
 		IndexedSyms iSyms = null;
 		try {
@@ -282,13 +272,13 @@ public class IndexingUtils {
 	}
 
 	/**
-	 * Get "length" annotations from filePosStart
+	 * Get "length" bytes starting at filePosStart
 	 * @param fis
 	 * @param filePosStart
 	 * @param length
 	 * @return
 	 */
-	public static byte[] getIndexedAnnotations(FileInputStream fis, long filePosStart, int length) {
+	public static byte[] readBytesFromFile(FileInputStream fis, long filePosStart, int length) {
 		byte[] contentsOnly = null;
 		try {
 			FileChannel fc = fis.getChannel();

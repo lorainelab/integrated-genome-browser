@@ -6,6 +6,8 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *  Trying to make a central repository for parsers.
@@ -21,6 +23,7 @@ public final class ParserController {
 		if (sindex >= 0) {
 			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 		}
+		System.out.println("Type prefix in parser code: " + type_prefix);
 		try {
 			if (instr instanceof BufferedInputStream) {
 				str = (BufferedInputStream) instr;
@@ -32,7 +35,9 @@ public final class ParserController {
 				Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
 				// need to modify Das1FeatureSaxParser to return a list of "transcript-level" annotation syms
 				parser = null;
-			} else if (stream_name.endsWith(".link.psl"))  {
+			}
+
+			/*else if (stream_name.endsWith(".link.psl"))  {
 				System.out.println("loading link.psl via PslParser: " + stream_name);
 				String annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
 				// assume that want to annotate target seqs, and that these are the seqs
@@ -47,7 +52,8 @@ public final class ParserController {
 
 				 // annotate target
 				results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);
-			}
+			}*/
+
 			else if (stream_name.endsWith(".bed")) {
 				System.out.println("loading via BedParser: " + stream_name);
 				String annot_type = GetAnnotType(annots_map, stream_name, ".bed");
@@ -125,12 +131,12 @@ public final class ParserController {
 	public static List parseIndexed(InputStream str, Map<String, String> annots_map, String stream_name, AnnotatedSeqGroup seq_group) {
 
 		DataInputStream dis = new DataInputStream(str);
-		if (stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) {
-			String type_prefix = null;
+		String type_prefix = null;
 		int sindex = stream_name.lastIndexOf("/");
 		if (sindex >= 0) {
 			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 		}
+		if ((stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) && (!stream_name.endsWith(".link.psl"))) {
 			System.out.println("loading via PslParser: " + stream_name);
 			String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
 			IndexWriter iWriter = new PSLParser();
@@ -157,23 +163,65 @@ public final class ParserController {
 			String annot_type = GetAnnotType(annots_map, stream_name, ".brs");
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
+		if (stream_name.endsWith(".link.psl")) {
+			System.out.println("loading link.psl via PslParser: " + stream_name);
+			String annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
+			// assume that want to annotate target seqs, and that these are the seqs
+			//    represented in seq_group
+			IndexWriter iWriter = new PSLParser();
+			PSLParser parser = ((PSLParser) iWriter);
+			if (type_prefix != null) {
+				parser.setTrackNamePrefix(type_prefix);
+			}
+
+			parser.setIsLinkPsl(true);
+			parser.enableSharedQueryTarget(true);
+			parser.setCreateContainerAnnot(true);
+			try {
+				// annotate target
+				return parser.parse(dis, annot_type, null, seq_group, null, false, true, false);
+			} catch (IOException ex) {
+				Logger.getLogger(ParserController.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
 		return null;
 	}
 
 
 
 	public static IndexWriter getIndexWriter(String stream_name) {
+		String type_prefix = null;
+		int sindex = stream_name.lastIndexOf("/");
+		if (sindex >= 0) {
+			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
+		}
 		if (stream_name.endsWith((".bps"))) {
 			return new BpsParser();
 		}
-		if (stream_name.endsWith("psl") && !stream_name.endsWith("link.psl")) {
-			return new PSLParser();
+		if (stream_name.endsWith(".psl") && !stream_name.endsWith(".link.psl")) {
+			IndexWriter iWriter = new PSLParser();
+			if (type_prefix != null) {
+				((PSLParser) iWriter).setTrackNamePrefix(type_prefix);
+			}
+			return iWriter;
 		}
 		if (stream_name.endsWith(".bgn")) {
 			return new BgnParser();
 		}
 		if (stream_name.endsWith(".brs")) {
 			return new BrsParser();
+		}
+		if (stream_name.endsWith(".link.psl")) {
+			IndexWriter iWriter = new PSLParser();
+			PSLParser parser = ((PSLParser) iWriter);
+			if (type_prefix != null) {
+				parser.setTrackNamePrefix(type_prefix);
+			}
+
+			parser.setIsLinkPsl(true);
+			parser.enableSharedQueryTarget(true);
+			parser.setCreateContainerAnnot(true);
+			return parser;
 		}
 		return null;
 		

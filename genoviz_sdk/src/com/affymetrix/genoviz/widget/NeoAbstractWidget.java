@@ -352,9 +352,21 @@ public abstract class NeoAbstractWidget extends Container
 	 *
 	 * @param datamodel an arbitrary object associated with one or
 	 *   more glyphs.
-	 * @return the first GlyphI found to be associated with the datamodel
+	 * @return the GlyphI most recently associated with the datamodel
 	 */
-	public abstract GlyphI getItem(Object datamodel);
+	public <G extends GlyphI> G getItem(Object datamodel) {
+		Object result = model_hash.get(datamodel);
+		if (result instanceof GlyphI) {
+			return (G)result;
+		}
+		else if (result instanceof Vector && ((Vector)result).size() > 0) {
+			Vector<G> vec = (Vector)result;
+			return vec.elementAt(vec.size()-1);
+		}
+		else {
+			return null;
+		}
+	}
 
 	/**
 	 * Retrieves the <code>Vector</code> of glyphs associated with the
@@ -366,7 +378,19 @@ public abstract class NeoAbstractWidget extends Container
 	 * @return the <code>Vector</code> of glyphs associated with <code>
 	 *  datamodel</code>.
 	 */
-	public abstract Vector<GlyphI> getItems(Object datamodel);
+	public <G extends GlyphI> Vector<G> getItems(Object datamodel) {
+		Collections.singletonList(datamodel);
+		Object result = model_hash.get(datamodel);
+		if (result instanceof Vector) {
+			return (Vector<G>)result;
+		} else {
+			Vector<G> vec = new Vector<G>();
+			if ( null != result ) {
+				vec.addElement((G)result);
+			}
+			return vec;
+		}
+	}
 
 	/**
 	 * returns a vector of all <code>Glyph</code>s at

@@ -756,7 +756,7 @@ public final class GraphSelectionManager
     Iterator iter = selected_syms.iterator();
     while (iter.hasNext()) {
       SeqSymmetry sym = (SeqSymmetry) iter.next();
-      GlyphI g = current_source.getItem(sym);
+      GlyphI g = current_source.<GlyphI>getItem(sym);
       if (g instanceof GraphGlyph) {
         selected_graph_glyphs.add((GraphGlyph)g);
       }

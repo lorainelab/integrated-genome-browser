@@ -471,35 +471,6 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		}
 	}
 
-	public Vector<GlyphI> getItems(Object datamodel) {
-		Object result = model_hash.get(datamodel);
-		if (result instanceof Vector) {
-			return (Vector)result;
-		} else {
-			Vector<GlyphI> vec = new Vector<GlyphI>();
-			vec.addElement((GlyphI)result);
-			return vec;
-		}
-	}
-
-	/**
-	 *  If there is more than one glyph associated with the datamodel,
-	 *  then return glyph that was most recently associated
-	 */
-	public GlyphI getItem(Object datamodel) {
-		Object result = model_hash.get(datamodel);
-		if (result instanceof GlyphI) {
-			return (GlyphI)result;
-		}
-		else if (result instanceof Vector && ((Vector)result).size() > 0) {
-			Vector vec = (Vector)result;
-			return (GlyphI)vec.elementAt(vec.size()-1);
-		}
-		else {
-			return null;
-		}
-	}
-
 	public NeoAbstractWidget getWidget(GlyphI gl) {
 		Scene glyph_scene, widg_scene;
 		NeoAbstractWidget widg;

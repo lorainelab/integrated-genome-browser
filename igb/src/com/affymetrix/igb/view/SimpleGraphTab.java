@@ -317,17 +317,10 @@ public final class SimpleGraphTab extends JPanel
 				if (grafs != selected_syms) {
 					grafs.add(graf);
 				}
-				int gcount = gviewer.getSeqMap().getItemCount(graf);
-				if (gcount == 1) {
-					GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
-					glyphs.add(gl);
-				} // allowing for cases where same graph sym is represented by multiple graphs glyphs...
-				else if (gcount > 1) {
-					List multigl = gviewer.getSeqMap().getItems(graf);
-					// add all graph glyphs representing graph sym
-					//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
-					glyphs.addAll(multigl);
-				}
+				List<GraphGlyph> multigl = gviewer.getSeqMap().<GraphGlyph>getItems(graf);
+				// add all graph glyphs representing graph sym
+				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
+				glyphs.addAll(multigl);
 			}
 		}
 

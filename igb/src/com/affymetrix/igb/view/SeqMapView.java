@@ -1082,7 +1082,7 @@ public class SeqMapView extends JPanel
 			while (iter.hasNext()) {
 				SeqSymmetry old_selected_sym = (SeqSymmetry) iter.next();
 
-				GlyphI gl = seqmap.getItem(old_selected_sym);
+				GlyphI gl = seqmap.<GlyphI>getItem(old_selected_sym);
 				if (gl != null) {
 					seqmap.select(gl);
 				}
@@ -1572,7 +1572,7 @@ public class SeqMapView extends JPanel
 
 		for (SeqSymmetry sym : sym_list) {
 			// currently assuming 1-to-1 mapping of sym to glyph
-			GlyphI gl = seqmap.getItem(sym);
+			GlyphI gl = seqmap.<GlyphI>getItem(sym);
 			if (gl != null) {
 				seqmap.select(gl);
 			}

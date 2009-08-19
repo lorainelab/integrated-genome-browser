@@ -225,18 +225,18 @@ public class NeoAssemblerDemo extends Applet
 
 
 	public Object addBases(Mapping align) {
-		GlyphI seqtag = map.getItem(align);
+		GlyphI seqtag = map.<GlyphI>getItem(align);
 		map.setResidues(seqtag, align.getSequence().getResidues());
 		return seqtag;
 	}
 
 	public Object addGaps(Mapping align) {
 		// this assumes only one glyph returned by NeoAssembler.getItems()!
-		GlyphI seqtag = map.getItem(align);
-		Vector spans = align.getSpans();
+		GlyphI seqtag = map.<GlyphI>getItem(align);
+		Vector<Span> spans = align.getSpans();
 		Span sp;
 		for (int j=0; j<spans.size(); j++) {
-			sp = (Span)spans.elementAt(j);
+			sp = spans.elementAt(j);
 			// simulating unaligned edges
 			// by declaring the first and last spans unaligned
 			if (simulateTrimmedEdges && ((j==0) || (j == spans.size()-1))) {
@@ -395,7 +395,7 @@ public class NeoAssemblerDemo extends Applet
 		Enumeration enm = selectedDataModels.elements();
 		while (enm.hasMoreElements()) {
 			Mapping align = (Mapping)enm.nextElement();
-			Vector seq_glyphs = map.getItems(align);
+			Vector<GlyphI> seq_glyphs = map.<GlyphI>getItems(align);
 			map.deselect(seq_glyphs);
 			map.removeItem(seq_glyphs);
 		}

@@ -58,11 +58,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public final class Das2ClientOptimizer {
-
-    //static boolean USE_SEGMENT = Das2Region.USE_SEGMENT;
-    //static boolean USE_TYPE_URI = Das2Region.USE_TYPE_URI;
-    //static boolean USE_SEGMENT_URI = Das2Region.USE_SEGMENT_URI;
-    //static boolean URL_ENCODE_QUERY = Das2Region.URL_ENCODE_QUERY;
     private static final boolean DEBUG = false;
     private static final boolean DEBUG_HEADERS = false;
     private static final boolean OPTIMIZE_FORMAT = true;
@@ -75,13 +70,6 @@ public final class Das2ClientOptimizer {
     //static boolean SEPARATE_SEGMENT_FILTER = false;
     private static final String default_format = "das2feature";
     
-		/*private static final String PREF_SHOW_DAS_QUERY_GENOMETRY = "SHOW_DAS_QUERY_GENOMETRY";
-		private static final boolean default_show_das_query_genometry = false;
-    static {
-        SHOW_DAS_QUERY_GENOMETRY =
-                UnibrowPrefsUtil.getTopNode().getBoolean(PREF_SHOW_DAS_QUERY_GENOMETRY,
-                default_show_das_query_genometry);
-    }*/
 
     // input is a single Das2FeatureRequestSym
     // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input request,
@@ -97,8 +85,6 @@ public final class Das2ClientOptimizer {
     public static List<Das2FeatureRequestSym> loadFeatures(Das2FeatureRequestSym request_sym) {
         Das2RequestLog request_log = request_sym.getLog();
 
-        //    System.out.println("called Das2ClientOptimizer.loadFeatures()");
-        //  public static List optimizeFeatureRequests(List input_requests) {
         List<Das2FeatureRequestSym> output_requests = new ArrayList<Das2FeatureRequestSym>();
         // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
         SeqSymmetry overlap_sym = request_sym.getOverlapSym();
@@ -107,8 +93,6 @@ public final class Das2ClientOptimizer {
         Das2Region region = request_sym.getRegion();
         Das2Type type = request_sym.getDas2Type();
         String typeid = type.getID();
-        //int omin = overlap_span.getMin();
-        //int omax = overlap_span.getMax();
         SeqSymmetry split_query = null;
 
         if (!(seq instanceof BioSeq)) {
@@ -347,14 +331,14 @@ public final class Das2ClientOptimizer {
                 System.out.println("url-decoded query:  " + URLDecoder.decode(feature_query, IGBConstants.UTF8));
 
             }
-            boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, gmodel, request_sym);
-            request_log.setSuccess(success);
-        } catch (Exception ex) {
-					ex.printStackTrace();
-            request_log.setSuccess(false);
-            //request_log.setException(ex);
-        }
-        return request_log;
+			boolean success = LoadFeaturesFromQuery(overlap_span, aseq, feature_query, format, request_log, seq_group, type, gmodel, request_sym);
+			request_log.setSuccess(success);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			request_log.setSuccess(false);
+			//request_log.setException(ex);
+		}
+		return request_log;
     }
 
     private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
@@ -457,9 +441,7 @@ public final class Das2ClientOptimizer {
                     request_log.setSuccess(false);
                     return false;
                 } else {
-                    // System.out.println("    getting content type");
                     String content_type = query_con.getContentType();
-                    // System.out.println("    getting input stream");
                     istr = query_con.getInputStream();
                     bis = new BufferedInputStream(istr);
                     if (DEBUG) {
@@ -484,7 +466,7 @@ public final class Das2ClientOptimizer {
             if (request_log.getSuccess()) {
                 List feats = DetermineFormatAndParse(content_subtype, request_log, bis, feature_query, seq_group, type, gmodel);
                 addSymmetriesAndAnnotations(feats, request_sym, request_log, aseq);
-            } // end if (success) conditional
+            }
             return request_log.getSuccess();
         } finally {
             GeneralUtils.safeClose(bis);
@@ -540,7 +522,6 @@ public final class Das2ClientOptimizer {
             feats = parser.parse(bis, ".", seq_group, false, false);
         } else if (content_subtype.equals("link.psl")) {
             AddParsingLogMessage(content_subtype);
-            // reference to LoadFileAction.ParsePSL
             PSLParser parser = new PSLParser();
             parser.setIsLinkPsl(true);
             parser.enableSharedQueryTarget(true);
@@ -618,13 +599,11 @@ public final class Das2ClientOptimizer {
      *  Uses type URI as graph ID, type name as graph name
      */
     public static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
-        Das2RequestLog request_log = request_sym.getLog();
+        //Das2RequestLog request_log = request_sym.getLog();
 
         System.out.println("adding a child GraphSym to parent graph");
         BioSeq aseq = (BioSeq) cgraf.getGraphSeq();
         // check and see if parent graph already exists
-        //    String id = cgraf.getGraphName();  // grafs can be retrieved from BioSeq by treating their ID as type
-        //    String id = cgraf.getID();  // grafs can be retrieved from BioSeq by treating their ID as type
         Das2Type type = request_sym.getDas2Type();
         String id = type.getID();
         String name = type.getName();
@@ -634,11 +613,8 @@ public final class Das2ClientOptimizer {
         GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
         if (pgraf == null) {
             System.out.println("$$$$ creating new parent composite graph sym");
-            //      pgraf = new CompositeGraphSym(new int[0], new float[0], id, aseq);
-            //      String compid = GraphSymUtils.getUniqueGraphID(id, aseq);
             // don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
             pgraf = new CompositeGraphSym(id, aseq);
-            //      pgraf.setGraphName(id);
             pgraf.setGraphName(name);
             aseq.addAnnotation(pgraf);
         }

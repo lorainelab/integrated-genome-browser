@@ -308,7 +308,6 @@ public final class GFFParser implements AnnotationWriter  {
 
 		try {
 			Thread thread = Thread.currentThread();
-			//      while ((! thread.isInterrupted()) && ((line = br.readLine()) != null) && (line_count < 100)) {
 			while ((! thread.isInterrupted()) && ((line = br.readLine()) != null)) {
 				if (line == null) { continue; }
 				if (line.startsWith("##")) {
@@ -390,101 +389,11 @@ public final class GFFParser implements AnnotationWriter  {
 					// then add group syms to MutableAnnotatedBioSeq after entire parse is done.
 
 					if (use_hierarchy) {
-						if (hier_parents == null) {
-							hier_parents = new UcscGffSym[hierarchy_levels.size()];
-						}
-
-						Integer new_h_level_int = hierarchy_levels.get(feature_type);
-						if (new_h_level_int == null) {
-							throw new RuntimeException("Hierarchy exception: unknown feature type: " + feature_type);
-						}
-
-						int new_h_level = new_h_level_int.intValue();
-						if (new_h_level - current_h_level > 1) {
-							throw new RuntimeException("Hierarchy exception: skipped a level: "+current_h_level+" -> "+new_h_level + ":\n"
-									+ line+"\n");
-						}
-						String id_field = hierarchy_id_fields.get(feature_type);
-						if (id_field != null) {
-							String group_id = determineGroupId(sym, id_field);
-							if (group_id != null) {sym.setProperty("id", group_id);}
-						}
-
-						hier_parents[new_h_level] = sym; // It is a potential parent of the lower-level sym
-						if (new_h_level == 0) {
-							results.add(sym);
-						}
-						else {
-							UcscGffSym the_parent = hier_parents[new_h_level - 1];
-							if (the_parent == null) {
-								throw new RuntimeException("Hierarchy exception: no parent");
-							}
-							the_parent.addChild(sym);
-						}
-						current_h_level = new_h_level;
+						useHierarchy(hier_parents, feature_type, current_h_level, line, sym, results);
 					}
 					else if (USE_GROUPING)  {
-						String group_id = null;
-
-						if (sym.isGFF1()) {
-							group_id = sym.getGroup();
-						} else if (group_tag != null) {
-							group_id = determineGroupId(sym, group_tag);
-						}
-
-						if (group_id == null) {
-							results.add(sym); // just add it directly
-						}
-						else {
-							if (DEBUG_GROUPING)  { System.out.println(group_id); }
-							SingletonSymWithProps groupsym = group_hash.get(group_id);
-
-							if (groupsym == null) {
-								if (use_first_one_as_group) {
-									// Take the first entry found with a given group_id and use it
-									// as the parent symmetry for all members of the group
-									// (For example, a "transcript" line with transcript_id=3 might
-									//  be followed by several "exon" lines with transcript_id=3.
-									//  The "transcript" line should be used as the group symmetry in this case.)
-									groupsym = sym;
-								} else {
-									// Make a brand-new symmetry to hold all syms with a given group_id
-									groupsym = new SingletonSymWithProps(sym.getStart(), sym.getEnd(), sym.getBioSeq());
-									groupsym.addChild(sym);
-									// Setting the "group" property might be needed if you plan to use the
-									// outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
-									groupsym.setProperty("group", group_id);
-									groupsym.setProperty("source", source);
-									if (track_name != null) {
-										groupsym.setProperty("method", track_name);
-									} else {
-										groupsym.setProperty("method", source);
-									}
-								}
-								group_count++;
-
-								// If one field, like "probeset_id" was chosen as the group_id_field_name,
-								// then make the contents of that field be the "id" of the group symmetry
-								// and also index it in the IGB id-to-symmetry hash
-								String index_id = null;
-								if (group_id_field_name != null) {
-									index_id = (String) sym.getProperty(group_id_field_name);
-								}
-								if (index_id != null) {
-									groupsym.setProperty("id", index_id);
-									if (seq_group != null) { seq_group.addToIndex(index_id, groupsym); }
-								} else {
-									groupsym.setProperty("id", group_id);
-									if (seq_group != null) { seq_group.addToIndex(group_id, groupsym); }
-								}
-
-								group_hash.put(group_id, groupsym);
-								results.add(groupsym);
-							} else {
-								groupsym.addChild(sym);
-							}
-						}
-					}  // END if (USE_GROUPING)
+						group_count = useGrouping(sym, results, group_hash, source, track_name, group_count, seq_group);
+					}
 					else {
 						// if not grouping, then simply add feature directly to results List
 						results.add(sym);
@@ -496,45 +405,138 @@ public final class GFFParser implements AnnotationWriter  {
 			br.close();
 		}
 		hierarchy_levels.clear();
+		
+		addSymstoSeq(results, create_container_annot, seq2meths, annotate_seq);
+		
+
+		System.out.println("lines: " + line_count + " syms:" + sym_count + " groups:" + group_count + " results:" + results.size());
+		return results;
+		}
 
 
-		{ // Loop through the results List and add all Sym's to the BioSeq
-			Iterator iter = results.iterator();
-			while (iter.hasNext()) {
-				SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
-				MutableAnnotatedBioSeq seq = sym.getBioSeq();
+	private void useHierarchy(UcscGffSym[] hier_parents, String feature_type, int current_h_level, String line, UcscGffSym sym, List<SeqSymmetry> results) throws RuntimeException {
+		if (hier_parents == null) {
+			hier_parents = new UcscGffSym[hierarchy_levels.size()];
+		}
+		Integer new_h_level_int = hierarchy_levels.get(feature_type);
+		if (new_h_level_int == null) {
+			throw new RuntimeException("Hierarchy exception: unknown feature type: " + feature_type);
+		}
+		int new_h_level = new_h_level_int.intValue();
+		if (new_h_level - current_h_level > 1) {
+			throw new RuntimeException("Hierarchy exception: skipped a level: " + current_h_level + " -> " + new_h_level + ":\n" + line + "\n");
+		}
+		String id_field = hierarchy_id_fields.get(feature_type);
+		if (id_field != null) {
+			String group_id = determineGroupId(sym, id_field);
+			if (group_id != null) {
+				sym.setProperty("id", group_id);
+			}
+		}
+		hier_parents[new_h_level] = sym; // It is a potential parent of the lower-level sym
+		if (new_h_level == 0) {
+			results.add(sym);
+		} else {
+			UcscGffSym the_parent = hier_parents[new_h_level - 1];
+			if (the_parent == null) {
+				throw new RuntimeException("Hierarchy exception: no parent");
+			}
+			the_parent.addChild(sym);
+		}
+		current_h_level = new_h_level;
+	}
 
-				if (USE_GROUPING && sym.getChildCount() > 0) {
-					// stretch sym to bounds of all children
-					SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
-					// SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
 
-					sym.setCoords(pspan.getStart(), pspan.getEnd());
-
-					resortChildren((MutableSingletonSeqSymmetry) sym, seq);
-				}
-
-				if (create_container_annot) {
-					String meth = (String)sym.getProperty("method");
-					SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth, annotate_seq);
-					parent_sym.addChild(sym);
-				}
-				else {
-					if (annotate_seq) {
-						seq.addAnnotation(sym);
+	private int useGrouping(UcscGffSym sym, List<SeqSymmetry> results, Map<String, SingletonSymWithProps> group_hash, String source, String track_name, int group_count, AnnotatedSeqGroup seq_group) {
+		String group_id = null;
+		if (sym.isGFF1()) {
+			group_id = sym.getGroup();
+		} else if (group_tag != null) {
+			group_id = determineGroupId(sym, group_tag);
+		}
+		if (group_id == null) {
+			results.add(sym); // just add it directly
+		} else {
+			if (DEBUG_GROUPING) {
+				System.out.println(group_id);
+			}
+			SingletonSymWithProps groupsym = group_hash.get(group_id);
+			if (groupsym == null) {
+				if (use_first_one_as_group) {
+					// Take the first entry found with a given group_id and use it
+					// as the parent symmetry for all members of the group
+					// (For example, a "transcript" line with transcript_id=3 might
+					//  be followed by several "exon" lines with transcript_id=3.
+					//  The "transcript" line should be used as the group symmetry in this case.)
+					groupsym = sym;
+				} else {
+					// Make a brand-new symmetry to hold all syms with a given group_id
+					groupsym = new SingletonSymWithProps(sym.getStart(), sym.getEnd(), sym.getBioSeq());
+					groupsym.addChild(sym);
+					// Setting the "group" property might be needed if you plan to use the
+					// outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
+					groupsym.setProperty("group", group_id);
+					groupsym.setProperty("source", source);
+					if (track_name != null) {
+						groupsym.setProperty("method", track_name);
+					} else {
+						groupsym.setProperty("method", source);
 					}
+				}
+				group_count++;
+				// If one field, like "probeset_id" was chosen as the group_id_field_name,
+				// then make the contents of that field be the "id" of the group symmetry
+				// and also index it in the IGB id-to-symmetry hash
+				String index_id = null;
+				if (group_id_field_name != null) {
+					index_id = (String) sym.getProperty(group_id_field_name);
+				}
+				if (index_id != null) {
+					groupsym.setProperty("id", index_id);
+					if (seq_group != null) {
+						seq_group.addToIndex(index_id, groupsym);
+					}
+				} else {
+					groupsym.setProperty("id", group_id);
+					if (seq_group != null) {
+						seq_group.addToIndex(group_id, groupsym);
+					}
+				}
+				group_hash.put(group_id, groupsym);
+				results.add(groupsym);
+			} else {
+				groupsym.addChild(sym);
+			}
+		}
+		return group_count;
+	}
+
+
+	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq) {
+		// Loop through the results List and add all Sym's to the BioSeq
+		Iterator iter = results.iterator();
+		while (iter.hasNext()) {
+			SingletonSymWithProps sym = (SingletonSymWithProps) iter.next();
+			MutableAnnotatedBioSeq seq = sym.getBioSeq();
+			if (USE_GROUPING && sym.getChildCount() > 0) {
+				// stretch sym to bounds of all children
+				SeqSpan pspan = SeqUtils.getChildBounds(sym, seq);
+				// SeqSpan pspan = SeqUtils.getLeafBounds(sym, seq);  // alternative that does full recursion...
+				sym.setCoords(pspan.getStart(), pspan.getEnd());
+				resortChildren((MutableSingletonSeqSymmetry) sym, seq);
+			}
+			if (create_container_annot) {
+				String meth = (String) sym.getProperty("method");
+				SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth, annotate_seq);
+				parent_sym.addChild(sym);
+			} else {
+				if (annotate_seq) {
+					seq.addAnnotation(sym);
 				}
 			}
 		}
+	}
 
-		System.out.println("line count: " + line_count);
-		System.out.println("sym count: " + sym_count);
-		System.out.println("group count: " + group_count);
-		System.out.println("result count: " + results.size());
-		//    System.out.println("seq length: " + seq.getLength());
-		//    System.out.println("annot count: " + seq.getAnnotationCount());
-		return results;
-		}
 
 		/**
 		 *  Retrieves (and/or creates) a container symmetry based on the BioSeq

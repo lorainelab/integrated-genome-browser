@@ -55,24 +55,26 @@ public abstract class ServerUtils {
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static Map<String, String> annots_map = new LinkedHashMap<String, String>();    // hash of originalFile names and titles
 
+	private static final String modChromInfo = "mod_chromInfo.txt";
+	private static final String liftAll = "liftAll.lft";
 	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
-		File chrom_info_file = new File(genome_directory, "mod_chromInfo.txt");
+		File chrom_info_file = new File(genome_directory, modChromInfo);
 		if (chrom_info_file.exists()) {
-			System.out.println("parsing in chromosome data from mod_chromInfo file for genome: " + genome_version);
+			System.out.println("parsing " + modChromInfo + " for: " + genome_version);
 			InputStream chromstream = new FileInputStream(chrom_info_file);
 			ChromInfoParser.parse(chromstream, gmodel, genome_version);
 			GeneralUtils.safeClose(chromstream);
 		} else {
-			System.out.println("couldn't find mod_chromInfo file for genome: " + genome_version);
-			System.out.println("looking for lift file instead");
+			System.out.println("couldn't find " + modChromInfo + "  for genome: " + genome_version);
+			System.out.println("looking for " + liftAll + " instead");
 			File lift_file = new File(genome_directory, "liftAll.lft");
 			if (lift_file.exists()) {
-				System.out.println("parsing in chromosome data from liftAll file for genome: " + genome_version);
+				System.out.println("parsing " + liftAll + " for: " + genome_version);
 				InputStream liftstream = new FileInputStream(lift_file);
 				LiftParser.parse(liftstream, gmodel, genome_version);
 				GeneralUtils.safeClose(liftstream);
 			} else {
-				System.out.println("couldn't find liftAll or mod_chromInfo file for genome!!! " + genome_version);
+				System.out.println("couldn't find " + modChromInfo + " or " + liftAll + " for genome!!! " + genome_version);
 			}
 		}
 	}

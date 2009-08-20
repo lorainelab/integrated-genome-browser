@@ -4,11 +4,9 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.ServerUtils;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,8 +22,6 @@ import static org.junit.Assert.*;
  * @author jnicol
  */
 public class BgnParserTest {
-
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	String filename = "test/data/bgn/mgcGenes.bgn";
 	String versionString = "genomeVersion";
 	AnnotatedSeqGroup genome = null;
@@ -37,10 +33,8 @@ public class BgnParserTest {
 		FileInputStream istr = null;
 		try {
 			istr = new FileInputStream(filename);
-			BufferedInputStream bis = new BufferedInputStream(istr);
-			//DataInputStream dis = new DataInputStream(bis);
 			genome = new AnnotatedSeqGroup("testGenome");
-			results = parser.parse(istr, filename, genome, 0, true);
+			results = parser.parse(istr, filename, genome, true);
 		} catch (Exception ex) {
 			Logger.getLogger(BgnParserTest.class.getName()).log(Level.SEVERE, null, ex);
 		} finally {

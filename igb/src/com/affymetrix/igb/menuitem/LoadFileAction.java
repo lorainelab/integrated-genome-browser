@@ -409,7 +409,7 @@ public final class LoadFileAction {
 		} else if (lcname.endsWith(".bgn")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 			BgnParser parser = new BgnParser();
-			parser.parse(str, annot_type, selected_group, -1, true);
+			parser.parse(str, annot_type, selected_group, true);
 			return input_seq;
 		} else if (lcname.endsWith(".brs")) {
 			BrsParser parser = new BrsParser();

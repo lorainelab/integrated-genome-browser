@@ -22,8 +22,7 @@ import java.util.regex.*;
 
 
 public final class TrackLineParser {
-
-	//static Pattern line_regex = Pattern.compile("\t");
+	private static final boolean DEBUG = false;
 	private static final Pattern comma_regex = Pattern.compile(",");
 
 	static final String NAME="name";
@@ -122,7 +121,9 @@ public final class TrackLineParser {
 		if (track_name != null && track_name_prefix != null) {
 			String new_track_name = track_name_prefix + track_name;
 			track_hash.put(NAME, new_track_name);
-			System.out.println("  modifying track name in TrackLineParser: " + new_track_name);
+			if (DEBUG) {
+				System.out.println("  modifying track name in TrackLineParser: " + new_track_name);
+			}
 		}
 		return track_hash;
 	}

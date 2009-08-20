@@ -497,7 +497,7 @@ public final class Das2ClientOptimizer {
         } else if (content_subtype.equals("bgn")) {
             AddParsingLogMessage(content_subtype);
             BgnParser parser = new BgnParser();
-            feats = parser.parse(bis, type.getID(), seq_group, -1, false);
+            feats = parser.parse(bis, type.getID(), seq_group, false);
         } else if (content_subtype.equals("bps")) {
             AddParsingLogMessage(content_subtype);
             DataInputStream dis = new DataInputStream(bis);

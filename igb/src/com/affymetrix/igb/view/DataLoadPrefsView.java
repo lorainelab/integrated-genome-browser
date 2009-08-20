@@ -21,13 +21,13 @@ import com.affymetrix.igb.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
-import com.affymetrix.igb.prefs.SourceCellRenderer;
 import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
+import com.affymetrix.swing.BooleanTableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -43,7 +43,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableCellEditor;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 
@@ -218,6 +218,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		}
 	}
 
+	@SuppressWarnings("fallthrough")
 	private void addSourcesBox() {
 
 		final Box sourceBox = Box.createVerticalBox();
@@ -227,35 +228,42 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 		sourceTableModel = new SourceTableModel();
 		final JTable table = new JTable(sourceTableModel);
+		table.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
+		table.setDefaultRenderer(String.class,  new DefaultTableCellRenderer() {
+			private static final long serialVersionUID = -5433598077871623855l;
+
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value,
+					boolean isSelected, boolean hasFocus, int row, int col) {
+
+				this.setEnabled((Boolean) table.getModel().getValueAt(row, SourceColumn.Enabled.ordinal()));
+				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+			}
+		});
 
 		for (Enumeration<TableColumn> e = table.getColumnModel().getColumns(); e.hasMoreElements(); ) {
 			TableColumn column = e.nextElement();
-			
 			SourceColumn current = SourceColumn.valueOf((String)column.getHeaderValue());
+
 			switch (current) {
 				case Name:
 					column.setPreferredWidth(100);
-					column.setCellRenderer(new SourceCellRenderer());
 					break;
 				case URL:
 					column.setPreferredWidth(300);
-					column.setCellRenderer(new SourceCellRenderer());
 					break;
 				case Enabled:
 					column.setPreferredWidth(30);
 					break;
 				case Password:
-					column.setPreferredWidth(50);
-					column.setCellRenderer(new SourceCellRenderer());
-					
 					JPasswordField password = new JPasswordField();
 					password.setBorder(new LineBorder(Color.BLACK));
-					TableCellEditor editor = new DefaultCellEditor(password);
-					column.setCellEditor(editor);
+					column.setCellEditor(new DefaultCellEditor(password));
+
+					column.setPreferredWidth(50);
 					break;
 				default:
 					column.setPreferredWidth(50);
-					column.setCellRenderer(new SourceCellRenderer());
 					break;
 			}
 		}

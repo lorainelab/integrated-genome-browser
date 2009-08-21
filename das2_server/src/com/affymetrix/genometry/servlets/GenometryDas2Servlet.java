@@ -456,7 +456,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
-		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file, dataRoot);
+		ServerUtils.loadAnnotsFromFile(genome_directory, genome, graph_name2dir, graph_name2file, dataRoot);
 
 		// optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);

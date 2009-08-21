@@ -155,28 +155,43 @@ public abstract class ServerUtils {
 	}
 
 	/**
+	 *   Recursively call on each child file;
+	 *   if not directory, see if can parse as annotation originalFile.
+	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
+	 */
+	public static final void loadAnnotsFromFile(
+			File genome_directory,
+			AnnotatedSeqGroup genome,
+			Map<String, String> graph_name2dir,
+			Map<String, String> graph_name2file,
+			String dataRoot) {
+
+		try {
+		ServerUtils.loadAnnotsFromFileRecurse(genome_directory, genome, "", graph_name2dir, graph_name2file, dataRoot);
+		}
+catch (Exception ex) {
+	ex.printStackTrace();
+}
+		// Index the IDs in the symmetries for speed and memory usage in name search.
+		//IndexingUtils.writeIndexedIDs(genome, results);
+	}
+
+		/**
 	 *   If current_file is directory:
 	 *       if ".seqs" suffix, then handle as graphs
 	 *       otherwise recursively call on each child files;
 	 *   if not directory, see if can parse as annotation originalFile.
-	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
-	public static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
+	private static final void loadAnnotsFromFileRecurse(File current_file, AnnotatedSeqGroup genome, String type_prefix,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
 
-		String type_name;
-		String new_type_prefix;
-		if (type_prefix == null) {  // special-casing for top level genome directory, don't want genome name added to type name path
-			type_name = file_name;
-			new_type_prefix = "";
-		} else {
-			type_name = type_prefix + file_name;
-			new_type_prefix = type_name + "/";
-		}
+		String type_name = type_prefix + file_name;
+		String new_type_prefix = type_name + "/";
+		
 
 		// if current originalFile is directory, then descend down into child files
 		if (current_file.isDirectory()) {
@@ -390,7 +405,7 @@ public abstract class ServerUtils {
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
 			Arrays.sort(child_files);
 			for (File child_file : child_files) {
-				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
+				loadAnnotsFromFileRecurse(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
 			}
 		}
 	}

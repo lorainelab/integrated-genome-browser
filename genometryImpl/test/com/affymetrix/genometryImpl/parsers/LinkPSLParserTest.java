@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedIDs;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
@@ -206,7 +207,8 @@ public class LinkPSLParserTest {
 			String testFileName = "test/data/psl/RT_U34TEST.link.psl";
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "RT_U34", (IndexWriter) parser);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+			IndexedIDs iIDs = new IndexedIDs("test/data/psl/",group, null);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, iIDs, testFileName);
 
 			String overlap = "3000000:160000000";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);

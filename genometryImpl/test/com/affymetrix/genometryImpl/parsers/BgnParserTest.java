@@ -5,6 +5,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedIDs;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 import java.io.File;
@@ -73,7 +74,8 @@ public class BgnParserTest {
 
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", (IndexWriter) parser);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+			IndexedIDs iIDs = new IndexedIDs("test/data/bgn/",genome, null);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, iIDs, testFileName);
 
 			String overlap = "3000000:160000000";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);

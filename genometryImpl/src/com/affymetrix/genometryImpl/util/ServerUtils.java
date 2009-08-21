@@ -19,6 +19,7 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedIDs;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -165,15 +166,11 @@ public abstract class ServerUtils {
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
-
 		try {
-		ServerUtils.loadAnnotsFromFileRecurse(genome_directory, genome, "", graph_name2dir, graph_name2file, dataRoot);
+			ServerUtils.loadAnnotsFromFileRecurse(genome_directory, genome, "", graph_name2dir, graph_name2file, dataRoot);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-catch (Exception ex) {
-	ex.printStackTrace();
-}
-		// Index the IDs in the symmetries for speed and memory usage in name search.
-		//IndexingUtils.writeIndexedIDs(genome, results);
 	}
 
 		/**
@@ -218,11 +215,7 @@ catch (Exception ex) {
 			return;
 		}
 
-		// current originalFile is not a directory, so try and recognize as annotation originalFile
-
-
-		//System.out.println("loading annotations of " + current_file.getName());
-
+		// current originalFile is not a directory, so try and recognize as annotation file
 		indexOrLoadFile(dataRoot, current_file, type_name, genome);
 	}
 
@@ -249,9 +242,25 @@ catch (Exception ex) {
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
 		List loadedSyms = loadAnnotFile(file, stream_name, tempGenome, true);
+
 		System.out.println("Indexing " + originalFileName);
-		determineIndexes(genome,
-				tempGenome, dataRoot, file, loadedSyms, iWriter, stream_name);
+
+		String extension = "";
+		if (stream_name.endsWith(".link.psl")) {
+			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
+					stream_name.length());
+		} else {
+			extension = stream_name.substring(stream_name.lastIndexOf("."),
+					stream_name.length());
+		}
+		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension);
+		String returnTypeName = typeName;
+		if (stream_name.endsWith(".link.psl")) {
+			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
+			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
+		}
+		IndexingUtils.determineIndexes(genome,
+				tempGenome, dataRoot, file, loadedSyms, iWriter, typeName, returnTypeName);
 	}
 
 	/**
@@ -271,71 +280,11 @@ catch (Exception ex) {
 		return tempGenome;
 	}
 
-	/**
-	 * Generate indexes.
-	 * @param genome
-	 * @param dataRoot
-	 * @param file
-	 * @param originalFileName
-	 * @param loadedSyms
-	 * @param iWriter
-	 * @param typeName
-	 */
-	private static void determineIndexes(
-			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome, 
-			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String stream_name) {
+	
 
-		String extension = "";
-		if (stream_name.endsWith(".link.psl")) {
-			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
-				stream_name.length());
-		} else {
-			extension = stream_name.substring(stream_name.lastIndexOf("."),
-				stream_name.length());
-		}
-		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension);
-		String returnTypeName = typeName;
-		if (stream_name.endsWith(".link.psl")) {
-			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
-			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
-		}
+	
 
-		for (BioSeq originalSeq : originalGenome.getSeqList()) {
-			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
-			if (tempSeq == null) {
-				continue;	// ignore; this is a seq that was added during parsing.
-			}
-
-			IndexedSyms iSyms = null;
-			String dirName = indexedDirName(dataRoot, tempGenome, tempSeq);
-			String indexedAnnotationsFileName = indexedFileName(dataRoot, file.getName(), tempGenome, tempSeq);
-			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
-
-			createDirIfNecessary(dirName);
-
-			// Sort symmetries for this specific chromosome.
-			List<SeqSymmetry> sortedSyms =
-					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
-			iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
-			// add symmetries to the chromosome (used by types request)
-			// TODO: use this for names request
-			originalSeq.addIndexedSyms(returnTypeName, iSyms);
-			// Write the annotations out to a file.
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, indexedAnnotationsFileName);
-		}
-	}
-
-
-	// filename of indexed annotations.
-	private static String indexedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
-		return indexedDirName(dataRoot, genome, seq) + "/" + fileName;
-	}
-	private static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
-		String optimizedDirectory = dataRoot + ".indexed";
-		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
-	}
-
-	private static void createDirIfNecessary(String dirName) {
+	public static void createDirIfNecessary(String dirName) {
 		// Make sure the appropriate .indexed/species/version/chr directory exists.
 		// If not, create it.
 		File newFile = new File(dirName);
@@ -344,7 +293,9 @@ catch (Exception ex) {
 				System.out.println("ERROR: Couldn't create directory: " + dirName);
 				System.exit(-1);
 			} else {
-				System.out.println("Created new directory: " + dirName);
+				if (DEBUG) {
+					System.out.println("Created new directory: " + dirName);
+				}
 			}
 		}
 	}

@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedIDs;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -140,7 +141,8 @@ public class ServerUtilsTest {
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
 
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+			IndexedIDs iIDs = new IndexedIDs("test/data/bps/",group, null);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, iIDs, testFileName);
 
 			String overlap = "90000:11200177";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);

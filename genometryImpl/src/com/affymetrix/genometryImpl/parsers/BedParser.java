@@ -19,14 +19,19 @@ import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
 //import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
@@ -79,7 +84,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  *
  * </pre>
  */
-public final class BedParser implements AnnotationWriter, StreamingParser, ParserListener  {
+public final class BedParser implements AnnotationWriter, IndexWriter, StreamingParser, ParserListener  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
 	static List<String> pref_list = new ArrayList<String>();
@@ -190,150 +195,144 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 				}
 				String[] fields = line_regex.split(line);
 				int field_count = fields.length;
-				String seq_name = null;
-				String annot_name = null;
-				int min, max;
-				String itemRgb = "";
-				int thick_min = Integer.MIN_VALUE;  // Integer.MIN_VALUE signifies that thick_min is not used
-				int thick_max = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_max is not used
-				float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
-				boolean forward;
-				int[] blockSizes = null;
-				int[] blockStarts = null;
-				int[] blockMins = null;
-				int[] blockMaxs = null;
+				if (field_count < 3) {
+					continue;
+				}
 
-				if (field_count >= 3) {
-					boolean includes_bin_field = (field_count > 6 &&
-							(fields[6].startsWith("+") ||
-							 fields[6].startsWith("-") ||
-							 fields[6].startsWith(".") ) );
-					int findex = 0;
-					if (includes_bin_field) { findex++; }
-					seq_name = fields[findex++]; // seq id field
-					MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
-					if ((seq == null) && (seq_name.indexOf(';') > -1)) {
-						// if no seq found, try and split up seq_name by ";", in case it is in format
-						//    "seqid;genome_version"
-						String seqid = seq_name.substring(0, seq_name.indexOf(';'));
-						String version = seq_name.substring(seq_name.indexOf(';')+1);
-						//            System.out.println("    seq = " + seqid + ", version = " + version);
-						if ((gmodel.getSeqGroup(version) == seq_group) ||
-								seq_group.getID().equals(version)) {
-							// for format [chrom_name];[genome_version]
-							seq = seq_group.getSeq(seqid);
-							if (seq != null) { seq_name = seqid; }
-								}
-						// try flipping seqid and version around
-						else if ((gmodel.getSeqGroup(seqid) == seq_group) ||
-								seq_group.getID().equals(seqid)) {
-							// for format [genome_version];[chrom_name]
-							String temp = seqid;
-							seqid = version;
-							version = temp;
-							seq = seq_group.getSeq(seqid);
-							if (seq != null) { seq_name = seqid; }
-								}
-					}
-
-					if (seq == null) {
-						//System.out.println("seq not recognized, creating new seq: " + seq_name);
-						seq = seq_group.addSeq(seq_name, 0);
-					}
-					int beg = Integer.parseInt(fields[findex++]);  // start field
-					int end = Integer.parseInt(fields[findex++]);  // stop field
-					if (field_count >= 4) {
-						annot_name = parseName(fields[findex++]);
-					}
-					if (field_count >=5) {
-						score = parseScore(fields[findex++]);
-					} // score field
-					if (field_count >= 6) { forward = !(fields[findex++].equals("-")); }  // strand field
-					else  { forward = (beg <= end); }
-					min = Math.min(beg, end);
-					max = Math.max(beg, end);
-
-					if (field_count >= 8) {
-						thick_min = Integer.parseInt(fields[findex++]); // thickStart field
-						thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
-					}
-
-					if (field_count >= 9) {
-						itemRgb = fields[findex++];
-					} else {
-						findex++;
-					}
-
-					findex++; // block count field is skipped because it is redundant
-
-					if (field_count >= 12) {
-						blockSizes = parseIntArray(fields[findex++]); // blockSizes field
-						blockStarts = parseIntArray(fields[findex++]); // blockStarts field
-						blockMins = makeBlockMins(min, blockStarts);
-						blockMaxs = makeBlockMaxs(blockSizes, blockMins);
-					}
-					else {
-						/*
-						 * if no child blocks, make a single child block the same size as the parent
-						 * Very Inefficient, ideally wouldn't do this
-						 * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
-						 *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
-						 *     then factory will create a line container glyph to draw line connecting all the bed annots
-						 * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
-						 */
-						blockMins = new int[1];
-						blockMins[0] = min;
-						blockMaxs = new int[1];
-						blockMaxs[0] = max;
-					}
-
-					if (max > seq.getLength()) {
-						seq.setLength(max);
-					}
-					if (DEBUG) {
-						System.out.println("fields: "  + field_count + ", type = " + type + ", seq = " + seq_name +
-								", min = " + min + ", max = " + max +
-								", name = " + annot_name + ", score = " + score +
-								", forward = " + forward +
-								", thickmin = " + thick_min + ", thickmax = " + thick_max);
-						if (blockMins != null) {
-							int count = blockMins.length;
-							if (blockSizes != null && blockStarts != null && blockMins != null && blockMaxs != null) {
-								for (int i=0; i<count; i++) {
-									System.out.println("   " + i + ": blockSize = " + blockSizes[i] +
-											", blockStart = " + blockStarts[i] +
-											", blockMin = " + blockMins[i] +
-											", blockMax = " + blockMaxs[i]);
-								}
-							}
-						}
-					}
-					SymWithProps bedline_sym = null;
-					bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward,
-							thick_min, thick_max, blockMins, blockMaxs);
-					if (use_item_rgb && itemRgb != null) {
-						java.awt.Color c = null;
-						try {
-							c = TrackLineParser.reformatColor(itemRgb);
-						} catch (Exception e) {
-							throw new IOException("Could not parse a color from String '"+itemRgb+"'");
-						}
-						if (c != null) {
-							bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
-						}
-					}
-
-					// if there are any ParserListeners registered, notify them of parse
-					for (ParserListener pl : parse_listeners) {
-						pl.annotationParsed(bedline_sym);
-					}
-					if (annot_name != null) {
-						seq_group.addToIndex(annot_name, bedline_sym);
-					}
-				}  // end field_count >= 3
-			}  // end of line.startsWith() else
-		}   // end of line-reading loop
+				parseLine(field_count, fields, seq_group, gmodel, type, use_item_rgb);
+			}
+		}
 	}
+
+
+	private void parseLine(int field_count, String[] fields, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb) throws NumberFormatException, IOException {
+		String seq_name = null;
+		String annot_name = null;
+		int min;
+		int max;
+		String itemRgb = "";
+		int thick_min = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_min is not used
+		int thick_max = Integer.MIN_VALUE; // Integer.MIN_VALUE signifies that thick_max is not used
+		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
+		boolean forward;
+		int[] blockSizes = null;
+		int[] blockStarts = null;
+		int[] blockMins = null;
+		int[] blockMaxs = null;
+		boolean includes_bin_field = field_count > 6 && (fields[6].startsWith("+") || fields[6].startsWith("-") || fields[6].startsWith("."));
+		int findex = 0;
+		if (includes_bin_field) {
+			findex++;
+		}
+		seq_name = fields[findex++]; // seq id field
+		MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+		if ((seq == null) && (seq_name.indexOf(';') > -1)) {
+			// if no seq found, try and split up seq_name by ";", in case it is in format
+			//    "seqid;genome_version"
+			String seqid = seq_name.substring(0, seq_name.indexOf(';'));
+			String version = seq_name.substring(seq_name.indexOf(';') + 1);
+			//            System.out.println("    seq = " + seqid + ", version = " + version);
+			if ((gmodel.getSeqGroup(version) == seq_group) || seq_group.getID().equals(version)) {
+				// for format [chrom_name];[genome_version]
+				seq = seq_group.getSeq(seqid);
+				if (seq != null) {
+					seq_name = seqid;
+				}
+			} else if ((gmodel.getSeqGroup(seqid) == seq_group) || seq_group.getID().equals(seqid)) {
+				// for format [genome_version];[chrom_name]
+				String temp = seqid;
+				seqid = version;
+				version = temp;
+				seq = seq_group.getSeq(seqid);
+				if (seq != null) {
+					seq_name = seqid;
+				}
+			}
+		}
+		if (seq == null) {
+			//System.out.println("seq not recognized, creating new seq: " + seq_name);
+			seq = seq_group.addSeq(seq_name, 0);
+		}
+		int beg = Integer.parseInt(fields[findex++]); // start field
+		int end = Integer.parseInt(fields[findex++]); // stop field
+		if (field_count >= 4) {
+			annot_name = parseName(fields[findex++]);
+		}
+		if (field_count >= 5) {
+			score = parseScore(fields[findex++]);
+		} // score field
+		if (field_count >= 6) {
+			forward = !(fields[findex++].equals("-"));
+		} else {
+			forward = (beg <= end);
+		}
+		min = Math.min(beg, end);
+		max = Math.max(beg, end);
+		if (field_count >= 8) {
+			thick_min = Integer.parseInt(fields[findex++]); // thickStart field
+			thick_max = Integer.parseInt(fields[findex++]); // thickEnd field
+		}
+		if (field_count >= 9) {
+			itemRgb = fields[findex++];
+		} else {
+			findex++;
+		}
+		findex++; // block count field is skipped because it is redundant
+		if (field_count >= 12) {
+			blockSizes = parseIntArray(fields[findex++]); // blockSizes field
+			blockStarts = parseIntArray(fields[findex++]); // blockStarts field
+			blockMins = makeBlockMins(min, blockStarts);
+			blockMaxs = makeBlockMaxs(blockSizes, blockMins);
+		} else {
+			/*
+			 * if no child blocks, make a single child block the same size as the parent
+			 * Very Inefficient, ideally wouldn't do this
+			 * But currently need this because of GenericAnnotGlyphFactory use of annotation depth to
+			 *     determine at what level to connect glyphs -- if just leave blockMins/blockMaxs null (no children),
+			 *     then factory will create a line container glyph to draw line connecting all the bed annots
+			 * Maybe a way around this is to adjust depth preference based on overall depth (1 or 2) of bed file?
+			 */
+			blockMins = new int[1];
+			blockMins[0] = min;
+			blockMaxs = new int[1];
+			blockMaxs[0] = max;
+		}
+		if (max > seq.getLength()) {
+			seq.setLength(max);
+		}
+		if (DEBUG) {
+			System.out.println("fields: " + field_count + ", type = " + type + ", seq = " + seq_name + ", min = " + min + ", max = " + max + ", name = " + annot_name + ", score = " + score + ", forward = " + forward + ", thickmin = " + thick_min + ", thickmax = " + thick_max);
+			if (blockMins != null) {
+				int count = blockMins.length;
+				if (blockSizes != null && blockStarts != null && blockMins != null && blockMaxs != null) {
+					for (int i = 0; i < count; i++) {
+						System.out.println("   " + i + ": blockSize = " + blockSizes[i] + ", blockStart = " + blockStarts[i] + ", blockMin = " + blockMins[i] + ", blockMax = " + blockMaxs[i]);
+					}
+				}
+			}
+		}
+		SymWithProps bedline_sym = null;
+		bedline_sym = new UcscBedSym(type, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+		if (use_item_rgb && itemRgb != null) {
+			java.awt.Color c = null;
+			try {
+				c = TrackLineParser.reformatColor(itemRgb);
+			} catch (Exception e) {
+				throw new IOException("Could not parse a color from String '" + itemRgb + "'");
+			}
+			if (c != null) {
+				bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
+			}
+		}
+		// if there are any ParserListeners registered, notify them of parse
+		for (ParserListener pl : parse_listeners) {
+			pl.annotationParsed(bedline_sym);
+		}
+		if (annot_name != null) {
+			seq_group.addToIndex(annot_name, bedline_sym);
+		}
+	}
+
 
 	/** Converts the data in the score field, if present, to a floating-point number. */
 	public float parseScore(String s) {
@@ -513,7 +512,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 			if (childcount > 0) {
 				writeOutChildren(out, propsym, min, max, childcount, sym, seq);
 			}
-		} // END "if ( (! span.isForward()) || (childcount > 0) || (propsym != null) )"
+		}
 		out.write('\n');
 	}
 
@@ -586,6 +585,44 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 		}
 		return success;
 	}
+
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException {
+		Writer bw = null;
+		try {
+			bw = new BufferedWriter(new OutputStreamWriter(dos));
+			BedParser.writeSymmetry(bw, sym, seq);
+		} finally {
+			bw.flush();
+		}
+	}
+
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+		try {
+			return this.parse(dis, SingletonGenometryModel.getGenometryModel(), group, false, annot_type, false);
+		} catch (IOException ex) {
+			Logger.getLogger(BedParser.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+
+	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+		return new SeqSymMinComparator((BioSeq)seq);
+	}
+
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		SeqSpan span = sym.getSpan(seq);
+		return span.getMin();
+	}
+
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		SeqSpan span = sym.getSpan(seq);
+		return span.getMax();
+	}
+
+	public List<String> getFormatPrefList() {
+		return pref_list;
+	}
+
 
 	/** Returns "text/bed". */
 	public String getMimeType() { return "text/bed"; }

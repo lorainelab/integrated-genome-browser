@@ -159,7 +159,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph implements Label
 		Rectangle compbox = view.getComponentSizeRect();
 		if ((pixelbox.x < compbox.x) ||
 						((pixelbox.x + pixelbox.width) > (compbox.x + compbox.width))) {
-			pixelbox = GeometryUtils.intersection(compbox, pixelbox, pixelbox);
+			pixelbox = pixelbox.intersection(compbox);
 		}
 		if (OUTLINE_PIXELBOX) {
 			g.setColor(Color.yellow);

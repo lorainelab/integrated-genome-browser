@@ -379,7 +379,7 @@ public class TierGlyph extends SolidGlyph {
 
     Graphics g = view.getGraphics();
     Rectangle vbox = view.getPixelBox();
-    pixelbox = GeometryUtils.intersection(vbox, pixelbox, pixelbox);
+	pixelbox = pixelbox.intersection(vbox);
 
     if (middle_glyphs.size() == 0) { // no middle glyphs, so use fill color to fill entire tier
       if (style.getBackground() != null) {

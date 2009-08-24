@@ -147,6 +147,11 @@ public final class FeatureLoading {
 	 *  Then for each set of requests spawn a SwingWorker thread, with serial processing of each request in the set
 	 *     and finishing with a gviewer.setAnnotatedSeq() call on the event thread to revise main view to show new annotations
 	 *
+	 *
+	 * @param requests
+	 * @param update_display
+	 * @param gmodel
+	 * @param gviewer
 	 */
 	public static void processDas2FeatureRequests(
 					List<Das2FeatureRequestSym> requests,
@@ -165,9 +170,9 @@ public final class FeatureLoading {
 			Executor vexec = ThreadUtils.getPrimaryExecutor(version);
 			final Set<Das2FeatureRequestSym> request_set = entry.getValue();
 
-			SwingWorker worker = new SwingWorker() {
+			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-				public Object doInBackground() {
+				public Void doInBackground() {
 					try {
 					createDAS2ResultSyms(request_set, result_syms);
 					} catch (Exception ex) {
@@ -240,9 +245,9 @@ public final class FeatureLoading {
 
 		Executor vexec = ThreadUtils.getPrimaryExecutor(gFeature.gVersion.gServer);
 
-		SwingWorker worker = new SwingWorker() {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			public Object doInBackground() {
+			public Void doInBackground() {
 				try {
 				loadQuickLoadFeature(fileName, gFeature);
 				} catch (Exception ex) {

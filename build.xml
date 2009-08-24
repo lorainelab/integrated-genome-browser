@@ -160,6 +160,7 @@
 				<include name="jlfgr-1_0.jar"/>
 				<include name="myswing.jar"/>
 				<include name="image4j.jar" />
+				<include name="commons-codec-1.4.jar"/>
 			</zipgroupfileset>
 		</jar>
 	</target>

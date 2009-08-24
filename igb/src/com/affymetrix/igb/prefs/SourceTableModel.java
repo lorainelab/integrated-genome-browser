@@ -121,7 +121,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	private void changePreference(String existingDirectoryOrURL, GenericServer server) {
 
 		if (!existingDirectoryOrURL.equals(server.URL)) {
-			ServerList.removeServerFromPrefs(server.URL);
+			ServerList.removeServerFromPrefs(existingDirectoryOrURL);
 		}
 		ServerList.addServerToPrefs(server);
 		

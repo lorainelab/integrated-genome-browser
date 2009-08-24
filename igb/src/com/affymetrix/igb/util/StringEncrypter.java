@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -12,8 +14,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 public class StringEncrypter
 {
@@ -70,7 +71,7 @@ public class StringEncrypter
 
 	}
 
-	public String encrypt(String unencryptedString) throws EncryptionException {
+	public String encrypt(String unencryptedString) throws IllegalArgumentException  {
 		if (unencryptedString == null || unencryptedString.trim().length() == 0)
 			throw new IllegalArgumentException(
 			        "unencrypted string was null or empty");
@@ -78,17 +79,24 @@ public class StringEncrypter
 		try {
 			SecretKey key = keyFactory.generateSecret(keySpec);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
-			byte[] cleartext = unencryptedString.getBytes(UNICODE_FORMAT);
-			byte[] ciphertext = cipher.doFinal(cleartext);
+			
+			// encrypt
+	        byte[] encryptedBytes = cipher.doFinal(unencryptedString.getBytes("UTF-8"));
+	 
+	        // convert encrypted bytes into a base64 encoded string
+			Base64 encoder = new Base64();
+	        String encryptedString = new String(encoder.encode(encryptedBytes), "UTF-8");// for store use, so must convert to string
+	 
+			
+			return encryptedString;
 
-			BASE64Encoder base64encoder = new BASE64Encoder();
-			return base64encoder.encode(ciphertext);
 		} catch (Exception e) {
-			throw new EncryptionException(e);
+			Logger.getLogger(StringEncrypter.class.getName()).log(Level.SEVERE, "Unable to encrypt password", e);
+			return "";
 		}
 	}
 
-	public String decrypt(String encryptedString) throws EncryptionException {
+	public String decrypt(String encryptedString) throws IllegalArgumentException {
 		if (encryptedString == null || encryptedString.trim().length() <= 0)
 			throw new IllegalArgumentException(
 			        "encrypted string was null or empty");
@@ -96,23 +104,24 @@ public class StringEncrypter
 		try {
 			SecretKey key = keyFactory.generateSecret(keySpec);
 			cipher.init(Cipher.DECRYPT_MODE, key);
-			BASE64Decoder base64decoder = new BASE64Decoder();
-			byte[] cleartext = base64decoder.decodeBuffer(encryptedString);
-			byte[] ciphertext = cipher.doFinal(cleartext);
+			
+			// Convert the base64 encoded string into bytes
+			Base64 encoder = new Base64();
+			byte[] encryptedBytes = encoder.decode(encryptedString.getBytes("UTF-8"));
+			
+			//decrypt
+			byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+			
+			// Convert decrypted bytes into a String
+	        String decryptedString = new String(decryptedBytes, "UTF-8");
 
-			return bytes2String(ciphertext);
+			return decryptedString;
 		} catch (Exception e) {
-			throw new EncryptionException(e);
+			Logger.getLogger(StringEncrypter.class.getName()).log(Level.SEVERE, "Unable to decrypt password", e);
+			return "";
 		}
 	}
 
-	private static String bytes2String(byte[] bytes) {
-		StringBuffer stringBuffer = new StringBuffer();
-		for (int i = 0; i < bytes.length; i++) {
-			stringBuffer.append((char) bytes[i]);
-		}
-		return stringBuffer.toString();
-	}
 
 	public static class EncryptionException extends Exception {
 		public EncryptionException(Throwable t) {

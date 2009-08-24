@@ -23,7 +23,7 @@ import java.util.*;
  *  first in its own Map, then in its parent Map, then the parent's parent, etc.
  *  All keys and values must be String's.
  */
-public final class PropertyMap extends HashMap implements Map, Cloneable, XmlAppender {
+public final class PropertyMap extends HashMap<String, Object> implements Map<String, Object>, Cloneable, XmlAppender {
 
   private PropertyMap parentProperties;
   
@@ -64,11 +64,12 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return this.parentProperties;
   }
   
+	@Override
   public Object get(Object key) {
     return this.getProperty((String) key);
   }
     
-  ArrayList ancestors = new ArrayList(100);
+  ArrayList<PropertyMap> ancestors = new ArrayList<PropertyMap>(100);
 
   public Object getProperty(String key) {
     Object o = super.get(key);
@@ -84,7 +85,7 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return o;
   }
   
-  private boolean contains(List list, Object o) {
+  private boolean contains(List<PropertyMap> list, Object o) {
     for (int i=0; i<list.size(); i++) {
       if (list.get(i) == o) {
         return true;
@@ -93,7 +94,7 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return false;
   }
     
-  private Object getProperty(String key, int recur, List ancestors) {
+  private Object getProperty(String key, int recur, List<PropertyMap> ancestors) {
 
     if (contains(ancestors, this)) {
       System.out.println("WARNING: Caught an infinite loop!");
@@ -161,6 +162,7 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return c;
   }
   
+	@Override
   public Object clone() {
     PropertyMap clone = (PropertyMap) super.clone();
     // It does not seem necessary to clone the parent properties,
@@ -175,9 +177,9 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
   public static String PROP_ATT_VALUE = "value";
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
-    Iterator iter = this.keySet().iterator();
+    Iterator<String> iter = this.keySet().iterator();
     while (iter.hasNext()) {
-     String key = (String) iter.next();
+     String key = iter.next();
      Object value = this.getProperty(key);
      sb.append(indent).append('<').append(PROP_ELEMENT_NAME);
      XmlStylesheetParser.appendAttribute(sb, PROP_ATT_KEY, key);
@@ -187,12 +189,16 @@ public final class PropertyMap extends HashMap implements Map, Cloneable, XmlApp
     return sb;
   }
 
-  /** For diagnostic testing, appends the properties and the parent properties, etc. */
+  /** For diagnostic testing, appends the properties and the parent properties, etc.
+   * @param indent
+   * @param sb
+   * @return 
+   */
   public StringBuffer fullParentHeirarchy(String indent, StringBuffer sb) {
     sb.append(indent).append("<PROPERTIY_MAP>\n");
-    Iterator iter = this.keySet().iterator();
+    Iterator<String> iter = this.keySet().iterator();
     while (iter.hasNext()) {
-      String key = (String) iter.next();
+      String key = iter.next();
       Object value = this.getProperty(key);
       sb.append(indent + "  ").append("<PROPERTY ");
       XmlStylesheetParser.appendAttribute(sb, "key", key);

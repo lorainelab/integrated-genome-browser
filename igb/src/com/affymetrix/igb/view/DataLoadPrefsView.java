@@ -457,12 +457,19 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		addServerB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				// Convert password into clear text
+                String passwordText = new String("");
+                for (int i = 0; i < serverPasswordTF.getPassword().length; i++)
+                {
+                	passwordText += serverPasswordTF.getPassword()[i];
+                }
+                
 				// Add the server to IGB
 				addServer(serverTF.getText(),
 						(String) serverTypeCB.getSelectedItem(),
 						serverNameTF.getText(),
 						serverLoginTF.getText(),
-						serverPasswordTF.getPassword().toString());
+						passwordText);
 
 				// New clear out the server fields in the add panel
 				serverTF.setText("");
@@ -536,17 +543,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		removeServerButton.setEnabled(false);
 
 		boolean authEnabled = (login != null && password != null) && !(login.isEmpty() || password.isEmpty());
-		
-		// Encrypt the password
-		String passwordEncrypted = "";
-		StringEncrypter encrypter = null;
-		try {
-			encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-			passwordEncrypted = encrypter.encrypt(password);
-		} catch (Exception e) {
-		}
-
-		ServerList.addServerToPrefs(DirectoryOrURL, serverName, ServerType.valueOf(serverType), authEnabled, login, passwordEncrypted, true);
+		ServerList.addServerToPrefs(DirectoryOrURL, serverName, ServerType.valueOf(serverType), authEnabled, login, password, true);
 
 		serverDialog(serverName, DirectoryOrURL);
 	}

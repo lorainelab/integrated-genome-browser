@@ -234,6 +234,9 @@ public final class ServerList {
 		if (authEnabled) {
 			node.put("login", login);
 			node.put("password", encrypt(password));
+		} else {
+			node.remove("login");
+			node.remove("password");
 		}
 
 		node.putBoolean("enabled", enabled);

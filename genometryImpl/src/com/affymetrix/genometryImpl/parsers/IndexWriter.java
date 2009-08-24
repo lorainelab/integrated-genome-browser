@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,6 +27,15 @@ public interface IndexWriter {
 	 * @throws IOException
 	 */
 	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException;
+
+	/**
+	 * Output simple BED format for name search.
+	 * @param sym
+	 * @param seq
+	 * @param out
+	 * @throws IOException
+	 */
+	public void outputSimpleBedFormat(SeqSymmetry sym, MutableAnnotatedBioSeq seq, Writer out) throws IOException;
 
 	/**
 	 * Parse the given stream, returning a list of SeqSymmetries.

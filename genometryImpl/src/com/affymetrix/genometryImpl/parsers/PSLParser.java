@@ -619,5 +619,13 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	public String getMimeType() {
 		return "text/plain";
 	}
+
+	public void outputSimpleBedFormat(SeqSymmetry sym, MutableAnnotatedBioSeq seq, Writer out) throws IOException {
+		out.write(seq.getID());
+		out.write('\t');
+		out.write(Integer.toString(this.getMin(sym, seq)));
+		out.write('\t');
+		out.write(Integer.toString(this.getMax(sym, seq)));
+	}
 }
 

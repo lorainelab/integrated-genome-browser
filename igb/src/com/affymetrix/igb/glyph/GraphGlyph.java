@@ -22,7 +22,7 @@ import java.util.*;
 import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;

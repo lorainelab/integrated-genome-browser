@@ -15,9 +15,6 @@ package com.affymetrix.igb.glyph;
 
 import java.util.*;
 
-import com.affymetrix.genoviz.bioviews.*;
-
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;

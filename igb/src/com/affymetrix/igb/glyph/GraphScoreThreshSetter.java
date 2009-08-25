@@ -13,9 +13,9 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;

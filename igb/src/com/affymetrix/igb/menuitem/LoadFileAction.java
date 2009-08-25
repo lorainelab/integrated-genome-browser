@@ -12,6 +12,9 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -30,7 +33,6 @@ import javax.swing.*;
 
 import org.xml.sax.InputSource;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
@@ -407,7 +409,7 @@ public final class LoadFileAction {
 		} else if (lcname.endsWith(".bgn")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));
 			BgnParser parser = new BgnParser();
-			parser.parse(str, annot_type, selected_group, -1, true, null);
+			parser.parse(str, annot_type, selected_group, true, null);
 			return input_seq;
 		} else if (lcname.endsWith(".brs")) {
 			BrsParser parser = new BrsParser();
@@ -532,7 +534,7 @@ public final class LoadFileAction {
 		if (syms != null && !syms.isEmpty()) {
 			SeqSymmetry fsym = syms.get(0);
 			SeqSpan fspan = fsym.getSpan(0);
-			first_seq = (MutableAnnotatedBioSeq) fspan.getBioSeq();
+			first_seq = fspan.getBioSeq();
 		}
 		return first_seq;
 	}

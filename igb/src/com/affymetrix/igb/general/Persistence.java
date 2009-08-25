@@ -1,9 +1,9 @@
 package com.affymetrix.igb.general;
 
 import java.util.prefs.Preferences;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;

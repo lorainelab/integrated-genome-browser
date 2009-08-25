@@ -1,10 +1,10 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometry.MutableSeqSymmetry;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;

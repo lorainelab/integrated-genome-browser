@@ -31,7 +31,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 //import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
@@ -456,18 +455,16 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
 		}
-	
+		SeqSpan span = sym.getSpan(seq);
+		if (span == null) {
+			return;
+		}
+
 		if (sym instanceof UcscBedSym) {
 			UcscBedSym bedsym = (UcscBedSym) sym;
 			if (seq == bedsym.getBioSeq()) {
 				bedsym.outputBedFormat(out);
 			}
-			return;
-		}
-		
-
-		SeqSpan span = sym.getSpan(seq);
-		if (span == null) {
 			return;
 		}
 
@@ -564,7 +561,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "BED" format.
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
 		if (DEBUG){
 			System.out.println("in BedParser.writeAnnotations()");
@@ -573,7 +570,9 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		Writer bw = null;
 		try {
 			bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			for (SeqSymmetry sym : syms) {
+			Iterator iterator = syms.iterator();
+			while (iterator.hasNext()) {
+				SeqSymmetry sym = (SeqSymmetry)iterator.next();
 				writeSymmetry(bw, sym, seq);
 			}
 			bw.flush();
@@ -581,6 +580,8 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		catch (Exception ex) {
 			ex.printStackTrace();
 			success = false;
+		} finally {
+			GeneralUtils.safeClose(bw);
 		}
 		return success;
 	}
@@ -626,12 +627,5 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	/** Returns "text/bed". */
 	public String getMimeType() { return "text/bed"; }
 
-	public void outputSimpleBedFormat(SeqSymmetry sym, MutableAnnotatedBioSeq seq, Writer out) throws IOException {
-		out.write(seq.getID());
-		out.write('\t');
-		out.write(Integer.toString(this.getMin(sym, seq)));
-		out.write('\t');
-		out.write(Integer.toString(this.getMax(sym, seq)));
-	}
 }
 

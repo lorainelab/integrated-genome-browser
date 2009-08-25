@@ -524,15 +524,6 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBi
 	public List<String> getFormatPrefList() {
 		return BrsParser.pref_list;
 	}
-	
-	public void outputSimpleBedFormat(SeqSymmetry sym, MutableAnnotatedBioSeq seq, Writer out) throws IOException {
-		out.write(seq.getID());
-		out.write('\t');
-		out.write(Integer.toString(this.getMin(sym, seq)));
-		out.write('\t');
-		out.write(Integer.toString(this.getMax(sym, seq)));
-	}
-
 
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations

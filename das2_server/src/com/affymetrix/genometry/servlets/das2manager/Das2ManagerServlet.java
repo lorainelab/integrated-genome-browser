@@ -33,7 +33,8 @@ import org.dom4j.io.XMLWriter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import com.affymetrix.genoviz.util.GeneralUtils;
+
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;

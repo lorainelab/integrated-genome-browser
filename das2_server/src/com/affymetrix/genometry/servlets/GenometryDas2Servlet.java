@@ -18,10 +18,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -326,7 +325,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					loadGenomesFromDB();				  
 				} else {
 					System.out.println("Loading genomes from file system....");
-			loadGenomes();
+					loadGenomes(data_root, organisms, org_order_filename);
 				}
 
 			ServerUtils.printGenomes(organisms);
@@ -339,6 +338,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		date_init_string = date_formatter.format(new Date(date_initialized));
 		System.out.println("GenometryDas2Servlet " + RELEASE_VERSION + ", dir: '" + data_root + "', url: '" + xml_base + "'");
 	}
+
 
 	/**
 	 * Attempts to load the genometry_server_dir, maintainer_email, and the
@@ -569,7 +569,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *     else try to parse and annotate seqs based on file suffix (.xyz)
 	 * @throws java.io.IOException
 	 */
-	private final void loadGenomes() throws IOException {
+	private final void loadGenomes(String dataRoot,
+			Map<String, List<AnnotatedSeqGroup>> organisms,
+			String org_order_filename) throws IOException {
+
 		// get list of all directories in data root
 		// each directory corresponds to a different organism
 		//    organism_name = directory name
@@ -582,7 +585,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//           if directory, recurse in
 		//           else try to parse and annotate seqs based on file suffix (.xyz)
 
-		File top_level = new File(data_root);
+		File top_level = new File(dataRoot);
 		if (!top_level.exists() && !top_level.isDirectory()) {
 			throw new IOException("'" + top_level + "' does not exist or is not a directory");
 		}
@@ -590,7 +593,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		FileFilter filter = new HiddenFileFilter(new DirectoryFilter());
 		for (File org : top_level.listFiles(filter)) {
 			for (File version : org.listFiles(filter)) {
-				loadGenome(version, org.getName());
+				loadGenome(version, org.getName(), dataRoot);
 			}
 		}
 
@@ -598,7 +601,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		ServerUtils.sortGenomes(organisms, org_order_filename);
 	}
 
-	private final void loadGenome(File genome_directory, String organism) throws IOException {
+	private final void loadGenome(File genome_directory, String organism, String dataRoot) throws IOException {
 		// first, create MutableAnnotatedSeqs for each chromosome via ChromInfoParser
 		String genome_version = genome_directory.getName();
 
@@ -624,10 +627,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String,String> graph_name2file = genome2graphfiles.get(genome);
-		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file);
+		ServerUtils.loadAnnotsFromFile(genome_directory, genome, null, graph_name2dir, graph_name2file, dataRoot);
 
 		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
+
+		// Garbage collection after initialization
+		// only needed for debugging purposes (to see how much memory is actually used in initialization)
+		System.gc();
 	}
 
 	
@@ -760,19 +767,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		String format = "";
 		boolean all_params_known = true;
 
-		for (int i = 0; i < query_array.length; i++) {
-			String tagval = query_array[i];
-			String[] tagval_array = tagval_splitter.split(tagval);
-			String tag = tagval_array[0];
-			String val = tagval_array[1];
-			System.out.println("tag = " + tag + ", val = " + val);
-			if (tag.equals("format")) {
-				formats.add(val);
-			} else if (tag.equals("range")) {
-				ranges.add(val);
-			} else {
-				all_params_known = false;
-		}
+
+		splitSequenceQuery(GeneralUtils.URLDecode(request.getQueryString()), formats, ranges);
+
+		if (ranges.size() > 1) {
+			System.out.println("too many range params, aborting");
+			return;
 		}
 
 		AnnotatedSeqGroup genome = getGenome(request);
@@ -1113,7 +1113,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			
       
 			List<String> formats = types_hash.get(feat_type);
-			String feat_type_encoded = URLEncoder.encode(feat_type);
+			String feat_type_encoded = GeneralUtils.URLEncode(feat_type);
 			// URLEncoding replaces slashes, want to keep those...
 			feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
 			/*if (DEBUG) {
@@ -1184,7 +1184,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			
 			} else {
 				System.out.println("Loading genomes from file system....");
-				this.loadGenomes();
+				loadGenomes(data_root, organisms, org_order_filename);
 			}
 		
 			
@@ -1305,7 +1305,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Map<String, ArrayList<String>> props = new HashMap<String, ArrayList<String>>();
 
 			boolean known_query =
-					splitFeaturesQuery(URLDecoder.decode(query), formats, types, segments, overlaps, insides, excludes, names, coordinates, links, notes, props);
+					splitFeaturesQuery(GeneralUtils.URLDecode(query), formats, types, segments, overlaps, insides, excludes, names, coordinates, links, notes, props);
 
 			if (formats.size() == 1) {
 				output_format = formats.get(0);
@@ -1375,16 +1375,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					outseq = overlap_span.getBioSeq();
 
 					/** this is the main call to retrieve symmetries meeting query constraints */
-					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
-
-
-					if (result == null) {
-						result = Collections.<SeqSymmetry>emptyList();
-					}
-
-					if (inside_span != null) {
-						result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
-					}
+					result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type, inside_span);
 				}
 			} else {
 				// any query combination not recognized above may  be correct based on DAS/2 spec
@@ -1567,7 +1558,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		
 	private static final String getInternalType(String full_type_uri, AnnotatedSeqGroup genome) {
-		String query_type = URLDecoder.decode(full_type_uri);
+		String query_type = GeneralUtils.URLDecode(full_type_uri);
 		// using end of URI for internal typeid if type is given as full URI
 		//    (as it should according to DAS/2 spec)
 		//    special-case exception is when need to know full URL for locating graph data,

@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.parsers;
 
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.IGBConstants;
 import java.io.*;
 import java.util.*;

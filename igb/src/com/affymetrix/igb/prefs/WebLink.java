@@ -1,6 +1,6 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import static com.affymetrix.igb.IGBConstants.UTF8;
 
 public final class WebLink {
 
@@ -232,7 +234,7 @@ public final class WebLink {
 		}
 		String encoded_id = "";
 		try {
-			encoded_id = URLEncoder.encode(id, "UTF-8");
+			encoded_id = URLEncoder.encode(id, UTF8);
 		} catch (UnsupportedEncodingException ex) {
 			Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -255,7 +257,7 @@ public final class WebLink {
 		if (group != null) {
 			String encoded_id = "";
 			try {
-				encoded_id = URLEncoder.encode(group.getID(), "UTF-8");
+				encoded_id = URLEncoder.encode(group.getID(), UTF8);
 			} catch (UnsupportedEncodingException ex) {
 				Logger.getLogger(WebLink.class.getName()).log(Level.SEVERE, null, ex);
 			}

@@ -12,6 +12,9 @@
 */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -21,8 +24,7 @@ import affymetrix.calvin.data.*;
 import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
@@ -426,7 +428,7 @@ public final class ChpParser {
 	  match_count++;
 	  SeqSymmetry prev_sym = syms.get(0);
 	  SeqSpan span = prev_sym.getSpan(0);
-	  MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	  MutableAnnotatedBioSeq aseq = span.getBioSeq();
 	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	  isym.setID(id);
 	  OneScoreEntry sentry = new OneScoreEntry(isym, val);
@@ -464,7 +466,7 @@ public final class ChpParser {
 	  for (int k=0; k<scount; k++) {
 	    SeqSymmetry prev_sym = syms.get(k);
 	    SeqSpan span = prev_sym.getSpan(0);
-	    MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)span.getBioSeq();
+	    MutableAnnotatedBioSeq aseq = span.getBioSeq();
 	    IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	    isym.setID(id);
 	    OneScoreEntry sentry = new OneScoreEntry(isym, val);

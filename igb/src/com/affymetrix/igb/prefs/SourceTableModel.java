@@ -1,25 +1,16 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometry.util.LoadUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.util.StringEncrypter;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.view.DataLoadPrefsView;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
 
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
+
 
 /**
  *
@@ -27,18 +18,10 @@ import javax.swing.table.TableColumn;
  * @version $Id$
  */
 public final class SourceTableModel extends AbstractTableModel implements PreferenceChangeListener {
-	static final long serialVersionUID = 1l;
-	static final String[] headings = {"Name", "Type", "URL", "Login", "Password", "Enabled"};
-	
-	public static final int NAME     = 0;
-	public static final int TYPE     = 1;
-	public static final int URL      = 2;
-	public static final int LOGIN    = 3;
-	public static final int PASSWORD = 4;
-	public static final int ENABLED  = 5;
-	
-	
+	private static final long serialVersionUID = 1l;
 	private List<GenericServer> servers = new ArrayList<GenericServer>();
+
+	public static enum SourceColumn { Name, Type, URL, Login, Password, Enabled };
 
 	public SourceTableModel() {
 		init();
@@ -54,70 +37,61 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		return servers.size();
 	}
 	
-    public Class getColumnClass(int c) {
-		switch (c) {
-		case ENABLED:
-			return Boolean.class;
-		case NAME:
-			return String.class;
-		case TYPE:
-			return String.class;
-		case URL:
-			return String.class;
-		case LOGIN:
-			return String.class;
-		case PASSWORD:
-			return String.class;
-		default:
-			throw new IllegalArgumentException("col " + c + " is out of range");
-	}
+	@Override
+    public Class<?> getColumnClass(int c) {
+		switch (SourceColumn.valueOf(this.getColumnName(c))) {
+			case Enabled:
+				return Boolean.class;
+			default:
+				return String.class;
+		}
     }
 
 
-	public int getColumnCount() { return 6; }
+	public int getColumnCount() { return SourceColumn.values().length; }
 
 	@Override
-	public String getColumnName(int col) { return headings[col]; }
+	public String getColumnName(int col) { return SourceColumn.values()[col].toString(); }
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch (columnIndex) {
-			case ENABLED:
+		switch (SourceColumn.valueOf(this.getColumnName(columnIndex))) {
+			case Enabled:
 				return servers.get(rowIndex).enabled;
-			case NAME:
+			case Name:
 				return servers.get(rowIndex).serverName;
-			case TYPE:
+			case Type:
 				return servers.get(rowIndex).serverType;
 			case URL:
 				return servers.get(rowIndex).URL;
-			case LOGIN:
+			case Login:
 				return servers.get(rowIndex).login;
-			case PASSWORD:
+			case Password:
 				return servers.get(rowIndex).password != null && !servers.get(rowIndex).password.equals("") ? "****" : ""; 				
 			default:
 				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
 		}
 	}
 
+	@Override
     public boolean isCellEditable(int row, int col) {
-        return true;
+		SourceColumn c = SourceColumn.valueOf(this.getColumnName(col));
+		return c != SourceColumn.Type && ServerList.inServerPrefs(servers.get(row).URL);
     }
     
 
+	@Override
     public void setValueAt(Object value, int row, int col) {
         GenericServer server = servers.get(row);
         String existingDirectoryOrURL = server.URL;
-        String existingServerType = server.serverType.toString();
         
-        switch (col) {
-        case ENABLED:
+        switch (SourceColumn.valueOf(this.getColumnName(col))) {
+        case Enabled:
 			server.enabled = Boolean.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case NAME:
+			break;
+		case Name:
 			server.serverName = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case TYPE:
+			break;
+		case Type:
 			if (server.serverType.equals(LoadUtils.ServerType.QuickLoad)) {
 				server.serverType = LoadUtils.ServerType.QuickLoad;
 			} else if  (server.serverType.equals(LoadUtils.ServerType.DAS)) {
@@ -125,78 +99,36 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 			} else if  (server.serverType.equals(LoadUtils.ServerType.DAS2)) {
 				server.serverType = LoadUtils.ServerType.DAS2;
 			}
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
+			break;
 		case URL:
 			server.URL = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case LOGIN:
+			break;
+		case Login:
 			server.login = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
-		case PASSWORD:
+			break;
+		case Password:
 			server.password = String.class.cast(value);
-	        changePreference(existingDirectoryOrURL, existingServerType, server);
-			return;
+			break;
 		
 		default:
 			throw new IllegalArgumentException("columnIndex " + col + " is out of range");
         }
         
-
+		changePreference(existingDirectoryOrURL, server);
     }
     
 
-	private void changePreference(String existingDirectoryOrURL, String existingServerType, GenericServer server) {
+	private void changePreference(String existingDirectoryOrURL, GenericServer server) {
 
-		Preferences prefServers = UnibrowPrefsUtil.getServersNode();
-		Preferences individualServerPref = prefServers.node(existingServerType);
-		try {
-			// Remove the entry from the key-value pair
-			individualServerPref.remove(URLEncoder.encode(existingDirectoryOrURL, "UTF-8"));
-			
-			// Now add the key-value pair of URL and server name
-			individualServerPref.put(URLEncoder.encode(server.URL, "UTF-8"), server.serverName);
-			
-			// Under a child node called 'login' add the key-value pair of URL and login
-			individualServerPref.node("login").put(URLEncoder.encode(server.URL, "UTF-8"), server.login != null ? server.login : "");
-
-			// Encrypt the password
-			String passwordEncrypted = "";
-			StringEncrypter encrypter = null;
-			try {
-				encrypter = new StringEncrypter(StringEncrypter.DESEDE_ENCRYPTION_SCHEME);
-				passwordEncrypted = encrypter.encrypt(server.password != null ? server.password : "");
-			} catch (Exception e) {
-			}
-			
-			// Under a child node called 'password' add the key-value pair of URL and encrypted password
-			individualServerPref.node("password").put(URLEncoder.encode(server.URL, "UTF-8"), passwordEncrypted);
-
-			// Under a child node called 'enabled' add the key-value pair of URL and enabled boolean
-			individualServerPref.node("enabled").put(URLEncoder.encode(server.URL, "UTF-8"), new Boolean(server.enabled).toString());
-			
-			individualServerPref.flush();
-			
-		} catch (BackingStoreException ex) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, e);
+		if (!existingDirectoryOrURL.equals(server.URL)) {
+			ServerList.removeServerFromPrefs(existingDirectoryOrURL);
 		}
+		ServerList.addServerToPrefs(server);
+		
 		this.fireTableDataChanged();
 		
 		
 	}
-	
-
-	private GenericServer getServer(int row) {
-		return servers.get(row);
-	}
-
-
-
-
 
 	public void preferenceChange(PreferenceChangeEvent evt) {
 		/* It is easier to rebuild than try and find out what changed */

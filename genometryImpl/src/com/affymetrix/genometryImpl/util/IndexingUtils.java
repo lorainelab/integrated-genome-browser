@@ -4,11 +4,14 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -46,7 +49,8 @@ public class IndexingUtils {
 		public File file;
 		public int[] min;
 		public int[] max;
-		//public String[] id;
+		public boolean[] forward;
+		public String[] id;
 		public long[] filePos;
 		public String typeName;
 		public IndexWriter iWriter;
@@ -54,7 +58,8 @@ public class IndexingUtils {
 		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
 			min = new int[resultSize];
 			max = new int[resultSize];
-			//id = new String[resultSize];
+			forward = new boolean[resultSize];
+			id = new String[resultSize];
 			filePos = new long[resultSize + 1];
 			this.file = file;
 			this.typeName = typeName;
@@ -69,7 +74,7 @@ public class IndexingUtils {
 		public List<String> id;
 		public List<Long> filePos;
 		public DataOutputStream symDos;	// output stream for all of the symmetries
-		public IndexWriter iWriter;		// BPS writer
+		public static IndexWriter iWriter = new BedParser();
 
 		public IndexedIDs(String dataRoot, AnnotatedSeqGroup group) throws FileNotFoundException {
 			this(dataRoot,group,
@@ -78,10 +83,9 @@ public class IndexingUtils {
 
 		public IndexedIDs(String dataRoot, AnnotatedSeqGroup group, DataOutputStream symDos) {
 			this.id = new ArrayList<String>(1000);
-				this.filePos = new ArrayList<Long>(1000);
-				this.filePos.add(new Long(0));
+			this.filePos = new ArrayList<Long>(1000);
+			this.filePos.add(new Long(0));
 			this.symDos = symDos;
-			this.iWriter = new BedParser();
 		}
 
 		public void writeIDFile(String dataRoot, AnnotatedSeqGroup originalGenome) {
@@ -90,11 +94,13 @@ public class IndexingUtils {
 				String IDFileName = indexedGenomeIDFileName(dataRoot, originalGenome);
 				IDdos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(IDFileName)));
 				int symSize = this.id.size();
+				IDdos.writeInt(symSize);
 				for (int i = 0; i < symSize; i++) {
 					IDdos.writeChars(this.id.get(i));
-					IDdos.writeLong(this.filePos.get(i).longValue());
+					IDdos.writeLong(this.filePos.get(i+1).longValue());
 				}
-				IDdos.writeLong(this.filePos.get(symSize).longValue());
+				//IDdos.writeLong(this.filePos.get(symSize).longValue());
+				//originalGenome.setIndexedIDFileName(IDFileName);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {
@@ -170,11 +176,18 @@ public class IndexingUtils {
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, iIDs, indexedAnnotationsFileName);
 		}
 
-		iIDs.writeIDFile(dataRoot, originalGenome);
+		//iIDs.writeIDFile(dataRoot, originalGenome);
 	}
 
 
-	public static List<SeqSymmetry> findSymsByName(String fileName, Pattern regex, IndexWriter iWriter) {
+	/**
+	 * Find symmetries that have IDs matching regex.  Return no more than resultLimit symmetries.
+	 * @param fileName -- of indexed symmetries (done by genome)
+	 * @param regex
+	 * @param resultLimit
+	 * @return
+	 */
+	public static List<SeqSymmetry> findSymsByName(String fileName, Pattern regex, int resultLimit) {
 		final Matcher matcher = regex.matcher("");
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
@@ -190,15 +203,20 @@ public class IndexingUtils {
 
 			int symsSize = dis.readInt();	// determine number of rows.
 			long oldFilePos = 0;
+			int resultCount = 0;
 			for (int i=0;i<symsSize;i++) {
 				String id = dis.readUTF();
 				long newFilePos = dis.readLong();
 				matcher.reset(id);
 				if (matcher.matches()) {
-					SeqSymmetry sym = getSingleSymmetry(fis, oldFilePos, newFilePos, iWriter, dis, dis2);
+					/*SeqSymmetry sym = getSingleSymmetry(fis, oldFilePos, newFilePos, IndexedIDs.iWriter, dis, dis2);
 					if (sym != null) {
 						results.add(sym);
-					}
+						resultCount++;
+						if (resultCount == resultLimit) {
+							break;
+						}
+					}*/
 				}
 				oldFilePos = newFilePos;
 			}
@@ -213,12 +231,81 @@ public class IndexingUtils {
 		return results;
 	}
 
-	private static SeqSymmetry getSingleSymmetry(FileInputStream fis, long oldFilePos, long newFilePos, IndexWriter iWriter, DataInputStream dis, DataInputStream dis2) {
+	/**
+	 * Find symmetries that have IDs matching regex.  Return no more than resultLimit symmetries.
+	 * @param fileName -- of indexed symmetries (done by genome)
+	 * @param regex
+	 * @param resultLimit
+	 * @return
+	 */
+	public static List<SeqSymmetry> findSymsByName(AnnotatedSeqGroup genome, Pattern regex, int resultLimit) {
+		final Matcher matcher = regex.matcher("");
+		//FileInputStream fis = null;
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(resultLimit);
+
+		int resultCount = 0;
+		for (BioSeq seq : genome.getSeqList()) {
+			if (resultCount == resultLimit) {
+				break;
+			}
+			for (String type : seq.getIndexedTypeList()) {
+				if (resultCount == resultLimit) {
+					break;
+				}
+				IndexedSyms iSyms = seq.getIndexedSym(type);
+				int symSize = iSyms.id.length;
+				if (symSize == 0) {
+					continue;
+				}
+				//try {
+					//fis = new FileInputStream(iSyms.file);
+					for (int i = 0; i < symSize; i++) {
+						String id = iSyms.id[i];
+						matcher.reset(id);
+						if (!matcher.matches()) {
+							continue;
+						}
+
+						SimpleSymWithProps sym = new SimpleSymWithProps();
+						sym.setID(id);
+						if (iSyms.forward[i]) {
+							sym.addSpan(new SimpleSeqSpan(iSyms.min[i],iSyms.max[i], seq));
+						} else {
+							sym.addSpan(new SimpleSeqSpan(iSyms.max[i],iSyms.min[i], seq));
+						}
+						results.add(sym);
+
+						/*SeqSymmetry sym = getSingleSymmetry(
+								fis, iSyms.filePos[i], iSyms.filePos[i + 1], iSyms.iWriter);
+						if (sym != null) {
+							results.add(sym);*/
+							resultCount++;
+							if (resultCount == resultLimit) {
+								break;
+							}
+						//}
+					}
+				/*} catch (Exception ex) {
+					ex.printStackTrace();
+					continue;
+				}*/ /*finally {
+					GeneralUtils.safeClose(fis);
+				}*/
+			}
+		}
+
+		return results;
+	}
+
+
+
+	private static SeqSymmetry getSingleSymmetry(FileInputStream fis, long oldFilePos, long newFilePos, IndexWriter iWriter) {
 		// Get the symmetry; it's from oldFilePos to newFilePos.
 		byte[] bytes = IndexingUtils.readBytesFromFile(fis, oldFilePos, (int) (newFilePos - oldFilePos));
 		ByteArrayInputStream newIstr = new ByteArrayInputStream(bytes);
+		DataInputStream dis = null;
 		try {
-			dis2 = new DataInputStream(newIstr);
+			dis = new DataInputStream(newIstr);
 			@SuppressWarnings(value = "unchecked")
 			List<SeqSymmetry> syms = iWriter.parse(dis, "", null);
 			if (syms != null && !syms.isEmpty()) {
@@ -226,7 +313,7 @@ public class IndexingUtils {
 			}
 			return null;
 		} finally {
-			GeneralUtils.safeClose(dis2);
+			GeneralUtils.safeClose(dis);
 		}
 	}
 
@@ -282,13 +369,17 @@ public class IndexingUtils {
 			baos.reset();
 
 			// add to iIDS
-			iIDs.id.add(sym.getID());
-			long cumulativeFilePos = buf.length + iIDs.filePos.get(iIDs.filePos.size()-1);
-			iIDs.filePos.add(new Long(cumulativeFilePos));
+			/*if (sym.getID() != null) {
+				iIDs.id.add(sym.getID());
+				long cumulativeFilePos = buf.length + iIDs.filePos.get(iIDs.filePos.size()-1);
+				iIDs.filePos.add(new Long(cumulativeFilePos));
+			}*/
 
 			// add to iSyms, and advance index.
+			iSyms.id[index] = sym.getID();
 			iSyms.min[index] = iWriter.getMin(sym, seq);
 			iSyms.max[index] = iWriter.getMax(sym, seq);
+			iSyms.forward[index] = sym.getSpan(seq).isForward();
 			currentFilePos += buf.length;
 			index++;
 			iSyms.filePos[index] = currentFilePos;
@@ -326,11 +417,11 @@ public class IndexingUtils {
 			for (SeqSymmetry sym : syms) {
 				iSymWriter.writeSymmetry(sym, seq, dos);	// write out interval<->symmetries
 			}
-			if (iIDs.symDos != null) {
+			/*if (iIDs.symDos != null) {
 				for (SeqSymmetry sym : syms) {
 					iIDWriter.writeSymmetry(sym, seq, iIDs.symDos);	// write out ID<->symmetries to genome file
 				}
-			}
+			}*/
 			if (iSymWriter instanceof PSLParser && indexesFileName.toLowerCase().endsWith(".link.psl")) {
 				writeAdditionalLinkPSLIndex(indexesFileName, syms, seq, iSyms.typeName);
 			}
@@ -465,6 +556,46 @@ public class IndexingUtils {
 			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		return contentsOnly;
+	}
+
+	// special case for link.psl files
+	// we need to append the track name, and the probesets
+	static ByteArrayInputStream readAdditionalLinkPSLIndex(
+			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
+		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
+		secondIndexesFileName += ".link2.psl";
+
+		File secondIndexesFile = new File(secondIndexesFileName);
+		int bytes2Len = (int) secondIndexesFile.length();
+		byte[] bytes0 = PSLParser.trackLine(annot_type, "Consensus Sequences").getBytes();
+		// Determine overall length
+		int bytes0Len = bytes0.length;
+		int bytes1Len = bytes1.length;
+		byte[] combinedByteArr = new byte[bytes0Len + bytes1Len + bytes2Len];
+
+		// Copy in arrays.
+		// copy 0th byte array (trackLine)
+		System.arraycopy(bytes0, 0, combinedByteArr, 0, bytes0Len);
+		bytes0 = null;	// now unused
+
+		// copy 1st byte array (consensus syms)
+		System.arraycopy(bytes1, 0, combinedByteArr, bytes0Len, bytes1Len);
+		bytes1 = null;	// now unused
+
+		// copy 2nd byte array (probeset syms)
+		FileInputStream fis = null;
+		byte[] bytes2 = null;
+		try {
+			fis = new FileInputStream(secondIndexesFileName);
+			bytes2 = IndexingUtils.readBytesFromFile(
+					fis, 0, bytes2Len);
+		} finally {
+			GeneralUtils.safeClose(fis);
+		}
+		System.arraycopy(bytes2, 0, combinedByteArr, bytes0Len + bytes1Len, bytes2Len);
+		bytes2 = null;	// now unused
+
+		return new ByteArrayInputStream(combinedByteArr);
 	}
 
 	/**

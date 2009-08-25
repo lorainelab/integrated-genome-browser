@@ -352,7 +352,6 @@ public abstract class ServerUtils {
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
 			graph_name2dir.put(graph_name, file_path);
 		} else {
-			//System.out.println("checking for annotations in directory: " + current_file);
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
 			Arrays.sort(child_files);
 			for (File child_file : child_files) {
@@ -362,23 +361,17 @@ public abstract class ServerUtils {
 	}
 
 	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
-		// GAH 11-2006
-		//   need to enhance this to support multiple name parameters OR'd together
-		//   DAS/2 specification defines glob-style searches:
-		//   The string searches may be exact matches, substring, prefix or suffix searches.
-		//   The query type depends on if the search value starts and/or ends with a '*'.
-		//
-		//    ABC -- field exactly matches "ABC"
-		//    *ABC -- field ends with "ABC"
-		//    ABC* -- field starts with "ABC"
-		//    *ABC* -- field contains the substring "ABC"
+		int resultLimit = 10000;
+
 		boolean glob_start = name.startsWith("*");
 		boolean glob_end = name.endsWith("*");
 
 		List<SeqSymmetry> result = null;
+		List<SeqSymmetry> indexedResult = null;
 		Pattern name_pattern = null;
+		String name_regex = name;
 		if (glob_start || glob_end) {
-			String name_regex = name.toLowerCase();
+			//name_regex = name.toLowerCase();
 			if (glob_start) {
 				// do replacement of first "*" with ".*" ?
 				name_regex = ".*" + name_regex.substring(1);
@@ -387,15 +380,31 @@ public abstract class ServerUtils {
 				// do replacement of last "*" with ".*" ?
 				name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
 			}
-			System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
-			name_pattern = Pattern.compile(name_regex);
-			result = genome.findSyms(name_pattern);
-			//	   Collections.sort(sortedSyms, new SeqSymIdComparator());
-			System.out.println("!!!! regex matches: " + result.size());
+			
 		} else {
 			// ABC -- field exactly matches "ABC"
-			result = genome.findSyms(name);
+			name_regex = "^" + name.toLowerCase() + "$";
+			//result = genome.findSyms(name);
 		}
+		if (DEBUG) {
+			System.out.println("name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
+		}
+		name_pattern = Pattern.compile(name_regex, Pattern.CASE_INSENSITIVE);
+		result = genome.findSyms(name_pattern);
+
+		if (DEBUG) {
+			System.out.println("non-indexed regex matches: " + result.size());
+		}
+		//if (genome.getIndexedIDFileName() != null) {
+		indexedResult = IndexingUtils.findSymsByName(genome, name_pattern, resultLimit);
+		if (indexedResult != null) {
+			result.addAll(indexedResult);
+		}
+		//}
+		if (DEBUG) {
+			System.out.println("total regex matches: " + result.size());
+		}
+
 		return result;
 	}
 
@@ -545,7 +554,7 @@ public abstract class ServerUtils {
 
 			if (iSyms.iWriter instanceof PSLParser && iSyms.file.getName().endsWith(".link.psl")) {
 				String indexesFileName = iSyms.file.getAbsolutePath();
-				newIstr = readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
+				newIstr = IndexingUtils.readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
 			} else {
 				newIstr = new ByteArrayInputStream(bytes);
 			}
@@ -564,45 +573,7 @@ public abstract class ServerUtils {
 	}
 
 
-	// special case for link.psl files
-	// we need to append the track name, and the probesets
-	private static ByteArrayInputStream readAdditionalLinkPSLIndex(
-			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
-		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
-		secondIndexesFileName += ".link2.psl";
-		
-		File secondIndexesFile = new File(secondIndexesFileName);
-		int bytes2Len = (int) secondIndexesFile.length();
-		byte[] bytes0 = PSLParser.trackLine(annot_type, "Consensus Sequences").getBytes();
-		// Determine overall length
-		int bytes0Len = bytes0.length;
-		int bytes1Len = bytes1.length;
-		byte[] combinedByteArr = new byte[bytes0Len + bytes1Len + bytes2Len];
-
-		// Copy in arrays.
-		// copy 0th byte array (trackLine)
-		System.arraycopy(bytes0, 0, combinedByteArr, 0, bytes0Len);
-		bytes0 = null;	// now unused
-
-		// copy 1st byte array (consensus syms)
-		System.arraycopy(bytes1, 0, combinedByteArr, bytes0Len, bytes1Len);
-		bytes1 = null;	// now unused
-
-		// copy 2nd byte array (probeset syms)
-		FileInputStream fis = null;
-		byte[] bytes2 = null;
-		try {
-			fis = new FileInputStream(secondIndexesFileName);
-			bytes2 = IndexingUtils.readBytesFromFile(
-					fis, 0, bytes2Len);
-		} finally {
-			GeneralUtils.safeClose(fis);
-		}
-		System.arraycopy(bytes2, 0, combinedByteArr, bytes0Len + bytes1Len, bytes2Len);
-		bytes2 = null;	// now unused
-
-		return new ByteArrayInputStream(combinedByteArr);
-	}
+	
 
 
 	// Print out the genomes

@@ -1051,6 +1051,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		List<SeqSymmetry> result = null;
 		MutableAnnotatedBioSeq outseq = null;
+		Class writerclass = null;
 
 		if (query == null || query.length() == 0) {
 			// no query string, so requesting _all_ features for a versioned source
@@ -1077,6 +1078,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			if (formats.size() == 1) {
 				output_format = formats.get(0);
 			}
+			writerclass = output_registry.get(output_format);
 
 			if (!known_query) {
 				// at least one query parameter was not recognized, throw bad request error
@@ -1094,8 +1096,48 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			} /* support for single name, single format, no other filters */ else if (names != null && names.size() == 1) {
 				String name = names.get(0);
 				result = ServerUtils.FindNameInGenome(name, genome);
-			} // handling one type, one segment, one overlaps, optionally one inside
-			else if (types.size() == 1 && // one and only one type
+				OutputStream outstream = null;
+				try {
+					AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
+					if (writerclass == null) {
+						System.out.println("no AnnotationWriter found for format: " + output_format);
+						response.setStatus(response.SC_BAD_REQUEST);
+						return;
+					}
+					String mime_type = writer.getMimeType();
+
+					if (writer instanceof Das2FeatureSaxParser) {
+						((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));
+					}
+					response.setContentType(mime_type);
+
+					outstream = response.getOutputStream();
+
+					System.out.println("Result size is :" + result.size());
+					//BioSeq seq = genome.getSeq("chr1");
+					for (BioSeq seq : genome.getSeqList()) {
+					/*if (writer instanceof IndexWriter) {
+						Writer out = new BufferedWriter(new OutputStreamWriter(outstream));
+						for (SeqSymmetry sym : result) {
+							((IndexWriter)writer).outputSimpleBedFormat(sym, seq, out);
+						}
+					} else {*/
+						writer.writeAnnotations(result, seq, "", outstream);
+					//}
+					}
+
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				} finally {
+					GeneralUtils.safeClose(outstream);
+				}
+				return;
+
+			}
+
+
+			// handling one type, one segment, one overlaps, optionally one inside
+			if (types.size() == 1 && // one and only one type
 					segments.size() == 1 && // one and only one segment
 					overlaps.size() <= 1 && // one and only one overlaps
 					insides.size() <= 1 && // zere or one inside
@@ -1152,7 +1194,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				System.out.println("  ***** query combination not supported, throwing an error");
 			}
 		}
-		Class writerclass = output_registry.get(output_format);
+
 		OutputTheAnnotations(writerclass, output_format, response, result, outseq, query_type, xbase);
 
 	}
@@ -1340,12 +1382,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String xbase, HttpServletResponse response,
 			Class writerclass,
 			String format) {
-		boolean success = true;
 		try {
 			if (writerclass == null) {
 				System.out.println("no AnnotationWriter found for format: " + format);
 				response.setStatus(response.SC_BAD_REQUEST);
-				success = false;
+				return false;
 			} else {
 				AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
 				String mime_type = writer.getMimeType();
@@ -1357,7 +1398,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 				OutputStream outstream = response.getOutputStream();
 				try {
-					success = writer.writeAnnotations(syms, seq, annot_type, outstream);
+					return writer.writeAnnotations(syms, seq, annot_type, outstream);
 				} finally {
 					GeneralUtils.safeClose(outstream);
 				}
@@ -1365,9 +1406,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		} catch (Exception ex) {
 			System.err.println("problem in GenometryDas2Servlet.outputAnnotations():");
 			ex.printStackTrace();
-			success = false;
 		}
-		return success;
+		return false;
 	}
 
 	private static final void printXmlDeclaration(PrintWriter pw) {

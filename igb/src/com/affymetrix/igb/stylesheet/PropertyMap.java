@@ -189,29 +189,4 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     return sb;
   }
 
-  /** For diagnostic testing, appends the properties and the parent properties, etc.
-   * @param indent
-   * @param sb
-   * @return 
-   */
-  public StringBuffer fullParentHeirarchy(String indent, StringBuffer sb) {
-    sb.append(indent).append("<PROPERTIY_MAP>\n");
-    Iterator<String> iter = this.keySet().iterator();
-    while (iter.hasNext()) {
-      String key = iter.next();
-      Object value = this.getProperty(key);
-      sb.append(indent + "  ").append("<PROPERTY ");
-      XmlStylesheetParser.appendAttribute(sb, "key", key);
-      XmlStylesheetParser.appendAttribute(sb, "value", "" + value);
-      sb.append("/>\n");
-    }
-    if (parentProperties == this) {
-      System.out.println("********************* INFINITE LOOP !");
-    }
-    else if (parentProperties != null) {
-      parentProperties.fullParentHeirarchy(indent + "  ", sb);
-    }
-    sb.append(indent).append("</PROPERTIY_MAP>\n");
-    return sb;
-  }
 }

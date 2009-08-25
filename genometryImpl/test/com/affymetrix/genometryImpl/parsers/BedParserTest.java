@@ -5,10 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SimpleSeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
 import java.io.*;
 import java.util.*;
@@ -186,11 +184,11 @@ public class BedParserTest {
 		}
 
 	/**
-	 * Test of writeBedFormat method, of class com.affymetrix.igb.parsers.BedParser.
+	 * Test of writeSymmetry method, of class com.affymetrix.igb.parsers.BedParser.
 	 */
 	@Test
 		public void testWriteBedFormat() throws Exception {
-			//System.out.println("writeBedFormat");
+			//System.out.println("writeSymmetry");
 
 			Writer out = new StringWriter();
 
@@ -203,7 +201,7 @@ public class BedParserTest {
 				sym.addSpan(span_in_array);
 			}
 
-			BedParser.writeBedFormat(out, sym, seq);
+			BedParser.writeSymmetry(out, sym, seq);
 			assertEquals("chr12\t500\t800\n", out.toString());
 		}
 

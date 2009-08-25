@@ -1,7 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometry.util.DNAUtils;
-
 public final class NibbleIterator implements SearchableCharIterator {
 	private int length;
 	private byte[] nibble_array;
@@ -56,7 +54,7 @@ public final class NibbleIterator implements SearchableCharIterator {
 	 *  BEGIN
 	 *  CharacterIterator implementation
 	 */
-	public char charAt(int pos) {
+	private char charAt(int pos) {
 		int index = pos & one_mask;  // either 0 or 1, index into offsets and filters arrays
 		int offset = offsets[index];
 		int filter = filters[index];

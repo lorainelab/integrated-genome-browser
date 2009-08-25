@@ -1,14 +1,17 @@
 package com.affymetrix.genometryImpl.util;
 
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
-import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 
 

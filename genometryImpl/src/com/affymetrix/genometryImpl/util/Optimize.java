@@ -1,8 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
 import java.util.ArrayList;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.IntervalSearchSym;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -45,6 +44,9 @@ public abstract class Optimize {
 			System.out.println("optimizing seq = " + aseq.getID());
 		}
 		int annot_count = aseq.getAnnotationCount();
+		if (DEBUG) {
+			System.out.println("annotation count: " + annot_count);
+		}
 		for (int i = annot_count - 1; i >= 0; i--) {
 			// annot should be a TypeContainerAnnot (if seq is a BioSeq)
 			SeqSymmetry annot = aseq.getAnnotation(i);

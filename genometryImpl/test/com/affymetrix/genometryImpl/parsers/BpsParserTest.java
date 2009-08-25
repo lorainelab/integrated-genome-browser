@@ -5,12 +5,13 @@ import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -128,13 +129,14 @@ public class BpsParserTest {
 			pslSyms.add((UcscPslSym)sym);
 		}
 
-		BpsParser instance = new BpsParser();
-		Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-		List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(pslSyms, seq, USCCCompare);
+		BpsParser bps = new BpsParser();
+			Comparator<UcscPslSym> USCCCompare = bps.getComparator(seq);
+		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+				pslSyms, seq, USCCCompare);
 
 		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
 
-		assertEquals(457617, sortedSyms.get(1).getTargetMin());	// the middle symmetry (after sorting) should have a start coord of 457617.
+		assertEquals(457617, ((UcscPslSym)sortedSyms.get(1)).getTargetMin());	// the middle symmetry (after sorting) should have a start coord of 457617.
 		
 	}
 
@@ -146,7 +148,6 @@ public class BpsParserTest {
 	@SuppressWarnings("unchecked")
 	public void testIndexing2() {
 
-		FileInputStream istr = null;
 		try {
 			String filename = "test/data/bps/test1.bps";
 			String testFileName = "test/data/bps/testNEW.bps";
@@ -158,27 +159,23 @@ public class BpsParserTest {
 			syms = BpsParser.parse(filename, "stream_test", group);
 
 			BioSeq seq = group.getSeq("chr1");
-			
-			BpsParser instance = new BpsParser();
-			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+		
+			IndexWriter iWriter = new BpsParser();
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+					syms, seq, iWriter.getComparator(seq));
 
 			assertEquals(15,sortedSyms.size());
 
-			int[] min = new int[sortedSyms.size()];
-			int[] max = new int[sortedSyms.size()];
-			long[] filePos = new long[sortedSyms.size() + 1];
-			FileOutputStream fos = null;
-			fos = new FileOutputStream(testFileName);
-			instance.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
-
-			assertEquals(min.length, max.length);
-			assertEquals(min.length + 1, filePos.length);
-			assertEquals(sortedSyms.size(), min.length);
-
-			testOutputIndexedSymmetries(min,max,filePos);
-
 			File testFile = new File(testFileName);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", iWriter);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+
+			assertEquals(iSyms.min.length, iSyms.max.length);
+			assertEquals(iSyms.min.length + 1, iSyms.filePos.length);
+			assertEquals(sortedSyms.size(), iSyms.min.length);
+
+			testOutputIndexedSymmetries(iSyms.min,iSyms.max,iSyms.filePos);
+
 			if (testFile.exists()) {
 				testFile.delete();
 			}

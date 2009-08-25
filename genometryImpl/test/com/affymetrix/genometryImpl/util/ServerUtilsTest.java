@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -9,13 +9,12 @@ import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -92,7 +91,7 @@ public class ServerUtilsTest {
 
 		String query_type="mRNA1.sm";
 		List<SeqSymmetry> result = null;
-		result = ServerUtils.getIntersectedSymmetries(overlap_span, query_type);
+		result = ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
 		assertNotNull(result);
 		
 		List<UcscPslSym> tempResult = new ArrayList<UcscPslSym>(result.size());
@@ -112,81 +111,70 @@ public class ServerUtilsTest {
 		assertNotNull(inside_span);
 		assertEquals(92000,inside_span.getMin());
 		assertEquals(4600000,inside_span.getMax());
+		assertEquals(seqid, inside_span.getBioSeq().getID());
 
-		result = ServerUtils.SpecifiedInsideSpan(inside_span, result, query_type);
+		result = ServerUtils.specifiedInsideSpan(inside_span, result);
 		assertEquals(138, result.size());
 	}
 
 
 	@Test
-	public void testIndexing3() {
-		//FileInputStream istr = null;
+	public void testIndexing() {
 		try {
 			String filename = "test/data/bps/mRNA1.mm.bps";
 			String testFileName = "test/data/bps/mRNA1_test.mm.bps";
+			String query_type="mRNA1.sm";
+			String seqid = "chr1";
 			assertTrue(new File(filename).exists());
 
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 
-			List<UcscPslSym> syms = null;
-			syms = BpsParser.parse(filename, "stream_test", group);
+			List<UcscPslSym> syms = BpsParser.parse(filename, query_type, group);
 
-			BioSeq seq = group.getSeq("chr1");
+			BioSeq seq = group.getSeq(seqid);
 
-			BpsParser instance = new BpsParser();
-			Comparator<UcscPslSym> USCCCompare = new UcscPslComparator();
-			List<UcscPslSym> sortedSyms = instance.getSortedAnnotationsForChrom(syms, seq, USCCCompare);
+			IndexWriter iWriter = new BpsParser();
+			List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+					syms, seq, iWriter.getComparator(seq));
 
-			int[] min = new int[sortedSyms.size()];
-			int[] max = new int[sortedSyms.size()];
-			long[] filePos = new long[sortedSyms.size() + 1];
-			FileOutputStream fos = null;
-			fos = new FileOutputStream(testFileName);
-			instance.writeIndexedAnnotations(sortedSyms, fos, min, max, filePos);
-			GeneralUtils.safeClose(fos);
+			File testFile = new File(testFileName);
+			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
+
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
 
 			String overlap = "90000:11200177";
-			SeqSpan overlap_span = ServerUtils.getLocationSpan("chr1", overlap, group);
+			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
 			assertNotNull(overlap_span);
 			assertEquals(90000, overlap_span.getMin());
 			assertEquals(11200177, overlap_span.getMax());
+			assertEquals(overlap_span.getBioSeq(), seq);
 
-			int[] overlapRange = new int[2];
-			int[] outputRange = new int[2];
-			overlapRange[0] = overlap_span.getMin();
-			overlapRange[1] = overlap_span.getMax();
-
-			IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
-
-			int minPos = outputRange[0];
-
-			int maxPos = outputRange[1]+1;
 			
+			List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(
+					overlap_span, iSyms, "testOUT", group);
+			
+			assertEquals(384, result.size());
+			assertEquals(136731, result.get(0).getTargetMin());
+			assertEquals(137967, result.get(0).getTargetMax());
 
-			FileInputStream fis = new FileInputStream(testFileName);
+			String inside = "92000:4600000";
+			SeqSpan inside_span = ServerUtils.getLocationSpan(seqid, inside, group);
+			assertNotNull(inside_span);
+			assertEquals(92000, inside_span.getMin());
+			assertEquals(4600000, inside_span.getMax());
+			assertEquals(inside_span.getBioSeq(), seq);
 
-			// We add 1 to the filePos index.
-			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
-			byte[] bytes = IndexingUtils.getIndexedAnnotations(fis,filePos[minPos], (int)(filePos[maxPos] - filePos[minPos]));
-			assertEquals((int)(filePos[maxPos] - filePos[minPos]), bytes.length);
-			GeneralUtils.safeClose(fis);
-
-			File testFile = new File(testFileName);
+			result = ServerUtils.specifiedInsideSpan(inside_span, result);
+			assertEquals(138, result.size());
+			
 			if (testFile.exists()) {
 				testFile.delete();
 			}
 
-			InputStream newIstr = new ByteArrayInputStream(bytes);
-			DataInputStream dis = new DataInputStream(newIstr);
-
-			List <UcscPslSym> result = BpsParser.parse(dis, "BPS", (AnnotatedSeqGroup) null, group, false, true);
-
-			assertEquals(384, result.size());
-			assertEquals(136731, result.get(0).getTargetMin());
-			assertEquals(137967, result.get(0).getTargetMax());
 		} catch (Exception ex) {
 			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
 			fail();
 		}
 	}
+
 }

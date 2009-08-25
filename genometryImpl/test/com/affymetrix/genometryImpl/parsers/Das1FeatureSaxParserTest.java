@@ -7,7 +7,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

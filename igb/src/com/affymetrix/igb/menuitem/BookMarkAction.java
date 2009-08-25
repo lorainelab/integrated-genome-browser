@@ -13,6 +13,9 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -24,10 +27,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.MenuListener;
 
-import com.affymetrix.genoviz.bioviews.*;
-
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 

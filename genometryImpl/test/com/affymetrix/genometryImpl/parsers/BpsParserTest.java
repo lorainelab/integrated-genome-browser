@@ -9,16 +9,13 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.util.IndexingUtils;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedIDs;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -169,8 +166,7 @@ public class BpsParserTest {
 
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", iWriter);
-			IndexedIDs iIDs = new IndexedIDs("test/data/bps/",group, null);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, iIDs, testFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
 
 			assertEquals(iSyms.min.length, iSyms.max.length);
 			assertEquals(iSyms.min.length + 1, iSyms.filePos.length);

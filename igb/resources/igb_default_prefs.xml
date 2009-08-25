@@ -8,7 +8,6 @@
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
 
-
 <boolean tag="USE_GRAPH_ADJUSTER" val="true" />
 <boolean tag="USE_SLICE_VIEW" val="true" />
 <boolean tag="USE_PATTERN_SEARCHER" val="true" />

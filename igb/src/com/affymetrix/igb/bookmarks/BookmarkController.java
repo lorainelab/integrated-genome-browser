@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.List;
 import java.io.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.*;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;

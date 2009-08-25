@@ -31,7 +31,7 @@ Felis catus	Cat	F_catus	felCat3
 Gallus gallus	Chicken	G_gallus	G_gallus_May_2006	galGal2	galGal3
 Gasterosteus aculeatus	Stickleback G_aculeatus	gasAcu1
 Glycine max	Soybean	G_max	G_max_Dec_2008
-Homo sapiens	Human	H_sapiens	H_sapiens_Jun_2002	H_sapiens_Nov_2002	H_sapiens_Apr_2003	H_sapiens_Jul_2003	H_sapiens_May_2004	H_sapiens_Mar_2006	hg16	hg17	hg18	hg19
+Homo sapiens	Human	H_sapiens	H_sapiens_Jun_2002	H_sapiens_Nov_2002	H_sapiens_Apr_2003	H_sapiens_Jul_2003	H_sapiens_May_2004	H_sapiens_mar_2006	H_sapiens_Mar_2006	hg16	hg17	hg18	hg19
 Macaca mulatta	Rhesus	M_mulatta	M_mulatta_Jan_2006	rheMac2
 Medicago truncatula	Barrel Medic	M_truncatula	M_truncatula_Aug_2007
 Monodelphis domestica	Opossum	M_domestica	monDom1	monDom4	monDom5
@@ -50,13 +50,13 @@ Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe2
 Populus trichocarpa	Black Cottonwood	P_trichocarpa	P_trichocarpa_Jun_2004
 Pristionchus pacificus	P. pacificus	P_pacificus	priPac1
 Rattus norvegicus	Rat	R_norvegicus	R_norvegicus_Jan_2003	R_norvegicus_Jun_2003	R_norvegicus_Nov_2004	rn3	rn4
-Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	yeast_feb2006_37_1d	yeast_may2008	S_cerevisiae_feb_2006	S_cerevisiae_Jul_2007	S_cerevisiae_Apr_2008	S_cerevisiae_may_2008	yeast_2005Jan	yeast_Ver1
+Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	sacCer2	yeast_feb2006_37_1d	yeast_may2008	S_cerevisiae_feb_2006	S_cerevisiae_Jul_2007	S_cerevisiae_Apr_2008	S_cerevisiae_may_2008	yeast_2005Jan	yeast_Ver1
 Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	S_pombe_Apr_2007	S_pombe_sep_2007	pombe_sep-2007
 Sodalis glossinidius	S_glossinidius	S_glossinidius_Jan_2006
 Sorghum bicolor	Sorghum	S_bicolor_Mar_2008   
 Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur1	strPur2
 Taeniopygia guttata	Zebra Finch	taeGut1
 Takifugu rubripes	Fugu	fr1	fr2
-Tetraodon nigroviridis	Tetraodon	tetNig1	T_nigroviridis_feb_2004
+Tetraodon nigroviridis	Tetraodon	tetNig1	T_nigroviridis_feb_2004	T_nigroviridis_mar_2007
 Vitis vinifera	Common Grape Vine	V_vinifera	V_vinifera_Apr_2007
 Xenopus tropicalis	Pipid Frog	xenTro1	xenTro2	X_tropicalis_aug_2005

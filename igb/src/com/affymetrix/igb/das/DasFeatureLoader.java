@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.MutableSeqSymmetry;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 
@@ -22,6 +22,8 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.igb.view.SeqMapView;
+
+import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  * Class to aid in loading features from DAS servers.
@@ -32,9 +34,6 @@ import com.affymetrix.igb.view.SeqMapView;
  * @author sgblanch
  */
 public final class DasFeatureLoader {
-	/** Encoding used for {@link java.net.URLEncoder#encode(String,String)}.  Default value is {@value} */
-	private static final String ENCODING = "UTF-8";
-
 	/** A private copy of IGB's Map view */
 	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
 	
@@ -59,14 +58,14 @@ public final class DasFeatureLoader {
 	 */
 	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
 		String das_root = gFeature.gVersion.gServer.URL;
-		MutableAnnotatedBioSeq current_seq = (MutableAnnotatedBioSeq) gviewer.getViewSeq();
+		MutableAnnotatedBioSeq current_seq = gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();
 
 		try {
 			String query_root = das_root.endsWith("/") ? das_root : das_root.concat("/")
-						+ URLEncoder.encode(gFeature.gVersion.versionID, ENCODING) + "/features?"
-						+ "segment=" + URLEncoder.encode(current_seq.getID(), ENCODING);
-			String encoded_type = ";type=" + URLEncoder.encode(gFeature.featureName, ENCODING);
+						+ URLEncoder.encode(gFeature.gVersion.versionID, UTF8) + "/features?"
+						+ "segment=" + URLEncoder.encode(current_seq.getID(), UTF8);
+			String encoded_type = ";type=" + URLEncoder.encode(gFeature.featureName, UTF8);
 			String id = query_root + encoded_type;
 
 			SimpleSymWithProps query_sym = new SimpleSymWithProps();
@@ -119,7 +118,7 @@ public final class DasFeatureLoader {
 			String query;
 			for (int i = 0; i < sym.getSpanCount(); i++) {
 				span = sym.getSpan(i);
-				query = query_root + URLEncoder.encode(":" + (span.getMin() + 1) + "," + span.getMax(), ENCODING) + encoded_type;
+				query = query_root + URLEncoder.encode(":" + (span.getMin() + 1) + "," + span.getMax(), UTF8) + encoded_type;
 				urls.add(new URL(query));
 			}
 		}

@@ -13,8 +13,9 @@
 
 package com.affymetrix.igb.das;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 

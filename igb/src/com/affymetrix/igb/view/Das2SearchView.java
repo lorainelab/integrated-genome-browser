@@ -11,10 +11,10 @@ import java.util.List;
 import javax.swing.EditableComboBox;
 
 import com.affymetrix.igb.*;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.comparator.Das2FeatureComparator;
@@ -103,7 +103,7 @@ public final class Das2SearchView extends JPanel implements ActionListener, Grou
 	public void displaySearchResult(SimpleDas2Feature feat) {
 		System.out.println("displaying result of name search: " + feat);
 		SeqSpan span = feat.getSpan(0);
-		MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) span.getBioSeq();
+		MutableAnnotatedBioSeq seq = span.getBioSeq();
 		if (gmodel.getSelectedSeq() != seq) {
 			gmodel.setSelectedSeq(seq);
 		}

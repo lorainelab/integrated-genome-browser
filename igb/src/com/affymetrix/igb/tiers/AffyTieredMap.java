@@ -12,13 +12,14 @@
  */
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
@@ -332,14 +333,14 @@ public class AffyTieredMap extends NeoMap {
 	public void removeItem(GlyphI gl) {
 		super.removeItem(gl);
 		if (gl.getChildren() != null) {
-			Vector children = gl.getChildren();
+			Vector<GlyphI> children = gl.getChildren();
 			int childCount = children.size();
 			/* remove from end of child Vector instead of beginning! -- that way, won't
 			 *   get issues with trying to access elements off end of Vector as
 			 *   Vector shrinks during removal...
 			 */
 			for (int i = childCount - 1; i >= 0; i--) {
-				GlyphI child = (GlyphI) children.elementAt(i);
+				GlyphI child = children.elementAt(i);
 				removeItem(child);
 			}
 		}

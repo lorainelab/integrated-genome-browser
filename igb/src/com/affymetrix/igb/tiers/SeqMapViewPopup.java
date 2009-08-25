@@ -13,13 +13,14 @@
 
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -32,7 +33,6 @@ import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;

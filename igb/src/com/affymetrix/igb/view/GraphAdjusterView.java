@@ -23,8 +23,8 @@ import java.util.List;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -85,7 +85,7 @@ public final class GraphAdjusterView {
         newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
       }
 
-      ((MutableAnnotatedBioSeq)newgraf.getGraphSeq()).addAnnotation(newgraf);
+      newgraf.getGraphSeq().addAnnotation(newgraf);
       newgrafs.add(newgraf);
     }
     return newgrafs;

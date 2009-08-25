@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.util.*;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.menuitem.MenuUtil;

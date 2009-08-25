@@ -1,7 +1,7 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometry.util.LoadUtils.ServerType;
-import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import java.awt.Component;
 import java.util.Hashtable;

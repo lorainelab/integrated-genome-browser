@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.*;
 import java.util.Map;
 
@@ -19,7 +20,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -214,7 +214,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
         String seq_name = (String) seqtable.getModel().getValueAt(srow, 0);
         selected_seq = gmodel.getSelectedSeqGroup().getSeq(seq_name);
         if (selected_seq != gmodel.getSelectedSeq()) {
-          gmodel.setSelectedSeq( (MutableAnnotatedBioSeq) selected_seq);
+          gmodel.setSelectedSeq(selected_seq);
         }
       }
     }

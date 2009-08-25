@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.*;
@@ -22,7 +24,6 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
@@ -52,7 +53,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   // but we use a special TableCellRenderer so that what is actually displayed
   // is a String representing the Tier
   private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
-  private final static Class[] col_classes = {String.class, SeqSymmetry.class, Integer.class, Integer.class, String.class};
+  private final static Class<?>[] col_classes = {String.class, SeqSymmetry.class, Integer.class, Integer.class, String.class};
   private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
   static final int NUM_COLUMNS = 5;
 
@@ -103,11 +104,14 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     bottom_row.add(status_bar);
     
     model = new DefaultTableModel() {
+			@Override
       public boolean isCellEditable(int row, int column) {return false;}
+			@Override
       public Class getColumnClass(int column) {
         return col_classes[column];
       }
       
+			@Override
       public void fireTableStructureChanged() {
         // The columns never change, so suppress tableStructureChanged events
         // converting to normal table-rows-changed-type events.
@@ -149,20 +153,20 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
   
 //  FindResiduesPanel find_residues = new FindResiduesPanel();
   
-  private Vector buildRows(List results) {
+  private Vector<Vector<Object>> buildRows(List<SearchResult> results) {
         
     if (results == null || results.isEmpty()) {
-      return new Vector(0);
+      return new Vector<Vector<Object>>(0);
     }
     
     int num_rows = results.size();
     
-    Vector rows = new Vector(num_rows, num_rows/10);
+    Vector<Vector<Object>> rows = new Vector<Vector<Object>>(num_rows, num_rows/10);
     for (int j = 0 ; j < num_rows && rows.size() < THE_LIMIT ; j++) {
-      SearchResult result = (SearchResult) results.get(j);      
+      SearchResult result = results.get(j);      
       SeqSpan span = result.span;
       
-      Vector a_row = new Vector(NUM_COLUMNS);
+      Vector<Object> a_row = new Vector<Object>(NUM_COLUMNS);
       a_row.add(result.id);
       a_row.add(result.sym);
       a_row.add(new Integer(span.getStart()));
@@ -196,16 +200,17 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
     final String start = "";
     final String end = "";
     Thread thread = new Thread() {
+			@Override
       public void run() {
         getSearchAction().setEnabled(false);
         clearTable("Working...");        
         
-        List results = Collections.EMPTY_LIST;
+        List<SearchResult> results = Collections.<SearchResult>emptyList();
         try {
           results = finder.searchForSyms(final_seq_group);
         } catch (Exception e) {
           ErrorHandler.errorPanel("Error", e);
-          results = Collections.EMPTY_LIST;
+          results = Collections.<SearchResult>emptyList();
         }
 
         final Vector rows = buildRows(results);
@@ -351,6 +356,7 @@ implements SymMapChangeListener, GroupSelectionListener, IPlugin  {
       super();
     }
     
+		@Override
     protected void setValue(Object value) {
       SeqSymmetry sym = (SeqSymmetry) value;
       super.setValue(BioSeq.determineMethod(sym));

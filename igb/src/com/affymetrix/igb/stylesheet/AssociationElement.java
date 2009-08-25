@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;

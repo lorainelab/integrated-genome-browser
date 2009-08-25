@@ -349,8 +349,7 @@ public final class FeatureTreeView extends JComponent {
 			Boolean drawsFocusBorderAroundIcon = (Boolean) UIManager.get("Tree.drawsFocusBorderAroundIcon");
 			leafCheckBox.setFocusPainted((drawsFocusBorderAroundIcon != null) && (drawsFocusBorderAroundIcon.booleanValue()));
 			
-			String osName = (String) java.security.AccessController.doPrivileged(
-					new sun.security.action.GetPropertyAction("os.name"));
+			String osName = System.getProperty("os.name");
 			if (osName != null && osName.indexOf("Windows") != -1) {
 				leafCheckBox.setBorderPaintedFlat(true);
 				leafCheckBox.setBorder(new DashedBorder(selectionBorderColor));

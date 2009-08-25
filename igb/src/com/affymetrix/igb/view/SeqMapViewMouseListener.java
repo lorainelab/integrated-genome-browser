@@ -12,8 +12,8 @@
 */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.*;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;

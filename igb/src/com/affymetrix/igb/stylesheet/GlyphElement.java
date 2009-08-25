@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.symmetry.SimpleDerivedSeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleDerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.ArrowGlyph;
 import com.affymetrix.genoviz.glyph.BridgeGlyph;

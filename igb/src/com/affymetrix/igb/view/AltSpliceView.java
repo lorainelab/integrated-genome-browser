@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -22,7 +24,6 @@ import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GraphSym;

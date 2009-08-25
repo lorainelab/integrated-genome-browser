@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
@@ -317,17 +317,10 @@ public final class SimpleGraphTab extends JPanel
 				if (grafs != selected_syms) {
 					grafs.add(graf);
 				}
-				int gcount = gviewer.getSeqMap().getItemCount(graf);
-				if (gcount == 1) {
-					GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(graf);
-					glyphs.add(gl);
-				} // allowing for cases where same graph sym is represented by multiple graphs glyphs...
-				else if (gcount > 1) {
-					List multigl = gviewer.getSeqMap().getItems(graf);
-					// add all graph glyphs representing graph sym
-					//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
-					glyphs.addAll(multigl);
-				}
+				List<GraphGlyph> multigl = gviewer.getSeqMap().<GraphGlyph>getItems(graf);
+				// add all graph glyphs representing graph sym
+				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
+				glyphs.addAll(multigl);
 			}
 		}
 
@@ -847,7 +840,7 @@ public final class SimpleGraphTab extends JPanel
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
 
 				if (newsym != null) {
-					MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+					MutableAnnotatedBioSeq aseq = newsym.getGraphSeq();
 					aseq.addAnnotation(newsym);
 					gviewer.setAnnotatedSeq(aseq, true, true);
 					//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);

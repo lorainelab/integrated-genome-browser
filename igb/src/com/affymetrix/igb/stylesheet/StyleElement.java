@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 //import com.affymetrix.genometry.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.view.SeqMapView;

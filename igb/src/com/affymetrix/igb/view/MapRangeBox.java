@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genoviz.event.*;

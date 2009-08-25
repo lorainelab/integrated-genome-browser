@@ -12,12 +12,12 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometry.DerivedSeqSymmetry;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.MutableSeqSymmetry;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
@@ -33,13 +33,13 @@ import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.PackerI;
 
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.symmetry.LeafSingletonSymmetry;
-import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometry.symmetry.SimplePairSeqSymmetry;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
@@ -665,9 +665,9 @@ public class SeqMapView extends JPanel
 		//    coord shift, slice'n'dice, etc.
 		// but first, need to fix BioSeq.isComplete() implementations...
 		// currently only GeneralBioSeq implements CharacterIterator
-		seq_glyph.setResiduesProvider((SearchableCharIterator) viewseq, viewseq.getLength());
+		seq_glyph.setResiduesProvider(viewseq, viewseq.getLength());
 
-		SeqSymmetry compsym = ((BioSeq) viewseq).getComposition();
+		SeqSymmetry compsym = viewseq.getComposition();
 		if (compsym != null) {
 			int compcount = compsym.getChildCount();
 			// create a color, c3, in between the foreground and background colors
@@ -898,8 +898,8 @@ public class SeqMapView extends JPanel
 	 *  Specifically, NeoMap.removeItem(GlyphI gl) need to recursively remove child glyphs from
 	 *     objects such as the Hashtable in NeoMap that maps data models to glyphs
 	 *  Also, should really be removing not just GraphGlyphs (and their parent
-	 *     PixelFloaterGlyphs and TierGlyphs), but also should remove GraphSyms from
-	 *     AnnotatedBioSeq, which currently I'm not doing
+	 *     PixelFloaterGlyphs and TierGlyphs)
+
 	 */
 	/**
 	 *  Clears the graphs, and reclaims some memory.
@@ -911,7 +911,7 @@ public class SeqMapView extends JPanel
 			for (int i = acount - 1; i >= 0; i--) {
 				SeqSymmetry annot = mseq.getAnnotation(i);
 				if (annot instanceof GraphSym) {
-					mseq.removeAnnotation(annot);
+					mseq.removeAnnotation(annot); // This also removes from the AnnotatedSeqGroup.
 				}
 			}
 		} else {
@@ -1082,7 +1082,7 @@ public class SeqMapView extends JPanel
 			while (iter.hasNext()) {
 				SeqSymmetry old_selected_sym = (SeqSymmetry) iter.next();
 
-				GlyphI gl = seqmap.getItem(old_selected_sym);
+				GlyphI gl = seqmap.<GlyphI>getItem(old_selected_sym);
 				if (gl != null) {
 					seqmap.select(gl);
 				}
@@ -1363,14 +1363,14 @@ public class SeqMapView extends JPanel
 		}
 
 		if (aseq != null &&
-						((BioSeq) aseq).getComposition() != null) {
+						aseq.getComposition() != null) {
 			// muck with aseq, seq2viewsym, transform_path to trick addAnnotationTiers(),
 			//   addLeafsToTier(), addToTier(), etc. into mapping from compositon sequences
 			BioSeq cached_aseq = aseq;
 			MutableSeqSymmetry cached_seq2viewSym = seq2viewSym;
 			SeqSymmetry[] cached_path = transform_path;
 
-			SeqSymmetry comp = ((BioSeq) aseq).getComposition();
+			SeqSymmetry comp = aseq.getComposition();
 			// assuming a two-level deep composition hierarchy for now...
 			//   need to make more recursive at some point...
 			//   (or does recursive call to addAnnotationTiers already give us full recursion?!!)
@@ -1572,7 +1572,7 @@ public class SeqMapView extends JPanel
 
 		for (SeqSymmetry sym : sym_list) {
 			// currently assuming 1-to-1 mapping of sym to glyph
-			GlyphI gl = seqmap.getItem(sym);
+			GlyphI gl = seqmap.<GlyphI>getItem(sym);
 			if (gl != null) {
 				seqmap.select(gl);
 			}
@@ -1985,8 +1985,8 @@ public class SeqMapView extends JPanel
 		seq2viewSym.addSpan(seq_span);
 		seq2viewSym.addSpan(view_span);
 
-		((BioSeq) viewseq).setComposition(seq2viewSym);
-		((BioSeq) viewseq).setBounds(view_span.getMin(), view_span.getMax());
+		viewseq.setComposition(seq2viewSym);
+		viewseq.setBounds(view_span.getMin(), view_span.getMax());
 		transform_path = new SeqSymmetry[1];
 		transform_path[0] = seq2viewSym;
 		slicing_in_effect = true;
@@ -2240,8 +2240,8 @@ public class SeqMapView extends JPanel
 
 	public void unclamp() {
 		if (viewseq instanceof BioSeq) {
-			int min = ((BioSeq) viewseq).getMin();
-			int max = ((BioSeq) viewseq).getMax();
+			int min = viewseq.getMin();
+			int max = viewseq.getMax();
 			seqmap.setMapRange(min, max);
 		} else {
 			seqmap.setMapRange(0, viewseq.getLength());
@@ -2263,7 +2263,7 @@ public class SeqMapView extends JPanel
 		if (aseq instanceof BioSeq && !slicing_in_effect) {
 			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-			String version = ((BioSeq) aseq).getVersion();
+			String version = aseq.getVersion();
 			Collection<String> syns = lookup.getSynonyms(version);
 
 			if (syns == null) {
@@ -2314,7 +2314,7 @@ public class SeqMapView extends JPanel
 		} else {
 			String genomeVersion = aseq.getID();
 			if (aseq instanceof BioSeq) {
-				genomeVersion = ((BioSeq) aseq).getVersion();
+				genomeVersion = aseq.getVersion();
 			}
 			Application.errorPanel("Don't have UCSC information for genome " + genomeVersion);
 		}
@@ -2966,7 +2966,7 @@ public class SeqMapView extends JPanel
 		AnnotatedSeqGroup current_group = null;
 		AnnotatedSeqGroup new_group = evt.getSelectedGroup();
 		if (aseq instanceof BioSeq) {
-			current_group = ((BioSeq) aseq).getSeqGroup();
+			current_group = aseq.getSeqGroup();
 		}
 
 		if (Application.DEBUG_EVENTS) {

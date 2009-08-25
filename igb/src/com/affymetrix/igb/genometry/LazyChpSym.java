@@ -1,12 +1,11 @@
 package com.affymetrix.igb.genometry;
 
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
 import java.util.List;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 //import com.affymetrix.igb.das2.*;
@@ -289,7 +288,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 
 		int symcount = symlist.size();
 		// should the syms be sorted here??
-		Collections.sort(symlist, new SeqSymMinComparator(aseq, true));
+		Collections.sort(symlist, new SeqSymMinComparator(aseq));
 
 		// Iterate through probeset annotations, if possible do integer id binary search,
 		//     otherwise do hash for string ID

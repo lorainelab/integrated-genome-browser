@@ -19,7 +19,6 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedIDs;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

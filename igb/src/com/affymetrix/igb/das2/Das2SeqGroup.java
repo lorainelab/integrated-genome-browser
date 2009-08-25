@@ -1,8 +1,8 @@
 package com.affymetrix.igb.das2;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 

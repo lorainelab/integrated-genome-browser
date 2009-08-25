@@ -14,7 +14,6 @@ package com.affymetrix.swing;
 
 import java.awt.Component;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -43,6 +42,7 @@ implements TableCellRenderer {
    *  you might want to choose to set this to false, but I recommend keeping
    *  it true.
    *  Default is true.
+   * @param b 
    */
   public void setIndicateWhenEditable(boolean b) {
     indicateWhenEditable = b;
@@ -61,23 +61,13 @@ implements TableCellRenderer {
       setEnabled(true);
     }
       
-    if (isSelected) {
+   if (isSelected || hasFocus) {
       setForeground(table.getSelectionForeground());
       setBackground(table.getSelectionBackground());
     }
     else {
       setForeground(table.getForeground());
       setBackground(table.getBackground());
-    }
-
-    if (hasFocus) {
-      setBorder( UIManager.getBorder("Table.focusCellHighlightBorder") );
-      if (editable) {
-          setForeground( UIManager.getColor("Table.focusCellForeground") );
-          setBackground( UIManager.getColor("Table.focusCellBackground") );
-      }
-    } else {
-      setBorder(null);
     }
 
     setSelected((value != null && ((Boolean)value).booleanValue()));

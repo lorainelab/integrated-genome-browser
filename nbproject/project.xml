@@ -22,12 +22,6 @@
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>genometry/src</label>
-                    <type>java</type>
-                    <location>genometry/src</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
                     <label>genometryImpl/src</label>
                     <type>java</type>
                     <location>genometryImpl/src</location>
@@ -49,12 +43,6 @@
                     <label>das2_server/test</label>
                     <type>java</type>
                     <location>das2_server/test</location>
-                    <encoding>UTF-8</encoding>
-                </source-folder>
-                <source-folder>
-                    <label>genometry/test</label>
-                    <type>java</type>
-                    <location>genometry/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
@@ -127,11 +115,6 @@
             </export>
             <export>
                 <type>folder</type>
-                <location>genometry/build</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
                 <location>genometryImpl/build</location>
                 <build-target>compile</build-target>
             </export>
@@ -148,11 +131,6 @@
             <export>
                 <type>folder</type>
                 <location>das2_server/build-test</location>
-                <build-target>compile</build-target>
-            </export>
-            <export>
-                <type>folder</type>
-                <location>genometry/build-test</location>
                 <build-target>compile</build-target>
             </export>
             <export>
@@ -182,10 +160,6 @@
                         <location>das2_server/src</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>genometry/src</label>
-                        <location>genometry/src</location>
-                    </source-folder>
-                    <source-folder style="packages">
                         <label>genometryImpl/src</label>
                         <location>genometryImpl/src</location>
                     </source-folder>
@@ -200,10 +174,6 @@
                     <source-folder style="packages">
                         <label>das2_server/test</label>
                         <location>das2_server/test</location>
-                    </source-folder>
-                    <source-folder style="packages">
-                        <label>genometry/test</label>
-                        <location>genometry/test</location>
                     </source-folder>
                     <source-folder style="packages">
                         <label>genometryImpl/test</label>
@@ -244,19 +214,14 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>das2_server/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar;ext/org.mortbay.jetty.jar;genometry/src;genometryImpl/src</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar;ext/org.mortbay.jetty.jar;genometryImpl/src</classpath>
                 <built-to>das2_server/build</built-to>
                 <javadoc-built-to>documentation/api-docs</javadoc-built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>genometry/src</package-root>
-                <built-to>genometry/build</built-to>
-                <source-level>1.5</source-level>
-            </compilation-unit>
-            <compilation-unit>
                 <package-root>genometryImpl/src</package-root>
-                <classpath mode="compile">genometry/src;ext/image4j.jar</classpath>
+                <classpath mode="compile">ext/image4j.jar</classpath>
                 <built-to>genometryImpl/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
@@ -267,28 +232,21 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>igb/src</package-root>
-                <classpath mode="compile">ext/affx_fusion.jar:ext/myswing.jar:ext/freehep-2.1.1.jar:genoviz_sdk/src:genometry/src:genometryImpl/src</classpath>
+                <classpath mode="compile">ext/affx_fusion.jar:ext/myswing.jar:ext/freehep-2.1.1.jar:genoviz_sdk/src:genometryImpl/src</classpath>
                 <built-to>igb/build</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>das2_server/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">ext/javax.servlet.jar;/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src;genometryImpl/src</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar;/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometryImpl/src</classpath>
                 <built-to>das2_server/build-test</built-to>
-                <source-level>1.5</source-level>
-            </compilation-unit>
-            <compilation-unit>
-                <package-root>genometry/test</package-root>
-                <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src</classpath>
-                <built-to>genometry/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>genometryImpl/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometry/src;genometryImpl/src;ext/image4j.jar</classpath>
+                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometryImpl/src;ext/image4j.jar</classpath>
                 <built-to>genometryImpl/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>
@@ -302,7 +260,7 @@
             <compilation-unit>
                 <package-root>igb/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;igb/src;genoviz_sdk/src;genometryImpl/src</classpath>
+                <classpath mode="compile">/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;igb/src;genoviz_sdk/src</classpath>
                 <built-to>igb/build-test</built-to>
                 <javadoc-built-to>/documentation/api-docs</javadoc-built-to>
                 <source-level>1.5</source-level>

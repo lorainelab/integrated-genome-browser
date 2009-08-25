@@ -197,7 +197,7 @@ public class UniFileChooser extends JFileChooser {
 		}
 
 	/** Return a new file with the given extension at the end of the name. */
-	private File applyExtension(File f, String extension) {
+	private static File applyExtension(File f, String extension) {
 		String name = f.getName();
 		String dotExtension = "."+extension;
 

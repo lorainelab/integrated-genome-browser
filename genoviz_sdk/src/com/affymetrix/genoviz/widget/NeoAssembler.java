@@ -35,7 +35,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.ItemSelectable;
-import java.awt.Toolkit;
 import java.util.Collections;
 import java.util.Comparator;
 import javax.swing.JScrollBar;
@@ -474,6 +473,7 @@ public class NeoAssembler extends NeoContainerWidget
 		 * This enables scrolling past the current position.
 		 */
 		this.addComponentListener(new ComponentAdapter(){
+			@Override
 			public void componentResized(ComponentEvent e) {
 				int [] visible_offset = labelmap.getVisibleOffset();
 				double scale = ((LinearTransform)alignmap.getView().getTransform()).getScaleY();
@@ -591,8 +591,8 @@ public class NeoAssembler extends NeoContainerWidget
 		apacker.setSpacing(align_spacing);
 		cglyph.setPacker(apacker);
 
-		alignmap.setReshapeBehavior(alignmap.X, reshape_constraint[X]);
-		alignmap.setReshapeBehavior(alignmap.Y, reshape_constraint[Y]);
+		alignmap.setReshapeBehavior(NeoMap.X, reshape_constraint[X]);
+		alignmap.setReshapeBehavior(NeoMap.Y, reshape_constraint[Y]);
 		alignmap.zoomOffset(align_offset_scale);
 		alignmap.scrollOffset(0);
 	}
@@ -610,9 +610,9 @@ public class NeoAssembler extends NeoContainerWidget
 		axis_glyph = consmap.addAxis(axis_offset);
 
 		axis_glyph.setVisibility(false);
-		consmap.setReshapeBehavior(consmap.X, reshape_constraint[X]);
+		consmap.setReshapeBehavior(NeoMap.X, reshape_constraint[X]);
 
-		consmap.setReshapeBehavior(consmap.Y, NeoConstants.NONE);
+		consmap.setReshapeBehavior(NeoMap.Y, NeoConstants.NONE);
 		consmap.zoomOffset(align_offset_scale);
 		consmap.scrollOffset(0);
 
@@ -628,7 +628,7 @@ public class NeoAssembler extends NeoContainerWidget
 		lmap.setMapOffset(0, 0);
 		lmap.setRubberBandBehavior(false);
 
-		lmap.setReshapeBehavior(lmap.Y, reshape_constraint[Y]);
+		lmap.setReshapeBehavior(NeoMap.Y, reshape_constraint[Y]);
 		lmap.zoomOffset(align_offset_scale);
 		lmap.scrollOffset(0);
 	}
@@ -1353,13 +1353,13 @@ public class NeoAssembler extends NeoContainerWidget
 	 * Should move this method and QuickSorter, InsertionSort classes
 	 *  to a Sorter util class
 	 */
-	protected int getSortedPosition(Comparable elem, Vector vec) {
+	protected int getSortedPosition(Comparable<AlignmentGlyph> elem, Vector<GlyphI> vec) {
 		if (vec == null) {
 			return 0;
 		}
 		int max = vec.size();
 		for (int i=0; i<max; i++) {
-			if (elem.compareTo(vec.elementAt(i)) < 0) {
+			if (vec.elementAt(i) instanceof AlignmentGlyph && elem.compareTo((AlignmentGlyph)vec.elementAt(i)) < 0) {
 				return i;
 			}
 		}
@@ -1437,7 +1437,7 @@ public class NeoAssembler extends NeoContainerWidget
 	}
 
 	public Object[] getSelectedObjects() {
-		Vector v = this.labelmap.getSelected();
+		Vector<GlyphI> v = this.labelmap.getSelected();
 		if ( null == v || v.size() < 1 ) {
 			return null;
 		}
@@ -1461,9 +1461,9 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @param offset the label is at.
 	 */
 	private void selectLabel( double offset ) {
-		Vector v = this.labelmap.getItems( 10, offset );
+		Vector<GlyphI> v = this.labelmap.getItems( 10, offset );
 		for ( int i = 0; i < v.size(); i++ ) {
-			Object o = v.elementAt( i );
+			GlyphI o = v.elementAt( i );
 			if ( o instanceof StringGlyph ) {
 				StringGlyph g = ( StringGlyph ) o;
 				this.labelmap.select( g );
@@ -1539,12 +1539,12 @@ public class NeoAssembler extends NeoContainerWidget
 						alignmap.deselect(alignmap.getSelected());
 						consmap.deselect(consmap.getSelected());
 						GlyphI item;
-						Vector items = selmap.getItems(nevt.getCoordX(),
+						Vector<GlyphI> items = selmap.getItems(nevt.getCoordX(),
 								nevt.getCoordY());
-						Enumeration e = items.elements();
+						Enumeration<GlyphI> e = items.elements();
 						sel_glyph = null;
 						while (e.hasMoreElements()) {
-							item = (GlyphI)e.nextElement();
+							item = e.nextElement();
 							if (item instanceof AbstractResiduesGlyph) {
 								sel_glyph = item;
 								// CoordX returns reference coord
@@ -2238,7 +2238,7 @@ public class NeoAssembler extends NeoContainerWidget
 			//   if switch to making a new matrix with each call to
 			//   adjustColorMatrix()
 
-			Vector align_glyphs = this.getAlignmentGlyphs();
+			Vector<GlyphI> align_glyphs = this.getAlignmentGlyphs();
 			AlignmentGlyph gar;
 			if (color_matrix == bg_color_matrix) {
 				for (int i=0; i<align_glyphs.size(); i++) {
@@ -2514,7 +2514,7 @@ public class NeoAssembler extends NeoContainerWidget
 		font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;
 		residue_color = col;
 		if (apply_color_retro) {
-			Vector align_glyphs = this.getAlignmentGlyphs();
+			Vector<GlyphI> align_glyphs = this.getAlignmentGlyphs();
 			AlignmentGlyph gar;
 			for (int i=0; i<align_glyphs.size(); i++) {
 				gar = (AlignmentGlyph) align_glyphs.elementAt(i);

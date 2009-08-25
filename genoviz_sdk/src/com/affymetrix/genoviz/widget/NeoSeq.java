@@ -668,11 +668,11 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 	protected WrapSequence getResidueGlyph() {
-		return (WrapSequence)residue_map.getItem(seq);
+		return residue_map.<WrapSequence>getItem(seq);
 	}
 
 	protected WrapNumbers getNumGlyph() {
-		return (WrapNumbers)num_map.getItem(seq);
+		return num_map.<WrapNumbers>getItem(seq);
 	}
 
 	public void configureLayout(int component, int placement) {

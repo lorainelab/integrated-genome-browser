@@ -13,6 +13,7 @@
 
 package com.affymetrix.genoviz.event;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
@@ -45,7 +46,7 @@ public class NeoViewMouseEvent extends NeoMouseEvent {
 		return view;
 	}
 
-	public Vector getItems() {
+	public Vector<GlyphI> getItems() {
 		return null;
 	}
 

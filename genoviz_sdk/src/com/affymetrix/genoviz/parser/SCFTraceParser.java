@@ -16,14 +16,11 @@ package com.affymetrix.genoviz.parser;
 import com.affymetrix.genoviz.datamodel.Trace;
 import com.affymetrix.genoviz.datamodel.CalledBase;
 
-import com.affymetrix.genoviz.util.Debug;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.Hashtable;
 
 /**
  * parsers SCF format trace data.

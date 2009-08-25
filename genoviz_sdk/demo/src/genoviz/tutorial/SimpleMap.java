@@ -222,7 +222,7 @@ public class SimpleMap extends JApplet implements ActionListener {
 		int token = theTokens.nextToken();
 		if (StreamTokenizer.TT_NUMBER == token) {
 			begin = (int) theTokens.nval;
-			token = (int) theTokens.nextToken();
+			token = theTokens.nextToken();
 			if (StreamTokenizer.TT_NUMBER == token) {
 				end = (int) theTokens.nval;
 				return new Range(begin, end);

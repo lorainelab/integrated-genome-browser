@@ -21,7 +21,6 @@ import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.glyph.LabelledRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.parser.ContentParser;
-import com.affymetrix.genoviz.util.Debug;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import org.xml.sax.*;
@@ -103,10 +102,10 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * sets the widget (in our case a NeoMap).
 	 */
 	public void setWidget( NeoAbstractWidget theWidget ) {
-		Debug.inform( "setting widget" );
+		System.out.println( "setting widget" );
 
 		if ( theWidget instanceof NeoMap ) {
-			Debug.inform( "it's a map" );
+			System.out.println( "it's a map" );
 
 			this.map = ( NeoMap ) theWidget;
 			this.labelFactory = this.map.addFactory( "-glyphtype LabelGlyph" );
@@ -122,7 +121,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param theMap on which glyphs are to be placed.
 	 */
 	public void addMap( String theName, NeoMap theMap ) {
-		Debug.inform( "adding map type " + theName );
+		System.out.println( "adding map type " + theName );
 		this.maps.put( theName, theMap );
 	}
 
@@ -131,7 +130,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#startDocument
 	 */
 	public void startDocument() {
-		Debug.inform( "Start document" );
+		System.out.println( "Start document" );
 	}
 
 	/**
@@ -139,7 +138,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#endDocument
 	 */
 	public void endDocument() {
-		Debug.inform( "End document" );
+		System.out.println( "End document" );
 	}
 
 	private Stack parents = new Stack();
@@ -153,7 +152,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		LabelGlyph label = null;
 		NeoMap    nextMap = null;
 
-		Debug.inform( "Start element:  name=" + name );
+		System.out.println( "Start element:  name=" + name );
 
 		// First look to see if this has been defined earlier.
 		MapGlyphFactory fac = ( MapGlyphFactory ) this.featureTypes.get( name );
@@ -241,10 +240,10 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			this.map.addAxis( axisOffset );
 		}
 		else if ( null != ( nextMap = ( NeoMap ) this.maps.get( name ) ) ) {
-			Debug.inform( "got map alias" );
+			System.out.println( "got map alias" );
 
 			if ( null != this.map ) {
-				Debug.inform( "pushing map" );
+				System.out.println( "pushing map" );
 				this.mapStack.push( this.map );
 			}
 
@@ -256,14 +255,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 
 			v = attributes.getValue("min");
 			if ( null != v ) {
-				Debug.inform( "min set to " + v );
+				System.out.println( "min set to " + v );
 
 				mapMin = Integer.parseInt( v );
 			}
 
 			v = attributes.getValue("max");
 			if ( null != v ) {
-				Debug.inform( "max set to " + v );
+				System.out.println( "max set to " + v );
 				mapMax = Integer.parseInt( v );
 			}
 
@@ -309,7 +308,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		else { // Not a recognized tag.
 
 			// Push a null on the stack so we dont get parental relationships confused.
-			Debug.inform( "huh? what's a \"" + name + "\"?" );
+			System.out.println( "huh? what's a \"" + name + "\"?" );
 			this.parents.push( null );
 		}
 
@@ -394,14 +393,14 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#endElement
 	 */
 	public void endElement( String name ) {
-		Debug.inform( "End element:  " + name );
+		System.out.println( "End element:  " + name );
 
 		if ( !parents.empty() ) {
 			GlyphI p = ( GlyphI ) this.parents.pop();
 
 			if ( name.equals( "chromosome" ) ) {  // temporary
 				p.setPacker( new SiblingCoordAvoid() );
-				ViewI view = ( ( NeoMap ) this.map ).getView();
+				ViewI view = this.map.getView();
 			}
 		}
 
@@ -415,7 +414,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#charData
 	 */
 	public void characters( char ch[], int start, int length ) {
-		Debug.inform( "Character data:  \"" + escape( ch, length ) + '"' );
+		System.out.println( "Character data:  \"" + escape( ch, length ) + '"' );
 
 		GlyphI lastItem = null;
 
@@ -428,7 +427,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 			}
 		}
 		catch ( EmptyStackException e ) {
-			Debug.warn( "No parents. " + e.getMessage() );
+			System.out.println( "No parents. " + e.getMessage() );
 		}
 	}
 
@@ -437,7 +436,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#ignorableWhitespace
 	 */
 	public void ignorableWhitespace( char ch[], int start, int length ) {
-		Debug.inform( "Ignorable whitespace:  \"" + escape( ch, length ) + '"' );
+		System.out.println( "Ignorable whitespace:  \"" + escape( ch, length ) + '"' );
 	}
 
 	/**
@@ -445,7 +444,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @see org.xml.sax.DocumentHandler#processingInstruction
 	 */
 	public void processingInstruction( String target, String data ) {
-		Debug.inform( "Processing Instruction:  " + target + ' ' 
+		System.out.println( "Processing Instruction:  " + target + ' '
 				+ escape( data.toCharArray(), data.length() ) );
 	}
 

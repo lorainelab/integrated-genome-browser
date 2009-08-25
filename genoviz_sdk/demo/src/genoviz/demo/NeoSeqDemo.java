@@ -829,12 +829,12 @@ public class NeoSeqDemo extends Applet
 		Object theItem = e.getSource();
 
 		if (theItem == oneLetterCBMenuItem) {
-			((NeoSeq)seqview).setTranslationStyle(NeoSeq.ONE_LETTER_CODE);
+			seqview.setTranslationStyle(NeoSeq.ONE_LETTER_CODE);
 			setMenuItemState(transFormatMenu,(CheckboxMenuItem)theItem);
 			seqview.updateWidget();
 		}
 		else if (theItem == threeLetterCBMenuItem) {
-			((NeoSeq)seqview).setTranslationStyle(NeoSeq.THREE_LETTER_CODE);
+			seqview.setTranslationStyle(NeoSeq.THREE_LETTER_CODE);
 			setMenuItemState(transFormatMenu, (CheckboxMenuItem)theItem);
 			seqview.updateWidget();
 		}
@@ -846,32 +846,32 @@ public class NeoSeqDemo extends Applet
 		}
 		else if (theItem == transOneCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
-			((NeoSeq)seqview).setShow(NeoSeq.FRAME_ONE, mi.getState());
+			seqview.setShow(NeoSeq.FRAME_ONE, mi.getState());
 			seqview.updateWidget();
 		}
 		else if (theItem == transTwoCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
-			((NeoSeq)seqview).setShow(NeoSeq.FRAME_TWO, mi.getState());
+			seqview.setShow(NeoSeq.FRAME_TWO, mi.getState());
 			seqview.updateWidget();
 		}
 		else if (theItem == transThreeCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
-			((NeoSeq)seqview).setShow(NeoSeq.FRAME_THREE, mi.getState());
+			seqview.setShow(NeoSeq.FRAME_THREE, mi.getState());
 			seqview.updateWidget();
 		}
 		else if (theItem == transNegOneCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
-			((NeoSeq)seqview).setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
+			seqview.setShow(NeoSeq.FRAME_NEG_ONE, mi.getState());
 			seqview.updateWidget();
 		}
 		else if (theItem == transNegTwoCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
-			((NeoSeq)seqview).setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
+			seqview.setShow(NeoSeq.FRAME_NEG_TWO, mi.getState());
 			seqview.updateWidget();
 		}
 		else if (theItem == transNegThreeCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
-			((NeoSeq)seqview).setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
+			seqview.setShow(NeoSeq.FRAME_NEG_THREE, mi.getState());
 			seqview.updateWidget();
 		}
 		else if (theItem == dialogFontCBMenuItem

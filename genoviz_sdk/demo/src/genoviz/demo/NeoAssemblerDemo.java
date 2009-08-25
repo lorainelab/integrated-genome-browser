@@ -32,8 +32,6 @@ import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.widget.NeoAssembler;
 import com.affymetrix.genoviz.widget.NeoAssemblerCustomizer;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.util.Memer;
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genoviz.glyph.AlignmentGlyph;
 import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
@@ -94,8 +92,8 @@ public class NeoAssemblerDemo extends Applet
 	boolean consensus_added = false;
 
 	// For debugging
-	Memer memcheck;
-	Timer tm;
+	//Memer memcheck;
+	//Timer tm;
 
 	// Start add sequences to the assembly view with second sequence in
 	//    assembly (first is consensus);
@@ -155,8 +153,8 @@ public class NeoAssemblerDemo extends Applet
 
 		going = true;
 
-		if (isMemed)  { memcheck = new Memer(); }
-		if (isTimed)  { tm = new Timer(); }
+		//if (isMemed)  { memcheck = new Memer(); }
+		//if (isTimed)  { tm = new Timer(); }
 
 		map = new NeoAssembler(use_internal_zoomer);
 		if (!use_internal_zoomer) {
@@ -166,7 +164,7 @@ public class NeoAssemblerDemo extends Applet
 		}
 
 		map.setLabelsBackground(nicePaleBlue);
-		((NeoAssembler)map).setDamageOptimized(optimize_damage);
+		map.setDamageOptimized(optimize_damage);
 		map.setAutoSort(false);
 
 		// Use the NeoAssembler's built-in selection methods.
@@ -178,20 +176,20 @@ public class NeoAssemblerDemo extends Applet
 		consensus = assem.getConsensus();
 		Vector aligns = assem.getAlignments();
 
-		if (isMemed)  { memcheck.printMemory(); }
+		//if (isMemed)  { memcheck.printMemory(); }
 
 		//----------- setting up alignment map info ------------
 		addConsensus();
 		if (show_half_first) {
-			if (isTimed)  { tm.start(); }
+			//if (isTimed)  { tm.start(); }
 			int half = aligns.size()/2;
 			for (int i=1; i<half; i++) {
 				addNext();
 			}
-			if (isTimed)  { tm.print(); }
+			//if (isTimed)  { tm.print(); }
 		}
 
-		if (isMemed)  { memcheck.printMemory(); }
+		//if (isMemed)  { memcheck.printMemory(); }
 
 		mapframe = new Frame("genoviz NeoAssembler Demo");
 		setupMenus(mapframe);
@@ -227,18 +225,18 @@ public class NeoAssemblerDemo extends Applet
 
 
 	public Object addBases(Mapping align) {
-		GlyphI seqtag = map.getItem(align);
+		GlyphI seqtag = map.<GlyphI>getItem(align);
 		map.setResidues(seqtag, align.getSequence().getResidues());
 		return seqtag;
 	}
 
 	public Object addGaps(Mapping align) {
 		// this assumes only one glyph returned by NeoAssembler.getItems()!
-		GlyphI seqtag = map.getItem(align);
-		Vector spans = align.getSpans();
+		GlyphI seqtag = map.<GlyphI>getItem(align);
+		Vector<Span> spans = align.getSpans();
 		Span sp;
 		for (int j=0; j<spans.size(); j++) {
-			sp = (Span)spans.elementAt(j);
+			sp = spans.elementAt(j);
 			// simulating unaligned edges
 			// by declaring the first and last spans unaligned
 			if (simulateTrimmedEdges && ((j==0) || (j == spans.size()-1))) {
@@ -269,7 +267,7 @@ public class NeoAssemblerDemo extends Applet
 
 		align_start = ((Span)spans.elementAt(0)).ref_start;
 		align_end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
-		align_length = (int)Math.abs(align_end-align_start)+1;
+		align_length = Math.abs(align_end-align_start)+1;
 
 		String seq_string = align.getSequence().getResidues();
 		StringBuffer sb = new StringBuffer(align_length);
@@ -341,7 +339,7 @@ public class NeoAssemblerDemo extends Applet
 		// color coding particular alignments (based on source, for example)
 		if (name.startsWith("GEO")) {
 			map.setLabelColor(Color.blue);
-			((GlyphI)seqtag).setColor(Color.blue);
+			seqtag.setColor(Color.blue);
 		}
 		else {
 			map.setLabelColor(Color.black);
@@ -397,7 +395,7 @@ public class NeoAssemblerDemo extends Applet
 		Enumeration enm = selectedDataModels.elements();
 		while (enm.hasMoreElements()) {
 			Mapping align = (Mapping)enm.nextElement();
-			Vector seq_glyphs = map.getItems(align);
+			Vector<GlyphI> seq_glyphs = map.<GlyphI>getItems(align);
 			map.deselect(seq_glyphs);
 			map.removeItem(seq_glyphs);
 		}

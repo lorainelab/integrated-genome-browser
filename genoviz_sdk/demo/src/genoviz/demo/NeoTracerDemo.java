@@ -273,7 +273,7 @@ public class NeoTracerDemo extends Applet
 					ReadConfidence rc = new ReadConfidence();
 					ContentParser parser = new PHDReadConfParser();
 					rc = ( ReadConfidence ) parser.importContent( r.openStream() );
-					((NeoTracer)widget).replaceBaseCalls( rc.getBaseCalls() );
+					widget.replaceBaseCalls( rc.getBaseCalls() );
 				}
 			}
 			catch ( Exception phdex ) {
@@ -290,7 +290,7 @@ public class NeoTracerDemo extends Applet
 					ReadConfidence rc = new ReadConfidence();
 					ContentParser parser = new PHDReadConfParser();
 					rc = ( ReadConfidence ) parser.importContent( r.openStream() );
-					((NeoTracer)widget).addBaseCalls( rc.getBaseCalls() );
+					widget.addBaseCalls( rc.getBaseCalls() );
 				}
 			}
 			catch ( Exception phdex ) {
@@ -349,7 +349,7 @@ public class NeoTracerDemo extends Applet
 			propFrame.show();
 		}
 		super.start();
-		NeoTracer nt = (NeoTracer)widget;
+		NeoTracer nt = widget;
 
 	}
 
@@ -427,7 +427,7 @@ public class NeoTracerDemo extends Applet
 		}
 		else if (evtSource == optScrollingB) {
 			optScrolling = !optScrolling;
-			((NeoTracer)widget).setScrollingOptimized(optScrolling);
+			widget.setScrollingOptimized(optScrolling);
 			widget.updateWidget();
 			if (optScrolling) {
 				optScrollingB.setLabel("Opt Scrolling");
@@ -438,7 +438,7 @@ public class NeoTracerDemo extends Applet
 		}
 		else if (evtSource == optDamageB) {
 			optDamage = !optDamage;
-			((NeoTracer)widget).setDamageOptimized(optDamage);
+			widget.setDamageOptimized(optDamage);
 			widget.updateWidget();
 			if (optDamage) {
 				optDamageB.setLabel("Opt Damage");
@@ -472,7 +472,7 @@ public class NeoTracerDemo extends Applet
 
 
 	public void cloneWidget() {
-		oneClone = new NeoTracer((NeoTracer)widget);
+		oneClone = new NeoTracer(widget);
 		if (clone_in_same_frame) {
 			widg_pan.remove((Component)widget);
 			widg_pan.setLayout(new GridLayout(0, 1));
@@ -506,7 +506,7 @@ public class NeoTracerDemo extends Applet
 	}
 
 	public void setTraceColors(Color[] colors) {
-		((NeoTracer)widget).setTraceColors(colors);
+		widget.setTraceColors(colors);
 	}
 
 	public void setBasesBackground(Color col) {

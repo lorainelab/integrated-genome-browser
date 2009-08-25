@@ -70,10 +70,10 @@ public class AnnotationAdapter implements NeoDataAdapterI {
 
 		GlyphI gl;
 		if (start <= end) {
-			gl = factory.makeGlyph((float)start, (float)(end+1));
+			gl = factory.makeGlyph(start, end+1.0f);
 		}
 		else {
-			gl = factory.makeGlyph((float)(start+1), (float)end);
+			gl = factory.makeGlyph(start+1.0f, end);
 		}
 		return gl;
 	}

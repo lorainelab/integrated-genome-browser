@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -29,7 +31,6 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.bioviews.*;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
@@ -549,7 +550,7 @@ public final class GraphSelectionManager
     else {
       GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
       
-      MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq) newsym.getGraphSeq();
+      MutableAnnotatedBioSeq aseq = newsym.getGraphSeq();
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
       //GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);
@@ -755,7 +756,7 @@ public final class GraphSelectionManager
     Iterator iter = selected_syms.iterator();
     while (iter.hasNext()) {
       SeqSymmetry sym = (SeqSymmetry) iter.next();
-      GlyphI g = current_source.getItem(sym);
+      GlyphI g = current_source.<GlyphI>getItem(sym);
       if (g instanceof GraphGlyph) {
         selected_graph_glyphs.add((GraphGlyph)g);
       }

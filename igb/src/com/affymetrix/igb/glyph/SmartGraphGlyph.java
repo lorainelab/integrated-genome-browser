@@ -22,10 +22,10 @@ import java.util.*;
 import java.awt.geom.Point2D;
 
 import com.affymetrix.igb.*;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.MutableSeqSymmetry;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 //import com.affymetrix.genometryImpl.util.FloatList;

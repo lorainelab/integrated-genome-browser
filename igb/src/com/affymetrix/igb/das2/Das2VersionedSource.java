@@ -22,8 +22,8 @@ import java.lang.Object.*;
 import java.net.URI.*;
 //import java.util.regex.*;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -31,6 +31,8 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+
+import static com.affymetrix.igb.IGBConstants.UTF8;
 
 /**
  *
@@ -481,7 +483,7 @@ public class Das2VersionedSource {
 			String request_root = featcap.getRootURI().toString();
 			String nameglob = name;
 			if (Das2Region.URL_ENCODE_QUERY) {
-				nameglob = URLEncoder.encode(nameglob, "UTF-8");
+				nameglob = URLEncoder.encode(nameglob, UTF8);
 			}
 			String feature_query = request_root + "?name=" + nameglob;
 			if (DEBUG) {

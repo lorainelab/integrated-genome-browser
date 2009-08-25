@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -21,7 +22,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.genometry.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.event.ThreadProgressMonitor;
 import com.affymetrix.igb.view.SeqMapView;
@@ -210,7 +210,7 @@ public final class OpenGraphAction extends AbstractAction {
       if (index > 0) {
         String last_name = name.substring(index+1);
         if (last_name.length()>0) { 
-          name = URLDecoder.decode(last_name); 
+          name = GeneralUtils.URLDecode(last_name);
         }
       }
     }

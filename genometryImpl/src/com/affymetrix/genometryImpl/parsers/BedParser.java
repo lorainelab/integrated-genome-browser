@@ -12,13 +12,15 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -173,7 +175,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 			}
 			else if (line.startsWith("track")) {
 				track_line_parser.parseTrackLine(line);
-				TrackLineParser.createAnnotStyle(seq_group, track_line_parser.getCurrentTrackHash(), default_type);
+				TrackLineParser.createAnnotStyle(track_line_parser.getCurrentTrackHash(), default_type);
 				type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				String item_rgb_string = track_line_parser.getCurrentTrackHash().get(TrackLineParser.ITEM_RGB);
 				use_item_rgb = "on".equalsIgnoreCase(item_rgb_string);
@@ -374,7 +376,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	public void annotationParsed(SeqSymmetry bedline_sym, Integer annot_id) {
 		symlist.add(bedline_sym);
 		if (annotate_seq) {
-			MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq)bedline_sym.getSpan(0).getBioSeq();
+			MutableAnnotatedBioSeq seq = bedline_sym.getSpan(0).getBioSeq();
 			if (create_container_annot) {
 				String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 				if (type == null) { type = default_type; }
@@ -441,7 +443,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	public static void writeBedFormat(Writer wr, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)
 		throws IOException  {
 		for (SeqSymmetry sym : syms) {
-			writeBedFormat(wr, sym, seq);
+			writeSymmetry(wr, sym, seq);
 		}
 	}
 
@@ -450,7 +452,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	public static void writeBedFormat(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
+	public static void writeSymmetry(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
@@ -573,7 +575,7 @@ public final class BedParser implements AnnotationWriter, StreamingParser, Parse
 			Iterator iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry sym = (SeqSymmetry)iterator.next();
-				writeBedFormat(bw, sym, seq);
+				writeSymmetry(bw, sym, seq);
 			}
 			bw.flush();
 		}

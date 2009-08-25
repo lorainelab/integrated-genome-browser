@@ -13,8 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.SeqSpan;
-
 public interface SupportsCdsSpan  {
 	public boolean hasCdsSpan();
 	public SeqSpan getCdsSpan();

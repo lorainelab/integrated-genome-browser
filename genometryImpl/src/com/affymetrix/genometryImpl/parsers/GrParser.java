@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;

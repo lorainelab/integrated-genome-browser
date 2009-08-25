@@ -13,25 +13,27 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.util.Timer;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.nio.channels.FileChannel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public final class BpsParser implements AnnotationWriter  {
+public final class BpsParser implements AnnotationWriter, IndexWriter  {
+	private static final UcscPslComparator comp = new UcscPslComparator();
 	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
 	static {
@@ -61,6 +63,8 @@ public final class BpsParser implements AnnotationWriter  {
 	 */
 	static String psl_input_dir = user_dir + "/moredata/Drosophila_Jan_2003/";
 	static String bps_output_dir = user_dir + "/query_server_dro/Drosophila_Jan_2003/";
+
+	
 
 	/*  PSL format fields (from UcscPslSym)
 		int matches;
@@ -330,7 +334,6 @@ public final class BpsParser implements AnnotationWriter  {
 		}
 		else {
 			tim.start();
-			UcscPslComparator comp = new UcscPslComparator();
 			Collections.sort(results, comp);
 			if (REPORT_LOAD_STATS) {
 				SingletonGenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
@@ -425,7 +428,7 @@ public final class BpsParser implements AnnotationWriter  {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}
-				((UcscPslSym)sym).outputBpsFormat(dos);
+				this.writeSymmetry(sym,seq,dos);
 			}
 			dos.flush();
 		}
@@ -439,98 +442,44 @@ public final class BpsParser implements AnnotationWriter  {
 		return success;
 	}
 
-
-	/**
-	 * Create a file of annotations, and index its entries.
-	 * @param syms -- a sorted list of annotations (on one chromosome)
-	 * @param fos -- stream to write file to.
-	 * @param min -- int array of TargetMins in annotation list.
-	 * @param max -- int array of TargetMaxes in annotation list.
-	 * @param fileIndices -- long array of file pointers in annotation list.
-	 * Note there is an extra file index, to allow us to record both beginning and ends of lines.
-	 * @return -- success or failure
-	 * @throws IOException
-	 */
-	public boolean writeIndexedAnnotations(List<UcscPslSym> syms, FileOutputStream fos,
-			int min[], int max[], long[] fileIndices) throws IOException {
-		if (DEBUG){
-			System.out.println("in BpsParser.writeIndexedAnnotations()");
-		}
+	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+		return comp;
+	}
+	
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
 		DataOutputStream dos = null;
+		if (os instanceof DataOutputStream) {
+			dos = (DataOutputStream)os;
+		} else {
+			dos = new DataOutputStream(os);
+		}
+		((UcscPslSym)sym).outputBpsFormat(dos);
+	}
+
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		return ((UcscPslSym)sym).getTargetMin();
+	}
+
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		return ((UcscPslSym)sym).getTargetMax();
+	}
+	public List<String> getFormatPrefList() {
+		return BpsParser.pref_list;
+	}
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			dos = new DataOutputStream(fos);
-			FileChannel fChannel = fos.getChannel();
-			int index = 0;
-			fileIndices[index] = 0;
-			
-			for (UcscPslSym sym : syms) {
-				min[index] = sym.getTargetMin();
-				max[index] = sym.getTargetMax();
-				index++;
-				sym.outputBpsFormat(dos);
-				fileIndices[index] = fChannel.position();
-			}
+			return BpsParser.parse(dis, annot_type, null, group, false, false, null);
+		} catch (IOException ex) {
+			Logger.getLogger(BpsParser.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		}
-		return true;
+		return null;
 	}
-
-
-	/**
-	 * Write out PSL annotations as binary PSL.
-	 * This file is for a specific chromosome, and is sorted by the given comparator.
-	 * @param syms - original list of annotations
-	 * @param seq - specific chromosome
-	 * @param outstream - stream to write to
-	 * @return - success or failure
-	 */
-	public boolean writeSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, OutputStream outstream, Comparator<UcscPslSym> UCSCcomp) {
-		DataOutputStream dos = null;
-		try {
-			dos = new DataOutputStream(new BufferedOutputStream(outstream));
-			List<UcscPslSym> symList = this.getSortedAnnotationsForChrom(syms, seq, UCSCcomp);
-			for (UcscPslSym sym : symList) {
-				sym.outputBpsFormat(dos);
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		}
-		finally {
-			GeneralUtils.safeClose(dos);
-		}
-		return true;
-	}
-
-	/**
-	 * Returns annotations for specific chromosome, sorted by comparator.
-	 * @param syms - original list of annotations
-	 * @param seq - specific chromosome
-	 * @param UCSCcomp - comparator
-	 * @return - sorted list of annotations
-	 */
-	public List<UcscPslSym> getSortedAnnotationsForChrom(List<UcscPslSym> syms, BioSeq seq, Comparator<UcscPslSym> UCSCcomp) {
-		Collections.sort(syms, UCSCcomp);
-
-		List<UcscPslSym> results = new ArrayList<UcscPslSym>();
-		for (UcscPslSym sym : syms) {
-			if (sym.getTargetSeq() != seq) {
-				continue;
-			}
-			// add the lines specifically with Target seq == seq.
-			results.add(sym);
-		}
-		return results;
-	}
-
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
 	public String getMimeType() { return "binary/bps"; }
+
+
 }
 

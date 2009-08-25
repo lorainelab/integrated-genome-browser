@@ -13,12 +13,11 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
 
 /**
  *  A SeqSymmetry (as well as SeqSpan) representation of UCSC BED format annotatations.

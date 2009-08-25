@@ -12,14 +12,11 @@
  */
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 
-import java.net.URLDecoder;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.*;
 import java.util.regex.*;
 
@@ -254,7 +251,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 			if (tag_and_vals.length == 2) {
 				String[] vals = commaP.split(tag_and_vals[1]);
 				for (int j=0; j<vals.length; j++) {
-					vals[j] = URLDecoder.decode(vals[j]);
+					vals[j] = GeneralUtils.URLDecode(vals[j]);
 				}
 				if (vals.length == 1) { // put a single String
 					m.put(tag_and_vals[0], vals[0]);
@@ -285,7 +282,7 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 		}
 		String[] results = val.split(",");
 		for (int i=0; i<results.length; i++) {
-			results[i] = URLDecoder.decode(results[i]);
+			results[i] = GeneralUtils.URLDecode(results[i]);
 		}
 		return results;
 	}

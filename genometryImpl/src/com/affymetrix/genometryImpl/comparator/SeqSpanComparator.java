@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.comparator;
 
-import com.affymetrix.genometry.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSpan;
 import java.util.Comparator;
 
 /**

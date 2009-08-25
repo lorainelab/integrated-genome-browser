@@ -13,7 +13,6 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
-import com.affymetrix.genometry.*;
 
 public final class SharedProbesetInfo {
 	MutableAnnotatedBioSeq seq;

@@ -13,17 +13,23 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscGeneSym;
+import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.Timer;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
@@ -40,7 +46,7 @@ import java.util.regex.Pattern;
  * but "refFlat.txt" is preferred.
  * (refFlat contains gene names, while refGene does not.)
  */
-public final class BrsParser implements AnnotationWriter  {
+public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 	static List<String> pref_list = new ArrayList<String>();
 	static {
@@ -91,7 +97,7 @@ public final class BrsParser implements AnnotationWriter  {
 			fis = new FileInputStream(fil);
 			result = parse(fis, annot_type, seq_group, true, blength, annot_id);
 		} finally {
-			if (fis != null) {try { fis.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(fis);
 		}
 		return result;
 	}
@@ -220,7 +226,7 @@ public final class BrsParser implements AnnotationWriter  {
 
 		if (annotate_seq) {
 			for (SeqSymmetry annot : annots) {
-				MutableAnnotatedBioSeq chromseq = (MutableAnnotatedBioSeq)annot.getSpan(0).getBioSeq();
+				MutableAnnotatedBioSeq chromseq = annot.getSpan(0).getBioSeq();
 				chromseq.addAnnotation(annot);
 			}
 		}
@@ -237,7 +243,7 @@ public final class BrsParser implements AnnotationWriter  {
 	}
 
 
-	public void writeBinary(String file_name, List annots) {
+	/*public void writeBinary(String file_name, List annots) {
 		DataOutputStream dos = null;
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
@@ -251,9 +257,9 @@ public final class BrsParser implements AnnotationWriter  {
 		catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
-			try {dos.close();} catch (Exception e) {}
+			GeneralUtils.safeClose(dos);
 		}
-	}
+	}*/
 
 	public void outputBrsFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
@@ -432,107 +438,6 @@ public final class BrsParser implements AnnotationWriter  {
 		   */
 	}
 
-	/*public void writeObjTest(String text_file, String bin_file) {
-	  System.out.println("Writing object");
-	  int count = 0;
-	  long flength = 0;
-	//    int bread = 0;
-	int max_tlength = Integer.MIN_VALUE;
-	int max_exons = Integer.MIN_VALUE;
-	int total_exon_count = 0;
-	int biguns = 0;
-	int big_spliced = 0;
-	Vector<SerialTrans> transvec = new Vector<SerialTrans>();
-
-	Timer tim = new Timer();
-	tim.start();
-	try {
-	File fil = new File(text_file);
-	flength = fil.length();
-	FileInputStream fis = new FileInputStream(fil);
-	BufferedInputStream bis = new BufferedInputStream(fis);
-	DataInputStream dis = new DataInputStream(bis);
-	String line;
-
-	File outfile = new File(bin_file);
-	FileOutputStream fos = new FileOutputStream(outfile);
-	BufferedOutputStream bos = new BufferedOutputStream(fos);
-	ObjectOutputStream sos = new ObjectOutputStream(bos);
-
-	// trying to handle both refFlat and refGene files
-	//   if refGene, then file doesn't include geneName field (and can be detected because
-	//   it has one fewer tab-delimited field)
-	boolean text_includes_genename;
-	while ((line = dis.readLine()) != null) {
-	count++;
-	int field_index = 0;
-	String[] fields = line_regex.split(line);
-	text_includes_genename = (fields.length > 10);
-	String geneName = null;
-	if (text_includes_genename)  { geneName = fields[field_index++]; }
-	String name = fields[field_index++];
-	String chrom = fields[field_index++];
-	String strand = fields[field_index++];
-	String txStart = fields[field_index++];  // min base of transcript on genome
-	String txEnd = fields[field_index++];  // max base of transcript on genome
-	String cdsStart = fields[field_index++];  // min base of CDS on genome
-	String cdsEnd = fields[field_index++];  // max base of CDS on genome
-	String exonCount = fields[field_index++]; // number of exons
-	String exonStarts = fields[field_index++];
-	String exonEnds = fields[field_index++];
-	int tmin = Integer.parseInt(txStart);
-	int tmax = Integer.parseInt(txEnd);
-	int tlength = tmax - tmin;
-	int cmin = Integer.parseInt(cdsStart);
-	int cmax = Integer.parseInt(cdsEnd);
-	int clength = cmax - cmin;
-	int ecount = Integer.parseInt(exonCount);
-	String[] emins = emin_regex.split(exonStarts);
-	String[] emaxs = emax_regex.split(exonEnds);
-
-	int[] emin_int = new int[ecount];
-	int[] emax_int = new int[ecount];
-	for (int i=0; i<ecount; i++) {
-	int emin = Integer.parseInt(emins[i]);
-	int emax = Integer.parseInt(emaxs[i]);
-	emin_int[i] = emin;
-	emax_int[i] = emax;
-	}
-	if (! text_includes_genename)  { geneName = name; }
-	SerialTrans trans = new SerialTrans(geneName, name, chrom, strand,
-	tmin, tmax, cmin, cmax, emin_int, emax_int);
-	transvec.add(trans);
-	}
-	sos.writeObject(transvec);
-	sos.flush();
-	sos.close();
-	}
-catch (Exception ex) {
-	ex.printStackTrace();
-}
-SingletonGenometryModel.logInfo("load time: " + tim.read()/1000f);
-	}
-
-public void readObjTest(String object_file) {
-	System.out.println("loading object");
-	Timer tim = new Timer();
-	tim.start();
-	try {
-		FileInputStream fis = new FileInputStream(object_file);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		ObjectInputStream sos = new ObjectInputStream(bis);
-		Vector transvec = (Vector)sos.readObject();
-		sos.close();
-
-		System.out.println("object load time: " + tim.read()/1000f);
-		System.out.println("size = " + transvec.size());
-		SerialTrans check2 = (SerialTrans)transvec.elementAt(2);
-		System.out.println("spot check, element at 2: " + check2.geneName);
-	}
-	catch (Exception ex) {
-		ex.printStackTrace();
-	}
-}*/
 /**
  *  Reads a text file and writes a binary file.
  *<p>
@@ -583,46 +488,50 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBi
 	return success;
 }
 
-/**
- *  Implementing AnnotationWriter interface to write out annotations
- *    to an output stream as "binary UCSC refseq gene"
- **/
-public String getMimeType() { return "binary/brs"; }
 
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+		DataOutputStream dos = null;
+		if (os instanceof DataOutputStream) {
+			dos = (DataOutputStream)os;
+		} else {
+			dos = new DataOutputStream(os);
+		}
+		outputBrsFormat((UcscGeneSym)sym, dos);
+	}
 
-/*public final class SerialHolder implements Serializable {
-  static final long serialVersionUID = 1L;
-  Vector transvec;
-  public SerialHolder(Vector transvec) {
-  this.transvec = transvec;
-  }
-}
+	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+		try {
+			return this.parse((InputStream) dis, annot_type, group, null);
+		} catch (IOException ex) {
+			Logger.getLogger(BrsParser.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
 
-public final class SerialTrans implements Serializable {
-static final long serialVersionUID = 1L;
-String geneName;
-String name;
-String chrom;
-String strand;
-int tmin;
-int tmax;
-int cmin;
-int cmax;
-int[] emins;
-int[] emaxs;
+	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+		return new SeqSymMinComparator((BioSeq)seq);
+	}
 
-public SerialTrans(String geneName, String name, String chrom, String strand,
-int tmin, int tmax, int cmin, int cmax, int[] emins, int[] emaxs) {
-this.geneName = geneName;
-this.name = name;
-this.chrom = chrom;
-this.strand = strand;
-this.tmin = tmin;
-this.tmax = tmax;
-this.cmin = cmin;
-this.cmax = cmax;
-this.emins = emins;
-this.emaxs = emaxs;
-}
-}*/
+	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		SeqSpan span = sym.getSpan(seq);
+		return span.getMin();
+	}
+
+	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+		SeqSpan span = sym.getSpan(seq);
+		return span.getMax();
+	}
+
+	public List<String> getFormatPrefList() {
+		return BrsParser.pref_list;
+	}
+
+	/**
+	 *  Implementing AnnotationWriter interface to write out annotations
+	 *    to an output stream as "binary UCSC refseq gene"
+	 **/
+	public String getMimeType() {
+		return "binary/brs";
+	}
+
 }

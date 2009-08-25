@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.awt.Color;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -155,7 +155,7 @@ public final class WiggleParser {
 
 		if (annotate_seq) {
 			for (GraphSym graf : grafs) {
-				MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) graf.getGraphSeq();
+				MutableAnnotatedBioSeq seq = graf.getGraphSeq();
 				seq.addAnnotation(graf);
 			}
 		}

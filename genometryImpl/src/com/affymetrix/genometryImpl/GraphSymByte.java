@@ -13,8 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-
 /**
  *  A SeqSymmetry for holding integer-based graph data.
  */

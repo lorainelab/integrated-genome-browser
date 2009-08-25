@@ -13,10 +13,9 @@
 
 package com.affymetrix.genometryImpl;
 
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.*;
 
 /**
  *  Holds a reference to a "parent" symmetry and an index within it.

@@ -12,12 +12,15 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
-import com.affymetrix.genometry.symmetry.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -137,7 +140,7 @@ public final class BrptParser {
 					parent_syms.add(psym);
 				}
 				else {
-					seq = (MutableAnnotatedBioSeq)psym.getSpanSeq(0);
+					seq = psym.getSpanSeq(0);
 				}
 				int min = Integer.parseInt(fields[6]);
 				int max = Integer.parseInt(fields[7]);

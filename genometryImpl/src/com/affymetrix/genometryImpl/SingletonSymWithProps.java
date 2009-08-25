@@ -15,8 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
 
 
 public class SingletonSymWithProps extends MutableSingletonSeqSymmetry

@@ -31,7 +31,7 @@ public final class SimpleDas2Feature extends SimpleSymWithProps implements Typed
 	List xids;   // or should these just be folded into properties?
 
 	public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
-			String feat_created, String feat_modified, String feat_doc_href, Map feat_props) {
+			String feat_created, String feat_modified, String feat_doc_href, Map<String, Object> feat_props) {
 		id = feat_id;
 		//    feat_uri = furi;
 		type = feat_type;

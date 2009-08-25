@@ -1,17 +1,14 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.MutableSeqSymmetry;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.DNAUtils;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.DNAUtils;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +19,10 @@ import java.util.regex.Pattern;
 /**
  * @version: $Id$
  */
-public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
+	private Map<String, IndexedSyms> type_id2indexedsym = new HashMap<String, IndexedSyms>();
 	private AnnotatedSeqGroup seq_group;
 	private List<SeqSymmetry> annots;
 	private String version;
@@ -196,7 +194,8 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	 *     so GraphSyms can be retrieved with graph id given as type
 	 */
 	public SymWithProps getAnnotation(String type) {
-		if (type_id2sym == null) { return null; }	
+		if (type_id2sym == null) {
+			return null; }
 		return type_id2sym.get(type);
 	}
 
@@ -206,7 +205,6 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 			Matcher match = regex.matcher("");
 			for (Map.Entry<String, SymWithProps> entry : type_id2sym.entrySet()) {
 				String type = entry.getKey();
-				// System.out.println("  type: " + type);
 				if (match.reset(type).matches()) {
 					results.add(entry.getValue());
 				}
@@ -215,6 +213,16 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 		return results;
 	}
 
+	/*public List<SymWithProps> getAnnotations() {
+		List<SymWithProps> results = new ArrayList<SymWithProps>();
+		if (type_id2sym != null) {
+			for (Map.Entry<String, SymWithProps> entry : type_id2sym.entrySet()) {
+				results.add(entry.getValue());
+			}
+		}
+		return results;
+	}
+*/
 
 
 	/**
@@ -222,9 +230,6 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	 *  @return an instance of {@link TypeContainerAnnot}
 	 */
 	private synchronized TypeContainerAnnot addAnnotation(String type) {
-		if (type_id2sym == null) { 
-			type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
-		}
 		TypeContainerAnnot container = new TypeContainerAnnot(type);
 		container.setProperty("method", type);
 		SeqSpan span = new SimpleSeqSpan(0, this.getLength(), this);
@@ -345,6 +350,9 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	}
 
 	public synchronized void removeAnnotation(SeqSymmetry annot) {
+		if (annot != null) {
+			this.getSeqGroup().removeSymmetry(annot);
+		}
 		if (! needsContainer(annot)) {
 			if (null != annots) {
 				annots.remove(annot);
@@ -363,6 +371,44 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Remove this type from the BioSeq.
+	 * Make it possible to reclaim resources for its SeqSymmetry.
+	 * @param type
+	 */
+	public final void removeTypes(String type) {
+		SymWithProps sym = this.getAnnotation(type);
+		
+		if (sym instanceof TypeContainerAnnot) {
+			// TODO: Investigate removeAnnotation() when the sym is a TypeContainerAnnot.
+			if (annots != null) {
+				annots.remove(sym);
+			}
+			
+			TypeContainerAnnot tca = (TypeContainerAnnot)sym;
+			tca.clear();
+
+			type_id2sym.remove(type);
+		}
+	}
+
+	/**
+	 * Add an indexed collection to id2indexedsym.
+	 * @param type ID string.
+	 * @param value indexedSyms to add to the hash.
+	 */
+	public final void addIndexedSyms(String type, IndexedSyms value) {
+		type_id2indexedsym.put(type,value);
+	}
+
+	public final Set<String> getIndexedTypeList() {
+		return type_id2indexedsym.keySet();
+	}
+
+	public final IndexedSyms getIndexedSym(String type) {
+		return type_id2indexedsym.get(type);
 	}
 
 
@@ -404,7 +450,7 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 	public SearchableCharIterator getResiduesProvider() {
 		return residues_provider;
 	}
-	public void setResiduesProvider(SearchableCharIterator chariter) {
+	public <S extends SearchableCharIterator> void setResiduesProvider(S chariter) {
 		if (chariter.getLength() != this.getLength()) {
 			System.out.println("WARNING -- in setResidueProvider, lengths don't match");
 		}
@@ -611,15 +657,6 @@ public class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
 			return true;
 		}
 		return true;
-	}
-
-	public char charAt(int pos) {
-		if (residues_provider == null) {
-				String str = this.getResidues(pos, pos+1, '-');
-				if (str == null) { return '-'; }
-				return str.charAt(0);	
-		}
-		return residues_provider.charAt(pos);
 	}
 
 	public String substring(int start, int end) {

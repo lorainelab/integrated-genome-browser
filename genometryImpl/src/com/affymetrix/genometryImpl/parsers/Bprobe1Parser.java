@@ -12,16 +12,19 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
+
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
@@ -69,7 +72,7 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
  */
 public final class Bprobe1Parser implements AnnotationWriter {
 
-	static boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bp2");
@@ -80,13 +83,13 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	public void setTypePrefix(String prefix) { type_prefix = prefix; }
 	public String getTypePrefix() { return type_prefix; }
 
-	public List parse(InputStream istr, AnnotatedSeqGroup group,
+	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
 			boolean annotate_seq, String default_type, 
 			Integer annot_id) throws IOException {
 		return parse(istr, group, annotate_seq, default_type, false, annot_id);
 	}
 
-	public List parse(InputStream istr, AnnotatedSeqGroup group,
+	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
 			boolean annotate_seq, String default_type, boolean populate_id_hash,
 			Integer annot_id) throws IOException {
 		System.out.println("in Bprobe1Parser, populating id hash: " + populate_id_hash);
@@ -108,7 +111,9 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			String format = dis.readUTF();
 			int format_version = dis.readInt();
 			boolean version2 = (format.equals("bp2"));
-			System.out.println("is bp2: " + version2);
+			if (DEBUG) {
+				System.out.println("is bp2: " + version2);
+			}
 			String seq_group_name = dis.readUTF(); // genome name
 			String seq_group_version = dis.readUTF(); // genome version
 			// combining genome and version to get seq group id
@@ -133,7 +138,9 @@ public final class Bprobe1Parser implements AnnotationWriter {
 				}
 				else {
 					annot_type = type_prefix + specified_type; 
-					System.out.println("old annot type: " + specified_type + ", new annot type: " + annot_type);
+					if (DEBUG) {
+						System.out.println("old annot type: " + specified_type + ", new annot type: " + annot_type);
+					}
 				}
 			}
 			int probe_length = dis.readInt();
@@ -172,7 +179,9 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			for (String seqid : seq2syms.keySet()) {
 				SeqSymmetry[] syms = (SeqSymmetry[]) seq2syms.get(seqid);
 				int probeset_count = syms.length;
-				System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
+				if (DEBUG) {
+					System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
+				}
 
 				MutableAnnotatedBioSeq aseq = group.getSeq(seqid);
 				SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
@@ -270,7 +279,9 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			dos.writeUTF(id_prefix);
 
 			dos.writeInt(1);  // only one seq written out by writeAnnotations() call
-			System.out.println("seqid: " + seqid + ", annot count: " + acount );
+			if (DEBUG) {
+				System.out.println("seqid: " + seqid + ", annot count: " + acount );
+			}
 			dos.writeUTF(seqid);
 			dos.writeInt(aseq.getLength());
 			dos.writeInt(syms.size());
@@ -305,14 +316,19 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		tagvals.put("tagval_test_2", "testing2");
 
 		List annots = null;
+		BufferedInputStream bis = null;
 		try {
-			System.out.println("parsing gff file: " + gff_file);
+			if (DEBUG) {
+				System.out.println("parsing gff file: " + gff_file);
+			}
 			GFFParser gff_parser = new GFFParser();
-			BufferedInputStream bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
+			bis = new BufferedInputStream( new FileInputStream( new File( gff_file) ) );
 			annots = gff_parser.parse(bis, seq_group, false, null);
-			bis.close();
 		}
 		catch (Exception ex) { ex.printStackTrace(); }
+		finally {
+			GeneralUtils.safeClose(bis);
+		}
 
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;

@@ -13,19 +13,20 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import java.util.regex.Matcher;
 
@@ -298,7 +299,7 @@ public final class ScoredIntervalParser {
 				//    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
 				//    so cycle through all isyms
 				for (IndexedSingletonSym child : isyms) {
-					MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)child.getSpan(0).getBioSeq();
+					MutableAnnotatedBioSeq aseq = child.getSpan(0).getBioSeq();
 					List<SinEntry> sin_entries = seq2sinentries.get(aseq);
 					if (sin_entries == null) {
 						sin_entries = new ArrayList<SinEntry>();

@@ -13,8 +13,8 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
-import com.affymetrix.genometry.*;
 
 
 import com.affymetrix.genometryImpl.util.Timer;

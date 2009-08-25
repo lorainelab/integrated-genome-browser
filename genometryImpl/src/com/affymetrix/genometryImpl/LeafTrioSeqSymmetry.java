@@ -13,11 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometry.SeqSymmetry;
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.SeqSpan;
-import com.affymetrix.genometry.MutableSeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 /** A SeqSymmetry with exactly three SeqSpan's. */
 public final class LeafTrioSeqSymmetry implements SeqSymmetry {

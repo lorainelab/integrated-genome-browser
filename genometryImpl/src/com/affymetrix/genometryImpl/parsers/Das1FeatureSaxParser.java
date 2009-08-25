@@ -12,6 +12,10 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 
@@ -21,15 +25,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.*;
 import org.xml.sax.SAXException;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometry.span.SimpleSeqSpan;
-import com.affymetrix.genometry.util.SeqUtils;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 
@@ -865,9 +867,9 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		try {
 			PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
 			Das1FeatureSaxParser.writeDasFeatHeader(qspan, pw);
-			Iterator iterator = syms.iterator();
+			Iterator<SeqSymmetry> iterator = syms.iterator();
 			while (iterator.hasNext()) {
-				SeqSymmetry annot = (SeqSymmetry) iterator.next();
+				SeqSymmetry annot = iterator.next();
 				Das1FeatureSaxParser.writeDasFeature(annot, seq, type, pw);
 			}
 			//      System.out.println("annot returned: " + annot_count);

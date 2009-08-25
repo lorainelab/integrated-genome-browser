@@ -13,10 +13,11 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
 
 public interface AnnotationWriter {
 

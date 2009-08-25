@@ -12,12 +12,14 @@
  */
 package com.affymetrix.genometryImpl.parsers;
 
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.span.*;
 import com.affymetrix.genometryImpl.UcscGffSym;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
@@ -130,7 +132,7 @@ public abstract class BsnpParser {
 					// need to make sure SNPs are written out in sorted order!
 					snps.add(parent.getChild(k));
 				}
-				Collections.sort(snps, new SeqSymMinComparator((BioSeq)seq, true));
+				Collections.sort(snps, new SeqSymMinComparator((BioSeq)seq));
 				for (int k=0; k<snp_count; k++) {
 					EfficientSnpSym snp = (EfficientSnpSym)snps.get(k);
 					int base_coord = snp.getSpan(0).getMin();

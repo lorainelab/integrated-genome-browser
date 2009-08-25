@@ -1,8 +1,8 @@
 package com.affymetrix.genometryImpl.general;
 
-import com.affymetrix.genometry.MutableAnnotatedBioSeq;
-import com.affymetrix.genometry.util.LoadUtils.LoadStatus;
-import com.affymetrix.genometry.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
+import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;

@@ -16,9 +16,8 @@ package com.affymetrix.genometryImpl;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import java.util.*;
 
-import com.affymetrix.genometry.*;
-import com.affymetrix.genometry.util.SeqUtils;
-import com.affymetrix.genometry.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 
 /**
  *  A symmetry that supports efficient retrieval of a subset of child
@@ -77,7 +76,7 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 
 	public void initForSearching(MutableAnnotatedBioSeq seq) {
 		search_seq = seq;
-		comp = new SeqSymMinComparator((BioSeq)search_seq, true);
+		comp = new SeqSymMinComparator((BioSeq)search_seq);
 
 		// make sure child symmetries are sorted by ascending min along search_seq
 		// to avoid unecessary sort, first go through child list and see if it's

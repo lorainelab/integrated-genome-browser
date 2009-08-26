@@ -647,43 +647,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	public String getMimeType() {
 		return FEATURES_CONTENT_TYPE;
 	}
-
-	/**
-	 *  writes out annotations in DAS/2 feature XML, but wraps them in a <WRITEBACK> element?
-	 */
-	/*public boolean writeBackAnnotations(java.util.Collection syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) {
-		//  does not use seq arg, but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
-
-		boolean success = true;
-		PrintWriter pw = null;
-		try {
-			pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
-			pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			pw.println("<" + WRITEBACK + " xmlns=\"" + DAS2_NAMESPACE + "\">");
-			//      pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-			//      pw.println("    xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-			//      pw.println(" >");
-			pw.println("<" + FEATURES + ">");
-			MutableSeqSpan mspan = new SimpleMutableSeqSpan();
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry annot = (SeqSymmetry) iterator.next();
-				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs
-				//	  writeDasFeature(annot, null, 0, seq, type, pw, mspan);
-				writeDasFeature(annot, null, 0, type, pw, mspan);
-			}
-			pw.println("</" + FEATURES + ">");
-			pw.println("</" + WRITEBACK + ">");
-
-			pw.flush();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			success = false;
-		} finally {
-			GeneralUtils.safeClose(pw);
-		}
-		return success;
-	}*/
+	
 
 	/**
 	 *  Implementing AnnotationWriter interface to write out annotations

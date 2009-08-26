@@ -81,11 +81,12 @@
 
 		<delete file="${webstart.dir}/das2server.jar" />
 
-		<my.signjar jar="${lib.dir}/affx_fusion.jar"   signedjar="${webstart.dir}/affx_fusion.jar" />
-		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar" signedjar="${webstart.dir}/freehep-2.1.1.jar" />
-		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"     signedjar="${webstart.dir}/jlfgr-1_0.jar" />
-		<my.signjar jar="${lib.dir}/myswing.jar"       signedjar="${webstart.dir}/myswing.jar" />
-		<my.signjar jar="${lib.dir}/image4j.jar"       signedjar="${webstart.dir}/image4j.jar" />
+		<my.signjar jar="${lib.dir}/affx_fusion.jar"       signedjar="${webstart.dir}/affx_fusion.jar" />
+		<my.signjar jar="${lib.dir}/freehep-2.1.1.jar"     signedjar="${webstart.dir}/freehep-2.1.1.jar" />
+		<my.signjar jar="${lib.dir}/jlfgr-1_0.jar"         signedjar="${webstart.dir}/jlfgr-1_0.jar" />
+		<my.signjar jar="${lib.dir}/myswing.jar"           signedjar="${webstart.dir}/myswing.jar" />
+		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
+		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
 		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
 		<!--
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">

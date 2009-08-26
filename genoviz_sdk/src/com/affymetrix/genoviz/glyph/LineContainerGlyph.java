@@ -41,7 +41,7 @@ public class LineContainerGlyph extends Glyph  {
 
 		// temp fix for AWT drawing bug when rect gets too big.
 		Rectangle compbox = view.getComponentSizeRect();
-		pixelbox = GeometryUtils.intersection(compbox, pixelbox, pixelbox);
+		pixelbox = pixelbox.intersection(compbox);
 
 		// We use fillRect instead of drawLine, because it may be faster.
 		g.fillRect(pixelbox.x, pixelbox.y+pixelbox.height/2, pixelbox.width, 1);

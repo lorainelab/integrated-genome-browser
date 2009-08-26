@@ -156,28 +156,39 @@ public abstract class ServerUtils {
 	}
 
 	/**
+	 *   Recursively call on each child file;
+	 *   if not directory, see if can parse as annotation originalFile.
+	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
+	 */
+	public static final void loadAnnotsFromFile(
+			File genome_directory,
+			AnnotatedSeqGroup genome,
+			Map<String, String> graph_name2dir,
+			Map<String, String> graph_name2file,
+			String dataRoot) {
+		try {
+			ServerUtils.loadAnnotsFromFileRecurse(genome_directory, genome, "", graph_name2dir, graph_name2file, dataRoot);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+		/**
 	 *   If current_file is directory:
 	 *       if ".seqs" suffix, then handle as graphs
 	 *       otherwise recursively call on each child files;
 	 *   if not directory, see if can parse as annotation originalFile.
-	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
 	 */
-	public static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
+	private static final void loadAnnotsFromFileRecurse(File current_file, AnnotatedSeqGroup genome, String type_prefix,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
 		String file_name = current_file.getName();
 		String file_path = current_file.getPath();
 
-		String type_name;
-		String new_type_prefix;
-		if (type_prefix == null) {  // special-casing for top level genome directory, don't want genome name added to type name path
-			type_name = file_name;
-			new_type_prefix = "";
-		} else {
-			type_name = type_prefix + file_name;
-			new_type_prefix = type_name + "/";
-		}
+		String type_name = type_prefix + file_name;
+		String new_type_prefix = type_name + "/";
+		
 
 		// if current originalFile is directory, then descend down into child files
 		if (current_file.isDirectory()) {
@@ -204,11 +215,7 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		// current originalFile is not a directory, so try and recognize as annotation originalFile
-
-
-		//System.out.println("loading annotations of " + current_file.getName());
-
+		// current originalFile is not a directory, so try and recognize as annotation file
 		indexOrLoadFile(dataRoot, current_file, type_name, genome);
 	}
 
@@ -235,9 +242,25 @@ public abstract class ServerUtils {
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
 		List loadedSyms = loadAnnotFile(file, stream_name, tempGenome, true);
+
 		System.out.println("Indexing " + originalFileName);
-		determineIndexes(genome,
-				tempGenome, dataRoot, file, loadedSyms, iWriter, stream_name);
+
+		String extension = "";
+		if (stream_name.endsWith(".link.psl")) {
+			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
+					stream_name.length());
+		} else {
+			extension = stream_name.substring(stream_name.lastIndexOf("."),
+					stream_name.length());
+		}
+		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension, null, true);
+		String returnTypeName = typeName;
+		if (stream_name.endsWith(".link.psl")) {
+			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
+			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
+		}
+		IndexingUtils.determineIndexes(genome,
+				tempGenome, dataRoot, file, loadedSyms, iWriter, typeName, returnTypeName);
 	}
 
 	/**
@@ -257,71 +280,9 @@ public abstract class ServerUtils {
 		return tempGenome;
 	}
 
-	/**
-	 * Generate indexes.
-	 * @param genome
-	 * @param dataRoot
-	 * @param file
-	 * @param originalFileName
-	 * @param loadedSyms
-	 * @param iWriter
-	 * @param typeName
-	 */
-	private static void determineIndexes(
-			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome, 
-			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String stream_name) {
+	
 
-		String extension = "";
-		if (stream_name.endsWith(".link.psl")) {
-			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
-				stream_name.length());
-		} else {
-			extension = stream_name.substring(stream_name.lastIndexOf("."),
-				stream_name.length());
-		}
-		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension, null, true);
-		String returnTypeName = typeName;
-		if (stream_name.endsWith(".link.psl")) {
-			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
-			returnTypeName = typeName + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE;
-		}
-
-		for (BioSeq originalSeq : originalGenome.getSeqList()) {
-			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
-			if (tempSeq == null) {
-				continue;	// ignore; this is a seq that was added during parsing.
-			}
-
-			IndexedSyms iSyms = null;
-			String dirName = indexedDirName(dataRoot, tempGenome, tempSeq);
-			String indexedAnnotationsFileName = indexedFileName(dataRoot, file.getName(), tempGenome, tempSeq);
-			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
-
-			createDirIfNecessary(dirName);
-
-			// Sort symmetries for this specific chromosome.
-			List<SeqSymmetry> sortedSyms =
-					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
-			iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
-			// add symmetries to the chromosome (used by types request)
-			// TODO: use this for names request
-			originalSeq.addIndexedSyms(returnTypeName, iSyms);
-			// Write the annotations out to a file.
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, indexedAnnotationsFileName);
-		}
-	}
-
-
-	// filename of indexed annotations.
-	private static String indexedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
-		return indexedDirName(dataRoot, genome, seq) + "/" + fileName;
-	}
-	private static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
-		String optimizedDirectory = dataRoot + ".indexed";
-		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID() + "/" + seq.getID();
-	}
-
-	private static void createDirIfNecessary(String dirName) {
+	public static void createDirIfNecessary(String dirName) {
 		// Make sure the appropriate .indexed/species/version/chr directory exists.
 		// If not, create it.
 		File newFile = new File(dirName);
@@ -330,7 +291,9 @@ public abstract class ServerUtils {
 				System.out.println("ERROR: Couldn't create directory: " + dirName);
 				System.exit(-1);
 			} else {
-				System.out.println("Created new directory: " + dirName);
+				if (DEBUG) {
+					System.out.println("Created new directory: " + dirName);
+				}
 			}
 		}
 	}
@@ -387,11 +350,10 @@ public abstract class ServerUtils {
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
 			graph_name2dir.put(graph_name, file_path);
 		} else {
-			//System.out.println("checking for annotations in directory: " + current_file);
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
 			Arrays.sort(child_files);
 			for (File child_file : child_files) {
-				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
+				loadAnnotsFromFileRecurse(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
 			}
 		}
 	}
@@ -466,23 +428,17 @@ public abstract class ServerUtils {
 
 
 	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
-		// GAH 11-2006
-		//   need to enhance this to support multiple name parameters OR'd together
-		//   DAS/2 specification defines glob-style searches:
-		//   The string searches may be exact matches, substring, prefix or suffix searches.
-		//   The query type depends on if the search value starts and/or ends with a '*'.
-		//
-		//    ABC -- field exactly matches "ABC"
-		//    *ABC -- field ends with "ABC"
-		//    ABC* -- field starts with "ABC"
-		//    *ABC* -- field contains the substring "ABC"
+		int resultLimit = 10000;
+
 		boolean glob_start = name.startsWith("*");
 		boolean glob_end = name.endsWith("*");
 
 		List<SeqSymmetry> result = null;
+		List<SeqSymmetry> indexedResult = null;
 		Pattern name_pattern = null;
+		String name_regex = name;
 		if (glob_start || glob_end) {
-			String name_regex = name.toLowerCase();
+			//name_regex = name.toLowerCase();
 			if (glob_start) {
 				// do replacement of first "*" with ".*" ?
 				name_regex = ".*" + name_regex.substring(1);
@@ -491,15 +447,31 @@ public abstract class ServerUtils {
 				// do replacement of last "*" with ".*" ?
 				name_regex = name_regex.substring(0, name_regex.length() - 1) + ".*";
 			}
-			System.out.println("!!!! name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
-			name_pattern = Pattern.compile(name_regex);
-			result = genome.findSyms(name_pattern);
-			//	   Collections.sort(sortedSyms, new SeqSymIdComparator());
-			System.out.println("!!!! regex matches: " + result.size());
+			
 		} else {
 			// ABC -- field exactly matches "ABC"
-			result = genome.findSyms(name);
+			name_regex = "^" + name.toLowerCase() + "$";
+			//result = genome.findSyms(name);
 		}
+		if (DEBUG) {
+			System.out.println("name arg: " + name + ",  regex to use for pattern-matching: " + name_regex);
+		}
+		name_pattern = Pattern.compile(name_regex, Pattern.CASE_INSENSITIVE);
+		result = genome.findSyms(name_pattern);
+
+		if (DEBUG) {
+			System.out.println("non-indexed regex matches: " + result.size());
+		}
+		//if (genome.getIndexedIDFileName() != null) {
+		indexedResult = IndexingUtils.findSymsByName(genome, name_pattern, resultLimit);
+		if (indexedResult != null) {
+			result.addAll(indexedResult);
+		}
+		//}
+		if (DEBUG) {
+			System.out.println("total regex matches: " + result.size());
+		}
+
 		return result;
 	}
 
@@ -649,7 +621,7 @@ public abstract class ServerUtils {
 
 			if (iSyms.iWriter instanceof PSLParser && iSyms.file.getName().endsWith(".link.psl")) {
 				String indexesFileName = iSyms.file.getAbsolutePath();
-				newIstr = readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
+				newIstr = IndexingUtils.readAdditionalLinkPSLIndex(indexesFileName, annot_type, bytes);
 			} else {
 				newIstr = new ByteArrayInputStream(bytes);
 			}
@@ -668,45 +640,7 @@ public abstract class ServerUtils {
 	}
 
 
-	// special case for link.psl files
-	// we need to append the track name, and the probesets
-	private static ByteArrayInputStream readAdditionalLinkPSLIndex(
-			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
-		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
-		secondIndexesFileName += ".link2.psl";
-		
-		File secondIndexesFile = new File(secondIndexesFileName);
-		int bytes2Len = (int) secondIndexesFile.length();
-		byte[] bytes0 = PSLParser.trackLine(annot_type, "Consensus Sequences").getBytes();
-		// Determine overall length
-		int bytes0Len = bytes0.length;
-		int bytes1Len = bytes1.length;
-		byte[] combinedByteArr = new byte[bytes0Len + bytes1Len + bytes2Len];
-
-		// Copy in arrays.
-		// copy 0th byte array (trackLine)
-		System.arraycopy(bytes0, 0, combinedByteArr, 0, bytes0Len);
-		bytes0 = null;	// now unused
-
-		// copy 1st byte array (consensus syms)
-		System.arraycopy(bytes1, 0, combinedByteArr, bytes0Len, bytes1Len);
-		bytes1 = null;	// now unused
-
-		// copy 2nd byte array (probeset syms)
-		FileInputStream fis = null;
-		byte[] bytes2 = null;
-		try {
-			fis = new FileInputStream(secondIndexesFileName);
-			bytes2 = IndexingUtils.readBytesFromFile(
-					fis, 0, bytes2Len);
-		} finally {
-			GeneralUtils.safeClose(fis);
-		}
-		System.arraycopy(bytes2, 0, combinedByteArr, bytes0Len + bytes1Len, bytes2Len);
-		bytes2 = null;	// now unused
-
-		return new ByteArrayInputStream(combinedByteArr);
-	}
+	
 
 
 	// Print out the genomes

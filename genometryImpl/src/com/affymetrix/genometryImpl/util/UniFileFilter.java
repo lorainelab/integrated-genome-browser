@@ -50,10 +50,6 @@ public final class UniFileFilter extends FileFilter {
 		}
 	}
 
-	/*public UniFileFilter(String[] filters) {
-		this(filters, null);
-	}*/
-
 	/**
 	 *  This is the full constructor.
 	 *  <pre>
@@ -118,7 +114,7 @@ public final class UniFileFilter extends FileFilter {
 
 	// Removes all compression file-type endings
 	// Supply argument in lower case
-	String stripCompressionEndings(String name) {
+	private String stripCompressionEndings(String name) {
 		if (compression_endings != null) {
 			for (String ending : compression_endings) {
 				name = stripCompressionEnding(name, ending);
@@ -130,7 +126,7 @@ public final class UniFileFilter extends FileFilter {
 	// Removes a compression file-type endings. If the ending isn't present,
 	// the given filename is returned intact
 	// Should supply both arguments in lower case
-	String stripCompressionEnding(String name, String ending) {
+	private static String stripCompressionEnding(String name, String ending) {
 		if (name.endsWith(ending)) {
 			int index = name.lastIndexOf(ending);
 			return name.substring(0,index);

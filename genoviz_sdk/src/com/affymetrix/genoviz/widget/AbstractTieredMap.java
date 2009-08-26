@@ -236,7 +236,9 @@ public abstract class AbstractTieredMap
 					newbox.setRect(pbox.x, mtg.getCoordBox().y,
 							pbox.width, mtg.getCoordBox().height);
 				}
-				else GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
+				else {
+					GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
+				}
 			}
 
 			if ( newbox != null )

@@ -74,7 +74,7 @@ public class IndexingUtils {
 			SimpleSymWithProps sym = new SimpleSymWithProps();
 			String id = this.getID(i);
 			sym.setID(id);
-			sym.setProperty("title", id);
+			sym.setProperty("name", id);
 			sym.setProperty("method",type);
 			if (this.forward[i]) {
 				sym.addSpan(new SimpleSeqSpan(this.min[i], this.max[i], seq));

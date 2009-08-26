@@ -184,9 +184,9 @@ public final class GeneralLoadView extends JComponent
 
 		Executor vexec = Executors.newSingleThreadExecutor();
 
-		SwingWorker worker = new SwingWorker() {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			protected Object doInBackground() throws Exception {
+			protected Void doInBackground() throws Exception {
 				discoverServersAndSpeciesAndVersions();
 				return null;
 			}
@@ -214,6 +214,9 @@ public final class GeneralLoadView extends JComponent
 	 * @param serverName
 	 * @param serverURL
 	 * @param serverType
+	 * @param login
+	 * @param password 
+	 * @return
 	 */
 	public boolean addServer(String serverName, String serverURL, String serverType, String login, String password) {
 		boolean successful = false;
@@ -375,9 +378,9 @@ public final class GeneralLoadView extends JComponent
 		// Use a SwingWorker to avoid locking up the GUI.
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 
-		SwingWorker worker = new SwingWorker() {
+		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			public Object doInBackground() {
+			public Void doInBackground() {
 				try {
 				if (src == partial_residuesB) {
 					SeqSpan viewspan = gviewer.getVisibleSpan();

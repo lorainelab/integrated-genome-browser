@@ -108,33 +108,16 @@ public class StyleElement implements DrawableElement {
     return glyph;
   }
   
-  public void setName(String name) {
-    if (this.name != null) {
-      throw new RuntimeException("You canot change the name of StyleElement '" +
-          this.name + "' to '" + name +"'");
-    }
-    else {
-      this.name = name;
-      names2styles.put(name, this);
-    }
-  }
   
   public String getName() {
     return this.name;
   }
 
-  public GlyphElement getGlyphElement() {
-    return this.glyphElement;
-  }
 
   public void setGlyphElement(GlyphElement glyphElement) {
     this.glyphElement = glyphElement;
   }
 
-  
- public List getMatchElements() {
-   return this.matchElements;
- }
 
  public void addMatchElement(MatchElement me) {
     if (matchElements == null) {

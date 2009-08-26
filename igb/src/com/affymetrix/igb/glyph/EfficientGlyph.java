@@ -570,8 +570,8 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
     if (FIX_AWT_BIG_RECT_BUG) {
       if (pixelbox.width >= 1024) {
         Rectangle compbox = view.getComponentSizeRect();
-        pixelbox = com.affymetrix.genoviz.util.GeometryUtils.intersection(compbox, pixelbox, pixelbox);
-      }
+		pixelbox = pixelbox.intersection(compbox);
+	  }
     }
     return pixelbox;
   }

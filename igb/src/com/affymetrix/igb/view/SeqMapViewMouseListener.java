@@ -130,12 +130,12 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
     NeoMouseEvent nevt = (NeoMouseEvent)evt;
 
     Point2D.Double zoom_point = new Point2D.Double(nevt.getCoordX(), nevt.getCoordY());
-    List hits = nevt.getItems();
+    List<GlyphI> hits = nevt.getItems();
     int hcount = hits.size();
 
     GlyphI topgl = null;
     if (! nevt.getItems().isEmpty()) {
-      topgl = (GlyphI) nevt.getItems().lastElement();
+      topgl = nevt.getItems().lastElement();
       topgl = zoomCorrectedGlyphChoice(topgl, zoom_point);
     }
 

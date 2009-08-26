@@ -48,12 +48,6 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     return clone;
   }
 
-  public Stylesheet() {
-  }
-
-  /*public void importFromURL(String url) {
-    throw new RuntimeException("import not implemented");
-  }*/
 
   public StyleElement getStyleByName(String name) {
     return stylename2styleElement.get(name);
@@ -83,15 +77,6 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     }
   }
 
-  /*public static StyleElement easyClone(StyleElement original) {
-    try {
-      StyleElement cloned = (StyleElement) original.clone();
-      return cloned;
-    } catch (CloneNotSupportedException e) {
-      // Never happens !
-      throw new RuntimeException(e);
-    }
-  }*/
 
   /**
    *  Tries to find a styleElement for the given seq symmetry.
@@ -230,7 +215,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     return se;
   }
 
-  public static class WrappedStyleElement extends StyleElement {
+  public final static class WrappedStyleElement extends StyleElement {
     public static String NAME = "USE_STYLE";
 
     public WrappedStyleElement(String name) {

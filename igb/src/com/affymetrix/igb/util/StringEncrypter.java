@@ -14,9 +14,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-//import sun.misc.BASE64Decoder;
-//import sun.misc.BASE64Encoder;
-import org.apache.commons.codec.DecoderException;
+
 import org.apache.commons.codec.binary.Base64;
 
 import com.affymetrix.igb.general.ServerList;

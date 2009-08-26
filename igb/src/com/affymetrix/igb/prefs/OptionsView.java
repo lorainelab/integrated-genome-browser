@@ -265,7 +265,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
   }
 
   public String getToolTip() {
-    return "Edit Miscelaneous Options";
+    return "Edit Miscellaneous Options";
   }
 
   public String getInfoURL() {

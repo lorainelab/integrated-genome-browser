@@ -1326,46 +1326,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					notes.size() > 0 ||
 					props.size() > 0) {
 				result = new ArrayList<SeqSymmetry>();
-			} /* support for single name, single format, no other filters */ else if (names != null && names.size() == 1) {
-				String name = names.get(0);
-				result = ServerUtils.FindNameInGenome(name, genome);
-				OutputStream outstream = null;
-				try {
-					AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
-					if (writerclass == null) {
-						System.out.println("no AnnotationWriter found for format: " + output_format);
-						response.setStatus(response.SC_BAD_REQUEST);
-						return;
-					}
-					String mime_type = writer.getMimeType();
-
-					if (writer instanceof Das2FeatureSaxParser) {
-						((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));
-					}
-					response.setContentType(mime_type);
-
-					outstream = response.getOutputStream();
-
-					System.out.println("Result size is :" + result.size());
-					//BioSeq seq = genome.getSeq("chr1");
-					for (BioSeq seq : genome.getSeqList()) {
-					/*if (writer instanceof IndexWriter) {
-						Writer out = new BufferedWriter(new OutputStreamWriter(outstream));
-						for (SeqSymmetry sym : result) {
-							((IndexWriter)writer).outputSimpleBedFormat(sym, seq, out);
-						}
-					} else {*/
-						writer.writeAnnotations(result, seq, "", outstream);
-					//}
-					}
-
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				} finally {
-					GeneralUtils.safeClose(outstream);
-				}
+			} /* support for single name, single format, no other filters */
+			else if (names != null && names.size() == 1) {
+				handleNameQuery(
+						names, genome, writerclass, output_format, response, xbase);
 				return;
-
 			}
 
 
@@ -1492,6 +1457,34 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 		}
 		return known_query;
+	}
+
+
+	private void handleNameQuery(ArrayList<String> names, AnnotatedSeqGroup genome, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
+		String name = names.get(0);
+		List<SeqSymmetry> result = ServerUtils.FindNameInGenome(name, genome);
+		OutputStream outstream = null;
+		try {
+			AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
+			if (writerclass == null) {
+				System.out.println("no AnnotationWriter found for format: " + output_format);
+				response.setStatus(response.SC_BAD_REQUEST);
+				return;
+			}
+			String mime_type = writer.getMimeType();
+			if (writer instanceof Das2FeatureSaxParser) {
+				((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));
+			}
+			response.setContentType(mime_type);
+			outstream = response.getOutputStream();
+			for (BioSeq seq : genome.getSeqList()) {
+				writer.writeAnnotations(result, seq, null, outstream);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(outstream);
+		}
 	}
 
 

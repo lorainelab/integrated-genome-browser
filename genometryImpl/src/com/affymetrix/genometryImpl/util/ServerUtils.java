@@ -462,12 +462,10 @@ public abstract class ServerUtils {
 		if (DEBUG) {
 			System.out.println("non-indexed regex matches: " + result.size());
 		}
-		//if (genome.getIndexedIDFileName() != null) {
 		indexedResult = IndexingUtils.findSymsByName(genome, name_pattern, resultLimit);
 		if (indexedResult != null) {
 			result.addAll(indexedResult);
 		}
-		//}
 		if (DEBUG) {
 			System.out.println("total regex matches: " + result.size());
 		}

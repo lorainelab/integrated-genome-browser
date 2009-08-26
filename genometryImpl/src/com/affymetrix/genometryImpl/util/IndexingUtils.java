@@ -5,18 +5,15 @@ import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
-import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
+
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +47,7 @@ public class IndexingUtils {
 		public int[] min;
 		public int[] max;
 		public boolean[] forward;
-		public String[] id;
+		private byte[][] id;	// Using byte array instead of String to save memory
 		public long[] filePos;
 		public String typeName;
 		public IndexWriter iWriter;
@@ -59,23 +56,33 @@ public class IndexingUtils {
 			min = new int[resultSize];
 			max = new int[resultSize];
 			forward = new boolean[resultSize];
-			id = new String[resultSize];
+			id = new byte[resultSize][];
 			filePos = new long[resultSize + 1];
 			this.file = file;
 			this.typeName = typeName;
 			this.iWriter = iWriter;
 		}
 
-		private SimpleSymWithProps convertToSymWithProps(int i, BioSeq seq) {
-		SimpleSymWithProps sym = new SimpleSymWithProps();
-		sym.setID(this.id[i]);
-		if (this.forward[i]) {
-			sym.addSpan(new SimpleSeqSpan(this.min[i], this.max[i], seq));
-		} else {
-			sym.addSpan(new SimpleSeqSpan(this.max[i], this.min[i], seq));
+		String getID(int i) {
+			return new String(this.id[i]);
 		}
-		return sym;
-	}
+		void setID(int i, String val) {
+			this.id[i] = val.getBytes();
+		}
+		
+		private SimpleSymWithProps convertToSymWithProps(int i, BioSeq seq, String type) {
+			SimpleSymWithProps sym = new SimpleSymWithProps();
+			String id = this.getID(i);
+			sym.setID(id);
+			sym.setProperty("name", id);
+			sym.setProperty("method",type);
+			if (this.forward[i]) {
+				sym.addSpan(new SimpleSeqSpan(this.min[i], this.max[i], seq));
+			} else {
+				sym.addSpan(new SimpleSeqSpan(this.max[i], this.min[i], seq));
+			}
+			return sym;
+		}
 
 	}
 
@@ -155,17 +162,14 @@ public class IndexingUtils {
 					break;
 				}
 				IndexedSyms iSyms = seq.getIndexedSym(type);
-				int symSize = iSyms.id.length;
-				if (symSize == 0) {
-					continue;
-				}
+				int symSize = iSyms.min.length;
 				for (int i = 0; i < symSize; i++) {
-					String id = iSyms.id[i];
+					String id = iSyms.getID(i);
 					matcher.reset(id);
 					if (!matcher.matches()) {
 						continue;
 					}
-					SimpleSymWithProps sym = iSyms.convertToSymWithProps(i, seq);
+					SimpleSymWithProps sym = iSyms.convertToSymWithProps(i, seq, type);
 					results.add(sym);
 
 					resultCount++;
@@ -230,7 +234,7 @@ public class IndexingUtils {
 			baos.reset();
 
 			// add to iSyms, and advance index.
-			iSyms.id[index] = sym.getID();
+			iSyms.setID(index, sym.getID());
 			iSyms.min[index] = iWriter.getMin(sym, seq);
 			iSyms.max[index] = iWriter.getMax(sym, seq);
 			iSyms.forward[index] = sym.getSpan(seq).isForward();

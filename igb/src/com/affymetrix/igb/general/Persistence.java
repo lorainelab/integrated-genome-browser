@@ -81,6 +81,9 @@ public final class Persistence {
 		}
 
 		AnnotatedSeqGroup current_group = seq.getSeqGroup();
+		if (current_group == null) {
+			return;
+		}
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, current_group.getID(), true);
 		//  encodes id via MD5 if too long, removes slashes rather than make deeply nested node hierarchy

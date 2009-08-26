@@ -569,24 +569,19 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		if (DEBUG){
 			System.out.println("in BedParser.writeAnnotations()");
 		}
-		boolean success = true;
 		Writer bw = null;
 		try {
 			bw = new BufferedWriter(new OutputStreamWriter(outstream));
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry sym = (SeqSymmetry)iterator.next();
+			for (SeqSymmetry sym : syms) {
 				writeSymmetry(bw, sym, seq);
 			}
 			bw.flush();
+			return true;
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			success = false;
-		} finally {
-			GeneralUtils.safeClose(bw);
 		}
-		return success;
+		return false;
 	}
 
 	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException {

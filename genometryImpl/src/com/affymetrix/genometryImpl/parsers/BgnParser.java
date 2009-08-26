@@ -141,7 +141,6 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 				}
 				results.add(sym);
 
-
 				if (tmax > chromseq.getLength()) {
 					chromseq.setLength(tmax);
 				}

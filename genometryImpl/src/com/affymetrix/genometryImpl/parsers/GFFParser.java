@@ -512,6 +512,7 @@ public final class GFFParser implements AnnotationWriter  {
 	}
 
 
+
 	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq, Integer annot_id) {
 		// Loop through the results List and add all Sym's to the BioSeq
 		Iterator iter = results.iterator();

@@ -44,7 +44,6 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	static boolean main_batch_mode = false; // main() should run in batch mode (processing PSL files in psl_input_dir)
 	static boolean write_from_text = true; // main() should read psl file from text_file and write bps to bin_file
 	static boolean read_from_bps = false;  // main() should read bps file bin_file
-	static boolean use_byte_buffer = true;
 	static boolean REPORT_LOAD_STATS = true;
 
 	static String user_dir = System.getProperty("user.dir");
@@ -176,16 +175,11 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			fis = new FileInputStream(fil);
 			BufferedInputStream bis = new BufferedInputStream(fis);
 
-			if (use_byte_buffer) {
 				byte[] bytebuf = new byte[(int)flength];
 				bis.read(bytebuf);
 				//        fis.read(bytebuf);
 				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
 				dis = new DataInputStream(bytestream);
-			}
-			else {
-				dis = new DataInputStream(bis);
-			}
 			results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true, annot_id);
 		}
 		finally {
@@ -219,7 +213,6 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		HashMap<String,SeqSymmetry> query2sym = new HashMap<String,SeqSymmetry>(); // maps query chrom name to top-level symmetry
 		ArrayList<UcscPslSym> results = new ArrayList<UcscPslSym>(estimated_count);
 		int count = 0;
-		int same_count = 0;
 		Timer tim = new Timer();
 		tim.start();
 		boolean reached_EOF = false;
@@ -320,7 +313,9 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		catch (EOFException ex) {
 			reached_EOF = true;
 		}
-		finally {try { dis.close(); } catch (Exception ex) {}}
+		finally {
+			GeneralUtils.safeClose(dis);
+		}
 
 		long timecount = tim.read();
 		if (REPORT_LOAD_STATS) {
@@ -354,34 +349,28 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		List<SeqSymmetry> results = null;
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
-		try  {
+		try {
 			File fil = new File(file_name);
 			long flength = fil.length();
 			fis = new FileInputStream(fil);
 			InputStream istr = null;
-			if (use_byte_buffer) {
-				byte[] bytebuf = new byte[(int)flength];
-				bis = new BufferedInputStream(fis);
-				bis.read(bytebuf);
-				bis.close();
-				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-				istr = bytestream;
-			}
-			else {
-				istr = fis;
-			}
+			byte[] bytebuf = new byte[(int) flength];
+			bis = new BufferedInputStream(fis);
+			bis.read(bytebuf);
+			bis.close();
+			ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+			istr = bytestream;
+
 			PSLParser parser = new PSLParser();
 			// don't bother annotating the sequences, just get the list of syms
 			results = parser.parse(istr, file_name, null, null, false, false, null);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(fis);
 		}
-		//long timecount = tim.read();
-		SingletonGenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read()/1000f));
+		SingletonGenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read() / 1000f));
 		return results;
 	}
 

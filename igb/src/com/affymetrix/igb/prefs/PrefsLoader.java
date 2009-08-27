@@ -99,7 +99,7 @@ public abstract class PrefsLoader {
 		/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
 		try {
 			default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.DEFAULT_PREFS_API_RESOURCE);
-			System.out.println("Default User preferences were not found.  loading default User preferencess from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			System.out.println("Default User preferences were not found.  loading default User preferences from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
 			Preferences.importPreferences(default_prefs_stream);
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {

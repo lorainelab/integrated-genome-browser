@@ -121,15 +121,19 @@ public class IndexingUtils {
 				continue;	// ignore; this is a seq that was added during parsing.
 			}
 
+			// Sort symmetries for this specific chromosome.
+			List<SeqSymmetry> sortedSyms =
+					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
+			if (sortedSyms.isEmpty()) {
+				continue;
+			}
+
 			String dirName = IndexingUtils.indexedDirName(dataRoot, tempGenome, tempSeq);
 			String indexedAnnotationsFileName = IndexingUtils.indexedFileName(dataRoot, file.getName(), tempGenome, tempSeq);
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 
 			ServerUtils.createDirIfNecessary(dirName);
 
-			// Sort symmetries for this specific chromosome.
-			List<SeqSymmetry> sortedSyms =
-					IndexingUtils.getSortedAnnotationsForChrom(loadedSyms, tempSeq, iWriter.getComparator(tempSeq));
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 
 			// add symmetries to the chromosome (used by types request)

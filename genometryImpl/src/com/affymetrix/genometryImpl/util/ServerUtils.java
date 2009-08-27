@@ -155,43 +155,101 @@ public abstract class ServerUtils {
 	}
 
 	/**
-	 *   Recursively call on each child file;
-	 *   if not directory, see if can parse as annotation originalFile.
-	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
+	 * Load annotations from root of genome directory.
+	 * @param genomeDir
+	 * @param genome
+	 * @param graph_name2dir
+	 * @param graph_name2file
+	 * @param dataRoot
 	 */
-	public static final void loadAnnotsFromFile(
-			File genome_directory,
+	public static final void loadAnnots(
+			File genomeDir,
 			AnnotatedSeqGroup genome,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
 		try {
-			ServerUtils.loadAnnotsFromFileRecurse(genome_directory, genome, "", graph_name2dir, graph_name2file, dataRoot);
+			if (genomeDir.isDirectory()) {
+				ServerUtils.loadAnnotsFromDir(
+						genomeDir.getName(), genome, genomeDir, "", graph_name2dir, graph_name2file, dataRoot);
+			} else {
+				System.out.println("Warning: " + genomeDir.getAbsolutePath() + " is not a directory.  Skipping.");
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-		/**
-	 *   If current_file is directory:
-	 *       if ".seqs" suffix, then handle as graphs
-	 *       otherwise recursively call on each child files;
-	 *   if not directory, see if can parse as annotation originalFile.
+	/**
+	 * if ".seqs" suffix, then handle as graphs
+	 * otherwise recursively call on each child files;
+	 * @param type_name
+	 * @param genome
+	 * @param current_file
+	 * @param new_type_prefix
+	 * @param graph_name2dir
+	 * @param graph_name2file
+	 * @param dataRoot
 	 */
-	private static final void loadAnnotsFromFileRecurse(File current_file, AnnotatedSeqGroup genome, String type_prefix,
+	public static final void loadAnnotsFromDir(
+			String type_name,
+			AnnotatedSeqGroup genome,
+			File current_file,
+			String new_type_prefix,
+			Map<String, String> graph_name2dir,
+			Map<String, String> graph_name2file,
+			String dataRoot) {
+		File annot = new File(current_file, annots_filename);
+		if (annot.exists()) {
+			FileInputStream istr = null;
+			try {
+				istr = new FileInputStream(annot);
+				AnnotsParser.parseAnnotsXml(istr, annots_map);
+			} catch (FileNotFoundException ex) {
+				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
+			} finally {
+				GeneralUtils.safeClose(istr);
+			}
+		}
+
+
+		if (type_name.endsWith(graph_dir_suffix)) {
+			// each originalFile in directory is same annotation type, but for a single originalSeq?
+			// assuming bar files for now, each with starting with originalSeq id?
+			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
+			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
+			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + current_file.getPath());
+			graph_name2dir.put(graph_name, current_file.getPath());
+		} else {
+			File[] child_files = current_file.listFiles(new HiddenFileFilter());
+			Arrays.sort(child_files);
+			for (File child_file : child_files) {
+				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
+			}
+		}
+	}
+
+	/**
+	 * see if can parse as annotation originalFile.
+	 * @param current_file
+	 * @param genome
+	 * @param type_prefix
+	 * @param graph_name2dir
+	 * @param graph_name2file
+	 * @param dataRoot
+	 */
+	private static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
 		String file_name = current_file.getName();
-		String file_path = current_file.getPath();
-
 		String type_name = type_prefix + file_name;
-		String new_type_prefix = type_name + "/";
 		
-
 		// if current originalFile is directory, then descend down into child files
 		if (current_file.isDirectory()) {
-			loadAnnotsFromDir(type_name, file_path, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
+			String new_type_prefix = type_name + "/";
+			loadAnnotsFromDir(
+					type_name, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
 			return;
 		}
 
@@ -199,6 +257,7 @@ public abstract class ServerUtils {
 			// String file_path = current_file.getPath();
 			// special casing so bar files are seen in types request, but not parsed in on startup
 			//    (because using graph slicing so don't have to pull all bar originalFile graphs into memory)
+			String file_path = current_file.getPath();
 			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
 			graph_name2file.put(type_name, file_path);
 			return;
@@ -318,46 +377,6 @@ public abstract class ServerUtils {
 		return results;
 	}
 
-	
-
-	public static final void loadAnnotsFromDir(
-			String type_name,
-			String file_path,
-			AnnotatedSeqGroup genome,
-			File current_file,
-			String new_type_prefix,
-			Map<String, String> graph_name2dir,
-			Map<String, String> graph_name2file,
-			String dataRoot) {
-		File annot = new File(current_file, annots_filename);
-		if (annot.exists()) {
-			FileInputStream istr = null;
-			try {
-				istr = new FileInputStream(annot);
-				AnnotsParser.parseAnnotsXml(istr, annots_map);
-			} catch (FileNotFoundException ex) {
-				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
-			} finally {
-				GeneralUtils.safeClose(istr);
-			}
-		}
-
-
-		if (type_name.endsWith(graph_dir_suffix)) {
-			// each originalFile in directory is same annotation type, but for a single originalSeq?
-			// assuming bar files for now, each with starting with originalSeq id?
-			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
-			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
-			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + file_path);
-			graph_name2dir.put(graph_name, file_path);
-		} else {
-			File[] child_files = current_file.listFiles(new HiddenFileFilter());
-			Arrays.sort(child_files);
-			for (File child_file : child_files) {
-				loadAnnotsFromFileRecurse(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
-			}
-		}
-	}
 
 	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
 		int resultLimit = 10000;

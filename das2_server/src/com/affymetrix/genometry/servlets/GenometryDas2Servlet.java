@@ -627,7 +627,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String,String> graph_name2file = genome2graphfiles.get(genome);
-		ServerUtils.loadAnnotsFromFile(genome_directory, genome, graph_name2dir, graph_name2file, dataRoot);
+		ServerUtils.loadAnnots(genome_directory, genome, graph_name2dir, graph_name2file, dataRoot);
 
 		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
@@ -1363,12 +1363,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 				overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
 				if (overlap_span != null) {
-					if (insides.size() == 1) {
-						String inside = insides.get(0);
-						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
-					}
-
-					//	if (query_type.endsWith(".bar")) {
+					
 					Map<String, String> graph_name2dir = genome2graphdirs.get(genome);
 					Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 					if ((graph_name2dir.get(query_type) != null) ||
@@ -1377,6 +1372,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 							(query_type.endsWith(".bar"))) {
 						handleGraphRequest(output_registry, xbase, response, query_type, overlap_span);
 						return;
+					}
+					
+					if (insides.size() == 1) {
+						String inside = insides.get(0);
+						inside_span = ServerUtils.getLocationSpan(seqid, inside, genome);
 					}
 
 					outseq = overlap_span.getBioSeq();

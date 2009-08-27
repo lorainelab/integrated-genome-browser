@@ -16,15 +16,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author jnicol1
  */
 public abstract class PrefsLoader {
-	static Map<String,Map> prefs_hash;
+	private static final int CURRENT_PREF_VERSION = 1;
+	private static Map<String,Map> prefs_hash;
 
 	private static final String user_dir = System.getProperty("user.dir");
   private static final String user_home = System.getProperty("user.home");
@@ -47,6 +51,8 @@ public abstract class PrefsLoader {
    *  If prefs haven't been loaded yet, will force loading of prefs
    */
   public static Map<String,Map> getIGBPrefs(String [] main_args) {
+	  checkPrefsVersion();
+	  
       if (prefs_hash != null) {
           return prefs_hash;
       }
@@ -65,7 +71,7 @@ public abstract class PrefsLoader {
 
       LoadFileOrURLPrefs(prefs_list, prefs_parser);
 
-			ServerList.LoadServerPrefs();
+		ServerList.LoadServerPrefs();
 
       return prefs_hash;
   }
@@ -99,7 +105,7 @@ public abstract class PrefsLoader {
 		/**  load default prefs from jar (with Preferences API).  This will be the standard method soon.*/
 		try {
 			default_prefs_stream = IGB.class.getResourceAsStream(IGBConstants.DEFAULT_PREFS_API_RESOURCE);
-			System.out.println("Default User preferences were not found.  loading default User preferencess from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
+			System.out.println("Default User preferences were not found.  loading default User preferences from: " + IGBConstants.DEFAULT_PREFS_API_RESOURCE);
 			Preferences.importPreferences(default_prefs_stream);
 			//prefs_parser.parse(default_prefs_stream, "", prefs_hash);
 		} catch (Exception ex) {
@@ -193,5 +199,56 @@ public abstract class PrefsLoader {
     return def_prefs_url;
   }
 
+	/**
+	 * Checks the version of the preferences file.  This function is also
+	 * responsible for updating older preference files to the current version.
+	 *
+	 * @return true if the preferences version matches this copy of IGB
+	 */
+	private static void checkPrefsVersion() {
+		int version = UnibrowPrefsUtil.getTopNode().getInt("version", 0);
 
+		/* Preferences are not versioned */
+		if (version == 0) {
+			/* Update server preferences to new format */
+			ServerList.updateServerPrefs();
+
+			/* Version the preferences */
+			version = 1;
+			UnibrowPrefsUtil.getTopNode().putInt("version", version);
+		}
+
+		/*
+		 * Check if the version of the preferences is not the 'correct' version.
+		 * The check is done this way because code above this point should have
+		 * upgraded the preferences file to the 'correct' version.  This check
+		 * will catch any future preference versions as well as any mistakes in
+		 * the upgrade code that runs before it.
+		 */
+		if (version != CURRENT_PREF_VERSION) {
+			Object[] options = { "Quit IGB", "Delete and Continue" };
+			int n = JOptionPane.showOptionDialog(null,
+					"The preferences file is newer than this version of IGB.  Do you\n"
+					+ "wish to delete preferences and continue?",
+					"Preferences Too New",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE,
+					null,
+					options,
+					options[0]);
+
+			System.err.println("pressed: " + n);
+			if (n == 0 || n == JOptionPane.CLOSED_OPTION) {
+				System.err.println("Quitting");
+				System.exit(0);
+			} else {
+				try {
+					System.err.println("Deleting");
+					UnibrowPrefsUtil.getTopNode().removeNode();
+				} catch (BackingStoreException ex) {
+					Logger.getLogger(PrefsLoader.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+		}
+	}
 }

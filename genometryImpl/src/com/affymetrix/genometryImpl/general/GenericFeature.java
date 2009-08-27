@@ -3,9 +3,12 @@ package com.affymetrix.genometryImpl.general;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class that's useful for visualizing a generic feature.
@@ -47,6 +50,7 @@ public final class GenericFeature {
 			this.visible = false;
 			this.loadStrategy = LoadStrategy.NO_LOAD;
 		}
+		this.setFriendlyURL();
 		this.LoadStatusMap = new HashMap<MutableAnnotatedBioSeq, LoadStatus>();
 	}
 
@@ -59,6 +63,23 @@ public final class GenericFeature {
 				featureProps.containsKey("load_hint") &&
 				featureProps.get("load_hint").equals("Whole Sequence"));
 	}
+	private void setFriendlyURL() {
+		if (this.featureProps == null || !this.featureProps.containsKey("URL") || this.featureProps.get("URL").length() == 0) {
+			return;
+		}
+		try {
+			this.friendlyURL = new URL(this.featureProps.get("URL"));
+		} catch (MalformedURLException ex) {
+			Logger.getLogger(GenericFeature.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	public String description() {
+		if (this.featureProps != null && this.featureProps.containsKey("description")) {
+			return this.featureProps.get("description");
+		}
+		return "";
+	}
 
 	@Override
 	public String toString() {
@@ -68,5 +89,5 @@ public final class GenericFeature {
 
 		int lastSlash = this.featureName.lastIndexOf("/");
 		return this.featureName.substring(lastSlash + 1,featureName.length());
-	}	
+	}
 }

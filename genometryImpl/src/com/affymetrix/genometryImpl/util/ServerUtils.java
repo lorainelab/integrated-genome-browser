@@ -14,6 +14,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
+import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
@@ -53,7 +54,7 @@ public abstract class ServerUtils {
 	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
 	private static final Pattern interval_splitter = Pattern.compile(":");
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-	private static Map<String, String> annots_map = new LinkedHashMap<String, String>();    // hash of originalFile names and titles
+	private static Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map = new HashMap<AnnotatedSeqGroup,List<AnnotMapElt>>();    // hash of filenames to annot properties.
 
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
@@ -204,7 +205,9 @@ public abstract class ServerUtils {
 			FileInputStream istr = null;
 			try {
 				istr = new FileInputStream(annot);
-				AnnotsParser.parseAnnotsXml(istr, annots_map);
+				List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
+				annots_map.put(genome, annotList);
+				AnnotsParser.parseAnnotsXml(istr, annotList);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
 			} finally {
@@ -311,7 +314,7 @@ public abstract class ServerUtils {
 			extension = stream_name.substring(stream_name.lastIndexOf("."),
 					stream_name.length());
 		}
-		String typeName = ParserController.GetAnnotType(annots_map, stream_name, extension);
+		String typeName = ParserController.GetAnnotType(annots_map.get(genome), stream_name, extension);
 		String returnTypeName = typeName;
 		if (stream_name.endsWith(".link.psl")) {
 			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
@@ -360,14 +363,18 @@ public abstract class ServerUtils {
 
 
 	private static List loadAnnotFile(File current_file, String stream_name, AnnotatedSeqGroup genome, boolean isIndexed) {
+		List<AnnotMapElt> annotList = annots_map.get(genome);
+		if (annotList == null) {
+			return Collections.emptyList();
+		}
 		InputStream istr = null;
 		List results = null;
 		try {
 			istr = new BufferedInputStream(new FileInputStream(current_file));
 			if (!isIndexed) {
-				results = ParserController.parse(istr, annots_map, stream_name, gmodel, genome);
+				results = ParserController.parse(istr, annots_map.get(genome), stream_name, gmodel, genome);
 			} else {
-				results = ParserController.parseIndexed(istr, annots_map, stream_name, genome);
+				results = ParserController.parseIndexed(istr, annots_map.get(genome), stream_name, genome);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

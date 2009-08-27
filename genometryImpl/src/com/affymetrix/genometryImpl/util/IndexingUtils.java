@@ -414,15 +414,8 @@ public class IndexingUtils {
 		bytes1 = null;	// now unused
 
 		// copy 2nd byte array (probeset syms)
-		FileInputStream fis = null;
-		byte[] bytes2 = null;
-		try {
-			fis = new FileInputStream(secondIndexesFileName);
-			bytes2 = IndexingUtils.readBytesFromFile(
-					secondIndexesFile, 0, bytes2Len);
-		} finally {
-			GeneralUtils.safeClose(fis);
-		}
+		byte[] bytes2 = IndexingUtils.readBytesFromFile(secondIndexesFile, 0, bytes2Len);
+
 		System.arraycopy(bytes2, 0, combinedByteArr, bytes0Len + bytes1Len, bytes2Len);
 		bytes2 = null;	// now unused
 

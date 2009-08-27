@@ -6,6 +6,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -54,6 +55,7 @@ public final class FeatureLoading {
 		return true;
 	}
 
+
 	/**
 	 * Load the annotations for the given version.  This is specific to one server.
 	 * @param gVersion
@@ -79,11 +81,11 @@ public final class FeatureLoading {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				if (type_props != null && type_props.size() > 0) {
+				//if (type_props != null && type_props.size() > 0) {
 					gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
-				} else {
-					gVersion.features.add(new GenericFeature(type_name, gVersion));
-				}
+				//} else {
+				//	gVersion.features.add(new GenericFeature(type_name, gVersion));
+				//}
 			}
 			return;
 		}
@@ -122,7 +124,8 @@ public final class FeatureLoading {
 					if (DEBUG) {
 						System.out.println("Adding feature " + featureName);
 					}
-					gVersion.features.add(new GenericFeature(featureName, gVersion));
+					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, featureName);
+					gVersion.features.add(new GenericFeature(featureName, type_props, gVersion));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -276,12 +279,14 @@ public final class FeatureLoading {
 		}
 
 		QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
-		Map<String,String> annotsMap = quickloadServer.getAnnotsMap(gFeature.gVersion.versionID);
+		List<AnnotMapElt> annotsList = quickloadServer.getAnnotsMap(gFeature.gVersion.versionID);
 		
 		// Linear search, but over a very small list.
-		for (Map.Entry<String,String> entry : annotsMap.entrySet()) {
-			if (entry.getValue().equals(gFeature.featureName)) {
-				return  entry.getKey();
+		for (AnnotMapElt annotMapElt : annotsList) {
+			System.out.println("Testing " + annotMapElt.title + " against " + gFeature.featureName);
+			if (annotMapElt.title.equals(gFeature.featureName)) {
+				System.out.println("Found it.");
+				return annotMapElt.fileName;
 			}
 		}
 		return "";

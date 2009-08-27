@@ -6,6 +6,7 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 public final class ParserController {
 
 	public static List parse(
-			InputStream instr, Map<String, String> annots_map, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
+			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
 		InputStream str = null;
 		List results = null;
 		String type_prefix = null;
@@ -38,7 +39,7 @@ public final class ParserController {
 
 			/*else if (stream_name.endsWith(".link.psl"))  {
 				System.out.println("loading link.psl via PslParser: " + stream_name);
-				String annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
+				String annot_type = GetAnnotType(annotList, stream_name, ".link.psl");
 				// assume that want to annotate target seqs, and that these are the seqs
 				//    represented in seq_group
 				PSLParser parser = new PSLParser();
@@ -55,7 +56,7 @@ public final class ParserController {
 
 			else if (stream_name.endsWith(".bed")) {
 				System.out.println("loading via BedParser: " + stream_name);
-				String annot_type = GetAnnotType(annots_map, stream_name, ".bed");
+				String annot_type = GetAnnotType(annotList, stream_name, ".bed");
 				BedParser parser = new BedParser();
 				// specifying via boolean arg that BedParser should build container syms
 				results = parser.parse(str, gmodel, seq_group, true, annot_type, true);
@@ -65,14 +66,14 @@ public final class ParserController {
 				if (type_prefix != null) {
 					bp1_reader.setTypePrefix(type_prefix);
 				}
-				String annot_type = GetAnnotType(annots_map, stream_name, ".bp");
+				String annot_type = GetAnnotType(annotList, stream_name, ".bp");
 				// parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
 				//   (to save memory)
 				results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 				System.out.println("done loading via Bprobe1Parser: " + stream_name);
 			} else if (stream_name.endsWith(".ead")) {
 				System.out.println("loading via ExonArrayDesignParser");
-				String annot_type = GetAnnotType(annots_map, stream_name, ".ead");
+				String annot_type = GetAnnotType(annotList, stream_name, ".ead");
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				parser.parse(str, seq_group, true, annot_type);
 				System.out.println("done loading via ExonArrayDesignParser: " + stream_name);
@@ -121,13 +122,13 @@ public final class ParserController {
 	/**
 	 * Parsing indexed files; don't annotate.
 	 * @param stream_name
-	 * @param annots_map
+	 * @param annotList
 	 * @param str
 	 * @param type_prefix
 	 * @param seq_group
 	 * @return
 	 */
-	public static List parseIndexed(InputStream str, Map<String, String> annots_map, String stream_name, AnnotatedSeqGroup seq_group) {
+	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group) {
 
 		DataInputStream dis = new DataInputStream(str);
 		String type_prefix = null;
@@ -137,7 +138,7 @@ public final class ParserController {
 		}
 		if ((stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) && (!stream_name.endsWith(".link.psl"))) {
 			System.out.println("loading via PslParser: " + stream_name);
-			String annot_type = GetAnnotType(annots_map, stream_name, ".psl");
+			String annot_type = GetAnnotType(annotList, stream_name, ".psl");
 			IndexWriter iWriter = new PSLParser();
 			if (type_prefix != null) {
 				((PSLParser) iWriter).setTrackNamePrefix(type_prefix);
@@ -146,25 +147,25 @@ public final class ParserController {
 		}
 		if (stream_name.endsWith(".bps")) {
 			System.out.println("loading via BpsParser: " + stream_name);
-			String annot_type = GetAnnotType(annots_map, stream_name, ".bps");
+			String annot_type = GetAnnotType(annotList, stream_name, ".bps");
 			IndexWriter iWriter = new BpsParser();
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".bgn")) {
 			System.out.println("loading via BgnParser: " + stream_name);
 			IndexWriter iWriter = new BgnParser();
-			String annot_type = GetAnnotType(annots_map, stream_name, ".bgn");
+			String annot_type = GetAnnotType(annotList, stream_name, ".bgn");
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".brs")) {
 			System.out.println("loading via BrsParser: " + stream_name);
 			IndexWriter iWriter = new BrsParser();
-			String annot_type = GetAnnotType(annots_map, stream_name, ".brs");
+			String annot_type = GetAnnotType(annotList, stream_name, ".brs");
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".link.psl")) {
 			System.out.println("loading link.psl via PslParser: " + stream_name);
-			String annot_type = GetAnnotType(annots_map, stream_name, ".link.psl");
+			String annot_type = GetAnnotType(annotList, stream_name, ".link.psl");
 			// assume that want to annotate target seqs, and that these are the seqs
 			//    represented in seq_group
 			IndexWriter iWriter = new PSLParser();
@@ -228,17 +229,15 @@ public final class ParserController {
 
 	// return an annotation type.
 	// This is either:
-	// 1.  A type name contained in the annots_map hash table.
+	// 1.  A type name contained in the annotList hash table.
 	// 2.  (Default) The stream name with the extension stripped off.
 	public static String GetAnnotType(
-			Map<String, String> annots_map, String stream_name, String extension) {
+			List<AnnotMapElt> annotsList, String stream_name, String extension) {
 		// Check if this was in the annots mapping.
-		if (annots_map != null && !annots_map.isEmpty()) {
-			if (annots_map.containsKey(stream_name)) {
-				return annots_map.get(stream_name);
-			}
-			if (annots_map.containsKey(stream_name.toLowerCase())) {
-				return annots_map.get(stream_name.toLowerCase());
+		if (annotsList != null) {
+			AnnotMapElt annotMapElt = AnnotMapElt.findFileNameElt(stream_name, annotsList);
+			if (annotMapElt != null) {
+				return annotMapElt.title;
 			}
 		}
 

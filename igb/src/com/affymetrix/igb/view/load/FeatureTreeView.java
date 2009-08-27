@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -68,6 +69,10 @@ public final class FeatureTreeView extends JComponent {
 		tree_panel.setAlignmentX(0.0f);
 
 		tree = new JTree();
+
+		 //Enable tool tips.
+		ToolTipManager.sharedInstance().registerComponent(tree);
+
 		tcr = new FeatureTreeCellRenderer();
 		tree.setCellRenderer(tcr);
 
@@ -90,7 +95,6 @@ public final class FeatureTreeView extends JComponent {
 
 		tree_panel.add(tree_scroller);
 		this.add(tree_panel);
-
 	}
 
 	/**
@@ -207,7 +211,6 @@ public final class FeatureTreeView extends JComponent {
 
 		private Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private Cursor defaultCursor = null;
-		private JTree tree;
 
 		private URL getURLAt(Object source, int x, int y) {
 
@@ -234,47 +237,43 @@ public final class FeatureTreeView extends JComponent {
 			}
 
 			if (nodeData instanceof GenericServer) {
-				GenericServer gServer = (GenericServer) nodeData;
-
-				if (gServer.friendlyURL != null) {
-
-					Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
-					bounds.width = (int) linkBound.getWidth();
-
-					if (gServer.friendlyIcon != null) {
-						bounds.x += gServer.friendlyIcon.getIconWidth() + 1;
-					} else {
-						bounds.x += 16;
-					}
-
-					if (bounds.contains(x, y)) {
-						return gServer.friendlyURL;
-					}
-
-				}
-			} else if (nodeData instanceof GenericFeature) {
-				GenericFeature gFeature = (GenericFeature) nodeData;
-
-//				//this is for test if link works.
-//				try {
-//					gFeature.friendlyURL = new URL("http://www.google.com");
-//				} catch (MalformedURLException ex) {
-//					Logger.getLogger(FeatureTreeView.class.getName()).log(Level.SEVERE, null, ex);
-//				}
-				if (gFeature.friendlyURL != null) {
-					int iconWidth = 10 + 2 * 4;
-					bounds.x += bounds.width - iconWidth;
-					bounds.width = iconWidth;
-					if (bounds.contains(x, y)) {
-						return gFeature.friendlyURL;
-					}
-
-				}
-
+				return serverFriendlyURL(nodeData, thetree, bounds, x, y);
 			}
-
+			if (nodeData instanceof GenericFeature) {
+				return featureFriendlyURL(nodeData, bounds, x, y);
+			}
 			return null;
 
+		}
+
+		private URL featureFriendlyURL(Object nodeData, Rectangle bounds, int x, int y) {
+			GenericFeature gFeature = (GenericFeature) nodeData;
+			if (gFeature.friendlyURL != null) {
+				int iconWidth = 10 + 2 * 4;
+				bounds.x += bounds.width - iconWidth;
+				bounds.width = iconWidth;
+				if (bounds.contains(x, y)) {
+					return gFeature.friendlyURL;
+				}
+			}
+			return null;
+		}
+
+		private URL serverFriendlyURL(Object nodeData, JTree thetree, Rectangle bounds, int x, int y) {
+			GenericServer gServer = (GenericServer) nodeData;
+			if (gServer.friendlyURL != null) {
+				Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
+				bounds.width = (int) linkBound.getWidth();
+				if (gServer.friendlyIcon != null) {
+					bounds.x += gServer.friendlyIcon.getIconWidth() + 1;
+				} else {
+					bounds.x += 16;
+				}
+				if (bounds.contains(x, y)) {
+					return gServer.friendlyURL;
+				}
+			}
+			return null;
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -317,6 +316,7 @@ public final class FeatureTreeView extends JComponent {
 
 		public void mouseDragged(MouseEvent e) {
 		}
+
 	}
 
 
@@ -382,76 +382,63 @@ public final class FeatureTreeView extends JComponent {
 
 
 			if (genericData instanceof GenericServer) {
-
-				GenericServer gServer = (GenericServer) genericData;
-				String serverNameString = "";
-
-				if (gServer.friendlyURL != null) {
-					serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
-				} else {
-					serverNameString = "<b>" + gServer.serverName + "</b>";
-				}
-
-				serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
-				
-				super.getTreeCellRendererComponent(
-						tree, serverNameString, sel,
-						expanded, leaf, row,
-						hasFocus);
-
-				if (gServer.friendlyIcon != null) {
-					setIcon(gServer.friendlyIcon);
-				}
-
-				return this;
-
-			} else if (leaf && genericData instanceof GenericFeature) {
-
-				// You must call super before each return.
-				super.getTreeCellRendererComponent(
-						tree, value, sel,
-						expanded, leaf, row,
-						hasFocus);
-
-				GenericFeature gFeature = (GenericFeature) genericData;
-				boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
-
-				String featureName = gFeature.featureName;
-				String featureText = featureName.substring(featureName.indexOf(path_separator) + 1);
-
-				featureText = "<html>" + featureText;
-
-				if (gFeature.friendlyURL != null) {
-					java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");
-
-					if (imgURL != null) {
-						ImageIcon infoIcon = new ImageIcon(imgURL);
-						featureText += " <img src='" + infoIcon + "' width='10' height='10'/>";
-					}
-
-				}
-
-				leafCheckBox.setText(featureText);
-				leafCheckBox.setSelected(isChecked);
-
-				leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
-
-				if (selected) {
-					leafCheckBox.setForeground(selectionForeground);
-					leafCheckBox.setBackground(selectionBackground);
-					leafCheckBox.setBorderPainted(true);
-				} else {
-					leafCheckBox.setForeground(textForeground);
-					leafCheckBox.setBackground(textBackground);
-					leafCheckBox.setBorderPainted(false);
-				}
-				return leafCheckBox;
+				return renderServer(genericData, tree, sel, expanded, leaf, row, hasFocus);
+			}
+			if (leaf && genericData instanceof GenericFeature) {
+				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, genericData, nodeUObject);
 			}
 
 			return super.getTreeCellRendererComponent(
 					tree, value, sel,
 					expanded, leaf, row,
 					hasFocus);
+		}
+
+		private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, Object genericData, Object nodeUObject) {
+			// You must call super before each return.
+			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+			GenericFeature gFeature = (GenericFeature) genericData;
+			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
+			String featureName = gFeature.featureName;
+			String featureText = featureName.substring(featureName.indexOf(path_separator) + 1);
+			featureText = "<html>" + featureText;
+			if (gFeature.friendlyURL != null) {
+				java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");
+				if (imgURL != null) {
+					ImageIcon infoIcon = new ImageIcon(imgURL);
+					featureText += " <img src='" + infoIcon + "' width='10' height='10'/>";
+				}
+			}
+			leafCheckBox.setText(featureText);
+			leafCheckBox.setToolTipText(gFeature.description());
+			leafCheckBox.setSelected(isChecked);
+			leafCheckBox.setEnabled(tree.isEnabled() && !isChecked);
+			if (selected) {
+				leafCheckBox.setForeground(selectionForeground);
+				leafCheckBox.setBackground(selectionBackground);
+				leafCheckBox.setBorderPainted(true);
+			} else {
+				leafCheckBox.setForeground(textForeground);
+				leafCheckBox.setBackground(textBackground);
+				leafCheckBox.setBorderPainted(false);
+			}
+			return leafCheckBox;
+		}
+
+		private Component renderServer(Object genericData, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+			GenericServer gServer = (GenericServer) genericData;
+			String serverNameString = "";
+			if (gServer.friendlyURL != null) {
+				serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
+			} else {
+				serverNameString = "<b>" + gServer.serverName + "</b>";
+			}
+			serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
+			super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
+			if (gServer.friendlyIcon != null) {
+				setIcon(gServer.friendlyIcon);
+			}
+			return this;
 		}
 	}
 
@@ -479,7 +466,6 @@ public final class FeatureTreeView extends JComponent {
 
 						Rectangle r = thetree.getPathBounds(path);
 						int x = mouseEvent.getX() - r.x;
-						//int y = mouseEvent.getY() - r.y;
 
 						JCheckBox checkbox = renderer.getLeafFeatureRenderer();
 						checkbox.setText("");
@@ -488,7 +474,6 @@ public final class FeatureTreeView extends JComponent {
 					}
 				}
 			}
-			//System.out.println("1. isCellEditable: " + Boolean.toString(returnValue));
 			return returnValue;
 		}
 
@@ -500,7 +485,6 @@ public final class FeatureTreeView extends JComponent {
 			ItemListener itemListener = new ItemListener() {
 
 				public void itemStateChanged(ItemEvent itemEvent) {
-					//System.out.println("3.itemStateChanged:	 " + itemEvent.toString());
 					Object nodeData = editedNode.getUserObject();
 					if (nodeData instanceof TreeNodeUserInfo) {
 						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
@@ -509,8 +493,6 @@ public final class FeatureTreeView extends JComponent {
 						((GenericFeature) nodeData).visible = true;
 						glv.createFeaturesTable(false);
 					}
-					//TreePath path = new TreePath(editedNode.getPath());
-					//SingletonGenometryModel.getGenometryModel().setSelectedFeature(path);
 					tree.repaint();
 					fireEditingStopped();
 				}
@@ -519,7 +501,6 @@ public final class FeatureTreeView extends JComponent {
 			if (editor instanceof JCheckBox) {
 				((JCheckBox) editor).addItemListener(itemListener);
 			}
-			//System.out.println("2. getTreeCellEditorComponent: " + editor.toString());
 			return editor;
 		}
 
@@ -529,7 +510,6 @@ public final class FeatureTreeView extends JComponent {
 			if (nodeData instanceof TreeNodeUserInfo) {
 				((TreeNodeUserInfo) nodeData).setChecked(checkbox.isSelected());
 			}
-			//System.out.println("4. getCellEditorValue: " + nodeData);
 			return nodeData;
 		}
 	}

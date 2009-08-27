@@ -551,7 +551,6 @@ public abstract class ServerUtils {
 			IndexedSyms iSyms,
 			String annot_type,
 			AnnotatedSeqGroup group) {
-		FileInputStream fis = null;
 		InputStream newIstr = null;
 		DataInputStream dis = null;
 		try {
@@ -564,9 +563,8 @@ public abstract class ServerUtils {
 			// We add 1 to the maxPos index.
 			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
 			int maxPos = outputRange[1] + 1;
-			fis = new FileInputStream(iSyms.file);
 			byte[] bytes = IndexingUtils.readBytesFromFile(
-					fis, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
+					iSyms.file, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
 
 			if (iSyms.iWriter instanceof PSLParser && iSyms.file.getName().endsWith(".link.psl")) {
 				String indexesFileName = iSyms.file.getAbsolutePath();
@@ -582,7 +580,6 @@ public abstract class ServerUtils {
 			return null;
 		}
 		finally {
-			GeneralUtils.safeClose(fis);
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(newIstr);
 		}

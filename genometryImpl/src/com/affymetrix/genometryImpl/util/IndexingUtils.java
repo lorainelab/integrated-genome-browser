@@ -280,9 +280,9 @@ public class IndexingUtils {
 				writeAdditionalLinkPSLIndex(indexesFileName, syms, seq, iSyms.typeName);
 			}
 		} finally {
-			GeneralUtils.safeClose(fos);
 			GeneralUtils.safeClose(dos);
 			GeneralUtils.safeClose(bos);
+			GeneralUtils.safeClose(fos);
 		}
 	}
 
@@ -361,21 +361,36 @@ public class IndexingUtils {
 	 * @param length
 	 * @return
 	 */
-	public static byte[] readBytesFromFile(FileInputStream fis, long filePosStart, int length) {
+	public static byte[] readBytesFromFile(File file, long filePosStart, int length) {
 		byte[] contentsOnly = null;
+		FileInputStream fis = null;
 		try {
+			fis = new FileInputStream(file);
+			if (file.length() < length) {
+				System.out.println("WARNING: filesize " + file.length() + " was less than argument " + length);
+				length = (int)file.length();
+			}
 			FileChannel fc = fis.getChannel();
 			MappedByteBuffer mbb = fc.map(FileChannel.MapMode.READ_ONLY, filePosStart, length);
 			contentsOnly = new byte[length];
 			mbb.get(contentsOnly);
 		} catch (IOException ex) {
 			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			GeneralUtils.safeClose(fis);
 		}
 		return contentsOnly;
 	}
 
-	// special case for link.psl files
-	// we need to append the track name, and the probesets
+	/**
+	 * special case for link.psl files
+	 * we need to append the track name, and the probesets
+	 * @param indexesFileName
+	 * @param annot_type
+	 * @param bytes1 - consensus symmetries in a byte array
+	 * @return
+	 * @throws IOException
+	 */
 	static ByteArrayInputStream readAdditionalLinkPSLIndex(
 			String indexesFileName, String annot_type, byte[] bytes1) throws IOException {
 		String secondIndexesFileName = indexesFileName.substring(0, indexesFileName.lastIndexOf(".link.psl"));
@@ -404,7 +419,7 @@ public class IndexingUtils {
 		try {
 			fis = new FileInputStream(secondIndexesFileName);
 			bytes2 = IndexingUtils.readBytesFromFile(
-					fis, 0, bytes2Len);
+					secondIndexesFile, 0, bytes2Len);
 		} finally {
 			GeneralUtils.safeClose(fis);
 		}

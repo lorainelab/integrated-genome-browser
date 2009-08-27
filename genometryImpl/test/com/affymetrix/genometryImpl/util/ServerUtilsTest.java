@@ -141,31 +141,17 @@ public class ServerUtilsTest {
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
 
 			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
-
-			String overlap = "90000:11200177";
-			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-			assertNotNull(overlap_span);
-			assertEquals(90000, overlap_span.getMin());
-			assertEquals(11200177, overlap_span.getMax());
-			assertEquals(overlap_span.getBioSeq(), seq);
-
 			
-			List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(
-					overlap_span, iSyms, "testOUT", group);
+			testIndexing1(seqid, group, seq, iSyms);
+
+			// Overflow conditions.
+			testIndexing2("0:30432562", seqid, group, seq, iSyms);
+			testIndexing2("0:30432563", seqid, group, seq, iSyms);
+			testIndexing2("0:30432564", seqid, group, seq, iSyms);
+
+			testIndexing3(seqid, group, seq, iSyms);
 			
-			assertEquals(384, result.size());
-			assertEquals(136731, result.get(0).getTargetMin());
-			assertEquals(137967, result.get(0).getTargetMax());
-
-			String inside = "92000:4600000";
-			SeqSpan inside_span = ServerUtils.getLocationSpan(seqid, inside, group);
-			assertNotNull(inside_span);
-			assertEquals(92000, inside_span.getMin());
-			assertEquals(4600000, inside_span.getMax());
-			assertEquals(inside_span.getBioSeq(), seq);
-
-			result = ServerUtils.specifiedInsideSpan(inside_span, result);
-			assertEquals(138, result.size());
+			testIndexing4(seqid, group, seq, iSyms);
 			
 			if (testFile.exists()) {
 				testFile.delete();
@@ -177,4 +163,67 @@ public class ServerUtilsTest {
 		}
 	}
 
+	private void testIndexing1(String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+		String overlap;
+		SeqSpan overlap_span;
+		List<UcscPslSym> result;
+		overlap = "0:11200177";
+		overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+		assertNotNull(overlap_span);
+		assertEquals(0, overlap_span.getMin());
+		assertEquals(11200177, overlap_span.getMax());
+		assertEquals(overlap_span.getBioSeq(), seq);
+		result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		assertEquals(385, result.size());
+		assertEquals(88976, result.get(0).getTargetMin());
+		assertEquals(89560, result.get(0).getTargetMax());
+	}
+
+	private void testIndexing2(String overlap, String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+		assertEquals(overlap_span.getBioSeq(), seq);
+		List<UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		assertEquals(861, result.size());
+		assertEquals(88976, result.get(0).getTargetMin());
+		assertEquals(89560, result.get(0).getTargetMax());
+		assertEquals(30427075, result.get(result.size()-1).getTargetMin());
+		assertEquals(30428332, result.get(result.size()-1).getTargetMax());
+	}
+
+	private void testIndexing3(
+			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+		String overlap = "0:11200177";
+		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+		assertNotNull(overlap_span);
+		assertEquals(0, overlap_span.getMin());
+		assertEquals(11200177, overlap_span.getMax());
+		assertEquals(overlap_span.getBioSeq(), seq);
+		List <UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		assertEquals(385, result.size());
+		assertEquals(88976, result.get(0).getTargetMin());
+		assertEquals(89560, result.get(0).getTargetMax());
+	}
+
+
+	private void testIndexing4(
+			String seqid, AnnotatedSeqGroup group, BioSeq seq, IndexedSyms iSyms) {
+		String overlap = "90000:11200177";
+		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+		assertNotNull(overlap_span);
+		assertEquals(90000, overlap_span.getMin());
+		assertEquals(11200177, overlap_span.getMax());
+		assertEquals(overlap_span.getBioSeq(), seq);
+		List <UcscPslSym> result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		assertEquals(384, result.size());
+		assertEquals(136731, result.get(0).getTargetMin());
+		assertEquals(137967, result.get(0).getTargetMax());
+		String inside = "92000:4600000";
+		SeqSpan inside_span = ServerUtils.getLocationSpan(seqid, inside, group);
+		assertNotNull(inside_span);
+		assertEquals(92000, inside_span.getMin());
+		assertEquals(4600000, inside_span.getMax());
+		assertEquals(inside_span.getBioSeq(), seq);
+		result = ServerUtils.specifiedInsideSpan(inside_span, result);
+		assertEquals(138, result.size());
+	}
 }

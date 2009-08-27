@@ -145,11 +145,6 @@ public final class ServerList {
 	 * Load server preferences from the Java preferences subsystem.
 	 */
 	public static void LoadServerPrefs() {
-		/* Look for old-style preferences to update */
-		for (ServerType type : ServerType.values()) {
-			UpdateServerPrefs(type);
-		}
-
 		String server_name, login, password;
 		ServerType serverType;
 		Boolean enabled;
@@ -187,29 +182,30 @@ public final class ServerList {
 	}
 
 	/**
-	 * Update the old-style preference nodes to the newer format.
-	 *
-	 * @param type the type of server to update
+	 * Update the old-style preference nodes to the newer format.  This is now
+	 * called by the PrefsLoader when checking/updating the preferences version.
 	 */
-	private static void UpdateServerPrefs(ServerType type) {
-		try {
-			if (UnibrowPrefsUtil.getServersNode().nodeExists(type.toString())) {
-				Preferences prefServers = UnibrowPrefsUtil.getServersNode().node(type.toString());
-				String name, login, password;
-				boolean authEnabled, enabled;
-				for (String url : prefServers.keys()) {
-					name        = prefServers.get(url, "Unknown");
-					login       = prefServers.node("login").get(url, "");
-					password    = decrypt(prefServers.node("password").get(url, ""));
-					authEnabled = !(login.isEmpty() || password.isEmpty());
-					enabled     = Boolean.parseBoolean(prefServers.node("enabled").get(url, "true"));
-					
-					addServerToPrefs(GeneralUtils.URLDecode(url), name, type, authEnabled, login, password, enabled);
+	public static void updateServerPrefs() {
+		for (ServerType type : ServerType.values()) {
+			try {
+				if (UnibrowPrefsUtil.getServersNode().nodeExists(type.toString())) {
+					Preferences prefServers = UnibrowPrefsUtil.getServersNode().node(type.toString());
+					String name, login, password;
+					boolean authEnabled, enabled;
+					for (String url : prefServers.keys()) {
+						name        = prefServers.get(url, "Unknown");
+						login       = prefServers.node("login").get(url, "");
+						password    = decrypt(prefServers.node("password").get(url, ""));
+						authEnabled = !(login.isEmpty() || password.isEmpty());
+						enabled     = Boolean.parseBoolean(prefServers.node("enabled").get(url, "true"));
+
+						addServerToPrefs(GeneralUtils.URLDecode(url), name, type, authEnabled, login, password, enabled);
+					}
+					prefServers.removeNode();
 				}
-				prefServers.removeNode();
+			} catch (BackingStoreException ex) {
+				Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 			}
-		} catch (BackingStoreException ex) {
-			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 

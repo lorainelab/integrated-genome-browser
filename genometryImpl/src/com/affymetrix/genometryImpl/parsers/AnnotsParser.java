@@ -1,7 +1,9 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -51,8 +53,7 @@ public abstract class AnnotsParser {
 	public static class AnnotMapElt {
 		public String fileName;
 		public String title;
-		public String description;
-		public String URL;
+		public Map<String,String> props = new HashMap<String,String>();
 
 		public AnnotMapElt(String fileName, String title) {
 			this(fileName, title, "", "");
@@ -62,8 +63,8 @@ public abstract class AnnotsParser {
 			// filename's case is important, since we may be loading this file locally (in QuickLoad).
 			this.fileName = fileName;
 			this.title = (title == null ? "" : title);
-			this.description = (description == null ? "" : description);
-			this.URL = (URL == null ? "" : URL);
+			this.props.put("description", description);
+			this.props.put("URL", URL);
 		}
 
 		public static AnnotMapElt findFileNameElt(String fileName, List<AnnotMapElt> annotList) {

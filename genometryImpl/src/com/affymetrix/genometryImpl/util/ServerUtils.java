@@ -54,8 +54,7 @@ public abstract class ServerUtils {
 	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
 	private static final Pattern interval_splitter = Pattern.compile(":");
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-	private static Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map = new HashMap<AnnotatedSeqGroup,List<AnnotMapElt>>();    // hash of filenames to annot properties.
-
+	
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
 	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
@@ -166,13 +165,14 @@ public abstract class ServerUtils {
 	public static final void loadAnnots(
 			File genomeDir,
 			AnnotatedSeqGroup genome,
+			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
 		try {
 			if (genomeDir.isDirectory()) {
 				ServerUtils.loadAnnotsFromDir(
-						genomeDir.getName(), genome, genomeDir, "", graph_name2dir, graph_name2file, dataRoot);
+						genomeDir.getName(), genome, genomeDir, "", annots_map, graph_name2dir, graph_name2file, dataRoot);
 			} else {
 				System.out.println("Warning: " + genomeDir.getAbsolutePath() + " is not a directory.  Skipping.");
 			}
@@ -197,6 +197,7 @@ public abstract class ServerUtils {
 			AnnotatedSeqGroup genome,
 			File current_file,
 			String new_type_prefix,
+			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
@@ -205,8 +206,12 @@ public abstract class ServerUtils {
 			FileInputStream istr = null;
 			try {
 				istr = new FileInputStream(annot);
-				List<AnnotMapElt> annotList = new ArrayList<AnnotMapElt>();
-				annots_map.put(genome, annotList);
+
+				List<AnnotMapElt> annotList = annots_map.get(genome);
+				if (annotList == null) {
+					annotList = new ArrayList<AnnotMapElt>();
+					annots_map.put(genome, annotList);
+				}
 				AnnotsParser.parseAnnotsXml(istr, annotList);
 			} catch (FileNotFoundException ex) {
 				Logger.getLogger(ServerUtils.class.getName()).log(Level.SEVERE, null, ex);
@@ -227,7 +232,7 @@ public abstract class ServerUtils {
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
 			Arrays.sort(child_files);
 			for (File child_file : child_files) {
-				loadAnnotsFromFile(child_file, genome, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
+				loadAnnotsFromFile(child_file, genome, new_type_prefix, annots_map, graph_name2dir, graph_name2file, dataRoot);
 			}
 		}
 	}
@@ -242,6 +247,7 @@ public abstract class ServerUtils {
 	 * @param dataRoot
 	 */
 	private static final void loadAnnotsFromFile(File current_file, AnnotatedSeqGroup genome, String type_prefix,
+			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
 			String dataRoot) {
@@ -252,7 +258,7 @@ public abstract class ServerUtils {
 		if (current_file.isDirectory()) {
 			String new_type_prefix = type_name + "/";
 			loadAnnotsFromDir(
-					type_name, genome, current_file, new_type_prefix, graph_name2dir, graph_name2file, dataRoot);
+					type_name, genome, current_file, new_type_prefix, annots_map, graph_name2dir, graph_name2file, dataRoot);
 			return;
 		}
 
@@ -266,9 +272,12 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		if (!annots_map.isEmpty() && !annots_map.containsKey(file_name)) {
-			// we have loaded in an annots.xml originalFile, but yet this originalFile is not in it and should be ignored.
-			return;
+		if (!annots_map.isEmpty() && annots_map.containsKey(genome)) {
+			AnnotMapElt ame = AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome));
+			if (ame == null) {
+				// we have loaded in an annots.xml originalFile, but yet this originalFile is not in it and should be ignored.
+				return;
+			}
 		}
 
 		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
@@ -277,7 +286,7 @@ public abstract class ServerUtils {
 		}
 
 		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataRoot, current_file, type_name, genome);
+		indexOrLoadFile(dataRoot, current_file, type_name, annots_map, genome);
 	}
 
 
@@ -288,21 +297,21 @@ public abstract class ServerUtils {
 	 * @param genome
 	 * @param loadedSyms
 	 */
-	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, AnnotatedSeqGroup genome) {
+	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome) {
 
 		String originalFileName = file.getName();
 
 		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
 		if (iWriter == null) {
-			loadAnnotFile(file, stream_name, genome, false);
+			loadAnnotFile(file, stream_name, annots_map, genome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
 		}
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
-		List loadedSyms = loadAnnotFile(file, stream_name, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, stream_name, annots_map, tempGenome, true);
 
 		System.out.println("Indexing " + originalFileName);
 
@@ -362,19 +371,16 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String stream_name, AnnotatedSeqGroup genome, boolean isIndexed) {
+	private static List loadAnnotFile(File current_file, String stream_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome, boolean isIndexed) {
 		List<AnnotMapElt> annotList = annots_map.get(genome);
-		if (annotList == null) {
-			return Collections.emptyList();
-		}
 		InputStream istr = null;
 		List results = null;
 		try {
 			istr = new BufferedInputStream(new FileInputStream(current_file));
 			if (!isIndexed) {
-				results = ParserController.parse(istr, annots_map.get(genome), stream_name, gmodel, genome);
+				results = ParserController.parse(istr, annotList, stream_name, gmodel, genome);
 			} else {
-				results = ParserController.parseIndexed(istr, annots_map.get(genome), stream_name, genome);
+				results = ParserController.parseIndexed(istr, annotList, stream_name, genome);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

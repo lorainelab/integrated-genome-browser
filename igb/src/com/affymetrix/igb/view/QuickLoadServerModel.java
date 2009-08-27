@@ -112,9 +112,7 @@ public final class QuickLoadServerModel {
 		List<AnnotMapElt> annotList = this.genome2annotsMap.get(genomeName);
 		AnnotMapElt annotElt = AnnotMapElt.findTitleElt(featureName, annotList);
 		if (annotElt != null) {
-			props = new HashMap<String, String>();
-			props.put("description", annotElt.description);
-			props.put("URL", annotElt.URL);
+			return annotElt.props;
 		}
 		return props;
 	}

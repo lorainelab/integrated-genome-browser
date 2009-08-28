@@ -545,7 +545,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		boolean authEnabled = (login != null && password != null) && !(login.isEmpty() || password.isEmpty());
 		ServerList.addServerToPrefs(DirectoryOrURL, serverName, ServerType.valueOf(serverType), authEnabled, login, password, true);
 
-		serverDialog(serverName, DirectoryOrURL);
+		serverDialog(serverName, ServerType.valueOf(serverType));
 	}
 
 	private void removePreference(String DirectoryOrURL, String serverType, String serverName) {
@@ -554,10 +554,11 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		sourceTableModel.init();
 	}
 
-	private void serverDialog(String serverName, String DirectoryOrURL) {
+	private void serverDialog(String serverName, ServerType serverType) {
 		JOptionPane.showMessageDialog(null,
-				"Server " + serverName + " at " + DirectoryOrURL + " has been added. If you do not see your new server, please restart the application",
-				"Server has been added",
+				"The " + serverType + " server '" + serverName + "' has been added.  If you do not\n"
+				+ "see the new server, please restart the application",
+				"New server added",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 

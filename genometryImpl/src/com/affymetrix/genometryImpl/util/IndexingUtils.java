@@ -87,15 +87,20 @@ public class IndexingUtils {
 	}
 
 	// filename of indexed annotations.
-	static String indexedFileName(String dataRoot, String fileName, AnnotatedSeqGroup genome, BioSeq seq) {
-		return indexedDirName(dataRoot, genome, seq) + "/" + fileName;
+	static String indexedFileName(String dataRoot, File file, AnnotatedSeqGroup genome, BioSeq seq) {
+		String retVal = indexedDirName(dataRoot, genome, seq) + "/";
+		String shortenedPath = (file.getPath().replace(dataRoot + genomeDirName(genome) + "/", ""));
+		return retVal + shortenedPath;
 	}
 	static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {
 		return indexedGenomeDirName(dataRoot, genome) + "/" + seq.getID();
 	}
+	static String genomeDirName(AnnotatedSeqGroup genome) {
+		return genome.getOrganism() + "/" + genome.getID();
+	}
 	static String indexedGenomeDirName(String dataRoot, AnnotatedSeqGroup genome) {
 		String optimizedDirectory = dataRoot + ".indexed";
-		return optimizedDirectory + "/" + genome.getOrganism() + "/" + genome.getID();
+		return optimizedDirectory + "/" + genomeDirName(genome);
 	}
 
 
@@ -128,11 +133,11 @@ public class IndexingUtils {
 				continue;
 			}
 
-			String dirName = IndexingUtils.indexedDirName(dataRoot, tempGenome, tempSeq);
-			String indexedAnnotationsFileName = IndexingUtils.indexedFileName(dataRoot, file.getName(), tempGenome, tempSeq);
-			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
-
+			String indexedAnnotationsFileName = IndexingUtils.indexedFileName(dataRoot, file, tempGenome, tempSeq);
+			String dirName = indexedAnnotationsFileName.substring(0,indexedAnnotationsFileName.lastIndexOf("/"));
 			ServerUtils.createDirIfNecessary(dirName);
+
+			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
 
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 

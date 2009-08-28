@@ -141,7 +141,6 @@ public abstract class ServerUtils {
 			Collections.sort(orglist, org_comp);
 			Map<String, List<AnnotatedSeqGroup>> sorted_organisms = new LinkedHashMap<String, List<AnnotatedSeqGroup>>();
 			for (String org : orglist) {
-				//	System.out.println("add organism to sorted list: " + org + ",   " + organisms.get(org));
 				sorted_organisms.put(org, organisms.get(org));
 			}
 			organisms = sorted_organisms;
@@ -224,7 +223,6 @@ public abstract class ServerUtils {
 		if (type_name.endsWith(graph_dir_suffix)) {
 			// each originalFile in directory is same annotation type, but for a single originalSeq?
 			// assuming bar files for now, each with starting with originalSeq id?
-			//	String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + current_file.getPath());
 			graph_name2dir.put(graph_name, current_file.getPath());
@@ -309,7 +307,7 @@ public abstract class ServerUtils {
 
 		if (iWriter == null) {	
 			loadAnnotFile(file, stream_name, annots_map, genome, false);
-			checkAlteredSeqCount(oldSeqCount, genome.getSeqCount(), false, file, genome.getID());
+			checkAlteredSeqCount(oldSeqCount, genome.getSeqCount(), false, file);
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
@@ -317,9 +315,7 @@ public abstract class ServerUtils {
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
 		List loadedSyms = loadAnnotFile(file, stream_name, annots_map, tempGenome, true);
-		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file, genome.getID());
-
-		System.out.println("Indexing " + originalFileName);
+		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file);
 
 		String extension = "";
 		if (stream_name.endsWith(".link.psl")) {
@@ -357,9 +353,9 @@ public abstract class ServerUtils {
 	}
 
 
-	private static void checkAlteredSeqCount(int oldSeqCount, int newSeqCount, boolean isIgnored, File file, String ID) {
+	private static void checkAlteredSeqCount(int oldSeqCount, int newSeqCount, boolean isIgnored, File file) {
 		if (oldSeqCount != newSeqCount) {
-			System.out.print("WARNING: file " + file.getPath() + " has a chromosome count of " + newSeqCount + " instead of " + oldSeqCount);
+			System.out.print("WARNING: file " + file.getPath() + " has " + newSeqCount + " chromosomes instead of " + oldSeqCount);
 			if (isIgnored) {
 				System.out.print(". Due to indexing, this is ignored.");
 			} else {

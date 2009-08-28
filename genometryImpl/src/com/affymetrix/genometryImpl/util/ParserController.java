@@ -19,11 +19,9 @@ public final class ParserController {
 			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
 		InputStream str = null;
 		List results = null;
-		String type_prefix = null;
 		int sindex = stream_name.lastIndexOf("/");
-		if (sindex >= 0) {
-			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-		}
+		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
+		
 		try {
 			if (instr instanceof BufferedInputStream) {
 				str = (BufferedInputStream) instr;
@@ -36,24 +34,6 @@ public final class ParserController {
 				// need to modify Das1FeatureSaxParser to return a list of "transcript-level" annotation syms
 				parser = null;
 			}
-
-			/*else if (stream_name.endsWith(".link.psl"))  {
-				System.out.println("loading link.psl via PslParser: " + stream_name);
-				String annot_type = GetAnnotType(annotList, stream_name, ".link.psl");
-				// assume that want to annotate target seqs, and that these are the seqs
-				//    represented in seq_group
-				PSLParser parser = new PSLParser();
-				parser.setIsLinkPsl(true);
-				parser.enableSharedQueryTarget(true);
-				parser.setCreateContainerAnnot(true); // is this needed?
-				if (type_prefix != null) {
-					parser.setTrackNamePrefix(type_prefix);
-				}
-
-				 // annotate target
-				results = parser.parse(str, annot_type, null, seq_group, null, false, true, false);
-			}*/
-
 			else if (stream_name.endsWith(".bed")) {
 				System.out.println("loading via BedParser: " + stream_name);
 				String annot_type = GetAnnotType(annotList, stream_name, ".bed");
@@ -129,57 +109,35 @@ public final class ParserController {
 	 * @return
 	 */
 	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group) {
-
+		IndexWriter iWriter = getIndexWriter(stream_name);
 		DataInputStream dis = new DataInputStream(str);
-		String type_prefix = null;
-		int sindex = stream_name.lastIndexOf("/");
-		if (sindex >= 0) {
-			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-		}
+
 		if ((stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) && (!stream_name.endsWith(".link.psl"))) {
-			System.out.println("loading via PslParser: " + stream_name);
+			System.out.println("indexing via PslParser: " + stream_name);
 			String annot_type = GetAnnotType(annotList, stream_name, ".psl");
-			IndexWriter iWriter = new PSLParser();
-			if (type_prefix != null) {
-				((PSLParser) iWriter).setTrackNamePrefix(type_prefix);
-			}
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".bps")) {
-			System.out.println("loading via BpsParser: " + stream_name);
+			System.out.println("indexing via BpsParser: " + stream_name);
 			String annot_type = GetAnnotType(annotList, stream_name, ".bps");
-			IndexWriter iWriter = new BpsParser();
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".bgn")) {
-			System.out.println("loading via BgnParser: " + stream_name);
-			IndexWriter iWriter = new BgnParser();
+			System.out.println("indexing via BgnParser: " + stream_name);
 			String annot_type = GetAnnotType(annotList, stream_name, ".bgn");
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".brs")) {
-			System.out.println("loading via BrsParser: " + stream_name);
-			IndexWriter iWriter = new BrsParser();
+			System.out.println("indexing via BrsParser: " + stream_name);
 			String annot_type = GetAnnotType(annotList, stream_name, ".brs");
 			return iWriter.parse(dis, annot_type, seq_group);
 		}
 		if (stream_name.endsWith(".link.psl")) {
-			System.out.println("loading link.psl via PslParser: " + stream_name);
+			System.out.println("indexing link.psl via PslParser: " + stream_name);
 			String annot_type = GetAnnotType(annotList, stream_name, ".link.psl");
-			// assume that want to annotate target seqs, and that these are the seqs
-			//    represented in seq_group
-			IndexWriter iWriter = new PSLParser();
-			PSLParser parser = ((PSLParser) iWriter);
-			if (type_prefix != null) {
-				parser.setTrackNamePrefix(type_prefix);
-			}
-
-			parser.setIsLinkPsl(true);
-			parser.enableSharedQueryTarget(true);
-			parser.setCreateContainerAnnot(true);
 			try {
 				// annotate target
-				return parser.parse(dis, annot_type, null, seq_group, null, false, true, false);
+				return ((PSLParser)iWriter).parse(dis, annot_type, null, seq_group, null, false, true, false);
 			} catch (IOException ex) {
 				Logger.getLogger(ParserController.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -189,12 +147,10 @@ public final class ParserController {
 
 
 
-	public static IndexWriter getIndexWriter(String stream_name) {
-		String type_prefix = null;
+	public static IndexWriter getIndexWriter(String stream_name) {	
 		int sindex = stream_name.lastIndexOf("/");
-		if (sindex >= 0) {
-			type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-		}
+		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
+
 		if (stream_name.endsWith((".bps"))) {
 			return new BpsParser();
 		}
@@ -217,7 +173,8 @@ public final class ParserController {
 			if (type_prefix != null) {
 				parser.setTrackNamePrefix(type_prefix);
 			}
-
+			// assume that want to annotate target seqs, and that these are the seqs
+			//    represented in seq_group
 			parser.setIsLinkPsl(true);
 			parser.enableSharedQueryTarget(true);
 			parser.setCreateContainerAnnot(true);

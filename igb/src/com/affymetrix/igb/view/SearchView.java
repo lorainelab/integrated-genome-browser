@@ -32,7 +32,6 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener {
 
 	// A maximum number of hits that can be found in a search.
@@ -41,22 +40,19 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private JLabel hitCountL;
 	private JLabel optionalLabel;
-  private JTextField searchTF;
-  private JTextField optionalSearchTF2;
-
-  private JComboBox sequence_CB;
+	private JTextField searchTF;
+	private JTextField optionalSearchTF2;
+	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB;
-
 	private JButton clear_button = new JButton("Clear");
 	private SeqMapView gviewer;
 	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
 	private Color hitcolor = new Color(150, 150, 255);
-
 	private static final String ALLID = "All IDs";
 	private static final String REGEXID = "ID matches string or Regular Expression";
 	private static final String BETWEENID = "ID between x and y";
 	private static final String REGEXRESIDUE = "Residues match string or Regular Expression";
-	private static final String CHOOSESEARCH = "Choose a search method";
+	private static final String CHOOSESEARCH = "Choose search method";
 
 	public SearchView() {
 		super();
@@ -69,12 +65,17 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		initSequenceCB();
 		JPanel pan1 = new JPanel();
-		
+
 
 		JPanel pan2 = new JPanel();
 		initSequenceCB();
+
+		JLabel sequenceChooseLabel = new JLabel("Choose a sequence");
+		pan2.add(sequenceChooseLabel);
 		pan2.add(sequence_CB);
-		
+
+		JLabel searchMethodLabel = new JLabel(CHOOSESEARCH);
+		pan2.add(searchMethodLabel);
 		pan2.add(searchCB);
 
 		hitCountL = new JLabel(" No hits");
@@ -86,47 +87,48 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		pan2.add(optionalSearchTF2);
 
 
-		//pan2.add(hitCountL);
+		pan2.add(hitCountL);
 
 		//pan2.add(clear_button);
-	
+
 		this.add("North", pan2);
 		this.add("Center", new JPanel());// a blank panel: improves appearance in JDK1.5
 
+		gmodel.addGroupSelectionListener(this);
+		searchCB.addActionListener(this);
 		searchTF.addActionListener(this);
 		clear_button.addActionListener(this);
 	}
 
 	private void initSequenceCB() {
-		sequence_CB = new JComboBox();
-    // set up the sequence combo_box
-    sequence_CB.removeAllItems();
-    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    if (group != null) {
+		// set up the sequence combo_box
+		sequence_CB.removeAllItems();
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+		if (group != null) {
 			sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID);	// put this at top of list
 			for (BioSeq seq : group.getSeqList()) {
 				if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 					continue;
 				}
-        sequence_CB.addItem(seq.getID());
-      }
+				sequence_CB.addItem(seq.getID());
+			}
 			sequence_CB.setToolTipText("Genome: " + group.getID());
 			sequence_CB.setEnabled(true);
-    } else {
+		} else {
 			sequence_CB.setToolTipText("Genome has not been selected");
 			sequence_CB.setEnabled(false);
 		}
 
-   MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
-    if (selected_seq != null) {
-      sequence_CB.setSelectedItem(selected_seq.getID());
-    }
+		MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
+		if (selected_seq != null) {
+			sequence_CB.setSelectedItem(selected_seq.getID());
+		}
 
 	}
 
 	private void initSearchCB() {
 		searchCB = new JComboBox();
-    searchCB.removeAllItems();
+		searchCB.removeAllItems();
 		searchCB.addItem(ALLID);
 		searchCB.addItem(REGEXID);
 		searchCB.addItem(BETWEENID);
@@ -134,16 +136,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchCB.setToolTipText(CHOOSESEARCH);
 	}
 
-
-  private void initComponents() {
-    searchTF = new JTextField(10);
-    optionalSearchTF2 = new JTextField(10);
-    optionalLabel = new JLabel("and");
+	private void initComponents() {
+		searchTF = new JTextField(10);
+		optionalSearchTF2 = new JTextField(10);
+		optionalSearchTF2.setVisible(false);
+		optionalLabel = new JLabel("and");
+		optionalLabel.setVisible(false);
 	}
 
-
-
-	private void clearAll() {		
+	private void clearAll() {
 		searchTF.setText("");
 		hitCountL.setText(" No hits");
 		clearResults();
@@ -161,50 +162,48 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-System.out.println("Action: " + evt.toString());
+		System.out.println("Action: " + evt.toString());
 		if (src == this.searchCB) {
 			clearAll();
-			String searchMode = (String)this.searchCB.getSelectedItem();
+			String searchMode = (String) this.searchCB.getSelectedItem();
 			boolean optionalField = BETWEENID.equals(searchMode);
 			this.optionalLabel.setVisible(optionalField);
 			this.optionalSearchTF2.setVisible(optionalField);
 			return;
 		}
 		if (src == this.searchTF || src == this.optionalSearchTF2) {
-			String searchMode = (String)this.searchCB.getSelectedItem();
+			String searchMode = (String) this.searchCB.getSelectedItem();
 			if (ALLID.equals(searchMode)) {
-
 			} else if (REGEXID.equals(searchMode)) {
 			} else if (BETWEENID.equals(searchMode)) {
-
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				clearResults();
 
-			Timer tim = new Timer();
+				Timer tim = new Timer();
 
-			NeoMap map = gviewer.getSeqMap();
-			MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
-			if (vseq == null || !vseq.isComplete()) {
-				hitCountL.setText(" No hits");
+				NeoMap map = gviewer.getSeqMap();
+				MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
+				if (vseq == null || !vseq.isComplete()) {
+					hitCountL.setText(" No hits");
 
-				Application.errorPanel("Residues for seq not available, search aborted");
-				return;
-			}
-			int residue_offset = ((BioSeq) vseq).getMin();
+					Application.errorPanel("Residues for seq not available, search aborted");
+					return;
+				}
+				int residue_offset = ((BioSeq) vseq).getMin();
 
-			TransformTierGlyph axis_tier = gviewer.getAxisTier();
-			GlyphI seq_glyph = findSeqGlyph(axis_tier);
-			regexTF(tim, (BioSeq)vseq, residue_offset, seq_glyph, axis_tier, map);
+				TransformTierGlyph axis_tier = gviewer.getAxisTier();
+				GlyphI seq_glyph = findSeqGlyph(axis_tier);
+				regexTF(tim, (BioSeq) vseq, residue_offset, seq_glyph, axis_tier, map);
 			}
 		}
 		/*if (src == idsearchTF) {
-			if (searchTF.getText().length() == 0) {
-				hitCountL.setText(" No hits");
-				return;
-			}
-			String id = searchTF.getText().intern();
-			findSym(id);
-			return;
+		if (searchTF.getText().length() == 0) {
+		hitCountL.setText(" No hits");
+		return;
+		}
+		String id = searchTF.getText().intern();
+		findSym(id);
+		return;
 		}*/
 	}
 
@@ -218,7 +217,7 @@ System.out.println("Action: " + evt.toString());
 		return null;
 	}
 
-	private final void regexTF(Timer tim,BioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
+	private final void regexTF(Timer tim, BioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
 		if (searchTF.getText().length() == 0) {
 			hitCountL.setText(" No hits");
 			return;
@@ -227,7 +226,7 @@ System.out.println("Action: " + evt.toString());
 		tim.start();
 		String residues = vseq.getResidues();
 		try {
-			
+
 			String str = searchTF.getText();
 			if (str.length() < 3) {
 				Application.errorPanel("Regular expression must contain at least 3 characters");
@@ -300,6 +299,4 @@ System.out.println("Action: " + evt.toString());
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		this.initSequenceCB();
 	}
-
-
 }

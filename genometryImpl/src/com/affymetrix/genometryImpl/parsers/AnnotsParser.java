@@ -38,7 +38,7 @@ public abstract class AnnotsParser {
 				String filename = fileElement.getAttribute("name");
 				String title = fileElement.getAttribute("title");
 				String desc = fileElement.getAttribute("description");   // not currently used
-				String friendlyURL = fileElement.getAttribute("URL");
+				String friendlyURL = fileElement.getAttribute("url");
 
 				if (filename != null) {
 					AnnotMapElt annotMapElt = new AnnotMapElt(filename, title, desc, friendlyURL);
@@ -64,7 +64,7 @@ public abstract class AnnotsParser {
 			this.fileName = fileName;
 			this.title = (title == null ? "" : title);
 			this.props.put("description", description);
-			this.props.put("URL", URL);
+			this.props.put("url", URL);
 		}
 
 		public static AnnotMapElt findFileNameElt(String fileName, List<AnnotMapElt> annotList) {

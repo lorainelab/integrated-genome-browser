@@ -237,6 +237,8 @@ public abstract class ServerUtils {
 		}
 	}
 
+
+
 	/**
 	 * see if can parse as annotation originalFile.
 	 * @param current_file
@@ -303,8 +305,11 @@ public abstract class ServerUtils {
 
 		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
-		if (iWriter == null) {
+		int oldSeqCount = genome.getSeqCount();
+
+		if (iWriter == null) {	
 			loadAnnotFile(file, stream_name, annots_map, genome, false);
+			checkAlteredSeqCount(oldSeqCount, genome.getSeqCount(), false, file, genome.getID());
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
@@ -312,6 +317,7 @@ public abstract class ServerUtils {
 
 		AnnotatedSeqGroup tempGenome = tempGenome(genome);
 		List loadedSyms = loadAnnotFile(file, stream_name, annots_map, tempGenome, true);
+		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file, genome.getID());
 
 		System.out.println("Indexing " + originalFileName);
 
@@ -350,7 +356,19 @@ public abstract class ServerUtils {
 		return tempGenome;
 	}
 
-	
+
+	private static void checkAlteredSeqCount(int oldSeqCount, int newSeqCount, boolean isIgnored, File file, String ID) {
+		if (oldSeqCount != newSeqCount) {
+			System.out.print("WARNING: file " + file.getPath() + " has a chromosome count of " + newSeqCount + " instead of " + oldSeqCount);
+			if (isIgnored) {
+				System.out.print(". Due to indexing, this is ignored.");
+			} else {
+				System.out.print(". The genome has been altered.");
+			}
+			System.out.println();
+		}
+	}
+
 
 	
 

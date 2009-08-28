@@ -114,6 +114,15 @@ public final class SynonymLookup {
 	}
 
 	/**
+	 * Return the Set of all known synonyms.
+	 *
+	 * @return Set of all known synonyms.
+	 */
+	public Set<String> getSynonyms() {
+		return lookupHash.keySet();
+	}
+	
+	/**
 	 * Return all known synonyms for the given synonym.  Will return an empty
 	 * list if the synonym is unknown.
 	 * <p />

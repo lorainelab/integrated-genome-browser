@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -63,6 +64,20 @@ public final class GeneralLoadUtils {
 	private static final double default_genome_min = 0;
 
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+
+
+	/**
+	 * Location of synonym file for correlating versions to species.
+	 * The file lookup is done using {@link Class#getResourceAsStream(String)}.
+	 * The default file is {@value}.
+	 *
+	 * @see #SPECIES_LOOKUP
+	 */
+	private static final String SPECIES_SYNONYM_FILE = "/species.txt";
+
+	/** Unused list of chromosomes that may be used in a future chromosome lookup */
+	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
+	
 	private final SeqMapView gviewer;
 
 	//public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
@@ -90,29 +105,13 @@ public final class GeneralLoadUtils {
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
 	
 	/** Private synonym lookup for correlating versions to species. */
-	private static final SynonymLookup SPECIES_LOOKUP = new SynonymLookup();
+	private static final SpeciesLookup SPECIES_LOOKUP = new SpeciesLookup();
 	
-	/**
-	 * Location of synonym file for correlating versions to species.
-	 * The file lookup is done using {@link Class#getResourceAsStream(String)}.
-	 * The default file is {@value}.
-	 * 
-	 * @see #SPECIES_LOOKUP
-	 */
-	private static final String SPECIES_SYNONYM_FILE = "/species.txt";
-	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
-	/*
-	 * This is done in a static context vs the constructor to ensure that
-	 * static functions have access to the synonyms
-	 */
 	static {
 		try {
-			SPECIES_LOOKUP.loadSynonyms(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
-
-			// Eventually this will need its own synonyms object.
-			SPECIES_LOOKUP.loadSynonyms(GeneralLoadUtils.class.getResourceAsStream(CHROM_SYNONYM_FILE));
-		} catch (IOException e) { 
-			e.printStackTrace();
+			SPECIES_LOOKUP.load(GeneralLoadUtils.class.getResourceAsStream(SPECIES_SYNONYM_FILE));
+		} catch (IOException ex) {
+			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 
@@ -245,6 +244,8 @@ public final class GeneralLoadUtils {
 
 	/**
 	 * Discover the list of servers.
+	 *
+	 * @param discoveredServers 
 	 */
 	public static synchronized void discoverServersInternal(final List<GenericServer> discoveredServers) {
 		/*for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
@@ -346,7 +347,7 @@ public final class GeneralLoadUtils {
 			 * using normalizeVersion allows us to use previously know names
 			 */
 			/* String speciesName = source.getDescription(); */
-			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getID());
+			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getID());
 			/* TODO: GenericVersion should be able to store source's name and ID */
 			/* String versionName = source.getName(); */
 			String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), source.getID());
@@ -371,7 +372,7 @@ public final class GeneralLoadUtils {
 			return false;
 		}
 		for (Das2Source source : server.getSources().values()) {
-			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getName());
+			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
 			List<GenericVersion> gVersionList;
 			if (!this.species2genericVersionList.containsKey(speciesName)) {
 				gVersionList = new ArrayList<GenericVersion>();
@@ -388,7 +389,7 @@ public final class GeneralLoadUtils {
 	private synchronized void getDAS2Versions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		for (Das2Source source : server.getSources().values()) {
-			String speciesName = SPECIES_LOOKUP.getPreferredName(source.getName());
+			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
 			List<GenericVersion> gVersionList = this.species2genericVersionList.get(speciesName);
 
 			// Das/2 has versioned sources.  Get each version.
@@ -440,7 +441,7 @@ public final class GeneralLoadUtils {
 				discoverVersion(versionName, gServer, quickLoadVersion, gVersionList, speciesName);
 				continue;
 			}
-			String species = SPECIES_LOOKUP.getPreferredName(genomeName);
+			String species = SPECIES_LOOKUP.getSpeciesName(genomeName);
 
 			// Unknown genome.  We'll add the name as if it's a species and a version.
 			if (DEBUG) {

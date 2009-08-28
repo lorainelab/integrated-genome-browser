@@ -21,7 +21,7 @@ public final class SpeciesLookup {
 	private static final boolean DEFAULT_CS = true;
 
 	/** Regex to find species names from versions named like G_Species_* */
-	private static final Pattern STANDARD_REGEX = Pattern.compile("^([A-Z]_[a-zA-Z]+)_.+$");
+	private static final Pattern STANDARD_REGEX = Pattern.compile("^([a-zA-Z]_[a-zA-Z]+)_.+$");
 
 	/** Regex to find species named in the UCSC format.  (eg. gs# or genSpe#) */
 	private static final Pattern UCSC_REGEX = Pattern.compile("^([a-zA-Z]{2,6})[\\d]+$");

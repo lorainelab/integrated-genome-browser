@@ -159,49 +159,50 @@ public final class GeneralLoadUtils {
 		}
 		
 		try {
-		if (serverType == ServerType.QuickLoad) {
-			gServer = ServerList.addServer(serverType, serverName, serverURL);
-			if (gServer == null) {
+			if (serverType == ServerType.QuickLoad) {
+				gServer = ServerList.addServer(serverType, serverName, serverURL);
+				if (gServer == null) {
+					return false;
+				}
+				if (!getQuickLoadSpeciesAndVersions(gServer)) {
+					return false;
+				}
+				discoveredServers.add(gServer);
+			} else if (serverType == ServerType.DAS) {
+				/*DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
+				if (server == null) {
 				return false;
-			}
-			if (!getQuickLoadSpeciesAndVersions(gServer)) {
-				return false;
-			}
-			discoveredServers.add(gServer);
-		} else if (serverType == ServerType.DAS) {
-			/*DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
-			if (server == null) {
-				return false;
-			}
-			gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);*/
-			gServer = ServerList.addServer(serverType, serverName, serverURL);
-			if (gServer == null) {
-				return false;
-			}
-			getDAS1SpeciesAndVersions(gServer);
-			discoveredServers.add(gServer);
+				}
+				gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);*/
+				gServer = ServerList.addServer(serverType, serverName, serverURL);
+				if (gServer == null) {
+					return false;
+				}
+				if (!getDAS1SpeciesAndVersions(gServer)) {
+					return false;
+				};
+				discoveredServers.add(gServer);
 
-		} else if (serverType == ServerType.DAS2) {
-			//Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
-			gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
-			if (gServer == null) {
-				return false;
+			} else if (serverType == ServerType.DAS2) {
+				//Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
+				gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
+				if (gServer == null) {
+					return false;
+				}
+				//gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
+				discoveredServers.add(gServer);
+				getDAS2Species(gServer);
+				getDAS2Versions(gServer);
 			}
-			//gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
-			discoveredServers.add(gServer);
-			getDAS2Species(gServer);
-			getDAS2Versions(gServer);
-		}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
-		
+
 		// We just added a server, so reset the init flag on the versions
 		// so that the types requests are reissued.
 		version2init.clear();
-		
+
 		return true;
 	}
 	

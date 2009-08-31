@@ -11,8 +11,9 @@
  *   http://www.opensource.org/licenses/cpl.php
  */
 
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;

@@ -3,8 +3,10 @@
  * and open the template in the editor.
  */
 
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;

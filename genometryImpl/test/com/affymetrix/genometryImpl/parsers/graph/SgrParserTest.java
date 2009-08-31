@@ -1,5 +1,6 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

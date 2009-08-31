@@ -5,8 +5,9 @@
  * Created on October 18, 2006, 2:36 PM
  */
 
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

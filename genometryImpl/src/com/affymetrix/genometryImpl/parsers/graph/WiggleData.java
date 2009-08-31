@@ -1,4 +1,4 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;

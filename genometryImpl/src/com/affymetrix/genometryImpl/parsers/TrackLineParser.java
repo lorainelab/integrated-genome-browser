@@ -25,7 +25,7 @@ public final class TrackLineParser {
 	private static final boolean DEBUG = false;
 	private static final Pattern comma_regex = Pattern.compile(",");
 
-	static final String NAME="name";
+	public static final String NAME="name";
 	private static final String COLOR="color";
 	private static final String DESCRIPTION="description";
 	private static final String VISIBILITY ="visibility";
@@ -53,8 +53,6 @@ public final class TrackLineParser {
 			+ ")");               //    ... end of group 2
 
 	private final Map<String,String> track_hash = new TreeMap<String,String>();
-
-	public TrackLineParser() {}
 
 	public Map<String,String> getCurrentTrackHash() { return track_hash; }
 
@@ -91,7 +89,7 @@ public final class TrackLineParser {
 	 *  The Map is returned and is also available as {@link #getCurrentTrackHash()}.
 	 *  Any old values are cleared from the existing track line hash first.
 	 */
-	Map<String,String> parseTrackLine(String track_line) {
+	public Map<String,String> parseTrackLine(String track_line) {
 		return parseTrackLine(track_line, null);
 	}
 
@@ -242,7 +240,7 @@ public final class TrackLineParser {
 	 *  Applies the UCSC track properties that it understands to the GraphState
 	 *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
 	 */
-	static void applyTrackProperties(Map<String,String> track_hash, GraphStateI gstate) {
+	public static void applyTrackProperties(Map<String,String> track_hash, GraphStateI gstate) {
 		applyTrackProperties(track_hash, gstate.getTierStyle());
 
 		String view_limits = track_hash.get("viewlimits");

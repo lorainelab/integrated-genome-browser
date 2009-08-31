@@ -3,12 +3,14 @@
  * and open the template in the editor.
  */
 
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
 
 
 
 
+import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.io.ByteArrayInputStream;

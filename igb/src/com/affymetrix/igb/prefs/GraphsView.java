@@ -16,7 +16,7 @@ package com.affymetrix.igb.prefs;
 import java.awt.*;
 import javax.swing.*;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 

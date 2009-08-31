@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import java.io.*;
 import java.net.*;
 import java.util.*;

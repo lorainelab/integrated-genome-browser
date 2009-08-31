@@ -1,5 +1,6 @@
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.parsers.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;

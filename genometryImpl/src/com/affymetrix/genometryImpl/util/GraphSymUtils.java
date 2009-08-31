@@ -27,7 +27,7 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
-import com.affymetrix.genometryImpl.parsers.BgrParser;
+import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 
 public final class GraphSymUtils {

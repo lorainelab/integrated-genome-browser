@@ -153,23 +153,26 @@ public final class SgrParser {
 		}
 		String seq_id = seq.getID();
 
-		int xpos[] = graf.getGraphXCoords();
-		//float ypos[] = (float[]) graf.getGraphYCoords();
 
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try {
 			bos = new BufferedOutputStream(ostr);
 			dos = new DataOutputStream(bos);
-
-			for (int i = 0; i < xpos.length; i++) {
-				dos.writeBytes(seq_id + "\t" + xpos[i] + "\t" + graf.getGraphYCoordString(i) + "\n");
-			}
+			writeGraphPoints(graf, dos, seq_id);
 		} finally {
 			GeneralUtils.safeClose(bos);
 			GeneralUtils.safeClose(dos);
 		}
 		return true;
+	}
+
+	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos, String seq_id) throws IOException {
+		int total_points = graf.getPointCount();
+		for (int i = 0; i < total_points; i++) {
+			dos.writeBytes(seq_id + "\t" + graf.getGraphXCoord(i) + "\t"
+					+ graf.getGraphYCoordString(i) + "\n");
+		}
 	}
 
 

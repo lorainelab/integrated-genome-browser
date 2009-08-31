@@ -101,6 +101,7 @@ public final class ScoredIntervalParser {
 	//     for + and - strand, otherwise put both strands in same graph
 	static public final boolean separate_by_strand = true;
 
+
 	/**
 	 *  Boolean preference for whether container glyphs should always be added.
 	 *  If false, will construct the container glyphs only if there is MORE than
@@ -500,9 +501,6 @@ public final class ScoredIntervalParser {
 	 *  Also writes a header.
 	 */
 	public static boolean writeEgrFormat(GraphIntervalSym graf, String genome_version, OutputStream ostr) throws IOException {
-		int xpos[] = graf.getGraphXCoords();
-		int widths[] = graf.getGraphWidthCoords();
-		//float ypos[] = (float[]) graf.getGraphYCoords();
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 
@@ -533,16 +531,22 @@ public final class ScoredIntervalParser {
 				// individual region inside it.
 				strand_char = '.';
 			}
-
-			for (int i=0; i<xpos.length; i++) {
-				int x2 = xpos[i] + widths[i];
-				dos.writeBytes(seq_id + '\t' + xpos[i] + '\t' +  x2  + '\t' + strand_char + '\t' + graf.getGraphYCoordString(i) + '\n');
-			}
+			writeGraphPoints(graf, dos, seq_id, strand_char);
 			dos.flush();
 		} finally {
 			dos.close();
 		}
 		return true;
+	}
+
+	private static void writeGraphPoints(GraphIntervalSym graf, DataOutputStream dos, String seq_id, char strand_char) throws IOException {
+		int total_points = graf.getPointCount();
+		for (int i = 0; i < total_points; i++) {
+			int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
+			dos.writeBytes(seq_id + '\t' + 
+					graf.getGraphXCoord(i) + '\t' + x2 + '\t' + strand_char + '\t' +
+					graf.getGraphYCoordString(i) + '\n');
+		}
 	}
 /**
 	public static void main(String[] args) {

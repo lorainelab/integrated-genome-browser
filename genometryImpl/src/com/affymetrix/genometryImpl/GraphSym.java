@@ -113,6 +113,10 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		return xcoords;
 	}
 
+	public int getGraphXCoord(int i) {
+		return xcoords[i];
+	}
+
 	/**
 	 *  Returns the y coordinate as a float, even if it is internally stored
 	 *  as an integer or in some other form.

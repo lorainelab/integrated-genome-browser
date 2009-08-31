@@ -53,9 +53,6 @@ public final class BgrParser {
 		System.out.println("writing graph: " + graf);
 		BufferedOutputStream bos = new BufferedOutputStream(ostr);
 		DataOutputStream dos = new DataOutputStream(bos);
-		int[] xcoords = graf.getGraphXCoords();
-		//float[] ycoords = (float[]) graf.getGraphYCoords();
-		int total_points = xcoords.length;
 
 		Map headers = graf.getProperties();
 
@@ -83,12 +80,8 @@ public final class BgrParser {
 			if (headers.get("value_type_name") == null)  { dos.writeUTF("null"); }
 			else  { dos.writeUTF((String)headers.get("value_type_name")); }           
 			if (headers.get("control_group_name") == null) { dos.writeUTF("null"); }
-			else { dos.writeUTF((String)headers.get("control_group_name")); }           		
-		dos.writeInt(total_points);
-		for (int i=0; i<total_points; i++) {        
-			dos.writeInt(xcoords[i]);
-			dos.writeFloat(graf.getGraphYCoord(i));
-		}
+			else { dos.writeUTF((String)headers.get("control_group_name")); }
+		writeGraphPoints(graf, dos);
 		//      dos.flush();
 		dos.close();
 		return true;
@@ -168,6 +161,15 @@ public final class BgrParser {
 				sb.append(", ");
 			}
 			sb.append(s);
+		}
+	}
+
+	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos) throws IOException {
+		int total_points = graf.getPointCount();
+		dos.writeInt(total_points);
+		for (int i = 0; i < total_points; i++) {
+			dos.writeInt(graf.getGraphXCoord(i));
+			dos.writeFloat(graf.getGraphYCoord(i));
 		}
 	}
 

@@ -896,16 +896,7 @@ CHUNK_LOOP:
 
 			//write out all properties from seq and/or graphs as tag/vals
 			writeTagValuePairs(dos,graf.getProperties());
-
-			int[] xcoords = graf.getGraphXCoords();
-			//float[] ycoords = (float[]) graf.getGraphYCoords();
-			int total_points = xcoords.length;
-
-			dos.writeInt(total_points);
-			for (int i=0; i<total_points; i++) {
-				dos.writeInt(xcoords[i]);
-				dos.writeFloat(graf.getGraphYCoord(i));
-			}
+			writeGraphPoints(graf, dos);
 			dos.close();  // or should responsibility for closing stream be left to the caller??
 			success = true;
 		}
@@ -946,6 +937,15 @@ CHUNK_LOOP:
 			if (xcount > 0 && (xcoords[xcount-1] > aseq.getLength())) {
 				aseq.setLength(xcoords[xcount-1]);
 			}
+		}
+	}
+
+	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos) throws IOException {
+		int total_points = graf.getPointCount();
+		dos.writeInt(total_points);
+		for (int i = 0; i < total_points; i++) {
+			dos.writeInt(graf.getGraphXCoord(i));
+			dos.writeFloat(graf.getGraphYCoord(i));
 		}
 	}
 

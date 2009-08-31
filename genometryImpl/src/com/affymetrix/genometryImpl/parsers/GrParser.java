@@ -28,21 +28,25 @@ public final class GrParser {
 	static Comparator<PointIntFloat> pointcomp = PointIntFloat.getComparator(true, true);
 
 	public static boolean writeGrFormat(GraphSym graf, OutputStream ostr) throws IOException {
-		int xpos[] = graf.getGraphXCoords();
-		//float ypos[] = (float[]) graf.getGraphYCoords();
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
 		try {
 			bos = new BufferedOutputStream(ostr);
 			dos = new DataOutputStream(bos);
-			for (int i=0; i<xpos.length; i++) {
-				dos.writeBytes("" + xpos[i] + "\t" + graf.getGraphYCoordString(i) + "\n");
-			}
+			writeGraphPoints(graf, dos);
 			dos.flush();
 		} finally {
 			dos.close();
 		}
 		return true;
+	}
+
+	private static void writeGraphPoints(GraphSym graf, DataOutputStream dos) throws IOException {
+		int total_points = graf.getPointCount();
+		for (int i = 0; i < total_points; i++) {
+			dos.writeBytes("" + graf.getGraphXCoord(i) + "\t" +
+					graf.getGraphYCoordString(i) + "\n");
+		}
 	}
 
 	public static GraphSymFloat parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name) throws IOException {

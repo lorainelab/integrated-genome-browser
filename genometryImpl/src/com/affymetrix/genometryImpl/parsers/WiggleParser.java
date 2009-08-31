@@ -37,6 +37,7 @@ import java.util.Iterator;
  *  There can be multiple formats per track.
  */
 public final class WiggleParser {
+
 	private static enum WiggleFormat {
 
 		BED4, VARSTEP, FIXEDSTEP
@@ -339,9 +340,6 @@ public final class WiggleParser {
 	 *  Also writes a track line as a header.
 	 */
 	public static void writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {
-		int xpos[] = graf.getGraphXCoords();
-		int widths[] = graf.getGraphWidthCoords();
-
 		MutableAnnotatedBioSeq seq = graf.getGraphSeq();
 		String seq_id = (seq == null ? "." : seq.getID());
 		String human_name = graf.getGraphState().getTierStyle().getHumanName();
@@ -362,13 +360,19 @@ public final class WiggleParser {
 			bw.write(" viewLimits=" + Float.toString(state.getVisibleMinY()) + ":" + Float.toString(state.getVisibleMaxY()));
 			bw.write("");
 			bw.write('\n');
-			for (int i = 0; i < xpos.length; i++) {
-				int x2 = xpos[i] + widths[i];
-				bw.write(seq_id + ' ' + xpos[i] + ' ' + x2 + ' ' + graf.getGraphYCoord(i) + '\n');
-			}
+			writeGraphPoints(graf, bw, seq_id);
 			bw.flush();
 		} finally {
 			GeneralUtils.safeClose(bw);
+		}
+	}
+
+	private static void writeGraphPoints(GraphIntervalSym graf, BufferedWriter bw, String seq_id) throws IOException {
+		int total_points = graf.getPointCount();
+		for (int i = 0; i < total_points; i++) {
+			int x2 = graf.getGraphXCoord(i) + graf.getGraphWidthCoord(i);
+			bw.write(seq_id + ' ' + graf.getGraphXCoord(i) + ' ' + x2
+					+ ' ' + graf.getGraphYCoord(i) + '\n');
 		}
 	}
 }

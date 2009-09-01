@@ -61,7 +61,7 @@ public final class FeatureLoading {
 	 * @param gVersion
 	 */
 	private static synchronized void loadFeatureNames(final GenericVersion gVersion) {
-		if (gVersion.features.size() > 0) {
+		if (!gVersion.features.isEmpty()) {
 			if (DEBUG) {
 				System.out.println("Feature names are already loaded.");
 			}
@@ -76,16 +76,12 @@ public final class FeatureLoading {
 			Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 			for (Das2Type type : version.getTypes().values()) {
 				String type_name = type.getName();
-				Map<String, String> type_props = type.getProps();
 				if (type_name == null || type_name.length() == 0) {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				//if (type_props != null && type_props.size() > 0) {
-					gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
-				//} else {
-				//	gVersion.features.add(new GenericFeature(type_name, gVersion));
-				//}
+				Map<String, String> type_props = type.getProps();
+				gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
 			}
 			return;
 		}
@@ -101,7 +97,7 @@ public final class FeatureLoading {
 					System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 					continue;
 				}
-				gVersion.features.add(new GenericFeature(type_name, gVersion));
+				gVersion.features.add(new GenericFeature(type_name, null, gVersion));
 			}
 			return;
 		}
@@ -115,17 +111,17 @@ public final class FeatureLoading {
 				}
 
 				QuickLoadServerModel quickloadServer = QuickLoadServerModel.getQLModelForURL(gmodel, quickloadURL);
-				List<String> featureNames = quickloadServer.getTypes(gVersion.versionName);
-				for (String featureName : featureNames) {
-					if (featureName == null || featureName.length() == 0) {
+				List<String> typeNames = quickloadServer.getTypes(gVersion.versionName);
+				for (String type_name : typeNames) {
+					if (type_name == null || type_name.length() == 0) {
 						System.out.println("WARNING: Found empty feature name in " + gVersion.versionName + ", " + gVersion.gServer.serverName);
 						continue;
 					}
 					if (DEBUG) {
-						System.out.println("Adding feature " + featureName);
+						System.out.println("Adding feature " + type_name);
 					}
-					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, featureName);
-					gVersion.features.add(new GenericFeature(featureName, type_props, gVersion));
+					Map<String, String> type_props = quickloadServer.getProps(gVersion.versionName, type_name);
+					gVersion.features.add(new GenericFeature(type_name, type_props, gVersion));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -283,9 +279,7 @@ public final class FeatureLoading {
 		
 		// Linear search, but over a very small list.
 		for (AnnotMapElt annotMapElt : annotsList) {
-			System.out.println("Testing " + annotMapElt.title + " against " + gFeature.featureName);
 			if (annotMapElt.title.equals(gFeature.featureName)) {
-				System.out.println("Found it.");
 				return annotMapElt.fileName;
 			}
 		}

@@ -180,7 +180,7 @@ public final class FeatureTreeView extends JComponent {
 			return;
 		}
 
-		// the recursaive adding of non leaves
+		// the recursive adding of non leaves
 		String featureLeft = featureName.substring(0, featureName.indexOf(path_separator));
 		String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
 		Enumeration en = root.children();
@@ -200,7 +200,7 @@ public final class FeatureTreeView extends JComponent {
 		}
 
 		// Couldn't find matching node.  Add new one.
-		GenericFeature dummyFeature = new GenericFeature(featureLeft, feature.gVersion);
+		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion);
 		TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
 		root.add(newNode);

@@ -3,6 +3,7 @@ package com.affymetrix.genometryImpl.general;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -25,14 +26,6 @@ public final class GenericFeature {
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public Map<MutableAnnotatedBioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
-
-	/**
-	 * @param featureName
-	 * @param gVersion
-	 */
-	public GenericFeature(String featureName, GenericVersion gVersion) {
-		this(featureName, null, gVersion);
-	}
 	
 	/**
 	 * @param featureName
@@ -48,7 +41,11 @@ public final class GenericFeature {
 			this.loadStrategy = LoadStrategy.WHOLE;
 		} else {
 			this.visible = false;
-			this.loadStrategy = LoadStrategy.NO_LOAD;
+			if ((gVersion != null && gVersion.gServer != null && gVersion.gServer.serverType == ServerType.DAS2)) {
+				this.loadStrategy = LoadStrategy.VISIBLE;  // DAS/2 server should default to "Region in View"
+			} else {
+				this.loadStrategy = LoadStrategy.NO_LOAD;
+			}
 		}
 		this.setFriendlyURL();
 		this.LoadStatusMap = new HashMap<MutableAnnotatedBioSeq, LoadStatus>();

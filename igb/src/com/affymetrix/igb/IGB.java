@@ -315,6 +315,9 @@ public final class IGB extends Application
 	}
 
 	private void init() {
+		if (System.getProperty("os.name").equals("Mac OS X")) {
+			MacIntegration mi = MacIntegration.getInstance();
+		}
 		frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
 		RepaintManager rm = RepaintManager.currentManager(frm);
 
@@ -847,7 +850,7 @@ public final class IGB extends Application
 		}
 	}
 
-	private void showAboutDialog() {
+	void showAboutDialog() {
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
@@ -988,7 +991,7 @@ public final class IGB extends Application
 		return icon;
 	}
 
-	private void exit() {
+	void exit() {
 		boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING,
 						UnibrowPrefsUtil.default_ask_before_exiting);
 		String message = "Do you really want to exit?";

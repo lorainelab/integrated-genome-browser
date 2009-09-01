@@ -143,7 +143,7 @@ public final class IGB extends Application
 	JMenuItem move_tabbed_panel_to_window_item;
 	SeqMapView map_view;
 	AlignControl align_control;
-	DataLoadView data_load_view = null;
+	public DataLoadView data_load_view = null;
 	AltSpliceView slice_view = null;
 	List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
 	List<Object> plugins = new ArrayList<Object>(16);

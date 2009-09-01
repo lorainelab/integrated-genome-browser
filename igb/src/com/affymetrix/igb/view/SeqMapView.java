@@ -60,6 +60,7 @@ import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.das2.Das2FeatureRequestSym;
 import com.affymetrix.igb.tiers.*;
@@ -71,7 +72,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -249,6 +249,8 @@ public class SeqMapView extends JPanel
 	boolean report_status_in_status_bar = true;
 	protected SeqSymmetry sym_used_for_title = null;
 
+	private JButton refreshButton = new JButton("Refresh data");
+
 	/*
 	 *  units to scroll are either in pixels or bases
 	 */
@@ -404,18 +406,25 @@ public class SeqMapView extends JPanel
 		map_range_box = new MapRangeBox(this);
 		xzoombox = Box.createHorizontalBox();
 		xzoombox.add(map_range_box.range_box);
-
+		
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
+		ActionListener refreshAL = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				((IGB)Application.getSingleton()).
+						data_load_view.general_load_view.loadVisibleData();
+				}
+		};
+		refreshButton.addActionListener(refreshAL);
+		xzoombox.add(refreshButton);
+
 		boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+		JPanel pan = new JPanel(new BorderLayout());
+		pan.add("Center", xzoombox);
 		if (x_above) {
-			JPanel pan = new JPanel(new BorderLayout());
-			pan.add("Center", xzoombox);
 			this.add(BorderLayout.NORTH, pan);
 		} else {
-			JPanel pan = new JPanel(new BorderLayout());
-			pan.add("Center", xzoombox);
 			this.add(BorderLayout.SOUTH, pan);
 		}
 

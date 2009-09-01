@@ -56,7 +56,7 @@ import javax.swing.table.TableColumn;
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
-	GeneralLoadUtils glu;
+	static GeneralLoadUtils glu;
 	private static final boolean DEBUG_EVENTS = false;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = "Species";
@@ -400,7 +400,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Load any data that's marked for visible range.
 	 */
-	private void loadVisibleData() {
+	public void loadVisibleData() {
 		SeqSpan request_span = gviewer.getVisibleSpan();
 
 		if (DEBUG_EVENTS) {

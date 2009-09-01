@@ -315,8 +315,11 @@ public final class IGB extends Application
 	}
 
 	private void init() {
-		if (System.getProperty("os.name").equals("Mac OS X")) {
+		if ("Mac OS X".equals(System.getProperty("os.name"))) {
 			MacIntegration mi = MacIntegration.getInstance();
+			if (this.getIcon() != null) {
+				mi.setDockIconImage(this.getIcon());
+			}
 		}
 		frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
 		RepaintManager rm = RepaintManager.currentManager(frm);

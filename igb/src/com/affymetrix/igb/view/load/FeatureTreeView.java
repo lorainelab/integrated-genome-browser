@@ -172,7 +172,7 @@ public final class FeatureTreeView extends JComponent {
 		if (!featureName.contains(path_separator)) {
 			//This code adds a leaf
 			//System.out.println("adding leaf : " + featureName);
-			TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.visible);
+			TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
 			newNode.setUserObject(featureUInfo);
 			newNode.setAllowsChildren(false);	// this is a leaf.
@@ -490,7 +490,7 @@ public final class FeatureTreeView extends JComponent {
 						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
 					}
 					if (nodeData instanceof GenericFeature) {
-						((GenericFeature) nodeData).visible = true;
+						((GenericFeature) nodeData).setVisible();
 						glv.createFeaturesTable(false);
 					}
 					tree.repaint();

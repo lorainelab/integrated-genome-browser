@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.Closeable;
@@ -9,6 +10,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -188,6 +191,16 @@ public final class GeneralUtils {
 		} catch (UnsupportedEncodingException ex) {
 			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
 			throw new IllegalArgumentException(ex);
+		}
+	}
+
+	public static void browse(String s) {
+		try {
+			Desktop.getDesktop().browse(new URI(s));
+		} catch (IOException ex) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (URISyntaxException ex) {
+			Logger.getLogger(GeneralUtils.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 }

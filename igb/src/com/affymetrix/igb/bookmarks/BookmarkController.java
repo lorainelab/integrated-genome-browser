@@ -20,6 +20,7 @@ import java.io.*;
 
 import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -58,7 +59,7 @@ public abstract class BookmarkController {
       }
     } else {
       if (DEBUG) System.out.println("****** Viewing external bookmark: "+bm.getURL().toExternalForm());
-      WebBrowserControl.displayURLEventually(bm.getURL().toExternalForm());
+      GeneralUtils.browse(bm.getURL().toExternalForm());
     }
   }
 

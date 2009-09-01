@@ -48,6 +48,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.menuitem.*;
@@ -65,7 +66,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.swing.DisplayUtils;
 
 /**
@@ -894,25 +894,25 @@ public final class IGB extends Application
 		licenseB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to");
+				GeneralUtils.browse("http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to");
 			}
 		});
 		apacheB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://www.apache.org/licenses/LICENSE-2.0");
+				GeneralUtils.browse("http://www.apache.org/licenses/LICENSE-2.0");
 			}
 		});
 		freehepB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://java.freehep.org/vectorgraphics/license.html");
+				GeneralUtils.browse("http://java.freehep.org/vectorgraphics/license.html");
 			}
 		});
 		fusionB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/fusion/index.affx");
+				GeneralUtils.browse("http://www.affymetrix.com/support/developer/fusion/index.affx");
 			}
 		});
 		JPanel buttonP = new JPanel(new GridLayout(2, 2));
@@ -940,7 +940,7 @@ public final class IGB extends Application
 		sfB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://genoviz.sourceforge.net");
+				GeneralUtils.browse("http://genoviz.sourceforge.net");
 			}
 		});
 		Box buttonP = Box.createHorizontalBox();

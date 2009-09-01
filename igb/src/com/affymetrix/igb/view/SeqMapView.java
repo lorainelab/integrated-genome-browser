@@ -54,7 +54,7 @@ import com.affymetrix.genometryImpl.parsers.CytobandParser;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 
@@ -71,7 +71,6 @@ import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.WebBrowserControl;
 
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
@@ -2319,7 +2318,7 @@ public class SeqMapView extends JPanel
 
 		if (UcscVersion != null && region != null) {
 			String ucsc_url = "http://genome.ucsc.edu/cgi-bin/hgTracks?" + "db=" + UcscVersion + "&position=" + region;
-			WebBrowserControl.displayURLEventually(ucsc_url);
+			GeneralUtils.browse(ucsc_url);
 		} else {
 			String genomeVersion = aseq.getID();
 			if (aseq instanceof BioSeq) {

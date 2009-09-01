@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -282,7 +283,7 @@ public final class FeatureTreeView extends JComponent {
 			int y = e.getY();
 			URL friendlyURL = getURLAt(e.getSource(), x, y);
 			if (friendlyURL != null) {
-				com.affymetrix.igb.util.WebBrowserControl.displayURLEventually(friendlyURL.toString());
+				GeneralUtils.browse(friendlyURL.toString());
 			}
 		}
 

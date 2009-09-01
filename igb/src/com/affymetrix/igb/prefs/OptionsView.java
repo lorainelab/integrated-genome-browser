@@ -18,7 +18,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.igb.view.OrfAnalyzer2;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
@@ -54,7 +53,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
 
 
     Box misc_box = Box.createVerticalBox();
-    boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX);
+    /* boolean is_unix = (WebBrowserControl.getPlatformCode() == WebBrowserControl.UNIX); */
 
     //misc_box.setBorder(new javax.swing.border.EtchedBorder());
     misc_box.add(UnibrowPrefsUtil.createCheckBox("Ask before exiting", UnibrowPrefsUtil.getTopNode(),
@@ -79,6 +78,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
 
 
     misc_box.add(Box.createRigidArea(new Dimension(0,5)));
+	/*
     if ( is_unix ) {
       misc_box.add(new JLabel("Browser command: "));
       // Default value is "", not WebBrowserControl.DEFAULT_BROWSER_CMD, to
@@ -87,6 +87,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
         UnibrowPrefsUtil.getTopNode(), WebBrowserControl.PREF_BROWSER_CMD, ""));
       tf.setMaximumSize(new Dimension(10000, 1000));
     }
+	 */
 
     /*
     JPanel colors_box = new JPanel();
@@ -245,6 +246,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
     sb.append("Recommend: false.");
     sb.append("</p>\n");*/
 
+	/*
     sb.append("<p>\n");
     sb.append("<h2>Browser Command (Unix Only)</h2>\n");
     sb.append("<b>Linux/Unix</b>: Set the command for opening a web address in your browser.  ");
@@ -257,6 +259,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
     sb.append("<br><br><b>Windows</b>: This option will be hidden and your default browser will be used.  ");
     //sb.append("<br><br>Changes do not require re-start.  ");
     sb.append("</p>\n");
+	 */
     return sb.toString();
   }
 

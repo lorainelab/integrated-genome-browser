@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -26,9 +27,18 @@ import com.affymetrix.igb.tiers.TransformTierGlyph;
 
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
+import com.affymetrix.genometryImpl.event.SymMapChangeListener;
+import com.affymetrix.igb.util.TableSorter2;
+import com.affymetrix.igb.view.AnnotBrowserView.SeqSymmetryMethodComparator;
+import com.affymetrix.igb.view.AnnotBrowserView.SeqSymmetryTableCellRenderer;
+import com.affymetrix.swing.IntegerTableCellRenderer;
+import java.awt.Dimension;
+import javax.swing.table.DefaultTableModel;
 
-public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener {
-
+public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
+	private static final long serialVersionUID = 0;
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
 	private final static int MAX_HITS = 100000;
@@ -41,11 +51,24 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private JPanel pan1 = new JPanel();
 	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB = new JComboBox();
-	private JCheckBox remoteSearchCheckBox = new JCheckBox("search remote servers");
+	private JCheckBox remoteSearchCheckBox = new JCheckBox("search DAS/2 servers");
 	private JButton clear_button = new JButton("Clear");
 	private SeqMapView gviewer;
 	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
 	private Color hitcolor = new Color(150, 150, 255);
+
+
+	private final JTable table = new JTable();
+	private final JLabel status_bar = new JLabel("0 results");
+	// The second column in the table contains an object of type SeqSymmetry
+	// but we use a special TableCellRenderer so that what is actually displayed
+	// is a String representing the Tier
+	private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
+	private final static Class<?>[] col_classes = {String.class, SeqSymmetry.class, Integer.class, Integer.class, String.class};
+	private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
+	private DefaultTableModel model;
+	private ListSelectionModel lsm;
+
 	private static final String ALLID = "All loaded IDs";
 	private static final String REGEXID = "Matching ID";
 	private static final String REGEXIDTF = "ID matches string or Regular Expression";
@@ -56,6 +79,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String FINDANNOTS = "Find Annotations For ";
 	private static final String FINDANNOTSBY = " By...";
 	private static final String FINDANNOTSNULL = "Please select genome before continuing";
+	private static final String SEQUENCETOSEARCH = "Sequence to search";
 
 	public SearchView() {
 		super();
@@ -67,10 +91,20 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		initSearchCB();
 
-		initSequenceCB();
 		initComponents();
-		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID() + FINDANNOTSBY);
+		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID());
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
+		pan1.setLayout(new BoxLayout(pan1, BoxLayout.X_AXIS));
+
+
+		JLabel sequenceChooseLabel = new JLabel("Sequence");
+		pan1.add(sequenceChooseLabel);
+		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
+		pan1.add(sequence_CB);
+
+		pan1.add(Box.createRigidArea(new Dimension(200, 0)));
+
+
 		pan1.add(searchCB);
 		pan1.add(searchTF);
 		pan1.add(andLabel);
@@ -81,29 +115,34 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			searchTF.setEnabled(false);
 		}
 
-		JPanel pan2 = new JPanel();
-		initSequenceCB();
+		
+		this.initSequenceCB();
 
-		JLabel sequenceChooseLabel = new JLabel("Choose a sequence");
-		pan2.add(sequenceChooseLabel);
-		pan2.add(sequence_CB);
-
-
-		//JLabel searchMethodLabel = new JLabel(CHOOSESEARCH);
-		//pan2.add(searchMethodLabel);
-		//pan2.add(searchCB);
-
-		hitCountL = new JLabel(" No hits");
-
-		pan2.add(hitCountL);
-
-		//pan2.add(clear_button);
+		this.initTable();
+		
 
 		this.add("North", pan1);
 
-		this.add("Center", new JPanel());// a blank panel: improves appearance in JDK1.5
+		JPanel pan2 = new JPanel();
+		hitCountL = new JLabel(" No hits");
 
+		pan2.add(hitCountL);
+		pan2.add(this.table);
+		this.add("Center", pan2);// a blank panel: improves appearance in JDK1.5
+
+
+		JScrollPane scroll_pane = new JScrollPane(table);
+		this.add(scroll_pane, BorderLayout.CENTER);
+
+		Box bottom_row = Box.createHorizontalBox();
+		this.add(bottom_row, BorderLayout.SOUTH);
+
+		bottom_row.add(status_bar);
+		validate();
+
+		AnnotatedSeqGroup.addSymMapChangeListener(this);
 		gmodel.addGroupSelectionListener(this);
+		gmodel.addSeqSelectionListener(this);
 		searchCB.addActionListener(this);
 		searchTF.addActionListener(this);
 		clear_button.addActionListener(this);
@@ -120,7 +159,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				}
 				sequence_CB.addItem(seq.getID());
 			}
-			sequence_CB.setToolTipText("Genome: " + group.getID());
+			//sequence_CB.setToolTipText("Genome: " + group.getID());
+			sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 			sequence_CB.setEnabled(true);
 		} else {
 			sequence_CB.setToolTipText("Genome has not been selected");
@@ -154,6 +194,49 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
 	}
 
+	private void initTable() {
+		model = new DefaultTableModel() {
+			private static final long serialVersionUID = 0;
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+
+			@Override
+			public Class getColumnClass(int column) {
+				return col_classes[column];
+			}
+
+			@Override
+			public void fireTableStructureChanged() {
+				// The columns never change, so suppress tableStructureChanged events
+				// converting to normal table-rows-changed-type events.
+				// This allows the column-based sorting settings to be preserved when
+				// the data changes.
+				fireTableChanged(new javax.swing.event.TableModelEvent(this));
+			}
+		};
+	
+		model.setDataVector(new Vector(0), col_headings_vector);
+
+		lsm = table.getSelectionModel();
+		//lsm.addListSelectionListener(list_selection_listener);
+		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		TableSorter2 sort_model = new TableSorter2(model);
+		//sort_model.addMouseListenerToHeaderInTable(table); // for TableSorter version 1
+		sort_model.setTableHeader(table.getTableHeader()); // for TableSorter2
+		sort_model.setColumnComparator(SeqSymmetry.class, new SeqSymmetryMethodComparator());
+
+		table.setModel(sort_model);
+		table.setRowSelectionAllowed(true);
+		table.setEnabled(true);
+		table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
+		table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
+
+	}
+
 	private void clearAll() {
 		searchTF.setText("");
 		hitCountL.setText(" No hits");
@@ -172,7 +255,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
-		System.out.println("Action: " + evt.toString());
 		if (src == this.searchCB) {
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
@@ -319,17 +401,39 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return hit_count;
 	}
 
-	/**
-	 * This gets called when the genome versionName is changed.
-	 * @param evt
-	 */
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
+		groupOrSeqChange();
+	}
+	public void seqSelectionChanged(SeqSelectionEvent evt) {
+		groupOrSeqChange();
+	}
+
+	private void groupOrSeqChange() {
 		group = gmodel.getSelectedSeqGroup();
-		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID() + FINDANNOTSBY);
+		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID());
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		this.searchCB.setEnabled(group != null);
 		this.searchTF.setEnabled(group != null);
 		this.initSequenceCB();
 	}
 
+	/** Causes a call to {@link #setStatus(String)}.
+	 * }
+	 *  Normally, this occurs as a result of a call to
+	 *  {@link AnnotatedSeqGroup#symHashChanged(Object)}.
+	 */
+	public void symMapModified(SymMapChangeEvent evt) {
+		//showSymHash(evt.getSeqGroup());
+		setStatus("Data modified, search again");
+	}
+
+	/** Set the text in the status bar in a thread-safe way. */
+	void setStatus(final String text) {
+		SwingUtilities.invokeLater(new Runnable() {
+
+			public void run() {
+				status_bar.setText(text);
+			}
+		});
+	}
 }

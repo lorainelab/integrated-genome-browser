@@ -240,7 +240,6 @@ public class SeqMapView extends JPanel
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
-	//JButton refreshB = new JButton("Refresh Data");
 	SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static Font axisFont = new Font("Courier", Font.BOLD, 12);
@@ -415,6 +414,7 @@ public class SeqMapView extends JPanel
 						data_load_view.general_load_view.loadVisibleData();
 				}
 		};
+		refreshButton.setMnemonic('R');
 		refreshButton.addActionListener(refreshAL);
 		xzoombox.add(refreshButton);
 
@@ -2266,27 +2266,24 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
-	private String getUcscGenomeVersion() {
+	private static String getUcscGenomeVersion(String version) {
 		String ucsc_version = null;
-		if (aseq instanceof BioSeq && !slicing_in_effect) {
-			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-			String version = aseq.getVersion();
-			Collection<String> syns = lookup.getSynonyms(version);
+		Collection<String> syns = lookup.getSynonyms(version);
 
-			if (syns == null) {
-				syns = new ArrayList<String>();
-				syns.add(version);
-			}
-			for (String syn : syns) {
-				// Having to hardwire this check to figure out which synonym to use to match
-				//  with UCSC.  Really need to have some way when loading synonyms to specify
-				//  which ones should be used when communicating with which external resource!
-				//	System.out.println("testing syn: " + syn);
-				if (syn.startsWith("hg") || syn.startsWith("mm") ||
-								syn.startsWith("rn") || syn.startsWith("ce") || syn.startsWith("dm")) {
-					ucsc_version = syn;
-				}
+		if (syns == null) {
+			syns = new ArrayList<String>();
+			syns.add(version);
+		}
+		for (String syn : syns) {
+			// Having to hardwire this check to figure out which synonym to use to match
+			//  with UCSC.  Really need to have some way when loading synonyms to specify
+			//  which ones should be used when communicating with which external resource!
+			//	System.out.println("testing syn: " + syn);
+			if (syn.startsWith("hg") || syn.startsWith("mm") ||
+					syn.startsWith("rn") || syn.startsWith("ce") || syn.startsWith("dm")) {
+				ucsc_version = syn;
 			}
 		}
 		return ucsc_version;
@@ -2299,21 +2296,23 @@ public class SeqMapView extends JPanel
 	 */
 	private String getRegionString() {
 		String region = null;
-		if (!slicing_in_effect) {
-			Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
-			int start = (int) vbox.x;
-			int end = (int) (vbox.x + vbox.width);
-			String seqid = aseq.getID();
+		Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
+		int start = (int) vbox.x;
+		int end = (int) (vbox.x + vbox.width);
+		String seqid = aseq.getID();
 
-			region = seqid + ":" + start + "-" + end;
-		}
+		region = seqid + ":" + start + "-" + end;
 		return region;
 	}
 
 	public void invokeUcscView() {
+		if (aseq == null || slicing_in_effect) {
+			return;
+		}
+
 		// links to UCSC look like this:
 		//  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
-		String UcscVersion = getUcscGenomeVersion();
+		String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
 		String region = getRegionString();
 
 		if (UcscVersion != null && region != null) {
@@ -2321,9 +2320,7 @@ public class SeqMapView extends JPanel
 			GeneralUtils.browse(ucsc_url);
 		} else {
 			String genomeVersion = aseq.getID();
-			if (aseq instanceof BioSeq) {
-				genomeVersion = aseq.getVersion();
-			}
+			genomeVersion = aseq.getVersion();
 			Application.errorPanel("Don't have UCSC information for genome " + genomeVersion);
 		}
 	}

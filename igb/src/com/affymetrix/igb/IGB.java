@@ -441,14 +441,14 @@ public final class IGB extends Application
 		exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
 		adjust_edgematch_item = new JMenuItem("Adjust edge match fuzziness", KeyEvent.VK_F);
-		view_ucsc_item = new JMenuItem("View Region in UCSC Browser", KeyEvent.VK_R);
+		view_ucsc_item = new JMenuItem("View Region in UCSC Browser");
 		view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
 		clamp_view_item = new JMenuItem("Clamp To View", KeyEvent.VK_V);
 		res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
 		res2clip_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
 		unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
-		rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
+		rev_comp_item = new JMenuItem("Reverse Complement");
 		shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
 		shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
 		shrink_wrap_item.setState(map_view.getShrinkWrap());

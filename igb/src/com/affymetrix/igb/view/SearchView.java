@@ -3,7 +3,6 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
@@ -14,13 +13,13 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
@@ -44,14 +43,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private final static int MAX_HITS = 100000;
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static AnnotatedSeqGroup group;
-	private JLabel hitCountL;
 	private JLabel andLabel;
 	private JTextField searchTF;
 	private JTextField searchTF2;
 	private JPanel pan1 = new JPanel();
 	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB = new JComboBox();
-	private JCheckBox remoteSearchCheckBox = new JCheckBox("search DAS/2 servers");
+	private JCheckBox remoteSearchCheckBox = new JCheckBox("search remotely");
+	private JCheckBox selectInMapCheckBox = new JCheckBox("select in map");
+	private JButton searchButton = new JButton("Search");
 	private JButton clear_button = new JButton("Clear");
 	private SeqMapView gviewer;
 	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
@@ -63,9 +63,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	// The second column in the table contains an object of type SeqSymmetry
 	// but we use a special TableCellRenderer so that what is actually displayed
 	// is a String representing the Tier
-	private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Sequence"};
-	private final static Class<?>[] col_classes = {String.class, SeqSymmetry.class, Integer.class, Integer.class, String.class};
+	private final static String[] col_headings = {"ID", "Start", "End", "Chromosome", "Strand"};
+	private final static Class<?>[] col_classes = {String.class, Integer.class, Integer.class, String.class, String.class};
 	private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
+	private final static int NUM_COLUMNS = col_headings_vector.size();
 	private DefaultTableModel model;
 	private ListSelectionModel lsm;
 
@@ -77,7 +78,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
 	private static final String CHOOSESEARCH = "Choose search method";
 	private static final String FINDANNOTS = "Find Annotations For ";
-	private static final String FINDANNOTSBY = " By...";
 	private static final String FINDANNOTSNULL = "Please select genome before continuing";
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
 
@@ -102,7 +102,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 		pan1.add(sequence_CB);
 
-		pan1.add(Box.createRigidArea(new Dimension(200, 0)));
+		pan1.add(Box.createRigidArea(new Dimension(100, 0)));
 
 
 		pan1.add(searchCB);
@@ -110,26 +110,24 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		pan1.add(andLabel);
 		pan1.add(searchTF2);
 		pan1.add(remoteSearchCheckBox);
+		pan1.add(selectInMapCheckBox);
+
+		pan1.add(Box.createRigidArea(new Dimension(30, 0)));
+
+		pan1.add(searchButton);
+		
 		if (group == null) {
 			searchCB.setEnabled(false);
 			searchTF.setEnabled(false);
+			searchButton.setEnabled(false);
 		}
 
 		
 		this.initSequenceCB();
 
 		this.initTable();
-		
 
 		this.add("North", pan1);
-
-		JPanel pan2 = new JPanel();
-		hitCountL = new JLabel(" No hits");
-
-		pan2.add(hitCountL);
-		pan2.add(this.table);
-		this.add("Center", pan2);// a blank panel: improves appearance in JDK1.5
-
 
 		JScrollPane scroll_pane = new JScrollPane(table);
 		this.add(scroll_pane, BorderLayout.CENTER);
@@ -137,7 +135,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		Box bottom_row = Box.createHorizontalBox();
 		this.add(bottom_row, BorderLayout.SOUTH);
 
-		bottom_row.add(status_bar);
+		bottom_row.add(status_bar, BorderLayout.CENTER);
 		validate();
 
 		AnnotatedSeqGroup.addSymMapChangeListener(this);
@@ -145,6 +143,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		gmodel.addSeqSelectionListener(this);
 		searchCB.addActionListener(this);
 		searchTF.addActionListener(this);
+		searchButton.addActionListener(this);
 		clear_button.addActionListener(this);
 	}
 
@@ -185,13 +184,16 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void initComponents() {
 		searchTF = new JTextField(10);
-		searchTF.setVisible(false);
+		searchTF.setVisible(true);
+		searchTF.setEnabled(false);
 		searchTF2 = new JTextField(10);
 		searchTF2.setVisible(false);
 		andLabel = new JLabel("and");
 		andLabel.setVisible(false);
 		remoteSearchCheckBox.setEnabled(false);
 		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
+		selectInMapCheckBox.setToolTipText("highlight matches in sequence map");
+		searchButton.setEnabled(true);
 	}
 
 	private void initTable() {
@@ -239,10 +241,59 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void clearAll() {
 		searchTF.setText("");
-		hitCountL.setText(" No hits");
+		//hitCountL.setText(" No hits");
 		clearResults();
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
+	}
+
+	private static Vector<Vector<Object>> buildRows(List<SeqSymmetry> results, BioSeq seq) {
+
+		if (results == null || results.isEmpty()) {
+			return new Vector<Vector<Object>>(0);
+		}
+
+		int num_rows = results.size();
+
+		Vector<Vector<Object>> rows = new Vector<Vector<Object>>(num_rows, num_rows / 10);
+		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
+			SeqSymmetry result = results.get(j);
+			SeqSpan span = result.getSpan(seq);
+
+			Vector<Object> a_row = new Vector<Object>(NUM_COLUMNS);
+			a_row.add(result.getID());
+			a_row.add(new Integer(span.getStart()));
+			a_row.add(new Integer(span.getEnd()));
+			a_row.add(seq.getID());
+			a_row.add(span.isForward() ? "+" : "-");
+			rows.add(a_row);
+		}
+
+    return rows;
+  }
+
+	private void displayInTable(final Vector<Vector<Object>> rows) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            model.setDataVector(rows, col_headings_vector);
+            //int num_results = rows.size();
+            if (rows.size() >= MAX_HITS) {
+              setStatus("More than " + MAX_HITS + " results");
+            } else {
+              setStatus("" + rows.size() + " results");
+            }
+          }
+        });
+	}
+
+  // Clear the table (using invokeLater)
+	private void clearTable() {
+		SwingUtilities.invokeLater(new Runnable() {
+
+			public void run() {
+				model.setDataVector(new Vector(0), col_headings_vector);
+			}
+		});
 	}
 
 	// remove the previous search results from the map.
@@ -251,6 +302,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
 		}
 		glyphs.clear();
+
+		clearTable();
 	}
 
 	public void actionPerformed(ActionEvent evt) {
@@ -258,7 +311,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		if (src == this.searchCB) {
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
-			this.searchTF.setVisible(!ALLID.equals(searchMode));
+			this.searchTF.setEnabled(!ALLID.equals(searchMode));
 
 			boolean optionalField = BETWEENID.equals(searchMode);
 			this.andLabel.setVisible(optionalField);
@@ -266,6 +319,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
 			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
+			if (!remoteEnabled) {
+				this.remoteSearchCheckBox.setSelected(false);
+			}
+
+			boolean displaySelectedEnabled = !REGEXRESIDUE.equals(searchMode);
+			this.selectInMapCheckBox.setEnabled(displaySelectedEnabled);
+			if (!displaySelectedEnabled) {
+				this.selectInMapCheckBox.setSelected(false);
+			}
 
 			if (REGEXID.equals(searchMode)) {
 				this.searchTF.setToolTipText(REGEXIDTF);
@@ -278,9 +340,12 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			return;
 		}
 		if (src == this.searchTF || src == this.searchTF2) {
+			return;
+		}
+		if (src == this.searchButton) {
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			if (ALLID.equals(searchMode)) {
-				displayAllIDs();
+				displayRegexIDs(".*");
 			} else if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText());
 			} else if (BETWEENID.equals(searchMode)) {
@@ -291,23 +356,41 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 	}
 
-	private static final void displayAllIDs() {
-		Set<String> results = group.getSymmetryIDs();
-	}
-
 	private void displayRegexIDs(String text) {
+		Pattern regex = null;
+		try {
+			regex = Pattern.compile(text,Pattern.CASE_INSENSITIVE);
+		} catch (PatternSyntaxException pse) {
+			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
+		} catch (Exception ex) {
+			Application.errorPanel("Problem with regular expression...", ex);
+			return;
+		}
+
+		clearResults();
+
+		String friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
+		setStatus(friendlySearchStr + ": Working...");
+
 		// Local symmetries
-		List<SeqSymmetry> sym_list = group.findSyms(text);
+		List<SeqSymmetry> sym_list = group.findSyms(regex);
 
 		//List<SeqSymmetry> remoteSymList =
 
+
 		// Display them instead
 		if (sym_list != null && !sym_list.isEmpty()) {
-			hitCountL.setText(sym_list.size() + " matches found");
-			gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
+			setStatus(friendlySearchStr + ": " + sym_list.size() + " matches found");
+			if (this.selectInMapCheckBox.isSelected()) {
+				gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
+			}
 		} else {
-			hitCountL.setText(" no matches");
+			setStatus(friendlySearchStr + ": No hits");
 		}
+
+		final Vector<Vector<Object>> rows = buildRows(sym_list, (BioSeq)gmodel.getSelectedSeq());
+		displayInTable(rows);
+
 	}
 
 	private static void displayBetweenIDs(String text, String text2) {
@@ -315,24 +398,20 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 
+	/**
+	 * Display (highlight on SeqMap) the residues matching the specified regex.
+	 */
 	private void displayRegexResidues() {
-		clearResults();
-		Timer tim = new Timer();
-		NeoMap map = gviewer.getSeqMap();
 		MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
-			hitCountL.setText(" No hits");
 			Application.errorPanel("Residues for seq not available, search aborted");
 			return;
 		}
-		int residue_offset = ((BioSeq) vseq).getMin();
-		TransformTierGlyph axis_tier = gviewer.getAxisTier();
-		GlyphI seq_glyph = findSeqGlyph(axis_tier);
-		regexTF(tim, (BioSeq) vseq, residue_offset, seq_glyph, axis_tier, map);
+		regexTF((BioSeq) vseq);
 	}
 
 
-	private static final GlyphI findSeqGlyph(TransformTierGlyph axis_tier) {
+	private static GlyphI findSeqGlyph(TransformTierGlyph axis_tier) {
 		// find the sequence glyph on axis tier.
 		for (GlyphI seq_glyph : axis_tier.getChildren()) {
 			if (seq_glyph instanceof AbstractResiduesGlyph) {
@@ -342,41 +421,41 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return null;
 	}
 
-	private final void regexTF(Timer tim, BioSeq vseq, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, NeoMap map) {
-		if (searchTF.getText().length() == 0) {
-			hitCountL.setText(" No hits");
+	private void regexTF(BioSeq vseq) {
+		String searchStr = searchTF.getText();
+		String friendlySearchStr = friendlyString(searchStr, vseq.getID());
+		if (searchStr.length() < 3) {
+			Application.errorPanel("Search must contain at least 3 characters");
 			return;
 		}
-		hitCountL.setText(" Working...");
-		tim.start();
-		String residues = vseq.getResidues();
+		Pattern regex = null;
 		try {
-
-			String str = searchTF.getText();
-			if (str.length() < 3) {
-				Application.errorPanel("Regular expression must contain at least 3 characters");
-				return;
-			}
-			// It is possible to add the flag Pattern.CASE_INSENSITIVE, but that
-			// makes the search slower.  Better to let the user decide whether
-			// to add the "(?i)" flag for themselves
-			Pattern regex = Pattern.compile(str);
-			int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier, 0);
-
-			// Search for reverse complement of query string
-			//   flip searchstring around, and redo nibseq search...
-			String rev_searchstring = DNAUtils.reverseComplement(residues);
-			int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier, 0);
-
-			float match_time = tim.read() / 1000f;
-			System.out.println("time to run search: " + match_time);
-			hitCountL.setText(" " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
-			map.updateWidget();
+			regex = Pattern.compile(searchStr,Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
 			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
 		} catch (Exception ex) {
 			Application.errorPanel("Problem with regular expression...", ex);
+			return;
 		}
+
+		clearResults();
+		setStatus(friendlySearchStr + ": Working...");
+
+		String residues = vseq.getResidues();
+
+		TransformTierGlyph axis_tier = gviewer.getAxisTier();
+		GlyphI seq_glyph = findSeqGlyph(axis_tier);
+		int residue_offset = vseq.getMin();
+		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier, 0);
+
+		// Search for reverse complement of query string
+		//   flip searchstring around, and redo nibseq search...
+		String rev_searchstring = DNAUtils.reverseComplement(residues);
+		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier, 0);
+
+		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
+		NeoMap map = gviewer.getSeqMap();
+		map.updateWidget();
 	}
 
 	private int searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, int hit_count) {
@@ -401,6 +480,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return hit_count;
 	}
 
+	private static String friendlyString(String text, String chr) {
+		return "Search for " + text + " on " + chr;
+	}
+
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
 	}
@@ -413,7 +496,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID());
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		this.searchCB.setEnabled(group != null);
-		this.searchTF.setEnabled(group != null);
+		this.searchButton.setEnabled(group != null);
+		String searchMode = (String) this.searchCB.getSelectedItem();
+		this.searchTF.setEnabled(group != null && !ALLID.equals(searchMode));
 		this.initSequenceCB();
 	}
 

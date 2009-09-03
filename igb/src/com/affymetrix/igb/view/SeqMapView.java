@@ -12,67 +12,6 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.glyph.AxisGlyph;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
-import com.affymetrix.genoviz.glyph.RootGlyph;
-import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.widget.Shadow;
-import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.genoviz.bioviews.PackerI;
-
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.ScoredContainerSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-
-
-import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.tiers.*;
-import com.affymetrix.igb.glyph.*;
-import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
-import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.WebBrowserControl;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
-
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -84,14 +23,131 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EventObject;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.prefs.*;
+import java.util.Map;
+import java.util.Vector;
+import java.util.prefs.PreferenceChangeEvent;
+import java.util.prefs.PreferenceChangeListener;
 import java.util.regex.Pattern;
-import javax.swing.*;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollBar;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
+import com.affymetrix.genometryImpl.event.SymSelectionSource;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
+import com.affymetrix.genoviz.glyph.RootGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.widget.Shadow;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.glyph.CharSeqGlyph;
+import com.affymetrix.igb.glyph.EfficientFillRectGlyph;
+import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
+import com.affymetrix.igb.glyph.EfficientPaintRectGlyph;
+import com.affymetrix.igb.glyph.EfficientSolidGlyph;
+import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
+import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
+import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.GraphSelectionManager;
+import com.affymetrix.igb.glyph.GridGlyph;
+import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
+import com.affymetrix.igb.glyph.PixelFloaterGlyph;
+import com.affymetrix.igb.glyph.RoundRectMaskGlyph;
+import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
+import com.affymetrix.igb.glyph.SmartRubberBand;
+import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
+import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.CollapsePacker;
+import com.affymetrix.igb.tiers.ExpandPacker;
+import com.affymetrix.igb.tiers.FasterExpandPacker;
+import com.affymetrix.igb.tiers.MultiWindowTierMap;
+import com.affymetrix.igb.tiers.SeqMapViewPopup;
+import com.affymetrix.igb.tiers.TierArithmetic;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TierLabelManager;
+import com.affymetrix.igb.tiers.TransformTierGlyph;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import com.affymetrix.igb.util.WebBrowserControl;
 
 /**
  *
@@ -137,6 +193,8 @@ public class SeqMapView extends JPanel
 	List<SymSelectionListener> selection_listeners = new ArrayList<SymSelectionListener>();
 	List<ContextualPopupListener> popup_listeners = new ArrayList<ContextualPopupListener>();
 	protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
+	
+	
 	/**
 	 *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
 	 */
@@ -379,6 +437,16 @@ public class SeqMapView extends JPanel
 				//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 				tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
 			}
+			
+			// Listener for track selection events.  We will use this to populate 'Selection Info'
+			// grid with properties of the Type.
+			TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
+				  public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
+					  // TODO:  Find properties of selected track and show in 'Selection Info' tab.
+					  System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
+				  }
+			};
+			tier_manager.addTrackSelectionListener(track_selection_listener);
 		}
 
 		seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
@@ -508,6 +576,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 	};
+	
 
 	public void setFrame(JFrame frm) {
 		this.frm = frm;
@@ -2859,7 +2928,7 @@ public class SeqMapView extends JPanel
 		}
 		return tier;
 	}
-
+	
 	/**
 	 *  Returns a forward and reverse tier for the given method, creating them if they don't
 	 *  already exist.

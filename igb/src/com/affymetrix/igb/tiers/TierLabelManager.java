@@ -363,6 +363,27 @@ public final class TierLabelManager {
     public void popupNotify(JPopupMenu popup, TierLabelManager handler);
   }
 
+  List<TrackSelectionListener> track_selection_listeners = new ArrayList<TrackSelectionListener>();
+  
+  public void addTrackSelectionListener(TrackSelectionListener l) {
+	    track_selection_listeners.add(l);
+  }
+
+  public void doTrackSelection(GlyphI topLevelGlyph) {
+	    
+		for (TrackSelectionListener l : track_selection_listeners) {
+	      l.trackSelectionNotify(topLevelGlyph, this);
+	    }
+
+	  }  
+
+
+
+  /** An interface that to listener for track selection events. */
+  public interface TrackSelectionListener {
+    public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler);
+  }
+  
   
   MouseListener mouse_listener = new MouseListener() {
     TierLabelGlyph dragging_label = null;
@@ -390,6 +411,10 @@ public final class TierLabelManager {
         if (!selected_glyphs.isEmpty()) {
           topgl = (GlyphI) selected_glyphs.lastElement();
         }
+        
+        // Dispatch track selection event
+        doTrackSelection(topgl);
+        
         // Normally, clicking will clear previons selections before selecting new things.
         // but we preserve the current selections if:
         //  1. shift or alt key is pressed, or

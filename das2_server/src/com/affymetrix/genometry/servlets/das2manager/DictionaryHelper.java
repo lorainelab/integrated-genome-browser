@@ -357,6 +357,30 @@ public class DictionaryHelper {
 		}
 	}
 	
+	public String getExperimentMethod(Integer id) {
+		if (id == null) {
+			return "";
+		}
+		ExperimentMethod d = experimentMethodMap.get(id);
+		if (d != null) {
+			return d.getName();
+		} else {
+			return "";
+		}
+	}
+	
+	public String getExperimentPlatform(Integer id) {
+		if (id == null) {
+			return "";
+		}
+		ExperimentPlatform d = experimentPlatformMap.get(id);
+		if (d != null) {
+			return d.getName();
+		} else {
+			return "";
+		}
+	}
+	
 	public List<Organism> getOrganisms() {
 		return this.organismList;
 	}

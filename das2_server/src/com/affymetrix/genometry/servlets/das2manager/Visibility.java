@@ -22,6 +22,18 @@ public class Visibility {
     	this.name = name;
     }
 	
+	public static String getDisplay(String codeVisibility) {
+		if (codeVisibility.equals(MEMBERS)) {
+			return "Members";
+		} else if (codeVisibility.equals(MEMBERS_AND_COLLABORATORS)){
+			return "Members and Collaborators";
+		} else if (codeVisibility.equals(PUBLIC)) {
+			return "Public";
+		} else {
+			return "";
+		}
+	}
+	
 	
 
 }

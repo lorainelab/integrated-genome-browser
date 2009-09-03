@@ -16,9 +16,10 @@ import org.hibernate.Session;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.AnnotSecurity;
 
 
-public class Das2ManagerSecurity {
+public class Das2ManagerSecurity implements AnnotSecurity {
 	
 	public static final String    SESSION_KEY = "Das2SecurityManager";
 	public static final String    ADMIN_ROLE  = "das2admin";
@@ -29,53 +30,64 @@ public class Das2ManagerSecurity {
 	public static final String    GROUP_SCOPE_LEVEL = "GROUP";
 	public static final String    ALL_SCOPE_LEVEL   = "ALL";
 	
+	private boolean                scrutinizeAccess = false;
+	
 	
 	private User                    user;
-	private boolean                isAdminRole;
-	private boolean                isGuestRole;
+	private boolean                isAdminRole = false;
+	private boolean                isGuestRole = true;
 	
 	
 	private HashMap<Integer, SecurityGroup>   groupsMemCollabVisibility = new HashMap<Integer, SecurityGroup>();
 	private HashMap<Integer, SecurityGroup>   groupsMemVisibility = new HashMap<Integer, SecurityGroup>();
 	
-	private HashMap<String, HashMap<Integer, String>> versionToAuthorizedResourceMap = new HashMap<String, HashMap<Integer, String>>();
+	private HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
 	
 	
 	@SuppressWarnings("unchecked")
-	public Das2ManagerSecurity(Session sess, String userName, boolean isAdminRole, boolean isGuestRole) throws Exception {
+	public Das2ManagerSecurity(Session sess, String userName, boolean scrutinizeAccess, boolean isAdminRole, boolean isGuestRole) throws Exception {
+		// Are the annotations loaded from the db?  If so, security
+		// logic is driven from info in db, otherwise, access to all resources
+		// is granted.
+		this.scrutinizeAccess = scrutinizeAccess;
 		
-		// Lookup user
-		List<User> users = (List<User>)sess.createQuery("SELECT u from User as u where u.userName = '" + userName + "'").list();
-		if (users == null || users.size() == 0) {
-			throw new Exception("Cannot find user " + userName);
+		if (this.scrutinizeAccess) {
+			// Lookup user
+			List<User> users = (List<User>)sess.createQuery("SELECT u from User as u where u.userName = '" + userName + "'").list();
+			if (users == null || users.size() == 0) {
+				throw new Exception("Cannot find user " + userName);
+			}
+			user = users.get(0);	
+			this.isAdminRole = isAdminRole;
+			this.isGuestRole = isGuestRole;
+			
+			for (SecurityGroup sc : (Set<SecurityGroup>)user.getMemberSecurityGroups()) {
+				groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
+				groupsMemVisibility.put(sc.getIdSecurityGroup(), sc);
+			}
+			for (SecurityGroup sc : (Set<SecurityGroup>)user.getManagingSecurityGroups()) {
+				groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
+				groupsMemVisibility.put(sc.getIdSecurityGroup(), sc);
+			}
+			for (SecurityGroup sc : (Set<SecurityGroup>)user.getCollaboratingSecurityGroups()) {
+				groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
+			}
+			this.loadAuthorizedResources(sess);	
 		}
-		user = users.get(0);	
-		this.isAdminRole = isAdminRole;
-		this.isGuestRole = isGuestRole;
 		
-		for (SecurityGroup sc : (Set<SecurityGroup>)user.getMemberSecurityGroups()) {
-			groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
-			groupsMemVisibility.put(sc.getIdSecurityGroup(), sc);
-		}
-		for (SecurityGroup sc : (Set<SecurityGroup>)user.getManagingSecurityGroups()) {
-			groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
-			groupsMemVisibility.put(sc.getIdSecurityGroup(), sc);
-		}
-		for (SecurityGroup sc : (Set<SecurityGroup>)user.getCollaboratingSecurityGroups()) {
-			groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
-		}
-		this.loadAuthorizedResources(sess);
+		
+		
 	}
 	
 	public Document getXML() {
 		Document doc = DocumentHelper.createDocument();
 		Element root = doc.addElement("Das2ManagerSecurity");
-		root.addAttribute("userName",        user.getUserName());
-		root.addAttribute("userDisplayName", user.getUserDisplayName());
-		root.addAttribute("name",            user.getName());
+		root.addAttribute("userName",        user != null ? user.getUserName() : "");
+		root.addAttribute("userDisplayName", user != null ? user.getUserDisplayName() : "");
+		root.addAttribute("name",            user != null ? user.getName() : "");
 		root.addAttribute("isAdmin",         isAdminRole ? "Y" : "N");
 		root.addAttribute("isGuest",         isGuestRole ? "Y" : "N");
-		root.addAttribute("canManageUsers",  isAdminRole || user.getManagingSecurityGroups().size() > 0 ? "Y" : "N");
+		root.addAttribute("canManageUsers",  isAdminRole || (user != null && user.getManagingSecurityGroups().size() > 0) ? "Y" : "N");
 		
 		
 		return doc;		
@@ -95,6 +107,10 @@ public class Das2ManagerSecurity {
 	
 	@SuppressWarnings("unchecked")
 	public boolean isMember(Integer idSecurityGroup) {
+		if (!scrutinizeAccess) {
+			return false;
+		}
+		
 		boolean isMember = false;
 		for(SecurityGroup g : (Set<SecurityGroup>)user.getMemberSecurityGroups()) {
 			if (g.getIdSecurityGroup().equals(idSecurityGroup)) {
@@ -105,12 +121,15 @@ public class Das2ManagerSecurity {
 		return isMember;
 	}
 	
-	public boolean isCollaborator(SecurityGroup group) {		
+	public boolean isCollaborator(SecurityGroup group) {	
 		return isCollaborator(group.getIdSecurityGroup());		
 	}
 	
 	@SuppressWarnings("unchecked")
 	public boolean isCollaborator(Integer idSecurityGroup) {
+		if (!scrutinizeAccess) {
+			return false;
+		}
 		boolean isCollaborator = false;
 		for(SecurityGroup g : (Set<SecurityGroup>)user.getCollaboratingSecurityGroups()) {
 			if (g.getIdSecurityGroup().equals(idSecurityGroup)) {
@@ -127,6 +146,10 @@ public class Das2ManagerSecurity {
 	
 	@SuppressWarnings("unchecked")
 	public boolean isManager(Integer idSecurityGroup) {
+		if (!scrutinizeAccess) {
+			return false;
+		}
+		
 		boolean isManager = false;
 		if (this.isAdminRole) {
 			isManager = true;
@@ -143,6 +166,9 @@ public class Das2ManagerSecurity {
 	
 	@SuppressWarnings("unchecked")
 	public SecurityGroup getDefaultSecurityGroup() {
+		if (!scrutinizeAccess) {
+			return null;
+		}
 		SecurityGroup defaultSecurityGroup = null;
 		if (user.getManagingSecurityGroups() != null && user.getManagingSecurityGroups().size() > 0) {
 			defaultSecurityGroup = SecurityGroup.class.cast(user.getManagingSecurityGroups().iterator().next());			
@@ -156,6 +182,10 @@ public class Das2ManagerSecurity {
 	
 	@SuppressWarnings("unchecked")
 	public boolean canRead(Object object) {
+		if (!scrutinizeAccess) {
+			return true;
+		}
+		
 		boolean canRead = false;
 		if (isAdminRole) {
 			// Admins can read any annotation
@@ -218,6 +248,10 @@ public class Das2ManagerSecurity {
 	
 	@SuppressWarnings("unchecked")
 	public boolean canWrite(Object object) {
+		if (!scrutinizeAccess) {
+			return false;
+		}
+		
 		boolean canWrite = false;
 		
 		// Admins can write any object
@@ -256,6 +290,10 @@ public class Das2ManagerSecurity {
 			                           String annotationGroupingAlias, 
 			                           boolean addWhere)
 	  throws Exception {
+		if (!scrutinizeAccess) {
+			return addWhere;
+		}
+		
 		if (isAdminRole) {
 			
 			// Admins don't have any restrictions
@@ -445,14 +483,16 @@ public class Das2ManagerSecurity {
 		}
 	}
 	
-	public HashMap<String, HashMap<Integer, String>> getAuthorizedResources() {
-		return this.versionToAuthorizedResourceMap;
-	}
+
 	
 	public void loadAuthorizedResources(Session sess) throws Exception {
+		if (!scrutinizeAccess) {
+			return;
+		}
+		
 		// Start over if we have already loaded the resources
-		if (!versionToAuthorizedResourceMap.isEmpty()) {
-			versionToAuthorizedResourceMap.clear();
+		if (!versionToAuthorizedAnnotationMap.isEmpty()) {
+			versionToAuthorizedAnnotationMap.clear();
 		}
 		
 		// Cache the authorized annotation ids of each genome version for this user
@@ -461,43 +501,66 @@ public class Das2ManagerSecurity {
 		for (String organismName : annotationQuery.getOrganismNames()) {
 			for (String genomeVersionName : annotationQuery.getVersionNames(organismName)) {
 
-				HashMap<Integer, String> authorizedAnnotationIdMap = this.versionToAuthorizedResourceMap.get(genomeVersionName);
-				if (authorizedAnnotationIdMap == null) {
-					authorizedAnnotationIdMap = new HashMap<Integer, String>();
-					this.versionToAuthorizedResourceMap.put(genomeVersionName, authorizedAnnotationIdMap);
+				HashMap<Integer, QualifiedAnnotation> annotationMap = this.versionToAuthorizedAnnotationMap.get(genomeVersionName);
+				if (annotationMap == null) {
+					annotationMap = new HashMap<Integer, QualifiedAnnotation>();
+					this.versionToAuthorizedAnnotationMap.put(genomeVersionName, annotationMap);
 				}
 				for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organismName, genomeVersionName)) {
-					String resourceName = null;
-					if (qa.getTypePrefix() == null) {						
-						resourceName = qa.getAnnotation().getName();
-					} else {
-						resourceName = qa.getTypePrefix();
-					}
-					authorizedAnnotationIdMap.put(qa.getAnnotation().getIdAnnotation(), resourceName);
+					annotationMap.put(qa.getAnnotation().getIdAnnotation(), qa);
 				}
 			}
 		}
 
 	}
+	
+	
+	
+	//
+	//
+	// AnnotSecurity methods
+	//
+	//
 
-	public boolean isAuthorizedResource(String genomeVersionName, Object annotationId) {
-	  
-	  // If the annotation id is not provided, block access
-	  if (annotationId == null) {
-	    return false;
-	  }
+	public boolean isAuthorized(String genomeVersionName, Object annotationId) {
+		// When annotation is loaded directly from file system, all annotations 
+		// are shown.
+		if (!scrutinizeAccess) { 
+			return true;
+		}
 
-	  // Get the hash map of annotation ids this user is authorized to view
-	  Map authorizedAnnotationIdMap = (Map)versionToAuthorizedResourceMap.get(genomeVersionName);
+		// If the annotation id is not provided, block access
+		if (annotationId == null) {
+			return false;
+		}
 
-	  // Returns true if annotation id is in hash map; otherwise, returns false
-	  return authorizedAnnotationIdMap.containsKey(annotationId);
+		// Get the hash map of annotation ids this user is authorized to view
+		Map annotationMap = (Map)versionToAuthorizedAnnotationMap.get(genomeVersionName);
+
+		// Returns true if annotation id is in hash map; otherwise, returns false
+		return annotationMap.containsKey(annotationId);
 
 	}
 	
-	public Map<Integer, ?> getAuthorizedAnnotationIds(String genomeVersionName) {
-		return versionToAuthorizedResourceMap.get(genomeVersionName);
+	public Map<String, Object> getProperties(String genomeVersionName, Object annotationId) {
+		// When annotation is loaded directly from file system, annotations
+		// don't have any additional properties
+		if (!scrutinizeAccess) { 
+			return null;
+		}
+
+		// If the annotation access is blocked, don't show
+		// properties.
+		if (!isAuthorized(genomeVersionName, annotationId)) {
+			return null;
+		}
+
+		// Get the hash map of annotation ids this user is authorized to view
+		Map<Integer, QualifiedAnnotation> annotationMap = versionToAuthorizedAnnotationMap.get(genomeVersionName);
+		QualifiedAnnotation qa = annotationMap.get(annotationId);
+		return qa.getAnnotation().getProperties();
 	}
+
 	
 
 

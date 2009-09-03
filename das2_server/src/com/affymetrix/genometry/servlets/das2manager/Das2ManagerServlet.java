@@ -115,6 +115,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				
 				das2ManagerSecurity = new Das2ManagerSecurity(sess, 
 						                                      req.getUserPrincipal().getName(), 
+						                                      true,
 						                                      req.isUserInRole(Das2ManagerSecurity.ADMIN_ROLE),
 						                                      req.isUserInRole(Das2ManagerSecurity.GUEST_ROLE));
 				req.getSession().setAttribute(Das2ManagerSecurity.SESSION_KEY, das2ManagerSecurity);

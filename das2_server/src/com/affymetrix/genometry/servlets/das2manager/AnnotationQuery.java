@@ -297,6 +297,11 @@ public class AnnotationQuery {
 			AnnotationGrouping parentAnnotGrouping = (AnnotationGrouping) row[3];
 			Annotation annot                       = (Annotation) row[4];
 			
+			// Load properties for anotations
+			if (annot != null) {
+				annot.loadProps(dictionaryHelper);				
+			}
+			
 			// Hash genome versions for an organism
 			TreeMap<String, ?> versionNameMap = organismToVersion.get(organism.getName());
 			if (versionNameMap == null) {

@@ -4,27 +4,45 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-public class Annotation implements Owned {
+import com.affymetrix.genometryImpl.Propertied;
+
+public class Annotation implements Owned, Propertied {
+
+	public static final String PROP_NAME                = "name";
+    public static final String PROP_SUMMARY             = "summary";
+    public static final String PROP_DESCRIPTION         = "description";
+    public static final String PROP_OWNER               = "owner";
+    public static final String PROP_GROUP               = "group";
+    public static final String PROP_VISIBILITY          = "visibility";
+    public static final String PROP_INSTITUTE           = "institute";
+    public static final String PROP_ANALYSIS_TYPE       = "analysis_type";
+    public static final String PROP_EXPERIMENT_METHOD   = "experiment_method";
+    public static final String PROP_EXPERIMENT_PLATFORM = "experiment_platform";
     
-    private Integer   idAnnotation;
-    private String    name;
-    private String    summary;
-    private String    description;
-    private String    codeVisibility;
-    private String    fileName;
-    private Integer   idGenomeVersion;
-    private Integer   idAnalysisType;
-    private Integer   idExperimentMethod;
-    private Integer   idExperimentPlatform;
-    private Set       annotationGroupings;
-    private Integer   idUser;
-    private Integer   idSecurityGroup;
+    private Integer             idAnnotation;
+    private String              name;
+    private String              summary;
+    private String              description;
+    private String              codeVisibility;
+    private String              fileName;
+    private Integer             idGenomeVersion;
+    private Integer             idAnalysisType;
+    private Integer             idExperimentMethod;
+    private Integer             idExperimentPlatform;
+    private Set                 annotationGroupings;
+    private Integer             idUser;
+    private Integer             idSecurityGroup;
+    
+    private Map<String, Object> props;  // tag/value representation of annotation properties
+    
     
     
     public Integer getIdAnnotation() {
@@ -241,6 +259,43 @@ public class Annotation implements Owned {
 	public String getDirectory(String genometry_manager_data_dir) {
 		return genometry_manager_data_dir  + this.getFileName();
 	}
+	
+	public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {
+		props = new TreeMap<String, Object>();
+		props.put(PROP_NAME, this.getName());
+		props.put(PROP_DESCRIPTION, this.getDescription());
+		props.put(PROP_SUMMARY, this.getSummary());
+		props.put(PROP_VISIBILITY,  Visibility.getDisplay(this.getCodeVisibility()));
+		props.put(PROP_OWNER, this.getIdUser() != null ? dictionaryHelper.getUserFullName(this.getIdUser()) : "");
+		props.put(PROP_GROUP, this.getIdSecurityGroup() != null ? dictionaryHelper.getSecurityGroupName(this.getIdSecurityGroup()) : "");
+		props.put(PROP_ANALYSIS_TYPE, dictionaryHelper.getAnalysisType(this.getIdAnalysisType()));
+		props.put(PROP_EXPERIMENT_METHOD, dictionaryHelper.getExperimentMethod(this.getIdExperimentMethod()));
+		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
+		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));
+		return props;
+    }
 
+	public Map<String,Object> getProperties() {
+		return props;
+	}
+	public Map<String,Object> cloneProperties() {
+		return props;
+	}
+	
+	public Object getProperty(String key) {
+		if (props != null) {
+			return props.get(key);
+		} else {
+			return null;
+		}
+	}
+	public boolean setProperty(String key, Object val) {
+		if (props != null) {
+			props.put(key, val);
+			return true;
+		} else {
+			return false;
+		}
+	}
    
 }

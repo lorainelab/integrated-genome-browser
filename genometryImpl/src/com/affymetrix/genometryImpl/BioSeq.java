@@ -446,6 +446,18 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		}
 		return meth;
 	}
+	
+	/**
+	 *  Finds the properties for a SeqSymmetry.
+	 */
+	public static Map<String, Object> determineProperties(SeqSymmetry sym) {
+		if (sym instanceof SymWithProps)  {
+			SymWithProps psym = (SymWithProps)sym;
+			return psym.getProperties();
+		} else {
+			return null;
+		}
+	}
 
 	public SearchableCharIterator getResiduesProvider() {
 		return residues_provider;

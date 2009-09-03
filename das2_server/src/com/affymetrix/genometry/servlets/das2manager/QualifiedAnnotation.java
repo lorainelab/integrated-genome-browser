@@ -1,5 +1,8 @@
 package com.affymetrix.genometry.servlets.das2manager;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 public class QualifiedAnnotation {
 	private Annotation annotation;
 	private String     typePrefix;
@@ -29,6 +32,4 @@ public class QualifiedAnnotation {
 	public void setResourceName(String resourceName) {
     	this.resourceName = resourceName;
     }
-	
-
 }

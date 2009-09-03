@@ -3,7 +3,6 @@ package com.affymetrix.genometry.servlets;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
@@ -27,6 +26,7 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -701,23 +701,22 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private Das2ManagerSecurity getDas2ManagerSecurity(HttpServletRequest request) {
-		// Das2ManagerSecurity is only available when annotation info is served from DB
-		if (!genometry_load_annotations_from_db) {
-			return null;
-		}
-
 
 		Das2ManagerSecurity das2ManagerSecurity = null;
 		// Get the Das2ManagerSecurity    
 		try {
 			das2ManagerSecurity = Das2ManagerSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + Das2ManagerSecurity.SESSION_KEY));
 			if (das2ManagerSecurity == null) {
-				Session sess = HibernateUtil.getSessionFactory().openSession();
+				Session sess = null;
+				if (genometry_load_annotations_from_db) {
+					sess = HibernateUtil.getSessionFactory().openSession();					
+				}
 
 				das2ManagerSecurity = new Das2ManagerSecurity(sess, 
-						request.getUserPrincipal().getName(), 
-						request.isUserInRole(Das2ManagerSecurity.ADMIN_ROLE),
-						request.isUserInRole(Das2ManagerSecurity.GUEST_ROLE));
+						request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : null, 
+						genometry_load_annotations_from_db,
+						request.getUserPrincipal() != null ? request.isUserInRole(Das2ManagerSecurity.ADMIN_ROLE) : false,
+						request.getUserPrincipal() != null ? request.isUserInRole(Das2ManagerSecurity.GUEST_ROLE) : true);
 				request.getSession().setAttribute(this.getClass().getName() + Das2ManagerSecurity.SESSION_KEY, das2ManagerSecurity);
 			}
 		} catch (Exception e ){     
@@ -1049,13 +1048,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Das2ManagerSecurity das2ManagerSecurity = this.getDas2ManagerSecurity(request);
 
 		response.setContentType(TYPES_CONTENT_TYPE);
-		
-		Map<Integer, ?> authorized_annot_ids = null;
-		if (genometry_load_annotations_from_db) {
-			authorized_annot_ids = this.getDas2ManagerSecurity(request).getAuthorizedAnnotationIds(genome.getID());
-		}
 
-		Map<String, List<String>> types_hash =
+
+		Map<String, SimpleDas2Type> types_hash =
 				ServerUtils.getTypes(
 				genome,
 				genome2graphfiles.get(genome),
@@ -1063,8 +1058,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				genome2graphfile_annotid.get(genome),
 				genome2graphdir_annotid.get(genome),
 				graph_formats,
-				this.genometry_load_annotations_from_db,
-				authorized_annot_ids);
+				this.getDas2ManagerSecurity(request));
 
 		ByteArrayOutputStream buf = null;
 		PrintWriter pw = null;
@@ -1100,7 +1094,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			PrintWriter pw,
 			String xbase,
 			String genome_id,
-			Map<String,List<String>> types_hash) {
+			Map<String,SimpleDas2Type> types_hash) {
 		printXmlDeclaration(pw);
 		//    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
 		pw.println("<TYPES ");
@@ -1112,7 +1106,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		for (String feat_type : sorted_types_list) {
 			
       
-			List<String> formats = types_hash.get(feat_type);
+			SimpleDas2Type das2Type = types_hash.get(feat_type);
+			List<String> formats = das2Type.getFormats();
+			Map<String, Object> props = das2Type.getProps();
+			
 			String feat_type_encoded = GeneralUtils.URLEncode(feat_type);
 			// URLEncoding replaces slashes, want to keep those...
 			feat_type_encoded = feat_type_encoded.replaceAll("%2F", "/");
@@ -1133,6 +1130,15 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					pw.println("       <FORMAT name=\"" + format + "\" />");
 				}
 			}
+			
+			// Print properties of annotation as tag/value pairs
+			if ((props != null) && (!props.isEmpty())) {
+				for (String tag : props.keySet()) {
+					Object value = props.get(tag);
+					pw.println("       <PROP key=\"" + tag + "\" value=\"" + value + "\" />");
+				}
+			}
+
 			pw.println("   </TYPE>");
 		}
 		pw.println("</TYPES>");

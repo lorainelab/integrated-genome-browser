@@ -1,26 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
-import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.SearchableSeqSymmetry;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.parsers.AnnotsParser;
-import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
-import com.affymetrix.genometryImpl.parsers.IndexWriter;
-import com.affymetrix.genometryImpl.parsers.LiftParser;
-import com.affymetrix.genometryImpl.parsers.PSLParser;
-import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
-import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -42,6 +21,30 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.SearchableSeqSymmetry;
+import com.affymetrix.genometryImpl.AnnotSecurity;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
+import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
+import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
+import com.affymetrix.genometryImpl.parsers.AnnotsParser;
+import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
+import com.affymetrix.genometryImpl.parsers.LiftParser;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 
 /**
  * Utils for DAS/2 and other servers.
@@ -671,21 +674,21 @@ public abstract class ServerUtils {
 	/**
 	 *  Gets the list of types of annotations for a given genome version.
 	 *  Assuming top-level annotations hold type info in property "method" or "meth".
-	 *  @return a Map where keys are feature type Strings and values
-	 *    are non-null Lists of preferred format Strings
+	 *  @return a Map where keys are feature type Strings and values are 
+	 *    instances of SimpleDas2Type, which contains a list graph formats and
+	 *    a map of properties.
 	 *
 	 *  may want to cache this info (per versioned source) at some point...
 	 */
-	public static final Map<String, List<String>> getTypes(
+	public static final Map<String, SimpleDas2Type> getTypes(
 					AnnotatedSeqGroup genome,
 					Map<String, String> graph_name2file,
 					Map<String, String> graph_name2dir,
 					Map graph_name_file2annot_id,
 					Map graph_name_dir2annot_id,
 					ArrayList<String> graph_formats,
-					boolean genometry_load_annotations_from_db,
-					Map <Integer, ?> authorized_annot_ids) {
-		Map<String, List<String>> genome_types = getGenomeTypes(genome, genometry_load_annotations_from_db, authorized_annot_ids);
+					AnnotSecurity annotSecurity) {
+		Map<String, SimpleDas2Type> genome_types = getGenomeTypes(genome, annotSecurity);
 
 		// adding in any graph files as additional types (with type id = originalFile name)
 		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
@@ -693,42 +696,23 @@ public abstract class ServerUtils {
 		for (String gname : graph_name2file.keySet()) {
 			Integer annot_id = (Integer)graph_name_file2annot_id.get(gname);
 			
-			boolean show = true;
-			// When the annotation is loaded from the db, block access if
-			// annotation is not authorized for this user.  When annotation
-			// is loaded directly from file system, all annotations are
-			// shown.
-			if (genometry_load_annotations_from_db) {
-				show = false;
-				if (authorized_annot_ids != null) {        
-					show = authorized_annot_ids.containsKey(annot_id);
-				}
-				//System.out.println((show ? "Showing  " : "Blocking ") + " Annotation " + gname + " ID=" + annot_id);
-			}
-			
+			boolean show = annotSecurity.isAuthorized(genome.getID(), annot_id);
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO, (show ? "Showing  " : "Blocking ") + " Annotation " + gname + " ID=" + annot_id);
 			if (show) {
-				genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?				
+				Map<String, Object> props = annotSecurity.getProperties(gname, annot_id);
+				genome_types.put(gname, new SimpleDas2Type(genome.getID(), graph_formats, props));  // should probably get formats instead from "preferred_formats"?				
 			}
 		}
 
 		for (String gname : graph_name2dir.keySet()) {
 			Integer annot_id = (Integer)graph_name_dir2annot_id.get(gname);
 
-			boolean show = true;
-			// When the annotation is loaded from the db, block access if
-			// annotation is not authorized for this user.  When annotation
-			// is loaded directly from file system, all annotations are
-			// shown.
-			if (genometry_load_annotations_from_db) {
-				show = false;
-				if (authorized_annot_ids != null) {        
-					show = authorized_annot_ids.containsKey(annot_id);
-				}
-				//System.out.println((show ? "Showing  " : "Blocking ") + " Annotation " + gname + " ID=" + annot_id);
-			}
+			boolean show = annotSecurity.isAuthorized(genome.getID(), annot_id);
+			Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO, (show ? "Showing  " : "Blocking ") + " Annotation " + gname + " ID=" + annot_id);
 
 			if (show) {
-				genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+				Map<String, Object> props = annotSecurity.getProperties(genome.getID(), annot_id);
+				genome_types.put(gname, new SimpleDas2Type(gname, graph_formats, props));  // should probably get formats instead from "preferred_formats"?
 			}
 		}
 
@@ -736,9 +720,9 @@ public abstract class ServerUtils {
 	}
 
 	// iterate over seqs to collect annotation types
-	private static final Map<String,List<String>> getGenomeTypes(AnnotatedSeqGroup genome, boolean genometry_load_annotations_from_db, Map<Integer, ?> authorized_annot_ids) {
+	private static final Map<String, SimpleDas2Type> getGenomeTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity) {
 		List<BioSeq> seqList = genome.getSeqList();
-		Map<String,List<String>> genome_types = new LinkedHashMap<String,List<String>>();
+		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();
 		for (BioSeq aseq : seqList) {
 			for (String type : aseq.getTypeList()) {
 				if (genome_types.get(type) != null) {
@@ -755,20 +739,11 @@ public abstract class ServerUtils {
 				}
 				Object annot_id = tannot.getProperty(SimpleSymWithProps.ANNOT_ID);
 				
-		        boolean show = true;
-		        // When the annotation is loaded from the db, block access if
-		        // annotation is not authorized for this user.  When annotation
-		        // is loaded directly from file system, all annotations are
-		        // shown.
-		        if (genometry_load_annotations_from_db) {
-		          show = false;
-		          if (authorized_annot_ids != null) {        
-						show = authorized_annot_ids.containsKey(annot_id);
-		          }
-		          //System.out.println((show ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + annot_id);
-		        }
+		        boolean show = annotSecurity.isAuthorized(genome.getID(), annot_id);
+		        Logger.getLogger(ServerUtils.class.getName()).log(Level.INFO, (show ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + annot_id);
 		        if (show) {
-					genome_types.put(type, flist);
+					Map<String, Object> props = annotSecurity.getProperties(genome.getID(), annot_id);
+					genome_types.put(type, new SimpleDas2Type(type, flist, props));
 		        }
 			}
 			for (String type : aseq.getIndexedTypeList()) {
@@ -778,7 +753,7 @@ public abstract class ServerUtils {
 				IndexedSyms iSyms = aseq.getIndexedSym(type);
 				List<String> flist = new ArrayList<String>();
 				flist.addAll(iSyms.iWriter.getFormatPrefList());
-				genome_types.put(type, flist);
+				genome_types.put(type, new SimpleDas2Type(type, flist));
 			}
 		}
 		return genome_types;

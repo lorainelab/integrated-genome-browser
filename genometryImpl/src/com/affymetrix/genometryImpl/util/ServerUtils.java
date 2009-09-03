@@ -313,7 +313,7 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		AnnotatedSeqGroup tempGenome = tempGenome(genome);
+		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
 		List loadedSyms = loadAnnotFile(file, stream_name, annots_map, tempGenome, true);
 		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file);
 
@@ -335,22 +335,7 @@ public abstract class ServerUtils {
 				tempGenome, dataRoot, file, loadedSyms, iWriter, typeName, returnTypeName);
 	}
 
-	/**
-	 * Create a temporary shallow-copy genome, to avoid any side-effects.
-	 * @param oldGenome
-	 * @return
-	 */
-	private static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
-		AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup(oldGenome.getID());
-		tempGenome.setOrganism(oldGenome.getOrganism());
-		if (oldGenome == null) {
-			return tempGenome;
-		}
-		for (BioSeq seq : oldGenome.getSeqList()) {
-			tempGenome.addSeq(seq.getID(), seq.getLength());
-		}
-		return tempGenome;
-	}
+	
 
 
 	private static void checkAlteredSeqCount(int oldSeqCount, int newSeqCount, boolean isIgnored, File file) {

@@ -12,22 +12,38 @@
 */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Map;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.FeatureTreeView;
-import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import com.affymetrix.swing.DisplayUtils;
 
 public class DataLoadView extends JComponent  { 
 	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -35,7 +51,6 @@ public class DataLoadView extends JComponent  {
 	GeneralLoadView general_load_view;
 	SeqGroupView group_view;
 	FeatureTreeView feature_tree_view;
-	TrackInfoView track_info_view;
 
 	public DataLoadView() {
 		this.setLayout(new BorderLayout());
@@ -49,14 +64,9 @@ public class DataLoadView extends JComponent  {
 
 		general_load_view = new GeneralLoadView();
 		group_view = new SeqGroupView();
-		track_info_view = new TrackInfoView();
 			
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, general_load_view, group_view);
 		jPane.setResizeWeight(0.9);
-		JSplitPane jPaneTrackInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jPane, track_info_view);
-		jPaneTrackInfo.setResizeWeight(0.9);
-
-		//main_panel.add("Center", jPaneTrackInfo);
 		main_panel.add("Center", jPane);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
@@ -226,62 +236,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
 }
-class TrackInfoView extends JComponent implements FeatureSelectionListener {
-	
-	static boolean DEBUG_EVENTS = false;
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-	static final String NO_TRACK = "No Track Selected";
-	
-	JTable trackPropTable;
-	MutableAnnotatedBioSeq selected_track = null;
-	ListSelectionModel lsm;
 
-	public TrackInfoView() {
-		trackPropTable = new JTable();
-		trackPropTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				
-		TrackPropertyTableModel mod = new TrackPropertyTableModel(null, null);
-		trackPropTable.setModel(mod);	// Force immediate visibility of column headers (although there's no data).
-		 
-		JScrollPane scroller = new JScrollPane(trackPropTable);
-		scroller.setBorder(BorderFactory.createCompoundBorder(scroller.getBorder(), BorderFactory.createEmptyBorder(0,2,0,2)));
-		
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		this.add(Box.createRigidArea(new Dimension(0, 5)));
-		this.add(scroller);
-		
-		this.setBorder(BorderFactory.createTitledBorder("Track Properties"));			
-		
-		 gmodel.addFeatureSelectionListener(this);
-	}
-	
-	public void featureSelectionChanged(TreeSelectionEvent e) {
-		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
-		GenericFeature selectedFeature = (GenericFeature) selectedNode.getUserObject();
-		String selectedName = selectedFeature.featureName;				
-		
-		//reset the title
-		this.setBorder(BorderFactory.createTitledBorder("Track Properties - " + selectedName));
-		//add the data		
-		Map<String, String> properties= selectedFeature.featureProps;	
-		
-		TrackPropertyTableModel mod = new TrackPropertyTableModel(selectedName, properties);
-		trackPropTable.setModel(mod);
-	
-		trackPropTable.validate();
-		trackPropTable.repaint();
-	}
-	
-	@Override
-	public Dimension getMinimumSize() { 
-		return new Dimension(200, 50); 
-	}
-	
-	@Override
-	public Dimension getPreferredSize() { 
-		return new Dimension(200, 50); 
-	}
-}
 
 
 

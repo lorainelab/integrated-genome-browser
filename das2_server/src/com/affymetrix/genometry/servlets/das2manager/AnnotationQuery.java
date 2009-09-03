@@ -263,7 +263,14 @@ public class AnnotationQuery {
 		// Hash segments for each genome version
 		if (segmentRows != null) {
 			for (Segment segment : segmentRows) {
+				if (segment == null) {
+					continue;
+				}
 				GenomeVersion genomeVersion = dictionaryHelper.getGenomeVersion(segment.getIdGenomeVersion());
+				if (genomeVersion == null) {
+					System.out.println("Warning - Segment " + segment.getIdSegment() + " does not belong to a valid Genome Version");
+					continue;
+				}
 				List<Segment> segments = versionToSegments.get(genomeVersion.getName());
 				if (segments == null) {
 					segments = new ArrayList<Segment>();

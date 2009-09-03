@@ -16,16 +16,16 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
-import org.xml.sax.*;
 import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;
-//import java.util.regex.*;
 
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.das.DasLoader;
@@ -34,16 +34,12 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
-/**
- *
- *  started with com.affymetrix.igb.das.DasSource and modified
- */
 public class Das2VersionedSource {
 
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -71,14 +67,6 @@ public class Das2VersionedSource {
     protected String types_filter = null;
     LinkedList platforms = new LinkedList();
 
-    /**
-     *  To maintain backward compatibility, keeping constuctor with no coords_uri argument,
-     *   but it just acts as a pass-through to the constructor that takes a coords_uri argument
-     */
-    /*public Das2VersionedSource(Das2Source das_source, URI vers_uri, String name,
-            String href, String description, boolean init) {
-        this(das_source, vers_uri, null, name, href, description, init);
-    }*/
 
     public Das2VersionedSource(Das2Source das_source, URI vers_uri, URI coords_uri, String name,
             String href, String description, boolean init) {
@@ -133,14 +121,6 @@ public class Das2VersionedSource {
         return coords_uri;
     }
 
-    /** NOT YET IMPLEMENTED */
-    //  public List getAssembly()   { return assembly; }
-    /** NOT YET IMPLEMENTED */
-    //  public Map getProperties()  { return properties; }
-    /** NOT YET IMPLEMENTED */
-    //  public Map getNamespaces()  { return namespaces; }
-    /** NOT YET IMPLEMENTED */
-    //  public Map getCapabilities()  { return capabilities; }
     public void addCapability(Das2Capability cap) {
         capabilities.put(cap.getType(), cap);
         cap.setVersionedSource(this);
@@ -252,14 +232,6 @@ public class Das2VersionedSource {
         return name2types.get(name);
     }
 
-    /*
-    public Map getTypes(String filter) {
-    if (! types_initialized || !filter.equals(types_filter)) {
-    initTypes(filter, true);
-    }
-    return types;
-    }
-     */
     public void clearTypes() {
         this.types = new LinkedHashMap<String,Das2Type>();
     }
@@ -337,11 +309,9 @@ public class Das2VersionedSource {
 
         // how should xml:base be handled?
         //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
-        //    String types_request = this.getRootUrl() + "/" + TYPES_QUERY;
         Das2Capability typecap = this.getCapability(TYPES_CAP_QUERY);
         String types_request = typecap.getRootURI().toString();
 
-        //    if (filter != null) { types_request = types_request+"?ontology="+filter; }
         try {
 					if (DEBUG) {
 						System.out.println("Das2 Types Request: " + types_request);
@@ -367,8 +337,6 @@ public class Das2VersionedSource {
 					Document doc = DasLoader.getDocument(response);
 					Element top_element = doc.getDocumentElement();
 					NodeList typelist = doc.getElementsByTagName("TYPE");
-					// System.out.println("types: " + typelist.getLength());
-					//int typeCounter = 0;
 
 					getTypeList(typelist, types_request);
 
@@ -390,7 +358,6 @@ public class Das2VersionedSource {
 			System.out.println("Das2 Types: " + typelist.item(0));
 		}
 		}
-		//      ontologyStuff1();
 		for (int i = 0; i < typelist.getLength(); i++) {
 			Element typenode = (Element) typelist.item(i);
 			String typeid = typenode.getAttribute(URID); // Gets the ID value
@@ -429,8 +396,6 @@ public class Das2VersionedSource {
 				if (mimetype == null || mimetype.equals("")) {
 					mimetype = "unknown";
 				}
-				//	  System.out.println("alternative format for annot type " + typeid +
-				//": format = " + formatid + ", mimetype = " + mimetype);
 				formats.put(formatid, mimetype);
 			}
 			NodeList plist = typenode.getElementsByTagName("PROP");
@@ -438,11 +403,8 @@ public class Das2VersionedSource {
 				Element pnode = (Element) plist.item(k);
 				String key = pnode.getAttribute("key");
 				String val = pnode.getAttribute("value");
-				// if (key.equals("load_hint")) { System.out.println("@@@@@ Das2Type has load_hint: " + type_name + ", " + val); }
 				props.put(key, val);
 			}
-			// System.out.println("type id att: " + typeid);
-			// System.out.println("base_uri: " + Das2ServerInfo.getBaseURI(types_request, typenode));
 			// If one of the typeid's is not a valid URI, then skip it, but allow
 			// other typeid's to get through.
 			URI type_uri = null;
@@ -452,30 +414,18 @@ public class Das2VersionedSource {
 				System.out.println("Error in typeid, skipping: " + typeid + "\nUsually caused by an improper character in the URI.");
 			}
 			if (type_uri != null) {
-				// System.out.println("type URI: " + type_uri.toString());
-				Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null); // parents field is null for now -- remove at some point?
-				//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props, null);  // parents field is null for now -- remove at some point?
-				//	Das2Type type = new Das2Type(this, typeid, ontid, type_source, href, formats, props);
+				Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);
+				// parents field is null for now -- remove at some point?
 				this.addType(type);
 			}
 		}
 	}
 
-    /*public synchronized List getFeaturesByName(String name) {
-        return getFeaturesByName(name, false);
-    }*/
 
     /**
-     *  Use the name feature filter in DAS/2 to retrieve features by name or id (maybe alias).
-     *  this method should also add any feature retrieved to the appropriate seq(s) in the AnnotatedSeqGroup
-     *      (should they be added directly or indirectly?  For range-based queries the returned features are
-     *       wrapped in a Das2FeatureRequestSym -- should there be a wrapper sym for name-based queries also,
-     *       or expand/refactor/subclass Das2FeatureRequestSym to serve as wrapper for name-based queries?
-     *       For now, trying to just add features directly to seq...)
-     *   For now, not allowing combination with any other filters
+     *  Use the name feature filter in DAS/2 to retrieve features by name or id.
      */
-    public synchronized List<SeqSymmetry> getFeaturesByName(String name, boolean annotate_seq) {
-		List<SeqSymmetry> feats = null;
+    public synchronized List<SeqSymmetry> getFeaturesByName(String name, AnnotatedSeqGroup group, BioSeq chrFilter) {
 		InputStream istr = null;
 		BufferedInputStream bis = null;
 		try {
@@ -485,27 +435,46 @@ public class Das2VersionedSource {
 			if (Das2Region.URL_ENCODE_QUERY) {
 				nameglob = URLEncoder.encode(nameglob, UTF8);
 			}
-			String feature_query = request_root + "?name=" + nameglob;
+			String feature_query = request_root + "?name=" + nameglob +";format=bed";
 			if (DEBUG) {
 				System.out.println("feature query: " + feature_query);
 			}
-			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
+			BedParser parser = new BedParser();
 			URL query_url = new URL(feature_query);
 			URLConnection query_con = query_url.openConnection();
 			query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
 			query_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
 			istr = query_con.getInputStream();
 			bis = new BufferedInputStream(istr);
-			feats = parser.parse(new InputSource(bis), feature_query, this.getGenome(), annotate_seq);
-			int feat_count = feats.size();
-			System.out.println("parsed query results, annot count = " + feat_count);
+
+			// temporary group needed to avoid side effects (remote SeqSymmetries added to the genome)
+			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
+			List<SeqSymmetry> feats = parser.parse(istr, gmodel, tempGroup, false, "", false);
+			if (DEBUG) {
+				int feat_count = feats.size();
+				System.out.println("parsed query results, annot count = " + feat_count);
+			}
+			if (chrFilter == null) {
+				return feats;
+			}
+			// Filter by chromosome.  Unforunately due to the temporary group, we need to create a temporary chrFilter.
+			BioSeq tempChrFilter = tempGroup.getSeq(chrFilter.getID());
+			if (tempChrFilter == null) {
+				return feats;
+			}
+			List<SeqSymmetry> newFeats = new ArrayList<SeqSymmetry>();
+			for (SeqSymmetry feat : feats) {
+				if (feat.getSpan(tempChrFilter) != null) {
+					newFeats.add(feat);
+				}
+			}
+			return newFeats;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(istr);
 		}
-		return feats;
+		return null;
 	}
-
 }

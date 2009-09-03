@@ -29,11 +29,13 @@ import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
 import com.affymetrix.genometryImpl.event.SymMapChangeListener;
+import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.util.TableSorter2;
-import com.affymetrix.igb.view.AnnotBrowserView.SeqSymmetryMethodComparator;
-import com.affymetrix.igb.view.AnnotBrowserView.SeqSymmetryTableCellRenderer;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
@@ -43,9 +45,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private final static int MAX_HITS = 100000;
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static AnnotatedSeqGroup group;
-	private JLabel andLabel;
+	private static int seqCount = 0;
+	//private JLabel andLabel;
 	private JTextField searchTF;
-	private JTextField searchTF2;
+	//private JTextField searchTF2;
 	private JPanel pan1 = new JPanel();
 	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB = new JComboBox();
@@ -73,13 +76,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String ALLID = "All loaded IDs";
 	private static final String REGEXID = "Matching ID";
 	private static final String REGEXIDTF = "ID matches string or Regular Expression";
-	private static final String BETWEENID = "ID between...";
+	//private static final String BETWEENID = "ID between...";
 	private static final String REGEXRESIDUE = "Matching residues";
 	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
 	private static final String CHOOSESEARCH = "Choose search method";
 	private static final String FINDANNOTS = "Find Annotations For ";
 	private static final String FINDANNOTSNULL = "Please select genome before continuing";
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
+
+	private static final boolean DEBUG = true;
 
 	public SearchView() {
 		super();
@@ -107,8 +112,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		pan1.add(searchCB);
 		pan1.add(searchTF);
-		pan1.add(andLabel);
-		pan1.add(searchTF2);
+		//pan1.add(andLabel);
+		//pan1.add(searchTF2);
 		pan1.add(remoteSearchCheckBox);
 		pan1.add(selectInMapCheckBox);
 
@@ -158,7 +163,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				}
 				sequence_CB.addItem(seq.getID());
 			}
-			//sequence_CB.setToolTipText("Genome: " + group.getID());
 			sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 			sequence_CB.setEnabled(true);
 		} else {
@@ -166,18 +170,14 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			sequence_CB.setEnabled(false);
 		}
 
-		MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
-		if (selected_seq != null) {
-			sequence_CB.setSelectedItem(selected_seq.getID());
-		}
-
+		sequence_CB.setSelectedItem(IGBConstants.GENOME_SEQ_ID);
 	}
 
 	private void initSearchCB() {
 		searchCB.removeAllItems();
 		searchCB.addItem(ALLID);
 		searchCB.addItem(REGEXID);
-		searchCB.addItem(BETWEENID);
+		//searchCB.addItem(BETWEENID);
 		searchCB.addItem(REGEXRESIDUE);
 		searchCB.setToolTipText(CHOOSESEARCH);
 	}
@@ -186,10 +186,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
 		searchTF.setEnabled(false);
-		searchTF2 = new JTextField(10);
-		searchTF2.setVisible(false);
-		andLabel = new JLabel("and");
-		andLabel.setVisible(false);
+		//searchTF2 = new JTextField(10);
+		//searchTF2.setVisible(false);
+		//andLabel = new JLabel("and");
+		//andLabel.setVisible(false);
 		remoteSearchCheckBox.setEnabled(false);
 		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
 		selectInMapCheckBox.setToolTipText("highlight matches in sequence map");
@@ -241,7 +241,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void clearAll() {
 		searchTF.setText("");
-		//hitCountL.setText(" No hits");
 		clearResults();
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
@@ -258,13 +257,32 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		Vector<Vector<Object>> rows = new Vector<Vector<Object>>(num_rows, num_rows / 10);
 		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
 			SeqSymmetry result = results.get(j);
-			SeqSpan span = result.getSpan(seq);
+			SeqSpan span = null;
+			if (seq != null) {
+				span = result.getSpan(seq);
+				if (span == null) {
+					// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
+					SeqSpan tempSpan = result.getSpan(0);
+					if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
+						span = tempSpan;
+					}
+				}
+			} else {
+				span = result.getSpan(0);
+			}
+			if (span == null) {
+				continue;	// on different chromosome; filtered out
+			}
 
 			Vector<Object> a_row = new Vector<Object>(NUM_COLUMNS);
 			a_row.add(result.getID());
 			a_row.add(new Integer(span.getStart()));
 			a_row.add(new Integer(span.getEnd()));
-			a_row.add(seq.getID());
+			if (seq != null) {
+				a_row.add(seq.getID());
+			} else {
+				a_row.add(span.getBioSeq().getID());
+			}
 			a_row.add(span.isForward() ? "+" : "-");
 			rows.add(a_row);
 		}
@@ -277,11 +295,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
           public void run() {
             model.setDataVector(rows, col_headings_vector);
             //int num_results = rows.size();
-            if (rows.size() >= MAX_HITS) {
+            /*if (rows.size() >= MAX_HITS) {
               setStatus("More than " + MAX_HITS + " results");
             } else {
               setStatus("" + rows.size() + " results");
-            }
+            }*/
           }
         });
 	}
@@ -313,9 +331,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			this.searchTF.setEnabled(!ALLID.equals(searchMode));
 
-			boolean optionalField = BETWEENID.equals(searchMode);
-			this.andLabel.setVisible(optionalField);
-			this.searchTF2.setVisible(optionalField);
+			//boolean optionalField = BETWEENID.equals(searchMode);
+			//this.andLabel.setVisible(optionalField);
+			//this.searchTF2.setVisible(optionalField);
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
 			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
@@ -339,24 +357,26 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 			return;
 		}
-		if (src == this.searchTF || src == this.searchTF2) {
+		if (src == this.searchTF) {
 			return;
 		}
 		if (src == this.searchButton) {
 			String searchMode = (String) this.searchCB.getSelectedItem();
+			String chrStr = (String) this.sequence_CB.getSelectedItem();
+			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
 			if (ALLID.equals(searchMode)) {
-				displayRegexIDs(".*");
+				displayRegexIDs(".*", chrfilter);
 			} else if (REGEXID.equals(searchMode)) {
-				displayRegexIDs(this.searchTF.getText());
-			} else if (BETWEENID.equals(searchMode)) {
-				displayBetweenIDs(this.searchTF.getText(), this.searchTF2.getText());
+				displayRegexIDs(this.searchTF.getText(), chrfilter);
+			//} else if (BETWEENID.equals(searchMode)) {
+			//	displayBetweenIDs(this.searchTF.getText(), this.searchTF2.getText());
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues();
 			}
 		}
 	}
 
-	private void displayRegexIDs(String text) {
+	private void displayRegexIDs(String text, BioSeq chrFilter) {
 		Pattern regex = null;
 		try {
 			regex = Pattern.compile(text,Pattern.CASE_INSENSITIVE);
@@ -370,32 +390,41 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		clearResults();
 
 		String friendlySearchStr = friendlyString(text, this.sequence_CB.getSelectedItem().toString());
-		setStatus(friendlySearchStr + ": Working...");
+		status_bar.setText(friendlySearchStr + ": Searching locally...");
 
 		// Local symmetries
 		List<SeqSymmetry> sym_list = group.findSyms(regex);
+		List<SeqSymmetry> remoteSymList = null;
 
-		//List<SeqSymmetry> remoteSymList =
-
-
-		// Display them instead
-		if (sym_list != null && !sym_list.isEmpty()) {
-			setStatus(friendlySearchStr + ": " + sym_list.size() + " matches found");
-			if (this.selectInMapCheckBox.isSelected()) {
-				gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
-			}
-		} else {
-			setStatus(friendlySearchStr + ": No hits");
+		if (this.remoteSearchCheckBox.isSelected()) {
+			status_bar.setText(friendlySearchStr + ": Searching remotely...");
+			remoteSymList = searchFeaturesByName(group, text, chrFilter);
 		}
 
-		final Vector<Vector<Object>> rows = buildRows(sym_list, (BioSeq)gmodel.getSelectedSeq());
+		// Display them instead
+		if (sym_list != null && remoteSymList != null) {
+			String statusStr = friendlySearchStr + ": " + sym_list.size() + " local matches";
+			if (this.remoteSearchCheckBox.isSelected()) {
+				statusStr += ", " + remoteSymList.size() + " remote matches";
+			}
+			setStatus(statusStr);
+		} else {
+			setStatus(friendlySearchStr + ": No matches");
+			return;
+		}
+
+		if (this.selectInMapCheckBox.isSelected()) {
+			gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
+		}
+		sym_list.addAll(remoteSymList);
+		final Vector<Vector<Object>> rows = buildRows(sym_list, chrFilter);
 		displayInTable(rows);
 
 	}
 
-	private static void displayBetweenIDs(String text, String text2) {
+	/*private static void displayBetweenIDs(String text, String text2) {
 		Set<String> results = group.getSymmetryIDs(text, text2);
-	}
+	}*/
 
 
 	/**
@@ -439,7 +468,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 
 		clearResults();
-		setStatus(friendlySearchStr + ": Working...");
+		status_bar.setText(friendlySearchStr + ": Working...");
 
 		String residues = vseq.getResidues();
 
@@ -484,6 +513,30 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return "Search for " + text + " on " + chr;
 	}
 
+
+	static List<SeqSymmetry> searchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
+		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
+
+		if (name == null || name.length() == 0) {
+			return features;
+		}
+		
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (gVersion.gServer.serverType == ServerType.DAS2) {
+				Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
+				if (version != null) {
+					features.addAll(version.getFeaturesByName(name, group, chrFilter));
+				}
+			}
+		}
+
+		if (DEBUG) {
+			System.out.println("features found: " + features.size());
+		}
+
+		return features;
+	}
+
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
 	}
@@ -492,14 +545,21 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void groupOrSeqChange() {
-		group = gmodel.getSelectedSeqGroup();
-		String annotsStr = (group == null) ? FINDANNOTSNULL : (FINDANNOTS + group.getID());
+		AnnotatedSeqGroup newGroup = gmodel.getSelectedSeqGroup();
+		int newSeqCount = (group == null) ? 0 : group.getSeqCount();
+		String annotsStr = (newGroup == null) ? FINDANNOTSNULL : (FINDANNOTS + newGroup.getID());
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
-		this.searchCB.setEnabled(group != null);
-		this.searchButton.setEnabled(group != null);
+		this.searchCB.setEnabled(newGroup != null);
+		this.searchButton.setEnabled(newGroup != null);
 		String searchMode = (String) this.searchCB.getSelectedItem();
-		this.searchTF.setEnabled(group != null && !ALLID.equals(searchMode));
-		this.initSequenceCB();
+		this.searchTF.setEnabled(newGroup != null && !ALLID.equals(searchMode));
+
+		// only re-initialize the combobox if the group or seqs have changed
+		if (newGroup != group || seqCount != newSeqCount) {
+			group = newGroup;
+			seqCount = newSeqCount;
+			this.initSequenceCB();
+		}
 	}
 
 	/** Causes a call to {@link #setStatus(String)}.
@@ -521,4 +581,24 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			}
 		});
 	}
+
+	 /** A renderer that displays the value of {@link SeqMapView#determineMethod(SeqSymmetry)}. */
+  private static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
+    public SeqSymmetryTableCellRenderer() {
+      super();
+    }
+
+		@Override
+    protected void setValue(Object value) {
+      SeqSymmetry sym = (SeqSymmetry) value;
+      super.setValue(BioSeq.determineMethod(sym));
+    }
+  }
+
+  /** A Comparator that compares based on {@link BioSeq#determineMethod(SeqSymmetry)}. */
+  private static class SeqSymmetryMethodComparator implements Comparator<SeqSymmetry> {
+    public int compare(SeqSymmetry s1, SeqSymmetry s2) {
+      return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
+    }
+  }
 }

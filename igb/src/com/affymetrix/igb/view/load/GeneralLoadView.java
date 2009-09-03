@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Executor;
@@ -24,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -32,9 +34,11 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
+import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -44,14 +48,21 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
+import com.affymetrix.igb.general.ServerList;
+import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.table.TableColumn;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
@@ -78,6 +89,7 @@ public final class GeneralLoadView extends JComponent
 	private FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
 	private FeatureTreeView feature_tree_view;
+	private TrackInfoView track_info_view;
 
 	public GeneralLoadView() {
 		if (Application.getSingleton() != null) {
@@ -163,8 +175,18 @@ public final class GeneralLoadView extends JComponent
 
 		this.add("North", choicePanel);
 
+		/* COMMENTED OUT.  The Track Info table makes the data load view
+		 *                 too busy, so for now, the code is commented out
+		 */
+//		track_info_view = new TrackInfoView();		
+//		JSplitPane featurePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, featuresPanel, track_info_view);		
+//		featurePane.setResizeWeight(0.5);		
+//		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featurePane);
+
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
-		jPane.setResizeWeight(0.5);		
+		jPane.setResizeWeight(0.5);
+
+
 		
 		this.add("Center", jPane);
 		this.add("South", buttonPanel);
@@ -784,6 +806,7 @@ public final class GeneralLoadView extends JComponent
 		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setRowHeight(20);    // TODO: better than the default value of 16, but still not perfect.
 
+
 		// Handle sizing of the columns
 		this.feature_table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);   // Allow columns to be resized
 		int maxFeatureNameLength = 1;
@@ -797,6 +820,27 @@ public final class GeneralLoadView extends JComponent
 		// Don't enable combo box for full genome sequence
 		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !this.IsGenomeSequence());
 
+		
+		/* COMMENTED OUT.  The Track Info table makes the data load view
+		 *                 too busy, so for now, the code is commented out
+		 */		
+		//Listen for selection of feature to fill in track info
+//		feature_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//		feature_table.getSelectionModel().addListSelectionListener(
+//				new ListSelectionListener() {
+//
+//					public void valueChanged(ListSelectionEvent event) {
+//						int row = feature_table.getSelectedRow();
+//						if (row >= 0) {
+//							GenericFeature feature = feature_model.getFeature(row);
+//							if (feature != null) {
+//								track_info_view.initializeFeature(feature);
+//							}
+//						}
+//					}
+//				});
+		
+		
 		this.feature_model.fireTableDataChanged();
 		featuresTableScrollPane.setViewportView(this.feature_table);
 
@@ -895,5 +939,9 @@ public final class GeneralLoadView extends JComponent
 		return (seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID));
 	}
 
+
+	
+	
 }
+
 

@@ -2,6 +2,7 @@ package com.affymetrix.igb.view.load;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -168,7 +169,7 @@ public final class FeatureTreeView extends JComponent {
 		if (!featureName.contains(path_separator)) {
 			//This code adds a leaf
 			//System.out.println("adding leaf : " + featureName);
-			TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.visible);
+			TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
 			newNode.setUserObject(featureUInfo);
 			newNode.setAllowsChildren(false);	// this is a leaf.
@@ -176,7 +177,7 @@ public final class FeatureTreeView extends JComponent {
 			return;
 		}
 
-		// the recursaive adding of non leaves
+		// the recursive adding of non leaves
 		String featureLeft = featureName.substring(0, featureName.indexOf(path_separator));
 		String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
 		Enumeration en = root.children();
@@ -196,7 +197,7 @@ public final class FeatureTreeView extends JComponent {
 		}
 
 		// Couldn't find matching node.  Add new one.
-		GenericFeature dummyFeature = new GenericFeature(featureLeft, feature.gVersion);
+		GenericFeature dummyFeature = new GenericFeature(featureLeft, null, feature.gVersion);
 		TreeNodeUserInfo dummyFeatureUInfo = new TreeNodeUserInfo(dummyFeature);
 		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(dummyFeatureUInfo);
 		root.add(newNode);
@@ -283,7 +284,7 @@ public final class FeatureTreeView extends JComponent {
 			int y = e.getY();
 			URL friendlyURL = getURLAt(e.getSource(), x, y);
 			if (friendlyURL != null) {
-				com.affymetrix.igb.util.WebBrowserControl.displayURLEventually(friendlyURL.toString());
+				GeneralUtils.browse(friendlyURL.toString());
 			}
 		}
 
@@ -506,7 +507,7 @@ public final class FeatureTreeView extends JComponent {
 						nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
 					}
 					if (nodeData instanceof GenericFeature) {
-						((GenericFeature) nodeData).visible = true;
+						((GenericFeature) nodeData).setVisible();
 						glv.createFeaturesTable(false);
 					}
 					//TreePath path = new TreePath(editedNode.getPath());

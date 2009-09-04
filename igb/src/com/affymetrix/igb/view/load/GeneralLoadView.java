@@ -67,7 +67,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
-	GeneralLoadUtils glu;
+	static GeneralLoadUtils glu;
 	private static final boolean DEBUG_EVENTS = false;
 	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = "Species";
@@ -240,16 +240,12 @@ public final class GeneralLoadView extends JComponent
 	 * @param password 
 	 * @return
 	 */
-	public boolean addServer(String serverName, String serverURL, String serverType, String login, String password) {
-		boolean successful = false;
-		if (serverType.equals(ServerType.QuickLoad.toString())) {
-			successful = this.glu.addServer(serverName, serverURL, ServerType.QuickLoad, null, null);
-		} else if (serverType.equals(ServerType.DAS.toString())) {
-			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS, null, null);
-		} else if (serverType.equals(ServerType.DAS2.toString())) {
-			successful = this.glu.addServer(serverName, serverURL, ServerType.DAS2, login, password);
+	public boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
+		if (!serverType.equals(ServerType.DAS2)) {
+			login = null;
+			password = null;
 		}
-		if (!successful) {
+		if (!this.glu.addServer(serverName, serverURL, serverType, login, password)) {
 			return false;
 		}
 
@@ -263,19 +259,8 @@ public final class GeneralLoadView extends JComponent
 		return true;
 	}
 	
-	public boolean removeServer(String serverName, String serverURL, String serverType) {
-		boolean successful = false;
-		if (serverType.equals(ServerType.QuickLoad.toString())) {
-			successful = this.glu.removeServer(serverName, serverURL, ServerType.QuickLoad);
-		} else if (serverType.equals(ServerType.DAS.toString())) {
-			successful = this.glu.removeServer(serverName, serverURL, ServerType.DAS);
-		} else if (serverType.equals(ServerType.DAS2.toString())) {
-			successful = this.glu.removeServer(serverName, serverURL, ServerType.DAS2);
-		}
-		if (!successful) {
-			return false;
-		}
-		return true;
+	public boolean removeServer(String serverName, String serverURL, ServerType serverType) {
+		return this.glu.removeServer(serverName, serverURL, serverType);
 	}
 
 
@@ -437,7 +422,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Load any data that's marked for visible range.
 	 */
-	private void loadVisibleData() {
+	public void loadVisibleData() {
 		SeqSpan request_span = gviewer.getVisibleSpan();
 
 		if (DEBUG_EVENTS) {

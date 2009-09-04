@@ -60,7 +60,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		}
 		List<GenericFeature> visibleFeatures = new ArrayList<GenericFeature>();
 		for (GenericFeature gFeature : features) {
-			if (gFeature.visible) {
+			if (gFeature.isVisible()) {
 				visibleFeatures.add(gFeature);
 			}
 		}

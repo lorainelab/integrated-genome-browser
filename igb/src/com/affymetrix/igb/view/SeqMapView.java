@@ -12,6 +12,66 @@
  */
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
+import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.MutableSeqSpan;
+import com.affymetrix.genometryImpl.MutableSeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.glyph.AxisGlyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
+import com.affymetrix.genoviz.glyph.RootGlyph;
+import com.affymetrix.genoviz.widget.NeoMap;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
+import com.affymetrix.genoviz.widget.Shadow;
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.util.Timer;
+import com.affymetrix.genoviz.bioviews.PackerI;
+
+import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
+import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
+import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
+import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
+import com.affymetrix.genometryImpl.util.SeqUtils;
+
+import com.affymetrix.genometryImpl.SimpleSymWithProps;
+import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
+
+
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
+import com.affymetrix.igb.IGBConstants;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.menuitem.MenuUtil;
+import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
+import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
+import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
+
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,131 +83,14 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EventObject;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
+import java.util.prefs.*;
 import java.util.regex.Pattern;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.ScoredContainerSym;
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.TypeContainerAnnot;
-import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
-import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
-import com.affymetrix.genometryImpl.event.GroupSelectionListener;
-import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
-import com.affymetrix.genometryImpl.event.SeqSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionEvent;
-import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.event.SymSelectionSource;
-import com.affymetrix.genometryImpl.parsers.CytobandParser;
-import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.genometryImpl.symmetry.LeafSingletonSymmetry;
-import com.affymetrix.genometryImpl.symmetry.MutableSingletonSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
-import com.affymetrix.genometryImpl.symmetry.SimplePairSeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.util.SynonymLookup;
-import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.bioviews.PackerI;
-import com.affymetrix.genoviz.bioviews.SceneI;
-import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.glyph.AxisGlyph;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
-import com.affymetrix.genoviz.glyph.RootGlyph;
-import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.util.Timer;
-import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.widget.Shadow;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGBConstants;
-import com.affymetrix.igb.das2.Das2FeatureRequestSym;
-import com.affymetrix.igb.glyph.CharSeqGlyph;
-import com.affymetrix.igb.glyph.EfficientFillRectGlyph;
-import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
-import com.affymetrix.igb.glyph.EfficientPaintRectGlyph;
-import com.affymetrix.igb.glyph.EfficientSolidGlyph;
-import com.affymetrix.igb.glyph.GenericGraphGlyphFactory;
-import com.affymetrix.igb.glyph.GlyphEdgeMatcher;
-import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.GraphSelectionManager;
-import com.affymetrix.igb.glyph.GridGlyph;
-import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
-import com.affymetrix.igb.glyph.PixelFloaterGlyph;
-import com.affymetrix.igb.glyph.RoundRectMaskGlyph;
-import com.affymetrix.igb.glyph.ScoredContainerGlyphFactory;
-import com.affymetrix.igb.glyph.SmartRubberBand;
-import com.affymetrix.igb.menuitem.MenuUtil;
-import com.affymetrix.igb.stylesheet.InvisibleBoxGlyph;
-import com.affymetrix.igb.stylesheet.XmlStylesheetGlyphFactory;
-import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
-import com.affymetrix.igb.tiers.AffyLabelledTierMap;
-import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.tiers.AnnotStyle;
-import com.affymetrix.igb.tiers.CollapsePacker;
-import com.affymetrix.igb.tiers.ExpandPacker;
-import com.affymetrix.igb.tiers.FasterExpandPacker;
-import com.affymetrix.igb.tiers.MultiWindowTierMap;
-import com.affymetrix.igb.tiers.SeqMapViewPopup;
-import com.affymetrix.igb.tiers.TierArithmetic;
-import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.tiers.TierLabelManager;
-import com.affymetrix.igb.tiers.TransformTierGlyph;
-import com.affymetrix.igb.util.GraphGlyphUtils;
-import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.WebBrowserControl;
+import javax.swing.*;
 
 /**
  *
@@ -299,13 +242,14 @@ public class SeqMapView extends JPanel
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
-	//JButton refreshB = new JButton("Refresh Data");
 	SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static Font axisFont = new Font("Courier", Font.BOLD, 12);
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
 	protected SeqSymmetry sym_used_for_title = null;
+
+	private JButton refreshButton = new JButton("Refresh data");
 
 	/*
 	 *  units to scroll are either in pixels or bases
@@ -472,18 +416,26 @@ public class SeqMapView extends JPanel
 		map_range_box = new MapRangeBox(this);
 		xzoombox = Box.createHorizontalBox();
 		xzoombox.add(map_range_box.range_box);
-
+		
 		xzoombox.add(Box.createRigidArea(new Dimension(6, 0)));
 		xzoombox.add((Component) xzoomer);
 
+		ActionListener refreshAL = new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				((IGB)Application.getSingleton()).
+						data_load_view.general_load_view.loadVisibleData();
+				}
+		};
+		refreshButton.setMnemonic('R');
+		refreshButton.addActionListener(refreshAL);
+		xzoombox.add(refreshButton);
+
 		boolean x_above = UnibrowPrefsUtil.getBooleanParam(PREF_X_ZOOMER_ABOVE, default_x_zoomer_above);
+		JPanel pan = new JPanel(new BorderLayout());
+		pan.add("Center", xzoombox);
 		if (x_above) {
-			JPanel pan = new JPanel(new BorderLayout());
-			pan.add("Center", xzoombox);
 			this.add(BorderLayout.NORTH, pan);
 		} else {
-			JPanel pan = new JPanel(new BorderLayout());
-			pan.add("Center", xzoombox);
 			this.add(BorderLayout.SOUTH, pan);
 		}
 
@@ -2327,27 +2279,24 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
-	private String getUcscGenomeVersion() {
+	private static String getUcscGenomeVersion(String version) {
 		String ucsc_version = null;
-		if (aseq instanceof BioSeq && !slicing_in_effect) {
-			SynonymLookup lookup = SynonymLookup.getDefaultLookup();
+		SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
-			String version = aseq.getVersion();
-			Collection<String> syns = lookup.getSynonyms(version);
+		Collection<String> syns = lookup.getSynonyms(version);
 
-			if (syns == null) {
-				syns = new ArrayList<String>();
-				syns.add(version);
-			}
-			for (String syn : syns) {
-				// Having to hardwire this check to figure out which synonym to use to match
-				//  with UCSC.  Really need to have some way when loading synonyms to specify
-				//  which ones should be used when communicating with which external resource!
-				//	System.out.println("testing syn: " + syn);
-				if (syn.startsWith("hg") || syn.startsWith("mm") ||
-								syn.startsWith("rn") || syn.startsWith("ce") || syn.startsWith("dm")) {
-					ucsc_version = syn;
-				}
+		if (syns == null) {
+			syns = new ArrayList<String>();
+			syns.add(version);
+		}
+		for (String syn : syns) {
+			// Having to hardwire this check to figure out which synonym to use to match
+			//  with UCSC.  Really need to have some way when loading synonyms to specify
+			//  which ones should be used when communicating with which external resource!
+			//	System.out.println("testing syn: " + syn);
+			if (syn.startsWith("hg") || syn.startsWith("mm") ||
+					syn.startsWith("rn") || syn.startsWith("ce") || syn.startsWith("dm")) {
+				ucsc_version = syn;
 			}
 		}
 		return ucsc_version;
@@ -2360,31 +2309,31 @@ public class SeqMapView extends JPanel
 	 */
 	private String getRegionString() {
 		String region = null;
-		if (!slicing_in_effect) {
-			Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
-			int start = (int) vbox.x;
-			int end = (int) (vbox.x + vbox.width);
-			String seqid = aseq.getID();
+		Rectangle2D.Double vbox = seqmap.getView().getCoordBox();
+		int start = (int) vbox.x;
+		int end = (int) (vbox.x + vbox.width);
+		String seqid = aseq.getID();
 
-			region = seqid + ":" + start + "-" + end;
-		}
+		region = seqid + ":" + start + "-" + end;
 		return region;
 	}
 
 	public void invokeUcscView() {
+		if (aseq == null || slicing_in_effect) {
+			return;
+		}
+
 		// links to UCSC look like this:
 		//  http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg11&position=chr22:15916196-31832390
-		String UcscVersion = getUcscGenomeVersion();
+		String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
 		String region = getRegionString();
 
 		if (UcscVersion != null && region != null) {
 			String ucsc_url = "http://genome.ucsc.edu/cgi-bin/hgTracks?" + "db=" + UcscVersion + "&position=" + region;
-			WebBrowserControl.displayURLEventually(ucsc_url);
+			GeneralUtils.browse(ucsc_url);
 		} else {
 			String genomeVersion = aseq.getID();
-			if (aseq instanceof BioSeq) {
-				genomeVersion = aseq.getVersion();
-			}
+			genomeVersion = aseq.getVersion();
 			Application.errorPanel("Don't have UCSC information for genome " + genomeVersion);
 		}
 	}

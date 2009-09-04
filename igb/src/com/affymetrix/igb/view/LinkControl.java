@@ -8,9 +8,9 @@ import java.util.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.util.WebBrowserControl;
 
 final class LinkControl implements ContextualPopupListener {
 	public void popupNotify(JPopupMenu popup, List selected_syms, SeqSymmetry primary_sym) {
@@ -123,7 +123,7 @@ final class LinkControl implements ContextualPopupListener {
 			linkMI.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent evt) {
-					WebBrowserControl.displayURLEventually(url);
+					GeneralUtils.browse(url);
 				}
 			});
 		}

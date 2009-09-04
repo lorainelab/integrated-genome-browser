@@ -465,7 +465,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
                 }
 
 				// Add the server to IGB
-				addServer(serverTF.getText(),
+				addServer(serverTF.getText().trim(),
 						(String) serverTypeCB.getSelectedItem(),
 						serverNameTF.getText(),
 						serverLoginTF.getText(),
@@ -490,19 +490,20 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		});
 	}
 
-	private void addServer(String DirectoryOrURL, String serverType, String serverName, String login, String password) {
+	private void addServer(String DirectoryOrURL, String serverTypeStr, String serverName, String login, String password) {
 		if (serverName == null || serverName.length() == 0) {
 			ErrorHandler.errorPanel("Blank server name", "Server name must be specified", this);
 			return;
 		}
-		if (serverType.equals(ServerType.QuickLoad.toString())) {
+		ServerType serverType = ServerType.valueOf(serverTypeStr);
+		if (serverType.equals(ServerType.QuickLoad)) {
 			File f = new File(DirectoryOrURL);
 			if (f.isDirectory()) {
 				try {
 					URL url = new URL(f.toString());
 					addToPreferences(url.toString(), serverType, serverName, login, password);
 				} catch (MalformedURLException ex) {
-					String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? "/Directory" : "");
+					String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad) ? "/Directory" : "");
 					String errorMessage = "'file://" + f + "' is not a valid " + ServerType.QuickLoad.toString() + " directory";
 					ErrorHandler.errorPanel(errorTitle, errorMessage, this);
 					return;
@@ -516,9 +517,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 			URL url = new URL(DirectoryOrURL);
 			addToPreferences(DirectoryOrURL, serverType, serverName, login, password);
 		} catch (MalformedURLException ex) {
-			String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? "/Directory" : "");
+			String errorTitle = "Invalid URL" + (serverType.equals(ServerType.QuickLoad) ? "/Directory" : "");
 			String errorMessage =
-					"'" + DirectoryOrURL + "' is not a valid URL" + (serverType.equals(ServerType.QuickLoad.toString()) ? " or directory" : "");
+					"'" + DirectoryOrURL + "' is not a valid URL" + (serverType.equals(ServerType.QuickLoad) ? " or directory" : "");
 			ErrorHandler.errorPanel(errorTitle, errorMessage, this);
 			return;
 		}
@@ -527,10 +528,10 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 	/**
 	 * Add the URL/Directory and server name to the preferences.
 	 * @param DirectoryOrURL
-	 * @param serverType
+	 * @param serverTypeStr
 	 * @param serverName
 	 */
-	private void addToPreferences(String DirectoryOrURL, String serverType, String serverName, String login, String password) {
+	private void addToPreferences(String DirectoryOrURL, ServerType serverType, String serverName, String login, String password) {
 		// Add to GeneralLoadView and validate
 		if (!this.glv.addServer(serverName, DirectoryOrURL, serverType, login, password)) {
 			ErrorHandler.errorPanel(
@@ -543,21 +544,22 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		removeServerButton.setEnabled(false);
 
 		boolean authEnabled = (login != null && password != null) && !(login.isEmpty() || password.isEmpty());
-		ServerList.addServerToPrefs(DirectoryOrURL, serverName, ServerType.valueOf(serverType), authEnabled, login, password, true);
+		ServerList.addServerToPrefs(DirectoryOrURL, serverName, serverType, authEnabled, login, password, true);
 
-		serverDialog(serverName, DirectoryOrURL);
+		serverDialog(serverName, serverType);
 	}
 
 	private void removePreference(String DirectoryOrURL, String serverType, String serverName) {
 		ServerList.removeServerFromPrefs(DirectoryOrURL);
-		this.glv.removeServer(serverName, DirectoryOrURL, serverType);
+		this.glv.removeServer(serverName, DirectoryOrURL, ServerType.valueOf(serverType));
 		sourceTableModel.init();
 	}
 
-	private void serverDialog(String serverName, String DirectoryOrURL) {
+	private void serverDialog(String serverName, ServerType serverType) {
 		JOptionPane.showMessageDialog(null,
-				"Server " + serverName + " at " + DirectoryOrURL + " has been added. If you do not see your new server, please restart the application",
-				"Server has been added",
+				"The " + serverType + " server '" + serverName + "' has been added.  If you do not\n"
+				+ "see the new server, please restart the application",
+				"New server added",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 

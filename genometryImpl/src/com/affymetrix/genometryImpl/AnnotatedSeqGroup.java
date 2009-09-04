@@ -467,4 +467,21 @@ public class AnnotatedSeqGroup {
 			}
 		}
 	}
+
+	/**
+	 * Create a temporary shallow-copy genome, to avoid any side-effects.
+	 * @param oldGenome
+	 * @return
+	 */
+	public static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
+		AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup(oldGenome.getID());
+		tempGenome.setOrganism(oldGenome.getOrganism());
+		if (oldGenome == null) {
+			return tempGenome;
+		}
+		for (BioSeq seq : oldGenome.getSeqList()) {
+			tempGenome.addSeq(seq.getID(), seq.getLength());
+		}
+		return tempGenome;
+	}
 }

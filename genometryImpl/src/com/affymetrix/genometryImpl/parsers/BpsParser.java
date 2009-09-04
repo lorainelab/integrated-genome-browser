@@ -44,7 +44,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	static boolean main_batch_mode = false; // main() should run in batch mode (processing PSL files in psl_input_dir)
 	static boolean write_from_text = true; // main() should read psl file from text_file and write bps to bin_file
 	static boolean read_from_bps = false;  // main() should read bps file bin_file
-	static boolean REPORT_LOAD_STATS = true;
+	static boolean REPORT_LOAD_STATS = false;
 
 	static String user_dir = System.getProperty("user.dir");
 

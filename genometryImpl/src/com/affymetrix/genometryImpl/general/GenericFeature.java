@@ -3,6 +3,8 @@ package com.affymetrix.genometryImpl.general;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,18 +20,10 @@ public final class GenericFeature {
 	public final String featureName;      // friendly name of the feature.
 	public final Map<String, String> featureProps;
 	public final GenericVersion gVersion;        // Points to the version that uses this feature.
-	public boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
+	private boolean visible;							// indicates whether this feature should be visible or not (used in FeatureTreeView/GeneralLoadView interaction).
 	public LoadStrategy loadStrategy;  // range chosen by the user, defaults to NO_LOAD.
 	public Map<MutableAnnotatedBioSeq, LoadStatus> LoadStatusMap; // each chromosome maps to a feature loading status.
 	public URL friendlyURL = null;			// friendly URL that users may look at.
-
-	/**
-	 * @param featureName
-	 * @param gVersion
-	 */
-	public GenericFeature(String featureName, GenericVersion gVersion) {
-		this(featureName, null, gVersion);
-	}
 	
 	/**
 	 * @param featureName
@@ -41,14 +35,32 @@ public final class GenericFeature {
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
 		if (shouldAutoLoad(featureProps)) {
-			this.visible = true;
 			this.loadStrategy = LoadStrategy.WHOLE;
+			this.setVisible();
 		} else {
-			this.visible = false;
 			this.loadStrategy = LoadStrategy.NO_LOAD;
+			this.visible = false;
+			
 		}
 		this.LoadStatusMap = new HashMap<MutableAnnotatedBioSeq, LoadStatus>();
 	}
+
+	public void setVisible() {
+		this.visible = true;
+		if (this.loadStrategy != LoadStrategy.NO_LOAD) {
+			return;
+		}
+		if ((gVersion != null && gVersion.gServer != null && gVersion.gServer.serverType == ServerType.DAS2)) {
+			this.loadStrategy = LoadStrategy.VISIBLE;  // DAS/2 server should default to "Region in View"
+			} else {
+			this.loadStrategy = LoadStrategy.NO_LOAD;
+		}
+	}
+
+	public boolean isVisible() {
+		return this.visible;
+	}
+
 
 	/**
 	 * @param featureProps feature properties

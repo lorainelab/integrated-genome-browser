@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets;
 
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -28,6 +29,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
@@ -78,7 +80,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String RELEASE_VERSION = "2.6";
 	//private static final boolean ADD_VERSION_TO_CONTENT_TYPE = false;
 	private static final boolean USE_CREATED_ATT = true;
-	private static boolean WINDOWS_OS_TEST = false;
 
 	private static final String SERVER_SYNTAX_EXPLANATION =
 			"See http://netaffxdas.affymetrix.com/das2 for proper query syntax.";
@@ -202,10 +203,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				//source
 				"Chromosome",
 				null));
-
-		WINDOWS_OS_TEST = System.getProperty("os.name").startsWith("Windows");
-
-
 	}
 	//private static final String DAS2_VERSION = "2.0";
 	private static final String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
@@ -273,6 +270,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private long date_initialized = 0;
 	private String date_init_string = null;
+	private static Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map = new HashMap<AnnotatedSeqGroup,List<AnnotMapElt>>();    // hash of filenames to annot properties.
 	private Map<AnnotatedSeqGroup,Map<String,String>> genome2graphfiles = new LinkedHashMap<AnnotatedSeqGroup,Map<String,String>>();
 	// mapping to graph files when there is one dir for all seqs
 	private Map<AnnotatedSeqGroup,Map<String,String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup,Map<String,String>>();
@@ -529,6 +527,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 								 ServerUtils.loadDBAnnotsFromFile(file, 
 										 genomeVersion, 
+										 annots_map,
 										 typePrefix, 
 										 qa.getAnnotation().getIdAnnotation(),
 										 graph_name2file, 
@@ -627,7 +626,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// (and recursively descend through subdirectories doing same)
 		Map<String,String> graph_name2dir = genome2graphdirs.get(genome);
 		Map<String,String> graph_name2file = genome2graphfiles.get(genome);
-		ServerUtils.loadAnnots(genome_directory, genome, graph_name2dir, graph_name2file, dataRoot);
+		ServerUtils.loadAnnots(genome_directory, genome, annots_map, graph_name2dir, graph_name2file, dataRoot);
 
 		//Third: optimize genome by replacing second-level syms with IntervalSearchSyms
 		Optimize.Genome(genome);
@@ -1070,7 +1069,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		String xbase = getXmlBase(request) + genome.getID() + "/";
-		writeTypesXML(pw, xbase, genome.getID(), types_hash);
+		List<AnnotMapElt> annotList = annots_map.get(genome);
+		writeTypesXML(pw, xbase, genome.getID(), types_hash, annotList);
 
 		if (use_types_xslt) {
 			pw.flush();
@@ -1094,7 +1094,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			PrintWriter pw,
 			String xbase,
 			String genome_id,
-			Map<String,SimpleDas2Type> types_hash) {
+			Map<String,SimpleDas2Type> types_hash,
+			List<AnnotMapElt> annotList) {
 		printXmlDeclaration(pw);
 		//    pw.println("<!DOCTYPE DAS2TYPES SYSTEM \"http://www.biodas.org/dtd/das2types.dtd\" >");
 		pw.println("<TYPES ");
@@ -1125,14 +1126,30 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String title = feat_type;
 
 			pw.println("   <TYPE " + URID + "=\"" + feat_type_encoded + "\" " + NAME + "=\"" + title + "\" >");
-			if ((formats != null) && (!formats.isEmpty())) {
+			if (formats != null) {
 				for (String format : formats) {
 					pw.println("       <FORMAT name=\"" + format + "\" />");
 				}
 			}
 			
+			// For now, if props is empty from Types request, fill in properties
+			// from annots.xml file.
+			if (props == null) {
+				if (annotList != null) {
+					AnnotMapElt ame = AnnotMapElt.findTitleElt(title, annotList);
+					if (ame != null && ame.props != null) {
+						for (Map.Entry<String,String> propEntry : ame.props.entrySet()) {
+							if (propEntry.getValue().length() > 0) {
+								props.put(propEntry.getKey(), propEntry.getValue());
+							}
+						}
+					}
+				}
+			}
+			
+	
 			// Print properties of annotation as tag/value pairs
-			if ((props != null) && (!props.isEmpty())) {
+			if (props != null && !props.isEmpty()) {
 				for (String tag : props.keySet()) {
 					Object value = props.get(tag);
 					pw.println("       <PROP key=\"" + tag + "\" value=\"" + value + "\" />");
@@ -1531,11 +1548,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		if (file_path.startsWith("file:")) {
 			// if file_path is URI string, strip off "file:" prefix
-			if (WINDOWS_OS_TEST) {
-				file_path = "C:/data/transcriptome/database_test_Human_May_2004" + file_path.substring(5);
-			} else {
-				file_path = file_path.substring(5);
-			}
+			file_path = file_path.substring(5);
 		}
 		return file_path;
 	}

@@ -371,25 +371,25 @@ public abstract class GenometryModel {
 		HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2SymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
 
 		// for each ID found in the ID2sym hash, add it to the owning sequences
-		//  list of selected symmetries
-		Iterator<SeqSymmetry> syms_iter = syms.iterator();
+		// list of selected symmetries
 		HashSet<MutableAnnotatedBioSeq> all_seqs = new HashSet<MutableAnnotatedBioSeq>(); // remember all seqs found
-		while (syms_iter.hasNext()) {
-			SeqSymmetry sym = syms_iter.next();
-			if (sym != null) {
-				MutableAnnotatedBioSeq seq = getSelectedSeqGroup().getSeq(sym);
-				if (seq != null) {
-					// prepare the list to add the sym to based on the seq ID
-					List<SeqSymmetry> symlist = seq2SymsHash.get(seq);
-					if (symlist == null) {
-						symlist = new ArrayList<SeqSymmetry>();
-						seq2SymsHash.put(seq, symlist);
-					}
-					// add the sym to the list for the correct seq ID
-					symlist.add(sym);
-					all_seqs.add(seq);
-				}
+		for (SeqSymmetry sym : syms) {
+			if (sym == null) {
+				continue;
 			}
+			BioSeq seq = getSelectedSeqGroup().getSeq(sym);
+			if (seq == null) {
+				continue;
+			}
+			// prepare the list to add the sym to based on the seq ID
+			List<SeqSymmetry> symlist = seq2SymsHash.get(seq);
+			if (symlist == null) {
+				symlist = new ArrayList<SeqSymmetry>();
+				seq2SymsHash.put(seq, symlist);
+			}
+			// add the sym to the list for the correct seq ID
+			symlist.add(sym);
+			all_seqs.add(seq);
 		}
 
 		// clear all the existing selections first

@@ -73,7 +73,7 @@ public class BgnParserTest {
 
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "test", (IndexWriter) parser);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms, testFileName);
 
 			String overlap = "3000000:160000000";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);

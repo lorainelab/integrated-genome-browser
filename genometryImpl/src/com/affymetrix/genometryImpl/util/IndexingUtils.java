@@ -4,6 +4,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.Propertied;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
@@ -47,27 +48,45 @@ public class IndexingUtils {
 		public int[] min;
 		public int[] max;
 		public boolean[] forward;
-		private byte[][] id;	// Using byte array instead of String to save memory
 		public long[] filePos;
 		public String typeName;
 		public IndexWriter iWriter;
+
+		// for each sym, we have an array of ids generated from the group's id2symhash.
+		// Each of these ids is in a byte array instead of a String to save memory
+		private byte[][][] id;
 
 		public IndexedSyms(int resultSize, File file, String typeName, IndexWriter iWriter) {
 			min = new int[resultSize];
 			max = new int[resultSize];
 			forward = new boolean[resultSize];
-			id = new byte[resultSize][];
+			id = new byte[resultSize][][];
 			filePos = new long[resultSize + 1];
 			this.file = file;
 			this.typeName = typeName;
 			this.iWriter = iWriter;
 		}
 
-		String getID(int i) {
-			return new String(this.id[i]);
+		byte[][] getIDs(int i) {
+			return this.id[i];
 		}
-		void setID(int i, String val) {
-			this.id[i] = val.getBytes();
+		String getID(int i) {
+			return new String(this.id[i][0]);	// first String is the ID
+		}
+		private void setIDs(AnnotatedSeqGroup group, String symID, int i) {
+			// determine list of IDs for this symmetry index.
+			List<String> extraNames = group.getSymmetryIDs(symID.toLowerCase());
+			List<String> ids = new ArrayList<String>(1 + (extraNames == null ? 0 : extraNames.size()));
+			ids.add(symID);
+			if (extraNames != null) {
+				ids.addAll(extraNames);
+			}
+
+			int idSize = ids.size();
+			this.id[i] = new byte[idSize][];
+			for (int j=0;j<idSize;j++) {
+				this.id[i][j] = ids.get(j).getBytes();
+			}
 		}
 		
 		private SimpleSymWithProps convertToSymWithProps(int i, BioSeq seq, String type) {
@@ -145,17 +164,16 @@ public class IndexingUtils {
 
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 
-			// add symmetries to the chromosome (used by types request)
+			// add indexed symmetries to the chromosome (used by types request)
 			originalSeq.addIndexedSyms(returnTypeName, iSyms);
 
 			// Write the annotations out to a file.
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, iSyms, indexedAnnotationsFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, tempSeq, tempGenome, iSyms, indexedAnnotationsFileName);
 		}
-
 	}
 
 	/**
-	 * Find symmetries that have IDs matching regex.  Return no more than resultLimit symmetries.
+	 * Find symmetries that have IDs or titles matching regex.  Return no more than resultLimit symmetries.
 	 * @param fileName -- of indexed symmetries (done by genome)
 	 * @param regex
 	 * @param resultLimit
@@ -166,29 +184,17 @@ public class IndexingUtils {
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(resultLimit);
 
 		int resultCount = 0;
-		for (BioSeq seq : genome.getSeqList()) {
-			if (resultCount == resultLimit) {
-				break;
-			}
-			for (String type : seq.getIndexedTypeList()) {
-				if (resultCount == resultLimit) {
-					break;
-				}
-				IndexedSyms iSyms = seq.getIndexedSym(type);
-				int symSize = iSyms.min.length;
-				for (int i = 0; i < symSize; i++) {
-					String id = iSyms.getID(i);
-					matcher.reset(id);
-					if (!matcher.matches()) {
-						continue;
-					}
-					SimpleSymWithProps sym = iSyms.convertToSymWithProps(i, seq, type);
-					results.add(sym);
 
-					resultCount++;
-					if (resultCount == resultLimit) {
-						break;
-					}
+		// label for breaking out of loop
+		SEARCHSYMS:
+		for (BioSeq seq : genome.getSeqList()) {
+			for (String type : seq.getIndexedTypeList()) {
+				IndexedSyms iSyms = seq.getIndexedSym(type);
+				if (iSyms == null) {
+					continue;
+				}
+				if (findSymByName(iSyms, matcher, seq, type, results, resultCount, resultLimit)) {
+					break SEARCHSYMS;
 				}
 			}
 		}
@@ -196,11 +202,43 @@ public class IndexingUtils {
 		return results;
 	}
 
+	private static boolean findSymByName(
+			IndexedSyms iSyms, final Matcher matcher, BioSeq seq, String type, List<SeqSymmetry> results, int resultCount, int resultLimit) {
+		int symSize = iSyms.min.length;
+		for (int i = 0; i < symSize; i++) {
+			// test against various IDs
+			byte[][] ids = iSyms.getIDs(i);
+			boolean foundID = false;
+			for (int j=0;j<ids.length;j++) {
+				String id = new String(ids[j]);
+				matcher.reset(id);
+				if (matcher.matches()) {
+					foundID = true;
+					break;
+				}
+			}
+			if (!foundID) {
+				continue;
+			}
+
+			// found a match
+			SimpleSymWithProps sym = iSyms.convertToSymWithProps(i, seq, type);
+			results.add(sym);
+			resultCount++;
+			if (resultCount == resultLimit) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 
 	/**
 	 * Create a file of annotations, and index its entries.
 	 * @param syms -- a sorted list of annotations (on one chromosome)
 	 * @param seq -- the chromosome
+	 * @param group -- the group (used to determine IDs for each sym)
 	 * @param iSyms
 	 * @param fos
 	 * @return - success or failure
@@ -208,6 +246,7 @@ public class IndexingUtils {
 	public static boolean writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
 			MutableAnnotatedBioSeq seq,
+			AnnotatedSeqGroup group,
 			IndexedSyms iSyms,
 			String indexesFileName) {
 		if (DEBUG) {
@@ -215,7 +254,7 @@ public class IndexingUtils {
 		}
 
 		try {
-			createIndexArray(iSyms, syms, seq);
+			createIndexArray(iSyms, syms, seq, group);
 			writeIndex(iSyms, indexesFileName, syms, seq);
 			return true;
 		} catch (Exception ex) {
@@ -234,20 +273,22 @@ public class IndexingUtils {
 	private static void createIndexArray(
 			IndexedSyms iSyms,
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq) throws IOException {
+			MutableAnnotatedBioSeq seq,
+			AnnotatedSeqGroup group) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int index = 0;
 		long currentFilePos = 0;
 		IndexWriter iWriter = iSyms.iWriter;
 		iSyms.filePos[0] = 0;
 		for (SeqSymmetry sym : syms) {
+			// Determine symmetry's byte size
 			iWriter.writeSymmetry(sym, seq, baos);
 			baos.flush();
 			byte[] buf = baos.toByteArray();
 			baos.reset();
 
 			// add to iSyms, and advance index.
-			iSyms.setID(index, sym.getID());
+			iSyms.setIDs(group, sym.getID(), index);
 			iSyms.min[index] = iWriter.getMin(sym, seq);
 			iSyms.max[index] = iWriter.getMax(sym, seq);
 			iSyms.forward[index] = sym.getSpan(seq).isForward();

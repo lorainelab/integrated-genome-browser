@@ -12,6 +12,8 @@
  */
 package com.affymetrix.igb.menuitem;
 
+import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;

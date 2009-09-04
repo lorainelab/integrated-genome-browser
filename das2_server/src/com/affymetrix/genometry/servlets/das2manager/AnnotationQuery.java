@@ -38,17 +38,16 @@ public class AnnotationQuery {
 	private static final int ANNOTATION_LEVEL = 2;
 	
 	
-	private TreeMap<String, TreeMap<String, ?>> organismToVersion;
-	private HashMap<String, TreeMap<String, ?>> versionToRootGroupings;
-	private HashMap<String, TreeMap<String, ?>> groupingToGroupings;
-	private HashMap<String, TreeMap<String, ?>> groupingToAnnotations;
+	private TreeMap<String, TreeMap<GenomeVersion, ?>> organismToVersion;
+	private HashMap<String, TreeMap<String, ?>>        versionToRootGroupings;
+	private HashMap<String, TreeMap<String, ?>>        groupingToGroupings;
+	private HashMap<String, TreeMap<String, ?>>        groupingToAnnotations;
 	
-	private HashMap<String, List<Segment>>           versionToSegments;  
+	private HashMap<String, List<Segment>>             versionToSegments;  
 	
-	private HashMap<String,  Organism>               organismMap;
-	private HashMap<String,  GenomeVersion>          genomeVersionMap;
-	private HashMap<Integer, Annotation>             annotationMap;
-	private HashMap<Integer, AnnotationGrouping>     annotationGroupingMap;
+	private HashMap<String,  Organism>                 organismMap;
+	private HashMap<Integer, Annotation>               annotationMap;
+	private HashMap<Integer, AnnotationGrouping>       annotationGroupingMap;
 	
 	public AnnotationQuery() {
 		if (scopeLevel == null || scopeLevel.equals("")) {
@@ -160,12 +159,12 @@ public class AnnotationQuery {
 		String[] tokens;
 				
 		// Use hash to create XML Document
-		for (String organismName : organismToVersion.keySet()) {
-			TreeMap<String, ?> versionNameMap = organismToVersion.get(organismName);
-			Organism organism = organismMap.get(organismName);
+		for (String organismBinomialName : organismToVersion.keySet()) {
+			TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organismBinomialName);
+			Organism organism = organismMap.get(organismBinomialName);
 
 			organismNode = root.addElement("Organism");
-			organismNode.addAttribute("label", organismName);
+			organismNode.addAttribute("label", organismBinomialName);
 			organismNode.addAttribute("idOrganism", organism.getIdOrganism().toString());
 			organismNode.addAttribute("name",         organism.getName() != null ? organism.getName() : "");				
 			organismNode.addAttribute("commonName",   organism.getCommonName() != null ? organism.getCommonName() : "");				
@@ -174,13 +173,11 @@ public class AnnotationQuery {
 			organismNode.addAttribute("canWrite",     das2ManagerSecurity.canWrite(organism) ? "Y" : "N");
 			
 			// For each version, build up hierarchy
-			if (versionNameMap != null) {
-				for (String versionName : versionNameMap.keySet()) {
-					
-					GenomeVersion genomeVersion = genomeVersionMap.get(versionName);
+			if (versionMap != null) {
+				for (GenomeVersion genomeVersion : versionMap.keySet()) {
 					
 					versionNode = organismNode.addElement("GenomeVersion");
-					versionNode.addAttribute("label", versionName);				
+					versionNode.addAttribute("label", genomeVersion.getName());				
 					versionNode.addAttribute("idGenomeVersion",genomeVersion.getIdGenomeVersion().toString());				
 					versionNode.addAttribute("name",           genomeVersion.getName());				
 					versionNode.addAttribute("buildDate",      genomeVersion.getBuildDate() != null ? Util.formatDate(genomeVersion.getBuildDate()) : "");				
@@ -194,7 +191,7 @@ public class AnnotationQuery {
 					
 					// For each root annotation grouping, recurse to create annotations
 					// and groupings.
-					TreeMap<String, ?> rootGroupings = versionToRootGroupings.get(versionName);
+					TreeMap<String, ?> rootGroupings = versionToRootGroupings.get(genomeVersion.getName());
 					fillGroupingNode(genomeVersion, versionNode, rootGroupings, das2ManagerSecurity, dictionaryHelper, false);
 				}
 				
@@ -208,14 +205,13 @@ public class AnnotationQuery {
 	
 	private void hashAnnotations(List<Object[]> annotationRows, List<Segment> segmentRows, DictionaryHelper dictionaryHelper) {
 
-		organismToVersion        = new TreeMap<String, TreeMap<String, ?>>();
+		organismToVersion        = new TreeMap<String, TreeMap<GenomeVersion, ?>>();
 		versionToRootGroupings   = new HashMap<String, TreeMap<String, ?>>();
 		groupingToGroupings      = new HashMap<String, TreeMap<String, ?>>();
 		groupingToAnnotations    = new HashMap<String, TreeMap<String, ?>>();
 		versionToSegments        = new HashMap<String, List<Segment>>();
 		
 		organismMap              = new HashMap<String, Organism>();
-		genomeVersionMap         = new HashMap<String, GenomeVersion>();
 		annotationGroupingMap    = new HashMap<Integer, AnnotationGrouping>();
 		annotationMap            = new HashMap<Integer, Annotation>();
 		
@@ -223,7 +219,7 @@ public class AnnotationQuery {
 		// hash map with known entries
 		// since those without annotations would otherwise not show up.
 		for (Organism o : dictionaryHelper.getOrganisms()) {
-			organismMap.put(o.getName(), o);
+			organismMap.put(o.getBinomialName(), o);
 			
 			// If we are filtering by organism, only include that one
 			if (this.idOrganism != null) {
@@ -231,8 +227,8 @@ public class AnnotationQuery {
 					continue;
 				}
 			}
-			TreeMap<String, ?> versionNameMap = new TreeMap<String, String>();
-			organismToVersion.put(o.getName(), versionNameMap);
+			TreeMap<GenomeVersion, ?> versionMap = new TreeMap<GenomeVersion, Object>(new GenomeVersionComparator());
+			organismToVersion.put(o.getBinomialName(), versionMap);
 			if (dictionaryHelper.getGenomeVersions(o.getIdOrganism()) != null) {
 				for(GenomeVersion v : dictionaryHelper.getGenomeVersions(o.getIdOrganism())) {
 					
@@ -243,9 +239,8 @@ public class AnnotationQuery {
 						}
 					}
 
-					versionNameMap.put(v.getName(), null);
+					versionMap.put(v, null);
 					
-					genomeVersionMap.put(v.getName(), v);
 					AnnotationGrouping rootGrouping = v.getRootAnnotationGrouping();
 					
 					if (rootGrouping != null) {
@@ -304,20 +299,19 @@ public class AnnotationQuery {
 			AnnotationGrouping parentAnnotGrouping = (AnnotationGrouping) row[3];
 			Annotation annot                       = (Annotation) row[4];
 			
-			// Load properties for anotations
+			// Load properties for annotations
 			if (annot != null) {
 				annot.loadProps(dictionaryHelper);				
 			}
 			
 			// Hash genome versions for an organism
-			TreeMap<String, ?> versionNameMap = organismToVersion.get(organism.getName());
-			if (versionNameMap == null) {
-				versionNameMap = new TreeMap<String, String>();
-				organismToVersion.put(organism.getName(), versionNameMap);
+			TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organism.getBinomialName());
+			if (versionMap == null) {
+				versionMap = new TreeMap<GenomeVersion, Object>(new GenomeVersionComparator());
+				organismToVersion.put(organism.getBinomialName(), versionMap);
 			}
 			if (genomeVersion != null) {
-				versionNameMap.put(genomeVersion.getName(), null);
-				genomeVersionMap.put(genomeVersion.getName(), genomeVersion);
+				versionMap.put(genomeVersion, null);
 			}
 			
 			if (annotGrouping != null) {
@@ -364,31 +358,38 @@ public class AnnotationQuery {
 	}
 	
 
-	public Set<String> getOrganismNames() {
-		return organismToVersion.keySet();
+	public Set<Organism> getOrganisms() {
+		TreeSet<Organism> organisms = new TreeSet<Organism>(new OrganismComparator());
+		for(String organismBinomialName: organismToVersion.keySet()) {
+			Organism organism = organismMap.get(organismBinomialName);
+			organisms.add(organism);
+		}
+		return organisms;
 	}
 	
-	public Set<String> getVersionNames(String organismName) {
+	public Set<String> getVersionNames(Organism organism) {
 		Set<String> versionNames = new TreeSet<String>();
 		
-		TreeMap<String, ?> versionNameMap = organismToVersion.get(organismName);
-		if (versionNameMap != null) {
-			versionNames = versionNameMap.keySet();
+		TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organism.getBinomialName());
+		if (versionMap != null) {
+			for(GenomeVersion version : versionMap.keySet()) {
+				versionNames.add(version.getName());
+			}
 		}
 		
 		return versionNames;
 	}
 	
-	public List<Segment> getSegments(String organismName, String genomeVersionName) {
+	public List<Segment> getSegments(Organism organism, String genomeVersionName) {
 		List<Segment> segments = null;
-		TreeMap<String, ?> versionNameMap = organismToVersion.get(organismName);
+		TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organism.getBinomialName());
 			
 		// For each version...
-		if (versionNameMap != null) {
-			for (String versionName : versionNameMap.keySet()) {
+		if (versionMap != null) {
+			for (GenomeVersion genomeVersion: versionMap.keySet()) {
 				
-				if (versionName.equals(genomeVersionName)) {
-					segments = versionToSegments.get(versionName);
+				if (genomeVersion.getName().equals(genomeVersionName)) {
+					segments = versionToSegments.get(genomeVersion.getName());
 					break;
 				}
 			}
@@ -396,20 +397,20 @@ public class AnnotationQuery {
 		return segments;		
 	}
 	
-	public List<QualifiedAnnotation> getQualifiedAnnotations(String organismName, String genomeVersionName) {
+	public List<QualifiedAnnotation> getQualifiedAnnotations(Organism organism, String genomeVersionName) {
 		List<QualifiedAnnotation> qualifiedAnnotations = new ArrayList<QualifiedAnnotation>();
 		
 				
-		TreeMap<String, ?> versionNameMap = organismToVersion.get(organismName);
+		TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organism.getBinomialName());
 			
 		// For each version...
-		if (versionNameMap != null) {
-			for (String versionName : versionNameMap.keySet()) {
+		if (versionMap != null) {
+			for (GenomeVersion genomeVersion : versionMap.keySet()) {
 				
-				if (versionName.equals(genomeVersionName)) {
+				if (genomeVersion.getName().equals(genomeVersionName)) {
 					// For each root annotation grouping, recurse annotation grouping
 					// hierarchy to get leaf annotations.
-					TreeMap<String, ?> rootGroupingNameMap = versionToRootGroupings.get(versionName);
+					TreeMap<String, ?> rootGroupingNameMap = versionToRootGroupings.get(genomeVersion.getName());
 					String qualifiedName = new String();
 					getQualifiedAnnotation(rootGroupingNameMap, qualifiedAnnotations, qualifiedName, false);
 					

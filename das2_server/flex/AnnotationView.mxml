@@ -1362,7 +1362,7 @@
 		    <mx:HBox width="100%">
 				<mx:HBox horizontalGap="0" verticalAlign="middle">
 					<mx:Label text="Show annotations for Organism:" id="label3"/>
-					<mx:ComboBox labelField="@name" id="organismCombo" change="refreshAnnotations()" width="150">
+					<mx:ComboBox labelField="@name" id="organismCombo" change="refreshAnnotations()" width="200">
 						<mx:dataProvider>{parentApplication.dictionaryOrganism}</mx:dataProvider>
 					</mx:ComboBox>
 				</mx:HBox>
@@ -1716,6 +1716,7 @@
 					<mx:ComboBox id="securityGroupCombo" dataProvider="{parentApplication.dictionaryMySecurityGroup}" labelField="@name" width="180" change="refreshAnnotations()"></mx:ComboBox>
 			    </mx:HBox>
 			</mx:AddChild>
+			<mx:SetProperty target="{organismCombo}" name="labelField" value="@binomialName"/>
 		</mx:State>
 		<mx:State name="UserState">
 			<mx:AddChild relativeTo="{hbox1}" position="lastChild">

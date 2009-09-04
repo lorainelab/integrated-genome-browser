@@ -498,15 +498,15 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		// Cache the authorized annotation ids of each genome version for this user
 		AnnotationQuery annotationQuery = new AnnotationQuery();
 		annotationQuery.runAnnotationQuery(sess, this);
-		for (String organismName : annotationQuery.getOrganismNames()) {
-			for (String genomeVersionName : annotationQuery.getVersionNames(organismName)) {
+		for (Organism organism : annotationQuery.getOrganisms()) {
+			for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
 
 				HashMap<Integer, QualifiedAnnotation> annotationMap = this.versionToAuthorizedAnnotationMap.get(genomeVersionName);
 				if (annotationMap == null) {
 					annotationMap = new HashMap<Integer, QualifiedAnnotation>();
 					this.versionToAuthorizedAnnotationMap.put(genomeVersionName, annotationMap);
 				}
-				for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organismName, genomeVersionName)) {
+				for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organism, genomeVersionName)) {
 					annotationMap.put(qa.getAnnotation().getIdAnnotation(), qa);
 				}
 			}

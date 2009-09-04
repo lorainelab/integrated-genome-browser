@@ -98,7 +98,7 @@ public class DictionaryHelper {
 		
 		List<GenomeVersion> genomeVersions = (List<GenomeVersion>) sess
         	.createQuery(
-                "SELECT d from GenomeVersion d order by d.name")
+                "SELECT d from GenomeVersion d order by d.buildDate desc, d.name asc")
                 .list();
 		for (GenomeVersion d : genomeVersions) {
 			genomeVersionMap.put(d.getIdGenomeVersion(), d);
@@ -267,6 +267,8 @@ public class DictionaryHelper {
 			Element dictEntry = dict.addElement("Organism");
 			dictEntry.addAttribute("id",   d.getIdOrganism().toString());
 			dictEntry.addAttribute("name", d.getName());
+			dictEntry.addAttribute("binomialName", d.getBinomialName());
+			dictEntry.addAttribute("commonName", d.getCommonName());
 			
 			makeBlankNode(dictEntry, "GenomeVersion");
 			if (this.getGenomeVersions(d.getIdOrganism()) != null) {
@@ -417,7 +419,27 @@ public class DictionaryHelper {
 		} else {
 			return "";
 		}
-	}	
+	}
+	public String getOrganismBinomialName(Integer idOrganism) {
+		Organism organism = organismMap.get(idOrganism);
+		if (organism != null) {
+			return organism.getBinomialName();
+		} else {
+			return "";
+		}
+	}
+	public String getOrganismBinomialName(GenomeVersion genomeVersion) {
+		if (genomeVersion != null && genomeVersion.getIdOrganism() != null) {
+			Organism organism = organismMap.get(genomeVersion.getIdOrganism());
+			if (organism != null) {
+				return organism.getBinomialName();
+			} else {
+				return "";
+			}			
+		} else {
+			return "";
+		}
+	}
 	public String getGenomeVersionName(Integer idGenomeVersion) {
 		GenomeVersion genomeVersion = genomeVersionMap.get(idGenomeVersion);
 		if (genomeVersion != null) {

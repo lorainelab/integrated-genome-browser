@@ -467,30 +467,30 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			 AnnotationQuery annotationQuery = new AnnotationQuery();
 			 annotationQuery.runAnnotationQuery(sess, null);
-			 for (String organismName : annotationQuery.getOrganismNames()) {
-				 System.out.println(organismName);
-				 for (String genomeVersionName : annotationQuery.getVersionNames(organismName)) {
+			 for (Organism organism : annotationQuery.getOrganisms()) {
+				 System.out.println(organism.getName());
+				 for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
 					 System.out.println("\t" + genomeVersionName);
 
 					 // Instantiate an AnnotatedSeqGroup (the genome version).         
 					 AnnotatedSeqGroup genomeVersion = gmodel.addSeqGroup(genomeVersionName);
-					 genomeVersion.setOrganism(organismName);
+					 genomeVersion.setOrganism(organism.getName());
 
 					 // Initialize hash tables   
 					 genome2graphdirs.put(genomeVersion, new LinkedHashMap<String, String>());
 					 genome2graphfiles.put(genomeVersion, new LinkedHashMap<String, String>());
 					 genome2graphdir_annotid.put(genomeVersion, new LinkedHashMap<String, Integer>());
 					 genome2graphfile_annotid.put(genomeVersion, new LinkedHashMap<String, Integer>());
-					 List<AnnotatedSeqGroup> versions = organisms.get(organismName);
+					 List<AnnotatedSeqGroup> versions = organisms.get(organism.getName());
 					 if (versions == null) {
 						 versions = new ArrayList<AnnotatedSeqGroup>();
-						 organisms.put(organismName, versions);
+						 organisms.put(organism.getName(), versions);
 					 }
 					 versions.add(genomeVersion);
 
 
 					 // Create SmartAnnotBioSeqs (chromosomes) for the genome version
-					 List<Segment> segments = annotationQuery.getSegments(organismName, genomeVersionName);
+					 List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);
 					 if (segments != null) {
 						 for(Segment segment : segments) {
 							 BioSeq chrom = genomeVersion.addSeq(segment.getName(), segment.getLength().intValue());
@@ -506,7 +506,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					 Map<String, Integer> graph_name_for_file2annot_id = genome2graphfile_annotid.get(genomeVersion);
 
 					 // Load annotations for the genome version
-					 for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organismName, genomeVersionName)) {
+					 for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organism, genomeVersionName)) {
 
 						 String fileName = qa.getAnnotation().getQualifiedFileName(this.genometry_db_annotation_dir);    
 						 String typePrefix = qa.getTypePrefix();     

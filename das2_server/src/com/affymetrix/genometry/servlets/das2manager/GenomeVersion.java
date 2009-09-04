@@ -1,6 +1,7 @@
 package com.affymetrix.genometry.servlets.das2manager;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -121,5 +122,6 @@ public class GenomeVersion {
 	public void setAnnotations(Set annotations) {
     	this.annotations = annotations;
     }
+	
 
 }

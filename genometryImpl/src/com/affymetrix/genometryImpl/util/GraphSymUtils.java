@@ -23,12 +23,12 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.parsers.ScoredIntervalParser;
-import com.affymetrix.genometryImpl.parsers.SgrParser;
-import com.affymetrix.genometryImpl.parsers.BarParser;
-import com.affymetrix.genometryImpl.parsers.GrParser;
-import com.affymetrix.genometryImpl.parsers.BgrParser;
-import com.affymetrix.genometryImpl.parsers.WiggleParser;
+import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
+import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
+import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.graph.GrParser;
+import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
+import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 
 public final class GraphSymUtils {
 

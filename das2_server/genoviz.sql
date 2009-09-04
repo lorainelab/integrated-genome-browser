@@ -384,7 +384,8 @@ CREATE TABLE `organism` (
   `idUser` int(10) unsigned default NULL,
   `name` varchar(200) NOT NULL,
   PRIMARY KEY  USING BTREE (`idOrganism`),
-  UNIQUE KEY `Index_OrganismName` (`name`)
+  UNIQUE KEY `Index_OrganismName` (`name`),
+  UNIQUE KEY `Index_OrganismBinomialName` (`binomialName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6300 DEFAULT CHARSET=latin1;
 
 --
@@ -420,7 +421,7 @@ INSERT INTO `organism` (`idOrganism`,`commonName`,`sortOrder`,`binomialName`,`NC
  (2500,'D. virilis',NULL,'Drosophila virilis',NULL,NULL,'D_virilis'),
  (2600,'D. yakuba',NULL,'Drosophila yakuba',NULL,NULL,'D_yakuba'),
  (2700,'Zebrafish',NULL,'Danio rerio','7955',NULL,'D_rerio'),
- (2800,'Horse',NULL,'Equus caballus',NULL,NULL,'H_caballus'),
+ (2800,'Horse',NULL,'Equus caballus',NULL,NULL,'E_caballus'),
  (2900,'E. coli',NULL,'Escherichia coli',NULL,NULL,'E_coli'),
  (3000,'Cat',NULL,'Felis catus',NULL,NULL,'F_catus'),
  (3100,'Chicken',NULL,'Gallus gallus',NULL,NULL,'G_gallus'),

@@ -27,7 +27,7 @@ import javax.swing.event.ListSelectionListener;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
-import com.affymetrix.igb.util.TableSorter2;
+import com.affymetrix.igb.util.TableSorter;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
@@ -170,7 +170,7 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-    TableSorter2 sort_model = new TableSorter2(model);
+    TableSorter sort_model = new TableSorter(model);
     sort_model.setTableHeader(table.getTableHeader());
     table.setModel(sort_model);
     table.getColumnModel().getColumn(COL_TIER_NAME).setPreferredWidth(150);

@@ -21,7 +21,7 @@ import javax.swing.table.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.affymetrix.igb.util.TableSorter2;
+import com.affymetrix.igb.util.TableSorter;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
@@ -58,7 +58,7 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
     lsm.addListSelectionListener(this);
     lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-    TableSorter2 sort_model = new TableSorter2(model);
+    TableSorter sort_model = new TableSorter(model);
     //sort_model.addMouseListenerToHeaderInTable(table);
     sort_model.setTableHeader(table.getTableHeader());
 

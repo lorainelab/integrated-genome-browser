@@ -18,7 +18,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
-import com.affymetrix.igb.util.TableSorter2;
+import com.affymetrix.igb.util.TableSorter;
 import com.affymetrix.swing.BlockingTableCellEditor;
 
 class PropertySheet extends JPanel {
@@ -91,7 +91,7 @@ class PropertySheet extends JPanel {
    */
   public int getModelIndex(int i) {
     if (sortable) {
-      return ((TableSorter2) table.getModel()).modelIndex(i);
+      return ((TableSorter) table.getModel()).modelIndex(i);
     } else {
       return i;
     }
@@ -279,7 +279,7 @@ class PropertySheet extends JPanel {
     TableModel unsorted_model = new DefaultTableModel(rows,col_headings);
     
     if (sortable) {
-      TableSorter2 sort_model = new TableSorter2(unsorted_model);
+      TableSorter sort_model = new TableSorter(unsorted_model);
       sort_model.setTableHeader(table.getTableHeader());
       table.setModel(sort_model);
     } else {

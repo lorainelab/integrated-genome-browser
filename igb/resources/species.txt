@@ -1,62 +1,62 @@
-Anolis carolinensis	Lizard	A_carolinensis	anoCar1
-Anopheles gambiae	A.gambiae	A_gambiae	anoGam1
-Apis mellifera	A_mellifera	apiMel1	apiMel2
-Arabidopsis thaliana	A. thaliana	A_thaliana	A_thaliana_Jan_2004	A_thaliana_TAIR7	A_thalina_TAIR8	A_thaliana_TAIR9
-Bos taurus	Cow	B_taurus	B_taurus_Aug_2006	B_taurus_Oct_2007	bosTau2	bosTau3	bosTau4
-Branchiostoma floridae	Lancet	B_floridae	braFlo1
-Callithrix jacchus	Marmoset	C_jacchus	calJac1
-Cavia porcellus	Guinea Pig	C_porcellus	cavPor3
-Ciona intestinalis	C. intestinalis	C_intestinalis	ci1	ci2
-Caenorhabditis brenneri	C. brenneri	C_brenneri	caePb1	caePb2
-Caenorhabditis briggsae	C. briggsae	C_briggsae	cb1	cb3	briggsae	briggsae_cb25
-Caenorhabditis elegans	C. elegans	C_elegans	C_elegans_May_2003	C_elegans_Mar_2004	C_elegans_Jan_2007	C_elegans_May_2007	C_elegans_May_2008	ce2	ce4	ce6	elegans	elegans_ws110
-Caenorhabditis japonica	C. japonica	C_japonica	caeJap1
-Caenorhabditis remanei	C. remanei	C_remanei	caeRem2	caeRem3	remanei
-Canis lupus familiaris	Dog	C_familiaris	C_familiaris_May_2005	canFam1	canFam2
-Drosophila ananassae	D. ananassae	D_ananassae	droAna1	droAna2
-Drosophila erecta	D. erecta	D_erecta	droEre1
-Drosophila grimshawi	D. grimshawi	D_grimshawi	droGri1
-Drosophila melanogaster	D. melanogaster	D_melanogaster	D_melanogaster_Apr_2004	D_melanogaster_Apr_2006	D_melanogaster_Jan_2003	dm1	dm2	dm3
-Drosophila mojavensis	D. mojavensis	D_mojavensis	droMoj1	droMoj2
-Drosophila persimilis	D. persimilis	D_persimilis	droPer1
-Drosophila pseudoobscura	D. pseudoobscura	D_pseudoobscura	dp2	dp3
-Drosophila sechellia	D. sechellia	D_sechellia	droSec1
-Drosophila simulans	D. simulans	D_simulans	droSim1
-Drosophila virilis	D. virilis	D_virilis	droVir1	droVir2
-Drosophila yakuba	D. yakuba	D_yakuba	droYak1	droYak2
-Danio rerio	Zebrafish	D_rerio	D_rerio_Mar_2006	D_rerio_Jul_2007	danRer3	danRer4	danRer5
-Equus caballus	Horse	H_caballus	equCab1	equCab2
-Escherichia coli	E. coli	E_coli	E_coli_oct_2007	e-coli_oct-2007
-Felis catus	Cat	F_catus	felCat3
-Gallus gallus	Chicken	G_gallus	G_gallus_May_2006	galGal2	galGal3
-Gasterosteus aculeatus	Stickleback G_aculeatus	gasAcu1
-Glycine max	Soybean	G_max	G_max_Dec_2008
-Homo sapiens	Human	H_sapiens	H_sapiens_Jun_2002	H_sapiens_Nov_2002	H_sapiens_Apr_2003	H_sapiens_Jul_2003	H_sapiens_May_2004	H_sapiens_mar_2006	H_sapiens_Mar_2006	hg16	hg17	hg18	hg19
-Macaca mulatta	Rhesus	M_mulatta	M_mulatta_Jan_2006	rheMac2
-Medicago truncatula	Barrel Medic	M_truncatula	M_truncatula_Aug_2007
-Monodelphis domestica	Opossum	M_domestica	monDom1	monDom4	monDom5
-Mus musculus	Mouse	M_musculus	M_musculus_Feb_2002	M_musculus_Feb_2003	M_musculus_Oct_2003	M_musculus_Aug_2005	M_musculus_Mar_2006	M_musculus_Jul_2007	mm7	mm8	mm9	mouse_feb-2006_mm8	Mm:NCBIv37
-Mycobacterium abscessus	M. abcessus	M_abscessus	M_abscessus_Mar_2008
-Mycobacterium smegmatis	M. smegmatis	M_smegmatis	M_smegmatis_mc2-155_march_2008
-Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	M_tuberculosis_h37Rv_sep_2008	mtuberculosis-h37Rv_sep2008
-Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna1
-Oryza sativa	Rice	O_sativa	O_sativa_Jan_2007	O_sativa_Jan_2009	O_sativa_Jun_2009
-Oryzias latipes	Medaka	O_latipes	oryLat2
-Ostreococcus lucimarinus	O_lucimarinus_Apr_2007
-Pan troglodytes	Chimp	P_troglodytes	panTro1	panTro2
-Petromyzon marinus	Lamprey	P_marinus	petMar1
-Plasmodium falciparum	P. falciparum	P_falciparum	P_falciparum_Jul_2007	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
-Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe2
-Populus trichocarpa	Black Cottonwood	P_trichocarpa	P_trichocarpa_Jun_2004
-Pristionchus pacificus	P. pacificus	P_pacificus	priPac1
-Rattus norvegicus	Rat	R_norvegicus	R_norvegicus_Jan_2003	R_norvegicus_Jun_2003	R_norvegicus_Nov_2004	rn3	rn4
-Saccharomyces cerevisiae	Yeast	S_cerevisiae	S_cerevisiae_Oct_2003	sacCer1	sacCer2	yeast_feb2006_37_1d	yeast_may2008	S_cerevisiae_feb_2006	S_cerevisiae_Jul_2007	S_cerevisiae_Apr_2008	S_cerevisiae_may_2008	yeast_2005Jan	yeast_Ver1
-Schizosaccharomyces pombe	Fission Yeast	S_pombe	S_pombe_Sep_2004	S_pombe_Apr_2007	S_pombe_sep_2007	pombe_sep-2007
-Sodalis glossinidius	S_glossinidius	S_glossinidius_Jan_2006
-Sorghum bicolor	Sorghum	S_bicolor_Mar_2008   
-Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur1	strPur2
-Taeniopygia guttata	Zebra Finch	taeGut1
-Takifugu rubripes	Fugu	fr1	fr2
-Tetraodon nigroviridis	Tetraodon	tetNig1	T_nigroviridis_feb_2004	T_nigroviridis_mar_2007
-Vitis vinifera	Common Grape Vine	V_vinifera	V_vinifera_Apr_2007
-Xenopus tropicalis	Pipid Frog	xenTro1	xenTro2	X_tropicalis_aug_2005
+Anolis carolinensis	Lizard	A_carolinensis	anoCar
+Anopheles gambiae	A. gambiae	A_gambiae	anoGam
+Apis mellifera	A. mellifera	A_mellifera	apiMel
+Arabidopsis thaliana	Thale Cress	A_thaliana	
+Bos taurus	Cow	B_taurus	bosTau
+Branchiostoma floridae	Lancet	B_floridae	braFlo
+Callithrix jacchus	Marmoset	C_jacchus	calJac
+Cavia porcellus	Guinea Pig	C_porcellus	cavPor
+Ciona intestinalis	C. intestinalis	C_intestinalis	ci
+Caenorhabditis brenneri	C. brenneri	C_brenneri	caePb
+Caenorhabditis briggsae	C. briggsae	C_briggsae	cb
+Caenorhabditis elegans	C. elegans	C_elegans	ce
+Caenorhabditis japonica	C. japonica	C_japonica	caeJap
+Caenorhabditis remanei	C. remanei	C_remanei	caeRem
+Canis lupus familiaris	Dog	C_familiaris	canFam
+Drosophila ananassae	D. ananassae	D_ananassae	droAna
+Drosophila erecta	D. erecta	D_erecta	droEre
+Drosophila grimshawi	D. grimshawi	D_grimshawi	droGri
+Drosophila melanogaster	D. melanogaster	D_melanogaster	dm
+Drosophila mojavensis	D. mojavensis	D_mojavensis	droMoj
+Drosophila persimilis	D. persimilis	D_persimilis	droPer
+Drosophila pseudoobscura	D. pseudoobscura	D_pseudoobscura	dp
+Drosophila sechellia	D. sechellia	D_sechellia	droSec
+Drosophila simulans	D. simulans	D_simulans	droSim
+Drosophila virilis	D. virilis	D_virilis	droVir
+Drosophila yakuba	D. yakuba	D_yakuba	droYak
+Danio rerio	Zebrafish	D_rerio	danRer
+Equus caballus	Horse	E_caballus	equCab
+Escherichia coli	E. coli	E_coli	
+Felis catus	Cat	F_catus	felCat
+Gallus gallus	Chicken	G_gallus	galGal
+Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu
+Glycine max	Soybean	G_max	
+Homo sapiens	Human	H_sapiens	hg
+Macaca mulatta	Rhesus	M_mulatta	rheMac
+Medicago truncatula	Barrel Medic	M_truncatula	
+Monodelphis domestica	Opossum	M_domestica	monDom
+Mus musculus	Mouse	M_musculus	mm
+Mycobacterium abscessus	M. abcessus	M_abscessus	
+Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
+Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
+Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna
+Oryza sativa	Rice	O_sativa	
+Oryzias latipes	Medaka	O_latipes	oryLat
+Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
+Pan troglodytes	Chimp	P_troglodytes	panTro
+Petromyzon marinus	Lamprey	P_marinus	petMar
+Plasmodium falciparum	P. falciparum	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
+Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe
+Populus trichocarpa	Black Cottonwood	P_trichocarpa	
+Pristionchus pacificus	P. pacificus	P_pacificus	priPac
+Rattus norvegicus	Rat	R_norvegicus	rn
+Saccharomyces cerevisiae	Yeast	S_cerevisiae	sacCer
+Schizosaccharomyces pombe	Fission Yeast	S_pombe	
+Sodalis glossinidius	S. glossinidius	S_glossinidius	
+Sorghum bicolor	Sorghum	S_bicolor	
+Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur
+Taeniopygia guttata	Zebra Finch	T_guttata	taeGut
+Takifugu rubripes	Fugu	T_rubripes	fr
+Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig
+Vitis vinifera	Common Grape Vine	V_vinifera	
+Xenopus tropicalis	Pipid Frog	X_tropicalis	xenTro

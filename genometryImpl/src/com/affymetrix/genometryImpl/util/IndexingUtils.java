@@ -89,7 +89,11 @@ public class IndexingUtils {
 	// filename of indexed annotations.
 	static String indexedFileName(String dataRoot, File file, AnnotatedSeqGroup genome, BioSeq seq) {
 		String retVal = indexedDirName(dataRoot, genome, seq) + "/";
-		String shortenedPath = (file.getPath().replace(dataRoot + genomeDirName(genome) + "/", ""));
+		
+		// Change the file path to use forward slash (for Windows OS)
+		String normalizedFilePath = file.getPath().replace("\\", "/");
+		
+		String shortenedPath = (normalizedFilePath.replace(dataRoot + genomeDirName(genome) + "/", ""));
 		return retVal + shortenedPath;
 	}
 	static String indexedDirName(String dataRoot, AnnotatedSeqGroup genome, BioSeq seq) {

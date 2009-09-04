@@ -48,6 +48,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.menuitem.*;
@@ -65,7 +66,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.UnibrowAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.util.WebBrowserControl;
 import com.affymetrix.swing.DisplayUtils;
 
 /**
@@ -143,7 +143,7 @@ public final class IGB extends Application
 	JMenuItem move_tabbed_panel_to_window_item;
 	SeqMapView map_view;
 	AlignControl align_control;
-	DataLoadView data_load_view = null;
+	public DataLoadView data_load_view = null;
 	AltSpliceView slice_view = null;
 	List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
 	List<Object> plugins = new ArrayList<Object>(16);
@@ -315,6 +315,12 @@ public final class IGB extends Application
 	}
 
 	private void init() {
+		if ("Mac OS X".equals(System.getProperty("os.name"))) {
+			MacIntegration mi = MacIntegration.getInstance();
+			if (this.getIcon() != null) {
+				mi.setDockIconImage(this.getIcon());
+			}
+		}
 		frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
 		RepaintManager rm = RepaintManager.currentManager(frm);
 
@@ -435,14 +441,14 @@ public final class IGB extends Application
 		exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
 		adjust_edgematch_item = new JMenuItem("Adjust edge match fuzziness", KeyEvent.VK_F);
-		view_ucsc_item = new JMenuItem("View Region in UCSC Browser", KeyEvent.VK_R);
+		view_ucsc_item = new JMenuItem("View Region in UCSC Browser");
 		view_ucsc_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/WebComponent16.gif"));
 
 		clamp_view_item = new JMenuItem("Clamp To View", KeyEvent.VK_V);
 		res2clip_item = new JMenuItem("Copy Selected Residues to Clipboard", KeyEvent.VK_C);
 		res2clip_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Copy16.gif"));
 		unclamp_item = new JMenuItem("Unclamp", KeyEvent.VK_U);
-		rev_comp_item = new JMenuItem("Reverse Complement", KeyEvent.VK_R);
+		rev_comp_item = new JMenuItem("Reverse Complement");
 		shrink_wrap_item = new JCheckBoxMenuItem("Toggle Shrink Wrapping");
 		shrink_wrap_item.setMnemonic(KeyEvent.VK_S);
 		shrink_wrap_item.setState(map_view.getShrinkWrap());
@@ -577,8 +583,6 @@ public final class IGB extends Application
 		plugins_info.add(new PluginInfo(SearchView.class.getName(), "Search", true));
 		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true));
 		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
-		plugins_info.add(new PluginInfo(Das2SearchView.class.getName(), "Name Search", true));
-		plugins_info.add(new PluginInfo(AnnotBrowserView.class.getName(), "Annotation Browser", true));
 		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true));
 
 		plugins_info.addAll(getPluginsFromXmlPrefs(PrefsLoader.getIGBPrefs(main_args)));
@@ -847,7 +851,7 @@ public final class IGB extends Application
 		}
 	}
 
-	private void showAboutDialog() {
+	void showAboutDialog() {
 		JPanel message_pane = new JPanel();
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
@@ -888,25 +892,25 @@ public final class IGB extends Application
 		licenseB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to");
+				GeneralUtils.browse("http://www.affymetrix.com/support/developer/tools/igbsource_terms.affx?to");
 			}
 		});
 		apacheB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://www.apache.org/licenses/LICENSE-2.0");
+				GeneralUtils.browse("http://www.apache.org/licenses/LICENSE-2.0");
 			}
 		});
 		freehepB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://java.freehep.org/vectorgraphics/license.html");
+				GeneralUtils.browse("http://java.freehep.org/vectorgraphics/license.html");
 			}
 		});
 		fusionB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://www.affymetrix.com/support/developer/fusion/index.affx");
+				GeneralUtils.browse("http://www.affymetrix.com/support/developer/fusion/index.affx");
 			}
 		});
 		JPanel buttonP = new JPanel(new GridLayout(2, 2));
@@ -934,7 +938,7 @@ public final class IGB extends Application
 		sfB.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent evt) {
-				WebBrowserControl.displayURL("http://genoviz.sourceforge.net");
+				GeneralUtils.browse("http://genoviz.sourceforge.net");
 			}
 		});
 		Box buttonP = Box.createHorizontalBox();
@@ -988,7 +992,7 @@ public final class IGB extends Application
 		return icon;
 	}
 
-	private void exit() {
+	void exit() {
 		boolean ask_before_exit = UnibrowPrefsUtil.getBooleanParam(UnibrowPrefsUtil.ASK_BEFORE_EXITING,
 						UnibrowPrefsUtil.default_ask_before_exiting);
 		String message = "Do you really want to exit?";

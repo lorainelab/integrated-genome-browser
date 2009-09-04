@@ -31,10 +31,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
@@ -69,23 +66,6 @@ public abstract class DasLoader {
 		return factory;
 	}
 
-  /**
-   *  Set parser factory to _not_ defer node expansion (thus forcing full expansion of DOM when
-   *    loaded). This slows down "loading" of DOM significantly (~2-3x), but also significantly
-   *    speeds up later access of the document, since that does not
-   *    trigger any node expansions.
-   *  Saves a lot of memory because it eliminates deferred-node objects that xerces-j uses, which
-   *     seem to elude the garbage collector and just keep accumulating....
-	 *
-	 * Unknown if this is still needed, as we are no longer guaranteed to be using Xerces-j.
-   */
-	/*public static void doNotDeferNodeExpansion(DocumentBuilderFactory factory) {
-		try {
-			factory.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-	}*/
 
   /** Opens an XML document, using {@link #nonValidatingFactory()}. */
   public static Document getDocument(String url)
@@ -114,7 +94,7 @@ public abstract class DasLoader {
       result_stream = new BufferedInputStream(request_con.getInputStream());
       doc = getDocument(result_stream);
     } finally {
-      if (result_stream != null) try {result_stream.close();} catch (Exception e) {}
+		GeneralUtils.safeClose(result_stream);
     }
     return doc;
   }

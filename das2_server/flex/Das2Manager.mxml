@@ -326,10 +326,6 @@
     	</mx:AddChild>
 	</mx:State>
     <mx:State name="AdminAllState" basedOn="AdminUserState">
-    	<!--<mx:AddChild relativeTo="{mainViewStack}" position="lastChild">
-    		<views:ConfigurationView id="configView" label="Configure"      icon="@Embed(source='assets/wrench.png')" width="100%" height="100%">
-  		    </views:ConfigurationView>
-    	</mx:AddChild>-->
     </mx:State>
     <mx:State name="GuestState" basedOn="UserState">
       <mx:RemoveChild target="{dictionaryView}"/>

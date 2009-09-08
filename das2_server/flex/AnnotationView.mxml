@@ -373,7 +373,7 @@
         			parms.scopeLevel = "ALL";
         		}
         	} else if (currentState == "AdminState") {
-        		parms.idSecurityGroup = this.securityGroupCombo.selectedItem != null ? this.securityGroupCombo.selectedItem.@id : "";
+        		parms.idUserGroup = this.userGroupCombo.selectedItem != null ? this.userGroupCombo.selectedItem.@id : "";
         	}
         	parms.idOrganism = this.organismCombo.selectedItem != null ? this.organismCombo.selectedItem.@id : "";
         	parms.idGenomeVersion = this.genomeVersionCombo.selectedItem != null ? this.genomeVersionCombo.selectedItem.@id : "";
@@ -499,7 +499,7 @@
 				parentApplication.selectDictionaryComboBox(this.experimentMethodCombo, getAnnotation.lastResult.@idExperimentMethod, parentApplication.dictionaryExperimentMethod);
 				parentApplication.selectDictionaryComboBox(this.analysisTypeCombo, getAnnotation.lastResult.@idAnalysisType, parentApplication.dictionaryAnalysisType);
 				parentApplication.selectDictionaryComboBox(this.visibilityCombo, getAnnotation.lastResult.@codeVisibility, parentApplication.dictionaryVisibility);
-				parentApplication.selectDictionaryComboBox(this.annotationSecurityGroupCombo, getAnnotation.lastResult.@idSecurityGroup, parentApplication.dictionarySecurityGroup);
+				parentApplication.selectDictionaryComboBox(this.annotationUserGroupCombo, getAnnotation.lastResult.@idUserGroup, parentApplication.dictionaryUserGroup);
 				if (currentState == "AdminState") {
 					parentApplication.selectDictionaryComboBox(this.annotationOwnerCombo, getAnnotation.lastResult.@idUser, parentApplication.dictionaryUser);
 				}
@@ -1147,7 +1147,7 @@
         	params.idExperimentMethod     = this.experimentMethodCombo.selectedItem != null ? this.experimentMethodCombo.selectedItem.@id : "";
         	params.idAnalysisType    = this.analysisTypeCombo.selectedItem != null ? this.analysisTypeCombo.selectedItem.@id : "";
         	params.codeVisibility         = this.visibilityCombo.selectedItem != null ? this.visibilityCombo.selectedItem.@id : "";
-        	params.idSecurityGroup        = this.annotationSecurityGroupCombo.selectedItem != null ? this.annotationSecurityGroupCombo.selectedItem.@id : "";
+        	params.idUserGroup        = this.annotationUserGroupCombo.selectedItem != null ? this.annotationUserGroupCombo.selectedItem.@id : "";
         	if (this.currentState == "AdminState") {
 	        	params.idUser                 = annotationOwnerCombo.selectedItem != null ? annotationOwnerCombo.selectedItem.@id : "";
         	} else {
@@ -1554,7 +1554,7 @@
 							    </mx:HBox>
 							    <mx:HBox width="100%" horizontalGap="0" id="userGroupBox">
 							    	<mx:Label text="User Group:" width="72"/>
-							    	<mx:ComboBox id="annotationSecurityGroupCombo" dataProvider="{parentApplication.dictionarySecurityGroup}" width="100%" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
+							    	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							    </mx:HBox>
 							    <mx:HBox width="100%" horizontalGap="0" id="hbox10">
 							    	<mx:Label text="Visibility:" width="72"/>
@@ -1743,7 +1743,7 @@
 			<mx:AddChild relativeTo="{hbox1}" position="lastChild">
 			    <mx:HBox horizontalGap="0" paddingLeft="2" verticalAlign="middle">
 			        <mx:Label text="Group:"/>
-					<mx:ComboBox id="securityGroupCombo" dataProvider="{parentApplication.dictionaryMySecurityGroup}" labelField="@name" width="180" change="refreshAnnotations()"></mx:ComboBox>
+					<mx:ComboBox id="userGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" labelField="@name" width="180" change="refreshAnnotations()"></mx:ComboBox>
 			    </mx:HBox>
 			</mx:AddChild>
 			<mx:SetProperty target="{organismCombo}" name="labelField" value="@binomialName"/>

@@ -38,8 +38,8 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 	private boolean                isGuestRole = true;
 	
 	
-	private HashMap<Integer, SecurityGroup>   groupsMemCollabVisibility = new HashMap<Integer, SecurityGroup>();
-	private HashMap<Integer, SecurityGroup>   groupsMemVisibility = new HashMap<Integer, SecurityGroup>();
+	private HashMap<Integer, UserGroup>   groupsMemCollabVisibility = new HashMap<Integer, UserGroup>();
+	private HashMap<Integer, UserGroup>   groupsMemVisibility = new HashMap<Integer, UserGroup>();
 	
 	private HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
 	
@@ -61,16 +61,16 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 			this.isAdminRole = isAdminRole;
 			this.isGuestRole = isGuestRole;
 			
-			for (SecurityGroup sc : (Set<SecurityGroup>)user.getMemberSecurityGroups()) {
-				groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
-				groupsMemVisibility.put(sc.getIdSecurityGroup(), sc);
+			for (UserGroup sc : (Set<UserGroup>)user.getMemberUserGroups()) {
+				groupsMemCollabVisibility.put(sc.getIdUserGroup(), sc);
+				groupsMemVisibility.put(sc.getIdUserGroup(), sc);
 			}
-			for (SecurityGroup sc : (Set<SecurityGroup>)user.getManagingSecurityGroups()) {
-				groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
-				groupsMemVisibility.put(sc.getIdSecurityGroup(), sc);
+			for (UserGroup sc : (Set<UserGroup>)user.getManagingUserGroups()) {
+				groupsMemCollabVisibility.put(sc.getIdUserGroup(), sc);
+				groupsMemVisibility.put(sc.getIdUserGroup(), sc);
 			}
-			for (SecurityGroup sc : (Set<SecurityGroup>)user.getCollaboratingSecurityGroups()) {
-				groupsMemCollabVisibility.put(sc.getIdSecurityGroup(), sc);
+			for (UserGroup sc : (Set<UserGroup>)user.getCollaboratingUserGroups()) {
+				groupsMemCollabVisibility.put(sc.getIdUserGroup(), sc);
 			}
 			this.loadAuthorizedResources(sess);	
 		}
@@ -87,33 +87,33 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		root.addAttribute("name",            user != null ? user.getName() : "");
 		root.addAttribute("isAdmin",         isAdminRole ? "Y" : "N");
 		root.addAttribute("isGuest",         isGuestRole ? "Y" : "N");
-		root.addAttribute("canManageUsers",  isAdminRole || (user != null && user.getManagingSecurityGroups().size() > 0) ? "Y" : "N");
+		root.addAttribute("canManageUsers",  isAdminRole || (user != null && user.getManagingUserGroups().size() > 0) ? "Y" : "N");
 		
 		
 		return doc;		
 	}
 	
-	public boolean belongsToGroup(Integer idSecurityGroup) {
-		return isMember(idSecurityGroup) || isCollaborator(idSecurityGroup) || isManager(idSecurityGroup);
+	public boolean belongsToGroup(Integer idUserGroup) {
+		return isMember(idUserGroup) || isCollaborator(idUserGroup) || isManager(idUserGroup);
 	}
 	
-	public boolean belongsToGroup(SecurityGroup group) {
+	public boolean belongsToGroup(UserGroup group) {
 		return isMember(group) || isCollaborator(group) || isManager(group);
 	}
 	
-	public boolean isMember(SecurityGroup group) {
-		return isMember(group.getIdSecurityGroup());
+	public boolean isMember(UserGroup group) {
+		return isMember(group.getIdUserGroup());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean isMember(Integer idSecurityGroup) {
+	public boolean isMember(Integer idUserGroup) {
 		if (!scrutinizeAccess) {
 			return false;
 		}
 		
 		boolean isMember = false;
-		for(SecurityGroup g : (Set<SecurityGroup>)user.getMemberSecurityGroups()) {
-			if (g.getIdSecurityGroup().equals(idSecurityGroup)) {
+		for(UserGroup g : (Set<UserGroup>)user.getMemberUserGroups()) {
+			if (g.getIdUserGroup().equals(idUserGroup)) {
 				isMember = true;
 				break;
 			}
@@ -121,18 +121,18 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		return isMember;
 	}
 	
-	public boolean isCollaborator(SecurityGroup group) {	
-		return isCollaborator(group.getIdSecurityGroup());		
+	public boolean isCollaborator(UserGroup group) {	
+		return isCollaborator(group.getIdUserGroup());		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean isCollaborator(Integer idSecurityGroup) {
+	public boolean isCollaborator(Integer idUserGroup) {
 		if (!scrutinizeAccess) {
 			return false;
 		}
 		boolean isCollaborator = false;
-		for(SecurityGroup g : (Set<SecurityGroup>)user.getCollaboratingSecurityGroups()) {
-			if (g.getIdSecurityGroup().equals(idSecurityGroup)) {
+		for(UserGroup g : (Set<UserGroup>)user.getCollaboratingUserGroups()) {
+			if (g.getIdUserGroup().equals(idUserGroup)) {
 				isCollaborator = true;
 				break;
 			}
@@ -140,12 +140,12 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		return isCollaborator;
 	}
 	
-	public boolean isManager(SecurityGroup group) {
-		return isManager(group.getIdSecurityGroup());
+	public boolean isManager(UserGroup group) {
+		return isManager(group.getIdUserGroup());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean isManager(Integer idSecurityGroup) {
+	public boolean isManager(Integer idUserGroup) {
 		if (!scrutinizeAccess) {
 			return false;
 		}
@@ -154,8 +154,8 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		if (this.isAdminRole) {
 			isManager = true;
 		} else {
-			for(SecurityGroup g : (Set<SecurityGroup>)user.getManagingSecurityGroups()) {
-				if (g.getIdSecurityGroup().equals(idSecurityGroup)) {
+			for(UserGroup g : (Set<UserGroup>)user.getManagingUserGroups()) {
+				if (g.getIdUserGroup().equals(idUserGroup)) {
 					isManager = true;
 					break;
 				}
@@ -165,19 +165,19 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public SecurityGroup getDefaultSecurityGroup() {
+	public UserGroup getDefaultUserGroup() {
 		if (!scrutinizeAccess) {
 			return null;
 		}
-		SecurityGroup defaultSecurityGroup = null;
-		if (user.getManagingSecurityGroups() != null && user.getManagingSecurityGroups().size() > 0) {
-			defaultSecurityGroup = SecurityGroup.class.cast(user.getManagingSecurityGroups().iterator().next());			
-		} else if (user.getMemberSecurityGroups() != null && user.getMemberSecurityGroups().size() > 0) {
-			defaultSecurityGroup = SecurityGroup.class.cast(user.getMemberSecurityGroups().iterator().next());			
-		} else if (user.getCollaboratingSecurityGroups() != null && user.getCollaboratingSecurityGroups().size() > 0) {
-			defaultSecurityGroup = SecurityGroup.class.cast(user.getCollaboratingSecurityGroups().iterator().next());			
+		UserGroup defaultUserGroup = null;
+		if (user.getManagingUserGroups() != null && user.getManagingUserGroups().size() > 0) {
+			defaultUserGroup = UserGroup.class.cast(user.getManagingUserGroups().iterator().next());			
+		} else if (user.getMemberUserGroups() != null && user.getMemberUserGroups().size() > 0) {
+			defaultUserGroup = UserGroup.class.cast(user.getMemberUserGroups().iterator().next());			
+		} else if (user.getCollaboratingUserGroups() != null && user.getCollaboratingUserGroups().size() > 0) {
+			defaultUserGroup = UserGroup.class.cast(user.getCollaboratingUserGroups().iterator().next());			
 		} 
-		return defaultSecurityGroup;
+		return defaultUserGroup;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -199,13 +199,13 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 			} else if (a.getCodeVisibility().equals(Visibility.MEMBERS)) {
 				// Annotations with Members visibility can be read by members
 				// or managers of the annotation's security group.				
-				if (this.isMember(a.getIdSecurityGroup()) || this.isManager(a.getIdSecurityGroup())) {
+				if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
 					canRead = true;
 				}
 			} else if (a.getCodeVisibility().equals(Visibility.MEMBERS_AND_COLLABORATORS)) {
 				// Annotations with Members & Collaborators visibility can be read by 
 				// members, collaborators, or managers of the annotation's security group.				
-				if (this.belongsToGroup(a.getIdSecurityGroup())) {
+				if (this.belongsToGroup(a.getIdUserGroup())) {
 					canRead = true;
 				}
 			} else if (a.getIdUser().equals(user.getIdUser())) {
@@ -221,7 +221,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 				// Annotation groups for Annotations with Members visibility can be 
 				// read by members or managers of the annotation's security group.	
 				for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-					if (this.isMember(a.getIdSecurityGroup()) || this.isManager(a.getIdSecurityGroup())) {
+					if (this.isMember(a.getIdUserGroup()) || this.isManager(a.getIdUserGroup())) {
 						canRead = true;
 						break;
 					}					
@@ -231,7 +231,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 				// visibility can be read by members, collaborators, or managers 
 				// of the annotation's security group.				
 				for(Annotation a : (Set<Annotation>)ag.getAnnotationGroupings()) {
-					if (this.belongsToGroup(a.getIdSecurityGroup())) {
+					if (this.belongsToGroup(a.getIdUserGroup())) {
 						canRead = true;
 						break;
 					}
@@ -267,14 +267,14 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 			if (!canWrite) {
 				if (object instanceof Annotation) {
 					Annotation a = Annotation.class.cast(object);
-					if (this.isMember(a.getIdSecurityGroup())) {
+					if (this.isMember(a.getIdUserGroup())) {
 						canWrite = true;
 					} 
 				}
 			}
 			
-		} else if (object instanceof SecurityGroup) {
-			SecurityGroup g = (SecurityGroup)object;
+		} else if (object instanceof UserGroup) {
+			UserGroup g = (UserGroup)object;
 			if (this.isManager(g)) {
 				canWrite = true;
 			}
@@ -331,7 +331,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 					queryBuf.append("(");
 					queryBuf.append(annotationAlias + ".codeVisibility in ('" + Visibility.MEMBERS + "', '" + Visibility.PUBLIC + "')");
 					addWhere = addWhereOrAnd(addWhere, queryBuf);
-					queryBuf.append(annotationAlias + ".idSecurityGroup ");
+					queryBuf.append(annotationAlias + ".idUserGroup ");
 					appendMemberInStatement(queryBuf, this.groupsMemVisibility);
 					queryBuf.append(")");
 					
@@ -349,7 +349,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 					queryBuf.append("(");
 					queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
 					addWhere = addWhereOrAnd(addWhere, queryBuf);
-					queryBuf.append(annotationAlias + ".idSecurityGroup ");
+					queryBuf.append(annotationAlias + ".idUserGroup ");
 					appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);
 					queryBuf.append(")");
 
@@ -427,11 +427,11 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 	
 	
 	@SuppressWarnings("unchecked")
-	private void appendMemberInStatement(StringBuffer queryBuf, HashMap securityGroupMap) {
+	private void appendMemberInStatement(StringBuffer queryBuf, HashMap userGroupMap) {
 		queryBuf.append(" in (");
-		for(Iterator i = securityGroupMap.keySet().iterator(); i.hasNext();) { 
-			Integer idSecurityGroup = (Integer)i.next();
-			queryBuf.append(idSecurityGroup);				
+		for(Iterator i = userGroupMap.keySet().iterator(); i.hasNext();) { 
+			Integer idUserGroup = (Integer)i.next();
+			queryBuf.append(idUserGroup);				
 			if (i.hasNext()) {
 				queryBuf.append(",");
 			}

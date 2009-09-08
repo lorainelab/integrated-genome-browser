@@ -22,37 +22,37 @@ CREATE DATABASE IF NOT EXISTS genoviz;
 USE genoviz;
 
 --
--- Definition of table `analysistype`
+-- Definition of table `AnalysisType`
 --
 
-DROP TABLE IF EXISTS `analysistype`;
-CREATE TABLE `analysistype` (
+DROP TABLE IF EXISTS `AnalysisType`;
+CREATE TABLE `AnalysisType` (
   `idAnalysisType` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
   `isActive` char(1) default NULL,
   `idUser` int(10) unsigned default NULL,
   PRIMARY KEY  USING BTREE (`idAnalysisType`),
   KEY `FK_AnalysisType_User` (`idUser`),
-  CONSTRAINT `FK_AnalysisType_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
+  CONSTRAINT `FK_AnalysisType_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `analysistype`
+-- Dumping data for table `AnalysisType`
 --
 
-/*!40000 ALTER TABLE `analysistype` DISABLE KEYS */;
-INSERT INTO `analysistype` (`idAnalysisType`,`name`,`isActive`,`idUser`) VALUES 
+/*!40000 ALTER TABLE `AnalysisType` DISABLE KEYS */;
+INSERT INTO `AnalysisType` (`idAnalysisType`,`name`,`isActive`,`idUser`) VALUES 
  (1,'Dynamic/Differential','Y',NULL),
  (2,'Static','Y',NULL);
-/*!40000 ALTER TABLE `analysistype` ENABLE KEYS */;
+/*!40000 ALTER TABLE `AnalysisType` ENABLE KEYS */;
 
 
 --
--- Definition of table `annotation`
+-- Definition of table `Annotation`
 --
 
-DROP TABLE IF EXISTS `annotation`;
-CREATE TABLE `annotation` (
+DROP TABLE IF EXISTS `Annotation`;
+CREATE TABLE `Annotation` (
   `idAnnotation` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(45) NOT NULL,
   `description` varchar(2000) default NULL,
@@ -63,7 +63,7 @@ CREATE TABLE `annotation` (
   `idGenomeVersion` int(10) unsigned NOT NULL,
   `codeVisibility` varchar(10) NOT NULL,
   `idUser` int(10) unsigned default NULL,
-  `idSecurityGroup` int(10) unsigned default NULL,
+  `idUserGroup` int(10) unsigned default NULL,
   `summary` varchar(200) default NULL,
   PRIMARY KEY  (`idAnnotation`),
   KEY `FK_Annotation_ExperimentPlatform` (`idExperimentPlatform`),
@@ -71,31 +71,31 @@ CREATE TABLE `annotation` (
   KEY `FK_Annotation_GenomeVersion` (`idGenomeVersion`),
   KEY `FK_Annotation_User` (`idUser`),
   KEY `FK_Annotation_Visibility` (`codeVisibility`),
-  KEY `FK_Annotation_group` USING BTREE (`idSecurityGroup`),
+  KEY `FK_Annotation_group` USING BTREE (`idUserGroup`),
   KEY `FK_Annotation_QuantificationType` USING BTREE (`idAnalysisType`),
-  CONSTRAINT `FK_Annotation_AnalysisType` FOREIGN KEY (`idAnalysisType`) REFERENCES `analysistype` (`idAnalysisType`),
-  CONSTRAINT `FK_Annotation_ExperimentMethod` FOREIGN KEY (`idExperimentMethod`) REFERENCES `experimentmethod` (`idExperimentMethod`),
-  CONSTRAINT `FK_Annotation_ExperimentPlatform` FOREIGN KEY (`idExperimentPlatform`) REFERENCES `experimentplatform` (`idExperimentPlatform`),
-  CONSTRAINT `FK_Annotation_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `genomeversion` (`idGenomeVersion`),
-  CONSTRAINT `FK_Annotation_SecurityGroup` FOREIGN KEY (`idSecurityGroup`) REFERENCES `securitygroup` (`idSecurityGroup`),
-  CONSTRAINT `FK_Annotation_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`),
-  CONSTRAINT `FK_Annotation_Visibility` FOREIGN KEY (`codeVisibility`) REFERENCES `visibility` (`codeVisibility`)
+  CONSTRAINT `FK_Annotation_AnalysisType` FOREIGN KEY (`idAnalysisType`) REFERENCES `AnalysisType` (`idAnalysisType`),
+  CONSTRAINT `FK_Annotation_ExperimentMethod` FOREIGN KEY (`idExperimentMethod`) REFERENCES `ExperimentMethod` (`idExperimentMethod`),
+  CONSTRAINT `FK_Annotation_ExperimentPlatform` FOREIGN KEY (`idExperimentPlatform`) REFERENCES `ExperimentPlatform` (`idExperimentPlatform`),
+  CONSTRAINT `FK_Annotation_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`),
+  CONSTRAINT `FK_Annotation_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`),
+  CONSTRAINT `FK_Annotation_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT `FK_Annotation_Visibility` FOREIGN KEY (`codeVisibility`) REFERENCES `Visibility` (`codeVisibility`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `annotation`
+-- Dumping data for table `Annotation`
 --
 
-/*!40000 ALTER TABLE `annotation` DISABLE KEYS */;
-/*!40000 ALTER TABLE `annotation` ENABLE KEYS */;
+/*!40000 ALTER TABLE `Annotation` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Annotation` ENABLE KEYS */;
 
 
 --
--- Definition of table `annotationgrouping`
+-- Definition of table `AnnotationGrouping`
 --
 
-DROP TABLE IF EXISTS `annotationgrouping`;
-CREATE TABLE `annotationgrouping` (
+DROP TABLE IF EXISTS `AnnotationGrouping`;
+CREATE TABLE `AnnotationGrouping` (
   `idAnnotationGrouping` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(45) NOT NULL,
   `description` varchar(2000) default NULL,
@@ -106,17 +106,17 @@ CREATE TABLE `annotationgrouping` (
   KEY `FK_AnnotationFolder_GenomeVersion` (`idGenomeVersion`),
   KEY `FK_AnnotationGrouping_parentAnnotationGrouping` USING BTREE (`idParentAnnotationGrouping`),
   KEY `FK_AnnotationGrouping_User` (`idUser`),
-  CONSTRAINT `FK_AnnotationFolder_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `genomeversion` (`idGenomeVersion`),
-  CONSTRAINT `FK_AnnotationGrouping_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`),
-  CONSTRAINT `FK_Annotationgruping_parentAnnotationGrouping` FOREIGN KEY (`idParentAnnotationGrouping`) REFERENCES `annotationgrouping` (`idAnnotationGrouping`)
+  CONSTRAINT `FK_AnnotationFolder_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`),
+  CONSTRAINT `FK_AnnotationGrouping_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT `FK_Annotationgruping_parentAnnotationGrouping` FOREIGN KEY (`idParentAnnotationGrouping`) REFERENCES `AnnotationGrouping` (`idAnnotationGrouping`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6300 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `annotationgrouping`
+-- Dumping data for table `AnnotationGrouping`
 --
 
-/*!40000 ALTER TABLE `annotationgrouping` DISABLE KEYS */;
-INSERT INTO `annotationgrouping` (`idAnnotationGrouping`,`name`,`description`,`idParentAnnotationGrouping`,`idGenomeVersion`,`idUser`) VALUES 
+/*!40000 ALTER TABLE `AnnotationGrouping` DISABLE KEYS */;
+INSERT INTO `AnnotationGrouping` (`idAnnotationGrouping`,`name`,`description`,`idParentAnnotationGrouping`,`idGenomeVersion`,`idUser`) VALUES 
  (400,'A_thaliana_Jan_2004','A_thaliana_Jan_2004',NULL,400,NULL),
  (500,'B_taurus_Aug_2006','B_taurus_Aug_2006',NULL,500,NULL),
  (501,'B_taurus_Oct_2007','B_taurus_Oct_2007',NULL,501,NULL),
@@ -169,52 +169,52 @@ INSERT INTO `annotationgrouping` (`idAnnotationGrouping`,`name`,`description`,`i
  (6000,'T_nigroviridis_Feb_2004','T_nigroviridis_Feb_2004',NULL,6000,NULL),
  (6100,'V_vinifera_Apr_2007','V_vinifera_Apr_2007',NULL,6100,NULL),
  (6201,'X_tropicalis_Aug_2005','X_tropicalis_Aug_2005',NULL,6201,NULL);
-/*!40000 ALTER TABLE `annotationgrouping` ENABLE KEYS */;
+/*!40000 ALTER TABLE `AnnotationGrouping` ENABLE KEYS */;
 
 
 --
--- Definition of table `annotationtoannotationgrouping`
+-- Definition of table `AnnotationToAnnotationGrouping`
 --
 
-DROP TABLE IF EXISTS `annotationtoannotationgrouping`;
-CREATE TABLE `annotationtoannotationgrouping` (
+DROP TABLE IF EXISTS `AnnotationToAnnotationGrouping`;
+CREATE TABLE `AnnotationToAnnotationGrouping` (
   `idAnnotation` int(10) unsigned NOT NULL,
   `idAnnotationGrouping` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`idAnnotation`,`idAnnotationGrouping`),
   KEY `FK_AnnotationToAnnotationGrouping_AnnotationGrouping` (`idAnnotationGrouping`),
-  CONSTRAINT `FK_AnnotationToAnnotationGrouping_AnnotationGrouping` FOREIGN KEY (`idAnnotationGrouping`) REFERENCES `annotationgrouping` (`idAnnotationGrouping`),
-  CONSTRAINT `FK_AnnotationToGrouping_Annotation` FOREIGN KEY (`idAnnotation`) REFERENCES `annotation` (`idAnnotation`)
+  CONSTRAINT `FK_AnnotationToAnnotationGrouping_AnnotationGrouping` FOREIGN KEY (`idAnnotationGrouping`) REFERENCES `AnnotationGrouping` (`idAnnotationGrouping`),
+  CONSTRAINT `FK_AnnotationToGrouping_Annotation` FOREIGN KEY (`idAnnotation`) REFERENCES `Annotation` (`idAnnotation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `annotationtoannotationgrouping`
+-- Dumping data for table `AnnotationToAnnotationGrouping`
 --
 
-/*!40000 ALTER TABLE `annotationtoannotationgrouping` DISABLE KEYS */;
-/*!40000 ALTER TABLE `annotationtoannotationgrouping` ENABLE KEYS */;
+/*!40000 ALTER TABLE `AnnotationToAnnotationGrouping` DISABLE KEYS */;
+/*!40000 ALTER TABLE `AnnotationToAnnotationGrouping` ENABLE KEYS */;
 
 
 --
--- Definition of table `experimentmethod`
+-- Definition of table `ExperimentMethod`
 --
 
-DROP TABLE IF EXISTS `experimentmethod`;
-CREATE TABLE `experimentmethod` (
+DROP TABLE IF EXISTS `ExperimentMethod`;
+CREATE TABLE `ExperimentMethod` (
   `idExperimentMethod` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
   `isActive` char(1) default NULL,
   `idUser` int(10) unsigned default NULL,
   PRIMARY KEY  (`idExperimentMethod`),
   KEY `FK_ExperimentMethod_User` (`idUser`),
-  CONSTRAINT `FK_ExperimentMethod_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
+  CONSTRAINT `FK_ExperimentMethod_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `experimentmethod`
+-- Dumping data for table `ExperimentMethod`
 --
 
-/*!40000 ALTER TABLE `experimentmethod` DISABLE KEYS */;
-INSERT INTO `experimentmethod` (`idExperimentMethod`,`name`,`isActive`,`idUser`) VALUES 
+/*!40000 ALTER TABLE `ExperimentMethod` DISABLE KEYS */;
+INSERT INTO `ExperimentMethod` (`idExperimentMethod`,`name`,`isActive`,`idUser`) VALUES 
  (1,'chIP-seq','Y',NULL),
  (2,'chIP-chip','Y',NULL),
  (3,'CGN Microarray','Y',NULL),
@@ -223,45 +223,45 @@ INSERT INTO `experimentmethod` (`idExperimentMethod`,`name`,`isActive`,`idUser`)
  (6,'Gene Expression Microarray','Y',NULL),
  (7,'Quantitative rtPCR','Y',NULL),
  (8,'SAGE','Y',NULL);
-/*!40000 ALTER TABLE `experimentmethod` ENABLE KEYS */;
+/*!40000 ALTER TABLE `ExperimentMethod` ENABLE KEYS */;
 
 
 --
--- Definition of table `experimentplatform`
+-- Definition of table `ExperimentPlatform`
 --
 
-DROP TABLE IF EXISTS `experimentplatform`;
-CREATE TABLE `experimentplatform` (
+DROP TABLE IF EXISTS `ExperimentPlatform`;
+CREATE TABLE `ExperimentPlatform` (
   `idExperimentPlatform` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
   `isActive` char(1) default NULL,
   `idUser` int(10) unsigned default NULL,
   PRIMARY KEY  (`idExperimentPlatform`),
   KEY `FK_ExperimentPlatform_User` (`idUser`),
-  CONSTRAINT `FK_ExperimentPlatform_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
+  CONSTRAINT `FK_ExperimentPlatform_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `experimentplatform`
+-- Dumping data for table `ExperimentPlatform`
 --
 
-/*!40000 ALTER TABLE `experimentplatform` DISABLE KEYS */;
-INSERT INTO `experimentplatform` (`idExperimentPlatform`,`name`,`isActive`,`idUser`) VALUES 
+/*!40000 ALTER TABLE `ExperimentPlatform` DISABLE KEYS */;
+INSERT INTO `ExperimentPlatform` (`idExperimentPlatform`,`name`,`isActive`,`idUser`) VALUES 
  (1,'Illumina Genome Analyzer','Y',NULL),
  (2,'Agilent Microarray','Y',NULL),
  (3,'Affymetrix Microarray','Y',NULL),
  (4,'454 Genome Sequencer','Y',NULL),
  (6,'Applied Biosystems SOLiD','Y',NULL),
  (7,'Helicos Genomic Signature Sequencing','Y',NULL);
-/*!40000 ALTER TABLE `experimentplatform` ENABLE KEYS */;
+/*!40000 ALTER TABLE `ExperimentPlatform` ENABLE KEYS */;
 
 
 --
--- Definition of table `genomeversion`
+-- Definition of table `GenomeVersion`
 --
 
-DROP TABLE IF EXISTS `genomeversion`;
-CREATE TABLE `genomeversion` (
+DROP TABLE IF EXISTS `GenomeVersion`;
+CREATE TABLE `GenomeVersion` (
   `idGenomeVersion` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(200) NOT NULL,
   `idOrganism` int(10) unsigned default NULL,
@@ -274,15 +274,15 @@ CREATE TABLE `genomeversion` (
   PRIMARY KEY  (`idGenomeVersion`),
   UNIQUE KEY `Index_GenomeVersionName` (`name`),
   KEY `FK_GenomeVersion_Organism` (`idOrganism`),
-  CONSTRAINT `FK_GenomeVersion_Organism` FOREIGN KEY (`idOrganism`) REFERENCES `organism` (`idOrganism`)
+  CONSTRAINT `FK_GenomeVersion_Organism` FOREIGN KEY (`idOrganism`) REFERENCES `Organism` (`idOrganism`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6300 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `genomeversion`
+-- Dumping data for table `GenomeVersion`
 --
 
-/*!40000 ALTER TABLE `genomeversion` DISABLE KEYS */;
-INSERT INTO `genomeversion` (`idGenomeVersion`,`name`,`idOrganism`,`buildDate`,`coordURI`,`coordVersion`,`coordSource`,`coordTestRange`,`coordAuthority`) VALUES 
+/*!40000 ALTER TABLE `GenomeVersion` DISABLE KEYS */;
+INSERT INTO `GenomeVersion` (`idGenomeVersion`,`name`,`idOrganism`,`buildDate`,`coordURI`,`coordVersion`,`coordSource`,`coordTestRange`,`coordAuthority`) VALUES 
  (400,'A_thaliana_Jan_2004',400,'2004-01-01 00:00:00',NULL,NULL,NULL,NULL,NULL),
  (500,'B_taurus_Aug_2006',500,'2006-08-01 00:00:00',NULL,NULL,NULL,NULL,NULL),
  (501,'B_taurus_Oct_2007',500,'2007-10-01 00:00:00',NULL,NULL,NULL,NULL,NULL),
@@ -337,29 +337,29 @@ INSERT INTO `genomeversion` (`idGenomeVersion`,`name`,`idOrganism`,`buildDate`,`
  (6000,'T_nigroviridis_Feb_2004',6000,'2004-02-01 00:00:00','','','','',''),
  (6100,'V_vinifera_Apr_2007',6100,'2007-04-01 00:00:00',NULL,NULL,NULL,NULL,NULL),
  (6201,'X_tropicalis_Aug_2005',6200,'2005-08-01 00:00:00','','','','','');
-/*!40000 ALTER TABLE `genomeversion` ENABLE KEYS */;
+/*!40000 ALTER TABLE `GenomeVersion` ENABLE KEYS */;
 
 
 --
--- Definition of table `genomeversionalias`
+-- Definition of table `GenomeVersionAlias`
 --
 
-DROP TABLE IF EXISTS `genomeversionalias`;
-CREATE TABLE `genomeversionalias` (
+DROP TABLE IF EXISTS `GenomeVersionAlias`;
+CREATE TABLE `GenomeVersionAlias` (
   `idGenomeVersionAlias` int(10) unsigned NOT NULL auto_increment,
   `alias` varchar(100) NOT NULL,
   `idGenomeVersion` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`idGenomeVersionAlias`),
   KEY `FK_GenomeVersionAlias_GenomeVersion` (`idGenomeVersion`),
-  CONSTRAINT `FK_GenomeVersionAlias_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `genomeversion` (`idGenomeVersion`)
+  CONSTRAINT `FK_GenomeVersionAlias_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `genomeversionalias`
+-- Dumping data for table `GenomeVersionAlias`
 --
 
-/*!40000 ALTER TABLE `genomeversionalias` DISABLE KEYS */;
-INSERT INTO `genomeversionalias` (`idGenomeVersionAlias`,`alias`,`idGenomeVersion`) VALUES 
+/*!40000 ALTER TABLE `GenomeVersionAlias` DISABLE KEYS */;
+INSERT INTO `GenomeVersionAlias` (`idGenomeVersionAlias`,`alias`,`idGenomeVersion`) VALUES 
  (1,'spApr07',6),
  (4,'sgJan06',7),
  (5,'danRer5',5),
@@ -367,15 +367,15 @@ INSERT INTO `genomeversionalias` (`idGenomeVersionAlias`,`alias`,`idGenomeVersio
  (7,'Zv7',5),
  (8,'hg17',9),
  (9,'hg18',1);
-/*!40000 ALTER TABLE `genomeversionalias` ENABLE KEYS */;
+/*!40000 ALTER TABLE `GenomeVersionAlias` ENABLE KEYS */;
 
 
 --
--- Definition of table `organism`
+-- Definition of table `Organism`
 --
 
-DROP TABLE IF EXISTS `organism`;
-CREATE TABLE `organism` (
+DROP TABLE IF EXISTS `Organism`;
+CREATE TABLE `Organism` (
   `idOrganism` int(10) unsigned NOT NULL auto_increment,
   `commonName` varchar(100) NOT NULL,
   `sortOrder` int(10) unsigned default NULL,
@@ -389,11 +389,11 @@ CREATE TABLE `organism` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6300 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `organism`
+-- Dumping data for table `Organism`
 --
 
-/*!40000 ALTER TABLE `organism` DISABLE KEYS */;
-INSERT INTO `organism` (`idOrganism`,`commonName`,`sortOrder`,`binomialName`,`NCBITaxID`,`idUser`,`name`) VALUES 
+/*!40000 ALTER TABLE `Organism` DISABLE KEYS */;
+INSERT INTO `Organism` (`idOrganism`,`commonName`,`sortOrder`,`binomialName`,`NCBITaxID`,`idUser`,`name`) VALUES 
  (100,'Lizard',NULL,'Anolis carolinensis',NULL,NULL,'A_carolinensis'),
  (200,'A.gambiae',NULL,'Anopheles gambiae',NULL,NULL,'A_gambiae'),
  (300,'A_mellifera',NULL,'Apis mellifera','',NULL,'A_mellifera'),
@@ -456,100 +456,100 @@ INSERT INTO `organism` (`idOrganism`,`commonName`,`sortOrder`,`binomialName`,`NC
  (6000,'Tetraodon',NULL,'Tetraodon nigroviridis','',NULL,'T_nigroviridis'),
  (6100,'Common Grape Vine',NULL,'Vitis vinifera',NULL,NULL,'V_vinifera'),
  (6200,'Pipid Frog',NULL,'Xenopus tropicalis','',NULL,'X_tropicalis');
-/*!40000 ALTER TABLE `organism` ENABLE KEYS */;
+/*!40000 ALTER TABLE `Organism` ENABLE KEYS */;
 
 
 --
--- Definition of table `securitygroup`
+-- Definition of table `UserGroup`
 --
 
-DROP TABLE IF EXISTS `securitygroup`;
-CREATE TABLE `securitygroup` (
-  `idSecurityGroup` int(10) unsigned NOT NULL auto_increment,
+DROP TABLE IF EXISTS `UserGroup`;
+CREATE TABLE `UserGroup` (
+  `idUserGroup` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(100) NOT NULL,
-  PRIMARY KEY  (`idSecurityGroup`)
+  PRIMARY KEY  (`idUserGroup`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `securitygroup`
+-- Dumping data for table `UserGroup`
 --
 
-/*!40000 ALTER TABLE `securitygroup` DISABLE KEYS */;
-/*!40000 ALTER TABLE `securitygroup` ENABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroup` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroup` ENABLE KEYS */;
 
 
 --
--- Definition of table `securitygroupcollaborator`
+-- Definition of table `UserGroupCollaborator`
 --
 
-DROP TABLE IF EXISTS `securitygroupcollaborator`;
-CREATE TABLE `securitygroupcollaborator` (
-  `idSecurityGroup` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `UserGroupCollaborator`;
+CREATE TABLE `UserGroupCollaborator` (
+  `idUserGroup` int(10) unsigned NOT NULL,
   `idUser` int(10) unsigned NOT NULL,
-  PRIMARY KEY  (`idSecurityGroup`,`idUser`),
-  KEY `FK_SecurityGroupCollaborator_User` (`idUser`),
-  CONSTRAINT `FK_SecurityGroupCollaborator_SecurityGroup` FOREIGN KEY (`idSecurityGroup`) REFERENCES `securitygroup` (`idSecurityGroup`),
-  CONSTRAINT `FK_SecurityGroupCollaborator_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
+  PRIMARY KEY  (`idUserGroup`,`idUser`),
+  KEY `FK_UserGroupCollaborator_User` (`idUser`),
+  CONSTRAINT `FK_UserGroupCollaborator_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`),
+  CONSTRAINT `FK_UserGroupCollaborator_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `securitygroupcollaborator`
+-- Dumping data for table `UserGroupCollaborator`
 --
 
-/*!40000 ALTER TABLE `securitygroupcollaborator` DISABLE KEYS */;
-/*!40000 ALTER TABLE `securitygroupcollaborator` ENABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroupCollaborator` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroupCollaborator` ENABLE KEYS */;
 
 
 --
--- Definition of table `securitygroupmanager`
+-- Definition of table `UserGroupManager`
 --
 
-DROP TABLE IF EXISTS `securitygroupmanager`;
-CREATE TABLE `securitygroupmanager` (
-  `idSecurityGroup` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `UserGroupManager`;
+CREATE TABLE `UserGroupManager` (
+  `idUserGroup` int(10) unsigned NOT NULL,
   `idUser` int(10) unsigned NOT NULL auto_increment,
-  PRIMARY KEY  (`idSecurityGroup`,`idUser`),
-  KEY `FK_SecurityGroupManager_User` (`idUser`),
-  CONSTRAINT `FK_SecurityGroupManager_SecurityGroup` FOREIGN KEY (`idSecurityGroup`) REFERENCES `securitygroup` (`idSecurityGroup`),
-  CONSTRAINT `FK_SecurityGroupManager_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`)
+  PRIMARY KEY  (`idUserGroup`,`idUser`),
+  KEY `FK_UserGroupManager_User` (`idUser`),
+  CONSTRAINT `FK_UserGroupManager_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`),
+  CONSTRAINT `FK_UserGroupManager_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `securitygroupmanager`
+-- Dumping data for table `UserGroupManager`
 --
 
-/*!40000 ALTER TABLE `securitygroupmanager` DISABLE KEYS */;
-/*!40000 ALTER TABLE `securitygroupmanager` ENABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroupManager` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroupManager` ENABLE KEYS */;
 
 
 --
--- Definition of table `securitygroupmember`
+-- Definition of table `UserGroupMember`
 --
 
-DROP TABLE IF EXISTS `securitygroupmember`;
-CREATE TABLE `securitygroupmember` (
-  `idSecurityGroup` int(10) unsigned NOT NULL,
+DROP TABLE IF EXISTS `UserGroupMember`;
+CREATE TABLE `UserGroupMember` (
+  `idUserGroup` int(10) unsigned NOT NULL,
   `idUser` int(10) unsigned NOT NULL,
-  PRIMARY KEY  USING BTREE (`idUser`,`idSecurityGroup`),
-  KEY `FK_SecurityGroupUser_SecurityGroup` (`idSecurityGroup`),
-  CONSTRAINT `FK_GroupUser_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`),
-  CONSTRAINT `FK_SecurityGroupUser_SecurityGroup` FOREIGN KEY (`idSecurityGroup`) REFERENCES `securitygroup` (`idSecurityGroup`)
+  PRIMARY KEY  USING BTREE (`idUser`,`idUserGroup`),
+  KEY `FK_UserGroupUser_UserGroup` (`idUserGroup`),
+  CONSTRAINT `FK_UserGroupMember_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT `FK_UserGroupMember_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 PACK_KEYS=1;
 
 --
--- Dumping data for table `securitygroupmember`
+-- Dumping data for table `UserGroupMember`
 --
 
-/*!40000 ALTER TABLE `securitygroupmember` DISABLE KEYS */;
-/*!40000 ALTER TABLE `securitygroupmember` ENABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroupMember` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UserGroupMember` ENABLE KEYS */;
 
 
 --
--- Definition of table `segment`
+-- Definition of table `Segment`
 --
 
-DROP TABLE IF EXISTS `segment`;
-CREATE TABLE `segment` (
+DROP TABLE IF EXISTS `Segment`;
+CREATE TABLE `Segment` (
   `idSegment` int(10) unsigned NOT NULL auto_increment,
   `length` int(10) unsigned NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -557,15 +557,15 @@ CREATE TABLE `segment` (
   `sortOrder` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`idSegment`),
   KEY `FK_Segment_GenomeVersion` (`idGenomeVersion`),
-  CONSTRAINT `FK_Segment_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `genomeversion` (`idGenomeVersion`)
+  CONSTRAINT `FK_Segment_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=220 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `segment`
+-- Dumping data for table `Segment`
 --
 
-/*!40000 ALTER TABLE `segment` DISABLE KEYS */;
-INSERT INTO `segment` (`idSegment`,`length`,`name`,`idGenomeVersion`,`sortOrder`) VALUES 
+/*!40000 ALTER TABLE `Segment` DISABLE KEYS */;
+INSERT INTO `Segment` (`idSegment`,`length`,`name`,`idGenomeVersion`,`sortOrder`) VALUES 
  (1,247249719,'chr1',3405,1),
  (2,242951149,'chr2',3405,2),
  (3,199501827,'chr3',3405,3),
@@ -668,15 +668,15 @@ INSERT INTO `segment` (`idSegment`,`length`,`name`,`idGenomeVersion`,`sortOrder`
  (217,20919568,'chrV',1204,5),
  (218,17718854,'chrX',1204,6),
  (219,13794,'chrM',1204,7);
-/*!40000 ALTER TABLE `segment` ENABLE KEYS */;
+/*!40000 ALTER TABLE `Segment` ENABLE KEYS */;
 
 
 --
--- Definition of table `user`
+-- Definition of table `User`
 --
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+DROP TABLE IF EXISTS `User`;
+CREATE TABLE `User` (
   `idUser` int(10) unsigned NOT NULL auto_increment,
   `lastName` varchar(200) NOT NULL,
   `firstName` varchar(200) NOT NULL,
@@ -688,22 +688,22 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `user`
+-- Dumping data for table `User`
 --
 
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`idUser`,`lastName`,`firstName`,`middleName`,`UserName`,`password`) VALUES 
+/*!40000 ALTER TABLE `User` DISABLE KEYS */;
+INSERT INTO `User` (`idUser`,`lastName`,`firstName`,`middleName`,`UserName`,`password`) VALUES 
  (1,'','guest','','guest','454326b776dc46d32bb1050efe72df5e'),
  (2,'','admin','','admin','a447a70b58594f44a798d54cb4081fc2');
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+/*!40000 ALTER TABLE `User` ENABLE KEYS */;
 
 
 --
--- Definition of table `userrole`
+-- Definition of table `UserRole`
 --
 
-DROP TABLE IF EXISTS `userrole`;
-CREATE TABLE `userrole` (
+DROP TABLE IF EXISTS `UserRole`;
+CREATE TABLE `UserRole` (
   `UserName` varchar(30) NOT NULL,
   `roleName` varchar(30) NOT NULL,
   `idUser` int(10) unsigned NOT NULL,
@@ -711,42 +711,42 @@ CREATE TABLE `userrole` (
   PRIMARY KEY  (`idUserRole`),
   KEY `FK_UserRole_Username` (`UserName`),
   KEY `FK_UserRole_User` (`idUser`),
-  CONSTRAINT `FK_UserRole_User` FOREIGN KEY (`idUser`) REFERENCES `user` (`idUser`),
-  CONSTRAINT `FK_UserRole_Username` FOREIGN KEY (`UserName`) REFERENCES `user` (`UserName`)
+  CONSTRAINT `FK_UserRole_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
+  CONSTRAINT `FK_UserRole_Username` FOREIGN KEY (`UserName`) REFERENCES `User` (`UserName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `userrole`
+-- Dumping data for table `UserRole`
 --
 
-/*!40000 ALTER TABLE `userrole` DISABLE KEYS */;
-INSERT INTO `userrole` (`UserName`,`roleName`,`idUser`,`idUserRole`) VALUES 
+/*!40000 ALTER TABLE `UserRole` DISABLE KEYS */;
+INSERT INTO `UserRole` (`UserName`,`roleName`,`idUser`,`idUserRole`) VALUES 
  ('guest','das2guest',1,1),
  ('admin','das2admin',2,2);
-/*!40000 ALTER TABLE `userrole` ENABLE KEYS */;
+/*!40000 ALTER TABLE `UserRole` ENABLE KEYS */;
 
 
 --
--- Definition of table `visibility`
+-- Definition of table `Visibility`
 --
 
-DROP TABLE IF EXISTS `visibility`;
-CREATE TABLE `visibility` (
+DROP TABLE IF EXISTS `Visibility`;
+CREATE TABLE `Visibility` (
   `codeVisibility` varchar(10) NOT NULL default '',
   `name` varchar(100) NOT NULL,
   PRIMARY KEY  (`codeVisibility`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `visibility`
+-- Dumping data for table `Visibility`
 --
 
-/*!40000 ALTER TABLE `visibility` DISABLE KEYS */;
-INSERT INTO `visibility` (`codeVisibility`,`name`) VALUES 
+/*!40000 ALTER TABLE `Visibility` DISABLE KEYS */;
+INSERT INTO `Visibility` (`codeVisibility`,`name`) VALUES 
  ('MEM','Members'),
  ('MEMCOL','Members and Collaborators'),
  ('PUBLIC','Public');
-/*!40000 ALTER TABLE `visibility` ENABLE KEYS */;
+/*!40000 ALTER TABLE `Visibility` ENABLE KEYS */;
 
 
 

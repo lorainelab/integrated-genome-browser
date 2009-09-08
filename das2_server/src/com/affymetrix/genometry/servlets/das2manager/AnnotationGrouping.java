@@ -86,15 +86,15 @@ public class AnnotationGrouping implements Owned {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean isSecurityGroup(Integer idSecurityGroup) {
-		boolean isSecurityGroup = false;
+	public boolean isUserGroup(Integer idUserGroup) {
+		boolean isUserGroup = false;
 		for(Annotation a : (Set<Annotation>)this.annotations) {
-			if (a.isSecurityGroup(idSecurityGroup)) {
-				isSecurityGroup = true;
+			if (a.isUserGroup(idUserGroup)) {
+				isUserGroup = true;
 				break;
 			}
 		}
-		return isSecurityGroup;
+		return isUserGroup;
 	}
 	public Integer getIdGenomeVersion() {
     	return idGenomeVersion;

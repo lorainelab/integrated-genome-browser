@@ -20,11 +20,11 @@
    
    	 
    <mx:HTTPService             
-    id="deleteSecurityGroup" 
+    id="deleteUserGroup" 
     url="manager/groupDelete"
     resultFormat="e4x"
     showBusyCursor="true"
-    result="onDeleteSecurityGroup(event)"
+    result="onDeleteUserGroup(event)"
     fault="parentApplication.onFailHttpRequest('Failed to remove group', event)"
     method="POST"
     useProxy="false">
@@ -33,11 +33,11 @@
    </mx:HTTPService> 
    
    <mx:HTTPService             
-    id="updateSecurityGroup" 
+    id="updateUserGroup" 
     url="manager/groupUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
-    result="onUpdateSecurityGroup(event)"
+    result="onUpdateUserGroup(event)"
     fault="parentApplication.onFailHttpRequest('Failed to update group', event)"
     method="POST"
     useProxy="false">
@@ -141,8 +141,8 @@
 		private function selectItem():void {
 			if (itemToSelect != null) {
 				var item:Object = null;
-				if (itemToSelect.name() == "SecurityGroup") {
-					item = getUsersAndGroups.lastResult.SecurityGroup.(@idSecurityGroup == itemToSelect.@idSecurityGroup);
+				if (itemToSelect.name() == "UserGroup") {
+					item = getUsersAndGroups.lastResult.UserGroup.(@idUserGroup == itemToSelect.@idUserGroup);
 					if (item != null) {
 						this.groupGrid.selectedItem = item[0];
 						groupGrid.scrollToIndex(groupGrid.selectedIndex);
@@ -195,63 +195,63 @@
         *  
         */        
         private function newGroup():void {
-            var groupAddWindow:GroupAddWindow = GroupAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, GroupAddWindow, true));
+            var groupAddWindow:UserGroupAddWindow = UserGroupAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, UserGroupAddWindow, true));
             PopUpManager.centerPopUp(groupAddWindow);
             groupAddWindow.groupName.setFocus();
         }	
         
-        private function promptToRemoveSecurityGroup():void {
+        private function promptToRemoveUserGroup():void {
          	Alert.show("Remove group " + groupGrid.selectedItem.@label + "?",
 						null, 
 						(Alert.YES | Alert.NO), this, 
-						onPromptToRemoveSecurityGroup);     
+						onPromptToRemoveUserGroup);     
          	
         }
         		
-		private function onPromptToRemoveSecurityGroup(event:CloseEvent):void {
+		private function onPromptToRemoveUserGroup(event:CloseEvent):void {
             if (event.detail==Alert.YES) {
-            	removeSecurityGroup();
+            	removeUserGroup();
             }
         }
         		
-        private function removeSecurityGroup():void {
+        private function removeUserGroup():void {
         	var params:Object = new Object();
-        	params.idSecurityGroup = groupGrid.selectedItem.@idSecurityGroup;
-        	deleteSecurityGroup.send(params);
+        	params.idUserGroup = groupGrid.selectedItem.@idUserGroup;
+        	deleteUserGroup.send(params);
         }
         
-        private function onDeleteSecurityGroup(event:ResultEvent):void {
-		  if (deleteSecurityGroup.lastResult.name() == "SUCCESS") {
+        private function onDeleteUserGroup(event:ResultEvent):void {
+		  if (deleteUserGroup.lastResult.name() == "SUCCESS") {
 		  	this.dirtyGroup.resetDirty();
 		  	this.itemToSelect = null;
 		  	refreshUsersAndGroups();			
-		  } else if (deleteSecurityGroup.lastResult.name() == "Error") {
-			Alert.show(deleteSecurityGroup.lastResult.@message);
+		  } else if (deleteUserGroup.lastResult.name() == "Error") {
+			Alert.show(deleteUserGroup.lastResult.@message);
 		  } else {
 			Alert.show("An error occurred while removing group");				
 		  }
 		}
 		
-		private function saveSecurityGroup():void {
+		private function saveUserGroup():void {
 			var params:Object = new Object();
-        	params.idSecurityGroup   = groupGrid.selectedItem.@idSecurityGroup;
+        	params.idUserGroup   = groupGrid.selectedItem.@idUserGroup;
         	params.name              = groupName.text;
         	
         	params.membersXML        = "<members>"       + this.groupMemberGrid.dataProvider.toXMLString()       + "</members>";
         	params.collaboratorsXML  = "<collaborators>" + this.groupCollaboratorGrid.dataProvider.toXMLString() + "</collaborators>";
         	params.managersXML       = "<managers>"      + this.groupManagerGrid.dataProvider.toXMLString()      + "</managers>";
 
-        	updateSecurityGroup.send(params);
+        	updateUserGroup.send(params);
 		}
 		
 		 
-        private function onUpdateSecurityGroup(event:ResultEvent):void {
-		  if (updateSecurityGroup.lastResult.name() == "SUCCESS") {
+        private function onUpdateUserGroup(event:ResultEvent):void {
+		  if (updateUserGroup.lastResult.name() == "SUCCESS") {
 		  	this.dirtyGroup.resetDirty();
 		  	this.itemToSelect = this.groupGrid.selectedItem;
 		  	refreshUsersAndGroups();			
-		  } else if (updateSecurityGroup.lastResult.name() == "Error") {
-			Alert.show(updateSecurityGroup.lastResult.@message);
+		  } else if (updateUserGroup.lastResult.name() == "Error") {
+			Alert.show(updateUserGroup.lastResult.@message);
 		  } else {
 			Alert.show("An error occurred while saving group");				
 		  }
@@ -387,12 +387,12 @@
 			           		enabled="{groupGrid.selectedItem != null}"
 			           		styleName="menuButton"  
 			           		height="20" width="30" 
-			           		click="promptToRemoveSecurityGroup()" 
+			           		click="promptToRemoveUserGroup()" 
 			           		toolTip="Delete group"   id="deleteGroupButton"/>
 			           	
 		            </mx:HBox>
 					<mx:DataGrid height="100%" width="100%" 
-						dataProvider="{getUsersAndGroups.lastResult.SecurityGroup}" 
+						dataProvider="{getUsersAndGroups.lastResult.UserGroup}" 
 						borderStyle="solid" 
         		    	click="{onGroupClick()}" 
         		    	id="groupGrid"
@@ -593,7 +593,7 @@
 					    	enabled="{groupGrid.selectedItem.@canWrite == 'Y' ? true : false}" />
 					    <mx:Button  label="Save" 
 					    	id="saveGroupButton"  
-					    	click="saveSecurityGroup()" 
+					    	click="saveUserGroup()" 
 					    	enabled="{groupGrid.selectedItem.@canWrite == 'Y' ? true : false}"
 					    	icon="@Embed(source='assets/save.png')"  
 					    	disabledIcon="@Embed(source='assets/save_disable.png')"/>

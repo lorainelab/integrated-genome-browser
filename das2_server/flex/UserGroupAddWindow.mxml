@@ -11,10 +11,10 @@
 	layout="vertical" backgroundAlpha="100">
  	
     <mx:HTTPService             
-      id="addSecurityGroup" 
+      id="addUserGroup" 
       url="manager/groupAdd"
       resultFormat="e4x"
-      result="onAddSecurityGroup(event)"
+      result="onAddUserGroup(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add group', event)"
       method="POST"
       useProxy="false">
@@ -31,16 +31,16 @@
 	import mx.rpc.events.ResultEvent;
 	import mx.controls.Alert;
 
-   	private function onAddSecurityGroup(event:ResultEvent):void {
-		if (addSecurityGroup.lastResult.name() == "SUCCESS") {			
+   	private function onAddUserGroup(event:ResultEvent):void {
+		if (addUserGroup.lastResult.name() == "SUCCESS") {			
 			closeWindow();
 			var itemToSelect:XML = new XML(
-			   "<SecurityGroup " +
-			     "idSecurityGroup='" + addSecurityGroup.lastResult.@idSecurityGroup + "'" +
+			   "<UserGroup " +
+			     "idUserGroup='" + addUserGroup.lastResult.@idUserGroup + "'" +
 			    "/>");
 			parentApplication.userGroupView.refreshUsersAndGroupsAndSelect(itemToSelect);
-		} else if (addSecurityGroup.lastResult.name() == "Error") {
-			Alert.show(addSecurityGroup.lastResult.@message);
+		} else if (addUserGroup.lastResult.name() == "Error") {
+			Alert.show(addUserGroup.lastResult.@message);
 		} else {
 			Alert.show("An error occurred while adding group");				
 		}		
@@ -69,7 +69,7 @@
 			icon="{parentApplication.iconSave}" 
 			disabledIcon="{parentApplication.iconSaveDisabled}" 
 			label="Save"
-			click="{addSecurityGroup.send()}"/>
+			click="{addUserGroup.send()}"/>
 		<mx:Button id="cancelButton" label="Cancel" click="closeWindow()"/>
 	</mx:ControlBar>
 </mx:TitleWindow>

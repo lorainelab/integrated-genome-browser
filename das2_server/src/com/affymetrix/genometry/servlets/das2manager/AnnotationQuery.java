@@ -23,7 +23,7 @@ public class AnnotationQuery {
   
 	// Criteria
 	private String             scopeLevel;
-	private Integer            idSecurityGroup;
+	private Integer            idUserGroup;
 	private Integer            idOrganism;
 	private Integer            idGenomeVersion;
 	private String             text;
@@ -57,7 +57,7 @@ public class AnnotationQuery {
 	
 	public AnnotationQuery(HttpServletRequest req) {
 		scopeLevel         = req.getParameter("scopeLevel");
-		idSecurityGroup    = Util.getIntegerParameter(req, "idSecurityGroup");
+		idUserGroup        = Util.getIntegerParameter(req, "idUserGroup");
 		idOrganism         = Util.getIntegerParameter(req, "idOrganism");
 		idGenomeVersion    = Util.getIntegerParameter(req, "idGenomeVersion");
 		text               = req.getParameter("text");
@@ -548,14 +548,14 @@ public class AnnotationQuery {
 			queryBuf.append(" ver.idGenomeVersion = ");
 			queryBuf.append(idGenomeVersion);
 		}
-		// Search for annotations and annotation groups for a particular security group
-		if (idSecurityGroup != null) {
+		// Search for annotations and annotation groups for a particular group
+		if (idUserGroup != null) {
 			this.addWhereOrAnd();
 			queryBuf.append("(");
-			queryBuf.append(" a.idSecurityGroup = " + this.idSecurityGroup);
+			queryBuf.append(" a.idUserGroup = " + this.idUserGroup);
 			if (joinLevel == ANNOTATION_GROUPING_LEVEL) {
 				queryBuf.append("  OR ");
-				queryBuf.append(" a.idSecurityGroup is null");				
+				queryBuf.append(" a.idUserGroup is null");				
 			}
 			queryBuf.append(")");
 		}

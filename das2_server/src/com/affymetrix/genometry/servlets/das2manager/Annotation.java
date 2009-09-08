@@ -39,7 +39,7 @@ public class Annotation implements Owned, Propertied {
     private Integer             idExperimentPlatform;
     private Set                 annotationGroupings;
     private Integer             idUser;
-    private Integer             idSecurityGroup;
+    private Integer             idUserGroup;
     
     private Map<String, Object> props;  // tag/value representation of annotation properties
     
@@ -111,11 +111,11 @@ public class Annotation implements Owned, Propertied {
 	public void setIdUser(Integer idUser) {
     	this.idUser = idUser;
     }
-	public Integer getIdSecurityGroup() {
-    	return idSecurityGroup;
+	public Integer getIdUserGroup() {
+    	return idUserGroup;
     }
-	public void setIdSecurityGroup(Integer idSecurityGroup) {
-    	this.idSecurityGroup = idSecurityGroup;
+	public void setIdUserGroup(Integer idUserGroup) {
+    	this.idUserGroup = idUserGroup;
     }
 	
 	public boolean isOwner(Integer idUser) {
@@ -125,8 +125,8 @@ public class Annotation implements Owned, Propertied {
 			return false;
 		}
 	}
-	public boolean isSecurityGroup(Integer idSecurityGroup) {
-		if (this.getIdSecurityGroup() != null && this.getIdSecurityGroup().equals(idSecurityGroup)) {
+	public boolean isUserGroup(Integer idUserGroup) {
+		if (this.getIdUserGroup() != null && this.getIdUserGroup().equals(idUserGroup)) {
 			return true;
 		} else {
 			return false;
@@ -157,11 +157,11 @@ public class Annotation implements Owned, Propertied {
 		root.addAttribute("idExperimentMethod", this.getIdExperimentMethod() != null ? this.getIdExperimentMethod().toString() : "");
 		root.addAttribute("idExperimentPlatform", this.getIdExperimentPlatform() != null ? this.getIdExperimentPlatform().toString() : "");
 		root.addAttribute("idUser", this.getIdUser() != null ? this.getIdUser().toString() : "");
-		root.addAttribute("idSecurityGroup", this.getIdSecurityGroup() != null ? this.getIdSecurityGroup().toString() : "");
+		root.addAttribute("idUserGroup", this.getIdUserGroup() != null ? this.getIdUserGroup().toString() : "");
 		root.addAttribute("owner", dh.getUserFullName(this.getIdUser()));
 		root.addAttribute("genomeVersion", genomeVersion.getName());
 		root.addAttribute("organism", dh.getOrganismName(genomeVersion.getIdOrganism()));
-		root.addAttribute("securityGroup", dh.getSecurityGroupName(this.getIdSecurityGroup()));
+		root.addAttribute("securityGroup", dh.getUserGroupName(this.getIdUserGroup()));
 		Element agsNode = root.addElement("AnnotationGroupings");
 		for(AnnotationGrouping ag : (Set<AnnotationGrouping>)this.getAnnotationGroupings()) {
 			Element agNode = agsNode.addElement("AnnotationGrouping");
@@ -267,7 +267,7 @@ public class Annotation implements Owned, Propertied {
 		props.put(PROP_SUMMARY, this.getSummary());
 		props.put(PROP_VISIBILITY,  Visibility.getDisplay(this.getCodeVisibility()));
 		props.put(PROP_OWNER, this.getIdUser() != null ? dictionaryHelper.getUserFullName(this.getIdUser()) : "");
-		props.put(PROP_GROUP, this.getIdSecurityGroup() != null ? dictionaryHelper.getSecurityGroupName(this.getIdSecurityGroup()) : "");
+		props.put(PROP_GROUP, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupName(this.getIdUserGroup()) : "");
 		props.put(PROP_ANALYSIS_TYPE, dictionaryHelper.getAnalysisType(this.getIdAnalysisType()));
 		props.put(PROP_EXPERIMENT_METHOD, dictionaryHelper.getExperimentMethod(this.getIdExperimentMethod()));
 		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));

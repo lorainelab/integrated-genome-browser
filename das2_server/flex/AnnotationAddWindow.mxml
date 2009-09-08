@@ -22,7 +22,7 @@
          <idGenomeVersion>{idGenomeVersion}</idGenomeVersion>
          <idAnnotationGrouping>{idAnnotationGrouping}</idAnnotationGrouping>
          <codeVisibility>{visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : ''}</codeVisibility>
-         <idSecurityGroup>{this.annotationSecurityGroupCombo.selectedItem != null ? annotationSecurityGroupCombo.selectedItem.@id : ''}</idSecurityGroup>
+         <idUserGroup>{this.annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : ''}</idUserGroup>
       </mx:request>
     </mx:HTTPService> 
     
@@ -92,13 +92,13 @@
                 <mx:VBox width="100%" verticalGap="0">
                 	<mx:HBox width="100%" horizontalGap="0" id="hbox2">
                 		<mx:Label text="User Group:" width="90"/>
-                		<mx:ComboBox id="annotationSecurityGroupCombo" dataProvider="{parentApplication.dictionarySecurityGroup}" width="100%" labelField="@name"></mx:ComboBox>
+                		<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
                 	</mx:HBox>
                 </mx:VBox>
             </mx:AddChild>
             <mx:SetProperty name="height" value="144"/>
             <mx:SetProperty target="{saveButton}" name="enabled">
-                <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationSecurityGroupCombo.selectedItem != null &amp;&amp; annotationSecurityGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
+                <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
             </mx:SetProperty>
         </mx:State>
     </mx:states>

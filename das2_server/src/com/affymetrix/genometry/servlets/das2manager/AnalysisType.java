@@ -40,7 +40,7 @@ public class AnalysisType implements Owned {
 			return false;
 		}
 	}
-	public boolean isSecurityGroup(Integer idSecurityGroup) {
+	public boolean isUserGroup(Integer idUserGroup) {
 		return false;
 	}
 

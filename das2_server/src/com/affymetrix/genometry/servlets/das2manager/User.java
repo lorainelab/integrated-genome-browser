@@ -12,9 +12,9 @@ public class User {
 	private String  middleName;
 	private String  userName;
 	private String  password;
-	private Set     memberSecurityGroups;
-	private Set     collaboratingSecurityGroups;
-	private Set     managingSecurityGroups;
+	private Set     memberUserGroups;
+	private Set     collaboratingUserGroups;
+	private Set     managingUserGroups;
 	private Set     roles;
 	
 	public Integer getIdUser() {
@@ -98,23 +98,23 @@ public class User {
 			return "";
 		}
 	}
-	public Set getMemberSecurityGroups() {
-    	return memberSecurityGroups;
+	public Set getMemberUserGroups() {
+    	return memberUserGroups;
     }
-	public void setMemberSecurityGroups(Set memberSecurityGroups) {
-    	this.memberSecurityGroups = memberSecurityGroups;
+	public void setMemberUserGroups(Set memberUserGroups) {
+    	this.memberUserGroups = memberUserGroups;
     }
-	public Set getCollaboratingSecurityGroups() {
-    	return collaboratingSecurityGroups;
+	public Set getCollaboratingUserGroups() {
+    	return collaboratingUserGroups;
     }
-	public void setCollaboratingSecurityGroups(Set collaboratingSecurityGroups) {
-    	this.collaboratingSecurityGroups = collaboratingSecurityGroups;
+	public void setCollaboratingUserGroups(Set collaboratingUserGroups) {
+    	this.collaboratingUserGroups = collaboratingUserGroups;
     }
-	public Set getManagingSecurityGroups() {
-    	return managingSecurityGroups;
+	public Set getManagingUserGroups() {
+    	return managingUserGroups;
     }
-	public void setManagingSecurityGroups(Set managingSecurityGroups) {
-    	this.managingSecurityGroups = managingSecurityGroups;
+	public void setManagingUserGroups(Set managingUserGroups) {
+    	this.managingUserGroups = managingUserGroups;
     }
 	public Set getRoles() {
     	return roles;

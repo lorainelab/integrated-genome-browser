@@ -1215,7 +1215,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				throw new Exception("Please select the visibility for this annotation.");
 			}
 			if (!request.getParameter("codeVisibility").equals(Visibility.PUBLIC)) {
-				if (Util.getIntegerParameter(request, "idSecurityGroup") == null) {
+				if (Util.getIntegerParameter(request, "idUserGroup") == null) {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
@@ -1231,7 +1231,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			annotation.setName(request.getParameter("name"));
 			annotation.setIdGenomeVersion(idGenomeVersion);
 			annotation.setCodeVisibility(request.getParameter("codeVisibility"));
-			annotation.setIdSecurityGroup(Util.getIntegerParameter(request, "idSecurityGroup"));
+			annotation.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
 			// Only set ownership if this is not an admin
 			if (!das2ManagerSecurity.isAdminRole()) {
 				annotation.setIdUser(das2ManagerSecurity.getIdUser());				
@@ -1327,7 +1327,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				throw new Exception("Please select the visibility for this annotation.");
 			}
 			if (!request.getParameter("codeVisibility").equals(Visibility.PUBLIC)) {
-				if (Util.getIntegerParameter(request, "idSecurityGroup") == null) {
+				if (Util.getIntegerParameter(request, "idUserGroup") == null) {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
@@ -1339,7 +1339,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			annotation.setIdExperimentPlatform(Util.getIntegerParameter(request, "idExperimentPlatform"));
 			annotation.setIdExperimentMethod(Util.getIntegerParameter(request, "idExperimentMethod"));
 			annotation.setCodeVisibility(request.getParameter("codeVisibility"));
-			annotation.setIdSecurityGroup(Util.getIntegerParameter(request, "idSecurityGroup"));
+			annotation.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
 			annotation.setIdUser(Util.getIntegerParameter(request, "idUser"));
 			
 			// Remove annotation files
@@ -1808,7 +1808,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			StringBuffer query = new StringBuffer();
 			query.append("SELECT      gr, ");
 			query.append("            mem   ");
-			query.append("FROM        SecurityGroup as gr   ");
+			query.append("FROM        UserGroup as gr   ");
 			query.append("LEFT JOIN   gr.members as mem ");
 			query.append("ORDER BY    gr.name, mem.lastName, mem.firstName ");
 			
@@ -1823,7 +1823,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			HashMap<Integer, Element> groupNodeMap = new HashMap<Integer, Element>();
 		
 			for (Object[] row : rows) {
-				SecurityGroup group = (SecurityGroup)row[0];
+				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 				
 				// Only show groups this user managers
@@ -1832,12 +1832,12 @@ public class Das2ManagerServlet extends HttpServlet {
 				}
 				
 				if (!group.getName().equals(groupNamePrev)) {
-					groupNode = doc.getRootElement().addElement("SecurityGroup");
+					groupNode = doc.getRootElement().addElement("UserGroup");
 					groupNode.addAttribute("label", group.getName());
 					groupNode.addAttribute("name", group.getName());					
-					groupNode.addAttribute("idSecurityGroup", group.getIdSecurityGroup().toString());
+					groupNode.addAttribute("idUserGroup", group.getIdUserGroup().toString());
 					groupNode.addAttribute("canWrite", this.das2ManagerSecurity.canWrite(group) ? "Y" : "N");
-					groupNodeMap.put(group.getIdSecurityGroup(), groupNode);					
+					groupNodeMap.put(group.getIdUserGroup(), groupNode);					
 					membersNode = null;
 				}
 				
@@ -1860,13 +1860,13 @@ public class Das2ManagerServlet extends HttpServlet {
 			query = new StringBuffer();
 			query.append("SELECT      gr, ");
 			query.append("            col   ");
-			query.append("FROM        SecurityGroup as gr   ");
+			query.append("FROM        UserGroup as gr   ");
 			query.append("JOIN   gr.collaborators as col ");
 			query.append("ORDER BY    gr.name, col.lastName, col.firstName ");
 			
 			rows = (List<Object[]>)sess.createQuery(query.toString()).list();
 			for (Object[] row : rows) {
-				SecurityGroup group = (SecurityGroup)row[0];
+				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 				
 				// Only show groups this user managers
@@ -1874,7 +1874,7 @@ public class Das2ManagerServlet extends HttpServlet {
 					continue;
 				}
 				
-				groupNode = groupNodeMap.get(group.getIdSecurityGroup());
+				groupNode = groupNodeMap.get(group.getIdUserGroup());
 				
 				collabsNode = groupNode.element("collaborators");				
 				if (collabsNode == null) {
@@ -1891,15 +1891,15 @@ public class Das2ManagerServlet extends HttpServlet {
 			query = new StringBuffer();
 			query.append("SELECT      gr, ");
 			query.append("            mgr   ");
-			query.append("FROM        SecurityGroup as gr   ");
+			query.append("FROM        UserGroup as gr   ");
 			query.append("JOIN   gr.managers as mgr ");
 			query.append("ORDER BY    gr.name, mgr.lastName, mgr.firstName ");
 			
 			rows = (List<Object[]>)sess.createQuery(query.toString()).list();
 			for (Object[] row : rows) {
-				SecurityGroup group = (SecurityGroup)row[0];
+				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
-				groupNode = groupNodeMap.get(group.getIdSecurityGroup());
+				groupNode = groupNodeMap.get(group.getIdUserGroup());
 				
 				// Only show groups this user managers
 				if (!this.das2ManagerSecurity.isManager(group)) {
@@ -1944,7 +1944,7 @@ public class Das2ManagerServlet extends HttpServlet {
 					}
 					
 					StringBuffer memberGroups = new StringBuffer();
-					for(SecurityGroup memberGroup : (Set<SecurityGroup>)user.getMemberSecurityGroups()) {
+					for(UserGroup memberGroup : (Set<UserGroup>)user.getMemberUserGroups()) {
 						if (memberGroups.length() > 0) {
 							memberGroups.append(", ");
 						}
@@ -1954,7 +1954,7 @@ public class Das2ManagerServlet extends HttpServlet {
 					
 					StringBuffer collaboratorGroups = new StringBuffer();
 					Element collaboratorGroupNode = userNode.addElement("collaborators");
-					for(SecurityGroup colGroup : (Set<SecurityGroup>)user.getCollaboratingSecurityGroups()) {
+					for(UserGroup colGroup : (Set<UserGroup>)user.getCollaboratingUserGroups()) {
 						if (collaboratorGroups.length() > 0) {
 							collaboratorGroups.append(", ");
 						}
@@ -1963,7 +1963,7 @@ public class Das2ManagerServlet extends HttpServlet {
 					userNode.addAttribute("collaboratorGroups", collaboratorGroups.length() > 0 ? collaboratorGroups.toString() : "(none)");
 					
 					StringBuffer managerGroups = new StringBuffer();
-					for(SecurityGroup mgrGroup : (Set<SecurityGroup>)user.getManagingSecurityGroups()) {
+					for(UserGroup mgrGroup : (Set<UserGroup>)user.getManagingUserGroups()) {
 						if (managerGroups.length() > 0) {
 							managerGroups.append(", ");
 						}
@@ -2290,7 +2290,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 			
-			SecurityGroup group = new SecurityGroup();
+			UserGroup group = new UserGroup();
 			
 			group.setName(request.getParameter("name"));
 
@@ -2302,7 +2302,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
-			root.addAttribute("idSecurityGroup", group.getIdSecurityGroup().toString());
+			root.addAttribute("idUserGroup", group.getIdUserGroup().toString());
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
             OutputFormat.createCompactFormat());
 			writer.write(doc);
@@ -2341,7 +2341,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 			
-			SecurityGroup group = SecurityGroup.class.cast(sess.load(SecurityGroup.class, Util.getIntegerParameter(request, "idSecurityGroup")));
+			UserGroup group = UserGroup.class.cast(sess.load(UserGroup.class, Util.getIntegerParameter(request, "idUserGroup")));
 			
 			// Check write permissions
 			if (!this.das2ManagerSecurity.canWrite(group)) {
@@ -2397,7 +2397,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 			
-			SecurityGroup group = SecurityGroup.class.cast(sess.load(SecurityGroup.class, Util.getIntegerParameter(request, "idSecurityGroup")));
+			UserGroup group = UserGroup.class.cast(sess.load(UserGroup.class, Util.getIntegerParameter(request, "idUserGroup")));
 			
 			// Check write permissions
 			if (!this.das2ManagerSecurity.canWrite(group)) {
@@ -2458,7 +2458,7 @@ public class Das2ManagerServlet extends HttpServlet {
 
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
-			root.addAttribute("idSecurityGroup", group.getIdSecurityGroup().toString());
+			root.addAttribute("idUserGroup", group.getIdUserGroup().toString());
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
             OutputFormat.createCompactFormat());
 			writer.write(doc);

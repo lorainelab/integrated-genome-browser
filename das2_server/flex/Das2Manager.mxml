@@ -55,10 +55,10 @@
 	public var dictionaryGenomeVersion:XMLListCollection;
 
 	[Bindable]
-	public var dictionarySecurityGroup:XMLListCollection;
+	public var dictionaryUserGroup:XMLListCollection;
 
 	[Bindable]
-	public var dictionaryMySecurityGroup:XMLListCollection;
+	public var dictionaryMyUserGroup:XMLListCollection;
 
 	[Bindable]
 	public var dictionaryAnalysisType:XMLListCollection;
@@ -220,8 +220,8 @@
 			dictionaryExperimentPlatform = new XMLListCollection(getDictionaries.lastResult.ExperimentPlatforms.ExperimentPlatform);
 			dictionaryExperimentMethod = new XMLListCollection(getDictionaries.lastResult.ExperimentMethods.ExperimentMethod);
 			dictionaryVisibility = new XMLListCollection(getDictionaries.lastResult.Visibilities.Visibility); 
-			dictionarySecurityGroup = new XMLListCollection(getDictionaries.lastResult.SecurityGroups.SecurityGroup); 
-			dictionaryMySecurityGroup = new XMLListCollection(getDictionaries.lastResult.SecurityGroups.SecurityGroup.(@id == '' || @isPartOf == "Y"));
+			dictionaryUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup); 
+			dictionaryMyUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup.(@id == '' || @isPartOf == "Y"));
 			dictionaryUser = new XMLListCollection(getDictionaries.lastResult.Users.User.(@name != 'guest'));
 			
 			callLater(this.dictionaryView.expandAllTreeNodes);				

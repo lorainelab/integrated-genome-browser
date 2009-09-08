@@ -2,18 +2,18 @@ package com.affymetrix.genometry.servlets.das2manager;
 
 import java.util.Set;
 
-public class SecurityGroup {
-	private Integer    idSecurityGroup;
+public class UserGroup {
+	private Integer    idUserGroup;
 	private String     name;
     private Set        members;
     private Set        collaborators;
     private Set        managers;
 	
-	public Integer getIdSecurityGroup() {
-    	return idSecurityGroup;
+	public Integer getIdUserGroup() {
+    	return idUserGroup;
     }
-	public void setIdSecurityGroup(Integer idSecurityGroup) {
-    	this.idSecurityGroup = idSecurityGroup;
+	public void setIdUserGroup(Integer isUserGroup) {
+    	this.idUserGroup = isUserGroup;
     }
 	public String getName() {
     	return name;

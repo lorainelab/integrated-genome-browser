@@ -23,7 +23,7 @@
         <property name="idExperimentPlatform"        column="idExperimentPlatform"       type="integer"/>
         <property name="idGenomeVersion"             column="idGenomeVersion"            type="integer"/>
         <property name="idUser"                      column="idUser"                     type="integer"/>
-        <property name="idSecurityGroup"             column="idSecurityGroup"            type="integer"/>
+        <property name="idUserGroup"                 column="idUserGroup"                type="integer"/>
         
 		  	<set name="annotationGroupings" table="AnnotationToAnnotationGrouping" lazy="true" cascade="none">
 					<key column="idAnnotation"/>
@@ -109,27 +109,6 @@
 			    <one-to-many class="com.affymetrix.genometry.servlets.das2manager.GenomeVersion" />
 		    </set>        
     </class>
-        
-    <!--  SecurityGroup -->
-    <class name="com.affymetrix.genometry.servlets.das2manager.SecurityGroup" table="SecurityGroup">
-        <id name="idSecurityGroup"       column="idSecurityGroup"   type="integer">
-            <generator class="native"/>
-        </id>
-        <property name="name"            column="name"              type="string"/>
-
-		    <set name="members" table="SecurityGroupMember" lazy="true" cascade="none">
-			    <key column="idSecurityGroup"/>
-			    <many-to-many column="idUser" class="com.affymetrix.genometry.servlets.das2manager.User"/>
-		    </set>        
-		    <set name="collaborators" table="SecurityGroupCollaborator" lazy="true" cascade="none">
-			    <key column="idSecurityGroup"/>
-			    <many-to-many column="idUser" class="com.affymetrix.genometry.servlets.das2manager.User"/>
-		    </set>        
-		    <set name="managers" table="SecurityGroupManager" lazy="true" cascade="none">
-			    <key column="idSecurityGroup"/>
-			    <many-to-many column="idUser" class="com.affymetrix.genometry.servlets.das2manager.User"/>
-		    </set>        
-    </class>
     
     <!--  Segment -->
     <class name="com.affymetrix.genometry.servlets.das2manager.Segment" table="Segment">
@@ -152,17 +131,17 @@
         <property name="middleName"          column="middleName"            type="string"/>
         <property name="userName"            column="userName"              type="string"/>
         <property name="password"            column="password"              type="string"/>
-		  	<set name="memberSecurityGroups" table="SecurityGroupMember" lazy="true" cascade="none">
+		  	<set name="memberUserGroups" table="UserGroupMember" lazy="true" cascade="none">
 					<key column="idUser"/>
-					<many-to-many column="idSecurityGroup" class="com.affymetrix.genometry.servlets.das2manager.SecurityGroup"/>
+					<many-to-many column="idUserGroup" class="com.affymetrix.genometry.servlets.das2manager.UserGroup"/>
 				</set>
-		  	<set name="collaboratingSecurityGroups" table="SecurityGroupCollaborator" lazy="true" cascade="none">
+		  	<set name="collaboratingUserGroups" table="UserGroupCollaborator" lazy="true" cascade="none">
 					<key column="idUser"/>
-					<many-to-many column="idSecurityGroup" class="com.affymetrix.genometry.servlets.das2manager.SecurityGroup"/>
+					<many-to-many column="idUserGroup" class="com.affymetrix.genometry.servlets.das2manager.UserGroup"/>
 				</set>
-		  	<set name="managingSecurityGroups" table="SecurityGroupManager" lazy="true" cascade="none">
+		  	<set name="managingUserGroups" table="UserGroupManager" lazy="true" cascade="none">
 					<key column="idUser"/>
-					<many-to-many column="idSecurityGroup" class="com.affymetrix.genometry.servlets.das2manager.SecurityGroup"/>
+					<many-to-many column="idUserGroup" class="com.affymetrix.genometry.servlets.das2manager.UserGroup"/>
 				</set>
         
 		  	<set name="roles" table="UserRole" lazy="true" cascade="none">
@@ -170,6 +149,28 @@
 			    <one-to-many class="com.affymetrix.genometry.servlets.das2manager.UserRole" />
 		    </set>
     </class>  
+    
+        
+    <!--  UserGroup -->
+    <class name="com.affymetrix.genometry.servlets.das2manager.UserGroup" table="UserGroup">
+        <id name="idUserGroup"       column="idUserGroup"   type="integer">
+            <generator class="native"/>
+        </id>
+        <property name="name"            column="name"              type="string"/>
+
+		    <set name="members" table="UserGroupMember" lazy="true" cascade="none">
+			    <key column="idUserGroup"/>
+			    <many-to-many column="idUser" class="com.affymetrix.genometry.servlets.das2manager.User"/>
+		    </set>        
+		    <set name="collaborators" table="UserGroupCollaborator" lazy="true" cascade="none">
+			    <key column="idUserGroup"/>
+			    <many-to-many column="idUser" class="com.affymetrix.genometry.servlets.das2manager.User"/>
+		    </set>        
+		    <set name="managers" table="UserGroupManager" lazy="true" cascade="none">
+			    <key column="idUserGroup"/>
+			    <many-to-many column="idUser" class="com.affymetrix.genometry.servlets.das2manager.User"/>
+		    </set>        
+    </class>    
     
     <!--  UserRole -->
     <class name="com.affymetrix.genometry.servlets.das2manager.UserRole" table="UserRole">

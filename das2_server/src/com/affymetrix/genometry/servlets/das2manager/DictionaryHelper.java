@@ -15,8 +15,8 @@ public class DictionaryHelper {
     
     private static DictionaryHelper              theDictionaryHelper   = null;
 	
-    private HashMap<Integer, AnalysisType>   analysisTypeMap  = new HashMap<Integer, AnalysisType>();
-	private List<AnalysisType>               analysisTypeList = new ArrayList<AnalysisType>();
+    private HashMap<Integer, AnalysisType>        analysisTypeMap  = new HashMap<Integer, AnalysisType>();
+	private List<AnalysisType>                    analysisTypeList = new ArrayList<AnalysisType>();
 	
     private HashMap<Integer, ExperimentMethod>    experimentMethodMap  = new HashMap<Integer, ExperimentMethod>();
 	private List<ExperimentMethod>                experimentMethodList = new ArrayList<ExperimentMethod>();
@@ -31,8 +31,8 @@ public class DictionaryHelper {
 	private List<GenomeVersion>                   genomeVersionList = new ArrayList<GenomeVersion>();
 	private HashMap<Integer, List<GenomeVersion>> organismToGenomeVersionMap = new HashMap<Integer, List<GenomeVersion>>();
 
-	private HashMap<Integer, SecurityGroup>       groupMap  = new HashMap<Integer, SecurityGroup>();
-	private List<SecurityGroup>                   groupList = new ArrayList<SecurityGroup>();
+	private HashMap<Integer, UserGroup>           groupMap  = new HashMap<Integer, UserGroup>();
+	private List<UserGroup>                       groupList = new ArrayList<UserGroup>();
 
 	private HashMap<Integer, User>                userMap  = new HashMap<Integer, User>();
 	private List<User>                            userList = new ArrayList<User>();
@@ -112,12 +112,12 @@ public class DictionaryHelper {
 			versions.add(d);
 		}
 				
-		List<SecurityGroup> groups = (List<SecurityGroup>) sess
+		List<UserGroup> groups = (List<UserGroup>) sess
         	.createQuery(
-                "SELECT d from SecurityGroup d order by d.name")
+                "SELECT d from UserGroup d order by d.name")
                 .list();
-		for (SecurityGroup d : groups) {
-			groupMap.put(d.getIdSecurityGroup(), d);
+		for (UserGroup d : groups) {
+			groupMap.put(d.getIdUserGroup(), d);
 			groupList.add(d);
 		}
 		
@@ -287,12 +287,12 @@ public class DictionaryHelper {
 		//
 		// Security groups
 		//
-		dict = root.addElement("SecurityGroups");
-		Element blank = makeBlankNode(dict, "SecurityGroup");
+		dict = root.addElement("UserGroups");
+		Element blank = makeBlankNode(dict, "UserGroup");
 		blank.addAttribute("isPartOf", "Y");
-		for (SecurityGroup d : groupList) {
-			Element dictEntry = dict.addElement("SecurityGroup");
-			dictEntry.addAttribute("id",         d.getIdSecurityGroup().toString());
+		for (UserGroup d : groupList) {
+			Element dictEntry = dict.addElement("UserGroup");
+			dictEntry.addAttribute("id",         d.getIdUserGroup().toString());
 			dictEntry.addAttribute("name",       d.getName());
 			
 			dictEntry.addAttribute("isPartOf",         das2Security.isAdminRole() || das2Security.belongsToGroup(d) ? "Y" : "N");
@@ -453,8 +453,8 @@ public class DictionaryHelper {
 		return genomeVersion;
 	}	
 	
-	public String getSecurityGroupName(Integer idSecurityGroup) {
-		SecurityGroup group = groupMap.get(idSecurityGroup);
+	public String getUserGroupName(Integer idUserGroup) {
+		UserGroup group = groupMap.get(idUserGroup);
 		if (group != null) {
 			return group.getName();
 		} else {

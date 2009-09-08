@@ -317,14 +317,7 @@ public abstract class ServerUtils {
 		List loadedSyms = loadAnnotFile(file, stream_name, annots_map, tempGenome, true);
 		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file);
 
-		String extension = "";
-		if (stream_name.endsWith(".link.psl")) {
-			extension = stream_name.substring(stream_name.lastIndexOf(".link.psl"),
-					stream_name.length());
-		} else {
-			extension = stream_name.substring(stream_name.lastIndexOf("."),
-					stream_name.length());
-		}
+		String extension = ParserController.getExtension(stream_name);
 		String typeName = ParserController.GetAnnotType(annots_map.get(genome), stream_name, extension);
 		String returnTypeName = typeName;
 		if (stream_name.endsWith(".link.psl")) {

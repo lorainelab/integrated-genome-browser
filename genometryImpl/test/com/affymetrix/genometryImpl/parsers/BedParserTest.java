@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.util.ParserController;
 import java.io.*;
 import java.util.*;
 
@@ -31,16 +32,15 @@ public class BedParserTest {
 			String filename = "test/data/bed/bed_01.bed";
 			assertTrue(new File(filename).exists());
 
-			InputStream istr = new FileInputStream(filename); 
-			assertNotNull(istr);
+			InputStream istr = new FileInputStream(filename);
+			DataInputStream dis = new DataInputStream(istr);
+			assertNotNull(dis);
 
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-			boolean annot_seq = true;
-			String stream_name = "test_file";
-			boolean create_container = true;
 
-			BedParser parser = new BedParser();
-			List<SeqSymmetry> result = parser.parse(istr, gmodel, group, annot_seq, stream_name, create_container);
+			IndexWriter parser = ParserController.getIndexWriter(filename);
+			assertNotNull(parser);
+			List result = parser.parse(dis, filename, group);
 
 			assertEquals(6, result.size());    
 

@@ -172,7 +172,6 @@ public final class FeatureTreeView extends JComponent {
 	private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
 		if (!featureName.contains(path_separator)) {
 			//This code adds a leaf
-			//System.out.println("adding leaf : " + featureName);
 			TreeNodeUserInfo featureUInfo = new TreeNodeUserInfo(feature, feature.isVisible());
 			DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(featureName);
 			newNode.setUserObject(featureUInfo);
@@ -401,7 +400,7 @@ public final class FeatureTreeView extends JComponent {
 			GenericFeature gFeature = (GenericFeature) genericData;
 			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 			String featureName = gFeature.featureName;
-			String featureText = featureName.substring(featureName.indexOf(path_separator) + 1);
+			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
 			featureText = "<html>" + featureText;
 			if (gFeature.friendlyURL != null) {
 				java.net.URL imgURL = com.affymetrix.igb.IGB.class.getResource("info_icon.gif");

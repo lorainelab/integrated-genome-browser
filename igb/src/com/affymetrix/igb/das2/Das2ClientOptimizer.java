@@ -47,14 +47,6 @@ import com.affymetrix.genoviz.util.GeneralUtils;
  *   3. whole-sequence-based persistent caching???
  *   4. addition of containment constraints to ensure uniqueness
  *   4. full persistent caching based on (2)
- *
-// Das2MultiRangeSplitter
-// Das2MultiTypeSplitter // can be applied to any Das2 feature query?
-// Das2FormatOptimizer
-// Das2OverlapOptimizer
-// etc.
- *  Chain together with a CompositeOptimizer?
- *
  */
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -99,8 +91,8 @@ public final class Das2ClientOptimizer {
         String typeid = type.getID();
         SeqSymmetry split_query = null;
 
-        if (!(seq instanceof BioSeq)) {
-            System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is NOT a SmartAnnotBioSeq!");
+        if (seq == null) {
+            System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is null!");
             output_requests.add(request_sym);
         } else {
             split_query = OptimizeDas2Query(seq, typeid, request_log, type, output_requests, request_sym, overlap_sym, region);
@@ -140,7 +132,8 @@ public final class Das2ClientOptimizer {
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
         cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
         // little hack for GraphSyms, need to resolve when to use id vs. name vs. type
-        if (cont_sym == null && typeid.endsWith(".bar")) {
+
+		if (cont_sym == null && typeid.endsWith(".bar")) {
             if (DEBUG) {
                 System.out.println("trying to use type name for bar type, name: " + type.getName() + ", id: " + typeid);
             }
@@ -396,7 +389,6 @@ public final class Das2ClientOptimizer {
         try {
             // if overlap_span is entire length of sequence, then check for caching
             if ((overlap_span.getMin() == 0) && (overlap_span.getMax() == aseq.getLength())) {
-                //	LocalUrlCacher.getInputStream(feature_query, cache_usage, cache_annots);
                 istr = LocalUrlCacher.getInputStream(feature_query);
                 if (istr == null) {
                     System.out.println("Server couldn't be accessed with query " + feature_query);
@@ -422,7 +414,6 @@ public final class Das2ClientOptimizer {
                     System.out.println("http response code: " + response_code + ", " + response_message);
                 }
 
-                //      Map headers = query_con.getHeaderFields();
                 if (DEBUG_HEADERS) {
                     int hindex = 0;
                     while (true) {
@@ -444,27 +435,26 @@ public final class Das2ClientOptimizer {
                     System.out.println("Server returned error code, aborting response parsing!");
                     request_log.setSuccess(false);
                     return false;
-                } else {
-                    String content_type = query_con.getContentType();
-                    istr = query_con.getInputStream();
-                    bis = new BufferedInputStream(istr);
-                    if (DEBUG) {
-                        System.out.println("content type: " + content_type);
-                    }
-                    content_subtype = content_type.substring(content_type.indexOf("/") + 1);
-                    int sindex = content_subtype.indexOf(';');
-                    if (sindex >= 0) {
-                        content_subtype = content_subtype.substring(0, sindex);
-                        content_subtype = content_subtype.trim();
-                    }
-										if (DEBUG) {
-											System.out.println("content subtype: " + content_subtype);
-										}
-                    if (content_subtype == null || content_type.equals("unknown") || content_subtype.equals("unknown") || content_subtype.equals("xml") || content_subtype.equals("plain")) {
-                        // if content type is not descriptive enough, go by what was requested
-                        content_subtype = format;
-                    }
                 }
+                String content_type = query_con.getContentType();
+				istr = query_con.getInputStream();
+				bis = new BufferedInputStream(istr);
+				if (DEBUG) {
+					System.out.println("content type: " + content_type);
+				}
+				content_subtype = content_type.substring(content_type.indexOf("/") + 1);
+				int sindex = content_subtype.indexOf(';');
+				if (sindex >= 0) {
+					content_subtype = content_subtype.substring(0, sindex);
+					content_subtype = content_subtype.trim();
+				}
+				if (DEBUG) {
+					System.out.println("content subtype: " + content_subtype);
+				}
+				if (content_subtype == null || content_type.equals("unknown") || content_subtype.equals("unknown") || content_subtype.equals("xml") || content_subtype.equals("plain")) {
+					// if content type is not descriptive enough, go by what was requested
+					content_subtype = format;
+				}
             }
 
             if (request_log.getSuccess()) {
@@ -602,35 +592,41 @@ public final class Das2ClientOptimizer {
      *  Also use Das2FeatureRequestSym overlap span as span for child GraphSym
      *  Uses type URI as graph ID, type name as graph name
      */
-    public static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
-        //Das2RequestLog request_log = request_sym.getLog();
-
-        System.out.println("adding a child GraphSym to parent graph");
-        BioSeq aseq = (BioSeq) cgraf.getGraphSeq();
-        // check and see if parent graph already exists
-        Das2Type type = request_sym.getDas2Type();
-        String id = type.getID();
-        String name = type.getName();
-        System.out.println("   child graph id: " + id);
-        System.out.println("   child graph name: " + name);
-        System.out.println("   seq: " + aseq.getID());
-        GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
-        if (pgraf == null) {
-            System.out.println("$$$$ creating new parent composite graph sym");
-            // don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
-            pgraf = new CompositeGraphSym(id, aseq);
-            pgraf.setGraphName(name);
-            aseq.addAnnotation(pgraf);
-        }
-        // since GraphSyms get a span automatically set to the whole seq when constructed, need to first
-        //    remove that span, then add overlap span from Das2FeatureRequestSym
-        //    could instead create new span based on start and end xcoord, but for better integration with
-        //    rest of Das2ClientOptimizer span of request is preferred
-        cgraf.removeSpan(cgraf.getSpan(aseq));
-        cgraf.addSpan(request_sym.getOverlapSpan());
-        System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
-        pgraf.addChild(cgraf);
-        //add properties of child to parent		
-        pgraf.setProperties(cgraf.getProperties());
-    }
+   private static void addChildGraph(GraphSym cgraf, Das2FeatureRequestSym request_sym) {
+		if (DEBUG) {
+			System.out.println("adding a child GraphSym to parent graph");
+		}
+		BioSeq aseq = (BioSeq) cgraf.getGraphSeq();
+		// check and see if parent graph already exists
+		Das2Type type = request_sym.getDas2Type();
+		String id = type.getID();
+		String name = type.getName();
+		if (DEBUG) {
+			System.out.println("   child graph id: " + id);
+			System.out.println("   child graph name: " + name);
+			System.out.println("   seq: " + aseq.getID());
+		}
+		GraphSym pgraf = (GraphSym) aseq.getAnnotation(id);
+		if (pgraf == null) {
+			if (DEBUG) {
+				System.out.println("$$$$ creating new parent composite graph sym");
+			}
+			// don't need to uniquify ID, since already know it's null (since no sym retrieved from aseq)
+			pgraf = new CompositeGraphSym(id, aseq);
+			pgraf.setGraphName(name);
+			aseq.addAnnotation(pgraf);
+		}
+		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
+		//    remove that span, then add overlap span from Das2FeatureRequestSym
+		//    could instead create new span based on start and end xcoord, but for better integration with
+		//    rest of Das2ClientOptimizer span of request is preferred
+		cgraf.removeSpan(cgraf.getSpan(aseq));
+		cgraf.addSpan(request_sym.getOverlapSpan());
+		if (DEBUG) {
+			System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
+		}
+		pgraf.addChild(cgraf);
+		//add properties of child to parent
+		pgraf.setProperties(cgraf.getProperties());
+	}
 }

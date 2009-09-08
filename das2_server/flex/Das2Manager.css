@@ -145,11 +145,8 @@ TitleWindow {
 	paddingTop: 0;
 }
 
-.helpLabel
+.menuLabel
 {
 	color: #463B40;
-	fontFamily: Arial;
-	paddingBottom: 0;
-	paddingTop: 0;
 }
 

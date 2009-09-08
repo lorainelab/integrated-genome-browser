@@ -72,6 +72,7 @@ public class Das2ManagerServlet extends HttpServlet {
 	private static final String UPLOAD_FILES_REQUEST               = "uploadFiles"; 
 	private static final String USERS_AND_GROUPS_REQUEST           = "usersAndGroups"; 
 	private static final String USER_ADD_REQUEST                   = "userAdd";
+	private static final String USER_PASSWORD_REQUEST              = "userPassword"; 
 	private static final String USER_UPDATE_REQUEST                = "userUpdate"; 
 	private static final String USER_DELETE_REQUEST                = "userDelete"; 
 	private static final String GROUP_ADD_REQUEST                  = "groupAdd";
@@ -176,6 +177,8 @@ public class Das2ManagerServlet extends HttpServlet {
 				this.handleUserAddRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.USER_UPDATE_REQUEST)) {
 				this.handleUserUpdateRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.USER_PASSWORD_REQUEST)) {
+				this.handleUserPasswordRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.USER_DELETE_REQUEST)) {
 				this.handleUserDeleteRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.GROUP_ADD_REQUEST)) {
@@ -2269,6 +2272,60 @@ public class Das2ManagerServlet extends HttpServlet {
 		
 	}
 
+	@SuppressWarnings("unchecked")
+	private void handleUserPasswordRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		Session sess = null;
+		Transaction tx = null;
+		
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+			tx = sess.beginTransaction();
+			
+			User user = User.class.cast(sess.load(User.class, this.das2ManagerSecurity.getIdUser()));
+						
+			// Encrypt the password
+			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && !request.getParameter("password").equals("")) {
+				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
+				String digestedPassword = RealmBase.Digest(pw, "MD5", null );
+				user.setPassword(digestedPassword);				
+			}
+			
+			// Flush here so that if user name changes, the user row is
+			// updated before trying to insert a new role
+			sess.flush();
+	
+			tx.commit();
+
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("SUCCESS");
+			root.addAttribute("idUser", user.getIdUser().toString());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", e.getMessage());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+			if (tx != null) {
+				tx.rollback();
+			}
+			
+		} finally {
+			
+			if (sess != null) {
+				sess.close();
+			}
+		}
+		
+	}
 
 	
 	@SuppressWarnings("unchecked")

@@ -340,7 +340,7 @@ public class UcscPslSym
 	/**
 	 *  Writes a line of PSL to a writer, including property tag values.
 	 */
-	public void outputPslFormat(Writer out) throws IOException  {
+	public void outputPslFormat(DataOutputStream out) throws IOException  {
 		outputStandardPsl(out, false);
 		outputPropTagVals(out);
 		out.write('\n');
@@ -350,65 +350,65 @@ public class UcscPslSym
 	 *  Writes a line of PSL to a writer, NOT including property tag values.
 	 *  @param include_newline  whether to add a newline at the end.
 	 */
-	protected void outputStandardPsl(Writer out, boolean include_newline)  throws IOException {
-		out.write(Integer.toString(matches));
+	protected void outputStandardPsl(DataOutputStream out, boolean include_newline)  throws IOException {
+		out.write(Integer.toString(matches).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(mismatches));
+		out.write(Integer.toString(mismatches).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(repmatches));
+		out.write(Integer.toString(repmatches).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(ncount));
+		out.write(Integer.toString(ncount).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(qNumInsert));
+		out.write(Integer.toString(qNumInsert).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(qBaseInsert));
+		out.write(Integer.toString(qBaseInsert).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(tNumInsert));
+		out.write(Integer.toString(tNumInsert).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(tBaseInsert));
+		out.write(Integer.toString(tBaseInsert).getBytes());
 		out.write('\t');
-		if (same_orientation) { out.write("+"); }
-		else { out.write("-"); }
+		if (same_orientation) { out.write('+'); }
+		else { out.write('-'); }
 		out.write('\t');
-		out.write(queryseq.getID());
+		out.write(queryseq.getID().getBytes());
 		out.write('\t');
-		out.write(Integer.toString(queryseq.getLength()));
+		out.write(Integer.toString(queryseq.getLength()).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(qmin));
+		out.write(Integer.toString(qmin).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(qmax));
+		out.write(Integer.toString(qmax).getBytes());
 		out.write('\t');
-		out.write(targetseq.getID());
+		out.write(targetseq.getID().getBytes());
 		out.write('\t');
-		out.write(Integer.toString(targetseq.getLength()));
+		out.write(Integer.toString(targetseq.getLength()).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(tmin));
+		out.write(Integer.toString(tmin).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(tmax));
+		out.write(Integer.toString(tmax).getBytes());
 		out.write('\t');
 		int blockcount = this.getChildCount();
-		out.write(Integer.toString(blockcount));
+		out.write(Integer.toString(blockcount).getBytes());
 		out.write('\t');
 		for (int i=0; i<blockcount; i++) {
-			out.write(Integer.toString(blockSizes[i]));
+			out.write(Integer.toString(blockSizes[i]).getBytes());
 			out.write(',');
 		}
 		out.write('\t');
 
 		for (int i=0; i<blockcount; i++) {
 			if (same_orientation) {
-				out.write(Integer.toString(qmins[i]));
+				out.write(Integer.toString(qmins[i]).getBytes());
 			}
 			else {
 				// dealing with reverse issue
 				int mod_qmin = queryseq.getLength() - qmins[i] - blockSizes[i];
-				out.write(Integer.toString(mod_qmin));
+				out.write(Integer.toString(mod_qmin).getBytes());
 			}
 			out.write(',');
 		}
 		out.write('\t');
 		for (int i=0; i<blockcount; i++) {
-			out.write(Integer.toString(tmins[i]));
+			out.write(Integer.toString(tmins[i]).getBytes());
 			out.write(',');
 		}
 		//out.write('\t');	Unnecessary tab.
@@ -417,14 +417,14 @@ public class UcscPslSym
 		}
 	}
 
-	protected void outputPropTagVals(Writer out)  throws IOException {
+	protected void outputPropTagVals(DataOutputStream out)  throws IOException {
 		if (props != null) {
 			Iterator iter = props.entrySet().iterator();
 			while (iter.hasNext()) {
 				Map.Entry entry = (Map.Entry)iter.next();
-				out.write((String)entry.getKey());
+				out.write(((String)entry.getKey()).getBytes());
 				out.write('=');
-				out.write(entry.getValue().toString());
+				out.write(entry.getValue().toString().getBytes());
 				out.write('\t');
 			}
 		}

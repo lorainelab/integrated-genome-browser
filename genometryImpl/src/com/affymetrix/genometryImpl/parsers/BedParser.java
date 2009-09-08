@@ -28,11 +28,9 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-//import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 
 /**
  *  A parser for UCSC's BED format.
@@ -438,10 +436,10 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	}
 
 
-	public static void writeBedFormat(Writer wr, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)
+	public static void writeBedFormat(DataOutputStream out, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)
 		throws IOException  {
 		for (SeqSymmetry sym : syms) {
-			writeSymmetry(wr, sym, seq);
+			writeSymmetry(out, sym, seq);
 		}
 	}
 
@@ -450,7 +448,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	public static void writeSymmetry(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
+	public static void writeSymmetry(DataOutputStream out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
@@ -477,29 +475,29 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	}
 
 
-	private static void writeOutFile(Writer out, MutableAnnotatedBioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
-		out.write(seq.getID());
+	private static void writeOutFile(DataOutputStream out, MutableAnnotatedBioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
+		out.write(seq.getID().getBytes());
 		out.write('\t');
 		int min = span.getMin();
 		int max = span.getMax();
-		out.write(Integer.toString(min));
+		out.write(Integer.toString(min).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(max));
+		out.write(Integer.toString(max).getBytes());
 		int childcount = sym.getChildCount();
 		if ((!span.isForward()) || (childcount > 0) || (propsym != null)) {
 			out.write('\t');
 			if (propsym != null) {
 				if (propsym.getProperty("name") != null) {
-					out.write((String) propsym.getProperty("name"));
+					out.write(((String) propsym.getProperty("name")).getBytes());
 				} else if (propsym.getProperty("id") != null) {
-					out.write((String) propsym.getProperty("id"));
+					out.write(((String) propsym.getProperty("id")).getBytes());
 				}
 			}
 			out.write('\t');
 			if ((propsym != null) && (propsym.getProperty("score") != null)) {
-				out.write(propsym.getProperty("score").toString());
+				out.write(propsym.getProperty("score").toString().getBytes());
 			} else if (sym instanceof Scored) {
-				out.write(Float.toString(((Scored) sym).getScore()));
+				out.write(Float.toString(((Scored) sym).getScore()).getBytes());
 			} else {
 				out.write('0');
 			}
@@ -518,23 +516,23 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 
 
 
-	private static void writeOutChildren(Writer out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, MutableAnnotatedBioSeq seq) throws IOException {
+	private static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, MutableAnnotatedBioSeq seq) throws IOException {
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
-			out.write(propsym.getProperty("cds min").toString());
+			out.write(propsym.getProperty("cds min").toString().getBytes());
 		} else {
-			out.write(Integer.toString(min));
+			out.write(Integer.toString(min).getBytes());
 		}
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds max") != null)) {
-			out.write(propsym.getProperty("cds max").toString());
+			out.write(propsym.getProperty("cds max").toString().getBytes());
 		} else {
-			out.write(Integer.toString(max));
+			out.write(Integer.toString(max).getBytes());
 		}
 		out.write('\t');
 		out.write('0');
 		out.write('\t');
-		out.write(Integer.toString(childcount));
+		out.write(Integer.toString(childcount).getBytes());
 		out.write('\t');
 		int[] blockSizes = new int[childcount];
 		int[] blockStarts = new int[childcount];
@@ -545,12 +543,12 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 			blockStarts[i] = cspan.getMin() - min;
 		}
 		for (int i = 0; i < childcount; i++) {
-			out.write(Integer.toString(blockSizes[i]));
+			out.write(Integer.toString(blockSizes[i]).getBytes());
 			out.write(',');
 		}
 		out.write('\t');
 		for (int i = 0; i < childcount; i++) {
-			out.write(Integer.toString(blockStarts[i]));
+			out.write(Integer.toString(blockStarts[i]).getBytes());
 			out.write(',');
 		}
 	}
@@ -566,13 +564,13 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		if (DEBUG){
 			System.out.println("in BedParser.writeAnnotations()");
 		}
-		Writer bw = null;
+		DataOutputStream dos = null;
 		try {
-			bw = new BufferedWriter(new OutputStreamWriter(outstream));
+			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 			for (SeqSymmetry sym : syms) {
-				writeSymmetry(bw, sym, seq);
+				writeSymmetry(dos, sym, seq);
 			}
-			bw.flush();
+			dos.flush();
 			return true;
 		}
 		catch (Exception ex) {
@@ -581,14 +579,14 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		return false;
 	}
 
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException {
-		Writer bw = null;
-		try {
-			bw = new BufferedWriter(new OutputStreamWriter(dos));
-			BedParser.writeSymmetry(bw, sym, seq);
-		} finally {
-			bw.flush();
+	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+		DataOutputStream dos = null;
+		if (os instanceof DataOutputStream) {
+			dos = (DataOutputStream) os;
+		} else {
+			dos = new DataOutputStream(os);
 		}
+		BedParser.writeSymmetry(dos, sym, seq);
 	}
 
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {

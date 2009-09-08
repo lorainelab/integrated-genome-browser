@@ -477,78 +477,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  /*
-  void removeTiers(List tier_labels) {
-    gmodel.setSelectedSymmetries(Collections.EMPTY_LIST, this);
-    Set types_to_remove = new TreeSet();
-
-    for (int i=0; i<tier_labels.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
-      List graphs = handler.getContainedGraphs(tlg);
-
-      if (graphs.isEmpty()) {
-        IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
-        String type = style.getUniqueName();
-        if (type != null) {
-          // coordinates tier has null type
-          types_to_remove.add(type);
-        }
-      } else {
-        Iterator graphs_iter = graphs.iterator();
-        while (graphs_iter.hasNext()) {
-          GraphGlyph gg =(GraphGlyph) graphs_iter.next();
-          String id =  gg.getGraphState().getTierStyle().getUniqueName();
-          if (id != null) {
-            types_to_remove.add(id);
-          }
-        }
-      }
-    }
-
-    Iterator iter = types_to_remove.iterator();
-    while (iter.hasNext()) {
-      String type = (String) iter.next();
-      if (type != null) {
-        gmodel.getSelectedSeqGroup().removeType(type);
-      }
-    }
-    refreshMap(true);
-  }*/
-
-
-  /*public void saveAsDas2File(TierGlyph atier) {
-    String annot_type = atier.getLabel();
-    int childcount= atier.getChildCount();
-    List syms = new ArrayList(childcount);
-    for (int i=0; i<childcount; i++) {
-      GlyphI child = atier.getChild(i);
-      if (child.getInfo() instanceof SeqSymmetry) {
-	syms.add(child.getInfo());
-      }
-    }
-    System.out.println("Saving symmetries to DAS/2: "+ syms.size());
-    JFileChooser chooser = UniFileChooser.getFileChooser("DAS/2 file", "das2xml");
-    chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
-    int option = chooser.showSaveDialog(null);
-    if (option == JFileChooser.APPROVE_OPTION) {
-      FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-      MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-      BufferedWriter bw = null;
-			FileOutputStream fos = null;
-    try {
-				File fil = chooser.getSelectedFile();
-				fos = new FileOutputStream(fil);
-				Das2FeatureSaxParser das_parser = new Das2FeatureSaxParser();
-				das_parser.writeAnnotations(syms, aseq, annot_type, fos);
-				fos.close();
-			} catch (Exception ex) {
-				ErrorHandler.errorPanel("Problem saving file", ex);
-			} finally {
-				GeneralUtils.safeClose(bw);
-				GeneralUtils.safeClose(fos);
-			}
-		}
-	}*/
 
 
   private static void saveAsBedFile(TierGlyph atier) {
@@ -561,7 +489,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			}
 		}
 		System.out.println("Saving symmetries as BED file: " + syms.size());
-//    com.affymetrix.genometry.util.SeqUtils.printSymmetry((SeqSymmetry) syms.get(0));
 
 		JFileChooser chooser = UniFileChooser.getFileChooser("Bed file", "bed");
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
@@ -570,16 +497,15 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		if (option == JFileChooser.APPROVE_OPTION) {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
 			MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
-			BufferedWriter bw = null;
+			DataOutputStream dos = null;
 			try {
 				File fil = chooser.getSelectedFile();
-				FileWriter fw = new FileWriter(fil);
-				bw = new BufferedWriter(fw);
-				BedParser.writeBedFormat(bw, syms, aseq);
+				dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(fil)));
+				BedParser.writeBedFormat(dos, syms, aseq);
 			} catch (Exception ex) {
 				ErrorHandler.errorPanel("Problem saving file", ex);
 			} finally {
-				GeneralUtils.safeClose(bw);
+				GeneralUtils.safeClose(dos);
 			}
 		}
 	}

@@ -188,9 +188,8 @@ public class BedParserTest {
 	 */
 	@Test
 		public void testWriteBedFormat() throws Exception {
-			//System.out.println("writeSymmetry");
-
-			Writer out = new StringWriter();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos = new DataOutputStream(baos);
 
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 			MutableAnnotatedBioSeq seq = group.addSeq("chr12", 500000);
@@ -201,8 +200,8 @@ public class BedParserTest {
 				sym.addSpan(span_in_array);
 			}
 
-			BedParser.writeSymmetry(out, sym, seq);
-			assertEquals("chr12\t500\t800\n", out.toString());
+			BedParser.writeSymmetry(dos, sym, seq);
+			assertEquals("chr12\t500\t800\n", baos.toString());
 		}
 
 	/**

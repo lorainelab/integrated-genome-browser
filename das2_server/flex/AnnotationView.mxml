@@ -383,6 +383,7 @@
                     
 		private function onGetAnnotations(event:ResultEvent):void {
 			if (getAnnotations.lastResult.name() == "Annotations") {
+				
 				if (this.dirtyOrganism != null) {
 					this.dirtyOrganism.resetDirty();
 				}
@@ -656,7 +657,13 @@
         private function onDeleteOrganism(event:ResultEvent):void {
 		  if (deleteOrganism.lastResult.name() == "SUCCESS") {
 		  	this.dirtyOrganism.resetDirty();
-		  	refreshAnnotations();			
+		  	
+		  	
+		  	refreshAnnotations();		
+		  	
+		    // Refresh the dictionaries so that the dropdowns are up-to-date.
+			parentApplication.getDictionaries.send();
+				
 		  } else if (deleteOrganism.lastResult.name() == "Error") {
 			Alert.show(deleteOrganism.lastResult.@message);
 		  } else {
@@ -729,7 +736,11 @@
 		  if (deleteGenomeVersion.lastResult.name() == "SUCCESS") {
 		  	this.dirtyGenomeVersion.resetDirty();
 
-		  	refreshAnnotations();			
+		  	refreshAnnotations();
+		  	
+		  	// Refresh the dictionaries so that the dropdowns are up-to-date.
+			parentApplication.getDictionaries.send();	
+			
 		  } else if (deleteGenomeVersion.lastResult.name() == "Error") {
 			Alert.show(deleteGenomeVersion.lastResult.@message);
 		  } else {

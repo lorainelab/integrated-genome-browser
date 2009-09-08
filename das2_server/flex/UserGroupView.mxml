@@ -119,6 +119,9 @@
                     
 		private function onGetUsersAndGroups(event:ResultEvent):void {
 			if (getUsersAndGroups.lastResult.name() == "UsersAndGroups") {
+				// Refresh the dictionaries so that the dropdowns are up-to-date.
+				parentApplication.getDictionaries.send();
+							
 				if (this.dirtyUser != null) {
 					this.dirtyUser.resetDirty();
 				}

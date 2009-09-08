@@ -40,7 +40,14 @@
 			   "<Organism " +
 			     "idOrganism='" + addOrganism.lastResult.@idOrganism + "'" +
 			    "/>");
+			    
+			// Refresh the annotations tree
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
+			
+						
+			// Refresh the dictionaries so that the dropdowns are up-to-date.
+			parentApplication.getDictionaries.send();
+
 		} else if (addOrganism.lastResult.name() == "Error") {
 			Alert.show(addOrganism.lastResult.@message);
 		} else {

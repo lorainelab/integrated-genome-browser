@@ -638,6 +638,16 @@
         }
         		
         private function removeOrganism():void {
+        	// After the delete operation has finished,
+        	// select either the next sibling, or if no more children,
+        	// the parent node.
+        	if (annotationsTree.selectedItem.childIndex() == 0) {
+	        	this.treeItemToSelect = annotationsTree.selectedItem.parent();
+        	} else {
+        		var idx:int = annotationsTree.selectedItem.childIndex() - 1;
+        		this.treeItemToSelect = annotationsTree.selectedItem.parent().children()[idx];
+        	}
+        	
         	var params:Object = new Object();
         	params.idOrganism = annotationsTree.selectedItem.@idOrganism;
         	deleteOrganism.send(params);
@@ -646,7 +656,6 @@
         private function onDeleteOrganism(event:ResultEvent):void {
 		  if (deleteOrganism.lastResult.name() == "SUCCESS") {
 		  	this.dirtyOrganism.resetDirty();
-		  	this.treeItemToSelect = null;
 		  	refreshAnnotations();			
 		  } else if (deleteOrganism.lastResult.name() == "Error") {
 			Alert.show(deleteOrganism.lastResult.@message);
@@ -701,6 +710,16 @@
         }
         		
         private function removeGenomeVersion():void {
+        	// After the delete operation has finished,
+        	// select either the next sibling, or if no more children,
+        	// the parent node.
+        	if (annotationsTree.selectedItem.childIndex() == 0) {
+	        	this.treeItemToSelect = annotationsTree.selectedItem.parent();
+        	} else {
+        		var idx:int = annotationsTree.selectedItem.childIndex() - 1;
+        		this.treeItemToSelect = annotationsTree.selectedItem.parent().children()[idx];
+        	}
+        	
         	var params:Object = new Object();
         	params.idGenomeVersion = annotationsTree.selectedItem.@idGenomeVersion;
         	deleteGenomeVersion.send(params);
@@ -709,7 +728,7 @@
         private function onDeleteGenomeVersion(event:ResultEvent):void {
 		  if (deleteGenomeVersion.lastResult.name() == "SUCCESS") {
 		  	this.dirtyGenomeVersion.resetDirty();
-		  	this.treeItemToSelect = null;
+
 		  	refreshAnnotations();			
 		  } else if (deleteGenomeVersion.lastResult.name() == "Error") {
 			Alert.show(deleteGenomeVersion.lastResult.@message);

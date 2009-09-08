@@ -209,7 +209,8 @@ public class IndexingUtils {
 			// test against various IDs
 			byte[][] ids = iSyms.getIDs(i);
 			boolean foundID = false;
-			for (int j=0;j<ids.length;j++) {
+			int idLength = ids.length;
+			for (int j=0;j<idLength;j++) {
 				String id = new String(ids[j]);
 				matcher.reset(id);
 				if (matcher.matches()) {

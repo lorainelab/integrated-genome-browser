@@ -159,26 +159,26 @@ public final class Psl3Sym extends UcscPslSym {
 		return tprops;
 	}
 
-	public void outputPsl3Format(Writer out) throws IOException {
+	public void outputPsl3Format(DataOutputStream out) throws IOException {
 		outputStandardPsl(out, false);
-		if (same_other_orientation) { out.write("+"); }
-		else { out.write("-"); }
-		out.write("\t");
-		out.write(otherseq.getID());
-		out.write("\t");
-		out.write(Integer.toString(otherseq.getLength()));
-		out.write("\t");
-		out.write(Integer.toString(omin));
-		out.write("\t");
-		out.write(Integer.toString(omax));
-		out.write("\t");
+		if (same_other_orientation) { out.write('+'); }
+		else { out.write('-'); }
+		out.write('\t');
+		out.write(otherseq.getID().getBytes());
+		out.write('\t');
+		out.write(Integer.toString(otherseq.getLength()).getBytes());
+		out.write('\t');
+		out.write(Integer.toString(omin).getBytes());
+		out.write('\t');
+		out.write(Integer.toString(omax).getBytes());
+		out.write('\t');
 		int blockcount = this.getChildCount();
 		for (int i=0; i<blockcount; i++) {
-			out.write(Integer.toString(omins[i]));
-			out.write(",");
+			out.write(Integer.toString(omins[i]).getBytes());
+			out.write(',');
 		}
-		out.write("\t");
+		out.write('\t');
 		outputPropTagVals(out);
-		out.write("\n");
+		out.write('\n');
 	}
 }

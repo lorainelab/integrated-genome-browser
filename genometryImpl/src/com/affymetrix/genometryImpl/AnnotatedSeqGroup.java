@@ -170,24 +170,16 @@ public class AnnotatedSeqGroup {
 	 *  See {@link #setUseSynonyms(boolean)}.
 	 *
 	 * @param synonym the string identifier of the requested BioSeq
-	 * @return a BioSeq for the give synonym or null
+	 * @return a BioSeq for the given synonym or null
 	 */
 	public BioSeq getSeq(String synonym) {
 		BioSeq aseq = id2seq.get(synonym);
 		if (use_synonyms && aseq == null) {
-			/*
-			 * Try and find a synonym.
-			 *
-			 * synonyms null check would not be necessary if getSynonyms()
-			 * always returned a List;
-			 */
-			Collection<String> synonyms = lookup.getSynonyms(synonym);
-			if (synonyms != null) {
-				for (String syn : synonyms) {
-					aseq = id2seq.get(syn);
-					if (aseq != null) {
-						return aseq;
-					}
+			// Try and find a synonym.
+			for (String syn : lookup.getSynonyms(synonym,false)) {
+				aseq = id2seq.get(syn);
+				if (aseq != null) {
+					return aseq;
 				}
 			}
 		}

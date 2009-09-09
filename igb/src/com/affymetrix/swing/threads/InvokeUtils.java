@@ -36,35 +36,7 @@ public final class InvokeUtils {
      *             the event dispatching thread to finish excecuting <i>function.call()</i>
      * @exception  InvocationTargetException  If <i>function.call()</i> throws
      */
-    public static Object invokeAndWait(Callable function)
-        throws InterruptedException, InvocationTargetException {
-
-        if (SwingUtilities.isEventDispatchThread()) {
-            throw new Error("Cannot call invokeAndWait from the event dispatcher thread");
-        }
-
-        FutureResult result = new FutureResult();
-        SwingUtilities.invokeLater(result.setter(function));
-        return result.get();
-    }
-
-
-    /**
-     * Causes <i>JOptionPane.showConfirmDialog()</i> to be executed synchronously
-     * on the AWT event dispatching thread and returns the result to the caller.
-     * <p>
-     * @exception  InterruptedException If we're interrupted while waiting for
-     *             the user to input a value.
-     *
-     * @see #invokeAndWait
-     */
-    /*public static int invokeConfirmDialog(Component parentComponent,
-            Object message, String title, int optionType, int messageType)
-                throws InterruptedException {
-        return invokeOptionDialog(parentComponent, message, title,
-                optionType, messageType, null, null, null);
-    }*/
-
+   
     /**
      * Causes <i>JOptionPane.showOptionDialog()</i> to be executed synchronously
      * on the AWT event dispatching thread and returns the result to the caller.
@@ -94,79 +66,27 @@ public final class InvokeUtils {
             }
         };
 
-        try {
-            Object obj = invokeAndWait(showOptionDialog);
-            return ((Integer) obj).intValue();
-        }
-        catch (InvocationTargetException e) {
-            /* showOptionDialog doesn't throw checked exceptions
-               so ex must be a RuntimeException or an Error. */
-            Throwable ex = e.getTargetException();
-            if (ex instanceof RuntimeException) {
-                throw (RuntimeException) ex;
-            } else {
-                throw (Error) ex;
-            }
-        }
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				throw new Error("Cannot call invokeAndWait from the event dispatcher thread");
+			}
+
+			FutureResult result = new FutureResult();
+			SwingUtilities.invokeLater(result.setter(showOptionDialog));
+			Object obj = result.get();
+
+			return ((Integer) obj).intValue();
+		} catch (InvocationTargetException e) {
+			/* showOptionDialog doesn't throw checked exceptions
+			so ex must be a RuntimeException or an Error. */
+			Throwable ex = e.getTargetException();
+			if (ex instanceof RuntimeException) {
+				throw (RuntimeException) ex;
+			} else {
+				throw (Error) ex;
+			}
+		}
     }
-
-    /**
-     * Causes <i>JOptionPane.showInputDialog()</i> to be executed synchronously
-     * on the AWT event dispatching thread and returns the result to the caller.
-     * <p>
-     * @exception  InterruptedException If we're interrupted while waiting for
-     *             the user to input a value.
-     *
-     * @see #invokeAndWait
-     */
-    /*public static Object invokeInputDialog(Component parentComponent,
-            Object message, String title, int messageType)
-                throws InterruptedException {
-        return invokeInputDialog(parentComponent, message, title,
-                messageType, null, null, null);
-    }*/
-
-    /**
-     * Causes <i>JOptionPane.showInputDialog()</i> to be executed synchronously
-     * on the AWT event dispatching thread and returns the result to the caller.
-     * <p>
-     * @exception  InterruptedException If we're interrupted while waiting for
-     *             the user to input a value.
-     *
-     * @see #invokeAndWait
-     */
-   /* public static Object invokeInputDialog(
-            final Component parentComponent,
-            final Object message,
-            final String title,
-            final int messageType,
-            final Icon icon,
-            final Object[] selectionValues,
-            final Object initialSelectionValue)
-                throws InterruptedException {
-
-        Callable showInputDialog = new Callable() {
-            public Object call() {
-                return JOptionPane.showInputDialog(parentComponent,
-                            message, title, messageType, icon,
-                            selectionValues, initialSelectionValue);
-            }
-        };
-
-        try {
-            return invokeAndWait(showInputDialog);
-        }
-        catch (InvocationTargetException e) {
-            // showOptionDialog doesn't throw checked exceptions
-            //   so ex must be a RuntimeException or an Error.
-            Throwable ex = e.getTargetException();
-            if (ex instanceof RuntimeException) {
-                throw (RuntimeException) ex;
-            } else {
-                throw (Error) ex;
-            }
-        }
-    }*/
 
 }
 

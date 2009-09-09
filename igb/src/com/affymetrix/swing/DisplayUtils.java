@@ -15,7 +15,6 @@ package com.affymetrix.swing;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.table.*;
 
 /**
  *  General Swing display utilities.
@@ -62,74 +61,5 @@ public final class DisplayUtils {
     viewport.scrollRectToVisible(rect);
   }
 
-
-  /**
-   * adjusts JTable column preferred widths based on table contents
-   * Adapted from "Swing Hacks" by Joshua Marinacci and Chris Adamson, 
-   *    copyright 2005 O'Reilly Media, ISBN 0-596-00907-0
-   */
-  /*public static final void adjustColumnPreferredWidths(JTable table, boolean include_headers) {
-      // strategy - get max width for cells in column and
-      // make that the preferred width
-      TableColumnModel columnModel = table.getColumnModel();
-      for (int col = 0; col < table.getColumnCount(); col++) {
-          TableColumn column = columnModel.getColumn(col);
-          int maxwidth = getMaxWidth(table, col, include_headers, column);
-          column.setPreferredWidth(maxwidth);
-      }
-  }*/
-
-
-  /**
-   * Determine the max width of the column.
-   */
-  private static final int getMaxWidth(JTable table, int col, boolean include_headers, TableColumn column) {
-        int maxwidth = 0;
-        for (int row = 0; row < table.getRowCount(); row++) {
-            TableCellRenderer rend = table.getCellRenderer(row, col);
-            Object value = table.getValueAt(row, col);
-            Component comp = rend.getTableCellRendererComponent(table, value, false, false, row, col);
-            maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
-        }
-        if (include_headers) {
-            // include the column header's preferred width too
-            TableCellRenderer headerRenderer = column.getHeaderRenderer();
-            if (headerRenderer == null) {
-                headerRenderer = table.getTableHeader().getDefaultRenderer();
-            }
-            Object headerValue = column.getHeaderValue();
-            Component headerComp = headerRenderer.getTableCellRendererComponent(table, headerValue, false, false, 0, col);
-            maxwidth = Math.max(maxwidth, headerComp.getPreferredSize().width);
-        }
-        return maxwidth;
-  }
-
-
-  /** Makes sure that the JFrame and JTabbedPane containing this component is visible. */
-  public static void ensureComponentIsShowing(final Component c) {
-    
-    final JTabbedPane tab_pane = (JTabbedPane) SwingUtilities.getAncestorOfClass(JTabbedPane.class, c);
-    
-    if (tab_pane != null && tab_pane.indexOfComponent(c) >= 0) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          tab_pane.setSelectedComponent(c);
-        }
-      });
-    }
-
-    // If the view has been opened in a new window and that window is
-    // now minimized or not on top, re-display the window
-    JFrame frame = null;
-    if (c instanceof JFrame) {
-      frame = (JFrame) c;
-    }
-    else {
-      frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, c);
-    }
-
-    //TODO: if frame is null, create one?
-    DisplayUtils.bringFrameToFront(frame);
-  }
 
 }

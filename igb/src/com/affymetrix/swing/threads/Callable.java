@@ -28,7 +28,7 @@ package com.affymetrix.swing.threads;
  * @see FutureResult
  **/
 
-public interface Callable {
+interface Callable {
   /** Perform some action that returns a result or throws an exception **/
   Object call() throws Exception;
 }

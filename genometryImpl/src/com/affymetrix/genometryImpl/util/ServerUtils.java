@@ -384,7 +384,7 @@ public abstract class ServerUtils {
 
 
 	public static final List<SeqSymmetry> FindNameInGenome(String name, AnnotatedSeqGroup genome) {
-		int resultLimit = 10000;
+		//int resultLimit = 1000000;
 
 		boolean glob_start = name.startsWith("*");
 		boolean glob_end = name.endsWith("*");
@@ -418,7 +418,7 @@ public abstract class ServerUtils {
 		if (DEBUG) {
 			System.out.println("non-indexed regex matches: " + result.size());
 		}
-		indexedResult = IndexingUtils.findSymsByName(genome, name_pattern, resultLimit);
+		indexedResult = IndexingUtils.findSymsByName(genome, name_pattern);
 		if (indexedResult != null) {
 			result.addAll(indexedResult);
 		}

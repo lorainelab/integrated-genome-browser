@@ -179,9 +179,9 @@ public class IndexingUtils {
 	 * @param resultLimit
 	 * @return
 	 */
-	public static List<SeqSymmetry> findSymsByName(AnnotatedSeqGroup genome, Pattern regex, int resultLimit) {
+	public static List<SeqSymmetry> findSymsByName(AnnotatedSeqGroup genome, Pattern regex) {
 		final Matcher matcher = regex.matcher("");
-		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(resultLimit);
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(100000);
 
 		int resultCount = 0;
 
@@ -193,7 +193,7 @@ public class IndexingUtils {
 				if (iSyms == null) {
 					continue;
 				}
-				if (findSymByName(iSyms, matcher, seq, type, results, resultCount, resultLimit)) {
+				if (findSymByName(iSyms, matcher, seq, type, results, resultCount)) {
 					break SEARCHSYMS;
 				}
 			}
@@ -203,7 +203,7 @@ public class IndexingUtils {
 	}
 
 	private static boolean findSymByName(
-			IndexedSyms iSyms, final Matcher matcher, BioSeq seq, String type, List<SeqSymmetry> results, int resultCount, int resultLimit) {
+			IndexedSyms iSyms, final Matcher matcher, BioSeq seq, String type, List<SeqSymmetry> results, int resultCount) {
 		int symSize = iSyms.min.length;
 		for (int i = 0; i < symSize; i++) {
 			// test against various IDs
@@ -226,9 +226,9 @@ public class IndexingUtils {
 			SimpleSymWithProps sym = iSyms.convertToSymWithProps(i, seq, type);
 			results.add(sym);
 			resultCount++;
-			if (resultCount == resultLimit) {
+			/*if (resultCount == resultLimit) {
 				return true;
-			}
+			}*/
 		}
 		return false;
 	}

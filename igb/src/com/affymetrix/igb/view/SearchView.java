@@ -415,8 +415,12 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		List<SeqSymmetry> remoteSymList = null;
 
 		if (this.remoteSearchCheckBox.isSelected()) {
-			status_bar.setText(friendlySearchStr + ": Searching remotely...");
-			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+			if (text.length() < 3) {
+				status_bar.setText(friendlySearchStr + ": Text is too short for remote search...");
+			} else {
+				status_bar.setText(friendlySearchStr + ": Searching remotely...");
+				remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+			}
 		}
 
 		if (sym_list == null && remoteSymList == null) {
@@ -425,8 +429,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 
 		String statusStr = friendlySearchStr + ": " + (sym_list == null ? 0 : sym_list.size()) + " local matches";
-		if (this.remoteSearchCheckBox.isSelected()) {
-			statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
+		if (this.remoteSearchCheckBox.isSelected() && text.length() >= 3) {
+				statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
 		}
 		setStatus(statusStr);
 		if (this.selectInMapCheckBox.isSelected()) {
@@ -529,7 +533,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return "Search for " + text + " on " + chr;
 	}
 
-	static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
+	private static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
 		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
 
 		if (name == null || name.isEmpty()) {

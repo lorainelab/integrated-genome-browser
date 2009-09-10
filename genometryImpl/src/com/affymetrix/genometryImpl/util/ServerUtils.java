@@ -305,8 +305,10 @@ public abstract class ServerUtils {
 
 		int oldSeqCount = genome.getSeqCount();
 
+		List<AnnotMapElt> annotList = annots_map.get(genome);
+
 		if (iWriter == null) {	
-			loadAnnotFile(file, stream_name, annots_map, genome, false);
+			loadAnnotFile(file, stream_name, annotList, genome, false);
 			checkAlteredSeqCount(oldSeqCount, genome.getSeqCount(), false, file);
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
@@ -314,11 +316,11 @@ public abstract class ServerUtils {
 		}
 
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
-		List loadedSyms = loadAnnotFile(file, stream_name, annots_map, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, stream_name, annotList, tempGenome, true);
 		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file);
 
 		String extension = ParserController.getExtension(stream_name);
-		String typeName = ParserController.GetAnnotType(annots_map.get(genome), stream_name, extension);
+		String typeName = ParserController.GetAnnotType(annotList, stream_name, extension);
 		String returnTypeName = typeName;
 		if (stream_name.endsWith(".link.psl")) {
 			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
@@ -363,8 +365,7 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String stream_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome, boolean isIndexed) {
-		List<AnnotMapElt> annotList = annots_map.get(genome);
+	private static List loadAnnotFile(File current_file, String stream_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) {
 		InputStream istr = null;
 		List results = null;
 		try {

@@ -501,20 +501,20 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			AnnotatedSeqGroup genome = getGenome(request);
 			if (genome == null) {
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized, possibly the genome name is incorrect or missing from path? " + SERVER_SYNTAX_EXPLANATION);
+				return;
+			}
+			String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
+			if (das_command.equals(segments_query)) {
+				handleSegmentsRequest(genome, request, response);
+			} else if (das_command.equals(types_query)) {
+				handleTypesRequest(genome, request, response);
+			} else if (das_command.equals(features_query)) {
+				handleFeaturesRequest(genome, request, response);
+			} else if (genome.getSeq(das_command) != null) {
+				handleSequenceRequest(genome, request, response);
 			} else {
-				String das_command = path_info.substring(path_info.lastIndexOf("/") + 1);
-				if (das_command.equals(segments_query)) {
-					handleSegmentsRequest(request, response);
-				} else if (das_command.equals(types_query)) {
-					handleTypesRequest(request, response);
-				} else if (das_command.equals(features_query)) {
-					handleFeaturesRequest(request, response);
-				} else if (genome.getSeq(das_command) != null) {
-					handleSequenceRequest(request, response);
-				} else {
-					System.out.println("DAS2 request not recognized, setting HTTP status header to 400, BAD_REQUEST");
-					response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
-				}
+				System.out.println("DAS2 request not recognized, setting HTTP status header to 400, BAD_REQUEST");
+				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
 			}
 		}
 	}
@@ -544,7 +544,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @param response
 	 * @throws java.io.IOException
 	 */
-	private static final void handleSequenceRequest(HttpServletRequest request, HttpServletResponse response)
+	private static final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		ArrayList<String> formats = new ArrayList<String>();
 		ArrayList<String> ranges = new ArrayList<String>();
@@ -561,7 +561,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		String path_info = request.getPathInfo();
-		AnnotatedSeqGroup genome = getGenome(request);
 		String org_name = genome.getOrganism();
 		String version_name = genome.getID();
 		String seqname = path_info.substring(path_info.lastIndexOf("/") + 1);
@@ -758,9 +757,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println("</SOURCES>");
 	}
 
-	private static final void handleSegmentsRequest(HttpServletRequest request, HttpServletResponse response)
+	private static final void handleSegmentsRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		AnnotatedSeqGroup genome = getGenome(request);
 		// genome null check already handled, so if it get this far the genome is non-null
 		Das2Coords coords = genomeid2coord.get(genome.getID());
 
@@ -801,14 +799,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *  filtered based on the users Session object. 
 	 *  
 	 */
-	private final void handleTypesRequest(HttpServletRequest request, HttpServletResponse response)
+	private final void handleTypesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-
-		AnnotatedSeqGroup genome = getGenome(request);
-		if (genome == null) {
-			response.setStatus(response.SC_BAD_REQUEST);
-			return;
-		}
 		HashMap<String, HashSet<String>> userAuthorizedResources = getUserAuthorizedResources(dasAuthorization, request);
 
 		response.setContentType(TYPES_CONTENT_TYPE);
@@ -1035,12 +1027,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *        filter by name(s)
 	 *
 	 */
-	private final void handleFeaturesRequest(HttpServletRequest request, HttpServletResponse response) {
-
-		AnnotatedSeqGroup genome = getGenome(request);
-		if (genome == null) {
-			return;
-		}
+	private final void handleFeaturesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response) {
 		String query = request.getQueryString();
 		String xbase = getXmlBase(request);
 		String output_format = default_feature_format;
@@ -1094,8 +1081,22 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				result = new ArrayList<SeqSymmetry>();
 			} /* support for single name, single format, no other filters */
 			else if (names != null && names.size() == 1) {
+				BioSeq seq = null;
+				if (segments.size() == 1) {
+					String seqid = segments.get(0);
+					System.out.println("seqid is " + seqid);
+					// using end of URI for internal seqid if segment is given as full URI (as it should according to DAS/2 spec)
+					int sindex = seqid.lastIndexOf("/");
+					if (sindex >= 0) {
+						seqid = seqid.substring(sindex + 1);
+					}
+					seq = genome.getSeq(seqid);
+					System.out.println("Seq is " + seq.getID());
+				}
+				
+
 				handleNameQuery(
-						names, genome, writerclass, output_format, response, xbase);
+						names, genome, seq, writerclass, output_format, response, xbase);
 				return;
 			}
 
@@ -1227,7 +1228,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 
-	private void handleNameQuery(ArrayList<String> names, AnnotatedSeqGroup genome, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
+	private void handleNameQuery(ArrayList<String> names, AnnotatedSeqGroup genome, BioSeq seq, Class writerclass, String output_format, HttpServletResponse response, String xbase) {
 		String name = names.get(0);
 		List<SeqSymmetry> result = ServerUtils.FindNameInGenome(name, genome);
 		OutputStream outstream = null;
@@ -1244,8 +1245,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 			response.setContentType(mime_type);
 			outstream = response.getOutputStream();
-			for (BioSeq seq : genome.getSeqList()) {
+			if (seq != null) {
+				// a chromosome was specified
 				writer.writeAnnotations(result, seq, null, outstream);
+			} else {
+				// Writing all of the chromosomes
+				for (BioSeq tempSeq : genome.getSeqList()) {
+					writer.writeAnnotations(result, tempSeq, null, outstream);
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();

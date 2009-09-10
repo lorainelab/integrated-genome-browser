@@ -376,19 +376,19 @@
 				<mx:VBox width="100%" height="100%" verticalGap="2">
 			        <mx:HBox horizontalGap="2"  width="100%" horizontalAlign="left">	
 			            <mx:Label text="Groups" width="60" styleName="headerLabel" />	           
-			    		<mx:Button   icon="@Embed(source='assets/add.png')" 
-			    			styleName="menuButton"  height="20" width="30" 
+			    		<mx:LinkButton   
+			    			icon="@Embed(source='assets/group_new.png')" 
+			    			styleName="linkMenuButton"   
 			    			click="newGroup()" 
 			    			toolTip="Add group"   
-			    			id="addGroupButton"/>
-			           	<mx:Button   
-			           		icon="@Embed(source='assets/delete.png')" 
-			           		disabledIcon="@Embed(source='assets/delete_disable.png')"
+			    			id="addGroupButton" label="New group"/>
+			           	<mx:LinkButton   
+			           		icon="@Embed(source='assets/group_delete.png')" 
+			           		disabledIcon="@Embed(source='assets/group_delete_disable.png')"
 			           		enabled="{groupGrid.selectedItem != null}"
-			           		styleName="menuButton"  
-			           		height="20" width="30" 
+			    			styleName="linkMenuButton"   
 			           		click="promptToRemoveUserGroup()" 
-			           		toolTip="Delete group"   id="deleteGroupButton"/>
+			           		toolTip="Delete group"   id="deleteGroupButton" label="Remove group"/>
 			           	
 		            </mx:HBox>
 					<mx:DataGrid height="100%" width="100%" 
@@ -409,19 +409,17 @@
 			    
 					<mx:HBox  horizontalGap="2"  width="100%" horizontalAlign="left" paddingTop="4" >	
 			            <mx:Label text="Users" width="60" styleName="headerLabel"/>	           
-			    		<mx:Button   
-			    			icon="@Embed(source='assets/add.png')" 
-			    			styleName="menuButton"  
-			    			height="20" width="30" 
-			    			click="newUser()" toolTip="Add user"   id="addUserButton"/>
-  					    <mx:Button   
-  					    	icon="@Embed(source='assets/delete.png')" 
-  							disabledIcon="@Embed(source='assets/delete_disable.png')"
+			    		<mx:LinkButton   
+			    			icon="@Embed(source='assets/vcard_new.png')" 
+			    			styleName="linkMenuButton"  
+			    			click="newUser()" toolTip="Add user"   id="addUserButton" label="New user"/>
+  					    <mx:LinkButton   
+  					    	icon="@Embed(source='assets/vcard_delete.png')" 
+  							disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
 			           		enabled="{userGrid.selectedItem != null}"
-							styleName="menuButton"  
-  					    	height="20" width="30" 
+			    			styleName="linkMenuButton"  
   					    	click="promptToRemoveUser()" 
-  					    	toolTip="Delete user"   id="deleteUserButton"/>
+  					    	toolTip="Delete user"   id="deleteUserButton" label="Remove user"/>
 		            </mx:HBox>
 					<mx:DataGrid height="100%" width="100%" 
 						dataProvider="{getUsersAndGroups.lastResult.User}" 
@@ -437,7 +435,7 @@
 					</mx:DataGrid>								
 				</mx:VBox>
 				<mx:HBox width="100%" horizontalAlign="left" paddingBottom="0">
-					<mx:LinkButton styleName="menuButton" label="Refresh" icon="@Embed(source='assets/refresh.png')" click="{itemToSelect=null;refreshUsersAndGroups()}"/>
+					<mx:LinkButton styleName="linkMenuButton" label="Refresh" icon="@Embed(source='assets/refresh.png')" click="{itemToSelect=null;refreshUsersAndGroups()}"/>
 					
 				</mx:HBox>
 				
@@ -511,23 +509,21 @@
 							<mx:TextInput id="groupName" width="200" text="{groupGrid.selectedItem.@name}" change="dirtyGroup.setDirty()"/>
 						</mx:HBox>
 						<mx:HBox horizontalGap="0">
-							<mx:Image source="{parentApplication.iconUser}"/>
-							<mx:Label text="Users" width="60"/>
-							<mx:Label text="(drag users from bottom left onto list)" fontWeight="bold" fontStyle="italic"/>
+							<mx:Label text="Drag users from bottom left onto list" fontWeight="bold" fontStyle="italic"/>
 						</mx:HBox>
 						<mx:HBox height="100%" horizontalGap="10">
 							<mx:VBox width="100%" height="100%" verticalGap="1" paddingLeft="8">
-							    <mx:HBox width="100%">
+							    <mx:VBox width="100%" verticalGap="0">
 									<mx:Label text="Members"/>
-									<mx:Button   
-										 icon="@Embed(source='assets/delete.png')"
-										 disabledIcon="@Embed(source='assets/delete_disable.png')"
-										 styleName="menuButton"  
-										 height="20" width="30" 
+									<mx:LinkButton   
+										 icon="@Embed(source='assets/vcard_delete.png')"
+										 label="Remove member"
+										 disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+										 styleName="linkMenuButton"  
 										 click="removeMember()"
 										 enabled="{groupMemberGrid.selectedItem != null}" 
-										 toolTip="Remove member"  />
-							    </mx:HBox>
+										 toolTip="Remove member"   paddingLeft="0"/>
+							    </mx:VBox>
 								<mx:DataGrid height="100%" 
 									dataProvider="{members}" 
 									borderStyle="solid" 
@@ -540,17 +536,17 @@
 								</mx:DataGrid>
 							</mx:VBox>
 							<mx:VBox width="100%" height="100%" verticalGap="1">
-							    <mx:HBox width="100%">
+							    <mx:VBox width="100%" verticalGap="0">
 									<mx:Label text="Collaborators"/>
-									<mx:Button   
-										 icon="@Embed(source='assets/delete.png')"
-										 disabledIcon="@Embed(source='assets/delete_disable.png')"
-										 styleName="menuButton"  
-										 height="20" width="30" 
+									<mx:LinkButton   
+										 icon="@Embed(source='assets/vcard_delete.png')"
+										 disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+										 styleName="linkMenuButton"  
+										 label="Remove collaborator"
 										 click="removeCollaborator()"
 										 enabled="{groupCollaboratorGrid.selectedItem != null}" 
-										 toolTip="Remove member"  />									
-								</mx:HBox>
+										 toolTip="Remove member"   paddingLeft="0"/>									
+								</mx:VBox>
 								<mx:DataGrid height="100%" 
 									dataProvider="{collaborators}" 
 									borderStyle="solid" 
@@ -563,17 +559,17 @@
 								</mx:DataGrid>
 							</mx:VBox>
 							<mx:VBox width="100%" height="100%" verticalGap="1">
-								<mx:HBox width="100%">
+								<mx:VBox width="100%" verticalGap="0">
 									<mx:Label text="Managers"/>
-									<mx:Button   
-										 icon="@Embed(source='assets/delete.png')"
-										 disabledIcon="@Embed(source='assets/delete_disable.png')"
-										 styleName="menuButton"  
-										 height="20" width="30" 
+									<mx:LinkButton   
+										 icon="@Embed(source='assets/vcard_delete.png')"
+										 disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+										 styleName="linkMenuButton" 
+										 label="Remove manager" 
 										 click="removeManager()"
 										 enabled="{groupManagerGrid.selectedItem != null}" 
-										 toolTip="Remove member"  />									
-								</mx:HBox>
+										 toolTip="Remove member"   paddingLeft="0"/>									
+								</mx:VBox>
 								<mx:DataGrid height="100%" 
 									dataProvider="{managers}" 
 									borderStyle="solid" 

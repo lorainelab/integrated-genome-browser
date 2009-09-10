@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="{'Add annotation to ' + parentName}"
+	title="{'Add annotation to ' + parentName}"	
 	showCloseButton="true" 
-	width="462" 
-	height="118" 
+	width="454" 
+	height="110" 
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotation}"
 	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
@@ -19,8 +19,8 @@
       useProxy="false">
       <mx:request>
          <name>{annotationName.text}</name>
-         <idGenomeVersion>{idGenomeVersion}</idGenomeVersion>
-         <idAnnotationGrouping>{idAnnotationGrouping}</idAnnotationGrouping>
+         <idGenomeVersion>{genomeVersion.@idGenomeVersion}</idGenomeVersion>
+         <idAnnotationGrouping>{idParentAnnotationGrouping}</idAnnotationGrouping>
          <codeVisibility>{visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : ''}</codeVisibility>
          <idUserGroup>{this.annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : ''}</idUserGroup>
       </mx:request>
@@ -29,20 +29,28 @@
        
     <mx:Script>
 	<![CDATA[
+		import mx.collections.XMLListCollection;
 	
 	import mx.managers.PopUpManager;
 	import mx.rpc.events.ResultEvent;
 	import mx.controls.Alert;
 	
+
 	[Bindable]
-	public var idGenomeVersion:Object = null;
-	[Bindable]
-	public var idAnnotationGrouping:Object = null;
+	public var idParentAnnotationGrouping:Object = null;
 	[Bindable]
 	public var parentName:Object = null;
-	
-	
-	public function init():void {
+	[Bindable]
+	private var genomeVersion:Object = null;
+
+	public function init(genomeVersion:Object, parent:Object):void {
+		this.genomeVersion = genomeVersion;
+		if (parent != null) {
+			this.idParentAnnotationGrouping = parent.@idAnnotationGrouping;
+			parentName = parent.@label;			
+		} else {
+			parentName = genomeVersion.@name;
+		}
 		for each(var item:Object in parentApplication.dictionaryVisibility) {
 			if (item.@id == 'PUBLIC') {
 				this.visibilityCombo.selectedItem = item;
@@ -50,6 +58,9 @@
 			}
 		}
 	}
+	
+	
+
 	
 	private function changeState():void {
 		if (this.visibilityCombo.selectedItem == null) {
@@ -88,31 +99,34 @@
     
     	    <mx:states>
         <mx:State name="GroupVisibilityState">
-            <mx:AddChild  relativeTo="{mainBody}" position="lastChild">
-                <mx:VBox width="100%" verticalGap="0">
-                	<mx:HBox width="100%" horizontalGap="0" id="hbox2">
-                		<mx:Label text="User Group:" width="90"/>
-                		<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
-                	</mx:HBox>
-                </mx:VBox>
-            </mx:AddChild>
-            <mx:SetProperty name="height" value="144"/>
+            <mx:SetProperty name="height" value="146"/>
             <mx:SetProperty target="{saveButton}" name="enabled">
                 <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
             </mx:SetProperty>
+            <mx:SetProperty name="width" value="458"/>
+            <mx:AddChild relativeTo="{vbox1}" position="lastChild">
+                <mx:HBox width="100%" id="hbox2">
+                	<mx:Label text="User Group:" width="105"/>
+                	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
+                </mx:HBox>
+            </mx:AddChild>
+            <mx:SetProperty name="title" value="Add annotation"/>
         </mx:State>
     </mx:states>
     <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%" verticalGap="4">
-		<mx:HBox width="100%" horizontalGap="0">
-			<mx:Label text="Name:" width="90"/>
-			<mx:TextInput id="annotationName" width="100%"/>
-		</mx:HBox>
+        <mx:VBox width="100%" height="100%" id="vbox1">
 
+		    <mx:HBox width="100%">
+		    	<mx:Label text="Name:" width="105"/>
+		    	<mx:TextInput id="annotationName" width="100%"/>
+		    </mx:HBox>
+			<mx:HBox width="100%">
+				<mx:Label text="Visibility:" width="105"/>
+				<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="changeState()"></mx:ComboBox>							        	
+			</mx:HBox>            	
+        </mx:VBox>
 	
-		<mx:HBox width="100%" horizontalGap="0">
-			<mx:Label text="Visibility:" width="90"/>
-			<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="changeState()"></mx:ComboBox>							        	
-		</mx:HBox>
+
     	
     </mx:VBox>
 	

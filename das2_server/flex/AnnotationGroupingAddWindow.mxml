@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="{'Add annotation folder to ' + parentName}"
 	showCloseButton="true" 
-	width="436" 
-	height="92"
+	width="406" 
+	height="104"
 	verticalGap="0"
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotationGrouping}"
@@ -19,7 +19,7 @@
       useProxy="false">
       <mx:request>
          <name>{annotationGroupingName.text}</name>
-         <idGenomeVersion>{idGenomeVersion}</idGenomeVersion>
+         <idGenomeVersion>{genomeVersion.@idGenomeVersion}</idGenomeVersion>
          <idParentAnnotationGrouping>{idParentAnnotationGrouping}</idParentAnnotationGrouping>
       </mx:request>
     </mx:HTTPService> 
@@ -33,11 +33,22 @@
 	import mx.controls.Alert;
 	
 	[Bindable]
-	public var idGenomeVersion:Object = null;
-	[Bindable]
 	public var idParentAnnotationGrouping:Object = null;
 	[Bindable]
 	public var parentName:Object = null;
+	[Bindable]
+	private var genomeVersion:Object = null;
+
+	public function init(genomeVersion:Object, parent:Object):void {
+		this.genomeVersion = genomeVersion;
+		if (parent != null) {
+			this.idParentAnnotationGrouping = parent.@idAnnotationGrouping;
+			parentName = parent.@label;			
+		} else {
+			parentName = genomeVersion.@name;
+		}
+	}
+	
 
    	private function onAddAnnotationGrouping(event:ResultEvent):void {
 		if (addAnnotationGrouping.lastResult.name() == "SUCCESS") {			
@@ -61,11 +72,13 @@
 	
 	]]>
     </mx:Script>
-    
-	<mx:HBox styleName="panelBody" width="100%" paddingTop="4">
-		<mx:Label text="Name:"/>
-		<mx:TextInput id="annotationGroupingName" width="100%"/>
+    <mx:VBox width="100%" height="100%" styleName="panelBody" verticalGap="10">
+		<mx:HBox  width="100%" paddingTop="4">
+			<mx:Label text="Folder name:" width="105"/>
+			<mx:TextInput id="annotationGroupingName" width="100%"/>
 	</mx:HBox>
+    	
+    </mx:VBox>
 
 	<mx:ControlBar horizontalAlign="right">
 		<mx:Button id="saveButton"  

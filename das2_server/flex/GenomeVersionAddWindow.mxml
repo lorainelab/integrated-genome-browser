@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="{'Add genome version to ' + organismName}"
+	title="Add genome version"
 	showCloseButton="true" 
 	width="398" 
-	height="160"
+	height="192"
 	verticalGap="0"
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconGenomeVersion}"
@@ -20,7 +20,7 @@
       <mx:request>
          <name>{genomeVersionName.text}</name>
          <buildDate>{buildDate.text}</buildDate>
-         <idOrganism>{idOrganism}</idOrganism>
+         <idOrganism>{organismCombo.selectedItem.@id}</idOrganism>
       </mx:request>
     </mx:HTTPService> 
     
@@ -31,11 +31,21 @@
 	import mx.managers.PopUpManager;
 	import mx.rpc.events.ResultEvent;
 	import mx.controls.Alert;
-	
-	[Bindable]
-	public var idOrganism:Object = null;
+
 	[Bindable]
 	public var organismName:Object = null;
+	
+	
+	public function setOrganism(organism:Object):void {
+		if (organism != null) {
+			for each(var o:Object in this.parentApplication.dictionaryOrganism) {
+				if (o.@id == organism.@idOrganism) {
+					this.organismCombo.selectedItem = o;
+					break;			
+				}
+			}
+		}
+	}
 
    	private function onAddGenomeVersion(event:ResultEvent):void {
 		if (addGenomeVersion.lastResult.name() == "SUCCESS") {			
@@ -67,6 +77,13 @@
     </mx:Script>
     
     <mx:VBox height="100%" width="100%" styleName="panelBody" verticalGap="0">
+		<mx:HBox width="100%">
+			<mx:Label text="Organism:" width="100"/>
+			<mx:ComboBox labelField="@binomialName" id="organismCombo" width="100%">
+				<mx:dataProvider>{parentApplication.dictionaryOrganism}</mx:dataProvider>
+			</mx:ComboBox>
+		</mx:HBox>
+		<mx:Spacer height="20"/>
 		<mx:HBox width="100%" paddingTop="4">
 			<mx:Label text="Name:"  width="100"/>
 			<mx:TextInput id="genomeVersionName" width="100%"/>
@@ -81,7 +98,7 @@
 
 	<mx:ControlBar horizontalAlign="right">
 		<mx:Button id="saveButton"  
-			enabled="{genomeVersionName.text != &quot;&quot; ? true : false}" 
+			enabled="{organismCombo.selectedItem != null &amp;&amp; organismCombo.selectedItem.@id != '' &amp;&amp; genomeVersionName.text != &quot;&quot; ? true : false}" 
 			icon="{parentApplication.iconSave}" 
 			disabledIcon="{parentApplication.iconSaveDisabled}" 
 			label="Save"

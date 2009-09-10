@@ -194,22 +194,23 @@
 
 	    <mx:VBox  styleName="headerBar" height="100%" width="300"   >
 	
+            <mx:Label text="Dictionaries" width="80" styleName="headerLabel"/>
             <mx:HBox  horizontalGap="2"  width="100%" horizontalAlign="left">		 
-            	<mx:Label text="Dictionaries" width="80" styleName="headerLabel"/>          
-  		        <mx:Button  styleName="menuButton" 
-  		        	icon="@Embed(source='assets/add.png')" 
-  		        	disabledIcon="@Embed(source='assets/add_disable.png')" 
-  		        	height="20" width="30" 
-  		        	toolTip="Add dictionary entry" 
-  		        	click="newDictionary()" 
-  		        	enabled="{dictionaryTree.selectedItem != null}"/>
-							            
-  		        <mx:Button  styleName="menuButton" icon="@Embed(source='assets/delete.png')" 
-  		        	enabled="{dictionaryTree.selectedItem != null &amp;&amp; dictionaryTree.selectedItem.name() != 'Dictionary' &amp;&amp; dictionaryTree.selectedItem.@canWrite == 'Y'}"
-  		        	disabledIcon="@Embed(source='assets/delete_disable.png')" 
-  		        	height="20" width="30" 
-  		        	click="promptToRemoveDictionary()" 
-  		        	id="deleteDictionaryButton"/>
+             <mx:LinkButton 
+             	icon="@Embed(source='assets/page_new.png')" 
+             	disabledIcon="@Embed(source='assets/page_new_disable.png')" 
+             	styleName="linkMenuButton"
+             	toolTip="Add dictionary entry" 
+             	click="newDictionary()" 
+             	enabled="{dictionaryTree.selectedItem != null}" label="New dictionary"/>
+                      
+             <mx:LinkButton 
+             	icon="@Embed(source='assets/page_delete.png')" 
+             	enabled="{dictionaryTree.selectedItem != null &amp;&amp; dictionaryTree.selectedItem.name() != 'Dictionary' &amp;&amp; dictionaryTree.selectedItem.@canWrite == 'Y'}"
+             	disabledIcon="@Embed(source='assets/page_delete_disable.png')" 
+             	styleName="linkMenuButton"
+             	click="promptToRemoveDictionary()" 
+             	id="deleteDictionaryButton" label="Remove dictionary"/>
             </mx:HBox>
     
 			<mx:Tree height="100%" width="100%" 
@@ -223,7 +224,7 @@
     		    iconField="@icon" dropShadowEnabled="true" dropShadowColor="#858282">
 			</mx:Tree>			
 			<mx:HBox width="100%" horizontalAlign="left">
-				<mx:LinkButton styleName="menuButton" label="Refresh" icon="@Embed(source='assets/refresh.png')" click="{refresh()}"/>
+				<mx:LinkButton styleName="linkMenuButton" label="Refresh" icon="@Embed(source='assets/refresh.png')" click="{refresh()}"/>
 			</mx:HBox>
 	   </mx:VBox>
 	    

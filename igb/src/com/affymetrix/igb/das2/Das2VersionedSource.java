@@ -449,7 +449,7 @@ public class Das2VersionedSource {
 
 			// temporary group needed to avoid side effects (remote SeqSymmetries added to the genome)
 			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
-			List<SeqSymmetry> feats = parser.parse(istr, gmodel, tempGroup, false, "", false);
+			List<SeqSymmetry> feats = parser.parse(bis, gmodel, tempGroup, false, "", false);
 			if (DEBUG) {
 				int feat_count = feats.size();
 				System.out.println("parsed query results, annot count = " + feat_count);

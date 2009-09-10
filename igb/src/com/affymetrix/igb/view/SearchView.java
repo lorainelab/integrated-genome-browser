@@ -532,7 +532,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
 		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
 
-		if (name == null || name.length() == 0) {
+		if (name == null || name.isEmpty()) {
 			return features;
 		}
 
@@ -540,7 +540,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			if (gVersion.gServer.serverType == ServerType.DAS2) {
 				Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 				if (version != null) {
-					features.addAll(version.getFeaturesByName(name, group, chrFilter));
+					List<SeqSymmetry> newFeatures = version.getFeaturesByName(name, group, chrFilter);
+					if (newFeatures != null) {
+						features.addAll(newFeatures);
+					}
 				}
 			}
 		}

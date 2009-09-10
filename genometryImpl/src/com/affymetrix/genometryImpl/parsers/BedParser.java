@@ -275,8 +275,8 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		} else {
 			findex++;
 		}
-		int blockCount = Integer.parseInt(fields[findex++]); // blockCount field
 		if (field_count >= 12) {
+			int blockCount = Integer.parseInt(fields[findex++]); // blockCount field
 			blockSizes = parseIntArray(fields[findex++]); // blockSizes field
 			if (blockCount != blockSizes.length) {
 				System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq_name);

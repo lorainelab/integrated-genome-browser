@@ -275,10 +275,18 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		} else {
 			findex++;
 		}
-		findex++; // block count field is skipped because it is redundant
+		int blockCount = Integer.parseInt(fields[findex++]); // blockCount field
 		if (field_count >= 12) {
 			blockSizes = parseIntArray(fields[findex++]); // blockSizes field
+			if (blockCount != blockSizes.length) {
+				System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq_name);
+				return;
+			}
 			blockStarts = parseIntArray(fields[findex++]); // blockStarts field
+			if (blockCount != blockStarts.length) {
+				System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq_name);
+				return;
+			}
 			blockMins = makeBlockMins(min, blockStarts);
 			blockMaxs = makeBlockMaxs(blockSizes, blockMins);
 		} else {
@@ -336,23 +344,6 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	public float parseScore(String s) {
 		return Float.parseFloat(s);
 	}
-
-	/** Parses the name field from the file.  Ensures that names are unique by
-	 *  adding a ".1", ".2", etc., as needed.
-	 */
-	/*public String parseName(String s) {
-		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
-		Integer count = name_counts.get(annot_name);
-		if (count == null) {
-			name_counts.put(annot_name, int1);
-		}
-		else {
-			Integer new_count = new Integer(count.intValue() + 1);
-			name_counts.put(annot_name, new_count);
-			annot_name = annot_name + "." + new_count.toString();
-		}
-		return annot_name;
-	}*/
 
 	/**
 	 * Parses the name field from the file.  Gene names are allowed to be non-unique.

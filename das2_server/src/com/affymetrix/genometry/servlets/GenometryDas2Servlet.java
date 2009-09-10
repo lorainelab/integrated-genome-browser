@@ -188,7 +188,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				"Chromosome",
 				null));
 	}
-	//private static final String DAS2_VERSION = "2.0";
 	private static final String DAS2_NAMESPACE = Das2FeatureSaxParser.DAS2_NAMESPACE;
 	private static final String SOURCES_CONTENT_TYPE = "application/x-das-sources+xml";
 	private static final String SEGMENTS_CONTENT_TYPE = "application/x-das-segments+xml";
@@ -212,7 +211,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String query_att = "query_uri";
 	private static final String login_query = "login";
 	private static final String default_feature_format = "das2feature";
-	//the following are now set by the loadAndSetFields() method
 	private static String genometry_server_dir;
 	private static String maintainer_email;
 	private static String xml_base;
@@ -304,7 +302,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @return true if fields loaded or false if not.
 	 */
 	private final boolean loadAndSetFields() {
-		// attempt to get properties from servlet context
 		ServletContext context = getServletContext();
 		genometry_server_dir = context.getInitParameter("genometry_server_dir");
 		maintainer_email = context.getInitParameter("maintainer_email");
@@ -666,7 +663,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			spanEnd = span.getEnd();
 		}
 
-		System.out.println("seq request mapping to file: " + file_name + " spanning " + spanStart + " to " + spanEnd);
+		//System.out.println("seq request mapping to file: " + file_name + " spanning " + spanStart + " to " + spanEnd);
 
 		response.setContentType(FastaParser.getMimeType());
 		byte[] buf = FastaParser.ReadFASTA(seqfile, spanStart, spanEnd);
@@ -713,7 +710,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		String xbase = getXmlBase(request);
 		printXmlDeclaration(pw);
-		//    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
 		pw.println("<SOURCES");
 		pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
 		pw.println("    xml:base=\"" + xbase + "\" >");
@@ -725,15 +721,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		for (Map.Entry<String, List<AnnotatedSeqGroup>> oentry : organisms.entrySet()) {
 			String org = oentry.getKey();
 			List<AnnotatedSeqGroup> versions = oentry.getValue();
-			//Iterator giter = genomes.entrySet().iterator();
-			//      pw.println("  <SOURCE id=\"" + org + "\" >" );
 			pw.println("  <SOURCE uri=\"" + org + "\" title=\"" + org + "\" >");
 
 			for (AnnotatedSeqGroup genome : versions) {
 				Das2Coords coords = genomeid2coord.get(genome.getID());
-				//	System.out.println("Genome: " + genome.getID() + ", organism: " + genome.getOrganism() +
-				//		     ", version: " + genome.getVersion() + ", seq count: " + genome.getSeqCount());
-				//      pw.println("      <VERSION id=\"" + genome.getID() + "\" />" );
 				if (USE_CREATED_ATT) {
 					pw.println("      <VERSION uri=\"" + genome.getID() + "\" title=\"" + genome.getID() +
 							"\" created=\"" + date_init_string + "\" >");
@@ -780,10 +771,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		String xbase = getXmlBase(request) + genome.getID() + "/";
 		String segments_uri = xbase + segments_query;
-		//    pw.println("<!DOCTYPE DAS2XML SYSTEM \"http://www.biodas.org/dtd/das2xml.dtd\">");
 		pw.println("<SEGMENTS ");
 		pw.println("    xmlns=\"" + DAS2_NAMESPACE + "\"");
-		//    pw.println("    xml:base=\"" + xbase + "\" >");
 		pw.println("    xml:base=\"" + xbase + "\" ");
 		// uri attribute is added purely to satisfy DAS 2.0 RelaxNG schema, it points back to this same document
 		pw.println("    " + URID + "=\"" + segments_uri + "\" >");
@@ -802,8 +791,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			}
 			pw.println("   <SEGMENT " + URID + "=\"" + aseq.getID() + "\" " + NAME + "=\"" + aseq.getID() + "\"" +
 					" length=\"" + aseq.getLength() + "\" " + refatt + " />");
-			//      pw.println("<REGION id=\"" + aseq.getID() +
-			//		 "\" start=\"0\" end=\"" + aseq.getLength() + "\" />");
 		}
 		pw.println("</SEGMENTS>");
 	}

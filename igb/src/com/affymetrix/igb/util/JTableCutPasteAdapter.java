@@ -14,7 +14,6 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.swing.BlockingTableCellEditor;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.TableCellEditor;
 
 /**
  *  An adapter to add Excel-like cut and paste facilities to JTable.
@@ -61,7 +59,7 @@ public final class JTableCutPasteAdapter {
   }
   
   /** Registers the default keyboard actions for Copy (control C) and Paste (control V). */
-  public void registerKeyStrokes() {
+  private void registerKeyStrokes() {
     KeyStroke copyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
     KeyStroke pasteStroke = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
 
@@ -71,19 +69,13 @@ public final class JTableCutPasteAdapter {
         pasteStroke, JComponent.WHEN_FOCUSED);
   }
 
-  /**
-   * Public Accessor methods for the Table on which this adapter acts.
-   */
-  public JTable getJTable() {return jTable1;}
-  public void setJTable(JTable jTable1) {this.jTable1=jTable1;}
-
  /**
   * Tests to see if the current selection area is suitable for copy action.
   * Selections comprising non-adjacent cells result in invalid selection and
   * then copy action cannot be performed.
   * Paste can be done as long as there is something selected.
   */
-  public boolean isValidSelectionForCopy() {
+  private boolean isValidSelectionForCopy() {
     int numcols=jTable1.getSelectedColumnCount();
     int numrows=jTable1.getSelectedRowCount();
     int[] rowsselected=jTable1.getSelectedRows();
@@ -98,7 +90,7 @@ public final class JTableCutPasteAdapter {
     return isValid;
   }
   
-  public void showInvalidSelectionMessage() {
+  private static void showInvalidSelectionMessage() {
     String msg = "Invalid selection";
     try {
       String msg2 = Application.getSingleton().getResourceString("invalid_selection");
@@ -111,7 +103,6 @@ public final class JTableCutPasteAdapter {
     } catch (Exception ex) {
       Application.errorPanel("ERROR", ex);
     }
-    return;
   }
   
   public Action copyAction = new AbstractAction("Copy") {
@@ -130,7 +121,7 @@ public final class JTableCutPasteAdapter {
     }
   };
   
-  public void doCopy() {
+  private void doCopy() {
     StringBuffer sbf=new StringBuffer();
     // Check to ensure we have selected only a contiguous block of cells
     int numcols=jTable1.getSelectedColumnCount();
@@ -158,7 +149,7 @@ public final class JTableCutPasteAdapter {
    * Paste is done by aligning the upper left corner of the selection with the
    * First element in the current selection of the JTable.
    */
-  public void doPaste() throws UnsupportedFlavorException, IOException {
+  private void doPaste() throws UnsupportedFlavorException, IOException {
     
     int startRow=(jTable1.getSelectedRows())[0];
     int startCol=(jTable1.getSelectedColumns())[0];
@@ -178,38 +169,6 @@ public final class JTableCutPasteAdapter {
       }
     }
   }
-
-  public static void main(String[] args) {
-
-    String cols[]= {"A","B","C","D"}; 
-    String rows[]= {"0","1","2","3","4"}; 
-    String[][] data = new String[rows.length][cols.length];
-
-    for (int i=0; i<rows.length; i++) {
-      for (int k=0; k<cols.length; k++) {
-	data[i][k] = cols[k] + rows[i];
-      }
-    }
-
-    JTable test_table = new JTable(data, cols);
-    test_table.setCellSelectionEnabled(true);
-    
-    TableCellEditor tce = new BlockingTableCellEditor();
-    test_table.setDefaultEditor(Object.class, tce);
-    test_table.setCellEditor(tce);
-
-    JFrame frm = new JFrame("JTableCutPasteAdapter test");
-    frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    Container cpane = frm.getContentPane();
-    cpane.setLayout(new BorderLayout());
-    cpane.add("Center", test_table);
-
-    JTableCutPasteAdapter test_adapter = new JTableCutPasteAdapter(test_table, true);    
-
-    frm.pack();
-    frm.setVisible(true);
-  }
-
 
 }
 

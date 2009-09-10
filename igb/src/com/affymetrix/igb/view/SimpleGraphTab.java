@@ -868,12 +868,8 @@ public final class SimpleGraphTab extends JPanel
 
 		void scaleGraphs() {
 			String selection = (String) scaleCB.getSelectedItem();
-			System.out.println("selected scaling: " + selection);
 			FloatTransformer trans = name2transform.get(selection);
-			Timer tim = new Timer();
-			tim.start();
 			List<GraphSym> newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);
-			System.out.println("time to transform graph: " + tim.read() / 1000f);
 			if (!newgrafs.isEmpty()) {
 				updateViewer();
 			}

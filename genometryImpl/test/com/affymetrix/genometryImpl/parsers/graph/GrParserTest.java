@@ -1,16 +1,14 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSym;
+
 
 import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
-import java.util.*;
 
 public class GrParserTest {
 
@@ -34,8 +32,8 @@ public class GrParserTest {
 
 		assertEquals(stream_name, gr0.getGraphSeq().getID());
 		assertEquals(10, gr0.getPointCount());
-		assertEquals(-0.0447924, gr0.getGraphYCoord(2),0.01);
-		assertEquals(0.275948, gr0.getGraphYCoord(3),0.01);
+		assertEquals(-0.0447924, gr0.getGraphYCoord(2), 0.01);
+		assertEquals(0.275948, gr0.getGraphYCoord(3), 0.01);
 		assertEquals(948028, gr0.getGraphXCoords()[3]);
 	}
 
@@ -46,8 +44,8 @@ public class GrParserTest {
 	public void testWriteFormat() throws IOException {
 
 		String string =
-						"948025	0.128646\n" +
-						"948026	0.363933\n";
+				"948025	0.128646\n" +
+				"948026	0.363933\n";
 		InputStream istr = new ByteArrayInputStream(string.getBytes());
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");

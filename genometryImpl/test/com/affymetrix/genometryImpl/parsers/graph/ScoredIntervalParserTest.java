@@ -1,4 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.graph;
+
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
@@ -21,7 +22,6 @@ import static org.junit.Assert.*;
  * @author auser
  */
 public class ScoredIntervalParserTest {
-
 
 	public ScoredIntervalParserTest() {
 	}
@@ -66,41 +66,38 @@ public class ScoredIntervalParserTest {
 		ScoredIntervalParser ins = new ScoredIntervalParser();
 
 		aseq = ins.makeNewSeq(seqid, seq_group);
-		assertEquals(100208700,aseq.getLength());
+		assertEquals(100208700, aseq.getLength());
 		assertEquals("Test Seq Group", aseq.getVersion());
-		assertEquals("chr1",aseq.getID());
-		}
+		assertEquals("chr1", aseq.getID());
+	}
 
 	@Test
 	public void testwriteEgrFormat() throws IOException {
-		String string ="# genome_version = H_sapiens_Mar_2006\n"+
-                   "# score0 = NormDiff\n" +
-                   "chr1	10015038	10016039	.	25.0\n" +
-									 "chr1	100004630	100005175	.	6.0\n" +
-                   "chr1	100087772	100088683	.	13.0\n" +
-									 "chr1	100207533	100208700	.	230.0\n";
+		String string = "# genome_version = H_sapiens_Mar_2006\n" +
+				"# score0 = NormDiff\n" +
+				"chr1	10015038	10016039	.	25.0\n" +
+				"chr1	100004630	100005175	.	6.0\n" +
+				"chr1	100087772	100088683	.	13.0\n" +
+				"chr1	100207533	100208700	.	230.0\n";
 
 		InputStream istr = new ByteArrayInputStream(string.getBytes());
 		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
-		String stream_name = "chr1";			
+		String stream_name = "chr1";
 		ScoredIntervalParser tester = new ScoredIntervalParser();
 		tester.parse(istr, stream_name, seq_group);
 		assertEquals(1, seq_group.getSeqCount());
 		BioSeq aseq = seq_group.getSeq(0);
-		assertEquals("chr1",aseq.getID());		
-	  ScoredContainerSym symI = (ScoredContainerSym) aseq.getAnnotation(0);
-		assertEquals("chr1",symI.getID());
-		assertEquals(2,aseq.getAnnotationCount());
+		assertEquals("chr1", aseq.getID());
+		ScoredContainerSym symI = (ScoredContainerSym) aseq.getAnnotation(0);
+		assertEquals("chr1", symI.getID());
+		assertEquals(2, aseq.getAnnotationCount());
 		GraphIntervalSym result = symI.makeGraphSym("NormDiff", seq_group);
 		assertEquals(4, result.getChildCount());
 		String genome_version = "H_sapiens_Mar_2006";
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		Boolean out = ScoredIntervalParser.writeEgrFormat(result, genome_version, outstream);		
+		Boolean out = ScoredIntervalParser.writeEgrFormat(result, genome_version, outstream);
 		assertEquals(true, out);
-		assertEquals(string,outstream.toString());
+		assertEquals(string, outstream.toString());
 	}
-
-	
-	
 }
 

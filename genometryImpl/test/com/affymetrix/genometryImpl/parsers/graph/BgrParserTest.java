@@ -86,8 +86,8 @@ public class BgrParserTest {
 		assertEquals(2, gr0.getPointCount());
 		assertEquals(0.128646, gr0.getGraphYCoord(0), 0.01);
 		assertEquals(0.363933, gr0.getGraphYCoord(1), 0.01);
-		assertEquals(948026, gr0.getGraphXCoords()[1]);
-		assertEquals(948025, gr0.getGraphXCoords()[0]);
+		assertEquals(948026, gr0.getGraphXCoord(1));
+		assertEquals(948025, gr0.getGraphXCoord(0));
 
 
 

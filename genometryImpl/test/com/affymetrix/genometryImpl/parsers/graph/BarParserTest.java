@@ -44,40 +44,6 @@ import static org.junit.Assert.*;
  * @author auser
  */
 public class BarParserTest {
-
-	/**
-		@Test
-	public void CreateBarFile() throws IOException {
-
-
-        String filename = "test/data/bar/1.sgr";
-		assertTrue(new File(filename).exists());
-
-		InputStream istr = new FileInputStream(filename);
-		assertNotNull(istr);
-
-        String stream_name = "test_file";
-		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
-
-		boolean ensure_unique_id = true;
-
-		List<GraphSym> result =SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
-		 FileOutputStream fout;
-     File file=new File("small.bar");
-     fout = new FileOutputStream(file);
-     BufferedOutputStream bos = new BufferedOutputStream(fout);
-	   DataOutputStream dos =  new DataOutputStream(bos);
-     GraphSym gr0 = (GraphSym) result.get(0);
-		 MutableAnnotatedBioSeq seq = (BioSeq) gr0.getGraphSeq();
-		 Collection<SeqSymmetry> syms = new ArrayList();
-		 syms.add(gr0);
-		 String type = "test_type";
-		BarParser instance=new BarParser();
-		instance.writeAnnotations(syms,seq,type,dos);
-		dos.close();
-		}
-	 * **/
 	
 	 
   @Before
@@ -112,7 +78,7 @@ public class BarParserTest {
 		assertEquals(38, gr0.getPointCount());
 		assertEquals(0, gr0.getGraphYCoord(2),0);
 		assertEquals(0, gr0.getGraphYCoord(3),0.01);
-		assertEquals(1879565, gr0.getGraphXCoords()[3]);
+		assertEquals(1879565, gr0.getGraphXCoord(3));
 
 	}
 
@@ -177,8 +143,8 @@ public class BarParserTest {
 		  assertEquals(2, gr0.getPointCount());
 		  assertEquals(0.2127714902162552, gr0.getGraphYCoord(0), 0.01);
 		  assertEquals(0.23889116942882538, gr0.getGraphYCoord(1), 0.01);
-		  assertEquals(1880186, gr0.getGraphXCoords()[1]);
-		  assertEquals(1880149,gr0.getGraphXCoords()[0]);
+		  assertEquals(1880186, gr0.getGraphXCoord(1));
+		  assertEquals(1880149,gr0.getGraphXCoord(0));
 		/**
 			
 			FileOutputStream fout;

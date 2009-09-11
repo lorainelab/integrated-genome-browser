@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="{'Add annotation to ' + parentName}"	
+	title="{'Add new annotation to ' + parentName}"	
 	showCloseButton="true" 
 	width="454" 
 	height="110" 
@@ -110,7 +110,6 @@
                 	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
                 </mx:HBox>
             </mx:AddChild>
-            <mx:SetProperty name="title" value="Add annotation"/>
         </mx:State>
     </mx:states>
     <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%" verticalGap="4">

@@ -361,7 +361,14 @@
             lastTreeItem = event;
         }
 
-        
+        public function syncAnnotationFilters(idOrganismAdded:Object):void {
+        	if (organismCombo.selectedItem != null) {
+        		if (organismCombo.selectedItem.@id != idOrganismAdded) {
+		        	this.organismCombo.selectedItem = null;
+		        	this.genomeVersionCombo.selectedItem = null;        			
+        		}
+        	}
+        }
         
         public function refreshAnnotationsAndSelect(itemToSelect:XML):void {
         	treeItemToSelect = itemToSelect;
@@ -570,8 +577,11 @@
             	var genomeWindow:GenomeVersionAddWindow = GenomeVersionAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, GenomeVersionAddWindow, true));
             	PopUpManager.centerPopUp(genomeWindow);
             	var organism:Object = getAncestor(XML(annotationsTree.selectedItem), "Organism");
+            	if (organism == null && organismCombo.selectedItem != null && organismCombo.selectedItem.@id != '') {
+            		var item:Object = getAnnotations.lastResult.Organism.(@idOrganism == organismCombo.selectedItem.@id);
+            		organism = item[0];
+            	}
             	genomeWindow.setOrganism(organism);
-            	genomeWindow.organismName = organism.@name;            		
             	genomeWindow.genomeVersionName.setFocus();
             } else if (label == "Annotation folder") {
             	var agWindow:AnnotationGroupingAddWindow = AnnotationGroupingAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationGroupingAddWindow, true));

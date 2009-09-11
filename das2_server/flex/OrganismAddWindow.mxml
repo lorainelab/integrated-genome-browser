@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="Add organism"
+	title="New organism"
 	showCloseButton="true" 
 	width="390" 
 	height="228"
@@ -42,6 +42,7 @@
 			    "/>");
 			    
 			// Refresh the annotations tree
+			parentApplication.annotationsView.syncAnnotationFilters("0");
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
 			
 						

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="Add genome version"
+	title="New genome version"
 	showCloseButton="true" 
 	width="398" 
 	height="192"
@@ -32,9 +32,7 @@
 	import mx.rpc.events.ResultEvent;
 	import mx.controls.Alert;
 
-	[Bindable]
-	public var organismName:Object = null;
-	
+
 	
 	public function setOrganism(organism:Object):void {
 		if (organism != null) {
@@ -56,6 +54,7 @@
 			    "/>");
 			    
 			// Refresh the annotations tree
+			parentApplication.annotationsView.syncAnnotationFilters(organismCombo.selectedItem.@id);
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
 			
 			// Refresh the dictionaries so that the dropdowns are up-to-date.

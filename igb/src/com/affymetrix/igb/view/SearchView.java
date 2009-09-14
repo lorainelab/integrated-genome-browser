@@ -144,7 +144,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		
 
 		//Create a separate form for filterText
-        JLabel l1 = new JLabel("Filter ID:", SwingConstants.TRAILING);
+       /* JLabel l1 = new JLabel("Filter ID:", SwingConstants.TRAILING);
         pan1.add(l1);
        //Whenever filterText changes, invoke newFilter.
 		filterText.getDocument().addDocumentListener(new DocumentListener() {
@@ -164,7 +164,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 
 
-        pan1.add(filterText);
+        pan1.add(filterText);*/
 
 		this.add("North", pan1);
 

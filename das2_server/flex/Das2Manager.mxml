@@ -225,7 +225,8 @@
 			dictionaryMyUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup.(@id == '' || @isPartOf == "Y"));
 			dictionaryUser = new XMLListCollection(getDictionaries.lastResult.Users.User.(@name != 'guest'));
 			
-			callLater(this.dictionaryView.expandAllTreeNodes);				
+			callLater(this.dictionaryView.expandAllTreeNodes);	
+			callLater(this.annotationsView.selectAnnotationFilter);
 			 
 		} else {
 			Alert.show("An error occurred while getting dictionaries.");

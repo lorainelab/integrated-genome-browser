@@ -244,7 +244,9 @@
         private var treeMenu:ContextMenu = new ContextMenu();
         private var lastTreeItem:ListEvent;
 
-        private var treeItemToSelect:Object = null;  
+        private var treeItemToSelect:Object = null; 
+        
+        private var organismFilterToSelect:Object = null; 
         
         private var reassignAnnotation:Object = null;
         private var reassignAnnotationGrouping:Object = null;
@@ -361,11 +363,35 @@
             lastTreeItem = event;
         }
 
-        public function syncAnnotationFilters(idOrganismAdded:Object):void {
+        public function refreshAnnotationFilters(idOrganismAdded:Object):void {
+        	// We want to clear out the organism dropdown selection
+        	// if a genome version from a different organism
+        	// or a different organism has been added
         	if (organismCombo.selectedItem != null) {
         		if (organismCombo.selectedItem.@id != idOrganismAdded) {
 		        	this.organismCombo.selectedItem = null;
-		        	this.genomeVersionCombo.selectedItem = null;        			
+        		}
+        	}
+        	// If we have added a new organism or a new genome version, clear out
+        	// the dropdown selection for genome version because it
+        	// doesn't apply anymore.
+		    this.genomeVersionCombo.selectedIndex = 0;
+		    
+		    // We now need to refresh the dictionaries to get newly added
+		    // organism or genome version into the dropdown.  Keep track
+		    // of the organism dropdown selection and re-select it
+		    // after the dictionaries are refreshed.
+		    organismFilterToSelect = organismCombo.selectedItem;
+		    parentApplication.getDictionaries.send();        			
+        }
+        
+        public function selectAnnotationFilter():void {
+        	if (this.organismFilterToSelect != null) {
+        		for each(var item:Object in parentApplication.dictionaryOrganism) {
+        			if (item.@id == organismFilterToSelect.@id) {
+        				organismCombo.selectedItem = item;
+        				break;
+        			}
         		}
         	}
         }

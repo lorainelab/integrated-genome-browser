@@ -42,7 +42,7 @@
 			    "/>");
 			    
 			// Refresh the annotations tree
-			parentApplication.annotationsView.syncAnnotationFilters("0");
+			parentApplication.annotationsView.refreshAnnotationFilters("0");
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
 			
 						

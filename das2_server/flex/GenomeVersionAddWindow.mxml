@@ -54,11 +54,9 @@
 			    "/>");
 			    
 			// Refresh the annotations tree
-			parentApplication.annotationsView.syncAnnotationFilters(organismCombo.selectedItem.@id);
+			parentApplication.annotationsView.refreshAnnotationFilters(organismCombo.selectedItem.@id);
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
 			
-			// Refresh the dictionaries so that the dropdowns are up-to-date.
-			parentApplication.getDictionaries.send();
 				
 		} else if (addGenomeVersion.lastResult.name() == "Error") {
 			Alert.show(addGenomeVersion.lastResult.@message);

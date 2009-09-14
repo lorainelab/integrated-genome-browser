@@ -149,27 +149,6 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
 
         return prop_order;
     }
-
-
-    /*
-    public static void printMap(Map hash)  {
-    Iterator iter = hash.entrySet().iterator();
-    while (iter.hasNext())  {
-    System.out.println(iter.next());
-    }
-
-    }
-
-    public List<SeqSymmetry> getCurrentSyms() {
-    return new ArrayList<SeqSymmetry>(currentSyms);
-    }
-
-    public SeqSymmetry getSymForRow(int i) {
-    return currentSyms.get(getModelIndex(i));
-    }*/
-    public void destroy() {
-        currentSyms = Collections.<SeqSymmetry>emptyList();
-    }
 }
 
 

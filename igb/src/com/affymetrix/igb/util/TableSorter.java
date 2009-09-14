@@ -81,12 +81,12 @@ public final class TableSorter extends AbstractTableModel {
   
   private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
   
-  public static final Comparator COMPARABLE_COMAPRATOR = new Comparator() {
+  private static final Comparator COMPARABLE_COMPARATOR = new Comparator() {
     public int compare(Object o1, Object o2) {
       return ((Comparable) o1).compareTo(o2);
     }
   };
-  public static final Comparator LEXICAL_COMPARATOR = new Comparator() {
+  private static final Comparator LEXICAL_COMPARATOR = new Comparator() {
     public int compare(Object o1, Object o2) {
       // Original version was case sensitive:
       //return o1.toString().compareTo(o2.toString());
@@ -104,7 +104,7 @@ public final class TableSorter extends AbstractTableModel {
   private Map<Class,Comparator> columnComparators = new HashMap<Class, Comparator>();
   private List<Directive> sortingColumns = new ArrayList<Directive>();
   
-  public TableSorter() {
+  private TableSorter() {
     this.mouseListener = new MouseHandler();
     this.tableModelListener = new TableModelHandler();
   }
@@ -119,11 +119,7 @@ public final class TableSorter extends AbstractTableModel {
     modelToView = null;
   }
   
-  public TableModel getTableModel() {
-    return tableModel;
-  }
-  
-  public void setTableModel(TableModel tableModel) {
+  private void setTableModel(TableModel tableModel) {
     if (this.tableModel != null) {
       this.tableModel.removeTableModelListener(tableModelListener);
     }
@@ -135,10 +131,6 @@ public final class TableSorter extends AbstractTableModel {
     
     clearSortingState();
     fireTableStructureChanged();
-  }
-  
-  public JTableHeader getTableHeader() {
-    return tableHeader;
   }
   
   public void setTableHeader(JTableHeader tableHeader) {
@@ -157,7 +149,7 @@ public final class TableSorter extends AbstractTableModel {
     }
   }
   
-  public boolean isSorting() {
+  private boolean isSorting() {
     return !sortingColumns.isEmpty();
   }
   
@@ -170,7 +162,7 @@ public final class TableSorter extends AbstractTableModel {
 		return EMPTY_DIRECTIVE;
 	}
   
-  public int getSortingStatus(int column) {
+  private int getSortingStatus(int column) {
     return getDirective(column).direction;
   }
   
@@ -182,7 +174,7 @@ public final class TableSorter extends AbstractTableModel {
     }
   }
   
-  public void setSortingStatus(int column, int status) {
+  private void setSortingStatus(int column, int status) {
     Directive directive = getDirective(column);
     if (directive != EMPTY_DIRECTIVE) {
       sortingColumns.remove(directive);
@@ -193,7 +185,7 @@ public final class TableSorter extends AbstractTableModel {
     sortingStatusChanged();
   }
   
-  protected Icon getHeaderRendererIcon(int column, int size) {
+  private Icon getHeaderRendererIcon(int column, int size) {
     Directive directive = getDirective(column);
     if (directive == EMPTY_DIRECTIVE) {
       return null;
@@ -214,7 +206,7 @@ public final class TableSorter extends AbstractTableModel {
     }
   }
   
-  protected Comparator getComparator(int column) {
+  private Comparator getComparator(int column) {
     Class columnType = tableModel.getColumnClass(column);
     Comparator comparator = columnComparators.get(columnType);
     if (comparator != null) {
@@ -225,7 +217,7 @@ public final class TableSorter extends AbstractTableModel {
       return LEXICAL_COMPARATOR;
     }
     if (Comparable.class.isAssignableFrom(columnType)) {
-      return COMPARABLE_COMAPRATOR;
+      return COMPARABLE_COMPARATOR;
     }
     return LEXICAL_COMPARATOR;
   }
@@ -270,14 +262,17 @@ public final class TableSorter extends AbstractTableModel {
     return (tableModel == null) ? 0 : tableModel.getColumnCount();
   }
   
+	@Override
   public String getColumnName(int column) {
     return tableModel.getColumnName(column);
   }
   
+	@Override
   public Class getColumnClass(int column) {
     return tableModel.getColumnClass(column);
   }
-  
+
+  @Override
   public boolean isCellEditable(int row, int column) {
     return tableModel.isCellEditable(modelIndex(row), column);
   }
@@ -285,7 +280,8 @@ public final class TableSorter extends AbstractTableModel {
   public Object getValueAt(int row, int column) {
     return tableModel.getValueAt(modelIndex(row), column);
   }
-  
+
+  @Override
   public void setValueAt(Object aValue, int row, int column) {
     tableModel.setValueAt(aValue, modelIndex(row), column);
   }
@@ -383,6 +379,7 @@ public final class TableSorter extends AbstractTableModel {
   }
   
   private final class MouseHandler extends MouseAdapter {
+		@Override
     public void mouseClicked(MouseEvent e) {
       JTableHeader h = (JTableHeader) e.getSource();
       TableColumnModel columnModel = h.getColumnModel();

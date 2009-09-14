@@ -32,11 +32,13 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
-import com.affymetrix.igb.util.TableSorter;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
 	private static final long serialVersionUID = 0;
@@ -47,9 +49,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
 
-	//private JLabel andLabel;
 	private JTextField searchTF;
-	//private JTextField searchTF2;
 	private JPanel pan1 = new JPanel();
 	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB = new JComboBox();
@@ -63,21 +63,22 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 
 	private final JTable table = new JTable();
+	private final JTextField filterText = new JTextField();
 	private final JLabel status_bar = new JLabel("0 results");
 	// The second column in the table contains an object of type SeqSymmetry
 	// but we use a special TableCellRenderer so that what is actually displayed
 	// is a String representing the Tier
-	private final static String[] col_headings = {"ID", "Start", "End", "Chromosome", "Strand"};
-	private final static Class<?>[] col_classes = {String.class, Integer.class, Integer.class, String.class, String.class};
+	private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
+	private final static Class<?>[] col_classes = {String.class, String.class, Integer.class, Integer.class, String.class, String.class};
 	private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
 	private final static int NUM_COLUMNS = col_headings_vector.size();
 	private DefaultTableModel model;
+	private TableRowSorter<DefaultTableModel> sorter;
 	private ListSelectionModel lsm;
 
 	private static final String ALLID = "All loaded IDs";
 	private static final String REGEXID = "Matching ID";
 	private static final String REGEXIDTF = "ID matches string or Regular Expression";
-	//private static final String BETWEENID = "ID between...";
 	private static final String REGEXRESIDUE = "Matching residues";
 	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
 	private static final String CHOOSESEARCH = "Choose search method";
@@ -122,8 +123,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		pan1.add(searchCB);
 		pan1.add(searchTF);
-		//pan1.add(andLabel);
-		//pan1.add(searchTF2);
 		pan1.add(remoteSearchCheckBox);
 		pan1.add(selectInMapCheckBox);
 
@@ -142,7 +141,33 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		this.initTable();
 
+		
+
+		//Create a separate form for filterText
+        JLabel l1 = new JLabel("Filter ID:", SwingConstants.TRAILING);
+        pan1.add(l1);
+       //Whenever filterText changes, invoke newFilter.
+		filterText.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				newFilter();
+			}
+
+			public void insertUpdate(DocumentEvent e) {
+				newFilter();
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				newFilter();
+			}
+		});
+        l1.setLabelFor(filterText);
+
+
+
+        pan1.add(filterText);
+
 		this.add("North", pan1);
+
 
 		JScrollPane scroll_pane = new JScrollPane(table);
 		this.add(scroll_pane, BorderLayout.CENTER);
@@ -187,7 +212,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchCB.removeAllItems();
 		searchCB.addItem(ALLID);
 		searchCB.addItem(REGEXID);
-		//searchCB.addItem(BETWEENID);
 		searchCB.addItem(REGEXRESIDUE);
 		searchCB.setToolTipText(CHOOSESEARCH);
 	}
@@ -196,10 +220,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
 		searchTF.setEnabled(false);
-		//searchTF2 = new JTextField(10);
-		//searchTF2.setVisible(false);
-		//andLabel = new JLabel("and");
-		//andLabel.setVisible(false);
 		remoteSearchCheckBox.setEnabled(false);
 		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
 		selectInMapCheckBox.setToolTipText("highlight matches in sequence map");
@@ -236,17 +256,31 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		//lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		TableSorter sort_model = new TableSorter(model);
-		sort_model.setTableHeader(table.getTableHeader());
-		sort_model.setColumnComparator(SeqSymmetry.class, new SeqSymmetryMethodComparator());
+		sorter = new TableRowSorter<DefaultTableModel>(model);
 
-		table.setModel(sort_model);
+		table.setModel(model);
 		table.setRowSelectionAllowed(true);
+		table.setRowSorter(sorter);
 		table.setEnabled(true);
 		table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
 		table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
-
 	}
+
+	/**
+     * Update the row filter regular expression from the expression in
+     * the text box.
+     */
+    private void newFilter() {
+        RowFilter<DefaultTableModel, Object> rf = null;
+        //If current expression doesn't parse, don't update.
+        try {
+            rf = RowFilter.regexFilter(filterText.getText(), 0);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorter.setRowFilter(rf);
+    }
+
 
 	private void clearAll() {
 		searchTF.setText("");
@@ -295,7 +329,12 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			return false;
 		}
 		// TODO: use SearchRow class
-		a_row.add(result.getID());
+		a_row.add(result.getID());	// ID
+		String tier = BioSeq.determineMethod(result);
+		if (tier.length() == 0) {
+			tier = "N/A";
+		}
+		a_row.add(tier);
 		a_row.add(new Integer(span.getStart()));
 		a_row.add(new Integer(span.getEnd()));
 		if (seq != null) {
@@ -309,15 +348,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void displayInTable(final Vector<Vector<Object>> rows) {
 		SwingUtilities.invokeLater(new Runnable() {
-
 			public void run() {
 				model.setDataVector(rows, col_headings_vector);
-				//int num_results = rows.size();
-            /*if (rows.size() >= MAX_HITS) {
-				setStatus("More than " + MAX_HITS + " results");
-				} else {
-				setStatus("" + rows.size() + " results");
-				}*/
 			}
 		});
 	}
@@ -348,10 +380,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			this.searchTF.setEnabled(!ALLID.equals(searchMode));
-
-			//boolean optionalField = BETWEENID.equals(searchMode);
-			//this.andLabel.setVisible(optionalField);
-			//this.searchTF2.setVisible(optionalField);
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
 			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
@@ -386,8 +414,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				displayRegexIDs(".*", chrfilter);
 			} else if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText(), chrfilter);
-				//} else if (BETWEENID.equals(searchMode)) {
-				//	displayBetweenIDs(this.searchTF.getText(), this.searchTF2.getText());
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues();
 			}
@@ -445,9 +471,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	}
 
-	/*private static void displayBetweenIDs(String text, String text2) {
-	Set<String> results = group.getSymmetryIDs(text, text2);
-	}*/
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */

@@ -1,4 +1,4 @@
--- MySQL Administrator dump 1.4
+﻿-- MySQL Administrator dump 1.4
 --
 -- ------------------------------------------------------
 -- Server version	5.0.67-community-nt
@@ -101,14 +101,14 @@ CREATE TABLE `AnnotationGrouping` (
   `description` varchar(2000) default NULL,
   `idParentAnnotationGrouping` int(10) unsigned default NULL,
   `idGenomeVersion` int(10) unsigned default NULL,
-  `idUser` int(10) unsigned default NULL,
+  `idUserGroup` int(10) unsigned default NULL,
   PRIMARY KEY  USING BTREE (`idAnnotationGrouping`),
-  KEY `FK_AnnotationFolder_GenomeVersion` (`idGenomeVersion`),
+  KEY `FK_AnnotationGrouping_GenomeVersion` (`idGenomeVersion`),
   KEY `FK_AnnotationGrouping_parentAnnotationGrouping` USING BTREE (`idParentAnnotationGrouping`),
-  KEY `FK_AnnotationGrouping_User` (`idUser`),
-  CONSTRAINT `FK_AnnotationFolder_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`),
-  CONSTRAINT `FK_AnnotationGrouping_User` FOREIGN KEY (`idUser`) REFERENCES `User` (`idUser`),
-  CONSTRAINT `FK_Annotationgruping_parentAnnotationGrouping` FOREIGN KEY (`idParentAnnotationGrouping`) REFERENCES `AnnotationGrouping` (`idAnnotationGrouping`)
+  KEY `FK_AnnotationGrouping_UserGroup` (`idUserGroup`),
+  CONSTRAINT `FK_AnnotationGrouping_UserGroup` FOREIGN KEY (`idUserGroup`) REFERENCES `UserGroup` (`idUserGroup`),
+  CONSTRAINT `FK_AnnotationGrouping_GenomeVersion` FOREIGN KEY (`idGenomeVersion`) REFERENCES `GenomeVersion` (`idGenomeVersion`),
+  CONSTRAINT `FK_AnnotationGrouping_parentAnnotationGrouping` FOREIGN KEY (`idParentAnnotationGrouping`) REFERENCES `AnnotationGrouping` (`idAnnotationGrouping`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6300 DEFAULT CHARSET=latin1;
 
 --
@@ -116,7 +116,7 @@ CREATE TABLE `AnnotationGrouping` (
 --
 
 /*!40000 ALTER TABLE `AnnotationGrouping` DISABLE KEYS */;
-INSERT INTO `AnnotationGrouping` (`idAnnotationGrouping`,`name`,`description`,`idParentAnnotationGrouping`,`idGenomeVersion`,`idUser`) VALUES 
+INSERT INTO `AnnotationGrouping` (`idAnnotationGrouping`,`name`,`description`,`idParentAnnotationGrouping`,`idGenomeVersion`,`idUserGroup`) VALUES 
  (400,'A_thaliana_Jan_2004','A_thaliana_Jan_2004',NULL,400,NULL),
  (500,'B_taurus_Aug_2006','B_taurus_Aug_2006',NULL,500,NULL),
  (501,'B_taurus_Oct_2007','B_taurus_Oct_2007',NULL,501,NULL),

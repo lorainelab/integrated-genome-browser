@@ -128,7 +128,9 @@ MySQL Database (required when running DAS2 server in database mode)
   * Modify the context.xml (see instructions above) to use the correct database
     username and password.
   * Run genoviz.sql to create genoviz database
-  * Uncompress the MySQL JDBC zip file (mysql-connector-java-5.1.7.zip) and place
+  * Download the MySQL JDBC driver (MySQL Connector/J) from 
+    http://dev.mysql.com/downloads/connector/j/5.1.html.  
+    Uncompress the zip file (mysql-connector-java-5.1.7.zip) and place
     mysql-connector-java-5.1.7-bin.jar into your tomcat/common/lib directory.
   
 === RUNNING THE WEB-BASED DAS2 MANAGER TOOL ===

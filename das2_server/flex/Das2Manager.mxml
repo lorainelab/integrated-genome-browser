@@ -222,7 +222,11 @@
 			dictionaryExperimentMethod = new XMLListCollection(getDictionaries.lastResult.ExperimentMethods.ExperimentMethod);
 			dictionaryVisibility = new XMLListCollection(getDictionaries.lastResult.Visibilities.Visibility); 
 			dictionaryUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup); 
-			dictionaryMyUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup.(@id == '' || @isPartOf == "Y"));
+			if (this.isAdmin()) {
+				dictionaryMyUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup.(@id == '' || @isPartOf == "Y"));				
+			} else {
+				dictionaryMyUserGroup = new XMLListCollection(getDictionaries.lastResult.UserGroups.UserGroup.(@isPartOf == "Y"));								
+			}
 			dictionaryUser = new XMLListCollection(getDictionaries.lastResult.Users.User.(@name != 'guest'));
 			
 			callLater(this.dictionaryView.expandAllTreeNodes);	

@@ -289,7 +289,7 @@ public class DictionaryHelper {
 		//
 		dict = root.addElement("UserGroups");
 		Element blank = makeBlankNode(dict, "UserGroup");
-		blank.addAttribute("isPartOf", "Y");
+		blank.addAttribute("isPartOf", "N");
 		for (UserGroup d : groupList) {
 			Element dictEntry = dict.addElement("UserGroup");
 			dictEntry.addAttribute("id",         d.getIdUserGroup().toString());

@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="{'Add new annotation to ' + parentName}"	
 	showCloseButton="true" 
-	width="454" 
-	height="110" 
+	width="468" 
+	height="124" 
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotation}"
 	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
@@ -99,15 +99,14 @@
     
     	    <mx:states>
         <mx:State name="GroupVisibilityState">
-            <mx:SetProperty name="height" value="146"/>
+            <mx:SetProperty name="height" value="164"/>
             <mx:SetProperty target="{saveButton}" name="enabled">
                 <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
             </mx:SetProperty>
-            <mx:SetProperty name="width" value="458"/>
             <mx:AddChild relativeTo="{vbox1}" position="lastChild">
                 <mx:HBox width="100%" id="hbox2">
                 	<mx:Label text="User Group:" width="105"/>
-                	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
+                	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
                 </mx:HBox>
             </mx:AddChild>
         </mx:State>

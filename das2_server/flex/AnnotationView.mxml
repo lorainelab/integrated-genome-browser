@@ -503,14 +503,14 @@
             } else if (this.annotationsTree.selectedItem.name() == "AnnotationGrouping") {
             	this.addTreeItemStack.selectedIndex = 3;
                 this.mainViewStack.selectedChild = this.annotationGroupingView;
-                if (this.currentState == "AdminState") {
-                	if (this.annotationGroupingOwnerStack != null) {
-	                	annotationGroupingOwnerStack.selectedIndex = 0;
-						parentApplication.selectDictionaryComboBox(this.annotationGroupingOwnerCombo, annotationsTree.selectedItem.@idUser, parentApplication.dictionaryUser);
+                if (this.annotationsTree.selectedItem.@canWrite == "Y") {
+                	if (this.agUserGroupStack != null) {
+	                	agUserGroupStack.selectedIndex = 0;
+						parentApplication.selectDictionaryComboBox(this.annotationGroupingUserGroupCombo, annotationsTree.selectedItem.@idUserGroup, parentApplication.dictionaryMyUserGroup);
                 	}
                 } else {
-                	if (this.annotationGroupingOwnerStack != null) {
-	                	annotationGroupingOwnerStack.selectedIndex = 1;
+                	if (this.agUserGroupStack != null) {
+	                	agUserGroupStack.selectedIndex = 1;
 	                }
                 }
                 
@@ -961,11 +961,8 @@
         	params.idAnnotationGrouping   = annotationsTree.selectedItem.@idAnnotationGrouping;
         	params.name                   = this.annotationGroupingName.text;
         	params.description            = this.annotationGroupingDescription.text;
-        	if (this.currentState == "AdminState") {
-	        	params.idUser                 = annotationGroupingOwnerCombo.selectedItem != null ? annotationGroupingOwnerCombo.selectedItem.@id : "";
-        	} else {
-        		params.idUser                 = this.getAnnotation.lastResult.@idUser;
-        	}
+        	params.idUserGroup            = annotationGroupingUserGroupCombo.selectedItem != null ? annotationGroupingUserGroupCombo.selectedItem.@id : "";
+        	
         	updateAnnotationGrouping.send(params);
 		}
 		
@@ -1603,7 +1600,7 @@
 							    </mx:HBox>
 							    <mx:HBox width="100%" horizontalGap="0" id="userGroupBox">
 							    	<mx:Label text="User Group:" width="72"/>
-							    	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryUserGroup}" width="100%" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
+							    	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							    </mx:HBox>
 							    <mx:HBox width="100%" horizontalGap="0" id="hbox10">
 							    	<mx:Label text="Visibility:" width="72"/>
@@ -1759,13 +1756,13 @@
 					  <mx:HBox width="100%" >
 						<mx:Label text="Name:"  width="120"/>
 						<mx:TextInput id="annotationGroupingName" width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyAnnotationGrouping.setDirty()"/>
-						<mx:Label text="Owner:" paddingLeft="8"/>
-			         	<mx:ViewStack id="annotationGroupingOwnerStack" width="100%">
+						<mx:Label text="User Group:" paddingLeft="8"/>
+			         	<mx:ViewStack id="agUserGroupStack" width="100%">
 			         		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" width="100%">
-					         	<mx:ComboBox width="100%" id="annotationGroupingOwnerCombo" labelField="@name" dataProvider="{parentApplication.dictionaryUser}" change="dirtyAnnotationGrouping.setDirty()"></mx:ComboBox>							         			
+							    <mx:ComboBox id="annotationGroupingUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="dirtyAnnotationGrouping.setDirty()"></mx:ComboBox>
 			         		</mx:HBox>
 			         		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0">
-					         	<mx:Label text="{annotationsTree.selectedItem.@owner}"/>							         			
+					         	<mx:Label text="{annotationsTree.selectedItem.@userGroup}"/>							         			
 			         		</mx:HBox>
 			         	</mx:ViewStack>
 					  </mx:HBox>
@@ -1796,6 +1793,7 @@
 			    </mx:HBox>
 			</mx:AddChild>
 			<mx:SetProperty target="{organismCombo}" name="labelField" value="@binomialName"/>
+			<mx:SetProperty target="{annotationUserGroupCombo}" name="dataProvider" value="{parentApplication.dictionaryMyUserGroup}"/>
 		</mx:State>
 		<mx:State name="UserState">
 			<mx:AddChild relativeTo="{hbox1}" position="lastChild">

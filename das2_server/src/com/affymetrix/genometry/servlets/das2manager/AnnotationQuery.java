@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -69,28 +70,41 @@ public class AnnotationQuery {
 
 	@SuppressWarnings("unchecked")
 	public Document getAnnotationDocument(Session sess, Das2ManagerSecurity das2ManagerSecurity) throws Exception {
-		
+		// Run query to get annotation groupings, organized under
+		// organism and genome version
+		StringBuffer queryBuf = this.getAnnotationGroupingQuery(das2ManagerSecurity);    	
+		Logger.getLogger(this.getClass().getName()).info("Annotation grouping query: " + queryBuf.toString());
+    	Query query = sess.createQuery(queryBuf.toString());
+		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
+				
 		// Run query to get annotation grouping and annotations, organized under
 		// organism and genome version
-		StringBuffer queryBuf = this.getAnnotationQuery(das2ManagerSecurity);
-    	Query query = sess.createQuery(queryBuf.toString());
-		List<Object[]> annotationRows = (List<Object[]>)query.list();
+		queryBuf = this.getAnnotationQuery(das2ManagerSecurity);
+    	Logger.getLogger(this.getClass().getName()).info("Annotation query: " + queryBuf.toString());
+    	query = sess.createQuery(queryBuf.toString());
+    	List<Object[]> annotationRows = (List<Object[]>)query.list();
 		
 	
 		// Create an XML document
-		Document doc = this.getAnnotationDocument(annotationRows, DictionaryHelper.getInstance(sess), das2ManagerSecurity);
+		Document doc = this.getAnnotationDocument(annotationGroupingRows, annotationRows, DictionaryHelper.getInstance(sess), das2ManagerSecurity);
 		return doc;
 		
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void runAnnotationQuery(Session sess, Das2ManagerSecurity das2ManagerSecurity) throws Exception {
-		
-		// Run query to get annotation grouping and annotations, organized under
+		// Run query to get annotation groupings, organized under
 		// organism and genome version
-		StringBuffer queryBuf = this.getAnnotationQuery(das2ManagerSecurity);    	
-		System.out.println("Annotation query: " + queryBuf.toString());
+		StringBuffer queryBuf = this.getAnnotationGroupingQuery(das2ManagerSecurity);    	
+		Logger.getLogger(this.getClass().getName()).info("Annotation grouping query: " + queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
+		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
+		
+		// Run query to get annotations, organized under annotation grouping,
+		// organism, and genome version
+		queryBuf = this.getAnnotationQuery(das2ManagerSecurity);    	
+		Logger.getLogger(this.getClass().getName()).info("Annotation query: " + queryBuf.toString());
+    	query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationRows = (List<Object[]>)query.list();
 		
 		// Now run query to get the genome version segments
@@ -98,8 +112,36 @@ public class AnnotationQuery {
     	query = sess.createQuery(queryBuf.toString());
 		List<Segment> segmentRows = (List<Segment>)query.list();
 			
-		this.hashAnnotations(annotationRows, segmentRows, DictionaryHelper.getInstance(sess));
+		this.hashAnnotations(annotationGroupingRows, annotationRows, segmentRows, DictionaryHelper.getInstance(sess));
 		
+	}
+	
+	private StringBuffer getAnnotationGroupingQuery(Das2ManagerSecurity das2Security) throws Exception {
+		
+		addWhere = true;
+		queryBuf = new StringBuffer();
+
+		queryBuf.append(" SELECT     org, ");
+		queryBuf.append("            ver, ");
+		queryBuf.append("            ag, ");
+		queryBuf.append("            pag ");
+		queryBuf.append(" FROM       Organism as org ");
+		queryBuf.append(" JOIN       org.genomeVersions as ver ");
+		queryBuf.append(" JOIN       ver.annotationGroupings as ag ");
+		queryBuf.append(" LEFT JOIN  ag.parentAnnotationGrouping as pag ");
+
+		addWhere = true;
+
+		addCriteria(ANNOTATION_GROUPING_LEVEL);
+		
+		if (das2Security != null) {
+			das2Security.appendAnnotationGroupingHQLSecurity(scopeLevel, queryBuf, "ag", addWhere);			
+		}
+		
+		queryBuf.append(" ORDER BY org.name asc, ver.buildDate desc, ag.name asc ");
+
+		return queryBuf;
+
 	}
 
 	private StringBuffer getAnnotationQuery(Das2ManagerSecurity das2Security) throws Exception {
@@ -120,10 +162,10 @@ public class AnnotationQuery {
 
 		addWhere = true;
 
-		addCriteria(ANNOTATION_GROUPING_LEVEL);
+		addCriteria(ANNOTATION_LEVEL);
 		
 		if (das2Security != null) {
-			das2Security.appendHQLSecurity(scopeLevel, queryBuf, "a", "ag", addWhere);			
+			das2Security.appendAnnotationHQLSecurity(scopeLevel, queryBuf, "a", "ag", addWhere);			
 		}
 		
 		queryBuf.append(" ORDER BY org.name asc, ver.buildDate desc, ag.name asc, a.name asc ");
@@ -145,10 +187,10 @@ public class AnnotationQuery {
 
 	}
 
-	private Document getAnnotationDocument(List<Object[]> annotationRows, DictionaryHelper dictionaryHelper, Das2ManagerSecurity das2ManagerSecurity) {
+	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, DictionaryHelper dictionaryHelper, Das2ManagerSecurity das2ManagerSecurity) {
 		
 		// Organize results rows into hash tables
-		hashAnnotations(annotationRows, null, dictionaryHelper);		
+		hashAnnotations(annotationGroupingRows, annotationRows, null, dictionaryHelper);		
 		
 
 		Document doc = DocumentHelper.createDocument();
@@ -203,7 +245,7 @@ public class AnnotationQuery {
 		
 	}
 	
-	private void hashAnnotations(List<Object[]> annotationRows, List<Segment> segmentRows, DictionaryHelper dictionaryHelper) {
+	private void hashAnnotations(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, List<Segment> segmentRows, DictionaryHelper dictionaryHelper) {
 
 		organismToVersion        = new TreeMap<String, TreeMap<GenomeVersion, ?>>();
 		versionToRootGroupings   = new HashMap<String, TreeMap<String, ?>>();
@@ -276,6 +318,7 @@ public class AnnotationQuery {
 		}
 
 		
+		
 		// Hash to create hierarchy:
 		//   Organism
 		//     Genome Version
@@ -292,6 +335,49 @@ public class AnnotationQuery {
 		//     and show the annotations under the genome version node instead.
 		// 3. Hash the annotation groupings under parent annotation grouping
 		//    and the annotations under the parent annotation grouping.
+		
+		// First hash the annotation groupings
+		for (Object[] row : annotationGroupingRows) {
+			Organism organism                      = (Organism) row[0];
+			GenomeVersion genomeVersion            = (GenomeVersion)  row[1];
+			AnnotationGrouping annotGrouping       = (AnnotationGrouping) row[2];
+			AnnotationGrouping parentAnnotGrouping = (AnnotationGrouping) row[3];
+			
+			// Hash genome versions for an organism
+			TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organism.getBinomialName());
+			if (versionMap == null) {
+				versionMap = new TreeMap<GenomeVersion, Object>(new GenomeVersionComparator());
+				organismToVersion.put(organism.getBinomialName(), versionMap);
+			}
+			if (genomeVersion != null) {
+				versionMap.put(genomeVersion, null);
+			}
+			
+			// Hash root annotation groupings for a genome version
+			String groupingKey       = annotGrouping.getName()  + KEY_DELIM + annotGrouping.getIdAnnotationGrouping();
+			if (parentAnnotGrouping == null) {
+
+				TreeMap<String, ?> groupingNameMap = versionToRootGroupings.get(genomeVersion.getName());
+				if (groupingNameMap == null) {
+					groupingNameMap = new TreeMap<String, String>();
+					versionToRootGroupings.put(genomeVersion.getName(), groupingNameMap);
+				}
+				groupingNameMap.put(groupingKey, null);				
+			} else {
+				String parentGroupingKey = parentAnnotGrouping.getName() + KEY_DELIM + parentAnnotGrouping.getIdAnnotationGrouping();
+
+				// Hash annotation grouping for a parent annotation grouping
+				TreeMap<String, ?> childGroupingNameMap = groupingToGroupings.get(parentGroupingKey);
+				if (childGroupingNameMap == null) {
+					childGroupingNameMap = new TreeMap<String, String>();
+					groupingToGroupings.put(parentGroupingKey, childGroupingNameMap);
+				}
+				childGroupingNameMap.put(groupingKey, null);				
+			}
+			annotationGroupingMap.put(annotGrouping.getIdAnnotationGrouping(), annotGrouping);				
+		}
+		
+		// Now hash the annotation rows
 		for (Object[] row : annotationRows) {
 			Organism organism                      = (Organism) row[0];
 			GenomeVersion genomeVersion            = (GenomeVersion)  row[1];
@@ -350,9 +436,6 @@ public class AnnotationQuery {
 					annotationMap.put(annot.getIdAnnotation(), annot);
 				}			
 			}
-			
-			
-			
 		}
 		
 	}
@@ -493,8 +576,8 @@ public class AnnotationQuery {
 					groupingNode.addAttribute("name", annotGrouping.getName().toString());	
 					groupingNode.addAttribute("description", annotGrouping.getDescription() != null ? annotGrouping.getDescription() : "");	
 					groupingNode.addAttribute("canWrite",    das2ManagerSecurity.canWrite(annotGrouping) ? "Y" : "N");
-					groupingNode.addAttribute("owner", dictionaryHelper.getUserFullName(annotGrouping.getIdUser()));
-					groupingNode.addAttribute("idUser",annotGrouping.getIdUser() != null ? annotGrouping.getIdUser().toString() : "");
+					groupingNode.addAttribute("userGroup", dictionaryHelper.getUserGroupName(annotGrouping.getIdUserGroup()));
+					groupingNode.addAttribute("idUserGroup",annotGrouping.getIdUserGroup() != null ? annotGrouping.getIdUserGroup().toString() : "");
 					
 				} else {
 					groupingNode = parentNode;					
@@ -538,24 +621,26 @@ public class AnnotationQuery {
 
 		// Search by organism
 		if (idOrganism != null) {
-			this.addWhereOrAnd();
+			this.AND();
 			queryBuf.append(" org.idOrganism = ");
 			queryBuf.append(idOrganism);
 		}
 		// Search by genome version
 		if (idGenomeVersion != null) {
-			this.addWhereOrAnd();
+			this.AND();
 			queryBuf.append(" ver.idGenomeVersion = ");
 			queryBuf.append(idGenomeVersion);
 		}
 		// Search for annotations and annotation groups for a particular group
 		if (idUserGroup != null) {
-			this.addWhereOrAnd();
+			this.AND();
 			queryBuf.append("(");
-			queryBuf.append(" a.idUserGroup = " + this.idUserGroup);
-			if (joinLevel == ANNOTATION_GROUPING_LEVEL) {
-				queryBuf.append("  OR ");
-				queryBuf.append(" a.idUserGroup is null");				
+			if (joinLevel == ANNOTATION_LEVEL) {
+				queryBuf.append(" a.idUserGroup = " + this.idUserGroup);
+			} else if (joinLevel == ANNOTATION_GROUPING_LEVEL) {
+				queryBuf.append(" ag.idUserGroup = " + this.idUserGroup);
+				queryBuf.append(" OR ");
+				queryBuf.append(" ag.idUserGroup is NULL");
 			}
 			queryBuf.append(")");
 		}
@@ -565,7 +650,7 @@ public class AnnotationQuery {
   
 
   
-	protected boolean addWhereOrAnd() {
+	protected boolean AND() {
 		if (addWhere) {
 			queryBuf.append(" WHERE ");
 			addWhere = false;

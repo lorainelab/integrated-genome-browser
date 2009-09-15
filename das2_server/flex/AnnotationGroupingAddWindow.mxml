@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="{'Add new annotation folder to ' + parentName}"
 	showCloseButton="true" 
-	width="406" 
-	height="104"
+	width="452" 
+	height="140"
 	verticalGap="0"
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotationGrouping}"
@@ -21,6 +21,7 @@
          <name>{annotationGroupingName.text}</name>
          <idGenomeVersion>{genomeVersion.@idGenomeVersion}</idGenomeVersion>
          <idParentAnnotationGrouping>{idParentAnnotationGrouping}</idParentAnnotationGrouping>
+         <idUserGroup>{userGroupCombo.selectedItem != null ? userGroupCombo.selectedItem.@id : ''}</idUserGroup>
       </mx:request>
     </mx:HTTPService> 
     
@@ -77,6 +78,10 @@
 			<mx:Label text="Folder name:" width="105"/>
 			<mx:TextInput id="annotationGroupingName" width="100%"/>
 	</mx:HBox>
+		<mx:HBox width="100%" id="hbox2">
+			<mx:Label text="User Group:" width="105"/>
+			<mx:ComboBox id="userGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
+		</mx:HBox>
     	
     </mx:VBox>
 

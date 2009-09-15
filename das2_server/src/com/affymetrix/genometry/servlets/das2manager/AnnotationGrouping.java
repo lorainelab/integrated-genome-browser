@@ -2,7 +2,7 @@ package com.affymetrix.genometry.servlets.das2manager;
 
 import java.util.Set;
 
-public class AnnotationGrouping implements Owned {
+public class AnnotationGrouping {
     
     private Integer            idAnnotationGrouping;
     private String             name;
@@ -11,7 +11,7 @@ public class AnnotationGrouping implements Owned {
     private AnnotationGrouping parentAnnotationGrouping;
     private Set                annotationGroupings;
     private Set                annotations;
-    private Integer            idUser;
+    private Integer            idUserGroup;
     private Integer            idGenomeVersion;
 
     
@@ -71,35 +71,17 @@ public class AnnotationGrouping implements Owned {
 		return hasVisibility;
 		
 	}
-	public Integer getIdUser() {
-    	return idUser;
-    }
-	public void setIdUser(Integer idUser) {
-    	this.idUser = idUser;
-    }
-	public boolean isOwner(Integer idUser) {
-		if (this.getIdUser() != null && this.getIdUser().equals(idUser)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean isUserGroup(Integer idUserGroup) {
-		boolean isUserGroup = false;
-		for(Annotation a : (Set<Annotation>)this.annotations) {
-			if (a.isUserGroup(idUserGroup)) {
-				isUserGroup = true;
-				break;
-			}
-		}
-		return isUserGroup;
-	}
+
 	public Integer getIdGenomeVersion() {
     	return idGenomeVersion;
     }
 	public void setIdGenomeVersion(Integer idGenomeVersion) {
     	this.idGenomeVersion = idGenomeVersion;
+    }
+	public Integer getIdUserGroup() {
+    	return idUserGroup;
+    }
+	public void setIdUserGroup(Integer idUserGroup) {
+    	this.idUserGroup = idUserGroup;
     } 
 }

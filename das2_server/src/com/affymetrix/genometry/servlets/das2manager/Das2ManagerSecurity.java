@@ -236,8 +236,9 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 						break;
 					}
 				}
-			} else if (ag.getIdUser().equals(user.getIdUser())) {
-				// Owner of annotation grouping can read it
+			} else if (this.belongsToGroup(ag.getIdUserGroup())) {
+				// If user is part of group that owns annotation grouping, user
+				// can read it.
 			}	canRead = true;
 			
 		} else {
@@ -267,10 +268,18 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 			if (!canWrite) {
 				if (object instanceof Annotation) {
 					Annotation a = Annotation.class.cast(object);
-					if (this.isMember(a.getIdUserGroup())) {
+					if (this.isManager(a.getIdUserGroup())) {
 						canWrite = true;
 					} 
 				}
+			}
+			
+		} else if (object instanceof AnnotationGrouping) {
+			// User that is a member or manager of the group that "owns" the 
+			// annotation grouping can write it.
+			AnnotationGrouping ag = AnnotationGrouping.class.cast(object);
+			if (this.isMember(ag.getIdUserGroup()) || this.isManager(ag.getIdUserGroup())) {
+				canWrite = true;
 			}
 			
 		} else if (object instanceof UserGroup) {
@@ -284,11 +293,11 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 	}
 	
 
-	public boolean appendHQLSecurity(String scopeLevel,
-			                           StringBuffer queryBuf, 
-			                           String annotationAlias, 
-			                           String annotationGroupingAlias, 
-			                           boolean addWhere)
+	public boolean appendAnnotationHQLSecurity(String scopeLevel,
+			                                     StringBuffer queryBuf, 
+			                                     String annotationAlias, 
+			                                     String annotationGroupingAlias, 
+			                                     boolean addWhere)
 	  throws Exception {
 		if (!scrutinizeAccess) {
 			return addWhere;
@@ -302,18 +311,27 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		} else if (isGuestRole) {
 			
 			// Only get public annotations for guests
-			addWhere = addWhereOrAnd(addWhere, queryBuf);
+			addWhere = AND(addWhere, queryBuf);
 			queryBuf.append("(");
 			queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.PUBLIC + "'");	
 			queryBuf.append(")");
 			
 		} else if (scopeLevel.equals(this.USER_SCOPE_LEVEL)) {
 			// Scope to annotations owned by this user
-			addWhere = addWhereOrAnd(addWhere, queryBuf);
+			addWhere = AND(addWhere, queryBuf);
+			
+			queryBuf.append("(");
+			
 			appendUserOwnedHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
 			
+			// Also pick up empty folders belonging to group
+			addWhere = OR(addWhere, queryBuf);
+			appendEmptyAnnotationGroupingHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
+			
+			queryBuf.append(")");
+			
 		} else if (scopeLevel.equals(this.GROUP_SCOPE_LEVEL) || scopeLevel.equals(this.ALL_SCOPE_LEVEL)) {
-			addWhere = addWhereOrAnd(addWhere, queryBuf);
+			addWhere = AND(addWhere, queryBuf);
 
 			// If this user isn't part of any group or we aren't searching for public
 			// annotations, add a security statement that will ensure no rows are returned.
@@ -330,7 +348,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 					// any public annotations belong one of the user's groups.)					
 					queryBuf.append("(");
 					queryBuf.append(annotationAlias + ".codeVisibility in ('" + Visibility.MEMBERS + "', '" + Visibility.PUBLIC + "')");
-					addWhere = addWhereOrAnd(addWhere, queryBuf);
+					addWhere = AND(addWhere, queryBuf);
 					queryBuf.append(annotationAlias + ".idUserGroup ");
 					appendMemberInStatement(queryBuf, this.groupsMemVisibility);
 					queryBuf.append(")");
@@ -344,11 +362,11 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 				// in which user is collaborator, member, (or manager)
 				if (!this.groupsMemCollabVisibility.isEmpty()) {
 					
-					addWhere = addWhereOrOr(addWhere, queryBuf);
+					addWhere = OR(addWhere, queryBuf);
 					
 					queryBuf.append("(");
 					queryBuf.append(annotationAlias + ".codeVisibility = '" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
-					addWhere = addWhereOrAnd(addWhere, queryBuf);
+					addWhere = AND(addWhere, queryBuf);
 					queryBuf.append(annotationAlias + ".idUserGroup ");
 					appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);
 					queryBuf.append(")");
@@ -357,28 +375,17 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 				}
 				
 
-				if (annotationGroupingAlias != null && !this.groupsMemVisibility.isEmpty()) {
-
-					// Also get annotation groups for those with no annotations attached directly to annotation group
-					addWhere = addWhereOrOr(addWhere, queryBuf);
-					
-					queryBuf.append("(");
-
-					queryBuf.append(annotationAlias + ".idAnnotation is NULL");
-					
-					addWhere = addWhereOrOr(addWhere, queryBuf);
-					
-					queryBuf.append(annotationGroupingAlias + ".idUser = " + user.getIdUser());
-					
-					queryBuf.append(")");
-
+				// Also pick up empty folders belonging to group
+				if (annotationGroupingAlias != null && !this.groupsMemCollabVisibility.isEmpty()) {
+					addWhere = OR(addWhere, queryBuf);
+					appendEmptyAnnotationGroupingHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
 					hasSecurityCriteria = true;
 				}
 				
 
 				// Get all user owned annotations
 				if (hasSecurityCriteria) {
-					addWhere = addWhereOrOr(addWhere, queryBuf);
+					addWhere = OR(addWhere, queryBuf);
 				}
 				appendUserOwnedHQLSecurity(queryBuf, annotationAlias, annotationGroupingAlias, addWhere);
 				hasSecurityCriteria = true;
@@ -388,7 +395,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 				if (scopeLevel.equals(this.ALL_SCOPE_LEVEL)) {
 
 					if (hasSecurityCriteria) {
-						addWhere = addWhereOrOr(addWhere, queryBuf);						
+						addWhere = OR(addWhere, queryBuf);						
 					}
 					
 					queryBuf.append("(");
@@ -403,26 +410,89 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		}
 		return addWhere;
 	}
-	
+
+
+	public boolean appendAnnotationGroupingHQLSecurity(String scopeLevel,
+			                                             StringBuffer queryBuf, 
+			                                             String annotationGroupingAlias, 
+			                                             boolean addWhere)
+	  throws Exception {
+		if (!scrutinizeAccess) {
+			return addWhere;
+		}
+		
+		if (isAdminRole) {
+			
+			// Admins don't have any restrictions
+			return addWhere;
+			
+		} else if (isGuestRole) {
+			
+			// For guests, don't get any extra annotation groupings. 
+			addWhere = AND(addWhere, queryBuf);
+			queryBuf.append("(");
+			queryBuf.append(annotationGroupingAlias + ".idAnnotationGrouping = -999");	
+			queryBuf.append(")");
+			
+		} else  {
+			addWhere = AND(addWhere, queryBuf);
+			
+			// Pick up public folders and folders belonging to the group
+			appendAnnotationGroupingHQLSecurity(queryBuf, annotationGroupingAlias, addWhere);
+			
+		} 	
+		return addWhere;
+	}
+
 	@SuppressWarnings("unchecked")
 	private void appendUserOwnedHQLSecurity(StringBuffer queryBuf, 
-            								 String annotationAlias, 
-            								 String annotationGroupingAlias, 
+            								 String annotationAlias,
+            								 String annotationGroupingAlias,
             								 boolean addWhere) throws Exception {
 		queryBuf.append("(");
 		
-		queryBuf.append("(");
 		queryBuf.append(annotationAlias + ".idUser = " + user.getIdUser());
-		addWhere = addWhereOrOr(addWhere, queryBuf);
-		queryBuf.append(annotationGroupingAlias + ".idUser = " + user.getIdUser());				
-		queryBuf.append(")");		
-
-		if (annotationGroupingAlias != null) {
-			addWhere = addWhereOrOr(addWhere, queryBuf);
-			queryBuf.append(annotationAlias + ".idAnnotation is NULL ");				
-		}
 		
 		queryBuf.append(")");		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void appendEmptyAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
+            								                String annotationAlias,
+            								                String annotationGroupingAlias,
+            								                boolean addWhere) throws Exception {
+		queryBuf.append("(");
+
+		queryBuf.append(annotationAlias + ".idAnnotation is NULL");
+		
+		addWhere = AND(addWhere, queryBuf);
+
+		queryBuf.append("(");					
+		queryBuf.append(annotationGroupingAlias + ".idUserGroup is NULL");
+		if (this.groupsMemCollabVisibility.size() > 0) {
+			addWhere = OR(addWhere, queryBuf);
+			queryBuf.append(annotationGroupingAlias + ".idUserGroup");
+			appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);			
+		}
+		queryBuf.append(")");
+
+		queryBuf.append(")");
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void appendAnnotationGroupingHQLSecurity(StringBuffer queryBuf, 
+            								           String annotationGroupingAlias,
+            								           boolean addWhere) throws Exception {
+
+		queryBuf.append("(");					
+		queryBuf.append(annotationGroupingAlias + ".idUserGroup is NULL");
+		if (this.groupsMemCollabVisibility.size() > 0) {
+			addWhere = OR(addWhere, queryBuf);
+			queryBuf.append(annotationGroupingAlias + ".idUserGroup");
+			appendMemberInStatement(queryBuf, this.groupsMemCollabVisibility);			
+		}
+		queryBuf.append(")");
+
 	}
 	
 	
@@ -439,7 +509,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		queryBuf.append(")");
 	}
 	
-	protected boolean addWhereOrAnd(boolean addWhere, StringBuffer queryBuf) {
+	protected boolean AND(boolean addWhere, StringBuffer queryBuf) {
 		if (addWhere) {
 			queryBuf.append(" WHERE ");
 			addWhere = false;
@@ -449,7 +519,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 		return addWhere;
 	}
 	
-	protected boolean addWhereOrOr(boolean addWhere, StringBuffer queryBuf) {
+	protected boolean OR(boolean addWhere, StringBuffer queryBuf) {
 		if (addWhere) {
 			queryBuf.append(" WHERE ");
 			addWhere = false;

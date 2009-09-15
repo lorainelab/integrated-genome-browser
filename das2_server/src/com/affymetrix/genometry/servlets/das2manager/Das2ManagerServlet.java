@@ -121,6 +121,7 @@ public class Das2ManagerServlet extends HttpServlet {
 						                                      req.isUserInRole(Das2ManagerSecurity.GUEST_ROLE));
 				req.getSession().setAttribute(Das2ManagerSecurity.SESSION_KEY, das2ManagerSecurity);
 			}
+			
 
 			// Handle the request
 			if (req.getPathInfo() == null) {
@@ -195,7 +196,8 @@ public class Das2ManagerServlet extends HttpServlet {
 				this.handleDictionaryDeleteRequest(req, res);
 			} 
 
-
+			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+			
 			return;
 
 		} catch (Exception e) {
@@ -942,10 +944,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			annotationGrouping.setName(request.getParameter("name"));
 			annotationGrouping.setIdGenomeVersion(idGenomeVersion);
 			annotationGrouping.setIdParentAnnotationGrouping(idParentAnnotationGrouping);
-			// Only set the user and group if a non-admin is adding the annotation grouping
-			if (!das2ManagerSecurity.isAdminRole()) {
-				annotationGrouping.setIdUser(das2ManagerSecurity.getIdUser());				
-			}
+			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));				
 			
 			
 			sess.save(annotationGrouping);
@@ -1004,7 +1003,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 			annotationGrouping.setName(request.getParameter("name"));
 			annotationGrouping.setDescription(request.getParameter("description"));
-			annotationGrouping.setIdUser(Util.getIntegerParameter(request, "idUser"));
+			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
 			
 			sess.save(annotationGrouping);
 			
@@ -1091,10 +1090,8 @@ public class Das2ManagerServlet extends HttpServlet {
 				annotationGrouping.setName(ag.getName());
 				annotationGrouping.setDescription(ag.getDescription());
 				annotationGrouping.setIdGenomeVersion(ag.getIdGenomeVersion());
-				// Only set the user and group if a non-admin is adding the annotation grouping
-				if (!das2ManagerSecurity.isAdminRole()) {
-					annotationGrouping.setIdUser(das2ManagerSecurity.getIdUser());				
-				}
+				annotationGrouping.setIdUserGroup(ag.getIdUserGroup());				
+				
 				Set annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
 				for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
 					annotationsToKeep.add(a);

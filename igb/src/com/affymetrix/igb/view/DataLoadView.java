@@ -28,6 +28,7 @@ import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.FeatureTreeView;
 import com.affymetrix.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
+import javax.swing.table.TableRowSorter;
 
 public class DataLoadView extends JComponent  { 
 	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -56,7 +57,6 @@ public class DataLoadView extends JComponent  {
 		JSplitPane jPaneTrackInfo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jPane, track_info_view);
 		jPaneTrackInfo.setResizeWeight(0.9);
 
-		//main_panel.add("Center", jPaneTrackInfo);
 		main_panel.add("Center", jPane);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
@@ -67,18 +67,15 @@ public class DataLoadView extends JComponent  {
 
 class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
-
-  static boolean DEBUG_EVENTS = false;
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  static final String NO_GENOME = "No Genome Selected";
-
-  JTable seqtable;
-  MutableAnnotatedBioSeq selected_seq = null;
+	static boolean DEBUG_EVENTS = false;
+	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static final String NO_GENOME = "No Genome Selected";
+	JTable seqtable;
+	MutableAnnotatedBioSeq selected_seq = null;
 	AnnotatedSeqGroup previousGroup = null;
 	int previousSeqCount = 0;
-  ListSelectionModel lsm;
-  //JLabel genomeL;
-  //JComboBox genomeCB;
+	ListSelectionModel lsm;
+	private TableRowSorter<SeqGroupTableModel> sorter;
 
   public SeqGroupView() {
 		seqtable = new JTable();
@@ -90,11 +87,10 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 
 		JScrollPane scroller = new JScrollPane(seqtable);
 		scroller.setBorder(BorderFactory.createCompoundBorder(
-						scroller.getBorder(),
-						BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+				scroller.getBorder(),
+				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		//this.add(genomeCB);
 		this.add(Box.createRigidArea(new Dimension(0, 5)));
 		this.add(scroller);
 
@@ -108,45 +104,40 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
   String most_recent_seq_id = null;
 
   public void groupSelectionChanged(GroupSelectionEvent evt) {
-    //    AnnotatedSeqGroup group = (AnnotatedSeqGroup)evt.getSelectedGroups().get(0);
-    AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    if (SeqGroupView.DEBUG_EVENTS)  {
-      System.out.println("SeqGroupView received groupSelectionChanged() event");
-      if (group == null)  { 
-    	  System.out.println("  group is null"); 
-      } else  {
-    	  System.out.println("  group: " + group.getID());
-    	  System.out.println("  seq count: " + group.getSeqCount());
-      }
-    }
+		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
+		if (SeqGroupView.DEBUG_EVENTS) {
+			System.out.println("SeqGroupView received groupSelectionChanged() event");
+			if (group == null) {
+				System.out.println("  group is null");
+			} else {
+				System.out.println("  group: " + group.getID());
+				System.out.println("  seq count: " + group.getSeqCount());
+			}
+		}
 
 		warnAboutNewlyAddedChromosomes(previousGroup, previousSeqCount, group);
 		previousGroup = group;
 		previousSeqCount = group == null ? 0 : group.getSeqCount();
 
-    SeqGroupTableModel mod = new SeqGroupTableModel(group);
-    selected_seq = null;
-    seqtable.setModel(mod);
 
-    // Uncomment this to allow the user to re-sort the table.
-    // It turns out to not work very well since it sorts by String sort order
-    // when something more complex is needed.
-    //
-    //TableSorter2 sort_model = new TableSorter2(mod);
-    //sort_model.setTableHeader(seqtable.getTableHeader());
-    //seqtable.setModel(sort_model);
+		SeqGroupTableModel mod = new SeqGroupTableModel(group);
+		sorter = new TableRowSorter<SeqGroupTableModel>(mod);
+		selected_seq = null;
+		seqtable.setModel(mod);
+		//seqtable.setRowSorter(sorter);
 
-    seqtable.validate();
-    seqtable.repaint();
 
-    if (group != null && most_recent_seq_id != null) {
-      // When changing genomes, try to keep the same chromosome selected when possible
-      MutableAnnotatedBioSeq aseq = group.getSeq(most_recent_seq_id);
-      if (aseq != null) {
-        gmodel.setSelectedSeq(aseq);
-      }
-    }
-  }
+		seqtable.validate();
+		seqtable.repaint();
+
+		if (group != null && most_recent_seq_id != null) {
+			// When changing genomes, try to keep the same chromosome selected when possible
+			MutableAnnotatedBioSeq aseq = group.getSeq(most_recent_seq_id);
+			if (aseq != null) {
+				gmodel.setSelectedSeq(aseq);
+			}
+		}
+	}
 
 	private static void warnAboutNewlyAddedChromosomes(AnnotatedSeqGroup previousGroup, int previousSeqCount, AnnotatedSeqGroup group) {
 		if (previousGroup != null && previousGroup == group) {

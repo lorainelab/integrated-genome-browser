@@ -77,8 +77,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private ListSelectionModel lsm;
 
 	private static final String ALLID = "All loaded IDs";
-	private static final String REGEXID = "Matching ID";
-	private static final String REGEXIDTF = "ID matches string or Regular Expression";
+	private static final String REGEXID = "Matching IDs";
+	private static final String REGEXIDTF = "IDs match string or Regular Expression";
 	private static final String REGEXRESIDUE = "Matching residues";
 	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
 	private static final String CHOOSESEARCH = "Choose search method";
@@ -421,6 +421,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void displayRegexIDs(String text, BioSeq chrFilter) {
+		if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
+			// Not much of a regular expression.  Assume the user wants to match at the start and end
+			text = ".*" + text + ".*";
+		}
 		Pattern regex = null;
 		try {
 			regex = Pattern.compile(text, Pattern.CASE_INSENSITIVE);

@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
@@ -330,18 +331,21 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 		// TODO: use SearchRow class
 		a_row.add(result.getID());	// ID
-		String tier = BioSeq.determineMethod(result);
-		if (tier.length() == 0) {
-			tier = "N/A";
-		}
-		a_row.add(tier);
-		a_row.add(new Integer(span.getStart()));
-		a_row.add(new Integer(span.getEnd()));
-		if (seq != null) {
-			a_row.add(seq.getID());
+		a_row.add(BioSeq.determineMethod(result));	// tier
+		if (result instanceof UcscPslSym) {
+			a_row.add(((UcscPslSym) result).getTargetMin());
+			a_row.add(((UcscPslSym) result).getTargetMax());
+			a_row.add(((UcscPslSym) result).getTargetSeq().getID());
 		} else {
-			a_row.add(span.getBioSeq().getID());
+			a_row.add(new Integer(span.getStart()));
+			a_row.add(new Integer(span.getEnd()));
+			if (seq != null) {
+				a_row.add(seq.getID());
+			} else {
+				a_row.add(span.getBioSeq().getID());
+			}
 		}
+		
 		a_row.add(span.isForward() ? "+" : "-");
 		return true;
 	}

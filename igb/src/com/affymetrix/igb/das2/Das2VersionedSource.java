@@ -32,6 +32,7 @@ import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
+import org.xml.sax.InputSource;
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
 public final class Das2VersionedSource {
@@ -426,11 +427,11 @@ public final class Das2VersionedSource {
 			}
 			String chrFilterStr = (chrFilter == null ? "?" : "?segment=" + URLEncoder.encode(chrFilter.getID(), UTF8) + ";");
 			String feature_query = request_root +
-					chrFilterStr + "name=" + nameglob +";format=bed";
+					chrFilterStr + "name=" + nameglob +";format=das2xml";
 			if (DEBUG) {
 				System.out.println("feature query: " + feature_query);
 			}
-			BedParser parser = new BedParser();
+			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 			URL query_url = new URL(feature_query);
 			URLConnection query_con = query_url.openConnection();
 			query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
@@ -440,7 +441,7 @@ public final class Das2VersionedSource {
 
 			// temporary group needed to avoid side effects (remote SeqSymmetries added to the genome)
 			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
-			List<SeqSymmetry> feats = parser.parse(bis, gmodel, tempGroup, false, "", false);
+			List<SeqSymmetry> feats = parser.parse(new InputSource(bis), feature_query, tempGroup, false);
 			if (DEBUG) {
 				int feat_count = feats.size();
 				System.out.println("parsed query results, annot count = " + feat_count);

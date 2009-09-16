@@ -418,7 +418,8 @@ public final class FeatureTreeView extends JComponent {
 				boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 
 				String featureName = gFeature.featureName;
-				String featureText = featureName.substring(featureName.indexOf(path_separator) + 1);
+				
+				String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
 
 				featureText = "<html>" + featureText;
 

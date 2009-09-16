@@ -57,7 +57,6 @@ public final class Das2ClientOptimizer {
     private static final boolean DEBUG = false;
     private static final boolean DEBUG_HEADERS = false;
     private static final boolean OPTIMIZE_FORMAT = true;
-    private static final boolean SHOW_DAS_QUERY_GENOMETRY = false;
     /**
      *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
      *  out into a separate query field, "segment", that applies to all location-based filters in the query
@@ -89,44 +88,23 @@ public final class Das2ClientOptimizer {
         Das2Region region = request_sym.getRegion();
         Das2Type type = request_sym.getDas2Type();
         String typeid = type.getID();
-        SeqSymmetry split_query = null;
 
         if (seq == null) {
             System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is null!");
             output_requests.add(request_sym);
         } else {
-            split_query = OptimizeDas2Query(seq, typeid, request_log, type, output_requests, request_sym, overlap_sym, region);
+			OptimizeDas2Query(seq, typeid, request_log, type, output_requests, request_sym, overlap_sym, region);
         }
 
         for (Das2FeatureRequestSym request : output_requests) {
             optimizedLoadFeatures(request);
         }
 
-        if (SHOW_DAS_QUERY_GENOMETRY) {
-            SimpleSymWithProps query_sym = new SimpleSymWithProps();
-            query_sym.setProperty("method", ("das_raw_query: " + typeid));
-            //      query_sym.addSpan(overlap_span);
-            SeqUtils.copyToMutable(overlap_sym, query_sym);
-            synchronized (seq) {
-                seq.addAnnotation(query_sym);
-            }
-            if (split_query == null) {
-                split_query = query_sym;
-            }
-            SimpleSymWithProps split_sym = new SimpleSymWithProps();
-            SeqUtils.copyToMutable(split_query, split_sym);
-            split_sym.setProperty("method", ("das_optimized_query:" + typeid));
-            synchronized (seq) {
-                seq.addAnnotation(split_sym);
-            }
-        }
-
         return output_requests;
     }
 
 
-    private static SeqSymmetry OptimizeDas2Query(MutableAnnotatedBioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
-        SeqSymmetry split_query = null;
+    private static void OptimizeDas2Query(MutableAnnotatedBioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
         BioSeq aseq = (BioSeq) seq;
         MutableSeqSymmetry cont_sym;
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
@@ -166,22 +144,20 @@ public final class Das2ClientOptimizer {
             qnewlist.add(overlap_sym);
             ArrayList<SeqSymmetry> qoldlist = new ArrayList<SeqSymmetry>();
             qoldlist.add(prev_union);
-            split_query = SplitQuery(qnewlist, qoldlist, aseq, split_query, request_log, typeid, prev_union, type, region, output_requests);
-            //	output_requests.add(request_sym);
+            SplitQuery(qnewlist, qoldlist, aseq, request_log, typeid, prev_union, type, region, output_requests);
         }
-        return split_query;
     }
 
 
-    private static SeqSymmetry SplitQuery(ArrayList<SeqSymmetry> qnewlist, ArrayList<SeqSymmetry> qoldlist, BioSeq aseq, SeqSymmetry split_query, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
-        split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
+    private static void SplitQuery(ArrayList<SeqSymmetry> qnewlist, ArrayList<SeqSymmetry> qoldlist, BioSeq aseq, Das2RequestLog request_log, String typeid, SeqSymmetry prev_union, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests) {
+        SeqSymmetry split_query = SeqSymSummarizer.getExclusive(qnewlist, qoldlist, aseq);
         if (split_query == null || split_query.getChildCount() == 0) {
             // all of current query overlap range covered by previous queries, so return empty list
             if (DEBUG) {
                 System.out.println("ALL OF NEW QUERY COVERED BY PREVIOUS QUERIES FOR TYPE: " + typeid);
 
             }
-            return split_query;
+            return;
         }
 
         SeqSpan split_query_span = split_query.getSpan(aseq);
@@ -218,9 +194,6 @@ public final class Das2ClientOptimizer {
         }
         // done determining first_within_min and last_within_max
         splitIntoSubSpans(split_query, aseq, first_within_min, last_within_max, request_log, type, region, output_requests, typeid);
-        
-        //	output_requests.add(request_sym);
-        return split_query;
     }
 
 
@@ -248,17 +221,6 @@ public final class Das2ClientOptimizer {
             }
             Das2FeatureRequestSym new_request = new Das2FeatureRequestSym(type, region, ospan, ispan);
             output_requests.add(new_request);
-            if (SHOW_DAS_QUERY_GENOMETRY) {
-                SimpleSymWithProps within_swp = new SimpleSymWithProps();
-                within_swp.addSpan(new SimpleSeqSpan(cur_within_min, cur_within_max, aseq));
-                within_swp.addChild(new SingletonSeqSymmetry(cur_within_min, cur_within_min, aseq));
-                within_swp.addChild(csym);
-                within_swp.addChild(new SingletonSeqSymmetry(cur_within_max, cur_within_max, aseq));
-                within_swp.setProperty("method", "das_within_query:" + typeid);
-                synchronized (aseq) {
-                    aseq.addAnnotation(within_swp);
-                }
-            }
         }
     }
 

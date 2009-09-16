@@ -140,7 +140,7 @@ public class ServerUtilsTest {
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
 
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms, testFileName);
 			
 			testIndexing1(seqid, group, seq, iSyms);
 

@@ -38,7 +38,8 @@ public class AnnotatedSeqGroup {
 	final private Map<String, BioSeq> id2seq;
 	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
-	final private TreeMap<String,ArrayList<SeqSymmetry>> id2sym_hash;
+	final private TreeMap<String,ArrayList<SeqSymmetry>> id2sym_hash;	// list of names -> sym
+	final private TreeMap<String,ArrayList<String>> symid2id_hash;	// main sym id -> list of other names
 	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
 	/**
 	 * Private copy of the synonym lookup table.
@@ -53,6 +54,7 @@ public class AnnotatedSeqGroup {
 		id2seq_dirty_bit = false;
 		seqlist = new ArrayList<BioSeq>();
 		id2sym_hash = new TreeMap<String,ArrayList<SeqSymmetry>>();
+		symid2id_hash = new TreeMap<String,ArrayList<String>>();
 	}
 
 	final public String getID() {
@@ -138,20 +140,6 @@ public class AnnotatedSeqGroup {
 	}
 
 	/**
-	 *  Remove all annotations of a given type from all seqs in this group.
-	 */
-	/*
-	   public void removeType(String type) {
-	   List seq_list = getSeqList();
-	   Iterator iter = seq_list.iterator();
-	   while (iter.hasNext()) {
-	   MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) iter.next();
-	   if (seq instanceof BioSeq) {
-	   ((BioSeq) seq).removeType(type.toLowerCase());
-	   }
-	   }
-	   }*/
-	/**
 	 *  Returns the sequence at the given position in the sequence list.
 	 */
 	public BioSeq getSeq(int index) {
@@ -182,24 +170,16 @@ public class AnnotatedSeqGroup {
 	 *  See {@link #setUseSynonyms(boolean)}.
 	 *
 	 * @param synonym the string identifier of the requested BioSeq
-	 * @return a BioSeq for the give synonym or null
+	 * @return a BioSeq for the given synonym or null
 	 */
 	public BioSeq getSeq(String synonym) {
 		BioSeq aseq = id2seq.get(synonym);
 		if (use_synonyms && aseq == null) {
-			/*
-			 * Try and find a synonym.
-			 *
-			 * synonyms null check would not be necessary if getSynonyms()
-			 * always returned a List;
-			 */
-			Collection<String> synonyms = lookup.getSynonyms(synonym);
-			if (synonyms != null) {
-				for (String syn : synonyms) {
-					aseq = id2seq.get(syn);
-					if (aseq != null) {
-						return aseq;
-					}
+			// Try and find a synonym.
+			for (String syn : lookup.getSynonyms(synonym,false)) {
+				aseq = id2seq.get(syn);
+				if (aseq != null) {
+					return aseq;
 				}
 			}
 		}
@@ -233,7 +213,7 @@ public class AnnotatedSeqGroup {
 
 	/**
 	 *  Returns the BioSeq with the given id (or synonym), creating it if necessary,
-	 *  and increasing its length to the given value if necessary.
+	 *  and increasing its length to the given sym if necessary.
 	 */
 	public BioSeq addSeq(String seqid, int length) {
 		if (seqid == null) {
@@ -370,10 +350,10 @@ public class AnnotatedSeqGroup {
 	 *  that have been added to the ID index using
 	 *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
 	 *  Each of the keys can be used as a parameter for the findSyms(String) method.
-	 *  @param start  A String indicating the lowest index value; null or empty start
-	 *   string will get all index strings up to (but excluding) the given end value.
-	 *  @param end    A String indicating the highest index value; null or empty end
-	 *   string will get all index strings above (and including) the given start value.
+	 *  @param start  A String indicating the lowest index sym; null or empty start
+	 *   string will get all index strings up to (but excluding) the given end sym.
+	 *  @param end    A String indicating the highest index sym; null or empty end
+	 *   string will get all index strings above (and including) the given start sym.
 	 *  PRECONDITION: start !=null.  end != null.
 	 */
 	final public Set<String> getSymmetryIDs(String start, String end) {
@@ -393,7 +373,9 @@ public class AnnotatedSeqGroup {
 		}
 	}
 
-
+	final public List<String> getSymmetryIDs(String symID) {
+		return this.symid2id_hash.get(symID);
+	}
 
 
 	/**
@@ -436,18 +418,31 @@ public class AnnotatedSeqGroup {
 
 
 	/**
-	 * Function to add a SeqSymmetry to the id2sym_hash.
-	 * @param key ID string.
-	 * @param value SeqSymmetry to add to the hash.
+	 * Function to add a SeqSymmetry to the id2sym_hash (and symid2id_hash).
+	 * @param id ID string (lower-cased).
+	 * @param sym SeqSymmetry to add to the hash.
 	 */
-	final private void putSeqInList(String key, SeqSymmetry value) {
-		ArrayList<SeqSymmetry> seq_list = id2sym_hash.get(key);
+	final private void putSeqInList(String id, SeqSymmetry sym) {
+		ArrayList<SeqSymmetry> seq_list = id2sym_hash.get(id);
 		if (seq_list == null) {
 			seq_list = new ArrayList<SeqSymmetry>();
 		}
-		if (!seq_list.contains(value)) {
-			seq_list.add(value);
-			id2sym_hash.put(key,seq_list);
+		if (!seq_list.contains(sym)) {
+			seq_list.add(sym);
+			id2sym_hash.put(id,seq_list);
+		}
+
+		String lcSymID = sym.getID().toLowerCase();
+		if (id.equals(lcSymID)) {
+			return;
+		}
+		ArrayList<String> id_list = symid2id_hash.get(lcSymID);
+		if (id_list == null) {
+			id_list = new ArrayList<String>();
+		}
+		if (!id_list.contains(id)) {
+			id_list.add(id);
+			symid2id_hash.put(lcSymID, id_list);
 		}
 	}
 
@@ -459,13 +454,15 @@ public class AnnotatedSeqGroup {
 		if (sym == null || sym.getID() == null) {
 			return;
 		}
-		List<SeqSymmetry> symList = id2sym_hash.get(sym.getID().toLowerCase());
+		String lcSymID = sym.getID().toLowerCase();
+		List<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
 		if (symList != null && symList.contains(sym)) {
 			symList.remove(sym);
 			if (symList.isEmpty()) {
-				id2sym_hash.remove(sym.getID().toLowerCase());
+				id2sym_hash.remove(lcSymID);
 			}
 		}
+		symid2id_hash.remove(lcSymID);
 	}
 
 	/**

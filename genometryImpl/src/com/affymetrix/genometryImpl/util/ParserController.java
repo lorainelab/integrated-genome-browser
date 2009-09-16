@@ -47,13 +47,8 @@ public final class ParserController {
 				Das1FeatureSaxParser parser = new Das1FeatureSaxParser();
 				// need to modify Das1FeatureSaxParser to return a list of "transcript-level" annotation syms
 				parser = null;
-			} else if (stream_name.endsWith(".bed")) {
-				System.out.println("loading via BedParser: " + stream_name);
-				String annot_type = GetAnnotType(annotList, stream_name, ".bed", type_prefix, use_stream_name);
-				BedParser parser = new BedParser();
-				// specifying via boolean arg that BedParser should build container syms
-				results = parser.parse(str, gmodel, seq_group, true, annot_type, true, annot_id);
-			} else if (stream_name.endsWith(".bp1") || stream_name.endsWith(".bp2")) {
+			}
+			else if (stream_name.endsWith(".bp1") || stream_name.endsWith(".bp2")) {
 				System.out.println("loading via Bprobe1Parser: " + stream_name);
 				Bprobe1Parser bp1_reader = new Bprobe1Parser();
 				if (type_prefix != null) {
@@ -127,6 +122,7 @@ public final class ParserController {
 
 	/**
 	 * Parsing indexed files; don't annotate.
+	 * Precondition: the stream is parseable via IndexWriter.
 	 * @param stream_name
 	 * @param annots_map
 	 * @param str
@@ -138,29 +134,12 @@ public final class ParserController {
 		IndexWriter iWriter = getIndexWriter(stream_name);
 		DataInputStream dis = new DataInputStream(str);
 
-		if ((stream_name.endsWith(".psl") || stream_name.endsWith(".psl3")) && (!stream_name.endsWith(".link.psl"))) {
-			System.out.println("indexing via PslParser: " + stream_name);
-			String annot_type = GetAnnotType(annotList, stream_name, ".psl", null, true);
-			return iWriter.parse(dis, annot_type, seq_group);
-		}
-		if (stream_name.endsWith(".bps")) {
-			System.out.println("indexing via BpsParser: " + stream_name);
-			String annot_type = GetAnnotType(annotList, stream_name, ".bps", null, true);
-			return iWriter.parse(dis, annot_type, seq_group);
-		}
-		if (stream_name.endsWith(".bgn")) {
-			System.out.println("indexing via BgnParser: " + stream_name);
-			String annot_type = GetAnnotType(annotList, stream_name, ".bgn", null, true);
-			return iWriter.parse(dis, annot_type, seq_group);
-		}
-		if (stream_name.endsWith(".brs")) {
-			System.out.println("indexing via BrsParser: " + stream_name);
-			String annot_type = GetAnnotType(annotList, stream_name, ".brs", null, true);
-			return iWriter.parse(dis, annot_type, seq_group);
-		}
-		if (stream_name.endsWith(".link.psl")) {
-			System.out.println("indexing link.psl via PslParser: " + stream_name);
-			String annot_type = GetAnnotType(annotList, stream_name, ".link.psl", null, true);
+		String extension = getExtension(stream_name);
+		String annot_type = GetAnnotType(annotList, stream_name, extension, null, true);
+
+		System.out.println("Indexing " + stream_name);
+
+		if (extension.equals(".link.psl")) {
 			try {
 				// annotate target
 				return ((PSLParser)iWriter).parse(dis, annot_type, null, seq_group, null, false, true, false, null);
@@ -168,7 +147,21 @@ public final class ParserController {
 				Logger.getLogger(ParserController.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		return null;
+
+		// bed, bps, bgn, brs, psl, psl3
+		return iWriter.parse(dis, annot_type, seq_group);
+	}
+
+	/**
+	 * Determine extension.
+	 * @param stream_name
+	 * @return
+	 */
+	public static String getExtension(String stream_name) {
+		if (stream_name.endsWith(".link.psl")) {
+			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
+		}
+		return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
 	}
 
 
@@ -177,6 +170,9 @@ public final class ParserController {
 		int sindex = stream_name.lastIndexOf("/");
 		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 
+		if (stream_name.endsWith((".bed"))) {
+			return new BedParser();
+		}
 		if (stream_name.endsWith((".bps"))) {
 			return new BpsParser();
 		}
@@ -260,11 +256,5 @@ public final class ParserController {
 		// Strip off the extension.
 		return stream_name.substring(0, stream_name.lastIndexOf(extension));
 	}
-  /**
-	 * finds all SeqSymmetry objects having a particular Type and ID.
-	 */
-  //  public static SeqSymmetry[] findMatchingSeqSyms(String type, String ID) {
-  //    return ParserController.globalSeqSymmetryIndex.getAllSeqSymsByTypeAndID(type, ID);
-  //  }
 }
 

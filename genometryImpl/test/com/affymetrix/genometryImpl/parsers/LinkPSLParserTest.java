@@ -205,7 +205,7 @@ public class LinkPSLParserTest {
 			String testFileName = "test/data/psl/RT_U34TEST.link.psl";
 			File testFile = new File(testFileName);
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, "RT_U34", (IndexWriter) parser);
-			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, iSyms, testFileName);
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, group, iSyms, testFileName);
 
 			String overlap = "3000000:160000000";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);

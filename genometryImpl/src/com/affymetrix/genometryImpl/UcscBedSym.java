@@ -267,25 +267,25 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 		return true;
 	}
 
-	public void outputBedFormat(Writer out) throws IOException  {
-		out.write(seq.getID());
+	public void outputBedFormat(DataOutputStream out) throws IOException  {
+		out.write(seq.getID().getBytes());
 		out.write('\t');
-		out.write(Integer.toString(txMin));
+		out.write(Integer.toString(txMin).getBytes());
 		out.write('\t');
-		out.write(Integer.toString(txMax));
+		out.write(Integer.toString(txMax).getBytes());
 		// only first three fields are required
 
 		// only keep going if has name
 		if (name != null) {
 			out.write('\t');
-			out.write(name);
+			out.write(name.getBytes());
 			// only keep going if has score field
 			if (score > Float.NEGATIVE_INFINITY) {
 				out.write('\t');
 				if (score == 0) {
 					out.write('0');
 				} else {
-					out.write(Float.toString(score));
+					out.write(Float.toString(score).getBytes());
 				}
 				out.write('\t');
 				if (forward) { out.write('+'); }
@@ -294,9 +294,9 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 				if (cdsMin > Integer.MIN_VALUE &&
 						cdsMax > Integer.MIN_VALUE)  {
 					out.write('\t');
-					out.write(Integer.toString(cdsMin));
+					out.write(Integer.toString(cdsMin).getBytes());
 					out.write('\t');
-					out.write(Integer.toString(cdsMax));
+					out.write(Integer.toString(cdsMax).getBytes());
 					// only keep going if has blockcount/blockSizes/blockStarts
 					int child_count = this.getChildCount();
 					if (child_count > 0) {
@@ -304,17 +304,17 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 						// writing out extra "reserved" field, which currently should always be 0
 						out.write('0');
 						out.write('\t');
-						out.write(Integer.toString(child_count));
+						out.write(Integer.toString(child_count).getBytes());
 						out.write('\t');
 						// writing blocksizes
 						for (int i=0; i<child_count; i++) {
-							out.write(Integer.toString(blockMaxs[i]-blockMins[i]));
+							out.write(Integer.toString(blockMaxs[i]-blockMins[i]).getBytes());
 							out.write(',');
 						}
 						out.write('\t');
 						// writing blockstarts
 						for (int i=0; i<child_count; i++) {
-							out.write(Integer.toString(blockMins[i]-txMin));
+							out.write(Integer.toString(blockMins[i]-txMin).getBytes());
 							out.write(',');
 						}
 					}

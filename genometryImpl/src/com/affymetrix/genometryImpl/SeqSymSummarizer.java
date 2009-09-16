@@ -61,9 +61,7 @@ public final class SeqSymSummarizer {
 	 *                  if true, then return a graph with flattened / binary depth information,
 	 *                  1 for covered, 0 for not covered
 	 */
-	public static GraphIntervalSym getSpanSummary(List<SeqSpan> spans, boolean binary_depth, String gid) {
-		//    System.out.println("SeqSymSummarizer: starting to summarize syms");
-		//    System.out.println("binary depth: " + binary_depth);
+	private static GraphIntervalSym getSpanSummary(List<SeqSpan> spans, boolean binary_depth, String gid) {
 		MutableAnnotatedBioSeq seq = spans.get(0).getBioSeq();
 		int span_num = spans.size();
 		int[] starts = new int[span_num];
@@ -181,18 +179,16 @@ public final class SeqSymSummarizer {
 		return projectLandscapeSpans(landscape);
 	}
 
-	public static List<SeqSpan> projectLandscapeSpans(GraphSym landscape) {
+	private static List<SeqSpan> projectLandscapeSpans(GraphSym landscape) {
 		List<SeqSpan> spanlist = new ArrayList<SeqSpan>();
 		MutableAnnotatedBioSeq seq = landscape.getGraphSeq();
-		int xcoords[] = landscape.getGraphXCoords();
-		//float ycoords[] = (float[]) landscape.getGraphYCoords();
-		int num_points = xcoords.length;
+		int num_points = landscape.getPointCount();
 
 		int current_region_start = 0;
 		int current_region_end = 0;
 		boolean in_region = false;
 		for (int i=0; i<num_points; i++) {
-			int xpos = xcoords[i];
+			int xpos = landscape.getGraphXCoord(i);
 			float ypos = landscape.getGraphYCoord(i);
 			if (in_region) {
 				if (ypos <= 0) { // reached end of region, make SeqSpan
@@ -200,13 +196,11 @@ public final class SeqSymSummarizer {
 					current_region_end = xpos;
 					SeqSpan newspan = new SimpleSeqSpan(current_region_start, current_region_end, seq);
 					spanlist.add(newspan);
-				} else {  // still in region, do nothing
 				}
 			} else {  // not already in_region
 				if (ypos > 0) {
 					in_region = true;
 					current_region_start = xpos;
-				} else {  // still not in region, so do nothing
 				}
 			}
 		}
@@ -218,18 +212,16 @@ public final class SeqSymSummarizer {
 	}
 
 
-	public static SymWithProps projectLandscape(GraphSym landscape) {
+	private static SymWithProps projectLandscape(GraphSym landscape) {
 		MutableAnnotatedBioSeq seq = landscape.getGraphSeq();
 		SimpleSymWithProps psym = new SimpleSymWithProps();
-		int xcoords[] = landscape.getGraphXCoords();
-		//float ycoords[] = (float[]) landscape.getGraphYCoords();
-		int num_points = xcoords.length;
+		int num_points = landscape.getPointCount();
 
 		int current_region_start = 0;
 		int current_region_end = 0;
 		boolean in_region = false;
 		for (int i=0; i<num_points; i++) {
-			int xpos = xcoords[i];
+			int xpos = landscape.getGraphXCoord(i);
 			float ypos = landscape.getGraphYCoord(i);
 			if (in_region) {
 				if (ypos <= 0) { // reached end of region, make SeqSpan
@@ -239,15 +231,11 @@ public final class SeqSymSummarizer {
 						new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
 					psym.addChild(newsym);
 				}
-				else {  // still in region, do nothing
-				}
 			}
 			else {  // not already in_region
 				if (ypos > 0) {
 					in_region = true;
 					current_region_start = xpos;
-				}
-				else {  // still not in region, so do nothing
 				}
 			}
 		}
@@ -305,15 +293,13 @@ public final class SeqSymSummarizer {
 		//    A && B      ==> depth = 2;
 
 		// so any regions with depth == 2 are intersection
-		int xcoords[] = combo_graph.getGraphXCoords();
-		//float ycoords[] = (float[]) combo_graph.getGraphYCoords();
-		int num_points = xcoords.length;
+		int num_points = combo_graph.getPointCount();
 
 		int current_region_start = 0;
 		int current_region_end = 0;
 		boolean in_region = false;
 		for (int i=0; i<num_points; i++) {
-			int xpos = xcoords[i];
+			int xpos = combo_graph.getGraphXCoord(i);
 			float ypos = combo_graph.getGraphYCoord(i);
 			if (in_region) {
 				if (ypos < 2) { // reached end of intersection region, make SeqSpan
@@ -323,15 +309,11 @@ public final class SeqSymSummarizer {
 						new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
 					psym.addChild(newsym);
 				}
-				else {  // still in region, do nothing
-				}
 			}
 			else {  // not already in_region
 				if (ypos >= 2) {
 					in_region = true;
 					current_region_start = xpos;
-				}
-				else {  // still not in region, so do nothing
 				}
 			}
 		}
@@ -379,15 +361,13 @@ public final class SeqSymSummarizer {
 		//    A && B      ==> depth = 2;
 
 		// so any regions with depth == 1 are XOR regions
-		int xcoords[] = combo_graph.getGraphXCoords();
-		//float ycoords[] = (float[]) combo_graph.getGraphYCoords();
-		int num_points = xcoords.length;
+		int num_points = combo_graph.getPointCount();
 
 		int current_region_start = 0;
 		int current_region_end = 0;
 		boolean in_region = false;
 		for (int i=0; i<num_points; i++) {
-			int xpos = xcoords[i];
+			int xpos = combo_graph.getGraphXCoord(i);
 			float ypos = combo_graph.getGraphYCoord(i);
 			if (in_region) {
 				if (ypos < 1 || ypos > 1) { // reached end of xor region, make SeqSpan
@@ -397,15 +377,11 @@ public final class SeqSymSummarizer {
 						new SingletonSeqSymmetry(current_region_start, current_region_end, seq);
 					psym.addChild(newsym);
 				}
-				else {  // still in region, do nothing
-				}
 			}
 			else {  // not already in_region
 				if (ypos == 1) {
 					in_region = true;
 					current_region_start = xpos;
-				}
-				else {  // still not in region, so do nothing
 				}
 			}
 		}
@@ -446,7 +422,7 @@ public final class SeqSymSummarizer {
 		return getNot(syms, seq, true);
 	}
 
-	public static SeqSymmetry getNot(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, boolean include_ends) {
+	private static SeqSymmetry getNot(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, boolean include_ends) {
 		SeqSymmetry union = getUnion(syms, seq);
 		int spanCount = union.getChildCount();
 
@@ -455,7 +431,6 @@ public final class SeqSymSummarizer {
 			if (spanCount <= 1) {  return null; }  // no gaps, no resulting inversion
 		}
 		MutableSeqSymmetry invertedSym = new SimpleSymWithProps();
-		//    invertedSym.addSpan(new SimpleSeqSpan(pSpan.getStart(), pSpan.getEnd(), seq));
 		if (include_ends) {
 			if (spanCount < 1) {
 				// no spans, so just return sym of whole range of seq

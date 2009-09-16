@@ -20,7 +20,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
  *  intervals.  So instead of (x,y) there is (x_start, x_width, y).
  */
 public final class GraphIntervalSym extends GraphSymFloat {
-	int wcoords[];
+	private int wcoords[];
 
 	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, MutableAnnotatedBioSeq seq) {
 		super(x,y,id,seq);
@@ -55,6 +55,6 @@ public final class GraphIntervalSym extends GraphSymFloat {
 	 */
 	@Override
 	public SeqSymmetry getChild(int index) {
-		return new ScoredSingletonSym(xcoords[index], xcoords[index]+wcoords[index], graph_original_seq, getGraphYCoord(index));
+		return new ScoredSingletonSym(xcoords[index], xcoords[index]+ getGraphWidthCoord(index), graph_original_seq, getGraphYCoord(index));
 	}
 }

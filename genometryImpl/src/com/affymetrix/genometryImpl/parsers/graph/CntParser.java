@@ -10,8 +10,7 @@
  *   The license is also available at
  *   http://www.opensource.org/licenses/cpl.php
  */
-
-package com.affymetrix.genometryImpl.parsers;
+package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -30,19 +29,18 @@ public final class CntParser {
 	static Pattern tag_val = Pattern.compile("(.*)=(.*)");
 	static Pattern line_regex = Pattern.compile("\\t");
 	static Pattern section_regex = Pattern.compile("\\[.*\\]");
-
 	static final String SECTION_HEADER = "[Header]";
 	static final String SECTION_COL_NAME = "[ColumnName]";
 	static final String SECTION_DATA = "[Data]";
-
 	// index of the first column containing data
 	static final int FIRST_DATA_COLUMN = 3;
+	Map<String, Object> thing = new HashMap<String, Object>();
+	Map<String, Object> thing2 = new HashMap<String, Object>();
 
-	public CntParser() {
-	}
+	Map<String, String> unique_gids = new HashMap<String, String>();
 
 	public void parse(InputStream dis, AnnotatedSeqGroup seq_group)
-		throws IOException  {
+			throws IOException {
 
 		String line;
 
@@ -52,11 +50,11 @@ public final class CntParser {
 		Matcher section_regex_matcher = section_regex.matcher("");
 		Matcher tag_val_matcher = tag_val.matcher("");
 		String current_section = "";
-		Map<String,Object> headerData = new HashMap<String,Object>();
+		Map<String, Object> headerData = new HashMap<String, Object>();
 
 
 		// First read the header
-		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+		while ((line = reader.readLine()) != null && (!thread.isInterrupted())) {
 			section_regex_matcher.reset(line);
 			if (section_regex_matcher.matches()) {
 				current_section = line;
@@ -81,7 +79,7 @@ public final class CntParser {
 
 		String[] column_names = null;
 
-		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+		while ((line = reader.readLine()) != null && (!thread.isInterrupted())) {
 			section_regex_matcher.reset(line);
 			if (section_regex_matcher.matches()) {
 				current_section = line;
@@ -108,10 +106,7 @@ public final class CntParser {
 			throw new IOException("No score columns in file");
 		}
 
-
-		//    SeqSymmetry foo = new SingletonSeqSymmetry();
-
-		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
+		while ((line = reader.readLine()) != null && (!thread.isInterrupted())) {
 
 			String[] fields = line_regex.split(line);
 			int field_count = fields.length;
@@ -125,21 +120,20 @@ public final class CntParser {
 			int x = Integer.parseInt(fields[2]);
 
 			MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
-			if (aseq == null) { aseq = seq_group.addSeq(seqid, x); }
-			if (x > aseq.getLength()) { aseq.setLength(x); }
-
-			//        SingletonSymWithProps child = new SingletonSymWithProps(x, x, aseq);
-			//        child.setProperty("method", "SNP IDs");
-			//        aseq.addAnnotation(child);
-			//        seq_group.addToIndex(snpId, child);
+			if (aseq == null) {
+				aseq = seq_group.addSeq(seqid, x);
+			}
+			if (x > aseq.getLength()) {
+				aseq.setLength(x);
+			}
 
 			IntList xVals = getXCoordsForSeq(aseq);
 			xVals.add(x);
 
 			FloatList[] floats = getFloatsForSeq(aseq, numScores);
-			for (int j=0; j<numScores; j++) {
+			for (int j = 0; j < numScores; j++) {
 				FloatList floatList = floats[j];
-				float floatVal = parseFloat(fields[FIRST_DATA_COLUMN+j]);
+				float floatVal = parseFloat(fields[FIRST_DATA_COLUMN + j]);
 				floatList.add(floatVal);
 			}
 		}   // end of line-reading loop
@@ -152,9 +146,9 @@ public final class CntParser {
 			x.trimToSize();
 			FloatList[] ys = (FloatList[]) thing.get(seqid);
 			MutableAnnotatedBioSeq seq = seq_group.getSeq(seqid);
-			for (int i=0; i<ys.length; i++) {
+			for (int i = 0; i < ys.length; i++) {
 				FloatList y = ys[i];
-				String id = column_names[i+FIRST_DATA_COLUMN];
+				String id = column_names[i + FIRST_DATA_COLUMN];
 				if ("ChipNum".equals(id)) {
 					continue;
 				}
@@ -166,7 +160,6 @@ public final class CntParser {
 
 	}
 
-	Map<String,String> unique_gids = new HashMap<String,String>();
 	String getGraphIdForColumn(String column_id, AnnotatedSeqGroup seq_group) {
 		String gid = unique_gids.get(column_id);
 		if (gid == null) {
@@ -186,15 +179,12 @@ public final class CntParser {
 		return val;
 	}
 
-	Map<String,Object> thing = new HashMap<String,Object>();
-	Map<String,Object> thing2 = new HashMap<String,Object>();
-
 	FloatList[] getFloatsForSeq(MutableAnnotatedBioSeq seq, int numScores) {
 		FloatList[] floats = (FloatList[]) thing.get(seq.getID());
 
 		if (floats == null) {
 			floats = new FloatList[numScores];
-			for (int i=0; i<numScores; i++) {
+			for (int i = 0; i < numScores; i++) {
 				floats[i] = new FloatList();
 			}
 			thing.put(seq.getID(), floats);

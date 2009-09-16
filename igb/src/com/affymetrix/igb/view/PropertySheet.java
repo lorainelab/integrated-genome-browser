@@ -18,7 +18,6 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
-import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.swing.BlockingTableCellEditor;
 
 class PropertySheet extends JPanel {
@@ -27,12 +26,14 @@ class PropertySheet extends JPanel {
   JTable table;
   JScrollPane scroll_pane;
   JTableCutPasteAdapter cutPaster;
+
+  private TableRowSorter<TableModel> sorter;
   
   Dimension size = new Dimension ( 1000, 1000 );
   int columnwidth;
 
   boolean by_rows = false;
-  boolean sortable = false;
+  boolean sortable = true;
   boolean useDefaultKeystrokes = true;
   
   public static final String PROPERTY = "property";
@@ -51,55 +52,6 @@ class PropertySheet extends JPanel {
     cutPaster = new JTableCutPasteAdapter(table, useDefaultKeystrokes);
   }
 
-
-  /**
-   * Tell this PropertySheet whether values for SeqFeature
-   * properties should be presented in a row or a column.
-   * The default is to present them in a column.
-   * @param by_rows - if true, then present them in a row
-   */
-  public void byRows(boolean by_rows) {
-    this.by_rows = by_rows;
-  }
-  
-  /**
-   * Whether values for SeqFeature
-   * properties should be presented in a row or a column.
-   * The default is to present them in a column.
-   */
-  public boolean isByRows() {
-    return this.by_rows;
-  }
-  
-  /**
-   *  Specifies whether the user should be able to sort the columns by clicking on the headers.
-   *  Note that the sort-order will be lost each time the data is updated because there
-   *  is no guarantee that the same type of data, with the same column names, will
-   *  be used each time showProperties() is called.
-   */
-  public void setSortable(boolean b) {
-    this.sortable = b;
-  }
-  
-  public boolean isSortable() {
-    return this.sortable;
-  }
-  
-  /** Converts a row index of the view into a row index of the model.
-   *  If {@link #setSortable(boolean)} was false, then the two indices are
-   *  equivalent.
-   */
-  public int getModelIndex(int i) {
-    if (sortable) {
-      return ((TableSorter2) table.getModel()).modelIndex(i);
-    } else {
-      return i;
-    }
-  }
-
-  public void setUseDefaultKeystrokes(boolean b) {
-    this.useDefaultKeystrokes = b;
-  }
   
   /**
    * Return headings for columns.  If we're laying out
@@ -119,7 +71,7 @@ class PropertySheet extends JPanel {
     String[] col_headings = null;
     // the number of different name-value groups
     int num_values = name_values.size();
-    // the nmber of items being described
+    // the number of items being described
     int num_items = props.length;
     if (by_rows) {  // columns represent individual property names
       col_headings = new String[num_values];
@@ -151,7 +103,7 @@ class PropertySheet extends JPanel {
    *   one or more Properties
    * @param props  the list of Properties
    */
-  public String[][] buildRows(Vector<String[]> name_values, Map[] props) {
+  private String[][] buildRows(Vector<String[]> name_values, Map[] props) {
     int num_props = props.length;
     int num_vals = name_values.size();
     String[][] rows = null;
@@ -196,67 +148,30 @@ class PropertySheet extends JPanel {
    * @param useOnlySpecifiedColumns If true, then the property sheet will display ONLY the properties
    * whose names are listed. 
    */
-  Vector<String[]> reorderNames(Vector<String[]> name_values, Vector preferred_ordering, boolean useOnlySpecifiedColumns) {
-    Vector<String[]> reordered = new Vector<String[]>(name_values.size());
-    for (int i=0; i<preferred_ordering.size(); i++) {
-      String request = (String)preferred_ordering.elementAt(i);
-      for (int k=0; k<name_values.size(); k++) {
-        String[] vals = name_values.elementAt(k);
-        if (vals != null && vals.length > 0) {
-          String name = vals[0];
-          if (name.equals(request)) {
-            reordered.add(vals);
-            name_values.setElementAt(null, k);
-            break;
-          }
-        }
-      }
-    }
-    if (! useOnlySpecifiedColumns) {
-      for (int i = 0; i < name_values.size(); i++) {
-        if (name_values.elementAt(i) != null) {
-          reordered.add(name_values.elementAt(i));
-        }
-      }
-    }
-    return reordered;
-  }
+  private Vector<String[]> reorderNames(Vector<String[]> name_values, Vector<String> preferred_ordering) {
+	  Vector<String[]> reordered = new Vector<String[]>(name_values.size());
+		for (String request : preferred_ordering) {
+			for (int k = 0; k < name_values.size(); k++) {
+				String[] vals = name_values.elementAt(k);
+				if (vals != null && vals.length > 0) {
+					String name = vals[0];
+					if (name.equals(request)) {
+						reordered.add(vals);
+						name_values.setElementAt(null, k);
+						break;
+					}
+				}
+			}
+		}
+		for (String[] name_value : name_values) {
+			if (name_value != null) {
+				reordered.add(name_value);
+			}
+		}
 
-  /**
-   * Show data associated with the given properties.
-   * Uses buildRows() to retrieve ordered
-   * name-value pairs.
-   * @param props  the given Properties
-   * @see #buildRows(Vector, Map[])
-   */
-  public void showProperties(Map[] props) {
-    showProperties(props, null);
-  }
+		return reordered;
+	}
 
-  /**
-   * Show data associated with the given properties.
-   * Uses buildRows() to retrieve ordered
-   * name-value pairs.
-   * @param props  the given Properties
-   * @param preferred_prop_order the preferred order of columns
-   * @see #buildRows(Vector, Map[])
-   */
-  public void showProperties(Map[] props, Vector preferred_prop_order) {
-    this.showProperties(props, preferred_prop_order, "ND");
-  }
-
-  /** If true, then the property sheet will display ONLY the properties
-   * whose names are listed. 
-   */
-  boolean useOnlyDefaultProperties = false;
-  
-  /** If true, then the property sheet will display ONLY the properties
-   * whose names are listed. 
-   */
-  public void setUseOnlyDefaultProperties(boolean b) {
-    useOnlyDefaultProperties = b;
-  }
-  
   /**
    * Show data associated with the given properties.
    * Uses buildRows() to retrieve ordered
@@ -266,24 +181,21 @@ class PropertySheet extends JPanel {
    * @param noData the value to use when a property value is null
    * @see #buildRows(Vector, Map[])
    */
-  public void showProperties(Map[] props, Vector preferred_prop_order, String noData) {
+  public void showProperties(Map[] props, Vector<String> preferred_prop_order, String noData) {
     PropertyKeys propkeys = new PropertyKeys();
 
     Vector<String[]> name_values = propkeys.getNameValues(props, noData);
     if (preferred_prop_order != null) {
-      name_values = reorderNames(name_values, preferred_prop_order, useOnlyDefaultProperties);
+      name_values = reorderNames(name_values, preferred_prop_order);
     }
     String[][] rows = buildRows(name_values,props);
     String[] col_headings = getColumnHeadings(name_values,props);
 
-    TableModel unsorted_model = new DefaultTableModel(rows,col_headings);
-    
+    TableModel model = new DefaultTableModel(rows,col_headings);
+    table.setModel(model);
     if (sortable) {
-      TableSorter2 sort_model = new TableSorter2(unsorted_model);
-      sort_model.setTableHeader(table.getTableHeader());
-      table.setModel(sort_model);
-    } else {
-      table.setModel(unsorted_model);
+		sorter = new TableRowSorter<TableModel>(model);
+		table.setRowSorter(sorter);
     }
 
     table.setEnabled( true );  // to allow selection, etc.
@@ -306,18 +218,4 @@ class PropertySheet extends JPanel {
       table.getColumnModel().getColumn(i).setPreferredWidth(150);
     }
   }
-
-  public JTable getTable() {
-    return table;
-  }
-  
-  /** Returns the current JTableCutPasteAdapter.  May be null. */
-  public JTableCutPasteAdapter getCutPasteAdapter() {
-    return cutPaster;
-  }
-
-  public void destroy() {
-    removeAll();
-  }
-
 }

@@ -525,30 +525,36 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			boolean writeTrackLines, String type,
 			String description, OutputStream outstream) {
+
+		DataOutputStream dos = null;
 		try {
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outstream));
+			dos = new DataOutputStream(new BufferedOutputStream(outstream));
 
 			if (writeTrackLines) {
-				bw.write(trackLine(type,description));
+				dos.write(trackLine(type,description).getBytes());
 			}
 
 			for (SeqSymmetry sym : syms) {
-				if (!(sym instanceof UcscPslSym)) {
-					SeqUtils.printSymmetry(sym);
+				if (! (sym instanceof UcscPslSym)) {
 					int spancount = sym.getSpanCount();
 					if (spancount == 1) {
-						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq, seq);
-					} else {
+						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
+					}
+					else {
 						MutableAnnotatedBioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
-						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq, seq2);
+						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}
-				((UcscPslSym) sym).outputPslFormat(bw);
+				this.writeSymmetry(sym,seq,dos);
 			}
-			bw.flush();
-		} catch (Exception ex) {
+			dos.flush();
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
+		}
+		finally {
+			GeneralUtils.safeClose(dos);
 		}
 		return true;
 	}
@@ -572,13 +578,13 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
-		Writer bw = null;
-		try {
-			bw = new BufferedWriter(new OutputStreamWriter(os));
-			((UcscPslSym) sym).outputPslFormat(bw);
-		} finally {
-			bw.flush();
+		DataOutputStream dos = null;
+		if (os instanceof DataOutputStream) {
+			dos = (DataOutputStream) os;
+		} else {
+			dos = new DataOutputStream(os);
 		}
+		((UcscPslSym) sym).outputPslFormat(dos);
 	}
 
 	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {

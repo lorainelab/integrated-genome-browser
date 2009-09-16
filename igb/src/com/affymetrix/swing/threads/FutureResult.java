@@ -43,20 +43,15 @@ import java.lang.reflect.*;
  * <p>[<a href="http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html"> Introduction to this package. </a>]
  **/
 
-public final class FutureResult {
+final class FutureResult {
   /** The result of the operation **/
-  protected Object value_ = null;
+  private Object value_ = null;
   
   /** Status -- true after first set **/
-  protected boolean ready_ = false;
+  private boolean ready_ = false;
 
   /** the exception encountered by operation producing result **/
-  protected InvocationTargetException exception_ = null;
-
-  /** 
-   * Create an initially unset FutureResult
-   **/
-  public FutureResult() { }
+  private InvocationTargetException exception_ = null;
 
 
   /** 
@@ -67,7 +62,7 @@ public final class FutureResult {
    * function and (eventually) set the result.
    **/
 
-  public Runnable setter(final Callable function) {
+  Runnable setter(final Callable function) {
     return new Runnable() {
       public void run() {
         try {
@@ -81,7 +76,7 @@ public final class FutureResult {
   }
 
   /** internal utility: either get the value or throw the exception **/
-  protected Object doGet() throws InvocationTargetException {
+  private Object doGet() throws InvocationTargetException {
     if (exception_ != null) 
       throw exception_;
     else
@@ -95,40 +90,12 @@ public final class FutureResult {
    * @exception InvocationTargetException if the operation
    * producing the value encountered an exception.
    **/
-  public synchronized Object get() 
+  synchronized Object get() 
     throws InterruptedException, InvocationTargetException {
     while (!ready_) wait();
     return doGet();
   }
 
-
-
-  /**
-   * Wait at most msecs to access the reference.
-   * @return current value
-   * @exception TimeoutException if not ready after msecs
-   * @exception InterruptedException if current thread has been interrupted
-   * @exception InvocationTargetException if the operation
-   * producing the value encountered an exception.
-   **/
-  /*public synchronized Object timedGet(long msecs)
-    throws TimeoutException, InterruptedException, InvocationTargetException {
-    long startTime = (msecs <= 0)? 0 : System.currentTimeMillis();
-    long waitTime = msecs;
-    if (ready_) return doGet();
-    else if (waitTime <= 0) throw new TimeoutException(msecs);
-    else {
-      for (;;) {
-        wait(waitTime);
-        if (ready_) return doGet();
-        else {
-          waitTime = msecs - (System.currentTimeMillis() - startTime);
-          if (waitTime <= 0)
-            throw new TimeoutException(msecs);
-        }
-      }
-    }
-  }*/
 
   /**
    * Set the reference, and signal that it is ready. It is not
@@ -136,7 +103,7 @@ public final class FutureResult {
    * but it is not something you would normally want to do.
    * @param newValue The value that will be returned by a subsequent get();
    **/
-  public synchronized void set(Object newValue) {
+  private synchronized void set(Object newValue) {
     value_ = newValue;
     ready_ = true;
     notifyAll();
@@ -147,53 +114,11 @@ public final class FutureResult {
    * @param ex The exception. It will be reported out wrapped
    * within an InvocationTargetException 
    **/
-  public synchronized void setException(Throwable ex) {
+  private synchronized void setException(Throwable ex) {
     exception_ = new InvocationTargetException(ex);
     ready_ = true;
     notifyAll();
   }
-
-
-  /**
-   * Get the exception, or null if there isn't one (yet).
-   * This does not wait until the future is ready, so should
-   * ordinarily only be called if you know it is.
-   * @return the exception encountered by the operation
-   * setting the future, wrapped in an InvocationTargetException
-   **/
-  public synchronized InvocationTargetException getException() {
-    return exception_;
-  }
-
-  /**
-   * Return whether the reference or exception have been set.
-   * @return true if has been set. else false
-   **/
-  public synchronized boolean isReady() {
-    return ready_; 
-  }
-
-  /**
-   * Access the reference, even if not ready
-   * @return current value
-   **/
-  /*public synchronized Object peek() {
-    return value_; 
-  }*/
-
-
-  /**
-   * Clear the value and exception and set to not-ready,
-   * allowing this FutureResult to be reused. This is not
-   * particularly recommended and must be done only
-   * when you know that no other object is depending on the
-   * properties of this FutureResult.
-   **/
-  /*public synchronized void clear() {
-    value_ = null;
-    exception_ = null;
-    ready_ = false;
-  }*/
 
 }
 

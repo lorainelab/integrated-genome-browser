@@ -14,6 +14,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  * A table with two customizations:
@@ -21,7 +22,7 @@ import javax.swing.table.TableModel;
  * 2.  Different combo box elements per row.  This allows different behavior per server type.
  */
 public final class TableWithVisibleComboBox {
-
+	private static TableRowSorter<FeaturesTableModel> sorter;
   /**
    * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
    * @param items
@@ -32,6 +33,8 @@ public final class TableWithVisibleComboBox {
     table.setRowEditorModel(rm);
 
     FeaturesTableModel ftm = (FeaturesTableModel) table.getModel();
+	sorter = new TableRowSorter<FeaturesTableModel>(ftm);
+	//table.setRowSorter(sorter);
 
     JComboBox DAScb = new JComboBox(FeaturesTableModel.standardLoadChoices);
     DAScb.setEnabled(enabled);

@@ -76,8 +76,8 @@ public final class PreferencesPanel extends JPanel {
         public void componentHidden(ComponentEvent e) {
           singleton.tpv.removedFromView();
         }
+
       });
-			singleton.tpv.refresh();	// necessary, otherwise the first time this is seen, it's empty.
 
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
 
@@ -169,12 +169,14 @@ public final class PreferencesPanel extends JPanel {
       if (pos != null) {
         UnibrowPrefsUtil.setWindowSize(frame, pos);
       }
-    }
 
-    ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
-    if (icon != null) {
-      frame.setIconImage(icon.getImage());
-    }
+		ImageIcon icon = MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif");
+		if (icon != null) {
+			frame.setIconImage(icon.getImage());
+		}
+    }    
+
+	singleton.tpv.refresh();	// update component list
 
     return frame;
   }

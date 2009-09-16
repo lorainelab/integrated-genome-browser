@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.IGBConstants;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
@@ -32,11 +33,13 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
-import com.affymetrix.igb.util.TableSorter2;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
 	private static final long serialVersionUID = 0;
@@ -46,9 +49,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
-	//private JLabel andLabel;
+
 	private JTextField searchTF;
-	//private JTextField searchTF2;
 	private JPanel pan1 = new JPanel();
 	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB = new JComboBox();
@@ -62,21 +64,22 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 
 	private final JTable table = new JTable();
+	private final JTextField filterText = new JTextField();
 	private final JLabel status_bar = new JLabel("0 results");
 	// The second column in the table contains an object of type SeqSymmetry
 	// but we use a special TableCellRenderer so that what is actually displayed
 	// is a String representing the Tier
-	private final static String[] col_headings = {"ID", "Start", "End", "Chromosome", "Strand"};
-	private final static Class<?>[] col_classes = {String.class, Integer.class, Integer.class, String.class, String.class};
+	private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
+	private final static Class<?>[] col_classes = {String.class, String.class, Integer.class, Integer.class, String.class, String.class};
 	private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
 	private final static int NUM_COLUMNS = col_headings_vector.size();
 	private DefaultTableModel model;
+	private TableRowSorter<DefaultTableModel> sorter;
 	private ListSelectionModel lsm;
 
 	private static final String ALLID = "All loaded IDs";
-	private static final String REGEXID = "Matching ID";
-	private static final String REGEXIDTF = "ID matches string or Regular Expression";
-	//private static final String BETWEENID = "ID between...";
+	private static final String REGEXID = "Matching IDs";
+	private static final String REGEXIDTF = "IDs match string or Regular Expression";
 	private static final String REGEXRESIDUE = "Matching residues";
 	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
 	private static final String CHOOSESEARCH = "Choose search method";
@@ -85,6 +88,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
 
 	private static final boolean DEBUG = true;
+
+	private class SearchRow {
+		String serverID;
+		String id;
+		int start;
+		int end;
+		String chr;
+		String orientation;
+	}
 
 	public SearchView() {
 		super();
@@ -112,8 +124,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		pan1.add(searchCB);
 		pan1.add(searchTF);
-		//pan1.add(andLabel);
-		//pan1.add(searchTF2);
 		pan1.add(remoteSearchCheckBox);
 		pan1.add(selectInMapCheckBox);
 
@@ -132,7 +142,33 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		this.initTable();
 
+		
+
+		//Create a separate form for filterText
+       /* JLabel l1 = new JLabel("Filter ID:", SwingConstants.TRAILING);
+        pan1.add(l1);
+       //Whenever filterText changes, invoke newFilter.
+		filterText.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				newFilter();
+			}
+
+			public void insertUpdate(DocumentEvent e) {
+				newFilter();
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				newFilter();
+			}
+		});
+        l1.setLabelFor(filterText);
+
+
+
+        pan1.add(filterText);*/
+
 		this.add("North", pan1);
+
 
 		JScrollPane scroll_pane = new JScrollPane(table);
 		this.add(scroll_pane, BorderLayout.CENTER);
@@ -177,7 +213,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchCB.removeAllItems();
 		searchCB.addItem(ALLID);
 		searchCB.addItem(REGEXID);
-		//searchCB.addItem(BETWEENID);
 		searchCB.addItem(REGEXRESIDUE);
 		searchCB.setToolTipText(CHOOSESEARCH);
 	}
@@ -186,10 +221,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
 		searchTF.setEnabled(false);
-		//searchTF2 = new JTextField(10);
-		//searchTF2.setVisible(false);
-		//andLabel = new JLabel("and");
-		//andLabel.setVisible(false);
 		remoteSearchCheckBox.setEnabled(false);
 		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
 		selectInMapCheckBox.setToolTipText("highlight matches in sequence map");
@@ -226,18 +257,31 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		//lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		TableSorter2 sort_model = new TableSorter2(model);
-		//sort_model.addMouseListenerToHeaderInTable(table); // for TableSorter version 1
-		sort_model.setTableHeader(table.getTableHeader()); // for TableSorter2
-		sort_model.setColumnComparator(SeqSymmetry.class, new SeqSymmetryMethodComparator());
+		sorter = new TableRowSorter<DefaultTableModel>(model);
 
-		table.setModel(sort_model);
+		table.setModel(model);
 		table.setRowSelectionAllowed(true);
+		table.setRowSorter(sorter);
 		table.setEnabled(true);
 		table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
 		table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
-
 	}
+
+	/**
+     * Update the row filter regular expression from the expression in
+     * the text box.
+     */
+    private void newFilter() {
+        RowFilter<DefaultTableModel, Object> rf = null;
+        //If current expression doesn't parse, don't update.
+        try {
+            rf = RowFilter.regexFilter(filterText.getText(), 0);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorter.setRowFilter(rf);
+    }
+
 
 	private void clearAll() {
 		searchTF.setText("");
@@ -256,26 +300,43 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 		Vector<Vector<Object>> rows = new Vector<Vector<Object>>(num_rows, num_rows / 10);
 		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
-			SeqSymmetry result = results.get(j);
-			SeqSpan span = null;
-			if (seq != null) {
-				span = result.getSpan(seq);
-				if (span == null) {
-					// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
-					SeqSpan tempSpan = result.getSpan(0);
-					if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
-						span = tempSpan;
-					}
-				}
-			} else {
-				span = result.getSpan(0);
-			}
-			if (span == null) {
-				continue;	// on different chromosome; filtered out
-			}
-
 			Vector<Object> a_row = new Vector<Object>(NUM_COLUMNS);
-			a_row.add(result.getID());
+			SeqSymmetry result = results.get(j);
+			if (!convertSymmetryToRow(result, j, seq, a_row)) {
+				continue ;
+			}
+			rows.add(a_row);
+		}
+
+		return rows;
+	}
+
+
+	private static boolean convertSymmetryToRow(SeqSymmetry result, int j, BioSeq seq, Vector<Object> a_row) {
+		SeqSpan span = null;
+		if (seq != null) {
+			span = result.getSpan(seq);
+			if (span == null) {
+				// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
+				SeqSpan tempSpan = result.getSpan(0);
+				if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
+					span = tempSpan;
+				}
+			}
+		} else {
+			span = result.getSpan(0);
+		}
+		if (span == null) {
+			return false;
+		}
+		// TODO: use SearchRow class
+		a_row.add(result.getID());	// ID
+		a_row.add(BioSeq.determineMethod(result));	// tier
+		if (result instanceof UcscPslSym) {
+			a_row.add(((UcscPslSym) result).getTargetMin());
+			a_row.add(((UcscPslSym) result).getTargetMax());
+			a_row.add(((UcscPslSym) result).getTargetSeq().getID());
+		} else {
 			a_row.add(new Integer(span.getStart()));
 			a_row.add(new Integer(span.getEnd()));
 			if (seq != null) {
@@ -283,28 +344,21 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			} else {
 				a_row.add(span.getBioSeq().getID());
 			}
-			a_row.add(span.isForward() ? "+" : "-");
-			rows.add(a_row);
 		}
-
-    return rows;
-  }
-
-	private void displayInTable(final Vector<Vector<Object>> rows) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            model.setDataVector(rows, col_headings_vector);
-            //int num_results = rows.size();
-            /*if (rows.size() >= MAX_HITS) {
-              setStatus("More than " + MAX_HITS + " results");
-            } else {
-              setStatus("" + rows.size() + " results");
-            }*/
-          }
-        });
+		
+		a_row.add(span.isForward() ? "+" : "-");
+		return true;
 	}
 
-  // Clear the table (using invokeLater)
+	private void displayInTable(final Vector<Vector<Object>> rows) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				model.setDataVector(rows, col_headings_vector);
+			}
+		});
+	}
+
+	// Clear the table (using invokeLater)
 	private void clearTable() {
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -330,10 +384,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			this.searchTF.setEnabled(!ALLID.equals(searchMode));
-
-			//boolean optionalField = BETWEENID.equals(searchMode);
-			//this.andLabel.setVisible(optionalField);
-			//this.searchTF2.setVisible(optionalField);
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
 			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
@@ -368,8 +418,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				displayRegexIDs(".*", chrfilter);
 			} else if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText(), chrfilter);
-			//} else if (BETWEENID.equals(searchMode)) {
-			//	displayBetweenIDs(this.searchTF.getText(), this.searchTF2.getText());
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues();
 			}
@@ -377,9 +425,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void displayRegexIDs(String text, BioSeq chrFilter) {
+		if (!(text.contains("*") || text.contains("^") || text.contains("$"))) {
+			// Not much of a regular expression.  Assume the user wants to match at the start and end
+			text = ".*" + text + ".*";
+		}
 		Pattern regex = null;
 		try {
-			regex = Pattern.compile(text,Pattern.CASE_INSENSITIVE);
+			regex = Pattern.compile(text, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
 			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
 		} catch (Exception ex) {
@@ -397,35 +449,35 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		List<SeqSymmetry> remoteSymList = null;
 
 		if (this.remoteSearchCheckBox.isSelected()) {
-			status_bar.setText(friendlySearchStr + ": Searching remotely...");
-			remoteSymList = searchFeaturesByName(group, text, chrFilter);
+			if (text.length() < 3) {
+				status_bar.setText(friendlySearchStr + ": Text is too short for remote search...");
+			} else {
+				status_bar.setText(friendlySearchStr + ": Searching remotely...");
+				remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+			}
 		}
 
-		// Display them instead
-		if (sym_list != null && remoteSymList != null) {
-			String statusStr = friendlySearchStr + ": " + sym_list.size() + " local matches";
-			if (this.remoteSearchCheckBox.isSelected()) {
-				statusStr += ", " + remoteSymList.size() + " remote matches";
-			}
-			setStatus(statusStr);
-		} else {
+		if (sym_list == null && remoteSymList == null) {
 			setStatus(friendlySearchStr + ": No matches");
 			return;
 		}
 
+		String statusStr = friendlySearchStr + ": " + (sym_list == null ? 0 : sym_list.size()) + " local matches";
+		if (this.remoteSearchCheckBox.isSelected() && text.length() >= 3) {
+				statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
+		}
+		setStatus(statusStr);
 		if (this.selectInMapCheckBox.isSelected()) {
 			gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
 		}
-		sym_list.addAll(remoteSymList);
+		if (remoteSymList != null) {
+			sym_list.addAll(remoteSymList);
+		}
+
 		final Vector<Vector<Object>> rows = buildRows(sym_list, chrFilter);
 		displayInTable(rows);
 
 	}
-
-	/*private static void displayBetweenIDs(String text, String text2) {
-		Set<String> results = group.getSymmetryIDs(text, text2);
-	}*/
-
 
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
@@ -438,7 +490,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 		regexTF((BioSeq) vseq);
 	}
-
 
 	private static GlyphI findSeqGlyph(TransformTierGlyph axis_tier) {
 		// find the sequence glyph on axis tier.
@@ -459,7 +510,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 		Pattern regex = null;
 		try {
-			regex = Pattern.compile(searchStr,Pattern.CASE_INSENSITIVE);
+			regex = Pattern.compile(searchStr, Pattern.CASE_INSENSITIVE);
 		} catch (PatternSyntaxException pse) {
 			Application.errorPanel("Regular expression syntax error...\n" + pse.getMessage());
 		} catch (Exception ex) {
@@ -513,19 +564,21 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return "Search for " + text + " on " + chr;
 	}
 
-
-	static List<SeqSymmetry> searchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
+	private static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
 		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
 
-		if (name == null || name.length() == 0) {
+		if (name == null || name.isEmpty()) {
 			return features;
 		}
-		
+
 		for (GenericVersion gVersion : group.getVersions()) {
 			if (gVersion.gServer.serverType == ServerType.DAS2) {
 				Das2VersionedSource version = (Das2VersionedSource) gVersion.versionSourceObj;
 				if (version != null) {
-					features.addAll(version.getFeaturesByName(name, group, chrFilter));
+					List<SeqSymmetry> newFeatures = version.getFeaturesByName(name, group, chrFilter);
+					if (newFeatures != null) {
+						features.addAll(newFeatures);
+					}
 				}
 			}
 		}
@@ -540,6 +593,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		groupOrSeqChange();
 	}
+
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		groupOrSeqChange();
 	}
@@ -582,23 +636,25 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		});
 	}
 
-	 /** A renderer that displays the value of {@link SeqMapView#determineMethod(SeqSymmetry)}. */
-  private static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
-    public SeqSymmetryTableCellRenderer() {
-      super();
-    }
+	/** A renderer that displays the value of {@link SeqMapView#determineMethod(SeqSymmetry)}. */
+	private static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
+
+		public SeqSymmetryTableCellRenderer() {
+			super();
+		}
 
 		@Override
-    protected void setValue(Object value) {
-      SeqSymmetry sym = (SeqSymmetry) value;
-      super.setValue(BioSeq.determineMethod(sym));
-    }
-  }
+		protected void setValue(Object value) {
+			SeqSymmetry sym = (SeqSymmetry) value;
+			super.setValue(BioSeq.determineMethod(sym));
+		}
+	}
 
-  /** A Comparator that compares based on {@link BioSeq#determineMethod(SeqSymmetry)}. */
-  private static class SeqSymmetryMethodComparator implements Comparator<SeqSymmetry> {
-    public int compare(SeqSymmetry s1, SeqSymmetry s2) {
-      return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
-    }
-  }
+	/** A Comparator that compares based on {@link BioSeq#determineMethod(SeqSymmetry)}. */
+	private static class SeqSymmetryMethodComparator implements Comparator<SeqSymmetry> {
+
+		public int compare(SeqSymmetry s1, SeqSymmetry s2) {
+			return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
+		}
+	}
 }

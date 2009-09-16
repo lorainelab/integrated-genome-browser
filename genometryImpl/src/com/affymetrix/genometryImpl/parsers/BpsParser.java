@@ -399,17 +399,13 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	 **/
 	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
 			String type, OutputStream outstream) {
-		//    SingletonGenometryModel.logInfo("in BpsParser.writeAnnotations()");
-		boolean success = true;
 		DataOutputStream dos = null;
 		try {
 			dos = new DataOutputStream(new BufferedOutputStream(outstream));
-			Iterator iterator = syms.iterator();
-			while (iterator.hasNext()) {
-				SeqSymmetry sym = (SeqSymmetry)iterator.next();
+			for (SeqSymmetry sym : syms) {
 				if (! (sym instanceof UcscPslSym)) {
 					int spancount = sym.getSpanCount();
-					if (sym.getSpanCount() == 1) {
+					if (spancount == 1) {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
 					}
 					else {
@@ -423,12 +419,12 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			success = false;
+			return false;
 		}
 		finally {
 			GeneralUtils.safeClose(dos);
 		}
-		return success;
+		return true;
 	}
 
 	public Comparator getComparator(MutableAnnotatedBioSeq seq) {

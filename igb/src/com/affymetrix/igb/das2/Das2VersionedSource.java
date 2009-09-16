@@ -32,14 +32,15 @@ import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
+import org.xml.sax.InputSource;
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
-public class Das2VersionedSource {
+public final class Das2VersionedSource {
 
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     static String ID = Das2FeatureSaxParser.ID;
     static String URID = Das2FeatureSaxParser.URID;
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
@@ -60,11 +61,11 @@ public class Das2VersionedSource {
     Map properties;
     List assembly;
     AnnotatedSeqGroup genome = null;
-    protected Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
-    protected Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
-    protected boolean regions_initialized = false;
-    protected boolean types_initialized = false;
-    protected String types_filter = null;
+    private Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
+    private Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
+    private boolean regions_initialized = false;
+    private boolean types_initialized = false;
+    private String types_filter = null;
     LinkedList platforms = new LinkedList();
 
 
@@ -124,51 +125,45 @@ public class Das2VersionedSource {
     public void addCapability(Das2Capability cap) {
         capabilities.put(cap.getType(), cap);
         cap.setVersionedSource(this);
-        //    System.out.println("Adding to cap map: " + cap.getRootURI().toString() + "  ,  version: " + this.getID());
-        Das2Capability.getCapabilityMap().put(cap.getRootURI().toString(), this);
+		Das2Capability.getCapabilityMap().put(cap.getRootURI().toString(), this);
     }
 
     public Das2Capability getCapability(String type) {
         return capabilities.get(type);
     }
 
-    public AnnotatedSeqGroup getGenome() {
-        if (genome == null) {
-            // trying to use name for group id first, if no name then use full URI
-            // This won't work in every situation!  Really need to resolve issues between VersionedSource URI ids and group ids
-            String groupid = this.getName();
-            if (groupid == null) {
-                groupid = this.getID();
-            }
-            //      genome = gmodel.addSeqGroup(groupid);  // gets existing seq group if possible, otherwise adds new one
-            genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible
-            if (genome == null && coords_uri != null) { // try coordinates
-                //	System.out.println("tring to match up coordinates: " + coords_uri);
-                genome = gmodel.getSeqGroup(coords_uri.toString());
-            //	if (genome != null)  { System.out.println("  found match: " + genome.getID()); }
-            }
-            if (genome == null) {
-                // add new seq group -- if has global coordinates uri, then use that
-                //   otherwise, use groupid (version source name or URI)
-                if (coords_uri == null) {
-                    // System.out.println("@@@@  Adding genome: " + groupid);
-                    //	  genome = gmodel.addSeqGroup(groupid);
-                    genome = new Das2SeqGroup(this, groupid);
-                } else {
-                    // for now only use coords URI for group if version has no name (just ID), otherwise use name
-                    if (this.getName() == null) {
-                        genome = new Das2SeqGroup(this, coords_uri.toString());
-                    } else {
-                        genome = new Das2SeqGroup(this, groupid);
-                    }
-                }
-                gmodel.addSeqGroup(genome);
-            }
-        }
-        return genome;
-    }
+	public AnnotatedSeqGroup getGenome() {
+		if (genome != null) {
+			return genome;
+		}
+		// trying to use name for group id first, if no name then use full URI
+		// This won't work in every situation!  Really need to resolve issues between VersionedSource URI ids and group ids
+		String groupid = this.getName();
+		if (groupid == null) {
+			groupid = this.getID();
+		}
+		genome = gmodel.getSeqGroup(groupid);  // gets existing seq group if possible
+		if (genome == null && coords_uri != null) { // try coordinates
+			genome = gmodel.getSeqGroup(coords_uri.toString());
+		}
+		if (genome == null) {
+			// add new seq group -- if has global coordinates uri, then use that
+			//   otherwise, use groupid (version source name or URI)
+			if (coords_uri == null) {
+				genome = new Das2SeqGroup(this, groupid);
+			} else {
+				// for now only use coords URI for group if version has no name (just ID), otherwise use name
+				if (this.getName() == null) {
+					genome = new Das2SeqGroup(this, coords_uri.toString());
+				} else {
+					genome = new Das2SeqGroup(this, groupid);
+				}
+			}
+			gmodel.addSeqGroup(genome);
+		}
+		return genome;
+	}
 
-    //  void setID(String id)  { this.id = id; }
     void setDescription(String desc) {
         this.description = desc;
     }
@@ -189,18 +184,13 @@ public class Das2VersionedSource {
      *    may want to change this to return a list of regions instead
      **/
     public Das2Region getSegment(MutableAnnotatedBioSeq seq) {
-        // should probably make a region2seq hash, but for now can just iterate through regions
-        Das2Region result = null;
-        Iterator iter = getSegments().values().iterator();
-        while (iter.hasNext()) {
-            Das2Region region = (Das2Region) iter.next();
+		for (Das2Region region : getSegments().values()) {
             MutableAnnotatedBioSeq region_seq = region.getAnnotatedSeq();
             if (region_seq == seq) {
-                result = region;
-                break;
+                return region;
             }
         }
-        return result;
+        return null;
     }
 
     public synchronized void addRegion(Das2Region region) {
@@ -225,7 +215,7 @@ public class Das2VersionedSource {
         return types;
     }
 
-    public List<Das2Type> getTypesByName(String name) {
+    public synchronized List<Das2Type> getTypesByName(String name) {
         if (!types_initialized || types_filter != null) {
             initTypes(null, false);
         }
@@ -237,7 +227,7 @@ public class Das2VersionedSource {
     }
 
     /** Get regions from da2s server. */
-	protected synchronized void initSegments() {
+	private synchronized void initSegments() {
 		String region_request;
 		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
 		region_request = segcap.getRootURI().toString();
@@ -303,7 +293,7 @@ public class Das2VersionedSource {
     /**
      *  loading of parents disabled, getParents currently does nothing
      */
-    protected synchronized void initTypes(String filter, boolean getParents) {
+    private synchronized void initTypes(String filter, boolean getParents) {
         this.types_filter = filter;
         this.clearTypes();
 
@@ -435,11 +425,13 @@ public class Das2VersionedSource {
 			if (Das2Region.URL_ENCODE_QUERY) {
 				nameglob = URLEncoder.encode(nameglob, UTF8);
 			}
-			String feature_query = request_root + "?name=" + nameglob +";format=bed";
+			String chrFilterStr = (chrFilter == null ? "?" : "?segment=" + URLEncoder.encode(chrFilter.getID(), UTF8) + ";");
+			String feature_query = request_root +
+					chrFilterStr + "name=" + nameglob +";format=das2xml";
 			if (DEBUG) {
 				System.out.println("feature query: " + feature_query);
 			}
-			BedParser parser = new BedParser();
+			Das2FeatureSaxParser parser = new Das2FeatureSaxParser();
 			URL query_url = new URL(feature_query);
 			URLConnection query_con = query_url.openConnection();
 			query_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
@@ -449,26 +441,12 @@ public class Das2VersionedSource {
 
 			// temporary group needed to avoid side effects (remote SeqSymmetries added to the genome)
 			AnnotatedSeqGroup tempGroup = AnnotatedSeqGroup.tempGenome(group);
-			List<SeqSymmetry> feats = parser.parse(istr, gmodel, tempGroup, false, "", false, null);
+			List<SeqSymmetry> feats = parser.parse(new InputSource(bis), feature_query, tempGroup, false);
 			if (DEBUG) {
 				int feat_count = feats.size();
 				System.out.println("parsed query results, annot count = " + feat_count);
 			}
-			if (chrFilter == null) {
-				return feats;
-			}
-			// Filter by chromosome.  Unforunately due to the temporary group, we need to create a temporary chrFilter.
-			BioSeq tempChrFilter = tempGroup.getSeq(chrFilter.getID());
-			if (tempChrFilter == null) {
-				return feats;
-			}
-			List<SeqSymmetry> newFeats = new ArrayList<SeqSymmetry>();
-			for (SeqSymmetry feat : feats) {
-				if (feat.getSpan(tempChrFilter) != null) {
-					newFeats.add(feat);
-				}
-			}
-			return newFeats;
+			return feats;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {

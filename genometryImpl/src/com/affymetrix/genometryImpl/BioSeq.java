@@ -32,7 +32,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	// instead of in composition seqs in case we actually want to compose/cache
 	// all residues...
 	private String residues;
-	private static final boolean DEBUG_GET_RESIDUES = false;
 
 	/** The index of the first residue of the sequence. */
 	private int start;
@@ -213,17 +212,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		return results;
 	}
 
-	/*public List<SymWithProps> getAnnotations() {
-		List<SymWithProps> results = new ArrayList<SymWithProps>();
-		if (type_id2sym != null) {
-			for (Map.Entry<String, SymWithProps> entry : type_id2sym.entrySet()) {
-				results.add(entry.getValue());
-			}
-		}
-		return results;
-	}
-*/
-
 
 	/**
 	 *  Creates an empty top-level container sym.
@@ -319,14 +307,14 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 			if (type_id2sym == null) { 
 				type_id2sym = new LinkedHashMap<String,SymWithProps>(); 
 			}
-			if (sym.getID() == null) {
-				System.out.println("WARNING: ID is null!!!  sym: " + sym);
-				throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation, sym.getID() == null && (! needsContainer(sym)), this should never happen!");
+			String symID = sym.getID();
+			if (symID == null) {
+				throw new RuntimeException("sym.getID() == null && (! needsContainer(sym)), this should never happen!");
 			}
 			if (sym instanceof SymWithProps) {
-				type_id2sym.put(id, (SymWithProps) sym);
+				type_id2sym.put(symID, (SymWithProps) sym);
 			} else {
-				throw new RuntimeException("in SmartAnnotBioSeq.addAnnotation: sym must be a SymWithProps");
+				throw new RuntimeException("sym must be a SymWithProps");
 			}
 			if (annots == null) {
 				annots = new ArrayList<SeqSymmetry>();
@@ -340,10 +328,9 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 			addAnnotation(sym, type); // side-effect calls notifyModified()
 			return;
 		}
-		//    else { super.addAnnotation(sym); }  // this includes GraphSyms
 		else  {
 			throw new RuntimeException(
-					"SmartAnnotBioSeq.addAnnotation(sym) will only accept " +
+					"BioSeq.addAnnotation(sym) will only accept " +
 					" SeqSymmetries that are also SymWithProps and " +
 					" have a _method_ property");
 		}
@@ -370,27 +357,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 					container.removeChild(annot);
 				}
 			}
-		}
-	}
-
-	/**
-	 * Remove this type from the BioSeq.
-	 * Make it possible to reclaim resources for its SeqSymmetry.
-	 * @param type
-	 */
-	public final void removeTypes(String type) {
-		SymWithProps sym = this.getAnnotation(type);
-		
-		if (sym instanceof TypeContainerAnnot) {
-			// TODO: Investigate removeAnnotation() when the sym is a TypeContainerAnnot.
-			if (annots != null) {
-				annots.remove(sym);
-			}
-			
-			TypeContainerAnnot tca = (TypeContainerAnnot)sym;
-			tca.clear();
-
-			type_id2sym.remove(type);
 		}
 	}
 
@@ -493,8 +459,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	 */
 	public String getResidues(int start, int end, char fillchar) {
 		if (residues_provider == null) {
-			// fall back on SimpleCompAnnotSeq (which will try both residues var and composition to provide residues)
-			//      result = super.getResidues(start, end, fillchar);
 			return getResiduesNoProvider(start, end, '-');
 		}
 		return residues_provider.substring(start, end);
@@ -581,17 +545,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 				spanResidues = other_seq.getResidues(other_residue_span.getMax(), other_residue_span.getMin());
 			}
 			if (spanResidues != null) {
-				if (DEBUG_GET_RESIDUES) {
-					System.out.println(spanResidues.substring(0, 15) + "..." + spanResidues.substring(spanResidues.length() - 15));
-					System.out.println("desired span: " + SeqUtils.spanToString(this_residue_span));
-					System.out.println("child residue span: " + SeqUtils.spanToString(this_comp_span));
-					System.out.println("intersect(child_span, desired_span): " + SeqUtils.spanToString(ispan));
-					System.out.println("other seq span: " + SeqUtils.spanToString(other_residue_span));
-					System.out.println("opposite strands: " + opposite_strands);
-					System.out.println("result forward: " + resultForward);
-					System.out.println("start < end: " + (other_residue_span.getStart() < other_residue_span.getEnd()));
-					System.out.println("");
-				}
 				int offset = ispan.getMin() - this_residue_span.getMin();
 				for (int j = 0; j < spanResidues.length(); j++) {
 					residues[offset + j] = spanResidues.charAt(j);
@@ -640,33 +593,30 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	 */
 	@Override
 	public boolean isComplete(int start, int end) {
-		if (residues_provider == null) {
-			if (residues == null) {
-				// assuming that if all sequences the composite is composed of are
-				//    complete, then composite is also complete
-				//    [which is an invalid assumption! Because that further assumes that composed seq
-				//     is fully covered by the sequences that it is composed from...]
-				SeqSymmetry rootsym = this.getComposition();
-				if (rootsym == null) {
-					return false;
-				}
-
-				int comp_count = rootsym.getChildCount();
-				if (comp_count == 0) {
-					MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
-					return other_seq.isComplete(start, end);
-				}
-
-				for (int i = 0; i < comp_count; i++) {
-					SeqSymmetry comp_sym = rootsym.getChild(i);
-					MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
-					if (!other_seq.isComplete()) {
-						return false;
-					}
-				}
-				return true;
-			}
+		if (residues_provider != null || residues != null) {
 			return true;
+		}
+			// assuming that if all sequences the composite is composed of are
+		//    complete, then composite is also complete
+		//    [which is an invalid assumption! Because that further assumes that composed seq
+		//     is fully covered by the sequences that it is composed from...]
+		SeqSymmetry rootsym = this.getComposition();
+		if (rootsym == null) {
+			return false;
+		}
+
+		int comp_count = rootsym.getChildCount();
+		if (comp_count == 0) {
+			MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
+			return other_seq.isComplete(start, end);
+		}
+
+		for (int i = 0; i < comp_count; i++) {
+			SeqSymmetry comp_sym = rootsym.getChild(i);
+			MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
+			if (!other_seq.isComplete()) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -685,10 +635,9 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		return residues_provider.indexOf(str, fromIndex);
 	}
 	
-
 	@Override
-		public String toString() {
-			return this.getID();
-		}
+	public String toString() {
+		return this.getID();
+	}
 
 }

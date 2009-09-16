@@ -181,7 +181,7 @@ public final class FeatureLoading {
 
 				@Override
 				public void done() {
-					if (update_display && gviewer != null) {
+					if (update_display && gviewer != null && !result_syms.isEmpty()) {
 						MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}

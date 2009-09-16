@@ -63,131 +63,140 @@ public final class GraphSymUtils {
 	 *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
 	 */
 	public static GraphSymFloat transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
-		//    System.out.println("called GraphGlyphUtils.transformGraphSym(), mapping sym:");
-		//    SeqUtils.printSymmetry(mapsym);
-		//    System.out.println("");
-
+		if (original_graf.getPointCount() == 0) {
+			return null;
+		}
 		MutableAnnotatedBioSeq fromseq = original_graf.getGraphSeq();
 		SeqSpan fromspan = mapsym.getSpan(fromseq);
+
+		if (fromseq == null || fromspan == null) {
+			return null;
+		}
 		GraphSymFloat new_graf = null;
-		if (fromseq != null && fromspan != null) {
-			MutableAnnotatedBioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
+		MutableAnnotatedBioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
 
-			SeqSpan tospan = mapsym.getSpan(toseq);
-			if (toseq != null && tospan != null) {
-				int[] xcoords = original_graf.getGraphXCoords();
-				//float[] ycoords = original_graf.getGraphYCoords();
-				int[] wcoords = null;
-				if (original_graf instanceof GraphIntervalSym) {
-					wcoords = ((GraphIntervalSym) original_graf).getGraphWidthCoords();
+		SeqSpan tospan = mapsym.getSpan(toseq);
+		if (toseq == null || tospan == null) {
+			return null;
+		}
+		int[] xcoords = original_graf.getGraphXCoords();
+		int[] wcoords = null;
+		if (original_graf instanceof GraphIntervalSym) {
+			wcoords = ((GraphIntervalSym) original_graf).getGraphWidthCoords();
+		}
+		double graf_base_length = xcoords[xcoords.length - 1] - xcoords[0];
+
+		// calculating graf length from xcoords, since graf's span
+		//    is (usually) incorrectly set to start = 0, end = seq.getLength();
+		double points_per_base = (double) xcoords.length / graf_base_length;
+		int initcap = (int) (points_per_base * toseq.getLength() * 1.5);
+		if (initcap > MAX_INITCAP) {
+			initcap = MAX_INITCAP;
+		}
+		IntList new_xcoords = new IntList(initcap);
+		FloatList new_ycoords = new FloatList(initcap);
+		IntList new_wcoords = null;
+		if (wcoords != null) {
+			new_wcoords = new IntList(initcap);
+		}
+
+		List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
+		for (SeqSymmetry leafsym : leaf_syms) {
+			SeqSpan fspan = leafsym.getSpan(fromseq);
+			SeqSpan tspan = leafsym.getSpan(toseq);
+			if (fspan == null || tspan == null) {
+				continue;
+			}
+			boolean opposite_spans = fspan.isForward() ^ tspan.isForward();
+			int ostart = fspan.getStart();
+			int oend = fspan.getEnd();
+			double scale = tspan.getLengthDouble() / fspan.getLengthDouble();
+			if (opposite_spans) {
+				scale = -scale;
+			}
+			double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
+			int kmax = xcoords.length;
+
+
+			int start_index = 0;
+
+			if (wcoords == null) {
+				// If there are no width coordinates, then we can speed-up the
+				// drawing be determining the start_index of the first x-value in range.
+				// If there are widths, this is much harder to determine, since
+				// even something starting way over to the left but having a huge width
+				// could intersect our region.  So when there are wcoords, don't
+				// try to determine start_index.  Luckily, when there are widths, there
+				// tend to be fewer graph points to deal with.
+
+				// should really use a binary search here to speed things up...
+				// but right now just doing a brute force scan for each leaf span to map to toseq
+				//    any graph points that overlap fspan in fromseq
+				// assumes graph is sorted
+				start_index = Arrays.binarySearch(xcoords, ostart);
+				if (start_index < 0) {
+					start_index = -start_index - 1;
+				} else {
+					// start_index > 0, so found exact match, but possible it's part of group of exact matches,
+					//    so move to left until find a non-match
+					while ((start_index > 0) && (xcoords[start_index - 1] == xcoords[start_index])) {
+						start_index--;
+					}
 				}
-				if (xcoords != null && original_graf.getPointCount() != 0) {
-					double graf_base_length = xcoords[xcoords.length-1] - xcoords[0];
+				if (start_index < 0) {
+					start_index = 0;
+				} // making sure previous conditional didn't result in index < 0
+			}
 
-					// calculating graf length from xcoords, since graf's span
-					//    is (usually) incorrectly set to start = 0, end = seq.getLength();
-					double points_per_base = (double)xcoords.length / graf_base_length;
-					int initcap = (int)(points_per_base * toseq.getLength() * 1.5);
-					if (initcap > MAX_INITCAP) {
-						initcap = MAX_INITCAP;
+			for (int k = start_index; k < kmax; k++) {
+				final int old_xcoord = xcoords[k];
+				if (old_xcoord >= oend) {
+					break; // since the array is sorted, we can stop here
+				}
+				int new_xcoord = (int) ((scale * old_xcoord) + offset);
+
+				// new_x2coord will represent x + width: initial assumption is width is zero
+				int new_x2coord = new_xcoord;
+				if (wcoords != null) {
+					final int old_x2coord = old_xcoord + wcoords[k];
+					new_x2coord = (int) ((scale * old_x2coord) + offset);
+					if (new_x2coord >= tspan.getEnd()) {
+						new_x2coord = tspan.getEnd();
 					}
-					IntList new_xcoords = new IntList(initcap);
-					FloatList new_ycoords = new FloatList(initcap);
-					IntList new_wcoords = null;
-					if (wcoords != null) {
-						new_wcoords = new IntList(initcap);
-					}
+				}
 
-					List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
-					for (SeqSymmetry leafsym : leaf_syms) {
-						SeqSpan fspan = leafsym.getSpan(fromseq);
-						SeqSpan tspan = leafsym.getSpan(toseq);
-						if (fspan == null || tspan == null) { continue; }
-						boolean opposite_spans = fspan.isForward() ^ tspan.isForward();
-						int ostart = fspan.getStart();
-						int oend = fspan.getEnd();
-						//int tstart = tspan.getStart();
-						//int tend = tspan.getEnd();
-						double scale = tspan.getLengthDouble() / fspan.getLengthDouble();
-						if (opposite_spans) { scale = -scale; }
-						double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
-						int kmax = xcoords.length;
-
-
-						int start_index = 0;
-
-						if (wcoords == null) {
-							// If there are no width coordinates, then we can speed-up the
-							// drawing be determining the start_index of the first x-value in range.
-							// If there are widths, this is much harder to determine, since
-							// even something starting way over to the left but having a huge width
-							// could intersect our region.  So when there are wcoords, don't
-							// try to determine start_index.  Luckily, when there are widths, there
-							// tend to be fewer graph points to deal with.
-
-							// should really use a binary search here to speed things up...
-							// but right now just doing a brute force scan for each leaf span to map to toseq
-							//    any graph points that overlap fspan in fromseq
-							// assumes graph is sorted
-							start_index = Arrays.binarySearch(xcoords, ostart);
-							if (start_index < 0)  { start_index = -start_index -1; } else {
-								// start_index > 0, so found exact match, but possible it's part of group of exact matches,
-								//    so move to left until find a non-match
-								while ((start_index > 0) && (xcoords[start_index-1] == xcoords[start_index]))  { start_index--; }
-							}
-							if (start_index < 0) { start_index = 0; } // making sure previous conditional didn't result in index < 0
-						}
-
-						for (int k=start_index; k<kmax; k++) {
-							final int old_xcoord = xcoords[k];
-							if (old_xcoord >= oend) {
-								break; // since the array is sorted, we can stop here
-							}
-							int new_xcoord = (int)((scale * old_xcoord) + offset);
-
-							// new_x2coord will represent x + width: initial assumption is width is zero
-							int new_x2coord = new_xcoord;
-							if (wcoords != null) {
-								final int old_x2coord = old_xcoord + wcoords[k];
-								new_x2coord = (int)((scale * old_x2coord) + offset);
-								if (new_x2coord >= tspan.getEnd()) {
-									new_x2coord = tspan.getEnd();
-								}
-							}
-
-							final int tstart = tspan.getStart();
-							if (new_xcoord < tstart) {
-								if (wcoords == null) {
-									continue;
-								} else if (new_x2coord > tstart) {
-									new_xcoord = tstart;
-								} else {
-									continue;
-								}
-							}
-
-							new_xcoords.add(new_xcoord);
-							new_ycoords.add(original_graf.getGraphYCoord(k));
-							if (wcoords != null) {
-								int new_wcoord = new_x2coord - new_xcoord;
-								new_wcoords.add(new_wcoord);
-							}
-						}
-					}
-					String newid = original_graf.getID();
-					if (ensure_unique_id)  { newid = GraphSymUtils.getUniqueGraphID(newid, toseq); }
-
-					if (new_wcoords == null) {
-						new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
-								newid, toseq);
+				final int tstart = tspan.getStart();
+				if (new_xcoord < tstart) {
+					if (wcoords == null) {
+						continue;
+					} else if (new_x2coord > tstart) {
+						new_xcoord = tstart;
 					} else {
-						new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
-								new_ycoords.copyToArray(), newid, toseq);
+						continue;
 					}
-					new_graf.setGraphName(original_graf.getGraphName());
+				}
+
+				new_xcoords.add(new_xcoord);
+				new_ycoords.add(original_graf.getGraphYCoord(k));
+				if (wcoords != null) {
+					int new_wcoord = new_x2coord - new_xcoord;
+					new_wcoords.add(new_wcoord);
 				}
 			}
 		}
+		String newid = original_graf.getID();
+		if (ensure_unique_id) {
+			newid = GraphSymUtils.getUniqueGraphID(newid, toseq);
+		}
+
+		if (new_wcoords == null) {
+			new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+					newid, toseq);
+		} else {
+			new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
+					new_ycoords.copyToArray(), newid, toseq);
+		}
+		new_graf.setGraphName(original_graf.getGraphName());
 		return new_graf;
 	}
 
@@ -243,37 +252,23 @@ public final class GraphSymUtils {
 		else if (sname.endsWith(".gr")) {
 			// If this is a newly-created seq group, then go ahead and add a new 
 			// unnamed seq to it if necessary.
-			boolean create_new_seq = false;
 			if (seq_group.getSeqCount() == 0) {
-				create_new_seq = true;
-			}
-			if (create_new_seq) {
 				seq = seq_group.addSeq("unnamed", 1000);
 			}
 			if (seq == null) {
 				throw new IOException("Must select a sequence before loading a graph of type 'gr'");
 			}
 			GraphSym graph = GrParser.parse(newstr, seq, stream_name);
-			int[] x_coords = graph.getGraphXCoords();
-			int max_x = x_coords[x_coords.length-1];
+			int max_x = graph.getGraphXCoord(graph.getPointCount()-1);
 			MutableAnnotatedBioSeq gseq = graph.getGraphSeq();
 			seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
 			grafs = wrapInList(graph);
 		}
-		/*
-		   else if (sname.endsWith(".sbar")) {
-		   if (seq == null) {
-		   throw new IOException("Must select a sequence before loading a graph of type 'sbar'");
-		   }
-		   grafs = wrapInList(readSbarFormat(newstr, seq));
-		   }
-		   */
 		else if (sname.endsWith(".bgr")) {
 			grafs = wrapInList(BgrParser.parse(newstr, stream_name, seq_group, true));
 		}
 		else if (sname.endsWith(".sgr")) {
-			SgrParser sgr_parser = new SgrParser();
-			grafs = sgr_parser.parse(newstr, stream_name, seq_group, false);
+			grafs = SgrParser.parse(newstr, stream_name, seq_group, false);
 		}
 		else if (sname.endsWith(".wig")) {
 			WiggleParser wig_parser = new WiggleParser();
@@ -289,14 +284,7 @@ public final class GraphSymUtils {
 		}
 		return grafs;
 	}
-
-	/**
-	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,AnnotatedSeqGroup)}.
-	 */
-	/*public static String getUniqueGraphID(String id, AnnotatedSeqGroup seq_group) {
-		return AnnotatedSeqGroup.getUniqueGraphID(id, seq_group);
-	}*/
-
+	
 	/**
 	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
 	 */
@@ -351,45 +339,23 @@ public final class GraphSymUtils {
 	}
 
 
-	/*public static GraphSymFloat revCompGraphSym(GraphSym gsym, MutableAnnotatedBioSeq symseq, MutableAnnotatedBioSeq revcomp_symseq) {
-	  int xpos[] = gsym.getGraphXCoords();
-
-	  int rcxpos[] = new int[xpos.length];
-	  float rcypos[] = new float[xpos.length];
-	  int seqlength = symseq.getLength();
-	  for (int i=0; i<xpos.length; i++) {
-	  rcxpos[i] = seqlength - xpos[xpos.length - i -1];
-	  }
-	  for (int i=0; i<gsym.getPointCount(); i++) {
-	  rcypos[i] = gsym.getGraphYCoord(xpos.length - i -1);
-	  }
-	  String newid = "rev_comp ( " + gsym.getID() + " )";
-	  String unique_newid = GraphSymUtils.getUniqueGraphID(newid, revcomp_symseq);
-	  GraphSymFloat revcomp_gsym = new GraphSymFloat(rcxpos, rcypos, unique_newid, revcomp_symseq);
-	  revcomp_gsym.setGraphName(newid);
-	  return revcomp_gsym;
-	  }*/
-
 	/** Writes out in a variety of possible formats depending
 	 *  on the suffix of the filename.
 	 *  Formats include ".gr", ".sgr", ".sin" == ".egr", ".bgr".
 	 *  @param seq_group the AnnotatedSeqGroup the graph is on, needed for ".wig", ".egr", and ".sin" formats.
-	 *  @return true if the file was written sucessfully
 	 */
-	public static boolean writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group, String file_name) throws IOException {
-		boolean result = false;
+	public static void writeGraphFile(GraphSym gsym, AnnotatedSeqGroup seq_group, String file_name) throws IOException {
 		BufferedOutputStream bos = null;
 		try {
-
 			if (file_name.endsWith(".bgr")) {
 				bos = new BufferedOutputStream(new FileOutputStream(file_name));
-				result =  BgrParser.writeBgrFormat(gsym, bos);
+				BgrParser.writeBgrFormat(gsym, bos);
 			} else if (file_name.endsWith(".gr")) {
 				bos = new BufferedOutputStream(new FileOutputStream(file_name));
-				result = GrParser.writeGrFormat(gsym, bos);
+				GrParser.writeGrFormat(gsym, bos);
 			} else if (file_name.endsWith(".sgr")) {
 				bos = new BufferedOutputStream(new FileOutputStream(file_name));
-				result = SgrParser.writeSgrFormat(gsym, bos);
+				SgrParser.writeSgrFormat(gsym, bos);
 			} else if (file_name.endsWith(".egr") || file_name.endsWith(".sin")) {
 				if (gsym instanceof GraphIntervalSym) {
 					String genome_name = null;
@@ -397,7 +363,7 @@ public final class GraphSymUtils {
 						genome_name = seq_group.getID();
 					}
 					bos = new BufferedOutputStream(new FileOutputStream(file_name));
-					result = ScoredIntervalParser.writeEgrFormat((GraphIntervalSym) gsym, genome_name, bos);
+					ScoredIntervalParser.writeEgrFormat((GraphIntervalSym) gsym, genome_name, bos);
 				} else {
 					throw new IOException("Not the correct graph type for the '.egr' format.");
 				}
@@ -415,43 +381,11 @@ public final class GraphSymUtils {
 				}
 			} else {
 				throw new IOException("Graph file name does not have the correct extension");
-				//result = false;
 			}
 		} finally {
-			if (bos != null) try { bos.close(); } catch (IOException ioe) {}
+			GeneralUtils.safeClose(bos);
 		}
-		return result;
 	}
-
-
-	/*public static void writeTagVal(DataOutputStream dos, String tag, String val)
-	  throws IOException  {
-  dos.writeInt(tag.length());
-  dos.writeBytes(tag);
-  dos.writeInt(val.length());
-  dos.writeBytes(val);
-  }*/
-
-	/*public static HashMap<String, String> readTagValPairs(DataInputStream dis, int pair_count) throws IOException  {
-		HashMap<String,String> tvpairs = new HashMap<String,String>(pair_count);
-		if (DEBUG_READ) { System.out.println("seq tagval count: " + pair_count); }
-		for (int i=0; i<pair_count; i++) {
-			int taglength = dis.readInt();
-			byte[] barray = new byte[taglength];
-			dis.readFully(barray);
-			String tag = new String(barray);
-			// maybe should intern?
-			//      String tag = (new String(barray)).intern();
-			int vallength = dis.readInt();
-			barray = new byte[vallength];
-			dis.readFully(barray);
-			String val = new String(barray);
-			//      String val = (new String(barray)).intern();
-			tvpairs.put(tag, val);
-			if (DEBUG_READ)  { System.out.println("    tag = " + tag + ", val = " + val); }
-		}
-		return tvpairs;
-	}*/
 
 	/**
 	 *  Calculate percentile rankings of graph values.
@@ -462,7 +396,6 @@ public final class GraphSymUtils {
 	 *    Plan to change this to a sampling strategy if scores.length greater than some cutoff (maybe 100,000 ?)
 	 */
 	public static float[] calcPercents2Scores(float[] scores, float bins_per_percent) {
-		//Timer tim = new Timer();
 		boolean USE_SAMPLING = true;
 		int max_sample_size = 100000;
 		float abs_max_percent = 100.0f;
@@ -499,82 +432,69 @@ public final class GraphSymUtils {
 		for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_bin) {
 			int score_index = (int)(percent * scores_per_percent);
 			if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
-			//      System.out.println("percent: " + percent + ", score_index: " + score_index
-			//			 + ", percent_index: " + (percent * bins_per_percent));
 			percent2score[Math.round(percent * bins_per_percent)] = ordered_scores[score_index];
 		}
 		// just making sure max 100% is really 100%...
 		percent2score[percent2score.length - 1] = ordered_scores[ordered_scores.length - 1];
-		//long t = tim.read();
-		//    System.out.println("time taken for GraphSymUtils.calcPercents2Scores(): " + (t/1000f));
 		return percent2score;
 	}
 
 
-	public static GraphSymFloat convertTransFragGraph(GraphSym trans_frag_graph) {
-		//    System.out.println("$$$ GraphSymUtils.convertTransFragGraph() called $$$");
-		int transfrag_max_spacer = 20;
-		MutableAnnotatedBioSeq seq = trans_frag_graph.getGraphSeq();
-		int[] xcoords = trans_frag_graph.getGraphXCoords();
-		//float[] ycoords = trans_frag_graph.getGraphYCoords();
-		IntList newx = new IntList();
-		FloatList newy = new FloatList();
-		int xcount = xcoords.length;
+	private static GraphSymFloat convertTransFragGraph(GraphSym trans_frag_graph) {
+		int xcount = trans_frag_graph.getPointCount();
 		if (xcount < 2) { return null; }
 
+		int transfrag_max_spacer = 20;
+		MutableAnnotatedBioSeq seq = trans_frag_graph.getGraphSeq();
+		IntList newx = new IntList();
+		FloatList newy = new FloatList();
+
 		// transfrag ycoords should be irrelevant
-		int xmin = xcoords[0];
+		int xmin = trans_frag_graph.getGraphXCoord(0);
 		float y_at_xmin = trans_frag_graph.getGraphYCoord(0);
-		int prevx = xcoords[0];
+		int prevx = xmin;
 		float prevy = trans_frag_graph.getGraphYCoord(0);
-		int curx = xcoords[0];
+		int curx = xmin;
 		float cury = trans_frag_graph.getGraphYCoord(0);
-		//    System.out.println("xcount: " + xcount);
 		for (int i=1; i<xcount; i++) {
-			curx = xcoords[i];
+			curx = trans_frag_graph.getGraphXCoord(i);
 			cury = trans_frag_graph.getGraphYCoord(i);
 			if ((curx - prevx) > transfrag_max_spacer) {
-				//	System.out.println("adding xmin = " + xmin + ", xmax = " + prevx + ", length = " + (prevx-xmin));
 				newx.add(xmin);
 				newy.add(y_at_xmin);
 				newx.add(prevx);
 				newy.add(prevy);
-				//	if (i == (xcount-2)) { break; }
-				//	System.out.println("i = " + i + ", xcount = " + xcount);
-				if (i == (xcount-2)) {
-					//	if (i == (xcount-2)) {
+				if (i == (xcount - 2)) {
 					System.out.println("breaking, i = " + i + ", xcount = " + xcount);
 					break;
-					}
+				}
 				xmin = curx;
 				y_at_xmin = cury;
 				i++;
-				}
-				prevx = xcoords[i];
-				prevy = trans_frag_graph.getGraphYCoord(i);
 			}
-			//    System.out.println("adding xmin = " + xmin + ", curx = " + prevx + ", length = " + (curx-xmin));
-			newx.add(xmin);
-			newy.add(y_at_xmin);
-			newx.add(curx);
-			newy.add(cury);
-			String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
-			GraphSymFloat span_graph = new GraphSymFloat(newx.copyToArray(), newy.copyToArray(), newid, seq);
-
-			// copy properties over...
-			span_graph.setProperties(trans_frag_graph.cloneProperties());
-
-			if (DEBUG_DATA) {
-				int[] xnew = span_graph.getGraphXCoords();
-				float[] ynew = span_graph.getGraphYCoords();
-				for (int i=0; i<xnew.length; i++) {
-					System.out.println("TransFrag graph point: x = " + xnew[i] + ", y = " + ynew[i]);
-				}
-			}
-
-			// add transfrag property...
-			span_graph.setProperty("TransFrag", "TransFrag");
-			return span_graph;
-
+			prevx = curx;
+			prevy = cury;
 		}
+		newx.add(xmin);
+		newy.add(y_at_xmin);
+		newx.add(curx);
+		newy.add(cury);
+		String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
+		GraphSymFloat span_graph = new GraphSymFloat(newx.copyToArray(), newy.copyToArray(), newid, seq);
+
+		// copy properties over...
+		span_graph.setProperties(trans_frag_graph.cloneProperties());
+
+		if (DEBUG_DATA) {
+			for (int i = 0; i < span_graph.getPointCount(); i++) {
+				System.out.println("TransFrag graph point: x = " + span_graph.getGraphXCoord(i)
+						+ ", y = " + span_graph.getGraphXCoord(i));
+			}
+		}
+
+		// add transfrag property...
+		span_graph.setProperty("TransFrag", "TransFrag");
+		return span_graph;
+
 	}
+}

@@ -1,36 +1,38 @@
 There are two ways to configure the DAS2 server:
 
- - Classic mode.  The annotations are organized into a directory structure on 
-                  the file system.  
-                  
-                  To build the system to run in classic mode, use all of the 
-                  normal targets described below, but use the 'webapp-classic' 
-                  target (instead of the 'webapp' target).  Building this way 
-                  will result in a web.xml and context.xml configured to support
-                  DAS2 server running in classic mode. 
-                                    
- - Database mode. The annotations are managed via entries in the database.  A
-                  web-based tool (DAS2 Manager) allows annotations to be easily added, 
-                  described, and organized.  Through the tool, users and
-                  groups are managed and annotation security is specified.
-                  Access to annotations is brokered by the DAS2 server so that 
-                  only authorized users can gain access to these resources.
-                  
-                  To build the system to run in database mode, in addition to 
-                  running the normal targets ('clean', 'all'), run the 'flex' target
-                  and the 'webapp' target.  These targets will build the web-based
-                  Flex tool for managing the annotations and configure a web.xml
-                  and context.xml with the following parameters:
-                  
-                  context.xml - Contains a <REALM> and <RESOURCE> entry
-                  that points to the database.  (See instructions below for 
-                  installing a MySQL server and creating a genoviz database.)
-                  Change the username and password to match your MySQL database
-                  account.
-                  
-                  web.xml - Contains parameters to indicate where the annotations
-                  are stored on file system.  Also contains entries to
-                  configure the server to use basic authentication.  
+ - Classic (file system)mode  
+    The annotations are organized into a directory structure on 
+    the file system.  
+    
+    To build the system to run in classic mode, use all of the 
+    normal targets described below, but use the 'webapp-classic' 
+    target (instead of the 'webapp' target).  Building this way 
+    will result in a web.xml and context.xml configured to support
+    DAS2 server running in classic mode. 
+                                  
+ - DB mode. 
+		The annotations are managed via entries in the database.  A
+    web-based tool (DAS2 Manager) allows annotations to be easily added, 
+    described, and organized.  Through the tool, users and
+    groups are managed and annotation security is specified.
+    Access to annotations is brokered by the DAS2 server so that 
+    only authorized users can gain access to these resources.
+    
+    To build the system to run in db mode, in addition to 
+    running the normal targets ('clean', 'all'), run the 'flex' target
+    and the 'webapp' target.  These targets will build the web-based
+    Flex tool for managing the annotations and configure a web.xml
+    and context.xml with the following parameters:
+    
+    context.xml - Contains a <REALM> and <RESOURCE> entry
+    that points to the database.  (See instructions below for 
+    installing a MySQL server and creating a genoviz database.)
+    Change the username and password to match your MySQL database
+    account.
+    
+    web.xml - Contains parameters to indicate where the annotations
+    are stored on file system.  Also contains entries to
+    configure the server to use basic authentication.  
 
 === REQUIREMENTS ===
 
@@ -49,7 +51,7 @@ before the das2 servlet will run. A list of the context parameters
 from the web.xml is below:
 
 To run in classic mode (see example in das2_server/web_classic.xml):
-  * genometry_load_annotations_from_db - set to 'false'
+  * genometry_dbmode - set to 'false'
 	* genometry_server_dir - Path to the data files A sample data directory can 
 	     be checked out using  subversion from 
 	     https://svn.transvar.org/repos/genomes/trunk/pub/das.  
@@ -62,9 +64,9 @@ To run in classic mode (see example in das2_server/web_classic.xml):
 	    changing the domain name of the server from the default (www.example.com) 
 	    will be the only change necessary.
 	
-To run in database mode (see example in das2_server/web.xml):
-  * genometry_load_annotations_from_db - set to 'true'
-  * genometry_db_annotation_dir - Path to the annotation data files managed by the db
+To run in db mode (see example in das2_server/web.xml):
+  * genometry_dbmode - set to 'true'
+  * genometry_server_dir_dbmode - Path to the annotation data files managed by the db
       IMPORTANT:  Do NOT set this directory to the Path to the data files
       used in classic mode (genometry_server_dir).  Instead specify a new
       directory under which the annotation files will be stored.
@@ -75,13 +77,13 @@ To run in database mode (see example in das2_server/web.xml):
 To run in classic mode (see example in das2_server/context_classic.xml):
   * <Valve> - to configure logging
 
-To run in database mode (see example in das2_server/context.xml):
+To run in db mode (see example in das2_server/context.xml):
   * <Resource> - configures the MySQL database.  
         Change the username, password to match the installed database.
   * <Realm> - configures the MySQL tables to manage users and passwords.  
        Change the username, password to match the installed database.
 
-== Configuring tomcat ==
+== Configuring Tomcat ==
 
 The das2 servlet is resource intensive.  The sample data set can use as much as 4GB of RAM.  Some useful options are listed below:
 
@@ -108,7 +110,7 @@ webapps directory.
   directory are copied.  These files comprise the DAS2 Manager tool, a Flex 
   application. 
 * Copy all .jar files from ext to the tomcat webapps das2 directory.
-  IMPORTANT - There are new jars that are required to run in database mode,
+  IMPORTANT - There are new jars that are required to run in db mode,
   so make sure all of the .jars are copied.
 
 Most tomcat servers are configured to detect new or updated 
@@ -120,7 +122,7 @@ webapps directory are:
 
 In classic mode, the das2 servlet does not detect changes in the data directory.  
 The servlet must be reloaded before it will register any changes.  However,
-in database mode, use the 'Reload DAS2 Server' link in the web-based DAS2 Manager
+in db mode, use the 'Reload DAS2 Server' link in the web-based DAS2 Manager
 tool to refresh DAS2.
 
 MySQL Database (required when running DAS2 server in database mode)

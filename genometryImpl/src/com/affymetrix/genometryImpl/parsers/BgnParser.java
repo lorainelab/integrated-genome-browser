@@ -65,7 +65,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 	//
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse(dis, annot_type, group, false, null);
+			return this.parse(dis, annot_type, group, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BgnParser.class.getName()).log(Level.SEVERE, null, ex);
 		}
@@ -79,7 +79,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 	 *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
-			AnnotatedSeqGroup seq_group, boolean annotate_seq, Integer annot_id) throws IOException {
+			AnnotatedSeqGroup seq_group, boolean annotate_seq) throws IOException {
 		if (seq_group == null) {
 			throw new IllegalArgumentException("BgnParser called with seq_group null.");
 		}
@@ -154,7 +154,6 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 						//              System.out.println("method: " + annot_type);
 						parent_sym.setProperty("preferred_formats", pref_list);
 						parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-						parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 						annots.add(parent_sym);
 						chrom2sym.put(chrom_name, parent_sym);
 					}

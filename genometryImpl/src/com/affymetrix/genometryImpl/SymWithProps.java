@@ -16,4 +16,5 @@ package com.affymetrix.genometryImpl;
 
 /** A SeqSymmetry with Properties. */
 public interface SymWithProps extends Propertied, SeqSymmetry {
+
 }

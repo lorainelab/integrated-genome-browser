@@ -70,9 +70,9 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
-			boolean annotate_query, boolean annotate_target, Integer annot_id) throws IOException {
+			boolean annotate_query, boolean annotate_target) throws IOException {
 		return parse(istr, annot_type, query_group, target_group, null,
-				annotate_query, annotate_target, false, annot_id);
+				annotate_query, annotate_target, false);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
-			boolean annotate_query, boolean annotate_target, boolean annotate_other, Integer annot_id)
+			boolean annotate_query, boolean annotate_target, boolean annotate_other)
 			throws IOException {
 
 		if (DEBUG) {
@@ -235,7 +235,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 
 				// Main method to determine the symmetry
 				SeqSymmetry sym = determineSym(
-						query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, annot_type, fields, findex, childcount, other_group, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, other2types, annotate_query, query2types, annotate_target, target2types, results, annot_id);
+						query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, annot_type, fields, findex, childcount, other_group, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, other2types, annotate_query, query2types, annotate_target, target2types, results);
 
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
@@ -301,7 +301,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return qseq;
 	}
 
-	private SeqSymmetry determineSym(AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> target2types, ArrayList<SeqSymmetry> results, Integer annot_id) throws NumberFormatException {
+	private SeqSymmetry determineSym(AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> target2types, ArrayList<SeqSymmetry> results) throws NumberFormatException {
 		MutableAnnotatedBioSeq qseq = determineSeq(query_group, qname, qsize);
 		MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
 		boolean shared_query_target = false;
@@ -357,15 +357,15 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			MutableAnnotatedBioSeq oseq = determineSeq(other_group,oname,osize);
 
 			sym = new Psl3Sym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, other_same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax, blockcount, blocksizes, qmins, tmins, omins);
-			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group, annot_id);
+			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
 		} else {
 			sym = new UcscPslSym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, blockcount, blocksizes, qmins, tmins);
 		}
 
 		findExtraTagValues(fields, findex, sym);
 
-		annotate(annotate_query, create_container_annot, is_link_psl, query2types, qseq, type, sym, is_psl3, query_group, annot_id);
-		annotateTarget(annotate_target || (shared_query_target && is_link_psl), create_container_annot, is_link_psl, target2types, tseq, type, sym, is_psl3, in_bottom_of_link_psl, target_group, annot_id);
+		annotate(annotate_query, create_container_annot, is_link_psl, query2types, qseq, type, sym, is_psl3, query_group);
+		annotateTarget(annotate_target || (shared_query_target && is_link_psl), create_container_annot, is_link_psl, target2types, tseq, type, sym, is_psl3, in_bottom_of_link_psl, target_group);
 
 		return sym;
 	}
@@ -386,10 +386,10 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private static void annotate(
-			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, AnnotatedSeqGroup annGroup, Integer annot_id) {
+			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, AnnotatedSeqGroup annGroup) {
 		if (annotate) {
 			if (create_container_annot) {
-				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl, annot_id);
+				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl);
 			} else {
 				seq.addAnnotation(sym);
 			}
@@ -398,11 +398,11 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private static void annotateTarget(
-			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, AnnotatedSeqGroup annGroup, Integer annot_id) {
+			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, AnnotatedSeqGroup annGroup) {
 		if (annotate) {
 			// force annotation of target if query and target are shared and file is ".link.psl" format
 			if (create_container_annot) {
-				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl, annot_id);
+				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl);
 			} else {
 				seq.addAnnotation(sym);
 			}
@@ -413,7 +413,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private static void createContainerAnnot(
-			Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link, Integer annot_id) {
+			Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
 		//    If using a container sym, need to first hash (seq2types) from
 		//    seq to another hash (type2csym) of types to container sym
 		//    System.out.println("in createContainerAnnot, type: " + type);
@@ -435,7 +435,6 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 				parent_sym.setProperty("preferred_formats", psl_pref_list);
 			}
 			parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-			parent_sym.setProperty(parent_sym.ANNOT_ID, annot_id);
 			seq.addAnnotation(parent_sym);
 			type2csym.put(type, parent_sym);
 		}
@@ -604,7 +603,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse(dis, annot_type, null, group, null, false, false, false, null);
+			return this.parse(dis, annot_type, null, group, null, false, false, false);
 		} catch (IOException ex) {
 			Logger.getLogger(PSLParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

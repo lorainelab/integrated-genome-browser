@@ -271,18 +271,18 @@ public final class GFFParser implements AnnotationWriter  {
 
 	boolean use_track_lines = true;
 
-	public List<? extends SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot, Integer annot_id)
+	public List<? extends SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
 		throws IOException {
-		return this.parse(istr, ".", seq_group, create_container_annot, annot_id);
+		return this.parse(istr, ".", seq_group, create_container_annot);
 	}
 
-	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot, Integer annot_id)
+	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group, boolean create_container_annot)
 		throws IOException {
-		return this.parse(istr, default_source, seq_group, create_container_annot, true, annot_id);
+		return this.parse(istr, default_source, seq_group, create_container_annot, true);
 	}
 
 	public List<? extends SeqSymmetry> parse(InputStream istr, String default_source, AnnotatedSeqGroup seq_group,
-			boolean create_container_annot, boolean annotate_seq, Integer annot_id)
+			boolean create_container_annot, boolean annotate_seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("starting GFF parse, create_container_annot: " + create_container_annot);
@@ -406,7 +406,7 @@ public final class GFFParser implements AnnotationWriter  {
 		}
 		hierarchy_levels.clear();
 		
-		addSymstoSeq(results, create_container_annot, seq2meths, annotate_seq, annot_id);
+		addSymstoSeq(results, create_container_annot, seq2meths, annotate_seq);
 		
 
 		System.out.println("lines: " + line_count + " syms:" + sym_count + " groups:" + group_count + " results:" + results.size());
@@ -512,8 +512,7 @@ public final class GFFParser implements AnnotationWriter  {
 	}
 
 
-
-	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq, Integer annot_id) {
+	private void addSymstoSeq(List<SeqSymmetry> results, boolean create_container_annot, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2meths, boolean annotate_seq) {
 		// Loop through the results List and add all Sym's to the BioSeq
 		Iterator iter = results.iterator();
 		while (iter.hasNext()) {
@@ -528,7 +527,7 @@ public final class GFFParser implements AnnotationWriter  {
 			}
 			if (create_container_annot) {
 				String meth = (String) sym.getProperty("method");
-				SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth, annotate_seq, annot_id);
+				SimpleSymWithProps parent_sym = getContainer(seq2meths, seq, meth, annotate_seq);
 				parent_sym.addChild(sym);
 			} else {
 				if (annotate_seq) {
@@ -550,7 +549,7 @@ public final class GFFParser implements AnnotationWriter  {
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)meth2csym.get(meth);
 		 */
 		static SimpleSymWithProps getContainer(Map<MutableAnnotatedBioSeq,Map<String,SimpleSymWithProps>> seq2meths,
-				MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq, Integer annot_id) {
+				MutableAnnotatedBioSeq seq, String meth, boolean annotate_seq) {
 
 			Map<String,SimpleSymWithProps> meth2csym = seq2meths.get(seq);
 			if (meth2csym == null) {
@@ -564,7 +563,6 @@ public final class GFFParser implements AnnotationWriter  {
 				parent_sym.setProperty("method", meth);
 				parent_sym.setProperty("preferred_formats", pref_list);
 				parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-        parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 				if (annotate_seq) {
 					seq.addAnnotation(parent_sym);
 				}

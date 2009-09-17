@@ -26,14 +26,6 @@ public class SimpleSymWithProps extends SimpleMutableSeqSymmetry
 	 *  as a glyph.
 	 */
 	public static final String CONTAINER_PROP = "container sym";
-	
-
-	/** Set this property to the id of the annotation obtained from the
-	 *  database.  This will be used to determine which users are
-	 *  authorized to view this annotation.
-	 */
-  public static final String           ANNOT_ID = "annot_id";
-
 
 	protected Map<String,Object> props;
 

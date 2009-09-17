@@ -122,8 +122,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	static List<String> pref_list = Arrays.asList("ead");
 
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group,
-			boolean annotate_seq, String default_type,
-			Integer annot_id) throws IOException {
+			boolean annotate_seq, String default_type) throws IOException {
 		BufferedInputStream bis;
 		Map<String,Object> tagvals = new LinkedHashMap<String,Object>();
 		DataInputStream dis = null;
@@ -206,7 +205,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				container_sym.setProperty("method", annot_type);
 				container_sym.setProperty("preferred_formats", pref_list);
 				container_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-        container_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 
 
 				if (USE_FULL_HIERARCHY) {
@@ -642,7 +640,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(out_file)));
 				AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
-				List results = parser.parse(bis, group, true, annot_type, null);
+				List results = parser.parse(bis, group, true, annot_type);
 				mem.printMemory();
 				System.gc();
 				Thread.sleep(3000);
@@ -696,7 +694,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 
 				GFFParser gff_parser = new GFFParser();
 				BufferedInputStream bis = new BufferedInputStream( new FileInputStream(gfile));
-				List annots = gff_parser.parse(bis, ".", seq_group, false, false, null);
+				List annots = gff_parser.parse(bis, ".", seq_group, false, false);
 
 				mem.printMemory();
 				System.out.println("top-level annots: " + annots.size());

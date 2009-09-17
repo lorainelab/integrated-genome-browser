@@ -73,14 +73,14 @@ public class AnnotationQuery {
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
 		StringBuffer queryBuf = this.getAnnotationGroupingQuery(das2ManagerSecurity);    	
-		Logger.getLogger(this.getClass().getName()).info("Annotation grouping query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 				
 		// Run query to get annotation grouping and annotations, organized under
 		// organism and genome version
 		queryBuf = this.getAnnotationQuery(das2ManagerSecurity);
-    	Logger.getLogger(this.getClass().getName()).info("Annotation query: " + queryBuf.toString());
+    	Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
     	query = sess.createQuery(queryBuf.toString());
     	List<Object[]> annotationRows = (List<Object[]>)query.list();
 		
@@ -96,14 +96,14 @@ public class AnnotationQuery {
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
 		StringBuffer queryBuf = this.getAnnotationGroupingQuery(das2ManagerSecurity);    	
-		Logger.getLogger(this.getClass().getName()).info("Annotation grouping query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 		
 		// Run query to get annotations, organized under annotation grouping,
 		// organism, and genome version
 		queryBuf = this.getAnnotationQuery(das2ManagerSecurity);    	
-		Logger.getLogger(this.getClass().getName()).info("Annotation query: " + queryBuf.toString());
+		Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
     	query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationRows = (List<Object[]>)query.list();
 		

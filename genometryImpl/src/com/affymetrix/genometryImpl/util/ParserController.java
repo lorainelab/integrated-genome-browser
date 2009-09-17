@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.util;
 
-
 import java.io.*;
 import java.util.*;
 
@@ -8,10 +7,8 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  *  Trying to make a central repository for parsers.
@@ -27,13 +24,13 @@ public final class ParserController {
     if (sindex >= 0) {
       type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
     }
-    return parse(instr, annotList, stream_name, gmodel, seq_group, type_prefix, true, null);
+    return parse(instr, annotList, stream_name, gmodel, seq_group, type_prefix, true);
   }
   
 
     
 	public static List parse(
-			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix, boolean use_stream_name, Integer annot_id) {
+			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix, boolean use_stream_name) {
 		InputStream str = null;
 		List results = null;
 		try {
@@ -57,13 +54,13 @@ public final class ParserController {
 				String annot_type = GetAnnotType(annotList, stream_name, ".bp", type_prefix, use_stream_name);
 				// parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
 				//   (to save memory)
-				results = bp1_reader.parse(str, seq_group, true, annot_type, false, annot_id);
+				results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 				System.out.println("done loading via Bprobe1Parser: " + stream_name);
 			} else if (stream_name.endsWith(".ead")) {
 				System.out.println("loading via ExonArrayDesignParser");
 				String annot_type = GetAnnotType(annotList, stream_name, ".ead", type_prefix, use_stream_name);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
-				parser.parse(str, seq_group, true, annot_type, annot_id);
+				parser.parse(str, seq_group, true, annot_type);
 				System.out.println("done loading via ExonArrayDesignParser: " + stream_name);
 			} else if (stream_name.endsWith(".gff") || stream_name.endsWith(".gtf")) {
 				// assume it's GFF1, GFF2, or GTF format
@@ -81,27 +78,16 @@ public final class ParserController {
 				// specifying via boolean arg that GFFParser should build container syms, one for each
 				//    particular "source" on each particular seq, can override the source for setting the name
 				String annot_type = use_stream_name ? stream_name.substring(0, stream_name.length() - 4) : type_prefix;
-				results = parser.parse(str, annot_type, seq_group, true, annot_id);
+				results = parser.parse(str, annot_type, seq_group, true);
 			} else if (stream_name.endsWith(".cyt")) {
 				System.out.println("loading via CytobandParser: " + stream_name);
 				CytobandParser parser = new CytobandParser();
-				results = parser.parse(str, seq_group, true, annot_id);
+				results = parser.parse(str, seq_group, true);
 			} else if (stream_name.endsWith(".bgr") ||
 					stream_name.endsWith(".bar")) {
 				// stream_name.endsWith(".gr") ||   can't use .gr yet, because doesn't
 				//    specify _which_ seq to annotate (format to be upgraded soon to allow this)
-				// Now, enter the new SeqSymmetrys into the global SeqSymmetry
-				//index, to make it easier to search for them later on:
-				/*
-       			if (results != null) {
-       				Iterator iterator = results.iterator();
-       				SeqSymmetry nextSeqSym = null;
-       				while (iterator.hasNext()) {
-       					nextSeqSym = (SeqSymmetry) iterator.next();
-       					ParserController.globalSeqSymmetryIndex.registerSeqSymmetry(nextSeqSym);
-       				}
-       			}
-				*/
+
 				// parsing a graph
 				results = GraphSymUtils.readGraphs(str, stream_name, gmodel, seq_group);
 			}
@@ -115,16 +101,15 @@ public final class ParserController {
 			GeneralUtils.safeClose(str);
 		}
 
-
-      return results;
-      }
+		return results;
+	}
 
 
 	/**
 	 * Parsing indexed files; don't annotate.
 	 * Precondition: the stream is parseable via IndexWriter.
 	 * @param stream_name
-	 * @param annots_map
+	 * @param annotList
 	 * @param str
 	 * @param type_prefix
 	 * @param seq_group
@@ -142,7 +127,7 @@ public final class ParserController {
 		if (extension.equals(".link.psl")) {
 			try {
 				// annotate target
-				return ((PSLParser)iWriter).parse(dis, annot_type, null, seq_group, null, false, true, false, null);
+				return ((PSLParser)iWriter).parse(dis, annot_type, null, seq_group, null, false, true, false);
 			} catch (IOException ex) {
 				Logger.getLogger(ParserController.class.getName()).log(Level.SEVERE, null, ex);
 			}
@@ -160,8 +145,11 @@ public final class ParserController {
 	public static String getExtension(String stream_name) {
 		if (stream_name.endsWith(".link.psl")) {
 			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
+		} else if (stream_name.lastIndexOf(".") >= 0) {			
+			return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
+		} else {
+			return "";
 		}
-		return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
 	}
 
 

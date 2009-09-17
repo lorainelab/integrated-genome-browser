@@ -22,7 +22,7 @@ public interface IndexWriter {
 	 * It is assumed that the file only uses one chromosome.
 	 * @param sym
 	 * @param seq - necessary for backwards compatibility.
-	 * @param dos 
+	 * @param dos
 	 * @throws IOException
 	 */
 	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException;

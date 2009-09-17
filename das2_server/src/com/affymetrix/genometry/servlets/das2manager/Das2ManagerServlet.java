@@ -239,8 +239,7 @@ public class Das2ManagerServlet extends HttpServlet {
 	
 	@SuppressWarnings("unchecked")
 	private void handleAnnotationsRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-    	Logger logger = Logger.getLogger("Hibernate");
-
+    	
     	Document doc = null;
 		Session sess = HibernateUtil.getSessionFactory().openSession();
 			

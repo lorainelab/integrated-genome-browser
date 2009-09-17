@@ -339,7 +339,7 @@ public final class UrlLoaderThread extends Thread {
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
       PSLParser parser = new PSLParser();
       parser.enableSharedQueryTarget(true);
-      parser.parse(bis, type, null, group, false, true, null);
+      parser.parse(bis, type, null, group, false, true);
       group.symHashChanged(parser);
     } finally {
         GeneralUtils.safeClose(bis);
@@ -417,7 +417,7 @@ public final class UrlLoaderThread extends Thread {
       BpsParser bps_parser = new BpsParser();
       AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
-      BpsParser.parse(dis, type, null, group, false, true, null);
+      BpsParser.parse(dis, type, null, group, false, true);
       group.symHashChanged(bps_parser);
     } finally {
         GeneralUtils.safeClose(dis);

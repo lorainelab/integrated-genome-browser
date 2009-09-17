@@ -119,11 +119,10 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	public void removeParserListener(ParserListener listener) {
 		parse_listeners.remove(listener);
 	}
-	
 
 	public List<SeqSymmetry> parse(InputStream istr,  GenometryModel gmodel,
 			AnnotatedSeqGroup group, boolean annot_seq,
-			String stream_name, boolean create_container, Integer annot_id)
+			String stream_name, boolean create_container)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("BED parser called, annotate seq: " + annotate_seq +
@@ -156,13 +155,13 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		}
 		DataInputStream dis = new DataInputStream(bis);
 		addParserListener(this);
-		parseWithEvents(dis, gmodel, group, default_type, annot_id);
+		parseWithEvents(dis, gmodel, group, default_type);
 		removeParserListener(this);
 		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 
-	public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type, Integer annot_id)
+	public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
 		throws IOException  {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -198,13 +197,13 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 					continue;
 				}
 
-				parseLine(field_count, fields, seq_group, gmodel, type, use_item_rgb, annot_id);
+				parseLine(field_count, fields, seq_group, gmodel, type, use_item_rgb);
 			}
 		}
 	}
 
 
-	private void parseLine(int field_count, String[] fields, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb, Integer annot_id) throws NumberFormatException, IOException {
+	private void parseLine(int field_count, String[] fields, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb) throws NumberFormatException, IOException {
 		String seq_name = null;
 		String annot_name = null;
 		int min;
@@ -333,13 +332,12 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		}
 		// if there are any ParserListeners registered, notify them of parse
 		for (ParserListener pl : parse_listeners) {
-			pl.annotationParsed(bedline_sym, annot_id);
+			pl.annotationParsed(bedline_sym);
 		}
 		if (annot_name != null) {
 			seq_group.addToIndex(annot_name, bedline_sym);
 		}
 	}
-
 
 
 	/** Converts the data in the score field, if present, to a floating-point number. */
@@ -363,7 +361,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	 * for BedParser this is intended only for internal callbacks, and thus should
 	 * never be called from outside of BedParser.
 	 */
-	public void annotationParsed(SeqSymmetry bedline_sym, Integer annot_id) {
+	public void annotationParsed(SeqSymmetry bedline_sym) {
 		symlist.add(bedline_sym);
 		if (annotate_seq) {
 			MutableAnnotatedBioSeq seq = bedline_sym.getSpan(0).getBioSeq();
@@ -382,7 +380,6 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 					parent_sym.setProperty("method", type);
 					parent_sym.setProperty("preferred_formats", pref_list);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
 					parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-          parent_sym.setProperty(SimpleSymWithProps.ANNOT_ID, annot_id);
 					seq.addAnnotation(parent_sym);
 					type2csym.put(type, parent_sym);
 				}
@@ -585,7 +582,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse(dis, SingletonGenometryModel.getGenometryModel(), group, false, annot_type, false, null);
+			return this.parse(dis, SingletonGenometryModel.getGenometryModel(), group, false, annot_type, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BedParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

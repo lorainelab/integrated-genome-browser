@@ -213,7 +213,7 @@ public final class BookmarksParser {
     BedParser bparser = new BedParser();
     
     AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("unknown");
-    List annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false, null);
+    List annots = bparser.parse(istr, gmodel, seq_group, true, "bookmarks", false);
     
     if ((annots != null)) {
       for (int k=0; k<annots.size(); k++) {

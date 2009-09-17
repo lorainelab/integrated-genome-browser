@@ -14,10 +14,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-
 import org.apache.commons.codec.binary.Base64;
-
-import com.affymetrix.igb.general.ServerList;
 
 public class StringEncrypter
 {

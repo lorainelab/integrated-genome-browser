@@ -136,8 +136,6 @@ public class SeqMapView extends JPanel
 	List<SymSelectionListener> selection_listeners = new ArrayList<SymSelectionListener>();
 	List<ContextualPopupListener> popup_listeners = new ArrayList<ContextualPopupListener>();
 	protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
-	
-	
 	/**
 	 *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
 	 */
@@ -528,7 +526,6 @@ public class SeqMapView extends JPanel
 			}
 		}
 	};
-	
 
 	public void setFrame(JFrame frm) {
 		this.frm = frm;
@@ -2877,7 +2874,7 @@ public class SeqMapView extends JPanel
 		}
 		return tier;
 	}
-	
+
 	/**
 	 *  Returns a forward and reverse tier for the given method, creating them if they don't
 	 *  already exist.

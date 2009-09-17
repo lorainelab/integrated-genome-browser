@@ -75,7 +75,6 @@ public final class Das2ServerInfo  {
 		return name;
 	}
 
-
 	@Override
 	public String toString() { return getName(); }
 

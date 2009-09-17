@@ -463,7 +463,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
                 {
                 	passwordText += serverPasswordTF.getPassword()[i];
                 }
-
+                
 				// Add the server to IGB
 				addServer(serverTF.getText().trim(),
 						(String) serverTypeCB.getSelectedItem(),

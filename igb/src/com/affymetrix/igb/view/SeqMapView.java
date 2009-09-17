@@ -534,7 +534,7 @@ public class SeqMapView extends JPanel
 		sym_info = new JLabel("");
 		sym_info.setEnabled(false); // makes the text look different (usually lighter)
 
-		centerMI = setUpMenuItem(sym_popup, "Center at selected");
+		centerMI = setUpMenuItem(sym_popup, "Center at hairline");
 
 		zoomtoMI = setUpMenuItem(sym_popup, "Zoom to selected");
 		zoomtoMI.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Zoom16.gif"));
@@ -2951,11 +2951,11 @@ public class SeqMapView extends JPanel
 		}
 	}
 
-	public TierGlyph makeTierGlyph(IAnnotStyle style) {
+	public static TierGlyph makeTierGlyph(IAnnotStyle style) {
 		return new TierGlyph(style);
 	}
 
-	void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
+	static void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {
 		FasterExpandPacker ep = new FasterExpandPacker();
 		ep.setConstantHeights(constantHeights);
 		if (above_axis) {

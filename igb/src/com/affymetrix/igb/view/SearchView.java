@@ -638,7 +638,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	/** A renderer that displays the value of {@link SeqMapView#determineMethod(SeqSymmetry)}. */
 	private static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
-
+		private static final long serialVersionUID = 0;
 		public SeqSymmetryTableCellRenderer() {
 			super();
 		}

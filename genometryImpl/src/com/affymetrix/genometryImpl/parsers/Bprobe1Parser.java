@@ -76,7 +76,6 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bp2");
-		System.out.println("here bp2");
 	}
 
 	String type_prefix = null;

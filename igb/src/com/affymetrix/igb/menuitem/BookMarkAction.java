@@ -59,12 +59,15 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   JMenuItem manage_bookmarksMI;
   SeqMapView gviewer;
   Application uni;
-  private Map component_hash = new HashMap();
+  private Map<Object,Component> component_hash = new HashMap<Object,Component>();
   BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
   JMenu main_bm_menu;
   boolean unsaved_bookmarks = false;
   JFrame bookmark_manager_frame = null;
   BookmarkManagerView bmv = null;
+
+
+  private static JFileChooser static_chooser = null;
 
   public BookMarkAction(Application app, SeqMapView smv, JMenu bm_menu) {
     uni = app;
@@ -104,11 +107,6 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     buildMenus(main_bm_menu, main_bookmark_list);
   }
 
-  /*
-  public BookmarkList getBookmarks() {
-    return main_bookmark_list;
-  }
-   */
 
   public void setBookmarkManager(BookmarkManagerView bmv) {
     this.bmv = bmv;
@@ -121,7 +119,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     updateBookmarkManager();
   }
 
-  void updateBookmarkManager() {
+  private void updateBookmarkManager() {
     if (bmv != null) bmv.setBList(main_bookmark_list);
   }
   
@@ -136,31 +134,34 @@ public final class BookMarkAction implements ActionListener, MenuListener {
    *  If loading succeeds, also creates a backup copy of that bookmark list
    *  in a new file with the same name, but "~" added at the end.
    */
-  void addDefaultBookmarks() {
-    File f = getBookmarksFile();
-    String filename = f.getAbsolutePath();
-    if (f.exists()) try {
-      System.out.println("Loading bookmarks from file \""+filename+"\"");
-      BookmarksParser.parse(main_bookmark_list, f);
+	private void addDefaultBookmarks() {
+		File f = getBookmarksFile();
+		if (!f.exists()) {
+			return;
+		}
 
-      if (main_bookmark_list != null && main_bookmark_list.getChildCount() != 0) {
-        File f2 = new File(filename+"~");
-        try {
-          System.out.println("Creating backup bookmarks file: \""+f2+"\"");
-          BookmarkList.exportAsNetscapeHTML(main_bookmark_list, f2);
-        } catch (Exception e) {
-          System.out.println("Error while trying to create backup bookmarks file: \""+f2+"\"");
-        }
-      }
+		String filename = f.getAbsolutePath();
+		try {
+			System.out.println("Loading bookmarks from file \"" + filename + "\"");
+			BookmarksParser.parse(main_bookmark_list, f);
 
-    } catch (FileNotFoundException fnfe) {
-      System.err.println("Could not load bookmarks. File not found or not readable: \""
-        +filename + "\"");
-    } catch (IOException ioe) {
-      System.err.println("Could not load bookmarks from file \""
-        +filename + "\"");
-    }
-  }
+			if (main_bookmark_list != null && main_bookmark_list.getChildCount() != 0) {
+				File f2 = new File(filename + "~");
+				try {
+					System.out.println("Creating backup bookmarks file: \"" + f2 + "\"");
+					BookmarkList.exportAsNetscapeHTML(main_bookmark_list, f2);
+				} catch (Exception e) {
+					System.out.println("Error while trying to create backup bookmarks file: \"" + f2 + "\"");
+				}
+			}
+
+		} catch (FileNotFoundException fnfe) {
+			System.err.println("Could not load bookmarks. File not found or not readable: \"" + filename + "\"");
+		} catch (IOException ioe) {
+			System.err.println("Could not load bookmarks from file \"" + filename + "\"");
+		}
+
+	}
 
   /** Will save the current bookmarks into the file that was specified
    *  by {@link #getBookmarksFile()}.
@@ -189,17 +190,6 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
     return saved;
   }
-
-  /** Returns true if it has some unsaved, modified bookmarks.
-   *  If the bookmark manager is used, this may return false even
-   *  though some bookmarks were added there.
-   */
-  
-  /*
-  public boolean hasUnsavedBookmarks() {
-    //TODO: integrate this better with the bookmark manager
-    return unsaved_bookmarks;
-  }*/
 
 
   public void actionPerformed(ActionEvent evt) {
@@ -270,95 +260,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     component_hash.put(main_bookmark_list, main_bm_menu);
   }
 
-  /** Currently unused. Instead we use removeAllBookmarkMenuItems(). */
-  /*
-  void removeComponentFor(BookmarkList bl) {
-    Object o = bl.getUserObject();
-    Component comp = (Component) component_hash.get(o);
-    if (comp instanceof JMenuItem) {
-      JMenuItem item = (JMenuItem) comp;
-      ActionListener[] listeners = item.getActionListeners();
-      for (int i=0; i<listeners.length; i++) {
-        item.removeActionListener(listeners[i]);
-      }
-    }
-    if (comp == null) {
-      if (DEBUG) System.out.println("Couldn't find a component to remove for "+o);
-    } else {
-      Container cont = comp.getParent();
-      if (cont != null) {cont.remove(comp);}
-      component_hash.remove(o);
-    }
-  }
-   */
-
-  public JMenuItem addBookmark(Map props, String name) {
-    return addBookmark(props, name, main_bookmark_list);
-  }
-
-  public JMenuItem addBookmark(Map props, String name, BookmarkList bl) {
-    JMenuItem markMI = null;
-    JMenu parent_menu = (JMenu) component_hash.get(bl);
-    if (parent_menu == null) {
-      Application.errorPanel("Couldn't add bookmark. Lost reference to menu");
-      return null;
-    }
-    if (name == null || name.equals("")) {
-      Application.errorPanel("A bookmark must have a name.");
-      return null;
-    } else try {
-      String url = Bookmark.constructURL(props);
-      Bookmark bm = new Bookmark(name, url);
-      addBookmarkMI(parent_menu, bm);
-      bl.addBookmark(bm);
-    } catch (MalformedURLException m) {
-      Application.errorPanel("Couldn't add bookmark", m);
-    }
-
-    updateBookmarkManager();
-    return markMI;
-  }
-
-  JMenuItem addBookmarkMI(JMenu parent_menu, Bookmark bm) {
-    JMenuItem markMI = (JMenuItem) component_hash.get(bm);
-    if (markMI != null) {
-      return markMI;
-    }
-    markMI = new BookmarkJMenuItem(bm);
-    component_hash.put(bm, markMI);
-    parent_menu.add(markMI);
-    markMI.addActionListener(this);
-    return markMI;
-  }
-
-  JMenu addBookmarkListMenu(JMenu parent_menu, BookmarkList bm_list) {
-    JMenu sub_menu = (JMenu) component_hash.get(bm_list);
-    if (sub_menu != null) {
-      return sub_menu;
-    }
-    sub_menu = new JMenu(bm_list.getName());
-    component_hash.put(bm_list,  sub_menu);
-    parent_menu.add(sub_menu);
-    return sub_menu;
-  }
-
-  JSeparator addSeparator(JMenu parent_menu, Separator s) {
-    JSeparator jsep = (JSeparator) component_hash.get(s);
-    if (jsep != null) {
-      return null;
-    }
-    jsep = new JSeparator();
-    component_hash.put(s, jsep);
-    parent_menu.add(jsep);
-    return jsep;
-  }
-
-  public void rebuildMenus() {
-    removeAllBookmarkMenuItems();
-    buildMenus(main_bm_menu, main_bookmark_list);
-  }
-
-  void buildMenus(JMenu pp, BookmarkList bl) {
+  
+  private void buildMenus(JMenu pp, BookmarkList bl) {
     JMenu bl_menu = (JMenu) component_hash.get(bl);
     if (bl_menu == null) {
       bl_menu = addBookmarkListMenu(pp, bl);
@@ -376,6 +279,41 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       }
     }
   }
+
+  private JMenuItem addBookmarkMI(JMenu parent_menu, Bookmark bm) {
+    JMenuItem markMI = (JMenuItem) component_hash.get(bm);
+    if (markMI != null) {
+      return markMI;
+    }
+    markMI = new BookmarkJMenuItem(bm);
+    component_hash.put(bm, markMI);
+    parent_menu.add(markMI);
+    markMI.addActionListener(this);
+    return markMI;
+  }
+
+  private JMenu addBookmarkListMenu(JMenu parent_menu, BookmarkList bm_list) {
+    JMenu sub_menu = (JMenu) component_hash.get(bm_list);
+    if (sub_menu != null) {
+      return sub_menu;
+    }
+    sub_menu = new JMenu(bm_list.getName());
+    component_hash.put(bm_list,  sub_menu);
+    parent_menu.add(sub_menu);
+    return sub_menu;
+  }
+
+  private JSeparator addSeparator(JMenu parent_menu, Separator s) {
+    JSeparator jsep = (JSeparator) component_hash.get(s);
+    if (jsep != null) {
+      return null;
+    }
+    jsep = new JSeparator();
+    component_hash.put(s, jsep);
+    parent_menu.add(jsep);
+    return jsep;
+  }
+
 
   /**
    *  Tries to import bookmarks into Unibrow.
@@ -401,10 +339,9 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
   }
 
-  static JFileChooser static_chooser = null;
 
   /** Gets a static re-usable file chooser that prefers "html" files. */
-  public static JFileChooser getJFileChooser() {
+  private static JFileChooser getJFileChooser() {
     if (static_chooser == null) {
       static_chooser = new JFileChooser();
       static_chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
@@ -445,52 +382,83 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
   }
 
-  void bookmarkCurrentPosition(boolean include_graphs) {
-    AffyTieredMap map = gviewer.getSeqMap();
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+	private void bookmarkCurrentPosition(boolean include_graphs) {
+		MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+		if (aseq == null) {
+			Application.errorPanel("Error", "Nothing to bookmark");
+			return;
+		}
 
-    if (aseq == null) {
-      Application.errorPanel("Error", "Nothing to bookmark");
-    } else {
-      Rectangle2D.Double vbox = map.getView().getCoordBox();
-      SimpleSymWithProps mark_sym = new BookmarkSymmetry();
-      SeqSpan mark_span = new SimpleSeqSpan((int)vbox.x,
-                                            (int)(vbox.x+vbox.width),
-                                            aseq);
-      mark_sym.addSpan(mark_span);
+		SeqSpan span = gviewer.getVisibleSpan();
+		SeqSpan mark_span = new SimpleSeqSpan(span.getStart(),span.getEnd(),aseq);
 
-      String version = "unknown";
-      if (aseq instanceof BioSeq) {
-        version = ((BioSeq)aseq).getVersion();
-      }
-      String default_name =
-        version + ", " + aseq.getID() + ":" + mark_span.getMin() +
-          ", " + mark_span.getMax();
-      mark_sym.setProperty("version", version);
-      mark_sym.setProperty("seqid", aseq.getID());
-      mark_sym.setProperty("start", new Integer(mark_span.getMin()));
-      mark_sym.setProperty("end", new Integer(mark_span.getMax()));
-      
-      if (include_graphs) {
-	//        List graphs = BookmarkController.collectGraphs(gviewer.getSeqMap());
-        List graphs = gviewer.collectGraphs();
-        BookmarkController.addGraphProperties(mark_sym, graphs);
-      }
-      
-      String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,
-        "Enter name for bookmark", "Input",
-        JOptionPane.PLAIN_MESSAGE, null, null, default_name);
-      if (bookmark_name == null) {
-        if (DEBUG) {System.out.println("bookmark action cancelled");}
-      }
-      else {
-        if (bookmark_name.trim().length()==0) {bookmark_name = default_name;}
-        if (DEBUG) {System.out.println("bookmark name: " + bookmark_name);}
-        addBookmark(mark_sym.getProperties(), bookmark_name);
-        unsaved_bookmarks = true;
-      }
-    }
+		SimpleSymWithProps mark_sym = new BookmarkSymmetry();
+		mark_sym.addSpan(mark_span);
+
+		String version = "unknown";
+		if (aseq instanceof BioSeq) {
+			version = ((BioSeq) aseq).getVersion();
+		}
+		String default_name =
+				version + ", " + aseq.getID() + ":" + mark_span.getMin() +
+				", " + mark_span.getMax();
+		mark_sym.setProperty("version", version);
+		mark_sym.setProperty("seqid", aseq.getID());
+		mark_sym.setProperty("start", new Integer(mark_span.getMin()));
+		mark_sym.setProperty("end", new Integer(mark_span.getMax()));
+
+		if (include_graphs) {
+			List graphs = gviewer.collectGraphs();
+			BookmarkController.addGraphProperties(mark_sym, graphs);
+		}
+
+		String bookmark_name = (String) JOptionPane.showInputDialog(gviewer,
+				"Enter name for bookmark", "Input",
+				JOptionPane.PLAIN_MESSAGE, null, null, default_name);
+		if (bookmark_name == null) {
+			if (DEBUG) {
+				System.out.println("bookmark action cancelled");
+			}
+		} else {
+			if (bookmark_name.trim().length() == 0) {
+				bookmark_name = default_name;
+			}
+			if (DEBUG) {
+				System.out.println("bookmark name: " + bookmark_name);
+			}
+			addBookmark(mark_sym.getProperties(), bookmark_name);
+			unsaved_bookmarks = true;
+		}
+	}
+
+  private JMenuItem addBookmark(Map props, String name) {
+    return addBookmark(props, name, main_bookmark_list);
   }
+
+  @SuppressWarnings("unchecked")
+  private JMenuItem addBookmark(Map props, String name, BookmarkList bl) {
+    JMenuItem markMI = null;
+    JMenu parent_menu = (JMenu) component_hash.get(bl);
+    if (parent_menu == null) {
+      Application.errorPanel("Couldn't add bookmark. Lost reference to menu");
+      return null;
+    }
+    if (name == null || name.equals("")) {
+      Application.errorPanel("A bookmark must have a name.");
+      return null;
+    } else try {
+      String url = Bookmark.constructURL(props);
+      Bookmark bm = new Bookmark(name, url);
+      addBookmarkMI(parent_menu, bm);
+      bl.addBookmark(bm);
+    } catch (MalformedURLException m) {
+      Application.errorPanel("Couldn't add bookmark", m);
+    }
+
+    updateBookmarkManager();
+    return markMI;
+  }
+
 
   /** Does nothing. */
   public void menuCanceled(javax.swing.event.MenuEvent e) {
@@ -511,8 +479,13 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
   }
 
+  private void rebuildMenus() {
+    removeAllBookmarkMenuItems();
+    buildMenus(main_bm_menu, main_bookmark_list);
+  }
+
     
-  void showBookmarkManager() {  
+  private void showBookmarkManager() {
     if (bmv == null) {
       bmv = new BookmarkManagerView();
       bmv.setApplication(uni);
@@ -536,6 +509,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
       }
       bookmark_manager_frame.setVisible(true);
       bookmark_manager_frame.addWindowListener( new WindowAdapter() {
+		  @Override
 	  public void windowClosing(WindowEvent evt) {
             // save the current size into the preferences, so the window
             // will re-open with this size next time
@@ -553,7 +527,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
    *  store the properties.  This ensures the bookmark properties will be
    *  listed in a predictable order.
    */
-  static class BookmarkSymmetry extends SimpleSymWithProps {
+  private static class BookmarkSymmetry extends SimpleSymWithProps {
     public BookmarkSymmetry() {
       super();
       props = new LinkedHashMap<String,Object>();

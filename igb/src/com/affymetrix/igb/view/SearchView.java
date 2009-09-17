@@ -50,18 +50,32 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
 
+	private static final String REGEXID = "Matching IDs";
+	private static final String REGEXIDTF = "IDs match string or Regular Expression";
+	private static final String REGEXRESIDUE = "Matching residues";
+	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
+	private static final String CHOOSESEARCH = "Choose search method";
+	private static final String FINDANNOTS = "Find Annotations For ";
+	private static final String FINDANNOTSNULL = "Please select genome before continuing";
+	private static final String SEQUENCETOSEARCH = "Sequence to search";
+	private static final String REMOTESERVERSEARCH1 = "search DAS/2 servers (";
+	private static final String REMOTESERVERSEARCH2 = " found)";
+	private static final String REMOTESERVERSEARCH3 = " for IDs";
+
+	private static final String SELECTINMAP_TEXT = "select in map";
+	private static final String SELECTINMAP_TIP = "highlight matches in sequence map";
+
 	private JTextField searchTF;
 	private JPanel pan1 = new JPanel();
 	private JComboBox sequence_CB = new JComboBox();
 	private JComboBox searchCB = new JComboBox();
-	private JCheckBox remoteSearchCheckBox = new JCheckBox("search remotely");
-	private JCheckBox selectInMapCheckBox = new JCheckBox("select in map");
+	private JCheckBox remoteSearchCheckBox = new JCheckBox("");
+	private JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
 	private JButton searchButton = new JButton("Search");
 	private JButton clear_button = new JButton("Clear");
 	private SeqMapView gviewer;
 	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
 	private Color hitcolor = new Color(150, 150, 255);
-
 
 	private final JTable table = new JTable();
 	private final JTextField filterText = new JTextField();
@@ -77,26 +91,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private TableRowSorter<DefaultTableModel> sorter;
 	private ListSelectionModel lsm;
 
-	private static final String ALLID = "All loaded IDs";
-	private static final String REGEXID = "Matching IDs";
-	private static final String REGEXIDTF = "IDs match string or Regular Expression";
-	private static final String REGEXRESIDUE = "Matching residues";
-	private static final String REGEXRESIDUETF = "Residues match string or Regular Expression";
-	private static final String CHOOSESEARCH = "Choose search method";
-	private static final String FINDANNOTS = "Find Annotations For ";
-	private static final String FINDANNOTSNULL = "Please select genome before continuing";
-	private static final String SEQUENCETOSEARCH = "Sequence to search";
-
 	private static final boolean DEBUG = true;
-
-	private class SearchRow {
-		String serverID;
-		String id;
-		int start;
-		int end;
-		String chr;
-		String orientation;
-	}
 
 	public SearchView() {
 		super();
@@ -188,6 +183,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		clear_button.addActionListener(this);
 	}
 
+	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
+		int remoteServerCount = getRemoteServerCount(group);
+		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2);
+		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2 + REMOTESERVERSEARCH3);
+		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
+	}
+
 	private void initSequenceCB() {
 		// set up the sequence combo_box
 		sequence_CB.removeAllItems();
@@ -211,7 +213,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void initSearchCB() {
 		searchCB.removeAllItems();
-		searchCB.addItem(ALLID);
 		searchCB.addItem(REGEXID);
 		searchCB.addItem(REGEXRESIDUE);
 		searchCB.setToolTipText(CHOOSESEARCH);
@@ -220,10 +221,12 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private void initComponents() {
 		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
-		searchTF.setEnabled(false);
-		remoteSearchCheckBox.setEnabled(false);
-		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
-		selectInMapCheckBox.setToolTipText("highlight matches in sequence map");
+		searchTF.setEnabled(true);
+		
+		initRemoteServerCheckBox(null);
+
+		selectInMapCheckBox.setToolTipText(SELECTINMAP_TIP);
+		selectInMapCheckBox.setEnabled(true);
 		searchButton.setEnabled(true);
 	}
 
@@ -383,7 +386,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		if (src == this.searchCB) {
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
-			this.searchTF.setEnabled(!ALLID.equals(searchMode));
+			this.searchTF.setEnabled(true);
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
 			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
@@ -394,7 +397,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			boolean displaySelectedEnabled = !REGEXRESIDUE.equals(searchMode);
 			this.selectInMapCheckBox.setEnabled(displaySelectedEnabled);
 			if (!displaySelectedEnabled) {
-				this.selectInMapCheckBox.setSelected(false);
+				this.selectInMapCheckBox.setSelected(true);	// we ALWAYS display in map if it's residues.
 			}
 
 			if (REGEXID.equals(searchMode)) {
@@ -414,9 +417,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			String chrStr = (String) this.sequence_CB.getSelectedItem();
 			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
-			if (ALLID.equals(searchMode)) {
-				displayRegexIDs(".*", chrfilter);
-			} else if (REGEXID.equals(searchMode)) {
+			if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText(), chrfilter);
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues();
@@ -448,13 +449,27 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		List<SeqSymmetry> sym_list = group.findSyms(regex);
 		List<SeqSymmetry> remoteSymList = null;
 
+		// Make sure this search is reasonable to do on a remote server.
+		int actualChars = text.length();
+		if (text.startsWith(".*")) {
+			actualChars -= 2;
+		} else if (text.startsWith("*")) {
+			actualChars -= 1;
+		}
+		if (text.endsWith(".*")) {
+			actualChars -= 2;
+		} else if (text.endsWith("*")) {
+			actualChars -= 1;
+		}
+
 		if (this.remoteSearchCheckBox.isSelected()) {
-			if (text.length() < 3) {
-				status_bar.setText(friendlySearchStr + ": Text is too short for remote search...");
-			} else {
-				status_bar.setText(friendlySearchStr + ": Searching remotely...");
-				remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+			if (actualChars < 3) {
+				Application.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
+				return;
 			}
+
+			status_bar.setText(friendlySearchStr + ": Searching remotely...");
+			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
 		}
 
 		if (sym_list == null && remoteSymList == null) {
@@ -463,7 +478,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 
 		String statusStr = friendlySearchStr + ": " + (sym_list == null ? 0 : sym_list.size()) + " local matches";
-		if (this.remoteSearchCheckBox.isSelected() && text.length() >= 3) {
+		if (this.remoteSearchCheckBox.isSelected() && actualChars >= 3) {
 				statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
 		}
 		setStatus(statusStr);
@@ -564,6 +579,19 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		return "Search for " + text + " on " + chr;
 	}
 
+	private static int getRemoteServerCount(AnnotatedSeqGroup group) {
+		if (group == null) {
+			return 0;
+		}
+		int count = 0;
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (gVersion.gServer.serverType == ServerType.DAS2) {
+				count++;
+			}
+		}
+		return count;
+	}
+
 	private static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
 		List<SeqSymmetry> features = new ArrayList<SeqSymmetry>();
 
@@ -605,14 +633,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		this.searchCB.setEnabled(newGroup != null);
 		this.searchButton.setEnabled(newGroup != null);
-		String searchMode = (String) this.searchCB.getSelectedItem();
-		this.searchTF.setEnabled(newGroup != null && !ALLID.equals(searchMode));
+		this.searchTF.setEnabled(newGroup != null);
 
 		// only re-initialize the combobox if the group or seqs have changed
 		if (newGroup != group || seqCount != newSeqCount) {
 			group = newGroup;
 			seqCount = newSeqCount;
 			this.initSequenceCB();
+			initRemoteServerCheckBox(group);
+
 		}
 	}
 

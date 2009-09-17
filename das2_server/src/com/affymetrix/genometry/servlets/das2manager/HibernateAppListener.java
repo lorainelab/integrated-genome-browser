@@ -1,5 +1,7 @@
 package com.affymetrix.genometry.servlets.das2manager;
 
+import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -11,17 +13,18 @@ public class HibernateAppListener implements ServletContextListener	{
 	  
 	    // If web.xml indicates that the DAS2 server should load annotation info from
 	    // a DB, then create a Hibernate Session Factory.
-	    if (ce.getServletContext().getInitParameter("genometry_load_annotations_from_db") != null && 
-	        ce.getServletContext().getInitParameter("genometry_load_annotations_from_db").equalsIgnoreCase("true")) {
+	    if (ce.getServletContext().getInitParameter("genometry_dbmode") != null && 
+	        ce.getServletContext().getInitParameter("genometry_dbmode").equalsIgnoreCase("true")) {
 
 	      try  {
 	        Class.forName("com.affymetrix.genometry.servlets.das2manager.HibernateUtil").newInstance();
+	        Logger.getLogger(this.getClass().getName()).info("Hibernate session factory created.");
 	      }
 	      catch (Exception e)  {
-	        System.out.println("FAILED HibernateAppListener.contextInitialize()");
+	        Logger.getLogger(this.getClass().getName()).severe("FAILED HibernateAppListener.contextInitialize()");
 	      }
 	    } else {
-	      System.out.println("Hibernate session factory NOT created because annotations will be loaded directly from file system.");
+	        Logger.getLogger(this.getClass().getName()).info("Hibernate session factory NOT created because annotations will be loaded directly from file system.");
 	    }
 	}
 

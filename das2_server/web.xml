@@ -3,20 +3,15 @@
 <web-app>
 
   <context-param>
-    <param-name>genometry_load_annotations_from_db</param-name>
+    <param-name>genometry_dbmode</param-name>
     <param-value>true</param-value>
   </context-param>
   
 	<context-param>
-		<param-name>genometry_db_annotation_dir</param-name>
+		<param-name>genometry_server_dir_dbmode</param-name>
 		<param-value>c:/apache/tomcat5.5/Das2ManagedData</param-value>
 	</context-param>
-  
-	<context-param>
-		<param-name>genometry_server_dir</param-name>
-		<param-value>c:/apache/tomcat5.5/Das2Data</param-value>
-	</context-param>
-	
+ 
 	<context-param>
 		<param-name>maintainer_email</param-name>
 		<param-value>first.last@someplace.something.edu</param-value>

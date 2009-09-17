@@ -3,14 +3,9 @@
 <web-app>
 
   <context-param>
-    <param-name>genometry_load_annotations_from_db</param-name>
+    <param-name>genometry_dbmode</param-name>
     <param-value>false</param-value>
   </context-param>
-  
-	<context-param>
-		<param-name>genometry_db_annotation_dir</param-name>
-		<param-value>c:/apache/tomcat5.5/Das2ManagedData</param-value>
-	</context-param>
   
 	<context-param>
 		<param-name>genometry_server_dir</param-name>
@@ -19,7 +14,7 @@
 	
 	<context-param>
 		<param-name>maintainer_email</param-name>
-		<param-value>tony.disera@hci.utah.edu</param-value>
+		<param-value>first.last@someplace.something.edu</param-value>
 	</context-param>
 
 	<!--                                                               -->
@@ -27,7 +22,7 @@
 	<!--                                                               -->
 	<context-param>
 		<param-name>xml_base</param-name>
-		<param-value>http://localhost:8080/DAS2/das2</param-value>
+		<param-value>http://localhost:8080/DAS2/genome</param-value>
 	</context-param>
 	
 	<!-- Listener to obtain Hibernate session  --> 

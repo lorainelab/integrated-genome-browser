@@ -224,10 +224,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String refresh_query = "refresh";
 	private static final String default_feature_format = "das2feature";
 	// This flag determines if DAS2 uses file system or DB to obtain annotation information
-	private static boolean genometry_load_annotations_from_db = true;
+	private static boolean genometry_dbmode = true;
 	// static String that indicates where annotation files are served from
 	// when annotation info comes from db
-	private static String genometry_db_annotation_dir;
 	private static String genometry_server_dir;
 	private static String maintainer_email;
 	private static String xml_base;
@@ -294,13 +293,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			ServerUtils.loadSynonyms(synonym_file);
 
-				if (this.genometry_load_annotations_from_db) {
-					Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
-					loadGenomesFromDB();				  
-				} else {
-					Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from file system....");
-					loadGenomes(data_root, organisms, org_order_filename);
-				}
+			if (this.genometry_dbmode) {
+				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
+				loadGenomesFromDB();				  
+			} else {
+				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from file system....");
+				loadGenomes(data_root, organisms, org_order_filename);
+			}
 
 			ServerUtils.printGenomes(organisms);
 
@@ -324,26 +323,32 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 */
 	private final boolean loadAndSetFields() {
 		ServletContext context = getServletContext();
-		genometry_server_dir = context.getInitParameter("genometry_server_dir");
+
+		// Indicates if the annotation info comes from the db or the file system
+		if (context.getInitParameter("genometry_dbmode") != null && context.getInitParameter("genometry_dbmode").equalsIgnoreCase("true")) {
+			this.genometry_dbmode = true;
+			genometry_server_dir = context.getInitParameter("genometry_server_dir_dbmode");
+		} else {
+			this.genometry_dbmode = false;
+			genometry_server_dir = context.getInitParameter("genometry_server_dir");
+		}
+
+		if (genometry_server_dir != null  && !genometry_server_dir.endsWith("/")) {
+			genometry_server_dir += "/";      
+		};
+
+		
 		maintainer_email = context.getInitParameter("maintainer_email");
 		xml_base = context.getInitParameter("xml_base");
 
-		// Indicates if the annotation info comes from the db or the file system
-		if (context.getInitParameter("genometry_load_annotations_from_db") != null && context.getInitParameter("genometry_load_annotations_from_db").equalsIgnoreCase("true")) {
-		  this.genometry_load_annotations_from_db = true;
-		} else {
-		  this.genometry_load_annotations_from_db = false;
-		}
-		
-    // This is the file path to the annotations files managed by DAS2 Manager 
-		genometry_db_annotation_dir = context.getInitParameter("genometry_db_annotation_dir");
-    if (genometry_db_annotation_dir != null  && !genometry_db_annotation_dir.endsWith("/")) {
-      genometry_db_annotation_dir += "/";      
-    };
 
 		//attempt to get from System.properties
 		if (genometry_server_dir == null || maintainer_email == null || xml_base == null) {
-			genometry_server_dir = System.getProperty("das2_genometry_server_dir");
+			if (genometry_dbmode) {
+				genometry_server_dir = System.getProperty("das2_genometry_server_dir_dbmode");				
+			} else {
+				genometry_server_dir = System.getProperty("das2_genometry_server_dir");
+			}
 			maintainer_email = System.getProperty("das2_maintainer_email");
 			xml_base = System.getProperty("das2_xml_base");
 		}
@@ -364,7 +369,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					if (!p.exists()) {
 						System.out.println("\tLooking for but couldn't find " + p);
 						System.out.println("\tERROR: Failed to load fields from " +
-								"System.properties or from the 'genometryDas2ServletParameters.txt' file.");
+						"System.properties or from the 'genometryDas2ServletParameters.txt' file.");
 						return false;
 					}
 				}
@@ -378,8 +383,15 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				return false;
 			}
 			//load fields
-			if (genometry_server_dir == null && prop.containsKey("genometry_server_dir")) {
-				genometry_server_dir = prop.get("genometry_server_dir");
+			if (genometry_dbmode) {
+				if (genometry_server_dir == null && prop.containsKey("genometry_server_dir_dbmode")) {
+					genometry_server_dir = prop.get("genometry_server_dir_dbmode");
+				}
+				
+			} else {
+				if (genometry_server_dir == null && prop.containsKey("genometry_server_dir")) {
+					genometry_server_dir = prop.get("genometry_server_dir");
+				}				
 			}
 			if (maintainer_email == null && prop.containsKey("maintainer_email")) {
 				maintainer_email = prop.get("maintainer_email");
@@ -395,10 +407,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 
 		//set data root
-		// Note adding an extra "/" at the end of genometry_server_dir just to be certain
+		// We have two possible data roots:  if running in "db" mode, use the
+		// db annotations dir as data root; if running in "filesystem" mode,
+		// use the server dir as the data root.
+		// Note adding an extra "/" at the end of the directory just to be certain
 		// there is one there.  If it ends up with two "/" characters, that hurts nothing
-		data_root = genometry_server_dir + "/";
-
+		data_root = genometry_server_dir + "/";			
+		
 		//set various files as Strings
 		synonym_file = data_root + "synonyms.txt";
 		types_xslt_file = data_root + "types.xslt";
@@ -478,7 +493,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					 // Load annotations for the genome version
 					 for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organism, genomeVersionName)) {
 
-						 String fileName = qa.getAnnotation().getQualifiedFileName(this.genometry_db_annotation_dir);    
+						 String fileName = qa.getAnnotation().getQualifiedFileName(this.genometry_server_dir);    
 						 String typePrefix = qa.getTypePrefix();     
 						 File file = new File(fileName);;
 						 if (file.exists()) {
@@ -494,7 +509,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 							 } else {
 
-								 ServerUtils.loadDBAnnotsFromFile(genometry_db_annotation_dir,
+								 ServerUtils.loadDBAnnotsFromFile(genometry_server_dir,
 										 file, 
 										 genomeVersion, 
 										 annots_map,
@@ -653,13 +668,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			das2ManagerSecurity = Das2ManagerSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + Das2ManagerSecurity.SESSION_KEY));
 			if (das2ManagerSecurity == null) {
 				Session sess = null;
-				if (genometry_load_annotations_from_db) {
+				if (genometry_dbmode) {
 					sess = HibernateUtil.getSessionFactory().openSession();					
 				}
 
 				das2ManagerSecurity = new Das2ManagerSecurity(sess, 
 						request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : null, 
-						genometry_load_annotations_from_db,
+						genometry_dbmode,
 						request.getUserPrincipal() != null ? request.isUserInRole(Das2ManagerSecurity.ADMIN_ROLE) : false,
 						request.getUserPrincipal() != null ? request.isUserInRole(Das2ManagerSecurity.GUEST_ROLE) : true);
 				request.getSession().setAttribute(this.getClass().getName() + Das2ManagerSecurity.SESSION_KEY, das2ManagerSecurity);
@@ -1098,7 +1113,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			gmodel = SingletonGenometryModel.refreshGenometryModel();
 		
 			// Reload the annotation files
-			if (this.genometry_load_annotations_from_db) {
+			if (this.genometry_dbmode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
 				this.loadGenomesFromDB();
 
@@ -1119,7 +1134,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("ERROR - problems refreshing annotations " + e.toString());
 	      e.printStackTrace();
 	    } finally {
-	    	if (this.genometry_load_annotations_from_db) {
+	    	if (this.genometry_dbmode) {
 		 	    HibernateUtil.getSessionFactory().close();
 	    	}
 	    }

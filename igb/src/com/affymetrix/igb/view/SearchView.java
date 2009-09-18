@@ -50,6 +50,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
 
+	private static final String SEARCHLABELTEXT = "Search ";
+	private static final String INLABELTEXT = "in ";
+	private static final String FORLABELTEXT = "for ";
 	private static final String REGEXID = "Matching IDs";
 	private static final String REGEXIDTF = "IDs match string or Regular Expression";
 	private static final String REGEXRESIDUE = "Matching residues";
@@ -58,8 +61,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String FINDANNOTS = "Find Annotations For ";
 	private static final String FINDANNOTSNULL = "Please select genome before continuing";
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
-	private static final String REMOTESERVERSEARCH1 = "search DAS/2 servers (";
-	private static final String REMOTESERVERSEARCH2 = " found)";
+	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
+	private static final String REMOTESERVERSEARCH2 = " server)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
 	private static final String SELECTINMAP_TEXT = "select in map";
@@ -108,19 +111,22 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		pan1.setLayout(new BoxLayout(pan1, BoxLayout.X_AXIS));
 
+		pan1.add(new JLabel(SearchView.SEARCHLABELTEXT));
+		pan1.add(searchCB);
 
-		JLabel sequenceChooseLabel = new JLabel("Sequence");
-		pan1.add(sequenceChooseLabel);
+		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(new JLabel(SearchView.INLABELTEXT));
 		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 		pan1.add(sequence_CB);
 
-		pan1.add(Box.createRigidArea(new Dimension(100, 0)));
-
-
-		pan1.add(searchCB);
+		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(new JLabel(SearchView.FORLABELTEXT));
 		pan1.add(searchTF);
+		
+		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+
 		pan1.add(remoteSearchCheckBox);
-		pan1.add(selectInMapCheckBox);
+		//pan1.add(selectInMapCheckBox);
 
 		pan1.add(Box.createRigidArea(new Dimension(30, 0)));
 
@@ -194,7 +200,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		// set up the sequence combo_box
 		sequence_CB.removeAllItems();
 		if (group != null) {
-			sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID);	// put this at top of list
+			if (!((String)this.searchCB.getSelectedItem()).equals(REGEXRESIDUE)) {
+				sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID); // put this at top of list
+			}
 			for (BioSeq seq : group.getSeqList()) {
 				if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 					continue;
@@ -386,6 +394,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		if (src == this.searchCB) {
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
+			this.initSequenceCB();
 			this.searchTF.setEnabled(true);
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
@@ -500,7 +509,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private void displayRegexResidues() {
 		MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
-			Application.errorPanel("Residues for seq not available, search aborted");
+			Application.errorPanel(
+					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
 			return;
 		}
 		regexTF((BioSeq) vseq);
@@ -537,33 +547,39 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		status_bar.setText(friendlySearchStr + ": Working...");
 
 		String residues = vseq.getResidues();
-
 		TransformTierGlyph axis_tier = gviewer.getAxisTier();
 		GlyphI seq_glyph = findSeqGlyph(axis_tier);
 		int residue_offset = vseq.getMin();
-		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier, 0);
+		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier);
 
 		// Search for reverse complement of query string
 		//   flip searchstring around, and redo nibseq search...
 		String rev_searchstring = DNAUtils.reverseComplement(residues);
-		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier, 0);
+		residue_offset = vseq.getMax();
+		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier);
 
 		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
 	}
 
-	private int searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, int hit_count) {
+	private int searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier) {
+		int hit_count = 0;
 		Matcher matcher = regex.matcher(residues);
 		while (matcher.find()) {
-			int start = matcher.start(0) + residue_offset;
-			int end = matcher.end(0) + residue_offset;
+			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
+			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
+			//int end = matcher.end(0) + residue_offset;
 			GlyphI gl = new FillRectGlyph();
 			gl.setColor(hitcolor);
 			if (seq_glyph != null) {
-				double pos = seq_glyph.getCoordBox().y + (forward ? 0 : 5);
-				gl.setCoords(start, pos, end - start, seq_glyph.getCoordBox().height);
+				double offset = forward ? 0 : seq_glyph.getCoordBox().height / 2;
+
+				gl.setCoords(start, seq_glyph.getCoordBox().y, end - start, seq_glyph.getCoordBox().height);
 				seq_glyph.addChild(gl);
+
+				// when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
+				gl.setCoords(start, seq_glyph.getCoordBox().y + offset, end - start, seq_glyph.getCoordBox().height / 2);
 			} else {
 				double pos = forward ? 10 : 15;
 				gl.setCoords(start, pos, end - start, 10);

@@ -24,13 +24,15 @@
   <Resource name="jdbc/GENOVIZ" auth="Container" 
     type="javax.sql.DataSource"
     maxActive="100" maxIdle="30" maxWait="10000"
+    testOnBorrow="true"  
+    validationQuery="SELECT 1 FROM DUAL" 
     username="genoviz" password="4u2Chg"
     driverClassName="com.mysql.jdbc.Driver"
     url="jdbc:mysql://localhost:3306/genoviz?autoReconnect=true"/>
     
   <Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
     driverName="com.mysql.jdbc.Driver"
-    connectionURL="jdbc:mysql://localhost:3306/genoviz?user=genoviz&amp;password=4u2Chg"
+    connectionURL="jdbc:mysql://localhost:3306/genoviz?autoReconnect=true"
     connectionName="genoviz" connectionPassword="4u2Chg"
     digest="MD5"
     userTable="User" userNameCol="userName" userCredCol="password"

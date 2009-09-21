@@ -84,12 +84,12 @@ public class Das2ManagerServlet extends HttpServlet {
 	
 	private Das2ManagerSecurity das2ManagerSecurity = null;
 	
-	private String genometry_db_annotation_dir;
+	private String genometry_server_dir;
 	
 	public void init() throws ServletException {
 		if (getGenometryManagerDataDir() == false) {
-			System.out.println("FAILED to init() Das2ManagerServlet, aborting!");
-			return;
+			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() Das2ManagerServlet, aborting!");
+			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
 	}
 	
@@ -260,7 +260,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
 		
 		Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-		Document doc = annotation.getXML(this.das2ManagerSecurity, DictionaryHelper.getInstance(sess), genometry_db_annotation_dir);
+		Document doc = annotation.getXML(this.das2ManagerSecurity, DictionaryHelper.getInstance(sess), genometry_server_dir);
 
 		XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat
 		        .createCompactFormat());
@@ -1406,7 +1406,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 			
 			// remove annotation files
-			annotation.removeFiles(genometry_db_annotation_dir);
+			annotation.removeFiles(genometry_server_dir);
 			
 			// delete database object
 			sess.delete(annotation);
@@ -1736,14 +1736,21 @@ public class Das2ManagerServlet extends HttpServlet {
     	        if (this.das2ManagerSecurity.canWrite(annotation)) {
     	          SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
     	          
+    	          // Make sure that the genometry server dir exists
+    	          if (!new File(genometry_server_dir).exists()) {
+    	        	  boolean success = (new File(genometry_server_dir)).mkdir();
+    	              if (!success) {
+    	                throw new Exception("Unable to create directory " + genometry_server_dir);      
+    	              }
+    	          }
     
-    	          String annotationFileDir = annotation.getDirectory(genometry_db_annotation_dir);
+    	          String annotationFileDir = annotation.getDirectory(genometry_server_dir);
     	          
     	          // Create annotation directory if it doesn't exist
     	          if (!new File(annotationFileDir).exists()) {
     	              boolean success = (new File(annotationFileDir)).mkdir();
     	              if (!success) {
-    	                System.out.println("Unable to create directory " + annotationFileDir);      
+    	                throw new Exception("Unable to create directory " + annotationFileDir);      
     	              }      
     	          }
     	          
@@ -2810,14 +2817,29 @@ public class Das2ManagerServlet extends HttpServlet {
 	private final boolean getGenometryManagerDataDir() {
 		// attempt to get properties from servlet context
 		ServletContext context = getServletContext();
-		genometry_db_annotation_dir = context.getInitParameter("genometry_db_annotation_dir");
+		genometry_server_dir = context.getInitParameter("genometry_server_dir_dbmode");
 
-		if (genometry_db_annotation_dir != null && !genometry_db_annotation_dir.endsWith("/")) {
-		  genometry_db_annotation_dir += "/";			
+		// Make sure we have the parameter
+		if (genometry_server_dir == null || genometry_server_dir.equals("")) {
+            Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter genometry_server_dir_dbmode");
+			return false;
 		}
-
-		//print values
-		System.out.println("Das2ManagerServlet: genometry_manager_data_dir\t" + genometry_db_annotation_dir);
+		
+		// Make sure that the genometry server dir exists
+        if (!new File(genometry_server_dir).exists()) {
+      	  boolean success = (new File(genometry_server_dir)).mkdir();
+            if (!success) {
+              Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_server_dir);
+              return false;
+            }
+        }
+        
+		if (genometry_server_dir != null && !genometry_server_dir.endsWith("/")) {
+		  genometry_server_dir += "/";			
+		}
+		
+		
+		Logger.getLogger(this.getClass().getName()).fine("genometry_manager_data_dir = " + genometry_server_dir);
 
 		return true;
 	}

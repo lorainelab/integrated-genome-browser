@@ -53,6 +53,7 @@
 			var url:String = getUploadURL.lastResult.@url;
 			initializeFileUploadControl(url);
 			initializeFileUploadParameters();
+			
 		}
 	}
 					
@@ -83,8 +84,13 @@
         }
       
    }
+   
+
    public function onUploadFinished(event:Event):void{
    		currentState = "FinishedState"
+   		
+   		// Just close window when uploads complete.
+   		this.closeWindow();
    }	
    
    public function onChooseFileToUpload(event:Event):void {

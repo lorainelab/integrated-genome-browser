@@ -44,7 +44,16 @@
 		this.genomeVersion = genomeVersion;
 		if (parent != null) {
 			this.idParentAnnotationGrouping = parent.@idAnnotationGrouping;
-			parentName = parent.@label;			
+			parentName = parent.@label;		
+			
+			if (parent.@idUserGroup != null && parent.@idUserGroup != "") {
+				for each (var item:Object in userGroupCombo.dataProvider) {
+					if (item.@id == parent.@idUserGroup) {
+						userGroupCombo.selectedItem = item;
+						break;
+					}
+				}
+			}	
 		} else {
 			parentName = genomeVersion.@name;
 		}

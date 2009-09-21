@@ -51,11 +51,32 @@
 		} else {
 			parentName = genomeVersion.@name;
 		}
-		for each(var item:Object in parentApplication.dictionaryVisibility) {
-			if (item.@id == 'PUBLIC') {
-				this.visibilityCombo.selectedItem = item;
-				break;
+		// If the parent folder belongs to a user group, set the annotation
+		// visibility to 'Members and Collaborators' and the user group combo
+		// to the same user group.
+		// Otherwise; set the visibility to 'PUBLIC'.
+		if (parent != null && parent.@idUserGroup != null && parent.@idUserGroup != "") {
+			for each(var item:Object in parentApplication.dictionaryVisibility) {
+				if (item.@id == 'MEM') {
+					this.visibilityCombo.selectedItem = item;
+					this.currentState = 'GroupVisibilityState';
+					break;
+				}
 			}
+			for each (var g:Object in annotationUserGroupCombo.dataProvider) {
+				if (g.@id == parent.@idUserGroup) {
+					annotationUserGroupCombo.selectedItem = g;
+					break;
+				}
+			}			
+		} else {
+			for each(var v:Object in parentApplication.dictionaryVisibility) {
+				if (v.@id == 'PUBLIC') {
+					this.visibilityCombo.selectedItem = v;
+					break;
+				}
+			}
+			
 		}
 	}
 	
@@ -82,6 +103,10 @@
 			     "idGenomeVersion='" + addAnnotation.lastResult.@idGenomeVersion  + "'" +
 			    "/>");
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
+			
+			// Open the upload file window
+			openFileUploadWindow(addAnnotation.lastResult.@idAnnotation, annotationName.text);
+			
 		} else if (addAnnotation.lastResult.name() == "Error") {
 			Alert.show(addAnnotation.lastResult.@message);
 		} else {
@@ -89,6 +114,13 @@
 		}		
 	}
 
+    private function openFileUploadWindow(idAnnotation:Object, annotationName:String):void {
+    	var uploadWindow:AnnotationFileUploadWindow = AnnotationFileUploadWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationFileUploadWindow, true));
+    	PopUpManager.centerPopUp(uploadWindow);
+    	uploadWindow.idAnnotation = idAnnotation;
+    	uploadWindow.annotationName = annotationName;
+    	uploadWindow.init();
+    }
    
     private function closeWindow():void {
 		PopUpManager.removePopUp(this);		

@@ -37,8 +37,10 @@ import com.affymetrix.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
@@ -83,16 +85,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private final JTable table = new JTable();
 	private final JTextField filterText = new JTextField();
 	private final JLabel status_bar = new JLabel("0 results");
-	// The second column in the table contains an object of type SeqSymmetry
-	// but we use a special TableCellRenderer so that what is actually displayed
-	// is a String representing the Tier
-	private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
-	private final static Class<?>[] col_classes = {String.class, String.class, Integer.class, Integer.class, String.class, String.class};
-	private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
-	private final static int NUM_COLUMNS = col_headings_vector.size();
-	private DefaultTableModel model;
-	private TableRowSorter<DefaultTableModel> sorter;
+	private SearchResultsTableModel model;
+	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
+
+	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 
 	private static final boolean DEBUG = true;
 
@@ -239,51 +236,47 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	}
 
 	private void initTable() {
-		model = new DefaultTableModel() {
-			private static final long serialVersionUID = 0;
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-
-			@Override
-			public Class getColumnClass(int column) {
-				return col_classes[column];
-			}
-
-			@Override
-			public void fireTableStructureChanged() {
-				// The columns never change, so suppress tableStructureChanged events
-				// converting to normal table-rows-changed-type events.
-				// This allows the column-based sorting settings to be preserved when
-				// the data changes.
-				fireTableChanged(new javax.swing.event.TableModelEvent(this));
-			}
-		};
-	
-		model.setDataVector(new Vector(0), col_headings_vector);
-
+		model = new SearchResultsTableModel(tableRows);
+		
 		lsm = table.getSelectionModel();
-		//lsm.addListSelectionListener(list_selection_listener);
+		lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		sorter = new TableRowSorter<DefaultTableModel>(model);
+		sorter = new TableRowSorter<SearchResultsTableModel>(model);
 
 		table.setModel(model);
 		table.setRowSelectionAllowed(true);
 		table.setRowSorter(sorter);
 		table.setEnabled(true);
 		table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
-		table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
+		//table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
 	}
+
+	/** This is called when the user selects a row of the table. */
+	ListSelectionListener list_selection_listener = new ListSelectionListener() {
+
+		public void valueChanged(ListSelectionEvent evt) {
+			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && model.getRowCount() > 0) {
+				int srow = table.getSelectedRow();
+				if (srow < 0) {
+					return;
+				}
+				SeqSymmetry sym = tableRows.get(srow);
+				if (sym != null) {
+					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
+					syms.add(sym);
+					gmodel.setSelectedSymmetriesAndSeq(syms, this);
+				}
+			}
+		}
+	};
 
 	/**
      * Update the row filter regular expression from the expression in
      * the text box.
      */
     private void newFilter() {
-        RowFilter<DefaultTableModel, Object> rf = null;
+        RowFilter<SearchResultsTableModel, Object> rf = null;
         //If current expression doesn't parse, don't update.
         try {
             rf = RowFilter.regexFilter(filterText.getText(), 0);
@@ -301,82 +294,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		map.updateWidget();
 	}
 
-	private static Vector<Vector<Object>> buildRows(List<SeqSymmetry> results, BioSeq seq) {
-
-		if (results == null || results.isEmpty()) {
-			return new Vector<Vector<Object>>(0);
-		}
-
-		int num_rows = results.size();
-
-		Vector<Vector<Object>> rows = new Vector<Vector<Object>>(num_rows, num_rows / 10);
-		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
-			Vector<Object> a_row = new Vector<Object>(NUM_COLUMNS);
-			SeqSymmetry result = results.get(j);
-			if (!convertSymmetryToRow(result, j, seq, a_row)) {
-				continue ;
-			}
-			rows.add(a_row);
-		}
-
-		return rows;
+	private void displayInTable(List<SeqSymmetry> rows) {
+		model.fireTableDataChanged();
 	}
 
-
-	private static boolean convertSymmetryToRow(SeqSymmetry result, int j, BioSeq seq, Vector<Object> a_row) {
-		SeqSpan span = null;
-		if (seq != null) {
-			span = result.getSpan(seq);
-			if (span == null) {
-				// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
-				SeqSpan tempSpan = result.getSpan(0);
-				if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
-					span = tempSpan;
-				}
-			}
-		} else {
-			span = result.getSpan(0);
-		}
-		if (span == null) {
-			return false;
-		}
-		// TODO: use SearchRow class
-		a_row.add(result.getID());	// ID
-		a_row.add(BioSeq.determineMethod(result));	// tier
-		if (result instanceof UcscPslSym) {
-			a_row.add(((UcscPslSym) result).getTargetMin());
-			a_row.add(((UcscPslSym) result).getTargetMax());
-			a_row.add(((UcscPslSym) result).getTargetSeq().getID());
-		} else {
-			a_row.add(new Integer(span.getStart()));
-			a_row.add(new Integer(span.getEnd()));
-			if (seq != null) {
-				a_row.add(seq.getID());
-			} else {
-				a_row.add(span.getBioSeq().getID());
-			}
-		}
-		
-		a_row.add(span.isForward() ? "+" : "-");
-		return true;
-	}
-
-	private void displayInTable(final Vector<Vector<Object>> rows) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				model.setDataVector(rows, col_headings_vector);
-			}
-		});
-	}
-
-	// Clear the table (using invokeLater)
 	private void clearTable() {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				model.setDataVector(new Vector(0), col_headings_vector);
-			}
-		});
+		tableRows.clear();
+		model.fireTableDataChanged();
 	}
 
 	// remove the previous search results from the map.
@@ -498,10 +422,47 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			sym_list.addAll(remoteSymList);
 		}
 
-		final Vector<Vector<Object>> rows = buildRows(sym_list, chrFilter);
-		displayInTable(rows);
+		tableRows = filterRows(sym_list, chrFilter);
+		displayInTable(tableRows);
 
 	}
+
+
+	private static List<SeqSymmetry> filterRows(List<SeqSymmetry> results, BioSeq seq) {
+
+		if (results == null || results.isEmpty()) {
+			return new ArrayList<SeqSymmetry>();
+		}
+
+		int num_rows = results.size();
+
+		List<SeqSymmetry> rows = new ArrayList<SeqSymmetry>(num_rows / 10);
+		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
+			SeqSymmetry result = results.get(j);
+
+			SeqSpan span = null;
+			if (seq != null) {
+				span = result.getSpan(seq);
+				if (span == null) {
+					// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
+					SeqSpan tempSpan = result.getSpan(0);
+					if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
+						span = tempSpan;
+					}
+				}
+			} else {
+				span = result.getSpan(0);
+			}
+			if (span == null) {
+				continue;
+			}
+
+			rows.add(result);
+		}
+
+		return rows;
+	}	
+	
 
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
@@ -701,5 +662,80 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		public int compare(SeqSymmetry s1, SeqSymmetry s2) {
 			return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
 		}
+	}
+
+	private class SearchResultsTableModel extends AbstractTableModel {
+
+		private final String[] column_names = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
+		private final int ID_COLUMN = 0;
+		private final int TIER_COLUMN = 1;
+		private final int START_COLUMN = 2;
+		private final int END_COLUMN = 3;
+		private final int CHROM_COLUMN = 4;
+		private final int STRAND_COLUMN = 5;
+		private List<SeqSymmetry> search_results;
+
+		public SearchResultsTableModel(List<SeqSymmetry> results) {
+			search_results = results;
+		}
+
+		public Object getValueAt(int row, int col) {
+			SeqSymmetry sym = tableRows.get(row);
+			SeqSpan span = sym.getSpan(0);
+			switch (col) {
+				case ID_COLUMN:
+					return sym.getID();
+				case TIER_COLUMN:
+					return BioSeq.determineMethod(sym);
+				case START_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return (((UcscPslSym) sym).getSameOrientation()) ? 
+							((UcscPslSym) sym).getTargetMin() : ((UcscPslSym) sym).getTargetMax();
+					}
+					return (span == null ? "" : span.getStart());
+				case END_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return (((UcscPslSym) sym).getSameOrientation()) ?
+							((UcscPslSym) sym).getTargetMax() : ((UcscPslSym) sym).getTargetMin();
+					}
+					return (span == null ? "" : span.getEnd());
+				case CHROM_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return ((UcscPslSym) sym).getTargetSeq().getID();
+					}
+					return (span == null ? "" : span.getBioSeq().getID());
+				case STRAND_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return (
+								(((UcscPslSym) sym).getSameOrientation())
+								? "+" : "-");
+					}
+					if (span == null) {
+						return "";
+					}
+					return (span.isForward() ? "+" : "-");
+			}
+			return "";
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+			
+		public int getColumnCount() {
+			return column_names.length;
+		}
+
+		@Override
+		public String getColumnName(int col) {
+			return column_names[col];
+		}
+
+		public int getRowCount() {
+			return tableRows.size();
+		}
+
+
 	}
 }

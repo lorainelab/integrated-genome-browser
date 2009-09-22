@@ -67,7 +67,7 @@ public abstract class IGBConstants {
 			BUILD_VERSION = p.getProperty("build.version", DEFAULT_STRING);
 			IGB_VERSION   = p.getProperty("igb.version", DEFAULT_STRING);
 			IGB_FRIENDLY_VERSION = IGB_VERSION;
-			IGB_FRIENDLY_VERSION += " BETA";
+			IGB_FRIENDLY_VERSION += " BETA (hotfix 1)";
 			IGB_VERSION  += "." + BUILD_VERSION;
 		  } catch(IOException e) {
 			  e.printStackTrace();

@@ -139,7 +139,7 @@
     public var iconChooseFiles:Class;	
 	
 	[Bindable]
-    [Embed(source="assets/folder_page.png")]
+    [Embed(source="assets/folder_page_disable.png")]
     public var iconChooseFilesDisabled:Class;
 
     [Bindable]

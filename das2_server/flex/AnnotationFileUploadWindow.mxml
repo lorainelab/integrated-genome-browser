@@ -6,6 +6,7 @@
 	height="286"
 	verticalGap="0"
 	close="closeWindow()"
+	defaultButton="{uploadBrowseButton}"
 	layout="vertical" backgroundAlpha="100">
  	
   <mx:HTTPService  
@@ -53,6 +54,9 @@
 			var url:String = getUploadURL.lastResult.@url;
 			initializeFileUploadControl(url);
 			initializeFileUploadParameters();
+
+			this.uploadBrowseButton.setFocus();
+			this.defaultButton = this.uploadBrowseButton;
 			
 		}
 	}
@@ -94,6 +98,8 @@
    }	
    
    public function onChooseFileToUpload(event:Event):void {
+   		this.uploadButton.setFocus();
+		this.defaultButton = this.uploadButton;
    }
 
    
@@ -110,11 +116,11 @@
 	<mx:VBox styleName="panelBody" label="Files" width="100%" height="100%" >
 		<mx:VBox width="100%" height="100%" verticalGap="2">
 		          <mx:HBox  width="100%" >
-		              <mx:LinkButton id="uploadBrowseButton" 
+		              <mx:Button id="uploadBrowseButton" 
 		              	label="Choose files" 
 		              	icon="{parentApplication.iconChooseFiles}"  
 		                disabledIcon="{parentApplication.iconChooseFilesDisabled}"  
-		                toolTip="Choose file(s) to upload"  textDecoration="underline" styleName="formLinkButton"/>
+		                toolTip="Choose file(s)"/>
 		              <mx:LinkButton id="uploadDeleteButton" label="Remove" 
 		              	icon="{parentApplication.iconDelete}"  
 		                disabledIcon="{parentApplication.iconDeleteDisabled}"  

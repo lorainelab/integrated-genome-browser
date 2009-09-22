@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="{'Add new annotation to ' + parentName}"	
 	showCloseButton="true" 
-	width="468" 
-	height="124" 
+	width="470" 
+	height="330" 
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotation}"
 	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
@@ -26,14 +26,28 @@
       </mx:request>
     </mx:HTTPService> 
     
+    <mx:HTTPService  
+      id="getUploadURL" 
+      url="manager/uploadURL"
+      resultFormat="e4x"
+      showBusyCursor="true" 
+      result="onGetUploadURL(event)" 
+	  fault="parentApplication.onFailHttpRequest('Failed to get upload URL', event)"
+      method="POST"
+      useProxy="false">
+    </mx:HTTPService>
+
        
     <mx:Script>
 	<![CDATA[
-		import mx.collections.XMLListCollection;
-	
+	import mx.collections.XMLListCollection;
 	import mx.managers.PopUpManager;
 	import mx.rpc.events.ResultEvent;
 	import mx.controls.Alert;
+	import mx.managers.PopUpManager;
+	import mx.rpc.events.ResultEvent;
+	import mx.controls.Alert;
+	import util.MultiFileUpload;
 	
 
 	[Bindable]
@@ -42,6 +56,13 @@
 	public var parentName:Object = null;
 	[Bindable]
 	private var genomeVersion:Object = null;
+	
+	
+	[Bindable]
+	public var idAnnotation:Object = null;
+	private var multiFileUpload:MultiFileUpload;
+	
+	private var itemToSelect:XML;
 
 	public function init(genomeVersion:Object, parent:Object):void {
 		this.genomeVersion = genomeVersion;
@@ -78,6 +99,8 @@
 			}
 			
 		}
+		this.defaultButton = uploadBrowseButton;
+		getUploadURL.send();
 	}
 	
 	
@@ -96,7 +119,7 @@
    	private function onAddAnnotation(event:ResultEvent):void {
 		if (addAnnotation.lastResult.name() == "SUCCESS") {			
 			closeWindow();
-			var itemToSelect:XML = new XML(
+			itemToSelect = new XML(
 			   "<Annotation " +
 			     "idAnnotation='" + addAnnotation.lastResult.@idAnnotation + "'" +
 			     "idAnnotationGrouping='" + addAnnotation.lastResult.@idAnnotationGrouping  + "'" +
@@ -105,7 +128,7 @@
 			parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
 			
 			// Open the upload file window
-			openFileUploadWindow(addAnnotation.lastResult.@idAnnotation, annotationName.text);
+			//openFileUploadWindow(addAnnotation.lastResult.@idAnnotation, annotationName.text);
 			
 		} else if (addAnnotation.lastResult.name() == "Error") {
 			Alert.show(addAnnotation.lastResult.@message);
@@ -120,22 +143,134 @@
     	uploadWindow.idAnnotation = idAnnotation;
     	uploadWindow.annotationName = annotationName;
     	uploadWindow.init();
+
     }
    
     private function closeWindow():void {
 		PopUpManager.removePopUp(this);		
 	}
 	
+	private function saveAnnotation():void {
+		if (this.saveButton.label == 'Save') {
+			addAnnotation.send()
+		}
+		
+
+	}
+
+	private function onGetUploadURL(event:ResultEvent):void {
+		if (getUploadURL.lastResult.name() == "UploadURL") {
+			var url:String = getUploadURL.lastResult.@url;
+			initializeFileUploadControl(url);
+		}
+	}
+		
+	public function initializeFileUploadParameters():void{
+           var postVariables:URLVariables = new URLVariables;
+                      
+           postVariables.name =  annotationName.text;
+           postVariables.idGenomeVersion = genomeVersion.@idGenomeVersion;
+           postVariables.idAnnotationGrouping = idParentAnnotationGrouping != null ? idParentAnnotationGrouping : '-99';
+           postVariables.codeVisibility = visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : 'PUBLIC';
+           postVariables.idUserGroup = '-99';
+           if (this.currentState == 'GroupVisibilityState' && this.annotationUserGroupCombo.selectedItem != null) {
+           	postVariables.idUserGroup = annotationUserGroupCombo.selectedItem.@id;
+           } 
+
+
+		    
+		   multiFileUpload.setUploadURLParameters(postVariables);  
+	}
+			
+					
+	private function initializeFileUploadControl(uploadServletURL:String):void{
+        
+        if (multiFileUpload == null) {
+	         
+	        multiFileUpload = new MultiFileUpload(
+	            this.uploadFilesGrid,
+	            this.uploadBrowseButton,
+	            this.uploadDeleteButton,
+	            this.uploadClearButton,
+	            this.saveButton,
+	            this.uploadProgressBar,
+	            uploadServletURL,
+	            postVariables,
+	            0,
+	            null
+	            );
+	        
+	       multiFileUpload.addEventListener(Event.COMPLETE, onUploadFinished);
+	       multiFileUpload.addEventListener(Event.OPEN, onChooseFileToUpload);
+	       multiFileUpload.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, onIndividualFileUploaded);
+        	
+        } else {
+        	var postVariables:URLVariables = new URLVariables;
+	        postVariables.idAnnotation = idAnnotation;
+	        multiFileUpload.setUploadURLParameters(postVariables);  
+        }
+      
+   }
+   
+   //
+   // Called after all file upload have completed
+   //
+   public function onUploadFinished(event:Event):void{
+   		// Select the added annotation
+   		parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
+   		
+   		// Just close window when uploads complete.
+   		this.closeWindow();
+   }	
+   
+   //
+   // Called after user has selected files to upload
+   //
+   public function onChooseFileToUpload(event:Event):void {
+   	    initializeFileUploadParameters();
+   	    this.saveButton.setFocus();
+   	    this.saveButton.label = "Upload and Save";
+   	    this.defaultButton = this.saveButton;
+
+   }
+   
+   //
+   // Called after each individual file has been updated
+   //
+   public function onIndividualFileUploaded(event:DataEvent):void {
+   		// When the first file is upload, the annotation is
+   		// added.  Grab the id and use in subsequent
+   		// upload requests so that the uploaded files are
+   		// associated with the annotation just added.
+   		var response:XML = XML( event.data );
+   		var idAnnotation:Object = response.@idAnnotation;		
+       	var postVariables:URLVariables = new URLVariables;
+       	postVariables.idAnnotation =  idAnnotation.toString();
+	   	multiFileUpload.setUploadURLParameters(postVariables);  
+	   	
+	   	// Capture the annotation that will be selected from
+	   	// the tree when the upload is finished.
+	 	itemToSelect = new XML(
+			   "<Annotation " +
+			     "idAnnotation='" + response.@idAnnotation + "'" +
+			     "idAnnotationGrouping='" +  (idParentAnnotationGrouping != null ? idParentAnnotationGrouping : '')+ "'" +
+			     "idGenomeVersion='" + genomeVersion.@idGenomeVersion  + "'" +
+			    "/>");
+
+   }
+
+	
 	]]>
     </mx:Script>
     
     	    <mx:states>
         <mx:State name="GroupVisibilityState">
-            <mx:SetProperty name="height" value="164"/>
+            <mx:SetProperty name="height" value="346"/>
             <mx:SetProperty target="{saveButton}" name="enabled">
                 <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
             </mx:SetProperty>
-            <mx:AddChild relativeTo="{vbox1}" position="lastChild">
+            <mx:SetProperty name="width" value="476"/>
+            <mx:AddChild relativeTo="{vbox2}" position="before">
                 <mx:HBox width="100%" id="hbox2">
                 	<mx:Label text="User Group:" width="105"/>
                 	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
@@ -154,6 +289,23 @@
 				<mx:Label text="Visibility:" width="105"/>
 				<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="changeState()"></mx:ComboBox>							        	
 			</mx:HBox>            	
+			<mx:VBox styleName="panelBody" label="Files" width="100%" height="100%"  id="vbox2" verticalGap="2" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0">
+				<mx:HBox width="100%">
+					<mx:Label text="File(s) to upload" id="label1" width="105"/>
+					<mx:Button id="uploadBrowseButton" 
+						label="Choose files" 
+						icon="{parentApplication.iconChooseFiles}"  
+					    disabledIcon="{parentApplication.iconChooseFilesDisabled}"  
+				    	 toolTip="Choose file(s) to upload" />
+					
+				</mx:HBox>
+				<mx:VBox width="100%" height="100%" verticalGap="2">
+					<mx:DataGrid id="uploadFilesGrid" width="100%" height="100%">				
+					</mx:DataGrid>				
+				  		<mx:Spacer  width="100%" height="10"/>		
+				</mx:VBox>
+				<mx:ProgressBar id="uploadProgressBar"  width="100%" labelPlacement="center" trackHeight="15" height="20" fontWeight="normal" themeColor="#EAED9A"/>
+			</mx:VBox>
         </mx:VBox>
 	
 
@@ -161,12 +313,15 @@
     </mx:VBox>
 	
 	<mx:ControlBar horizontalAlign="right">
+	    <mx:Button id="uploadDeleteButton" width="0"  visible="false"/>
+	    <mx:Button id="uploadClearButton" 
+            width="0" visible="false" />
 		<mx:Button id="saveButton"  
 			enabled="{annotationName.text != null ? true : false}" 
 			icon="{parentApplication.iconSave}" 
 			disabledIcon="{parentApplication.iconSaveDisabled}" 
 			label="Save"
-			click="{addAnnotation.send()}"/>
+			click="{saveAnnotation()}"/>
 		<mx:Button id="cancelButton" label="Cancel" click="closeWindow()"/>
 	</mx:ControlBar>
 	

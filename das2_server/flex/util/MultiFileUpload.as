@@ -146,7 +146,9 @@ package util
 	        _remallbutton.addEventListener(MouseEvent.CLICK,clearFileCue);
 	        _remselbutton.addEventListener(MouseEvent.CLICK,removeSelectedFileFromCue);
 	        _fileref.addEventListener(Event.SELECT, selectHandler);
+	        _fileref.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, dataCompleteHandler);
 	        _files.addEventListener(CollectionEvent.COLLECTION_CHANGE,popDataGrid);
+	        
 	        
 	        // Set Up Progress Bar UI
 	        _progressbar.mode = "manual";
@@ -197,7 +199,9 @@ package util
         /********************************************************
         *   PRIVATE METHODS                                     *
         ********************************************************/
-        
+		        
+		
+
         
         //Browse for files
         private function browseFiles(event:Event):void{        
@@ -218,6 +222,7 @@ package util
                 _file.addEventListener(Event.OPEN, openHandler);
                 _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
                 _file.addEventListener(Event.COMPLETE, completeHandler);
+                _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, dataCompleteHandler );
                 _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR,securityErrorHandler);
                 _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
                 _file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
@@ -385,8 +390,9 @@ package util
             _progressbar.label = "Uploading " + Math.round(event.bytesLoaded / 1024) + " kb of " + Math.round(event.bytesTotal / 1024) + " kb " + (_files.length - 1) + " files remaining";
         }
 
-        // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
-        private function completeHandler(event:Event):void{
+		private function dataCompleteHandler(dataCompleteEvent:DataEvent) :void
+		{
+			dispatchEvent(dataCompleteEvent);
             _files.removeItemAt(0);
             if (_files.length > 0){
             	_totalbytes = 0;
@@ -397,6 +403,10 @@ package util
                  var uploadCompleted:Event = new Event(Event.COMPLETE);
                 dispatchEvent(uploadCompleted);
             }
+		} 
+
+        // called after a file has been successully uploaded | we use this as well to check if there are any files left to upload and how to handle it
+        private function completeHandler(event:Event):void{
         }    
           
         // only called if there is an  error detected by flash player browsing or uploading a file   

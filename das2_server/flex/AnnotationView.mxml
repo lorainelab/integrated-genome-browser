@@ -433,6 +433,7 @@
 				if (this.dirtyAnnotation != null) {
 					this.dirtyAnnotation.resetDirty();
 					this.annotationFilesToRemove = new XMLListCollection();
+
 				}
 				
 				callLater(expandAllAnnotationNodes);
@@ -631,6 +632,7 @@
         	PopUpManager.centerPopUp(uploadWindow);
         	uploadWindow.idAnnotation = annotationsTree.selectedItem.@idAnnotation;
         	uploadWindow.annotationName = annotationsTree.selectedItem.@label;
+        	uploadWindow.uploadBrowseButton.setFocus();
         	uploadWindow.init();
         }
         
@@ -1613,7 +1615,7 @@
 								    </mx:Tree>
 							    </mx:VBox>
 							    <mx:VBox width="100%" height="100%" verticalGap="2" paddingTop="6" >
-							        <mx:Label text="Files:"/>
+							        <mx:Label text="{'Files (' + annotationFiles.length + '):'}"/>
 							        <mx:HBox horizontalGap="2" width="100%">
 							        <mx:LinkButton icon="@Embed(source='assets/page_new.png')" 
 							        	disabledIcon="@Embed(source='assets/page_new_disable.png')" 

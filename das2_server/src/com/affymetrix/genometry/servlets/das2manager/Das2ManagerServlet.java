@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1218,52 +1219,19 @@ public class Das2ManagerServlet extends HttpServlet {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
-
-			sess = HibernateUtil.getSessionFactory().openSession();
-			Transaction tx = sess.beginTransaction();
 			
-			Annotation annotation = new Annotation();
-			
+			String name = request.getParameter("name");
+			String codeVisibility = request.getParameter("codeVisibility");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
+			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");
 			
-			annotation.setName(request.getParameter("name"));
-			annotation.setIdGenomeVersion(idGenomeVersion);
-			annotation.setCodeVisibility(request.getParameter("codeVisibility"));
-			annotation.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
-			// Only set ownership if this is not an admin
-			if (!das2ManagerSecurity.isAdminRole()) {
-				annotation.setIdUser(das2ManagerSecurity.getIdUser());				
-			}
-			sess.save(annotation);
-			sess.flush();
-
-			// Get the annotation grouping this annotation is in.
-			AnnotationGrouping ag = null;
-			if (idAnnotationGrouping == null) {
-				// If this is a root annotation, find the default root annotation
-				// grouping for the genome version.
-				GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
-				ag = gv.getRootAnnotationGrouping();
-				if (ag == null) {
-					throw new Exception("Cannot find root annotation grouping for " + gv.getName());
-				}
-			} else {
-				// Otherwise, find the annotation grouping passed in as a request parameter.
-				ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
-			}
-
-			// Add the annotation to the annotation grouping
-			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
-				newAnnotations.add(a);
-			}
-			newAnnotations.add(annotation);
-			ag.setAnnotations(newAnnotations);
+			sess = HibernateUtil.getSessionFactory().openSession();
+			Transaction tx = sess.beginTransaction();
+		
 			
-			
-			// Assign a file directory name
-			annotation.setFileName("A" + annotation.getIdAnnotation());
+			// Create a new annotation
+			Annotation annotation = createNewAnnotation(sess, name, codeVisibility, idGenomeVersion, idAnnotationGrouping, idUserGroup);
 			
 			
 			sess.flush();
@@ -1299,6 +1267,56 @@ public class Das2ManagerServlet extends HttpServlet {
 				sess.close();
 			}
 		}
+		
+		
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Annotation createNewAnnotation(Session sess, String name, String codeVisibility, Integer idGenomeVersion, Integer idAnnotationGrouping,  Integer idUserGroup) throws Exception {
+		Annotation annotation = new Annotation();
+		
+		
+		annotation.setName(name);
+		annotation.setIdGenomeVersion(idGenomeVersion);
+		annotation.setCodeVisibility(codeVisibility);
+		annotation.setIdUserGroup(idUserGroup);
+		
+		// Only set ownership if this is not an admin
+		if (!das2ManagerSecurity.isAdminRole()) {
+			annotation.setIdUser(das2ManagerSecurity.getIdUser());				
+		}
+		sess.save(annotation);
+		sess.flush();
+
+		// Get the annotation grouping this annotation is in.
+		AnnotationGrouping ag = null;
+		if (idAnnotationGrouping == null) {
+			// If this is a root annotation, find the default root annotation
+			// grouping for the genome version.
+			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
+			ag = gv.getRootAnnotationGrouping();
+			if (ag == null) {
+				throw new Exception("Cannot find root annotation grouping for " + gv.getName());
+			}
+		} else {
+			// Otherwise, find the annotation grouping passed in as a request parameter.
+			ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
+		}
+
+		// Add the annotation to the annotation grouping
+		Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+		for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+			newAnnotations.add(a);
+		}
+		newAnnotations.add(annotation);
+		ag.setAnnotations(newAnnotations);
+		
+		
+		// Assign a file directory name
+		annotation.setFileName("A" + annotation.getIdAnnotation());
+		
+		return annotation;
 		
 	}
 	
@@ -1703,7 +1721,15 @@ public class Das2ManagerServlet extends HttpServlet {
 		
 		Session sess = null;
 		Integer idAnnotation = null;
+		
 	    Annotation annotation = null;
+	    
+		String annotationName = null;
+		String codeVisibility = null;
+		Integer idGenomeVersion = null;
+		Integer idAnnotationGrouping = null;
+		Integer idUserGroup = null;
+	    
 	    String fileName = null;
 	    Transaction tx = null;
 	    
@@ -1712,8 +1738,15 @@ public class Das2ManagerServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 			
-			PrintWriter out = res.getWriter();
-    	    res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+			
+		    res.setDateHeader("Expires", -1);
+		    res.setDateHeader("Last-Modified", System.currentTimeMillis());
+		    res.setHeader("Pragma", "");
+		    res.setHeader("Cache-Control", "");
+		 
+		    
+		    res.setCharacterEncoding("UTF-8");
+
     	            
     	    MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
     	    Part part;
@@ -1725,57 +1758,93 @@ public class Das2ManagerServlet extends HttpServlet {
     	        String value = paramPart.getStringValue();
     	        if (name.equals("idAnnotation")) {
     	            idAnnotation = new Integer(String.class.cast(value));
-    	            break;
-    	          }
-    	        } 
-    	      }
-    	      
-    	      if (idAnnotation != null) {
-    	        
-    	        annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
-    	        if (this.das2ManagerSecurity.canWrite(annotation)) {
-    	          SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
-    	          
-    	          // Make sure that the genometry server dir exists
-    	          if (!new File(genometry_server_dir).exists()) {
-    	        	  boolean success = (new File(genometry_server_dir)).mkdir();
-    	              if (!success) {
-    	                throw new Exception("Unable to create directory " + genometry_server_dir);      
-    	              }
-    	          }
-    
-    	          String annotationFileDir = annotation.getDirectory(genometry_server_dir);
-    	          
-    	          // Create annotation directory if it doesn't exist
-    	          if (!new File(annotationFileDir).exists()) {
-    	              boolean success = (new File(annotationFileDir)).mkdir();
-    	              if (!success) {
-    	                throw new Exception("Unable to create directory " + annotationFileDir);      
-    	              }      
-    	          }
-    	          
-    	          while ((part = mp.readNextPart()) != null) {        
-    	            if (part.isFile()) {
-    	              // it's a file part
-    	              FilePart filePart = (FilePart) part;
-    	              fileName = filePart.getFileName();
-    	              if (fileName != null) {
-    	                // the part actually contained a file
-    	                long size = filePart.writeTo(new File(annotationFileDir));
-    	              }
-    	              else { 
-    	              }
-    	              out.flush();
-    	            }
-    	          }
-    	          sess.flush();
-    	        } else {
-    	        	System.out.println("Bypassing upload of annotation " + annotation.getName() + " due to insufficient permissions.");
+    	        } else if (name.equals("name")) {
+    	        	annotationName = value;
+    	        } else if (name.equals("codeVisibility")) {
+    	        	codeVisibility = value;
+    	        } else if (name.equals("idGenomeVersion")) {
+    	        	idGenomeVersion = new Integer(value);
+    	        } else if (name.equals("idAnnotationGrouping")) {
+    	        	if (value != null && !value.equals("")) {
+    	        		idAnnotationGrouping = new Integer(value);
+    	        	}
+    	        } else if (name.equals("idUserGroup")) {
+    	        	if (value != null && !value.equals("")) {
+    	        		idUserGroup = new Integer(value);
+    	        	}
     	        }
     	      }
     	      
-    	      tx.commit();
+    	      if (idAnnotation != null) {
+    	    	  break;
+    	      } else if (annotationName != null && codeVisibility != null && idGenomeVersion != null && idAnnotationGrouping != null && idUserGroup != null) {
+    	    	  break;
+    	      }
+    	    
+    	    }
     	      
+    	      
+    	    if (idAnnotation != null) {
+    	    	annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
+    	    } else {
+    	    	// If idAnnotation wasn't sent in as parameter, we are adding
+    	    	// annotation as part of the upload
+    	    	annotation = createNewAnnotation(sess, annotationName, codeVisibility, idGenomeVersion, idAnnotationGrouping.intValue() == -99 ? null : idAnnotationGrouping, idUserGroup.intValue() == -99 ? null : idUserGroup);
+    	    	sess.flush();
+    	    }
+
+    	    if (annotation != null) {
+    	    	if (this.das2ManagerSecurity.canWrite(annotation)) {
+    	    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
+
+    	    		// Make sure that the genometry server dir exists
+    	    		if (!new File(genometry_server_dir).exists()) {
+    	    			boolean success = (new File(genometry_server_dir)).mkdir();
+    	    			if (!success) {
+    	    				throw new Exception("Unable to create directory " + genometry_server_dir);      
+    	    			}
+    	    		}
+
+    	    		String annotationFileDir = annotation.getDirectory(genometry_server_dir);
+
+    	    		// Create annotation directory if it doesn't exist
+    	    		if (!new File(annotationFileDir).exists()) {
+    	    			boolean success = (new File(annotationFileDir)).mkdir();
+    	    			if (!success) {
+    	    				throw new Exception("Unable to create directory " + annotationFileDir);      
+    	    			}      
+    	    		}
+
+    	    		while ((part = mp.readNextPart()) != null) {        
+    	    			if (part.isFile()) {
+    	    				// it's a file part
+    	    				FilePart filePart = (FilePart) part;
+    	    				fileName = filePart.getFileName();
+    	    				if (fileName != null) {
+    	    					// the part actually contained a file
+    	    					long size = filePart.writeTo(new File(annotationFileDir));
+    	    				}
+    	    				else { 
+    	    				}
+    	    			}
+    	    		}
+    	    		sess.flush();
+    	    	} else {
+    	    		System.out.println("Bypassing upload of annotation " + annotation.getName() + " due to insufficient permissions.");
+    	    	}
+    	    }
+
+
+    	    tx.commit();
+    	    
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("SUCCESS");
+			root.addAttribute("idAnnotation", annotation.getIdAnnotation().toString());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+
 		} catch (Exception e) {
 			if (tx != null) {
 				tx.rollback();
@@ -1797,6 +1866,8 @@ public class Das2ManagerServlet extends HttpServlet {
 				sess.close();
 			}
 		}
+		
+		
 	}
 	
 

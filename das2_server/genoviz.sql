@@ -136,7 +136,10 @@ INSERT INTO `AnnotationGrouping` (`idAnnotationGrouping`,`name`,`description`,`i
  (2900,'E_coli_Oct_2007','E_coli_Oct_2007',NULL,2900,NULL),
  (3100,'G_gallus_May_2006','G_gallus_May_2006',NULL,3100,NULL),
  (3301,'G_max_Dec_2008','G_max_Dec_2008',NULL,3301,NULL),
+ (3400, 'H_sapiens_Jun_2002', 'H_sapiens_Jun_2002',NULL,3400,NULL),
+ (3401, 'H_sapiens_Nov_2002', 'H_sapiens_Nov_2002',NULL,3401,NULL),
  (3402,'H_sapiens_Apr_2003','H_sapiens_Apr_2003',NULL,3402,NULL),
+ (3403, 'H_sapiens_Jul_2003', 'H_sapiens_Jul_2003',NULL,3403,NULL),
  (3404,'H_sapiens_May_2004','H_sapiens_May_2004',NULL,3404,NULL),
  (3405,'H_sapiens_Mar_2006','H_sapiens_Mar_2006',NULL,3405,NULL),
  (3500,'M_mulatta_Jan_2006','M_mulatta_Jan_2006',NULL,3500,NULL),
@@ -166,6 +169,7 @@ INSERT INTO `AnnotationGrouping` (`idAnnotationGrouping`,`name`,`description`,`i
  (5400,'S_pombe_Sep_2004','S_pombe_Sep_2004',NULL,5400,NULL),
  (5401,'S_pombe_Apr_2007','S_pombe_Apr_2007',NULL,5401,NULL),
  (5402,'S_pombe_Sep_2007','S_pombe_Sep_2007',NULL,5402,NULL),
+ (5500, 'S_glossinidius_Jan_2006', 'S_glossinidius_Jan_2006', NULL, 5500, NULL),
  (6000,'T_nigroviridis_Feb_2004','T_nigroviridis_Feb_2004',NULL,6000,NULL),
  (6100,'V_vinifera_Apr_2007','V_vinifera_Apr_2007',NULL,6100,NULL),
  (6201,'X_tropicalis_Aug_2005','X_tropicalis_Aug_2005',NULL,6201,NULL);

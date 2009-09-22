@@ -442,7 +442,7 @@ public final class FeatureTreeView extends JComponent {
 		}
 	}
 
-	class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+	private class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
 		FeatureTreeCellRenderer renderer = new FeatureTreeCellRenderer();
 		DefaultMutableTreeNode editedNode;
@@ -520,8 +520,7 @@ public final class FeatureTreeView extends JComponent {
 		private boolean checked;
 
 		public TreeNodeUserInfo(Object genericObject) {
-			this.checked = false;
-			this.genericObject = genericObject;
+			this(genericObject, false);
 		}
 
 		public TreeNodeUserInfo(Object genericObject, boolean checked) {

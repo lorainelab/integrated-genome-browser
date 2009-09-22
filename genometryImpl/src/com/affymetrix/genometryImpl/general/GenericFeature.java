@@ -75,11 +75,11 @@ public final class GenericFeature {
 				featureProps.get("load_hint").equals("Whole Sequence"));
 	}
 	private void setFriendlyURL() {
-		if (this.featureProps == null || !this.featureProps.containsKey("URL") || this.featureProps.get("URL").length() == 0) {
+		if (this.featureProps == null || !this.featureProps.containsKey("url") || this.featureProps.get("url").length() == 0) {
 			return;
 		}
 		try {
-			this.friendlyURL = new URL(this.featureProps.get("URL"));
+			this.friendlyURL = new URL(this.featureProps.get("url"));
 		} catch (MalformedURLException ex) {
 			Logger.getLogger(GenericFeature.class.getName()).log(Level.SEVERE, null, ex);
 		}

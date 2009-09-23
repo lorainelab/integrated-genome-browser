@@ -11,6 +11,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genometryImpl.util.ParserController;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasSource;
 import com.affymetrix.igb.das.DasType;
@@ -296,23 +297,37 @@ public final class FeatureLoading {
 		}
 		try {
 			istr = LocalUrlCacher.getInputStream(annot_url, true);
-			if (istr != null) {
-				IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
-				style.setHumanName(gFeature.featureName);
-				if (GraphSymUtils.isAGraphFilename(fileName)) {
-					URL url = new URL(annot_url);
-					List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-					if (graphs != null) {
-						// Reset the selected Seq Group to make sure that the DataLoadView knows
-						// about any new chromosomes that were added.
-						gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-					}
-				} else {
-					bis = new BufferedInputStream(istr);
-					LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-				}
-				return true;
+			if (istr == null) {
+				return false;
 			}
+			
+			// Put the friendly name of the feature in the tier.
+			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(fileName);
+			if (style != null) {
+				style.setHumanName(gFeature.featureName);
+			}
+			// Due to file loading code, the style is probably stored with the stripped name of the file.
+			String unzippedName = GeneralUtils.getUnzippedName(fileName);
+			String extension = ParserController.getExtension(unzippedName);
+			String strippedName = unzippedName.substring(0, unzippedName.lastIndexOf(extension));
+			style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(strippedName);
+			if (style != null) {
+				style.setHumanName(gFeature.featureName);
+			}
+
+			if (GraphSymUtils.isAGraphFilename(fileName)) {
+				URL url = new URL(annot_url);
+				List<GraphSym> graphs = OpenGraphAction.loadGraphFile(url, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+				if (graphs != null) {
+					// Reset the selected Seq Group to make sure that the DataLoadView knows
+					// about any new chromosomes that were added.
+					gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+				}
+			} else {
+				bis = new BufferedInputStream(istr);
+				LoadFileAction.load(Application.getSingleton().getFrame(), bis, fileName, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+			}
+			return true;
 		} catch (Exception ex) {
 			System.out.println("Problem loading requested url:" + annot_url);
 			ex.printStackTrace();

@@ -13,6 +13,7 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -557,6 +558,72 @@ public abstract class ServerUtils {
 			IndexedSyms iSyms,
 			String annot_type,
 			AnnotatedSeqGroup group) {
+
+		List<SeqSymmetry> symList = getIndexedSymmetries(overlap_span,iSyms,annot_type,group);
+
+		// We need to filter this list to only return overlaps.
+		// Due to the way indexing is implemented, there may have been additional symmetries outside of the specified interval.
+		// This violates the DAS/2 specification, but more importantly, IGB gets confused.
+		return filterForOverlappingSymmetries(overlap_span,symList);
+	}
+
+
+	/**
+	 * Return only the symmetries that have some overlap with this span.
+	 * Chromosome is not an issue; everything returned is on the same chromosome.
+	 * @param overlap_span
+	 * @param symList
+	 * @return
+	 */
+	private static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<SeqSymmetry> symList) {
+		List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
+		for (SeqSymmetry sym : symList) {
+			if (sym instanceof UcscPslSym) {
+				UcscPslSym uSym = (UcscPslSym)sym;
+				SeqSpan span = uSym.getSpan(uSym.getTargetSeq());
+				if (!SeqUtils.overlap(span, overlapSpan)) {
+					continue;
+				}
+				newList.add(sym);
+				continue;
+			}
+
+			int spanCount = sym.getSpanCount();
+			boolean overlaps = false;
+			for (int i=0;i<spanCount;i++) {
+				SeqSpan span = sym.getSpan(i);
+				if (span == null) {
+					continue;
+				}
+				if (!SeqUtils.overlap(span, overlapSpan)) {
+					continue;
+				}
+				overlaps = true;
+				break;
+			}
+			if (overlaps) {
+				newList.add(sym);
+			}
+		}
+		return newList;
+	}
+
+	/**
+	 * Get the list of symmetries.
+	 * @param overlap_span
+	 * @param min - array of min values
+	 * @param max - array of max values
+	 * @param indexedFile - indexed file to read from
+	 * @param filePos - array of indexed file positions
+	 * @param group
+	 * @return
+	 */
+	private static List getIndexedSymmetries(
+			SeqSpan overlap_span,
+			IndexedSyms iSyms,
+			String annot_type,
+			AnnotatedSeqGroup group) {
+
 		InputStream newIstr = null;
 		DataInputStream dis = null;
 		try {
@@ -569,7 +636,7 @@ public abstract class ServerUtils {
 			// We add 1 to the maxPos index.
 			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
 			int maxPos = outputRange[1] + 1;
-			
+
 			if (minPos >= maxPos) {
 				// Nothing found, or invalid values passed in.
 				return Collections.<SeqSymmetry>emptyList();

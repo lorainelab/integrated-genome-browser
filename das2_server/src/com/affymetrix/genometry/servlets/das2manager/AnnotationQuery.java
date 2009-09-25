@@ -27,6 +27,9 @@ public class AnnotationQuery {
 	private Integer            idUserGroup;
 	private Integer            idOrganism;
 	private Integer            idGenomeVersion;
+	private String             isVisibilityPublic = "Y";
+	private String             isVisibilityMembers = "Y";
+	private String             isVisibilityMembersAndCollabs = "Y";
 	private String             text;
 	
     
@@ -61,10 +64,13 @@ public class AnnotationQuery {
 		idUserGroup        = Util.getIntegerParameter(req, "idUserGroup");
 		idOrganism         = Util.getIntegerParameter(req, "idOrganism");
 		idGenomeVersion    = Util.getIntegerParameter(req, "idGenomeVersion");
+		this.isVisibilityMembers = Util.getFlagParameter(req, "isVisibilityMembers");
+		this.isVisibilityMembersAndCollabs = Util.getFlagParameter(req, "isVisibilityMembersAndCollabs");
+		this.isVisibilityPublic = Util.getFlagParameter(req, "isVisibilityPublic");
 		text               = req.getParameter("text");
 		
 		if (scopeLevel == null || scopeLevel.equals("")) {
-			scopeLevel = Das2ManagerSecurity.USER_SCOPE_LEVEL;
+			scopeLevel = Das2ManagerSecurity.ALL_SCOPE_LEVEL;
 		}		
 	}
 
@@ -235,8 +241,25 @@ public class AnnotationQuery {
 					// and groupings.
 					TreeMap<String, ?> rootGroupings = versionToRootGroupings.get(genomeVersion.getName());
 					fillGroupingNode(genomeVersion, versionNode, rootGroupings, das2ManagerSecurity, dictionaryHelper, false);
+					
+					// If selection criteria was applied to query, prune out nodes that don't 
+					// have any content 
+					if (this.hasAnnotationCriteria()) {
+						if (!versionNode.hasContent()) {
+							organismNode.remove(versionNode);					
+						}
+					}
+
 				}
 				
+			}
+			
+			// If selection criteria was applied to query, prune out nodes that don't 
+			// have any content 
+			if (this.hasAnnotationCriteria()) {
+				if (!organismNode.hasContent()) {
+					root.remove(organismNode);					
+				}
 			}
 			
 		}
@@ -262,7 +285,7 @@ public class AnnotationQuery {
 		// since those without annotations would otherwise not show up.
 		for (Organism o : dictionaryHelper.getOrganisms()) {
 			organismMap.put(o.getBinomialName(), o);
-			
+
 			// If we are filtering by organism, only include that one
 			if (this.idOrganism != null) {
 				if (!this.idOrganism.equals(o.getIdOrganism())) {
@@ -273,7 +296,7 @@ public class AnnotationQuery {
 			organismToVersion.put(o.getBinomialName(), versionMap);
 			if (dictionaryHelper.getGenomeVersions(o.getIdOrganism()) != null) {
 				for(GenomeVersion v : dictionaryHelper.getGenomeVersions(o.getIdOrganism())) {
-					
+
 					// If we are filtering by genome version, only include that one
 					if (this.idGenomeVersion != null) {
 						if (!this.idGenomeVersion.equals(v.getIdGenomeVersion())) {
@@ -282,21 +305,20 @@ public class AnnotationQuery {
 					}
 
 					versionMap.put(v, null);
-					
+
 					AnnotationGrouping rootGrouping = v.getRootAnnotationGrouping();
-					
+
 					if (rootGrouping != null) {
 						String groupingKey       = rootGrouping.getName()  + KEY_DELIM + rootGrouping.getIdAnnotationGrouping();
 						TreeMap<String, String> groupings = new TreeMap<String, String>();
 						groupings.put(groupingKey, null);
 						versionToRootGroupings.put(v.getName(), groupings);
 					}
-				
+
 				}
-				
+
 			}
 		}
-		
 		// Hash segments for each genome version
 		if (segmentRows != null) {
 			for (Segment segment : segmentRows) {
@@ -316,6 +338,10 @@ public class AnnotationQuery {
 				segments.add(segment);
 			}			
 		}
+
+		
+		
+
 
 		
 		
@@ -348,6 +374,7 @@ public class AnnotationQuery {
 			if (versionMap == null) {
 				versionMap = new TreeMap<GenomeVersion, Object>(new GenomeVersionComparator());
 				organismToVersion.put(organism.getBinomialName(), versionMap);
+				organismMap.put(organism.getBinomialName(), organism);
 			}
 			if (genomeVersion != null) {
 				versionMap.put(genomeVersion, null);
@@ -573,19 +600,23 @@ public class AnnotationQuery {
 					groupingNode.addAttribute("label", groupingName);	
 					groupingNode.addAttribute("idAnnotationGrouping", annotGrouping.getIdAnnotationGrouping().toString());	
 					groupingNode.addAttribute("idGenomeVersion", genomeVersion.getIdGenomeVersion().toString());	
+					groupingNode.addAttribute("genomeVersion", genomeVersion.getName());	
 					groupingNode.addAttribute("name", annotGrouping.getName().toString());	
 					groupingNode.addAttribute("description", annotGrouping.getDescription() != null ? annotGrouping.getDescription() : "");	
 					groupingNode.addAttribute("canWrite",    das2ManagerSecurity.canWrite(annotGrouping) ? "Y" : "N");
 					groupingNode.addAttribute("userGroup", dictionaryHelper.getUserGroupName(annotGrouping.getIdUserGroup()));
 					groupingNode.addAttribute("idUserGroup",annotGrouping.getIdUserGroup() != null ? annotGrouping.getIdUserGroup().toString() : "");
-					
+					groupingNode.addAttribute("createdBy", annotGrouping.getCreatedBy() != null ? annotGrouping.getCreatedBy() : "");
+					groupingNode.addAttribute("createDate", annotGrouping.getCreateDate() != null ? Util.formatDate(annotGrouping.getCreateDate()) : "");
+
 				} else {
 					groupingNode = parentNode;					
 				}
 				
 				// For each annotation
 				TreeMap<String, ?> annotNameMap = groupingToAnnotations.get(groupingKey);
-				if (annotNameMap != null) {
+				if (annotNameMap != null && annotNameMap.size() > 0) {
+					groupingNode.addAttribute("annotationCount", new Integer(annotNameMap.size()).toString());
 					// For each annotation...
 					for (String annotNameKey : annotNameMap.keySet()) { 
 						String[] tokens1    = annotNameKey.split(KEY_DELIM);
@@ -614,7 +645,24 @@ public class AnnotationQuery {
    
 	
 
-  
+    private boolean hasAnnotationCriteria() {
+    	if (idUserGroup != null ||
+    	    hasVisibilityCriteria()) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
+    private boolean hasVisibilityCriteria() {
+    	if (this.isVisibilityMembers.equals("Y") && this.isVisibilityMembersAndCollabs.equals("Y") && this.isVisibilityPublic.equals("Y")) {
+    		return false;
+    	} else if (this.isVisibilityMembers.equals("N") && this.isVisibilityMembersAndCollabs.equals("N") && this.isVisibilityPublic.equals("N")) {
+    		return false;
+    	} else {
+    		return true;
+    	}
+    }
   
 
 	private void addCriteria(int joinLevel) {
@@ -644,6 +692,34 @@ public class AnnotationQuery {
 			}
 			queryBuf.append(")");
 		}
+		// Filter by annotation's visibility
+		if (joinLevel == ANNOTATION_LEVEL) {
+			if (hasVisibilityCriteria()) {
+				this.AND();
+				int count = 0;
+				queryBuf.append(" a.codeVisibility in (");
+				if (this.isVisibilityMembers.equals("Y")) {
+					queryBuf.append("'" + Visibility.MEMBERS + "'");
+					count++;
+				}
+				if (this.isVisibilityMembersAndCollabs.equals("Y")) {
+					if (count > 0) {
+						queryBuf.append(", ");
+					}
+					queryBuf.append("'" + Visibility.MEMBERS_AND_COLLABORATORS + "'");
+					count++;
+				}
+				if (this.isVisibilityPublic.equals("Y")) {
+					if (count > 0) {
+						queryBuf.append(", ");
+					}
+					queryBuf.append("'" + Visibility.PUBLIC + "'");
+					count++;
+				}
+				queryBuf.append(")");
+			}
+			
+		}
 
 	}
 
@@ -659,6 +735,31 @@ public class AnnotationQuery {
 		}
 		return addWhere;
 	}
+
+	public String getIsVisibilityPublic() {
+    	return isVisibilityPublic;
+    }
+
+	public void setIsVisibilityPublic(String isVisibilityPublic) {
+    	this.isVisibilityPublic = isVisibilityPublic;
+    }
+
+	public String getIsVisibilityMembers() {
+    	return isVisibilityMembers;
+    }
+
+	public void setIsVisibilityMembers(String isVisibilityMembers) {
+    	this.isVisibilityMembers = isVisibilityMembers;
+    }
+
+	public String getIsVisibilityMembersAndCollabs() {
+    	return isVisibilityMembersAndCollabs;
+    }
+
+	public void setIsVisibilityMembersAndCollabs(
+            String isVisibilityMembersAndCollabs) {
+    	this.isVisibilityMembersAndCollabs = isVisibilityMembersAndCollabs;
+    }
 
 
 

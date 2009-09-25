@@ -1,5 +1,6 @@
 package com.affymetrix.genometry.servlets.das2manager;
 
+import java.sql.Date;
 import java.util.Set;
 
 public class AnnotationGrouping {
@@ -13,6 +14,8 @@ public class AnnotationGrouping {
     private Set                annotations;
     private Integer            idUserGroup;
     private Integer            idGenomeVersion;
+    private String             createdBy;
+    private Date               createDate;
 
     
     public Integer getIdAnnotationGrouping() {
@@ -84,4 +87,40 @@ public class AnnotationGrouping {
 	public void setIdUserGroup(Integer idUserGroup) {
     	this.idUserGroup = idUserGroup;
     } 
+	
+	public String getQualifiedName() {
+		String qualifiedName = "/";
+		AnnotationGrouping parent = this.getParentAnnotationGrouping();
+		if (parent != null) {
+			qualifiedName = getName();
+			qualifiedName = recurseGetParentName(qualifiedName);			
+		}
+		return qualifiedName;
+	}
+	
+	private String recurseGetParentName(String qualifiedName) {
+		AnnotationGrouping parent = this.getParentAnnotationGrouping();
+		
+		// Stop before the root annotation grouping
+		if (parent != null && parent.getParentAnnotationGrouping() != null) {
+			if (parent != null && parent.getName() != null) {
+				qualifiedName = parent.getName() + "/" + qualifiedName;
+			
+				qualifiedName = parent.recurseGetParentName(qualifiedName);
+			}
+		}
+		return qualifiedName;
+	}
+	public String getCreatedBy() {
+    	return createdBy;
+    }
+	public void setCreatedBy(String createdBy) {
+    	this.createdBy = createdBy;
+    }
+	public Date getCreateDate() {
+    	return createDate;
+    }
+	public void setCreateDate(Date createDate) {
+    	this.createDate = createDate;
+    }
 }

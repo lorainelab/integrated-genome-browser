@@ -3,6 +3,7 @@ package com.affymetrix.genometry.servlets.das2manager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,8 @@ public class Annotation implements Owned, Propertied {
     private Set                 annotationGroupings;
     private Integer             idUser;
     private Integer             idUserGroup;
+    private String              createdBy;
+    private java.sql.Date       createDate;
     
     private Map<String, Object> props;  // tag/value representation of annotation properties
     
@@ -162,16 +165,20 @@ public class Annotation implements Owned, Propertied {
 		root.addAttribute("genomeVersion", genomeVersion.getName());
 		root.addAttribute("organism", dh.getOrganismName(genomeVersion.getIdOrganism()));
 		root.addAttribute("securityGroup", dh.getUserGroupName(this.getIdUserGroup()));
+		root.addAttribute("createdBy", this.getCreatedBy() != null ? this.getCreatedBy() : "");
+		root.addAttribute("createDate", this.getCreateDate() != null ? Util.formatDate(this.getCreateDate()) : "");
 		Element agsNode = root.addElement("AnnotationGroupings");
 		for(AnnotationGrouping ag : (Set<AnnotationGrouping>)this.getAnnotationGroupings()) {
 			Element agNode = agsNode.addElement("AnnotationGrouping");
-			agNode.addAttribute("name", ag.getName());
+			agNode.addAttribute("name", ag.getQualifiedName());
 		}
 		Element filesNode = root.addElement("Files");
 		
 		String filePath = getDirectory(genometry_manager_data_dir);
 	    File fd = new File(filePath);
 	    if (fd.exists()) {
+	    	
+
 		    Element fileNode = filesNode.addElement("Dir");
 			fileNode.addAttribute("name", this.getFileName());
 			fileNode.addAttribute("url", filePath);
@@ -210,8 +217,15 @@ public class Annotation implements Owned, Propertied {
 					                + f1.getName() : f1.getName());
 				} else {
 					Element fileNode = parentNode.addElement("File");
+
+					long kb = Util.getKilobytes(f1.length());
+					String kilobytes = kb + " kb";
+					
 					fileNode.addAttribute("name", displayName);
 					fileNode.addAttribute("url", fileName);
+					fileNode.addAttribute("size", kilobytes);
+					fileNode.addAttribute("lastModified", Util.formatDate(new java.sql.Date(f1.lastModified())));
+
 				}
 			}
 		}
@@ -297,5 +311,17 @@ public class Annotation implements Owned, Propertied {
 			return false;
 		}
 	}
+	public String getCreatedBy() {
+    	return createdBy;
+    }
+	public void setCreatedBy(String createdBy) {
+    	this.createdBy = createdBy;
+    }
+	public java.sql.Date getCreateDate() {
+    	return createDate;
+    }
+	public void setCreateDate(java.sql.Date createDate) {
+    	this.createDate = createDate;
+    }
    
 }

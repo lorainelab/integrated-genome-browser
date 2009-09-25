@@ -24,6 +24,8 @@
         <property name="idGenomeVersion"             column="idGenomeVersion"            type="integer"/>
         <property name="idUser"                      column="idUser"                     type="integer"/>
         <property name="idUserGroup"                 column="idUserGroup"                type="integer"/>
+        <property name="createdBy"                   column="createdBy"                  type="string"/>
+        <property name="createDate"                  column="createDate"                 type="java.sql.Date"/>
         
 		  	<set name="annotationGroupings" table="AnnotationToAnnotationGrouping" lazy="true" cascade="none">
 					<key column="idAnnotation"/>
@@ -42,6 +44,8 @@
     		<many-to-one name="parentAnnotationGrouping" column="idParentAnnotationGrouping" class="com.affymetrix.genometry.servlets.das2manager.AnnotationGrouping" cascade="none" insert="false" update="false" />
         <property name="idGenomeVersion"             column="idGenomeVersion"            type="integer"/>
         <property name="idUserGroup"                 column="idUserGroup"                type="integer"/>
+        <property name="createdBy"                   column="createdBy"                  type="string"/>
+        <property name="createDate"                  column="createDate"                 type="java.sql.Date"/>
         
         <set name="annotationGroupings" table="AnnotationGrouping" lazy="true" cascade="all" order-by="name">
 			    <key column="idParentAnnotationGrouping"/>

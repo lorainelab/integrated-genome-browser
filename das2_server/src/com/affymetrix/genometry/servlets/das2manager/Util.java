@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 public class Util {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
+    
+	
+	private static final double    KB = Math.pow(2, 10);
 	
 	public static Integer getIntegerParameter(HttpServletRequest req, String parameterName) {
 		if (req.getParameter(parameterName) != null && !req.getParameter(parameterName).equals("")) {
@@ -48,4 +50,7 @@ public class Util {
 		return new Date(dateFormat.parse(date).getTime());
 	}
     
+	public static long getKilobytes(long bytes) {
+		return Math.round(bytes / KB);
+	}
 }

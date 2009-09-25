@@ -226,4 +226,116 @@ public class ServerUtilsTest {
 		result = ServerUtils.specifiedInsideSpan(inside_span, result);
 		assertEquals(138, result.size());
 	}
+
+	/**
+	 * Testing that max overlap method works as designed.
+	 * Testing half-open spans on both sides, inside spans, and outside spans.
+	 */
+	@Test
+	public void testInternalOverlapCode() {
+		int[] overlapRange = new int[2];
+		int[] outputRange = new int[2];
+		overlapRange[0] = 30068522;
+		overlapRange[1] = 30072392;
+		int[]min = new int[6];
+		int[]max = new int[6];
+		min[0] = 30068510; max[0] = 30068520; // completely outside range on left side; should be excluded
+		min[1] = 30068521; max[1] = 30072392; // outside range on left side; should be included
+		min[2] = 30068522; max[2] = 30072392; // exactly the range; should be included
+		min[3] = 30068522; max[3] = 30072393; // outside range on right side; should be included
+		min[4] = 30068532; max[4] = 30072382; // completely inside the range; should be included
+		min[5] = 30072400; max[5] = 30072410; // completely outside range on right side; should be excluded
+		
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(1,outputRange[0]);
+		assertEquals(4,outputRange[1]);
+		
+		overlapRange[0] = 30068523;
+		overlapRange[1] = 30072392;
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(1,outputRange[0]);
+		assertEquals(4,outputRange[1]);
+
+		overlapRange[0] = 30068523;
+		overlapRange[1] = 30068530;
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(1,outputRange[0]);
+		assertEquals(3,outputRange[1]);
+
+		overlapRange[0] = 30068530;
+		overlapRange[1] = 30068531;
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(1,outputRange[0]);
+		assertEquals(3,outputRange[1]);
+
+		overlapRange[0] = 30068510;
+		overlapRange[1] = 30068520;
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(0,outputRange[0]);
+		assertEquals(0,outputRange[1]);
+
+		overlapRange[0] = 30068511;
+		overlapRange[1] = 30068520;
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(0,outputRange[0]);
+		assertEquals(0,outputRange[1]);
+
+		overlapRange[0] = 30068510;
+		overlapRange[1] = 30068519;
+		IndexingUtils.findMaxOverlap(overlapRange, outputRange, min, max);
+		assertEquals(0,outputRange[0]);
+		assertEquals(0,outputRange[1]);
+	}
+	
+	@Test
+	public void testOverlap2() {
+		String seqid="chr1";
+
+		String overlap = "30068522:30072392";
+		SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, genome);
+
+		assertNotNull(overlap_span);
+		//assertEquals(22949908,overlap_span.getMin());
+		//assertEquals(22950581,overlap_span.getMax());
+
+		String query_type="mRNA1.sm";
+		List<SeqSymmetry> result = null;
+		result = ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
+		assertNotNull(result);
+		assertEquals(6, result.size());	// not sure why all 6 of these are here
+
+		List<UcscPslSym> tempResult = new ArrayList<UcscPslSym>(result.size());
+
+		BioSeq seq = genome.getSeq(seqid);
+		assertNotNull(seq);
+
+		IndexWriter iWriter = new PSLParser();
+		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
+				result, seq, iWriter.getComparator(seq));
+		assertEquals(6, sortedSyms.size());
+		/*for(SeqSymmetry res : sortedSyms) {
+			tempResult.add((UcscPslSym)res);
+			System.out.println("sorted ID: " + res.getID());
+		}*/
+
+		String testFileName = baseDir + "/" + versionString + "/mRNA_INDEX_TEST.psl";
+		File testFile = new File(testFileName);
+		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
+
+		IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms, testFileName);
+
+		List<SeqSymmetry> result2 = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", genome);
+		/*	for(SeqSymmetry res : result2) {
+			tempResult.add((UcscPslSym)res);
+			System.out.println("ID: " + res.getID());
+		}*/
+		assertEquals(6, result2.size());
+
+		if (testFile.exists()) {
+			testFile.delete();
+		}
+	}
+
+	
+
 }

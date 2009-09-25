@@ -224,7 +224,7 @@ public class LinkPSLParserTest {
 			/*for (SeqSymmetry sym : newResults) {
 				SeqUtils.printSymmetry(sym);
 			}*/
-			assertEquals(144, newResults.size());
+			assertEquals(146, newResults.size());
 
 			if (testFile.exists()) {
 				testFile.delete();

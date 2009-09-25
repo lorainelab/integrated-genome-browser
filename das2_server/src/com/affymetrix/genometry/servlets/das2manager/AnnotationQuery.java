@@ -637,6 +637,23 @@ public class AnnotationQuery {
 				// Recurse for each annotation grouping (under a grouping)
 				TreeMap<String, ?> childGroupings = groupingToGroupings.get(groupingKey);
 				fillGroupingNode(genomeVersion, groupingNode, childGroupings, das2ManagerSecurity, dictionaryHelper, true);
+				
+				// If selection criteria was applied to query, prune out nodes that don't 
+				// have any content 
+				if (this.hasAnnotationCriteria()) {
+					if (!groupingNode.hasContent()) {
+						// Always show (don't prune) group owned folders
+						// if user group criteria was applied.
+						if (this.idUserGroup != null && 
+							groupingNode.getName().equals("AnnotationGrouping") &&
+						    groupingNode.attributeValue("idUserGroup") != null &&
+						    !groupingNode.attributeValue("idUserGroup").equals("")) {
+							
+						} else {
+							parentNode.remove(groupingNode);					
+						}
+					}
+				}
 			}					
 		}
 
@@ -653,6 +670,7 @@ public class AnnotationQuery {
     		return false;
     	}
     }
+    
     
     private boolean hasVisibilityCriteria() {
     	if (this.isVisibilityMembers.equals("Y") && this.isVisibilityMembersAndCollabs.equals("Y") && this.isVisibilityPublic.equals("Y")) {

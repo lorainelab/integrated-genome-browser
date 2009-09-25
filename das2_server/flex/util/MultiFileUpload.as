@@ -155,7 +155,7 @@ package util
 	        _progressbar.label = "";
 	        
 	        // Set Up UI Buttons;
-	        _uploadbutton.enabled = false;
+	        //_uploadbutton.enabled = false;
 	        _remselbutton.enabled = false;
 	        _remallbutton.enabled = false;
 	        
@@ -277,7 +277,8 @@ package util
 	            for(i=0;i < _files.length;i++){
 	            _totalbytes +=  _files[i].size;
 	            }
-	        _progressbar.label = "Total Files: "+  _files.length+ " Total Size: " + Math.round(_totalbytes/1024) + " kb"
+	        _progressbar.visible = true;
+	        _progressbar.label = _files.length + " files, " + Math.round(_totalbytes/1024) + " kb total size"
         }        
         
         // Checks the files do not exceed maxFileSize | if _maxFileSize == 0 No File Limit Set
@@ -302,13 +303,14 @@ package util
         private function resetProgressBar():void{
         
                   _progressbar.label = "";
+                  _progressbar.visible = false;
                  _progressbar.maximum = 0;
                  _progressbar.minimum = 0;
         }
         
         // reset form item elements
         private function resetForm():void{
-            _uploadbutton.enabled = false;
+            //_uploadbutton.enabled = false;
             _uploadbutton.addEventListener(MouseEvent.CLICK,uploadFiles);
             _uploadbutton.label = "Upload";
             _progressbar.maximum = 0;
@@ -328,12 +330,12 @@ package util
        // enable or disable upload and remove controls based on files in the cue;        
         private function checkCue():void{
              if (_files.length > 0){
-                _uploadbutton.enabled = true;
+                //_uploadbutton.enabled = true;
                 _remselbutton.enabled = true;
                 _remallbutton.enabled = true;            
              }else{
                 resetProgressBar();
-                _uploadbutton.enabled = false;     
+                //_uploadbutton.enabled = false;     
              }    
         }
 
@@ -385,9 +387,10 @@ package util
         }
         
         // called during the file upload of each file being uploaded | we use this to feed the progress bar its data
-        private function progressHandler(event:ProgressEvent):void {        
+        private function progressHandler(event:ProgressEvent):void {
+        	_progressbar.visible = true;        
             _progressbar.setProgress(event.bytesLoaded,event.bytesTotal);
-            _progressbar.label = "Uploading " + Math.round(event.bytesLoaded / 1024) + " kb of " + Math.round(event.bytesTotal / 1024) + " kb " + (_files.length - 1) + " files remaining";
+            _progressbar.label = "Uploading " + Math.round(event.bytesLoaded / 1024) + " kb of " + Math.round(event.bytesTotal / 1024) + " kb (" + (_files.length - 1) + " files remaining)";
         }
 
 		private function dataCompleteHandler(dataCompleteEvent:DataEvent) :void

@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="{'Add new annotation to ' + parentName}"	
 	showCloseButton="true" 
-	width="470" 
-	height="330" 
+	width="518" 
+	height="446" 
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconAnnotation}"
 	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
@@ -22,7 +22,7 @@
          <idGenomeVersion>{genomeVersion.@idGenomeVersion}</idGenomeVersion>
          <idAnnotationGrouping>{idParentAnnotationGrouping}</idAnnotationGrouping>
          <codeVisibility>{visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : ''}</codeVisibility>
-         <idUserGroup>{this.annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : ''}</idUserGroup>
+         <idUserGroup>{visibilityCombo.selectedItem.@id != 'PUBLIC' &amp;&amp; this.annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : ''}</idUserGroup>
       </mx:request>
     </mx:HTTPService> 
     
@@ -62,6 +62,9 @@
 	public var idAnnotation:Object = null;
 	private var multiFileUpload:MultiFileUpload;
 	
+	[Bindable]
+	private var trimmedName:String = "";
+	
 	private var itemToSelect:XML;
 
 	public function init(genomeVersion:Object, parent:Object):void {
@@ -80,7 +83,6 @@
 			for each(var item:Object in parentApplication.dictionaryVisibility) {
 				if (item.@id == 'MEM') {
 					this.visibilityCombo.selectedItem = item;
-					this.currentState = 'GroupVisibilityState';
 					break;
 				}
 			}
@@ -103,18 +105,33 @@
 		getUploadURL.send();
 	}
 	
+	private function trimName():void {
+		this.trimmedName = annotationName.text;
+		var pos:int = trimmedName.lastIndexOf("/");
+		if (pos < 0) {
+			pos = trimmedName.lastIndexOf("\\");
+		}
+		
+		if (pos >= 0) {
+			var endPos:int = trimmedName.indexOf(".graphs.seqs", pos);
+			if (endPos < 0) {
+				endPos = trimmedName.indexOf(".", pos);
+			}
+			if (endPos < 0) {
+				endPos = trimmedName.length;
+			}
+			trimmedName  = trimmedName.substring(pos + 1, endPos);
+			
+			uploadBrowseButton.setFocus();
+			this.defaultButton = uploadBrowseButton;
+			
+			
+		}
+	}
+
 	
 
 	
-	private function changeState():void {
-		if (this.visibilityCombo.selectedItem == null) {
-			this.currentState == "";
-		} else if(this.visibilityCombo.selectedItem.@id == "MEM" || this.visibilityCombo.selectedItem.@id == "MEMCOL") {
-			this.currentState = "GroupVisibilityState";
-		} else {
-			this.currentState = "";
-		}
-	}
 
    	private function onAddAnnotation(event:ResultEvent):void {
 		if (addAnnotation.lastResult.name() == "SUCCESS") {			
@@ -173,8 +190,8 @@
            postVariables.idAnnotationGrouping = idParentAnnotationGrouping != null ? idParentAnnotationGrouping : '-99';
            postVariables.codeVisibility = visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : 'PUBLIC';
            postVariables.idUserGroup = '-99';
-           if (this.currentState == 'GroupVisibilityState' && this.annotationUserGroupCombo.selectedItem != null) {
-           	postVariables.idUserGroup = annotationUserGroupCombo.selectedItem.@id;
+           if (this.visibilityCombo.selectedItem != null && this.visibilityCombo.selectedItem.@id != 'PUBLIC' && this.annotationUserGroupCombo.selectedItem != null) {
+           		postVariables.idUserGroup = annotationUserGroupCombo.selectedItem.@id;
            } 
 
 
@@ -263,49 +280,48 @@
 	]]>
     </mx:Script>
     
-    	    <mx:states>
-        <mx:State name="GroupVisibilityState">
-            <mx:SetProperty name="height" value="346"/>
-            <mx:SetProperty target="{saveButton}" name="enabled">
-                <mx:value>{annotationName.text != null ? true : false &amp;&amp; annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '' ? true : false}</mx:value>
-            </mx:SetProperty>
-            <mx:SetProperty name="width" value="476"/>
-            <mx:AddChild relativeTo="{vbox2}" position="before">
-                <mx:HBox width="100%" id="hbox2">
-                	<mx:Label text="User Group:" width="105"/>
-                	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name"></mx:ComboBox>
-                </mx:HBox>
-            </mx:AddChild>
-        </mx:State>
-    </mx:states>
-    <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%" verticalGap="4">
-        <mx:VBox width="100%" height="100%" id="vbox1">
+    <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%">
+        <mx:VBox width="100%" height="100%" id="vbox1" verticalGap="25">
 
-		    <mx:HBox width="100%">
-		    	<mx:Label text="Name:" width="105"/>
-		    	<mx:TextInput id="annotationName" width="100%"/>
-		    </mx:HBox>
-			<mx:HBox width="100%">
-				<mx:Label text="Visibility:" width="105"/>
-				<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="changeState()"></mx:ComboBox>							        	
-			</mx:HBox>            	
-			<mx:VBox styleName="panelBody" label="Files" width="100%" height="100%"  id="vbox2" verticalGap="2" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0">
+			<mx:VBox  width="100%" verticalGap="0">
+                <mx:Label text="Name:" width="100%" fontWeight="bold" id="label2"/>
+			    <mx:HBox width="100%">
+			    	<mx:TextArea id="annotationName" width="100%" change="{initializeFileUploadParameters()}"/>
+			    </mx:HBox>
+			    <mx:HBox width="100%" horizontalAlign="left">
+				    <mx:LinkButton id="trimButton" label="Trim name" click="trimName()" styleName="linkMenuButton" textDecoration="underline" paddingTop="0" paddingLeft="0"/>			    	
+			    </mx:HBox>
+				
+			</mx:VBox>
+			<mx:VBox label="Files" width="100%" height="100%"  id="vbox2" verticalGap="0" paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0">
 				<mx:HBox width="100%">
-					<mx:Label text="File(s) to upload" id="label1" width="105"/>
-					<mx:Button id="uploadBrowseButton" 
-						label="Choose files" 
+					<mx:LinkButton id="uploadBrowseButton" 
+						label="Choose files"
 						icon="{parentApplication.iconChooseFiles}"  
 					    disabledIcon="{parentApplication.iconChooseFilesDisabled}"  
-				    	 toolTip="Choose file(s) to upload" />
+					   	 toolTip="Choose file(s) to upload"  textDecoration="underline" paddingTop="0" paddingLeft="0" fontWeight="bold"/>
 					
 				</mx:HBox>
 				<mx:VBox width="100%" height="100%" verticalGap="2">
 					<mx:DataGrid id="uploadFilesGrid" width="100%" height="100%">				
 					</mx:DataGrid>				
-				  		<mx:Spacer  width="100%" height="10"/>		
+					<mx:ProgressBar id="uploadProgressBar"  visible="true" width="100%" labelPlacement="center" trackHeight="15" height="20" fontWeight="normal" themeColor="#EAED9A"/>
 				</mx:VBox>
-				<mx:ProgressBar id="uploadProgressBar"  width="100%" labelPlacement="center" trackHeight="15" height="20" fontWeight="normal" themeColor="#EAED9A"/>
 			</mx:VBox>
+			<mx:VBox width="100%" id="vbox3" verticalGap="0">
+				<mx:Label text="Visibility:" width="100%" fontWeight="bold" id="label3"/>
+				<mx:HBox width="100%" id="visibilityBox">
+					<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="240"  change="{initializeFileUploadParameters()}"></mx:ComboBox>							        					
+					<mx:HBox width="100%" id="hbox0" verticalAlign="middle">
+						<mx:Label text="User Group:">
+							<mx:visible>{visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != 'PUBLIC' ? true : false}</mx:visible>
+						</mx:Label>
+						<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="{initializeFileUploadParameters()}">
+							<mx:visible>{visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != 'PUBLIC' ? true : false}</mx:visible>
+						</mx:ComboBox>
+					</mx:HBox>
+				</mx:HBox>
+			</mx:VBox>            	
         </mx:VBox>
 	
 
@@ -317,7 +333,7 @@
 	    <mx:Button id="uploadClearButton" 
             width="0" visible="false" />
 		<mx:Button id="saveButton"  
-			enabled="{annotationName.text != null ? true : false}" 
+			enabled="{annotationName.text != null &amp;&amp; annotationName.text != '' &amp;&amp; visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != '' &amp;&amp; (!annotationUserGroupCombo.visible || (annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '')) ? true : false}" 
 			icon="{parentApplication.iconSave}" 
 			disabledIcon="{parentApplication.iconSaveDisabled}" 
 			label="Save"
@@ -325,5 +341,7 @@
 		<mx:Button id="cancelButton" label="Cancel" click="closeWindow()"/>
 	</mx:ControlBar>
 	
+	<mx:Binding source="trimmedName" destination="annotationName.text"/>
+
 
 </mx:TitleWindow>

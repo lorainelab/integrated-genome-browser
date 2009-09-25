@@ -169,29 +169,6 @@ public class LinkPSLParserTest {
 			assertNotNull(result);
 			assertEquals(2103, result.size());	// all types of symmetries
 			@SuppressWarnings("unchecked")
-			
-
-			/*assertNotNull(seq.getAnnotation(type + " " + ProbeSetDisplayPlugin.CONSENSUS_TYPE));
-			// Test non-indexed scheme
-			String query_type=type;
-			String overlap = "3000000:160000000";
-			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-			List<SeqSymmetry> newResults = ServerUtils.getOverlappedSymmetries(overlap_span,query_type);
-			assertEquals(239, newResults.size());
-			overlap = "115000000:123000000";
-			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-			newResults = ServerUtils.getOverlappedSymmetries(overlap_span,query_type);*/
-			/*for (SeqSymmetry sym : newResults) {
-				SeqUtils.printSymmetry(sym);
-			}*/
-			/*assertEquals(144, newResults.size());
-			overlap = "12722772:12723220";
-			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
-			newResults = ServerUtils.getOverlappedSymmetries(overlap_span,query_type);
-			for (SeqSymmetry sym : newResults) {
-				SeqUtils.printSymmetry(sym);
-			}
-			assertEquals(144, newResults.size());*/
 
 			Comparator<UcscPslSym> USCCCompare = parser.getComparator(seq);
 
@@ -210,21 +187,40 @@ public class LinkPSLParserTest {
 			String overlap = "3000000:160000000";
 			SeqSpan overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
 			List<SeqSymmetry>newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
-			assertEquals(239, newResults.size());
-			overlap = "115000000:123000000";
+			assertEquals(96, newResults.size());	// first 96 lines of file are < 160000000
+
+			overlap = "160000000:160254000";
 			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
 			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
-			/*for (SeqSymmetry sym : newResults) {
-				SeqUtils.printSymmetry(sym);
-			}*/
-			assertEquals(144, newResults.size());
+			assertEquals(0, newResults.size()); // no spans here
+
+			overlap = "160254000:160254500";
+			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
+			assertEquals(1, newResults.size());
+			assertEquals("RT-U34:S78284_S_AT", newResults.get(0).getID());	// only feature in this span.
+
+			overlap = "160254500:160254600";
+			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
+			assertEquals(1, newResults.size());
+			assertEquals("RT-U34:S78284_S_AT", newResults.get(0).getID());	// only feature in this span.
+
+			overlap = "160254600:160254700";
+			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
+			assertEquals(0, newResults.size()); // no spans here
+
+			overlap = "122000000:123000000";
+			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
+			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
+			assertEquals(1, newResults.size());
+			assertEquals("RT-U34:L29232_AT", newResults.get(0).getID()); // only feature in this span
+			
 			overlap = "12722772:12723220";
 			overlap_span = ServerUtils.getLocationSpan(seqid, overlap, group);
 			newResults = ServerUtils.getIndexedOverlappedSymmetries(overlap_span,iSyms,"testOUT",group);
-			/*for (SeqSymmetry sym : newResults) {
-				SeqUtils.printSymmetry(sym);
-			}*/
-			assertEquals(146, newResults.size());
+			assertEquals(3, newResults.size());	// first three in the file
 
 			if (testFile.exists()) {
 				testFile.delete();

@@ -569,6 +569,11 @@ public abstract class ServerUtils {
 			// We add 1 to the maxPos index.
 			// Since filePos is recorded at the *beginning* of each line, this allows us to read the last element.
 			int maxPos = outputRange[1] + 1;
+			
+			if (minPos >= maxPos) {
+				// Nothing found, or invalid values passed in.
+				return Collections.<SeqSymmetry>emptyList();
+			}
 			byte[] bytes = IndexingUtils.readBytesFromFile(
 					iSyms.file, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
 

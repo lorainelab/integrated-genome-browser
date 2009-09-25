@@ -260,14 +260,20 @@
 			if (item.name() == "Organism") {
 				return parentApplication.iconOrganism;
 			} else if (item.name() == "AnnotationGrouping") {
-				return parentApplication.iconAnnotationGrouping;
+				if (item.@idUserGroup != '') {
+					return parentApplication.iconAnnotationGroupingForGroup;					
+				} else {
+					return parentApplication.iconAnnotationGrouping;										
+				}
 			} else if (item.name() == "GenomeVersion") {
 				return parentApplication.iconGenomeVersion;
 			} else if (item.name() == "Annotation") {
-				if (item.@codeVisibility == "PUBLIC") {
-					return parentApplication.iconAnnotation;
+				if (item.@codeVisibility == "MEM") {
+					return parentApplication.iconAnnotationMember;
+				} else if (item.@codeVisibility == "MEMCOL") {
+					return parentApplication.iconAnnotationMemberCollab;
 				} else {
-					return parentApplication.iconPrivateAnnotation;
+					return parentApplication.iconAnnotation;
 				}
 			} else {
 				return parentApplication.iconAnnotation;
@@ -404,23 +410,25 @@
         public function refreshAnnotations():void {
        		var parms:Object = new Object();
         	
-        	if (currentState == "UserState") {
-        		parms.scopeLevel = this.scopeRadioGroup.selectedValue;
-        		if (parms.scopeLevel == null) {
-        			parms.scopeLevel = "ALL";
-        		}
-        	} else if (currentState == "AdminState") {
+        	if (currentState == "AdminState") {
         		parms.idUserGroup = this.userGroupCombo.selectedItem != null ? this.userGroupCombo.selectedItem.@id : "";
+        	}
+        	if (currentState != "GuestState") {
+        		parms.isVisibilityPublic = this.cbVisibilityPublic.selected ? "Y" : "N";
+        		parms.isVisibilityMembers = this.cbVisibilityMem.selected ? "Y" : "N";
+        		parms.isVisibilityMembersAndCollabs = this.cbVisibilityMemCol.selected ? "Y" : "N";
         	}
         	parms.idOrganism = this.organismCombo.selectedItem != null ? this.organismCombo.selectedItem.@id : "";
         	parms.idGenomeVersion = this.genomeVersionCombo.selectedItem != null ? this.genomeVersionCombo.selectedItem.@id : "";
+        	
         	
         	getAnnotations.send(parms);
         }
                     
 		private function onGetAnnotations(event:ResultEvent):void {
 			if (getAnnotations.lastResult.name() == "Annotations") {
-				
+				annotationsTree.selectedItem = null;
+
 				if (this.dirtyOrganism != null) {
 					this.dirtyOrganism.resetDirty();
 				}
@@ -436,7 +444,7 @@
 
 				}
 				
-				callLater(expandAllAnnotationNodes);
+				callLater(expandAppropriateAnnotationNodes);
 			} else if (getAnnotations.lastResult.name() == "Error") {
 				Alert.show(getAnnotations.lastResult.@message);
 			} else {
@@ -446,22 +454,39 @@
 		
 		private function selectTreeItem():void {
 			if (treeItemToSelect != null) {
-				var item:Object = null;
-				if (treeItemToSelect.name() == "Organism") {
-					item = getAnnotations.lastResult.Organism.(@idOrganism == treeItemToSelect.@idOrganism);
-				} else if (treeItemToSelect.name() == "GenomeVersion") {
-					item = getAnnotations.lastResult..GenomeVersion.(@idGenomeVersion == treeItemToSelect.@idGenomeVersion);
-				} else if (treeItemToSelect.name() == "AnnotationGrouping") {
-					item = getAnnotations.lastResult..AnnotationGrouping.(@idAnnotationGrouping == treeItemToSelect.@idAnnotationGrouping);
-				} else if (treeItemToSelect.name() == "Annotation") {
-					item = getAnnotations.lastResult..Annotation.(@idAnnotation == treeItemToSelect.@idAnnotation && @idAnnotationGrouping == treeItemToSelect.@idAnnotationGrouping);
-				}
+				var item:Object = getItemToSelect();
+				
 				if (item != null) {
 					annotationsTree.selectedItem = item[0];
 					annotationsTree.scrollToIndex(annotationsTree.selectedIndex);
+				} else {
+					annotationsTree.selectedItem = null;
 				}
 			}
 			selectView();
+		}
+		
+		private function getItemToSelect():XML {
+			if (treeItemToSelect == null) {
+				return null;
+			} 
+			
+			var item:XMLList = null;
+			if (treeItemToSelect.name() == "Organism") {
+				item = getAnnotations.lastResult.Organism.(@idOrganism == treeItemToSelect.@idOrganism);
+			} else if (treeItemToSelect.name() == "GenomeVersion") {
+				item = getAnnotations.lastResult..GenomeVersion.(@idGenomeVersion == treeItemToSelect.@idGenomeVersion);
+			} else if (treeItemToSelect.name() == "AnnotationGrouping") {
+				item = getAnnotations.lastResult..AnnotationGrouping.(@idAnnotationGrouping == treeItemToSelect.@idAnnotationGrouping);
+			} else if (treeItemToSelect.name() == "Annotation") {
+				item = getAnnotations.lastResult..Annotation.(@idAnnotation == treeItemToSelect.@idAnnotation && @idAnnotationGrouping == treeItemToSelect.@idAnnotationGrouping);
+			}
+			if (item != null && item.length() > 0) {
+				return XML(item[0]);				
+			} else {
+				return null;
+			}
+			
 		}
 		
 		private function onTreeClick():void {
@@ -556,6 +581,43 @@
 				Alert.show("An error occurred while getting genome version ");				
 			}		
 		}	
+		private function expandAppropriateAnnotationNodes():void {
+			var itemToSelect:XML = getItemToSelect();
+			
+			if (cbAlwaysExpandTree.selected) {
+				// If the user has check the 'Expand tree' checkbox,
+				// just expand all nodes
+				this.expandAllAnnotationNodes();
+				annotationsTree.validateNow();
+				callLater(selectTreeItem);
+			}else if (itemToSelect != null && (itemToSelect.name() == "AnnotationGrouping" || itemToSelect.name() == "Annotation")) {
+				// If there is a tree, expand so it and its ancestors.
+				recurseExpandParent(itemToSelect);
+	  			annotationsTree.validateNow();
+	  			callLater(selectTreeItem);
+			} else {
+				// If no item to select or we have selected organism or genome version, 
+				// expand out to first folder level for all organisms, genome versions.
+				annotationsTree.expandItem(getAnnotations.lastResult, true);
+  				for each(var organism:Object in getAnnotations.lastResult..Organism) {
+  					annotationsTree.expandItem(organism, true);
+  				}
+  				for each(var version:Object in getAnnotations.lastResult..GenomeVersion) {
+  					annotationsTree.expandItem(version, true);
+  				}
+			}
+
+		}		
+		
+		private function recurseExpandParent(item:XML):void {
+			if (item.name() != 'Annotation') {
+				annotationsTree.expandItem(item, true);				
+			}
+			if (item.parent() != null) {
+				recurseExpandParent(item.parent());									
+			}
+
+		}
 
 		private function expandAllAnnotationNodes():void {
 
@@ -571,9 +633,38 @@
   			}
   			annotationsTree.validateNow();
   			
-  			callLater(selectTreeItem);
+
 
 		}		
+		private function collapseAllAnnotationNodes():void {
+
+  			annotationsTree.expandItem(getAnnotations.lastResult, false);
+  			for each(var organism:Object in getAnnotations.lastResult..Organism) {
+  				annotationsTree.expandItem(organism, false);
+  			}
+  			for each(var version:Object in getAnnotations.lastResult..GenomeVersion) {
+  				annotationsTree.expandItem(version, false);
+  			}
+  			for each(var grouping:Object in getAnnotations.lastResult..AnnotationGrouping) {
+  				annotationsTree.expandItem(grouping, false);
+  			}
+  			annotationsTree.validateNow();
+  		}
+  		
+  		private function setVisibilityCheckboxes():void {
+  			if (currentState == "AdminState") {
+  				if (this.userGroupCombo.selectedItem != null && this.userGroupCombo.selectedItem.@id != '') {
+					this.cbVisibilityMem.selected = true;
+					this.cbVisibilityMemCol.selected = true;
+					this.cbVisibilityPublic.selected = false;  					
+  				} else {
+  					this.cbVisibilityMem.selected = true;
+					this.cbVisibilityMemCol.selected = true;
+					this.cbVisibilityPublic.selected = true;
+  				}
+  			}
+  			
+  		}
 		
 		/************************************************************************
 		 * Refresh DAS2 Server
@@ -1389,9 +1480,9 @@
 
     <mx:Array id="newButtonItemsForOrganism">
         <mx:Object label="Genome version"
-                icon="@Embed(source='assets/camera_small.png')" />
+                icon="@Embed(source='assets/genome_version.png')" />
         <mx:Object label="Organism"
-                icon="@Embed(source='assets/picture.png')"  disabled="true"/>
+                icon="@Embed(source='assets/organism.png')"  disabled="true"/>
     </mx:Array>
 
     <mx:Array id="newButtonItemsForGenomeVersion">
@@ -1419,19 +1510,29 @@
 		paddingLeft="0" 
 		paddingRight="0" 
 		paddingTop="0" 
-		verticalGap="1">
-		<mx:VBox width="100%" styleName="headerBar" horizontalGap="20" paddingTop="4" paddingBottom="4" paddingLeft="4" paddingRight="4" verticalGap="0" id="vbox5">
-		    <mx:HBox width="100%">
-				<mx:HBox horizontalGap="0" verticalAlign="middle">
-					<mx:Label text="Show annotations for Organism:" id="label3"/>
+		verticalGap="2">
+		<mx:VBox width="100%" styleName="headerBar" horizontalGap="20" paddingTop="0" paddingBottom="2" paddingLeft="2" paddingRight="2" verticalGap="0" id="vbox5">
+		    <mx:HBox width="100%" verticalAlign="top">
+				<mx:Label text="Show annotations for:" id="label3" styleName="menuLabel" paddingTop="0" paddingBottom="0"/>
+				<mx:VBox verticalGap="0" verticalAlign="middle" paddingLeft="4" paddingTop="0">
+				    <mx:Label text="Organism" styleName="menuLabel" paddingTop="0"/>
 					<mx:ComboBox labelField="@binomialName" id="organismCombo" change="refreshAnnotations()" width="200">
 						<mx:dataProvider>{parentApplication.dictionaryOrganism}</mx:dataProvider>
 					</mx:ComboBox>
-				</mx:HBox>
-				<mx:HBox horizontalGap="0" verticalAlign="middle">
-					<mx:Label text="Genome Version:"/>
+				</mx:VBox>
+				<mx:VBox verticalGap="0" verticalAlign="middle" paddingTop="0">
+					<mx:Label text="Genome Version" styleName="menuLabel" paddingTop="0"/>
 					<mx:ComboBox dataProvider="{organismCombo.selectedItem.GenomeVersion}" labelField="@name" id="genomeVersionCombo" change="refreshAnnotations()" width="180"></mx:ComboBox>
-				</mx:HBox>
+				</mx:VBox>
+				<mx:VBox height="100%" verticalGap="0" id="vbox6" paddingTop="0">
+					<mx:Label text="Visibility" styleName="menuLabel" paddingTop="0"/>
+					<mx:HBox horizontalGap="2" paddingLeft="4">
+					    <mx:CheckBox id="cbVisibilityMem" label="Members"  selected="true" paddingBottom="0" paddingTop="0" styleName="menuLabelSmall" click="refreshAnnotations()"/>
+					    <mx:CheckBox id="cbVisibilityMemCol" label="Members &amp; collaborators" paddingLeft="0" selected="true"  paddingTop="0" paddingBottom="0" styleName="menuLabelSmall" click="refreshAnnotations()"/>
+					    <mx:CheckBox id="cbVisibilityPublic" label="Public" selected="true" paddingLeft="0"  paddingTop="0" paddingBottom="0" styleName="menuLabelSmall" click="refreshAnnotations()"/>
+						
+					</mx:HBox>
+				</mx:VBox>
 			    <mx:HBox horizontalGap="0" id="hbox1">
 			    </mx:HBox>
 				<mx:HBox horizontalGap="0" verticalAlign="middle" id="hbox13">				
@@ -1442,35 +1543,35 @@
 		</mx:VBox>
 
 		<mx:HDividedBox width="100%" height="100%">
-		    <mx:VBox  styleName="headerBar" height="100%" width="435">
-			        <mx:Label text="Annotations" styleName="headerLabel"/>
-			        <mx:VBox width="100%" verticalGap="3">
+		    <mx:VBox  styleName="headerBar" height="100%" width="360" verticalGap="0">
+			        <mx:VBox width="100%" verticalGap="0">
 			        <mx:HBox width="100%" horizontalGap="0" paddingLeft="0">
 			               <mx:LinkButton  label="New Organism" 
-			               	    icon="@Embed(source='assets/picture_add.png')" 
+			               	    icon="@Embed(source='assets/organism_new.png')" 
 			               	    enabled="true"
-  					        	disabledIcon="@Embed(source='assets/picture_new_disable.png')"  
+  					        	disabledIcon="@Embed(source='assets/organism_new_disable.png')"  
   					        	toolTip="New organism"
 								styleName="linkMenuButton"   					        	
   					        	click="{addItem('Organism')}" paddingRight="0" leading="0" 
-  					        	labelPlacement="right" textAlign="left" paddingLeft="0"/>
-				            <mx:LinkButton  label="New Genome version" icon="@Embed(source='assets/camera_small_add.png')" 
+  					        	labelPlacement="right" textAlign="left" paddingLeft="0" width="95"/>
+				            <mx:LinkButton  label="Genome version" 
+				            	icon="@Embed(source='assets/genome_version_new.png')" 
 				            	enabled="true"
-  					        	disabledIcon="@Embed(source='assets/camera_small_new_disable.png')" 
+  					        	disabledIcon="@Embed(source='assets/genome_version_new_disable.png')" 
   					        	styleName="linkMenuButton"   					        	
   					        	toolTip="New genome version" 
   					        	click="{addItem('Genome version')}" 
-  					        	paddingRight="0" leading="0" />
-  					        <mx:LinkButton   label="New Folder" 
-  					        	icon="@Embed(source='assets/folder_add.png')" 
+  					        	paddingRight="0" leading="0"  width="110"/>
+  					        <mx:LinkButton   label="Folder" 
+  					        	icon="@Embed(source='assets/folder_new.png')" 
   					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; (annotationsTree.selectedItem.name() == 'GenomeVersion' || annotationsTree.selectedItem.name() == 'AnnotationGrouping' || annotationsTree.selectedItem.name() == 'Annotation') }"
   					        	disabledIcon="@Embed(source='assets/folder_new_disable.png')" 
   					        	styleName="linkMenuButton"   					        	
   					        	toolTip="New annotation folder" 
   					        	click="{addItem('Annotation folder')}" 
   					        	paddingRight="0" leading="0"/>
-  					        <mx:LinkButton   label="New Annotation" 
-  					        	icon="@Embed(source='assets/comment_add.png')"
+  					        <mx:LinkButton   label="Annotation" 
+  					        	icon="@Embed(source='assets/comment_new.png')"
   					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; (annotationsTree.selectedItem.name() == 'GenomeVersion' || annotationsTree.selectedItem.name() == 'AnnotationGrouping' || annotationsTree.selectedItem.name() == 'Annotation') }"
   					        	disabledIcon="@Embed(source='assets/comment_new_disable.png')"
   					        	styleName="linkMenuButton"   					        	
@@ -1478,50 +1579,52 @@
   					        	 click="{addItem('Annotation')}" 
   					        	 paddingRight="0" leading="0"/>
   					 </mx:HBox>       
-			        <mx:ViewStack id="addTreeItemStack" width="100%"  creationPolicy="all"  >
-			            <mx:HBox  horizontalGap="8" paddingLeft="2"  width="100%" horizontalAlign="left" id="hbox5">		           
-  					        <mx:LinkButton  
-  					        	label="Remove" 
-  					        	icon="@Embed(source='assets/crossout.png')" visible="false" enabled="false"
-  					        	styleName="linkMenuButton"   					        	
-  					        	disabledIcon="@Embed(source='assets/delete_disable.png')" height="20" />
-			            </mx:HBox>
-			            <mx:HBox horizontalGap="8"   width="100%" horizontalAlign="left" id="hbox6">
-						    <mx:LinkButton   
-  					        	icon="@Embed(source='assets/picture_remove.png')" 
-  					        	label="Remove"
-  					        	disabledIcon="@Embed(source='assets/delete_disable.png')"
-  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
-  					        	styleName="linkMenuButton" 
-  					        	click="promptToRemoveOrganism()" toolTip="Delete organism"   id="removeOrganismButton"  paddingLeft="0"/>
-			            </mx:HBox>
-			            <mx:HBox  horizontalGap="8"  width="100%" horizontalAlign="left" id="hbox7" paddingLeft="0">
-							<mx:LinkButton label="Remove" icon="@Embed(source='assets/camera_small_remove.png')" 
-  					        	disabledIcon="@Embed(source='assets/delete_disable.png')"
-  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
-  					        	styleName="linkMenuButton" 
-  					        	click="promptToRemoveGenomeVersion()" 
-  					        	toolTip="Delete genome version"  id="removeGenomeVersionButton"  paddingLeft="0"/>
-			            </mx:HBox>
-			            <mx:HBox horizontalGap="8"  width="100%" horizontalAlign="left" >
-				            <mx:LinkButton   icon="@Embed(source='assets/folder_remove.png')"  
-				            	label="Remove"
-				                disabledIcon="@Embed(source='assets/delete_disable.png')"
-				            	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"								  					        	
-				            	styleName="linkMenuButton" 
-				            	click="promptToRemoveAnnotationGrouping()" 
-				            	toolTip="Delete annotation grouping"  id="removeAnnotationGroupingButton"  paddingLeft="0"/>
-			            </mx:HBox>
-			            <mx:HBox horizontalGap="8"  width="100%" horizontalAlign="left" id="hbox8">
-  					        <mx:LinkButton  icon="@Embed(source='assets/comment_remove.png')"  
-  					        	label="Remove"
-								disabledIcon="@Embed(source='assets/delete_disable.png')"
-  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"								  					        	
-  					        	styleName="linkMenuButton" 
-  					        	click="promptToRemoveAnnotation()" 
-  					        	toolTip="Delete annotation"  id="removeAnnotationButton" paddingLeft="0"/>
-			            </mx:HBox>
-			        </mx:ViewStack>
+  			        <mx:HBox width="100%" horizontalGap="0" paddingTop="0" verticalAlign="middle">
+				        <mx:ViewStack id="addTreeItemStack" width="95"  creationPolicy="all"  paddingLeft="0" paddingRight="0"  paddingTop="0">
+				            <mx:HBox  horizontalGap="8" paddingLeft="2" horizontalAlign="left" id="hbox5">		           
+							    <mx:LinkButton   
+	  					        	icon="@Embed(source='assets/organism_remove.png')" 
+	  					        	label="Remove"
+	  					        	disabledIcon="@Embed(source='assets/organism_remove_disable.png')"
+	  					        	enabled="false"
+	  					        	styleName="linkMenuButton" 
+	  					        	click="promptToRemoveOrganism()" toolTip="Delete organism" paddingLeft="0"/>
+				            </mx:HBox>
+				            <mx:HBox horizontalGap="8"   width="100%" horizontalAlign="left" id="hbox6">
+							    <mx:LinkButton   
+	  					        	icon="@Embed(source='assets/organism_remove.png')" 
+	  					        	label="Remove"
+	  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
+	  					        	styleName="linkMenuButton" 
+	  					        	click="promptToRemoveOrganism()" toolTip="Delete organism"   id="removeOrganismButton"  paddingLeft="0"/>
+				            </mx:HBox>
+				            <mx:HBox  horizontalGap="8"  width="100%" horizontalAlign="left" id="hbox7" paddingLeft="0">
+								<mx:LinkButton label="Remove" icon="@Embed(source='assets/genome_version_remove.png')" 
+	  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
+	  					        	styleName="linkMenuButton" 
+	  					        	click="promptToRemoveGenomeVersion()" 
+	  					        	toolTip="Delete genome version"  id="removeGenomeVersionButton"  paddingLeft="0"/>
+				            </mx:HBox>
+				            <mx:HBox horizontalGap="8"  width="100%" horizontalAlign="left" >
+					            <mx:LinkButton   icon="@Embed(source='assets/folder_remove.png')"  
+					            	label="Remove"
+					            	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"								  					        	
+					            	styleName="linkMenuButton" 
+					            	click="promptToRemoveAnnotationGrouping()" 
+					            	toolTip="Delete annotation grouping"  id="removeAnnotationGroupingButton"  paddingLeft="0"/>
+				            </mx:HBox>
+				            <mx:HBox horizontalGap="8"  width="100%" horizontalAlign="left" id="hbox8">
+	  					        <mx:LinkButton  icon="@Embed(source='assets/comment_remove.png')"  
+	  					        	label="Remove"
+	  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"								  					        	
+	  					        	styleName="linkMenuButton" 
+	  					        	click="promptToRemoveAnnotation()" 
+	  					        	toolTip="Delete annotation"  id="removeAnnotationButton" paddingLeft="0"/>
+				            </mx:HBox>
+				        </mx:ViewStack>
+				        <mx:Spacer width="118"/>
+
+  			        </mx:HBox >
 			        	
 			        </mx:VBox>
 			        	
@@ -1529,6 +1632,7 @@
 				<mx:Tree height="100%" width="100%" 
 					dataProvider="{getAnnotations.lastResult..Organism}" 
 					labelField="@label"
+					dataTipField="@dataTip"
 					borderStyle="solid" 
 					contextMenu="{treeMenu}"
 					itemRollOver="setLastTreeItem(event)"
@@ -1542,9 +1646,10 @@
         		    dragEnabled="true" 
 					dropEnabled="true" 
 					dragMoveEnabled="true"
-					dragDrop="onDragDrop(event);">
+					dragDrop="onDragDrop(event);" 
+					rowHeight="18" allowMultipleSelection="false">
 				</mx:Tree>			
-				<mx:HBox width="100%" horizontalAlign="left" id="hbox4">
+				<mx:HBox width="100%" horizontalAlign="left" id="hbox4" paddingTop="1">
 					<mx:LinkButton styleName="linkMenuButton" label="Refresh" 
 						icon="@Embed(source='assets/refresh.png')" 
 						click="{treeItemToSelect=null;refreshAnnotations()}"/>
@@ -1552,69 +1657,74 @@
 						icon="@Embed(source='assets/database_refresh.png')" 
 						click="{refreshDAS2Server.send()}" 
 						id="reloadDas2ServerButton"/>
+					<mx:Spacer width="100%"/>
+					<mx:CheckBox fontSize="9" id="cbAlwaysExpandTree" label="Expand tree" click="annotationsTree.selectedItem=null;expandAppropriateAnnotationNodes()"/>
 				</mx:HBox>
 		    </mx:VBox>
 			<mx:ViewStack id="mainViewStack" width="100%" height="100%" creationPolicy="all">
 			    <mx:Panel id="blankView" width="100%" height="100%"   borderThicknessBottom="27">			    	
 			    </mx:Panel>
 			
-				<mx:Panel id="annotationView" width="100%" height="100%" verticalGap="2" title="Annotation" titleIcon="{getAnnotation.lastResult.@codeVisibility == 'PUBLIC' ? parentApplication.iconAnnotation : parentApplication.iconPrivateAnnotation}">
+				<mx:Panel id="annotationView" width="100%" height="100%" verticalGap="2" title="Annotation" titleIcon="{getAnnotation.lastResult.@codeVisibility == 'PUBLIC' ? parentApplication.iconAnnotation : (getAnnotation.lastResult.@codeVisibility == 'MEM' ? parentApplication.iconAnnotationMember : parentApplication.iconAnnotationMemberCollab)}">
 				  <mx:VBox width="100%" height="100%" styleName="panelBody">
-				   <mx:HBox width="100%" height="100%">
-					   	<mx:VBox width="60%" height="100%">
-							<mx:HBox width="100%" horizontalGap="0">
-								<mx:Label text="Name:" width="126"/>
-								<mx:TextInput width="100%" text="{getAnnotation.lastResult.@name}" id="annotationName" change="dirtyAnnotation.setDirty()"/>					    	
+				   <mx:VBox width="100%" height="100%">
+			  			<mx:HBox width="100%" horizontalGap="0">
+							<mx:Label text="Name:" width="126"/>
+							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@name}" id="annotationName" change="dirtyAnnotation.setDirty()"/>					    	
+						</mx:HBox>
+						<mx:HBox width="100%" horizontalGap="0">
+							<mx:Label text="Summary:" width="126"/>
+							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()"/>
+						</mx:HBox>
+						<mx:HBox width="100%" id="hbox3" height="100%" horizontalGap="0">
+							<mx:Label text="Description:" width="126"/>
+							<mx:TextArea width="100%" text="{getAnnotation.lastResult.@description}" id="annotationDescription" change="dirtyAnnotation.setDirty()" height="100%"/>
+						</mx:HBox>
+
+				   </mx:VBox>
+				   <mx:HRule width="100%"/>
+				   <mx:HBox width="100%">
+					   	<mx:VBox width="100%" height="100%" id="vbox8">
+							<mx:HBox width="100%" horizontalGap="0" id="hbox11">
+							    		<mx:Label text="Experiment Platform:" width="126"/>
+							    		<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentPlatform}" labelField="@name" id="experimentPlatformCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>					    
+							  	</mx:HBox>
+							<mx:HBox width="100%" horizontalGap="0" id="hbox12">
+								<mx:Label text="Experiment Method:" width="126"/>
+								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentMethod}" labelField="@name" id="experimentMethodCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							</mx:HBox>
 							<mx:HBox width="100%" horizontalGap="0">
-								<mx:Label text="Summary:" width="126"/>
-								<mx:TextInput width="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()"/>
+								<mx:Label text="Analysis Type:" width="126"/>
+								<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryAnalysisType}" labelField="@name" id="analysisTypeCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
 							</mx:HBox>
-							<mx:HBox width="100%" id="hbox3" height="100%" horizontalGap="0">
-								<mx:Label text="Description:" width="126"/>
-								<mx:TextArea width="100%" height="100%" text="{getAnnotation.lastResult.@description}" id="annotationDescription" change="dirtyAnnotation.setDirty()"/>
+							<mx:HRule width="100%"/>
+							<mx:HBox width="100%" horizontalGap="0" id="hbox10">
+								<mx:Label text="Visibility:" width="126"/>
+								<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="dirtyAnnotation.setDirty()"></mx:ComboBox>							        	
 							</mx:HBox>
-					    	<mx:HBox width="100%" horizontalGap="0" id="hbox11">
-						        		<mx:Label text="Experiment Platform:" width="126"/>
-						        		<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentPlatform}" labelField="@name" id="experimentPlatformCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>					    
-				        	</mx:HBox>
-				    	    <mx:HBox width="100%" horizontalGap="0" id="hbox12">
-					        	<mx:Label text="Experiment Method:" width="126"/>
-					        	<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentMethod}" labelField="@name" id="experimentMethodCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
-					        </mx:HBox>
-					        <mx:HBox width="100%" horizontalGap="0">
-					        	<mx:Label text="Analysis Type:" width="126"/>
-					        	<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryAnalysisType}" labelField="@name" id="analysisTypeCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
-					        </mx:HBox>
+							<mx:HBox width="100%" horizontalGap="0" id="userGroupBox">
+								<mx:Label text="User Group:" width="126"/>
+								<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
+							</mx:HBox>
+							<mx:HBox horizontalGap="0" id="annotationOwnerBox" width="100%">
+							       	<mx:Label text="Owner:" width="126" id="label2"/>
+							       	<mx:ViewStack id="annotationOwnerStack" width="100%">
+							       		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" width="100%">
+							       			<mx:ComboBox width="100%" id="annotationOwnerCombo" labelField="@name" dataProvider="{parentApplication.dictionaryUser}" change="dirtyAnnotation.setDirty()"></mx:ComboBox>							         			
+							       		</mx:HBox>
+							       		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0">
+							       			<mx:Label text="{getAnnotation.lastResult.@owner}"/>							         			
+							       		</mx:HBox>
+							       	</mx:ViewStack>
+							</mx:HBox>
+							<mx:HBox width="100%" horizontalGap="0" >
+								<mx:Label text="Created by:" width="126"/>
+								<mx:Label text="{getAnnotation.lastResult.@createdBy + ' ' + getAnnotation.lastResult.@createDate}" width="100%"/>
+							</mx:HBox>
 					    </mx:VBox>
 					   	<mx:VRule height="100%"/>
-					    <mx:VBox width="40%" height="100%">
-							    <mx:HBox horizontalGap="0" id="annotationOwnerBox" width="100%">
-							           	<mx:Label text="Owner:" width="72" id="label2"/>
-							           	<mx:ViewStack id="annotationOwnerStack" width="100%">
-							           		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" width="100%">
-							           			<mx:ComboBox width="100%" id="annotationOwnerCombo" labelField="@name" dataProvider="{parentApplication.dictionaryUser}" change="dirtyAnnotation.setDirty()"></mx:ComboBox>							         			
-							           		</mx:HBox>
-							           		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0">
-							           			<mx:Label text="{getAnnotation.lastResult.@owner}"/>							         			
-							           		</mx:HBox>
-							           	</mx:ViewStack>
-							    </mx:HBox>
-							    <mx:HBox width="100%" horizontalGap="0" id="userGroupBox">
-							    	<mx:Label text="User Group:" width="72"/>
-							    	<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="dirtyAnnotation.setDirty()"></mx:ComboBox>
-							    </mx:HBox>
-							    <mx:HBox width="100%" horizontalGap="0" id="hbox10">
-							    	<mx:Label text="Visibility:" width="72"/>
-							    	<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="dirtyAnnotation.setDirty()"></mx:ComboBox>							        	
-							    </mx:HBox>
-							    <mx:VBox width="100%" verticalGap="2" paddingTop="6" id="vbox4">
-								    <mx:Label text="Annotation folders:" id="label1"/>
-								    <mx:Tree id="annotationGroupingTree" height="50" width="100%" labelField="@name" defaultLeafIcon="@Embed(source='assets/folder.gif')">
-								    	<mx:dataProvider>{getAnnotation.lastResult.AnnotationGroupings.AnnotationGrouping}</mx:dataProvider>
-								    </mx:Tree>
-							    </mx:VBox>
-							    <mx:VBox width="100%" height="100%" verticalGap="2" paddingTop="6" >
+					    <mx:VBox width="100%" height="100%" id="vbox7">
+							    <mx:VBox width="100%" height="100%" verticalGap="0" id="vbox9">
 							        <mx:Label text="{'Files (' + annotationFiles.length + '):'}"/>
 							        <mx:HBox horizontalGap="2" width="100%">
 							        <mx:LinkButton icon="@Embed(source='assets/page_new.png')" 
@@ -1623,19 +1733,21 @@
 							        	styleName="linkMenuButton"  label="Upload file(s)">
 							        	<mx:enabled>{getAnnotation.lastResult.@canWrite == 'Y' ? true : false}</mx:enabled>
 							        </mx:LinkButton>
-							        <mx:LinkButton icon="@Embed(source='assets/page_delete.png')"
-							        	disabledIcon="@Embed(source='assets/page_delete_disable.png')"
+							        <mx:LinkButton icon="@Embed(source='assets/page_remove.png')"
+							        	disabledIcon="@Embed(source='assets/page_remove_disable.png')"
 							        	enabled="{annotationFileGrid.selectedItem != null &amp;&amp; getAnnotation.lastResult.@canWrite == 'Y' ? true : false}"  
 							        	styleName="linkMenuButton"
 							        	click="removeAnnotationFile()"  label="Remove file(s)"/>
 							        </mx:HBox>
 							    	<mx:DataGrid  id="annotationFileGrid"
 							    		dataProvider="{annotationFiles}"
-							    		showHeaders="false"
+							    		showHeaders="true"
 							    		width="100%"  						    		 
 							    		height="100%"  allowMultipleSelection="true">
 							    		<mx:columns>
-							    			<mx:DataGridColumn  dataField="@name"/>  
+							    			<mx:DataGridColumn  dataField="@name" headerText="Name" width="25"/>  
+							    			<mx:DataGridColumn  dataField="@lastModified" headerText="Date" width="15"/>  
+							    			<mx:DataGridColumn  dataField="@size"  headerText="Size" width="15" />  
 							    		</mx:columns>							
 							    	</mx:DataGrid>
 							    </mx:VBox>
@@ -1714,14 +1826,14 @@
 						<mx:VBox width="100%" height="100%" verticalGap="2" paddingTop="6">
 						    <mx:Label text="Segments:"/>
 						    <mx:HBox horizontalGap="2" width="100%">
-						    <mx:LinkButton icon="@Embed(source='assets/segment_add.png')"
+						    <mx:LinkButton icon="@Embed(source='assets/segment_new.png')"
 						        click="addSegment()"
 						    	styleName="linkMenuButton"
-						    	disabledIcon="@Embed(source='assets/segment_add_disable.png')" label="New segment" >
+						    	disabledIcon="@Embed(source='assets/segment_new_disable.png')" label="New segment" >
 						    	<mx:enabled>{annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}</mx:enabled>
 						    </mx:LinkButton>
-						    <mx:LinkButton icon="@Embed(source='assets/segment_delete.png')"
-						    	disabledIcon="@Embed(source='assets/segment_delete_disable.png')"
+						    <mx:LinkButton icon="@Embed(source='assets/segment_remove.png')"
+						    	disabledIcon="@Embed(source='assets/segment_remove_disable.png')"
 						    	enabled="{segmentGrid.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"  
 						    	click="removeSegment()"
 						    	styleName="linkMenuButton" label="Remove segment"/>
@@ -1753,7 +1865,7 @@
 				</mx:Panel>
 				
 				
-				<mx:Panel id="annotationGroupingView" width="100%" height="100%" title="Annotation folder" titleIcon="{parentApplication.iconAnnotationGrouping}">
+				<mx:Panel id="annotationGroupingView" width="100%" height="100%" title="Folder" titleIcon="{annotationsTree.selectedItem.@idUserGroup == '' ? parentApplication.iconAnnotationGrouping : parentApplication.iconAnnotationGroupingForGroup}">
 				  <mx:VBox styleName="panelBody" width="100%" height="100%">				    
 					  <mx:HBox width="100%" >
 						<mx:Label text="Name:"  width="120"/>
@@ -1772,6 +1884,11 @@
 						<mx:Label text="Description:" width="120"/>
 						<mx:TextArea id="annotationGroupingDescription" text="{annotationsTree.selectedItem.@description}" change="dirtyAnnotationGrouping.setDirty()" width="100%" height="100%"/>
 					  </mx:HBox>
+				  	  <mx:HBox width="100%" horizontalGap="0" >
+							<mx:Label text="Created by:" width="126"/>
+							<mx:Label text="{annotationsTree.selectedItem.@createdBy + ' ' + annotationsTree.selectedItem.@createDate}" width="100%"/>
+					  </mx:HBox>
+
 			        </mx:VBox>
 			        
 					<mx:ControlBar horizontalAlign="right">
@@ -1790,38 +1907,28 @@
 		<mx:State name="AdminState">
 			<mx:AddChild relativeTo="{hbox1}" position="lastChild">
 			    <mx:HBox horizontalGap="0" paddingLeft="2" verticalAlign="middle">
-			        <mx:Label text="Group:"/>
-					<mx:ComboBox id="userGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" labelField="@name" width="180" change="refreshAnnotations()"></mx:ComboBox>
+			        <mx:VBox width="100%" height="100%" verticalGap="0" paddingTop="0" paddingBottom="0">
+			            <mx:Label text="User Group" fontSize="9" paddingTop="0" paddingBottom="0" styleName="menuLabel"/>
+			            <mx:ComboBox id="userGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" labelField="@name" width="180" change="{setVisibilityCheckboxes();refreshAnnotations()}"></mx:ComboBox>
+			        </mx:VBox>
 			    </mx:HBox>
 			</mx:AddChild>
 			<mx:SetProperty target="{organismCombo}" name="labelField" value="@binomialName"/>
 			<mx:SetProperty target="{annotationUserGroupCombo}" name="dataProvider" value="{parentApplication.dictionaryMyUserGroup}"/>
+			<mx:RemoveChild target="{hbox13}"/>
 		</mx:State>
 		<mx:State name="UserState">
-			<mx:AddChild relativeTo="{hbox1}" position="lastChild">
-				<mx:RadioButtonGroup id="scopeRadioGroup"/>
-			</mx:AddChild>
-			<mx:AddChild relativeTo="{hbox1}" position="lastChild">
-				<mx:RadioButton label="My annotations" id="myAnnotationsRadio" groupName="scopeRadioGroup" selected="false" value="USER" click="refreshAnnotations()"/>
-			</mx:AddChild>
-			<mx:AddChild relativeTo="{hbox1}" position="lastChild">
-				<mx:RadioButton label="My group's" id="myGroupsAnnotationsRadio" groupName="scopeRadioGroup" value="GROUP" click="refreshAnnotations()" selected="false"/>
-			</mx:AddChild>
-			<mx:AddChild relativeTo="{hbox1}" position="lastChild">
-				<mx:RadioButton label="All" id="allAnnotationsRadio" groupName="scopeRadioGroup" value="ALL" click="refreshAnnotations()" selected="true"/>
-			</mx:AddChild>
-			<mx:SetStyle target="{hbox1}" name="horizontalGap" value="4"/>
 			<mx:RemoveChild target="{reloadDas2ServerButton}"/>
 			<mx:SetProperty target="{label3}" name="text" value="Show annotations for Organism:"/>
+			<mx:RemoveChild target="{hbox1}"/>
+			<mx:SetProperty target="{cbAlwaysExpandTree}" name="selected" value="true"/>
 
 		</mx:State>
 		<mx:State name="GuestState">
 			<mx:RemoveChild target="{reloadDas2ServerButton}"/>
-<!--			<mx:SetProperty target="{newButtonForOrganisms}" name="enabled" value="false"/>
-			<mx:SetProperty target="{newButtonForOrganism}" name="enabled" value="false"/>
-			<mx:SetProperty target="{newButtonForGenomeVersion}" name="enabled" value="false"/>
-			<mx:SetProperty target="{newButtonForAnnotationGrouping}" name="enabled" value="false"/>
--->		
+			<mx:RemoveChild target="{vbox6}"/>
+			<mx:SetProperty target="{cbAlwaysExpandTree}" name="selected" value="true"/>
+	
          </mx:State>
 	</mx:states>
 

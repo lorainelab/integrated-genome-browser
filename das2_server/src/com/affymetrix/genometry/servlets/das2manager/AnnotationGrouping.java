@@ -89,12 +89,8 @@ public class AnnotationGrouping {
     } 
 	
 	public String getQualifiedName() {
-		String qualifiedName = "/";
-		AnnotationGrouping parent = this.getParentAnnotationGrouping();
-		if (parent != null) {
-			qualifiedName = getName();
-			qualifiedName = recurseGetParentName(qualifiedName);			
-		}
+		String qualifiedName = getName();
+		qualifiedName = recurseGetParentName(qualifiedName);			 		
 		return qualifiedName;
 	}
 	
@@ -102,7 +98,7 @@ public class AnnotationGrouping {
 		AnnotationGrouping parent = this.getParentAnnotationGrouping();
 		
 		// Stop before the root annotation grouping
-		if (parent != null && parent.getParentAnnotationGrouping() != null) {
+		if (parent != null) {
 			if (parent != null && parent.getName() != null) {
 				qualifiedName = parent.getName() + "/" + qualifiedName;
 			

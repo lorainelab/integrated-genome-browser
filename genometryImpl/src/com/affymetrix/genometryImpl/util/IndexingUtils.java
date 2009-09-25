@@ -522,12 +522,11 @@ public class IndexingUtils {
 			// This means the end element was not found in the array.  Translate back to "insertion point", which is:
 			//the index of the first element greater than the key, or min.length, if all elements in the list are less than the specified key.
 			tempPos = (-(tempPos + 1));
-			// But here, we want to backtrack to the element less than the key.
+			// But here, we want to go the last element < the key.
 			if (tempPos > 0) {
 				tempPos--;
-				tempPos = backTrack(min, tempPos);
 			}
-			// Don't go past array limit
+			// Don't go past array limit (this case is probably impossible)
 			tempPos = Math.min(min.length - 1, tempPos);
 		}
 		return tempPos;

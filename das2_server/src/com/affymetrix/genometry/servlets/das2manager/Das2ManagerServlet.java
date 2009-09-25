@@ -669,6 +669,13 @@ public class Das2ManagerServlet extends HttpServlet {
 				throw new Exception("The genome version DAS2 name cannot have special characters.");
 			}
 			
+			// If the genomeversion name has changed, change to root annotation grouping
+			// name
+			if (!request.getParameter("name").equals(genomeVersion.getName())) {
+				AnnotationGrouping ag = genomeVersion.getRootAnnotationGrouping();
+				ag.setName(request.getParameter("name"));
+				ag.setDescription(request.getParameter("name"));
+			}
 			
 			genomeVersion.setIdOrganism(Util.getIntegerParameter(request, "idOrganism"));
 			genomeVersion.setName(request.getParameter("name"));
@@ -678,7 +685,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			genomeVersion.setCoordSource(request.getParameter("coordSource"));
 			genomeVersion.setCoordTestRange(request.getParameter("coordTestRange"));
 			genomeVersion.setCoordAuthority(request.getParameter("coordAuthority"));
-
+			
 
 			// Delete segments		
 			StringReader reader = new StringReader(request.getParameter("segmentsXML"));
@@ -929,21 +936,40 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idParentAnnotationGrouping = Util.getIntegerParameter(request, "idParentAnnotationGrouping");
-			
+			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");
 			// If this is a root annotation grouping, find the default root annotation
 	        // grouping for the genome version.
+			AnnotationGrouping parentAnnotationGrouping = null;
 			if (idParentAnnotationGrouping == null) {
 				GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
-				AnnotationGrouping rootAnnotationGrouping = gv.getRootAnnotationGrouping();
-				if (rootAnnotationGrouping == null) {
+				parentAnnotationGrouping = gv.getRootAnnotationGrouping();
+				if (parentAnnotationGrouping == null) {
 					throw new Exception("Cannot find root annotation grouping for " + gv.getName());
 				}
-				idParentAnnotationGrouping = rootAnnotationGrouping.getIdAnnotationGrouping(); 
+				idParentAnnotationGrouping = parentAnnotationGrouping.getIdAnnotationGrouping(); 
+			} else {
+				parentAnnotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idParentAnnotationGrouping));
 			}
+			
+			// If parent annotation grouping is owned by a user group, this
+			// child annotation grouping must be as well.
+			if (parentAnnotationGrouping.getIdUserGroup() != null) {
+				
+				if (idUserGroup == null ||
+					!parentAnnotationGrouping.getIdUserGroup().equals(idUserGroup)) {
+					throw new Exception("Folder '" + request.getParameter("name") + "' must belong to user group '" + 
+							DictionaryHelper.getInstance(sess).getUserGroupName(parentAnnotationGrouping.getIdUserGroup()) + "'");
+
+				}
+			} 
+			
+			
+			
 			
 			annotationGrouping.setName(request.getParameter("name"));
 			annotationGrouping.setIdGenomeVersion(idGenomeVersion);
 			annotationGrouping.setIdParentAnnotationGrouping(idParentAnnotationGrouping);
+			
 			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));				
 
 			annotationGrouping.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
@@ -1004,9 +1030,22 @@ public class Das2ManagerServlet extends HttpServlet {
 				throw new Exception("Insufficient permision to write annotation folder.");
 			}
 			
+			// If parent annotation grouping is owned by a user group, this
+			// child annotation grouping must be as well.
+			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");
+			if (annotationGrouping.getParentAnnotationGrouping() != null &&
+			    annotationGrouping.getParentAnnotationGrouping().getIdUserGroup() != null) {
+				
+				if (idUserGroup == null ||
+					!annotationGrouping.getParentAnnotationGrouping().getIdUserGroup().equals(idUserGroup)) {
+					throw new Exception("Folder '" + request.getParameter("name") + "' must belong to user group '" + 
+							DictionaryHelper.getInstance(sess).getUserGroupName(annotationGrouping.getParentAnnotationGrouping().getIdUserGroup()) + "'");
+				}
+			} 
+			
 			annotationGrouping.setName(request.getParameter("name"));
 			annotationGrouping.setDescription(request.getParameter("description"));
-			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
+			annotationGrouping.setIdUserGroup(idUserGroup);
 			
 			sess.save(annotationGrouping);
 			

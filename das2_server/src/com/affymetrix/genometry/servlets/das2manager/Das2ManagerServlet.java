@@ -945,7 +945,10 @@ public class Das2ManagerServlet extends HttpServlet {
 			annotationGrouping.setIdGenomeVersion(idGenomeVersion);
 			annotationGrouping.setIdParentAnnotationGrouping(idParentAnnotationGrouping);
 			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));				
-			
+
+			annotationGrouping.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+			annotationGrouping.setCreatedBy(this.das2ManagerSecurity.getUserName());
+
 			
 			sess.save(annotationGrouping);
 			
@@ -1224,7 +1227,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			String codeVisibility = request.getParameter("codeVisibility");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
-			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");
+			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");			
 			
 			sess = HibernateUtil.getSessionFactory().openSession();
 			Transaction tx = sess.beginTransaction();
@@ -1286,6 +1289,10 @@ public class Das2ManagerServlet extends HttpServlet {
 		if (!das2ManagerSecurity.isAdminRole()) {
 			annotation.setIdUser(das2ManagerSecurity.getIdUser());				
 		}
+		
+		annotation.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+		annotation.setCreatedBy(this.das2ManagerSecurity.getUserName());
+		
 		sess.save(annotation);
 		sess.flush();
 

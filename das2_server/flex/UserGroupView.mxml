@@ -383,8 +383,8 @@
 			    			toolTip="Add group"   
 			    			id="addGroupButton" label="New group"/>
 			           	<mx:LinkButton   
-			           		icon="@Embed(source='assets/group_delete.png')" 
-			           		disabledIcon="@Embed(source='assets/group_delete_disable.png')"
+			           		icon="@Embed(source='assets/group_remove.png')" 
+			           		disabledIcon="@Embed(source='assets/group_remove_disable.png')"
 			           		enabled="{groupGrid.selectedItem != null}"
 			    			styleName="linkMenuButton"   
 			           		click="promptToRemoveUserGroup()" 
@@ -414,8 +414,8 @@
 			    			styleName="linkMenuButton"  
 			    			click="newUser()" toolTip="Add user"   id="addUserButton" label="New user"/>
   					    <mx:LinkButton   
-  					    	icon="@Embed(source='assets/vcard_delete.png')" 
-  							disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+  					    	icon="@Embed(source='assets/vcard_remove.png')" 
+  							disabledIcon="@Embed(source='assets/vcard_remove_disable.png')"
 			           		enabled="{userGrid.selectedItem != null}"
 			    			styleName="linkMenuButton"  
   					    	click="promptToRemoveUser()" 
@@ -516,9 +516,9 @@
 							    <mx:VBox width="100%" verticalGap="0">
 									<mx:Label text="Members"/>
 									<mx:LinkButton   
-										 icon="@Embed(source='assets/vcard_delete.png')"
+										 icon="@Embed(source='assets/vcard_remove.png')"
 										 label="Remove member"
-										 disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+										 disabledIcon="@Embed(source='assets/vcard_remove_disable.png')"
 										 styleName="linkMenuButton"  
 										 click="removeMember()"
 										 enabled="{groupMemberGrid.selectedItem != null}" 
@@ -539,8 +539,8 @@
 							    <mx:VBox width="100%" verticalGap="0">
 									<mx:Label text="Collaborators"/>
 									<mx:LinkButton   
-										 icon="@Embed(source='assets/vcard_delete.png')"
-										 disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+										 icon="@Embed(source='assets/vcard_remove.png')"
+										 disabledIcon="@Embed(source='assets/vcard_remove_disable.png')"
 										 styleName="linkMenuButton"  
 										 label="Remove collaborator"
 										 click="removeCollaborator()"
@@ -562,8 +562,8 @@
 								<mx:VBox width="100%" verticalGap="0">
 									<mx:Label text="Managers"/>
 									<mx:LinkButton   
-										 icon="@Embed(source='assets/vcard_delete.png')"
-										 disabledIcon="@Embed(source='assets/vcard_delete_disable.png')"
+										 icon="@Embed(source='assets/vcard_remove.png')"
+										 disabledIcon="@Embed(source='assets/vcard_remove_disable.png')"
 										 styleName="linkMenuButton" 
 										 label="Remove manager" 
 										 click="removeManager()"

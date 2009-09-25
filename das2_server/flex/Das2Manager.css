@@ -52,7 +52,7 @@ LinkBar {
 	 selectionColor: #FFFFFF;
 	 useHandCursor: true;
 	 selectedButtonTextStyleName: linkBarButtonText;
-	fontSize: 11;
+	 fontSize: 10;
 }
 
 .linkBarButtonText
@@ -131,7 +131,6 @@ TitleWindow {
 }
 .headerLabel
 {
-	fontSize: 11;
 	fontWeight: normal;
 }
 
@@ -139,7 +138,7 @@ TitleWindow {
 {
 	color: #463B40;
 	fontFamily: Arial;
-	fontSize: 15;
+	fontSize: 14;
 	fontWeight: bold;
 	paddingBottom: 0;
 	paddingTop: 0;
@@ -147,6 +146,11 @@ TitleWindow {
 
 .menuLabel
 {
+	color: #463B40;
+}
+.menuLabelSmall
+{
+	fontSize: 9;
 	color: #463B40;
 }
 .linkMenuButton

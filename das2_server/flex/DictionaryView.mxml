@@ -205,9 +205,9 @@
              	enabled="{dictionaryTree.selectedItem != null}" label="New dictionary"/>
                       
              <mx:LinkButton 
-             	icon="@Embed(source='assets/page_delete.png')" 
+             	icon="@Embed(source='assets/page_remove.png')" 
              	enabled="{dictionaryTree.selectedItem != null &amp;&amp; dictionaryTree.selectedItem.name() != 'Dictionary' &amp;&amp; dictionaryTree.selectedItem.@canWrite == 'Y'}"
-             	disabledIcon="@Embed(source='assets/page_delete_disable.png')" 
+             	disabledIcon="@Embed(source='assets/page_remove_disable.png')" 
              	styleName="linkMenuButton"
              	click="promptToRemoveDictionary()" 
              	id="deleteDictionaryButton" label="Remove dictionary"/>

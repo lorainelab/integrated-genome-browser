@@ -85,8 +85,7 @@
     public var iconDictionaryEntry:Class;
     
 	[Bindable]
-    //[Embed(source="assets/database_gear.png")]
-    [Embed(source="assets/camera_small.png")]
+    [Embed(source="assets/genome_version.png")]
     public var iconGenomeVersion:Class;
 	
 	[Bindable]
@@ -98,8 +97,11 @@
     public var iconAnnotationGrouping:Class;
 
 	[Bindable]
-    //[Embed(source="assets/database.png")]
-    [Embed(source="assets/picture.png")]
+    [Embed(source="assets/folder_group.png")]
+    public var iconAnnotationGroupingForGroup:Class;
+
+	[Bindable]
+    [Embed(source="assets/organism.png")]
     public var iconOrganism:Class;
     
     [Bindable]
@@ -108,7 +110,11 @@
 
 	[Bindable]
     [Embed(source="assets/comment_key.png")]
-    public var iconPrivateAnnotation:Class;
+    public var iconAnnotationMember:Class;
+
+	[Bindable]
+    [Embed(source="assets/comment_key_twice.png")]
+    public var iconAnnotationMemberCollab:Class;
     
     [Bindable]
     [Embed(source="assets/save.png")]
@@ -117,23 +123,7 @@
     [Bindable]
     [Embed(source="assets/save_disable.png")]
     public var iconSaveDisabled:Class;
-      
-    [Bindable]
-    [Embed(source="assets/add.png")]
-    public var iconAdd:Class;
-    
-    [Bindable]
-    [Embed(source="assets/add_disable.png")]
-    public var iconAddDisabled:Class;
-	   
-    [Bindable]
-    [Embed(source="assets/delete.png")]
-    public var iconDelete:Class;
-    
-    [Bindable]
-    [Embed(source="assets/delete_disable.png")]
-    public var iconDeleteDisabled:Class;
-	
+      	
 	[Bindable]
     [Embed(source="assets/folder_page.png")]
     public var iconChooseFiles:Class;	
@@ -280,15 +270,15 @@
    	  fillAlphas="[1, 1]" dock="true"    
    	  paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" >
    	  <mx:VBox width="100%" paddingLeft="1" paddingBottom="0" paddingRight="1" paddingTop="2" verticalGap="0" id="vbox1">
-		<mx:HBox width="100%" id="hbox1" paddingBottom="2">
-			<mx:Label text="DAS2 Manager" id="label1" styleName="titleLabel"/>			
-			<mx:HBox verticalAlign="middle" height="100%" paddingLeft="30">
+		<mx:HBox width="100%" id="hbox1" paddingBottom="0">
+			<mx:Label text="DAS2 Manager" id="label1" styleName="titleLabel" paddingBottom="0" paddingTop="0"/>			
+			<mx:HBox verticalAlign="middle" height="100%" paddingLeft="30" paddingTop="0" paddingBottom="0">
 				<mx:Label text="{'(' + getSecurity.lastResult.@userDisplayName + ')'}" styleName="menuLabel" id="loggedInUserName"/>
 			</mx:HBox>
 			<mx:HBox horizontalAlign="right" verticalAlign="top" horizontalGap="3" width="100%" id="hbox2">
-				<mx:LinkButton label="Help"  id="linkbutton1" styleName="menuLabel"/>
+				<mx:LinkButton label="Help"  id="linkbutton1" styleName="menuLabel" paddingBottom="0" paddingTop="0"/>
         	 	<mx:Spacer width="10"/>
-				<mx:LinkButton label="About"  id="linkbutton2" styleName="menuLabel"/>
+				<mx:LinkButton label="About"  id="linkbutton2" styleName="menuLabel" paddingTop="0" paddingBottom="0"/>
 			</mx:HBox>
 		</mx:HBox >
 		<mx:HBox width="100%">
@@ -331,7 +321,7 @@
     	</mx:AddChild>    
     	<mx:SetProperty target="{loggedInUserName}" name="text" value="{getSecurity.lastResult.@userDisplayName}"/>
     	<mx:AddChild relativeTo="{hbox2}" position="lastChild">
-    	 	<mx:LinkButton label="Change password"  id="changePasswordButton" styleName="menuLabel" click="showChangePasswordWindow()"/>
+    	 	<mx:LinkButton label="Change password"  id="changePasswordButton" styleName="menuLabel" click="showChangePasswordWindow()" paddingTop="0" paddingBottom="0"/>
     	</mx:AddChild>
     	<mx:AddChild relativeTo="{changePasswordButton}" position="before">
     	 	<mx:Spacer width="10"/>
@@ -342,11 +332,16 @@
     		<views:UserGroupView id="userGroupView" label="Users and Groups"      icon="@Embed(source='assets/group.png')" width="100%" height="100%">
   		    </views:UserGroupView>
     	</mx:AddChild>
+    	<mx:SetStyle target="{changePasswordButton}" name="paddingTop" value="0"/>
+    	<mx:SetStyle target="{changePasswordButton}" name="paddingBottom" value="0"/>
 	</mx:State>
     <mx:State name="AdminAllState" basedOn="AdminUserState">
+      <mx:SetStyle target="{changePasswordButton}" name="paddingBottom" value="0"/>
+      <mx:SetStyle target="{changePasswordButton}" name="paddingTop" value="0"/>
     </mx:State>
     <mx:State name="GuestState" basedOn="UserState">
       <mx:RemoveChild target="{dictionaryView}"/>
+      <mx:RemoveChild target="{changePasswordButton}"/>
     </mx:State>
   </mx:states>
 </mx:Application>

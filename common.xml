@@ -16,7 +16,7 @@
 		<!-- JNLP Webstart -->
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
 		<property name="jnlp.version"   value="${build.version}" />
-		<property name="jnlp.codebase"  value="http://genoviz.sourceforge.net/webstart/" />
+		<property name="jnlp.codebase"  value="http://USE_YOUR_URL_HERE" />
 		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />

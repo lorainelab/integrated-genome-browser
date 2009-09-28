@@ -609,6 +609,7 @@
   				for each(var version:Object in getAnnotations.lastResult..GenomeVersion) {
   					annotationsTree.expandItem(version, true);
   				}
+  				callLater(selectTreeItem);
 			}
 
 		}		

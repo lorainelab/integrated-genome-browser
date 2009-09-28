@@ -51,6 +51,10 @@ public class Util {
 	}
     
 	public static long getKilobytes(long bytes) {
-		return Math.round(bytes / KB);
+		long kb =  Math.round(bytes / KB);
+		if (kb == 0) {
+			kb = 1;
+		}
+		return kb;
 	}
 }

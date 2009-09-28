@@ -233,6 +233,10 @@
    // Called after all file upload have completed
    //
    public function onUploadFinished(event:Event):void{
+   		if (multiFileUpload.getSkipCount() > 0) {
+   			Alert.show(multiFileUpload.getSkipCount() + " file(s) were skipped.\n(0 length files are not uploaded.)", "Upload Warning");
+   		}
+   	
    		// Select the added annotation
    		parentApplication.annotationsView.refreshAnnotationsAndSelect(itemToSelect);
    		

@@ -93,6 +93,11 @@
    public function onUploadFinished(event:Event):void{
    		currentState = "FinishedState"
    		
+   		if (multiFileUpload.getSkipCount() > 0) {
+   			Alert.show(multiFileUpload.getSkipCount() + " file(s) were skipped.\n(0 length files are not uploaded.)", "Upload Warning");
+   		}
+
+   		
    		// Just close window when uploads complete.
    		this.closeWindow();
    }	

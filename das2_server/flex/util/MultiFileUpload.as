@@ -103,6 +103,8 @@ package util
         private var _maxFileSize:Number; //bytes
         private var _variables:URLVariables; //variables to passed along to the file upload handler on the server.
         
+        private var _skipCount:int = 0;
+        
         //Constructor    
         public function MultiFileUpload(
         								dataGrid:DataGrid,
@@ -126,6 +128,7 @@ package util
             _variables = variables;
             _maxFileSize = maxFileSize;
             _filefilter = filter;
+            _skipCount = 0;
             init();
         }
         
@@ -218,17 +221,51 @@ package util
         private function uploadFiles(event:Event):void{
            
             if (_files.length > 0){
+
                 _file = FileReference(_files.getItemAt(0));    
-                _file.addEventListener(Event.OPEN, openHandler);
-                _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
-                _file.addEventListener(Event.COMPLETE, completeHandler);
-                _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, dataCompleteHandler );
-                _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR,securityErrorHandler);
-                _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
-                _file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
-                _file.upload(_uploadURL);
-                 setupCancelButton(true);
+
+				var viableFile:Boolean = true;
+            	try{
+					_file.size;
+					if (_file.size == 0) {
+						viableFile = false;
+						trace("Skipping 0 length file " + _file.name);
+						_progressbar.label = "Skipping 0 length file " + _file.name;
+					}
+				} catch(e:Error){
+					viableFile = false;
+					Alert.show("Skipping file " + _file.name + " " + e.message)
+					_progressbar.label = "Skipping invalid file " + _file.name;
+				}
+				
+				if (viableFile) {
+		            _file.addEventListener(Event.OPEN, openHandler);
+		            _file.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+		            _file.addEventListener(Event.COMPLETE, completeHandler);
+		            _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, dataCompleteHandler );
+		            _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR,securityErrorHandler);
+		            _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
+		            _file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
+		            _file.upload(_uploadURL);
+		             setupCancelButton(true);
+				} else {
+					_skipCount++;
+					_files.removeItemAt(0);
+					uploadFiles(null);
+					
+					if (_files.length == 0) {
+					     setupCancelButton(false);
+                		 _progressbar.label = "Uploads Complete";
+        		         var uploadCompleted:Event = new Event(Event.COMPLETE);
+		                dispatchEvent(uploadCompleted);
+					}
+
+				}
             }
+        }
+        
+        public function getSkipCount():int {
+        	return _skipCount;
         }
         
         public function setUploadURLParameters(params:URLVariables):void {
@@ -414,7 +451,7 @@ package util
           
         // only called if there is an  error detected by flash player browsing or uploading a file   
         private function ioErrorHandler(event:IOErrorEvent):void{
-            mx.controls.Alert.show("File \n" + event.target.name + "\n did not upload.  Please contact GNomEx support.",
+            mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\n" + event.text,
             						"Upload IO error",0);
         }    
         // only called if a security error detected by flash player such as a sandbox violation
@@ -430,7 +467,7 @@ package util
         //  after a file upload is complete or attemted the server will return an http status code, code 200 means all is good anything else is bad.
         private function httpStatusHandler(event:HTTPStatusEvent):void {
             if (event.status != 200){
-            		mx.controls.Alert.show("File \n" + event.target.name + "\n did not upload.  Please contact GNomEx support.",
+            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.",
             						"HTTP status",0);
             }
         }

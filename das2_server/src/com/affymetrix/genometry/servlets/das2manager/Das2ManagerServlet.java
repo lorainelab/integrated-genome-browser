@@ -31,6 +31,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -809,8 +810,21 @@ public class Das2ManagerServlet extends HttpServlet {
 				sess.delete(ag);
 			}
 			
+			// Delete segments
+			for (Segment segment : (Set<Segment>)genomeVersion.getSegments()) {
+				sess.delete(segment);
+			}
+			
+			// Delete aliases
+			for (GenomeVersionAlias alias : (Set<GenomeVersionAlias>)genomeVersion.getAliases()) {
+				sess.delete(alias);
+			}
+			
+			sess.flush();
+			
 			
 			// Now delete the genome version
+			sess.refresh(genomeVersion);
 			sess.delete(genomeVersion);
 			
 			tx.commit();

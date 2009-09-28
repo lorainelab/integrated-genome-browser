@@ -102,7 +102,7 @@ CREATE TABLE `AnnotationGrouping` (
   `name` varchar(45) NOT NULL,
   `description` varchar(2000) default NULL,
   `idParentAnnotationGrouping` int(10) unsigned default NULL,
-  `idGenomeVersion` int(10) unsigned default NULL,
+  `idGenomeVersion` int(10) unsigned default NOT NULL,
   `idUserGroup` int(10) unsigned default NULL,
   `createdBy` varchar(200) default NULL,
   `createDate` datetime default NULL,  

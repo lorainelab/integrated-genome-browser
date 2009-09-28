@@ -129,7 +129,7 @@ public final class XmlPrefsParser {
 	 *  Add as many names as you want to this list, and retrieve them later
 	 *  with {@link #getFilenames}.
 	 */
-	public static void addFilename(String filename, Map prefs_hash) {
+	private static void addFilename(String filename, Map prefs_hash) {
 		if (filename != null && filename.length() > 0) {
 			List<String> filenames = getFilenames(prefs_hash);
 			filenames.add(filename);
@@ -139,7 +139,8 @@ public final class XmlPrefsParser {
 	/** Returns a List of Strings added with {@link #addFilename}.
 	 *  The list can be empty but is never null.
 	 */
-	public static List<String> getFilenames(Map prefs_hash) {
+	@SuppressWarnings("unchecked")
+	private static List<String> getFilenames(Map prefs_hash) {
 		List<String> filenames = (List) prefs_hash.get(FILENAME_LIST);
 		if (filenames == null) {
 			filenames = new ArrayList<String>(4);
@@ -149,7 +150,8 @@ public final class XmlPrefsParser {
 	}
 
 
-	public Map parse(InputStream istr, String file_name, Map<String, Map> prefs_hash) {
+	@SuppressWarnings("unchecked")
+	public static Map parse(InputStream istr, String file_name, Map<String, Map> prefs_hash) {
 		try {
 			InputSource insrc = new InputSource(istr);
 			prefs_hash = parse(insrc, file_name, prefs_hash);
@@ -161,7 +163,8 @@ public final class XmlPrefsParser {
 		return prefs_hash;
 	}
 
-	private Map parse(InputSource insource, String file_name, Map<String, Map> prefs_hash) {
+	@SuppressWarnings("unchecked")
+	private static Map parse(InputSource insource, String file_name, Map<String, Map> prefs_hash) {
 		try {
 			//      System.out.println("parsing from source: " + insource);
 			Document prefsdoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(insource);
@@ -187,7 +190,8 @@ public final class XmlPrefsParser {
 		return m;
 	}
 
-	private Map processDocument(Document prefsdoc, String file_name, Map prefs_hash) {
+	@SuppressWarnings("unchecked")
+	private static Map processDocument(Document prefsdoc, String file_name, Map prefs_hash) {
 		addFilename(file_name, prefs_hash);
 		Map type2factory = getNamedMap(prefs_hash, MATCH_FACTORIES);
 		Map regex2factory = getNamedMap(prefs_hash, REGEX_FACTORIES);
@@ -255,7 +259,6 @@ public final class XmlPrefsParser {
 						val = new Color(red, green, blue);
 						// prefs_hash.put(name.trim().toLowerCase(), val);
 						prefs_hash.put(name.trim(), val);
-					//          System.out.println(tag + ",   " + val);
 					} else if (name.equalsIgnoreCase("dasserver") || name.equalsIgnoreCase("das_server")) {
 						String server_name = el.getAttribute("name");
 						String server_url = el.getAttribute("url");
@@ -292,23 +295,22 @@ public final class XmlPrefsParser {
 
 	}
 
-	private void processPlugin(Element el, Map prefs_hash) {
+	@SuppressWarnings("unchecked")
+	private static void processPlugin(Element el, Map prefs_hash) {
 		String loadstr = el.getAttribute("load");
 		// ignore if load attribute set to false
 		//     if (loadstr == null || (! loadstr.equalsIgnoreCase("false")) ) {
 		Map<String, PluginInfo> plugins = getNamedMap(prefs_hash, PLUGINS);
 		String plugin_name = el.getAttribute("name");
 		String class_name = el.getAttribute("class");
-		String description = el.getAttribute("description");
-		String info_url = el.getAttribute("info_url");
+		//String description = el.getAttribute("description");
+		//String info_url = el.getAttribute("info_url");
 		boolean load = (loadstr == null ? true : (!loadstr.equalsIgnoreCase("false")));
 		if (plugin_name != null && class_name != null) {
 			System.out.println("plugin, name = " + plugin_name + ", class = " + class_name);
-			//PluginInfo pinfo = new PluginInfo(class_name, plugin_name, description, info_url, load);
 			PluginInfo pinfo = new PluginInfo(class_name, plugin_name, load);
 			plugins.put(plugin_name, pinfo);
 		}
-	//      }
 	}
 
 	/**
@@ -325,7 +327,7 @@ public final class XmlPrefsParser {
 	 *  By default, match is case-insensitive;  use match_case="true" if you want
 	 *  to require an exact match.
 	 */
-	private void processLinkUrl(Element el) {
+	private static void processLinkUrl(Element el) {
 		Map<String, String> attmap = XmlPrefsParser.getAttributeMap(el);
 		String url = attmap.get("url");
 		if (url == null || url.trim().length() == 0) {
@@ -364,7 +366,8 @@ public final class XmlPrefsParser {
 		}
 	}
 
-	private void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
+	@SuppressWarnings("unchecked")
+	private static void processAnnotStyle(Element el, Map type2factory, Map regex2factory) {
 		/*  Builds two hash tables:
 		 *  type2factory ==> hash of "annot_type" attribute mapped to MapViewGlyphFactoryI
 		 *  regex2factory ==> hash of RE objects derived from "annot_starts_with",
@@ -383,9 +386,7 @@ public final class XmlPrefsParser {
 			String factory_name = null;
 			try {
 				factory_name = attmap.get("factory");
-
 				factory_class = ObjectUtils.classForName(factory_name);
-			//System.out.println("mapping annot_type to factory: "+annot_type+" --> "+factory_class.getName());
 			} catch (ClassNotFoundException ex) {
 				System.out.println("ERROR: Class '" + factory_name + "' specified in the preferences file can not be found");
 				factory_class = default_factory_class;
@@ -434,6 +435,7 @@ public final class XmlPrefsParser {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void addColors(Element el, Map hash) {
 		if (el.hasAttribute("red")) {
 			int red = Integer.parseInt(el.getAttribute("red"));
@@ -462,7 +464,6 @@ public final class XmlPrefsParser {
 					String color_name = cel.getAttribute("name");
 					Color col = new Color(red, green, blue);
 					hash.put(color_name, col);
-				//          System.out.println("adding color: " + color_name + ",  " + col);
 				}
 			}
 		}

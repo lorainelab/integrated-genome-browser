@@ -37,8 +37,10 @@ import com.affymetrix.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 public final class SearchView extends JComponent implements ActionListener, GroupSelectionListener, SeqSelectionListener, SymMapChangeListener {
@@ -50,34 +52,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
 
-	private JTextField searchTF;
-	private JPanel pan1 = new JPanel();
-	private JComboBox sequence_CB = new JComboBox();
-	private JComboBox searchCB = new JComboBox();
-	private JCheckBox remoteSearchCheckBox = new JCheckBox("search remotely");
-	private JCheckBox selectInMapCheckBox = new JCheckBox("select in map");
-	private JButton searchButton = new JButton("Search");
-	private JButton clear_button = new JButton("Clear");
-	private SeqMapView gviewer;
-	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
-	private Color hitcolor = new Color(150, 150, 255);
-
-
-	private final JTable table = new JTable();
-	private final JTextField filterText = new JTextField();
-	private final JLabel status_bar = new JLabel("0 results");
-	// The second column in the table contains an object of type SeqSymmetry
-	// but we use a special TableCellRenderer so that what is actually displayed
-	// is a String representing the Tier
-	private final static String[] col_headings = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
-	private final static Class<?>[] col_classes = {String.class, String.class, Integer.class, Integer.class, String.class, String.class};
-	private final static Vector<String> col_headings_vector = new Vector<String>(Arrays.asList(col_headings));
-	private final static int NUM_COLUMNS = col_headings_vector.size();
-	private DefaultTableModel model;
-	private TableRowSorter<DefaultTableModel> sorter;
-	private ListSelectionModel lsm;
-
-	private static final String ALLID = "All loaded IDs";
+	private static final String SEARCHLABELTEXT = "Search ";
+	private static final String INLABELTEXT = "in ";
+	private static final String FORLABELTEXT = "for ";
 	private static final String REGEXID = "Matching IDs";
 	private static final String REGEXIDTF = "IDs match string or Regular Expression";
 	private static final String REGEXRESIDUE = "Matching residues";
@@ -86,17 +63,35 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String FINDANNOTS = "Find Annotations For ";
 	private static final String FINDANNOTSNULL = "Please select genome before continuing";
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
+	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
+	private static final String REMOTESERVERSEARCH2 = " server)";
+	private static final String REMOTESERVERSEARCH3 = " for IDs";
+
+	private static final String SELECTINMAP_TEXT = "select in map";
+	private static final String SELECTINMAP_TIP = "highlight matches in sequence map";
+
+	private JTextField searchTF;
+	private JPanel pan1 = new JPanel();
+	private JComboBox sequence_CB = new JComboBox();
+	private JComboBox searchCB = new JComboBox();
+	private JCheckBox remoteSearchCheckBox = new JCheckBox("");
+	private JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
+	private JButton searchButton = new JButton("Search");
+	private JButton clear_button = new JButton("Clear");
+	private SeqMapView gviewer;
+	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
+	private Color hitcolor = new Color(150, 150, 255);
+
+	private final JTable table = new JTable();
+	private final JTextField filterText = new JTextField();
+	private final JLabel status_bar = new JLabel("0 results");
+	private SearchResultsTableModel model;
+	private TableRowSorter<SearchResultsTableModel> sorter;
+	private ListSelectionModel lsm;
+
+	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 
 	private static final boolean DEBUG = true;
-
-	private class SearchRow {
-		String serverID;
-		String id;
-		int start;
-		int end;
-		String chr;
-		String orientation;
-	}
 
 	public SearchView() {
 		super();
@@ -113,19 +108,22 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		pan1.setLayout(new BoxLayout(pan1, BoxLayout.X_AXIS));
 
+		pan1.add(new JLabel(SearchView.SEARCHLABELTEXT));
+		pan1.add(searchCB);
 
-		JLabel sequenceChooseLabel = new JLabel("Sequence");
-		pan1.add(sequenceChooseLabel);
+		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(new JLabel(SearchView.INLABELTEXT));
 		sequence_CB.setToolTipText(SEQUENCETOSEARCH);
 		pan1.add(sequence_CB);
 
-		pan1.add(Box.createRigidArea(new Dimension(100, 0)));
-
-
-		pan1.add(searchCB);
+		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+		pan1.add(new JLabel(SearchView.FORLABELTEXT));
 		pan1.add(searchTF);
+		
+		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
+
 		pan1.add(remoteSearchCheckBox);
-		pan1.add(selectInMapCheckBox);
+		//pan1.add(selectInMapCheckBox);
 
 		pan1.add(Box.createRigidArea(new Dimension(30, 0)));
 
@@ -188,11 +186,20 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		clear_button.addActionListener(this);
 	}
 
+	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
+		int remoteServerCount = getRemoteServerCount(group);
+		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2);
+		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2 + REMOTESERVERSEARCH3);
+		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
+	}
+
 	private void initSequenceCB() {
 		// set up the sequence combo_box
 		sequence_CB.removeAllItems();
 		if (group != null) {
-			sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID);	// put this at top of list
+			if (!((String)this.searchCB.getSelectedItem()).equals(REGEXRESIDUE)) {
+				sequence_CB.addItem(IGBConstants.GENOME_SEQ_ID); // put this at top of list
+			}
 			for (BioSeq seq : group.getSeqList()) {
 				if (seq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
 					continue;
@@ -211,7 +218,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void initSearchCB() {
 		searchCB.removeAllItems();
-		searchCB.addItem(ALLID);
 		searchCB.addItem(REGEXID);
 		searchCB.addItem(REGEXRESIDUE);
 		searchCB.setToolTipText(CHOOSESEARCH);
@@ -220,59 +226,57 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private void initComponents() {
 		searchTF = new JTextField(10);
 		searchTF.setVisible(true);
-		searchTF.setEnabled(false);
-		remoteSearchCheckBox.setEnabled(false);
-		remoteSearchCheckBox.setToolTipText("search remote servers for IDs");
-		selectInMapCheckBox.setToolTipText("highlight matches in sequence map");
+		searchTF.setEnabled(true);
+		
+		initRemoteServerCheckBox(null);
+
+		selectInMapCheckBox.setToolTipText(SELECTINMAP_TIP);
+		selectInMapCheckBox.setEnabled(true);
 		searchButton.setEnabled(true);
 	}
 
 	private void initTable() {
-		model = new DefaultTableModel() {
-			private static final long serialVersionUID = 0;
-
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-
-			@Override
-			public Class getColumnClass(int column) {
-				return col_classes[column];
-			}
-
-			@Override
-			public void fireTableStructureChanged() {
-				// The columns never change, so suppress tableStructureChanged events
-				// converting to normal table-rows-changed-type events.
-				// This allows the column-based sorting settings to be preserved when
-				// the data changes.
-				fireTableChanged(new javax.swing.event.TableModelEvent(this));
-			}
-		};
-	
-		model.setDataVector(new Vector(0), col_headings_vector);
-
+		model = new SearchResultsTableModel(tableRows);
+		
 		lsm = table.getSelectionModel();
-		//lsm.addListSelectionListener(list_selection_listener);
+		lsm.addListSelectionListener(list_selection_listener);
 		lsm.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		sorter = new TableRowSorter<DefaultTableModel>(model);
+		sorter = new TableRowSorter<SearchResultsTableModel>(model);
 
 		table.setModel(model);
 		table.setRowSelectionAllowed(true);
 		table.setRowSorter(sorter);
 		table.setEnabled(true);
 		table.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer());
-		table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
+		//table.setDefaultRenderer(SeqSymmetry.class, new SeqSymmetryTableCellRenderer());
 	}
+
+	/** This is called when the user selects a row of the table. */
+	ListSelectionListener list_selection_listener = new ListSelectionListener() {
+
+		public void valueChanged(ListSelectionEvent evt) {
+			if (evt.getSource() == lsm && !evt.getValueIsAdjusting() && model.getRowCount() > 0) {
+				int srow = table.getSelectedRow();
+				if (srow < 0) {
+					return;
+				}
+				SeqSymmetry sym = tableRows.get(srow);
+				if (sym != null) {
+					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
+					syms.add(sym);
+					gmodel.setSelectedSymmetriesAndSeq(syms, this);
+				}
+			}
+		}
+	};
 
 	/**
      * Update the row filter regular expression from the expression in
      * the text box.
      */
     private void newFilter() {
-        RowFilter<DefaultTableModel, Object> rf = null;
+        RowFilter<SearchResultsTableModel, Object> rf = null;
         //If current expression doesn't parse, don't update.
         try {
             rf = RowFilter.regexFilter(filterText.getText(), 0);
@@ -290,82 +294,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		map.updateWidget();
 	}
 
-	private static Vector<Vector<Object>> buildRows(List<SeqSymmetry> results, BioSeq seq) {
-
-		if (results == null || results.isEmpty()) {
-			return new Vector<Vector<Object>>(0);
-		}
-
-		int num_rows = results.size();
-
-		Vector<Vector<Object>> rows = new Vector<Vector<Object>>(num_rows, num_rows / 10);
-		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
-			Vector<Object> a_row = new Vector<Object>(NUM_COLUMNS);
-			SeqSymmetry result = results.get(j);
-			if (!convertSymmetryToRow(result, j, seq, a_row)) {
-				continue ;
-			}
-			rows.add(a_row);
-		}
-
-		return rows;
+	private void displayInTable(List<SeqSymmetry> rows) {
+		model.fireTableDataChanged();
 	}
 
-
-	private static boolean convertSymmetryToRow(SeqSymmetry result, int j, BioSeq seq, Vector<Object> a_row) {
-		SeqSpan span = null;
-		if (seq != null) {
-			span = result.getSpan(seq);
-			if (span == null) {
-				// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
-				SeqSpan tempSpan = result.getSpan(0);
-				if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
-					span = tempSpan;
-				}
-			}
-		} else {
-			span = result.getSpan(0);
-		}
-		if (span == null) {
-			return false;
-		}
-		// TODO: use SearchRow class
-		a_row.add(result.getID());	// ID
-		a_row.add(BioSeq.determineMethod(result));	// tier
-		if (result instanceof UcscPslSym) {
-			a_row.add(((UcscPslSym) result).getTargetMin());
-			a_row.add(((UcscPslSym) result).getTargetMax());
-			a_row.add(((UcscPslSym) result).getTargetSeq().getID());
-		} else {
-			a_row.add(new Integer(span.getStart()));
-			a_row.add(new Integer(span.getEnd()));
-			if (seq != null) {
-				a_row.add(seq.getID());
-			} else {
-				a_row.add(span.getBioSeq().getID());
-			}
-		}
-		
-		a_row.add(span.isForward() ? "+" : "-");
-		return true;
-	}
-
-	private void displayInTable(final Vector<Vector<Object>> rows) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				model.setDataVector(rows, col_headings_vector);
-			}
-		});
-	}
-
-	// Clear the table (using invokeLater)
 	private void clearTable() {
-		SwingUtilities.invokeLater(new Runnable() {
-
-			public void run() {
-				model.setDataVector(new Vector(0), col_headings_vector);
-			}
-		});
+		tableRows.clear();
+		model.fireTableDataChanged();
 	}
 
 	// remove the previous search results from the map.
@@ -383,7 +318,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		if (src == this.searchCB) {
 			clearAll();
 			String searchMode = (String) this.searchCB.getSelectedItem();
-			this.searchTF.setEnabled(!ALLID.equals(searchMode));
+			this.initSequenceCB();
+			this.searchTF.setEnabled(true);
 
 			boolean remoteEnabled = REGEXID.equals(searchMode);
 			this.remoteSearchCheckBox.setEnabled(remoteEnabled);
@@ -394,7 +330,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			boolean displaySelectedEnabled = !REGEXRESIDUE.equals(searchMode);
 			this.selectInMapCheckBox.setEnabled(displaySelectedEnabled);
 			if (!displaySelectedEnabled) {
-				this.selectInMapCheckBox.setSelected(false);
+				this.selectInMapCheckBox.setSelected(true);	// we ALWAYS display in map if it's residues.
 			}
 
 			if (REGEXID.equals(searchMode)) {
@@ -414,9 +350,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			String chrStr = (String) this.sequence_CB.getSelectedItem();
 			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);
-			if (ALLID.equals(searchMode)) {
-				displayRegexIDs(".*", chrfilter);
-			} else if (REGEXID.equals(searchMode)) {
+			if (REGEXID.equals(searchMode)) {
 				displayRegexIDs(this.searchTF.getText(), chrfilter);
 			} else if (REGEXRESIDUE.equals(searchMode)) {
 				displayRegexResidues();
@@ -448,13 +382,27 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		List<SeqSymmetry> sym_list = group.findSyms(regex);
 		List<SeqSymmetry> remoteSymList = null;
 
+		// Make sure this search is reasonable to do on a remote server.
+		int actualChars = text.length();
+		if (text.startsWith(".*")) {
+			actualChars -= 2;
+		} else if (text.startsWith("*")) {
+			actualChars -= 1;
+		}
+		if (text.endsWith(".*")) {
+			actualChars -= 2;
+		} else if (text.endsWith("*")) {
+			actualChars -= 1;
+		}
+
 		if (this.remoteSearchCheckBox.isSelected()) {
-			if (text.length() < 3) {
-				status_bar.setText(friendlySearchStr + ": Text is too short for remote search...");
-			} else {
-				status_bar.setText(friendlySearchStr + ": Searching remotely...");
-				remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
+			if (actualChars < 3) {
+				Application.errorPanel(friendlySearchStr + ": Text is too short to allow remote search.");
+				return;
 			}
+
+			status_bar.setText(friendlySearchStr + ": Searching remotely...");
+			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
 		}
 
 		if (sym_list == null && remoteSymList == null) {
@@ -463,7 +411,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 
 		String statusStr = friendlySearchStr + ": " + (sym_list == null ? 0 : sym_list.size()) + " local matches";
-		if (this.remoteSearchCheckBox.isSelected() && text.length() >= 3) {
+		if (this.remoteSearchCheckBox.isSelected() && actualChars >= 3) {
 				statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
 		}
 		setStatus(statusStr);
@@ -474,10 +422,47 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			sym_list.addAll(remoteSymList);
 		}
 
-		final Vector<Vector<Object>> rows = buildRows(sym_list, chrFilter);
-		displayInTable(rows);
+		tableRows = filterRows(sym_list, chrFilter);
+		displayInTable(tableRows);
 
 	}
+
+
+	private static List<SeqSymmetry> filterRows(List<SeqSymmetry> results, BioSeq seq) {
+
+		if (results == null || results.isEmpty()) {
+			return new ArrayList<SeqSymmetry>();
+		}
+
+		int num_rows = results.size();
+
+		List<SeqSymmetry> rows = new ArrayList<SeqSymmetry>(num_rows / 10);
+		for (int j = 0; j < num_rows && rows.size() < MAX_HITS; j++) {
+			SeqSymmetry result = results.get(j);
+
+			SeqSpan span = null;
+			if (seq != null) {
+				span = result.getSpan(seq);
+				if (span == null) {
+					// Special case when chromosomes are not equal, but have same ID (i.e., really they're equal)
+					SeqSpan tempSpan = result.getSpan(0);
+					if (tempSpan != null && tempSpan.getBioSeq() != null && seq.getID().equals(tempSpan.getBioSeq().getID())) {
+						span = tempSpan;
+					}
+				}
+			} else {
+				span = result.getSpan(0);
+			}
+			if (span == null) {
+				continue;
+			}
+
+			rows.add(result);
+		}
+
+		return rows;
+	}	
+	
 
 	/**
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
@@ -485,7 +470,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private void displayRegexResidues() {
 		MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
-			Application.errorPanel("Residues for seq not available, search aborted");
+			Application.errorPanel(
+					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
 			return;
 		}
 		regexTF((BioSeq) vseq);
@@ -522,33 +508,39 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		status_bar.setText(friendlySearchStr + ": Working...");
 
 		String residues = vseq.getResidues();
-
 		TransformTierGlyph axis_tier = gviewer.getAxisTier();
 		GlyphI seq_glyph = findSeqGlyph(axis_tier);
 		int residue_offset = vseq.getMin();
-		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier, 0);
+		int hit_count1 = searchForRegexInResidues(true, regex, residues, residue_offset, seq_glyph, axis_tier);
 
 		// Search for reverse complement of query string
 		//   flip searchstring around, and redo nibseq search...
 		String rev_searchstring = DNAUtils.reverseComplement(residues);
-		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier, 0);
+		residue_offset = vseq.getMax();
+		int hit_count2 = searchForRegexInResidues(false, regex, rev_searchstring, residue_offset, seq_glyph, axis_tier);
 
 		setStatus(friendlySearchStr + ": " + hit_count1 + " forward strand hits and " + hit_count2 + " reverse strand hits");
 		NeoMap map = gviewer.getSeqMap();
 		map.updateWidget();
 	}
 
-	private int searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier, int hit_count) {
+	private int searchForRegexInResidues(boolean forward, Pattern regex, String residues, int residue_offset, GlyphI seq_glyph, TransformTierGlyph axis_tier) {
+		int hit_count = 0;
 		Matcher matcher = regex.matcher(residues);
 		while (matcher.find()) {
-			int start = matcher.start(0) + residue_offset;
-			int end = matcher.end(0) + residue_offset;
+			int start = residue_offset + (forward ? matcher.start(0) : -matcher.end(0));
+			int end = residue_offset + (forward ? matcher.end(0) : -matcher.start(0));
+			//int end = matcher.end(0) + residue_offset;
 			GlyphI gl = new FillRectGlyph();
 			gl.setColor(hitcolor);
 			if (seq_glyph != null) {
-				double pos = seq_glyph.getCoordBox().y + (forward ? 0 : 5);
-				gl.setCoords(start, pos, end - start, seq_glyph.getCoordBox().height);
+				double offset = forward ? 0 : seq_glyph.getCoordBox().height / 2;
+
+				gl.setCoords(start, seq_glyph.getCoordBox().y, end - start, seq_glyph.getCoordBox().height);
 				seq_glyph.addChild(gl);
+
+				// when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
+				gl.setCoords(start, seq_glyph.getCoordBox().y + offset, end - start, seq_glyph.getCoordBox().height / 2);
 			} else {
 				double pos = forward ? 10 : 15;
 				gl.setCoords(start, pos, end - start, 10);
@@ -562,6 +554,19 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private static String friendlyString(String text, String chr) {
 		return "Search for " + text + " on " + chr;
+	}
+
+	private static int getRemoteServerCount(AnnotatedSeqGroup group) {
+		if (group == null) {
+			return 0;
+		}
+		int count = 0;
+		for (GenericVersion gVersion : group.getVersions()) {
+			if (gVersion.gServer.serverType == ServerType.DAS2) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	private static List<SeqSymmetry> remoteSearchFeaturesByName(AnnotatedSeqGroup group, String name, BioSeq chrFilter) {
@@ -605,14 +610,15 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		pan1.setBorder(BorderFactory.createTitledBorder(annotsStr));
 		this.searchCB.setEnabled(newGroup != null);
 		this.searchButton.setEnabled(newGroup != null);
-		String searchMode = (String) this.searchCB.getSelectedItem();
-		this.searchTF.setEnabled(newGroup != null && !ALLID.equals(searchMode));
+		this.searchTF.setEnabled(newGroup != null);
 
 		// only re-initialize the combobox if the group or seqs have changed
 		if (newGroup != group || seqCount != newSeqCount) {
 			group = newGroup;
 			seqCount = newSeqCount;
 			this.initSequenceCB();
+			initRemoteServerCheckBox(group);
+
 		}
 	}
 
@@ -638,7 +644,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	/** A renderer that displays the value of {@link SeqMapView#determineMethod(SeqSymmetry)}. */
 	private static class SeqSymmetryTableCellRenderer extends DefaultTableCellRenderer {
-
+		private static final long serialVersionUID = 0;
 		public SeqSymmetryTableCellRenderer() {
 			super();
 		}
@@ -656,5 +662,80 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		public int compare(SeqSymmetry s1, SeqSymmetry s2) {
 			return BioSeq.determineMethod(s1).compareTo(BioSeq.determineMethod(s2));
 		}
+	}
+
+	private class SearchResultsTableModel extends AbstractTableModel {
+
+		private final String[] column_names = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
+		private final int ID_COLUMN = 0;
+		private final int TIER_COLUMN = 1;
+		private final int START_COLUMN = 2;
+		private final int END_COLUMN = 3;
+		private final int CHROM_COLUMN = 4;
+		private final int STRAND_COLUMN = 5;
+		private List<SeqSymmetry> search_results;
+
+		public SearchResultsTableModel(List<SeqSymmetry> results) {
+			search_results = results;
+		}
+
+		public Object getValueAt(int row, int col) {
+			SeqSymmetry sym = tableRows.get(row);
+			SeqSpan span = sym.getSpan(0);
+			switch (col) {
+				case ID_COLUMN:
+					return sym.getID();
+				case TIER_COLUMN:
+					return BioSeq.determineMethod(sym);
+				case START_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return (((UcscPslSym) sym).getSameOrientation()) ? 
+							((UcscPslSym) sym).getTargetMin() : ((UcscPslSym) sym).getTargetMax();
+					}
+					return (span == null ? "" : span.getStart());
+				case END_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return (((UcscPslSym) sym).getSameOrientation()) ?
+							((UcscPslSym) sym).getTargetMax() : ((UcscPslSym) sym).getTargetMin();
+					}
+					return (span == null ? "" : span.getEnd());
+				case CHROM_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return ((UcscPslSym) sym).getTargetSeq().getID();
+					}
+					return (span == null ? "" : span.getBioSeq().getID());
+				case STRAND_COLUMN:
+					if (sym instanceof UcscPslSym) {
+						return (
+								(((UcscPslSym) sym).getSameOrientation())
+								? "+" : "-");
+					}
+					if (span == null) {
+						return "";
+					}
+					return (span.isForward() ? "+" : "-");
+			}
+			return "";
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+			
+		public int getColumnCount() {
+			return column_names.length;
+		}
+
+		@Override
+		public String getColumnName(int col) {
+			return column_names[col];
+		}
+
+		public int getRowCount() {
+			return tableRows.size();
+		}
+
+
 	}
 }

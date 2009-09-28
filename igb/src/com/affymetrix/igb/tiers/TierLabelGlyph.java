@@ -13,9 +13,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private Font fnt;
 	private boolean show_background = false;
 	private boolean show_outline = false;
-	private String word_breaker_regexp = "\\s|_|-|\\.|/|\\\\|\\|";
-	private int text_padding = 2;
-
+	
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
@@ -125,8 +123,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	void drawLabel(Graphics g, Rectangle boundingPixelBox) {
 		// assumes that pixelbox coordinates are already computed
 
-
-
 		if (null != fnt) {
 			g.setFont(fnt);
 		}
@@ -155,56 +151,61 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 		int text_width = fm.stringWidth(label);
 		if (text_width > pixelbox.width) {
-
-			// OLD: if text wider than glyph's pixelbox, then show beginning of text
-			OLD:
-			pixelbox.x += 3;
-
-			// NOW: split line by breakers and show it.
-
-
-			// splitting
-			String[] words = label.split(word_breaker_regexp);
-			// cc,wc and lc  are character, word and line counts.
-			int charCounter = 0, wordCounter = 0, lineCounter = 0;
-
-			// idea: combine words until they get wider:
-
-			while (wordCounter < words.length) {
-
-				int word_width = fm.stringWidth(words[wordCounter]);
-				// i will be the number of proceding words to add to words[wc]
-				int numberOfWords = 1;
-				// cc is counted to add word breakers!
-				charCounter += words[wordCounter].length();
-
-				while (wordCounter + numberOfWords < words.length) {
-					String nextword = label.charAt(charCounter) + words[wordCounter + numberOfWords];
-
-					int nextword_width = fm.stringWidth(nextword);
-
-					if (word_width + nextword_width > pixelbox.width - 2 * text_padding - 1) {
-						break;
-					}
-					words[wordCounter] += nextword;
-					word_width += nextword_width;
-					charCounter += nextword.length();
-					//words[wordCounter + numberOfWords] = "";
-					numberOfWords++;
-				}
-				g.drawString(words[wordCounter], pixelbox.x, (lowerY + upperY + text_height) / 2 + (lineCounter - 1) * (text_height + text_padding - 4));
-				wordCounter += numberOfWords;
-				lineCounter++;
-				charCounter++;
-			}
-
+			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height);
 		} else {
 			// if text wider than glyph's pixelbox, then center text
 			pixelbox.x += pixelbox.width / 2 - text_width / 2;
 			g.drawString(label, pixelbox.x, (lowerY + upperY + text_height) / 2);
 		}
-
 	}
+
+
+	private void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height) {
+		String word_breaker_regexp = "\\s|_|-|\\.|/|\\\\|\\|";
+		int stringHeight = (lowerY + upperY + text_height) / 2;
+
+		String[] words = label.split(word_breaker_regexp);
+
+		pixelbox.x += 3;
+
+		// split line by breakers and show it.
+		
+		int charCounter = 0;
+		int wordCounter = 0;
+		int lineCounter = 0;
+		
+		// idea: combine words until they get wider:
+		while (wordCounter < words.length) {
+			// loop: draw a single line, maximizing the number of words
+			int word_width = fm.stringWidth(words[wordCounter]);
+			int numberOfWords = 1;
+			
+			// charCounter is counted to add word breakers!
+			charCounter += words[wordCounter].length();
+			while (wordCounter + numberOfWords < words.length) {
+				String nextword = label.charAt(charCounter) + words[wordCounter + numberOfWords];
+				int nextword_width = fm.stringWidth(nextword);
+				if (stringHeight + (lineCounter * (text_height - 2)) <= upperY) {
+					// Only wrap words if there's no potential of going outside the box
+					if (word_width + nextword_width > pixelbox.width - 5) {
+						// words won't fit together on this line, so wrap, advancing to the next line.
+						break;
+					}
+				}
+				words[wordCounter] += nextword;
+				word_width += nextword_width;
+				charCounter += nextword.length();
+				numberOfWords++;
+			}
+			
+			int height =  stringHeight + (lineCounter - 1) * (text_height -2);
+			g.drawString(words[wordCounter], pixelbox.x, height);
+			wordCounter += numberOfWords;
+			lineCounter++;
+			charCounter++;
+		}
+	}
+
 
 	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
 	 *  the outline is usually drawn a pixel or two larger than the glyph.

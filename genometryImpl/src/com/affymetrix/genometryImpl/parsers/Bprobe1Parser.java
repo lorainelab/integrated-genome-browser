@@ -109,6 +109,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			String format = dis.readUTF();
 			int format_version = dis.readInt();
 			boolean version2 = (format.equals("bp2"));
+			
 			if (DEBUG) {
 				System.out.println("is bp2: " + version2);
 			}
@@ -208,7 +209,6 @@ public final class Bprobe1Parser implements AnnotationWriter {
 						cmins[k] = min;
 					}
 					SeqSymmetry psym = new EfficientProbesetSymA(shared_info, cmins, forward, nid);
-					// SeqSymmetry psym = new EfficientProbesetSymA(tagvals, cmins, probe_length, forward, id_prefix, nid, aseq);
 					syms[i]  = psym;
 					container_sym.addChild(psym);
 					results.add(psym);
@@ -240,7 +240,6 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		boolean success = false;
 		AnnotatedSeqGroup group = ((BioSeq)aseq).getSeqGroup();
 		String groupid = group.getID();
-		//    String version = groupid;
 		String seqid = aseq.getID();
 		int acount = syms.size();
 
@@ -265,11 +264,9 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			//     Genometry DAS/2 servlet
 			//     (when running in Jetty -- possibly conflicts with Jetty's donwstream buffering of HTTP responses?)
 			else { dos = new DataOutputStream(outstream); }
-			//      else { dos = new DataOutputStream(new BufferedOutputStream(outstream)); }
 			dos.writeUTF("bp2");
 			dos.writeInt(1);
 			dos.writeUTF(groupid);
-			//      dos.writeUTF(version_id);
 			dos.writeUTF("");  // version id blank -- version and group are combined in groupid
 			dos.writeUTF(type);
 			dos.writeInt(probe_length);
@@ -284,10 +281,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			dos.writeInt(syms.size());
 
 			dos.writeInt(0);  // no tagval properties...
-			Iterator siter = syms.iterator();
-			while (siter.hasNext())  {
-				//        EfficientProbesetSymA psym  = (EfficientProbesetSymA)siter.next();
-				SeqSymmetry psym = (SeqSymmetry)siter.next();
+			for (SeqSymmetry psym : syms) {
 				writeProbeset(psym, aseq, dos);
 			}
 			dos.flush();
@@ -336,6 +330,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			bos = new BufferedOutputStream( new FileOutputStream( new File( output_file) ) );
 			dos = new DataOutputStream(bos);
 			dos.writeUTF("bp2");
+			
 			dos.writeInt(1);
 			dos.writeUTF(seq_group.getID());
 			dos.writeUTF(version_id);
@@ -343,9 +338,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			dos.writeInt(probe_length);
 			dos.writeUTF(id_prefix);
 			dos.writeInt(seq_count);
-			Iterator iter = seq_group.getSeqList().iterator();
-			while (iter.hasNext()) {
-				MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)iter.next();
+			for (BioSeq aseq : seq_group.getSeqList()) {
 				String seqid = aseq.getID();
 				int seq_length = aseq.getLength();
 				int container_count = aseq.getAnnotationCount();
@@ -361,44 +354,20 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			}
 			int tagval_count = tagvals.size();
 			dos.writeInt(tagval_count);
-			Iterator tviter = tagvals.entrySet().iterator();
-			while (tviter.hasNext()) {
-				Map.Entry ent = (Map.Entry)tviter.next();
-				String tag = (String)ent.getKey();
-				String val = (String)ent.getValue();
+			for (Map.Entry<String,String> ent : tagvals.entrySet()) {
+				String tag = ent.getKey();
+				String val = ent.getValue();
 				dos.writeUTF(tag);
 				dos.writeUTF(val);
 			}
-			iter = seq_group.getSeqList().iterator();
-			while (iter.hasNext()) {
-				MutableAnnotatedBioSeq aseq = (MutableAnnotatedBioSeq)iter.next();
+			for (BioSeq aseq : seq_group.getSeqList()) {
 				int container_count = aseq.getAnnotationCount();
-				//        System.out.println("seqid: " + aseq.getID() + ", annot count: " + annot_count );
 				for (int i=0; i<container_count; i++) {
 					SeqSymmetry cont = aseq.getAnnotation(i);
 					int annot_count = cont.getChildCount();
 					for (int k=0; k<annot_count; k++) {
 						writeProbeset(cont.getChild(k), aseq, dos);
 					}
-					/*
-					   for (int k=0; k<annot_count; k++) {
-					   SeqSymmetry psym = cont.getChild(k);
-					   SeqSpan pspan = psym.getSpan(aseq);
-					   int child_count = psym.getChildCount();
-					   String symid = psym.getID();
-					//          System.out.println("probeset_id: " + symid);
-					int symint = Integer.parseInt(symid);
-					//            int symint = psym.getIntID();
-					dos.writeInt(symint);  // probeset id representated as an integer
-					// sign of strnad_and_count indicates forward (+) or reverse (-) strand
-					byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
-					dos.writeByte(strand_and_count);
-					for (int m=0; m<child_count; m++) {
-					SeqSymmetry csym = psym.getChild(m);
-					dos.writeInt(csym.getSpan(aseq).getMin());
-					}
-					   }
-					   */
 				}
 			}
 		}
@@ -409,13 +378,13 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	}
 
 
-	//  protected static void writeProbeset(EfficientPrebesetSymA psym, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
 	protected static void writeProbeset(SeqSymmetry psym, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
 		SeqSpan pspan = psym.getSpan(aseq);
 		int child_count = psym.getChildCount();
 		int intid;
 		if (psym instanceof EfficientProbesetSymA) {
 			intid = ((EfficientProbesetSymA)psym).getIntID();
+			
 		}
 		else {
 			intid = Integer.parseInt(psym.getID());
@@ -476,11 +445,11 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		}
 
 
-		System.out.println("Creating a '.bp1' format file: ");
+		System.out.println("Creating a '.bp2' format file: ");
 		System.out.println("Input '"+in_file+"'");
 		System.out.println("Output '"+out_file+"'");
 		convertGff(in_file, out_file, genomeid, versionid, annot_type, id_prefix);
-		System.out.println("DONE!  Finished converting GFF file to BP1 file.");
+		System.out.println("DONE!  Finished converting GFF file to BP2 file.");
 		System.out.println("");
 
 		/*
@@ -497,11 +466,5 @@ public final class Bprobe1Parser implements AnnotationWriter {
 		*/
 
 	}
-
-	/*
-	   public void makeBprobe1(String gff_input_file, String bprobe_output_file) {
-
-	   }
-	   */
 
 	}

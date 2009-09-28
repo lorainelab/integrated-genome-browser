@@ -484,16 +484,24 @@ public class IndexingUtils {
 	/**
 	 * Find the maximum overlap given a range.
 	 * @param insideRange -- an array of length 2, with a start and end coordinate.
-	 * @param outputRange -- an outputted array of length 2, with a start position (from min[] array) and an end position (from max[] array).
+	 * @param outputRange -- an outputted array of length 2, with a start position (from min[] array) and an end position (from min[] array).
 	 * @param min -- array of SORTED min points.
 	 * @param max -- array of max points.
 	 */
 	public static void findMaxOverlap(int [] overlapRange, int [] outputRange, int [] min, int [] max) {
-		int tempPos = findMinimaGreaterOrEqual(min, overlapRange[0]);
-		outputRange[0] = tempPos;
+		// Find the first element with min at least equal to our start.
+		int minStart = findMinimaGreaterOrEqual(min, overlapRange[0]);
 
-		tempPos = findMaximaLessOrEqual(min, overlapRange[1]);
-		outputRange[1] = tempPos;
+		// Correct this estimate by backtracking to find any max values where start <= max.
+		// (Otherwise, we will miss half-in intervals that have min < start, but start <= max.)
+		int correctedMinStart = backtrackForHalfInIntervals(minStart, max, overlapRange[0]);
+
+		outputRange[0] = correctedMinStart;
+
+		// Find the last element with start(min) at most equal to our overlap end.
+		// Since min is always <= max, this gives us a correct bound on our return values.
+		int maxEnd = findMaximaLessOrEqual(min, overlapRange[1]);
+		outputRange[1] = maxEnd;
 	}
 
 
@@ -531,12 +539,11 @@ public class IndexingUtils {
 			// This means the end element was not found in the array.  Translate back to "insertion point", which is:
 			//the index of the first element greater than the key, or min.length, if all elements in the list are less than the specified key.
 			tempPos = (-(tempPos + 1));
-			// But here, we want to backtrack to the element less than the key.
+			// But here, we want to go the last element < the key.
 			if (tempPos > 0) {
 				tempPos--;
-				tempPos = backTrack(min, tempPos);
 			}
-			// Don't go past array limit
+			// Don't go past array limit (this case is probably impossible)
 			tempPos = Math.min(min.length - 1, tempPos);
 		}
 		return tempPos;
@@ -576,6 +583,23 @@ public class IndexingUtils {
 			}
 		}
 		return pos;
+	}
+
+	/**
+	 * Backtrack to find any max values where start <= max <= end.
+	 * @param minStart
+	 * @param max
+	 * @param overlapRange
+	 * @return
+	 */
+	private static int backtrackForHalfInIntervals(int minStart, int[] max, int overlapStart) {
+		int minVal = minStart;
+		for (int i=minStart-1;i>=0;i--) {
+			if (max[i] >= overlapStart) {
+				minVal = i;
+			}
+		}
+		return minVal;
 	}
 
 }

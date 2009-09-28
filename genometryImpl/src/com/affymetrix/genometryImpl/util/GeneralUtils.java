@@ -89,29 +89,33 @@ public final class GeneralUtils {
 	 */
 	public static InputStream unzipStream(InputStream istr, String stream_name,
 			StringBuffer stripped_name)
-		throws IOException  {
+			throws IOException {
 		String lc_stream_name = stream_name.toLowerCase();
 		if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip") ||
-				lc_stream_name.endsWith(".z"))  {
-			//System.out.println("uncompressing via gzip stream");
+				lc_stream_name.endsWith(".z")) {
 			GZIPInputStream gzstr = new GZIPInputStream(istr);
-			//      String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
-			//System.out.println("stripped off gzip suffix, name = " + new_name);
 			return unzipStream(gzstr, new_name, stripped_name);
-				}
-		else if (stream_name.endsWith(".zip")) {
-			//System.out.println("uncompressing via zip stream");
+		} else if (stream_name.endsWith(".zip")) {
 			ZipInputStream zstr = new ZipInputStream(istr);
 			zstr.getNextEntry();
 			String new_name = stream_name.substring(0, stream_name.lastIndexOf('.'));
-			//System.out.println("stripped off zip suffix, name = " + new_name);
 			return unzipStream(zstr, new_name, stripped_name);
 		}
 		stripped_name.append(stream_name);
 		return istr;
 	}
 
+	public static String getUnzippedName(String stream_name) {
+		String lc_stream_name = stream_name.toLowerCase();
+		if (lc_stream_name.endsWith(".gz") || lc_stream_name.endsWith(".gzip") ||
+				lc_stream_name.endsWith(".z")) {
+			return stream_name.substring(0, stream_name.lastIndexOf('.'));
+		} else if (stream_name.endsWith(".zip")) {
+			return stream_name.substring(0, stream_name.lastIndexOf('.'));
+		}
+		return stream_name;
+	}
 
 	/**
 	 * Get a favicon from the URL.

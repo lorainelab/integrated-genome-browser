@@ -79,7 +79,7 @@
 			    <key column="idGenomeVersion"/>
 			    <one-to-many class="com.affymetrix.genometry.servlets.das2manager.GenomeVersionAlias" />
 		    </set>        
-		    <set name="annotationGroupings" table="AnnotationGrouping" lazy="false" cascade="all" order-by="name">
+		    <set name="annotationGroupings" table="AnnotationGrouping" lazy="false" cascade="none" order-by="name">
 			    <key column="idGenomeVersion"/>
 			    <one-to-many class="com.affymetrix.genometry.servlets.das2manager.AnnotationGrouping" />
 		    </set>        

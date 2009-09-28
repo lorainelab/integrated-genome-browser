@@ -22,7 +22,7 @@ public class URLElement implements DynamicAttribute, OptionSource
     private static final String POLICY_FILE_URL = "policy-file-url";
 
     private String rslURL;
-    private String policyFileURL;
+    private String policyFileURL = "";
 
     public void setDynamicAttribute(String name, String value)
     {
@@ -37,7 +37,7 @@ public class URLElement implements DynamicAttribute, OptionSource
         else
         {
             throw new BuildException("The <url> type doesn't support the \"" +
-                                     name + "\" attribute.");            
+                                     name + "\" attribute.");
         }
     }
 
@@ -47,7 +47,7 @@ public class URLElement implements DynamicAttribute, OptionSource
         {
             commandLine.createArgument().setValue(rslURL);
         }
-        
+
         if (policyFileURL != null)
         {
             commandLine.createArgument().setValue(policyFileURL);

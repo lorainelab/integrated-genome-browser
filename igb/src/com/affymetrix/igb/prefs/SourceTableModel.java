@@ -21,7 +21,11 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	private static final long serialVersionUID = 1l;
 	private List<GenericServer> servers = new ArrayList<GenericServer>();
 
-	public static enum SourceColumn { Name, Type, URL, Login, Password, Enabled };
+	//public static enum SourceColumn { Name, Type, URL, Login, Password, Enabled };
+	/* Reorder the columns so the two columns to be hidden are at the end */
+	public static enum SourceColumn { Name, Type, URL, Enabled, Login, Password };
+	/* Hide the last two columns */
+	private static final int HIDDEN = 2;
 
 	public SourceTableModel() {
 		init();
@@ -48,7 +52,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
     }
 
 
-	public int getColumnCount() { return SourceColumn.values().length; }
+	public int getColumnCount() { return SourceColumn.values().length - HIDDEN; }
 
 	@Override
 	public String getColumnName(int col) { return SourceColumn.values()[col].toString(); }
@@ -135,5 +139,4 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 		this.init();
 		this.fireTableDataChanged();
 	}
-
 }

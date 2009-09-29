@@ -4,6 +4,27 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-6.0
+client features:
+
++ compiled with Java 6
++ enhanced data source preferences page
++ unification of "Pattern Search", "Name Search", and "Annotation Browser" tabs
++ added "Restriction sites" tab by default
++ auto-loading of features (if specified by DAS/2 server)
++ data provider hyperlinks and icons
++ feature hyperlinks and description tooltips
++ QuickLoad annots.xml file (similar to DAS/2)
++ GFF and BED parsing bugfixes
++ warnings for chromosome conflicts
++ assorted GUI enhancements and bugfixes 
+
+server features:
++ file indexing: reduces memory requirements by up to 90%, often reducing startup time as well.
++ improved ID searches: reduces network traffic, thus speeding up client-side search.
++ warnings for chromosome conflicts
++ additional annots.xml properties
+
 IGB-5.5
   + Incremental change: UI improvements, memory management, code cleanup.  This is the last Java 5-compatible release; Java 5 will NOT be supported after this. 
   + Image export (print to file) for many formats, such as: 

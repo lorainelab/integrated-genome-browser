@@ -55,7 +55,7 @@ DROP TABLE IF EXISTS `Annotation`;
 CREATE TABLE `Annotation` (
   `idAnnotation` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(45) NOT NULL,
-  `description` varchar(2000) default NULL,
+  `description` varchar(10000) default NULL,
   `fileName` varchar(2000) default NULL,
   `idExperimentPlatform` int(10) unsigned default NULL,
   `idExperimentMethod` int(10) unsigned default NULL,

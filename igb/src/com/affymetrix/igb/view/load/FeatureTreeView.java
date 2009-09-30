@@ -264,8 +264,8 @@ public final class FeatureTreeView extends JComponent {
 			if (gServer.friendlyURL != null) {
 				Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
 				bounds.width = (int) linkBound.getWidth();
-				if (gServer.friendlyIcon != null) {
-					bounds.x += gServer.friendlyIcon.getIconWidth() + 1;
+				if (gServer.getFriendlyIcon() != null) {
+					bounds.x += gServer.getFriendlyIcon().getIconWidth() + 1;
 				} else {
 					bounds.x += 16;
 				}
@@ -435,8 +435,8 @@ public final class FeatureTreeView extends JComponent {
 			}
 			serverNameString = "<html>" + serverNameString + " (" + gServer.serverType.toString() + ")";
 			super.getTreeCellRendererComponent(tree, serverNameString, sel, expanded, leaf, row, hasFocus);
-			if (gServer.friendlyIcon != null) {
-				setIcon(gServer.friendlyIcon);
+			if (gServer.getFriendlyIcon() != null) {
+				setIcon(gServer.getFriendlyIcon());
 			}
 			return this;
 		}

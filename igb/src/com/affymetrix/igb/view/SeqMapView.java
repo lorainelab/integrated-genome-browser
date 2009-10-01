@@ -1676,7 +1676,8 @@ public class SeqMapView extends JPanel
 				seq_glyph.setSelected(false);
 			} else {
 				SeqSpan seq_region = seq_selected_sym.getSpan(aseq);
-				seq_glyph.select(seq_region.getMin(), seq_region.getMax());
+				// corrected for interbase coords
+				seq_glyph.select(seq_region.getMin(), seq_region.getMax()-1);
 				setStatus(SeqUtils.spanToString(seq_region));
 			}
 			if (update_widget) {
@@ -1719,11 +1720,12 @@ public class SeqMapView extends JPanel
 			Application.errorPanel("Can't copy to clipboard",
 							"No selection or multiple selections.  Select a single item before copying its residues to clipboard.");
 		} else {
-			SeqSpan span = residues_sym.getSpan(aseq);
 			if (aseq == null) {
 				// This is a fishy test.  How could aseq possibly be null?
 				Application.errorPanel("Don't have residues, can't copy to clipboard");
-			} else { // 2
+			}
+			else {
+				SeqSpan span = residues_sym.getSpan(aseq);
 				int child_count = residues_sym.getChildCount();
 				if (child_count > 0) {
 					// make new resorted sym to fix any problems with orientation

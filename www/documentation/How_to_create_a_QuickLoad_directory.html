@@ -26,18 +26,16 @@ The top-level directory must contain:<br />
   One sub-directory for each genome<br />
   File: contents.txt<br />
   File: synonyms.txt<br />
-  File: das_servers.txt<br />
 <br />
 Each genome directory must contain:<br />
-  Required File: annots.txt<br />
-  Required: Either "liftAll.lft" or "mod_chromInfo.txt"<br />
-  Optional: refseq.brs<br />
+  Required File: annots.xml (or older annots.txt)<br />
+  Required: Either "mod_chromInfo.txt" or "liftAll.lft"<br />
   Optional: A set of files with genomic sequence for each chromosome<br />
   Optional: Any additional annotation files you wish<br />
 <br />
 When setting up your own QuickLoad directory, you may wish<br />
-to refer to the Affymetrix QuickLoad server:
-<a href="http://netaffxdas.affymetrix.com/quickload_data/">http://netaffxdas.affymetrix.com/quickload_data/</a>
+to refer to the Bioviz QuickLoad server:
+<a href="http://bioviz.org/quickload/">http://bioviz.org/quickload/</a>
 <br />
 <br />
 <br />
@@ -61,22 +59,13 @@ and chromosomes.  Each line contains any number of synonyms for an <br />
 individual sequence, separated by tabs.<br />
 <br />
 This file helps IGB recognize identical sequences that have <br />
-different names on different DAS servers.<br />
+different names on different QuickLoad, DAS, and DAS/2 servers.<br />
 <br />
 <br />
-<!--<u>"das_servers.txt"</u><br />
+
+<u>"annots.xml"</u><br />
 <br />
-A list of DAS servers.  The format of each line is <br />
-NAME <i>tab</i> URL <i>tab</i> INFO_URI.<br />
-<br />
-INFO_URI can point to any url containing explanatory information; <br />
-use "null" if there is nothing appropriate.<br />
-<br />
-<br />
--->
-<u>"annots.txt"</u><br />
-<br />
-A list of the annotation files in a given genome directory.<br />
+A list of the annotation files and their properties in a given genome directory.<br />
 You should not list sequence data files here, but only list<br />
 annotation files.<br />
 <br />
@@ -84,23 +73,26 @@ The annotation files can be in a wide variety of formats.<br />
 The formats will be recognized based on the filename extensions.<br />
 <br />
 <br />
+
+<u>"mod_chromInfo.txt"</u><br />
+<br />
+Lists the names of the chromosomes and their lengths.  <br />
+Each line contains <br />
+NAME <i>tab</i> LENGTH.<br />
+
+<br/>
+
 <u>"liftAll.lft"</u><br />
 <br />
 Describes how contigs are assembled into chromosomes.<br />
-If you do not have this information available, you may use <br />
-a "mod_chromInfo.txt" file instead.<br />
 <br />
 Each line contains <br />
 CONTIG_START <i>tab</i> CONTIG_NAME <i>tab</i> CONTIG_LENGTH <i>tab</i> CHROMOSOME_NAME <i>tab</i> CHROMOSOME_LENGTH<br />
+
 <br />
-<br />
-<u>"mod_chromInfo.txt"</u><br />
-<br />
-Lists the names of the chromosomes and their lenghts.  <br />
-Each line contains <br />
-NAME <i>tab</i> LENGTH.<br />
 <br />
 You must provide either a "mod_chromInfo.txt" or "liftAll.lft" file.<br />
+
 <br />
 <br />
 <br />
@@ -108,10 +100,11 @@ You must provide either a "mod_chromInfo.txt" or "liftAll.lft" file.<br />
 <br />
 Each genome directory can contain as few or as many annotation files<br />
 as you wish.  Each annotation file should be listed in the <br />
-"annots.txt" file.<br />
+"annots.xml" file.<br />
 <br />
 A wide variety of file formats is accepted, and the files are <br />
-recognized based on their filename extensions, such as ".psl".<br />
+recognized based on their filename extensions,
+such as ".psl", ".bed", ".wig", et cetera.<br />
 <br />
 It is not required, but your files will load much faster if you <br />
 first convert them to some binary formats designed for use in IGB.<br />
@@ -123,11 +116,6 @@ or all of the chromosomes.  Sequence files should use the binary <br />
 names that match the name of the corresponding chromosome, <br />
 for example "chr12.bnib".<br />
 <br />
-You may optionally include a "refseq.brs" file containing <br />
-refseq data in a ".brs" (Binary RefSeq) format.<br />
-This format will be documented elsewhere.<br />
-If this optional file is present and listed in annots.txt,<br />
-it will be read by default when you choose that genome.<br />
 <br />
 <br />
 <b>Configuring IGB to use your QuickLoad files</b><br />

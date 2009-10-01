@@ -122,12 +122,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		
 		pan1.add(Box.createRigidArea(new Dimension(50, 0)));
 
+		pan1.add(searchButton);
+		
+		pan1.add(Box.createRigidArea(new Dimension(30, 0)));
+
 		pan1.add(remoteSearchCheckBox);
 		//pan1.add(selectInMapCheckBox);
 
-		pan1.add(Box.createRigidArea(new Dimension(30, 0)));
-
-		pan1.add(searchButton);
 		
 		if (group == null) {
 			searchCB.setEnabled(false);
@@ -343,10 +344,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 			return;
 		}
-		if (src == this.searchTF) {
-			return;
-		}
-		if (src == this.searchButton) {
+		if (src == this.searchTF || src == this.searchButton) {
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			String chrStr = (String) this.sequence_CB.getSelectedItem();
 			BioSeq chrfilter = IGBConstants.GENOME_SEQ_ID.equals(chrStr) ? null : group.getSeq(chrStr);

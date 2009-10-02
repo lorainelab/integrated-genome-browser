@@ -42,7 +42,14 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import com.affymetrix.genometry.servlets.das2manager.*;
+
+import com.affymetrix.genometry.genopub.*;
+import com.affymetrix.genometry.genopub.AnnotationQuery;
+import com.affymetrix.genometry.genopub.GenoPubSecurity;
+import com.affymetrix.genometry.genopub.HibernateUtil;
+import com.affymetrix.genometry.genopub.Organism;
+import com.affymetrix.genometry.genopub.QualifiedAnnotation;
+import com.affymetrix.genometry.genopub.Segment;
 
 
 /**
@@ -224,7 +231,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final String refresh_query = "refresh";
 	private static final String default_feature_format = "das2feature";
 	// This flag determines if DAS2 uses file system or DB to obtain annotation information
-	private static boolean genometry_dbmode = true;
+	private static boolean is_genometry_genopub_mode = true;
 	// static String that indicates where annotation files are served from
 	// when annotation info comes from db
 	private static String genometry_server_dir;
@@ -293,7 +300,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			ServerUtils.loadSynonyms(synonym_file);
 
-			if (this.genometry_dbmode) {
+			if (this.is_genometry_genopub_mode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
 				loadGenomesFromDB();				  
 			} else {
@@ -324,13 +331,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final boolean loadAndSetFields() {
 		ServletContext context = getServletContext();
 
-		// Indicates if the annotation info comes from the db or the file system
-		if (context.getInitParameter("genometry_dbmode") != null && context.getInitParameter("genometry_dbmode").equalsIgnoreCase("true")) {
-			this.genometry_dbmode = true;
-			genometry_server_dir = context.getInitParameter("genometry_server_dir_dbmode");
+		// Indicates if the annotation info comes from the genopub or the file system
+		if (context.getInitParameter(Constants.GENOMETRY_MODE) != null && 
+		    context.getInitParameter(Constants.GENOMETRY_MODE).equalsIgnoreCase(Constants.GENOMETRY_MODE_GENOPUB)) {
+			this.is_genometry_genopub_mode = true;
+			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 		} else {
-			this.genometry_dbmode = false;
-			genometry_server_dir = context.getInitParameter("genometry_server_dir");
+			this.is_genometry_genopub_mode = false;
+			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 		}
 
 		if (genometry_server_dir != null  && !genometry_server_dir.endsWith("/")) {
@@ -344,10 +352,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		//attempt to get from System.properties
 		if (genometry_server_dir == null || maintainer_email == null || xml_base == null) {
-			if (genometry_dbmode) {
-				genometry_server_dir = System.getProperty("das2_genometry_server_dir_dbmode");				
+			if (is_genometry_genopub_mode) {
+				genometry_server_dir = System.getProperty("das2_" + Constants.GENOMETRY_SERVER_DIR_GENOPUB);				
 			} else {
-				genometry_server_dir = System.getProperty("das2_genometry_server_dir");
+				genometry_server_dir = System.getProperty("das2_" + Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 			}
 			maintainer_email = System.getProperty("das2_maintainer_email");
 			xml_base = System.getProperty("das2_xml_base");
@@ -383,14 +391,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				return false;
 			}
 			//load fields
-			if (genometry_dbmode) {
-				if (genometry_server_dir == null && prop.containsKey("genometry_server_dir_dbmode")) {
-					genometry_server_dir = prop.get("genometry_server_dir_dbmode");
+			if (is_genometry_genopub_mode) {
+				if (genometry_server_dir == null && prop.containsKey(Constants.GENOMETRY_SERVER_DIR_GENOPUB)) {
+					genometry_server_dir = prop.get(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 				}
 				
 			} else {
-				if (genometry_server_dir == null && prop.containsKey("genometry_server_dir")) {
-					genometry_server_dir = prop.get("genometry_server_dir");
+				if (genometry_server_dir == null && prop.containsKey(Constants.GENOMETRY_SERVER_DIR_CLASSIC)) {
+					genometry_server_dir = prop.get(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 				}				
 			}
 			if (maintainer_email == null && prop.containsKey("maintainer_email")) {
@@ -660,31 +668,31 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	private Das2ManagerSecurity getDas2ManagerSecurity(HttpServletRequest request) {
+	private GenoPubSecurity getGenoPubSecurity(HttpServletRequest request) {
 
-		Das2ManagerSecurity das2ManagerSecurity = null;
-		// Get the Das2ManagerSecurity    
+		GenoPubSecurity genoPubSecurity = null;
+		// Get the GenoPubSecurity    
 		try {
-			das2ManagerSecurity = Das2ManagerSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + Das2ManagerSecurity.SESSION_KEY));
-			if (das2ManagerSecurity == null) {
+			genoPubSecurity = GenoPubSecurity.class.cast(request.getSession().getAttribute(this.getClass().getName() + GenoPubSecurity.SESSION_KEY));
+			if (genoPubSecurity == null) {
 				Session sess = null;
-				if (genometry_dbmode) {
+				if (is_genometry_genopub_mode) {
 					sess = HibernateUtil.getSessionFactory().openSession();					
 				}
 
-				das2ManagerSecurity = new Das2ManagerSecurity(sess, 
+				genoPubSecurity = new GenoPubSecurity(sess, 
 						request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : null, 
-						genometry_dbmode,
-						request.getUserPrincipal() != null ? request.isUserInRole(Das2ManagerSecurity.ADMIN_ROLE) : false,
-						request.getUserPrincipal() != null ? request.isUserInRole(Das2ManagerSecurity.GUEST_ROLE) : true);
-				request.getSession().setAttribute(this.getClass().getName() + Das2ManagerSecurity.SESSION_KEY, das2ManagerSecurity);
+						is_genometry_genopub_mode,
+						request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.ADMIN_ROLE) : false,
+						request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.GUEST_ROLE) : true);
+				request.getSession().setAttribute(this.getClass().getName() + GenoPubSecurity.SESSION_KEY, genoPubSecurity);
 			}
 		} catch (Exception e ){     
 			System.out.println(e.toString());
 			e.printStackTrace();
 		}
 
-		return das2ManagerSecurity;
+		return genoPubSecurity;
 
 	}
 	
@@ -974,7 +982,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		
 		// Get the das2 manager security which will determine which resources (annotations)
 		// are authorized for this user.
-		Das2ManagerSecurity das2ManagerSecurity = this.getDas2ManagerSecurity(request);
+		GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
 
 		response.setContentType(TYPES_CONTENT_TYPE);
 
@@ -983,7 +991,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				ServerUtils.getTypes(
 				genome,
 				graph_formats,
-				this.getDas2ManagerSecurity(request));
+				this.getGenoPubSecurity(request));
 
 		ByteArrayOutputStream buf = null;
 		PrintWriter pw = null;
@@ -1113,14 +1121,14 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			gmodel = SingletonGenometryModel.refreshGenometryModel();
 		
 			// Reload the annotation files
-			if (this.genometry_dbmode) {
+			if (this.is_genometry_genopub_mode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
 				this.loadGenomesFromDB();
 
 				// Refresh the authorized resources for this user
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing authorized resources....");
 				Session sess  = HibernateUtil.getSessionFactory().openSession();
-				this.getDas2ManagerSecurity(request).loadAuthorizedResources(sess);
+				this.getGenoPubSecurity(request).loadAuthorizedResources(sess);
 
 			
 			} else {
@@ -1134,7 +1142,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("ERROR - problems refreshing annotations " + e.toString());
 	      e.printStackTrace();
 	    } finally {
-	    	if (this.genometry_dbmode) {
+	    	if (this.is_genometry_genopub_mode) {
 		 	    HibernateUtil.getSessionFactory().close();
 	    	}
 	    }

@@ -99,8 +99,8 @@ CREATE TABLE `Annotation` (
 DROP TABLE IF EXISTS `AnnotationGrouping`;
 CREATE TABLE `AnnotationGrouping` (
   `idAnnotationGrouping` int(10) unsigned NOT NULL auto_increment,
-  `name` varchar(45) NOT NULL,
-  `description` varchar(2000) default NULL,
+  `name` varchar(2000) NOT NULL,
+  `description` varchar(10000) default NULL,
   `idParentAnnotationGrouping` int(10) unsigned default NULL,
   `idGenomeVersion` int(10) unsigned  NOT NULL,
   `idUserGroup` int(10) unsigned default NULL,

@@ -9,11 +9,11 @@
 	creationComplete="init()" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#96979D, #96979D]">
   
 
-  <mx:Style source="Das2Manager.css" />  
+  <mx:Style source="GenoPub.css" />  
   
   <mx:HTTPService             
     id="getSecurity" 
-    url="manager/security"
+    url="genopub/security"
     resultFormat="e4x"
     result="onGetSecurity(event)"
     fault="parentApplication.onFailHttpRequest('Failed to get security', event)"
@@ -25,7 +25,7 @@
   
   <mx:HTTPService             
     id="getDictionaries" 
-    url="manager/dictionaries"
+    url="genopub/dictionaries"
     resultFormat="e4x"
     result="onGetDictionaries(event)"
     fault="parentApplication.onFailHttpRequest('Failed to get dictionaries', event)"
@@ -163,7 +163,7 @@
     }
     
     private function onGetSecurity(event:ResultEvent):void {
-    	if (getSecurity.lastResult.name() == "Das2ManagerSecurity") {
+    	if (getSecurity.lastResult.name() == "GenoPubSecurity") {
     		if (isAdmin()) {
     			this.currentState = "AdminAllState";
     		} else if (canManageUsers()) {
@@ -276,7 +276,7 @@
    	  paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" >
    	  <mx:VBox width="100%" paddingLeft="1" paddingBottom="0" paddingRight="1" paddingTop="2" verticalGap="0" id="vbox1">
 		<mx:HBox width="100%" id="hbox1" paddingBottom="0">
-			<mx:Label text="DAS2 Manager" id="label1" styleName="titleLabel" paddingBottom="0" paddingTop="0"/>			
+			<mx:Label text="GenoPub" id="label1" styleName="titleLabel" paddingBottom="0" paddingTop="0"/>			
 			<mx:HBox verticalAlign="middle" height="100%" paddingLeft="30" paddingTop="0" paddingBottom="0">
 				<mx:Label text="{'(' + getSecurity.lastResult.@userDisplayName + ')'}" styleName="menuLabel" id="loggedInUserName"/>
 			</mx:HBox>

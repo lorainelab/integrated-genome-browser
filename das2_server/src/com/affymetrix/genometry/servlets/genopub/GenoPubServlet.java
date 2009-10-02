@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.servlets.das2manager;
+package com.affymetrix.genometry.genopub;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,6 +36,26 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 
+import com.affymetrix.genometry.genopub.AnalysisType;
+import com.affymetrix.genometry.genopub.Annotation;
+import com.affymetrix.genometry.genopub.AnnotationComparator;
+import com.affymetrix.genometry.genopub.AnnotationGrouping;
+import com.affymetrix.genometry.genopub.AnnotationGroupingComparator;
+import com.affymetrix.genometry.genopub.AnnotationQuery;
+import com.affymetrix.genometry.genopub.DictionaryHelper;
+import com.affymetrix.genometry.genopub.ExperimentMethod;
+import com.affymetrix.genometry.genopub.ExperimentPlatform;
+import com.affymetrix.genometry.genopub.GenoPubSecurity;
+import com.affymetrix.genometry.genopub.GenomeVersion;
+import com.affymetrix.genometry.genopub.GenomeVersionAlias;
+import com.affymetrix.genometry.genopub.HibernateUtil;
+import com.affymetrix.genometry.genopub.Organism;
+import com.affymetrix.genometry.genopub.Segment;
+import com.affymetrix.genometry.genopub.User;
+import com.affymetrix.genometry.genopub.UserComparator;
+import com.affymetrix.genometry.genopub.UserGroup;
+import com.affymetrix.genometry.genopub.UserRole;
+import com.affymetrix.genometry.genopub.Util;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -44,10 +64,11 @@ import com.oreilly.servlet.multipart.Part;
 
 import org.apache.catalina.realm.RealmBase;
 
-public class Das2ManagerServlet extends HttpServlet {
+public class GenoPubServlet extends HttpServlet {
 
-	private static final String DAS2_MANAGER_HTML_WRAPPER = "Das2Manager.html";
-	private static final String REALM                     = "Das2";
+	private static final String GENOPUB_HTML_WRAPPER = "GenoPub.html";
+	private static final String REALM                = "Das2";
+	private static final String GENOPUB_WEBAPP_NAME  = "genopub";
 
 	private static final String SECURITY_REQUEST                   = "security";
 	private static final String DICTIONARIES_REQUEST               = "dictionaries";
@@ -84,13 +105,13 @@ public class Das2ManagerServlet extends HttpServlet {
 	private static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
 	private static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
 	
-	private Das2ManagerSecurity das2ManagerSecurity = null;
+	private GenoPubSecurity genoPubSecurity = null;
 	
-	private String genometry_server_dir;
+	private String genometry_genopub_dir;
 	
 	public void init() throws ServletException {
 		if (getGenometryManagerDataDir() == false) {
-			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() Das2ManagerServlet, aborting!");
+			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
 	}
@@ -111,17 +132,17 @@ public class Das2ManagerServlet extends HttpServlet {
 
 		try {
 			
-			// Get the Das2ManagerSecurity		
-			das2ManagerSecurity = Das2ManagerSecurity.class.cast(req.getSession().getAttribute(Das2ManagerSecurity.SESSION_KEY));
-			if (das2ManagerSecurity == null) {
+			// Get the GenoPubSecurity		
+			genoPubSecurity = GenoPubSecurity.class.cast(req.getSession().getAttribute(GenoPubSecurity.SESSION_KEY));
+			if (genoPubSecurity == null) {
 				Session sess = HibernateUtil.getSessionFactory().openSession();
 				
-				das2ManagerSecurity = new Das2ManagerSecurity(sess, 
+				genoPubSecurity = new GenoPubSecurity(sess, 
 						                                      req.getUserPrincipal().getName(), 
 						                                      true,
-						                                      req.isUserInRole(Das2ManagerSecurity.ADMIN_ROLE),
-						                                      req.isUserInRole(Das2ManagerSecurity.GUEST_ROLE));
-				req.getSession().setAttribute(Das2ManagerSecurity.SESSION_KEY, das2ManagerSecurity);
+						                                      req.isUserInRole(GenoPubSecurity.ADMIN_ROLE),
+						                                      req.isUserInRole(GenoPubSecurity.GUEST_ROLE));
+				req.getSession().setAttribute(GenoPubSecurity.SESSION_KEY, genoPubSecurity);
 			}
 			
 
@@ -222,7 +243,7 @@ public class Das2ManagerServlet extends HttpServlet {
 	private void handleSecurityRequest(HttpServletRequest request, HttpServletResponse res) throws Exception{
 		XMLWriter writer = new XMLWriter(res.getOutputStream(),
 			                                 OutputFormat.createCompactFormat());
-		writer.write(das2ManagerSecurity.getXML());
+		writer.write(genoPubSecurity.getXML());
 
 	}
 	
@@ -230,7 +251,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		Session sess = HibernateUtil.getSessionFactory().openSession();
 
 		Document doc = DictionaryHelper.reload(sess)
-		        .getXML(das2ManagerSecurity);
+		        .getXML(genoPubSecurity);
 
 		XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat
 		        .createCompactFormat());
@@ -246,7 +267,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		Session sess = HibernateUtil.getSessionFactory().openSession();
 			
 		AnnotationQuery annotationQuery = new AnnotationQuery(request);
-		doc = annotationQuery.getAnnotationDocument(sess, das2ManagerSecurity);
+		doc = annotationQuery.getAnnotationDocument(sess, genoPubSecurity);
 
 		XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
 		writer.write(doc);
@@ -262,7 +283,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
 		
 		Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-		Document doc = annotation.getXML(this.das2ManagerSecurity, DictionaryHelper.getInstance(sess), genometry_server_dir);
+		Document doc = annotation.getXML(this.genoPubSecurity, DictionaryHelper.getInstance(sess), genometry_genopub_dir);
 
 		XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat
 		        .createCompactFormat());
@@ -277,7 +298,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		
 		try {
 			// Only admins can add organisms
-			if (!this.das2ManagerSecurity.isAdminRole()) {
+			if (!this.genoPubSecurity.isAdminRole()) {
 				throw new Exception("Insufficient permission to add organism.");
 			}
 			
@@ -362,7 +383,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			Organism organism = Organism.class.cast(sess.load(Organism.class, Util.getIntegerParameter(request, "idOrganism")));
 
 			// Check write permissions
-			if (!this.das2ManagerSecurity.canWrite(organism)) {
+			if (!this.genoPubSecurity.canWrite(organism)) {
 				throw new Exception("Insufficient permission to update organism.");
 			}
 			
@@ -445,7 +466,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 
 			// Check write permissions
-			if (!this.das2ManagerSecurity.canWrite(organism)) {
+			if (!this.genoPubSecurity.canWrite(organism)) {
 				throw new Exception("Insufficient permission to update organism.");
 			}
 
@@ -559,7 +580,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		
 		try {
 			// Only admins can add genome versions
-			if (!this.das2ManagerSecurity.isAdminRole()) {
+			if (!this.genoPubSecurity.isAdminRole()) {
 				throw new Exception("Insufficient permissions to add genome version.");
 			}
 			
@@ -650,7 +671,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, Util.getIntegerParameter(request, "idGenomeVersion")));
 			
 			// Make sure the user can write this genome version
-			if (!this.das2ManagerSecurity.canWrite(genomeVersion)) {
+			if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 				throw new Exception("Insufficient permision to write genome version.");
 			}
 			
@@ -796,7 +817,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
 			
 			// Make sure the user can write this genome version
-			if (!this.das2ManagerSecurity.canWrite(genomeVersion)) {
+			if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 				throw new Exception("Insufficient permision to delete genome version.");
 			}
 			
@@ -987,7 +1008,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));				
 
 			annotationGrouping.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
-			annotationGrouping.setCreatedBy(this.das2ManagerSecurity.getUserName());
+			annotationGrouping.setCreatedBy(this.genoPubSecurity.getUserName());
 
 			
 			sess.save(annotationGrouping);
@@ -1040,7 +1061,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 			
 			// Make sure the user can write this annotation grouping
-			if (!this.das2ManagerSecurity.canWrite(annotationGrouping)) {
+			if (!this.genoPubSecurity.canWrite(annotationGrouping)) {
 				throw new Exception("Insufficient permision to write annotation folder.");
 			}
 			
@@ -1137,7 +1158,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 				
 				// Make sure the user can write this annotation grouping
-				if (!this.das2ManagerSecurity.canWrite(annotationGrouping)) {
+				if (!this.genoPubSecurity.canWrite(annotationGrouping)) {
 					throw new Exception("Insufficient permision to move this annotation folder.");
 				}
 			} else {
@@ -1217,7 +1238,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			
 			
 			// Make sure the user can write this annotation grouping
-			if (!this.das2ManagerSecurity.canWrite(annotationGrouping)) {
+			if (!this.genoPubSecurity.canWrite(annotationGrouping)) {
 				throw new Exception("Insufficient permision to delete this annotation folder.");
 			}
 			
@@ -1339,12 +1360,12 @@ public class Das2ManagerServlet extends HttpServlet {
 		annotation.setIdUserGroup(idUserGroup);
 		
 		// Only set ownership if this is not an admin
-		if (!das2ManagerSecurity.isAdminRole()) {
-			annotation.setIdUser(das2ManagerSecurity.getIdUser());				
+		if (!genoPubSecurity.isAdminRole()) {
+			annotation.setIdUser(genoPubSecurity.getIdUser());				
 		}
 		
 		annotation.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
-		annotation.setCreatedBy(this.das2ManagerSecurity.getUserName());
+		annotation.setCreatedBy(this.genoPubSecurity.getUserName());
 		
 		sess.save(annotation);
 		sess.flush();
@@ -1392,7 +1413,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));
 			
 			// Make sure the user can write this annotation 
-			if (!this.das2ManagerSecurity.canWrite(annotation)) {
+			if (!this.genoPubSecurity.canWrite(annotation)) {
 				throw new Exception("Insufficient permision to write annotation.");
 			}
 			
@@ -1478,13 +1499,13 @@ public class Das2ManagerServlet extends HttpServlet {
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
 
 			// Make sure the user can write this annotation 
-			if (!this.das2ManagerSecurity.canWrite(annotation)) {
+			if (!this.genoPubSecurity.canWrite(annotation)) {
 				throw new Exception("Insufficient permision to delete annotation.");
 			}
 			
 			
 			// remove annotation files
-			annotation.removeFiles(genometry_server_dir);
+			annotation.removeFiles(genometry_genopub_dir);
 			
 			// delete database object
 			sess.delete(annotation);
@@ -1538,7 +1559,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
 
 			// Make sure the user can write this annotation 
-			if (!this.das2ManagerSecurity.canWrite(annotation)) {
+			if (!this.genoPubSecurity.canWrite(annotation)) {
 				throw new Exception("Insufficient permision to unlink annotation.");
 			}
 			
@@ -1641,7 +1662,7 @@ public class Das2ManagerServlet extends HttpServlet {
 
 			// Make sure the user can write this annotation 
 			if (isMove.equals("Y")) {
-				if (!this.das2ManagerSecurity.canWrite(annotation)) {
+				if (!this.genoPubSecurity.canWrite(annotation)) {
 					throw new Exception("Insufficient permision to unlink annotation.");
 				}
 			}
@@ -1762,7 +1783,7 @@ public class Das2ManagerServlet extends HttpServlet {
 	        //
 	        
 	        String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
-	        String URL = baseURL + "/manager/" +  this.UPLOAD_FILES_REQUEST;
+	        String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.UPLOAD_FILES_REQUEST;
 	        // Encode session id in URL so that session maintains for upload servlet when called from
 	        // Flex upload component inside FireFox, Safari
 	        URL += ";jsessionid=" + req.getRequestedSessionId();
@@ -1854,18 +1875,18 @@ public class Das2ManagerServlet extends HttpServlet {
     	    }
 
     	    if (annotation != null) {
-    	    	if (this.das2ManagerSecurity.canWrite(annotation)) {
+    	    	if (this.genoPubSecurity.canWrite(annotation)) {
     	    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
 
     	    		// Make sure that the genometry server dir exists
-    	    		if (!new File(genometry_server_dir).exists()) {
-    	    			boolean success = (new File(genometry_server_dir)).mkdir();
+    	    		if (!new File(genometry_genopub_dir).exists()) {
+    	    			boolean success = (new File(genometry_genopub_dir)).mkdir();
     	    			if (!success) {
-    	    				throw new Exception("Unable to create directory " + genometry_server_dir);      
+    	    				throw new Exception("Unable to create directory " + genometry_genopub_dir);      
     	    			}
     	    		}
 
-    	    		String annotationFileDir = annotation.getDirectory(genometry_server_dir);
+    	    		String annotationFileDir = annotation.getDirectory(genometry_genopub_dir);
 
     	    		// Create annotation directory if it doesn't exist
     	    		if (!new File(annotationFileDir).exists()) {
@@ -1964,7 +1985,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				User user = (User)row[1];
 				
 				// Only show groups this user managers
-				if (!this.das2ManagerSecurity.isManager(group)) {
+				if (!this.genoPubSecurity.isManager(group)) {
 					continue;
 				}
 				
@@ -1973,7 +1994,7 @@ public class Das2ManagerServlet extends HttpServlet {
 					groupNode.addAttribute("label", group.getName());
 					groupNode.addAttribute("name", group.getName());					
 					groupNode.addAttribute("idUserGroup", group.getIdUserGroup().toString());
-					groupNode.addAttribute("canWrite", this.das2ManagerSecurity.canWrite(group) ? "Y" : "N");
+					groupNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(group) ? "Y" : "N");
 					groupNodeMap.put(group.getIdUserGroup(), groupNode);					
 					membersNode = null;
 				}
@@ -2007,7 +2028,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				User user = (User)row[1];
 				
 				// Only show groups this user managers
-				if (!this.das2ManagerSecurity.isManager(group)) {
+				if (!this.genoPubSecurity.isManager(group)) {
 					continue;
 				}
 				
@@ -2039,7 +2060,7 @@ public class Das2ManagerServlet extends HttpServlet {
 				groupNode = groupNodeMap.get(group.getIdUserGroup());
 				
 				// Only show groups this user managers
-				if (!this.das2ManagerSecurity.isManager(group)) {
+				if (!this.genoPubSecurity.isManager(group)) {
 					continue;
 				}
 				
@@ -2071,9 +2092,9 @@ public class Das2ManagerServlet extends HttpServlet {
 				userNode.addAttribute("lastName",  user.getLastName() != null ? user.getLastName() : "");
 				userNode.addAttribute("middleName",  user.getMiddleName() != null ? user.getMiddleName() : "");
 				userNode.addAttribute("userName",  user.getUserName() != null ? user.getUserName() : "");
-				userNode.addAttribute("canWrite", this.das2ManagerSecurity.canWrite(user) ? "Y" : "N");
+				userNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(user) ? "Y" : "N");
 				
-				if (this.das2ManagerSecurity.canWrite(user)) {
+				if (this.genoPubSecurity.canWrite(user)) {
 					userNode.addAttribute("passwordDisplay",  user.getPasswordDisplay() != null ? user.getPasswordDisplay() : "");
 
 					for(UserRole role : (Set<UserRole>)user.getRoles()) {
@@ -2146,7 +2167,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		Transaction tx = null;
 		
 		// Only admins can add users
-		if (!this.das2ManagerSecurity.isAdminRole()) {
+		if (!this.genoPubSecurity.isAdminRole()) {
 			throw new Exception("Insufficient permissions to add users.");
 		}
 		
@@ -2185,7 +2206,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			// Default user to das2user role
 			TreeSet roles = new TreeSet();
 			UserRole role = new UserRole();
-			role.setRoleName(Das2ManagerSecurity.USER_ROLE);
+			role.setRoleName(GenoPubSecurity.USER_ROLE);
 			role.setUserName(user.getUserName());
 			role.setIdUser(user.getIdUser());
 			sess.save(role);
@@ -2238,7 +2259,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			User user = User.class.cast(sess.load(User.class, Util.getIntegerParameter(request, "idUser")));
 
 			// Check write permissions
-			if (!this.das2ManagerSecurity.canWrite(user)) {
+			if (!this.genoPubSecurity.canWrite(user)) {
 				throw new Exception("Insufficient permissions to delete user.");
 			}
 			
@@ -2302,7 +2323,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			User user = User.class.cast(sess.load(User.class, Util.getIntegerParameter(request, "idUser")));
 			
 			// Check write permissions
-			if (!this.das2ManagerSecurity.canWrite(user)) {
+			if (!this.genoPubSecurity.canWrite(user)) {
 				throw new Exception("Insufficient permissions to write user.");
 			}
 
@@ -2364,7 +2385,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			} else {
 				// New create a new user role
 				UserRole role = new UserRole();
-				role.setRoleName(Das2ManagerSecurity.USER_ROLE);
+				role.setRoleName(GenoPubSecurity.USER_ROLE);
 				role.setUserName(user.getUserName());
 				role.setIdUser(user.getIdUser());
 				sess.save(role);
@@ -2415,7 +2436,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 			
-			User user = User.class.cast(sess.load(User.class, this.das2ManagerSecurity.getIdUser()));
+			User user = User.class.cast(sess.load(User.class, this.genoPubSecurity.getIdUser()));
 						
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && !request.getParameter("password").equals("")) {
@@ -2468,7 +2489,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		Transaction tx = null;
 		
 		// Only admins can add groups
-		if (!this.das2ManagerSecurity.isAdminRole()) {
+		if (!this.genoPubSecurity.isAdminRole()) {
 			throw new Exception("Insufficient permissions to add groups.");
 		}
 		// Make sure required fields are filled in.
@@ -2535,7 +2556,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			UserGroup group = UserGroup.class.cast(sess.load(UserGroup.class, Util.getIntegerParameter(request, "idUserGroup")));
 			
 			// Check write permissions
-			if (!this.das2ManagerSecurity.canWrite(group)) {
+			if (!this.genoPubSecurity.canWrite(group)) {
 				throw new Exception("Insufficient permissions to delete group.");
 			}
 			
@@ -2591,7 +2612,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			UserGroup group = UserGroup.class.cast(sess.load(UserGroup.class, Util.getIntegerParameter(request, "idUserGroup")));
 			
 			// Check write permissions
-			if (!this.das2ManagerSecurity.canWrite(group)) {
+			if (!this.genoPubSecurity.canWrite(group)) {
 				throw new Exception("Insufficient permissions to write group.");
 			}
 			
@@ -2696,21 +2717,21 @@ public class Das2ManagerServlet extends HttpServlet {
 				AnalysisType dict = new AnalysisType();
 				dict.setName(request.getParameter("name"));
 				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				dict.setIdUser(this.das2ManagerSecurity.isAdminRole() ? null : this.das2ManagerSecurity.getIdUser());
+				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
 				sess.save(dict);
 				id = dict.getIdAnalysisType();
 			} else if (dictionaryName.equals("ExperimentMethod")) {
 				ExperimentMethod dict = new ExperimentMethod();
 				dict.setName(request.getParameter("name"));
 				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				dict.setIdUser(this.das2ManagerSecurity.isAdminRole() ? null : this.das2ManagerSecurity.getIdUser());
+				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
 				sess.save(dict);
 				id = dict.getIdExperimentMethod();
 			} else if (dictionaryName.equals("ExperimentPlatform")) {
 				ExperimentPlatform dict = new ExperimentPlatform();
 				dict.setName(request.getParameter("name"));
 				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				dict.setIdUser(this.das2ManagerSecurity.isAdminRole() ? null : this.das2ManagerSecurity.getIdUser());
+				dict.setIdUser(this.genoPubSecurity.isAdminRole() ? null : this.genoPubSecurity.getIdUser());
 				sess.save(dict);
 				id = dict.getIdExperimentPlatform();
 			} 
@@ -2763,7 +2784,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			if (dictionaryName.equals("AnalysisType")) {
 				AnalysisType dict = AnalysisType.class.cast(sess.load(AnalysisType.class, id));
 				// Check write permissions
-				if (!this.das2ManagerSecurity.canWrite(dict)) {
+				if (!this.genoPubSecurity.canWrite(dict)) {
 					throw new Exception("Insufficient permissions to delete dictionary entry.");
 				}
 				sess.delete(dict);
@@ -2771,7 +2792,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			} else if (dictionaryName.equals("ExperimentMethod")) {
 				ExperimentMethod dict = ExperimentMethod.class.cast(sess.load(ExperimentMethod.class, id));
 				// Check write permissions
-				if (!this.das2ManagerSecurity.canWrite(dict)) {
+				if (!this.genoPubSecurity.canWrite(dict)) {
 					throw new Exception("Insufficient permissions to delete dictionary entry.");
 				}
 				sess.delete(dict);
@@ -2779,7 +2800,7 @@ public class Das2ManagerServlet extends HttpServlet {
 			} else if (dictionaryName.equals("ExperimentPlatform")) {
 				ExperimentPlatform dict = ExperimentPlatform.class.cast(sess.load(ExperimentPlatform.class, id));
 				// Check write permissions
-				if (!this.das2ManagerSecurity.canWrite(dict)) {
+				if (!this.genoPubSecurity.canWrite(dict)) {
 					throw new Exception("Insufficient permissions to delete dictionary entry.");
 				}
 				sess.delete(dict);
@@ -2840,39 +2861,39 @@ public class Das2ManagerServlet extends HttpServlet {
 			if (dictionaryName.equals("AnalysisType")) {
 				AnalysisType dict = AnalysisType.class.cast(sess.load(AnalysisType.class, id));
 				// Check write permissions
-				if (!this.das2ManagerSecurity.canWrite(dict)) {
+				if (!this.genoPubSecurity.canWrite(dict)) {
 					throw new Exception("Insufficient permissions to write dictionary entry.");
 				}
 
 				dict.setName(request.getParameter("name"));
 				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				if (this.das2ManagerSecurity.isAdminRole()) {
+				if (this.genoPubSecurity.isAdminRole()) {
 					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
 				}
 				
 			} else if (dictionaryName.equals("ExperimentMethod")) {
 				ExperimentMethod dict = ExperimentMethod.class.cast(sess.load(ExperimentMethod.class, id));
 				// Check write permissions
-				if (!this.das2ManagerSecurity.canWrite(dict)) {
+				if (!this.genoPubSecurity.canWrite(dict)) {
 					throw new Exception("Insufficient permissions to write dictionary entry.");
 				}
 
 				dict.setName(request.getParameter("name"));
 				dict.setIsActive(Util.getFlagParameter(request, "isActive"));
-				if (this.das2ManagerSecurity.isAdminRole()) {
+				if (this.genoPubSecurity.isAdminRole()) {
 					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
 				}
 				
 			} else if (dictionaryName.equals("ExperimentPlatform")) {
 				ExperimentPlatform dict = ExperimentPlatform.class.cast(sess.load(ExperimentPlatform.class, id));
 				// Check write permissions
-				if (!this.das2ManagerSecurity.canWrite(dict)) {
+				if (!this.genoPubSecurity.canWrite(dict)) {
 					throw new Exception("Insufficient permissions to write dictionary entry.");
 				}
 
 				dict.setName(request.getParameter("name"));
 				dict.setIsActive(Util.getFlagParameter(request, "isActive"));				
-				if (this.das2ManagerSecurity.isAdminRole()) {
+				if (this.genoPubSecurity.isAdminRole()) {
 					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
 				}
 			} 
@@ -2919,7 +2940,7 @@ public class Das2ManagerServlet extends HttpServlet {
 		BufferedReader input = null;
 		try {
 			String fileName = getServletContext().getRealPath("/");
-			fileName += "/" + this.DAS2_MANAGER_HTML_WRAPPER;
+			fileName += "/" + this.GENOPUB_HTML_WRAPPER;
 			FileReader fileReader = new FileReader(fileName);
 			input = new BufferedReader(fileReader);
 		} catch (FileNotFoundException ex) {
@@ -2948,29 +2969,29 @@ public class Das2ManagerServlet extends HttpServlet {
 	private final boolean getGenometryManagerDataDir() {
 		// attempt to get properties from servlet context
 		ServletContext context = getServletContext();
-		genometry_server_dir = context.getInitParameter("genometry_server_dir_dbmode");
+		genometry_genopub_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 
 		// Make sure we have the parameter
-		if (genometry_server_dir == null || genometry_server_dir.equals("")) {
-            Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter genometry_server_dir_dbmode");
+		if (genometry_genopub_dir == null || genometry_genopub_dir.equals("")) {
+            Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter " + Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 			return false;
 		}
 		
 		// Make sure that the genometry server dir exists
-        if (!new File(genometry_server_dir).exists()) {
-      	  boolean success = (new File(genometry_server_dir)).mkdir();
+        if (!new File(genometry_genopub_dir).exists()) {
+      	  boolean success = (new File(genometry_genopub_dir)).mkdir();
             if (!success) {
-              Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_server_dir);
+              Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_genopub_dir);
               return false;
             }
         }
         
-		if (genometry_server_dir != null && !genometry_server_dir.endsWith("/")) {
-		  genometry_server_dir += "/";			
+		if (genometry_genopub_dir != null && !genometry_genopub_dir.endsWith("/")) {
+		  genometry_genopub_dir += "/";			
 		}
 		
 		
-		Logger.getLogger(this.getClass().getName()).fine("genometry_manager_data_dir = " + genometry_server_dir);
+		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
 
 		return true;
 	}

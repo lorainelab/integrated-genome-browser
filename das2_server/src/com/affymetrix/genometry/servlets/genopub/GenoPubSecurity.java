@@ -1,4 +1,4 @@
-package com.affymetrix.genometry.servlets.das2manager;
+package com.affymetrix.genometry.genopub;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,17 +14,25 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.Session;
 
+import com.affymetrix.genometry.genopub.Annotation;
+import com.affymetrix.genometry.genopub.AnnotationGrouping;
+import com.affymetrix.genometry.genopub.AnnotationQuery;
+import com.affymetrix.genometry.genopub.Organism;
+import com.affymetrix.genometry.genopub.Owned;
+import com.affymetrix.genometry.genopub.QualifiedAnnotation;
+import com.affymetrix.genometry.genopub.User;
+import com.affymetrix.genometry.genopub.UserGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.AnnotSecurity;
 
 
-public class Das2ManagerSecurity implements AnnotSecurity {
+public class GenoPubSecurity implements AnnotSecurity {
 	
-	public static final String    SESSION_KEY = "Das2SecurityManager";
-	public static final String    ADMIN_ROLE  = "das2admin";
-	public static final String    USER_ROLE   = "das2user";
-	public static final String    GUEST_ROLE  = "das2guest";
+	public static final String    SESSION_KEY = "GenoPubSecurity";
+	public static final String    ADMIN_ROLE  = "admin";
+	public static final String    USER_ROLE   = "user";
+	public static final String    GUEST_ROLE  = "guest";
 
 	public static final String    USER_SCOPE_LEVEL  = "USER";
 	public static final String    GROUP_SCOPE_LEVEL = "GROUP";
@@ -45,7 +53,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 	
 	
 	@SuppressWarnings("unchecked")
-	public Das2ManagerSecurity(Session sess, String userName, boolean scrutinizeAccess, boolean isAdminRole, boolean isGuestRole) throws Exception {
+	public GenoPubSecurity(Session sess, String userName, boolean scrutinizeAccess, boolean isAdminRole, boolean isGuestRole) throws Exception {
 		// Are the annotations loaded from the db?  If so, security
 		// logic is driven from info in db, otherwise, access to all resources
 		// is granted.
@@ -81,7 +89,7 @@ public class Das2ManagerSecurity implements AnnotSecurity {
 	
 	public Document getXML() {
 		Document doc = DocumentHelper.createDocument();
-		Element root = doc.addElement("Das2ManagerSecurity");
+		Element root = doc.addElement("GenoPubSecurity");
 		root.addAttribute("userName",        user != null ? user.getUserName() : "");
 		root.addAttribute("userDisplayName", user != null ? user.getUserDisplayName() : "");
 		root.addAttribute("name",            user != null ? user.getName() : "");

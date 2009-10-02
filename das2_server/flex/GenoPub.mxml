@@ -283,7 +283,7 @@
 			<mx:HBox horizontalAlign="right" verticalAlign="top" horizontalGap="3" width="100%" id="hbox2">
 				<mx:LinkButton label="Help"  id="linkbutton1" styleName="menuLabel" paddingBottom="0" paddingTop="0"/>
         	 	<mx:Spacer width="10"/>
-				<mx:LinkButton label="About"  id="linkbutton2" styleName="menuLabel" paddingTop="0" paddingBottom="0" click="showAboutWindow()"/>
+				<mx:LinkButton label="About GenoPub"  id="linkbutton2" styleName="menuLabel" paddingTop="0" paddingBottom="0" click="showAboutWindow()"/>
 			</mx:HBox>
 		</mx:HBox >
 		<mx:HBox width="100%">

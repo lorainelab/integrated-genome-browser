@@ -1,32 +1,33 @@
 There are two ways to configure the DAS2 server:
 
- - Classic (file system)mode  
+ - Classic (file system) mode:  
     The annotations are organized into a directory structure on 
     the file system.  
     
     To build the system to run in classic mode, use all of the 
     normal targets described below, but use the 'webapp-classic' 
-    target (instead of the 'webapp' target).  Building this way 
+    target instead of the 'webapp' target.  Building this way 
     will result in a web.xml and context.xml configured to support
     DAS2 server running in classic mode. 
                                   
- - DB mode. 
-		The annotations are managed via entries in the database.  A
-    web-based tool (DAS2 Manager) allows annotations to be easily added, 
+ - GenoPub mode: 
+	The annotations are managed by the GenoPub (Genomic Annotation Publisher), which
+	stores information about each annotation in a database.  A
+    web-based tool (GenoPub Flex app) allows annotations to be easily added, 
     described, and organized.  Through the tool, users and
     groups are managed and annotation security is specified.
     Access to annotations is brokered by the DAS2 server so that 
     only authorized users can gain access to these resources.
     
-    To build the system to run in db mode, in addition to 
+    To build the system to run in GenoPub mode, in addition to 
     running the normal targets ('clean', 'all'), run the 'flex' target
     and the 'webapp' target.  These targets will build the web-based
-    Flex tool for managing the annotations and configure a web.xml
+    GenoPub Flex tool for managing the annotations and configure a web.xml
     and context.xml with the following parameters:
     
     context.xml - Contains a <REALM> and <RESOURCE> entry
     that points to the database.  (See instructions below for 
-    installing a MySQL server and creating a genoviz database.)
+    installing a MySQL server and creating a genopub database.)
     Change the username and password to match your MySQL database
     account.
     
@@ -51,7 +52,6 @@ before the das2 servlet will run. A list of the context parameters
 from the web.xml is below:
 
 To run in classic mode (see example in das2_server/web_classic.xml):
-  * genometry_dbmode - set to 'false'
 	* genometry_server_dir - Path to the data files A sample data directory can 
 	     be checked out using  subversion from 
 	     https://svn.transvar.org/repos/genomes/trunk/pub/das.  
@@ -65,8 +65,8 @@ To run in classic mode (see example in das2_server/web_classic.xml):
 	    will be the only change necessary.
 	
 To run in db mode (see example in das2_server/web.xml):
-  * genometry_dbmode - set to 'true'
-  * genometry_server_dir_dbmode - Path to the annotation data files managed by the db
+  * genometry_mode - set to 'genopub'
+  * genometry_genopub_dir - Path to the annotation data files managed by GenoPub.
       IMPORTANT:  Do NOT set this directory to the Path to the data files
       used in classic mode (genometry_server_dir).  Instead specify a new
       directory under which the annotation files will be stored.
@@ -106,11 +106,11 @@ webapps directory.
   with the target 'webapp' (for db mode) or 'webapp-classic' (for classic mode).
 * Copy the contents of dist/webapp to the tomcat webapps directory under a 
   directory called DAS2 (or whatever webapp name you wish to call it).  
-  IMPORTANT - For db mode, make sure the .js, .html, and .swf files in the webapp
-  directory are copied.  These files comprise the DAS2 Manager tool, a Flex 
+  IMPORTANT - For GenoPub mode, make sure the .js, .html, and .swf files in the webapp
+  directory are copied.  These files comprise the GenoPub tool, a Flex 
   application. 
 * Copy all .jar files from ext to the tomcat webapps das2 directory.
-  IMPORTANT - There are new jars that are required to run in db mode,
+  IMPORTANT - There are new jars that are required to run in Genopub mode,
   so make sure all of the .jars are copied.
 
 Most tomcat servers are configured to detect new or updated 
@@ -122,23 +122,25 @@ webapps directory are:
 
 In classic mode, the das2 servlet does not detect changes in the data directory.  
 The servlet must be reloaded before it will register any changes.  However,
-in db mode, use the 'Reload DAS2 Server' link in the web-based DAS2 Manager
+in GenoPub mode, use the 'Reload DAS2 Server' link in the web-based GenoPub
 tool to refresh DAS2.
 
-MySQL Database (required when running DAS2 server in database mode)
-  * Install MySQL Server, create a database user account
-  * Modify the context.xml (see instructions above) to use the correct database
-    username and password.
-  * Run genoviz.sql to create genoviz database
+MySQL Database (required when running DAS2 server in GenoPub mode)
+  * Install MySQL Server
+  * Create a database user account called 'genopub'
+  * Using MySQL, login with genopub user and run genopub.sql to 
+    create genopub database
   * Download the MySQL JDBC driver (MySQL Connector/J) from 
     http://dev.mysql.com/downloads/connector/j/5.1.html.  
     Uncompress the zip file (mysql-connector-java-5.1.7.zip) and place
     mysql-connector-java-5.1.7-bin.jar into your tomcat/common/lib directory.
+  * Modify the context.xml (see instructions above) to use the correct database
+    username (genopub) and password.
   
 === RUNNING THE WEB-BASED DAS2 MANAGER TOOL ===
 Once the DAS2 server is deployed and running under tomcat, enter the 
-following URL from the browser to launch DB Manager:
-  http://yourhost:yourport/DAS2/manager  
+following URL from the browser to launch the GenoPub tool:
+  http://yourhost:yourport/DAS2/genopub 
 
 Login with the username 'admin' and the password 'admin'.  Click on 
 the Users and Groups link and add yourself as a user.  If you are an admin,

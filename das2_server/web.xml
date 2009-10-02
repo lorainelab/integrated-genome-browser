@@ -3,13 +3,13 @@
 <web-app>
 
   <context-param>
-    <param-name>genometry_dbmode</param-name>
-    <param-value>true</param-value>
+    <param-name>genometry_mode</param-name>
+    <param-value>genopub</param-value>
   </context-param>
   
 	<context-param>
-		<param-name>genometry_server_dir_dbmode</param-name>
-		<param-value>c:/apache/tomcat5.5/Das2ManagedData</param-value>
+		<param-name>genometry_server_dir_genopub</param-name>
+		<param-value>c:/apache/tomcat5.5/GenoPubData</param-value>
 	</context-param>
  
 	<context-param>
@@ -27,12 +27,12 @@
 	
 	<!-- Listener to obtain Hibernate session  --> 
   <listener>
-    <listener-class>com.affymetrix.genometry.servlets.das2manager.HibernateAppListener</listener-class>
+    <listener-class>com.affymetrix.genometry.genopub.HibernateAppListener</listener-class>
   </listener>	
   
 	<servlet>
-		<servlet-name>Das2ManagerServlet</servlet-name>
-		<servlet-class>com.affymetrix.genometry.servlets.das2manager.Das2ManagerServlet</servlet-class>
+		<servlet-name>GenoPubServlet</servlet-name>
+		<servlet-class>com.affymetrix.genometry.genopub.GenoPubServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
@@ -43,18 +43,18 @@
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Das2ManagerServlet</servlet-name>
-		<url-pattern>/manager</url-pattern>
+		<servlet-name>GenoPubServlet</servlet-name>
+		<url-pattern>/genopub</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>Das2ManagerServlet</servlet-name>
-		<url-pattern>/manager/*</url-pattern>
+		<servlet-name>GenoPubServlet</servlet-name>
+		<url-pattern>/genopub/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
-		<url-pattern>Das2Manager.swf</url-pattern>
+		<url-pattern>GenoPub.swf</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -64,7 +64,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
-		<url-pattern>/Das2Manager.swf</url-pattern>
+		<url-pattern>/GenoPub.swf</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -99,15 +99,15 @@
 		<web-resource-collection>
 			<web-resource-name>Login</web-resource-name>
 			<description>Login</description>
-			<url-pattern>das2Manager.swf</url-pattern>
-			<url-pattern>manager</url-pattern>
-			<url-pattern>manager/*</url-pattern>
+			<url-pattern>genopub.swf</url-pattern>
+			<url-pattern>genopub</url-pattern>
+			<url-pattern>genopub/*</url-pattern>
 			<url-pattern>/*</url-pattern>   
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>das2admin</role-name>
-			<role-name>das2user</role-name>
-			<role-name>das2guest</role-name>
+			<role-name>admin</role-name>
+			<role-name>user</role-name>
+			<role-name>guest</role-name>
 		</auth-constraint>
 		<user-data-constraint>
 			<transport-guarantee>NONE</transport-guarantee>
@@ -121,15 +121,15 @@
 	
 	
 	<security-role>
-		<role-name>das2admin</role-name>
+		<role-name>admin</role-name>
 	</security-role>
 
 	<security-role>
-		<role-name>das2user</role-name>
+		<role-name>user</role-name>
 	</security-role>
 
 	<security-role>
-		<role-name>das2guest</role-name>
+		<role-name>guest</role-name>
 	</security-role>
 	
 

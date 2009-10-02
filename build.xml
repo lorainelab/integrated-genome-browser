@@ -32,20 +32,20 @@
 		<iterate target="compile" />
 	</target>
 
-	<target name="flex" depends="common-init" description="Compile Flex Das2Manager application">
+	<target name="flex" depends="common-init" description="Compile Flex GenoPub application">
 		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
-		<mxmlc file="${das2server}/flex/Das2Manager.mxml" output="${dist.dir}/Das2Manager.swf">
+		<mxmlc file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
 	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
 	        <source-path path-element="${FLEX_HOME}/frameworks"/>
 			    <compiler.debug>true</compiler.debug>			
 		</mxmlc>
 		<html-wrapper 
-		      title="DAS2 Manager"
-		      file="Das2Manager.html"
+		      title="GenoPub"
+		      file="GenoPub.html"
 		      width="100%"
 		      height="100%"
-		      application="Das2Manager"
-		      swf="Das2Manager"
+		      application="GenoPub"
+		      swf="GenoPub"
 		      version-major="9"
 		      version-minor="0"
 		      version-revision="0"

@@ -127,7 +127,12 @@ tool to refresh DAS2.
 
 MySQL Database (required when running DAS2 server in GenoPub mode)
   * Install MySQL Server
-  * Create a database user account called 'genopub'
+  * Create a database user account called 'genopub'.  Here is the mysql command:
+      mysql> CREATE USER 'genopub'@'localhost' IDENTIFIED BY 'some_password';
+      mysql> GRANT ALL PRIVILEGES ON *.* TO 'genopub'@'localhost' WITH GRANT OPTION;
+      mysql> CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_passord';
+      mysql> GRANT ALL PRIVILEGES ON *.* TO 'genopub'@'%' WITH GRANT OPTION;
+      mysql> FLUSH PRIVILEGES;
   * Using MySQL, login with genopub user and run genopub.sql to 
     create genopub database
   * Download the MySQL JDBC driver (MySQL Connector/J) from 

@@ -11,7 +11,7 @@
  	
   <mx:HTTPService  
     id="getUploadURL" 
-    url="manager/uploadURL"
+    url="genopub/uploadURL"
     resultFormat="e4x"
     showBusyCursor="true" 
     result="onGetUploadURL(event)" 

@@ -11,7 +11,7 @@
  	
     <mx:HTTPService             
       id="addGenomeVersion" 
-      url="manager/genomeVersionAdd"
+      url="genopub/genomeVersionAdd"
       resultFormat="e4x"
       result="onAddGenomeVersion(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add organism', event)"

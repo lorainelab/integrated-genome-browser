@@ -11,7 +11,7 @@
  	
     <mx:HTTPService             
       id="addUser" 
-      url="manager/userAdd"
+      url="genopub/userAdd"
       resultFormat="e4x"
       result="onAddUser(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add user', event)"

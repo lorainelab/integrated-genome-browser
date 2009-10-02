@@ -11,7 +11,7 @@
  	
     <mx:HTTPService             
       id="addAnnotationGrouping" 
-      url="manager/annotationGroupingAdd"
+      url="genopub/annotationGroupingAdd"
       resultFormat="e4x"
       result="onAddAnnotationGrouping(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add annotation folder', event)"

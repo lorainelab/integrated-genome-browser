@@ -8,7 +8,7 @@
 
 	<mx:HTTPService             
     id="getUsersAndGroups" 
-    url="manager/usersAndGroups"
+    url="genopub/usersAndGroups"
     resultFormat="e4x"
     result="onGetUsersAndGroups(event)"
     fault="parentApplication.onFailHttpRequest('Failed to get users and groups', event)"
@@ -21,7 +21,7 @@
    	 
    <mx:HTTPService             
     id="deleteUserGroup" 
-    url="manager/groupDelete"
+    url="genopub/groupDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteUserGroup(event)"
@@ -34,7 +34,7 @@
    
    <mx:HTTPService             
     id="updateUserGroup" 
-    url="manager/groupUpdate"
+    url="genopub/groupUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateUserGroup(event)"
@@ -49,7 +49,7 @@
    	 
    <mx:HTTPService             
     id="deleteUser" 
-    url="manager/userDelete"
+    url="genopub/userDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteUser(event)"
@@ -62,7 +62,7 @@
    
    <mx:HTTPService             
     id="updateUser" 
-    url="manager/userUpdate"
+    url="genopub/userUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateUser(event)"

@@ -6,7 +6,7 @@
 	
    <mx:HTTPService             
     id="deleteDictionary" 
-    url="manager/dictionaryDelete"
+    url="genopub/dictionaryDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteDictionary(event)"
@@ -19,7 +19,7 @@
    
    <mx:HTTPService             
     id="updateDictionary" 
-    url="manager/dictionaryUpdate"
+    url="genopub/dictionaryUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateDictionary(event)"

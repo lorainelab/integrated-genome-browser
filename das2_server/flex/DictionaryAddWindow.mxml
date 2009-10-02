@@ -11,7 +11,7 @@
  	
     <mx:HTTPService             
       id="addDictionary" 
-      url="manager/dictionaryAdd"
+      url="genopub/dictionaryAdd"
       resultFormat="e4x"
       result="onAddDictionary(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add dictionary', event)"

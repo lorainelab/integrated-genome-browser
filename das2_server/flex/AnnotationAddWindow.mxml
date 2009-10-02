@@ -11,7 +11,7 @@
  	
     <mx:HTTPService             
       id="addAnnotation" 
-      url="manager/annotationAdd"
+      url="genopub/annotationAdd"
       resultFormat="e4x"
       result="onAddAnnotation(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add annotation', event)"
@@ -28,7 +28,7 @@
     
     <mx:HTTPService  
       id="getUploadURL" 
-      url="manager/uploadURL"
+      url="genopub/uploadURL"
       resultFormat="e4x"
       showBusyCursor="true" 
       result="onGetUploadURL(event)" 

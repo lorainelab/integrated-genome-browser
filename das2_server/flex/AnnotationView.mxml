@@ -21,7 +21,7 @@
 
 	<mx:HTTPService             
     id="getAnnotations" 
-    url="manager/annotations"
+    url="genopub/annotations"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onGetAnnotations(event)"
@@ -34,7 +34,7 @@
    
    	<mx:HTTPService             
     id="getAnnotation" 
-    url="manager/annotation"
+    url="genopub/annotation"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onGetAnnotation(event)"
@@ -47,7 +47,7 @@
      
    	<mx:HTTPService             
     id="getGenomeVersion" 
-    url="manager/genomeVersion"
+    url="genopub/genomeVersion"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onGetGenomeVersion(event)"
@@ -60,7 +60,7 @@
    
    <mx:HTTPService             
     id="deleteOrganism" 
-    url="manager/organismDelete"
+    url="genopub/organismDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteOrganism(event)"
@@ -73,7 +73,7 @@
    
    <mx:HTTPService             
     id="updateOrganism" 
-    url="manager/organismUpdate"
+    url="genopub/organismUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateOrganism(event)"
@@ -86,7 +86,7 @@
    
    <mx:HTTPService             
     id="deleteGenomeVersion" 
-    url="manager/genomeVersionDelete"
+    url="genopub/genomeVersionDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteGenomeVersion(event)"
@@ -99,7 +99,7 @@
    
    <mx:HTTPService             
     id="updateGenomeVersion" 
-    url="manager/genomeVersionUpdate"
+    url="genopub/genomeVersionUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateGenomeVersion(event)"
@@ -112,7 +112,7 @@
    
    <mx:HTTPService             
     id="updateAnnotationGrouping" 
-    url="manager/annotationGroupingUpdate"
+    url="genopub/annotationGroupingUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateAnnotationGrouping(event)"
@@ -125,7 +125,7 @@
    
    <mx:HTTPService             
     id="moveAnnotationGrouping" 
-    url="manager/annotationGroupingMove"
+    url="genopub/annotationGroupingMove"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onMoveAnnotationGrouping(event)"
@@ -138,7 +138,7 @@
      
    <mx:HTTPService             
     id="deleteAnnotationGrouping" 
-    url="manager/annotationGroupingDelete"
+    url="genopub/annotationGroupingDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteAnnotationGrouping(event)"
@@ -152,7 +152,7 @@
    
    <mx:HTTPService             
     id="updateAnnotation" 
-    url="manager/annotationUpdate"
+    url="genopub/annotationUpdate"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateAnnotation(event)"
@@ -165,7 +165,7 @@
      
    <mx:HTTPService             
     id="deleteAnnotation" 
-    url="manager/annotationDelete"
+    url="genopub/annotationDelete"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteAnnotation(event)"
@@ -178,7 +178,7 @@
    
    <mx:HTTPService             
     id="unlinkAnnotation" 
-    url="manager/annotationUnlink"
+    url="genopub/annotationUnlink"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUnlinkAnnotation(event)"
@@ -191,7 +191,7 @@
    
    <mx:HTTPService             
     id="moveAnnotation" 
-    url="manager/annotationMove"
+    url="genopub/annotationMove"
     resultFormat="e4x"
     showBusyCursor="true"
     result="onMoveAnnotation(event)"

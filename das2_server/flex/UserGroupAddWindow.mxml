@@ -12,7 +12,7 @@
  	
     <mx:HTTPService             
       id="addUserGroup" 
-      url="manager/groupAdd"
+      url="genopub/groupAdd"
       resultFormat="e4x"
       result="onAddUserGroup(event)"
       fault="parentApplication.onFailHttpRequest('Failed to add group', event)"

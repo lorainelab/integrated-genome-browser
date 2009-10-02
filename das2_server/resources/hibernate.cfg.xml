@@ -9,7 +9,7 @@
 
         <!-- Use a Tomcat 5.5 JNDI datasource -->
 	 <property name="connection.datasource">
-		java:comp/env/jdbc/GENOVIZ
+		java:comp/env/jdbc/GENOPUB
 	 </property>
    <property name="show_sql">false</property>
 	 <property name="dialect">
@@ -21,7 +21,7 @@
 	 </property>
  
 
-	<mapping resource="das2Manager.hbm.xml"/>
+	<mapping resource="genopub.hbm.xml"/>
         
 
     </session-factory>

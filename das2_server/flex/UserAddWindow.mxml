@@ -59,11 +59,11 @@
     <mx:VBox height="100%" width="100%" styleName="panelBody" verticalGap="8">
 		<mx:HBox width="100%" paddingTop="4" horizontalGap="0">
 			<mx:Label text="First name:" width="72"/>
-			<mx:TextInput id="firstName" width="120"/>
+			<mx:TextInput id="firstName" width="120" maxChars="200"/>
 			<mx:Label text="Middle:" paddingLeft="4"/>
-			<mx:TextInput id="middleName" width="35"/>
+			<mx:TextInput id="middleName" width="35" maxChars="100"/>
 			<mx:Label text="Last name:" paddingLeft="4"/>
-			<mx:TextInput id="lastName" width="120"/>
+			<mx:TextInput id="lastName" width="120" maxChars="200"/>
 		</mx:HBox>
 		<mx:HBox width="100%" horizontalGap="0">
 			<mx:Label text="User name:" width="72"/>

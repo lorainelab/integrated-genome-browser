@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="{'Add ' + dictionaryDisplayName}"
 	showCloseButton="true" 
-	width="462" 
-	height="90"
+	width="478" 
+	height="108"
 	close="closeWindow()"
 	titleIcon="{parentApplication.iconDictonaryEntry}"
 	layout="vertical" backgroundAlpha="100" defaultButton="{saveButton}">
@@ -69,7 +69,7 @@
     <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%" verticalGap="4">
 		<mx:HBox width="100%" horizontalGap="0">
 			<mx:Label text="Name:" width="90"/>
-			<mx:TextInput id="theName" width="100%"/>
+			<mx:TextInput id="theName" width="100%" maxChars="100"/>
 		</mx:HBox>
 
 	

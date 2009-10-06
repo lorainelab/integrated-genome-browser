@@ -474,7 +474,7 @@ INSERT INTO `Organism` (`idOrganism`,`commonName`,`sortOrder`,`binomialName`,`NC
 DROP TABLE IF EXISTS `UserGroup`;
 CREATE TABLE `UserGroup` (
   `idUserGroup` int(10) unsigned NOT NULL auto_increment,
-  `name` varchar(100) NOT NULL,
+  `name` varchar(200) NOT NULL,
   PRIMARY KEY  (`idUserGroup`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 

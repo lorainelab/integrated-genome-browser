@@ -2,8 +2,8 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="Add group"
 	showCloseButton="true" 
-	width="386" 
-	height="98"
+	width="408" 
+	height="112"
 	verticalGap="0"
 	close="closeWindow()"
 	defaultButton="{saveButton}"	
@@ -57,7 +57,7 @@
     <mx:VBox width="100%" height="100%" styleName="panelBody" verticalGap="0">
 		<mx:HBox width="100%" paddingTop="4">
 			<mx:Label text="Name:"  width="100"/>
-			<mx:TextInput id="groupName" width="100%"/>
+			<mx:TextInput id="groupName" width="100%" maxChars="200"/>
 		</mx:HBox>
 		
     	

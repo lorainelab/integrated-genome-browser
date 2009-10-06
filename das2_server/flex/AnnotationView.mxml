@@ -1700,15 +1700,15 @@
 				   <mx:VBox width="100%" height="100%">
 			  			<mx:HBox width="100%" horizontalGap="0">
 							<mx:Label text="Name:" width="126"/>
-							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@name}" id="annotationName" change="dirtyAnnotation.setDirty()"/>					    	
+							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@name}" id="annotationName" change="dirtyAnnotation.setDirty()" maxChars="2000"/>					    	
 						</mx:HBox>
 						<mx:HBox width="100%" horizontalGap="0">
 							<mx:Label text="Summary:" width="126"/>
-							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()"/>
+							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()" maxChars="5000"/>
 						</mx:HBox>
 						<mx:HBox width="100%" id="hbox3" height="100%" horizontalGap="0">
 							<mx:Label text="Description:" width="126"/>
-							<mx:TextArea width="100%" text="{getAnnotation.lastResult.@description}" id="annotationDescription" change="dirtyAnnotation.setDirty()" height="100%"/>
+							<mx:TextArea width="100%" text="{getAnnotation.lastResult.@description}" id="annotationDescription" change="dirtyAnnotation.setDirty()" height="100%" maxChars="10000" wordWrap="true"/>
 						</mx:HBox>
 
 				   </mx:VBox>
@@ -1796,19 +1796,19 @@
 				  <mx:VBox styleName="panelBody" width="100%" height="100%">
 					<mx:HBox width="100%" >
 						<mx:Label text="Common name:"  width="120"/>
-						<mx:TextInput id="organismCommonName" width="100%" text="{annotationsTree.selectedItem.@commonName}" change="dirtyOrganism.setDirty()"/>
+						<mx:TextInput id="organismCommonName" width="100%" text="{annotationsTree.selectedItem.@commonName}" change="dirtyOrganism.setDirty()" maxChars="100"/>
 					</mx:HBox>
 					<mx:HBox width="100%">
 						<mx:Label text="Binomial name:" width="120"/>
-						<mx:TextInput id="organismBinomialName"  width="100%" text="{annotationsTree.selectedItem.@binomialName}" change="dirtyOrganism.setDirty()"/>
+						<mx:TextInput id="organismBinomialName"  width="100%" text="{annotationsTree.selectedItem.@binomialName}" change="dirtyOrganism.setDirty()" maxChars="200"/>
 					</mx:HBox>
 					<mx:HBox width="100%" >
 						<mx:Label text="DAS2 name:" width="120"/>
-						<mx:TextInput id="organismName"  width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyOrganism.setDirty()"/>
+						<mx:TextInput id="organismName"  width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyOrganism.setDirty()" maxChars="200"/>
 					</mx:HBox>
 					<mx:HBox width="100%" >
 						<mx:Label text="NCBI taxonomy ID:" width="120"/>
-						<mx:TextInput id="organismNCBITaxID"  width="100%" text="{annotationsTree.selectedItem.@NCBITaxID}" change="dirtyOrganism.setDirty()"/>
+						<mx:TextInput id="organismNCBITaxID"  width="100%" text="{annotationsTree.selectedItem.@NCBITaxID}" change="dirtyOrganism.setDirty()" maxChars="45"/>
 					</mx:HBox>
 				  	
 				  	
@@ -1827,7 +1827,7 @@
 				    <mx:VBox styleName="panelBody" width="100%" height="100%">			
 						<mx:HBox width="100%" >
 							<mx:Label text="Name:"  width="120"/>
-							<mx:TextInput id="genomeVersionName" width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyGenomeVersion.setDirty()"/>
+							<mx:TextInput id="genomeVersionName" width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyGenomeVersion.setDirty()" maxChars="200"/>
 						</mx:HBox>
 						<mx:HBox width="100%">
 							<mx:Label text="Build date:" width="120"/>
@@ -1835,23 +1835,23 @@
 						</mx:HBox>
 						<mx:HBox width="100%" >
 							<mx:Label text="Coord URI:" width="120"/>
-							<mx:TextInput id="coordURI"  width="100%" text="{annotationsTree.selectedItem.@coordURI}" change="dirtyGenomeVersion.setDirty()"/>
+							<mx:TextInput id="coordURI"  width="100%" text="{annotationsTree.selectedItem.@coordURI}" change="dirtyGenomeVersion.setDirty()" maxChars="2000"/>
 						</mx:HBox>
 						<mx:HBox width="100%" >
 							<mx:Label text="Coord version:" width="120"/>
-							<mx:TextInput id="coordVersion"  width="100%" text="{annotationsTree.selectedItem.@coordVersion}" change="dirtyGenomeVersion.setDirty()"/>
+							<mx:TextInput id="coordVersion"  width="100%" text="{annotationsTree.selectedItem.@coordVersion}" change="dirtyGenomeVersion.setDirty()" maxChars="50"/>
 						</mx:HBox>
 						<mx:HBox width="100%" >
 							<mx:Label text="Coord source:" width="120"/>
-							<mx:TextInput id="coordSource"  width="100%" text="{annotationsTree.selectedItem.@coordSource}" change="dirtyGenomeVersion.setDirty()"/>
+							<mx:TextInput id="coordSource"  width="100%" text="{annotationsTree.selectedItem.@coordSource}" change="dirtyGenomeVersion.setDirty()" maxChars="50"/>
 						</mx:HBox>
 						<mx:HBox width="100%" >
 							<mx:Label text="Coord test range:" width="120"/>
-							<mx:TextInput id="coordTestRange"  width="100%" text="{annotationsTree.selectedItem.@coordTestRange}" change="dirtyGenomeVersion.setDirty()"/>
+							<mx:TextInput id="coordTestRange"  width="100%" text="{annotationsTree.selectedItem.@coordTestRange}" change="dirtyGenomeVersion.setDirty()" maxChars="100"/>
 						</mx:HBox>
 						<mx:HBox width="100%" >
 							<mx:Label text="Coord authority:" width="120"/>
-							<mx:TextInput id="coordAuthority"  width="100%" text="{annotationsTree.selectedItem.@coordAuthority}" change="dirtyGenomeVersion.setDirty()"/>
+							<mx:TextInput id="coordAuthority"  width="100%" text="{annotationsTree.selectedItem.@coordAuthority}" change="dirtyGenomeVersion.setDirty()" maxChars="50"/>
 						</mx:HBox>
 						<mx:VBox width="100%" height="100%" verticalGap="2" paddingTop="6">
 						    <mx:Label text="Segments:"/>
@@ -1899,7 +1899,7 @@
 				  <mx:VBox styleName="panelBody" width="100%" height="100%">				    
 					  <mx:HBox width="100%" >
 						<mx:Label text="Name:"  width="120"/>
-						<mx:TextInput id="annotationGroupingName" width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyAnnotationGrouping.setDirty()"/>
+						<mx:TextInput id="annotationGroupingName" width="100%" text="{annotationsTree.selectedItem.@name}" change="dirtyAnnotationGrouping.setDirty()" maxChars="2000"/>
 						<mx:Label text="User Group:" paddingLeft="8"/>
 			         	<mx:ViewStack id="agUserGroupStack" width="100%">
 			         		<mx:HBox horizontalGap="0" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" width="100%">
@@ -1912,7 +1912,7 @@
 					  </mx:HBox>
 					  <mx:HBox width="100%" height="100%">
 						<mx:Label text="Description:" width="120"/>
-						<mx:TextArea id="annotationGroupingDescription" text="{annotationsTree.selectedItem.@description}" change="dirtyAnnotationGrouping.setDirty()" width="100%" height="100%"/>
+						<mx:TextArea id="annotationGroupingDescription" text="{annotationsTree.selectedItem.@description}" change="dirtyAnnotationGrouping.setDirty()" width="100%" height="100%" maxChars="10000" wordWrap="true"/>
 					  </mx:HBox>
 				  	  <mx:HBox width="100%" horizontalGap="0" >
 							<mx:Label text="Created by:" width="126"/>
@@ -1952,6 +1952,9 @@
 			<mx:AddChild relativeTo="{dirtyAnnotation}" position="before">
 				<mx:Spacer width="100%"/>
 			</mx:AddChild>
+			<mx:SetProperty target="{annotationDescription}" name="maxChars" value="10000"/>
+			<mx:SetProperty target="{annotationSummary}" name="maxChars" value="5000"/>
+			<mx:SetProperty target="{annotationName}" name="maxChars" value="2000"/>
 		</mx:State>
 		<mx:State name="UserState">
 			<mx:RemoveChild target="{reloadDas2ServerButton}"/>

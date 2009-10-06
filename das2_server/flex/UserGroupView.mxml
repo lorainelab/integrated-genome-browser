@@ -449,22 +449,22 @@
 				  <mx:VBox styleName="panelBody" width="100%" height="100%" verticalGap="8">
 					<mx:HBox width="100%" horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="First name:" width="140"/>
-						<mx:TextInput id="firstName" width="200" text="{userGrid.selectedItem.@firstName}" change="dirtyUser.setDirty()"/>
+						<mx:TextInput id="firstName" width="200" text="{userGrid.selectedItem.@firstName}" change="dirtyUser.setDirty()" maxChars="200"/>
 						<mx:Label text="Middle:"/>
-						<mx:TextInput id="middleName"  width="50" text="{userGrid.selectedItem.@middleName}" change="dirtyUser.setDirty()"/>
+						<mx:TextInput id="middleName"  width="50" text="{userGrid.selectedItem.@middleName}" change="dirtyUser.setDirty()" maxChars="100"/>
 					</mx:HBox>
 					<mx:HBox width="100%" horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="Last name:" width="140"/>
-						<mx:TextInput id="lastName"  width="200" text="{userGrid.selectedItem.@lastName}" change="dirtyUser.setDirty()"/>
+						<mx:TextInput id="lastName"  width="200" text="{userGrid.selectedItem.@lastName}" change="dirtyUser.setDirty()" maxChars="200"/>
 					</mx:HBox>
 					
 					<mx:HBox width="100%"  horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="User name:" width="140"/>
-						<mx:TextInput text="{userGrid.selectedItem.@userName}" id="userName" width="200" change="dirtyUser.setDirty()"/>
+						<mx:TextInput text="{userGrid.selectedItem.@userName}" id="userName" width="200" change="dirtyUser.setDirty()" maxChars="30"/>
 					</mx:HBox>
 					<mx:HBox width="100%" id="hbox1" horizontalGap="0" verticalAlign="middle">
 						<mx:Label text="Password:" width="140"/>
-						<mx:TextInput displayAsPassword="true"  text="{userGrid.selectedItem.@passwordDisplay}" id="password"  width="200" change="dirtyUser.setDirty()"/>
+						<mx:TextInput displayAsPassword="true"  text="{userGrid.selectedItem.@passwordDisplay}" id="password"  width="200" change="dirtyUser.setDirty()" maxChars="30"/>
 					</mx:HBox>
 					<mx:HBox width="100%"  id="hbox2" verticalAlign="middle">
 						<mx:Label text="Role:" width="140"/>
@@ -506,7 +506,7 @@
 				    <mx:VBox styleName="panelBody" width="100%" height="100%" verticalGap="0">			
 						<mx:HBox width="100%"  paddingBottom="8">
 							<mx:Label text="Name:"  width="50"/>
-							<mx:TextInput id="groupName" width="200" text="{groupGrid.selectedItem.@name}" change="dirtyGroup.setDirty()"/>
+							<mx:TextInput id="groupName" width="200" text="{groupGrid.selectedItem.@name}" change="dirtyGroup.setDirty()" maxChars="200"/>
 						</mx:HBox>
 						<mx:HBox horizontalGap="0">
 							<mx:Label text="Drag users from bottom left onto list" fontWeight="bold" fontStyle="italic"/>

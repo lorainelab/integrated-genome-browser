@@ -290,7 +290,7 @@
 			<mx:VBox  width="100%" verticalGap="0">
                 <mx:Label text="Name:" width="100%" fontWeight="bold" id="label2"/>
 			    <mx:HBox width="100%">
-			    	<mx:TextArea id="annotationName" width="100%" change="{initializeFileUploadParameters()}"/>
+			    	<mx:TextArea id="annotationName" width="100%" change="{initializeFileUploadParameters()}" maxChars="2000"/>
 			    </mx:HBox>
 			    <mx:HBox width="100%" horizontalAlign="left">
 				    <mx:LinkButton id="trimButton" label="Trim name" click="trimName()" styleName="linkMenuButton" textDecoration="underline" paddingTop="0" paddingLeft="0"/>			    	

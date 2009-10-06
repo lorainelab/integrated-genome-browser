@@ -1,155 +1,91 @@
+==Configuring DAS2 Server==
+
+=== System Requirements ===
+* Java 5+, 64-bit recommended (http://java.sun.com/)
+* Apache Tomcat 5.5+ (http://apache.tomcat.org/)
+* Subversion client (Optional, for accessing example data set
+* MySQL database server (http://mysql.com
+* MySQL jdbc driver (http://mysql.com, download the mysql-connector-java-5.1.7.zip)
+
+
+=== Modes ===
 There are two ways to configure the DAS2 server:
+* Classic (file system) mode:  The annotations are organized into a directory structure on the file system.  
+* GenoPub mode: The annotations are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each annotation in a database.  A web-based tool (GenoPub Flex app) allows annotations to be easily added, described, and organized.  Through the tool, users and groups are managed and annotation security is specified. Access to annotations is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
 
- - Classic (file system) mode:  
-    The annotations are organized into a directory structure on 
-    the file system.  
-    
-    To build the system to run in classic mode, use all of the 
-    normal targets described below, but use the 'webapp-classic' 
-    target instead of the 'webapp' target.  Building this way 
-    will result in a web.xml and context.xml configured to support
-    DAS2 server running in classic mode. 
-                                  
- - GenoPub mode: 
-	The annotations are managed by the GenoPub (Genomic Annotation Publisher), which
-	stores information about each annotation in a database.  A
-    web-based tool (GenoPub Flex app) allows annotations to be easily added, 
-    described, and organized.  Through the tool, users and
-    groups are managed and annotation security is specified.
-    Access to annotations is brokered by the DAS2 server so that 
-    only authorized users can gain access to these resources.
-    
-    To build the system to run in GenoPub mode, in addition to 
-    running the normal targets ('clean', 'all'), run the 'flex' target
-    and the 'webapp' target.  These targets will build the web-based
-    GenoPub Flex tool for managing the annotations and configure a web.xml
-    and context.xml with the following parameters:
-    
-    context.xml - Contains a <REALM> and <RESOURCE> entry
-    that points to the database.  (See instructions below for 
-    installing a MySQL server and creating a genopub database.)
-    Change the username and password to match your MySQL database
-    account.
-    
-    web.xml - Contains parameters to indicate where the annotations
-    are stored on file system.  Also contains entries to
-    configure the server to use basic authentication.  
+=== Build Targets ===
+* To build the system to run in classic mode, use all of the normal targets described below, but use the 'webapp-classic' target instead of the 'webapp' target. Building this way will result in a web.xml and context.xml configured to support DAS2 server running in classic mode.                                 
 
-=== REQUIREMENTS ===
+* To build the system to run in GenoPub mode, in addition to running the normal targets ('clean', 'all'), run the 'flex' target and the 'webapp' target.  These targets will build the web-based GenoPub Flex tool for managing the annotations and configure a web.xml and context.xml with the following parameters:
+** context.xml - Contains a <REALM> and <RESOURCE> entry that points to the database.  (See instructions below for installing a MySQL server and creating a genopub database.) Change the username and password to match your MySQL database account.
+** web.xml - Contains parameters to indicate where the annotations are stored on file system.  Also contains entries to configure the server to use basic authentication.  
 
-	- Java 5+, 64-bit recommended (http://java.sun.com/)
-	- Apache Tomcat 5.5+ (http://apache.tomcat.org/)
-	- Subversion client (Optional, for accessing example data set)
-	- MySQL database server (http://mysql.com)
-	- MySQL jdbc driver (http://mysql.com, download the mysql-connector-java-5.1.7.zip)
-
-
-=== CONFIGURATION ===
-
-== The web.xml file ==
+=== The web.xml file ===
 The web.xml file in the das2/WEB-INF directory must be properly configured 
 before the das2 servlet will run. A list of the context parameters 
 from the web.xml is below:
 
 To run in classic mode (see example in das2_server/web_classic.xml):
-	* genometry_server_dir - Path to the data files A sample data directory can 
-	     be checked out using  subversion from 
-	     https://svn.transvar.org/repos/genomes/trunk/pub/das.  
-       Many data files in the data directory are compressed with gzip and must 
-       be decompressed before they can be read by the server.  The total size 
-       of the data directory after decompression is approximately 1GB.
-	* maintainer_email - Email address of the server's maintainer
-	* xml_base - URL that the server will answer to. The xml_base context parameter 
-	    is used by the servlet to build links back to itself.  For most configurations, 
-	    changing the domain name of the server from the default (www.example.com) 
-	    will be the only change necessary.
+* genometry_server_dir - Path to the data files A sample data directory can  be checked out using  subversion from  https://svn.transvar.org/repos/genomes/trunk/pub/das.   Many data files in the data directory are compressed with gzip and must be decompressed before they can be read by the server.  The total size  of the data directory after decompression is approximately 1GB.
+* maintainer_email - Email address of the server's maintainer
+* xml_base - URL that the server will answer to. The xml_base context parameter is used by the servlet to build links back to itself.  For most configurations,  changing the domain name of the server from the default (www.example.com)  will be the only change necessary.
 	
-To run in db mode (see example in das2_server/web.xml):
-  * genometry_mode - set to 'genopub'
-  * genometry_genopub_dir - Path to the annotation data files managed by GenoPub.
-      IMPORTANT:  Do NOT set this directory to the Path to the data files
-      used in classic mode (genometry_server_dir).  Instead specify a new
-      directory under which the annotation files will be stored.
-  * maintainer_email (see above)
-  * xml_base (see above)
+To run in GenoPub mode (see example in das2_server/web.xml):
+* genometry_mode - set to 'genopub'
+* genometry_genopub_dir - Path to the annotation data files managed by GenoPub. IMPORTANT:  Do NOT set this directory to the Path to the data files used in classic mode (genometry_server_dir).  Instead specify a new directory under which the annotation files will be stored. 
+* maintainer_email (see above)
+* xml_base (see above)
   
-== The context.xml file ==
+=== The context.xml file ===
 To run in classic mode (see example in das2_server/context_classic.xml):
-  * <Valve> - to configure logging
+* <Valve> - to configure logging
 
 To run in db mode (see example in das2_server/context.xml):
-  * <Resource> - configures the MySQL database.  
-        Change the username, password to match the installed database.
-  * <Realm> - configures the MySQL tables to manage users and passwords.  
-       Change the username, password to match the installed database.
+* <Resource> - configures the MySQL database. Change the username, password to match the installed database.
+* <Realm> - configures the MySQL tables to manage users and passwords.  Change the username, password to match the installed database.
 
-== Configuring Tomcat ==
+=== Configuring Tomcat ===
 
 The das2 servlet is resource intensive.  The sample data set can use as much as 4GB of RAM.  Some useful options are listed below:
-
-	* -Xmx4096m: Use maximum 4GB of RAM for the heap
-	* -Xincgc: Use incremental garbage collection
+* -Xmx4096m: Use maximum 4GB of RAM for the heap
+* -Xincgc: Use incremental garbage collection
 	
 The above options can be placed in the JAVA_OPTS environmental variable when using the self-contained tomcat from tomcat.apache.org.  On many Linux platforms, there is a configuration file available to place the above arguments in:
-
-	* RedHat: /etc/sysconfig/tomcat5
-	* Debian: /etc/default/tomcat5.5
+* RedHat: /etc/sysconfig/tomcat5
+* Debian: /etc/default/tomcat5.5
 
 Note that 2GB of RAM is the maximum available when using a 32-bit Java Virtual Machine.
 
-=== INSTALLATION ===
-
+=== Installation ===
 The das2 servlet can be installed by copying the entire das2 directory to tomcat's 
 webapps directory.  
 
-* In order to build a das2 webapp, run the Ant build script
-  with the target 'webapp' (for db mode) or 'webapp-classic' (for classic mode).
-* Copy the contents of dist/webapp to the tomcat webapps directory under a 
-  directory called DAS2 (or whatever webapp name you wish to call it).  
-  IMPORTANT - For GenoPub mode, make sure the .js, .html, and .swf files in the webapp
-  directory are copied.  These files comprise the GenoPub tool, a Flex 
-  application. 
-* Copy all .jar files from ext to the tomcat webapps das2 directory.
-  IMPORTANT - There are new jars that are required to run in Genopub mode,
-  so make sure all of the .jars are copied.
+* In order to build a das2 webapp, run the Ant build script with the target 'webapp' (for db mode) or 'webapp-classic' (for classic mode).
+* Copy the contents of dist/webapp to the tomcat webapps directory under a directory called DAS2 (or whatever webapp name you wish to call it).   IMPORTANT - For GenoPub mode, make sure the .js, .html, and .swf files in the webapp directory are copied.  These files comprise the GenoPub tool, a Flex  application. 
+* Copy all .jar files from ext to the tomcat webapps das2 directory. IMPORTANT - There are new jars that are required to run in Genopub mode, so make sure all of the .jars are copied.
 
-Most tomcat servers are configured to detect new or updated 
-web applications and will deploy them automatically.  Common locations for the 
-webapps directory are:
+Most tomcat servers are configured to detect new or updated web applications and will deploy them automatically.  Common locations for the webapps directory are:
+* RedHat: /var/lib/tomcat5/webapps/
+* Debian: /var/lib/tomcat5.5/webapps/
 
-	* RedHat: /var/lib/tomcat5/webapps/
-	* Debian: /var/lib/tomcat5.5/webapps/
-
-In classic mode, the das2 servlet does not detect changes in the data directory.  
-The servlet must be reloaded before it will register any changes.  However,
-in GenoPub mode, use the 'Reload DAS2 Server' link in the web-based GenoPub
-tool to refresh DAS2.
+In classic mode, the das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.  However, in GenoPub mode, use the 'Reload DAS2 Server' link in the web-based GenoPub tool to refresh DAS2.
 
 MySQL Database (required when running DAS2 server in GenoPub mode)
-  * Install MySQL Server
-  * Create a database user account called 'genopub'.  Here is the mysql command:
+* Install MySQL Server
+* Create a database user account called 'genopub'.  Here is the mysql command:
+<pre>
       mysql> CREATE USER 'genopub'@'localhost' IDENTIFIED BY 'some_password';
       mysql> GRANT ALL PRIVILEGES ON *.* TO 'genopub'@'localhost' WITH GRANT OPTION;
       mysql> CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_passord';
       mysql> GRANT ALL PRIVILEGES ON *.* TO 'genopub'@'%' WITH GRANT OPTION;
-      mysql> FLUSH PRIVILEGES;
-  * Using MySQL, login with genopub user and run genopub.sql to 
-    create genopub database
-  * Download the MySQL JDBC driver (MySQL Connector/J) from 
-    http://dev.mysql.com/downloads/connector/j/5.1.html.  
-    Uncompress the zip file (mysql-connector-java-5.1.7.zip) and place
-    mysql-connector-java-5.1.7-bin.jar into your tomcat/common/lib directory.
-  * Modify the context.xml (see instructions above) to use the correct database
-    username (genopub) and password.
+      mysql> FLUSH PRIVILEGES
+</pre>
+* Using MySQL, login with genopub user and run genopub.sql to create genopub database
+* Download the MySQL JDBC driver (MySQL Connector/J) from http://dev.mysql.com/downloads/connector/j/5.1.html.  Uncompress the zip file (mysql-connector-java-5.1.7.zip) and place mysql-connector-java-5.1.7-bin.jar into your tomcat/common/lib directory.
+* Modify the context.xml (see instructions above) to use the correct database username (genopub) and password.
   
-=== RUNNING THE WEB-BASED DAS2 MANAGER TOOL ===
-Once the DAS2 server is deployed and running under tomcat, enter the 
-following URL from the browser to launch the GenoPub tool:
-  http://yourhost:yourport/DAS2/genopub 
+=== Running the Web-based GenoPub Tool ===
+Once the DAS2 server is deployed and running under tomcat, enter the following URL from the browser to launch the GenoPub tool: http://yourhost:yourport/DAS2/genopub 
 
-Login with the username 'admin' and the password 'admin'.  Click on 
-the Users and Groups link and add yourself as a user.  If you are an admin,
-click the 'Admin' radio button.  Now try the URL again to make sure you
-can login.  Delete the default 'admin' user now that you have set yourself up
-as a user.
+Login with the username 'admin' and the password 'admin'.  Click on the Users and Groups link and add yourself as a user.  If you are an admin,click the 'Admin' radio button.  Now try the URL again to make sure you can login.  Delete the default 'admin' user now that you have set yourself up as a user.
 

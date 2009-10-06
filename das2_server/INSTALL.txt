@@ -1,7 +1,7 @@
 === REQUIREMENTS ===
 
-	- Java 5+, 64-bit recommended (http://java.sun.com/)
-	- Aapche Tomcat 5.5+ (http://apache.tomcat.org/)
+	- Java 6+, 64-bit recommended (http://java.sun.com/)
+	- Apache Tomcat 5.5+ (http://apache.tomcat.org/)
 	- Subversion client (Optional, for accessing example data set)
 
 
@@ -20,7 +20,7 @@ The xml_base context parameter is used by the servlet to build links back to its
 
 == Configuring tomcat ==
 
-The das2 servlet is resource intensive.  The sample data set can use as much as 4GB of RAM.  Some useful options are listed below:
+The das2 servlet with the sample data set will use up to 2 GB of RAM during startup (average usage will be under 500MB of RAM). Some useful options are listed below:
 
 	* -Xmx4096m: Use maximum 4GB of RAM for the heap
 	* -Xincgc: Use incremental garbage collection
@@ -40,3 +40,5 @@ The das2 servlet can be installed by copying the entire das2 directory to tomcat
 	* Debian: /var/lib/tomcat5.5/webapps/
 
 The das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.
+
+The das2 servlet will need write access to the sub-directory <DATADIR>/.indexed. This is used to store indexing files.  It is rebuilt upon a restart of the servlet.

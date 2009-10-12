@@ -552,9 +552,6 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			ex.printStackTrace();
 			return false;
 		}
-		finally {
-			GeneralUtils.safeClose(dos);
-		}
 		return true;
 	}
 

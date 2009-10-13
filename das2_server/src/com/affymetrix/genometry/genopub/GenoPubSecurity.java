@@ -236,7 +236,8 @@ public class GenoPubSecurity implements AnnotSecurity {
 				}
 			} else if (a.getIdUser().equals(user.getIdUser())) {
 				// Owner of annotation can read it
-			}	canRead = true;			
+				canRead = true;
+			}
 		} else if (object instanceof AnnotationGrouping) {
 			AnnotationGrouping ag = AnnotationGrouping.class.cast(object);
 			if (ag.hasVisibility(Visibility.PUBLIC)) {

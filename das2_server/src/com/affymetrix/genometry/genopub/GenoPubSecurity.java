@@ -49,8 +49,26 @@ public class GenoPubSecurity implements AnnotSecurity {
 	private HashMap<Integer, UserGroup>   groupsMemCollabVisibility = new HashMap<Integer, UserGroup>();
 	private HashMap<Integer, UserGroup>   groupsMemVisibility = new HashMap<Integer, UserGroup>();
 	
-	private HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
 	
+	private HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
+	private Map<String, GenomeVersion> versionNameToVersionMap = new HashMap<String, GenomeVersion>();
+	
+	private String                  baseURL;
+	
+	
+	public void setBaseURL(String fullURL, String servletPath, String pathInfo) {
+		baseURL = "";
+		
+        String extraPath = servletPath + pathInfo;
+        int pos = fullURL.lastIndexOf(extraPath);
+        if (pos > 0) {
+        	baseURL = fullURL.substring(0, pos);
+        }
+	}
+	
+	public String getBaseURL() {
+		return baseURL;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public GenoPubSecurity(Session sess, String userName, boolean scrutinizeAccess, boolean isAdminRole, boolean isGuestRole) throws Exception {
@@ -425,6 +443,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 			                                             String annotationGroupingAlias, 
 			                                             boolean addWhere)
 	  throws Exception {
+		/*
 		if (!scrutinizeAccess) {
 			return addWhere;
 		}
@@ -448,7 +467,8 @@ public class GenoPubSecurity implements AnnotSecurity {
 			// Pick up public folders and folders belonging to the group
 			appendAnnotationGroupingHQLSecurity(queryBuf, annotationGroupingAlias, addWhere);
 			
-		} 	
+		} 
+		*/	
 		return addWhere;
 	}
 
@@ -545,6 +565,10 @@ public class GenoPubSecurity implements AnnotSecurity {
     	this.isAdminRole = isAdminRole;
     }	
 	
+	public boolean isGuestRole() {
+		return isGuestRole;
+	}
+	
 	public String getUserName() {
 		if (user != null ) {
 			return user.getUserName();
@@ -576,6 +600,11 @@ public class GenoPubSecurity implements AnnotSecurity {
 		// Cache the authorized annotation ids of each genome version for this user
 		AnnotationQuery annotationQuery = new AnnotationQuery();
 		annotationQuery.runAnnotationQuery(sess, this);
+		
+		// Cache the genome versions
+		this.versionNameToVersionMap = annotationQuery.getGenomeVersionNameMap();
+		
+		// Cache the authorized annotations
 		for (Organism organism : annotationQuery.getOrganisms()) {
 			for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
 
@@ -636,7 +665,26 @@ public class GenoPubSecurity implements AnnotSecurity {
 		// Get the hash map of annotation ids this user is authorized to view
 		Map<Integer, QualifiedAnnotation> annotationMap = versionToAuthorizedAnnotationMap.get(genomeVersionName);
 		QualifiedAnnotation qa = annotationMap.get(annotationId);
-		return qa.getAnnotation().getProperties();
+		Map<String, Object> props =  qa.getAnnotation().getProperties();
+		
+		// Add the 'info' URL as a property.  
+		if (!props.containsKey(Annotation.PROP_URL)) {
+			props.put(Annotation.PROP_URL, this.baseURL + "/" + GenoPubServlet.GENOPUB_WEBAPP_NAME + "/" + GenoPubServlet.ANNOTATION_INFO_REQUEST + "?idAnnotation=" + annotationId);
+		}
+		return props;
+		
+	}
+	
+	public String getSequenceDirectory(String data_root, AnnotatedSeqGroup genome) throws Exception {
+		if (scrutinizeAccess) {
+			GenomeVersion genomeVersion = versionNameToVersionMap.get(genome.getID());
+			if (genomeVersion == null) {
+				throw new Exception("Cannot find genome version " + genome.getID() + " in genome version map");
+			}
+			return data_root + Constants.SEQUENCE_DIR_PREFIX + genomeVersion.getIdGenomeVersion().toString() + "/";
+		} else {
+			return data_root + genome.getOrganism() + "/" + genome.getID() + "/dna/";
+		}
 	}
 
 	

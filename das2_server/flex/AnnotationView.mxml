@@ -10,7 +10,7 @@
     id="refreshDAS2Server" 
     url="genome/refresh"
     resultFormat="e4x"
-    showBusyCursor="true"
+    showBusyCursor="false"
     result="onRefreshDAS2Server(event)"
     fault="parentApplication.onFailHttpRequest('Failed to refresh annotations on DAS2 Server', event)"
     method="GET"
@@ -258,6 +258,8 @@
         
        	[Bindable]
        	private var annotationCount:String = "";
+       	
+       	private var refreshDAS2ProgressWindow:RefreshDAS2ProgressWindow;
               
 		public function getTreeIcon(item:Object):Class {
 			if (item.name() == "Organism") {
@@ -691,8 +693,16 @@
 		 * Refresh DAS2 Server
 		 *
 		 */
+		 
+		private function startDAS2Refresh():void {
+            refreshDAS2ProgressWindow = RefreshDAS2ProgressWindow(PopUpManager.createPopUp(parentApplication.mainArea, RefreshDAS2ProgressWindow, false));
+            PopUpManager.centerPopUp(refreshDAS2ProgressWindow);
+            refreshDAS2Server.send();
+		}
 		private function onRefreshDAS2Server(event:ResultEvent):void {
-			Alert.show("Annotations refreshed on DAS2 Server");
+			refreshDAS2ProgressWindow.progress.label = "DAS2 server reloaded."
+			refreshDAS2ProgressWindow.progress.mode = "manual";
+			refreshDAS2ProgressWindow.progress.setProgress(100, 100);
 		}
 		
 
@@ -1695,13 +1705,13 @@
 					dragDrop="onDragDrop(event);" 
 					rowHeight="18" allowMultipleSelection="false" itemClick="{onTreeClick()}">
 				</mx:Tree>			
-				<mx:HBox width="100%" horizontalAlign="left" id="hbox4" paddingTop="1">
+				<mx:HBox width="100%" horizontalAlign="left" id="bottomButtomBox" paddingTop="1">
 					<mx:LinkButton styleName="linkMenuButton" label="Refresh" 
 						icon="@Embed(source='assets/refresh.png')" 
 						click="{treeItemToSelect=null;refreshAnnotations()}"/>
 					<mx:LinkButton styleName="linkMenuButton" label="Reload DAS2 Server" 
 						icon="@Embed(source='assets/database_refresh.png')" 
-						click="{refreshDAS2Server.send()}" 
+						click="{startDAS2Refresh()}" 
 						id="reloadDas2ServerButton"/>
 					<mx:Spacer width="100%"/>
 					<mx:CheckBox fontSize="9" id="cbAlwaysExpandTree" label="Expand tree"  click="{annotationsTree.selectedItem=null;cbAlwaysExpandTree.selected ? expandAppropriateAnnotationNodes() : this.collapseAllAnnotationNodes();expandAppropriateAnnotationNodes()}"/>

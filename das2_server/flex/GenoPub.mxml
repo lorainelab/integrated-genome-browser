@@ -275,7 +275,7 @@
     <mx:ApplicationControlBar  width="100%"  id="navBar"
    	  fillAlphas="[1, 1]" dock="true"    
    	  paddingBottom="0" paddingLeft="0" paddingRight="0" paddingTop="0" >
-   	  <mx:VBox width="100%" paddingLeft="1" paddingBottom="0" paddingRight="1" paddingTop="2" verticalGap="0" id="vbox1">
+   	  <mx:VBox width="100%" paddingLeft="1" paddingBottom="0" paddingRight="1" paddingTop="2" verticalGap="0" id="navBox">
 		<mx:HBox width="100%" id="hbox1" paddingBottom="0">
 			<mx:Label text="GenoPub" id="label1" styleName="titleLabel" paddingBottom="0" paddingTop="0"/>			
 			<mx:HBox verticalAlign="middle" height="100%" paddingLeft="30" paddingTop="0" paddingBottom="0">

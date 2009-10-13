@@ -2,7 +2,7 @@
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
 	title="New genome version"
 	showCloseButton="true" 
-	width="398" 
+	width="436" 
 	height="192"
 	verticalGap="0"
 	close="closeWindow()"
@@ -73,22 +73,22 @@
 	]]>
     </mx:Script>
     
-    <mx:VBox height="100%" width="100%" styleName="panelBody" verticalGap="0">
-		<mx:HBox width="100%">
+    <mx:VBox height="100%" styleName="panelBody" verticalGap="0">
+		<mx:HBox>
 			<mx:Label text="Organism:" width="100"/>
-			<mx:ComboBox labelField="@binomialName" id="organismCombo" width="100%">
+			<mx:ComboBox labelField="@binomialName" id="organismCombo" width="300">
 				<mx:dataProvider>{parentApplication.dictionaryOrganism}</mx:dataProvider>
 			</mx:ComboBox>
 		</mx:HBox>
 		<mx:Spacer height="20"/>
-		<mx:HBox width="100%" paddingTop="4">
+		<mx:HBox paddingTop="4">
 			<mx:Label text="Name:"  width="100"/>
-			<mx:TextInput id="genomeVersionName" width="100%"/>
+			<mx:TextInput id="genomeVersionName" width="300" maxChars="200"/>
 		</mx:HBox>
 		<mx:Label text="Example: H_sapiens_Mar_2006" width="100%" textAlign="right" fontSize="9" fontStyle="italic"/>
-		<mx:HBox width="100%" paddingTop="10">
+		<mx:HBox paddingTop="10">
 			<mx:Label text="Build date:" width="100"/>
-			<mx:DateField id="buildDate"  width="100%"/>
+			<mx:DateField id="buildDate"  width="300"/>
 	</mx:HBox>
     	
     </mx:VBox>

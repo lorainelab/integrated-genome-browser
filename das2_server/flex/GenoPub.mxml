@@ -164,15 +164,6 @@
     
     private function onGetSecurity(event:ResultEvent):void {
     	if (getSecurity.lastResult.name() == "GenoPubSecurity") {
-    		if (isAdmin()) {
-    			this.currentState = "AdminAllState";
-    		} else if (canManageUsers()) {
-    			this.currentState = "AdminUserState";
-    		} else if (isGuest()) {
-    			this.currentState = "GuestState";
-    		} else {
-    			this.currentState = "UserState";
-    		} 
     		getDictionaries.send();
     	}
     }
@@ -203,6 +194,16 @@
 
 	private function onGetDictionaries(event:ResultEvent):void {
 		if (getDictionaries.lastResult.name() == "Dictionaries") {
+			if (isAdmin()) {
+    			this.currentState = "AdminAllState";
+    		} else if (canManageUsers()) {
+    			this.currentState = "AdminUserState";
+    		} else if (isGuest()) {
+    			this.currentState = "GuestState";
+    		} else {
+    			this.currentState = "UserState";
+    		} 
+
 			dictionaries = new XMLListCollection(getDictionaries.lastResult.Dictionary);
 
 			dictionaryOrganism      = new XMLListCollection(getDictionaries.lastResult.Organisms.Organism); 

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.text.NumberFormat;
@@ -66,44 +67,48 @@ import org.apache.catalina.realm.RealmBase;
 
 public class GenoPubServlet extends HttpServlet {
 
+	public static final String GENOPUB_WEBAPP_NAME  = "genopub";
+
 	private static final String GENOPUB_HTML_WRAPPER = "GenoPub.html";
 	private static final String REALM                = "Das2";
-	private static final String GENOPUB_WEBAPP_NAME  = "genopub";
 
-	private static final String SECURITY_REQUEST                   = "security";
-	private static final String DICTIONARIES_REQUEST               = "dictionaries";
-	private static final String ANNOTATIONS_REQUEST                = "annotations";
-	private static final String ANNOTATION_REQUEST                 = "annotation";
-	private static final String ORGANISM_ADD_REQUEST               = "organismAdd";
-	private static final String ORGANISM_UPDATE_REQUEST            = "organismUpdate";
-	private static final String ORGANISM_DELETE_REQUEST            = "organismDelete";
-	private static final String GENOME_VERSION_REQUEST             = "genomeVersion";
-	private static final String GENOME_VERSION_ADD_REQUEST         = "genomeVersionAdd";
-	private static final String GENOME_VERSION_UPDATE_REQUEST      = "genomeVersionUpdate";
-	private static final String GENOME_VERSION_DELETE_REQUEST      = "genomeVersionDelete";
-	private static final String GENOME_VERSION_SEGMENT_IMPORT_REQUEST = "genomeVersionSegmentImport";
-	private static final String ANNOTATION_GROUPING_ADD_REQUEST    = "annotationGroupingAdd";
-	private static final String ANNOTATION_GROUPING_UPDATE_REQUEST = "annotationGroupingUpdate";
-	private static final String ANNOTATION_GROUPING_MOVE_REQUEST   = "annotationGroupingMove";
-	private static final String ANNOTATION_GROUPING_DELETE_REQUEST = "annotationGroupingDelete";
-	private static final String ANNOTATION_ADD_REQUEST             = "annotationAdd";
-	private static final String ANNOTATION_UPDATE_REQUEST          = "annotationUpdate";
-	private static final String ANNOTATION_DELETE_REQUEST          = "annotationDelete";
-	private static final String ANNOTATION_UNLINK_REQUEST          = "annotationUnlink";
-	private static final String ANNOTATION_MOVE_REQUEST            = "annotationMove";
-	private static final String FORMULATE_UPLOAD_URL_REQUEST       = "uploadURL";
-	private static final String UPLOAD_FILES_REQUEST               = "uploadFiles"; 
-	private static final String USERS_AND_GROUPS_REQUEST           = "usersAndGroups"; 
-	private static final String USER_ADD_REQUEST                   = "userAdd";
-	private static final String USER_PASSWORD_REQUEST              = "userPassword"; 
-	private static final String USER_UPDATE_REQUEST                = "userUpdate"; 
-	private static final String USER_DELETE_REQUEST                = "userDelete"; 
-	private static final String GROUP_ADD_REQUEST                  = "groupAdd";
-	private static final String GROUP_UPDATE_REQUEST               = "groupUpdate"; 
-	private static final String GROUP_DELETE_REQUEST               = "groupDelete"; 
-	private static final String DICTIONARY_ADD_REQUEST             = "dictionaryAdd";
-	private static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
-	private static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
+	public static final String SECURITY_REQUEST                   = "security";
+	public static final String DICTIONARIES_REQUEST               = "dictionaries";
+	public static final String ANNOTATIONS_REQUEST                = "annotations";
+	public static final String ANNOTATION_REQUEST                 = "annotation";
+	public static final String ORGANISM_ADD_REQUEST               = "organismAdd";
+	public static final String ORGANISM_UPDATE_REQUEST            = "organismUpdate";
+	public static final String ORGANISM_DELETE_REQUEST            = "organismDelete";
+	public static final String GENOME_VERSION_REQUEST             = "genomeVersion";
+	public static final String GENOME_VERSION_ADD_REQUEST         = "genomeVersionAdd";
+	public static final String GENOME_VERSION_UPDATE_REQUEST      = "genomeVersionUpdate";
+	public static final String GENOME_VERSION_DELETE_REQUEST      = "genomeVersionDelete";
+	public static final String SEGMENT_IMPORT_REQUEST             = "segmentImport";
+	public static final String SEQUENCE_FORM_UPLOAD_URL_REQUEST   = "sequenceUploadURL";
+	public static final String SEQUENCE_UPLOAD_FILES_REQUEST      = "sequenceUploadFiles"; 
+	public static final String ANNOTATION_GROUPING_ADD_REQUEST    = "annotationGroupingAdd";
+	public static final String ANNOTATION_GROUPING_UPDATE_REQUEST = "annotationGroupingUpdate";
+	public static final String ANNOTATION_GROUPING_MOVE_REQUEST   = "annotationGroupingMove";
+	public static final String ANNOTATION_GROUPING_DELETE_REQUEST = "annotationGroupingDelete";
+	public static final String ANNOTATION_ADD_REQUEST             = "annotationAdd";
+	public static final String ANNOTATION_UPDATE_REQUEST          = "annotationUpdate";
+	public static final String ANNOTATION_DELETE_REQUEST          = "annotationDelete";
+	public static final String ANNOTATION_UNLINK_REQUEST          = "annotationUnlink";
+	public static final String ANNOTATION_MOVE_REQUEST            = "annotationMove";
+	public static final String ANNOTATION_INFO_REQUEST            = "annotationInfo";
+	public static final String ANNOTATION_FORM_UPLOAD_URL_REQUEST = "annotationUploadURL";
+	public static final String ANNOTATION_UPLOAD_FILES_REQUEST    = "annotationUploadFiles"; 
+	public static final String USERS_AND_GROUPS_REQUEST           = "usersAndGroups"; 
+	public static final String USER_ADD_REQUEST                   = "userAdd";
+	public static final String USER_PASSWORD_REQUEST              = "userPassword"; 
+	public static final String USER_UPDATE_REQUEST                = "userUpdate"; 
+	public static final String USER_DELETE_REQUEST                = "userDelete"; 
+	public static final String GROUP_ADD_REQUEST                  = "groupAdd";
+	public static final String GROUP_UPDATE_REQUEST               = "groupUpdate"; 
+	public static final String GROUP_DELETE_REQUEST               = "groupDelete"; 
+	public static final String DICTIONARY_ADD_REQUEST             = "dictionaryAdd";
+	public static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
+	public static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
 	
 	private GenoPubSecurity genoPubSecurity = null;
 	
@@ -171,8 +176,12 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleGenomeVersionUpdateRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.GENOME_VERSION_DELETE_REQUEST)) {
 				this.handleGenomeVersionDeleteRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.GENOME_VERSION_SEGMENT_IMPORT_REQUEST)) {
-				this.handleGenomeVersionSegmentImportRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.SEGMENT_IMPORT_REQUEST)) {
+				this.handleSegmentImportRequest(req, res);
+			}  else if (req.getPathInfo().endsWith(this.SEQUENCE_FORM_UPLOAD_URL_REQUEST)) {
+				this.handleSequenceFormUploadURLRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.SEQUENCE_UPLOAD_FILES_REQUEST)) {
+				this.handleSequenceUploadRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_GROUPING_ADD_REQUEST)) {
 				this.handleAnnotationGroupingAddRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_GROUPING_UPDATE_REQUEST)) {
@@ -191,10 +200,12 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleAnnotationUnlinkRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_MOVE_REQUEST)) {
 				this.handleAnnotationMoveRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.FORMULATE_UPLOAD_URL_REQUEST)) {
-				this.handleFormulateUploadURLRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.UPLOAD_FILES_REQUEST)) {
-				this.handleUploadRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_INFO_REQUEST)) {
+				this.handleAnnotationInfoRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_FORM_UPLOAD_URL_REQUEST)) {
+				this.handleAnnotationFormUploadURLRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UPLOAD_FILES_REQUEST)) {
+				this.handleAnnotationUploadRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.USERS_AND_GROUPS_REQUEST)) {
 				this.handleUsersAndGroupsRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.USER_ADD_REQUEST)) {
@@ -523,29 +534,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
 			
-			Document doc = DocumentHelper.createDocument();
-			Element versionNode = doc.addElement("GenomeVersion");
-			
-			versionNode.addAttribute("label", gv.getName());				
-			versionNode.addAttribute("idGenomeVersion",gv.getIdGenomeVersion().toString());				
-			versionNode.addAttribute("name",           gv.getName());				
-			versionNode.addAttribute("buildDate",      gv.getBuildDate() != null ? Util.formatDate(gv.getBuildDate()) : "");				
-			versionNode.addAttribute("idOrganism",     gv.getIdOrganism().toString());				
-			versionNode.addAttribute("coordURI",       gv.getCoordURI() != null ? gv.getCoordURI().toString() : "");	
-			versionNode.addAttribute("coordVersion",   gv.getCoordVersion() != null ? gv.getCoordVersion().toString() : "");	
-			versionNode.addAttribute("coordSource",    gv.getCoordSource() != null ? gv.getCoordSource().toString() : "");	
-			versionNode.addAttribute("coordTestRange", gv.getCoordTestRange() != null ? gv.getCoordTestRange().toString() : "");	
-			versionNode.addAttribute("coordAuthority", gv.getCoordAuthority() != null ? gv.getCoordAuthority().toString() : "");
-			
-			Element segmentsNode = doc.getRootElement().addElement("Segments");
-			for (Segment segment : (Set<Segment>)gv.getSegments()) {
-				Element sNode = segmentsNode.addElement("Segment");
-				sNode.addAttribute("idSegment", segment.getIdSegment().toString());
-				sNode.addAttribute("name", segment.getName());
-				
-				sNode.addAttribute("length", segment.getLength() != null ? NumberFormat.getInstance().format(segment.getLength()) : "");
-				sNode.addAttribute("sortOrder", segment.getSortOrder() != null ? segment.getSortOrder().toString() : "");
-			}
+			Document doc = gv.getXML(genoPubSecurity, this.genometry_genopub_dir);
 			
 			XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
 			writer.write(doc);
@@ -765,6 +754,16 @@ public class GenoPubServlet extends HttpServlet {
 			}    
 			sess.flush();
 			
+			
+			// Remove sequence files
+			reader = new StringReader(request.getParameter("sequenceFilesToRemoveXML"));
+			sax = new SAXReader();
+			Document filesDoc = sax.read(reader);
+			for(Iterator i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
+				Element fileNode = (Element)i.next();
+				File file = new File(fileNode.attributeValue("url"));
+				file.delete();
+			}            
 
 			
 			
@@ -843,6 +842,9 @@ public class GenoPubServlet extends HttpServlet {
 			
 			sess.flush();
 			
+			// remove sequence files
+			genomeVersion.removeSequenceFiles(genometry_genopub_dir);
+		
 			
 			// Now delete the genome version
 			sess.refresh(genomeVersion);
@@ -883,7 +885,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 	
-	private void handleGenomeVersionSegmentImportRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	private void handleSegmentImportRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		
 		try {
@@ -952,7 +954,159 @@ public class GenoPubServlet extends HttpServlet {
 		}
 		
 	}
+	
+	private void handleSequenceFormUploadURLRequest(HttpServletRequest req, HttpServletResponse res) {
+	    try {
+	        
+	        //
+	        // COMMENTED OUT CODE: 
+	        //    String baseURL =  "http"+ (isLocalHost ? "://" : "s://") + req.getServerName() + req.getContextPath();
+	        //
+	        // To fix upload problem (missing session in upload servlet for FireFox, Safari), encode session in URL
+	        // for upload servlet.  Also, use non-secure (http: rather than https:) when making http request; 
+	        // otherwise, existing session is not accessible to upload servlet.
+	        //
+	        //
+	        
+	        String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
+	        String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.SEQUENCE_UPLOAD_FILES_REQUEST;
+	        // Encode session id in URL so that session maintains for upload servlet when called from
+	        // Flex upload component inside FireFox, Safari
+	        URL += ";jsessionid=" + req.getRequestedSessionId();
+	        
+	        
+	        res.setContentType("application/xml");
+	        res.getOutputStream().println("<UploadURL url='" + URL + "'/>");
+	        
+	      } catch (Exception e) {
+	        System.out.println("An error has occured in GenoPubServlet - " + e.toString());
+	      }		
+	}
 
+	private void handleSequenceUploadRequest(HttpServletRequest req, HttpServletResponse res) {
+		
+		Session sess = null;
+		Integer idGenomeVersion = null;
+		
+	    GenomeVersion genomeVersion = null;
+
+	    String fileName = null;
+	    
+		
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+			
+			
+		    res.setDateHeader("Expires", -1);
+		    res.setDateHeader("Last-Modified", System.currentTimeMillis());
+		    res.setHeader("Pragma", "");
+		    res.setHeader("Cache-Control", "");
+		 
+		    
+		    res.setCharacterEncoding("UTF-8");
+
+    	            
+    	    MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
+    	    Part part;
+    	    while ((part = mp.readNextPart()) != null) {
+    	      String name = part.getName();
+    	      if (part.isParam()) {
+    	        // it's a parameter part
+    	        ParamPart paramPart = (ParamPart) part;
+    	        String value = paramPart.getStringValue();
+    	        if (name.equals("idGenomeVersion")) {
+    	            idGenomeVersion = new Integer(String.class.cast(value));
+    	        } 
+    	      }
+    	      
+    	      if (idGenomeVersion != null) {
+    	    	  break;
+    	      }
+    	    
+    	    }
+    	      
+    	      
+    	    if (idGenomeVersion != null) {
+    	    	genomeVersion = (GenomeVersion)sess.get(GenomeVersion.class, idGenomeVersion);
+    	    } 
+    	    if (genomeVersion != null) {
+    	    	if (this.genoPubSecurity.canWrite(genomeVersion)) {
+    	    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
+
+    	    		// Make sure that the data root dir exists
+    	    		if (!new File(genometry_genopub_dir).exists()) {
+    	    			boolean success = (new File(genometry_genopub_dir)).mkdir();
+    	    			if (!success) {
+    	    				throw new Exception("Unable to create directory " + genometry_genopub_dir);      
+    	    			}
+    	    		}
+
+    	    		String sequenceDir = genomeVersion.getSequenceDirectory(genometry_genopub_dir);
+
+    	    		// Create sequence directory if it doesn't exist
+    	    		if (!new File(sequenceDir).exists()) {
+    	    			boolean success = (new File(sequenceDir)).mkdir();
+    	    			if (!success) {
+    	    				throw new Exception("Unable to create directory " + sequenceDir);      
+    	    			}      
+    	    		}
+
+    	    		while ((part = mp.readNextPart()) != null) {        
+    	    			if (part.isFile()) {
+    	    				// it's a file part
+    	    				FilePart filePart = (FilePart) part;
+    	    				fileName = filePart.getFileName();
+    	    				if (fileName != null) {
+    	    					// the part actually contained a file
+    	    					long size = filePart.writeTo(new File(sequenceDir));
+    	    				}
+    	    				else { 
+    	    				}
+    	    			}
+    	    		}
+    	    		sess.flush();
+    	    		
+    				Document doc = DocumentHelper.createDocument();
+    				Element root = doc.addElement("SUCCESS");
+    				root.addAttribute("idGenomeVersion", genomeVersion.getIdGenomeVersion().toString());
+    				XMLWriter writer = new XMLWriter(res.getOutputStream(),
+    	            OutputFormat.createCompactFormat());
+    				writer.write(doc);
+
+    	    	} else {
+    	    		System.out.println("Bypassing upload of sequence files for  " + genomeVersion.getName() + " due to insufficient permissions.");
+    	    	}
+    	    } else {
+    	    	throw new Exception("No genome version provided for sequence files");
+    	    }
+
+
+    	    
+			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", e.getMessage());
+			try {
+				XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
+				writer.write(doc);				
+			} catch (Exception e1) {
+				
+			}
+			
+		} finally {
+			
+			if (sess != null) {
+				sess.close();
+			}
+		}
+		
+		
+	}
+
+	
 	private void handleAnnotationGroupingAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		
@@ -962,6 +1116,10 @@ public class GenoPubServlet extends HttpServlet {
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new Exception("Please enter the annotation folder name.");
+			}
+			
+			if (genoPubSecurity.isGuestRole()) {
+				throw new Exception("Insufficient permissions to add a folder.");
 			}
 			
 			sess = HibernateUtil.getSessionFactory().openSession();
@@ -1282,7 +1440,11 @@ public class GenoPubServlet extends HttpServlet {
 	private void handleAnnotationAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		
+
 		try {
+			if (genoPubSecurity.isGuestRole()) {
+				throw new Exception("Insufficient permissions to add an annotation.");
+			}
 
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
@@ -1768,8 +1930,135 @@ public class GenoPubServlet extends HttpServlet {
 		
 	}
 
+	private void handleAnnotationInfoRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		Session sess = null;
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+
+			Integer idAnnotation = Util.getIntegerParameter(request, "idAnnotation");
+			
+			DictionaryHelper dh = DictionaryHelper.getInstance(sess);
+			
+			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
+			
+			if (!this.genoPubSecurity.canRead(annotation)) {
+				throw new Exception("Insufficient permissions to access information on this annotation.");				
+			}
+			
+			res.setContentType("text/html");
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("HTML");
+			
+            Element head = root.addElement("HEAD");
+            Element link = head.addElement("link");
+            link.addAttribute("rel", "stylesheet");
+            link.addAttribute("type", "text/css");
+            
+            String baseURL = "";
+            StringBuffer fullPath = request.getRequestURL();
+            String extraPath = request.getServletPath() + request.getPathInfo();
+            int pos = fullPath.lastIndexOf(extraPath);
+            if (pos > 0) {
+            	baseURL = fullPath.substring(0, pos);
+            }
+            
+            link.addAttribute("href", baseURL + "/info.css");
+			
+			Element body = root.addElement("BODY");
+
+
+            Element center = body.addElement("CENTER");
+			Element h1   = center.addElement("H1");
+			h1.addText("DAS2 Annotation");
+
+			Element h2   = body.addElement("H2");
+			h2.addText(annotation.getName());
+			
+			Element table = body.addElement("TABLE");
+			
+			Element row   = table.addElement("TR");
+			row.addElement("TD").addText("Summary").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getSummary() != null && !annotation.getSummary().equals("") ? annotation.getSummary() : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Description").addAttribute("CLASS", "label");
+			if (annotation.getDescription() == null || annotation.getDescription().equals("")) {
+				row.addElement("TD").addCDATA("&nbsp;");
+			} else {
+				String description = annotation.getDescription().replaceAll("\\n", "<br>");
+				description = annotation.getDescription().replaceAll("\\r", "<br>");
+				row.addElement("TD").addCDATA(description);				
+			}
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Experiment Platform").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdExperimentPlatform() != null ? dh.getExperimentPlatform(annotation.getIdExperimentPlatform()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Experiment Method").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdExperimentMethod() != null ? dh.getExperimentMethod(annotation.getIdExperimentMethod()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Analysis Type").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdAnalysisType() != null ? dh.getAnalysisType(annotation.getIdAnalysisType()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Owner").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserFullName(annotation.getIdUser()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("User Group").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupName(annotation.getIdUserGroup()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && !annotation.getCodeVisibility().equals("") ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
+			
+			
+			String publishedBy = "&nbsp;";
+			if (annotation.getCreatedBy() != null && !annotation.getCreatedBy().equals("")) {
+				publishedBy = annotation.getCreatedBy();
+				
+				if (annotation.getCreateDate() != null) {
+					publishedBy += " " + Util.formatDate(annotation.getCreateDate());
+				}
+			} else {
+				if (annotation.getCreateDate() != null) {
+					publishedBy = " " + Util.formatDate(annotation.getCreateDate());
+				}
+			}
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Published by").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(publishedBy);
+
+
+	        org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
+	        org.dom4j.io.HTMLWriter writer = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
+	      
+	        writer.write(doc);
+	        writer.flush();
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", e.getMessage());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+		} finally {
+			
+			if (sess != null) {
+				sess.close();
+			}
+		}
+		
+	}
+
 	
-	private void handleFormulateUploadURLRequest(HttpServletRequest req, HttpServletResponse res) {
+	private void handleAnnotationFormUploadURLRequest(HttpServletRequest req, HttpServletResponse res) {
 	    try {
 	        
 	        //
@@ -1783,7 +2072,7 @@ public class GenoPubServlet extends HttpServlet {
 	        //
 	        
 	        String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
-	        String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.UPLOAD_FILES_REQUEST;
+	        String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.ANNOTATION_UPLOAD_FILES_REQUEST;
 	        // Encode session id in URL so that session maintains for upload servlet when called from
 	        // Flex upload component inside FireFox, Safari
 	        URL += ";jsessionid=" + req.getRequestedSessionId();
@@ -1793,12 +2082,12 @@ public class GenoPubServlet extends HttpServlet {
 	        res.getOutputStream().println("<UploadURL url='" + URL + "'/>");
 	        
 	      } catch (Exception e) {
-	        System.out.println("An error has occured in UploadURLServlet - " + e.toString());
+	        System.out.println("An error has occured in GenoPubServlet handleAnnotationFormUploadURLRequest - " + e.toString());
 	      }		
 	}
 
 	
-	private void handleUploadRequest(HttpServletRequest req, HttpServletResponse res) {
+	private void handleAnnotationUploadRequest(HttpServletRequest req, HttpServletResponse res) {
 		
 		Session sess = null;
 		Integer idAnnotation = null;
@@ -1816,6 +2105,11 @@ public class GenoPubServlet extends HttpServlet {
 	    
 		
 		try {
+			
+			if (genoPubSecurity.isGuestRole()) {
+				throw new Exception("Insufficient permissions to upload data.");
+			}
+			
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 			
@@ -3029,3 +3323,5 @@ public class GenoPubServlet extends HttpServlet {
 
 
 }
+
+

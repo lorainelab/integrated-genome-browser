@@ -1,10 +1,17 @@
 package com.affymetrix.genometry.genopub;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import com.affymetrix.genometry.genopub.AnnotationGrouping;
 
@@ -125,5 +132,128 @@ public class GenomeVersion {
     	this.annotations = annotations;
     }
 	
+	@SuppressWarnings("unchecked")
+	public Document getXML(GenoPubSecurity genoPubSecurity, String data_root) {
+		Document doc = DocumentHelper.createDocument();
+		Element root = doc.addElement("GenomeVersion");
+		
+		root.addAttribute("label", this.getName());				
+		root.addAttribute("idGenomeVersion",this.getIdGenomeVersion().toString());				
+		root.addAttribute("name",           this.getName());				
+		root.addAttribute("buildDate",      this.getBuildDate() != null ? Util.formatDate(this.getBuildDate()) : "");				
+		root.addAttribute("idOrganism",     this.getIdOrganism().toString());				
+		root.addAttribute("coordURI",       this.getCoordURI() != null ? this.getCoordURI().toString() : "");	
+		root.addAttribute("coordVersion",   this.getCoordVersion() != null ? this.getCoordVersion().toString() : "");	
+		root.addAttribute("coordSource",    this.getCoordSource() != null ? this.getCoordSource().toString() : "");	
+		root.addAttribute("coordTestRange", this.getCoordTestRange() != null ? this.getCoordTestRange().toString() : "");	
+		root.addAttribute("coordAuthority", this.getCoordAuthority() != null ? this.getCoordAuthority().toString() : "");	
+		
+		// Only show the sequence files and segments for genome version detail 
+		// (if data_root provided).
+		if (data_root != null) {
+			
+			// Sequence files
+			Element filesNode = root.addElement("SequenceFiles");
+			
+			String filePath = getSequenceDirectory(data_root);
+		    File fd = new File(filePath);
+		    if (fd.exists()) {
+		    	
+
+			    Element fileNode = filesNode.addElement("Dir");
+				fileNode.addAttribute("name", getSequenceFileName());
+				fileNode.addAttribute("url", filePath);
+			    appendSequenceFileXML(filePath, fileNode, null);	    	
+		    }
+		    
+			// Segments
+			Element segmentsNode = root.addElement("Segments");
+			for (Segment segment : (Set<Segment>)this.getSegments()) {
+				Element sNode = segmentsNode.addElement("Segment");
+				sNode.addAttribute("idSegment", segment.getIdSegment().toString());
+				sNode.addAttribute("name", segment.getName());
+				
+				sNode.addAttribute("length", segment.getLength() != null ? NumberFormat.getInstance().format(segment.getLength()) : "");
+				sNode.addAttribute("sortOrder", segment.getSortOrder() != null ? segment.getSortOrder().toString() : "");
+			}
+		}
+		
+		
+		root.addAttribute("canRead", genoPubSecurity.canRead(this) ? "Y" : "N");
+		root.addAttribute("canWrite", genoPubSecurity.canWrite(this) ? "Y" : "N");
+			
+		return doc;
+	}
+	
+	public String getSequenceDirectory(String data_root) {
+		return data_root  + getSequenceFileName();
+	}
+	
+	public String getSequenceFileName() {
+		return Constants.SEQUENCE_DIR_PREFIX + this.getIdGenomeVersion();
+	}
+	
+	public void removeSequenceFiles(String data_root) throws IOException {
+		
+		String filePath = getSequenceDirectory(data_root);
+	    File dir = new File(filePath);
+	    
+	    if (dir.exists()) {
+		    // Delete the files in the directory
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+				for (int x = 0; x < childFileNames.length; x++) {
+					String fileName = filePath + "/" + childFileNames[x];
+					File f = new File(fileName);
+					f.delete();
+				}
+		    	
+		    }
+			
+			// Delete the annotation directory
+			dir.delete();	    	
+	    }
+	}
+
+	public static void appendSequenceFileXML(String filePath, Element parentNode, String subDirName) {
+		File fd = new File(filePath);
+
+		if (fd.isDirectory()) {
+			String[] fileList = fd.list();
+			for (int x = 0; x < fileList.length; x++) {
+				String fileName = filePath + "/" + fileList[x];
+				File f1 = new File(fileName);
+
+				// Show the subdirectory in the name if we are not at the main folder level
+				String displayName = "";
+				if (subDirName != null) {
+					displayName = subDirName + "/" + fileList[x];
+				} else {
+					displayName = f1.getName();
+				}
+
+				if (f1.isDirectory()) {
+					Element fileNode = parentNode.addElement("Dir");
+					fileNode.addAttribute("name", displayName);
+					fileNode.addAttribute("url", fileName);
+					appendSequenceFileXML(fileName, fileNode,
+					        subDirName != null ? subDirName + "/"
+					                + f1.getName() : f1.getName());
+				} else {
+					Element fileNode = parentNode.addElement("File");
+
+					long kb = Util.getKilobytes(f1.length());
+					String kilobytes = kb + " kb";
+					
+					fileNode.addAttribute("name", displayName);
+					fileNode.addAttribute("url", fileName);
+					fileNode.addAttribute("size", kilobytes);
+					fileNode.addAttribute("lastModified", Util.formatDate(new java.sql.Date(f1.lastModified())));
+
+				}
+			}
+		}
+	}
+
 
 }

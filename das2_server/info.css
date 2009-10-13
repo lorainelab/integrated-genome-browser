@@ -1,0 +1,69 @@
+
+ table {
+
+ }
+
+ H1 {
+
+      font-family: Verdana;
+      font-size: 10pt;
+      font-weight: bold;
+      padding-top: 0;
+      padding-right: 8;
+      padding-bottom: 0;     
+  }
+  
+   H2 {
+
+      font-family:  Verdana;
+      font-size: 10pt;
+      font-weight: bold;
+      padding-top: 0;
+      padding-right: 0;
+      padding-bottom: 0;     
+  }
+
+  td {
+
+      border: thin solid;
+      border-color: #CDCDC1;
+      font-family:  Verdana;
+      font-size: 8pt;
+      padding-right: 4;
+      padding-left: 4;
+      padding-top: 4;
+      padding-bottom: 4;
+      vertical-align: top;
+      width: 100%;
+
+ 
+      
+  }
+
+  td.label {
+      border: none;
+      border-color: #CDCDC1;
+      font-family:  Verdana;
+      font-size: 8pt;
+      font-weight: normal;
+      padding-top: 4;
+      padding-right: 0;
+      padding-left: 0;
+      padding-bottom: 0;
+      width: 10%;     
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+

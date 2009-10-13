@@ -11,11 +11,11 @@
  	
   <mx:HTTPService  
     id="getUploadURL" 
-    url="genopub/uploadURL"
+    url="genopub/annotationUploadURL"
     resultFormat="e4x"
     showBusyCursor="true" 
     result="onGetUploadURL(event)" 
-	fault="parentApplication.onFailHttpRequest('Failed to get upload URL', event)"
+	fault="parentApplication.onFailHttpRequest('Failed to get annotation upload URL', event)"
     method="POST"
     useProxy="false">
   </mx:HTTPService>

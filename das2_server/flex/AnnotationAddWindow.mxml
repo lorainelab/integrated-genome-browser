@@ -28,7 +28,7 @@
     
     <mx:HTTPService  
       id="getUploadURL" 
-      url="genopub/uploadURL"
+      url="genopub/annotationUploadURL"
       resultFormat="e4x"
       showBusyCursor="true" 
       result="onGetUploadURL(event)" 

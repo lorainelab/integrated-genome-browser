@@ -286,19 +286,45 @@ public class GenoPubServlet extends HttpServlet {
 	
 	
 	private void handleAnnotationRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-		Session sess = HibernateUtil.getSessionFactory().openSession();
-
-		if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
-			throw new Exception("idAnnotation request to get Annotation");
-		}
-		Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
+		Session sess = null;
 		
-		Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-		Document doc = annotation.getXML(this.genoPubSecurity, DictionaryHelper.getInstance(sess), genometry_genopub_dir);
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
 
-		XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat
-		        .createCompactFormat());
-		writer.write(doc);
+			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
+				throw new Exception("idAnnotation request to get Annotation");
+			}
+			Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
+			
+			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
+			
+			if (!genoPubSecurity.canRead(annotation)) {
+				throw new Exception("Insufficient permission to access this annotation");
+			}
+			
+			Document doc = annotation.getXML(this.genoPubSecurity, DictionaryHelper.getInstance(sess), genometry_genopub_dir);
+
+			XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", e.getMessage());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+			
+		} finally {
+			
+			if (sess != null) {
+				sess.close();
+			}
+		} 
+		
 
 		
 	}

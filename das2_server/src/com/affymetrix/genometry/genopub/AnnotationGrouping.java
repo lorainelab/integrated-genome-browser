@@ -3,6 +3,10 @@ package com.affymetrix.genometry.genopub;
 import java.sql.Date;
 import java.util.Set;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 import com.affymetrix.genometry.genopub.Annotation;
 import com.affymetrix.genometry.genopub.AnnotationGrouping;
 
@@ -122,4 +126,26 @@ public class AnnotationGrouping {
 	public void setCreateDate(Date createDate) {
     	this.createDate = createDate;
     }
+	
+	public Document getXML(GenoPubSecurity genoPubSecurity, DictionaryHelper dictionaryHelper) {
+		Document doc = DocumentHelper.createDocument();
+		Element root = doc.addElement("AnnotationGrouping");
+		
+		GenomeVersion genomeVersion = dictionaryHelper.getGenomeVersion(this.getIdGenomeVersion());
+		
+		root.addAttribute("label", this.getName());	
+		root.addAttribute("idAnnotationGrouping", this.getIdAnnotationGrouping().toString());	
+		root.addAttribute("idGenomeVersion", genomeVersion.getIdGenomeVersion().toString());	
+		root.addAttribute("genomeVersion", genomeVersion.getName());	
+		root.addAttribute("name", this.getName().toString());	
+		root.addAttribute("description", this.getDescription() != null ? this.getDescription() : "");	
+		root.addAttribute("userGroup", dictionaryHelper.getUserGroupName(this.getIdUserGroup()));
+		root.addAttribute("idUserGroup",this.getIdUserGroup() != null ? this.getIdUserGroup().toString() : "");
+		root.addAttribute("createdBy", this.getCreatedBy() != null ? this.getCreatedBy() : "");
+		root.addAttribute("createDate", this.getCreateDate() != null ? Util.formatDate(this.getCreateDate()) : "");
+		
+		root.addAttribute("canWrite",    genoPubSecurity.canWrite(this) ? "Y" : "N");
+
+		return doc;
+	}
 }

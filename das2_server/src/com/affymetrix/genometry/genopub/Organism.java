@@ -2,6 +2,10 @@ package com.affymetrix.genometry.genopub;
 
 import java.util.Set;
 
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+
 public class Organism {
     
     private Integer idOrganism;
@@ -56,6 +60,20 @@ public class Organism {
     	this.name = name;
     }
     
+	public Document getXML(GenoPubSecurity genoPubSecurity) {
+		Document doc = DocumentHelper.createDocument();
+		Element root = doc.addElement("Organism");
+		
+		root.addAttribute("label",        this.getBinomialName());
+		root.addAttribute("idOrganism",   this.getIdOrganism().toString());
+		root.addAttribute("name",         this.getName() != null ? this.getName() : "");				
+		root.addAttribute("commonName",   this.getCommonName() != null ? this.getCommonName() : "");				
+		root.addAttribute("binomialName", this.getBinomialName() != null ? this.getBinomialName() : "");				
+		root.addAttribute("NCBITaxID",    this.getNCBITaxID() != null ? this.getNCBITaxID() : "");		
+		root.addAttribute("canWrite",     genoPubSecurity.canWrite(this) ? "Y" : "N");
+
+		return doc;
+	}
     
 
 }

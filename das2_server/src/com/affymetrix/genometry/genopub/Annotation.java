@@ -34,6 +34,7 @@ public class Annotation implements Owned, Propertied {
     public static final String PROP_ANALYSIS_TYPE       = "analysis_type";
     public static final String PROP_EXPERIMENT_METHOD   = "experiment_method";
     public static final String PROP_EXPERIMENT_PLATFORM = "experiment_platform";
+    public static final String PROP_URL                 = "url";
     
     private Integer             idAnnotation;
     private String              name;
@@ -151,13 +152,14 @@ public class Annotation implements Owned, Propertied {
 
 	
 	@SuppressWarnings("unchecked")
-	public Document getXML(GenoPubSecurity genoPubSecurity, DictionaryHelper dh, String genometry_manager_data_dir) {
+	public Document getXML(GenoPubSecurity genoPubSecurity, DictionaryHelper dh, String data_root) {
 		Document doc = DocumentHelper.createDocument();
 		Element root = doc.addElement("Annotation");
 		
 		GenomeVersion genomeVersion = dh.getGenomeVersion(this.getIdGenomeVersion());
-		
+				
 		root.addAttribute("idAnnotation", this.getIdAnnotation().toString());
+		root.addAttribute("label", this.getName());
 		root.addAttribute("name", this.getName());
 		root.addAttribute("summary", this.getSummary());
 		root.addAttribute("description", this.getDescription());
@@ -174,23 +176,29 @@ public class Annotation implements Owned, Propertied {
 		root.addAttribute("securityGroup", dh.getUserGroupName(this.getIdUserGroup()));
 		root.addAttribute("createdBy", this.getCreatedBy() != null ? this.getCreatedBy() : "");
 		root.addAttribute("createDate", this.getCreateDate() != null ? Util.formatDate(this.getCreateDate()) : "");
-		Element agsNode = root.addElement("AnnotationGroupings");
-		for(AnnotationGrouping ag : (Set<AnnotationGrouping>)this.getAnnotationGroupings()) {
-			Element agNode = agsNode.addElement("AnnotationGrouping");
-			agNode.addAttribute("name", ag.getQualifiedName());
-		}
-		Element filesNode = root.addElement("Files");
 		
-		String filePath = getDirectory(genometry_manager_data_dir);
-	    File fd = new File(filePath);
-	    if (fd.exists()) {
-	    	
+		
+		// Only show annotation groupings and annotation files for detail
+		// (when data_root is provided).
+		if (data_root != null) {
+			Element agsNode = root.addElement("AnnotationGroupings");
+			for(AnnotationGrouping ag : (Set<AnnotationGrouping>)this.getAnnotationGroupings()) {
+				Element agNode = agsNode.addElement("AnnotationGrouping");
+				agNode.addAttribute("name", ag.getQualifiedName());
+			}
+			Element filesNode = root.addElement("Files");
+			
+			String filePath = getDirectory(data_root);
+		    File fd = new File(filePath);
+		    if (fd.exists()) {
+		    	
 
-		    Element fileNode = filesNode.addElement("Dir");
-			fileNode.addAttribute("name", this.getFileName());
-			fileNode.addAttribute("url", filePath);
-		    appendFileXML(filePath, fileNode, null);	    	
-	    }
+			    Element fileNode = filesNode.addElement("Dir");
+				fileNode.addAttribute("name", this.getFileName());
+				fileNode.addAttribute("url", filePath);
+			    appendFileXML(filePath, fileNode, null);	    	
+		    }			
+		}
 		
 		root.addAttribute("canRead", genoPubSecurity.canRead(this) ? "Y" : "N");
 		root.addAttribute("canWrite", genoPubSecurity.canWrite(this) ? "Y" : "N");
@@ -238,9 +246,9 @@ public class Annotation implements Owned, Propertied {
 		}
 	}
 	
-	public void removeFiles(String genometry_manager_data_dir) throws IOException {
+	public void removeFiles(String data_root) throws IOException {
 		
-		String filePath = getDirectory(genometry_manager_data_dir);
+		String filePath = getDirectory(data_root);
 	    File dir = new File(filePath);
 	    
 	    if (dir.exists()) {
@@ -260,11 +268,11 @@ public class Annotation implements Owned, Propertied {
 	    }
 	}
 	
-	public String getQualifiedFileName(String genometry_manager_data_dir) {
+	public String getQualifiedFileName(String data_root) {
 		if (this.getFileName() == null || this.getFileName().equals("")) {
 			return "";
 		}
-		String filePath =  genometry_manager_data_dir + this.getFileName();
+		String filePath =  data_root + this.getFileName();
 		File file = new File(filePath);
 		
 		// If there is only one annotation file in the directory, append the file name to the file path.
@@ -277,8 +285,8 @@ public class Annotation implements Owned, Propertied {
 		
 	}
 	
-	public String getDirectory(String genometry_manager_data_dir) {
-		return genometry_manager_data_dir  + this.getFileName();
+	public String getDirectory(String data_root) {
+		return data_root  + this.getFileName();
 	}
 	
 	public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {

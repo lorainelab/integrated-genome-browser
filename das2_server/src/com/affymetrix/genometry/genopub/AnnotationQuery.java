@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -62,6 +63,7 @@ public class AnnotationQuery {
 	private HashMap<String, List<Segment>>             versionToSegments;  
 	
 	private HashMap<String,  Organism>                 organismMap;
+	private HashMap<String,  GenomeVersion>            genomeVersionNameMap;
 	private HashMap<Integer, Annotation>               annotationMap;
 	private HashMap<Integer, AnnotationGrouping>       annotationGroupingMap;
 	
@@ -87,40 +89,40 @@ public class AnnotationQuery {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Document getAnnotationDocument(Session sess, GenoPubSecurity das2ManagerSecurity) throws Exception {
+	public Document getAnnotationDocument(Session sess, GenoPubSecurity genoPubSecurity) throws Exception {
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
-		StringBuffer queryBuf = this.getAnnotationGroupingQuery(das2ManagerSecurity);    	
+		StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
 		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 				
 		// Run query to get annotation grouping and annotations, organized under
 		// organism and genome version
-		queryBuf = this.getAnnotationQuery(das2ManagerSecurity);
+		queryBuf = this.getAnnotationQuery(genoPubSecurity);
     	Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
     	query = sess.createQuery(queryBuf.toString());
     	List<Object[]> annotationRows = (List<Object[]>)query.list();
 		
 	
 		// Create an XML document
-		Document doc = this.getAnnotationDocument(annotationGroupingRows, annotationRows, DictionaryHelper.getInstance(sess), das2ManagerSecurity);
+		Document doc = this.getAnnotationDocument(annotationGroupingRows, annotationRows, DictionaryHelper.getInstance(sess), genoPubSecurity);
 		return doc;
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void runAnnotationQuery(Session sess, GenoPubSecurity das2ManagerSecurity) throws Exception {
+	public void runAnnotationQuery(Session sess, GenoPubSecurity genoPubSecurity) throws Exception {
 		// Run query to get annotation groupings, organized under
 		// organism and genome version
-		StringBuffer queryBuf = this.getAnnotationGroupingQuery(das2ManagerSecurity);    	
+		StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
 		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
     	Query query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
 		
 		// Run query to get annotations, organized under annotation grouping,
 		// organism, and genome version
-		queryBuf = this.getAnnotationQuery(das2ManagerSecurity);    	
+		queryBuf = this.getAnnotationQuery(genoPubSecurity);    	
 		Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
     	query = sess.createQuery(queryBuf.toString());
 		List<Object[]> annotationRows = (List<Object[]>)query.list();
@@ -205,7 +207,7 @@ public class AnnotationQuery {
 
 	}
 
-	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, DictionaryHelper dictionaryHelper, GenoPubSecurity das2ManagerSecurity) {
+	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity) {
 		
 		// Organize results rows into hash tables
 		hashAnnotations(annotationGroupingRows, annotationRows, null, dictionaryHelper);		
@@ -223,36 +225,23 @@ public class AnnotationQuery {
 			TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organismBinomialName);
 			Organism organism = organismMap.get(organismBinomialName);
 
-			organismNode = root.addElement("Organism");
-			organismNode.addAttribute("label", organismBinomialName);
-			organismNode.addAttribute("idOrganism", organism.getIdOrganism().toString());
-			organismNode.addAttribute("name",         organism.getName() != null ? organism.getName() : "");				
-			organismNode.addAttribute("commonName",   organism.getCommonName() != null ? organism.getCommonName() : "");				
-			organismNode.addAttribute("binomialName", organism.getBinomialName() != null ? organism.getBinomialName() : "");				
-			organismNode.addAttribute("NCBITaxID",    organism.getNCBITaxID() != null ? organism.getNCBITaxID() : "");		
-			organismNode.addAttribute("canWrite",     das2ManagerSecurity.canWrite(organism) ? "Y" : "N");
+			organismNode = organism.getXML(genoPubSecurity).getRootElement();
+			root.add(organismNode);
 			
 			// For each version, build up hierarchy
 			if (versionMap != null) {
 				for (GenomeVersion genomeVersion : versionMap.keySet()) {
 					
-					versionNode = organismNode.addElement("GenomeVersion");
-					versionNode.addAttribute("label", genomeVersion.getName());				
-					versionNode.addAttribute("idGenomeVersion",genomeVersion.getIdGenomeVersion().toString());				
-					versionNode.addAttribute("name",           genomeVersion.getName());				
-					versionNode.addAttribute("buildDate",      genomeVersion.getBuildDate() != null ? Util.formatDate(genomeVersion.getBuildDate()) : "");				
-					versionNode.addAttribute("idOrganism",     genomeVersion.getIdOrganism().toString());				
-					versionNode.addAttribute("coordURI",       genomeVersion.getCoordURI() != null ? genomeVersion.getCoordURI().toString() : "");	
-					versionNode.addAttribute("coordVersion",   genomeVersion.getCoordVersion() != null ? genomeVersion.getCoordVersion().toString() : "");	
-					versionNode.addAttribute("coordSource",    genomeVersion.getCoordSource() != null ? genomeVersion.getCoordSource().toString() : "");	
-					versionNode.addAttribute("coordTestRange", genomeVersion.getCoordTestRange() != null ? genomeVersion.getCoordTestRange().toString() : "");	
-					versionNode.addAttribute("coordAuthority", genomeVersion.getCoordAuthority() != null ? genomeVersion.getCoordAuthority().toString() : "");	
-					versionNode.addAttribute("canWrite",     das2ManagerSecurity.canWrite(genomeVersion) ? "Y" : "N");
+					versionNode = genomeVersion.getXML(genoPubSecurity, null).getRootElement();
+					
+					
+					// Attach the genome version node
+					organismNode.add(versionNode);
 					
 					// For each root annotation grouping, recurse to create annotations
 					// and groupings.
 					TreeMap<String, ?> rootGroupings = versionToRootGroupings.get(genomeVersion.getName());
-					fillGroupingNode(genomeVersion, versionNode, rootGroupings, das2ManagerSecurity, dictionaryHelper, false);
+					fillGroupingNode(genomeVersion, versionNode, rootGroupings, genoPubSecurity, dictionaryHelper, false);
 					
 					// If selection criteria was applied to query, prune out nodes that don't 
 					// have any content 
@@ -289,6 +278,7 @@ public class AnnotationQuery {
 		versionToSegments        = new HashMap<String, List<Segment>>();
 		
 		organismMap              = new HashMap<String, Organism>();
+		genomeVersionNameMap     = new HashMap<String, GenomeVersion>();
 		annotationGroupingMap    = new HashMap<Integer, AnnotationGrouping>();
 		annotationMap            = new HashMap<Integer, Annotation>();
 		
@@ -308,6 +298,8 @@ public class AnnotationQuery {
 			organismToVersion.put(o.getBinomialName(), versionMap);
 			if (dictionaryHelper.getGenomeVersions(o.getIdOrganism()) != null) {
 				for(GenomeVersion v : dictionaryHelper.getGenomeVersions(o.getIdOrganism())) {
+
+					genomeVersionNameMap.put(v.getName(), v);
 
 					// If we are filtering by genome version, only include that one
 					if (this.idGenomeVersion != null) {
@@ -391,6 +383,8 @@ public class AnnotationQuery {
 			if (genomeVersion != null) {
 				versionMap.put(genomeVersion, null);
 			}
+			genomeVersionNameMap.put(genomeVersion.getName(), genomeVersion);
+
 			
 			// Hash root annotation groupings for a genome version
 			String groupingKey       = annotGrouping.getName()  + KEY_DELIM + annotGrouping.getIdAnnotationGrouping();
@@ -477,6 +471,14 @@ public class AnnotationQuery {
 			}
 		}
 		
+	}
+	
+	public GenomeVersion getGenomeVersion(String genomeVersionName) {
+		return genomeVersionNameMap.get(genomeVersionName);
+	}
+	
+	public Map<String, GenomeVersion> getGenomeVersionNameMap() {
+		return genomeVersionNameMap;
 	}
 	
 
@@ -596,7 +598,7 @@ public class AnnotationQuery {
 
 
 	
-	private void fillGroupingNode(GenomeVersion genomeVersion, Element parentNode, TreeMap<String, ?> theGroupings, GenoPubSecurity das2ManagerSecurity, DictionaryHelper dictionaryHelper, boolean showGroupingLevel) {
+	private void fillGroupingNode(GenomeVersion genomeVersion, Element parentNode, TreeMap<String, ?> theGroupings, GenoPubSecurity genoPubSecurity, DictionaryHelper dictionaryHelper, boolean showGroupingLevel) {
 		if (theGroupings != null) {
 			for (String groupingKey : theGroupings.keySet()) {
 				String[] tokens     = groupingKey.split(KEY_DELIM);
@@ -608,18 +610,9 @@ public class AnnotationQuery {
 				if (showGroupingLevel) {
 					annotGrouping = annotationGroupingMap.get(idAnnotationGrouping);
 					
-				    groupingNode = parentNode.addElement("AnnotationGrouping");
-					groupingNode.addAttribute("label", groupingName);	
-					groupingNode.addAttribute("idAnnotationGrouping", annotGrouping.getIdAnnotationGrouping().toString());	
-					groupingNode.addAttribute("idGenomeVersion", genomeVersion.getIdGenomeVersion().toString());	
-					groupingNode.addAttribute("genomeVersion", genomeVersion.getName());	
-					groupingNode.addAttribute("name", annotGrouping.getName().toString());	
-					groupingNode.addAttribute("description", annotGrouping.getDescription() != null ? annotGrouping.getDescription() : "");	
-					groupingNode.addAttribute("canWrite",    das2ManagerSecurity.canWrite(annotGrouping) ? "Y" : "N");
-					groupingNode.addAttribute("userGroup", dictionaryHelper.getUserGroupName(annotGrouping.getIdUserGroup()));
-					groupingNode.addAttribute("idUserGroup",annotGrouping.getIdUserGroup() != null ? annotGrouping.getIdUserGroup().toString() : "");
-					groupingNode.addAttribute("createdBy", annotGrouping.getCreatedBy() != null ? annotGrouping.getCreatedBy() : "");
-					groupingNode.addAttribute("createDate", annotGrouping.getCreateDate() != null ? Util.formatDate(annotGrouping.getCreateDate()) : "");
+				    groupingNode = annotGrouping.getXML(genoPubSecurity, dictionaryHelper).getRootElement();
+				    parentNode.add(groupingNode);
+					
 
 				} else {
 					groupingNode = parentNode;					
@@ -635,35 +628,60 @@ public class AnnotationQuery {
 						Integer idAnnotation = new Integer(tokens1[1]);
 						
 						Annotation annot = annotationMap.get(idAnnotation);
-
-						Element annotNode = groupingNode.addElement("Annotation");
-						annotNode.addAttribute("label", annot.getName());
-						annotNode.addAttribute("idAnnotation", annot.getIdAnnotation().toString());
-						annotNode.addAttribute("idGenomeVersion", genomeVersion.getIdGenomeVersion().toString());	
+						
+						Element annotNode = annot.getXML(genoPubSecurity, dictionaryHelper, null).getRootElement();
 						annotNode.addAttribute("idAnnotationGrouping", annotGrouping != null ? annotGrouping.getIdAnnotationGrouping().toString() : "");	
-						annotNode.addAttribute("codeVisibility", annot.getCodeVisibility());
-						annotNode.addAttribute("canWrite",       das2ManagerSecurity.canWrite(annot) ? "Y" : "N");
+						
+						groupingNode.add(annotNode);
+
 					}						
 				}
 											
 				// Recurse for each annotation grouping (under a grouping)
 				TreeMap<String, ?> childGroupings = groupingToGroupings.get(groupingKey);
-				fillGroupingNode(genomeVersion, groupingNode, childGroupings, das2ManagerSecurity, dictionaryHelper, true);
+				fillGroupingNode(genomeVersion, groupingNode, childGroupings, genoPubSecurity, dictionaryHelper, true);
 				
-				// If selection criteria was applied to query, prune out nodes that don't 
-				// have any content 
-				if (this.hasAnnotationCriteria()) {
-					if (!groupingNode.hasContent()) {
-						// Always show (don't prune) group owned folders
-						// if user group criteria was applied.
-						if (this.idUserGroup != null && 
-							groupingNode.getName().equals("AnnotationGrouping") &&
-						    groupingNode.attributeValue("idUserGroup") != null &&
-						    !groupingNode.attributeValue("idUserGroup").equals("")) {
-							
+				// Prune out other group's folders that don't have
+				// any content (no authorized annotations in its folder
+				// or its descendent's folder).
+				if (!groupingNode.hasContent()) {
+					String folderIdUserGroup = groupingNode.attributeValue("idUserGroup");
+					boolean prune = true;
+					if (groupingNode.getName().equals("AnnotationGrouping") &&
+						(folderIdUserGroup == null || folderIdUserGroup.equals(""))) {
+						// If we are not filtering by user group,
+						// always show empty public empty folders
+						if (this.idUserGroup == null) {
+							prune = false;
 						} else {
-							parentNode.remove(groupingNode);					
+							// If we are filtering by user group, prune
+							// empty public folders.
+							prune = true;
 						}
+					} else if (groupingNode.getName().equals("AnnotationGrouping") &&
+							    folderIdUserGroup != null && 
+							    !folderIdUserGroup.equals("") &&
+							  	(genoPubSecurity.belongsToGroup(new Integer(folderIdUserGroup)))) {
+						if (this.idUserGroup == null) {
+							// If we are not filtering by user group, then always
+							// show my group's empty folders
+							prune = false;							
+						} else {
+							// If we are filtering by user group, prune any empty
+							// folders not specifically for the group being filtered
+							if (this.idUserGroup.equals(new Integer(folderIdUserGroup))) {
+								prune = false;								
+							} else {
+								prune = true;
+							}
+							
+						}
+					}	else {
+						// Prune empty folders for other groups
+						prune = true;
+					}
+					if (prune) {
+						parentNode.remove(groupingNode);					
 					}
 				}
 			}					

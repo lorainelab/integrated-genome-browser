@@ -189,10 +189,8 @@
            postVariables.idGenomeVersion = genomeVersion.@idGenomeVersion;
            postVariables.idAnnotationGrouping = idParentAnnotationGrouping != null ? idParentAnnotationGrouping : '-99';
            postVariables.codeVisibility = visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : 'PUBLIC';
-           postVariables.idUserGroup = '-99';
-           if (this.visibilityCombo.selectedItem != null && this.visibilityCombo.selectedItem.@id != 'PUBLIC' && this.annotationUserGroupCombo.selectedItem != null) {
-           		postVariables.idUserGroup = annotationUserGroupCombo.selectedItem.@id;
-           } 
+           postVariables.idUserGroup = annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : '-99';
+          
 
 
 		    
@@ -285,7 +283,7 @@
     </mx:Script>
     
     <mx:VBox id="mainBody" styleName="panelBody" width="100%" height="100%">
-        <mx:VBox width="100%" height="100%" id="vbox1" verticalGap="25">
+        <mx:VBox width="100%" height="100%" id="vbox1" verticalGap="12">
 
 			<mx:VBox  width="100%" verticalGap="0">
                 <mx:Label text="Name:" width="100%" fontWeight="bold" id="label2"/>
@@ -312,20 +310,20 @@
 					<mx:ProgressBar id="uploadProgressBar"  visible="true" width="100%" labelPlacement="center" trackHeight="15" height="20" fontWeight="normal" themeColor="#EAED9A"/>
 				</mx:VBox>
 			</mx:VBox>
-			<mx:VBox width="100%" id="vbox3" verticalGap="0">
-				<mx:Label text="Visibility:" width="100%" fontWeight="bold" id="label3"/>
-				<mx:HBox width="100%" id="visibilityBox">
-					<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="240"  change="{initializeFileUploadParameters()}"></mx:ComboBox>							        					
-					<mx:HBox width="100%" id="hbox0" verticalAlign="middle">
-						<mx:Label text="User Group:">
-							<mx:visible>{visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != 'PUBLIC' ? true : false}</mx:visible>
-						</mx:Label>
-						<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="{initializeFileUploadParameters()}">
-							<mx:visible>{visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != 'PUBLIC' ? true : false}</mx:visible>
-						</mx:ComboBox>
+			
+				<mx:VBox width="100%" verticalGap="0">
+					<mx:Label text="User Group:" fontWeight="bold">
+					</mx:Label>
+					<mx:ComboBox id="annotationUserGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" width="100%" labelField="@name" change="{initializeFileUploadParameters()}">
+					</mx:ComboBox>
+				</mx:VBox>
+					<mx:VBox width="100%" verticalGap="0">
+					<mx:Label text="Visibility:" width="100%" fontWeight="bold" id="label3"/>
+					<mx:HBox width="100%" id="visibilityBox">
+						<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%"  change="{initializeFileUploadParameters()}"></mx:ComboBox>							        					
 					</mx:HBox>
-				</mx:HBox>
-			</mx:VBox>            	
+					</mx:VBox>
+			            	
         </mx:VBox>
 	
 
@@ -337,7 +335,7 @@
 	    <mx:Button id="uploadClearButton" 
             width="0" visible="false" />
 		<mx:Button id="saveButton"  
-			enabled="{annotationName.text != null &amp;&amp; annotationName.text != '' &amp;&amp; visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != '' &amp;&amp; (!annotationUserGroupCombo.visible || (annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '')) ? true : false}" 
+			enabled="{annotationName.text != null &amp;&amp; annotationName.text != '' &amp;&amp; visibilityCombo.selectedItem != null &amp;&amp; visibilityCombo.selectedItem.@id != '' &amp;&amp; (visibilityCombo.selectedItem.@id == 'PUBLIC' || (annotationUserGroupCombo.selectedItem != null &amp;&amp; annotationUserGroupCombo.selectedItem.@id != '')) ? true : false}" 
 			icon="{parentApplication.iconSave}" 
 			disabledIcon="{parentApplication.iconSaveDisabled}" 
 			label="Save"

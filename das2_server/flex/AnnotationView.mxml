@@ -686,14 +686,6 @@
 
   		}
   		
-  		private function resetAnnotationUserGroupCombo():void {
-  			if (this.visibilityCombo.selectedItem == null || this.visibilityCombo.selectedItem.@id == '' || this.visibilityCombo.selectedItem.@id == 'PUBLIC') {
-  				this.annotationUserGroupCombo.selectedItem = null;
-  				this.annotationUserGroupCombo.enabled = false;
-  			} else {
-  				this.annotationUserGroupCombo.enabled = true;
-  			}
-  		}
 		
 		/************************************************************************
 		 * Refresh DAS2 Server
@@ -1754,7 +1746,7 @@
 							<mx:HRule width="100%"/>
 							<mx:HBox width="100%" horizontalGap="0" id="hbox10">
 								<mx:Label text="Visibility:" width="126"/>
-								<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="dirtyAnnotation.setDirty();resetAnnotationUserGroupCombo()"></mx:ComboBox>							        	
+								<mx:ComboBox id="visibilityCombo" dataProvider="{parentApplication.dictionaryVisibility}" labelField="@name" width="100%" change="dirtyAnnotation.setDirty();"></mx:ComboBox>							        	
 							</mx:HBox>
 							<mx:HBox width="100%" horizontalGap="0" id="userGroupBox">
 								<mx:Label text="User Group:" width="126"/>
@@ -1771,7 +1763,7 @@
 							       		</mx:HBox>
 							       	</mx:ViewStack>
 							</mx:HBox>
-							<mx:HBox width="100%" horizontalGap="0" >
+							<mx:HBox width="100%" horizontalGap="0"  id="hbox14">
 								<mx:Label text="Created by:" width="126"/>
 								<mx:Label text="{getAnnotation.lastResult.@createdBy + ' ' + getAnnotation.lastResult.@createDate}" width="100%"/>
 							</mx:HBox>
@@ -2015,6 +2007,8 @@
 			<mx:SetProperty target="{annotationDescription}" name="maxChars" value="10000"/>
 			<mx:SetProperty target="{annotationSummary}" name="maxChars" value="5000"/>
 			<mx:SetProperty target="{annotationName}" name="maxChars" value="2000"/>
+			<mx:RemoveChild target="{hbox10}"/>
+			<mx:AddChild relativeTo="{hbox14}" position="before" target="{hbox10}"/>
 		</mx:State>
 		<mx:State name="UserState">
 			<mx:RemoveChild target="{reloadDas2ServerButton}"/>

@@ -161,7 +161,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 
 	private void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height) {
-		String word_breaker_regexp = "\\s|_|-|\\.|/|\\\\|\\|";
+		String word_breaker_regexp = "\\s";
 		int stringHeight = (lowerY + upperY + text_height) / 2;
 
 		String[] words = label.split(word_breaker_regexp);

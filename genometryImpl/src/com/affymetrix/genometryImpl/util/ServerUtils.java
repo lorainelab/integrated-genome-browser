@@ -277,7 +277,7 @@ public abstract class ServerUtils {
 			}
 		}
 
-		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
+		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft") || file_name.endsWith(".bnib") || file_name.endsWith(".fa")) {
 			// for loading annotations, ignore the genome sequence data files
 			return;
 		}

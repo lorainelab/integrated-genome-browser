@@ -288,13 +288,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
     }
 
 
-	private void clearAll() {
-		searchTF.setText("");
-		clearResults();
-		NeoMap map = gviewer.getSeqMap();
-		map.updateWidget();
-	}
-
 	private void displayInTable(List<SeqSymmetry> rows) {
 		model.fireTableDataChanged();
 	}
@@ -317,7 +310,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
 		if (src == this.searchCB) {
-			clearAll();
+			clearResults();
+			NeoMap map = gviewer.getSeqMap();
+			map.updateWidget();
+
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			this.initSequenceCB();
 			this.searchTF.setEnabled(true);

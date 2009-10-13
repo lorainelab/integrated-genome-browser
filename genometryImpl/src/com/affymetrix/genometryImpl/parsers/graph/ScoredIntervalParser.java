@@ -381,7 +381,7 @@ public final class ScoredIntervalParser {
 		}
 	}
 
-	private MutableAnnotatedBioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
+	protected MutableAnnotatedBioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
 		System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
 		return seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
 	}

@@ -65,6 +65,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
 	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
 	private static final String REMOTESERVERSEARCH2 = " server)";
+	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
 	private static final String SELECTINMAP_TEXT = "select in map";
@@ -189,9 +190,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
 		int remoteServerCount = getRemoteServerCount(group);
-		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2);
-		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2 + REMOTESERVERSEARCH3);
+		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCH2 : REMOTESERVERSEARCH2PLURAL;
+		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + remoteServerPluralText);
+		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + remoteServerPluralText + REMOTESERVERSEARCH3);
 		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
+		remoteSearchCheckBox.setSelected(remoteServerCount > 0);
 	}
 
 	private void initSequenceCB() {

@@ -54,7 +54,7 @@ import java.util.logging.Logger;
  * @version $Id$
  */
 public final class GeneralLoadUtils {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_VIRTUAL_GENOME = false;
 	/**
 	 *  using negative start coord for virtual genome chrom because (at least for human genome)

@@ -29,4 +29,16 @@ public interface AnnotSecurity {
 	 */
 	public Map<String, Object> getProperties(String genomeVersionName, Object annotationId);
 	
+	
+	/**
+	 * Returns the sequence directory for a given genome version
+	 * 
+	 * @param data_root
+	 * @param genome
+	 * @return
+	 * @throws Exception
+	 */
+	
+	public String getSequenceDirectory(String data_root, AnnotatedSeqGroup genome) throws Exception;
+	
 }

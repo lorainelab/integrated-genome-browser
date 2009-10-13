@@ -685,7 +685,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						is_genometry_genopub_mode,
 						request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.ADMIN_ROLE) : false,
 						request.getUserPrincipal() != null ? request.isUserInRole(GenoPubSecurity.GUEST_ROLE) : true);
+				genoPubSecurity.setBaseURL(request.getRequestURL().toString(), request.getServletPath(), request.getPathInfo());
 				request.getSession().setAttribute(this.getClass().getName() + GenoPubSecurity.SESSION_KEY, genoPubSecurity);
+				
 			}
 		} catch (Exception e ){     
 			System.out.println(e.toString());
@@ -722,8 +724,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @param response
 	 * @throws java.io.IOException
 	 */
-	private static final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
+	private  final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
+		// Get the  genopub security which will determine the sequence directory
+		GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
+		
+		
+		String sequence_directory = null;
+		try {
+			sequence_directory = genoPubSecurity.getSequenceDirectory(data_root, genome);
+		} catch (Exception e) {
+			throw new IOException(e.getMessage());
+		}
+		
 		ArrayList<String> formats = new ArrayList<String>();
 		ArrayList<String> ranges = new ArrayList<String>();
 
@@ -755,13 +768,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// PhaseI: retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
-			retrieveBNIB(ranges, org_name, version_name, seqname, format, response, request);
+			retrieveBNIB(ranges, sequence_directory, seqname, format, response, request);
 			return;
 		}
 
 
 		if (format.equals("fasta")) {
-			retrieveFASTA(ranges, span, org_name, version_name, seqname, format, response, request);
+			retrieveFASTA(ranges, span, sequence_directory, genome.getOrganism(), seqname, format, response, request);
 			return;
 		}
 
@@ -770,7 +783,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println(request.getRequestURL().toString());
 	}
 
-	private static final void retrieveBNIB(ArrayList ranges, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	private static final void retrieveBNIB(ArrayList ranges, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		/*if (ranges.size() != 0) {
 		// A ranged request for a bnib.  Not supported.
 		PrintWriter pw = response.getWriter();
@@ -781,7 +794,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// range requests are ignored.  The entire sequence is returned.
 
-		String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".bnib";
+		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
 		if (seqfile.exists()) {
 			byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
@@ -814,9 +827,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @throws java.io.IOException
 	 */
 	@Deprecated
-	private static final void retrieveFASTA(ArrayList ranges, SeqSpan span, String org_name, String version_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
+	private static final void retrieveFASTA(ArrayList ranges, SeqSpan span, String sequence_directory, String organism_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
 			throws IOException {
-		String file_name = data_root + org_name + "/" + version_name + "/dna/" + seqname + ".fa";
+		String file_name = sequence_directory + seqname + ".fa";
 		File seqfile = new File(file_name);
 		if (!seqfile.exists()) {
 			System.out.println("seq request mapping to nonexistent file: " + file_name);
@@ -844,7 +857,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		response.setContentType(FastaParser.getMimeType());
 		byte[] buf = FastaParser.ReadFASTA(seqfile, spanStart, spanEnd);
-		byte[] header = FastaParser.GenerateNewHeader(seqname, org_name, spanStart, spanEnd);
+		byte[] header = FastaParser.GenerateNewHeader(seqname, organism_name, spanStart, spanEnd);
 		OutputFormattedFasta(buf, header, response.getOutputStream());
 	}
 
@@ -980,7 +993,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final void handleTypesRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		
-		// Get the das2 manager security which will determine which resources (annotations)
+		// Get the  genopub security which will determine which resources (annotations)
 		// are authorized for this user.
 		GenoPubSecurity genoPubSecurity = this.getGenoPubSecurity(request);
 

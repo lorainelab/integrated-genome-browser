@@ -165,19 +165,15 @@ public abstract class ServerUtils {
 	public static final void loadAnnots(
 			File genomeDir,
 			AnnotatedSeqGroup genome,
-			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
+			Map<AnnotatedSeqGroup, List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
-			String dataRoot) {
-		try {
-			if (genomeDir.isDirectory()) {
-				ServerUtils.loadAnnotsFromDir(
-						genomeDir.getName(), genome, genomeDir, "", annots_map, graph_name2dir, graph_name2file, dataRoot);
-			} else {
-				System.out.println("Warning: " + genomeDir.getAbsolutePath() + " is not a directory.  Skipping.");
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			String dataRoot) throws IOException {
+		if (genomeDir.isDirectory()) {
+			ServerUtils.loadAnnotsFromDir(
+					genomeDir.getName(), genome, genomeDir, "", annots_map, graph_name2dir, graph_name2file, dataRoot);
+		} else {
+			System.out.println("Warning: " + genomeDir.getAbsolutePath() + " is not a directory.  Skipping.");
 		}
 	}
 
@@ -200,7 +196,7 @@ public abstract class ServerUtils {
 			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
-			String dataRoot) {
+			String dataRoot) throws IOException {
 		File annot = new File(current_file, annots_filename);
 		if (annot.exists()) {
 			FileInputStream istr = null;
@@ -251,7 +247,7 @@ public abstract class ServerUtils {
 			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
 			Map<String, String> graph_name2dir,
 			Map<String, String> graph_name2file,
-			String dataRoot) {
+			String dataRoot) throws IOException {
 		String file_name = current_file.getName();
 		String type_name = type_prefix + file_name;
 		
@@ -298,7 +294,7 @@ public abstract class ServerUtils {
 	 * @param genome
 	 * @param loadedSyms
 	 */
-	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome) {
+	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome) throws IOException {
 
 		String originalFileName = file.getName();
 
@@ -366,20 +362,14 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String stream_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) {
+	private static List loadAnnotFile(File current_file, String stream_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
 		InputStream istr = null;
 		List results = null;
-		try {
-			istr = new BufferedInputStream(new FileInputStream(current_file));
-			if (!isIndexed) {
-				results = ParserController.parse(istr, annotList, stream_name, gmodel, genome);
-			} else {
-				results = ParserController.parseIndexed(istr, annotList, stream_name, genome);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(istr);
+		istr = new BufferedInputStream(new FileInputStream(current_file));
+		if (!isIndexed) {
+			results = ParserController.parse(istr, annotList, stream_name, gmodel, genome);
+		} else {
+			results = ParserController.parseIndexed(istr, annotList, stream_name, genome);
 		}
 		return results;
 	}

@@ -138,7 +138,7 @@ public class IndexingUtils {
 	 */
 	static void determineIndexes(
 			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome,
-			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName) {
+			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName) throws IOException {
 
 		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, originalGenome));
 
@@ -146,6 +146,10 @@ public class IndexingUtils {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
 			if (tempSeq == null) {
 				continue;	// ignore; this is a seq that was added during parsing.
+			}
+
+			if (DEBUG) {
+				System.out.println("Determining indexes for " + tempGenome.getID() + ", " + tempSeq.getID());
 			}
 
 			// Sort symmetries for this specific chromosome.
@@ -243,24 +247,18 @@ public class IndexingUtils {
 	 * @param fos
 	 * @return - success or failure
 	 */
-	public static boolean writeIndexedAnnotations(
+	public static void writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
 			MutableAnnotatedBioSeq seq,
 			AnnotatedSeqGroup group,
 			IndexedSyms iSyms,
-			String indexesFileName) {
+			String indexesFileName) throws IOException {
 		if (DEBUG) {
 			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 		}
 
-		try {
-			createIndexArray(iSyms, syms, seq, group);
-			writeIndex(iSyms, indexesFileName, syms, seq);
-			return true;
-		} catch (Exception ex) {
-			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		}
+		createIndexArray(iSyms, syms, seq, group);
+		writeIndex(iSyms, indexesFileName, syms, seq);
 	}
 
 	/**

@@ -283,6 +283,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			System.exit(-1);
 		}
 		//instantiate DasAuthorization
 		dasAuthorization = new Das2Authorization(new File(data_root));

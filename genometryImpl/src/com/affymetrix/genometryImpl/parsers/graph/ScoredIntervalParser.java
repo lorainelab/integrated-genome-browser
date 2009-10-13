@@ -28,6 +28,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.regex.Matcher;
 
 /**
@@ -91,24 +92,15 @@ chr22        14434054        14434140        +        36.2883        40.7145
 */
 public final class ScoredIntervalParser {
 
-	static Pattern line_regex  = Pattern.compile("\t");
-	static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
-	static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
+	private static Pattern line_regex  = Pattern.compile("\t");
+	private static Pattern tagval_regex = Pattern.compile("#\\s*([\\w]+)\\s*=\\s*(.*)$");
+	private static Pattern strand_regex = Pattern.compile("[\\+\\-\\.]");
 
 	static public final String PREF_ATTACH_GRAPHS = "Make graphs from scored intervals";
 	static public final boolean default_attach_graphs = true;
 	// if attaching graphs to seq, then if separate by strand make a separate graph sym
 	//     for + and - strand, otherwise put both strands in same graph
-	static public final boolean separate_by_strand = true;
-
-
-	/**
-	 *  Boolean preference for whether container glyphs should always be added.
-	 *  If false, will construct the container glyphs only if there is MORE than
-	 *  one score field in the file.
-	 */
-	//static public final String PREF_ALWAYS_ADD_CONTAINER_GLYPHS = "Always add container glyphs";
-	//static public final boolean default_always_add_container_glyphs = false;
+	//static public final boolean separate_by_strand = true;
 
 	/**
 	 *  If attach_graphs, then in addition to ScoredContainerSym added as annotation to seq,
@@ -119,7 +111,6 @@ public final class ScoredIntervalParser {
 
 	public void parse(InputStream istr, String stream_name, AnnotatedSeqGroup seq_group)
 		throws IOException {
-		//boolean attach_graphs = UnibrowPrefsUtil.getBooleanParam(PREF_ATTACH_GRAPHS, default_attach_graphs);
 		String unique_container_name = AnnotatedSeqGroup.getUniqueGraphID(stream_name, seq_group);
 
 		BufferedReader br= null;
@@ -129,19 +120,13 @@ public final class ScoredIntervalParser {
 		int mod_hit_count = 0;
 		int total_mod_hit_count = 0;
 		int miss_count = 0;
-		boolean sin1 = false;
-		boolean sin2 = false;
-		boolean sin3 = false;
 		boolean all_sin3 = true;
 
 		try {
 			br = new BufferedReader(new InputStreamReader(istr));
 			String line = null;
 
-			//      Map seq2container = new LinkedHashMap();
 			Map<MutableAnnotatedBioSeq,List<SinEntry>> seq2sinentries = new LinkedHashMap<MutableAnnotatedBioSeq,List<SinEntry>>();
-			//      Map seq2arrays = new LinkedHashMap();
-			//      Map arrays2container = new LinkedHashMap();
 			Map<Integer,String> index2id = new HashMap<Integer,String>();
 			List<String> score_names = null;
 			Map<String,Object> props = new HashMap<String,Object>();
@@ -187,8 +172,6 @@ public final class ScoredIntervalParser {
 				if (line.startsWith("#")) { continue; }
 
 				String[] fields = line_regex.split(line);
-				int fieldcount = fields.length;
-
 				String annot_id = null;
 				String seqid;
 				int min;
@@ -198,7 +181,7 @@ public final class ScoredIntervalParser {
 
 				// sin1 format if 4rth field is strand: [+-.]
 				if ((fields.length > 3) && strand_matcher.reset(fields[3]).matches())  {
-					sin1 = true; sin2 = false; sin3 = false; all_sin3 = false;
+					all_sin3 = false;
 					score_offset = 4;
 					annot_id = null;
 					seqid = fields[0];
@@ -215,7 +198,7 @@ public final class ScoredIntervalParser {
 				}
 				// sin2 format if 5th field is strand: [+-.]
 				else if ((fields.length > 4) && strand_matcher.reset(fields[4]).matches())  {
-					sin2 = true; sin1 = false; sin3 = false; all_sin3 = false;
+					all_sin3 = false;
 					score_offset = 5;
 					annot_id = fields[0];
 					seqid = fields[1];
@@ -234,7 +217,6 @@ public final class ScoredIntervalParser {
 					seq_group.addToIndex(annot_id, child);
 				}
 				else { // not sin1 or sin2, must be sin3
-					sin3 = true; sin1 = false; sin2 = false;
 					score_offset = 1;
 					annot_id = fields[0];
 					// need to match up to pre-existing annotation in seq_group
@@ -336,16 +318,12 @@ public final class ScoredIntervalParser {
 				IAnnotStyleExtended style = seq_group.getStateProvider().getAnnotStyle(unique_container_name);
 				style.setGlyphDepth(1);
 
-				//        seq2container.put(seqid, container);
 				List<SinEntry> entry_list = seq2sinentries.get(aseq);
 				int entry_count = entry_list.size();
-				System.out.println("entry list count: " + entry_count);
 				for (SinEntry entry : entry_list) {
 					container.addChild(entry.sym);
 				}
-				System.out.println("container child count: " + container.getChildCount());
 
-				// Object[] scores = new Object[score_count];
 				for (int i=0; i<score_count; i++) {
 					String score_name = score_names.get(i);
 					float[] score_column = new float[entry_count];
@@ -356,8 +334,6 @@ public final class ScoredIntervalParser {
 					container.addScores(score_name, score_column);
 				}
 
-				//boolean always_add_container_glyphs = UnibrowPrefsUtil.getBooleanParam(PREF_ALWAYS_ADD_CONTAINER_GLYPHS, default_always_add_container_glyphs);
-				//boolean always_add_container_glyphs = default_always_add_container_glyphs;
 
 				// always add the container as an annotation, and
 				// do not attach any graphs
@@ -365,13 +341,7 @@ public final class ScoredIntervalParser {
 
 				container.setID(unique_container_name);
 
-				//if (always_add_container_glyphs || score_count > 1) {
 				aseq.addAnnotation(container);
-				//}
-				//System.out.println("seq = " + aseq.getID() + ", interval count = " + container.getChildCount());
-				//if (attach_graphs) {
-				//  attachGraphs(container, aseq);
-				//}
 			}
 
 			System.out.println("data lines in .sin file: " + line_count);
@@ -389,7 +359,7 @@ public final class ScoredIntervalParser {
 			throw ioe;
 		}
 		finally {
-			if (br != null) {try { br.close(); } catch (Exception e) {}}
+			GeneralUtils.safeClose(br);
 		}
 
 		if (all_sin3 && hit_count == 0 && mod_hit_count == 0 && miss_count > 0) {
@@ -411,73 +381,12 @@ public final class ScoredIntervalParser {
 		}
 	}
 
-	protected MutableAnnotatedBioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
+	private MutableAnnotatedBioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
 		System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
 		return seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
 	}
 
-
-	//  /**
-	//   *  Make a GraphSym for each scores column, and add as an annotation to aseq.
-	//   */
-	//  static protected void attachGraphs(ScoredContainerSym container, MutableAnnotatedBioSeq aseq) {
-	//    GraphIntervalSym[] graphs = makeGraphs(container);
-	//    for (int i=0; i<graphs.length; i++) {
-	//      aseq.addAnnotation(graphs[i]);
-	//    }
-	//  }
-	//
-	//  static public GraphIntervalSym[] makeGraphs(ScoredContainerSym container) {
-	//    //TODO: deal with uniquifying the styles?
-	//    // May not be needed, because the styles are created here and never
-	//    // applied to anything else anyway
-	//
-	//    IAnnotStyle combo_f = new DefaultIAnnotStyle("Scores (+)", true);
-	//    combo_f.setExpandable(true);
-	//    combo_f.setCollapsed(false);
-	//    IAnnotStyle combo_r = new DefaultIAnnotStyle("Scores (-)", true);
-	//    combo_r.setExpandable(true);
-	//    combo_r.setCollapsed(false);
-	//    IAnnotStyle combo = new DefaultIAnnotStyle("Scores", true);
-	//    combo.setExpandable(true);
-	//    combo.setCollapsed(false);
-	//
-	//    int score_count = container.getScoreCount();
-	//    ArrayList results = new ArrayList(score_count * 2);
-	//
-	//    for (int i=0; i<score_count; i++) {
-	//      String score_name = container.getScoreName(i);
-	//      if (separate_by_strand)  {
-	//        GraphIntervalSym forward_gsym = container.makeGraphSym(score_name, true, true);
-	//        GraphIntervalSym reverse_gsym = container.makeGraphSym(score_name, true, false);
-	//        if (forward_gsym != null) {
-	//          forward_gsym.getGraphState().setFloatGraph(false);
-	//          forward_gsym.getGraphState().setComboStyle(combo_f);
-	//          forward_gsym.getGraphState().getTierStyle().setHumanName(score_name);
-	//          results.add(forward_gsym);
-	//        }
-	//        if (reverse_gsym != null) {
-	//          reverse_gsym.getGraphState().setFloatGraph(false);
-	//          reverse_gsym.getGraphState().setComboStyle(combo_r);
-	//          reverse_gsym.getGraphState().getTierStyle().setHumanName(score_name);
-	//          results.add(reverse_gsym);
-	//        }
-	//      }
-	//      else {
-	//        GraphSym gsym = container.makeGraphSym(score_name, true);
-	//        if (gsym != null) {
-	//          gsym.getGraphState().setFloatGraph(false);
-	//          gsym.getGraphState().setComboStyle(combo);
-	//          gsym.getGraphState().getTierStyle().setHumanName(score_name);
-	//          results.add(gsym);
-	//        }
-	//      }
-	//    }
-	//    return (GraphIntervalSym[]) results.toArray(new GraphIntervalSym[results.size()]);
-	//  }
-
-
-	protected List<String> initScoreNames(int score_count, Map<Integer,String> index2id, String stream_name) {
+	private List<String> initScoreNames(int score_count, Map<Integer,String> index2id, String stream_name) {
 		List<String> names = new ArrayList<String>();
 		for (int i=0; i<score_count; i++) {
 			Integer index = new Integer(i);
@@ -534,7 +443,7 @@ public final class ScoredIntervalParser {
 			writeGraphPoints(graf, dos, seq_id, strand_char);
 			dos.flush();
 		} finally {
-			dos.close();
+			GeneralUtils.safeClose(dos);
 		}
 		return true;
 	}
@@ -548,24 +457,9 @@ public final class ScoredIntervalParser {
 					graf.getGraphYCoordString(i) + '\n');
 		}
 	}
-/**
-	public static void main(String[] args) {
-		String test_file = System.getProperty("user.dir") + "/testdata/sin/test1.sin";
-		String test_name = "name_testing";
-		System.out.println("testing ScoredIntervalParser, parsing file: " + test_file);
-		ScoredIntervalParser tester = new ScoredIntervalParser();
-		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
-		try {
-			FileInputStream fis = new FileInputStream(new File(test_file));
-			tester.parse(fis, test_name, seq_group);
-		}
-		catch (Exception ex) { ex.printStackTrace(); }
-		System.out.println("done testing ScoredMapParser");
-	}
- * **/
 
 	/** For sorting of sin lines. */
-	public final class SinEntry {
+	private final class SinEntry {
 		SeqSymmetry sym;
 		float[] scores;
 		public SinEntry(SeqSymmetry sym, float[] scores) {
@@ -575,7 +469,7 @@ public final class ScoredIntervalParser {
 	}
 
 	/** For sorting of sin lines. */
-	public final class SinEntryComparator implements Comparator<SinEntry>  {
+	private final class SinEntryComparator implements Comparator<SinEntry>  {
 		public int compare(SinEntry objA, SinEntry objB) {
 			SeqSpan symA = objA.sym.getSpan(0);
 			SeqSpan symB = objB.sym.getSpan(0);

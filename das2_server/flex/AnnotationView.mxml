@@ -244,7 +244,7 @@
         private var treeMenu:ContextMenu = new ContextMenu();
         private var lastTreeItem:ListEvent;
 
-        private var treeItemToSelect:Object = null; 
+        public var treeItemToSelect:Object = null; 
         
         private var organismFilterToSelect:Object = null; 
         
@@ -487,6 +487,8 @@
 				item = getAnnotations.lastResult..AnnotationGrouping.(@idAnnotationGrouping == treeItemToSelect.@idAnnotationGrouping);
 			} else if (treeItemToSelect.name() == "Annotation") {
 				item = getAnnotations.lastResult..Annotation.(@idAnnotation == treeItemToSelect.@idAnnotation && @idAnnotationGrouping == treeItemToSelect.@idAnnotationGrouping);
+			} else if (treeItemToSelect.name() == "LaunchAnnotation") {
+				item = getAnnotations.lastResult..Annotation.(@idAnnotation == treeItemToSelect.@idAnnotation);
 			}
 			if (item != null && item.length() > 0) {
 				return XML(item[0]);				
@@ -575,7 +577,7 @@
 				if (currentState == "AdminState") {
 					parentApplication.selectDictionaryComboBox(this.annotationOwnerCombo, getAnnotation.lastResult.@idUser, parentApplication.dictionaryUser);
 				}
-			} else if (getAnnotations.lastResult.name() == "Error") {
+			} else if (getAnnotation.lastResult.name() == "Error") {
 				Alert.show(getAnnotation.lastResult.@message);
 			} else {
 				Alert.show("An error occurred while getting annotation");				

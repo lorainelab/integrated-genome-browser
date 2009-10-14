@@ -46,6 +46,9 @@
 	import mx.managers.PopUpManager;
 	
 	
+	private var launchAnnotation:Object = null;
+	
+	
 	[Bindable]
 	public var dictionaries:XMLListCollection;
 
@@ -159,6 +162,12 @@
     
     
     private function init():void {
+    	if (Application.application.parameters.idAnnotation != null &&
+    	    Application.application.parameters.idAnnotation != '') {
+    		launchAnnotation = new XML("<LaunchAnnotation " +
+    		    	"idAnnotation='" + Application.application.parameters.idAnnotation + "'" +
+    		    	"/>");
+    	}
     	getSecurity.send();
     }
     
@@ -203,6 +212,10 @@
     		} else {
     			this.currentState = "UserState";
     		} 
+    		
+    		if (launchAnnotation != null) {
+    			this.annotationsView.treeItemToSelect = launchAnnotation;
+    		}
 
 			dictionaries = new XMLListCollection(getDictionaries.lastResult.Dictionary);
 

@@ -2787,6 +2787,16 @@ public class SeqMapView extends JPanel
 		}
 		// For garbage collection, it would be nice to add a listener that
 		// could call sym_popup.removeAll() when the popup is removed from view.
+
+		/* Force a repaint of the JPopupMenu.  This is a work-around for an
+		 * Apple JVM Bug (verified on 10.5.8, Java Update 5).  Affected systems
+		 * will display a stale copy of the JPopupMenu if the current number of
+		 * menu items is equal to the previous number of menu items.
+		 *
+		 * The repaint must occur after the menu has been drawn:  it appears to
+		 * skip the repaint if isVisible is false.  (another optimisation?)
+		 */
+		sym_popup.repaint();
 	}
 
 	public void addPopupListener(ContextualPopupListener listener) {

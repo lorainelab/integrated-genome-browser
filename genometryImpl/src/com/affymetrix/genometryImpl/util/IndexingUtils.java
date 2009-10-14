@@ -70,9 +70,17 @@ public class IndexingUtils {
 			return this.id[i];
 		}
 		String getID(int i) {
+			if (this.id[i] == null) {
+				return "";
+			}
 			return new String(this.id[i][0]);	// first String is the ID
 		}
 		private void setIDs(AnnotatedSeqGroup group, String symID, int i) {
+			if (symID == null) {
+				// no IDs
+				this.id[i] = null;
+				return;
+			}
 			// determine list of IDs for this symmetry index.
 			List<String> extraNames = group.getSymmetryIDs(symID.toLowerCase());
 			List<String> ids = new ArrayList<String>(1 + (extraNames == null ? 0 : extraNames.size()));
@@ -212,7 +220,7 @@ public class IndexingUtils {
 			// test against various IDs
 			byte[][] ids = iSyms.getIDs(i);
 			boolean foundID = false;
-			int idLength = ids.length;
+			int idLength = (ids == null) ? 0 : ids.length;
 			for (int j=0;j<idLength;j++) {
 				String id = new String(ids[j]);
 				matcher.reset(id);

@@ -115,7 +115,7 @@ public class GenoPubServlet extends HttpServlet {
 	private String genometry_genopub_dir;
 	
 	public void init() throws ServletException {
-		if (getGenometryManagerDataDir() == false) {
+		if (getGenoPubDir() == false) {
 			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
@@ -246,9 +246,47 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 	private void handleFlexRequest(HttpServletRequest request, HttpServletResponse res) throws IOException {
-		res.setContentType("text/html");
-		res.getOutputStream().println(getFlexHTMLWrapper());
-		res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+		Session sess = null;
+		
+		try {
+
+			// If idAnnotation was provided, make sure the user has permission
+			// to read this annotation.
+			if (request.getParameter("idAnnotation") != null && !request.getParameter("idAnnotation").equals("")) {
+				sess = HibernateUtil.getSessionFactory().openSession();
+				Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
+				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
+			
+    			if (!genoPubSecurity.canRead(annotation)) {
+    				throw new Exception("Insufficient permission to access this annotation");
+    			}
+			}
+
+			// Now stream the HTML wrapper to the response.  This HTML
+			// invokes the GenoPub swf.
+			res.setContentType("text/html");
+			res.getOutputStream().println(getFlexHTMLWrapper(request));
+			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", e.getMessage());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+			
+		} finally {
+			
+			if (sess != null) {
+				sess.close();
+			}
+		} 
+
+		
 	}
 	
 	private void handleSecurityRequest(HttpServletRequest request, HttpServletResponse res) throws Exception{
@@ -1111,6 +1149,7 @@ public class GenoPubServlet extends HttpServlet {
 			
 
 		} catch (Exception e) {
+			res.setStatus(9999);
 			e.printStackTrace();
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("Error");
@@ -2247,6 +2286,7 @@ public class GenoPubServlet extends HttpServlet {
 			
 
 		} catch (Exception e) {
+			res.setStatus(9999);
 			if (tx != null) {
 				tx.rollback();
 			}
@@ -2260,6 +2300,7 @@ public class GenoPubServlet extends HttpServlet {
 			} catch (Exception e1) {
 				
 			}
+			
 			
 		} finally {
 			
@@ -3255,7 +3296,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	
 	
-	private String getFlexHTMLWrapper() {
+	private String getFlexHTMLWrapper(HttpServletRequest request) {
 		StringBuffer buf = new StringBuffer();
 		BufferedReader input = null;
 		try {
@@ -3269,9 +3310,24 @@ public class GenoPubServlet extends HttpServlet {
 		if (input != null) {
 			try {
 				String line = null;
+				String flashVarsLine = null;
 				while ((line = input.readLine()) != null) {
+					// If we encounter the Flash invocation line,
+					// add in the FlashVars if the request parameter idAnnotation
+					// was provided.  This will allow us to launch GenoPub
+					// and bring up a particular annotation.
+					if (line.contains("src") && line.contains("GenoPub")) {
+						if (request.getParameter("idAnnotation") != null) {
+							flashVarsLine =   "\"FlashVars\", \"idAnnotation=" + request.getParameter("idAnnotation") + "\",";
+						}
+					}
 					buf.append(line);
 					buf.append(System.getProperty("line.separator"));
+					if (flashVarsLine != null) {
+						buf.append(flashVarsLine);
+						buf.append(System.getProperty("line.separator"));
+						flashVarsLine = null;
+					}
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -3286,7 +3342,7 @@ public class GenoPubServlet extends HttpServlet {
 		return buf.toString();
 	}
 
-	private final boolean getGenometryManagerDataDir() {
+	private final boolean getGenoPubDir() {
 		// attempt to get properties from servlet context
 		ServletContext context = getServletContext();
 		genometry_genopub_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);

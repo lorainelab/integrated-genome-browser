@@ -1,22 +1,21 @@
-
- table {
-
- }
+body
+{
+	color: #444444;
+       font-family: Calibri;
+}
 
  H1 {
 
-      font-family: Verdana;
-      font-size: 10pt;
+      font-size: 12pt;
       font-weight: bold;
       padding-top: 0;
-      padding-right: 8;
-      padding-bottom: 0;     
+      padding-bottom: 0;   
   }
   
    H2 {
 
-      font-family:  Verdana;
-      font-size: 10pt;
+
+      font-size: 11pt;
       font-weight: bold;
       padding-top: 0;
       padding-right: 0;
@@ -27,24 +26,18 @@
 
       border: thin solid;
       border-color: #CDCDC1;
-      font-family:  Verdana;
-      font-size: 8pt;
+      font-size: 10pt;
       padding-right: 4;
       padding-left: 4;
       padding-top: 4;
       padding-bottom: 4;
       vertical-align: top;
       width: 100%;
-
- 
-      
   }
-
+  
   td.label {
       border: none;
-      border-color: #CDCDC1;
-      font-family:  Verdana;
-      font-size: 8pt;
+      font-size: 10pt;
       font-weight: normal;
       padding-top: 4;
       padding-right: 0;
@@ -52,18 +45,4 @@
       padding-bottom: 0;
       width: 10%;     
   }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    

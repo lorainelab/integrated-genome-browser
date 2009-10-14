@@ -950,7 +950,7 @@ public class SeqMapView extends JPanel
 	 */
 	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
 		//    setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
-		setAnnotatedSeq(seq, preserve_selection, preserve_view, true);
+		setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
 	}
 
 	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {

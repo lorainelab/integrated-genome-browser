@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	showCloseButton="true" 
+	width="208" 
+	height="58"
+	verticalGap="0"
+	close="closeWindow()"
+	layout="vertical" backgroundAlpha="0.7" alpha="0.7" headerHeight="16">
+
+    
+       
+    <mx:Script>
+	<![CDATA[
+	
+	import mx.managers.PopUpManager;
+	import mx.rpc.events.ResultEvent;
+	import mx.controls.Alert;
+	
+	
+    private function closeWindow():void {
+		PopUpManager.removePopUp(this);	
+	}
+	
+	]]>
+    </mx:Script>
+    
+    <mx:VBox width="100%" height="100%" verticalGap="8" styleName="panelBody">
+	    <mx:VBox height="100%" width="100%"  verticalGap="14">
+	    	<mx:ProgressBar indeterminate="true" labelPlacement="top" 
+	    		label="Reloading DAS2 Server..." barColor="#0F4EEE" indeterminateMoveInterval="40" alpha="1.0" id="progress" minimum="0" maximum="100" fontWeight="normal" horizontalGap="0" verticalGap="1"  width="100%"/>
+	    </mx:VBox>
+    </mx:VBox>
+
+</mx:TitleWindow>

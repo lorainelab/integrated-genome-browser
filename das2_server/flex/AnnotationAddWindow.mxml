@@ -188,12 +188,9 @@
            postVariables.name =  annotationName.text;
            postVariables.idGenomeVersion = genomeVersion.@idGenomeVersion;
            postVariables.idAnnotationGrouping = idParentAnnotationGrouping != null ? idParentAnnotationGrouping : '-99';
-           postVariables.codeVisibility = visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : 'PUBLIC';
-           postVariables.idUserGroup = annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : '-99';
-          
-
-
-		    
+           postVariables.codeVisibility = visibilityCombo.selectedItem != null && visibilityCombo.selectedItem.@id != '' ? visibilityCombo.selectedItem.@id : 'PUBLIC';
+           postVariables.idUserGroup = annotationUserGroupCombo.selectedItem != null && annotationUserGroupCombo.selectedItem.@id != '' ? annotationUserGroupCombo.selectedItem.@id : '-99';
+           		    
 		   multiFileUpload.setUploadURLParameters(postVariables);  
 	}
 			

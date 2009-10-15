@@ -1997,6 +1997,10 @@ public class GenoPubServlet extends HttpServlet {
 
 	private void handleAnnotationInfoRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
+		org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
+        org.dom4j.io.HTMLWriter writer = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
+      
+			
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
@@ -2073,11 +2077,13 @@ public class GenoPubServlet extends HttpServlet {
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Owner email").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserEmail(annotation.getIdUser()) : "&nbsp;");
+			String userEmail = dh.getUserEmail(annotation.getIdUser());
+			row.addElement("TD").addCDATA(userEmail != null ? userEmail : "&nbsp;");
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Owner institute").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserInstitute(annotation.getIdUser()) : "&nbsp;");
+			String userInstitute = dh.getUserInstitute(annotation.getIdUser());
+			row.addElement("TD").addCDATA(userInstitute != null ? userInstitute : "&nbsp;");
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group").addAttribute("CLASS", "label");
@@ -2085,15 +2091,18 @@ public class GenoPubServlet extends HttpServlet {
 			
 			row   = table.addElement("TR");			 
 			row.addElement("TD").addText("User Group contact").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupContact(annotation.getIdUserGroup()) : "&nbsp;");
+			String groupContact = dh.getUserGroupContact(annotation.getIdUserGroup());
+			row.addElement("TD").addCDATA(groupContact != null ? groupContact : "&nbsp;");
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group email").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupEmail(annotation.getIdUserGroup()) : "&nbsp;");
+			String groupEmail = dh.getUserGroupEmail(annotation.getIdUserGroup());
+			row.addElement("TD").addCDATA(groupEmail != null ? groupEmail : "&nbsp;");
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
-			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupInstitute(annotation.getIdUserGroup()) : "&nbsp;");
+			String groupInstitute = dh.getUserGroupInstitute(annotation.getIdUserGroup());
+			row.addElement("TD").addCDATA(groupInstitute != null ? groupInstitute : "&nbsp;");
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
@@ -2117,23 +2126,26 @@ public class GenoPubServlet extends HttpServlet {
 			row.addElement("TD").addCDATA(publishedBy);
 
 
-	        org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
-	        org.dom4j.io.HTMLWriter writer = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
-	      
+	        	
 	        writer.write(doc);
 	        writer.flush();
+	        writer.close();
 			
 		} catch (Exception e) {
+			
+			writer.close();
 			
 			e.printStackTrace();
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("Error");
 			root.addAttribute("message", e.getMessage());
-			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
-			writer.write(doc);
+
+			XMLWriter w = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
+
+			w.write(doc);
 			
 		} finally {
+			writer.close();
 			
 			if (sess != null) {
 				sess.close();

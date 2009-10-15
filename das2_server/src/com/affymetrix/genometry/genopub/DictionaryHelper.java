@@ -415,7 +415,7 @@ public class DictionaryHelper {
 		if (user != null) {
 			return user.getEmail();
 		} else {
-			return "";
+			return null;
 		}
 	}
 	public String getUserInstitute(Integer idUser) {
@@ -423,7 +423,7 @@ public class DictionaryHelper {
 		if (user != null) {
 			return user.getInstitute();
 		} else {
-			return "";
+			return null;
 		}
 	}
 	
@@ -493,7 +493,7 @@ public class DictionaryHelper {
 		if (group != null) {
 			return group.getContact();
 		} else {
-			return "";
+			return null;
 		}
 	}
 	public String getUserGroupEmail(Integer idUserGroup) {
@@ -501,7 +501,7 @@ public class DictionaryHelper {
 		if (group != null) {
 			return group.getEmail();
 		} else {
-			return "";
+			return null;
 		}
 	}
 	public String getUserGroupInstitute(Integer idUserGroup) {
@@ -509,7 +509,7 @@ public class DictionaryHelper {
 		if (group != null) {
 			return group.getInstitute();
 		} else {
-			return "";
+			return null;
 		}
 	}
 

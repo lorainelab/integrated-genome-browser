@@ -22,7 +22,7 @@
          <idGenomeVersion>{genomeVersion.@idGenomeVersion}</idGenomeVersion>
          <idAnnotationGrouping>{idParentAnnotationGrouping}</idAnnotationGrouping>
          <codeVisibility>{visibilityCombo.selectedItem != null ? visibilityCombo.selectedItem.@id : ''}</codeVisibility>
-         <idUserGroup>{visibilityCombo.selectedItem.@id != 'PUBLIC' &amp;&amp; this.annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : ''}</idUserGroup>
+         <idUserGroup>{this.annotationUserGroupCombo.selectedItem != null ? annotationUserGroupCombo.selectedItem.@id : ''}</idUserGroup>
       </mx:request>
     </mx:HTTPService> 
     
@@ -75,11 +75,13 @@
 		} else {
 			parentName = genomeVersion.@name;
 		}
-		// If the parent folder belongs to a user group, set the annotation
+		// If the parent folder belongs to a user group or this is a non-admin
+		// user, set the annotation
 		// visibility to 'Members and Collaborators' and the user group combo
 		// to the same user group.
 		// Otherwise; set the visibility to 'PUBLIC'.
-		if (parent != null && parent.@idUserGroup != null && parent.@idUserGroup != "") {
+		if (!parentApplication.isAdmin() || 
+		    (parent != null && parent.@idUserGroup != null && parent.@idUserGroup != "")) {
 			for each(var item:Object in parentApplication.dictionaryVisibility) {
 				if (item.@id == 'MEM') {
 					this.visibilityCombo.selectedItem = item;

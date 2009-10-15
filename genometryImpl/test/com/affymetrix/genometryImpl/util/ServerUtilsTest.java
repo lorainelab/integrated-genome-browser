@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -321,8 +322,12 @@ public class ServerUtilsTest {
 		String testFileName = baseDir + "/" + versionString + "/mRNA_INDEX_TEST.psl";
 		File testFile = new File(testFileName);
 		IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), testFile, query_type, iWriter);
-
-		IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms, testFileName);
+		try {
+			IndexingUtils.writeIndexedAnnotations(sortedSyms, seq, genome, iSyms, testFileName);
+		} catch (IOException ex) {
+			Logger.getLogger(ServerUtilsTest.class.getName()).log(Level.SEVERE, null, ex);
+			fail();
+		}
 
 		List<SeqSymmetry> result2 = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", genome);
 		/*	for(SeqSymmetry res : result2) {

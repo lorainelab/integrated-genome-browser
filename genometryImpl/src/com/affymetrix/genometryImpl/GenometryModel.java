@@ -444,7 +444,7 @@ public abstract class GenometryModel {
 	 *  Get the list of selected symmetries on the currently selected sequence.
 	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
 	 */
-	public List<SeqSymmetry> getSelectedSymmetriesOnCurrentSeq() {
+	public final List<SeqSymmetry> getSelectedSymmetriesOnCurrentSeq() {
 		return getSelectedSymmetries(selected_seq);
 	}
 
@@ -465,7 +465,7 @@ public abstract class GenometryModel {
 	 *  Get the list of selected symmetries on the specified sequence.
 	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
 	 */
-	public List<SeqSymmetry> getSelectedSymmetries(MutableAnnotatedBioSeq seq) {
+	public final List<SeqSymmetry> getSelectedSymmetries(MutableAnnotatedBioSeq seq) {
 		List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
 		if (selections == null) {
 			selections = new ArrayList<SeqSymmetry>();

@@ -70,9 +70,17 @@ public class IndexingUtils {
 			return this.id[i];
 		}
 		String getID(int i) {
+			if (this.id[i] == null) {
+				return "";
+			}
 			return new String(this.id[i][0]);	// first String is the ID
 		}
 		private void setIDs(AnnotatedSeqGroup group, String symID, int i) {
+			if (symID == null) {
+				// no IDs
+				this.id[i] = null;
+				return;
+			}
 			// determine list of IDs for this symmetry index.
 			List<String> extraNames = group.getSymmetryIDs(symID.toLowerCase());
 			List<String> ids = new ArrayList<String>(1 + (extraNames == null ? 0 : extraNames.size()));
@@ -147,7 +155,7 @@ public class IndexingUtils {
 	 */
 	static void determineIndexes(
 			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome,
-			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName) {
+			String dataRoot, File file, List loadedSyms, IndexWriter iWriter, String typeName, String returnTypeName) throws IOException {
 
 		ServerUtils.createDirIfNecessary(IndexingUtils.indexedGenomeDirName(dataRoot, originalGenome));
 
@@ -155,6 +163,10 @@ public class IndexingUtils {
 			BioSeq tempSeq = tempGenome.getSeq(originalSeq.getID());
 			if (tempSeq == null) {
 				continue;	// ignore; this is a seq that was added during parsing.
+			}
+
+			if (DEBUG) {
+				System.out.println("Determining indexes for " + tempGenome.getID() + ", " + tempSeq.getID());
 			}
 
 			// Sort symmetries for this specific chromosome.
@@ -217,7 +229,7 @@ public class IndexingUtils {
 			// test against various IDs
 			byte[][] ids = iSyms.getIDs(i);
 			boolean foundID = false;
-			int idLength = ids.length;
+			int idLength = (ids == null) ? 0 : ids.length;
 			for (int j=0;j<idLength;j++) {
 				String id = new String(ids[j]);
 				matcher.reset(id);
@@ -252,24 +264,18 @@ public class IndexingUtils {
 	 * @param fos
 	 * @return - success or failure
 	 */
-	public static boolean writeIndexedAnnotations(
+	public static void writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
 			MutableAnnotatedBioSeq seq,
 			AnnotatedSeqGroup group,
 			IndexedSyms iSyms,
-			String indexesFileName) {
+			String indexesFileName) throws IOException {
 		if (DEBUG) {
 			System.out.println("in IndexingUtils.writeIndexedAnnotations()");
 		}
 
-		try {
-			createIndexArray(iSyms, syms, seq, group);
-			writeIndex(iSyms, indexesFileName, syms, seq);
-			return true;
-		} catch (Exception ex) {
-			Logger.getLogger(IndexingUtils.class.getName()).log(Level.SEVERE, null, ex);
-			return false;
-		}
+		createIndexArray(iSyms, syms, seq, group);
+		writeIndex(iSyms, indexesFileName, syms, seq);
 	}
 
 	/**

@@ -312,6 +312,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			System.exit(-1);
 		}
 
 		date_initialized = System.currentTimeMillis();

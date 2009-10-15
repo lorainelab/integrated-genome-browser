@@ -5,8 +5,6 @@
 
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.parsers.graph.SgrParser;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -18,15 +16,11 @@ import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -82,34 +76,30 @@ public class BarParserTest {
 
 	}
 
-		public void TestWriteAnnotations() throws IOException {
-			String string =
-						"chr15_random	1880113	0.23001233\n" +
-						"chr15_random	1880219	0.21503295\n";
+	public void TestWriteAnnotations() throws IOException {
+		String string =
+				"chr15_random	1880113	0.23001233\n" +
+				"chr15_random	1880219	0.21503295\n";
 
-    InputStream istr = new ByteArrayInputStream(string.getBytes());
+		InputStream istr = new ByteArrayInputStream(string.getBytes());
 
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
 		String stream_name = "test_file";
 		boolean ensure_unique_id = true;
 
-    List<GraphSym> results = SgrParser.parse(istr,stream_name,seq_group,ensure_unique_id);
+		List<GraphSym> results = SgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
 
-    GraphSym gr0 = (GraphSym) results.get(0);
-		MutableAnnotatedBioSeq seq = (MutableAnnotatedBioSeq) gr0.getGraphSeq();
+		GraphSym gr0 = results.get(0);
+		MutableAnnotatedBioSeq seq = gr0.getGraphSeq();
 		Collection<SeqSymmetry> syms = new ArrayList();
 		syms.add(gr0);
 		String type = "test_type";
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		BarParser instance=new BarParser();
-		boolean result1 =instance.writeAnnotations(syms,seq,type,outstream);
+		BarParser instance = new BarParser();
+		boolean result1 = instance.writeAnnotations(syms, seq, type, outstream);
 		assertEquals(true, result1);
 		assertEquals(string, outstream.toString());
-
-
-
-		}
+	}
 
     @Test
 		public void TestParseBarHeader()  throws Exception {

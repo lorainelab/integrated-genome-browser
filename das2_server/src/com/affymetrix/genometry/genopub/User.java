@@ -12,6 +12,8 @@ public class User {
 	private String  middleName;
 	private String  userName;
 	private String  password;
+	private String  email;
+	private String  institute;
 	private Set     memberUserGroups;
 	private Set     collaboratingUserGroups;
 	private Set     managingUserGroups;
@@ -121,6 +123,18 @@ public class User {
     }
 	public void setRoles(Set roles) {
     	this.roles = roles;
+    }
+	public String getEmail() {
+    	return email;
+    }
+	public void setEmail(String email) {
+    	this.email = email;
+    }
+	public String getInstitute() {
+    	return institute;
+    }
+	public void setInstitute(String institute) {
+    	this.institute = institute;
     }
 	
 

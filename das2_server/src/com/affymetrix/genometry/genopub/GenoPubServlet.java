@@ -2056,15 +2056,15 @@ public class GenoPubServlet extends HttpServlet {
 			}
 			
 			row   = table.addElement("TR");			
-			row.addElement("TD").addText("Experiment Platform").addAttribute("CLASS", "label");
+			row.addElement("TD").addText("Experiment platform").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdExperimentPlatform() != null ? dh.getExperimentPlatform(annotation.getIdExperimentPlatform()) : "&nbsp;");
 			
 			row   = table.addElement("TR");			
-			row.addElement("TD").addText("Experiment Method").addAttribute("CLASS", "label");
+			row.addElement("TD").addText("Experiment method").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdExperimentMethod() != null ? dh.getExperimentMethod(annotation.getIdExperimentMethod()) : "&nbsp;");
 			
 			row   = table.addElement("TR");			
-			row.addElement("TD").addText("Analysis Type").addAttribute("CLASS", "label");
+			row.addElement("TD").addText("Analysis type").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdAnalysisType() != null ? dh.getAnalysisType(annotation.getIdAnalysisType()) : "&nbsp;");
 			
 			row   = table.addElement("TR");			
@@ -2072,8 +2072,28 @@ public class GenoPubServlet extends HttpServlet {
 			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserFullName(annotation.getIdUser()) : "&nbsp;");
 			
 			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Owner email").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserEmail(annotation.getIdUser()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("Owner institute").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserInstitute(annotation.getIdUser()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupName(annotation.getIdUserGroup()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			 
+			row.addElement("TD").addText("User Group contact").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupContact(annotation.getIdUserGroup()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("User Group email").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupEmail(annotation.getIdUserGroup()) : "&nbsp;");
+			
+			row   = table.addElement("TR");			
+			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
+			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupInstitute(annotation.getIdUserGroup()) : "&nbsp;");
 			
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
@@ -2354,6 +2374,9 @@ public class GenoPubServlet extends HttpServlet {
 					groupNode = doc.getRootElement().addElement("UserGroup");
 					groupNode.addAttribute("label", group.getName());
 					groupNode.addAttribute("name", group.getName());					
+					groupNode.addAttribute("contact", group.getContact() != null ? group.getContact() : "");					
+					groupNode.addAttribute("email", group.getEmail() != null ? group.getEmail() : "");					
+					groupNode.addAttribute("institute", group.getInstitute() != null ? group.getInstitute() : "");					
 					groupNode.addAttribute("idUserGroup", group.getIdUserGroup().toString());
 					groupNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(group) ? "Y" : "N");
 					groupNodeMap.put(group.getIdUserGroup(), groupNode);					
@@ -2452,6 +2475,8 @@ public class GenoPubServlet extends HttpServlet {
 				userNode.addAttribute("firstName",  user.getFirstName() != null ? user.getFirstName() : "");
 				userNode.addAttribute("lastName",  user.getLastName() != null ? user.getLastName() : "");
 				userNode.addAttribute("middleName",  user.getMiddleName() != null ? user.getMiddleName() : "");
+				userNode.addAttribute("email", user.getEmail() != null ? user.getEmail() : "");					
+				userNode.addAttribute("institute", user.getInstitute() != null ? user.getInstitute() : "");					
 				userNode.addAttribute("userName",  user.getUserName() != null ? user.getUserName() : "");
 				userNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(user) ? "Y" : "N");
 				
@@ -2725,6 +2750,8 @@ public class GenoPubServlet extends HttpServlet {
 			user.setMiddleName(request.getParameter("middleName"));
 			user.setLastName(request.getParameter("lastName"));
 			user.setUserName(request.getParameter("userName"));
+			user.setEmail(request.getParameter("email"));
+			user.setInstitute(request.getParameter("institute"));
 			
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD)) {
@@ -2983,6 +3010,9 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			group.setName(request.getParameter("name"));
+			group.setContact(request.getParameter("contact"));
+			group.setEmail(request.getParameter("email"));
+			group.setInstitute(request.getParameter("institute"));
 			
 			
 			// Add members

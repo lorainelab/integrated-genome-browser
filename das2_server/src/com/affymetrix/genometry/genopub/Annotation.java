@@ -28,7 +28,12 @@ public class Annotation implements Owned, Propertied {
     public static final String PROP_SUMMARY             = "summary";
     public static final String PROP_DESCRIPTION         = "description";
     public static final String PROP_OWNER               = "owner";
+    public static final String PROP_OWNER_EMAIL         = "owner_institute";
+    public static final String PROP_OWNER_INSTITUTE     = "owner_email";
     public static final String PROP_GROUP               = "group";
+    public static final String PROP_GROUP_CONTACT       = "group_contact";
+    public static final String PROP_GROUP_EMAIL         = "group_email";
+    public static final String PROP_GROUP_INSTITUTE     = "group_institute";
     public static final String PROP_VISIBILITY          = "visibility";
     public static final String PROP_INSTITUTE           = "institute";
     public static final String PROP_ANALYSIS_TYPE       = "analysis_type";
@@ -296,7 +301,12 @@ public class Annotation implements Owned, Propertied {
 		props.put(PROP_SUMMARY, this.getSummary());
 		props.put(PROP_VISIBILITY,  Visibility.getDisplay(this.getCodeVisibility()));
 		props.put(PROP_OWNER, this.getIdUser() != null ? dictionaryHelper.getUserFullName(this.getIdUser()) : "");
+		props.put(PROP_OWNER_EMAIL, this.getIdUser() != null ? dictionaryHelper.getUserEmail(this.getIdUser()) : "");
+		props.put(PROP_OWNER_INSTITUTE, this.getIdUser() != null ? dictionaryHelper.getUserInstitute(this.getIdUser()) : "");
 		props.put(PROP_GROUP, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupName(this.getIdUserGroup()) : "");
+		props.put(PROP_GROUP_CONTACT, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupContact(this.getIdUserGroup()) : "");
+		props.put(PROP_GROUP_EMAIL, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupEmail(this.getIdUserGroup()) : "");
+		props.put(PROP_GROUP_INSTITUTE, this.getIdUserGroup() != null ? dictionaryHelper.getUserGroupInstitute(this.getIdUserGroup()) : "");
 		props.put(PROP_ANALYSIS_TYPE, dictionaryHelper.getAnalysisType(this.getIdAnalysisType()));
 		props.put(PROP_EXPERIMENT_METHOD, dictionaryHelper.getExperimentMethod(this.getIdExperimentMethod()));
 		props.put(PROP_EXPERIMENT_PLATFORM, dictionaryHelper.getExperimentPlatform(this.getIdExperimentPlatform()));

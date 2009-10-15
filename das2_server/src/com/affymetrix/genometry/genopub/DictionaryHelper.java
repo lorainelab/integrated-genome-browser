@@ -410,6 +410,22 @@ public class DictionaryHelper {
 			return "";
 		}
 	}
+	public String getUserEmail(Integer idUser) {
+		User user = userMap.get(idUser);
+		if (user != null) {
+			return user.getEmail();
+		} else {
+			return "";
+		}
+	}
+	public String getUserInstitute(Integer idUser) {
+		User user = userMap.get(idUser);
+		if (user != null) {
+			return user.getInstitute();
+		} else {
+			return "";
+		}
+	}
 	
 	public String getOrganismName(Integer idOrganism) {
 		Organism organism = organismMap.get(idOrganism);
@@ -468,6 +484,30 @@ public class DictionaryHelper {
 		UserGroup group = groupMap.get(idUserGroup);
 		if (group != null) {
 			return group.getName();
+		} else {
+			return "";
+		}
+	}
+	public String getUserGroupContact(Integer idUserGroup) {
+		UserGroup group = groupMap.get(idUserGroup);
+		if (group != null) {
+			return group.getContact();
+		} else {
+			return "";
+		}
+	}
+	public String getUserGroupEmail(Integer idUserGroup) {
+		UserGroup group = groupMap.get(idUserGroup);
+		if (group != null) {
+			return group.getEmail();
+		} else {
+			return "";
+		}
+	}
+	public String getUserGroupInstitute(Integer idUserGroup) {
+		UserGroup group = groupMap.get(idUserGroup);
+		if (group != null) {
+			return group.getInstitute();
 		} else {
 			return "";
 		}

@@ -475,6 +475,9 @@ DROP TABLE IF EXISTS `UserGroup`;
 CREATE TABLE `UserGroup` (
   `idUserGroup` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(200) NOT NULL,
+  `contact` varchar(500) default NULL,
+  `email` varchar(500) default NULL,
+  `institute` varchar(200) default NULL,  
   PRIMARY KEY  (`idUserGroup`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
@@ -689,6 +692,8 @@ CREATE TABLE `User` (
   `lastName` varchar(200) NOT NULL,
   `firstName` varchar(200) NOT NULL,
   `middleName` varchar(100) default NULL,
+  `email` varchar(500) default NULL,
+  `institute` varchar(200) default NULL,
   `UserName` varchar(30) default NULL,
   `password` varchar(200) default NULL,
   PRIMARY KEY  USING BTREE (`idUser`),

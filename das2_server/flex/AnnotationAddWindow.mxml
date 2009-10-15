@@ -89,10 +89,12 @@
 				}
 			}
 			for each (var g:Object in annotationUserGroupCombo.dataProvider) {
-				if (g.@id == parent.@idUserGroup) {
-					annotationUserGroupCombo.selectedItem = g;
-					break;
-				}
+				if (parent != null ) {
+					if (g.@id == parent.@idUserGroup) {
+						annotationUserGroupCombo.selectedItem = g;
+						break;
+					}					
+				} 
 			}			
 		} else {
 			for each(var v:Object in parentApplication.dictionaryVisibility) {

@@ -494,11 +494,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	private final void handleDas2Request(HttpServletResponse response, HttpServletRequest request) throws IOException {
 		String path_info = request.getPathInfo();
-		if (DEBUG)
-		{
-			if (request != null && request.getQueryString() != null) {
-				System.out.println("Processing request:" + GeneralUtils.URLDecode(request.getQueryString()));
-			}
+		if (DEBUG) {
+			String query = request.getQueryString();
+			System.out.println("GenometryDas2Servlet received GET request: ");
+			System.out.println("   path: " + path_info);
+			System.out.println("   query: " + query);
 		}
 		if (path_info == null || path_info.trim().length() == 0 || path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
 			handleSourcesRequest(request, response, date_init_string);

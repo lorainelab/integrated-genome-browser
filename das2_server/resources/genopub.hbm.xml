@@ -135,6 +135,8 @@
         <property name="middleName"          column="middleName"            type="string"/>
         <property name="userName"            column="userName"              type="string"/>
         <property name="password"            column="password"              type="string"/>
+        <property name="email"               column="email"                 type="string"/>
+        <property name="institute"           column="institute"             type="string"/>
 		  	<set name="memberUserGroups" table="UserGroupMember" lazy="true" cascade="none">
 					<key column="idUser"/>
 					<many-to-many column="idUserGroup" class="com.affymetrix.genometry.genopub.UserGroup"/>
@@ -161,6 +163,9 @@
             <generator class="native"/>
         </id>
         <property name="name"            column="name"              type="string"/>
+        <property name="contact"         column="contact"           type="string"/>
+        <property name="email"           column="email"             type="string"/>
+        <property name="institute"       column="institute"         type="string"/>
 
 		    <set name="members" table="UserGroupMember" lazy="true" cascade="none">
 			    <key column="idUserGroup"/>

@@ -500,7 +500,7 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBi
 
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse((InputStream) dis, annot_type, group);
+			return this.parse((InputStream) dis, annot_type, group, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BrsParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

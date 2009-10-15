@@ -5,6 +5,7 @@ There are two ways to configure the DAS2 server:
 * Classic mode: The annotations are organized into a directory structure on the file system.  
 * GenoPub mode: The annotations are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each annotation in a database.  A web-based tool allows annotations to be easily added, described, and organized.  Through the tool, users and groups are managed and annotation security is specified. Access to annotations is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
 
+
 === System Requirements ===
 * Java 5+, 64-bit recommended (http://java.sun.com/)
 * Apache Tomcat 5.5+ (http://apache.tomcat.org/)
@@ -47,7 +48,7 @@ To run in Genopub mode (see example in das2_server/context.xml):
 
 === Configuring Tomcat ===
 
-The das2 servlet is resource intensive.  The sample data set can use as much as 4GB of RAM.  Some useful options are listed below:
+The das2 servlet with the sample data set will use up to 2 GB of RAM during startup (average usage will be under 500MB of RAM). Some useful options are listed below:
 * -Xmx4096m: Use maximum 4GB of RAM for the heap
 * -Xincgc: Use incremental garbage collection
 	
@@ -56,6 +57,7 @@ The above options can be placed in the JAVA_OPTS environmental variable when usi
 * Debian: /etc/default/tomcat5.5
 
 Note that 2GB of RAM is the maximum available when using a 32-bit Java Virtual Machine.
+
 
 === Installation ===
 The das2 servlet can be installed by copying the entire das2 directory to tomcat's 
@@ -70,6 +72,9 @@ Most tomcat servers are configured to detect new or updated web applications and
 * Debian: /var/lib/tomcat5.5/webapps/
 
 In Classic mode, the das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.  However, in GenoPub mode, use the 'Reload DAS2 Server' link in the web-based GenoPub tool to refresh DAS2.
+
+The das2 servlet will need write access to the sub-directory <DATADIR>/.indexed. 
+This is used to store indexing files.  It is rebuilt upon a restart of the servlet.
 
 MySQL Database (required when running DAS2 server in GenoPub mode)
 * Install MySQL Server
@@ -89,4 +94,5 @@ MySQL Database (required when running DAS2 server in GenoPub mode)
 Once the DAS2 server is deployed and running under tomcat, enter the following URL from the browser to launch the GenoPub tool: http://yourhost:yourport/DAS2/genopub 
 
 Login with the username 'admin' and the password 'admin'.  Click on the Users and Groups link and add yourself as a user.  If you are an admin,click the 'Admin' radio button.  Now try the URL again to make sure you can login.  Delete the default 'admin' user now that you have set yourself up as a user.
+
 

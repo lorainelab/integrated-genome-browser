@@ -106,6 +106,11 @@ public class AffyTieredMap extends NeoMap {
 		show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
 	}
 
+	public AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
+		this(hscroll, vscroll);
+		this.scroller[Y] = vscroller;
+	}
+
 	/** Add the given tier to the map, building top-down. */
 	public void addTier(TierGlyph mtg) {
 		addTier(mtg, false);

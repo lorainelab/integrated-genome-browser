@@ -78,6 +78,8 @@ public final class PreferencesPanel extends JPanel {
         }
 
       });
+	  
+	  singleton.getFrame().addWindowListener(singleton.tpv);
 
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
 

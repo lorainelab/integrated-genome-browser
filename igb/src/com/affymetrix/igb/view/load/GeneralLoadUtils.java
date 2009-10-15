@@ -169,27 +169,20 @@ public final class GeneralLoadUtils {
 				}
 				discoveredServers.add(gServer);
 			} else if (serverType == ServerType.DAS) {
-				/*DasServerInfo server = DasDiscovery.addDasServer(serverName, serverURL);
-				if (server == null) {
-				return false;
-				}
-				gServer = new GenericServer(serverName, server.getRootUrl(), serverType, server);*/
 				gServer = ServerList.addServer(serverType, serverName, serverURL);
 				if (gServer == null) {
 					return false;
 				}
 				if (!getDAS1SpeciesAndVersions(gServer)) {
 					return false;
-				};
+				}
 				discoveredServers.add(gServer);
 
 			} else if (serverType == ServerType.DAS2) {
-				//Das2ServerInfo server = Das2Discovery.addDas2Server(serverName, serverURL);
 				gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
 				if (gServer == null) {
 					return false;
 				}
-				//gServer = new GenericServer(serverName, server.getURI().toString(), serverType, server);
 				discoveredServers.add(gServer);
 				getDAS2Species(gServer);
 				getDAS2Versions(gServer);
@@ -249,20 +242,6 @@ public final class GeneralLoadUtils {
 	 * @param discoveredServers 
 	 */
 	public static synchronized void discoverServersInternal(final List<GenericServer> discoveredServers) {
-		/*for (Map.Entry<String, Das2ServerInfo> entry : Das2Discovery.getDas2Servers().entrySet()) {
-			Das2ServerInfo server = entry.getValue();
-			String serverName = entry.getKey();
-			if (server != null && serverName != null) {
-				if (serverExists(discoveredServers, serverName, ServerType.DAS2) == null) {
-					GenericServer g = new GenericServer(serverName, server.getURI().toString(), ServerType.DAS2, server);
-					discoveredServers.add(g);
-				}
-			}
-		}*/
-		/*for (GenericServer gServer : ServerList.getEnabledServers()) {
-			System.out.println("Discovering server... " + gServer);
-		}*/
-
 		for (GenericServer gServer : ServerList.getEnabledServers()) {
 			if (gServer.serverType == ServerType.DAS2) {
 				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
@@ -281,16 +260,6 @@ public final class GeneralLoadUtils {
 				}
 			}
 		}
-		/*for (Map.Entry<String, DasServerInfo> entry : DasDiscovery.getDasServers().entrySet()) {
-			DasServerInfo server = entry.getValue();
-			String serverName = entry.getKey();
-			if (server != null && serverName != null) {
-				if (serverExists(discoveredServers, serverName, ServerType.DAS) == null) {
-					GenericServer g = new GenericServer(serverName, server.getRootUrl(), ServerType.DAS, server);
-					discoveredServers.add(g);
-				}
-			}
-		}*/
 
 		// Discover Quickload servers
 		// This is based on new preferences, which allow arbitrarily many quickload servers.
@@ -522,14 +491,6 @@ public final class GeneralLoadUtils {
 		return gVersionList;
 	}
 
-	/** Returns the name that this server uses to refer to the given AnnotatedSeqGroup.
-	 *  Because of synonyms, different servers may use different names to
-	 *  refer to the same genome.
-	 */
-	/*public String getGenomeName(AnnotatedSeqGroup group) {
-	return group2version.get(group);
-	}*/
-
 
 	/**
 	 *  Returns the list of features for the genome with the given version name.
@@ -567,6 +528,7 @@ public final class GeneralLoadUtils {
 	 * @param versionName
 	 */
 	void initVersion(final String versionName) {
+		System.out.println("version: " + versionName);
 		if (versionName == null) {
 			return;
 		}

@@ -171,22 +171,8 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
             end = end_or_width;
           }
 
-          SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-          
-          if (gmodel.getSelectedSeqGroup() != null) {
-//            if (allowedChromosomes != null && !allowedChromosomes.contains(chrom_text)) {
-//              Application.errorPanel("Chrom: " + chrom_text + " not available.");
-//            } else {
-              Map<String,String> m = new HashMap<String,String>();
-              m.put(Bookmark.SEQID, chrom_text);
-              m.put(Bookmark.START, Integer.toString((int) start));
-              m.put(Bookmark.END, Integer.toString((int) end));
-              m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
-              UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
-//            }
-          }
+		  zoomToSeqAndSpan( chrom_text, (int)start, (int)end);
 
-          //gview.zoomTo(start, end);
         }
         else
          if (start_end_matcher.matches()) {
@@ -227,5 +213,17 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
         setRangeText(start, end);
       }
     }
-  };
+	};
+
+	static void zoomToSeqAndSpan(String chrom_text, int start, int end) throws NumberFormatException {
+		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		if (gmodel.getSelectedSeqGroup() != null) {
+			Map<String, String> m = new HashMap<String, String>();
+			m.put(Bookmark.SEQID, chrom_text);
+			m.put(Bookmark.START, Integer.toString(start));
+			m.put(Bookmark.END, Integer.toString(end));
+			m.put(Bookmark.VERSION, gmodel.getSelectedSeqGroup().getID());
+			UnibrowControlServlet.goToBookmark(Application.getSingleton(), m);
+		}
+	}
 }

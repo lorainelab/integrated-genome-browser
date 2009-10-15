@@ -65,6 +65,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String SEQUENCETOSEARCH = "Sequence to search";
 	private static final String REMOTESERVERSEARCH1 = "also search remotely (";
 	private static final String REMOTESERVERSEARCH2 = " server)";
+	private static final String REMOTESERVERSEARCH2PLURAL = " servers)";
 	private static final String REMOTESERVERSEARCH3 = " for IDs";
 
 	private static final String SELECTINMAP_TEXT = "select in map";
@@ -90,6 +91,9 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private ListSelectionModel lsm;
 
 	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
+
+	private List<SeqSymmetry> localSymList;
+	private List<SeqSymmetry> remoteSymList;
 
 	private static final boolean DEBUG = true;
 
@@ -189,9 +193,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private void initRemoteServerCheckBox(AnnotatedSeqGroup group) {
 		int remoteServerCount = getRemoteServerCount(group);
-		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2);
-		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + REMOTESERVERSEARCH2 + REMOTESERVERSEARCH3);
+		String remoteServerPluralText = remoteServerCount == 1 ? REMOTESERVERSEARCH2 : REMOTESERVERSEARCH2PLURAL;
+		remoteSearchCheckBox.setText(REMOTESERVERSEARCH1 + remoteServerCount + remoteServerPluralText);
+		remoteSearchCheckBox.setToolTipText(REMOTESERVERSEARCH1 + remoteServerCount + remoteServerPluralText + REMOTESERVERSEARCH3);
 		remoteSearchCheckBox.setEnabled(remoteServerCount > 0);
+		remoteSearchCheckBox.setSelected(remoteServerCount > 0);
 	}
 
 	private void initSequenceCB() {
@@ -264,6 +270,25 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				}
 				SeqSymmetry sym = tableRows.get(srow);
 				if (sym != null) {
+					if (remoteSymList != null && remoteSymList.contains(sym)) {
+						if (group == null) {
+							return;
+						}
+						// remote symmetry.  We must zoom to its coordinate and select its seq.
+						String seqID = sym.getSpanSeq(0).getID();
+						BioSeq seq = group.getSeq(seqID);
+						if (seq != null) {
+							SeqSpan span = sym.getSpan(0);
+							if (span != null) {
+								// zoom to its coordinates
+								MapRangeBox.zoomToSeqAndSpan(seqID, span.getStart(), span.getEnd());
+							}
+						}
+
+						return;
+					}
+
+					// Set selected symmetry normally
 					List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(1);
 					syms.add(sym);
 					gmodel.setSelectedSymmetriesAndSeq(syms, this);
@@ -288,13 +313,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
     }
 
 
-	private void clearAll() {
-		searchTF.setText("");
-		clearResults();
-		NeoMap map = gviewer.getSeqMap();
-		map.updateWidget();
-	}
-
 	private void displayInTable(List<SeqSymmetry> rows) {
 		model.fireTableDataChanged();
 	}
@@ -317,7 +335,10 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	public void actionPerformed(ActionEvent evt) {
 		Object src = evt.getSource();
 		if (src == this.searchCB) {
-			clearAll();
+			clearResults();
+			NeoMap map = gviewer.getSeqMap();
+			map.updateWidget();
+
 			String searchMode = (String) this.searchCB.getSelectedItem();
 			this.initSequenceCB();
 			this.searchTF.setEnabled(true);
@@ -377,8 +398,8 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		status_bar.setText(friendlySearchStr + ": Searching locally...");
 
 		// Local symmetries
-		List<SeqSymmetry> sym_list = group.findSyms(regex);
-		List<SeqSymmetry> remoteSymList = null;
+		localSymList = group.findSyms(regex);
+		remoteSymList = null;
 
 		// Make sure this search is reasonable to do on a remote server.
 		int actualChars = text.length();
@@ -403,24 +424,24 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			remoteSymList = remoteSearchFeaturesByName(group, text, chrFilter);
 		}
 
-		if (sym_list == null && remoteSymList == null) {
+		if (localSymList == null && remoteSymList == null) {
 			setStatus(friendlySearchStr + ": No matches");
 			return;
 		}
 
-		String statusStr = friendlySearchStr + ": " + (sym_list == null ? 0 : sym_list.size()) + " local matches";
+		String statusStr = friendlySearchStr + ": " + (localSymList == null ? 0 : localSymList.size()) + " local matches";
 		if (this.remoteSearchCheckBox.isSelected() && actualChars >= 3) {
 				statusStr += ", " + (remoteSymList == null ? 0 : remoteSymList.size()) + " remote matches";
 		}
 		setStatus(statusStr);
 		if (this.selectInMapCheckBox.isSelected()) {
-			gmodel.setSelectedSymmetriesAndSeq(sym_list, this);
+			gmodel.setSelectedSymmetriesAndSeq(localSymList, this);
 		}
 		if (remoteSymList != null) {
-			sym_list.addAll(remoteSymList);
+			localSymList.addAll(remoteSymList);
 		}
 
-		tableRows = filterRows(sym_list, chrFilter);
+		tableRows = filterRows(localSymList, chrFilter);
 		displayInTable(tableRows);
 
 	}

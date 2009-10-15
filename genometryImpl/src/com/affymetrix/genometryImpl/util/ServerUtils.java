@@ -489,6 +489,9 @@ public abstract class ServerUtils {
 		BioSeq seq = (BioSeq) query_span.getBioSeq();
 		SymWithProps container = seq.getAnnotation(annot_type);
 		if (container != null) {
+			if (DEBUG) {
+				System.out.println("non-indexed request for " + annot_type);
+			}
 			int annot_count = container.getChildCount();
 			for (int i = 0; i < annot_count; i++) {
 				SeqSymmetry sym = container.getChild(i);
@@ -499,6 +502,9 @@ public abstract class ServerUtils {
 			}
 		} else {
 			// Couldn't find it.  See if it's been indexed.
+			if (DEBUG) {
+					System.out.println("indexed request for " + annot_type);
+				}
 			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
 			if (iSyms != null) {
 				return getIndexedOverlappedSymmetries(

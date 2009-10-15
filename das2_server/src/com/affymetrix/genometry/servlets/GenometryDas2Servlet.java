@@ -283,7 +283,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			System.exit(-1);
+			throw new ServletException(ex);
+			// this is a major deal... kill the servlet.
+			// (don't use System.exit(), as that may kill other processes as well.)
 		}
 		//instantiate DasAuthorization
 		dasAuthorization = new Das2Authorization(new File(data_root));
@@ -487,13 +489,15 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String path_info = request.getPathInfo();
-		String request_url = request.getRequestURL().toString();
-
-		HandleDas2Request(path_info, response, request, request_url);
+		handleDas2Request(response, request);
 	}
 
-	private final void HandleDas2Request(String path_info, HttpServletResponse response, HttpServletRequest request, String request_url) throws IOException {
+	private final void handleDas2Request(HttpServletResponse response, HttpServletRequest request) throws IOException {
+		String path_info = request.getPathInfo();
+		if (DEBUG)
+		{
+			System.out.println("Processing request:" + GeneralUtils.URLDecode(request.getQueryString()));
+		}
 		if (path_info == null || path_info.trim().length() == 0 || path_info.endsWith(sources_query_no_slash) || path_info.endsWith(sources_query_with_slash)) {
 			handleSourcesRequest(request, response, date_init_string);
 		} else if (path_info.endsWith(login_query)) {
@@ -514,7 +518,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			} else if (genome.getSeq(das_command) != null) {
 				handleSequenceRequest(genome, request, response);
 			} else {
-				System.out.println("DAS2 request not recognized, setting HTTP status header to 400, BAD_REQUEST");
+				System.out.println("DAS2 request " + path_info + " not recognized, setting HTTP status header to 400, BAD_REQUEST");
 				response.sendError(response.SC_BAD_REQUEST, "Query was not recognized. " + SERVER_SYNTAX_EXPLANATION);
 			}
 		}
@@ -1341,11 +1345,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String query_type,
 			String xbase) {
 		try {
-			if (DEBUG) {
-				response.setContentType("text/html");
-				PrintWriter pw = response.getWriter();
-				pw.println("overlapping annotations found: " + result.size());
-			} else {
+				if (DEBUG) {
+					System.out.println("overlapping annotations found: " + (result==null ? result : result.size()));
+				}
 				if (result == null) {
 					response.sendError(
 							response.SC_REQUEST_ENTITY_TOO_LARGE,
@@ -1353,7 +1355,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				} else {
 					outputAnnotations(result, outseq, query_type, xbase, response, writerclass, output_format);
 				}
-			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

@@ -57,4 +57,14 @@ public class Util {
 		}
 		return kb;
 	}
+	
+	public static String escapeHTML(String buf) {
+		if (buf != null) {
+			buf = buf.replaceAll("&", "&amp;");
+			buf = buf.replaceAll("<", "&lt;");
+			buf = buf.replaceAll(">", "&gt;");			
+		}
+		
+		return buf;
+	}
 }

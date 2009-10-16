@@ -1998,7 +1998,7 @@ public class GenoPubServlet extends HttpServlet {
 	private void handleAnnotationInfoRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
-        org.dom4j.io.HTMLWriter writer = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
+        org.dom4j.io.HTMLWriter writer = null;
       
 			
 		try {
@@ -2126,26 +2126,39 @@ public class GenoPubServlet extends HttpServlet {
 			row.addElement("TD").addCDATA(publishedBy);
 
 
-	        	
+			writer = new org.dom4j.io.HTMLWriter(res.getWriter(), format);	        	
 	        writer.write(doc);
 	        writer.flush();
 	        writer.close();
 			
 		} catch (Exception e) {
 			
-			writer.close();
+			if (writer != null) {
+				writer.close();
+			}
 			
 			e.printStackTrace();
 			Document doc = DocumentHelper.createDocument();
-			Element root = doc.addElement("Error");
-			root.addAttribute("message", e.getMessage());
+
+			res.setContentType("text/html");
+			Element root = doc.addElement("HTML");
+			
+            Element head = root.addElement("HEAD");
+            Element link = head.addElement("link");
+            link.addAttribute("rel", "stylesheet");
+            link.addAttribute("type", "text/css");
+            Element body = root.addElement("BODY");
+            body.addText(e.toString());
 
 			XMLWriter w = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
 
 			w.write(doc);
+			w.close();
 			
 		} finally {
-			writer.close();
+			if (writer != null) {
+				writer.close();
+			}
 			
 			if (sess != null) {
 				sess.close();

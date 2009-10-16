@@ -162,7 +162,6 @@ public class SeqMapView extends JPanel
 
 	JFrame frm;
 	protected AffyTieredMap seqmap;
-	private int tierCount;
 	UnibrowHairline hairline = null;
 	BioSeq aseq;
 	/**
@@ -344,8 +343,6 @@ public class SeqMapView extends JPanel
 		// the MapColor MUST be a very dark color or else the hairline (which is
 		// drawn with XOR) will not be visible!
 		seqmap.setMapColor(Color.BLACK);
-
-		this.tierCount = seqmap.getTiers().size();
 
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
 
@@ -948,10 +945,12 @@ public class SeqMapView extends JPanel
 	 *   Sets the sequence.  If null, has the same effect as calling clear().
 	 *   @param preserve_selection  if true, then try and keep same selections
 	 *   @param preserve_view  if true, then try and keep same scroll and zoom / scale and offset in
-	 *          both x and y direction.
+	 *       // both x and y direction.
+	 *       [GAH: temporarily changed to preserve scale in only the x direction]
 	 */
 	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
-		setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
+		//    setAnnotatedSeq(seq, preserve_selection, preserve_view, preserve_view);
+		setAnnotatedSeq(seq, preserve_selection, preserve_view, false);
 	}
 
 	public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view_x, boolean preserve_view_y) {
@@ -1126,19 +1125,14 @@ public class SeqMapView extends JPanel
 		}
 		// notifyPlugins();
 
-		if (same_seq && this.seqmap.getTiers().size() != this.tierCount) {
-			/* Reset vertical zoom if the number of tiers has changed */
-			this.seqmap.stretchToFit(!preserve_view_x, true);
-			this.tierCount = this.seqmap.getTiers().size();
-		} else if ((preserve_view_x || preserve_view_y) && same_seq) {
+		// Ignore preserve_view if seq has changed
+		if ((preserve_view_x || preserve_view_y) && same_seq) {
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 		} else {
-			// Ignore preserve_view if seq has changed
 			seqmap.stretchToFit(true, true);
 			zoomToSelections();
 			int[] range = seqmap.getVisibleRange();
 			setZoomSpotX(0.5 * (range[0] + range[1]));
-			this.tierCount = seqmap.getTiers().size();
 		}
 		seqmap.updateWidget();
 		if (DIAGNOSTICS) {

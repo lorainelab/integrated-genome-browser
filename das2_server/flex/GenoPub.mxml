@@ -16,7 +16,7 @@
     url="genopub/security"
     resultFormat="e4x"
     result="onGetSecurity(event)"
-    fault="parentApplication.onFailHttpRequest('Failed to get security', event)"
+    fault="onFailHttpRequest('Failed to get security', event)"
     method="POST"
     useProxy="false">
     <mx:request>
@@ -28,7 +28,7 @@
     url="genopub/dictionaries"
     resultFormat="e4x"
     result="onGetDictionaries(event)"
-    fault="parentApplication.onFailHttpRequest('Failed to get dictionaries', event)"
+    fault="onFailHttpRequest('Failed to get dictionaries', event)"
     method="POST"
     useProxy="false">
     <mx:request>

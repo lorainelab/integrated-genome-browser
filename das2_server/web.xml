@@ -54,18 +54,15 @@
 	
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
-		<url-pattern>GenoPub.swf</url-pattern>
+		<url-pattern>index.html</url-pattern>
 	</servlet-mapping>
+	
 
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>AC_OETags.js</url-pattern>
 	</servlet-mapping>
 	
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>/GenoPub.swf</url-pattern>
-	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>GenometryDas2Servlet</servlet-name>
@@ -99,10 +96,12 @@
 		<web-resource-collection>
 			<web-resource-name>Login</web-resource-name>
 			<description>Login</description>
-			<url-pattern>genopub.swf</url-pattern>
+			<url-pattern>GenoPub.swf</url-pattern>
+			<url-pattern>GenoPub.html</url-pattern>
 			<url-pattern>genopub</url-pattern>
 			<url-pattern>genopub/*</url-pattern>
-			<url-pattern>/*</url-pattern>   
+			<url-pattern>/genome</url-pattern>   
+			<url-pattern>/genome/*</url-pattern>   
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>admin</role-name>

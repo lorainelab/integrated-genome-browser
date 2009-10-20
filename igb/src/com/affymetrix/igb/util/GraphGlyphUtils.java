@@ -108,7 +108,7 @@ public final class GraphGlyphUtils {
 		if (numpoints != graphB.getPointCount()) {
 			return "Graphs must have the same X points";
 		}
-		if ((graphA.getWCoords() == null) != (graphB.getWCoords() == null)) {
+		if (graphA.hasWidth() != graphB.hasWidth()) {
 			// one has width coords, the other doesn't.
 			return "Must select two graphs of the same type";
 		}
@@ -180,7 +180,7 @@ public final class GraphGlyphUtils {
 				((GraphSym) graphA.getInfo()).getGraphSeq();
 		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
 		GraphSymFloat newsym;
-		if (graphA.getWCoords() == null) {
+		if (!graphA.hasWidth()) {
 			newsym = new GraphSymFloat(graphA.getXCoords(), newY, newname, aseq);
 		} else {
 			newsym = new GraphIntervalSym(graphA.getXCoords(), graphA.getWCoords(), newY, newname, aseq);

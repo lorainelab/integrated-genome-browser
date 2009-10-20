@@ -94,6 +94,10 @@ public abstract class GraphGlyph extends Glyph {
 		return ((GraphIntervalSym) graf).getGraphWidthCoord(i);
 	}
 
+	public int[] getWCoords() {
+		return ((GraphIntervalSym) graf).getGraphWidthCoords();
+	}
+
 	public GraphGlyph(GraphSym graf, GraphStateI gstate) {
 		super();
 		state = gstate;
@@ -174,7 +178,7 @@ public abstract class GraphGlyph extends Glyph {
 		checkVisibleBoundsY();
 	}
 
-	protected boolean hasWidth() {
+	public boolean hasWidth() {
 		return (graf instanceof GraphIntervalSym) && ((GraphIntervalSym)graf).getGraphWidthCount() > 0;
 	}
 

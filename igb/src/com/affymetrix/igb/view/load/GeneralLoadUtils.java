@@ -528,7 +528,6 @@ public final class GeneralLoadUtils {
 	 * @param versionName
 	 */
 	void initVersion(final String versionName) {
-		System.out.println("version: " + versionName);
 		if (versionName == null) {
 			return;
 		}

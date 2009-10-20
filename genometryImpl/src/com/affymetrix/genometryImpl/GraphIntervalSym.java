@@ -24,11 +24,12 @@ public final class GraphIntervalSym extends GraphSymFloat {
 
 	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, MutableAnnotatedBioSeq seq) {
 		super(x,y,id,seq);
-		this.wcoords = width;
 
-		if (xcoords.length != y.length || xcoords.length != wcoords.length) {
+		if (this.getPointCount() != y.length || this.getPointCount() != width.length) {
 			throw new IllegalArgumentException("X,W, and Y arrays must have the same length");
 		}
+
+		this.wcoords = width;
 
 		this.removeSpans();
 		int xmin = x[0];
@@ -46,7 +47,7 @@ public final class GraphIntervalSym extends GraphSymFloat {
 
 	@Override
 	public int getChildCount() {
-		return xcoords.length;
+		return this.getPointCount();
 	}
 
 	/**
@@ -55,6 +56,10 @@ public final class GraphIntervalSym extends GraphSymFloat {
 	 */
 	@Override
 	public SeqSymmetry getChild(int index) {
-		return new ScoredSingletonSym(xcoords[index], xcoords[index]+ getGraphWidthCoord(index), graph_original_seq, getGraphYCoord(index));
+		return new ScoredSingletonSym(
+				this.getGraphXCoord(index),
+				this.getGraphXCoord(index)+ getGraphWidthCoord(index),
+				graph_original_seq,
+				getGraphYCoord(index));
 	}
 }

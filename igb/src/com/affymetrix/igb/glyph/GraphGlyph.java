@@ -130,11 +130,11 @@ public abstract class GraphGlyph extends Glyph {
 			this.wcoords = ((GraphIntervalSym) graf).getGraphWidthCoords();
 		}
 
-		if (xcoords == null) {
+		if (graf.getPointCount() == 0) {
 			return;
 		}
 		if (wcoords != null) {
-			if (wcoords.length != xcoords.length || wcoords.length != graf.getPointCount()) {
+			if (wcoords.length != graf.getPointCount()) {
 				return;
 			}
 		}
@@ -258,7 +258,7 @@ public abstract class GraphGlyph extends Glyph {
 			drawHorizontalGridLines(view);
 		}
 
-		if (getShowGraph() && graf != null && xcoords != null && graf.getPointCount() == xcoords.length && xcoords.length > 0) {
+		if (getShowGraph() && graf != null && graf.getPointCount() > 0 && graf.getPointCount() == this.getPointCount()) {
 			DrawTheGraph(offset, view, g, yscale, graph_style, xmin, xmax, heatmap_scaling, heatmap_colors);
 			//      System.out.println("draw count: " + draw_count);
 		}
@@ -318,45 +318,14 @@ public abstract class GraphGlyph extends Glyph {
 		g.setColor(this.getColor());
 
 		// set up prev_point before starting loop
-		coord.x = xcoords[beg_index];
+		coord.x = graf.getGraphXCoord(beg_index);
 		coord.y = offset - ((graf.getGraphYCoord(beg_index) - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, prev_point);
 		float prev_ytemp = graf.getGraphYCoord(beg_index);
 
 		Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
-
-		int draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
-		int draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
-		if (draw_beg_index < 0) {
-			// want draw_beg_index to be index of max xcoord <= view_start
-			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-			draw_beg_index = (-draw_beg_index - 1) - 1;
-			if (draw_beg_index < 0) {
-				draw_beg_index = 0;
-			}
-		}
-		if (draw_end_index < 0) {
-			// want draw_end_index to be index of min xcoord >= view_end
-			//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-			draw_end_index = -draw_end_index - 1;
-			if (draw_end_index < 0) {
-				draw_end_index = 0;
-			} else if (draw_end_index >= xcoords.length) {
-				draw_end_index = xcoords.length - 1;
-			}
-			if (draw_end_index < (xcoords.length - 1)) {
-				draw_end_index++;
-			}
-		}
-
-		// figure out what is the last x index value for the loop
-		if (draw_end_index >= xcoords.length) {
-			if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
-				draw_end_index = xcoords.length - 1;
-			} else {
-				draw_end_index = xcoords.length - 2;
-			}
-		}
+		int draw_beg_index = determineBegIndex(xmin);
+		int draw_end_index = determineEndIndex(xmax, graph_style);
 
 		float ytemp;
 		int ymin_pixel;
@@ -377,7 +346,7 @@ public abstract class GraphGlyph extends Glyph {
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
 			// also offsetting to place within glyph bounds
-			coord.x = xcoords[i];
+			coord.x = graf.getGraphXCoord(i);
 			ytemp = graf.getGraphYCoord(i);
 
 			if (Double.isNaN(ytemp) || Double.isInfinite(ytemp)) {
@@ -394,7 +363,7 @@ public abstract class GraphGlyph extends Glyph {
 			view.transformToPixels(coord, curr_point);
 
 			if (wcoords != null) {
-				x_plus_width2D.x = xcoords[i] + wcoords[i];
+				x_plus_width2D.x = graf.getGraphXCoord(i) + wcoords[i];
 				x_plus_width2D.y = coord.y;
 				view.transformToPixels(x_plus_width2D, curr_x_plus_width);
 			}
@@ -771,8 +740,8 @@ public abstract class GraphGlyph extends Glyph {
 		super.moveRelative(xdelta, ydelta);
 		state.getTierStyle().setHeight(coordbox.height);
 		state.getTierStyle().setY(coordbox.y);
-		if (xcoords != null && mutable_xcoords && xdelta != 0.0f) {
-			int maxi = xcoords.length;
+		if (mutable_xcoords && xdelta != 0.0f) {
+			int maxi = this.getPointCount();
 			for (int i = 0; i < maxi; i++) {
 				xcoords[i] += xdelta;
 			}
@@ -995,11 +964,7 @@ public abstract class GraphGlyph extends Glyph {
 	}
 
 	public int getPointCount() {
-		if (xcoords == null) {
-			return 0;
-		} else {
-			return xcoords.length;
-		}
+		return this.graf.getPointCount();
 	}
 
 	public void setHeatMap(HeatMap hmap) {
@@ -1060,6 +1025,45 @@ public abstract class GraphGlyph extends Glyph {
 
 	public static void setLabelFont(Font f) {
 		default_font = f;
+	}
+
+	private int determineBegIndex(double xmin) {
+		int draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
+		if (draw_beg_index < 0) {
+			// want draw_beg_index to be index of max xcoord <= view_start
+			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
+			draw_beg_index = (-draw_beg_index - 1) - 1;
+			if (draw_beg_index < 0) {
+				draw_beg_index = 0;
+			}
+		}
+		return draw_beg_index;
+	}
+
+	private int determineEndIndex(double xmax, int graph_style) {
+		int draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
+		if (draw_end_index < 0) {
+			// want draw_end_index to be index of min xcoord >= view_end
+			//   (insertion point)  [as defined in Arrays.binarySearch() docs]
+			draw_end_index = -draw_end_index - 1;
+			if (draw_end_index < 0) {
+				draw_end_index = 0;
+			} else if (draw_end_index >= xcoords.length) {
+				draw_end_index = xcoords.length - 1;
+			}
+			if (draw_end_index < (xcoords.length - 1)) {
+				draw_end_index++;
+			}
+		}
+		// figure out what is the last x index value for the loop
+		if (draw_end_index >= xcoords.length) {
+			if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
+				draw_end_index = xcoords.length - 1;
+			} else {
+				draw_end_index = xcoords.length - 2;
+			}
+		}
+		return draw_end_index;
 	}
 }
 

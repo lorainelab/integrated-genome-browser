@@ -87,6 +87,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		return gname;
 	}
 
+	@Override
 	public String getID() {
 		return gid;
 	}
@@ -94,6 +95,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Not allowed to call GraphSym.setID(), id
 	 */
+	@Override
 	public void setID(String id) {
 		if (isLockID()) {
 			SingletonGenometryModel.getLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
@@ -152,6 +154,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Overriding request for property "method" to return graph name.
 	 */
+	@Override
 	public Object getProperty(String key) {
 		if (key.equals("method")) {
 			return getGraphName();
@@ -164,6 +167,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		}
 	}
 
+	@Override
 	public boolean setProperty(String name, Object val) {
 		if (name.equals("id")) {
 			this.setID(name);

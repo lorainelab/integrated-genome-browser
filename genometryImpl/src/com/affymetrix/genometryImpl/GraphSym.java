@@ -106,16 +106,16 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		//    throw new RuntimeException("Attempted to call GraphSym.setID(), but not allowed to modify GraphSym id!");
 	}
 
-	public int getPointCount() {
+	public final int getPointCount() {
 		if (xcoords == null) { return 0; }
 		else { return xcoords.length; }
 	}
 
-	public int[] getGraphXCoords() {
+	public final int[] getGraphXCoords() {
 		return xcoords;
 	}
 
-	public int getGraphXCoord(int i) {
+	public final int getGraphXCoord(int i) {
 		return xcoords[i];
 	}
 

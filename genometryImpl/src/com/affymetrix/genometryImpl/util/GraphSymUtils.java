@@ -79,16 +79,15 @@ public final class GraphSymUtils {
 		if (toseq == null || tospan == null) {
 			return null;
 		}
-		int[] xcoords = original_graf.getGraphXCoords();
 		int[] wcoords = null;
 		if (original_graf instanceof GraphIntervalSym) {
 			wcoords = ((GraphIntervalSym) original_graf).getGraphWidthCoords();
 		}
-		double graf_base_length = xcoords[xcoords.length - 1] - xcoords[0];
+		double graf_base_length = original_graf.getGraphXCoord(original_graf.getPointCount() - 1) - original_graf.getGraphXCoord(0);
 
 		// calculating graf length from xcoords, since graf's span
 		//    is (usually) incorrectly set to start = 0, end = seq.getLength();
-		double points_per_base = (double) xcoords.length / graf_base_length;
+		double points_per_base = (double) original_graf.getPointCount() / graf_base_length;
 		int initcap = (int) (points_per_base * toseq.getLength() * 1.5);
 		if (initcap > MAX_INITCAP) {
 			initcap = MAX_INITCAP;
@@ -115,41 +114,17 @@ public final class GraphSymUtils {
 				scale = -scale;
 			}
 			double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
-			int kmax = xcoords.length;
+			int kmax = original_graf.getPointCount();
 
 
 			int start_index = 0;
 
 			if (wcoords == null) {
-				// If there are no width coordinates, then we can speed-up the
-				// drawing be determining the start_index of the first x-value in range.
-				// If there are widths, this is much harder to determine, since
-				// even something starting way over to the left but having a huge width
-				// could intersect our region.  So when there are wcoords, don't
-				// try to determine start_index.  Luckily, when there are widths, there
-				// tend to be fewer graph points to deal with.
-
-				// should really use a binary search here to speed things up...
-				// but right now just doing a brute force scan for each leaf span to map to toseq
-				//    any graph points that overlap fspan in fromseq
-				// assumes graph is sorted
-				start_index = Arrays.binarySearch(xcoords, ostart);
-				if (start_index < 0) {
-					start_index = -start_index - 1;
-				} else {
-					// start_index > 0, so found exact match, but possible it's part of group of exact matches,
-					//    so move to left until find a non-match
-					while ((start_index > 0) && (xcoords[start_index - 1] == xcoords[start_index])) {
-						start_index--;
-					}
-				}
-				if (start_index < 0) {
-					start_index = 0;
-				} // making sure previous conditional didn't result in index < 0
+				start_index = determineBegIndex(original_graf.getGraphXCoords(), ostart);
 			}
 
 			for (int k = start_index; k < kmax; k++) {
-				final int old_xcoord = xcoords[k];
+				final int old_xcoord = original_graf.getGraphXCoord(k);
 				if (old_xcoord >= oend) {
 					break; // since the array is sorted, we can stop here
 				}
@@ -496,5 +471,33 @@ public final class GraphSymUtils {
 		span_graph.setProperty("TransFrag", "TransFrag");
 		return span_graph;
 
+	}
+
+	private static int determineBegIndex(int[] xcoords, int xmin) {
+		// If there are no width coordinates, then we can speed-up the
+		// drawing be determining the start_index of the first x-value in range.
+		// If there are widths, this is much harder to determine, since
+		// even something starting way over to the left but having a huge width
+		// could intersect our region.  So when there are wcoords, don't
+		// try to determine start_index.  Luckily, when there are widths, there
+		// tend to be fewer graph points to deal with.
+		// should really use a binary search here to speed things up...
+		// but right now just doing a brute force scan for each leaf span to map to toseq
+		//    any graph points that overlap fspan in fromseq
+		// assumes graph is sorted
+		int draw_beg_index = Arrays.binarySearch(xcoords, xmin);
+		if (draw_beg_index < 0) {
+			draw_beg_index = -draw_beg_index - 1;
+		} else {
+			// start_index > 0, so found exact match, but possible it's part of group of exact matches,
+			//    so move to left until find a non-match
+			while ((draw_beg_index > 0) && (xcoords[draw_beg_index - 1] == xcoords[draw_beg_index])) {
+				draw_beg_index--;
+			}
+		}
+		if (draw_beg_index < 0) {
+			draw_beg_index = 0;
+		} // making sure previous conditional didn't result in index < 0
+		return draw_beg_index;
 	}
 }

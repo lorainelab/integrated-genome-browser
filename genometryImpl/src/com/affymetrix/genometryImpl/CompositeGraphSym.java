@@ -39,7 +39,7 @@ public final class CompositeGraphSym extends GraphSymFloat {
 				slice_ycoords = slice.copyGraphYCoords();
 			}
 
-			if (xcoords == null && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
+			if (this.getPointCount() == 0 && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
 				setCoords(slice_xcoords, slice_ycoords);
 				slice.setCoords(null, null);
 			} else {
@@ -55,7 +55,7 @@ public final class CompositeGraphSym extends GraphSymFloat {
 						slice_index = (-slice_index - 1);
 					}
 
-					int[] new_xcoords = new int[xcoords.length + slice_xcoords.length];
+					int[] new_xcoords = new int[this.getPointCount() + slice_xcoords.length];
 					int new_index = 0;
 					// since slices cannot overlap, new xcoord array should be:
 
@@ -68,8 +68,8 @@ public final class CompositeGraphSym extends GraphSymFloat {
 					System.arraycopy(slice_xcoords, 0, new_xcoords, new_index, slice_xcoords.length);
 					new_index += slice_xcoords.length;
 					//    old xcoord array entries from "A" to end of old xcoord array
-					if (slice_index < xcoords.length) {
-						System.arraycopy(xcoords, slice_index, new_xcoords, new_index, xcoords.length - slice_index);
+					if (slice_index < this.getPointCount()) {
+						System.arraycopy(xcoords, slice_index, new_xcoords, new_index, this.getPointCount() - slice_index);
 					}
 
 					// get rid of old xcoords

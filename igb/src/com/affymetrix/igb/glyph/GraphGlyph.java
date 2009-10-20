@@ -262,9 +262,8 @@ public abstract class GraphGlyph extends Glyph {
 			drawHorizontalGridLines(view);
 		}
 
-		if (getShowGraph() && graf != null && graf.getPointCount() > 0 && graf.getPointCount() == this.getPointCount()) {
+		if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
 			DrawTheGraph(offset, view, g, yscale, graph_style, xmin, xmax, heatmap_scaling, heatmap_colors);
-			//      System.out.println("draw count: " + draw_count);
 		}
 
 		// drawing the "handle", which is the only part of the graph that recognizes hits

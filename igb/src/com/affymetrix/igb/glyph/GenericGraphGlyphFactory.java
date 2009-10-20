@@ -121,12 +121,9 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
       newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
     }
-    if (newgraf == null || newgraf.getGraphXCoords() == null) {
+    if (newgraf == null || newgraf.getPointCount() == 0) {
       return null;
     } 
-//    else if (newgraf.getGraphXCoords().length == 0 || newgraf.getPointCount() == 0) {
-//      return null;
-//    }
 
     String graph_name = newgraf.getGraphName();
     if (graph_name == null) {

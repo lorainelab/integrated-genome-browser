@@ -113,11 +113,9 @@ public final class GraphGlyphUtils {
 			return "Must select two graphs of the same type";
 		}
 
-		int[] xcoordsA = graphA.getXCoords();
-		int[] xcoordsB = graphB.getXCoords();
 		// checking that both graphs have same x points
 		for (int i = 0; i < numpoints; i++) {
-			if (xcoordsA[i] != xcoordsB[i]) {
+			if (graphA.getXCoord(i) != graphB.getXCoord(i)) {
 				return "Graphs must have the same X points";
 			}
 		}

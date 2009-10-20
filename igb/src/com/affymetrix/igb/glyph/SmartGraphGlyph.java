@@ -109,7 +109,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 		}
 		this.addChild(thresh_glyph);
 
-		if (xcoords == null || graf == null || xcoords.length <= 0 || graf.getPointCount() <= 0) {
+		if (this.getPointCount() == 0) {
 			return;
 		}
 
@@ -228,7 +228,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 	Point last_point_temp = new Point(0, 0);
 
 	public void drawGraph(ViewI view) {
-		if (xcoords.length <= 0) {
+		if (this.getPointCount() == 0) {
 			return; // there is nothing to draw!
 		}
 		int graph_style = getGraphStyle();
@@ -310,43 +310,14 @@ public final class SmartGraphGlyph extends GraphGlyph {
 	}
 
 	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
-		// not using graph cache...
-		// using binary search to find end points --
-		//    assumes xcoords array is ordered by increasing value
-		int draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
-
-		// The +1 on draw_end_index might be an error, but it gets corrected below
-		int draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
-
-		if (draw_beg_index < 0) {
-			// want draw_beg_index to be index of max xcoord <= view_start
-			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-			draw_beg_index = (-draw_beg_index - 1) - 1;
-			if (draw_beg_index < 0) {
-				draw_beg_index = 0;
-			}
-		}
-		if (draw_end_index < 0) {
-			// want draw_end_index to be index of min xcoord >= view_end
-			//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-			draw_end_index = -draw_end_index - 1;
-			if (draw_end_index < 0) {
-				draw_end_index = 0;
-			} else if (draw_end_index >= xcoords.length) {
-				draw_end_index = xcoords.length - 1;
-			}
-			if (draw_end_index < (xcoords.length - 1)) {
-				draw_end_index++;
-			}
-		}
-
+		int draw_beg_index = determineBegIndex(xmin);
+		int draw_end_index = determineEndIndex(xmax);
 		// draw_end_index is sometimes too large (by 1)
-		if (draw_end_index >= xcoords.length) {
-			draw_end_index = xcoords.length - 1;
+		if (draw_end_index >= this.getPointCount()) {
+			draw_end_index = this.getPointCount() - 1;
 		}
 
-		coord.x = xcoords[draw_beg_index];
-		//      coord.y = offset - (ycoords[draw_beg_index] * yscale);
+		coord.x = graf.getGraphXCoord(draw_beg_index);
 		coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, prev_point);
 
@@ -364,7 +335,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 			g.setColor(getBackgroundColor());
 		}
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			coord.x = xcoords[i];
+			coord.x = graf.getGraphXCoord(i);
 			coord.y = offset - ((graf.getGraphYCoord(i) - getVisibleMinY()) * yscale);
 			view.transformToPixels(coord, curr_point);
 			if (prev_point.x == curr_point.x) {
@@ -413,7 +384,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 				}
 
 				if (graph_style == LINE_GRAPH && i > 0 && i <= graf.getPointCount()) {
-					coord.x = xcoords[i - 1];
+					coord.x = graf.getGraphXCoord(i - 1);
 					coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
 					view.transformToPixels(coord, last_point_temp);
 
@@ -548,31 +519,10 @@ public final class SmartGraphGlyph extends GraphGlyph {
 		if (make_syms) {
 			// if writing to region_holder, then want to do _whole_ graph, not just
 			//   what's in current view
-			draw_end_index = xcoords.length - 1;
+			draw_end_index = this.getPointCount() - 1;
 		} else {
-			draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
-			draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
-			if (draw_beg_index < 0) {
-				// want draw_beg_index to be index of max xcoord <= view_start
-				//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-				draw_beg_index = (-draw_beg_index - 1) - 1;
-				if (draw_beg_index < 0) {
-					draw_beg_index = 0;
-				}
-			}
-			if (draw_end_index < 0) {
-				// want draw_end_index to be index of min xcoord >= view_end
-				//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-				draw_end_index = -draw_end_index - 1;
-				if (draw_end_index < 0) {
-					draw_end_index = 0;
-				} else if (draw_end_index >= xcoords.length) {
-					draw_end_index = xcoords.length - 1;
-				}
-				if (draw_end_index < (xcoords.length - 1)) {
-					draw_end_index++;
-				}
-			}
+			draw_beg_index = determineBegIndex(xmin);
+			draw_end_index = determineEndIndex(xmax);
 		}
 
 
@@ -604,7 +554,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 
 		boolean pass_threshold_mode = false;
 		int min_index = 0;
-		int max_index = xcoords.length - 1;
+		int max_index = this.getPointCount() - 1;
 
 		// need to widen range searched to include previous and next points out of view that
 		//   pass threshold (unless distance to view is > max_gap_threshold
@@ -612,8 +562,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 
 		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
 		while ((new_beg > min_index) &&
-				// ((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
-				((xcoords[draw_beg_index] - xcoords[new_beg]) <= max_gap_threshold)) {
+				((graf.getGraphXCoord(draw_beg_index) - graf.getGraphXCoord(new_beg)) <= max_gap_threshold)) {
 			new_beg--;
 		}
 		draw_beg_index = new_beg;
@@ -625,13 +574,13 @@ public final class SmartGraphGlyph extends GraphGlyph {
 
 		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
 		while ((new_end < max_index) && // end_index is really the maximum allowed draw_end_index
-				((xcoords[new_end] - xcoords[draw_end_index]) <= max_gap_threshold)) {
+				((graf.getGraphXCoord(new_end) - graf.getGraphXCoord(draw_end_index)) <= max_gap_threshold)) {
 			new_end++;
 		}
 		draw_end_index = new_end;
 
-		if (draw_end_index >= xcoords.length) {
-			draw_end_index = xcoords.length - 1;
+		if (draw_end_index >= this.getPointCount()) {
+			draw_end_index = this.getPointCount() - 1;
 		}
 
 
@@ -643,7 +592,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 		//      true, false, false
 		//      true, true, false
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			x = xcoords[i];
+			x = graf.getGraphXCoord(i);
 			w = 0;
 			if (wcoords != null) {
 				w = wcoords[i];

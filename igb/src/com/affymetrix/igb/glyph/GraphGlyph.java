@@ -74,7 +74,7 @@ public abstract class GraphGlyph extends Glyph {
 	float point_max_ycoord = Float.POSITIVE_INFINITY;
 	float point_min_ycoord = Float.NEGATIVE_INFINITY;
 	// assumes sorted points, each x corresponding to y
-	int xcoords[];
+	private int xcoords[];
 	int wcoords[];
 	GraphSym graf;
 	public static int handle_width = 10;  // width of handle in pixels
@@ -83,6 +83,10 @@ public abstract class GraphGlyph extends Glyph {
 	Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	GraphStateI state;
 	LinearTransform scratch_trans = new LinearTransform();
+
+	public float getXCoord(int i) {
+		return graf.getGraphXCoord(i);
+	}
 
 	public float getYCoord(int i) {
 		return graf.getGraphYCoord(i);
@@ -325,7 +329,15 @@ public abstract class GraphGlyph extends Glyph {
 
 		Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 		int draw_beg_index = determineBegIndex(xmin);
-		int draw_end_index = determineEndIndex(xmax, graph_style);
+		int draw_end_index = determineEndIndex(xmax);
+		// figure out what is the last x index value for the loop
+		if (draw_end_index >= this.getPointCount()) {
+			if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
+				draw_end_index = this.getPointCount() - 1;
+			} else {
+				draw_end_index = this.getPointCount() - 2;
+			}
+		}
 
 		float ytemp;
 		int ymin_pixel;
@@ -1027,7 +1039,7 @@ public abstract class GraphGlyph extends Glyph {
 		default_font = f;
 	}
 
-	private int determineBegIndex(double xmin) {
+	protected int determineBegIndex(double xmin) {
 		int draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
 		if (draw_beg_index < 0) {
 			// want draw_beg_index to be index of max xcoord <= view_start
@@ -1040,7 +1052,7 @@ public abstract class GraphGlyph extends Glyph {
 		return draw_beg_index;
 	}
 
-	private int determineEndIndex(double xmax, int graph_style) {
+	protected int determineEndIndex(double xmax) {
 		int draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
 		if (draw_end_index < 0) {
 			// want draw_end_index to be index of min xcoord >= view_end
@@ -1048,19 +1060,11 @@ public abstract class GraphGlyph extends Glyph {
 			draw_end_index = -draw_end_index - 1;
 			if (draw_end_index < 0) {
 				draw_end_index = 0;
-			} else if (draw_end_index >= xcoords.length) {
-				draw_end_index = xcoords.length - 1;
+			} else if (draw_end_index >= this.getPointCount()) {
+				draw_end_index = this.getPointCount() - 1;
 			}
-			if (draw_end_index < (xcoords.length - 1)) {
+			if (draw_end_index < (this.getPointCount() - 1)) {
 				draw_end_index++;
-			}
-		}
-		// figure out what is the last x index value for the loop
-		if (draw_end_index >= xcoords.length) {
-			if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
-				draw_end_index = xcoords.length - 1;
-			} else {
-				draw_end_index = xcoords.length - 2;
 			}
 		}
 		return draw_end_index;

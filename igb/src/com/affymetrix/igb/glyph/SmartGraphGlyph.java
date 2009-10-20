@@ -594,8 +594,8 @@ public final class SmartGraphGlyph extends GraphGlyph {
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			x = graf.getGraphXCoord(i);
 			w = 0;
-			if (wcoords != null) {
-				w = wcoords[i];
+			if (this.hasWidth()) {
+				w = this.getWCoord(i);
 			}
 			y = graf.getGraphYCoord(i);
 

@@ -74,8 +74,6 @@ public abstract class GraphGlyph extends Glyph {
 	float point_max_ycoord = Float.POSITIVE_INFINITY;
 	float point_min_ycoord = Float.NEGATIVE_INFINITY;
 	// assumes sorted points, each x corresponding to y
-	private int xcoords[];
-	int wcoords[];
 	GraphSym graf;
 	public static int handle_width = 10;  // width of handle in pixels
 	public static final int pointer_width = 10;
@@ -90,6 +88,10 @@ public abstract class GraphGlyph extends Glyph {
 
 	public float getYCoord(int i) {
 		return graf.getGraphYCoord(i);
+	}
+
+	protected float getWCoord(int i) {
+		return ((GraphIntervalSym) graf).getGraphWidthCoord(i);
 	}
 
 	public GraphGlyph(GraphSym graf, GraphStateI gstate) {
@@ -129,21 +131,19 @@ public abstract class GraphGlyph extends Glyph {
 		//must call again to get it to properly render
 		setColor(state.getTierStyle().getColor());
 
-		this.xcoords = graf.getGraphXCoords();
-		if (graf instanceof GraphIntervalSym) {
-			this.wcoords = ((GraphIntervalSym) graf).getGraphWidthCoords();
-		}
+		this.graf = graf;
 
 		if (graf.getPointCount() == 0) {
 			return;
 		}
-		if (wcoords != null) {
-			if (wcoords.length != graf.getPointCount()) {
-				return;
+		
+		if (graf instanceof GraphIntervalSym) {
+			if (((GraphIntervalSym) graf).getGraphWidthCount() > 0) {
+				if (((GraphIntervalSym) graf).getGraphWidthCount() != graf.getPointCount()) {
+					return;
+				}
 			}
 		}
-
-		this.graf = graf;
 
 		boolean rangeInit = false;
 		if (toInitialize && map != null) {
@@ -172,6 +172,10 @@ public abstract class GraphGlyph extends Glyph {
 			point_min_ycoord = point_max_ycoord - 1;
 		}
 		checkVisibleBoundsY();
+	}
+
+	protected boolean hasWidth() {
+		return (graf instanceof GraphIntervalSym) && ((GraphIntervalSym)graf).getGraphWidthCount() > 0;
 	}
 
 	public float[] getVisibleYRange() {
@@ -373,14 +377,14 @@ public abstract class GraphGlyph extends Glyph {
 			coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 			view.transformToPixels(coord, curr_point);
 
-			if (wcoords != null) {
-				x_plus_width2D.x = graf.getGraphXCoord(i) + wcoords[i];
+			if (this.hasWidth()) {
+				x_plus_width2D.x = graf.getGraphXCoord(i) + this.getWCoord(i);
 				x_plus_width2D.y = coord.y;
 				view.transformToPixels(x_plus_width2D, curr_x_plus_width);
 			}
 
 			if (graph_style == LINE_GRAPH) {
-				if (wcoords == null) {
+				if (!this.hasWidth()) {
 					g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 				} else {
 					// Draw a line representing the width: (x,y) to (x + width,y)
@@ -409,14 +413,14 @@ public abstract class GraphGlyph extends Glyph {
 					yheight_pixel = 1;
 				}
 
-				if (wcoords == null) {
+				if (!this.hasWidth()) {
 					g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
 				} else {
 					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
 					g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 				}
 			} else if (graph_style == DOT_GRAPH || graph_style == BIG_DOT_GRAPH) {
-				if (wcoords == null) {
+				if (!this.hasWidth()) {
 					if (graph_style == BIG_DOT_GRAPH) {
 						g.fillRect(curr_point.x - 1, curr_point.y - 1, 3, 3);
 					} else {
@@ -433,7 +437,7 @@ public abstract class GraphGlyph extends Glyph {
 			} else if (graph_style == HEAT_MAP) {
 
 
-				if (wcoords == null) {
+				if (!this.hasWidth()) {
 					// there are no wcoords, so bars go from previous x to current x (like stairstep graphs)
 					// When multiple coords map to one pixel, use the color corresponding to the max value.
 					float the_y = prev_ytemp;
@@ -487,7 +491,7 @@ public abstract class GraphGlyph extends Glyph {
 				}
 				// If this is the very last point, special rules apply
 				if (i == draw_end_index) {
-					int stairwidth = (wcoords == null) ? 1 : curr_x_plus_width.x - curr_point.x;
+					int stairwidth = (!this.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
 					g.fillRect(curr_point.x, Math.min(zero_point.y, curr_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(curr_point.y - zero_point.y)));
 				}
 			}
@@ -752,6 +756,7 @@ public abstract class GraphGlyph extends Glyph {
 		state.getTierStyle().setHeight(coordbox.height);
 		state.getTierStyle().setY(coordbox.y);
 		if (mutable_xcoords && xdelta != 0.0f) {
+			int[] xcoords = graf.getGraphXCoords();
 			int maxi = this.getPointCount();
 			for (int i = 0; i < maxi; i++) {
 				xcoords[i] += xdelta;
@@ -966,16 +971,11 @@ public abstract class GraphGlyph extends Glyph {
 	}
 
 	public int[] getXCoords() {
-		return xcoords;
-	}
-
-	/** Returns the width coordinate array or null. */
-	public int[] getWCoords() {
-		return wcoords;
+		return graf.getGraphXCoords();
 	}
 
 	public int getPointCount() {
-		return this.graf.getPointCount();
+		return graf.getPointCount();
 	}
 
 	public void setHeatMap(HeatMap hmap) {
@@ -1039,7 +1039,7 @@ public abstract class GraphGlyph extends Glyph {
 	}
 
 	protected int determineBegIndex(double xmin) {
-		int draw_beg_index = Arrays.binarySearch(xcoords, (int) xmin);
+		int draw_beg_index = Arrays.binarySearch(graf.getGraphXCoords(), (int) xmin);
 		if (draw_beg_index < 0) {
 			// want draw_beg_index to be index of max xcoord <= view_start
 			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
@@ -1052,7 +1052,7 @@ public abstract class GraphGlyph extends Glyph {
 	}
 
 	protected int determineEndIndex(double xmax) {
-		int draw_end_index = Arrays.binarySearch(xcoords, (int) xmax) + 1;
+		int draw_end_index = Arrays.binarySearch(graf.getGraphXCoords(), (int) xmax) + 1;
 		if (draw_end_index < 0) {
 			// want draw_end_index to be index of min xcoord >= view_end
 			//   (insertion point)  [as defined in Arrays.binarySearch() docs]

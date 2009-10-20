@@ -29,9 +29,9 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
 	public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
 
-	int xcoords[];
-	MutableAnnotatedBioSeq graph_original_seq;
-	String gid;
+	protected int xcoords[];
+	protected MutableAnnotatedBioSeq graph_original_seq;
+	private String gid;
 
 	/**
 	 *  id_locked is a temporary fix to allow graph id to be changed after construction, 

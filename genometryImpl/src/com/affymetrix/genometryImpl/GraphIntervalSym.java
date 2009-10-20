@@ -45,6 +45,13 @@ public final class GraphIntervalSym extends GraphSymFloat {
 		return wcoords[i];
 	}
 
+	public int getGraphWidthCount() {
+		if (wcoords == null) {
+			return 0;
+		}
+		return wcoords.length;
+	}
+
 	@Override
 	public int getChildCount() {
 		return this.getPointCount();

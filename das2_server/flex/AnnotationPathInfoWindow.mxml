@@ -32,7 +32,7 @@
     </mx:Script>
     
     <mx:VBox height="100%" width="100%" styleName="panelBody" verticalGap="8">
-		<mx:Tree id="annotationGroupingTree" height="100%" width="100%" labelField="@name" defaultLeafIcon="@Embed(source='assets/folder.gif')">
+		<mx:Tree id="annotationGroupingTree" height="100%" width="100%" labelField="@name" defaultLeafIcon="@Embed(source='assets/folder.gif')" borderStyle="none">
 	    	<mx:dataProvider>{annotation.AnnotationGroupings.AnnotationGrouping}</mx:dataProvider>
 	    </mx:Tree>
 

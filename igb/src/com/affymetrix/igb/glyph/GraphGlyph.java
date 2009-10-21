@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 
@@ -179,7 +180,7 @@ public abstract class GraphGlyph extends Glyph {
 	}
 
 	public boolean hasWidth() {
-		return (graf instanceof GraphIntervalSym) && ((GraphIntervalSym)graf).getGraphWidthCount() > 0;
+		return GraphSymUtils.hasWidth(graf);
 	}
 
 	public float[] getVisibleYRange() {
@@ -335,17 +336,9 @@ public abstract class GraphGlyph extends Glyph {
 		float prev_ytemp = graf.getGraphYCoord(beg_index);
 
 		Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
-		int draw_beg_index = determineBegIndex(xmin);
-		int draw_end_index = determineEndIndex(xmax);
-		// figure out what is the last x index value for the loop
-		if (draw_end_index >= this.getPointCount()) {
-			if (graph_style == HEAT_MAP || graph_style == DOT_GRAPH) {
-				draw_end_index = this.getPointCount() - 1;
-			} else {
-				draw_end_index = this.getPointCount() - 2;
-			}
-		}
-
+		int draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
+		int draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax);
+		
 		float ytemp;
 		int ymin_pixel;
 		int yheight_pixel;
@@ -974,11 +967,11 @@ public abstract class GraphGlyph extends Glyph {
 		return state.getGraphStyle();
 	}
 
-	public int[] getXCoords() {
+	public final int[] getXCoords() {
 		return graf.getGraphXCoords();
 	}
 
-	public int getPointCount() {
+	public final int getPointCount() {
 		return graf.getPointCount();
 	}
 
@@ -1040,37 +1033,6 @@ public abstract class GraphGlyph extends Glyph {
 
 	public static void setLabelFont(Font f) {
 		default_font = f;
-	}
-
-	protected int determineBegIndex(double xmin) {
-		int draw_beg_index = Arrays.binarySearch(graf.getGraphXCoords(), (int) xmin);
-		if (draw_beg_index < 0) {
-			// want draw_beg_index to be index of max xcoord <= view_start
-			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
-			draw_beg_index = (-draw_beg_index - 1) - 1;
-			if (draw_beg_index < 0) {
-				draw_beg_index = 0;
-			}
-		}
-		return draw_beg_index;
-	}
-
-	protected int determineEndIndex(double xmax) {
-		int draw_end_index = Arrays.binarySearch(graf.getGraphXCoords(), (int) xmax) + 1;
-		if (draw_end_index < 0) {
-			// want draw_end_index to be index of min xcoord >= view_end
-			//   (insertion point)  [as defined in Arrays.binarySearch() docs]
-			draw_end_index = -draw_end_index - 1;
-			if (draw_end_index < 0) {
-				draw_end_index = 0;
-			} else if (draw_end_index >= this.getPointCount()) {
-				draw_end_index = this.getPointCount() - 1;
-			}
-			if (draw_end_index < (this.getPointCount() - 1)) {
-				draw_end_index++;
-			}
-		}
-		return draw_end_index;
 	}
 }
 

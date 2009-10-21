@@ -79,10 +79,6 @@ public final class GraphSymUtils {
 		if (toseq == null || tospan == null) {
 			return null;
 		}
-		int[] wcoords = null;
-		if (original_graf instanceof GraphIntervalSym) {
-			wcoords = ((GraphIntervalSym) original_graf).getGraphWidthCoords();
-		}
 		double graf_base_length = original_graf.getGraphXCoord(original_graf.getPointCount() - 1) - original_graf.getGraphXCoord(0);
 
 		// calculating graf length from xcoords, since graf's span
@@ -95,7 +91,7 @@ public final class GraphSymUtils {
 		IntList new_xcoords = new IntList(initcap);
 		FloatList new_ycoords = new FloatList(initcap);
 		IntList new_wcoords = null;
-		if (wcoords != null) {
+		if (hasWidth(original_graf)) {
 			new_wcoords = new IntList(initcap);
 		}
 
@@ -119,8 +115,16 @@ public final class GraphSymUtils {
 
 			int start_index = 0;
 
-			if (wcoords == null) {
-				start_index = determineBegIndex(original_graf.getGraphXCoords(), ostart);
+			if (!hasWidth(original_graf)) {
+				// If there are no width coordinates, then we can speed up the
+				// drawing by determining the start_index of the first x-value in range.
+				// If there are widths, this is much harder to determine, since
+				// even something starting way over to the left but having a huge width
+				// could intersect our region.  So when there are wcoords, don't
+				// try to determine start_index.  Luckily, when there are widths, there
+				// tend to be fewer graph points to deal with.
+				// assumes graph is sorted
+				start_index = determineBegIndex(original_graf, ostart-1);
 			}
 
 			for (int k = start_index; k < kmax; k++) {
@@ -132,8 +136,8 @@ public final class GraphSymUtils {
 
 				// new_x2coord will represent x + width: initial assumption is width is zero
 				int new_x2coord = new_xcoord;
-				if (wcoords != null) {
-					final int old_x2coord = old_xcoord + wcoords[k];
+				if (hasWidth(original_graf)) {
+					final int old_x2coord = old_xcoord + ((GraphIntervalSym)original_graf).getGraphWidthCoord(k);
 					new_x2coord = (int) ((scale * old_x2coord) + offset);
 					if (new_x2coord >= tspan.getEnd()) {
 						new_x2coord = tspan.getEnd();
@@ -142,7 +146,7 @@ public final class GraphSymUtils {
 
 				final int tstart = tspan.getStart();
 				if (new_xcoord < tstart) {
-					if (wcoords == null) {
+					if (!hasWidth(original_graf)) {
 						continue;
 					} else if (new_x2coord > tstart) {
 						new_xcoord = tstart;
@@ -153,7 +157,7 @@ public final class GraphSymUtils {
 
 				new_xcoords.add(new_xcoord);
 				new_ycoords.add(original_graf.getGraphYCoord(k));
-				if (wcoords != null) {
+				if (hasWidth(original_graf)) {
 					int new_wcoord = new_x2coord - new_xcoord;
 					new_wcoords.add(new_wcoord);
 				}
@@ -164,7 +168,7 @@ public final class GraphSymUtils {
 			newid = GraphSymUtils.getUniqueGraphID(newid, toseq);
 		}
 
-		if (new_wcoords == null) {
+		if (!hasWidth(original_graf)) {
 			new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
 					newid, toseq);
 		} else {
@@ -473,31 +477,37 @@ public final class GraphSymUtils {
 
 	}
 
-	private static int determineBegIndex(int[] xcoords, int xmin) {
-		// If there are no width coordinates, then we can speed-up the
-		// drawing be determining the start_index of the first x-value in range.
-		// If there are widths, this is much harder to determine, since
-		// even something starting way over to the left but having a huge width
-		// could intersect our region.  So when there are wcoords, don't
-		// try to determine start_index.  Luckily, when there are widths, there
-		// tend to be fewer graph points to deal with.
-		// should really use a binary search here to speed things up...
-		// but right now just doing a brute force scan for each leaf span to map to toseq
-		//    any graph points that overlap fspan in fromseq
-		// assumes graph is sorted
-		int draw_beg_index = Arrays.binarySearch(xcoords, xmin);
-		if (draw_beg_index < 0) {
-			draw_beg_index = -draw_beg_index - 1;
-		} else {
-			// start_index > 0, so found exact match, but possible it's part of group of exact matches,
-			//    so move to left until find a non-match
-			while ((draw_beg_index > 0) && (xcoords[draw_beg_index - 1] == xcoords[draw_beg_index])) {
-				draw_beg_index--;
+	/**
+	 * Find last point with value <= xmin.
+	 * @param xmin
+	 * @return
+	 */
+	public final static int determineBegIndex(GraphSym graf, double xmin) {
+		int xCoordLength = graf.getPointCount();
+		for (int i=0;i<xCoordLength;i++) {
+			if (graf.getGraphXCoord(i) > (int)xmin) {
+				return Math.max(0, i-1);
 			}
 		}
-		if (draw_beg_index < 0) {
-			draw_beg_index = 0;
-		} // making sure previous conditional didn't result in index < 0
-		return draw_beg_index;
+		return 0;
+	}
+
+	/**
+	 * Find first point with value >= xmax.
+	 * @param xmax
+	 * @return
+	 */
+	public final static int determineEndIndex(GraphSym graf, double xmax) {
+		int xCoordLength = graf.getPointCount();
+		for (int i=0;i<xCoordLength;i++) {
+			if (graf.getGraphXCoord(i) >= (int)xmax) {
+				return i;
+			}
+		}
+		return xCoordLength-1;
+	}
+
+	public final static boolean hasWidth(GraphSym graf) {
+		return (graf instanceof GraphIntervalSym) && ((GraphIntervalSym)graf).getGraphWidthCount() > 0;
 	}
 }

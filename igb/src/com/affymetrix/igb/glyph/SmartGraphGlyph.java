@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.View;
@@ -310,12 +311,8 @@ public final class SmartGraphGlyph extends GraphGlyph {
 	}
 
 	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
-		int draw_beg_index = determineBegIndex(xmin);
-		int draw_end_index = determineEndIndex(xmax);
-		// draw_end_index is sometimes too large (by 1)
-		if (draw_end_index >= this.getPointCount()) {
-			draw_end_index = this.getPointCount() - 1;
-		}
+		int draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
+		int draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax);
 
 		coord.x = graf.getGraphXCoord(draw_beg_index);
 		coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
@@ -521,8 +518,8 @@ public final class SmartGraphGlyph extends GraphGlyph {
 			//   what's in current view
 			draw_end_index = this.getPointCount() - 1;
 		} else {
-			draw_beg_index = determineBegIndex(xmin);
-			draw_end_index = determineEndIndex(xmax);
+			draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
+			draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax);
 		}
 
 

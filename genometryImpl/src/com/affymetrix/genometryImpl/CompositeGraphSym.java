@@ -44,10 +44,10 @@ public final class CompositeGraphSym extends GraphSymFloat {
 				slice.setCoords(null, null);
 			} else {
 				// if no data points in slice, then just keep old coords
-				if ((slice_xcoords != null) && (slice_xcoords.length > 0)) {
+				if (slice.getPointCount() > 0) {
 					// use binary search to figure out what index "A" that slice_xcoords array should insert
 					//    into existing xcoord array
-					int slice_min = slice_xcoords[0];
+					int slice_min = slice.getGraphXCoord(0);
 					int slice_index = Arrays.binarySearch(xcoords, slice_min);
 					if (slice_index < 0) {
 						// want draw_beg_index to be index of max xcoord <= view_start
@@ -55,7 +55,7 @@ public final class CompositeGraphSym extends GraphSymFloat {
 						slice_index = (-slice_index - 1);
 					}
 
-					int[] new_xcoords = new int[this.getPointCount() + slice_xcoords.length];
+					int[] new_xcoords = new int[this.getPointCount() + slice.getPointCount()];
 					int new_index = 0;
 					// since slices cannot overlap, new xcoord array should be:
 
@@ -65,8 +65,8 @@ public final class CompositeGraphSym extends GraphSymFloat {
 						new_index += slice_index;
 					}
 					//    all of slice_xcoords entries
-					System.arraycopy(slice_xcoords, 0, new_xcoords, new_index, slice_xcoords.length);
-					new_index += slice_xcoords.length;
+					System.arraycopy(slice_xcoords, 0, new_xcoords, new_index, slice.getPointCount());
+					new_index += slice.getPointCount();
 					//    old xcoord array entries from "A" to end of old xcoord array
 					if (slice_index < this.getPointCount()) {
 						System.arraycopy(xcoords, slice_index, new_xcoords, new_index, this.getPointCount() - slice_index);
@@ -93,9 +93,6 @@ public final class CompositeGraphSym extends GraphSymFloat {
 					}
 					setCoords(xcoords, new_ycoords);
 					slice.setCoords(null, null);
-					//System.out.println("composite graph points: " + getGraphYCoords().length);
-					// trying to encourage garbage collection of old coord arrays
-					//	System.gc();
 				}
 				// also need to recalculate point_min_ycoord and point_max_ycoord
 				//   but already know these for previous coords, so just iterate through slice coords to update

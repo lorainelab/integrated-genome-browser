@@ -296,7 +296,6 @@
 			</mx:HBox>
 			<mx:HBox horizontalAlign="right" verticalAlign="top" horizontalGap="3" width="100%" id="hbox2">
 				<mx:LinkButton label="Help"  id="linkbutton1" styleName="menuLabel" paddingBottom="0" paddingTop="0"/>
-        	 	<mx:Spacer width="10"/>
 				<mx:LinkButton label="About GenoPub"  id="linkbutton2" styleName="menuLabel" paddingTop="0" paddingBottom="0" click="showAboutWindow()"/>
 			</mx:HBox>
 		</mx:HBox >
@@ -340,10 +339,10 @@
   		    </views:DictionaryView>
     	</mx:AddChild>    
     	<mx:AddChild relativeTo="{hbox2}" position="lastChild">
-    	 	<mx:LinkButton label="Change password"  id="changePasswordButton" styleName="menuLabel" click="showChangePasswordWindow()" paddingTop="0" paddingBottom="0"/>
-    	</mx:AddChild>
-    	<mx:AddChild relativeTo="{changePasswordButton}" position="before">
     	 	<mx:Spacer width="10"/>
+    	</mx:AddChild>
+    	<mx:AddChild relativeTo="{linkbutton1}" position="before">
+    	 	<mx:LinkButton label="Change password"  id="changePasswordButton" styleName="menuLabel" click="showChangePasswordWindow()" paddingTop="0" paddingBottom="0"/>
     	</mx:AddChild>
 	</mx:State>
     <mx:State name="AdminUserState" basedOn="UserState">
@@ -351,16 +350,11 @@
     		<views:UserGroupView id="userGroupView" label="Users and Groups"      icon="@Embed(source='assets/group.png')" width="100%" height="100%">
   		    </views:UserGroupView>
     	</mx:AddChild>
-    	<mx:SetStyle target="{changePasswordButton}" name="paddingTop" value="0"/>
-    	<mx:SetStyle target="{changePasswordButton}" name="paddingBottom" value="0"/>
 	</mx:State>
     <mx:State name="AdminAllState" basedOn="AdminUserState">
-      <mx:SetStyle target="{changePasswordButton}" name="paddingBottom" value="0"/>
-      <mx:SetStyle target="{changePasswordButton}" name="paddingTop" value="0"/>
     </mx:State>
     <mx:State name="GuestState" basedOn="UserState">
       <mx:RemoveChild target="{dictionaryView}"/>
-      <mx:RemoveChild target="{changePasswordButton}"/>
     </mx:State>
   </mx:states>
 </mx:Application>

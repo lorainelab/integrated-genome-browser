@@ -60,6 +60,14 @@ LinkBar {
 	fontWeight: bold;
 }
 
+DataGrid  {
+	headerStyleName: dataGridHeader;		 
+}
+
+.dataGridHeader {
+	    fontWeight: normal;
+}
+
 Button {
         fontWeight: normal;
 }

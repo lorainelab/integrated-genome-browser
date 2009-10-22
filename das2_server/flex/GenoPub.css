@@ -68,6 +68,10 @@ DataGrid  {
 	    fontWeight: normal;
 }
 
+Tree{
+dropIndicatorSkin: ClassReference("util.ListDropIndicator");
+}
+
 Button {
         fontWeight: normal;
 }

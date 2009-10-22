@@ -1403,10 +1403,15 @@ public class GenoPubServlet extends HttpServlet {
 			// The move/copy is disallowed if the parent annotation grouping belongs to a 
 			// different genome version
 			if (!parentAnnotationGrouping.getIdGenomeVersion().equals(annotationGrouping.getIdGenomeVersion())) {
-				throw new Exception("Annotation grouping '" + annotationGrouping.getName() + 
+				throw new Exception("Annotation folder '" + annotationGrouping.getName() + 
 						"' cannot be moved to a different genome version");
 			}
 	
+			// The move/copy is disallowed if the from and to annotation grouping are the
+			// same
+			if (parentAnnotationGrouping.getIdAnnotationGrouping().equals(idAnnotationGrouping)) {
+				throw new Exception("Move/copy operation to same annotation folder is not allowed.");
+			}
 			
 			// Set the parent annotation grouping
 			annotationGrouping.setIdParentAnnotationGrouping(parentAnnotationGrouping.getIdAnnotationGrouping());
@@ -1915,6 +1920,18 @@ public class GenoPubServlet extends HttpServlet {
 			if (!annotationGroupingNew.getIdGenomeVersion().equals(annotation.getIdGenomeVersion())) {
 				throw new Exception("Annotation '" + annotation.getName() + 
 						"' cannot be moved to a different genome version");
+			}
+			
+			// The move/copy is disallowed if the from and to annotation grouping are the
+			// same
+			if (idAnnotationGroupingOld != null) {
+				if (annotationGroupingNew.getIdAnnotationGrouping().equals(idAnnotationGroupingOld)) {
+					throw new Exception("Move/copy operation to same annotation folder is not allowed.");
+				}				
+			} else {
+				if (idAnnotationGrouping == null && idAnnotationGroupingOld == null) {
+					throw new Exception("Move/copy operation to same folder is not allowed.");
+				}
 			}
 	
 			

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="New genome version"
+	title="New Genome Build"
 	showCloseButton="true" 
 	width="436" 
 	height="192"
@@ -75,7 +75,7 @@
     
     <mx:VBox height="100%" styleName="panelBody" verticalGap="0">
 		<mx:HBox>
-			<mx:Label text="Organism:" width="100"/>
+			<mx:Label text="Species:" width="100"/>
 			<mx:ComboBox labelField="@binomialName" id="organismCombo" width="300">
 				<mx:dataProvider>{parentApplication.dictionaryOrganism}</mx:dataProvider>
 			</mx:ComboBox>

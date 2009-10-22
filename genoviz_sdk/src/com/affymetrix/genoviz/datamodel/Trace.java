@@ -13,12 +13,10 @@
 
 package com.affymetrix.genoviz.datamodel;
 
-import java.io.InputStream;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
-
-import com.affymetrix.genoviz.util.DNAUtils;
+import java.util.Arrays;
 
 /**
  * Base implementation of the TraceI interface.
@@ -144,37 +142,6 @@ public class Trace implements TraceI {
 		return baseHashtable.get(index);
 	}
 
-	/**
-	 * searches the array of peak values
-	 * to find one near the given point.
-	 *
-	 * <p><em>Note that
-	 * this is like the Java 1.2 Arrays.binarySearch method.
-	 * When we go to Java 1.2,
-	 * this should be deprecated.
-	 * </em>
-	 *
-	 * @param theBases an array of peak values.
-	 * @param thePoint to look for.
-	 * @return an index into theBases.
-	 */
-	private int binarySearch(int[] theBases, int thePoint) {
-		int low = 0;
-		int high = theBases.length-1;
-
-		while (low <= high) {
-			int mid =(low + high)/2;
-			int midVal = theBases[mid];
-
-			if (midVal < thePoint)
-				low = mid + 1;
-			else if (midVal > thePoint)
-				high = mid - 1;
-			else
-				return mid; // thePoint found
-		}
-		return -(low + 1);  // thePoint not found.
-	}
 
 	/**
 	 * sets an array of peak points in the trace.
@@ -225,7 +192,7 @@ public class Trace implements TraceI {
 		if (null == peak) {
 			setPeaks();
 		}
-		int candidate = binarySearch(peak, thePoint);
+		int candidate = Arrays.binarySearch(peak, thePoint);
 		if (0 <= candidate) // exact match was found.
 			return candidate;
 		// Exact match was not found.

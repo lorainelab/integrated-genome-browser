@@ -19,7 +19,7 @@ import java.awt.geom.Rectangle2D;
 /**
  *  A transform used internally by NeoSeq, should not be used directly.
  */
-public class ConstrainLinearTrnsfm extends LinearTransform {
+public final class ConstrainLinearTrnsfm extends LinearTransform {
 
 	public static final int FLOOR = 0;
 	public static final int ROUND = 1;

@@ -17,29 +17,11 @@ import java.util.Vector;
 
 import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
-import javax.swing.SwingUtilities;
 
 /**
  *  A timer thread that generates NeoTimerEvents at specified intervals.
  */
 public class NeoTimerEventClock extends Thread {
-	/*
-	 * GAH 12-2-98
-	 * if lazy_event_posting, then use pseudoswing-style post invocation to
-	 * run listeners' timer event handling on EventDispatchThread
-	 * (and thus synchronously with AWT event handling and paint calls)
-	 * this will help avoid potential race conditions between
-	 * timer event handling and AWT-event/paint handling
-	 *
-	 * if !lazy_event_posting, then fall back on simpler timer-based event
-	 * handling, which may run listeners' timer event handling asynchronously
-	 * with AWT-event/paint handling (and therefore leaves open the possibility
-	 * of race conditions)
-	 *
-	 * As of 12-4-98, lazy event posting should be usable both in
-	 *    jdk1.0 and jdk1.1
-	 */
-	boolean lazy_event_posting = true;
 
 	// interval between generation of events ("ticks"), in milliseconds
 	protected int time_interval = 50;
@@ -92,12 +74,7 @@ public class NeoTimerEventClock extends Thread {
 		// a less obvious problem, and better way is probably to correctly
 		// synchronize run/post/etc. in NeoTimerEventClock
 		count++;
-		if (lazy_event_posting) {
-			postTimerEventLater();
-		}
-		else {
-			postTimerEvent();
-		}
+		postTimerEventLater();
 
 		while (true) {
 			try {
@@ -112,12 +89,7 @@ public class NeoTimerEventClock extends Thread {
 			// see above -- count increment and lazy_event_posting can combine
 			// to give race conditions (though for count it doesn't really matter)
 			count++;
-			if (lazy_event_posting) {
-				postTimerEventLater();
-			}
-			else {
-				postTimerEvent();
-			}
+			postTimerEventLater();
 		}
 	}
 
@@ -163,9 +135,4 @@ public class NeoTimerEventClock extends Thread {
 	public Vector getTimerListeners() {
 		return listeners;
 	}
-
-	public void setLazyEventPosting(boolean lazy_event_posting) {
-		this.lazy_event_posting = lazy_event_posting;
-	}
-
 }

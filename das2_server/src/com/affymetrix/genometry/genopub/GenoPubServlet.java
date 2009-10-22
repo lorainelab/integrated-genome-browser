@@ -92,6 +92,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String ANNOTATION_GROUPING_DELETE_REQUEST = "annotationGroupingDelete";
 	public static final String ANNOTATION_ADD_REQUEST             = "annotationAdd";
 	public static final String ANNOTATION_UPDATE_REQUEST          = "annotationUpdate";
+	public static final String ANNOTATION_DUPLICATE_REQUEST       = "annotationDuplicate";
 	public static final String ANNOTATION_DELETE_REQUEST          = "annotationDelete";
 	public static final String ANNOTATION_UNLINK_REQUEST          = "annotationUnlink";
 	public static final String ANNOTATION_MOVE_REQUEST            = "annotationMove";
@@ -194,6 +195,8 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleAnnotationAddRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UPDATE_REQUEST)) {
 				this.handleAnnotationUpdateRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DUPLICATE_REQUEST)) {
+				this.handleAnnotationDuplicateRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DELETE_REQUEST)) {
 				this.handleAnnotationDeleteRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UNLINK_REQUEST)) {
@@ -1718,6 +1721,115 @@ public class GenoPubServlet extends HttpServlet {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void handleAnnotationDuplicateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		Session sess = null;
+		Transaction tx = null;
+		
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+			tx = sess.beginTransaction();
+			
+			// Make sure that the required fields are filled in
+			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
+				throw new Exception("idAnnotation required.");
+			}
+
+			
+			Annotation sourceAnnot = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));
+			
+			// Make sure the user can write this annotation 
+			if (!this.genoPubSecurity.canWrite(sourceAnnot)) {
+				throw new Exception("Insufficient permision to write annotation.");
+			}
+			
+			Annotation dup = new Annotation();
+			
+			dup.setName(sourceAnnot.getName() + "_copy");
+			dup.setDescription(sourceAnnot.getDescription());
+			dup.setSummary(sourceAnnot.getSummary());
+			dup.setIdAnalysisType(sourceAnnot.getIdAnalysisType());
+			dup.setIdExperimentPlatform(sourceAnnot.getIdExperimentPlatform());
+			dup.setIdExperimentMethod(sourceAnnot.getIdExperimentMethod());
+			dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
+			dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
+			dup.setIdUser(sourceAnnot.getIdUser());
+			dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
+			
+			sourceAnnot.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+			sourceAnnot.setCreatedBy(this.genoPubSecurity.getUserName());
+			
+			
+			sess.save(dup);
+			
+
+			// Get the annotation grouping this annotation is in.
+			AnnotationGrouping ag = null;
+			if (Util.getIntegerParameter(request, "idAnnotationGrouping") == null) {
+				// If this is a root annotation, find the default root annotation
+				// grouping for the genome version.
+				GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, sourceAnnot.getIdGenomeVersion()));
+				ag = gv.getRootAnnotationGrouping();
+				if (ag == null) {
+					throw new Exception("Cannot find root annotation grouping for " + gv.getName());
+				}
+			} else {
+				// Otherwise, find the annotation grouping passed in as a request parameter.
+				ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, Util.getIntegerParameter(request, "idAnnotationGrouping")));
+			}
+
+			// Add the annotation to the annotation grouping
+			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+				newAnnotations.add(a);
+			}
+			newAnnotations.add(dup);
+			ag.setAnnotations(newAnnotations);
+			
+			
+			// Assign a file directory name
+			dup.setFileName("A" + dup.getIdAnnotation());
+			
+			tx.commit();
+			
+			
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("SUCCESS");
+			root.addAttribute("idAnnotation", dup.getIdAnnotation().toString());
+			if ( Util.getIntegerParameter(request, "idAnnotationGrouping") != null) {
+				root.addAttribute("idAnnotationGrouping", Util.getIntegerParameter(request, "idAnnotationGrouping").toString());				
+			} else {
+				root.addAttribute("idAnnotationGrouping", "");
+			}
+		
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", e.getMessage());
+			XMLWriter writer = new XMLWriter(res.getOutputStream(),
+            OutputFormat.createCompactFormat());
+			writer.write(doc);
+			
+			if (tx != null) {
+				tx.rollback();
+			}
+			
+		} finally {
+			
+			if (sess != null) {
+				sess.close();
+			}
+		}
+		
+	}
+
 	
 	private void handleAnnotationDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;

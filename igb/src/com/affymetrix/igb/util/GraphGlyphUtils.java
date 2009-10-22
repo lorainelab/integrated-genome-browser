@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
@@ -44,7 +44,7 @@ public final class GraphGlyphUtils {
 	 *  inside the map view.
 	 *  See {@link #checkPixelBounds(GraphGlyph, AffyTieredMap)}.
 	 */
-	public static boolean checkPixelBounds(GraphGlyph gl, SeqMapView gviewer) {
+	public static boolean checkPixelBounds(SmartGraphGlyph gl, SeqMapView gviewer) {
 		AffyTieredMap map = gviewer.getSeqMap();
 		return checkPixelBounds(gl, map);
 	}
@@ -58,7 +58,7 @@ public final class GraphGlyphUtils {
 	 *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
 	 *   the glyph's coord box is also its pixel box.
 	 */
-	public static boolean checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
+	public static boolean checkPixelBounds(SmartGraphGlyph gl, AffyTieredMap map) {
 		boolean changed_coords = false;
 		if (gl.getGraphState().getFloatGraph()) {
 			Rectangle mapbox = map.getView().getPixelBox();
@@ -98,7 +98,7 @@ public final class GraphGlyphUtils {
 	 *   the other must also.)
 	 *  @return null if the graphs are comparable, or an explanation string if they are not.
 	 */
-	public static String graphsAreComparable(GraphGlyph graphA, GraphGlyph graphB) {
+	public static String graphsAreComparable(SmartGraphGlyph graphA, SmartGraphGlyph graphB) {
 		// checking that both graphs are non-null
 		if (graphA == null || graphB == null) {
 			return "Must select exactly two graphs";
@@ -132,7 +132,7 @@ public final class GraphGlyphUtils {
 	 *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable(GraphGlyph,GraphGlyph)}.
 	 *  During division, indefinite values are replaced by zero.
 	 */
-	public static GraphSymFloat graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
+	public static GraphSymFloat graphArithmetic(SmartGraphGlyph graphA, SmartGraphGlyph graphB, String operation) {
 		String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
 
 		if (error != null) {

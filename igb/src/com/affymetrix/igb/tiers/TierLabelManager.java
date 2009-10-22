@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -120,7 +120,7 @@ public final class TierLabelManager {
       TierLabelGlyph tierlabel = labels.get(j);
       TierGlyph tg = tierlabel.getReferenceTier();
       int child_count = tg.getChildCount();
-      if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
+      if (child_count > 0 && tg.getChild(0) instanceof SmartGraphGlyph) {
         // It would be nice if we could assume that a tier contains only
         // GraphGlyph's or only non-GraphGlyph's, but that is not true.
         // 
@@ -133,11 +133,11 @@ public final class TierLabelManager {
         // Assume that if first child is a GraphGlyph, then so are all others
         for (int i=0; i<child_count; i++) {
           Object ob = tg.getChild(i);
-          if (! (ob instanceof GraphGlyph)) {
+          if (! (ob instanceof SmartGraphGlyph)) {
             // ignore the glyphs that are not GraphGlyph's
             continue;
           }
-          GraphGlyph child = (GraphGlyph) ob;
+          SmartGraphGlyph child = (SmartGraphGlyph) ob;
           SeqSymmetry sym = (SeqSymmetry) child.getInfo();
           // sym will be a GraphSym, but we don't need to cast it
           if (tierlabel.isSelected()) {
@@ -159,8 +159,8 @@ public final class TierLabelManager {
   }
 
   /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
-  public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-    List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+  public static List<SmartGraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
+    List<SmartGraphGlyph> result = new ArrayList<SmartGraphGlyph>();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
       result.addAll(getContainedGraphs(tlg));
     }
@@ -168,14 +168,14 @@ public final class TierLabelManager {
   }
   
   /** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
-  public static List<GraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
-    ArrayList<GraphGlyph> result = new ArrayList<GraphGlyph>();
+  public static List<SmartGraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
+    ArrayList<SmartGraphGlyph> result = new ArrayList<SmartGraphGlyph>();
     TierGlyph tier = (TierGlyph) tlg.getInfo();
     //IAnnotStyle style = tier.getAnnotStyle();
     int child_count = tier.getChildCount();
-    if ( child_count > 0 && tier.getChild(0) instanceof GraphGlyph) {
+    if ( child_count > 0 && tier.getChild(0) instanceof SmartGraphGlyph) {
       for (int j=0; j<child_count; j++) {
-        result.add((GraphGlyph) tier.getChild(j));
+        result.add((SmartGraphGlyph) tier.getChild(j));
       }
     }
     return result;
@@ -227,9 +227,9 @@ public final class TierLabelManager {
         // When collapsing, make them all be the same height as the tier.
         // (this is for simplicity in figuring out how to draw things.)
         if (collapsed) {
-          List<GraphGlyph> graphs = getContainedGraphs(tlg);
+          List<SmartGraphGlyph> graphs = getContainedGraphs(tlg);
           double tier_height = style.getHeight();
-					for (GraphGlyph graph : graphs) {
+					for (SmartGraphGlyph graph : graphs) {
             graph.getGraphState().getTierStyle().setHeight(tier_height);
           }
         }

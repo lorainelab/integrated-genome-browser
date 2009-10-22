@@ -285,7 +285,7 @@ public class SeqMapView extends JPanel
 				public void run() {
 					List graphs = collectGraphs();
 					for (int i = 0; i < graphs.size(); i++) {
-						GraphGlyphUtils.checkPixelBounds((GraphGlyph) graphs.get(i), getSeqMap());
+						GraphGlyphUtils.checkPixelBounds((SmartGraphGlyph) graphs.get(i), getSeqMap());
 					}
 					getSeqMap().stretchToFit(false, true);
 					getSeqMap().updateWidget();
@@ -1557,7 +1557,7 @@ public class SeqMapView extends JPanel
 
 		// Bring them all into the visual area
 		for (int i = 0; i < glyphlist.size(); i++) {
-			GraphGlyphUtils.checkPixelBounds((GraphGlyph) glyphlist.get(i), getSeqMap());
+			GraphGlyphUtils.checkPixelBounds((SmartGraphGlyph) glyphlist.get(i), getSeqMap());
 		}
 
 		List<SeqSymmetry> symlist = glyphsToSyms(glyphlist);
@@ -2602,8 +2602,8 @@ public class SeqMapView extends JPanel
 	// sets the text on the JLabel based on the current selection
 	private void setPopupMenuTitle(JLabel label, List<GlyphI> selected_glyphs) {
 		String title = "";
-		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof GraphGlyph) {
-			GraphGlyph gg = (GraphGlyph) selected_glyphs.get(0);
+		if (selected_glyphs.size() == 1 && selected_glyphs.get(0) instanceof SmartGraphGlyph) {
+			SmartGraphGlyph gg = (SmartGraphGlyph) selected_glyphs.get(0);
 			title = gg.getLabel();
 		} else {
 			title = getSelectionTitle(selected_glyphs);
@@ -2669,8 +2669,8 @@ public class SeqMapView extends JPanel
 						sym_used_for_title = original;
 					}
 				}
-				if (id == null && topgl instanceof GraphGlyph) {
-					GraphGlyph gg = (GraphGlyph) topgl;
+				if (id == null && topgl instanceof SmartGraphGlyph) {
+					SmartGraphGlyph gg = (SmartGraphGlyph) topgl;
 					if (gg.getLabel() != null) {
 						id = "Graph: " + gg.getLabel();
 					} else {
@@ -2815,8 +2815,8 @@ public class SeqMapView extends JPanel
 		int max = gl.getChildCount();
 		for (int i = 0; i < max; i++) {
 			GlyphI child = gl.getChild(i);
-			if (child instanceof GraphGlyph) {
-				graphs.add((GraphGlyph) child);
+			if (child instanceof SmartGraphGlyph) {
+				graphs.add((SmartGraphGlyph) child);
 			}
 			if (child.getChildCount() > 0) {
 				collectGraphs(child, graphs);

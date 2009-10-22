@@ -84,7 +84,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
    *     will go into an attached tier, never a floating glyph.
    *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
    */
-  public GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
+  public SmartGraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
     GraphState state = (GraphState) graf.getGraphState();
     
     MutableAnnotatedBioSeq aseq = smv.getAnnotatedSeq();

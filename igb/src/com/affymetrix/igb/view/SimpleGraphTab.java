@@ -34,7 +34,6 @@ import com.affymetrix.genometryImpl.util.FloatTransformer.InverseLogTransform;
 import com.affymetrix.genometryImpl.util.FloatTransformer.LogTransform;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
@@ -78,7 +77,7 @@ public final class SimpleGraphTab extends JPanel
 	JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
 
 	private	List<GraphSym> grafs = new ArrayList<GraphSym>();
-	private List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+	private List<SmartGraphGlyph> glyphs = new ArrayList<SmartGraphGlyph>();
 
 	public Action select_all_graphs_action = new AbstractAction("Select All Graphs") {
 
@@ -317,7 +316,7 @@ public final class SimpleGraphTab extends JPanel
 				if (grafs != selected_syms) {
 					grafs.add(graf);
 				}
-				List<GraphGlyph> multigl = gviewer.getSeqMap().<GraphGlyph>getItems(graf);
+				List<SmartGraphGlyph> multigl = gviewer.getSeqMap().<SmartGraphGlyph>getItems(graf);
 				// add all graph glyphs representing graph sym
 				//	  System.out.println("found multiple glyphs for graph sym: " + multigl.size());
 				glyphs.addAll(multigl);
@@ -336,7 +335,7 @@ public final class SimpleGraphTab extends JPanel
 		boolean all_are_smart_glyphs = false; // all implement SmartGraphGlyph
 
 		// Take the first glyph in the list as a prototype
-		GraphGlyph first_glyph = null;
+		SmartGraphGlyph first_glyph = null;
 		int graph_style = -1;
 		HeatMap hm = null;
 		if (!glyphs.isEmpty()) {
@@ -357,7 +356,7 @@ public final class SimpleGraphTab extends JPanel
 
 		// Now loop through other glyphs if there are more than one
 		// and see if the graph_style and heatmap are the same in all selections
-		for (GraphGlyph gl : glyphs) {
+		for (SmartGraphGlyph gl : glyphs) {
 			all_are_floating = all_are_floating && gl.getGraphState().getFloatGraph();
 			all_show_axis = all_show_axis && gl.getGraphState().getShowAxis();
 			all_show_label = all_show_label && gl.getGraphState().getShowLabel();
@@ -499,13 +498,13 @@ public final class SimpleGraphTab extends JPanel
 			Runnable r = new Runnable() {
 
 				public void run() {
-					GraphGlyph first_glyph = glyphs.get(0);
+					SmartGraphGlyph first_glyph = glyphs.get(0);
 					if (style == GraphStateI.MAX_HEAT_MAP) {
 						// set to heat map FIRST so that getHeatMap() below will return default map instead of null
 						first_glyph.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
 					}
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
-					for (GraphGlyph sggl : glyphs) {
+					for (SmartGraphGlyph sggl : glyphs) {
 						sggl.setShowGraph(true);
 						sggl.setGraphStyle(style); // leave the heat map whatever it was
 						if ((style == GraphStateI.MAX_HEAT_MAP) && (hm != sggl.getHeatMap())) {
@@ -557,7 +556,7 @@ public final class SimpleGraphTab extends JPanel
 				HeatMap hm = HeatMap.getStandardHeatMap(name);
 
 				if (hm != null) {
-					for (GraphGlyph gl : glyphs) {
+					for (SmartGraphGlyph gl : glyphs) {
 						gl.setShowGraph(true);
 						gl.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
 						gl.setHeatMap(hm);
@@ -587,7 +586,7 @@ public final class SimpleGraphTab extends JPanel
 
 			AffyTieredMap map = gviewer.getSeqMap();
 
-			for (GraphGlyph gl : glyphs) {
+			for (SmartGraphGlyph gl : glyphs) {
 				Rectangle2D.Double cbox = gl.getCoordBox();
 				gl.setCoords(cbox.x, cbox.y, cbox.width, height);
 
@@ -835,8 +834,8 @@ public final class SimpleGraphTab extends JPanel
 
 		public void graphArithmetic(String operation) {
 			if (glyphs.size() == 2) {
-				GraphGlyph graphA = glyphs.get(0);
-				GraphGlyph graphB = glyphs.get(1);
+				SmartGraphGlyph graphA = glyphs.get(0);
+				SmartGraphGlyph graphB = glyphs.get(1);
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
 
 				if (newsym != null) {
@@ -853,14 +852,14 @@ public final class SimpleGraphTab extends JPanel
 		}
 
 		void setShowAxis(boolean b) {
-			for (GraphGlyph gl : glyphs) {
+			for (SmartGraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
 			}
 			gviewer.getSeqMap().updateWidget();
 		}
 
 		void setShowLabels(boolean b) {
-			for (GraphGlyph gl : glyphs) {
+			for (SmartGraphGlyph gl : glyphs) {
 				gl.setShowLabel(b);
 			}
 			gviewer.getSeqMap().updateWidget();
@@ -877,7 +876,7 @@ public final class SimpleGraphTab extends JPanel
 
 		private void floatGraphs(boolean do_float) {
 			boolean something_changed = false;
-			for (GraphGlyph gl : glyphs) {
+			for (SmartGraphGlyph gl : glyphs) {
 				GraphStateI gstate = gl.getGraphState();
 				if (gstate.getComboStyle() != null) {
 					gstate.setComboStyle(null);

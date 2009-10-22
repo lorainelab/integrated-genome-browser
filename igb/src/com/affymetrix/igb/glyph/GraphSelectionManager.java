@@ -79,13 +79,13 @@ public final class GraphSelectionManager
   static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
   List graphlist = new ArrayList();
-  GraphGlyph current_graph = null;
-  GraphGlyph graph_to_scale = null;
+  SmartGraphGlyph current_graph = null;
+  SmartGraphGlyph graph_to_scale = null;
   //   second_curent_graph is
   //   the graph selected just _before_ the current_graph in a multi-select
   //   (this is usually the previous current_graph if multi-selection is happening,
   //    but null if no multi-select)
-  GraphGlyph second_current_graph = null;
+  SmartGraphGlyph second_current_graph = null;
 
   // The current_source will be the AffyTieredMap of the SeqMapView
   //  final NeoAbstractWidget current_source;
@@ -441,7 +441,7 @@ public final class GraphSelectionManager
    *  tier in the source which is a tier map, then delete the tier as well.
    *  If the graph's symmetry is in a mutalbe bio seq, remove it from there.
    */
-  void deleteGraph(NeoAbstractWidget source, GraphGlyph gl) {
+  void deleteGraph(NeoAbstractWidget source, SmartGraphGlyph gl) {
     source.removeItem(gl);
     // clean-up references to the graph, allowing garbage-collection, etc.
     gmodel.clearSelectedSymmetries(this);
@@ -508,7 +508,7 @@ public final class GraphSelectionManager
     return graph_file_chooser;
   }
 
-  public void saveGraph(GraphGlyph graph) {
+  public void saveGraph(SmartGraphGlyph graph) {
     Object info = graph.getInfo();
     if (info instanceof GraphSym) {
       FileOutputStream ostr = null;
@@ -534,7 +534,7 @@ public final class GraphSelectionManager
     }
   }
 
-  void graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String function) {
+  void graphArithmetic(SmartGraphGlyph graphA, SmartGraphGlyph graphB, String function) {
     if (gviewer == null) {
       Application.errorPanel("This action is invalid at this time");
     }
@@ -582,16 +582,16 @@ public final class GraphSelectionManager
 	//        System.out.println("selected: " + selected.elementAt(i));
         GlyphI gl = (GlyphI)selected.elementAt(i);
         if (ALLOW_THRESHOLD_DRAG &&
-            (! (gl instanceof GraphGlyph)) &&
-            (gl.getParent() instanceof GraphGlyph)) {
+            (! (gl instanceof SmartGraphGlyph)) &&
+            (gl.getParent() instanceof SmartGraphGlyph)) {
           // for now assume if child of GraphGlyph and not itself a GraphGlyph then it's the threshold glyph
           //          System.out.println("hit child of GraphGlyph");
           dragGraph(gl, nevt);
           break;
         }
         // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
-        else if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
-          GraphGlyph gr = (GraphGlyph)gl;
+        else if (gl instanceof SmartGraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
+          SmartGraphGlyph gr = (SmartGraphGlyph)gl;
           if (nevt.isShiftDown() || nevt.isAltDown()) {
             scaleGraph(gr, nevt);
             break;
@@ -601,7 +601,7 @@ public final class GraphSelectionManager
             break;
           }
         }
-        else if (gl.getParent() instanceof GraphGlyph) {
+        else if (gl.getParent() instanceof SmartGraphGlyph) {
           if (DEBUG) System.out.println("hit child of graph...");
         }
       }
@@ -684,7 +684,7 @@ public final class GraphSelectionManager
 
   }
 
-  public void scaleGraph(GraphGlyph gl, NeoMouseEvent nevt) {
+  public void scaleGraph(SmartGraphGlyph gl, NeoMouseEvent nevt) {
 
 // The mouse motion listener is added here, and removed in heardGlpyhDrag()
     ((Component)nevt.getSource()).addMouseMotionListener(this);
@@ -719,8 +719,8 @@ public final class GraphSelectionManager
       dragger.removeGlyphDragListener(this);
 
       GlyphI gl = evt.getGlyph();
-      if (gl instanceof GraphGlyph && src instanceof AffyTieredMap) {
-        GraphGlyphUtils.checkPixelBounds((GraphGlyph) gl, (AffyTieredMap) src);
+      if (gl instanceof SmartGraphGlyph && src instanceof AffyTieredMap) {
+        GraphGlyphUtils.checkPixelBounds((SmartGraphGlyph) gl, (AffyTieredMap) src);
       }
     }
     // otherwise it must be DRAG_STARTED event, which can be ignored
@@ -729,7 +729,7 @@ public final class GraphSelectionManager
 
 
   /** Make a simple lable for a graph glyph, no longer than max_label_length. */
-  private String getGraphLabel(GraphGlyph gg) {
+  private String getGraphLabel(SmartGraphGlyph gg) {
     if (gg==null) {return "";}
     String result = gg.getLabel();
     if (result == null) {result = "No label";}
@@ -748,7 +748,7 @@ public final class GraphSelectionManager
       return;
     }
     
-    Vector<GraphGlyph> selected_graph_glyphs = new Vector<GraphGlyph>(0);
+    Vector<SmartGraphGlyph> selected_graph_glyphs = new Vector<SmartGraphGlyph>(0);
     current_graph = null;
     second_current_graph = null;
 
@@ -757,8 +757,8 @@ public final class GraphSelectionManager
     while (iter.hasNext()) {
       SeqSymmetry sym = (SeqSymmetry) iter.next();
       GlyphI g = current_source.<GlyphI>getItem(sym);
-      if (g instanceof GraphGlyph) {
-        selected_graph_glyphs.add((GraphGlyph)g);
+      if (g instanceof SmartGraphGlyph) {
+        selected_graph_glyphs.add((SmartGraphGlyph)g);
       }
     }
 
@@ -792,10 +792,10 @@ public final class GraphSelectionManager
       // for left-click on the TierLabelGlyph's
 
       List labels = handler.getSelectedTierLabels();
-      List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
+      List<SmartGraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
       List<GraphSym> graph_syms = new ArrayList<GraphSym>(graph_glyphs.size());
-			for (GraphGlyph glyph : graph_glyphs) {
+			for (SmartGraphGlyph glyph : graph_glyphs) {
         graph_syms.add((GraphSym)glyph.getInfo()); // It will be a GraphSym object
       }
       GraphSym primary_sym = null;

@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.igb.glyph.GraphGlyph;
+import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.tiers.*;
 import java.awt.Rectangle;
 import java.awt.event.*;
@@ -173,11 +173,11 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
 
     // seems no longer needed
     //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
-    Vector<GraphGlyph> graphs = new Vector<GraphGlyph>();
+    Vector<SmartGraphGlyph> graphs = new Vector<SmartGraphGlyph>();
     for (int i=0; i<hcount; i++) {
       Object obj = hits.get(i);
-      if (obj instanceof GraphGlyph) {
-	graphs.add((GraphGlyph) obj);
+      if (obj instanceof SmartGraphGlyph) {
+	graphs.add((SmartGraphGlyph) obj);
       }
     }
     int gcount = graphs.size();
@@ -192,7 +192,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
         map.select(topgl);
       }
       for (int i=0; i<gcount; i++) {
-	GraphGlyph gl = graphs.get(i);
+	SmartGraphGlyph gl = graphs.get(i);
 	if (gl != topgl) {  // if gl == topgl, already handled above...
 	  if (toggle_event && gl.isSelected()) {
 	    map.deselect(gl);

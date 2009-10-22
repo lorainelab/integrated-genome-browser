@@ -262,13 +262,11 @@ public final class GraphScoreThreshSetter extends JPanel
 	 *  Filters out any graphs that aren't SmartGraphGlyphs
 	 *  so other methods don't have to worry about doing type checking.
 	 */
-	public void setGraphs(List<GraphGlyph> newgraphs) {
+	public void setGraphs(List<SmartGraphGlyph> newgraphs) {
 		turnOffListening();
 		graphs.clear();
-		for (GraphGlyph gl : newgraphs) {
-			if (gl instanceof SmartGraphGlyph) {
-				graphs.add((SmartGraphGlyph)gl);
-			}
+		for (SmartGraphGlyph gl : newgraphs) {
+				graphs.add(gl);
 		}
 		initPercents();
 		initValues();
@@ -480,7 +478,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				setScoreThreshold(thresh);  // also sets prev_thresh_val
 			} catch (ParseException ex) { // couldn't parse, keep same...
 				//score_valT.setText(val_format.format(prev_thresh_val));
-				setGraphs(new ArrayList<GraphGlyph>(graphs));
+				setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
 			}
 		} else if (src == score_perT) {
 			try {
@@ -493,7 +491,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				setScoreThresholdByPercent(thresh_per); // also sets prev_thresh_per
 			} catch (ParseException ex) { // couldn't parse, keep same...
 				//score_perT.setText(per_format.format(prev_thresh_per));
-				setGraphs(new ArrayList<GraphGlyph>(graphs));
+				setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
 			}
 		} else if (src == thresh_aboveB) {
 			if (prev_thresh_type == THRESH_TYPE_VALUE) {
@@ -514,7 +512,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			} catch (NumberFormatException ex) {
 				//SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
 				//shift_startTF.setText(val_format.format(first_glyph.getThreshStartShift()));
-				setGraphs(new ArrayList<GraphGlyph>(graphs));
+				setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
 			}
 		} else if (src == shift_endTF) {
 			try {
@@ -523,7 +521,7 @@ public final class GraphScoreThreshSetter extends JPanel
 			} catch (NumberFormatException ex) {
 				//SmartGraphGlyph first_glyph = (SmartGraphGlyph) graphs.get(0);
 				//shift_endTF.setText(val_format.format(first_glyph.getThreshEndShift()));
-				setGraphs(new ArrayList<GraphGlyph>(graphs));
+				setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
 			}
 		} else if (src == tier_threshB) {
 			for (SmartGraphGlyph sggl : graphs) {
@@ -537,7 +535,7 @@ public final class GraphScoreThreshSetter extends JPanel
 				sggl.setShowThreshold(thresh_on);
 			}
 			widg.updateWidget();
-			this.setGraphs(new ArrayList<GraphGlyph>(graphs));
+			this.setGraphs(new ArrayList<SmartGraphGlyph>(graphs));
 		}
 	}
 

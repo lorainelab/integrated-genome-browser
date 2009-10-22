@@ -177,7 +177,7 @@ public final class PercentThresholder extends JPanel
     }
   }
 
-  public float[] calcPercents2Scores(GraphGlyph sgg) {
+  public float[] calcPercents2Scores(SmartGraphGlyph sgg) {
     // System.out.println("calculating percentages");
     //float[] scores = sgg.getYCoords();
     //int num_scores = sgg.graf.getPointCount();;

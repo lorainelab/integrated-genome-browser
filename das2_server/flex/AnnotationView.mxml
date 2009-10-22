@@ -222,6 +222,8 @@
      	import mx.controls.ToolTip;
         import flash.events.TimerEvent;
     	import flash.utils.Timer;
+    	
+    	import mx.collections.ArrayCollection;
         
         private var MENUITEM_NEW_ORGANISM:String            = "New organism...";
         private var MENUITEM_NEW_GENOME_VERSION:String      = "New genome version...";
@@ -252,10 +254,6 @@
         
         private var organismFilterToSelect:Object = null; 
         
-        private var reassignAnnotation:Object = null;
-        private var reassignAnnotationGrouping:Object = null;
-        private var reassignToNode:Object = null;
-        private var reassignFromNode:Object = null;
         private var reassignIsMove:Boolean = false;
         
         private static var alertButtonWidthDefault:Number = Alert.buttonWidth;
@@ -269,6 +267,9 @@
        	private var hitToolTip:ToolTip = null;
        	
        	private var refreshDAS2ProgressWindow:RefreshDAS2ProgressWindow;
+       	
+       	private var dragParams:ArrayCollection = null;
+       	private var dropNode:Object = null;
               
 		public function getTreeIcon(item:Object):Class {
 			if (item.name() == "Organism") {
@@ -1045,72 +1046,6 @@
 		  }
 		}
 		
-		private function promptToReassignAnnotationGrouping(annotationGrouping:Object, toNode:Object, isMove:Boolean):void {
-         	reassignAnnotationGrouping = annotationGrouping;
-         	reassignToNode = toNode;
-         	reassignIsMove = isMove;
-         	
-         	Alert.yesLabel = "Move";
-			Alert.noLabel = "Duplicate";
-			Alert.buttonWidth = 100;
-
-         	Alert.show("Do you want to move or duplicate annotation folder \n'" + annotationGrouping.@label + "' to '" + toNode.@label + "'?",
-						"Confirm", 
-						(Alert.YES | Alert.NO | Alert.CANCEL), this, 
-						onPromptToReassignAnnotationGrouping);     
-        }
-
-		
-		private function onPromptToReassignAnnotationGrouping(event:CloseEvent):void {
-            if (event.detail==Alert.YES) {
-            	reassignIsMove = true;
-            	reassignAnnotationGroupingParent();
-            } else if (event.detail==Alert.NO) {
-            	reassignIsMove = false;
-            	reassignAnnotationGroupingParent();
-            } else {
-            	reassignAnnotationGrouping = null;
-            	reassignFromNode = null;
-            	reassignToNode = null;
-            }
-            Alert.yesLabel = "Yes";
-			Alert.noLabel = "No";
-			Alert.buttonWidth = alertButtonWidthDefault;
-        }
-        private function reassignAnnotationGroupingParent():void {
-        	var params:Object = new Object();
-
-        	params.idAnnotationGrouping = reassignAnnotationGrouping.@idAnnotationGrouping;
-
-        	if (reassignToNode.name() == "GenomeVersion") {
-        		params.idGenomeVersion = reassignToNode.@idGenomeVersion;
-        	}
-        	if (reassignToNode.name() == "AnnotationGrouping") {
-        		params.idParentAnnotationGrouping = reassignToNode.@idAnnotationGrouping;
-        		params.idGenomeVersion = reassignToNode.@idGenomeVersion;
-        	}
-        	params.isMove = reassignIsMove ? "Y" : "N";
-        	
-        	moveAnnotationGrouping.send(params);
-        }
-
-		private function onMoveAnnotationGrouping(event:ResultEvent):void {
-		  if (moveAnnotationGrouping.lastResult.name() == "SUCCESS") {
-		  	if (this.dirtyAnnotationGrouping != null) {
-			  	this.dirtyAnnotationGrouping.resetDirty();
-		  	}
-		  	
-		  	treeItemToSelect = new XML("<AnnotationGrouping " +
-				"idAnnotationGrouping='" + moveAnnotationGrouping.lastResult.@idAnnotationGrouping + "' " +
-				"/>");
-
-		  	refreshAnnotations();			
-		  } else if (moveAnnotationGrouping.lastResult.name() == "Error") {
-			Alert.show(moveAnnotationGrouping.lastResult.@message);
-		  } else {
-			Alert.show("An error occurred while moving annotation grouping");				
-		  }
-		}
 
 		private function saveAnnotationGrouping():void {
 			var params:Object = new Object();
@@ -1249,59 +1184,6 @@
         		deleteAnnotation.send(params);
 			}
 		}
-
-		private function promptToReassignAnnotation(annotation:Object, fromNode:Object, toNode:Object, isMove:Boolean):void {
-         	reassignAnnotation = annotation;
-         	reassignFromNode = fromNode;
-         	reassignToNode = toNode;
-         	reassignIsMove = isMove;
-         	
-         	Alert.yesLabel = "Move";
-			Alert.noLabel =  "Copy link";
-			Alert.buttonWidth = 100;
-
-         	Alert.show("Do you want to move or copy annotation \n'" + annotation.@label + "' to '" + toNode.@label + "'?",
-						"Confirm", 
-						(Alert.YES | Alert.NO | Alert.CANCEL), this, 
-						onPromptToReassignAnnotation);     
-        }
-        		
-		private function onPromptToReassignAnnotation(event:CloseEvent):void {
-            if (event.detail==Alert.YES) {
-            	reassignIsMove = true;
-            	reassignAnnotationParent();
-            } else if (event.detail==Alert.NO) {
-            	reassignIsMove = false;
-            	reassignAnnotationParent();
-            } else {
-            	reassignAnnotation = null;
-            	reassignFromNode = null;
-            	reassignToNode = null;
-            }
-            Alert.yesLabel = "Yes";
-			Alert.noLabel = "No";
-			Alert.buttonWidth = alertButtonWidthDefault;
-        }
-        private function reassignAnnotationParent():void {
-        	var params:Object = new Object();
-
-        	params.idAnnotation = reassignAnnotation.@idAnnotation;
-
-        	if (reassignFromNode != null) {
-	        	params.idAnnotationGroupingOld = reassignFromNode.@idAnnotationGrouping;
-        	}
-
-        	if (reassignToNode.name() == "GenomeVersion") {
-        		params.idGenomeVersion = reassignToNode.@idGenomeVersion;
-        	}
-        	if (reassignToNode.name() == "AnnotationGrouping") {
-        		params.idAnnotationGrouping = reassignToNode.@idAnnotationGrouping;
-        		params.idGenomeVersion = reassignToNode.@idGenomeVersion;
-        	}
-        	params.isMove = reassignIsMove ? "Y" : "N";
-        	
-        	moveAnnotation.send(params);
-        }
         
         private function onMoveAnnotation(event:ResultEvent):void {
 		  if (moveAnnotation.lastResult.name() == "SUCCESS") {
@@ -1315,14 +1197,44 @@
 				"idGenomeVersion='" + moveAnnotation.lastResult.@idGenomeVersion + "' " +
 				"/>");
 
-		  	refreshAnnotations();			
+		  	
+		  	if (dragParams.length > 0) {
+			  	this.performMoveOrCopy();
+		  	} else {
+			  	refreshAnnotations();			
+		  	}
+
 		  } else if (moveAnnotation.lastResult.name() == "Error") {
 			Alert.show(moveAnnotation.lastResult.@message);
 		  } else {
 			Alert.show("An error occurred while moving annotation");				
 		  }
+
 		}
 		
+		private function onMoveAnnotationGrouping(event:ResultEvent):void {
+		  if (moveAnnotationGrouping.lastResult.name() == "SUCCESS") {
+		  	if (this.dirtyAnnotationGrouping != null) {
+			  	this.dirtyAnnotationGrouping.resetDirty();
+		  	}
+		  	
+		  	treeItemToSelect = new XML("<AnnotationGrouping " +
+				"idAnnotationGrouping='" + moveAnnotationGrouping.lastResult.@idAnnotationGrouping + "' " +
+				"/>");
+
+		  	if (dragParams.length > 0) {
+			  	this.performMoveOrCopy();
+		  	} else {
+			  	refreshAnnotations();			
+		  	}
+		
+		  } else if (moveAnnotationGrouping.lastResult.name() == "Error") {
+			Alert.show(moveAnnotationGrouping.lastResult.@message);
+		  } else {
+			Alert.show("An error occurred while moving annotation grouping");				
+		  }
+		}
+
 		public function saveAnnotation():void {
 			var params:Object = new Object();
         	params.idAnnotation   = annotationsTree.selectedItem.@idAnnotation;
@@ -1429,106 +1341,167 @@
 			}
 		}
 		
+				
 		
 		private function onDragDrop( event:DragEvent ) : void
 		{
 
 	       var ds:DragSource = event.dragSource;
-	       var dropTarget:Tree = Tree(event.currentTarget);
-	       	       
-	
+
+		   // Determine the drop node
+		   var dropIndex:int = this.annotationsTree.calculateDropIndex(event);
+		   dropNode = this.annotationsTree.indexToItemRenderer(dropIndex).data as XML;
+		   // If the drop node is the annotation, go up to next level (either folder 
+		   // or genome version), and make it the drop target
+		   if (dropNode.name() == "Annotation") {
+		   		dropNode = dropNode.parent();
+		   }
+
+		   
 	       // retrieve the data associated with the "items" format. This will be the data that
 	       // the dragInitiator has copied into the DragSource.
-	       var items:Array = ds.dataForFormat("treeItems") as Array;
-	
-	       // determine where in the tree the drop occurs and select that node by the index; followed by 
-	       // retrieving the node itself. 
-	       var r:int = annotationsTree.calculateDropIndex(event);
-	       annotationsTree.selectedIndex = r;
-	       var node:XML = annotationsTree.selectedItem as XML;
-	       var dropNode:*;
-
-	       if (node.name() == "AnnotationGrouping" || node.name() == "GenomeVersion") {
-	       		dropNode = node;
-	       } else if (node.name() == "Annotation") {
-	       		dropNode = node.parent();
-	       }else {
-	       		//ignore drop operations on lab.
-	       		event.preventDefault();
-		       	event.target.hideDropFeedback(event);
-		       	DragManager.showFeedback(DragManager.NONE);		 
-		       	return;
+	       dragParams = new ArrayCollection();
+	       for each(var dragItem:Object in ds.dataForFormat("treeItems") as Array) {
+	      		var params:Object = new Object();
+	      		var keep:Boolean = true;
+	      		if (dragItem.name() == "Annotation") {
+	      			params.name = "Annotation";
+	        		params.idAnnotation = dragItem.@idAnnotation;
+       		 		if (dragItem.parent().name() == "AnnotationGrouping") {
+       		 			params.idAnnotationGroupingOld = dragItem.parent().@idAnnotationGrouping;
+       		 		}
+		        	if (dropNode.name() == "GenomeVersion") {
+		        		params.idGenomeVersion = dropNode.@idGenomeVersion;
+		        	}
+		        	if (dropNode.name() == "AnnotationGrouping") {
+		        		params.idAnnotationGrouping = dropNode.@idAnnotationGrouping;
+		        		params.idGenomeVersion = dropNode.@idGenomeVersion;
+		        	}
+		        	// Ignore operation if user dragged to its own parent
+		        	if (dragItem.parent() == dropNode) {
+		        		keep = false;
+		        	}
+		       		// Disallow operation if user does not have write
+		       		// permissions on annotation
+		       		if (dragItem.@canWrite != "Y") {
+		       		 	Alert.show("Insufficient permissions to move annotation " + dragItem.@label + ".");   
+			 			event.preventDefault();
+		   				event.target.hideDropFeedback(event);
+			       		DragManager.showFeedback(DragManager.NONE);		   	
+			       		return;
+		       		}
+		       		// Disallow operation if moving/copying to a different genome version
+			       	if (dropNode.@idGenomeVersion != dragItem.@idGenomeVersion) {
+			       		Alert.show("Cannot move annotation to a different genome version");
+			 			event.preventDefault();
+		   				event.target.hideDropFeedback(event);
+			       		DragManager.showFeedback(DragManager.NONE);		   	
+			       		return;	
+			       	}
+		       	 
+		       	 	if (keep) {
+			       		dragParams.addItem(params);
+		       	 	}
+	       		 } else if (dragItem.name() == "AnnotationGrouping") {
+	      			params.name = "AnnotationGrouping";
+		         	params.idAnnotationGrouping = dragItem.@idAnnotationGrouping;
+		        	if (dropNode.name() == "GenomeVersion") {
+		        		params.idGenomeVersion = dropNode.@idGenomeVersion;
+		        	}
+		        	if (dropNode.name() == "AnnotationGrouping") {
+		        		params.idParentAnnotationGrouping = dropNode.@idAnnotationGrouping;
+		        		params.idGenomeVersion = dropNode.@idGenomeVersion;
+		        	}
+		        	// Ignore operation if user dragged to its own parent
+		        	if (dragItem.parent() == dropNode) {
+		        		keep = false;
+		        	}
+		        	// Ignore operation if item is dragged back to itself
+		        	if (dragItem == dropNode) {
+		        		keep = false;
+		        	}
+		       		// Disallow operation if user does not have write
+		       		// permissions on annotation grouping
+		       		if (dragItem.@canWrite != "Y") {
+		       			Alert.show("Insufficient permissions to move annotation folder " + dragItem.@label + ".");
+			 			event.preventDefault();
+		   				event.target.hideDropFeedback(event);
+			       		DragManager.showFeedback(DragManager.NONE);		   	
+			       		return;
+		       		}
+			       	if (dropNode.@idGenomeVersion != dragItem.@idGenomeVersion) {
+			       		Alert.show("Cannot move annotation grouping to a different genome version");
+			 			event.preventDefault();
+		   				event.target.hideDropFeedback(event);
+			       		DragManager.showFeedback(DragManager.NONE);		   	
+			 	        return;	
+			       	}
+			       	if (keep) {
+			       		dragParams.addItem(params);			       		
+			       	}
+	       		 }
 	       }
+	
 	       
 	       
+	       event.preventDefault();
+		   event.target.hideDropFeedback(event);
+		   DragManager.showFeedback(DragManager.NONE);		
 	
 	       // Reassign dragged annotation or annotation grouping to
 	       // new parent 
-	       if (dropNode != null) {
-
-		       for(var i:Number=0; i < items.length; i++) {
-		       	if (items[i].name() == "Annotation") {
-		       		 var annotationGroupingFrom:Object = null;
-		       		 if (items[i].parent().name() == "AnnotationGrouping") {
-		       		 	annotationGroupingFrom = items[i].parent();
-		       		 }
-		       		  
-		       		 // Disallow operation if user does not have write
-		       		 // permissions on annotation
-		       		 if (items[i].@canWrite != "Y") {
-		       		 	Alert.show("Insufficient permissions to move annotation " + items[i].@label + ".");
-		       		 	event.preventDefault();
-			   			event.target.hideDropFeedback(event);
-			 			DragManager.showFeedback(DragManager.NONE);		   	
-			       		return;
-		       		 }
-			       	 if (dropNode.@idGenomeVersion != items[i].parent().@idGenomeVersion) {
-			       		Alert.show("Cannot move annotation to a different genome version");
-					    event.preventDefault();
-			   			event.target.hideDropFeedback(event);
-			 			DragManager.showFeedback(DragManager.NONE);		   	
-			       		return;	
-			       	 }
-			       	 
-				     event.preventDefault();
-		   			 event.target.hideDropFeedback(event);
-		 			 DragManager.showFeedback(DragManager.NONE);		   	
-		             
-		             this.promptToReassignAnnotation(items[i], annotationGroupingFrom, dropNode, true);
-		       	} else if (items[i].name() == "AnnotationGrouping") {
-		       		 
-				     event.preventDefault();
-		   			 event.target.hideDropFeedback(event);
-		 			 DragManager.showFeedback(DragManager.NONE);		   	
-
-		       		 // Disallow operation if user does not have write
-		       		 // permissions on annotation grouping
-		       		 if (items[i].@canWrite != "Y") {
-		       		 	Alert.show("Insufficient permissions to move annotation folder " + items[i].@label + ".");
-		       		 	event.preventDefault();
-			   			event.target.hideDropFeedback(event);
-			 			DragManager.showFeedback(DragManager.NONE);		   	
-			       		return;
-		       		 }
-
-		       		  
-			       	 if (dropNode.@idGenomeVersion != items[i].@idGenomeVersion) {
-			       		Alert.show("Cannot move annotation grouping to a different genome version");
-					    event.preventDefault();
-			   			event.target.hideDropFeedback(event);
-			 			DragManager.showFeedback(DragManager.NONE);		   	
-			       		return;	
-			       	 }
-		             
-		             this.promptToReassignAnnotationGrouping(items[i], dropNode, true);
-		       	} 
-		       }
+	       if (dropNode != null && dragParams.length > 0) {
+		   		promptToMoveOrCopy();
 	       }	
-	       event.preventDefault();
-		   event.target.hideDropFeedback(event);
-		   DragManager.showFeedback(DragManager.NONE);		   	
+	       
 		   return;       
 		} 
+		
+		private function promptToMoveOrCopy():void {
+			reassignIsMove = true;
+			Alert.yesLabel = "Move";
+			Alert.noLabel = "Copy";
+			Alert.buttonWidth = 100;
+			
+         	Alert.show("Do you want to move or copy items to " + dropNode.@label + "?", 
+						"", 
+						(Alert.YES | Alert.NO | Alert.CANCEL), this, 
+						onPromptToMoveOrCopy);     
+         	
+        }
+
+		private function onPromptToMoveOrCopy(event:CloseEvent):void {
+            if (event.detail==Alert.YES) {
+            	reassignIsMove = true;
+            	this.performMoveOrCopy();
+            } else if (event.detail==Alert.NO) {
+            	reassignIsMove = false;
+            	this.performMoveOrCopy();
+            } 
+            Alert.yesLabel = "Yes";
+			Alert.noLabel = "No";
+			Alert.buttonWidth = alertButtonWidthDefault;
+        }        
+
+		
+		private function performMoveOrCopy():void {
+			if (dragParams.length == 0) {
+				return;
+			}
+			var params:Object = dragParams[0];
+		    params.isMove = reassignIsMove ? "Y" : "N";
+	       	if (params.name == "Annotation") {
+	             dragParams.removeItemAt(0);
+	             moveAnnotation.send(params);
+	             
+	       	} else if (params.name == "AnnotationGrouping") {
+	             dragParams.removeItemAt(0);
+	             moveAnnotationGrouping.send(params);
+	       	} 
+		
+		}
+
+		
 		private function locateByName():void {
 			//hitLabel.text = "";
 			hitCount = 0;
@@ -1557,6 +1530,7 @@
 			}  else {
 				annotationsTree.selectedItem = null;
 			}
+			this.locateStack.selectedIndex = 1;
 			if (this.locateText.text != "") {
 				this.nextLocationButton.visible = hitCount > 0 ? true : false;
 
@@ -1711,27 +1685,7 @@
 				item.@emphasize = "N";
 			}
 		}
-			
-		private function keepParent(item:XML):void {
-			if (item.parent() == null) {
-				return;
-			}
-			item.parent().@keep = "Y";
-			keepParent(item.parent());
-		}
 		
-		private function keepChildren(item:XML):void {
-			if (item.elements() == null || item.elements().length() == 0) {
-				return;
-			}
-			for each(var child:XML in item.elements()) {
-				child.@keep = "Y";
-				keepChildren(child);
-			}
-		}
-
-
-
 
         ]]>
         
@@ -1896,10 +1850,17 @@
 	  					        	toolTip="Delete annotation"  id="removeAnnotationButton"/>
 				            </mx:HBox>
 				        </mx:ViewStack>
-				        <mx:Spacer width="100%"/>
 				        <mx:Label text="Look for:" styleName="menuLabelSmall" paddingRight="1"/>
-				        <mx:TextInput id="locateText"  width="100"  enter="locateByName()"/>
-				        <mx:LinkButton label="Next match"  paddingLeft="1" visible="false" id="nextLocationButton" styleName="linkMenuButton" click="jumpToNextMatch()" textAlign="left" icon="@Embed(source='assets/next.png')"/>
+				        <mx:TextInput id="locateText"  width="100%"  enter="locateByName()" change="{this.locateStack.selectedIndex = 0}"/>
+				        <mx:ViewStack id="locateStack" >
+				            <mx:HBox paddingLeft="2">
+						        <mx:LinkButton label="Find"   width="90" paddingLeft="1" visible="{locateText.text != ''}" id="findLocationButton" styleName="linkMenuButton" click="this.locateByName()" textAlign="left" icon="@Embed(source='assets/find.png')"/>
+				            </mx:HBox>
+				            <mx:HBox>
+						        <mx:LinkButton label="Next match" width="90"  paddingLeft="1" visible="true" id="nextLocationButton" styleName="linkMenuButton" click="jumpToNextMatch()" textAlign="left" icon="@Embed(source='assets/next.png')"/>
+				            </mx:HBox>
+				        </mx:ViewStack>
+				        
   			        </mx:HBox >
 			        	
 			        </mx:VBox>
@@ -1924,7 +1885,7 @@
 					itemRenderer="util.TreeNodeRenderer"
 					dragMoveEnabled="true"
 					dragDrop="onDragDrop(event);" 
-					rowHeight="18" allowMultipleSelection="false" itemClick="{onTreeClick()}">
+					rowHeight="18" allowMultipleSelection="true" itemClick="{onTreeClick()}">
 				</mx:Tree>			
 				<mx:HBox width="100%" horizontalAlign="right" paddingTop="2">
 					<mx:Label text="{annotationCount}" styleName="menuLabelSmall" fontStyle="normal"/>

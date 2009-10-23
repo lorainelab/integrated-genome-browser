@@ -37,7 +37,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -352,7 +351,7 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
 			any_are_combined = this_one_is_combined;
 			all_are_combined = this_one_is_combined;
-			all_are_smart_glyphs = (first_glyph instanceof SmartGraphGlyph);
+			all_are_smart_glyphs = (first_glyph instanceof GraphGlyph);
 		}
 
 		// Now loop through other glyphs if there are more than one
@@ -364,7 +363,7 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
 			any_are_combined = any_are_combined || this_one_is_combined;
 			all_are_combined = all_are_combined && this_one_is_combined;
-			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof SmartGraphGlyph);
+			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof GraphGlyph);
 
 			if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
 				graph_style = -1;

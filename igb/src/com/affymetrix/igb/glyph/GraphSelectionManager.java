@@ -277,43 +277,43 @@ public final class GraphSelectionManager
         current_graph.setGraphStyle(GraphStateI.STAIRSTEP_GRAPH);
       }
       else if (src == min_max_graph) {
-        if (current_graph instanceof SmartGraphGlyph) {
+        if (current_graph instanceof GraphGlyph) {
           current_graph.setGraphStyle(GraphStateI.MINMAXAVG);
         }
       }
       else if (src == adjust_hilo) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+        if (current_graph instanceof GraphGlyph) {
+          GraphGlyph sgg = (GraphGlyph)current_graph;
           if (DEBUG) System.out.println("setting up graph bounds adjuster");
           GraphVisibleBoundsSetter.showFramedThresholder(current_graph, current_source);
         }
       }
       else if (src == adjust_percent) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+        if (current_graph instanceof GraphGlyph) {
+          GraphGlyph sgg = (GraphGlyph)current_graph;
           if (DEBUG) System.out.println("setting up percent adjuster");
           PercentThresholder.showFramedThresholder(sgg, current_source);
         }
       }
       else if (src == thresh_graph) {
-        if (current_graph instanceof SmartGraphGlyph) {
+        if (current_graph instanceof GraphGlyph) {
           if (second_current_graph != null || current_graph == null) {
             Application.errorPanel("ERROR", "Must select exactly one graph");
           } else {
-            SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+            GraphGlyph sgg = (GraphGlyph)current_graph;
             boolean show = ! sgg.getShowThreshold();
             sgg.setShowThreshold(show);
           }
         }
       }
       else if (src == tweak_thresh) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          showThresholds((SmartGraphGlyph)current_graph);
+        if (current_graph instanceof GraphGlyph) {
+          showThresholds((GraphGlyph)current_graph);
         }
       }
       else if (src == max_gap_thresh) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+        if (current_graph instanceof GraphGlyph) {
+          GraphGlyph sgg = (GraphGlyph)current_graph;
           //          if (sgg.getShowThreshold()) {
           sgg.setShowThreshold(true);
             if (DEBUG) System.out.println("setting up max_gap thresholder");
@@ -322,16 +322,16 @@ public final class GraphSelectionManager
         }
       }
       else if (src == min_score_thresh) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+        if (current_graph instanceof GraphGlyph) {
+          GraphGlyph sgg = (GraphGlyph)current_graph;
           sgg.setShowThreshold(true);
           if (DEBUG) System.out.println("setting up max_gap thresholder");
           MinScoreThresholder.showFramedThresholder(sgg, current_source);
         }
       }
       else if (src == min_run_thresh) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+        if (current_graph instanceof GraphGlyph) {
+          GraphGlyph sgg = (GraphGlyph)current_graph;
           if (sgg.getShowThreshold()) {
             if (DEBUG) System.out.println("setting up min_run thresholder");
             MinRunThresholder.showFramedThresholder(sgg, current_source);
@@ -374,8 +374,8 @@ public final class GraphSelectionManager
         current_graph.setShowLabel( ! current_graph.getShowLabel());
       }
       else if (src == show_axis) {
-        if (current_graph instanceof SmartGraphGlyph) {
-          SmartGraphGlyph sgg = (SmartGraphGlyph)current_graph;
+        if (current_graph instanceof GraphGlyph) {
+          GraphGlyph sgg = (GraphGlyph)current_graph;
           sgg.setShowAxis( ! sgg.getShowAxis());
         }
       }
@@ -472,7 +472,7 @@ public final class GraphSelectionManager
     }
   }
 
-  public void showThresholds(SmartGraphGlyph sgg) {
+  public void showThresholds(GraphGlyph sgg) {
     if (! sgg.getShowThreshold())  {
       sgg.setShowThreshold(true);
       current_source.updateWidget();
@@ -701,11 +701,11 @@ public final class GraphSelectionManager
     if (id == evt.DRAG_IN_PROGRESS) {
       //      System.out.println("got a drag in progress event: " + evt);
       GlyphI gl = evt.getGlyph();
-      if (gl.getParent() instanceof SmartGraphGlyph && src instanceof NeoWidget) {
+      if (gl.getParent() instanceof GraphGlyph && src instanceof NeoWidget) {
         NeoWidget widg = (NeoWidget)src;
         ViewI view = widg.getView();
         GlyphI threshgl = gl;
-        SmartGraphGlyph graphgl = (SmartGraphGlyph)threshgl.getParent();
+        GraphGlyph graphgl = (GraphGlyph)threshgl.getParent();
         Rectangle2D.Double tbox = threshgl.getCoordBox();
         float new_threshold = graphgl.getGraphValue(view, tbox.y);
         if (graphgl.getThresholdDirection() == GraphState.THRESHOLD_DIRECTION_GREATER) {

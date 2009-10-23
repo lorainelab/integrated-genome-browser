@@ -26,7 +26,6 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
@@ -320,11 +319,11 @@ public abstract class BookmarkController {
     int i = -1;
     for (int j=0; j<max; j++) {
       Object graph_object = graphs.get(j);
-      if (!(graph_object instanceof SmartGraphGlyph)) {
-        System.out.println("Cannot bookmark graphs that do not implement SmartGraphGlyph.");
+      if (!(graph_object instanceof GraphGlyph)) {
+        System.out.println("Cannot bookmark graphs that do not implement GraphGlyph.");
         continue;
       }
-      SmartGraphGlyph gr = (SmartGraphGlyph) graph_object;
+      GraphGlyph gr = (GraphGlyph) graph_object;
       GraphSym graf = (GraphSym)gr.getInfo();
       if (DEBUG) {
         System.out.println("graph sym, points = " + graf.getPointCount() + ": " + graf);

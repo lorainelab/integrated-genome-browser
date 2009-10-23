@@ -57,7 +57,7 @@ import static com.affymetrix.genometryImpl.style.GraphStateI.MINMAXAVG;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public abstract class GraphGlyph extends Glyph {
+public class GraphGlyph extends Glyph {
 	public static final double default_transition_scale = 100;
 
 	public boolean TIME_DRAWING = false;
@@ -127,7 +127,7 @@ public abstract class GraphGlyph extends Glyph {
 	Rectangle2D.Double thresh_coord_box = new Rectangle2D.Double();
 	ThreshGlyph thresh_glyph = new ThreshGlyph();
 	Rectangle thresh_pix_box = new Rectangle();
-	double transition_scale = SmartGraphGlyph.default_transition_scale;
+	double transition_scale = GraphGlyph.default_transition_scale;
 
 	public float getXCoord(int i) {
 		return graf.getGraphXCoord(i);

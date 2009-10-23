@@ -62,8 +62,7 @@ public final class GraphGlyph extends Glyph {
 	static final double default_transition_scale = 100;
 
 	private static final boolean TIME_DRAWING = false;
-	// THICK_OUTLINE: should the selection outline be thick?
-	private static final boolean THICK_OUTLINE = true;
+
 	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
@@ -76,8 +75,6 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
 	private final Rectangle label_pix_box = new Rectangle();
 	private final Timer tim = new Timer();
-	private static final boolean LARGE_HANDLE = true;
-	private static final boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
 	 *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
@@ -93,11 +90,8 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	private final GraphStateI state;
 	private final LinearTransform scratch_trans = new LinearTransform();
-	private static final boolean AVGLINE = true;
-	private static final boolean MINMAXBAR = true;
-	private static final boolean NEWDEBUG = false;
+	private static final boolean DEBUG = false;
 	// specified in coords_per_pixel
-	private static final boolean TRANSITION_TO_BARS = true;
 	/**
 	 * A variable used to hold some temporary calculations for LINE_GRAPH.
 	 */
@@ -134,8 +128,6 @@ public final class GraphGlyph extends Glyph {
 	private final BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
 			BasicStroke.JOIN_MITER, 10.0f,
 			new float[]{1.0f, 10.0f}, 0.0f);
-
-	private static final boolean mutable_xcoords = true;
 
 	public float getXCoord(int i) {
 		return graf.getGraphXCoord(i);
@@ -256,7 +248,7 @@ public final class GraphGlyph extends Glyph {
 		return GraphSymUtils.hasWidth(graf);
 	}
 
-	public float[] getVisibleYRange() {
+	private float[] getVisibleYRange() {
 		float[] result = new float[2];
 		float min_ycoord = Float.POSITIVE_INFINITY;
 		float max_ycoord = Float.NEGATIVE_INFINITY;
@@ -279,7 +271,7 @@ public final class GraphGlyph extends Glyph {
 		return result;
 	}
 
-	public boolean isUninitialized() {
+	private boolean isUninitialized() {
 		return getVisibleMinY() == Float.POSITIVE_INFINITY ||
 				getVisibleMinY() == Float.NEGATIVE_INFINITY ||
 				getVisibleMaxY() == Float.POSITIVE_INFINITY ||
@@ -293,7 +285,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public String getID() {
+	private String getID() {
 		Object mod = this.getInfo();
 		String ident = null;
 		if (mod instanceof SeqSymmetry) {
@@ -309,7 +301,7 @@ public final class GraphGlyph extends Glyph {
 		return state;
 	}
 
-	public void draw(ViewI view, int graph_style) {
+	private void draw(ViewI view, int graph_style) {
 		if (TIME_DRAWING) {
 			tim.start();
 		}
@@ -365,17 +357,6 @@ public final class GraphGlyph extends Glyph {
 
 	private void DrawTheGraph(double offset, ViewI view, Graphics g, double yscale, int graph_style, double xmin, double xmax, double heatmap_scaling, Color[] heatmap_colors) {
 		int beg_index = 0;
-		if (show_min_max) {
-			//	Point scratch_point = new Point();
-			coord.y = offset; // visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
-			view.transformToPixels(coord, scratch_point);
-			g.setColor(Color.yellow);
-			g.drawLine(pixelbox.x, scratch_point.y, pixelbox.x + pixelbox.width, scratch_point.y);
-			coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
-			view.transformToPixels(coord, scratch_point);
-			g.setColor(Color.blue);
-			g.drawLine(pixelbox.x, scratch_point.y, pixelbox.x + pixelbox.width, scratch_point.y);
-		}
 
 		float yzero = 0;
 		if (getVisibleMinY() > yzero) {
@@ -572,7 +553,7 @@ public final class GraphGlyph extends Glyph {
 
 	}
 
-	public void drawLabel(ViewI view) {
+	private void drawLabel(ViewI view) {
 		if (state.getShowLabelOnRight()) {
 			drawLabelRight(view);
 		} else {
@@ -580,7 +561,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void drawLabelRight(ViewI view) {
+	private void drawLabelRight(ViewI view) {
 		if (getLabel() == null) {
 			return;
 		}
@@ -606,7 +587,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void drawLabelLeft(ViewI view) {
+	private void drawLabelLeft(ViewI view) {
 		if (getLabel() == null) {
 			return;
 		}
@@ -632,7 +613,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void drawHorizontalGridLines(ViewI view) {
+	private void drawHorizontalGridLines(ViewI view) {
 		float[] grid = getGridLinesYValues();
 		if (grid == null || grid.length == 0) {
 			return;
@@ -667,7 +648,7 @@ public final class GraphGlyph extends Glyph {
 		g.setStroke(old_stroke); // reset to orignial stroke
 	}
 
-	public void drawAxisLabel(ViewI view) {
+	private void drawAxisLabel(ViewI view) {
 		if (GraphState.isHeatMapStyle(getGraphStyle())) {
 			return;
 		}
@@ -706,7 +687,7 @@ public final class GraphGlyph extends Glyph {
 	/** Creates an array of about 4 to 10 coord values evenly spaced between 
 	 * {@link #getVisibleMinY()} and {@link #getVisibleMaxY()}. 
 	 */
-	public Double[] determineYTickCoords() {
+	private Double[] determineYTickCoords() {
 		float min = getVisibleMinY();
 		float max = getVisibleMaxY();
 		return determineYTickCoords(min, max);
@@ -753,7 +734,7 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	/** Calculate tick pixel positions based on tick coord positions. */
-	public double[] convertToPixels(ViewI view, Double[] y_coords) {
+	private double[] convertToPixels(ViewI view, Double[] y_coords) {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
 		double yoffset = scratch_trans.getOffsetY();
@@ -790,10 +771,8 @@ public final class GraphGlyph extends Glyph {
 		if (handle_width > 0) {
 			g.drawRect(view_pixbox.x, pixelbox.y,
 					handle_width - 1, pixelbox.height - 1);
-			if (THICK_OUTLINE) {
-				g.drawRect(view_pixbox.x + 1, pixelbox.y + 1,
-						handle_width - 3, pixelbox.height - 3);
-			}
+			g.drawRect(view_pixbox.x + 1, pixelbox.y + 1,
+					handle_width - 3, pixelbox.height - 3);
 		}
 
 		// also draw a little pointing triangle to make the selection stand-out more
@@ -813,7 +792,7 @@ public final class GraphGlyph extends Glyph {
 		super.moveRelative(xdelta, ydelta);
 		state.getTierStyle().setHeight(coordbox.height);
 		state.getTierStyle().setY(coordbox.y);
-		if (mutable_xcoords && xdelta != 0.0f) {
+		if (xdelta != 0.0f) {
 			int[] xcoords = graf.getGraphXCoords();
 			int maxi = this.getPointCount();
 			for (int i = 0; i < maxi; i++) {
@@ -866,13 +845,8 @@ public final class GraphGlyph extends Glyph {
 		int xbeg = Math.max(view_pixbox.x, pixelbox.x);
 		Graphics g = view.getGraphics();
 		g.setFont(default_font);
-		FontMetrics fm = g.getFontMetrics();
-		int h = Math.min(fm.getMaxAscent(), pixelbox.height);
-		if (LARGE_HANDLE) {
-			handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, pixelbox.height);
-		} else {
-			handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, h);
-		}
+		handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, pixelbox.height);
+
 		return handle_pixbox;
 	}
 
@@ -881,11 +855,11 @@ public final class GraphGlyph extends Glyph {
 	 *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
 	 *     be modified (except for resetting the points by calling setPointCoords() again)
 	 */
-	public float getGraphMinY() {
+	float getGraphMinY() {
 		return point_min_ycoord;
 	}
 
-	public float getGraphMaxY() {
+	float getGraphMaxY() {
 		return point_max_ycoord;
 	}
 
@@ -952,7 +926,7 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowBounds();
 	}
 
-	public boolean getShowHandle() {
+	private boolean getShowHandle() {
 		return state.getShowHandle();
 	}
 
@@ -964,7 +938,7 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowAxis();
 	}
 
-	public boolean getShowGrid() {
+	private boolean getShowGrid() {
 		return state.getShowGrid();
 	}
 
@@ -974,10 +948,6 @@ public final class GraphGlyph extends Glyph {
 
 	public void setShowGraph(boolean show) {
 		state.setShowGraph(show);
-	}
-
-	public void setShowHandle(boolean show) {
-		state.setShowHandle(show);
 	}
 
 	public void setShowBounds(boolean show) {
@@ -992,19 +962,7 @@ public final class GraphGlyph extends Glyph {
 		state.setShowAxis(b);
 	}
 
-	public void setShowGrid(boolean b) {
-		state.setShowGrid(b);
-	}
-
-	public void setXPixelOffset(int offset) {
-		xpix_offset = offset;
-	}
-
-	public void setGridLinesYValues(float[] f) {
-		state.setGridLinesYValues(f);
-	}
-
-	public float[] getGridLinesYValues() {
+	private float[] getGridLinesYValues() {
 		return state.getGridLinesYValues();
 	}
 
@@ -1107,10 +1065,6 @@ public final class GraphGlyph extends Glyph {
 		lt.setOffsetY(yoffset);
 	}
 
-	public static void setLabelFont(Font f) {
-		default_font = f;
-	}
-
 	private void DrawAvgLine(int graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
 		if (graph_style == MINMAXAVG) {
 			g.setColor(lighter);
@@ -1176,7 +1130,7 @@ public final class GraphGlyph extends Glyph {
 				points_in_pixel++;
 			} else {
 				// draw previous pixel position
-				if ((graph_style == MINMAXAVG && MINMAXBAR) || graph_style == LINE_GRAPH || graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
+				if ((graph_style == MINMAXAVG) || graph_style == LINE_GRAPH || graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
 					// Does not apply to AVG_HEAT_MAP
 					int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 					int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
@@ -1202,7 +1156,7 @@ public final class GraphGlyph extends Glyph {
 					draw_count++;
 				}
 				yavg_pixel = ysum / points_in_pixel;
-				if (AVGLINE || graph_style == LINE_GRAPH) {
+				if (graph_style == LINE_GRAPH) {
 					// cache for drawing later
 					if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 						pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
@@ -1227,7 +1181,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void drawGraph(ViewI view) {
+	private void drawGraph(ViewI view) {
 		if (this.getPointCount() == 0) {
 			return;
 		}
@@ -1277,12 +1231,6 @@ public final class GraphGlyph extends Glyph {
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
 		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
-			if (show_min_max) {
-				g.setColor(Color.yellow);
-				g.drawLine(pixelbox.x, plot_bottom_ypixel, pixelbox.width, plot_bottom_ypixel);
-				g.setColor(Color.blue);
-				g.drawLine(pixelbox.x, plot_top_ypixel, pixelbox.width, plot_top_ypixel);
-			}
 			if (getGraphState().getShowZeroLine() && yzero == 0) {
 				g.setColor(Color.gray);
 				g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
@@ -1294,9 +1242,7 @@ public final class GraphGlyph extends Glyph {
 			}
 		}
 		DrawPoints(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
-		if (AVGLINE) {
-			DrawAvgLine(graph_style, g, heatmap_scaling, plot_bottom_ypixel, plot_top_ypixel, coords_per_pixel);
-		}
+		DrawAvgLine(graph_style, g, heatmap_scaling, plot_bottom_ypixel, plot_top_ypixel, coords_per_pixel);
 	}
 
 	private void drawSmart(ViewI view) {
@@ -1344,10 +1290,6 @@ public final class GraphGlyph extends Glyph {
 			long drawtime = tim.read();
 			System.out.println("smart graph draw time: " + drawtime);
 		}
-	}
-
-	private void drawThresholdedRegions(ViewI view) {
-		drawThresholdedRegions(view, null, null);
 	}
 
 	/**
@@ -1572,11 +1514,11 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowThreshold();
 	}
 
-	public double getThreshEndShift() {
+	double getThreshEndShift() {
 		return state.getThreshEndShift();
 	}
 
-	public double getThreshStartShift() {
+	double getThreshStartShift() {
 		return state.getThreshStartShift();
 	}
 
@@ -1597,7 +1539,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void setMaxGapThreshold(int thresh) {
+	void setMaxGapThreshold(int thresh) {
 		state.setMaxGapThreshold(thresh);
 	}
 
@@ -1606,7 +1548,7 @@ public final class GraphGlyph extends Glyph {
 		resetThreshLabel();
 	}
 
-	public void setMinRunThreshold(int thresh) {
+	void setMinRunThreshold(int thresh) {
 		state.setMinRunThreshold(thresh);
 	}
 
@@ -1615,16 +1557,16 @@ public final class GraphGlyph extends Glyph {
 		resetThreshLabel();
 	}
 
-	public void setShowThreshold(boolean show) {
+	void setShowThreshold(boolean show) {
 		state.setShowThreshold(show);
 		thresh_glyph.setVisibility(show);
 	}
 
-	public void setThreshEndShift(double d) {
+	void setThreshEndShift(double d) {
 		state.setThreshEndShift(d);
 	}
 
-	public void setThreshStartShift(double d) {
+	void setThreshStartShift(double d) {
 		state.setThreshStartShift(d);
 	}
 
@@ -1633,20 +1575,17 @@ public final class GraphGlyph extends Glyph {
 		resetThreshLabel();
 	}
 
-	/** Sets the scale at which the drawing routine will switch between the
-	 *  style that is optimized for large genomic regions and the normal style.
-	 */
 	/**
 	 * Sets the scale at which the drawing routine will switch between the
 	 * style that is optimized for large genomic regions and the normal style.
 	 */
-	public void setTransitionScale(double d) {
+	void setTransitionScale(double d) {
 		transition_scale = d;
 	}
 
 	@Override
 	public void draw(ViewI view) {
-		if (NEWDEBUG) {
+		if (DEBUG) {
 			System.out.println("called SmartGraphGlyph.draw(), coords = " + coordbox);
 		}
 		int graph_style = getGraphStyle();
@@ -1665,7 +1604,7 @@ public final class GraphGlyph extends Glyph {
 		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
 			double xpixels_per_coord = ((LinearTransform) view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
-			if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
+			if ((xcoords_per_pixel < transition_scale)) {
 				if ((graph_style == MINMAXAVG) && (Application.getSingleton() instanceof IGB)) {
 					this.draw(view, BAR_GRAPH);
 				} else {
@@ -1681,7 +1620,7 @@ public final class GraphGlyph extends Glyph {
 			this.draw(view, graph_style);
 		}
 		if (getShowThreshold()) {
-			drawThresholdedRegions(view);
+			drawThresholdedRegions(view, null, null);
 		} else {
 			thresh_glyph.setVisibility(false);
 		}

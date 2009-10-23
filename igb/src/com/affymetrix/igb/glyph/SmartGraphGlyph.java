@@ -38,47 +38,5 @@ public final class SmartGraphGlyph extends GraphGlyph {
 
 	public SmartGraphGlyph(GraphSym graf, GraphStateI gstate) {
 		super(graf, gstate);
-		setDrawOrder(Glyph.DRAW_SELF_FIRST);
-
-		thresh_glyph.setVisibility(getShowThreshold());
-		thresh_glyph.setSelectable(false);
-		if (thresh_color != null) {
-			thresh_glyph.setColor(thresh_color);
-		}
-		this.addChild(thresh_glyph);
-
-		if (this.getPointCount() == 0) {
-			return;
-		}
-
-		if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
-			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
-		}
-		resetThreshLabel();
-	}
-
-	@Override
-	public void setBackgroundColor(Color col) {
-		super.setBackgroundColor(col);
-		thresh_color = darker.darker();
-		if (thresh_glyph != null) {
-			thresh_glyph.setColor(thresh_color);
-		}
-	}
-
-	/**
-	 *  Same as GraphGlyph.getInternalLinearTransform(), except
-	 *  also caclulates a bottom y offset for showing thresholded
-	 *  regions, if showThresholdedRegions() == true.
-	 */
-	@Override
-	protected double getLowerYCoordInset(ViewI view) {
-		double bottom_ycoord_inset = super.getLowerYCoordInset(view);
-		if (getShowThreshold()) {
-			thresh_pix_box.height = thresh_contig_height + thresh_contig_yoffset;
-			view.transformToCoords(thresh_pix_box, thresh_coord_box);
-			bottom_ycoord_inset += thresh_coord_box.height;
-		}
-		return bottom_ycoord_inset;
 	}
 }

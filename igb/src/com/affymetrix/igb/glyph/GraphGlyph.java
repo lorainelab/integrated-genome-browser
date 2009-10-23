@@ -223,6 +223,25 @@ public abstract class GraphGlyph extends Glyph {
 			point_min_ycoord = point_max_ycoord - 1;
 		}
 		checkVisibleBoundsY();
+
+		/* Code below comes from old SmartGraphGlyph Constructor */
+		setDrawOrder(Glyph.DRAW_SELF_FIRST);
+
+		thresh_glyph.setVisibility(getShowThreshold());
+		thresh_glyph.setSelectable(false);
+		if (thresh_color != null) {
+			thresh_glyph.setColor(thresh_color);
+		}
+		this.addChild(thresh_glyph);
+
+		if (this.getPointCount() == 0) {
+			return;
+		}
+
+		if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
+			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
+		}
+		resetThreshLabel();
 	}
 
 	public boolean hasWidth() {
@@ -995,6 +1014,10 @@ public abstract class GraphGlyph extends Glyph {
 		super.setBackgroundColor(col);
 		lighter = col.brighter();
 		darker = col.darker();
+		thresh_color = darker.darker();
+		if (thresh_glyph != null) {
+			thresh_glyph.setColor(thresh_color);
+		}
 	}
 
 	public void setGraphStyle(int type) {
@@ -1052,9 +1075,22 @@ public abstract class GraphGlyph extends Glyph {
 		return top_ycoord_inset;
 	}
 
+	/**
+	 *  Same as GraphGlyph.getInternalLinearTransform(), except
+	 *  also caclulates a bottom y offset for showing thresholded
+	 *  regions, if showThresholdedRegions() == true.
+	 */
 	protected double getLowerYCoordInset(ViewI view) {
-		//    return 0;
-		return 5;  // GAH 3-21-2005
+		/* This original super to this function had had its return value
+		 * changed from 0 to 5 by GAH 3-21-2005.  bottom_ycoord_inset
+		 * is set to five to mirror the original call to super */
+		double bottom_ycoord_inset = 5;
+		if (getShowThreshold()) {
+			thresh_pix_box.height = thresh_contig_height + thresh_contig_yoffset;
+			view.transformToCoords(thresh_pix_box, thresh_coord_box);
+			bottom_ycoord_inset += thresh_coord_box.height;
+		}
+		return bottom_ycoord_inset;
 	}
 
 	protected void getInternalLinearTransform(ViewI view, LinearTransform lt) {

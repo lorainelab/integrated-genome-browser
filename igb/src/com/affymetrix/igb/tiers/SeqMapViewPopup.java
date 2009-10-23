@@ -427,7 +427,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
               style.setBackground(chooser.getColor());
             }
           }
-					for (SmartGraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+					for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
             if (fg) {
               gg.setColor(chooser.getColor());
               gg.getGraphState().getTierStyle().setColor(chooser.getColor());
@@ -586,7 +586,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     gsym.setGraphName("depth: " + atier.getLabel());
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
-    SmartGraphGlyph gl = (SmartGraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);
+    GraphGlyph gl = (GraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);
     //    gl.setState(GraphGlyph.STAIRSTEP);
     gl.setGraphStyle(GraphStateI.STAIRSTEP_GRAPH);
     gl.setColor(atier.getForegroundColor());

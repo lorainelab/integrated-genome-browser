@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.SeqMapView;
@@ -107,7 +108,7 @@ public abstract class BookmarkController {
     Iterator iter = loaded_graphs.iterator();
     List<String> loaded_graph_paths = new Vector<String>(loaded_graphs.size());
     while (iter.hasNext()) {
-      SmartGraphGlyph gr = (SmartGraphGlyph) iter.next();
+      GraphGlyph gr = (GraphGlyph) iter.next();
       GraphSym graf_info = (GraphSym) gr.getInfo();
       String source_url = (String) graf_info.getProperty("source_url");
       loaded_graph_paths.add(source_url);

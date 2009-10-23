@@ -27,7 +27,7 @@ import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.tiers.AffyTieredMap;
@@ -123,7 +123,7 @@ public final class GraphAdjusterView {
       gmodel.getSelectedSeqGroup().removeType(method);
     }*/
 
-    SmartGraphGlyph gl = (SmartGraphGlyph) gviewer.getSeqMap().getItem(gsym);
+    GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
     if (gl != null) {
       gviewer.getSeqMap().removeItem(gl);
       // clean-up references to the graph, allowing garbage-collection, etc.
@@ -181,7 +181,7 @@ public final class GraphAdjusterView {
     if (scount > 0) {
       // Set an initial color so that the "reset" button will work.
       GraphSym graf_0 = graf_syms.get(0);
-      SmartGraphGlyph gl_0 = (SmartGraphGlyph) gviewer.getSeqMap().getItem(graf_0);
+      GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
       Color initial_color = Color.GREEN;
       if (gl_0 != null) {
         // gl_0 could be null if there is a selected graph that isn't visible in
@@ -198,7 +198,7 @@ public final class GraphAdjusterView {
 	  if (glist != null) {
 	    int glyphcount = glist.size();
 	    for (int k=0; k<glyphcount; k++) {
-	      SmartGraphGlyph gl = (SmartGraphGlyph)glist.get(k);
+	      GraphGlyph gl = (GraphGlyph)glist.get(k);
 	      gl.setColor(col); // this automatically sets the GraphState color
 	      // if graph is in a tier, change foreground color of tier also
 	      //   (which in turn triggers change in color for TierLabelGlyph...)

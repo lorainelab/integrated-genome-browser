@@ -14,7 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.style.*;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -481,10 +481,10 @@ public class TierGlyph extends SolidGlyph {
       FontMetrics fm = g.getFontMetrics();
       int h = Math.min(fm.getMaxAscent(), pixelbox.height);
       if (LARGE_HANDLE) {
-        handle_pixbox.setBounds(xbeg, pixelbox.y, SmartGraphGlyph.handle_width, pixelbox.height);
+        handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, pixelbox.height);
       }
       else {
-        handle_pixbox.setBounds(xbeg, pixelbox.y, SmartGraphGlyph.handle_width, h);
+        handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, h);
       }
       return handle_pixbox;
   }

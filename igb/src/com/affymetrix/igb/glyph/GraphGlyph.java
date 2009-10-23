@@ -16,6 +16,8 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
+import com.affymetrix.igb.Application;
+import com.affymetrix.igb.IGB;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
@@ -1605,6 +1607,49 @@ public abstract class GraphGlyph extends Glyph {
 	 */
 	public void setTransitionScale(double d) {
 		transition_scale = d;
+	}
+
+	@Override
+	public void draw(ViewI view) {
+		if (NEWDEBUG) {
+			System.out.println("called SmartGraphGlyph.draw(), coords = " + coordbox);
+		}
+		int graph_style = getGraphStyle();
+		//    System.out.println("thresh glyph visibility: " + thresh_glyph.isVisible() + ", show threshold = " + show_threshold);
+		// GAH 9-13-2002
+		// hack to get thresholding to work -- thresh line child glyph keeps getting removed
+		//   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...
+		if (this.getChildCount() == 0) {
+			if (thresh_glyph == null) {
+				thresh_glyph = new ThreshGlyph();
+				thresh_glyph.setSelectable(false);
+				thresh_glyph.setColor(thresh_color);
+			}
+			this.addChild(thresh_glyph);
+		}
+		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+			double xpixels_per_coord = ((LinearTransform) view.getTransform()).getScaleX();
+			double xcoords_per_pixel = 1 / xpixels_per_coord;
+			if (TRANSITION_TO_BARS && (xcoords_per_pixel < transition_scale)) {
+				if ((graph_style == MINMAXAVG) && (Application.getSingleton() instanceof IGB)) {
+					this.draw(view, BAR_GRAPH);
+				} else {
+					this.draw(view, LINE_GRAPH);
+				}
+			} else {
+				drawSmart(view);
+			}
+		} else if (graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == AVG_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
+			drawSmart(view);
+		} else {
+			// Not one of the special styles, so default to regular GraphGlyph.draw method.
+			this.draw(view, graph_style);
+		}
+		if (getShowThreshold()) {
+			drawThresholdedRegions(view);
+		} else {
+			thresh_glyph.setVisibility(false);
+		}
 	}
 }
 

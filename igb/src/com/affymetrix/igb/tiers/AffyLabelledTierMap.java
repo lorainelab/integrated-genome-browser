@@ -148,9 +148,6 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
     // No need to set the TierLabelGlyph colors or label:
     // it reads that information dynamically from the given TierGlyph
-
-    label_glyph.setShowBackground(true);
-    label_glyph.setShowOutline(true);
     
     labelmap.addItem(label_glyph);
     // set info for string glyph to point to tier glyph

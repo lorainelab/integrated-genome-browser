@@ -1,5 +1,6 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genometryImpl.util.StringUtils;
 import java.awt.*;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
@@ -11,8 +12,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 	private Font fnt;
-	private boolean show_background = false;
-	private boolean show_outline = false;
 	
 	@Override
 	public String toString() {
@@ -33,8 +32,13 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 */
 	@Override
 	public void setInfo(Object o) {
+		if (o == null) {
+			throw new IllegalArgumentException("Null input parameter to setInfo() method in TierLabelGlyph found.");
+		}
 		if (!(o instanceof TierGlyph)) {
-			throw new IllegalArgumentException();
+			String msg = "Invalid type " + o.getClass().getName() + " found in input parameter ";
+			msg += "for setInfo() method in TierLabelGlyph.  Type TierGlyph required.";
+			throw new IllegalArgumentException(msg);
 		}
 		super.setInfo(o);
 	}
@@ -46,14 +50,14 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		return (TierGlyph) getInfo();
 	}
 
-	private String getDirectionString(TierGlyph tg) {
+	private static String getDirectionString(TierGlyph tg) {
 		switch (tg.direction) {
 			case TierGlyph.DIRECTION_FORWARD:
-				return "(+)";
+				return " (+)";
 			case TierGlyph.DIRECTION_REVERSE:
-				return "(-)";
+				return " (-)";
 			case TierGlyph.DIRECTION_BOTH:
-				return "(+/-)";
+				return " (+/-)";
 			default: // DIRECTION_NONE
 				return "";
 		}
@@ -65,30 +69,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	 */
 	private String getLabelString() {
 		TierGlyph reference_tier = getReferenceTier();
-		if (reference_tier == null || reference_tier.getLabel() == null) {
+		if (reference_tier.getLabel() == null) {
 			return ".......";
 		}
 		String direction_str = getDirectionString(reference_tier);
-		if (direction_str.length() == 0) {
-			return reference_tier.getLabel();
-		}
-		return reference_tier.getLabel() + " " + direction_str;
-	}
-
-	public void setShowBackground(boolean show) {
-		show_background = show;
-	}
-
-	private boolean getShowBackground() {
-		return show_background;
-	}
-
-	public void setShowOutline(boolean show) {
-		show_outline = show;
-	}
-
-	private boolean getShowOutline() {
-		return show_outline;
+		return reference_tier.getLabel() + direction_str;
 	}
 
 	@Override
@@ -100,27 +85,23 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
 
+		Rectangle pixelbox = new Rectangle();
 		view.transformToPixels(coordbox, pixelbox);
 
-		if (getShowBackground()) { // show background
-			if (bgcolor != null) {
-				g.setColor(bgcolor);
-				g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
-			}
+		if (bgcolor != null) {
+			g.setColor(bgcolor);
+			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
 		}
-		if (getShowOutline()) {
-			g.setColor(fgcolor);
-			g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height - 1);
-			g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
-		}
-
 		g.setColor(fgcolor);
-		drawLabel(g, view.getPixelBox());
+		g.drawRect(pixelbox.x, pixelbox.y, pixelbox.width - 1, pixelbox.height - 1);
+		g.drawRect(pixelbox.x + 1, pixelbox.y + 1, pixelbox.width - 3, pixelbox.height - 3);
+
+		drawLabel(g, view.getPixelBox(), pixelbox);
 
 		super.draw(view);
 	}
 
-	void drawLabel(Graphics g, Rectangle boundingPixelBox) {
+	private void drawLabel(Graphics g, Rectangle boundingPixelBox, Rectangle pixelbox) {
 		// assumes that pixelbox coordinates are already computed
 
 		if (null != fnt) {
@@ -130,16 +111,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 		String label = getLabelString();
 		// this was for test:
 		// label = "hey_this_is_going_to_be-a-long-text-to-test.the.behaviour";
-		if (label == null) {
-			return;
-		}
+		//label = "abc DEfgHIj  klMn		OPqRstUv  w xyz.  Antidisestablishmentarianism.  The quick brown fox jumps over a lazy dog.";
 
 		FontMetrics fm = g.getFontMetrics();
-		int text_height = fm.getAscent() + fm.getDescent();
-		// only show text if it will fit in pixelbox
-		if (text_height > pixelbox.height) {
-			return;
-		}
+		//int text_height = fm.getAscent() + fm.getDescent();
+		int text_height = fm.getHeight();
 
 		// Lower bound of visible glyph
 		int lowerY = Math.max(pixelbox.y, boundingPixelBox.y);
@@ -151,61 +127,28 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 		int text_width = fm.stringWidth(label);
 		if (text_width > pixelbox.width) {
-			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height);
+			drawWrappedLabel(label, fm, g, lowerY, upperY, text_height, pixelbox);
 		} else {
-			// if text wider than glyph's pixelbox, then center text
+			// if glyph's pixelbox wider than text, then center text
 			pixelbox.x += pixelbox.width / 2 - text_width / 2;
 			g.drawString(label, pixelbox.x, (lowerY + upperY + text_height) / 2);
 		}
 	}
 
 
-	private void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height) {
-		String word_breaker_regexp = "\\s";
-		int stringHeight = (lowerY + upperY + text_height) / 2;
-
-		String[] words = label.split(word_breaker_regexp);
-
-		pixelbox.x += 3;
-
-		// split line by breakers and show it.
-		
-		int charCounter = 0;
-		int wordCounter = 0;
-		int lineCounter = 0;
-		
-		// idea: combine words until they get wider:
-		while (wordCounter < words.length) {
-			// loop: draw a single line, maximizing the number of words
-			int word_width = fm.stringWidth(words[wordCounter]);
-			int numberOfWords = 1;
-			
-			// charCounter is counted to add word breakers!
-			charCounter += words[wordCounter].length();
-			while (wordCounter + numberOfWords < words.length) {
-				String nextword = label.charAt(charCounter) + words[wordCounter + numberOfWords];
-				int nextword_width = fm.stringWidth(nextword);
-				if (stringHeight + (lineCounter * (text_height - 2)) <= upperY) {
-					// Only wrap words if there's no potential of going outside the box
-					if (word_width + nextword_width > pixelbox.width - 5) {
-						// words won't fit together on this line, so wrap, advancing to the next line.
-						break;
-					}
-				}
-				words[wordCounter] += nextword;
-				word_width += nextword_width;
-				charCounter += nextword.length();
-				numberOfWords++;
-			}
-			
-			int height =  stringHeight + (lineCounter - 1) * (text_height -2);
-			g.drawString(words[wordCounter], pixelbox.x, height);
-			wordCounter += numberOfWords;
-			lineCounter++;
-			charCounter++;
+	private static void drawWrappedLabel(String label, FontMetrics fm, Graphics g, int lowerY, int upperY, int text_height, Rectangle pixelbox) {
+		int pbBuffer_x = 3;
+		int maxLines = (upperY - lowerY) / text_height;
+		if(maxLines == 0)  { return; }
+		String[] lines = StringUtils.wrap(label, fm, pixelbox.width - pbBuffer_x, maxLines);
+		pixelbox.x += pbBuffer_x;
+		int height =  (upperY + lowerY - text_height*(lines.length - 2)) / 2;
+		for (String line : lines) {
+			//Remark: the "height-3" parameter in the drawString function is a fine-tune to center vertically.
+			g.drawString(line, pixelbox.x, height-3);
+			height += text_height;
 		}
 	}
-
 
 	/** Draws the outline in a way that looks good for tiers.  With other glyphs,
 	 *  the outline is usually drawn a pixel or two larger than the glyph.
@@ -218,6 +161,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 		Graphics g = view.getGraphics();
 		g.setColor(view.getScene().getSelectionColor());
+		Rectangle pixelbox = new Rectangle();
 		view.transformToPixels(getPositiveCoordBox(), pixelbox);
 		g.drawRect(pixelbox.x, pixelbox.y,
 				pixelbox.width - 1, pixelbox.height - 1);

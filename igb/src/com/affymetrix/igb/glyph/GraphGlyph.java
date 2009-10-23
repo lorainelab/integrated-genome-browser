@@ -57,7 +57,7 @@ import static com.affymetrix.genometryImpl.style.GraphStateI.MINMAXAVG;
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
-public class GraphGlyph extends Glyph {
+public final class GraphGlyph extends Glyph {
 	public static final double default_transition_scale = 100;
 
 	public boolean TIME_DRAWING = false;

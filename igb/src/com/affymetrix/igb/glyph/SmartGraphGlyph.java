@@ -112,7 +112,7 @@ public final class SmartGraphGlyph extends GraphGlyph {
 
 		} else {
 			// Not one of the special styles, so default to regular GraphGlyph.draw method.
-			super.draw(view);
+			super.draw(view, graph_style);
 		}
 
 		if (getShowThreshold()) {

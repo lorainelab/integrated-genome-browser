@@ -283,11 +283,6 @@ public abstract class GraphGlyph extends Glyph {
 	Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
 	Point curr_x_plus_width = new Point(0, 0);
 
-	@Override
-	public void draw(ViewI view) {
-		draw(view, getGraphStyle());
-	}
-
 	public void draw(ViewI view, int graph_style) {
 		if (TIME_DRAWING) {
 			tim.start();

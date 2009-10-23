@@ -33,6 +33,7 @@ import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.util.Timer;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 
@@ -58,55 +59,49 @@ import static com.affymetrix.genometryImpl.style.GraphStateI.MINMAXAVG;
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
 public final class GraphGlyph extends Glyph {
-	public static final double default_transition_scale = 100;
+	static final double default_transition_scale = 100;
 
-	public boolean TIME_DRAWING = false;
+	private static final boolean TIME_DRAWING = false;
 	// THICK_OUTLINE: should the selection outline be thick?
-	static final boolean THICK_OUTLINE = true;
-	static Font default_font = new Font("Courier", Font.PLAIN, 12);
-	static Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
-	static NumberFormat nformat = new DecimalFormat();
-	static NumberFormat nformat2 = NumberFormat.getIntegerInstance();
-	static int axis_bins = 10;
-	int xpix_offset = 0;
-	Point zero_point = new Point(0, 0);
-	Point2D.Double coord = new Point2D.Double(0, 0);
-	Point curr_point = new Point(0, 0);
-	Point prev_point = new Point(0, 0);
-	Point scratch_point = new Point(0, 0);
-	Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
-	Rectangle label_pix_box = new Rectangle();
-	com.affymetrix.genoviz.util.Timer tim = new com.affymetrix.genoviz.util.Timer();
-	static final boolean LARGE_HANDLE = true;
-	boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
+	private static final boolean THICK_OUTLINE = true;
+	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
+	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
+	private static final NumberFormat nformat = new DecimalFormat();
+	private int xpix_offset = 0;
+	private final Point zero_point = new Point(0, 0);
+	private final Point2D.Double coord = new Point2D.Double(0, 0);
+	private final Point curr_point = new Point(0, 0);
+	private final Point prev_point = new Point(0, 0);
+	private final Point scratch_point = new Point(0, 0);
+	private final Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
+	private final Rectangle label_pix_box = new Rectangle();
+	private final Timer tim = new Timer();
+	private static final boolean LARGE_HANDLE = true;
+	private static final boolean show_min_max = false;  // drawing lines for getVisibleMinY() and getVisibleMaxY() for debugging
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
 	 *  This number is calculated in setPointCoords() directly fom ycoords, and cannot
 	 *     be modified (except for resetting the points by calling setPointCoords() again)
 	 */
-	float point_max_ycoord = Float.POSITIVE_INFINITY;
-	float point_min_ycoord = Float.NEGATIVE_INFINITY;
+	private float point_max_ycoord = Float.POSITIVE_INFINITY;
+	private float point_min_ycoord = Float.NEGATIVE_INFINITY;
 	// assumes sorted points, each x corresponding to y
-	GraphSym graf;
-	public static int handle_width = 10;  // width of handle in pixels
-	public static final int pointer_width = 10;
-	Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
-	Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
-	GraphStateI state;
-	LinearTransform scratch_trans = new LinearTransform();
-	boolean AVGLINE = true;
-	boolean CACHE_DIRECT_DRAW = false;
-	boolean MINMAXBAR = true;
-	public boolean NEWDEBUG = false;
-	boolean SHOW_CACHE_INDICATOR = false;
-	public boolean THRESH_DEBUG = false;
+	final GraphSym graf;
+	public static final int handle_width = 10;  // width of handle in pixels
+	private static final int pointer_width = 10;
+	private final Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
+	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
+	private final GraphStateI state;
+	private final LinearTransform scratch_trans = new LinearTransform();
+	private static final boolean AVGLINE = true;
+	private static final boolean MINMAXBAR = true;
+	private static final boolean NEWDEBUG = false;
 	// specified in coords_per_pixel
-	boolean TRANSITION_TO_BARS = true;
-	int compression_level = 20;
+	private static final boolean TRANSITION_TO_BARS = true;
 	/**
 	 * A variable used to hold some temporary calculations for LINE_GRAPH.
 	 */
-	Point last_point_temp = new Point(0, 0);
+	private final Point last_point_temp = new Point(0, 0);
 	// average # of points per entry in flat graph compression cache
 	/*
 	 *  may need to try a new approach to minimize switching graphics color
@@ -119,15 +114,28 @@ public final class GraphGlyph extends Glyph {
 	 *       (as doubles in graph coords, or maybe in pixel positions)
 	 *
 	 */
-	int[] pixel_cache;
-	Color thresh_color;
-	int thresh_contig_height = 10;
+	private int[] pixel_cache;
+	private Color thresh_color;
+	private static final int thresh_contig_height = 10;
 	// in pixels, for calculating where to draw thresholded regions
-	int thresh_contig_yoffset = 2;
-	Rectangle2D.Double thresh_coord_box = new Rectangle2D.Double();
-	ThreshGlyph thresh_glyph = new ThreshGlyph();
-	Rectangle thresh_pix_box = new Rectangle();
-	double transition_scale = GraphGlyph.default_transition_scale;
+	private static final int thresh_contig_yoffset = 2;
+	private final Rectangle2D.Double thresh_coord_box = new Rectangle2D.Double();
+	private ThreshGlyph thresh_glyph = new ThreshGlyph();
+	private final Rectangle thresh_pix_box = new Rectangle();
+	private double transition_scale = GraphGlyph.default_transition_scale;
+
+	// temporary variables used in draw()
+	private final Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
+	private final Point curr_x_plus_width = new Point(0, 0);
+
+	private Color lighter;
+	private Color darker;
+
+	private final BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+			BasicStroke.JOIN_MITER, 10.0f,
+			new float[]{1.0f, 10.0f}, 0.0f);
+
+	private static final boolean mutable_xcoords = true;
 
 	public float getXCoord(int i) {
 		return graf.getGraphXCoord(i);
@@ -137,7 +145,7 @@ public final class GraphGlyph extends Glyph {
 		return graf.getGraphYCoord(i);
 	}
 
-	protected float getWCoord(int i) {
+	private float getWCoord(int i) {
 		return ((GraphIntervalSym) graf).getGraphWidthCoord(i);
 	}
 
@@ -278,7 +286,7 @@ public final class GraphGlyph extends Glyph {
 				getVisibleMaxY() == Float.NEGATIVE_INFINITY;
 	}
 
-	protected void checkVisibleBoundsY() {
+	private void checkVisibleBoundsY() {
 		if (isUninitialized()) {
 			setVisibleMaxY(point_max_ycoord);
 			setVisibleMinY(point_min_ycoord);
@@ -300,9 +308,6 @@ public final class GraphGlyph extends Glyph {
 	public GraphStateI getGraphState() {
 		return state;
 	}
-	// temporary variables used in draw()
-	Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
-	Point curr_x_plus_width = new Point(0, 0);
 
 	public void draw(ViewI view, int graph_style) {
 		if (TIME_DRAWING) {
@@ -615,7 +620,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	protected void drawHandle(ViewI view) {
+	private void drawHandle(ViewI view) {
 		if (handle_width <= 0) {
 			return;
 		}
@@ -626,9 +631,6 @@ public final class GraphGlyph extends Glyph {
 			g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
 		}
 	}
-	BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10.0f,
-			new float[]{1.0f, 10.0f}, 0.0f);
 
 	public void drawHorizontalGridLines(ViewI view) {
 		float[] grid = getGridLinesYValues();
@@ -805,7 +807,6 @@ public final class GraphGlyph extends Glyph {
 		g.setColor(c);
 		g.fillPolygon(xs, ys, 3);
 	}
-	boolean mutable_xcoords = true;
 
 	@Override
 	public void moveRelative(double xdelta, double ydelta) {
@@ -847,7 +848,7 @@ public final class GraphGlyph extends Glyph {
 		return false;
 	}
 
-	protected Rectangle calcHandlePix(ViewI view) {
+	private Rectangle calcHandlePix(ViewI view) {
 		// could cache pixelbox of handle, but then will have problems if try to
 		//    have multiple views on same scene / glyph hierarchy
 		// therefore reconstructing handle pixel bounds here... (although reusing same object to
@@ -1006,8 +1007,6 @@ public final class GraphGlyph extends Glyph {
 	public float[] getGridLinesYValues() {
 		return state.getGridLinesYValues();
 	}
-	protected Color lighter;
-	protected Color darker;
 
 	@Override
 	public void setBackgroundColor(Color col) {
@@ -1062,7 +1061,7 @@ public final class GraphGlyph extends Glyph {
 		trans.setOffsetY(new_yoffset);
 	}
 
-	protected double getUpperYCoordInset(ViewI view) {
+	private double getUpperYCoordInset(ViewI view) {
 		double top_ycoord_inset = 0;
 		if (getShowLabel()) {
 			Graphics g = view.getGraphics();
@@ -1080,7 +1079,7 @@ public final class GraphGlyph extends Glyph {
 	 *  also caclulates a bottom y offset for showing thresholded
 	 *  regions, if showThresholdedRegions() == true.
 	 */
-	protected double getLowerYCoordInset(ViewI view) {
+	private double getLowerYCoordInset(ViewI view) {
 		/* This original super to this function had had its return value
 		 * changed from 0 to 5 by GAH 3-21-2005.  bottom_ycoord_inset
 		 * is set to five to mirror the original call to super */
@@ -1093,7 +1092,7 @@ public final class GraphGlyph extends Glyph {
 		return bottom_ycoord_inset;
 	}
 
-	protected void getInternalLinearTransform(ViewI view, LinearTransform lt) {
+	private void getInternalLinearTransform(ViewI view, LinearTransform lt) {
 		double top_ycoord_inset = getUpperYCoordInset(view);
 		double bottom_ycoord_inset = getLowerYCoordInset(view);
 
@@ -1300,7 +1299,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	protected void drawSmart(ViewI view) {
+	private void drawSmart(ViewI view) {
 		// could size cache to just the view's pixelbox, but then may end up creating a
 		//   new int array every time the pixelbox changes (which with view damage or
 		//   scrolling optimizations turned on could be often)
@@ -1347,7 +1346,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	protected void drawThresholdedRegions(ViewI view) {
+	private void drawThresholdedRegions(ViewI view) {
 		drawThresholdedRegions(view, null, null);
 	}
 
@@ -1585,7 +1584,7 @@ public final class GraphGlyph extends Glyph {
 		return state.getThresholdDirection();
 	}
 
-	protected void resetThreshLabel() {
+	private void resetThreshLabel() {
 		float min_thresh = getMinScoreThreshold();
 		float max_thresh = getMaxScoreThreshold();
 		int direction = state.getThresholdDirection();

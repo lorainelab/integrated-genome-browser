@@ -82,50 +82,32 @@ import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
  *
  * </pre>
  */
-public final class BedParser implements AnnotationWriter, IndexWriter, StreamingParser, ParserListener  {
+public final class BedParser implements AnnotationWriter, IndexWriter  {
 
 	// Used later to allow bed files to be output as a supported format in the DAS/2 types query.
-	static List<String> pref_list = new ArrayList<String>();
+	private static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bed");
 	}
 
-	static final boolean DEBUG = false;
-	static Pattern line_regex = Pattern.compile("\\s+");
-	static Pattern comma_regex = Pattern.compile(",");
-	static Pattern tagval_regex = Pattern.compile("=");
+	private static final boolean DEBUG = false;
+	private static final Pattern line_regex = Pattern.compile("\\s+");
+	private static final Pattern comma_regex = Pattern.compile(",");
 
-	protected Map<String,Integer> name_counts = new HashMap<String,Integer>();
-	List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	Map<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
-	boolean annotate_seq = true;
-	boolean create_container_annot = false;
-	String default_type = null;
+	private List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
+	private Map<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
+	private boolean annotate_seq = true;
+	private boolean create_container_annot = false;
+	private String default_type = null;
 
-
-	static Integer int1 = new Integer(1);
-	List<ParserListener> parse_listeners = new ArrayList<ParserListener>();
-
-	TrackLineParser track_line_parser = new TrackLineParser();
-
-	public BedParser() {
-		super();
-	}
-
-	public void addParserListener(ParserListener listener) {
-		parse_listeners.add(listener);
-	}
-
-	public void removeParserListener(ParserListener listener) {
-		parse_listeners.remove(listener);
-	}
+	private final TrackLineParser track_line_parser = new TrackLineParser();
 
 	public List<SeqSymmetry> parse(InputStream istr,  GenometryModel gmodel,
 			AnnotatedSeqGroup group, boolean annot_seq,
 			String stream_name, boolean create_container)
 		throws IOException {
 		if (DEBUG) {
-			System.out.println("BED parser called, annotate seq: " + annotate_seq +
+			System.out.println("BED parser called, annotate seq: " + annot_seq +
 					", create_container_annot: " + create_container);
 		}
 		/*
@@ -138,7 +120,6 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		 */
 		seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
 		symlist = new ArrayList<SeqSymmetry>();
-		name_counts = new HashMap<String,Integer>();
 		annotate_seq = annot_seq;
 		this.create_container_annot = create_container;
 		default_type = stream_name;
@@ -154,14 +135,12 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 			bis = new BufferedInputStream(istr);
 		}
 		DataInputStream dis = new DataInputStream(bis);
-		addParserListener(this);
-		parseWithEvents(dis, gmodel, group, default_type);
-		removeParserListener(this);
+		parse(dis, gmodel, group, default_type);
 		System.out.println("BED annot count: " + symlist.size());
 		return symlist;
 	}
 
-	public void parseWithEvents(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
+	private void parse(DataInputStream dis, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String default_type)
 		throws IOException  {
 		if (DEBUG) {
 			System.out.println("called BedParser.parseWithEvents()");
@@ -173,7 +152,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
 		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
-			if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
+			if (line.startsWith("#") || line.length() == 0) {  // skip comment lines
 				continue;
 			}
 			else if (line.startsWith("track")) {
@@ -191,19 +170,20 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 				if (DEBUG) {
 					System.out.println(line);
 				}
-				String[] fields = line_regex.split(line);
-				int field_count = fields.length;
-				if (field_count < 3) {
-					continue;
-				}
-
-				parseLine(field_count, fields, seq_group, gmodel, type, use_item_rgb);
+				parseLine(line, seq_group, gmodel, type, use_item_rgb);
 			}
 		}
 	}
 
 
-	private void parseLine(int field_count, String[] fields, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb) throws NumberFormatException, IOException {
+	private void parseLine(String line, AnnotatedSeqGroup seq_group, GenometryModel gmodel, String type, boolean use_item_rgb)
+			throws NumberFormatException, IOException {
+		String[] fields = line_regex.split(line);
+		int field_count = fields.length;
+		if (field_count < 3) {
+			return;
+		}
+
 		String seq_name = null;
 		String annot_name = null;
 		int min;
@@ -330,9 +310,9 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 				bedline_sym.setProperty(TrackLineParser.ITEM_RGB, c);
 			}
 		}
-		// if there are any ParserListeners registered, notify them of parse
-		for (ParserListener pl : parse_listeners) {
-			pl.annotationParsed(bedline_sym);
+		symlist.add(bedline_sym);
+		if (annotate_seq) {
+			this.annotationParsed(bedline_sym);
 		}
 		if (annot_name != null) {
 			seq_group.addToIndex(annot_name, bedline_sym);
@@ -341,7 +321,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 
 
 	/** Converts the data in the score field, if present, to a floating-point number. */
-	public float parseScore(String s) {
+	private static float parseScore(String s) {
 		return Float.parseFloat(s);
 	}
 
@@ -350,49 +330,41 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	 * @param s
 	 * @return
 	 */
-	public static String parseName(String s) {
+	private static String parseName(String s) {
 		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved
 		return annot_name;
 	}
 
-	/**
-	 * Implementation of ParserListener interface.
-	 * This method must be public to meet ParserListener interface, but
-	 * for BedParser this is intended only for internal callbacks, and thus should
-	 * never be called from outside of BedParser.
-	 */
-	public void annotationParsed(SeqSymmetry bedline_sym) {
-		symlist.add(bedline_sym);
-		if (annotate_seq) {
-			MutableAnnotatedBioSeq seq = bedline_sym.getSpan(0).getBioSeq();
-			if (create_container_annot) {
-				String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
-				if (type == null) { type = default_type; }
-				Map<String,SeqSymmetry> type2csym = seq2types.get(seq);
-				if (type2csym == null) {
-					type2csym = new HashMap<String,SeqSymmetry>();
-					seq2types.put(seq, type2csym);
-				}
-				SimpleSymWithProps parent_sym = (SimpleSymWithProps)type2csym.get(type);
-				if (parent_sym == null) {
-					parent_sym = new SimpleSymWithProps();
-					parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-					parent_sym.setProperty("method", type);
-					parent_sym.setProperty("preferred_formats", pref_list);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
-					parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-					seq.addAnnotation(parent_sym);
-					type2csym.put(type, parent_sym);
-				}
-				parent_sym.addChild(bedline_sym);
+	private void annotationParsed(SeqSymmetry bedline_sym) {
+		MutableAnnotatedBioSeq seq = bedline_sym.getSpan(0).getBioSeq();
+		if (create_container_annot) {
+			String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
+			if (type == null) {
+				type = default_type;
 			}
-			else {
-				seq.addAnnotation(bedline_sym);
+			Map<String, SeqSymmetry> type2csym = seq2types.get(seq);
+			if (type2csym == null) {
+				type2csym = new HashMap<String, SeqSymmetry>();
+				seq2types.put(seq, type2csym);
 			}
+			SimpleSymWithProps parent_sym = (SimpleSymWithProps) type2csym.get(type);
+			if (parent_sym == null) {
+				parent_sym = new SimpleSymWithProps();
+				parent_sym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+				parent_sym.setProperty("method", type);
+				parent_sym.setProperty("preferred_formats", pref_list);   // Used to indicate to DAS/2 server to support the formats in the pref_list.
+				parent_sym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+				seq.addAnnotation(parent_sym);
+				type2csym.put(type, parent_sym);
+			}
+			parent_sym.addChild(bedline_sym);
+		} else {
+			seq.addAnnotation(bedline_sym);
 		}
 	}
 
 
-	protected int[] parseIntArray(String int_array) {
+	public static int[] parseIntArray(String int_array) {
 		String[] intstrings = comma_regex.split(int_array);
 		int count = intstrings.length;
 		int[] results = new int[count];
@@ -408,7 +380,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 	 *  @param blockStarts  in coords relative to min of annotation
 	 *  @return blockMins in coords relative to sequence that annotation is "on"
 	 */
-	protected int[] makeBlockMins(int min, int[] blockStarts) {
+	public static int[] makeBlockMins(int min, int[] blockStarts) {
 		int count = blockStarts.length;
 		int[] blockMins = new int[count];
 		for (int i=0; i<count; i++) {
@@ -417,7 +389,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter, Streaming
 		return blockMins;
 	}
 
-	protected int[] makeBlockMaxs(int[] blockMins, int[] blockSizes)  {
+	public static int[] makeBlockMaxs(int[] blockMins, int[] blockSizes)  {
 		int count = blockMins.length;
 		int[] blockMaxs = new int[count];
 		for (int i=0; i<count; i++) {

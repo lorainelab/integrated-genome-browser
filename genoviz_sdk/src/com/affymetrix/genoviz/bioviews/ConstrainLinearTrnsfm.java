@@ -104,7 +104,7 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 
 	public boolean equals(TransformI Tx) {
 		return (Tx instanceof ConstrainLinearTrnsfm) &&
-				((LinearTransform)this).equals(Tx) &&
+				super.equals(Tx) &&
 				(constrain_value == ((ConstrainLinearTrnsfm)Tx).getConstrainValue());
 	}
 

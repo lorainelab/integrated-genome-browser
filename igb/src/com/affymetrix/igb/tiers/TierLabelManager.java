@@ -307,15 +307,11 @@ public final class TierLabelManager {
    *  has determined the label order.  Can also be called from an external class.
    */
   public void orderTiersByLabels(List<TierLabelGlyph> label_glyphs) {
-      // mucking directly with tiermap's tier Vector, which is not
-      //     the cleanest way to do this, but is efficient...
-      int tierCount = label_glyphs.size();
-      Vector<TierGlyph> tiervec = tiermap.getAllTiers();
-      tiervec.removeAllElements();
-      for (int i=0; i<tierCount; i++) {
-        GlyphI label = label_glyphs.get(i);
+      List<TierGlyph> tiers = tiermap.getTiers();
+      tiers.clear();
+	  for (TierLabelGlyph label : label_glyphs) {
         TierGlyph tier = (TierGlyph)label.getInfo();
-        tiervec.add(tier);
+        tiers.add(tier);
       }
   }
 

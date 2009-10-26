@@ -231,7 +231,7 @@ public final class AffyTieredMultiMap extends AffyLabelledTierMap {
     }
     // The extra map's tiers need to be sorted by y position (top to bottom)
     // So that the tiers will not get rearanged by the extra map's packTiers method.
-    Collections.sort( this.extramap.getAllTiers(), extraMapSorter );
+    Collections.sort( this.extramap.getTiers(), extraMapSorter );
   }
 
   public void setExtraMapInset(double inset) {

@@ -21,18 +21,10 @@ import java.awt.geom.Rectangle2D;
  */
 public final class ConstrainLinearTrnsfm extends LinearTransform {
 
-	public static final int FLOOR = 0;
-	public static final int ROUND = 1;
-	public static final int CEILING = 2;
-
 	protected double constrain_value;
-	protected int constrain_behavior;
 
 	public ConstrainLinearTrnsfm() {
 		constrain_value = 1;
-		constrain_behavior = FLOOR;
-		// Why FLOOR?   GAH
-		//    constrain_behavior = ROUND;
 	}
 
 	public void setConstrainValue(double cv) {
@@ -43,14 +35,6 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 		return constrain_value;
 	}
 
-	public void setConstrainBehavior(int b) {
-		constrain_behavior = b;
-	}
-
-	public int getConstrainBehavior() {
-		return constrain_behavior;
-	}
-
 	public double transform(int orientation, double in) {
 		double out = 0;
 		if (orientation == X) {
@@ -59,24 +43,8 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 			out = in * yscale;
 		}
 
-		if (constrain_behavior == FLOOR) {
-			out = out - (out % constrain_value);
-		} else if (constrain_behavior == ROUND) {
-			double out2 = out - (out % constrain_value);
-			if ( out - out2 > constrain_value / 2 ) {
-				out = out2 + constrain_value;
-			} else {
-				out = out2;
-			}
-		} else if (constrain_behavior == CEILING) {
-			double out2 = out - (out % constrain_value);
-			if ( out - out2 > 0 ) {
-				out = out2 + constrain_value;
-			} else {
-				out = out2;
-			}
-		}
-
+		out = out - (out % constrain_value);
+	
 		if (orientation == X) {
 			out += xoffset;
 		} else if (orientation == Y) {
@@ -135,18 +103,9 @@ public final class ConstrainLinearTrnsfm extends LinearTransform {
 	}
 
 	public boolean equals(TransformI Tx) {
-		if (Tx instanceof ConstrainLinearTrnsfm) {
-			ConstrainLinearTrnsfm clint = (ConstrainLinearTrnsfm)Tx;
-			return (xscale == clint.getScaleX() &&
-					yscale == clint.getScaleY() &&
-					xoffset == clint.getOffsetX() &&
-					yoffset == clint.getOffsetY() &&
-					constrain_value == clint.getConstrainValue() &&
-					constrain_behavior == clint.getConstrainBehavior() );
-		}
-		else {
-			return false;
-		}
+		return (Tx instanceof ConstrainLinearTrnsfm) &&
+				((LinearTransform)this).equals(Tx) &&
+				(constrain_value == ((ConstrainLinearTrnsfm)Tx).getConstrainValue());
 	}
 
 }

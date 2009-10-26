@@ -1144,7 +1144,6 @@ public class NeoSeq extends NeoContainerWidget
 	public void scrollSequence(int value) {
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(scroll_increment);
-		clt.setConstrainBehavior(clt.FLOOR);
 		clt.setTranslation(0, 0);
 		int cval = (int)(clt.transform(clt.X,value));
 		residue_map.scrollOffset(cval);
@@ -1246,7 +1245,6 @@ public class NeoSeq extends NeoContainerWidget
 		int start = (int)(visible_box.y);
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(residues_per_line);
-		clt.setConstrainBehavior(clt.FLOOR);
 		clt.setTranslation(0, 0);
 		int end = (int)(visible_box.y +
 				clt.transform(clt.X, visible_box.height) -1 );
@@ -1524,7 +1522,6 @@ public class NeoSeq extends NeoContainerWidget
 		scroll_increment = inc;
 
 		sclt.setConstrainValue(inc);
-		sclt.setConstrainBehavior(sclt.FLOOR);
 		sclt.setTranslation(0, 0);
 		residue_map.setScrollTransform(NeoWidget.Y, sclt);
 		num_map.setScrollTransform(NeoWidget.Y, sclt);

@@ -38,27 +38,6 @@ public class LinearTransform implements TransformI  {
 	 * Creates a new transform with the same scales and offsets
 	 * as the LinearTransform passed in.
 	 */
-	public LinearTransform(LinearTransform LT) {
-		xscale = LT.getScaleX();
-		yscale = LT.getScaleY();
-		xoffset = LT.getOffsetX();
-		yoffset = LT.getOffsetY();
-	}
-
-	/**
-	 * Sets the base transform to linearly map coordinate space -- usually in a Scene --
-	 * bounded by coord_box to pixel space -- used by the view of the Scene -- bounded
-	 * by this.pixel_box.  Should be able to "fit" a glyph hierarchy into the pixel_box
-	 * by calling this with the top glyph's coord_box
-	 */
-	/*
-	   public LinearTransform(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
-	   xscale = (double)pixel_box.width / coord_box.width;
-	   yscale = (double)pixel_box.height / coord_box.height;
-	   xoffset = (double)pixel_box.x - xscale * coord_box.x;
-	   yoffset = (double)pixel_box.y - yscale * coord_box.y;
-	   }*/
-
 	public void copyTransform(LinearTransform LT) {
 		xscale = LT.getScaleX();
 		yscale = LT.getScaleY();
@@ -220,32 +199,6 @@ public class LinearTransform implements TransformI  {
 		dst.x = (src.x - xoffset) / xscale;
 		dst.y = (src.y - yoffset) / yscale;
 		return dst;
-	}
-
-	/* Why not put these in a LinearTransformI interface? */
-
-	public void append(TransformI T) {
-		// MUST CHANGE SOON to throw IncompatibleTransformException
-		if (! (T instanceof LinearTransform)) { return; }
-		else {
-			LinearTransform LT = (LinearTransform)T;
-			xoffset = LT.xscale * xoffset + LT.xoffset;
-			yoffset = LT.yscale * yoffset + LT.yoffset;
-			xscale = xscale * LT.xscale;
-			yscale = yscale * LT.yscale;
-		}
-	}
-
-	public void prepend(TransformI T) {
-		// MUST CHANGE SOON to throw IncompatibleTransformException
-		if (! (T instanceof LinearTransform)) { return; }
-		else {
-			LinearTransform LT = (LinearTransform)T;
-			xoffset = xscale * LT.xoffset + xoffset;
-			yoffset = yscale * LT.yoffset + yoffset;
-			xscale = xscale * LT.xscale;
-			yscale = yscale * LT.yscale;
-		}
 	}
 
 	public double getScaleX() {

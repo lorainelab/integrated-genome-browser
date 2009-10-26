@@ -102,18 +102,6 @@ public interface TransformI extends Cloneable  {
 	public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst);
 
 	/**
-	 * appends one transformation to another
-	 * to build a cumulative transformation.
-	 */
-	public void append(TransformI Tx);
-
-	/**
-	 * prepends one transformation to another
-	 * to build a cumulative transformation.
-	 */
-	public void prepend(TransformI Tx);
-
-	/**
 	 * creates a clone of the TransormI.
 	 *
 	 * @return the new clone.

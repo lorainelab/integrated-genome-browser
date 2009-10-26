@@ -81,7 +81,6 @@ public class WrapSequence extends WrapGlyph {
 
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(residues_per_line);
-		clt.setConstrainBehavior(clt.FLOOR);
 		last_visible_residue = (int)
 			(visible_box.y + clt.transform(clt.X, visible_box.height) - 1);
 

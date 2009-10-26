@@ -72,8 +72,6 @@ public final class GraphGlyph extends Glyph {
 	private final Point curr_point = new Point(0, 0);
 	private final Point prev_point = new Point(0, 0);
 	private final Point scratch_point = new Point(0, 0);
-	private final Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
-	private final Rectangle label_pix_box = new Rectangle();
 	private final Timer tim = new Timer();
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -1025,7 +1023,8 @@ public final class GraphGlyph extends Glyph {
 			Graphics g = view.getGraphics();
 			g.setFont(default_font);
 			FontMetrics fm = g.getFontMetrics();
-			label_pix_box.height = fm.getAscent() + fm.getDescent();
+			Rectangle label_pix_box = new Rectangle(0,fm.getAscent() + fm.getDescent());
+			Rectangle2D.Double label_coord_box = new Rectangle2D.Double();
 			view.transformToCoords(label_pix_box, label_coord_box);
 			top_ycoord_inset = label_coord_box.height;
 		}
@@ -1211,14 +1210,12 @@ public final class GraphGlyph extends Glyph {
 		int plot_top_ypixel = scratch_point.y;
 		// replaces pixelbox.y
 		coord.y = offset;
-		// visible min, since = offset - ((getVisibleMinY() - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, scratch_point);
 		int plot_bottom_ypixel = scratch_point.y;
 		// replaces pbox_yheight
-		Color[] heatmap_colors = null;
 		double heatmap_scaling = 1;
 		if (state.getHeatMap() != null) {
-			heatmap_colors = state.getHeatMap().getColors();
+			Color[] heatmap_colors = state.getHeatMap().getColors();
 			// scale based on pixel position, not cooord position, since most calculations below are in pixels
 			heatmap_scaling = (double) (heatmap_colors.length - 1) / (-plot_top_ypixel + plot_bottom_ypixel);
 		}

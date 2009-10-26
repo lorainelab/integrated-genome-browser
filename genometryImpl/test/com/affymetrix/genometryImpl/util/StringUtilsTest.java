@@ -50,7 +50,6 @@ public final class StringUtilsTest {
 	 */
 	@Test
 	public void testWrap_3args() {
-		System.out.println("wrap");
 		String toWrap = loremIpsum;
 		FontMetrics metrics = this.canvas.getFontMetrics(new Font("sansserif", Font.PLAIN, 12));
 		int pixels;
@@ -80,7 +79,6 @@ public final class StringUtilsTest {
 	 */
 	@Test
 	public void testWrap_4args() {
-		System.out.println("wrap");
 		String toWrap = loremIpsum;
 		FontMetrics metrics = this.canvas.getFontMetrics(new Font("sansserif", Font.PLAIN, 12));
 		int pixels = 300;
@@ -131,8 +129,6 @@ public final class StringUtilsTest {
 		int i = 0;
 		String[] words = loremIpsum.split("\\s+");
 		for (String line : result) {
-			System.out.println(line);
-
 			/* Check that line lengths are not greater than maximum */
 			if (line.endsWith(" ")) {
 				current = line.substring(0, line.length() - 1);
@@ -151,6 +147,5 @@ public final class StringUtilsTest {
 				i++;
 			}
 		}
-		System.out.println("---");
 	}
 }

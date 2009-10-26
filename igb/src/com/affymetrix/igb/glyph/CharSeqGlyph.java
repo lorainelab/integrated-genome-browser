@@ -114,7 +114,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	 */
 	@Override
 	public void drawTraversal(ViewI view) {
-		if (coordbox.intersects(view.getCoordBox()) && isVisible) {
+		if (isVisible && coordbox.intersects(view.getCoordBox())) {
 			int sel_style = view.getScene().getSelectionAppearance();
 
 			// 1.) draw background rectangle

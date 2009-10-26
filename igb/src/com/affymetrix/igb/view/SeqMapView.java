@@ -550,7 +550,7 @@ public class SeqMapView extends JPanel
 	public JPopupMenu getSelectionPopup() {
 		return sym_popup;
 	}
-	TransformTierGlyph axis_tier;
+	protected TransformTierGlyph axis_tier;
 
 	private IAnnotStyleExtended getAxisAnnotStyle() {
 		return axis_annot_style;

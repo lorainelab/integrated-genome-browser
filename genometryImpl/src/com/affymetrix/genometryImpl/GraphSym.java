@@ -27,8 +27,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	public static final Integer GRAPH_STRAND_PLUS = new Integer(1);
 	public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
 	public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
-	public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
-
+	
 	protected int xcoords[];
 	protected MutableAnnotatedBioSeq graph_original_seq;
 	private String gid;
@@ -60,26 +59,24 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		this.gid = id;
 	}
 
-	//public abstract void setCoords(int[] x, Object y);
-
-	public void lockID() {
+	public final void lockID() {
 		setLockID(true);
 	}
 
-	public void setLockID(boolean b) {
+	private final void setLockID(boolean b) {
 		id_locked = b;
 	}
 
-	public boolean isLockID() {
+	private final boolean isLockID() {
 		return id_locked;
 	}
 
-	public void setGraphName(String name) {
+	public final void setGraphName(String name) {
 		getGraphState().getTierStyle().setHumanName(name);
 		setProperty("name", name);
 	}
 
-	public String getGraphName() {
+	public final String getGraphName() {
 		String gname = getGraphState().getTierStyle().getHumanName();
 		if (gname == null) {
 			gname = this.getID();

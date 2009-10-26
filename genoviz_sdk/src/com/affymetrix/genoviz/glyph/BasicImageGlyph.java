@@ -175,14 +175,14 @@ public class BasicImageGlyph extends Glyph {
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
+		return  isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
 	// this isn't going to be very accurate -- really need to back-calculate
 	// apparent coord box based on center coord, img_width, img_height
 	// GAH  3-26-98
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible?coord_hitbox.intersects(coordbox):false;
+		return isVisible && coord_hitbox.intersects(coordbox);
 	}
 
 

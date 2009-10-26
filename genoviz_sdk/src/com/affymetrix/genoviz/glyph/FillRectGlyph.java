@@ -17,9 +17,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.GeometryUtils;
 
 /**
  * A glyph that is drawn as a solid rectangle.
@@ -28,10 +26,6 @@ public class FillRectGlyph extends SolidGlyph  {
 
 	public void draw(ViewI view) {
 		view.transformToPixels(coordbox, pixelbox);
-		if (DEBUG_DRAW) {
-			System.out.println("FillRectGlyph, coordbox: " + coordbox);
-			System.out.println("FillRectGlyph, pixelbox: " + pixelbox);
-		}
 
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());

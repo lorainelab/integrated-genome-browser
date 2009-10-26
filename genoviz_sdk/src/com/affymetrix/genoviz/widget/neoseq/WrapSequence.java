@@ -294,11 +294,11 @@ public class WrapSequence extends WrapGlyph {
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
+		return  isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible?coord_hitbox.intersects(coordbox):false;
+		return isVisible && coord_hitbox.intersects(coordbox);
 	}
 
 	public int getStartVisible() {
@@ -459,7 +459,7 @@ public class WrapSequence extends WrapGlyph {
 	 * and some after.
 	 */
 	public void drawTraversal(ViewI view)  {
-		if (coordbox.intersects(view.getCoordBox()) && isVisible) {
+		if (isVisible && coordbox.intersects(view.getCoordBox())) {
 
 			stripe_glyph.drawTraversal(view);
 

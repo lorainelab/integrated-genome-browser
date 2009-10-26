@@ -27,13 +27,10 @@ import java.awt.geom.Rectangle2D;
  * invisible container for other child glyphs.
  */
 public abstract class Glyph implements GlyphI  {
-    public boolean DEBUG_DRAW = false;
 	public static final int DRAW_SELF_FIRST = 0;
 	public static final int DRAW_CHILDREN_FIRST = 1;
 
-	private static final boolean DEBUG_SELECTION = false;
-	private static final boolean debug = false;
-	private static final boolean DEBUG_DT = false;
+	private static final boolean DEBUG = false;
 	protected static final Color default_bg_color = Color.black;
 	protected static final Color default_fg_color = Color.black;
 	protected static GlyphStyleFactory stylefactory = new GlyphStyleFactory(); // might want to set default colors;
@@ -45,14 +42,12 @@ public abstract class Glyph implements GlyphI  {
 	protected int min_pixels_width=1;
 	protected int min_pixels_height=1;
 	protected GlyphI parent;
-	protected ViewI current_view;
 	protected Vector<GlyphI> children;
 	protected GlyphStyle style;
 
 	protected boolean isVisible;
-	protected Object info;
+	private Object info;
 	protected PackerI packer;
-	protected int styleIndex;
 	protected boolean selected;
 	protected int draw_order = DRAW_SELF_FIRST;
 
@@ -114,7 +109,7 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public void drawTraversal(ViewI view)  {
-		if (DEBUG_DT) {
+		if (DEBUG) {
 			System.err.println("called Glyph.drawTraversal() on " + this);
 		}
 		if (draw_order == DRAW_SELF_FIRST) {
@@ -131,7 +126,7 @@ public abstract class Glyph implements GlyphI  {
 				else { draw(view); }
 			}
 		}
-		if (DEBUG_DT) {
+		if (DEBUG) {
 			System.err.println("leaving Glyph.drawTraversal()");
 		}
 	}
@@ -168,7 +163,7 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public void draw(ViewI view)  {
-		if (DEBUG_DRAW) {
+		if (DEBUG) {
 			Graphics2D g = view.getGraphics();
 			g.setColor(Color.red);
 			view.transformToPixels(coordbox, pixelbox);
@@ -254,14 +249,14 @@ public abstract class Glyph implements GlyphI  {
 	public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
 			ViewI view)  {
 		if (isVisible && intersects(pickRect, view))  {
-			if (debug)  {
+			if (DEBUG)  {
 				System.out.println("intersects");
 			}
 			if (hit(pickRect, view))  {
 				if (!pickVector.contains(this)) {
 					pickVector.addElement(this);
 				}
-				if (debug)   {
+				if (DEBUG)   {
 					System.out.println("Hit " + this);
 				}
 			}
@@ -286,14 +281,14 @@ public abstract class Glyph implements GlyphI  {
 	public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
 			ViewI view) {
 		if (isVisible && intersects(pickRect, view))  {
-			if (debug)  {
+			if (DEBUG)  {
 				System.out.println("intersects");
 			}
 			if (hit(pickRect, view))  {
 				if (!pickVector.contains(this)) {
 					pickVector.addElement(this);
 				}
-				if (debug)   {
+				if (DEBUG)   {
 					System.out.println("Hit " + this);
 				}
 			}

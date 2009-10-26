@@ -78,6 +78,8 @@
 	
 	[Bindable]
 	public var dictionaryUser:XMLListCollection;
+	
+	public var textStyleSheet:StyleSheet = null;
 
 	[Bindable]
 	[Embed(source="assets/book.png")]
@@ -162,6 +164,7 @@
     
     
     private function init():void {
+    	initTextStyleSheet();
     	if (Application.application.parameters.idAnnotation != null &&
     	    Application.application.parameters.idAnnotation != '') {
     		launchAnnotation = new XML("<LaunchAnnotation " +
@@ -169,6 +172,32 @@
     		    	"/>");
     	}
     	getSecurity.send();
+    }
+    
+    private function initTextStyleSheet():void {
+        var h1:Object = new Object();
+        h1.fontFamily = "Verdana, Arial, Geneva, sans";
+        h1.fontWeight = "bold";
+        h1.color = "#6600CC";
+        h1.fontSize = 20;
+        h1.leading = 10;
+        
+        var h2:Object = new Object();
+        h2.fontFamily = "Verdana, Arial, Geneva, sans";
+        h2.fontWeight = "bold";
+        h2.color = "#666666";
+        h2.fontSize = 16;
+        h2.leading = 4;
+
+        var a:Object = new Object();
+        a.fontStyle = "normal";
+        a.color = "#0066FF";
+        a.textDecoration = "underline";
+        
+        textStyleSheet = new StyleSheet();
+        textStyleSheet.setStyle("h1", h1);
+        textStyleSheet.setStyle("h2", h2);
+        textStyleSheet.setStyle("a", a);
     }
     
     private function onGetSecurity(event:ResultEvent):void {

@@ -647,6 +647,7 @@ public class AnnotationQuery {
 				if (!groupingNode.hasContent()) {
 					String folderIdUserGroup = groupingNode.attributeValue("idUserGroup");
 					boolean prune = true;
+					// Public folders
 					if (groupingNode.getName().equals("AnnotationGrouping") &&
 						(folderIdUserGroup == null || folderIdUserGroup.equals(""))) {
 						// If we are not filtering by user group,
@@ -658,7 +659,9 @@ public class AnnotationQuery {
 							// empty public folders.
 							prune = true;
 						}
-					} else if (groupingNode.getName().equals("AnnotationGrouping") &&
+					}
+					// User group folders
+					else if (groupingNode.getName().equals("AnnotationGrouping") &&
 							    folderIdUserGroup != null && 
 							    !folderIdUserGroup.equals("") &&
 							  	(genoPubSecurity.belongsToGroup(new Integer(folderIdUserGroup)))) {

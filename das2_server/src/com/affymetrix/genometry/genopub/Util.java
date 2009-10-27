@@ -58,11 +58,20 @@ public class Util {
 		return kb;
 	}
 	
+	public static String removeHTMLTags(String buf) {
+		if (buf  != null) {
+			buf = buf.replaceAll("<(.|\n)+?>", " ");
+			buf = Util.escapeHTML(buf);
+		}
+		return buf;
+	}
+	
 	public static String escapeHTML(String buf) {
 		if (buf != null) {
 			buf = buf.replaceAll("&", "&amp;");
 			buf = buf.replaceAll("<", "&lt;");
 			buf = buf.replaceAll(">", "&gt;");			
+			buf = buf.replaceAll("\"", "'");			
 		}
 		
 		return buf;

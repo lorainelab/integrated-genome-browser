@@ -297,8 +297,8 @@ public class Annotation implements Owned, Propertied {
 	public Map<String, Object> loadProps(DictionaryHelper dictionaryHelper) {
 		props = new TreeMap<String, Object>();
 		props.put(PROP_NAME, this.getName());
-		props.put(PROP_DESCRIPTION, this.getDescription() != null ? Util.escapeHTML(this.getDescription()) : "");
-		props.put(PROP_SUMMARY, this.getSummary() != null ? Util.escapeHTML(this.getSummary()) : "");
+		props.put(PROP_DESCRIPTION, this.getDescription() != null ? Util.removeHTMLTags(this.getDescription()) : "");
+		props.put(PROP_SUMMARY, this.getSummary() != null ? Util.removeHTMLTags(this.getSummary()) : "");
 		props.put(PROP_VISIBILITY,  Visibility.getDisplay(this.getCodeVisibility()));
 		props.put(PROP_OWNER, this.getIdUser() != null ? dictionaryHelper.getUserFullName(this.getIdUser()) : "");
 		props.put(PROP_OWNER_EMAIL, this.getIdUser() != null ? dictionaryHelper.getUserEmail(this.getIdUser()) : "");

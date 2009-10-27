@@ -670,15 +670,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 		
 		// Add the 'info' URL as a property.  
 		if (!props.containsKey(Annotation.PROP_URL)) {
-			// Try out different launches as a prototype.  Public annotations
-			// launch HTML annotation info page, Private annotations launch
-			// GenoPub.
-			if (qa.getAnnotation().getCodeVisibility() != null &&
-		        qa.getAnnotation().getCodeVisibility().equals(Visibility.PUBLIC)) {
-				props.put(Annotation.PROP_URL, this.baseURL + "/" + GenoPubServlet.GENOPUB_WEBAPP_NAME + "/" + GenoPubServlet.ANNOTATION_INFO_REQUEST + "?idAnnotation=" + annotationId);
-			} else {
-				props.put(Annotation.PROP_URL, this.baseURL + "/" + GenoPubServlet.GENOPUB_WEBAPP_NAME + "?idAnnotation=" + annotationId);
-			}
+			props.put(Annotation.PROP_URL, this.baseURL + "/" + GenoPubServlet.GENOPUB_WEBAPP_NAME + "?idAnnotation=" + annotationId);
 		}
 		return props;
 		

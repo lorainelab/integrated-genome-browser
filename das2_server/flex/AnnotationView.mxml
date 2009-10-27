@@ -328,7 +328,10 @@
         	
         	treeMenu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuTriggered);
             treeMenu.hideBuiltInItems();
-            
+         
+            this.annotationDescriptionRichText.textArea.maxChars = 9000;   
+            this.annotationGroupingDescriptionRichText.textArea.maxChars = 9000;
+               
             callLater(refreshAnnotations);
 			
         }
@@ -593,7 +596,6 @@
 			
 		private function onGetAnnotation(event:ResultEvent):void {
 			if (getAnnotation.lastResult.name() == "Annotation") {
-				this.previewDescription();
 				if (this.currentState == "AdminState") {
 					this.annotationOwnerStack.selectedIndex = 0;
 				} else if (this.currentState == "UserState") {
@@ -1082,7 +1084,7 @@
 			var params:Object = new Object();
         	params.idAnnotationGrouping   = annotationsTree.selectedItem.@idAnnotationGrouping;
         	params.name                   = this.annotationGroupingName.text;
-        	params.description            = this.annotationGroupingDescription.text;
+        	params.description            = this.cleanRichTextHTML(this.annotationGroupingDescriptionRichText.htmlText);
         	params.idUserGroup            = annotationGroupingUserGroupCombo.selectedItem != null ? annotationGroupingUserGroupCombo.selectedItem.@id : "";
         	
         	updateAnnotationGrouping.send(params);
@@ -1270,7 +1272,7 @@
 			var params:Object = new Object();
         	params.idAnnotation   = annotationsTree.selectedItem.@idAnnotation;
         	params.name                   = this.annotationName.text;
-        	params.description            = this.annotationDescription.text;
+        	params.description            = this.cleanRichTextHTML(this.annotationDescriptionRichText.htmlText);
         	params.summary                = this.annotationSummary.text;
         	params.idExperimentPlatform   = this.experimentPlatformCombo.selectedItem != null ? this.experimentPlatformCombo.selectedItem.@id : "";
         	params.idExperimentMethod     = this.experimentMethodCombo.selectedItem != null ? this.experimentMethodCombo.selectedItem.@id : "";
@@ -1735,39 +1737,31 @@
 			}
 		}
 		
-		private function editDescription():void {
-			this.annotationDescription.editable = true;
-			this.annotationDescription.text = getAnnotation.lastResult.@description;
-			this.annotationDescription.styleSheet = null;
-			this.annotationDescription.invalidateDisplayList();
-			this.togglePreviewButton.label = "Preview";
+		
+		private function cleanRichTextHTML(htmlText:String):String {
+		    var pattern:RegExp = /<TEXTFORMAT.*?>/g;
+		    var str:String = htmlText.replace(pattern, "");
+		    pattern = /<FONT.*?>/g;
+		    str = str.replace(pattern, "");
+		    pattern = /<\/FONT.*?>/g;
+		    str = str.replace(pattern, "");
+		    pattern = /<\/TEXTFORMAT.*?>/g;
+		    str = str.replace(pattern, "");
+		    
+			return str;		    
 		}
 		
-		private function previewDescription():void {
-			if (this.dirtyAnnotation.isDirty()) {
-				// to work around bug, make sure description
-				// doesn't start with markup.
-				if (annotationDescription.text.indexOf("<") == 0) {
-					annotationDescription.text = "\n" + annotationDescription.text;
-				}
-				this.saveAnnotation();
-			}
-			this.annotationDescription.editable = false;
-			this.annotationDescription.htmlText = getAnnotation.lastResult.@description;
-			this.annotationDescription.styleSheet = parentApplication.textStyleSheet;
-			this.annotationDescription.invalidateDisplayList();
-			this.togglePreviewButton.label = "Edit";
+		private function removeAnnotationRichTextButtons():void {
+            this.annotationDescriptionRichText.toolbar.removeChild(annotationDescriptionRichText.colorPicker);
+            this.annotationDescriptionRichText.toolbar.removeChild(annotationDescriptionRichText.fontFamilyCombo);
+            this.annotationDescriptionRichText.toolbar.removeChild(annotationDescriptionRichText.fontSizeCombo);
+        }
+		private function removeAnnotationGroupingRichTextButtons():void {
+            this.annotationGroupingDescriptionRichText.toolbar.removeChild(annotationGroupingDescriptionRichText.colorPicker);
+            this.annotationGroupingDescriptionRichText.toolbar.removeChild(annotationGroupingDescriptionRichText.fontFamilyCombo);
+            this.annotationGroupingDescriptionRichText.toolbar.removeChild(annotationGroupingDescriptionRichText.fontSizeCombo);
 		}
 		
-		private function toggleEditDescription():void {
-			if (this.togglePreviewButton.label == "Preview") {
-				this.previewDescription();
-			} else {
-				this.editDescription();
-			}
-		}
-		
-
         ]]>
         
         
@@ -2005,19 +1999,26 @@
 							<mx:Label text="Summary:" width="126"/>
 							<mx:TextInput width="100%" text="{getAnnotation.lastResult.@summary}" id="annotationSummary" change="dirtyAnnotation.setDirty()" maxChars="5000"/>
 						</mx:HBox>
-						<mx:HBox width="100%" id="hbox3" height="100%" horizontalGap="0">
+						<mx:HBox width="100%" id="hbox3" horizontalGap="0" height="100%">
 							<mx:Label text="Description:" width="126"/>
-							  <mx:VBox  verticalGap="0" width="100%" height="100%">
-								<mx:TextArea width="100%" id="annotationDescription"  change="dirtyAnnotation.setDirty()" height="100%" maxChars="10000" wordWrap="true" text="{getAnnotation.lastResult.@description}"/>
-		  				    	<mx:LinkButton label="Preview" styleName="menuLabelSmall" enabled="{getAnnotation.lastResult.@canWrite == 'Y' &amp;&amp; !this.dirtyAnnotation.isDirty() ? true : false}" id="togglePreviewButton" click="toggleEditDescription()" paddingLeft="0" textDecoration="underline" textAlign="left"/>
-							  </mx:VBox>
+							<mx:RichTextEditor  borderStyle="none"  headerHeight="0"  
+								id="annotationDescriptionRichText" width="100%" 
+								htmlText="{getAnnotation.lastResult.@description}" 
+								showControlBar="{getAnnotation.lastResult.@canWrite == 'Y' ? true : false}"
+								change="{this.dirtyAnnotation.setDirty()}"
+								creationComplete="removeAnnotationRichTextButtons()" 
+								paddingLeft="0" paddingRight="0" paddingTop="0" 
+								roundedBottomCorners="false" paddingBottom="0" 
+								borderThicknessRight="0" borderThicknessLeft="0" 
+								borderThicknessBottom="0" borderThickness="0" 
+								borderThicknessTop="0" height="100%" minHeight="50"/>
 						</mx:HBox>
 
 				   </mx:VBox>
 				   <mx:Spacer height="8"/>
 				   <mx:HRule width="100%"/>
 				   <mx:HBox width="100%">
-					   	<mx:VBox width="50%" height="100%" id="vbox8" paddingTop="8" verticalGap="4">
+					   	<mx:VBox width="50%" id="vbox8" paddingTop="8" verticalGap="4">
 							<mx:HBox horizontalGap="0" id="hbox11" width="100%">
 							    		<mx:Label text="Experiment Platform:" width="126"/>
 							    		<mx:ComboBox width="100%" dataProvider="{parentApplication.dictionaryExperimentPlatform}" labelField="@name" id="experimentPlatformCombo" change="dirtyAnnotation.setDirty()"></mx:ComboBox>					    
@@ -2055,7 +2056,7 @@
 							</mx:HBox>
 					    </mx:VBox>
 					   	<mx:VRule height="100%"/>
-					    <mx:VBox width="50%" height="100%" id="vbox7" paddingTop="8">
+					    <mx:VBox width="50%" id="vbox7" paddingTop="8">
 							    <mx:VBox width="100%" height="100%" verticalGap="0" id="vbox9">
 							        <mx:Label text="{'Files (' + annotationFiles.length + '):'}"/>
 							        <mx:HBox horizontalGap="2" width="100%">
@@ -2075,7 +2076,7 @@
 							    		dataProvider="{annotationFiles}"
 							    		showHeaders="true"
 							    		width="100%"  						    		 
-							    		height="100%"  allowMultipleSelection="true">
+							    		allowMultipleSelection="true" height="134">
 							    		<mx:columns>
 							    			<mx:DataGridColumn  dataField="@name" headerText="Name" width="10"/>  
 							    			<mx:DataGridColumn  dataField="@lastModified" headerText="Date" width="10"/>  
@@ -2260,7 +2261,17 @@
 					  </mx:HBox>
 					  <mx:HBox width="100%" height="100%">
 						<mx:Label text="Description:" width="120"/>
-						<mx:TextArea id="annotationGroupingDescription" text="{annotationsTree.selectedItem.@description}" change="dirtyAnnotationGrouping.setDirty()" width="100%" height="100%" maxChars="10000" wordWrap="true"/>
+						<mx:RichTextEditor  borderStyle="none"  headerHeight="0"  
+								id="annotationGroupingDescriptionRichText" width="100%" 
+								htmlText="{annotationsTree.selectedItem.@description}" 
+								showControlBar="{annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
+								change="this.dirtyAnnotationGrouping.setDirty()"
+								creationComplete="removeAnnotationGroupingRichTextButtons()"
+								paddingLeft="0" paddingRight="0" paddingTop="0" 
+								roundedBottomCorners="false" paddingBottom="0" 
+								borderThicknessRight="0" borderThicknessLeft="0" 
+								borderThicknessBottom="0" borderThickness="0" 
+								borderThicknessTop="0" height="100%" minHeight="50"/>
 					  </mx:HBox>
 				  	  <mx:HBox width="100%" horizontalGap="0" >
 							<mx:Label text="Created by:" width="126"/>
@@ -2291,7 +2302,6 @@
 			<mx:AddChild relativeTo="{dirtyAnnotation}" position="before">
 				<mx:Spacer width="100%"/>
 			</mx:AddChild>
-			<mx:SetProperty target="{annotationDescription}" name="maxChars" value="10000"/>
 			<mx:SetProperty target="{annotationSummary}" name="maxChars" value="5000"/>
 			<mx:SetProperty target="{annotationName}" name="maxChars" value="2000"/>
 			<mx:RemoveChild target="{hbox10}"/>

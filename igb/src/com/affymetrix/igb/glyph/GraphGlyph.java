@@ -28,6 +28,7 @@ import java.awt.geom.Point2D;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
+import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -71,7 +72,6 @@ public final class GraphGlyph extends Glyph {
 	private final Point2D.Double coord = new Point2D.Double(0, 0);
 	private final Point curr_point = new Point(0, 0);
 	private final Point prev_point = new Point(0, 0);
-	private final Point scratch_point = new Point(0, 0);
 	private final Timer tim = new Timer();
 	/**
 	 *  point_max_ycoord is the max ycoord (in graph coords) of all points in graph.
@@ -81,7 +81,7 @@ public final class GraphGlyph extends Glyph {
 	private float point_max_ycoord = Float.POSITIVE_INFINITY;
 	private float point_min_ycoord = Float.NEGATIVE_INFINITY;
 	// assumes sorted points, each x corresponding to y
-	final GraphSym graf;
+	private final GraphSym graf;
 	public static final int handle_width = 10;  // width of handle in pixels
 	private static final int pointer_width = 10;
 	private final Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
@@ -116,16 +116,9 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle thresh_pix_box = new Rectangle();
 	private double transition_scale = GraphGlyph.default_transition_scale;
 
-	// temporary variables used in draw()
-	private final Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
-	private final Point curr_x_plus_width = new Point(0, 0);
 
 	private Color lighter;
 	private Color darker;
-
-	private final BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10.0f,
-			new float[]{1.0f, 10.0f}, 0.0f);
 
 	public float getXCoord(int i) {
 		return graf.getGraphXCoord(i);
@@ -141,6 +134,25 @@ public final class GraphGlyph extends Glyph {
 
 	public int[] getWCoords() {
 		return ((GraphIntervalSym) graf).getGraphWidthCoords();
+	}
+
+	/**
+	 * Temporary helper method.
+	 * @return
+	 */
+	public float[] getOrCopyYCoords() {
+		if (graf instanceof GraphSymFloat) {
+			return ((GraphSymFloat) graf).getGraphYCoords();
+		}
+		return this.copyYCoords();
+	}
+
+	/**
+	 * Temporary helper method.
+	 * @return
+	 */
+	public float[] copyYCoords() {
+		return graf.copyGraphYCoords();
 	}
 
 	public GraphGlyph(GraphSym graf, GraphStateI gstate) {
@@ -398,6 +410,8 @@ public final class GraphGlyph extends Glyph {
 			g2.addRenderingHints(my_render_hints);
 		}
 
+		Point curr_x_plus_width = new Point(0, 0);
+
 		// START OF BIG LOOP:
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			// flipping about yaxis... should probably make this optional
@@ -419,6 +433,7 @@ public final class GraphGlyph extends Glyph {
 			view.transformToPixels(coord, curr_point);
 
 			if (this.hasWidth()) {
+				Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
 				x_plus_width2D.x = graf.getGraphXCoord(i) + this.getWCoord(i);
 				x_plus_width2D.y = coord.y;
 				view.transformToPixels(x_plus_width2D, curr_x_plus_width);
@@ -631,8 +646,13 @@ public final class GraphGlyph extends Glyph {
 		double offset = scratch_trans.getOffsetY();
 
 		Stroke old_stroke = g.getStroke();
+		BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
+			BasicStroke.JOIN_MITER, 10.0f,
+			new float[]{1.0f, 10.0f}, 0.0f);
 		g.setStroke(grid_stroke);
 		g.setFont(axis_font);
+
+		Point scratch_point = new Point(0, 0);
 
 		for (int i = 0; i < grid.length; i++) {
 			float gridY = grid[i];
@@ -1206,6 +1226,7 @@ public final class GraphGlyph extends Glyph {
 		//        plot_top_ypixel = pixel position of graph.getVisibleMaxY()
 		//        plot_bottom_ypixel = pixel position of graph.getVisibleMinY();
 		coord.y = offset - ((getVisibleMaxY() - getVisibleMinY()) * yscale);
+		Point scratch_point = new Point(0, 0);
 		view.transformToPixels(coord, scratch_point);
 		int plot_top_ypixel = scratch_point.y;
 		// replaces pixelbox.y

@@ -789,12 +789,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		float[] p2score = (float[]) info2pscores.get(info);
 
 		if (p2score == null) {
-			float[] ycoords;
-			if (gl.graf instanceof GraphSymFloat) {
-				ycoords = ((GraphSymFloat) gl.graf).getGraphYCoords();
-			} else {
-				ycoords = gl.graf.copyGraphYCoords();
-			}
+			float[] ycoords = gl.getOrCopyYCoords();
 			p2score = GraphSymUtils.calcPercents2Scores(ycoords, sliders_per_percent);
 			info2pscores.put(info, p2score);
 		}

@@ -432,9 +432,9 @@ public final class GraphSymUtils {
 		int xmin = trans_frag_graph.getGraphXCoord(0);
 		float y_at_xmin = trans_frag_graph.getGraphYCoord(0);
 		int prevx = xmin;
-		float prevy = trans_frag_graph.getGraphYCoord(0);
+		float prevy = y_at_xmin;
 		int curx = xmin;
-		float cury = trans_frag_graph.getGraphYCoord(0);
+		float cury = y_at_xmin;
 		for (int i=1; i<xcount; i++) {
 			curx = trans_frag_graph.getGraphXCoord(i);
 			cury = trans_frag_graph.getGraphYCoord(i);

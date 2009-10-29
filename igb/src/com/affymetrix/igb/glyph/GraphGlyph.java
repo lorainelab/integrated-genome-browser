@@ -1346,17 +1346,16 @@ public final class GraphGlyph extends Glyph {
 			min_score_threshold = getMinScoreThreshold();
 			max_score_threshold = Float.POSITIVE_INFINITY;
 		}
-		Rectangle2D.Double view_coordbox = view.getCoordBox();
-		double xmin = view_coordbox.x;
-		double xmax = view_coordbox.x + view_coordbox.width;
+		
 		int draw_beg_index = 0;
 		int draw_end_index;
 		boolean make_syms = (region_holder != null) && (aseq != null);
-		int sym_count = 0;
-		int draw_count = 0;
 		if (make_syms) {
 			draw_end_index = this.getPointCount() - 1;
 		} else {
+			Rectangle2D.Double view_coordbox = view.getCoordBox();
+			double xmin = view_coordbox.x;
+			double xmax = view_coordbox.x + view_coordbox.width;
 			draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
 			draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax);
 		}
@@ -1379,9 +1378,7 @@ public final class GraphGlyph extends Glyph {
 		thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
 		Graphics g = view.getGraphics();
 		g.setColor(lighter);
-		double x;
-		double w;
-		double y;
+
 		double pass_thresh_start = 0;
 		double pass_thresh_end = 0;
 		boolean pass_threshold_mode = false;
@@ -1396,8 +1393,6 @@ public final class GraphGlyph extends Glyph {
 		}
 		draw_beg_index = new_beg;
 		int new_end = draw_end_index;
-		boolean pass_score_thresh;
-		boolean passes_max_gap;
 		boolean draw_previous = false;
 		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
 		while ((new_end < max_index) && ((graf.getGraphXCoord(new_end) - graf.getGraphXCoord(draw_end_index)) <= max_gap_threshold)) {
@@ -1415,15 +1410,15 @@ public final class GraphGlyph extends Glyph {
 		//      true, false, false
 		//      true, true, false
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			x = graf.getGraphXCoord(i);
-			w = 0;
+			double x = graf.getGraphXCoord(i);
+			double w = 0;
 			if (this.hasWidth()) {
 				w = this.getWCoord(i);
 			}
-			y = graf.getGraphYCoord(i);
+			double y = graf.getGraphYCoord(i);
 			// GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline
-			pass_score_thresh = ((y > min_score_threshold) && (y <= max_score_threshold));
-			passes_max_gap = ((x - pass_thresh_end) <= max_gap_threshold);
+			boolean pass_score_thresh = ((y > min_score_threshold) && (y <= max_score_threshold));
+			boolean passes_max_gap = ((x - pass_thresh_end) <= max_gap_threshold);
 			if (pass_threshold_mode) {
 				if (!passes_max_gap) {
 					draw_previous = true;
@@ -1454,9 +1449,7 @@ public final class GraphGlyph extends Glyph {
 					if (make_syms) {
 						SeqSymmetry sym = new SingletonSeqSymmetry((int) draw_min, (int) draw_max, aseq);
 						region_holder.addChild(sym);
-						sym_count++;
 					} else {
-						draw_count++;
 						g.fillRect(prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
 					}
 				}

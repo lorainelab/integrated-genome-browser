@@ -93,16 +93,6 @@ import javax.swing.*;
      return getTopNode().getInt(param_name, def);
    }
 
-   /*
-   public static void saveBooleanParam(String param_name, boolean param) {
-     try {
-       getTopNode().putBoolean(param_name, param);
-     } catch (Exception e) {
-       e.printStackTrace(System.out);
-     }
-   }
-    */
-
    public static boolean getBooleanParam(String param_name, boolean def) {
      return getTopNode().getBoolean(param_name, def);
    }
@@ -154,7 +144,6 @@ import javax.swing.*;
    */
   public static void saveWindowLocation(Window w, String name) {
     Rectangle r = w.getBounds();
-    //System.out.println("saving window '"+name+"' location: "+r);
     try {
       Preferences p = getTopNode();
       p.putInt(name+" x", r.x);
@@ -178,7 +167,6 @@ import javax.swing.*;
     r.y = p.getInt(name+" y", def.y);
     r.width = p.getInt(name+" width", def.width);
     r.height = p.getInt(name+" height", def.height);
-    //System.out.println("Found window location for '"+name+"': "+r);
     return r;
   }
 
@@ -382,24 +370,6 @@ import javax.swing.*;
   }
 
  
-
-  /*public static String getLocation(String name, String default_value) {
-
-    if (name == null) {return null;}
-    String str = getLocationsNode().get(name, null);
-
-    if (str == null && default_value != null) {
-      // store the default value so that the user will be able to
-      // see which preferences are settable
-      //System.out.println("Storing default value for location '"+name+"' --> '"+default_value+"'");
-      getLocationsNode().put(name, default_value);
-      str = default_value;
-    }
-
-    return str;
-  }*/
-
-
   /** Returns the location of the application data directory.
    *  The String will always end with "/".
    */
@@ -419,23 +389,6 @@ import javax.swing.*;
     return app_dir;
   }
 
-
-  /** Will issue a stern warning message the first time a BackingStoreException
-   *  is passed to this method, but will be silent about all future ones.
-   */
-  /*public static void handleBSE(Component parent, BackingStoreException bse) {
-    if (bse_already_warned_once) {
-      return;
-    } else {
-      JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, parent);
-      ErrorHandler.errorPanel(frame, "BackingStoreException",
-        "Cannot communicate with the preference storage system.  \n" +
-        "Changes to preferences may not become permanent.  \n" +
-        "It may be a good idea to restart the program.  \n", null);
-      bse_already_warned_once = true;
-    }
-    System.out.println("BackingStoreException: "+bse.getMessage());
-  }*/
 
   /**
    *  Stores a color preference, encoded as a String.
@@ -465,10 +418,6 @@ import javax.swing.*;
     }
     return result;
   }
-
-  /*public static JCheckBox createCheckBox(String title, final String pref_name, boolean default_val) {
-    return createCheckBox(title, getTopNode(), pref_name, default_val);
-  }*/
 
   /**
    *  Creates a JCheckBox associated with a boolean preference.
@@ -610,27 +559,6 @@ import javax.swing.*;
     });
     return button;
   }
-
-  /** Convert a String of arbitrary length into one that is short enough to
-   *  be used as a key name or node name.
-   */
-  /*
-  public static String shortKeyName(String s) {
-    String short_s;
-    if (s.length() >= Preferences.MAX_KEY_LENGTH) {
-      short_s = UrlToFileName.toMd5(s);
-    } else {
-      short_s = s;
-    }
-    return short_s;
-  }
-   * */
-
-
-
-   /*public static String shortNodeName(String s)  {
-     return shortNodeName(s, false);
-   }*/
 
    private static String shortNodeName(String s, boolean remove_slash)  {
     String short_s;

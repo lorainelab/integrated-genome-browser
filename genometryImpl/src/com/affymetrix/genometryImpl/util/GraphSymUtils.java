@@ -258,6 +258,8 @@ public final class GraphSymUtils {
 
 		processGraphSyms(grafs, stream_name);
 
+		System.gc();	// this is just for IGB; give a more accurate estimate of how much memory is being used.
+
 		if (grafs == null) {
 			grafs = Collections.<GraphSym>emptyList();
 		}
@@ -272,7 +274,7 @@ public final class GraphSymUtils {
 	}
 
 
-	static List<GraphSym> wrapInList(GraphSym gsym) {
+	private static List<GraphSym> wrapInList(GraphSym gsym) {
 		List<GraphSym> grafs = null;
 		if (gsym != null) {
 			grafs = new ArrayList<GraphSym>();
@@ -290,7 +292,7 @@ public final class GraphSymUtils {
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
 	 *  @param grafs  a List, empty or null is OK.
 	 */
-	static void processGraphSyms(List<GraphSym> grafs, String original_stream_name) {
+	private static void processGraphSyms(List<GraphSym> grafs, String original_stream_name) {
 		if (grafs == null) {
 			return;
 		}

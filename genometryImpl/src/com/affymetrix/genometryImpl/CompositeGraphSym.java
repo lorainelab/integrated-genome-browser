@@ -41,7 +41,7 @@ public final class CompositeGraphSym extends GraphSymFloat {
 			slice_ycoords = slice.copyGraphYCoords();
 		}
 
-		if (this.getPointCount() == 0 && getGraphYCoords() == null) { // first GraphSym child, so just set xcoords and ycoords
+		if (this.getPointCount() == 0) { // first GraphSym child, so just set xcoords and ycoords
 			setCoords(slice_xcoords, slice_ycoords);
 			slice.setCoords(null, null);
 		} else if (slice.getPointCount() > 0) {
@@ -60,45 +60,50 @@ public final class CompositeGraphSym extends GraphSymFloat {
 			//  (insertion point - 1)  [as defined in Arrays.binarySearch() docs]
 			slice_index = (-slice_index - 1);
 		}
-		int[] new_xcoords = new int[this.getPointCount() + slice.getPointCount()];
-		int new_index = 0;
-		// since slices cannot overlap, new xcoord array should be:
-		//    old xcoord array entries up to "A-1"
-		if (slice_index > 0) {
-			System.arraycopy(xcoords, 0, new_xcoords, new_index, slice_index);
-			new_index += slice_index;
-		}
-		//    all of slice_xcoords entries
-		System.arraycopy(slice_xcoords, 0, new_xcoords, new_index, slice.getPointCount());
-		new_index += slice.getPointCount();
-		//    old xcoord array entries from "A" to end of old xcoord array
-		if (slice_index < this.getPointCount()) {
-			System.arraycopy(xcoords, slice_index, new_xcoords, new_index, this.getPointCount() - slice_index);
-		}
-		// get rid of old xcoords
+		int[] new_xcoords = copyXCoords(slice, slice_index, slice_xcoords);
+		// get rid of old coords
 		xcoords = new_xcoords;
 		slice_xcoords = null;
 		slice.xcoords = null;
-		float[] new_ycoords = copyYCoords(slice_ycoords, slice_index, new_index);
+		float[] new_ycoords = copyYCoords(slice_ycoords, slice_index);
 		setCoords(xcoords, new_ycoords);
 		slice.setCoords(null, null);
 	}
 
-	private float[] copyYCoords(float[] slice_ycoords, int slice_index, int new_index) {
-		float[] new_ycoords = new float[getGraphYCoords().length + slice_ycoords.length];
-		new_index = 0;
-		//    old ycoord array entries up to "A-1"
+	private int[] copyXCoords(GraphSymFloat slice, int slice_index, int[] slice_coords) {
+		int[] new_coords = new int[this.getPointCount() + slice.getPointCount()];
+		int new_index = 0;
+		// since slices cannot overlap, new coord array should be:
+		//    old coord array entries up to "A-1"
 		if (slice_index > 0) {
-			System.arraycopy(getGraphYCoords(), 0, new_ycoords, new_index, slice_index);
+			System.arraycopy(xcoords, 0, new_coords, new_index, slice_index);
 			new_index += slice_index;
 		}
-		//    all of slice_ycoords entries
-		System.arraycopy(slice_ycoords, 0, new_ycoords, new_index, slice_ycoords.length);
-		new_index += slice_ycoords.length;
-		//    old ycoord array entries from "A" to end of old ycoord array
-		if (slice_index < getGraphYCoords().length) {
-			System.arraycopy(getGraphYCoords(), slice_index, new_ycoords, new_index, getGraphYCoords().length - slice_index);
+		//    all of slice_coords entries
+		System.arraycopy(slice_coords, 0, new_coords, new_index, slice.getPointCount());
+		new_index += slice.getPointCount();
+		//    old coord array entries from "A" to end of old coord array
+		if (slice_index < this.getPointCount()) {
+			System.arraycopy(xcoords, slice_index, new_coords, new_index, this.getPointCount() - slice_index);
 		}
-		return new_ycoords;
+		return new_coords;
+	}
+
+	private float[] copyYCoords(float[] slice_ycoords, int slice_index) {
+		float[] new_coords = new float[this.getPointCount() + slice_ycoords.length];
+		int new_index = 0;
+		//    old coord array entries up to "A-1"
+		if (slice_index > 0) {
+			System.arraycopy(getGraphYCoords(), 0, new_coords, new_index, slice_index);
+			new_index += slice_index;
+		}
+		//    all of slice_coords entries
+		System.arraycopy(slice_ycoords, 0, new_coords, new_index, slice_ycoords.length);
+		new_index += slice_ycoords.length;
+		//    old coord array entries from "A" to end of old coord array
+		if (slice_index < this.getPointCount()) {
+			System.arraycopy(getGraphYCoords(), slice_index, new_coords, new_index, this.getPointCount() - slice_index);
+		}
+		return new_coords;
 	}
 }

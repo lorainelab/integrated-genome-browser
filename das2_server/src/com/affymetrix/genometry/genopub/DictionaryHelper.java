@@ -264,7 +264,7 @@ public class DictionaryHelper {
 		// Genome versions
 		//
 		dict = root.addElement("GenomeVersions");
-		makeBlankNode(dict, "GenomeVersion");
+		makeBlankNode(dict, "GenomeVersion", "name", "Genome version...");
 		for (GenomeVersion d : genomeVersionList) {
 			Element dictEntry = dict.addElement("GenomeVersion");
 			dictEntry.addAttribute("id",         d.getIdGenomeVersion().toString());
@@ -273,7 +273,7 @@ public class DictionaryHelper {
 		}
 
 		dict = root.addElement("Organisms");
-		makeBlankNode(dict, "Organism");
+		makeBlankNode(dict, "Organism", "binomialName", "Species...");
 		for (Organism d : organismList) {
 			Element dictEntry = dict.addElement("Organism");
 			dictEntry.addAttribute("id",   d.getIdOrganism().toString());
@@ -281,7 +281,7 @@ public class DictionaryHelper {
 			dictEntry.addAttribute("binomialName", d.getBinomialName());
 			dictEntry.addAttribute("commonName", d.getCommonName());
 			
-			makeBlankNode(dictEntry, "GenomeVersion");
+			makeBlankNode(dictEntry, "GenomeVersion", "name", "Genome version...");
 			if (this.getGenomeVersions(d.getIdOrganism()) != null) {
 				for (GenomeVersion gv : this.getGenomeVersions(d.getIdOrganism())) {
 					Element de = dictEntry.addElement("GenomeVersion");
@@ -299,12 +299,13 @@ public class DictionaryHelper {
 		// Security groups
 		//
 		dict = root.addElement("UserGroups");
-		Element blank = makeBlankNode(dict, "UserGroup");
+		Element blank = makeBlankNode(dict, "UserGroup", "promptedName", "User group...");
 		blank.addAttribute("isPartOf", "N");
 		for (UserGroup d : groupList) {
 			Element dictEntry = dict.addElement("UserGroup");
 			dictEntry.addAttribute("id",         d.getIdUserGroup().toString());
 			dictEntry.addAttribute("name",       d.getName());
+			dictEntry.addAttribute("promptedName",  d.getName());
 			
 			dictEntry.addAttribute("isPartOf",         genoPubSecurity.isAdminRole() || genoPubSecurity.belongsToGroup(d) ? "Y" : "N");
 			dictEntry.addAttribute("isMemberOf",       genoPubSecurity.isAdminRole() || genoPubSecurity.isMember(d) ? "Y" : "N");
@@ -355,6 +356,17 @@ public class DictionaryHelper {
 		Element node = parentNode.addElement(name);
 		node.addAttribute("id",   "");
 		node.addAttribute("name", "");
+		return node;
+	}
+	
+	private Element makeBlankNode(Element parentNode, String name, String displayAttributeName, String display) {
+		Element node = parentNode.addElement(name);
+		node.addAttribute("id",   "");
+		node.addAttribute(displayAttributeName, display);
+		
+		if (!displayAttributeName.equals("name")) {
+			node.addAttribute("name", "");			
+		}
 		return node;
 	}
 

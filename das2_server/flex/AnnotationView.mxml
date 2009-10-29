@@ -1828,7 +1828,7 @@
 			               	toolTip="New annotation folder" 
 			               	click="{addItem('Annotation folder')}" 
 			               	id="linkbutton3" textAlign="left"/>
-			               <mx:LinkButton  label="New Genome build" 
+			               <mx:LinkButton  label="New Genome version" 
 			               	icon="@Embed(source='assets/genome_version_new.png')" 
 			               	enabled="true"
 			               disabledIcon="@Embed(source='assets/genome_version_new_disable.png')" 
@@ -1910,22 +1910,20 @@
   					 </mx:HBox>       
 			        <mx:HRule width="100%" id="hrule1"/>
   			        <mx:HBox width="100%" horizontalGap="4" paddingTop="0" verticalAlign="middle" paddingBottom="2" id="hbox15" backgroundAlpha="0.8">
-  			            <mx:Label text="Filters:" styleName="menuLabelSmall:"/>
-  			        	<mx:HBox  horizontalGap="0" verticalGap="0" verticalAlign="middle" paddingLeft="10" paddingTop="0">
-  			        	    <mx:Label text="Species" styleName="menuLabelSmall"/>
+  			            <mx:Label text="Filters:" styleName="menuLabelSmall"/>
+  			        	<mx:HBox  horizontalGap="0" verticalGap="0" verticalAlign="middle" paddingLeft="2" paddingTop="0">
   			        		<mx:ComboBox labelField="@binomialName" id="organismCombo" change="refreshAnnotations()" styleName="menuLabelSmall">
   			        			<mx:dataProvider>{parentApplication.dictionaryOrganism}</mx:dataProvider>
   			        		</mx:ComboBox>
   			        	</mx:HBox>
   			        	<mx:HBox  horizontalGap="0" verticalGap="0" verticalAlign="middle" paddingTop="0">
-  			        	    <mx:Label text="Build" styleName="menuLabelSmall"/>
-  			        		<mx:ComboBox dataProvider="{organismCombo.selectedItem.GenomeVersion}" labelField="@name" id="genomeVersionCombo" change="refreshAnnotations()" styleName="menuLabelSmall" width="150"></mx:ComboBox>
+  			        		<mx:ComboBox dataProvider="{organismCombo.selectedItem.GenomeVersion}" labelField="@name" id="genomeVersionCombo" change="refreshAnnotations()" styleName="menuLabelSmall" width="170" prompt="Genome version..."></mx:ComboBox>
   			        	</mx:HBox>
-  			        	<mx:VBox height="100%" verticalGap="0" id="vbox6" paddingTop="0">
+  			        	<mx:VBox height="100%" verticalGap="0" id="vbox6" paddingTop="0" verticalAlign="middle">
   			        		<mx:HBox horizontalGap="2" paddingLeft="4">
-  			        		    <mx:Label text="Visible to" styleName="menuLabelSmall"/>
+  			        		    <mx:Label text="Visible to" styleName="menuLabelSmall" id="label3"/>
   			        		    <mx:CheckBox id="cbVisibilityMem" label="Members"  selected="true" paddingBottom="0" paddingTop="0" styleName="menuLabelSmall" click="refreshAnnotations()"/>
-  			        		    <mx:CheckBox id="cbVisibilityMemCol" label="Members &amp; collaborators" paddingLeft="0" selected="true"  paddingTop="0" paddingBottom="0" styleName="menuLabelSmall" click="refreshAnnotations()"/>
+  			        		    <mx:CheckBox id="cbVisibilityMemCol" label="Members/collaborators" paddingLeft="0" selected="true"  paddingTop="0" paddingBottom="0" styleName="menuLabelSmall" click="refreshAnnotations()"/>
   			        		    <mx:CheckBox id="cbVisibilityPublic" label="Public" selected="true" paddingLeft="0"  paddingTop="0" paddingBottom="0" styleName="menuLabelSmall" click="defaultUserGroupCombo();refreshAnnotations()"/>
   			        			
   			        		</mx:HBox>
@@ -2306,10 +2304,13 @@
 			<mx:SetProperty target="{annotationName}" name="maxChars" value="2000"/>
 			<mx:RemoveChild target="{hbox10}"/>
 			<mx:AddChild relativeTo="{hbox14}" position="before" target="{hbox10}"/>
-			<mx:AddChild relativeTo="{vbox6}" position="before">
+			<mx:SetProperty target="{genomeVersionView}" name="title" value="Genome version"/>
+			<mx:SetProperty target="{genomeVersionCombo}" name="width" value="155"/>
+			<mx:SetStyle target="{label3}" name="paddingBottom" value="0"/>
+			<mx:SetStyle target="{label3}" name="paddingTop" value="0"/>
+			<mx:AddChild relativeTo="{hbox15}" position="lastChild">
 				<mx:HBox horizontalGap="0" height="100%" verticalGap="0" paddingTop="0" paddingBottom="0" verticalAlign="middle">
-				    <mx:Label text="Group"/>
-				    <mx:ComboBox id="userGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" labelField="@name" change="{defaultVisibilityCheckboxes();refreshAnnotations()}" styleName="menuLabelSmall"></mx:ComboBox>
+				    <mx:ComboBox id="userGroupCombo" dataProvider="{parentApplication.dictionaryMyUserGroup}" labelField="@promptedName" change="{defaultVisibilityCheckboxes();refreshAnnotations()}" styleName="menuLabelSmall"></mx:ComboBox>
 				</mx:HBox>
 			</mx:AddChild>
 		</mx:State>

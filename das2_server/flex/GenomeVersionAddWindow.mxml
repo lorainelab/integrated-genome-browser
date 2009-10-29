@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	title="New Genome Build"
+	title="New Genome version"
 	showCloseButton="true" 
 	width="436" 
 	height="192"

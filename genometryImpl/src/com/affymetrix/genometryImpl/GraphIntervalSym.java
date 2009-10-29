@@ -86,19 +86,17 @@ public final class GraphIntervalSym extends GraphSymFloat {
 
 	private File index(String graphName, int[] width, int[] xBuf, float[] yBuf, int[] wBuf) {
 		int pointCount = this.getPointCount();
+		
+		// initialize buffer.
+		System.arraycopy(width, 0, wBuf, 0, Math.min(BUFSIZE, pointCount));
 		if (pointCount <= BUFSIZE) {
 			// no need to index.  Array is too small.
-			wBuf = width;
 			return null;
 		}
 
 		File bufVal = null;
 		DataOutputStream dos = null;
 		try {
-			// initialize buffer.
-			bufStart = 0;
-			System.arraycopy(width, 0, wBuf, 0, BUFSIZE);
-
 			// create indexed file.
 			bufVal = File.createTempFile(graphName, "idx");
 			bufVal.deleteOnExit();	// Delete this file when IGB shuts down.

@@ -24,16 +24,6 @@ public final class GraphSymInt extends GraphSym {
 		super(x, id, seq);
 		setCoords(x, y);
 	}
-
-	/**
-	 *  Sets the x and y coordinates.
-	 *  @param x an array of int, or null.
-	 *  @param y must be an array of int of same length as x, or null if x is null.
-	 */
-	/*public void setCoords(int[] x, Object y) {
-		setCoords(x, (int[]) y);
-	}*/
-
 	/**
 	 *  Sets the x and y coordinates.
 	 *  @param x an array of int, or null.

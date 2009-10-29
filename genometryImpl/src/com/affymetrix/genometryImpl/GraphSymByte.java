@@ -30,15 +30,6 @@ public final class GraphSymByte extends GraphSym {
 	 *  @param x an array of int, or null.
 	 *  @param y must be an array of int of same length as x, or null if x is null.
 	 */
-	/*public void setCoords(int[] x, Object y) {
-		setCoords(x, (byte[]) y);
-	}*/
-
-	/**
-	 *  Sets the x and y coordinates.
-	 *  @param x an array of int, or null.
-	 *  @param y must be an array of int of same length as x, or null if x is null.
-	 */
 	public void setCoords(int[] x, byte[] y) {
 		if ((y == null && x != null) || (x == null && y != null)) {
 			throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");

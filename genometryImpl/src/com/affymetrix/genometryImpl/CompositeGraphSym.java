@@ -79,6 +79,12 @@ public final class CompositeGraphSym extends GraphSymFloat {
 		xcoords = new_xcoords;
 		slice_xcoords = null;
 		slice.xcoords = null;
+		float[] new_ycoords = copyYCoords(slice_ycoords, slice_index, new_index);
+		setCoords(xcoords, new_ycoords);
+		slice.setCoords(null, null);
+	}
+
+	private float[] copyYCoords(float[] slice_ycoords, int slice_index, int new_index) {
 		float[] new_ycoords = new float[getGraphYCoords().length + slice_ycoords.length];
 		new_index = 0;
 		//    old ycoord array entries up to "A-1"
@@ -93,8 +99,6 @@ public final class CompositeGraphSym extends GraphSymFloat {
 		if (slice_index < getGraphYCoords().length) {
 			System.arraycopy(getGraphYCoords(), slice_index, new_ycoords, new_index, getGraphYCoords().length - slice_index);
 		}
-		setCoords(xcoords, new_ycoords);
-		slice.setCoords(null, null);
+		return new_ycoords;
 	}
-
 }

@@ -79,7 +79,7 @@ public final class GraphSymUtils {
 		if (toseq == null || tospan == null) {
 			return null;
 		}
-		double graf_base_length = original_graf.getGraphXCoord(original_graf.getPointCount() - 1) - original_graf.getGraphXCoord(0);
+		double graf_base_length = original_graf.getMaxXCoord() - original_graf.getMinXCoord();
 
 		// calculating graf length from xcoords, since graf's span
 		//    is (usually) incorrectly set to start = 0, end = seq.getLength();
@@ -94,7 +94,27 @@ public final class GraphSymUtils {
 		if (hasWidth(original_graf)) {
 			new_wcoords = new IntList(initcap);
 		}
+		
+		addCoords(mapsym, fromseq, toseq, original_graf, new_xcoords, new_ycoords, new_wcoords);
 
+		String newid = original_graf.getID();
+		if (ensure_unique_id) {
+			newid = GraphSymUtils.getUniqueGraphID(newid, toseq);
+		}
+
+		if (!hasWidth(original_graf)) {
+			new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+					newid, toseq);
+		} else {
+			new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
+					new_ycoords.copyToArray(), newid, toseq);
+		}
+		new_graf.setGraphName(original_graf.getGraphName());
+		return new_graf;
+	}
+
+
+	private static void addCoords(SeqSymmetry mapsym, MutableAnnotatedBioSeq fromseq, MutableAnnotatedBioSeq toseq, GraphSym original_graf, IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
 		List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
 		for (SeqSymmetry leafsym : leaf_syms) {
 			SeqSpan fspan = leafsym.getSpan(fromseq);
@@ -111,10 +131,7 @@ public final class GraphSymUtils {
 			}
 			double offset = tspan.getStartDouble() - (scale * fspan.getStartDouble());
 			int kmax = original_graf.getPointCount();
-
-
 			int start_index = 0;
-
 			if (!hasWidth(original_graf)) {
 				// If there are no width coordinates, then we can speed up the
 				// drawing by determining the start_index of the first x-value in range.
@@ -124,26 +141,23 @@ public final class GraphSymUtils {
 				// try to determine start_index.  Luckily, when there are widths, there
 				// tend to be fewer graph points to deal with.
 				// assumes graph is sorted
-				start_index = determineBegIndex(original_graf, ostart-1);
+				start_index = determineBegIndex(original_graf, ostart - 1);
 			}
-
 			for (int k = start_index; k < kmax; k++) {
 				final int old_xcoord = original_graf.getGraphXCoord(k);
 				if (old_xcoord >= oend) {
 					break; // since the array is sorted, we can stop here
 				}
 				int new_xcoord = (int) ((scale * old_xcoord) + offset);
-
 				// new_x2coord will represent x + width: initial assumption is width is zero
 				int new_x2coord = new_xcoord;
 				if (hasWidth(original_graf)) {
-					final int old_x2coord = old_xcoord + ((GraphIntervalSym)original_graf).getGraphWidthCoord(k);
+					final int old_x2coord = old_xcoord + ((GraphIntervalSym) original_graf).getGraphWidthCoord(k);
 					new_x2coord = (int) ((scale * old_x2coord) + offset);
 					if (new_x2coord >= tspan.getEnd()) {
 						new_x2coord = tspan.getEnd();
 					}
 				}
-
 				final int tstart = tspan.getStart();
 				if (new_xcoord < tstart) {
 					if (!hasWidth(original_graf)) {
@@ -154,7 +168,6 @@ public final class GraphSymUtils {
 						continue;
 					}
 				}
-
 				new_xcoords.add(new_xcoord);
 				new_ycoords.add(original_graf.getGraphYCoord(k));
 				if (hasWidth(original_graf)) {
@@ -163,21 +176,8 @@ public final class GraphSymUtils {
 				}
 			}
 		}
-		String newid = original_graf.getID();
-		if (ensure_unique_id) {
-			newid = GraphSymUtils.getUniqueGraphID(newid, toseq);
-		}
-
-		if (!hasWidth(original_graf)) {
-			new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
-					newid, toseq);
-		} else {
-			new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
-					new_ycoords.copyToArray(), newid, toseq);
-		}
-		new_graf.setGraphName(original_graf.getGraphName());
-		return new_graf;
 	}
+
 
 
 
@@ -238,7 +238,7 @@ public final class GraphSymUtils {
 				throw new IOException("Must select a sequence before loading a graph of type 'gr'");
 			}
 			GraphSym graph = GrParser.parse(newstr, seq, stream_name);
-			int max_x = graph.getGraphXCoord(graph.getPointCount()-1);
+			int max_x = graph.getMaxXCoord();
 			MutableAnnotatedBioSeq gseq = graph.getGraphSeq();
 			seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
 			grafs = wrapInList(graph);
@@ -272,7 +272,6 @@ public final class GraphSymUtils {
 	public static String getUniqueGraphID(String id, MutableAnnotatedBioSeq seq) {
 		return AnnotatedSeqGroup.getUniqueGraphID(id, seq);
 	}
-
 
 	private static List<GraphSym> wrapInList(GraphSym gsym) {
 		List<GraphSym> grafs = null;
@@ -431,7 +430,7 @@ public final class GraphSymUtils {
 		FloatList newy = new FloatList();
 
 		// transfrag ycoords should be irrelevant
-		int xmin = trans_frag_graph.getGraphXCoord(0);
+		int xmin = trans_frag_graph.getMinXCoord();
 		float y_at_xmin = trans_frag_graph.getGraphYCoord(0);
 		int prevx = xmin;
 		float prevy = y_at_xmin;

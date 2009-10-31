@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -728,7 +727,6 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	 *   of GraphVisibleBoundsSetter, adjusts the controls, and updates the widget.
 	 */
 	private void setVisibleMaxPercent(float percent) {
-		//    System.out.println("setting max percent: " + percent + ", previous: " + prev_max_per);
 		int gcount = graphs.size();
 
 		if (gcount > 0 /*&& (percent != prev_max_per)*/) {
@@ -864,16 +862,4 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		max_valT.addFocusListener(this);
 	}
 
-	/*public void deleteGraph(GraphGlyph gl) {
-		Object info = gl.getInfo();
-		if (info != null) {
-			info2pscores.remove(info);
-		}
-		graphs.remove(gl);
-		setGraphs(graphs);
-	}*/
-
-	/*public static void main(String[] args) {
-		com.affymetrix.igb.view.SimpleGraphTab.main(args);
-	}*/
 }

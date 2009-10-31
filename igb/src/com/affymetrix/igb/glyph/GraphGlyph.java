@@ -366,8 +366,6 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void DrawTheGraph(double offset, ViewI view, Graphics g, double yscale, int graph_style, double xmin, double xmax, double heatmap_scaling, Color[] heatmap_colors) {
-		int beg_index = 0;
-
 		float yzero = 0;
 		if (getVisibleMinY() > yzero) {
 			yzero = getVisibleMinY();
@@ -386,10 +384,10 @@ public final class GraphGlyph extends Glyph {
 		g.setColor(this.getColor());
 
 		// set up prev_point before starting loop
-		coord.x = graf.getGraphXCoord(beg_index);
-		coord.y = offset - ((graf.getGraphYCoord(beg_index) - getVisibleMinY()) * yscale);
+		coord.x = graf.getMinXCoord();
+		float prev_ytemp = graf.getGraphYCoord(0);
+		coord.y = offset - ((prev_ytemp - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, prev_point);
-		float prev_ytemp = graf.getGraphYCoord(beg_index);
 
 		Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 		int draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);

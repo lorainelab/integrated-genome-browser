@@ -106,50 +106,6 @@ public abstract class DasLoader {
   }
 
   /**
-   *  Returns a Map where keys are String labels and values are SeqSpan's.
-   *  Looks for <gff><segment id="..."> where the id's are in the given seq_group.
-   */
-  /*public static Map<String,SeqSpan> parseTermQuery(Document doc, AnnotatedSeqGroup seq_group) {
-    if (DEBUG) System.out.println("========= Parsing term query");
-    Map<String,SeqSpan> segment_hash = new HashMap<String,SeqSpan>();
-
-    Element top_element = doc.getDocumentElement();
-    //String name = top_element.getTagName();
-    //      System.out.println("top element: " + name);
-    NodeList children = top_element.getChildNodes();
-    for (int i=0; i<children.getLength(); i++) {
-      Node child = children.item(i);
-      String cname = child.getNodeName();
-      if (cname != null && cname.equalsIgnoreCase("gff")) {
-        NodeList gff_children = child.getChildNodes();
-        for (int k=0; k<gff_children.getLength(); k++) {
-          Node gff_child = gff_children.item(k);
-          if (gff_child.getNodeName().equalsIgnoreCase("segment"))  {
-            Element seg_elem = (Element)gff_child;
-            String id = seg_elem.getAttribute("id");
-            if (id != null) {
-              BioSeq segmentseq = seq_group.getSeq(id);
-              if (segmentseq != null) {
-                int start = Integer.parseInt(seg_elem.getAttribute("start"));
-                int end = Integer.parseInt(seg_elem.getAttribute("end"));
-                SeqSpan segment_span = new SimpleSeqSpan(start, end, segmentseq);
-                String das_label = seg_elem.getAttribute("label");
-                String label = id + " : " + start + ", " + end + " ==> " + das_label;
-
-                segment_hash.put(label, segment_span);
-                if (DEBUG)  {
-                  System.out.println("segment: id = " + id + ", start = " + start + ", end = " + end);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    return segment_hash;
-  }*/
-
-  /**
    *  Returns a List of String's which are the id's of the segments.
    *  From <entry_points><segment id="...">.
    */

@@ -1270,8 +1270,8 @@ public class SeqMapView extends JPanel
 			if (annotSym instanceof GraphSym) {
 				if (!exclude_graphs) {
 					GraphSym graf = (GraphSym) annotSym;
-					min = Math.min(graf.getGraphXCoord(0),min);
-					max = Math.max(graf.getGraphXCoord(graf.getPointCount() - 1), max);
+					min = Math.min(graf.getMinXCoord(),min);
+					max = Math.max(graf.getMaxXCoord(), max);
 				}
 			} else if (annotSym instanceof TypeContainerAnnot) {
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
@@ -1320,8 +1320,8 @@ public class SeqMapView extends JPanel
 				if (annotSym instanceof GraphSym) {
 					if (!exclude_graphs) {
 						GraphSym graf = (GraphSym) annotSym;
-						min_max[0] = Math.min(graf.getGraphXCoord(0), min_max[0]);
-						min_max[1] = Math.max(graf.getGraphXCoord(graf.getPointCount() - 1), min_max[1]);   // JN - was using min_max[0]; fixed
+						min_max[0] = Math.min(graf.getMinXCoord(), min_max[0]);
+						min_max[1] = Math.max(graf.getMaxXCoord(), min_max[1]);   // JN - was using min_max[0]; fixed
 						// TODO: This needs to take into account GraphIntervalSyms width coords also !!
 						// The easiest way would be to re-write the GraphSym and GraphIntervalSym
 						// method getSpan() so that it returned the correct values.

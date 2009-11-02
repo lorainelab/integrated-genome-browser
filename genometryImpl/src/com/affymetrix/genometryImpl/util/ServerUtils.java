@@ -237,7 +237,6 @@ public abstract class ServerUtils {
 	}
 
 
-
 	/**
 	 * see if can parse as annotation originalFile.
 	 * @param current_file
@@ -307,26 +306,26 @@ public abstract class ServerUtils {
 
 		IndexWriter iWriter = ParserController.getIndexWriter(originalFileName);
 
-		int oldSeqCount = genome.getSeqCount();
-
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
 		String extension = ParserController.getExtension(stream_name);
 		String typeName = annot_name != null ? annot_name : ParserController.GetAnnotType(annotList, stream_name, extension);
-
 		genome.addType(typeName, annot_id);
+
+		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
 
 		if (iWriter == null) {	
 			loadAnnotFile(file, stream_name, annotList, genome, false);
-			checkAlteredSeqCount(oldSeqCount, genome.getSeqCount(), false, file);
+			getAddedChroms(genome, tempGenome, false);
+			getAlteredChroms(genome, tempGenome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
 			// Not yet indexable
 			return;
 		}
 
-		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
 		List loadedSyms = loadAnnotFile(file, stream_name, annotList, tempGenome, true);
-		checkAlteredSeqCount(oldSeqCount, tempGenome.getSeqCount(), true, file);
+		getAddedChroms(tempGenome, genome, true);
+		getAlteredChroms(tempGenome, genome, true);
 
 		String returnTypeName = typeName;
 		if (stream_name.endsWith(".link.psl")) {
@@ -335,25 +334,7 @@ public abstract class ServerUtils {
 		}
 		IndexingUtils.determineIndexes(genome,
 				tempGenome, dataRoot, file, loadedSyms, iWriter, typeName, returnTypeName);
-	}
-
-	
-
-
-	private static void checkAlteredSeqCount(int oldSeqCount, int newSeqCount, boolean isIgnored, File file) {
-		if (oldSeqCount != newSeqCount) {
-			System.out.print("WARNING: file " + file.getPath() + " has " + newSeqCount + " chromosomes instead of " + oldSeqCount);
-			if (isIgnored) {
-				System.out.print(". Due to indexing, this is ignored.");
-			} else {
-				System.out.print(". The genome has been altered.");
-			}
-			System.out.println();
-		}
-	}
-
-
-	
+	}	
 
 	public static void createDirIfNecessary(String dirName) {
 		// Make sure the appropriate .indexed/species/version/chr directory exists.
@@ -558,6 +539,9 @@ public abstract class ServerUtils {
 		BioSeq seq = (BioSeq) query_span.getBioSeq();
 		SymWithProps container = seq.getAnnotation(annot_type);
 		if (container != null) {
+			if (DEBUG) {
+				System.out.println("non-indexed request for " + annot_type);
+			}
 			int annot_count = container.getChildCount();
 			for (int i = 0; i < annot_count; i++) {
 				SeqSymmetry sym = container.getChild(i);
@@ -568,6 +552,9 @@ public abstract class ServerUtils {
 			}
 		} else {
 			// Couldn't find it.  See if it's been indexed.
+			if (DEBUG) {
+					System.out.println("indexed request for " + annot_type);
+				}
 			IndexedSyms iSyms = seq.getIndexedSym(annot_type);
 			if (iSyms != null) {
 				return getIndexedOverlappedSymmetries(
@@ -806,4 +793,56 @@ public abstract class ServerUtils {
 		}
 		return genome_types;
 	}
+
+
+	private static void getAddedChroms(AnnotatedSeqGroup newGenome, AnnotatedSeqGroup oldGenome, boolean isIgnored) {
+		if (oldGenome.getSeqCount() == newGenome.getSeqCount()) {
+			return;
+		}
+
+		System.out.print("WARNING: found " + newGenome.getSeqCount() + " chromosomes instead of " + oldGenome.getSeqCount());
+		if (isIgnored) {
+			System.out.println(". Due to indexing, this was ignored.");
+		} else {
+			System.out.println(". The genome has been altered.");
+		}
+
+		// output the altered seq
+		System.out.print("Extra chromosomes : ");
+		for (BioSeq seq : newGenome.getSeqList()) {
+			BioSeq genomeSeq = oldGenome.getSeq(seq.getID());
+			if (genomeSeq == null) {
+				System.out.print(seq.getID() + " ");
+			}
+		}
+		System.out.println();
+	}
+
+
+	private static void getAlteredChroms(AnnotatedSeqGroup newGenome, AnnotatedSeqGroup oldGenome, boolean isIgnored) {
+		List<String> alteredChromStrings = new ArrayList<String>();
+		for (BioSeq seq : newGenome.getSeqList()) {
+			BioSeq genomeSeq = oldGenome.getSeq(seq.getID());
+			if (genomeSeq != null && genomeSeq.getLength() != seq.getLength()) {
+				alteredChromStrings.add(
+						seq.getID() + ":" + seq.getLength() + "(was " + genomeSeq.getLength() + ") ");
+			}
+		}
+
+		if (alteredChromStrings.size() > 0) {
+			System.out.print("WARNING: altered chromosomes found. ");
+			if (isIgnored) {
+				System.out.println("Indexing; this may cause problems.");
+			} else {
+				System.out.println("The genome has been altered.");
+			}
+			// output the altered seq
+			System.out.print("Altered chromosomes : ");
+			for (String alteredChromString : alteredChromStrings) {
+				System.out.print(alteredChromString);
+			}
+			System.out.println();
+		}
+	}
+
 }

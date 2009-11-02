@@ -90,9 +90,6 @@ public class ExponentialTransform implements TransformI {
 		return dst;
 	}
 
-	public void append(TransformI T) {  }
-	public void prepend(TransformI T) { }
-
 	/**
 	 * creates a shallow copy.
 	 * Since the only instance variables are doubles,

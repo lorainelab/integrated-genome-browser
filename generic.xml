@@ -64,6 +64,7 @@
 		</condition>
 
 		<junit fork="true" printsummary="${junit.printsummary}" showoutput="${junit.showoutput}" haltonfailure="false" failureproperty="junit.failure" dir="${basedir}">
+			<jvmarg value="-Djava.awt.headless=true"/>
 			<classpath path="${junit.jar}:${test.classpath}" />
 			<formatter usefile="false" type="brief" if="build.compiler.emacs" />
 			<formatter type="xml" />

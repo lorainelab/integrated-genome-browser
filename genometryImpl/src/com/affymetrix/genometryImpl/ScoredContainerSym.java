@@ -26,12 +26,15 @@ import com.affymetrix.genometryImpl.util.FloatList;
  *  Assumes that ScoredContainerSym has only one SeqSpan
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
-	Map<String,Object> name2scores = new HashMap<String,Object>();
-	Map<String,String> name2id = new HashMap<String,String>(); // Maps score names to unique graph ids
-	Map<String,String> name2id_plus = new HashMap<String,String>();
-	Map<String,String> name2id_minus = new HashMap<String,String>();
-	List<Object> scorevals = new ArrayList<Object>();
-	List<String> scorenames = new ArrayList<String>();
+	private Map<String,Object> name2scores = new HashMap<String,Object>();
+	private List<Object> scorevals = new ArrayList<Object>();
+	private List<String> scorenames = new ArrayList<String>();
+
+	private static Map<String,GraphStateI> id2gstate = new HashMap<String,GraphStateI>();
+
+	private static Map<String,IAnnotStyle> id2combo_style_plus = new HashMap<String,IAnnotStyle>();
+	private static Map<String,IAnnotStyle> id2combo_style_minus = new HashMap<String,IAnnotStyle>();
+	private static Map<String,IAnnotStyle> id2combo_style_neutral = new HashMap<String,IAnnotStyle>();
 
 	/**
 	 *  Adds scores.
@@ -79,6 +82,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	/**
 	 *  Can only accept children that are instances of IndexedSym.
 	 */
+	@Override
 	public void addChild(SeqSymmetry sym) {
 		if (sym instanceof IndexedSym) {
 			IndexedSym isym = (IndexedSym)sym;
@@ -107,7 +111,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	 *
 	 * @return a GraphSym or null if there was an error condition
 	 */
-	public GraphIntervalSym makeGraphSym(String name, AnnotatedSeqGroup seq_group)  {
+	public final GraphIntervalSym makeGraphSym(String name, AnnotatedSeqGroup seq_group)  {
 		float[] scores = getScores(name);
 		SeqSpan pspan = this.getSpan(0);
 		if (scores == null) {
@@ -151,7 +155,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	 *  @param orientation  true for forward strand intervals.
 	 *  @see #makeGraphSym(String,AnnotatedSeqGroup)
 	 */
-	public GraphIntervalSym makeGraphSym(String name, boolean orientation, AnnotatedSeqGroup seq_group) {
+	public final GraphIntervalSym makeGraphSym(String name, boolean orientation, AnnotatedSeqGroup seq_group) {
 		float[] scores = getScores(name);
 		SeqSpan pspan = this.getSpan(0);
 		if (scores == null) {
@@ -185,30 +189,30 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 			}
 		}
 
-		if (xlist.size() <= 0) {
+		if (xlist.size() == 0) {
 			return null;
 		}
-		else {
-			String id;
-			if (orientation) {
-				id = getGraphID(seq_group, name, '+');
-			} else {
-				id = getGraphID(seq_group, name, '-');
-			}
-			int[] xcoords = xlist.copyToArray();
-			int[] wcoords = wlist.copyToArray();
-			float[] ycoords = ylist.copyToArray();
-			GraphIntervalSym gsym = new GraphIntervalSym(xcoords, wcoords, ycoords, id, aseq);
-			if (orientation) {
-				gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
-			} else {
-				gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
-			}
-			return gsym;
+		String id;
+		if (orientation) {
+			id = getGraphID(seq_group, name, '+');
+		} else {
+			id = getGraphID(seq_group, name, '-');
 		}
+		int[] xcoords = xlist.copyToArray();
+		xlist = null;
+		int[] wcoords = wlist.copyToArray();
+		wlist = null;
+		float[] ycoords = ylist.copyToArray();
+		ylist = null;
+		GraphIntervalSym gsym = new GraphIntervalSym(xcoords, wcoords, ycoords, id, aseq);
+		if (orientation) {
+			gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_PLUS);
+		} else {
+			gsym.setProperty(GraphSym.PROP_GRAPH_STRAND, GraphSym.GRAPH_STRAND_MINUS);
+		}
+		return gsym;
 	}
 
-	static Map<String,GraphStateI> id2gstate = new HashMap<String,GraphStateI>();
 
 	// Returns the unique graph ID associated with the score name;
 	// this score will map to this same graph ID for all other
@@ -224,8 +228,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		return id;
 	}
 
-	GraphStateI initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
-		GraphStateI gs = seq_group.getStateProvider().getGraphState(id);
+	private GraphStateI initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
+		GraphStateI gs = AnnotatedSeqGroup.getStateProvider().getGraphState(id);
 		gs.setFloatGraph(false);
 		gs.setGraphStyle(GraphStateI.HEAT_MAP);
 		// don't bother setting preferred heat map style, it should happen automatically.
@@ -235,11 +239,8 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		return gs;
 	}
 
-	static Map<String,IAnnotStyle> id2combo_style_plus = new HashMap<String,IAnnotStyle>();
-	static Map<String,IAnnotStyle> id2combo_style_minus = new HashMap<String,IAnnotStyle>();
-	static Map<String,IAnnotStyle> id2combo_style_neutral = new HashMap<String,IAnnotStyle>();
 
-	IAnnotStyle getContainerStyle(char strand) {
+	private IAnnotStyle getContainerStyle(char strand) {
 		// There are separate combo style items for +, - and +/-.
 		// They are shared by all scores with the same ID on different seqs.
 		// They do not need a "+" or "-" as part of their name, because the glyph
@@ -274,7 +275,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		return style;
 	}
 
-	static IAnnotStyle newComboStyle(String name) {
+	private static IAnnotStyle newComboStyle(String name) {
 		IAnnotStyle style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(name);
 		style.setGraphTier(true);
 		style.setExpandable(true);

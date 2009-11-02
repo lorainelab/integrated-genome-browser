@@ -27,11 +27,10 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	public static final Integer GRAPH_STRAND_PLUS = new Integer(1);
 	public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
 	public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
-	public static final Integer GRAPH_STRAND_NEITHER = new Integer(0);
-
-	int xcoords[];
-	MutableAnnotatedBioSeq graph_original_seq;
-	String gid;
+	
+	protected int xcoords[];
+	protected MutableAnnotatedBioSeq graph_original_seq;
+	private String gid;
 
 	/**
 	 *  id_locked is a temporary fix to allow graph id to be changed after construction, 
@@ -60,26 +59,24 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		this.gid = id;
 	}
 
-	//public abstract void setCoords(int[] x, Object y);
-
-	public void lockID() {
+	public final void lockID() {
 		setLockID(true);
 	}
 
-	public void setLockID(boolean b) {
+	private final void setLockID(boolean b) {
 		id_locked = b;
 	}
 
-	public boolean isLockID() {
+	private final boolean isLockID() {
 		return id_locked;
 	}
 
-	public void setGraphName(String name) {
+	public final void setGraphName(String name) {
 		getGraphState().getTierStyle().setHumanName(name);
 		setProperty("name", name);
 	}
 
-	public String getGraphName() {
+	public final String getGraphName() {
 		String gname = getGraphState().getTierStyle().getHumanName();
 		if (gname == null) {
 			gname = this.getID();
@@ -87,6 +84,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		return gname;
 	}
 
+	@Override
 	public String getID() {
 		return gid;
 	}
@@ -94,6 +92,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Not allowed to call GraphSym.setID(), id
 	 */
+	@Override
 	public void setID(String id) {
 		if (isLockID()) {
 			SingletonGenometryModel.getLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
@@ -104,17 +103,25 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		//    throw new RuntimeException("Attempted to call GraphSym.setID(), but not allowed to modify GraphSym id!");
 	}
 
-	public int getPointCount() {
+	public final int getPointCount() {
 		if (xcoords == null) { return 0; }
 		else { return xcoords.length; }
 	}
 
-	public int[] getGraphXCoords() {
+	public final int[] getGraphXCoords() {
 		return xcoords;
 	}
 
-	public int getGraphXCoord(int i) {
+	public final int getGraphXCoord(int i) {
 		return xcoords[i];
+	}
+
+	public final int getMinXCoord() {
+		return xcoords[0];
+	}
+
+	public final int getMaxXCoord() {
+		return xcoords[xcoords.length-1];
 	}
 
 	/**
@@ -152,6 +159,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Overriding request for property "method" to return graph name.
 	 */
+	@Override
 	public Object getProperty(String key) {
 		if (key.equals("method")) {
 			return getGraphName();
@@ -164,6 +172,7 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		}
 	}
 
+	@Override
 	public boolean setProperty(String name, Object val) {
 		if (name.equals("id")) {
 			this.setID(name);

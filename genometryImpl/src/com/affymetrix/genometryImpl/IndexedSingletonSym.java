@@ -23,9 +23,9 @@ import java.util.*;
  *  will throw exceptions if the parent is null.
  */
 public final class IndexedSingletonSym extends SingletonSeqSymmetry implements IndexedSym, SymWithProps {
-	int index_in_parent = -1;
-	ScoredContainerSym parent = null;
-	String id = null;
+	private int index_in_parent = -1;
+	private ScoredContainerSym parent = null;
+	private String id = null;
 
 	/** Constructor. Be sure to also call {@link #setParent} and {@link #setIndex}.
 	*/
@@ -77,17 +77,4 @@ public final class IndexedSingletonSym extends SingletonSeqSymmetry implements I
 			return false;
 		}
 	}
-
-	/*
-	   public float[] getScores(List scorelist) {
-	   return this.getParent().getChildScores(this, scorelist);
-	   }
-
-	   public float[] getScores() {
-	   return this.getParent().getChildScores(this);
-	   }
-
-	   public int getScoreCount() { return this.getParent().getScoreCount(); }
-	   */
-
 }

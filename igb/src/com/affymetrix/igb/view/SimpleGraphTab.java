@@ -12,7 +12,6 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genoviz.util.Timer;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
@@ -37,7 +36,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.GraphScoreThreshSetter;
 import com.affymetrix.igb.glyph.GraphVisibleBoundsSetter;
-import com.affymetrix.igb.glyph.SmartGraphGlyph;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.util.GraphGlyphUtils;
@@ -80,7 +78,34 @@ public final class SimpleGraphTab extends JPanel
 	private	List<GraphSym> grafs = new ArrayList<GraphSym>();
 	private List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
-	public Action select_all_graphs_action = new AbstractAction("Select All Graphs") {
+	private static Map<String,FloatTransformer> name2transform;
+	private static final String IDENTITY_TRANSFORM = "Copy";
+	private static final String LOG_10 = "Log10";
+	private static final String LOG_2 = "Log2";
+	private static final String LOG_NATURAL = "Natural Log";
+	private static final String INVERSE_LOG_10 = "Inverse Log10";
+	private static final String INVERSE_LOG_2 = "Inverse Log2";
+	private static final String INVERSE_LOG_NATURAL = "Inverse Natural Log";
+
+	static {
+		name2transform = new LinkedHashMap<String,FloatTransformer>();
+		name2transform.put(IDENTITY_TRANSFORM, new IdentityTransform());
+		name2transform.put(LOG_10, new LogTransform(10));
+		name2transform.put(LOG_2, new LogTransform(2));
+		name2transform.put(LOG_NATURAL, new LogTransform(Math.E));
+		name2transform.put(INVERSE_LOG_10, new InverseLogTransform(10));
+		name2transform.put(INVERSE_LOG_2, new InverseLogTransform(2));
+		name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
+	}
+	private final JButton cloneB = new JButton("Go");
+	private final JLabel scale_type_label = new JLabel("Transformation:");
+	private final JComboBox scaleCB = new JComboBox();
+	private final JCheckBox labelCB = new JCheckBox("Label");
+	private final JCheckBox yaxisCB = new JCheckBox("Y Axis");
+	private final JCheckBox floatCB = new JCheckBox("Floating");
+
+
+	private final Action select_all_graphs_action = new AbstractAction("Select All Graphs") {
 
 		public void actionPerformed(ActionEvent e) {
 			if (gviewer != null) {
@@ -88,37 +113,36 @@ public final class SimpleGraphTab extends JPanel
 			}
 		}
 	};
-	public Action delete_selected_graphs_action = new AbstractAction("Delete Selected Graphs") {
+	private final Action delete_selected_graphs_action = new AbstractAction("Delete Selected Graphs") {
 
 		public void actionPerformed(ActionEvent e) {
 			GraphAdjusterView.deleteGraphs(gmodel, gviewer, grafs);
 		}
 	};
-	public Action save_selected_graphs_action = new AbstractAction("Save Selected Graphs...") {
+	private final Action save_selected_graphs_action = new AbstractAction("Save Selected Graphs...") {
 
 		public void actionPerformed(ActionEvent e) {
 			GraphAdjusterView.saveGraphs(gviewer, gmodel, grafs);
 		}
 	};
-	public Action graph_threshold_action = new AbstractAction("Graph Thresholding...") {
+	private final Action graph_threshold_action = new AbstractAction("Graph Thresholding...") {
 
 		public void actionPerformed(ActionEvent e) {
 			showGraphScoreThreshSetter();
 		}
 	};
-	JButton selectAllB = new JButton(select_all_graphs_action);
-	JButton saveB = new JButton(save_selected_graphs_action);
-	JButton deleteB = new JButton(delete_selected_graphs_action);
-	JButton threshB = new JButton(graph_threshold_action);
-	JButton combineB = new JButton("Join");
-	JButton splitB = new JButton("Split");
-	JButton addB;
-	JButton subB;
-	JButton mulB;
-	JButton divB;
-	JLabel heat_map_label = new JLabel("Heat Map:");
-	JComboBox heat_mapCB;
-	JPanel advanced_panel;
+	private final JButton selectAllB = new JButton(select_all_graphs_action);
+	private final JButton saveB = new JButton(save_selected_graphs_action);
+	private final JButton deleteB = new JButton(delete_selected_graphs_action);
+	private final JButton threshB = new JButton(graph_threshold_action);
+	private final JButton combineB = new JButton("Join");
+	private final JButton splitB = new JButton("Split");
+	private JButton addB;
+	private JButton subB;
+	private JButton mulB;
+	private JButton divB;
+	private JComboBox heat_mapCB;
+	private JPanel advanced_panel;
 
 	public SimpleGraphTab() {
 		this(Application.getSingleton());
@@ -268,15 +292,15 @@ public final class SimpleGraphTab extends JPanel
 		gmodel.addSymSelectionListener(this);
 	}
 
-	void showGraphScoreThreshSetter() {
+	private void showGraphScoreThreshSetter() {
 		score_thresh_adjuster.showFrame();
 	}
 
-	void setSeqMapView(SeqMapView smv) {
+	private void setSeqMapView(SeqMapView smv) {
 		this.gviewer = smv;
 	}
 
-	void enableButtons(ButtonGroup g, boolean b) {
+	private void enableButtons(ButtonGroup g, boolean b) {
 		Enumeration e = g.getElements();
 		while (e.hasMoreElements()) {
 			AbstractButton but = (AbstractButton) e.nextElement();
@@ -298,7 +322,7 @@ public final class SimpleGraphTab extends JPanel
 		resetSelectedGraphGlyphs(selected_syms);
 	}
 
-	public void resetSelectedGraphGlyphs(List selected_syms) {
+	private void resetSelectedGraphGlyphs(List selected_syms) {
 		int symcount = selected_syms.size();
 		is_listening = false; // turn off propagation of events from the GUI while we modify the settings
 		if (grafs != selected_syms) {
@@ -352,7 +376,7 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (first_glyph.getGraphState().getComboStyle() != null);
 			any_are_combined = this_one_is_combined;
 			all_are_combined = this_one_is_combined;
-			all_are_smart_glyphs = (first_glyph instanceof SmartGraphGlyph);
+			all_are_smart_glyphs = (first_glyph instanceof GraphGlyph);
 		}
 
 		// Now loop through other glyphs if there are more than one
@@ -364,7 +388,7 @@ public final class SimpleGraphTab extends JPanel
 			boolean this_one_is_combined = (gl.getGraphState().getComboStyle() != null);
 			any_are_combined = any_are_combined || this_one_is_combined;
 			all_are_combined = all_are_combined && this_one_is_combined;
-			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof SmartGraphGlyph);
+			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof GraphGlyph);
 
 			if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
 				graph_style = -1;
@@ -470,17 +494,7 @@ public final class SimpleGraphTab extends JPanel
 		resetSelectedGraphGlyphs(gmodel.getSelectedSymmetries(current_seq));
 	}
 
-	/*public static void main(String[] args) {
-		SimpleGraphTab graph_tab = new SimpleGraphTab();
-		JFrame fr = new JFrame();
-		fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Container cpan = fr.getContentPane();
-		cpan.add(graph_tab);
-		fr.pack();
-		fr.setVisible(true);
-	}*/
-
-	class GraphStyleSetter implements ActionListener {
+	private final class GraphStyleSetter implements ActionListener {
 
 		int style = 0;
 
@@ -531,7 +545,7 @@ public final class SimpleGraphTab extends JPanel
 		}
 	}
 
-	void updateViewer() {
+	private void updateViewer() {
 		final SeqMapView current_viewer = gviewer;
 		final List<GraphSym> previous_graph_syms = new ArrayList<GraphSym>(grafs);
 		// set selections to empty so that options get turned off
@@ -545,7 +559,7 @@ public final class SimpleGraphTab extends JPanel
 		});
 	}
 
-	class HeatMapItemListener implements ItemListener {
+	private final class HeatMapItemListener implements ItemListener {
 
 		public void itemStateChanged(ItemEvent e) {
 			if (gviewer == null || glyphs.isEmpty() || !is_listening) {
@@ -568,7 +582,7 @@ public final class SimpleGraphTab extends JPanel
 		}
 	}
 
-	class GraphHeightSetter implements ChangeListener {
+	private final class GraphHeightSetter implements ChangeListener {
 
 		public void stateChanged(ChangeEvent e) {
 			if (gviewer == null || glyphs.isEmpty() || !is_listening) {
@@ -580,7 +594,7 @@ public final class SimpleGraphTab extends JPanel
 			}
 		}
 
-		void setTheHeights(double height) {
+		private void setTheHeights(double height) {
 			if (gviewer == null) {
 				return; // for testing
 			}
@@ -603,35 +617,8 @@ public final class SimpleGraphTab extends JPanel
 			map.updateWidget();
 		}
 	}
-	static Map<String,FloatTransformer> name2transform;
-	static String BLANK = "";
-	static String IDENTITY_TRANSFORM = "Copy";
-	static String LOG_10 = "Log10";
-	static String LOG_2 = "Log2";
-	static String LOG_NATURAL = "Natural Log";
-	static String INVERSE_LOG_10 = "Inverse Log10";
-	static String INVERSE_LOG_2 = "Inverse Log2";
-	static String INVERSE_LOG_NATURAL = "Inverse Natural Log";
-
-
-	static {
-		name2transform = new LinkedHashMap<String,FloatTransformer>();
-		name2transform.put(IDENTITY_TRANSFORM, new IdentityTransform());
-		name2transform.put(LOG_10, new LogTransform(10));
-		name2transform.put(LOG_2, new LogTransform(2));
-		name2transform.put(LOG_NATURAL, new LogTransform(Math.E));
-		name2transform.put(INVERSE_LOG_10, new InverseLogTransform(10));
-		name2transform.put(INVERSE_LOG_2, new InverseLogTransform(2));
-		name2transform.put(INVERSE_LOG_NATURAL, new InverseLogTransform(Math.E));
-	}
-	JButton cloneB = new JButton("Go");
-	JLabel scale_type_label = new JLabel("Transformation:");
-	JComboBox scaleCB = new JComboBox();
-	JCheckBox labelCB = new JCheckBox("Label");
-	JCheckBox yaxisCB = new JCheckBox("Y Axis");
-	JCheckBox floatCB = new JCheckBox("Floating");
-
-	private class AdvancedGraphPanel extends JPanel {
+	
+	private final class AdvancedGraphPanel extends JPanel {
 
 		public AdvancedGraphPanel() {
 
@@ -782,7 +769,7 @@ public final class SimpleGraphTab extends JPanel
 		 *  Puts all selected graphs in the same tier.
 		 *  Current glyph factories do not support floating the combined graphs.
 		 */
-		void combineGraphs() {
+		private void combineGraphs() {
 			int gcount = grafs.size();
 
 			// Note that the combo_style does not implement IFloatableTierStyle
@@ -817,7 +804,7 @@ public final class SimpleGraphTab extends JPanel
 		 *  Puts all selected graphs in separate tiers by setting the
 		 *  combo state of each graph's state to null.
 		 */
-		void splitGraphs() {
+		private void splitGraphs() {
 			if (grafs.isEmpty()) {
 				return;
 			}
@@ -833,7 +820,7 @@ public final class SimpleGraphTab extends JPanel
 			updateViewer();
 		}
 
-		public void graphArithmetic(String operation) {
+		private void graphArithmetic(String operation) {
 			if (glyphs.size() == 2) {
 				GraphGlyph graphA = glyphs.get(0);
 				GraphGlyph graphB = glyphs.get(1);
@@ -852,21 +839,21 @@ public final class SimpleGraphTab extends JPanel
 			}
 		}
 
-		void setShowAxis(boolean b) {
+		private void setShowAxis(boolean b) {
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowAxis(b);
 			}
 			gviewer.getSeqMap().updateWidget();
 		}
 
-		void setShowLabels(boolean b) {
+		private void setShowLabels(boolean b) {
 			for (GraphGlyph gl : glyphs) {
 				gl.setShowLabel(b);
 			}
 			gviewer.getSeqMap().updateWidget();
 		}
 
-		void scaleGraphs() {
+		private void scaleGraphs() {
 			String selection = (String) scaleCB.getSelectedItem();
 			FloatTransformer trans = name2transform.get(selection);
 			List<GraphSym> newgrafs = GraphAdjusterView.transformGraphs(grafs, selection, trans);

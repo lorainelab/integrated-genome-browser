@@ -45,51 +45,51 @@ public final class GraphAdjusterView {
   static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
 
   public static List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
-    List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
+   List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
 		for (GraphSym graf : grafs) {
-      float[] new_ycoords;
-      
-      if (transformer instanceof IdentityTransform && graf instanceof GraphSymFloat) {
-        new_ycoords = ((GraphSymFloat) graf).getGraphYCoords();
-      } else {
-        int pcount = graf.getPointCount();
-        new_ycoords = new float[pcount];
-        for (int k=0; k<pcount; k++) {
-          new_ycoords[k] = transformer.transform(graf.getGraphYCoord(k));
-        }
-      }
-      String newname = trans_name + " (" + graf.getGraphName() + ") ";
-      
-     // Transforming on this one seq only, not the whole genome
-      String newid = trans_name + " (" + graf.getID() + ") ";
-      newid = GraphSymUtils.getUniqueGraphID(newid, graf.getGraphSeq());
-      GraphSym newgraf;
-      if (graf instanceof GraphIntervalSym) {
-        newgraf = new GraphIntervalSym(graf.getGraphXCoords(), 
-          ((GraphIntervalSym) graf).getGraphWidthCoords(),
-          new_ycoords, newid, graf.getGraphSeq());
-      } else {
-        newgraf = new GraphSymFloat(graf.getGraphXCoords(), 
-          new_ycoords, newid, graf.getGraphSeq());
-      }
-      
-      newgraf.setProperty(GraphSym.PROP_GRAPH_STRAND, graf.getProperty(GraphSym.PROP_GRAPH_STRAND));
-      
-      
-      GraphStateI newstate = newgraf.getGraphState();
-      newstate.copyProperties(graf.getGraphState());
-      newstate.getTierStyle().setHumanName(newname); // this is redundant
-      if (! (transformer instanceof IdentityTransform)) {
-        // unless this is an identity transform, do not copy the min-max range
-        newstate.setVisibleMinY(Float.NEGATIVE_INFINITY);
-        newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
-      }
+			float[] new_ycoords;
 
-      newgraf.getGraphSeq().addAnnotation(newgraf);
-      newgrafs.add(newgraf);
-    }
-    return newgrafs;
-  }
+			if (transformer instanceof IdentityTransform && graf instanceof GraphSymFloat) {
+				new_ycoords = ((GraphSymFloat) graf).getGraphYCoords();
+			} else {
+				int pcount = graf.getPointCount();
+				new_ycoords = new float[pcount];
+				for (int k = 0; k < pcount; k++) {
+					new_ycoords[k] = transformer.transform(graf.getGraphYCoord(k));
+				}
+			}
+			String newname = trans_name + " (" + graf.getGraphName() + ") ";
+
+			// Transforming on this one seq only, not the whole genome
+			String newid = trans_name + " (" + graf.getID() + ") ";
+			newid = GraphSymUtils.getUniqueGraphID(newid, graf.getGraphSeq());
+			GraphSym newgraf;
+			if (graf instanceof GraphIntervalSym) {
+				newgraf = new GraphIntervalSym(graf.getGraphXCoords(),
+						((GraphIntervalSym) graf).getGraphWidthCoords(),
+						new_ycoords, newid, graf.getGraphSeq());
+			} else {
+				newgraf = new GraphSymFloat(graf.getGraphXCoords(),
+						new_ycoords, newid, graf.getGraphSeq());
+			}
+
+			newgraf.setProperty(GraphSym.PROP_GRAPH_STRAND, graf.getProperty(GraphSym.PROP_GRAPH_STRAND));
+
+
+			GraphStateI newstate = newgraf.getGraphState();
+			newstate.copyProperties(graf.getGraphState());
+			newstate.getTierStyle().setHumanName(newname); // this is redundant
+			if (!(transformer instanceof IdentityTransform)) {
+				// unless this is an identity transform, do not copy the min-max range
+				newstate.setVisibleMinY(Float.NEGATIVE_INFINITY);
+				newstate.setVisibleMaxY(Float.POSITIVE_INFINITY);
+			}
+
+			newgraf.getGraphSeq().addAnnotation(newgraf);
+			newgrafs.add(newgraf);
+		}
+		return newgrafs;
+	}
 
   public static void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, List grafs) {
     int gcount = grafs.size();

@@ -240,7 +240,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 
 
 	private static void displayGraphSym(GraphIntervalSym gis, Double cbox, AffyTieredMap map, SeqMapView smv) {
-		SmartGraphGlyph graph_glyph = new SmartGraphGlyph(gis, gis.getGraphState());
+		GraphGlyph graph_glyph = new GraphGlyph(gis, gis.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
 		GraphStateI gstate = graph_glyph.getGraphState();
 		IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later

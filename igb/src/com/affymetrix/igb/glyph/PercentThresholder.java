@@ -55,7 +55,7 @@ public final class PercentThresholder extends JPanel
   //    desire to avoid recalculation of percent-to-score array (which requires a
   //    sort) every time a graph is selected...
   Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
-  List<SmartGraphGlyph> graphs = new ArrayList<SmartGraphGlyph>();
+  List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 
   /**
    *  Now trying to map slider values to percentages, such that each slider
@@ -69,10 +69,10 @@ public final class PercentThresholder extends JPanel
   float prev_max;
   float slider_label_offset = 50.0f;
 
-  static PercentThresholder showFramedThresholder(SmartGraphGlyph sgg, NeoAbstractWidget widg) {
+  static PercentThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     //    PercentThresholder thresher = new PercentThresholder(sgg, widg);
     PercentThresholder thresher = new PercentThresholder(widg);
-    List<SmartGraphGlyph> glist = new ArrayList<SmartGraphGlyph>();
+    List<GraphGlyph> glist = new ArrayList<GraphGlyph>();
     glist.add(sgg);
     thresher.setGraphs(glist);
     JFrame frm = new JFrame("Graph Percentile Adjuster");
@@ -119,13 +119,9 @@ public final class PercentThresholder extends JPanel
     min_percent_slider.addChangeListener(this);
     min_percent_slider.setPreferredSize(new Dimension(600, 15));
 
-    //    int label_offset_vals = ;
     max_percent_slider.setMinorTickSpacing(10);
     max_percent_slider.setMajorTickSpacing((int)slider_label_offset);
-    //    max_percent_slider.setPaintTicks(true);
-    //    max_percent_slider.setPaintLabels(true);
     max_percent_slider.addChangeListener(this);
-    //    max_percent_slider.setPreferredSize(new Dimension(600, 40));
     max_percent_slider.setPreferredSize(new Dimension(600, 15));
 
     Hashtable<Integer, JLabel> decimal_labels = new Hashtable<Integer, JLabel>();
@@ -163,9 +159,9 @@ public final class PercentThresholder extends JPanel
     syncCB.addActionListener(this);
   }
 
-  private void setGraphs(List<SmartGraphGlyph> newgraphs) {
+  private void setGraphs(List<GraphGlyph> newgraphs) {
     graphs.clear();
-		for (SmartGraphGlyph gl : newgraphs) {
+		for (GraphGlyph gl : newgraphs) {
       Object info = gl.getInfo();
       if (info == null) { System.err.println("Graph has no info! " + gl); }
       float[] p2score = info2pscores.get(info);
@@ -178,25 +174,18 @@ public final class PercentThresholder extends JPanel
   }
 
   public float[] calcPercents2Scores(GraphGlyph sgg) {
-    // System.out.println("calculating percentages");
-    //float[] scores = sgg.getYCoords();
-    //int num_scores = sgg.graf.getPointCount();;
-    //    int num_percents = max_percent - min_percent + 1;
     int num_percents = (int)(abs_max_percent * sliders_per_percent + 1);
     System.out.println("num_percents: " + num_percents);
-    float[] ordered_scores = sgg.graf.copyGraphYCoords();
+    float[] ordered_scores = sgg.copyYCoords();
     System.out.println("score array copied");
     Arrays.sort(ordered_scores);
     System.out.println("scores sorted");
     float[] percent2score = new float[num_percents];
 
     float scores_per_percent = ordered_scores.length / 100.0f;
-    //    float scores_per_percent = ordered_scores.length / num_percents;
     for (float percent = 0.0f; percent <= abs_max_percent; percent += percents_per_slider) {
       int score_index = (int)(percent * scores_per_percent);
       if (score_index >= ordered_scores.length) { score_index = ordered_scores.length -1; }
-      //      System.out.println("percent: " + percent + ", score_index: " + score_index
-      //			 + ", percent_index: " + (percent * sliders_per_percent));
       percent2score[Math.round(percent * sliders_per_percent)] = ordered_scores[score_index];
     }
     // just making sure max 100% is really 100%...
@@ -210,7 +199,6 @@ public final class PercentThresholder extends JPanel
     float min_val = (min_percent_slider.getValue()/sliders_per_percent);;
 
     if (src == max_percent_slider) {
-      //      int max_val = max_percent_slider.getValue();
       if (max_val <= prev_min) {
 	prev_max = prev_min+1;
 	max_percent_slider.setValue((int)(prev_max * sliders_per_percent));
@@ -225,8 +213,6 @@ public final class PercentThresholder extends JPanel
 	  prev_min = min_percent;
 	  min_percent_slider.setValue((int)(min_percent * sliders_per_percent));
 	}
-	//	System.out.println("percent: " + max_percent +
-	//	       ", min_score: " + sgg.getVisibleMinY() + ", max score: " + sgg.getVisibleMaxY());
 	prev_max = max_val;
 	widg.updateWidget();
       }
@@ -247,8 +233,7 @@ public final class PercentThresholder extends JPanel
 	  prev_max = max_percent;
 	  max_percent_slider.setValue((int)(max_percent * sliders_per_percent));
 	}
-	//	System.out.println("percent: " + min_percent +
-	//	      ", min_score: " + sgg.getVisibleMinY() + ", max score: " + sgg.getVisibleMaxY());
+
 	prev_min = min_val;
 	widg.updateWidget();
       }
@@ -304,7 +289,7 @@ public final class PercentThresholder extends JPanel
    *   Argument is _value_, not percentage.
    */
   public void setVisibleMinPercent(float percent) {
-		for (SmartGraphGlyph gl : graphs) {
+		for (GraphGlyph gl : graphs) {
       Object info = gl.getInfo();
       float[] percent2score = info2pscores.get(info);
       float min_score = percent2score[Math.round(percent * sliders_per_percent)];
@@ -319,7 +304,7 @@ public final class PercentThresholder extends JPanel
    *   Argument is _value_, not percentage.
    */
   public void setVisibleMaxPercent(float percent) {
-		for (SmartGraphGlyph gl : graphs) {
+		for (GraphGlyph gl : graphs) {
       Object info = gl.getInfo();
       float[] percent2score = info2pscores.get(info);
       float max_score = percent2score[Math.round(percent * sliders_per_percent)];

@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
 import java.awt.geom.Rectangle2D;
 
-public class EfficientExpandPacker extends ExpandPacker {
+public abstract class EfficientExpandPacker extends ExpandPacker {
   boolean DEBUG_PACK = false;
 
   public Rectangle pack(GlyphI parent, ViewI view) {

@@ -14,13 +14,15 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 
 /**
  *  TransformTierGlyph.
@@ -36,7 +38,7 @@ import com.affymetrix.genoviz.glyph.*;
  *
  */
 public final class TransformTierGlyph extends TierGlyph {
-  boolean DEBUG_PICK_TRAVERSAL = false;
+  private static final boolean DEBUG_PICK_TRAVERSAL = false;
 
   /*
    *  if fixed_pixel_height == true,
@@ -44,21 +46,21 @@ public final class TransformTierGlyph extends TierGlyph {
    *    same height in pixels
    *  (assumes tier only appears in one map / scene)
    */
-  boolean fixed_pixel_height = false;
-  int fixedPixHeight = 1;
+  private boolean fixed_pixel_height = false;
+  private int fixedPixHeight = 1;
 
-  LinearTransform tier_transform = new LinearTransform();
+  private LinearTransform tier_transform = new LinearTransform();
 
-  LinearTransform modified_view_transform = new LinearTransform();
-  Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
+  private LinearTransform modified_view_transform = new LinearTransform();
+  private Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
 
-  LinearTransform incoming_view_transform;
-  Rectangle2D.Double incoming_view_coordbox;
+  private LinearTransform incoming_view_transform;
+  private Rectangle2D.Double incoming_view_coordbox;
 
   // for caching in pickTraversal() methods
-  Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
+  private Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   // for caching in pickTraversal(pixbox, picks, view) method
-  Rectangle2D.Double pix_rect = new Rectangle2D.Double();
+  private Rectangle2D.Double pix_rect = new Rectangle2D.Double();
 
   public TransformTierGlyph() {
     super();
@@ -66,10 +68,6 @@ public final class TransformTierGlyph extends TierGlyph {
   
   public TransformTierGlyph(IAnnotStyle style)  {
     super(style);
-  }
-
-  public void setTransform(LinearTransform trans) {
-    tier_transform = trans;
   }
 
   public LinearTransform getTransform() {
@@ -138,15 +136,9 @@ public final class TransformTierGlyph extends TierGlyph {
     if ( 0.0d != coordbox.height ) {
       yscale = (double)fixedPixHeight / coordbox.height;
     }
-    //    System.out.println("yscale: " + yscale);
     yscale = yscale / view_transform.getScaleY();
-    //    System.out.println("yscale2: " + yscale);
     tier_transform.setScaleY(tier_transform.getScaleY() * yscale );
-    //    tier_transform.setOffsetY(tier_transform.getOffsetY() * yscale);
-    /*
-    tier_transform.setOffsetY(tier_transform.getOffsetY()
-			      - (tier_transform.getOffsetY() * yscale) );
-    */
+ 
 
     coordbox.height = coordbox.height * yscale;
   }
@@ -214,10 +206,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;
-    //    tier_transform.setOffsetY(coordbox.y);
-    //    tier_transform.setOffsetY(diffy);
     tier_transform.setOffsetY(tier_transform.getOffsetY() + diffy);
-    //    System.out.println("Hmm: called moveRelative: diffx = " + diffx + ", diffy = " + diffy);
   }
 
 
@@ -250,25 +239,6 @@ public final class TransformTierGlyph extends TierGlyph {
   public int getFixedPixHeight() {
     return fixedPixHeight;
   }
-
-  /**
-   *  WARNING - NOT YET TESTED
-   *  This may very well not work at all!
-   */
-  /*public void getChildTransform(LinearTransform trans) {
-    //    LinearTransform vt = (LinearTransform)view.getTransform();
-    // mostly copied from drawChildren() ...
-    // keep same X scale and offset, but concatenate internal Y transform
-    AffineTransform trans2D = new AffineTransform();
-    trans2D.translate(0.0, trans.getOffsetY());
-    trans2D.scale(1.0, trans.getScaleY());
-    trans2D.translate(1.0, tier_transform.getOffsetY());
-    trans2D.scale(1.0, tier_transform.getScaleY());
-
-    trans.setScaleY(trans2D.getScaleY());
-    trans.setOffsetY(trans2D.getTranslateY());
-  }*/
-
 
 }
 

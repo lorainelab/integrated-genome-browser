@@ -14,7 +14,6 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
@@ -36,22 +35,22 @@ import javax.swing.*;
  */
 public class AffyTieredMap extends NeoMap {
 
-	boolean TIME_PACKING = false;
+	private static final boolean TIME_PACKING = false;
 	public String name; // for debugging only
-	protected Vector<TierGlyph> tiers = new Vector<TierGlyph>();
-	com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+	private List<TierGlyph> tiers = new ArrayList<TierGlyph>();
+	private final com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 
 	// the total pixel height of visible fixed pixel tiers
 	//    (recalculated with every packTiers() call)
-	int fixed_pixel_height;
+	private int fixed_pixel_height;
 
 	// the total coord height of visible fixed coord tiers
 	//    (any visible tier that is NOT a fixed pixel tier)
 	//    (recalculated with every packTiers() call)
-	double fixed_coord_height;
-	static boolean show_plus = true;
-	static boolean show_minus = true;
-	static boolean show_mixed = true;
+	private double fixed_coord_height;
+	private static boolean show_plus = true;
+	private static boolean show_minus = true;
+	private static boolean show_mixed = true;
 	/**
 	 *  Starting with Java 1.6, there is an Action property Action.SELECTED_KEY.
 	 *  By setting this property, JCheckBoxMenuItem's can update themselves
@@ -90,24 +89,24 @@ public class AffyTieredMap extends NeoMap {
 		super();
 	}
 
-	public AffyTieredMap(AffyTieredMap rootmap) {
-		super(rootmap);
-		this.tiers = rootmap.tiers;
-	}
-
 	public AffyTieredMap(boolean hscroll, boolean vscroll) {
 		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
 	}
 
-	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
+	private AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
 		show_plus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
 		show_minus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
 		show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
 	}
 
+	public AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
+		this(hscroll, vscroll);
+		this.scroller[Y] = vscroller;
+	}
+
 	/** Add the given tier to the map, building top-down. */
-	public void addTier(TierGlyph mtg) {
+	public final void addTier(TierGlyph mtg) {
 		addTier(mtg, false);
 	}
 
@@ -116,7 +115,7 @@ public class AffyTieredMap extends NeoMap {
 	 * @param mtg the TierGlyph being added.
 	 * @param ontop determines whether tier goes above or below existing tiers
 	 */
-	public void addTier(TierGlyph mtg, boolean ontop) {
+	public final void addTier(TierGlyph mtg, boolean ontop) {
 		if (ontop) {
 			addTier(mtg, 0);
 		} else {
@@ -133,40 +132,14 @@ public class AffyTieredMap extends NeoMap {
 			return;
 		}
 		super.addItem(mtg);
-		tiers.insertElementAt(mtg, tier_index);
+		tiers.add(tier_index, mtg);
 	}
 
-	/*public TierGlyph getTier(String tier_name) {
-		for (int i = 0; i < tiers.size(); i++) {
-			TierGlyph tgl = tiers.get(i);
-			if (tier_name.equals(tgl.getLabel())) {
-				return tgl;
-			}
-		}
-		return null;
-	}*/
-
-	/** Returns the index of the requested TierGlyph in the map,
-	 *  or -1 if it isn't included. The test is based on "==", not equals().
-	 */
-	public int getTierIndex(TierGlyph tg) {
-		int tindex = -1;
-		for (int i = 0; i < tiers.size(); i++) {
-			if (tiers.get(i) == tg) {
-				tindex = i;
-				break;
-			}
-		}
-		return tindex;
+	public final int getTierIndex(TierGlyph tg) {
+		return tiers.indexOf(tg);
 	}
 
-	// need to deprecate getTiers() or getAllTiers()
-	public List<TierGlyph> getTiers() {
-		return tiers;
-	}
-
-	// need to deprecate getTiers() or getAllTiers()
-	public Vector<TierGlyph> getAllTiers() {
+	public final List<TierGlyph> getTiers() {
 		return tiers;
 	}
 
@@ -185,8 +158,7 @@ public class AffyTieredMap extends NeoMap {
 	public void packTiers(boolean full_repack, boolean stretch_map, boolean stretch_includes_nontiers) {
 		packTiers(full_repack, stretch_map);
 	}
-	static int packCount = 0;
-
+	
 	/**
 	 * pack tiers in order.
 	 * @param full_repack if true, packs the contents of the tiers as well
@@ -199,25 +171,20 @@ public class AffyTieredMap extends NeoMap {
 	 * Protected because outside of subclasses of AffyTieredMap, all calls should
 	 *   go through packTiers(boolean, boolean, boolean)
 	 */
-	protected void packTiers(boolean full_repack, boolean stretch_map) {
+	private void packTiers(boolean full_repack, boolean stretch_map) {
 		if (TIME_PACKING) {
 			timecheck.start();
 		}
 		fixed_pixel_height = 0;
 		fixed_coord_height = 0;
-		//    System.out.println("packTiers: " + packCount++);
 		if (full_repack) {
-			for (int i = 0; i < tiers.size(); i++) {
-				TierGlyph mtg = tiers.elementAt(i);
+			for (TierGlyph mtg : tiers) {
 				mtg.pack(getView());
 			}
 		}
 
 		// Now hide or show tiers based on which checkboxes are selected
-		for (int i = 0; i < tiers.size(); i++) {
-			TierGlyph mtg = tiers.elementAt(i);
-			IAnnotStyle style = mtg.getAnnotStyle();
-
+		for (TierGlyph mtg : tiers) {
 			if (mtg.getChildCount() <= 0) {
 				mtg.setState(TierGlyph.HIDDEN);
 			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
@@ -241,14 +208,10 @@ public class AffyTieredMap extends NeoMap {
 		//   com.affymetrix.genoviz. widget. TieredNeoMap
 		double offset = 0;
 		double height = mbox.height;
-		//    System.out.println("in packTiers(), bounding coordbox: " + mbox);
-		TierGlyph mtg;
-		for (int i = 0; i < tiers.size(); i++) {
-			mtg = tiers.elementAt(i);
+		for (TierGlyph mtg : tiers) {
 			// don't make room if tier is'nt visible, or if it's hidden
 			if ((!mtg.isVisible()) ||
 							((mtg.getState() == TierGlyph.HIDDEN))) {
-				//	System.out.println("hiding tier: " + mtg.getLabel());
 				continue;
 			}
 			if (mtg instanceof TransformTierGlyph &&
@@ -257,7 +220,6 @@ public class AffyTieredMap extends NeoMap {
 				transtier.fitToPixelHeight(this.getView());
 				fixed_pixel_height += transtier.getFixedPixHeight();
 			} else {
-				//	System.out.println(mtg.getCoordBox().height);
 				fixed_coord_height += mtg.getCoordBox().height;
 			}
 			height = mtg.getCoordBox().height;
@@ -277,12 +239,8 @@ public class AffyTieredMap extends NeoMap {
 			}
 			Rectangle2D.Double pbox = getCoordBounds();
 			Rectangle2D.Double newbox = null;
-			mtg = null;
-
-			for (int i = 0; i < tiers.size(); i++) {
-				mtg = tiers.elementAt(i);
+			for (TierGlyph mtg : tiers) {
 				if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.HIDDEN)) {
-					//	  System.out.println("still trying to hide tier: " + mtg.getLabel());
 					continue;
 				} else if (newbox == null) {
 					newbox = new Rectangle2D.Double();
@@ -294,10 +252,7 @@ public class AffyTieredMap extends NeoMap {
 			}
 
 			if (newbox != null) {
-				//	setMapOffset((int) newbox.y, (int) (newbox.y + newbox.height));
-				//        setMapOffset(Math.floor(newbox.y), (int) (newbox.y + newbox.height));
 				setFloatBounds(Y, newbox.y, newbox.y + newbox.height);
-			//	System.out.println("new bounds: " + this.getCoordBounds());
 			}
 		}
 		if (TIME_PACKING) {
@@ -322,8 +277,7 @@ public class AffyTieredMap extends NeoMap {
 		if ((axis != X) || (tiers == null)) {
 			return;
 		}
-		for (int i = 0; i < tiers.size(); i++) {
-			TierGlyph tier = tiers.elementAt(i);
+		for (TierGlyph tier : tiers) {
 			Rectangle2D.Double tbox = tier.getCoordBox();
 			tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
 		}
@@ -351,29 +305,15 @@ public class AffyTieredMap extends NeoMap {
 	 */
 	public void removeTier(TierGlyph toRemove) {
 		this.removeItem(toRemove);
-		tiers.removeElement(toRemove);
+		tiers.remove(toRemove);
 	}
-
-	/*protected boolean hasFixedTier() {
-		int tierCount = tiers.size();
-		for (int i = 0; i < tierCount; i++) {
-			TierGlyph mtg = tiers.elementAt(i);
-			if (mtg instanceof TransformTierGlyph) {
-				TransformTierGlyph transtier = (TransformTierGlyph) mtg;
-				if (transtier.hasFixedPixelHeight()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}*/
 
 	@Override
 	public void stretchToFit(boolean fitx, boolean fity) {
 		this.stretchToFit(fitx, fity, true);
 	}
 
-	public void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
+	private void stretchToFit(boolean fitx, boolean fity, boolean packTiers) {
 		super.stretchToFit(fitx, fity);
 		if (packTiers) {
 			packTiers(false, true, false);
@@ -408,7 +348,6 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 		zoom(id, zoomer_scale[id]);
-	// updateWidget(); // usually something else will call updateWidget() later
 	}
 
 	/**  Called within NeoMap.stretchToFit(), subclassing here to customize calculation
@@ -448,24 +387,11 @@ public class AffyTieredMap extends NeoMap {
 		if (fixed_coord_height == 0) {
 			return new_trans;
 		}
-		//    if (fixed_pixel_height == 0)  { return new_trans; }
-		//    double prevmin = getMinZoom(this.Y);
 		int mod_pixel_height = canvas.getSize().height - fixed_pixel_height;
 		double mod_coord_height = fixed_coord_height;
 		double minzoom = mod_pixel_height / mod_coord_height;
-		//    setMinZoom(this.Y, minzoom);
-		//    System.out.println("standard fit: " + new_trans);
 		new_trans.setScaleY(minzoom);
-		/*
-		System.out.println("new transform: " + new_trans);
-		System.out.println("canvas size: " + canvas.getSize().height);
-		System.out.println("constant-pix tiers total pixel height = " + fixed_pixel_height);
-		System.out.println("constant-coord tiers tot coord height = " + fixed_coord_height);
-		//    System.out.println("prev minzoom = " + prevmin + ", new minzoom = " + getMinZoom(this.Y));
-		System.out.println("prev minzoom = " + prevmin + ", new minzoom = " + minzoom);
-		System.out.println("calculated scene / view size at min zoom: " +
-		canvas.size().height / minzoom );
-		 */
+		
 		return new_trans;
 	}
 
@@ -475,7 +401,6 @@ public class AffyTieredMap extends NeoMap {
 			super.zoom(id, zoom_scale);
 			return;
 		}
-		//    System.out.println("***** zoom_scale = " + zoom_scale + " *****");
 		if (zoom_scale == Float.NEGATIVE_INFINITY || zoom_scale == Float.POSITIVE_INFINITY ||
 						Double.isNaN(zoom_scale)) {
 			return;
@@ -507,26 +432,14 @@ public class AffyTieredMap extends NeoMap {
 		} else {  // if unknown zoom behavior, hold middle constant
 			fixed_coord = prev_view_coords.y + (prev_view_coords.height / 2.0f);
 		}
-		/*
-		else if (zoom_behavior[id] == CONSTRAIN_START)  {
-		fixed_coord = prev_coord_offset;
-		}
-		else if (zoom_behavior[id] == CONSTRAIN_END) {
-		fixed_coord = prev_coord_offset + prev_visible_coords;
-		}
-		 */
 
 		// transforming fixed coord to find fixed pixel
 		fixed_pixel = trans.transform(Y, fixed_coord);
-		//    System.out.println("fixed coord = " + fixed_coord + ", fixed pixel = " + fixed_pixel);
-
+		
 		// calculate transform offset needed to hold coords at same fixed pixel
 		double pix_offset = fixed_pixel - pixels_per_coord[id] * fixed_coord;
 		// convert transform offset (which is in pixels) to coords
 		double coord_offset = pix_offset * coords_per_pixel[id];
-
-		//    System.out.println("real pix offset = " + pix_offset +
-		//		       ", real coord offset = " + coord_offset);
 
 		double visible_coords = coords_per_pixel[id] * pixel_size[id];
 		double first_coord_displayed = -coord_offset;
@@ -569,7 +482,6 @@ public class AffyTieredMap extends NeoMap {
 		// redoing setting of transform, in case there were any adjusments to trim to scene...
 		// assuming modifying Y
 		trans.setOffsetY(pixel_offset[id]);
-		//    trans.setOffsetY(pix_offset);
 		trans.setScaleY(pixels_per_coord[id]);
 
 		if (zoom_scale != zoomer_scale[id]) {
@@ -578,9 +490,6 @@ public class AffyTieredMap extends NeoMap {
 		adjustScroller(id);
 
 		view.calcCoordBox();
-	//    System.out.println("zooming to: " + zoom_scale + ", coord offset = " + coord_offset);
-	//	System.out.println("SceneCoordBox: " + scene.getCoordBox());
-	//	System.out.println("ViewCoordBox:  " + view.getCoordBox());
 	}
 
 	/**
@@ -623,7 +532,7 @@ public class AffyTieredMap extends NeoMap {
 	 *  version of AffyTieredMap.SELECTED_KEY. In Java 1.6, this won't be necessary, because
 	 *  the standard JCkeckBoxMenuItem pays attention to Action.SELECTED_KEY.
 	 */
-	public static class ActionToggler extends JCheckBoxMenuItem implements PropertyChangeListener {
+	public static final class ActionToggler extends JCheckBoxMenuItem implements PropertyChangeListener {
 
 		public ActionToggler(Action action) {
 			super(action);
@@ -638,34 +547,6 @@ public class AffyTieredMap extends NeoMap {
 			}
 		}
 	}
-
-	// if fixed tiers, then pack first
-	//    (responsibility for packing tier itself to a fixed pixel height
-	//    is left to the tier (which may well delegate to its packer...)
-	// supressing call to updateWidget() in packTiers()
-	//    (de facto standard with GenoViz is for anything that calls zoom() or scroll(),
-	//    the caller is responsible for deciding whether and when to call updateWidget())
-	//    packTiers(false, true, false);
-	// CALL NORMAL ZOOM
-
-	// GAH 4-10-2002
-	// MESSY PROBLEM WITH GETTING PACKING OF FIXED-PIXEL TIERS AND ZOOMING PLAYING NICE TOGETHER
-	//
-	// this seems to be the core of the problem:
-	// packTiers packs based on a particular transform (which includes zoom scale), and
-	// this ends up changing the bounds of the scene when there are fixed-pixel tiers.
-	// But if the zoom is done _after_ the packTiers, then:
-	//    A) the fixed-pixel tiers often end up larger or smaller than they are supposed
-	//       to be (since there internal transforms weren't calculated for the
-	//       appropriate scaling factor / zoom level),
-	// and if the zoom is done _before_ the packTiers then
-	//    B) the zoom does not take into account the new packed height of the map/scene,
-	//       so things like scrollbar adjustments get screwed up
-	// neither of which is what we really want
-	// probably need to reimplement more of zoom rather than call super.zoom(), so
-	//     can interleave manipulations happening in packTiers() and zoom(),
-	//     so that zoom is done with the right scene size, and pack is done with the
-	//     appropriate scaling factor
 }
 
 

@@ -51,7 +51,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
    */
 	@Override
   public void initComponentLayout() {
-    labelmap = new AffyTieredMap(false, false);    
+    labelmap = new AffyTieredMap(false, false, scroller[Y]);
     labelmap.setRubberBandBehavior(false);
     this.setBackground(Color.blue);
     labelmap.setBackground(Color.lightGray);
@@ -148,9 +148,6 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
     // No need to set the TierLabelGlyph colors or label:
     // it reads that information dynamically from the given TierGlyph
-
-    label_glyph.setShowBackground(true);
-    label_glyph.setShowOutline(true);
     
     labelmap.addItem(label_glyph);
     // set info for string glyph to point to tier glyph
@@ -194,6 +191,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
+	/*
 	@Override
   public void scroll(int axisid, double value) {
     super.scroll(axisid, value);
@@ -201,6 +199,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
       labelmap.scroll(axisid, value);
     }
   }
+	 */
 
 	@Override
   public void setZoomBehavior(int axisid, int constraint, double coord) {

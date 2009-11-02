@@ -29,7 +29,7 @@ import java.awt.geom.Rectangle2D;
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final boolean DEBUG = false;
   boolean check_same_seq = true;
-  double sgg_transition = SmartGraphGlyph.default_transition_scale;
+  double sgg_transition = GraphGlyph.default_transition_scale;
   
   
   /** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE. 
@@ -41,8 +41,8 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   static final public String CHECK_SAME_SEQ_OPTION = "Check Same Seq";
 
   /** Name of a parameter for the init() method.  Set to an instance of Double.
-   *  Controls a parameter of the SmartGraphGlyph.
-   *  @see SmartGraphGlyph#setTransitionScale(double)
+   *  Controls a parameter of the GraphGlyph.
+   *  @see GraphGlyph#setTransitionScale(double)
    */
   public final static String TRANSITION_POINT_FOR_SMART_GLYPH = "SGG Transition Point";
 
@@ -75,7 +75,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   }
 
   /**
-   *  Makes a SmartGraphGlyph to represent the input GraphSym,
+   *  Makes a GraphGlyph to represent the input GraphSym,
    *     and either adds it as a floating graph to the SeqMapView or adds it
    *     in a tier, depending on getGraphState().getGraphStyle().getFloatGraph() 
    *     and getGraphState().getComboStyle().
@@ -121,12 +121,9 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
       newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
     }
-    if (newgraf == null || newgraf.getGraphXCoords() == null) {
+    if (newgraf == null || newgraf.getPointCount() == 0) {
       return null;
     } 
-//    else if (newgraf.getGraphXCoords().length == 0 || newgraf.getPointCount() == 0) {
-//      return null;
-//    }
 
     String graph_name = newgraf.getGraphName();
     if (graph_name == null) {
@@ -135,7 +132,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
       newgraf.setGraphName(graph_name);
     }
 
-    SmartGraphGlyph graph_glyph = new SmartGraphGlyph(newgraf, state);
+    GraphGlyph graph_glyph = new GraphGlyph(newgraf, state);
     graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
     graph_glyph.setTransitionScale(sgg_transition);
     

@@ -574,7 +574,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			setResidues(align_buffer.toString());
 			align_modified = false;
 		}
-		if (coordbox.intersects(view.getCoordBox()) && isVisible) {
+		if (isVisible && coordbox.intersects(view.getCoordBox())) {
 			if (debugdraw)  {
 				System.out.println("now in AlignmentGlyph.drawTraversal(): " + this);
 			}
@@ -642,11 +642,11 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 
 		public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 			calcPixels(view);
-			return  isVisible?pixel_hitbox.intersects(pixelbox):false;
+			return  isVisible && pixel_hitbox.intersects(pixelbox);
 		}
 
 		public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-			return isVisible?coord_hitbox.intersects(coordbox):false;
+			return isVisible && coord_hitbox.intersects(coordbox);
 		}
 
 		public void setSelected(boolean selected) {

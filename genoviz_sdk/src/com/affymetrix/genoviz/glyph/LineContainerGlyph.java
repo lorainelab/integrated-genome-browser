@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.glyph;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.GeometryUtils;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -68,7 +67,7 @@ public class LineContainerGlyph extends Glyph  {
 	//
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible?pixel_hitbox.intersects(pixelbox):false;
+		return  isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
 	//
@@ -77,7 +76,7 @@ public class LineContainerGlyph extends Glyph  {
 	//    THIS BEHAVIOR COMMENTED OUT FOR NOW
 	//
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return isVisible?coord_hitbox.intersects(coordbox):false;
+		return isVisible && coord_hitbox.intersects(coordbox);
 	}
 
 }

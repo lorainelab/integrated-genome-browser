@@ -219,10 +219,8 @@ public class NeoSeq extends NeoContainerWidget
 		showAs[FRAME_NEG_TWO] = false;
 		showAs[FRAME_NEG_THREE] = false;
 
-		IntegralTransform res_trans = new IntegralTransform();
-		IntegralTransform num_trans = new IntegralTransform();
-		res_trans.setIntegralInverse(false, true, false, false);
-		num_trans.setIntegralInverse(false, true, false, false);
+		LinearTransform res_trans = new LinearTransform();
+		LinearTransform num_trans = new LinearTransform();
 
 		residue_map = new NeoMap(false, false, NeoConstants.HORIZONTAL, res_trans);
 		num_map = new NeoMap(false, false, NeoConstants.HORIZONTAL, num_trans);
@@ -270,15 +268,15 @@ public class NeoSeq extends NeoContainerWidget
 
 		residue_map.setMapRange(0, 1000);
 		residue_map.setMapOffset(0, 1000);
-		residue_map.setReshapeBehavior(residue_map.X, NeoConstants.NONE);
-		residue_map.setReshapeBehavior(residue_map.Y, NeoConstants.NONE);
-		residue_map.setZoomBehavior(residue_map.Y, residue_map.CONSTRAIN_START);
+		residue_map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
+		residue_map.setReshapeBehavior(NeoMap.Y, NeoConstants.NONE);
+		residue_map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_START);
 
 		num_map.setMapRange(0, 1000);
 		num_map.setMapOffset(0, 1000);
-		num_map.setReshapeBehavior(num_map.X, NeoConstants.NONE);
-		num_map.setReshapeBehavior(num_map.Y, NeoConstants.NONE);
-		num_map.setZoomBehavior(num_map.Y, num_map.CONSTRAIN_START);
+		num_map.setReshapeBehavior(NeoMap.X, NeoConstants.NONE);
+		num_map.setReshapeBehavior(NeoMap.Y, NeoConstants.NONE);
+		num_map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_START);
 
 		residue_map.addMouseListener(this);
 		residue_map.addMouseMotionListener(this);
@@ -318,23 +316,6 @@ public class NeoSeq extends NeoContainerWidget
 
 	}
 
-	/**
-	 *  Sets up this NeoSeq as another view on root NeoSeq.
-	 *  Currently requires that the pixel width of this NeoSeq and root NeoSeq
-	 *  remain the same -- GAH 1-19-98
-	 */
-	/*
-	   public NeoSeq(NeoSeq root) {
-	   this();
-	   setRoot(root);
-	   }*/
-
-	/** Set up a NeoSeq with the given Adjustable as the scroller. */
-	/*
-	   public NeoSeq(Adjustable scroller) {
-	   this();
-	   setScroller(scroller);
-	   }*/
 
 	public void setEditable( boolean theAbility ) {
 		if ( this.editable == theAbility )
@@ -371,62 +352,9 @@ public class NeoSeq extends NeoContainerWidget
 		range_listeners.removeAllElements();
 	}
 
-	/**
-	 * Allows monitoring of the caret position.
-	 * This is a simplified version of the Swing caret listening mechanism.
-	 * Instead of taking a Swing Caret object,
-	 * it takes a PositionListener.
-	 */
-	/*
-	   public void addCaretListener( PositionListener p ) {
-	   System.err.println( "NeoSeq.addCaretListener: ..." );
-	   if ( null == this.insertionPoint ) {
-	   System.err.println( "NeoSeq.addCaretListener: no insertion point." );
-	   }
-	   else {
-	   this.insertionPoint.addListener( p );
-	   }
-	   }
-	   */
 	boolean isEditable() {
 		return this.editable;
 	}
-
-	/**
-	 *  Sets up this NeoSeq as another view on root NeoSeq.
-	 *  Currently requires that the pixel width of this NeoSeq and root NeoSeq
-	 *  remain the same -- GAH 1-19-98
-	 */
-	/*
-	   protected void setRoot(NeoSeq root) {
-
-	// need to set up a derived view from  each individual NeoMap
-	//    within this NeoSeq based on corresponding NeoMap within root
-	//    NeoSeq
-	// also need to fiddle with removing this as EventListener to
-	//    previous residue_map.view and adding this as EventListener to
-	//    new residue_map.view because listening to residue_map.view
-	//    is a NeoSeq-specific customization
-	NeoMap root_residuemap = (NeoMap)root.getWidget(NeoSeq.RESIDUES);
-	NeoMap root_numbermap = (NeoMap)root.getWidget(NeoSeq.NUMBERS);
-	residue_map.getView().removePostDrawViewListener(this);
-	residue_map.setRoot(root_residuemap);
-	residue_map.getView().addPostDrawViewListener(this);
-	num_map.setRoot(root_numbermap);
-
-	// Set various fields that need to be shared between
-	// this NeoAssembler and the root
-
-	// can't just do this.seq = root.seq -- need effects of setSequence
-	// BUT, can't just do setSequence(seq), since that decouples this.seq
-	//   from root.seq.  So do both, in the right order...???
-	this.seq = root.seq;
-	setSequence(seq);
-
-	num_glyph = root.num_glyph;
-	residue_glyph = root.residue_glyph;
-	setSelection(root.sel_range); // monitor the same selection as the root.
-	}*/
 
 	public void setSelection(Selection theSelection) {
 		if (null != sel_range) {
@@ -1216,7 +1144,6 @@ public class NeoSeq extends NeoContainerWidget
 	public void scrollSequence(int value) {
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(scroll_increment);
-		clt.setConstrainBehavior(clt.FLOOR);
 		clt.setTranslation(0, 0);
 		int cval = (int)(clt.transform(clt.X,value));
 		residue_map.scrollOffset(cval);
@@ -1318,7 +1245,6 @@ public class NeoSeq extends NeoContainerWidget
 		int start = (int)(visible_box.y);
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(residues_per_line);
-		clt.setConstrainBehavior(clt.FLOOR);
 		clt.setTranslation(0, 0);
 		int end = (int)(visible_box.y +
 				clt.transform(clt.X, visible_box.height) -1 );
@@ -1596,7 +1522,6 @@ public class NeoSeq extends NeoContainerWidget
 		scroll_increment = inc;
 
 		sclt.setConstrainValue(inc);
-		sclt.setConstrainBehavior(sclt.FLOOR);
 		sclt.setTranslation(0, 0);
 		residue_map.setScrollTransform(NeoWidget.Y, sclt);
 		num_map.setScrollTransform(NeoWidget.Y, sclt);

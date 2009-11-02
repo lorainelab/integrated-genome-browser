@@ -16,8 +16,6 @@ package com.affymetrix.genoviz.glyph;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
-import com.affymetrix.genoviz.glyph.GlyphStyle;
-import com.affymetrix.genoviz.util.NeoColorMap;
 
 /**
  * produces {@link GlyphStyle}s.
@@ -32,11 +30,6 @@ public class GlyphStyleFactory {
 	public GlyphStyleFactory() {
 		styles = new Hashtable<GlyphStyle,GlyphStyle>();
 	};
-
-	public String debug_str( Color fg, Color bg, Font fnt ) {
-		NeoColorMap m = NeoColorMap.getColorMap();
-		return ( m.getColorName( fg ) + m.getColorName( bg ) + fnt.getName() );
-	}
 
 	/**
 	 * produces a style.

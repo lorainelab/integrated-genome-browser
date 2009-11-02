@@ -50,7 +50,7 @@ public class SolidGlyph extends Glyph {
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  hitable && isVisible() && pixel_hitbox.intersects(getPixelBox());
+		return hitable && isVisible() && pixel_hitbox.intersects(getPixelBox());
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {

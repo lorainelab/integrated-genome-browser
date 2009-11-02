@@ -181,7 +181,6 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		int text_width = (null==this.text)?0:fm.stringWidth(this.text);
 		int text_height = (null==this.text)?0:fm.getAscent();
 
-		Rectangle2D.Double view_box = theView.getCoordBox();
 		if (null == this.labeled) {
 			theView.transformToPixels(this.coordbox, this.pixelbox);
 		} else {

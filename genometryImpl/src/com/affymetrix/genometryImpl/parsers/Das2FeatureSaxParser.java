@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.Propertied;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
@@ -721,8 +720,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 		String feat_id = getChildID(annot, parent_id, parent_index);
 		String feat_title = null;
-		if (annot instanceof Propertied) {
-			Propertied swp = (Propertied) annot;
+		if (annot instanceof SymWithProps) {
+			SymWithProps swp = (SymWithProps) annot;
 			feat_title = (String) swp.getProperty("name");
 			if (feat_title == null) {
 				feat_title = (String) swp.getProperty("title");
@@ -843,8 +842,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	protected static String getChildID(SeqSymmetry child, String parent_id, int child_index) {
 		String feat_id = child.getID();
 		if (feat_id == null) {
-			if (child instanceof Propertied) {
-				feat_id = (String) ((Propertied) child).getProperty("id");
+			if (child instanceof SymWithProps) {
+				feat_id = (String) ((SymWithProps) child).getProperty("id");
 			}
 			if (feat_id == null) {
 				if (parent_id != null) {

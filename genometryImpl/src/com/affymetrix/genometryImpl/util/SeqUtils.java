@@ -17,9 +17,9 @@ import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.Propertied;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -1231,8 +1231,8 @@ private static final void printSymmetry(String indent, SeqSymmetry sym, String s
 	   System.out.println("  derived from: " + symToString(origsym));
 	   }
 	   */
-	if (print_props && sym instanceof Propertied) {
-		Propertied pp = (Propertied) sym;
+	if (print_props && sym instanceof SymWithProps) {
+		SymWithProps pp = (SymWithProps) sym;
 		Map<String,Object> props = pp.getProperties();
 		if (props != null) {
 			for (Map.Entry<String,Object> entry : props.entrySet()) {

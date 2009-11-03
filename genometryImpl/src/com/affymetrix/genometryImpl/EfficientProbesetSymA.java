@@ -28,7 +28,7 @@ import java.util.*;
  *
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
-public final class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, IntId {
+public final class EfficientProbesetSymA implements SeqSpan, SymWithProps, IntId {
 	SharedProbesetInfo info;
 	boolean forward;
 	int nid;

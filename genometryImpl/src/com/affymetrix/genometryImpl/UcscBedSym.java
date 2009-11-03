@@ -64,7 +64,7 @@ import java.util.*;
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  * </pre>
  */
-public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedSym, SymWithProps, Scored  {
+public final class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithProps, Scored  {
 	MutableAnnotatedBioSeq seq; // "chrom"
 	int txMin; // "chromStart"
 	int txMax; // "chromEnd"

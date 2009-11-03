@@ -508,6 +508,6 @@ public final class GraphSymUtils {
 	}
 
 	public final static boolean hasWidth(GraphSym graf) {
-		return (graf instanceof GraphIntervalSym) && ((GraphIntervalSym)graf).getGraphWidthCount() > 0;
+		return graf instanceof GraphIntervalSym;
 	}
 }

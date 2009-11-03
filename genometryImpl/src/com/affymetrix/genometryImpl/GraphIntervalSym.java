@@ -34,7 +34,7 @@ public final class GraphIntervalSym extends GraphSym {
 		int xmin = x[0];
 		int xmax = x[x.length-1] + width[x.length-1];
 		this.addSpan(new SimpleSeqSpan(xmin, xmax, seq));
-		bufFile = index(this.getGraphName() + this.graph_original_seq.getID(),
+		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(),
 				width,
 				xBuf, yBuf, wBuf);
 	}
@@ -80,7 +80,7 @@ public final class GraphIntervalSym extends GraphSym {
 		return new ScoredSingletonSym(
 				this.getGraphXCoord(index),
 				this.getGraphXCoord(index)+ getGraphWidthCoord(index),
-				graph_original_seq,
+				this.getGraphSeq(),
 				getGraphYCoord(index));
 	}
 

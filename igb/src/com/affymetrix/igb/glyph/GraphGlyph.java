@@ -139,17 +139,6 @@ public final class GraphGlyph extends Glyph {
 	 * Temporary helper method.
 	 * @return
 	 */
-	public float[] getOrCopyYCoords() {
-		if (graf instanceof GraphSym) {
-			return ((GraphSym) graf).getGraphYCoords();
-		}
-		return this.copyYCoords();
-	}
-
-	/**
-	 * Temporary helper method.
-	 * @return
-	 */
 	public float[] copyYCoords() {
 		return graf.copyGraphYCoords();
 	}
@@ -195,14 +184,6 @@ public final class GraphGlyph extends Glyph {
 
 		if (graf.getPointCount() == 0) {
 			return;
-		}
-		
-		if (graf instanceof GraphIntervalSym) {
-			if (((GraphIntervalSym) graf).getGraphWidthCount() > 0) {
-				if (((GraphIntervalSym) graf).getGraphWidthCount() != graf.getPointCount()) {
-					return;
-				}
-			}
 		}
 
 		boolean rangeInit = false;

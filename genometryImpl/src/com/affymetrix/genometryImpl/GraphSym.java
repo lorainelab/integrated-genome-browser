@@ -28,11 +28,11 @@ public class GraphSym extends SimpleSymWithProps {
 	public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
 	public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
 	
-	private int xcoords[];
-	private float[] float_y;
+	private int[] xcoords;
+	private float[] ycoords;
 
 
-	protected MutableAnnotatedBioSeq graph_original_seq;
+	private final MutableAnnotatedBioSeq graph_original_seq;
 	private String gid;
 
 	/**
@@ -43,9 +43,6 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	private boolean id_locked = false;
 
-	/** Constructor.  Subclasses should provide a constructor that specifies the
-	 *  y-coordinate array.
-	 */
 	public GraphSym(int[] x, float[] y, String id, MutableAnnotatedBioSeq seq) {
 		super();
 		setCoords(x, y);
@@ -59,20 +56,11 @@ public class GraphSym extends SimpleSymWithProps {
 		}
 		SeqSpan span = new SimpleSeqSpan(start, end, seq);
 		this.addSpan(span);
-		this.xcoords = x;
 		this.gid = id;
 	}
 
 	public final void lockID() {
-		setLockID(true);
-	}
-
-	private final void setLockID(boolean b) {
-		id_locked = b;
-	}
-
-	private final boolean isLockID() {
-		return id_locked;
+		id_locked = true;
 	}
 
 	public final void setGraphName(String name) {
@@ -98,7 +86,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	@Override
 	public void setID(String id) {
-		if (isLockID()) {
+		if (id_locked) {
 			SingletonGenometryModel.getLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
 		}
 		else {
@@ -112,7 +100,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 *  @param x an array of int, or null.
 	 *  @param y must be an array of float of same length as x, or null if x is null.
 	 */
-	public void setCoords(int[] x, float[] y) {
+	protected void setCoords(int[] x, float[] y) {
 		if ((y == null && x != null) || (x == null && y != null)) {
 			throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");
 		}
@@ -120,7 +108,7 @@ public class GraphSym extends SimpleSymWithProps {
 			throw new IllegalArgumentException("Y-coords and x-coords must have the same length.");
 		}
 		this.xcoords = x;
-		this.float_y = y;
+		this.ycoords = y;
 	}
 
 
@@ -141,32 +129,34 @@ public class GraphSym extends SimpleSymWithProps {
 	public final int getMinXCoord() {
 		return xcoords[0];
 	}
-
+	
 	public final int getMaxXCoord() {
 		return xcoords[xcoords.length-1];
-	}
-
-	public float getGraphYCoord(int i) {
-		return float_y[i];
 	}
 
 	/**
 	 *  Returns the y coordinate as a String.
 	 */
 	public String getGraphYCoordString(int i) {
-		return Float.toString(float_y[i]);
+		return Float.toString(getGraphYCoord(i));
+	}
+
+	
+
+	public float getGraphYCoord(int i) {
+		return ycoords[i];
 	}
 
 	public float[] getGraphYCoords() {
-		return float_y;
+		return ycoords;
 	}
 
 	/** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates
 	 *  were originally specified as non-floats.
 	 */
 	public float[] copyGraphYCoords() {
-		float[] dest = new float[float_y.length];
-		System.arraycopy(float_y, 0, dest, 0, float_y.length);
+		float[] dest = new float[ycoords.length];
+		System.arraycopy(ycoords, 0, dest, 0, ycoords.length);
 		return dest;
 	}
 

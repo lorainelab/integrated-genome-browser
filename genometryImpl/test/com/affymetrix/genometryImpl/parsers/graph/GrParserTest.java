@@ -3,10 +3,8 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-
-
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 
@@ -22,13 +20,12 @@ public class GrParserTest {
 		assertNotNull(istr);
 
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
-		boolean annot_seq = true;
 		String stream_name = "test_file";
 		boolean ensure_unique_id = true;
 
 		BioSeq aseq = group.addSeq(stream_name, 1000);
 
-		GraphSymFloat gr0 = GrParser.parse(istr, aseq, filename, ensure_unique_id);
+		GraphSym gr0 = GrParser.parse(istr, aseq, filename, ensure_unique_id);
 
 		assertEquals(stream_name, gr0.getGraphSeq().getID());
 		assertEquals(10, gr0.getPointCount());
@@ -56,7 +53,7 @@ public class GrParserTest {
 		BioSeq aseq = group.addSeq(stream_name, 1000);
 
 
-		GraphSymFloat gr0 = GrParser.parse(istr, aseq, stream_name, ensure_unique_id);
+		GraphSym gr0 = GrParser.parse(istr, aseq, stream_name, ensure_unique_id);
 
 		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
 

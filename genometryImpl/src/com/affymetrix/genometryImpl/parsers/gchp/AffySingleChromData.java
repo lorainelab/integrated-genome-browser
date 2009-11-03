@@ -13,9 +13,9 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
@@ -120,7 +120,7 @@ final class AffySingleChromData {
 
 				xlist.trimToSize();
 				flist.trimToSize();
-				GraphSymFloat gsym = new GraphSymFloat(xlist.getInternalArray(), flist.getInternalArray(), graphId, seq);
+				GraphSym gsym = new GraphSym(xlist.getInternalArray(), flist.getInternalArray(), graphId, seq);
 				results.add(gsym);
 			} else if (colData.getData() instanceof IntList) {
 				IntList ilist = (IntList) colData.getData();
@@ -129,10 +129,10 @@ final class AffySingleChromData {
 				for (int i=0;i<ilist.size();i++) {
 					y[i] = ilist.get(i);
 				}
-				GraphSymFloat gsym = new GraphSymFloat(positions.getInternalArray(), y, graphId, seq);
+				GraphSym gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
 				results.add(gsym);
 			} else if (colData.getData() instanceof ShortList) {
-				GraphSymFloat gsym;
+				GraphSym gsym;
 				if (colData.name.startsWith("CNState")) {
 					// In the "CNStateMin" and "CNStateMax" graphs, the number "255"
 					// is used to represent "unknown".  These x,y pairs should be discarded.
@@ -146,7 +146,7 @@ final class AffySingleChromData {
 					for (int i = 0; i < ilist.size(); i++) {
 						y[i] = ilist.get(i);
 					}
-					gsym = new GraphSymFloat(xlist.getInternalArray(), y, graphId, seq);
+					gsym = new GraphSym(xlist.getInternalArray(), y, graphId, seq);
 				} else {
 					ShortList ilist = (ShortList) colData.getData();
 					ilist.trimToSize();
@@ -154,7 +154,7 @@ final class AffySingleChromData {
 					for (int i = 0; i < ilist.size(); i++) {
 						y[i] = ilist.get(i);
 					}
-					gsym = new GraphSymFloat(positions.getInternalArray(), y, graphId, seq);
+					gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
 				}
 				results.add(gsym);
 			} else if (colData.getData() instanceof ByteList) {
@@ -164,7 +164,7 @@ final class AffySingleChromData {
 				for (int i = 0; i < ilist.getInternalArray().length; i++) {
 					y[i] = ilist.get(i);
 				}
-				GraphSymFloat gsym = new GraphSymFloat(positions.getInternalArray(), y, graphId, seq);
+				GraphSym gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
 				results.add(gsym);
 			} else {
 				SingletonGenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);

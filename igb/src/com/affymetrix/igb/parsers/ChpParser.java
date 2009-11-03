@@ -12,6 +12,7 @@
 */
 package com.affymetrix.igb.parsers;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
@@ -29,7 +30,6 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -145,11 +145,11 @@ public final class ChpParser {
     return results;
   }
 
-  public static List<GraphSymFloat> parseTilingChp(FusionCHPTilingData tchp)  {
+  public static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp)  {
     return parseTilingChp(tchp, true);
   }
 
-  public static List<GraphSymFloat> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq) {
+  public static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq) {
     return parseTilingChp(tchp, annotate_seq, true);
   }
 
@@ -557,9 +557,9 @@ public final class ChpParser {
     return results;
   }
 
-  public static List<GraphSymFloat> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
+  public static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
     SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    ArrayList<GraphSymFloat> results = new ArrayList<GraphSymFloat>();
+    ArrayList<GraphSym> results = new ArrayList<GraphSym>();
     int seq_count = tchp.getNumberSequences();
     String alg_name = tchp.getAlgName();
     String alg_vers = tchp.getAlgVersion();
@@ -642,7 +642,7 @@ public final class ChpParser {
       }
       String graph_id = OpenGraphAction.getGraphNameForFile(tchp.getFileName());
       if (ensure_unique_id) { graph_id = GraphSymUtils.getUniqueGraphID(graph_id, aseq); }
-      GraphSymFloat gsym = new GraphSymFloat(xcoords, ycoords, graph_id, aseq);
+      GraphSym gsym = new GraphSym(xcoords, ycoords, graph_id, aseq);
 
       Iterator fiter = file_prop_hash.entrySet().iterator();
       while (fiter.hasNext()) {

@@ -28,7 +28,6 @@ import java.awt.geom.Point2D;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -141,8 +140,8 @@ public final class GraphGlyph extends Glyph {
 	 * @return
 	 */
 	public float[] getOrCopyYCoords() {
-		if (graf instanceof GraphSymFloat) {
-			return ((GraphSymFloat) graf).getGraphYCoords();
+		if (graf instanceof GraphSym) {
+			return ((GraphSym) graf).getGraphYCoords();
 		}
 		return this.copyYCoords();
 	}

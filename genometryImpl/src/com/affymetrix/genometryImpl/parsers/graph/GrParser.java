@@ -15,7 +15,6 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.PointIntFloat;
@@ -49,12 +48,12 @@ public final class GrParser {
 		}
 	}
 
-	public static GraphSymFloat parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name) throws IOException {
+	public static GraphSym parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name) throws IOException {
 		return parse(istr, aseq, name, true);
 	}
-	public static GraphSymFloat parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name, boolean ensure_unique_id)
+	public static GraphSym parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name, boolean ensure_unique_id)
 		throws IOException {
-		GraphSymFloat graf = null;
+		GraphSym graf = null;
 		String line = null;
 		String headerstr = null;
 		boolean hasHeader = false;
@@ -159,7 +158,7 @@ public final class GrParser {
 		}
 		//    graf = new GraphSym(xlist.copyToArray(), ylist.copyToArray(), name, aseq);
 		if (ensure_unique_id)  { name = AnnotatedSeqGroup.getUniqueGraphID(name, aseq); }
-		graf = new GraphSymFloat(xcoords, ycoords, name, aseq);
+		graf = new GraphSym(xcoords, ycoords, name, aseq);
 		System.out.println("loaded graph data, total points = " + count);
 		return graf;
 	}

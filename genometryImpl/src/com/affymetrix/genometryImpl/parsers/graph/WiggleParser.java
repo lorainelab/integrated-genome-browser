@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.Iterator;
@@ -326,7 +325,7 @@ public final class WiggleParser {
 		// Need iterator because we're removing data on the fly
 		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();
 		while (wiggleDataIterator.hasNext()) {
-			GraphSymFloat gsym = wiggleDataIterator.next().createGraph(graph_id);
+			GraphSym gsym = wiggleDataIterator.next().createGraph(graph_id);
 
 			if (gsym != null) {
 				grafs.add(gsym);

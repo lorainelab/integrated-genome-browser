@@ -22,7 +22,6 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -117,11 +116,11 @@ public final class BarParser implements AnnotationWriter  {
 	 *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
 	 *  be used only inside a CompositeGraphSym.
 	 */
-	public static GraphSymFloat getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {	
+	public static GraphSym getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {	
 		Timer tim = new Timer();
 		tim.start();
 		//boolean USE_RANDOM_ACCESS = false;
-		GraphSymFloat graf = null;
+		GraphSym graf = null;
 		MutableAnnotatedBioSeq aseq = span.getBioSeq();
 		String seq_name = aseq.getID();
 		int min_base = span.getMin();
@@ -254,7 +253,7 @@ public final class BarParser implements AnnotationWriter  {
 			checkSeqLength(aseq, graph_xcoords);
 			// don't need a unique id for this GraphSym, since slices are not added directly as annotations
 			//    on BioSeqs, but rather as child annotations of CompositeGraphSyms...
-			graf = new GraphSymFloat(graph_xcoords, graph_ycoords, "slice", aseq);
+			graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
 			graf.removeSpan(graf.getSpan(aseq));
 			graf.addSpan(span);
 			long t1 = tim.read();
@@ -518,7 +517,7 @@ CHUNK_LOOP:
 						}
 						if (ensure_unique_id) { graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq); }
 						checkSeqLength(seq, xcoords);
-						GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, graph_id, seq);
+						GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
 						//          graf.setProperties(new HashMap(file_tagvals));
 						copyProps(graf, file_tagvals);
 						if (bar2)  { copyProps(graf, seq_tagvals); }
@@ -567,10 +566,9 @@ CHUNK_LOOP:
 							mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
 						}
 						checkSeqLength(seq, xcoords);
-						GraphSymFloat pm_graf =
-							new GraphSymFloat(xcoords, ycoords, pm_name, seq);
-						GraphSymFloat mm_graf =
-							new GraphSymFloat(xcoords, zcoords, mm_name, seq);
+						GraphSym pm_graf =
+							new GraphSym(xcoords, ycoords, pm_name, seq);
+						GraphSym mm_graf = new GraphSym(xcoords, zcoords, mm_name, seq);
 						//          mm_graf.setProperties(new HashMap(file_tagvals));
 						//          pm_graf.setProperties(new HashMap(file_tagvals));
 						copyProps(pm_graf, file_tagvals);

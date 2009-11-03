@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.awt.Color;
 import java.awt.Component;
 import java.io.*;
@@ -49,8 +48,8 @@ public final class GraphAdjusterView {
 		for (GraphSym graf : grafs) {
 			float[] new_ycoords;
 
-			if (transformer instanceof IdentityTransform && graf instanceof GraphSymFloat) {
-				new_ycoords = ((GraphSymFloat) graf).getGraphYCoords();
+			if (transformer instanceof IdentityTransform && graf instanceof GraphSym) {
+				new_ycoords = ((GraphSym) graf).getGraphYCoords();
 			} else {
 				int pcount = graf.getPointCount();
 				new_ycoords = new float[pcount];
@@ -69,7 +68,7 @@ public final class GraphAdjusterView {
 						((GraphIntervalSym) graf).getGraphWidthCoords(),
 						new_ycoords, newid, graf.getGraphSeq());
 			} else {
-				newgraf = new GraphSymFloat(graf.getGraphXCoords(),
+				newgraf = new GraphSym(graf.getGraphXCoords(),
 						new_ycoords, newid, graf.getGraphSeq());
 			}
 

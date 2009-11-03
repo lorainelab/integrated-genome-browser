@@ -12,9 +12,9 @@
  */
 package com.affymetrix.genometryImpl.parsers.graph;
 
+import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
 import java.io.*;
@@ -153,7 +153,7 @@ public final class CntParser {
 					continue;
 				}
 				id = getGraphIdForColumn(id, seq_group);
-				GraphSymFloat graf = new GraphSymFloat(x.getInternalArray(), y.copyToArray(), id, seq);
+				GraphSym graf = new GraphSym(x.getInternalArray(), y.copyToArray(), id, seq);
 				seq.addAnnotation(graf);
 			}
 		}

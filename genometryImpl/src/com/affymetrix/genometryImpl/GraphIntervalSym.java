@@ -15,7 +15,7 @@ import java.util.Arrays;
  *  A SeqSymmetry for holding graph for graphs that have y values that apply to
  *  intervals.  So instead of (x,y) there is (x_start, x_width, y).
  */
-public final class GraphIntervalSym extends GraphSymFloat {
+public final class GraphIntervalSym extends GraphSym {
 	private static final int BUFSIZE = 1000;	// buffer size
 	private int bufStart = 0;	// current buffer start
 	private int xBuf[] = new int[BUFSIZE];

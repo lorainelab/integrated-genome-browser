@@ -20,7 +20,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
@@ -62,7 +61,7 @@ public final class GraphSymUtils {
 	 *     (including the original_graf, if it's one of seq's annotations)
 	 *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
 	 */
-	public static GraphSymFloat transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
+	public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
 		if (original_graf.getPointCount() == 0) {
 			return null;
 		}
@@ -72,7 +71,7 @@ public final class GraphSymUtils {
 		if (fromseq == null || fromspan == null) {
 			return null;
 		}
-		GraphSymFloat new_graf = null;
+		GraphSym new_graf = null;
 		MutableAnnotatedBioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
 
 		SeqSpan tospan = mapsym.getSpan(toseq);
@@ -103,7 +102,7 @@ public final class GraphSymUtils {
 		}
 
 		if (!hasWidth(original_graf)) {
-			new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+			new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
 					newid, toseq);
 		} else {
 			new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
@@ -420,7 +419,7 @@ public final class GraphSymUtils {
 	}
 
 
-	private static GraphSymFloat convertTransFragGraph(GraphSym trans_frag_graph) {
+	private static GraphSym convertTransFragGraph(GraphSym trans_frag_graph) {
 		int xcount = trans_frag_graph.getPointCount();
 		if (xcount < 2) { return null; }
 
@@ -460,7 +459,7 @@ public final class GraphSymUtils {
 		newx.add(curx);
 		newy.add(cury);
 		String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
-		GraphSymFloat span_graph = new GraphSymFloat(newx.copyToArray(), newy.copyToArray(), newid, seq);
+		GraphSym span_graph = new GraphSym(newx.copyToArray(), newy.copyToArray(), newid, seq);
 
 		// copy properties over...
 		span_graph.setProperties(trans_frag_graph.cloneProperties());

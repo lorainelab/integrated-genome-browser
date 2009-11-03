@@ -13,18 +13,16 @@
 package com.affymetrix.igb.util;
 
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import com.affymetrix.genometryImpl.GraphSymFloat;
-import java.awt.Rectangle;
-
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.view.SeqMapView;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
 
@@ -132,7 +130,7 @@ public final class GraphGlyphUtils {
 	 *  Returns null if the two graphs are not comparable via {@link #graphsAreComparable(GraphGlyph,GraphGlyph)}.
 	 *  During division, indefinite values are replaced by zero.
 	 */
-	public static GraphSymFloat graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
+	public static GraphSym graphArithmetic(GraphGlyph graphA, GraphGlyph graphB, String operation) {
 		String error = GraphGlyphUtils.graphsAreComparable(graphA, graphB);
 
 		if (error != null) {
@@ -179,9 +177,9 @@ public final class GraphGlyphUtils {
 		MutableAnnotatedBioSeq aseq =
 				((GraphSym) graphA.getInfo()).getGraphSeq();
 		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
-		GraphSymFloat newsym;
+		GraphSym newsym;
 		if (!graphA.hasWidth()) {
-			newsym = new GraphSymFloat(graphA.getXCoords(), newY, newname, aseq);
+			newsym = new GraphSym(graphA.getXCoords(), newY, newname, aseq);
 		} else {
 			newsym = new GraphIntervalSym(graphA.getXCoords(), graphA.getWCoords(), newY, newname, aseq);
 		}

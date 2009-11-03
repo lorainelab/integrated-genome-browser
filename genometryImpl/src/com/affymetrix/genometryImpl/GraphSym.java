@@ -20,7 +20,7 @@ import com.affymetrix.genometryImpl.style.GraphStateI;
 /**
  *  A SeqSymmetry for holding graph data.
  */
-public abstract class GraphSym extends SimpleSymWithProps {
+public class GraphSym extends SimpleSymWithProps {
 
 	/** A property that can optionally be set to give a hint about the graph strand for display. */
 	public static final String PROP_GRAPH_STRAND = "Graph Strand";
@@ -28,7 +28,10 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	public static final Integer GRAPH_STRAND_MINUS = new Integer(-1);
 	public static final Integer GRAPH_STRAND_BOTH = new Integer(2);
 	
-	protected int xcoords[];
+	private int xcoords[];
+	private float[] float_y;
+
+
 	protected MutableAnnotatedBioSeq graph_original_seq;
 	private String gid;
 
@@ -38,13 +41,14 @@ public abstract class GraphSym extends SimpleSymWithProps {
 	 *  Really want to forbid setting id except in constructor, but currently some code 
 	 *    needs to modify this after construction, but before adding as annotation to graph_original_seq
 	 */
-	boolean id_locked = false;
+	private boolean id_locked = false;
 
 	/** Constructor.  Subclasses should provide a constructor that specifies the
 	 *  y-coordinate array.
 	 */
-	protected GraphSym(int[] x, String id, MutableAnnotatedBioSeq seq) {
+	public GraphSym(int[] x, float[] y, String id, MutableAnnotatedBioSeq seq) {
 		super();
+		setCoords(x, y);
 		this.graph_original_seq = seq;
 
 		int start = 0;
@@ -103,6 +107,24 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		//    throw new RuntimeException("Attempted to call GraphSym.setID(), but not allowed to modify GraphSym id!");
 	}
 
+	/**
+	 *  Sets the x and y coordinates.
+	 *  @param x an array of int, or null.
+	 *  @param y must be an array of float of same length as x, or null if x is null.
+	 */
+	public void setCoords(int[] x, float[] y) {
+		if ((y == null && x != null) || (x == null && y != null)) {
+			throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");
+		}
+		if (y != null && x != null && y.length  != x.length) {
+			throw new IllegalArgumentException("Y-coords and x-coords must have the same length.");
+		}
+		this.xcoords = x;
+		this.float_y = y;
+	}
+
+
+
 	public final int getPointCount() {
 		if (xcoords == null) { return 0; }
 		else { return xcoords.length; }
@@ -124,22 +146,29 @@ public abstract class GraphSym extends SimpleSymWithProps {
 		return xcoords[xcoords.length-1];
 	}
 
-	/**
-	 *  Returns the y coordinate as a float, even if it is internally stored
-	 *  as an integer or in some other form.
-	 */
-	public abstract float getGraphYCoord(int i);
+	public float getGraphYCoord(int i) {
+		return float_y[i];
+	}
 
 	/**
 	 *  Returns the y coordinate as a String.
 	 */
-	public abstract String getGraphYCoordString(int i);
+	public String getGraphYCoordString(int i) {
+		return Float.toString(float_y[i]);
+	}
+
+	public float[] getGraphYCoords() {
+		return float_y;
+	}
 
 	/** Returns a copy of the graph Y coordinates as a float[], even if the Y coordinates
 	 *  were originally specified as non-floats.
 	 */
-	public abstract float[] copyGraphYCoords();
-
+	public float[] copyGraphYCoords() {
+		float[] dest = new float[float_y.length];
+		System.arraycopy(float_y, 0, dest, 0, float_y.length);
+		return dest;
+	}
 
 	/**
 	 *  Get the seq that the graph's xcoords are specified in

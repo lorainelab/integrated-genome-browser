@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
@@ -12,7 +7,6 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
@@ -128,7 +122,7 @@ public class BarParserTest {
 			SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test_group");
 			BioSeq aseq = seq_group.addSeq("chr15_random",1881177);
-			GraphSymFloat gr0 = BarParser.getSlice(filename,gmodel,new SimpleSeqSpan(1880135,1880205,aseq));
+			GraphSym gr0 = BarParser.getSlice(filename,gmodel,new SimpleSeqSpan(1880135,1880205,aseq));
 		  assertEquals("chr15_random", gr0.getGraphSeq().getID());
 		  assertEquals(2, gr0.getPointCount());
 		  assertEquals(0.2127714902162552, gr0.getGraphYCoord(0), 0.01);

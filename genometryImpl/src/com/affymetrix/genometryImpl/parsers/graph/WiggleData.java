@@ -2,8 +2,8 @@ package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +26,7 @@ final class WiggleData {
 	 *  Creates a GraphSym from the stored data, or returns null if no data
 	 *  has been stored yet.
 	 */
-	GraphSymFloat createGraph(String graph_id) {
+	GraphSym createGraph(String graph_id) {
 		if (data.isEmpty()) {
 			return null;
 		}

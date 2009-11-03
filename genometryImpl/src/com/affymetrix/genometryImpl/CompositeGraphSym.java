@@ -2,7 +2,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
-public final class CompositeGraphSym extends GraphSymFloat {
+public final class CompositeGraphSym extends GraphSym {
 
 	public CompositeGraphSym(String id, MutableAnnotatedBioSeq seq) {
 		super(null, null, id, seq);
@@ -22,7 +22,7 @@ public final class CompositeGraphSym extends GraphSymFloat {
 		if (!(sym instanceof GraphSym)) {
 			throw new RuntimeException("only GraphSyms can be added as children to CompositeGraphSym!");
 		}
-		GraphSymFloat slice = (GraphSymFloat) sym;
+		GraphSym slice = (GraphSym) sym;
 		
 		if (this.getPointCount() == 0) { // first GraphSym child, so just set xcoords and ycoords
 			int[] slice_xcoords = slice.getGraphXCoords();
@@ -35,7 +35,7 @@ public final class CompositeGraphSym extends GraphSymFloat {
 		super.addChild(slice);
 	}
 
-	private void createNewCoords(GraphSymFloat slice) {
+	private void createNewCoords(GraphSym slice) {
 		int slice_min = slice.getMinXCoord();
 		int slice_index = GraphSymUtils.determineBegIndex(this, slice_min);
 

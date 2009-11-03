@@ -31,7 +31,6 @@ import java.net.*;
 import java.util.*;
 import java.util.List;
 
-import com.affymetrix.genoviz.util.Memer;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
@@ -86,7 +85,6 @@ public final class IGB extends Application
 	private static String HttpUserAgent = APP_SHORT_NAME + "/" + APP_VERSION + ", " + System.getProperty("os.name") + "/" + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
 	private static boolean USE_MULTI_WINDOW_MAP = false;
 	private static boolean REPORT_GRAPHICS_CONFIG = false;
-	private static final boolean ADD_DIAGNOSTICS = false;
 	public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
@@ -95,7 +93,6 @@ public final class IGB extends Application
 	Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
 	JMenu popup_windowsM = new JMenu("Open in Window...");
-	Memer mem = new Memer();
 	SimpleBookmarkServer web_control = null;
 	JFrame frm;
 	JMenuBar mbar;
@@ -103,7 +100,6 @@ public final class IGB extends Application
 	JMenu export_to_file_menu;
 	JMenu view_menu;
 	JMenu edit_menu;
-	//JMenu navigation_menu;
 	JMenu bookmark_menu;
 	JMenu tools_menu;
 	JMenu help_menu;
@@ -111,7 +107,6 @@ public final class IGB extends Application
 	JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
 	LoadFileAction open_file_action;
-	//DasFeaturesAction2 load_das_action;
 	JMenuItem gc_item;
 	JMenuItem memory_item;
 	JMenuItem about_item;
@@ -120,7 +115,6 @@ public final class IGB extends Application
 	JMenuItem clear_item;
 	JMenuItem clear_graphs_item;
 	JMenuItem open_file_item;
-	//JMenuItem load_das_item;
 	JMenuItem print_item;
 	JMenuItem print_frame_item;
 	JMenuItem export_map_item;
@@ -488,10 +482,6 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(help_menu, about_item);
 		MenuUtil.addToMenu(help_menu, documentation_item);
 		MenuUtil.addToMenu(help_menu, console_item);
-		if (ADD_DIAGNOSTICS) {
-			MenuUtil.addToMenu(help_menu, gc_item);
-			MenuUtil.addToMenu(help_menu, memory_item);
-		}
 
 		gc_item.addActionListener(this);
 		memory_item.addActionListener(this);
@@ -722,12 +712,10 @@ public final class IGB extends Application
 			}
 			JComponent comp = (JComponent) plugin;
 			boolean in_a_window = (UnibrowPrefsUtil.getComponentState(title).equals(UnibrowPrefsUtil.COMPONENT_STATE_WINDOW));
-			//boolean in_a_window = PluginInfo.PLACEMENT_WINDOW.equals(pi.getPlacement());
 			addToPopupWindows(comp, title);
 			JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
 			menu_item.setSelected(in_a_window);
 			if (in_a_window) {
-				//openCompInWindow(comp, title, tool_tip, null, tab_pane);
 				openCompInWindow(comp, tab_pane);
 			} else {
 				tab_pane.addTab(title, icon, comp, tool_tip);
@@ -748,9 +736,7 @@ public final class IGB extends Application
 		Object src = evt.getSource();
 		if (src == open_file_item) {
 			open_file_action.actionPerformed(evt);
-		} /*else if (src == load_das_item) {
-		load_das_action.actionPerformed(evt);
-		}*/ else if (src == print_item) {
+		} else if (src == print_item) {
 			try {
 				map_view.getSeqMap().print();
 			} catch (Exception ex) {
@@ -811,10 +797,7 @@ public final class IGB extends Application
 			//adjust_edgematch_item.setEnabled(map_view.getEdgeMatching());
 		} else if (src == adjust_edgematch_item) {
 			EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
-		} // rev comp not working
-		//    else if (src == rev_comp_item) {
-		//      map_view.reverseComplement();
-		//    }
+		}
 		else if (src == shrink_wrap_item) {
 			if (DEBUG_EVENTS) {
 				System.out.println("trying to toggle map bounds shrink wrapping to extent of annotations");
@@ -836,8 +819,6 @@ public final class IGB extends Application
 			openTabbedPanelInNewWindow(tab_pane);
 		} else if (src == gc_item) {
 			System.gc();
-		} else if (src == memory_item) {
-			mem.printMemory();
 		} else if (src == about_item) {
 			showAboutDialog();
 		} else if (src == documentation_item) {
@@ -923,7 +904,6 @@ public final class IGB extends Application
 		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
 						JOptionPane.DEFAULT_OPTION);
 		final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
-		//dialog.setResizable(true);
 		dialog.setVisible(true);
 	}
 
@@ -1038,9 +1018,6 @@ public final class IGB extends Application
 					return;
 				}
 				final JComponent comp = (JComponent) tab_pane.getComponentAt(index);
-				//final String title = tab_pane.getTitleAt(index);
-				//final String tool_tip = tab_pane.getToolTipTextAt(index);
-				//openCompInWindow(comp, title, tool_tip, null, tab_pane);
 				openCompInWindow(comp, tab_pane);
 			}
 		};
@@ -1298,7 +1275,6 @@ public final class IGB extends Application
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		MutableAnnotatedBioSeq selected_seq = evt.getSelectedSeq();
 		if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
-			//      System.out.println("----------- saving visible span selection for seq: " + prev_selected_seq.getID());
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_seq = selected_seq;

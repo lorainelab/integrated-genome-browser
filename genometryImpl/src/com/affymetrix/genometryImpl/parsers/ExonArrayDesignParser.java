@@ -29,7 +29,6 @@ import com.affymetrix.genometryImpl.SharedProbesetInfo;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonSymWithIntId;
-import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 /**
@@ -593,16 +592,11 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 		boolean WRITE = false;
 		boolean READ = true;
-		Memer mem = new Memer();
 		String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
-		//    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff_test";
-		//    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
 		String default_out_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/ead/HuEx-1_0-st-v2_3level.ead";
-		//    String default_out_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/ead/test_3level.ead";
 		String default_genome_id = "H_sapiens_Mar_2006";
 		String default_id_prefix = "HuEx-1_0-st-v2:";
 		String default_annot_type = "HuEx-1_0-st-v2";
-		//    String in_file = "";
 		String in_file = default_in_file;
 		String out_file = default_out_file;
 		String id_prefix = default_id_prefix;
@@ -641,11 +635,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				List results = parser.parse(bis, group, true, annot_type);
-				mem.printMemory();
 				System.gc();
-				Thread.sleep(3000);
-				mem.printMemory();
-				Thread.sleep(3000);
 				System.out.println("Finished reading ead file, transcript_clusters: " + results.size());
 
 			}
@@ -664,7 +654,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 */
 	public void convertGff(String in_file, String out_file, String genome_id,
 			String version_id, String annot_type, String id_prefix)  {
-		Memer mem = new Memer();
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
 		int probe_length = 25;
 		try {
@@ -696,7 +685,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				BufferedInputStream bis = new BufferedInputStream( new FileInputStream(gfile));
 				List annots = gff_parser.parse(bis, ".", seq_group, false, false);
 
-				mem.printMemory();
 				System.out.println("top-level annots: " + annots.size());
 				// now convert each annot hierarchy to SingletonSymWithIntId and EfficientProbesetSymA
 				// assuming 5-level deep hierarchy:
@@ -809,7 +797,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				SeqSymmetry container = ent.getValue();
 				aseq.addAnnotation(container, annot_type);
 			}
-			mem.printMemory();
 
 			FileOutputStream fos = new FileOutputStream(new File(out_file));
 			writeAnnotations(annot_type, seq_group, fos);

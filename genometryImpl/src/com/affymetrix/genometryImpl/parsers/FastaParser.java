@@ -23,7 +23,6 @@ import java.util.List;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 
 /**
@@ -250,7 +249,6 @@ public final class FastaParser {
 		else {
 			buf = new StringBuffer();
 		}
-		Memer mem = new Memer();
 
 		Matcher matcher = header_regex.matcher("");
 		int line_count = 0;
@@ -355,9 +353,7 @@ public final class FastaParser {
 			}
 		}
 		System.out.println("time to execute: " + tim.read()/1000f);
-		mem.printMemory();
 		System.out.println("done loading fasta file");
-		//    System.out.println(residues.substring(0, 1000));
 		System.out.println("length of sequence: " + residues.length());
 		return seq;
 	}

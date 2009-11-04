@@ -36,7 +36,7 @@ import javax.swing.*;
 public class AffyTieredMap extends NeoMap {
 
 	private static final boolean TIME_PACKING = false;
-	public String name; // for debugging only
+	protected String name; // for debugging only
 	private List<TierGlyph> tiers = new ArrayList<TierGlyph>();
 	private final com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 

@@ -176,11 +176,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   };
   private Action save_bed_action = new AbstractAction("Save tier as BED file") {
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       saveAsBedFile(current_tier);
     }
   };
@@ -634,7 +634,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation
-      TierLabelGlyph label = (TierLabelGlyph) labels.get(0);
+      TierLabelGlyph label = labels.get(0);
       TierGlyph glyph = (TierGlyph) label.getInfo();
       IAnnotStyle style = glyph.getAnnotStyle();
       boolean is_annotation_type = ! style.isGraphTier();
@@ -707,14 +707,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	  }
   }
   // purely for debugging
-  private void doDebugAction() {
-    if (DEBUG) {
-      List<TierGlyph> current_tiers = handler.getSelectedTiers();
-	  for (TierGlyph tg : current_tiers) {
-        IAnnotStyle style = tg.getAnnotStyle();
-        System.out.println("Tier: " + tg);
-        System.out.println("Style: " + style);
-      }
-    }
-  }
+	private void doDebugAction() {
+		List<TierGlyph> current_tiers = handler.getSelectedTiers();
+		for (TierGlyph tg : current_tiers) {
+			IAnnotStyle style = tg.getAnnotStyle();
+			System.out.println("Tier: " + tg);
+			System.out.println("Style: " + style);
+		}
+	}
 }

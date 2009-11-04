@@ -13,7 +13,13 @@
 
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.*;
+//import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.Color;
 import java.awt.Font;
@@ -23,9 +29,6 @@ import java.awt.Rectangle;
 import java.util.*;
 import java.util.List;
 
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.GeometryUtils;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -38,20 +41,16 @@ import java.awt.geom.Rectangle2D;
  */
 public class TierGlyph extends SolidGlyph {
   // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
-  boolean DEBUG_SEARCH = false;
-  boolean sorted = true;
-  boolean ready_for_searching = false;
-  static Comparator<GlyphI> child_sorter = new GlyphMinComparator();
-  boolean isTimed = false;
-  int direction = DIRECTION_NONE;
-
-  protected com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
+  private boolean sorted = true;
+  private boolean ready_for_searching = false;
+  private static final Comparator<GlyphI> child_sorter = new GlyphMinComparator();
+  protected int direction = DIRECTION_NONE;
 
   /** glyphs to be drawn in the "middleground" --
    *    in front of the solid background, but behind the child glyphs
    *    For example, to indicate how much of the xcoord range has been covered by feature retrieval attempts
    */
-  List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
+  private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
   public static final int HIDDEN = 100;
   public static final int COLLAPSED = 101;
@@ -83,7 +82,7 @@ public class TierGlyph extends SolidGlyph {
    */
   public static final String SHOW_TIER_HANDLES_PROPERTY = "Show Tier Handles";
 
-  protected double spacer = 2;
+  private double spacer = 2;
 
   /*
    * other_fill_color is derived from fill_color whenever setFillColor() is called.
@@ -91,10 +90,14 @@ public class TierGlyph extends SolidGlyph {
    *    middle glyphs are drawn with fill_color
    * if no "middle" glyphs, then background is drawn with fill_color
    */
-  protected Color other_fill_color = null;
-  protected Color outline_color = null;
-  protected boolean hideable = true;
-  protected String label = null;
+  private Color other_fill_color = null;
+  private Color outline_color = null;
+  private boolean hideable = true;
+  private String label = null;
+
+
+  private static final Font default_font = new Font("Monospaced", Font.PLAIN, 12);
+
 
   /*
    *  Trying different packers for expand mode:
@@ -111,19 +114,16 @@ public class TierGlyph extends SolidGlyph {
    *        same as FastExpandPacker, but with additional optimizations for
    *        deep overlaps
    */
-  //  protected PackerI expand_packer = null;
-  //  protected PackerI expand_packer = new ExpandedTierPacker();
-  //  protected PackerI expand_packer = new ExpandPacker();
-  //  protected PackerI expand_packer = new ExpandPacker2();
-  //  protected PackerI expand_packer = new EfficientExpandPacker();
-  //  protected PackerI expand_packer = new FastExpandPacker();
-  protected PackerI expand_packer = new FasterExpandPacker();
-  protected PackerI collapse_packer = new CollapsePacker();
-  //  protected PackerI summarize_packer = new SummarizePacker();
+  private PackerI expand_packer = new FasterExpandPacker();
+  private PackerI collapse_packer = new CollapsePacker();
 
-  protected List<GlyphI> max_child_sofar = null;
+  private List<GlyphI> max_child_sofar = null;
 
-  IAnnotStyle style;
+  private IAnnotStyle style;
+
+
+  private static final boolean LARGE_HANDLE = false;
+
 
   public TierGlyph(IAnnotStyle style) {
     setHitable(false);
@@ -171,11 +171,11 @@ public class TierGlyph extends SolidGlyph {
  *  The only way to remove these is via removeAllChildren() method,
  *    there is currently no external access to them.
  */
-  public void addMiddleGlyph(GlyphI gl) {
+  public final void addMiddleGlyph(GlyphI gl) {
     middle_glyphs.add(gl);
   }
 
-  public void initForSearching() {
+  private void initForSearching() {
     int child_count = getChildCount();
     if (child_count > 0) {
       sortChildren(true);  // forcing sort
@@ -202,17 +202,6 @@ public class TierGlyph extends SolidGlyph {
     }
     else {
       max_child_sofar = null;
-    }
-
-    if (DEBUG_SEARCH && (label.startsWith("test"))) {
-      System.out.println("***** called TierGlyph.initForSearch() on tier: " + getLabel());
-      for (int i=0; i<child_count; i++) {
-	GlyphI curchild = getChild(i);
-	GlyphI maxchild = max_child_sofar.get(i);
-	double max = maxchild.getCoordBox().x + maxchild.getCoordBox().width;
-	System.out.println("child " + i + ", min = " + getChild(i).getCoordBox().x +
-			   ", max including child: " + max);
-      }
     }
 
     ready_for_searching = true;
@@ -244,7 +233,7 @@ public class TierGlyph extends SolidGlyph {
    *      and that max_child_sofar list is also populated
    *      (via TierGlyph.initForSearching() call)
    */
-  public List getPriorOverlaps(int query_index) {
+  public final List<GlyphI> getPriorOverlaps(int query_index) {
     if ((! ready_for_searching)  || (! sorted)) {
       throw new RuntimeException("must call TierGlyph.initForSearching() before " +
 				 "calling TierGlyph.getPriorOverlaps");
@@ -255,16 +244,16 @@ public class TierGlyph extends SolidGlyph {
     double query_min = getChild(query_index).getCoordBox().x;
     int cur_index = query_index;
 
-    while (cur_index > 0) {
-      cur_index--;
-      GlyphI cur_max_glyph = max_child_sofar.get(cur_index);
-      Rectangle2D.Double rect = cur_max_glyph.getCoordBox();
-      double cur_max = rect.x + rect.width;
-      if (cur_max < query_min) {
-	cur_index++;
-	break;
-      }
-    }
+	  while (cur_index > 0) {
+		  cur_index--;
+		  GlyphI cur_max_glyph = max_child_sofar.get(cur_index);
+		  Rectangle2D.Double rect = cur_max_glyph.getCoordBox();
+		  double cur_max = rect.x + rect.width;
+		  if (cur_max < query_min) {
+			  cur_index++;
+			  break;
+		  }
+	  }
     if (cur_index == query_index) { return null; }
 
     ArrayList<GlyphI> result = new ArrayList<GlyphI>();
@@ -280,7 +269,7 @@ public class TierGlyph extends SolidGlyph {
   }
 
 
-  public void sortChildren(boolean force) {
+  private void sortChildren(boolean force) {
     int child_count = this.getChildCount();
     if (((! sorted) || force) && (child_count > 0)) {
       // make sure child symmetries are sorted by ascending min along search_seq
@@ -293,7 +282,6 @@ public class TierGlyph extends SolidGlyph {
       double prev_min = Double.NEGATIVE_INFINITY;
       for (int i=0; i<child_count; i++) {
 	GlyphI child = getChild(i);
-	// int min = child.getCoordBox().x;
 	double min = child.getCoordBox().x;
 	if (prev_min > min) {
 	  sorted = false;
@@ -308,10 +296,6 @@ public class TierGlyph extends SolidGlyph {
     sorted = true;
   }
 
-  public boolean isSorted() {
-    return sorted;
-  }
-
 
   public void setLabel(String str) {
     label = str;
@@ -321,7 +305,7 @@ public class TierGlyph extends SolidGlyph {
     return label;
   }
 
-  boolean shouldDrawLabel() {
+  private boolean shouldDrawLabel() {
     if (! style.isGraphTier()) {
       // graph tiers take care of drawing their own handles and labels.
       if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_LABELS_PROPERTY))) {
@@ -333,7 +317,6 @@ public class TierGlyph extends SolidGlyph {
 
   // overriding pack to ensure that tier is always the full width of the scene
   public void pack(ViewI view) {
-    if (isTimed) { timecheck.start(); }
     int cycles = 1;
     for (int i=0; i<cycles; i++) {
       initForSearching();
@@ -343,11 +326,6 @@ public class TierGlyph extends SolidGlyph {
 
       if (shouldDrawLabel()) {
         // Add extra space to make room for the label.
-//        FontMetrics fm = view.getGraphics().getFontMetrics();
-//        int h_pix = fm.getAscent() + fm.getDescent();
-//        com.affymetrix.genoviz.bioviews.Point2D p = new com.affymetrix.genoviz.bioviews.Point2D(0,0);
-//        view.transformToCoords(new Point(0,h_pix), p);
-//        this.setCoords(mbox.x, cbox.y - p.y, mbox.width, cbox.height + p.y);
 
         // Although the space SHOULD be computed based on font metrics, etc,
         // that doesn't really work any better than a fixed coord value
@@ -357,12 +335,9 @@ public class TierGlyph extends SolidGlyph {
       }
       //    if (isTimed && label.startsWith("whatever (+)")) {
     }
-    if (isTimed) {
-      long tim = timecheck.read();
-      System.out.println("######## time to pack " + label + ": " + tim/cycles);
-    }
   }
 
+	@Override
   public void drawTraversal(ViewI view) {
     super.drawTraversal(view);
   }
@@ -418,7 +393,7 @@ public class TierGlyph extends SolidGlyph {
     if (! style.isGraphTier()) {
       // graph tiers take care of drawing their own handles and labels.
       if (shouldDrawLabel()) {
-        drawLabel(view);
+        drawLabelLeft(view);
       }
       if (Boolean.TRUE.equals(style.getTransientPropertyMap().get(SHOW_TIER_HANDLES_PROPERTY))) {
         drawHandle(view);
@@ -428,46 +403,24 @@ public class TierGlyph extends SolidGlyph {
     super.draw(view);
   }
 
-  public void drawLabel(ViewI view) {
-    drawLabelLeft(view);
-  }
-
-  static Font default_font = new Font("Monospaced", Font.PLAIN, 12);
-  public static void setLabelFont(Font f) {
-    default_font = f;
-  }
-
-  public void drawLabelLeft(ViewI view) {
+  private void drawLabelLeft(ViewI view) {
     if (getLabel() == null) { return; }
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {
       Graphics g = view.getGraphics();
       g.setFont(default_font);
       FontMetrics fm = g.getFontMetrics();
-
-//      java.awt.geom.Rectangle2D rect2d = g.getFontMetrics().getStringBounds(getLabel(), g);
-//      g.setColor(Color.CYAN);
-//      g.fillRect((hpix.x + hpix.width + 1), (hpix.y  + 1),
-//          (int) rect2d.getWidth(), (int) rect2d.getHeight());
-
       g.setColor(this.getColor());
       g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
-      //g.drawString(getLabel(), (hpix.x + hpix.width + 1), (int) (hpix.y + rect2d.getHeight()));
-    }
+	}
   }
 
-  static final boolean LARGE_HANDLE = false;
-  Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
-  Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
-
-  protected Rectangle calcHandlePix(ViewI view) {
+  private Rectangle calcHandlePix(ViewI view) {
     // could cache pixelbox of handle, but then will have problems if try to
     //    have multiple views on same scene / glyph hierarchy
     // therefore reconstructing handle pixel bounds here... (although reusing same object to
     //    cut down on object creation)
-    //    System.out.println("comparing full view cbox.x: " + view.getFullView().getCoordBox().x +
-    //		       ", view cbox.x: " + view.getCoordBox().x);
-
+ 
     // if full view differs from current view, and current view doesn't left align with full view,
     //   don't draw handle (only want handle at left side of full view)
     if (view.getFullView().getCoordBox().x != view.getCoordBox().x)  {
@@ -478,18 +431,21 @@ public class TierGlyph extends SolidGlyph {
       int xbeg = Math.max(view_pixbox.x, pixelbox.x);
       Graphics g = view.getGraphics();
       g.setFont(default_font);
-      FontMetrics fm = g.getFontMetrics();
-      int h = Math.min(fm.getMaxAscent(), pixelbox.height);
+      
+	  Rectangle handle_pixbox = new Rectangle();
+
       if (LARGE_HANDLE) {
         handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, pixelbox.height);
       }
       else {
+		  FontMetrics fm = g.getFontMetrics();
+		  int h = Math.min(fm.getMaxAscent(), pixelbox.height);
         handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, h);
       }
       return handle_pixbox;
   }
 
-  public void drawHandle(ViewI view) {
+  private void drawHandle(ViewI view) {
     Rectangle hpix = calcHandlePix(view);
     if (hpix != null) {
       Graphics g = view.getGraphics();
@@ -580,7 +536,7 @@ public class TierGlyph extends SolidGlyph {
     setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
-  public void setSpacer(double spacer) {
+  private void setSpacer(double spacer) {
     this.spacer = spacer;
     if (collapse_packer instanceof PaddedPackerI) {
       ((PaddedPackerI)collapse_packer).setParentSpacer(spacer);
@@ -590,28 +546,15 @@ public class TierGlyph extends SolidGlyph {
     }
   }
 
-  public double getSpacer() {
+  private double getSpacer() {
     return spacer;
-  }
-
-  /** Sets the color used to draw the outline.
-   *  @param col A color, or null if no outline is desired.
-   */
-  public void setOutlineColor(Color col) {
-    outline_color = col;
-  }
-
-  /** Returns the color used to draw the outline, or null
-      if there is no outline. */
-  public Color getOutlineColor() {
-    return outline_color;
   }
 
 
   /** Sets the color used to fill the tier background, or null if no color
    *  @param col  A color, or null if no background color is desired.
    */
-  public void setFillColor(Color col) {
+  public final void setFillColor(Color col) {
     if (style.getBackground() != col) {
       style.setBackground(col);
     }
@@ -641,7 +584,7 @@ public class TierGlyph extends SolidGlyph {
 
   /** Returns the color used to draw the tier background, or null
       if there is no background. */
-  public Color getFillColor() {
+  public final Color getFillColor() {
     return style.getBackground();
   }
 
@@ -667,23 +610,7 @@ public class TierGlyph extends SolidGlyph {
     return getFillColor();
   }
 
-  /** Set whether or not the tier wants to allow itself to be hidden;
-   *  The state of this flag has no effect on whether setState(HIDDEN)
-   *  will work or not.
-   */
-  public void setHideable(boolean h) {
-    this.hideable = h;
-  }
-
-  /** Get whether or not the tier wants to allow itself to be hidden;
-   *  The state of this flag has no effect on whether setState(HIDDEN)
-   *  will work or not.
-   */
-  public boolean isHideable() {
-    return this.hideable;
-  }
-
-  public int getDirection() {
+  public final int getDirection() {
     return direction;
   }
 
@@ -691,7 +618,7 @@ public class TierGlyph extends SolidGlyph {
    *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
    *  DIRECTION_BOTH or DIRECTION_NONE.
    */
-  public void setDirection(int d) {
+  public final void setDirection(int d) {
     if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE)
         && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH) && (d != DIRECTION_AXIS)) {
       throw new IllegalArgumentException();
@@ -705,7 +632,7 @@ public class TierGlyph extends SolidGlyph {
    *  getExpandedPacker() is not of the correct type to allow for setting the max depth.
    *  @return true if the current expand packer allowed the max depth to be set.
    */
-  public boolean setMaxExpandDepth(int max) {
+  public final boolean setMaxExpandDepth(int max) {
     PackerI epacker = getExpandedPacker();
     if (epacker instanceof FasterExpandPacker) {
       FasterExpandPacker fpacker = (FasterExpandPacker) epacker;
@@ -741,12 +668,5 @@ public class TierGlyph extends SolidGlyph {
   protected void drawSelectedReverse(ViewI view) {
     this.drawSelectedOutline(view);
   }
-
-  /*
-  public void moveAbsolute(double x, double y) {
-    System.out.println("move absolute: " + label + ", " + x + ", " + y);
-    super.moveAbsolute(x, y);
-  }
-  */
 
 }

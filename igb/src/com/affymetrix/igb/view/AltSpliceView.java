@@ -13,7 +13,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -50,7 +49,7 @@ public class AltSpliceView extends JComponent
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
 
-	class AltSpliceSeqMapView extends SeqMapView {
+	private class AltSpliceSeqMapView extends SeqMapView {
 
 		private AltSpliceSeqMapView(boolean b) {
 			super();

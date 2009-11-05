@@ -231,7 +231,7 @@ public class SeqMapView extends JPanel
 	// for right-click on background
 	protected SeqMapViewActionListener action_listener;
 	protected SeqMapViewMouseListener mouse_listener;
-	CharSeqGlyph seq_glyph = null;
+	private CharSeqGlyph seq_glyph = null;
 	SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
 	Vector<GlyphI> match_glyphs = new Vector<GlyphI>();
 	protected TierLabelManager tier_manager;
@@ -311,7 +311,7 @@ public class SeqMapView extends JPanel
 	/** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
 	 *  will be done in init()
 	 */
-	protected AffyTieredMap createSeqMap(boolean splitWindows, boolean labelTiermap,
+	private AffyTieredMap createSeqMap(boolean splitWindows, boolean labelTiermap,
 					boolean internalXScroller, boolean internalYScroller) {
 		AffyTieredMap resultSeqMap;
 		if (splitWindows) {
@@ -467,7 +467,7 @@ public class SeqMapView extends JPanel
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
 	// in part because of the need to coordinate with the label glyphs.
-	PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
+	private PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
 
 		public void preferenceChange(PreferenceChangeEvent pce) {
 			if (getAxisTier() == null) {
@@ -556,7 +556,7 @@ public class SeqMapView extends JPanel
 		return axis_annot_style;
 	}
 	/** An un-collapsible instance.  It is hideable, though. */
-	static AnnotStyle axis_annot_style = new AnnotStyle() {
+	private static AnnotStyle axis_annot_style = new AnnotStyle() {
 
 		{ // a non-static initializer block
 			setHumanName("Coordinates");
@@ -626,7 +626,6 @@ public class SeqMapView extends JPanel
 		axis_tier.setFixedPixelHeight(true);
 		axis_tier.setFixedPixHeight(45);
 		axis_tier.setDirection(TierGlyph.DIRECTION_AXIS);
-		//    axis_tier.setFixedPixelHeight(false);
 		AxisGlyph axis = seqmap.addAxis(0);
 		axis.setHitable(false);
 		axis.setFont(axisFont);
@@ -658,78 +657,77 @@ public class SeqMapView extends JPanel
 		} else {
 			seqmap.addTier(axis_tier);
 		}
-		seq_glyph = new CharSeqGlyph();
+		
+		seq_glyph = initSeqGlyph(viewseq, axis_fg, axis);
+
+		axis_tier.addChild(seq_glyph);
+
+		return axis_tier;
+	}
+
+	private static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
+		CharSeqGlyph seq_glyph = new CharSeqGlyph();
 		seq_glyph.setForegroundColor(axis_fg);
 		seq_glyph.setShowBackground(false);
 		seq_glyph.setHitable(false);
 		seq_glyph.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
-
-		BioSeq compseq = viewseq;
+		BioSeq compseq = viewSeq;
 		seq_glyph.setCoords(compseq.getMin(), 0, compseq.getLengthDouble(), 10);
-
-		axis_tier.addChild(seq_glyph);
-
-		// need to change this to get residues from viewseq! (to take account of reverse complement,
-		//    coord shift, slice'n'dice, etc.
-		// but first, need to fix BioSeq.isComplete() implementations...
-		// currently only GeneralBioSeq implements CharacterIterator
-		seq_glyph.setResiduesProvider(viewseq, viewseq.getLength());
-
-		SeqSymmetry compsym = viewseq.getComposition();
+		seq_glyph.setResiduesProvider(viewSeq, viewSeq.getLength());
+		SeqSymmetry compsym = viewSeq.getComposition();
 		if (compsym != null) {
-			int compcount = compsym.getChildCount();
-			// create a color, c3, in between the foreground and background colors
-			Color c1 = axis.getForegroundColor();
-			Color c2 = axis.getBackgroundColor();
-			Color c3 = new Color(
-							(c1.getRed() + 2 * c2.getRed()) / 3,
-							(c1.getGreen() + 2 * c2.getGreen()) / 3,
-							(c1.getBlue() + 2 * c2.getBlue()) / 3);
-
-			for (int i = 0; i < compcount; i++) {
-				// Make glyphs for contigs
-				SeqSymmetry childsym = compsym.getChild(i);
-				SeqSpan childspan = childsym.getSpan(viewseq);
-				SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
-
-				GlyphI cgl;
-				if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
-					cgl = new FillRectGlyph();
-					cgl.setColor(c3);
-				} else {
-					if (viewseq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
-						// hide axis numbering
-						axis.setLabelFormat(AxisGlyph.NO_LABELS);
-						cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-						String label = ospan.getBioSeq().getID();
-						if (label.toLowerCase().startsWith("chr")) {
-							label = label.substring(3);
-						}
-						((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
-						cgl.setColor(axis.getForegroundColor());
-					} else if (viewseq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
-						cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
-						String label = childsym.getID();
-						if (label != null) {
-							((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
-						}
-						cgl.setColor(axis.getForegroundColor());
-					} else {
-						cgl = new OutlineRectGlyph();
-						cgl.setColor(axis.getForegroundColor());
-					}
-				}
-
-				cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
-
-				// also note that "Load residues in view" produces additional
-				// contig-like glyphs that can partially hide these glyphs.
-				seq_glyph.addChild(cgl);
-			}
+			showFillRect(viewSeq, seq_glyph, compsym, axis);
 		}
-
-		return axis_tier;
+		return seq_glyph;
 	}
+
+
+
+	private static void showFillRect(BioSeq viewSeq, CharSeqGlyph seqGlyph, SeqSymmetry compsym, AxisGlyph axis) {
+		int compcount = compsym.getChildCount();
+		// create a color, c3, in between the foreground and background colors
+		Color c1 = axis.getForegroundColor();
+		Color c2 = axis.getBackgroundColor();
+		Color c3 = new Color((c1.getRed() + 2 * c2.getRed()) / 3, (c1.getGreen() + 2 * c2.getGreen()) / 3, (c1.getBlue() + 2 * c2.getBlue()) / 3);
+		for (int i = 0; i < compcount; i++) {
+			// Make glyphs for contigs
+			SeqSymmetry childsym = compsym.getChild(i);
+			SeqSpan childspan = childsym.getSpan(viewSeq);
+			SeqSpan ospan = SeqUtils.getOtherSpan(childsym, childspan);
+			GlyphI cgl;
+			if (ospan.getBioSeq().isComplete(ospan.getMin(), ospan.getMax())) {
+				cgl = new FillRectGlyph();
+				cgl.setColor(c3);
+			} else {
+				if (viewSeq.getID().equals(IGBConstants.GENOME_SEQ_ID)) {
+					// hide axis numbering
+					axis.setLabelFormat(AxisGlyph.NO_LABELS);
+					cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+					String label = ospan.getBioSeq().getID();
+					if (label.toLowerCase().startsWith("chr")) {
+						label = label.substring(3);
+					}
+					((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+					cgl.setColor(axis.getForegroundColor());
+				} else if (viewSeq.getID().equals(IGBConstants.ENCODE_REGIONS_ID)) {
+					cgl = new com.affymetrix.igb.glyph.LabelledRectGlyph();
+					String label = childsym.getID();
+					if (label != null) {
+						((com.affymetrix.igb.glyph.LabelledRectGlyph) cgl).setLabel(label);
+					}
+					cgl.setColor(axis.getForegroundColor());
+				} else {
+					cgl = new OutlineRectGlyph();
+					cgl.setColor(axis.getForegroundColor());
+				}
+			}
+			cgl.setCoords(childspan.getMinDouble(), 0, childspan.getLengthDouble(), 10);
+			// also note that "Load residues in view" produces additional
+			// contig-like glyphs that can partially hide these glyphs.
+			seqGlyph.addChild(cgl);
+		}
+	}
+
 
 	public EfficientSolidGlyph makeCytobandGlyph() {
 		BioSeq sma = getAnnotatedSeq();
@@ -861,11 +859,6 @@ public class SeqMapView extends JPanel
 		}
 
 		return cytoband_glyph;
-	}
-
-	/** By default, this does nothing.  Subclasses can implement. */
-	public void addCytobandAsTier(TypeContainerAnnot tca) {
-		return;
 	}
 
 	/** Sets the axis label format from the value in the persistent preferences. */
@@ -1357,7 +1350,6 @@ public class SeqMapView extends JPanel
 				TypeContainerAnnot tca = (TypeContainerAnnot) annotSym;
 
 				if (CYTOBAND_TIER_REGEX.matcher(tca.getType()).matches()) {
-					addCytobandAsTier(tca);
 					continue;
 				}
 			}
@@ -1802,11 +1794,11 @@ public class SeqMapView extends JPanel
 	 *  @return a SeqSymmetry or null
 	 */
 	public SeqSymmetry getSelectedSymmetry() {
-		Vector glyphs = seqmap.getSelected();
+		Vector<GlyphI> glyphs = seqmap.getSelected();
 		if (glyphs.isEmpty()) {
 			return null;
 		} else {
-			return glyphToSym((GlyphI) glyphs.lastElement());
+			return glyphToSym(glyphs.lastElement());
 		}
 	}
 
@@ -2176,12 +2168,6 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 	}
 
-	/*private void zoomToGlyph(GlyphI gl) {
-		if (gl != null) {
-			zoomToRectangle(gl.getCoordBox());
-		}
-	}*/
-
 	/** Zoom to a region including all the currently selected Glyphs. */
 	public void zoomToSelections() {
 		Vector<GlyphI> selections = seqmap.getSelected();
@@ -2218,8 +2204,7 @@ public class SeqMapView extends JPanel
 			Rectangle2D.Double rect = new Rectangle2D.Double();
 			GlyphI g0 = glyphs.get(0);
 			rect.setRect(g0.getCoordBox());
-			for (int i = 1; i < size; i++) {
-				GlyphI g = glyphs.get(i);
+			for (GlyphI g : glyphs) {
 				rect.add(g.getCoordBox());
 			}
 			return rect;
@@ -2618,11 +2603,6 @@ public class SeqMapView extends JPanel
 		if (!report_hairline_position_in_status_bar) {
 			return;
 		}
-		/*if (hairline == null || Application.getSingleton() == null) {
-		return;
-		}
-		String pos = "  " + nformat.format((int) hairline.getSpot()) + "  ";
-		Application.getSingleton().setStatusBarHairlinePosition(pos);*/
 	}
 
 	void setStatus(String title) {
@@ -2794,9 +2774,6 @@ public class SeqMapView extends JPanel
 		popup_listeners.add(listener);
 	}
 
-	/*public void removePopupListener(ContextualPopupListener listener) {
-	popup_listeners.remove(listener);
-	}*/
 	public List<ContextualPopupListener> getPopupListeners() {
 		return Collections.<ContextualPopupListener>unmodifiableList(popup_listeners);
 	}
@@ -3014,7 +2991,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Get the span of the symmetry that is on the seq being viewed. */
-	public SeqSpan getViewSeqSpan(SeqSymmetry sym) {
+	public final SeqSpan getViewSeqSpan(SeqSymmetry sym) {
 		return sym.getSpan(viewseq);
 	}
 }

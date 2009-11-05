@@ -32,7 +32,6 @@ final class FormatPriorities {
 		"gff",
 		"bar",};
 
-	//  static String default_format = "das2feature";
 	static String getFormat(Das2Type type) {
 		if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...
 			return "bar";
@@ -41,7 +40,7 @@ final class FormatPriorities {
 			return "bed";
 		}
 
-		Map type_formats = type.getFormats();
+		Map<String,String> type_formats = type.getFormats();
 		if (type_formats != null) {
 			for (String format : ordered_formats) {
 
@@ -54,11 +53,5 @@ final class FormatPriorities {
 		// return default_format;
 		return null;
 	}
-	/**
-	 *  input is list of Das2Types, output is preferred format name
-	 *    that can be served by server for all the types
-	 */
-	//  static String getFormat(List types) {
-	//
-	//  }
+
 }

@@ -62,7 +62,6 @@ public final class Das2ClientOptimizer {
      *  out into a separate query field, "segment", that applies to all location-based filters in the query
      *  (overlaps, inside, ??)
      */
-    //static boolean SEPARATE_SEGMENT_FILTER = false;
     private static final String default_format = "das2feature";
     
 
@@ -263,9 +262,6 @@ public final class Das2ClientOptimizer {
         MutableAnnotatedBioSeq aseq = region.getAnnotatedSeq();
         Das2VersionedSource versioned_source = region.getVersionedSource();
         AnnotatedSeqGroup seq_group = versioned_source.getGenome();
-        Das2Source source = versioned_source.getSource();
-        //    String version_url = source.getServerInfo().getRootUrl() + "/" +
-        //      versioned_source.getID();
 
         Das2Capability featcap = versioned_source.getCapability(Das2VersionedSource.FEATURES_CAP_QUERY);
         String request_root = featcap.getRootURI().toString();

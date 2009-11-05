@@ -15,19 +15,13 @@ import com.affymetrix.genometryImpl.BioSeq;
 public final class Das2SeqGroup extends AnnotatedSeqGroup {
 
   private final Das2VersionedSource original_version;
-  //private Set versions = new LinkedHashSet();
 
   public Das2SeqGroup(Das2VersionedSource version, String gid) {
     super(gid);
     original_version = version;
   }
 
-  public Das2VersionedSource getOriginalVersionedSource()  { return original_version; }
-
-  /** NOT YET IMPLEMENTED */
-  public Set getVersionedSources() { return null; }
-
-  protected void ensureSeqsLoaded()  {
+  private void ensureSeqsLoaded()  {
     original_version.getSegments();
   }
 
@@ -78,30 +72,5 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
     ensureSeqsLoaded();
     return super.getSeq(sym);
   }
-
-  /**
-   *  Returns the MutableAnnotatedBioSeq with the given id (or synonym), creating it if necessary,
-   *  and increasing its length to the given value if necessary.
-   */
-    @Override
-  public BioSeq addSeq(String seqid, int length) {
-    if (seqid == null) {
-      throw new NullPointerException();
-    }
-    BioSeq aseq;
-    // calling super.getSeq() to avoid ensureSeqsLoaded() calls??
-    aseq = super.getSeq(seqid);
-    if (aseq != null) {
-      if (aseq.getLength() < length) {
-        aseq.setLength(length);
-      }
-    }
-    else {
-      aseq = new BioSeq(seqid, this.getID(), length);
-      this.addSeq(aseq);
-    }
-    return aseq;
-  }
-
 
 }

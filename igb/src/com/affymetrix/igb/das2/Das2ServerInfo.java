@@ -359,11 +359,9 @@ public final class Das2ServerInfo  {
 			if (DEBUG_SOURCES_QUERY) {
 				System.out.println("source_name: " + source_name);
 			}
-			String source_info_url = source.getAttribute("doc_href");
-			String source_description = source.getAttribute("description");
-			String source_taxon = source.getAttribute("taxid");
+
 			URI source_uri = getBaseURI(das_query, source).resolve(source_id);
-			Das2Source dasSource = new Das2Source(this, source_uri, source_name, source_info_url, source_taxon, source_description);
+			Das2Source dasSource = new Das2Source(this, source_uri, source_name);
 			this.addDataSource(dasSource);
 			
 			NodeList slist = source.getChildNodes();
@@ -420,7 +418,7 @@ public final class Das2ServerInfo  {
 						System.out.println("Capability: " + captype + ", URI: " + cap_root);
 					}
 					// for now don't worry about format subelements
-					Das2Capability cap = new Das2Capability(captype, cap_root, null);
+					Das2Capability cap = new Das2Capability(captype, cap_root);
 					//		vsource.addCapability(cap);
 					caps.put(captype, cap);
 				} else if (nodename.equals("COORDINATES")) {

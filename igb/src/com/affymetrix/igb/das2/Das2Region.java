@@ -25,14 +25,14 @@ public final class Das2Region {
     static public boolean USE_SEGMENT_URI = true;
     static public boolean USE_TYPE_URI = true;
     static public boolean URL_ENCODE_QUERY = true;
-    URI region_uri;
-    String name;
-    int length;
-    String info_url;  // doc_href
+    private URI region_uri;
+    private String name;
+    private int length;
+    private String info_url;  // doc_href
     //  List assembly;  // or should this be a SeqSymmetry??   // or composition of SmartAnnotBioSeq??
-    SeqSpan segment_span;
-    MutableAnnotatedBioSeq aseq;
-    Das2VersionedSource versioned_source;
+    private SeqSpan segment_span;
+    private MutableAnnotatedBioSeq aseq;
+    private Das2VersionedSource versioned_source;
 
     public Das2Region(Das2VersionedSource source, URI reg_uri, String nm, String info, int ln) {
         region_uri = reg_uri;
@@ -63,16 +63,6 @@ public final class Das2Region {
         segment_span = new SimpleSeqSpan(0, length, aseq);
     }
 
-    // public boolean getResidues(SeqSpan span)  {
-    /** return a MutableAnnotatedBioSeq (or maybe a CharSeqIterator that can be used for composition of aseq?) */
-    /*public MutableAnnotatedBioSeq getResidues(SeqSpan span) {
-        return null;
-    }*/
-
-    public URI getURI() {
-        return region_uri;
-    }
-
     public String getID() {
         return region_uri.toString();
     }
@@ -81,16 +71,8 @@ public final class Das2Region {
         return name;
     }
 
-    public String getInfoUrl() {
-        return info_url;
-    }
-
     public Das2VersionedSource getVersionedSource() {
         return versioned_source;
-    }
-
-    public SeqSpan getSegment() {
-        return segment_span;
     }
 
     // or should this return a SmartAnnotbioSeq???

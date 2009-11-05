@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
@@ -84,7 +84,7 @@ public class BarParserTest {
 		List<GraphSym> results = SgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
 
 		GraphSym gr0 = results.get(0);
-		MutableAnnotatedBioSeq seq = gr0.getGraphSeq();
+		BioSeq seq = gr0.getGraphSeq();
 		Collection<SeqSymmetry> syms = new ArrayList();
 		syms.add(gr0);
 		String type = "test_type";
@@ -136,7 +136,7 @@ public class BarParserTest {
       fout = new FileOutputStream(file);
       BufferedOutputStream bos = new BufferedOutputStream(fout);
       DataOutputStream dos =  new DataOutputStream(bos);
-      MutableAnnotatedBioSeq seq = (BioSeq) gr0.getGraphSeq();
+      BioSeq seq = (BioSeq) gr0.getGraphSeq();
 		  Collection<SeqSymmetry> syms = new ArrayList();
 		  syms.add(gr0);
 		  String type = "test_type";

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.awt.Color;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -156,7 +156,7 @@ public final class WiggleParser {
 
 		if (annotate_seq) {
 			for (GraphSym graf : grafs) {
-				MutableAnnotatedBioSeq seq = graf.getGraphSeq();
+				BioSeq seq = graf.getGraphSeq();
 				seq.addAnnotation(graf);
 			}
 		}
@@ -340,7 +340,7 @@ public final class WiggleParser {
 	 *  Also writes a track line as a header.
 	 */
 	public static void writeBedFormat(GraphIntervalSym graf, String genome_version, OutputStream outstream) throws IOException {
-		MutableAnnotatedBioSeq seq = graf.getGraphSeq();
+		BioSeq seq = graf.getGraphSeq();
 		String seq_id = (seq == null ? "." : seq.getID());
 		String human_name = graf.getGraphState().getTierStyle().getHumanName();
 		String gname = graf.getGraphName();

@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -180,7 +180,7 @@ public final class RestrictionControlView extends JComponent
 
 		clearGlyphs();
 
-		MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
+		BioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
 			Application.errorPanel("Residues for seq not available, search aborted.");
 			return;
@@ -205,7 +205,7 @@ public final class RestrictionControlView extends JComponent
 		NeoMap map = gviewer.getSeqMap();
 		TransformTierGlyph axis_tier = gviewer.getAxisTier();
 		GlyphI seq_glyph = null;
-		MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
+		BioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
 			Application.errorPanel("Residues for seq not available, search aborted.");
 			return;

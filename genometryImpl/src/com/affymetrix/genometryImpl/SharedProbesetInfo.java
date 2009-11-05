@@ -15,19 +15,19 @@ package com.affymetrix.genometryImpl;
 import java.util.*;
 
 public final class SharedProbesetInfo {
-	MutableAnnotatedBioSeq seq;
+	BioSeq seq;
 	int probe_length;
 	String id_prefix;
 	Map<String,Object> props;
 
-	public SharedProbesetInfo(MutableAnnotatedBioSeq seq, int probe_length, String id_prefix, Map<String,Object> props) {
+	public SharedProbesetInfo(BioSeq seq, int probe_length, String id_prefix, Map<String,Object> props) {
 		this.seq = seq;
 		this.probe_length = probe_length;
 		this.id_prefix = id_prefix;
 		this.props = props;
 	}
 
-	public MutableAnnotatedBioSeq getBioSeq() { return seq; }
+	public BioSeq getBioSeq() { return seq; }
 	public int getProbeLength() { return probe_length; }
 	public String getIDPrefix() { return id_prefix; }
 	public Map<String,Object> getProps() { return props; }

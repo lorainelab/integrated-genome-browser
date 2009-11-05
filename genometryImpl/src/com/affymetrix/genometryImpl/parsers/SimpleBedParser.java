@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 
@@ -25,7 +25,7 @@ public final class SimpleBedParser implements AnnotationWriter {
 
 	public String getMimeType() { return "text/plain"; }
 
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) throws IOException {
 		boolean success;
 		ArrayList<SeqSpan> spanlist = new ArrayList<SeqSpan>(syms.size());  // initialize to number of top-level syms, won't be lower...

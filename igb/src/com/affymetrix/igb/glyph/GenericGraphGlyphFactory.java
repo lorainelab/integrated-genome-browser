@@ -87,9 +87,9 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI  {
   public GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map)  {
     GraphState state = (GraphState) graf.getGraphState();
     
-    MutableAnnotatedBioSeq aseq = smv.getAnnotatedSeq();
-    MutableAnnotatedBioSeq vseq = smv.getViewSeq();
-    MutableAnnotatedBioSeq graph_seq = graf.getGraphSeq();
+    BioSeq aseq = smv.getAnnotatedSeq();
+    BioSeq vseq = smv.getViewSeq();
+    BioSeq graph_seq = graf.getGraphSeq();
     AffyTieredMap map = smv.getSeqMap();
     
     if (check_same_seq && graph_seq != aseq) {

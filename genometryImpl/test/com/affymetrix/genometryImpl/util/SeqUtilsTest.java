@@ -6,7 +6,7 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +16,8 @@ import com.affymetrix.genometryImpl.BioSeq;
 
 
 public class SeqUtilsTest {
-	MutableAnnotatedBioSeq seqA;
-	MutableAnnotatedBioSeq seqB;
+	BioSeq seqA;
+	BioSeq seqB;
 
 	public SeqUtilsTest() {
 	}
@@ -36,7 +36,7 @@ public class SeqUtilsTest {
 		public void testUnion() {
 			//System.out.println("union");
 
-			MutableAnnotatedBioSeq seq = seqA;
+			BioSeq seq = seqA;
 			SeqSymmetry symA;
 			SeqSymmetry symB;
 			MutableSeqSymmetry result;
@@ -122,7 +122,7 @@ public class SeqUtilsTest {
 	//    
 	//    SeqSymmetry symA = null;
 	//    SeqSymmetry symB = null;
-	//    MutableAnnotatedBioSeq seq = null;
+	//    BioSeq seq = null;
 	//    
 	//    MutableSeqSymmetry expResult = null;
 	//    MutableSeqSymmetry result = SeqUtils.intersection(symA, symB, seq);

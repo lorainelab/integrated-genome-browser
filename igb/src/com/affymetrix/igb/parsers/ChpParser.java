@@ -15,7 +15,7 @@ package com.affymetrix.igb.parsers;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.List;
@@ -407,8 +407,8 @@ public final class ChpParser {
 	System.out.println("3' IVT CHP file");
       }
     }
-    Map<MutableAnnotatedBioSeq,List<OneScoreEntry>> seq2entries =
-						new HashMap<MutableAnnotatedBioSeq,List<OneScoreEntry>>();
+    Map<BioSeq,List<OneScoreEntry>> seq2entries =
+						new HashMap<BioSeq,List<OneScoreEntry>>();
     int match_count = 0;
 
     if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
@@ -428,7 +428,7 @@ public final class ChpParser {
 	  match_count++;
 	  SeqSymmetry prev_sym = syms.get(0);
 	  SeqSpan span = prev_sym.getSpan(0);
-	  MutableAnnotatedBioSeq aseq = span.getBioSeq();
+	  BioSeq aseq = span.getBioSeq();
 	  IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	  isym.setID(id);
 	  OneScoreEntry sentry = new OneScoreEntry(isym, val);
@@ -466,7 +466,7 @@ public final class ChpParser {
 	  for (int k=0; k<scount; k++) {
 	    SeqSymmetry prev_sym = syms.get(k);
 	    SeqSpan span = prev_sym.getSpan(0);
-	    MutableAnnotatedBioSeq aseq = span.getBioSeq();
+	    BioSeq aseq = span.getBioSeq();
 	    IndexedSingletonSym isym = new IndexedSingletonSym(span.getStart(), span.getEnd(), aseq);
 	    isym.setID(id);
 	    OneScoreEntry sentry = new OneScoreEntry(isym, val);
@@ -498,8 +498,8 @@ public final class ChpParser {
 
     // now for each sequence seen, sort the SinEntry list by span min/max
     ScoreEntryComparator comp = new ScoreEntryComparator();
-		for (Map.Entry<MutableAnnotatedBioSeq,List<OneScoreEntry>> ent : seq2entries.entrySet()) {
-      MutableAnnotatedBioSeq aseq = ent.getKey();
+		for (Map.Entry<BioSeq,List<OneScoreEntry>> ent : seq2entries.entrySet()) {
+      BioSeq aseq = ent.getKey();
       List<OneScoreEntry> entry_list = ent.getValue();
       Collections.sort(entry_list, comp);
 
@@ -579,7 +579,7 @@ public final class ChpParser {
     }
 
     AnnotatedSeqGroup group = null;
-    MutableAnnotatedBioSeq aseq = null;
+    BioSeq aseq = null;
 
     for (int i=0; i<seq_count; i++) {
       tchp.openTilingSequenceDataSet(i);
@@ -592,7 +592,7 @@ public final class ChpParser {
       System.out.println("seq " + i + ", name = " + seq_name + ", group = " + seq_group_name +
 			 ", version = " + seq_vers + ", datapoints = " + entry_count);
 
-      // try and match up chp seq to a MutableAnnotatedBioSeq and AnnotatedSeqGroup in SingletonGenometryModel
+      // try and match up chp seq to a BioSeq and AnnotatedSeqGroup in SingletonGenometryModel
       // if seq group can't be matched, make a new seq group
       // if seq can't be matched, make a new seq
 

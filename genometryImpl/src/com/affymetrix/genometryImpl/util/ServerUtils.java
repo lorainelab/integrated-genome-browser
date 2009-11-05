@@ -2,7 +2,7 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SearchableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -411,7 +411,7 @@ public abstract class ServerUtils {
 		if (seqid == null || group == null) {
 			return null;
 		}
-		MutableAnnotatedBioSeq seq = group.getSeq(seqid);
+		BioSeq seq = group.getSeq(seqid);
 		if (seq == null) {
 			return null;
 		}
@@ -504,7 +504,7 @@ public abstract class ServerUtils {
 			SeqSpan inside_span, List<SymExtended> result) {
 		int inside_min = inside_span.getMin();
 		int inside_max = inside_span.getMax();
-		MutableAnnotatedBioSeq iseq = inside_span.getBioSeq();
+		BioSeq iseq = inside_span.getBioSeq();
 		MutableSeqSpan testspan = new SimpleMutableSeqSpan();
 		List<SymExtended> orig_result = result;
 		int rcount = orig_result.size();

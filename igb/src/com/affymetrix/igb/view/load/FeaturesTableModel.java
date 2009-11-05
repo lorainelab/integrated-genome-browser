@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
@@ -27,7 +27,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	static String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString()};
 	public static String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.WHOLE.toString()};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
-	private final MutableAnnotatedBioSeq cur_seq;
+	private final BioSeq cur_seq;
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
@@ -37,7 +37,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	private final GeneralLoadView glv;
 	private featureTableComparator visibleFeatureComp = new featureTableComparator();
 
-	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, MutableAnnotatedBioSeq cur_seq) {
+	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, BioSeq cur_seq) {
 		this.glv = glv;
 		this.features = getVisibleFeatures(features);
 		this.cur_seq = cur_seq;

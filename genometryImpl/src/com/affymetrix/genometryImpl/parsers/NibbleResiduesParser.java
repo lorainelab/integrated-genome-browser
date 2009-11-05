@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 
 
@@ -30,7 +30,7 @@ public final class NibbleResiduesParser {
 	 *  The sequence will get added to the existing NibbleBioSeq found by
 	 *  seq_group.getSeq(name), where the name comes from data in the file.
 	 *  If such a NibbleBioSeq doesn't exist, it will be created, but if a
-	 *  MutableAnnotatedBioSeq does exist that is not of the type NibbleBioSeq, an exception
+	 *  BioSeq does exist that is not of the type NibbleBioSeq, an exception
 	 *  will be thrown.
 	 */
 	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
@@ -211,7 +211,7 @@ public final class NibbleResiduesParser {
 
 			// if file is gzipped or zipped, then fil.length() will not really be the max_seq_length,
 			//   but that's okay because the parse() method only uses it as a suggestion
-			MutableAnnotatedBioSeq seq = FastaParser.parse(isr, null, (int)(fil.length()));
+			BioSeq seq = FastaParser.parse(isr, null, (int)(fil.length()));
 			int seqlength = seq.getResidues().length();
 			System.out.println("length: " + seqlength);
 

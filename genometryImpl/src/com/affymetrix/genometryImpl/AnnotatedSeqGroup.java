@@ -197,7 +197,7 @@ public class AnnotatedSeqGroup {
 		final int spancount = sym.getSpanCount();
 		for (int i = 0; i < spancount; i++) {
 			SeqSpan span = sym.getSpan(i);
-			MutableAnnotatedBioSeq seq1 = span.getBioSeq();
+			BioSeq seq1 = span.getBioSeq();
 			String seqid = seq1.getID();
 			BioSeq seq2 = id2seq.get(seqid);
 			if ((seq2 != null) && (seq1 == seq2)) {
@@ -363,7 +363,7 @@ public class AnnotatedSeqGroup {
 	 *     currently on the seq.
 	 *  The id returned is only unique for GraphSyms on that seq, may be used for graphs on other seqs.
 	 */
-	final public static String getUniqueGraphID(String id, MutableAnnotatedBioSeq seq) {
+	final public static String getUniqueGraphID(String id, BioSeq seq) {
 		if (id == null) {
 			return null;
 		}

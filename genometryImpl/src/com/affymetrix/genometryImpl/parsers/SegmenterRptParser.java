@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -214,7 +214,7 @@ public final class SegmenterRptParser {
 					// some chromosomes named "1" and some others named "chr1".
 					chromName = "chr" + chromName;
 				}
-				MutableAnnotatedBioSeq seq = seq_group.getSeq(chromName);
+				BioSeq seq = seq_group.getSeq(chromName);
 				if (seq == null) {
 					seq = seq_group.addSeq(chromName, 0);
 				}
@@ -318,7 +318,7 @@ public final class SegmenterRptParser {
 			tester.parse(fis, file.getName(), seq_group);
 
 			for (int s=0; s<seq_group.getSeqCount(); s++) {
-				MutableAnnotatedBioSeq aseq = seq_group.getSeq(s);
+				BioSeq aseq = seq_group.getSeq(s);
 				for (int i=0; i<aseq.getAnnotationCount(); i++) {
 					SeqSymmetry annot = aseq.getAnnotation(i);
 					SeqUtils.printSymmetry(annot, "  ", true);

@@ -18,7 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.*;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -80,13 +80,13 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   }
   
   private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map)  {
-    MutableAnnotatedBioSeq aseq = smv.getAnnotatedSeq();
+    BioSeq aseq = smv.getAnnotatedSeq();
     if (DEBUG)  { System.out.println("   creating graphs on seq: " + aseq.getID()); }
     if (original_container.getSpan(aseq) == null) {
       return;
     }
 
-		MutableAnnotatedBioSeq vseq = smv.getViewSeq();
+		BioSeq vseq = smv.getViewSeq();
     AffyTieredMap map = smv.getSeqMap();
     
     GraphIntervalSym[] the_graph_syms = null;
@@ -145,7 +145,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   
   
   private static GraphIntervalSym[] makeGraphsFromDerived(DerivedSeqSymmetry derived_parent_sym,
-      AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq seq) {
+      AnnotatedSeqGroup seq_group, BioSeq seq) {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent_sym.getOriginalSymmetry();
     
     int score_count = original_container.getScoreCount();
@@ -181,7 +181,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   // strands should be one of '+', '-' or '.'
   // name -- should be a score name in the original ScoredContainerSym
   private static GraphIntervalSym makeGraphSymFromDerived(DerivedSeqSymmetry derived_parent, String name,
-      AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq seq, final char strands) {
+      AnnotatedSeqGroup seq_group, BioSeq seq, final char strands) {
     ScoredContainerSym original_container = (ScoredContainerSym) derived_parent.getOriginalSymmetry();
     
     float[] original_scores = original_container.getScores(name);

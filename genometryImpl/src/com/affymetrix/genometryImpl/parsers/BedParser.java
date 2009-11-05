@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.Scored;
 import java.io.*;
 import java.util.*;
@@ -95,7 +95,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	private static final Pattern comma_regex = Pattern.compile(",");
 
 	private List<SeqSymmetry> symlist = new ArrayList<SeqSymmetry>();
-	private Map<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
+	private Map<BioSeq,Map<String,SeqSymmetry>> seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
 	private boolean annotate_seq = true;
 	private boolean create_container_annot = false;
 	private String default_type = null;
@@ -112,13 +112,13 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 		}
 		/*
 		 *  seq2types is hash for making container syms (if create_container_annot == true)
-		 *  each entry in hash is: MutableAnnotatedBioSeq ==> type2psym hash
+		 *  each entry in hash is: BioSeq ==> type2psym hash
 		 *     Each type2csym is hash where each entry is "type" ==> container_sym
 		 *  so two-step process to find container sym for a particular type on a particular seq:
 		 *    Map type2csym = (Map)seq2types.get(seq);
 		 *    MutableSeqSymmetry container_sym = (MutableSeqSymmetry)type2csym.get(type);
 		 */
-		seq2types = new HashMap<MutableAnnotatedBioSeq,Map<String,SeqSymmetry>>();
+		seq2types = new HashMap<BioSeq,Map<String,SeqSymmetry>>();
 		symlist = new ArrayList<SeqSymmetry>();
 		annotate_seq = annot_seq;
 		this.create_container_annot = create_container;
@@ -203,7 +203,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 			findex++;
 		}
 		seq_name = fields[findex++]; // seq id field
-		MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+		BioSeq seq = seq_group.getSeq(seq_name);
 		if ((seq == null) && (seq_name.indexOf(';') > -1)) {
 			// if no seq found, try and split up seq_name by ";", in case it is in format
 			//    "seqid;genome_version"
@@ -336,7 +336,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	}
 
 	private void annotationParsed(SeqSymmetry bedline_sym) {
-		MutableAnnotatedBioSeq seq = bedline_sym.getSpan(0).getBioSeq();
+		BioSeq seq = bedline_sym.getSpan(0).getBioSeq();
 		if (create_container_annot) {
 			String type = track_line_parser.getCurrentTrackHash().get(TrackLineParser.NAME);
 			if (type == null) {
@@ -399,7 +399,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	}
 
 
-	public static void writeBedFormat(DataOutputStream out, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)
+	public static void writeBedFormat(DataOutputStream out, List<SeqSymmetry> syms, BioSeq seq)
 		throws IOException  {
 		for (SeqSymmetry sym : syms) {
 			writeSymmetry(out, sym, seq);
@@ -411,7 +411,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	 *  WARNING. This currently assumes that each child symmetry contains
 	 *     a span on the seq given as an argument.
 	 */
-	public static void writeSymmetry(DataOutputStream out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
+	public static void writeSymmetry(DataOutputStream out, SeqSymmetry sym, BioSeq seq)
 		throws IOException {
 		if (DEBUG) {
 			System.out.println("writing sym: " + sym);
@@ -438,7 +438,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	}
 
 
-	private static void writeOutFile(DataOutputStream out, MutableAnnotatedBioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
+	private static void writeOutFile(DataOutputStream out, BioSeq seq, SeqSpan span, SeqSymmetry sym, SymWithProps propsym) throws IOException {
 		out.write(seq.getID().getBytes());
 		out.write('\t');
 		int min = span.getMin();
@@ -479,7 +479,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 
 
 
-	private static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, MutableAnnotatedBioSeq seq) throws IOException {
+	private static void writeOutChildren(DataOutputStream out, SymWithProps propsym, int min, int max, int childcount, SeqSymmetry sym, BioSeq seq) throws IOException {
 		out.write('\t');
 		if ((propsym != null) && (propsym.getProperty("cds min") != null)) {
 			out.write(propsym.getProperty("cds min").toString().getBytes());
@@ -522,7 +522,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "BED" format.
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		if (DEBUG){
 			System.out.println("in BedParser.writeAnnotations()");
@@ -542,7 +542,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 		return false;
 	}
 
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, BioSeq seq, OutputStream os) throws IOException {
 		DataOutputStream dos = null;
 		if (os instanceof DataOutputStream) {
 			dos = (DataOutputStream) os;
@@ -561,16 +561,16 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 		return null;
 	}
 
-	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+	public Comparator getComparator(BioSeq seq) {
 		return new SeqSymMinComparator((BioSeq)seq);
 	}
 
-	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMin(SeqSymmetry sym, BioSeq seq) {
 		SeqSpan span = sym.getSpan(seq);
 		return span.getMin();
 	}
 
-	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMax(SeqSymmetry sym, BioSeq seq) {
 		SeqSpan span = sym.getSpan(seq);
 		return span.getMax();
 	}

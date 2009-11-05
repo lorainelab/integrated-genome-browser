@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -24,12 +24,12 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 
 	protected static final int count = 2;
 	protected int startA, startB, endA, endB;
-	protected MutableAnnotatedBioSeq seqA, seqB;
+	protected BioSeq seqA, seqB;
 	protected List<SeqSymmetry> children;
 	protected SeqSymmetry parent;
 	protected String id;
 
-	public EfficientPairSeqSymmetry(int startA, int endA, MutableAnnotatedBioSeq seqA, int startB, int endB, MutableAnnotatedBioSeq seqB) {
+	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB) {
 		this.startA = startA;
 		this.startB = startB;
 		this.endA = endA;
@@ -38,7 +38,7 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 		this.seqB = seqB;
 	}
 
-	public SeqSpan getSpan(MutableAnnotatedBioSeq seq) {
+	public SeqSpan getSpan(BioSeq seq) {
 		if (seqA == seq) { return new SimpleSeqSpan(startA, endA, seqA); }
 		else if (seqB == seq) { return new SimpleSeqSpan(startB, endB, seqB); }
 		return null;
@@ -54,13 +54,13 @@ public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 		else { return null; }
 	}
 
-	public MutableAnnotatedBioSeq getSpanSeq(int i) {
+	public BioSeq getSpanSeq(int i) {
 		if (i == 0) { return seqA; }
 		else if (i == 1) { return seqB;  }
 		else { return null; }
 	}
 
-	public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span) {
+	public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
 		if (seqA == seq) {
 			span.setStart(startA);
 			span.setEnd(endA);

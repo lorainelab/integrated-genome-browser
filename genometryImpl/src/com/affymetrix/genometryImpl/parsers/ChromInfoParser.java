@@ -22,14 +22,14 @@ import com.affymetrix.genometryImpl.BioSeq;
 
 public final class ChromInfoParser {
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	//static MutableAnnotatedBioSeq default_seq_template = new BioSeq();
+	//static BioSeq default_seq_template = new BioSeq();
 
-	//MutableAnnotatedBioSeq template_seq = default_seq_template;
+	//BioSeq template_seq = default_seq_template;
 
 	/** Constructs a ChromInfoParser with a default template sequence. */
 	//public ChromInfoParser() { }
 
-	//public ChromInfoParser(MutableAnnotatedBioSeq template) {
+	//public ChromInfoParser(BioSeq template) {
 	//template_seq = template;
 	//}
 

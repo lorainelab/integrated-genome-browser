@@ -17,7 +17,7 @@ import java.net.*;
 import java.io.*;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -67,7 +67,7 @@ public final class UrlLoaderThread extends Thread {
     @Override
   public void run() {
     //ThreadProgressMonitor monitor = null;
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     try {
       // should really move to using gmodel's currently selected  _group_ of sequences rather than
@@ -171,7 +171,7 @@ public final class UrlLoaderThread extends Thread {
   }
 
 
-  private void updateViewer(final SeqMapView gviewer, final MutableAnnotatedBioSeq seq) {
+  private void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
     if (gviewer==null || seq==null) return;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -240,7 +240,7 @@ public final class UrlLoaderThread extends Thread {
   private static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String file_extension, String type)
     throws java.net.UnknownHostException, java.io.IOException {
 
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     //TODO: This is an important part of the data loading code, but it could be improved.
 

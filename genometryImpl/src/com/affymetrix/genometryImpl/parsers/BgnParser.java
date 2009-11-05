@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -127,7 +127,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 					emaxs[i] = dis.readInt();
 				}
 
-				MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
+				BioSeq chromseq = seq_group.getSeq(chrom_name);
 
 				if (chromseq == null) {
 					chromseq = seq_group.addSeq(chrom_name, 0);
@@ -184,7 +184,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 
 		if (annotate_seq) {
 			for (SeqSymmetry annot : annots) {
-				MutableAnnotatedBioSeq chromseq = annot.getSpan(0).getBioSeq();
+				BioSeq chromseq = annot.getSpan(0).getBioSeq();
 				chromseq.addAnnotation(annot);
 			}
 		}
@@ -210,7 +210,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 	 *  probably not the best format to use, but since that can still be useful,
 	 *  this routine will treat the entire span as the CDS.
 	 */
-	public void writeSymmetry(SeqSymmetry gsym, MutableAnnotatedBioSeq targetSeq, OutputStream os) throws IOException {
+	public void writeSymmetry(SeqSymmetry gsym, BioSeq targetSeq, OutputStream os) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan;
 		String name;
@@ -225,7 +225,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 			cspan = tspan;
 			name = gsym.getID();
 		}
-		MutableAnnotatedBioSeq seq = tspan.getBioSeq();
+		BioSeq seq = tspan.getBioSeq();
 		DataOutputStream dos = null;
 		if (os instanceof DataOutputStream) {
 			dos = (DataOutputStream) os;
@@ -398,7 +398,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary UCSC gene" (.bgn)
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		System.out.println("in BgnParser.writeAnnotations()");
 		try {
@@ -417,16 +417,16 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 		return true;
 	}
 
-	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+	public Comparator getComparator(BioSeq seq) {
 		return new SeqSymMinComparator((BioSeq) seq);
 	}
 
-	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMin(SeqSymmetry sym, BioSeq seq) {
 		SeqSpan span = sym.getSpan(seq);
 		return span.getMin();
 	}
 
-	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMax(SeqSymmetry sym, BioSeq seq) {
 		SeqSpan span = sym.getSpan(seq);
 		return span.getMax();
 	}

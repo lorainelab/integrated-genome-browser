@@ -13,15 +13,15 @@
 
 package com.affymetrix.genometryImpl.span;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 
 public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 	protected double start;
 	protected double end;
-	protected MutableAnnotatedBioSeq seq;
+	protected BioSeq seq;
 
-	public MutableDoubleSeqSpan(double start, double end, MutableAnnotatedBioSeq seq) {
+	public MutableDoubleSeqSpan(double start, double end, BioSeq seq) {
 		this.start = start;
 		this.end = end;
 		this.seq = seq;
@@ -32,7 +32,7 @@ public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 		this(0, 0, null);
 	}
 
-	public void set(int start, int end, MutableAnnotatedBioSeq seq) {
+	public void set(int start, int end, BioSeq seq) {
 		this.start = (double)start;
 		this.end = (double)end;
 		this.seq = seq;
@@ -51,12 +51,12 @@ public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 		this.end = (double)end;
 	}
 
-	public void setBioSeq(MutableAnnotatedBioSeq seq) {
+	public void setBioSeq(BioSeq seq) {
 		this.seq = seq;
 	}
 
 
-	public void setDouble(double start, double end, MutableAnnotatedBioSeq seq) {
+	public void setDouble(double start, double end, BioSeq seq) {
 		this.start = start;
 		this.end = end;
 		this.seq = seq;
@@ -119,7 +119,7 @@ public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 		}
 	}
 
-	public MutableAnnotatedBioSeq getBioSeq() {
+	public BioSeq getBioSeq() {
 		return seq;
 	}
 

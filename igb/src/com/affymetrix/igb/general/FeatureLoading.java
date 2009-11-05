@@ -1,6 +1,6 @@
 package com.affymetrix.igb.general;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -184,7 +184,7 @@ public final class FeatureLoading {
 				@Override
 				public void done() {
 					if (update_display && gviewer != null && !result_syms.isEmpty()) {
-						MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+						BioSeq aseq = gmodel.getSelectedSeq();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
 					Application.getSingleton().setStatus("", false);

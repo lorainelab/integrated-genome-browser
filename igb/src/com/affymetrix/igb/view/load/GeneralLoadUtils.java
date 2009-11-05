@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
@@ -688,7 +688,7 @@ public final class GeneralLoadUtils {
 
 		BioSeq genome_seq = group.addSeq(IGBConstants.GENOME_SEQ_ID, 0);
 		for (int i = 0; i < chrom_count; i++) {
-			MutableAnnotatedBioSeq chrom_seq = group.getSeq(i);
+			BioSeq chrom_seq = group.getSeq(i);
 			if (chrom_seq == genome_seq) {
 				continue;
 			}
@@ -705,7 +705,7 @@ public final class GeneralLoadUtils {
 		double seq_bounds = 0.0;
 
 		for (int i = 0; i < chrom_count; i++) {
-			MutableAnnotatedBioSeq chrom_seq = group.getSeq(i);
+			BioSeq chrom_seq = group.getSeq(i);
 			int clength = chrom_seq.getLength();
 			int spacer = (clength > 5000000) ? 5000000 : 100000;
 			seq_bounds += clength + spacer;
@@ -722,7 +722,7 @@ public final class GeneralLoadUtils {
 		return true;
 	}
 
-	private static void addSeqToVirtualGenome(BioSeq genome_seq, MutableAnnotatedBioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
+	private static void addSeqToVirtualGenome(BioSeq genome_seq, BioSeq chrom, double default_genome_min, boolean DEBUG_VIRTUAL_GENOME) {
 		double glength = genome_seq.getLengthDouble();
 		int clength = chrom.getLength();
 		int spacer = (clength > 5000000) ? 5000000 : 100000;
@@ -758,14 +758,14 @@ public final class GeneralLoadUtils {
 	 * @param gFeature
 	 * @return
 	 */
-	boolean loadAndDisplayAnnotations(GenericFeature gFeature, MutableAnnotatedBioSeq cur_seq, FeaturesTableModel model) {
+	boolean loadAndDisplayAnnotations(GenericFeature gFeature, BioSeq cur_seq, FeaturesTableModel model) {
 
 		// We don't validate previous load status.  It's assumed that we want to reload the feature.
 
 		SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
 
-		MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
-		MutableAnnotatedBioSeq visible_seq = gviewer.getViewSeq();
+		BioSeq selected_seq = gmodel.getSelectedSeq();
+		BioSeq visible_seq = gviewer.getViewSeq();
 		if (selected_seq == null || visible_seq == null) {
 			//      ErrorHandler.errorPanel("ERROR", "You must first choose a sequence to display.");
 			//System.out.println("@@@@@ selected chrom: " + selected_seq);
@@ -830,7 +830,7 @@ public final class GeneralLoadUtils {
 		return false;
 	}
 
-	private static void SetLoadStatus(GenericFeature gFeature, MutableAnnotatedBioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
+	private static void SetLoadStatus(GenericFeature gFeature, BioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
 		gFeature.LoadStatusMap.put(aseq, ls);
 		model.fireTableDataChanged();
 
@@ -852,7 +852,7 @@ public final class GeneralLoadUtils {
 	 * @return
 	 */
 	private boolean loadDAS2Annotations(
-					MutableAnnotatedBioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, MutableAnnotatedBioSeq visible_seq, SeqSpan overlap) {
+					BioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, BioSeq visible_seq, SeqSpan overlap) {
 		if (!(selected_seq instanceof BioSeq)) {
 			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
 			return false;

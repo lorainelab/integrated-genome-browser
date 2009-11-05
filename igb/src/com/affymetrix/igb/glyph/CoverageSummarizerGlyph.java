@@ -14,7 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -129,7 +129,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
 			int[] newmins = new int[spancount];
 			int[] newmaxs = new int[spancount];
-			MutableAnnotatedBioSeq firstseq = (spanlist.get(0)).getBioSeq();
+			BioSeq firstseq = (spanlist.get(0)).getBioSeq();
 			for (int i = 0; i < spancount; i++) {
 				SeqSpan span = spanlist.get(i);
 				newmins[i] = span.getMin();

@@ -28,7 +28,7 @@ public final class SeqSymmetryConverter {
 	 */
 	/*
 	   public static Psl3Sym convertToTrioPslSym(SeqSymmetry sym, String type,
-	   MutableAnnotatedBioSeq queryseq, MutableAnnotatedBioSeq targetseq, MutableAnnotatedBioSeq otherseq) {
+	   BioSeq queryseq, BioSeq targetseq, BioSeq otherseq) {
 	   int child_count = sym.getChildCount();
 	   SeqSpan qspan = sym.getSpan(queryseq);
 	   SeqSpan tspan = sym.getSpan(targetseq);
@@ -70,7 +70,7 @@ public final class SeqSymmetryConverter {
 	 *  @param type  The PSL type parameter
 	 */
 	public static UcscPslSym convertToPslSym(SeqSymmetry sym, String type,
-			MutableAnnotatedBioSeq targetseq)  {
+			BioSeq targetseq)  {
 		int child_count = sym.getChildCount();
 		SeqSpan tspan = sym.getSpan(targetseq);
 		boolean forward = tspan.isForward();
@@ -115,7 +115,7 @@ public final class SeqSymmetryConverter {
 	 *  @param queryseq indicates span in symmetry to be used as "query" span for UcscPslSym
 	 */
 	public static UcscPslSym convertToPslSym(SeqSymmetry sym, String type,
-			MutableAnnotatedBioSeq queryseq, MutableAnnotatedBioSeq targetseq) {
+			BioSeq queryseq, BioSeq targetseq) {
 		int child_count = sym.getChildCount();
 		SeqSpan qspan = sym.getSpan(queryseq);
 		SeqSpan tspan = sym.getSpan(targetseq);

@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
@@ -65,14 +65,14 @@ public final class GraphSymUtils {
 		if (original_graf.getPointCount() == 0) {
 			return null;
 		}
-		MutableAnnotatedBioSeq fromseq = original_graf.getGraphSeq();
+		BioSeq fromseq = original_graf.getGraphSeq();
 		SeqSpan fromspan = mapsym.getSpan(fromseq);
 
 		if (fromseq == null || fromspan == null) {
 			return null;
 		}
 		GraphSym new_graf = null;
-		MutableAnnotatedBioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
+		BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
 
 		SeqSpan tospan = mapsym.getSpan(toseq);
 		if (toseq == null || tospan == null) {
@@ -113,7 +113,7 @@ public final class GraphSymUtils {
 	}
 
 
-	private static void addCoords(SeqSymmetry mapsym, MutableAnnotatedBioSeq fromseq, MutableAnnotatedBioSeq toseq, GraphSym original_graf, IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
+	private static void addCoords(SeqSymmetry mapsym, BioSeq fromseq, BioSeq toseq, GraphSym original_graf, IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
 		List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
 		for (SeqSymmetry leafsym : leaf_syms) {
 			SeqSpan fspan = leafsym.getSpan(fromseq);
@@ -200,7 +200,7 @@ public final class GraphSymUtils {
 	 *  Equivalent to a call to the other readGraphs() method using seq = null.
 	 */
 	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) throws IOException  {
-		return readGraphs(istr, stream_name, gmodel, seq_group, (MutableAnnotatedBioSeq) null);
+		return readGraphs(istr, stream_name, gmodel, seq_group, (BioSeq) null);
 	}
 
 	/**
@@ -209,12 +209,12 @@ public final class GraphSymUtils {
 	 *  more than one.  For consistency, always returns a List (possibly empty).
 	 *  Will accept "bar", "bgr", "gr", or "sgr".
 	 *  Loaded graphs will be attached to their respective BioSeq's, if they
-	 *  are instances of MutableAnnotatedBioSeq.
+	 *  are instances of BioSeq.
 	 *  @param seq  Ignored in most cases.  But for "gr" files that
 	 *   do not specify a BioSeq, use this parameter to specify it.  If null
 	 *   then GenometryModel.getSelectedSeq() will be used.
 	 */
-	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq seq) throws IOException  {
+	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
 		List<GraphSym> grafs = null;
 		StringBuffer stripped_name = new StringBuffer();
 		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
@@ -238,7 +238,7 @@ public final class GraphSymUtils {
 			}
 			GraphSym graph = GrParser.parse(newstr, seq, stream_name);
 			int max_x = graph.getMaxXCoord();
-			MutableAnnotatedBioSeq gseq = graph.getGraphSeq();
+			BioSeq gseq = graph.getGraphSeq();
 			seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
 			grafs = wrapInList(graph);
 		}
@@ -268,7 +268,7 @@ public final class GraphSymUtils {
 	/**
 	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
 	 */
-	public static String getUniqueGraphID(String id, MutableAnnotatedBioSeq seq) {
+	public static String getUniqueGraphID(String id, BioSeq seq) {
 		return AnnotatedSeqGroup.getUniqueGraphID(id, seq);
 	}
 
@@ -284,7 +284,7 @@ public final class GraphSymUtils {
 	/*
 	 *  Does some post-load processing of Graph Syms.
 	 *  For each GraphSym in the list,
-	 *  Adds it as an annotation of the MutableAnnotatedBioSeq it refers to.
+	 *  Adds it as an annotation of the BioSeq it refers to.
 	 *  Sets the "source_url" to the given stream name.
 	 *  Calls setGraphName() with the given name;
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
@@ -295,7 +295,7 @@ public final class GraphSymUtils {
 			return;
 		}
 		for (GraphSym gsym : grafs) {
-			MutableAnnotatedBioSeq gseq = gsym.getGraphSeq();
+			BioSeq gseq = gsym.getGraphSeq();
 			if (gseq != null) {
 				String gid = gsym.getID();
 				String newid = getUniqueGraphID(gid, gseq);
@@ -305,7 +305,7 @@ public final class GraphSymUtils {
 				}
 			}
 			gsym.lockID();
-			if (gseq instanceof MutableAnnotatedBioSeq) {
+			if (gseq instanceof BioSeq) {
 				gseq.addAnnotation(gsym);
 			}
 
@@ -424,7 +424,7 @@ public final class GraphSymUtils {
 		if (xcount < 2) { return null; }
 
 		int transfrag_max_spacer = 20;
-		MutableAnnotatedBioSeq seq = trans_frag_graph.getGraphSeq();
+		BioSeq seq = trans_frag_graph.getGraphSeq();
 		IntList newx = new IntList();
 		FloatList newy = new FloatList();
 

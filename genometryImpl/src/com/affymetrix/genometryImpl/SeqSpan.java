@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 /**
  * Implementations model a contiguous section of a {@link BioSeq}.
@@ -25,7 +25,7 @@ public interface SeqSpan {
 	public int getMax();
 	public int getLength();
 	public boolean isForward();
-	public MutableAnnotatedBioSeq getBioSeq();
+	public BioSeq getBioSeq();
 	// boolean isReverse();
 	/*
 	   public int getStrand()

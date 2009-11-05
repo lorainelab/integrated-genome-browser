@@ -34,7 +34,7 @@ public final class Das2Region {
         versioned_source = source;
         AnnotatedSeqGroup genome = versioned_source.getGenome();
         // a)  see if id of Das2Region maps directly to an already seen annotated seq in genome
-        //   check for prior existence of MutableAnnotatedBioSeq for Das2Region only if genome group is _not_ a Das2SeqGroup
+        //   check for prior existence of BioSeq for Das2Region only if genome group is _not_ a Das2SeqGroup
         //      if group is a Das2SeqGroup, then calling getSeq() will trigger infinite loop as group attempts
         //      to initialize sequences via Das2VersionedSources.getSegments()
         //   But if genome is a Das2SeqGroup, then can assume that no seqs are in group that aren't

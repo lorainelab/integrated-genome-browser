@@ -44,7 +44,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
   private Das2Region das2_region;
   private Das2Type das2_type;
 
-  private MutableAnnotatedBioSeq aseq;
+  private BioSeq aseq;
   private MutableSeqSpan sum_child_spans;
   private String format;
 
@@ -114,7 +114,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
     else { return null; }
   }
 
-  public SeqSpan getSpan(MutableAnnotatedBioSeq seq) {
+  public SeqSpan getSpan(BioSeq seq) {
     if (seq == aseq) { return sum_child_spans; }
     else { return null; }
   }
@@ -126,7 +126,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
     return true;
   }
 
-  public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span) {
+  public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
     SeqSpan vspan = getSpan(seq);
     if (vspan == null) { return false; }
     span.set(vspan.getStart(), vspan.getEnd(), aseq);

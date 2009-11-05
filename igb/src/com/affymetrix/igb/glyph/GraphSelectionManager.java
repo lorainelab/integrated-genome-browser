@@ -14,7 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -365,9 +365,9 @@ public final class GraphSelectionManager
     GraphSym gsym = null;
     if (info instanceof GraphSym) {
       gsym = (GraphSym) info;
-      MutableAnnotatedBioSeq aseq = gsym.getGraphSeq();
-      if (aseq instanceof MutableAnnotatedBioSeq) {
-        MutableAnnotatedBioSeq mut = aseq;
+      BioSeq aseq = gsym.getGraphSeq();
+      if (aseq instanceof BioSeq) {
+        BioSeq mut = aseq;
         mut.removeAnnotation(gsym);
       }
     }
@@ -464,7 +464,7 @@ public final class GraphSelectionManager
     else {
       GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, function);
       
-      MutableAnnotatedBioSeq aseq = newsym.getGraphSeq();
+      BioSeq aseq = newsym.getGraphSeq();
       aseq.addAnnotation(newsym);
       gviewer.setAnnotatedSeq(aseq, true, true);
     }

@@ -122,7 +122,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 			System.err.println("ScoreContainerSym.makeGraphSym() called, but has no span yet");
 			return null;
 		}
-		MutableAnnotatedBioSeq aseq = pspan.getBioSeq();
+		BioSeq aseq = pspan.getBioSeq();
 		int score_count = scores.length;
 		int[] xcoords = new int[score_count];
 		int[] wcoords = new int[score_count];
@@ -166,7 +166,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 			System.err.println("ScoreContainerSym.makeGraphSym() called, but has no span yet");
 			return null;
 		}
-		MutableAnnotatedBioSeq aseq = pspan.getBioSeq();
+		BioSeq aseq = pspan.getBioSeq();
 		int score_count = scores.length;
 
 		IntList xlist = new IntList(score_count);

@@ -12,7 +12,7 @@
  */
 package com.affymetrix.igb.util;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -174,7 +174,7 @@ public final class GraphGlyphUtils {
 		String newname = operation + ": (" + graphA.getLabel() + ") " +
 				symbol + " (" + graphB.getLabel() + ")";
 
-		MutableAnnotatedBioSeq aseq =
+		BioSeq aseq =
 				((GraphSym) graphA.getInfo()).getGraphSeq();
 		newname = GraphSymUtils.getUniqueGraphID(newname, aseq);
 		GraphSym newsym;

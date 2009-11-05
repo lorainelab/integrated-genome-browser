@@ -396,7 +396,7 @@ public abstract class BookmarkController {
    */
   public static Map constructBookmarkProperties(SeqSymmetry sym) {
     SeqSpan span = sym.getSpan(0);
-    MutableAnnotatedBioSeq seq = span.getBioSeq();
+    BioSeq seq = span.getBioSeq();
     Map<String,String> props = new LinkedHashMap<String,String>();
     props.put("seqid", seq.getID());
     if (seq instanceof BioSeq) {

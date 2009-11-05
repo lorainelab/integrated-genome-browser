@@ -13,7 +13,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.igb.Application;
@@ -1294,7 +1294,7 @@ public final class GraphGlyph extends Glyph {
 	 * populate regions_parent with child SeqSymmetries for each region that passes threshold,
 	 *
 	 */
-	void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, MutableAnnotatedBioSeq aseq) {
+	void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
 		/*
 		 *  Should really eventually move the SeqSymmetry stuff out of this class, maybe have
 		 *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or

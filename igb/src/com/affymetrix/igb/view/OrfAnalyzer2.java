@@ -14,7 +14,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -65,7 +65,7 @@ public final class OrfAnalyzer2 extends JComponent
   int orf_thresh_max = 500;
   int max_analysis_span = 1000000;
   boolean show_orfs;
-  MutableAnnotatedBioSeq current_seq;
+  BioSeq current_seq;
 
   private List<FlyPointLinkerGlyph> orf_holders = new ArrayList<FlyPointLinkerGlyph>();
   String[] stop_codons = { "TAA", "TAG", "TGA", "TTA", "CTA", "TCA" };
@@ -140,7 +140,7 @@ public final class OrfAnalyzer2 extends JComponent
 
   public void redoOrfs()  {
     if (smv == null) { return; }
-    MutableAnnotatedBioSeq vseq = smv.getViewSeq();
+    BioSeq vseq = smv.getViewSeq();
     current_seq = vseq;
     if (current_seq == null)  { return; }
     removeTiersFromMap();

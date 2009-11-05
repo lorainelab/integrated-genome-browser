@@ -32,7 +32,7 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 	implements SearchableSeqSymmetry  {
 	static boolean DEBUG = false;
 	boolean ready_for_searching = false;
-	MutableAnnotatedBioSeq search_seq;
+	BioSeq search_seq;
 
 	//   for each entry in min sorted children list, the maximum max
 	//     value up to (and including) that position
@@ -43,17 +43,17 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 	SeqSymMinComparator comp = null;
 
 	/**
-	 *  Constructor takes MutableAnnotatedBioSeq argument for which
+	 *  Constructor takes BioSeq argument for which
 	 *  seq to optimize search for.
 	 */
-	public IntervalSearchSym(MutableAnnotatedBioSeq seq) {
+	public IntervalSearchSym(BioSeq seq) {
 		this.search_seq = seq;
 	}
 
 	/**
 	 *  Copies children of sym_to_copy into new IntervalSearchSym.
 	 */
-	public IntervalSearchSym(MutableAnnotatedBioSeq seq, SeqSymmetry sym_to_copy) {
+	public IntervalSearchSym(BioSeq seq, SeqSymmetry sym_to_copy) {
 		this(seq);
 		if (sym_to_copy instanceof SymWithProps) {
 			this.setProperties(((SymWithProps)sym_to_copy).getProperties());
@@ -74,7 +74,7 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 		ready_for_searching = false;
 	}
 
-	public void initForSearching(MutableAnnotatedBioSeq seq) {
+	public void initForSearching(BioSeq seq) {
 		search_seq = seq;
 		comp = new SeqSymMinComparator((BioSeq)search_seq);
 

@@ -13,7 +13,7 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -119,7 +119,7 @@ public final class CntParser {
 			String seqid = fields[1];
 			int x = Integer.parseInt(fields[2]);
 
-			MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+			BioSeq aseq = seq_group.getSeq(seqid);
 			if (aseq == null) {
 				aseq = seq_group.addSeq(seqid, x);
 			}
@@ -145,7 +145,7 @@ public final class CntParser {
 			IntList x = (IntList) thing2.get(seqid);
 			x.trimToSize();
 			FloatList[] ys = (FloatList[]) thing.get(seqid);
-			MutableAnnotatedBioSeq seq = seq_group.getSeq(seqid);
+			BioSeq seq = seq_group.getSeq(seqid);
 			for (int i = 0; i < ys.length; i++) {
 				FloatList y = ys[i];
 				String id = column_names[i + FIRST_DATA_COLUMN];
@@ -179,7 +179,7 @@ public final class CntParser {
 		return val;
 	}
 
-	FloatList[] getFloatsForSeq(MutableAnnotatedBioSeq seq, int numScores) {
+	FloatList[] getFloatsForSeq(BioSeq seq, int numScores) {
 		FloatList[] floats = (FloatList[]) thing.get(seq.getID());
 
 		if (floats == null) {
@@ -193,7 +193,7 @@ public final class CntParser {
 		return floats;
 	}
 
-	IntList getXCoordsForSeq(MutableAnnotatedBioSeq seq) {
+	IntList getXCoordsForSeq(BioSeq seq) {
 		IntList xcoords = (IntList) thing2.get(seq.getID());
 
 		if (xcoords == null) {

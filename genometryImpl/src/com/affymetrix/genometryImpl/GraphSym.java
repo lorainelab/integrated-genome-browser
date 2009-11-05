@@ -32,7 +32,7 @@ public class GraphSym extends SimpleSymWithProps {
 	private float[] ycoords;
 
 
-	private final MutableAnnotatedBioSeq graph_original_seq;
+	private final BioSeq graph_original_seq;
 	private String gid;
 
 	/**
@@ -43,7 +43,7 @@ public class GraphSym extends SimpleSymWithProps {
 	 */
 	private boolean id_locked = false;
 
-	public GraphSym(int[] x, float[] y, String id, MutableAnnotatedBioSeq seq) {
+	public GraphSym(int[] x, float[] y, String id, BioSeq seq) {
 		super();
 		setCoords(x, y);
 		this.graph_original_seq = seq;
@@ -163,7 +163,7 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Get the seq that the graph's xcoords are specified in
 	 */
-	public MutableAnnotatedBioSeq getGraphSeq() {
+	public BioSeq getGraphSeq() {
 		return graph_original_seq;
 	}
 

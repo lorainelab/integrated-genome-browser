@@ -14,7 +14,7 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 
@@ -182,7 +182,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 					System.out.println("seq: " + seqid + ", probeset count: " + probeset_count);
 				}
 
-				MutableAnnotatedBioSeq aseq = group.getSeq(seqid);
+				BioSeq aseq = group.getSeq(seqid);
 				SharedProbesetInfo shared_info = new SharedProbesetInfo(aseq, probe_length, id_prefix, tagvals);
 				if (aseq == null) {
 					int seqlength = seq2lengths.get(seqid).intValue();
@@ -235,7 +235,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	 *      all syms in collection are EfficientProbesetSymA
 	 *      all syms share same probe_length, id_prefix
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq aseq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
 			String type, OutputStream outstream) {
 		boolean success = false;
 		AnnotatedSeqGroup group = ((BioSeq)aseq).getSeqGroup();
@@ -378,7 +378,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	}
 
 
-	protected static void writeProbeset(SeqSymmetry psym, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
+	protected static void writeProbeset(SeqSymmetry psym, BioSeq aseq, DataOutputStream dos) throws IOException {
 		SeqSpan pspan = psym.getSpan(aseq);
 		int child_count = psym.getChildCount();
 		int intid;

@@ -14,7 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -472,7 +472,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-			MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+			BioSeq aseq = gmodel.getSelectedSeq();
 			DataOutputStream dos = null;
 			try {
 				File fil = chooser.getSelectedFile();
@@ -500,7 +500,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 	}
 
   private void addSymCoverageTier(TierGlyph atier) {
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
 
     List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
@@ -555,7 +555,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       return;
     }
 
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     String graphid = "summary: " + atier.getLabel();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, graphid);
     gsym.setGraphName("depth: " + atier.getLabel());

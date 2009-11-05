@@ -34,7 +34,7 @@ import java.util.List;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -1270,10 +1270,10 @@ public final class IGB extends Application
 		}
 		prev_selected_group = selected_group;
 	}
-	MutableAnnotatedBioSeq prev_selected_seq = null;
+	BioSeq prev_selected_seq = null;
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		MutableAnnotatedBioSeq selected_seq = evt.getSelectedSeq();
+		BioSeq selected_seq = evt.getSelectedSeq();
 		if ((prev_selected_seq != null) && (prev_selected_seq != selected_seq)) {
 			Persistence.saveSeqVisibleSpan(map_view);
 		}

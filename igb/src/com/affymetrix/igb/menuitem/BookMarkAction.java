@@ -15,7 +15,7 @@ package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -383,7 +383,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   }
 
 	private void bookmarkCurrentPosition(boolean include_graphs) {
-		MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+		BioSeq aseq = gmodel.getSelectedSeq();
 		if (aseq == null) {
 			Application.errorPanel("Error", "Nothing to bookmark");
 			return;

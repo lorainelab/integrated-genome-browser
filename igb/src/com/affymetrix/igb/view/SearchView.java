@@ -14,7 +14,7 @@ import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -487,7 +487,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	 * Display (highlight on SeqMap) the residues matching the specified regex.
 	 */
 	private void displayRegexResidues() {
-		MutableAnnotatedBioSeq vseq = gviewer.getViewSeq();
+		BioSeq vseq = gviewer.getViewSeq();
 		if (vseq == null || !vseq.isComplete()) {
 			Application.errorPanel(
 					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");

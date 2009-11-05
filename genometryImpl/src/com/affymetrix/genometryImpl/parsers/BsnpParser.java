@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -115,7 +115,7 @@ public abstract class BsnpParser {
 			dos.writeInt(pcount);  // how many seqs there are
 			for (int i=0; i<pcount; i++) {
 				SeqSymmetry parent = parents.get(i);
-				MutableAnnotatedBioSeq seq = parent.getSpanSeq(0);
+				BioSeq seq = parent.getSpanSeq(0);
 				String seqid = seq.getID();
 				int snp_count = parent.getChildCount();
 				dos.writeUTF(seqid);
@@ -125,7 +125,7 @@ public abstract class BsnpParser {
 			int total_snp_count = 0;
 			for (int i=0; i<pcount; i++) {
 				SeqSymmetry parent = parents.get(i);
-				MutableAnnotatedBioSeq seq = parent.getSpanSeq(0);
+				BioSeq seq = parent.getSpanSeq(0);
 				int snp_count = parent.getChildCount();
 				ArrayList<SeqSymmetry> snps = new ArrayList<SeqSymmetry>(snp_count);
 				for (int k=0; k<snp_count; k++) {
@@ -172,7 +172,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				// need to debug this eventually...
 				if (acount >= 1) { 
 					SimpleSymWithProps new_psym = new SimpleSymWithProps();
-					MutableAnnotatedBioSeq seq = new BioSeq(seqid, aseq.getVersion(), 1000000000);
+					BioSeq seq = new BioSeq(seqid, aseq.getVersion(), 1000000000);
 					new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					for (int k=0; k<acount; k++) {
@@ -218,7 +218,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 				MutableSeqSymmetry psym = (MutableSeqSymmetry)id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
-					MutableAnnotatedBioSeq seq = new BioSeq(seqid, seqid, 1000000000);
+					BioSeq seq = new BioSeq(seqid, seqid, 1000000000);
 					psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
 					((SymWithProps) psym).setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
 					id2psym.put(seqid, psym);
@@ -263,14 +263,14 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		int seq_count = dis.readInt();
 		int[] snp_counts = new int[seq_count];
 		String[] seqids = new String[seq_count];
-		MutableAnnotatedBioSeq[] seqs = new MutableAnnotatedBioSeq[seq_count];
+		BioSeq[] seqs = new BioSeq[seq_count];
 		//System.out.println("genome version: " + genome_version);
 		//System.out.println("seqs: " + seq_count);
 		int total_snp_count = 0;
 		for (int i=0; i<seq_count; i++) {
 			String seqid = dis.readUTF();
 			seqids[i] = seqid;
-			MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+			BioSeq aseq = seq_group.getSeq(seqid);
 			if (aseq == null) {
 				aseq = seq_group.addSeq(seqid, 0);
 			}
@@ -282,7 +282,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		EfficientSnpSym dummy_snp = new EfficientSnpSym(null, 0);
 		// Object[] all_coord_arrays = new Object[seq_count];
 		for (int i=0; i<seq_count; i++) {
-			MutableAnnotatedBioSeq aseq = seqs[i];
+			BioSeq aseq = seqs[i];
 			int snp_count = snp_counts[i];
 			//        System.out.println("seqid: " + seqids[i] + ", snps: " + snp_counts[i]);
 			SimpleSymWithProps psym = new SimpleSymWithProps();
@@ -380,7 +380,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 
 
 	// Annotationwriter implementation
-	//  public boolean writeAnnotations(Collection syms, MutableAnnotatedBioSeq seq,
+	//  public boolean writeAnnotations(Collection syms, BioSeq seq,
 	//                                  String type, OutputStream outstream) {
 	//  }
 	// public String getMimeType()  { return "binary/bsnp"; }

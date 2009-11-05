@@ -13,7 +13,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -124,9 +124,9 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		boolean in_bottom_of_link_psl = false;
 
 		// the three xxx2types Maps accommodate using create_container_annot and psl with track lines.
-		Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>>();
-		Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>>();
-		Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> target2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> query2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
+		Map<BioSeq, Map<String, SimpleSymWithProps>> other2types = new HashMap<BioSeq, Map<String, SimpleSymWithProps>>();
 
 		int line_count = 0;
 		BufferedReader br = new BufferedReader(new InputStreamReader(istr));
@@ -285,8 +285,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return findex;
 	}
 
-	private static MutableAnnotatedBioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
-		MutableAnnotatedBioSeq qseq = query_group.getSeq(qname);
+	private static BioSeq determineSeq(AnnotatedSeqGroup query_group, String qname, int qsize) {
+		BioSeq qseq = query_group.getSeq(qname);
 		if (qseq == null) {
 			// Doing a new String() here gives a > 4X reduction in
 			//    memory requirements!  Possible reason: Regex machinery when it splits a String into
@@ -301,9 +301,9 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return qseq;
 	}
 
-	private SeqSymmetry determineSym(AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> target2types, ArrayList<SeqSymmetry> results) throws NumberFormatException {
-		MutableAnnotatedBioSeq qseq = determineSeq(query_group, qname, qsize);
-		MutableAnnotatedBioSeq tseq = target_group.getSeq(tname);
+	private SeqSymmetry determineSym(AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<BioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<BioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<BioSeq, Map<String, SimpleSymWithProps>> target2types, ArrayList<SeqSymmetry> results) throws NumberFormatException {
+		BioSeq qseq = determineSeq(query_group, qname, qsize);
+		BioSeq tseq = target_group.getSeq(tname);
 		boolean shared_query_target = false;
 		if (tseq == null) {
 			if (look_for_targets_in_query_group && (query_group.getSeq(tname) != null)) {
@@ -354,7 +354,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 			for (int i = 0; i < childcount; i++) {
 				omins[i] = Integer.parseInt(o_min_array[i]);
 			}
-			MutableAnnotatedBioSeq oseq = determineSeq(other_group,oname,osize);
+			BioSeq oseq = determineSeq(other_group,oname,osize);
 
 			sym = new Psl3Sym(type, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, other_same_orientation, qseq, qmin, qmax, tseq, tmin, tmax, oseq, omin, omax, blockcount, blocksizes, qmins, tmins, omins);
 			annotate(annotate_other, create_container_annot, is_link_psl, other2types, oseq, type, sym, is_psl3, other_group);
@@ -386,7 +386,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private static void annotate(
-			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, AnnotatedSeqGroup annGroup) {
+			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<BioSeq, Map<String, SimpleSymWithProps>> str2types, BioSeq seq, String type, UcscPslSym sym, boolean is_psl3, AnnotatedSeqGroup annGroup) {
 		if (annotate) {
 			if (create_container_annot) {
 				createContainerAnnot(str2types, seq, type, sym, is_psl3, is_link_psl);
@@ -398,7 +398,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private static void annotateTarget(
-			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> str2types, MutableAnnotatedBioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, AnnotatedSeqGroup annGroup) {
+			boolean annotate, boolean create_container_annot, boolean is_link_psl, Map<BioSeq, Map<String, SimpleSymWithProps>> str2types, BioSeq seq, String type, UcscPslSym sym, boolean is_psl3, boolean in_bottom_of_link_psl, AnnotatedSeqGroup annGroup) {
 		if (annotate) {
 			// force annotation of target if query and target are shared and file is ".link.psl" format
 			if (create_container_annot) {
@@ -413,7 +413,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 	private static void createContainerAnnot(
-			Map<MutableAnnotatedBioSeq, Map<String, SimpleSymWithProps>> seq2types, MutableAnnotatedBioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
+			Map<BioSeq, Map<String, SimpleSymWithProps>> seq2types, BioSeq seq, String type, SeqSymmetry sym, boolean is_psl3, boolean is_link) {
 		//    If using a container sym, need to first hash (seq2types) from
 		//    seq to another hash (type2csym) of types to container sym
 		//    System.out.println("in createContainerAnnot, type: " + type);
@@ -441,7 +441,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		parent_sym.addChild(sym);
 	}
 
-	private static List<Object> calcChildren(MutableAnnotatedBioSeq qseq, MutableAnnotatedBioSeq tseq, boolean qforward, boolean tforward,
+	private static List<Object> calcChildren(BioSeq qseq, BioSeq tseq, boolean qforward, boolean tforward,
 			String[] blocksize_strings,
 			String[] qstart_strings, String[] tstart_strings) {
 		int childCount = blocksize_strings.length;
@@ -513,7 +513,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "PSL" format
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		return writeAnnotations(syms, seq, false, type, null, outstream);
 	}
@@ -521,7 +521,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	/**
 	 *  This version of the method is able to write out track lines
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 			boolean writeTrackLines, String type,
 			String description, OutputStream outstream) {
 
@@ -540,7 +540,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
 					}
 					else {
-						MutableAnnotatedBioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
+						BioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}
@@ -569,11 +569,11 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 
-	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+	public Comparator getComparator(BioSeq seq) {
 		return comp;
 	}
 
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, BioSeq seq, OutputStream os) throws IOException {
 		DataOutputStream dos = null;
 		if (os instanceof DataOutputStream) {
 			dos = (DataOutputStream) os;
@@ -583,11 +583,11 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		((UcscPslSym) sym).outputPslFormat(dos);
 	}
 
-	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMin(SeqSymmetry sym, BioSeq seq) {
 		return ((UcscPslSym) sym).getTargetMin();
 	}
 
-	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMax(SeqSymmetry sym, BioSeq seq) {
 		return ((UcscPslSym) sym).getTargetMax();
 	}
 

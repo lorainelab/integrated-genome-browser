@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 
 public final class CompositeGraphSym extends GraphSym {
 
-	public CompositeGraphSym(String id, MutableAnnotatedBioSeq seq) {
+	public CompositeGraphSym(String id, BioSeq seq) {
 		super(null, null, id, seq);
 	}
 

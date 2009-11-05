@@ -13,7 +13,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -716,7 +716,7 @@ public final class GraphScoreThreshSetter extends JPanel
 
 	private void pickleThreshold(GraphGlyph sgg) {
 		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-		MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+		BioSeq aseq = gmodel.getSelectedSeq();
 
 		nformat2.setPositivePrefix("+");
 

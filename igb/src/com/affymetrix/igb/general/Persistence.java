@@ -1,7 +1,7 @@
 package com.affymetrix.igb.general;
 
 import java.util.prefs.Preferences;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -129,7 +129,7 @@ public final class Persistence {
 	public static void saveSeqVisibleSpan(SeqMapView gviewer) {
 		SeqSpan visible_span = gviewer.getVisibleSpan();
 		if (visible_span != null) {
-			MutableAnnotatedBioSeq seq = visible_span.getBioSeq();
+			BioSeq seq = visible_span.getBioSeq();
 			if (seq instanceof BioSeq) {
 				AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
 				Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
@@ -147,7 +147,7 @@ public final class Persistence {
 	 *  Assumes that correct seq has already been set in gviewer (usually due to gviewr bein a SeqSelectionListener on gmodel)
 	 */
 	public static SeqSpan restoreSeqVisibleSpan(SeqMapView gviewer) {
-		MutableAnnotatedBioSeq seq = gviewer.getViewSeq();
+		BioSeq seq = gviewer.getViewSeq();
 		if (!(seq instanceof BioSeq)) {
 			return null;
 		}

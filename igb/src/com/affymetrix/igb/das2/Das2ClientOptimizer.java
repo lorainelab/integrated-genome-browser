@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -87,7 +87,7 @@ public final class Das2ClientOptimizer {
         // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
         SeqSymmetry overlap_sym = request_sym.getOverlapSym();
         SeqSpan overlap_span = request_sym.getOverlapSpan();
-        MutableAnnotatedBioSeq seq = overlap_span.getBioSeq();
+        BioSeq seq = overlap_span.getBioSeq();
         Das2Region region = request_sym.getRegion();
         Das2Type type = request_sym.getDas2Type();
         String typeid = type.getID();
@@ -107,7 +107,7 @@ public final class Das2ClientOptimizer {
     }
 
 
-    private static void OptimizeDas2Query(MutableAnnotatedBioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
+    private static void OptimizeDas2Query(BioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
         BioSeq aseq = (BioSeq) seq;
         MutableSeqSymmetry cont_sym;
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
@@ -263,7 +263,7 @@ public final class Das2ClientOptimizer {
             request_sym.setFormat(format);
         }
 
-        MutableAnnotatedBioSeq aseq = region.getAnnotatedSeq();
+        BioSeq aseq = region.getAnnotatedSeq();
         Das2VersionedSource versioned_source = region.getVersionedSource();
         AnnotatedSeqGroup seq_group = versioned_source.getGenome();
 
@@ -337,7 +337,7 @@ public final class Das2ClientOptimizer {
     }
 
     private static boolean LoadFeaturesFromQuery(
-            SeqSpan overlap_span, MutableAnnotatedBioSeq aseq, String feature_query, String format, Das2RequestLog request_log,
+            SeqSpan overlap_span, BioSeq aseq, String feature_query, String format, Das2RequestLog request_log,
             AnnotatedSeqGroup seq_group, Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym)
             throws SAXException, IOException, IOException {
 
@@ -510,7 +510,7 @@ public final class Das2ClientOptimizer {
         System.out.println("PARSING " + content_subtype.toUpperCase() + " FORMAT FOR DAS2 FEATURE RESPONSE");
     }
 
-     private static void addSymmetriesAndAnnotations(List feats, Das2FeatureRequestSym request_sym, Das2RequestLog request_log, MutableAnnotatedBioSeq aseq) {
+     private static void addSymmetriesAndAnnotations(List feats, Das2FeatureRequestSym request_sym, Das2RequestLog request_log, BioSeq aseq) {
         boolean no_graphs = true;
         if (feats == null || feats.size() == 0) {
             // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
@@ -539,7 +539,7 @@ public final class Das2ClientOptimizer {
         // on one thread when might be rendering based on aseq in event thread...
         // or maybe should just make addAnnotation() a synchronized method
         if (no_graphs) {
-            // if graphs, then adding to annotation MutableAnnotatedBioSeq is already handled by addChildGraph() method
+            // if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
             synchronized (aseq) {
                 aseq.addAnnotation(request_sym);
             }

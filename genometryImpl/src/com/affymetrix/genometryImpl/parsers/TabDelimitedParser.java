@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
@@ -177,7 +177,7 @@ public class TabDelimitedParser {
 				}
 
 				String chromName = cols[chromosome_col];
-				MutableAnnotatedBioSeq seq = seq_group.getSeq(chromName);
+				BioSeq seq = seq_group.getSeq(chromName);
 				if (seq == null) {
 					seq = seq_group.addSeq(chromName, 0);
 				}
@@ -259,7 +259,7 @@ AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
 tester.parse(fis, file.getName(), seq_group);
 
 for (int s=0; s<seq_group.getSeqCount(); s++) {
-MutableAnnotatedBioSeq aseq = seq_group.getSeq(s);
+BioSeq aseq = seq_group.getSeq(s);
 for (int i=0; i<aseq.getAnnotationCount(); i++) {
 SeqSymmetry annot = aseq.getAnnotation(i);
 SeqUtils.printSymmetry(annot, "  ", true);

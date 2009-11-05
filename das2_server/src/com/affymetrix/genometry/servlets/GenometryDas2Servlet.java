@@ -19,7 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
@@ -1043,7 +1043,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		SeqSpan inside_span = null;
 
 		List<SeqSymmetry> result = null;
-		MutableAnnotatedBioSeq outseq = null;
+		BioSeq outseq = null;
 		Class writerclass = null;
 
 		if (query == null || query.length() == 0) {
@@ -1343,7 +1343,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			String output_format,
 			HttpServletResponse response,
 			List<SeqSymmetry> result,
-			MutableAnnotatedBioSeq outseq,
+			BioSeq outseq,
 			String query_type,
 			String xbase) {
 		try {
@@ -1377,7 +1377,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return query_type;
 	}
 
-	private static final boolean outputAnnotations(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	private static final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
 			String annot_type,
 			String xbase, HttpServletResponse response,
 			Class writerclass,

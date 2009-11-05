@@ -23,7 +23,7 @@ public final class GraphIntervalSym extends GraphSym {
 	private int wBuf[] = new int[BUFSIZE];
 	private File bufFile = null;
 
-	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, MutableAnnotatedBioSeq seq) {
+	public GraphIntervalSym(int[] x, int[] width, float[] y, String id, BioSeq seq) {
 		super(x,y,id,seq);
 
 		if (x.length != y.length || x.length != width.length) {

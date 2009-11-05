@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -58,7 +58,7 @@ public final class DasFeatureLoader {
 	 */
 	public static boolean loadFeatures(GenericFeature gFeature, SeqSpan query_span) {
 		String das_root = gFeature.gVersion.gServer.URL;
-		MutableAnnotatedBioSeq current_seq = gviewer.getViewSeq();
+		BioSeq current_seq = gviewer.getViewSeq();
 		List<URL> urls = new ArrayList<URL>();
 
 		try {

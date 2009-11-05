@@ -1,6 +1,6 @@
 package com.affymetrix.igb.glyph;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -67,7 +67,7 @@ public final class DeletionGlyph extends SolidGlyph {
    * @param deletion_height y coord height for deletion glyph
    */
   public static void handleEdgeRendering(java.util.List<SeqSymmetry> outside_children, GlyphI pglyph,
-					 MutableAnnotatedBioSeq annotseq, MutableAnnotatedBioSeq coordseq, 
+					 BioSeq annotseq, BioSeq coordseq, 
 					 double deletion_y, double deletion_height)  {
       /** GAH 2009-02-23 BUG FIX for issues 2390626, 1832822
 	 *  found splice view deletion rendering bug when annotation is on negative strand

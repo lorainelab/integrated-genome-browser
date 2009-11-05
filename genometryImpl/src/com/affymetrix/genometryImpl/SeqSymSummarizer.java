@@ -38,7 +38,7 @@ public final class SeqSymSummarizer {
 	 *  @param seq the sequence you want the summary computed for
 	 *  @param binary_depth passed through to {@link #getSpanSummary(List, boolean, String)}
 	 */
-	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, boolean binary_depth, String id)  {
+	public static GraphIntervalSym getSymmetrySummary(List<SeqSymmetry> syms, BioSeq seq, boolean binary_depth, String id)  {
 		int symcount = syms.size();
 		List<SeqSpan> leaf_spans = new ArrayList<SeqSpan>(symcount);
 		for (SeqSymmetry sym : syms) {
@@ -62,7 +62,7 @@ public final class SeqSymSummarizer {
 	 *                  1 for covered, 0 for not covered
 	 */
 	private static GraphIntervalSym getSpanSummary(List<SeqSpan> spans, boolean binary_depth, String gid) {
-		MutableAnnotatedBioSeq seq = spans.get(0).getBioSeq();
+		BioSeq seq = spans.get(0).getBioSeq();
 		int span_num = spans.size();
 		int[] starts = new int[span_num];
 		int[] stops = new int[span_num];
@@ -181,7 +181,7 @@ public final class SeqSymSummarizer {
 
 	private static List<SeqSpan> projectLandscapeSpans(GraphSym landscape) {
 		List<SeqSpan> spanlist = new ArrayList<SeqSpan>();
-		MutableAnnotatedBioSeq seq = landscape.getGraphSeq();
+		BioSeq seq = landscape.getGraphSeq();
 		int num_points = landscape.getPointCount();
 
 		int current_region_start = 0;
@@ -213,7 +213,7 @@ public final class SeqSymSummarizer {
 
 
 	private static SymWithProps projectLandscape(GraphSym landscape) {
-		MutableAnnotatedBioSeq seq = landscape.getGraphSeq();
+		BioSeq seq = landscape.getGraphSeq();
 		SimpleSymWithProps psym = new SimpleSymWithProps();
 		int num_points = landscape.getPointCount();
 
@@ -261,7 +261,7 @@ public final class SeqSymSummarizer {
 	 *  Finds the Union of a List of SeqSymmetries.
 	 *  This will merge not only overlapping syms but also abutting syms (where symA.getMax() == symB.getMin())
 	 */
-	public static SeqSymmetry getUnion(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)  {
+	public static SeqSymmetry getUnion(List<SeqSymmetry> syms, BioSeq seq)  {
 		//    MutableSeqSymmetry psym = new SimpleSymWithProps();
 		// first get the landscape as a GraphSym
 		GraphSym landscape = getSymmetrySummary(syms, seq, true, "");
@@ -278,7 +278,7 @@ public final class SeqSymSummarizer {
 	/**
 	 *  Finds the Intersection of a List of SeqSymmetries.
 	 */
-	public static SeqSymmetry getIntersection(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, MutableAnnotatedBioSeq seq)  {
+	public static SeqSymmetry getIntersection(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq)  {
 		MutableSeqSymmetry psym = new SimpleSymWithProps();
 		SeqSymmetry unionA = getUnion(symsA, seq);
 		SeqSymmetry unionB = getUnion(symsB, seq);
@@ -346,14 +346,14 @@ public final class SeqSymSummarizer {
 		 */
 	}
 
-	public static SeqSymmetry getXor(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, MutableAnnotatedBioSeq seq) {
+	public static SeqSymmetry getXor(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq) {
 		MutableSeqSymmetry psym = new SimpleSymWithProps();
 		SeqSymmetry unionA = getUnion(symsA, seq);
 		SeqSymmetry unionB = getUnion(symsB, seq);
 		List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
 		symsAB.add(unionA);
 		symsAB.add(unionB);
-		GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
+		GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, "");
 		// combo_graph should now be landscape where:
 		//    no coverage ==> depth = 0;
 		//    A not B     ==> depth = 1;
@@ -408,7 +408,7 @@ public final class SeqSymSummarizer {
 	 *  creates a SeqSymmetry that contains children for regions covered by syms in symsA that
 	 *     are not covered by syms in symsB.
 	 */
-	public static SeqSymmetry getExclusive(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, MutableAnnotatedBioSeq seq) {
+	public static SeqSymmetry getExclusive(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq) {
 		SeqSymmetry xorSym = getXor(symsA, symsB, seq);
 		//  if no spans for xor, then won't be any for one-sided xor either, so return null;
 		if (xorSym == null)  { return null; }
@@ -418,11 +418,11 @@ public final class SeqSymSummarizer {
 		return a_not_b;
 	}
 
-	public static SeqSymmetry getNot(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) {
+	public static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq) {
 		return getNot(syms, seq, true);
 	}
 
-	private static SeqSymmetry getNot(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, boolean include_ends) {
+	private static SeqSymmetry getNot(List<SeqSymmetry> syms, BioSeq seq, boolean include_ends) {
 		SeqSymmetry union = getUnion(syms, seq);
 		int spanCount = union.getChildCount();
 

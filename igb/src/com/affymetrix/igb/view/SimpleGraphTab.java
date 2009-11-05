@@ -15,7 +15,7 @@ package com.affymetrix.igb.view;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
@@ -54,7 +54,7 @@ public final class SimpleGraphTab extends JPanel
 				implements SeqSelectionListener, SymSelectionListener {
 
 	SeqMapView gviewer = null;
-	MutableAnnotatedBioSeq current_seq;
+	BioSeq current_seq;
 	SingletonGenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	GraphScoreThreshSetter score_thresh_adjuster;
@@ -827,7 +827,7 @@ public final class SimpleGraphTab extends JPanel
 				GraphSym newsym = GraphGlyphUtils.graphArithmetic(graphA, graphB, operation);
 
 				if (newsym != null) {
-					MutableAnnotatedBioSeq aseq = newsym.getGraphSeq();
+					BioSeq aseq = newsym.getGraphSeq();
 					aseq.addAnnotation(newsym);
 					gviewer.setAnnotatedSeq(aseq, true, true);
 					//GlyphI newglyph = gviewer.getSeqMap().getItem(newsym);

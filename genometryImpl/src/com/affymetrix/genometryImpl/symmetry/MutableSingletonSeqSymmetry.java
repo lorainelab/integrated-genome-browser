@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.symmetry;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
@@ -32,11 +32,11 @@ public class MutableSingletonSeqSymmetry
 		super(span);
 	}
 
-	public MutableSingletonSeqSymmetry(int start, int end, MutableAnnotatedBioSeq seq) {
+	public MutableSingletonSeqSymmetry(int start, int end, BioSeq seq) {
 		super(start, end, seq);
 	}
 
-	public MutableSingletonSeqSymmetry(CharSequence id, int start, int end, MutableAnnotatedBioSeq seq) {
+	public MutableSingletonSeqSymmetry(CharSequence id, int start, int end, BioSeq seq) {
 		this(start, end, seq);
 		this.id = id;
 	}
@@ -45,7 +45,7 @@ public class MutableSingletonSeqSymmetry
 	 *  Constructor.
 	 *  @param parent  This parameter is ignored.
 	 */
-	/*public MutableSingletonSeqSymmetry(SeqSymmetry parent, int start, int end, MutableAnnotatedBioSeq seq) {
+	/*public MutableSingletonSeqSymmetry(SeqSymmetry parent, int start, int end, BioSeq seq) {
 		super(start, end, seq);
 		// ignoring parent
 	}*/
@@ -54,7 +54,7 @@ public class MutableSingletonSeqSymmetry
 	 *  Constructor.
 	 *  @param parent  This parameter is ignored.
 	 */
-	/*public MutableSingletonSeqSymmetry(CharSequence id, SeqSymmetry parent, int start, int end, MutableAnnotatedBioSeq seq) {
+	/*public MutableSingletonSeqSymmetry(CharSequence id, SeqSymmetry parent, int start, int end, BioSeq seq) {
 		this(parent, start, end, seq);
 		this.id = id;
 	}*/

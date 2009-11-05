@@ -41,7 +41,7 @@ public final class FastaParser {
 	 * Parses an input stream which can contain one or more sequences in FASTA format.
 	 * Will merge the sequences with the given group.
 	 * (When necessary, new sequences will be added to the existing group; otherwise
-	 * sequence data will be stored in the existing, synonymous MutableAnnotatedBioSeq objects.)
+	 * sequence data will be stored in the existing, synonymous BioSeq objects.)
 	 * Returns the List of sequences that were read from the file, which will be
 	 * a subset of the sequences in the group.
 	 */

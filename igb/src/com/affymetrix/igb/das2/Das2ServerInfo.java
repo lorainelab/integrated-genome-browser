@@ -20,7 +20,7 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
-//import com.affymetrix.genometry.MutableAnnotatedBioSeq;
+//import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;

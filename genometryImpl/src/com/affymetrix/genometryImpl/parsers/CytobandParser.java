@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -78,7 +78,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		String line;
 		Thread thread = Thread.currentThread();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(dis));
-		Map<MutableAnnotatedBioSeq,SeqSymmetry> seq2csym = new HashMap<MutableAnnotatedBioSeq,SeqSymmetry>();
+		Map<BioSeq,SeqSymmetry> seq2csym = new HashMap<BioSeq,SeqSymmetry>();
 		while ((line = reader.readLine()) != null && (! thread.isInterrupted())) {
 			if (line.startsWith("#") || "".equals(line)) {  // skip comment lines
 				continue;
@@ -97,7 +97,7 @@ public final class CytobandParser implements AnnotationWriter  {
 				}
 
 				seq_name = fields[0]; // seq id field
-				MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+				BioSeq seq = seq_group.getSeq(seq_name);
 				if (seq == null) {
 					//System.out.println("seq not recognized, creating new seq: " + seq_name);
 					seq = seq_group.addSeq(seq_name, 0);
@@ -177,7 +177,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		}
 	}
 
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		System.out.println("in CytobandParser.writeAnnotations()");
 		boolean success = true;
@@ -197,7 +197,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		return success;
 	}
 
-	public static void writeCytobandFormat(Writer out, SeqSymmetry sym, MutableAnnotatedBioSeq seq)
+	public static void writeCytobandFormat(Writer out, SeqSymmetry sym, BioSeq seq)
 		throws IOException  {
 		if (sym instanceof CytobandSym) {
 			CytobandSym cytosym = (CytobandSym)sym;
@@ -226,7 +226,7 @@ public final class CytobandParser implements AnnotationWriter  {
 	public final class CytobandSym extends SingletonSymWithProps implements Scored, TypedSym {
 		String band;
 
-		public CytobandSym(int start, int end, MutableAnnotatedBioSeq seq, String name, String band) {
+		public CytobandSym(int start, int end, BioSeq seq, String name, String band) {
 			super(start, end, seq);
 			this.band = band;
 			this.id = name;

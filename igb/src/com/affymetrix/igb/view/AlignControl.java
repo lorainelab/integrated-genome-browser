@@ -15,7 +15,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
@@ -87,7 +87,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
     System.out.println("trying to send control request");
     SeqSymmetry annot_sym = gviewer.getSelectedSymmetry();
     //    SeqUtils.printSymmetry(annot_sym);
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
 
     // trying to get "other" span in symmetry (the one that doesn't map to aseq)
     SeqSpan curspan = annot_sym.getSpan(aseq);
@@ -100,7 +100,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
     System.out.println("Other span: " + other_span);
 
     SeqUtils.printSpan(other_span);
-    MutableAnnotatedBioSeq other_seq = other_span.getBioSeq();
+    BioSeq other_seq = other_span.getBioSeq();
     String seqid = other_seq.getID();
     String version = "unknown";
     /*
@@ -171,7 +171,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
         int spancount = annot_sym.getSpanCount();
         for (int i = 0; i < spancount; i++) {
             SeqSpan ospan = annot_sym.getSpan(i);
-            MutableAnnotatedBioSeq oseq = ospan.getBioSeq();
+            BioSeq oseq = ospan.getBioSeq();
             if (!SeqUtils.spansEqual(curspan, ospan)) {
                 if (oseq.getID().startsWith("chr")) {
                     // found a other_span != curspan and likely on a chromosome, so use it
@@ -210,7 +210,7 @@ public final class AlignControl implements ActionListener, ContextualPopupListen
       int spancount = selected_sym.getSpanCount();
       int chrom_count = 0;
       for (int i=0; i<spancount; i++) {
-	MutableAnnotatedBioSeq bseq = selected_sym.getSpan(i).getBioSeq();
+	BioSeq bseq = selected_sym.getSpan(i).getBioSeq();
 	if (bseq.getID().startsWith("chr")) {
 	  chrom_count++;
 	}

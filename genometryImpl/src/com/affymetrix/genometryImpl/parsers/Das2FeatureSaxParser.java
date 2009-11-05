@@ -18,7 +18,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -562,9 +562,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 			for (int i = 0; i < loc_count; i++) {
 				SeqSpan span = feat_locs.get(i);
-				MutableAnnotatedBioSeq seq = span.getBioSeq();
+				BioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
-				MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
+				BioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
 				if ((aseq != null) && (seq == aseq)) {
 					result_syms.add(featsym);
 					if (add_to_sym_hash) {
@@ -652,7 +652,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "DASGFF" XML format.
 	 */
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) {
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {
 		// Das2FeatureSaxParser.writeAnnotations() does not use seq arg, since now writing out all spans
 		//  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
@@ -943,7 +943,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				forward = false;
 			}
 		}
-		MutableAnnotatedBioSeq seq;
+		BioSeq seq;
 		// need to revisit what to do if group == null
 		if (group == null) {
 			seq = new BioSeq(seqid, "", max);

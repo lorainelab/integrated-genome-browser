@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.parsers.*;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
@@ -121,7 +121,7 @@ public final class BarParser implements AnnotationWriter  {
 		tim.start();
 		//boolean USE_RANDOM_ACCESS = false;
 		GraphSym graf = null;
-		MutableAnnotatedBioSeq aseq = span.getBioSeq();
+		BioSeq aseq = span.getBioSeq();
 		String seq_name = aseq.getID();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
@@ -246,7 +246,7 @@ public final class BarParser implements AnnotationWriter  {
 
 			// making GraphSym because bar writer takes GraphSym list as argument
 			//      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-			//      MutableAnnotatedBioSeq gseq = gmodel.getSelectedSeq();
+			//      BioSeq gseq = gmodel.getSelectedSeq();
 			//      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
 			//      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
 
@@ -480,7 +480,7 @@ CHUNK_LOOP:
 				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
 				int total_points = seq_header.data_point_count;
 				Map<String,String> seq_tagvals = seq_header.tagvals;
-				//      MutableAnnotatedBioSeq seq = seq_header.aseq;
+				//      BioSeq seq = seq_header.aseq;
 				BioSeq seq = (BioSeq)seq_header.aseq;
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
@@ -740,7 +740,7 @@ CHUNK_LOOP:
 							", data points = " + total_points);
 		}
 		//      System.out.println("total data points for graph " + k + ": " + total_points);
-		MutableAnnotatedBioSeq seq = null;
+		BioSeq seq = null;
 
 		AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
 		seq = determineSeq(seq_group, seqname, seq, orig_seqname, seqversion, groupname, bar2);
@@ -749,7 +749,7 @@ CHUNK_LOOP:
 	}
 
 
-	private static MutableAnnotatedBioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, MutableAnnotatedBioSeq seq, String orig_seqname, String seqversion, String groupname, boolean bar2) {
+	private static BioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, BioSeq seq, String orig_seqname, String seqversion, String groupname, boolean bar2) {
 		// trying standard AnnotatedSeqGroup seq id resolution first
 		seq = seq_group.getSeq(seqname);
 		if (seq == null) {
@@ -853,9 +853,9 @@ CHUNK_LOOP:
 
 	/**
 	 * Writes bar format.
-	 * Assumes syms size is one and single sym is a GraphSym with same MutableAnnotatedBioSeq as seq
+	 * Assumes syms size is one and single sym is a GraphSym with same BioSeq as seq
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream ostr) {
 		boolean success = false;
 		BufferedOutputStream bos = new BufferedOutputStream(ostr);
@@ -929,9 +929,9 @@ CHUNK_LOOP:
 
 	public String getMimeType() { return "binary/bar"; }
 
-	public static void checkSeqLength(MutableAnnotatedBioSeq seq, int[] xcoords) {
-		if (seq instanceof MutableAnnotatedBioSeq) {
-			MutableAnnotatedBioSeq aseq = seq;
+	public static void checkSeqLength(BioSeq seq, int[] xcoords) {
+		if (seq instanceof BioSeq) {
+			BioSeq aseq = seq;
 			int xcount = xcoords.length;
 			if (xcount > 0 && (xcoords[xcount-1] > aseq.getLength())) {
 				aseq.setLength(xcoords[xcount-1]);
@@ -951,11 +951,11 @@ CHUNK_LOOP:
 
 }
 class BarSeqHeader {
-	MutableAnnotatedBioSeq aseq;
+	BioSeq aseq;
 	int data_point_count;
 	Map<String,String> tagvals;
 
-	public BarSeqHeader(MutableAnnotatedBioSeq seq, int data_points, Map<String,String> tagvals)  {
+	public BarSeqHeader(BioSeq seq, int data_points, Map<String,String> tagvals)  {
 		this.aseq = seq;
 		this.data_point_count = data_points;
 		this.tagvals = tagvals;

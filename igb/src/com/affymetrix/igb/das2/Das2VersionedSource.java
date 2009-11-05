@@ -20,7 +20,7 @@ import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -141,9 +141,9 @@ public final class Das2VersionedSource {
      *  assumes there is only one region for each seq
      *    may want to change this to return a list of regions instead
      **/
-    public Das2Region getSegment(MutableAnnotatedBioSeq seq) {
+    public Das2Region getSegment(BioSeq seq) {
 		for (Das2Region region : getSegments().values()) {
-            MutableAnnotatedBioSeq region_seq = region.getAnnotatedSeq();
+            BioSeq region_seq = region.getAnnotatedSeq();
             if (region_seq == seq) {
                 return region;
             }

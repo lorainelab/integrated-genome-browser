@@ -28,7 +28,7 @@ public final class Das2SeqGroup extends AnnotatedSeqGroup {
   
 
   /**
-   *  Returns a List of MutableAnnotatedBioSeq objects.
+   *  Returns a List of BioSeq objects.
    *  Will not return null.  The list is in the same order as in
    *  {@link #getSeq(int)}.
    */

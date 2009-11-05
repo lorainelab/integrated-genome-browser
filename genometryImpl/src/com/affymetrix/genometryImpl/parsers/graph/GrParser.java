@@ -12,7 +12,7 @@
  */
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.FloatList;
@@ -48,10 +48,10 @@ public final class GrParser {
 		}
 	}
 
-	public static GraphSym parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name) throws IOException {
+	public static GraphSym parse(InputStream istr, BioSeq aseq, String name) throws IOException {
 		return parse(istr, aseq, name, true);
 	}
-	public static GraphSym parse(InputStream istr, MutableAnnotatedBioSeq aseq, String name, boolean ensure_unique_id)
+	public static GraphSym parse(InputStream istr, BioSeq aseq, String name, boolean ensure_unique_id)
 		throws IOException {
 		GraphSym graf = null;
 		String line = null;

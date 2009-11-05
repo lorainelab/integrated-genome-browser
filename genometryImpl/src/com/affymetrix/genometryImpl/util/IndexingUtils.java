@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -258,7 +258,7 @@ public class IndexingUtils {
 	 */
 	public static void writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq,
+			BioSeq seq,
 			AnnotatedSeqGroup group,
 			IndexedSyms iSyms,
 			String indexesFileName) throws IOException {
@@ -280,7 +280,7 @@ public class IndexingUtils {
 	private static void createIndexArray(
 			IndexedSyms iSyms,
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq,
+			BioSeq seq,
 			AnnotatedSeqGroup group) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int index = 0;
@@ -321,7 +321,7 @@ public class IndexingUtils {
 			IndexedSyms iSyms,
 			String indexesFileName,
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq) throws IOException {
+			BioSeq seq) throws IOException {
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
@@ -355,7 +355,7 @@ public class IndexingUtils {
 	 * @throws FileNotFoundException
 	 */
 	private static void writeAdditionalLinkPSLIndex(
-			String indexesFileName, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String typeName) throws FileNotFoundException {
+			String indexesFileName, List<SeqSymmetry> syms, BioSeq seq, String typeName) throws FileNotFoundException {
 		if (DEBUG) {
 			System.out.println("in IndexingUtils.writeAdditionalLinkPSLIndex()");
 		}

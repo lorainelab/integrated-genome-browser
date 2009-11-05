@@ -39,7 +39,7 @@ public class AnnotatedSeqGroup {
 	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
-	final private TreeMap<String,ArrayList<String>> symid2id_hash;	// main sym id -> list of other names
+	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
 	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
 	/**
 	 * Private copy of the synonym lookup table.
@@ -54,7 +54,7 @@ public class AnnotatedSeqGroup {
 		id2seq_dirty_bit = false;
 		seqlist = new ArrayList<BioSeq>();
 		id2sym_hash = new TreeMap<String,Set<SeqSymmetry>>();
-		symid2id_hash = new TreeMap<String,ArrayList<String>>();
+		symid2id_hash = new TreeMap<String,Set<String>>();
 	}
 
 	final public String getID() {
@@ -338,34 +338,7 @@ public class AnnotatedSeqGroup {
 		this.putSeqInList(id.toLowerCase(), sym);
 	}
 
-	/** Returns a set of the String IDs alphabetically between start and end (including start, excluding end)
-	 *  that have been added to the ID index using
-	 *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
-	 *  Each of the keys can be used as a parameter for the findSyms(String) method.
-	 *  @param start  A String indicating the lowest index sym; null or empty start
-	 *   string will get all index strings up to (but excluding) the given end sym.
-	 *  @param end    A String indicating the highest index sym; null or empty end
-	 *   string will get all index strings above (and including) the given start sym.
-	 *  PRECONDITION: start !=null.  end != null.
-	 */
-	final public Set<String> getSymmetryIDs(String start, String end) {
-		if (start.length() == 0 && end.length() == 0) {
-			return id2sym_hash.keySet();
-		}
-
-		start = start.toLowerCase();
-		end = end.toLowerCase();
-
-		if (start.length() == 0) {
-			return id2sym_hash.headMap(end).keySet();   // exclusive of end
-		} else if (end.length() == 0) {
-			return id2sym_hash.tailMap(start).keySet(); // inclusive of start
-		} else {
-			return id2sym_hash.subMap(start, end).keySet(); // inclusive of start, exclusive of end
-		}
-	}
-
-	final public List<String> getSymmetryIDs(String symID) {
+	final public Set<String> getSymmetryIDs(String symID) {
 		return this.symid2id_hash.get(symID);
 	}
 
@@ -426,14 +399,12 @@ public class AnnotatedSeqGroup {
 		if (id.equals(lcSymID)) {
 			return;
 		}
-		ArrayList<String> id_list = symid2id_hash.get(lcSymID);
+		Set<String> id_list = symid2id_hash.get(lcSymID);
 		if (id_list == null) {
-			id_list = new ArrayList<String>();
-		}
-		if (!id_list.contains(id)) {
-			id_list.add(id);
+			id_list = new HashSet<String>();
 			symid2id_hash.put(lcSymID, id_list);
 		}
+		id_list.add(id);
 	}
 
 	/**

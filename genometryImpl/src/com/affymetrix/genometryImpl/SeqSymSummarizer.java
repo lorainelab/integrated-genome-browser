@@ -175,7 +175,7 @@ public final class SeqSymSummarizer {
 	 *  Assumes all spans refer to same BioSeq
 	 */
 	public static List<SeqSpan> getMergedSpans(List<SeqSpan> spans) {
-		GraphSym landscape = getSpanSummary(spans, true, null);
+		GraphSym landscape = getSpanSummary(spans, true, "");
 		return projectLandscapeSpans(landscape);
 	}
 
@@ -285,7 +285,7 @@ public final class SeqSymSummarizer {
 		List<SeqSymmetry> symsAB = new ArrayList<SeqSymmetry>();
 		symsAB.add(unionA);
 		symsAB.add(unionB);
-		GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, null);
+		GraphSym combo_graph = getSymmetrySummary(symsAB, seq, false, "");
 		// combo_graph should now be landscape where:
 		//    no coverage ==> depth = 0;
 		//    A not B     ==> depth = 1;
@@ -333,17 +333,6 @@ public final class SeqSymSummarizer {
 			psym.addSpan(pspan);
 		}
 		return psym;
-
-		//Where does this comment belong?
-		/*
-		 *  Alternative way to get to combo_graph (should be more efficient, as it avoid
-		 *     intermediary creation of symsA union syms, and symsB union syms)
-		 *  GraphSym scapeA = getSymmetrySummary(symsA, seq, true);
-		 *  GraphSym scapeB = getSymmetrySummary(symsB, seq, true);
-		 *  List scapes = new ArrayList();
-		 *  scapes.add(scapeA); scapes.add(scapeB);
-		 *  GraphSym combo_graph = landscapeSummer(scapes, seq);
-		 */
 	}
 
 	public static SeqSymmetry getXor(List<SeqSymmetry> symsA, List<SeqSymmetry> symsB, BioSeq seq) {

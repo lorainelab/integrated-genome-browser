@@ -84,7 +84,7 @@ public final class Das2Region {
         if (span == null) {
             return null;
         }
-        BioSeq spanseq = (BioSeq)span.getBioSeq();
+        BioSeq spanseq = span.getBioSeq();
         if (this.getAnnotatedSeq() == spanseq) {
             StringBuffer buf = new StringBuffer(100);
             buf.append(this.getName());

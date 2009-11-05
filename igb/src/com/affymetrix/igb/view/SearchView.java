@@ -493,7 +493,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 					"Residues for " + this.sequence_CB.getSelectedItem().toString() + " not available.  Please load residues before searching.");
 			return;
 		}
-		regexTF((BioSeq) vseq);
+		regexTF(vseq);
 	}
 
 	private static GlyphI findSeqGlyph(TransformTierGlyph axis_tier) {

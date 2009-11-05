@@ -122,7 +122,6 @@ public final class BarParser implements AnnotationWriter  {
 		//boolean USE_RANDOM_ACCESS = false;
 		GraphSym graf = null;
 		BioSeq aseq = span.getBioSeq();
-		String seq_name = aseq.getID();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
 		if (DEBUG_SLICE)  { SingletonGenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base); }
@@ -134,14 +133,8 @@ public final class BarParser implements AnnotationWriter  {
 		//     across bar files that have the exact same base coords
 		int[] chunk_mins = (int[])coordset2seqs.get(file_name);
 
-		//    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
-		AnnotatedSeqGroup seq_group;
-		if (aseq instanceof BioSeq) {
-			seq_group = ((BioSeq)aseq).getSeqGroup();
-		}
-		else {
-			seq_group = gmodel.getSelectedSeqGroup();
-		}
+		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+		
 		if (DEBUG_SLICE) {
 			System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
 		}
@@ -480,8 +473,7 @@ CHUNK_LOOP:
 				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
 				int total_points = seq_header.data_point_count;
 				Map<String,String> seq_tagvals = seq_header.tagvals;
-				//      BioSeq seq = seq_header.aseq;
-				BioSeq seq = (BioSeq)seq_header.aseq;
+				BioSeq seq = seq_header.aseq;
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
 				}
@@ -495,8 +487,6 @@ CHUNK_LOOP:
 						float prev_max_xcoord = -1;
 						boolean sort_reported = false;
 						for (int i= 0; i<total_points; i++) {
-							//            xcoords[i] = (double)dis.readInt();
-							//            ycoords[i] = (double)dis.readFloat();
 							int col0 = dis.readInt();
 							float col1 = dis.readFloat();
 							if (col0 < prev_max_xcoord && (! sort_reported)) {
@@ -866,10 +856,8 @@ CHUNK_LOOP:
 		GraphSym graf = (GraphSym) iter.next();
 		// should check to make sure seq is same as graf.getGraphSeq()??
 
-		AnnotatedSeqGroup group = null;
-		if (seq instanceof BioSeq) {
-			group = ((BioSeq)seq).getSeqGroup();
-		}
+		AnnotatedSeqGroup group = seq.getSeqGroup();
+		
 		String groupid = group.getID();
 		String version = groupid;
 		String seqid = seq.getID();
@@ -930,7 +918,7 @@ CHUNK_LOOP:
 	public String getMimeType() { return "binary/bar"; }
 
 	public static void checkSeqLength(BioSeq seq, int[] xcoords) {
-		if (seq instanceof BioSeq) {
+		if (seq != null) {
 			BioSeq aseq = seq;
 			int xcount = xcoords.length;
 			if (xcount > 0 && (xcoords[xcount-1] > aseq.getLength())) {

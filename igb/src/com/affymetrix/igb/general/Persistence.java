@@ -33,8 +33,8 @@ public final class Persistence {
 	 */
 	public static void saveCurrentView(SeqMapView gviewer) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (gmodel.getSelectedSeq() instanceof BioSeq) {
-			BioSeq seq = (BioSeq) gmodel.getSelectedSeq();
+		if (gmodel.getSelectedSeq() != null) {
+			BioSeq seq = gmodel.getSelectedSeq();
 			saveGroupSelection(group);
 			saveSeqSelection(seq);
 			saveSeqVisibleSpan(gviewer);
@@ -130,8 +130,8 @@ public final class Persistence {
 		SeqSpan visible_span = gviewer.getVisibleSpan();
 		if (visible_span != null) {
 			BioSeq seq = visible_span.getBioSeq();
-			if (seq instanceof BioSeq) {
-				AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
+			if (seq != null) {
+				AnnotatedSeqGroup group = seq.getSeqGroup();
 				Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 				Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
 				Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
@@ -148,11 +148,11 @@ public final class Persistence {
 	 */
 	public static SeqSpan restoreSeqVisibleSpan(SeqMapView gviewer) {
 		BioSeq seq = gviewer.getViewSeq();
-		if (!(seq instanceof BioSeq)) {
+		if (seq == null) {
 			return null;
 		}
 
-		AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
+		AnnotatedSeqGroup group = seq.getSeqGroup();
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
 		Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");

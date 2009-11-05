@@ -470,16 +470,12 @@ public final class LoadFileAction {
 				return null;
 			}
 		} else if (lcname.endsWith(".bnib")) {
-			if (input_seq == null || input_seq instanceof BioSeq) {
-				BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
-				if (aseq != gmodel.getSelectedSeq()) {
-					//TODO: maybe set the current seq to this seq
-					Application.getSingleton().logWarning("This is not the currently-selected sequence.");
-				}
-				return aseq;
+			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+			if (aseq != gmodel.getSelectedSeq()) {
+				//TODO: maybe set the current seq to this seq
+				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
 			}
-			ErrorHandler.errorPanel(gviewerFrame, "ABORTED LOADING BNIB FILE", "The currently loaded sequence is not the correct type to merge with a bnib file", null);
-			return null;
+			return aseq;
 		}
 
 		ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + stream_name, null);

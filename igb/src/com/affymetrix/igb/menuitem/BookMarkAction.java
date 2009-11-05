@@ -39,6 +39,7 @@ import com.affymetrix.igb.parsers.*;
 
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
@@ -396,9 +397,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.addSpan(mark_span);
 
 		String version = "unknown";
-		if (aseq instanceof BioSeq) {
-			version = ((BioSeq) aseq).getVersion();
-		}
+		version = aseq.getVersion();
+		
 		String default_name =
 				version + ", " + aseq.getID() + ":" + mark_span.getMin() +
 				", " + mark_span.getMax();
@@ -408,7 +408,7 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 		mark_sym.setProperty("end", new Integer(mark_span.getMax()));
 
 		if (include_graphs) {
-			List graphs = gviewer.collectGraphs();
+			List<GlyphI> graphs = gviewer.collectGraphs();
 			BookmarkController.addGraphProperties(mark_sym, graphs);
 		}
 

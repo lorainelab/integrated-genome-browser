@@ -853,7 +853,7 @@ public final class GeneralLoadUtils {
 	 */
 	private boolean loadDAS2Annotations(
 					BioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, BioSeq visible_seq, SeqSpan overlap) {
-		if (!(selected_seq instanceof BioSeq)) {
+		if (selected_seq == null) {
 			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
 			return false;
 		}

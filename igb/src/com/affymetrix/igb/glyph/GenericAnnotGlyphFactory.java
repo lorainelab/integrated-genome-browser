@@ -107,7 +107,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       System.out.println("called GenericAnnotGlyphFactory.createGlyph(sym,smv), " +
 			 "annotated_seq = " + aseq.getID() + ", view_seq = " + vseq.getID() + ", " + (aseq == vseq));
       if (aseq != vseq) {
-	SeqSymmetry comp = ((BioSeq)vseq).getComposition();
+	SeqSymmetry comp = vseq.getComposition();
 	SeqUtils.printSymmetry(comp);
       }
     }

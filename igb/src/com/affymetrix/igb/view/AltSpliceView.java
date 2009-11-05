@@ -69,8 +69,8 @@ public class AltSpliceView extends JComponent
 				super.setAnnotatedSeq(seq, preserve_selection, false);
 			} else {
 				this.clear();
-				this.aseq = (BioSeq)seq;
-				this.viewseq = (BioSeq)seq;
+				this.aseq = seq;
+				this.viewseq = seq;
 			}
 		}
 

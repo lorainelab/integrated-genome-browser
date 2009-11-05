@@ -211,15 +211,9 @@ public final class RestrictionControlView extends JComponent
 			return;
 		}
 		int residue_offset = 0;
-		String residues = null;
-		BioSeq nibseq = null;
-		boolean use_nibseq = (vseq instanceof BioSeq);
-		if (use_nibseq) {
-			nibseq = (BioSeq) vseq;
-			residue_offset = ((BioSeq) vseq).getMin();
-		} else {
-			residues = vseq.getResidues();
-		}
+
+		residue_offset = vseq.getMin();
+
 
 		// find the sequence glyph on axis tier...
 		for (int i = 0; i < axis_tier.getChildCount(); i++) {
@@ -230,12 +224,8 @@ public final class RestrictionControlView extends JComponent
 		}
 
 		System.out.println("searching for occurrences of \"" + site + "\" in sequence");
-		int res_index;
-		if (use_nibseq) {
-			res_index = nibseq.indexOf(site, 0);
-		} else {
-			res_index = residues.indexOf(site, 0);
-		}
+		int res_index = vseq.indexOf(site, 0);
+
 		int seq_index;
 		int length = site.length();
 		int hit_count = 0;
@@ -253,11 +243,7 @@ public final class RestrictionControlView extends JComponent
 			}
 			glyphs.add(gl);
 			hit_count++;
-			if (use_nibseq) {
-				res_index = nibseq.indexOf(site, res_index + 1);
-			} else {
-				res_index = residues.indexOf(site, res_index + 1);
-			}
+			res_index = vseq.indexOf(site, res_index + 1);
 		}
 		//    hitCountL.setText("" + hit_count + " hits");
 		System.out.println(site + ", hits = " + hit_count);

@@ -1264,8 +1264,8 @@ public final class IGB extends Application
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();
-		if ((prev_selected_group != selected_group) && (prev_selected_seq instanceof BioSeq)) {
-			Persistence.saveSeqSelection((BioSeq) prev_selected_seq);
+		if ((prev_selected_group != selected_group) && (prev_selected_seq != null)) {
+			Persistence.saveSeqSelection(prev_selected_seq);
 			Persistence.saveSeqVisibleSpan(map_view);
 		}
 		prev_selected_group = selected_group;

@@ -751,8 +751,8 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		int start = qspan.getMin();
 		int stop = qspan.getMax();
 		String version = "unknown";
-		if (aseq instanceof BioSeq) {
-			version = ((BioSeq) aseq).getVersion();
+		if (aseq != null) {
+			version = aseq.getVersion();
 		}
 		pw.println("<?xml version=\"1.0\" standalone=\"no\"?>");
 		pw.println("<DASGFF>");

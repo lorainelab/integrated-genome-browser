@@ -399,11 +399,7 @@ public abstract class BookmarkController {
     BioSeq seq = span.getBioSeq();
     Map<String,String> props = new LinkedHashMap<String,String>();
     props.put("seqid", seq.getID());
-    if (seq instanceof BioSeq) {
-      props.put("version", ((BioSeq)seq).getVersion());
-    } else {
-      props.put("version", "unknown");
-    }
+	props.put("version", seq.getVersion());
     props.put("start", Integer.toString(span.getMin()));
     props.put("end", Integer.toString(span.getMax()));
     return props;

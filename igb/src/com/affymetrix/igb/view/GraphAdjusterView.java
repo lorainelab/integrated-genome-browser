@@ -49,7 +49,7 @@ public final class GraphAdjusterView {
 			float[] new_ycoords;
 
 			if (transformer instanceof IdentityTransform && graf instanceof GraphSym) {
-				new_ycoords = ((GraphSym) graf).getGraphYCoords();
+				new_ycoords = (graf).getGraphYCoords();
 			} else {
 				int pcount = graf.getPointCount();
 				new_ycoords = new float[pcount];
@@ -111,16 +111,10 @@ public final class GraphAdjusterView {
     //System.out.println("deleting graph: " + gsym);
 
     BioSeq aseq = gsym.getGraphSeq();
-    if (aseq instanceof BioSeq) {
+    if (aseq != null) {
       BioSeq mut = aseq;
       mut.removeAnnotation(gsym);
     }
-
-    /*
-    if (Application.ALLOW_DELETING_DATA && aseq instanceof SmartAnnotBioSeq) {
-      String method = SmartAnnotBioSeq.determineMethod(gsym);
-      gmodel.getSelectedSeqGroup().removeType(method);
-    }*/
 
     GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
     if (gl != null) {

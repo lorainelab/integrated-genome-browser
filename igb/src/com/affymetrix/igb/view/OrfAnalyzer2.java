@@ -167,12 +167,8 @@ public final class OrfAnalyzer2 extends JComponent
     //    span_end = (int)(span_end / 3) * 3;
     int span_length = span_end - span_start;
 
-    //    int reside_offset = span_start;
     int residue_offset = 0;
 
-    if (vseq instanceof BioSeq) {
-      residue_offset = ((BioSeq)vseq).getMin();
-    }
 
     AffyTieredMap map = smv.getSeqMap();
     orf_holders = new Vector<FlyPointLinkerGlyph>();
@@ -183,15 +179,8 @@ public final class OrfAnalyzer2 extends JComponent
       return;
     }
 
-    String residues = null;
-    BioSeq nibseq = null;
-    boolean use_nibseq = (vseq instanceof BioSeq);
-    if (use_nibseq)  {
-      nibseq = (BioSeq)vseq;  // vseq is a NibbleBioSeq, therefore also a CharacterIterator
-    }
-    else {
-      residues = vseq.getResidues();
-    }
+      residue_offset = vseq.getMin();
+
 
     fortier = new TransformTierGlyph(new DefaultIAnnotStyle());
     fortier.setLabel("Stop Codons");
@@ -219,9 +208,6 @@ public final class OrfAnalyzer2 extends JComponent
     }
 
 
-    //    System.out.println("start of span: " + span_start);
-    //    System.out.println("end of span: " + span_end);
-  //    System.out.println("length of span: " + span_length);
 		for (int i = 0; i < stop_codons.length; i++) {
 			int count = 0;
 			boolean forward_codon = (i <= 2);
@@ -232,11 +218,8 @@ public final class OrfAnalyzer2 extends JComponent
 			//      if (use_nibseq)  { res_index = nibseq.indexOf(codon, 0); }
 			//      else { res_index = residues.indexOf(codon, 0); }
 			res_index = span_start - residue_offset;
-			if (use_nibseq) {
-				res_index = nibseq.indexOf(codon, res_index);
-			} else {
-				res_index = residues.indexOf(codon, res_index);
-			}
+			res_index = vseq.indexOf(codon, res_index);
+		
 			// need to factor in possible offset of residues string from start of
 			//    sequence (for example, when sequence is a CompNegSeq)
 			while (res_index >= 0 && (seq_index < span_end)) {
@@ -253,16 +236,10 @@ public final class OrfAnalyzer2 extends JComponent
 				} // reverse frames = (3, 4, 5)
 				//	System.out.println("frame: " + frame);
 				frame_lists[frame].add(seq_index);
-				if (use_nibseq) {
-					res_index = nibseq.indexOf(codon, res_index + 1);
-				} else {
-					res_index = residues.indexOf(codon, res_index + 1);
-				}
+				res_index = vseq.indexOf(codon, res_index + 1);
+
 				count++;
 			}
-      //      System.out.println("resindex: " + res_index);
-      //      System.out.println("seqindex: " + seq_index);
-      //      System.out.println("count: " + count);
     }
 
     for (int frame=0; frame<6; frame++) {

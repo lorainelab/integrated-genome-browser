@@ -677,8 +677,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			pw.println("    xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 			if (getBaseURI() != null) {
 				String genome_id = "";
-				if (seq instanceof BioSeq) {
-					genome_id = ((BioSeq) seq).getSeqGroup().getID();
+				if (seq != null) {
+					genome_id = seq.getSeqGroup().getID();
 				}
 				String xbase = getBaseURI().toString() + genome_id + "/";
 				//	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");

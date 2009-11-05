@@ -366,7 +366,7 @@ public final class GraphSelectionManager
     if (info instanceof GraphSym) {
       gsym = (GraphSym) info;
       BioSeq aseq = gsym.getGraphSeq();
-      if (aseq instanceof BioSeq) {
+      if (aseq != null) {
         BioSeq mut = aseq;
         mut.removeAnnotation(gsym);
       }

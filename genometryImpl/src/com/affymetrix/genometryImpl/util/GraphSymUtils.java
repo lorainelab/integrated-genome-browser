@@ -305,7 +305,7 @@ public final class GraphSymUtils {
 				}
 			}
 			gsym.lockID();
-			if (gseq instanceof BioSeq) {
+			if (gseq != null) {
 				gseq.addAnnotation(gsym);
 			}
 

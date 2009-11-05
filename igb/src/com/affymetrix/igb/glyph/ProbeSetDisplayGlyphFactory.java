@@ -185,10 +185,10 @@ the probeset, probe and pieces of probes
         break;
       }
     }
-    if (consensus_seq instanceof BioSeq) {
+    if (consensus_seq != null) {
       return consensus_seq;
     } else {
-      System.out.println("ProbeSetDisplayGlyphFactory: Consensus Seq is not an annotated bio seq!");
+      System.out.println("ProbeSetDisplayGlyphFactory: Consensus Seq is null!");
       return null;
     }
   }

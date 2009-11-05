@@ -700,7 +700,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				for (int tindex=0; tindex < tcount; tindex++) {
 					SymWithProps tcluster = (SymWithProps)annots.get(tindex);
 					SeqSpan tspan = tcluster.getSpan(0);
-					BioSeq aseq = (BioSeq) tspan.getBioSeq();
+					BioSeq aseq = tspan.getBioSeq();
 
 					SharedProbesetInfo shared_info = seq2info.get(aseq);
 					if (shared_info == null) {

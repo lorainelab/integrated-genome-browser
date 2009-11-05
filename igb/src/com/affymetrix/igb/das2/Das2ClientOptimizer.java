@@ -108,7 +108,7 @@ public final class Das2ClientOptimizer {
 
 
     private static void OptimizeDas2Query(BioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
-        BioSeq aseq = (BioSeq) seq;
+        BioSeq aseq = seq;
         MutableSeqSymmetry cont_sym;
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
         cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
@@ -558,7 +558,7 @@ public final class Das2ClientOptimizer {
 		if (DEBUG) {
 			System.out.println("adding a child GraphSym to parent graph");
 		}
-		BioSeq aseq = (BioSeq) cgraf.getGraphSeq();
+		BioSeq aseq = cgraf.getGraphSeq();
 		// check and see if parent graph already exists
 		Das2Type type = request_sym.getDas2Type();
 		String id = type.getID();

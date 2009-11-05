@@ -82,10 +82,10 @@ public final class DeletionGlyph extends SolidGlyph {
     boolean already_left_extended = false;
     // some sanity checks
     if (annotseq == coordseq)  { return; }
-    if (! (coordseq instanceof BioSeq)) { return; }
+    if (coordseq == null) { return; }
 
     // symmetry representing composition of view seq from slices of annnoted seqs
-    SeqSymmetry viewsym = ((BioSeq)coordseq).getComposition();
+    SeqSymmetry viewsym = coordseq.getComposition();
     SeqSpan viewedges = viewsym.getSpan(annotseq);
 
     for (SeqSymmetry child : outside_children)  {  

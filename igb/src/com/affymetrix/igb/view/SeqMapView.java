@@ -732,14 +732,13 @@ public class SeqMapView extends JPanel
 	}
 
 	public EfficientSolidGlyph makeCytobandGlyph() {
-		BioSeq sma = (BioSeq) getAnnotatedSeq();
+		BioSeq sma = getAnnotatedSeq();
 		//      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
 		SymWithProps cyto_annots = null;
-		List cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
+		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
 		if (cyto_tiers.size() > 0) {
-			cyto_annots = (SymWithProps) cyto_tiers.get(0);
-			//	SeqUtils.printSymmetry(cyto_annots);
-			}
+			cyto_annots = cyto_tiers.get(0);
+		}
 
 		if (cyto_annots instanceof TypeContainerAnnot) {
 			TypeContainerAnnot cyto_container = (TypeContainerAnnot) cyto_annots;
@@ -1030,7 +1029,7 @@ public class SeqMapView extends JPanel
 		pixel_floater_glyph.setParent(null);
 		seqmap.addItem(pixel_floater_glyph);
 
-		aseq = (BioSeq)seq;
+		aseq = seq;
 
 		// if shifting coords, then seq2viewSym and viewseq are already taken care of,
 		//   but reset coord_shift to false...
@@ -1172,8 +1171,8 @@ public class SeqMapView extends JPanel
 			return null;
 		}
 		String version_info = null;
-		if (((BioSeq) seq).getSeqGroup() != null) {
-			AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
+		if (seq.getSeqGroup() != null) {
+			AnnotatedSeqGroup group = seq.getSeqGroup();
 			if (group.getDescription() != null) {
 				version_info = group.getDescription();
 			} else {
@@ -1181,7 +1180,7 @@ public class SeqMapView extends JPanel
 			}
 		}
 		if (version_info == null) {
-			version_info = ((BioSeq) seq).getVersion();
+			version_info = seq.getVersion();
 		}
 		if ("hg17".equals(version_info)) {
 			version_info = "hg17 = NCBI35";
@@ -1385,7 +1384,7 @@ public class SeqMapView extends JPanel
 				//      for (int i=0; i<1; i++) {
 				SeqSymmetry csym = comp.getChild(i);
 				// return seq in a symmetry span that _doesn't_ match aseq
-				BioSeq cseq = (BioSeq)SeqUtils.getOtherSeq(csym, cached_aseq);
+				BioSeq cseq = SeqUtils.getOtherSeq(csym, cached_aseq);
 				if (DEBUG_COMP) {
 					System.out.println(" other seq: " + cseq.getID() + ",  " + cseq);
 				}
@@ -2159,7 +2158,7 @@ public class SeqMapView extends JPanel
 
 	public void zoomTo(SeqSpan span) {
 		BioSeq zseq = span.getBioSeq();
-		if ((zseq instanceof BioSeq) &&
+		if ((zseq != null) &&
 						(zseq != this.getAnnotatedSeq())) {
 			gmodel.setSelectedSeq(zseq);
 		}
@@ -2247,7 +2246,7 @@ public class SeqMapView extends JPanel
 	}
 
 	public void unclamp() {
-		if (viewseq instanceof BioSeq) {
+		if (viewseq != null) {
 			int min = viewseq.getMin();
 			int max = viewseq.getMax();
 			seqmap.setMapRange(min, max);
@@ -2980,7 +2979,7 @@ public class SeqMapView extends JPanel
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup current_group = null;
 		AnnotatedSeqGroup new_group = evt.getSelectedGroup();
-		if (aseq instanceof BioSeq) {
+		if (aseq != null) {
 			current_group = aseq.getSeqGroup();
 		}
 

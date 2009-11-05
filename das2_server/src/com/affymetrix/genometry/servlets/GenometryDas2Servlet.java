@@ -1278,7 +1278,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 */
 	private final void handleGraphRequest(Map<String, Class> output_registry, String xbase, HttpServletResponse response,
 			String type, SeqSpan span) {
-		BioSeq seq = (BioSeq) span.getBioSeq();
+		BioSeq seq = span.getBioSeq();
 		String seqid = seq.getID();
 		AnnotatedSeqGroup genome = seq.getSeqGroup();
 		// use bar parser to extract just the overlap slice from the graph

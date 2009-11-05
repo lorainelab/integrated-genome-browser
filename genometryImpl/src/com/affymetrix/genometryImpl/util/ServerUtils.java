@@ -467,7 +467,7 @@ public abstract class ServerUtils {
 	 *      of the TypeContainerAnnot
 	 */
 	public static final List<SeqSymmetry> getOverlappedSymmetries(SeqSpan query_span, String annot_type) {
-		BioSeq seq = (BioSeq) query_span.getBioSeq();
+		BioSeq seq = query_span.getBioSeq();
 		SymWithProps container = seq.getAnnotation(annot_type);
 		if (container != null) {
 			if (DEBUG) {

@@ -173,6 +173,7 @@ public class IndexingUtils {
 			ServerUtils.createDirIfNecessary(dirName);
 
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
+			indexedAnnotationsFile.deleteOnExit();
 
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 

@@ -264,7 +264,7 @@ public final class SeqSymSummarizer {
 	public static SeqSymmetry getUnion(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq)  {
 		//    MutableSeqSymmetry psym = new SimpleSymWithProps();
 		// first get the landscape as a GraphSym
-		GraphSym landscape = getSymmetrySummary(syms, seq, true, null);
+		GraphSym landscape = getSymmetrySummary(syms, seq, true, "");
 		// now just flatten it
 		if (landscape != null) {
 			return projectLandscape(landscape);

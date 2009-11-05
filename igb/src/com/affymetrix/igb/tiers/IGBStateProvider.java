@@ -10,11 +10,7 @@ import com.affymetrix.genometryImpl.style.StateProvider;
 
 public final class IGBStateProvider implements StateProvider {
 
-   Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
-
-  /** Creates a new instance of IGBStateProvider */
-  public IGBStateProvider() {
-  }
+  private final Map<String,GraphState> id2graphState = new HashMap<String,GraphState>();
 
   public IAnnotStyleExtended getAnnotStyle(String name) {
     return AnnotStyle.getInstance(name);
@@ -27,7 +23,6 @@ public final class IGBStateProvider implements StateProvider {
           id2graphState.put(id, state);
       }
       return state;
-     //    return new GraphState(name);
   }
 
 }

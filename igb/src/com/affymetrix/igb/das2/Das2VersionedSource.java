@@ -35,7 +35,7 @@ import org.xml.sax.InputSource;
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
 public final class Das2VersionedSource {
-
+    private static final boolean URL_ENCODE_QUERY = true;
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
@@ -370,7 +370,7 @@ public final class Das2VersionedSource {
 			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
 			String request_root = featcap.getRootURI().toString();
 			String nameglob = name;
-			if (Das2Region.URL_ENCODE_QUERY) {
+			if (URL_ENCODE_QUERY) {
 				nameglob = URLEncoder.encode(nameglob, UTF8);
 			}
 			String chrFilterStr = (chrFilter == null ? "?" : "?segment=" + URLEncoder.encode(chrFilter.getID(), UTF8) + ";");

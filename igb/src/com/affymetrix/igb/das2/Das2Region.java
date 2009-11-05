@@ -13,31 +13,22 @@
 package com.affymetrix.igb.das2;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import java.net.*;
-
-import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
+
+import java.net.*;
 
 public final class Das2Region {
 
-    static public boolean USE_SEGMENT = true;  // segment param, or old version with seq included in other filters
-    static public boolean USE_SEGMENT_URI = true;
-    static public boolean USE_TYPE_URI = true;
-    static public boolean URL_ENCODE_QUERY = true;
     private URI region_uri;
     private String name;
     private int length;
-    private String info_url;  // doc_href
-    //  List assembly;  // or should this be a SeqSymmetry??   // or composition of SmartAnnotBioSeq??
-    private SeqSpan segment_span;
-    private MutableAnnotatedBioSeq aseq;
+    private BioSeq aseq;
     private Das2VersionedSource versioned_source;
 
     public Das2Region(Das2VersionedSource source, URI reg_uri, String nm, String info, int ln) {
         region_uri = reg_uri;
         name = nm;
-        info_url = info;
         length = ln;
 
         versioned_source = source;
@@ -60,7 +51,6 @@ public final class Das2Region {
             // using name instead of id for now
             aseq = genome.addSeq(name, length);
         }
-        segment_span = new SimpleSeqSpan(0, length, aseq);
     }
 
     public String getID() {
@@ -76,7 +66,7 @@ public final class Das2Region {
     }
 
     // or should this return a SmartAnnotbioSeq???
-    public MutableAnnotatedBioSeq getAnnotatedSeq() {
+    public BioSeq getAnnotatedSeq() {
         return aseq;
     }
 
@@ -90,12 +80,11 @@ public final class Das2Region {
      *     but probably better to have this method figure out region based on versioned source
      */
     // Note similarities to Das2FeatureSaxParser.getRangeString.
-    public String getPositionString(SeqSpan span, boolean indicate_strand) {
+    String getPositionString(SeqSpan span, boolean indicate_strand) {
         if (span == null) {
             return null;
         }
-        String result = null;
-        MutableAnnotatedBioSeq spanseq = span.getBioSeq();
+        BioSeq spanseq = (BioSeq)span.getBioSeq();
         if (this.getAnnotatedSeq() == spanseq) {
             StringBuffer buf = new StringBuffer(100);
             buf.append(this.getName());
@@ -110,12 +99,8 @@ public final class Das2Region {
                     buf.append(":-1");
                 }
             }
-            result = buf.toString();
-        } else {  // this region's annotated seq is _not_ the same seq as the span argument seq
-            // throw an error?
-            // return null?
-            // try using Das2VersionedSource.getRegion()?
+            return buf.toString();
         }
-        return result;
+		return null;
     }
 }

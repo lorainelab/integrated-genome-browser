@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -57,6 +56,11 @@ public final class Das2ClientOptimizer {
     private static final boolean DEBUG = false;
     private static final boolean DEBUG_HEADERS = false;
     private static final boolean OPTIMIZE_FORMAT = true;
+
+	private static final boolean USE_SEGMENT = true;  // segment param, or old version with seq included in other filters
+	private static final boolean USE_SEGMENT_URI = true;
+	private static final boolean USE_TYPE_URI = true;
+
     /**
      *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
      *  out into a separate query field, "segment", that applies to all location-based filters in the query
@@ -236,7 +240,7 @@ public final class Das2ClientOptimizer {
         SeqSpan inside_span = request_sym.getInsideSpan();
         String overlap_filter = null;
         String inside_filter = null;
-        if (Das2Region.USE_SEGMENT) {
+        if (USE_SEGMENT) {
             overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
             if (inside_span != null) {
                 inside_filter = Das2FeatureSaxParser.getRangeString(inside_span, false);
@@ -298,9 +302,9 @@ public final class Das2ClientOptimizer {
 
     private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
         StringBuffer buf = new StringBuffer(200);
-        if (Das2Region.USE_SEGMENT) {
+        if (USE_SEGMENT) {
             buf.append("segment=");
-            if (Das2Region.USE_SEGMENT_URI) {
+            if (USE_SEGMENT_URI) {
                 buf.append(URLEncoder.encode(region.getID(), IGBConstants.UTF8));
             } else {
                 buf.append(URLEncoder.encode(region.getName(), IGBConstants.UTF8));
@@ -317,7 +321,7 @@ public final class Das2ClientOptimizer {
             buf.append(";");
         }
         buf.append("type=");
-        if (Das2Region.USE_TYPE_URI) {
+        if (USE_TYPE_URI) {
             buf.append(URLEncoder.encode(type.getID(), IGBConstants.UTF8));
         } else {
             buf.append(type.getName());

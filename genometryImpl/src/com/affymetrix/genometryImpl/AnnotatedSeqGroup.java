@@ -38,7 +38,7 @@ public class AnnotatedSeqGroup {
 	final private Map<String, BioSeq> id2seq;
 	private ArrayList<BioSeq> seqlist; //lazy copy of id2seq.values()
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
-	final private TreeMap<String,ArrayList<SeqSymmetry>> id2sym_hash;	// list of names -> sym
+	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,ArrayList<String>> symid2id_hash;	// main sym id -> list of other names
 	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
 	/**
@@ -53,7 +53,7 @@ public class AnnotatedSeqGroup {
 		id2seq = Collections.<String, BioSeq>synchronizedMap(new LinkedHashMap<String, BioSeq>());
 		id2seq_dirty_bit = false;
 		seqlist = new ArrayList<BioSeq>();
-		id2sym_hash = new TreeMap<String,ArrayList<SeqSymmetry>>();
+		id2sym_hash = new TreeMap<String,Set<SeqSymmetry>>();
 		symid2id_hash = new TreeMap<String,ArrayList<String>>();
 	}
 
@@ -254,9 +254,9 @@ public class AnnotatedSeqGroup {
 		final HashSet<SeqSymmetry> symset = new HashSet<SeqSymmetry>();
 		final Matcher matcher = regex.matcher("");
 
-		for (Map.Entry<String, ArrayList<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
+		for (Map.Entry<String, Set<SeqSymmetry>> ent : id2sym_hash.entrySet()) {
 			String seid = ent.getKey();
-			ArrayList<SeqSymmetry> val = ent.getValue();
+			Set<SeqSymmetry> val = ent.getValue();
 			if (seid != null && val != null) {
 				matcher.reset(seid);
 				if (matcher.matches()) {
@@ -274,11 +274,11 @@ public class AnnotatedSeqGroup {
 		if (id == null) {
 			return Collections.<SeqSymmetry>emptyList();
 		}
-		ArrayList<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
+		Set<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
 		if (sym_list == null) {
 			return Collections.<SeqSymmetry>emptyList();
 		}
-		return Collections.<SeqSymmetry>unmodifiableList(sym_list);
+		return Collections.unmodifiableList((List<SeqSymmetry>) sym_list);
 	}
 
 	/** Finds all symmetries with the given case-insensitive ID and add them to
@@ -300,7 +300,7 @@ public class AnnotatedSeqGroup {
 		}
 
 		final String lid = id.toLowerCase();
-		final List<SeqSymmetry> seqsym_list = id2sym_hash.get(lid);
+		final Set<SeqSymmetry> seqsym_list = id2sym_hash.get(lid);
 		if (seqsym_list != null) {
 			results.addAll(seqsym_list);
 			return true;
@@ -317,7 +317,7 @@ public class AnnotatedSeqGroup {
 	private boolean lookForAppendedIDs(String lid, List<SeqSymmetry> results) {
 		boolean success = false;
 		int postfix = 0;
-		List<SeqSymmetry> seq_sym_list;
+		Set<SeqSymmetry> seq_sym_list;
 		while ((seq_sym_list = id2sym_hash.get(lid + "." + postfix)) != null) {
 			results.addAll(seq_sym_list);
 			success = true;
@@ -338,14 +338,6 @@ public class AnnotatedSeqGroup {
 		this.putSeqInList(id.toLowerCase(), sym);
 	}
 
-	/** Returns a set of the String IDs that have been added to the ID index using
-	 *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
-	 *  Each of the keys can be used as a parameter for the findSyms(String) method.
-	 */
-	final public Set<String> getSymmetryIDs() {
-		return id2sym_hash.keySet();
-	}
-
 	/** Returns a set of the String IDs alphabetically between start and end (including start, excluding end)
 	 *  that have been added to the ID index using
 	 *  addToIndex(String, SeqSymmetry).  The IDs will be returned in lower-case.
@@ -358,7 +350,7 @@ public class AnnotatedSeqGroup {
 	 */
 	final public Set<String> getSymmetryIDs(String start, String end) {
 		if (start.length() == 0 && end.length() == 0) {
-			return getSymmetryIDs();
+			return id2sym_hash.keySet();
 		}
 
 		start = start.toLowerCase();
@@ -423,14 +415,12 @@ public class AnnotatedSeqGroup {
 	 * @param sym SeqSymmetry to add to the hash.
 	 */
 	final private void putSeqInList(String id, SeqSymmetry sym) {
-		ArrayList<SeqSymmetry> seq_list = id2sym_hash.get(id);
+		Set<SeqSymmetry> seq_list = id2sym_hash.get(id);
 		if (seq_list == null) {
-			seq_list = new ArrayList<SeqSymmetry>();
-		}
-		if (!seq_list.contains(sym)) {
-			seq_list.add(sym);
+			seq_list = new HashSet<SeqSymmetry>();
 			id2sym_hash.put(id,seq_list);
 		}
+		seq_list.add(sym);
 
 		String lcSymID = sym.getID().toLowerCase();
 		if (id.equals(lcSymID)) {
@@ -455,7 +445,7 @@ public class AnnotatedSeqGroup {
 			return;
 		}
 		String lcSymID = sym.getID().toLowerCase();
-		List<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
+		Set<SeqSymmetry> symList = id2sym_hash.get(lcSymID);
 		if (symList != null && symList.contains(sym)) {
 			symList.remove(sym);
 			if (symList.isEmpty()) {

@@ -92,28 +92,11 @@ public class TierGlyph extends SolidGlyph {
    */
   private Color other_fill_color = null;
   private Color outline_color = null;
-  private boolean hideable = true;
   private String label = null;
 
 
   private static final Font default_font = new Font("Monospaced", Font.PLAIN, 12);
 
-
-  /*
-   *  Trying different packers for expand mode:
-   *     ExpandPacker -- expand packer with no speed improvements
-   *     ExpandPacker2  -- expand packer with xmax tracking to speed up packing when
-   *                        no prior children overlap
-   *     EfficientExpandPacker
-   *        expand packer with optimizations for packing of sorted children
-   *        in TierGlyph -- location-tuned scan
-   *     FastExpandPacker
-   *        expand packer with optimizations for packing of sorted children
-   *        in TierGlyph when all children have same yheight
-   *     FasterExpandPacker
-   *        same as FastExpandPacker, but with additional optimizations for
-   *        deep overlaps
-   */
   private PackerI expand_packer = new FasterExpandPacker();
   private PackerI collapse_packer = new CollapsePacker();
 
@@ -129,11 +112,6 @@ public class TierGlyph extends SolidGlyph {
     setHitable(false);
     setSpacer(spacer);
     setStyle(style);
-  }
-
-  /** Constructor that generates a default IAnnotStyle. */
-  public TierGlyph() {
-    this(new DefaultIAnnotStyle());
   }
 
   public void setStyle(IAnnotStyle style) {

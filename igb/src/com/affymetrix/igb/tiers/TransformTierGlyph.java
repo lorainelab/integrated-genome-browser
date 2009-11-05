@@ -61,10 +61,6 @@ public final class TransformTierGlyph extends TierGlyph {
   private Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   // for caching in pickTraversal(pixbox, picks, view) method
   private Rectangle2D.Double pix_rect = new Rectangle2D.Double();
-
-  public TransformTierGlyph() {
-    super();
-  }
   
   public TransformTierGlyph(IAnnotStyle style)  {
     super(style);

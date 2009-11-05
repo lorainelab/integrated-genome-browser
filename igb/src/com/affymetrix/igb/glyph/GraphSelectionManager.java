@@ -682,17 +682,17 @@ public final class GraphSelectionManager
       // This routine adapts it to also work as a TierLabelManager.PopupListener
       // for left-click on the TierLabelGlyph's
 
-      List labels = handler.getSelectedTierLabels();
+      List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
       List<GraphGlyph> graph_glyphs = TierLabelManager.getContainedGraphs(labels);
 
-      List<GraphSym> graph_syms = new ArrayList<GraphSym>(graph_glyphs.size());
-			for (GraphGlyph glyph : graph_glyphs) {
-        graph_syms.add((GraphSym)glyph.getInfo()); // It will be a GraphSym object
-      }
-      GraphSym primary_sym = null;
-      if (! graph_syms.isEmpty()) {
-        primary_sym = graph_syms.get(0);
-      }
+		List<GraphSym> graph_syms = new ArrayList<GraphSym>(graph_glyphs.size());
+		for (GraphGlyph glyph : graph_glyphs) {
+			graph_syms.add((GraphSym) glyph.getInfo()); // It will be a GraphSym object
+		}
+		GraphSym primary_sym = null;
+		if (!graph_syms.isEmpty()) {
+			primary_sym = graph_syms.get(0);
+		}
 
       this.popupNotify(popup, graph_syms, primary_sym);
     }

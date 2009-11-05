@@ -33,6 +33,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
@@ -192,7 +193,7 @@ public final class OrfAnalyzer2 extends JComponent
       residues = vseq.getResidues();
     }
 
-    fortier = new TransformTierGlyph();
+    fortier = new TransformTierGlyph(new DefaultIAnnotStyle());
     fortier.setLabel("Stop Codons");
     fortier.setFixedPixelHeight(true);
     fortier.setFixedPixHeight(25);
@@ -200,7 +201,7 @@ public final class OrfAnalyzer2 extends JComponent
     fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
     map.addTier(fortier, true);  // put forward tier above axis
 
-    revtier = new TransformTierGlyph();
+    revtier = new TransformTierGlyph(new DefaultIAnnotStyle());
     revtier.setLabel("Stop Codons");
     revtier.setFixedPixelHeight(true);
     revtier.setFixedPixHeight(25);

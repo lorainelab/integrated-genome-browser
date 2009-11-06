@@ -13,8 +13,7 @@
 
 package com.affymetrix.igb.tiers;
 
-//import com.affymetrix.genometryImpl.style.*;
-import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
+import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -618,23 +617,6 @@ public class TierGlyph extends SolidGlyph {
       return true;
     }
     return false;
-  }
-
-
-  /** Returns a string representing the state of this object.
-      @see #setState */
-  public String getStateString() {
-    String str = (this.isVisible ? "VISIBLE" : "HIDDEN") + " | ";
-    if (packer instanceof ExpandPacker) {
-      str += "EXPANDED";
-    } else if (packer instanceof CollapsePacker) {
-      str += "COLLAPSED";
-    } else if (packer == null) {
-      str += "NULL PACKER";
-    } else {
-      str += "PACKER = " + packer.getClass().getName();
-    }
-    return str;
   }
 
   /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */

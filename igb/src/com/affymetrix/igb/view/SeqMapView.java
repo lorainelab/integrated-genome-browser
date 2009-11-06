@@ -596,23 +596,6 @@ public class SeqMapView extends JPanel
 		public Color getBackground() {
 			return UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_AXIS_BACKGROUND, default_axis_background);
 		}
-
-		@Override
-		public void setHumanName(String s) {
-			//UnibrowPrefsUtil.getTopNode().put(PREF_AXIS_NAME, s);
-			super.setHumanName(s);
-		}
-
-		@Override
-		public String getHumanName() {
-			//return UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_NAME, "Coordinates");
-			return super.getHumanName();
-		}
-
-		@Override
-		public void setShow(boolean b) {
-			super.setShow(b);
-		}
 	};
 
 	public TransformTierGlyph getAxisTier() {
@@ -731,7 +714,6 @@ public class SeqMapView extends JPanel
 
 	public EfficientSolidGlyph makeCytobandGlyph() {
 		BioSeq sma = getAnnotatedSeq();
-		//      SymWithProps cyto_annots = sma.getAnnotation(CytobandParser.CYTOBAND_TIER_NAME);
 		SymWithProps cyto_annots = null;
 		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
 		if (cyto_tiers.size() > 0) {
@@ -2814,7 +2796,7 @@ public class SeqMapView extends JPanel
 	 *  @param tier_direction use {@link TierGlyph#DIRECTION_REVERSE} if you want
 	 *  the tier to go below the axis. Other values have no effect.
 	 */
-	public TierGlyph getGraphTier(IAnnotStyle style, int tier_direction) {
+	public final TierGlyph getGraphTier(IAnnotStyle style, int tier_direction) {
 		if (style == null) {
 			throw new NullPointerException();
 		}

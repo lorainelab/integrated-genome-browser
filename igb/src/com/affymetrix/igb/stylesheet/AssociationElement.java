@@ -16,8 +16,6 @@ package com.affymetrix.igb.stylesheet;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
-import com.affymetrix.igb.glyph.GenericAnnotGlyphFactory;
-import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class AssociationElement implements DrawableElement {
@@ -60,10 +58,7 @@ public final class AssociationElement implements DrawableElement {
     } else {
       this.factory = null;
     }
-    //    if (factory instanceof GenericAnnotGlyphFactory) {
-    //      GenericAnnotGlyphFactory gfac = (GenericAnnotGlyphFactory)factory;
-    //      gfac.setStyle(annot_style);
-    //    }
+
   }
 
   public static final String METHOD_ASSOCIATION = "METHOD_ASSOCIATION";
@@ -101,7 +96,7 @@ public final class AssociationElement implements DrawableElement {
     Class factory_class = null;
 
     try {
-      factory_class = ObjectUtils.classForName(styleName);
+      factory_class = Class.forName(styleName);
     }
     catch (ClassNotFoundException ex) {
       System.out.println("ERROR: Class '"+styleName+"' specified in the preferences file can not be found");

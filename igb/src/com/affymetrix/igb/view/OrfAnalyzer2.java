@@ -187,7 +187,7 @@ public final class OrfAnalyzer2 extends JComponent
     fortier.setFixedPixelHeight(true);
     fortier.setFixedPixHeight(25);
     fortier.setFillColor(Color.darkGray);
-    fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
+    fortier.setDirection(TierGlyph.Direction.FORWARD);
     map.addTier(fortier, true);  // put forward tier above axis
 
     revtier = new TransformTierGlyph(new DefaultIAnnotStyle());
@@ -195,7 +195,7 @@ public final class OrfAnalyzer2 extends JComponent
     revtier.setFixedPixelHeight(true);
     revtier.setFixedPixHeight(25);
     revtier.setFillColor(Color.darkGray);
-    revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
+    revtier.setDirection(TierGlyph.Direction.REVERSE);
     map.addTier(revtier, false);  // put reverse tier below axis
 
     Color pointcol = UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_STOP_CODON_COLOR, default_stop_codon_color);

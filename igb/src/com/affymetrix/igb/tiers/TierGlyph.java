@@ -43,7 +43,8 @@ public class TierGlyph extends SolidGlyph {
   private boolean sorted = true;
   private boolean ready_for_searching = false;
   private static final Comparator<GlyphI> child_sorter = new GlyphMinComparator();
-  protected int direction = DIRECTION_NONE;
+//  protected int direction = DIRECTION_NONE;
+  protected Direction direction = Direction.NONE;
 
   /** glyphs to be drawn in the "middleground" --
    *    in front of the solid background, but behind the child glyphs
@@ -56,15 +57,7 @@ public class TierGlyph extends SolidGlyph {
   public static final int EXPANDED = 102;
   public static final int FIXED_COORD_HEIGHT = 103;
 
-  public static final int DIRECTION_FORWARD = +1;
-  public static final int DIRECTION_NONE = 0;
-  public static final int DIRECTION_REVERSE = -1;
-  public static final int DIRECTION_BOTH = 2;
-
-  /** Use this direction for axis tiers, so they can be recognized as a
-   *  special case when sorting tiers.
-   */
-  public static final int DIRECTION_AXIS = -2;
+  public static enum Direction { FORWARD, NONE, REVERSE, BOTH, AXIS};
 
   /** A property for the IAnnotStyle.getTransientPropertyMap().  If set to
    *  Boolean.TRUE, the tier will draw a label next to where the handle
@@ -587,7 +580,7 @@ public class TierGlyph extends SolidGlyph {
     return getFillColor();
   }
 
-  public final int getDirection() {
+  public final Direction getDirection() {
     return direction;
   }
 
@@ -595,11 +588,7 @@ public class TierGlyph extends SolidGlyph {
    *  Sets direction.  Must be one of DIRECTION_FORWARD, DIRECTION_REVERSE,
    *  DIRECTION_BOTH or DIRECTION_NONE.
    */
-  public final void setDirection(int d) {
-    if ((d != DIRECTION_FORWARD) && (d != DIRECTION_NONE)
-        && (d != DIRECTION_REVERSE) && (d != DIRECTION_BOTH) && (d != DIRECTION_AXIS)) {
-      throw new IllegalArgumentException();
-    }
+  public final void setDirection(Direction d) {
     this.direction = d;
   }
 

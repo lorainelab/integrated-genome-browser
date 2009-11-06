@@ -187,11 +187,11 @@ public class AffyTieredMap extends NeoMap {
 		for (TierGlyph mtg : tiers) {
 			if (mtg.getChildCount() <= 0) {
 				mtg.setState(TierGlyph.HIDDEN);
-			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
+			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
 				mtg.setState(TierGlyph.HIDDEN);
-			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
 				mtg.setState(TierGlyph.HIDDEN);
-			} else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.DIRECTION_BOTH)) {
+			} else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.Direction.BOTH)) {
 				mtg.setState(TierGlyph.HIDDEN);
 			} else {
 				if (mtg.getAnnotStyle().getShow()) {

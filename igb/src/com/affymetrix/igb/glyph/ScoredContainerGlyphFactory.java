@@ -18,7 +18,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.*;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -79,39 +78,41 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
     if (DEBUG)  { System.out.println("&&&&& exiting ScoredContainerGlyphFactory"); }
   }
   
-  private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map)  {
-    BioSeq aseq = smv.getAnnotatedSeq();
-    if (DEBUG)  { System.out.println("   creating graphs on seq: " + aseq.getID()); }
-    if (original_container.getSpan(aseq) == null) {
-      return;
-    }
+ private static void displayGraphs(ScoredContainerSym original_container, SeqMapView smv, boolean update_map) {
+		BioSeq aseq = smv.getAnnotatedSeq();
+		if (DEBUG) {
+			System.out.println("   creating graphs on seq: " + aseq.getID());
+		}
+		if (original_container.getSpan(aseq) == null) {
+			return;
+		}
 
 		BioSeq vseq = smv.getViewSeq();
-    AffyTieredMap map = smv.getSeqMap();
-    
-    GraphIntervalSym[] the_graph_syms = null;
-    DerivedSeqSymmetry derived_sym = null;
-    AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
-    if (aseq != vseq) {
-      derived_sym = SeqUtils.copyToDerived(original_container);
-      SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
-      the_graph_syms = makeGraphsFromDerived(derived_sym, seq_group, vseq);
-    } else { // aseq == vseq, so no transformation needed
-      the_graph_syms = makeGraphs(original_container, seq_group);
-    }
-    Rectangle2D.Double cbox = map.getCoordBounds();
-		
+		AffyTieredMap map = smv.getSeqMap();
+
+		GraphIntervalSym[] the_graph_syms = null;
+		DerivedSeqSymmetry derived_sym = null;
+		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+		if (aseq != vseq) {
+			derived_sym = SeqUtils.copyToDerived(original_container);
+			SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());
+			the_graph_syms = makeGraphsFromDerived(derived_sym, seq_group, vseq);
+		} else { // aseq == vseq, so no transformation needed
+			the_graph_syms = makeGraphs(original_container, seq_group);
+		}
+		Rectangle2D.Double cbox = map.getCoordBounds();
+
 		for (GraphIntervalSym gis : the_graph_syms) {
 			displayGraphSym(gis, cbox, map, smv);
-    }
-    
-    if (update_map) {
-      map.packTiers(false, true, false);
-      map.stretchToFit(false, false);
-      map.updateWidget();
-    }
-    return;
-  }
+		}
+
+		if (update_map) {
+			map.packTiers(false, true, false);
+			map.stretchToFit(false, false);
+			map.updateWidget();
+		}
+		return;
+	}
   
   private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {
     int score_count = container.getScoreCount();
@@ -239,13 +240,13 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
   }
 
 
-	private static void displayGraphSym(GraphIntervalSym gis, Double cbox, AffyTieredMap map, SeqMapView smv) {
-		GraphGlyph graph_glyph = new GraphGlyph(gis, gis.getGraphState());
-		graph_glyph.getGraphState().getTierStyle().setHumanName(gis.getGraphName());
+	private static void displayGraphSym(GraphIntervalSym graf, Double cbox, AffyTieredMap map, SeqMapView smv) {
+		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());
+		graph_glyph.getGraphState().getTierStyle().setHumanName(graf.getGraphName());
 		GraphStateI gstate = graph_glyph.getGraphState();
 		IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-		map.setDataModelFromOriginalSym(graph_glyph, gis); // has side-effect of graph_glyph.setInfo(graf)
+		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)
 		// Allow floating glyphs ONLY when combo style is null.
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
@@ -256,9 +257,9 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 			if (gstate.getComboStyle() != null) {
 				tier_style = gstate.getComboStyle();
 			}
-			int tier_direction = TierGlyph.DIRECTION_FORWARD;
-			if (GraphSym.GRAPH_STRAND_MINUS.equals(gis.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
-				tier_direction = TierGlyph.DIRECTION_REVERSE;
+			TierGlyph.Direction tier_direction = TierGlyph.Direction.FORWARD;
+			if (GraphSym.GRAPH_STRAND_MINUS.equals(graf.getProperty(GraphSym.PROP_GRAPH_STRAND))) {
+				tier_direction = TierGlyph.Direction.REVERSE;
 			}
 			TierGlyph tglyph = smv.getGraphTier(tier_style, tier_direction);
 			tglyph.addChild(graph_glyph);

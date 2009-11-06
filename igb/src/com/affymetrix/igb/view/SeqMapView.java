@@ -608,7 +608,7 @@ public class SeqMapView extends JPanel
 		axis_tier = new TransformTierGlyph(getAxisAnnotStyle());
 		axis_tier.setFixedPixelHeight(true);
 		axis_tier.setFixedPixHeight(45);
-		axis_tier.setDirection(TierGlyph.DIRECTION_AXIS);
+		axis_tier.setDirection(TierGlyph.Direction.AXIS);
 		AxisGlyph axis = seqmap.addAxis(0);
 		axis.setHitable(false);
 		axis.setFont(axisFont);
@@ -2796,7 +2796,7 @@ public class SeqMapView extends JPanel
 	 *  @param tier_direction use {@link TierGlyph#DIRECTION_REVERSE} if you want
 	 *  the tier to go below the axis. Other values have no effect.
 	 */
-	public final TierGlyph getGraphTier(IAnnotStyle style, int tier_direction) {
+	public final TierGlyph getGraphTier(IAnnotStyle style, TierGlyph.Direction tier_direction) {
 		if (style == null) {
 			throw new NullPointerException();
 		}
@@ -2822,12 +2822,7 @@ public class SeqMapView extends JPanel
 		tier.setForegroundColor(style.getColor());
 
 		if (getSeqMap().getTierIndex(tier) == -1) {
-			boolean above_axis = true;
-			if (tier_direction == TierGlyph.DIRECTION_REVERSE) {
-				above_axis = false;
-			} else {
-				above_axis = true;
-			}
+			boolean above_axis = (tier_direction != TierGlyph.Direction.REVERSE);
 			getSeqMap().addTier(tier, above_axis);
 		}
 		return tier;
@@ -2873,15 +2868,15 @@ public class SeqMapView extends JPanel
 
 		TierGlyph axis_tier = this.getAxisTier();
 		if (fortier == null) {
-			fortier = makeTierGlyph(style);
+			fortier = new TierGlyph(style);
 			setUpTierPacker(fortier, true, constant_heights);
 			method2ftier.put(meth.toLowerCase(), fortier);
 		}
 
 		if (style.getSeparate()) {
-			fortier.setDirection(TierGlyph.DIRECTION_FORWARD);
+			fortier.setDirection(TierGlyph.Direction.FORWARD);
 		} else {
-			fortier.setDirection(TierGlyph.DIRECTION_BOTH);
+			fortier.setDirection(TierGlyph.Direction.BOTH);
 		}
 		fortier.setLabel(style.getHumanName());
 
@@ -2895,8 +2890,8 @@ public class SeqMapView extends JPanel
 		}
 
 		if (revtier == null) {
-			revtier = makeTierGlyph(style);
-			revtier.setDirection(TierGlyph.DIRECTION_REVERSE);
+			revtier = new TierGlyph(style);
+			revtier.setDirection(TierGlyph.Direction.REVERSE);
 			setUpTierPacker(revtier, false, constant_heights);
 			method2rtier.put(meth.toLowerCase(), revtier);
 		}
@@ -2917,10 +2912,6 @@ public class SeqMapView extends JPanel
 			// put everything in a single tier
 			return new TierGlyph[]{fortier, fortier};
 		}
-	}
-
-	public static TierGlyph makeTierGlyph(IAnnotStyle style) {
-		return new TierGlyph(style);
 	}
 
 	static void setUpTierPacker(TierGlyph tg, boolean above_axis, boolean constantHeights) {

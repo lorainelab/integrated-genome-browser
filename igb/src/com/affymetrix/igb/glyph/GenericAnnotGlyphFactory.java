@@ -36,11 +36,10 @@ import com.affymetrix.igb.view.SeqMapView;
  * @version $Id$
  */
 public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
-  static boolean DEBUG = false;
-  static boolean SET_PARENT_INFO = true;
-  static boolean SET_CHILD_INFO = true;
-  static boolean ADD_CHILDREN = true;
-  static boolean OPTIMIZE_CHILD_MODEL = false;
+  private static final boolean DEBUG = false;
+  private static final  boolean SET_PARENT_INFO = true;
+  private static final  boolean SET_CHILD_INFO = true;
+  private static final  boolean ADD_CHILDREN = true;
 
   /** Set to true if the we can assume the container SeqSymmetry being passed
    *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
@@ -116,14 +115,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
 
   public void createGlyph(SeqSymmetry sym, SeqMapView smv, boolean next_to_axis) {
     setMapView(smv);
-    //AffyTieredMap map = gviewer.getSeqMap();
-
-	/*
-    if (sym instanceof GFF3Sym) {
-      GFF3GlyphFactory.getInstance().createGlyph(sym, smv, next_to_axis);
-      return;
-    }
-	 */
 
     String meth = BioSeq.determineMethod(sym);
 
@@ -144,7 +135,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       for (int i=0; i<childCount; i++) {
         SeqSymmetry childSym = sym.getChild(i);
         createGlyph(childSym, gviewer, false);
-	//        createGlyph(childSym, gviewer, next_to_axis);
       }
     }
   }
@@ -172,12 +162,6 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
                              TierGlyph ftier, TierGlyph rtier,
                              int desired_leaf_depth) {
 
-	  /*
-    if (sym instanceof GFF3Sym) {
-      GFF3GlyphFactory.getInstance().createGlyph(sym, gviewer);
-      return;
-    }
-	   */
 
     int depth = getDepth(sym);
     if (depth > desired_leaf_depth || sym instanceof TypeContainerAnnot) {
@@ -305,7 +289,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
       Object property = getTheProperty(insym, label_field);
       String label = (property == null) ? "" : property.toString();
-      if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+      if (the_tier.getDirection() == TierGlyph.Direction.REVERSE) {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);
       } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
       //          System.out.println("using label: " + label);
@@ -477,7 +461,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI  {
       LabelledGlyph lglyph = (LabelledGlyph)parent_labelled_glyph_class.newInstance();
       Object property = getTheProperty(insym, label_field);
       String label = (property == null) ? "" : property.toString();
-      if (the_tier.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+      if (the_tier.getDirection() == TierGlyph.Direction.REVERSE) {
         lglyph.setLabelLocation(LabelledGlyph.SOUTH);
       } else { lglyph.setLabelLocation(LabelledGlyph.NORTH); }
 

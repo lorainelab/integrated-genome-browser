@@ -52,11 +52,11 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 	private static String getDirectionString(TierGlyph tg) {
 		switch (tg.direction) {
-			case TierGlyph.DIRECTION_FORWARD:
+			case FORWARD:
 				return " (+)";
-			case TierGlyph.DIRECTION_REVERSE:
+			case REVERSE:
 				return " (-)";
-			case TierGlyph.DIRECTION_BOTH:
+			case BOTH:
 				return " (+/-)";
 			default: // DIRECTION_NONE
 				return "";

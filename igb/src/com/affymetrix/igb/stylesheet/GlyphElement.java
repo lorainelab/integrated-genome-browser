@@ -110,7 +110,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
   private List<GlyphElement> enclosedGlyphElements = null;
   ChildrenElement childrenElement = null;
   private String position;
-  String type;
+  private String type;
 
   private static final int glyph_height = 10;
   
@@ -345,7 +345,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     lgl.getCoordBox().height *= 2;
     if (the_label != null) {
       lgl.setLabel(the_label);
-      if (tier_glyph.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+      if (tier_glyph.getDirection() == TierGlyph.Direction.REVERSE) {
         lgl.setLabelLocation(LabelledGlyph.SOUTH);
       } else {
         lgl.setLabelLocation(LabelledGlyph.NORTH);

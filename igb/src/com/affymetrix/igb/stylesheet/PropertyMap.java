@@ -26,15 +26,23 @@ import java.util.*;
 public final class PropertyMap extends HashMap<String, Object> implements Map<String, Object>, Cloneable, XmlAppender {
 
   private PropertyMap parentProperties;
-  
-  public PropertyMap() {
-  }
+
+  private final ArrayList<PropertyMap> ancestors = new ArrayList<PropertyMap>(100);
+
+
+  private static int color_warnings = 0; // count the number of warnings about colors
+  // Printing millions of such warnings would cause a big slowdown.
+
+
+  static final String PROP_ELEMENT_NAME = "PROPERTY";
+  static final String PROP_ATT_KEY = "key";
+  static final String PROP_ATT_VALUE = "value";
   
   /** Checks whether this item's parent, or grandparent, etc. is
    *  identical to the possible_ancestor. This helps prevent infinite loops
    *  that could arise during processing recursive <STYLE> invocations.
    */
-  boolean hasAncestor(PropertyMap possible_ancestor) {
+  private boolean hasAncestor(PropertyMap possible_ancestor) {
     PropertyMap p2 = this;
     while (p2 != null) {
       if (p2 == possible_ancestor) {
@@ -45,7 +53,7 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     return false;
   }
   
-  public void setContext(PropertyMap context) {
+  void setContext(PropertyMap context) {
     if (context == null) {
       this.parentProperties = null;
     } else {
@@ -60,7 +68,7 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     }
   }
   
-  public PropertyMap getContext() {
+  PropertyMap getContext() {
     return this.parentProperties;
   }
   
@@ -69,8 +77,6 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     return this.getProperty((String) key);
   }
     
-  ArrayList<PropertyMap> ancestors = new ArrayList<PropertyMap>(100);
-
   public Object getProperty(String key) {
     Object o = super.get(key);
     
@@ -84,19 +90,10 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     
     return o;
   }
-  
-  private boolean contains(List<PropertyMap> list, Object o) {
-    for (int i=0; i<list.size(); i++) {
-      if (list.get(i) == o) {
-        return true;
-      }
-    }
-    return false;
-  }
     
   private Object getProperty(String key, int recur, List<PropertyMap> ancestors) {
 
-    if (contains(ancestors, this)) {
+    if (ancestors.contains(this)) {
       System.out.println("WARNING: Caught an infinite loop!");
       return null;
     }
@@ -115,14 +112,10 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     return o;
   }
 
-  public boolean setProperty(String key, Object val) {
+  public void setProperty(String key, Object val) {
     super.put(key, val);
-    return true; // why ?
   }
     
-  static int color_warnings = 0; // count the number of warnings about colors
-  // Printing millions of such warnings would cause a big slowdown.
-  
   public Color getColor(String key) {
         
     Color c = null;
@@ -172,9 +165,6 @@ public final class PropertyMap extends HashMap<String, Object> implements Map<St
     return clone;
   }
   
-  public static String PROP_ELEMENT_NAME = "PROPERTY";
-  public static String PROP_ATT_KEY = "key";
-  public static String PROP_ATT_VALUE = "value";
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     Iterator<String> iter = this.keySet().iterator();

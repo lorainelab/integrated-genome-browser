@@ -163,7 +163,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
       default_style = new StyleElement();
       default_style.name = "<system-default-style>";
       default_style.glyphElement = new GlyphElement();
-      default_style.glyphElement.type = GlyphElement.TYPE_BOX;
+      default_style.glyphElement.setType(GlyphElement.TYPE_BOX);
       default_style.glyphElement.childrenElement = new ChildrenElement();
       default_style.glyphElement.childrenElement.styleElement = default_style;
     }

@@ -508,7 +508,7 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 	}
 
 	public Comparator getComparator(BioSeq seq) {
-		return new SeqSymMinComparator((BioSeq)seq);
+		return new SeqSymMinComparator(seq);
 	}
 
 	public int getMin(SeqSymmetry sym, BioSeq seq) {

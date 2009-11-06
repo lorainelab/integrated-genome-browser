@@ -76,7 +76,7 @@ public final class IntervalSearchSym extends SimpleSymWithProps
 
 	public void initForSearching(BioSeq seq) {
 		search_seq = seq;
-		comp = new SeqSymMinComparator((BioSeq)search_seq);
+		comp = new SeqSymMinComparator(search_seq);
 
 		// make sure child symmetries are sorted by ascending min along search_seq
 		// to avoid unecessary sort, first go through child list and see if it's

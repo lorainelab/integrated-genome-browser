@@ -238,7 +238,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
 			String type, OutputStream outstream) {
 		boolean success = false;
-		AnnotatedSeqGroup group = ((BioSeq)aseq).getSeqGroup();
+		AnnotatedSeqGroup group = aseq.getSeqGroup();
 		String groupid = group.getID();
 		String seqid = aseq.getID();
 		int acount = syms.size();

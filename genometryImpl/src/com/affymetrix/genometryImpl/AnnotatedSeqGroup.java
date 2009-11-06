@@ -371,10 +371,9 @@ public class AnnotatedSeqGroup {
 			return id;
 		}
 
-		final BioSeq sab = (BioSeq) seq;
 		int prevcount = 0;
 		String newid = id;
-		while (sab.getAnnotation(newid) != null) {
+		while (seq.getAnnotation(newid) != null) {
 			prevcount++;
 			newid = id + "." + prevcount;
 		}

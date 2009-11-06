@@ -112,8 +112,8 @@ public final class GraphIntervalSym extends GraphSym {
 		}
 		finally {
 			GeneralUtils.safeClose(dos);
-			return bufVal;
 		}
+		return bufVal;
 	}
 
 	/**

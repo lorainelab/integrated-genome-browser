@@ -1009,6 +1009,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		Map<String, SimpleDas2Type> types_hash =
 				ServerUtils.getTypes(
+				data_root,
 				genome,
 				graph_formats,
 				this.getGenoPubSecurity(request));

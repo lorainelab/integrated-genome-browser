@@ -315,7 +315,7 @@ public abstract class ServerUtils {
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
 
 		if (iWriter == null) {	
-			loadAnnotFile(file, stream_name, annotList, genome, false);
+			loadAnnotFile(file, stream_name, typeName, annotList, genome, false);
 			getAddedChroms(genome, tempGenome, false);
 			getAlteredChroms(genome, tempGenome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
@@ -323,7 +323,7 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		List loadedSyms = loadAnnotFile(file, stream_name, annotList, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, stream_name, typeName, annotList, tempGenome, true);
 		getAddedChroms(tempGenome, genome, true);
 		getAlteredChroms(tempGenome, genome, true);
 
@@ -353,14 +353,14 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String stream_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
+	private static List loadAnnotFile(File current_file, String stream_name, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
 		InputStream istr = null;
 		List results = null;
 		istr = new BufferedInputStream(new FileInputStream(current_file));
 		if (!isIndexed) {
-			results = ParserController.parse(istr, annotList, stream_name, gmodel, genome);
+			results = ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
 		} else {
-			results = ParserController.parseIndexed(istr, annotList, stream_name, genome);
+			results = ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
 		}
 		return results;
 	}
@@ -734,6 +734,7 @@ public abstract class ServerUtils {
 	 *  may want to cache this info (per versioned source) at some point...
 	 */
 	public static final Map<String, SimpleDas2Type> getTypes(
+					String data_root,
 					AnnotatedSeqGroup genome,
 					ArrayList<String> graph_formats,
 					AnnotSecurity annotSecurity) {
@@ -744,7 +745,11 @@ public abstract class ServerUtils {
 		for (String type : genome.getTypeList()) {
 			if (!genome_types.containsKey(type)) {
 				if (genome.isAuthorized(annotSecurity, type)) {
-					genome_types.put(type, new SimpleDas2Type(genome.getID(), graph_formats, genome.getProperties(annotSecurity, type))); 				
+					if (genome.hasFileExtension(data_root, annotSecurity, type, ".bar")) {
+						genome_types.put(type, new SimpleDas2Type(genome.getID(), graph_formats, genome.getProperties(annotSecurity, type))); 										
+					} else {
+						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request."); 
+					}
 				}
 				
 			}

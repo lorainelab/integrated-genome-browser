@@ -272,6 +272,27 @@ public class Annotation implements Owned, Propertied {
 			dir.delete();	    	
 	    }
 	}
+
+	public boolean hasFileExtension(String data_root, String extension) throws IOException {
+		boolean isExtension = false;
+		String filePath = getDirectory(data_root);
+	    File dir = new File(filePath);
+	    
+	    if (dir.exists()) {
+		    // Delete the files in the directory
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+				for (int x = 0; x < childFileNames.length; x++) {
+					if (childFileNames[x].endsWith(extension)) {
+						isExtension = true;
+						break;
+					}
+				}
+		    	
+		    }
+	    }
+	    return isExtension;
+	}
 	
 	public String getQualifiedFileName(String data_root) {
 		if (this.getFileName() == null || this.getFileName().equals("")) {

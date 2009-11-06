@@ -16,7 +16,7 @@ public interface AnnotSecurity {
 	 * @return true if user is authorized to access this annotation; false
 	 *          if user is not authorized.
 	 */
-	public boolean isAuthorized(String genomeVersionName, Object annotationId);
+	public boolean isAuthorized(String genomeVersionName, String annotationName, Object annotationId);
 	
 	
 	/**
@@ -27,7 +27,18 @@ public interface AnnotSecurity {
 	 * @return Property map of annotation.  (Only returns property map if
 	 *          user is authorized to see this annotation.
 	 */
-	public Map<String, Object> getProperties(String genomeVersionName, Object annotationId);
+	public Map<String, Object> getProperties(String genomeVersionName, String annotationName, Object annotationId);
+	
+	/**
+	 * Determine if an annotation has a certain file extension
+	 * 
+	 * @param data_root
+	 * @param genomeVersionName The name of the name version
+	 * @param annotationId The id of the annotation
+	 * @param extension The file extension
+	 * @return true if this annotation has the given file extension
+	 */
+	public boolean hasFileExtension(String data_root, String genomeVersionName, String annotationName, Object annotationId, String extension);
 	
 	
 	/**

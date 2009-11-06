@@ -24,13 +24,13 @@ public final class ParserController {
     if (sindex >= 0) {
       type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
     }
-    return parse(instr, annotList, stream_name, gmodel, seq_group, type_prefix, true);
+    return parse(instr, annotList, stream_name, gmodel, seq_group, type_prefix);
   }
   
 
     
 	public static List parse(
-			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix, boolean use_stream_name) {
+			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
 		List results = null;
 		try {
@@ -51,14 +51,14 @@ public final class ParserController {
 				if (type_prefix != null) {
 					bp1_reader.setTypePrefix(type_prefix);
 				}
-				String annot_type = GetAnnotType(annotList, stream_name, ".bp", type_prefix, use_stream_name);
+				String annot_type = GetAnnotType(annotList, stream_name, ".bp", type_prefix);
 				// parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
 				//   (to save memory)
 				results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 				System.out.println("done loading via Bprobe1Parser: " + stream_name);
 			} else if (stream_name.endsWith(".ead")) {
 				System.out.println("loading via ExonArrayDesignParser");
-				String annot_type = GetAnnotType(annotList, stream_name, ".ead", type_prefix, use_stream_name);
+				String annot_type = GetAnnotType(annotList, stream_name, ".ead", type_prefix);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				parser.parse(str, seq_group, true, annot_type);
 				System.out.println("done loading via ExonArrayDesignParser: " + stream_name);
@@ -75,9 +75,10 @@ public final class ParserController {
 				parser.addFeatureFilter("transcript");
 				parser.setGroupTag("transcript_id");
 				parser.setUseDefaultSource(true);
+				parser.setUseTrackLines(false);
 				// specifying via boolean arg that GFFParser should build container syms, one for each
 				//    particular "source" on each particular seq, can override the source for setting the name
-				String annot_type = use_stream_name ? stream_name.substring(0, stream_name.length() - 4) : type_prefix;
+				String annot_type = type_prefix == null ? stream_name.substring(0, stream_name.length() - 4) : type_prefix;
 				results = parser.parse(str, annot_type, seq_group, true);
 			} else if (stream_name.endsWith(".cyt")) {
 				System.out.println("loading via CytobandParser: " + stream_name);
@@ -115,12 +116,12 @@ public final class ParserController {
 	 * @param seq_group
 	 * @return
 	 */
-	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group) {
+	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		IndexWriter iWriter = getIndexWriter(stream_name);
 		DataInputStream dis = new DataInputStream(str);
 
 		String extension = getExtension(stream_name);
-		String annot_type = GetAnnotType(annotList, stream_name, extension, null, true);
+		String annot_type = GetAnnotType(annotList, stream_name, extension, type_prefix);
 
 		System.out.println("Indexing " + stream_name);
 
@@ -199,24 +200,10 @@ public final class ParserController {
 	// 1. A type name contained in the annots_map hash table.
 	// 2. (Default) The stream name with the extension stripped off.
 	public static String GetAnnotType(List<AnnotMapElt> annotsList,
-	        String stream_name, String extension, String type_prefix,
-	        boolean use_stream_name) {
+	        String stream_name, String extension, String type_prefix) {
 		
-		if (use_stream_name) {
-			// Check if this was in the annots mapping.
-			if (annotsList != null) {
-				AnnotMapElt annotMapElt = AnnotMapElt.findFileNameElt(stream_name, annotsList);
-				if (annotMapElt != null) {
-					return annotMapElt.title;
-				}
-			}
-
-			if (extension == null) {
-				return stream_name;
-			}
-
-			// Strip off the extension.
-			return stream_name.substring(0, stream_name.lastIndexOf(extension));
+		if (type_prefix != null) {
+			return GetAnnotType(annotsList, stream_name, extension);
 		} else {
 			return type_prefix;
 		}

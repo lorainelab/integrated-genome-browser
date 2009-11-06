@@ -113,14 +113,19 @@ public class AnnotatedSeqGroup {
 	}
 	
 	public final boolean isAuthorized(AnnotSecurity annotSecurity, String type) {
-		 boolean isAuthorized =  annotSecurity.isAuthorized(this.getID(), getAnnotationId(type));
+		 boolean isAuthorized =  annotSecurity.isAuthorized(this.getID(), type, getAnnotationId(type));
 	     Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + getAnnotationId(type));
 		 return isAuthorized;
 	}
 	
 	public final Map<String, Object> getProperties(AnnotSecurity annotSecurity, String type) {
-		Map<String, Object> props = annotSecurity.getProperties(this.getID(), getAnnotationId(type));
+		Map<String, Object> props = annotSecurity.getProperties(this.getID(), type, getAnnotationId(type));
 		return props;
+	}
+	
+	public final boolean hasFileExtension(String data_root, AnnotSecurity annotSecurity, String type, String extension) {
+		 boolean isAuthorized =  annotSecurity.hasFileExtension(data_root, this.getID(), type, getAnnotationId(type), extension);
+		 return isAuthorized;
 	}
 	
 

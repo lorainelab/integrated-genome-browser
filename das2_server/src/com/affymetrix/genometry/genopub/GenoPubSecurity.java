@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -630,7 +631,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 	//
 	//
 
-	public boolean isAuthorized(String genomeVersionName, Object annotationId) {
+	public boolean isAuthorized(String genomeVersionName, String annotationName, Object annotationId) {
 		// When annotation is loaded directly from file system, all annotations 
 		// are shown.
 		if (!scrutinizeAccess) { 
@@ -639,7 +640,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 
 		// If the annotation id is not provided, block access
 		if (annotationId == null) {
-			return false;
+			Logger.getLogger(GenoPubSecurity.class.getName()).warning("Unable to find annotation id for " + annotationName + ".  Blocking access.");
 		}
 
 		// Get the hash map of annotation ids this user is authorized to view
@@ -650,7 +651,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 
 	}
 	
-	public Map<String, Object> getProperties(String genomeVersionName, Object annotationId) {
+	public Map<String, Object> getProperties(String genomeVersionName, String annotationName, Object annotationId) {
 		// When annotation is loaded directly from file system, annotations
 		// don't have any additional properties
 		if (!scrutinizeAccess) { 
@@ -659,7 +660,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 
 		// If the annotation access is blocked, don't show
 		// properties.
-		if (!isAuthorized(genomeVersionName, annotationId)) {
+		if (!isAuthorized(genomeVersionName, annotationName, annotationId)) {
 			return null;
 		}
 
@@ -673,6 +674,29 @@ public class GenoPubSecurity implements AnnotSecurity {
 			props.put(Annotation.PROP_URL, this.baseURL + "/" + GenoPubServlet.GENOPUB_WEBAPP_NAME + "?idAnnotation=" + annotationId);
 		}
 		return props;
+		
+	}
+	
+	public boolean hasFileExtension(String data_root, String genomeVersionName, String annotationName, Object annotationId, String extension) {
+		// When annotation is loaded directly from file system, just return true
+		if (!scrutinizeAccess) { 
+			return true;
+		}
+
+		// If the annotation access is blocked, return false
+		if (!isAuthorized(genomeVersionName, annotationName, annotationId)) {
+			return false;
+		}
+
+		// Get the hash map of annotation ids this user is authorized to view
+		Map<Integer, QualifiedAnnotation> annotationMap = versionToAuthorizedAnnotationMap.get(genomeVersionName);
+		QualifiedAnnotation qa = annotationMap.get(annotationId);
+		try {
+			return qa.getAnnotation().hasFileExtension(data_root, extension);
+		} catch (Exception e) {
+			return false;
+		}
+		
 		
 	}
 	

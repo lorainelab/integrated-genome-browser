@@ -146,9 +146,6 @@ public final class OrfAnalyzer2 extends JComponent
     removeTiersFromMap();
 
     if (! show_orfs) { return; }
-    //    System.out.println("running OrfAnalyzer on sequence in SeqMapView: " + smv);
-    //    System.out.println("seq: " + current_seq.getID() + ", length = " + current_seq.getLength());
-    //    SeqSpan span = new SimpleSeqSpan(15000000, 17000000, current_seq);
     SeqSpan vspan = smv.getVisibleSpan();
     int span_start = vspan.getMin();
     int span_end = vspan.getMax();
@@ -159,12 +156,6 @@ public final class OrfAnalyzer2 extends JComponent
     span_end = span_mid + (max_analysis_span/2);
     span_end -= span_end % 3;
 
-    // rounding down to closest divisible by three (for consistency of forward strand frames)
-    //    span_start = (int)(span_start / 3) * 3;
-    //    int span_end = span_start + 2000000;
-    //    span_end = Math.min(span_end, current_seq.getLength()-55);
-    // rounding down to closest divisible by three (for consistency of reverse strand frames)
-    //    span_end = (int)(span_end / 3) * 3;
     int span_length = span_end - span_start;
 
     int residue_offset = 0;
@@ -214,10 +205,7 @@ public final class OrfAnalyzer2 extends JComponent
 			String codon = stop_codons[i];
 
 			int seq_index = span_start;
-			int res_index;
-			//      if (use_nibseq)  { res_index = nibseq.indexOf(codon, 0); }
-			//      else { res_index = residues.indexOf(codon, 0); }
-			res_index = span_start - residue_offset;
+			int res_index = span_start - residue_offset;
 			res_index = vseq.indexOf(codon, res_index);
 		
 			// need to factor in possible offset of residues string from start of
@@ -234,7 +222,6 @@ public final class OrfAnalyzer2 extends JComponent
 				else {
 					frame = 3 + (res_index % 3);
 				} // reverse frames = (3, 4, 5)
-				//	System.out.println("frame: " + frame);
 				frame_lists[frame].add(seq_index);
 				res_index = vseq.indexOf(codon, res_index + 1);
 
@@ -297,7 +284,7 @@ public final class OrfAnalyzer2 extends JComponent
     }
   }
 
-  public void adjustMap() {
+  private void adjustMap() {
     AffyTieredMap tiermap = smv.getSeqMap();
     tiermap.repack();
     tiermap.stretchToFit(false, true);

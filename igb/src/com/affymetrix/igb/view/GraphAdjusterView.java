@@ -1,16 +1,15 @@
 /**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
+ *   Copyright (c) 2001-2007 Affymetrix, Inc.
+ *
+ *   Licensed under the Common Public License, Version 1.0 (the "License").
+ *   A copy of the license must be included with any distribution of
+ *   this source code.
+ *   Distributions from Affymetrix, Inc., place this in the
+ *   IGB_LICENSE.html file.
+ *
+ *   The license is also available at
+ *   http://www.opensource.org/licenses/cpl.php
+ */
 package com.affymetrix.igb.view;
 
 import java.awt.Color;
@@ -41,10 +40,12 @@ import java.text.ParseException;
 
 public final class GraphAdjusterView {
 
-  static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
+	public static NumberFormat numberParser = NumberFormat.getNumberInstance();
 
-  public static List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
-   List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
+	private static FileTracker load_dir_tracker = FileTracker.DATA_DIR_TRACKER;
+
+	public static List<GraphSym> transformGraphs(List<GraphSym> grafs, String trans_name, FloatTransformer transformer) {
+		List<GraphSym> newgrafs = new ArrayList<GraphSym>(grafs.size());
 		for (GraphSym graf : grafs) {
 			float[] new_ycoords;
 
@@ -90,137 +91,132 @@ public final class GraphAdjusterView {
 		return newgrafs;
 	}
 
-  public static void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, List grafs) {
-    int gcount = grafs.size();
-    for (int i=0; i<gcount; i++) {
-      GraphSym graf = (GraphSym)grafs.get(i);
-      deleteGraph(gmodel, gviewer, graf);
-    }
-    gmodel.clearSelectedSymmetries(GraphAdjusterView.class);
-    gviewer.getSeqMap().updateWidget();
-  }
-
-  /**
-   *  Removes a GraphSym from the annotated bio seq it is annotating (if any),
-   *     and tries to make sure the GraphSym can be garbage collected.
-   *  Tries to delete the GraphGlyph representing the GraphSym.  If the GraphSym
-   *  happens to be a child of a tier in the widget, and the tier has no children
-   *  left after deleting the graph, then delete the tier as well.
-   */
-  public static void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
-    //System.out.println("deleting graph: " + gsym);
-
-    BioSeq aseq = gsym.getGraphSeq();
-    if (aseq != null) {
-      BioSeq mut = aseq;
-      mut.removeAnnotation(gsym);
-    }
-
-    GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
-    if (gl != null) {
-      gviewer.getSeqMap().removeItem(gl);
-      // clean-up references to the graph, allowing garbage-collection, etc.
-      gviewer.select(Collections.<SeqSymmetry>emptyList());
-
-      // if this is not a floating graph, then it's in a tier,
-      //    so check tier -- if this graph is only child, then get rid of the tier also
-      if (! gl.getGraphState().getFloatGraph()) {
-        AffyTieredMap map = gviewer.getSeqMap();
-        GlyphI parentgl = gl.getParent();
-        parentgl.removeChild(gl);
-        if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
-          if (parentgl instanceof TierGlyph) {
-            map.removeTier((TierGlyph)parentgl);
-            
-            // This method doesn't exist. But could if we really cared
-            // about cleaning-up references to this GraphState and its Tier
-            //gviewer.deleteGraphTier(gsym.getGraphState());
-            
-            map.packTiers(false, true, false);
-            map.stretchToFit(false, false);
-          }
-        }
-      }
-    }
-  }
-
-
-  public static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, List grafs) {
-    int gcount = grafs.size();
-    if (gcount > 1) {
-      // actually shouldn't get here, since save button is disabled if more than one graph
-      ErrorHandler.errorPanel("Can only save one graph at a time");
-    }
-    else if (gcount == 1) {
-      GraphSym gsym = (GraphSym)grafs.get(0);
-      try {
-        GraphSaverFileChooser chooser = new GraphSaverFileChooser(gsym);
-        chooser.setCurrentDirectory(load_dir_tracker.getFile());
-        int option = chooser.showSaveDialog(gviewer.getFrame());
-        if (option == JFileChooser.APPROVE_OPTION) {          
-          load_dir_tracker.setFile(chooser.getCurrentDirectory());
-          File fil = chooser.getSelectedFile();
-          GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getAbsolutePath());
-        }
-      }
-      catch (Exception ex) {
-        ErrorHandler.errorPanel("Error saving graph", ex);
-      }
-    }
-  }
-
-  public static void changeColor(List<GraphSym> graf_syms, SeqMapView gviewer) {
-    int scount = graf_syms.size();
-    if (scount > 0) {
-      // Set an initial color so that the "reset" button will work.
-      GraphSym graf_0 = graf_syms.get(0);
-      GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
-      Color initial_color = Color.GREEN;
-      if (gl_0 != null) {
-        // gl_0 could be null if there is a selected graph that isn't visible in
-        // the current view.
-        initial_color = gl_0.getColor();
-      }
-      Color col = JColorChooser.showDialog((Component) gviewer.getSeqMap(),
-        "Graph Color Chooser", initial_color);
-      // Note: If the user selects "Cancel", col will be null
-      if (col != null) {
-				for (GraphSym graf : graf_syms) {
-	  // using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
-	  List glist = gviewer.getSeqMap().getItems(graf);
-	  if (glist != null) {
-	    int glyphcount = glist.size();
-	    for (int k=0; k<glyphcount; k++) {
-	      GraphGlyph gl = (GraphGlyph)glist.get(k);
-	      gl.setColor(col); // this automatically sets the GraphState color
-	      // if graph is in a tier, change foreground color of tier also
-	      //   (which in turn triggers change in color for TierLabelGlyph...)
-	      if (gl.getParent() instanceof TierGlyph) {
-		gl.getParent().setForegroundColor(col);
-                List views = gl.getParent().getScene().getViews();
-                for (int qq=0; qq<views.size(); qq++) {
-                  ViewI v = (ViewI) views.get(qq);
-                  if (gl.withinView(v)) {
-                    gl.draw(v);
-                  }
-                }
-	      }
-	    }
-	  }
+	public static void deleteGraphs(GenometryModel gmodel, SeqMapView gviewer, List<GraphSym> grafs) {
+		int gcount = grafs.size();
+		for (int i = 0; i < gcount; i++) {
+			GraphSym graf = grafs.get(i);
+			deleteGraph(gmodel, gviewer, graf);
+		}
+		gmodel.clearSelectedSymmetries(GraphAdjusterView.class);
+		gviewer.getSeqMap().updateWidget();
 	}
-      }
-      gviewer.getSeqMap().updateWidget();
-    }
-  }
 
-  public static NumberFormat numberParser = NumberFormat.getNumberInstance();
+	/**
+	 *  Removes a GraphSym from the annotated bio seq it is annotating (if any),
+	 *     and tries to make sure the GraphSym can be garbage collected.
+	 *  Tries to delete the GraphGlyph representing the GraphSym.  If the GraphSym
+	 *  happens to be a child of a tier in the widget, and the tier has no children
+	 *  left after deleting the graph, then delete the tier as well.
+	 */
+	public static void deleteGraph(GenometryModel gmodel, SeqMapView gviewer, GraphSym gsym) {
+		BioSeq aseq = gsym.getGraphSeq();
+		if (aseq != null) {
+			BioSeq mut = aseq;
+			mut.removeAnnotation(gsym);
+		}
 
-  /** Parse a String floating-point number that may optionally end with a "%" symbol. */
-  public static float parsePercent(String text) throws ParseException {
-    if (text.endsWith("%")) {
-      text = text.substring(0, text.length()-1);
-    }
+		GraphGlyph gl = (GraphGlyph) gviewer.getSeqMap().getItem(gsym);
+		if (gl == null) {
+			return;
+		}
+		gviewer.getSeqMap().removeItem(gl);
+		// clean-up references to the graph, allowing garbage-collection, etc.
+		gviewer.select(Collections.<SeqSymmetry>emptyList());
 
-    return numberParser.parse(text).floatValue();
-  }
+		// if this is not a floating graph, then it's in a tier,
+		//    so check tier -- if this graph is only child, then get rid of the tier also
+		if (!gl.getGraphState().getFloatGraph()) {
+			AffyTieredMap map = gviewer.getSeqMap();
+			GlyphI parentgl = gl.getParent();
+			parentgl.removeChild(gl);
+			if (parentgl.getChildCount() == 0) {  // if no children left in tier, then remove it
+				if (parentgl instanceof TierGlyph) {
+					map.removeTier((TierGlyph) parentgl);
+
+					// This method doesn't exist. But could if we really cared
+					// about cleaning-up references to this GraphState and its Tier
+					//gviewer.deleteGraphTier(gsym.getGraphState());
+
+					map.packTiers(false, true, false);
+					map.stretchToFit(false, false);
+				}
+			}
+		}
+	}
+
+	public static void saveGraphs(SeqMapView gviewer, GenometryModel gmodel, List grafs) {
+		int gcount = grafs.size();
+		if (gcount > 1) {
+			// actually shouldn't get here, since save button is disabled if more than one graph
+			ErrorHandler.errorPanel("Can only save one graph at a time");
+		} else if (gcount == 1) {
+			GraphSym gsym = (GraphSym) grafs.get(0);
+			try {
+				GraphSaverFileChooser chooser = new GraphSaverFileChooser(gsym);
+				chooser.setCurrentDirectory(load_dir_tracker.getFile());
+				int option = chooser.showSaveDialog(gviewer.getFrame());
+				if (option == JFileChooser.APPROVE_OPTION) {
+					load_dir_tracker.setFile(chooser.getCurrentDirectory());
+					File fil = chooser.getSelectedFile();
+					GraphSymUtils.writeGraphFile(gsym, gmodel.getSelectedSeqGroup(), fil.getAbsolutePath());
+				}
+			} catch (Exception ex) {
+				ErrorHandler.errorPanel("Error saving graph", ex);
+			}
+		}
+	}
+
+	public static void changeColor(List<GraphSym> graf_syms, SeqMapView gviewer) {
+		if (graf_syms.isEmpty()) {
+			return;
+		}
+
+		// Set an initial color so that the "reset" button will work.
+		GraphSym graf_0 = graf_syms.get(0);
+		GraphGlyph gl_0 = (GraphGlyph) gviewer.getSeqMap().getItem(graf_0);
+		Color initial_color = Color.GREEN;
+		if (gl_0 != null) {
+			// gl_0 could be null if there is a selected graph that isn't visible in
+			// the current view.
+			initial_color = gl_0.getColor();
+		}
+		Color col = JColorChooser.showDialog((Component) gviewer.getSeqMap(),
+				"Graph Color Chooser", initial_color);
+		// Note: If the user selects "Cancel", col will be null
+		if (col != null) {
+			applyColorChange(graf_syms, gviewer, col);
+		}
+		gviewer.getSeqMap().updateWidget();
+	}
+
+	private static void applyColorChange(List<GraphSym> graf_syms, SeqMapView gviewer, Color col) {
+		for (GraphSym graf : graf_syms) {
+			// using getItems() instead of getItem(), in case graph sym is represented by multiple graph glyphs
+			List<GraphGlyph> glist = gviewer.getSeqMap().getItems(graf);
+			for (GraphGlyph gl : glist) {
+				gl.setColor(col); // this automatically sets the GraphState color
+				// if graph is in a tier, change foreground color of tier also
+				//   (which in turn triggers change in color for TierLabelGlyph...)
+				GlyphI glParent = gl.getParent();
+				if (glParent instanceof TierGlyph) {
+					glParent.setForegroundColor(col);
+					List<ViewI> views = glParent.getScene().getViews();
+					for (ViewI v : views) {
+						if (gl.withinView(v)) {
+							gl.draw(v);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/** Parse a String floating-point number that may optionally end with a "%" symbol. */
+	public static float parsePercent(String text) throws ParseException {
+		if (text.endsWith("%")) {
+			text = text.substring(0, text.length() - 1);
+		}
+
+		return numberParser.parse(text).floatValue();
+	}
 }

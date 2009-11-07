@@ -977,12 +977,12 @@ public class SeqMapView extends JPanel
 		// stash annotation tiers for proper state restoration after resetting for same seq
 		//    (but presumably added / deleted / modified annotations...)
 
-		ArrayList<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
+		List<TierGlyph> temp_tiers = new ArrayList<TierGlyph>();
 		int axis_index = 0;
 		// copying map tiers to separate list to avoid problems when removing tiers
 		//   (and thus modifying map.getTiers() list -- could probably deal with this
 		//    via iterators, but feels safer this way...)
-		ArrayList<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
+		List<TierGlyph> cur_tiers = new ArrayList<TierGlyph>(seqmap.getTiers());
 		for (int i = 0; i < cur_tiers.size(); i++) {
 			TierGlyph tg = cur_tiers.get(i);
 			if (tg == axis_tier) {
@@ -2534,7 +2534,7 @@ public class SeqMapView extends JPanel
 		boolean top_level = true;
 		// linked hash set keeps parents in same order as child list so that comparison
 		// like childList.equals(parentList) can be used.
-		java.util.Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
+		Set<GlyphI> results = new LinkedHashSet<GlyphI>(childGlyphs.size());
 		for (GlyphI child : childGlyphs) {
 			GlyphI pglyph = getParent(child, top_level);
 			results.add(pglyph);

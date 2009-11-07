@@ -105,22 +105,20 @@ public final class XmlStylesheetParser {
     return stylesheet;
   }
 
-  private Stylesheet parse(InputSource insource) throws IOException {
-    try {
+	private Stylesheet parse(InputSource insource) throws IOException {
+		try {
 			Document prefsdoc = DasLoader.nonValidatingFactory().newDocumentBuilder().parse(insource);
 
-      processDocument(prefsdoc);
-    }
-    catch (IOException ioe) {
-      throw ioe;
-    }
-    catch (Exception ex) {
-      IOException ioe = new IOException("Error processing stylesheet file");
-      ioe.initCause(ex);
-      throw ioe;
-    }
-    return stylesheet;
-  }
+			processDocument(prefsdoc);
+		} catch (IOException ioe) {
+			throw ioe;
+		} catch (Exception ex) {
+			IOException ioe = new IOException("Error processing stylesheet file");
+			ioe.initCause(ex);
+			throw ioe;
+		}
+		return stylesheet;
+	}
 
   private void processDocument(Document prefsdoc) throws IOException {
 

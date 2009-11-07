@@ -20,7 +20,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
 
 
-public class StyleElement implements DrawableElement {
+class StyleElement implements DrawableElement {
   /*
 <!ELEMENT STYLE (PROPERTY*, ((MATCH+,ELSE?) | GLYPH))>
 <!ATTLIST STYLE
@@ -29,10 +29,10 @@ public class StyleElement implements DrawableElement {
   >
   */
 
-  public static String NAME="STYLE";
+  static String NAME="STYLE";
   
-  public static String ATT_NAME="name";
-  public static String ATT_CONTAINER="container";
+  static String ATT_NAME="name";
+  static String ATT_CONTAINER="container";
   
   static Map<String,StyleElement> names2styles = new HashMap<String,StyleElement>();
   
@@ -43,7 +43,7 @@ public class StyleElement implements DrawableElement {
 
   String name;
     
-  public StyleElement() {
+  StyleElement() {
     this.propertyMap = new PropertyMap();
   }
 
@@ -97,10 +97,8 @@ public class StyleElement implements DrawableElement {
         
         glyph = glyphElement.symToGlyph(gviewer, sym, container, stylesheet, this.propertyMap);
       } catch (RuntimeException re) {
-        //System.out.println("Exception: " + re.toString());
         re.printStackTrace();
         System.out.println("Exception in style: " + name + "  for " + sym);
-        //SeqUtils.printSymmetry(sym);
       }
     }
     
@@ -109,17 +107,17 @@ public class StyleElement implements DrawableElement {
   }
   
   
-  public String getName() {
+  String getName() {
     return this.name;
   }
 
 
-  public void setGlyphElement(GlyphElement glyphElement) {
+  void setGlyphElement(GlyphElement glyphElement) {
     this.glyphElement = glyphElement;
   }
 
 
- public void addMatchElement(MatchElement me) {
+ void addMatchElement(MatchElement me) {
     if (matchElements == null) {
       matchElements = new ArrayList<MatchElement>();
     }

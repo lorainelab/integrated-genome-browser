@@ -25,15 +25,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Stylesheet implements Cloneable, XmlAppender {
-  public static boolean DEBUG = false;
-
   LinkedHashMap<String, AssociationElement> meth2association = new LinkedHashMap<String, AssociationElement>();
   LinkedHashMap<Pattern, AssociationElement> regex2association = new LinkedHashMap<Pattern, AssociationElement>();
   LinkedHashMap<String, AssociationElement> type2association = new LinkedHashMap<String, AssociationElement>();
-
   LinkedHashMap<String,StyleElement> stylename2styleElement = new LinkedHashMap<String,StyleElement>();
 
-  public static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
+  private static final String SYM_TO_STYLE_PROPERTY_KEY = Stylesheet.class.getName();
 
   public Object clone() throws CloneNotSupportedException {
     Stylesheet clone = (Stylesheet) super.clone();
@@ -49,14 +46,14 @@ public final class Stylesheet implements Cloneable, XmlAppender {
   }
 
 
-  public StyleElement getStyleByName(String name) {
+  StyleElement getStyleByName(String name) {
     return stylename2styleElement.get(name);
   }
 
   /** Creates a new style.  If one with the given name already exists, it will
    *  be obliterated and replaced by this new one.
    */
-  public StyleElement createStyle(String name, boolean add_to_index) {
+  StyleElement createStyle(String name, boolean add_to_index) {
 
     StyleElement se = getStyleByName(name);
     if (se == null) {
@@ -71,7 +68,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     return se;
   }
 
-  public void addToIndex(StyleElement se) {
+  void addToIndex(StyleElement se) {
     if (se.name != null && se.name.trim().length() > 0) {
       stylename2styleElement.put(se.name, se);
     }
@@ -84,43 +81,34 @@ public final class Stylesheet implements Cloneable, XmlAppender {
    *  Second looks for a match by feature type (such as an ontology term).
    *  Third looks for a match by feature "method" (i.e. the tier name).
    */
-  public DrawableElement getDrawableForSym(SeqSymmetry sym) {
-    if (DEBUG) {
-      System.out.println("|||||||||||| in StyleSheet.getDrawableForSym(), method: " + BioSeq.determineMethod(sym));
-      System.out.println("sym: " + sym);
-    }
-    DrawableElement drawable = null;
-    if (sym instanceof SymWithProps) {
-      SymWithProps proper = (SymWithProps) sym;
-      Object o = proper.getProperty(SYM_TO_STYLE_PROPERTY_KEY);
-      if (o instanceof DrawableElement) {
-        drawable = (DrawableElement) o;
-	if (DEBUG) { System.out.println("     retrieved drawable from sym's properties"); }
-      }
-    }
-    if (drawable == null) {
-      if (sym instanceof Das2FeatureRequestSym) {
-        Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
-        String type = d2r.getType();
-        drawable = getAssociationForType(type);
-	if (DEBUG)  { System.out.println("      DAS/2 sym, trying getAssociationForType(), result: " + drawable); }
-      } else if (sym instanceof GFF3Sym) {
-        GFF3Sym gff = (GFF3Sym) sym;
-        String type = gff.getFeatureType();
-        drawable = getAssociationForType(type);
-	if (DEBUG)  { System.out.println("      GFF sym, trying getAssociationForType(), result: " + drawable); }
-      }
-    }
-    if (drawable == null) {
-      drawable = getAssociationForMethod(BioSeq.determineMethod(sym));
-      if (DEBUG)  { System.out.println("      trying getAssociationForMethod(), result: " + drawable); }
-    }
-    if (drawable == null) {
-      drawable = getDefaultStyleElement();
-      if (DEBUG)  { System.out.println("      no drawable found for refseq, using default: " + drawable); }
-    }
-    return drawable;
-  }
+  DrawableElement getDrawableForSym(SeqSymmetry sym) {
+		DrawableElement drawable = null;
+		if (sym instanceof SymWithProps) {
+			SymWithProps proper = (SymWithProps) sym;
+			Object o = proper.getProperty(SYM_TO_STYLE_PROPERTY_KEY);
+			if (o instanceof DrawableElement) {
+				drawable = (DrawableElement) o;
+			}
+		}
+		if (drawable == null) {
+			if (sym instanceof Das2FeatureRequestSym) {
+				Das2FeatureRequestSym d2r = (Das2FeatureRequestSym) sym;
+				String type = d2r.getType();
+				drawable = getAssociationForType(type);
+			} else if (sym instanceof GFF3Sym) {
+				GFF3Sym gff = (GFF3Sym) sym;
+				String type = gff.getFeatureType();
+				drawable = getAssociationForType(type);
+			}
+		}
+		if (drawable == null) {
+			drawable = getAssociationForMethod(BioSeq.determineMethod(sym));
+		}
+		if (drawable == null) {
+			drawable = getDefaultStyleElement();
+		}
+		return drawable;
+	}
 
 
   public AssociationElement getAssociationForMethod(String meth){
@@ -141,7 +129,6 @@ public final class Stylesheet implements Cloneable, XmlAppender {
       for (int j=keyset.size()-1 ; j >= 0 && association == null; j--) {
         Pattern regex = keyset.get(j);
         if (regex.matcher(meth).find()) {
-	  if (DEBUG)  {System.out.println("   found style match, regex: " + regex.pattern() + ", matches: " + meth); }
           association = regex2association.get(regex);
           // Put the stylename in meth2stylename to speed things up next time through.
           meth2association.put(meth, association);
@@ -157,7 +144,7 @@ public final class Stylesheet implements Cloneable, XmlAppender {
 
   private StyleElement default_style;
 
-  public StyleElement getDefaultStyleElement() {
+  StyleElement getDefaultStyleElement() {
     if (default_style == null) {
       // Create a default style that is just boxes inside boxes...
       default_style = new StyleElement();
@@ -210,20 +197,20 @@ public final class Stylesheet implements Cloneable, XmlAppender {
     return sb;
   }
 
-  public StyleElement getWrappedStyle(String name) {
+  StyleElement getWrappedStyle(String name) {
     StyleElement se = new WrappedStyleElement(name);
     return se;
   }
 
-  public final static class WrappedStyleElement extends StyleElement {
+  final static class WrappedStyleElement extends StyleElement {
     public static String NAME = "USE_STYLE";
 
-    public WrappedStyleElement(String name) {
+    private WrappedStyleElement(String name) {
       super();
       this.name = name;
     }
 
-    public StyleElement getReferredStyle(Stylesheet ss) {
+    private StyleElement getReferredStyle(Stylesheet ss) {
       StyleElement se = ss.getStyleByName(name);
       if (se == null) {
         se = ss.getDefaultStyleElement();

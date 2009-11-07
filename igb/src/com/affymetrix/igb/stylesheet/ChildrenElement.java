@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public final class ChildrenElement implements Cloneable, XmlAppender {
+final class ChildrenElement implements Cloneable, XmlAppender {
 
 /*
 <!ELEMENT CHILDREN (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
@@ -33,17 +33,10 @@ public final class ChildrenElement implements Cloneable, XmlAppender {
   >
 */
   
-public static String NAME = "CHILDREN";
+static String NAME = "CHILDREN";
   
-public static String ATT_CONTAINER = "container";
-public static String ATT_POSITIONS = "child_positions";
-  
-//  static String ARRANGEMENT_CENTER = "center";
-//  static String ARRANGEMENT_FAR = "far";
-//  static String ARRANGEMENT_NEAR = "near";
-//  static String ARRANGEMENT_PACK = "bump";
-//  
-//  String child_arrangement = ARRANGEMENT_CENTER;
+static String ATT_CONTAINER = "container";
+static String ATT_POSITIONS = "child_positions";
   
   private String childContainer = ".";
   private String childPositions; // becomes default position for children glyphs if they don't override it
@@ -79,7 +72,7 @@ public static String ATT_POSITIONS = "child_positions";
     return clone;
   }
   
-  public ChildrenElement() {
+  ChildrenElement() {
     this.propertyMap = new PropertyMap();
   }
   
@@ -89,12 +82,11 @@ public static String ATT_POSITIONS = "child_positions";
    *   symmetries are drawn as glyphs inside this parent glyph, but that can
    *   change depending on the setting of {@link #childContainer}.
    */
-  public void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, 
+  void childSymsToGlyphs(SeqMapView gviewer, SeqSymmetry insym, GlyphI gl, 
       Stylesheet stylesheet, PropertyMap context) {
     
     int childCount = insym.getChildCount();
     if (childCount > 0) {
-      GlyphI container_glyph = findContainer(gl, childContainer);
       for (int i=0; i<childCount; i++) {
         SeqSymmetry childsym = insym.getChild(i);
         this.childSymToGlyph(gviewer, childsym, gl, stylesheet, context);
@@ -107,7 +99,7 @@ public static String ATT_POSITIONS = "child_positions";
   /** Draws a single child from the <CHILDREN> element.  Generally called
    *  only from inside this class.
    */
-  public GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym, 
+  private GlyphI childSymToGlyph(SeqMapView gviewer, SeqSymmetry childsym,
       GlyphI container_glyph, Stylesheet stylesheet, PropertyMap context) {
     GlyphI result = null;
 
@@ -148,7 +140,7 @@ public static String ATT_POSITIONS = "child_positions";
     return result;
   }
   
-  public static GlyphI findContainer(GlyphI gl, String container) {
+  static GlyphI findContainer(GlyphI gl, String container) {
     GlyphI container_glyph = gl;
     
     if (container == null || "".equals(container)) {
@@ -175,7 +167,7 @@ public static String ATT_POSITIONS = "child_positions";
     return container_glyph;
   }  
   
-  static GlyphI parent(GlyphI gl) {
+  private static GlyphI parent(GlyphI gl) {
     if (gl instanceof TierGlyph) {
       return gl;
     } else {
@@ -183,19 +175,11 @@ public static String ATT_POSITIONS = "child_positions";
     }
   }
 
-  public StyleElement getStyleElement() {
-    return this.styleElement;
-  }
-
-  public void setStyleElement(StyleElement styleElement) {
+  void setStyleElement(StyleElement styleElement) {
     this.styleElement = styleElement;
   }
   
-  public List getMatchElements() {
-    return this.matchElements;
-  }
-  
-  public void addMatchElement(MatchElement me) {
+  void addMatchElement(MatchElement me) {
     if (matchElements == null) {
       matchElements = new ArrayList<MatchElement>();
     }
@@ -228,19 +212,11 @@ public static String ATT_POSITIONS = "child_positions";
     return sb;
   }
 
-  public String getChildContainer() {
-    return this.childContainer;
-  }
-
-  public void setChildContainer(String child_container) {
+  void setChildContainer(String child_container) {
     this.childContainer = child_container;
   }
 
-  public String getPosition() {
-    return this.childPositions;
-  }
-
-  public void setPosition(String position) {
+  void setPosition(String position) {
     this.childPositions = position;
   }
 }

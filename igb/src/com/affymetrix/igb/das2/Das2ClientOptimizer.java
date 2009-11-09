@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -55,11 +54,6 @@ import org.xml.sax.SAXException;
 public final class Das2ClientOptimizer {
     private static final boolean DEBUG = false;
     private static final boolean DEBUG_HEADERS = false;
-    private static final boolean OPTIMIZE_FORMAT = true;
-
-	private static final boolean USE_SEGMENT = true;  // segment param, or old version with seq included in other filters
-	private static final boolean USE_SEGMENT_URI = true;
-	private static final boolean USE_TYPE_URI = true;
 
     /**
      *  For DAS/2 version >= 300, the segment part of location-based feature filters is split
@@ -81,14 +75,11 @@ public final class Das2ClientOptimizer {
     // also attaches
     // assume for now one type, one overlap span
     public static List<Das2FeatureRequestSym> loadFeatures(Das2FeatureRequestSym request_sym) {
-        Das2RequestLog request_log = request_sym.getLog();
-
         List<Das2FeatureRequestSym> output_requests = new ArrayList<Das2FeatureRequestSym>();
-        // overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
-        SeqSymmetry overlap_sym = request_sym.getOverlapSym();
+       
         SeqSpan overlap_span = request_sym.getOverlapSpan();
         BioSeq seq = overlap_span.getBioSeq();
-        Das2Region region = request_sym.getRegion();
+        
         Das2Type type = request_sym.getDas2Type();
         String typeid = type.getID();
 
@@ -96,7 +87,7 @@ public final class Das2ClientOptimizer {
             System.out.println("Can't optimize DAS/2 query for type: " + typeid + ", seq is null!");
             output_requests.add(request_sym);
         } else {
-			OptimizeDas2Query(seq, typeid, request_log, type, output_requests, request_sym, overlap_sym, region);
+			OptimizeDas2Query(seq, typeid, type, output_requests, request_sym);
         }
 
         for (Das2FeatureRequestSym request : output_requests) {
@@ -107,8 +98,12 @@ public final class Das2ClientOptimizer {
     }
 
 
-    private static void OptimizeDas2Query(BioSeq seq, String typeid, Das2RequestLog request_log, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym, SeqSymmetry overlap_sym, Das2Region region) {
-        BioSeq aseq = seq;
+    private static void OptimizeDas2Query(
+			BioSeq aseq, String typeid, Das2Type type, List<Das2FeatureRequestSym> output_requests, Das2FeatureRequestSym request_sym) {
+        Das2RequestLog request_log = request_sym.getLog();
+		// overlap_span and overlap_sym should actually be the same object, a LeafSeqSymmetry
+		SeqSymmetry overlap_sym = request_sym.getOverlapSym();
+		Das2Region region = request_sym.getRegion();
         MutableSeqSymmetry cont_sym;
         // this should work even for graphs, now that graphs are added to BioSeq's type hash (with id as type)
         cont_sym = (MutableSeqSymmetry) aseq.getAnnotation(typeid);
@@ -199,7 +194,6 @@ public final class Das2ClientOptimizer {
         splitIntoSubSpans(split_query, aseq, first_within_min, last_within_max, request_log, type, region, output_requests, typeid);
     }
 
-
     private static void splitIntoSubSpans(
             SeqSymmetry split_query, BioSeq aseq, int first_within_min, int last_within_max, Das2RequestLog request_log, Das2Type type, Das2Region region, List<Das2FeatureRequestSym> output_requests, String typeid) {
         int split_count = split_query.getChildCount();
@@ -227,9 +221,7 @@ public final class Das2ClientOptimizer {
         }
     }
 
-
-
-    static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
+    private static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
         SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 
         Das2RequestLog request_log = request_sym.getLog();
@@ -238,19 +230,9 @@ public final class Das2ClientOptimizer {
         Das2Region region = request_sym.getRegion();
         SeqSpan overlap_span = request_sym.getOverlapSpan();
         SeqSpan inside_span = request_sym.getInsideSpan();
-        String overlap_filter = null;
-        String inside_filter = null;
-        if (USE_SEGMENT) {
-            overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
-            if (inside_span != null) {
-                inside_filter = Das2FeatureSaxParser.getRangeString(inside_span, false);
-            }
-        } else {
-            overlap_filter = region.getPositionString(overlap_span, false);
-            if (inside_span != null) {
-                inside_filter = region.getPositionString(inside_span, false);
-            }
-        }
+        String overlap_filter = Das2FeatureSaxParser.getRangeString(overlap_span, false);
+        String inside_filter = inside_span == null ? null : Das2FeatureSaxParser.getRangeString(inside_span, false);
+       
         if (DEBUG) {
             System.out.println("^^^^^^^  in Das2ClientOptimizer.optimizedLoadFeatures(), overlap = " + overlap_filter +
                     ", inside = " + inside_filter);
@@ -258,7 +240,7 @@ public final class Das2ClientOptimizer {
         Das2Type type = request_sym.getDas2Type();
         String format = request_sym.getFormat();
         // if format already specified in Das2FeatureRequestSym, don't optimize
-        if (OPTIMIZE_FORMAT && (format == null)) {
+        if (format == null) {
             format = FormatPriorities.getFormat(type);
             request_sym.setFormat(format);
         }
@@ -301,17 +283,10 @@ public final class Das2ClientOptimizer {
     }
 
     private static String DetermineQueryPart(Das2Region region, String overlap_filter, String inside_filter, Das2Type type, String format) throws UnsupportedEncodingException {
-        StringBuffer buf = new StringBuffer(200);
-        if (USE_SEGMENT) {
-            buf.append("segment=");
-            if (USE_SEGMENT_URI) {
-                buf.append(URLEncoder.encode(region.getID(), IGBConstants.UTF8));
-            } else {
-                buf.append(URLEncoder.encode(region.getName(), IGBConstants.UTF8));
-            }
-            buf.append(";");
-        }
-
+      StringBuffer buf = new StringBuffer(200);
+		buf.append("segment=");
+		buf.append(URLEncoder.encode(region.getID(), IGBConstants.UTF8));
+		buf.append(";");
         buf.append("overlaps=");
         buf.append(URLEncoder.encode(overlap_filter, IGBConstants.UTF8));
         buf.append(";");
@@ -321,12 +296,8 @@ public final class Das2ClientOptimizer {
             buf.append(";");
         }
         buf.append("type=");
-        if (USE_TYPE_URI) {
-            buf.append(URLEncoder.encode(type.getID(), IGBConstants.UTF8));
-        } else {
-            buf.append(type.getName());
-        }
-        if (OPTIMIZE_FORMAT && format != null) {
+        buf.append(URLEncoder.encode(type.getID(), IGBConstants.UTF8));
+        if (format != null) {
             buf.append(";");
             buf.append("format=");
             buf.append(URLEncoder.encode(format, IGBConstants.UTF8));
@@ -401,9 +372,7 @@ public final class Das2ClientOptimizer {
                 String content_type = query_con.getContentType();
 				istr = query_con.getInputStream();
 				bis = new BufferedInputStream(istr);
-				if (DEBUG) {
-					System.out.println("content type: " + content_type);
-				}
+
 				content_subtype = content_type.substring(content_type.indexOf("/") + 1);
 				int sindex = content_subtype.indexOf(';');
 				if (sindex >= 0) {
@@ -411,6 +380,7 @@ public final class Das2ClientOptimizer {
 					content_subtype = content_subtype.trim();
 				}
 				if (DEBUG) {
+					System.out.println("content type: " + content_type);
 					System.out.println("content subtype: " + content_subtype);
 				}
 				if (content_subtype == null || content_type.equals("unknown") || content_subtype.equals("unknown") || content_subtype.equals("xml") || content_subtype.equals("plain")) {
@@ -512,7 +482,7 @@ public final class Das2ClientOptimizer {
 
      private static void addSymmetriesAndAnnotations(List feats, Das2FeatureRequestSym request_sym, Das2RequestLog request_log, BioSeq aseq) {
         boolean no_graphs = true;
-        if (feats == null || feats.size() == 0) {
+        if (feats == null || feats.isEmpty()) {
             // because many operations will treat empty Das2FeatureRequestSym as a leaf sym, want to
             //    populate with empty sym child/grandchild
             //    [ though a better way might be to have request sym's span on aseq be dependent on children, so
@@ -535,9 +505,6 @@ public final class Das2ClientOptimizer {
                 }
             }
         }
-        // probably want to synchronize on annotated seq, since don't want to add annotations to aseq
-        // on one thread when might be rendering based on aseq in event thread...
-        // or maybe should just make addAnnotation() a synchronized method
         if (no_graphs) {
             // if graphs, then adding to annotation BioSeq is already handled by addChildGraph() method
             synchronized (aseq) {
@@ -559,6 +526,24 @@ public final class Das2ClientOptimizer {
 			System.out.println("adding a child GraphSym to parent graph");
 		}
 		BioSeq aseq = cgraf.getGraphSeq();
+		GraphSym pgraf = getParentGraph(request_sym, aseq);
+
+		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
+		//    remove that span, then add overlap span from Das2FeatureRequestSym
+		//    could instead create new span based on start and end xcoord, but for better integration with
+		//    rest of Das2ClientOptimizer span of request is preferred
+		cgraf.removeSpan(cgraf.getSpan(aseq));
+		cgraf.addSpan(request_sym.getOverlapSpan());
+		if (DEBUG) {
+			System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
+		}
+		pgraf.addChild(cgraf);
+		//add properties of child to parent
+		pgraf.setProperties(cgraf.getProperties());
+	}
+
+
+	private static GraphSym getParentGraph(Das2FeatureRequestSym request_sym, BioSeq aseq) {
 		// check and see if parent graph already exists
 		Das2Type type = request_sym.getDas2Type();
 		String id = type.getID();
@@ -578,17 +563,6 @@ public final class Das2ClientOptimizer {
 			pgraf.setGraphName(name);
 			aseq.addAnnotation(pgraf);
 		}
-		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
-		//    remove that span, then add overlap span from Das2FeatureRequestSym
-		//    could instead create new span based on start and end xcoord, but for better integration with
-		//    rest of Das2ClientOptimizer span of request is preferred
-		cgraf.removeSpan(cgraf.getSpan(aseq));
-		cgraf.addSpan(request_sym.getOverlapSpan());
-		if (DEBUG) {
-			System.out.println("   span of child graf: " + SeqUtils.spanToString(cgraf.getSpan(aseq)));
-		}
-		pgraf.addChild(cgraf);
-		//add properties of child to parent
-		pgraf.setProperties(cgraf.getProperties());
+		return pgraf;
 	}
 }

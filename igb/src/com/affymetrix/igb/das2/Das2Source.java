@@ -13,14 +13,9 @@
 
 package com.affymetrix.igb.das2;
 
-//import java.io.*;
 import java.net.*;
 import java.util.*;
-//import org.xml.sax.*;
-//import org.w3c.dom.*;
 
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 
 /**
  *
@@ -30,9 +25,8 @@ public final class Das2Source {
 
   private URI source_uri;
   private String name;
-  private Map<String,Das2VersionedSource> versions = new LinkedHashMap<String,Das2VersionedSource>();
-  private Map<String,Das2VersionedSource> name2version = new LinkedHashMap<String,Das2VersionedSource>();
-
+  private final Map<String,Das2VersionedSource> versions = new LinkedHashMap<String,Das2VersionedSource>();
+ 
   private Das2ServerInfo server;
 
 
@@ -56,7 +50,6 @@ public final class Das2Source {
 
   synchronized void addVersion(Das2VersionedSource version) {
     versions.put(version.getID(), version);
-    name2version.put(version.getName(), version);
   }
 
 

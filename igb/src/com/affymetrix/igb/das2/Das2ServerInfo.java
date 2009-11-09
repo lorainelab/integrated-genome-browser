@@ -16,27 +16,21 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-//import java.util.regex.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.igb.das.DasLoader;
-//import com.affymetrix.genometry.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.SimpleAuthenticator;
-//import com.affymetrix.igb.util.*;
 
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;
-
-	private static String SOURCES_QUERY = "sequence";
-
 	private URI server_uri;
 	private String das_version;
 	private String name;
-	private Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
-	private Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
+	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
+	private final Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 	private String sessionId = null; //used to store a session id following authentication with a DAS2 server
 
@@ -100,110 +94,31 @@ public final class Das2ServerInfo  {
 	}
 
 	/**
-	 *  source_id may be either the URI for the source or optionally the source name
-	 *  If multiple sources in this server have the same name, then this method will only 
-	 *     return one of the sources that match
-	 */
-	/*public Das2Source getSource(String id) {
-		if (!initialized) { initialize(); }
-		Das2Source source = sources.get(id);
-		if (source == null) { source = name2source.get(id); }
-		return source;
-	}*/
-
-	/**
 	 *  getVersionedSource()
 	 *    assumes there is only one versioned source for each AnnotatedSeqGroup
 	 *    if server allows multiple versioned sources per group, then should
 	 *    use getVersionedSources()
 	 **/
 	public Das2VersionedSource getVersionedSource(AnnotatedSeqGroup group) {
-		Collection vsources = getVersionedSources(group);
-		if (vsources.size() == 0) { return null; }
-		else { return (Das2VersionedSource)vsources.iterator().next(); }
+		Collection<Das2VersionedSource> vsources = getVersionedSources(group);
+		if (vsources.isEmpty()) { return null; }
+		else { return vsources.iterator().next(); }
 	}
 
 	private Collection<Das2VersionedSource> getVersionedSources(AnnotatedSeqGroup group) {
 		// should probably make a vsource2seqgroup hash,
 		//   but for now can just iterate through sources and versions
-		//    Das2VersionedSource result = null;
 		Set<Das2VersionedSource> results = new LinkedHashSet<Das2VersionedSource>();
-		Iterator siter = getSources().values().iterator();
-		while (siter.hasNext()) {
-			Das2Source source = (Das2Source)siter.next();
-			Iterator viter = source.getVersions().values().iterator();
-			while (viter.hasNext()) {
-				Das2VersionedSource version = (Das2VersionedSource)viter.next();
+		for (Das2Source source : getSources().values()) {
+			for (Das2VersionedSource version : source.getVersions().values()) {
 				AnnotatedSeqGroup version_group = version.getGenome();
 				if (version_group == group) {
-					//	  result = version;
-					//	  break;
 					results.add(version);
 				}
 			}
 		}
 		return results;
 	}
-
-	/*public Das2VersionedSource getVersionedSource(String version_id) {
-		Iterator siter = this.getSources().values().iterator();
-		while (siter.hasNext()) {
-			Das2Source source = (Das2Source)siter.next();
-			Das2VersionedSource version = source.getVersion(version_id);
-			if (version != null) {
-				return version;
-			}
-		}
-		return null;
-	}*/
-        
-        // Determine the version of the Das2Server.  If there are problems retrieving this, just return null.
-        /*public static Das2VersionedSource GetDas2Version(String server_url, String source_id, String version_id,
-          String default_server_url, String default_source_url, String default_version_uri) {
-            Das2ServerInfo server = Das2Discovery.getDas2Server(server_url);
-            if (server == null) {
-                server = Das2Discovery.getDas2Server(default_server_url);
-                if (server == null) {
-                    return null;
-                }
-            }
-            Map source_list = server.getSources();
-            if (source_list == null) {
-                return null;
-            }
-            Das2Source source = (Das2Source) source_list.get(source_id);
-            if (source == null) {
-                source = (Das2Source) source_list.get(default_source_url);
-                if (source == null) {
-                    if (source_list.values() == null || source_list.values().iterator() == null || !source_list.values().iterator().hasNext()) {
-                        return null;
-                    }
-                    source = (Das2Source) source_list.values().iterator().next();
-                    if (source == null) {
-                        return null;
-                    }
-                }
-            }
-            Map version_list = source.getVersions();
-            Das2VersionedSource version = (Das2VersionedSource) version_list.get(version_id);
-            if (version == null) {
-                version = (Das2VersionedSource) version_list.get(default_version_uri);
-                if (version == null) {
-                    if (version_list.values() == null || version_list.values().iterator() == null || !version_list.values().iterator().hasNext()) {
-                        return null;
-                    }
-                    version = (Das2VersionedSource) version_list.values().iterator().next();
-                    if (version == null) {
-                        return null;
-                    }
-                }
-            }
-            return version;
-        }*/
-
-
-//	public String getDescription() { return description; }
-//	protected void setDescription(String desc)  { }
 
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
@@ -429,12 +344,9 @@ public final class Das2ServerInfo  {
 				//		System.out.println("$$$$ Coordinates URI: " + coords_uri);
 				}
 			}
-			/*Das2VersionedSource vsource;
-			if (caps.get(Das2WritebackVersionedSource.WRITEBACK_CAP_QUERY) != null) {
-				vsource = new Das2WritebackVersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
-			} else {*/
-				Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
-			//}
+
+			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
+
 			Iterator<Das2Capability> capiter = caps.values().iterator();
 			while (capiter.hasNext()) {
 				Das2Capability cap = capiter.next();
@@ -446,32 +358,6 @@ public final class Das2ServerInfo  {
 	}
 
 	
-
-	/**
-	    static boolean TEST_WRITEBACK_SERVER = false;
-
-	    // hardwired hack to see test writeback server (which has version_id "yeast/S228C-writeback");
-	    Das2VersionedSource write_hack_src = null;
-	    boolean add_writeback_hack = false;
-	    if (TEST_WRITEBACK_SERVER && version_id.endsWith("yeast/S228C")) {
-	      System.out.println("adding writeback source hack");
-	      add_writeback_hack = true;
-	      URI hack_uri = new URI(version_uri.toString() + "-writeback");
-	      write_hack_src = new Das2VersionedSource(dasSource, hack_uri, version_name + "-writeback",
-						       null, null, false);
-	      dasSource.addVersion(write_hack_src);
-	    }
-
-		// hardwired hack to see test writeback server (which has version_id "yeast/S228C-writeback");
-		if (add_writeback_hack) {
-		  System.out.println("adding writeback capability hack");
-		  Pattern pat = Pattern.compile("yeast/S228C");
-		  Matcher mat = pat.matcher(cap_root.toString());
-		  String hack_root = mat.replaceAll("yeast/S228C-writeback");
-		  Das2Capability write_cap = new Das2Capability(captype, new URI(hack_root), null);
-		  write_hack_src.addCapability(write_cap);
-		}
-	 */
 
 
 	/**

@@ -47,5 +47,5 @@ public final class Das2Type {
 
   public Map<String, String> getProps() { return props; }
  
-  public Map<String,String> getFormats() { return formats; }
+  Map<String,String> getFormats() { return formats; }
 }

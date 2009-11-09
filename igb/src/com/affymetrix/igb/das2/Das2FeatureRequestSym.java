@@ -38,17 +38,17 @@ import com.affymetrix.genometryImpl.das2.Das2RequestLog;
  */
 public final class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
 
-  private LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
-  private SeqSpan inside_span;
+  private final LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
+  private final SeqSpan inside_span;
 
-  private Das2Region das2_region;
-  private Das2Type das2_type;
+  private final Das2Region das2_region;
+  private final Das2Type das2_type;
 
-  private BioSeq aseq;
+  private final BioSeq aseq;
   private MutableSeqSpan sum_child_spans;
   private String format;
 
-  private Das2RequestLog response = new Das2RequestLog();
+  private final Das2RequestLog response = new Das2RequestLog();
 
   //  for now trying to do without container info in constructor
   public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {

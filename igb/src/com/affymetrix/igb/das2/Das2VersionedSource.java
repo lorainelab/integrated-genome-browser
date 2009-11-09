@@ -20,7 +20,6 @@ import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -89,12 +88,12 @@ public final class Das2VersionedSource {
         return source;
     }
 
-    public void addCapability(Das2Capability cap) {
+    void addCapability(Das2Capability cap) {
         capabilities.put(cap.getType(), cap);
 		Das2Capability.getCapabilityMap().put(cap.getRootURI().toString(), this);
     }
 
-    public Das2Capability getCapability(String type) {
+    Das2Capability getCapability(String type) {
         return capabilities.get(type);
     }
 

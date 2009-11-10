@@ -310,7 +310,7 @@ public final class GraphGlyph extends Glyph {
 		double xmin = view_coordbox.x;
 		double xmax = view_coordbox.x + view_coordbox.width;
 
-		if (getShowGrid() && !GraphState.isHeatMapStyle(getGraphStyle())) {
+		if (state.getShowGrid() && !GraphState.isHeatMapStyle(getGraphStyle())) {
 			drawHorizontalGridLines(view);
 		}
 
@@ -586,7 +586,7 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawHorizontalGridLines(ViewI view) {
-		float[] grid = getGridLinesYValues();
+		float[] grid = state.getGridLinesYValues();
 		if (grid == null || grid.length == 0) {
 			return;
 		}
@@ -911,14 +911,6 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowAxis();
 	}
 
-	private boolean getShowGrid() {
-		return state.getShowGrid();
-	}
-
-	public int getXPixelOffset() {
-		return xpix_offset;
-	}
-
 	public void setShowGraph(boolean show) {
 		state.setShowGraph(show);
 	}
@@ -933,10 +925,6 @@ public final class GraphGlyph extends Glyph {
 
 	public void setShowAxis(boolean b) {
 		state.setShowAxis(b);
-	}
-
-	private float[] getGridLinesYValues() {
-		return state.getGridLinesYValues();
 	}
 
 	@Override
@@ -1238,7 +1226,7 @@ public final class GraphGlyph extends Glyph {
 			tim.start();
 		}
 		view.transformToPixels(coordbox, pixelbox);
-		if (getShowGrid() && !GraphState.isHeatMapStyle(getGraphStyle())) {
+		if (state.getShowGrid() && !GraphState.isHeatMapStyle(getGraphStyle())) {
 			drawHorizontalGridLines(view);
 		}
 		if (getShowGraph()) {
@@ -1345,7 +1333,6 @@ public final class GraphGlyph extends Glyph {
 		int minX = graf.getGraphXCoord(draw_beg_index);
 		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
 		while ((new_beg > min_index) && ((minX - graf.getGraphXCoord(new_beg)) <= max_gap_threshold)) {
-			System.out.println("gg6:" +new_beg);
 			new_beg--;
 		}
 		draw_beg_index = new_beg;
@@ -1354,7 +1341,6 @@ public final class GraphGlyph extends Glyph {
 		int maxX = graf.getGraphXCoord(draw_end_index);
 		// GAH 2006-02-16 changed to <= max_gap instead of <, to better mirror Affy tiling array pipeline
 		while ((new_end < max_index) && ((graf.getGraphXCoord(new_end) - maxX) <= max_gap_threshold)) {
-			System.out.println("gg7:" +new_beg);
 			new_end++;
 		}
 		draw_end_index = new_end;
@@ -1369,7 +1355,6 @@ public final class GraphGlyph extends Glyph {
 		//      true, false, false
 		//      true, true, false
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
-			System.out.println("gg8:" + i);
 			double x = graf.getGraphXCoord(i);
 			double w = 0;
 			if (this.hasWidth()) {
@@ -1576,7 +1561,7 @@ public final class GraphGlyph extends Glyph {
 			double xpixels_per_coord = ((LinearTransform) view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
 			if ((xcoords_per_pixel < transition_scale)) {
-				if ((graph_style == MINMAXAVG) && (Application.getSingleton() instanceof IGB)) {
+				if (graph_style == MINMAXAVG) {
 					this.draw(view, BAR_GRAPH);
 				} else {
 					this.draw(view, LINE_GRAPH);

@@ -483,31 +483,20 @@ public final class GraphSymUtils {
 	 * @return
 	 */
 	public final static int determineBegIndex(GraphSym graf, double xmin) {
-		int xCoordLength = graf.getPointCount();
-		for (int i=0;i<xCoordLength;i++) {
-			if (graf.getGraphXCoord(i) > (int)xmin) {
-				return Math.max(0, i-1);
-			}
-		}
-		return 0;
+		return graf.determineBegIndex(xmin);
 	}
 
 	/**
 	 * Find first point with value >= xmax.
+	 * Use beginning index as a starting point.
 	 * @param xmax
 	 * @return
 	 */
-	public final static int determineEndIndex(GraphSym graf, double xmax) {
-		int xCoordLength = graf.getPointCount();
-		for (int i=0;i<xCoordLength;i++) {
-			if (graf.getGraphXCoord(i) >= (int)xmax) {
-				return i;
-			}
-		}
-		return xCoordLength-1;
+	public final static int determineEndIndex(GraphSym graf, double xmax, int begIndex) {
+		return graf.determineEndIndex(xmax, begIndex);
 	}
 
-	public final static boolean hasWidth(GraphSym graf) {
+	private final static boolean hasWidth(GraphSym graf) {
 		return graf instanceof GraphIntervalSym;
 	}
 }

@@ -22,6 +22,7 @@ import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
 
@@ -37,7 +38,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   private JPanel can_panel;
 
   public AffyLabelledTierMap(boolean hscroll_show, boolean vscroll_show) {
-    super(hscroll_show, vscroll_show);
+    super(hscroll_show, vscroll_show, NeoConstants.HORIZONTAL);
   }
 
   /**
@@ -53,7 +54,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     // setMapColor() controls what I normally think of as the background.
 
     mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    //mapsplitter.setOneTouchExpandable(true);		// confusing to new users
     mapsplitter.setDividerSize(8);
     mapsplitter.setDividerLocation(100);
     NeoCanvas ncan = this.getNeoCanvas();
@@ -217,7 +217,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
   /** Prints this component.
    *  @param print_labels whether or not to print the label map along with the map
    */
-  public void print(boolean print_labels) throws java.awt.print.PrinterException {
+  private void print(boolean print_labels) throws java.awt.print.PrinterException {
     ComponentPagePrinter cpp = null;
     if (print_labels) {
       cpp = new ComponentPagePrinter(mapsplitter);

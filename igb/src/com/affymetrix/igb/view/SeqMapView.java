@@ -322,7 +322,7 @@ public class SeqMapView extends JPanel
 			label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 			label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 		} else {
-			resultSeqMap = new AffyTieredMap(internalXScroller, internalYScroller);
+			resultSeqMap = new AffyTieredMap(internalXScroller, internalYScroller, NeoConstants.HORIZONTAL);
 		}
 		return resultSeqMap;
 	}
@@ -350,18 +350,13 @@ public class SeqMapView extends JPanel
 		action_listener = new SeqMapViewActionListener(this);
 		mouse_listener = new SeqMapViewMouseListener(this);
 
-		//    map.setScrollingOptimized(true);
 		seqmap.getNeoCanvas().setDoubleBuffered(false);
-		//    map.getLabelMap().getNeoCanvas().setDoubleBuffered(false);
 
 		seqmap.setScrollIncrementBehavior(AffyTieredMap.X, AffyTieredMap.AUTO_SCROLL_HALF_PAGE);
 
-		Adjustable xzoomer;
-		Adjustable yzoomer;
-
-		xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+		Adjustable xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
 		((JSlider)xzoomer).setToolTipText("Horizontal zoom");
-		yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+		Adjustable yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 		((JSlider)yzoomer).setToolTipText("Vertical zoom");
 
 		seqmap.setZoomer(NeoMap.X, xzoomer);
@@ -638,7 +633,7 @@ public class SeqMapView extends JPanel
 		if (seqmap.getTiers().size() >= tier_index) {
 			seqmap.addTier(axis_tier, tier_index);
 		} else {
-			seqmap.addTier(axis_tier);
+			seqmap.addTier(axis_tier, false);
 		}
 		
 		seq_glyph = initSeqGlyph(viewseq, axis_fg, axis);
@@ -1045,7 +1040,7 @@ public class SeqMapView extends JPanel
 					tg.setStyle(tg.getAnnotStyle());
 				}
 
-				seqmap.addTier(tg);
+				seqmap.addTier(tg, false);
 			}
 			temp_tiers.clear(); // redundant hint to garbage collection
 		}

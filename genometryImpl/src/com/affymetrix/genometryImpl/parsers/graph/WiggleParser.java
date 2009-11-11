@@ -38,7 +38,7 @@ import java.util.Iterator;
  */
 public final class WiggleParser {
 
-	private static enum WiggleFormat {
+	private static enum WigFormat {
 
 		BED4, VARSTEP, FIXEDSTEP
 	};
@@ -59,7 +59,7 @@ public final class WiggleParser {
 	 */
 	public List<GraphSym> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean annotate_seq, String stream_name)
 					throws IOException {
-		WiggleFormat current_format = WiggleFormat.BED4;
+		WigFormat current_format = WigFormat.BED4;
 
 		List<GraphSym> grafs = new ArrayList<GraphSym>();
 		WiggleData current_data = null;
@@ -79,7 +79,7 @@ public final class WiggleParser {
 			if (line.length() == 0) {
 				continue;
 			}
-			if (line.startsWith("#") || line.startsWith("%") || line.startsWith("browser")) {
+			if (line.charAt(0)=='#' || line.charAt(0)=='%' || line.startsWith("browser")) {
 				continue;
 			}
 
@@ -92,7 +92,7 @@ public final class WiggleParser {
 				track_line_parser.parseTrackLine(line);
 				previous_track_line = true;
 
-				current_format = WiggleFormat.BED4; // assume BED4 until changed.
+				current_format = WigFormat.BED4; // assume BED4 until changed.
 				current_data = null;
 				current_datamap = new HashMap<String, WiggleData>();
 				continue;
@@ -103,7 +103,7 @@ public final class WiggleParser {
 					throw new IllegalArgumentException("Wiggle format error: 'variableStep' line does not have a previous 'track' line");
 				}
 
-				current_format = WiggleFormat.VARSTEP;
+				current_format = WigFormat.VARSTEP;
 				current_seq_id = WiggleParser.parseFormatLine( line, "chrom","unknown");
 				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","1"));
 				continue;
@@ -114,7 +114,7 @@ public final class WiggleParser {
 					throw new IllegalArgumentException("Wiggle format error: 'fixedStep' line does not have a previous 'track' line");
 				}
 
-				current_format = WiggleFormat.FIXEDSTEP;
+				current_format = WigFormat.FIXEDSTEP;
 				current_seq_id = WiggleParser.parseFormatLine( line, "chrom","unknown");
 				current_start = Integer.parseInt(WiggleParser.parseFormatLine( line, "start","1"));
 				if (current_start < 1) {
@@ -124,35 +124,13 @@ public final class WiggleParser {
 				current_span = Integer.parseInt(WiggleParser.parseFormatLine( line, "span","1"));
 				continue;
 			}
-
-			// Else, it is a data line
-
-			// There should have been one track line at least...
-			if (!previous_track_line) {
-				throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
-			}
-
-
-			String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
 			
-			validateArguments(current_format, line, fields);
-
-			if (current_format == WiggleFormat.BED4) {
-				parseDataLine(fields, seq_group, current_data, current_datamap);
-				continue;
-			}
-			if (current_format == WiggleFormat.VARSTEP) {
-				parseDataLine(fields, current_seq_id, current_span, seq_group, current_data, current_datamap);
-				continue;
-			}
-			if (current_format == WiggleFormat.FIXEDSTEP) {
-				parseDataLine(fields, current_seq_id, current_start, current_span, seq_group, current_data, current_datamap);
-				current_start += current_step;	// We advance the start based upon the step.
-				continue;
-			}
+			current_start = parseData(
+					previous_track_line, line, current_format, seq_group, current_data, current_datamap, current_seq_id, current_span, current_start, current_step);
 		}
 
-		grafs.addAll(createGraphSyms(track_line_parser.getCurrentTrackHash(), seq_group, current_datamap, stream_name));
+		grafs.addAll(createGraphSyms(
+				track_line_parser.getCurrentTrackHash(), seq_group, current_datamap, stream_name));
 
 		if (annotate_seq) {
 			for (GraphSym graf : grafs) {
@@ -164,32 +142,37 @@ public final class WiggleParser {
 		return grafs;
 	}
 
-	/**
-	 * Sanity checking on arguments.
-	 * @param current_format
-	 * @param line
-	 * @param fields
-	 */
-	private static void validateArguments(WiggleFormat current_format, String line, String [] fields) {
-		if (current_format == WiggleFormat.BED4) {
-			if (fields.length < 4) {
-				throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-			}
+	private static int parseData(boolean previous_track_line, String line, WigFormat current_format, AnnotatedSeqGroup seq_group, WiggleData current_data, Map<String, WiggleData> current_datamap, String current_seq_id, int current_span, int current_start, int current_step) throws IllegalArgumentException {
+		// There should have been one track line at least...
+		if (!previous_track_line) {
+			throw new IllegalArgumentException("Wiggle format error: File does not have a previous 'track' line");
 		}
-		if (current_format == WiggleFormat.VARSTEP) {
-			if (fields.length < 2) {
-				throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-			}
+		String[] fields = field_regex.split(line.trim()); // trim() because lines are allowed to start with whitespace
+		switch(current_format) {
+			case BED4:
+				if (fields.length < 4) {
+					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+				}
+				parseDataLine(fields, current_data, current_datamap);
+				break;
+			case VARSTEP:
+				if (fields.length < 2) {
+					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+				}
+				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span);
+				break;
+			case FIXEDSTEP:
+				if (fields.length < 1) {
+					throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
+				}
+				parseDataLine(fields, current_data, current_datamap, current_seq_id, current_span, current_start);
+				current_start += current_step; // We advance the start based upon the step.
+				break;
 		}
-		if (current_format == WiggleFormat.FIXEDSTEP) {
-			if (fields.length < 1) {
-				throw new IllegalArgumentException("Wiggle format error: Improper " + current_format + " line: " + line);
-			}
-		}
+		return current_start;
 	}
 
-
-		/**
+	/**
 	 * Parse a single line of data (BED4 format).
 	 * @param line
 	 * @param current_format
@@ -199,7 +182,6 @@ public final class WiggleParser {
 	 */
 	private static void parseDataLine(
 					String[] fields,
-					AnnotatedSeqGroup seq_group,
 					WiggleData current_data,
 					Map<String, WiggleData> current_datamap) {
 
@@ -208,7 +190,7 @@ public final class WiggleParser {
 
 		current_data = current_datamap.get(seq_id);
 		if (current_data == null) {
-			current_data = new WiggleData(seq_group, seq_id);
+			current_data = new WiggleData(seq_id);
 			current_datamap.put(seq_id, current_data);
 		}
 
@@ -230,15 +212,14 @@ public final class WiggleParser {
 	 */
 	private static void parseDataLine(
 					String[] fields,
-					String current_seq_id,
-					int current_span,
-					AnnotatedSeqGroup seq_group,
 					WiggleData current_data,
-					Map<String, WiggleData> current_datamap) {
+					Map<String, WiggleData> current_datamap, 
+					String current_seq_id,
+					int current_span) {
 
 		current_data = current_datamap.get(current_seq_id);
 		if (current_data == null) {
-			current_data = new WiggleData(seq_group, current_seq_id);
+			current_data = new WiggleData(current_seq_id);
 			current_datamap.put(current_seq_id, current_data);
 		}
 
@@ -261,17 +242,16 @@ public final class WiggleParser {
 	 * @param current_datamap
 	 */
 	private static void parseDataLine(
-					String[] fields,
-					String current_seq_id,
-					int current_start,
-					int current_span,
-					AnnotatedSeqGroup seq_group,
+					String[] fields, 
 					WiggleData current_data,
-					Map<String, WiggleData> current_datamap) {
+					Map<String, WiggleData> current_datamap,
+					String current_seq_id,
+					int current_span,
+					int current_start) {
 
 		current_data = current_datamap.get(current_seq_id);
 		if (current_data == null) {
-			current_data = new WiggleData(seq_group, current_seq_id);
+			current_data = new WiggleData(current_seq_id);
 			current_datamap.put(current_seq_id, current_data);
 		}
 
@@ -325,7 +305,7 @@ public final class WiggleParser {
 		// Need iterator because we're removing data on the fly
 		Iterator<WiggleData> wiggleDataIterator = current_datamap.values().iterator();
 		while (wiggleDataIterator.hasNext()) {
-			GraphSym gsym = wiggleDataIterator.next().createGraph(graph_id);
+			GraphSym gsym = wiggleDataIterator.next().createGraph(seq_group, graph_id);
 
 			if (gsym != null) {
 				grafs.add(gsym);

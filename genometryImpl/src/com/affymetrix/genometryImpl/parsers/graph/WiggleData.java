@@ -13,20 +13,18 @@ import java.util.Comparator;
  */
 final class WiggleData {
 	private final ArrayList<Point3D> data;
-	private final AnnotatedSeqGroup seq_group;
 	private final String seq_id;
 
-	WiggleData(AnnotatedSeqGroup group, String seq_id) {
+	WiggleData(String seq_id) {
 		this.data = new ArrayList<Point3D>();
 		this.seq_id = seq_id;
-		this.seq_group = group;
 	}
 
 	/**
 	 *  Creates a GraphSym from the stored data, or returns null if no data
 	 *  has been stored yet.
 	 */
-	GraphSym createGraph(String graph_id) {
+	GraphSym createGraph(AnnotatedSeqGroup seq_group, String graph_id) {
 		if (data.isEmpty()) {
 			return null;
 		}
@@ -56,15 +54,6 @@ final class WiggleData {
 	}
 
 	public void add(int x, float y, int w) {
-		if (!data.isEmpty()) {
-			// See if we can merge intervals with same Y coordinate.
-			// This is done to save space in redundant wiggle files.
-			Point3D lastP = data.get(data.size()-1);
-			if (y == lastP.y && x >= lastP.x && x <= (lastP.x + lastP.w)) {
-				lastP.w = x - lastP.x + w;
-				return;
-			}
-		}
 		data.add(new Point3D(x, y, w));
 	}
 

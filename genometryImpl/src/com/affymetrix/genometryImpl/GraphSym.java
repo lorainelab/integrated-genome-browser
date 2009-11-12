@@ -77,20 +77,20 @@ public class GraphSym extends SimpleSymWithProps {
 	public GraphSym(int[] x, int[] w, float[] y, String id, BioSeq seq) {
 		super();
 
-		xMax = seq.getLength();
-		this.hasWidth = (w != null);
-		setCoords(x, y);
-		if (hasWidth) {
-			setCoords(w);
-		}
 		this.gid = id;
 		this.graph_original_seq = seq;
+		
+		this.hasWidth = (w != null);
+
+		if (x == null || x.length == 0) {
+			xMax = seq.getLength();
+		} else {
+			setCoords(x, y, w);
+		}
+		
 		SeqSpan span = new SimpleSeqSpan(this.xMin, this.xMax, seq);
 		this.addSpan(span);
 
-		if (x != null) {
-			bufFile = index(this.getGraphName() + seq.getID(),x,y,w);
-		}
 	}
 
 
@@ -130,35 +130,39 @@ public class GraphSym extends SimpleSymWithProps {
 	}
 
 	/**
-	 *  Sets the x and y coordinates.
+	 *  Sets the x and y coordinates and indexes.
 	 *  @param x an array of int, or null.
-	 *  @param y must be an array of float of same length as x, or null if x is null.
+	 *  @param y must be an array of float of same length as x.
+	 *  @param w must be an array of float of same length as x and y, or null
 	 */
-	protected void setCoords(int[] x, float[] y) {
-		if ((y == null && x != null) || (x == null && y != null)) {
-			throw new IllegalArgumentException("Y-coords cannot be null if x-coords are not null.");
+	protected void setCoords(int[] x, float[] y, int[] w) {
+		if (x.length != y.length) {
+			throw new IllegalArgumentException("X-coords and y-coords must have the same length.");
 		}
-		if (y != null && x != null && y.length != x.length) {
-			throw new IllegalArgumentException("Y-coords and x-coords must have the same length.");
-		}
-		
-		if (x != null && x.length >= 1) {
-			xMin = x[0];
-			pointCount = x.length;
-			xMax = x[pointCount-1];
-		}
-	}
-
-	/**
-	 *  Sets w coordinates.
-	 *  @param x an array of int.
-	 *  @param w must be an array of float of same length as x and y.
-	 */
-	protected void setCoords(int[] w) {
-		if (this.pointCount != w.length) {
+		if (w != null && (x.length != w.length)) {
 			throw new IllegalArgumentException("X,W, and Y arrays must have the same length");
 		}
-		xMax += w[pointCount - 1];
+		xMin = x[0];
+		pointCount = x.length;
+		xMax = x[pointCount - 1];
+		if (w != null) {
+			xMax += w[pointCount - 1];
+		}
+
+		bufFile = index(this.getGraphName() + this.getGraphSeq().getID(), x,y,w);
+	}
+
+	protected void nullCoords() {
+		// null out for garbage collection and cleanup
+		yBuf = null;
+		wBuf = null;
+		if (bufFile != null && bufFile.exists()) {
+			try {
+				bufFile.delete();
+			} catch (Exception ex) {
+				// doesn't matter
+			}
+		}
 	}
 
 	public final int getPointCount() {

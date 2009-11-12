@@ -37,7 +37,7 @@ public final class GenericFeature {
 		this.featureProps = featureProps;
 		this.gVersion = gVersion;
 		if (shouldAutoLoad(featureProps)) {
-			this.loadStrategy = LoadStrategy.WHOLE;
+			this.loadStrategy = LoadStrategy.GENOME;
 			this.setVisible();
 		} else {
 			this.loadStrategy = LoadStrategy.NO_LOAD;

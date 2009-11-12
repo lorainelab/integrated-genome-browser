@@ -804,7 +804,7 @@ public final class GeneralLoadView extends JComponent
 	private void loadWholeRangeFeatures(String versionName) {
 		BioSeq curSeq = gmodel.getSelectedSeq();
 		for (GenericFeature gFeature : glu.getFeatures(versionName)) {
-			if (gFeature.loadStrategy != LoadStrategy.WHOLE) {
+			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
 				continue;
 			}
 

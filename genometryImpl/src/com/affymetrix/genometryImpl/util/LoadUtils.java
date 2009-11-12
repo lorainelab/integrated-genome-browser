@@ -5,7 +5,7 @@ public final class LoadUtils {
 		NO_LOAD ("Don't Load"),
 		VISIBLE ("Region In View"),
 		CHROMOSOME ("Whole Chromosome"),
-		WHOLE ("Whole Genome");
+		GENOME ("Whole Genome");
 
 		private String name;
 

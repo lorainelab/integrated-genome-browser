@@ -419,7 +419,7 @@ public final class GeneralLoadView extends JComponent
 		// Load any features that have a visible strategy and haven't already been loaded.
 		String genomeVersionName = (String) versionCB.getSelectedItem();
 		for (GenericFeature gFeature : glu.getFeatures(genomeVersionName)) {
-			if (gFeature.loadStrategy != LoadStrategy.VISIBLE) {
+			if (gFeature.loadStrategy != LoadStrategy.VISIBLE && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
 				continue;
 			}
 			// Even if it's already loaded, we may want to reload... for example, if the viewsize changes.
@@ -869,7 +869,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		boolean enabled = false;
 		for (GenericFeature gFeature : features) {
-			if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
+			if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
 				enabled = true;
 				break;
 			}

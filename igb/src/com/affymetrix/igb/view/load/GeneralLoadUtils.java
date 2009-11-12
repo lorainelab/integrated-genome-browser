@@ -782,7 +782,7 @@ public final class GeneralLoadUtils {
 		SeqSpan overlap;
 		if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
 			overlap = gviewer.getVisibleSpan();
-		} else if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+		} else if (gFeature.loadStrategy == LoadStrategy.WHOLE || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
 			overlap = new SimpleSeqSpan(0, selected_seq.getLength(), selected_seq);
 		} else {
 			ErrorHandler.errorPanel("ERROR", "Requested load strategy not recognized: " + gFeature.loadStrategy);

@@ -21,7 +21,6 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.glyph.PixelFloaterGlyph;
 import com.affymetrix.igb.tiers.AffyTieredMap;
-import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.prefs.Preferences;
@@ -40,36 +39,20 @@ public final class GraphGlyphUtils {
 	/**
 	 *  Checks to make sure the the boundaries of a floating glyph are
 	 *  inside the map view.
-	 *  See {@link #checkPixelBounds(GraphGlyph, AffyTieredMap)}.
-	 */
-	public static boolean checkPixelBounds(GraphGlyph gl, SeqMapView gviewer) {
-		AffyTieredMap map = gviewer.getSeqMap();
-		return checkPixelBounds(gl, map);
-	}
-
-	/**
-	 *  Checks to make sure the the boundaries of a floating glyph are
-	 *  inside the map view.
-	 *  Return true if graph coords were changed, false otherwise.
-	 *  If the glyph is not a floating glyph, this will have no effect on it
-	 *  and will return false.
+	 *  If the glyph is not a floating glyph, this will have no effect on it.
 	 *  Assumes that graph glyph is a child of a PixelFloaterGlyph, so that
 	 *   the glyph's coord box is also its pixel box.
 	 */
-	public static boolean checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
-		boolean changed_coords = false;
+	public static void checkPixelBounds(GraphGlyph gl, AffyTieredMap map) {
 		if (gl.getGraphState().getFloatGraph()) {
 			Rectangle mapbox = map.getView().getPixelBox();
 			Rectangle2D.Double gbox = gl.getCoordBox();
 			if (gbox.y < mapbox.y) {
 				gl.setCoords(gbox.x, mapbox.y, gbox.width, gbox.height);
-				changed_coords = true;
 			} else if (gbox.y > (mapbox.y + mapbox.height - 10)) {
 				gl.setCoords(gbox.x, mapbox.y + mapbox.height - 10, gbox.width, gbox.height);
-				changed_coords = true;
 			}
 		}
-		return changed_coords;
 	}
 
 	public static boolean hasFloatingAncestor(GlyphI gl) {

@@ -251,7 +251,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 		// (Combo graphs cannot yet float.)
 		if (gstate.getComboStyle() == null && gstate.getFloatGraph()) {
 			graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
-			GraphGlyphUtils.checkPixelBounds(graph_glyph, smv);
+			GraphGlyphUtils.checkPixelBounds(graph_glyph, smv.getSeqMap());
 			smv.getPixelFloaterGlyph().addChild(graph_glyph);
 		} else {
 			if (gstate.getComboStyle() != null) {

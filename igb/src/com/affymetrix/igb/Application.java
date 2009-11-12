@@ -23,8 +23,6 @@ import javax.swing.*;
 
 public abstract class Application {
 
-  //final static boolean USE_STATUS_BAR = true;
-  public static boolean ALLOW_DELETING_DATA = false;
   public static boolean CACHE_GRAPHS = true;
 
   public final static boolean DEBUG_EVENTS = false;
@@ -55,11 +53,7 @@ public abstract class Application {
   }
 
   public static Application getSingleton() {
-    /*if (singleton == null) {
-      return new NullApplication();
-    } else {*/
       return singleton;
- //   }
   }
 
   abstract public Image getIcon();
@@ -100,13 +94,6 @@ public abstract class Application {
   public synchronized void setStatus(String s) {
     setStatus(s, true);
   }
-
-  /*public void setStatusBarHairlinePosition(String s) {
-    if (status_bar != null) {
-      status_bar.setPosition(s);
-			status_bar.progressBar.setVisible(false);
-    }
-  }*/
 
   /** Sets the text in the status bar.
    *  Will optionally echo a copy of the string to System.out.
@@ -161,12 +148,6 @@ public abstract class Application {
       frame, message, "Confirm", JOptionPane.YES_NO_OPTION));
   }
 
-  /*public static void informPanel(String message) {
-    Application app = getSingleton();
-    JFrame frame = (app==null) ? null : app.getFrame();
-    JOptionPane.showMessageDialog(frame, message, "Inform", JOptionPane.INFORMATION_MESSAGE);
-  }*/
-
   public abstract Logger getLogger();
 
   public static Logger getApplicationLogger() {
@@ -189,18 +170,4 @@ public abstract class Application {
     getApplicationLogger().fine(msg);
   }
 
-  /** A very basic implementation of Application.  It returns null from most methods. */
-  /*static class NullApplication extends Application {
-    public Image getIcon() { return null;}
-    public JFrame getFrame() { return null;}
-    public SeqMapView getMapView() {return null;}
-    public String getApplicationName() {return "Null Application";}
-    public String getVersion() {return "0.0";}
-    public String getResourceString(String key) { return null; }
-
-    // Returns a non-null Logger.
-    public Logger getLogger() {
-      return Logger.getLogger("Null Logger");
-    }
-  };*/
 }

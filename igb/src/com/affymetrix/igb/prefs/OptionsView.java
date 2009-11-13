@@ -18,7 +18,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.igb.view.OrfAnalyzer2;
+import com.affymetrix.igb.view.OrfAnalyzer;
 import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.view.UnibrowHairline;
 
@@ -128,10 +128,10 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
     orf_box.setLayout(new GridLayout(2,2));
     orf_box.setBorder(new javax.swing.border.TitledBorder("ORF Analyzer"));
 
-    JButton stop_codon_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_STOP_CODON_COLOR, OrfAnalyzer2.default_stop_codon_color);
+    JButton stop_codon_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_STOP_CODON_COLOR, OrfAnalyzer.default_stop_codon_color);
     orf_box.add(new JLabel("Stop Codon: "));
     orf_box.add(stop_codon_color);
-    JButton dynamic_orf_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer2.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer2.default_dynamic_orf_color);
+    JButton dynamic_orf_color = UnibrowPrefsUtil.createColorButton(null, UnibrowPrefsUtil.getTopNode(), OrfAnalyzer.PREF_DYNAMIC_ORF_COLOR, OrfAnalyzer.default_dynamic_orf_color);
     orf_box.add(new JLabel("Dynamic ORF: "));
     orf_box.add(dynamic_orf_color);
 

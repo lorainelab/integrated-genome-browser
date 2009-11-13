@@ -40,7 +40,7 @@ public class AltSpliceView extends JComponent
 	private boolean CONTROLS_ON_SIDE = false;
 	private SeqMapView original_view;
 	private SeqMapView spliced_view;
-	private OrfAnalyzer2 orf_analyzer;
+	private OrfAnalyzer orf_analyzer;
 	private JTextField buffer_sizeTF;
 	private JCheckBox slice_by_selectionCB;
 	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
@@ -102,7 +102,7 @@ public class AltSpliceView extends JComponent
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.SUBSELECT_SEQUENCE = false;
-		orf_analyzer = new OrfAnalyzer2(spliced_view, CONTROLS_ON_SIDE);
+		orf_analyzer = new OrfAnalyzer(spliced_view, CONTROLS_ON_SIDE);
 		buffer_sizeTF = new JTextField(4);
 		buffer_sizeTF.setText("" + getSliceBuffer());
 		slice_by_selectionCB = new JCheckBox("Slice By Selection", true);

@@ -956,14 +956,6 @@ public static final boolean contains(SeqSpan spanA, SeqSpan spanB) {
 
 
 /**
- *  Semantic sugar atop overlap().
- */
-public static final boolean intersects(SeqSpan spanA, SeqSpan spanB) {
-	return overlap(spanA, spanB);
-}
-
-
-/**
  *  Return SeqSpan that is the intersection of spanA and spanB.
 
  *  returns null if spans aren't on same seq
@@ -977,22 +969,17 @@ public static final boolean intersects(SeqSpan spanA, SeqSpan spanB) {
  *     new MutableSeqSpan creation -- to avoid, use intersection(span, span, mutspan) instead
  *
  */
-public static final SeqSpan intersection(SeqSpan spanA, SeqSpan spanB) {
+private static final SeqSpan intersection(SeqSpan spanA, SeqSpan spanB) {
 	if (! (overlap(spanA, spanB))) { return null; }
-	MutableSeqSpan dstSpan = null;
-	//    dstSpan = new SimpleMutableSeqSpan();
-	dstSpan = new MutableDoubleSeqSpan();
+	MutableSeqSpan dstSpan = new MutableDoubleSeqSpan();
 	if (intersection(spanA, spanB, dstSpan)) {
 		return dstSpan;
 	}
-	else {
-		return null;
-	}
+	return null;
 }
 
 /**
- *  More efficient method to retrieve intersection of two spans.
- *  returns the resulting span in dstSpan, and returns true if
+ *  Returns the resulting span in dstSpan, and returns true if
  *     attempt to calculate intersection was a success
  *  (if couldn't calculate intersection, returns false, and dstSpan is unmodified)
  *  orientation of returned SeqSpan:
@@ -1036,25 +1023,6 @@ public static final boolean intersection(SeqSpan spanA, SeqSpan spanB, MutableSe
 
 
 
-
-/**
- *  More efficient method to retrieve union of two spans.
- *  returns the resulting span in dstSpan, and returns true if
- *     attempt to calculate union was a success
- *  (if couldn't calculate union, returns false, and dstSpan is unmodified)
- *  orientation of returned SeqSpan:
- *      forward if both spans are forward
- *      reverse if both spans are reverse
- *      (currently) same orientation as spanA, if spanA and spanB are in different orientations
- *
- *  WARNING 8-11-2003
- *    really need to decide whether to use strictOverlap() or looseOverlap() when
- *    doing union (in other words, should "abutting but not overlapping" spans be merged?
- *    maybe make this a boolean arg to the method?
- *
- */
-
-
 /**
  * Variant of making union of two spans,
  *   this one taking an additional boolean argument specifying whether to use
@@ -1089,7 +1057,7 @@ public static final boolean union(SeqSpan spanA, SeqSpan spanB, MutableSeqSpan d
 	else {
 		if (! looseOverlap(AMin, AMax, BMin, BMax)) { return false; }
 	}
-	return encompass(AForward, BForward, AMin, AMax, BMin, BMax, spanA.getBioSeq(), dstSpan);
+	return encompass(AForward, AMin, AMax, BMin, BMax, spanA.getBioSeq(), dstSpan);
 }
 
 
@@ -1133,7 +1101,7 @@ public static final boolean encompass(SeqSpan spanA, SeqSpan spanB, MutableSeqSp
 	return true;
 }
 
-private static final boolean encompass(boolean AForward, boolean BForward,
+private static final boolean encompass(boolean AForward, 
 		double AMin, double AMax, double BMin, double BMax,
 		BioSeq seq, MutableSeqSpan dstSpan) {
 
@@ -1152,31 +1120,10 @@ private static final boolean encompass(boolean AForward, boolean BForward,
 	return true;
 }
 
-/**
- *  Copies a SeqSymmetry.
- *  Note that this clears all previous data from the MutableSeqSymmetry.
- */
-public static final void copyToMutable(SeqSymmetry sym, MutableSeqSymmetry mut) {
-	mut.clear();
-	int spanCount = sym.getSpanCount();
-	for (int i=0; i<spanCount; i++) {
-		SeqSpan span = sym.getSpan(i);
-		SeqSpan newspan = new SimpleMutableSeqSpan(span);
-		mut.addSpan(newspan);
-	}
-	int childCount = sym.getChildCount();
-	for (int i=0; i<childCount; i++) {
-		SeqSymmetry child = sym.getChild(i);
-		MutableSeqSymmetry newchild = new SimpleMutableSeqSymmetry();
-		copyToMutable(child, newchild);
-		mut.addChild(newchild);
-	}
-}
-
 public static final DerivedSeqSymmetry copyToDerived(SeqSymmetry sym) {
-	DerivedSeqSymmetry mut = new SimpleDerivedSeqSymmetry();
-	copyToDerived(sym, mut);
-	return mut;
+	DerivedSeqSymmetry der = new SimpleDerivedSeqSymmetry();
+	copyToDerived(sym, der);
+	return der;
 }
 
 private static final void copyToDerived(SeqSymmetry sym, DerivedSeqSymmetry der) {
@@ -1225,12 +1172,6 @@ public static final void printSymmetry(SeqSymmetry sym, String spacer, boolean p
 // not public.  Used for recursion
 private static final void printSymmetry(String indent, SeqSymmetry sym, String spacer, boolean print_props) {
 	System.out.println(indent + symToString(sym));
-	/*
-	   if (sym instanceof DerivedSeqSymmetry) {
-	   SeqSymmetry origsym = ((DerivedSeqSymmetry)sym).getOriginalSymmetry();
-	   System.out.println("  derived from: " + symToString(origsym));
-	   }
-	   */
 	if (print_props && sym instanceof SymWithProps) {
 		SymWithProps pp = (SymWithProps) sym;
 		Map<String,Object> props = pp.getProperties();

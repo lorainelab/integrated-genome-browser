@@ -479,7 +479,7 @@ public final class BioSeq implements SearchableCharIterator {
 		int symCount = sym.getChildCount();
 		if (symCount == 0) {
 			SeqSpan this_comp_span = sym.getSpan(this);
-			if (this_comp_span == null || !SeqUtils.intersects(this_comp_span, this_residue_span)) {
+			if (this_comp_span == null || !SeqUtils.overlap(this_comp_span, this_residue_span)) {
 				return;
 			}
 			BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);

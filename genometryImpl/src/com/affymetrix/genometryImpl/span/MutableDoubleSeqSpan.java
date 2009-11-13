@@ -62,11 +62,6 @@ public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
 		this.seq = seq;
 	}
 
-	/*public void setCoordsDouble(double start, double end) {
-		this.start = start;
-		this.end = end;
-	}*/
-
 	public void setStartDouble(double start) {
 		this.start = start;
 	}

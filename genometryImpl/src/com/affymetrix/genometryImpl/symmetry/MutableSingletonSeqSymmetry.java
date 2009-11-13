@@ -28,10 +28,6 @@ public class MutableSingletonSeqSymmetry
 
 	protected CharSequence id;
 
-	public MutableSingletonSeqSymmetry(SeqSpan span) {
-		super(span);
-	}
-
 	public MutableSingletonSeqSymmetry(int start, int end, BioSeq seq) {
 		super(start, end, seq);
 	}
@@ -40,24 +36,6 @@ public class MutableSingletonSeqSymmetry
 		this(start, end, seq);
 		this.id = id;
 	}
-
-	/**
-	 *  Constructor.
-	 *  @param parent  This parameter is ignored.
-	 */
-	/*public MutableSingletonSeqSymmetry(SeqSymmetry parent, int start, int end, BioSeq seq) {
-		super(start, end, seq);
-		// ignoring parent
-	}*/
-
-	/**
-	 *  Constructor.
-	 *  @param parent  This parameter is ignored.
-	 */
-	/*public MutableSingletonSeqSymmetry(CharSequence id, SeqSymmetry parent, int start, int end, BioSeq seq) {
-		this(parent, start, end, seq);
-		this.id = id;
-	}*/
 
 	public void addChild(SeqSymmetry sym) {
 		if (children == null) {
@@ -98,29 +76,7 @@ public class MutableSingletonSeqSymmetry
 	public void removeSpan(SeqSpan span) { throw new
 		RuntimeException("Operation Not Allowed. Can't remove a span froma a SingletonSeqSymmetry."); }
 
-	/**
-	 * The setSpan() operation is not allowed, it will throw an exception.
-	 * The issue is that we can set our coordinates to that of the span, but
-	 * we can't set the span to _be_ the span, that is if someone calls setSpan
-	 * and then changes the span, we won't know about it since we aren't actually
-	 * setting the span, but rather copying its start and end.
-	 */
-	/*public void setSpan(int index, SeqSpan span) {
-		throw new RuntimeException("Operation Not Allowed. Can't set the span of a SingletonSeqSymmetry.");
-	}*/
-
 	public String getID() { return id.toString(); }
 
-	/**
-	 *  Sorts child syms based on the given comparator.
-	 *  This method is not thread-safe if you try to access the
-	 *  children while sorting is happening.
-	 */
-	/*public void sortChildren(Comparator<SeqSymmetry> comp)  {
-		if (children == null) {
-			return;
-		}
-		Collections.sort(children, comp);
-	}*/
 }
 

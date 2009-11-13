@@ -206,31 +206,55 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 					int seqEndIndex,
 					int pixelStart) {
 		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
+		String str = residue_provider.substring(seqBegIndex, seqEndIndex);
+
+		drawResidueRectangles(g, pixelsPerBase, str);
+
+		drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
+	}
+
+	private void drawResidueRectangles( Graphics g, double pixelsPerBase, String str) {
+		for (int j = 0; j < str.length(); j++) {
+			if (str.charAt(j) == 'A') {
+				g.setColor(Color.green);
+			} else if (str.charAt(j) == 'T') {
+				g.setColor(Color.pink);
+			} else if (str.charAt(j) == 'G') {
+				g.setColor(Color.yellow);
+			} else if (str.charAt(j) == 'C') {
+				g.setColor(Color.cyan);
+			}
+			if (str.charAt(j)=='A' ||str.charAt(j)== 'T' || str.charAt(j)=='G' || str.charAt(j)== 'C'){
+				//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
+				int offset = (int) (j * pixelsPerBase);
+				//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
+				g.fillRect(pixelbox.x + offset, pixelbox.y,(int) Math.ceil(pixelsPerBase), pixelbox.height);
+			}
+		}
+	}
+
+
+	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
 		g.setFont(getResidueFont());
 		g.setColor(getForegroundColor());
 		fontmet = GeneralUtils.getFontMetrics(getResidueFont());
-
-		String str = residue_provider.substring(seqBegIndex, seqEndIndex);
-		if (this.font_width < pixelsPerBase) { // Ample room to draw residue letters.
+		if (this.font_width < pixelsPerBase) {
+			// Ample room to draw residue letters.
 			for (int i = 0; i < str.length(); i++) {
 				String c = String.valueOf(str.charAt(i));
 				if (c != null) {
-					g.drawString(c,
-									(pixelStart + (int) (i * pixelsPerBase)),
-									baseline);
+					g.drawString(c, pixelStart + (int) (i * pixelsPerBase), baseline);
 				}
 			}
-		} else if (((double) ((int) pixelsPerBase) == pixelsPerBase) // Make sure it's an integral number of pixels per base.
-						&& (this.font_width == pixelsPerBase) //&& ( this.fontmet.getHeight() < this.pixelbox.height )
-						) { // pixelsPerBase matches the font width.
+		} else if (((double) ((int) pixelsPerBase) == pixelsPerBase) && (this.font_width == pixelsPerBase)) {
+			// pixelsPerBase matches the font width.
 			// Draw the whole string in one go.
-
 			if (str != null) {
 				g.drawString(str, pixelStart, baseline);
 			}
 		}
-
 	}
+
 
 	/** If false, then {@link #hit(Rectangle, ViewI)} and
 	 *  {@link #hit(Rectangle2D, ViewI)} will always return false.

@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -41,7 +42,7 @@ import java.awt.geom.Rectangle2D;
  *
  */
 public final class CharSeqGlyph extends AbstractResiduesGlyph
-				implements NeoConstants {
+		implements NeoConstants {
 
 	int parent_seq_beg, parent_seq_end;
 	SearchableCharIterator chariter;
@@ -55,6 +56,14 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	protected boolean hitable = true;
 	private boolean show_background = true;
 	private boolean drawingRects = false;
+	public static final String PREF_A_COLOR = "Adenine color";
+	public static final String PREF_T_COLOR = "Thymine color";
+	public static final String PREF_G_COLOR = "Guanine color";
+	public static final String PREF_C_COLOR = "Cytosine color";
+	public static final Color default_A_color = Color.GREEN;
+	public static final Color default_T_color = Color.PINK;
+	public static final Color default_G_color = Color.YELLOW;
+	public static final Color default_C_color = Color.CYAN;
 
 	public final boolean isDrawingRects() {
 		return this.drawingRects;
@@ -150,8 +159,8 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 		Graphics g = view.getGraphics();
 		double pixels_per_base;
 		int visible_ref_beg, visible_ref_end,
-						visible_seq_beg, visible_seq_end, visible_seq_span,
-						seq_beg_index, seq_end_index;
+				visible_seq_beg, visible_seq_end, visible_seq_span,
+				seq_beg_index, seq_end_index;
 		visible_ref_beg = (int) coordclipbox.x;
 		visible_ref_end = (int) (coordclipbox.x + coordclipbox.width);
 		// adding 1 to visible ref_end to make sure base is drawn if only
@@ -172,7 +181,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 			}
 
 			scratchrect.setRect(visible_seq_beg, coordbox.y,
-							visible_seq_span, coordbox.height);
+					visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = ((LinearTransform) view.getTransform()).getScaleX();
 			int seq_pixel_offset = pixelbox.x;
@@ -200,11 +209,11 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 
 	// Look at similarity with SequenceGlyph.drawHorizontalResidues
 	protected void drawHorizontalResidues(Graphics g,
-					double pixelsPerBase,
-					SearchableCharIterator residue_provider,
-					int seqBegIndex,
-					int seqEndIndex,
-					int pixelStart) {
+			double pixelsPerBase,
+			SearchableCharIterator residue_provider,
+			int seqBegIndex,
+			int seqEndIndex,
+			int pixelStart) {
 		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
 		String str = residue_provider.substring(seqBegIndex, seqEndIndex);
 
@@ -213,26 +222,32 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 		drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
 	}
 
-	private void drawResidueRectangles( Graphics g, double pixelsPerBase, String str) {
+	private void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
+
+
 		for (int j = 0; j < str.length(); j++) {
 			if (str.charAt(j) == 'A') {
-				g.setColor(Color.green);
+
+				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_A_COLOR, default_A_color));
 			} else if (str.charAt(j) == 'T') {
-				g.setColor(Color.pink);
+
+				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_T_COLOR, default_T_color));
 			} else if (str.charAt(j) == 'G') {
-				g.setColor(Color.yellow);
+
+				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_G_COLOR, default_G_color));
 			} else if (str.charAt(j) == 'C') {
-				g.setColor(Color.cyan);
+
+				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_C_COLOR, default_C_color));
+				;
 			}
-			if (str.charAt(j)=='A' ||str.charAt(j)== 'T' || str.charAt(j)=='G' || str.charAt(j)== 'C'){
+			if (str.charAt(j) == 'A' || str.charAt(j) == 'T' || str.charAt(j) == 'G' || str.charAt(j) == 'C') {
 				//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
 				int offset = (int) (j * pixelsPerBase);
 				//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-				g.fillRect(pixelbox.x + offset, pixelbox.y,(int) Math.ceil(pixelsPerBase), pixelbox.height);
+				g.fillRect(pixelbox.x + offset, pixelbox.y, (int) Math.ceil(pixelsPerBase), pixelbox.height);
 			}
 		}
 	}
-
 
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
 		g.setFont(getResidueFont());
@@ -254,7 +269,6 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 			}
 		}
 	}
-
 
 	/** If false, then {@link #hit(Rectangle, ViewI)} and
 	 *  {@link #hit(Rectangle2D, ViewI)} will always return false.
@@ -298,14 +312,14 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 	public void addChild(GlyphI child, int position) {
 		super.addChild(child, position);
 		child.setCoords(child.getCoordBox().x, this.coordbox.y,
-						child.getCoordBox().width, this.coordbox.height);
+				child.getCoordBox().width, this.coordbox.height);
 	}
 
 	@Override
 	public void addChild(GlyphI child) {
 		super.addChild(child);
 		child.setCoords(child.getCoordBox().x, this.coordbox.y,
-						child.getCoordBox().width, this.coordbox.height);
+				child.getCoordBox().width, this.coordbox.height);
 	}
 
 	public void setParentSeqStart(int beg) {

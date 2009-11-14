@@ -184,7 +184,7 @@ public interface ViewI  {
 	 *
 	 *    Returns alterred destination Point2D
 	 */
-	public Point2D.Double transformToCoords(Point src, Point2D.Double dst);
+	public Point2D transformToCoords(Point2D src, Point2D dst);
 
 	// needed to add this for efficiency -- some glyphs access component
 	// width/height/bounds to get around Graphics drawing bugs  -- GAH 12/14/97

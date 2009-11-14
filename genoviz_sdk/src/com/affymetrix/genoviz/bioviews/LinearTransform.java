@@ -183,9 +183,8 @@ public class LinearTransform implements TransformI  {
 	 * @param dst ignored
 	 * @return the souce Point2D transformed.
 	 */
-	public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
-		dst.x = src.x * xscale + xoffset;
-		dst.y = src.y * yscale + yoffset;
+	public Point2D transform(Point2D src, Point2D dst) {
+		dst.setLocation(src.getX() * xscale + xoffset, src.getY() * yscale + yoffset);
 		return dst;
 	}
 
@@ -195,9 +194,8 @@ public class LinearTransform implements TransformI  {
 	 * @param dst ignored
 	 * @return the souce Point2D transformed.
 	 */
-	public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
-		dst.x = (src.x - xoffset) / xscale;
-		dst.y = (src.y - yoffset) / yscale;
+	public Point2D inverseTransform(Point2D src, Point2D dst) {
+		dst.setLocation((src.getX() - xoffset) / xscale, (src.getY() - yoffset) / yscale);
 		return dst;
 	}
 

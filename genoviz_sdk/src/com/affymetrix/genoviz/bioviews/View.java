@@ -310,26 +310,19 @@ public class View implements ViewI, NeoPaintListener,
 			   scratch_coords.y = (double)src.y;
 			   scratch_coords.width = (double)src.width;
 			   scratch_coords.height = (double)src.height;
-			   //    System.out.println("calling inverseTransform: " + transform);
 			   Rectangle2D.Double result = transform.inverseTransform(scratch_coords, dst);
-			   //    System.out.println("done calling inverseTransform");
 			   return result;
 		   }
 
-		   public Point2D.Double transformToCoords(Point src, Point2D.Double dst)  {
-			   scratch_coord.x = (double)src.x;
-			   scratch_coord.y = (double)src.y;
-			   return transform.inverseTransform(scratch_coord, dst);
+		   public Point2D transformToCoords(Point2D src, Point2D dst)  {
+			   return transform.inverseTransform(src, dst);
 		   }
 
 		   /**
 			*  draw this view
 			*/
 		   public void draw()  {
-
-			   // public synchronized void draw()  {
 			   boolean drawn = false;
-			   //    System.out.println("scale = " + ((LinearTransform)transform).getScaleX());
 			   drawCount++;
 			   if (isTimed) {
 				   timecheck.start();

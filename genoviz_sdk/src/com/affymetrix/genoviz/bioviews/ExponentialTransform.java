@@ -60,19 +60,19 @@ public class ExponentialTransform implements TransformI {
 		return out;
 	}
 
-	public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
+	public Point2D transform(Point2D src, Point2D dst) {
 		// y = f(x), but in this case y is really dst.x
 		//   (Exponential is a one-dimensional transform, ignores src.y & dst.y
-		double x = src.x;
+		double x = src.getX();
 		double y = Math.exp(x*ratio);
-		dst.x = y;
+		dst.setLocation(y, dst.getY());
 		return dst;
 	}
 
-	public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
-		double y = src.x;
+	public Point2D inverseTransform(Point2D src, Point2D dst) {
+		double y = src.getX();
 		double x = Math.log(y/ratio);
-		dst.x = x;
+		dst.setLocation(x,dst.getY());
 		return dst;
 	}
 

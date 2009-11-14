@@ -69,7 +69,7 @@ public interface TransformI extends Cloneable  {
 	 *
 	 * @return the point transformed
 	 */
-	public Point2D.Double transform(Point2D.Double src, Point2D.Double dst);
+	public Point2D transform(Point2D src, Point2D dst);
 
 	/**
 	 * inverts the transformation of a Point2D.
@@ -79,7 +79,7 @@ public interface TransformI extends Cloneable  {
 	 *
 	 * @return the point transformed
 	 */
-	public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst);
+	public Point2D inverseTransform(Point2D src, Point2D dst);
 
 	/**
 	 * transforms a rectangle.

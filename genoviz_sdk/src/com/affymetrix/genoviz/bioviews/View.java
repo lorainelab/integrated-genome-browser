@@ -102,7 +102,7 @@ public class View implements ViewI, NeoPaintListener,
 		   // View currently requires specific Scene implementation to
 		   //    handle optimization method calls
 		   protected Scene scene;
-		   protected TransformI transform;
+		   protected LinearTransform transform;
 
 		   protected NeoCanvas component;
 
@@ -133,7 +133,7 @@ public class View implements ViewI, NeoPaintListener,
 		   protected boolean buffer_optimized = true;
 		   protected boolean buffered = false;
 
-		   protected TransformI lastTransform;  // copy of transform from last draw
+		   protected LinearTransform lastTransform;  // copy of transform from last draw
 		   // I think prevCalcCoordBox can be replaced with prevCoordBox -- GAH 8/4/97
 		   protected Rectangle2D.Double prevCalcCoordBox;
 		   protected Rectangle2D.Double prevCoordBox;
@@ -239,11 +239,11 @@ public class View implements ViewI, NeoPaintListener,
 			   }
 		   }
 
-		   public void setTransform (TransformI transform)  {
+		   public void setTransform (LinearTransform transform)  {
 			   this.transform = transform;
 		   }
 
-		   public TransformI getTransform ()  {
+		   public LinearTransform getTransform ()  {
 			   return this.transform;
 		   }
 
@@ -433,7 +433,7 @@ public class View implements ViewI, NeoPaintListener,
 			   }
 
 			   try {
-				   lastTransform = (TransformI)transform.clone();
+				   lastTransform = (LinearTransform)transform.clone();
 			   }
 			   catch (CloneNotSupportedException e) {
 				   // This can never happen as long as TransformI extends Cloneable.

@@ -85,8 +85,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected int scroller_value[] = new int[2];
 	protected int prev_zoomer_value[] = new int[2];
 	protected int prev_scroller_value[] = new int[2];
-	protected TransformI zoomtrans[] = new TransformI[2];
-	protected TransformI scrolltrans[] = new TransformI[2];
+	protected ExponentialTransform zoomtrans[] = new ExponentialTransform[2];
+	protected LinearTransform scrolltrans[] = new LinearTransform[2];
 
 	protected double zoomer_scale[] = new double[2];
 	protected int zoom_behavior[] = new int[2];
@@ -912,7 +912,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		}
 	}
 
-	public void setScrollTransform(int id, TransformI trans) {
+	public void setScrollTransform(int id, LinearTransform trans) {
 		scrolltrans[id] = trans;
 	}
 

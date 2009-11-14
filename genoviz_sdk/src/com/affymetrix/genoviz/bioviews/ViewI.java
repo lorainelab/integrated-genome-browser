@@ -20,7 +20,7 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A ViewI is an abstract window onto a particular {@link SceneI}.
- * The view maintains a mapping (with the help of {@link TransformI})
+ * The view maintains a mapping
  * between the scene's coordinate space
  * and the pixel space of a particular AWT component.
  * Among other things
@@ -139,16 +139,16 @@ public interface ViewI  {
 	public ViewI getFullView();
 
 	/**
-	 *  sets the TransformI that is used to transform widget coordinates to
+	 *  sets the LinearTransform that is used to transform widget coordinates to
 	 *  pixels and vice versa.
 	 */
-	public void setTransform(TransformI t);
+	public void setTransform(LinearTransform t);
 
 	/**
-	 *  returns the TransformI that is used to transform widget coordinates to
+	 *  returns the LinearTransform that is used to transform widget coordinates to
 	 *  pixels and vice versa.
 	 */
-	public TransformI getTransform();
+	public LinearTransform getTransform();
 
 	/**
 	 *    The view is responsible for mapping coordinates to pixels and

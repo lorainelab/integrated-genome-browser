@@ -203,7 +203,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected WrapNumbers num_glyph;
 
 	protected int scroll_increment;
-	protected ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
+	private ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
 	protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 

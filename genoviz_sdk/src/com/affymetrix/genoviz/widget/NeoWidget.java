@@ -25,7 +25,6 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
-import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.View;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;

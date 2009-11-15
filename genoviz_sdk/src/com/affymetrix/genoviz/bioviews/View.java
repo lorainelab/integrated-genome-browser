@@ -15,12 +15,15 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.NoninvertibleTransformException;
 import java.util.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * implementation of ViewI interface.
@@ -293,9 +296,14 @@ public class View implements ViewI, NeoPaintListener,
 			   return result;
 		   }
 
-		   public Point2D transformToCoords(Point2D src, Point2D dst)  {
-			   return transform.inverseTransform(src, dst);
-		   }
+		public Point2D transformToCoords(Point2D src, Point2D dst) {
+			try {
+				return transform.inverseTransform(src, dst);
+			} catch (NoninvertibleTransformException ex) {
+				Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+				return null;
+			}
+		}
 
 		   /**
 			*  draw this view

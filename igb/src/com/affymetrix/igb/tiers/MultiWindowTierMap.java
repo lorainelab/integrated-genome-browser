@@ -80,8 +80,8 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 		LinearTransform trans =  rootview.getTransform();
 		double xscale = trans.getScaleX();
 		double yscale = trans.getScaleY();
-		double xoffset = trans.getOffsetX();
-		double yoffset = trans.getOffsetY();
+		double xoffset = trans.getTranslateX();
+		double yoffset = trans.getTranslateY();
 
 		// update all the child maps
 		for (int x = 0; x < tile_columns; x++) {
@@ -98,8 +98,8 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 				LinearTransform ctrans =  cview.getTransform();
 				ctrans.setScaleX(xscale);
 				ctrans.setScaleY(yscale);
-				ctrans.setOffsetX(xoffset - (x * tile_width));
-				ctrans.setOffsetY(yoffset - (y * tile_height));
+				ctrans.setTranslateX(xoffset - (x * tile_width));
+				ctrans.setTranslateY(yoffset - (y * tile_height));
 				cview.setFullView(rootview);
 				cmap.updateWidget();
 			}

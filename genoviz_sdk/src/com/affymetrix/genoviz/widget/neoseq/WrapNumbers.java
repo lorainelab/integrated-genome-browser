@@ -18,6 +18,7 @@ import java.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Range;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 public class WrapNumbers extends WrapGlyph {
@@ -83,7 +84,7 @@ public class WrapNumbers extends WrapGlyph {
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(residues_per_line);
 		int last_residue_line =
-			(int)(visible_box.y + clt.transform(clt.X, visible_box.height) - 1) + firstOrd;
+			(int)(visible_box.y + clt.transform(NeoConstants.HORIZONTAL, visible_box.height) - 1) + firstOrd;
 
 		if (last_residue_line > seqEnd) {
 			last_residue_line = seqEnd;

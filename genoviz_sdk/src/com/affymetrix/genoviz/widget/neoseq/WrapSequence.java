@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Range;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 public class WrapSequence extends WrapGlyph {
@@ -82,7 +83,7 @@ public class WrapSequence extends WrapGlyph {
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(residues_per_line);
 		last_visible_residue = (int)
-			(visible_box.y + clt.transform(clt.X, visible_box.height) - 1);
+			(visible_box.y + clt.transform(NeoConstants.HORIZONTAL, visible_box.height) - 1);
 
 		lastPotentiallyVisibleResidue = last_visible_residue;
 

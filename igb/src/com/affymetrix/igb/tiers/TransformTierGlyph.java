@@ -93,21 +93,21 @@ public final class TransformTierGlyph extends TierGlyph {
     // should switch soon to doing this completely through
     //    LinearTransform calls, and eliminate new AffineTransform creation...
     AffineTransform trans2D = new AffineTransform();
-    trans2D.translate(0.0, incoming_view_transform.getOffsetY());
+    trans2D.translate(0.0, incoming_view_transform.getTranslateY());
     trans2D.scale(1.0, incoming_view_transform.getScaleY());
 
     //    trans2D.translate(1.0, this.getCoordBox().y);
     //    System.out.println("tier transform: offset = " + tier_transform.getOffsetY() +
     //    		       ", scale = " + tier_transform.getScaleY());
 
-    trans2D.translate(1.0, tier_transform.getOffsetY());
+    trans2D.translate(1.0, tier_transform.getTranslateY());
     trans2D.scale(1.0, tier_transform.getScaleY());
 
     modified_view_transform = new LinearTransform();
     modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
-    modified_view_transform.setOffsetX(incoming_view_transform.getOffsetX());
+    modified_view_transform.setTranslateX(incoming_view_transform.getTranslateX());
     modified_view_transform.setScaleY(trans2D.getScaleY());
-    modified_view_transform.setOffsetY(trans2D.getTranslateY());
+    modified_view_transform.setTranslateY(trans2D.getTranslateY());
     view.setTransform(modified_view_transform);
 
     // need to set view coordbox based on nested transformation
@@ -202,7 +202,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;
-    tier_transform.setOffsetY(tier_transform.getOffsetY() + diffy);
+    tier_transform.setTranslateY(tier_transform.getTranslateY() + diffy);
   }
 
 

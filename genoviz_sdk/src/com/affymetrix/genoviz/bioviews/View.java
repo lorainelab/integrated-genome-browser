@@ -409,12 +409,8 @@ public class View implements ViewI, NeoPaintListener,
 				   }
 			   }
 
-			   try {
-				   lastTransform = (LinearTransform)transform.clone();
-			   }
-			   catch (CloneNotSupportedException e) {
-				   // This can never happen as long as TransformI extends Cloneable.
-			   }
+			   lastTransform = (LinearTransform)transform.clone();
+			  
 			   if (isTimed) {
 				   timecheck.print();
 			   }
@@ -600,8 +596,8 @@ public class View implements ViewI, NeoPaintListener,
 
 			   //    b. only one translation has changed (not both X and Y)
 			   boolean xunchanged, yunchanged;
-			   xunchanged =  (transform.getOffsetX() == lastTransform.getOffsetX());
-			   yunchanged =  (transform.getOffsetY() == lastTransform.getOffsetY());
+			   xunchanged =  (transform.getTranslateX() == lastTransform.getTranslateX());
+			   yunchanged =  (transform.getTranslateY() == lastTransform.getTranslateY());
 			   boolean transformChanged = (!(xunchanged && yunchanged));
 			   if (!(xunchanged || yunchanged))  {
 				   if (DEBUG_SCROLL_CHECKS)  {

@@ -427,7 +427,7 @@ public class AffyTieredMap extends NeoMap {
 		// [later, may be able to leverage off the fact that tier maps always
 		//   pack down from 0, so that scene starts at 0 and ends at (y+height)
 		//   of last packed tier]
-		trans.setOffsetY(pix_offset);
+		trans.setTranslateY(pix_offset);
 		trans.setScaleY(pixels_per_coord[id]);
 		// pack tiers (which may modify scene bounds) based on view with transform
 		//    modified to take into account zoom_scale and "proposed" offset
@@ -454,7 +454,7 @@ public class AffyTieredMap extends NeoMap {
 
 		// redoing setting of transform, in case there were any adjusments to trim to scene...
 		// assuming modifying Y
-		trans.setOffsetY(pixel_offset[id]);
+		trans.setTranslateY(pixel_offset[id]);
 		trans.setScaleY(pixels_per_coord[id]);
 
 		if (zoom_scale != zoomer_scale[id]) {

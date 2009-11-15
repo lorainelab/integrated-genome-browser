@@ -567,7 +567,7 @@ public final class GraphSelectionManager
     }
 
     trans.setScaleX(vtrans.getScaleX());
-    trans.setOffsetX(vtrans.getOffsetX());
+    trans.setTranslateX(vtrans.getTranslateX());
 
 	dragger.setConstraint(NeoConstants.HORIZONTAL, true);
 

@@ -569,12 +569,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		if (id == X) {
 			pixels_per_coord[id] = trans.getScaleX();
 			pixel_value = coord_value * pixels_per_coord[id];
-			trans.setOffsetX(-pixel_value);
+			trans.setTranslateX(-pixel_value);
 		}
 		else {
 			pixels_per_coord[id] = trans.getScaleY();
 			pixel_value = coord_value * pixels_per_coord[id];
-			trans.setOffsetY(-pixel_value);
+			trans.setTranslateY(-pixel_value);
 			if (DEBUG_SCROLL) {
 				System.out.println("Coord Value = " + coord_value +
 						", Pixels/Coord = " + pixels_per_coord[id] +
@@ -618,14 +618,14 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double coord_beg, coord_end, coord_size;
 		Rectangle2D.Double scenebox = scene.getCoordBox();
     if (id == X)  {
-      pixel_offset[id] = -1 * trans.getOffsetX();
+      pixel_offset[id] = -1 * trans.getTranslateX();
       coord_beg = scenebox.x;
       coord_size = scenebox.width;
     }
     else {
       coord_beg = scenebox.y;
       coord_size = scenebox.height;
-      pixel_offset[id] = -1 * trans.getOffsetY();
+      pixel_offset[id] = -1 * trans.getTranslateY();
 
     }
     coord_end = coord_beg + coord_size;
@@ -1062,12 +1062,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		double fixed_coord, fixed_pixel;
 
 		if (id == X) {
-			prev_pixel_offset = -1 * trans.getOffsetX();
+			prev_pixel_offset = -1 * trans.getTranslateX();
 			coord_beg = scenebox.x;
 			coord_size = scenebox.width;
 		}
 		else {
-			prev_pixel_offset = -1 * trans.getOffsetY();
+			prev_pixel_offset = -1 * trans.getTranslateY();
 			coord_beg = scenebox.y;
 			coord_size = scenebox.height;
 		}
@@ -1126,11 +1126,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		}
 
 		if (id == X) {
-			trans.setOffsetX(-pixel_offset[id]);
+			trans.setTranslateX(-pixel_offset[id]);
 			trans.setScaleX(pixels_per_coord[id]);
 		}
 		else {
-			trans.setOffsetY(-pixel_offset[id]);
+			trans.setTranslateY(-pixel_offset[id]);
 			trans.setScaleY(pixels_per_coord[id]);
 		}
 		if (zoom_scale != zoomer_scale[id]) {

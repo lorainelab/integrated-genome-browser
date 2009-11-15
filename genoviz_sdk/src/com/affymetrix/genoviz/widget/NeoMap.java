@@ -717,9 +717,9 @@ public class NeoMap extends NeoWidget implements
 			   trans = view.getTransform();
 			   double xscale, xoffset, yscale, yoffset;
 			   xscale = trans.getScaleX();
-			   xoffset = trans.getOffsetX();
+			   xoffset = trans.getTranslateX();
 			   yscale = trans.getScaleY();
-			   yoffset = trans.getOffsetY();
+			   yoffset = trans.getTranslateY();
 
 			   /*
 				* GAH 4-10-2002
@@ -750,13 +750,13 @@ public class NeoMap extends NeoWidget implements
 			   if (min_pixels_per_coord[X] >= max_pixels_per_coord[X]) {
 				   min_pixels_per_coord[X] = max_pixels_per_coord[X];
 				   trans.setScaleX(min_pixels_per_coord[X]);
-				   trans.setOffsetX(canvas.getSize().width/2 -
+				   trans.setTranslateX(canvas.getSize().width/2 -
 						   trans.getScaleX()*scene.getCoordBox().width/2);
 			   }
 			   if (min_pixels_per_coord[Y] >= max_pixels_per_coord[Y]) {
 				   min_pixels_per_coord[Y] = max_pixels_per_coord[Y];
 				   trans.setScaleY(min_pixels_per_coord[Y]);
-				   trans.setOffsetY(
+				   trans.setTranslateY(
 						   canvas.getSize().height/2 -
 						   trans.getScaleY()*scene.getCoordBox().height/2);
 			   }
@@ -776,7 +776,7 @@ public class NeoMap extends NeoWidget implements
 				   int pixel_value;
 				   if (!xfit) {
 					   trans.setScaleX(xscale);
-					   trans.setOffsetX(xoffset);
+					   trans.setTranslateX(xoffset);
 					   view.calcCoordBox();
 					   viewbox = view.getCoordBox();
 					   if (fit_check)  {
@@ -794,13 +794,13 @@ public class NeoMap extends NeoWidget implements
 								   visible_start = scene_end - viewbox.width;
 							   }
 							   pixel_value = (int)(visible_start * trans.getScaleX());
-							   trans.setOffsetX(-pixel_value);
+							   trans.setTranslateX(-pixel_value);
 						   }
 					   }
 				   }
 				   if (!yfit) {
 					   trans.setScaleY(yscale);
-					   trans.setOffsetY(yoffset);
+					   trans.setTranslateY(yoffset);
 					   view.calcCoordBox();
 					   viewbox = view.getCoordBox();
 					   if (fit_check) {
@@ -818,7 +818,7 @@ public class NeoMap extends NeoWidget implements
 								   visible_start = scene_end - viewbox.height;
 							   }
 							   pixel_value = (int)(visible_start * trans.getScaleY());
-							   trans.setOffsetY(-pixel_value);
+							   trans.setTranslateY(-pixel_value);
 						   }
 					   }
 				   }
@@ -1425,26 +1425,26 @@ public class NeoMap extends NeoWidget implements
 				   int pixels_per_scroll = 10;
 				   if (direction == NeoConstants.NORTH) {
 					   scroll_to_coord =
-						   trans.inverseTransform(LinearTransform.Y, -pixels_per_scroll);
+						   trans.inverseTransform(NeoConstants.VERTICAL, -pixels_per_scroll);
 					   scroll(Y, scroll_to_coord);
 					   updateWidget();
 				   }
 				   else if (direction == NeoConstants.SOUTH) {
 					   scroll_to_coord =
-						   trans.inverseTransform(LinearTransform.Y, pixels_per_scroll);
+						   trans.inverseTransform(NeoConstants.VERTICAL, pixels_per_scroll);
 					   scroll(Y, scroll_to_coord);
 					   updateWidget();
 				   }
 				   else if (direction == NeoConstants.EAST) {
 					   scroll_to_coord =
-						   trans.inverseTransform(LinearTransform.X, pixels_per_scroll);
+						   trans.inverseTransform(NeoConstants.HORIZONTAL, pixels_per_scroll);
 					   scroll(X, scroll_to_coord);
 					   updateWidget();
 					   str = "EAST";
 				   }
 				   else if (direction == NeoConstants.WEST) {
 					   scroll_to_coord =
-						   trans.inverseTransform(LinearTransform.X, -pixels_per_scroll);
+						   trans.inverseTransform(NeoConstants.HORIZONTAL, -pixels_per_scroll);
 					   scroll(X, scroll_to_coord);
 					   updateWidget();
 					   str = "WEST";

@@ -296,7 +296,7 @@ public final class GraphGlyph extends Glyph {
 		Graphics g = view.getGraphics();
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
-		double offset = scratch_trans.getOffsetY();
+		double offset = scratch_trans.getTranslateY();
 
 		// calculate slope (m)
 		Color[] heatmap_colors = null;
@@ -602,7 +602,7 @@ public final class GraphGlyph extends Glyph {
 
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
-		double offset = scratch_trans.getOffsetY();
+		double offset = scratch_trans.getTranslateY();
 
 		Stroke old_stroke = g.getStroke();
 		BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
@@ -714,7 +714,7 @@ public final class GraphGlyph extends Glyph {
 	private double[] convertToPixels(ViewI view, Double[] y_coords) {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
-		double yoffset = scratch_trans.getOffsetY();
+		double yoffset = scratch_trans.getTranslateY();
 
 		double[] y_pixels = new double[y_coords.length];
 		for (int i = 0; i < y_coords.length; i++) {
@@ -968,7 +968,7 @@ public final class GraphGlyph extends Glyph {
 	@Override
 	public void getChildTransform(ViewI view, LinearTransform trans) {
 		double external_yscale = trans.getScaleY();
-		double external_offset = trans.getOffsetY();
+		double external_offset = trans.getTranslateY();
 		double internal_yscale = coordbox.height / (getVisibleMaxY() - getVisibleMinY());
 		double internal_offset = coordbox.y + coordbox.height;
 		double new_yscale = internal_yscale * external_yscale * -1;
@@ -977,7 +977,7 @@ public final class GraphGlyph extends Glyph {
 				(external_yscale * internal_yscale * getVisibleMinY()) +
 				external_offset;
 		trans.setScaleY(new_yscale);
-		trans.setOffsetY(new_yoffset);
+		trans.setTranslateY(new_yoffset);
 	}
 
 	private double getUpperYCoordInset(ViewI view) {
@@ -1024,7 +1024,7 @@ public final class GraphGlyph extends Glyph {
 		double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / num;
 		double yoffset = coordbox.y + coordbox.height - bottom_ycoord_inset;
 		lt.setScaleY(yscale);
-		lt.setOffsetY(yoffset);
+		lt.setTranslateY(yoffset);
 	}
 
 	private void DrawAvgLine(int graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
@@ -1153,7 +1153,7 @@ public final class GraphGlyph extends Glyph {
 		double coords_per_pixel = 1.0F / ( view.getTransform()).getScaleX();
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
-		double offset = scratch_trans.getOffsetY();
+		double offset = scratch_trans.getTranslateY();
 		Rectangle2D.Double view_coordbox = view.getCoordBox();
 		double xmin = view_coordbox.x;
 		double xmax = view_coordbox.x + view_coordbox.width;
@@ -1434,7 +1434,7 @@ public final class GraphGlyph extends Glyph {
 	private double getCoordValue(ViewI view, float graph_value) {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
-		double offset = scratch_trans.getOffsetY();
+		double offset = scratch_trans.getTranslateY();
 		float coord_value = (float) (offset - ((graph_value - getVisibleMinY()) * yscale));
 		return coord_value;
 	}
@@ -1445,7 +1445,7 @@ public final class GraphGlyph extends Glyph {
 	float getGraphValue(ViewI view, double coord_value) {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
-		double offset = scratch_trans.getOffsetY();
+		double offset = scratch_trans.getTranslateY();
 		float graph_value = (float) ((offset - coord_value) / yscale) + getVisibleMinY();
 		return graph_value;
 	}

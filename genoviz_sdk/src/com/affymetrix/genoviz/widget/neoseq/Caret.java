@@ -18,6 +18,7 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.Position;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -140,7 +141,7 @@ public class Caret extends WrapGlyph {
 		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
 		clt.setConstrainValue(residues_per_line);
 		int last_visible_residue =
-			(int) (visible_box.y + clt.transform(clt.X, visible_box.height) - 1);
+			(int) (visible_box.y + clt.transform(NeoConstants.HORIZONTAL, visible_box.height) - 1);
 
 		for (line_index = first_visible_residue;
 				line_index < last_visible_residue;

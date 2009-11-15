@@ -71,19 +71,19 @@ public final class PixelFloaterGlyph extends Glyph  {
     LinearTransform vtrans = view.getTransform();
     if (YPIXEL_FLOAT) {
       childtrans.setScaleY(1.0);
-      childtrans.setOffsetY(0.0);
+      childtrans.setTranslateY(0.0);
     }
     else {
       childtrans.setScaleY(vtrans.getScaleY());
-      childtrans.setOffsetY(vtrans.getOffsetY());
+      childtrans.setTranslateY(vtrans.getTranslateY());
     }
     if (XPIXEL_FLOAT) {
       childtrans.setScaleX(1.0);
-      childtrans.setOffsetX(0.0);
+      childtrans.setTranslateX(0.0);
     }
     else {
       childtrans.setScaleX(vtrans.getScaleX());
-      childtrans.setOffsetX(vtrans.getOffsetX());
+      childtrans.setTranslateX(vtrans.getTranslateX());
     }
   }
 

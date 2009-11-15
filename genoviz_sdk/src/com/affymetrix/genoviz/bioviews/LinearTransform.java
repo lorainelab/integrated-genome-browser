@@ -1,27 +1,16 @@
-/**
- *   Copyright (c) 1998-2005 Affymetrix, Inc.
- *    
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.  
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
+import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Point2D;
 
 /**
  * Also see interface TransformI for more documentation.
  */
-public class LinearTransform implements TransformI  {
-	protected double xscale, yscale, xoffset, yoffset;
+public class LinearTransform extends AffineTransform  {
+	private double xscale, yscale, xoffset, yoffset;
 
 
 	/** 
@@ -41,8 +30,8 @@ public class LinearTransform implements TransformI  {
 	public void copyTransform(LinearTransform LT) {
 		xscale = LT.getScaleX();
 		yscale = LT.getScaleY();
-		xoffset = LT.getOffsetX();
-		yoffset = LT.getOffsetY();
+		xoffset = LT.getTranslateX();
+		yoffset = LT.getTranslateY();
 	}
 
 	/**
@@ -87,9 +76,9 @@ public class LinearTransform implements TransformI  {
 	 */
 	public double transform(int orientation, double in) {
 		double out = 0;
-		if (orientation == X) {
+		if (orientation == NeoConstants.HORIZONTAL) {
 			out = in * xscale + xoffset;
-		} else if (orientation == Y) {
+		} else if (orientation == NeoConstants.VERTICAL) {
 			out = in * yscale + yoffset;
 		}
 		return out;
@@ -104,9 +93,9 @@ public class LinearTransform implements TransformI  {
 	 */
 	public double inverseTransform(int orientation, double in) {
 		double out = 0;
-		if (orientation == X) {
+		if (orientation == NeoConstants.HORIZONTAL) {
 			out = (in - xoffset) / xscale;
-		} else if (orientation == Y) {
+		} else if (orientation == NeoConstants.VERTICAL) {
 			out = (in - yoffset) / yscale;
 		}
 		return out;
@@ -215,47 +204,30 @@ public class LinearTransform implements TransformI  {
 		yscale = scale;
 	}
 
-	public double getOffsetX() {
+	public double getTranslateX() {
 		return xoffset;
 	}
 
-	public double getOffsetY() {
+	public double getTranslateY() {
 		return yoffset;
 	}
 
-	public void setOffsetX(double offset) {
+	public void setTranslateX(double offset) {
 		xoffset = offset;
 	}
 
-	public void setOffsetY(double offset) {
+	public void setTranslateY(double offset) {
 		yoffset = offset;
 	}
 
-	/**
-	 * creates a shallow copy.
-	 * Since the only instance variables are doubles,
-	 * it is also trivially a deep copy.
-	 */
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	public String toString() {
-		return ("LinearTransform:  xscale = " + xscale + ", xoffset = " +
-				xoffset + ",  yscale = " + yscale + ", yoffset " + yoffset);
-	}
-
-	public boolean equals(TransformI Tx) {
-		if (Tx instanceof LinearTransform) {
-			LinearTransform lint = (LinearTransform)Tx;
-			return (xscale == lint.getScaleX() &&
-					yscale == lint.getScaleY() &&
-					xoffset == lint.getOffsetX() &&
-					yoffset == lint.getOffsetY());
-		}
-		else {
+	public boolean equals(LinearTransform lint) {
+		if (lint == null) {
 			return false;
 		}
+		return (xscale == lint.getScaleX() &&
+				yscale == lint.getScaleY() &&
+				xoffset == lint.getTranslateX() &&
+				yoffset == lint.getTranslateY());
 	}
 
 }

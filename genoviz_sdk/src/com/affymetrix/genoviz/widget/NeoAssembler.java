@@ -476,7 +476,7 @@ public class NeoAssembler extends NeoContainerWidget
 			@Override
 			public void componentResized(ComponentEvent e) {
 				int [] visible_offset = labelmap.getVisibleOffset();
-				double scale = ((LinearTransform)alignmap.getView().getTransform()).getScaleY();
+				double scale = (alignmap.getView().getTransform()).getScaleY();
 				int font_height = GeneralUtils.getFontMetrics(residue_font).getHeight();
 				int visible_map_height = visible_offset[1] - visible_offset[0];
 				//visible_map_height is in coords
@@ -504,7 +504,7 @@ public class NeoAssembler extends NeoContainerWidget
 	public int getSeqHeight()
 	{
 		int number_of_aligned_sequences = align_glyphs.size();
-		double scale = ((LinearTransform)alignmap.getView().getTransform()).getScaleY();
+		double scale = (alignmap.getView().getTransform()).getScaleY();
 		double aligned_sequences_height = ((number_of_aligned_sequences * (label_font_height/scale)));
 		return ((int)aligned_sequences_height);
 	}
@@ -1212,7 +1212,7 @@ public class NeoAssembler extends NeoContainerWidget
 		// alignment map xbeg = consensus map xbeg = horizontal scroll xbeg
 
 	    //	    System.out.println("in old NeoAssembler.doLayout()");
-		LinearTransform trans = (LinearTransform)alignmap.getView().getTransform();
+		LinearTransform trans = alignmap.getView().getTransform();
 		Dimension dim = this.getSize();
 		int cons_y=0, label_x=0;
 		int align_x=0, align_y=0, align_height=0, align_width=0;

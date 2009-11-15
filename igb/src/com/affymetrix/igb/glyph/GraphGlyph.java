@@ -1150,7 +1150,7 @@ public final class GraphGlyph extends Glyph {
 		int graph_style = getGraphStyle();
 		view.transformToPixels(coordbox, pixelbox);
 		Graphics g = view.getGraphics();
-		double coords_per_pixel = 1.0F / ((LinearTransform) view.getTransform()).getScaleX();
+		double coords_per_pixel = 1.0F / ( view.getTransform()).getScaleX();
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
 		double offset = scratch_trans.getOffsetY();
@@ -1558,7 +1558,7 @@ public final class GraphGlyph extends Glyph {
 			this.addChild(thresh_glyph);
 		}
 		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
-			double xpixels_per_coord = ((LinearTransform) view.getTransform()).getScaleX();
+			double xpixels_per_coord = ( view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
 			if ((xcoords_per_pixel < transition_scale)) {
 				if (graph_style == MINMAXAVG) {

@@ -557,7 +557,7 @@ public final class GraphSelectionManager
     dragger.setUseCopy(false);
 
     LinearTransform trans = new LinearTransform();
-    LinearTransform vtrans = (LinearTransform)widg.getView().getTransform();
+    LinearTransform vtrans = widg.getView().getTransform();
     //    gl.getGlobalChildTransform(widg.getView(), trans);
     if (gl instanceof ThreshGlyph) {
       gl.getParent().getGlobalTransform(widg.getView(), trans);

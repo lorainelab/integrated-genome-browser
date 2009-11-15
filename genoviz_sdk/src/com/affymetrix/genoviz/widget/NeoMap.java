@@ -714,7 +714,7 @@ public class NeoMap extends NeoWidget implements
 						   ", " + canvas);
 			   }
 			   scene.maxDamage();  // max out scene damage to ensure full redraw
-			   trans = (LinearTransform)view.getTransform();
+			   trans = view.getTransform();
 			   double xscale, xoffset, yscale, yoffset;
 			   xscale = trans.getScaleX();
 			   xoffset = trans.getOffsetX();

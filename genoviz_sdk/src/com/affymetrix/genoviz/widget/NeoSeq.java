@@ -1800,10 +1800,7 @@ public class NeoSeq extends NeoContainerWidget
 		residue_glyph.setShow(type, show);
 		num_glyph.setShow(type, show);
 		// calling stretchToFit to force adjustment of vertical scrollbar
-		LinearTransform trans;
-		trans = (LinearTransform)residue_map.getView().getTransform();
 		stretchToFit(false,false);
-		trans = (LinearTransform)residue_map.getView().getTransform();
 	}
 
 	/**

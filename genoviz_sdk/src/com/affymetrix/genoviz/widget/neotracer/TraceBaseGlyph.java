@@ -126,7 +126,7 @@ public class TraceBaseGlyph extends Glyph  {
 		Graphics g = view.getGraphics();
 		Rectangle2D.Double viewbox = view.getCoordBox();
 
-		double pixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
+		double pixels_per_coord = (view.getTransform()).getScaleX();
 		double coords_per_base = (double)dataCount/(double)baseCount;
 		double pixels_per_base = pixels_per_coord * coords_per_base;
 

@@ -194,7 +194,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
     }
 
     // figure out how many bases per pixel
-    double pixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
+    double pixels_per_coord = (view.getTransform()).getScaleX();
     double coords_per_pixel = 1.0 / pixels_per_coord;
     view.transformToPixels(coordbox, pixelbox);
 

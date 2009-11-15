@@ -20,6 +20,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.awt.NeoCanvas;
+import com.affymetrix.genoviz.glyph.TransientGlyph;
 
 /**
  * implementation of ViewI interface.
@@ -27,9 +28,6 @@ import com.affymetrix.genoviz.awt.NeoCanvas;
  */
 public class View implements ViewI, NeoPaintListener,
 	   MouseListener, MouseMotionListener, KeyListener  {
-
-		   boolean rememberToFlush = com.affymetrix.genoviz.util.NeoConstants.flush;
-		   boolean rememberToDispose = com.affymetrix.genoviz.util.NeoConstants.dispose;
 
 		   Rectangle scratch_pixelbox = new Rectangle();
 
@@ -82,13 +80,6 @@ public class View implements ViewI, NeoPaintListener,
 		   private static final boolean DEBUG_BUFFERED = false;
 
 		   private boolean DEBUG_OPTSCROLL = false;
-
-		   private static final boolean optscroll_checkNotFirst = true;
-		   private static final boolean optscroll_checkLinTrans = true;
-		   private static final boolean optscroll_checkOneChange = true;
-		   private static final boolean optscroll_checkNoScaleChange = true;
-		   private static final boolean optscroll_checkIntScale = true;
-		   private static final boolean optscroll_checkNoDamage = true;
 
 		   protected Rectangle pixelbox;
 
@@ -264,17 +255,6 @@ public class View implements ViewI, NeoPaintListener,
 			   dst.width = (int)(scratch_coords.x+scratch_coords.width)-dst.x;
 			   dst.height = (int)(scratch_coords.y+scratch_coords.height)-dst.y;
 
-			   //    dst.width = (int)(scratch_coords.x+scratch_coords.width - dst.x);
-			   //    dst.height = (int)(scratch_coords.y+scratch_coords.height - dst.y);
-
-			   //    dst.width = (int)(scratch_coords.width);
-			   //    dst.height = (int)(scratch_coords.height);
-			   /*
-				  dst.x = (int)(scratch_coords.x + 0.499f);
-				  dst.y = (int)(scratch_coords.y + 0.499f);
-				  dst.width = (int)(scratch_coords.width + 0.499f);
-				  dst.height = (int)(scratch_coords.height + 0.499f);
-				  */
 			   return dst;
 		   }
 
@@ -295,7 +275,6 @@ public class View implements ViewI, NeoPaintListener,
 			   dst.y = src.y<pixelbox.y ? pixelbox.y : src.y;
 			   dst.width = sx2>vx2 ? vx2-dst.x : sx2-dst.x;
 			   dst.height = sy2>vy2 ? vy2-dst.y : sy2-dst.y;
-			   //    return dst;
 			   return true;
 		   }
 
@@ -365,7 +344,7 @@ public class View implements ViewI, NeoPaintListener,
 			   if (DEBUG_VIEWBOX) {
 				   transformToCoords(pixelbox, getCoordBox());
 				   System.out.println("Scale: " +
-						   ((LinearTransform)transform).getScaleX() + ", " +
+						   (transform).getScaleX() + ", " +
 						   getCoordBox() + ", " + getPixelBox());
 			   }
 
@@ -421,10 +400,8 @@ public class View implements ViewI, NeoPaintListener,
 				*      if it will work in such situations
 				*/
 			   if (scene.hasTransients()) {
-				   Vector transients = scene.getTransients();
-				   GlyphI transglyph;   // or should it be cast to TransientGlyph???
-				   for (int i=0; i<transients.size(); i++) {
-					   transglyph = (GlyphI)transients.elementAt(i);
+				   Vector<TransientGlyph> transients = scene.getTransients();
+				   for (TransientGlyph transglyph : transients) {
 					   if (DEBUG_TRANSIENTS)  {
 						   System.out.println("Drawing transient: " + transglyph);
 					   }
@@ -612,7 +589,7 @@ public class View implements ViewI, NeoPaintListener,
 			   //    e. no damage in Scene since last draw
 
 			   //    aa. not first draw after setting scrolling_optimize to true
-			   if (optscroll_checkNotFirst && firstScrollOptimizedDraw) {
+			   if (firstScrollOptimizedDraw) {
 				   if (DEBUG_SCROLL_CHECKS)  {
 					   System.out.println("First optimized draw, doing normal draw instead");
 				   }
@@ -620,25 +597,13 @@ public class View implements ViewI, NeoPaintListener,
 				   return false;
 			   }
 
-			   //    a. both transforms are linear
-			   if (optscroll_checkLinTrans &&
-					   (!(transform instanceof LinearTransform &&
-						  lastTransform instanceof LinearTransform)) ) {
-				   if (DEBUG_SCROLL_CHECKS)  {
-					   System.out.println("Not LinearTransforms, doing normal draw instead");
-				   }
-				   return false;
-						  }
 
 			   //    b. only one translation has changed (not both X and Y)
-			   LinearTransform currTransform, prevTransform;
-			   currTransform = (LinearTransform)transform;
-			   prevTransform = (LinearTransform)lastTransform;
 			   boolean xunchanged, yunchanged;
-			   xunchanged =  (currTransform.getOffsetX() == prevTransform.getOffsetX());
-			   yunchanged =  (currTransform.getOffsetY() == prevTransform.getOffsetY());
+			   xunchanged =  (transform.getOffsetX() == lastTransform.getOffsetX());
+			   yunchanged =  (transform.getOffsetY() == lastTransform.getOffsetY());
 			   boolean transformChanged = (!(xunchanged && yunchanged));
-			   if (optscroll_checkOneChange && (!(xunchanged || yunchanged)))  {
+			   if (!(xunchanged || yunchanged))  {
 				   if (DEBUG_SCROLL_CHECKS)  {
 					   System.out.println("Both X and Y offsets changed, " +
 							   "doing normal draw instead");
@@ -648,10 +613,10 @@ public class View implements ViewI, NeoPaintListener,
 
 			   //    c. only the translation has changed (scales are the same)
 			   boolean scaleXchange, scaleYchange;
-			   scaleXchange = !(currTransform.getScaleX() == prevTransform.getScaleX());
-			   scaleYchange = !(currTransform.getScaleY() == prevTransform.getScaleY());
+			   scaleXchange = !(transform.getScaleX() == lastTransform.getScaleX());
+			   scaleYchange = !(transform.getScaleY() == lastTransform.getScaleY());
 			   transformChanged = transformChanged || scaleXchange || scaleYchange;
-			   if (optscroll_checkNoScaleChange && (scaleXchange || scaleYchange)) {
+			   if (scaleXchange || scaleYchange) {
 				   if (DEBUG_SCROLL_CHECKS)  {
 					   System.out.println("Scale has changed, doing normal draw instead");
 				   }
@@ -673,13 +638,13 @@ public class View implements ViewI, NeoPaintListener,
 				   // if transformChanged && x-scroll not changed, then
 				   //          y-scroll must have changed
 				   if (xunchanged) {
-					   scale = currTransform.getScaleY();
+					   scale = transform.getScaleY();
 				   }
 				   else {
-					   scale = currTransform.getScaleX();
+					   scale = transform.getScaleX();
 				   }
-				   if (optscroll_checkIntScale &&
-						   (!(((int)scale == scale) || ((int)(1/scale) == (1/scale))))) { if (DEBUG_SCROLL_CHECKS)  {
+				   if (
+					!(((int)scale == scale) || ((int)(1/scale) == (1/scale)))) { if (DEBUG_SCROLL_CHECKS)  {
 					   System.out.println("Scale not integral: " +
 							   scale + ", " + (1/scale) +
 							   " doing normal draw instead");
@@ -692,7 +657,7 @@ public class View implements ViewI, NeoPaintListener,
 			   }
 
 			   //    e. no damage in Scene since last draw
-			   if (optscroll_checkNoDamage && (scene.isDamaged())) {
+			   if (scene.isDamaged()) {
 				   if (DEBUG_SCROLL_CHECKS)  {
 					   System.out.println("Scene damaged, doing normal draw instead");
 				   }
@@ -719,10 +684,10 @@ public class View implements ViewI, NeoPaintListener,
 			   //   overlap
 			   transformToCoords(pixelbox, coordbox);
 			   Rectangle2D.Double currCoordBox = coordbox;
-			   setTransform(prevTransform);
+			   setTransform(lastTransform);
 			   transformToCoords(pixelbox, prevCalcCoordBox);
 			   prevCoordBox = prevCalcCoordBox;
-			   setTransform(currTransform);
+			   setTransform(transform);
 
 			   if (!(currCoordBox.intersects(prevCoordBox))) {
 				   return false;
@@ -733,9 +698,9 @@ public class View implements ViewI, NeoPaintListener,
 			   Rectangle2D.Double coordOverlap = (Rectangle2D.Double)coordbox.createIntersection(prevCoordBox);
 			   Rectangle prevOverlapPixBox = new Rectangle();
 			   Rectangle currOverlapPixBox = new Rectangle();
-			   setTransform(prevTransform);
+			   setTransform(lastTransform);
 			   transformToPixels(coordOverlap, prevOverlapPixBox);
-			   setTransform(currTransform);
+			   setTransform(transform);
 			   transformToPixels(coordOverlap, currOverlapPixBox);
 
 			   // 4. copy (bit blt) shared pixels from previous position to
@@ -888,10 +853,10 @@ public class View implements ViewI, NeoPaintListener,
 				   // GAH 12-3-98
 				   //  trying to minimize damage caused by JVM image memory leak
 				   //  see Java Developer's Connection, Bug ID = 4014323
-				   if (rememberToFlush && bufferImage != null) {
+				   if (bufferImage != null) {
 					   bufferImage.flush();
 				   }
-				   if (rememberToDispose && bufferGraphics != null) {
+				   if (bufferGraphics != null) {
 					   bufferGraphics.dispose();
 				   }
 
@@ -1015,19 +980,13 @@ public class View implements ViewI, NeoPaintListener,
 			   if (DEBUG_EVENTS && id == KeyEvent.KEY_PRESSED) {
 				   System.out.println("View heard KEY_PRESSED: " + this);
 			   }
-			   KeyListener kl;
-			   if (key_listeners.size() > 0) {
-				   for (int i=0; i<key_listeners.size(); i++) {
-					   kl = key_listeners.elementAt(i);
-					   if (id == KeyEvent.KEY_PRESSED) {
-						   kl.keyPressed(e);
-					   }
-					   else if (id == KeyEvent.KEY_RELEASED) {
-						   kl.keyReleased(e);
-					   }
-					   else if (id == KeyEvent.KEY_TYPED) {
-						   kl.keyTyped(e);
-					   }
+			   for (KeyListener kl : key_listeners) {
+				   if (id == KeyEvent.KEY_PRESSED) {
+					   kl.keyPressed(e);
+				   } else if (id == KeyEvent.KEY_RELEASED) {
+					   kl.keyReleased(e);
+				   } else if (id == KeyEvent.KEY_TYPED) {
+					   kl.keyTyped(e);
 				   }
 			   }
 		   }
@@ -1050,27 +1009,22 @@ public class View implements ViewI, NeoPaintListener,
 			   // the views pixelbox, for example to deal with mouse drags that
 			   // continue beyond the window
 
-			   if (transform == null) { return; };
+			   if (transform == null) { return; }
 			   transformToCoords(pixrect, coordrect);
 			   NeoViewMouseEvent nevt =
 				   new NeoViewMouseEvent(e, this, coordrect.x, coordrect.y);
-			   if (mouse_listeners.size() > 0) {
-				   for (int i=0; i<mouse_listeners.size(); i++) {
-					   MouseListener ml = mouse_listeners.elementAt(i);
+
+			   for (MouseListener ml : mouse_listeners) {
 					   if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
 					   else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
 					   else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
 					   else if (id == MouseEvent.MOUSE_PRESSED) { ml.mousePressed(nevt); }
 					   else if (id == MouseEvent.MOUSE_RELEASED) { ml.mouseReleased(nevt); }
-				   }
 			   }
-			   if (mouse_motion_listeners.size() > 0) {
-				   for (int i=0; i<mouse_motion_listeners.size(); i++) {
-					   MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
+			   for (MouseMotionListener mml : mouse_motion_listeners) {
 					   if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
 					   else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
 				   }
-			   }
 			   }
 
 		   /**

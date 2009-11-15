@@ -73,7 +73,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void drawChildren(ViewI view) {
 
     // MODIFY VIEW
-    incoming_view_transform = (LinearTransform)view.getTransform();
+    incoming_view_transform = view.getTransform();
     incoming_view_coordbox = view.getCoordBox();
 
     // figure out draw transform by combining tier transform with view transform
@@ -127,7 +127,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void fitToPixelHeight(ViewI view) {
     // use view transform to determine how much "more" scaling must be
     //       done within tier to keep its
-    LinearTransform view_transform = (LinearTransform)view.getTransform();
+    LinearTransform view_transform = view.getTransform();
     double yscale = 0.0d;
     if ( 0.0d != coordbox.height ) {
       yscale = (double)fixedPixHeight / coordbox.height;

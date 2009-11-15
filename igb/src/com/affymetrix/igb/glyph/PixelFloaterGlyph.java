@@ -41,7 +41,7 @@ public final class PixelFloaterGlyph extends Glyph  {
    *  not sure if need to set view's coord box...
    */
   public void drawTraversal(ViewI view) {
-    LinearTransform vtrans = (LinearTransform)view.getTransform();
+    LinearTransform vtrans = view.getTransform();
     Rectangle2D.Double vbox = view.getCoordBox();
     Rectangle pbox = view.getPixelBox();
     //    yidentity.setScaleX(vtrans.getScaleX());
@@ -68,7 +68,7 @@ public final class PixelFloaterGlyph extends Glyph  {
   }
 
   protected void setChildTransform(ViewI view)  {
-    LinearTransform vtrans = (LinearTransform)view.getTransform();
+    LinearTransform vtrans = view.getTransform();
     if (YPIXEL_FLOAT) {
       childtrans.setScaleY(1.0);
       childtrans.setOffsetY(0.0);
@@ -100,7 +100,7 @@ public final class PixelFloaterGlyph extends Glyph  {
   Rectangle scratchRect = new Rectangle();
   public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
-    LinearTransform vtrans = (LinearTransform)view.getTransform();
+    LinearTransform vtrans = view.getTransform();
     double cached_y = pickRect.y;
     double cached_height = pickRect.height;
     Rectangle2D.Double vbox = view.getCoordBox();

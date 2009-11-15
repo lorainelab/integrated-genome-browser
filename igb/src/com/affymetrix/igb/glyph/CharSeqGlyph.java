@@ -183,7 +183,7 @@ public final class CharSeqGlyph extends AbstractResiduesGlyph
 			scratchrect.setRect(visible_seq_beg, coordbox.y,
 					visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
-			pixels_per_base = ((LinearTransform) view.getTransform()).getScaleX();
+			pixels_per_base = ( view.getTransform()).getScaleX();
 			int seq_pixel_offset = pixelbox.x;
 			int seq_pixel_width = pixelbox.width;
 

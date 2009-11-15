@@ -77,7 +77,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 			((View) rootview).calcCoordBox();  // just to make sure...
 		}
 		// transform scale is pixels/coord, transform offset is in pixels
-		LinearTransform trans = (LinearTransform) rootview.getTransform();
+		LinearTransform trans =  rootview.getTransform();
 		double xscale = trans.getScaleX();
 		double yscale = trans.getScaleY();
 		double xoffset = trans.getOffsetX();
@@ -95,7 +95,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 				}
 
 				ViewI cview = cmap.getView();
-				LinearTransform ctrans = (LinearTransform) cview.getTransform();
+				LinearTransform ctrans =  cview.getTransform();
 				ctrans.setScaleX(xscale);
 				ctrans.setScaleY(yscale);
 				ctrans.setOffsetX(xoffset - (x * tile_width));

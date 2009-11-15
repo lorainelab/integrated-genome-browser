@@ -77,7 +77,7 @@ public class GlyphDragger
 		if (nevt != null) {
 			Object src = nevt.getSource();
 			if (src instanceof NeoWidget) {
-				trans = (LinearTransform)((NeoWidget)src).getView().getTransform();
+				trans = ((NeoWidget) src).getView().getTransform();
 				return trans;
 			}
 		}

@@ -1843,7 +1843,6 @@ public class NeoSeq extends NeoContainerWidget
 	// need to decide what "clearing" the sequence widget actually means
 	public void clearWidget() {
 		clearAnnotations();
-		residue_glyph.clearORFSpecs();
 		super.clearWidget();
 
 		residue_map.getScene().addGlyph(residue_glyph);
@@ -2153,52 +2152,6 @@ public class NeoSeq extends NeoContainerWidget
 
 	public void removeRangeListener(NeoRangeListener l) {
 		range_listeners.removeElement(l);
-	}
-
-
-	/**
-	 * Add a given ORFSpecs object
-	 * whose ORF is to be associated with the NeoSeq.
-	 */
-	public void addORFSpecs (ORFSpecs orf) {
-
-		if ((residue_glyph == null) || (num_glyph == null))
-			return;
-
-		// Add *a copy of* the ORFSpecs, which reflect our firstOrdinal
-		// (i.e. make it zero-based)
-
-		ORFSpecs orfCopy = new ORFSpecs (orf.getStart() - num_glyph.getFirstOrdinal(),
-				orf.getEnd()   - num_glyph.getFirstOrdinal());
-
-		residue_glyph.addORFSpecs(orfCopy);
-	}
-
-
-	/**
-	 * Remove a given ORFSpecs object
-	 * whose ORF is to no longer be associated with the NeoSeq.
-	 */
-	public void removeORFSpecs (ORFSpecs orf) {
-		residue_glyph.removeORFSpecs(orf, num_glyph.getFirstOrdinal());
-	}
-
-	/**
-	 * Set whether or not translation should only be displayed inside ORFs.
-	 * @see #addORFSpecs (ORFSpecs)
-	 */
-
-	public void setTranslateOnlyORFs (boolean b) {
-		residue_glyph.setTranslateOnlyORFs (b);
-	}
-
-	/**
-	 * Get whether or not translation is only being displayed inside ORFs
-	 * @see #addORFSpecs (ORFSpecs)
-	 */
-
-	public boolean isTranslateOnlyORFs () {
-		return residue_glyph.isTranslateOnlyORFs ();
 	}
 
 	/**

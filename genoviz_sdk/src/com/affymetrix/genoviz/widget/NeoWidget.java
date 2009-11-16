@@ -59,8 +59,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	private static final boolean DEBUG_SCROLLER_VALUES = false;
 	private static final boolean DEBUG_SCROLL = false;
 	private static final boolean DEBUG_ZOOM = false;
-	private static final boolean NW_DEBUG_EVENTS = false;
-	private static final boolean NW_DEBUG_COLORS = false;
 
 	protected boolean checkZoomValue = true;
 	protected boolean checkScrollValue = true;
@@ -85,7 +83,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected int prev_zoomer_value[] = new int[2];
 	protected int prev_scroller_value[] = new int[2];
 	protected ExponentialTransform zoomtrans[] = new ExponentialTransform[2];
-	protected LinearTransform scrolltrans[] = new LinearTransform[2];
+	private LinearTransform scrolltrans[] = new LinearTransform[2];
 
 	protected double zoomer_scale[] = new double[2];
 	protected int zoom_behavior[] = new int[2];
@@ -1101,8 +1099,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 					scale_constraint[id] == INTEGRAL_ALL) && zoom_scale >= 1) {
 			coord_offset = (int)coord_offset;
 					}
-		double first_coord_displayed = coord_offset;
-
+		
 		double last_coord_displayed = coord_offset + visible_coords;
 
 		if (!((coord_offset < coord_beg)  && (last_coord_displayed > coord_end))) {
@@ -1259,8 +1256,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 		if (source != view) { return; }
 		int id = e.getID();
-		int x = e.getX();
-		int y = e.getY();
 
 		NeoMouseEvent nevt =
 			new NeoMouseEvent(e, this, NeoConstants.UNKNOWN, e.getCoordX(), e.getCoordY());
@@ -1269,24 +1264,24 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		Rectangle bnds = view.getComponent().getBounds();
 		nevt.translatePoint(bnds.x, bnds.y);
 
-		if (mouse_listeners.size() > 0) {
-			int last_listener = mouse_listeners.size()-1;
-			for (int i=0;
-					(i <= last_listener) && (i < mouse_listeners.size());
-					i++) {
-				MouseListener ml = mouse_listeners.elementAt(i);
-				if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
-				else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
-				else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
-				else if (id == MouseEvent.MOUSE_PRESSED) { ml.mousePressed(nevt); }
-				else if (id == MouseEvent.MOUSE_RELEASED) { ml.mouseReleased(nevt);}
-					}
+		for (MouseListener ml : mouse_listeners) {
+			if (id == MouseEvent.MOUSE_CLICKED) {
+				ml.mouseClicked(nevt);
+			} else if (id == MouseEvent.MOUSE_ENTERED) {
+				ml.mouseEntered(nevt);
+			} else if (id == MouseEvent.MOUSE_EXITED) {
+				ml.mouseExited(nevt);
+			} else if (id == MouseEvent.MOUSE_PRESSED) {
+				ml.mousePressed(nevt);
+			} else if (id == MouseEvent.MOUSE_RELEASED) {
+				ml.mouseReleased(nevt);
+			}
 		}
-		if (mouse_motion_listeners.size() > 0) {
-			for (int i=0; i<mouse_motion_listeners.size(); i++) {
-				MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
-				if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
-				else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
+		for (MouseMotionListener mml : mouse_motion_listeners) {
+			if (id == MouseEvent.MOUSE_DRAGGED) {
+				mml.mouseDragged(nevt);
+			} else if (id == MouseEvent.MOUSE_MOVED) {
+				mml.mouseMoved(nevt);
 			}
 		}
 	}

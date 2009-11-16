@@ -20,55 +20,44 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.widget.neoseq.*;
-import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.glyph.*;
-
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.genoviz.datamodel.Range;
 import com.affymetrix.genoviz.datamodel.Sequence;
-import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.parser.FastaSequenceParser;
+import com.affymetrix.genoviz.widget.NeoSeq;
+import com.affymetrix.genoviz.widget.NeoSeqCustomizer;
+import com.affymetrix.genoviz.widget.neoseq.AnnotationGlyph;
 
 public class NeoSeqDemo extends Applet
 	implements WindowListener, ActionListener, ItemListener
 {
-	//implements EventListenerI  {
-	NeoSeq seqview;
-	Frame mapframe;
-	Frame propframe;
+	private NeoSeq seqview;
+	private Frame mapframe;
+	private Frame propframe;
 
-	Sequence seqmodel;
-	Vector annotations;
-	String seq;
+	private Sequence seqmodel;
+	private Vector<GlyphI> annotations;
+	private String seq;
 
 	// Fake Sequences for Testing
-	boolean use_real_seq = false;
-	//String fake_seq = ""; // No Residues
-	// Just the Common Nucleotide Code Letters
-	//String fake_seq = "TTTTTACGTACGTACGTACGTACGTACGTAAAAAA";
+	private boolean use_real_seq = false;
 	// All the Standard Nucleotide Code Letters
-	String fake_seq = "ACGT UMRWSYK VHDBXN."; // The two gaps make it 0 mod 10 long.
-	// All the Standard Peptide Code Letters
-	//String fake_seq = "ARNDBCQEZGHILKMFPSTWYV";
+	private String fake_seq = "ACGT UMRWSYK VHDBXN."; // The two gaps make it 0 mod 10 long.
 
-	boolean showComp = false; // show complementary strand?
-	int pixel_width = 500;
-	int pixel_height = 400;
+	private boolean showComp = false; // show complementary strand?
+	private int pixel_width = 500;
+	private int pixel_height = 400;
 
-	Color text_annot_color = Color.blue;
-	Color back_annot_color = Color.green;
-	Color out_annot_color = Color.white;
+	private Color text_annot_color = Color.blue;
+	private Color back_annot_color = Color.green;
+	private Color out_annot_color = Color.white;
 
-	Image backgroundImage = null;
-	boolean clicking = false;
-	NeoSeqCustomizer customizer;
-	boolean framesShowing = true;
-	boolean going = false;
-	Color nicePaleBlue = new Color(180, 250, 250);
+	private Image backgroundImage = null;
+	private boolean clicking = false;
+	private NeoSeqCustomizer customizer;
+	private boolean framesShowing = true;
+	private boolean going = false;
+	private Color nicePaleBlue = new Color(180, 250, 250);
 
 	public void init()  {
 
@@ -134,7 +123,7 @@ public class NeoSeqDemo extends Applet
 
 		seqview.enableDragScrolling(true);
 
-		annotations = new Vector();
+		annotations = new Vector<GlyphI>();
 
 		// need a Sequence data model since using FastaSequenceParser,
 		// which parses from fasta file into a Sequence
@@ -147,7 +136,7 @@ public class NeoSeqDemo extends Applet
 			seqview.setResidues(seq);
 		}
 
-		seqview.setShow(seqview.COMPLEMENT, showComp);
+		seqview.setShow(NeoSeq.COMPLEMENT, showComp);
 
 		// Set the color scheme.
 		Color[] okayColors = {
@@ -190,7 +179,7 @@ public class NeoSeqDemo extends Applet
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width-pixel_width)/2,
 				(screen_size.height-pixel_height)/2);
-		mapframe.show();
+		mapframe.setVisible(true);
 		final Applet app = this;
 		mapframe.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -212,7 +201,7 @@ public class NeoSeqDemo extends Applet
 		if (!going) {
 			getGoing();
 		}
-		mapframe.show();
+		mapframe.setVisible(true);
 	}
 
 	private void hideFrames() {
@@ -268,7 +257,7 @@ public class NeoSeqDemo extends Applet
 
 	public void addOutlineAnnotation() {
 		if (seqview.residuesSelected()) {
-			Object annot = seqview.addOutlineAnnotation(seqview.getSelectedStart(),
+			GlyphI annot = seqview.addOutlineAnnotation(seqview.getSelectedStart(),
 					seqview.getSelectedEnd(),
 					out_annot_color);
 			annotations.addElement(annot);
@@ -279,7 +268,7 @@ public class NeoSeqDemo extends Applet
 
 	public void addBackgroundAnnotation() {
 		if (seqview.residuesSelected()) {
-			Object annot = seqview.addAnnotation(seqview.getSelectedStart(),
+			GlyphI annot = seqview.addAnnotation(seqview.getSelectedStart(),
 					seqview.getSelectedEnd(),
 					back_annot_color);
 			annotations.addElement(annot);
@@ -290,7 +279,7 @@ public class NeoSeqDemo extends Applet
 
 	private void addTextAnnotation() {
 		if (seqview.residuesSelected()) {
-			Object annot =
+			GlyphI annot =
 				seqview.addTextColorAnnotation(seqview.getSelectedStart(),
 						seqview.getSelectedEnd(),
 						text_annot_color);
@@ -302,7 +291,7 @@ public class NeoSeqDemo extends Applet
 
 	private void removeAnnotation() {
 		if (annotations.size() > 0) {
-			GlyphI annot = (GlyphI)annotations.lastElement();
+			GlyphI annot = annotations.lastElement();
 			seqview.removeAnnotation(annot);
 			annotations.removeElement(annot);
 			seqview.updateWidget();
@@ -311,7 +300,7 @@ public class NeoSeqDemo extends Applet
 
 	public void selectAnnotation() {
 		if (annotations.size() > 0) {
-			GlyphI annot = (GlyphI)annotations.lastElement();
+			GlyphI annot = annotations.lastElement();
 			seqview.deselect(seqview.getSelected());
 			seqview.select(annot);
 			seqview.updateWidget();
@@ -320,19 +309,17 @@ public class NeoSeqDemo extends Applet
 
 
 	public void toFrontSelectionOverlappers() {
-		Vector overlappers =
+		Vector<GlyphI> overlappers =
 			seqview.getAnnotationItems(seqview.getSelectedStart(),
 					seqview.getSelectedEnd());
-		GlyphI gl;
-		for (int i=0; i<overlappers.size(); i++) {
-			gl = (GlyphI)overlappers.elementAt(i);
+		for (GlyphI gl : overlappers) {
 			seqview.toFrontOfSiblings(gl);
 		}
 		seqview.updateWidget();
 	}
 
 	public void printSelectionOverlappers() {
-		Vector overlappers =
+		Vector<GlyphI> overlappers =
 			seqview.getAnnotationItems(seqview.getSelectedStart(),
 					seqview.getSelectedEnd());
 		AnnotationGlyph gl;
@@ -357,7 +344,7 @@ public class NeoSeqDemo extends Applet
 	}
 
 	public void testSelectedVisibility() {
-		Vector overlappers =
+		Vector<GlyphI> overlappers =
 			seqview.getAnnotationItems(seqview.getSelectedStart(),
 					seqview.getSelectedEnd());
 		if (overlappers.size() <= 0) {
@@ -369,7 +356,7 @@ public class NeoSeqDemo extends Applet
 			return;
 		}
 
-		GlyphI gl = (GlyphI)overlappers.elementAt(0);
+		GlyphI gl = overlappers.elementAt(0);
 		if (seqview.isUnObscured(gl)) {
 			System.out.println("selected glyph is fully visible");
 		}
@@ -416,7 +403,7 @@ public class NeoSeqDemo extends Applet
 
 	public void exportSequenceFasta() {
 		FileDialog fd = new FileDialog( mapframe, "Save As", FileDialog.SAVE );
-		fd.show();
+		fd.setVisible(true);
 		String fileName = fd.getFile();
 		if ( null != fileName ) {
 			try {
@@ -719,8 +706,6 @@ public class NeoSeqDemo extends Applet
 
 		bar.add(showMenu);
 		bar.add(editMenu);
-		//      bar.add( this.selectionMenu );
-		//      bar.add(colorMenu);
 		bar.add(formatMenu);
 
 	}
@@ -784,7 +769,7 @@ public class NeoSeqDemo extends Applet
 				propframe.addWindowListener(this);
 			}
 			propframe.setBounds(200, 200, 500, 300);
-			propframe.show();
+			propframe.setVisible(true);
 		}
 		else if (theItem == showSelectedEndsMenuItem) {
 			String str = seqview.getSelectedResidues();
@@ -841,7 +826,7 @@ public class NeoSeqDemo extends Applet
 		else if (theItem == compCBMenuItem)  {
 			CheckboxMenuItem mi = (CheckboxMenuItem)theItem;
 			boolean showComp = mi.getState();
-			seqview.setShow(seqview.COMPLEMENT, showComp);
+			seqview.setShow(NeoSeq.COMPLEMENT, showComp);
 			seqview.updateWidget();
 		}
 		else if (theItem == transOneCBMenuItem)  {
@@ -900,15 +885,15 @@ public class NeoSeqDemo extends Applet
 			setMenuItemState(fontSizesMenu, (CheckboxMenuItem)theItem);
 		}
 		else if (theItem == vertStripesCBMenuItem) {
-			seqview.setStripeOrientation(seqview.VERTICAL_STRIPES);
+			seqview.setStripeOrientation(NeoSeq.VERTICAL_STRIPES);
 			setMenuItemState(stripesMenu, (CheckboxMenuItem)theItem);
 		}
 		else if (theItem == horizStripesCBMenuItem) {
-			seqview.setStripeOrientation(seqview.HORIZONTAL_STRIPES);
+			seqview.setStripeOrientation(NeoSeq.HORIZONTAL_STRIPES);
 			setMenuItemState(stripesMenu, (CheckboxMenuItem)theItem);
 		}
 		else if (theItem == noStripesCBMenuItem) {
-			seqview.setStripeOrientation(seqview.NO_STRIPES);
+			seqview.setStripeOrientation(NeoSeq.NO_STRIPES);
 			setMenuItemState(stripesMenu, (CheckboxMenuItem)theItem);
 		}
 		else if (theItem == smallStripesCBMenuItem) {

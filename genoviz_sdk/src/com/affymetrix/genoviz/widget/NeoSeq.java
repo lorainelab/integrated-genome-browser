@@ -1142,10 +1142,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * @param value points to a residue that must be in the top visible line.
 	 */
 	public void scrollSequence(int value) {
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(scroll_increment);
-		clt.setTranslation(0, 0);
-		int cval = (int)(clt.transform(NeoConstants.HORIZONTAL,value));
+		int cval = value - (value % scroll_increment);
 		residue_map.scrollOffset(cval);
 		num_map.scrollOffset(cval);
 		return;
@@ -1243,11 +1240,7 @@ public class NeoSeq extends NeoContainerWidget
 		Rectangle2D.Double visible_box = residue_map.getView().calcCoordBox();
 
 		int start = (int)(visible_box.y);
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(residues_per_line);
-		clt.setTranslation(0, 0);
-		int end = (int)(visible_box.y +
-				clt.transform(NeoConstants.HORIZONTAL, visible_box.height) -1 );
+		int end = useConstrain(residues_per_line, visible_box.y, visible_box.height);
 
 		if ( start < 0) {
 			start = 0;
@@ -2247,5 +2240,8 @@ public class NeoSeq extends NeoContainerWidget
 
 	}
 
+	private static int useConstrain(int residues_per_line, double y, double height) {
+		return (int) (y + height - (height % residues_per_line) - 1);
+	}
 
 }

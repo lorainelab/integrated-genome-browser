@@ -80,11 +80,8 @@ public class WrapNumbers extends WrapGlyph {
 		if (residues_per_line < 1) {
 			return;
 		}
-
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(residues_per_line);
 		int last_residue_line =
-			(int)(visible_box.y + clt.transform(NeoConstants.HORIZONTAL, visible_box.height) - 1) + firstOrd;
+			useConstrain(residues_per_line, visible_box.y, visible_box.height);
 
 		if (last_residue_line > seqEnd) {
 			last_residue_line = seqEnd;
@@ -121,6 +118,10 @@ public class WrapNumbers extends WrapGlyph {
 			ycounter += residue_height;
 				}
 
+	}
+
+	private static int useConstrain(int residues_per_line, double y, double height) {
+		return (int) (y + height - (height % residues_per_line) - 1);
 	}
 
 }

@@ -80,10 +80,7 @@ public class WrapSequence extends WrapGlyph {
 			return;
 		}
 
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(residues_per_line);
-		last_visible_residue = (int)
-			(visible_box.y + clt.transform(NeoConstants.HORIZONTAL, visible_box.height) - 1);
+		last_visible_residue = useConstrain(residues_per_line, visible_box.y, visible_box.height);
 
 		lastPotentiallyVisibleResidue = last_visible_residue;
 
@@ -542,6 +539,10 @@ public class WrapSequence extends WrapGlyph {
 	 */
 	public boolean isTranslateOnlyORFs () {
 		return translateOnlyORFs;
+	}
+
+	private static int useConstrain(int residues_per_line, double y, double height) {
+		return (int) (y + height - (height % residues_per_line) - 1);
 	}
 
 }

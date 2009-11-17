@@ -699,7 +699,7 @@ public abstract class Glyph implements GlyphI  {
 	 *  (Based on getChildTransform() of parent.)
 	 */
 	public boolean getGlobalTransform(ViewI view, LinearTransform trans) {
-		trans.copyTransform(view.getTransform());
+		trans.setTransform(view.getTransform());
 		return getParent().getGlobalChildTransform(view, trans);
 	}
 
@@ -719,7 +719,7 @@ public abstract class Glyph implements GlyphI  {
 			if (parent == null) { return false; }
 			glstack.push(gl);
 		}
-		trans.copyTransform(view.getTransform());
+		trans.setTransform(view.getTransform());
 		while (! (glstack.empty())) {
 			gl = glstack.pop();
 			gl.getChildTransform(view, trans);

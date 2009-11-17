@@ -44,12 +44,9 @@ public final class PixelFloaterGlyph extends Glyph  {
     LinearTransform vtrans = view.getTransform();
     Rectangle2D.Double vbox = view.getCoordBox();
     Rectangle pbox = view.getPixelBox();
-    //    yidentity.setScaleX(vtrans.getScaleX());
-    //    yidentity.setOffsetX(vtrans.getOffsetX());
     setChildTransform(view);
     view_pix_box.setRect(vbox.x, (double)pbox.y,
     			 vbox.width, (double)pbox.height);
-    //    view.setTransform(yidentity);
     view.setTransform(childtrans);
     view.setCoordBox(view_pix_box);
     super.drawTraversal(view);
@@ -112,9 +109,6 @@ public final class PixelFloaterGlyph extends Glyph  {
     pickRect.y = (double)scratchRect.y;
     pickRect.height = (double)scratchRect.height;
 
-    //    yidentity.setScaleX(vtrans.getScaleX());
-    //    yidentity.setOffsetX(vtrans.getOffsetX());
-    //    view.setTransform(yidentity);
     setChildTransform(view);
     view.setTransform(childtrans);
 
@@ -130,9 +124,8 @@ public final class PixelFloaterGlyph extends Glyph  {
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {
-    //    trans.copyTransform(identity);
     setChildTransform(view);
-    trans.copyTransform(childtrans);
+    trans.setTransform(childtrans);
   }
 
 }

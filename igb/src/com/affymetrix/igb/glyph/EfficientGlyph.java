@@ -536,7 +536,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
    *    getChildTransform() of parent).
    */
   public boolean  getGlobalTransform(ViewI view, LinearTransform trans) {
-    trans.copyTransform(view.getTransform());
+    trans.setTransform(view.getTransform());
     return getParent().getGlobalChildTransform(view, trans);
   }
 
@@ -556,7 +556,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
       if (parent == null) { return false; }
       glstack.push(gl);
     }
-    trans.copyTransform(view.getTransform());
+    trans.setTransform(view.getTransform());
     while (! glstack.empty()) {
       glstack.pop().getChildTransform(view, trans);
     }

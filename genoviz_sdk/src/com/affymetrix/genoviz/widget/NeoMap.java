@@ -865,9 +865,23 @@ public class NeoMap extends NeoWidget implements
 
 		   }
 
+		   /**
+			* Sets the transform's scales and offsets such that the coord_box's space is
+			* mapped to the pixel_box's space.  For example, to map a whole Scene to a
+			* view, with no zooming, the coord_box would be the coordinate bounds of
+			* the Scene, and the pixel_box the size of the NeoCanvas holding the View.
+			* @return
+			*/
 		   public LinearTransform calcFittedTransform() {
 			   LinearTransform new_trans = new LinearTransform();
-			   new_trans.fit(scene.getCoordBox(), view.getPixelBox());
+			   new_trans.setTransform(
+				(double)view.getPixelBox().width / scene.getCoordBox().width,
+				0,
+				0,
+				(double)view.getPixelBox().height / scene.getCoordBox().height,
+				(double)view.getPixelBox().x - new_trans.getScaleX() * scene.getCoordBox().x,
+				(double)view.getPixelBox().y - new_trans.getScaleY() * scene.getCoordBox().y);
+			   
 			   return new_trans;
 		   }
 

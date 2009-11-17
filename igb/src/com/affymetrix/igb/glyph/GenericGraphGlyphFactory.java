@@ -27,7 +27,6 @@ import java.awt.geom.Rectangle2D;
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	private boolean check_same_seq = true;
-	private double sgg_transition = GraphGlyph.default_transition_scale;
 	/** Name of a parameter for the init() method.  Set to Boolean.TRUE or Boolean.FALSE.
 	 *  Determines whether the glyph factory will try to determine whether the GraphSym
 	 *  that it is drawing is defined on the currently-displayed bioseq.
@@ -39,18 +38,12 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *  Controls a parameter of the GraphGlyph.
 	 *  @see GraphGlyph#setTransitionScale(double)
 	 */
-	private final static String TRANSITION_POINT_FOR_SMART_GLYPH = "SGG Transition Point";
-
+	
 	/** Allows you to set the parameter CHECK_SAME_SEQ_OPTION. */
 	public void init(Map options) {
 		Boolean ccs = (Boolean) options.get(CHECK_SAME_SEQ_OPTION);
 		if (ccs != null) {
 			check_same_seq = ccs.booleanValue();
-		}
-
-		if (options.get(TRANSITION_POINT_FOR_SMART_GLYPH) instanceof Double) {
-			Double d = (Double) options.get(TRANSITION_POINT_FOR_SMART_GLYPH);
-			sgg_transition = d.doubleValue();
 		}
 	}
 
@@ -143,7 +136,6 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, Rectangle2D.Double cbox, AffyTieredMap map, SeqMapView smv, boolean update_map) {
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, graf.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
-		graph_glyph.setTransitionScale(sgg_transition);
 		GraphStateI gstate = graf.getGraphState();
 		IAnnotStyle tier_style = gstate.getTierStyle();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());

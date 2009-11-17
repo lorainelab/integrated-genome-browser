@@ -16,8 +16,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
-import com.affymetrix.igb.Application;
-import com.affymetrix.igb.IGB;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
@@ -32,7 +30,6 @@ import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
-import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.Timer;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
@@ -59,9 +56,8 @@ import static com.affymetrix.genometryImpl.style.GraphStateI.MINMAXAVG;
  *  ONLY MEANT FOR GRAPHS ON HORIZONTAL MAPS.
  */
 public final class GraphGlyph extends Glyph {
-	static final double default_transition_scale = 100;
-
 	private static final boolean TIME_DRAWING = false;
+	private static final boolean DEBUG = false;
 
 	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
@@ -87,12 +83,9 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
 	private final GraphStateI state;
 	private final LinearTransform scratch_trans = new LinearTransform();
-	private static final boolean DEBUG = false;
+
 	// specified in coords_per_pixel
-	/**
-	 * A variable used to hold some temporary calculations for LINE_GRAPH.
-	 */
-	private final Point last_point_temp = new Point(0, 0);
+
 	// average # of points per entry in flat graph compression cache
 	/*
 	 *  may need to try a new approach to minimize switching graphics color
@@ -113,7 +106,7 @@ public final class GraphGlyph extends Glyph {
 	private final Rectangle2D.Double thresh_coord_box = new Rectangle2D.Double();
 	private ThreshGlyph thresh_glyph = new ThreshGlyph();
 	private final Rectangle thresh_pix_box = new Rectangle();
-	private double transition_scale = GraphGlyph.default_transition_scale;
+	private static final double transition_scale = 100;
 
 
 	private Color lighter;
@@ -271,17 +264,6 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	private String getID() {
-		Object mod = this.getInfo();
-		String ident = null;
-		if (mod instanceof SeqSymmetry) {
-			ident = ((SeqSymmetry) mod).getID();
-		}
-		if (ident == null) {
-			ident = state.getTierStyle().getUniqueName();
-		}
-		return ident;
-	}
 
 	public GraphStateI getGraphState() {
 		return state;
@@ -366,8 +348,8 @@ public final class GraphGlyph extends Glyph {
 		view.transformToPixels(coord, prev_point);
 
 		Point max_x_plus_width = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
-		int draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
-		int draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax, draw_beg_index);
+		int draw_beg_index = graf.determineBegIndex(xmin);
+		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		
 		int curr_max_index = 0; // used for heatmaps
 		g.translate(xpix_offset, 0);
@@ -526,10 +508,6 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawLabelRight(ViewI view) {
-		if (getLabel() == null) {
-			return;
-		}
-
 		// if full view differs from current view, and current view doesn't right align with full view,
 		//   don't draw handle (only want handle at right side of full view)
 		if (view.getFullView().getCoordBox().x + view.getFullView().getCoordBox().width != view.getCoordBox().x + view.getCoordBox().width) {
@@ -552,17 +530,12 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawLabelLeft(ViewI view) {
-		if (getLabel() == null) {
-			return;
-		}
 		Rectangle hpix = calcHandlePix(view);
-		if (hpix != null) {
-			Graphics g = view.getGraphics();
-			g.setColor(this.getColor());
-			g.setFont(default_font);
-			FontMetrics fm = g.getFontMetrics();
-			g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
-		}
+		Graphics g = view.getGraphics();
+		g.setColor(this.getColor());
+		g.setFont(default_font);
+		FontMetrics fm = g.getFontMetrics();
+		g.drawString(getLabel(), (hpix.x + hpix.width + 1), (hpix.y + fm.getMaxAscent() - 1));
 	}
 
 	private void drawHandle(ViewI view) {
@@ -623,9 +596,6 @@ public final class GraphGlyph extends Glyph {
 		}
 
 		Rectangle hpix = calcHandlePix(view);
-		if (hpix == null) {
-			return;
-		}
 
 		Graphics g = view.getGraphics();
 		g.setColor(this.getColor());
@@ -785,7 +755,7 @@ public final class GraphGlyph extends Glyph {
 			// overlapping handle ?  (need to do this one in pixel space?)
 			view.transformToPixels(coord_hitbox, pixel_hitbox);
 			Rectangle hpix = calcHandlePix(view);
-			if (hpix != null && (hpix.intersects(pixel_hitbox))) {
+			if (hpix.intersects(pixel_hitbox)) {
 				return true;
 			}
 		}
@@ -875,7 +845,13 @@ public final class GraphGlyph extends Glyph {
 		}
 		if (lab == null) {
 			// if no label was set, try using ID
-			lab = getID();
+			Object mod = this.getInfo();
+			if (mod instanceof SeqSymmetry) {
+				lab = ((SeqSymmetry) mod).getID();
+			}
+			if (lab == null) {
+				lab = state.getTierStyle().getUniqueName();
+			}
 		}
 
 		lab += " (" + nformat.format(state.getVisibleMinY()) + ", " + nformat.format(state.getVisibleMaxY()) + ")";
@@ -1054,8 +1030,8 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
-		int draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
-		int draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax, draw_beg_index);
+		int draw_beg_index = graf.determineBegIndex(xmin);
+		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		coord.x = graf.getGraphXCoord(draw_beg_index);
 		coord.y = offset - ((graf.getGraphYCoord(draw_beg_index) - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, prev_point);
@@ -1109,9 +1085,21 @@ public final class GraphGlyph extends Glyph {
 		// Does not apply to AVG_HEAT_MAP
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-		int yheight = yend - ystart;
 		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+			int yheight = yend - ystart;
 			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
+			if (graph_style == LINE_GRAPH) {
+				// cache for drawing later
+				if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
+					int yavg_pixel = ysum / points_in_pixel;
+					pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+				}
+				if (i > 0) {
+					int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
+					int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+					g.drawLine(prev_point.x, y1, curr_point.x, y2);
+				}
+			}
 		} else if (graph_style == MIN_HEAT_MAP) {
 			g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
 			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
@@ -1127,18 +1115,6 @@ public final class GraphGlyph extends Glyph {
 				g.setColor(state.getHeatMap().getColor(min));
 			}
 			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-		}
-		if (graph_style == LINE_GRAPH) {
-			int yavg_pixel = ysum / points_in_pixel;
-			// cache for drawing later
-			if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
-				pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
-			}
-			if (i > 0) {
-				int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
-				int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-				g.drawLine(prev_point.x, y1, curr_point.x, y2);
-			}
 		}
 	}
 
@@ -1239,9 +1215,8 @@ public final class GraphGlyph extends Glyph {
 			//      System.out.println("in SmartGraphGlyph, creating new pixel cache");
 			pixel_cache = new int[comp_ysize];
 		}
-		for (int i = 0; i < comp_ysize; i++) {
-			pixel_cache[i] = Integer.MIN_VALUE;
-		}
+		Arrays.fill(pixel_cache, 0, comp_ysize-1, 0);
+
 		if (TIME_DRAWING) {
 			tim.start();
 		}
@@ -1269,7 +1244,7 @@ public final class GraphGlyph extends Glyph {
 		}
 		if (TIME_DRAWING) {
 			long drawtime = tim.read();
-			System.out.println("smart graph draw time: " + drawtime);
+			System.out.println("graph draw time: " + drawtime);
 		}
 	}
 
@@ -1319,8 +1294,8 @@ public final class GraphGlyph extends Glyph {
 			Rectangle2D.Double view_coordbox = view.getCoordBox();
 			double xmin = view_coordbox.x;
 			double xmax = view_coordbox.x + view_coordbox.width;
-			draw_beg_index = GraphSymUtils.determineBegIndex(graf, xmin);
-			draw_end_index = GraphSymUtils.determineEndIndex(graf, xmax, draw_beg_index);
+			draw_beg_index = graf.determineBegIndex(xmin);
+			draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		}
 		double thresh_ycoord;
 		double thresh_score;
@@ -1355,6 +1330,7 @@ public final class GraphGlyph extends Glyph {
 		while ((new_beg > min_index) && ((minX - graf.getGraphXCoord(new_beg)) <= max_gap_threshold)) {
 			new_beg--;
 		}
+
 		draw_beg_index = new_beg;
 		int new_end = draw_end_index;
 		boolean draw_previous = false;
@@ -1561,18 +1537,10 @@ public final class GraphGlyph extends Glyph {
 		resetThreshLabel();
 	}
 
-	/**
-	 * Sets the scale at which the drawing routine will switch between the
-	 * style that is optimized for large genomic regions and the normal style.
-	 */
-	void setTransitionScale(double d) {
-		transition_scale = d;
-	}
-
 	@Override
 	public void draw(ViewI view) {
 		if (DEBUG) {
-			System.out.println("called SmartGraphGlyph.draw(), coords = " + coordbox);
+			System.out.println("called GraphGlyph.draw(), coords = " + coordbox);
 		}
 		int graph_style = getGraphStyle();
 		// GAH 9-13-2002
@@ -1596,6 +1564,7 @@ public final class GraphGlyph extends Glyph {
 					this.draw(view, LINE_GRAPH);
 				}
 			} else {
+				System.out.println("transition");
 				drawSmart(view);
 			}
 		} else if (graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == AVG_HEAT_MAP || graph_style == EXT_HEAT_MAP) {

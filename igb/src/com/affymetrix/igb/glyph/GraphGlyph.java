@@ -454,14 +454,14 @@ public final class GraphGlyph extends Glyph {
 		} else if (graph_style == DOT_GRAPH || graph_style == BIG_DOT_GRAPH) {
 			if (!this.hasWidth()) {
 				if (graph_style == BIG_DOT_GRAPH) {
-					g.fillRect(curr_point.x - 1, curr_point.y - 1, 3, 3);
+					drawRectOrLine(g,curr_point.x - 1, curr_point.y - 1, 3, 3);
 				} else {
 					g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
 				}
 			} else {
 				if (graph_style == BIG_DOT_GRAPH) {
 					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
-					g.fillRect(curr_point.x, curr_point.y - 1, width, 3);
+					drawRectOrLine(g,curr_point.x, curr_point.y - 1, width, 3);
 				} else {
 					g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
 				}
@@ -481,7 +481,7 @@ public final class GraphGlyph extends Glyph {
 				} else {
 					g.setColor(heatmap_colors[heatmap_index]);
 					// the x+1 start point prevents this from over-writing the last rectangle
-					g.fillRect(prev_point.x + 1, pixelbox.y, curr_point.x - prev_point.x, pixelbox.height + 1);
+					drawRectOrLine(g,prev_point.x + 1, pixelbox.y, curr_point.x - prev_point.x, pixelbox.height + 1);
 					curr_max_index = 0;
 				}
 			} else {
@@ -490,11 +490,7 @@ public final class GraphGlyph extends Glyph {
 				int heatmap_index = determineHeatmapIndex(heatmap_scaling, the_y, getVisibleMinY());
 				int pixel_width = curr_x_plus_width.x - curr_point.x;
 				g.setColor(heatmap_colors[heatmap_index]);
-				if (pixel_width <= 1) {
-					g.drawLine(curr_point.x, pixelbox.y, curr_point.x, pixelbox.y + pixelbox.height);
-				} else {
-					g.fillRect(curr_point.x, pixelbox.y, pixel_width, pixelbox.height + 1);
-				}
+				drawRectOrLine(g,curr_point.x, pixelbox.y, pixel_width, pixelbox.height + 1);
 			}
 		} else if (graph_style == STAIRSTEP_GRAPH) {
 			int stairwidth = curr_point.x - prev_point.x;
@@ -502,13 +498,13 @@ public final class GraphGlyph extends Glyph {
 				if (i <= 0 || (graf.getGraphYCoord(i - 1) != 0)) {
 					// skip drawing if width > 10000... (fix for linux problem?)
 					// draw the same regardless of whether wcoords == null
-					g.fillRect(prev_point.x, Math.min(zero_point.y, prev_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(prev_point.y - zero_point.y)));
+					drawRectOrLine(g,prev_point.x, Math.min(zero_point.y, prev_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(prev_point.y - zero_point.y)));
 				}
 			}
 			// If this is the very last point, special rules apply
 			if (i == draw_end_index) {
 				stairwidth = (!this.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
-				g.fillRect(curr_point.x, Math.min(zero_point.y, curr_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(curr_point.y - zero_point.y)));
+				drawRectOrLine(g,curr_point.x, Math.min(zero_point.y, curr_point.y), Math.max(1, stairwidth), Math.max(1, Math.abs(curr_point.y - zero_point.y)));
 			}
 		}
 		prev_point.x = curr_point.x;
@@ -581,7 +577,7 @@ public final class GraphGlyph extends Glyph {
 		if (hpix != null) {
 			Graphics g = view.getGraphics();
 			g.setColor(this.getColor());
-			g.fillRect(hpix.x, hpix.y, hpix.width, hpix.height);
+			drawRectOrLine(g,hpix.x, hpix.y, hpix.width, hpix.height);
 		}
 	}
 
@@ -646,7 +642,7 @@ public final class GraphGlyph extends Glyph {
 		double[] tick_pixels = convertToPixels(view, tick_coords);
 		for (int i = 0; i < tick_pixels.length; i++) {
 			double mark_ypix = tick_pixels[i];
-			g.fillRect(hpix.x, (int) mark_ypix, hpix.width + 8, 1);
+			drawRectOrLine(g,hpix.x, (int) mark_ypix, hpix.width + 8, 1);
 			// Always draw the lowest tick value, and indicate the others only
 			// if there is enough room between them that the text won't overlap
 			if (Double.isNaN(last_pixel) || Math.abs(mark_ypix - last_pixel) > font_height) {
@@ -1044,7 +1040,7 @@ public final class GraphGlyph extends Glyph {
 				if (graph_style == AVG_HEAT_MAP) {
 					if (yval != Integer.MIN_VALUE) {
 						g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yval))));
-						g.fillRect(i, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+						drawRectOrLine(g,i, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
 						prev_index = i;
 					}
 				}
@@ -1071,7 +1067,6 @@ public final class GraphGlyph extends Glyph {
 		view.transformToPixels(coord, prev_point);
 		int ymin_pixel = prev_point.y;
 		int ymax_pixel = prev_point.y;
-		int yavg_pixel;
 		int ysum = prev_point.y;
 		int points_in_pixel = 1;
 		int draw_count = 0;
@@ -1092,19 +1087,19 @@ public final class GraphGlyph extends Glyph {
 				points_in_pixel++;
 			} else {
 				// draw previous pixel position
-				if ((graph_style == MINMAXAVG) || graph_style == LINE_GRAPH || graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
+				if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH || graph_style == MIN_HEAT_MAP || graph_style == MAX_HEAT_MAP || graph_style == EXT_HEAT_MAP) {
 					// Does not apply to AVG_HEAT_MAP
 					int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 					int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 					int yheight = yend - ystart;
 					if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
-						g.fillRect(prev_point.x, ystart, 1, yheight);
+						drawRectOrLine(g,prev_point.x, ystart, 1, yheight);
 					} else if (graph_style == MIN_HEAT_MAP) {
 						g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - yend))));
-						g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+						drawRectOrLine(g,prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
 					} else if (graph_style == MAX_HEAT_MAP) {
 						g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
-						g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+						drawRectOrLine(g,prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
 					} else if (graph_style == EXT_HEAT_MAP) {
 						int max = (int) (heatmap_scaling * (plot_bottom_ypixel - ystart));
 						int min = (int) (heatmap_scaling * (plot_bottom_ypixel - yend));
@@ -1113,33 +1108,54 @@ public final class GraphGlyph extends Glyph {
 						} else {
 							g.setColor(state.getHeatMap().getColor(min));
 						}
-						g.fillRect(prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+						drawRectOrLine(g,prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
 					}
 					draw_count++;
-				}
-				yavg_pixel = ysum / points_in_pixel;
-				if (graph_style == LINE_GRAPH) {
-					// cache for drawing later
-					if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
-						pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+		
+					if (graph_style == LINE_GRAPH) {
+						int yavg_pixel = ysum / points_in_pixel;
+						// cache for drawing later
+						if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
+							pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+						}
+						if (i > 0) {
+							coord.x = graf.getGraphXCoord(i - 1);
+							coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
+							view.transformToPixels(coord, last_point_temp);
+							int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
+							int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+							g.drawLine(prev_point.x, y1, curr_point.x, y2);
+						}
 					}
 				}
-				if (graph_style == LINE_GRAPH && i > 0 && i <= graf.getPointCount()) {
-					coord.x = graf.getGraphXCoord(i - 1);
-					coord.y = offset - ((graf.getGraphYCoord(i - 1) - getVisibleMinY()) * yscale);
-					view.transformToPixels(coord, last_point_temp);
-					int y1 = Math.min(Math.max(last_point_temp.y, plot_top_ypixel), plot_bottom_ypixel);
-					int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-					g.drawLine(prev_point.x, y1, curr_point.x, y2);
-				}
+
 				ymin_pixel = curr_point.y;
 				ymax_pixel = curr_point.y;
 				ysum = curr_point.y;
 				points_in_pixel = 1;
 			}
 			prev_point.x = curr_point.x;
-			// this line is sometimes redundant
 			prev_point.y = curr_point.y;
+		}
+	}
+
+	/**
+	 * Fill rect or draw line, depending upon width
+	 * (Much faster than simply filling a rect, if the width or height is 1)
+	 * @param g
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	private static void drawRectOrLine(Graphics g, int x, int y, int width, int height) {
+		if (width <= 0 || height <= 0) {
+			return;
+		}
+		if (width == 1 || height == 1) {
+			g.drawLine(x, y, x+width-1, y+height-1);
+		} else {
+			g.fillRect(x, y, width, height);
 		}
 	}
 
@@ -1395,7 +1411,7 @@ public final class GraphGlyph extends Glyph {
 						SeqSymmetry sym = new SingletonSeqSymmetry((int) draw_min, (int) draw_max, aseq);
 						region_holder.addChild(sym);
 					} else {
-						g.fillRect(prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
+						drawRectOrLine(g,prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
 					}
 				}
 				draw_previous = false;
@@ -1422,7 +1438,7 @@ public final class GraphGlyph extends Glyph {
 					SeqSymmetry sym = new SingletonSeqSymmetry((int) pass_thresh_start, (int) pass_thresh_end, aseq);
 					region_holder.addChild(sym);
 				} else {
-					g.fillRect(prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
+					drawRectOrLine(g,prev_point.x, pixelbox.y + pixelbox.height - thresh_contig_height, curr_point.x - prev_point.x + 1, thresh_contig_height);
 				}
 			}
 		}

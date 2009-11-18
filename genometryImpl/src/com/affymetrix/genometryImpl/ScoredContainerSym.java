@@ -16,6 +16,7 @@ package com.affymetrix.genometryImpl;
 import java.util.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.FloatList;
@@ -231,9 +232,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	private GraphStateI initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
 		GraphStateI gs = AnnotatedSeqGroup.getStateProvider().getGraphState(id);
 		gs.setFloatGraph(false);
-		gs.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
-		// don't bother setting preferred heat map style, it should happen automatically.
-		//gs.setHeatMap(GraphState.getUserPrefHeatmap(UnibrowPrefsUtil.getTopNode()));
+		gs.setGraphStyle(GraphType.HEAT_MAP);
 		gs.getTierStyle().setHumanName(score_name);
 		gs.setComboStyle(getContainerStyle(strand));
 		return gs;

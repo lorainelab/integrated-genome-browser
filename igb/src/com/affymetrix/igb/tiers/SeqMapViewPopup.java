@@ -34,6 +34,7 @@ import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
@@ -562,7 +563,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);
-    gl.setGraphStyle(GraphStateI.STAIRSTEP_GRAPH);
+    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
     gl.setColor(atier.getForegroundColor());
   }
 

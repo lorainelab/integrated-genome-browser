@@ -221,72 +221,61 @@ public abstract class BookmarkController {
           graph_name = graph_path;
         }
 
-        if (Application.CACHE_GRAPHS)  {
-          istr = LocalUrlCacher.getInputStream(graph_path);
-        } else {
-          URL graphurl = new URL(graph_path);
-          istr = graphurl.openStream();
-        }
-        List grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
-        istr.close();
-        //        displayGraph(graf, col, ypos, 60, true);
-        //        GenericGraphGlyphFactory.displayGraph(graf, gmodel.getSelectedSeq(), gviewer.getSeqMap(),
-        //                                     col, ypos, yheight, use_floating_graphs
-        Integer graph_style_num = null;
-        if (graph_style != null) {
-          //	  graph_style_num = (Integer)gstyle2num.get(graph_style);
-          graph_style_num = GraphState.getStyleNumber(graph_style);
-        }
-        if (grafs != null) {
-          Iterator graf_iter = grafs.iterator();
-          while (graf_iter.hasNext()) {
-            GraphSym graf = (GraphSym) graf_iter.next();
-            GraphStateI gstate = graf.getGraphState();
-            graf.setGraphName(graph_name);
-            if (graph_style_num != null)  {
-              gstate.setGraphStyle(graph_style_num.intValue());
-            }
-            if (heatmap_name != null) {
-              HeatMap heat_map = HeatMap.getStandardHeatMap(heatmap_name);
-              if (heat_map != null) {
-                gstate.setHeatMap(heat_map);
-              }
-            }
-            IAnnotStyle tier_style = gstate.getTierStyle();
-            tier_style.setColor(col);
-            tier_style.setBackground(bg_col);
-            tier_style.setY(ypos);
-            tier_style.setHeight(yheight);
-            gstate.setFloatGraph(use_floating_graphs);
-            gstate.setShowLabel(show_label);
-            gstate.setShowAxis(show_axis);
-            gstate.setVisibleMinY((float) minvis);
-            gstate.setVisibleMaxY((float) maxvis);
-            gstate.setMinScoreThreshold((float) score_thresh);
-            gstate.setMinRunThreshold(minrun_thresh);
-            gstate.setMaxGapThreshold(maxgap_thresh);
-            gstate.setShowThreshold(show_thresh);
-            gstate.setThresholdDirection(thresh_direction);
+		  if (Application.CACHE_GRAPHS) {
+			  istr = LocalUrlCacher.getInputStream(graph_path);
+		  } else {
+			  URL graphurl = new URL(graph_path);
+			  istr = graphurl.openStream();
+		  }
+		  List<GraphSym> grafs = GraphSymUtils.readGraphs(istr, graph_path, gmodel, gmodel.getSelectedSeqGroup(), gmodel.getSelectedSeq());
+		  istr.close();
+		  GraphType graph_style_num = null;
+		  if (graph_style != null) {
+			  graph_style_num = GraphState.getStyleNumber(graph_style);
+			}
+			if (grafs != null) {
+				for (GraphSym graf : grafs) {
+					GraphStateI gstate = graf.getGraphState();
+					graf.setGraphName(graph_name);
+					if (graph_style_num != null) {
+						gstate.setGraphStyle(graph_style_num);
+					}
+					if (heatmap_name != null) {
+						HeatMap heat_map = HeatMap.getStandardHeatMap(heatmap_name);
+						if (heat_map != null) {
+							gstate.setHeatMap(heat_map);
+						}
+					}
+					IAnnotStyle tier_style = gstate.getTierStyle();
+					tier_style.setColor(col);
+					tier_style.setBackground(bg_col);
+					tier_style.setY(ypos);
+					tier_style.setHeight(yheight);
+					gstate.setFloatGraph(use_floating_graphs);
+					gstate.setShowLabel(show_label);
+					gstate.setShowAxis(show_axis);
+					gstate.setVisibleMinY((float) minvis);
+					gstate.setVisibleMaxY((float) maxvis);
+					gstate.setMinScoreThreshold((float) score_thresh);
+					gstate.setMinRunThreshold(minrun_thresh);
+					gstate.setMaxGapThreshold(maxgap_thresh);
+					gstate.setShowThreshold(show_thresh);
+					gstate.setThresholdDirection(thresh_direction);
 
-            if (combo_name != null) {
-              IAnnotStyle combo_style = combos.get(combo_name);
-              if (combo_style == null) {
-                combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
-                combo_style.setHumanName("Joined Graphs");
-                combo_style.setExpandable(true);
-                combo_style.setCollapsed(true);
-                combos.put(combo_name, combo_style);
-              }
-              gstate.setComboStyle(combo_style);
-            }
-
-//            gviewer.getGenericGraphGlyphFactory().displayGraph(graf, gviewer, false);
-          }
-        }
-      }
-//      gviewer.getSeqMap().packTiers(false, true, false);
-//      gviewer.getSeqMap().stretchToFit(false, false);
-//      gviewer.getSeqMap().updateWidget(true);
+					if (combo_name != null) {
+						IAnnotStyle combo_style = combos.get(combo_name);
+						if (combo_style == null) {
+							combo_style = new DefaultIAnnotStyle("Joined Graphs", true);
+							combo_style.setHumanName("Joined Graphs");
+							combo_style.setExpandable(true);
+							combo_style.setCollapsed(true);
+							combos.put(combo_name, combo_style);
+						}
+						gstate.setComboStyle(combo_style);
+					}
+				}
+			}
+		}
 
       // Because of combo graphs, have to completely re-draw the display
       // Don't bother trying to preserve_view in y-direction.  It usually doesn't work well,
@@ -358,9 +347,9 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_maxgap_thresh_" + i, Integer.toString((int)gr.getMaxGapThreshold()));
         mark_sym.setProperty("graph_minrun_thresh_" + i, Integer.toString((int)gr.getMinRunThreshold()));
         mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));
-        mark_sym.setProperty("graph_style_" + i, (GraphState.getStyleName(gr.getGraphStyle())) );
+        mark_sym.setProperty("graph_style_" + i, gr.getGraphStyle().name().toLowerCase());
         mark_sym.setProperty("graph_thresh_direction_" + i, Integer.toString(gr.getThresholdDirection()));
-        if (gr.getGraphStyle() == GraphStateI.MAX_HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
+        if (gr.getGraphStyle() == GraphType.HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
           mark_sym.setProperty("graph_heatmap_" + i, gr.getGraphState().getHeatMap().getName());
         }
 

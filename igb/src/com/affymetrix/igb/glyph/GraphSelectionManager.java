@@ -35,6 +35,7 @@ import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.menuitem.FileTracker;
@@ -234,25 +235,25 @@ public final class GraphSelectionManager
 			  if (DEBUG) {
 				  System.out.println("picked bar graph");
 			  }
-			  current_graph.setGraphStyle(GraphStateI.BAR_GRAPH);
+			  current_graph.setGraphStyle(GraphType.BAR_GRAPH);
 		  } else if (src == line_graph) {
 			  if (DEBUG) {
 				  System.out.println("picked line graph");
 			  }
-			  current_graph.setGraphStyle(GraphStateI.LINE_GRAPH);
+			  current_graph.setGraphStyle(GraphType.LINE_GRAPH);
 		  } else if (src == dot_graph) {
 			  if (DEBUG) {
 				  System.out.println("picked dot graph");
 			  }
-			  current_graph.setGraphStyle(GraphStateI.DOT_GRAPH);
+			  current_graph.setGraphStyle(GraphType.DOT_GRAPH);
 		  } else if (src == stairstep_graph) {
 			  if (DEBUG) {
 				  System.out.println("picked stairstep graph");
 			  }
-			  current_graph.setGraphStyle(GraphStateI.STAIRSTEP_GRAPH);
+			  current_graph.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
 		  } else if (src == min_max_graph) {
 			  if (current_graph instanceof GraphGlyph) {
-				  current_graph.setGraphStyle(GraphStateI.MINMAXAVG);
+				  current_graph.setGraphStyle(GraphType.MINMAXAVG);
 			  }
 		  } else if (src == adjust_hilo) {
 			  if (DEBUG) {

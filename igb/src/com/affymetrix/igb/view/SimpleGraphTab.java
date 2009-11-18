@@ -25,6 +25,7 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
@@ -186,12 +187,12 @@ public final class SimpleGraphTab extends JPanel
 		heat_mapCB_box.setAlignmentX(0.0f);
 		stylebox.add(heat_mapCB_box);
 
-		barB.addActionListener(new GraphStyleSetter(GraphStateI.BAR_GRAPH));
-		dotB.addActionListener(new GraphStyleSetter(GraphStateI.DOT_GRAPH));
-		hmapB.addActionListener(new GraphStyleSetter(GraphStateI.MAX_HEAT_MAP));
-		lineB.addActionListener(new GraphStyleSetter(GraphStateI.LINE_GRAPH));
-		mmavgB.addActionListener(new GraphStyleSetter(GraphStateI.MINMAXAVG));
-		sstepB.addActionListener(new GraphStyleSetter(GraphStateI.STAIRSTEP_GRAPH));
+		barB.addActionListener(new GraphStyleSetter(GraphType.BAR_GRAPH));
+		dotB.addActionListener(new GraphStyleSetter(GraphType.DOT_GRAPH));
+		hmapB.addActionListener(new GraphStyleSetter(GraphType.HEAT_MAP));
+		lineB.addActionListener(new GraphStyleSetter(GraphType.LINE_GRAPH));
+		mmavgB.addActionListener(new GraphStyleSetter(GraphType.MINMAXAVG));
+		sstepB.addActionListener(new GraphStyleSetter(GraphType.STAIRSTEP_GRAPH));
 
 		stylegroup.add(barB);
 		stylegroup.add(dotB);
@@ -357,12 +358,12 @@ public final class SimpleGraphTab extends JPanel
 
 		// Take the first glyph in the list as a prototype
 		GraphGlyph first_glyph = null;
-		int graph_style = -1;
+		GraphType graph_style = GraphType.LINE_GRAPH;
 		HeatMap hm = null;
 		if (!glyphs.isEmpty()) {
 			first_glyph = glyphs.get(0);
 			graph_style = first_glyph.getGraphStyle();
-			if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+			if (graph_style == GraphType.HEAT_MAP) {
 				hm = first_glyph.getHeatMap();
 			}
 			the_height = first_glyph.getGraphState().getTierStyle().getHeight();
@@ -387,9 +388,9 @@ public final class SimpleGraphTab extends JPanel
 			all_are_smart_glyphs = all_are_smart_glyphs && (gl instanceof GraphGlyph);
 
 			if (first_glyph.getGraphStyle() != gl.getGraphStyle()) {
-				graph_style = -1;
+				graph_style = GraphType.LINE_GRAPH;
 			}
-			if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+			if (graph_style == GraphType.HEAT_MAP) {
 				if (first_glyph.getHeatMap() != gl.getHeatMap()) {
 					hm = null;
 				}
@@ -408,22 +409,22 @@ public final class SimpleGraphTab extends JPanel
 		}
 
 		switch (graph_style) {
-			case GraphStateI.MINMAXAVG:
+			case MINMAXAVG:
 				mmavgB.setSelected(true);
 				break;
-			case GraphStateI.LINE_GRAPH:
+			case LINE_GRAPH:
 				lineB.setSelected(true);
 				break;
-			case GraphStateI.BAR_GRAPH:
+			case BAR_GRAPH:
 				barB.setSelected(true);
 				break;
-			case GraphStateI.DOT_GRAPH:
+			case DOT_GRAPH:
 				dotB.setSelected(true);
 				break;
-			case GraphStateI.MAX_HEAT_MAP:
+			case HEAT_MAP:
 				hmapB.setSelected(true);
 				break;
-			case GraphStateI.STAIRSTEP_GRAPH:
+			case STAIRSTEP_GRAPH:
 				sstepB.setSelected(true);
 				break;
 			default:
@@ -431,7 +432,7 @@ public final class SimpleGraphTab extends JPanel
 				break;
 		}
 
-		if (graph_style == GraphStateI.MAX_HEAT_MAP) {
+		if (graph_style == GraphType.HEAT_MAP) {
 			heat_mapCB.setEnabled(true);
 			if (hm == null) {
 				heat_mapCB.setSelectedIndex(-1);
@@ -492,9 +493,9 @@ public final class SimpleGraphTab extends JPanel
 
 	private final class GraphStyleSetter implements ActionListener {
 
-		int style = 0;
+		GraphType style = GraphType.LINE_GRAPH;
 
-		public GraphStyleSetter(int style) {
+		public GraphStyleSetter(GraphType style) {
 			this.style = style;
 		}
 
@@ -510,19 +511,19 @@ public final class SimpleGraphTab extends JPanel
 
 				public void run() {
 					GraphGlyph first_glyph = glyphs.get(0);
-					if (style == GraphStateI.MAX_HEAT_MAP) {
+					if (style == GraphType.HEAT_MAP) {
 						// set to heat map FIRST so that getHeatMap() below will return default map instead of null
-						first_glyph.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
+						first_glyph.setGraphStyle(GraphType.HEAT_MAP);
 					}
 					HeatMap hm = (glyphs.get(0)).getHeatMap();
 					for (GraphGlyph sggl : glyphs) {
 						sggl.setShowGraph(true);
 						sggl.setGraphStyle(style); // leave the heat map whatever it was
-						if ((style == GraphStateI.MAX_HEAT_MAP) && (hm != sggl.getHeatMap())) {
+						if ((style == GraphType.HEAT_MAP) && (hm != sggl.getHeatMap())) {
 							hm = null;
 						}
 					}
-					if (style == GraphStateI.MAX_HEAT_MAP) {
+					if (style == GraphType.HEAT_MAP) {
 						heat_mapCB.setEnabled(true);
 						if (hm == null) {
 							heat_mapCB.setSelectedIndex(-1);
@@ -569,7 +570,7 @@ public final class SimpleGraphTab extends JPanel
 				if (hm != null) {
 					for (GraphGlyph gl : glyphs) {
 						gl.setShowGraph(true);
-						gl.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
+						gl.setGraphStyle(GraphType.HEAT_MAP);
 						gl.setHeatMap(hm);
 					}
 					gviewer.getSeqMap().updateWidget();

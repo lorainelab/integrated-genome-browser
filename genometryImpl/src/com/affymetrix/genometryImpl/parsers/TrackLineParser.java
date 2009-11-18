@@ -257,10 +257,10 @@ public final class TrackLineParser {
 		String graph_type = track_hash.get("graphtype");
 		// UCSC browser supports only the types "points" and "bar"
 		if ("points".equalsIgnoreCase(graph_type)) {
-			gstate.setGraphStyle(GraphStateI.DOT_GRAPH);
+			gstate.setGraphStyle(GraphType.DOT_GRAPH);
 		}
 		else if ("bar".equalsIgnoreCase(graph_type)) {
-			gstate.setGraphStyle(GraphStateI.BAR_GRAPH);
+			gstate.setGraphStyle(GraphType.BAR_GRAPH);
 		}
 	}
 }

@@ -34,17 +34,6 @@ import com.affymetrix.genoviz.util.Timer;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 
-/*
- * These are replacing private copies which GraphGlyph used to keep
- */
-import static com.affymetrix.genometryImpl.style.GraphStateI.BAR_GRAPH;
-import static com.affymetrix.genometryImpl.style.GraphStateI.DOT_GRAPH;
-import static com.affymetrix.genometryImpl.style.GraphStateI.LINE_GRAPH;
-import static com.affymetrix.genometryImpl.style.GraphStateI.STAIRSTEP_GRAPH;
-
-import static com.affymetrix.genometryImpl.style.GraphStateI.MAX_HEAT_MAP;
-import static com.affymetrix.genometryImpl.style.GraphStateI.MINMAXAVG;
-
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
  *  Started with {@link com.affymetrix.genoviz.glyph.BasicGraphGlyph} and improved from there.
@@ -264,7 +253,7 @@ public final class GraphGlyph extends Glyph {
 		return state;
 	}
 
-	private void oldDraw(ViewI view, int graph_style) {
+	private void oldDraw(ViewI view, GraphType graph_style) {
 		if (TIME_DRAWING) {
 			tim.start();
 		}
@@ -303,7 +292,7 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	private void DrawTheGraph(ViewI view, Graphics g, int graph_style) {
+	private void DrawTheGraph(ViewI view, Graphics g, GraphType graph_style) {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
 		double offset = scratch_trans.getTranslateY();
@@ -368,7 +357,7 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	private void bigDrawLoop(int i, double offset, double yscale, ViewI view, Point curr_x_plus_width, int graph_style, Graphics g, Point max_x_plus_width, int draw_end_index) {
+	private void bigDrawLoop(int i, double offset, double yscale, ViewI view, Point curr_x_plus_width, GraphType graph_style, Graphics g, Point max_x_plus_width, int draw_end_index) {
 		// flipping about yaxis... should probably make this optional
 		// also offsetting to place within glyph bounds
 		int xtemp = graf.getGraphXCoord(i);
@@ -389,7 +378,7 @@ public final class GraphGlyph extends Glyph {
 			x_plus_width2D.y = coord.y;
 			view.transformToPixels(x_plus_width2D, curr_x_plus_width);
 		}
-		if (graph_style == LINE_GRAPH) {
+		if (graph_style == GraphType.LINE_GRAPH) {
 			if (!this.hasWidth()) {
 				g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 			} else {
@@ -406,7 +395,7 @@ public final class GraphGlyph extends Glyph {
 					max_x_plus_width.y = curr_x_plus_width.y; // yB
 				}
 			}
-		} else if (graph_style == BAR_GRAPH) {
+		} else if (graph_style == GraphType.BAR_GRAPH) {
 			int ymin_pixel = Math.min(curr_point.y, zero_point.y);
 			int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
 			yheight_pixel = Math.max(1, yheight_pixel);
@@ -416,13 +405,13 @@ public final class GraphGlyph extends Glyph {
 				final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
 				g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 			}
-		} else if (graph_style == DOT_GRAPH) {
+		} else if (graph_style == GraphType.DOT_GRAPH) {
 			if (!this.hasWidth()) {
 				g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
 			} else {
 				g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
 			}
-		} else if (graph_style == STAIRSTEP_GRAPH) {
+		} else if (graph_style == GraphType.STAIRSTEP_GRAPH) {
 			int stairwidth = curr_point.x - prev_point.x;
 			if ((stairwidth >= 0 && stairwidth <= 10000) && (i <= 0 || graf.getGraphYCoord(i - 1) != 0)) {
 				if (i <= 0 || (graf.getGraphYCoord(i - 1) != 0)) {
@@ -848,14 +837,14 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	public void setGraphStyle(int type) {
+	public void setGraphStyle(GraphType type) {
 		state.setGraphStyle(type);
-		if (type == MAX_HEAT_MAP) {
+		if (type == GraphType.HEAT_MAP) {
 			setHeatMap(state.getHeatMap());
 		}
 	}
 
-	public int getGraphStyle() {
+	public GraphType getGraphStyle() {
 		return state.getGraphStyle();
 	}
 
@@ -937,13 +926,13 @@ public final class GraphGlyph extends Glyph {
 		lt.setTranslateY(yoffset);
 	}
 
-	private void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, int graph_style, Graphics g, double heatmap_scaling, int ysum, int points_in_pixel, int i) {
+	private void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, GraphType graph_style, Graphics g, double heatmap_scaling, int ysum, int points_in_pixel, int i) {
 		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
 			int yheight = yend - ystart;
 			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
-			if (graph_style == LINE_GRAPH) {
+			if (graph_style == GraphType.LINE_GRAPH) {
 				// cache for drawing later
 				if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 					int yavg_pixel = ysum / points_in_pixel;
@@ -955,7 +944,7 @@ public final class GraphGlyph extends Glyph {
 					g.drawLine(prev_point.x, y1, curr_point.x, y2);
 				}
 			}
-		} else if (graph_style == MAX_HEAT_MAP) {
+		} else if (graph_style == GraphType.HEAT_MAP) {
 			g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
 			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
 		}
@@ -1032,7 +1021,7 @@ public final class GraphGlyph extends Glyph {
 		if (this.getPointCount() == 0) {
 			return;
 		}
-		int graph_style = getGraphStyle();
+		GraphType graph_style = getGraphStyle();
 		view.transformToPixels(coordbox, pixelbox);
 		Graphics g = view.getGraphics();
 		double coords_per_pixel = 1.0F / ( view.getTransform()).getScaleX();
@@ -1076,12 +1065,12 @@ public final class GraphGlyph extends Glyph {
 		}
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
-		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
 			if (getGraphState().getShowZeroLine() && yzero == 0) {
 				g.setColor(Color.gray);
 				g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
 			}
-			if (graph_style == MINMAXAVG) {
+			if (graph_style == GraphType.MINMAXAVG) {
 				g.setColor(darker);
 			} else {
 				g.setColor(getBackgroundColor());
@@ -1091,7 +1080,7 @@ public final class GraphGlyph extends Glyph {
 		DrawAvgLine(graph_style, g, heatmap_scaling, plot_bottom_ypixel, plot_top_ypixel, coords_per_pixel);
 	}
 
-	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, int graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
+	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, GraphType graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
 		int draw_beg_index = graf.determineBegIndex(xmin);
 		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		coord.x = graf.getGraphXCoord(draw_beg_index);
@@ -1101,10 +1090,10 @@ public final class GraphGlyph extends Glyph {
 		int ymax_pixel = prev_point.y;
 		int ysum = prev_point.y;
 		int points_in_pixel = 1;
-		if (graph_style == MINMAXAVG) {
+		if (graph_style == GraphType.MINMAXAVG) {
 			g.setColor(darker);
 		}
-		if (graph_style == LINE_GRAPH) {
+		if (graph_style == GraphType.LINE_GRAPH) {
 			g.setColor(getBackgroundColor());
 		}
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
@@ -1128,7 +1117,9 @@ public final class GraphGlyph extends Glyph {
 				points_in_pixel++;
 			} else {
 				// draw previous pixel position
-				if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH || graph_style == MAX_HEAT_MAP) {
+				if (graph_style == GraphType.MINMAXAVG ||
+						graph_style == GraphType.LINE_GRAPH ||
+						graph_style == GraphType.HEAT_MAP) {
 					drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, graph_style, g, heatmap_scaling, ysum, points_in_pixel, i);
 				}
 
@@ -1142,8 +1133,8 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	private void DrawAvgLine(int graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
-		if (graph_style == MINMAXAVG) {
+	private void DrawAvgLine(GraphType graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
+		if (graph_style == GraphType.MINMAXAVG) {
 			g.setColor(lighter);
 		}
 		int prev_index = 0;
@@ -1158,7 +1149,7 @@ public final class GraphGlyph extends Glyph {
 				if (yval == Integer.MIN_VALUE) {
 					continue;
 				}
-				if (graph_style == MINMAXAVG) {
+				if (graph_style == GraphType.MINMAXAVG) {
 					if (pixel_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
 						g.drawLine(i, yval, i, yval);
 					} else {
@@ -1466,7 +1457,7 @@ public final class GraphGlyph extends Glyph {
 		if (DEBUG) {
 			System.out.println("called GraphGlyph.draw(), coords = " + coordbox);
 		}
-		int graph_style = getGraphStyle();
+		GraphType graph_style = getGraphStyle();
 		// GAH 9-13-2002
 		// hack to get thresholding to work -- thresh line child glyph keeps getting removed
 		//   as a child of graph... (must be something in SeqMapView.setAnnotatedSeq()...
@@ -1478,20 +1469,19 @@ public final class GraphGlyph extends Glyph {
 			}
 			this.addChild(thresh_glyph);
 		}
-		if (graph_style == MINMAXAVG || graph_style == LINE_GRAPH) {
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
 			double xpixels_per_coord = ( view.getTransform()).getScaleX();
 			double xcoords_per_pixel = 1 / xpixels_per_coord;
 			if ((xcoords_per_pixel < transition_scale)) {
-				if (graph_style == MINMAXAVG) {
-					this.oldDraw(view, BAR_GRAPH);
+				if (graph_style == GraphType.MINMAXAVG) {
+					this.oldDraw(view, GraphType.BAR_GRAPH);
 				} else {
-					this.oldDraw(view, LINE_GRAPH);
+					this.oldDraw(view, GraphType.LINE_GRAPH);
 				}
 			} else {
-				System.out.println("transition");
 				drawSmart(view);
 			}
-		} else if (graph_style == MAX_HEAT_MAP) {
+		} else if (graph_style == GraphType.HEAT_MAP) {
 			drawSmart(view);
 		} else {
 			// Not one of the special styles, so default to regular GraphGlyph.draw method.

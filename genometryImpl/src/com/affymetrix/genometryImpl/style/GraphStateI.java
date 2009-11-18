@@ -24,20 +24,11 @@ public interface GraphStateI {
 	public static int THRESHOLD_DIRECTION_BETWEEN = 0;
 	public static int THRESHOLD_DIRECTION_LESS = -1;
 
-	//TODO: Make this an enum
-	public static final int LINE_GRAPH = 1;
-	public static final int BAR_GRAPH = 2;
-	public static final int DOT_GRAPH = 3;
-	public static final int MINMAXAVG = 4;
-	public static final int STAIRSTEP_GRAPH = 5;
-	public static final int MAX_HEAT_MAP = 6;
-
-
 	/** Copy all the properties, except ID and label, of the given state into this state. */
 	public void copyProperties(GraphStateI ostate);
 
 	public String getUrl();
-	public int getGraphStyle();
+	public GraphType getGraphStyle();
 	public HeatMap getHeatMap();
 
 	public float getVisibleMinY();
@@ -71,7 +62,7 @@ public interface GraphStateI {
 
 	public void setUrl(String url);
 	public void setFloatGraph(boolean b);
-	public void setGraphStyle(int style);
+	public void setGraphStyle(GraphType style);
 	public void setHeatMap(HeatMap hmap);
 	public void setVisibleMinY(float vminy);
 	public void setVisibleMaxY(float vmaxy);

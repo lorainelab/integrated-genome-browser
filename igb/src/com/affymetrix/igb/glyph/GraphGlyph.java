@@ -39,7 +39,6 @@ import java.text.AttributedString;
  */
 import static com.affymetrix.genometryImpl.style.GraphStateI.BAR_GRAPH;
 import static com.affymetrix.genometryImpl.style.GraphStateI.DOT_GRAPH;
-import static com.affymetrix.genometryImpl.style.GraphStateI.BIG_DOT_GRAPH;
 import static com.affymetrix.genometryImpl.style.GraphStateI.LINE_GRAPH;
 import static com.affymetrix.genometryImpl.style.GraphStateI.STAIRSTEP_GRAPH;
 
@@ -417,20 +416,11 @@ public final class GraphGlyph extends Glyph {
 				final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
 				g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 			}
-		} else if (graph_style == DOT_GRAPH || graph_style == BIG_DOT_GRAPH) {
+		} else if (graph_style == DOT_GRAPH) {
 			if (!this.hasWidth()) {
-				if (graph_style == BIG_DOT_GRAPH) {
-					drawRectOrLine(g,curr_point.x - 1, curr_point.y - 1, 3, 3);
-				} else {
-					g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
-				}
+				g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
 			} else {
-				if (graph_style == BIG_DOT_GRAPH) {
-					final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
-					drawRectOrLine(g,curr_point.x, curr_point.y - 1, width, 3);
-				} else {
-					g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
-				}
+				g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
 			}
 		} else if (graph_style == STAIRSTEP_GRAPH) {
 			int stairwidth = curr_point.x - prev_point.x;

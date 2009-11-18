@@ -11,7 +11,7 @@ public enum GraphType {
 		DOT_GRAPH("Dot", 3), 
 		MINMAXAVG("Min/Max/Avg", 4),
 		STAIRSTEP_GRAPH("Stairstep", 5),
-		HEAT_MAP("Heat Map", 12);
+		HEAT_MAP("Heat Map", 6);
 
 	private String humanReadable;
 	private int number;

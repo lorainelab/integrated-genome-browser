@@ -44,12 +44,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.affymetrix.genometry.genopub.*;
-import com.affymetrix.genometry.genopub.AnnotationQuery;
-import com.affymetrix.genometry.genopub.GenoPubSecurity;
-import com.affymetrix.genometry.genopub.HibernateUtil;
-import com.affymetrix.genometry.genopub.Organism;
-import com.affymetrix.genometry.genopub.QualifiedAnnotation;
-import com.affymetrix.genometry.genopub.Segment;
 
 
 /**
@@ -509,14 +503,21 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						 File file = new File(fileName);;
 						 if (file.exists()) {
 							 Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Annotation type = " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
-							 if (file.isDirectory()) {  
+							 if (file.isDirectory() ) {
+								 
+								 if (dirHasFilesWithExtension(file, "bar")) {
 
-								 ServerUtils.loadDBAnnotsFromDir(typePrefix, 
-										 file.getPath(), 
-										 genomeVersion, 
-										 file, 
-										 qa.getAnnotation().getIdAnnotation(),
-										 graph_name2dir);                  
+									 ServerUtils.loadDBAnnotsFromDir(typePrefix, 
+											 file.getPath(), 
+											 genomeVersion, 
+											 file, 
+											 qa.getAnnotation().getIdAnnotation(),
+											 graph_name2dir);                  
+								 
+								 } else {
+									 Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing non-bar annotation " + typePrefix + ". Only the bar format permits multiple annotation files.");
+								 }
+
 
 							 } else {
 
@@ -547,6 +548,24 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	    return true;
 	    
 	  }
+	 
+	private boolean dirHasFilesWithExtension(File dir, String extension) {
+		boolean isExtension = false;
+		if (dir.exists()) {
+		    // Delete the files in the directory
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+				for (int x = 0; x < childFileNames.length; x++) {
+					if (childFileNames[x].endsWith(extension)) {
+						isExtension = true;
+						break;
+					}
+				}
+		    	
+		    }
+	    }
+		return isExtension;
+	}
 
 	private final void loadGenomes(String dataRoot,
 			Map<String, List<AnnotatedSeqGroup>> organisms,

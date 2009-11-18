@@ -149,11 +149,7 @@ public final class SimpleGraphTab extends JPanel
 	}
 
 	public SimpleGraphTab(Application app) {
-		/*if (app == null) {
-		this.gviewer = SeqMapView.makeSeqMapView(true, false); // for testing only
-		} else {*/
 		this.gviewer = app.getMapView();
-		//}
 
 		heat_mapCB = new JComboBox(HeatMap.getStandardNames());
 		heat_mapCB.addItemListener(new HeatMapItemListener());

@@ -231,7 +231,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	private GraphStateI initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
 		GraphStateI gs = AnnotatedSeqGroup.getStateProvider().getGraphState(id);
 		gs.setFloatGraph(false);
-		gs.setGraphStyle(GraphStateI.HEAT_MAP);
+		gs.setGraphStyle(GraphStateI.MAX_HEAT_MAP);
 		// don't bother setting preferred heat map style, it should happen automatically.
 		//gs.setHeatMap(GraphState.getUserPrefHeatmap(UnibrowPrefsUtil.getTopNode()));
 		gs.getTierStyle().setHumanName(score_name);

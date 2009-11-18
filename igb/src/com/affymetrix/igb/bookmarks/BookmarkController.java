@@ -360,7 +360,7 @@ public abstract class BookmarkController {
         mark_sym.setProperty("graph_show_thresh_" + i, (gr.getShowThreshold()?"true":"false"));
         mark_sym.setProperty("graph_style_" + i, (GraphState.getStyleName(gr.getGraphStyle())) );
         mark_sym.setProperty("graph_thresh_direction_" + i, Integer.toString(gr.getThresholdDirection()));
-        if (gr.getGraphStyle() == GraphStateI.HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
+        if (gr.getGraphStyle() == GraphStateI.MAX_HEAT_MAP && gr.getGraphState().getHeatMap() != null) {
           mark_sym.setProperty("graph_heatmap_" + i, gr.getGraphState().getHeatMap().getName());
         }
 

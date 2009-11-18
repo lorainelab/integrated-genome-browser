@@ -31,23 +31,10 @@ public interface GraphStateI {
 	public static final int MINMAXAVG = 4;
 	public static final int STAIRSTEP_GRAPH = 5;
 
-	/** @deprecated Use EXT_HEAT_MAP for most cases. */
-	@Deprecated
-	public static final int HEAT_MAP = 7;
-
 	public static final int BIG_DOT_GRAPH = 8;
 
-	/** A heatmap that draws the color for the Minimum value at each pixel. */
-	public static final int MIN_HEAT_MAP = 9;
 	/** A heatmap that draws the color for the Maximum value at each pixel. */
 	public static final int MAX_HEAT_MAP = 10;
-	/** A heatmap that draws the color for the Average value at each pixel. */
-	public static final int AVG_HEAT_MAP = 11;
-
-	/** A heatmap that draws the color for the most extreme value at each pixel; 
-	 *  i.e. the value the most different from the midpoint of the range.
-	 */
-	public static final int EXT_HEAT_MAP = 12;
 
 
 	/** Copy all the properties, except ID and label, of the given state into this state. */

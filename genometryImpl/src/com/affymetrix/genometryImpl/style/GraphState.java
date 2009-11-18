@@ -95,7 +95,7 @@ public final class GraphState implements GraphStateI {
 		gstyle2num.put("bar", new Integer(GraphStateI.BAR_GRAPH));
 		gstyle2num.put("dot", new Integer(GraphStateI.DOT_GRAPH));
 		gstyle2num.put("stairstep", new Integer(GraphStateI.STAIRSTEP_GRAPH));
-		gstyle2num.put("heatmap", new Integer(GraphStateI.HEAT_MAP));
+		gstyle2num.put("heatmap", new Integer(GraphStateI.MAX_HEAT_MAP));
 		gstyle2num.put("minmaxavg", new Integer(GraphStateI.MINMAXAVG));
 		//    gstyle2num.put("span", new Integer(SmartGraphGlyph.SPAN_GRAPH));  // SPAN_GRAPH is deprecated
 
@@ -283,8 +283,6 @@ public final class GraphState implements GraphStateI {
 	}
 
 	public static boolean isHeatMapStyle(int graph_style) {
-		return (graph_style == GraphStateI.HEAT_MAP || graph_style == GraphStateI.AVG_HEAT_MAP
-				|| graph_style == GraphStateI.MAX_HEAT_MAP || graph_style == GraphStateI.MIN_HEAT_MAP
-				|| graph_style == GraphStateI.EXT_HEAT_MAP);
+		return (graph_style == GraphStateI.MAX_HEAT_MAP);
 	}
 }

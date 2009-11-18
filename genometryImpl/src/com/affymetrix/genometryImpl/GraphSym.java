@@ -327,10 +327,10 @@ public class GraphSym extends SimpleSymWithProps {
 		//xBuf = new int[BUFSIZE];
 		yBuf = new float[BUFSIZE];
 		//System.arraycopy(x, 0, xBuf, 0, Math.min(BUFSIZE, pointCount));
-		System.arraycopy(y, 0, yBuf, 0, Math.min(BUFSIZE, pointCount));
+		Arrays.fill(y, 0, Math.min(BUFSIZE,pointCount)-1, 0f);
 		if (this.hasWidth) {
 			wBuf = new int[BUFSIZE];
-			System.arraycopy(w, 0, wBuf, 0, Math.min(BUFSIZE, pointCount));
+			Arrays.fill(w, 0, Math.min(BUFSIZE,pointCount)-1, 0);
 		}
 		if (pointCount <= BUFSIZE) {
 			// no need to index.  Array is too small.
@@ -394,7 +394,9 @@ public class GraphSym extends SimpleSymWithProps {
 				System.out.println("ERROR: skipped " + bytesSkipped + " out of " + bytesToSkip + " bytes when indexing");
 				//Arrays.fill(xBuf, 0);
 				Arrays.fill(yBuf, 0.0f);
-				Arrays.fill(wBuf, 0);
+				if (this.hasWidth) {
+					Arrays.fill(wBuf, 0);
+				}
 				return;
 			}
 
@@ -404,19 +406,26 @@ public class GraphSym extends SimpleSymWithProps {
 				//xBuf[i] = dis.readInt();	// x
 				dis.readInt();	//x
 				yBuf[i] = dis.readFloat();	// y
-				wBuf[i] = dis.readInt();
+				int w = dis.readInt();
+				if (this.hasWidth) {
+					wBuf[i] = w;
+				}
 			}
 			// zero out remainder of buffer, if necessary
 			for (int i=maxPoints;i<BUFSIZE;i++) {
 				//xBuf[i] = 0;
 				yBuf[i] = 0.0f;
-				wBuf[i] = 0;
+				if (this.hasWidth) {
+					wBuf[i] = 0;
+				}
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			//Arrays.fill(xBuf, 0);
 			Arrays.fill(yBuf, 0.0f);
-			Arrays.fill(wBuf, 0);
-			ex.printStackTrace();
+			if (this.hasWidth) {
+				Arrays.fill(wBuf, 0);
+			}
 		} finally {
 			GeneralUtils.safeClose(dis);
 		}

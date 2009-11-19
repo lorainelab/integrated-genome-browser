@@ -12,8 +12,8 @@
 		<property name="deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_DAS2_HERE" />
 		<property name="build.version"   value="${DSTAMP}" />
 		
-		<!-- das2 mode, set to either classic or genopub -->
-		<property name="das2_mode"    value="classic"/>
+		<!-- das2 genopub mode, set to true to configure DAS2 with GenoPub -->
+		<property name="das2_genopub_mode"    value="false"/>
 		
 		<!-- file paths -->
 		<property name="web.xml" value="${das2server}/web.xml" />
@@ -76,18 +76,18 @@
 
 
 	<condition property="is_das2_classic_mode">
-	  <matches string="${das2_mode}" pattern="classic"/>
+	  <isfalse value="${das2_genopub_mode}"/>
 	</condition>
 
 	<condition property="is_das2_genopub_mode">
-	  <matches string="${das2_mode}" pattern="genopub"/>
+	  <istrue value="${das2_genopub_mode}"/>
 	</condition>
 
 	<!-- Only compile file flex if the the das2 mode is 'genopub' and the flex app is not up-to-date -->
 	<condition property="should_compile_flex">
 		<and>
 			<!-- Is the das2 mode genopub? -->
-  	  <matches string="${das2_mode}" pattern="genopub"/>
+  	  <istrue value="${das2_genopub_mode}"/>
 			
 	    <!-- Is the flex app not already up-to-date? -->
 			<not>

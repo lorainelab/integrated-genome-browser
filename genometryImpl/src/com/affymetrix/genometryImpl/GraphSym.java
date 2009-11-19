@@ -327,10 +327,10 @@ public class GraphSym extends SimpleSymWithProps {
 		//xBuf = new int[BUFSIZE];
 		yBuf = new float[BUFSIZE];
 		//System.arraycopy(x, 0, xBuf, 0, Math.min(BUFSIZE, pointCount));
-		Arrays.fill(y, 0, Math.min(BUFSIZE,pointCount)-1, 0f);
+		System.arraycopy(y, 0, yBuf, 0, Math.min(BUFSIZE, pointCount));
 		if (this.hasWidth) {
 			wBuf = new int[BUFSIZE];
-			Arrays.fill(w, 0, Math.min(BUFSIZE,pointCount)-1, 0);
+			System.arraycopy(w, 0, wBuf, 0, Math.min(BUFSIZE, pointCount));
 		}
 		if (pointCount <= BUFSIZE) {
 			// no need to index.  Array is too small.

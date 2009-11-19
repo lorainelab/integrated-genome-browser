@@ -452,7 +452,7 @@ public final class LoadFileAction {
 			if (index > 0) {
 				annot_type = stream_name.substring(0, index);
 			}
-			parser.parse(str, annot_type, selected_group, false, false);
+			parser.parse(str, annot_type, selected_group, false);
 			return null;
 		} else if (lcname.endsWith(".gff3")) {
 			/* Force parcing as GFF3 */

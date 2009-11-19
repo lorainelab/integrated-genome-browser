@@ -28,7 +28,7 @@ import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -243,7 +243,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 	private static void displayGraphSym(GraphIntervalSym graf, Double cbox, AffyTieredMap map, SeqMapView smv) {
 		GraphGlyph graph_glyph = new GraphGlyph(graf, graf.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(graf.getGraphName());
-		GraphStateI gstate = graph_glyph.getGraphState();
+		GraphState gstate = graph_glyph.getGraphState();
 		IAnnotStyle tier_style = gstate.getTierStyle(); // individual style: combo comes later
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)

@@ -24,7 +24,8 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
@@ -789,7 +790,7 @@ public final class SimpleGraphTab extends JPanel
 
 			// Now apply that combo style to all the selected graphs
 			for (GraphSym gsym : grafs) {
-				GraphStateI gstate = gsym.getGraphState();
+				GraphState gstate = gsym.getGraphState();
 				gstate.setComboStyle(combo_style);
 				gstate.getTierStyle().setHeight(combo_style.getHeight());
 				gstate.setFloatGraph(false); // ignored since combo_style is set
@@ -807,7 +808,7 @@ public final class SimpleGraphTab extends JPanel
 			}
 
 			for (GraphSym gsym : grafs) {
-				GraphStateI gstate = gsym.getGraphState();
+				GraphState gstate = gsym.getGraphState();
 				gstate.setComboStyle(null);
 
 				// For simplicity, set the floating state of all new tiers to false.
@@ -862,7 +863,7 @@ public final class SimpleGraphTab extends JPanel
 		private void floatGraphs(boolean do_float) {
 			boolean something_changed = false;
 			for (GraphGlyph gl : glyphs) {
-				GraphStateI gstate = gl.getGraphState();
+				GraphState gstate = gl.getGraphState();
 				if (gstate.getComboStyle() != null) {
 					gstate.setComboStyle(null);
 					something_changed = true;

@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -76,7 +76,7 @@ public final class GraphAdjusterView {
 			newgraf.setProperty(GraphSym.PROP_GRAPH_STRAND, graf.getProperty(GraphSym.PROP_GRAPH_STRAND));
 
 
-			GraphStateI newstate = newgraf.getGraphState();
+			GraphState newstate = newgraf.getGraphState();
 			newstate.copyProperties(graf.getGraphState());
 			newstate.getTierStyle().setHumanName(newname); // this is redundant
 			if (!(transformer instanceof IdentityTransform)) {

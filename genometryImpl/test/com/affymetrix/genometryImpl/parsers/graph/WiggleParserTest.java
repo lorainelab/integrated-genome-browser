@@ -14,7 +14,7 @@ import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.Scored;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import java.io.*;
 import java.util.*;
 
@@ -39,13 +39,13 @@ public class WiggleParserTest {
 
 		WiggleParser parser = new WiggleParser();
 
-		List results = parser.parse(istr, seq_group, true, filename);
+		List<GraphSym> results = parser.parse(istr, seq_group, true, filename);
 
 		assertEquals(3, results.size());
 
-		GraphSym gr0 = (GraphSym) results.get(0);
+		GraphSym gr0 = results.get(0);
 
-		BioSeq seq = (BioSeq) gr0.getGraphSeq();
+		BioSeq seq = gr0.getGraphSeq();
 
 		// BED format
 		assertTrue(gr0 instanceof GraphIntervalSym);
@@ -55,7 +55,7 @@ public class WiggleParserTest {
 		assertEquals(59304700, gr0.getSpan(seq).getMax());
 
 		// variableStep format
-		GraphSym gr1 = (GraphSym) results.get(1);
+		GraphSym gr1 = results.get(1);
 		assertTrue(gr1 instanceof GraphIntervalSym);
 		assertEquals(9, gr1.getChildCount());
 		assertTrue(gr1.getChild(0) instanceof Scored);
@@ -63,7 +63,7 @@ public class WiggleParserTest {
 		assertEquals(59308021 - 1, gr1.getSpan(seq).getMax());	// variableStep: 1-relative foramt
 
 		// fixedStep format
-		GraphSym gr2 = (GraphSym) results.get(2);
+		GraphSym gr2 = results.get(2);
 		assertTrue(gr2 instanceof GraphIntervalSym);
 		assertEquals(10, gr2.getChildCount());
 		assertEquals(59307401 - 1, gr2.getSpan(seq).getMin());			// fixedStep: 1-relative format
@@ -74,7 +74,7 @@ public class WiggleParserTest {
 		assertEquals("variableStep", gr1.getID());
 		assertEquals("fixedStep", gr2.getID());
 
-		GraphStateI state = gr1.getGraphState();
+		GraphState state = gr1.getGraphState();
 		assertEquals(0.0, state.getVisibleMinY(), 0.00001);
 		assertEquals(25.0, state.getVisibleMaxY(), 0.00001);
 

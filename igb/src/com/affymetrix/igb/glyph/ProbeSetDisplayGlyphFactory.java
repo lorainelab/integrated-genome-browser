@@ -16,7 +16,7 @@ package com.affymetrix.igb.glyph;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -160,10 +160,10 @@ the probeset, probe and pieces of probes
   
   /** 
    *  If given a SeqSymmetry with exactly two Spans, will return
-   *  the MutableAnnotatedBioSeq of the Span that is NOT the sequence you specify.
+   *  the BioSeq of the Span that is NOT the sequence you specify.
    *  TODO: This could return more than one consensus sequence
    */
-  MutableAnnotatedBioSeq getConsensusSeq(SeqSymmetry sym, MutableAnnotatedBioSeq primary_seq) {
+  BioSeq getConsensusSeq(SeqSymmetry sym, BioSeq primary_seq) {
     assert primary_seq != null;
     assert sym != null;
 
@@ -177,18 +177,18 @@ the probeset, probe and pieces of probes
       return null;
     }
 
-    MutableAnnotatedBioSeq consensus_seq = null;
+    BioSeq consensus_seq = null;
     for (int i=0; i<2; i++) {
-      MutableAnnotatedBioSeq seq = sym.getSpan(i).getBioSeq();
+      BioSeq seq = sym.getSpan(i).getBioSeq();
       if (seq != primary_seq) {
         consensus_seq = seq; 
         break;
       }
     }
-    if (consensus_seq instanceof MutableAnnotatedBioSeq) {
+    if (consensus_seq != null) {
       return consensus_seq;
     } else {
-      System.out.println("ProbeSetDisplayGlyphFactory: Consensus Seq is not an annotated bio seq!");
+      System.out.println("ProbeSetDisplayGlyphFactory: Consensus Seq is null!");
       return null;
     }
   }
@@ -207,8 +207,8 @@ the probeset, probe and pieces of probes
       return null;
     }
 
-    MutableAnnotatedBioSeq annotseq = gviewer.getAnnotatedSeq();
-    MutableAnnotatedBioSeq coordseq = gviewer.getViewSeq();
+    BioSeq annotseq = gviewer.getAnnotatedSeq();
+    BioSeq coordseq = gviewer.getViewSeq();
     
     SeqSymmetry transformed_consensus_sym = gviewer.transformForViewSeq(consensus_sym);
     
@@ -294,7 +294,7 @@ the probeset, probe and pieces of probes
     // and the coordbox can be moved around by adding the glyph to the tier
     the_tier.addChild(pglyph);
     
-    MutableAnnotatedBioSeq consensus_seq = getConsensusSeq(consensus_sym, annotseq);
+    BioSeq consensus_seq = getConsensusSeq(consensus_sym, annotseq);
     if (consensus_seq != null) {
       drawConsensusAnnotations(consensus_seq, consensus_sym, pglyph, the_tier, child_y, child_height);
     }
@@ -305,7 +305,7 @@ the probeset, probe and pieces of probes
   /**
    *  Finds the annotations at depth 2 on the consensus_seq, which are assumed to be 
    *  probe sets, and draws glyphs for them.
-   *  @param consensus_seq  An MutableAnnotatedBioSeq containing annotations which are probe sets.
+   *  @param consensus_seq  An BioSeq containing annotations which are probe sets.
    *  @param consensus_sym  A symmetry of depth 2 that maps the consensus onto the genome.
    *   (More generally, it maps the consensus onto SeqMapView.getAnnotatedSeq(). It should
    *    NOT have already been transformed to map onto SeqMapView.getViewSeq(), because then
@@ -314,7 +314,7 @@ the probeset, probe and pieces of probes
    *  @param y coordinate of the "Exon" regions of the consensus glyph
    *  @param height height of the "Exon" regions of the consensus glyph
    */
-  void drawConsensusAnnotations(MutableAnnotatedBioSeq consensus_seq, SeqSymmetry consensus_sym, 
+  void drawConsensusAnnotations(BioSeq consensus_seq, SeqSymmetry consensus_sym, 
     GlyphI parent_glyph, TierGlyph tier, double y, double height) {
     int annot_count = consensus_seq.getAnnotationCount();
     for (int i=0; i<annot_count; i++) {

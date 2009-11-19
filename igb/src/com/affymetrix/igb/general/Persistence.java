@@ -1,7 +1,7 @@
 package com.affymetrix.igb.general;
 
 import java.util.prefs.Preferences;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -33,8 +33,8 @@ public final class Persistence {
 	 */
 	public static void saveCurrentView(SeqMapView gviewer) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (gmodel.getSelectedSeq() instanceof BioSeq) {
-			BioSeq seq = (BioSeq) gmodel.getSelectedSeq();
+		if (gmodel.getSelectedSeq() != null) {
+			BioSeq seq = gmodel.getSelectedSeq();
 			saveGroupSelection(group);
 			saveSeqSelection(seq);
 			saveSeqVisibleSpan(gviewer);
@@ -129,9 +129,9 @@ public final class Persistence {
 	public static void saveSeqVisibleSpan(SeqMapView gviewer) {
 		SeqSpan visible_span = gviewer.getVisibleSpan();
 		if (visible_span != null) {
-			MutableAnnotatedBioSeq seq = visible_span.getBioSeq();
-			if (seq instanceof BioSeq) {
-				AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
+			BioSeq seq = visible_span.getBioSeq();
+			if (seq != null) {
+				AnnotatedSeqGroup group = seq.getSeqGroup();
 				Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 				Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
 				Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");
@@ -147,12 +147,12 @@ public final class Persistence {
 	 *  Assumes that correct seq has already been set in gviewer (usually due to gviewr bein a SeqSelectionListener on gmodel)
 	 */
 	public static SeqSpan restoreSeqVisibleSpan(SeqMapView gviewer) {
-		MutableAnnotatedBioSeq seq = gviewer.getViewSeq();
-		if (!(seq instanceof BioSeq)) {
+		BioSeq seq = gviewer.getViewSeq();
+		if (seq == null) {
 			return null;
 		}
 
-		AnnotatedSeqGroup group = ((BioSeq) seq).getSeqGroup();
+		AnnotatedSeqGroup group = seq.getSeqGroup();
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
 		Preferences group_node = UnibrowPrefsUtil.getSubnode(genomes_node, group.getID(), true);  //  encodes id via MD5 if too long
 		Preferences seqs_node = UnibrowPrefsUtil.getSubnode(group_node, "seqs");

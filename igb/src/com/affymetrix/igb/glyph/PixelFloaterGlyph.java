@@ -41,15 +41,12 @@ public final class PixelFloaterGlyph extends Glyph  {
    *  not sure if need to set view's coord box...
    */
   public void drawTraversal(ViewI view) {
-    LinearTransform vtrans = (LinearTransform)view.getTransform();
+    LinearTransform vtrans = view.getTransform();
     Rectangle2D.Double vbox = view.getCoordBox();
     Rectangle pbox = view.getPixelBox();
-    //    yidentity.setScaleX(vtrans.getScaleX());
-    //    yidentity.setOffsetX(vtrans.getOffsetX());
     setChildTransform(view);
     view_pix_box.setRect(vbox.x, (double)pbox.y,
     			 vbox.width, (double)pbox.height);
-    //    view.setTransform(yidentity);
     view.setTransform(childtrans);
     view.setCoordBox(view_pix_box);
     super.drawTraversal(view);
@@ -68,22 +65,22 @@ public final class PixelFloaterGlyph extends Glyph  {
   }
 
   protected void setChildTransform(ViewI view)  {
-    LinearTransform vtrans = (LinearTransform)view.getTransform();
+    LinearTransform vtrans = view.getTransform();
     if (YPIXEL_FLOAT) {
       childtrans.setScaleY(1.0);
-      childtrans.setOffsetY(0.0);
+      childtrans.setTranslateY(0.0);
     }
     else {
       childtrans.setScaleY(vtrans.getScaleY());
-      childtrans.setOffsetY(vtrans.getOffsetY());
+      childtrans.setTranslateY(vtrans.getTranslateY());
     }
     if (XPIXEL_FLOAT) {
       childtrans.setScaleX(1.0);
-      childtrans.setOffsetX(0.0);
+      childtrans.setTranslateX(0.0);
     }
     else {
       childtrans.setScaleX(vtrans.getScaleX());
-      childtrans.setOffsetX(vtrans.getOffsetX());
+      childtrans.setTranslateX(vtrans.getTranslateX());
     }
   }
 
@@ -100,7 +97,7 @@ public final class PixelFloaterGlyph extends Glyph  {
   Rectangle scratchRect = new Rectangle();
   public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
-    LinearTransform vtrans = (LinearTransform)view.getTransform();
+    LinearTransform vtrans = view.getTransform();
     double cached_y = pickRect.y;
     double cached_height = pickRect.height;
     Rectangle2D.Double vbox = view.getCoordBox();
@@ -112,9 +109,6 @@ public final class PixelFloaterGlyph extends Glyph  {
     pickRect.y = (double)scratchRect.y;
     pickRect.height = (double)scratchRect.height;
 
-    //    yidentity.setScaleX(vtrans.getScaleX());
-    //    yidentity.setOffsetX(vtrans.getOffsetX());
-    //    view.setTransform(yidentity);
     setChildTransform(view);
     view.setTransform(childtrans);
 
@@ -130,9 +124,8 @@ public final class PixelFloaterGlyph extends Glyph  {
   }
 
   public void getChildTransform(ViewI view, LinearTransform trans) {
-    //    trans.copyTransform(identity);
     setChildTransform(view);
-    trans.copyTransform(childtrans);
+    trans.setTransform(childtrans);
   }
 
 }

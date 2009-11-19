@@ -23,7 +23,7 @@ import java.util.Set;
 public final class ResidueLoading {
 
 	private static final boolean DEBUG = true;
-	
+
 	/**
 	 * Get residues from servers: DAS/2, Quickload, or DAS/1.
 	 * Also gets partial residues.
@@ -36,10 +36,10 @@ public final class ResidueLoading {
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
 	public static boolean getResidues(
-					Set<GenericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
+			Set<GenericServer> serversWithChrom, String genomeVersionName, String seq_name, int min, int max, BioSeq aseq, SeqSpan span) {
 
 		boolean partial_load = (min > 0 || max < aseq.getLength());	// Are we only asking for part of the sequence?
-		
+
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
@@ -61,7 +61,7 @@ public final class ResidueLoading {
 				} else {
 					// not a partial load.  Try bnib format first, as this format is more compactly represented internally.
 					uri = generateDas2URI(
-									server.URL, genomeVersionName, seq_name, min, max, true);
+							server.URL, genomeVersionName, seq_name, min, max, true);
 					if (LoadResiduesFromDAS2(seq_group, uri)) {
 						AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
@@ -79,7 +79,7 @@ public final class ResidueLoading {
 			}
 		}
 
-		
+
 		if (!partial_load) {
 			// Attempt to load via Quickload -- not supported except for full loading.
 			for (GenericServer server : serversWithChrom) {
@@ -94,7 +94,7 @@ public final class ResidueLoading {
 		}
 
 		for ( // Attempt to load via DAS/1
-						GenericServer server : serversWithChrom) {
+				GenericServer server : serversWithChrom) {
 			if (server.serverType == ServerType.DAS) {
 				String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
 				if (residues != null) {
@@ -111,10 +111,9 @@ public final class ResidueLoading {
 				}
 			}
 		}
-						
+
 		return false;
 	}
-
 
 	/**
 	 * Get the residues from the specified DAS/1 server.
@@ -193,8 +192,8 @@ public final class ResidueLoading {
 	}
 
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")
-	private static String generateDas2URI(String URL, String genomeVersionName, 
-					String segmentName, int min, int max, boolean bnibFormat) {
+	private static String generateDas2URI(String URL, String genomeVersionName,
+			String segmentName, int min, int max, boolean bnibFormat) {
 		if (DEBUG) {
 			System.out.println("trying to load residues via DAS/2");
 		}
@@ -215,10 +214,10 @@ public final class ResidueLoading {
 		return uri;
 	}
 
-	 // try loading via DAS/2 server that genome was originally modeled from
+	// try loading via DAS/2 server that genome was originally modeled from
 	private static boolean LoadResiduesFromDAS2(AnnotatedSeqGroup seq_group, String uri) {
 		InputStream istr = null;
-		Map<String,String> headers = new HashMap<String,String>();
+		Map<String, String> headers = new HashMap<String, String>();
 		try {
 			istr = LocalUrlCacher.getInputStream(uri, true, headers);
 			// System.out.println(headers);
@@ -264,120 +263,98 @@ public final class ResidueLoading {
 	}
 
 	// try loading via DAS/2 server
-    private static String GetPartialFASTADas2Residues(String uri) {
-        InputStream istr = null;
-        Map<String,String> headers = new HashMap<String,String>();
-        try {
-            istr = LocalUrlCacher.getInputStream(uri, true, headers);
-            // System.out.println(headers);
-            String content_type = headers.get("content-type");
-            if (DEBUG) {
-							System.out.println("    response content-type: " + content_type);
-						}
-            if (istr == null || content_type == null) {
-               if (DEBUG) {
-								 System.out.println("  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
-							 }
-                return null;
-            }
-
-            if (content_type.equals(FastaParser.getMimeType())) {
-                // check for fasta format
-							if (DEBUG) {
-                System.out.println("   response is in fasta format, parsing...");
-							}
-                return FastaParser.parseResidues(istr);
-            }
-
-						if (DEBUG) {
-            System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
-						}
-            return null;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            GeneralUtils.safeClose(istr);
-        }
-
-        return null;
-    }
-
-		/**
-		 * Add residues to composition (full sequence loaded).
-		 * @param aseq
-		 */
-		private static void AddResiduesToComposition(BioSeq aseq) {
-			if (aseq.getResiduesProvider() != null) {
-				SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
-				AddResiduesToComposition(aseq, span);
-				return;
+	private static String GetPartialFASTADas2Residues(String uri) {
+		InputStream istr = null;
+		Map<String, String> headers = new HashMap<String, String>();
+		try {
+			istr = LocalUrlCacher.getInputStream(uri, true, headers);
+			// System.out.println(headers);
+			String content_type = headers.get("content-type");
+			if (DEBUG) {
+				System.out.println("    response content-type: " + content_type);
 			}
-			String residues = aseq.getResidues();
-			SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
-			AddResiduesToComposition(aseq, residues, span);
-		}
-		
-		private static void AddResiduesToComposition(BioSeq aseq, SeqSpan span) {
-			BioSeq subseq = new BioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
+			if (istr == null || content_type == null) {
+				if (DEBUG) {
+					System.out.println("  Didn't get a proper response from DAS/2; aborting DAS/2 residues loading.");
+				}
+				return null;
+			}
 
-        SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);
-        SeqSpan span2 = span;
-        MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
-        subsym.addSpan(span1);
-        subsym.addSpan(span2);
+			if (content_type.equals(FastaParser.getMimeType())) {
+				// check for fasta format
+				if (DEBUG) {
+					System.out.println("   response is in fasta format, parsing...");
+				}
+				return FastaParser.parseResidues(istr);
+			}
 
-        MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
-        if (compsym == null) {
-            //No children.  Add one.
-            compsym = new SimpleMutableSeqSymmetry();
-            compsym.addChild(subsym);
-            compsym.addSpan(new SimpleSeqSpan(span2.getMin(), span2.getMax(), aseq));
-            aseq.setComposition(compsym);
-        } else {
-					// Merge children that already exist.
-            compsym.addChild(subsym);
-            SeqSpan compspan = compsym.getSpan(aseq);
-            int compmin = Math.min(compspan.getMin(), span.getMin());
-            int compmax = Math.max(compspan.getMax(), span.getMax());
-            SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
-            compsym.removeSpan(compspan);
-            compsym.addSpan(new_compspan);
-        }
+			if (DEBUG) {
+				System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+			}
+			return null;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
 		}
 
-    /**
-		 * Adds the residues to the composite sequence.  This allows merging of subsequences.
-		 * @param aseq
-		 * @param residues
-		 * @param span
-		 */
-    private static void AddResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
-        BioSeq subseq = new BioSeq(aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
-				subseq.setResidues(residues);
+		return null;
+	}
 
-        SeqSpan span1 = new SimpleSeqSpan(0, span.getLength(), subseq);
-        SeqSpan span2 = span;
-        MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
-        subsym.addSpan(span1);
-        subsym.addSpan(span2);
+	/**
+	 * Add residues to composition (full sequence loaded).
+	 * @param aseq
+	 */
+	private static void AddResiduesToComposition(BioSeq aseq) {
+		if (aseq.getResiduesProvider() != null) {
+			SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
+			BioSeq subseq = new BioSeq(
+					aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
+			subseq.setResiduesProvider(aseq.getResiduesProvider());
+			addSubseqToComposition(aseq, span, subseq);
+			return;
+		}
+		String residues = aseq.getResidues();
+		SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
+		AddResiduesToComposition(aseq, residues, span);
+	}
 
-        MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
-        if (compsym == null) {
-            //No children.  Add one.
-            compsym = new SimpleMutableSeqSymmetry();
-            compsym.addChild(subsym);
-            compsym.addSpan(new SimpleSeqSpan(span2.getMin(), span2.getMax(), aseq));
-            aseq.setComposition(compsym);
-        } else {
-					// Merge children that already exist.
-            compsym.addChild(subsym);
-            SeqSpan compspan = compsym.getSpan(aseq);
-            int compmin = Math.min(compspan.getMin(), span.getMin());
-            int compmax = Math.max(compspan.getMax(), span.getMax());
-            SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
-            compsym.removeSpan(compspan);
-            compsym.addSpan(new_compspan);
-        }
-    }
 
+	/**
+	 * Adds the residues to the composite sequence.  This allows merging of subsequences.
+	 * @param aseq
+	 * @param residues
+	 * @param span
+	 */
+	private static void AddResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
+		BioSeq subseq = new BioSeq(
+				aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
+		subseq.setResidues(residues);
+		addSubseqToComposition(aseq, span, subseq);
+	}
+
+	private static void addSubseqToComposition(BioSeq aseq,SeqSpan span, BioSeq subSeq) {
+		SeqSpan subSpan = new SimpleSeqSpan(0, span.getLength(), subSeq);
+		SeqSpan mainSpan = span;
+		MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
+		subsym.addSpan(subSpan);
+		subsym.addSpan(mainSpan);
+		MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
+		if (compsym == null) {
+			//No children.  Add one.
+			compsym = new SimpleMutableSeqSymmetry();
+			compsym.addChild(subsym);
+			compsym.addSpan(new SimpleSeqSpan(mainSpan.getMin(), mainSpan.getMax(), aseq));
+			aseq.setComposition(compsym);
+		} else {
+			// Merge children that already exist.
+			compsym.addChild(subsym);
+			SeqSpan compspan = compsym.getSpan(aseq);
+			int compmin = Math.min(compspan.getMin(), span.getMin());
+			int compmax = Math.max(compspan.getMax(), span.getMax());
+			SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
+			compsym.removeSpan(compspan);
+			compsym.addSpan(new_compspan);
+		}
+	}
 }

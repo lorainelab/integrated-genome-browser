@@ -14,7 +14,7 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -129,7 +129,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
 			int[] newmins = new int[spancount];
 			int[] newmaxs = new int[spancount];
-			MutableAnnotatedBioSeq firstseq = (spanlist.get(0)).getBioSeq();
+			BioSeq firstseq = (spanlist.get(0)).getBioSeq();
 			for (int i = 0; i < spancount; i++) {
 				SeqSpan span = spanlist.get(i);
 				newmins[i] = span.getMin();
@@ -194,7 +194,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
     }
 
     // figure out how many bases per pixel
-    double pixels_per_coord = ((LinearTransform)view.getTransform()).getScaleX();
+    double pixels_per_coord = (view.getTransform()).getScaleX();
     double coords_per_pixel = 1.0 / pixels_per_coord;
     view.transformToPixels(coordbox, pixelbox);
 

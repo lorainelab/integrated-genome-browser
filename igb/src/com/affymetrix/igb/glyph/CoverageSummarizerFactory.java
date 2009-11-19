@@ -15,7 +15,7 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.util.*;
 import java.util.List;
@@ -87,8 +87,8 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
       
       AffyTieredMap map = gviewer.getSeqMap();
 
-      MutableAnnotatedBioSeq annotseq = gviewer.getAnnotatedSeq();
-      MutableAnnotatedBioSeq coordseq = gviewer.getViewSeq();
+      BioSeq annotseq = gviewer.getAnnotatedSeq();
+      BioSeq coordseq = gviewer.getViewSeq();
       SeqSymmetry tsym = sym;
       // transform symmetry to coordseq if annotseq != coordseq, like in the slice viewer
       if (annotseq != coordseq) {

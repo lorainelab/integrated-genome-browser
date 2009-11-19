@@ -15,11 +15,15 @@ There are two ways to configure the DAS2 server:
 
 
 === Build Targets ===
-* To build the system to run in Classic mode, use all of the normal targets described below, but use the 'webapp-classic' target instead of the 'webapp' target. Building this way will result in a web.xml and context.xml configured to support DAS2 server running in Classic mode.                                 
-
-* To build the system to run in GenoPub mode, in addition to running the normal targets ('clean', 'all'), run the 'flex' target and the 'webapp' target.  These targets will build the web-based GenoPub Flex tool for managing the annotations and configure a web.xml and context.xml with the following parameters:
-** context.xml - Contains a <REALM> and <RESOURCE> entry that points to the database.  (See instructions below for installing a MySQL server and creating a genopub database.) Change the username and password to match your MySQL database account.
-** web.xml - Contains parameters to indicate where the annotations are stored on file system.  Also contains entries to configure the server to use basic authentication.  
+* To build the system to run in Classic mode: 
+** Set the property das2_mode to 'classic' in common.xml.  
+** Run the ant build target 'all' and 'webapp', which will compile the necessary jars, and create a webapp distribution (dist/webapp) with web.xml and context.xml configured to support DAS2 server running in Classic mode.        
+                         
+* To build the system to run in GenoPub mode: 
+** Set the property das2_mode to 'genopub' in common.xml.  
+** Run the ant build target 'all' and 'webapp', which will compile the necessary jars, compile the web-based GenoPub Flex tool, and create a webapp distribution (dist/webapp) configured to support the DAS2 server running in GenoPub mode:
+*** context.xml - Contains a <REALM> and <RESOURCE> entry that points to the database.  (See instructions below for installing a MySQL server and creating a genopub database.) Change the username and password to match your MySQL database account.
+*** web.xml - Contains parameters to indicate where the annotations are stored on file system.  Also contains entries to configure the server to use basic authentication.  
 
 === The web.xml file ===
 The web.xml file in the das2/WEB-INF directory must be properly configured 
@@ -81,9 +85,9 @@ MySQL Database (required when running DAS2 server in GenoPub mode)
 * Create a database user account called 'genopub'.  Here is the mysql command:
 <pre>
       mysql> CREATE USER 'genopub'@'localhost' IDENTIFIED BY 'some_password';
-      mysql> GRANT ALL PRIVILEGES ON *.* TO 'genopub'@'localhost' WITH GRANT OPTION;
-      mysql> CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_passord';
-      mysql> GRANT ALL PRIVILEGES ON *.* TO 'genopub'@'%' WITH GRANT OPTION;
+      mysql> GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'localhost' WITH GRANT OPTION;
+      mysql> CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_password';
+      mysql> GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'%' WITH GRANT OPTION;
       mysql> FLUSH PRIVILEGES
 </pre>
 * Using MySQL, login with genopub user and run genopub.sql to create genopub database

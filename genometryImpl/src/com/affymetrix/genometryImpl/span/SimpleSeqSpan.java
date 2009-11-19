@@ -14,14 +14,14 @@
 package com.affymetrix.genometryImpl.span;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 public class SimpleSeqSpan implements SeqSpan, Cloneable {
 	protected int start;
 	protected int end;
-	protected MutableAnnotatedBioSeq seq;
+	protected BioSeq seq;
 
-	public SimpleSeqSpan(int start, int end, MutableAnnotatedBioSeq seq) {
+	public SimpleSeqSpan(int start, int end, BioSeq seq) {
 		this.start = start;
 		this.end = end;
 		this.seq = seq;
@@ -52,7 +52,7 @@ public class SimpleSeqSpan implements SeqSpan, Cloneable {
 		return (end > start ? end-start : start-end);
 	}
 
-	public MutableAnnotatedBioSeq getBioSeq() {
+	public BioSeq getBioSeq() {
 		return seq;
 	}
 

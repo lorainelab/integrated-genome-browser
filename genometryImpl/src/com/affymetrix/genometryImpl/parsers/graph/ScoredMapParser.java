@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
@@ -36,7 +36,7 @@ public final class ScoredMapParser {
 	static Pattern line_regex  = Pattern.compile("\t");
 	//boolean attach_graphs = ScoredIntervalParser.default_attach_graphs;
 
-	public void parse(InputStream istr, String stream_name, MutableAnnotatedBioSeq aseq, AnnotatedSeqGroup seq_group) {
+	public void parse(InputStream istr, String stream_name, BioSeq aseq, AnnotatedSeqGroup seq_group) {
 		//attach_graphs = UnibrowPrefsUtil.getBooleanParam(ScoredIntervalParser.PREF_ATTACH_GRAPHS,
 		//                                             ScoredIntervalParser.default_attach_graphs);
 		try {
@@ -107,7 +107,7 @@ public final class ScoredMapParser {
 		System.out.println("testing ScoredMapParser, parsing file: " + test_file);
 		ScoredMapParser tester = new ScoredMapParser();
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test");
-		MutableAnnotatedBioSeq aseq = new BioSeq("test_seq", "test_version", 50000000);
+		BioSeq aseq = new BioSeq("test_seq", "test_version", 50000000);
 		try {
 			FileInputStream fis = new FileInputStream(new File(test_file));
 			tester.parse(fis, test_name, aseq, seq_group);

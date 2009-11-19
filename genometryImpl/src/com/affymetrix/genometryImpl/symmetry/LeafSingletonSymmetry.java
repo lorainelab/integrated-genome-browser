@@ -13,7 +13,7 @@
 package com.affymetrix.genometryImpl.symmetry;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
@@ -32,11 +32,11 @@ public class LeafSingletonSymmetry extends SimpleMutableSeqSpan implements SeqSy
 		seq = span.getBioSeq();
 	}
 
-	public LeafSingletonSymmetry(int start, int end, MutableAnnotatedBioSeq seq) {
+	public LeafSingletonSymmetry(int start, int end, BioSeq seq) {
 		super(start, end, seq);
 	}
 
-	public SeqSpan getSpan(MutableAnnotatedBioSeq seq) {
+	public SeqSpan getSpan(BioSeq seq) {
 		if (this.getBioSeq() == seq) { return this; }
 		else { return null; }
 	}
@@ -50,12 +50,12 @@ public class LeafSingletonSymmetry extends SimpleMutableSeqSpan implements SeqSy
 		else { return null; }
 	}
 
-	public MutableAnnotatedBioSeq getSpanSeq(int i) {
+	public BioSeq getSpanSeq(int i) {
 		if (i == 0) { return seq; }
 		else { return null; }
 	}
 
-	public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span) {
+	public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
 		if (this.getBioSeq() == seq) {
 			span.setStart(this.getStart());
 			span.setEnd(this.getEnd());

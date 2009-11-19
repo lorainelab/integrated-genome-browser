@@ -15,12 +15,11 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import java.io.*;
 import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
@@ -62,18 +61,18 @@ public final class GraphSymUtils {
 	 *     (including the original_graf, if it's one of seq's annotations)
 	 *     For transformed GraphSyms probably should set ensure_unique_id to false, unless result is actually added onto toseq...
 	 */
-	public static GraphSymFloat transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
+	public static GraphSym transformGraphSym(GraphSym original_graf, SeqSymmetry mapsym, boolean ensure_unique_id) {
 		if (original_graf.getPointCount() == 0) {
 			return null;
 		}
-		MutableAnnotatedBioSeq fromseq = original_graf.getGraphSeq();
+		BioSeq fromseq = original_graf.getGraphSeq();
 		SeqSpan fromspan = mapsym.getSpan(fromseq);
 
 		if (fromseq == null || fromspan == null) {
 			return null;
 		}
-		GraphSymFloat new_graf = null;
-		MutableAnnotatedBioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
+		GraphSym new_graf = null;
+		BioSeq toseq = SeqUtils.getOtherSeq(mapsym, fromseq);
 
 		SeqSpan tospan = mapsym.getSpan(toseq);
 		if (toseq == null || tospan == null) {
@@ -103,7 +102,7 @@ public final class GraphSymUtils {
 		}
 
 		if (!hasWidth(original_graf)) {
-			new_graf = new GraphSymFloat(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
+			new_graf = new GraphSym(new_xcoords.copyToArray(), new_ycoords.copyToArray(),
 					newid, toseq);
 		} else {
 			new_graf = new GraphIntervalSym(new_xcoords.copyToArray(), new_wcoords.copyToArray(),
@@ -114,7 +113,7 @@ public final class GraphSymUtils {
 	}
 
 
-	private static void addCoords(SeqSymmetry mapsym, MutableAnnotatedBioSeq fromseq, MutableAnnotatedBioSeq toseq, GraphSym original_graf, IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
+	private static void addCoords(SeqSymmetry mapsym, BioSeq fromseq, BioSeq toseq, GraphSym original_graf, IntList new_xcoords, FloatList new_ycoords, IntList new_wcoords) {
 		List<SeqSymmetry> leaf_syms = SeqUtils.getLeafSyms(mapsym);
 		for (SeqSymmetry leafsym : leaf_syms) {
 			SeqSpan fspan = leafsym.getSpan(fromseq);
@@ -201,7 +200,7 @@ public final class GraphSymUtils {
 	 *  Equivalent to a call to the other readGraphs() method using seq = null.
 	 */
 	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) throws IOException  {
-		return readGraphs(istr, stream_name, gmodel, seq_group, (MutableAnnotatedBioSeq) null);
+		return readGraphs(istr, stream_name, gmodel, seq_group, (BioSeq) null);
 	}
 
 	/**
@@ -210,12 +209,12 @@ public final class GraphSymUtils {
 	 *  more than one.  For consistency, always returns a List (possibly empty).
 	 *  Will accept "bar", "bgr", "gr", or "sgr".
 	 *  Loaded graphs will be attached to their respective BioSeq's, if they
-	 *  are instances of MutableAnnotatedBioSeq.
+	 *  are instances of BioSeq.
 	 *  @param seq  Ignored in most cases.  But for "gr" files that
 	 *   do not specify a BioSeq, use this parameter to specify it.  If null
 	 *   then GenometryModel.getSelectedSeq() will be used.
 	 */
-	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq seq) throws IOException  {
+	public static List<GraphSym> readGraphs(InputStream istr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) throws IOException  {
 		List<GraphSym> grafs = null;
 		StringBuffer stripped_name = new StringBuffer();
 		InputStream newstr = GeneralUtils.unzipStream(istr, stream_name, stripped_name);
@@ -239,7 +238,7 @@ public final class GraphSymUtils {
 			}
 			GraphSym graph = GrParser.parse(newstr, seq, stream_name);
 			int max_x = graph.getMaxXCoord();
-			MutableAnnotatedBioSeq gseq = graph.getGraphSeq();
+			BioSeq gseq = graph.getGraphSeq();
 			seq_group.addSeq(gseq.getID(), max_x); // this stretches the seq to hold the graph
 			grafs = wrapInList(graph);
 		}
@@ -269,7 +268,7 @@ public final class GraphSymUtils {
 	/**
 	 * Calls {@link AnnotatedSeqGroup#getUniqueGraphID(String,BioSeq)}.
 	 */
-	public static String getUniqueGraphID(String id, MutableAnnotatedBioSeq seq) {
+	public static String getUniqueGraphID(String id, BioSeq seq) {
 		return AnnotatedSeqGroup.getUniqueGraphID(id, seq);
 	}
 
@@ -285,7 +284,7 @@ public final class GraphSymUtils {
 	/*
 	 *  Does some post-load processing of Graph Syms.
 	 *  For each GraphSym in the list,
-	 *  Adds it as an annotation of the MutableAnnotatedBioSeq it refers to.
+	 *  Adds it as an annotation of the BioSeq it refers to.
 	 *  Sets the "source_url" to the given stream name.
 	 *  Calls setGraphName() with the given name;
 	 *  Converts to a trans frag graph if "TransFrag" is part of the graph name.
@@ -296,7 +295,7 @@ public final class GraphSymUtils {
 			return;
 		}
 		for (GraphSym gsym : grafs) {
-			MutableAnnotatedBioSeq gseq = gsym.getGraphSeq();
+			BioSeq gseq = gsym.getGraphSeq();
 			if (gseq != null) {
 				String gid = gsym.getID();
 				String newid = getUniqueGraphID(gid, gseq);
@@ -306,7 +305,7 @@ public final class GraphSymUtils {
 				}
 			}
 			gsym.lockID();
-			if (gseq instanceof MutableAnnotatedBioSeq) {
+			if (gseq != null) {
 				gseq.addAnnotation(gsym);
 			}
 
@@ -420,12 +419,12 @@ public final class GraphSymUtils {
 	}
 
 
-	private static GraphSymFloat convertTransFragGraph(GraphSym trans_frag_graph) {
+	private static GraphSym convertTransFragGraph(GraphSym trans_frag_graph) {
 		int xcount = trans_frag_graph.getPointCount();
 		if (xcount < 2) { return null; }
 
 		int transfrag_max_spacer = 20;
-		MutableAnnotatedBioSeq seq = trans_frag_graph.getGraphSeq();
+		BioSeq seq = trans_frag_graph.getGraphSeq();
 		IntList newx = new IntList();
 		FloatList newy = new FloatList();
 
@@ -460,7 +459,7 @@ public final class GraphSymUtils {
 		newx.add(curx);
 		newy.add(cury);
 		String newid = GraphSymUtils.getUniqueGraphID(trans_frag_graph.getGraphName(), seq);
-		GraphSymFloat span_graph = new GraphSymFloat(newx.copyToArray(), newy.copyToArray(), newid, seq);
+		GraphSym span_graph = new GraphSym(newx.copyToArray(), newy.copyToArray(), newid, seq);
 
 		// copy properties over...
 		span_graph.setProperties(trans_frag_graph.cloneProperties());
@@ -484,31 +483,20 @@ public final class GraphSymUtils {
 	 * @return
 	 */
 	public final static int determineBegIndex(GraphSym graf, double xmin) {
-		int xCoordLength = graf.getPointCount();
-		for (int i=0;i<xCoordLength;i++) {
-			if (graf.getGraphXCoord(i) > (int)xmin) {
-				return Math.max(0, i-1);
-			}
-		}
-		return 0;
+		return graf.determineBegIndex(xmin);
 	}
 
 	/**
 	 * Find first point with value >= xmax.
+	 * Use beginning index as a starting point.
 	 * @param xmax
 	 * @return
 	 */
-	public final static int determineEndIndex(GraphSym graf, double xmax) {
-		int xCoordLength = graf.getPointCount();
-		for (int i=0;i<xCoordLength;i++) {
-			if (graf.getGraphXCoord(i) >= (int)xmax) {
-				return i;
-			}
-		}
-		return xCoordLength-1;
+	public final static int determineEndIndex(GraphSym graf, double xmax, int begIndex) {
+		return graf.determineEndIndex(xmax, begIndex);
 	}
 
-	public final static boolean hasWidth(GraphSym graf) {
-		return (graf instanceof GraphIntervalSym) && ((GraphIntervalSym)graf).getGraphWidthCount() > 0;
+	private final static boolean hasWidth(GraphSym graf) {
+		return graf instanceof GraphIntervalSym;
 	}
 }

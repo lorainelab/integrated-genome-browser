@@ -4,7 +4,8 @@ public final class LoadUtils {
 	public static enum LoadStrategy {
 		NO_LOAD ("Don't Load"),
 		VISIBLE ("Region In View"),
-		WHOLE ("Whole Genome");
+		CHROMOSOME ("Whole Chromosome"),
+		GENOME ("Whole Genome");
 
 		private String name;
 

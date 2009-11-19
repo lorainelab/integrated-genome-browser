@@ -4,8 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
-import com.affymetrix.genometryImpl.GraphSymFloat;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -147,7 +146,7 @@ public final class SgrParser {
 	}
 
 	public static boolean writeSgrFormat(GraphSym graf, OutputStream ostr) throws IOException {
-		MutableAnnotatedBioSeq seq = graf.getGraphSeq();
+		BioSeq seq = graf.getGraphSeq();
 		if (seq == null) {
 			throw new IOException("You cannot use the '.sgr' format when the sequence is unknown. Use '.gr' instead.");
 		}
@@ -189,7 +188,7 @@ public final class SgrParser {
 			xlist = null;
 			float[] ycoords = ylist.copyToArray();
 			ylist = null;
-			GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, gid, aseq);
+			GraphSym graf = new GraphSym(xcoords, ycoords, gid, aseq);
 			results.add(graf);
 		}
 	}

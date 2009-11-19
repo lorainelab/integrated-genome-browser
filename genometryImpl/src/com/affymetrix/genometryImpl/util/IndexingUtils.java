@@ -1,7 +1,7 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -82,7 +83,7 @@ public class IndexingUtils {
 				return;
 			}
 			// determine list of IDs for this symmetry index.
-			List<String> extraNames = group.getSymmetryIDs(symID.toLowerCase());
+			Set<String> extraNames = group.getSymmetryIDs(symID.toLowerCase());
 			List<String> ids = new ArrayList<String>(1 + (extraNames == null ? 0 : extraNames.size()));
 			ids.add(symID);
 			if (extraNames != null) {
@@ -181,6 +182,7 @@ public class IndexingUtils {
 			ServerUtils.createDirIfNecessary(dirName);
 
 			File indexedAnnotationsFile = new File(indexedAnnotationsFileName);
+			indexedAnnotationsFile.deleteOnExit();
 
 			IndexedSyms iSyms = new IndexedSyms(sortedSyms.size(), indexedAnnotationsFile, typeName, iWriter);
 
@@ -266,7 +268,7 @@ public class IndexingUtils {
 	 */
 	public static void writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq,
+			BioSeq seq,
 			AnnotatedSeqGroup group,
 			IndexedSyms iSyms,
 			String indexesFileName) throws IOException {
@@ -288,7 +290,7 @@ public class IndexingUtils {
 	private static void createIndexArray(
 			IndexedSyms iSyms,
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq,
+			BioSeq seq,
 			AnnotatedSeqGroup group) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int index = 0;
@@ -329,7 +331,7 @@ public class IndexingUtils {
 			IndexedSyms iSyms,
 			String indexesFileName,
 			List<SeqSymmetry> syms,
-			MutableAnnotatedBioSeq seq) throws IOException {
+			BioSeq seq) throws IOException {
 		FileOutputStream fos = null;
 		BufferedOutputStream bos = null;
 		DataOutputStream dos = null;
@@ -363,7 +365,7 @@ public class IndexingUtils {
 	 * @throws FileNotFoundException
 	 */
 	private static void writeAdditionalLinkPSLIndex(
-			String indexesFileName, List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String typeName) throws FileNotFoundException {
+			String indexesFileName, List<SeqSymmetry> syms, BioSeq seq, String typeName) throws FileNotFoundException {
 		if (DEBUG) {
 			System.out.println("in IndexingUtils.writeAdditionalLinkPSLIndex()");
 		}

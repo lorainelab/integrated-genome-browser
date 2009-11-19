@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.parsers.*;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
@@ -22,7 +22,6 @@ import java.util.*;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -117,13 +116,12 @@ public final class BarParser implements AnnotationWriter  {
 	 *  Gets a slice from a graph bar file.  The returned GraphSym is intended to
 	 *  be used only inside a CompositeGraphSym.
 	 */
-	public static GraphSymFloat getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {	
+	public static GraphSym getSlice(String file_name, GenometryModel gmodel, SeqSpan span) throws IOException {	
 		Timer tim = new Timer();
 		tim.start();
 		//boolean USE_RANDOM_ACCESS = false;
-		GraphSymFloat graf = null;
-		MutableAnnotatedBioSeq aseq = span.getBioSeq();
-		String seq_name = aseq.getID();
+		GraphSym graf = null;
+		BioSeq aseq = span.getBioSeq();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
 		if (DEBUG_SLICE)  { SingletonGenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base); }
@@ -135,14 +133,8 @@ public final class BarParser implements AnnotationWriter  {
 		//     across bar files that have the exact same base coords
 		int[] chunk_mins = (int[])coordset2seqs.get(file_name);
 
-		//    AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
-		AnnotatedSeqGroup seq_group;
-		if (aseq instanceof BioSeq) {
-			seq_group = ((BioSeq)aseq).getSeqGroup();
-		}
-		else {
-			seq_group = gmodel.getSelectedSeqGroup();
-		}
+		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
+		
 		if (DEBUG_SLICE) {
 			System.out.println("in BarParser.getSlice(), seq_group: " + seq_group.getID() + ", seq: " + aseq.getID());
 		}
@@ -247,14 +239,14 @@ public final class BarParser implements AnnotationWriter  {
 
 			// making GraphSym because bar writer takes GraphSym list as argument
 			//      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-			//      MutableAnnotatedBioSeq gseq = gmodel.getSelectedSeq();
+			//      BioSeq gseq = gmodel.getSelectedSeq();
 			//      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
 			//      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
 
 			checkSeqLength(aseq, graph_xcoords);
 			// don't need a unique id for this GraphSym, since slices are not added directly as annotations
 			//    on BioSeqs, but rather as child annotations of CompositeGraphSyms...
-			graf = new GraphSymFloat(graph_xcoords, graph_ycoords, "slice", aseq);
+			graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", aseq);
 			graf.removeSpan(graf.getSpan(aseq));
 			graf.addSpan(span);
 			long t1 = tim.read();
@@ -481,8 +473,7 @@ CHUNK_LOOP:
 				BarSeqHeader seq_header = parseSeqHeader(dis, gmodel, default_seq_group, bar_header);
 				int total_points = seq_header.data_point_count;
 				Map<String,String> seq_tagvals = seq_header.tagvals;
-				//      MutableAnnotatedBioSeq seq = seq_header.aseq;
-				BioSeq seq = (BioSeq)seq_header.aseq;
+				BioSeq seq = seq_header.aseq;
 				if (vals_per_point == 1) {
 					throw new IOException("PARSING FOR BAR FILES WITH 1 VALUE PER POINT NOT YET IMPLEMENTED");
 				}
@@ -496,8 +487,6 @@ CHUNK_LOOP:
 						float prev_max_xcoord = -1;
 						boolean sort_reported = false;
 						for (int i= 0; i<total_points; i++) {
-							//            xcoords[i] = (double)dis.readInt();
-							//            ycoords[i] = (double)dis.readFloat();
 							int col0 = dis.readInt();
 							float col1 = dis.readFloat();
 							if (col0 < prev_max_xcoord && (! sort_reported)) {
@@ -518,7 +507,7 @@ CHUNK_LOOP:
 						}
 						if (ensure_unique_id) { graph_id = AnnotatedSeqGroup.getUniqueGraphID(graph_id, seq); }
 						checkSeqLength(seq, xcoords);
-						GraphSymFloat graf = new GraphSymFloat(xcoords, ycoords, graph_id, seq);
+						GraphSym graf = new GraphSym(xcoords, ycoords, graph_id, seq);
 						//          graf.setProperties(new HashMap(file_tagvals));
 						copyProps(graf, file_tagvals);
 						if (bar2)  { copyProps(graf, seq_tagvals); }
@@ -567,10 +556,9 @@ CHUNK_LOOP:
 							mm_name = AnnotatedSeqGroup.getUniqueGraphID(mm_name, seq);
 						}
 						checkSeqLength(seq, xcoords);
-						GraphSymFloat pm_graf =
-							new GraphSymFloat(xcoords, ycoords, pm_name, seq);
-						GraphSymFloat mm_graf =
-							new GraphSymFloat(xcoords, zcoords, mm_name, seq);
+						GraphSym pm_graf =
+							new GraphSym(xcoords, ycoords, pm_name, seq);
+						GraphSym mm_graf = new GraphSym(xcoords, zcoords, mm_name, seq);
 						//          mm_graf.setProperties(new HashMap(file_tagvals));
 						//          pm_graf.setProperties(new HashMap(file_tagvals));
 						copyProps(pm_graf, file_tagvals);
@@ -742,7 +730,7 @@ CHUNK_LOOP:
 							", data points = " + total_points);
 		}
 		//      System.out.println("total data points for graph " + k + ": " + total_points);
-		MutableAnnotatedBioSeq seq = null;
+		BioSeq seq = null;
 
 		AnnotatedSeqGroup seq_group = getSeqGroup(groupname, seqversion, gmodel, default_seq_group);
 		seq = determineSeq(seq_group, seqname, seq, orig_seqname, seqversion, groupname, bar2);
@@ -751,7 +739,7 @@ CHUNK_LOOP:
 	}
 
 
-	private static MutableAnnotatedBioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, MutableAnnotatedBioSeq seq, String orig_seqname, String seqversion, String groupname, boolean bar2) {
+	private static BioSeq determineSeq(AnnotatedSeqGroup seq_group, String seqname, BioSeq seq, String orig_seqname, String seqversion, String groupname, boolean bar2) {
 		// trying standard AnnotatedSeqGroup seq id resolution first
 		seq = seq_group.getSeq(seqname);
 		if (seq == null) {
@@ -855,9 +843,9 @@ CHUNK_LOOP:
 
 	/**
 	 * Writes bar format.
-	 * Assumes syms size is one and single sym is a GraphSym with same MutableAnnotatedBioSeq as seq
+	 * Assumes syms size is one and single sym is a GraphSym with same BioSeq as seq
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream ostr) {
 		boolean success = false;
 		BufferedOutputStream bos = new BufferedOutputStream(ostr);
@@ -868,10 +856,8 @@ CHUNK_LOOP:
 		GraphSym graf = (GraphSym) iter.next();
 		// should check to make sure seq is same as graf.getGraphSeq()??
 
-		AnnotatedSeqGroup group = null;
-		if (seq instanceof BioSeq) {
-			group = ((BioSeq)seq).getSeqGroup();
-		}
+		AnnotatedSeqGroup group = seq.getSeqGroup();
+		
 		String groupid = group.getID();
 		String version = groupid;
 		String seqid = seq.getID();
@@ -931,9 +917,9 @@ CHUNK_LOOP:
 
 	public String getMimeType() { return "binary/bar"; }
 
-	public static void checkSeqLength(MutableAnnotatedBioSeq seq, int[] xcoords) {
-		if (seq instanceof MutableAnnotatedBioSeq) {
-			MutableAnnotatedBioSeq aseq = seq;
+	public static void checkSeqLength(BioSeq seq, int[] xcoords) {
+		if (seq != null) {
+			BioSeq aseq = seq;
 			int xcount = xcoords.length;
 			if (xcount > 0 && (xcoords[xcount-1] > aseq.getLength())) {
 				aseq.setLength(xcoords[xcount-1]);
@@ -953,11 +939,11 @@ CHUNK_LOOP:
 
 }
 class BarSeqHeader {
-	MutableAnnotatedBioSeq aseq;
+	BioSeq aseq;
 	int data_point_count;
 	Map<String,String> tagvals;
 
-	public BarSeqHeader(MutableAnnotatedBioSeq seq, int data_points, Map<String,String> tagvals)  {
+	public BarSeqHeader(BioSeq seq, int data_points, Map<String,String> tagvals)  {
 		this.aseq = seq;
 		this.data_point_count = data_points;
 		this.tagvals = tagvals;

@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -126,7 +126,7 @@ public final class ScoredIntervalParser {
 			br = new BufferedReader(new InputStreamReader(istr));
 			String line = null;
 
-			Map<MutableAnnotatedBioSeq,List<SinEntry>> seq2sinentries = new LinkedHashMap<MutableAnnotatedBioSeq,List<SinEntry>>();
+			Map<BioSeq,List<SinEntry>> seq2sinentries = new LinkedHashMap<BioSeq,List<SinEntry>>();
 			Map<Integer,String> index2id = new HashMap<Integer,String>();
 			List<String> score_names = null;
 			Map<String,Object> props = new HashMap<String,Object>();
@@ -188,7 +188,7 @@ public final class ScoredIntervalParser {
 					min = Integer.parseInt(fields[1]);
 					max = Integer.parseInt(fields[2]);
 					strand = fields[3];
-					MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+					BioSeq aseq = seq_group.getSeq(seqid);
 					if (aseq == null) { aseq = makeNewSeq(seqid, seq_group); }
 					IndexedSingletonSym child;
 					if (strand.equals("-")) { child = new IndexedSingletonSym(max, min, aseq); }
@@ -206,7 +206,7 @@ public final class ScoredIntervalParser {
 					max = Integer.parseInt(fields[3]);
 					strand = fields[4];
 
-					MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+					BioSeq aseq = seq_group.getSeq(seqid);
 					if (aseq == null) { aseq = makeNewSeq(seqid, seq_group); }
 					if (max > aseq.getLength()) { aseq.setLength(max); }
 					IndexedSingletonSym child;
@@ -282,7 +282,7 @@ public final class ScoredIntervalParser {
 				//    but in the case of sin3, can have multiple syms that match up to the same sin id via "extended ids"
 				//    so cycle through all isyms
 				for (IndexedSingletonSym child : isyms) {
-					MutableAnnotatedBioSeq aseq = child.getSpan(0).getBioSeq();
+					BioSeq aseq = child.getSpan(0).getBioSeq();
 					List<SinEntry> sin_entries = seq2sinentries.get(aseq);
 					if (sin_entries == null) {
 						sin_entries = new ArrayList<SinEntry>();
@@ -304,7 +304,7 @@ public final class ScoredIntervalParser {
 
 			System.out.println("number of scores per line: " + score_count);
 			// now make the container syms
-			for (MutableAnnotatedBioSeq aseq : seq2sinentries.keySet()) {
+			for (BioSeq aseq : seq2sinentries.keySet()) {
 				ScoredContainerSym container = new ScoredContainerSym();
 				container.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
 				for (Map.Entry<String,Object> entry : props.entrySet())  {
@@ -381,7 +381,7 @@ public final class ScoredIntervalParser {
 		}
 	}
 
-	protected MutableAnnotatedBioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
+	protected BioSeq makeNewSeq(String seqid, AnnotatedSeqGroup seq_group) {
 		System.out.println("in ScoredIntervalParser, creating new seq: " + seqid);
 		return seq_group.addSeq(seqid, 0); // hmm, should a default size be set?
 	}
@@ -417,7 +417,7 @@ public final class ScoredIntervalParser {
 			bos = new BufferedOutputStream(ostr);
 			dos = new DataOutputStream(bos);
 
-			MutableAnnotatedBioSeq seq = graf.getGraphSeq();
+			BioSeq seq = graf.getGraphSeq();
 			String seq_id = (seq == null ? "." : seq.getID());
 
 			String human_name = graf.getGraphState().getTierStyle().getHumanName();

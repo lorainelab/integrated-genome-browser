@@ -27,7 +27,6 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
-import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
 import com.affymetrix.genoviz.util.Timer;
@@ -65,7 +64,7 @@ public final class GraphGlyph extends Glyph {
 	private static final int pointer_width = 10;
 	private final Rectangle handle_pixbox = new Rectangle(); // caching rect for handle pixel bounds
 	private final Rectangle pixel_hitbox = new Rectangle();  // caching rect for hit detection
-	private final GraphStateI state;
+	private final GraphState state;
 	private final LinearTransform scratch_trans = new LinearTransform();
 
 	// specified in coords_per_pixel
@@ -124,7 +123,7 @@ public final class GraphGlyph extends Glyph {
 		return graf.copyGraphYCoords();
 	}
 
-	public GraphGlyph(GraphSym graf, GraphStateI gstate) {
+	public GraphGlyph(GraphSym graf, GraphState gstate) {
 		super();
 		state = gstate;
 		if (state == null) {
@@ -254,7 +253,7 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	public GraphStateI getGraphState() {
+	public GraphState getGraphState() {
 		return state;
 	}
 

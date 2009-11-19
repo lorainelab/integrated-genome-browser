@@ -74,7 +74,6 @@
 		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
 	</target>
 
-	</target>
 
 	<condition property="is_das2_classic_mode">
 	  <matches string="${das2_mode}" pattern="classic"/>

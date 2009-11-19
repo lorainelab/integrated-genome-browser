@@ -14,7 +14,7 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
@@ -376,8 +376,8 @@ public final class UnibrowControlServlet {
 				}
 				// hopefully setting gmodel's selected seq group above triggered population of seqs
 				//   for group if not already populated
-				MutableAnnotatedBioSeq selected_seq = gmodel.getSelectedSeq();
-				MutableAnnotatedBioSeq book_seq = book_group.getSeq(seqid);
+				BioSeq selected_seq = gmodel.getSelectedSeq();
+				BioSeq book_seq = book_group.getSeq(seqid);
 				// System.out.println("current seq: " + ((selected_seq == null) ? "null" : selected_seq.getID()) );
 				//System.out.println("bookmark seq: " + ((book_seq == null) ? "null" : book_seq.getID()) );
 				if (seqid == null || "unknown".equals(seqid) || seqid.trim().equals("")) {

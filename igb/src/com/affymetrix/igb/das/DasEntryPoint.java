@@ -14,7 +14,7 @@
 package com.affymetrix.igb.das;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
@@ -25,14 +25,14 @@ public final class DasEntryPoint {
   String description;
   String seqtype;
   SeqSpan segment_span;
-  MutableAnnotatedBioSeq aseq;
+  BioSeq aseq;
   DasSource das_source;
   boolean has_subparts;
   int start; // start: 0-interbase coords
   int stop;
   boolean forward = true;
 
-  // still need to figure out matching up entry point to MutableAnnotatedBioSeq in genometry model
+  // still need to figure out matching up entry point to BioSeq in genometry model
   public DasEntryPoint(DasSource source, String id) {
     entry_id = id;
     das_source = source;
@@ -61,7 +61,7 @@ public final class DasEntryPoint {
     }
     return segment_span;
   }
-  public MutableAnnotatedBioSeq getAnnotatedSeq() {
+  public BioSeq getAnnotatedSeq() {
     if (aseq == null) {
       initEntryPoint();
     }

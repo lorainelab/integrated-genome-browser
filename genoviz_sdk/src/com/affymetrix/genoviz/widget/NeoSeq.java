@@ -203,7 +203,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected WrapNumbers num_glyph;
 
 	protected int scroll_increment;
-	protected ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
+	private ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
 	protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
 
@@ -1142,10 +1142,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * @param value points to a residue that must be in the top visible line.
 	 */
 	public void scrollSequence(int value) {
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(scroll_increment);
-		clt.setTranslation(0, 0);
-		int cval = (int)(clt.transform(clt.X,value));
+		int cval = value - (value % scroll_increment);
 		residue_map.scrollOffset(cval);
 		num_map.scrollOffset(cval);
 		return;
@@ -1243,11 +1240,7 @@ public class NeoSeq extends NeoContainerWidget
 		Rectangle2D.Double visible_box = residue_map.getView().calcCoordBox();
 
 		int start = (int)(visible_box.y);
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(residues_per_line);
-		clt.setTranslation(0, 0);
-		int end = (int)(visible_box.y +
-				clt.transform(clt.X, visible_box.height) -1 );
+		int end = useConstrain(residues_per_line, visible_box.y, visible_box.height);
 
 		if ( start < 0) {
 			start = 0;
@@ -1522,7 +1515,8 @@ public class NeoSeq extends NeoContainerWidget
 		scroll_increment = inc;
 
 		sclt.setConstrainValue(inc);
-		sclt.setTranslation(0, 0);
+		sclt.setTranslateX(0);
+		sclt.setTranslateY(0);
 		residue_map.setScrollTransform(NeoWidget.Y, sclt);
 		num_map.setScrollTransform(NeoWidget.Y, sclt);
 		offset_scroll.setBlockIncrement(inc);
@@ -1800,10 +1794,7 @@ public class NeoSeq extends NeoContainerWidget
 		residue_glyph.setShow(type, show);
 		num_glyph.setShow(type, show);
 		// calling stretchToFit to force adjustment of vertical scrollbar
-		LinearTransform trans;
-		trans = (LinearTransform)residue_map.getView().getTransform();
 		stretchToFit(false,false);
-		trans = (LinearTransform)residue_map.getView().getTransform();
 	}
 
 	/**
@@ -1853,7 +1844,6 @@ public class NeoSeq extends NeoContainerWidget
 	// need to decide what "clearing" the sequence widget actually means
 	public void clearWidget() {
 		clearAnnotations();
-		residue_glyph.clearORFSpecs();
 		super.clearWidget();
 
 		residue_map.getScene().addGlyph(residue_glyph);
@@ -2165,52 +2155,6 @@ public class NeoSeq extends NeoContainerWidget
 		range_listeners.removeElement(l);
 	}
 
-
-	/**
-	 * Add a given ORFSpecs object
-	 * whose ORF is to be associated with the NeoSeq.
-	 */
-	public void addORFSpecs (ORFSpecs orf) {
-
-		if ((residue_glyph == null) || (num_glyph == null))
-			return;
-
-		// Add *a copy of* the ORFSpecs, which reflect our firstOrdinal
-		// (i.e. make it zero-based)
-
-		ORFSpecs orfCopy = new ORFSpecs (orf.getStart() - num_glyph.getFirstOrdinal(),
-				orf.getEnd()   - num_glyph.getFirstOrdinal());
-
-		residue_glyph.addORFSpecs(orfCopy);
-	}
-
-
-	/**
-	 * Remove a given ORFSpecs object
-	 * whose ORF is to no longer be associated with the NeoSeq.
-	 */
-	public void removeORFSpecs (ORFSpecs orf) {
-		residue_glyph.removeORFSpecs(orf, num_glyph.getFirstOrdinal());
-	}
-
-	/**
-	 * Set whether or not translation should only be displayed inside ORFs.
-	 * @see #addORFSpecs (ORFSpecs)
-	 */
-
-	public void setTranslateOnlyORFs (boolean b) {
-		residue_glyph.setTranslateOnlyORFs (b);
-	}
-
-	/**
-	 * Get whether or not translation is only being displayed inside ORFs
-	 * @see #addORFSpecs (ORFSpecs)
-	 */
-
-	public boolean isTranslateOnlyORFs () {
-		return residue_glyph.isTranslateOnlyORFs ();
-	}
-
 	/**
 	 * trying to refresh the widget when the sequence has changed.
 	 */
@@ -2250,5 +2194,8 @@ public class NeoSeq extends NeoContainerWidget
 
 	}
 
+	private static int useConstrain(int residues_per_line, double y, double height) {
+		return (int) (y + height - (height % residues_per_line) - 1);
+	}
 
 }

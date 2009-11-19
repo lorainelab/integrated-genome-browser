@@ -25,7 +25,6 @@ import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.NeoDataAdapterI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.Scene;
-import com.affymetrix.genoviz.bioviews.TransformI;
 import com.affymetrix.genoviz.bioviews.View;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -60,8 +59,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	private static final boolean DEBUG_SCROLLER_VALUES = false;
 	private static final boolean DEBUG_SCROLL = false;
 	private static final boolean DEBUG_ZOOM = false;
-	private static final boolean NW_DEBUG_EVENTS = false;
-	private static final boolean NW_DEBUG_COLORS = false;
 
 	protected boolean checkZoomValue = true;
 	protected boolean checkScrollValue = true;
@@ -85,8 +82,8 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected int scroller_value[] = new int[2];
 	protected int prev_zoomer_value[] = new int[2];
 	protected int prev_scroller_value[] = new int[2];
-	protected TransformI zoomtrans[] = new TransformI[2];
-	protected TransformI scrolltrans[] = new TransformI[2];
+	protected ExponentialTransform zoomtrans[] = new ExponentialTransform[2];
+	private LinearTransform scrolltrans[] = new LinearTransform[2];
 
 	protected double zoomer_scale[] = new double[2];
 	protected int zoom_behavior[] = new int[2];
@@ -569,12 +566,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		if (id == X) {
 			pixels_per_coord[id] = trans.getScaleX();
 			pixel_value = coord_value * pixels_per_coord[id];
-			trans.setOffsetX(-pixel_value);
+			trans.setTranslateX(-pixel_value);
 		}
 		else {
 			pixels_per_coord[id] = trans.getScaleY();
 			pixel_value = coord_value * pixels_per_coord[id];
-			trans.setOffsetY(-pixel_value);
+			trans.setTranslateY(-pixel_value);
 			if (DEBUG_SCROLL) {
 				System.out.println("Coord Value = " + coord_value +
 						", Pixels/Coord = " + pixels_per_coord[id] +
@@ -618,14 +615,14 @@ public abstract class NeoWidget extends NeoAbstractWidget
     double coord_beg, coord_end, coord_size;
 		Rectangle2D.Double scenebox = scene.getCoordBox();
     if (id == X)  {
-      pixel_offset[id] = -1 * trans.getOffsetX();
+      pixel_offset[id] = -1 * trans.getTranslateX();
       coord_beg = scenebox.x;
       coord_size = scenebox.width;
     }
     else {
       coord_beg = scenebox.y;
       coord_size = scenebox.height;
-      pixel_offset[id] = -1 * trans.getOffsetY();
+      pixel_offset[id] = -1 * trans.getTranslateY();
 
     }
     coord_end = coord_beg + coord_size;
@@ -912,7 +909,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		}
 	}
 
-	public void setScrollTransform(int id, TransformI trans) {
+	public void setScrollTransform(int id, LinearTransform trans) {
 		scrolltrans[id] = trans;
 	}
 
@@ -1062,12 +1059,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		double fixed_coord, fixed_pixel;
 
 		if (id == X) {
-			prev_pixel_offset = -1 * trans.getOffsetX();
+			prev_pixel_offset = -1 * trans.getTranslateX();
 			coord_beg = scenebox.x;
 			coord_size = scenebox.width;
 		}
 		else {
-			prev_pixel_offset = -1 * trans.getOffsetY();
+			prev_pixel_offset = -1 * trans.getTranslateY();
 			coord_beg = scenebox.y;
 			coord_size = scenebox.height;
 		}
@@ -1102,8 +1099,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 					scale_constraint[id] == INTEGRAL_ALL) && zoom_scale >= 1) {
 			coord_offset = (int)coord_offset;
 					}
-		double first_coord_displayed = coord_offset;
-
+		
 		double last_coord_displayed = coord_offset + visible_coords;
 
 		if (!((coord_offset < coord_beg)  && (last_coord_displayed > coord_end))) {
@@ -1126,11 +1122,11 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		}
 
 		if (id == X) {
-			trans.setOffsetX(-pixel_offset[id]);
+			trans.setTranslateX(-pixel_offset[id]);
 			trans.setScaleX(pixels_per_coord[id]);
 		}
 		else {
-			trans.setOffsetY(-pixel_offset[id]);
+			trans.setTranslateY(-pixel_offset[id]);
 			trans.setScaleY(pixels_per_coord[id]);
 		}
 		if (zoom_scale != zoomer_scale[id]) {
@@ -1260,8 +1256,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 		if (source != view) { return; }
 		int id = e.getID();
-		int x = e.getX();
-		int y = e.getY();
 
 		NeoMouseEvent nevt =
 			new NeoMouseEvent(e, this, NeoConstants.UNKNOWN, e.getCoordX(), e.getCoordY());
@@ -1270,24 +1264,24 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		Rectangle bnds = view.getComponent().getBounds();
 		nevt.translatePoint(bnds.x, bnds.y);
 
-		if (mouse_listeners.size() > 0) {
-			int last_listener = mouse_listeners.size()-1;
-			for (int i=0;
-					(i <= last_listener) && (i < mouse_listeners.size());
-					i++) {
-				MouseListener ml = mouse_listeners.elementAt(i);
-				if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
-				else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
-				else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
-				else if (id == MouseEvent.MOUSE_PRESSED) { ml.mousePressed(nevt); }
-				else if (id == MouseEvent.MOUSE_RELEASED) { ml.mouseReleased(nevt);}
-					}
+		for (MouseListener ml : mouse_listeners) {
+			if (id == MouseEvent.MOUSE_CLICKED) {
+				ml.mouseClicked(nevt);
+			} else if (id == MouseEvent.MOUSE_ENTERED) {
+				ml.mouseEntered(nevt);
+			} else if (id == MouseEvent.MOUSE_EXITED) {
+				ml.mouseExited(nevt);
+			} else if (id == MouseEvent.MOUSE_PRESSED) {
+				ml.mousePressed(nevt);
+			} else if (id == MouseEvent.MOUSE_RELEASED) {
+				ml.mouseReleased(nevt);
+			}
 		}
-		if (mouse_motion_listeners.size() > 0) {
-			for (int i=0; i<mouse_motion_listeners.size(); i++) {
-				MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
-				if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
-				else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
+		for (MouseMotionListener mml : mouse_motion_listeners) {
+			if (id == MouseEvent.MOUSE_DRAGGED) {
+				mml.mouseDragged(nevt);
+			} else if (id == MouseEvent.MOUSE_MOVED) {
+				mml.mouseMoved(nevt);
 			}
 		}
 	}

@@ -125,7 +125,7 @@ public class NeoSeqCustomizer
 		if (null == this.neoSeq) {
 		}
 		else if (evtSource == this.colorChoice) {
-			Color c = widgeti.getColor(this.colorChoice.getSelectedItem());
+			Color c = NeoAbstractWidget.getColor(this.colorChoice.getSelectedItem());
 			neoSeq.setResiduesBackground(c);
 			neoSeq.setNumbersBackground(c);
 			neoSeq.repaint();
@@ -180,19 +180,19 @@ public class NeoSeqCustomizer
 		}
 		else if (evtSource == this.fontColorChoice) {
 			String cs = ((Choice)evtSource).getSelectedItem();
-			Color c = widgeti.getColor(cs);
+			Color c = NeoAbstractWidget.getColor(cs);
 			neoSeq.setResidueFontColor(c);
 			neoSeq.updateWidget();
 			return;
 		}
 		else if (evtSource == this.stripe0ColorChoice) {
-			stripesColor[0] = widgeti.getColor(this.stripe0ColorChoice.getSelectedItem());
+			stripesColor[0] = NeoAbstractWidget.getColor(this.stripe0ColorChoice.getSelectedItem());
 			neoSeq.setStripeColors(stripesColor);
 			neoSeq.updateWidget();
 			return;
 		}
 		else if (evtSource == this.stripe1ColorChoice) {
-			stripesColor[1] = widgeti.getColor(this.stripe1ColorChoice.getSelectedItem());
+			stripesColor[1] = NeoAbstractWidget.getColor(this.stripe1ColorChoice.getSelectedItem());
 			neoSeq.setStripeColors(stripesColor);
 			neoSeq.updateWidget();
 			return;
@@ -251,7 +251,7 @@ public class NeoSeqCustomizer
 		}
 		String stripeColorName = "Transparent";
 		if (null != stripeColor) {
-			stripeColorName = widgeti.getColorName(stripeColor);
+			stripeColorName = NeoAbstractWidget.getColorName(stripeColor);
 		}
 		stripe0ColorChoice.addItem("Transparent");
 		loadColorChoice(stripe0ColorChoice, stripeColorName);
@@ -260,7 +260,7 @@ public class NeoSeqCustomizer
 		}
 		stripeColorName = "Transparent";
 		if (null != stripeColor) {
-			stripeColorName = widgeti.getColorName(stripeColor);
+			stripeColorName = NeoAbstractWidget.getColorName(stripeColor);
 		}
 		stripe1ColorChoice.addItem("Transparent");
 		loadColorChoice(stripe1ColorChoice, stripeColorName);

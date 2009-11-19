@@ -1,4 +1,5 @@
-<Context path="/das2" docBase="/path/to/das2/servlet/" debug="0" reloadable="true">
+<Context path="/das2" docBase="/path/to/das2/servlet/" workDir="/path/to/das2/servlet/"  debug="0" reloadable="true">
+
 	<!-- Optimised Logging routine.  Configured to log in 'combined'
 	     log format. -->
 	<!--
@@ -19,4 +20,25 @@
 	    prefix="das2_access-"
 	    suffix=".log"
 	    pattern='%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i" %Dms' />
+	    
+  <Resource name="jdbc/GENOPUB" auth="Container" 
+    type="javax.sql.DataSource"
+    maxActive="100" maxIdle="30" maxWait="10000"
+    testOnBorrow="true"  
+    validationQuery="SELECT 1 FROM DUAL" 
+    username="genopub" password="your_genopub_db_password_here"
+    driverClassName="com.mysql.jdbc.Driver"
+    url="jdbc:mysql://localhost:3306/genopub?autoReconnect=true"/>
+    
+  <Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
+    driverName="com.mysql.jdbc.Driver"
+    connectionURL="jdbc:mysql://localhost:3306/genopub?autoReconnect=true"
+    connectionName="genopub" connectionPassword="your_genopub_db_password_here"
+    digest="MD5"
+    userTable="User" userNameCol="userName" userCredCol="password"
+    userRoleTable="UserRole" roleNameCol="roleName"/>
+
+
+	
 </Context>
+

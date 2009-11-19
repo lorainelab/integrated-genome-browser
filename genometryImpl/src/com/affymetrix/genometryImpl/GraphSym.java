@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -264,6 +264,10 @@ public class GraphSym extends SimpleSymWithProps {
 		return hasWidth ? this.pointCount : 0;
 	}
 
+	public final boolean hasWidth() {
+		return hasWidth;
+	}
+
 
 	/**
 	 * Find last point with value <= xmin.
@@ -394,7 +398,9 @@ public class GraphSym extends SimpleSymWithProps {
 				System.out.println("ERROR: skipped " + bytesSkipped + " out of " + bytesToSkip + " bytes when indexing");
 				//Arrays.fill(xBuf, 0);
 				Arrays.fill(yBuf, 0.0f);
-				Arrays.fill(wBuf, 0);
+				if (this.hasWidth) {
+					Arrays.fill(wBuf, 0);
+				}
 				return;
 			}
 
@@ -404,19 +410,26 @@ public class GraphSym extends SimpleSymWithProps {
 				//xBuf[i] = dis.readInt();	// x
 				dis.readInt();	//x
 				yBuf[i] = dis.readFloat();	// y
-				wBuf[i] = dis.readInt();
+				int w = dis.readInt();
+				if (this.hasWidth) {
+					wBuf[i] = w;
+				}
 			}
 			// zero out remainder of buffer, if necessary
 			for (int i=maxPoints;i<BUFSIZE;i++) {
 				//xBuf[i] = 0;
 				yBuf[i] = 0.0f;
-				wBuf[i] = 0;
+				if (this.hasWidth) {
+					wBuf[i] = 0;
+				}
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			//Arrays.fill(xBuf, 0);
 			Arrays.fill(yBuf, 0.0f);
-			Arrays.fill(wBuf, 0);
-			ex.printStackTrace();
+			if (this.hasWidth) {
+				Arrays.fill(wBuf, 0);
+			}
 		} finally {
 			GeneralUtils.safeClose(dis);
 		}
@@ -433,9 +446,8 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Returns the graph state.  Will never be null.
 	 */
-	public GraphStateI getGraphState() {
-		GraphStateI state = DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
-		return state;
+	public GraphState getGraphState() {
+		return DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
 	}
 
 	/**

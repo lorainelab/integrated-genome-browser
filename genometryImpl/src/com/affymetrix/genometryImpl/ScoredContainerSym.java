@@ -15,7 +15,8 @@ package com.affymetrix.genometryImpl;
 
 import java.util.*;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -31,7 +32,7 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 	private List<Object> scorevals = new ArrayList<Object>();
 	private List<String> scorenames = new ArrayList<String>();
 
-	private static Map<String,GraphStateI> id2gstate = new HashMap<String,GraphStateI>();
+	private static Map<String,GraphState> id2gstate = new HashMap<String,GraphState>();
 
 	private static Map<String,IAnnotStyle> id2combo_style_plus = new HashMap<String,IAnnotStyle>();
 	private static Map<String,IAnnotStyle> id2combo_style_minus = new HashMap<String,IAnnotStyle>();
@@ -223,14 +224,14 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		// I'm just assuming that this combination will be unique
 		String id = getID() + ":" + strand + ":" + score_name;
 		if (id2gstate.get(id) == null) {
-			GraphStateI gs = initializeGraphState(id, seq_group, score_name, strand);
+			GraphState gs = initializeGraphState(id, seq_group, score_name, strand);
 			id2gstate.put(id, gs);
 		}
 		return id;
 	}
 
-	private GraphStateI initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
-		GraphStateI gs = AnnotatedSeqGroup.getStateProvider().getGraphState(id);
+	private GraphState initializeGraphState(String id, AnnotatedSeqGroup seq_group, String score_name, char strand) {
+		GraphState gs = AnnotatedSeqGroup.getStateProvider().getGraphState(id);
 		gs.setFloatGraph(false);
 		gs.setGraphStyle(GraphType.HEAT_MAP);
 		gs.getTierStyle().setHumanName(score_name);

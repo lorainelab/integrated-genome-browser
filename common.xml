@@ -5,13 +5,22 @@
 		<!-- directory paths -->
 		<property name="dist.dir"     value="${basedir}/dist" />
 		<property name="webstart.dir" value="${dist.dir}/webstart" />
+		<property name="flex.dir"     value="${basedir}/flex" />
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 		<property name="release.dir"   value="${dist.dir}/release" />
 
+		<property name="deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_DAS2_HERE" />
 		<property name="build.version"   value="${DSTAMP}" />
-
+		
+		<!-- das2 mode, set to either classic or genopub -->
+		<property name="das2_mode"    value="classic"/>
+		
 		<!-- file paths -->
 		<property name="web.xml" value="${das2server}/web.xml" />
+		<property name="context.xml" value="${das2server}/context.xml" />
+		<property name="web.classic.xml" value="${das2server}/web_classic.xml" />
+		<property name="context.classic.xml" value="${das2server}/context_classic.xml" />
+		<property name="das2.resources" value="${das2server}/resources" />
 
 		<!-- JNLP Webstart -->
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
@@ -21,6 +30,10 @@
 		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />
 		<property name="jnlp.splashicon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.splashicon.name}" />
+
+		
+		<!-- FLEX -->
+		<property name="FLEX_HOME"              value="${lib.dir}/flex_sdk/"/>
 
 		<!-- global compiler defaults -->
 		<property name="build.compiler"         value="modern" />
@@ -61,6 +74,33 @@
 		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
 	</target>
 
+
+	<condition property="is_das2_classic_mode">
+	  <matches string="${das2_mode}" pattern="classic"/>
+	</condition>
+
+	<condition property="is_das2_genopub_mode">
+	  <matches string="${das2_mode}" pattern="genopub"/>
+	</condition>
+
+	<!-- Only compile file flex if the the das2 mode is 'genopub' and the flex app is not up-to-date -->
+	<condition property="should_compile_flex">
+		<and>
+			<!-- Is the das2 mode genopub? -->
+  	  <matches string="${das2_mode}" pattern="genopub"/>
+			
+	    <!-- Is the flex app not already up-to-date? -->
+			<not>
+	  	  <uptodate property="flex_up_to_date" targetfile="${dist.dir}/GenoPub.swf">
+	    	  <srcfiles dir="${das2server}/flex">
+		    	  <include name="**/*.as"/>
+	  	  	  <include name="**/*.mxml"/>
+	  		  </srcfiles>
+			  </uptodate>
+			</not>
+		</and>
+	</condition>
+  
 	<presetdef name="my.javac">
 		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}">
 			<compilerarg compiler="modern" line="${compiler.args}" />

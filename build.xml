@@ -32,6 +32,28 @@
 		<iterate target="compile" />
 	</target>
 
+	<target name="flex" if="should_compile_flex" depends="common-init" description="Compile Flex GenoPub application">
+		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
+		<mxmlc file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
+	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
+	        <source-path path-element="${FLEX_HOME}/frameworks"/>
+			    <compiler.debug>true</compiler.debug>			
+		</mxmlc>
+		<html-wrapper 
+		      title="GenoPub"
+		      file="GenoPub.html"
+		      width="100%"
+		      height="100%"
+		      application="GenoPub"
+		      swf="GenoPub"
+		      version-major="9"
+		      version-minor="0"
+		      version-revision="0"
+		      history="false"
+		      template="express-installation"
+		      output="${dist.dir}"/>
+	</target>	
+
 	<target name="demos" depends="jar" description="Compile genoviz demos">
 		<my.javac srcdir="${demos.dir}/src" destdir="${demos.dir}" classpath="${genoviz}/build" />
 
@@ -80,12 +102,15 @@
 		<my.signjar jar="${webstart.dir}/igb.jar" />
 		-->
 		<my.signjar jar="${dist.dir}/igb.jar" signedjar="${webstart.dir}/igb.jar" />
+		<my.signjar jar="${dist.dir}/genometry.jar" signedjar="${webstart.dir}/genometry.jar" />
+		<my.signjar jar="${dist.dir}/genoviz.jar" signedjar="${webstart.dir}/genoviz.jar" />
 
 		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 	</target>
 
 	<target name="webapp" depends="jar" description="Create das2servlet web application">
+		<antcall target="flex"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${dist.dir}">
@@ -94,9 +119,76 @@
 				<exclude name="genoviz.jar" />
 			</fileset>
 		</copy>
-		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" />
+		<mkdir dir="${webapp.dir}/WEB-INF/classes" />
+		<copy todir="${webapp.dir}/WEB-INF/classes">
+			<fileset dir="${das2.resources}">
+				<include name="*.xml" />
+				<include name="*.properties" />
+			</fileset>
+		</copy> 
+		<copy todir="${webapp.dir}" overwrite="true" verbose="true">
+			<fileset dir="${dist.dir}">
+				<include name="*.swf" />
+				<include name="*.html" />
+				<include name="*.js" />
+			</fileset>
+		</copy>
+		<copy todir="${webapp.dir}" overwrite="true">
+			<fileset dir="${das2server}">
+				<include name="*.css" />
+				<include name="index.html" />
+				<include name="*.ico" />
+				<include name="*.png" />
+			</fileset>
+		</copy>
+		<antcall target="webapp-classic" />
+		<antcall target="webapp-genopub" />
 	</target>
 
+	<target name="webapp-classic" if="is_das2_classic_mode" depends="jar" description="Create das2servlet web application, use filesystem to serve annotations">
+		<copy file="${web.classic.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
+		<copy file="${context.classic.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
+	</target>
+
+	<target name="webapp-genopub" if="is_das2_genopub_mode" depends="jar" description="Create das2servlet web application, use db to serve annotations">
+		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
+		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
+	</target>
+	
+	<target name="deploy" description="Copy das2 web application to apache tomcat">
+		<copy todir="${deploy.dir}" overwrite="true">
+			<fileset dir="${webapp.dir}">
+				<include name="*.css" />
+				<include name="*.swf" />
+				<include name="*.html" />
+				<include name="*.ico" />
+				<include name="*.png" />
+				<include name="*.js" />
+			</fileset>
+		</copy> 
+		<copy todir="${deploy.dir}/META-INF" overwrite="true">
+			<fileset dir="${webapp.dir}/META-INF">
+				<include name="context.xml" />
+			</fileset>
+		</copy> 
+		<copy todir="${deploy.dir}/WEB-INF" overwrite="true">
+			<fileset dir="${webapp.dir}/WEB-INF">
+				<include name="web.xml" />
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${webapp.dir}/WEB-INF/classes">
+				<include name="*.xml" />
+				<include name="*.properties" />
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir}/WEB-INF/lib" overwrite="true">
+			<fileset dir="${webapp.dir}/WEB-INF/lib">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
 	</target>

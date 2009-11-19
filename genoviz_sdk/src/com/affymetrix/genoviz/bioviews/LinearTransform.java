@@ -1,81 +1,12 @@
-/**
- *   Copyright (c) 1998-2005 Affymetrix, Inc.
- *    
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.  
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
+import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Point2D;
 
-/**
- * Also see interface TransformI for more documentation.
- */
-public class LinearTransform implements TransformI  {
-	protected double xscale, yscale, xoffset, yoffset;
-
-
-	/** 
-	 * Constructs a new LinearTransform
-	 * with X and Y scales set at 1
-	 * and offsets of 0.
-	 */
+public class LinearTransform extends AffineTransform  {
 	public LinearTransform() {
-		xscale = yscale = 1.0f;
-		xoffset = yoffset = 0.0f;
-	}
-
-	/**
-	 * Creates a new transform with the same scales and offsets
-	 * as the LinearTransform passed in.
-	 */
-	public void copyTransform(LinearTransform LT) {
-		xscale = LT.getScaleX();
-		yscale = LT.getScaleY();
-		xoffset = LT.getOffsetX();
-		yoffset = LT.getOffsetY();
-	}
-
-	/**
-	 * Sets the transform's scales and offsets such that the coord_box's space is
-	 * mapped to the pixel_box's space.  For example, to map a whole Scene to a 
-	 * view, with no zooming, the coord_box would be the coordinate bounds of
-	 * the Scene, and the pixel_box the size of the NeoCanvas holding the View.
-	 * @param coord_box the coordinates of the Scene
-	 * @param pixel_box coordinates of the pixel space to which you are mapping.
-	 */
-	public void fit(Rectangle2D.Double coord_box, Rectangle pixel_box)  {
-    fit(coord_box, pixel_box, true, true);
-  }
-
-  /**
-   * Sets the transform's scales and offsets such that the coord_box's space is
-   * mapped to the pixel_box's space.  For example, to map a whole Scene to a
-   * view, with no zooming, the coord_box would be the coordinate bounds of
-   * the Scene, and the pixel_box the size of the NeoCanvas holding the View.
-   * @param coord_box the coordinates of the Scene
-   * @param pixel_box coordinates of the pixel space to which you are mapping.
-   * @param fitx whether to perform a fit in the x axis
-   * @param fity whether to perform a fit in the y axis
-   */
-  public void fit(Rectangle2D.Double coord_box, Rectangle pixel_box, boolean fitx, boolean fity)  {
-    if (fitx) {
-  		xscale = (double)pixel_box.width / coord_box.width;
-	  	xoffset = (double)pixel_box.x - xscale * coord_box.x;
-    }
-    if (fity) {
-  		yscale = (double)pixel_box.height / coord_box.height;
-	  	yoffset = (double)pixel_box.y - yscale * coord_box.y;
-    }
+		super();
 	}
 
 	/**
@@ -87,10 +18,10 @@ public class LinearTransform implements TransformI  {
 	 */
 	public double transform(int orientation, double in) {
 		double out = 0;
-		if (orientation == X) {
-			out = in * xscale + xoffset;
-		} else if (orientation == Y) {
-			out = in * yscale + yoffset;
+		if (orientation == NeoConstants.HORIZONTAL) {
+			out = in * this.getScaleX() + this.getTranslateX();
+		} else if (orientation == NeoConstants.VERTICAL) {
+			out = in * this.getScaleY() + this.getTranslateY();
 		}
 		return out;
 	}
@@ -102,35 +33,16 @@ public class LinearTransform implements TransformI  {
 	 * @param orientation X or Y
 	 * @param in the coordinate
 	 */
-	public double inverseTransform(int orientation, double in) {
+	public final double inverseTransform(int orientation, double in) {
 		double out = 0;
-		if (orientation == X) {
-			out = (in - xoffset) / xscale;
-		} else if (orientation == Y) {
-			out = (in - yoffset) / yscale;
+		if (orientation == NeoConstants.HORIZONTAL) {
+			out = (in - this.getTranslateX()) / this.getScaleX();
+		} else if (orientation == NeoConstants.VERTICAL) {
+			out = (in - this.getTranslateY()) / this.getScaleY();
 		}
 		return out;
 	}
 
-	/** 
-	 * Sets the scale of the transform directly.
-	 * @param x X scale
-	 * @param y Y scale
-	 */
-	public void setScale(double x, double y) {
-		xscale = x;
-		yscale = y;
-	}
-
-	/**
-	 * Sets the offsets directly.
-	 * @param x X offset
-	 * @param y Y offset
-	 */
-	public void setTranslation(double x, double y) {
-		xoffset = x;
-		yoffset = y;
-	}
 
 	/**
 	 * Transforms the source rectangle.
@@ -138,11 +50,11 @@ public class LinearTransform implements TransformI  {
 	 * @param dst ignored
 	 * @return the Souce rectangle transformed.
 	 */
-	public Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst) {
-		dst.x = src.x * xscale + xoffset;
-		dst.y = src.y * yscale + yoffset;
-		dst.width = src.width * xscale;
-		dst.height = src.height * yscale;
+	public final Rectangle2D.Double transform(Rectangle2D.Double src, Rectangle2D.Double dst) {
+		dst.x = src.x * this.getScaleX() + this.getTranslateX();
+		dst.y = src.y * this.getScaleY() + this.getTranslateY();
+		dst.width = src.width * this.getScaleX();
+		dst.height = src.height * this.getScaleY();
 		if (dst.height < 0) {
 			dst.y = dst.y + dst.height;
 			dst.height = -dst.height;
@@ -160,11 +72,11 @@ public class LinearTransform implements TransformI  {
 	 * @param dst ignored
 	 * @return the souce rectangle transformed.
 	 */
-	public Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst) {
-		dst.x = (src.x - xoffset) / xscale;
-		dst.y = (src.y - yoffset) / yscale;
-		dst.width = src.width / xscale;
-		dst.height = src.height / yscale;
+	public final Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst) {
+		dst.x = (src.x - this.getTranslateX()) / this.getScaleX();
+		dst.y = (src.y - this.getTranslateY()) / this.getScaleY();
+		dst.width = src.width / this.getScaleX();
+		dst.height = src.height / this.getScaleY();
 
 		if (dst.height < 0) {
 			dst.y = dst.y + dst.height;
@@ -177,87 +89,27 @@ public class LinearTransform implements TransformI  {
 		return dst;
 	}
 
-	/**
-	 * Transforms the Point2D.
-	 * @param src the Point2D to be transformed.
-	 * @param dst ignored
-	 * @return the souce Point2D transformed.
-	 */
-	public Point2D.Double transform(Point2D.Double src, Point2D.Double dst) {
-		dst.x = src.x * xscale + xoffset;
-		dst.y = src.y * yscale + yoffset;
-		return dst;
+	public final void setScaleX(double scale) {
+		this.setTransform(scale,0,0,this.getScaleY(),this.getTranslateX(),this.getTranslateY());
 	}
 
-	/**
-	 * Inversely transforms the Point2D.
-	 * @param src the Point2D to be transformed.
-	 * @param dst ignored
-	 * @return the souce Point2D transformed.
-	 */
-	public Point2D.Double inverseTransform(Point2D.Double src, Point2D.Double dst) {
-		dst.x = (src.x - xoffset) / xscale;
-		dst.y = (src.y - yoffset) / yscale;
-		return dst;
+	public final void setScaleY(double scale) {
+		this.setTransform(this.getScaleX(),0,0,scale,this.getTranslateX(),this.getTranslateY());
 	}
 
-	public double getScaleX() {
-		return xscale;
+	public final void setTranslateX(double offset) {
+		this.setTransform(this.getScaleX(), 0, 0, this.getScaleY(), offset, this.getTranslateY());
 	}
 
-	public double getScaleY() {
-		return yscale;
+	public final void setTranslateY(double offset) {
+		this.setTransform(this.getScaleX(), 0, 0, this.getScaleY(), this.getTranslateX(), offset);
 	}
 
-	public void setScaleX(double scale) {
-		xscale = scale;
-	}
-
-	public void setScaleY(double scale) {
-		yscale = scale;
-	}
-
-	public double getOffsetX() {
-		return xoffset;
-	}
-
-	public double getOffsetY() {
-		return yoffset;
-	}
-
-	public void setOffsetX(double offset) {
-		xoffset = offset;
-	}
-
-	public void setOffsetY(double offset) {
-		yoffset = offset;
-	}
-
-	/**
-	 * creates a shallow copy.
-	 * Since the only instance variables are doubles,
-	 * it is also trivially a deep copy.
-	 */
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
-
-	public String toString() {
-		return ("LinearTransform:  xscale = " + xscale + ", xoffset = " +
-				xoffset + ",  yscale = " + yscale + ", yoffset " + yoffset);
-	}
-
-	public boolean equals(TransformI Tx) {
-		if (Tx instanceof LinearTransform) {
-			LinearTransform lint = (LinearTransform)Tx;
-			return (xscale == lint.getScaleX() &&
-					yscale == lint.getScaleY() &&
-					xoffset == lint.getOffsetX() &&
-					yoffset == lint.getOffsetY());
-		}
-		else {
+	public boolean equals(LinearTransform lint) {
+		if (lint == null) {
 			return false;
 		}
+		return super.equals(lint);
 	}
 
 }

@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
@@ -62,7 +62,7 @@ public class ScoredIntervalParserTest {
 		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Seq Group");
 		String seqid = "chr1";
 
-		MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+		BioSeq aseq = seq_group.getSeq(seqid);
 		ScoredIntervalParser ins = new ScoredIntervalParser();
 
 		aseq = ins.makeNewSeq(seqid, seq_group);

@@ -528,7 +528,7 @@ public class Scene implements SceneI  {
 		}
 	}
 
-	protected Vector getTransients() {
+	protected Vector<TransientGlyph> getTransients() {
 		return transients;
 	}
 

@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.GraphSymFloat;
 import java.io.ByteArrayInputStream;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.ByteArrayOutputStream;
@@ -79,7 +74,7 @@ public class BgrParserTest {
 
 		boolean ensure_unique_id = true;
 
-		GraphSymFloat gr0 = BgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
+		GraphSym gr0 = BgrParser.parse(istr, stream_name, seq_group, ensure_unique_id);
 		istr.close();
 
 		assertEquals("16", gr0.getGraphSeq().getID());

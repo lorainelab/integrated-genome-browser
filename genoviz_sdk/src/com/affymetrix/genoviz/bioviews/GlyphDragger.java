@@ -15,6 +15,7 @@ package com.affymetrix.genoviz.bioviews;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.awt.geom.Point2D;
@@ -25,6 +26,8 @@ import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class to handle generic dragging of Glyphs (and glyph hierarchies)
@@ -77,7 +80,7 @@ public class GlyphDragger
 		if (nevt != null) {
 			Object src = nevt.getSource();
 			if (src instanceof NeoWidget) {
-				trans = (LinearTransform)((NeoWidget)src).getView().getTransform();
+				trans = ((NeoWidget) src).getView().getTransform();
 				return trans;
 			}
 		}
@@ -116,8 +119,12 @@ public class GlyphDragger
 		else {
 			prev_point.x = (double)nevt.getX();
 			prev_point.y = (double)nevt.getY();
-			// inverse transform to map pixel position to coords
-			trans.inverseTransform(prev_point, prev_point);
+			try {
+				// inverse transform to map pixel position to coords
+				trans.inverseTransform(prev_point, prev_point);
+			} catch (NoninvertibleTransformException ex) {
+				Logger.getLogger(GlyphDragger.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 		// flushing, just in case...
 		widget.removeMouseListener(this);
@@ -139,7 +146,11 @@ public class GlyphDragger
 		if (trans == null) { trans = getTransform(nevt); }
 		cur_point.x = (double)nevt.getX();
 		cur_point.y = (double)nevt.getY();
-		trans.inverseTransform(cur_point, cur_point);
+		try {
+			trans.inverseTransform(cur_point, cur_point);
+		} catch (NoninvertibleTransformException ex) {
+			Logger.getLogger(GlyphDragger.class.getName()).log(Level.SEVERE, null, ex);
+		}
 
 		if (constrained[HORIZ]) {
 			cur_point.x = prev_point.x;

@@ -104,6 +104,10 @@ public final class GraphGlyph extends Glyph {
 		return graf.getGraphYCoord(i);
 	}
 
+	public boolean hasWidth() {
+		return graf.hasWidth();
+	}
+
 	private float getWCoord(int i) {
 		return ((GraphIntervalSym) graf).getGraphWidthCoord(i);
 	}
@@ -131,6 +135,34 @@ public final class GraphGlyph extends Glyph {
 
 		Map<String,Object> map = graf.getProperties();
 		boolean toInitialize = isUninitialized();
+		
+		setColorAndStyle(toInitialize, map);
+
+		this.graf = graf;
+
+		if (graf.getPointCount() == 0) {
+			return;
+		}
+
+		checkVisibleBoundsY(toInitialize, map);
+
+		/* Code below comes from old SmartGraphGlyph Constructor */
+		setDrawOrder(Glyph.DRAW_SELF_FIRST);
+
+		thresh_glyph.setVisibility(getShowThreshold());
+		thresh_glyph.setSelectable(false);
+		if (thresh_color != null) {
+			thresh_glyph.setColor(thresh_color);
+		}
+		this.addChild(thresh_glyph);
+
+		if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
+			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
+		}
+		resetThreshLabel();
+	}
+
+	private void setColorAndStyle(boolean toInitialize, Map<String, Object> map) throws NumberFormatException {
 		if (toInitialize && map != null) {
 			Object value = map.get(ViewPropertyNames.INITIAL_COLOR);
 			if (value != null) {
@@ -156,59 +188,6 @@ public final class GraphGlyph extends Glyph {
 		}
 		//must call again to get it to properly render
 		setColor(state.getTierStyle().getColor());
-
-		this.graf = graf;
-
-		if (graf.getPointCount() == 0) {
-			return;
-		}
-
-		boolean rangeInit = false;
-		if (toInitialize && map != null) {
-			Object value = map.get(ViewPropertyNames.INITIAL_MAX_Y);
-			if (value != null) {
-				point_max_ycoord = Float.parseFloat(value.toString());
-				rangeInit = true;
-			}
-			value = map.get(ViewPropertyNames.INITIAL_MIN_Y);
-			if (value != null) {
-				point_min_ycoord = Float.parseFloat(value.toString());
-				rangeInit = true;
-			}
-		}
-		if (!rangeInit) {
-			float[] range = getVisibleYRange();
-			if (point_max_ycoord == Float.POSITIVE_INFINITY) {
-				point_max_ycoord = range[1];
-			}
-			if (point_min_ycoord == Float.NEGATIVE_INFINITY) {
-				point_min_ycoord = range[0];
-			}
-		}
-
-		if (point_max_ycoord <= point_min_ycoord) {
-			point_min_ycoord = point_max_ycoord - 1;
-		}
-		checkVisibleBoundsY();
-
-		/* Code below comes from old SmartGraphGlyph Constructor */
-		setDrawOrder(Glyph.DRAW_SELF_FIRST);
-
-		thresh_glyph.setVisibility(getShowThreshold());
-		thresh_glyph.setSelectable(false);
-		if (thresh_color != null) {
-			thresh_glyph.setColor(thresh_color);
-		}
-		this.addChild(thresh_glyph);
-
-		if (Float.isInfinite(getMinScoreThreshold()) && Float.isInfinite(getMaxScoreThreshold())) {
-			setMinScoreThreshold(getVisibleMinY() + ((getVisibleMaxY() - getVisibleMinY()) / 2));
-		}
-		resetThreshLabel();
-	}
-
-	public boolean hasWidth() {
-		return graf instanceof GraphIntervalSym;
 	}
 
 	private float[] getVisibleYRange() {
@@ -241,7 +220,33 @@ public final class GraphGlyph extends Glyph {
 				getVisibleMaxY() == Float.NEGATIVE_INFINITY;
 	}
 
-	private void checkVisibleBoundsY() {
+	private void checkVisibleBoundsY(boolean toInitialize, Map<String,Object> map) {
+		boolean rangeInit = false;
+		if (isUninitialized() && map != null) {
+			Object value = map.get(ViewPropertyNames.INITIAL_MAX_Y);
+			if (value != null) {
+				point_max_ycoord = Float.parseFloat(value.toString());
+				rangeInit = true;
+			}
+			value = map.get(ViewPropertyNames.INITIAL_MIN_Y);
+			if (value != null) {
+				point_min_ycoord = Float.parseFloat(value.toString());
+				rangeInit = true;
+			}
+		}
+		if (!rangeInit) {
+			float[] range = getVisibleYRange();
+			if (point_max_ycoord == Float.POSITIVE_INFINITY) {
+				point_max_ycoord = range[1];
+			}
+			if (point_min_ycoord == Float.NEGATIVE_INFINITY) {
+				point_min_ycoord = range[0];
+			}
+		}
+
+		if (point_max_ycoord <= point_min_ycoord) {
+			point_min_ycoord = point_max_ycoord - 1;
+		}
 		if (isUninitialized()) {
 			setVisibleMaxY(point_max_ycoord);
 			setVisibleMinY(point_min_ycoord);
@@ -261,10 +266,6 @@ public final class GraphGlyph extends Glyph {
 
 		Graphics g = view.getGraphics();
 		
-		if (state.getShowGrid() && !GraphState.isHeatMapStyle(getGraphStyle())) {
-			drawHorizontalGridLines(view);
-		}
-
 		if (getShowGraph() && graf != null && graf.getPointCount() > 0) {
 			DrawTheGraph(view, g, graph_style);
 		}
@@ -309,7 +310,7 @@ public final class GraphGlyph extends Glyph {
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
 
-		if (getGraphState().getShowZeroLine() && yzero == 0) {
+		if (yzero == 0) {
 			// zero_point within min/max, so draw
 			g.setColor(Color.gray);
 			g.drawLine(pixelbox.x, zero_point.y, pixelbox.x + pixelbox.width, zero_point.y);
@@ -372,14 +373,14 @@ public final class GraphGlyph extends Glyph {
 
 		coord.y = offset - ((ytemp - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, curr_point);
-		if (this.hasWidth()) {
+		if (graf.hasWidth()) {
 			Point2D.Double x_plus_width2D = new Point2D.Double(0, 0);
 			x_plus_width2D.x = xtemp + this.getWCoord(i);
 			x_plus_width2D.y = coord.y;
 			view.transformToPixels(x_plus_width2D, curr_x_plus_width);
 		}
 		if (graph_style == GraphType.LINE_GRAPH) {
-			if (!this.hasWidth()) {
+			if (!graf.hasWidth()) {
 				g.drawLine(prev_point.x, prev_point.y, curr_point.x, curr_point.y);
 			} else {
 				// Draw a line representing the width: (x,y) to (x + width,y)
@@ -399,14 +400,14 @@ public final class GraphGlyph extends Glyph {
 			int ymin_pixel = Math.min(curr_point.y, zero_point.y);
 			int yheight_pixel = Math.abs(curr_point.y - zero_point.y);
 			yheight_pixel = Math.max(1, yheight_pixel);
-			if (!this.hasWidth()) {
+			if (!graf.hasWidth()) {
 				g.drawLine(curr_point.x, ymin_pixel, curr_point.x, ymin_pixel + yheight_pixel);
 			} else {
 				final int width = Math.max(1, curr_x_plus_width.x - curr_point.x);
 				g.drawRect(curr_point.x, ymin_pixel, width, yheight_pixel);
 			}
 		} else if (graph_style == GraphType.DOT_GRAPH) {
-			if (!this.hasWidth()) {
+			if (!graf.hasWidth()) {
 				g.drawLine(curr_point.x, curr_point.y, curr_point.x, curr_point.y); // point
 			} else {
 				g.drawLine(curr_point.x, curr_point.y, curr_x_plus_width.x, curr_point.y);
@@ -423,7 +424,7 @@ public final class GraphGlyph extends Glyph {
 			}
 			// If this is the very last point, special rules apply
 			if (i == draw_end_index) {
-				stairwidth = (!this.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
+				stairwidth = (!graf.hasWidth()) ? 1 : curr_x_plus_width.x - curr_point.x;
 				drawRectOrLine(g,curr_point.x,
 						Math.min(zero_point.y, curr_point.y),
 						Math.max(1, stairwidth),
@@ -483,46 +484,6 @@ public final class GraphGlyph extends Glyph {
 			g.setColor(this.getColor());
 			drawRectOrLine(g,hpix.x, hpix.y, hpix.width, hpix.height);
 		}
-	}
-
-	private void drawHorizontalGridLines(ViewI view) {
-		float[] grid = state.getGridLinesYValues();
-		if (grid == null || grid.length == 0) {
-			return;
-		}
-
-		Graphics2D g = view.getGraphics();
-
-		view.transformToPixels(coordbox, pixelbox);
-		Rectangle view_pixbox = view.getPixelBox();
-
-		int xbeg = Math.max(view_pixbox.x, pixelbox.x);
-		int xend = Math.max(view_pixbox.x + view_pixbox.width, pixelbox.x + view_pixbox.width);
-		g.setColor(lighter);
-
-		getInternalLinearTransform(view, scratch_trans);
-		double yscale = scratch_trans.getScaleY();
-		double offset = scratch_trans.getTranslateY();
-
-		Stroke old_stroke = g.getStroke();
-		BasicStroke grid_stroke = new BasicStroke(0.5f, BasicStroke.CAP_SQUARE,
-			BasicStroke.JOIN_MITER, 10.0f,
-			new float[]{1.0f, 10.0f}, 0.0f);
-		g.setStroke(grid_stroke);
-		g.setFont(axis_font);
-
-		Point scratch_point = new Point(0, 0);
-
-		for (int i = 0; i < grid.length; i++) {
-			float gridY = grid[i];
-			coord.x = 5;
-			coord.y = offset - ((gridY - getVisibleMinY()) * yscale);
-			if (gridY >= getVisibleMinY() && gridY <= getVisibleMaxY()) {
-				view.transformToPixels(coord, scratch_point);
-				g.drawLine(xbeg, scratch_point.y, xend, scratch_point.y);
-			}
-		}
-		g.setStroke(old_stroke); // reset to orignial stroke
 	}
 
 	private void drawAxisLabel(ViewI view) {
@@ -930,50 +891,6 @@ public final class GraphGlyph extends Glyph {
 		lt.setTranslateY(yoffset);
 	}
 
-	private void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, GraphType graph_style, Graphics g, double heatmap_scaling, int ysum, int points_in_pixel, int i) {
-		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
-		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
-		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
-			int yheight = yend - ystart;
-			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
-			if (graph_style == GraphType.LINE_GRAPH) {
-				// cache for drawing later
-				if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
-					int yavg_pixel = ysum / points_in_pixel;
-					pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
-				}
-				if (i > 0) {
-					int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
-					int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
-					g.drawLine(prev_point.x, y1, curr_point.x, y2);
-				}
-			}
-		} else if (graph_style == GraphType.HEAT_MAP) {
-			g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
-			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
-		}
-	}
-
-
-	/**
-	 * Fill rect or draw line, depending upon width
-	 * (Much faster than simply filling a rect, if the width or height is 1)
-	 * @param g
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 */
-	private static void drawRectOrLine(Graphics g, int x, int y, int width, int height) {
-		if (width <= 0 || height <= 0) {
-			return;
-		}
-		if (width == 1 || height == 1) {
-			g.drawLine(x, y, x+width-1, y+height-1);
-		} else {
-			g.fillRect(x, y, width, height);
-		}
-	}
 
 	private void drawSmart(ViewI view) {
 		// could size cache to just the view's pixelbox, but then may end up creating a
@@ -994,9 +911,7 @@ public final class GraphGlyph extends Glyph {
 			tim.start();
 		}
 		view.transformToPixels(coordbox, pixelbox);
-		if (state.getShowGrid() && !GraphState.isHeatMapStyle(getGraphStyle())) {
-			drawHorizontalGridLines(view);
-		}
+		
 		if (getShowGraph()) {
 			drawGraph(view);
 		}
@@ -1055,12 +970,7 @@ public final class GraphGlyph extends Glyph {
 		view.transformToPixels(coord, scratch_point);
 		int plot_bottom_ypixel = scratch_point.y;
 		// replaces pbox_yheight
-		double heatmap_scaling = 1;
-		if (state.getHeatMap() != null) {
-			Color[] heatmap_colors = state.getHeatMap().getColors();
-			// scale based on pixel position, not cooord position, since most calculations below are in pixels
-			heatmap_scaling = (double) (heatmap_colors.length - 1) / (-plot_top_ypixel + plot_bottom_ypixel);
-		}
+		
 		float yzero = 0;
 		if (getVisibleMinY() > yzero) {
 			yzero = getVisibleMinY();
@@ -1070,7 +980,7 @@ public final class GraphGlyph extends Glyph {
 		coord.y = offset - ((yzero - getVisibleMinY()) * yscale);
 		view.transformToPixels(coord, zero_point);
 		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
-			if (getGraphState().getShowZeroLine() && yzero == 0) {
+			if (yzero == 0) {
 				g.setColor(Color.gray);
 				g.drawLine(pixelbox.x, zero_point.y, pixelbox.width, zero_point.y);
 			}
@@ -1080,11 +990,11 @@ public final class GraphGlyph extends Glyph {
 				g.setColor(getBackgroundColor());
 			}
 		}
-		DrawPoints(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel, heatmap_scaling);
-		DrawAvgLine(graph_style, g, heatmap_scaling, plot_bottom_ypixel, plot_top_ypixel, coords_per_pixel);
+		DrawPoints(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel);
+		DrawAvgLine(graph_style, g, coords_per_pixel);
 	}
 
-	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, GraphType graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel, double heatmap_scaling) {
+	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, GraphType graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel) {
 		int draw_beg_index = graf.determineBegIndex(xmin);
 		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		coord.x = graf.getGraphXCoord(draw_beg_index);
@@ -1124,7 +1034,7 @@ public final class GraphGlyph extends Glyph {
 				if (graph_style == GraphType.MINMAXAVG ||
 						graph_style == GraphType.LINE_GRAPH ||
 						graph_style == GraphType.HEAT_MAP) {
-					drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, graph_style, g, heatmap_scaling, ysum, points_in_pixel, i);
+					drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, graph_style, g, ysum, points_in_pixel, i);
 				}
 
 				ymin_pixel = curr_point.y;
@@ -1137,7 +1047,39 @@ public final class GraphGlyph extends Glyph {
 		}
 	}
 
-	private void DrawAvgLine(GraphType graph_style, Graphics g, double heatmap_scaling, int plot_bottom_ypixel, int plot_top_ypixel, double coords_per_pixel) {
+
+	private void drawSingleRect(int ymin_pixel, int plot_bottom_ypixel, int plot_top_ypixel, int ymax_pixel, GraphType graph_style, Graphics g, int ysum, int points_in_pixel, int i) {
+		int ystart = Math.max(Math.min(ymin_pixel, plot_bottom_ypixel), plot_top_ypixel);
+		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
+		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
+			int yheight = yend - ystart;
+			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
+			if (graph_style == GraphType.LINE_GRAPH) {
+				// cache for drawing later
+				if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
+					int yavg_pixel = ysum / points_in_pixel;
+					pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
+				}
+				if (i > 0) {
+					int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
+					int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);
+					g.drawLine(prev_point.x, y1, curr_point.x, y2);
+				}
+			}
+		} else if (graph_style == GraphType.HEAT_MAP) {
+			double heatmap_scaling = 1;
+			if (state.getHeatMap() != null) {
+				Color[] heatmap_colors = state.getHeatMap().getColors();
+				// scale based on pixel position, not cooord position, since most calculations below are in pixels
+				heatmap_scaling = (double) (heatmap_colors.length - 1) / (-plot_top_ypixel + plot_bottom_ypixel);
+			}
+			g.setColor(state.getHeatMap().getColor((int) (heatmap_scaling * (plot_bottom_ypixel - ystart))));
+			drawRectOrLine(g, prev_point.x, plot_top_ypixel, 3, plot_bottom_ypixel - plot_top_ypixel);
+		}
+	}
+
+
+	private void DrawAvgLine(GraphType graph_style, Graphics g, double coords_per_pixel) {
 		if (graph_style == GraphType.MINMAXAVG) {
 			g.setColor(lighter);
 		}
@@ -1271,7 +1213,7 @@ public final class GraphGlyph extends Glyph {
 		//      true, true, false
 		for (int i = draw_beg_index; i <= draw_end_index; i++) {
 			double x = graf.getGraphXCoord(i);
-			double w = this.hasWidth() ? graf.getGraphWidthCoord(i) : 0;
+			double w = graf.hasWidth() ? graf.getGraphWidthCoord(i) : 0;
 			double y = graf.getGraphYCoord(i);
 			// GAH 2006-02-16 changed to > min_score instead of >= min_score, to better mirror Affy tiling array pipeline
 			boolean pass_score_thresh = ((y > min_score_threshold) && (y <= max_score_threshold));
@@ -1352,6 +1294,28 @@ public final class GraphGlyph extends Glyph {
 			}
 		}
 	}
+
+
+	/**
+	 * Fill rect or draw line, depending upon width
+	 * (Much faster than simply filling a rect, if the width or height is 1)
+	 * @param g
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	private static void drawRectOrLine(Graphics g, int x, int y, int width, int height) {
+		if (width <= 0 || height <= 0) {
+			return;
+		}
+		if (width == 1 || height == 1) {
+			g.drawLine(x, y, x+width-1, y+height-1);
+		} else {
+			g.fillRect(x, y, width, height);
+		}
+	}
+
 
 	/**
 	 * Retrieve the map y coord corresponding to a given graph yvalue.

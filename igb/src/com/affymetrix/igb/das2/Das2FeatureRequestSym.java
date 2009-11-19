@@ -38,28 +38,22 @@ import com.affymetrix.genometryImpl.das2.Das2RequestLog;
  */
 public final class Das2FeatureRequestSym extends SimpleSymWithProps implements TypedSym  {  // or should extend TypeContainerAnnot?
 
-  LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
-  SeqSpan inside_span;
-  // SeqSpan encompass_span;  // not needed, this is actually standard span of a single-span symmetry
+  private final LeafSingletonSymmetry overlap_span; // LeafSingletonSym also implements SeqSymmetry interface
+  private final SeqSpan inside_span;
 
-  Das2Region das2_region;
-  Das2Type das2_type;
-  // not sure how to make sure that parent is a Das2ContainerAnnot, since auto-containment in SmartAnnotBioSeq
-  //     uses TypeContainerAnnot instead.  So for now make parent the TypeContainerAnnot
-  //  Das2ContainerAnnot parent_container;
-  TypeContainerAnnot parent_container;
-  MutableAnnotatedBioSeq aseq;
-  MutableSeqSpan sum_child_spans;
-  String format;
+  private final Das2Region das2_region;
+  private final Das2Type das2_type;
 
-  Das2RequestLog response = new Das2RequestLog();
+  private final BioSeq aseq;
+  private MutableSeqSpan sum_child_spans;
+  private String format;
+
+  private final Das2RequestLog response = new Das2RequestLog();
 
   //  for now trying to do without container info in constructor
   public Das2FeatureRequestSym(Das2Type type, Das2Region region, SeqSpan overlap, SeqSpan inside) {
     das2_type = type;
     das2_region = region;
-    //    parent_container = container;
-    //    overlap_span = overlap;
     overlap_span = new LeafSingletonSymmetry(overlap);
     inside_span = inside;
     aseq = overlap_span.getBioSeq();
@@ -79,29 +73,18 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
   /**
    *  Convenience method for returning overlap span as a SeqSymmetry with 1 span and 0 children.
    */
-  public SeqSymmetry getOverlapSym() { return overlap_span; }
+  SeqSymmetry getOverlapSym() { return overlap_span; }
 
   /**
    *  Returns the inside span, the span specified in the original DAS query
    *    that returned annotation must be contained within.
    */
   //  May need to returns a sym instead of span to better match up with SeqSymmetrySummarizer methods??
-  public SeqSpan getInsideSpan() { return inside_span; }
+  SeqSpan getInsideSpan() { return inside_span; }
 
-  /**
-   *  Returns encompass span, the union of the bounds of all the features returned by the DAS2 feature query.
-   */
-  // (OR, may need to be union of overlap span and bounds of all features returned...)
-  public SeqSpan getEncompassSpan() { return getSpan(0); }
-
-  //  public Das2ContainerAnnot getParentContainer() { return parent_container; }
-  //  public Das2Region getRegion() { return parent_container.getRegion(); }
-  //  public Das2Type getDas2Type() { return parent_container.getDas2Type(); }
-
-  public TypeContainerAnnot getParentContainer() { return parent_container; }
-  public Das2Region getRegion() { return das2_region; }
+  Das2Region getRegion() { return das2_region; }
   public Das2Type getDas2Type() { return das2_type; }
-  public String getFormat() { return format; }
+  String getFormat() { return format; }
   public void setFormat(String format) { this.format = format; }
 
 
@@ -131,7 +114,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
     else { return null; }
   }
 
-  public SeqSpan getSpan(MutableAnnotatedBioSeq seq) {
+  public SeqSpan getSpan(BioSeq seq) {
     if (seq == aseq) { return sum_child_spans; }
     else { return null; }
   }
@@ -143,7 +126,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
     return true;
   }
 
-  public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span) {
+  public boolean getSpan(BioSeq seq, MutableSeqSpan span) {
     SeqSpan vspan = getSpan(seq);
     if (vspan == null) { return false; }
     span.set(vspan.getStart(), vspan.getEnd(), aseq);
@@ -170,7 +153,7 @@ public final class Das2FeatureRequestSym extends SimpleSymWithProps implements T
   /** Returns a {@link Das2RequestLog} object that can be used to store
    *  the progress, status, and exceptions of this request.
    */
-  public Das2RequestLog getLog() {
+  Das2RequestLog getLog() {
     return response;
   }
 

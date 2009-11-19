@@ -20,12 +20,10 @@ import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
-import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.das.DasLoader;
@@ -36,7 +34,7 @@ import org.xml.sax.InputSource;
 import static com.affymetrix.igb.IGBConstants.UTF8;
 
 public final class Das2VersionedSource {
-
+    private static final boolean URL_ENCODE_QUERY = true;
     public static String SEGMENTS_CAP_QUERY = "segments";
     public static String TYPES_CAP_QUERY = "types";
     public static String FEATURES_CAP_QUERY = "features";
@@ -47,26 +45,18 @@ public final class Das2VersionedSource {
     static String NAME = Das2FeatureSaxParser.NAME;
     static String TITLE = Das2FeatureSaxParser.TITLE;
     static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-    URI version_uri;
-    URI coords_uri;
-    Das2Source source;
-    String name;
-    String description;
-    String info_url;
-    Date creation_date;
-    Date modified_date;
-    Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
-    Map namespaces;
-    Map<String,Das2Region> regions = new LinkedHashMap<String,Das2Region>();
-    Map properties;
-    List assembly;
-    AnnotatedSeqGroup genome = null;
-    private Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
-    private Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
+    private URI version_uri;
+    private URI coords_uri;
+    private Das2Source source;
+    private String name;
+    private final Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
+    private final Map<String,Das2Region> regions = new LinkedHashMap<String,Das2Region>();
+    private AnnotatedSeqGroup genome = null;
+    private final Map<String,Das2Type> types = new LinkedHashMap<String,Das2Type>();
+    private final Map<String,List<Das2Type>> name2types = new LinkedHashMap<String,List<Das2Type>>();
     private boolean regions_initialized = false;
     private boolean types_initialized = false;
     private String types_filter = null;
-    LinkedList platforms = new LinkedList();
 
 
     public Das2VersionedSource(Das2Source das_source, URI vers_uri, URI coords_uri, String name,
@@ -77,12 +67,8 @@ public final class Das2VersionedSource {
         source = das_source;
         if (init) {
             initSegments();
-            initTypes(null, false);
+            initTypes(null);
         }
-    }
-
-    public URI getURI() {
-        return version_uri;
     }
 
     public String getID() {
@@ -98,37 +84,16 @@ public final class Das2VersionedSource {
         return getName();
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getInfoUrl() {
-        return info_url;
-    }
-
-    public Date getCreationDate() {
-        return creation_date;
-    }
-
-    public Date getLastModifiedDate() {
-        return modified_date;
-    }
-
     public Das2Source getSource() {
         return source;
     }
 
-    public URI getCoordinatesURI() {
-        return coords_uri;
-    }
-
-    public void addCapability(Das2Capability cap) {
+    void addCapability(Das2Capability cap) {
         capabilities.put(cap.getType(), cap);
-        cap.setVersionedSource(this);
 		Das2Capability.getCapabilityMap().put(cap.getRootURI().toString(), this);
     }
 
-    public Das2Capability getCapability(String type) {
+    Das2Capability getCapability(String type) {
         return capabilities.get(type);
     }
 
@@ -164,14 +129,6 @@ public final class Das2VersionedSource {
 		return genome;
 	}
 
-    void setDescription(String desc) {
-        this.description = desc;
-    }
-
-    void setInfoUrl(String url) {
-        this.info_url = url;
-    }
-
     public synchronized Map<String,Das2Region> getSegments() {
         if (!regions_initialized) {
             initSegments();
@@ -183,9 +140,9 @@ public final class Das2VersionedSource {
      *  assumes there is only one region for each seq
      *    may want to change this to return a list of regions instead
      **/
-    public Das2Region getSegment(MutableAnnotatedBioSeq seq) {
+    public Das2Region getSegment(BioSeq seq) {
 		for (Das2Region region : getSegments().values()) {
-            MutableAnnotatedBioSeq region_seq = region.getAnnotatedSeq();
+            BioSeq region_seq = region.getAnnotatedSeq();
             if (region_seq == seq) {
                 return region;
             }
@@ -193,11 +150,7 @@ public final class Das2VersionedSource {
         return null;
     }
 
-    public synchronized void addRegion(Das2Region region) {
-        regions.put(region.getID(), region);
-    }
-
-    public synchronized void addType(Das2Type type) {
+    private synchronized void addType(Das2Type type) {
         types.put(type.getID(), type);
         String name = type.getName();
         List<Das2Type> prevlist = name2types.get(name);
@@ -210,23 +163,19 @@ public final class Das2VersionedSource {
 
     public synchronized Map<String,Das2Type> getTypes() {
         if (!types_initialized || types_filter != null) {
-            initTypes(null, false);
+            initTypes(null);
         }
         return types;
     }
 
     public synchronized List<Das2Type> getTypesByName(String name) {
         if (!types_initialized || types_filter != null) {
-            initTypes(null, false);
+            initTypes(null);
         }
         return name2types.get(name);
     }
 
-    public void clearTypes() {
-        this.types = new LinkedHashMap<String,Das2Type>();
-    }
-
-    /** Get regions from da2s server. */
+    /** Get regions from das server. */
 	private synchronized void initSegments() {
 		String region_request;
 		Das2Capability segcap = getCapability(SEGMENTS_CAP_QUERY);
@@ -284,7 +233,7 @@ public final class Das2VersionedSource {
 			if (DEBUG) {
 				System.out.println("segment: " + region_uri.toString() + ", length = " + lengthstr + ", name = " + region_name);
 			}
-			this.addRegion(region);
+			regions.put(region.getID(), region);
 		}
 	}
 
@@ -293,9 +242,9 @@ public final class Das2VersionedSource {
     /**
      *  loading of parents disabled, getParents currently does nothing
      */
-    private synchronized void initTypes(String filter, boolean getParents) {
+    private synchronized void initTypes(String filter) {
         this.types_filter = filter;
-        this.clearTypes();
+		this.types.clear();
 
         // how should xml:base be handled?
         //example of type request:  http://das.biopackages.net/das/assay/mouse/6/type?ontology=MA
@@ -366,9 +315,7 @@ public final class Das2VersionedSource {
 			//	if (typeid.startsWith("./")) { typeid = typeid.substring(2); }
 			// if these characters are one the beginning, take off the 1st 2 characters...
 			//FIXME: quick hack to get the type IDs to be kind of right (for now)
-			String ontid = typenode.getAttribute("ontology");
-			String type_source = typenode.getAttribute("source");
-			String href = typenode.getAttribute("doc_href");
+
 			String type_name = typenode.getAttribute(NAME);
 			if (type_name.length() == 0) {
 				type_name = typenode.getAttribute(TITLE);
@@ -404,7 +351,7 @@ public final class Das2VersionedSource {
 				System.out.println("Error in typeid, skipping: " + typeid + "\nUsually caused by an improper character in the URI.");
 			}
 			if (type_uri != null) {
-				Das2Type type = new Das2Type(this, type_uri, type_name, ontid, type_source, href, formats, props, null);
+				Das2Type type = new Das2Type(this, type_uri, type_name, formats, props);
 				// parents field is null for now -- remove at some point?
 				this.addType(type);
 			}
@@ -422,7 +369,7 @@ public final class Das2VersionedSource {
 			Das2Capability featcap = getCapability(FEATURES_CAP_QUERY);
 			String request_root = featcap.getRootURI().toString();
 			String nameglob = name;
-			if (Das2Region.URL_ENCODE_QUERY) {
+			if (URL_ENCODE_QUERY) {
 				nameglob = URLEncoder.encode(nameglob, UTF8);
 			}
 			String chrFilterStr = (chrFilter == null ? "?" : "?segment=" + URLEncoder.encode(chrFilter.getID(), UTF8) + ";");

@@ -16,11 +16,11 @@ There are two ways to configure the DAS2 server:
 
 === Build Targets ===
 * To build the system to run in Classic mode: 
-** Set the property das2_mode to 'classic' in common.xml.  
+** Set the property das2_genopub_mode to 'false' in common.xml.  
 ** Run the ant build target 'all' and 'webapp', which will compile the necessary jars, and create a webapp distribution (dist/webapp) with web.xml and context.xml configured to support DAS2 server running in Classic mode.        
                          
 * To build the system to run in GenoPub mode: 
-** Set the property das2_mode to 'genopub' in common.xml.  
+** Set the property das2_genopub_mode to 'true' in common.xml.  
 ** Run the ant build target 'all' and 'webapp', which will compile the necessary jars, compile the web-based GenoPub Flex tool, and create a webapp distribution (dist/webapp) configured to support the DAS2 server running in GenoPub mode:
 *** context.xml - Contains a <REALM> and <RESOURCE> entry that points to the database.  (See instructions below for installing a MySQL server and creating a genopub database.) Change the username and password to match your MySQL database account.
 *** web.xml - Contains parameters to indicate where the annotations are stored on file system.  Also contains entries to configure the server to use basic authentication.  

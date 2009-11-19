@@ -13,16 +13,16 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
 import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
-
 /**
  *
  * @version $Id$
@@ -41,6 +41,9 @@ public class AnnotatedSeqGroup {
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
 	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
+	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
+	
+	
 	/**
 	 * Private copy of the synonym lookup table.
 	 * @see com.affymetrix.genometryImpl.util.SynonymLookup#getDefaultLookup()
@@ -95,6 +98,37 @@ public class AnnotatedSeqGroup {
 	final public List<GenericVersion> getVersions() {
 		return this.gVersions;
 	}
+	
+
+	final public void addType(String type, Integer annot_id) {
+		type_id2annot_id.put(type, annot_id);
+	}
+	
+	public final Set<String> getTypeList() {
+		return type_id2annot_id.keySet();
+	}
+
+	public final Integer getAnnotationId(String type) {
+		return type_id2annot_id.get(type);
+	}
+	
+	public final boolean isAuthorized(AnnotSecurity annotSecurity, String type) {
+		 boolean isAuthorized =  annotSecurity.isAuthorized(this.getID(), type, getAnnotationId(type));
+	     Logger.getLogger(AnnotatedSeqGroup.class.getName()).fine((isAuthorized ? "Showing  " : "Blocking ") + " Annotation " + type + " ID=" + getAnnotationId(type));
+		 return isAuthorized;
+	}
+	
+	public final Map<String, Object> getProperties(AnnotSecurity annotSecurity, String type) {
+		Map<String, Object> props = annotSecurity.getProperties(this.getID(), type, getAnnotationId(type));
+		return props;
+	}
+	
+	public final boolean hasFileExtension(String data_root, AnnotSecurity annotSecurity, String type, String extension) {
+		 boolean isAuthorized =  annotSecurity.hasFileExtension(data_root, this.getID(), type, getAnnotationId(type), extension);
+		 return isAuthorized;
+	}
+	
+
 	
 	/** By default, simply returns the global StateProvider, but subclasses
 	 *  can implement a different one for each seq group.

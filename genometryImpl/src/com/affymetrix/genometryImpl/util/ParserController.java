@@ -14,14 +14,25 @@ import java.util.logging.Logger;
  *  Trying to make a central repository for parsers.
  */
 public final class ParserController {
+  
 
+
+  public static List parse(
+      InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
+    String type_prefix = null;
+    int sindex = stream_name.lastIndexOf("/");
+    if (sindex >= 0) {
+      type_prefix = stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
+    }
+    return parse(instr, annotList, stream_name, gmodel, seq_group, type_prefix);
+  }
+  
+
+    
 	public static List parse(
-			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group) {
+			InputStream instr, List<AnnotMapElt> annotList, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup seq_group, String type_prefix) {
 		InputStream str = null;
 		List results = null;
-		int sindex = stream_name.lastIndexOf("/");
-		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
-		
 		try {
 			if (instr instanceof BufferedInputStream) {
 				str = (BufferedInputStream) instr;
@@ -40,14 +51,14 @@ public final class ParserController {
 				if (type_prefix != null) {
 					bp1_reader.setTypePrefix(type_prefix);
 				}
-				String annot_type = GetAnnotType(annotList, stream_name, ".bp");
+				String annot_type = GetAnnotType(annotList, stream_name, ".bp", type_prefix);
 				// parsing probesets in bp1/bp2 format, but not add ids to group's id2sym hash
 				//   (to save memory)
 				results = bp1_reader.parse(str, seq_group, true, annot_type, false);
 				System.out.println("done loading via Bprobe1Parser: " + stream_name);
 			} else if (stream_name.endsWith(".ead")) {
 				System.out.println("loading via ExonArrayDesignParser");
-				String annot_type = GetAnnotType(annotList, stream_name, ".ead");
+				String annot_type = GetAnnotType(annotList, stream_name, ".ead", type_prefix);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				parser.parse(str, seq_group, true, annot_type);
 				System.out.println("done loading via ExonArrayDesignParser: " + stream_name);
@@ -64,9 +75,11 @@ public final class ParserController {
 				parser.addFeatureFilter("transcript");
 				parser.setGroupTag("transcript_id");
 				parser.setUseDefaultSource(true);
+				parser.setUseTrackLines(false);
 				// specifying via boolean arg that GFFParser should build container syms, one for each
 				//    particular "source" on each particular seq, can override the source for setting the name
-				results = parser.parse(str, stream_name.substring(0, stream_name.length() - 4), seq_group, true);
+				String annot_type = type_prefix == null ? stream_name.substring(0, stream_name.length() - 4) : type_prefix;
+				results = parser.parse(str, annot_type, seq_group, true);
 			} else if (stream_name.endsWith(".cyt")) {
 				System.out.println("loading via CytobandParser: " + stream_name);
 				CytobandParser parser = new CytobandParser();
@@ -103,12 +116,12 @@ public final class ParserController {
 	 * @param seq_group
 	 * @return
 	 */
-	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group) {
+	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		IndexWriter iWriter = getIndexWriter(stream_name);
 		DataInputStream dis = new DataInputStream(str);
 
 		String extension = getExtension(stream_name);
-		String annot_type = GetAnnotType(annotList, stream_name, extension);
+		String annot_type = GetAnnotType(annotList, stream_name, extension, type_prefix);
 
 		System.out.println("Indexing " + stream_name);
 
@@ -133,8 +146,11 @@ public final class ParserController {
 	public static String getExtension(String stream_name) {
 		if (stream_name.endsWith(".link.psl")) {
 			return stream_name.substring(stream_name.lastIndexOf(".link.psl"), stream_name.length());
+		} else if (stream_name.lastIndexOf(".") >= 0) {			
+			return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
+		} else {
+			return "";
 		}
-		return stream_name.substring(stream_name.lastIndexOf("."), stream_name.length());
 	}
 
 
@@ -181,6 +197,21 @@ public final class ParserController {
 
 	// return an annotation type.
 	// This is either:
+	// 1. A type name contained in the annots_map hash table.
+	// 2. (Default) The stream name with the extension stripped off.
+	public static String GetAnnotType(List<AnnotMapElt> annotsList,
+	        String stream_name, String extension, String type_prefix) {
+		
+		if (type_prefix != null) {
+			return GetAnnotType(annotsList, stream_name, extension);
+		} else {
+			return type_prefix;
+		}
+	}
+
+
+
+	// This is either:
 	// 1.  A type name contained in the annotList hash table.
 	// 2.  (Default) The stream name with the extension stripped off.
 	public static String GetAnnotType(
@@ -200,5 +231,5 @@ public final class ParserController {
 		// Strip off the extension.
 		return stream_name.substring(0, stream_name.lastIndexOf(extension));
 	}
-
 }
+

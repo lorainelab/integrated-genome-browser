@@ -86,10 +86,25 @@ public final class GenericFeature {
 	}
 
 	public String description() {
-		if (this.featureProps != null && this.featureProps.containsKey("description")) {
-			return this.featureProps.get("description");
+		if (this.featureProps != null) {
+			
+			String summary = featureProps.get("summary");
+			String descrip = featureProps.get("description");
+			
+			if (summary != null && !summary.equals("")) {
+				return summary;
+			} else if (descrip != null && !descrip.equals("")) {
+				if (descrip.length() > 100) {
+					return descrip.substring(0, 100) + "...";
+				} else {
+					return descrip;
+				}
+			} else {
+				return featureName;
+			}
+		} else {
+			return featureName;
 		}
-		return "";
 	}
 
 	@Override

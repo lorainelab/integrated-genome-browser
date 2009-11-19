@@ -270,6 +270,8 @@ public final class GFFParser implements AnnotationWriter  {
 	}
 
 	boolean use_track_lines = true;
+	
+	
 
 	public List<? extends SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group, boolean create_container_annot)
 		throws IOException {
@@ -477,7 +479,7 @@ public final class GFFParser implements AnnotationWriter  {
 					// outputGFF() method.  Otherwise it is probably not necessary since "id" is set to group id below
 					groupsym.setProperty("group", group_id);
 					groupsym.setProperty("source", source);
-					if (track_name != null) {
+					if (this.use_track_lines && track_name != null) {
 						groupsym.setProperty("method", track_name);
 					} else {
 						groupsym.setProperty("method", source);
@@ -1031,4 +1033,8 @@ public final class GFFParser implements AnnotationWriter  {
 	public void setUseDefaultSource(boolean useDefaultSource) {
 		this.useDefaultSource = useDefaultSource;
 	}
+
+	public void setUseTrackLines(boolean use_track_lines) {
+    	this.use_track_lines = use_track_lines;
+    }
 }

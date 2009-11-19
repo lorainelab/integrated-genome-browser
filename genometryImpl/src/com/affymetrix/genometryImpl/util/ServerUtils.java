@@ -2,6 +2,8 @@ package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.comparator.MatchToListComparator;
 import com.affymetrix.genometryImpl.comparator.GenomeVersionDateComparator;
+import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
+import com.affymetrix.genometryImpl.AnnotSecurity;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.SearchableSeqSymmetry;
@@ -223,6 +225,8 @@ public abstract class ServerUtils {
 			String graph_name = type_name.substring(0, type_name.length() - graph_dir_suffix.length());
 			System.out.println("@@@ adding graph directory to types: " + graph_name + ", path: " + current_file.getPath());
 			graph_name2dir.put(graph_name, current_file.getPath());
+			
+			genome.addType(graph_name, null);
 		} else {
 			File[] child_files = current_file.listFiles(new HiddenFileFilter());
 			Arrays.sort(child_files);
@@ -265,6 +269,9 @@ public abstract class ServerUtils {
 			String file_path = current_file.getPath();
 			System.out.println("@@@ adding graph file to types: " + type_name + ", path: " + file_path);
 			graph_name2file.put(type_name, file_path);
+
+			genome.addType(type_name, null);
+
 			return;
 		}
 
@@ -282,7 +289,7 @@ public abstract class ServerUtils {
 		}
 
 		// current originalFile is not a directory, so try and recognize as annotation file
-		indexOrLoadFile(dataRoot, current_file, type_name, annots_map, genome);
+		indexOrLoadFile(dataRoot, current_file, type_name, type_name, annots_map, genome, null);
 	}
 
 
@@ -293,7 +300,7 @@ public abstract class ServerUtils {
 	 * @param genome
 	 * @param loadedSyms
 	 */
-	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome) throws IOException {
+	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, String annot_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome, Integer annot_id) throws FileNotFoundException, IOException {
 
 		String originalFileName = file.getName();
 
@@ -301,9 +308,14 @@ public abstract class ServerUtils {
 
 		List<AnnotMapElt> annotList = annots_map.get(genome);
 
+		String extension = ParserController.getExtension(stream_name);
+		String typeName = annot_name != null ? annot_name : ParserController.GetAnnotType(annotList, stream_name, extension);
+		genome.addType(typeName, annot_id);
+
 		AnnotatedSeqGroup tempGenome = AnnotatedSeqGroup.tempGenome(genome);
+
 		if (iWriter == null) {	
-			loadAnnotFile(file, stream_name, annotList, genome, false);
+			loadAnnotFile(file, stream_name, typeName, annotList, genome, false);
 			getAddedChroms(genome, tempGenome, false);
 			getAlteredChroms(genome, tempGenome, false);
 			//System.out.println("Type " + typeName + " is not optimizable");
@@ -311,12 +323,10 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		List loadedSyms = loadAnnotFile(file, stream_name, annotList, tempGenome, true);
+		List loadedSyms = loadAnnotFile(file, stream_name, typeName, annotList, tempGenome, true);
 		getAddedChroms(tempGenome, genome, true);
 		getAlteredChroms(tempGenome, genome, true);
 
-		String extension = ParserController.getExtension(stream_name);
-		String typeName = ParserController.GetAnnotType(annotList, stream_name, extension);
 		String returnTypeName = typeName;
 		if (stream_name.endsWith(".link.psl")) {
 			// Nasty hack necessary to add "netaffx consensus" to type names returned by GetGenomeType
@@ -343,16 +353,75 @@ public abstract class ServerUtils {
 	}
 
 
-	private static List loadAnnotFile(File current_file, String stream_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
+	private static List loadAnnotFile(File current_file, String stream_name, String type_name, List<AnnotMapElt> annotList, AnnotatedSeqGroup genome, boolean isIndexed) throws FileNotFoundException {
 		InputStream istr = null;
 		List results = null;
 		istr = new BufferedInputStream(new FileInputStream(current_file));
 		if (!isIndexed) {
-			results = ParserController.parse(istr, annotList, stream_name, gmodel, genome);
+			results = ParserController.parse(istr, annotList, stream_name, gmodel, genome, type_name);
 		} else {
-			results = ParserController.parseIndexed(istr, annotList, stream_name, genome);
+			results = ParserController.parseIndexed(istr, annotList, stream_name, genome, type_name);
 		}
 		return results;
+	}
+
+
+
+	/**
+	 *   If current_file is directory:
+	 *       if ".seqs" suffix, then handle as graphs
+	 *       otherwise recursively call on each child files;
+	 *   if not directory, see if can parse as annotation file.
+	 *   if type prefix is null, then at top level of genome directory, so make type_prefix = "" when recursing down
+	 */
+	public static final void loadDBAnnotsFromFile(String dataroot,
+			File current_file, 
+			AnnotatedSeqGroup genome, 
+			Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map,
+			String type_prefix, 
+			Integer annot_id,
+			Map<String,String> graph_name2file) throws FileNotFoundException, IOException {
+		String file_name = current_file.getName();
+		String file_path = current_file.getPath();
+
+
+
+		if (file_name != null && file_name.endsWith(".bar")) {
+			// String file_path = current_file.getPath();
+			// special casing so bar files are seen in types request, but not parsed in on startup
+			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
+			System.out.println("@@@ adding graph file to types: " + type_prefix + ", path: " + file_path);
+			graph_name2file.put(type_prefix, file_path);
+			genome.addType(type_prefix, annot_id);
+
+			return;
+		}
+
+
+		if (file_name.equals("mod_chromInfo.txt") || file_name.equals("liftAll.lft")) {
+			// for loading annotations, ignore the genome sequence data files
+			return;
+		}
+
+		
+		// current originalFile is not a directory, so try and recognize as annotation file
+		indexOrLoadFile(dataroot, current_file, current_file.getName(), type_prefix, annots_map, genome, annot_id);
+	}
+
+
+	public static final void loadDBAnnotsFromDir(String type_name, 
+			String file_path, 
+			AnnotatedSeqGroup genome, 
+			File current_file, 
+			Integer annot_id,
+			Map<String,String> graph_name2dir) {
+		// each file in directory is same annotation type, but for a single seq?
+		// assuming bar files for now, each with starting with seq id?
+		//  String graph_name = file_name.substring(0, file_name.length() - graph_dir_suffix.length());
+		System.out.println("@@@ adding graph directory to types: " + type_name + ", path: " + file_path);
+		graph_name2dir.put(type_name, file_path);
+		genome.addType(type_name, annot_id);
+
 	}
 
 
@@ -658,35 +727,41 @@ public abstract class ServerUtils {
 	/**
 	 *  Gets the list of types of annotations for a given genome version.
 	 *  Assuming top-level annotations hold type info in property "method" or "meth".
-	 *  @return a Map where keys are feature type Strings and values
-	 *    are non-null Lists of preferred format Strings
+	 *  @return a Map where keys are feature type Strings and values are 
+	 *    instances of SimpleDas2Type, which contains a list graph formats and
+	 *    a map of properties.
 	 *
 	 *  may want to cache this info (per versioned source) at some point...
 	 */
-	public static final Map<String, List<String>> getTypes(
-			AnnotatedSeqGroup genome,
-			Map<String, String> graph_name2file,
-			Map<String, String> graph_name2dir,
-			ArrayList<String> graph_formats) {
-		Map<String, List<String>> genome_types = getGenomeTypes(genome.getSeqList());
+	public static final Map<String, SimpleDas2Type> getTypes(
+					String data_root,
+					AnnotatedSeqGroup genome,
+					ArrayList<String> graph_formats,
+					AnnotSecurity annotSecurity) {
+		
+		Map<String, SimpleDas2Type> genome_types = getGenomeTypes(genome, annotSecurity);
 
-		// adding in any graph files as additional types (with type id = originalFile name)
-		// this is temporary, need a better solution soon -- should probably add empty graphs to seqs to have graphs
-		//    show up in originalSeq.getTypes(), but without actually being loaded??
-		for (String gname : graph_name2file.keySet()) {
-			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
-		}
-
-		for (String gname : graph_name2dir.keySet()) {
-			genome_types.put(gname, graph_formats);  // should probably get formats instead from "preferred_formats"?
+		// Now add all of the bar graphs that were not picked up from getGenomeTypes()
+		for (String type : genome.getTypeList()) {
+			if (!genome_types.containsKey(type)) {
+				if (genome.isAuthorized(annotSecurity, type)) {
+					if (genome.hasFileExtension(data_root, annotSecurity, type, ".bar")) {
+						genome_types.put(type, new SimpleDas2Type(genome.getID(), graph_formats, genome.getProperties(annotSecurity, type))); 										
+					} else {
+						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request."); 
+					}
+				}
+				
+			}
 		}
 
 		return genome_types;
 	}
 
 	// iterate over seqs to collect annotation types
-	private static final Map<String, List<String>> getGenomeTypes(List<BioSeq> seqList) {
-		Map<String, List<String>> genome_types = new LinkedHashMap<String, List<String>>();
+	private static final Map<String, SimpleDas2Type> getGenomeTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity) {
+		List<BioSeq> seqList = genome.getSeqList();
+		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();
 		for (BioSeq aseq : seqList) {
 			for (String type : aseq.getTypeList()) {
 				if (genome_types.get(type) != null) {
@@ -701,7 +776,10 @@ public abstract class ServerUtils {
 						flist = formats;
 					}
 				}
-				genome_types.put(type, flist);
+				
+		        if (genome.isAuthorized(annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
+		        }
 			}
 			for (String type : aseq.getIndexedTypeList()) {
 				if (genome_types.get(type) != null) {
@@ -710,7 +788,12 @@ public abstract class ServerUtils {
 				IndexedSyms iSyms = aseq.getIndexedSym(type);
 				List<String> flist = new ArrayList<String>();
 				flist.addAll(iSyms.iWriter.getFormatPrefList());
-				genome_types.put(type, flist);
+				
+			    
+		        if (genome.isAuthorized(annotSecurity, type)) {
+					genome_types.put(type, new SimpleDas2Type(type, flist, genome.getProperties(annotSecurity, type)));
+		        }
+
 			}
 		}
 		return genome_types;

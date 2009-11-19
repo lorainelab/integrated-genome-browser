@@ -18,7 +18,7 @@ public final class GenericServer implements Comparable<GenericServer> {
 	public boolean enabled;			// Is this server enabled?
 	public final Object serverObj;    // Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	public final URL friendlyURL;			// friendly URL that users may look at.
-	public ImageIcon friendlyIcon = null;		// friendly icon that users may look at.
+	private ImageIcon friendlyIcon = null;		// friendly icon that users may look at.
 	public int  loginAttempts = 0;
 
 	/**
@@ -41,10 +41,18 @@ public final class GenericServer implements Comparable<GenericServer> {
 		this.password = password;			// to be used by DAS/2 authentication
 
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
-		if (this.friendlyURL != null) {
-			this.friendlyIcon = GeneralUtils.determineFriendlyIcon(
-				this.friendlyURL.toString() + "/favicon.ico");
+	}
+	
+	public ImageIcon getFriendlyIcon() {
+		if (friendlyIcon == null) {
+			if (this.friendlyURL != null) {
+				this.friendlyIcon = GeneralUtils.determineFriendlyIcon(
+							this.friendlyURL.toString() + "/favicon.ico");
+				
+			}		
+			
 		}
+		return friendlyIcon;
 	}
 
 	private static URL determineFriendlyURL(String URL, ServerType serverType) {
@@ -61,8 +69,9 @@ public final class GenericServer implements Comparable<GenericServer> {
 				tempURL = tempURL.substring(0, tempURL.length() - 4);
 			}
 		} else if (serverType.equals(ServerType.DAS2)) {
-			// Remove the last section (e.g., "/genome" or "/das2")
-			tempURL = tempURL.substring(0, tempURL.lastIndexOf("/"));
+			if (tempURL.endsWith("/genome")) {
+				tempURL = tempURL.substring(0, tempURL.length() - 7);
+			} 
 		}
 		try {
 			tempFriendlyURL = new URL(tempURL);

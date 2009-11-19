@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class MatchElement implements DrawableElement {
+class MatchElement implements DrawableElement {
 
 //<!ELEMENT MATCH (PROPERTY*, ((MATCH+,ELSE?) | (STYLE|USE_STYLE)))>
 //<!ATTLIST MATCH
@@ -30,19 +30,19 @@ public class MatchElement implements DrawableElement {
 //    param CDATA #REQUIRED
 //>
   
-  public static String NAME = "MATCH";
+  static String NAME = "MATCH";
 
-  public static String ATT_TEST = "test";
-  public static String ATT_PARAM = "param";
+  static String ATT_TEST = "test";
+  static String ATT_PARAM = "param";
   
-  public static String MATCH_BY_EXACT_TYPE = "type";
-  public static String MATCH_BY_EXACT_METHOD = "method";
-  public static String MATCH_BY_METHOD_REGEX = "method_regex";
+  static String MATCH_BY_EXACT_TYPE = "type";
+  static String MATCH_BY_EXACT_METHOD = "method";
+  static String MATCH_BY_METHOD_REGEX = "method_regex";
 
   /** A test where of whether the item has or doesn't have children;
    *  the param should be set to "true" (default) or "false".
    */
-  public static String TEST_HAS_CHILDREN = "has_children";
+  static String TEST_HAS_CHILDREN = "has_children";
   
   static String[] knownTypes = new String[] {
     MATCH_BY_EXACT_TYPE, MATCH_BY_EXACT_METHOD, MATCH_BY_METHOD_REGEX,
@@ -71,7 +71,7 @@ public class MatchElement implements DrawableElement {
     return clone;
   }
 
-  public MatchElement() {
+  MatchElement() {
     this.propertyMap = new PropertyMap();
   }
   
@@ -154,15 +154,15 @@ public class MatchElement implements DrawableElement {
     return result;
   }
   
-  public StyleElement getStyle() {
+  StyleElement getStyle() {
     return this.styleElement;
   }
 
-  public void setStyle(StyleElement style) {
+  void setStyle(StyleElement style) {
     this.styleElement = style;
   }
 
-  public List<MatchElement> getSubMatchList() {
+  List<MatchElement> getSubMatchList() {
     return this.subMatchList;
   }
   

@@ -13,7 +13,7 @@
 
 package com.affymetrix.igb.menuitem;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -46,7 +46,7 @@ public final class OpenGraphAction extends AbstractAction {
 
   public void actionPerformed(ActionEvent e) {
     // allowing for multiple file selection, so may have multiple graphs
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     if (aseq == null) {
       ErrorHandler.errorPanel("Must load a sequence before loading a graph");
       return;
@@ -64,7 +64,7 @@ public final class OpenGraphAction extends AbstractAction {
     }
   }
 
-  public static Thread loadAndShowGraphs(File[] files, MutableAnnotatedBioSeq aseq, SeqMapView gviewer)
+  public static Thread loadAndShowGraphs(File[] files, BioSeq aseq, SeqMapView gviewer)
   throws MalformedURLException {
     URL[] urls = new URL[files.length];
     for (int i=0; i<files.length; i++) {
@@ -73,7 +73,7 @@ public final class OpenGraphAction extends AbstractAction {
     return loadAndShowGraphs(urls, aseq, gviewer);
   }
 
-  public static Thread loadAndShowGraphs(final URL[] files, final MutableAnnotatedBioSeq aseq, final SeqMapView gviewer) {
+  public static Thread loadAndShowGraphs(final URL[] files, final BioSeq aseq, final SeqMapView gviewer) {
     Thread t = new Thread() {
       ThreadProgressMonitor monitor = null;
       public void run() {
@@ -133,7 +133,7 @@ public final class OpenGraphAction extends AbstractAction {
    *  this is a reminder that this is fairly common here.  (You have to catch
    *  "Throwable" rather than "Exception" to catch these.)
    */
-  static List<GraphSym> loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
+  static List<GraphSym> loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
   throws IOException, OutOfMemoryError {
     List<GraphSym> graphs = Collections.<GraphSym>emptyList();
     if (aseq != null) {
@@ -147,7 +147,7 @@ public final class OpenGraphAction extends AbstractAction {
   }
 
   //TODO: Make a version that works with an InputStream instead of a url
-  public static List<GraphSym> loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq aseq) throws IOException, OutOfMemoryError {
+  public static List<GraphSym> loadGraphFile(URL furl, AnnotatedSeqGroup seq_group, BioSeq aseq) throws IOException, OutOfMemoryError {
     List<GraphSym> graphs = Collections.<GraphSym>emptyList();
     InputStream fis = null;
     try {

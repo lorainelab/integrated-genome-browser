@@ -16,7 +16,7 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredMapParser;
 import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -171,9 +171,9 @@ public final class LoadFileAction {
 		File[] fils = chooser.getSelectedFiles();
 
 		AnnotatedSeqGroup previous_seq_group = gmodel.getSelectedSeqGroup();
-		MutableAnnotatedBioSeq previous_seq = gmodel.getSelectedSeq();
+		BioSeq previous_seq = gmodel.getSelectedSeq();
 
-		MutableAnnotatedBioSeq new_seq = null;
+		BioSeq new_seq = null;
 
 		if (!chooser.merge_button.isSelected()) {
 			// Not merging, so create a new Seq Group
@@ -194,10 +194,10 @@ public final class LoadFileAction {
 
 	
 
-	private static MutableAnnotatedBioSeq loadFilesIntoSeq(
+	private static BioSeq loadFilesIntoSeq(
 					File[] fils, JFrame gviewerFrame, GenometryModel gmodel,
-					AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq seq) {
-		MutableAnnotatedBioSeq new_seq = null;
+					AnnotatedSeqGroup seq_group, BioSeq seq) {
+		BioSeq new_seq = null;
 		for (File cfil : fils) {
 			String file_name = cfil.toString();
 			if (file_name.indexOf("http:") > -1) {
@@ -213,10 +213,10 @@ public final class LoadFileAction {
 		return new_seq;
 	}
 
-	private static MutableAnnotatedBioSeq load(JFrame gviewerFrame, File annotfile,
-					GenometryModel gmodel, AnnotatedSeqGroup seq_group, MutableAnnotatedBioSeq input_seq)
+	private static BioSeq load(JFrame gviewerFrame, File annotfile,
+					GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq)
 					throws IOException {
-		MutableAnnotatedBioSeq aseq = null;
+		BioSeq aseq = null;
 		InputStream fistr = null;
 		try {
 			// need to handle CHP files as a special case, because ChpParser currently only has
@@ -251,7 +251,7 @@ public final class LoadFileAction {
 		return aseq;
 	}
 
-	private static void setGroupAndSeq(GenometryModel gmodel, AnnotatedSeqGroup previous_seq_group, MutableAnnotatedBioSeq previous_seq, MutableAnnotatedBioSeq new_seq) {
+	private static void setGroupAndSeq(GenometryModel gmodel, AnnotatedSeqGroup previous_seq_group, BioSeq previous_seq, BioSeq new_seq) {
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		if (group == null) {
 			// This primarily can happen if the merge button is not selected
@@ -289,8 +289,8 @@ public final class LoadFileAction {
 	 *  The stream will be passed through uncompression routines
 	 *  if necessary.
 	 */
-	public static MutableAnnotatedBioSeq load(JFrame gviewerFrame, InputStream instr,
-					String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, MutableAnnotatedBioSeq input_seq)
+	public static BioSeq load(JFrame gviewerFrame, InputStream instr,
+					String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, BioSeq input_seq)
 					throws IOException {
 		if (selected_group == null) {
 			// this should never happen
@@ -300,7 +300,7 @@ public final class LoadFileAction {
 		Application.getSingleton().logInfo("loading file: " + stream_name);
 
 		Exception the_exception = null;
-		MutableAnnotatedBioSeq aseq = null;
+		BioSeq aseq = null;
 		InputStream str = null;
 
 		try {
@@ -343,8 +343,8 @@ public final class LoadFileAction {
 		return aseq;
 	}
 
-	private static MutableAnnotatedBioSeq DoParse(
-					InputStream str, AnnotatedSeqGroup selected_group, MutableAnnotatedBioSeq input_seq,
+	private static BioSeq DoParse(
+					InputStream str, AnnotatedSeqGroup selected_group, BioSeq input_seq,
 					String stream_name, JFrame gviewerFrame, GenometryModel gmodel)
 					throws IOException, InterruptedException, HeadlessException, SAXException {
 
@@ -470,16 +470,12 @@ public final class LoadFileAction {
 				return null;
 			}
 		} else if (lcname.endsWith(".bnib")) {
-			if (input_seq == null || input_seq instanceof BioSeq) {
-				BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
-				if (aseq != gmodel.getSelectedSeq()) {
-					//TODO: maybe set the current seq to this seq
-					Application.getSingleton().logWarning("This is not the currently-selected sequence.");
-				}
-				return aseq;
+			BioSeq aseq = NibbleResiduesParser.parse(str, selected_group);
+			if (aseq != gmodel.getSelectedSeq()) {
+				//TODO: maybe set the current seq to this seq
+				Application.getSingleton().logWarning("This is not the currently-selected sequence.");
 			}
-			ErrorHandler.errorPanel(gviewerFrame, "ABORTED LOADING BNIB FILE", "The currently loaded sequence is not the correct type to merge with a bnib file", null);
-			return null;
+			return aseq;
 		}
 
 		ErrorHandler.errorPanel(gviewerFrame, "FORMAT NOT RECOGNIZED", "Format not recognized for file: " + stream_name, null);
@@ -531,9 +527,9 @@ public final class LoadFileAction {
 		}
 	}
 
-	/** Returns the first MutableAnnotatedBioSeq on the first SeqSymmetry in the given list, or null. */
-	private static MutableAnnotatedBioSeq getFirstSeq(List<SeqSymmetry> syms) {
-		MutableAnnotatedBioSeq first_seq = null;
+	/** Returns the first BioSeq on the first SeqSymmetry in the given list, or null. */
+	private static BioSeq getFirstSeq(List<SeqSymmetry> syms) {
+		BioSeq first_seq = null;
 		if (syms != null && !syms.isEmpty()) {
 			SeqSymmetry fsym = syms.get(0);
 			SeqSpan fspan = fsym.getSpan(0);

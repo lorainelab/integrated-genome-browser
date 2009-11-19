@@ -21,8 +21,8 @@ import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Component;
 import java.awt.geom.Rectangle2D;
 
@@ -30,19 +30,15 @@ import java.awt.geom.Rectangle2D;
  *  Wraps a AffyTieredMap and another map that has tier labels which 
  *    track changes in tiers (size, placement) of AffyTieredMap.
  */
-public class AffyLabelledTierMap extends AffyTieredMap  {
+public final class AffyLabelledTierMap extends AffyTieredMap  {
   
-  AffyTieredMap labelmap;
+  private AffyTieredMap labelmap;
   private JSplitPane mapsplitter;
-  private List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
+  private final List<TierLabelGlyph> label_glyphs = new ArrayList<TierLabelGlyph>();
   private JPanel can_panel;
-  
-  public AffyLabelledTierMap() {
-    super();
-  }
 
   public AffyLabelledTierMap(boolean hscroll_show, boolean vscroll_show) {
-    super(hscroll_show, vscroll_show);
+    super(hscroll_show, vscroll_show, NeoConstants.HORIZONTAL);
   }
 
   /**
@@ -58,7 +54,6 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     // setMapColor() controls what I normally think of as the background.
 
     mapsplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-    //mapsplitter.setOneTouchExpandable(true);		// confusing to new users
     mapsplitter.setDividerSize(8);
     mapsplitter.setDividerLocation(100);
     NeoCanvas ncan = this.getNeoCanvas();
@@ -96,7 +91,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   public void clearWidget() {
     super.clearWidget();
     labelmap.clearWidget();
-    label_glyphs = new ArrayList<TierLabelGlyph>();
+    label_glyphs.clear();
   }
 
   public List<TierLabelGlyph> getTierLabels() {
@@ -110,19 +105,11 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
 	@Override
   public void packTiers(boolean full_repack, boolean stretch_map, boolean extra_for_now) { 
     super.packTiers(full_repack, stretch_map, extra_for_now);
-    //Rectangle2D.Double bbox = this.getCoordBounds();
-    //    labelmap.setMapOffset((int)bbox.y, (int)(bbox.y + bbox.height));
-    // this should actually get dealt with in AffyTieredMap, since packTiers() calls 
-    //     this.setFloatBounds(), which in turn calls labelmap.setFloatOffset()
-    //    labelmap.setFloatBounds(bbox.y, bbox.y + bbox.height);
     Rectangle2D.Double lbox = labelmap.getCoordBounds();
-    for (int i=0; i<label_glyphs.size(); i++) {
-      GlyphI label_glyph = (GlyphI)label_glyphs.get(i);
+	for (TierLabelGlyph label_glyph : label_glyphs) {
       TierGlyph tier_glyph = (TierGlyph)label_glyph.getInfo();
       Rectangle2D.Double tbox = tier_glyph.getCoordBox();
-      //      label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
-      //      System.out.println(label_glyph.getCoordBox());
       label_glyph.setVisibility(tier_glyph.isVisible());
     }
   }
@@ -144,7 +131,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
    *  Called by addTier() methods.  Override this to 
    *  add additional settings to the glyph.
    */
-  public TierLabelGlyph createTierLabel(TierGlyph mtg) {
+  private TierLabelGlyph createTierLabel(TierGlyph mtg) {
     TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
     // No need to set the TierLabelGlyph colors or label:
     // it reads that information dynamically from the given TierGlyph
@@ -191,16 +178,6 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
     }
   }
 
-	/*
-	@Override
-  public void scroll(int axisid, double value) {
-    super.scroll(axisid, value);
-    if (axisid == Y && labelmap != null) {
-      labelmap.scroll(axisid, value);
-    }
-  }
-	 */
-
 	@Override
   public void setZoomBehavior(int axisid, int constraint, double coord) {
     super.setZoomBehavior(axisid, constraint, coord);
@@ -240,7 +217,7 @@ public class AffyLabelledTierMap extends AffyTieredMap  {
   /** Prints this component.
    *  @param print_labels whether or not to print the label map along with the map
    */
-  public void print(boolean print_labels) throws java.awt.print.PrinterException {
+  private void print(boolean print_labels) throws java.awt.print.PrinterException {
     ComponentPagePrinter cpp = null;
     if (print_labels) {
       cpp = new ComponentPagePrinter(mapsplitter);

@@ -14,7 +14,7 @@
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -34,8 +34,10 @@ import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.*;
@@ -43,20 +45,28 @@ import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
-  static final boolean DEBUG = false;
-  static boolean das2_writeback_enabled = false;
+  private static final boolean DEBUG = false;
+  
+  private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  private AnnotatedSeqViewer gviewer;
+  private TierLabelManager handler;
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  AnnotatedSeqViewer gviewer;
-  TierLabelManager handler;
+  private final JMenu showMenu = new JMenu("Show...");
+  private final JMenu changeMenu = new JMenu("Change...");
+  private final JMenu strandsMenu = new JMenu("Strands...");
+  private final JMenuItem deleteMI = new JMenuItem("Delete");
 
-  Action select_all_tiers_action = new AbstractAction("Select All Tiers") {
+  private ActionToggler at1;
+  private ActionToggler at2;
+  private ActionToggler at3;
+
+  private Action select_all_tiers_action = new AbstractAction("Select All Tiers") {
     public void actionPerformed(ActionEvent e) {
       handler.selectAllTiers();
     }
   };
 
-  Action rename_action = new AbstractAction("Change Display Name") {
+  private Action rename_action = new AbstractAction("Change Display Name") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() != 1) {
@@ -67,88 +77,85 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  Action customize_action = new AbstractAction("Customize") {
+  private Action customize_action = new AbstractAction("Customize") {
     public void actionPerformed(ActionEvent e) {
       showCustomizer();
     }
   };
 
-  Action expand_action = new AbstractAction("Expand") {
+  private Action expand_action = new AbstractAction("Expand") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getSelectedTierLabels(), false);
     }
   };
 
-  Action expand_all_action = new AbstractAction("Expand All") {
+  private Action expand_all_action = new AbstractAction("Expand All") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getAllTierLabels(), false);
     }
   };
 
-  Action collapse_action = new AbstractAction("Collapse") {
+  private Action collapse_action = new AbstractAction("Collapse") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getSelectedTierLabels(), true);
     }
   };
 
-  Action collapse_all_action = new AbstractAction("Collapse All") {
+  private Action collapse_all_action = new AbstractAction("Collapse All") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getAllTierLabels(), true);
     }
   };
 
-  Action hide_action = new AbstractAction("Hide") {
+  private Action hide_action = new AbstractAction("Hide") {
     public void actionPerformed(ActionEvent e) {
       hideTiers(handler.getSelectedTierLabels());
     }
   };
 
-  Action show_all_action = new AbstractAction("Show All Types") {
+  private Action show_all_action = new AbstractAction("Show All Types") {
     public void actionPerformed(ActionEvent e) {
       showAllTiers();
     }
   };
 
-  Action change_color_action = new AbstractAction("Change FG Color") {
+  private Action change_color_action = new AbstractAction("Change FG Color") {
     public void actionPerformed(ActionEvent e) {
       changeColor(handler.getSelectedTierLabels(), true);
     }
   };
 
-  Action change_bg_color_action = new AbstractAction("Change BG Color") {
+  private Action change_bg_color_action = new AbstractAction("Change BG Color") {
     public void actionPerformed(ActionEvent e) {
       changeColor(handler.getSelectedTierLabels(), false);
     }
   };
 
-  Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
+  private Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
     public void actionPerformed(ActionEvent e) {
       setColorByScore(handler.getSelectedTierLabels(), true);
     }
   };
 
-  Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
+  private Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
     public void actionPerformed(ActionEvent e) {
       setColorByScore(handler.getSelectedTierLabels(), false);
     }
   };
 
-  Action show_two_tiers = new AbstractAction("Show 2 tiers (+) and (-)") {
+  private Action show_two_tiers = new AbstractAction("Show 2 tiers (+) and (-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), true);
     }
   };
 
-  Action show_single_tier = new AbstractAction("Show 1 tier (+/-)") {
+  private Action show_single_tier = new AbstractAction("Show 1 tier (+/-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), false);
     }
   };
-  //TODO: make a change_height_action
-  //Action change_height_action = ....
-
-
-  Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
+  
+  private Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -158,7 +165,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       addSymSummaryTier(current_tier);
     }
   };
-  Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
+  private Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -168,61 +175,40 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       addSymCoverageTier(current_tier);
     }
   };
-  Action save_bed_action = new AbstractAction("Save tier as BED file") {
+  private Action save_bed_action = new AbstractAction("Save tier as BED file") {
     public void actionPerformed(ActionEvent e) {
-      List current_tiers = handler.getSelectedTiers();
+      List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
         ErrorHandler.errorPanel("Must select only one tier");
       }
-      TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
+      TierGlyph current_tier = current_tiers.get(0);
       saveAsBedFile(current_tier);
     }
   };
 
-  /*Action save_das_action = new AbstractAction("Save tier as DAS/2 XML file") {
-      public void actionPerformed(ActionEvent e) {
-	List current_tiers = handler.getSelectedTiers();
-	if (current_tiers.size() > 1) {
-	  ErrorHandler.errorPanel("Must select only one tier");
-	}
-	TierGlyph current_tier = (TierGlyph) current_tiers.get(0);
-	saveAsDas2File(current_tier);
-      }
-    };*/
-
-  Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
+  private Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
     public void actionPerformed(ActionEvent e) {
       changeExpandMax(handler.getSelectedTierLabels());
     }
   };
 
-  Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
+  private Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
     public void actionPerformed(ActionEvent e) {
       changeExpandMax(handler.getAllTierLabels());
     }
   };
 
-  /*
-  Action delete_action = new AbstractAction("Delete selected tiers") {
+  
+  private Action delete_action = new AbstractAction("Delete selected tiers (NOT IMPLEMENTED") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTierLabels();
       if (Application.confirmPanel("Really remove selected tiers?\n"+
-          "Data will be removed from all chromosomes on this genome.\n"+
-          "(Note: to remove graphs made from .egr files, delete the corresponding annotation tier.)"
-          )) {
+          "Data will be removed from all chromosomes on this genome.")) {
         removeTiers(current_tiers);
       }
     }
-  };*/
+  };
 
-  JMenu showMenu = new JMenu("Show...");
-  JMenu changeMenu = new JMenu("Change...");
-  JMenu strandsMenu = new JMenu("Strands...");
-  JMenuItem deleteMI = new JMenuItem("Delete");
-
-  ActionToggler at1;
-  ActionToggler at2;
-  ActionToggler at3;
 
   public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
     this.handler = handler;
@@ -235,7 +221,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   }
 
-  void showCustomizer() {
+  private void showCustomizer() {
     PreferencesPanel pv = PreferencesPanel.getSingleton();
     pv.setTab(PreferencesPanel.TAB_NUM_TIERS);
     JFrame f = pv.getFrame();
@@ -298,20 +284,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     changeExpandMax(tier_labels, newmax);
   }
 
-  void changeExpandMax(List tier_label_glyphs, int max) {
-    for (int i=0; i<tier_label_glyphs.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
-      TierGlyph tier = (TierGlyph) tlg.getInfo();
-      IAnnotStyle style = tier.getAnnotStyle();
-      style.setMaxDepth(max);
-      tier.setMaxExpandDepth(max);
-    }
-    refreshMap(false);
-  }
+	private void changeExpandMax(List<TierLabelGlyph> tier_label_glyphs, int max) {
+		for (TierLabelGlyph tlg : tier_label_glyphs) {
+			TierGlyph tier = (TierGlyph) tlg.getInfo();
+			IAnnotStyle style = tier.getAnnotStyle();
+			style.setMaxDepth(max);
+			tier.setMaxExpandDepth(max);
+		}
+		refreshMap(false);
+	}
 
-  void setTwoTiers(List tier_label_glyphs, boolean b) {
-    for (int i=0; i<tier_label_glyphs.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_label_glyphs.get(i);
+  private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
+    for (TierLabelGlyph tlg : tier_label_glyphs) {
       TierGlyph tier = (TierGlyph) tlg.getInfo();
       IAnnotStyle style = tier.getAnnotStyle();
       if (style instanceof IAnnotStyleExtended) {
@@ -322,27 +306,26 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     handler.sortTiers();
   }
 
-  public void showAllTiers() {
-    List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
+  private void showAllTiers() {
+	  List<TierLabelGlyph> tiervec = handler.getAllTierLabels();
 
-		for (TierLabelGlyph label : tiervec) {
-			TierGlyph tier = (TierGlyph) label.getInfo();
-			IAnnotStyle style = tier.getAnnotStyle();
-			if (style != null) {
-				style.setShow(true);
-				tier.restoreState();
-			}
-		}
-    showMenu.removeAll();
-
-    refreshMap(true); // when re-showing all tiers, do strech_to_fit in the y-direction
-    handler.sortTiers();
-  }
+	  for (TierLabelGlyph label : tiervec) {
+		  TierGlyph tier = (TierGlyph) label.getInfo();
+		  IAnnotStyle style = tier.getAnnotStyle();
+		  if (style != null) {
+			  style.setShow(true);
+			  tier.restoreState();
+		  }
+	  }
+	  showMenu.removeAll();
+	  refreshMap(true); // when re-showing all tiers, do strech_to_fit in the y-direction
+	  handler.sortTiers();
+	}
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
    *  Does not re-pack the given tier, or any other tiers.
    */
-  protected void hideOneTier(final TierGlyph tier) {
+  private void hideOneTier(final TierGlyph tier) {
     final IAnnotStyle style = tier.getAnnotStyle();
     // if style.getShow() is already false, there is likely a bug somewhere!
 		if (style == null) {
@@ -380,21 +363,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   /** Hides multiple tiers and then repacks.
    *  @param tiers  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
    */
-  public void hideTiers(List tiers) {
-    Iterator iter = tiers.iterator();
-    while (iter.hasNext()) {
-      GlyphI g = (GlyphI) iter.next();
+  private void hideTiers(List<GlyphI> tiers) {
+    for (GlyphI g : tiers) {
       if (g.getInfo() instanceof TierGlyph) {
         TierGlyph tier = (TierGlyph) g.getInfo();
         hideOneTier(tier);
-        //tier.pack(tiermap.getView());
       }
     }
 
     refreshMap(false);
   }
 
-  public void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
+  private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
     if (tier_label_glyphs.isEmpty()) {
       return;
     }
@@ -413,31 +393,29 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 
     ActionListener al = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        for (int i=0; i<tier_label_glyphs.size(); i++) {
-          TierLabelGlyph tlg = tier_label_glyphs.get(i);
-          TierGlyph tier = (TierGlyph) tlg.getInfo();
-          IAnnotStyle style = tier.getAnnotStyle();
 
-          if (style != null) {
-            //System.out.println("Setting color of " + style.getHumanName() + ", " + style);
-            if (fg) {
-              style.setColor(chooser.getColor());
-            } else {
-              style.setBackground(chooser.getColor());
-            }
-          }
-					for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
-            if (fg) {
-              gg.setColor(chooser.getColor());
-              gg.getGraphState().getTierStyle().setColor(chooser.getColor());
-            } else {
-              //gg.setBackgroundColor(chooser.getColor()); // this wouldn't really work
-              gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
-            }
-          }
-        }
-      }
+		  public void actionPerformed(ActionEvent e) {
+			  for (TierLabelGlyph tlg : tier_label_glyphs) {
+				  TierGlyph tier = (TierGlyph) tlg.getInfo();
+				  IAnnotStyle style = tier.getAnnotStyle();
+
+				  if (style != null) {
+					  if (fg) {
+						  style.setColor(chooser.getColor());
+					  } else {
+						  style.setBackground(chooser.getColor());
+					  }
+				  }
+				  for (GraphGlyph gg : TierLabelManager.getContainedGraphs(tier_label_glyphs)) {
+					  if (fg) {
+						  gg.setColor(chooser.getColor());
+						  gg.getGraphState().getTierStyle().setColor(chooser.getColor());
+					  } else {
+						  gg.getGraphState().getTierStyle().setBackground(chooser.getColor());
+					  }
+				  }
+			  }
+		  }
     };
 
     JDialog dialog = JColorChooser.createDialog((java.awt.Component) null, // parent
@@ -464,9 +442,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     refreshMap(false);
   }
 
-  void setColorByScore(List tier_labels, boolean b) {
-    for (int i=0; i<tier_labels.size(); i++) {
-      TierLabelGlyph tlg = (TierLabelGlyph) tier_labels.get(i);
+  private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
+    for (TierLabelGlyph tlg : tier_labels) {
       IAnnotStyle style = tlg.getReferenceTier().getAnnotStyle();
       if (style instanceof IAnnotStyleExtended) {
         IAnnotStyleExtended astyle = (IAnnotStyleExtended) style;
@@ -496,7 +473,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		int option = chooser.showSaveDialog(null);
 		if (option == JFileChooser.APPROVE_OPTION) {
 			FileTracker.DATA_DIR_TRACKER.setFile(chooser.getCurrentDirectory());
-			MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+			BioSeq aseq = gmodel.getSelectedSeq();
 			DataOutputStream dos = null;
 			try {
 				File fil = chooser.getSelectedFile();
@@ -510,7 +487,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-  static void collectSyms(GlyphI gl, List<SeqSymmetry> syms) {
+  private static void collectSyms(GlyphI gl, List<SeqSymmetry> syms) {
 		Object info = gl.getInfo();
 		if ((info != null) && (info instanceof SeqSymmetry)) {
 			syms.add((SeqSymmetry) info);
@@ -523,8 +500,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		}
 	}
 
-  public void addSymCoverageTier(TierGlyph atier) {
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+  private void addSymCoverageTier(TierGlyph atier) {
+    BioSeq aseq = gmodel.getSelectedSeq();
     int child_count = atier.getChildCount();
 
     List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>(child_count);
@@ -548,7 +525,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
 
     String human_name = "coverage: " + atier.getLabel();
-    //wrapperSym.setProperty("method", method);
 
     // Generate a non-persistent style.
     // Factory will be CoverageSummarizerFactory because name starts with "coverage:"
@@ -567,7 +543,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
 
-  public void addSymSummaryTier(TierGlyph atier) {
+  private void addSymSummaryTier(TierGlyph atier) {
     // not sure best way to collect syms from tier, but for now,
     //   just recursively descend through child glyphs of the tier, and if
     //   childA.getInfo() is a SeqSymmetry, add to symmetry list and prune recursion
@@ -580,27 +556,23 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       return;
     }
 
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     String graphid = "summary: " + atier.getLabel();
     GraphSym gsym = SeqSymSummarizer.getSymmetrySummary(syms, aseq, false, graphid);
     gsym.setGraphName("depth: " + atier.getLabel());
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
     GraphGlyph gl = (GraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);
-    //    gl.setState(GraphGlyph.STAIRSTEP);
-    gl.setGraphStyle(GraphStateI.STAIRSTEP_GRAPH);
+    gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
     gl.setColor(atier.getForegroundColor());
-    // System.out.println("glyph: " + gl);
-    // System.out.println("datamodel: " + gsym);
   }
 
-  void refreshMap(boolean stretch_vertically) {
+  private void refreshMap(boolean stretch_vertically) {
     if (gviewer != null) {
       // if an AnnotatedSeqViewer is being used, ask it to update itself.
       // later this can be made more specific to just update the tiers that changed
       boolean preserve_view = ! stretch_vertically;
       gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view);
-//      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, false, preserve_view);
     } else {
       // if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
       handler.repackTheTiers(false, stretch_vertically);
@@ -608,7 +580,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   public void popupNotify(javax.swing.JPopupMenu popup, TierLabelManager handler) {
-    List labels = handler.getSelectedTierLabels();
+    List<TierLabelGlyph> labels = handler.getSelectedTierLabels();
     int num_selections = labels.size();
     boolean not_empty = ! handler.getAllTierLabels().isEmpty();
 
@@ -619,8 +591,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     boolean any_are_separate_tiers = false;
     boolean any_are_single_tier = false;
 
-    for (int i=0; i<labels.size(); i++) {
-      TierLabelGlyph label = (TierLabelGlyph) labels.get(i);
+	for (TierLabelGlyph label : labels) {
       TierGlyph glyph = label.getReferenceTier();
       IAnnotStyle style = glyph.getAnnotStyle();
       if (style instanceof IAnnotStyleExtended) {
@@ -644,7 +615,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
     change_color_action.setEnabled(num_selections > 0);
     change_bg_color_action.setEnabled(num_selections > 0);
-    //change_height_action.setEnabled(num_selections > 0);
     rename_action.setEnabled(num_selections == 1);
 
     color_by_score_on_action.setEnabled(any_are_color_off);
@@ -661,13 +631,11 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     showMenu.setEnabled(showMenu.getMenuComponentCount() > 0);
 
     save_bed_action.setEnabled(num_selections == 1);
-    //save_das_action.setEnabled(num_selections == 1);
-    //write_das_action.setEnabled(num_selections == 1);
     JMenu save_menu = new JMenu("Save Annotations");
 
     if (num_selections == 1) {
       // Check whether this selection is a graph or an annotation
-      TierLabelGlyph label = (TierLabelGlyph) labels.get(0);
+      TierLabelGlyph label = labels.get(0);
       TierGlyph glyph = (TierGlyph) label.getInfo();
       IAnnotStyle style = glyph.getAnnotStyle();
       boolean is_annotation_type = ! style.isGraphTier();
@@ -675,19 +643,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       coverage_action.setEnabled(is_annotation_type);
       save_menu.setEnabled(is_annotation_type);
       save_bed_action.setEnabled(is_annotation_type);
-      //save_das_action.setEnabled(is_annotation_type);
     } else {
       sym_summarize_action.setEnabled(false);
       coverage_action.setEnabled(false);
       save_menu.setEnabled(false);
       save_bed_action.setEnabled(false);
-      //save_das_action.setEnabled(false);
     }
 
     changeMenu.removeAll();
     changeMenu.add(change_color_action);
     changeMenu.add(change_bg_color_action);
-    //changeMenu.add(change_height_action);
     changeMenu.add(rename_action);
     changeMenu.add(change_expand_max_action);
     changeMenu.add(new JSeparator());
@@ -704,7 +669,6 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(show_all_action);
 
     if (gviewer instanceof SeqMapView) {
-      SeqMapView smv = (SeqMapView) gviewer;
       strandsMenu.removeAll();
       strandsMenu.add(at1);
       strandsMenu.add(at2);
@@ -714,27 +678,16 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(new JSeparator());
     popup.add(select_all_tiers_action);
     popup.add(changeMenu);
-    //popup.add(rename_action);
-    //popup.add(change_color_action);
     popup.add(new JSeparator());
     popup.add(collapse_action);
     popup.add(expand_action);
     popup.add(change_expand_max_action);
-    //popup.add(collapse_all_action);
-    //popup.add(expand_all_action);
-    //popup.add(change_expand_max_all_action);
     popup.add(new JSeparator());
 
     popup.add(save_menu);
     save_menu.add(save_bed_action);
-    //save_menu.add(save_das_action);
-    /*if (das2_writeback_enabled && curation_enabled && Application.getSingleton() instanceof IGB) {
-      save_menu.add(write_das_action);
-    }*/
 
-    // The delete_action works properly, but the QuickLoad tab doesn't update
-    // its state in response.  So it is best to disable this for now.
-    // popup.add(delete_action);
+    popup.add(delete_action);
 
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);
@@ -749,17 +702,18 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   }
 
-  // purely for debugging
-  void doDebugAction() {
-    if (DEBUG) {
-      List current_tiers = handler.getSelectedTiers();
-      Iterator iter = current_tiers.iterator();
-      while (iter.hasNext()) {
-        TierGlyph tg = (TierGlyph) iter.next();
-        IAnnotStyle style = tg.getAnnotStyle();
-        System.out.println("Tier: " + tg);
-        System.out.println("Style: " + style);
-      }
-    }
+  private void removeTiers(List<TierLabelGlyph> tiers) {
+	  for (TierLabelGlyph tlg: tiers) {
+		  System.out.println("DEBUG: eventually would delete this tier: " + tlg);
+	  }
   }
+  // purely for debugging
+	private void doDebugAction() {
+		List<TierGlyph> current_tiers = handler.getSelectedTiers();
+		for (TierGlyph tg : current_tiers) {
+			IAnnotStyle style = tg.getAnnotStyle();
+			System.out.println("Tier: " + tg);
+			System.out.println("Style: " + style);
+		}
+	}
 }

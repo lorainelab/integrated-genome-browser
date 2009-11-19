@@ -34,18 +34,22 @@ import java.awt.geom.Rectangle2D;
  */
 public final class TierLabelManager {
 
-  AffyLabelledTierMap tiermap;
-  AffyTieredMap labelmap;
-  JPopupMenu popup;
+  private AffyLabelledTierMap tiermap;
+  private AffyTieredMap labelmap;
+  private JPopupMenu popup;
 
-  int xoffset_pop = 10;
-  int yoffset_pop = 0;
+  private int xoffset_pop = 10;
+  private int yoffset_pop = 0;
+
+
+  private List<PopupListener> popup_listeners = new ArrayList<PopupListener>();
+  
 
   /**
    *  Determines whether selecting a tier label of a tier that contains only
    *  GraphGlyphs should cause the graphs in that tier to become selected.
    */
-  boolean do_graph_selections = false;
+  private boolean do_graph_selections = false;
   
   public TierLabelManager(AffyLabelledTierMap map) {
     tiermap = map;
@@ -59,7 +63,7 @@ public final class TierLabelManager {
   }
   
   /** Returns a list of TierGlyph items representing the selected tiers. */
-  public List<TierGlyph> getSelectedTiers() {
+  List<TierGlyph> getSelectedTiers() {
     List<TierGlyph> selected_tiers = new ArrayList<TierGlyph>();
 
 		for (GlyphI tlg : (List<GlyphI>)getSelectedTierLabels()) {
@@ -81,16 +85,16 @@ public final class TierLabelManager {
   }
 
   /** Selects all non-hidden tiers. */
-  public void selectAllTiers()  {
-    List labels = getAllTierLabels();
+  void selectAllTiers()  {
+    List<TierLabelGlyph> labels = getAllTierLabels();
     int tiercount = labels.size();
     for (int i=0; i<tiercount; i++) {
-      TierLabelGlyph tierlabel = (TierLabelGlyph) labels.get(i);
+      TierLabelGlyph tierlabel = labels.get(i);
       if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
         labelmap.select(tierlabel);
       }
     }
-    doGraphSelections(labelmap);
+    doGraphSelections();
     //labelmap.updateWidget();
     tiermap.updateWidget(); // make sure selections becomes visible
   }
@@ -103,7 +107,7 @@ public final class TierLabelManager {
     do_graph_selections = b;
   }
   
-  void doGraphSelections(AffyTieredMap labelmap) {
+  private void doGraphSelections() {
     if (! do_graph_selections) {
       return;
     }
@@ -168,7 +172,7 @@ public final class TierLabelManager {
   }
   
   /** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
-  public static List<GraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
+  private static List<GraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
     ArrayList<GraphGlyph> result = new ArrayList<GraphGlyph>();
     TierGlyph tier = (TierGlyph) tlg.getInfo();
     //IAnnotStyle style = tier.getAnnotStyle();
@@ -180,11 +184,6 @@ public final class TierLabelManager {
     }
     return result;
   }
-  
-  /** Gets the index of a given tier. Note that is a TierGlyph, not a TierLabelGlyph. */
-  /*public int getTierIndex(TierGlyph atier) {
-    return tiermap.getTierIndex(atier);
-  }*/
   
   /** Restores multiple hidden tiers and then repacks.
    *  @param tier_labels  a List of GlyphI objects for each of which getInfo() returns a TierGlyph.
@@ -243,14 +242,14 @@ public final class TierLabelManager {
     repackTheTiers(full_repack, fit_y);
   }
 
-  public void finishDragging(TierLabelGlyph glyph) {
+  private void finishDragging(TierLabelGlyph glyph) {
     sortTiers();
   }
 
   /**
    *  Sorts all tiers and then calls packTiers() and updateWidget().
    */
-  public void sortTiers() {
+  void sortTiers() {
     List<TierLabelGlyph> label_glyphs = tiermap.getTierLabels();
     orderTierLabels(label_glyphs);
     orderTiersByLabels(label_glyphs);
@@ -261,7 +260,7 @@ public final class TierLabelManager {
   }
   
   /** Comparator class needed to sort tiers based on label placement. */
-  public final class MinYSorter implements Comparator<GlyphI> {
+  private final class MinYSorter implements Comparator<GlyphI> {
     public int compare(GlyphI glyph1, GlyphI glyph2) {
       Rectangle2D.Double box1 = glyph1.getCoordBox();
       Rectangle2D.Double box2 = glyph2.getCoordBox();
@@ -271,23 +270,10 @@ public final class TierLabelManager {
     }
   }
   
-  Comparator<GlyphI> ysorter = new MinYSorter();
+  private Comparator<GlyphI> ysorter = new MinYSorter();
   
-  Comparator<GlyphI> tier_sorter = ysorter;
+  private Comparator<GlyphI> tier_sorter = ysorter;
   
-  /**
-   *  Set a Comparator to be used to re-sort tiers after the user drags a tier.
-   *  The default Comparator, which is probably good for all cases, sorts based
-   *  on the y-position of the top of each tier after the mouse is released.
-   *  The actual sorting happens in {@link #orderTierLabels(List)}.
-   */
-  public void setTierSorter(Comparator<GlyphI> c) {
-    if (c == null) {
-      tier_sorter = null;
-    } else {
-      tier_sorter = c;
-    }
-  }
   
   /**
    *  Called after a tier label has been dragged, this can be used to
@@ -296,7 +282,7 @@ public final class TierLabelManager {
    *  call {@link #sortTiers()} instead, which will call this and then
    *  call {@link #orderTiersByLabels(List)}.
    */
-  public void orderTierLabels(List<TierLabelGlyph> label_glyphs) {
+  private void orderTierLabels(List<TierLabelGlyph> label_glyphs) {
     if (tier_sorter != null) {
       Collections.sort(label_glyphs, tier_sorter);
     }
@@ -306,7 +292,7 @@ public final class TierLabelManager {
    *  glyphs in the given list.  Will be called after orderTierLabels() 
    *  has determined the label order.  Can also be called from an external class.
    */
-  public void orderTiersByLabels(List<TierLabelGlyph> label_glyphs) {
+  private void orderTiersByLabels(List<TierLabelGlyph> label_glyphs) {
       List<TierGlyph> tiers = tiermap.getTiers();
       tiers.clear();
 	  for (TierLabelGlyph label : label_glyphs) {
@@ -319,25 +305,20 @@ public final class TierLabelManager {
    *  Repacks tiers.  Should be called after hiding or showing tiers or
    *  changing their heights.
    */
-  public void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
+  void repackTheTiers(boolean full_repack, boolean stretch_vertically) {
     tiermap.repackTheTiers(full_repack, stretch_vertically);
   }
-  
-  List<PopupListener> popup_listeners = new ArrayList<PopupListener>();
   
   public void addPopupListener(PopupListener p) {
     popup_listeners.add(p);
   }
   
-  /*public void removePopupListener(PopupListener p) {
-    popup_listeners.remove(p);
-  }*/
 
   /** Removes all elements from the popup, then notifies all {@link TierLabelManager.PopupListener}
    *  objects (which may add items to the menu), then displays the popup
    *  (if it isn't empty).
    */
-  public void doPopup(MouseEvent e) {
+  private void doPopup(MouseEvent e) {
     popup.removeAll();
 
 		for (PopupListener pl : popup_listeners) {
@@ -361,6 +342,7 @@ public final class TierLabelManager {
 
   List<TrackSelectionListener> track_selection_listeners = new ArrayList<TrackSelectionListener>();
   
+
   public void addTrackSelectionListener(TrackSelectionListener l) {
 	    track_selection_listeners.add(l);
   }
@@ -381,7 +363,7 @@ public final class TierLabelManager {
   }
   
   
-  MouseListener mouse_listener = new MouseListener() {
+  private MouseListener mouse_listener = new MouseListener() {
     TierLabelGlyph dragging_label = null;
 
     public void mouseEntered(MouseEvent evt) { }
@@ -431,8 +413,8 @@ public final class TierLabelManager {
         }
         Vector<GlyphI> selected = nevt.getItems();
         labelmap.select(selected);
-        doGraphSelections(labelmap);
-//        labelmap.updateWidget();
+        doGraphSelections();
+
         tiermap.updateWidget(); // make sure selections becomes visible
         if ( isOurPopupTrigger(evt)  ) {
           doPopup(evt);
@@ -456,7 +438,7 @@ public final class TierLabelManager {
       }      
     }
 
-    void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
+    private void dragLabel(TierLabelGlyph gl, NeoMouseEvent nevt) {
       dragging_label = gl;
       GlyphDragger dragger = new GlyphDragger((NeoAbstractWidget)nevt.getSource());
       dragger.setUseCopy(false);

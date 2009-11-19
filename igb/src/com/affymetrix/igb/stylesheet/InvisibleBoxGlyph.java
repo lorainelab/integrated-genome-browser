@@ -21,8 +21,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public final class InvisibleBoxGlyph extends EfficientOutlineContGlyph {
-  public InvisibleBoxGlyph() {
-  }
 
   public void draw(ViewI view) {
     // When the pixelbox is normal size, draw nothing.

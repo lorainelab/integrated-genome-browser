@@ -27,14 +27,19 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-import com.affymetrix.igb.glyph.*;
+//import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.glyph.EfficientLabelledLineGlyph;
+import com.affymetrix.igb.glyph.EfficientLineContGlyph;
+import com.affymetrix.igb.glyph.EfficientOutlineContGlyph;
+import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
+import com.affymetrix.igb.glyph.LabelledGlyph;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.Color;
 import java.util.*;
 
-public final class GlyphElement implements Cloneable, XmlAppender {
+final class GlyphElement implements Cloneable, XmlAppender {
 /*
 <!ELEMENT GLYPH (PROPERTY*, GLYPH*, CHILDREN?)>
 <!ATTLIST GLYPH
@@ -43,9 +48,9 @@ public final class GlyphElement implements Cloneable, XmlAppender {
   >
 */
     
-  public static String NAME = "GLYPH";
-  public static String ATT_TYPE = "type";
-  public static String ATT_POSITION = "position";
+  public static final String NAME = "GLYPH";
+  public static final String ATT_TYPE = "type";
+  public static final String ATT_POSITION = "position";
   
   static ExpandPacker expand_packer;
   static {
@@ -54,17 +59,17 @@ public final class GlyphElement implements Cloneable, XmlAppender {
       expand_packer.setStretchHorizontal(false);
   }
   
-  public static String TYPE_BOX = "box";
-  public static String TYPE_FILLED_BOX = "filled_box";
-  public static String TYPE_LINE = "line";
-  public static String TYPE_ARROW = "arrow";
-  public static String TYPE_POINTED = "pointed";
-  public static String TYPE_SPAN = "span";
+  static final String TYPE_BOX = "box";
+  private static final String TYPE_FILLED_BOX = "filled_box";
+  private static final String TYPE_LINE = "line";
+  private static final String TYPE_ARROW = "arrow";
+  private static final String TYPE_POINTED = "pointed";
+  private static final String TYPE_SPAN = "span";
 
-  public static String TYPE_NONE = "none";
-  public static String TYPE_INVISIBLE = "hidden";
+  private static final String TYPE_NONE = "none";
+  private static final String TYPE_INVISIBLE = "hidden";
 
-  static String[] knownTypes = new String[] {
+  private static final String[] knownTypes = new String[] {
     TYPE_BOX, TYPE_FILLED_BOX, TYPE_LINE, 
     TYPE_ARROW, TYPE_POINTED, TYPE_SPAN,
     TYPE_NONE,
@@ -74,52 +79,49 @@ public final class GlyphElement implements Cloneable, XmlAppender {
   /**
    *  Indicates a color; the value shoule be a six-digit RRGGBB hex String.
    */
-  public static String PROP_KEY_COLOR = "color";
+  private static final String PROP_KEY_COLOR = "color";
   
   /** Set to "true" (default) or "false" to indicate that the map.setInfo()
    *  should be called on the indicated glyph.
    *  Default is true.  False is useful when there are multiple
    *  glyphs representing the same symmetry.
    */
-  public static String PROP_KEY_INDEXED = "indexed";
+  private static final String PROP_KEY_INDEXED = "indexed";
 
   /** Whether the glyph is labeled or not.
    */
-  public static String PROP_KEY_LABELED = "labeled";
+  private static final String PROP_KEY_LABELED = "labeled";
 
   /**
    *  Which property name to use to determine the label, if labeled is true.
    */
-  public static String PROP_KEY_LABEL_FIELD = "label_field";
+  private static final String PROP_KEY_LABEL_FIELD = "label_field";
 
   /** Set to "5to3" (default) or "3to5" to
    *  indicate the direction of directed glyphs, such as arrows.
    */
-  public static String PROP_KEY_DIRECTION = "direction";
+  private static final String PROP_KEY_DIRECTION = "direction";
+
+  private static final String PROP_VALUE_DIRECTION_3to5 = "3to5";
   
-  public static String PROP_VALUE_DIRECTION_5to3 = "5to3";
-  public static String PROP_VALUE_DIRECTION_3to5 = "3to5";
-  
-  public static Color default_color = Color.GREEN;
+  private static final Color default_color = Color.GREEN;
   
   PropertyMap propertyMap;
-  List<GlyphElement> enclosedGlyphElements = null;
+  private List<GlyphElement> enclosedGlyphElements = null;
   ChildrenElement childrenElement = null;
-  String position;
-  String type;
+  private String position;
+  private String type;
 
-  int glyph_height = 10;
-  static int diff_height = 3;
+  private static final int glyph_height = 10;
   
-  DerivedSeqSymmetry der; // used for transforming spans
-  MutableSeqSpan derSpan; // used for transforming spans
+  private DerivedSeqSymmetry der; // used for transforming spans
+  private MutableSeqSpan derSpan; // used for transforming spans
   
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();
     if (this.enclosedGlyphElements != null) {
       clone.enclosedGlyphElements = new ArrayList<GlyphElement>(enclosedGlyphElements.size());
-      for (int i=0; i<enclosedGlyphElements.size(); i++) {
-        GlyphElement ge = enclosedGlyphElements.get(i);
+	  for (GlyphElement ge : enclosedGlyphElements) {
         GlyphElement new_glyph_element = (GlyphElement) ge.clone();
         clone.enclosedGlyphElements.add(new_glyph_element);
       }
@@ -134,34 +136,22 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     return clone;
   }
   
-  public GlyphElement() {
+  GlyphElement() {
     this.propertyMap = new PropertyMap();
     der = new SimpleDerivedSeqSymmetry();
     derSpan = new SimpleMutableSeqSpan();
     der.addSpan(derSpan);
   }
 
-  public String getPosition() {
-    return this.position;
-  }
-
-  public void setPosition(String position) {
+  void setPosition(String position) {
     this.position = position;
   }
 
-  public String getType() {
-    return this.type;
-  }
-
-  public void setType(String type) {
+  void setType(String type) {
     this.type = type;
   }
   
-  public List<GlyphElement> getEnclosedGlyphElements() {
-    return this.enclosedGlyphElements;
-  }
-  
-  public void addGlyphElement(GlyphElement ge) {
+  void addGlyphElement(GlyphElement ge) {
     if (enclosedGlyphElements == null) {
       enclosedGlyphElements = new ArrayList<GlyphElement>();
     }
@@ -182,8 +172,8 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     }
     return false;
   }
-  
-  public GlyphI makeGlyph(String type, SeqSpan span) {
+
+  private GlyphI makeGlyph(String type) {
     boolean use_label = false;
     if ("true".equals(propertyMap.getProperty(PROP_KEY_LABELED))) {
       use_label = true;
@@ -217,7 +207,7 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     return gl;
   }
   
-  public GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, 
+  GlyphI symToGlyph(SeqMapView gviewer, SeqSymmetry insym, GlyphI parent_glyph, 
       Stylesheet stylesheet, PropertyMap context) {
     
     if (insym == null) { 
@@ -233,84 +223,79 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     
     GlyphI gl = null;
     if (knownGlyphType(type)) {
-      TierGlyph tier_glyph = (TierGlyph) context.getProperty(TierGlyph.class.getName());
-      
-      //SeqSymmetry transformed_sym = gviewer.transformForViewSeq(insym);
-      //SeqSpan span = transformed_sym.getSpan(gviewer.getViewSeq());
-      SeqSpan span = transformForViewSeq(gviewer, insym);
+			TierGlyph tier_glyph = (TierGlyph) context.getProperty(TierGlyph.class.getName());
 
-      if (span == null) {
-        // TODO: In future we must take into account the possibility
-        // that an item may have children which map to the current seq
-        // even though the parent does not.  Thus we need to loop over
-        // the children even when the span for the current item is null.
-        //
-        // Would be nice if a SeqSymmetry could report whether all its children
-        // are or are not enclosed in its bounds, then we would know which
-        // syms we really have to worry about that for.
-        gl = null; 
-        // NOTE: important not to simply call "return null" before
-        // taking care of restoring the context.
-      } else if (span.getLength() == 0 && parent_glyph instanceof TierGlyph) {
-        gl = null;
-      }
-      else {
+			SeqSpan span = transformForViewSeq(gviewer, insym);
 
-      gl = makeGlyph(type, span);
-      boolean is_labeled_glyph = (gl instanceof LabelledGlyph);
+			if (span == null || (span.getLength() == 0 && parent_glyph instanceof TierGlyph)) {
+				// NOTE: important not to simply call "return null" before
+				// taking care of restoring the context.
+				// TODO: In future we must take into account the possibility
+				// that an item may have children which map to the current seq
+				// even though the parent does not.  Thus we need to loop over
+				// the children even when the span for the current item is null.
+				//
+				// Would be nice if a SeqSymmetry could report whether all its children
+				// are or are not enclosed in its bounds, then we would know which
+				// syms we really have to worry about that for.
+				gl = null;
+			} else {
 
-      if (gl != null) {
-        gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
-        
-        if (is_labeled_glyph) {
-          configureLabel((LabelledGlyph) gl, insym, tier_glyph);
-        }
-        
-        gl.setColor(findColor(propertyMap));
-        
-        addToParent(parent_glyph, gl, this.position);
-        
-        indexGlyph(propertyMap, gviewer, gl, insym);
-      }
+				gl = makeGlyph(type);
+				
+				if (gl != null) {
+					gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
 
-      
-      // Normally, the container for sub-glyphs and children is the glyph itself,
-      // but if no glyph was drawn, use the parent glyph
-      GlyphI container = gl;
-      if (gl == null) {
-        container = parent_glyph;
-      }
-      
-      // Now do <GLYPH> elements enclosed inside a <GLYPH> element.
-      // These re-draw the same sym, not the children
-      drawEnclosedGlyphs(gviewer, container, insym, stylesheet);
+					boolean is_labeled_glyph = (gl instanceof LabelledGlyph);
+					if (is_labeled_glyph) {
+						configureLabel((LabelledGlyph) gl, insym, tier_glyph);
+					}
 
-      if (childrenElement != null) {
-        // Always use "insym" rather than "transformed_sym" for children.
-        // The transformed_sym may not have the same number of levels of nesting.
-        childrenElement.childSymsToGlyphs(gviewer, insym, container, stylesheet, propertyMap);
-      }
-      
-      packGlyph(gviewer, container);
-      
-      // Setting the direction of a directed glyph must come after
-      // adding the children to it.  Not sure why.
-      if (gl instanceof DirectedGlyph) {
-        ((DirectedGlyph) gl).setForward(false);
-        if (PROP_VALUE_DIRECTION_3to5.equalsIgnoreCase((String) propertyMap.getProperty(PROP_KEY_DIRECTION))) {
-          ((DirectedGlyph) gl).setForward(! span.isForward());
-        } else {
-          ((DirectedGlyph) gl).setForward(span.isForward());
-        }
-      }
-    }
-    }
+					gl.setColor(findColor(propertyMap));
 
-    propertyMap.setContext(oldContext);
-    return gl;
-  }
+					addToParent(parent_glyph, gl);
 
-  void addToParent(GlyphI parent, GlyphI child, String position) {
+					indexGlyph(propertyMap, gviewer, gl, insym);
+				}
+
+
+				// Normally, the container for sub-glyphs and children is the glyph itself,
+				// but if no glyph was drawn, use the parent glyph
+				GlyphI container = gl;
+				if (gl == null) {
+					container = parent_glyph;
+				}
+
+				// Now do <GLYPH> elements enclosed inside a <GLYPH> element.
+				// These re-draw the same sym, not the children
+				drawEnclosedGlyphs(gviewer, container, insym, stylesheet);
+
+				if (childrenElement != null) {
+					// Always use "insym" rather than "transformed_sym" for children.
+					// The transformed_sym may not have the same number of levels of nesting.
+					childrenElement.childSymsToGlyphs(gviewer, insym, container, stylesheet, propertyMap);
+				}
+
+				packGlyph(gviewer, container);
+
+				// Setting the direction of a directed glyph must come after
+				// adding the children to it.  Not sure why.
+				if (gl instanceof DirectedGlyph) {
+					((DirectedGlyph) gl).setForward(false);
+					if (PROP_VALUE_DIRECTION_3to5.equalsIgnoreCase((String) propertyMap.getProperty(PROP_KEY_DIRECTION))) {
+						((DirectedGlyph) gl).setForward(!span.isForward());
+					} else {
+						((DirectedGlyph) gl).setForward(span.isForward());
+					}
+				}
+			}
+		}
+
+		propertyMap.setContext(oldContext);
+		return gl;
+	}
+
+  private void addToParent(GlyphI parent, GlyphI child) {
     parent.addChild(child);
     //TODO: use position
     // One way to do it: make a special glyph interface StyledGlyphI where
@@ -318,11 +303,9 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     // inside their parents
   }
 
-  void packGlyph(SeqMapView gviewer, GlyphI container) {
+  private void packGlyph(SeqMapView gviewer, GlyphI container) {
     if (container != null) {
-      if (/* ! (container instanceof labeledGlyph) && */
-           ! (container instanceof TierGlyph)) {
-        //System.out.println("Packing: " + container.getClass().getName() + ", " + container.getChildCount());
+      if (! (container instanceof TierGlyph)) {
         // packing with labeled glyphs doesn't work right, so skip it.
         container.setPacker(expand_packer);
         container.pack(gviewer.getSeqMap().getView());
@@ -330,18 +313,16 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     }
   }
   
-  void drawEnclosedGlyphs(SeqMapView gviewer, GlyphI container, SeqSymmetry insym, Stylesheet stylesheet) {
+  private void drawEnclosedGlyphs(SeqMapView gviewer, GlyphI container, SeqSymmetry insym, Stylesheet stylesheet) {
     if (enclosedGlyphElements != null) {
       // inside the parent, not inside the glyph.
-      Iterator iter = enclosedGlyphElements.iterator();
-      while (iter.hasNext()) {
-        GlyphElement kid = (GlyphElement) iter.next();
+      for (GlyphElement kid : enclosedGlyphElements) {
         kid.symToGlyph(gviewer, insym, container, stylesheet, this.propertyMap);
       }
     }
   }
   
-  static Color findColor(PropertyMap pm) {
+  private static Color findColor(PropertyMap pm) {
     Color color = pm.getColor(PROP_KEY_COLOR);
     if (color == null || "".equals(color.toString())) {
       IAnnotStyleExtended style = (IAnnotStyleExtended) pm.get(IAnnotStyleExtended.class.getName());
@@ -355,37 +336,44 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     return color;
   }
 
-  void configureLabel(LabelledGlyph lgl, SeqSymmetry insym, TierGlyph tier_glyph) {
-    String the_label = null;
-    if (insym instanceof SymWithProps) {
-      String label_property_name = (String) this.propertyMap.getProperty(PROP_KEY_LABEL_FIELD);
-      if (null == label_property_name) {
-        the_label = insym.getID();
-      } else {
-        the_label = (String) ((SymWithProps) insym).getProperty(label_property_name);
-        if (the_label == null) {
-          the_label = label_property_name + "=???";
-        }
-      }
-    } else {
-      the_label = insym.getID();
-    }
+  private void configureLabel(LabelledGlyph lgl, SeqSymmetry insym, TierGlyph tier_glyph) {
+	  String the_label = determineLabel(insym);
 
     // go ahead and set the height big enough for a label, even if it is null,
     // because (1) we want to keep constant heights with other labeled glyphs, and
     // (2) instances of LabelledGlyph expect that.
     lgl.getCoordBox().height *= 2;
-    if (! (the_label == null)) {
+    if (the_label != null) {
       lgl.setLabel(the_label);
-      if (tier_glyph.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+      if (tier_glyph.getDirection() == TierGlyph.Direction.REVERSE) {
         lgl.setLabelLocation(LabelledGlyph.SOUTH);
       } else {
         lgl.setLabelLocation(LabelledGlyph.NORTH);
       }
     }
   }
+
+
+	private String determineLabel(SeqSymmetry insym) {
+		String the_label = null;
+		if (insym instanceof SymWithProps) {
+			String label_property_name = (String) this.propertyMap.getProperty(PROP_KEY_LABEL_FIELD);
+			if (null == label_property_name) {
+				the_label = insym.getID();
+			} else {
+				the_label = (String) ((SymWithProps) insym).getProperty(label_property_name);
+				if (the_label == null) {
+					the_label = label_property_name + "=???";
+				}
+			}
+		} else {
+			the_label = insym.getID();
+		}
+		return the_label;
+	}
   
-  static void indexGlyph(PropertyMap pm, SeqMapView gviewer, GlyphI gl, SeqSymmetry insym) {
+  
+  private static void indexGlyph(PropertyMap pm, SeqMapView gviewer, GlyphI gl, SeqSymmetry insym) {
     if (! "false".equals(pm.getProperty(PROP_KEY_INDEXED))) {
       // This will call GlyphI.setInfo() as a side-effect.
       gviewer.getSeqMap().setDataModelFromOriginalSym(gl, insym);
@@ -400,30 +388,18 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     }
   }
    
-  
-  /** An efficient method to transform a single span. */
-  SeqSpan transformForViewSeq(SeqMapView gviewer, SeqSymmetry insym) {
-
-    der.clear();
-
-    // copy the span into derSpan
-    insym.getSpan(gviewer.getAnnotatedSeq(), derSpan);
-
-    der.addSpan(derSpan);
-
-    if (gviewer.getAnnotatedSeq() != gviewer.getViewSeq()) {
-
-      //der.setOriginalSymmetry(null);
-
-      SeqUtils.transformSymmetry(der, gviewer.getTransformPath());
-
-      //der.setOriginalSymmetry(insym);
-    }
-
-    SeqSpan result_span = gviewer.getViewSeqSpan(der);
-
-    return result_span;
-  }
+  	/** An efficient method to transform a single span. */
+	private SeqSpan transformForViewSeq(SeqMapView gviewer, SeqSymmetry insym) {
+		der.clear();
+		// copy the span into derSpan
+		insym.getSpan(gviewer.getAnnotatedSeq(), derSpan);
+		der.addSpan(derSpan);
+		
+		if (gviewer.getAnnotatedSeq() != gviewer.getViewSeq()) {
+			SeqUtils.transformSymmetry(der, gviewer.getTransformPath());
+		}
+		return gviewer.getViewSeqSpan(der);
+	}
   
   public StringBuffer appendXML(String indent, StringBuffer sb) {
     sb.append(indent).append('<').append(NAME);
@@ -435,9 +411,7 @@ public final class GlyphElement implements Cloneable, XmlAppender {
     }
     
     if (this.enclosedGlyphElements != null) {
-      Iterator iter = enclosedGlyphElements.iterator();
-      while (iter.hasNext()) {
-       GlyphElement kid = (GlyphElement) iter.next();
+		for (GlyphElement kid : enclosedGlyphElements) {
        kid.appendXML(indent + "  ", sb);
       }
     }

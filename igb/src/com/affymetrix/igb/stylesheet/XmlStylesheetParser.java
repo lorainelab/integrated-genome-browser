@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.stylesheet;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasLoader;
 import java.io.*;
@@ -22,20 +21,19 @@ import java.util.regex.PatternSyntaxException;
 
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  *  Loads an XML document using the igb_stylesheet_1.dtd.
  */
 public final class XmlStylesheetParser {
 
-  Stylesheet stylesheet = new Stylesheet();
-  static Stylesheet system_stylesheet = null;
-  static Stylesheet user_stylesheet = null;
+  private Stylesheet stylesheet = new Stylesheet();
+  private static Stylesheet system_stylesheet = null;
+  private static Stylesheet user_stylesheet = null;
 
   // This resource should in the top-level igb source directory, or top level of jar file
-  static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
-  static final String default_user_stylesheet_resource_name = "/default_user_stylesheet.xml";
+  private static final String system_stylesheet_resource_name = "/igb_system_stylesheet.xml";
+  private static final String default_user_stylesheet_resource_name = "/default_user_stylesheet.xml";
 
   /** Set the system stylesheet to null, so that the next call to getSystemStylesheet()
    *  will re-load it from storage.
@@ -44,7 +42,7 @@ public final class XmlStylesheetParser {
     system_stylesheet = null;
   }
 
-  public static synchronized Stylesheet getSystemStylesheet() {
+  private static synchronized Stylesheet getSystemStylesheet() {
     if (system_stylesheet == null) {
       try {
 	Application.getSingleton().getLogger().info("Loading system stylesheet from resource:" + system_stylesheet_resource_name);
@@ -101,45 +99,28 @@ public final class XmlStylesheetParser {
     return user_stylesheet;
   }
 
-  /*public Stylesheet parse(File fl) throws IOException {
-    FileInputStream fistr = null;
-    BufferedInputStream bistr = null;
-    try {
-      fistr = new FileInputStream(fl);
-      bistr = new BufferedInputStream(fistr);
-      stylesheet = parse(bistr);
-    }
-    finally {
-			GeneralUtils.safeClose(bistr);
-			GeneralUtils.safeClose(fistr);
-    }
-    return stylesheet;
-  }*/
-
-  public Stylesheet parse(InputStream istr) throws IOException {
+  private Stylesheet parse(InputStream istr) throws IOException {
     InputSource insrc = new InputSource(istr);
     parse(insrc);
     return stylesheet;
   }
 
-  public Stylesheet parse(InputSource insource) throws IOException {
-    try {
+	private Stylesheet parse(InputSource insource) throws IOException {
+		try {
 			Document prefsdoc = DasLoader.nonValidatingFactory().newDocumentBuilder().parse(insource);
 
-      processDocument(prefsdoc);
-    }
-    catch (IOException ioe) {
-      throw ioe;
-    }
-    catch (Exception ex) {
-      IOException ioe = new IOException("Error processing stylesheet file");
-      ioe.initCause(ex);
-      throw ioe;
-    }
-    return stylesheet;
-  }
+			processDocument(prefsdoc);
+		} catch (IOException ioe) {
+			throw ioe;
+		} catch (Exception ex) {
+			IOException ioe = new IOException("Error processing stylesheet file");
+			ioe.initCause(ex);
+			throw ioe;
+		}
+		return stylesheet;
+	}
 
-  public void processDocument(Document prefsdoc) throws IOException {
+  private void processDocument(Document prefsdoc) throws IOException {
 
     Element top_element = prefsdoc.getDocumentElement();
     String topname = top_element.getTagName();
@@ -151,7 +132,6 @@ public final class XmlStylesheetParser {
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
       String name = child.getNodeName();
-      Object val = null;
       if (child instanceof Element) {
         Element el = (Element)child;
 
@@ -171,28 +151,28 @@ public final class XmlStylesheetParser {
     }
   }
 
-  void cantParse(Element n) {
+  private static void cantParse(Element n) {
     System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
   }
 
-  void cantParse(Element n, String msg) {
+  private static void cantParse(Element n, String msg) {
     System.out.println("WARNING: Stylesheet: Cannot parse element: " + n.getNodeName());
     System.out.println("        " + msg);
   }
 
-  void notImplemented(String s) {
+  private static void notImplemented(String s) {
     System.out.println("WARNING: Stylesheet: Not yet implemented: " + s);
   }
 
-  boolean isBlank(String s) {
+  private static boolean isBlank(String s) {
     return (s == null || s.trim().length() == 0);
   }
 
-  void processImport(Element el) throws IOException {
+  private static void processImport(Element el) throws IOException {
     notImplemented("<IMPORT>");
   }
 
-  void processAssociations(Element associations) throws IOException {
+  private void processAssociations(Element associations) throws IOException {
 
     NodeList children = associations.getChildNodes();
 
@@ -259,14 +239,8 @@ public final class XmlStylesheetParser {
     }
   }
 
-  void processStyles(Element stylesNode) throws IOException {
+  private void processStyles(Element stylesNode) throws IOException {
     NodeList children = stylesNode.getChildNodes();
-
-    //applyProperties(stylesNode, ...);
-
-    // There could be a top-level property map that applies to the
-    // whole stylesheet, but that isn't implemented now
-    PropertyMap top_level_property_map = null;
 
     for (int i=0; i<children.getLength(); i++) {
       Node child = children.item(i);
@@ -281,7 +255,7 @@ public final class XmlStylesheetParser {
     }
   }
 
-  StyleElement processStyle(Element styleel, boolean top_level) throws IOException {
+  private StyleElement processStyle(Element styleel, boolean top_level) throws IOException {
 
     // node name should be STYLE, COPY_STYLE or USE_STYLE
     String node_name = styleel.getNodeName();
@@ -293,17 +267,6 @@ public final class XmlStylesheetParser {
       se = stylesheet.createStyle(styleName, top_level);
       se.childContainer = styleel.getAttribute(StyleElement.ATT_CONTAINER);
 
-//    } else if ("COPY_STYLE".equalsIgnoreCase(node_name)) {
-//      String newName = styleel.getAttribute("new_name");
-//      String extendsName = styleel.getAttribute("extends");
-//      se = stylesheet.getStyleByName(extendsName);
-//
-//      if (se == null) {
-//        se = stylesheet.createStyle(newName, top_level);
-//      } else {
-//        se = StyleElement.clone(se, newName);
-//      }
-//
     } else if (Stylesheet.WrappedStyleElement.NAME.equalsIgnoreCase(node_name)) {
       String styleName = styleel.getAttribute(StyleElement.ATT_NAME);
       if (styleName==null || styleName.trim().length()==0) {
@@ -361,7 +324,7 @@ public final class XmlStylesheetParser {
     return se;
   }
 
-  GlyphElement processGlyph(Element glyphel) throws IOException {
+  private GlyphElement processGlyph(Element glyphel) throws IOException {
     GlyphElement ge = new GlyphElement();
 
     String type = glyphel.getAttribute(GlyphElement.ATT_TYPE);
@@ -399,7 +362,7 @@ public final class XmlStylesheetParser {
     return ge;
   }
 
-  ChildrenElement processChildrenElement(Element childel) throws IOException {
+  private ChildrenElement processChildrenElement(Element childel) throws IOException {
     ChildrenElement ce = new ChildrenElement();
 
     String position = childel.getAttribute(ChildrenElement.ATT_POSITIONS);
@@ -431,7 +394,7 @@ public final class XmlStylesheetParser {
 
   }
 
-  MatchElement processMatchElement(Element matchel) throws IOException {
+  private MatchElement processMatchElement(Element matchel) throws IOException {
     MatchElement me;
 
     if (MatchElement.NAME.equalsIgnoreCase(matchel.getNodeName())) {
@@ -493,7 +456,7 @@ public final class XmlStylesheetParser {
     return me;
   }
 
-  void processProperty(Element properElement, PropertyMap propertied)
+  private void processProperty(Element properElement, PropertyMap propertied)
   throws IOException {
     String key = properElement.getAttribute(PropertyMap.PROP_ATT_KEY);
     String value = properElement.getAttribute(PropertyMap.PROP_ATT_VALUE);
@@ -503,7 +466,7 @@ public final class XmlStylesheetParser {
     propertied.setProperty(key, value);
   }
 
-  static String escapeXML(String s) {
+  private static String escapeXML(String s) {
     if (s==null) {
       return "";
     } else {
@@ -513,7 +476,7 @@ public final class XmlStylesheetParser {
   }
 
 
-  public static void appendAttribute(StringBuffer sb, String name, String value) {
+  static void appendAttribute(StringBuffer sb, String name, String value) {
     if (value != null && value.trim().length() > 0) {
       sb.append(" ").append(name).append("='").append(escapeXML(value)).append("'");
     }

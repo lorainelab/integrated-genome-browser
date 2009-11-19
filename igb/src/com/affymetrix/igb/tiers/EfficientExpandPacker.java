@@ -147,7 +147,7 @@ public abstract class EfficientExpandPacker extends ExpandPacker {
     }
     childbox = child.getCoordBox();
     if (DEBUG_PACK && test_tier)  { System.out.println("packing glyph: " + childbox); }
-    List sibsinrange = null;
+    List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
     if (avoid_sibs) {
       sibsinrange = tier.getPriorOverlaps(child_index);
@@ -165,7 +165,7 @@ public abstract class EfficientExpandPacker extends ExpandPacker {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = (GlyphI)sibsinrange.get(j);
+        GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_PACK && test_tier)  { System.out.println("checking against: " + sibling); }

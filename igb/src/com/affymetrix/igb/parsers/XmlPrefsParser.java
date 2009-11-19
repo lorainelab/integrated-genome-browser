@@ -26,7 +26,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.prefs.WebLink;
-import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.SourceTableModel;
@@ -386,7 +385,7 @@ public final class XmlPrefsParser {
 			String factory_name = null;
 			try {
 				factory_name = attmap.get("factory");
-				factory_class = ObjectUtils.classForName(factory_name);
+				factory_class = Class.forName(factory_name);
 			} catch (ClassNotFoundException ex) {
 				System.out.println("ERROR: Class '" + factory_name + "' specified in the preferences file can not be found");
 				factory_class = default_factory_class;

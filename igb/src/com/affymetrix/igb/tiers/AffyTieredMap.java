@@ -35,10 +35,7 @@ import javax.swing.*;
  */
 public class AffyTieredMap extends NeoMap {
 
-	private static final boolean TIME_PACKING = false;
-	public String name; // for debugging only
 	private List<TierGlyph> tiers = new ArrayList<TierGlyph>();
-	private final com.affymetrix.genoviz.util.Timer timecheck = new com.affymetrix.genoviz.util.Timer();
 
 	// the total pixel height of visible fixed pixel tiers
 	//    (recalculated with every packTiers() call)
@@ -85,29 +82,16 @@ public class AffyTieredMap extends NeoMap {
 		}
 	};
 
-	public AffyTieredMap() {
-		super();
-	}
-
-	public AffyTieredMap(boolean hscroll, boolean vscroll) {
-		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
-	}
-
-	private AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
+	public AffyTieredMap(boolean hscroll, boolean vscroll, int orient) {
 		super(hscroll, vscroll, orient, new LinearTransform());
 		show_plus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_plus));
 		show_minus_action.putValue(SELECTED_KEY, Boolean.valueOf(show_minus));
 		show_mixed_action.putValue(SELECTED_KEY, Boolean.valueOf(show_mixed));
 	}
 
-	public AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
-		this(hscroll, vscroll);
+	AffyTieredMap(boolean hscroll, boolean vscroll, JScrollBar vscroller) {
+		this(hscroll, vscroll, NeoConstants.HORIZONTAL);
 		this.scroller[Y] = vscroller;
-	}
-
-	/** Add the given tier to the map, building top-down. */
-	public final void addTier(TierGlyph mtg) {
-		addTier(mtg, false);
 	}
 
 	/**
@@ -172,9 +156,6 @@ public class AffyTieredMap extends NeoMap {
 	 *   go through packTiers(boolean, boolean, boolean)
 	 */
 	private void packTiers(boolean full_repack, boolean stretch_map) {
-		if (TIME_PACKING) {
-			timecheck.start();
-		}
 		fixed_pixel_height = 0;
 		fixed_coord_height = 0;
 		if (full_repack) {
@@ -187,11 +168,11 @@ public class AffyTieredMap extends NeoMap {
 		for (TierGlyph mtg : tiers) {
 			if (mtg.getChildCount() <= 0) {
 				mtg.setState(TierGlyph.HIDDEN);
-			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.DIRECTION_FORWARD) {
+			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
 				mtg.setState(TierGlyph.HIDDEN);
-			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.DIRECTION_REVERSE) {
+			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
 				mtg.setState(TierGlyph.HIDDEN);
-			} else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.DIRECTION_BOTH)) {
+			} else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.Direction.BOTH)) {
 				mtg.setState(TierGlyph.HIDDEN);
 			} else {
 				if (mtg.getAnnotStyle().getShow()) {
@@ -225,15 +206,11 @@ public class AffyTieredMap extends NeoMap {
 			height = mtg.getCoordBox().height;
 			// need to call moveAbsolute to trigger recursive move of
 			//   all children
-			//      System.out.println("moving tier absolute, yoffset = " + offset);
-			//      mtg.moveAbsolute(mbox.x, offset);
 			mtg.moveAbsolute(mtg.getCoordBox().x, offset);
-			//      mtg.setCoords(mbox.x, offset, mbox.width, height);
 			offset = offset + height;
 		}
 
 		if (stretch_map) {
-			//      System.out.println("stretching");
 			if (tiers.size() <= 0) {
 				return;
 			}
@@ -254,10 +231,6 @@ public class AffyTieredMap extends NeoMap {
 			if (newbox != null) {
 				setFloatBounds(Y, newbox.y, newbox.y + newbox.height);
 			}
-		}
-		if (TIME_PACKING) {
-			long tim = timecheck.read();
-			System.out.println("time to pack: " + tim / 1000f);
 		}
 	}
 
@@ -454,7 +427,7 @@ public class AffyTieredMap extends NeoMap {
 		// [later, may be able to leverage off the fact that tier maps always
 		//   pack down from 0, so that scene starts at 0 and ends at (y+height)
 		//   of last packed tier]
-		trans.setOffsetY(pix_offset);
+		trans.setTranslateY(pix_offset);
 		trans.setScaleY(pixels_per_coord[id]);
 		// pack tiers (which may modify scene bounds) based on view with transform
 		//    modified to take into account zoom_scale and "proposed" offset
@@ -481,7 +454,7 @@ public class AffyTieredMap extends NeoMap {
 
 		// redoing setting of transform, in case there were any adjusments to trim to scene...
 		// assuming modifying Y
-		trans.setOffsetY(pixel_offset[id]);
+		trans.setTranslateY(pixel_offset[id]);
 		trans.setScaleY(pixels_per_coord[id]);
 
 		if (zoom_scale != zoomer_scale[id]) {

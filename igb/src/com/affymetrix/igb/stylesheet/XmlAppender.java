@@ -13,6 +13,6 @@
 
 package com.affymetrix.igb.stylesheet;
 
-public interface XmlAppender {
-  public StringBuffer appendXML(String indent, StringBuffer sb);
+interface XmlAppender {
+  StringBuffer appendXML(String indent, StringBuffer sb);
 }

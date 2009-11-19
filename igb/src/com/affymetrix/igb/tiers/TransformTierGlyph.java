@@ -61,10 +61,6 @@ public final class TransformTierGlyph extends TierGlyph {
   private Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   // for caching in pickTraversal(pixbox, picks, view) method
   private Rectangle2D.Double pix_rect = new Rectangle2D.Double();
-
-  public TransformTierGlyph() {
-    super();
-  }
   
   public TransformTierGlyph(IAnnotStyle style)  {
     super(style);
@@ -77,7 +73,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void drawChildren(ViewI view) {
 
     // MODIFY VIEW
-    incoming_view_transform = (LinearTransform)view.getTransform();
+    incoming_view_transform = view.getTransform();
     incoming_view_coordbox = view.getCoordBox();
 
     // figure out draw transform by combining tier transform with view transform
@@ -97,21 +93,21 @@ public final class TransformTierGlyph extends TierGlyph {
     // should switch soon to doing this completely through
     //    LinearTransform calls, and eliminate new AffineTransform creation...
     AffineTransform trans2D = new AffineTransform();
-    trans2D.translate(0.0, incoming_view_transform.getOffsetY());
+    trans2D.translate(0.0, incoming_view_transform.getTranslateY());
     trans2D.scale(1.0, incoming_view_transform.getScaleY());
 
     //    trans2D.translate(1.0, this.getCoordBox().y);
     //    System.out.println("tier transform: offset = " + tier_transform.getOffsetY() +
     //    		       ", scale = " + tier_transform.getScaleY());
 
-    trans2D.translate(1.0, tier_transform.getOffsetY());
+    trans2D.translate(1.0, tier_transform.getTranslateY());
     trans2D.scale(1.0, tier_transform.getScaleY());
 
     modified_view_transform = new LinearTransform();
     modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
-    modified_view_transform.setOffsetX(incoming_view_transform.getOffsetX());
+    modified_view_transform.setTranslateX(incoming_view_transform.getTranslateX());
     modified_view_transform.setScaleY(trans2D.getScaleY());
-    modified_view_transform.setOffsetY(trans2D.getTranslateY());
+    modified_view_transform.setTranslateY(trans2D.getTranslateY());
     view.setTransform(modified_view_transform);
 
     // need to set view coordbox based on nested transformation
@@ -131,7 +127,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void fitToPixelHeight(ViewI view) {
     // use view transform to determine how much "more" scaling must be
     //       done within tier to keep its
-    LinearTransform view_transform = (LinearTransform)view.getTransform();
+    LinearTransform view_transform = view.getTransform();
     double yscale = 0.0d;
     if ( 0.0d != coordbox.height ) {
       yscale = (double)fixedPixHeight / coordbox.height;
@@ -206,7 +202,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;
-    tier_transform.setOffsetY(tier_transform.getOffsetY() + diffy);
+    tier_transform.setTranslateY(tier_transform.getTranslateY() + diffy);
   }
 
 

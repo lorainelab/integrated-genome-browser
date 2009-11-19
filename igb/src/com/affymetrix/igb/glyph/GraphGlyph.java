@@ -271,9 +271,8 @@ public final class GraphGlyph extends Glyph {
 
 		// drawing the "handle", which is the only part of the graph that recognizes hits
 		// not a normal "child", so if it is hit then graph is considered to be hit...
-		if (getShowHandle()) {
-			drawHandle(view);
-		}
+		drawHandle(view);
+		
 		if (getShowAxis()) {
 			drawAxisLabel(view);
 		}
@@ -435,33 +434,7 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawLabel(ViewI view) {
-		if (state.getShowLabelOnRight()) {
-			drawLabelRight(view);
-		} else {
-			drawLabelLeft(view);
-		}
-	}
-
-	private void drawLabelRight(ViewI view) {
-		// if full view differs from current view, and current view doesn't right align with full view,
-		//   don't draw handle (only want handle at right side of full view)
-		if (view.getFullView().getCoordBox().x + view.getFullView().getCoordBox().width != view.getCoordBox().x + view.getCoordBox().width) {
-			return;
-		}
-
-		view.transformToPixels(coordbox, pixelbox);
-		Rectangle view_pixbox = view.getPixelBox();
-
-		if (view_pixbox != null) {
-			Graphics g = view.getGraphics();
-			g.setFont(default_font);
-			FontMetrics fm = g.getFontMetrics();
-			Rectangle2D.Double sb = (Rectangle2D.Double) fm.getStringBounds(getLabel(), g);
-			int stringWidth = (int) sb.getWidth() + 1;
-
-			g.setColor(getColor());
-			g.drawString(getLabel(), (view_pixbox.x + view_pixbox.width - stringWidth), (pixelbox.y + fm.getMaxAscent() - 1));
-		}
+		drawLabelLeft(view);
 	}
 
 	private void drawLabelLeft(ViewI view) {
@@ -646,7 +619,7 @@ public final class GraphGlyph extends Glyph {
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
 		// within bounds of graph ?
-		if (getShowHandle() && isVisible() && coord_hitbox.intersects(coordbox)) {
+		if (isVisible() && coord_hitbox.intersects(coordbox)) {
 			// overlapping handle ?  (need to do this one in pixel space?)
 			view.transformToPixels(coord_hitbox, pixel_hitbox);
 			Rectangle hpix = calcHandlePix(view);
@@ -762,10 +735,6 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowBounds();
 	}
 
-	private boolean getShowHandle() {
-		return state.getShowHandle();
-	}
-
 	public boolean getShowLabel() {
 		return state.getShowLabel();
 	}
@@ -774,11 +743,15 @@ public final class GraphGlyph extends Glyph {
 		return state.getShowAxis();
 	}
 
+	public void setShowAxis(boolean b) {
+		state.setShowAxis(b);
+	}
+
 	public void setShowGraph(boolean show) {
 		state.setShowGraph(show);
 	}
 
-	public void setShowBounds(boolean show) {
+	void setShowBounds(boolean show) {
 		state.setShowBounds(show);
 	}
 
@@ -786,9 +759,7 @@ public final class GraphGlyph extends Glyph {
 		state.setShowLabel(show);
 	}
 
-	public void setShowAxis(boolean b) {
-		state.setShowAxis(b);
-	}
+	
 
 	@Override
 	public void setBackgroundColor(Color col) {
@@ -914,9 +885,9 @@ public final class GraphGlyph extends Glyph {
 		if (getShowGraph()) {
 			drawGraph(view);
 		}
-		if (getShowHandle()) {
-			drawHandle(view);
-		}
+
+		drawHandle(view);
+		
 		if (getShowAxis()) {
 			drawAxisLabel(view);
 		}

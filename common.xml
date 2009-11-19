@@ -4,15 +4,17 @@
 
 		<!-- directory paths -->
 		<property name="dist.dir"     value="${basedir}/dist" />
-		<property name="flex.dir"     value="${basedir}/flex" />
 		<property name="webstart.dir" value="${dist.dir}/webstart" />
+		<property name="flex.dir"     value="${basedir}/flex" />
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
-		<property name="release.dir"  value="${dist.dir}/release" />
-    <property name="deploy.dir"   value="c:\apache\tomcat5.5\webapps\DAS2" />
+		<property name="release.dir"   value="${dist.dir}/release" />
 
+		<property name="deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_DAS2_HERE" />
 		<property name="build.version"   value="${DSTAMP}" />
 		
-
+		<!-- das2 mode, set to either classic or genopub -->
+		<property name="das2_mode"    value="classic"/>
+		
 		<!-- file paths -->
 		<property name="web.xml" value="${das2server}/web.xml" />
 		<property name="context.xml" value="${das2server}/context.xml" />
@@ -20,11 +22,10 @@
 		<property name="context.classic.xml" value="${das2server}/context_classic.xml" />
 		<property name="das2.resources" value="${das2server}/resources" />
 
-
 		<!-- JNLP Webstart -->
 		<property name="jnlp.file.path" value="${igb}/etc/igb.jnlp" />
 		<property name="jnlp.version"   value="${build.version}" />
-		<property name="jnlp.codebase"  value="http://localhost:8080/igb" />
+		<property name="jnlp.codebase"  value="http://USE_YOUR_URL_HERE" />
 		<property name="jnlp.icon.name" value="igb.gif" />
 		<property name="jnlp.icon.path" value="${igb}/resources/com/affymetrix/igb/${jnlp.icon.name}" />
 		<property name="jnlp.splashicon.name" value="igb_splash.gif" />
@@ -42,9 +43,7 @@
 		<!-- compiler defaults passed to javac -->
 		<property name="debug"         value="on" />
 		<property name="deprecation"   value="off"/>
-		<property name="compiler.args" value="-Xlint:all,-serial,-deprecation,-unchecked -Xmaxwarns 500"/>
-
-
+		<property name="compiler.args" value="-Xlint:all,-serial -Xmaxwarns 500"/>
 
 		<!-- signjar defaults -->
 		<property name="jar.sign.keystore"      value="${user.home}/.keystore" />
@@ -75,6 +74,34 @@
 		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
 	</target>
 
+	</target>
+
+	<condition property="is_das2_classic_mode">
+	  <matches string="${das2_mode}" pattern="classic"/>
+	</condition>
+
+	<condition property="is_das2_genopub_mode">
+	  <matches string="${das2_mode}" pattern="genopub"/>
+	</condition>
+
+	<!-- Only compile file flex if the the das2 mode is 'genopub' and the flex app is not up-to-date -->
+	<condition property="compile_flex">
+		<and>
+			<!-- Is the das2 mode genopub? -->
+  	  <matches string="${das2_mode}" pattern="genopub"/>
+			
+	    <!-- Is the flex app not already up-to-date? -->
+			<not>
+	  	  <uptodate property="flex_up_to_date" targetfile="${dist.dir}/GenoPub.swf">
+	    	  <srcfiles dir="${das2server}/flex">
+		    	  <include name="**/*.as"/>
+	  	  	  <include name="**/*.mxml"/>
+	  		  </srcfiles>
+			  </uptodate>
+			</not>
+		</and>
+	</condition>
+  
 	<presetdef name="my.javac">
 		<javac srcdir="${src.dir}" classpath="${classpath}" debug="${debug}" deprecation="${deprecation}">
 			<compilerarg compiler="modern" line="${compiler.args}" />

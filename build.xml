@@ -32,7 +32,7 @@
 		<iterate target="compile" />
 	</target>
 
-	<target name="flex" depends="common-init" description="Compile Flex GenoPub application">
+	<target name="flex" if="compile_flex" depends="common-init" description="Compile Flex GenoPub application">
 		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
 		<mxmlc file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
 	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
@@ -87,7 +87,7 @@
 		<my.signjar jar="${lib.dir}/myswing.jar"           signedjar="${webstart.dir}/myswing.jar" />
 		<my.signjar jar="${lib.dir}/image4j.jar"           signedjar="${webstart.dir}/image4j.jar" />
 		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
-		<my.signjar jar="${lib.dir}/commons-codec-1.4.jar" signedjar="${webstart.dir}/commons-codec-1.4.jar" />
+
 		<!--
 		<jar jarfile="${webstart.dir}/igb.jar" index="true">
 			<zipfileset src="${dist.dir}/igb.jar" />
@@ -109,7 +109,7 @@
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 	</target>
 
-	<target name="webappbase">
+	<target name="webapp" depends="jar,flex" description="Create das2servlet web application">
 		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${dist.dir}">
@@ -125,7 +125,7 @@
 				<include name="*.properties" />
 			</fileset>
 		</copy> 
-		<copy todir="${webapp.dir}" verbose="true">
+		<copy todir="${webapp.dir}" >
 			<fileset dir="${dist.dir}">
 				<include name="*.swf" />
 				<include name="*.html" />
@@ -140,16 +140,16 @@
 				<include name="*.png" />
 			</fileset>
 		</copy>
+		<antcall target="webapp-classic" />
+		<antcall target="webapp-genopub" />
 	</target>
 
-	<target name="webapp-classic"  depends="jar, flex" description="Create das2servlet web application, use filesystem to serve annotations">
-		<antcall target="webappbase" />
+	<target name="webapp-classic" if="is_das2_classic_mode" depends="jar, flex" description="Create das2servlet web application, use filesystem to serve annotations">
 		<copy file="${web.classic.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
 		<copy file="${context.classic.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
 	</target>
 
-	<target name="webapp"  depends="jar, flex" description="Create das2servlet web application, use db to serve annotations">
-		<antcall target="webappbase" />
+	<target name="webapp-genopub" if="is_das2_genopub_mode" depends="jar, flex" description="Create das2servlet web application, use db to serve annotations">
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
 		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
 	</target>

@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -264,6 +264,10 @@ public class GraphSym extends SimpleSymWithProps {
 		return hasWidth ? this.pointCount : 0;
 	}
 
+	public final boolean hasWidth() {
+		return hasWidth;
+	}
+
 
 	/**
 	 * Find last point with value <= xmin.
@@ -442,9 +446,8 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 *  Returns the graph state.  Will never be null.
 	 */
-	public GraphStateI getGraphState() {
-		GraphStateI state = DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
-		return state;
+	public GraphState getGraphState() {
+		return DefaultStateProvider.getGlobalStateProvider().getGraphState(this.gid);
 	}
 
 	/**

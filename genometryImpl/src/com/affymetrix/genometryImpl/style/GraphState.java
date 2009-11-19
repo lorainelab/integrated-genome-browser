@@ -17,7 +17,12 @@ package com.affymetrix.genometryImpl.style;
  *  Encapsulates information needed to restore the visual appearance of
  *    a graph stored at a URL.
  */
-public final class GraphState implements GraphStateI {
+public final class GraphState {
+
+		//TODO: Make this an enum
+	public static int THRESHOLD_DIRECTION_GREATER = 1;
+	public static int THRESHOLD_DIRECTION_BETWEEN = 0;
+	public static int THRESHOLD_DIRECTION_LESS = -1;
 
 	private String graph_path;
 	private GraphType graph_style = GraphType.MINMAXAVG;
@@ -69,14 +74,12 @@ public final class GraphState implements GraphStateI {
 	private boolean float_graph = false;
 	private boolean show_threshold = false;
 	private boolean show_axis = false;
-	private boolean show_grid = false;
 
 	private boolean show_handle = true;
 	private boolean show_graph = true;
 	private boolean show_bounds = false;
 	private boolean show_label = true;
 	private boolean show_label_on_right = false;
-	private boolean show_zero_line = true;
 
 	private HeatMap heat_map;
 	private IAnnotStyle tier_style;
@@ -111,7 +114,7 @@ public final class GraphState implements GraphStateI {
 	}
 
 	/** Copy all the properties, except ID and label, of the given state into this state. */
-	public void copyProperties(GraphStateI ostate) {
+	public void copyProperties(GraphState ostate) {
 		setUrl(ostate.getUrl());
 		setGraphStyle(ostate.getGraphStyle());
 		setVisibleMinY(ostate.getVisibleMinY());
@@ -119,13 +122,11 @@ public final class GraphState implements GraphStateI {
 		setFloatGraph(ostate.getFloatGraph());
 		setShowThreshold(ostate.getShowThreshold());
 		setShowAxis(ostate.getShowAxis());
-		setShowGrid(ostate.getShowGrid());
 		setShowHandle(ostate.getShowHandle());
 		setShowGraph(ostate.getShowGraph());
 		setShowBounds(ostate.getShowBounds());
 		setShowLabel(ostate.getShowLabel());
 		setShowLabelOnRight(ostate.getShowLabelOnRight());
-		setShowZeroLine(ostate.getShowZeroLine());
 		setThresholdDirection(ostate.getThresholdDirection());
 		setMinScoreThreshold(ostate.getMinScoreThreshold());
 		setMaxScoreThreshold(ostate.getMaxScoreThreshold());
@@ -152,7 +153,6 @@ public final class GraphState implements GraphStateI {
 	public final boolean getFloatGraph() { return  float_graph; }
 	public final boolean getShowThreshold() { return show_threshold; }
 	public final boolean getShowAxis() { return show_axis; }
-	public final boolean getShowGrid() { return show_grid; }
 
 	public final boolean getShowHandle() { return show_handle; }
 	public final boolean getShowGraph() { return show_graph; }
@@ -182,7 +182,6 @@ public final class GraphState implements GraphStateI {
 	public final void setVisibleMaxY(float vmaxy) { graph_visible_max = vmaxy;}  // check
 	public final void setShowThreshold(boolean b) { show_threshold = b;} // check
 	public final void setShowAxis(boolean b) { show_axis = b;} // check
-	public final void setShowGrid(boolean b) { show_grid = b;} // check
 	public final void setShowHandle(boolean b) { show_handle = b;}  // check
 	public final void setShowGraph(boolean b) { show_graph = b;}    // check
 	public final void setShowBounds(boolean b) { show_bounds = b;}  // check
@@ -218,14 +217,6 @@ public final class GraphState implements GraphStateI {
 
 	public void setComboStyle(IAnnotStyle s) {
 		this.combo_tier_style = s;
-	}
-
-	public void setShowZeroLine(boolean b) {
-		this.show_zero_line = b;
-	}
-
-	public boolean getShowZeroLine() {
-		return show_zero_line;
 	}
 
 	float[] gridLineYValues = null;

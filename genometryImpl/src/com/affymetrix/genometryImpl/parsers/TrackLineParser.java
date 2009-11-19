@@ -240,7 +240,7 @@ public final class TrackLineParser {
 	 *  Applies the UCSC track properties that it understands to the GraphState
 	 *  object.  Understands: "viewlimits", "graphtype" = "bar" or "points".
 	 */
-	public static void applyTrackProperties(Map<String,String> track_hash, GraphStateI gstate) {
+	public static void applyTrackProperties(Map<String,String> track_hash, GraphState gstate) {
 		applyTrackProperties(track_hash, gstate.getTierStyle());
 
 		String view_limits = track_hash.get("viewlimits");

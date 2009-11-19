@@ -13,21 +13,13 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
-import com.affymetrix.igb.Application;
-import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.style.IAnnotStyle;
-import com.affymetrix.genometryImpl.style.GraphStateI;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 
 import java.awt.Adjustable;
 import java.awt.event.*;
-import java.util.*;
 
 import javax.swing.*;
 

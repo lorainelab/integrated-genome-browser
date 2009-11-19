@@ -20,7 +20,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.Iterator;
 
@@ -299,7 +299,7 @@ public final class WiggleParser {
 		}
 		track_hash.put(TrackLineParser.NAME, graph_id);
 
-		GraphStateI gstate = AnnotatedSeqGroup.getStateProvider().getGraphState(graph_id);
+		GraphState gstate = AnnotatedSeqGroup.getStateProvider().getGraphState(graph_id);
 		TrackLineParser.applyTrackProperties(track_hash, gstate);
 
 		// Need iterator because we're removing data on the fly
@@ -324,7 +324,7 @@ public final class WiggleParser {
 		String seq_id = (seq == null ? "." : seq.getID());
 		String human_name = graf.getGraphState().getTierStyle().getHumanName();
 		String gname = graf.getGraphName();
-		GraphStateI state = graf.getGraphState();
+		GraphState state = graf.getGraphState();
 		Color color = state.getTierStyle().getColor();
 
 		BufferedWriter bw = null;

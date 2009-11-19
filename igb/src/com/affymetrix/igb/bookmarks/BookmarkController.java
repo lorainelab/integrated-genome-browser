@@ -94,10 +94,8 @@ public abstract class BookmarkController {
     int default_minrun_thresh = 30;
     int default_maxgap_thresh = 100;
     boolean default_show_thresh = false;
-    int default_thresh_direction = GraphStateI.THRESHOLD_DIRECTION_GREATER;
+    int default_thresh_direction = GraphState.THRESHOLD_DIRECTION_GREATER;
     Map<String,IAnnotStyle> combos = new HashMap<String,IAnnotStyle>();
-
-    //System.err.println("I am in loadGraphs!!!!");
 
     // Figure out the "source_url" paths of all currently-loaded graphs
     List loaded_graphs = Collections.EMPTY_LIST;
@@ -235,7 +233,7 @@ public abstract class BookmarkController {
 			}
 			if (grafs != null) {
 				for (GraphSym graf : grafs) {
-					GraphStateI gstate = graf.getGraphState();
+					GraphState gstate = graf.getGraphState();
 					graf.setGraphName(graph_name);
 					if (graph_style_num != null) {
 						gstate.setGraphStyle(graph_style_num);

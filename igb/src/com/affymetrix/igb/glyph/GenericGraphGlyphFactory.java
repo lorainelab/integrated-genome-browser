@@ -15,7 +15,7 @@ package com.affymetrix.igb.glyph;
 import java.util.*;
 
 import com.affymetrix.genometryImpl.*;
-import com.affymetrix.genometryImpl.style.GraphStateI;
+import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -136,7 +136,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, Rectangle2D.Double cbox, AffyTieredMap map, SeqMapView smv, boolean update_map) {
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, graf.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
-		GraphStateI gstate = graf.getGraphState();
+		GraphState gstate = graf.getGraphState();
 		IAnnotStyle tier_style = gstate.getTierStyle();
 		graph_glyph.setCoords(cbox.x, tier_style.getY(), cbox.width, tier_style.getHeight());
 		map.setDataModelFromOriginalSym(graph_glyph, graf); // has side-effect of graph_glyph.setInfo(graf)

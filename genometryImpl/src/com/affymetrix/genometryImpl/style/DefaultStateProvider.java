@@ -61,7 +61,7 @@ public final class DefaultStateProvider implements StateProvider {
 		return default_instance;
 	}
 
-	public GraphStateI getGraphState(String id) {
+	public GraphState getGraphState(String id) {
 		GraphState state = id2graphState.get(id);
 		if (state == null) {
 			state = new GraphState(id);

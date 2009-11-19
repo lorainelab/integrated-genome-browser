@@ -20,9 +20,9 @@ import com.affymetrix.genometry.genopub.GenomeVersion;
 import com.affymetrix.genometry.genopub.Owned;
 import com.affymetrix.genometry.genopub.Util;
 import com.affymetrix.genometry.genopub.Visibility;
-import com.affymetrix.genometryImpl.Propertied;
 
-public class Annotation implements Owned, Propertied {
+
+public class Annotation implements Owned {
 
 	public static final String PROP_NAME                = "name";
     public static final String PROP_SUMMARY             = "summary";

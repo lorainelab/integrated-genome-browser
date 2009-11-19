@@ -434,10 +434,6 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawLabel(ViewI view) {
-		drawLabelLeft(view);
-	}
-
-	private void drawLabelLeft(ViewI view) {
 		Rectangle hpix = calcHandlePix(view);
 		Graphics g = view.getGraphics();
 		g.setColor(this.getColor());
@@ -875,7 +871,7 @@ public final class GraphGlyph extends Glyph {
 			//      System.out.println("in SmartGraphGlyph, creating new pixel cache");
 			pixel_cache = new int[comp_ysize];
 		}
-		Arrays.fill(pixel_cache, 0, comp_ysize-1, 0);
+		Arrays.fill(pixel_cache, 0, comp_ysize-1, Integer.MIN_VALUE);
 
 		if (TIME_DRAWING) {
 			tim.start();
@@ -917,9 +913,7 @@ public final class GraphGlyph extends Glyph {
 		getInternalLinearTransform(view, scratch_trans);
 		double yscale = scratch_trans.getScaleY();
 		double offset = scratch_trans.getTranslateY();
-		Rectangle2D.Double view_coordbox = view.getCoordBox();
-		double xmin = view_coordbox.x;
-		double xmax = view_coordbox.x + view_coordbox.width;
+		
 		// plot_top_ypixel and plot_bottom_ypixel are replacements for pixelbox.y and pbox_yheight in many
 		//   (but not all) calculations, they take into account an internal transform to shrink the graph rendering
 		//   if necessary to allow space for the graph label and thresholded regions
@@ -960,11 +954,14 @@ public final class GraphGlyph extends Glyph {
 				g.setColor(getBackgroundColor());
 			}
 		}
-		DrawPoints(xmin, xmax, offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel);
+		DrawPoints(offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel);
 		DrawAvgLine(graph_style, g, coords_per_pixel);
 	}
 
-	private void DrawPoints(double xmin, double xmax, double offset, double yscale, ViewI view, GraphType graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel) {
+	private void DrawPoints(double offset, double yscale, ViewI view, GraphType graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel) {
+		Rectangle2D.Double view_coordbox = view.getCoordBox();
+		double xmin = view_coordbox.x;
+		double xmax = view_coordbox.x + view_coordbox.width;
 		int draw_beg_index = graf.determineBegIndex(xmin);
 		int draw_end_index = graf.determineEndIndex(xmax, draw_beg_index);
 		coord.x = graf.getGraphXCoord(draw_beg_index);
@@ -1023,13 +1020,13 @@ public final class GraphGlyph extends Glyph {
 		int yend = Math.min(Math.max(ymax_pixel, plot_top_ypixel), plot_bottom_ypixel);
 		if (graph_style == GraphType.MINMAXAVG || graph_style == GraphType.LINE_GRAPH) {
 			int yheight = yend - ystart;
-			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
-			if (graph_style == GraphType.LINE_GRAPH) {
-				// cache for drawing later
+			// cache for drawing later
 				if (prev_point.x > 0 && prev_point.x < pixel_cache.length) {
 					int yavg_pixel = ysum / points_in_pixel;
 					pixel_cache[prev_point.x] = Math.min(Math.max(yavg_pixel, plot_top_ypixel), plot_bottom_ypixel);
 				}
+			drawRectOrLine(g, prev_point.x, ystart, 1, yheight);
+			if (graph_style == GraphType.LINE_GRAPH) {
 				if (i > 0) {
 					int y1 = Math.min(Math.max(prev_point.y, plot_top_ypixel), plot_bottom_ypixel);
 					int y2 = Math.min(Math.max(curr_point.y, plot_top_ypixel), plot_bottom_ypixel);

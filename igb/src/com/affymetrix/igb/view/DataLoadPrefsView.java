@@ -434,10 +434,8 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		serverBox.add(serverBox1);
 		serverBox.add(serverBox2);
 		serverBox.add(serverBox3);
-		/*
 		serverBox.add(serverBoxLogin);
 		serverBox.add(serverBoxPassword);
-		 */
 		serverBox.add(serverBox4);
 		serverBox.setAlignmentX(0.0f);
 		this.add(serverBox);

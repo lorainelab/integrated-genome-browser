@@ -1,4 +1,4 @@
-package com.affymetrix.igb.view;
+package com.affymetrix.igb.view.load;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Set;
 
 import javax.swing.table.AbstractTableModel;
 
-final class TrackPropertyTableModel extends AbstractTableModel {
+class TrackPropertyTableModel extends AbstractTableModel {
 	
 	String featureName = "";
 	Map<String, String> properties = null;
@@ -50,7 +50,7 @@ final class TrackPropertyTableModel extends AbstractTableModel {
 	@Override
 	public String getColumnName(int col) {
 		if (col == 0) {
-			return "Name";
+			return "Property";
 		} else if (col == 1) {
 			return "Value";
 		} else {

@@ -77,6 +77,7 @@ public final class GeneralLoadView extends JComponent
 	private FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
 	private FeatureTreeView feature_tree_view;
+	private TrackInfoView track_info_view;
 
 	public GeneralLoadView() {
 		if (Application.getSingleton() != null) {
@@ -157,6 +158,14 @@ public final class GeneralLoadView extends JComponent
 		featuresPanel.add(featuresTableScrollPane);
 
 		this.add("North", choicePanel);
+
+		/* COMMENTED OUT.  The Track Info table makes the data load view
+		 *                 too busy, so for now, the code is commented out
+		 */
+//		track_info_view = new TrackInfoView();		
+//		JSplitPane featurePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, featuresPanel, track_info_view);		
+//		featurePane.setResizeWeight(0.5);		
+//		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featurePane);
 
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
 		jPane.setResizeWeight(0.5);		
@@ -789,6 +798,27 @@ public final class GeneralLoadView extends JComponent
 		// Don't enable combo box for full genome sequence
 		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !this.IsGenomeSequence());
 
+		
+		/* COMMENTED OUT.  The Track Info table makes the data load view
+		 *                 too busy, so for now, the code is commented out
+		 */		
+		//Listen for selection of feature to fill in track info
+//		feature_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//		feature_table.getSelectionModel().addListSelectionListener(
+//				new ListSelectionListener() {
+//
+//					public void valueChanged(ListSelectionEvent event) {
+//						int row = feature_table.getSelectedRow();
+//						if (row >= 0) {
+//							GenericFeature feature = feature_model.getFeature(row);
+//							if (feature != null) {
+//								track_info_view.initializeFeature(feature);
+//							}
+//						}
+//					}
+//				});
+		
+		
 		this.feature_model.fireTableDataChanged();
 		featuresTableScrollPane.setViewportView(this.feature_table);
 

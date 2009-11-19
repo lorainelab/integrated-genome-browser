@@ -340,6 +340,13 @@ public final class IGB extends Application
 			System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
 			GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
 		}
+		
+
+		// when HTTP authentication is needed, getPasswordAuthentication will
+		//    be called on the authenticator set as the default
+		Authenticator.setDefault(new UnibrowAuthenticator(frm));
+		
+		
 		// force loading of prefs if hasn't happened yet
 		// usually since IGB.main() is called first, prefs will have already been loaded
 		//   via getUnibrowPrefs() call in main().  But if for some reason an IGB instance
@@ -349,9 +356,6 @@ public final class IGB extends Application
 		StateProvider stateProvider = new IGBStateProvider();
 		DefaultStateProvider.setGlobalStateProvider(stateProvider);
 
-		// when HTTP authentication is needed, getPasswordAuthentication will
-		//    be called on the authenticator set as the default
-		Authenticator.setDefault(new UnibrowAuthenticator(frm));
 
 		frm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

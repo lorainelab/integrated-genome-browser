@@ -374,6 +374,16 @@ public class SeqMapView extends JPanel
 				//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
 				tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
 			}
+			
+			// Listener for track selection events.  We will use this to populate 'Selection Info'
+			// grid with properties of the Type.
+			TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
+				  public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
+					  // TODO:  Find properties of selected track and show in 'Selection Info' tab.
+					  System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
+				  }
+			};
+			tier_manager.addTrackSelectionListener(track_selection_listener);
 		}
 
 		seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);

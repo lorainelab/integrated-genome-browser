@@ -123,71 +123,45 @@ public final class Das2ServerInfo  {
 	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
 	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
 	private synchronized void login(){
-		ArrayList<String> log = new ArrayList<String>();
-		//log.add("Attempting login to server: "+server_uri);
-		try{
-			//first check to see if server authenticates 
-			//log.add("\tDoes server support authentication?");
-			String das_query = server_uri+"/login";
-			log.add("\t\tDas2 Authentication Request: " + das_query); 
-			LinkedHashMap headers = new LinkedHashMap();
-			InputStream response = LocalUrlCacher.getInputStream(das_query, headers);
-			Document doc = DasLoader.getDocument(response);
-			NodeList nodes = doc.getElementsByTagName("AUTHORIZED");
-			boolean authentication = Boolean.parseBoolean(((Element)nodes.item(0)).getTextContent());		
-			
-			//if true then not restricting
-			if (authentication) log.add("\t\tServer recognized authentication but it is currently not enabled.");
-			
-			//attempt login 
-			else {
-				log.add("\tAttempting login");
-				//throw dialog box to collect userName and password
-			    SimpleAuthenticator sa = new SimpleAuthenticator(server_uri.toString());
-			    String message = "Authenticate or hit Cancel";
-			    String[] userPassword;
-			    while (true){
-			    	userPassword = sa.requestAuthentication(message);
-			    	//did they hit cancel
-			    	if (userPassword == null) {
-							log.add("User canceled login.");
-							break;
-						}
-			    	//attempt authentication
-			    	else if (userPassword[0].length() !=0 || userPassword[1].length() !=0) {
-			    		das_query = server_uri+"/login?user="+ userPassword[0]+"&password="+ userPassword[1];
-						log.add("\t\tDas2 Authentication Request: " + das_query); 
-						headers.clear();
-						response = LocalUrlCacher.getInputStream(das_query, headers);
-						doc = DasLoader.getDocument(response);
-						nodes = doc.getElementsByTagName("AUTHORIZED");
-						authentication = Boolean.parseBoolean(((Element)nodes.item(0)).getTextContent());
-						log.add("\t\tAuthenticated? "+authentication);
-						if (authentication == false) message = "Try again or hit Cancel.";
-						//authenticated, fetch sessionId cookie
-						else {
-						      String cookieVal = (String)headers.get("set-cookie");
-						      if(cookieVal != null) {
-						    	  sessionId = cookieVal.substring(0, cookieVal.indexOf(";"));
-						    	  log.add("\t\tSessionId: "+sessionId);
-						      }
-						      else {
-						    	  log.add("\t\tError: Authenticated OK but no sessionId found in header! No authentication.");
-						    	  authentication = false;
-						      }
+    ArrayList<String> log = new ArrayList<String>();
+    //log.add("Attempting login to server: "+server_uri);
+    try{
+      
+      // The DAS2 server uses basic authentication.  When we attempt to connect, the servlet 
+      // will send back a response, indicating that authenication is required. This will trigger 
+      // the Authenticator (see com.affymetrics.igb.util.UnibrowAuthenticator)
+      // to be invoked, presenting a dialog for enter a network login and password.
+      // The Authenticator is responsible for password the username and password
+      // to the servlet.  If authenication succeeds, a session will 
+      // be established.      
+      String das_query = server_uri+"/login";
+      log.add("\t\tDas2 Authentication Request: " + das_query);
+      
 
-							break;
-						}
-			    	}
-			    	else message = "Complete fields or hit Cancel.";
-			    }
-			}
-		}   catch (Exception ex) {
-			log.add("\t\tServer doesn't support/recognize authentication.");
-		}	finally {
-			for (int i=0; i< log.size(); i++) System.out.println(log.get(i));
-		}
-	}
+      LinkedHashMap headers = new LinkedHashMap();
+
+      // We must connect to the URL w/o caching so that subsequent launches
+      // of IGB from same machine do no use the old session that may have
+      // been established with a different login (user).
+      InputStream response = LocalUrlCacher.getInputStream(das_query, LocalUrlCacher.IGNORE_CACHE, false, headers);
+      Document doc = DasLoader.getDocument(response);
+      
+      String cookie = (String)headers.get("set-cookie");
+        if(cookie != null) {
+          sessionId = cookie.substring(0, cookie.indexOf(";"));
+          log.add("\t\tSessionId: "+sessionId);
+        }
+        else {
+          log.add("\t\tError: No sessionId found in header! No authentication.");         
+        }
+    }   catch (Exception ex) {
+      log.add("\t\tServer doesn't support/recognize authentication.");
+    } finally {
+      for (int i=0; i< log.size(); i++) System.out.println(log.get(i));
+    }
+  }
+
+
 
 
 	/**

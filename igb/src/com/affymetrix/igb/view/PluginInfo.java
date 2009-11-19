@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view;
 
-import com.affymetrix.igb.util.ObjectUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.util.prefs.Preferences;
 
@@ -58,7 +57,7 @@ public final class PluginInfo {
 	public static Object instantiatePlugin(String class_name) throws InstantiationException {
 		Object plugin = null;
 		try {
-			plugin = ObjectUtils.classForName(class_name).newInstance();
+			plugin = Class.forName(class_name).newInstance();
 		} catch (Throwable t) {
 			// catches things like NoClassDefFoundError
 			String msg = "Could not instantiate plugin\n" +

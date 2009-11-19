@@ -42,4 +42,14 @@ final class SeqGroupTableModel extends AbstractTableModel {
 			return null;
 		}
 	}
+
+	@Override
+	public Class<?> getColumnClass(int c) {
+		switch (c) {
+			case 1:
+				return Integer.class;
+			default:
+				return super.getColumnClass(c);
+		}
+	} 
 }

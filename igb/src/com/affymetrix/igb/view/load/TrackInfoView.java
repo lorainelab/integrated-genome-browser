@@ -13,7 +13,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
@@ -25,7 +25,7 @@ class TrackInfoView extends JComponent  {
 	static final String NO_TRACK = "No Track Selected";
 	
 	JTable trackPropTable;
-	MutableAnnotatedBioSeq selected_track = null;
+	BioSeq selected_track = null;
 	ListSelectionModel lsm;
 
 	public TrackInfoView() {

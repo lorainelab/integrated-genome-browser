@@ -13,13 +13,13 @@
 
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 
 public interface AnnotatedSeqViewer {
-  public void setAnnotatedSeq(MutableAnnotatedBioSeq seq);
-  public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, 
+  public void setAnnotatedSeq(BioSeq seq);
+  public void setAnnotatedSeq(BioSeq seq, 
 			      boolean preserve_selection, 
 			      boolean preserve_view);
-  public MutableAnnotatedBioSeq getAnnotatedSeq();
+  public BioSeq getAnnotatedSeq();
 }

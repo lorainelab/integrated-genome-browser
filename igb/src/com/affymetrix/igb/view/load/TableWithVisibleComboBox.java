@@ -69,7 +69,7 @@ public final class TableWithVisibleComboBox {
 
     public ColumnRenderer() {
       comboBoxRender = new JComboBox();
-      textFieldRender = new JTextField(LoadStrategy.WHOLE.toString());
+      textFieldRender = new JTextField(LoadStrategy.GENOME.toString());
       comboBoxRender.setBorder(null);
       textFieldRender.setBorder(null);
     }

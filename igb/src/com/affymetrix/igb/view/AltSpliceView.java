@@ -13,7 +13,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -41,16 +40,16 @@ public class AltSpliceView extends JComponent
 	private boolean CONTROLS_ON_SIDE = false;
 	private SeqMapView original_view;
 	private SeqMapView spliced_view;
-	private OrfAnalyzer2 orf_analyzer;
+	private OrfAnalyzer orf_analyzer;
 	private JTextField buffer_sizeTF;
 	private JCheckBox slice_by_selectionCB;
 	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
-	private MutableAnnotatedBioSeq last_seq_changed = null;
+	private BioSeq last_seq_changed = null;
 	private boolean pending_sequence_change = false;
 	private boolean pending_selection_change = false;
 	private boolean slice_by_selection_on = true;
 
-	class AltSpliceSeqMapView extends SeqMapView {
+	private class AltSpliceSeqMapView extends SeqMapView {
 
 		private AltSpliceSeqMapView(boolean b) {
 			super();
@@ -63,14 +62,14 @@ public class AltSpliceView extends JComponent
 		}
 
 		@Override
-		public void setAnnotatedSeq(MutableAnnotatedBioSeq seq, boolean preserve_selection, boolean preserve_view) {
+		public void setAnnotatedSeq(BioSeq seq, boolean preserve_selection, boolean preserve_view) {
 			if (coord_shift) {
 				// ignore the preserve_view parameter, always pretend it is false in the splice view
 				super.setAnnotatedSeq(seq, preserve_selection, false);
 			} else {
 				this.clear();
-				this.aseq = (BioSeq)seq;
-				this.viewseq = (BioSeq)seq;
+				this.aseq = seq;
+				this.viewseq = seq;
 			}
 		}
 
@@ -103,7 +102,7 @@ public class AltSpliceView extends JComponent
 		this.setLayout(new BorderLayout());
 		spliced_view = new AltSpliceSeqMapView(false);
 		spliced_view.SUBSELECT_SEQUENCE = false;
-		orf_analyzer = new OrfAnalyzer2(spliced_view, CONTROLS_ON_SIDE);
+		orf_analyzer = new OrfAnalyzer(spliced_view, CONTROLS_ON_SIDE);
 		buffer_sizeTF = new JTextField(4);
 		buffer_sizeTF.setText("" + getSliceBuffer());
 		slice_by_selectionCB = new JCheckBox("Slice By Selection", true);
@@ -203,7 +202,7 @@ public class AltSpliceView extends JComponent
 		if (Application.DEBUG_EVENTS) {
 			System.out.println("AltSpliceView received SeqSelectionEvent, selected seq: " + evt.getSelectedSeq());
 		}
-		MutableAnnotatedBioSeq newseq = gmodel.getSelectedSeq();
+		BioSeq newseq = gmodel.getSelectedSeq();
 		if (last_seq_changed != newseq) {
 			last_seq_changed = newseq;
 			if (this.isShowing() && slice_by_selection_on) {

@@ -12,7 +12,7 @@
 */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.*;
 import java.util.Map;
 
@@ -66,7 +66,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 	static final String NO_GENOME = "No Genome Selected";
 	JTable seqtable;
-	MutableAnnotatedBioSeq selected_seq = null;
+	BioSeq selected_seq = null;
 	AnnotatedSeqGroup previousGroup = null;
 	int previousSeqCount = 0;
 	ListSelectionModel lsm;
@@ -127,7 +127,7 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
 
 		if (group != null && most_recent_seq_id != null) {
 			// When changing genomes, try to keep the same chromosome selected when possible
-			MutableAnnotatedBioSeq aseq = group.getSeq(most_recent_seq_id);
+			BioSeq aseq = group.getSeq(most_recent_seq_id);
 			if (aseq != null) {
 				gmodel.setSelectedSeq(aseq);
 			}
@@ -212,7 +212,3 @@ class SeqGroupView extends JComponent implements ListSelectionListener, GroupSel
   public Dimension getPreferredSize() { return new Dimension(200, 50); }
 
 }
-
-
-
-

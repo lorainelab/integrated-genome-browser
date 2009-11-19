@@ -1,6 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
@@ -24,10 +24,10 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	//private static String[] columnNames = {"Load Mode", "Name", "Server", "Server Type", "Load Status"};
 	//Turn off "Load Status" for now.
 	private static String[] columnNames = { "Choose Load Mode", "Data Set","Data Source"};
-	static String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString()};
-	public static String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.WHOLE.toString()};
+	static String[] standardLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.VISIBLE.toString(), LoadStrategy.CHROMOSOME.toString()};
+	public static String[] quickloadLoadChoices = {LoadStrategy.NO_LOAD.toString(), LoadStrategy.GENOME.toString()};
 	private final Map<String, LoadStrategy> reverseLoadStrategyMap;  // from friendly string to enum
-	private final MutableAnnotatedBioSeq cur_seq;
+	private final BioSeq cur_seq;
 	static final int LOAD_STRATEGY_COLUMN = 0;
 	static final int FEATURE_NAME_COLUMN = 1;
 	private static final int SERVER_NAME_COLUMN = 2;
@@ -37,7 +37,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	private final GeneralLoadView glv;
 	private featureTableComparator visibleFeatureComp = new featureTableComparator();
 
-	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, MutableAnnotatedBioSeq cur_seq) {
+	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, BioSeq cur_seq) {
 		this.glv = glv;
 		this.features = getVisibleFeatures(features);
 		this.cur_seq = cur_seq;
@@ -166,7 +166,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		// This cell is only editable if the feature isn't already fully loaded.
 		GenericFeature gFeature = features.get(row);
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
-		return (gFeature.loadStrategy != LoadStrategy.WHOLE && serverType != ServerType.Unknown);
+		return (gFeature.loadStrategy != LoadStrategy.GENOME && serverType != ServerType.Unknown);
 	}
 
 	@Override
@@ -178,7 +178,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 		String valueString = value.toString();
 		GenericFeature gFeature = features.get(row);
 	
-		if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+		if (gFeature.loadStrategy == LoadStrategy.GENOME) {
 				return;	// We can't change strategies once we've loaded the entire genome.
 			}
 		if (!gFeature.loadStrategy.toString().equals(valueString)) {
@@ -197,7 +197,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	private void updatedStrategy(int row, int col, GenericFeature gFeature) {
 		fireTableCellUpdated(row, col);
 
-			if (gFeature.loadStrategy == LoadStrategy.WHOLE) {
+			if (gFeature.loadStrategy == LoadStrategy.GENOME) {
 				Application.getSingleton().setNotLockedUpStatus("Loading feature " + gFeature.featureName);
 				this.glv.glu.loadAndDisplayAnnotations(gFeature, this.cur_seq, this);
 				Application.getSingleton().setStatus("", false);

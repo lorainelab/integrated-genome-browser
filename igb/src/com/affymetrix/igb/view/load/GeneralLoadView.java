@@ -237,7 +237,7 @@ public final class GeneralLoadView extends JComponent
 		if (group == null) {
 			return true;
 		}
-		BioSeq seq = (BioSeq)gmodel.getSelectedSeq();
+		BioSeq seq = gmodel.getSelectedSeq();
 
 		String versionName = (String)this.versionCB.getSelectedItem();
 		initVersion(versionName);
@@ -375,7 +375,7 @@ public final class GeneralLoadView extends JComponent
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 
 
-		final BioSeq curSeq = (BioSeq)gmodel.getSelectedSeq();
+		final BioSeq curSeq = gmodel.getSelectedSeq();
 		// Use a SwingWorker to avoid locking up the GUI.
 		Executor vexec = ThreadUtils.getPrimaryExecutor(src);
 
@@ -423,12 +423,12 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Visible load request span: " + request_span.getStart() + " " + request_span.getEnd());
 		}
 
-		BioSeq curSeq = (BioSeq)gmodel.getSelectedSeq();
+		BioSeq curSeq = gmodel.getSelectedSeq();
 
 		// Load any features that have a visible strategy and haven't already been loaded.
 		String genomeVersionName = (String) versionCB.getSelectedItem();
 		for (GenericFeature gFeature : glu.getFeatures(genomeVersionName)) {
-			if (gFeature.loadStrategy != LoadStrategy.VISIBLE) {
+			if (gFeature.loadStrategy != LoadStrategy.VISIBLE && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
 				continue;
 			}
 			// Even if it's already loaded, we may want to reload... for example, if the viewsize changes.
@@ -652,7 +652,7 @@ public final class GeneralLoadView extends JComponent
 	 * @param evt
 	 */
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
-		BioSeq aseq = (BioSeq) evt.getSelectedSeq();
+		BioSeq aseq = evt.getSelectedSeq();
 
 		if (DEBUG_EVENTS) {
 			System.out.println("GeneralLoadView.seqSelectionChanged() called, aseq: " + (aseq == null ? null : aseq.getID()));
@@ -758,7 +758,7 @@ public final class GeneralLoadView extends JComponent
 	 */
 	void createFeaturesTable(boolean refreshTree) {
 		String versionName = (String) this.versionCB.getSelectedItem();
-		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
+		BioSeq curSeq = gmodel.getSelectedSeq();
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
 		}
@@ -832,9 +832,9 @@ public final class GeneralLoadView extends JComponent
 	 * @param versionName
 	 */
 	private void loadWholeRangeFeatures(String versionName) {
-		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
+		BioSeq curSeq = gmodel.getSelectedSeq();
 		for (GenericFeature gFeature : glu.getFeatures(versionName)) {
-			if (gFeature.loadStrategy != LoadStrategy.WHOLE) {
+			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
 				continue;
 			}
 
@@ -868,7 +868,7 @@ public final class GeneralLoadView extends JComponent
 		// Don't allow buttons for a full genome sequence
 		boolean enabled = !IsGenomeSequence();
 		if (enabled) {
-			BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
+			BioSeq curSeq = gmodel.getSelectedSeq();
 			enabled = curSeq.getSeqGroup() != null;	// Don't allow a null sequence group either.
 			if (enabled) {		// Don't allow buttons for an "unknown" versionName
 				List<GenericVersion> gVersions = curSeq.getSeqGroup().getVersions();
@@ -899,7 +899,7 @@ public final class GeneralLoadView extends JComponent
 		}
 		boolean enabled = false;
 		for (GenericFeature gFeature : features) {
-			if (gFeature.loadStrategy == LoadStrategy.VISIBLE) {
+			if (gFeature.loadStrategy == LoadStrategy.VISIBLE || gFeature.loadStrategy == LoadStrategy.CHROMOSOME) {
 				enabled = true;
 				break;
 			}
@@ -912,7 +912,7 @@ public final class GeneralLoadView extends JComponent
 
 	boolean IsGenomeSequence() {
 		// hardwiring names for genome and encode virtual seqs, need to generalize this
-		BioSeq curSeq = (BioSeq) gmodel.getSelectedSeq();
+		BioSeq curSeq = gmodel.getSelectedSeq();
 		final String seqID = curSeq == null ? null : curSeq.getID();
 		return (seqID == null || ENCODE_REGIONS_ID.equals(seqID) || GENOME_SEQ_ID.equals(seqID));
 	}

@@ -12,14 +12,7 @@
  */
 
 package com.affymetrix.genoviz.widget.neoseq;
-import com.affymetrix.genoviz.glyph.*;
 
-import java.awt.*;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 
 public class WrapFontColors extends AnnotationGlyph {

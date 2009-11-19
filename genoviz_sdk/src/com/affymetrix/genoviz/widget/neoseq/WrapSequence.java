@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Range;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 public class WrapSequence extends WrapGlyph {
@@ -43,9 +44,6 @@ public class WrapSequence extends WrapGlyph {
 	protected WrapAnnot font_annot_glyph = new WrapAnnot();
 	protected WrapAnnot outline_annot_glyph = new WrapAnnot();
 	protected WrapColors sel_glyph = null;
-
-	protected Vector<ORFSpecs> ORFs = new Vector<ORFSpecs>();
-	protected boolean translateOnlyORFs = false;
 
 	public WrapSequence() {
 		// shouldn't need any of this at the moment, since drawTraversal has
@@ -79,10 +77,7 @@ public class WrapSequence extends WrapGlyph {
 			return;
 		}
 
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(residues_per_line);
-		last_visible_residue = (int)
-			(visible_box.y + clt.transform(clt.X, visible_box.height) - 1);
+		last_visible_residue = useConstrain(residues_per_line, visible_box.y, visible_box.height);
 
 		lastPotentiallyVisibleResidue = last_visible_residue;
 
@@ -126,7 +121,7 @@ public class WrapSequence extends WrapGlyph {
 			return;
 		}
 
-		if (monospace && !isTranslation && !translateOnlyORFs) {
+		if (monospace && !isTranslation) {
 			g.drawString(res_string, xposition, yposition);
 			return;
 		}
@@ -135,31 +130,9 @@ public class WrapSequence extends WrapGlyph {
 
 		int l = res_string.length();
 		for (int i = 0; i < l; i++, xposition += font_width) {
-
-			// See if we should skip this amino acid
-			if (isTranslation && translateOnlyORFs &&
-					isOutsideORFs (first_drawn_residue + i))
-				continue;
-
 			g.drawString(res_string.substring(i, i+1), xposition, yposition);
 		}
 			}
-
-	/** Given a location, is it outside all of our specified ORFs? */
-	protected boolean isOutsideORFs (int loc) {
-		boolean foundInside = true;
-		int numORFs = ORFs.size();
-
-		for (int i=0; i < numORFs; i++) {
-			ORFSpecs orf = ORFs.elementAt(i);
-			if ((loc >= orf.startLoc) && (loc <= orf.endLoc)) {
-				foundInside = false;
-				break;
-			}
-		}
-
-		return foundInside;
-	}
 
 	protected void drawResidues(int start, int end, ViewI view,
 			Font fnt, Color col, boolean showArray[]) {
@@ -491,56 +464,8 @@ public class WrapSequence extends WrapGlyph {
 		}
 	}
 
-	/**
-	 * Add a given ORFSpecs object
-	 * whose ORF is to be associated with the NeoSeq.
-	 */
-	public void addORFSpecs (ORFSpecs orf) {
-		ORFs.addElement(orf);
-	}
-
-
-	/**
-	 * Remove a given ORFSpecs object
-	 * whose ORF is to no longer be associated with the NeoSeq.
-	 */
-	public void removeORFSpecs (ORFSpecs orf, int firstOrd) {
-
-		// Find the ORF with the same start & end,
-		// taking the firstOrd into account.
-
-		ORFSpecs otherOrf;
-
-		for (int i=0; i < ORFs.size(); i++) {
-			otherOrf = ORFs.elementAt(i);
-
-			if (((orf.startLoc + firstOrd) == otherOrf.startLoc) &&
-					((orf.endLoc   + firstOrd) == otherOrf.endLoc)) {
-				ORFs.removeElementAt(i);
-				return;
-					}
-		}
-	}
-
-	/** Remove all ORFSpecs. */
-	public void clearORFSpecs () {
-		ORFs.removeAllElements();
-	}
-
-	/**
-	 * Set whether or not translation should only be displayed inside ORFs.
-	 * @see #addORFSpecs (ORFSpecs)
-	 */
-	public void setTranslateOnlyORFs (boolean b) {
-		translateOnlyORFs = b;
-	}
-
-	/**
-	 * Get whether or not translation is only being displayed inside ORFs.
-	 * @see #addORFSpecs (ORFSpecs)
-	 */
-	public boolean isTranslateOnlyORFs () {
-		return translateOnlyORFs;
+	private static int useConstrain(int residues_per_line, double y, double height) {
+		return (int) (y + height - (height % residues_per_line) - 1);
 	}
 
 }

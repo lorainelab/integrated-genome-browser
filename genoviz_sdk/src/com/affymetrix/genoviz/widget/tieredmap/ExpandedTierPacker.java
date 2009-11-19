@@ -17,9 +17,6 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.util.*;
-//import com.affymetrix.genoviz.bioviews.*;
-
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
 import java.awt.geom.Rectangle2D;
 

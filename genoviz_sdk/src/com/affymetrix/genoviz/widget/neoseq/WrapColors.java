@@ -18,6 +18,7 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 public class WrapColors extends AnnotationGlyph {
@@ -92,10 +93,7 @@ public class WrapColors extends AnnotationGlyph {
 		if (residues_per_line < 1) {
 			return; // Avoid infinite loop below.
 		}
-
-		ConstrainLinearTrnsfm clt = new ConstrainLinearTrnsfm();
-		clt.setConstrainValue(residues_per_line);
-		int last_visible_residue = (int)(visible_box.y + clt.transform(clt.X, visible_box.height) - 1);
+		int last_visible_residue = useConstrain(residues_per_line, visible_box.y, visible_box.height);
 
 		for ( line_index = first_visible_residue;
 				line_index < last_visible_residue;
@@ -173,6 +171,10 @@ public class WrapColors extends AnnotationGlyph {
 
 					}
 		}
+	}
+
+	private static int useConstrain(int residues_per_line, double y, double height) {
+		return (int) (y + height - (height % residues_per_line) - 1);
 	}
 
 }

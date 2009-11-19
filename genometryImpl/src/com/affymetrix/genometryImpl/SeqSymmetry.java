@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 
 /**
  * Implementations model a collection of {@link SeqSpan}s.
@@ -26,13 +26,13 @@ public interface SeqSymmetry {
 	public String getID();
 	public int getSpanCount();
 
-	//  public int getSpanCount(MutableAnnotatedBioSeq seq);
+	//  public int getSpanCount(BioSeq seq);
 
 	/**
-	 *  Convenience method to get a SeqSpan whose MutableAnnotatedBioSeq is seq
+	 *  Convenience method to get a SeqSpan whose BioSeq is seq
 	 *  If the SeqSymmetry has no spans with the specified seq, returns null
-	 *  If the SeqSymmetry contains only one SeqSpan whose MutableAnnotatedBioSeq is seq, then that span is returned
-	 *  If the SeqSymmetry contains multiple spans whose MutableAnnotatedBioSeq is seq, 
+	 *  If the SeqSymmetry contains only one SeqSpan whose BioSeq is seq, then that span is returned
+	 *  If the SeqSymmetry contains multiple spans whose BioSeq is seq, 
 	 *      then only one these spans is returned -- which one is unspecified
 	 *  
 	 *  In many situations it will already be known by the calling code which SeqSymmetrys have 
@@ -43,21 +43,21 @@ public interface SeqSymmetry {
 	 *     via sym.getSpan(index) to find each span that points to the seq 
 	 *
 	 *  Other possibilities considered:
-	 *    public List getSeqSpans(MutableAnnotatedBioSeq seq)  -- but too much potential extra List creation and/or storage
-	 *    public void getSeqSpans(MutableAnnotatedBioSeq seq, List spans)  -- spans with MutableAnnotatedBioSeq seq are added to passed in list
+	 *    public List getSeqSpans(BioSeq seq)  -- but too much potential extra List creation and/or storage
+	 *    public void getSeqSpans(BioSeq seq, List spans)  -- spans with BioSeq seq are added to passed in list
 	 *  If either of these methods is added could probably remove getSpanCount(seq) method.
 	 *  If add getSeqSpans(seq, spans) could possibly also remove getSpan(seq)
 	 */
-	public SeqSpan getSpan(MutableAnnotatedBioSeq seq);
+	public SeqSpan getSpan(BioSeq seq);
 	public SeqSpan getSpan(int index);
 	/** maybe this method should be called copySpan() ? */
-	public boolean getSpan(MutableAnnotatedBioSeq seq, MutableSeqSpan span);
+	public boolean getSpan(BioSeq seq, MutableSeqSpan span);
 	/**  maybe this method should be called copySpan() ? */
 	public boolean getSpan(int index, MutableSeqSpan span);
 	/** 
 	 * getSpanSeq(index) is not being used much, so might remove it soon (4-22-2005)
 	 */
-	public MutableAnnotatedBioSeq getSpanSeq(int index);
+	public BioSeq getSpanSeq(int index);
 	public int getChildCount();
 	public SeqSymmetry getChild(int index);
 
@@ -66,7 +66,7 @@ public interface SeqSymmetry {
 	//   public SeqSymmetry getParent();
 
 	// Methods to improve efficiency for "compressed" SeqSymmetry implementations
-	//  public boolean getChildSpan(int child_index, MutableAnnotatedBioSeq seq, MutableSeqSpan span);
+	//  public boolean getChildSpan(int child_index, BioSeq seq, MutableSeqSpan span);
 	//  public boolean getChildSpan(int child_index, int child_span_index, MutableSeqSpan span);
 
 

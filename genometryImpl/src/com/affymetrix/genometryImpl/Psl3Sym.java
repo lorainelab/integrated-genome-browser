@@ -21,7 +21,7 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 
 public final class Psl3Sym extends UcscPslSym {
 	static int OTHER_INDEX = 2;
-	MutableAnnotatedBioSeq otherseq;
+	BioSeq otherseq;
 	boolean same_other_orientation;  // orientation of "other" spans relative to _query_
 	int omin;
 	int omax;
@@ -39,13 +39,13 @@ public final class Psl3Sym extends UcscPslSym {
 			int tBaseInsert,
 			boolean same_target_orientation,
 			boolean same_other_orientation,
-			MutableAnnotatedBioSeq queryseq,
+			BioSeq queryseq,
 			int qmin,
 			int qmax,
-			MutableAnnotatedBioSeq targetseq,
+			BioSeq targetseq,
 			int tmin,
 			int tmax,
-			MutableAnnotatedBioSeq otherseq,
+			BioSeq otherseq,
 			int omin,
 			int omax,
 			int blockcount,  // now ignored, uses blockSizes.length
@@ -70,7 +70,7 @@ public final class Psl3Sym extends UcscPslSym {
 	/** Always returns 3. */
 	public int getSpanCount() { return 3; }
 
-	public SeqSpan getSpan(MutableAnnotatedBioSeq bs) {
+	public SeqSpan getSpan(BioSeq bs) {
 		if (bs.equals(otherseq)) {
 			SeqSpan span = null;
 			if (same_other_orientation) {  span = new SimpleSeqSpan(omin, omax, otherseq); }
@@ -80,7 +80,7 @@ public final class Psl3Sym extends UcscPslSym {
 		else { return super.getSpan(bs); }
 	}
 
-	public boolean getSpan(MutableAnnotatedBioSeq bs, MutableSeqSpan span) {
+	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
 		if (bs.equals(otherseq)) {
 			if (same_other_orientation) { span.set(omin, omax, otherseq); }
 			else { span.set(omax, omin, otherseq); }
@@ -110,7 +110,7 @@ public final class Psl3Sym extends UcscPslSym {
 		}
 	}
 
-	public MutableAnnotatedBioSeq getSpanSeq(int index) {
+	public BioSeq getSpanSeq(int index) {
 		if (index == OTHER_INDEX) { return otherseq; }
 		else { return super.getSpanSeq(index); }
 	}
@@ -147,7 +147,7 @@ public final class Psl3Sym extends UcscPslSym {
 		}
 	}
 
-	public MutableAnnotatedBioSeq getOtherSeq() { return otherseq; }
+	public BioSeq getOtherSeq() { return otherseq; }
 	public int getOtherMin() { return omin; }
 	public int getOtherMax() { return omax; }
 	public boolean getSameOtherOrientation() { return same_other_orientation; }

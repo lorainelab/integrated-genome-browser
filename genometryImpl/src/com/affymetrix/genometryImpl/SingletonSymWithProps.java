@@ -23,11 +23,11 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 
 	Map<String,Object> props;
 
-	public SingletonSymWithProps(int start, int end, MutableAnnotatedBioSeq seq) {
+	public SingletonSymWithProps(int start, int end, BioSeq seq) {
 		super(start, end, seq);
 	}
 
-	public SingletonSymWithProps(CharSequence id, int start, int end, MutableAnnotatedBioSeq seq) {
+	public SingletonSymWithProps(CharSequence id, int start, int end, BioSeq seq) {
 		super(id, start, end, seq);
 	}
 

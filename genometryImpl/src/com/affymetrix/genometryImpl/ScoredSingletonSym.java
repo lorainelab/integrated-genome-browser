@@ -19,7 +19,7 @@ import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 public final class ScoredSingletonSym extends SingletonSeqSymmetry implements Scored {
 	float score;
 
-	public ScoredSingletonSym(int start, int end, MutableAnnotatedBioSeq seq, float score) {
+	public ScoredSingletonSym(int start, int end, BioSeq seq, float score) {
 		super(start, end, seq);
 		this.score = score;
 	}

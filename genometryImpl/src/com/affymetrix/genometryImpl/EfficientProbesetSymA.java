@@ -28,7 +28,7 @@ import java.util.*;
  *
  *   Assumption is that this sym will be child of a sym that handles type, etc.
  */
-public final class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWithProps, IntId {
+public final class EfficientProbesetSymA implements SeqSpan, SymWithProps, IntId {
 	SharedProbesetInfo info;
 	boolean forward;
 	int nid;
@@ -54,7 +54,7 @@ public final class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWit
 	}
 
 	/** implementing ParentOfLeafSpan interface */
-	public MutableSeqSpan getChildSpan(int child_index, MutableAnnotatedBioSeq aseq, MutableSeqSpan result_span) {
+	public MutableSeqSpan getChildSpan(int child_index, BioSeq aseq, MutableSeqSpan result_span) {
 		if ((child_index >= child_mins.length) ||
 				(aseq != getBioSeq()) ||
 				(result_span == null)) {
@@ -66,7 +66,7 @@ public final class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWit
 	}
 
 	/* SeqSymmetry implementation */
-	public SeqSpan getSpan(MutableAnnotatedBioSeq bs) {
+	public SeqSpan getSpan(BioSeq bs) {
 		if (this.getBioSeq() == bs) { return this; }
 		else { return null; }
 	}
@@ -78,12 +78,12 @@ public final class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWit
 		else { return null; }
 	}
 
-	public MutableAnnotatedBioSeq getSpanSeq(int i) {
+	public BioSeq getSpanSeq(int i) {
 		if (i == 0) { return this.getBioSeq(); }
 		else { return null; }
 	}
 
-	public boolean getSpan(MutableAnnotatedBioSeq bs, MutableSeqSpan span) {
+	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
 		if (this.getBioSeq() == bs) {
 			span.setStart(this.getStart());
 			span.setEnd(this.getEnd());
@@ -162,7 +162,7 @@ public final class EfficientProbesetSymA implements SeqSymmetry, SeqSpan, SymWit
 
 	public int getLength() { return (getMax() - getMin()); }
 	public boolean isForward() { return forward; }
-	public MutableAnnotatedBioSeq getBioSeq() { return info.getBioSeq(); }
+	public BioSeq getBioSeq() { return info.getBioSeq(); }
 	public double getStartDouble() { return (double)getStart(); }
 	public double getEndDouble() { return (double)getEnd(); }
 	public double getMinDouble() { return (double)getMin(); }

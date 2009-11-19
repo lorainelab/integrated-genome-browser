@@ -18,7 +18,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
@@ -1267,8 +1266,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		SeqSpan inside_span = null;
 
 		List<SeqSymmetry> result = null;
-		MutableAnnotatedBioSeq outseq = null;
-		Class writerclass = null;
+		BioSeq outseq = null;
+		Class<AnnotationWriter> writerclass = null;
 
 		if (query == null || query.length() == 0) {
 			// no query string, so requesting _all_ features for a versioned source
@@ -1366,7 +1365,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 					if ((graph_name2dir.get(query_type) != null) ||
 							(graph_name2file.get(query_type) != null) ||
-							// (query_type.startsWith("file:") && query_type.endsWith(".bar"))  ||
 							(query_type.endsWith(".bar"))) {
 						handleGraphRequest(output_registry, xbase, response, query_type, overlap_span);
 						return;
@@ -1494,15 +1492,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 	/**
-	 *  1) looks for graph files in graph seq grouping directories (".graphs.seqs")
-	 *  if not 1), then
-	 *     2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
-	 *     if not 2), then
-	 *        3) tries to directly access file
+	 * 1) looks for graph files in graph seq grouping directories (".graphs.seqs")
+	 * or, 2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
+	 * or, 3) tries to directly access file
 	 */
 		private final void handleGraphRequest(Map<String, Class> output_registry, String xbase, HttpServletResponse response,
 			String type, SeqSpan span) {
-		BioSeq seq = (BioSeq) span.getBioSeq();
+		BioSeq seq = span.getBioSeq();
 		String seqid = seq.getID();
 		AnnotatedSeqGroup genome = seq.getSeqGroup();
 		// use bar parser to extract just the overlap slice from the graph
@@ -1512,10 +1508,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 
 		String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
-		Class writerclass = output_registry.get("bar");
+		Class<AnnotationWriter> writerclass = output_registry.get("bar");
 		OutputGraphSlice(writerclass, file_path, span, type, xbase, response);
 	}
 
+	/**
+	 * Determine the file path of the graph, based upon name and seqid.
+	 * General assumption: there is a directory called NAME.graphs.seqs/, containing chr1.bar, chr2.bar, etc.
+	 * @param graph_name2dir
+	 * @param graph_name2file
+	 * @param graph_name
+	 * @param seqid
+	 * @return
+	 */
 	private static final String DetermineFilePath(Map<String, String> graph_name2dir, Map<String, String> graph_name2file, String graph_name, String seqid) {
 		// for now using graph_name as graph type
 		String file_path = graph_name2dir.get(graph_name);
@@ -1536,7 +1541,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void OutputGraphSlice(
-			Class writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
+			Class<AnnotationWriter> writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
 		GraphSym graf = null;
 		try {
 			graf = BarParser.getSlice(file_path, gmodel, span);
@@ -1544,7 +1549,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			ex.printStackTrace();
 		}
 		if (graf != null) {
-			ArrayList<SeqSymmetry> gsyms = new ArrayList<SeqSymmetry>();
+			List<SeqSymmetry> gsyms = new ArrayList<SeqSymmetry>();
 			gsyms.add(graf);
 			System.out.println("#### returning graph slice in bar format");
 			outputAnnotations(gsyms, span.getBioSeq(), type, xbase, response, writerclass, "bar");
@@ -1563,11 +1568,11 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void OutputTheAnnotations(
-			Class writerclass,
+			Class<AnnotationWriter> writerclass,
 			String output_format,
 			HttpServletResponse response,
 			List<SeqSymmetry> result,
-			MutableAnnotatedBioSeq outseq,
+			BioSeq outseq,
 			String query_type,
 			String xbase) {
 		try {
@@ -1601,10 +1606,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return query_type;
 	}
 
-	private static final boolean outputAnnotations(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	private static final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
 			String annot_type,
 			String xbase, HttpServletResponse response,
-			Class writerclass,
+			Class<AnnotationWriter> writerclass,
 			String format) {
 		try {
 			if (writerclass == null) {
@@ -1612,7 +1617,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				response.setStatus(response.SC_BAD_REQUEST);
 				return false;
 			} else {
-				AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
+				AnnotationWriter writer = writerclass.newInstance();
 				String mime_type = writer.getMimeType();
 
 				if (writer instanceof Das2FeatureSaxParser) {

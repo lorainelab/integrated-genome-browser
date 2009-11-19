@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * @version: $Id$
  */
-public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharIterator {
+public final class BioSeq implements SearchableCharIterator {
 	private static final boolean DEBUG = false;
 	private Map<String, SymWithProps> type_id2sym = null;   // lazy instantiation of type ids to container annotations
 	private Map<String, IndexedSyms> type_id2indexedsym = new HashMap<String, IndexedSyms>();
@@ -479,10 +479,10 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 		int symCount = sym.getChildCount();
 		if (symCount == 0) {
 			SeqSpan this_comp_span = sym.getSpan(this);
-			if (this_comp_span == null || !SeqUtils.intersects(this_comp_span, this_residue_span)) {
+			if (this_comp_span == null || !SeqUtils.overlap(this_comp_span, this_residue_span)) {
 				return;
 			}
-			MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
+			BioSeq other_seq = SeqUtils.getOtherSeq(sym, this);
 			SeqSpan other_comp_span = sym.getSpan(other_seq);
 			MutableSeqSpan ispan = new SimpleMutableSeqSpan();
 			SeqUtils.intersection(this_comp_span, this_residue_span, ispan);
@@ -543,7 +543,6 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 	 * @param  end   the end index (exclusive?)
 	 * @return       true if all residues betwen start and end are available
 	 */
-	@Override
 	public boolean isComplete(int start, int end) {
 		if (residues_provider != null || residues != null) {
 			return true;
@@ -559,13 +558,13 @@ public final class BioSeq implements MutableAnnotatedBioSeq, SearchableCharItera
 
 		int comp_count = rootsym.getChildCount();
 		if (comp_count == 0) {
-			MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
+			BioSeq other_seq = SeqUtils.getOtherSeq(rootsym, this);
 			return other_seq.isComplete(start, end);
 		}
 
 		for (int i = 0; i < comp_count; i++) {
 			SeqSymmetry comp_sym = rootsym.getChild(i);
-			MutableAnnotatedBioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
+			BioSeq other_seq = SeqUtils.getOtherSeq(comp_sym, this);
 			if (!other_seq.isComplete()) {
 				return false;
 			}

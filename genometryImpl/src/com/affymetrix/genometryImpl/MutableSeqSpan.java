@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl;
 
 public interface MutableSeqSpan extends SeqSpan  {
 
-	public void set(int start, int end, MutableAnnotatedBioSeq seq);
+	public void set(int start, int end, BioSeq seq);
 	public void setCoords(int start, int end);
 	public void setStart(int start);
 	public void setEnd(int end);
@@ -25,10 +25,10 @@ public interface MutableSeqSpan extends SeqSpan  {
 	 *  change the orientation of this SeqSpan.
 	 */
 	//public void stretchSpan(int start, int end);
-	public void setBioSeq(MutableAnnotatedBioSeq seq);
+	public void setBioSeq(BioSeq seq);
 
 	public void setStartDouble(double start);
 	public void setEndDouble(double end);
 	//public void setCoordsDouble(double start, double end);
-	public void setDouble(double start, double end, MutableAnnotatedBioSeq seq);
+	public void setDouble(double start, double end, BioSeq seq);
 }

@@ -64,8 +64,8 @@ import java.util.*;
  *  chr22 2000 6000 cloneB 900 - 2000 6000 0 2 433,399, 0,3601
  * </pre>
  */
-public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, TypedSym, SymWithProps, Scored  {
-	MutableAnnotatedBioSeq seq; // "chrom"
+public final class UcscBedSym implements SeqSpan, SupportsCdsSpan, TypedSym, SymWithProps, Scored  {
+	BioSeq seq; // "chrom"
 	int txMin; // "chromStart"
 	int txMax; // "chromEnd"
 	String name; // "name"
@@ -89,7 +89,7 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 	 *  @param cdsMax the end of the CDS region, "thickEnd", or Integer.MIN_VALUE.
 	 *  @param score an optional score, or Float.NEGATIVE_INFINITY to indicate no score.
 	 */
-	public UcscBedSym(String type, MutableAnnotatedBioSeq seq, int txMin, int txMax, String name, float score,
+	public UcscBedSym(String type, BioSeq seq, int txMin, int txMax, String name, float score,
 			boolean forward, int cdsMin, int cdsMax, int[] blockMins, int[] blockMaxs) {
 		this.type = type;
 		this.seq = seq;  // replace chrom name-string with reference to chrom BioSeq
@@ -122,7 +122,7 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 	}
 
 	public String getID() { return name; }
-	public SeqSpan getSpan(MutableAnnotatedBioSeq bs) {
+	public SeqSpan getSpan(BioSeq bs) {
 		if (bs.equals(this.seq)) { return this; }
 		else { return null; }
 	}
@@ -132,7 +132,7 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 		else { return null; }
 	}
 
-	public boolean getSpan(MutableAnnotatedBioSeq bs, MutableSeqSpan span) {
+	public boolean getSpan(BioSeq bs, MutableSeqSpan span) {
 		if (bs.equals(this.seq)) {
 			if (forward) {
 				span.set(txMin, txMax, seq);
@@ -162,7 +162,7 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 	public int getSpanCount() { return 1; }
 
 	/** Returns null if index is not 1. */
-	public MutableAnnotatedBioSeq getSpanSeq(int index) {
+	public BioSeq getSpanSeq(int index) {
 		if (index == 0) { return seq; }
 		else { return null; }
 	}
@@ -188,7 +188,7 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 	}
 
 	class BedChildSingletonSeqSym extends SingletonSeqSymmetry implements SymWithProps, Scored {
-		public BedChildSingletonSeqSym(int start, int end, MutableAnnotatedBioSeq seq) {
+		public BedChildSingletonSeqSym(int start, int end, BioSeq seq) {
 			super(start, end, seq);
 		}
 
@@ -209,7 +209,7 @@ public final class UcscBedSym implements SeqSpan, SeqSymmetry, SupportsCdsSpan, 
 	public int getMax() { return txMax; }
 	public int getLength() { return (txMax - txMin); }
 	public boolean isForward() { return forward; }
-	public MutableAnnotatedBioSeq getBioSeq() { return seq; }
+	public BioSeq getBioSeq() { return seq; }
 	public double getStartDouble() { return (double)getStart(); }
 	public double getEndDouble() { return (double)getEnd(); }
 	public double getMaxDouble() { return (double)getMax(); }

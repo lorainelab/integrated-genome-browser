@@ -31,7 +31,7 @@ public abstract class GenometryModel {
 	/**
 	 * Ann's comment: There is a lot of logic related to selection of
 	 * SeqSymmetry objects. It appears that SeqSymmetry on many different
-	 * MutableAnnotatedBioSeq objects can be selected simultaneously. Why? What does
+	 * BioSeq objects can be selected simultaneously. Why? What does
 	 * selection mean in this context?
 	 */
 
@@ -41,7 +41,7 @@ public abstract class GenometryModel {
 	// LinkedHashMap preserves the order things were added in, which is nice for QuickLoad
 
 	// maps sequences to lists of selected symmetries
-	Map<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
+	Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
 	final List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
 	final List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
@@ -50,7 +50,7 @@ public abstract class GenometryModel {
 	//List model_change_listeners = new ArrayList();
 
 	AnnotatedSeqGroup selected_group = null;
-	MutableAnnotatedBioSeq selected_seq = null;
+	BioSeq selected_seq = null;
 
 	public void removeAllListeners() {
 		seq_selection_listeners.clear();
@@ -120,7 +120,7 @@ public abstract class GenometryModel {
 
 	/*public void removeSeqGroup(AnnotatedSeqGroup group) {
 		seq_groups.remove(group.getID());
-		for (MutableAnnotatedBioSeq seq : group.getSeqList()) {
+		for (BioSeq seq : group.getSeqList()) {
 			seq2selectedSymsHash.remove(seq);
 		}
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
@@ -214,11 +214,11 @@ public abstract class GenometryModel {
 	}
 	
 
-	public MutableAnnotatedBioSeq getSelectedSeq() {
+	public BioSeq getSelectedSeq() {
 		return selected_seq;
 	}
 
-	public void setSelectedSeq(MutableAnnotatedBioSeq seq) {
+	public void setSelectedSeq(BioSeq seq) {
 		setSelectedSeq(seq, this);
 	}
 
@@ -227,14 +227,14 @@ public abstract class GenometryModel {
 	 *     because in some SeqSelectionListeners (such as SeqMapView) the side effects of receiving a 
 	 *     SeqSelectionEvent are important even if selected seq is same. 
 	 */
-	public void setSelectedSeq(MutableAnnotatedBioSeq seq, Object src) {
+	public void setSelectedSeq(BioSeq seq, Object src) {
 		if (DEBUG)  {
 			System.out.println("GenometryModel.setSelectedSeq() called, ");
 			System.out.println("    seq = " + (seq == null ? null : seq.getID()));
 		}
 
 		selected_seq = seq;
-		ArrayList<MutableAnnotatedBioSeq> slist = new ArrayList<MutableAnnotatedBioSeq>();
+		ArrayList<BioSeq> slist = new ArrayList<BioSeq>();
 		slist.add(selected_seq);
 		fireSeqSelectionEvent(src, slist);
 	}
@@ -259,7 +259,7 @@ public abstract class GenometryModel {
 	 *       for example in IGB some listeners assume main SeqMapView has been
 	 *       notified first)
 	 */
-	void fireSeqSelectionEvent(Object src, List<MutableAnnotatedBioSeq> slist) {
+	void fireSeqSelectionEvent(Object src, List<BioSeq> slist) {
 		SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
 		synchronized (seq_selection_listeners) {
 			// the "synchronized" block, by itself, doesn't seem to be enough,
@@ -307,7 +307,7 @@ public abstract class GenometryModel {
 	 */
 	/*public List<AnnotatedBioSeq> getSequencesWithSelections() {
 		Set<AnnotatedBioSeq> sequences = new HashSet<AnnotatedBioSeq>();
-		for (MutableAnnotatedBioSeq seq : seq2selectedSymsHash.keySet()) {
+		for (BioSeq seq : seq2selectedSymsHash.keySet()) {
 			List<SeqSymmetry> list = seq2selectedSymsHash.get(seq);
 			if (! list.isEmpty()) {
 				sequences.add(seq);
@@ -325,7 +325,7 @@ public abstract class GenometryModel {
 	 *  @param src The object responsible for selecting the sequences.
 	 */
 	public void setSelectedSymmetries(List<SeqSymmetry> syms, Object src)  {
-		List<MutableAnnotatedBioSeq> seqs_with_selections = setSelectedSymmetries(syms);
+		List<BioSeq> seqs_with_selections = setSelectedSymmetries(syms);
 		fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
 	}
 
@@ -344,9 +344,9 @@ public abstract class GenometryModel {
 		List seqs_with_selections = setSelectedSymmetries(syms);
 		if (! seqs_with_selections.contains(getSelectedSeq())) {
 			if (getSelectedSymmetries(getSelectedSeq()).isEmpty()) {
-				MutableAnnotatedBioSeq seq = null;
+				BioSeq seq = null;
 				if (! seqs_with_selections.isEmpty()) {
-					seq = (MutableAnnotatedBioSeq) seqs_with_selections.get(0);
+					seq = (BioSeq) seqs_with_selections.get(0);
 				}
 				setSelectedSeq(seq, src);
 			}
@@ -362,17 +362,17 @@ public abstract class GenometryModel {
 	 *  @param syms A List of SeqSymmetry objects to select.
 	 *  @return The List of sequences with selections on them after this operation.
 	 */
-	private List<MutableAnnotatedBioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {
+	private List<BioSeq> setSelectedSymmetries(List<SeqSymmetry> syms) {
 
 		if (DEBUG) {
 			System.out.println("SetSelectedSymmetries called, number of syms: " + syms.size());
 		}
 
-		HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>> seq2SymsHash = new HashMap<MutableAnnotatedBioSeq,List<SeqSymmetry>>();
+		HashMap<BioSeq,List<SeqSymmetry>> seq2SymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
 		// for each ID found in the ID2sym hash, add it to the owning sequences
 		// list of selected symmetries
-		HashSet<MutableAnnotatedBioSeq> all_seqs = new HashSet<MutableAnnotatedBioSeq>(); // remember all seqs found
+		HashSet<BioSeq> all_seqs = new HashSet<BioSeq>(); // remember all seqs found
 		for (SeqSymmetry sym : syms) {
 			if (sym == null) {
 				continue;
@@ -396,7 +396,7 @@ public abstract class GenometryModel {
 		clearSelectedSymmetries(); // do not send an event yet
 
 		// now perform the selections for each sequence that was matched
-		for(  MutableAnnotatedBioSeq seq : seq2SymsHash.keySet()) {
+		for(  BioSeq seq : seq2SymsHash.keySet()) {
 			List<SeqSymmetry> symslist = seq2SymsHash.get(seq);
 			if (DEBUG) {
 				System.out.println("Syms " + symslist.size() + " on seq " + seq.getID());
@@ -404,25 +404,25 @@ public abstract class GenometryModel {
 			setSelectedSymmetries(symslist, seq); // do not send an event yet
 		}
 
-		return new ArrayList<MutableAnnotatedBioSeq>(all_seqs);
+		return new ArrayList<BioSeq>(all_seqs);
 	}
 
 	/**
-	 *  Selects a List of SeqSymmetry objects for a particular MutableAnnotatedBioSeq object.
+	 *  Selects a List of SeqSymmetry objects for a particular BioSeq object.
 	 *  All SymmetrySelectionListeners will be notified regardless of whether this
 	 *  is the currently-selected sequence.
 	 *  @param syms A List of SeqSymmetry objects to select.
 	 *  @param src The object responsible for selecting the sequences.
-	 *  @param seq The MutableAnnotatedBioSeq to select the symmetries for.
+	 *  @param seq The BioSeq to select the symmetries for.
 	 */
-	/*void setSelectedSymmetries(List<SeqSymmetry> syms, Object src, MutableAnnotatedBioSeq seq ) {
+	/*void setSelectedSymmetries(List<SeqSymmetry> syms, Object src, BioSeq seq ) {
 		setSelectedSymmetries(syms, seq);
 		fireSymSelectionEvent(src, syms);
 	}*/
 
 	// Selects a List of SeqSymmetry objects for a particular BioSeq.
 	// Does not send a selection event.
-	private void setSelectedSymmetries(List<SeqSymmetry> syms, MutableAnnotatedBioSeq seq) {
+	private void setSelectedSymmetries(List<SeqSymmetry> syms, BioSeq seq) {
 		if (seq == null) { return; }
 		// Should it complain if any of the syms are not on the specified seq?
 		// (This is not an issue since this is not called from outside of this class.)
@@ -465,7 +465,7 @@ public abstract class GenometryModel {
 	 *  Get the list of selected symmetries on the specified sequence.
 	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
 	 */
-	public final List<SeqSymmetry> getSelectedSymmetries(MutableAnnotatedBioSeq seq) {
+	public final List<SeqSymmetry> getSelectedSymmetries(BioSeq seq) {
 		List<SeqSymmetry> selections = seq2selectedSymsHash.get(seq);
 		if (selections == null) {
 			selections = new ArrayList<SeqSymmetry>();

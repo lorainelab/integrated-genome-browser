@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GFF3Sym;
@@ -180,7 +180,7 @@ public final class GFF3Parser {
 						continue;
 					}
 
-					MutableAnnotatedBioSeq seq = seq_group.getSeq(seq_name);
+					BioSeq seq = seq_group.getSeq(seq_name);
 					if (seq == null) {
 						seq = seq_group.addSeq(seq_name, 0);
 					}
@@ -232,7 +232,7 @@ public final class GFF3Parser {
 					results.add(sym);
 					/* Do we really need to do for every span? */
 					for(int i=0; i<sym.getSpanCount(); i++) {
-						MutableAnnotatedBioSeq seq = sym.getSpanSeq(i);
+						BioSeq seq = sym.getSpanSeq(i);
 						seq.addAnnotation(sym);
 					}
 				} else {

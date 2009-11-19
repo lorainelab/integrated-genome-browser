@@ -16,10 +16,9 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.Propertied;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -563,9 +562,9 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 			for (int i = 0; i < loc_count; i++) {
 				SeqSpan span = feat_locs.get(i);
-				MutableAnnotatedBioSeq seq = span.getBioSeq();
+				BioSeq seq = span.getBioSeq();
 				//	System.out.println("top-level annotation created, seq = " + seq.getID());
-				MutableAnnotatedBioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
+				BioSeq aseq = seqgroup.getSeq(seq.getID());  // should be a BioSeq
 				if ((aseq != null) && (seq == aseq)) {
 					result_syms.add(featsym);
 					if (add_to_sym_hash) {
@@ -653,7 +652,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "DASGFF" XML format.
 	 */
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) {
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {
 		// Das2FeatureSaxParser.writeAnnotations() does not use seq arg, since now writing out all spans
 		//  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
@@ -678,8 +677,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			pw.println("    xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
 			if (getBaseURI() != null) {
 				String genome_id = "";
-				if (seq instanceof BioSeq) {
-					genome_id = ((BioSeq) seq).getSeqGroup().getID();
+				if (seq != null) {
+					genome_id = seq.getSeqGroup().getID();
 				}
 				String xbase = getBaseURI().toString() + genome_id + "/";
 				//	  pw.println("   xml:base=\"" + getBaseURI().toString() + "\" >");
@@ -721,8 +720,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		}
 		String feat_id = getChildID(annot, parent_id, parent_index);
 		String feat_title = null;
-		if (annot instanceof Propertied) {
-			Propertied swp = (Propertied) annot;
+		if (annot instanceof SymWithProps) {
+			SymWithProps swp = (SymWithProps) annot;
 			feat_title = (String) swp.getProperty("name");
 			if (feat_title == null) {
 				feat_title = (String) swp.getProperty("title");
@@ -843,8 +842,8 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	protected static String getChildID(SeqSymmetry child, String parent_id, int child_index) {
 		String feat_id = child.getID();
 		if (feat_id == null) {
-			if (child instanceof Propertied) {
-				feat_id = (String) ((Propertied) child).getProperty("id");
+			if (child instanceof SymWithProps) {
+				feat_id = (String) ((SymWithProps) child).getProperty("id");
 			}
 			if (feat_id == null) {
 				if (parent_id != null) {
@@ -944,7 +943,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 				forward = false;
 			}
 		}
-		MutableAnnotatedBioSeq seq;
+		BioSeq seq;
 		// need to revisit what to do if group == null
 		if (group == null) {
 			seq = new BioSeq(seqid, "", max);

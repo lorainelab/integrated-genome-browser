@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 
@@ -29,7 +29,6 @@ import com.affymetrix.genometryImpl.SharedProbesetInfo;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.SingletonSymWithIntId;
-import com.affymetrix.genometryImpl.util.Memer;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 /**
@@ -194,7 +193,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				}
 				total_tcluster_count += transcript_cluster_count;
 
-				MutableAnnotatedBioSeq aseq = group.getSeq(seqid);
+				BioSeq aseq = group.getSeq(seqid);
 				if (aseq == null) {
 					aseq = group.addSeq(seqid, seq_length);
 				}
@@ -326,7 +325,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *    Level 3: probeset annots (EfficieentProbesetSymA)
 	 *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq aseq,
+	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
 			String type, OutputStream outstream) throws IOException {
 		boolean success = false;
 		DataOutputStream dos = null;
@@ -340,7 +339,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			//     Genometry DAS/2 servlet
 			//     (when running in Jetty -- possibly conflicts with Jetty's donwstream buffering of HTTP responses?)
 			else { dos = new DataOutputStream(outstream); }
-			List<MutableAnnotatedBioSeq> oneseq = new ArrayList<MutableAnnotatedBioSeq>();
+			List<BioSeq> oneseq = new ArrayList<BioSeq>();
 			oneseq.add(aseq);
 			SeqSymmetry tcluster_exemplar = null;
 
@@ -476,7 +475,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *  write out a seq data section
 	 *  assumes syms in collection contain span on aseq
 	 */
-	protected static void writeSeqWithAnnots(java.util.Collection syms, MutableAnnotatedBioSeq aseq, DataOutputStream dos) throws IOException {
+	protected static void writeSeqWithAnnots(java.util.Collection syms, BioSeq aseq, DataOutputStream dos) throws IOException {
 		String seqid = aseq.getID();
 		System.out.println("seqid: " + seqid + ", annot count: " + syms.size() );
 		dos.writeUTF(seqid);
@@ -553,7 +552,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		SeqSpan pspan = psym.getSpan(0);
 		int child_count = psym.getChildCount();
 		int intid = psym.getIntID();
-		// MutableAnnotatedBioSeq aseq = pspan.getBioSeq();
+		// BioSeq aseq = pspan.getBioSeq();
 		dos.writeInt(intid);  // probeset id representated as an integer
 		// sign of strnad_and_count indicates forward (+) or reverse (-) strand
 		byte strand_and_count = (byte)(pspan.isForward() ? child_count : -child_count);
@@ -593,16 +592,11 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
 		boolean WRITE = false;
 		boolean READ = true;
-		Memer mem = new Memer();
 		String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
-		//    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff_test";
-		//    String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";
 		String default_out_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/ead/HuEx-1_0-st-v2_3level.ead";
-		//    String default_out_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/ead/test_3level.ead";
 		String default_genome_id = "H_sapiens_Mar_2006";
 		String default_id_prefix = "HuEx-1_0-st-v2:";
 		String default_annot_type = "HuEx-1_0-st-v2";
-		//    String in_file = "";
 		String in_file = default_in_file;
 		String out_file = default_out_file;
 		String id_prefix = default_id_prefix;
@@ -641,11 +635,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeid + versionid);
 				ExonArrayDesignParser parser = new ExonArrayDesignParser();
 				List results = parser.parse(bis, group, true, annot_type);
-				mem.printMemory();
 				System.gc();
-				Thread.sleep(3000);
-				mem.printMemory();
-				Thread.sleep(3000);
 				System.out.println("Finished reading ead file, transcript_clusters: " + results.size());
 
 			}
@@ -664,7 +654,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 */
 	public void convertGff(String in_file, String out_file, String genome_id,
 			String version_id, String annot_type, String id_prefix)  {
-		Memer mem = new Memer();
 		AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup(genome_id);
 		int probe_length = 25;
 		try {
@@ -687,7 +676,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 			}
 			int printcount = 0;
 			HashMap<BioSeq,SimpleSymWithProps> seq2container = new HashMap<BioSeq,SimpleSymWithProps>();
-			HashMap<MutableAnnotatedBioSeq,SharedProbesetInfo> seq2info = new HashMap<MutableAnnotatedBioSeq,SharedProbesetInfo>();
+			HashMap<BioSeq,SharedProbesetInfo> seq2info = new HashMap<BioSeq,SharedProbesetInfo>();
 
 			for (File gfile : gfiles) {
 				System.out.println("parsing gff file: " + gfile.getPath());
@@ -696,7 +685,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				BufferedInputStream bis = new BufferedInputStream( new FileInputStream(gfile));
 				List annots = gff_parser.parse(bis, ".", seq_group, false, false);
 
-				mem.printMemory();
 				System.out.println("top-level annots: " + annots.size());
 				// now convert each annot hierarchy to SingletonSymWithIntId and EfficientProbesetSymA
 				// assuming 5-level deep hierarchy:
@@ -712,7 +700,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				for (int tindex=0; tindex < tcount; tindex++) {
 					SymWithProps tcluster = (SymWithProps)annots.get(tindex);
 					SeqSpan tspan = tcluster.getSpan(0);
-					BioSeq aseq = (BioSeq) tspan.getBioSeq();
+					BioSeq aseq = tspan.getBioSeq();
 
 					SharedProbesetInfo shared_info = seq2info.get(aseq);
 					if (shared_info == null) {
@@ -809,7 +797,6 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 				SeqSymmetry container = ent.getValue();
 				aseq.addAnnotation(container, annot_type);
 			}
-			mem.printMemory();
 
 			FileOutputStream fos = new FileOutputStream(new File(out_file));
 			writeAnnotations(annot_type, seq_group, fos);

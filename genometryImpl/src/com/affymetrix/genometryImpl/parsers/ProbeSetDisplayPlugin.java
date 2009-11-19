@@ -3,7 +3,7 @@ package com.affymetrix.genometryImpl.parsers;
 import java.io.*;
 import java.util.*;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -49,7 +49,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	 *  Step 2, 3, 4 handled as output issue...
 	 *
 	 */
-	public static void collectAndWriteAnnotations(Collection<SeqSymmetry> consensus_syms, boolean writeConsensus, MutableAnnotatedBioSeq genome_seq, String array_name,
+	public static void collectAndWriteAnnotations(Collection<SeqSymmetry> consensus_syms, boolean writeConsensus, BioSeq genome_seq, String array_name,
 			OutputStream outstream) {
 
 		String array_name_prefix = "";
@@ -79,11 +79,11 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	}
 
 
-	private static void findProbeSets(Collection<SeqSymmetry> consensus_syms, MutableAnnotatedBioSeq genome_seq, String probeset_type, Set<SeqSymmetry> probesets, Set<SeqSymmetry> crossHybProbes, String poly_a_sites_type, Set<SeqSymmetry> polyASites, String poly_a_stacks_type, Set<SeqSymmetry> polyAStacks) {
+	private static void findProbeSets(Collection<SeqSymmetry> consensus_syms, BioSeq genome_seq, String probeset_type, Set<SeqSymmetry> probesets, Set<SeqSymmetry> crossHybProbes, String poly_a_sites_type, Set<SeqSymmetry> polyASites, String poly_a_stacks_type, Set<SeqSymmetry> polyAStacks) {
 		for (SeqSymmetry current_c2g : consensus_syms) {
 			// 2. For each consensus sequence symmetry, get the
 			//    corresponding consensus BioSeq
-			MutableAnnotatedBioSeq aseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
+			BioSeq aseq = SeqUtils.getOtherSeq(current_c2g, genome_seq);
 			if (aseq == null) {
 				continue;
 			}
@@ -131,7 +131,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 
 
 
-	public static void writePSLTrack(PSLParser parser, Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type,
+	public static void writePSLTrack(PSLParser parser, Collection<SeqSymmetry> syms, BioSeq seq, String type,
 			String description, OutputStream outstream) {
 		if (! syms.isEmpty()) {
 			parser.writeAnnotations(syms, seq, true, type, description, outstream);
@@ -145,7 +145,7 @@ public final class ProbeSetDisplayPlugin implements AnnotationWriter {
 	}
 
 	// implementation of AnnotationWriter    
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq, String type, OutputStream outstream) throws IOException {
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) throws IOException {
 		String array_name = getArrayNameFromRequestedType(type);
 		System.out.println("in ProbesetDisplayPlugin.writeAnnotations(), array_name: " + array_name);
 		if (array_name == null || seq == null) {

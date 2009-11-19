@@ -39,14 +39,14 @@ public final class LiftParser {
 	private static final int CHROM_LENGTH = 4;
 	private static final int CONTIG_NAME_SUBFIELD = 1;
 
-	//static MutableAnnotatedBioSeq default_seq_template = new BioSeq();
-	//MutableAnnotatedBioSeq template_seq = default_seq_template;
+	//static BioSeq default_seq_template = new BioSeq();
+	//BioSeq template_seq = default_seq_template;
 
 	private static final boolean SET_COMPOSITION = true;
 
 	//public LiftParser()  {  }
 
-	//public LiftParser(MutableAnnotatedBioSeq template) {
+	//public LiftParser(BioSeq template) {
 	//template_seq = template;
 	//}
 

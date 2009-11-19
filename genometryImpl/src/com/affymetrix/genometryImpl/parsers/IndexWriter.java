@@ -1,6 +1,6 @@
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.DataInputStream;
@@ -25,7 +25,7 @@ public interface IndexWriter {
 	 * @param dos
 	 * @throws IOException
 	 */
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream dos) throws IOException;
+	public void writeSymmetry(SeqSymmetry sym, BioSeq seq, OutputStream dos) throws IOException;
 
 	/**
 	 * Parse the given stream, returning a list of SeqSymmetries.
@@ -37,21 +37,21 @@ public interface IndexWriter {
 	 * Get a comparator for the class.
 	 * @return comparator.
 	 */
-	public Comparator getComparator(MutableAnnotatedBioSeq seq);
+	public Comparator getComparator(BioSeq seq);
 
 	/**
 	 * Get the minimum of a given symmetry.
 	 * @param sym
 	 * @return
 	 */
-	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq);
+	public int getMin(SeqSymmetry sym, BioSeq seq);
 
 	/**
 	 * Get the maximum of a given symmetry.
 	 * @param sym
 	 * @return
 	 */
-	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq);
+	public int getMax(SeqSymmetry sym, BioSeq seq);
 
 	/**
 	 * Get the preferred formats.

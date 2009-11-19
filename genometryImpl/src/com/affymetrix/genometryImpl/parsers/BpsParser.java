@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 
@@ -235,7 +235,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 				int qmin = dis.readInt();
 				int qmax = dis.readInt();
 
-				MutableAnnotatedBioSeq queryseq = query_group.getSeq(qname);
+				BioSeq queryseq = query_group.getSeq(qname);
 				if (queryseq == null)  {
 					queryseq = query_group.addSeq(qname, qsize);
 				}
@@ -247,7 +247,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 				int tmax = dis.readInt();
 
 
-				MutableAnnotatedBioSeq targetseq = target_group.getSeq(tname);
+				BioSeq targetseq = target_group.getSeq(tname);
 				if (targetseq == null) {
 					targetseq = target_group.addSeq(tname, tsize);
 				}
@@ -395,7 +395,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		DataOutputStream dos = null;
 		try {
@@ -407,7 +407,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq);
 					}
 					else {
-						MutableAnnotatedBioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
+						BioSeq seq2 = SeqUtils.getOtherSeq(sym, seq);
 						sym = SeqSymmetryConverter.convertToPslSym(sym, type, seq2, seq);
 					}
 				}
@@ -425,11 +425,11 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		return true;
 	}
 
-	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
+	public Comparator getComparator(BioSeq seq) {
 		return comp;
 	}
 	
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, BioSeq seq, OutputStream os) throws IOException {
 		DataOutputStream dos = null;
 		if (os instanceof DataOutputStream) {
 			dos = (DataOutputStream)os;
@@ -439,11 +439,11 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		((UcscPslSym)sym).outputBpsFormat(dos);
 	}
 
-	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMin(SeqSymmetry sym, BioSeq seq) {
 		return ((UcscPslSym)sym).getTargetMin();
 	}
 
-	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMax(SeqSymmetry sym, BioSeq seq) {
 		return ((UcscPslSym)sym).getTargetMax();
 	}
 	public List<String> getFormatPrefList() {

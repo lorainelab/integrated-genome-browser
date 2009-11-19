@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * A class that's useful for visualizing a generic version.
+ * A generic version is a genome version found on a specific server.
+ * Thus, GenericVersion has a many-to-one map to AnnotatedSeqGroup.
  *
  * @other $Id$
  */

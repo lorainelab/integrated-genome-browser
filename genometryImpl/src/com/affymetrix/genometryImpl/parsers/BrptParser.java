@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -91,7 +91,7 @@ public final class BrptParser {
 			dos.writeInt(pcount);  // how many seqs there are
 			for (int i=0; i<pcount; i++) {
 				SeqSymmetry parent = parents.get(i);
-				MutableAnnotatedBioSeq seq = parent.getSpanSeq(0);
+				BioSeq seq = parent.getSpanSeq(0);
 				String seqid = seq.getID();
 				int rpt_count = parent.getChildCount();
 				dos.writeUTF(seqid);
@@ -129,7 +129,7 @@ public final class BrptParser {
 			while ((line = br.readLine()) != null) {
 				String[] fields = line_regex.split(line);
 				String seqid = fields[5].intern();
-				MutableAnnotatedBioSeq seq = null;
+				BioSeq seq = null;
 				MutableSeqSymmetry psym = id2psym.get(seqid);
 				if (psym == null) {
 					psym = new SimpleSymWithProps();
@@ -185,14 +185,14 @@ public final class BrptParser {
 			int seq_count = dis.readInt();
 			int[] rpt_counts = new int[seq_count];
 			String[] seqids = new String[seq_count];
-			MutableAnnotatedBioSeq[] seqs = new MutableAnnotatedBioSeq[seq_count];
+			BioSeq[] seqs = new BioSeq[seq_count];
 			System.out.println("genome version: " + genome_version);
 			System.out.println("seqs: " + seq_count);
 			int total_rpt_count = 0;
 			for (int i=0; i<seq_count; i++) {
 				String seqid = dis.readUTF();
 				seqids[i] = seqid;
-				MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+				BioSeq aseq = seq_group.getSeq(seqid);
 				if (aseq == null) {
 					aseq = seq_group.addSeq(seqid, 0);
 				}
@@ -203,7 +203,7 @@ public final class BrptParser {
 			System.out.println("total rpts: " + total_rpt_count);
 			rpt_syms = new ArrayList<SeqSymmetry>(total_rpt_count);
 			for (int i=0; i<seq_count; i++) {
-				MutableAnnotatedBioSeq aseq = seqs[i];
+				BioSeq aseq = seqs[i];
 
 				int rpt_count = rpt_counts[i];
 				System.out.println("seqid: " + seqids[i] + ", rpts: " + rpt_counts[i]);
@@ -284,7 +284,7 @@ public final class BrptParser {
 
 
 	// Annotationwriter implementation
-	//  public boolean writeAnnotations(Collection syms, MutableAnnotatedBioSeq seq,
+	//  public boolean writeAnnotations(Collection syms, BioSeq seq,
 	//                                  String type, OutputStream outstream) {
 	//  }
 	// public String getMimeType()  { return "binary/brpt"; }

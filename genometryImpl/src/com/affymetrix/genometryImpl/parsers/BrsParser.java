@@ -15,7 +15,7 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -181,7 +181,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 						emaxs[i] = dis.readInt();
 					}
 
-					MutableAnnotatedBioSeq chromseq = seq_group.getSeq(chrom_name);
+					BioSeq chromseq = seq_group.getSeq(chrom_name);
 					if (chromseq == null) {
 						chromseq = seq_group.addSeq(chrom_name, tmax);
 					}
@@ -225,7 +225,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 		if (annotate_seq) {
 			for (SeqSymmetry annot : annots) {
-				MutableAnnotatedBioSeq chromseq = annot.getSpan(0).getBioSeq();
+				BioSeq chromseq = annot.getSpan(0).getBioSeq();
 				chromseq.addAnnotation(annot);
 			}
 		}
@@ -263,7 +263,7 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	public void outputBrsFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
 		SeqSpan cspan = gsym.getCdsSpan();
-		MutableAnnotatedBioSeq seq = tspan.getBioSeq();
+		BioSeq seq = tspan.getBioSeq();
 		dos.writeUTF(gsym.getGeneName());
 		dos.writeUTF(gsym.getName());
 		dos.writeUTF(seq.getID());
@@ -464,7 +464,7 @@ public static void main(String[] args) {
  *  Implementing AnnotationWriter interface to write out annotations
  *    to an output stream as "binary UCSC refseq gene". File extension ".brs".
  **/
-public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBioSeq seq,
+public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 		String type, OutputStream outstream) {
 	System.out.println("in BrsParser.writeAnnotations()");
 	boolean success = true;
@@ -488,7 +488,7 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBi
 }
 
 
-	public void writeSymmetry(SeqSymmetry sym, MutableAnnotatedBioSeq seq, OutputStream os) throws IOException {
+	public void writeSymmetry(SeqSymmetry sym, BioSeq seq, OutputStream os) throws IOException {
 		DataOutputStream dos = null;
 		if (os instanceof DataOutputStream) {
 			dos = (DataOutputStream)os;
@@ -507,16 +507,16 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, MutableAnnotatedBi
 		return null;
 	}
 
-	public Comparator getComparator(MutableAnnotatedBioSeq seq) {
-		return new SeqSymMinComparator((BioSeq)seq);
+	public Comparator getComparator(BioSeq seq) {
+		return new SeqSymMinComparator(seq);
 	}
 
-	public int getMin(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMin(SeqSymmetry sym, BioSeq seq) {
 		SeqSpan span = sym.getSpan(seq);
 		return span.getMin();
 	}
 
-	public int getMax(SeqSymmetry sym, MutableAnnotatedBioSeq seq) {
+	public int getMax(SeqSymmetry sym, BioSeq seq) {
 		SeqSpan span = sym.getSpan(seq);
 		return span.getMax();
 	}

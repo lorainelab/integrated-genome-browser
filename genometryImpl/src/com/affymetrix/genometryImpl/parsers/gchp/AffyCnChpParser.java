@@ -14,7 +14,7 @@
 /** A parser for the Affymetrix Generic CHP files containing copy number data. */
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
@@ -39,7 +39,7 @@ public final class AffyCnChpParser {
 			}            
 
 			for (AffySingleChromData data : dataSet.getSingleChromData()) {
-				MutableAnnotatedBioSeq seq = getSeq(seq_group, data.displayName);
+				BioSeq seq = getSeq(seq_group, data.displayName);
 				List<SeqSymmetry> syms = data.makeGraphs(seq);
 				for (SeqSymmetry sym : syms) {
 					seq.addAnnotation(sym); 
@@ -56,8 +56,8 @@ public final class AffyCnChpParser {
 		}
 	}
 
-	private MutableAnnotatedBioSeq getSeq(AnnotatedSeqGroup seq_group, String seqid) {
-		MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+	private BioSeq getSeq(AnnotatedSeqGroup seq_group, String seqid) {
+		BioSeq aseq = seq_group.getSeq(seqid);
 		if (aseq == null) {
 			aseq = seq_group.addSeq(seqid, 1);
 		}

@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonSymWithProps;
 import java.io.*;
@@ -70,7 +70,7 @@ public final class VarParser {
 			int start = Integer.parseInt(fields[3]);
 			int end = Integer.parseInt(fields[4]);
 
-			MutableAnnotatedBioSeq aseq = seq_group.getSeq(seqid);
+			BioSeq aseq = seq_group.getSeq(seqid);
 			if (aseq == null) { aseq = seq_group.addSeq(seqid, end); }
 			if (start > aseq.getLength()) { aseq.setLength(start); }
 			if (end > aseq.getLength()) { aseq.setLength(end); }

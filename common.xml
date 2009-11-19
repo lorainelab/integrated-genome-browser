@@ -84,7 +84,7 @@
 	</condition>
 
 	<!-- Only compile file flex if the the das2 mode is 'genopub' and the flex app is not up-to-date -->
-	<condition property="compile_flex">
+	<condition property="should_compile_flex">
 		<and>
 			<!-- Is the das2 mode genopub? -->
   	  <matches string="${das2_mode}" pattern="genopub"/>

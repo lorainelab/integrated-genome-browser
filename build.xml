@@ -32,7 +32,7 @@
 		<iterate target="compile" />
 	</target>
 
-	<target name="flex" if="compile_flex" depends="common-init" description="Compile Flex GenoPub application">
+	<target name="flex" if="should_compile_flex" depends="common-init" description="Compile Flex GenoPub application">
 		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
 		<mxmlc file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
 	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
@@ -109,7 +109,8 @@
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 	</target>
 
-	<target name="webapp" depends="jar,flex" description="Create das2servlet web application">
+	<target name="webapp" depends="jar" description="Create das2servlet web application">
+		<antcall target="flex"/>
 		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${dist.dir}">
@@ -125,7 +126,7 @@
 				<include name="*.properties" />
 			</fileset>
 		</copy> 
-		<copy todir="${webapp.dir}" >
+		<copy todir="${webapp.dir}" overwrite="true" verbose="true">
 			<fileset dir="${dist.dir}">
 				<include name="*.swf" />
 				<include name="*.html" />
@@ -144,12 +145,12 @@
 		<antcall target="webapp-genopub" />
 	</target>
 
-	<target name="webapp-classic" if="is_das2_classic_mode" depends="jar, flex" description="Create das2servlet web application, use filesystem to serve annotations">
+	<target name="webapp-classic" if="is_das2_classic_mode" depends="jar" description="Create das2servlet web application, use filesystem to serve annotations">
 		<copy file="${web.classic.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
 		<copy file="${context.classic.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
 	</target>
 
-	<target name="webapp-genopub" if="is_das2_genopub_mode" depends="jar, flex" description="Create das2servlet web application, use db to serve annotations">
+	<target name="webapp-genopub" if="is_das2_genopub_mode" depends="jar" description="Create das2servlet web application, use db to serve annotations">
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
 		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
 	</target>

@@ -3,7 +3,7 @@
 <web-app>
 	<context-param>
 		<param-name>genometry_server_dir</param-name>
-		<param-value>c:/apache/tomcat5.5/Das2Data</param-value>
+		<param-value>/path/to/das2/data</param-value>
 	</context-param>
 
 	<context-param>
@@ -16,7 +16,7 @@
 	<!--                                                                  -->
 	<context-param>
 		<param-name>xml_base</param-name>
-		<param-value>http://localhost:8080/DAS2/genome</param-value>
+		<param-value>http://www.example.com:8080/das2/genome</param-value>
 	</context-param>
 
 	<servlet>

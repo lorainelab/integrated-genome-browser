@@ -9,12 +9,12 @@
   
 	<context-param>
 		<param-name>genometry_server_dir_genopub</param-name>
-		<param-value>c:/apache/tomcat5.5/GenoPubData</param-value>
+		<param-value>/path/to/das2/genpubdata/<param-value>
 	</context-param>
  
 	<context-param>
 		<param-name>maintainer_email</param-name>
-		<param-value>first.last@someplace.something.edu</param-value>
+		<param-value>admin@example.com<</param-value>
 	</context-param>
 
 	<!--                                                                  -->
@@ -22,7 +22,7 @@
 	<!--                                                                  -->
 	<context-param>
 		<param-name>xml_base</param-name>
-		<param-value>http://localhost:8080/DAS2/genome</param-value>
+		<param-value>http://www.example.com:8080/das2/genome</param-value>
 	</context-param>
 	
 	<!-- Listener to obtain Hibernate session  --> 

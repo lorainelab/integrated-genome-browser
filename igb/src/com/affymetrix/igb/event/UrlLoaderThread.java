@@ -17,7 +17,7 @@ import java.net.*;
 import java.io.*;
 import javax.swing.SwingUtilities;
 
-import com.affymetrix.genometryImpl.MutableAnnotatedBioSeq;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -34,24 +34,11 @@ import org.xml.sax.InputSource;
  * @version $Id$
  */
 public final class UrlLoaderThread extends Thread {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
-  final URL[] urls;
-  final String[] tier_names;
-  final SeqMapView gviewer;
-  final String[] file_extensions;
-
-  /** A convenience method that makes it easier to get an instance for loading
-   *  a <i>single</i> URL.  For loading multiple URLs, use the main constructor.
-   */
-  /*public static UrlLoaderThread getUrlLoaderThread(SeqMapView smv, URL das_url, String file_extension, String tier_name) {
-    URL[] das_urls = new URL[1];
-    das_urls[0] = das_url;
-    String[] tier_names = null;
-    if (tier_name != null) {tier_names = new String[] {tier_name};}
-    String[] file_extensions = null;
-    if (file_extensions != null) {file_extensions = new String[] {file_extension};}
-    return new UrlLoaderThread(smv, das_urls, file_extensions, tier_names);
-  }*/
+  private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  private final URL[] urls;
+  private final String[] tier_names;
+  private final SeqMapView gviewer;
+  private final String[] file_extensions;
 
   /**
    *  Creates a thread that can be used to load data.
@@ -80,7 +67,7 @@ public final class UrlLoaderThread extends Thread {
     @Override
   public void run() {
     //ThreadProgressMonitor monitor = null;
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     try {
       // should really move to using gmodel's currently selected  _group_ of sequences rather than
@@ -168,7 +155,7 @@ public final class UrlLoaderThread extends Thread {
     parseDataFromURL(gviewer, connection, file_extension, tier_name);
   }
 
-  void handleException(final Exception e) {
+  private void handleException(final Exception e) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if (e instanceof UnknownHostException) {
@@ -184,7 +171,7 @@ public final class UrlLoaderThread extends Thread {
   }
 
 
-  private void updateViewer(final SeqMapView gviewer, final MutableAnnotatedBioSeq seq) {
+  private void updateViewer(final SeqMapView gviewer, final BioSeq seq) {
     if (gviewer==null || seq==null) return;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -253,7 +240,7 @@ public final class UrlLoaderThread extends Thread {
   private static void parseDataFromURL(SeqMapView gviewer, URLConnection feat_request_con, String file_extension, String type)
     throws java.net.UnknownHostException, java.io.IOException {
 
-    MutableAnnotatedBioSeq aseq = gmodel.getSelectedSeq();
+    BioSeq aseq = gmodel.getSelectedSeq();
     AnnotatedSeqGroup seq_group = gmodel.getSelectedSeqGroup();
     //TODO: This is an important part of the data loading code, but it could be improved.
 
@@ -264,9 +251,7 @@ public final class UrlLoaderThread extends Thread {
     }
 
     URL url = feat_request_con.getURL();
-//if (3<4) return;
-//    content_type = null; // For Testing Only !!!!!!!!!!!!!!!!!!!!!!
-    
+  
     if (content_type==null) {
       content_type="content/unknown"; // to avoid null pointer
     }
@@ -330,7 +315,6 @@ public final class UrlLoaderThread extends Thread {
    */
   private static void parsePSL(URLConnection feat_request_con, String type)
   throws IOException {
-    MutableAnnotatedBioSeq new_seq = null;
     InputStream result_stream = null;
     BufferedInputStream bis = null;
     try {

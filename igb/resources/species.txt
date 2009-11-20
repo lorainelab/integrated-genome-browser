@@ -1,22 +1,26 @@
-Anolis carolinensis	Lizard	A_carolinensis	anoCar
+Anolis carolinensis	Lizard	A_carolinensis	anoCar	Anolis_carolinensis
 Anopheles gambiae	A. gambiae	A_gambiae	anoGam
 Apis mellifera	A. mellifera	A_mellifera	apiMel
 Arabidopsis thaliana	Thale Cress	A_thaliana	
-Bos taurus	Cow	B_taurus	bosTau
+Bos taurus	Cow	B_taurus	bosTau	Bos_taurus
 Branchiostoma floridae	Lancet	B_floridae	braFlo
-Callithrix jacchus	Marmoset	C_jacchus	calJac
-Cavia porcellus	Guinea Pig	C_porcellus	cavPor
-Ciona intestinalis	C. intestinalis	C_intestinalis	ci
 Caenorhabditis brenneri	C. brenneri	C_brenneri	caePb
 Caenorhabditis briggsae	C. briggsae	C_briggsae	cb
-Caenorhabditis elegans	C. elegans	C_elegans	ce
+Caenorhabditis elegans	C. elegans	C_elegans	ce	Caenorhabditis_elegans
 Caenorhabditis japonica	C. japonica	C_japonica	caeJap
 Caenorhabditis remanei	C. remanei	C_remanei	caeRem
-Canis lupus familiaris	Dog	C_familiaris	canFam
+Callithrix jacchus	Common Marmoset	C_jacchus	calJac	Callithrix_jacchus
+Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
+Cavia porcellus	Guinea Pig	C_porcellus	cavPor	Cavia_porcellus
+Choloepus hoffmanni	Two-toed Sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
+Ciona intestinalis	C. intestinalis	C_intestinalis	ci	Ciona_intestinalis
+Ciona savignyi	C. savignyi	C_savignyi		Ciona_savignyi
+Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
+Dasypus novemcinctus	Nine-banded Armadillo	D_novemcinctus		Dasypus_novemcinctus
 Drosophila ananassae	D. ananassae	D_ananassae	droAna
 Drosophila erecta	D. erecta	D_erecta	droEre
 Drosophila grimshawi	D. grimshawi	D_grimshawi	droGri
-Drosophila melanogaster	D. melanogaster	D_melanogaster	dm
+Drosophila melanogaster	D. melanogaster	D_melanogaster	dm	Drosophila_melanogaster
 Drosophila mojavensis	D. mojavensis	D_mojavensis	droMoj
 Drosophila persimilis	D. persimilis	D_persimilis	droPer
 Drosophila pseudoobscura	D. pseudoobscura	D_pseudoobscura	dp
@@ -24,39 +28,58 @@ Drosophila sechellia	D. sechellia	D_sechellia	droSec
 Drosophila simulans	D. simulans	D_simulans	droSim
 Drosophila virilis	D. virilis	D_virilis	droVir
 Drosophila yakuba	D. yakuba	D_yakuba	droYak
-Danio rerio	Zebrafish	D_rerio	danRer
-Equus caballus	Horse	E_caballus	equCab
+Dipodomys ordii	Kangaroo Rat	D_ordii	dipOrd	Dipodomys_ordii
+Echinops telfairi	Lesser Hedgehog Tenrec	E_telfairi		Echinops_telfairi
+Equus caballus	Horse	E_caballus	equCab	Equus_caballus
+Erinaceus europaeus	European Hedgehog	E_europaeus		Erinaceus_europaeus
 Escherichia coli	E. coli	E_coli	
-Felis catus	Cat	F_catus	felCat
-Gallus gallus	Chicken	G_gallus	galGal
-Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu
+Felis catus	Cat	F_catus	felCat	Felis_catus
+Gallus gallus	Chicken	G_gallus	galGal	Gallus_gallus
+Gasterosteus aculeatus	Stickleback	G_aculeatus	gasAcu	Gasterosteus_aculeatus
 Glycine max	Soybean	G_max	
-Homo sapiens	Human	H_sapiens	hg
-Macaca mulatta	Rhesus	M_mulatta	rheMac
+Gorilla gorilla	Western Gorilla	G_gorilla	gorGor	Gorilla_gorilla
+Homo sapiens	Human	H_sapiens	hg	Homo_sapiens
+Loxodonta africana	African Bush Elephant	L_africana	loxAfr	Loxodonta_africana
+Macaca mulatta	Rhesus	M_mulatta	rheMac	Macaca_mulatta
+Macropus eugenii	Tammar Wallaby	M_eugenii		Macropus_eugenii
 Medicago truncatula	Barrel Medic	M_truncatula	
-Monodelphis domestica	Opossum	M_domestica	monDom
-Mus musculus	Mouse	M_musculus	mm
+Microcebus murinus	Gray Mouse Lemur	M_murinus	micMur	Microcebus_murinus
+Monodelphis domestica	Opossum	M_domestica	monDom	Monodelphis_domestica
+Mus musculus	Mouse	M_musculus	mm	Mus_musculus
 Mycobacterium abscessus	M. abcessus	M_abscessus	
 Mycobacterium smegmatis	M. smegmatis	M_smegmatis	
 Mycobacterium tuberculosis	M. tuberculosis	M_tuberculosis	
-Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna
+Myotis lucifugus	Little Brown Bat	M_lucifugus		Myotis_lucifugus
+Ochotona princeps	American Pika	O_princeps		Ochotona_princeps
+Ornithorhynchus anatinus	Platypus	O_anatinus	ornAna	Ornithorhynchus_anatinus
+Oryctolagus cuniculus	European Rabbit	O_cuniculus		Oryctolagus_cuniculus
 Oryza sativa	Rice	O_sativa	
-Oryzias latipes	Medaka	O_latipes	oryLat
+Oryzias latipes	Medaka	O_latipes	oryLat	Oryzias_latipes
+Otolemur garnettii	Nothern Greater galago	O_garnettii		Otolemur_garnettii
 Ostreococcus lucimarinus	O. lucimarinus	O_lucimarinus	
-Pan troglodytes	Chimp	P_troglodytes	panTro
+Pan troglodytes	Chimp	P_troglodytes	panTro	Pan_troglodytes
 Petromyzon marinus	Lamprey	P_marinus	petMar
 Plasmodium falciparum	P. falciparum	P_falciparum	Pfalciparum_3D7_plasmoDB-5.4	Pfalciparum_3D7_plasmoDB-5.5
-Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe
+Pongo pygmaeus abelii	Orangutan	P_abelii	ponAbe	Pongo_pygmaeus
 Populus trichocarpa	Black Cottonwood	P_trichocarpa	
 Pristionchus pacificus	P. pacificus	P_pacificus	priPac
-Rattus norvegicus	Rat	R_norvegicus	rn
-Saccharomyces cerevisiae	Yeast	S_cerevisiae	sacCer
+Procavia capensis	Rock Hyrax	P_capensis	proCap	Procavia_capensis
+Pteropus vampyrus	Large Flying Fox	P_vampyrus	pteVam	Pteropus_vampyrus
+Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
+Saccharomyces cerevisiae	Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
 Schizosaccharomyces pombe	Fission Yeast	S_pombe	
 Sodalis glossinidius	S. glossinidius	S_glossinidius	
+Sorex araneus	Eurasian Shrew	S_araneus		Sorex_araneus
 Sorghum bicolor	Sorghum	S_bicolor	
+Spermophilus tridecemlineatus	Thirteen-lined Ground Squirrel	S_tridecemlineatus		Spermophilus_tridecemlineatus
 Strongylocentrotus purpuratus	Purple Sea Urchin	S_purpuratus	strPur
-Taeniopygia guttata	Zebra Finch	T_guttata	taeGut
-Takifugu rubripes	Fugu	T_rubripes	fr
-Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig
+Sus scrofa	Wild Boar	S_scrofa		Sus_scrofa
+Taeniopygia guttata	Zebra Finch	T_guttata	taeGut	Taeniopygia_guttata
+Takifugu rubripes	Fugu	T_rubripes	fr	Takifugu_rubripes
+Tarsius syrichta	Philippine Tarsier	T_syrichta	tarSyr	Tarsius_syrichta
+Tetraodon nigroviridis	Tetraodon	T_nigroviridis	tetNig	Tetraodon_nigroviridis
+Tupaia belangeri	Northern Tree Shrew	T_belangeri		Tupaia_belangeri
+Tursiops truncatus	Bottlenose dolphin	T_truncatus	turTru	Tursiops_truncatus
+Vicugna pacos	Alpaca	V_pacos	vicPac	Vicugna_pacos
 Vitis vinifera	Common Grape Vine	V_vinifera	
-Xenopus tropicalis	Pipid Frog	X_tropicalis	xenTro
+Xenopus tropicalis	Pipid Frog	X_tropicalis	xenTro	Xenopus_tropicalis

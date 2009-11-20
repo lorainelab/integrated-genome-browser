@@ -52,10 +52,11 @@ public class TierGlyph extends SolidGlyph {
    */
   private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
-  public static final int HIDDEN = 100;
-  public static final int COLLAPSED = 101;
-  public static final int EXPANDED = 102;
-  public static final int FIXED_COORD_HEIGHT = 103;
+  public static enum TierState { HIDDEN, COLLAPSED, EXPANDED, FIXED_COORD_HEIGHT};
+  //public static final int HIDDEN = 100;
+  //public static final int COLLAPSED = 101;
+  //public static final int EXPANDED = 102;
+  //public static final int FIXED_COORD_HEIGHT = 103;
 
   public static enum Direction { FORWARD, NONE, REVERSE, BOTH, AXIS};
 
@@ -95,9 +96,6 @@ public class TierGlyph extends SolidGlyph {
   private List<GlyphI> max_child_sofar = null;
 
   private IAnnotStyle style;
-
-
-  private static final boolean LARGE_HANDLE = false;
 
 
   public TierGlyph(IAnnotStyle style) {
@@ -403,15 +401,9 @@ public class TierGlyph extends SolidGlyph {
       g.setFont(default_font);
       
 	  Rectangle handle_pixbox = new Rectangle();
-
-      if (LARGE_HANDLE) {
-        handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, pixelbox.height);
-      }
-      else {
-		  FontMetrics fm = g.getFontMetrics();
-		  int h = Math.min(fm.getMaxAscent(), pixelbox.height);
-        handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, h);
-      }
+	  FontMetrics fm = g.getFontMetrics();
+	  int h = Math.min(fm.getMaxAscent(), pixelbox.height);
+	  handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, h);
       return handle_pixbox;
   }
 
@@ -441,25 +433,21 @@ public class TierGlyph extends SolidGlyph {
     middle_glyphs.clear();
   }
 
-  public void setState(int newstate) {
-    if (newstate == EXPANDED) {
+  public void setState(TierState newstate) {
+    if (newstate == TierState.EXPANDED) {
       setPacker(expand_packer);
       setVisibility(true);
     }
-    else if (newstate == COLLAPSED) {
+    else if (newstate == TierState.COLLAPSED) {
       setPacker(collapse_packer);
       setVisibility(true);
     }
-    else if (newstate == FIXED_COORD_HEIGHT)  {
+    else if (newstate == TierState.FIXED_COORD_HEIGHT)  {
       setPacker(null);
       setVisibility(true);
     }
-    else if (newstate == HIDDEN) {
+    else if (newstate == TierState.HIDDEN) {
       setVisibility(false);
-    }
-    else {
-      System.out.println("state not recognized: " + newstate);
-      return;
     }
   }
 
@@ -468,19 +456,17 @@ public class TierGlyph extends SolidGlyph {
     setVisibility(true);
   }
 
-  public int getState() {
-    if (isVisible()) {
+  public TierState getState() {
+	  if (!isVisible()) {
+		  return TierState.HIDDEN;
+	  }
       if (packer == expand_packer) {
-        return EXPANDED;
-      } else if (packer == collapse_packer) {
-        return COLLAPSED;
-      } else if (packer == null) {
-        return FIXED_COORD_HEIGHT;
+        return TierState.EXPANDED;
       }
-    } else {
-      return HIDDEN;
-    }
-    return -1; // should never happen
+	  if (packer == collapse_packer) {
+        return TierState.COLLAPSED;
+      }
+	  return TierState.FIXED_COORD_HEIGHT;
   }
 
   public PackerI getExpandedPacker() {

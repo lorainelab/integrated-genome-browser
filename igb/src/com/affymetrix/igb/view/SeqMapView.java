@@ -1223,7 +1223,7 @@ public class SeqMapView extends JPanel
 		// Hides all empty tiers.  Doesn't really remove them.
 		for (TierGlyph tg : seqmap.getTiers()) {
 			if (tg.getChildCount() <= 0) {
-				tg.setState(TierGlyph.HIDDEN);
+				tg.setState(TierGlyph.TierState.HIDDEN);
 			}
 		}
 	}

@@ -355,7 +355,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       showMenu.add(show_tier);
     }
     if (! style.getShow()) {
-      tier.setState(TierGlyph.HIDDEN);
+      tier.setState(TierGlyph.TierState.HIDDEN);
     }
   }
 

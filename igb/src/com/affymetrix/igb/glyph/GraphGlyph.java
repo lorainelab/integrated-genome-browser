@@ -443,9 +443,6 @@ public final class GraphGlyph extends Glyph {
 	}
 
 	private void drawHandle(ViewI view) {
-		if (handle_width <= 0) {
-			return;
-		}
 		Rectangle hpix = calcHandlePix(view);
 		if (hpix != null) {
 			Graphics g = view.getGraphics();
@@ -571,12 +568,10 @@ public final class GraphGlyph extends Glyph {
 		view.transformToPixels(getPositiveCoordBox(), pixelbox);
 
 		// only outline the handle, not the whole graph
-		if (handle_width > 0) {
-			g.drawRect(view_pixbox.x, pixelbox.y,
-					handle_width - 1, pixelbox.height - 1);
-			g.drawRect(view_pixbox.x + 1, pixelbox.y + 1,
-					handle_width - 3, pixelbox.height - 3);
-		}
+		g.drawRect(view_pixbox.x, pixelbox.y,
+				handle_width - 1, pixelbox.height - 1);
+		g.drawRect(view_pixbox.x + 1, pixelbox.y + 1,
+				handle_width - 3, pixelbox.height - 3);
 
 		// also draw a little pointing triangle to make the selection stand-out more
 		int[] xs = {view_pixbox.x + handle_width,

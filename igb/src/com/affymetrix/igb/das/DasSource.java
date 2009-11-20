@@ -100,7 +100,13 @@ public final class DasSource {
 
   /** Get entry points from das server. */
   protected synchronized void initEntryPoints() {
-    String entry_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/entry_points";
+    String entry_request;
+	if (mapmaster != null && !mapmaster.isEmpty()) {
+		entry_request = mapmaster + "/entry_points";
+	} else {
+		entry_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/entry_points";
+	}
+	
     try {
       System.out.println("Das Entry Request: " + entry_request);
       Document doc = XMLUtils.getDocument(entry_request);

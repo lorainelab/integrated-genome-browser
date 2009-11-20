@@ -16,6 +16,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.util.FloatList;
+import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.util.PointIntFloat;
 import java.io.*;
@@ -33,9 +34,8 @@ public final class GrParser {
 			bos = new BufferedOutputStream(ostr);
 			dos = new DataOutputStream(bos);
 			writeGraphPoints(graf, dos);
-			dos.flush();
 		} finally {
-			dos.close();
+			GeneralUtils.safeClose(dos);
 		}
 		return true;
 	}

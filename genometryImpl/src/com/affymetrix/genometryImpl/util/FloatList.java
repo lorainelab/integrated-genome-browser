@@ -117,7 +117,7 @@ public final class FloatList {
 		return true;
 	}
 
-	/*public void add(int index, float val) {
+	public void add(int index, float val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -127,7 +127,7 @@ public final class FloatList {
 				size - index);
 		primData[index] = val;
 		size++;
-	}*/
+	}
 
 	// returns value that was removed
 	/*public float remove(int index) {

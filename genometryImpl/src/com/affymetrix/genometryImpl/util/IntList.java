@@ -13,6 +13,8 @@
 
 package com.affymetrix.genometryImpl.util;
 
+import java.util.Arrays;
+
 /**
  *  A Vector-like class for ints (since Vectors don't deal with primitives).
  *  Does not implement the Collection interfaces.
@@ -120,13 +122,12 @@ public final class IntList {
 		return oldValue;
 	}*/
 
-	public boolean add(int i) {
+	public void add(int i) {
 		ensureCapacity(size + 1); 
 		primData[size++] = i;
-		return true;
 	}
 
-	/*public void add(int index, int val) {
+	public void add(int index, int val) {
 		if (index > size || index < 0) {
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
 		}
@@ -136,7 +137,11 @@ public final class IntList {
 				size - index);
 		primData[index] = val;
 		size++;
-	}*/
+	}
+	
+	public int binarySearch(int val) {
+		return Arrays.binarySearch(primData, val);
+	}
 
 	// returns value that was removed
 	/*public int remove(int index) {

@@ -373,11 +373,11 @@ public final class ScoredIntervalParser {
 		// syms with the same ID rather than insisting on taking only the first match.
 		// This probably will make this parser simpler, since we may be able to drop
 		// this stuff about adding ".0" and ".1" to non-unique ids.
-		List sym_list = seq_group.findSyms(id);
+		Set<SeqSymmetry> sym_list = seq_group.findSyms(id);
 		if (sym_list.isEmpty()) {
 			return null;
 		} else {
-			return (SeqSymmetry) sym_list.get(0);
+			return sym_list.iterator().next();
 		}
 	}
 

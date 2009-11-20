@@ -304,15 +304,15 @@ public class AnnotatedSeqGroup {
 	/** Finds all symmetries with the given case-insensitive ID.
 	 *  @return a non-null List, possibly an empty one.
 	 */
-	final public List<SeqSymmetry> findSyms(String id) {
+	final public Set<SeqSymmetry> findSyms(String id) {
 		if (id == null) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<SeqSymmetry>emptySet();
 		}
 		Set<SeqSymmetry> sym_list = id2sym_hash.get(id.toLowerCase());
 		if (sym_list == null) {
-			return Collections.<SeqSymmetry>emptyList();
+			return Collections.<SeqSymmetry>emptySet();
 		}
-		return Collections.unmodifiableList((List<SeqSymmetry>) sym_list);
+		return Collections.<SeqSymmetry>unmodifiableSet(sym_list);
 	}
 
 	/** Finds all symmetries with the given case-insensitive ID and add them to
@@ -423,7 +423,7 @@ public class AnnotatedSeqGroup {
 	final private void putSeqInList(String id, SeqSymmetry sym) {
 		Set<SeqSymmetry> seq_list = id2sym_hash.get(id);
 		if (seq_list == null) {
-			seq_list = new HashSet<SeqSymmetry>();
+			seq_list = new LinkedHashSet<SeqSymmetry>();
 			id2sym_hash.put(id,seq_list);
 		}
 		seq_list.add(sym);

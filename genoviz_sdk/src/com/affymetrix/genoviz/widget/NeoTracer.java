@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.awt.geom.Point2D;
@@ -26,7 +26,14 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neotracer.*;
+import java.awt.Adjustable;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.geom.Rectangle2D;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JScrollBar;
 
 /**
@@ -159,10 +166,8 @@ public class NeoTracer extends NeoContainerWidget
 
 	// optional - for aligned bases
 	private BaseCalls consensus; // reference string
-	private Mapping cons_aligner; // aligns the consensus
-	private Mapping active_aligner; // aligns the active BaseCalls object with the consensus
 
-	private Vector<NeoBaseSelectListener> base_listeners = new Vector<NeoBaseSelectListener>();
+	private List<NeoBaseSelectListener> base_listeners = new CopyOnWriteArrayList<NeoBaseSelectListener>();
 
 	protected Glyph line_glyph;
 	protected FillRectGlyph left_trim_glyph, right_trim_glyph;
@@ -1656,19 +1661,18 @@ public class NeoTracer extends NeoContainerWidget
 
 	public void addBaseSelectListener(NeoBaseSelectListener l) {
 		if (!base_listeners.contains(l)) {
-			base_listeners.addElement(l);
+			base_listeners.add(l);
 		}
 	}
 
 	public void removeBaseSelectListener(NeoBaseSelectListener l) {
-		base_listeners.removeElement(l);
+		base_listeners.remove(l);
 	}
 
 	private void sendBaseSelectedEvent( int base_index ) {
-		Enumeration<NeoBaseSelectListener> e = base_listeners.elements();
 		NeoBaseSelectEvent event = new NeoBaseSelectEvent( (Object)this, base_index );
-		while( e.hasMoreElements() ) {
-			e.nextElement().baseSelected( event );
+		for (NeoBaseSelectListener nbsl : base_listeners) {
+			nbsl.baseSelected( event );
 		}
 	}
 

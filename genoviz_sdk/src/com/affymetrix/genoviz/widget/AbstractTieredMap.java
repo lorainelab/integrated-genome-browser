@@ -14,13 +14,13 @@
 package com.affymetrix.genoviz.widget;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.Dimension;
 
 import com.affymetrix.genoviz.event.TierEvent;
 import com.affymetrix.genoviz.event.TierEventListener;
 import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.util.GeometryUtils;
 import java.awt.geom.Rectangle2D;
@@ -46,7 +46,7 @@ public abstract class AbstractTieredMap
 	public String name; // for debugging only
 
 	protected Vector<MapTierGlyph> tiers = new Vector<MapTierGlyph>();
-	private Vector<TierEventListener> tierEventListeners = new Vector<TierEventListener>();
+	private List<TierEventListener> tierEventListeners = new CopyOnWriteArrayList<TierEventListener>();
 	private boolean notifyingListeners = false;
 
 	/**
@@ -78,7 +78,7 @@ public abstract class AbstractTieredMap
 	public void destroy() {
 		super.destroy();
 		clearWidget();
-		viewbox_listeners.removeAllElements();
+		viewbox_listeners.clear();
 	}
 
 	public void setNotifyOnPackTiers(boolean b) {
@@ -89,14 +89,16 @@ public abstract class AbstractTieredMap
 	 * Add a listener to the audience.
 	 */
 	public synchronized void addTierEventListener(TierEventListener tel) {
-		tierEventListeners.addElement(tel);
+		if (!tierEventListeners.contains(tel)) {
+			tierEventListeners.add(tel);
+		}
 	}
 
 	/**
 	 * Remove a listener from the audience.
 	 */
 	public synchronized void removeTierEventListener(TierEventListener tel) {
-		tierEventListeners.removeElement(tel);
+		tierEventListeners.remove(tel);
 	}
 
 	/**
@@ -119,7 +121,7 @@ public abstract class AbstractTieredMap
 		int tot = tierEventListeners.size();
 		notifyingListeners = true;
 		for (int i=0; i < tot; i++) {
-			(tierEventListeners.elementAt(i)).heardTierEvent(evt);
+			(tierEventListeners.get(i)).heardTierEvent(evt);
 		}
 		notifyingListeners = false;
 	}

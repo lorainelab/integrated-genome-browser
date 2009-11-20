@@ -13,9 +13,9 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.bioviews.*;
@@ -25,6 +25,9 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neoqualler.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
@@ -132,7 +135,7 @@ public class NeoQualler extends NeoContainerWidget
 	protected Selection sel_range;
 
 	protected Range range;
-	protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
+	protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 
 	public NeoQualler() {
 		super();
@@ -746,7 +749,7 @@ public class NeoQualler extends NeoContainerWidget
 						vbox.x, vbox.x + vbox.width);
 				NeoRangeListener rl;
 				for (int i=0; i<range_listeners.size(); i++) {
-					rl = range_listeners.elementAt(i);
+					rl = range_listeners.get(i);
 					rl.rangeChanged(nevt);
 				}
 			}
@@ -755,12 +758,12 @@ public class NeoQualler extends NeoContainerWidget
 
 	public void addRangeListener(NeoRangeListener l) {
 		if (!range_listeners.contains(l)) {
-			range_listeners.addElement(l);
+			range_listeners.add(l);
 		}
 	}
 
 	public void removeRangeListener(NeoRangeListener l) {
-		range_listeners.removeElement(l);
+		range_listeners.remove(l);
 	}
 
 }

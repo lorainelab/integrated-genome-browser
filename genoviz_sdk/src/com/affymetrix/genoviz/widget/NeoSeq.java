@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -25,6 +25,15 @@ import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.*;
 
 import com.affymetrix.genoviz.widget.neoseq.*;
+import java.awt.Adjustable;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Rectangle;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JScrollBar;
 
 /**
@@ -205,7 +214,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected int scroll_increment;
 	private ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
-	protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
+	protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 
 	public NeoSeq() {
 		super();
@@ -349,7 +358,7 @@ public class NeoSeq extends NeoContainerWidget
 		this.seq.removeSequenceListener ( this );
 		offset_scroll = null;
 		super.destroy();
-		range_listeners.removeAllElements();
+		range_listeners.clear();
 	}
 
 	boolean isEditable() {
@@ -2139,7 +2148,7 @@ public class NeoSeq extends NeoContainerWidget
 				NeoRangeEvent nevt = new NeoRangeEvent(this, r.beg, r.end);
 
 				for (int i=0; i<range_listeners.size(); i++) {
-					range_listeners.elementAt(i).rangeChanged(nevt);
+					range_listeners.get(i).rangeChanged(nevt);
 				}
 			}
 		}
@@ -2147,12 +2156,12 @@ public class NeoSeq extends NeoContainerWidget
 
 	public void addRangeListener(NeoRangeListener l) {
 		if (!range_listeners.contains(l)) {
-			range_listeners.addElement(l);
+			range_listeners.add(l);
 		}
 	}
 
 	public void removeRangeListener(NeoRangeListener l) {
-		range_listeners.removeElement(l);
+		range_listeners.remove(l);
 	}
 
 	/**

@@ -13,10 +13,11 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
 
@@ -37,6 +38,17 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Adjustable;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import javax.swing.JScrollBar;
 
 /**
@@ -122,8 +134,8 @@ public class NeoMap extends NeoWidget implements
 		   boolean drag_scrolling_enabled = false;
 
 		   protected int selectionMethod = NO_SELECTION;
-		   protected Vector<NeoViewBoxListener> viewbox_listeners = new Vector<NeoViewBoxListener>();
-		   protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
+		   protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+		   protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 
 		   /**
 			* Constructs a horizontal NeoMap with scrollbars.
@@ -1561,7 +1573,7 @@ public class NeoMap extends NeoWidget implements
 					   new NeoViewBoxChangeEvent(this, e.getCoordBox());
 
 				   for (int i=0; i<viewbox_listeners.size(); i++) {
-					   viewbox_listeners.elementAt(i).viewBoxChanged(vevt);
+					   viewbox_listeners.get(i).viewBoxChanged(vevt);
 				   }
 			   }
 			   if (range_listeners.size() > 0) {
@@ -1575,7 +1587,7 @@ public class NeoMap extends NeoWidget implements
 				   }
 
 				   for (int i=0; i<range_listeners.size(); i++) {
-					   range_listeners.elementAt(i).rangeChanged(nevt);
+					   range_listeners.get(i).rangeChanged(nevt);
 					   // currently range events are generated for _any_ viewbox change
 					   //    event, so sometimes the range may not actually have changed,
 					   //    might be only "offset" that is changing
@@ -1591,29 +1603,29 @@ public class NeoMap extends NeoWidget implements
 							   e.getX(), e.getY(), e.getClickCount(),
 							   e.isPopupTrigger(), e.getRubberBand());
 				   for (int i=0; i<rubberband_listeners.size(); i++) {
-					   rubberband_listeners.elementAt(i).rubberBandChanged(nevt);
+					   rubberband_listeners.get(i).rubberBandChanged(nevt);
 				   }
 			   }
 		   }
 
 		   public void addViewBoxListener(NeoViewBoxListener l) {
 			   if (!viewbox_listeners.contains(l)) {
-				   viewbox_listeners.addElement(l);
+				   viewbox_listeners.add(l);
 			   }
 		   }
 
 		   public void removeViewBoxListener(NeoViewBoxListener l) {
-			   viewbox_listeners.removeElement(l);
+			   viewbox_listeners.remove(l);
 		   }
 
 		   public void addRangeListener(NeoRangeListener l) {
 			   if (!range_listeners.contains(l)) {
-				   range_listeners.addElement(l);
+				   range_listeners.add(l);
 			   }
 		   }
 
 		   public void removeRangeListener(NeoRangeListener l) {
-			   range_listeners.removeElement(l);
+			   range_listeners.remove(l);
 		   }
 
 

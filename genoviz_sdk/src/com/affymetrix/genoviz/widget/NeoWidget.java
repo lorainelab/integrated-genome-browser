@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
@@ -34,7 +34,11 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Adjustable;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -126,7 +130,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected String hscroll_loc = hscroll_default_loc;
 	protected String vscroll_loc = vscroll_default_loc;
 
-	protected Vector<NeoRubberBandListener> rubberband_listeners = new Vector<NeoRubberBandListener>();
+	protected List<NeoRubberBandListener> rubberband_listeners = new CopyOnWriteArrayList<NeoRubberBandListener>();
 
 
 	public NeoWidget() {
@@ -1288,12 +1292,12 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	public void addRubberBandListener(NeoRubberBandListener l) {
 		if (!rubberband_listeners.contains(l)) {
-			rubberband_listeners.addElement(l);
+			rubberband_listeners.add(l);
 		}
 	}
 
 	public void removeRubberBandListener(NeoRubberBandListener l) {
-		rubberband_listeners.removeElement(l);
+		rubberband_listeners.remove(l);
 	}
 
 }

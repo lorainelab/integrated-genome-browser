@@ -214,7 +214,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>das2_server/src</package-root>
-                <classpath mode="compile">ext/javax.servlet.jar;ext/org.mortbay.jetty.jar;genometryImpl/src</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar;ext/org.mortbay.jetty.jar;ext/dom4j-1.6.1.jar;ext/hibernate3.jar;ext/cos.jar;ext/catalina.jar;genometryImpl/src</classpath>
                 <built-to>das2_server/build</built-to>
                 <javadoc-built-to>documentation/api-docs</javadoc-built-to>
                 <source-level>1.5</source-level>
@@ -239,7 +239,7 @@
             <compilation-unit>
                 <package-root>das2_server/test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">ext/javax.servlet.jar;/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometryImpl/src</classpath>
+                <classpath mode="compile">ext/javax.servlet.jar;ext/dom4j-1.6.1.jar;ext/hibernate3.jar;ext/cos.jar;ext/catalina.jar;/usr/share/junit/junit.jar;/usr/share/java/junit4.jar;C:\Program Files\NetBeans 6.5\platform9\modules\ext\junit-4.5.jar;genometryImpl/src</classpath>
                 <built-to>das2_server/build-test</built-to>
                 <source-level>1.5</source-level>
             </compilation-unit>

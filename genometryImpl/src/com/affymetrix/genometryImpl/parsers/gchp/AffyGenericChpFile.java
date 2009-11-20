@@ -15,31 +15,30 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import java.io.*;
-import java.nio.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
 /** A parser for the Affymetrix Generic CHP format. */
 public final class AffyGenericChpFile {
 
-	int magic; // magic number.  Always 59.
-	int version; // version number.  Always 1.
-	int num_groups;
-	int group_0_pos;
-	Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<String,AffyChpParameter>();
-	AffyGenericDataHeader header;
+	private int magic; // magic number.  Always 59.
+	private int version; // version number.  Always 1.
+	private int num_groups;
+	private int group_0_pos;
+	private Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<String,AffyChpParameter>();
+	private AffyGenericDataHeader header;
 	List<AffyDataGroup> groups;
-	File file;
+	private File file;
 	private ChromLoadPolicy loadPolicy;
 
 	/** Creates a new instance of AffyCnChpParser */
-	protected AffyGenericChpFile(File file, ChromLoadPolicy loadPolicy) {
+	private AffyGenericChpFile(File file, ChromLoadPolicy loadPolicy) {
 		this.file = file;
 		this.loadPolicy = loadPolicy;
 	}
 
 	/** Parses a string in UTF-16BE format, with the length specified first as an int. */
-	public static String parseWString(DataInputStream istr) throws IOException {
+	static String parseWString(DataInputStream istr) throws IOException {
 		int len = istr.readInt();
 		byte bytes[] = new byte[len * 2];
 		istr.readFully(bytes);
@@ -47,7 +46,7 @@ public final class AffyGenericChpFile {
 	}
 
 	/** Parses a string in UTF-8 format, with the length specified first as an int. */
-	public static CharSequence parseString(DataInputStream istr) throws IOException {
+	static CharSequence parseString(DataInputStream istr) throws IOException {
 		int len = istr.readInt();
 		byte bytes[] = new byte[len];
 		istr.readFully(bytes);
@@ -99,38 +98,10 @@ public final class AffyGenericChpFile {
 		return chpFile;
 	}
 
-	/** Dumps a description of the file to the given stream. */
-	public void dump(PrintStream str) {    
-		str.println("Magic: " + magic + ", version:" + version);
-		str.println("Number of Groups: " + num_groups);
-		str.println("Group 0 position: " + group_0_pos);
-		str.println("Parameters: " + parameterMap.size());
-
-		for (AffyChpParameter param : parameterMap.values()) {
-			str.println(param.toString());
-		}
-
-		header.dump(str);
-
-		for (AffyDataGroup group : groups) {
-			List<AffyDataSet> dataSets = group.getDataSets();
-			for (AffyDataSet set : dataSets) {
-				set.dump(str);
-			}
-		}
-	}
-
-	/** The file that was provided in the constructor.
-	 *  @return a file or null.
-	 */
-	public File getFile() {
-		return file;
-	}
-
 	/** Creates a String from the given bytes, using the given Charset and
 	 *  trimming off any trailing '\0' characters.
 	 */
-	public static String makeString(byte[] bytes, Charset charset) {
+	static String makeString(byte[] bytes, Charset charset) {
 		String s = null;
 		try {
 			//TODO: use new String(byte[], Charset) when we convert all to JDK 1.6
@@ -146,81 +117,7 @@ public final class AffyGenericChpFile {
 		return s;
 	}
 
-
-	public void testFullRead(String test_file) {
-		FileInputStream fis = null;
-		BufferedInputStream bis = null;
-		AffyGenericChpFile chpFile = null;
-
-		try {
-			File fil = new File(test_file);      
-			fis = new FileInputStream(fil);
-			bis = new BufferedInputStream(fis);
-			System.out.println("START Parse");
-			chpFile = parse(fil, loadPolicy, bis, false);
-			System.out.println("END Parse");
-			System.out.println("");
-
-			chpFile.dump(System.out);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		finally {
-			try {fis.close();} catch (Exception e) { e.printStackTrace(); }
-			try {bis.close();} catch (Exception e) { e.printStackTrace(); }
-		}
-	}
-
-	/** A method useful during debugging. */
-	private static void showBytes(DataInputStream istr, int count) throws IOException {
-		byte bytes[] = new byte[count];
-		istr.readFully(bytes);
-		System.out.println("Length: " + count);
-		try{
-			//TODO: use new String(byte[], Charset) when we convert all to JDK 1.6
-			System.out.print(new String(bytes, AffyDataType.UTF8.name()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		showBytes(bytes);
-	}
-
-	/** A method useful during debugging. */
-	private static void showBytes(byte[] bytes) {
-		System.out.println("");
-		for (int i=0; i<bytes.length; i++) {
-			System.out.print("(" + new Integer(bytes[i]) + ") ");
-		}
-		System.out.println("");
-	}
-
-	/** Tests the parsing of the given filename. */
-	public static void main(String[] args) {
-		String fileName = "C:\\Documents and Settings\\eerwin\\My Documents\\data\\copy_number\\NA06985_GW6_C.cnchp";
-		File file = new File(fileName);
-		ChromLoadPolicy loadPolicy = ChromLoadPolicy.getLoadAllPolicy();
-		AffyGenericChpFile parser = new AffyGenericChpFile(file, loadPolicy);
-		if (args.length > 0) {
-			fileName = args[0];
-		}
-		System.out.println("Testing reading of file: " + fileName);
-		parser.testFullRead(fileName);
-	}
-
-	/** Reades the affymetrix-algorithm-param-genome-version header value.
-	 *  @return a CharSequence or null
-	 */
-	public CharSequence getHeaderVersion() {
-		AffyChpParameter param = header.paramMap.get("affymetrix-algorithm-param-genome-version");    
-		if (param == null) {
-			return null;
-		} else {
-			return param.getValueString();
-		}
-	}
-
-	public ChromLoadPolicy getLoadPolicy() {
+	ChromLoadPolicy getLoadPolicy() {
 		return loadPolicy;
 	}
 

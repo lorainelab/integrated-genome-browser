@@ -151,7 +151,7 @@ public final class Das2ServerInfo  {
           log.add("\t\tSessionId: "+sessionId);
         }
         else {
-          log.add("\t\tError: No sessionId found in header! No authentication.");         
+          log.add("\t\tNo sessionId found in header. No authentication.");
         }
     }   catch (Exception ex) {
       log.add("\t\tServer doesn't support/recognize authentication.");

@@ -22,6 +22,7 @@ import org.w3c.dom.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
+import com.affymetrix.igb.util.XMLUtils;
 
 public final class DasSource {
 
@@ -102,7 +103,7 @@ public final class DasSource {
     String entry_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/entry_points";
     try {
       System.out.println("Das Entry Request: " + entry_request);
-      Document doc = DasLoader.getDocument(entry_request);
+      Document doc = XMLUtils.getDocument(entry_request);
       Element top_element = doc.getDocumentElement();
       NodeList segments = doc.getElementsByTagName("SEGMENT");
       System.out.println("segments: " + segments.getLength());
@@ -160,7 +161,7 @@ public final class DasSource {
     String types_request = getDasServerInfo().getRootUrl() + "/" + getID() + "/types";
     try {
       System.out.println("Das Types Request: " + types_request);
-      Document doc = DasLoader.getDocument(types_request);
+      Document doc = XMLUtils.getDocument(types_request);
       Element top_element = doc.getDocumentElement();
       NodeList typelist = doc.getElementsByTagName("TYPE");
       System.out.println("types: " + typelist.getLength());

@@ -13,6 +13,7 @@
 package com.affymetrix.igb.das;
 
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.XMLUtils;
 import java.net.*;
 import java.util.*;
 import org.w3c.dom.*;
@@ -94,7 +95,7 @@ public final class DasServerInfo {
 				System.out.println("DAS capabilities: " + das_capabilities);
 			}
 		
-			Document doc = DasLoader.getDocument(request_con);
+			Document doc = XMLUtils.getDocument(request_con);
 
 			Element top_element = doc.getDocumentElement();
 			NodeList dsns = doc.getElementsByTagName("DSN");

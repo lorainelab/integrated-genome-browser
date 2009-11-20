@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.das.DasLoader;
+import com.affymetrix.igb.util.XMLUtils;
 import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
@@ -187,7 +187,7 @@ public final class Das2VersionedSource {
 			// don't cache this!  If the file is corrupted, this can hose the IGB instance until the cache and preferences are cleared.
 			InputStream response = LocalUrlCacher.getInputStream(region_request, false);
 
-			Document doc = DasLoader.getDocument(response);
+			Document doc = XMLUtils.getDocument(response);
 			Element top_element = doc.getDocumentElement();
 			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
 			if (DEBUG) {
@@ -273,7 +273,7 @@ public final class Das2VersionedSource {
 						System.out.println("Types request " + types_request + " was not reachable.");
 						return;
 					}
-					Document doc = DasLoader.getDocument(response);
+					Document doc = XMLUtils.getDocument(response);
 					Element top_element = doc.getDocumentElement();
 					NodeList typelist = doc.getElementsByTagName("TYPE");
 

@@ -18,11 +18,10 @@ import java.net.*;
 import java.util.*;
 import org.w3c.dom.*;
 
-import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.SimpleAuthenticator;
+import com.affymetrix.igb.util.XMLUtils;
 
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;
@@ -144,7 +143,7 @@ public final class Das2ServerInfo  {
       // of IGB from same machine do no use the old session that may have
       // been established with a different login (user).
       InputStream response = LocalUrlCacher.getInputStream(das_query, LocalUrlCacher.IGNORE_CACHE, false, headers);
-      Document doc = DasLoader.getDocument(response);
+      Document doc = XMLUtils.getDocument(response);
       
       String cookie = (String)headers.get("set-cookie");
         if(cookie != null) {
@@ -210,7 +209,7 @@ public final class Das2ServerInfo  {
 			}
 			//       Document doc = DasLoader.getDocument(request_con);
 			System.out.println("Initializing " + server_uri);
-			Document doc = DasLoader.getDocument(response);
+			Document doc = XMLUtils.getDocument(response);
 
 			Element top_element = doc.getDocumentElement();
 

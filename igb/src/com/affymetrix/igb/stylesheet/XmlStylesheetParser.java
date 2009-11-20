@@ -14,7 +14,7 @@
 package com.affymetrix.igb.stylesheet;
 
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.das.DasLoader;
+import com.affymetrix.igb.util.XMLUtils;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -107,7 +107,7 @@ public final class XmlStylesheetParser {
 
 	private Stylesheet parse(InputSource insource) throws IOException {
 		try {
-			Document prefsdoc = DasLoader.nonValidatingFactory().newDocumentBuilder().parse(insource);
+			Document prefsdoc = XMLUtils.nonValidatingFactory().newDocumentBuilder().parse(insource);
 
 			processDocument(prefsdoc);
 		} catch (IOException ioe) {

@@ -16,11 +16,9 @@ package com.affymetrix.igb.das;
 import java.io.*;
 import java.io.IOException;
 import java.net.*;
-import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.*;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -31,9 +29,9 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.util.XMLUtils;
 
 
 
@@ -43,67 +41,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 public abstract class DasLoader {
   final static boolean DEBUG = false;
 	static final Pattern white_space = Pattern.compile("\\s+");
-
-	/**
-	 * Create a new DocumentBuilder factory with validation disabled.
-   * The parser returned is not specifically set-up for DAS, and can be
-   * used in any case where you want a non-validating parser.
-	 */
-	public static DocumentBuilderFactory nonValidatingFactory() {
-		if (DEBUG)
-			System.out.println("========== Getting a nonValidatingFactory!");
-
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setValidating(false);
-		try {
-			factory.setFeature("http://xml.org/sax/features/validation", false);
-			factory.setFeature("http://apache.org/xml/features/validation/dynamic", false);
-			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-
-		return factory;
-	}
-
-
-  /** Opens an XML document, using {@link #nonValidatingFactory()}. */
-  public static Document getDocument(String url)
-  throws ParserConfigurationException, MalformedURLException, SAXException, IOException {
-    if (DEBUG) System.out.println("=========== Getting a Document from URL: "+url);
-
-    Document doc = null;
-    URL request_url = new URL(url);
-    URLConnection request_con = request_url.openConnection();
-		request_con.setConnectTimeout(LocalUrlCacher.CONNECT_TIMEOUT);
-		request_con.setReadTimeout(LocalUrlCacher.READ_TIMEOUT);
-    doc = getDocument(request_con);
-    return doc;
-  }
-
-  /** Opens an XML document, using {@link #nonValidatingFactory()}. */
-  public static Document getDocument(URLConnection request_con)
-  throws ParserConfigurationException, SAXException, IOException {
-    if (DEBUG) System.out.println("=========== Getting a Document from connection: "+request_con.getURL().toExternalForm());
-
-    if (DEBUG) { LocalUrlCacher.reportHeaders(request_con); }
-
-    InputStream result_stream = null;
-    Document doc = null;
-    try {
-      result_stream = new BufferedInputStream(request_con.getInputStream());
-      doc = getDocument(result_stream);
-    } finally {
-		GeneralUtils.safeClose(result_stream);
-    }
-    return doc;
-  }
-
-  /** Opens an XML document, using {@link #nonValidatingFactory()}. */
-  public static Document getDocument(InputStream str)
-  throws ParserConfigurationException, SAXException, IOException {
-    return nonValidatingFactory().newDocumentBuilder().parse(str);
-  }
 
   /**
    *  Returns a List of String's which are the id's of the segments.
@@ -179,7 +116,7 @@ public abstract class DasLoader {
 		if (DEBUG) {
 			System.out.println("Das Request: " + request_str);
 		}
-    Document doc = DasLoader.getDocument(request_str);
+    Document doc = XMLUtils.getDocument(request_str);
     List<String> sources = DasLoader.parseSourceList(doc);
     SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 
@@ -201,7 +138,7 @@ public abstract class DasLoader {
 		if (DEBUG) {
 			System.out.println("Das Request: " + request_str);
 		}
-    Document doc = DasLoader.getDocument(request_str);
+    Document doc = XMLUtils.getDocument(request_str);
     List<String> segments = DasLoader.parseSegmentsFromEntryPoints(doc);
 
     result = lookup.findMatchingSynonym(segments,  seqid_synonym);
@@ -239,7 +176,7 @@ public abstract class DasLoader {
 
 		InputSource isrc = new InputSource(das_dna_result);
 
-		Document doc = DasLoader.nonValidatingFactory().newDocumentBuilder().parse(isrc);
+		Document doc = XMLUtils.nonValidatingFactory().newDocumentBuilder().parse(isrc);
 		Element top_element = doc.getDocumentElement();
 		String name = top_element.getTagName();
 		//    System.out.println("top element: " + name);

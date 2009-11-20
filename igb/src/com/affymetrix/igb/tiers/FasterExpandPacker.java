@@ -21,6 +21,7 @@ import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.bioviews.*;
 
 import com.affymetrix.genometryImpl.util.DoubleList;
+import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.geom.Rectangle2D;
 
 /**

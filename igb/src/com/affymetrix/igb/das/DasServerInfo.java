@@ -15,20 +15,14 @@ package com.affymetrix.igb.das;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import java.net.*;
 import java.util.*;
-//import java.util.regex.*;
 import org.w3c.dom.*;
 
 public final class DasServerInfo {
 
 	private static final boolean REPORT_SOURCES = false;
 	private static final boolean REPORT_CAPS = true;
-	//static Pattern cap_splitter = Pattern.compile("; *");
-	//static Pattern name_version_splitter = Pattern.compile("/");
 	private String root_url;
-	//String das_version;
 	private String name;
-	private String description;
-	//Map<String, String> capabilities = new LinkedHashMap<String, String>();  // using LinkedHashMap for predictable iteration
 	private Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
@@ -57,30 +51,6 @@ public final class DasServerInfo {
 		return name;
 	}*/
 
-	/*public String getDasVersion() {
-		if (!initialized) {
-			initialize();
-		}
-		return das_version;
-	}*/
-
-	/*public String getDescription() {
-		return description;
-	}*/
-
-	/*public Map getCapabilities() {
-		if (!initialized) {
-			initialize();
-		}
-		return capabilities;
-	}*/
-
-	/*public String getCapability(String cap) {
-		if (!initialized) {
-			initialize();
-		}
-		return capabilities.get(cap);
-	}*/
 
 	public Map<String, DasSource> getDataSources() {
 		if (!initialized) {
@@ -89,20 +59,9 @@ public final class DasServerInfo {
 		return sources;
 	}
 
-	/*private void setCapability(String cap, String version) {
-		capabilities.put(cap, version);
-	}*/
-
-	/*private void setDasVersion(String version) {
-		das_version = version;
-	}*/
-
 	private void addDataSource(DasSource ds) {
 		sources.put(ds.getID(), ds);
 	}
-
-	/*protected void setDescription(String desc) {
-	}*/
 
 	/**
 	 * Return true if successfully initialized.
@@ -134,19 +93,7 @@ public final class DasServerInfo {
 			if (REPORT_CAPS) {
 				System.out.println("DAS capabilities: " + das_capabilities);
 			}
-			/*if (das_capabilities != null) {
-				String[] cap_array = cap_splitter.split(das_capabilities);
-				for (int i = 0; i < cap_array.length; i++) {
-					String tagval = cap_array[i];
-					String[] name_version = name_version_splitter.split(tagval);
-					String cap_name = name_version[0];
-					String cap_version = name_version[1];
-					setCapability(cap_name, cap_version);
-					if (REPORT_CAPS) {
-						System.out.println("cap: " + cap_name + ", version: " + cap_version);
-					}
-				}
-			}*/
+		
 			Document doc = DasLoader.getDocument(request_con);
 
 			Element top_element = doc.getDocumentElement();

@@ -48,14 +48,12 @@ public final class PreferencesPanel extends JPanel {
   }
 
   public static int TAB_NUM_TIERS = -1;
-  private static int TAB_NUM_DAS = -1;
-  private static int TAB_NUM_KEY_STROKES = -1;
+  /*private static int TAB_NUM_KEY_STROKES = -1;
   private static int TAB_NUM_MISC_OPTIONS = -1;
-  private static int TAB_NUM_GRAPHS_VIEW = -1;
+  private static int TAB_NUM_GRAPHS_VIEW = -1;*/
 	
   public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / Import";
   public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / Export";
-  //public final static String CLEAR_ACTION_COMMAND  = WINDOW_NAME + " / Clear";
   public final static String HELP_ACTION_COMMAND  = WINDOW_NAME + " / Help";
   public final static String HELP_TAB_ACTION_COMMAND  = WINDOW_NAME + " / Help for current tab";
 
@@ -83,13 +81,16 @@ public final class PreferencesPanel extends JPanel {
 
       TAB_NUM_TIERS = singleton.addPrefEditorComponent(singleton.tpv);
 
-      TAB_NUM_KEY_STROKES = singleton.addPrefEditorComponent(new KeyStrokesView());
+      //TAB_NUM_KEY_STROKES =
+			  singleton.addPrefEditorComponent(new KeyStrokesView());
 
       //TAB_NUM_PLUGINS = singleton.addPrefEditorComponent(new PluginsView());
 
-      TAB_NUM_GRAPHS_VIEW = singleton.addPrefEditorComponent(new GraphsView());
+      //TAB_NUM_GRAPHS_VIEW =
+			  singleton.addPrefEditorComponent(new GraphsView());
 
-      TAB_NUM_MISC_OPTIONS = singleton.addPrefEditorComponent(new OptionsView());
+      //TAB_NUM_MISC_OPTIONS =
+			  singleton.addPrefEditorComponent(new OptionsView());
 
       //TAB_NUM_DAS = singleton.addPrefEditorComponent(new DasServersView());
 
@@ -395,33 +396,4 @@ public final class PreferencesPanel extends JPanel {
     return help_for_tab_action;
   }
 
-  /** A simple method for testing an IPrefEditorComponent, which MUST also
-   *  be a JComponent, by simply bringing it up in a JDialog.
-   */
-  /*public static void testPanel(IPrefEditorComponent p) {
-    JDialog d = new JDialog();
-    d.setTitle(p.getName());
-    d.getContentPane().add((JComponent) p);
-    d.pack();
-
-    d.setVisible(true);
-    d.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    d.addWindowListener(new java.awt.event.WindowAdapter() {
-      public void windowClosing(java.awt.event.WindowEvent e) {
-        System.exit(0);
-      }
-    });
-  }*/
-
-  /** A main method for testing. */
-  /*public static void main(String[] args) throws Exception {
-    PreferencesPanel pp = getSingleton();
-    JFrame f = pp.getFrame();
-    f.addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent evt) {
-        System.exit(0);
-      }
-    });
-    f.setVisible(true);
-  }*/
 }

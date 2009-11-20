@@ -33,18 +33,6 @@ import javax.swing.tree.*;
  */
 public final class BookmarkList extends DefaultMutableTreeNode {
   public static final String NETSCAPE_BOOKMARKS_DOCTYPE = "<!DOCTYPE NETSCAPE-Bookmark-file-1>";
-    
-  // protected so that you are forced to use one of the provided constructors
-  /*protected BookmarkList() {
-  }
-  
-  protected BookmarkList(Object o) {
-    super(o);
-  }
-
-  protected BookmarkList(Object o, boolean allows_children) {
-    super(o, allows_children);
-  }*/
  
   public BookmarkList(String s) {
     super(s, true);
@@ -213,54 +201,6 @@ public final class BookmarkList extends DefaultMutableTreeNode {
     }
   }
 
-  /** Exports the BookmarkList as a simple HTML file which does not
-   *  preserve the nested heirarchy.  The format matches the format
-   *  used by earlier versions of Unibrow.
-   */
-  /*public static void exportAsSimpleHTML(BookmarkList list, File fil) throws IOException {
-    FileWriter fw = null;
-    BufferedWriter bw = null;
-    try {
-      fw = new FileWriter(fil);
-      bw = new BufferedWriter(fw);
-      bw.write("<HTML>\n");
-      bw.write("<HEAD>\n");
-      bw.write("<TITLE>Saved Unibrow Bookmarks</TITLE>\n");
-      bw.write("</HEAD>\n");
-      bw.write("<BODY>\n");
-
-      bw.write("<H1>Unibrow Bookmarks</H1><BR>\n");
-      exportAsSimpleHTML_recursive(list, bw);
-
-      bw.write("</BODY>\n");
-      bw.write("</HTML>\n");
-      bw.close();
-    } finally {
-      if (bw != null) {bw.close();}
-      if (fw != null) {fw.close();}
-    }
-  }*/
-
-  // Used by exportAsSimpleHTML
-  private static void exportAsSimpleHTML_recursive(BookmarkList sub_list, Writer bw) throws IOException {
-    Enumeration e = sub_list.children();
-    while (e.hasMoreElements()) {
-      BookmarkList btn = (BookmarkList) e.nextElement();
-      Object o = btn.getUserObject();
-      if (o instanceof String) {
-        exportAsSimpleHTML_recursive(btn, bw);
-      } else if (o instanceof Bookmark) {
-        Bookmark bm = (Bookmark) o;
-        bw.write("<A href=\""+bm.getURL().toExternalForm()+"\">");
-        bw.write(bm.getName());
-        bw.write("</A>\n");
-        if (e.hasMoreElements()) {bw.write("<br>\n");}
-      } else if (o instanceof Separator) {
-        bw.write("<hr>\n");
-      }
-    }
-  }
-  
   // Used by exportAsNetscapeHTML
   private static void exportAsNetscapeHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
     // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes

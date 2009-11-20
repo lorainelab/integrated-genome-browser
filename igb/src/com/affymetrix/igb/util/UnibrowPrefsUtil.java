@@ -46,7 +46,6 @@ import javax.swing.*;
   public static final boolean default_ask_before_exiting = true;
   static JFileChooser static_chooser = null;
   static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
-	private static boolean bse_already_warned_once = false;
   static String app_dir = null;
 	
   private static Vector<String> FILENAMES;

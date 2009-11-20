@@ -18,6 +18,7 @@ import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
+import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.geom.Rectangle2D;
 
 public class ExpandPacker implements PaddedPackerI, NeoConstants  {

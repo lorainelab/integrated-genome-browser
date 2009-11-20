@@ -22,16 +22,20 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.awt.geom.Point2D;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.Timer;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
+
 
 /**
  *  An implementation of graphs for NeoMaps, capable of rendering graphs in a variety of styles
@@ -221,7 +225,7 @@ public final class GraphGlyph extends Glyph {
 
 	private void checkVisibleBoundsY(boolean toInitialize, Map<String,Object> map) {
 		boolean rangeInit = false;
-		if (isUninitialized() && map != null) {
+		if (toInitialize && map != null) {
 			Object value = map.get(ViewPropertyNames.INITIAL_MAX_Y);
 			if (value != null) {
 				point_max_ycoord = Float.parseFloat(value.toString());
@@ -246,7 +250,7 @@ public final class GraphGlyph extends Glyph {
 		if (point_max_ycoord <= point_min_ycoord) {
 			point_min_ycoord = point_max_ycoord - 1;
 		}
-		if (isUninitialized()) {
+		if (toInitialize) {
 			setVisibleMaxY(point_max_ycoord);
 			setVisibleMinY(point_min_ycoord);
 		}
@@ -774,11 +778,11 @@ public final class GraphGlyph extends Glyph {
 		return state.getGraphStyle();
 	}
 
-	public final int[] getXCoords() {
+	public int[] getXCoords() {
 		return graf.getGraphXCoords();
 	}
 
-	public final int getPointCount() {
+	public int getPointCount() {
 		return graf.getPointCount();
 	}
 

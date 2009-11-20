@@ -14,15 +14,11 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.*;
-import java.util.Map;
-
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.FeatureTreeView;

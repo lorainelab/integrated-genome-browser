@@ -17,6 +17,7 @@ import java.awt.Rectangle;
 import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.geom.Rectangle2D;
 
 public final class CollapsePacker implements PaddedPackerI {

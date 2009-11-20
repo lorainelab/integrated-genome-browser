@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 

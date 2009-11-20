@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.bioviews;
 import java.awt.*;
 import java.util.*;
 
-import com.affymetrix.genoviz.event.*;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -118,7 +117,7 @@ public interface SceneI {
 	/**
 	 *  Return a Vector of all views onto the scene
 	 */
-	public Vector getViews();
+	public Vector<ViewI> getViews();
 
 	/**
 	 *  Draw all the views of this scene
@@ -150,16 +149,5 @@ public interface SceneI {
 	 *  return the coordinate bounds of the entire scene
 	 */
 	public Rectangle2D.Double getCoordBox();
-
-
-	// Styles are not yet implemented
-	//    public void setStyle(StyleI style);
-	//    public StyleI getStyle();
-
-	// Scenes will need protected methods such as the following:
-	//    protected void addGroup();
-	// Scenes will need public methods such as the following:
-	//    public Object addThisData (DataType data)
-	//             { return (Object) new myGlyph(); }
 
 }

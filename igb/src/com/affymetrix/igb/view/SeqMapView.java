@@ -380,7 +380,7 @@ public class SeqMapView extends JPanel
 			TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
 				  public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
 					  // TODO:  Find properties of selected track and show in 'Selection Info' tab.
-					  System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
+					  //System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
 				  }
 			};
 			tier_manager.addTrackSelectionListener(track_selection_listener);

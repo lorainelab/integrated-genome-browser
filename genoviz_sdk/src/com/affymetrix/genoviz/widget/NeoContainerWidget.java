@@ -13,13 +13,16 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.*;
+import java.awt.Adjustable;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.JScrollBar;
 
 /**
@@ -561,8 +564,6 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		Object source = e.getSource();
 		if (! (source instanceof NeoAbstractWidget)) { return; }
 		int id = e.getID();
-		int x = e.getX();
-		int y = e.getY();
 
 		int location = NeoConstants.UNKNOWN;
 		location = getLocation((NeoAbstractWidget)source);
@@ -574,37 +575,24 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		Rectangle bnds = ((Component)source).getBounds();
 		nevt.translatePoint(bnds.x, bnds.y);
 
-		if (mouse_listeners.size() > 0) {
-			// trying to debug problem with JPopupMenus -- GAH 3-31-99
-			// problem is with a JPopup adding itself (or rather its Grabber)
-			// as a mouse listener to ALL containers/children down
-			// the hierarchy from the component its show is called on.
-			// But this happens through the mousePressed call _here_,
-			// so the listener loop as it was written would end up notifying
-			// the Grabber of a mouse pressed, which would be interpreted
-			// as wanting to hide the popup (when it was really caused by the
-			// mouse press that created the popup in the first place).
-			// Therefore trying to prevent this situation by only calling those
-			// listeners that were registered as listeners _before_ the loop was started.
-			// (current approach could however get screwed up by additional
-			//  adding/removing of mouse listeners in response to mouse events...)
-			int last_listener = mouse_listeners.size()-1;
-			for (int i=0;
-					(i <= last_listener) && (i < mouse_listeners.size());
-					i++) {
-				MouseListener ml = mouse_listeners.elementAt(i);
-				if (id == MouseEvent.MOUSE_CLICKED) { ml.mouseClicked(nevt); }
-				else if (id == MouseEvent.MOUSE_ENTERED) { ml.mouseEntered(nevt); }
-				else if (id == MouseEvent.MOUSE_EXITED) { ml.mouseExited(nevt); }
-				else if (id == MouseEvent.MOUSE_PRESSED) { ml.mousePressed(nevt); }
-				else if (id == MouseEvent.MOUSE_RELEASED) { ml.mouseReleased(nevt); }
-					}
+		for (MouseListener ml : mouse_listeners) {
+			if (id == MouseEvent.MOUSE_CLICKED) {
+				ml.mouseClicked(nevt);
+			} else if (id == MouseEvent.MOUSE_ENTERED) {
+				ml.mouseEntered(nevt);
+			} else if (id == MouseEvent.MOUSE_EXITED) {
+				ml.mouseExited(nevt);
+			} else if (id == MouseEvent.MOUSE_PRESSED) {
+				ml.mousePressed(nevt);
+			} else if (id == MouseEvent.MOUSE_RELEASED) {
+				ml.mouseReleased(nevt);
+			}
 		}
-		if (mouse_motion_listeners.size() > 0) {
-			for (int i=0; i<mouse_motion_listeners.size(); i++) {
-				MouseMotionListener mml = mouse_motion_listeners.elementAt(i);
-				if (id == MouseEvent.MOUSE_DRAGGED) { mml.mouseDragged(nevt); }
-				else if (id == MouseEvent.MOUSE_MOVED) { mml.mouseMoved(nevt); }
+		for (MouseMotionListener mml : mouse_motion_listeners) {
+			if (id == MouseEvent.MOUSE_DRAGGED) {
+				mml.mouseDragged(nevt);
+			} else if (id == MouseEvent.MOUSE_MOVED) {
+				mml.mouseMoved(nevt);
 			}
 		}
 	}

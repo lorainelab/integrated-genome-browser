@@ -13,12 +13,19 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.GeneralUtils;
+import java.awt.Adjustable;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 
@@ -247,9 +254,9 @@ public abstract class NeoAbstractWidget extends Container
 
 	protected Dimension pref_widg_size = new Dimension(1, 1);
 
-	protected Vector<MouseListener> mouse_listeners = new Vector<MouseListener>();
-	protected Vector<MouseMotionListener> mouse_motion_listeners = new Vector<MouseMotionListener>();
-	protected Vector<KeyListener> key_listeners = new Vector<KeyListener>();
+	protected List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
+	protected List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
+	protected List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
 
 	protected Hashtable<GlyphI,Object> glyph_hash = new Hashtable<GlyphI,Object>();
 
@@ -818,37 +825,37 @@ public abstract class NeoAbstractWidget extends Container
 	@Override
 	public void addMouseListener(MouseListener l) {
 		if (!mouse_listeners.contains(l)) {
-			mouse_listeners.addElement(l);
+			mouse_listeners.add(l);
 		}
 	}
 
 	@Override
 	public void removeMouseListener(MouseListener l) {
-		mouse_listeners.removeElement(l);
+		mouse_listeners.remove(l);
 	}
 
 	@Override
 	public void addMouseMotionListener(MouseMotionListener l) {
 		if (!mouse_motion_listeners.contains(l)) {
-			mouse_motion_listeners.addElement(l);
+			mouse_motion_listeners.add(l);
 		}
 	}
 
 	@Override
 	public void removeMouseMotionListener(MouseMotionListener l) {
-		mouse_motion_listeners.removeElement(l);
+		mouse_motion_listeners.remove(l);
 	}
 
 	@Override
 	public void addKeyListener(KeyListener l) {
 		if (!key_listeners.contains(l)) {
-			key_listeners.addElement(l);
+			key_listeners.add(l);
 		}
 	}
 
 	@Override
 	public void removeKeyListener(KeyListener l) {
-		key_listeners.removeElement(l);
+		key_listeners.remove(l);
 	}
 
 	/**
@@ -856,9 +863,9 @@ public abstract class NeoAbstractWidget extends Container
 	 * for garbage collection to occur.
 	 */
 	public void destroy() {
-		key_listeners.removeAllElements();
-		mouse_motion_listeners.removeAllElements();
-		mouse_listeners.removeAllElements();
+		key_listeners.clear();
+		mouse_motion_listeners.clear();
+		mouse_listeners.clear();
 		glyph_hash.clear();
 		model_hash.clear();
 		selected.removeAllElements();
@@ -875,9 +882,7 @@ public abstract class NeoAbstractWidget extends Container
 			KeyEvent nevt =
 				new KeyEvent(this, id, e.getWhen(), e.getModifiers(),
 						e.getKeyCode(), e.getKeyChar());
-			KeyListener kl;
-			for (int i=0; i<key_listeners.size(); i++) {
-				kl = key_listeners.elementAt(i);
+			for (KeyListener kl : key_listeners) {
 				if (id == KeyEvent.KEY_PRESSED) {
 					kl.keyPressed(nevt);
 				}

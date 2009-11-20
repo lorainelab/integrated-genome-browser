@@ -165,6 +165,7 @@ public final class UrlLoaderThread extends Thread {
             "File missing or not readable:\n "+e.getMessage(), null);
         } else {
           Application.getSingleton().setStatus(e.getMessage());
+					e.printStackTrace();
         }
       }
     });

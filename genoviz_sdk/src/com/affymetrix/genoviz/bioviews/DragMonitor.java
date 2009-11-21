@@ -13,22 +13,24 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.event.NeoDragEvent;
 import com.affymetrix.genoviz.event.NeoDragListener;
 import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Dimension;
 
 @SuppressWarnings(value="deprecation")
 public class DragMonitor
 	implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
 
 	NeoCanvas can;
-	Vector<NeoDragListener> listeners = new Vector<NeoDragListener>();
+	List<NeoDragListener> listeners = new CopyOnWriteArrayList<NeoDragListener>();
 	boolean already_dragging_outside = false;
 
 	protected NeoTimerEventClock timer = null;
@@ -103,20 +105,20 @@ public class DragMonitor
 		int direction = ((Integer)arg).intValue();
 		NeoDragEvent new_event = new NeoDragEvent(this, direction);
 		for (int i=0; i<listeners.size(); i++) {
-			listeners.elementAt(i).heardDragEvent(new_event);
+			listeners.get(i).heardDragEvent(new_event);
 		}
 		time_count++;
 	}
 
 	public void addDragListener(NeoDragListener listener) {
-		listeners.addElement(listener);
+		listeners.add(listener);
 	}
 
 	public void removeDragListener(NeoDragListener listener) {
-		listeners.removeElement(listener);
+		listeners.remove(listener);
 	}
 
-	public Vector getDragListeners() {
+	public List<NeoDragListener> getDragListeners() {
 		return listeners;
 	}
 

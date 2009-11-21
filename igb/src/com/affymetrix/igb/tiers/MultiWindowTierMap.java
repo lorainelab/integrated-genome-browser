@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -54,8 +55,8 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 	private int total_height = tile_height * tile_rows;
 	private NeoMap[][] child_maps = new NeoMap[tile_columns][tile_rows];
 	private MultiMapMouseHandler child_mouse_handler;
-	private List<MouseListener> mlisteners = new ArrayList<MouseListener>();
-	private List<NeoRubberBandListener> rlisteners = new ArrayList<NeoRubberBandListener>();
+	private List<MouseListener> mlisteners = new CopyOnWriteArrayList<MouseListener>();
+	private List<NeoRubberBandListener> rlisteners = new CopyOnWriteArrayList<NeoRubberBandListener>();
 
 	public MultiWindowTierMap(boolean hscroll, boolean vscroll) {
 		super(hscroll, vscroll, NeoConstants.HORIZONTAL);

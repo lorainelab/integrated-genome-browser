@@ -17,7 +17,9 @@ import com.affymetrix.genoviz.event.SequenceEvent;
 import com.affymetrix.genoviz.event.SequenceListener;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Models a biological sequence with known residues.
@@ -35,7 +37,7 @@ public class Sequence implements EditableSequenceI {
 	private String name;
 
 	private Vector<Position> positions = new Vector<Position>();
-	private Vector<SequenceListener> listeners = new Vector<SequenceListener>();
+	private List<SequenceListener> listeners = new CopyOnWriteArrayList<SequenceListener>();
 
 	private StringBuffer residues;
 
@@ -408,9 +410,7 @@ public class Sequence implements EditableSequenceI {
 	 */
 	protected void processSequenceEvent( SequenceEvent theEvent ) {
 		if ( null != listeners ) {
-			for ( Enumeration e = listeners.elements();
-					e.hasMoreElements(); ) {
-				SequenceListener l = ( SequenceListener ) e.nextElement();
+			for (SequenceListener l : listeners) {
 				l.sequenceChanged( theEvent );
 					}
 		}
@@ -422,7 +422,7 @@ public class Sequence implements EditableSequenceI {
 	 * @param l the listener to add.
 	 */
 	public void addSequenceListener( SequenceListener l ) {
-		listeners.addElement( l );
+		listeners.add( l );
 	}
 
 	/**
@@ -431,7 +431,7 @@ public class Sequence implements EditableSequenceI {
 	 * @param l the listener who is no longer listening.
 	 */
 	public void removeSequenceListener( SequenceListener l ) {
-		listeners.removeElement( l );
+		listeners.remove( l );
 	}
 
 }

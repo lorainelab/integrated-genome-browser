@@ -13,11 +13,12 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.event.NeoMouseEvent;
@@ -26,6 +27,7 @@ import com.affymetrix.genoviz.event.NeoGlyphDragListener;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.NeoWidget;
+import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,7 +63,7 @@ public class GlyphDragger
 
 	GlyphI dragged_glyph;
 	NeoAbstractWidget widget;
-	Vector<NeoGlyphDragListener> drag_listeners = new Vector<NeoGlyphDragListener>();
+	List<NeoGlyphDragListener> drag_listeners = new CopyOnWriteArrayList<NeoGlyphDragListener>();
 	boolean force_within_parent = false;
 
 	// a transform to use when mapping mouse drags to glyph coords
@@ -284,7 +286,9 @@ public class GlyphDragger
 	 *     NeoGlyphDragEvent...).
 	 */
 	public void addGlyphDragListener(NeoGlyphDragListener listener) {
-		drag_listeners.add(listener);
+		if (!drag_listeners.contains(listener)) {
+			drag_listeners.add(listener);
+		}
 	}
 
 	public void removeGlyphDragListener(NeoGlyphDragListener listener) {
@@ -292,12 +296,12 @@ public class GlyphDragger
 	}
 
 	public void removeAllListeners() {
-		drag_listeners.removeAllElements();
+		drag_listeners.clear();
 	}
 
 	public void notifyListeners(NeoGlyphDragEvent evt) {
 		for (int i=0; i<drag_listeners.size(); i++) {
-			NeoGlyphDragListener listener = drag_listeners.elementAt(i);
+			NeoGlyphDragListener listener = drag_listeners.get(i);
 			listener.heardGlyphDrag(evt);
 		}
 	}

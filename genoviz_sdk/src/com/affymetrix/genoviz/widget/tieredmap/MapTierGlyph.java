@@ -14,15 +14,17 @@
 package com.affymetrix.genoviz.widget.tieredmap;
 
 import java.util.Vector;
-import java.awt.*;
-
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
 import com.affymetrix.genoviz.glyph.*;
-
-import com.affymetrix.genoviz.util.GeometryUtils;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 // as long as moveRelative and moveAbsolute are used for moving the
@@ -43,7 +45,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
-	private Vector<TierStateChangeListener> tierStateChangeListeners = new Vector<TierStateChangeListener>();
+	private List<TierStateChangeListener> tierStateChangeListeners = new CopyOnWriteArrayList<TierStateChangeListener>();
 
 	/**
 	 *  If hidden, the MapTierGlyph height is 0 coords
@@ -527,24 +529,24 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 * for use in cleaning up references to facilitate gc'ing.
 	 */
 	public void removeAllTierStateChangeListeners() {
-		tierStateChangeListeners.removeAllElements();
+		tierStateChangeListeners.clear();
 	}
 
 	/** Add a TierStateChangeListener to the audience. */
 	public synchronized void addTierStateChangeListener(TierStateChangeListener tl) {
-		tierStateChangeListeners.addElement(tl);
+		tierStateChangeListeners.add(tl);
 	}
 
 	/** Remove a TierStateChangeListener from the audience. */
 	public synchronized void removeTierStateChangeListener(TierStateChangeListener tl) {
-		tierStateChangeListeners.removeElement(tl);
+		tierStateChangeListeners.remove(tl);
 	}
 
 	/** Tell all listeners of a TierStateChangeEvent. */
 	public synchronized void notifyTierStateChangeListeners(TierStateChangeEvent evt) {
 		int tot = tierStateChangeListeners.size();
 		for (int i=0; i < tot; i++) {
-			(tierStateChangeListeners.elementAt(i)).heardTierStateChangeEvent(evt);
+			(tierStateChangeListeners.get(i)).heardTierStateChangeEvent(evt);
 		}
 	}
 

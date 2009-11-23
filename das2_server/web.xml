@@ -9,12 +9,12 @@
   
 	<context-param>
 		<param-name>genometry_server_dir_genopub</param-name>
-		<param-value>/path/to/das2/genpubdata/<param-value>
+		<param-value>/path/to/das2/genpubdata/</param-value>
 	</context-param>
  
 	<context-param>
 		<param-name>maintainer_email</param-name>
-		<param-value>admin@example.com<</param-value>
+		<param-value>admin@example.com</param-value>
 	</context-param>
 
 	<!--                                                                  -->

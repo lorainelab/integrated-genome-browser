@@ -171,7 +171,7 @@ public abstract class GenometryModel {
 		}
 	}
 	
-	public void removeFeatureSelectionListener(SeqSelectionListener listener) {
+	public void removeFeatureSelectionListener(FeatureSelectionListener listener) {
 		feature_selection_listeners.remove(listener);
 	}
 

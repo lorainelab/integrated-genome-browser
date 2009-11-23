@@ -34,7 +34,7 @@
 
 	<target name="flex" if="should_compile_flex" depends="common-init" description="Compile Flex GenoPub application">
 		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
-		<mxmlc file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
+		<mxmlc fork="true" maxmemory="128m" file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
 	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
 	        <source-path path-element="${FLEX_HOME}/frameworks"/>
 			    <compiler.debug>true</compiler.debug>			

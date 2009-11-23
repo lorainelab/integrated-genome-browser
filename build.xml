@@ -129,6 +129,7 @@
 		</copy> 
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
+				<include name="dom4j-1.6.1.jar" />
 				<include name="hibernate3.jar" />
 			</fileset>
 			<fileset dir="${dist.dir}">

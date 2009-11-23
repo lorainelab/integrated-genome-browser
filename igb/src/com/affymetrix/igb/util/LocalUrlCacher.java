@@ -327,32 +327,7 @@ public final class LocalUrlCacher {
 		byte[] content = null;
 		ArrayList<byte[]> chunks = new ArrayList<byte[]>(1000);
 		IntList byte_counts = new IntList(100);
-		int chunk_count = 0;
-		int chunk_size = 256 * 256; // reading in 64KB chunks
-		int total_byte_count = 0;
-		int bytes_read = 0;
-		while (bytes_read != -1) {
-			// if bytes_read == -1, then end of data reached
-			byte[] chunk = new byte[chunk_size];
-			bytes_read = bis.read(chunk, 0, chunk_size);
-			if (DEBUG_CONNECTION) {
-				Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
-				if (bytes_read != chunk_size) {
-					System.out.println("chunk: " + chunk_count + ", byte count: " + bytes_read);
-				}
-			}
-			if (bytes_read > 0) {
-				// want to ignore EOF byte_count of -1, and empty reads (0 bytes due to blocking)
-				total_byte_count += bytes_read;
-				chunks.add(chunk);
-				byte_counts.add(bytes_read);
-			}
-			chunk_count++;
-		}
-		if (DEBUG_CONNECTION) {
-			Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
-			System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
-		}
+		int total_byte_count = readChunks(bis, chunks, byte_counts);
 		int content_length = total_byte_count;
 		content = new byte[content_length];
 		total_byte_count = 0;
@@ -366,6 +341,45 @@ public final class LocalUrlCacher {
 		}
 		chunks = null;
 		return content;
+	}
+
+
+	private static int readChunks(BufferedInputStream bis, ArrayList<byte[]> chunks, IntList byte_counts) throws IOException {
+		int chunk_count = 0;
+		int chunk_size = 256 * 256;
+		int total_byte_count = 0;
+		int bytes_read = 0;
+		while (bytes_read != -1) {
+			byte[] orig_chunk = new byte[chunk_size];
+			byte[] chunk;
+			bytes_read = bis.read(orig_chunk, 0, chunk_size);
+			if (bytes_read < chunk_size && bytes_read > 0) {
+				// save space by shrinking the chunk
+				chunk = new byte[bytes_read];
+				System.arraycopy(orig_chunk, 0, chunk, 0, bytes_read);
+				orig_chunk = null;
+			} else {
+				chunk = orig_chunk;
+			}
+
+			if (DEBUG_CONNECTION) {
+				Application.getSingleton().logDebug("   chunk: " + chunk_count + ", byte count: " + bytes_read);
+				if (bytes_read != chunk_size) {
+					System.out.println("chunk: " + chunk_count + ", byte count: " + bytes_read);
+				}
+			}
+			if (bytes_read > 0) {
+				total_byte_count += bytes_read;
+				chunks.add(chunk);
+				byte_counts.add(bytes_read);
+			}
+			chunk_count++;
+		}
+		if (DEBUG_CONNECTION) {
+			Application.getSingleton().logDebug("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+			System.out.println("total bytes: " + total_byte_count + ", chunks with > 0 bytes: " + chunks.size());
+		}
+		return total_byte_count;
 	}
 
 

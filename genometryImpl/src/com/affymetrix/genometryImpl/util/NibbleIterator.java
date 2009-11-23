@@ -55,16 +55,15 @@ public final class NibbleIterator implements SearchableCharIterator {
 	 *  CharacterIterator implementation
 	 */
 	private char charAt(int pos) {
+		return charAt(nibble_array,pos);
+	}
+	private static char charAt(byte[]nibbles, int pos) {
 		int index = pos & one_mask;  // either 0 or 1, index into offsets and filters arrays
 		int offset = offsets[index];
 		int filter = filters[index];
-		byte by = nibble_array[pos >> 1];
+		byte by = nibbles[pos >> 1];
 
 		int arrIndex = (by & filter) >>> offset;
-		/*if (arrIndex < 0) {
-			// JN - fixes bug with signed binary shifting.  See checkin comments.
-			arrIndex += nibble2char.length;
-		}*/
 		return nibble2char[arrIndex];
 	}
 
@@ -114,7 +113,6 @@ public final class NibbleIterator implements SearchableCharIterator {
 			int end = j + str.length() - 1;
 			int k = strOffset + 1;
 			while (j < end) {
-				//                if (v1[j++] != querychars[k++]) {
 				if (this.charAt(j++) != querychars[k++]) {
 					i++;
 					/* Look for str's first char again. */
@@ -162,25 +160,20 @@ public final class NibbleIterator implements SearchableCharIterator {
 		boolean forward = (start <= end);
 		int min = Math.min(start, end);
 		int max = Math.max(start, end);
-		StringBuffer buf = new StringBuffer(max - min);
-		for (int i = min; i < max; i++) {
-			int index = i & one_mask;  // either 0 or 1, index into offsets and filters arrays
-			int offset = offsets[index];
-			int filter = filters[index];
-			byte by = nibbles[i >> 1];
-			int arrIndex = (by & filter) >>> offset;
-		/*if (arrIndex < 0) {
-			// JN - fixes bug with signed binary shifting.  See checkin comments.
-			arrIndex += nibble2char.length;
-		}*/
-			char nib = nibble2char[arrIndex];
-
-			buf.append(nib);
-		}
-		residues = buf.toString();
+		char[] charArr = nibblesToCharArr(nibbles,min,max);
+		residues = new String(charArr);
+		charArr = null;
 		if (!forward) {
 			residues = DNAUtils.reverseComplement(residues);
 		}
 		return residues;
+	}
+
+	public static char[] nibblesToCharArr(byte[] nibbles, int start, int end) {
+		char[]charArr = new char[end-start];
+		for (int pos = start; pos < end; pos++) {
+			charArr[pos-start] = charAt(nibbles,pos);
+		}
+		return charArr;
 	}
 }

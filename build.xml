@@ -128,6 +128,9 @@
 			</fileset>
 		</copy> 
 		<copy todir="${webapp.dir}/WEB-INF/lib">
+			<fileset dir="${lib.dir}">
+				<include name="hibernate3.jar" />
+			</fileset>
 			<fileset dir="${dist.dir}">
 				<include name="das2server.jar" />
 				<include name="genometry.jar" />

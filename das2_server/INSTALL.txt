@@ -7,10 +7,10 @@ There are two ways to configure the DAS2 server:
 
 
 === System Requirements ===
-* Java 5+, 64-bit recommended (http://java.sun.com/)
+* Java 6+, 64-bit recommended (http://java.sun.com/)
 * Apache Tomcat 5.5+ (http://apache.tomcat.org/)
-* Subversion client (Optional, for accessing example data set
-* MySQL database server (http://mysql.com
+* Subversion client (optional, for accessing example data set)
+* MySQL database server (http://mysql.com)
 * MySQL jdbc driver (http://mysql.com, download the mysql-connector-java-5.1.7.zip)
 
 

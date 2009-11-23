@@ -19,9 +19,9 @@ import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
-import com.affymetrix.genometryImpl.general.GenericFeature;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
@@ -43,11 +43,10 @@ public abstract class GenometryModel {
 	// maps sequences to lists of selected symmetries
 	Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
-	final List<SeqSelectionListener> seq_selection_listeners = Collections.synchronizedList(new ArrayList<SeqSelectionListener>());
-	final List<GroupSelectionListener> group_selection_listeners = Collections.synchronizedList(new ArrayList<GroupSelectionListener>());
-	final List<SymSelectionListener> sym_selection_listeners = Collections.synchronizedList(new ArrayList<SymSelectionListener>());
-	final List<FeatureSelectionListener> feature_selection_listeners = Collections.synchronizedList(new ArrayList<FeatureSelectionListener>());
-	//List model_change_listeners = new ArrayList();
+	final List<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArrayList<SeqSelectionListener>();
+	final List<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArrayList<GroupSelectionListener>();
+	final List<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArrayList<SymSelectionListener>();
+	final List<FeatureSelectionListener> feature_selection_listeners = new CopyOnWriteArrayList<FeatureSelectionListener>();
 
 	AnnotatedSeqGroup selected_group = null;
 	BioSeq selected_seq = null;
@@ -118,22 +117,6 @@ public abstract class GenometryModel {
 		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
 	}
 
-	/*public void removeSeqGroup(AnnotatedSeqGroup group) {
-		seq_groups.remove(group.getID());
-		for (BioSeq seq : group.getSeqList()) {
-			seq2selectedSymsHash.remove(seq);
-		}
-		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
-	}*/
-
-	/*public void removeAllSeqGroups() {
-		this.setSelectedSeq(null);
-		this.setSelectedSeqGroup(null);
-		seq_groups.clear();
-		seq2selectedSymsHash.clear();
-		//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_REMOVED, group);
-	}*/
-
 	public AnnotatedSeqGroup getSelectedSeqGroup() {
 		return selected_group;
 	}
@@ -169,13 +152,8 @@ public abstract class GenometryModel {
 
 	private void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
 		GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
-		synchronized (group_selection_listeners) {
-			// the "synchronized" block, by itself, doesn't seem to be enough,
-			// so also copying the list
-			ArrayList<GroupSelectionListener> listeners = new ArrayList<GroupSelectionListener>(group_selection_listeners);
-			for (int i=listeners.size()-1; i>=0; i--) {
-				listeners.get(i).groupSelectionChanged(evt);
-			}
+		for (GroupSelectionListener listener : group_selection_listeners) {
+			listener.groupSelectionChanged(evt);
 		}
 	}
 	
@@ -203,13 +181,8 @@ public abstract class GenometryModel {
 
 	private void fireFeatureSelectionEvent(Object src, TreePath path) {
 		TreeSelectionEvent evt = new TreeSelectionEvent(src, path, false, null, null);
-		synchronized (feature_selection_listeners) {
-			// the "synchronized" block, by itself, doesn't seem to be enough,
-			// so also copying the list
-			ArrayList<FeatureSelectionListener> listeners = new ArrayList<FeatureSelectionListener>(feature_selection_listeners);
-			for (int i=listeners.size()-1; i>=0; i--) {
-				listeners.get(i).featureSelectionChanged(evt);
-			}
+		for (FeatureSelectionListener listener : feature_selection_listeners) {
+			listener.featureSelectionChanged(evt);
 		}
 	}
 	
@@ -261,14 +234,8 @@ public abstract class GenometryModel {
 	 */
 	void fireSeqSelectionEvent(Object src, List<BioSeq> slist) {
 		SeqSelectionEvent evt = new SeqSelectionEvent(src, slist);
-		synchronized (seq_selection_listeners) {
-			// the "synchronized" block, by itself, doesn't seem to be enough,
-			// so also copying the list
-			Iterator<SeqSelectionListener> iter = (new ArrayList<SeqSelectionListener>(seq_selection_listeners)).iterator();
-			while (iter.hasNext())  {
-				SeqSelectionListener listener = iter.next();
+		for (SeqSelectionListener listener : seq_selection_listeners) {
 				listener.seqSelectionChanged(evt);
-			}
 		}
 	}
 
@@ -291,30 +258,10 @@ public abstract class GenometryModel {
 			System.out.println("Firing event: " + syms.size());
 		}
 		SymSelectionEvent sevt = new SymSelectionEvent(src, syms);
-		synchronized (sym_selection_listeners) {
-			// the "synchronized" block, by itself, doesn't seem to be enough,
-			// so also copying the list
-			ArrayList<SymSelectionListener> listeners = new ArrayList<SymSelectionListener>(sym_selection_listeners);
-			for (int i=listeners.size()-1; i>=0; i--) {
-				listeners.get(i).symSelectionChanged(sevt);
-			}
+		for (SymSelectionListener listener : sym_selection_listeners) {
+			listener.symSelectionChanged(sevt);
 		}
 	}
-
-	/** Get a list of all BioSeq's that have selected SeqSymmetries on them.
-	 *  This may be different from the currently selected BioSeq's, because
-	 *  selection of sequence(s) and symmetries are independent.
-	 */
-	/*public List<AnnotatedBioSeq> getSequencesWithSelections() {
-		Set<AnnotatedBioSeq> sequences = new HashSet<AnnotatedBioSeq>();
-		for (BioSeq seq : seq2selectedSymsHash.keySet()) {
-			List<SeqSymmetry> list = seq2selectedSymsHash.get(seq);
-			if (! list.isEmpty()) {
-				sequences.add(seq);
-			}
-		}
-		return new ArrayList<AnnotatedBioSeq>(sequences);
-	}*/
 
 	/**
 	 *  Sets the selected symmetries.
@@ -325,7 +272,7 @@ public abstract class GenometryModel {
 	 *  @param src The object responsible for selecting the sequences.
 	 */
 	public void setSelectedSymmetries(List<SeqSymmetry> syms, Object src)  {
-		List<BioSeq> seqs_with_selections = setSelectedSymmetries(syms);
+		setSelectedSymmetries(syms);
 		fireSymSelectionEvent(src, syms); // Note this is the complete list of selections
 	}
 
@@ -407,19 +354,6 @@ public abstract class GenometryModel {
 		return new ArrayList<BioSeq>(all_seqs);
 	}
 
-	/**
-	 *  Selects a List of SeqSymmetry objects for a particular BioSeq object.
-	 *  All SymmetrySelectionListeners will be notified regardless of whether this
-	 *  is the currently-selected sequence.
-	 *  @param syms A List of SeqSymmetry objects to select.
-	 *  @param src The object responsible for selecting the sequences.
-	 *  @param seq The BioSeq to select the symmetries for.
-	 */
-	/*void setSelectedSymmetries(List<SeqSymmetry> syms, Object src, BioSeq seq ) {
-		setSelectedSymmetries(syms, seq);
-		fireSymSelectionEvent(src, syms);
-	}*/
-
 	// Selects a List of SeqSymmetry objects for a particular BioSeq.
 	// Does not send a selection event.
 	private void setSelectedSymmetries(List<SeqSymmetry> syms, BioSeq seq) {
@@ -447,19 +381,6 @@ public abstract class GenometryModel {
 	public final List<SeqSymmetry> getSelectedSymmetriesOnCurrentSeq() {
 		return getSelectedSymmetries(selected_seq);
 	}
-
-	/**
-	 *  Get the list of selected symmetries on the currently selected sequence.
-	 *  @return A List of the selected SeqSymmetry objects, can be empty, but not null
-	 */
-	/*public List<SeqSymmetry> getSelectedSymmetriesOnAllSeqs() {
-		List<SeqSymmetry> result = new ArrayList<SeqSymmetry>();
-		for (List<SeqSymmetry> list : seq2selectedSymsHash.values()) {
-			result.addAll(list);
-		}
-
-		return result;
-	}*/
 
 	/**
 	 *  Get the list of selected symmetries on the specified sequence.

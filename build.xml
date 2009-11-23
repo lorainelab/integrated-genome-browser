@@ -34,7 +34,7 @@
 
 	<target name="flex" if="should_compile_flex" depends="common-init" description="Compile Flex GenoPub application">
 		<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/> 
-		<mxmlc fork="true" maxmemory="128m" file="${das2server}/flex/GenoPub.mxml" output="${dist.dir}/GenoPub.swf">
+		<mxmlc fork="true" maxmemory="128m" file="${das2server}/flex/GenoPub.mxml" output="${webapp.dir}/GenoPub.swf">
 	        <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>
 	        <source-path path-element="${FLEX_HOME}/frameworks"/>
 			    <compiler.debug>true</compiler.debug>			
@@ -51,7 +51,7 @@
 		      version-revision="0"
 		      history="false"
 		      template="express-installation"
-		      output="${dist.dir}"/>
+		      output="${webapp.dir}"/>
 	</target>	
 
 	<target name="demos" depends="jar" description="Compile genoviz demos">
@@ -109,30 +109,10 @@
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 	</target>
 
-	<target name="webapp" depends="jar" description="Create das2servlet web application">
-		<antcall target="flex"/>
-		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
-		<copy todir="${webapp.dir}/WEB-INF/lib">
-			<fileset dir="${dist.dir}">
-				<include name="*.jar" />
-				<exclude name="igb.jar" />
-				<exclude name="genoviz.jar" />
-			</fileset>
-		</copy>
+	<target name="webapp" depends="jar,flex" description="Create das2servlet web application">
 		<mkdir dir="${webapp.dir}/WEB-INF/classes" />
-		<copy todir="${webapp.dir}/WEB-INF/classes">
-			<fileset dir="${das2.resources}">
-				<include name="*.xml" />
-				<include name="*.properties" />
-			</fileset>
-		</copy> 
-		<copy todir="${webapp.dir}" overwrite="true" verbose="true">
-			<fileset dir="${dist.dir}">
-				<include name="*.swf" />
-				<include name="*.html" />
-				<include name="*.js" />
-			</fileset>
-		</copy>
+		<mkdir dir="${webapp.dir}/WEB-INF/lib" />
+
 		<copy todir="${webapp.dir}" overwrite="true">
 			<fileset dir="${das2server}">
 				<include name="*.css" />
@@ -141,20 +121,23 @@
 				<include name="*.png" />
 			</fileset>
 		</copy>
-		<antcall target="webapp-classic" />
-		<antcall target="webapp-genopub" />
-	</target>
+		<copy todir="${webapp.dir}/WEB-INF/classes">
+			<fileset dir="${das2.resources}">
+				<include name="*.xml" />
+				<include name="*.properties" />
+			</fileset>
+		</copy> 
+		<copy todir="${webapp.dir}/WEB-INF/lib">
+			<fileset dir="${dist.dir}">
+				<include name="das2server.jar" />
+				<include name="genometry.jar" />
+			</fileset>
+		</copy>
 
-	<target name="webapp-classic" if="is_das2_classic_mode" depends="jar" description="Create das2servlet web application, use filesystem to serve annotations">
-		<copy file="${web.classic.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
-		<copy file="${context.classic.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
-	</target>
-
-	<target name="webapp-genopub" if="is_das2_genopub_mode" depends="jar" description="Create das2servlet web application, use db to serve annotations">
 		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
 		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
 	</target>
-	
+
 	<target name="deploy" description="Copy das2 web application to apache tomcat">
 		<copy todir="${deploy.dir}" overwrite="true">
 			<fileset dir="${webapp.dir}">

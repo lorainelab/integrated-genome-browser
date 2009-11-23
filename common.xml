@@ -16,10 +16,10 @@
 		<property name="das2_genopub_mode"    value="false"/>
 		
 		<!-- file paths -->
-		<property name="web.xml" value="${das2server}/web.xml" />
-		<property name="context.xml" value="${das2server}/context.xml" />
-		<property name="web.classic.xml" value="${das2server}/web_classic.xml" />
-		<property name="context.classic.xml" value="${das2server}/context_classic.xml" />
+		<property name="genopub.web.xml" value="${das2server}/web.xml" />
+		<property name="genopub.context.xml" value="${das2server}/context.xml" />
+		<property name="classic.web.xml" value="${das2server}/web_classic.xml" />
+		<property name="classic.context.xml" value="${das2server}/context_classic.xml" />
 		<property name="das2.resources" value="${das2server}/resources" />
 
 		<!-- JNLP Webstart -->
@@ -72,16 +72,14 @@
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
 		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
+
+		<condition property="web.xml" value="${genopub.web.xml}" else="${classic.web.xml}">
+			<istrue value="${das2_genopub_mode}" />
+		</condition>
+		<condition property="context.xml" value="${genopub.context.xml}" else="${classic.context.xml}">
+			<istrue value="${das2_genopub_mode}" />
+		</condition>
 	</target>
-
-
-	<condition property="is_das2_classic_mode">
-	  <isfalse value="${das2_genopub_mode}"/>
-	</condition>
-
-	<condition property="is_das2_genopub_mode">
-	  <istrue value="${das2_genopub_mode}"/>
-	</condition>
 
 	<!-- Only compile file flex if the the das2 mode is 'genopub' and the flex app is not up-to-date -->
 	<condition property="should_compile_flex">

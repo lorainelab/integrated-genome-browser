@@ -142,7 +142,7 @@ public abstract class GenometryModel {
 		}
 	}
 
-	public void removeGroupSelectionListener(SeqSelectionListener listener) {
+	public void removeGroupSelectionListener(GroupSelectionListener listener) {
 		group_selection_listeners.remove(listener);
 	}
 

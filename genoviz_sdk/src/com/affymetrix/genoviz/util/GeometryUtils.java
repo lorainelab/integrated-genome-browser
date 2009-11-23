@@ -21,29 +21,11 @@ import java.awt.geom.Rectangle2D;
 public class GeometryUtils {
 
 	/**
-	 *  Calculate the intersection of src1 and src2, and return as modified dst.
-	 */
-	/*public static Rectangle intersection(Rectangle src1, Rectangle src2,
-			Rectangle dst) {
-		int xbeg = Math.max(src1.x, src2.x);
-		int xend = Math.min(src1.x + src1.width, src2.x + src2.width);
-		int ybeg = Math.max(src1.y, src2.y);
-		int yend = Math.min(src1.y + src1.height, src2.y + src2.height);
-		dst.setBounds(xbeg, ybeg, xend - xbeg, yend - ybeg);
-		return dst;
-	}*/
-
-
-	/**
 	 *  Calculate the union of src1 and src2, and return as modified dst.
 	 */
 	public static Rectangle2D.Double union(Rectangle2D.Double src1, Rectangle2D.Double src2,
 			Rectangle2D.Double dst) {
-		double xbeg = Math.min(src1.x, src2.x);
-		double xend = Math.max(src1.x + src1.width, src2.x + src2.width);
-		double ybeg = Math.min(src1.y, src2.y);
-		double yend = Math.max(src1.y + src1.height, src2.y + src2.height);
-		dst.setRect(xbeg, ybeg, xend - xbeg, yend - ybeg);
+		Rectangle2D.union(src1, src2, dst);
 		return dst;
 	}
 

@@ -20,13 +20,13 @@ import java.util.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.XMLUtils;
 
 public final class DasSource {
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
   String id;
   String version;
@@ -60,7 +60,7 @@ public final class DasSource {
   public DasServerInfo getDasServerInfo() { return server; }
 
   /**
-   *  Equivalent to {@link SingletonGenometryModel#addSeqGroup(String)} with the
+   *  Equivalent to {@link GenometryModel#addSeqGroup(String)} with the
    *  id from {@link #getID()}.  Caches the result.
    */
   public AnnotatedSeqGroup getGenome() {

@@ -19,7 +19,7 @@ import javax.swing.event.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.FeatureTreeView;
 import com.affymetrix.swing.DisplayUtils;
@@ -27,7 +27,7 @@ import com.affymetrix.igb.view.load.GeneralLoadView;
 import javax.swing.table.TableRowSorter;
 
 public class DataLoadView extends JComponent  { 
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	GeneralLoadView general_load_view;
 	SeqGroupView group_view;
@@ -59,7 +59,7 @@ public class DataLoadView extends JComponent  {
 class SeqGroupView extends JComponent implements ListSelectionListener, GroupSelectionListener, SeqSelectionListener {
 	private static final String CHOOSESEQ = "Select a chromosome sequence";
 	static boolean DEBUG_EVENTS = false;
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static final String NO_GENOME = "No Genome Selected";
 	JTable seqtable;
 	BioSeq selected_seq = null;

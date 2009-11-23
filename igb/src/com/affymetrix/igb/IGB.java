@@ -38,7 +38,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
@@ -87,7 +87,7 @@ public final class IGB extends Application
 	private static boolean REPORT_GRAPHICS_CONFIG = false;
 	public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static String[] main_args;
 	static Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();

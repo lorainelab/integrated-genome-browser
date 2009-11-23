@@ -25,8 +25,8 @@ import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SeqSymmetryConverter;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.logging.Level;
@@ -103,7 +103,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 					String in_path = fil.getPath();
 					String in_name = fil.getName();
 					if (in_name.endsWith(".psl")) {
-						SingletonGenometryModel.logInfo("processing PSL file: " + in_path);
+						GenometryModel.logInfo("processing PSL file: " + in_path);
 						String barename;
 						if (in_name.endsWith(".psl.psl")) {
 							barename = in_name.substring(0, in_name.lastIndexOf(".psl.psl"));
@@ -131,12 +131,12 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			}
 		}
 		if (read_from_bps) {
-			AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().addSeqGroup("Test Group");
+			AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().addSeqGroup("Test Group");
 
 			String bin_file = args[0];
 			List syms = parse(bin_file, default_annot_type, seq_group);
 			int symcount = syms.size();
-			SingletonGenometryModel.logInfo("total sym count: " + symcount);
+			GenometryModel.logInfo("total sym count: " + symcount);
 			int[] blockcount = new int[100];
 			for (int i=0; i<symcount; i++) {
 				SeqSymmetry sym = (SeqSymmetry)syms.get(i);
@@ -145,7 +145,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			}
 			for (int i=0; i<blockcount.length; i++) {
 				if (blockcount[i] != 0) {
-					SingletonGenometryModel.logInfo("syms with " + i + " children: " + blockcount[i]);
+					GenometryModel.logInfo("syms with " + i + " children: " + blockcount[i]);
 				}
 			}
 		}
@@ -165,7 +165,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 
 	public static List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
-		SingletonGenometryModel.logInfo("loading file: " + file_name);
+		GenometryModel.logInfo("loading file: " + file_name);
 		List results = null;
 		FileInputStream fis = null;
 		DataInputStream dis = null;
@@ -317,22 +317,22 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 
 		long timecount = tim.read();
 		if (REPORT_LOAD_STATS) {
-			SingletonGenometryModel.logInfo("PSL binary file load time: " + timecount/1000f);
+			GenometryModel.logInfo("PSL binary file load time: " + timecount/1000f);
 			if (! reached_EOF) {
-				SingletonGenometryModel.logInfo("File loading was terminated early.");
+				GenometryModel.logInfo("File loading was terminated early.");
 			}
 		}
 		if (count <= 0) {
-			SingletonGenometryModel.logInfo("PSL total counts <= 0 ???");
+			GenometryModel.logInfo("PSL total counts <= 0 ???");
 		}
 		else {
 			tim.start();
 			Collections.sort(results, comp);
 			if (REPORT_LOAD_STATS) {
-				SingletonGenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
-				SingletonGenometryModel.logInfo("PSL alignment count = " + count);
-				SingletonGenometryModel.logInfo("PSL total block count = " + total_block_count);
-				SingletonGenometryModel.logInfo("PSL average blocks / alignment = " +
+				GenometryModel.logInfo("PSL sort time: " + tim.read()/1000f);
+				GenometryModel.logInfo("PSL alignment count = " + count);
+				GenometryModel.logInfo("PSL total block count = " + total_block_count);
+				GenometryModel.logInfo("PSL average blocks / alignment = " +
 						((double)total_block_count/(double)count));
 			}
 		}
@@ -368,7 +368,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			GeneralUtils.safeClose(bis);
 			GeneralUtils.safeClose(fis);
 		}
-		SingletonGenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read() / 1000f));
+		GenometryModel.logInfo("finished reading PSL file, time to read = " + (tim.read() / 1000f));
 		return results;
 	}
 

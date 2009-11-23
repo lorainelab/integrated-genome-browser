@@ -17,13 +17,13 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.util.*;
 
 public final class AffyCnChpParser {
 	public void parse(File file, ChromLoadPolicy loadPolicy, InputStream istr, String stream_name, AnnotatedSeqGroup seq_group) throws IOException {
-		SingletonGenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
+		GenometryModel.logInfo("Parsing with " + this.getClass().getName() + ": " + stream_name);
 		try {
 
 			AffyGenericChpFile chpFile = AffyGenericChpFile.parse(file, loadPolicy, istr, false);

@@ -19,7 +19,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
@@ -69,7 +69,7 @@ public final class LoadFileAction {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		loadFile(SingletonGenometryModel.getGenometryModel(), load_dir_tracker, gviewerFrame);
+		loadFile(GenometryModel.getGenometryModel(), load_dir_tracker, gviewerFrame);
 	}
 	private static MergeOptionFileChooser chooser = null;
 

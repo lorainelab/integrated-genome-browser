@@ -21,7 +21,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -36,7 +36,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 
   static final boolean DEBUG = false;
 
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
   AnnotatedSeqViewer gviewer;
   TierLabelManager handler;

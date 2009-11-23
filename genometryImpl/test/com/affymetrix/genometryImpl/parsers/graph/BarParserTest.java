@@ -7,7 +7,7 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -52,7 +52,7 @@ public class BarParserTest {
 		InputStream istr = new FileInputStream(filename);
 		assertNotNull(istr);
 
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		boolean annot_seq = true;
 		String stream_name = "chr15_random";
@@ -119,7 +119,7 @@ public class BarParserTest {
 			@Test
 		  public void TestGetSlice() throws Exception{
 			String filename = "test/data/bar/small.bar";
-			SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
 			AnnotatedSeqGroup seq_group = new AnnotatedSeqGroup("test_group");
 			BioSeq aseq = seq_group.addSeq("chr15_random",1881177);
 			GraphSym gr0 = BarParser.getSlice(filename,gmodel,new SimpleSeqSpan(1880135,1880205,aseq));

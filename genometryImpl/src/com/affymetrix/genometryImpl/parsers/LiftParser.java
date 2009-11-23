@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.util.regex.*;
 
@@ -52,7 +52,7 @@ public final class LiftParser {
 
 	public static final AnnotatedSeqGroup loadChroms(String file_name, GenometryModel gmodel, String genome_version)
 		throws IOException {
-		SingletonGenometryModel.logInfo("trying to load lift file: " + file_name);
+		GenometryModel.logInfo("trying to load lift file: " + file_name);
 		FileInputStream fistr = null;
 		AnnotatedSeqGroup result = null;
 		try {
@@ -84,7 +84,7 @@ public final class LiftParser {
 	 */
 	public static final AnnotatedSeqGroup parse(InputStream istr, GenometryModel gmodel, String genome_version, boolean annotate_seq)
 		throws IOException {
-		SingletonGenometryModel.logInfo("parsing in lift file");
+		GenometryModel.logInfo("parsing in lift file");
 		Timer tim = new Timer();
 		tim.start();
 		int contig_count = 0;
@@ -142,7 +142,7 @@ public final class LiftParser {
 				comp.addChild(csym);
 			}
 		} catch (EOFException ex) {
-			SingletonGenometryModel.logDebug("reached end of lift file");
+			GenometryModel.logDebug("reached end of lift file");
 		}
 
 		for (BioSeq chrom : seq_group.getSeqList()) {
@@ -152,9 +152,9 @@ public final class LiftParser {
 				comp.addSpan(chromspan);
 			}
 		}
-		SingletonGenometryModel.logInfo("chroms loaded, load time = " + tim.read() / 1000f);
-		SingletonGenometryModel.logInfo("contig count: " + contig_count);
-		SingletonGenometryModel.logInfo("chrom count: " + chrom_count);
+		GenometryModel.logInfo("chroms loaded, load time = " + tim.read() / 1000f);
+		GenometryModel.logInfo("contig count: " + contig_count);
+		GenometryModel.logInfo("chrom count: " + chrom_count);
 		return seq_group;
 	}
 

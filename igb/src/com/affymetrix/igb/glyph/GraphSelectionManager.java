@@ -29,7 +29,7 @@ import javax.swing.*;
 import com.affymetrix.igb.tiers.*;
 import com.affymetrix.genoviz.event.*;
 
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -63,7 +63,7 @@ import java.awt.geom.Rectangle2D;
 public final class GraphSelectionManager
   implements MouseListener, MouseMotionListener, ActionListener, NeoGlyphDragListener,
   ContextualPopupListener, TierLabelManager.PopupListener {
-  private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
   final static boolean DEBUG = false;
 
   private static final int max_label_length = 50;

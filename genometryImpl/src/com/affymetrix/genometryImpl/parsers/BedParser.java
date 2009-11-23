@@ -28,7 +28,6 @@ import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 
@@ -554,7 +553,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 
 	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
-			return this.parse(dis, SingletonGenometryModel.getGenometryModel(), group, false, annot_type, false);
+			return this.parse(dis, GenometryModel.getGenometryModel(), group, false, annot_type, false);
 		} catch (IOException ex) {
 			Logger.getLogger(BedParser.class.getName()).log(Level.SEVERE, null, ex);
 		}

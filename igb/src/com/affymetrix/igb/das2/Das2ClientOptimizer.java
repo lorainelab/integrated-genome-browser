@@ -29,7 +29,7 @@ import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.CompositeGraphSym;
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.das2.Das2RequestLog;
@@ -65,7 +65,7 @@ public final class Das2ClientOptimizer {
 
     // input is a single Das2FeatureRequestSym
     // output is List of _optimized_ Das2FeatureRequestSyms that are equivalent to input request,
-    //    based on current state of SingletonGenometryModel/AnnotatedSeqGroup/BioSeq
+    //    based on current state of GenometryModel/AnnotatedSeqGroup/BioSeq
     //    annotations --
     //    Could this strategy handle persistent caching??   Would need to redirect to
     //      file:// URLs on disk, but how to deal with proper setting of headers???
@@ -222,7 +222,7 @@ public final class Das2ClientOptimizer {
     }
 
     private static Das2RequestLog optimizedLoadFeatures(Das2FeatureRequestSym request_sym) {
-        SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+        GenometryModel gmodel = GenometryModel.getGenometryModel();
 
         Das2RequestLog request_log = request_sym.getLog();
         request_log.setSuccess(true);
@@ -309,7 +309,7 @@ public final class Das2ClientOptimizer {
 
     private static boolean LoadFeaturesFromQuery(
             SeqSpan overlap_span, BioSeq aseq, String feature_query, String format, Das2RequestLog request_log,
-            AnnotatedSeqGroup seq_group, Das2Type type, SingletonGenometryModel gmodel, Das2FeatureRequestSym request_sym)
+            AnnotatedSeqGroup seq_group, Das2Type type, GenometryModel gmodel, Das2FeatureRequestSym request_sym)
             throws SAXException, IOException, IOException {
 
         /**
@@ -402,7 +402,7 @@ public final class Das2ClientOptimizer {
 
     private static List DetermineFormatAndParse(
             String content_subtype, Das2RequestLog request_log, BufferedInputStream bis, String feature_query, AnnotatedSeqGroup seq_group,
-            Das2Type type, SingletonGenometryModel gmodel)
+            Das2Type type, GenometryModel gmodel)
             throws IOException, SAXException {
         List feats = null;
         if (content_subtype.equals(Das2FeatureSaxParser.FEATURES_CONTENT_SUBTYPE)

@@ -12,7 +12,7 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
@@ -56,7 +56,7 @@ public abstract class ServerUtils {
 	private static final boolean SORT_SOURCES_BY_ORGANISM = true;
 	private static final boolean SORT_VERSIONS_BY_DATE_CONVENTION = true;
 	private static final Pattern interval_splitter = Pattern.compile(":");
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";

@@ -1,15 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
@@ -22,11 +10,20 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreePath;
 
-public abstract class GenometryModel {
+public final class GenometryModel {
+
+	private static GenometryModel smodel = new GenometryModel();
+	private static Logger default_logger = Logger.getLogger(GenometryModel.class.getName());
+	private static Logger logger = default_logger;
+
+
+	
 
 	/**
 	 * Ann's comment: There is a lot of logic related to selection of
@@ -51,10 +48,16 @@ public abstract class GenometryModel {
 	AnnotatedSeqGroup selected_group = null;
 	BioSeq selected_seq = null;
 
-	public void removeAllListeners() {
-		seq_selection_listeners.clear();
-		sym_selection_listeners.clear();
-		group_selection_listeners.clear();
+	private GenometryModel() {
+	}
+
+	public static GenometryModel getGenometryModel() {
+		return smodel;
+	}
+
+	public static GenometryModel refreshGenometryModel() {
+		smodel = new GenometryModel();
+		return smodel;
 	}
 
 	/** Returns a Map of String names to AnnotatedSeqGroup objects. */
@@ -89,18 +92,13 @@ public abstract class GenometryModel {
 	 *  @return a non-null AnnotatedSeqGroup
 	 */
 	public AnnotatedSeqGroup addSeqGroup(String group_id) {
-		//    System.out.println("%%%%%%%%% GenometryModel.addSeqGroup() called, id = " + group_id);
 		// if AnnotatedSeqGroup with same or synonymous id already exists, then return it
 		AnnotatedSeqGroup group = getSeqGroup(group_id);
 		// otherwise create a new AnnotatedSeqGroup
 		if (group == null) {
-			//      System.out.println("  adding new seq group: " + group_id);
 			group = createSeqGroup(group_id);
 			seq_groups.put(group.getID(), group);
 			//fireModelChangeEvent(GenometryModelChangeEvent.SEQ_GROUP_ADDED, group);
-		}
-		else {
-			//      System.out.println("  already have seq group: " + group_id + ", actual id = " + group.getID());
 		}
 		return group;
 	}
@@ -156,21 +154,21 @@ public abstract class GenometryModel {
 			listener.groupSelectionChanged(evt);
 		}
 	}
-	
-	//Feature Select Event	
+
+	//Feature Select Event
 	public void setSelectedFeature(TreePath path) {
 		if (DEBUG)  {
 			System.out.println("GenometryModel.setSelectedFeature() called, ");
 		}
 		fireFeatureSelectionEvent(this, path);
 	}
-	
+
 	public void addFeatureSelectionListener(FeatureSelectionListener listener) {
 		if (!feature_selection_listeners.contains(listener)) {
 			feature_selection_listeners.add(listener);
 		}
 	}
-	
+
 	public void removeFeatureSelectionListener(FeatureSelectionListener listener) {
 		feature_selection_listeners.remove(listener);
 	}
@@ -185,7 +183,7 @@ public abstract class GenometryModel {
 			listener.featureSelectionChanged(evt);
 		}
 	}
-	
+
 
 	public BioSeq getSelectedSeq() {
 		return selected_seq;
@@ -195,10 +193,10 @@ public abstract class GenometryModel {
 		setSelectedSeq(seq, this);
 	}
 
-	/** 
-	 *  currently seq selection events _need_ to be fired even if seq is same as previously selected seq, 
-	 *     because in some SeqSelectionListeners (such as SeqMapView) the side effects of receiving a 
-	 *     SeqSelectionEvent are important even if selected seq is same. 
+	/**
+	 *  currently seq selection events _need_ to be fired even if seq is same as previously selected seq,
+	 *     because in some SeqSelectionListeners (such as SeqMapView) the side effects of receiving a
+	 *     SeqSelectionEvent are important even if selected seq is same.
 	 */
 	public void setSelectedSeq(BioSeq seq, Object src) {
 		if (DEBUG)  {
@@ -414,4 +412,32 @@ public abstract class GenometryModel {
 		}
 		seq2selectedSymsHash.clear();
 	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+
+	public static void setLogger(Logger log) {
+		logger = log;
+		if (logger == null) {
+			logger = default_logger;
+		}
+	}
+
+	public static void logError(String msg) {
+		getLogger().log(Level.SEVERE, msg);
+	}
+
+	public static void logWarning(String msg) {
+		getLogger().log(Level.WARNING, msg);
+	}
+
+	public static void logInfo(String msg) {
+		getLogger().log(Level.INFO, msg);
+	}
+
+	public static void logDebug(String msg) {
+		getLogger().log(Level.FINE, msg);
+	}
+
 }

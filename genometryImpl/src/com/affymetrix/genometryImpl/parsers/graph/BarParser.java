@@ -24,7 +24,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genometryImpl.util.Timer;
@@ -124,7 +124,7 @@ public final class BarParser implements AnnotationWriter  {
 		BioSeq aseq = span.getBioSeq();
 		int min_base = span.getMin();
 		int max_base = span.getMax();
-		if (DEBUG_SLICE)  { SingletonGenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base); }
+		if (DEBUG_SLICE)  { GenometryModel.logInfo("trying to get slice, min = " + min_base + ", max = " + max_base); }
 		// first check and see if the file is already indexed
 		//  if not already indexed, index it (unless it's too small?)
 		//
@@ -238,7 +238,7 @@ public final class BarParser implements AnnotationWriter  {
 			System.arraycopy(ycoord, start_index, graph_ycoords, 0, graph_point_count);
 
 			// making GraphSym because bar writer takes GraphSym list as argument
-			//      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+			//      GenometryModel gmodel = GenometryModel.getGenometryModel();
 			//      BioSeq gseq = gmodel.getSelectedSeq();
 			//      if (gseq == null) { gseq = new SimpleBioSeq(seq_name); }
 			//      graf = new GraphSym(graph_xcoords, graph_ycoords, "slice", gseq);
@@ -288,7 +288,7 @@ public final class BarParser implements AnnotationWriter  {
 		}
 		//    testFullRead(test_file);
 
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Seq Group");
 		buildIndex(test_file, test_file, gmodel, seq_group);
 		BioSeq testseq = new SimpleBioSeq("test", 150200300);
@@ -323,7 +323,7 @@ public final class BarParser implements AnnotationWriter  {
 			try {dis.close();} catch (Exception e) {}
 		}
 		long time_taken = tim.read();
-		SingletonGenometryModel.logInfo("time to fully read file: " + time_taken/1000f);
+		GenometryModel.logInfo("time to fully read file: " + time_taken/1000f);
 	}
 **/
 
@@ -583,7 +583,7 @@ CHUNK_LOOP:
 				}
 			}
 			long t1 = tim.read();
-			SingletonGenometryModel.getLogger().fine("bar load time: " + t1/1000f);
+			GenometryModel.getLogger().fine("bar load time: " + t1/1000f);
 		}
 		finally {
 			GeneralUtils.safeClose(bis);

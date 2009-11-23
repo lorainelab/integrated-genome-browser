@@ -23,7 +23,7 @@ import java.util.List;
 import javax.swing.*;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
@@ -36,7 +36,7 @@ public class AltSpliceView extends JComponent
 				SymSelectionListener, SeqSelectionListener,
 				TierLabelManager.PopupListener {
 
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private boolean CONTROLS_ON_SIDE = false;
 	private SeqMapView original_view;
 	private SeqMapView spliced_view;

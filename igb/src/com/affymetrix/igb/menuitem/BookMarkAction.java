@@ -28,7 +28,7 @@ import javax.swing.*;
 import javax.swing.event.MenuListener;
 
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.view.SeqMapView;
@@ -48,7 +48,7 @@ import com.affymetrix.swing.DisplayUtils;
 import java.awt.geom.Rectangle2D;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static GenometryModel gmodel = GenometryModel.getGenometryModel();
   final static boolean DEBUG = false;
 
   JMenu bookmark_menu;

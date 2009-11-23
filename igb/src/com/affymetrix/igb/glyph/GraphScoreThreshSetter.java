@@ -20,7 +20,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.GraphAdjusterView;
@@ -715,7 +715,7 @@ public final class GraphScoreThreshSetter extends JPanel
 	int pickle_count = 0;
 
 	private void pickleThreshold(GraphGlyph sgg) {
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		BioSeq aseq = gmodel.getSelectedSeq();
 
 		nformat2.setPositivePrefix("+");

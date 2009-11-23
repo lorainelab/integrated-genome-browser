@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStatus;
 import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
@@ -58,7 +58,7 @@ public final class GeneralLoadView extends JComponent
 
 	static GeneralLoadUtils glu;
 	private static final boolean DEBUG_EVENTS = false;
-	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = "Species";
 	private static final String SELECT_GENOME = "Genome Version";
 	private static final String GENOME_SEQ_ID = "genome";
@@ -229,10 +229,6 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		// server has been added.  Refresh necessary boxes, tables, etc.
-		//initializeSpeciesCB();
-		//clearFeaturesTable();
-		//speciesCB.addItemListener(this);
-		//speciesCB.setSelectedItem(SELECT_SPECIES);
 		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 		if (group == null) {
 			return true;

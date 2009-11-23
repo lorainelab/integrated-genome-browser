@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -66,9 +66,9 @@ public final class AffyGenericChpFile {
 
 		if (file != null) {
 			if (headerOnly) {
-				SingletonGenometryModel.logDebug("Parsing header of file: " + file.getName());
+				GenometryModel.logDebug("Parsing header of file: " + file.getName());
 			} else {
-				SingletonGenometryModel.logDebug("Parsing file: " + file.getName());
+				GenometryModel.logDebug("Parsing file: " + file.getName());
 			}
 		}
 

@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
  *  a bookmark.
  */
 public abstract class BookmarkController {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static GenometryModel gmodel = GenometryModel.getGenometryModel();
   private final static boolean DEBUG= false;
 
   /** Causes a bookmark to be executed.  If this is a Unibrow bookmark,

@@ -14,14 +14,14 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
 class TrackInfoView extends JComponent  {
 	
 	static boolean DEBUG_EVENTS = false;
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static final String NO_TRACK = "No Track Selected";
 	
 	JTable trackPropTable;

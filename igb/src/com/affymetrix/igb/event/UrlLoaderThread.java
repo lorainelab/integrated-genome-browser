@@ -19,7 +19,7 @@ import javax.swing.SwingUtilities;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -34,7 +34,7 @@ import org.xml.sax.InputSource;
  * @version $Id$
  */
 public final class UrlLoaderThread extends Thread {
-  private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
   private final URL[] urls;
   private final String[] tier_names;
   private final SeqMapView gviewer;

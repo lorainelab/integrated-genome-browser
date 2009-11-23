@@ -17,7 +17,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import java.util.*;
 
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.event.*;
 import java.text.NumberFormat;
@@ -40,7 +40,7 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
         setPreferredSize(new java.awt.Dimension(100, 250));
         setMinimumSize(new java.awt.Dimension(100, 250));
         if (isSymSelectionListener) {
-            SingletonGenometryModel.getGenometryModel().addSymSelectionListener(this);
+            GenometryModel.getGenometryModel().addSymSelectionListener(this);
         }
     }
 

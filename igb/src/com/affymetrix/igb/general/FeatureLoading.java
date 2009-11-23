@@ -3,7 +3,7 @@ package com.affymetrix.igb.general;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
@@ -41,7 +41,7 @@ import javax.swing.SwingWorker;
 public final class FeatureLoading {
 
 	private static final boolean DEBUG = false;
-	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	/**
 	 * Load annotation names for the given version name (across multiple servers).
@@ -156,7 +156,7 @@ public final class FeatureLoading {
 	public static void processDas2FeatureRequests(
 					List<Das2FeatureRequestSym> requests,
 					final boolean update_display,
-					final SingletonGenometryModel gmodel,
+					final GenometryModel gmodel,
 					final SeqMapView gviewer) {
 		if ((requests == null) || (requests.size() == 0)) {
 			return;

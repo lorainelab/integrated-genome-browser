@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.igb.glyph.*;
@@ -46,7 +46,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private static final boolean DEBUG = false;
   
-  private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
   private AnnotatedSeqViewer gviewer;
   private TierLabelManager handler;
 

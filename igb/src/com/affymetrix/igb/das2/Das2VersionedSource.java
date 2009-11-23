@@ -23,7 +23,7 @@ import java.net.URI.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.util.XMLUtils;
@@ -44,7 +44,7 @@ public final class Das2VersionedSource {
     static String SEGMENT = Das2FeatureSaxParser.SEGMENT;
     static String NAME = Das2FeatureSaxParser.NAME;
     static String TITLE = Das2FeatureSaxParser.TITLE;
-    static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    static GenometryModel gmodel = GenometryModel.getGenometryModel();
     private URI version_uri;
     private URI coords_uri;
     private Das2Source source;

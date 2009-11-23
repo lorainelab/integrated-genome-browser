@@ -14,7 +14,7 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 public final class QuickLoadServerModel {
 
 	private static final SynonymLookup LOOKUP = SynonymLookup.getDefaultLookup();
-	private final SingletonGenometryModel gmodel;
+	private final GenometryModel gmodel;
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	private String root_url;
 	private final List<String> genome_names = new ArrayList<String>();
@@ -44,7 +44,7 @@ public final class QuickLoadServerModel {
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
 	private static final Map<String, QuickLoadServerModel> url2quickload = new HashMap<String, QuickLoadServerModel>();
 
-	private QuickLoadServerModel(SingletonGenometryModel gmodel, String url) {
+	private QuickLoadServerModel(GenometryModel gmodel, String url) {
 		this.gmodel = gmodel;
 		root_url = url;
 		if (!root_url.endsWith("/")) {
@@ -53,7 +53,7 @@ public final class QuickLoadServerModel {
 		loadGenomeNames();
 	}
 
-	public static QuickLoadServerModel getQLModelForURL(SingletonGenometryModel gmodel, URL url) {
+	public static QuickLoadServerModel getQLModelForURL(GenometryModel gmodel, URL url) {
 		String ql_http_root = url.toExternalForm();
 		if (!ql_http_root.endsWith("/")) {
 			ql_http_root = ql_http_root + "/";

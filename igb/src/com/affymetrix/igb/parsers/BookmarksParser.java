@@ -22,7 +22,7 @@ import com.affymetrix.igb.bookmarks.*;
 
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 
@@ -43,7 +43,7 @@ public final class BookmarksParser {
     int format = getFormat(f);
     if (DEBUG) System.out.println("Format of '"+f.getAbsolutePath()+"' is "+format);
     if (format == BED_FORMAT) {
-      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      GenometryModel gmodel = GenometryModel.getGenometryModel();
       parseBEDFormat(bookmarks, f, gmodel);
     } else if (format == NETSCAPE_FORMAT) {
       parseNetscapeBookmarks(bookmarks, f);
@@ -194,7 +194,7 @@ public final class BookmarksParser {
   /** Parses bookmarks from a given file (formatted in BED format)
    *  and adds them to the given BookmarkList.
    */
-  public static void parseBEDFormat(BookmarkList bookmarks, File f, SingletonGenometryModel gmodel) throws IOException {
+  public static void parseBEDFormat(BookmarkList bookmarks, File f, GenometryModel gmodel) throws IOException {
     if (DEBUG) System.out.println("loading bookmarks in BED format from '"+f.getAbsolutePath()+"'");
     FileInputStream fis = new FileInputStream(f);
     BufferedInputStream bis = new BufferedInputStream(fis);
@@ -207,7 +207,7 @@ public final class BookmarksParser {
     return;
   }
   
-  public static void parseBEDFormat(BookmarkList bookmarks, BufferedInputStream istr, SingletonGenometryModel gmodel) throws IOException {
+  public static void parseBEDFormat(BookmarkList bookmarks, BufferedInputStream istr, GenometryModel gmodel) throws IOException {
     boolean had_errors = false;
 
     BedParser bparser = new BedParser();

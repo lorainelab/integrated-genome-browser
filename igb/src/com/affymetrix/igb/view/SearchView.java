@@ -16,7 +16,7 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
@@ -48,7 +48,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	// A maximum number of hits that can be found in a search.
 	// This helps protect against out-of-memory errors.
 	private final static int MAX_HITS = 100000;
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static AnnotatedSeqGroup group;
 	private static int seqCount = 0;
 

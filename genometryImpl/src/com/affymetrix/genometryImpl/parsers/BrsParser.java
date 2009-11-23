@@ -15,12 +15,11 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
 import com.affymetrix.genometryImpl.UcscGeneSym;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -83,9 +82,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	static final Pattern emin_regex = Pattern.compile(",");
 	static final Pattern emax_regex = Pattern.compile(",");
 
-	int max_genes = 50000;  // guesstimate...
-	ArrayList chromosomes = new ArrayList();
-
 	public List<SeqSymmetry> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
 		throws IOException {
 		System.out.println("loading file: " + file_name);
@@ -134,7 +130,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 
 		int total_exon_count = 0;
 		int count = 0;
-		int same_count = 0;
 		BufferedInputStream bis = new BufferedInputStream(istr);
 		DataInputStream dis = null;
 
@@ -165,10 +160,8 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 					int tmin = dis.readInt();
 					int tmax = dis.readInt();
 					//          tstarts[count] = tmin;
-					int tlength = tmax - tmin;
 					int cmin = dis.readInt();
 					int cmax = dis.readInt();
-					int clength = cmax - cmin;
 					int ecount = dis.readInt();
 					//          pos += (20 + (ecount * 8));
 					//          dis.skip(ecount * 8);
@@ -230,35 +223,16 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 			}
 		}
 		if (DEBUG) {
-			SingletonGenometryModel.logInfo("load time: " + tim.read() / 1000f);
-			SingletonGenometryModel.logInfo("transcript count = " + count);
-			SingletonGenometryModel.logInfo("exon count = " + total_exon_count);
+			GenometryModel.logInfo("load time: " + tim.read() / 1000f);
+			GenometryModel.logInfo("transcript count = " + count);
+			GenometryModel.logInfo("exon count = " + total_exon_count);
 			if (count > 0) {
-				SingletonGenometryModel.logInfo("average exons / transcript = " +
+				GenometryModel.logInfo("average exons / transcript = " +
 						((double) total_exon_count / (double) count));
 			}
 		}
 		return results;
 	}
-
-
-	/*public void writeBinary(String file_name, List annots) {
-		DataOutputStream dos = null;
-		try {
-			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(file_name))));
-			int acount = annots.size();
-			for (int i=0; i<acount; i++) {
-				UcscGeneSym gsym = (UcscGeneSym)annots.get(i);
-				outputBrsFormat(gsym, dos);
-			}
-			dos.close();
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			GeneralUtils.safeClose(dos);
-		}
-	}*/
 
 	public void outputBrsFormat(UcscGeneSym gsym, DataOutputStream dos) throws IOException {
 		SeqSpan tspan = gsym.getSpan(0);
@@ -286,10 +260,9 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 	}
 
 	public void convertTextToBinary(String file_name, String bin_file) {
-		SingletonGenometryModel.logInfo("loading file: " + file_name);
+		GenometryModel.logInfo("loading file: " + file_name);
 		int count = 0;
 		long flength = 0;
-		//    int bread = 0;
 		int max_tlength = Integer.MIN_VALUE;
 		int max_exons = Integer.MIN_VALUE;
 		int total_exon_count = 0;
@@ -354,7 +327,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 				int tlength = tmax - tmin;
 				int cmin = Integer.parseInt(cdsStart);
 				int cmax = Integer.parseInt(cdsEnd);
-				int clength = cmax - cmin;
 				int ecount = Integer.parseInt(exonCount);
 				String[] emins = emin_regex.split(exonStarts);
 				String[] emaxs = emax_regex.split(exonEnds);
@@ -382,7 +354,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 					System.out.println("EXON COUNTS DON'T MATCH UP FOR " + geneName + " !!!");
 				}
 				else {
-					int spliced_length = 0;
 					for (int i=0; i<ecount; i++) {
 						int emin = Integer.parseInt(emins[i]);
 						if (write_from_text) { dos.writeInt(emin); }

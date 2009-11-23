@@ -14,7 +14,7 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.widget.NeoMap;
@@ -107,7 +107,7 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
     
   void setRangeText(double start, double end) {
     /*if (format == FORMAT_CHROM_START_END) {
-      SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+      GenometryModel gmodel = GenometryModel.getGenometryModel();
       if (gmodel.getSelectedSeq() != null) {
         range_box.setText(gmodel.getSelectedSeq().getID() + ": " +  nformat.format(start) + " - " + nformat.format(end));
       } else {
@@ -216,7 +216,7 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
 	};
 
 	static void zoomToSeqAndSpan(String chrom_text, int start, int end) throws NumberFormatException {
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		if (gmodel.getSelectedSeqGroup() != null) {
 			Map<String, String> m = new HashMap<String, String>();
 			m.put(Bookmark.SEQID, chrom_text);

@@ -46,7 +46,7 @@ import com.affymetrix.genometryImpl.comparator.SeqSymStartComparator;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.TypeContainerAnnot;
@@ -240,7 +240,7 @@ public class SeqMapView extends JPanel
 	protected JComponent xzoombox;
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
-	SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	GenometryModel gmodel = GenometryModel.getGenometryModel();
 	final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static Font axisFont = new Font("Courier", Font.BOLD, 12);
 	boolean report_hairline_position_in_status_bar = false;
@@ -1623,7 +1623,7 @@ public class SeqMapView extends JPanel
 
 	/**
 	 *  Figures out which symmetries are currently selected and then calls
-	 *  {@link SingletonGenometryModel#setSelectedSymmetries(List, Object)}.
+	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
 	void postSelections() {
 		Vector<GlyphI> selected_glyphs = seqmap.getSelected();
@@ -2958,7 +2958,7 @@ public class SeqMapView extends JPanel
 		// (It can also handle the case where newseq is same as old seq.)
 
 		// trying out not calling setAnnotatedSeq() unless seq that is selected is actually different than previous seq being viewed
-		// Maybe should change SingletonGenometryModel.setSelectedSeq() to only fire if seq changes...
+		// Maybe should change GenometryModel.setSelectedSeq() to only fire if seq changes...
 		//    if (aseq != newseq) {
 		//      setAnnotatedSeq(newseq);
 		//    }

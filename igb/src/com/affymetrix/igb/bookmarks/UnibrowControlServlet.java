@@ -28,7 +28,7 @@ import com.affymetrix.igb.view.SeqMapView;
 import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.general.FeatureLoading;
@@ -52,7 +52,7 @@ import com.affymetrix.igb.general.ServerList;
 public final class UnibrowControlServlet {
 
 	static boolean DEBUG_DAS2_LOAD = false;
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static final Pattern query_splitter = Pattern.compile("[;\\&]");
 	Application uni;
 
@@ -325,7 +325,7 @@ public final class UnibrowControlServlet {
 					final String[] graph_files) {
 
 		final SeqMapView gviewer = uni.getMapView();
-		//final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		//final GenometryModel gmodel = GenometryModel.getGenometryModel();
 		final AnnotatedSeqGroup selected_group = gmodel.getSelectedSeqGroup();
 		final AnnotatedSeqGroup book_group;
 		if (version == null || "unknown".equals(version) || version.trim().equals("")) {

@@ -22,7 +22,7 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -115,7 +115,7 @@ public final class TierLabelManager {
     List<TierLabelGlyph> labels = getAllTierLabels();
     //boolean selections_changed = false;
     
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    GenometryModel gmodel = GenometryModel.getGenometryModel();
     
     ArrayList<SeqSymmetry> symmetries = new ArrayList<SeqSymmetry>();
     symmetries.addAll(gmodel.getSelectedSymmetriesOnCurrentSeq());

@@ -670,7 +670,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 
 			File test_file = new File(test_file_name);
 			FileInputStream fistr = new FileInputStream(test_file);
-			SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+			GenometryModel gmodel = GenometryModel.getGenometryModel();
 			AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Seq Group");
 			List results = test.parse(fistr, seq_group);
 

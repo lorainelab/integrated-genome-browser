@@ -26,7 +26,7 @@ import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.EfficientSnpSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.Timer;
@@ -313,7 +313,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 	}
 
 	public static void main(String[] args) {
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		try {
 			boolean TEST_BINARY_PARSE = false;
 			if (TEST_BINARY_PARSE) {

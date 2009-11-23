@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.parsers.gchp;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.ByteList;
 import com.affymetrix.genometryImpl.util.FloatList;
 import com.affymetrix.genometryImpl.util.IntList;
@@ -53,7 +53,7 @@ final class AffySingleChromData {
 	}
 
 	private void parse(DataInputStream dis) throws IOException {
-		SingletonGenometryModel.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
+		GenometryModel.logDebug("Parsing chromData: " + this.displayName + ", " + this.rowCount);
 		for (int row=0; row < rowCount; row++) {
 			for (AffyChpColumnData col : columns) {
 				col.addData(dis);
@@ -167,7 +167,7 @@ final class AffySingleChromData {
 				GraphSym gsym = new GraphSym(positions.getInternalArray(), y, graphId, seq);
 				results.add(gsym);
 			} else {
-				SingletonGenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);
+				GenometryModel.logError("Don't know how to make a graph for data of type: " + colData.type);
 			}
 		}
 

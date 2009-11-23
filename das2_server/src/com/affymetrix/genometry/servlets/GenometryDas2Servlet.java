@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
@@ -62,7 +62,7 @@ import com.affymetrix.genometry.genopub.*;
 //    for each genome version:
 //       genome_version_name = directory name
 //       parse liftAll or chromInfo file to create new AnnotatedSeqGroup for genome
-//           in SingletonGenometryModel
+//           in GenometryModel
 //       for each file in genome_version directory
 //           if directory:
 //                if ends with "..seqs" then indicates a subdirectory with same annotation type,
@@ -242,7 +242,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	/**
 	 *  Top level data structure that holds all the genome models
 	 */
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	/**
 	 *  Top level data structure that holds all the genome models in source/version hierarchy
 	 *  maps organism names to list of genome versions for that organism
@@ -576,7 +576,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		//    for each genome version:
 		//       genome_version_name = directory name
 		//       parse liftAll or chromInfo file to create new AnnotatedSeqGroup for genome
-		//           in SingletonGenometryModel
+		//           in GenometryModel
 		//       for each file in genome_version directory
 		//           if directory, recurse in
 		//           else try to parse and annotate seqs based on file suffix (.xyz)
@@ -726,7 +726,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	/**
 	 * Extracts name of (versioned?) genome from servlet request,
-	 *    and uses to retrieve AnnotatedSeqGroup (genome) from SingletonGenometryModel
+	 *    and uses to retrieve AnnotatedSeqGroup (genome) from GenometryModel
 	 */
 	private static final AnnotatedSeqGroup getGenome(HttpServletRequest request) {
 		String path_info = request.getPathInfo();
@@ -1157,7 +1157,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		try {
 			
 			// Clear out the annotations for the GenometryModel
-			gmodel = SingletonGenometryModel.refreshGenometryModel();
+			gmodel = GenometryModel.refreshGenometryModel();
 		
 			// Reload the annotation files
 			if (this.is_genometry_genopub_mode) {

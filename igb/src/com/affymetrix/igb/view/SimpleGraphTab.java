@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -56,7 +56,7 @@ public final class SimpleGraphTab extends JPanel
 
 	SeqMapView gviewer = null;
 	BioSeq current_seq;
-	SingletonGenometryModel gmodel;
+	GenometryModel gmodel;
 	boolean is_listening = true; // used to turn on and off listening to GUI events
 	GraphScoreThreshSetter score_thresh_adjuster;
 	GraphVisibleBoundsSetter vis_bounds_setter;
@@ -284,7 +284,7 @@ public final class SimpleGraphTab extends JPanel
 
 		setSeqMapView(this.gviewer); // called for the side-effects
 
-		gmodel = SingletonGenometryModel.getGenometryModel();
+		gmodel = GenometryModel.getGenometryModel();
 		gmodel.addSeqSelectionListener(this);
 		gmodel.addSymSelectionListener(this);
 	}

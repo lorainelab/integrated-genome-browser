@@ -31,7 +31,7 @@ import org.xml.sax.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Feature;
@@ -106,7 +106,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	//  static final String SCORE_PROP = "das:score";
 	static final Pattern range_splitter = Pattern.compile("/");
 	static final Pattern interval_splitter = Pattern.compile(":");
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	AnnotatedSeqGroup seqgroup = null;
 	boolean add_annots_to_seq = false;
 	boolean add_to_sym_hash = true;

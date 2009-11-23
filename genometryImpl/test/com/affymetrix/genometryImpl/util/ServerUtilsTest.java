@@ -4,7 +4,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.comparator.UcscPslComparator;
 import com.affymetrix.genometryImpl.parsers.BpsParser;
@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  * @author jnicol
  */
 public class ServerUtilsTest {
-	private static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static String baseDir = "test/data/server/A_thaliana";
 	private static String versionString = "A_thaliana_TAIR8";
 	AnnotatedSeqGroup genome = null;

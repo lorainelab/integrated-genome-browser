@@ -23,7 +23,7 @@ import java.net.*;
 import java.util.List;
 
 import com.affymetrix.genometryImpl.util.SeqUtils;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.IGB;
 import com.affymetrix.igb.util.LocalUrlCacher;
@@ -34,7 +34,7 @@ import java.awt.geom.Rectangle2D;
  *   another instance of IGB (by utilizing UnibrowControlServlet)
  */
 public final class AlignControl implements ActionListener, ContextualPopupListener  {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static GenometryModel gmodel = GenometryModel.getGenometryModel();
   SeqMapView gviewer;
   JMenuItem pushAlignUrlMI;
   JPopupMenu annot_popup;

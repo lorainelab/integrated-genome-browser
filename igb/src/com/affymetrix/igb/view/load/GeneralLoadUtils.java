@@ -11,7 +11,7 @@ import com.affymetrix.genometryImpl.util.LoadUtils.LoadStrategy;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
@@ -63,7 +63,7 @@ public final class GeneralLoadUtils {
 //    final double default_genome_min = -2100200300;
 	private static final double default_genome_min = 0;
 
-	private static final SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 
 	/**
@@ -79,13 +79,6 @@ public final class GeneralLoadUtils {
 	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
 	
 	private final SeqMapView gviewer;
-
-	//public static final String PREF_QUICKLOAD_CACHE_RESIDUES = "quickload_cache_residues";
-	//public static final String PREF_QUICKLOAD_CACHE_ANNOTS = "quickload_cache_annots";
-	//final static String ENCODE_FILE_NAME = "encodeRegions.bed";
-	//final static String ENCODE_FILE_NAME2 = "encode.bed";
-	//static boolean CACHE_RESIDUES_DEFAULT = false;
-	//static boolean CACHE_ANNOTS_DEFAULT = true;
 
 	private final Map<String, Boolean> version2init;
 
@@ -314,7 +307,7 @@ public final class GeneralLoadUtils {
 				System.out.println("source, version:" + source.getName() + "..." + source.getVersion() + "..." + source.getDescription() + "..." + source.getInfoUrl() + "..." + source.getID());
 			}
 			/* TODO: speciesName needs its own SynonymLookup or equivalent
-			 * using normalizeVersion allows us to use previously know names
+			 * using normalizeVersion allows us to use previously known names
 			 */
 			/* String speciesName = source.getDescription(); */
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getID());

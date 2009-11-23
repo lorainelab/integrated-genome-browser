@@ -29,7 +29,7 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
@@ -37,7 +37,7 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
 public final class OpenGraphAction extends AbstractAction {
-  static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+  static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
   int graph_count = 0;
   double default_yloc = 10;
@@ -85,7 +85,7 @@ public final class OpenGraphAction extends AbstractAction {
           false, false);
         monitor.showDialogEventually();
         try {
-          AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+          AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
           loadGraphFiles(files, seq_group, aseq, true, monitor, gviewer);
         } catch (final Throwable t) { // catch Out-Of-Memory Errors, etc.
           SwingUtilities.invokeLater(new Runnable() {

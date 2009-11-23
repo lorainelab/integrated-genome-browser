@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
@@ -92,7 +92,7 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 
 		GraphIntervalSym[] the_graph_syms = null;
 		DerivedSeqSymmetry derived_sym = null;
-		AnnotatedSeqGroup seq_group = SingletonGenometryModel.getGenometryModel().getSelectedSeqGroup();
+		AnnotatedSeqGroup seq_group = GenometryModel.getGenometryModel().getSelectedSeqGroup();
 		if (aseq != vseq) {
 			derived_sym = SeqUtils.copyToDerived(original_container);
 			SeqUtils.transformSymmetry(derived_sym, smv.getTransformPath());

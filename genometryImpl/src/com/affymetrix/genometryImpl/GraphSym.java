@@ -122,7 +122,7 @@ public class GraphSym extends SimpleSymWithProps {
 	@Override
 	public void setID(String id) {
 		if (id_locked) {
-			SingletonGenometryModel.getLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
+			GenometryModel.getLogger().warning("called GraphSym.setID() while id was locked:  " + this.getID() + " -> " + id);
 		}
 		else {
 			gid = id;

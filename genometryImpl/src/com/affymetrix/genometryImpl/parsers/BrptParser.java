@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
@@ -239,7 +239,7 @@ public final class BrptParser {
 				BrptParser tester = new BrptParser();
 				File ifil = new File(binfile);
 				InputStream istr = new FileInputStream(ifil);
-				SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+				GenometryModel gmodel = GenometryModel.getGenometryModel();
 				AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
 				tester.parse(istr, "rpt", seq_group, true);

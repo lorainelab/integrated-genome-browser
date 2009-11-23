@@ -23,7 +23,7 @@ import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.EfficientProbesetSymA;
 import com.affymetrix.genometryImpl.SharedProbesetInfo;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -589,7 +589,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *</pre>
 	 */
 	public static void main(String[] args) throws IOException {
-		SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+		GenometryModel gmodel = GenometryModel.getGenometryModel();
 		boolean WRITE = false;
 		boolean READ = true;
 		String default_in_file = "c:/data/chp_data_exon/HuEx-1_0-st-v2.design-annot-hg18/gff";

@@ -5,7 +5,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
@@ -19,7 +19,7 @@ public final class Persistence {
 	private final static String SELECTED_SEQ_PREF = "SELECTED_SEQ_PREF";
 	private final static String SEQ_MIN_PREF = "SEQ_MIN_PREF";
 	private final static String SEQ_MAX_PREF = "SEQ_MAX_PREF";
-	private final static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	/**
 	 *  Saves information on current group

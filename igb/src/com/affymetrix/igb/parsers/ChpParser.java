@@ -26,7 +26,7 @@ import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.SingletonGenometryModel;
+import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -171,7 +171,7 @@ public final class ChpParser {
   protected static List<LazyChpSym> makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries) {
     //    Timer tim2 = new Timer();
     //    tim2.start();
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    GenometryModel gmodel = GenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
 		GenericServer gServer = ServerList.getServer(LazyChpSym.PROBESET_SERVER_NAME);
@@ -225,7 +225,7 @@ public final class ChpParser {
 
   /** same as parseQuantChp, but adding detection/pval */
   public static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
-    //SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    //GenometryModel gmodel = GenometryModel.getGenometryModel();
     //AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     List<LazyChpSym> results = null;
     String file_name = chp.getFileName();
@@ -301,7 +301,7 @@ public final class ChpParser {
 
 
   public static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp) {
-    //SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    //GenometryModel gmodel = GenometryModel.getGenometryModel();
     //AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     List<LazyChpSym> results = null;
     String file_name = chp.getFileName();
@@ -381,7 +381,7 @@ public final class ChpParser {
    *  empty for Exon results.
    */
   public static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp) {
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    GenometryModel gmodel = GenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     //ArrayList results = new ArrayList();
 
@@ -558,7 +558,7 @@ public final class ChpParser {
   }
 
   public static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    GenometryModel gmodel = GenometryModel.getGenometryModel();
     ArrayList<GraphSym> results = new ArrayList<GraphSym>();
     int seq_count = tchp.getNumberSequences();
     String alg_name = tchp.getAlgName();
@@ -592,7 +592,7 @@ public final class ChpParser {
       System.out.println("seq " + i + ", name = " + seq_name + ", group = " + seq_group_name +
 			 ", version = " + seq_vers + ", datapoints = " + entry_count);
 
-      // try and match up chp seq to a BioSeq and AnnotatedSeqGroup in SingletonGenometryModel
+      // try and match up chp seq to a BioSeq and AnnotatedSeqGroup in GenometryModel
       // if seq group can't be matched, make a new seq group
       // if seq can't be matched, make a new seq
 
@@ -674,7 +674,7 @@ public final class ChpParser {
 
   /*public static void main(String[] args) throws IOException {
     //    String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
-    SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+    GenometryModel gmodel = GenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.addSeqGroup("H_sapiens_Mar_2006");
     gmodel.setSelectedSeqGroup(group);
     String infile = "c:/data/chp_data_exon/exon_chp_results/HuEx-1_0-st-v2.colon-cancer-data-set/10_5N.rma-exon-all-dabg.chp";

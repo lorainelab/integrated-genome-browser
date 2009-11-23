@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.*;
 
 public class BedParserTest {
-	static SingletonGenometryModel gmodel = SingletonGenometryModel.getGenometryModel();
+	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
 	public BedParserTest() {
 	}

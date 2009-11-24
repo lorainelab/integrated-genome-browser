@@ -1,3 +1,4 @@
+<!-- $Id$ -->
 <Context path="/das2" docBase="/path/to/das2/servlet/" workDir="/path/to/das2/servlet/"  debug="0" reloadable="true">
 
 	<!-- Optimised Logging routine.  Configured to log in 'combined'
@@ -13,7 +14,7 @@
 
 	<!-- Custom log format.  Is equivalent to 'combined' log format
 	     but appends the number of milliseconds required to service
-	     request to every line. -->
+	     a request to the end of the line. -->
 	<Valve
 	    className="org.apache.catalina.valves.AccessLogValve"
 	    directory="${catalina.home}/logs/"
@@ -23,22 +24,17 @@
 	    
   <Resource name="jdbc/GENOPUB" auth="Container" 
     type="javax.sql.DataSource"
-    maxActive="100" maxIdle="30" maxWait="10000"
+    maxActive="30" maxIdle="5" maxWait="2000"
+    removeAbandoned="true" logAbandoned="true"
     testOnBorrow="true"  
     validationQuery="SELECT 1 FROM DUAL" 
     username="genopub" password="your_genopub_db_password_here"
     driverClassName="com.mysql.jdbc.Driver"
     url="jdbc:mysql://localhost:3306/genopub?autoReconnect=true"/>
     
-  <Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
-    driverName="com.mysql.jdbc.Driver"
-    connectionURL="jdbc:mysql://localhost:3306/genopub?autoReconnect=true"
-    connectionName="genopub" connectionPassword="your_genopub_db_password_here"
-    digest="MD5"
+  <Realm className="org.apache.catalina.realm.DataSourceRealm" debug="0"
+    dataSourceName="jdbc/GENOPUB" localDataSource="true" digest="MD5"
     userTable="User" userNameCol="userName" userCredCol="password"
     userRoleTable="UserRole" roleNameCol="roleName"/>
-
-
-	
 </Context>
 

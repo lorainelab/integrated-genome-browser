@@ -13,14 +13,14 @@
 
 package com.affymetrix.igb.das;
 
-import java.util.*;
+//import java.util.*;
 
 public final class DasType {
-  String type_id;
-  String method;
-  String category;
-  List preferred_formats;
-  int annot_count;
+  private String type_id;
+  //private String method;
+  //private String category;
+  //private List preferred_formats;
+  //private int annot_count;
   // hmm, how about two timestamps?
   // This could take advantage of a DAS server which can distinguish between 
   //   the last time annotations of a particular type were _added_ to it, versus 
@@ -40,22 +40,22 @@ public final class DasType {
   //    end up with overlapping cached DAS-range-queries for same type, because they 
   //    differ in their _time-range_
   //   
-  long last_modified;  // timestamp (in milliseconds?)
-  long last_added;  
-  DasSource das_source;
+  //private long last_modified;  // timestamp (in milliseconds?)
+  //private long last_added;
+  //private DasSource das_source;
 
   public DasType(DasSource source, String id, String method, String category) {
     type_id = id;
-    das_source = source;
-	this.method = method;
-	this.category = category;
+    //das_source = source;
+	//this.method = method;
+	//this.category = category;
   }
 
   public String getID() { return type_id; }
-  public String getMethod() { return method; }
-  public String getCategory() { return category; }
-  public List getPreferredFormats() { return preferred_formats; }
-  public int getAnnotationCount() { return annot_count; }
-  public long getLastModified() { return last_modified; }
-  public DasSource getDasSource() { return das_source; }
+  //public String getMethod() { return method; }
+  //public String getCategory() { return category; }
+  //public List getPreferredFormats() { return preferred_formats; }
+  //public int getAnnotationCount() { return annot_count; }
+  //public long getLastModified() { return last_modified; }
+  //public DasSource getDasSource() { return das_source; }
 }

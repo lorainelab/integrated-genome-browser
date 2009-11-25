@@ -14,7 +14,6 @@ import com.affymetrix.genoviz.glyph.AbstractResiduesGlyph;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.util.DNAUtils;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -35,8 +34,6 @@ import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -92,7 +89,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 	private List<SeqSymmetry> tableRows = new ArrayList<SeqSymmetry>(0);
 
-	private List<SeqSymmetry> localSymList;
 	private List<SeqSymmetry> remoteSymList;
 
 	private static final boolean DEBUG = true;
@@ -398,7 +394,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		status_bar.setText(friendlySearchStr + ": Searching locally...");
 
 		// Local symmetries
-		localSymList = group.findSyms(regex);
+		List <SeqSymmetry> localSymList = group.findSyms(regex);
 		remoteSymList = null;
 
 		// Make sure this search is reasonable to do on a remote server.
@@ -441,13 +437,13 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			localSymList.addAll(remoteSymList);
 		}
 
-		tableRows = filterRows(localSymList, chrFilter);
+		tableRows = filterBySeq(localSymList, chrFilter);
 		displayInTable(tableRows);
 
 	}
 
 
-	private static List<SeqSymmetry> filterRows(List<SeqSymmetry> results, BioSeq seq) {
+	private static List<SeqSymmetry> filterBySeq(List<SeqSymmetry> results, BioSeq seq) {
 
 		if (results == null || results.isEmpty()) {
 			return new ArrayList<SeqSymmetry>();
@@ -601,6 +597,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 				if (version != null) {
 					List<SeqSymmetry> newFeatures = version.getFeaturesByName(name, group, chrFilter);
 					if (newFeatures != null) {
+						newFeatures = filterBySeq(newFeatures, chrFilter);	// make sure we filter out other chromosomes
 						features.addAll(newFeatures);
 					}
 				}

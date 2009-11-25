@@ -56,7 +56,7 @@ import javax.swing.table.TableColumn;
 public final class GeneralLoadView extends JComponent
 				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
 
-	static GeneralLoadUtils glu;
+	static GeneralLoadUtils glu = new GeneralLoadUtils();
 	private static final boolean DEBUG_EVENTS = false;
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static final String SELECT_SPECIES = "Species";
@@ -83,8 +83,6 @@ public final class GeneralLoadView extends JComponent
 		if (Application.getSingleton() != null) {
 			gviewer = Application.getSingleton().getMapView();
 		}
-
-		glu = new GeneralLoadUtils();
 	
 		this.setLayout(new BorderLayout());
 
@@ -279,7 +277,7 @@ public final class GeneralLoadView extends JComponent
 		speciesCB.removeAllItems();
 		speciesCB.addItem(SELECT_SPECIES);
 
-		int speciesListLength = glu.species2genericVersionList.keySet().size();
+		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
 		if (speciesListLength == 0) {
 			// Disable the speciesName selectedSpecies.
 			speciesCB.setEnabled(false);
@@ -288,7 +286,7 @@ public final class GeneralLoadView extends JComponent
 
 		// Sort the species before presenting them
 		SortedSet<String> speciesList = new TreeSet<String>();
-		speciesList.addAll(glu.species2genericVersionList.keySet());
+		speciesList.addAll(GeneralLoadUtils.species2genericVersionList.keySet());
 		for (String speciesName : speciesList) {
 			speciesCB.addItem(speciesName);
 		}
@@ -316,7 +314,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 		String versionName = gVersions.get(0).versionName;
-		if (versionName == null || glu.versionName2species.get(versionName) == null) {
+		if (versionName == null || GeneralLoadUtils.versionName2species.get(versionName) == null) {
 			return;
 		}
 
@@ -345,10 +343,9 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
-	private void initVersion(String versionName) {
+	private static void initVersion(String versionName) {
 		Application.getSingleton().setNotLockedUpStatus("Loading chromosomes...");
-		glu.initVersion(versionName); // Make sure this genome versionName's feature names are initialized.
-		glu.initSeq(versionName); // Make sure the chromosome sequences are initialized.
+		GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 		Application.getSingleton().setStatus("",false);
 	}
 	
@@ -523,7 +520,7 @@ public final class GeneralLoadView extends JComponent
 		AnnotatedSeqGroup group = gmodel.getSeqGroup(versionName);
 		if (group == null) {
 			System.out.println("Group was null -- trying species instead");
-			group = gmodel.getSeqGroup(glu.versionName2species.get(versionName));
+			group = gmodel.getSeqGroup(GeneralLoadUtils.versionName2species.get(versionName));
 		}
 
 		initVersion(versionName);
@@ -556,7 +553,7 @@ public final class GeneralLoadView extends JComponent
 		// Add versionName names to combo boxes.
 
 		List<String> versionNames = new ArrayList<String>();
-		for(GenericVersion gVersion : glu.species2genericVersionList.get(speciesName)) {
+		for(GenericVersion gVersion : GeneralLoadUtils.species2genericVersionList.get(speciesName)) {
 			// the same versionName name may occur on multiple servers
 			if (!versionNames.contains(gVersion.versionName)) {
 				versionNames.add(gVersion.versionName);
@@ -616,7 +613,7 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("ERROR -- couldn't find version");
 			return;
 		}
-		String speciesName = glu.versionName2species.get(versionName);
+		String speciesName = GeneralLoadUtils.versionName2species.get(versionName);
 		if (speciesName == null) {
 			// Couldn't find species matching this versionName -- we have problems.
 			System.out.println("ERROR - Couldn't find species for version " + versionName);
@@ -712,7 +709,7 @@ public final class GeneralLoadView extends JComponent
 		speciesCB.removeItemListener(this);
 		versionCB.removeItemListener(this);
 		GenericVersion gVersion = glu.getUnknownVersion(group);
-		String species = glu.versionName2species.get(gVersion.versionName);
+		String species = GeneralLoadUtils.versionName2species.get(gVersion.versionName);
 		initializeSpeciesCB();
 		if (DEBUG_EVENTS) {
 			System.out.println("Species is " + species + ", version is " + gVersion.versionName);

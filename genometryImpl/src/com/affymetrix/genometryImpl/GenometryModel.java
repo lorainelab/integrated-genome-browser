@@ -129,7 +129,7 @@ public final class GenometryModel {
 
 		selected_group = group;
 		selected_seq = null;
-		ArrayList<AnnotatedSeqGroup> glist = new ArrayList<AnnotatedSeqGroup>();
+		List<AnnotatedSeqGroup> glist = new ArrayList<AnnotatedSeqGroup>();
 		glist.add(selected_group);
 		fireGroupSelectionEvent(this, glist);
 	}

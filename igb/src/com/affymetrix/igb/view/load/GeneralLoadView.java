@@ -142,12 +142,12 @@ public final class GeneralLoadView extends JComponent
 		refresh_dataB.setEnabled(false);
 		refresh_dataB.addActionListener(this);
 		buttonPanel.add(refresh_dataB);
+		this.add("South", buttonPanel);
 
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table = new JTableX(this.feature_model);
 		this.feature_table.setModel(this.feature_model);
 
-		this.feature_tree_view = new FeatureTreeView(this);
 		featuresTableScrollPane = new JScrollPane(this.feature_table);
 
 		JPanel featuresPanel = new JPanel();
@@ -165,15 +165,13 @@ public final class GeneralLoadView extends JComponent
 //		featurePane.setResizeWeight(0.5);		
 //		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featurePane);
 
+		this.feature_tree_view = new FeatureTreeView(this);
 		JSplitPane jPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.feature_tree_view, featuresPanel);
 		jPane.setResizeWeight(0.5);		
-		
 		this.add("Center", jPane);
-		this.add("South", buttonPanel);
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
-		
 		populateSpeciesData();
 
 	}

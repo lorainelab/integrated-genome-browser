@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.List;
@@ -135,37 +136,37 @@ public final class GeneralUtils {
 		}
 
 		// Step 2. loading the icon and find a proper icon
-		InputStream iconStream = null;
 		BufferedImage icon = null;
+		URLConnection conn = null;
+		List<ICOImage> icoImages = null;
 		try {
-			iconStream = iconURL.openStream();
-			if (iconStream == null) {
+			conn = iconURL.openConnection();
+			conn.setConnectTimeout(5000);	// only wait a few seconds, since this isn't critical
+			conn.setReadTimeout(5000);		// only wait a few seconds, since this isn't critical
+			conn.connect();
+			if (conn.getInputStream() == null) {
 				return null;
 			}
-			List<ICOImage> icoImages = ICODecoder.readExt(iconStream);
-			int maxColorDepth = 0;
-			for (ICOImage icoImage : icoImages) {
-				int colorDepth = icoImage.getColourDepth();
-				int width = icoImage.getWidth();
-				if (width == 16 && maxColorDepth < colorDepth) {
-					icon = icoImage.getImage();
-					maxColorDepth = colorDepth;
-				}
-			}
-			if (icon == null && !icoImages.isEmpty()) {
-				icon = icoImages.get(0).getImage();
-			}
-
-		} catch (IOException ex) {
+			icoImages = ICODecoder.readExt(conn.getInputStream());
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		if (icoImages == null) {
 			return null;
-		} finally {
-			if (iconStream != null) {
-				try {
-					iconStream.close();
-				} catch (IOException ex) {
-					// Ignore an exception here, since this is only for making a pretty UI.
-				}
+		}
+		int maxColorDepth = 0;
+		for (ICOImage icoImage : icoImages) {
+			int colorDepth = icoImage.getColourDepth();
+			int width = icoImage.getWidth();
+			if (width == 16 && maxColorDepth < colorDepth) {
+				icon = icoImage.getImage();
+				maxColorDepth = colorDepth;
 			}
+		}
+		if (icon == null && !icoImages.isEmpty()) {
+			icon = icoImages.get(0).getImage();
 		}
 
 		// step 3. create the imageIcon instance

@@ -51,7 +51,7 @@ public final class FeatureTreeView extends JComponent {
 	private final JTree tree;
 	private DefaultMutableTreeNode treetop = null;
 	private static final String path_separator = "/";
-	private static final Pattern path_separator_regex = Pattern.compile(path_separator);
+	//private static final Pattern path_separator_regex = Pattern.compile(path_separator);
 	private final GeneralLoadView glv;
 	private TreePath selectedPath;
 	private TreeCellRenderer tcr;
@@ -207,80 +207,16 @@ public final class FeatureTreeView extends JComponent {
 		addOrFindNode(newNode, feature, featureRight);
 	}
 
-	class TreeMouseListener implements MouseListener, MouseMotionListener {
+	private final class TreeMouseListener implements MouseListener, MouseMotionListener {
 
 		private Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		private Cursor defaultCursor = null;
-
-		private URL getURLAt(Object source, int x, int y) {
-
-			JTree thetree = (JTree) source;
-
-			TreePath path = thetree.getClosestPathForLocation(x, y);
-			if (path == null) {
-				return null;
-			}
-
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-			if (node == null) {
-				return null;
-			}
-
-			Rectangle bounds = thetree.getPathBounds(path);
-			if (bounds == null) {
-				return null;
-			}
-
-			Object nodeData = node.getUserObject();
-			if (nodeData instanceof TreeNodeUserInfo) {
-				nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
-			}
-
-			if (nodeData instanceof GenericServer) {
-				return serverFriendlyURL(nodeData, thetree, bounds, x, y);
-			}
-			if (nodeData instanceof GenericFeature) {
-				return featureFriendlyURL(nodeData, bounds, x, y);
-			}
-			return null;
-
-		}
-
-		private URL featureFriendlyURL(Object nodeData, Rectangle bounds, int x, int y) {
-			GenericFeature gFeature = (GenericFeature) nodeData;
-			if (gFeature.friendlyURL != null) {
-				int iconWidth = 10 + 2 * 4;
-				bounds.x += bounds.width - iconWidth;
-				bounds.width = iconWidth;
-				if (bounds.contains(x, y)) {
-					return gFeature.friendlyURL;
-				}
-			}
-			return null;
-		}
-
-		private URL serverFriendlyURL(Object nodeData, JTree thetree, Rectangle bounds, int x, int y) {
-			GenericServer gServer = (GenericServer) nodeData;
-			if (gServer.friendlyURL != null) {
-				Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
-				bounds.width = (int) linkBound.getWidth();
-				if (gServer.getFriendlyIcon() != null) {
-					bounds.x += gServer.getFriendlyIcon().getIconWidth() + 1;
-				} else {
-					bounds.x += 16;
-				}
-				if (bounds.contains(x, y)) {
-					return gServer.friendlyURL;
-				}
-			}
-			return null;
-		}
 
 		public void mouseClicked(MouseEvent e) {
 
 			int x = e.getX();
 			int y = e.getY();
-			URL friendlyURL = getURLAt(e.getSource(), x, y);
+			URL friendlyURL = getURLAt((JTree)e.getSource(), x, y);
 			if (friendlyURL != null) {
 				GeneralUtils.browse(friendlyURL.toString());
 			}
@@ -316,7 +252,95 @@ public final class FeatureTreeView extends JComponent {
 
 		public void mouseDragged(MouseEvent e) {
 		}
+	}
 
+
+		/**
+	 * See if there is a hyperlink at this location.
+	 * @param tree
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private static URL getURLAt(JTree tree, int x, int y) {
+
+		TreePath path = tree.getClosestPathForLocation(x, y);
+		if (path == null) {
+			return null;
+		}
+
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+		if (node == null) {
+			return null;
+		}
+
+		Rectangle bounds = tree.getPathBounds(path);
+		if (bounds == null) {
+			return null;
+		}
+		if (bounds.y < y) {
+			return null;
+		}
+
+		Object nodeData = node.getUserObject();
+		if (nodeData instanceof TreeNodeUserInfo) {
+			nodeData = ((TreeNodeUserInfo) nodeData).genericObject;
+		}
+
+		if (nodeData instanceof GenericServer) {
+			return serverFriendlyURL((GenericServer) nodeData, tree, bounds, x, y);
+		}
+		if (nodeData instanceof GenericFeature) {
+			return featureFriendlyURL((GenericFeature) nodeData, bounds, x, y);
+		}
+		return null;
+
+	}
+
+	/**
+	 * Find hyperlink for the feature name.
+	 * @param nodeData
+	 * @param bounds
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private static URL featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
+		if (gFeature.friendlyURL != null) {
+			int iconWidth = 10 + 2 * 4;
+			bounds.x += bounds.width - iconWidth;
+			bounds.width = iconWidth;
+			if (bounds.contains(x, y)) {
+				return gFeature.friendlyURL;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find hyperlink for the server name.
+	 * @param nodeData
+	 * @param thetree
+	 * @param bounds
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private static URL serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
+		if (gServer.friendlyURL != null) {
+			Rectangle2D linkBound = thetree.getFontMetrics(thetree.getFont()).getStringBounds(gServer.serverName, thetree.getGraphics());
+			bounds.width = (int) linkBound.getWidth();
+			if (gServer.getFriendlyIcon() != null) {
+				bounds.x += gServer.getFriendlyIcon().getIconWidth() + 1;
+			} else {
+				bounds.x += 16;
+			}
+
+			if (bounds.contains(x, y)) {
+				return gServer.friendlyURL;
+			}
+		}
+		return null;
 	}
 
 
@@ -325,7 +349,7 @@ public final class FeatureTreeView extends JComponent {
 	 * http://www.experts-exchange.com/Programming/Languages/Java/Q_23851420.html
 	 *
 	 */
-	class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
+	private final class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		private JCheckBox leafCheckBox = new JCheckBox();
 		private Color selectionBorderColor, selectionForeground;
@@ -371,8 +395,6 @@ public final class FeatureTreeView extends JComponent {
 				int row,
 				boolean hasFocus) {
 
-
-
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 			Object nodeUObject = node.getUserObject();
 			Object genericData = nodeUObject;
@@ -380,12 +402,11 @@ public final class FeatureTreeView extends JComponent {
 				genericData = ((TreeNodeUserInfo) nodeUObject).genericObject;
 			}
 
-
 			if (genericData instanceof GenericServer) {
-				return renderServer(genericData, tree, sel, expanded, leaf, row, hasFocus);
+				return renderServer((GenericServer)genericData, tree, sel, expanded, leaf, row, hasFocus);
 			}
 			if (leaf && genericData instanceof GenericFeature) {
-				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, genericData, nodeUObject);
+				return renderFeature(tree, value, sel, expanded, leaf, row, hasFocus, (GenericFeature)genericData, nodeUObject);
 			}
 
 			return super.getTreeCellRendererComponent(
@@ -394,10 +415,9 @@ public final class FeatureTreeView extends JComponent {
 					hasFocus);
 		}
 
-		private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, Object genericData, Object nodeUObject) {
+		private Component renderFeature(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus, GenericFeature gFeature, Object nodeUObject) {
 			// You must call super before each return.
 			super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-			GenericFeature gFeature = (GenericFeature) genericData;
 			boolean isChecked = ((TreeNodeUserInfo) nodeUObject).checked;
 			String featureName = gFeature.featureName;
 			String featureText = featureName.substring(featureName.lastIndexOf(path_separator) + 1);
@@ -425,8 +445,7 @@ public final class FeatureTreeView extends JComponent {
 			return leafCheckBox;
 		}
 
-		private Component renderServer(Object genericData, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-			GenericServer gServer = (GenericServer) genericData;
+		private Component renderServer(GenericServer gServer, JTree tree, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 			String serverNameString = "";
 			if (gServer.friendlyURL != null) {
 				serverNameString = "<a href='" + gServer.friendlyURL + "'><b>" + gServer.serverName + "</b></a>";
@@ -442,7 +461,7 @@ public final class FeatureTreeView extends JComponent {
 		}
 	}
 
-	private class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
+	private final class FeatureTreeCellEditor extends AbstractCellEditor implements TreeCellEditor {
 
 		FeatureTreeCellRenderer renderer = new FeatureTreeCellRenderer();
 		DefaultMutableTreeNode editedNode;
@@ -514,7 +533,7 @@ public final class FeatureTreeView extends JComponent {
 		}
 	}
 
-	static class TreeNodeUserInfo {
+	private final static class TreeNodeUserInfo {
 
 		private final Object genericObject;
 		private boolean checked;

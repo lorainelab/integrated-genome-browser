@@ -220,7 +220,7 @@ public final class UnibrowControlServlet {
 					Das2ServerInfo server = (Das2ServerInfo)gServer.serverObj;
 
 					if (DEBUG_DAS2_LOAD) {
-						System.out.println("     server: " + server.getID());
+						System.out.println("     server: " + server.getURI().toString());
 					}
 					server.getSources(); // forcing initialization of server sources, versioned sources, version sources capabilities
 

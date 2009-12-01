@@ -26,7 +26,6 @@ import com.affymetrix.igb.util.XMLUtils;
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;
 	private URI server_uri;
-	private String das_version;
 	private String name;
 	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
 	private final Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
@@ -63,28 +62,13 @@ public final class Das2ServerInfo  {
 
 	/** Returns the root URL String.  Will not have any trailing "/" at the end. */
 	public URI getURI() { return server_uri; }
-	public String getID() { return server_uri.toString(); }
-	public String getName() {
-		return name;
-	}
 
 	@Override
-	public String toString() { return getName(); }
+	public String toString() { return name; }
 
 	public synchronized Map<String,Das2Source> getSources() {
 		if (!initialized) { initialize(); }
 		return sources;
-	}
-
-	/** DAS/2 version is not currently used */
-	private void setDasVersion(String version) {
-		das_version = version;
-	}
-
-	/** DAS/2 version is not currently used */
-	public String getDasVersion() {
-		if (!initialized) { initialize(); }
-		return das_version;
 	}
 
 	private void addDataSource(Das2Source ds) {
@@ -119,50 +103,6 @@ public final class Das2ServerInfo  {
 		return results;
 	}
 
-	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
-	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
-	private synchronized void login(){
-    ArrayList<String> log = new ArrayList<String>();
-    //log.add("Attempting login to server: "+server_uri);
-    try{
-      
-      // The DAS2 server uses basic authentication.  When we attempt to connect, the servlet 
-      // will send back a response, indicating that authenication is required. This will trigger 
-      // the Authenticator (see com.affymetrics.igb.util.UnibrowAuthenticator)
-      // to be invoked, presenting a dialog for enter a network login and password.
-      // The Authenticator is responsible for password the username and password
-      // to the servlet.  If authenication succeeds, a session will 
-      // be established.      
-      String das_query = server_uri+"/login";
-      log.add("\t\tDas2 Authentication Request: " + das_query);
-      
-
-      LinkedHashMap headers = new LinkedHashMap();
-
-      // We must connect to the URL w/o caching so that subsequent launches
-      // of IGB from same machine do no use the old session that may have
-      // been established with a different login (user).
-      InputStream response = LocalUrlCacher.getInputStream(das_query, LocalUrlCacher.IGNORE_CACHE, false, headers);
-      Document doc = XMLUtils.getDocument(response);
-      
-      String cookie = (String)headers.get("set-cookie");
-        if(cookie != null) {
-          sessionId = cookie.substring(0, cookie.indexOf(";"));
-          log.add("\t\tSessionId: "+sessionId);
-        }
-        else {
-          log.add("\t\tNo sessionId found in header. No authentication.");
-        }
-    }   catch (Exception ex) {
-      log.add("\t\tServer doesn't support/recognize authentication.");
-    } finally {
-      for (int i=0; i< log.size(); i++) System.out.println(log.get(i));
-    }
-  }
-
-
-
-
 	/**
 	 * Return true if successfully initialized.
 	 */
@@ -170,11 +110,12 @@ public final class Das2ServerInfo  {
 		InputStream response = null;
 		try {
 			if (server_uri == null) { return false; }
-			//      das_request = server_uri.toURL();
 			String das_query = server_uri.toString();
 			
-			//does server support authentication? If so then throw up dialog box and attempt.
-			login();
+			if (login() == false) {
+				System.out.println("WARNING: Could not find Das2 server " + server_uri);
+				return false;
+			}
 
 			if (DEBUG_SOURCES_QUERY) {
 				System.out.println("Das2 Request: " + server_uri);
@@ -191,23 +132,12 @@ public final class Das2ServerInfo  {
 				System.out.println("Das2 Response content type: " + content_type);
 			}
 
-
-			if (content_type != null) {
-				// setting DAS2 version if present in content type header -- currently not used
-				int vindex = content_type.indexOf("version=");
-				if (vindex >= 0) {
-					String das_version = content_type.substring(content_type.indexOf("version=") + 8, content_type.length());
-					setDasVersion(das_version);
-				}
-			}
-
 			//GAH March 2006:
 			//   HACK: Affy das2 server has problems  w/ a trailing slash, but URI resolution
 			//      doesn't work without trailing slash, so adding it back in here.
 			if (!das_query.endsWith("/")) {
 				das_query = das_query + "/";
 			}
-			//       Document doc = DasLoader.getDocument(request_con);
 			System.out.println("Initializing " + server_uri);
 			Document doc = XMLUtils.getDocument(response);
 
@@ -225,11 +155,49 @@ public final class Das2ServerInfo  {
 		return initialized;
 	}
 
+
+	/**Checks to see if a particular DAS2 server handles authentication. If so, will prompt user for login info and then
+	 * sends it to the server for validation.  If OK, fetches and sets the sessionId.*/
+	private synchronized boolean login() {
+		try {
+			// The DAS2 server uses basic authentication.  When we attempt to connect, the servlet
+			// will send back a response, indicating that authenication is required. This will trigger
+			// the Authenticator (see com.affymetrix.igb.util.UnibrowAuthenticator)
+			// to be invoked, presenting a dialog for enter a network login and password.
+			// The Authenticator is responsible for sending the username and password
+			// to the servlet.  If authentication succeeds, a session will
+			// be established.
+			String das_query = server_uri + "/login";
+			System.out.println("\tDas2 Authentication Request: " + das_query);
+
+			Map<String,String> headers = new LinkedHashMap<String,String>();
+
+			// We must connect to the URL w/o caching so that subsequent launches
+			// of IGB from same machine do no use the old session that may have
+			// been established with a different login (user).
+			InputStream response = LocalUrlCacher.getInputStream(das_query, LocalUrlCacher.IGNORE_CACHE, false, headers);
+			if (response == null) {
+				return false;
+			}
+			String cookie = headers.get("set-cookie");
+			if (cookie != null) {
+				sessionId = cookie.substring(0, cookie.indexOf(";"));
+				System.out.println("\tSessionId: " + sessionId);
+			} else {
+				System.out.println("\tNo sessionId found in header. No authentication.");
+			}
+		} catch (IOException ex) {
+			System.out.println("Failed server login test:");
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+  }
+
+
 	private void parseSources(NodeList sources, String das_query) {
-		//      System.out.println("source count: " + sources.getLength());
 		for (int i = 0; i < sources.getLength(); i++) {
 			Element source = (Element) sources.item(i);
-			//        System.out.println("source base URI: " + source.getBaseURI(das_query, source));
 			String source_id = source.getAttribute(URID);
 			if (source_id.length() == 0) {
 				source_id = source.getAttribute(ID);
@@ -258,7 +226,7 @@ public final class Das2ServerInfo  {
 	}
 
 
-	private void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource) {
+	private static void parseSourceChildren(NodeList slist, String das_query, Das2Source dasSource) {
 		for (int k = 0; k < slist.getLength(); k++) {
 			if (!slist.item(k).getNodeName().equals("VERSION")) {
 				continue;
@@ -281,7 +249,6 @@ public final class Das2ServerInfo  {
 			}
 			String version_desc = version.getAttribute("description");
 			String version_info_url = version.getAttribute("doc_href");
-			//	    setDasVersionedSource(dasSource, version_id, false);
 			URI version_uri = getBaseURI(das_query, version).resolve(version_id);
 			if (DEBUG_SOURCES_QUERY) {
 				System.out.println("base URI for version element: " + getBaseURI(das_query, version));
@@ -307,19 +274,16 @@ public final class Das2ServerInfo  {
 					}
 					// for now don't worry about format subelements
 					Das2Capability cap = new Das2Capability(captype, cap_root);
-					//		vsource.addCapability(cap);
 					caps.put(captype, cap);
 				} else if (nodename.equals("COORDINATES")) {
 					Element coordel = (Element) vlist.item(j);
 					String uri_att = coordel.getAttribute("uri");
 					URI base_uri = getBaseURI(das_query, coordel);
 					coords_uri = base_uri.resolve(uri_att);
-				//		System.out.println("$$$$ Coordinates URI: " + coords_uri);
 				}
 			}
 
 			Das2VersionedSource vsource = new Das2VersionedSource(dasSource, version_uri, coords_uri, version_name, version_desc, version_info_url, false);
-
 			Iterator<Das2Capability> capiter = caps.values().iterator();
 			while (capiter.hasNext()) {
 				Das2Capability cap = capiter.next();
@@ -362,9 +326,6 @@ public final class Das2ServerInfo  {
 		}
 		return base_uri;
 	}
-
-	public boolean isInitialized() { return initialized; }
-
 	/**Returns null or a JSESSIONID used in authentication*/
 	public String getSessionId() {
 		return sessionId;

@@ -185,7 +185,7 @@ public final class UrlToFileName {
   /**
    *  Convert filename to URL.
    */
-  public static String decode(String filename) {
+  /*public static String decode(String filename) {
     Matcher char_decode_matcher = char_decode_pattern.matcher(filename);
     StringBuffer buf = new StringBuffer();
     while (char_decode_matcher.find()) {
@@ -200,11 +200,11 @@ public final class UrlToFileName {
     }
     char_decode_matcher.appendTail(buf);
     return buf.toString();
-  }
+  }*/
 
 
-  static String[] default_test_urls = { "http://test.url.com/testing/url/to/filename/encoding",
-					"this\\should/test:all*the?chars\"that<need>encoding|I+hope" };
+  /*static String[] default_test_urls = { "http://test.url.com/testing/url/to/filename/encoding",
+					"this\\should/test:all*the?chars\"that<need>encoding|I+hope" };*/
   /**
    *  a main() for testing purposes
    */

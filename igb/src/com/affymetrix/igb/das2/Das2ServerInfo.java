@@ -180,7 +180,7 @@ public final class Das2ServerInfo  {
 				System.out.println("Das2 Request: " + server_uri);
 			}
 			Map<String,String> headers = new LinkedHashMap<String,String>();
-			response = LocalUrlCacher.getInputStream(das_query, headers);
+			response = LocalUrlCacher.getInputStream(das_query, true, headers);
 			if (response == null) {
 				System.out.println("WARNING: Could not find Das2 server " + server_uri);
 				return false;

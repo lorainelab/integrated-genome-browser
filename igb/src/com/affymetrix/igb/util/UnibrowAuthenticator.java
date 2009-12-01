@@ -14,7 +14,6 @@
 package com.affymetrix.igb.util;
 
 import java.awt.*;
-import java.io.*;
 import java.net.*;
 import javax.swing.*;
 
@@ -32,11 +31,6 @@ public final class UnibrowAuthenticator extends Authenticator  {
   String password = "";
   String serverName = "";
   int attempts = 0;
-
-
-  public UnibrowAuthenticator() {
-    this(null);
-  }
 
   public UnibrowAuthenticator(JFrame jf) {
     frm = jf;
@@ -146,24 +140,4 @@ public final class UnibrowAuthenticator extends Authenticator  {
 		}
 	  
   }
-
-  public static void main(String[] args) {
-    String test_site = args[0];
-    try {
-      UnibrowAuthenticator test = new UnibrowAuthenticator();
-      Authenticator.setDefault(test);
-      URL test_url = new URL(test_site);
-      InputStream istr = test_url.openStream();
-      BufferedReader br = new BufferedReader(new InputStreamReader(istr));
-      String line;
-      while ((line = br.readLine()) != null) {
-	System.out.println(line);
-      }
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    System.exit(0);
-  }
-
 }

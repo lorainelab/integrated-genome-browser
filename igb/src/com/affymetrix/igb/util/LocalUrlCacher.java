@@ -99,10 +99,6 @@ public final class LocalUrlCacher {
 		return getInputStream(url, getPreferredCacheUsage(), true);
 	}
 
-	public static InputStream getInputStream(String url, Map<String,String> headers) throws IOException {
-		return getInputStream(url, getPreferredCacheUsage(), true, headers);
-	}
-
 	public static InputStream getInputStream(String url, boolean write_to_cache, Map<String,String> headers)
 					throws IOException {
 		return getInputStream(url, getPreferredCacheUsage(), write_to_cache, headers);
@@ -117,7 +113,7 @@ public final class LocalUrlCacher {
 		return getInputStream(url, getPreferredCacheUsage(), write_to_cache);
 	}
 
-	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
+	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache)
 					throws IOException {
 		return getInputStream(url, cache_option, write_to_cache, null);
 	}
@@ -174,7 +170,6 @@ public final class LocalUrlCacher {
 		}
 		URLConnection conn = null;
 		long remote_timestamp = 0;
-		//String content_type = null;
 		boolean url_reachable = false;
 		int http_status = -1;
 
@@ -262,7 +257,6 @@ public final class LocalUrlCacher {
 			Application.getSingleton().logWarning("LocalUrlCacher couldn't get content for: " + url);
 			System.out.println("LocalUrlCacher couldn't get content for: " + url);
 		}
-		// if (result_stream == null)  { throw new IOException("WARNING: LocalUrlCacher couldn't get content for: " + url); }
 		return result_stream;
 	}
 
@@ -528,7 +522,6 @@ public final class LocalUrlCacher {
 
 	public static void reportHeaders(URLConnection query_con) {
 		try {
-			//      Application.getSingleton().logInfo("URL: " + query_con.getURL().toString());
 			System.out.println("URL: " + query_con.getURL().toString());
 			int hindex = 0;
 			while (true) {
@@ -537,7 +530,6 @@ public final class LocalUrlCacher {
 				if (val == null && key == null) {
 					break;
 				}
-				//	Application.getSingleton().logInfo("   header:   key = " + key + ", val = " + val);
 				System.out.println("   header:   key = " + key + ", val = " + val);
 				hindex++;
 			}

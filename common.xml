@@ -1,4 +1,9 @@
 <project>
+	
+	<!-- das2 genopub mode, set to true to configure DAS2 with GenoPub -->
+	<property name="das2_genopub_mode"    value="false"/>
+	
+
 	<target name="common-init" depends="init">
     <tstamp/>
 
@@ -10,10 +15,8 @@
 		<property name="release.dir"   value="${dist.dir}/release" />
 
 		<property name="deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_DAS2_HERE" />
+
 		<property name="build.version"   value="${DSTAMP}" />
-		
-		<!-- das2 genopub mode, set to true to configure DAS2 with GenoPub -->
-		<property name="das2_genopub_mode"    value="false"/>
 		
 		<!-- file paths -->
 		<property name="genopub.web.xml" value="${das2server}/web.xml" />
@@ -80,8 +83,9 @@
 			<istrue value="${das2_genopub_mode}" />
 		</condition>
 	</target>
+	
 
-	<!-- Only compile file flex if the the das2 mode is 'genopub' and the flex app is not up-to-date -->
+	<!-- Only compile file flex das2 server will run in genopub mode and the flex app is not up-to-date -->
 	<condition property="should_compile_flex">
 		<and>
 			<!-- Is the das2 mode genopub? -->

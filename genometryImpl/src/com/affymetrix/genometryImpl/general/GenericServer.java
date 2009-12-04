@@ -19,6 +19,7 @@ public final class GenericServer implements Comparable<GenericServer> {
 	public final Object serverObj;    // Das2ServerInfo, DasServerInfo, ..., QuickLoad?
 	public final URL friendlyURL;			// friendly URL that users may look at.
 	private ImageIcon friendlyIcon = null;		// friendly icon that users may look at.
+	private boolean friendlyIconAttempted = false;	// Don't keep on searching for friendlyIcon
 	public int  loginAttempts = 0;
 
 	/**
@@ -39,18 +40,16 @@ public final class GenericServer implements Comparable<GenericServer> {
 		this.enabled = enabled;
 		this.login = login;				// to be used by DAS/2 authentication
 		this.password = password;			// to be used by DAS/2 authentication
-
 		this.friendlyURL = determineFriendlyURL(URL, serverType);
 	}
 	
 	public ImageIcon getFriendlyIcon() {
-		if (friendlyIcon == null) {
+		if (friendlyIcon == null && !friendlyIconAttempted) {
 			if (this.friendlyURL != null) {
+				friendlyIconAttempted = true;
 				this.friendlyIcon = GeneralUtils.determineFriendlyIcon(
 							this.friendlyURL.toString() + "/favicon.ico");
-				
 			}		
-			
 		}
 		return friendlyIcon;
 	}

@@ -31,8 +31,6 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	String sequence;
 	FillRectGlyph full_rect;
 	boolean residuesSet = false;
-	Rectangle2D.Double scratchrect;
-
 	private boolean show_background = true;
 
 	private boolean drawingRects = false;
@@ -47,7 +45,6 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	private SequenceGlyph(int orientation) {
 		super(orientation);
 		full_rect = new FillRectGlyph();
-		scratchrect = new Rectangle2D.Double();
 	}
 
 	public void setOrientation(int orientation) {
@@ -127,10 +124,9 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	}
 
 	protected void drawVertical(ViewI view) {
-		Rectangle pixelclipbox = view.getPixelBox();
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
 		Graphics g = view.getGraphics();
-		double pixels_per_base, bases_per_pixel;
+		double pixels_per_base;
 		int visible_ref_beg, visible_ref_end,
 			visible_seq_beg, visible_seq_end, visible_seq_span,
 			seq_beg_index, seq_end_index;
@@ -153,11 +149,10 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				seq_end_index = sequence.length();
 			}
 
-			scratchrect.setRect(coordbox.x, visible_seq_beg,
+			Rectangle2D.Double scratchrect = new Rectangle2D.Double(coordbox.x, visible_seq_beg,
 					coordbox.width, visible_seq_span);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = (view.getTransform()).getScaleY();
-			bases_per_pixel = 1/pixels_per_base;
 
 			// ***** background already drawn in drawTraversal(), so just return if
 			// ***** scale is < 1 pixel per base
@@ -166,34 +161,33 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 			}
 
 			// ***** otherwise semantic zooming to show more detail *****
-			else {
-				if ( visible_seq_span > 0 ) {
-					int i, pixelstart, pixelwidth;
-					double doublestart;
-					// ***** draw the sequence string for visible bases if possible ****
-					// Should the DNA string be drawn?
-					//  already tested for setDNA
-					//  test for scale being natural number (integer double)
-					//    and for scale matching font size
-					if (((double)((int)pixels_per_base) == pixels_per_base) &&
-							((int)pixels_per_base >= fontmet.getHeight() - 4) &&
-							pixelbox.width >= (fontmet.charWidth('C'))) {
-						doublestart = (double)pixelbox.y;
-						int asc = fontmet.getAscent();
-						pixelstart = (int)doublestart + asc;
-						int midline = (pixelbox.x+(pixelbox.width/2)) -
-							fontmet.charWidth('G')/2;
 
-						g.setFont( getResidueFont() );
-						g.setColor( getForegroundColor() );
+			if (visible_seq_span > 0) {
+				drawVerticalResidues(g, pixels_per_base, this.sequence, seq_beg_index, seq_end_index);
+			}
 
-						for (i = seq_beg_index; i < seq_end_index; i++) {
-							if ((sequence.length() != 0) && (i+1 <= sequence.length())) {
-								g.drawString(sequence.substring(i,i+1), midline, pixelstart);
-								pixelstart += asc;
-							}
-						}
-							}
+		}
+	}
+
+	protected void drawVerticalResidues(
+			Graphics g,
+			double pixels_per_base,
+			String residues,
+			int seq_beg_index,
+			int seq_end_index) {
+		int pixelstart;
+		double doublestart;
+		if (((double) ((int) pixels_per_base) == pixels_per_base) && ((int) pixels_per_base >= fontmet.getHeight() - 4) && pixelbox.width >= (fontmet.charWidth('C'))) {
+			doublestart = (double) pixelbox.y;
+			int asc = fontmet.getAscent();
+			pixelstart = (int) doublestart + asc;
+			int midline = (pixelbox.x + (pixelbox.width / 2)) - fontmet.charWidth('G') / 2;
+			g.setFont(getResidueFont());
+			g.setColor(getForegroundColor());
+			for (int i = seq_beg_index; i < seq_end_index; i++) {
+				if ((residues.length() != 0) && (i + 1 <= residues.length())) {
+					g.drawString(residues.substring(i, i + 1), midline, pixelstart);
+					pixelstart += asc;
 				}
 			}
 		}
@@ -226,7 +220,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 				seq_end_index = sequence.length();
 			}
 
-			scratchrect.setRect(visible_seq_beg,  coordbox.y,
+			Rectangle2D.Double scratchrect = new Rectangle2D.Double(visible_seq_beg,  coordbox.y,
 					visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = (view.getTransform()).getScaleX();
@@ -239,11 +233,8 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 			}
 
 			// ***** otherwise semantic zooming to show more detail *****
-			else {
-				if ( visible_seq_span > 0 ) {
-					drawHorizontalResidues
-						( g, pixels_per_base, this.sequence, seq_beg_index, seq_end_index, seq_pixel_offset );
-				}
+			if (visible_seq_span > 0) {
+				drawHorizontalResidues(g, pixels_per_base, this.sequence, seq_beg_index, seq_end_index, seq_pixel_offset);
 			}
 		}
 	}

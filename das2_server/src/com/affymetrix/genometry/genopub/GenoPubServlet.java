@@ -972,14 +972,23 @@ public class GenoPubServlet extends HttpServlet {
 					if ( (line.length() == 0) || line.equals("") || line.startsWith("#"))  { 
 						continue; 
 					}
-					String[] tokens = line.split("\t");
-					String name = tokens[0];
-					String len = tokens[1];
+					
+					String name = null;
+					String len = null;
+					try {
+	          String[] tokens = line.split("\\s+", 2);
+	          name = tokens[0];
+	          len = tokens[1];					  
+					} catch (Exception e) {
+					  String message = "Segment info did not import due to incorrect format.  Please enter the chromsome name, then whitespace (spaces or tabs), then chromosome length.";
+					  reportError(res, message);
+					  return;
+					}
 					
 					Segment s = new Segment();		
 
 					s.setName(name);
-					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
+					s.setLength(len != null && !len.equals("") ? new Integer(len.replaceAll("[^0-9]", "")) : null);
 					s.setSortOrder(new Integer(count));
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 					
@@ -1004,17 +1013,9 @@ public class GenoPubServlet extends HttpServlet {
 			
 			
 		} catch (Exception e) {
-			
 			e.printStackTrace();
-			Document doc = DocumentHelper.createDocument();
-			Element root = doc.addElement("Error");
-			root.addAttribute("message", e.getMessage());
-			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
-			writer.write(doc);
-			
+			reportError(res, "Segment info did not import. " + e.toString());
 		} finally {
-			
 			if (sess != null) {
 				sess.close();
 			}
@@ -3585,6 +3586,19 @@ public class GenoPubServlet extends HttpServlet {
 			GeneralUtils.safeClose(in);
 		}
 		return names;
+	}
+	
+	private void reportError(HttpServletResponse response, String message) {
+	  try {
+	    Document doc = DocumentHelper.createDocument();
+	    Element root = doc.addElement("Error");
+	    root.addAttribute("message", message);
+	    XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
+	    writer.write(doc);	    
+	  } catch (Exception e) {
+	    e.printStackTrace();
+	  }
+	  
 	}
 
 

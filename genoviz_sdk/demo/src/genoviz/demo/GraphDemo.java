@@ -53,10 +53,10 @@ public class GraphDemo extends Applet {
 		BasicGraphGlyph sg = (BasicGraphGlyph)map.addItem(0, 1000);
 		sg.setPointCoords(xcoords, ycoords);
 
-		Image img1 = this.getImage(getCodeBase(), "../images/red-ball.gif");
+		Image img1 = this.getImage(getCodeBase(), "./images/red-ball.gif");
 		this.prepareImage(img1, this);
 
-		Image img2 = this.getImage(getCodeBase(), "../images/alphahelix.gif");
+		Image img2 = this.getImage(getCodeBase(), "./images/alphahelix.gif");
 		this.prepareImage(img2, this);
 
 		map.configure("-glyphtype com.affymetrix.genoviz.glyph.BasicImageGlyph "

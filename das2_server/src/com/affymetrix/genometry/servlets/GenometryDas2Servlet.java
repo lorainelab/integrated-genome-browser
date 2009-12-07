@@ -462,9 +462,28 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			 annotationQuery.runAnnotationQuery(sess, null);
 			 for (Organism organism : annotationQuery.getOrganisms()) {
 				 Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Organism = " + organism.getName());
+				 
+				 // Get genome versions for an organism.  
 				 for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
-					 Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Genome version = " + genomeVersionName);
+				   
+				   GenomeVersion gv = annotationQuery.getGenomeVersion(genomeVersionName);
+				   List<QualifiedAnnotation> qualifiedAnnotations = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName);
+           List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);
 
+           // Ignore genome version if there are not annotations nor sequence associated with it.
+           if (!gv.hasSequence(data_root) && (qualifiedAnnotations == null || qualifiedAnnotations.isEmpty())) {
+             Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Bypassing Genome version = " + genomeVersionName + ". No annotations nor sequence exists.");
+             continue;
+           }
+				   
+           // Ignore genome version if no segment information is present.
+           if (segments == null || segments.size() == 0) {
+             Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotations/sequence for Genome version " + genomeVersionName + ".  No segments have been defined.");
+				     continue;
+				   }
+				   
+					 Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Genome version = " + genomeVersionName);
+					 
 					 // Instantiate an AnnotatedSeqGroup (the genome version).         
 					 AnnotatedSeqGroup genomeVersion = gmodel.addSeqGroup(genomeVersionName);
 					 genomeVersion.setOrganism(organism.getName());
@@ -481,7 +500,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 
 					 // Create SmartAnnotBioSeqs (chromosomes) for the genome version
-					 List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);
 					 if (segments != null) {
 						 for(Segment segment : segments) {
 							 BioSeq chrom = genomeVersion.addSeq(segment.getName(), segment.getLength().intValue());
@@ -495,7 +513,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					 Map<String,String> graph_name2file = genome2graphfiles.get(genomeVersion);
 					 
 					 // Load annotations for the genome version
-					 for (QualifiedAnnotation qa : annotationQuery.getQualifiedAnnotations(organism, genomeVersionName)) {
+					 for (QualifiedAnnotation qa : qualifiedAnnotations) {
 
 						 String fileName = qa.getAnnotation().getQualifiedFileName(this.genometry_server_dir);    
 						 String typePrefix = qa.getTypePrefix();     

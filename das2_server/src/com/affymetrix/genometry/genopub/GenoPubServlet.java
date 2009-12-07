@@ -3507,8 +3507,10 @@ public class GenoPubServlet extends HttpServlet {
       for (Organism organism : annotationQuery.getOrganisms()) {
         for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
         
+          GenomeVersion gv = annotationQuery.getGenomeVersion(genomeVersionName);
+          
           List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);    
-          if (annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).size() > 0) {
+          if (annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).size() > 0 || gv.hasSequence(this.genometry_genopub_dir)) {
             if (segments == null || segments.size() == 0) {
               if (invalidGenomeVersions.length() > 0) {
                 invalidGenomeVersions.append(",\n");
@@ -3520,7 +3522,7 @@ public class GenoPubServlet extends HttpServlet {
       }
       
       if (invalidGenomeVersions.length() > 0) {
-        this.reportError(res, "Annotations for the following genome versions are missing segment information: " + 
+        this.reportError(res, "Annotations and sequence for the following genome versions will be bypassed due to missing segment information: " + 
             invalidGenomeVersions.toString() + 
             ".\n\nDo you wish to continue with DAS/2 reload?\n\n");
       } else {

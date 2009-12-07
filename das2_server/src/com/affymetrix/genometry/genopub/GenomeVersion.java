@@ -16,121 +16,122 @@ import org.dom4j.Element;
 import com.affymetrix.genometry.genopub.AnnotationGrouping;
 
 public class GenomeVersion {
-    
-    private Integer  idGenomeVersion;
-    private String   name;
-    private Date     buildDate;
-    private String   coordURI;
-    private String   coordAuthority;
-    private String   coordVersion;
-    private String   coordSource;
-    private String   coordTestRange;
-    private Set      segments;
-    private Set      aliases;
-    private Integer  idOrganism;
-    private Set      annotationGroupings;
-    private Set      annotations;
-    
-    public Integer getIdGenomeVersion() {
-        return idGenomeVersion;
+
+  private Integer  idGenomeVersion;
+  private String   name;
+  private Date     buildDate;
+  private String   coordURI;
+  private String   coordAuthority;
+  private String   coordVersion;
+  private String   coordSource;
+  private String   coordTestRange;
+  private Set      segments;
+  private Set      aliases;
+  private Integer  idOrganism;
+  private Set      annotationGroupings;
+  private Set      annotations;
+
+  public Integer getIdGenomeVersion() {
+    return idGenomeVersion;
+  }
+  public void setIdGenomeVersion(Integer idGenomeVersion) {
+    this.idGenomeVersion = idGenomeVersion;
+  }
+  public String getName() {
+    return name;
+  }
+  public void setName(String name) {
+    this.name = name;
+  }
+  public Date getBuildDate() {
+    return buildDate;
+  }
+  public void setBuildDate(Date buildDate) {
+    this.buildDate = buildDate;
+  }
+  public String getCoordURI() {
+    return coordURI;
+  }
+  public void setCoordURI(String coordURI) {
+    this.coordURI = coordURI;
+  }
+  public String getCoordAuthority() {
+    return coordAuthority;
+  }
+  public void setCoordAuthority(String coordAuthority) {
+    this.coordAuthority = coordAuthority;
+  }
+  public String getCoordVersion() {
+    return coordVersion;
+  }
+  public void setCoordVersion(String coordVersion) {
+    this.coordVersion = coordVersion;
+  }
+  public String getCoordSource() {
+    return coordSource;
+  }
+  public void setCoordSource(String coordSource) {
+    this.coordSource = coordSource;
+  }
+  public String getCoordTestRange() {
+    return coordTestRange;
+  }
+  public void setCoordTestRange(String coordTestRange) {
+    this.coordTestRange = coordTestRange;
+  }
+  public Set getSegments() {
+    return segments;
+  }
+  public void setSegments(Set segments) {
+    this.segments = segments;
+  }
+  public Set getAliases() {
+    return aliases;
+  }
+  public void setAliases(Set aliases) {
+    this.aliases = aliases;
+  }
+  public Set getAnnotationGroupings() {
+    return annotationGroupings;
+  }
+  public void setAnnotationGroupings(Set annotationGroupings) {
+    this.annotationGroupings = annotationGroupings;
+  }
+
+  @SuppressWarnings("unchecked")
+  private List getRootAnnotationGroupings() {
+    ArrayList rootGroupings = new ArrayList();
+    for (AnnotationGrouping annotationGrouping : (Set<AnnotationGrouping>) this
+        .getAnnotationGroupings()) {
+      if (annotationGrouping.getIdParentAnnotationGrouping() == null) {
+        rootGroupings.add(annotationGrouping);
+      }
     }
-    public void setIdGenomeVersion(Integer idGenomeVersion) {
-        this.idGenomeVersion = idGenomeVersion;
+    return rootGroupings;
+  }
+
+  public AnnotationGrouping getRootAnnotationGrouping() {
+    List rootGroupings = this.getRootAnnotationGroupings();
+    if (rootGroupings.size() > 0) {
+      return AnnotationGrouping.class.cast(rootGroupings.get(0));
+    } else {
+      return null;
     }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public Date getBuildDate() {
-        return buildDate;
-    }
-    public void setBuildDate(Date buildDate) {
-        this.buildDate = buildDate;
-    }
-    public String getCoordURI() {
-        return coordURI;
-    }
-    public void setCoordURI(String coordURI) {
-        this.coordURI = coordURI;
-    }
-    public String getCoordAuthority() {
-        return coordAuthority;
-    }
-    public void setCoordAuthority(String coordAuthority) {
-        this.coordAuthority = coordAuthority;
-    }
-    public String getCoordVersion() {
-        return coordVersion;
-    }
-    public void setCoordVersion(String coordVersion) {
-        this.coordVersion = coordVersion;
-    }
-    public String getCoordSource() {
-        return coordSource;
-    }
-    public void setCoordSource(String coordSource) {
-        this.coordSource = coordSource;
-    }
-    public String getCoordTestRange() {
-        return coordTestRange;
-    }
-    public void setCoordTestRange(String coordTestRange) {
-        this.coordTestRange = coordTestRange;
-    }
-    public Set getSegments() {
-        return segments;
-    }
-    public void setSegments(Set segments) {
-        this.segments = segments;
-    }
-    public Set getAliases() {
-        return aliases;
-    }
-    public void setAliases(Set aliases) {
-        this.aliases = aliases;
-    }
-    public Set getAnnotationGroupings() {
-        return annotationGroupings;
-    }
-    public void setAnnotationGroupings(Set annotationGroupings) {
-        this.annotationGroupings = annotationGroupings;
-    }
-    
-    @SuppressWarnings("unchecked")
-	private List getRootAnnotationGroupings() {
-		ArrayList rootGroupings = new ArrayList();
-		for (AnnotationGrouping annotationGrouping : (Set<AnnotationGrouping>) this
-		        .getAnnotationGroupings()) {
-			if (annotationGrouping.getIdParentAnnotationGrouping() == null) {
-				rootGroupings.add(annotationGrouping);
-			}
-		}
-		return rootGroupings;
-	}
-    
-    public AnnotationGrouping getRootAnnotationGrouping() {
-    	List rootGroupings = this.getRootAnnotationGroupings();
-    	if (rootGroupings.size() > 0) {
-    		return AnnotationGrouping.class.cast(rootGroupings.get(0));
-    	} else {
-    		return null;
-    	}
-    }
-    
-	public Integer getIdOrganism() {
-    	return idOrganism;
-    }
-	public void setIdOrganism(Integer idOrganism) {
-    	this.idOrganism = idOrganism;
-    }
-	public Set getAnnotations() {
-    	return annotations;
-    }
-	public void setAnnotations(Set annotations) {
-    	this.annotations = annotations;
-    }
+  }
+
+  public Integer getIdOrganism() {
+    return idOrganism;
+  }
+  public void setIdOrganism(Integer idOrganism) {
+    this.idOrganism = idOrganism;
+  }
+  public Set getAnnotations() {
+    return annotations;
+  }
+  public void setAnnotations(Set annotations) {
+    this.annotations = annotations;
+  }
+
 	
 	@SuppressWarnings("unchecked")
 	public Document getXML(GenoPubSecurity genoPubSecurity, String data_root) {
@@ -151,37 +152,37 @@ public class GenomeVersion {
 		// Only show the sequence files and segments for genome version detail 
 		// (if data_root provided).
 		if (data_root != null) {
-			
-			// Sequence files
-			Element filesNode = root.addElement("SequenceFiles");
-			
-			String filePath = getSequenceDirectory(data_root);
-		    File fd = new File(filePath);
-		    if (fd.exists()) {
-		    	
 
-			    Element fileNode = filesNode.addElement("Dir");
-				fileNode.addAttribute("name", getSequenceFileName());
-				fileNode.addAttribute("url", filePath);
-			    appendSequenceFileXML(filePath, fileNode, null);	    	
-		    }
-		    
-			// Segments
-			Element segmentsNode = root.addElement("Segments");
-			for (Segment segment : (Set<Segment>)this.getSegments()) {
-				Element sNode = segmentsNode.addElement("Segment");
-				sNode.addAttribute("idSegment", segment.getIdSegment().toString());
-				sNode.addAttribute("name", segment.getName());
-				
-				sNode.addAttribute("length", segment.getLength() != null ? NumberFormat.getInstance().format(segment.getLength()) : "");
-				sNode.addAttribute("sortOrder", segment.getSortOrder() != null ? segment.getSortOrder().toString() : "");
-			}
+		  // Sequence files
+		  Element filesNode = root.addElement("SequenceFiles");
+
+		  String filePath = getSequenceDirectory(data_root);
+		  File fd = new File(filePath);
+		  if (fd.exists()) {
+
+
+		    Element fileNode = filesNode.addElement("Dir");
+		    fileNode.addAttribute("name", getSequenceFileName());
+		    fileNode.addAttribute("url", filePath);
+		    appendSequenceFileXML(filePath, fileNode, null);	    	
+		  }
+
+		  // Segments
+		  Element segmentsNode = root.addElement("Segments");
+		  for (Segment segment : (Set<Segment>)this.getSegments()) {
+		    Element sNode = segmentsNode.addElement("Segment");
+		    sNode.addAttribute("idSegment", segment.getIdSegment().toString());
+		    sNode.addAttribute("name", segment.getName());
+
+		    sNode.addAttribute("length", segment.getLength() != null ? NumberFormat.getInstance().format(segment.getLength()) : "");
+		    sNode.addAttribute("sortOrder", segment.getSortOrder() != null ? segment.getSortOrder().toString() : "");
+		  }
 		}
-		
-		
+
+
 		root.addAttribute("canRead", genoPubSecurity.canRead(this) ? "Y" : "N");
 		root.addAttribute("canWrite", genoPubSecurity.canWrite(this) ? "Y" : "N");
-			
+
 		return doc;
 	}
 	
@@ -189,30 +190,48 @@ public class GenomeVersion {
 		return data_root  + getSequenceFileName();
 	}
 	
-	public String getSequenceFileName() {
-		return Constants.SEQUENCE_DIR_PREFIX + this.getIdGenomeVersion();
+	
+	public  String getSequenceFileName() {
+	  return Constants.SEQUENCE_DIR_PREFIX + this.getIdGenomeVersion();
 	}
 	
+	public boolean hasSequence(String data_root) throws IOException {
+
+	  boolean hasSequence = false;
+    String filePath = getSequenceDirectory(data_root);
+    File dir = new File(filePath);
+
+    if (dir.exists()) {
+      // Delete the files in the directory
+      String[] childFileNames = dir.list();
+      if (childFileNames != null && childFileNames.length > 0) {
+        hasSequence = true;
+      }
+    }
+    
+    return hasSequence;
+  }
+
 	public void removeSequenceFiles(String data_root) throws IOException {
-		
-		String filePath = getSequenceDirectory(data_root);
-	    File dir = new File(filePath);
-	    
-	    if (dir.exists()) {
-		    // Delete the files in the directory
-		    String[] childFileNames = dir.list();
-		    if (childFileNames != null) {
-				for (int x = 0; x < childFileNames.length; x++) {
-					String fileName = filePath + "/" + childFileNames[x];
-					File f = new File(fileName);
-					f.delete();
-				}
-		    	
-		    }
-			
-			// Delete the annotation directory
-			dir.delete();	    	
+
+	  String filePath = getSequenceDirectory(data_root);
+	  File dir = new File(filePath);
+
+	  if (dir.exists()) {
+	    // Delete the files in the directory
+	    String[] childFileNames = dir.list();
+	    if (childFileNames != null) {
+	      for (int x = 0; x < childFileNames.length; x++) {
+	        String fileName = filePath + "/" + childFileNames[x];
+	        File f = new File(fileName);
+	        f.delete();
+	      }
+
 	    }
+
+	    // Delete the annotation directory
+	    dir.delete();	    	
+	  }
 	}
 
 	public static void appendSequenceFileXML(String filePath, Element parentNode, String subDirName) {

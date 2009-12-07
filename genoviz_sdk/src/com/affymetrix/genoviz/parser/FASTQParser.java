@@ -75,7 +75,7 @@ public final class FASTQParser {
 		String fastqLine;
 		while ((fastqLine = fastqDataIn.readLine()) != null) {
 			// Skip comment lines -- but look for Illumina identifier
-			if (fastqLine.startsWith("@")) {
+			if (fastqLine.charAt(0) == '@') {
 				if (!Illumina && fastqLine.toLowerCase().startsWith("@hwusi-eas100r")) {
 					// Illumina/Solexa format.
 					Illumina = true;
@@ -83,7 +83,7 @@ public final class FASTQParser {
 				}
 				continue;
 			}
-			if (fastqLine.startsWith(bases)) {
+			if (fastqLine.charAt(0) == '+') {
 				continue;
 			}
 

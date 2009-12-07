@@ -21,7 +21,7 @@ import java.net.URL;
  *
  * @version $Id$
  */
-public class NeoQuallerDemo2 extends Applet
+public final class NeoQuallerDemo2 extends Applet
 				implements ActionListener, NeoRangeListener {
 
 	NeoPanel widg_pan;
@@ -64,6 +64,10 @@ public class NeoQuallerDemo2 extends Applet
 
 		try {
 			seqURL = new URL(getDocumentBase(), seq);
+			if (seqURL == null) {
+				System.out.println("Couldn't find document base... exiting.");
+				return;
+			}
 			init(seqURL);
 			widget.setBasesTrimmedLeft(-10);
 			widget.setBasesTrimmedRight(1);
@@ -83,11 +87,7 @@ public class NeoQuallerDemo2 extends Applet
 		init(filestr, read_conf);
 	}
 
-	public void init(ReadConfidence read_conf) {
-		init("", read_conf);
-	}
-
-	public void init(String name, ReadConfidence read_conf) {
+	private void init(String name, ReadConfidence read_conf) {
 		this.read_conf = read_conf;
 
 		descLabel.setText(name + ": " + read_conf.getReadLength() + " bases");
@@ -125,7 +125,7 @@ public class NeoQuallerDemo2 extends Applet
 
 	}
 
-	protected Panel constructControlPanel() {
+	private Panel constructControlPanel() {
 		descLabel = new Label();
 		posText = new TextField(3);
 		posText.addActionListener(this);

@@ -1117,7 +1117,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			if (props != null && !props.isEmpty()) {
 				for (String tag : props.keySet()) {
 					Object value = props.get(tag);
-					pw.println("       <PROP key=\"" + tag + "\" value=\"" + value + "\" />");
+					if (value != null && !value.equals("")) {
+	          pw.println("       <PROP key=\"" + tag + "\" value=\"" + value + "\" />");					  
+					}
 				}
 			}
 

@@ -90,24 +90,28 @@ public class AnnotationQuery {
 
 	@SuppressWarnings("unchecked")
 	public Document getAnnotationDocument(Session sess, GenoPubSecurity genoPubSecurity) throws Exception {
-		// Run query to get annotation groupings, organized under
-		// organism and genome version
-		StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
-		Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
-    	Query query = sess.createQuery(queryBuf.toString());
-		List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
-				
-		// Run query to get annotation grouping and annotations, organized under
-		// organism and genome version
-		queryBuf = this.getAnnotationQuery(genoPubSecurity);
-    	Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
-    	query = sess.createQuery(queryBuf.toString());
-    	List<Object[]> annotationRows = (List<Object[]>)query.list();
-		
-	
-		// Create an XML document
-		Document doc = this.getAnnotationDocument(annotationGroupingRows, annotationRows, DictionaryHelper.getInstance(sess), genoPubSecurity);
-		return doc;
+	  // Run query to get annotation groupings, organized under
+	  // organism and genome version
+	  StringBuffer queryBuf = this.getAnnotationGroupingQuery(genoPubSecurity);    	
+	  Logger.getLogger(this.getClass().getName()).fine("Annotation grouping query: " + queryBuf.toString());
+	  Query query = sess.createQuery(queryBuf.toString());
+	  List<Object[]> annotationGroupingRows = (List<Object[]>)query.list();
+
+	  // Run query to get annotation grouping and annotations, organized under
+	  // organism and genome version
+	  queryBuf = this.getAnnotationQuery(genoPubSecurity);
+	  Logger.getLogger(this.getClass().getName()).fine("Annotation query: " + queryBuf.toString());
+	  query = sess.createQuery(queryBuf.toString());
+	  List<Object[]> annotationRows = (List<Object[]>)query.list();
+
+	  // Now run query to get the genome version segments
+	  queryBuf = this.getSegmentQuery();
+	  query = sess.createQuery(queryBuf.toString());
+	  List<Segment> segmentRows = (List<Segment>) query.list();
+
+	  // Create an XML document
+	  Document doc = this.getAnnotationDocument(annotationGroupingRows, annotationRows, segmentRows, DictionaryHelper.getInstance(sess), genoPubSecurity);
+	  return doc;
 		
 	}
 	
@@ -207,10 +211,10 @@ public class AnnotationQuery {
 
 	}
 
-	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity) {
+	private Document getAnnotationDocument(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, List<Segment> segmentRows,  DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity) {
 		
 		// Organize results rows into hash tables
-		hashAnnotations(annotationGroupingRows, annotationRows, null, dictionaryHelper);		
+		hashAnnotations(annotationGroupingRows, annotationRows, segmentRows, dictionaryHelper);		
 		
 
 		Document doc = DocumentHelper.createDocument();
@@ -234,6 +238,9 @@ public class AnnotationQuery {
 					
 					versionNode = genomeVersion.getXML(genoPubSecurity, null).getRootElement();
 					
+					// Indicate if the genome version has segments
+					List<Segment> segments = this.getSegments(organism, genomeVersion.getName());
+					versionNode.addAttribute("hasSegments", (segments != null && segments.size() > 0 ? "Y" : "N"));					
 					
 					// Attach the genome version node
 					organismNode.add(versionNode);

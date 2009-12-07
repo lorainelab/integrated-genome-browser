@@ -10,8 +10,10 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -57,6 +59,8 @@ import com.affymetrix.genometry.genopub.UserComparator;
 import com.affymetrix.genometry.genopub.UserGroup;
 import com.affymetrix.genometry.genopub.UserRole;
 import com.affymetrix.genometry.genopub.Util;
+import com.affymetrix.genometry.servlets.GenometryDas2Servlet;
+import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -110,6 +114,7 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String DICTIONARY_ADD_REQUEST             = "dictionaryAdd";
 	public static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
 	public static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
+  public static final String VERIFY_REQUEST                     = "verify";
 	
 	private GenoPubSecurity genoPubSecurity = null;
 	
@@ -231,7 +236,9 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleDictionaryUpdateRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.DICTIONARY_DELETE_REQUEST)) {
 				this.handleDictionaryDeleteRequest(req, res);
-			} 
+			} else if (req.getPathInfo().endsWith(this.VERIFY_REQUEST)) {
+        this.handleVerifyRequest(req, res);
+      } 
 
 			res.setHeader("Cache-Control", "max-age=0, must-revalidate");
 			
@@ -3478,6 +3485,49 @@ public class GenoPubServlet extends HttpServlet {
 		}
 		
 	}
+	
+	private void handleVerifyRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+    Session sess  = null;
+    StringBuffer invalidGenomeVersions = new StringBuffer();
+    try {
+      sess  = HibernateUtil.getSessionFactory().openSession();
+
+      AnnotationQuery annotationQuery = new AnnotationQuery();
+      annotationQuery.runAnnotationQuery(sess, null);
+      for (Organism organism : annotationQuery.getOrganisms()) {
+        for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
+        
+          List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);    
+          if (annotationQuery.getQualifiedAnnotations(organism, genomeVersionName).size() > 0) {
+            if (segments == null || segments.size() == 0) {
+              if (invalidGenomeVersions.length() > 0) {
+                invalidGenomeVersions.append(",\n");
+              }
+              invalidGenomeVersions.append(genomeVersionName);
+            }
+          }
+        }
+      }
+      
+      if (invalidGenomeVersions.length() > 0) {
+        this.reportError(res, "Annotations for the following genome versions are missing segment information: " + 
+            invalidGenomeVersions.toString() + 
+            ".\n\nDo you wish to continue with DAS/2 reload?\n\n");
+      } else {
+        this.reportSuccess(res, null);
+      }
+    } catch (Exception e) {
+
+      e.printStackTrace();
+      this.reportError(res, e.toString());
+
+    } finally {
+
+      if (sess != null) {
+        sess.close();
+      }
+    }
+	}
 
 	
 	
@@ -3600,6 +3650,21 @@ public class GenoPubServlet extends HttpServlet {
 	  }
 	  
 	}
+	
+  private void reportSuccess(HttpServletResponse response, Integer id) {
+    try {
+       Document doc = DocumentHelper.createDocument();
+       Element root = doc.addElement("SUCCESS");
+       if (id != null) {
+         root.addAttribute("id", id.toString());
+       }
+       XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
+       writer.write(doc);
+    } catch (Exception e) {
+      e.printStackTrace();
+    
+    }
+  }
 
 
 }

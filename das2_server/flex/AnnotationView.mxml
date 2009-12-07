@@ -18,6 +18,20 @@
     <mx:request>
     </mx:request>
    </mx:HTTPService> 
+   
+    <mx:HTTPService             
+    id="verifyDAS2Refresh" 
+    url="genopub/verify"
+    resultFormat="e4x"
+    showBusyCursor="false"
+    result="onVerifyDAS2Refresh(event)"
+    fault="parentApplication.onFailHttpRequest('Failed to verify genome versions for DAS2 Server refresh', event)"
+    method="GET"
+    useProxy="false">
+    <mx:request>
+    </mx:request>
+   </mx:HTTPService> 
+
 
 	<mx:HTTPService             
     id="getAnnotations" 
@@ -731,9 +745,33 @@
 		 * Refresh DAS2 Server
 		 *
 		 */
+		private function refreshDAS2():void {
+			verifyDAS2Refresh.send();		
+		}
+		
+		private function onVerifyDAS2Refresh(event:ResultEvent):void {
+			if (verifyDAS2Refresh.lastResult.name() == "Error") {
+				Alert.show(verifyDAS2Refresh.lastResult.@message, 
+				"Warning", 
+				(Alert.YES | Alert.NO), 
+				this,
+				onPromptInvalidDAS2Refresh);
+			} else {
+				if (verifyDAS2Refresh.lastResult.name() == "SUCCESS") {
+					this.promptToStartDAS2Refresh();
+				}
+			}
+		}
+
+		private function onPromptInvalidDAS2Refresh(event:CloseEvent):void {
+			if (event.detail == Alert.YES) {
+				this.promptToStartDAS2Refresh();
+			}
+		}
+		
 		private function promptToStartDAS2Refresh():void {
 			Alert.show("Reloading DAS/2 can be time consuming and resource intensive.  Do you wish to continue?", 
-				"Confirm", 
+				"Warning", 
 				(Alert.YES | Alert.NO), 
 				this,
 				onPromptToStartDAS2Refresh);
@@ -782,21 +820,65 @@
             	genomeWindow.setOrganism(organism);
             	genomeWindow.genomeVersionName.setFocus();
             } else if (label == "Annotation folder") {
-            	var agWindow:AnnotationGroupingAddWindow = AnnotationGroupingAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationGroupingAddWindow, true));
-            	PopUpManager.centerPopUp(agWindow);
-            	var genomeVersion:Object = getAncestor(XML(annotationsTree.selectedItem), "GenomeVersion");
-            	var parent:Object = getAncestor(XML(annotationsTree.selectedItem), "AnnotationGrouping");
-            	agWindow.init(genomeVersion, parent);
-            	agWindow.annotationGroupingName.setFocus();
+	        	var v:Object = getAncestor(XML(annotationsTree.selectedItem), "GenomeVersion");
+	        	if (v.@hasSegments == "N") {
+	        		promptToAddAnnotationFolder();
+	        	} else {
+            		showAddAnnotationFolderWindow();
+          		}
             } else if (label == "Annotation") {
-            	var aWindow:AnnotationAddWindow = AnnotationAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationAddWindow, true));
-            	PopUpManager.centerPopUp(aWindow);
             	var gv:Object = getAncestor(XML(annotationsTree.selectedItem), "GenomeVersion");
-            	var ag:Object = getAncestor(XML(annotationsTree.selectedItem), "AnnotationGrouping");
-            	aWindow.init(gv, ag);
-            	aWindow.annotationName.setFocus();
+	        	if (gv.@hasSegments == "N") {
+	        		promptToAddAnnotation();
+	        	} else {
+            		showAddAnnotationWindow();
+          		}
             }
         }	
+        
+        private function promptToAddAnnotationFolder():void {
+     		Alert.show("The genome version is missing information about the segments.  Continue anyway?",
+					"Confirm", 
+					(Alert.YES | Alert.NO), this, 
+					onPromptToAddAnnotationFolder);     
+        }
+
+        private function onPromptToAddAnnotationFolder(event:CloseEvent):void {
+        	if (event.detail == Alert.YES) {
+        		showAddAnnotationFolderWindow();
+        	}
+        }
+        
+        private function showAddAnnotationFolderWindow():void {
+        	var agWindow:AnnotationGroupingAddWindow = AnnotationGroupingAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationGroupingAddWindow, true));
+        	PopUpManager.centerPopUp(agWindow);
+        	var genomeVersion:Object = getAncestor(XML(annotationsTree.selectedItem), "GenomeVersion");
+        	var parent:Object = getAncestor(XML(annotationsTree.selectedItem), "AnnotationGrouping");
+        	agWindow.init(genomeVersion, parent);
+        	agWindow.annotationGroupingName.setFocus();
+        }
+        
+        private function promptToAddAnnotation():void {
+     		Alert.show("The genome version is missing information about the segments.  Continue anyway?",
+					"Confirm", 
+					(Alert.YES | Alert.NO), this, 
+					onPromptToAddAnnotation);     
+        }
+
+        private function onPromptToAddAnnotation(event:CloseEvent):void {
+        	if (event.detail == Alert.YES) {
+        		showAddAnnotationWindow();
+        	}
+        }
+
+        private function showAddAnnotationWindow():void {
+        	var aWindow:AnnotationAddWindow = AnnotationAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationAddWindow, true));
+        	PopUpManager.centerPopUp(aWindow);
+        	var gv:Object = getAncestor(XML(annotationsTree.selectedItem), "GenomeVersion");
+        	var ag:Object = getAncestor(XML(annotationsTree.selectedItem), "AnnotationGrouping");
+        	aWindow.init(gv, ag);
+        	aWindow.annotationName.setFocus();
+    	}
         
         private function showAnnotationUploadWindow():void {
         	var uploadWindow:AnnotationFileUploadWindow = AnnotationFileUploadWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationFileUploadWindow, true));
@@ -1904,7 +1986,7 @@
 				        <mx:VRule height="20" id="vrule2" width="10"/>
 			            <mx:LinkButton styleName="linkMenuButton" label="Reload DAS2 Server" 
 			            	icon="@Embed(source='assets/database_refresh.png')" 
-			            	click="{promptToStartDAS2Refresh()}" 
+			            	click="{refreshDAS2()}" 
 			            	id="reloadDas2ServerButton"/>
 
   					 </mx:HBox>       

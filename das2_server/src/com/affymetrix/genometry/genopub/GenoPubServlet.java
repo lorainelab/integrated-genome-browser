@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,7 +69,6 @@ import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 
-import org.apache.catalina.realm.RealmBase;
 
 public class GenoPubServlet extends HttpServlet {
 
@@ -2918,8 +2919,13 @@ public class GenoPubServlet extends HttpServlet {
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD)) {
 				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
-				String digestedPassword = RealmBase.Digest(pw, "MD5", null );
-				user.setPassword(digestedPassword);				
+			  try {
+	        String digestedPassword = getDigestedPassword(pw);
+	        user.setPassword(digestedPassword);       			    
+			  } catch (Exception e) {
+			     e.printStackTrace();
+			     Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+			  }
 			}
 			
 			// Flush here so that if user name changes, the user row is
@@ -2991,9 +2997,13 @@ public class GenoPubServlet extends HttpServlet {
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && !request.getParameter("password").equals("")) {
 				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
-				String digestedPassword = RealmBase.Digest(pw, "MD5", null );
-				user.setPassword(digestedPassword);				
-			}
+				try {
+          String digestedPassword = getDigestedPassword(pw);
+          user.setPassword(digestedPassword);                 
+        } catch (Exception e) {
+           e.printStackTrace();
+           Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+        }			}
 			
 			// Flush here so that if user name changes, the user row is
 			// updated before trying to insert a new role
@@ -3664,6 +3674,42 @@ public class GenoPubServlet extends HttpServlet {
       e.printStackTrace();
     
     }
+  }
+  
+  
+  private String getDigestedPassword(String password) throws NoSuchAlgorithmException{
+    byte[] defaultBytes = password.getBytes();
+    MessageDigest algorithm = MessageDigest.getInstance("MD5");
+    algorithm.reset();
+    algorithm.update(defaultBytes);
+    byte messageDigest[] = algorithm.digest();
+
+    StringBuffer hexString = new StringBuffer(messageDigest.length * 2);
+    for (int i=0; i < messageDigest.length;i++)
+    {
+      int value1 = (int) (messageDigest[i] >> 4);
+      value1 &= 0x0f;
+      if (value1 >= 10)
+      {
+        hexString.append(((char) (value1 - 10 + 'a')));
+      }
+      else
+      {
+        hexString.append(((char) (value1 + '0')));
+      }
+      int value2 = (int) (int) (messageDigest[i] & 0x0f);
+      value2 &= 0x0f;
+      if (value2 >= 10)
+      {
+        hexString.append(((char) (value2 - 10 + 'a')));
+      }
+      else
+      {
+        hexString.append(((char) (value2 + '0')));
+      }
+    }
+    String digestedPassword = hexString.toString();    
+    return digestedPassword;
   }
 
 

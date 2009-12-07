@@ -8,9 +8,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
@@ -21,11 +22,11 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.List;
-import java.util.regex.Pattern;
 import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -45,14 +46,14 @@ import javax.swing.tree.TreePath;
 /**
  * View of genome features as a tree.
  */
-public final class FeatureTreeView extends JComponent {
+public final class FeatureTreeView extends JComponent implements ActionListener {
 
 	public final JScrollPane tree_scroller;
 	private final JTree tree;
 	private DefaultMutableTreeNode treetop = null;
 	private static final String path_separator = "/";
-	//private static final Pattern path_separator_regex = Pattern.compile(path_separator);
 	private final GeneralLoadView glv;
+	private final JButton serverPrefsB;
 	private TreePath selectedPath;
 	private TreeCellRenderer tcr;
 	private TreeCellEditor tce;
@@ -62,12 +63,16 @@ public final class FeatureTreeView extends JComponent {
 		this.setLayout(new BorderLayout());
 
 		JPanel tree_panel = new JPanel();
-		tree_panel.setLayout(new BoxLayout(tree_panel, BoxLayout.Y_AXIS));
-		tree_panel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
 		JLabel genome_features_label = new JLabel("Choose Data Sources and Data Sets:");
-		genome_features_label.setAlignmentX(0.0f);
+		serverPrefsB = new JButton("Configure");
+		serverPrefsB.addActionListener(this);
+
+		serverPrefsB.setToolTipText("Configure Data Sources");
+		genome_features_label.setAlignmentX(LEFT_ALIGNMENT);
 		tree_panel.add(genome_features_label);
-		tree_panel.setAlignmentX(0.0f);
+		tree_panel.setAlignmentX(LEFT_ALIGNMENT);
+		tree_panel.add(serverPrefsB);
+		tree_panel.setAlignmentX(LEFT_ALIGNMENT);
 
 		tree = new JTree();
 
@@ -89,14 +94,54 @@ public final class FeatureTreeView extends JComponent {
 		tree.addMouseMotionListener(tree_mouse_listener);
 
 		tree_scroller = new JScrollPane(tree);
-		//tree_scroller.setMinimumSize(new Dimension(300, 0));
-		tree_scroller.setPreferredSize(new Dimension(300, 0));
-		tree_scroller.setAlignmentX(0.0f);
 		clearTreeView();
 
 		tree_panel.add(tree_scroller);
+
+		GroupLayout layout = new GroupLayout(tree_panel);
+		tree_panel.setLayout(layout);
+		layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+		layout.setHorizontalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(tree_scroller)
+				.addGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				  .addComponent(genome_features_label))
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				  .addComponent(serverPrefsB))
+		)));
+
+		layout.setVerticalGroup(layout.createSequentialGroup()
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(genome_features_label)
+                .addComponent(serverPrefsB))
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(tree_scroller))))
+        );
+
 		this.add(tree_panel);
 	}
+
+
+	/**
+	 * Handles clicking of partial residue, all residue, and refresh data buttons.
+	 * @param evt
+	 */
+	public void actionPerformed(ActionEvent evt) {
+		final Object src = evt.getSource();
+		
+		if (src == this.serverPrefsB) {
+			// Go to server prefs tab.
+			System.out.println("Pressed button -- not implemented yet");
+		}
+	}
+
+
+
 
 	/**
 	 * Clear the tree view.

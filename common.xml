@@ -64,7 +64,7 @@
 		<property name="junit.jar"       value="/usr/share/junit/junit.jar:/usr/share/java/junit4.jar" />
 
 		<!-- Java VM configuration -->
-		<property name="igb.jvmargs" value="-Xms32m -Xmx1024m" />
+		<property name="igb.jvmargs" value="-Xms32m -Xmx1024m -XX:+UseCompressedOops" />
 
 		<!-- Configuration for pmd -->
 		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />

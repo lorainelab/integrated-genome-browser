@@ -135,7 +135,10 @@ public final class ParserController {
 		}
 
 		// bed, bps, bgn, brs, psl, psl3
-		return iWriter.parse(dis, annot_type, seq_group);
+		List results =  iWriter.parse(dis, annot_type, seq_group);
+		GeneralUtils.safeClose(str);
+		
+		return results;
 	}
 
 	/**

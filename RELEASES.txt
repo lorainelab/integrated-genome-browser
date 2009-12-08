@@ -4,6 +4,17 @@ Integrated Genome Browser - Versions
 See also
 http://genoviz.sourceforge.net/release_notes/igb_release.html
 
+IGB-6.1
+client features:
+
++ major memory improvements for graphs (SGR, Wiggle, etc.)
++ ability to parse large Wiggle files
++ better handling for large files over network
++ customizable coloring for residues
++ "whole chromosome" mode for DAS/2; only activated when data is refreshed
++ enhanced DAS/1 support (Ensembl is now accessible)
++ assorted GUI enhancements and bugfixes
+
 IGB-6.0
 client features:
 

@@ -2260,7 +2260,7 @@
 							    	disabledIcon="@Embed(source='assets/segment_remove_disable.png')"
 							    	enabled="{segmentGrid.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"  
 							    	click="removeSegment()"
-							    	styleName="linkMenuButton" label="Remove segment"/>
+							    	styleName="linkMenuButton" label="Remove segment(s)"/>
 							    <mx:Spacer width="10"/>
 							    </mx:HBox>
 								<mx:DataGrid  id="segmentGrid"

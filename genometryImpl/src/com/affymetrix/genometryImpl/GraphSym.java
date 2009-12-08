@@ -24,6 +24,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.URLEncoder;
 import java.util.Arrays;
 
 /**
@@ -360,7 +361,7 @@ public class GraphSym extends SimpleSymWithProps {
 			}*/
 
 			// create indexed file.
-			bufVal = File.createTempFile(graphName, "idx");
+			bufVal = File.createTempFile(URLEncoder.encode(graphName, "UTF-8"), "idx");
 			bufVal.deleteOnExit();	// Delete this file when IGB shuts down.
 			dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(bufVal)));
 

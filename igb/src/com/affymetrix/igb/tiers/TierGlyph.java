@@ -19,7 +19,6 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
-import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -94,6 +93,8 @@ public class TierGlyph extends SolidGlyph {
   private PackerI collapse_packer = new CollapsePacker();
 
   private List<GlyphI> max_child_sofar = null;
+
+  private static final int handle_width = 10;  // width of handle in pixels
 
   private IAnnotStyle style;
 
@@ -403,7 +404,7 @@ public class TierGlyph extends SolidGlyph {
 	  Rectangle handle_pixbox = new Rectangle();
 	  FontMetrics fm = g.getFontMetrics();
 	  int h = Math.min(fm.getMaxAscent(), pixelbox.height);
-	  handle_pixbox.setBounds(xbeg, pixelbox.y, GraphGlyph.handle_width, h);
+	  handle_pixbox.setBounds(xbeg, pixelbox.y, handle_width, h);
       return handle_pixbox;
   }
 

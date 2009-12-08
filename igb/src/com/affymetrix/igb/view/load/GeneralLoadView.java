@@ -901,7 +901,7 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
-	boolean IsGenomeSequence() {
+	static boolean IsGenomeSequence() {
 		// hardwiring names for genome and encode virtual seqs, need to generalize this
 		BioSeq curSeq = gmodel.getSelectedSeq();
 		final String seqID = curSeq == null ? null : curSeq.getID();

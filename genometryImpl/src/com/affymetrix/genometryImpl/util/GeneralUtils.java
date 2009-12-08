@@ -150,7 +150,7 @@ public final class GeneralUtils {
 			icoImages = ICODecoder.readExt(conn.getInputStream());
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			return null;
 		}
 		
 		if (icoImages == null) {

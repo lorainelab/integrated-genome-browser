@@ -58,7 +58,7 @@ http://sourceforge.net/docman/?group_id=129420
 ----------------- REQUIRED RESOURCES -----------------------
 
 IGB requires the Java 2 Platform, Standard Edition (J2SE), 
-version 1.5 or higher.
+version 1.6 or higher.
   http://java.sun.com/j2se/
 
 IGB requires several additional resources.  These are included 

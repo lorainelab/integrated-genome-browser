@@ -20,6 +20,7 @@
 	<rule ref="rulesets/controversial.xml">
 		<exclude name="OnlyOneReturn" />
 		<exclude name="UnusedModifier" />
+		<exclude name="AtLeastOneConstructor" />
 		<exclude name="AvoidFinalLocalVariables" />
 		<exclude name="AvoidFinalLocalVariable" />
 		<exclude name="DataflowAnomalyAnalysis" />
@@ -32,6 +33,7 @@
 	<rule ref="rulesets/design.xml">
 		<exclude name="ConfusingTernary" />
 		<exclude name="TooFewBranchesForASwitchStatement" />
+		<exclude name="UseSingleton" />
 	</rule>
 	<rule ref="rulesets/finalizers.xml" />
 	<rule ref="rulesets/imports.xml" />

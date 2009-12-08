@@ -22,12 +22,11 @@ import java.util.List;
 
 public final class EfficientPairSeqSymmetry implements SeqSymmetry {
 
-	protected static final int count = 2;
-	protected int startA, startB, endA, endB;
-	protected BioSeq seqA, seqB;
-	protected List<SeqSymmetry> children;
-	protected SeqSymmetry parent;
-	protected String id;
+	private static final int count = 2;
+	private int startA, startB, endA, endB;
+	private BioSeq seqA, seqB;
+	private List<SeqSymmetry> children;
+	private String id;
 
 	public EfficientPairSeqSymmetry(int startA, int endA, BioSeq seqA, int startB, int endB, BioSeq seqB) {
 		this.startA = startA;

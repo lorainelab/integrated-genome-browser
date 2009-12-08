@@ -520,8 +520,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						 File file = new File(fileName);;
 						 if (file.exists()) {
 							 Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Annotation type = " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
+							 
 							 if (file.isDirectory() ) {
-								 
 								 if (dirHasFilesWithExtension(file, "bar")) {
 
 									 ServerUtils.loadDBAnnotsFromDir(typePrefix, 
@@ -531,8 +531,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 											 qa.getAnnotation().getIdAnnotation(),
 											 graph_name2dir);                  
 								 
+								 } else if (!dirHasFiles(file)) {
+								   Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotation " + typePrefix + ".  No files associated with this annotation.");
 								 } else {
-									 Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing non-bar annotation " + typePrefix + ". Only the bar format permits multiple annotation files.");
+									 Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing non-bar annotation " + typePrefix + " for file " + fileName + ". Only the bar format permits multiple annotation files.");
 								 }
 
 
@@ -566,10 +568,18 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	    
 	  }
 	 
+	private boolean dirHasFiles(File dir) {
+	  if (dir.exists() & dir.list() != null && dir.list().length > 0) {
+	    return true;
+	  } else {
+	    return false;
+	  } 
+	}
+	 
 	private boolean dirHasFilesWithExtension(File dir, String extension) {
 		boolean isExtension = false;
 		if (dir.exists()) {
-		    // Delete the files in the directory
+		    
 		    String[] childFileNames = dir.list();
 		    if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {

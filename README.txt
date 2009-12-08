@@ -53,7 +53,7 @@ Javadocs can also be created from the java code using the
 provided 'ant' scripts.
 
 See also
-http://sourceforge.net/docman/?group_id=129420
+http://sourceforge.net/apps/trac/genoviz/wiki/IGB
 
 ----------------- REQUIRED RESOURCES -----------------------
 

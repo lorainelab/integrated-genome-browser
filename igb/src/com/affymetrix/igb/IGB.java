@@ -15,6 +15,7 @@ package com.affymetrix.igb;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -24,6 +25,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import java.io.*;
@@ -86,6 +88,7 @@ public final class IGB extends Application
 	private static boolean REPORT_GRAPHICS_CONFIG = false;
 	public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
+	private static final String BUG_URL = "http://sourceforge.net/tracker/?group_id=129420&atid=714744";
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static String[] main_args;
 	static Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
@@ -110,6 +113,7 @@ public final class IGB extends Application
 	JMenuItem memory_item;
 	JMenuItem about_item;
 	JMenuItem documentation_item;
+	JMenuItem bug_item;
 	JMenuItem console_item;
 	JMenuItem clear_item;
 	JMenuItem clear_graphs_item;
@@ -479,16 +483,19 @@ public final class IGB extends Application
 		about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
 		console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
 		console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
+		bug_item = new JMenuItem("Report a bug...", KeyEvent.VK_D);
 		documentation_item = new JMenuItem("Documentation...", KeyEvent.VK_D);
 		documentation_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Help16.gif"));
 
 		MenuUtil.addToMenu(help_menu, about_item);
+		MenuUtil.addToMenu(help_menu, bug_item);
 		MenuUtil.addToMenu(help_menu, documentation_item);
 		MenuUtil.addToMenu(help_menu, console_item);
 
 		gc_item.addActionListener(this);
 		memory_item.addActionListener(this);
 		about_item.addActionListener(this);
+		bug_item.addActionListener(this);
 		documentation_item.addActionListener(this);
 		console_item.addActionListener(this);
 		clear_item.addActionListener(this);
@@ -824,6 +831,14 @@ public final class IGB extends Application
 			System.gc();
 		} else if (src == about_item) {
 			showAboutDialog();
+		} else if (src == bug_item) {
+			try {
+				Desktop.getDesktop().browse(new URI(BUG_URL));
+			} catch (URISyntaxException ex) {
+				Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, "Unable to open URL " + BUG_URL, ex);
+			} catch (IOException ex) {
+				Logger.getLogger(IGB.class.getName()).log(Level.SEVERE, "Unable to open URL " + BUG_URL, ex);
+			}
 		} else if (src == documentation_item) {
 			showDocumentationDialog();
 		} else if (src == console_item) {
@@ -950,7 +965,7 @@ public final class IGB extends Application
 		sb.append("Release Notes: \n http://genoviz.sourceforge.net/release_notes/igb_release.html");
 		sb.append("\n");
 		sb.append("Downloads: \n http://sourceforge.net/project/showfiles.php?group_id=129420\n");
-		sb.append("Documentation: \n http://sourceforge.net/docman/?group_id=129420\n");
+		sb.append("Documentation: \n http://sourceforge.net/apps/trac/genoviz/wiki/IGB\n");
 		sb.append("Bug Reports: \n http://sourceforge.net/tracker/?group_id=129420&atid=714744\n");
 		sb.append("\n");
 

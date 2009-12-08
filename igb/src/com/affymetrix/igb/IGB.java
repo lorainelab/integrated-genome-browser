@@ -34,7 +34,6 @@ import java.util.List;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

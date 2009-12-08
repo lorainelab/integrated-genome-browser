@@ -33,6 +33,8 @@ public class DataLoadView extends JComponent  {
 	SeqGroupView group_view;
 	FeatureTreeView feature_tree_view;
 
+	public static int TAB_DATALOAD_PREFS = -1;
+
 	public DataLoadView() {
 		this.setLayout(new BorderLayout());
 
@@ -51,7 +53,7 @@ public class DataLoadView extends JComponent  {
 		main_panel.add("Center", jPane);
 
 		final PreferencesPanel pp = PreferencesPanel.getSingleton();
-		pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));
+		TAB_DATALOAD_PREFS = pp.addPrefEditorComponent(new DataLoadPrefsView(general_load_view));
 	}	
 }
 

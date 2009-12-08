@@ -3,11 +3,14 @@ package com.affymetrix.igb.view.load;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.igb.prefs.PreferencesPanel;
+import com.affymetrix.igb.view.DataLoadView;
 import com.sun.java.swing.plaf.windows.WindowsBorders.DashedBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -23,12 +26,12 @@ import java.util.Enumeration;
 import java.util.EventObject;
 import java.util.List;
 import javax.swing.AbstractCellEditor;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -64,11 +67,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		JPanel tree_panel = new JPanel();
 		JLabel genome_features_label = new JLabel("Choose Data Sources and Data Sets:");
-		serverPrefsB = new JButton("Configure");
-		serverPrefsB.addActionListener(this);
-
-		serverPrefsB.setToolTipText("Configure Data Sources");
 		genome_features_label.setAlignmentX(LEFT_ALIGNMENT);
+		genome_features_label.setAlignmentY(TOP_ALIGNMENT);
+
+		serverPrefsB = new JButton("Configure...");
+		serverPrefsB.addActionListener(this);
+		serverPrefsB.setToolTipText("Configure Data Sources");
+		serverPrefsB.setAlignmentY(TOP_ALIGNMENT);
+		
 		tree_panel.add(genome_features_label);
 		tree_panel.setAlignmentX(LEFT_ALIGNMENT);
 		tree_panel.add(serverPrefsB);
@@ -97,6 +103,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		clearTreeView();
 
 		tree_panel.add(tree_scroller);
+		tree_panel.setPreferredSize(new Dimension(200,0));
 
 		GroupLayout layout = new GroupLayout(tree_panel);
 		tree_panel.setLayout(layout);
@@ -128,7 +135,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 
 	/**
-	 * Handles clicking of partial residue, all residue, and refresh data buttons.
+	 * Handles clicking of server preferences button.
 	 * @param evt
 	 */
 	public void actionPerformed(ActionEvent evt) {
@@ -136,7 +143,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		
 		if (src == this.serverPrefsB) {
 			// Go to server prefs tab.
-			System.out.println("Pressed button -- not implemented yet");
+
+			if (DataLoadView.TAB_DATALOAD_PREFS != -1) {
+				PreferencesPanel pv = PreferencesPanel.getSingleton();
+				pv.setTab(DataLoadView.TAB_DATALOAD_PREFS);	// Server preferences tab
+				JFrame f = pv.getFrame();
+				f.setVisible(true);
+			} else {
+				System.out.println("Data Load Preferences not instantiated");
+			}
 		}
 	}
 
@@ -158,7 +173,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * If a node is already selected (this could happen if the user used a leaf checkbox), then we don't need to do this.
 	 * @param features
 	 */
-	public void initOrRefreshTree(List<GenericFeature> features) {
+	void initOrRefreshTree(List<GenericFeature> features) {
 		if (selectedPath != null) {
 			selectedPath = null;
 			return;
@@ -228,9 +243,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		// the recursive adding of non leaves
 		String featureLeft = featureName.substring(0, featureName.indexOf(path_separator));
 		String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
-		Enumeration en = root.children();
+		Enumeration<DefaultMutableTreeNode> en = root.children();
 		while (en.hasMoreElements()) {
-			DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) en.nextElement();
+			DefaultMutableTreeNode candidate = en.nextElement();
 			Object nodeData = candidate.getUserObject();
 			if (nodeData instanceof TreeNodeUserInfo) {
 				nodeData = ((TreeNodeUserInfo) nodeData).genericObject;

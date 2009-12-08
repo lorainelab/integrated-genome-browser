@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.LocalUrlCacher;
-import com.affymetrix.igb.util.StringEncrypter;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.prefs.IPrefEditorComponent;

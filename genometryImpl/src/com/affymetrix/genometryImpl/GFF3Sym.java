@@ -18,7 +18,11 @@ import com.affymetrix.genometryImpl.parsers.GFF3Parser;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *  A sym to efficiently store GFF version 3 annotations.
@@ -29,6 +33,7 @@ import java.util.regex.*;
  */
 public final class GFF3Sym extends SimpleSymWithProps implements Scored, SupportsCdsSpan {
 	private String id;
+	private static boolean multipleCdsWarning = false;
 
 	public static final char UNKNOWN_FRAME = UcscGffSym.UNKNOWN_FRAME;
 	public static final String UNKNOWN_SOURCE = ".";
@@ -350,17 +355,28 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 
 	/**
 	 * TODO: this does not take into account multiple CDS for a single mRNA nor
-	 *       does it make use of the 5' and 3' UTR.
+	 *       does it make use of the 5' and 3' UTR or multiple CDS regions on a
+	 *       single mRNA.
+	 *
+	 * TODO: Most of this should be precomputed in the addChild() or something
+	 *       so we do not need to compute it every time it is requested.
 	 *
 	 * @return A single SeqSpan covering the CDS region.
 	 */
 	public SeqSpan getCdsSpan() {
+		/* This can be null but Maps can store null keys */
+		String gff3ID;
+		Map<String,MutableSeqSpan> cdsSpans = new LinkedHashMap<String,MutableSeqSpan>();
 		MutableSeqSpan span = null;
+		
 		for(SeqSymmetry child : children) {
 			if (isCdsSym(child)) {
+				gff3ID = getIdFromGFF3Attributes(((GFF3Sym)child).getAttributes());
 				for(int i = 0; i < child.getSpanCount(); i++) {
+					span = cdsSpans.get(gff3ID);
 					if (span == null) {
 						span = new SimpleMutableSeqSpan(child.getSpan(i));
+						cdsSpans.put(gff3ID, span);
 					} else {
 						SeqUtils.encompass(child.getSpan(i), span, span);
 					}
@@ -368,10 +384,32 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 			}
 		}
 
-		if (span == null) {
+		if (cdsSpans.isEmpty()) {
 			throw new IllegalArgumentException("This Symmetry does not have a CDS");
+		} else if (cdsSpans.size() > 1){
+			Logger.getLogger(
+					this.getClass().getName()).log(Level.WARNING,
+					"Multiple CDS spans for a single Symmetry is not " +
+					"supported.  Skipping all remaining CDS spans.  (found " +
+					cdsSpans.size() + " spans for " +
+					getIdFromGFF3Attributes(attributes) + ")");
+
+			if (!multipleCdsWarning) {
+				multipleCdsWarning = !multipleCdsWarning;
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(null,
+								"Multiple CDS regions with distinct IDs and a shared parent have\n" +
+								"been detected in a GFF3 file.  IGB will only display the first\n" +
+								"CDS region encountered.  Bug reports containing the console log\n" +
+								"and offending GFF3 file would be much appreciated.",
+								"Multiple CDS Regions Detected",
+								JOptionPane.WARNING_MESSAGE);
+					}
+				});
+			}
 		}
 
-		return span;
+		return cdsSpans.values().iterator().next();
 	}
 }

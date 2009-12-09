@@ -8,16 +8,6 @@
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
 
-<boolean tag="USE_GRAPH_ADJUSTER" val="true" />
-<boolean tag="USE_SLICE_VIEW" val="true" />
-<boolean tag="USE_PATTERN_SEARCHER" val="true" />
-<boolean tag="USE_ANNOT_BROWSER" val="true" />
-<boolean tag="USE_BOOKMARK_MANAGER" val="true" />
-<boolean tag="USE_RESTRICTION_MAPPER" val="true" />
-
-
-
-
   <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
        parameters:
          annot_type_regex:  a regular expression (case insensitive by default)

@@ -181,7 +181,7 @@ public class Annotation implements Owned {
 		root.addAttribute("securityGroup", dh.getUserGroupName(this.getIdUserGroup()));
 		root.addAttribute("createdBy", this.getCreatedBy() != null ? this.getCreatedBy() : "");
 		root.addAttribute("createDate", this.getCreateDate() != null ? Util.formatDate(this.getCreateDate()) : "");
-		
+		root.addAttribute("annotationGroupingCount", new Integer(this.getAnnotationGroupings().size()).toString());
 		
 		// Only show annotation groupings and annotation files for detail
 		// (when data_root is provided).

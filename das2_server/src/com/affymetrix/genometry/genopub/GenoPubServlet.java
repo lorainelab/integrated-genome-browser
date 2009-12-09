@@ -1463,59 +1463,115 @@ public class GenoPubServlet extends HttpServlet {
 		
 	}
 
-	
-	
-	private void handleAnnotationGroupingDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-		Session sess = null;
-		Transaction tx = null;
-		
-		try {
-			sess = HibernateUtil.getSessionFactory().openSession();
-			tx = sess.beginTransaction();
-			
-			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
-			AnnotationGrouping annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
-			
-			
-			// Make sure the user can write this annotation grouping
-			if (!this.genoPubSecurity.canWrite(annotationGrouping)) {
-				throw new Exception("Insufficient permision to delete this annotation folder.");
-			}
-			
-			sess.delete(annotationGrouping);
-			
-			tx.commit();
-			
-			
-			Document doc = DocumentHelper.createDocument();
-			Element root = doc.addElement("SUCCESS");
-			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
-			writer.write(doc);
-			
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-			Document doc = DocumentHelper.createDocument();
-			Element root = doc.addElement("Error");
-			root.addAttribute("message", e.getMessage());
-			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
-			writer.write(doc);
-			
-			if (tx != null) {
-				tx.rollback();
-			}
-			
-		} finally {
-			
-			if (sess != null) {
-				sess.close();
-			}
-		}
-		
-	}
+	 private void handleAnnotationGroupingDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+	    Session sess = null;
+	    Transaction tx = null;
+	    
+	    try {
+	      sess = HibernateUtil.getSessionFactory().openSession();
+	      tx = sess.beginTransaction();
+	      
+	      Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
+	      AnnotationGrouping annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
+	      
+	      List descendents = new ArrayList();
+	      descendents.add(annotationGrouping);
+	      annotationGrouping.recurseGetChildren(descendents);
+	      
+	      
+	      // Make sure the user can write this annotation grouping and all of its
+	      // descendent annotations and annotation groupings
+	      for(Iterator i = descendents.iterator(); i.hasNext();) {
+	        Object descendent = i.next();
+	        if (!this.genoPubSecurity.canWrite(descendent)) {
+	          if (descendent.equals(annotationGrouping)) {
+	            throw new InsufficientPermissionException("Insufficient permision to delete this annotation folder.");	            
+	          } else if (descendent instanceof AnnotationGrouping){
+	            AnnotationGrouping ag = (AnnotationGrouping)descendent;
+	            throw new InsufficientPermissionException("Insufficent permission to delete child folder '" + ag.getName() + "'.");
+	          } else if (descendent instanceof Annotation){
+              Annotation a = (Annotation)descendent;
+              throw new InsufficientPermissionException("Insufficent permission to delete child annotation '" + a.getName() + "'.");
+            }
+	        }
+	      }
+	      
+	      // Make sure we are not trying to delete an annotation that also exists in
+	      // another folder (that will not be deleted.)
+	      for(Iterator i = descendents.iterator(); i.hasNext();) {
+          Object descendent = i.next();
+          if (descendent instanceof Annotation) {
+            Annotation a = (Annotation)descendent;
+            if (a.getAnnotationGroupings().size() > 1) {
+              for(Iterator i1 = a.getAnnotationGroupings().iterator(); i1.hasNext();) {
+                AnnotationGrouping ag = (AnnotationGrouping)i1.next();
+                boolean inDeleteList = false;
+                for(Iterator i2 = descendents.iterator(); i2.hasNext();) {
+                  Object d = i2.next();
+                  if (d instanceof AnnotationGrouping) {
+                    AnnotationGrouping agToDelete = (AnnotationGrouping)d;
+                    if (agToDelete.getIdAnnotationGrouping().equals(ag.getIdAnnotationGrouping())) {
+                      inDeleteList = true;
+                      break;
+                    }
+                  }
+                }
+                if (!inDeleteList) {
+                  throw new InsufficientPermissionException("Cannot remove contents of folder '" + annotationGrouping.getName() + 
+                      "' because annotation '" + a.getName() + 
+                      "' exists in folder '" + 
+                      ag.getName() + 
+                      "'.  Please remove this annotation first.");
+                }
+              }
+            }
+          }
+	      }
+	      
+	      // Now delete all of the contents of the annotation grouping and then the
+	      // annotation grouping itself.  By traversing the list from the
+	      // in reverse, we are sure to delete the children before the parent
+	      // folder.
+	      for(int i = descendents.size() - 1; i >= 0; i--) {
+	        Object descendent = descendents.get(i);
+	        
+	        // Remove annotation file(s)
+	        if (descendent instanceof Annotation) {
+	          Annotation a = (Annotation)descendent;	          
+	          a.removeFiles(genometry_genopub_dir);              
+	        } 
+	        
+	        // Delete the object from db
+	        sess.delete(descendent);          
+	      }
+
+	      tx.commit();
+	      
+	      this.reportSuccess(res, null);
+	      
+	    }  catch (InsufficientPermissionException e) {
+        
+        this.reportError(res, e.getMessage());
+        if (tx != null) {
+          tx.rollback();
+        }
+        
+      } catch (Exception e) {
+	      
+        this.reportError(res, e.toString());
+	      if (tx != null) {
+	        tx.rollback();
+	      }
+	      
+	    } finally {
+	      
+	      if (sess != null) {
+	        sess.close();
+	      }
+	    }
+	    
+	  }
+
 
 	
 	@SuppressWarnings("unchecked")

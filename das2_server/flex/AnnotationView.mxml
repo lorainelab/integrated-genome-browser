@@ -78,7 +78,7 @@
     resultFormat="e4x"
     showBusyCursor="true"
     result="onDeleteOrganism(event)"
-    fault="parentApplication.onFailHttpRequest('Failed to remove organism', event)"
+    fault="parentApplication.onFailHttpRequest('Failed to remove species', event)"
     method="POST"
     useProxy="false">
     <mx:request>
@@ -91,7 +91,7 @@
     resultFormat="e4x"
     showBusyCursor="true"
     result="onUpdateOrganism(event)"
-    fault="parentApplication.onFailHttpRequest('Failed to update organism', event)"
+    fault="parentApplication.onFailHttpRequest('Failed to update species', event)"
     method="POST"
     useProxy="false">
     <mx:request>
@@ -254,12 +254,12 @@
     	
     	import mx.collections.ArrayCollection;
         
-        private var MENUITEM_NEW_ORGANISM:String            = "New organism...";
+        private var MENUITEM_NEW_ORGANISM:String            = "New species...";
         private var MENUITEM_NEW_GENOME_VERSION:String      = "New genome version...";
         private var MENUITEM_NEW_ANNOTATION:String          = "New annotation...";
         private var MENUITEM_NEW_ANNOTATION_GROUPING:String = "New folder...";
 
-        private var MENUITEM_DELETE_ORGANISM:String            = "Remove organism";
+        private var MENUITEM_DELETE_ORGANISM:String            = "Remove species";
         private var MENUITEM_DELETE_GENOME_VERSION:String      = "Remove genome version";
         private var MENUITEM_DELETE_ANNOTATION:String          = "Remove annotation";
         private var MENUITEM_DELETE_ANNOTATION_GROUPING:String = "Remove folder";
@@ -284,6 +284,9 @@
         private var organismFilterToSelect:Object = null; 
         
         private var reassignIsMove:Boolean = false;
+        
+        private var itemToRemove:Object = null;
+        private var itemsToRemove:Array = new Array();
         
         private static var alertButtonWidthDefault:Number = Alert.buttonWidth;
         
@@ -384,7 +387,7 @@
                     addTreeContextMenuItem(MENUITEM_NEW_ANNOTATION_GROUPING, false);
                     addTreeContextMenuItem(MENUITEM_NEW_ANNOTATION, false);
                 	if (lastTreeItem.itemRenderer.data.@canWrite == "Y") {
-	                	addTreeContextMenuItem(MENUITEM_DELETE_ANNOTATION, false);
+	                	addTreeContextMenuItem(MENUITEM_DELETE_ANNOTATION, true);
 	                }
                 } 
             }
@@ -398,7 +401,7 @@
         
         private function onTreeMenuItemSelect(event:ContextMenuEvent):void {
         	if (event.currentTarget.caption == MENUITEM_NEW_ORGANISM) {
-        		this.addItem("Organism");
+        		this.addItem("Species");
         	} else if (event.currentTarget.caption == MENUITEM_NEW_GENOME_VERSION) {
         		this.addItem("Genome version");
         	} else if (event.currentTarget.caption == MENUITEM_NEW_ANNOTATION_GROUPING) {
@@ -406,12 +409,16 @@
         	} else if (event.currentTarget.caption == MENUITEM_NEW_ANNOTATION) {
         		this.addItem("Annotation");
         	} else if (event.currentTarget.caption == MENUITEM_DELETE_ORGANISM) {
+        		itemToRemove = annotationsTree.selectedItem;
         		this.promptToRemoveOrganism();
         	} else if (event.currentTarget.caption == MENUITEM_DELETE_GENOME_VERSION) {
+        		itemToRemove = annotationsTree.selectedItem;
         		this.promptToRemoveGenomeVersion();
         	} else if (event.currentTarget.caption == MENUITEM_DELETE_ANNOTATION_GROUPING) {
+        		itemToRemove = annotationsTree.selectedItem;
         		this.promptToRemoveAnnotationGrouping();
         	} else if (event.currentTarget.caption == MENUITEM_DELETE_ANNOTATION) {
+        		itemToRemove = annotationsTree.selectedItem;
         		this.promptToRemoveAnnotation();
         	}  
 			 
@@ -478,8 +485,9 @@
                     
 		private function onGetAnnotations(event:ResultEvent):void {
 			if (getAnnotations.lastResult.name() == "Annotations") {
+				
 				annotationsTree.selectedItem = null;
-
+				
 				if (this.dirtyOrganism != null) {
 					this.dirtyOrganism.resetDirty();
 				}
@@ -516,7 +524,8 @@
 					annotationsTree.selectedItem = null;
 				}
 			}
-			selectView();
+			selectView();				
+		
 		}
 		
 		private function getItemToSelect():XML {
@@ -647,6 +656,7 @@
 				this.expandAllAnnotationNodes();
 				annotationsTree.validateNow();
 				callLater(selectTreeItem);
+				
 			}else if (itemToSelect != null && (itemToSelect.name() == "AnnotationGrouping" || itemToSelect.name() == "Annotation")) {
 				// If there is a tree, expand so it and its ancestors.
 				recurseExpandParent(itemToSelect);
@@ -805,7 +815,7 @@
         }
         
         private function addItem(label:String):void {
-            if (label == "Organism") {
+            if (label == "Species") {
             	var orgWindow:OrganismAddWindow = OrganismAddWindow(PopUpManager.createPopUp(parentApplication.mainArea, OrganismAddWindow, true));
             	PopUpManager.centerPopUp(orgWindow);
             	orgWindow.commonName.setFocus();
@@ -888,6 +898,21 @@
         	uploadWindow.uploadBrowseButton.setFocus();
         	uploadWindow.init();
         }
+
+        private function getAncestors(item:Object, ancestorName:String):Array {
+        	var ancestors:Array = new Array();
+        	var firstTime:Boolean = true;
+        	while( item != null)
+			{
+				if (firstTime) {
+					firstTime = false;
+				} else if( item.name() == ancestorName ) {
+						ancestors.push(item);
+				}
+				item = item.parent();
+			}
+			return ancestors;
+        }
         
         private function getAncestor(item:XML, ancestorName:String):XML {
         	var ancestor:XML = null;
@@ -903,6 +928,79 @@
 			return ancestor;
         }
         
+        private function promptToRemoveSelectedItems():void {
+        	itemsToRemove = new Array();
+        	for each(var item:Object in annotationsTree.selectedItems) {
+        		var keep:Boolean = true;
+        		var ancestorFolders:Array = getAncestors(item, "AnnotationGrouping");
+        		
+        		// Since we are deleting the folder and its contents, ignore
+         		// any contents of a folder if the folder is being deleted.
+     			for each(var ancestor:Object in ancestorFolders) {
+     				for each(var candidateToDelete:Object in annotationsTree.selectedItems) {
+ 	    				if (candidateToDelete.name() == "AnnotationGrouping") {
+	 	    				if (ancestor.@idAnnotationGrouping == candidateToDelete.@idAnnotationGrouping) {
+    		 					keep = false;
+    		 					break;  	
+     						}
+ 	    					
+ 	    				}
+     				}
+     			}
+        		
+        		// Ignore all folders and annotations under genome version
+        		// if the genome version is being deleted.
+     			var ancestorGenomeVersions:Array = getAncestors(item, "GenomeVersion");
+     			for each(var ancestorgv:Object in ancestorGenomeVersions) {
+     				for each(var candidate:Object in annotationsTree.selectedItems) {
+ 	    				if (candidate.name() == "GenomeVersion") {
+	 	    				if (ancestorgv.@idGenomeVersion == candidate.@idGenomeVersion) {
+    		 					keep = false;
+    		 					break;  	
+     						}
+ 	    					
+ 	    				}
+     				}
+     			}
+        		// Ignore all genome versions, folders and annotations under organism
+        		// if the organims is being deleted.
+     			var ancestorOrganisms:Array = getAncestors(item, "Organism");
+     			for each(var ancestororg:Object in ancestorOrganisms) {
+     				for each(var cand:Object in annotationsTree.selectedItems) {
+ 	    				if (cand.name() == "Organism") {
+	 	    				if (ancestororg.@idOrganism == cand.@idOrganism) {
+    		 					keep = false;
+    		 					break;  	
+     						}
+ 	    					
+ 	    				}
+     				}
+     			}
+
+        		if (keep) {
+        			itemsToRemove.push(item);
+        		}
+        	}
+        	removeSelectedItems();
+        }
+        
+        private function removeSelectedItems():void {
+    		if (itemsToRemove.length == 0) {
+    			return;
+    		}
+    		itemToRemove = itemsToRemove.shift();
+    		if (itemToRemove.name() == "Organism") {
+    			this.promptToRemoveOrganism();
+    		} else if (itemToRemove.name() == "GenomeVersion") {
+    			this.promptToRemoveGenomeVersion();
+    		} else if (itemToRemove.name() == "AnnotationGrouping") {
+    			this.promptToRemoveAnnotationGrouping();
+    		} else if (itemToRemove.name() == "Annotation") {
+    			this.promptToRemoveAnnotation();
+    		}
+        	
+        }
+        
 
         /***********************************************************************
         * 
@@ -910,10 +1008,10 @@
         *  
         */        
         private function promptToRemoveOrganism():void {
-         	if (annotationsTree.selectedItem.children() != null && annotationsTree.selectedItem.children().length() > 0) {
-         		Alert.show("Please remove the genome versions and annotations first.");	        			
+         	if (itemToRemove.children() != null && itemToRemove.children().length() > 0) {
+         		Alert.show("Please remove the genome versions for species " +  itemToRemove.@label + " first.", "Unable to remove species");	    
          	} else {
-         		Alert.show("Remove organism '" + annotationsTree.selectedItem.@label + "'?",
+         		Alert.show("Remove species '" + itemToRemove.@label + "'?",
 						"Confirm", 
 						(Alert.YES | Alert.NO), this, 
 						onPromptToRemoveOrganism);     
@@ -930,15 +1028,15 @@
         	// After the delete operation has finished,
         	// select either the next sibling, or if no more children,
         	// the parent node.
-        	if (annotationsTree.selectedItem.childIndex() == 0) {
-	        	this.treeItemToSelect = annotationsTree.selectedItem.parent();
+        	if (itemToRemove.childIndex() == 0) {
+	        	this.treeItemToSelect = itemToRemove.parent();
         	} else {
-        		var idx:int = annotationsTree.selectedItem.childIndex() - 1;
-        		this.treeItemToSelect = annotationsTree.selectedItem.parent().children()[idx];
-        	}
-        	
+        		var idx:int = itemToRemove.childIndex() - 1;
+        		this.treeItemToSelect = itemToRemove.parent().children()[idx];
+        	}        		
+    	
         	var params:Object = new Object();
-        	params.idOrganism = annotationsTree.selectedItem.@idOrganism;
+        	params.idOrganism = itemToRemove.@idOrganism;
         	deleteOrganism.send(params);
         }
         
@@ -947,7 +1045,9 @@
 		  	this.dirtyOrganism.resetDirty();
 		  	
 		  	
-		  	refreshAnnotations();		
+		  	if (itemsToRemove.length == 0) {
+			  	refreshAnnotations();			  		
+		  	}
 		  	
 		    // Refresh the dictionaries so that the dropdowns are up-to-date.
 			parentApplication.getDictionaries.send();
@@ -957,6 +1057,7 @@
 		  } else {
 			Alert.show("An error occurred while removing organism");				
 		  }
+		  removeSelectedItems();
 		}
 		
 		private function saveOrganism():void {
@@ -988,10 +1089,10 @@
         *  
         */        
         private function promptToRemoveGenomeVersion():void {
-         	if (annotationsTree.selectedItem.children() != null && annotationsTree.selectedItem.children().length() > 0) {
-         		Alert.show("Please remove annotations first.");	        			
+         	if (itemToRemove.children() != null && itemToRemove.children().length() > 0) {
+         		Alert.show("Please remove folders and annotations for the genome version " + itemToRemove.@label + " first.", "Unable to remove genome version");	        			
          	} else {
-         		Alert.show("Remove genome version '" + annotationsTree.selectedItem.@label + "'?",
+         		Alert.show("Remove genome version '" + itemToRemove.@label + "'?",
 						"Confirm", 
 						(Alert.YES | Alert.NO), this, 
 						onPromptToRemoveGenomeVersion);     
@@ -1008,15 +1109,15 @@
         	// After the delete operation has finished,
         	// select either the next sibling, or if no more children,
         	// the parent node.
-        	if (annotationsTree.selectedItem.childIndex() == 0) {
-	        	this.treeItemToSelect = annotationsTree.selectedItem.parent();
+        	if (itemToRemove.childIndex() == 0) {
+	        	this.treeItemToSelect = itemToRemove.parent();
         	} else {
-        		var idx:int = annotationsTree.selectedItem.childIndex() - 1;
-        		this.treeItemToSelect = annotationsTree.selectedItem.parent().children()[idx];
+        		var idx:int = itemToRemove.childIndex() - 1;
+        		this.treeItemToSelect = itemToRemove.parent().children()[idx];
         	}
         	
         	var params:Object = new Object();
-        	params.idGenomeVersion = annotationsTree.selectedItem.@idGenomeVersion;
+        	params.idGenomeVersion = itemToRemove.@idGenomeVersion;
         	deleteGenomeVersion.send(params);
         }
         
@@ -1024,7 +1125,9 @@
 		  if (deleteGenomeVersion.lastResult.name() == "SUCCESS") {
 		  	this.dirtyGenomeVersion.resetDirty();
 
-		  	refreshAnnotations();
+			if (itemsToRemove.length == 0) {
+			  	refreshAnnotations();
+			}
 		  	
 		  	// Refresh the dictionaries so that the dropdowns are up-to-date.
 			parentApplication.getDictionaries.send();	
@@ -1034,6 +1137,7 @@
 		  } else {
 			Alert.show("An error occurred while removing genomeVersion");				
 		  }
+		  removeSelectedItems();
 		}
 		
 		public function saveGenomeVersion():void {
@@ -1114,10 +1218,15 @@
         *  
         */        
         private function promptToRemoveAnnotationGrouping():void {
-         	if (annotationsTree.selectedItem.children() != null && annotationsTree.selectedItem.children().length() > 0) {
-         		Alert.show("Please remove annotations first.");	        			
+         	if (itemToRemove.children() != null && itemToRemove.children().length() > 0) {
+         		Alert.show("Removing folder '" + itemToRemove.@label + "'" +
+         		           " will also remove all descendent folders and annotations.\n\n" +
+         		           "Are you sure you want to delete the folder and all of its contents?\n",
+						"Warning", 
+						(Alert.YES | Alert.NO), this, 
+						onPromptToRemoveAnnotationGrouping);      			
          	} else {
-         		Alert.show("Remove annotation folder '" + annotationsTree.selectedItem.@label + "'?",
+         		Alert.show("Remove annotation folder '" + itemToRemove.@label + "'?",
 						"Confirm", 
 						(Alert.YES | Alert.NO), this, 
 						onPromptToRemoveAnnotationGrouping);     
@@ -1135,17 +1244,17 @@
         	// After the delete operation has finished,
         	// select either the next sibling, or if no more children,
         	// the parent node.
-        	if (annotationsTree.selectedItem.childIndex() == 0) {
-	        	this.treeItemToSelect = annotationsTree.selectedItem.parent();
+        	if (itemToRemove.childIndex() == 0) {
+	        	this.treeItemToSelect = itemToRemove.parent();
         	} else {
         		var idx:int = annotationsTree.selectedItem.childIndex() - 1;
-        		this.treeItemToSelect = annotationsTree.selectedItem.parent().children()[idx];
+        		this.treeItemToSelect = itemToRemove.parent().children()[idx];
         	}
 
 
 			// Delete the annotation grouping
         	var params:Object = new Object();
-        	params.idAnnotationGrouping = annotationsTree.selectedItem.@idAnnotationGrouping;
+        	params.idAnnotationGrouping = itemToRemove.@idAnnotationGrouping;
         	deleteAnnotationGrouping.send(params);
         }
         
@@ -1153,12 +1262,15 @@
 		  if (deleteAnnotationGrouping.lastResult.name() == "SUCCESS") {
 		  	this.dirtyAnnotationGrouping.resetDirty();
 
-		  	refreshAnnotations();			
+			if (itemsToRemove.length == 0) {
+			  	refreshAnnotations();			
+			}
 		  } else if (deleteAnnotationGrouping.lastResult.name() == "Error") {
 			Alert.show(deleteAnnotationGrouping.lastResult.@message);
 		  } else {
 			Alert.show("An error occurred while removing annotationGrouping");				
 		  }
+		  removeSelectedItems();
 		}
 		
 
@@ -1199,11 +1311,11 @@
         	// groupings, just unlink it.  If the annotation is refererenced
         	// under only one annotation grouping, delete the annotation.
         	var annotation:Object = getAnnotation.lastResult;
-        	if (annotation..AnnotationGrouping.length() > 1) {
-        		message = "Remove reference to annotation '" + annotation.@name + 
-        		 "' under '" + annotationsTree.selectedItem.parent().@label + "'?";
+        	if (itemToRemove.@annotationGroupingCount > 1) {
+        		message = "Remove reference to annotation '" + itemToRemove.@name + 
+        		 "' under '" + itemToRemove.parent().@label + "'?";
         	} else {
-	        	message = "Delete annotation '" + annotationsTree.selectedItem.@label + "'?"	
+	        	message = "Delete annotation '" + itemToRemove.@label + "'?"	
         	}
          	Alert.show(message,
 						"Confirm", 
@@ -1221,31 +1333,30 @@
         	// After the delete operation has finished,
         	// select either the next sibling, or if no more children,
         	// the parent node.
-        	if (annotationsTree.selectedItem.childIndex() == 0) {
-	        	this.treeItemToSelect = annotationsTree.selectedItem.parent();
+        	if (itemToRemove.childIndex() == 0) {
+	        	this.treeItemToSelect = itemToRemove.parent();
         	} else {
-        		var idx:int = annotationsTree.selectedItem.childIndex() - 1;
-        		this.treeItemToSelect = annotationsTree.selectedItem.parent().children()[idx];
-        	}
+        		var idx:int = itemToRemove.childIndex() - 1;
+        		this.treeItemToSelect = itemToRemove.parent().children()[idx];
+        	}        		
+    	
         	
-        	var annotation:Object = getAnnotation.lastResult;
         	// If the annotation is referenced under multiple annotation
         	// groupings, just unlink it.  If the annotation is refererenced
         	// under only one annotation grouping, delete the annotation.
-        	var annotationGroupings:XMLList = annotation..AnnotationGrouping;
-        	if (annotationGroupings.length() > 1) {
+        	if (itemToRemove.@annotationGroupingCount > 1) {
         		// Unlink annotation
         		var params:Object = new Object();
-    	    	params.idAnnotation = annotation.@idAnnotation;
-    	    	params.idGenomeVersion = annotation.@idGenomeVersion;
-    	    	if (annotationsTree.selectedItem.parent().name() == "AnnotationGrouping") {
-    	    		params.idAnnotationGrouping = annotationsTree.selectedItem.parent().@idAnnotationGrouping;
+    	    	params.idAnnotation = itemToRemove.@idAnnotation;
+    	    	params.idGenomeVersion = itemToRemove.@idGenomeVersion;
+    	    	if (itemToRemove.parent().name() == "AnnotationGrouping") {
+    	    		params.idAnnotationGrouping = itemToRemove.parent().@idAnnotationGrouping;
     	    	}
         		unlinkAnnotation.send(params);
         	} else {
         		// Delete annotation
 	        	var params1:Object = new Object();
-    	    	params1.idAnnotation = annotationsTree.selectedItem.@idAnnotation;
+    	    	params1.idAnnotation = itemToRemove.@idAnnotation;
         		deleteAnnotation.send(params1);
         	}
         }
@@ -1254,12 +1365,16 @@
         private function onDeleteAnnotation(event:ResultEvent):void {
 		  if (deleteAnnotation.lastResult.name() == "SUCCESS") {
 		  	this.dirtyAnnotation.resetDirty();
-		  	refreshAnnotations();			
+		  	
+		  	if (itemsToRemove.length== 0) {
+			  	refreshAnnotations();			
+		  	}
 		  } else if (deleteAnnotation.lastResult.name() == "Error") {
 			Alert.show(deleteAnnotation.lastResult.@message);
 		  } else {
 			Alert.show("An error occurred while removing annotation");				
 		  }
+		  removeSelectedItems();
 		}
 		
 		
@@ -1272,23 +1387,28 @@
 		  	}
 		  	
 		  	// Check if there are other references to this annotation
-		  	if (unlinkAnnotation.lastResult.@numberRemainingAnnotationGroupings > 0) {
-		  		Alert.show("Annotation '" + unlinkAnnotation.lastResult.@name +
-		  		 "' is referenced under folders \n" + unlinkAnnotation.lastResult.@remainingAnnotationGroupings + 
-		  		 ".\n" +
-		  		 "Do you want to remove all references to this annotation?",
-		  		 "Confirm", 
-		  		 Alert.YES | Alert.NO,
-		  		 this,
-		  		 onPromptToRemoveAnnotationReferences);
+		  	if (itemsToRemove.length == 0) {
+			  	if (unlinkAnnotation.lastResult.@numberRemainingAnnotationGroupings > 0) {
+			  		Alert.show("Annotation '" + unlinkAnnotation.lastResult.@name +
+			  		 "' is referenced under folders \n" + unlinkAnnotation.lastResult.@remainingAnnotationGroupings + 
+			  		 ".\n" +
+			  		 "Do you want to remove all references to this annotation?",
+			  		 "Confirm", 
+			  		 Alert.YES | Alert.NO,
+			  		 this,
+			  		 onPromptToRemoveAnnotationReferences);
+			  	}
 		  	}
 		  	
-		  	refreshAnnotations();			
+		  	if (itemsToRemove.length == 0) {
+			  	refreshAnnotations();				  		
+		  	}
 		  } else if (unlinkAnnotation.lastResult.name() == "Error") {
 			Alert.show(unlinkAnnotation.lastResult.@message);
 		  } else {
 			Alert.show("An error occurred while unlinking annotation");				
 		  }
+		  removeSelectedItems();
 		}
 		
 		private function onPromptToRemoveAnnotationReferences(event:CloseEvent):void {
@@ -1891,9 +2011,8 @@
 		paddingRight="0" 
 		paddingTop="0" 
 		verticalGap="2">
-		<mx:HBox width="100%" verticalGap="0" styleName="headerBar">
-		    <mx:VBox width="100%" verticalGap="4">
-			        <mx:HBox width="100%" horizontalGap="2" paddingLeft="0" paddingBottom="2" verticalAlign="middle">
+		    <mx:VBox verticalGap="4" width="100%"  styleName="headerBar" paddingLeft="0" paddingRight="0" paddingBottom="0" paddingTop="0" verticalAlign="top" borderStyle="solid">
+			        <mx:HBox width="100%" styleName="menuBar" id="hbox17">
 			               <mx:LinkButton   label="New Annotation" 
 			               	icon="@Embed(source='assets/comment_new.png')"
 			               	enabled="{currentState != 'GuestState' &amp;&amp; annotationsTree.selectedItem != null &amp;&amp; (annotationsTree.selectedItem.name() == 'GenomeVersion' || annotationsTree.selectedItem.name() == 'AnnotationGrouping' || annotationsTree.selectedItem.name() == 'Annotation') }"
@@ -1902,6 +2021,7 @@
 			               	 toolTip="New annotation" 
 			               	 click="{addItem('Annotation')}" 
 			               	 id="linkbutton4" textAlign="left"/>
+			               <mx:VRule height="20" id="vrule4" width="2"/>
 			               <mx:LinkButton   label="New Folder" 
 			               	icon="@Embed(source='assets/folder_new.png')" 
 			               	enabled="{currentState != 'GuestState' &amp;&amp; annotationsTree.selectedItem != null &amp;&amp; (annotationsTree.selectedItem.name() == 'GenomeVersion' || annotationsTree.selectedItem.name() == 'AnnotationGrouping' || annotationsTree.selectedItem.name() == 'Annotation') }"
@@ -1910,6 +2030,7 @@
 			               	toolTip="New annotation folder" 
 			               	click="{addItem('Annotation folder')}" 
 			               	id="linkbutton3" textAlign="left"/>
+			               <mx:VRule height="20" id="vrule5" width="2"/>
 			               <mx:LinkButton  label="New Genome version" 
 			               	icon="@Embed(source='assets/genome_version_new.png')" 
 			               	enabled="true"
@@ -1918,6 +2039,7 @@
 			               toolTip="New genome version" 
 			               click="{addItem('Genome version')}" 
 			               leading="0" id="linkbutton2" textAlign="left"/>
+			               <mx:VRule height="20" id="vrule6" width="2"/>
 			               <mx:LinkButton  label="New Species" 
 			               	    icon="@Embed(source='assets/organism_new.png')" 
 			               	    enabled="true"
@@ -1926,13 +2048,14 @@
 								styleName="linkMenuButton"   					        	
   					        	click="{addItem('Organism')}" 
   					        	labelPlacement="right" textAlign="left" id="linkbutton1"/>
-  					        <mx:VRule height="20" id="vrule3" width="10"/>
-				        <mx:LinkButton label="Duplicate" styleName="menuLabelSmall" id="duplicateButton" 
-				        	disabledIcon="@Embed(source='assets/duplicate_disable.png')" 
-				        	icon="@Embed(source='assets/duplicate.png')" textAlign="left"
-				        	click="duplicateAnnotation.send()"
-				        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.name() == 'Annotation' }"
-				        	/>
+  					        <mx:VRule height="20" id="vrule3" width="2"/>
+  					        <mx:LinkButton label="Duplicate" styleName="menuLabelSmall" id="duplicateButton" 
+  					        	disabledIcon="@Embed(source='assets/duplicate_disable.png')" 
+  					        	icon="@Embed(source='assets/duplicate.png')" textAlign="left"
+  					        	click="duplicateAnnotation.send()"
+  					        	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.name() == 'Annotation' }"
+  					        	/>
+  					        <mx:VRule height="20" id="vrule0" width="2"/>
 				        <mx:ViewStack id="removeButtonStack" creationPolicy="all"  paddingLeft="0" paddingRight="0"  paddingTop="0" >
 				            <mx:HBox  horizontalGap="8" horizontalAlign="left" id="hbox5">		           
 				            <mx:LinkButton   
@@ -1941,7 +2064,7 @@
 				                 	disabledIcon="@Embed(source='assets/crossout_disable.png')"
 				                 	enabled="false"
 				                 	styleName="linkMenuButton" 
-				                 	click="promptToRemoveOrganism()" toolTip="Delete organism" id="linkbutton7"/>
+				                 	click="this.promptToRemoveSelectedItems()" toolTip="Delete organism" id="linkbutton7"/>
 				             </mx:HBox>
 				            <mx:HBox horizontalGap="8"   width="100%" horizontalAlign="left" id="hbox6">
 				            <mx:LinkButton   
@@ -1950,14 +2073,14 @@
 				                 	label="Remove"
 				                 	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
 				                 	styleName="linkMenuButton" 
-				                 	click="promptToRemoveOrganism()" toolTip="Delete organism"   id="removeOrganismButton"/>
+				                 	click="this.promptToRemoveSelectedItems()" toolTip="Delete organism"   id="removeOrganismButton"/>
 				            </mx:HBox>
 				            <mx:HBox  horizontalGap="8"  width="100%" horizontalAlign="left" id="hbox7">
 				            <mx:LinkButton label="Remove" icon="@Embed(source='assets/crossout.png')" 
 				                    	disabledIcon="@Embed(source='assets/crossout_disable.png')"
 				                    	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"
 				                    	styleName="linkMenuButton" 
-				                    	click="promptToRemoveGenomeVersion()" 
+				                    	click="this.promptToRemoveSelectedItems()" 
 				                    	toolTip="Delete genome version"  id="removeGenomeVersionButton"/>
 				            </mx:HBox>
 				            <mx:HBox horizontalGap="8"  width="100%" horizontalAlign="left"  id="hbox16">
@@ -1966,7 +2089,7 @@
 				             	label="Remove"
 				             	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"								  					        	
 				             	styleName="linkMenuButton" 
-				             	click="promptToRemoveAnnotationGrouping()" 
+				             	click="this.promptToRemoveSelectedItems()" 
 				             	toolTip="Delete annotation grouping"  id="removeAnnotationGroupingButton"/>
 				            </mx:HBox>
 				            <mx:HBox horizontalGap="8"  width="100%" horizontalAlign="left" id="hbox8">
@@ -1975,23 +2098,23 @@
 				            	label="Remove"
 				            	enabled="{annotationsTree.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"								  					        	
 				            	styleName="linkMenuButton" 
-				            	click="promptToRemoveAnnotation()" 
+				            	click="this.promptToRemoveSelectedItems()" 
 				            	toolTip="Delete annotation"  id="removeAnnotationButton"/>
 				            </mx:HBox>
 				        </mx:ViewStack>
-				        <mx:VRule height="20" id="vrule1" width="10"/>
+				        <mx:VRule height="20" id="vrule1" width="2"/>
 				        <mx:LinkButton styleName="linkMenuButton" label="Refresh" 
 				        	icon="@Embed(source='assets/refresh.png')" 
 				        	click="{treeItemToSelect=null;refreshAnnotations()}" id="linkbutton8"/>
-				        <mx:VRule height="20" id="vrule2" width="10"/>
-			            <mx:LinkButton styleName="linkMenuButton" label="Reload DAS2 Server" 
-			            	icon="@Embed(source='assets/database_refresh.png')" 
+				        <mx:VRule height="20" id="vrule2" width="2"/>
+			            <mx:LinkButton styleName="linkMenuButton" label="Reload DAS/2 Server" 
+			            	icon="@Embed(source='assets/database_lightning.png')" 
 			            	click="{refreshDAS2()}" 
-			            	id="reloadDas2ServerButton"/>
+			            	id="reloadDas2ServerButton" textAlign="left"/>
 
   					 </mx:HBox>       
-			        <mx:HRule width="100%" id="hrule1"/>
-  			        <mx:HBox width="100%" horizontalGap="4" paddingTop="0" verticalAlign="middle" paddingBottom="2" id="hbox15" backgroundAlpha="0.8">
+
+  			        <mx:HBox width="100%" horizontalGap="4" paddingTop="2" verticalAlign="middle" paddingBottom="2" id="hbox15" backgroundAlpha="0.8" borderStyle="none" paddingRight="2" paddingLeft="2">
   			            <mx:Label text="Filters:" styleName="menuLabelSmall"/>
   			        	<mx:HBox  horizontalGap="0" verticalGap="0" verticalAlign="middle" paddingLeft="2" paddingTop="0">
   			        		<mx:ComboBox labelField="@binomialName" id="organismCombo" change="refreshAnnotations()" styleName="menuLabelSmall">
@@ -2016,10 +2139,9 @@
 		    	
 		    </mx:VBox>
 			
-		</mx:HBox>
-
+		
 		<mx:HDividedBox width="100%" height="100%">
-		    <mx:VBox  styleName="headerBar" height="100%" width="300" verticalGap="0" paddingLeft="8">
+		    <mx:VBox  styleName="headerBar" height="100%" width="298" verticalGap="0" paddingLeft="8">
 			        <mx:HBox width="100%" horizontalGap="0" paddingLeft="0" paddingBottom="2" verticalAlign="middle">
 			        	<mx:TextInput id="locateText"  width="100%"  enter="locateByName()" change="{this.locateStack.selectedIndex = 0}" styleName="menuLabelSmall" height="20"/>
 			        	<mx:ViewStack id="locateStack" >
@@ -2244,23 +2366,23 @@
 						<mx:HBox width="100%" height="100%">
 							<mx:VBox width="100%" height="100%" verticalGap="2" paddingTop="8" id="vbox10">
 								<mx:Label text="{'Segments (' + segments.length + '):'}"/>
-								<mx:HBox width="100%">
-								    <mx:LinkButton label="Import segments" click="showSegmentsImportWindow()"  icon="@Embed(source='assets/segment_import.png')" disabledIcon="@Embed(source='assets/segment_import_disable.png')" styleName="linkMenuButton" id="linkbutton5" textAlign="left" width="170">
+								<mx:HBox width="100%" horizontalGap="2">
+								    <mx:LinkButton icon="@Embed(source='assets/segment_new.png')"
+								        click="addSegment()"
+								    	styleName="linkMenuButton"
+								    	disabledIcon="@Embed(source='assets/segment_new_disable.png')" label="New segment"  id="linkbutton6" textAlign="left">
+								    	<mx:enabled>{annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}</mx:enabled>
+								    </mx:LinkButton>
+								    <mx:LinkButton icon="@Embed(source='assets/segment_remove.png')"
+								    	disabledIcon="@Embed(source='assets/segment_remove_disable.png')"
+								    	enabled="{segmentGrid.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"  
+								    	click="removeSegment()"
+								    	styleName="linkMenuButton" label="Remove segment(s)"/>
+								    <mx:LinkButton label="Import" click="showSegmentsImportWindow()"  icon="@Embed(source='assets/segment_import.png')" disabledIcon="@Embed(source='assets/segment_import_disable.png')" styleName="linkMenuButton" id="linkbutton5" textAlign="right">
 								     <mx:enabled>{annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}</mx:enabled>
 								    </mx:LinkButton>
 								</mx:HBox>
 							    <mx:HBox horizontalGap="2" width="100%">
-							    <mx:LinkButton icon="@Embed(source='assets/segment_new.png')"
-							        click="addSegment()"
-							    	styleName="linkMenuButton"
-							    	disabledIcon="@Embed(source='assets/segment_new_disable.png')" label="New segment"  id="linkbutton6" textAlign="left">
-							    	<mx:enabled>{annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}</mx:enabled>
-							    </mx:LinkButton>
-							    <mx:LinkButton icon="@Embed(source='assets/segment_remove.png')"
-							    	disabledIcon="@Embed(source='assets/segment_remove_disable.png')"
-							    	enabled="{segmentGrid.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"  
-							    	click="removeSegment()"
-							    	styleName="linkMenuButton" label="Remove segment(s)"/>
 							    <mx:Spacer width="10"/>
 							    </mx:HBox>
 								<mx:DataGrid  id="segmentGrid"
@@ -2271,9 +2393,9 @@
 									editable="true"								
 									allowMultipleSelection="true" itemEditBegin="dirtyGenomeVersion.setDirty()">
 									<mx:columns>
-										<mx:DataGridColumn headerText="Name"    dataField="@name" width="10" editable="true"/>  
-										<mx:DataGridColumn headerText="Length"  textAlign="right" dataField="@length" width="10" editable="true" sortCompareFunction="sortLength"/>  
-										<mx:DataGridColumn headerText="Sort order" dataField="@sortOrder" width="10" editable="true"  sortCompareFunction="sortSortOrder"/>  
+										<mx:DataGridColumn headerText="Name"    dataField="@name" width="7" editable="true"/>  
+										<mx:DataGridColumn headerText="Length"  textAlign="right" dataField="@length" width="7" editable="true" sortCompareFunction="sortLength"/>  
+										<mx:DataGridColumn headerText="Order" dataField="@sortOrder" width="7" editable="true"  sortCompareFunction="sortSortOrder"/>  
 									</mx:columns>							
 								</mx:DataGrid>
 							</mx:VBox>
@@ -2295,9 +2417,6 @@
 								        	enabled="{sequenceFileGrid.selectedItem != null &amp;&amp; annotationsTree.selectedItem.@canWrite == 'Y' ? true : false}"  
 								        	styleName="linkMenuButton"
 								        	click="removeSequenceFile()"  label="Remove file(s)"/>
-								        </mx:HBox>
-								        <mx:HBox width="100%">
-								            <mx:Spacer height="22"/>
 								        </mx:HBox>
 								    	<mx:DataGrid  id="sequenceFileGrid"
 								    		dataProvider="{sequenceFiles}"
@@ -2408,12 +2527,10 @@
 			<mx:SetProperty target="{cbAlwaysExpandTree}" name="selected" value="true"/>
 			<mx:RemoveChild target="{vbox6}"/>
 			<mx:RemoveChild target="{reloadDas2ServerButton}"/>
-			<mx:RemoveChild target="{vrule2}"/>
 			<mx:RemoveChild target="{linkbutton4}"/>
 			<mx:RemoveChild target="{linkbutton3}"/>
 			<mx:RemoveChild target="{linkbutton2}"/>
 			<mx:RemoveChild target="{linkbutton1}"/>
-			<mx:RemoveChild target="{duplicateButton}"/>
 			<mx:RemoveChild target="{linkbutton7}"/>
 			<mx:RemoveChild target="{hbox5}"/>
 			<mx:RemoveChild target="{vrule1}"/>
@@ -2424,7 +2541,13 @@
 			<mx:RemoveChild target="{vrule3}"/>
 			<mx:RemoveChild target="{hbox15}"/>
 			<mx:AddChild relativeTo="{linkbutton8}" position="before" target="{hbox15}"/>
-			<mx:RemoveChild target="{hrule1}"/>
+			<mx:RemoveChild target="{vrule2}"/>
+			<mx:RemoveChild target="{duplicateButton}"/>
+			<mx:RemoveChild target="{vrule0}"/>
+			<mx:RemoveChild target="{vrule4}"/>
+			<mx:RemoveChild target="{vrule5}"/>
+			<mx:RemoveChild target="{vrule6}"/>
+			<mx:SetProperty target="{hbox17}" name="styleName"/>
 	
          </mx:State>
 	</mx:states>

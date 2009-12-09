@@ -1186,8 +1186,12 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Refreshing DAS2 server");
 		try {
 			
+		  // Clear out organisms
+		  organisms.clear();
+		  
 			// Clear out the annotations for the GenometryModel
 			gmodel = GenometryModel.refreshGenometryModel();
+			
 		
 			// Reload the annotation files
 			if (this.is_genometry_genopub_mode) {

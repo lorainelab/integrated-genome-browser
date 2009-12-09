@@ -12,6 +12,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,7 +66,6 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		this.glv = glv;	// used to see feature table, which this is linked to.
 		this.setLayout(new BorderLayout());
 
-		JPanel tree_panel = new JPanel();
 		JLabel genome_features_label = new JLabel("Choose Data Sources and Data Sets:");
 		genome_features_label.setAlignmentX(LEFT_ALIGNMENT);
 		genome_features_label.setAlignmentY(TOP_ALIGNMENT);
@@ -73,14 +73,16 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		serverPrefsB = new JButton("Configure...");
 		serverPrefsB.addActionListener(this);
 		serverPrefsB.setToolTipText("Configure Data Sources");
+		serverPrefsB.setMargin(new Insets(0,0,0,0));
 		serverPrefsB.setAlignmentY(TOP_ALIGNMENT);
-		
+
+		JPanel tree_panel = new JPanel();
 		tree_panel.add(genome_features_label);
 		tree_panel.setAlignmentX(LEFT_ALIGNMENT);
 		tree_panel.add(serverPrefsB);
-		tree_panel.setAlignmentX(LEFT_ALIGNMENT);
 
 		tree = new JTree();
+		tree.setPreferredSize(new Dimension(tree.getMinimumSize().width, tree.getMaximumSize().height));
 
 		 //Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
@@ -90,8 +92,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		tce = new FeatureTreeCellEditor();
 		tree.setCellEditor(tce);
+		
 		tree.setEditable(true);
-
 		tree.setRootVisible(false);
 		tree.setShowsRootHandles(true);
 
@@ -100,10 +102,14 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		tree.addMouseMotionListener(tree_mouse_listener);
 
 		tree_scroller = new JScrollPane(tree);
+		tree_scroller.setAlignmentX(LEFT_ALIGNMENT);
+		tree_scroller.setPreferredSize(new Dimension(
+				tree_scroller.getMinimumSize().width,
+				tree_scroller.getPreferredSize().height));
 		clearTreeView();
 
 		tree_panel.add(tree_scroller);
-		tree_panel.setPreferredSize(new Dimension(200,0));
+		//tree_panel.setPreferredSize(new Dimension(200,0));
 
 		GroupLayout layout = new GroupLayout(tree_panel);
 		tree_panel.setLayout(layout);
@@ -120,15 +126,26 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 				  .addComponent(serverPrefsB))
 		)));
 
+		/*layout.setHorizontalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(tree_scroller)
+				.addComponent(genome_features_label)
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				  .addComponent(serverPrefsB))
+		));*/
+
 		layout.setVerticalGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(genome_features_label)
                 .addComponent(serverPrefsB))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(tree_scroller))))
+				.addComponent(tree_scroller))
         );
+
+		tree_panel.setPreferredSize(new Dimension(
+				tree_panel.getMinimumSize().width,
+				tree_panel.getPreferredSize().height
+				));
 
 		this.add(tree_panel);
 	}

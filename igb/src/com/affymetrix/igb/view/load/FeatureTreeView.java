@@ -66,9 +66,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		this.glv = glv;	// used to see feature table, which this is linked to.
 		this.setLayout(new BorderLayout());
 
-		JLabel genome_features_label = new JLabel("Choose Data Sources and Data Sets:");
-		genome_features_label.setAlignmentX(LEFT_ALIGNMENT);
-		genome_features_label.setAlignmentY(TOP_ALIGNMENT);
+		JLabel featuresLabel = new JLabel("Choose Data Sources and Data Sets:");
+		featuresLabel.setPreferredSize(featuresLabel.getMinimumSize());
+		featuresLabel.setAlignmentX(LEFT_ALIGNMENT);
+		featuresLabel.setAlignmentY(TOP_ALIGNMENT);
 
 		serverPrefsB = new JButton("Configure...");
 		serverPrefsB.addActionListener(this);
@@ -77,8 +78,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		serverPrefsB.setAlignmentY(TOP_ALIGNMENT);
 
 		JPanel tree_panel = new JPanel();
-		tree_panel.add(genome_features_label);
+		tree_panel.add(featuresLabel);
 		tree_panel.setAlignmentX(LEFT_ALIGNMENT);
+		tree_panel.setAlignmentY(TOP_ALIGNMENT);
 		tree_panel.add(serverPrefsB);
 
 		tree = new JTree();
@@ -103,40 +105,34 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 		tree_scroller = new JScrollPane(tree);
 		tree_scroller.setAlignmentX(LEFT_ALIGNMENT);
+		tree_scroller.setAlignmentY(TOP_ALIGNMENT);
 		tree_scroller.setPreferredSize(new Dimension(
 				tree_scroller.getMinimumSize().width,
 				tree_scroller.getPreferredSize().height));
 		clearTreeView();
 
 		tree_panel.add(tree_scroller);
-		//tree_panel.setPreferredSize(new Dimension(200,0));
 
 		GroupLayout layout = new GroupLayout(tree_panel);
 		tree_panel.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
+		layout.setAutoCreateGaps(false);
+        layout.setAutoCreateContainerGaps(false);
 
 		layout.setHorizontalGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(tree_scroller)
 				.addGroup(layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				  .addComponent(genome_features_label))
+				  .addComponent(featuresLabel))
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				  .addGap(10))
 				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				  .addComponent(serverPrefsB))
 		)));
 
-		/*layout.setHorizontalGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				.addComponent(tree_scroller)
-				.addComponent(genome_features_label)
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-				  .addComponent(serverPrefsB))
-		));*/
-
 		layout.setVerticalGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(genome_features_label)
+                .addComponent(featuresLabel)
                 .addComponent(serverPrefsB))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(tree_scroller))

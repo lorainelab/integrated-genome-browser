@@ -38,7 +38,6 @@ public final class QuickLoadServerModel {
 	private static final Pattern tab_regex = Pattern.compile("\t");
 	private String root_url;
 	private final List<String> genome_names = new ArrayList<String>();
-	//private final Map<AnnotatedSeqGroup,String> group2name = new HashMap<AnnotatedSeqGroup,String>();
 	private final Map<String, Boolean> genome2init = new HashMap<String, Boolean>();
 	// A map from String genome name to a Map of (typeName,fileName) on the server for that group
 	private final Map<String, List<AnnotMapElt>> genome2annotsMap = new HashMap<String, List<AnnotMapElt>>();
@@ -97,19 +96,20 @@ public final class QuickLoadServerModel {
 		if (genome2init.get(genome_name) != Boolean.TRUE) {
 			initGenome(genome_name);
 		}
-		List<String> typeNames = new ArrayList<String>();
-		for (AnnotMapElt annotMapElt : genome2annotsMap.get(genome_name)) {
-			typeNames.add(annotMapElt.title);
-		}
-		if (typeNames == null) {
+		if (getAnnotsMap(genome_name) == null) {
 			return Collections.<String>emptyList();
 		}
+		List<String> typeNames = new ArrayList<String>();
+		for (AnnotMapElt annotMapElt : getAnnotsMap(genome_name)) {
+			typeNames.add(annotMapElt.title);
+		}
+		
 		return typeNames;
 	}
 
 	public Map<String, String> getProps(String genomeName, String featureName) {
 		Map<String, String> props = null;
-		List<AnnotMapElt> annotList = this.genome2annotsMap.get(genomeName);
+		List<AnnotMapElt> annotList = getAnnotsMap(genomeName);
 		AnnotMapElt annotElt = AnnotMapElt.findTitleElt(featureName, annotList);
 		if (annotElt != null) {
 			return annotElt.props;
@@ -125,7 +125,7 @@ public final class QuickLoadServerModel {
 		}
 
 		// Clear the type list if something went wrong.
-		List<AnnotMapElt> annotList = genome2annotsMap.get(genome_name);
+		List<AnnotMapElt> annotList = getAnnotsMap(genome_name);
 		if (annotList != null) {
 			annotList.clear();
 		}

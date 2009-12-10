@@ -21,13 +21,13 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public abstract class MenuUtil {
 
-  static JMenuBar main_menu_bar = new JMenuBar();
+  private static JMenuBar main_menu_bar = new JMenuBar();
     
   /** Sets the accelerator for the given JMenuItem based on
    *  the preference associated with the action command.
    *  The action command Strings should be unique across the whole application.
    */
-  public static final void addAccelerator(JMenuItem item, String command) {
+  private static final void addAccelerator(JMenuItem item, String command) {
     item.setAccelerator(UnibrowPrefsUtil.getAccelerator(command));
   }
   
@@ -77,28 +77,12 @@ public abstract class MenuUtil {
     return new_menu;
   }
   
-  public static final JMenuItem addToMenu(String name, JMenuItem item) {
-    return addToMenu(getMenu(name), item);
-  }
-  
   /**
    *  Calls {@link #addToMenu(JMenu, JMenuItem, String)}
    *  with command set to null.
    */
   public static final JMenuItem addToMenu(JMenu menu, JMenuItem item) {
-    return addToMenu(menu, item, null);
-  }
-
-  /** Adds a JMenuItem to a JMenu after first setting the accelerator
-   *  based on the user preference associated with the given command String.
-   *  @param command  A String that should uniquely identify the given
-   *    menu item, unique across the entire application.  If null,
-   *    the value of JMenuItem.getText() will be used, but there is
-   *    a risk that that will not be unique.
-   *  @see UnibrowPrefsUtil#getAccelerator(String)
-   */
-  public static final JMenuItem addToMenu(JMenu menu, JMenuItem item, String command) {
-    if (command == null) {command = item.getText();}
+    String command = item.getText();
     if (command != null) { addAccelerator(item, command); }
     return menu.add(item);
   }

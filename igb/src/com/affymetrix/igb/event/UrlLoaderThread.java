@@ -78,15 +78,7 @@ public final class UrlLoaderThread extends Thread {
       if (seq_group == null) {
         throw new RuntimeException("UrlLoaderThread: aborting because there is no currently selected seq group");
       }
-      //System.out.println("in UrlLoaderThread, get selected seq: " + aseq.getID());
 
-      /*monitor = new ThreadProgressMonitor(
-        gviewer.getFrame(),
-        "Loading...",
-        "Loading data from URL",
-        this,
-        false, false);
-      monitor.showDialogEventually();*/
 			Application.getSingleton().setNotLockedUpStatus();
       
       for (int i=0; i<urls.length; i++) {

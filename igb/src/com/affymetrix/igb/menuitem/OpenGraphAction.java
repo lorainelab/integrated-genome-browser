@@ -37,12 +37,12 @@ import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.util.LocalUrlCacher;
 
 public final class OpenGraphAction extends AbstractAction {
-  static GenometryModel gmodel = GenometryModel.getGenometryModel();
+  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-  int graph_count = 0;
-  double default_yloc = 10;
-  FileTracker load_dir_tracker;
-  SeqMapView gviewer;
+  private FileTracker load_dir_tracker;
+  private SeqMapView gviewer;
+  private static JFileChooser chooser = null;
+
 
   public void actionPerformed(ActionEvent e) {
     // allowing for multiple file selection, so may have multiple graphs
@@ -64,7 +64,7 @@ public final class OpenGraphAction extends AbstractAction {
     }
   }
 
-  public static Thread loadAndShowGraphs(File[] files, BioSeq aseq, SeqMapView gviewer)
+  private static Thread loadAndShowGraphs(File[] files, BioSeq aseq, SeqMapView gviewer)
   throws MalformedURLException {
     URL[] urls = new URL[files.length];
     for (int i=0; i<files.length; i++) {
@@ -104,7 +104,7 @@ public final class OpenGraphAction extends AbstractAction {
     return t;
   }
 
-  static void updateViewer(final SeqMapView gviewer) {
+  private static void updateViewer(final SeqMapView gviewer) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         gviewer.setAnnotatedSeq(gmodel.getSelectedSeq(), true, true);
@@ -112,7 +112,7 @@ public final class OpenGraphAction extends AbstractAction {
     });
   }
 
-  public File[] chooseGraphs() {
+  private File[] chooseGraphs() {
     JFileChooser chooser = getFileChooser();
     chooser.setMultiSelectionEnabled(true);
     chooser.setCurrentDirectory(load_dir_tracker.getFile());
@@ -133,7 +133,7 @@ public final class OpenGraphAction extends AbstractAction {
    *  this is a reminder that this is fairly common here.  (You have to catch
    *  "Throwable" rather than "Exception" to catch these.)
    */
-  static List<GraphSym> loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
+  private static List<GraphSym> loadGraphFiles(URL[] files, AnnotatedSeqGroup seq_group, BioSeq aseq, boolean update_viewer, ThreadProgressMonitor monitor, SeqMapView gviewer)
   throws IOException, OutOfMemoryError {
     List<GraphSym> graphs = Collections.<GraphSym>emptyList();
     if (aseq != null) {
@@ -233,11 +233,9 @@ public final class OpenGraphAction extends AbstractAction {
       }
     }
     return name;
-  }
-  
-  static JFileChooser chooser = null;
+  }  
 
-  static JFileChooser getFileChooser() {
+  private static JFileChooser getFileChooser() {
     if (chooser == null) {
       chooser = new JFileChooser();
       chooser.setMultiSelectionEnabled(true);
@@ -260,7 +258,6 @@ public final class OpenGraphAction extends AbstractAction {
       all_known_types.setExtensionListInDescription(false);
       all_known_types.addCompressionEndings(GeneralUtils.compression_endings);
       chooser.addChoosableFileFilter(all_known_types);
-      //chooser.setFileFilter(filters[0]); // set to "All Files"
     }
     return chooser;
   }

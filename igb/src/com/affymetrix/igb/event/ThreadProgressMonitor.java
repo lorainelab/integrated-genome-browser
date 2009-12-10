@@ -1,16 +1,3 @@
-/**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*    
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.  
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.event;
 
 import java.awt.Component;
@@ -25,11 +12,10 @@ import java.util.Vector;
  *  show a JProgressBar, and has optional "OK" and "Cancel" buttons to dismiss the dialog.
  */
 public final class ThreadProgressMonitor {
-  JOptionPane opt_pane;
-  JDialog dialog;
-  Thread thread;
-  boolean is_cancelled = false;
-  boolean is_closed = false;
+  private JOptionPane opt_pane;
+  private JDialog dialog;
+  private Thread thread;
+  private boolean is_closed = false;
   
   /** Creates a JDialog with parent component c.
    *  @param message  A message to display to the user.  Usually a String or String[].
@@ -48,8 +34,6 @@ public final class ThreadProgressMonitor {
     Vector<String> button_vector = new Vector<String>(2);
     if (can_dismiss) {button_vector.add(ok_text);}
     if (can_cancel) {button_vector.add(cancel_text);}
-    final String cancel = cancel_text;
-    final String ok = ok_text;
     String[] buttons = button_vector.toArray(new String[button_vector.size()]);
     this.thread = t;
     this.opt_pane = new JOptionPane(
@@ -79,7 +63,7 @@ public final class ThreadProgressMonitor {
     }
   };
   
-  public void setMessage(Object o) {
+  private void setMessage(Object o) {
     if (is_closed) return;
     opt_pane.setMessage(o);
     dialog.pack();
@@ -93,7 +77,7 @@ public final class ThreadProgressMonitor {
     });
   }
   
-  public void showDialog() {
+  private void showDialog() {
     if (is_closed) return;
     dialog.pack();
     dialog.setVisible(true);
@@ -135,9 +119,8 @@ public final class ThreadProgressMonitor {
    *  It simply calls {@link #closeDialog()}, and if a thread was provided
    *  in the constructor it calls interrupt() on it.
    */
-  public void cancelPressed() {
+  private void cancelPressed() {
     dialog.setEnabled(false);
-    is_cancelled = true;
     closeDialog();
     if (thread != null) {thread.interrupt();}
   }
@@ -145,10 +128,7 @@ public final class ThreadProgressMonitor {
   /** This method is called when the user selects the "OK" button.
    *  It simply calls {@link #closeDialog()}.
    */
-  public void okPressed() {
+  private void okPressed() {
     closeDialog();
   }
-  
-  /** Returns true if the cancel button has ever been pressed. */
-  public boolean isCancelled() { return is_cancelled; }
 }

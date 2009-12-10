@@ -27,7 +27,7 @@
     url="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$"
   />
 
-
+<!--
   <annotation_url annot_type_regex="(?i).*EnsGene$"
     name="Ensembl Human ID search"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
@@ -37,6 +37,38 @@
      name="Ensembl Human GeneView"
      url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
   />
+-->
+ <!--Regular expression to identify Ensembl human gene transcript ids that begin with ENS followed by digits-->
+	<annotation_url annot_id_regex="^ENST\d+(\.\d+)?$"
+     name="Ensembl GeneView"
+     url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
+  />
+
+<!--Regular expression to identify Ensembl Danio rerio gene transcript ids -->
+	<annotation_url annot_id_regex="^ENSDART\d+(\.\d+)?$"
+     name="Ensembl GeneView"
+     url="http://www.ensembl.org/Danio_rerio/geneview?gene=$$"
+  />
+
+<!--Regular expression to identify Ensembl Mus musculus gene transcript ids -->
+	<annotation_url annot_id_regex="^ENSMUST\d+(\.\d+)?$"
+     name="Ensembl GeneView"
+     url="http://www.ensembl.org/Mus_musculus/geneview?gene=$$"
+  />
+
+  <!--Regular expression to identify Ensembl Rattus norvegicus gene transcript ids -->
+	<annotation_url annot_id_regex="^ENSRNOT\d+(\.\d+)?$"
+     name="Ensembl GeneView"
+     url="http://www.ensembl.org/Rattus_norvegicus/geneview?gene=$$"
+  />
+
+   <!--Regular expression to identify Ensembl Gallus gallus gene transcript ids -->
+
+	<annotation_url annot_id_regex="^ENSGALT\d+(\.\d+)?$"
+     name="Ensembl GeneView"
+     url="http://www.ensembl.org/Gallus_gallus/geneview?gene=$$"
+  />
+
 
   <annotation_url annot_type_regex="(?i).* netaffx consensus"
     name="NetAffx"

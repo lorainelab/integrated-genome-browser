@@ -64,10 +64,6 @@ public class AnnotatedSeqGroup {
 		return id;
 	}
 
-	final public String getSource() {
-		return source;
-	}
-
 	final public void setSource(String source) {
 		this.source = source;
 	}

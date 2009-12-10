@@ -13,7 +13,6 @@
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -97,7 +96,7 @@ import javax.swing.*;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-				implements AnnotatedSeqViewer, SymSelectionSource,
+				implements AnnotatedSeqViewer, 
 				SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 
 	private static final boolean DIAGNOSTICS = false;
@@ -2380,17 +2379,6 @@ public class SeqMapView extends JPanel
 	}
 
 	/**
-	 *  SymSelectionSource interface
-	 */
-	public void addSymSelectionListener(SymSelectionListener listener) {
-		selection_listeners.add(listener);
-	}
-
-	public void removeSymSelectionListener(SymSelectionListener listener) {
-		selection_listeners.remove(listener);
-	}
-
-	/**
 	 *  SymSelectionListener interface
 	 */
 	public void symSelectionChanged(SymSelectionEvent evt) {
@@ -2759,10 +2747,6 @@ public class SeqMapView extends JPanel
 
 	public void addPopupListener(ContextualPopupListener listener) {
 		popup_listeners.add(listener);
-	}
-
-	public List<ContextualPopupListener> getPopupListeners() {
-		return Collections.<ContextualPopupListener>unmodifiableList(popup_listeners);
 	}
 
 	/** Recurse through glyphs and collect those that are instanceof GraphGlyph. */

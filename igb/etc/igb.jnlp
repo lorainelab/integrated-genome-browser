@@ -1,13 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="@jnlp.codebase@" href="igb.jnlp">
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="6.0+" codebase="@jnlp.codebase@" href="igb.jnlp">
 	<information>
 		<title>IGB @jnlp.version@</title>
 		<vendor>Genoviz Project</vendor>
 		<homepage href="http://genoviz.sourceforge.net/" />
 		<description>Integrated Genome Browser (@jnlp.version@)</description>
 		<icon href="@jnlp.icon.name@"/>
-		<icon kind="splash" href="@jnlp.splashicon.name@"/>
+		<icon href="@jnlp.splashicon.name@" kind="splash" />
 		<offline-allowed/>
+		<shortcut online="true">
+			<desktop/>
+			<menu submenu="IGB" />
+		</shortcut>
 	</information>
 	<security>
 		<all-permissions/>
@@ -24,5 +28,8 @@
 		<jar href="image4j.jar" />
 		<jar href="commons-codec-1.4.jar" />
 	</resources>
-	<application-desc main-class="com.affymetrix.igb.IGB" />
+	<application-desc main-class="com.affymetrix.igb.IGB">
+		<argument>-prefs</argument>
+		<argument>@jnlp.codebase@/igb_prefs.xml</argument>
+	</application-desc>
 </jnlp>

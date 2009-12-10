@@ -29,6 +29,7 @@
 	import mx.rpc.events.ResultEvent;
 	import mx.controls.Alert;
 	import util.MultiFileUpload;
+
 	
 	[Bindable]
 	public var idAnnotation:Object = null;
@@ -52,7 +53,8 @@
 	private function onGetUploadURL(event:ResultEvent):void {
 		if (getUploadURL.lastResult.name() == "UploadURL") {
 			var url:String = getUploadURL.lastResult.@url;
-			initializeFileUploadControl(url);
+			var fileExtensions:String = getUploadURL.lastResult.@fileExtensions;
+			initializeFileUploadControl(url, fileExtensions);
 			initializeFileUploadParameters();
 
 			this.uploadBrowseButton.setFocus();
@@ -61,10 +63,14 @@
 		}
 	}
 					
-	private function initializeFileUploadControl(uploadServletURL:String):void{
+	private function initializeFileUploadControl(uploadServletURL:String, fileExtensions:String):void{
         
         if (multiFileUpload == null) {
 	         
+	        var fileFilters:Array = new Array();
+	        var ff:FileFilter = new FileFilter("Genomic datasets (" + fileExtensions + ")", fileExtensions);
+			fileFilters.push(ff);
+	        
 	        multiFileUpload = new MultiFileUpload(
 	            this.uploadFilesGrid,
 	            this.uploadBrowseButton,
@@ -75,7 +81,7 @@
 	            uploadServletURL,
 	            postVariables,
 	            0,
-	            null
+	            fileFilters
 	            );
 	        
 	       multiFileUpload.addEventListener(Event.COMPLETE, onUploadFinished);

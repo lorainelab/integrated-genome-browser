@@ -62,7 +62,7 @@ package util
     import mx.controls.ProgressBar;
     import mx.controls.dataGridClasses.*;
     import mx.events.CollectionEvent;
-
+	import mx.events.CloseEvent;
     
     
     public class MultiFileUpload {
@@ -245,7 +245,7 @@ package util
 		            _file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, dataCompleteHandler );
 		            _file.addEventListener(SecurityErrorEvent.SECURITY_ERROR,securityErrorHandler);
 		            _file.addEventListener(HTTPStatusEvent.HTTP_STATUS,httpStatusHandler);
-		            _file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
+		            //_file.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
 		            _file.upload(_uploadURL);
 		             setupCancelButton(true);
 				} else {
@@ -467,9 +467,49 @@ package util
         //  after a file upload is complete or attemted the server will return an http status code, code 200 means all is good anything else is bad.
         private function httpStatusHandler(event:HTTPStatusEvent):void {
             if (event.status != 200){
-            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.",
-            						"HTTP status",0);
+            	if (event.status == 902) {
+            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\nUnsupported file extension.  Do you want to proceed with the remaining uploads?",
+            						"Unsupported File Extension",
+            						(Alert.YES | Alert.NO), 
+            						null, 
+            						onPromptToContinueUpload);
+            		
+            	} else if (event.status == 903) {
+            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\n The file name does not match any of the segment names for the genome version.  Do you want to proceed with the remaining uploads?",
+            						"Incorrect File Name",
+            						(Alert.YES | Alert.NO), 
+            						null,
+            						onPromptToContinueUpload);
+            		
+            	} else {
+            		mx.controls.Alert.show("File '" + event.target.name + "' did not upload.\nStatus code " + event.status + " returned.   Do you want to proceed with the remaining uploads?",
+            						"Upload Error",
+            						(Alert.YES | Alert.NO), 
+            						null,
+            						onPromptToContinueUpload);
+            	}
+            	
             }
+        }
+        
+       private function onPromptToContinueUpload(event:CloseEvent):void {
+			if (event.detail == Alert.YES) {
+	            _files.removeItemAt(0);
+	            if (_files.length > 0){
+	            	_totalbytes = 0;
+	                uploadFiles(null);
+	            }else{
+	                setupCancelButton(false);
+	                 _progressbar.label = "Uploads Complete";
+	                 var uploadCompleted:Event = new Event(Event.COMPLETE);
+	                dispatchEvent(uploadCompleted);
+	            }
+   			}else{
+	            setupCancelButton(false);
+	            _progressbar.label = "Uploads Cancelled";
+	            var completeEvent:Event = new Event(Event.COMPLETE);
+	            dispatchEvent(completeEvent);
+	        }
         }
 
         

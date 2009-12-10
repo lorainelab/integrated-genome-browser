@@ -5,17 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,7 +21,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,33 +31,9 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-
-import com.affymetrix.genometry.genopub.AnalysisType;
-import com.affymetrix.genometry.genopub.Annotation;
-import com.affymetrix.genometry.genopub.AnnotationComparator;
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
-import com.affymetrix.genometry.genopub.AnnotationGroupingComparator;
-import com.affymetrix.genometry.genopub.AnnotationQuery;
-import com.affymetrix.genometry.genopub.DictionaryHelper;
-import com.affymetrix.genometry.genopub.ExperimentMethod;
-import com.affymetrix.genometry.genopub.ExperimentPlatform;
-import com.affymetrix.genometry.genopub.GenoPubSecurity;
-import com.affymetrix.genometry.genopub.GenomeVersion;
-import com.affymetrix.genometry.genopub.GenomeVersionAlias;
-import com.affymetrix.genometry.genopub.HibernateUtil;
-import com.affymetrix.genometry.genopub.Organism;
-import com.affymetrix.genometry.genopub.Segment;
-import com.affymetrix.genometry.genopub.User;
-import com.affymetrix.genometry.genopub.UserComparator;
-import com.affymetrix.genometry.genopub.UserGroup;
-import com.affymetrix.genometry.genopub.UserRole;
-import com.affymetrix.genometry.genopub.Util;
-import com.affymetrix.genometry.servlets.GenometryDas2Servlet;
-import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -76,6 +47,11 @@ public class GenoPubServlet extends HttpServlet {
 
 	private static final String GENOPUB_HTML_WRAPPER = "GenoPub.html";
 	private static final String REALM                = "Das2";
+	
+	private static final int ERROR_CODE_OTHER                     = 901;
+	private static final int ERROR_CODE_UNSUPPORTED_FILE_TYPE     = 902;
+	private static final int ERROR_CODE_INCORRECT_FILENAME        = 903;
+	private static final int ERROR_CODE_INSUFFICIENT_PERMISSIONS  = 904;
 
 	public static final String SECURITY_REQUEST                   = "security";
 	public static final String DICTIONARIES_REQUEST               = "dictionaries";
@@ -1050,9 +1026,17 @@ public class GenoPubServlet extends HttpServlet {
 	        // Flex upload component inside FireFox, Safari
 	        URL += ";jsessionid=" + req.getRequestedSessionId();
 	        
+	        // Get the valid file extensions
+	        String fileExtensions = "";
+	        for (int x=0; x < Constants.SEQUENCE_FILE_EXTENSIONS.length; x++) {
+	        	if (fileExtensions.length() > 0) {
+	        		fileExtensions += ";";
+	        	}
+	        	fileExtensions += "*" + Constants.SEQUENCE_FILE_EXTENSIONS[x];
+	        }
 	        
 	        res.setContentType("application/xml");
-	        res.getOutputStream().println("<UploadURL url='" + URL + "'/>");
+	        res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
 	        
 	      } catch (Exception e) {
 	        System.out.println("An error has occured in GenoPubServlet - " + e.toString());
@@ -1133,8 +1117,15 @@ public class GenoPubServlet extends HttpServlet {
     	    				FilePart filePart = (FilePart) part;
     	    				fileName = filePart.getFileName();
     	    				if (fileName != null) {
-    	    					// the part actually contained a file
+    	    					
+    	    					// Is the fileName valid?
+    	    					if (!Util.isValidSequenceFileType(fileName)) {
+    	    						throw new UnsupportedFileTypeException("Bypassing upload of sequence files for  " + genomeVersion.getName() + " for file" + fileName + ". Unsupported file extension");
+    	    					}
+
+    	    					// Write the file
     	    					long size = filePart.writeTo(new File(sequenceDir));
+    	    				
     	    				}
     	    				else { 
     	    				}
@@ -1150,7 +1141,7 @@ public class GenoPubServlet extends HttpServlet {
     				writer.write(doc);
 
     	    	} else {
-    	    		System.out.println("Bypassing upload of sequence files for  " + genomeVersion.getName() + " due to insufficient permissions.");
+    	    		throw new InsufficientPermissionException("Bypassing upload of sequence files for  " + genomeVersion.getName() + " due to insufficient permissions.");
     	    	}
     	    } else {
     	    	throw new Exception("No genome version provided for sequence files");
@@ -1160,21 +1151,20 @@ public class GenoPubServlet extends HttpServlet {
     	    
 			
 
+		} catch (InsufficientPermissionException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			res.setStatus(this.ERROR_CODE_UNSUPPORTED_FILE_TYPE);
+			this.reportError(res, e.getMessage());
+		} catch (UnsupportedFileTypeException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			res.setStatus(this.ERROR_CODE_UNSUPPORTED_FILE_TYPE);
+			this.reportError(res, e.getMessage());
 		} catch (Exception e) {
-			res.setStatus(9999);
+			Logger.getLogger(this.getClass().getName()).warning(e.toString());
+			res.setStatus(this.ERROR_CODE_OTHER);
 			e.printStackTrace();
-			Document doc = DocumentHelper.createDocument();
-			Element root = doc.addElement("Error");
-			root.addAttribute("message", e.getMessage());
-			try {
-				XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
-				writer.write(doc);				
-			} catch (Exception e1) {
-				
-			}
-			
+			this.reportError(res, e.toString());
 		} finally {
-			
 			if (sess != null) {
 				sess.close();
 			}
@@ -2381,9 +2371,18 @@ public class GenoPubServlet extends HttpServlet {
 	        // Flex upload component inside FireFox, Safari
 	        URL += ";jsessionid=" + req.getRequestedSessionId();
 	        
+	        // Get the valid file extensions
+	        String fileExtensions = "";
+	        for (int x=0; x < Constants.ANNOTATION_FILE_EXTENSIONS.length; x++) {
+	        	if (fileExtensions.length() > 0) {
+	        		fileExtensions += ";";
+	        	}
+	        	fileExtensions += "*" + Constants.ANNOTATION_FILE_EXTENSIONS[x];
+	        }
+	        
 	        
 	        res.setContentType("application/xml");
-	        res.getOutputStream().println("<UploadURL url='" + URL + "'/>");
+	        res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
 	        
 	      } catch (Exception e) {
 	        System.out.println("An error has occured in GenoPubServlet handleAnnotationFormUploadURLRequest - " + e.toString());
@@ -2406,6 +2405,7 @@ public class GenoPubServlet extends HttpServlet {
 	    
 	    String fileName = null;
 	    Transaction tx = null;
+	    StringBuffer bypassedFiles = new StringBuffer();
 	    
 		
 		try {
@@ -2499,17 +2499,35 @@ public class GenoPubServlet extends HttpServlet {
     	    				// it's a file part
     	    				FilePart filePart = (FilePart) part;
     	    				fileName = filePart.getFileName();
-    	    				if (fileName != null) {
+    	    				
+    	    				// Is this a valid file extension?
+    	    				if (!Util.isValidAnnotationFileType(fileName)) {
+    	    					String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  Unsupported file extension.";    	    					
+    	    					throw new UnsupportedFileTypeException(message);
+    	    				}
+    	    				
+    	    				// If this is a bar file, does the file name match a known segment name?
+    	    				if (fileName.toUpperCase().endsWith(".BAR")) {
+    	    					
+    	    					DictionaryHelper dh = DictionaryHelper.getInstance(sess);
+    	    					GenomeVersion genomeVersion = dh.getGenomeVersion(annotation.getIdGenomeVersion());
+    	    					
+    	    					if (!Util.fileHasSegmentName(fileName, genomeVersion)) {
+        	    					String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  File name is invalid because it does not start with a valid segment name.";    	    					
+    	    						throw new IncorrectFileNameException(message);
+    	    					}
+    	    				}
+    	    				
+	    					if (fileName != null) {
     	    					// the part actually contained a file
     	    					long size = filePart.writeTo(new File(annotationFileDir));
     	    				}
-    	    				else { 
-    	    				}
+
     	    			}
     	    		}
     	    		sess.flush();
     	    	} else {
-    	    		System.out.println("Bypassing upload of annotation " + annotation.getName() + " due to insufficient permissions.");
+    	    		throw new InsufficientPermissionException("Bypassing upload of annotation " + annotation.getName() + " due to insufficient permissions.");
     	    	}
     	    }
 
@@ -2524,23 +2542,35 @@ public class GenoPubServlet extends HttpServlet {
 			writer.write(doc);
 			
 
+		} catch (InsufficientPermissionException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			res.setStatus(this.ERROR_CODE_UNSUPPORTED_FILE_TYPE);
+			if (tx != null) {
+				tx.rollback();
+			}
+			this.reportError(res, e.getMessage());
+		}  catch (IncorrectFileNameException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			res.setStatus(this.ERROR_CODE_INCORRECT_FILENAME);
+			if (tx != null) {
+				tx.rollback();
+			}
+			this.reportError(res, e.getMessage());
+		} catch (UnsupportedFileTypeException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			res.setStatus(this.ERROR_CODE_UNSUPPORTED_FILE_TYPE);
+			if (tx != null) {
+				tx.rollback();
+			}
+			this.reportError(res, e.getMessage());
 		} catch (Exception e) {
-			res.setStatus(9999);
+			Logger.getLogger(this.getClass().getName()).warning(e.toString());
+			res.setStatus(this.ERROR_CODE_OTHER);
 			if (tx != null) {
 				tx.rollback();
 			}
 			e.printStackTrace();
-			Document doc = DocumentHelper.createDocument();
-			Element root = doc.addElement("Error");
-			root.addAttribute("message", e.getMessage());
-			try {
-				XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
-				writer.write(doc);				
-			} catch (Exception e1) {
-				
-			}
-			
-			
+			this.reportError(res, e.toString());
 		} finally {
 			
 			if (sess != null) {

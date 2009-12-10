@@ -4,11 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
 public class Util {
 
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-    
+
 	
 	private static final double    KB = Math.pow(2, 10);
 	
@@ -40,6 +41,48 @@ public class Util {
 		}
 	}
 	
+	public static boolean fileHasSegmentName(String fileName, GenomeVersion genomeVersion) {
+		// For now, just skip this check if segments haven't beens specified
+		// for this genome version
+		if (genomeVersion.getSegments() == null || genomeVersion.getSegments().size() == 0) {
+			return true;
+		}
+		
+		boolean isValid = false;
+		for (Iterator i = genomeVersion.getSegments().iterator(); i.hasNext();) {
+			Segment segment = (Segment)i.next();
+			String fileParts[] = fileName.split("\\.");
+			if (fileParts.length == 2) {
+				if (fileParts[0].equalsIgnoreCase(segment.getName())) {
+					isValid = true;
+					break;
+				}
+			}
+		}
+		return isValid;
+	}
+	
+	public static boolean isValidAnnotationFileType(String fileName) {		
+		boolean isValid = false;
+		for (int x=0; x < Constants.ANNOTATION_FILE_EXTENSIONS.length; x++) {
+			if (fileName.toUpperCase().endsWith(Constants.ANNOTATION_FILE_EXTENSIONS[x].toUpperCase())) {
+				isValid = true;
+				break;
+			}
+		}
+		return isValid;
+	}
+	
+	public static boolean isValidSequenceFileType(String fileName) {		
+		boolean isValid = false;
+		for (int x=0; x < Constants.SEQUENCE_FILE_EXTENSIONS.length; x++) {
+			if (fileName.toUpperCase().endsWith(Constants.SEQUENCE_FILE_EXTENSIONS[x].toUpperCase())) {
+				isValid = true;
+				break;
+			}
+		}
+		return isValid;
+	}
 	
 	
 	public static String formatDate(Date date) {

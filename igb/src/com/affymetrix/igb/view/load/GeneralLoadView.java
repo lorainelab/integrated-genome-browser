@@ -65,8 +65,6 @@ public final class GeneralLoadView extends JComponent
 	private static final String ENCODE_REGIONS_ID = "encode_regions";
 	private static final String CHOOSE = "Choose";
 	private AnnotatedSeqGroup curGroup = null;
-	private BioSeq curSeq = null;
-	private JComboBox kingdomCB;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
 	private JButton all_residuesB;
@@ -89,14 +87,6 @@ public final class GeneralLoadView extends JComponent
 		JPanel choicePanel = new JPanel();
 		choicePanel.setLayout(new BoxLayout(choicePanel, BoxLayout.X_AXIS));
 		choicePanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
-
-		/*kingdomCB = new JComboBox();
-		kingdomCB.setEnabled(false);
-		kingdomCB.setEditable(false);
-		choicePanel.add(new JLabel("Kingdom:"));
-		choicePanel.add(Box.createHorizontalStrut(5));
-		choicePanel.add(kingdomCB);
-		choicePanel.add(Box.createHorizontalGlue());*/
 
 		speciesCB = new JComboBox();
 						speciesCB.addItem(SELECT_SPECIES);
@@ -179,7 +169,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * Discover servers, species, etc., asynchronously.
 	 */
-	public void populateSpeciesData() {
+	private void populateSpeciesData() {
 		Application.getSingleton().setNotLockedUpStatus("Loading servers...");
 
 		Executor vexec = Executors.newSingleThreadExecutor();
@@ -245,7 +235,7 @@ public final class GeneralLoadView extends JComponent
 		return true;
 	}
 	
-	public boolean removeServer(String serverName, String serverURL, ServerType serverType) {
+	public static boolean removeServer(String serverName, String serverURL, ServerType serverType) {
 		return glu.removeServer(serverName, serverURL, serverType);
 	}
 
@@ -509,7 +499,7 @@ public final class GeneralLoadView extends JComponent
 		}
 
 		if (versionName.equals(SELECT_GENOME)) {
-					// Select the null group (and the null seq), if it's not already selected.
+			// Select the null group (and the null seq), if it's not already selected.
 			gmodel.setSelectedSeqGroup(null);
 			gmodel.setSelectedSeq(null);
 			return;
@@ -634,8 +624,6 @@ public final class GeneralLoadView extends JComponent
 		clearFeaturesTable();
 
 		disableAllButtons();
-
-		//this.glu.initSeq(versionName);	// Make sure the chromosome sequences are initialized.
 	}
 
 	/**
@@ -652,16 +640,8 @@ public final class GeneralLoadView extends JComponent
 		if (aseq == null) {
 			clearFeaturesTable();
 			disableAllButtons();
-			curSeq = null;
 			return;
 		}
-		if (curSeq == aseq) {
-			if (DEBUG_EVENTS) {
-				System.out.println("GeneralLoadView.seqSelectionChanged(): group was same as previous.");
-			}
-			return;
-		}
-		curSeq = aseq;
 
 		// validate that this sequence is in our group.
 		AnnotatedSeqGroup group = aseq.getSeqGroup();
@@ -787,7 +767,8 @@ public final class GeneralLoadView extends JComponent
 		col.setPreferredWidth(maxFeatureNameLength);
 
 		// Don't enable combo box for full genome sequence
-		TableWithVisibleComboBox.setComboBoxEditors(this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !this.IsGenomeSequence());
+		TableWithVisibleComboBox.setComboBoxEditors(
+				this.feature_table, FeaturesTableModel.LOAD_STRATEGY_COLUMN, !GeneralLoadView.IsGenomeSequence());
 
 		
 		/* COMMENTED OUT.  The Track Info table makes the data load view
@@ -901,7 +882,7 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
-	static boolean IsGenomeSequence() {
+	private static boolean IsGenomeSequence() {
 		// hardwiring names for genome and encode virtual seqs, need to generalize this
 		BioSeq curSeq = gmodel.getSelectedSeq();
 		final String seqID = curSeq == null ? null : curSeq.getID();

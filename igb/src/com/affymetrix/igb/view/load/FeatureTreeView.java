@@ -84,7 +84,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		tree_panel.add(serverPrefsB);
 
 		tree = new JTree();
-		tree.setPreferredSize(new Dimension(tree.getMinimumSize().width, tree.getMaximumSize().height));
+		//tree.setPreferredSize(new Dimension(tree.getMinimumSize().width, tree.getPreferredSize().height));
 
 		 //Enable tool tips.
 		ToolTipManager.sharedInstance().registerComponent(tree);
@@ -106,9 +106,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		tree_scroller = new JScrollPane(tree);
 		tree_scroller.setAlignmentX(LEFT_ALIGNMENT);
 		tree_scroller.setAlignmentY(TOP_ALIGNMENT);
-		tree_scroller.setPreferredSize(new Dimension(
+		/*tree_scroller.setPreferredSize(new Dimension(
 				tree_scroller.getMinimumSize().width,
-				tree_scroller.getPreferredSize().height));
+				tree_scroller.getPreferredSize().height));*/
 		clearTreeView();
 
 		tree_panel.add(tree_scroller);
@@ -138,10 +138,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 				.addComponent(tree_scroller))
         );
 
-		tree_panel.setPreferredSize(new Dimension(
+		/*tree_panel.setPreferredSize(new Dimension(
 				tree_panel.getMinimumSize().width,
 				tree_panel.getPreferredSize().height
-				));
+				));*/
 
 		this.add(tree_panel);
 	}

@@ -949,7 +949,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final void handleSourcesRequest(HttpServletRequest request, HttpServletResponse response, String date_init_string)
 			throws IOException {
 		response.setContentType(SOURCES_CONTENT_TYPE);
-		PrintWriter pw = response.getWriter();
+    PrintWriter pw = response.getWriter();
 
 		String xbase = getXmlBase(request);
 		printXmlDeclaration(pw);
@@ -1223,13 +1223,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		
 		//send response
 		response.setContentType(LOGIN_CONTENT_TYPE);
-	    response.setHeader("Cache-Control", "max-age=0, must-revalidate");
-	    // Set to expire far in the past.
-	    response.setHeader("Expires", "Sat, 6 May 1995 12:00:00 GMT");
-	    // Set standard HTTP/1.1 no-cache headers.
-	    response.setHeader("Cache-Control", "max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
-	    // Set standard HTTP/1.0 no-cache header.
-	    response.setHeader("Pragma", "no-cache");
+		response.setHeader("Cache-Control", "max-age=0, must-revalidate");
+		// Set to expire far in the past.
+		response.setHeader("Expires", "Sat, 6 May 1995 12:00:00 GMT");
+		// Set standard HTTP/1.1 no-cache headers.
+		response.setHeader("Cache-Control", "max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
+		// Set standard HTTP/1.0 no-cache header.
+		response.setHeader("Pragma", "no-cache");
 
 		PrintWriter pw = response.getWriter();
 		String xbase = getXmlBase(request);
@@ -1241,6 +1241,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			pw.println("  <MAINTAINER email=\"" + maintainer_email + "\" />");
 		}
 		pw.println("</REFRESH>");
+		
+		date_initialized = System.currentTimeMillis();
+    date_init_string = date_formatter.format(new Date(date_initialized));
 	}
 
 	/**

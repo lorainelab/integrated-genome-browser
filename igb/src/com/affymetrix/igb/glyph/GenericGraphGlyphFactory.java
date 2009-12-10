@@ -1,28 +1,18 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.igb.glyph;
 
-import java.util.*;
+import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
-import com.affymetrix.genometryImpl.*;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
-
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-import com.affymetrix.igb.util.*;
-import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.util.GraphGlyphUtils;
 import com.affymetrix.igb.view.SeqMapView;
-import java.awt.geom.Rectangle2D;
 
 public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
@@ -49,8 +39,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 
 	public void createGlyph(SeqSymmetry sym, SeqMapView smv) {
 		if (sym instanceof GraphSym) {
-			GraphSym gsym = (GraphSym) sym;
-			displayGraph(gsym, smv, false);
+			displayGraph((GraphSym)sym, smv, false);
 		} else {
 			System.err.println("GenericGraphGlyphFactory.createGlyph() called, but symmetry " +
 					"passed in is NOT a GraphSym: " + sym);
@@ -67,11 +56,10 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 *     will go into an attached tier, never a floating glyph.
 	 *  Also adds to the SeqMapView's GraphState-to-TierGlyph hash if needed.
 	 */
-	public GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map) {
+	private GraphGlyph displayGraph(GraphSym graf, SeqMapView smv, boolean update_map) {
 		BioSeq aseq = smv.getAnnotatedSeq();
 		BioSeq vseq = smv.getViewSeq();
 		BioSeq graph_seq = graf.getGraphSeq();
-		AffyTieredMap map = smv.getSeqMap();
 
 		if (check_same_seq && graph_seq != aseq) {
 			// may need to modify to handle case where GraphGlyph's seq is one of seqs in aseq's composition...
@@ -93,12 +81,15 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 		//       make multiple GraphGlyphs
 		//    Approach 3)
 		//       ???
+		
 
 		GraphSym newgraf = graf;
 		if (check_same_seq && graph_seq != vseq) {
+			if (vseq != null && "genome".equals(vseq.getID())) {
+				//TODO: Fix bug 1856102 "Genome View Bug" here. See Gregg's comments above.
+			}
 			// The new graph doesn't need a new GraphState or a new ID.
 			// Changing any graph properties will thus apply to the original graph.
-
 			SeqSymmetry mapping_sym = smv.transformForViewSeq(graf, graph_seq);
 			newgraf = GraphSymUtils.transformGraphSym(graf, mapping_sym, false);
 		}
@@ -112,7 +103,8 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 			graph_name = "Graph #" + System.currentTimeMillis();
 			newgraf.setGraphName(graph_name);
 		}
-		
+
+		AffyTieredMap map = smv.getSeqMap();
 		Rectangle2D.Double cbox = map.getCoordBounds();
 
 		GraphGlyph graph_glyph = displayGraphSym(newgraf, graf, cbox, map, smv, update_map);

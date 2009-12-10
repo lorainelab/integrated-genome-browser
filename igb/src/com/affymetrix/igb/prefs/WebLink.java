@@ -47,7 +47,7 @@ public final class WebLink {
 	}
 
 	/** Used to compute the hashCode and in the equals() method. */
-	String toComparisonString() {
+	private String toComparisonString() {
 		// Do NOT consider the "name" in tests of equality.
 		// We do not want to allow two links that are identical except for name.
 		// This is important in allowing users to over-ride the default links.
@@ -91,7 +91,7 @@ public final class WebLink {
 		Collections.sort(weblink_list, webLinkComp);
 	}
 
-	static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
+	private static Comparator<WebLink> webLinkComp = new Comparator<WebLink>() {
 
 		String sortString(WebLink wl) {
 			return wl.name + ", " + wl.original_regex + ", " + wl.url.toString() + ", " + wl.id_field_name;
@@ -121,7 +121,7 @@ public final class WebLink {
 			return Collections.<WebLink>emptyList();
 		}
 
-		ArrayList<WebLink> results = new ArrayList<WebLink>();
+		List<WebLink> results = new ArrayList<WebLink>();
 
 		// If the method name has already been used, then the annotStyle must have already been created
 		AnnotStyle style = AnnotStyle.getInstance(method, false);
@@ -134,11 +134,20 @@ public final class WebLink {
 		if (method != null) {
 			if (DEBUG) {
 				System.out.println("method is : " + method);
+				System.out.println("ID is : " + ID);
 			}
 			for (WebLink link : weblink_list) {
-				if (link.url != null && link.matches(method)) {
+				if (link.url == null) {
+					continue;
+				}
+				if (link.regexType == RegexType.TYPE && link.matches(method)) {
 					if (DEBUG) {
-						System.out.println("link " + link + " matches. ");
+						System.out.println("link " + link + " matches method.");
+					}
+					results.add(link);
+				} else if (link.regexType == RegexType.ID && link.matches(ID)) {
+					if (DEBUG) {
+						System.out.println("link " + link + " matches ID.");
 					}
 					results.add(link);
 				}

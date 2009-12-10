@@ -15,6 +15,15 @@ client features:
 + enhanced DAS/1 support (Ensembl is now accessible)
 + assorted GUI enhancements and bugfixes
 
+server features:
+
++ Introduced GenoPub module (See install instructions under das2_server/INSTALL.txt)
+++ GenoPub uses a MySQL database to store the meta data and annotations on each dataset.  
+++ A web-based tool (developed using the open source Adobe Flex SDK) allows end-users to easily upload, annotate, organize, and secure their genomic datasets.
+++ The datasets are organized into a folder structure that supports multiple views (e.g. patient, disease, factor).  
+++ Datasets can be restricted to particular user groups, enabling the controlled distribution of private along side public datasets.
+
+
 IGB-6.0
 client features:
 

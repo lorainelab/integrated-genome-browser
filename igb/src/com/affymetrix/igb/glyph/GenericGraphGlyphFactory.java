@@ -125,7 +125,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param update_map
 	 * @return
 	 */
-	private GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, Rectangle2D.Double cbox, AffyTieredMap map, SeqMapView smv, boolean update_map) {
+	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, Rectangle2D.Double cbox, AffyTieredMap map, SeqMapView smv, boolean update_map) {
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, graf.getGraphState());
 		graph_glyph.getGraphState().getTierStyle().setHumanName(newgraf.getGraphName());
 		GraphState gstate = graf.getGraphState();

@@ -109,6 +109,7 @@
 
 		<copy file="${igb}/resources/igb_default_prefs.xml" tofile="${webstart.dir}/igb_prefs.xml" />
 		<copy file="${jnlp.file.path}" tofile="${webstart.dir}/igb.jnlp" filtering="true" overwrite="true" />
+		<copy file="${jnlp.largefile.path}" tofile="${webstart.dir}/igb-large.jnlp" filtering="true" overwrite="true" />
 		<copy file="${jnlp.icon.path}" tofile="${webstart.dir}/${jnlp.icon.name}" />
 		<copy file="${jnlp.splashicon.path}" tofile="${webstart.dir}/${jnlp.splashicon.name}" />
 	</target>

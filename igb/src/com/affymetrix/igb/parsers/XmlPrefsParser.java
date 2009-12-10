@@ -124,6 +124,8 @@ public final class XmlPrefsParser {
 	 */
 	public static final String PLUGINS = "plugins";
 
+	private XmlPrefsParser() { }
+
 	/** Allows you to keep track of which files preferences were read from.
 	 *  Add as many names as you want to this list, and retrieve them later
 	 *  with {@link #getFilenames}.

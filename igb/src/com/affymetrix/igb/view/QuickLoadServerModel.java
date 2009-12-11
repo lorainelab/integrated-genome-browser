@@ -110,9 +110,11 @@ public final class QuickLoadServerModel {
 	public Map<String, String> getProps(String genomeName, String featureName) {
 		Map<String, String> props = null;
 		List<AnnotMapElt> annotList = getAnnotsMap(genomeName);
-		AnnotMapElt annotElt = AnnotMapElt.findTitleElt(featureName, annotList);
-		if (annotElt != null) {
-			return annotElt.props;
+		if (annotList != null) {
+			AnnotMapElt annotElt = AnnotMapElt.findTitleElt(featureName, annotList);
+			if (annotElt != null) {
+				return annotElt.props;
+			}
 		}
 		return props;
 	}

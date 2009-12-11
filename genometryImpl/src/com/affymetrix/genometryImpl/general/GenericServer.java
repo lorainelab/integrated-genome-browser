@@ -64,9 +64,10 @@ public final class GenericServer implements Comparable<GenericServer> {
 			tempURL = tempURL.substring(0, tempURL.length() - 1);
 		}
 		if (serverType.equals(ServerType.DAS)) {
-			if (tempURL.endsWith("/dsn")) {
+			return null;	// ignore DAS friendly hyperlinks for now
+			/*if (tempURL.endsWith("/dsn")) {
 				tempURL = tempURL.substring(0, tempURL.length() - 4);
-			}
+			}*/
 		} else if (serverType.equals(ServerType.DAS2)) {
 			if (tempURL.endsWith("/genome")) {
 				tempURL = tempURL.substring(0, tempURL.length() - 7);

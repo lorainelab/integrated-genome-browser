@@ -32,7 +32,8 @@
     name="Ensembl Human ID search"
     url="http://www.ensembl.org/Homo_sapiens/textview?idx=All&amp;q=$$"
   />
-
+-->
+<!--
   <annotation_url annot_type_regex="(?i).*EnsGene$" 
      name="Ensembl Human GeneView"
      url="http://www.ensembl.org/Homo_sapiens/geneview?gene=$$"
@@ -51,10 +52,13 @@
   />
 
 <!--Regular expression to identify Ensembl Mus musculus gene transcript ids -->
+<!--Commented out temporarily-->
+<!--
 	<annotation_url annot_id_regex="^ENSMUST\d+(\.\d+)?$"
      name="Ensembl GeneView"
      url="http://www.ensembl.org/Mus_musculus/geneview?gene=$$"
   />
+  -->
 
   <!--Regular expression to identify Ensembl Rattus norvegicus gene transcript ids -->
 	<annotation_url annot_id_regex="^ENSRNOT\d+(\.\d+)?$"

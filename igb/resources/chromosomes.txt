@@ -20,6 +20,22 @@ chr19	19
 chr20	20
 chr21	21
 chr22	22
+chr23	23
+chr24	24
+chr25	25
+chr26	26
+chr27	27
+chr28	28
+chr29	29
+chr30	30
+chr31	31
+chr32	32
+chr33	33
+chr34	34
+chr35	35
+chr36	36
+chr37	37
+chr38	38
 chrX	X	arm_X
 chrY	Y
 chrM	M	chrMT	mitochondria	mitochondrion	NC_001709	chrM|11706

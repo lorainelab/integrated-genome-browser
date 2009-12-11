@@ -312,15 +312,17 @@ public final class IGB extends Application
 		return to_return;
 	}
 
-	private void init() {
-		InputStream synonyms = this.getClass().getResourceAsStream("/synonyms.txt");
-		if (synonyms != null) {
-			try {
-				SynonymLookup.getDefaultLookup().loadSynonyms(synonyms);
-			} catch (IOException ex) {
-				Logger.getLogger(IGB.class.getName()).log(Level.FINE, "Default synonyms file missing", ex);
-			}
+	private static void loadSynonyms(String file) {
+		try {
+			SynonymLookup.getDefaultLookup().loadSynonyms(IGB.class.getResourceAsStream(file));
+		} catch (IOException ex) {
+			Logger.getLogger(IGB.class.getName()).log(Level.FINE, "Problem loading default synonyms file " + file, ex);
 		}
+	}
+
+	private void init() {
+		loadSynonyms("/synonyms.txt");
+		loadSynonyms("/chromosomes.txt");
 
 		if ("Mac OS X".equals(System.getProperty("os.name"))) {
 			MacIntegration mi = MacIntegration.getInstance();

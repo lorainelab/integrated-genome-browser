@@ -49,6 +49,7 @@ import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.StateProvider;
 
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.bookmarks.Bookmark;
 import com.affymetrix.igb.bookmarks.BookmarkController;
 import com.affymetrix.igb.menuitem.*;
@@ -312,6 +313,15 @@ public final class IGB extends Application
 	}
 
 	private void init() {
+		InputStream synonyms = this.getClass().getResourceAsStream("/synonyms.txt");
+		if (synonyms != null) {
+			try {
+				SynonymLookup.getDefaultLookup().loadSynonyms(synonyms);
+			} catch (IOException ex) {
+				Logger.getLogger(IGB.class.getName()).log(Level.FINE, "Default synonyms file missing", ex);
+			}
+		}
+
 		if ("Mac OS X".equals(System.getProperty("os.name"))) {
 			MacIntegration mi = MacIntegration.getInstance();
 			if (this.getIcon() != null) {

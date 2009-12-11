@@ -7,6 +7,8 @@
 <server type="das2" name="Bioviz" url="http://bioviz.org/das2/genome" />
 <server type="quickload" name="Bioviz" url="http://bioviz.org/quickload/"/>
 
+<server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das" />
+
 
   <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
        parameters:

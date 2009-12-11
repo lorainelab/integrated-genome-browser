@@ -4,7 +4,7 @@
 	<property name="das2_genopub_mode"    value="false"/>
 	
 
-	<target name="common-init" depends="init">
+	<target name="common-init" depends="init,extras-init,svn-init">
     <tstamp/>
 
 		<!-- directory paths -->
@@ -16,7 +16,9 @@
 
 		<property name="deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_DAS2_HERE" />
 
-		<property name="build.version"   value="${DSTAMP}" />
+		<condition property="build.version" value="${svn.info.rev}" else="${DSTAMP}">
+			<isset property="svn.info.rev" />
+		</condition>
 		
 		<!-- file paths -->
 		<property name="genopub.web.xml" value="${das2server}/web.xml" />
@@ -67,9 +69,6 @@
 		<!-- Java VM configuration -->
 		<property name="igb.jvmargs" value="-Xms32m -Xmx1024m" />
 
-		<!-- Configuration for pmd -->
-		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />
-		<available classname="net.sourceforge.pmd.cpd.CPDTask" property="have.cpd" />
 
 		<filter token="build.version"  value="${build.version}" />
 		<filter token="jnlp.version"  value="${jnlp.version}" />
@@ -83,6 +82,22 @@
 		<condition property="context.xml" value="${genopub.context.xml}" else="${classic.context.xml}">
 			<istrue value="${das2_genopub_mode}" />
 		</condition>
+	</target>
+
+	<target name="extras-init" unless="run.extras-init">
+		<!-- Configuration for extra ant libraries -->
+		<available classname="net.sourceforge.pmd.ant.PMDTask" property="have.pmd" />
+		<available classname="net.sourceforge.pmd.cpd.CPDTask" property="have.cpd" />
+		<available classname="org.tigris.subversion.svnant.SvnTask" property="have.svnant" />
+		<property name="run.extras-init" value="true" />
+	</target>
+
+	<target name="svn-init" depends="extras-init" if="have.svnant" unless="run.svn-init">
+		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" />
+		<svn>
+			<info target="${basedir}" />
+		</svn>
+		<property name="run.svn-init" value="true" />
 	</target>
 	
 

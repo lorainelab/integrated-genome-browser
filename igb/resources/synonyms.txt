@@ -1,7 +1,7 @@
 A_gambiae_Jul_2003	Anopheles_Jul_2003	Ag	ag	ag:Jul_2003	Ag:Jul_2003
 A_thaliana_Apr_2008	TAIR8	tair8	Tair8
 A_thaliana_Jan_2004	At:NCBIv5	At:NCBI5	at.NCBIv5	at5	NCBIv5	TIGRv5	at:TIGRv5	At:TIGRv5	at:Jan_2004	At:Jan_2004	TAIR7	tair7	Tair7
-A_thaliana_Jun_2009	TAIR9	tair9	Tair9
+A_thaliana_Jun_2009	TAIR9	tair9	Tair9	A_thaliana_TAIR9
 B_taurus_Aug_2006	bosTau3	Cow_Aug_2006
 B_taurus_Mar_2005	bosTau2	Cow_Mar_2005
 B_taurus_Oct_2007	bosTau4	Cow_Oct_2007

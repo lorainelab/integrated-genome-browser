@@ -351,7 +351,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		if (bounds == null) {
 			return null;
 		}
-		if (bounds.y < y) {
+		if (!bounds.contains(x, y)) {
 			return null;
 		}
 

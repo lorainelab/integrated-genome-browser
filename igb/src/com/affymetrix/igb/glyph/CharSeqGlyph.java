@@ -133,21 +133,24 @@ public final class CharSeqGlyph extends SequenceGlyph
 
 	private void drawResidueRectangles(Graphics g, double pixelsPerBase, String str) {
 		for (int j = 0; j < str.length(); j++) {
-			if (str.charAt(j) == 'A') {
+			char charAt = str.charAt(j);
+			if (charAt == 'A' || charAt == 'a') {
 				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_A_COLOR, default_A_color));
-			} else if (str.charAt(j) == 'T') {
+			} else if (charAt == 'T' || charAt == 't') {
 				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_T_COLOR, default_T_color));
-			} else if (str.charAt(j) == 'G') {
+			} else if (charAt == 'G' || charAt == 'g') {
 				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_G_COLOR, default_G_color));
-			} else if (str.charAt(j) == 'C') {
+			} else if (charAt == 'C' || charAt == 'c') {
 				g.setColor(UnibrowPrefsUtil.getColor(UnibrowPrefsUtil.getTopNode(), PREF_C_COLOR, default_C_color));
+			} else {
+				continue;
 			}
-			if (str.charAt(j) == 'A' || str.charAt(j) == 'T' || str.charAt(j) == 'G' || str.charAt(j) == 'C') {
-				//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
-				int offset = (int) (j * pixelsPerBase);
-				//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
-				g.fillRect(pixelbox.x + offset, pixelbox.y, (int) Math.ceil(pixelsPerBase), pixelbox.height);
-			}
+
+			//Create a colored rectangle.
+			//We calculate the floor of the offset as we want the offset to stay to the extreme left as possible.
+			int offset = (int) (j * pixelsPerBase);
+			//ceiling is done to the width because we want the width to be as wide as possible to avoid losing pixels.
+			g.fillRect(pixelbox.x + offset, pixelbox.y, (int) Math.ceil(pixelsPerBase), pixelbox.height);
 		}
 	}
 

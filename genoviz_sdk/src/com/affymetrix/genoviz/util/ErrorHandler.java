@@ -25,13 +25,6 @@ import javax.swing.*;
  */
 public abstract class ErrorHandler {
 
-	private static boolean print_stack_traces = true;
-
-	/** Determines whether stack traces will be printed by the errorPanel routine. */
-	public static void setPrintStackTraces(boolean b) {
-		print_stack_traces = b;
-	}
-
 	/** Error panel with default title. */
 	public static void errorPanel(String message) {
 		errorPanel("ERROR", message);
@@ -92,16 +85,14 @@ public abstract class ErrorHandler {
 				cause = cause.getCause();
 			}
 		}
-		System.err.println(title+": "+message);
+		System.err.println(title + ": " + message);
 		if (e != null) {
-			if (print_stack_traces) {
-				if (e instanceof FileNotFoundException) {
-					// do nothing.  Error already printed above, stack trace not usually useful
-					//System.err.println("FileNotFoundException: " + e.getMessage());
-				}
-				else {
-					e.printStackTrace(System.err);
-				}
+			if (e instanceof FileNotFoundException) {
+				// do nothing.  Error already printed above, stack trace not usually useful
+				//System.err.println("FileNotFoundException: " + e.getMessage());
+			} else {
+				message += "\nSee console output for more details about this error.";
+				e.printStackTrace(System.err);
 			}
 		}
 

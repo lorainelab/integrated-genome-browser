@@ -384,6 +384,7 @@
     </mx:State>
     <mx:State name="GuestState" basedOn="UserState">
       <mx:RemoveChild target="{dictionaryView}"/>
+      <mx:RemoveChild target="{changePasswordButton}"/>
     </mx:State>
   </mx:states>
 </mx:Application>

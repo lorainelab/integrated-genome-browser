@@ -162,6 +162,9 @@ public class Annotation implements Owned {
 		Element root = doc.addElement("Annotation");
 		
 		GenomeVersion genomeVersion = dh.getGenomeVersion(this.getIdGenomeVersion());
+		if (genomeVersion == null) {
+			System.out.println("Unable to find genome version " + this.getIdGenomeVersion() + " for annotation " + this.getName());
+		}
 				
 		root.addAttribute("idAnnotation", this.getIdAnnotation().toString());
 		root.addAttribute("label", this.getName());
@@ -292,6 +295,21 @@ public class Annotation implements Owned {
 		    }
 	    }
 	    return isExtension;
+	}
+	
+	public int getFileCount(String data_root) throws IOException {
+		int fileCount = 0;
+		String filePath = getDirectory(data_root);
+	    File dir = new File(filePath);
+	    
+	    if (dir.exists()) {
+		    // Delete the files in the directory
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+		    	fileCount = childFileNames.length;
+		    }
+	    }
+	    return fileCount;
 	}
 	
 	public String getQualifiedFileName(String data_root) {

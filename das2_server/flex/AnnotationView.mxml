@@ -285,6 +285,8 @@
         
         private var reassignIsMove:Boolean = false;
         
+        private var refreshDictionaries:Boolean = false;
+        
         private var itemToRemove:Object = null;
         private var itemsToRemove:Array = new Array();
         
@@ -447,7 +449,10 @@
 		    // of the organism dropdown selection and re-select it
 		    // after the dictionaries are refreshed.
 		    organismFilterToSelect = organismCombo.selectedItem;
-		    parentApplication.getDictionaries.send();        			
+		    
+		    // Next time we refresh annotations, refresh the dictionary
+		    // dropdowns
+		    this.refreshDictionaries = true;      			
         }
         
         public function selectAnnotationFilter():void {
@@ -485,6 +490,16 @@
                     
 		private function onGetAnnotations(event:ResultEvent):void {
 			if (getAnnotations.lastResult.name() == "Annotations") {
+				
+				// We need to refresh dictionaries after we have made
+				// the request to refresh annotations; otherwise, the
+				// asynchronous calls make the dictionary helper's
+				// hash entries blank.
+				if (this.refreshDictionaries) {
+					// Refresh the dictionaries so that the dropdowns are up-to-date.
+					this.refreshDictionaries = false;
+					parentApplication.getDictionaries.send();
+				}
 				
 				annotationsTree.selectedItem = null;
 				
@@ -1045,13 +1060,12 @@
 		  	this.dirtyOrganism.resetDirty();
 		  	
 		  	
+		  	
 		  	if (itemsToRemove.length == 0) {
+		  		this.refreshDictionaries = true;
 			  	refreshAnnotations();			  		
 		  	}
 		  	
-		    // Refresh the dictionaries so that the dropdowns are up-to-date.
-			parentApplication.getDictionaries.send();
-				
 		  } else if (deleteOrganism.lastResult.name() == "Error") {
 			Alert.show(deleteOrganism.lastResult.@message);
 		  } else {
@@ -1126,11 +1140,10 @@
 		  	this.dirtyGenomeVersion.resetDirty();
 
 			if (itemsToRemove.length == 0) {
+				this.refreshDictionaries = true;
 			  	refreshAnnotations();
 			}
 		  	
-		  	// Refresh the dictionaries so that the dropdowns are up-to-date.
-			parentApplication.getDictionaries.send();	
 			
 		  } else if (deleteGenomeVersion.lastResult.name() == "Error") {
 			Alert.show(deleteGenomeVersion.lastResult.@message);
@@ -2046,7 +2059,7 @@
   					        	disabledIcon="@Embed(source='assets/organism_new_disable.png')"  
   					        	toolTip="New organism"
 								styleName="linkMenuButton"   					        	
-  					        	click="{addItem('Organism')}" 
+  					        	click="{addItem('Species')}" 
   					        	labelPlacement="right" textAlign="left" id="linkbutton1"/>
   					        <mx:VRule height="20" id="vrule3" width="2"/>
   					        <mx:LinkButton label="Duplicate" styleName="menuLabelSmall" id="duplicateButton" 

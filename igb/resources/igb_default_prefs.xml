@@ -9,6 +9,7 @@
 
 <server type="das" name="UCSC" url="http://genome.cse.ucsc.edu/cgi-bin/das" />
 
+<server type="quickload" name="HughesLab" url="http://hugheslab.ccbr.utoronto.ca/igb/" />
 
   <!-- <annotation_url> associates a "method" or "id" regular expression with a URL.
        parameters:

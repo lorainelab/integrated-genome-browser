@@ -18,6 +18,8 @@
 	</security>
 	<resources>
 		<java version="1.6+" initial-heap-size="32m" max-heap-size="2048m"/>
+		<property name="http.agent" value="IGB/@jnlp.version@ +LargeMem (Webstart)" />
+		<property name="com.apple.macos.useScreenMenuBar" value="true" />
 		<jar href="igb.jar" main="true" />
 		<jar href="affx_fusion.jar" />
 		<jar href="freehep-2.1.1.jar" download="lazy" />

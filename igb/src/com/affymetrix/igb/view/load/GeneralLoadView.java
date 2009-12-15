@@ -511,12 +511,42 @@ public final class GeneralLoadView extends JComponent
 			group = gmodel.getSeqGroup(GeneralLoadUtils.versionName2species.get(versionName));
 		}
 
-		initVersion(versionName);
-		gmodel.setSelectedSeqGroup(group);
+		speciesCB.setEnabled(false);
+		versionCB.setEnabled(false);
+		(new InitVersionWorker(versionName, group)).execute();	
+	}
 
-		// TODO: Need to be certain that the group is selected at this point!
-		gmodel.setSelectedSeq(group.getSeq(0));
-	
+
+	/**
+	 * Run initialization of version on thread, so we don't lock up the GUI.
+	 * Merge with initVersion();
+	 */
+	private class InitVersionWorker extends SwingWorker<Void, Void> {
+
+		private final String versionName;
+		private final AnnotatedSeqGroup group;
+
+		InitVersionWorker(String versionName, AnnotatedSeqGroup group) {
+			this.versionName = versionName;
+			this.group = group;
+		}
+
+		@Override
+		public Void doInBackground() {
+			Application.getSingleton().setNotLockedUpStatus("Loading chromosomes...");
+			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			Application.getSingleton().setStatus("", false);
+			speciesCB.setEnabled(true);
+			versionCB.setEnabled(true);
+			gmodel.setSelectedSeqGroup(group);
+			// TODO: Need to be certain that the group is selected at this point!
+			gmodel.setSelectedSeq(group.getSeq(0));
+		}
 	}
 
 

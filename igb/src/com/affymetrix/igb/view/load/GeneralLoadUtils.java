@@ -518,7 +518,7 @@ public final class GeneralLoadUtils {
 	 * Make sure this genome version has been initialized.
 	 * @param versionName
 	 */
-	static void initVersionAndSeq(final String versionName) {
+	static synchronized void initVersionAndSeq(final String versionName) {
 		if (versionName == null) {
 			return;
 		}

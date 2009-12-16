@@ -220,16 +220,40 @@ public class AnnotationQuery {
 		Document doc = DocumentHelper.createDocument();
 		Element root = doc.addElement("Annotations");
 		
+				
+		// Use hash to create XML Document.  Perform 2 passes so that organisms
+		// with populoated genome versions (annotations or sequences) appear first
+		// in the list.
+
+		fillOrganismNodes(root, dictionaryHelper, genoPubSecurity, true);
+		fillOrganismNodes(root, dictionaryHelper, genoPubSecurity, false);
+
+		return doc;
+		
+	}
+	
+	private void fillOrganismNodes(Element root, DictionaryHelper dictionaryHelper, GenoPubSecurity genoPubSecurity, boolean fillPopulatedOrganisms) {
 		Element organismNode = null;
 		Element versionNode  = null;
 		String[] tokens;
-				
-		// Use hash to create XML Document
 		for (String organismBinomialName : organismToVersion.keySet()) {
 			TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organismBinomialName);
 			Organism organism = organismMap.get(organismBinomialName);
-
+			
+			boolean keep = false;
+			boolean isPopulated = hasPopulatedGenomes(organism);
+			if (fillPopulatedOrganisms) {
+				keep = isPopulated;
+			} else {
+				keep = !isPopulated;
+			}
+			
+			if (!keep) {
+				continue;
+			}
+			
 			organismNode = organism.getXML(genoPubSecurity).getRootElement();
+			organismNode.addAttribute("isPopulated", isPopulated ? "Y" : "N");
 			root.add(organismNode);
 			
 			// For each version, build up hierarchy
@@ -271,10 +295,50 @@ public class AnnotationQuery {
 			}
 			
 		}
-
-		return doc;
 		
 	}
+	
+	private boolean hasPopulatedGenomes(Organism organism) {
+		boolean isPopulated = false;
+		
+		TreeMap<GenomeVersion, ?> versionMap = organismToVersion.get(organism.getBinomialName());
+		if (versionMap != null) {
+			for (GenomeVersion genomeVersion : versionMap.keySet()) {
+				if (isPopulated) {
+					break;
+				}
+				List<Segment> segments = this.getSegments(organism, genomeVersion.getName());
+				if (segments != null && segments.size() > 0) {
+					isPopulated = true;
+					break;
+				}
+				TreeMap<String, ?> rootGroupings = versionToRootGroupings.get(genomeVersion.getName());
+				if (rootGroupings != null && rootGroupings.size() > 0) {
+					for (String groupingKey : rootGroupings.keySet()) {
+						
+						String[] tokens     = groupingKey.split(KEY_DELIM);
+						String groupingName          = tokens[0];
+						
+
+						TreeMap<String, ?> annotNameMap = groupingToAnnotations.get(groupingKey);
+						if (annotNameMap != null && annotNameMap.size() > 0) {
+							isPopulated = true;
+						}
+						
+						TreeMap<String, ?> childGroupings = groupingToGroupings.get(groupingKey);
+						if (childGroupings != null && childGroupings.size() > 0) {
+							isPopulated = true;
+						}
+					}
+				}
+				
+				
+			}
+		}
+		return isPopulated;
+	}
+	
+
 	
 	private void hashAnnotations(List<Object[]> annotationGroupingRows, List<Object[]> annotationRows, List<Segment> segmentRows, DictionaryHelper dictionaryHelper) {
 
@@ -624,6 +688,7 @@ public class AnnotationQuery {
 				} else {
 					groupingNode = parentNode;					
 				}
+				
 				
 				// For each annotation
 				TreeMap<String, ?> annotNameMap = groupingToAnnotations.get(groupingKey);

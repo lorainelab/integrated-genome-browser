@@ -92,6 +92,10 @@
 	[Bindable]
     [Embed(source="assets/genome_version.png")]
     public var iconGenomeVersion:Class;
+    
+    	[Bindable]
+    [Embed(source="assets/genome_version.png")]
+    public var iconGenomeVersionFaded:Class;
 	
 	[Bindable]
     [Embed(source="assets/folder.gif")]
@@ -108,6 +112,10 @@
 	[Bindable]
     [Embed(source="assets/organism.png")]
     public var iconOrganism:Class;
+
+	[Bindable]
+    [Embed(source="assets/organism_faded.png")]
+    public var iconOrganismFaded:Class;
     
     [Bindable]
     [Embed(source="assets/comment.png")]

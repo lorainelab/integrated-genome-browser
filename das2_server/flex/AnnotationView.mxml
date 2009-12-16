@@ -308,7 +308,11 @@
               
 		public function getTreeIcon(item:Object):Class {
 			if (item.name() == "Organism") {
-				return parentApplication.iconOrganism;
+				if (item.@isPopulated == "Y") {
+					return parentApplication.iconOrganism;
+				} else {
+					return parentApplication.iconOrganismFaded;
+				}
 			} else if (item.name() == "AnnotationGrouping") {
 				if (item.@idUserGroup != '') {
 					return parentApplication.iconAnnotationGroupingForGroup;					
@@ -316,7 +320,11 @@
 					return parentApplication.iconAnnotationGrouping;										
 				}
 			} else if (item.name() == "GenomeVersion") {
-				return parentApplication.iconGenomeVersion;
+				if (item.children() != null && item.children().length() > 0) {
+					return parentApplication.iconGenomeVersion;				
+				} else {
+					return parentApplication.iconGenomeVersionFaded;
+				}
 			} else if (item.name() == "Annotation") {
 				if (item.@codeVisibility == "MEM") {
 					return parentApplication.iconAnnotationMember;
@@ -682,10 +690,13 @@
 				// expand out to first folder level for all organisms, genome versions.
 				annotationsTree.expandItem(getAnnotations.lastResult, true);
   				for each(var organism:Object in getAnnotations.lastResult..Organism) {
-  					annotationsTree.expandItem(organism, true);
-  				}
-  				for each(var version:Object in getAnnotations.lastResult..GenomeVersion) {
-  					annotationsTree.expandItem(version, true);
+  					if (organism.@isPopulated == "Y") {
+	  					annotationsTree.expandItem(organism, true);  	
+	  										
+		  				for each(var version:Object in organism.GenomeVersion) {
+  							annotationsTree.expandItem(version, true);
+  						}
+  					}
   				}
   				callLater(selectTreeItem);
 			}
@@ -704,7 +715,9 @@
 
 		private function expandAllAnnotationNodes():void {
   			for each(var organism:Object in getAnnotations.lastResult..Organism) {
-	  			annotationsTree.expandChildrenOf(organism,true);
+  				if (organism.@isPopulated == "Y") {
+		  			annotationsTree.expandChildrenOf(organism,true);
+  				}
   			}
   			
 

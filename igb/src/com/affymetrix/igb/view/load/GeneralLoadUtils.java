@@ -1,6 +1,5 @@
 package com.affymetrix.igb.view.load;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
@@ -518,7 +517,7 @@ public final class GeneralLoadUtils {
 	 * Make sure this genome version has been initialized.
 	 * @param versionName
 	 */
-	static synchronized void initVersionAndSeq(final String versionName) {
+	static void initVersionAndSeq(final String versionName) {
 		if (versionName == null) {
 			return;
 		}

@@ -49,6 +49,8 @@ import com.affymetrix.igb.view.SeqMapView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
@@ -101,7 +103,26 @@ public final class GeneralLoadView extends JComponent
 		//choicePanel.add(Box.createHorizontalGlue());
 
 		choicePanel.add(Box.createHorizontalStrut(50));
-		versionCB = new JComboBox();
+		versionCB = new JComboBox() {
+			/**
+			 * Default implementation of addListener permits the same class
+			 * to be added as a listener multiple times, causing it to be
+			 * notified of an event multiple times.
+			 *
+			 * This is a quick kludge to prevent a listener from being added
+			 * multiple times.  Hopefully this can be removed once we
+			 * sort out adding and removing ItemListeners.
+			 */
+			@Override public void addItemListener(ItemListener aListener) {
+				for (ItemListener listener :  this.getItemListeners()) {
+					if (listener == aListener) {
+						Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Attempt to add duplicate ItemListener, ignoring");
+						return;
+					}
+				}
+				super.addItemListener(aListener);
+			}
+		};
 		versionCB.addItem(SELECT_GENOME);
 		versionCB.setMaximumSize(new Dimension(versionCB.getPreferredSize().width*4, versionCB.getPreferredSize().height));
 		versionCB.setEnabled(false);

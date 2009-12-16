@@ -112,8 +112,9 @@ public final class DasSource {
       Document doc = XMLUtils.getDocument(entry_request);
       Element top_element = doc.getDocumentElement();
       NodeList segments = doc.getElementsByTagName("SEGMENT");
-      System.out.println("segments: " + segments.getLength());
-      for (int i=0; i< segments.getLength(); i++)  {
+	  int length = segments.getLength();
+      System.out.println("segments: " + length);
+      for (int i=0; i< length; i++)  {
 	Element seg = (Element)segments.item(i);
         String segid = seg.getAttribute("id");
 	String startstr = seg.getAttribute("start");

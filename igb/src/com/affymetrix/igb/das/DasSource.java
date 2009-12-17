@@ -153,7 +153,7 @@ public final class DasSource {
 	entry_point.setDescription(description);
 	entry_point.setInterval(start, stop, forward);
 	entry_point.setSubParts(has_subparts);
-	this.addEntryPoint(entry_point);
+	//this.addEntryPoint(entry_point);
       }
     }
     catch (Exception ex) {

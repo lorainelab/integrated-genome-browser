@@ -686,7 +686,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     popup.add(save_menu);
     save_menu.add(save_bed_action);
 
-    popup.add(delete_action);
+    //popup.add(delete_action);
 
     popup.add(new JSeparator());
     popup.add(sym_summarize_action);

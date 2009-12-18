@@ -548,7 +548,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 			//int end = matcher.end(0) + residue_offset;
 			GlyphI gl = new FillRectGlyph();
 			gl.setColor(hitcolor);
-			if (seq_glyph != null) {
+			/*if (seq_glyph != null) {
 				double offset = forward ? 0 : seq_glyph.getCoordBox().height / 2;
 
 				gl.setCoords(start, seq_glyph.getCoordBox().y, end - start, seq_glyph.getCoordBox().height);
@@ -556,11 +556,11 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 
 				// when adding as a child of the CharSeqGlyph, it automatically gets re-positioned, so we move it back where we want it
 				gl.setCoords(start, seq_glyph.getCoordBox().y + offset, end - start, seq_glyph.getCoordBox().height / 2);
-			} else {
+			} else {*/
 				double pos = forward ? 10 : 15;
 				gl.setCoords(start, pos, end - start, 10);
 				axis_tier.addChild(gl);
-			}
+//			}
 			glyphs.add(gl);
 			hit_count++;
 		}

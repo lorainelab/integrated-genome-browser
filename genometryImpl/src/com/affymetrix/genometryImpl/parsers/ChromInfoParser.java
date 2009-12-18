@@ -22,16 +22,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 
 public final class ChromInfoParser {
 	private static final Pattern tab_regex = Pattern.compile("\t");
-	//static BioSeq default_seq_template = new BioSeq();
-
-	//BioSeq template_seq = default_seq_template;
-
-	/** Constructs a ChromInfoParser with a default template sequence. */
-	//public ChromInfoParser() { }
-
-	//public ChromInfoParser(BioSeq template) {
-	//template_seq = template;
-	//}
 
 	/**
 	 *  Parses a chrom_info.txt file, creates a new AnnotatedSeqGroup and
@@ -46,10 +36,19 @@ public final class ChromInfoParser {
 		while ((line = dis.readLine()) != null) {
 			if ( (line.length() == 0) || line.equals("") || line.startsWith("#"))  { continue; }
 			String[] fields = tab_regex.split(line);
-			if (fields.length <= 0) { continue; }
+			if (fields.length == 0) { continue; }
+			if (fields.length == 1) {
+				System.out.println("WARNING: chromInfo line does not match.  Ignoring: " + line);
+				continue;
+			}
 			String chrom_name = fields[0];
-
-			int chrLength = Integer.parseInt(fields[1]);
+			int chrLength = 0;
+			try {
+				chrLength = Integer.parseInt(fields[1]);
+			} catch (NumberFormatException ex) {
+				System.out.println("WARNING: chromInfo line does not match.  Ignoring: " + line);
+				continue;
+			}
 			BioSeq chrom = seq_group.getSeq(chrom_name);
 			if (chrom == null) {  // if chrom already in seq group, then don't add to list
 				chrom = seq_group.addSeq(chrom_name, chrLength);

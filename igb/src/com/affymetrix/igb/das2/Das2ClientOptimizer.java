@@ -19,9 +19,10 @@ import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
+import java.util.zip.ZipInputStream;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.useq.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
@@ -128,6 +129,7 @@ public final class Das2ClientOptimizer {
             if (DEBUG) {
                 System.out.println("  child count: " + prevcount);
             }
+
             ArrayList<SeqSymmetry> prev_overlaps = new ArrayList<SeqSymmetry>(prevcount);
             for (int i = 0; i < prevcount; i++) {
                 SeqSymmetry prev_request = cont_sym.getChild(i);
@@ -299,7 +301,7 @@ public final class Das2ClientOptimizer {
         buf.append(URLEncoder.encode(type.getID(), IGBConstants.UTF8));
         if (format != null) {
             buf.append(";");
-            buf.append("format=");
+            buf.append("format="); 
             buf.append(URLEncoder.encode(format, IGBConstants.UTF8));
         }
         String query_part = buf.toString();
@@ -433,7 +435,21 @@ public final class Das2ClientOptimizer {
         } else if (content_subtype.equals("bar")) {
             AddParsingLogMessage(content_subtype);
             feats = BarParser.parse(bis, gmodel, seq_group, type.getName(), false);
-        } else if (content_subtype.equals("bp2")) {
+        } else if (content_subtype.equals("useq")) {  
+        	AddParsingLogMessage(content_subtype);
+        	//find out what kind of data it is, graph or region, from the ArchiveInfo object
+        	ZipInputStream zis = new ZipInputStream(bis); 
+    		zis.getNextEntry(); 
+        	ArchiveInfo archiveInfo = new ArchiveInfo(zis);
+            if (archiveInfo.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)){
+            	USeqGraphParser gp = new USeqGraphParser();
+                feats = gp.parseGraphSyms(zis, gmodel, type.getName(), archiveInfo);
+            }
+            else {
+            	 USeqRegionParser rp = new USeqRegionParser();
+                 feats = rp.parse(zis, seq_group, type.getName(), false, archiveInfo);
+            }  
+        }else if (content_subtype.equals("bp2")) {
             AddParsingLogMessage(content_subtype);
             Bprobe1Parser bp1_reader = new Bprobe1Parser();
             // parsing probesets in bp2 format, also adding probeset ids
@@ -464,7 +480,6 @@ public final class Das2ClientOptimizer {
             PSLParser parser = new PSLParser();
             parser.enableSharedQueryTarget(true);
             // annotate target sequence
-
             DataInputStream dis = new DataInputStream(bis);
             parser.parse(dis, type.getName(), null, seq_group, null, false, true, false);
             // Note that here we specifically ignore the output of parser.parse, because it's already been added to the seq_group.
@@ -526,7 +541,7 @@ public final class Das2ClientOptimizer {
 			System.out.println("adding a child GraphSym to parent graph");
 		}
 		BioSeq aseq = cgraf.getGraphSeq();
-		GraphSym pgraf = getParentGraph(request_sym, aseq);
+		GraphSym pgraf = getParentGraph(request_sym, aseq, cgraf);
 
 		// since GraphSyms get a span automatically set to the whole seq when constructed, need to first
 		//    remove that span, then add overlap span from Das2FeatureRequestSym
@@ -543,11 +558,31 @@ public final class Das2ClientOptimizer {
 	}
 
 
-	private static GraphSym getParentGraph(Das2FeatureRequestSym request_sym, BioSeq aseq) {
+	private static GraphSym getParentGraph(Das2FeatureRequestSym request_sym, BioSeq aseq, GraphSym cgraf) {
 		// check and see if parent graph already exists
 		Das2Type type = request_sym.getDas2Type();
 		String id = type.getID();
 		String name = type.getName();
+		
+		//is it a useq graph? modify name and id for strandedness?
+		if (name.endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){
+			//strip off useq
+			id = id.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+			name = name.replace(USeqUtilities.USEQ_EXTENSION_WITH_PERIOD, "");
+			//add strand?
+			Object obj = cgraf.getProperty(GraphSym.PROP_GRAPH_STRAND);
+			if (obj != null){
+				String strand = null;
+				Integer strInt = (Integer)obj;
+				if (strInt.equals(GraphSym.GRAPH_STRAND_PLUS)) strand = "+";
+				else if (strInt.equals(GraphSym.GRAPH_STRAND_MINUS)) strand = "-";
+				if (strand != null){
+					id = id+strand;
+					name = name+strand;
+				}
+			}
+		}
+		
 		if (DEBUG) {
 			System.out.println("   child graph id: " + id);
 			System.out.println("   child graph name: " + name);

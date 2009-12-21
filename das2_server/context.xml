@@ -1,5 +1,5 @@
 <!-- $Id$ -->
-<Context path="/das2" docBase="/path/to/das2/servlet/" workDir="/path/to/das2/servlet/"  debug="0" reloadable="true">
+<Context path="/das2" docBase="/path/to/das2/servlet/" debug="0" reloadable="true">
 
 	<!-- Optimised Logging routine.  Configured to log in 'combined'
 	     log format. -->

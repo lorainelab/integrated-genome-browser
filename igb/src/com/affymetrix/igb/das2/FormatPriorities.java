@@ -2,6 +2,8 @@ package com.affymetrix.igb.das2;
 
 import java.util.Map;
 
+import com.affymetrix.genometryImpl.useq.USeqUtilities;
+
 
 /**
  *  FormatPriorities is intended to help the IGB DAS/2 client figure out
@@ -27,23 +29,25 @@ final class FormatPriorities {
 		"bgn",
 		"bps",
 		"cyt",
+		"useq",
 		"bed",
 		"psl",
 		"gff",
-		"bar",};
+		"bar"};
 
 	static String getFormat(Das2Type type) {
 		if (type.getID().endsWith(".bar")) {  // temporary way to recognize graph "types"...
 			return "bar";
 		}
+		if (type.getID().endsWith(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)) {
+			return USeqUtilities.USEQ_EXTENSION_NO_PERIOD;
+		}
 		if (type.getID().endsWith(".bed")) {
 			return "bed";
 		}
-
 		Map<String,String> type_formats = type.getFormats();
 		if (type_formats != null) {
 			for (String format : ordered_formats) {
-
 				if (type_formats.get(format) != null) {
 					return format;
 				}

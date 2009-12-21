@@ -23,6 +23,7 @@ import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
+import com.affymetrix.genometryImpl.useq.*;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -262,7 +263,8 @@ public abstract class ServerUtils {
 			return;
 		}
 
-		if (type_name.endsWith(".bar")) {
+		//if a bar or useq archive don't load just add
+		if (type_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(type_name).matches()) {
 			// String file_path = current_file.getPath();
 			// special casing so bar files are seen in types request, but not parsed in on startup
 			//    (because using graph slicing so don't have to pull all bar originalFile graphs into memory)
@@ -274,7 +276,7 @@ public abstract class ServerUtils {
 
 			return;
 		}
-
+		
 		if (!annots_map.isEmpty() && annots_map.containsKey(genome)) {
 			AnnotMapElt ame = AnnotMapElt.findFileNameElt(file_name, annots_map.get(genome));
 			if (ame == null) {
@@ -738,15 +740,22 @@ public abstract class ServerUtils {
 					AnnotatedSeqGroup genome,
 					ArrayList<String> graph_formats,
 					AnnotSecurity annotSecurity) {
-		
 		Map<String, SimpleDas2Type> genome_types = getGenomeTypes(genome, annotSecurity);
 
-		// Now add all of the bar graphs that were not picked up from getGenomeTypes()
+		// Now add all of the bar and useq graphs that were not picked up from getGenomeTypes()		
 		for (String type : genome.getTypeList()) {
+			System.out.println("\ttype\t"+type);
 			if (!genome_types.containsKey(type)) {
 				if (genome.isAuthorized(annotSecurity, type)) {
+					//actually this genome.hasFileExtension is BS! doesn't check in some instances
 					if (genome.hasFileExtension(data_root, annotSecurity, type, ".bar")) {
-						genome_types.put(type, new SimpleDas2Type(genome.getID(), graph_formats, genome.getProperties(annotSecurity, type))); 										
+						//first look to see if this is a useq archive (.useq)
+						if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()){
+							genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
+						}
+						//otherwise add everything else
+						else genome_types.put(type, new SimpleDas2Type(genome.getID(), graph_formats, genome.getProperties(annotSecurity, type))); 	
+						
 					} else {
 						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request."); 
 					}
@@ -759,7 +768,7 @@ public abstract class ServerUtils {
 	}
 
 	// iterate over seqs to collect annotation types
-	private static final Map<String, SimpleDas2Type> getGenomeTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity) {
+	private static final Map<String, SimpleDas2Type> getGenomeTypes(AnnotatedSeqGroup genome, AnnotSecurity annotSecurity) {		
 		List<BioSeq> seqList = genome.getSeqList();
 		Map<String,SimpleDas2Type> genome_types = new LinkedHashMap<String,SimpleDas2Type>();
 		for (BioSeq aseq : seqList) {

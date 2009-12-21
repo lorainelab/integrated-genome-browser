@@ -28,6 +28,8 @@ import com.affymetrix.genometryImpl.parsers.graph.BarParser;
 import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
+import com.affymetrix.genometryImpl.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.useq.USeqRegionParser;
 
 public final class GraphSymUtils {
 
@@ -226,6 +228,10 @@ public final class GraphSymUtils {
 
 		if (sname.endsWith(".bar"))  {
 			grafs = BarParser.parse(newstr, gmodel, seq_group, stream_name);
+		}
+		else if (sname.endsWith(".useq")) {
+			USeqGraphParser up = new USeqGraphParser();
+			grafs = up.parseGraphSyms(istr, gmodel, stream_name, null);
 		}
 		else if (sname.endsWith(".gr")) {
 			// If this is a newly-created seq group, then go ahead and add a new 

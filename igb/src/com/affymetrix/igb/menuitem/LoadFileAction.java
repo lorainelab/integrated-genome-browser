@@ -17,22 +17,21 @@ import com.affymetrix.genometryImpl.parsers.graph.ScoredIntervalParser;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.igb.Application;
+import com.affymetrix.genometryImpl.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.util.UniFileFilter;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.event.*;
 import javax.swing.*;
-
 import org.xml.sax.InputSource;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.gchp.AffyCnChpParser;
@@ -41,7 +40,6 @@ import com.affymetrix.genometryImpl.parsers.graph.CntParser;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-
 import com.affymetrix.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import org.xml.sax.SAXException;
@@ -81,7 +79,7 @@ public final class LoadFileAction {
 		chooser.addChoosableFileFilter(new UniFileFilter(
 						new String[]{"bed"}, "BED Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
-						new String[]{"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2", "ead"},
+						new String[]{"bps", "bgn", "brs", "bsnp", "brpt", "bnib", "bp1", "bp2", "ead","useq"},
 						"Binary Files"));
 		chooser.addChoosableFileFilter(new UniFileFilter("cyt", "Cytobands"));
 		chooser.addChoosableFileFilter(new UniFileFilter(
@@ -136,8 +134,7 @@ public final class LoadFileAction {
 	}
 
 	/** Load a file into the global singleton genometry model. */
-	private static void loadFile(GenometryModel gmodel,
-					FileTracker load_dir_tracker, JFrame gviewerFrame) {
+	private static void loadFile(GenometryModel gmodel, FileTracker load_dir_tracker, JFrame gviewerFrame) {
 
 		MergeOptionFileChooser chooser = getFileChooser();
 		File currDir = load_dir_tracker.getFile();
@@ -192,9 +189,7 @@ public final class LoadFileAction {
 
 	
 
-	private static BioSeq loadFilesIntoSeq(
-					File[] fils, JFrame gviewerFrame, GenometryModel gmodel,
-					AnnotatedSeqGroup seq_group, BioSeq seq) {
+	private static BioSeq loadFilesIntoSeq( File[] fils, JFrame gviewerFrame, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq seq) {
 		BioSeq new_seq = null;
 		for (File cfil : fils) {
 			String file_name = cfil.toString();
@@ -211,9 +206,7 @@ public final class LoadFileAction {
 		return new_seq;
 	}
 
-	private static BioSeq load(JFrame gviewerFrame, File annotfile,
-					GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq)
-					throws IOException {
+	private static BioSeq load(JFrame gviewerFrame, File annotfile, GenometryModel gmodel, AnnotatedSeqGroup seq_group, BioSeq input_seq) throws IOException {
 		BioSeq aseq = null;
 		InputStream fistr = null;
 		try {
@@ -229,8 +222,14 @@ public final class LoadFileAction {
 				StringBuffer sb = new StringBuffer();
 				fistr = GeneralUtils.getInputStream(annotfile, sb);
 				String stripped_name = sb.toString();
-
-				if (GraphSymUtils.isAGraphFilename(stripped_name)) {
+				
+				//is it a useq graph archive?
+				boolean useqGraphArchive = false;
+				ArchiveInfo ai = ArchiveInfo.fetchArchiveInfo(annotfile);
+				if (ai != null && ai.getDataType().equals(ArchiveInfo.DATA_TYPE_VALUE_GRAPH)) useqGraphArchive = true;
+			
+				//is it a graph file?
+				if (GraphSymUtils.isAGraphFilename(stripped_name) || useqGraphArchive) {
 					if (seq_group == null) {
 						ErrorHandler.errorPanel(gviewerFrame, "ERROR", "Must select a a genome before loading a graph.  " +
 										"Graph data must be merged with already loaded genomic data.", null);
@@ -238,6 +237,7 @@ public final class LoadFileAction {
 						URL url = annotfile.toURI().toURL();
 						OpenGraphAction.loadGraphFile(url, seq_group, input_seq);
 					}
+				//nope load as non graph data
 				} else {
 					aseq = load(gviewerFrame, fistr, stripped_name, gmodel, seq_group, input_seq);
 				}
@@ -287,9 +287,7 @@ public final class LoadFileAction {
 	 *  The stream will be passed through uncompression routines
 	 *  if necessary.
 	 */
-	public static BioSeq load(JFrame gviewerFrame, InputStream instr,
-					String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, BioSeq input_seq)
-					throws IOException {
+	public static BioSeq load(JFrame gviewerFrame, InputStream instr, String stream_name, GenometryModel gmodel, AnnotatedSeqGroup selected_group, BioSeq input_seq) throws IOException {
 		if (selected_group == null) {
 			// this should never happen
 			throw new IOException("Must select a genome before loading a file");
@@ -406,6 +404,10 @@ public final class LoadFileAction {
 			BedParser parser = new BedParser();
 			// really need to switch create_container (last argument) to true soon!
 			parser.parse(str, gmodel, selected_group, true, annot_type, false);
+			return input_seq;
+		} 	else if (lcname.endsWith(".useq")) {
+			USeqRegionParser parser = new USeqRegionParser();
+			parser.parse(str, selected_group, stream_name, true, null);
 			return input_seq;
 		} else if (lcname.endsWith(".bgn")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bgn"));

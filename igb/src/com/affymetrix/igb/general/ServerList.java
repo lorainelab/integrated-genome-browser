@@ -225,6 +225,7 @@ public final class ServerList {
 	 * @param enabled boolean indicating whether this server is enabled.
 	 */
 	public static void addServerToPrefs(String url, String name, ServerType type, boolean authEnabled, String login, String password, boolean enabled) {
+		url = formatURL(url, type);
 		Preferences node = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(formatURL(url, type)));
 
 		node.put("name",  name);
@@ -329,8 +330,17 @@ public final class ServerList {
 	 * @return formatted URL
 	 */
 	private static String formatURL(String url, ServerType type) {
+		try {
+			/* remove .. and // from URL */
+			url = new URI(url).normalize().toASCIIString();
+		} catch (URISyntaxException ex) {
+			String message = "Unable to parse URL: '" + url + "'";
+			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, message, ex);
+			throw new IllegalArgumentException(message, ex);
+		}
 		switch (type) {
 			case DAS:
+			case DAS2:
 				return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
 			case QuickLoad:
 				return url.endsWith("/") ? url : url + "/";

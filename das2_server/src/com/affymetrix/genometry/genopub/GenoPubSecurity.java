@@ -677,7 +677,9 @@ public class GenoPubSecurity implements AnnotSecurity {
 		
 	}
 	
-	public boolean hasFileExtension(String data_root, String genomeVersionName, String annotationName, Object annotationId, String extension) {
+	
+	
+	public boolean isBarGraphData(String data_root, String genomeVersionName, String annotationName, Object annotationId) {
 		// When annotation is loaded directly from file system, just return true
 		if (!scrutinizeAccess) { 
 			return true;
@@ -692,13 +694,38 @@ public class GenoPubSecurity implements AnnotSecurity {
 		Map<Integer, QualifiedAnnotation> annotationMap = versionToAuthorizedAnnotationMap.get(genomeVersionName);
 		QualifiedAnnotation qa = annotationMap.get(annotationId);
 		try {
-			return qa.getAnnotation().hasFileExtension(data_root, extension);
+			return qa.getAnnotation().isBarGraphData(data_root);
 		} catch (Exception e) {
 			return false;
 		}
 		
 		
 	}
+	
+	public boolean isUseqGraphData(String data_root, String genomeVersionName, String annotationName, Object annotationId) {
+		// When annotation is loaded directly from file system, just return true
+		if (!scrutinizeAccess) { 
+			return true;
+		}
+
+		// If the annotation access is blocked, return false
+		if (!isAuthorized(genomeVersionName, annotationName, annotationId)) {
+			return false;
+		}
+
+		// Get the hash map of annotation ids this user is authorized to view
+		Map<Integer, QualifiedAnnotation> annotationMap = versionToAuthorizedAnnotationMap.get(genomeVersionName);
+		QualifiedAnnotation qa = annotationMap.get(annotationId);
+		try {
+			return qa.getAnnotation().isUseqGraphData(data_root);
+		} catch (Exception e) {
+			return false;
+		}
+		
+		
+	}
+	
+
 	
 	public String getSequenceDirectory(String data_root, AnnotatedSeqGroup genome) throws Exception {
 		if (scrutinizeAccess) {

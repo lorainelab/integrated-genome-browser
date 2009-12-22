@@ -18,12 +18,12 @@ import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.UcscPslSym;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.parsers.ChromInfoParser;
 import com.affymetrix.genometryImpl.parsers.IndexWriter;
 import com.affymetrix.genometryImpl.parsers.LiftParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genometryImpl.parsers.ProbeSetDisplayPlugin;
-import com.affymetrix.genometryImpl.useq.*;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -61,6 +61,12 @@ public abstract class ServerUtils {
 	
 	private static final String modChromInfo = "mod_chromInfo.txt";
 	private static final String liftAll = "liftAll.lft";
+	public static final ArrayList<String> BAR_FORMATS = new ArrayList<String>();
+	
+	static {
+		BAR_FORMATS.add("bar");
+	}
+
 	public static final void parseChromosomeData(File genome_directory, String genome_version) throws IOException {
 		File chrom_info_file = new File(genome_directory, modChromInfo);
 		if (chrom_info_file.exists()) {
@@ -388,7 +394,7 @@ public abstract class ServerUtils {
 
 
 
-		if (file_name != null && file_name.endsWith(".bar")) {
+		if (file_name != null && (file_name.endsWith(".bar") || USeqUtilities.USEQ_ARCHIVE.matcher(file_name).matches())) {
 			// String file_path = current_file.getPath();
 			// special casing so bar files are seen in types request, but not parsed in on startup
 			//    (because using graph slicing so don't have to pull all bar file graphs into memory)
@@ -738,7 +744,6 @@ public abstract class ServerUtils {
 	public static final Map<String, SimpleDas2Type> getTypes(
 					String data_root,
 					AnnotatedSeqGroup genome,
-					ArrayList<String> graph_formats,
 					AnnotSecurity annotSecurity) {
 		Map<String, SimpleDas2Type> genome_types = getGenomeTypes(genome, annotSecurity);
 
@@ -747,14 +752,11 @@ public abstract class ServerUtils {
 			System.out.println("\ttype\t"+type);
 			if (!genome_types.containsKey(type)) {
 				if (genome.isAuthorized(annotSecurity, type)) {
-					//actually this genome.hasFileExtension is BS! doesn't check in some instances
-					if (genome.hasFileExtension(data_root, annotSecurity, type, ".bar")) {
-						//first look to see if this is a useq archive (.useq)
-						if (USeqUtilities.USEQ_ARCHIVE.matcher(type).matches()){
-							genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type)));
-						}
-						//otherwise add everything else
-						else genome_types.put(type, new SimpleDas2Type(genome.getID(), graph_formats, genome.getProperties(annotSecurity, type))); 	
+					if (genome.isBarGraphData(data_root, annotSecurity, type)) {
+						genome_types.put(type, new SimpleDas2Type(genome.getID(), BAR_FORMATS, genome.getProperties(annotSecurity, type))); 	
+						
+					} else if (genome.isUseqGraphData(data_root, annotSecurity, type)) {
+						genome_types.put(type, new SimpleDas2Type(genome.getID(), USeqUtilities.USEQ_FORMATS, genome.getProperties(annotSecurity, type))); 	
 						
 					} else {
 						Logger.getLogger(ServerUtils.class.getName()).warning("Non-bar annotation " + type + " encountered, but does not match known GenoPub entry.  This annotation will not show in the types request."); 

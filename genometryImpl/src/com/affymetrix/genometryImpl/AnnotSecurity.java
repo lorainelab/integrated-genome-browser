@@ -1,5 +1,6 @@
 package com.affymetrix.genometryImpl;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /*
@@ -30,16 +31,24 @@ public interface AnnotSecurity {
 	public Map<String, Object> getProperties(String genomeVersionName, String annotationName, Object annotationId);
 	
 	/**
-	 * Determine if an annotation has a certain file extension
+	 * Determine if an annotation is bar graph data
 	 * 
 	 * @param data_root
 	 * @param genomeVersionName The name of the name version
 	 * @param annotationId The id of the annotation
-	 * @param extension The file extension
-	 * @return true if this annotation has the given file extension
+	 * @return true if this annotation is bar graph data
 	 */
-	public boolean hasFileExtension(String data_root, String genomeVersionName, String annotationName, Object annotationId, String extension);
+	public boolean isBarGraphData(String data_root, String genomeVersionName, String annotationName, Object annotationId);
 	
+	/**
+	 * Determine if an annotation is useq graph data
+	 * 
+	 * @param data_root
+	 * @param genomeVersionName The name of the name version
+	 * @param annotationId The id of the annotation
+	 * @return true if this annotation is bar graph data
+	 */
+	public boolean isUseqGraphData(String data_root, String genomeVersionName, String annotationName, Object annotationId);
 	
 	/**
 	 * Returns the sequence directory for a given genome version

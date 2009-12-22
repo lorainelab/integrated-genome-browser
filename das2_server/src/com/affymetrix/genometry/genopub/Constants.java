@@ -26,7 +26,8 @@ public class Constants {
 		".ead",
 		".gff", 
 		".gtf",
-		".psl"
+		".psl",
+		".useq"
 	};
 	
 	public static String[] SEQUENCE_FILE_EXTENSIONS = new String[] 

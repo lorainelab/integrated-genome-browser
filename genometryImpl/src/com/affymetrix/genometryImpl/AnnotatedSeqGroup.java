@@ -119,9 +119,12 @@ public class AnnotatedSeqGroup {
 		return props;
 	}
 	
-	public final boolean hasFileExtension(String data_root, AnnotSecurity annotSecurity, String type, String extension) {
-		 boolean isAuthorized =  annotSecurity.hasFileExtension(data_root, this.getID(), type, getAnnotationId(type), extension);
-		 return isAuthorized;
+	public final boolean isBarGraphData(String data_root, AnnotSecurity annotSecurity, String type) {
+		 return annotSecurity.isBarGraphData(data_root, this.getID(), type, getAnnotationId(type));
+	}
+	
+	public final boolean isUseqGraphData(String data_root, AnnotSecurity annotSecurity, String type) {
+		 return annotSecurity.isUseqGraphData(data_root, this.getID(), type, getAnnotationId(type));
 	}
 	
 

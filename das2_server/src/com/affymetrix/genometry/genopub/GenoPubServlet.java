@@ -2509,6 +2509,7 @@ public class GenoPubServlet extends HttpServlet {
     	    					
     	    					DictionaryHelper dh = DictionaryHelper.getInstance(sess);
     	    					GenomeVersion genomeVersion = dh.getGenomeVersion(annotation.getIdGenomeVersion());
+    	    					sess.refresh(genomeVersion);
     	    					
     	    					if (!Util.fileHasSegmentName(fileName, genomeVersion)) {
         	    					String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  File name is invalid because it does not start with a valid segment name.";    	    					

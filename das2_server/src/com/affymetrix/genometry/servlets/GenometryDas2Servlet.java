@@ -1,6 +1,8 @@
 package com.affymetrix.genometry.servlets;
 
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.useq.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -29,7 +31,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.das2.SimpleDas2Type;
 import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
-import com.affymetrix.genometryImpl.useq.*;
 import com.affymetrix.genometryImpl.util.DirectoryFilter;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.HiddenFileFilter;
@@ -259,7 +260,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private Map<AnnotatedSeqGroup, Map<String, String>> genome2graphfiles = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
 	private Map<AnnotatedSeqGroup, Map<String, String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
 	private HashMap<String, USeqArchive> file2USeqArchive = new HashMap<String, USeqArchive>();
-	private ArrayList<String> graph_formats = new ArrayList<String>();
 	private Transformer types_transformer;
 	private boolean DEFAULT_USE_TYPES_XSLT = true;
 	private boolean use_types_xslt;
@@ -292,7 +292,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				throw new ServletException("Aborting: Specified directory does not exist: '" + data_root + "'");
 			}
 
-			initFormats(output_registry, graph_formats);
+			initFormats(output_registry);
 
 			ServerUtils.loadSynonyms(synonym_file);
 
@@ -431,7 +431,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return true;
 	}
 
-	private static final void initFormats(Map<String, Class> output_registry, ArrayList<String> graph_formats) {
+	private static final void initFormats(Map<String, Class> output_registry) {
 		output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
 		output_registry.put("bps", BpsParser.class);
 		output_registry.put("psl", PSLParser.class);
@@ -450,7 +450,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		output_registry.put("bp2", Bprobe1Parser.class);
 		output_registry.put("ead", ExonArrayDesignParser.class);
 		output_registry.put("cyt", CytobandParser.class);
-		graph_formats.add("bar");
 	}
 
 
@@ -465,26 +464,26 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			annotationQuery.runAnnotationQuery(sess, null);
 			for (Organism organism : annotationQuery.getOrganisms()) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Organism = " + organism.getName());
-				 
-				 // Get genome versions for an organism.  
-				for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
-				   
-				   GenomeVersion gv = annotationQuery.getGenomeVersion(genomeVersionName);
-				   List<QualifiedAnnotation> qualifiedAnnotations = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName);
-           List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);
 
-           // Ignore genome version if there are not annotations nor sequence associated with it.
-           if (!gv.hasSequence(data_root) && (qualifiedAnnotations == null || qualifiedAnnotations.isEmpty())) {
-             Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Bypassing Genome version = " + genomeVersionName + ". No annotations nor sequence exists.");
-             continue;
-           }
-				   
-           // Ignore genome version if no segment information is present.
-           if (segments == null || segments.size() == 0) {
-             Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotations/sequence for Genome version " + genomeVersionName + ".  No segments have been defined.");
-				     continue;
-				   }
-				   
+				// Get genome versions for an organism.  
+				for (String genomeVersionName : annotationQuery.getVersionNames(organism)) {
+
+					GenomeVersion gv = annotationQuery.getGenomeVersion(genomeVersionName);
+					List<QualifiedAnnotation> qualifiedAnnotations = annotationQuery.getQualifiedAnnotations(organism, genomeVersionName);
+					List<Segment> segments = annotationQuery.getSegments(organism, genomeVersionName);
+
+					// Ignore genome version if there are not annotations nor sequence associated with it.
+					if (!gv.hasSequence(data_root) && (qualifiedAnnotations == null || qualifiedAnnotations.isEmpty())) {
+						Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Bypassing Genome version = " + genomeVersionName + ". No annotations nor sequence exists.");
+						continue;
+					}
+
+					// Ignore genome version if no segment information is present.
+					if (segments == null || segments.size() == 0) {
+						Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotations/sequence for Genome version " + genomeVersionName + ".  No segments have been defined.");
+						continue;
+					}
+
 					Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Genome version = " + genomeVersionName);
 
 					// Instantiate an AnnotatedSeqGroup (the genome version).         
@@ -516,7 +515,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					Map<String,String> graph_name2file = genome2graphfiles.get(genomeVersion);
 
 					// Load annotations for the genome version
-					 for (QualifiedAnnotation qa : qualifiedAnnotations) {
+					for (QualifiedAnnotation qa : qualifiedAnnotations) {
 
 						String fileName = qa.getAnnotation().getQualifiedFileName(this.genometry_server_dir);    
 						String typePrefix = qa.getTypePrefix();     
@@ -524,9 +523,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 						if (file.exists()) {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Annotation type = " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
 
-							 if (file.isDirectory() ) {
-								if (dirHasFilesWithExtension(file, "bar")) {
-
+							if (file.isDirectory() ) {
+								if (isMultiFileAnnotationType(file)) {
 									ServerUtils.loadDBAnnotsFromDir(typePrefix, 
 											file.getPath(), 
 											genomeVersion, 
@@ -534,10 +532,10 @@ public final class GenometryDas2Servlet extends HttpServlet {
 											qa.getAnnotation().getIdAnnotation(),
 											graph_name2dir);                  
 
-								 } else if (!dirHasFiles(file)) {
-								   Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotation " + typePrefix + ".  No files associated with this annotation.");
+								} else if (!file.exists() || file.list() == null || file.list().length == 0) {
+									Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotation " + typePrefix + ".  No files associated with this annotation.");
 								} else {
-									 Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing non-bar annotation " + typePrefix + " for file " + fileName + ". Only the bar format permits multiple annotation files.");
+									Logger.getLogger(GenometryDas2Servlet.class.getName()).warning("Bypassing annotation " + typePrefix + " for file " + fileName + ". Only the bar and useq format permit multiple annotation files.");
 								}
 
 
@@ -571,31 +569,25 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 	}
 
-	private boolean dirHasFiles(File dir) {
-	  if (dir.exists() & dir.list() != null && dir.list().length > 0) {
-	    return true;
-	  } else {
-	    return false;
-	  } 
-	}
-	 
-	private boolean dirHasFilesWithExtension(File dir, String extension) {
-		boolean isExtension = false;
+	private boolean isMultiFileAnnotationType(File dir) {
+		boolean isType = false;
 		if (dir.exists()) {
-		    
+			    
 			String[] childFileNames = dir.list();
 			if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {
-					if (childFileNames[x].endsWith(extension)) {
-						isExtension = true;
+					if (childFileNames[x].endsWith("bar") || USeqUtilities.USEQ_ARCHIVE.matcher(childFileNames[x]).matches()) {
+						isType = true;
 						break;
 					}
 				}
 
 			}
 		}
-		return isExtension;
+		return isType;
 	}
+	 
+	
 
 	private final void loadGenomes(String dataRoot,
 			Map<String, List<AnnotatedSeqGroup>> organisms,
@@ -1060,7 +1052,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			ServerUtils.getTypes(
 					data_root,
 					genome,
-					graph_formats,
 					this.getGenoPubSecurity(request));
 
 		ByteArrayOutputStream buf = null;
@@ -1404,7 +1395,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 
 					//useq format? this check must proceed the default graph handling below
-					if (USeqUtilities.USEQ_ARCHIVE.matcher(query_type).matches()){
+					if (formats.contains(USeqUtilities.USEQ_EXTENSION_NO_PERIOD)){
 						//does the file exist?
 						if (graph_name2file.containsKey(query_type)){
 							handleUSeqRequest(output_format, response, new File(graph_name2file.get(query_type)), overlap_span);

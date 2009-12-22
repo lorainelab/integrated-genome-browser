@@ -20,6 +20,7 @@ import com.affymetrix.genometry.genopub.GenomeVersion;
 import com.affymetrix.genometry.genopub.Owned;
 import com.affymetrix.genometry.genopub.Util;
 import com.affymetrix.genometry.genopub.Visibility;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 
 public class Annotation implements Owned {
@@ -276,7 +277,7 @@ public class Annotation implements Owned {
 	    }
 	}
 
-	public boolean hasFileExtension(String data_root, String extension) throws IOException {
+	public boolean isBarGraphData(String data_root) throws IOException {
 		boolean isExtension = false;
 		String filePath = getDirectory(data_root);
 	    File dir = new File(filePath);
@@ -286,7 +287,7 @@ public class Annotation implements Owned {
 		    String[] childFileNames = dir.list();
 		    if (childFileNames != null) {
 				for (int x = 0; x < childFileNames.length; x++) {
-					if (childFileNames[x].endsWith(extension)) {
+					if (childFileNames[x].endsWith("bar")) {
 						isExtension = true;
 						break;
 					}
@@ -296,7 +297,28 @@ public class Annotation implements Owned {
 	    }
 	    return isExtension;
 	}
-	
+
+	public boolean isUseqGraphData(String data_root) throws IOException {
+		boolean isExtension = false;
+		String filePath = getDirectory(data_root);
+	    File dir = new File(filePath);
+	    
+	    if (dir.exists()) {
+		    // Delete the files in the directory
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+				for (int x = 0; x < childFileNames.length; x++) {
+					if (USeqUtilities.USEQ_ARCHIVE.matcher(childFileNames[x]).matches() ) {
+						isExtension = true;
+						break;
+					}
+				}
+		    	
+		    }
+	    }
+	    return isExtension;
+	}
+
 	public int getFileCount(String data_root) throws IOException {
 		int fileCount = 0;
 		String filePath = getDirectory(data_root);

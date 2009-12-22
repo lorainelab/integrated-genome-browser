@@ -33,7 +33,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 
 /**
@@ -167,7 +167,7 @@ public class NeoTracer extends NeoContainerWidget
 	// optional - for aligned bases
 	private BaseCalls consensus; // reference string
 
-	private List<NeoBaseSelectListener> base_listeners = new CopyOnWriteArrayList<NeoBaseSelectListener>();
+	private Set<NeoBaseSelectListener> base_listeners = new CopyOnWriteArraySet<NeoBaseSelectListener>();
 
 	protected Glyph line_glyph;
 	protected FillRectGlyph left_trim_glyph, right_trim_glyph;
@@ -193,7 +193,7 @@ public class NeoTracer extends NeoContainerWidget
 	protected boolean hscroll_show, hzoom_show, vzoom_show;
 
 	protected Range range;
-	protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
+	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
 	/**
 	 * constructs a NeoTracer using all the built-in controls.
@@ -1627,21 +1627,19 @@ public class NeoTracer extends NeoContainerWidget
 				NeoRangeEvent nevt = new NeoRangeEvent(this,
 						visRange.beg, visRange.end);
 
-				for (int i=0; i<range_listeners.size(); i++) {
-					range_listeners.elementAt(i).rangeChanged(nevt);
+				for (NeoRangeListener l : range_listeners) {
+					l.rangeChanged(nevt);
 				}
 			}
 		}
 	}
 
 	public void addRangeListener(NeoRangeListener l) {
-		if (!range_listeners.contains(l)) {
-			range_listeners.addElement(l);
-		}
+		range_listeners.add(l);
 	}
 
 	public void removeRangeListener(NeoRangeListener l) {
-		range_listeners.removeElement(l);
+		range_listeners.remove(l);
 	}
 
 
@@ -1660,9 +1658,7 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	public void addBaseSelectListener(NeoBaseSelectListener l) {
-		if (!base_listeners.contains(l)) {
-			base_listeners.add(l);
-		}
+		base_listeners.add(l);
 	}
 
 	public void removeBaseSelectListener(NeoBaseSelectListener l) {

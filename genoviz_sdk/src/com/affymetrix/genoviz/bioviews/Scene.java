@@ -141,14 +141,14 @@ public class Scene implements SceneI  {
 	 * Adds a view representing this scene.
 	 */
 	public void addView(ViewI view)  {
-		views.addElement(view);
+		views.add(view);
 	}
 
 	/**
 	 * Removes a view that had been representing the scene.
 	 */
 	public void removeView(ViewI view)  {
-		views.removeElement(view);
+		views.remove(view);
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class Scene implements SceneI  {
 			GlyphI parent = gl.getParent();
 			parent.removeChild(gl);
 			//      Vector siblings = parent.getChildren();
-			//      siblings.removeElement(gl);
+			//      siblings.remove(gl);
 		}
 		if (gl instanceof TransientGlyph) {
 			removeTransient((TransientGlyph)gl);

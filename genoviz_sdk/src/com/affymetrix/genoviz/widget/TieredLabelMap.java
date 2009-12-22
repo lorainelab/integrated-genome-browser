@@ -115,7 +115,7 @@ public class TieredLabelMap extends AbstractTieredMap {
 			tiers.insertElementAt(mtg, 0);
 		}
 		else {
-			tiers.addElement(mtg);
+			tiers.add(mtg);
 		}
 
 		this.packTiers(true, true);

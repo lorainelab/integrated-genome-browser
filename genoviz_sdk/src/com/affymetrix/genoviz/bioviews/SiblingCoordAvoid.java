@@ -46,7 +46,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 			siblingbox = sibling.getCoordBox();
 			if (!(siblingbox.x > (childbox.x+childbox.width) ||
 						((siblingbox.x+siblingbox.width) < childbox.x)) ) {
-				sibsinrange.addElement(sibling);
+				sibsinrange.add(sibling);
 						}
 		}
 

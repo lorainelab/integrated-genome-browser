@@ -324,12 +324,12 @@ public abstract class NeoAbstractWidget extends Container
     else {
       models_have_multiple_glyphs = true;
       if (previous instanceof Vector) {
-        ((Vector<GlyphI>) previous).addElement(glyph);
+        ((Vector<GlyphI>) previous).add(glyph);
       }
       else {
         Vector<GlyphI> glyphs = new Vector<GlyphI>();
-        glyphs.addElement((GlyphI) previous);
-        glyphs.addElement(glyph);
+        glyphs.add((GlyphI) previous);
+        glyphs.add(glyph);
         model_hash.put(datamodel, glyphs);
       }
     }
@@ -392,7 +392,7 @@ public abstract class NeoAbstractWidget extends Container
 		} else {
 			Vector<G> vec = new Vector<G>();
 			if ( null != result ) {
-				vec.addElement((G)result);
+				vec.add((G)result);
 			}
 			return vec;
 		}
@@ -726,7 +726,7 @@ public abstract class NeoAbstractWidget extends Container
 	public void clearSelected() {
 		while (selected.size() > 0) {
 			// selected.size() shrinks because deselect(glyph)
-			//    calls selected.removeElement()
+			//    calls selected.remove()
 			Object gl = selected.get(0);
 			if (gl == null) { selected.remove(0); }
 			else {

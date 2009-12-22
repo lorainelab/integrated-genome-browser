@@ -105,7 +105,7 @@ public class FastaSequenceParser implements ContentParser {
 					}
 						}
 				seq.setResidues(out.toString());
-				v.addElement( seq );
+				v.add( seq );
 				out = new StringBuffer();
 			}
 		} finally {

@@ -124,7 +124,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 		LegendGlyph lglyph = getLegendForTier(mtg);
 		if (lglyph == null) { return; }
 		removeItem(lglyph);
-		legend_glyphs.removeElement(lglyph);
+		legend_glyphs.remove(lglyph);
 		tier_to_legend.remove(mtg);
 		legend_to_tier.remove(lglyph);
 	}
@@ -144,7 +144,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 		lglyph.setPrimaryLabel(mtg.getLabel());
 		lglyph.setCoords(0, 0, 100, 30);
 		this.addItem(lglyph);
-		legend_glyphs.addElement(lglyph);
+		legend_glyphs.add(lglyph);
 		tier_to_legend.put(mtg, lglyph);
 		legend_to_tier.put(lglyph, mtg);
 		return lglyph;

@@ -158,7 +158,7 @@ class PropertySheet extends JPanel {
 					String name = vals[0];
 					if (name.equals(request)) {
 						reordered.add(vals);
-						name_values.setElementAt(null, k);
+						name_values.set(k, null);
 						break;
 					}
 				}

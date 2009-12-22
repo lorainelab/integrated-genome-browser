@@ -48,7 +48,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	}
 
 	public void addWidget(NeoAbstractWidget widget) {
-		widgets.addElement(widget);
+		widgets.add(widget);
 	}
 
 	public void destroy() {
@@ -151,7 +151,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		if (widg != null) {
 			widg.select(gl);
 		}
-		selected.addElement(gl);
+		selected.add(gl);
 	}
 
 	public void deselect(GlyphI gl) {
@@ -162,7 +162,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		while (e.hasMoreElements()) {
 			e.nextElement().deselect(gl);
 		}
-		selected.removeElement(gl);
+		selected.remove(gl);
 	}
 
 	public void setSelectionAppearance(int behavior) {

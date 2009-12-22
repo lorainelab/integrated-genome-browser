@@ -231,7 +231,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 				int sibs_size = sibarray.length;
 				for (int i=0; i<sibs_size; i++) {
 					child = sibarray[i];
-					sibs.addElement(child);  // add children back in one at a time
+					sibs.add(child);  // add children back in one at a time
 					pack(parent, child, view);
 					if (DEBUG_CHECKS)  { System.out.println(child); }
 				}
@@ -336,7 +336,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 				siblingbox = sibling.getCoordBox();
 				if (!(siblingbox.x > (childbox.x+childbox.width) ||
 							((siblingbox.x+siblingbox.width) < childbox.x)) ) {
-					sibsinrange.addElement(sibling);
+					sibsinrange.add(sibling);
 							}
 			}
 			if (DEBUG_CHECKS)  { System.out.println("sibs in range: " + sibsinrange.size()); }

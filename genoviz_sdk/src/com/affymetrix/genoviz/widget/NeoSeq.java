@@ -1900,7 +1900,7 @@ public class NeoSeq extends NeoContainerWidget
 						annot_range.beg = annot_glyph.getStart();
 						annot_range.end = annot_glyph.getEnd();
 						if (sel_range.overlaps(annot_range)) {
-							resultVec.addElement(annot_glyph);
+							resultVec.add(annot_glyph);
 						}
 					}
 				}

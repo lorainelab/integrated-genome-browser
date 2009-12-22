@@ -86,13 +86,13 @@ final class PropertyKeys {
 		for (int i = 0; i < keys.length; i++) {
 			String[] row = rows_thus_far.get(keys[i]);
 			if (row != null) {
-				result.addElement(row);
+				result.add(row);
 			}
 			rows_thus_far.remove(keys[i]);
 		}
 		Enumeration<String[]> rows = rows_thus_far.elements();
 		while (rows.hasMoreElements()) {
-			result.addElement(rows.nextElement());
+			result.add(rows.nextElement());
 		}
 		return result;
 	}

@@ -257,7 +257,7 @@ public class GlyphSearchNode implements Cloneable {
 						System.out.println("cbox[x: " + cbox.x + ", x + width: " + ( cbox.x + cbox.width) + "]" );
 					}
 					if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
-						o.addElement(c);
+						o.add(c);
 					}
 				}
 			}
@@ -302,7 +302,7 @@ public class GlyphSearchNode implements Cloneable {
 			for (GlyphI c : children) {
 				Rectangle2D.Double cbox = c.getCoordBox();
 				if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
-					o.addElement(c);
+					o.add(c);
 				}
 			}
 		}

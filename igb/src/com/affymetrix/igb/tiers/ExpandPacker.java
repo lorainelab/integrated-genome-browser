@@ -231,7 +231,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
 	  boolean prev_overlap = (prev_xmax >  cbox.x);
 	  //	  if (i < 100) { System.out.println("overlap: " + prev_overlap + 
 	  //					    ", parent = " + parent); }
-	  sibs.addElement(child);  // add children back in one at a time
+	  sibs.add(child);  // add children back in one at a time
 	  if (! (child instanceof LabelGlyph)) {
 	    pack(parent, child, view, true);
 	  }

@@ -172,7 +172,7 @@ public class Mapping {
 			if (span.seq_start < map_start) { map_start = span.seq_start; }
 			if (span.seq_end > map_end) { map_end = span.seq_end; }
 		}
-		spans.addElement(span);
+		spans.add(span);
 		setDirection(span.seq_start <= span.seq_end);
 	}
 

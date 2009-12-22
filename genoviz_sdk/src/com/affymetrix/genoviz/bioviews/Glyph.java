@@ -259,7 +259,7 @@ public abstract class Glyph implements GlyphI  {
 			}
 			if (hit(pickRect, view))  {
 				if (!pickVector.contains(this)) {
-					pickVector.addElement(this);
+					pickVector.add(this);
 				}
 				if (DEBUG)   {
 					System.out.println("Hit " + this);
@@ -291,7 +291,7 @@ public abstract class Glyph implements GlyphI  {
 			}
 			if (hit(pickRect, view))  {
 				if (!pickVector.contains(this)) {
-					pickVector.addElement(this);
+					pickVector.add(this);
 				}
 				if (DEBUG)   {
 					System.out.println("Hit " + this);
@@ -388,7 +388,7 @@ public abstract class Glyph implements GlyphI  {
 			children = new Vector<GlyphI>();
 		}
 		if (position == children.size()) {
-			children.addElement(glyph);
+			children.add(glyph);
 		}
 		else  {
 			children.insertElementAt(glyph, position);
@@ -410,7 +410,7 @@ public abstract class Glyph implements GlyphI  {
 		if (children == null)  {
 			children = new Vector<GlyphI>();
 		}
-		children.addElement(glyph);
+		children.add(glyph);
 		glyph.setParent(this);
 	}
 
@@ -424,7 +424,7 @@ public abstract class Glyph implements GlyphI  {
 	 */
 	public void removeChild(GlyphI glyph)  {
 		if (children != null) {
-			children.removeElement(glyph);
+			children.remove(glyph);
 			if (children.size() == 0) { children = null; }
 		}
 		// null out the scene if glyph is removed

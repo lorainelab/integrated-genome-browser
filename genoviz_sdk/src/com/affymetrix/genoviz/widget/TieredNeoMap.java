@@ -88,7 +88,7 @@ public class TieredNeoMap extends AbstractTieredMap {
 			evtid = TierEvent.ADD_TOP;
 		}
 		else {
-			tiers.addElement(mtg);
+			tiers.add(mtg);
 			evtid = TierEvent.ADD_BOTTOM;
 		}
 

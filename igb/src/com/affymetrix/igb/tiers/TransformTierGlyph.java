@@ -152,7 +152,7 @@ public final class TransformTierGlyph extends TierGlyph {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
         if (!pickVector.contains(this)) {
-          pickVector.addElement(this);
+          pickVector.add(this);
         }
       }
 
@@ -183,7 +183,7 @@ public final class TransformTierGlyph extends TierGlyph {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
         if (!pickVector.contains(this)) {
-          pickVector.addElement(this);
+          pickVector.add(this);
         }
       }
       if (children != null)  {

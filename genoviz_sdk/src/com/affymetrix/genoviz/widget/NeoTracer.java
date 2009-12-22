@@ -791,7 +791,7 @@ public class NeoTracer extends NeoContainerWidget
 
 	public void addBaseCalls( BaseCalls base_calls, int start ) {
 		base_calls.setTrace( trace );
-		base_calls_vector.addElement( base_calls );
+		base_calls_vector.add( base_calls );
 
 		// Create a new glyph for the base calls.
 		TraceBaseGlyph base_glyph = new TraceBaseGlyph();
@@ -809,7 +809,7 @@ public class NeoTracer extends NeoContainerWidget
 		base_glyph.setCoords(start, old_base_height, trace_length, last_glyph_height );
 		base_map_pixel_height = old_base_height + last_glyph_height;
 
-		base_glyphs.addElement( base_glyph );
+		base_glyphs.add( base_glyph );
 
 		// adjust the base_map to fit the multiple base_glyphs
 		base_map.getScene().addGlyph(base_glyph);
@@ -1391,7 +1391,7 @@ public class NeoTracer extends NeoContainerWidget
 		Vector<BaseCalls> newBaseCalls = new Vector<BaseCalls>();
 		Enumeration<BaseCalls> e = base_calls_vector.elements();
 		for (BaseCalls bc : base_calls_vector ) {
-			newBaseCalls.addElement( bc.reverseComplement() );
+			newBaseCalls.add( bc.reverseComplement() );
 		}
 		// Remove the old.
 		removeAllBaseCalls();
@@ -1767,7 +1767,7 @@ public class NeoTracer extends NeoContainerWidget
 			// fit extra consensus bases in as best as possible
 			else { // cons_ref < calls_ref
 				char insert_base = cons_bases.getResidue( cons_index );
-				inserts.addElement( new Character( insert_base ) );
+				inserts.add( new Character( insert_base ) );
 				cons_index++;
 			}
 		} // end while loop for base calls

@@ -796,7 +796,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	public void select(GlyphI g) {
 		scene.select(g);
 		if ( g.isSelected() && !selected.contains(g)) {
-			selected.addElement(g);
+			selected.add(g);
 		}
 	}
 
@@ -814,7 +814,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			double width, double height) {
 		scene.select(g, x, y, width, height);
 		if (g.isSelected() && ! selected.contains(g)) {
-			selected.addElement(g);
+			selected.add(g);
 		}
 	}
 
@@ -824,7 +824,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	public void deselect(GlyphI g) {
 		scene.deselect(g);
-		selected.removeElement(g);
+		selected.remove(g);
 	}
 
 	public void clearWidget() {

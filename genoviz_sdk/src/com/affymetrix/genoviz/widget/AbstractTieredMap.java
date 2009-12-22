@@ -421,7 +421,7 @@ public abstract class AbstractTieredMap
 
 		// Then the tier itself!
 
-		tiers.removeElement(toRemove);
+		tiers.remove(toRemove);
 
 		packTiers(true,true);
 		updateWidget();

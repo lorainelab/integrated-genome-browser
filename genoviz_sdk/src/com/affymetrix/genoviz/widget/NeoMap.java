@@ -1078,7 +1078,7 @@ public class NeoMap extends NeoWidget implements
 			   scene.removeGlyph(gl);
 			   glyph_hash.remove(gl);
 
-			   selected.removeElement(gl);
+			   selected.remove(gl);
 
 			   Object model = gl.getInfo();
 			   if (model != null) {
@@ -1087,7 +1087,7 @@ public class NeoMap extends NeoWidget implements
 					   model_hash.remove(model);
 				   }
 				   else if (item2 instanceof Vector) {
-					   ((Vector)item2).removeElement(gl);
+					   ((Vector)item2).remove(gl);
 				   }
 			   }
 
@@ -1240,7 +1240,7 @@ public class NeoMap extends NeoWidget implements
 
 			   if ( gl.isSelected() ) { // Selection was not suppressed by an unselectable glyph!
 				   if (!(selected.contains(gl))) {
-					   selected.addElement(gl);
+					   selected.add(gl);
 				   }
 			   }
 		   }
@@ -1540,10 +1540,10 @@ public class NeoMap extends NeoWidget implements
 						   Vector<GlyphI> in = new Vector<GlyphI>(), out = new Vector<GlyphI>();
 						   for (GlyphI obj : candidates) {
 							   if (prev_items.contains(obj)) {
-								   out.addElement(obj);
+								   out.add(obj);
 							   }
 							   else {
-								   in.addElement(obj);
+								   in.add(obj);
 							   }
 							   if (0 < out.size()) {
 								   this.deselect(out);

@@ -254,7 +254,7 @@ public class Trace implements TraceI {
 				sample_C,
 				sample_G,
 				sample_T);
-		sampleVector.addElement(sample);
+		sampleVector.add(sample);
 	}
 
 	public void replaceBaseCalls( BaseCall[] theCall ) {
@@ -276,7 +276,7 @@ public class Trace implements TraceI {
 	 */
 	public void addBase(BaseCall base) {
 		baseHashtable.put(new Integer(base.getTracePoint()), base);
-		baseVector.addElement(base);
+		baseVector.add(base);
 		seqBuffer.append(base.getBase());
 	}
 
@@ -298,7 +298,7 @@ public class Trace implements TraceI {
 		for (int i = num_samples-1; i >= 0; i--) {
 			sample = sampleVector.get(i);
 			rev_sample = sample.complement();
-			rev_samples.addElement(rev_sample);
+			rev_samples.add(rev_sample);
 		}
 		rev.sampleVector = rev_samples;
 		rev.max_trace_value = max_trace_value;

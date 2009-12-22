@@ -75,7 +75,7 @@ public abstract class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.S
 	      GlyphI reified_glyph = (GlyphI)template_glyph.getClass().newInstance();
 	      reified_glyph.setColor(template_glyph.getColor());
 	      reified_glyph.setCoords(tbox.x, tbox.width, tbox.y, tbox.height);
-	      pickVector.addElement(reified_glyph);
+	      pickVector.add(reified_glyph);
 	    }
 	    catch (Exception ex) {
 	      ex.printStackTrace();

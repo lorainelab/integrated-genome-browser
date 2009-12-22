@@ -66,11 +66,11 @@ public class TierMapRubberBand extends RubberBand {
 	 * So they can act accordingly.
 	 */
 	public void addMap(AbstractTieredMap ntm){
-		other_maps.addElement(ntm);
+		other_maps.add(ntm);
 	}
 
 	public void removeMap ( AbstractTieredMap atm ) {
-		other_maps.removeElement(atm);
+		other_maps.remove(atm);
 	}
 
 	public void start(int x, int y){

@@ -169,7 +169,7 @@ public class AxisGlyph extends Glyph {
 			return;
 		}
 		if ( selected_regions == null ) selected_regions = new Vector();
-		selected_regions.addElement( range );
+		selected_regions.add( range );
 	}
 
 	public void deselectAll () {

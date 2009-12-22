@@ -423,9 +423,9 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 			ViewI view)  {
 		if (isVisible && intersects(pickRect, view))  {
 			if (hit(pickRect, view))  {
-				pickVector.addElement(this);
+				pickVector.add(this);
 				if (null != this.labeled && !pickVector.contains(this.labeled)) {
-					pickVector.addElement(this.labeled);
+					pickVector.add(this.labeled);
 				}
 			}
 			if (children != null)  {
@@ -449,9 +449,9 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	{
 		if (isVisible && intersects(pickRect, view))  {
 			if (hit(pickRect, view))  {
-				pickVector.addElement(this);
+				pickVector.add(this);
 				if (null != this.labeled && !pickVector.contains(this.labeled)) {
-					pickVector.addElement(this.labeled);
+					pickVector.add(this.labeled);
 				}
 			}
 			if (children != null)  {

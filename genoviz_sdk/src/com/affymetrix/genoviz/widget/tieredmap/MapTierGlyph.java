@@ -282,7 +282,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
 	public void addLineToLabel ( String s ) {
 		if ( moreStrings == null ) moreStrings = new Vector<String>();
-		moreStrings.addElement( s );
+		moreStrings.add( s );
 	}
 
 	public PackerI getExpandedPacker() {

@@ -1003,7 +1003,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 		// getChildren() does not make a copy, but passes a reference
 		// therefore cglyph.addChild() calls, etc., also affect align_glyphs,
-		// and align_glyphs.addElement() calls add to cglyph children
+		// and align_glyphs.add() calls add to cglyph children
 		align_glyphs = cglyph.getChildren();
 
 		if (auto_sort) {
@@ -1608,7 +1608,7 @@ public class NeoAssembler extends NeoContainerWidget
 		if (map == null) { return; }
 		map.select(gl, start, end);
 		if (!selected.contains(gl)) {
-			selected.addElement(gl);
+			selected.add(gl);
 		}
 	}
 
@@ -1654,7 +1654,7 @@ public class NeoAssembler extends NeoContainerWidget
 		if (adapters == null) {
 			adapters = new Vector<NeoDataAdapterI>();
 		}
-		adapters.addElement(adapter);
+		adapters.add(adapter);
 	}
 
 	public Object addData(Object obj) {

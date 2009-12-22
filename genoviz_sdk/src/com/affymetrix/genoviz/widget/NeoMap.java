@@ -107,10 +107,10 @@ public class NeoMap extends NeoWidget implements
 		   // not sure if foreground is used at all at the moment...
 		   protected static Color default_panel_foreground = Color.darkGray;
 
-		   // a vector of axes added to the map
+		   // a list of axes added to the map
 		   // this is maintained in order to stretch them
 		   // when the range coords of the map change.
-		   private Vector<AxisGlyph> axes = new Vector<AxisGlyph>();
+		   private List<AxisGlyph> axes = new ArrayList<AxisGlyph>();
 
 		   // fields for map glyph factories
 		   // a hashtable to map name strings to MapGlyphFactories
@@ -634,7 +634,7 @@ public class NeoMap extends NeoWidget implements
 
 			   if (axes != null) {
 				   for (int i=0; i<axes.size(); i++) {
-					   axes.elementAt(i).rangeChanged(); // notify the axis of the range change.
+					   axes.get(i).rangeChanged(); // notify the axis of the range change.
 				   }
 			   }
 
@@ -911,7 +911,7 @@ public class NeoMap extends NeoWidget implements
 			   }
 			   axis.setForegroundColor(Color.black);
 			   scene.getGlyph().addChild(axis);
-			   axes.addElement(axis);
+			   axes.add(axis);
 			   return axis;
 		   }
 
@@ -1139,7 +1139,7 @@ public class NeoMap extends NeoWidget implements
 			   model_hash = new Hashtable<Object,Object>();
 
 			   // reset axes
-			   axes.removeAllElements();
+			   axes.clear();
 
 			   // remove all the transient glyphs.
 			   scene.removeAllTransients();

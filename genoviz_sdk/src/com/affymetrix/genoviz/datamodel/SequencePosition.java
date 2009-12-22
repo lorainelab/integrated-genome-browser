@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.datamodel;
 
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * tracks position within a sequence.
@@ -43,16 +43,15 @@ public class SequencePosition implements Position {
 		notifyListeners();
 	}
 
-	private Vector<PositionListener> listeners = new Vector<PositionListener>();
+	private CopyOnWriteArraySet<PositionListener> listeners = new CopyOnWriteArraySet<PositionListener>();
 	public void addListener( PositionListener l ) {
-		this.listeners.addElement( l );
+		this.listeners.add( l );
 	}
 	public void removeListener( PositionListener l ) {
-		this.listeners.removeElement( l );
+		this.listeners.remove( l );
 	}
 	private void notifyListeners() {
-		for ( int i = 0; i < this.listeners.size(); i++ ) {
-			PositionListener l = this.listeners.elementAt( i );
+		for (PositionListener l : this.listeners) {
 			l.positionChanged( this, this.offset );
 		}
 	}

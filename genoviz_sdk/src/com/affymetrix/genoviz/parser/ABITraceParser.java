@@ -22,7 +22,8 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * parses ABI format data.
@@ -34,7 +35,7 @@ import java.util.Vector;
  */
 public class ABITraceParser implements ContentParser {
 
-	protected Vector<ABIIndex> ABIindices;
+	protected List<ABIIndex> ABIindices;
 	protected int max_numbyt;
 	protected ABIIndex trace1_index;
 	protected ABIIndex trace2_index;
@@ -51,10 +52,10 @@ public class ABITraceParser implements ContentParser {
 	protected ABIIndex sample_index;
 	protected ABIIndex thumbprint_index;
 
-	protected Vector<Integer> A_vector;
-	protected Vector<Integer> C_vector;
-	protected Vector<Integer> G_vector;
-	protected Vector<Integer> T_vector;
+	protected List<Integer> A_list;
+	protected List<Integer> C_list;
+	protected List<Integer> G_vector;
+	protected List<Integer> T_vector;
 
 	protected int A_strength;
 	protected int T_strength;
@@ -86,7 +87,7 @@ public class ABITraceParser implements ContentParser {
 	 */
 	public Object importContent( InputStream theInput ) throws IOException {
 
-		ABIindices = new Vector<ABIIndex>(14);
+		ABIindices = new ArrayList<ABIIndex>(14);
 
 		initTraceIndices();
 		max_trace_value = 0;
@@ -127,33 +128,33 @@ public class ABITraceParser implements ContentParser {
 
 	private void initTraceIndices () {
 		trace1_index = new ABIIndex ("DATA", 9);
-		ABIindices.addElement (trace1_index);
+		ABIindices.add (trace1_index);
 		trace2_index = new ABIIndex ("DATA", 10);
-		ABIindices.addElement (trace2_index);
+		ABIindices.add (trace2_index);
 		trace3_index = new ABIIndex ("DATA", 11);
-		ABIindices.addElement (trace3_index);
+		ABIindices.add (trace3_index);
 		trace4_index = new ABIIndex ("DATA", 12);
-		ABIindices.addElement (trace4_index);
+		ABIindices.add (trace4_index);
 		basemap_index = new ABIIndex ("FWO_", 1);
-		ABIindices.addElement (basemap_index);
+		ABIindices.add (basemap_index);
 		bases_index = new ABIIndex ("PBAS", 1);
-		ABIindices.addElement (bases_index);
+		ABIindices.add (bases_index);
 		baseposition_index = new ABIIndex ("PLOC", 1);
-		ABIindices.addElement (baseposition_index);
+		ABIindices.add (baseposition_index);
 		signal_index = new ABIIndex ("S/N%", 1);
-		ABIindices.addElement (signal_index);
+		ABIindices.add (signal_index);
 		spacing_index = new ABIIndex ("SPAC", 1);
-		ABIindices.addElement (spacing_index);
+		ABIindices.add (spacing_index);
 		pri_index = new ABIIndex ("PPOS", 1);
-		ABIindices.addElement (pri_index);
+		ABIindices.add (pri_index);
 		machine_index = new ABIIndex ("MCHN", 1);
-		ABIindices.addElement (machine_index);
+		ABIindices.add (machine_index);
 		dyeprimer_index = new ABIIndex ("PDMF", 1);
-		ABIindices.addElement (dyeprimer_index);
+		ABIindices.add (dyeprimer_index);
 		sample_index = new ABIIndex ("SMPL", 1);
-		ABIindices.addElement (sample_index);
+		ABIindices.add (sample_index);
 		thumbprint_index =  new ABIIndex ("THUM", 1);
-		ABIindices.addElement (thumbprint_index);
+		ABIindices.add (thumbprint_index);
 	}
 
 	private boolean readHeader (DataInputStream in) throws IOException {
@@ -197,7 +198,7 @@ public class ABITraceParser implements ContentParser {
 			index_number = 0;
 			index_found = false;
 
-			index = ABIindices.elementAt (index_number);
+			index = ABIindices.get (index_number);
 			while ( !index_found && index_number < ABIindices.size() ) {
 				if (serial_number == index.serial_number
 						&& (label.equals (index.label))
@@ -226,7 +227,7 @@ public class ABITraceParser implements ContentParser {
 				else {
 					index_number++;
 					if ( index_number < ABIindices.size() ) {
-						index = ABIindices.elementAt (index_number);
+						index = ABIindices.get (index_number);
 					}
 				}
 			}
@@ -342,23 +343,23 @@ public class ABITraceParser implements ContentParser {
 
 	private boolean readSamples (DataInputStream in) throws IOException {
 		boolean success = false;
-		A_vector = new Vector<Integer>();
-		C_vector = new Vector<Integer>();
-		G_vector = new Vector<Integer>();
-		T_vector = new Vector<Integer>();
+		A_list = new ArrayList<Integer>();
+		C_list = new ArrayList<Integer>();
+		G_vector = new ArrayList<Integer>();
+		T_vector = new ArrayList<Integer>();
 		char trace1_base = (char) ((basemap_index.offset >> 24) & 0xff);
 		char trace2_base = (char) ((basemap_index.offset >> 16) & 0xff);
 		char trace3_base = (char) ((basemap_index.offset >> 8) & 0xff);
 		char trace4_base = (char) ((basemap_index.offset) & 0xff);
-		Vector<Integer> trace1_vector;
-		Vector<Integer> trace2_vector;
-		Vector<Integer> trace3_vector;
-		Vector<Integer> trace4_vector;
+		List<Integer> trace1_list;
+		List<Integer> trace2_list;
+		List<Integer> trace3_list;
+		List<Integer> trace4_list;
 
-		trace1_vector = getBaseVector( trace1_base );
-		trace2_vector = getBaseVector( trace2_base );
-		trace3_vector = getBaseVector( trace3_base );
-		trace4_vector = getBaseVector( trace4_base );
+		trace1_list = getBaseList( trace1_base );
+		trace2_list = getBaseList( trace2_base );
+		trace3_list = getBaseList( trace3_base );
+		trace4_list = getBaseList( trace4_base );
 
 		// Read signal strength
 		readSignalStrengths (in,
@@ -369,22 +370,22 @@ public class ABITraceParser implements ContentParser {
 		int trace3_strength = getBaseStrength ( trace3_base );
 		int trace4_strength = getBaseStrength ( trace4_base );
 
-		success = readTrace (in, trace1_index, trace1_vector, trace1_strength);
-		success &= readTrace (in, trace2_index, trace2_vector, trace2_strength);
-		success &= readTrace (in, trace3_index, trace3_vector, trace3_strength);
-		success &= readTrace (in, trace4_index, trace4_vector, trace4_strength);
+		success = readTrace (in, trace1_index, trace1_list, trace1_strength);
+		success &= readTrace (in, trace2_index, trace2_list, trace2_strength);
+		success &= readTrace (in, trace3_index, trace3_list, trace3_strength);
+		success &= readTrace (in, trace4_index, trace4_list, trace4_strength);
 
 		if (success) {
 			for (int i = 0;
-					(i < A_vector.size ()
+					(i < A_list.size ()
 					 && i < T_vector.size ()
 					 && i < G_vector.size ()
-					 && i < C_vector.size ());
+					 && i < C_list.size ());
 					i++) {
-				trace.addSample(A_vector.elementAt(i).intValue(),
-						C_vector.elementAt(i).intValue(),
-						G_vector.elementAt(i).intValue(),
-						T_vector.elementAt(i).intValue());
+				trace.addSample(A_list.get(i).intValue(),
+						C_list.get(i).intValue(),
+						G_vector.get(i).intValue(),
+						T_vector.get(i).intValue());
 					}
 		}
 
@@ -393,7 +394,7 @@ public class ABITraceParser implements ContentParser {
 
 	private boolean readTrace (DataInputStream in,
 			ABIIndex trace_index,
-			Vector<Integer> trace_vector,
+			List<Integer> trace_vector,
 			int trace_signal) throws IOException {
 
 		boolean success = false;
@@ -410,20 +411,20 @@ public class ABITraceParser implements ContentParser {
 				if (sample > max_trace_value) {
 					max_trace_value = sample;
 				}
-				trace_vector.addElement(sample);
+				trace_vector.add(sample);
 			}
 			success = true;
 		}
 		return success;
 	}
 
-	private Vector<Integer> getBaseVector (char base) {
-		Vector<Integer> correct_vector = null;
+	private List<Integer> getBaseList (char base) {
+		List<Integer> correct_vector = null;
 
 		if (base == 'A')
-			correct_vector = A_vector;
+			correct_vector = A_list;
 		else if (base == 'C')
-			correct_vector = C_vector;
+			correct_vector = C_list;
 		else if (base == 'G')
 			correct_vector = G_vector;
 		else if (base == 'T')
@@ -488,7 +489,7 @@ public class ABITraceParser implements ContentParser {
 		int prev_position = 0;
 
 		if ( null != bases_index && bases_index.occur ) {
-			Vector<Integer> base_positions = new Vector<Integer>(baseposition_index.numwrd);
+			List<Integer> base_positions = new ArrayList<Integer>(baseposition_index.numwrd);
 			seek(in, baseposition_index.offset);
 			readBasePositions (in, base_positions);
 			seek(in, bases_index.offset);
@@ -496,7 +497,7 @@ public class ABITraceParser implements ContentParser {
 			for (int i = 0; i < bases_index.numbyt; i++) {
 				base = in.readUnsignedByte ();
 				curpos++;
-				base_position = base_positions.elementAt (i);
+				base_position = base_positions.get (i);
 				CalledBase trace_base =
 					new CalledBase(base_position.intValue(), 0, 0, 0, 0, (char) base);
 				trace.addBase(trace_base);
@@ -507,7 +508,7 @@ public class ABITraceParser implements ContentParser {
 		return success;
 	}
 
-	private void readBasePositions (DataInputStream in, Vector<Integer> base_positions)
+	private void readBasePositions (DataInputStream in, List<Integer> base_positions)
 		throws IOException {
 		int byte1, byte2;
 		int base_position = 0;
@@ -519,7 +520,7 @@ public class ABITraceParser implements ContentParser {
 			curpos++;
 			base_position = (byte1 << 8) | byte2;
 
-			base_positions.addElement(base_position);
+			base_positions.add(base_position);
 		}
 	}
 

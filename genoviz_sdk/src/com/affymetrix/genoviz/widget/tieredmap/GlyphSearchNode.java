@@ -18,6 +18,7 @@ import java.util.Hashtable;
 
 import com.affymetrix.genoviz.bioviews.*;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 public class GlyphSearchNode implements Cloneable {
 
@@ -25,7 +26,7 @@ public class GlyphSearchNode implements Cloneable {
 
 	private GlyphSearchNode l;
 	private GlyphSearchNode r;
-	private Vector<GlyphI> children;
+	private List<GlyphI> children;
 
 	private long start;
 	private long end;
@@ -147,7 +148,7 @@ public class GlyphSearchNode implements Cloneable {
 			if (debug) {
 				System.out.println("Really Adding interval: [" + a + "," + b + "] to " + this);
 			}
-			children.addElement(g);
+			children.add(g);
 			glyphsInSearchTree.put(g, g);
 		}
 		else if (b <= m) {
@@ -183,7 +184,7 @@ public class GlyphSearchNode implements Cloneable {
 			b = t;
 		}
 		if ( ( a <= m && m < b ) || m <= minimum_m ) {
-			if ( children != null ) children.removeElement ( g );
+			if ( children != null ) children.remove ( g );
 			glyphsInSearchTree.remove(g);
 		}
 		else if (a > m) {
@@ -249,9 +250,7 @@ public class GlyphSearchNode implements Cloneable {
 			System.out.println("Checking overlaps [" + a + "," + b + "]: " + this);
 		}
 		if (null != children) {
-			int j_size = children.size();
-			for (int j=0; j<j_size; j++) {
-				GlyphI c = children.elementAt(j);
+			for (GlyphI c : children) {
 				if (i != c) {
 					Rectangle2D.Double cbox = c.getCoordBox();
 					if (debug) {
@@ -300,8 +299,7 @@ public class GlyphSearchNode implements Cloneable {
 
 		if (null != children) {
 			int j_size = children.size();
-			for (int j=0; j<j_size; j++) {
-				GlyphI c = children.elementAt(j);
+			for (GlyphI c : children) {
 				Rectangle2D.Double cbox = c.getCoordBox();
 				if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {
 					o.addElement(c);

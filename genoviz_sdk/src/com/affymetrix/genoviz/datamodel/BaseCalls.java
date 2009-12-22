@@ -13,10 +13,8 @@
 
 package com.affymetrix.genoviz.datamodel;
 
-import com.affymetrix.genoviz.datamodel.BaseCall;
-import com.affymetrix.genoviz.datamodel.Mapping;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A model for the base calls from a trace.
@@ -33,7 +31,7 @@ import java.util.Enumeration;
 
 public class BaseCalls {
 
-	private Vector<BaseCall> baseVector;  // vector of BaseCalls
+	private List<BaseCall> baseVector;  // vector of BaseCalls
 	private TraceI trace;
 
 	/** optional datamodel for aligning bases. */
@@ -47,7 +45,7 @@ public class BaseCalls {
 
 
 	public BaseCalls() {
-		baseVector = new Vector<BaseCall>();
+		baseVector = new ArrayList<BaseCall>();
 	}
 
 	public BaseCalls( BaseCall[] base_calls ) {
@@ -65,7 +63,7 @@ public class BaseCalls {
 
 	public void setBaseCalls( BaseCall[] theCalls ){
 		int iBaseCount = this.baseVector.size();
-		baseVector = new Vector<BaseCall>(iBaseCount);
+		baseVector = new ArrayList<BaseCall>(iBaseCount);
 		for ( int i = 0; i < theCalls.length; i++ ) {
 			addBase( theCalls[i] );
 		}
@@ -73,18 +71,12 @@ public class BaseCalls {
 
 	public BaseCall[] getBaseCalls () {
 		BaseCall[] cba = new BaseCall[baseVector.size()];
-		Enumeration e = baseVector.elements();
-		int i = 0;
-		while (e.hasMoreElements()) {
-			BaseCall cb = (BaseCall) e.nextElement();
-			cba[i] = cb;
-			i++;
-		}
+		this.baseVector.toArray(cba);
 		return cba;
 	}
 
 	public BaseCall getBaseCall( int index ) {
-		return baseVector.elementAt(index);
+		return baseVector.get(index);
 	}
 
 
@@ -94,9 +86,7 @@ public class BaseCalls {
 
 	public String getBaseString(){
 		StringBuffer residue = new StringBuffer();
-		Enumeration e = baseVector.elements();
-		while (e.hasMoreElements()) {
-			BaseCall cb = (BaseCall) e.nextElement();
+		for (BaseCall cb : this.baseVector) {
 			char base = cb.getBase();
 			residue.append( base );
 		}
@@ -117,7 +107,7 @@ public class BaseCalls {
 		revBaseCalls.setTrace( this.getTrace() );
 		int iCount = getBaseCount();
 		for (int i = iCount - 1; i >= 0; i--) {
-			BaseCall base = baseVector.elementAt(i).reverseComplement( traceLength );
+			BaseCall base = baseVector.get(i).reverseComplement( traceLength );
 			revBaseCalls.addBase(base);
 		}
 		return revBaseCalls;
@@ -130,7 +120,7 @@ public class BaseCalls {
 	 * @param base the one to add.
 	 */
 	public void addBase(BaseCall base) {
-		baseVector.addElement(base);
+		baseVector.add(base);
 	}
 
 	public BaseCall getBaseCallAtTracePoint( int tracePoint ){

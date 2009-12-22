@@ -15,10 +15,9 @@ package com.affymetrix.genoviz.datamodel;
 
 import com.affymetrix.genoviz.event.SequenceEvent;
 import com.affymetrix.genoviz.event.SequenceListener;
+import java.util.ArrayList;
 
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -36,7 +35,7 @@ public class Sequence implements EditableSequenceI {
 	private String description;
 	private String name;
 
-	private Vector<Position> positions = new Vector<Position>();
+	private List<Position> positions = new ArrayList<Position>();
 	private List<SequenceListener> listeners = new CopyOnWriteArrayList<SequenceListener>();
 
 	private StringBuffer residues;
@@ -58,7 +57,7 @@ public class Sequence implements EditableSequenceI {
 	public Position createPosition( int theOffset ) {
 		Position p = new SequencePosition();
 		p.setOffset( theOffset );
-		this.positions.addElement( p );
+		this.positions.add( p );
 		return p;
 	}
 

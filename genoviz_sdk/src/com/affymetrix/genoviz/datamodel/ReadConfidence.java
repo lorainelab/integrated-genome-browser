@@ -13,6 +13,8 @@
 
 package com.affymetrix.genoviz.datamodel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -23,19 +25,19 @@ import java.util.Vector;
 public class ReadConfidence
 {
 
-	private Vector<BaseConfidence> qualityVector;
+	private List<BaseConfidence> qualityList;
 	private int maxConfidence = 0;
 
 	/**
 	 * creates an empty ReadConfidence.
 	 */
 	public ReadConfidence() {
-		this.qualityVector = new Vector<BaseConfidence>();
+		this.qualityList = new ArrayList<BaseConfidence>();
 	}
 
 	/** @return the number of bases called (read). */
 	public int getReadLength() {
-		return this.qualityVector.size();
+		return this.qualityList.size();
 	}
 
 	/** @return the confidence of the base called with the most confidence. */
@@ -47,7 +49,7 @@ public class ReadConfidence
 	 * adds a BaseConfidence to this ReadConfidence.
 	 */
 	public void addBaseConfidence( BaseConfidence theBase ) {
-		this.qualityVector.addElement( theBase );
+		this.qualityList.add( theBase );
 		this.maxConfidence = Math.max( this.maxConfidence, theBase.getConfidence() );
 	}
 
@@ -64,27 +66,27 @@ public class ReadConfidence
 	 * @param theNewBases the array of bases to assign.
 	 */
 	public void setBaseArray(char[] theNewBases) {
-		if (qualityVector == null) {
+		if (qualityList == null) {
 			System.out.println("Tried to set bases without quality scores.");
 		}
 				
-		int ourBases = Math.min( theNewBases.length, this.qualityVector.size() );
-		if ( theNewBases.length < this.qualityVector.size() ) {
+		int ourBases = Math.min( theNewBases.length, this.qualityList.size() );
+		if ( theNewBases.length < this.qualityList.size() ) {
 			System.err.println("setBaseArray: Not enough bases. Filling in with \"-\".");
 			System.err.println("              "
-					+ theNewBases.length + " < " + this.qualityVector.size() );
+					+ theNewBases.length + " < " + this.qualityList.size() );
 		}
-		if (this.qualityVector.size() < theNewBases.length ) {
+		if (this.qualityList.size() < theNewBases.length ) {
 			System.err.println( "setBaseArray: Too many bases. Ignoring the extras." );
 			System.err.println( "              "
-					+ this.qualityVector.size() + " < " + theNewBases.length );
+					+ this.qualityList.size() + " < " + theNewBases.length );
 		}
 		try {
 			for (int i = 0; i < ourBases; i++ ) {
 				BaseConfidence bc = getBaseConfidenceAt( i );
 				bc.setBase( theNewBases[i] );
 			}
-			for (int i = ourBases; i < this.qualityVector.size(); i++) {
+			for (int i = ourBases; i < this.qualityList.size(); i++) {
 				BaseConfidence bc = getBaseConfidenceAt( i );
 				bc.setBase( '-' );
 			}
@@ -98,9 +100,9 @@ public class ReadConfidence
 
 	/** @return an array of the bases called. */
 	public char[] getBaseArray() {
-		char[] b = new char[qualityVector.size()];
+		char[] b = new char[qualityList.size()];
 		for ( int i = 0; i < b.length; i++ ) {
-			b[i] = qualityVector.elementAt(i).getBase();
+			b[i] = qualityList.get(i).getBase();
 		}
 		return b;
 	}
@@ -113,9 +115,9 @@ public class ReadConfidence
 
 	/** @return the quality scores. */
 	public int[] getQualArray() {
-		int[] q = new int[qualityVector.size()];
+		int[] q = new int[qualityList.size()];
 		for ( int i = 0; i < q.length; i++ ) {
-			q[i] = qualityVector.elementAt(i).getConfidence();
+			q[i] = qualityList.get(i).getConfidence();
 		}
 		return q;
 	}
@@ -125,15 +127,15 @@ public class ReadConfidence
 	 * @return a BaseConfidence (including score) of that base.
 	 */
 	public BaseConfidence getBaseConfidenceAt(int index) {
-		return qualityVector.elementAt(index);
+		return qualityList.get(index);
 	}
 
 	/**
 	 * @return an array of base calls
 	 */
 	public BaseCall[] getBaseCalls() {
-		BaseCall[] array = new BaseCall[qualityVector.size()];
-		this.qualityVector.copyInto( array );
+		BaseCall[] array = new BaseCall[qualityList.size()];
+		this.qualityList.toArray(array);
 		return array;
 	}
 

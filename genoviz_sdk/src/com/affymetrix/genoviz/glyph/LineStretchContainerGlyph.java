@@ -51,7 +51,7 @@ public class LineStretchContainerGlyph extends Glyph {
 	 */
 	public void removeChild(GlyphI glyph) {
 		super.removeChild(glyph);
-		Vector child_glyphs = this.getChildren();
+		List child_glyphs = this.getChildren();
 		if (child_glyphs == null || child_glyphs.size() <= 0) {
 			// what should be done if no children left???
 		}

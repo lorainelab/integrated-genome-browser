@@ -57,7 +57,7 @@ public final class RestrictionControlView extends JComponent
 		/**
 	 *  keep track of added glyphs
 	 */
-	private final Vector<GlyphI> glyphs = new Vector<GlyphI>();
+	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
 
 	public RestrictionControlView() {
 		super();

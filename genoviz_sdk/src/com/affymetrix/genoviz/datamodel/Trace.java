@@ -13,10 +13,12 @@
 
 package com.affymetrix.genoviz.datamodel;
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Base implementation of the TraceI interface.
@@ -30,8 +32,8 @@ public class Trace implements TraceI {
 
 	protected String name;
 
-	protected Vector<BaseCall> baseVector;
-	protected Vector<TraceSample> sampleVector;
+	protected List<BaseCall> baseVector;
+	protected List<TraceSample> sampleVector;
 	protected Hashtable<Integer,BaseCall> baseHashtable;
 	protected StringBuffer seqBuffer;
 
@@ -46,8 +48,8 @@ public class Trace implements TraceI {
 	private BaseCalls activeBaseCalls;
 
 	public Trace() {
-		sampleVector = new Vector<TraceSample>();
-		baseVector = new Vector<BaseCall>();
+		sampleVector = new ArrayList<TraceSample>();
+		baseVector = new ArrayList<BaseCall>();
 		baseHashtable = new Hashtable<Integer,BaseCall>();
 		seqBuffer = new StringBuffer();
 	}
@@ -66,7 +68,7 @@ public class Trace implements TraceI {
 	 * @return a Vector of TraceSamples,
 	 * one for each data point in the trace.
 	 */
-	public Vector<TraceSample> getSampleVector() {
+	public List<TraceSample> getSampleVector() {
 		return sampleVector;
 	}
 
@@ -117,7 +119,7 @@ public class Trace implements TraceI {
 	/**
 	 * @return a Vector of CalledBases, one for each base called in the trace.
 	 */
-	public Vector getBaseVector() {
+	public List getBaseVector() {
 		return baseVector;
 	}
 
@@ -260,7 +262,7 @@ public class Trace implements TraceI {
 	public void replaceBaseCalls( BaseCall[] theCall ) {
 		int i = this.baseVector.size();
 		baseHashtable = new Hashtable<Integer,BaseCall>(i);
-		baseVector = new Vector<BaseCall>(i);
+		baseVector = new ArrayList<BaseCall>(i);
 		seqBuffer = new StringBuffer(i);
 		for ( i = 0; i < theCall.length; i++ ) {
 			addBase( theCall[i] );
@@ -288,7 +290,7 @@ public class Trace implements TraceI {
 	 */
 	public Trace reverseComplement() {
 		Trace rev = new Trace();
-		Vector<TraceSample> rev_samples = new Vector<TraceSample>();
+		List<TraceSample> rev_samples = new ArrayList<TraceSample>();
 		int num_samples = sampleVector.size();
 		TraceSample sample, rev_sample;
 

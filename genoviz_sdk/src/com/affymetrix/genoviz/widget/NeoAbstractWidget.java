@@ -269,7 +269,7 @@ public abstract class NeoAbstractWidget extends Container
 	protected int scroll_behavior[] = new int[2];
 
 	// a list of selected glyphs
-	protected Vector<GlyphI> selected = new Vector<GlyphI>();
+	protected List<GlyphI> selected = new ArrayList<GlyphI>();
 
 	/**
 	 * Places the a comonent in the widget.
@@ -324,10 +324,10 @@ public abstract class NeoAbstractWidget extends Container
     else {
       models_have_multiple_glyphs = true;
       if (previous instanceof Vector) {
-        ((Vector<GlyphI>) previous).add(glyph);
+        ((List<GlyphI>) previous).add(glyph);
       }
       else {
-        Vector<GlyphI> glyphs = new Vector<GlyphI>();
+        List<GlyphI> glyphs = new ArrayList<GlyphI>();
         glyphs.add((GlyphI) previous);
         glyphs.add(glyph);
         model_hash.put(datamodel, glyphs);
@@ -366,7 +366,7 @@ public abstract class NeoAbstractWidget extends Container
 			return (G)result;
 		}
 		else if (result instanceof Vector && ((Vector)result).size() > 0) {
-			Vector<G> vec = (Vector)result;
+			List<G> vec = (Vector)result;
 			return vec.get(vec.size()-1);
 		}
 		else {
@@ -375,22 +375,22 @@ public abstract class NeoAbstractWidget extends Container
 	}
 
 	/**
-	 * Retrieves the <code>Vector</code> of glyphs associated with the
+	 * Retrieves the <code>List</code> of glyphs associated with the
 	 * <code>datamodel</code>.  Typically, <code>datamodel</code> is
 	 * an arbitrary datamodel that has been associated with one or more glyphs.
 	 *
 	 * @param datamodel an arbitrary object associated with one or
 	 *   more glyphs.
-	 * @return the <code>Vector</code> of glyphs associated with <code>
+	 * @return the <code>List</code> of glyphs associated with <code>
 	 *  datamodel</code>.
 	 */
-	public <G extends GlyphI> Vector<G> getItems(Object datamodel) {
+	public <G extends GlyphI> List<G> getItems(Object datamodel) {
 		Collections.singletonList(datamodel);
 		Object result = model_hash.get(datamodel);
 		if (result instanceof Vector) {
-			return (Vector<G>)result;
+			return (List<G>)result;
 		} else {
-			Vector<G> vec = new Vector<G>();
+			List<G> vec = new ArrayList<G>();
 			if ( null != result ) {
 				vec.add((G)result);
 			}
@@ -405,10 +405,10 @@ public abstract class NeoAbstractWidget extends Container
 	 * @param x the double describing the X position
 	 * @param y the double describing the Y position
 	 *
-	 * @return a <code>Vector</code> of <code>Glyph</code>s
+	 * @return a <code>List</code> of <code>Glyph</code>s
 	 * at <code>x,y</code>
 	 */
-	public abstract Vector<GlyphI> getItems(double x, double y, int location);
+	public abstract List<GlyphI> getItems(double x, double y, int location);
 
 	/**
 	 * Determines widget behavior along each axis if items are added beyond
@@ -567,7 +567,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @param visible a boolean indicator of visibility.  if false,
 	 *   then the GlyphI is not displayed.
 	 */
-	public abstract void setVisibility(Vector<GlyphI> glyphs, boolean visible);
+	public abstract void setVisibility(List<GlyphI> glyphs, boolean visible);
 
 	/**
 	 * gets the visibility of an item in this widget.
@@ -604,7 +604,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @see #moveRelative
 	 * @see NeoMap#addItem
 	 */
-	public void moveAbsolute(Vector<GlyphI> glyphs, double x, double y) {
+	public void moveAbsolute(List<GlyphI> glyphs, double x, double y) {
 		for (int i=0; i<glyphs.size(); i++) {
 			moveAbsolute(glyphs.get(i), x, y);
 		}
@@ -642,7 +642,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @see #moveAbsolute
 	 * @see NeoMap#addItem
 	 */
-	public void moveRelative(Vector<GlyphI> glyphs, double x, double y) {
+	public void moveRelative(List<GlyphI> glyphs, double x, double y) {
 		for (int i=0; i<glyphs.size(); i++) {
 			moveRelative(glyphs.get(i), x, y);
 		}
@@ -710,7 +710,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @see #deselect
 	 * @see #getSelected
 	 */
-	public void select(Vector<GlyphI> glyphs) {
+	public void select(List<GlyphI> glyphs) {
 		if (glyphs == null) {
 			return;
 		}
@@ -752,7 +752,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @see #select
 	 * @see #getSelected
 	 */
-	public void deselect(Vector vec) {
+	public void deselect(List vec) {
 		// need to special case if vec argument is ref to same Vector as selected,
 		//   since the deselect(Object) will cause shrinking of vec size as
 		//   it is being looped through
@@ -770,11 +770,11 @@ public abstract class NeoAbstractWidget extends Container
 	/**
 	 * retrieves all currently selected glyphs.
 	 *
-	 * @return a <code>Vector</code> of all selected GlyphIs
+	 * @return a <code>List</code> of all selected GlyphIs
 	 * @see #deselect
 	 * @see #select
 	 */
-	public Vector<GlyphI> getSelected() {
+	public List<GlyphI> getSelected() {
 		return selected;
 	}
 
@@ -1215,7 +1215,7 @@ public abstract class NeoAbstractWidget extends Container
 	 * @param glyphs the Vector of GlyphIs to remove
 	 * @see NeoMap#addItem
 	 */
-	public abstract void removeItem(Vector<GlyphI> glyphs);
+	public abstract void removeItem(List<GlyphI> glyphs);
 
 	/**
 	 *  returns true if the glyph supports selection of a subregion

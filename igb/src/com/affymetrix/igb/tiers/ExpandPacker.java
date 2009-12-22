@@ -196,7 +196,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
 
   public Rectangle pack(GlyphI parent, ViewI view) {
     //    System.out.println("begin ExpandPacker.pack(glyph, view)");
-    Vector<GlyphI> sibs = parent.getChildren();
+    List<GlyphI> sibs = parent.getChildren();
     GlyphI child;
     Rectangle2D.Double cbox;
     Rectangle2D.Double pbox = parent.getCoordBox();
@@ -217,7 +217,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     // trying synchronization to ensure this method is threadsafe
       synchronized(sibs) {  // testing synchronizing on sibs vector...
 	GlyphI[] sibarray = new GlyphI[sibs.size()];
-	sibs.copyInto(sibarray);
+	sibs.toArray(sibarray);
 	sibs.clear(); // sets parent.getChildren() to empty Vector
 	int sibs_size = sibarray.length;
 	//	System.out.println("packing each child");
@@ -345,7 +345,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
       child.moveAbsolute(childbox.x, pbox.y+parent_spacer);
     }
     childbox = child.getCoordBox();
-    Vector<GlyphI> sibs = parent.getChildren();
+    List<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
     List<GlyphI> sibsinrange = null;
     boolean childMoved = true;

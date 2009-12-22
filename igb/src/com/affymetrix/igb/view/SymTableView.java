@@ -46,7 +46,7 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
 
     /*
     public void setDefaultColumnOrder(List<String> columns) {
-        default_order = new Vector<String>(columns);
+        default_order = new ArrayList<String>(columns);
     }*/
 
     public void symSelectionChanged(SymSelectionEvent evt) {
@@ -67,7 +67,7 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
         currentSyms = selected_syms;
 
         int symCount = selected_syms.size();
-        Vector<Map<String, Object>> propvec = new Vector<Map<String, Object>>();
+        List<Map<String, Object>> propvec = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < symCount; i++) {
             SeqSymmetry sym = selected_syms.get(i);
             Map<String, Object> props = determineProps(sym, seqMap);
@@ -76,7 +76,7 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
         }
         Map[] prop_array = propvec.toArray(new Map[propvec.size()]);
 
-        Vector<String> prop_order = determineOrder();
+        List<String> prop_order = determineOrder();
         this.showProperties(prop_array, prop_order, "");
     }
 
@@ -124,10 +124,10 @@ public final class SymTableView extends PropertySheet implements SymSelectionLis
     }
 
     // The general order these fields should show up in.
-    private static Vector<String> determineOrder() {
-        Vector<String> prop_order;
+    private static List<String> determineOrder() {
+        List<String> prop_order;
 
-        prop_order = new Vector<String>(18);
+        prop_order = new ArrayList<String>(18);
         prop_order.add("gene name");
         prop_order.add("name");
         prop_order.add("id");

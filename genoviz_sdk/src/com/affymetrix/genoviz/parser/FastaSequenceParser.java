@@ -16,8 +16,9 @@ package com.affymetrix.genoviz.parser;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.Sequence;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * Parses FASTA format data.
@@ -74,7 +75,7 @@ public class FastaSequenceParser implements ContentParser {
 
 	public Object importContent(BufferedReader in) throws IOException {
 		StringBuffer out = new StringBuffer();
-		Vector<SequenceI> v = new Vector<SequenceI>();
+		List<SequenceI> v = new ArrayList<SequenceI>();
 		String line;
 
 		try {
@@ -133,10 +134,9 @@ public class FastaSequenceParser implements ContentParser {
 		if ( o instanceof Sequence ) {
 			exportContent( pw, ( Sequence ) o );
 		}
-		else if ( o instanceof Vector ) {
-			Enumeration e = ((Vector)o).elements();
-			while ( e.hasMoreElements() ) {
-				exportContent( pw, (Sequence) e.nextElement() );
+		else if ( o instanceof List ) {
+			for (Object ob : (List)o) {
+				exportContent( pw, (Sequence) ob );
 				pw.println();
 			}
 		}

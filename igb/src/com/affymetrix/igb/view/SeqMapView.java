@@ -232,7 +232,7 @@ public class SeqMapView extends JPanel
 	protected SeqMapViewMouseListener mouse_listener;
 	private CharSeqGlyph seq_glyph = null;
 	SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
-	Vector<GlyphI> match_glyphs = new Vector<GlyphI>();
+	List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 	protected TierLabelManager tier_manager;
 	PixelFloaterGlyph grid_layer = null;
 	GridGlyph grid_glyph = null;
@@ -872,7 +872,7 @@ public class SeqMapView extends JPanel
 		method2ftier = new HashMap<String, TierGlyph>();
 		gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 		//gstyle2floatTier = new HashMap();
-		match_glyphs = new Vector<GlyphI>();
+		match_glyphs = new ArrayList<GlyphI>();
 		seqmap.updateWidget();
 	}
 
@@ -964,7 +964,7 @@ public class SeqMapView extends JPanel
 		boolean same_seq = ((seq == this.aseq) && (seq != null));
 
 
-		match_glyphs = new Vector<GlyphI>();
+		match_glyphs = new ArrayList<GlyphI>();
 		List<SeqSymmetry> old_selections = Collections.<SeqSymmetry>emptyList();
 		double old_zoom_spot_x = seqmap.getZoomCoord(AffyTieredMap.X);
 		double old_zoom_spot_y = seqmap.getZoomCoord(AffyTieredMap.Y);
@@ -1625,7 +1625,7 @@ public class SeqMapView extends JPanel
 	 *  {@link GenometryModel#setSelectedSymmetries(List, Object)}.
 	 */
 	void postSelections() {
-		Vector<GlyphI> selected_glyphs = seqmap.getSelected();
+		List<GlyphI> selected_glyphs = seqmap.getSelected();
 
 		List<SeqSymmetry> selected_syms = glyphsToSyms(selected_glyphs);
 		// Note that seq_selected_sym (the selected residues) is not included in selected_syms
@@ -1770,7 +1770,7 @@ public class SeqMapView extends JPanel
 	 *  @return a List of SeqSymmetry objects, possibly empty.
 	 */
 	List<SeqSymmetry> getSelectedSyms() {
-		Vector<GlyphI> glyphs = seqmap.getSelected();
+		List<GlyphI> glyphs = seqmap.getSelected();
 		return glyphsToSyms(glyphs);
 	}
 
@@ -1780,7 +1780,7 @@ public class SeqMapView extends JPanel
 	 *  @return a SeqSymmetry or null
 	 */
 	public SeqSymmetry getSelectedSymmetry() {
-		Vector<GlyphI> glyphs = seqmap.getSelected();
+		List<GlyphI> glyphs = seqmap.getSelected();
 		if (glyphs.isEmpty()) {
 			return null;
 		} else {
@@ -2156,7 +2156,7 @@ public class SeqMapView extends JPanel
 
 	/** Zoom to a region including all the currently selected Glyphs. */
 	public void zoomToSelections() {
-		Vector<GlyphI> selections = seqmap.getSelected();
+		List<GlyphI> selections = seqmap.getSelected();
 		if (selections.size() > 0) {
 			zoomToRectangle(getRegionForGlyphs(selections));
 		} else if (getSelectedRegion() != null) {
@@ -2313,7 +2313,7 @@ public class SeqMapView extends JPanel
 		}
 
 		if (match_query_count <= max_for_matching) {
-			match_glyphs = new Vector<GlyphI>();
+			match_glyphs = new ArrayList<GlyphI>();
 			ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
 			target_glyphs.add(seqmap.getScene().getGlyph());
 			double fuzz = getEdgeMatcher().getFuzziness();
@@ -2343,7 +2343,7 @@ public class SeqMapView extends JPanel
 		if (show_edge_matches) {
 			doEdgeMatching(seqmap.getSelected(), true);
 		} else {
-			doEdgeMatching(new Vector<GlyphI>(0), true);
+			doEdgeMatching(new ArrayList<GlyphI>(0), true);
 		}
 	}
 

@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-//import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
@@ -241,7 +240,7 @@ public class GlyphDragger
 		}
 		Rectangle2D.Double cbox = gl.getCoordBox();
 		newgl.setCoords(cbox.x, cbox.y-5, cbox.width, cbox.height);
-		Vector children = gl.getChildren();
+		List children = gl.getChildren();
 		if (children != null) {
 			for (int i=0; i<children.size(); i++) {
 				GlyphI child = (GlyphI)children.get(i);

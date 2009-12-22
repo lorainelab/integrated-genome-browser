@@ -46,7 +46,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
 
 	public Rectangle pack(GlyphI parent, ViewI view) {
-		Vector children = parent.getChildren();
+		List children = parent.getChildren();
 		if (children == null) { return null; }
 		GlyphI child;
 		double height;
@@ -85,7 +85,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 
 	protected void moveAllChildren(GlyphI parent) {
 		Rectangle2D.Double pbox = parent.getCoordBox();
-		Vector children = parent.getChildren();
+		List children = parent.getChildren();
 		if (children == null) { return; }
 		double parent_height = parent.getCoordBox().height;
 

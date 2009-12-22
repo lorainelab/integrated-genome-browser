@@ -33,7 +33,7 @@ public class Scene implements SceneI  {
 	private static final boolean debug = false;
 
 	protected GlyphI eveGlyph;
-	protected Vector<ViewI> views;
+	protected List<ViewI> views;
 	protected Color select_color;
 	protected int select_style;
 
@@ -65,7 +65,7 @@ public class Scene implements SceneI  {
 		eveGlyph = new RootGlyph();
 		eveGlyph.setScene(this);
 		eveGlyph.setCoords(0,0,1,1);
-		views = new Vector<ViewI>();
+		views = new ArrayList<ViewI>();
 		select_color = Color.red;
 		select_style = SELECT_FILL;
 		scratchCoordBox = new Rectangle2D.Double();
@@ -154,7 +154,7 @@ public class Scene implements SceneI  {
 	/**
 	 * Returns a vector of the views that are currently representing the scene.
 	 */
-	public Vector<ViewI> getViews()  {
+	public List<ViewI> getViews()  {
 		return views;
 	}
 
@@ -235,12 +235,12 @@ public class Scene implements SceneI  {
 		return null;
 	}
 
-	public void pickTraversal(Rectangle2D.Double coordrect, Vector<GlyphI> pickvect,
+	public void pickTraversal(Rectangle2D.Double coordrect, List<GlyphI> pickvect,
 			ViewI view) {
 		eveGlyph.pickTraversal(coordrect, pickvect, view);
 	}
 
-	public void pickTraversal(Rectangle coordrect, Vector<GlyphI> pickvect,
+	public void pickTraversal(Rectangle coordrect, List<GlyphI> pickvect,
 			ViewI view) {
 		eveGlyph.pickTraversal(coordrect, pickvect, view);
 	}

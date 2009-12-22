@@ -959,7 +959,7 @@ public class NeoSeq extends NeoContainerWidget
 		getResidueGlyph().removeAnnotation(gl);
 	}
 
-	public void removeAnnotations(Vector glyphs) {
+	public void removeAnnotations(List<GlyphI> glyphs) {
 		for (int i=0; i<glyphs.size(); i++) {
 			removeAnnotation((GlyphI)glyphs.get(i));
 		}
@@ -1873,12 +1873,12 @@ public class NeoSeq extends NeoContainerWidget
 	 *  @param start   the start of the range to find overlaps
 	 *  @param end     the end of the range to find overlaps
 	 */
-	public Vector<GlyphI> getAnnotationItems(int start, int end) {
-		Vector<GlyphI> resultVec = new Vector<GlyphI>();
+	public List<GlyphI> getAnnotationItems(int start, int end) {
+		List<GlyphI> resultVec = new ArrayList<GlyphI>();
 		Range sel_range = new Range(start, end);
 		Range annot_range = new Range(0,0);
 
-		Vector seqchildren, annotchildren;
+		List seqchildren, annotchildren;
 		Object seqchild, annotchild;
 		WrapAnnot wrap_annot;
 		AnnotationGlyph annot_glyph;
@@ -1933,7 +1933,7 @@ public class NeoSeq extends NeoContainerWidget
 		}
 		AnnotationGlyph annot = (AnnotationGlyph)glyph;
 		Range glyph_range = getAnnotationRange(annot);
-		Vector pickvect = getAnnotationItems(glyph_range.beg, glyph_range.end);
+		List pickvect = getAnnotationItems(glyph_range.beg, glyph_range.end);
 		int start = pickvect.indexOf(annot)+1;
 		if (start < 0) { // The glyph itself doesn't show up in pickvect.
 			// Something very strange is going on.

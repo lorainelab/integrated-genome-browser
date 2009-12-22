@@ -603,7 +603,7 @@ public class NeoQualler extends NeoContainerWidget
 		throw new RuntimeException("deselect not yet implemented.");
 	}
 
-	public Vector<GlyphI> getSelected() {
+	public List<GlyphI> getSelected() {
 		return selected;
 	}
 

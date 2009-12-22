@@ -159,7 +159,7 @@ public class TieredLabelMap extends AbstractTieredMap {
 		labelMTG.setCoords(0, 0, 100, 30);
 		labelMTG.setSelectable ( isSubSelectionAllowed() );
 
-		Vector<String> v = mtg.getMoreStrings();
+		List<String> v = mtg.getMoreStrings();
 		if ( v != null ) labelMTG.setMoreStrings( v );
 
 		return labelMTG;

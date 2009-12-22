@@ -15,9 +15,9 @@ package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import java.awt.Rectangle;
-import java.awt.Color;
-import java.util.Vector;
+import java.util.List;
 import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
+import java.util.ArrayList;
 
 
 /**
@@ -34,7 +34,7 @@ public class TierMapRubberBand extends RubberBand {
 	protected int startedTier;
 	protected int tier;
 	protected MapTierGlyph glyph;
-	protected Vector<AbstractTieredMap> other_maps;
+	protected List<AbstractTieredMap> other_maps;
 	protected boolean somethingToErase = false;
 
 	/**
@@ -44,13 +44,13 @@ public class TierMapRubberBand extends RubberBand {
 	 */
 	public TierMapRubberBand(){
 		super();
-		other_maps = new Vector<AbstractTieredMap>();
+		other_maps = new ArrayList<AbstractTieredMap>();
 	}
 
 	public TierMapRubberBand(AbstractTieredMap ntm){
 		super((java.awt.Component)ntm);
 		tiermap = ntm;
-		other_maps = new Vector<AbstractTieredMap>();
+		other_maps = new ArrayList<AbstractTieredMap>();
 	}
 
 	/**

@@ -189,7 +189,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 	}
 
 	public Rectangle pack(GlyphI parent, ViewI view) {
-		Vector<GlyphI> sibs;
+		List<GlyphI> sibs;
 		GlyphI child;
 
 		sibs = parent.getChildren();
@@ -211,7 +211,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		//
 		// might be more threadsafe to make a new pack(parent, child, view, vector) method
 		//   that can take a vector argument to use as children to check against, rather than
-		//   always checking against all the children of parent?  And then make a new vector
+		//   always checking against all the children of parent?  And then make a new ArrayList
 		//   and keep adding to it rather than removing all the children like current solution
 		//      [but then what to do about using glyph searchnodes?]
 		//
@@ -226,7 +226,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		if (USE_NEW_PACK) {
 			synchronized(sibs) {  // testing synchronizing on sibs vector...
 				GlyphI[] sibarray = new GlyphI[sibs.size()];
-				sibs.copyInto(sibarray);
+				sibs.toArray(sibarray);
 				sibs.clear(); // sets parent.getChildren() to empty Vector
 				int sibs_size = sibarray.length;
 				for (int i=0; i<sibs_size; i++) {
@@ -320,16 +320,16 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		}
 		childbox = child.getCoordBox();
 
-		Vector<? extends GlyphI> sibs = parent.getChildren();
+		List<? extends GlyphI> sibs = parent.getChildren();
 		if (sibs == null) { return null; }
 
-		Vector<GlyphI> sibsinrange;
+		List<GlyphI> sibsinrange;
 
 		if (parent instanceof MapTierGlyph && use_search_nodes) {
 			sibsinrange = ((MapTierGlyph)parent).getOverlappingSibs(child);
 		}
 		else {
-			sibsinrange = new Vector<GlyphI>();
+			sibsinrange = new ArrayList<GlyphI>();
 			int sibs_size = sibs.size();
 			for (int i=0; i<sibs_size; i++) {
 				GlyphI sibling = (GlyphI)sibs.get(i);

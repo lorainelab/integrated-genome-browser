@@ -39,8 +39,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
   protected Scene scene;
 
   protected GlyphI parent;
-  protected Vector<GlyphI> children;  // want to move towards using List instead of Vector, will require fixing lots of other code though
-
+  protected List<GlyphI> children;
   protected Color color = Color.black;
   protected boolean isVisible;
   protected Object info;
@@ -186,18 +185,18 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
     this.setForegroundColor( fg );
   }
 
-  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector, ViewI view)  {
+  public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList, ViewI view)  {
     if (isVisible && intersects(pickRect, view))  {
       if (debug)  {
         System.out.println("intersects");
       }
       if (hit(pickRect, view))  {
-        if (!pickVector.contains(this)) {
+        if (!pickList.contains(this)) {
           // Note that Vector.contains() performs a test using "equals()".
           // EfficientGlyph extends Rectangle2D.Double which tests equality based
           // on coordinates.  This means that you can't "select" both a parent glyph
           // and a child glyph that have identical coordinates.
-          pickVector.add(this);
+          pickList.add(this);
         }
         if (debug)   {
           System.out.println("Hit " + this);
@@ -207,14 +206,14 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
           GlyphI child = children.get(i);
-          child.pickTraversal( pickRect, pickVector, view );
+          child.pickTraversal( pickRect, pickList, view );
         }
       }
     }
   }
 
   /** NOT YET IMPLEMENTED. */
-  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector, ViewI view) {
+  public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList, ViewI view) {
     //TODO: need to covert pickRect to coords...
     /*
     if (isVisible && intersects(pickRect, view))  {
@@ -222,8 +221,8 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
         System.out.println("intersects");
       }
       if (hit(pickRect, view))  {
-        if (!pickVector.contains(this)) {
-          pickVector.add(this);
+        if (!pickList.contains(this)) {
+          pickList.add(this);
         }
         if (debug)   {
           System.out.println("Hit " + this);
@@ -235,7 +234,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
           child = (GlyphI)children.get(i);
-          child.pickTraversal(pickRect, pickVector, view);
+          child.pickTraversal(pickRect, pickList, view);
         }
       }
     }
@@ -258,7 +257,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
       prev_parent.removeChild(glyph);
     }
     if (children == null)  {
-      children = new Vector<GlyphI>();
+      children = new ArrayList<GlyphI>();
     }
     if (position == children.size()) {
       children.add(glyph);
@@ -276,7 +275,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
       prev_parent.removeChild(glyph);
     }
     if (children == null)  {
-      children = new Vector<GlyphI>();
+      children = new ArrayList<GlyphI>();
     }
     children.add(glyph);
     glyph.setParent(this);
@@ -308,7 +307,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
     return children.get(index);
   }
 
-  public Vector<GlyphI> getChildren()  {
+  public List<GlyphI> getChildren()  {
     return children;
   }
 

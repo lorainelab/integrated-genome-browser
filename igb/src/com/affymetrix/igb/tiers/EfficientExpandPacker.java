@@ -31,7 +31,7 @@ public abstract class EfficientExpandPacker extends ExpandPacker {
       throw new RuntimeException("EfficientExpandPacker can currently only work as packer for TierGlyph");
     }
     TierGlyph tier = (TierGlyph)parent;
-    Vector sibs = tier.getChildren();
+    List sibs = tier.getChildren();
     if (sibs == null || sibs.size() <= 0) { return null; }  // return if nothing to pack
 
     GlyphI child;
@@ -233,7 +233,7 @@ public abstract class EfficientExpandPacker extends ExpandPacker {
     childbox = child.getCoordBox();
     List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
-    Vector<GlyphI> sibs = parent.getChildren();
+    List<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
     if (avoid_sibs) {
       sibsinrange = new ArrayList<GlyphI>();

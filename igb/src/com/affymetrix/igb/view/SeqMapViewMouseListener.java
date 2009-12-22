@@ -385,7 +385,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
   }
 
   // This is called ONLY at the end of a rubber-band drag.
-  void doTheSelection(Vector<GlyphI> glyphs, MouseEvent evt) {      
+  void doTheSelection(List<GlyphI> glyphs, MouseEvent evt) {      
     boolean something_changed = true;
 
     // Remove any children of the axis tier (like contigs) from the selections.
@@ -402,7 +402,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
     // Now correct for the fact that we might be zoomed way-out.  In that case
     // select only the parent glyphs (RNA's), not all the little children (Exons).
     Point2D.Double zoom_point = new Point2D.Double(0,0); // dummy variable, value not used
-    Vector<GlyphI> corrected = new Vector<GlyphI>(glyphs.size());
+    List<GlyphI> corrected = new ArrayList<GlyphI>(glyphs.size());
     for (int i=0; i<glyphs.size(); i++) {
       GlyphI g = glyphs.get(i);
       GlyphI zc = zoomCorrectedGlyphChoice(g, zoom_point);
@@ -411,7 +411,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
     glyphs = corrected;
 
     if (onlySelectParentsDuringDrag) {
-      glyphs = new Vector<GlyphI>(SeqMapView.getParents(glyphs));
+      glyphs = new ArrayList<GlyphI>(SeqMapView.getParents(glyphs));
     }
     
     if (isToggleSelectionEvent(evt)) {

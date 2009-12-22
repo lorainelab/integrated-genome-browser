@@ -145,14 +145,14 @@ public final class TransformTierGlyph extends TierGlyph {
   // need to redo pickTraversal, etc. to take account of transform also...
   //
 	@Override
-  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
 
     // copied form first part of Glyph.pickTraversal()
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
-        if (!pickVector.contains(this)) {
-          pickVector.add(this);
+        if (!pickList.contains(this)) {
+          pickList.add(this);
         }
       }
 
@@ -167,7 +167,7 @@ public final class TransformTierGlyph extends TierGlyph {
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
           child = children.get( i );
-          child.pickTraversal(internal_pickRect, pickVector, view );
+          child.pickTraversal(internal_pickRect, pickList, view );
         }
       }
       if (DEBUG_PICK_TRAVERSAL)  { debugLocation(pickRect); }
@@ -178,12 +178,12 @@ public final class TransformTierGlyph extends TierGlyph {
 
   // NOT YET TESTED
 	@Override
-  public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList,
                             ViewI view) {
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
-        if (!pickVector.contains(this)) {
-          pickVector.add(this);
+        if (!pickList.contains(this)) {
+          pickList.add(this);
         }
       }
       if (children != null)  {
@@ -194,7 +194,7 @@ public final class TransformTierGlyph extends TierGlyph {
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
           child = children.get(i);
-          child.pickTraversal(internal_pickRect, pickVector, view);
+          child.pickTraversal(internal_pickRect, pickList, view);
         }
       }
     }

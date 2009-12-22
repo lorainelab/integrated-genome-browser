@@ -173,7 +173,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		arrow.setCoords(x, y, width, height);
 		arrow.setForward(forward);
 
-		Vector<GlyphI> subGlyphs = arrow.getChildren();
+		List<GlyphI> subGlyphs = arrow.getChildren();
 		if (null != subGlyphs){
 			for (int k = 0; k<subGlyphs.size(); k++){
 				SolidGlyph sg = (SolidGlyph)(subGlyphs.get(k));

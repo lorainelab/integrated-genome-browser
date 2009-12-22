@@ -159,7 +159,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
   @Override
   public Rectangle pack(GlyphI parent, ViewI view) {
     boolean REPORT_SLOT_CHECKS = false;
-    Vector sibs = parent.getChildren();
+    List sibs = parent.getChildren();
     Rectangle2D.Double cbox;
     GlyphI child;
     Rectangle2D.Double pbox = parent.getCoordBox();

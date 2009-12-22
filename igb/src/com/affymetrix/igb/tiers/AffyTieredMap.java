@@ -260,7 +260,7 @@ public class AffyTieredMap extends NeoMap {
 	public void removeItem(GlyphI gl) {
 		super.removeItem(gl);
 		if (gl.getChildren() != null) {
-			Vector<GlyphI> children = gl.getChildren();
+			List<GlyphI> children = gl.getChildren();
 			int childCount = children.size();
 			/* remove from end of child Vector instead of beginning! -- that way, won't
 			 *   get issues with trying to access elements off end of Vector as

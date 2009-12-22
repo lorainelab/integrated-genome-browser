@@ -37,14 +37,14 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 
 	protected static Hashtable<String,Color> colormap = GeneralUtils.getColorMap();
 
-	protected Vector<NeoAbstractWidget> widgets;
+	protected List<NeoAbstractWidget> widgets;
 
 	public NeoContainerWidget() {
 		super();
 		//    setOpaque(true);
 		//    setDoubleBuffered(true);
 
-		widgets = new Vector<NeoAbstractWidget>();
+		widgets = new ArrayList<NeoAbstractWidget>();
 	}
 
 	public void addWidget(NeoAbstractWidget widget) {
@@ -59,7 +59,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		this.removeAll();
 	}
 
-	public Vector<? extends NeoAbstractWidget> getWidgets() {
+	public List<? extends NeoAbstractWidget> getWidgets() {
 		return widgets;
 	}
 
@@ -126,7 +126,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		widg.setVisibility(gl, isVisible);
 	}
 
-	public void setVisibility(Vector<GlyphI> glyphs, boolean isVisible) {
+	public void setVisibility(List<GlyphI> glyphs, boolean isVisible) {
 		for (int i=0; i<glyphs.size(); i++) {
 			setVisibility(glyphs.get(i), isVisible);
 		}
@@ -150,9 +150,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		if (gl == null) {
 			return;
 		}
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			e.nextElement().deselect(gl);
+		for (int i=0;i<widgets.size();i++) {
+			widgets.get(i).deselect(gl);
 		}
 		selected.remove(gl);
 	}
@@ -173,7 +172,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	}
 
 	public Color getSelectionColor() {
-		return widgets.firstElement().getSelectionColor();
+		return widgets.get(0).getSelectionColor();
 	}
 
 	/**
@@ -232,7 +231,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	/** Subclasses must define getLocation() method. */
 	public abstract int getLocation(NeoAbstractWidget widget);
 
-	public Vector<GlyphI> getItems(double xcoord, double ycoord, int location) {
+	public List<GlyphI> getItems(double xcoord, double ycoord, int location) {
 		// getWidget() is defined in subclasses
 		NeoAbstractWidget widg = getWidget(location);
 		if (widg == this) {
@@ -367,7 +366,6 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
-		Enumeration e = widgets.elements();
 		for (NeoAbstractWidget widg : widgets) {
 			widg.zoom(axisid, zoom_scale);
 		}
@@ -462,8 +460,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		}
 	}
 
-	public void removeItem(Vector<GlyphI> vec) {
-		Vector<GlyphI> glyphs = (Vector)vec.clone();
+	public void removeItem(List<GlyphI> vec) {
+		List<GlyphI> glyphs = new ArrayList<GlyphI>(vec);
 		for (int i=0; i<glyphs.size(); i++) {
 			removeItem(glyphs.get(i));
 		}
@@ -471,11 +469,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 
 	public void clearWidget() {
 		super.clearWidget();
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		NeoAbstractWidget widg;
-		while (e.hasMoreElements()) {
-			widg = e.nextElement();
-			widg.clearWidget();
+		for (int i=0;i<widgets.size();i++) {
+			widgets.get(i).clearWidget();
 		}
 
 		// BEGIN bug fix for bug #185, 5-28-98
@@ -504,7 +499,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	}
 
 	public void setDamageOptimized(boolean optimize) {
-		Vector<? extends NeoAbstractWidget> widgvec = getWidgets();
+		List<? extends NeoAbstractWidget> widgvec = getWidgets();
 		for (int i=0; i<widgvec.size(); i++) {
 			Object widg = widgvec.get(i);
 			if (widg instanceof NeoMap) {
@@ -517,7 +512,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	}
 
 	public void setScrollingOptimized(boolean optimize) {
-		Vector<? extends NeoAbstractWidget> widgvec = getWidgets();
+		List<? extends NeoAbstractWidget> widgvec = getWidgets();
 		for (int i=0; i<widgvec.size(); i++) {
 			NeoAbstractWidget widg = widgvec.get(i);
 			if (widg instanceof NeoMap) {

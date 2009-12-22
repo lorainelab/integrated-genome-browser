@@ -61,9 +61,9 @@ public abstract class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.S
   /**
    *  Reifying flyweight glyphs as needed in pickTraversal.
    */
-  public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
+  public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
-    super.pickTraversal(pickRect, pickVector, view);
+    super.pickTraversal(pickRect, pickList, view);
     if (isVisible && intersects(pickRect, view))  {
       if (xcoords != null) {
 	Rectangle2D.Double tbox = template_glyph.getCoordBox();
@@ -75,7 +75,7 @@ public abstract class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.S
 	      GlyphI reified_glyph = (GlyphI)template_glyph.getClass().newInstance();
 	      reified_glyph.setColor(template_glyph.getColor());
 	      reified_glyph.setCoords(tbox.x, tbox.width, tbox.y, tbox.height);
-	      pickVector.add(reified_glyph);
+	      pickList.add(reified_glyph);
 	    }
 	    catch (Exception ex) {
 	      ex.printStackTrace();

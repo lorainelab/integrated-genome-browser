@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.util.Vector;
+import java.util.List;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
@@ -23,6 +23,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  *  A glyph to display a vertical or horizontal numbered axis.
@@ -59,7 +60,7 @@ public class AxisGlyph extends Glyph {
 
 	protected double label_scale = 1;
 
-	protected Vector selected_regions;
+	protected List selected_regions;
 
 	// default to true for backward compatability
 	protected boolean hitable = true;
@@ -168,7 +169,7 @@ public class AxisGlyph extends Glyph {
 			System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );
 			return;
 		}
-		if ( selected_regions == null ) selected_regions = new Vector();
+		if ( selected_regions == null ) selected_regions = new ArrayList();
 		selected_regions.add( range );
 	}
 

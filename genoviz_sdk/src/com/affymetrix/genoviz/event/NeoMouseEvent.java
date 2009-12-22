@@ -17,7 +17,7 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
-import java.util.Vector;
+import java.util.List;
 
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.geom.Point2D;
@@ -36,7 +36,7 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 	protected double xcoord;
 	protected double ycoord;
 	protected int location = UNKNOWN;
-	protected Vector<GlyphI> cached_items = null;
+	protected List<GlyphI> cached_items = null;
 
 	/**
 	 * Constructs an event with the specified original event, source component,
@@ -113,7 +113,7 @@ public class NeoMouseEvent extends MouseEvent implements NeoCoordEventI {
 	 * @return a Vector of GlyphIs
 	 * whose coord bounds contain the coord location of the event.
 	 */
-	public Vector<GlyphI> getItems() {
+	public List<GlyphI> getItems() {
 		if (cached_items == null) {
 			Object src = getSource();
 			if (! (src instanceof NeoAbstractWidget)) { return null; }

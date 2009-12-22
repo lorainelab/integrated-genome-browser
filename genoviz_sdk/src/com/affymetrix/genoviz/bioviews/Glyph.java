@@ -22,8 +22,9 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * The base class that implements the GlyphI interface. All other glyphs are
@@ -47,7 +48,7 @@ public abstract class Glyph implements GlyphI  {
 	protected int min_pixels_width=1;
 	protected int min_pixels_height=1;
 	protected GlyphI parent;
-	protected Vector<GlyphI> children;
+	protected List<GlyphI> children;
 	protected GlyphStyle style;
 
 	protected boolean isVisible;
@@ -251,15 +252,15 @@ public abstract class Glyph implements GlyphI  {
 		this.setForegroundColor( fg );
 	}
 
-	public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
+	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
 			ViewI view)  {
 		if (isVisible && intersects(pickRect, view))  {
 			if (DEBUG)  {
 				System.out.println("intersects");
 			}
 			if (hit(pickRect, view))  {
-				if (!pickVector.contains(this)) {
-					pickVector.add(this);
+				if (!pickList.contains(this)) {
+					pickList.add(this);
 				}
 				if (DEBUG)   {
 					System.out.println("Hit " + this);
@@ -270,7 +271,7 @@ public abstract class Glyph implements GlyphI  {
 				int childnum = children.size();
 				for ( int i = 0; i < childnum; i++ ) {
 					child = children.get( i );
-					child.pickTraversal( pickRect, pickVector, view );
+					child.pickTraversal( pickRect, pickList, view );
 				}
 			}
 		}
@@ -283,15 +284,15 @@ public abstract class Glyph implements GlyphI  {
 	 * to coordboxes and the call is
 	 * to <code>pickTraversal(<em>coordbox</em>, vec, view)</code>
 	 */
-	public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+	public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList,
 			ViewI view) {
 		if (isVisible && intersects(pickRect, view))  {
 			if (DEBUG)  {
 				System.out.println("intersects");
 			}
 			if (hit(pickRect, view))  {
-				if (!pickVector.contains(this)) {
-					pickVector.add(this);
+				if (!pickList.contains(this)) {
+					pickList.add(this);
 				}
 				if (DEBUG)   {
 					System.out.println("Hit " + this);
@@ -303,7 +304,7 @@ public abstract class Glyph implements GlyphI  {
 				int childnum = children.size();
 				for (int i=0; i<childnum; i++) {
 					child = children.get(i);
-					child.pickTraversal(pickRect, pickVector, view);
+					child.pickTraversal(pickRect, pickList, view);
 				}
 			}
 		}
@@ -385,7 +386,7 @@ public abstract class Glyph implements GlyphI  {
 			prev_parent.removeChild(glyph);
 		}
 		if (children == null)  {
-			children = new Vector<GlyphI>();
+			children = new ArrayList<GlyphI>();
 		}
 		if (position == children.size()) {
 			children.add(glyph);
@@ -408,7 +409,7 @@ public abstract class Glyph implements GlyphI  {
 			prev_parent.removeChild(glyph);
 		}
 		if (children == null)  {
-			children = new Vector<GlyphI>();
+			children = new ArrayList<GlyphI>();
 		}
 		children.add(glyph);
 		glyph.setParent(this);
@@ -449,7 +450,7 @@ public abstract class Glyph implements GlyphI  {
 		return children.get(index);
 	}
 
-	public Vector<GlyphI> getChildren()  {
+	public List<GlyphI> getChildren()  {
 		return children;
 	}
 

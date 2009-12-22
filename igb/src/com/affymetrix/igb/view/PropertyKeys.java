@@ -43,8 +43,8 @@ final class PropertyKeys {
    * @param noData  the String value to use to represent cases where
    *   there is no value of the property for a given key
    */
-  public Vector<String[]> getNameValues(Map[] props, String noData) {
-		Vector<String[]> result = new Vector<String[]>();
+  public List<String[]> getNameValues(Map[] props, String noData) {
+		List<String[]> result = new ArrayList<String[]>();
 		// collect all possible names from the given Properties
 		int num_props = props.length;
 		Hashtable<String, String[]> rows_thus_far = new Hashtable<String, String[]>();
@@ -97,7 +97,7 @@ final class PropertyKeys {
 		return result;
 	}
 
-  public static String getName(Vector<String[]> name_values,
+  public static String getName(List<String[]> name_values,
                                  int index) {
     // name_values is a list of arrays - the first item of
     // each array is the name-value

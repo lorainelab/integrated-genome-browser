@@ -13,7 +13,8 @@
 
 package com.affymetrix.genoviz.datamodel;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * models a mapping from an aligned sequence into a reference coordinate space.
@@ -49,7 +50,7 @@ public class Mapping {
 
 	protected String id;
 	protected boolean direction;
-	protected Vector<Span> spans = new Vector<Span>();
+	protected List<Span> spans = new ArrayList<Span>();
 
 	/** The mapping's domain. */
 	protected Sequence seq;
@@ -200,7 +201,7 @@ public class Mapping {
 	/**
 	 * return a Vector of all spans in the mapping.
 	 */
-	public Vector<Span> getSpans() {
+	public List<Span> getSpans() {
 		return spans;
 	}
 

@@ -158,8 +158,8 @@ public class NeoTracer extends NeoContainerWidget
 	protected TraceI trace;
 	protected TraceGlyph trace_glyph;
 
-	protected Vector<BaseCalls> base_calls_vector; // vector of BaseCalls's;
-	protected Vector<TraceBaseGlyph> base_glyphs; // vector of TraceBaseGlyphs
+	protected List<BaseCalls> base_calls_vector; // vector of BaseCalls's;
+	protected List<TraceBaseGlyph> base_glyphs; // vector of TraceBaseGlyphs
 	private AsymAxisGlyph base_axis;
 	private TraceBaseGlyph activeBaseCallsGlyph;
 
@@ -233,8 +233,8 @@ public class NeoTracer extends NeoContainerWidget
 		trace_map = new NeoMap(false, false);
 		base_map = new NeoMap(false, false);
 
-		base_calls_vector = new Vector<BaseCalls>();
-		base_glyphs = new Vector<TraceBaseGlyph>();
+		base_calls_vector = new ArrayList<BaseCalls>();
+		base_glyphs = new ArrayList<TraceBaseGlyph>();
 
 		this.setBackground(default_panel_background);
 		trace_map.setMapColor(default_trace_background);
@@ -1269,7 +1269,7 @@ public class NeoTracer extends NeoContainerWidget
 	}
 
 	public final boolean getBaseVisibility(int baseID) {
-		return base_glyphs.firstElement().getVisibility(baseID);
+		return base_glyphs.get(0).getVisibility(baseID);
 	}
 
 	public void setBaseVisibility(int baseID, boolean visible) {
@@ -1386,7 +1386,7 @@ public class NeoTracer extends NeoContainerWidget
 		boolean cViz = getBaseVisibility( TraceGlyph.C );
 		boolean gViz = getBaseVisibility( TraceGlyph.G );
 		boolean tViz = getBaseVisibility( TraceGlyph.T );
-		Vector<BaseCalls> newBaseCalls = new Vector<BaseCalls>();
+		List<BaseCalls> newBaseCalls = new ArrayList<BaseCalls>();
 		for (BaseCalls bc : base_calls_vector ) {
 			newBaseCalls.add( bc.reverseComplement() );
 		}
@@ -1453,7 +1453,7 @@ public class NeoTracer extends NeoContainerWidget
 			sel_range.notifyObservers();
 		}
 
-		Vector gchildren = trace_glyph.getChildren();
+		List gchildren = trace_glyph.getChildren();
 		GlyphI gchild;
 		Rectangle2D.Double childbox;
 		for (int i=0; i<gchildren.size(); i++) {
@@ -1690,7 +1690,7 @@ public class NeoTracer extends NeoContainerWidget
 			active_base_calls = getActiveBaseCalls();
 		}
 		consensus = new BaseCalls();
-		Vector<Character> inserts = new Vector<Character>();
+		List<Character> inserts = new ArrayList<Character>();
 		int last_pos=0;
 
 		int calls_index = active_aligner.getMappedStart();

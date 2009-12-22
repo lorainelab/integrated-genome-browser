@@ -16,7 +16,6 @@ package com.affymetrix.genoviz.widget;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -60,7 +59,7 @@ public class VisibleRange implements Cloneable {
 		try {
 			o = super.clone();
 			VisibleRange vr = ( VisibleRange ) o;
-			vr.listeners = new Vector<NeoRangeListener>();
+			vr.listeners = new CopyOnWriteArrayList<NeoRangeListener>();
 			vr.changed = false;
 		} catch ( CloneNotSupportedException e ) {
 		}

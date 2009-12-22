@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.bioviews;
 import java.awt.geom.Rectangle2D;
-import java.util.Vector;
+import java.util.List;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -119,7 +119,7 @@ public interface GlyphI extends NeoConstants  {
 	 *
 	 * @return a Vector containing the children.
 	 */
-	public Vector<GlyphI> getChildren();
+	public List<GlyphI> getChildren();
 
 	/**
 	 *  Returns number of child glyph's this glyph has.
@@ -290,13 +290,13 @@ public interface GlyphI extends NeoConstants  {
 	 * Searches children for hits and add them to the pick vector.
 	 * @param pickvec modified by this routine to return the results
 	 */
-	public void pickTraversal(Rectangle pickrect, Vector<GlyphI> pickvec, ViewI view);
+	public void pickTraversal(Rectangle pickrect, List<GlyphI> pickvec, ViewI view);
 
 	/**
 	 * Searches children for hits and add them to the pick vector.
 	 * @param pickvec modified by this routine to return the results
 	 */
-	public void pickTraversal(Rectangle2D.Double pickrect, Vector<GlyphI> pickvec, ViewI view);
+	public void pickTraversal(Rectangle2D.Double pickrect, List<GlyphI> pickvec, ViewI view);
 
 
 	/**

@@ -384,7 +384,7 @@ public final class TierLabelManager {
     public void mousePressed(MouseEvent evt) {
       if (evt instanceof NeoMouseEvent && evt.getSource() == labelmap) {
         NeoMouseEvent nevt = (NeoMouseEvent)evt;
-        Vector selected_glyphs = nevt.getItems();
+        List selected_glyphs = nevt.getItems();
         GlyphI topgl = null;
         if (!selected_glyphs.isEmpty()) {
           topgl = (GlyphI) selected_glyphs.get(selected_glyphs.size()-1);
@@ -411,7 +411,7 @@ public final class TierLabelManager {
         if (! preserve_selections ) {
           labelmap.clearSelected();
         }
-        Vector<GlyphI> selected = nevt.getItems();
+        List<GlyphI> selected = nevt.getItems();
         labelmap.select(selected);
         doGraphSelections();
 

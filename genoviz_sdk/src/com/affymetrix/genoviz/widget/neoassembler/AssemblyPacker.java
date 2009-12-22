@@ -47,7 +47,7 @@ public class AssemblyPacker implements PackerI {
 			// **** throw an exception here? ****
 			return null;
 		}
-		Vector alignments = assembly.getChildren();
+		List alignments = assembly.getChildren();
 		if (alignments == null) { return null; }
 		int position = alignments.size();
 		if (seq.getParent() == assembly) {
@@ -80,7 +80,7 @@ public class AssemblyPacker implements PackerI {
 	//     child vector mapping to top --> bottom in display
 	public Rectangle pack(GlyphI assembly, ViewI view) {
 		if (assembly == null || view == null) { return null; }
-		Vector alignments = assembly.getChildren();
+		List alignments = assembly.getChildren();
 		Rectangle2D.Double prevbox = assembly.getCoordBox();
 		assembly.setCoords(prevbox.x, prevbox.y, prevbox.width, 0);
 

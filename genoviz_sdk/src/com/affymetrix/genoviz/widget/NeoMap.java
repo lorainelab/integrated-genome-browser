@@ -150,8 +150,8 @@ public class NeoMap extends NeoWidget implements
 			*  <p>  What is shared between the rootmap and the new map:
 			*  <ul>
 			*  <li> scene
-			*  <li> selected Vector
-			*  <li> axes Vector
+			*  <li> selected List
+			*  <li> axes List
 			*  <li> glyph_hash
 			*  <li> model_hash
 			*  <li> selection appearance (by way of scene)
@@ -1086,14 +1086,14 @@ public class NeoMap extends NeoWidget implements
 				   if (item2 == gl) {
 					   model_hash.remove(model);
 				   }
-				   else if (item2 instanceof Vector) {
-					   ((Vector)item2).remove(gl);
+				   else if (item2 instanceof List) {
+					   ((List)item2).remove(gl);
 				   }
 			   }
 
 		   }
 
-		   public void removeItem(Vector<GlyphI> vec) {
+		   public void removeItem(List<GlyphI> vec) {
 			   /*
 				* Remove from end of child Vector instead of beginning! -- that way, won't
 				* get issues with trying to access elements off end of Vector as
@@ -1245,7 +1245,7 @@ public class NeoMap extends NeoWidget implements
 			   }
 		   }
 
-		   public void select(Vector glyphs, int start, int end) {
+		   public void select(List glyphs, int start, int end) {
 			   for (int i=0; i<glyphs.size(); i++) {
 				   select((GlyphI)glyphs.get(i), start, end);
 			   }
@@ -1529,15 +1529,15 @@ public class NeoMap extends NeoWidget implements
 							   ON_MOUSE_DOWN == selectionMethod) ||
 						   (id == NeoMouseEvent.MOUSE_RELEASED &&
 							ON_MOUSE_UP == selectionMethod)) {
-					   Vector prev_items = this.getSelected();
+					   List prev_items = this.getSelected();
 					   int prev_items_size = prev_items.size();
 					   if (prev_items_size > 0 &&  !(shiftDown || controlDown || metaDown)) {
 						   this.deselect(prev_items);
 					   }
-					   Vector<GlyphI> candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
+					   List<GlyphI> candidates = this.getItems(nme.getCoordX(), nme.getCoordY());
 					   if (candidates.size() > 0 && (shiftDown || controlDown)) {
 
-						   Vector<GlyphI> in = new Vector<GlyphI>(), out = new Vector<GlyphI>();
+						   List<GlyphI> in = new ArrayList<GlyphI>(), out = new ArrayList<GlyphI>();
 						   for (GlyphI obj : candidates) {
 							   if (prev_items.contains(obj)) {
 								   out.add(obj);

@@ -32,7 +32,7 @@ public final class CollapsePacker implements PaddedPackerI {
 
   public Rectangle pack(GlyphI parent, ViewI view) {
     Rectangle2D.Double pbox = parent.getCoordBox();
-    Vector children = parent.getChildren();
+    List children = parent.getChildren();
     double maxHeight = 0;
 
     if (children != null) { 

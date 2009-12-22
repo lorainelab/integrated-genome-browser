@@ -16,9 +16,7 @@ package com.affymetrix.genoviz.widget;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 
-import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Enumeration;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
@@ -35,6 +33,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.ItemSelectable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -220,8 +219,8 @@ public class NeoAssembler extends NeoContainerWidget
 	protected StretchContainerGlyph cglyph;
 
 	protected AssemblyPacker apacker;
-	protected Vector<GlyphI> align_glyphs;
-	protected Vector<NeoDataAdapterI> adapters;
+	protected List<GlyphI> align_glyphs;
+	protected List<NeoDataAdapterI> adapters;
 	boolean optimize_scrolling = false;
 	boolean optimize_damage = false;
 	boolean use_label_arrows = true;
@@ -378,7 +377,7 @@ public class NeoAssembler extends NeoContainerWidget
 		align_pixel_spacing = 1;
 		align_spacing = align_pixel_spacing;
 		align_num = 0;
-		align_glyphs = new Vector<GlyphI>();
+		align_glyphs = new ArrayList<GlyphI>();
 
 		alignmap = new NeoMap(false, false);
 		labelmap = new NeoMap(false, false);
@@ -1323,7 +1322,7 @@ public class NeoAssembler extends NeoContainerWidget
 		for (i=0; i<reflength; i++) {
 			refbuf.append('*');
 		}
-		Vector<Span> spans = consensus.getSpans();
+		List<Span> spans = consensus.getSpans();
 		if (spans != null) {
 			int seqindex, refindex;
 			for (Span s : spans) {
@@ -1355,7 +1354,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * Should move this method and QuickSorter, InsertionSort classes
 	 *  to a Sorter util class
 	 */
-	protected int getSortedPosition(Comparable<AlignmentGlyph> elem, Vector<GlyphI> vec) {
+	protected int getSortedPosition(Comparable<AlignmentGlyph> elem, List<GlyphI> vec) {
 		if (vec == null) {
 			return 0;
 		}
@@ -1439,7 +1438,7 @@ public class NeoAssembler extends NeoContainerWidget
 	}
 
 	public Object[] getSelectedObjects() {
-		Vector<GlyphI> v = this.labelmap.getSelected();
+		List<GlyphI> v = this.labelmap.getSelected();
 		if ( null == v || v.size() < 1 ) {
 			return null;
 		}
@@ -1463,7 +1462,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @param offset the label is at.
 	 */
 	private void selectLabel( double offset ) {
-		Vector<GlyphI> v = this.labelmap.getItems( 10, offset );
+		List<GlyphI> v = this.labelmap.getItems( 10, offset );
 		for ( int i = 0; i < v.size(); i++ ) {
 			GlyphI o = v.get( i );
 			if ( o instanceof StringGlyph ) {
@@ -1511,10 +1510,10 @@ public class NeoAssembler extends NeoContainerWidget
 					}
 						 }
 
-				Vector<GlyphI> a = (Vector<GlyphI>) alignmap.getSelected().clone();
-				// Vector a must be a clone! getSelected() returns the real thing.
+				List<GlyphI> a = new ArrayList<GlyphI>(alignmap.getSelected());
+				// a must be a clone! getSelected() returns the real thing.
 				a.addAll(consmap.getSelected());
-				//this.selected.clear();
+
 				this.selected = a;
 			}
 
@@ -1540,7 +1539,7 @@ public class NeoAssembler extends NeoContainerWidget
 						//    (keep track of subselection with select_start / select_end)
 						alignmap.deselect(alignmap.getSelected());
 						consmap.deselect(consmap.getSelected());
-						Vector<GlyphI> items = selmap.getItems(nevt.getCoordX(),
+						List<GlyphI> items = selmap.getItems(nevt.getCoordX(),
 								nevt.getCoordY());
 						sel_glyph = null;
 						for (GlyphI item : items) {
@@ -1617,7 +1616,7 @@ public class NeoAssembler extends NeoContainerWidget
 		selected.clear();
 	}
 
-	public Vector<GlyphI> getSelected() {
+	public List<GlyphI> getSelected() {
 		return selected;
 	}
 	//-------------------------------------------
@@ -1649,7 +1648,7 @@ public class NeoAssembler extends NeoContainerWidget
 			throw new NullPointerException("cannot add a null NeoDataAdapterI.");
 		}
 		if (adapters == null) {
-			adapters = new Vector<NeoDataAdapterI>();
+			adapters = new ArrayList<NeoDataAdapterI>();
 		}
 		adapters.add(adapter);
 	}
@@ -1755,7 +1754,7 @@ public class NeoAssembler extends NeoContainerWidget
 			return;
 		}
 		ViewI pack_view = alignmap.getView();
-		Vector align_glyphs = cglyph.getChildren();
+		List align_glyphs = cglyph.getChildren();
 		if (pack_view == null || align_glyphs == null) {
 			return;
 		}
@@ -1784,7 +1783,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 
 	public void resetUnalignedColors() {
-		Vector parents = getAlignmentGlyphs();
+		List parents = getAlignmentGlyphs();
 		AlignmentGlyph parent;
 		List<AlignedResiduesGlyph> unaligned_spans;
 		for (int i=0; i<parents.size(); i++) {
@@ -1816,7 +1815,7 @@ public class NeoAssembler extends NeoContainerWidget
 		Object child;
 		ResiduesGlyphI rglyph;
 		if (cglyph != null) {
-			Vector aligns = cglyph.getChildren();
+			List aligns = cglyph.getChildren();
 			if (aligns != null) {
 				for (int i=0; i<aligns.size(); i++) {
 					child = aligns.get(i);
@@ -1843,7 +1842,7 @@ public class NeoAssembler extends NeoContainerWidget
 			}
 			AlignmentGlyph seq_glyph;
 			if (cglyph != null) {
-				Vector aligns = cglyph.getChildren();
+				List aligns = cglyph.getChildren();
 				if (aligns != null) {
 					for (int i=0; i<aligns.size(); i++) {
 						child = aligns.get(i);
@@ -1852,7 +1851,7 @@ public class NeoAssembler extends NeoContainerWidget
 							glyphbox = seq_glyph.getCoordBox();
 							seq_glyph.setCoords(glyphbox.x, glyphbox.y,
 									glyphbox.width, align_glyph_height);
-							Vector child2 = seq_glyph.getChildren();
+							List child2 = seq_glyph.getChildren();
 
 							for (int k=0; k<child2.size(); k++){
 								GlyphI glyph = (GlyphI)child2.get(k);
@@ -2261,7 +2260,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
-	public Vector<GlyphI> getAlignmentGlyphs() {
+	public List<GlyphI> getAlignmentGlyphs() {
 		return align_glyphs;
 	}
 
@@ -2511,7 +2510,7 @@ public class NeoAssembler extends NeoContainerWidget
 		font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;
 		residue_color = col;
 		if (apply_color_retro) {
-			Vector<GlyphI> align_glyphs = this.getAlignmentGlyphs();
+			List<GlyphI> align_glyphs = this.getAlignmentGlyphs();
 			AlignmentGlyph gar;
 			for (int i=0; i<align_glyphs.size(); i++) {
 				gar = (AlignmentGlyph) align_glyphs.get(i);

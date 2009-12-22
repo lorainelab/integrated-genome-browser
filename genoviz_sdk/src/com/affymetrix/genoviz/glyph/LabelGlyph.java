@@ -417,15 +417,15 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	/**
 	 * We override the superclass's version of this method
 	 * so that we can add both the labeling (this) and labeled glyph
-	 * to the pickVector.
+	 * to the pickList.
 	 */
-	public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
+	public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
 			ViewI view)  {
 		if (isVisible && intersects(pickRect, view))  {
 			if (hit(pickRect, view))  {
-				pickVector.add(this);
-				if (null != this.labeled && !pickVector.contains(this.labeled)) {
-					pickVector.add(this.labeled);
+				pickList.add(this);
+				if (null != this.labeled && !pickList.contains(this.labeled)) {
+					pickList.add(this.labeled);
 				}
 			}
 			if (children != null)  {
@@ -433,7 +433,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 				int childnum = children.size();
 				for (int i=0; i<childnum; i++) {
 					child = children.get(i);
-					child.pickTraversal(pickRect, pickVector, view);
+					child.pickTraversal(pickRect, pickList, view);
 				}
 			}
 		}
@@ -442,16 +442,16 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 	/**
 	 * We override the superclass's version of this method
 	 * so that we can add both the labeling (this) and labeled glyph
-	 * to the pickVector.
+	 * to the pickList.
 	 */
-	public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
+	public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList,
 			ViewI view)
 	{
 		if (isVisible && intersects(pickRect, view))  {
 			if (hit(pickRect, view))  {
-				pickVector.add(this);
-				if (null != this.labeled && !pickVector.contains(this.labeled)) {
-					pickVector.add(this.labeled);
+				pickList.add(this);
+				if (null != this.labeled && !pickList.contains(this.labeled)) {
+					pickList.add(this.labeled);
 				}
 			}
 			if (children != null)  {
@@ -460,7 +460,7 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 				int childnum = children.size();
 				for (int i=0; i<childnum; i++) {
 					child = children.get(i);
-					child.pickTraversal(pickRect, pickVector, view);
+					child.pickTraversal(pickRect, pickList, view);
 				}
 			}
 		}

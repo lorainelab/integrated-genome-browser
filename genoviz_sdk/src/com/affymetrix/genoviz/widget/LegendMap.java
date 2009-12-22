@@ -32,7 +32,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 	TieredNeoMap map_to_track;
 	Hashtable<MapTierGlyph,LegendGlyph> tier_to_legend = new Hashtable<MapTierGlyph,LegendGlyph>();
 	Hashtable<LegendGlyph,MapTierGlyph> legend_to_tier = new Hashtable<LegendGlyph,MapTierGlyph>();
-	Vector<LegendGlyph> legend_glyphs = new Vector<LegendGlyph>();
+	List<LegendGlyph> legend_glyphs = new ArrayList<LegendGlyph>();
 	boolean debug_events = false;
 	Color expanded_color = Color.white;
 	Color collapsed_color = Color.black;
@@ -51,7 +51,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 		super.clearWidget();
 		tier_to_legend = new Hashtable<MapTierGlyph,LegendGlyph>();
 		legend_to_tier = new Hashtable<LegendGlyph,MapTierGlyph>();
-		legend_glyphs = new Vector<LegendGlyph>();
+		legend_glyphs = new ArrayList<LegendGlyph>();
 	}
 
 	public void setExpandedColor( Color expanded_color ) {

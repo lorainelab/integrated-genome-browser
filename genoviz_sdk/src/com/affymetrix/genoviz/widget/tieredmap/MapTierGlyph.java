@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import java.util.Vector;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
@@ -23,6 +22,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -110,7 +110,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	protected boolean showLabel = true;
 	protected boolean hitable = false;
 	protected boolean hideable = true;
-	protected Vector<String> moreStrings;
+	protected List<String> moreStrings;
 	protected int label_spacing = -1;
 	protected int strand = STRAND_INSENSITIVE;
 
@@ -149,7 +149,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	/** Remove all children of the glyph */
 
 	public void removeChildren () {
-		Vector kids = this.getChildren();
+		List kids = this.getChildren();
 
 		if (kids != null) {
 			for (int i=0; i < kids.size(); i++)
@@ -163,17 +163,19 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		gsn = new GlyphSearchNode();
 	}
 
-	public Vector<GlyphI> getOverlappingSibs(GlyphI child) {
+	public List<GlyphI> getOverlappingSibs(GlyphI child) {
 		return gsn.getOverlaps(child);
 	}
 
 	/**
-	 * @return a clone of the moreStrings vector, used with TieredLabelMap.
+	 * @return a clone of moreStrings, used with TieredLabelMap.
 	 */
   @SuppressWarnings("unchecked")
-	public Vector<String> getMoreStrings() {
-		if ( this.moreStrings == null ) moreStrings = new Vector<String>();
-		return (Vector<String>) this.moreStrings.clone();
+	public List<String> getMoreStrings() {
+		if ( this.moreStrings == null ) {
+			return new ArrayList<String>();
+		}
+		return new ArrayList<String>(this.moreStrings);
 	}
 
 	/**
@@ -184,7 +186,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 * which does make a clone.
 	 * @see #getMoreStrings
 	 */
-	public void setMoreStrings( Vector<String> theStrings ) {
+	public void setMoreStrings( List<String> theStrings ) {
 		this.moreStrings = theStrings;
 	}
 
@@ -197,7 +199,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			view.transformToCoords(pixelbox, cbox);
 			double a = cbox.x;
 			double b = cbox.x + cbox.width;
-			java.util.Vector children_in_range = gsn.getOverlappingGlyphs(a, b);
+			List children_in_range = gsn.getOverlappingGlyphs(a, b);
 			int j_size = children_in_range.size();
 			for (int j=0; j<j_size; j++) {
 				child = (GlyphI) children_in_range.get(j);
@@ -281,7 +283,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	}
 
 	public void addLineToLabel ( String s ) {
-		if ( moreStrings == null ) moreStrings = new Vector<String>();
+		if ( moreStrings == null ) moreStrings = new ArrayList<String>();
 		moreStrings.add( s );
 	}
 

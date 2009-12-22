@@ -298,33 +298,33 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * which makes sure the item is not only drawn/displayed,
 	 * but also visible (unobscured by other items).
 	 *
-	 * @return a vector of the items.
+	 * @return a list of the items.
 	 */
-	public Vector getVisibleItems() {
+	public List getVisibleItems() {
 		// SHOULD THIS BE getViewBounds() INSTEAD!!??!!!
 		//    WHICH GLYPHS DO WE REALLY WANT TO RETURN????
 		Rectangle2D.Double coordrect = getCoordBounds();
-		Vector<GlyphI> pickvect = new Vector<GlyphI>();
+		List<GlyphI> pickvect = new ArrayList<GlyphI>();
 		scene.pickTraversal(coordrect, pickvect, view);
 		return pickvect;
 	}
 
 
 	/**
-	 *  retrieve a Vector of all drawn glyphs that overlap
+	 *  retrieve a List of all drawn glyphs that overlap
 	 *  the coordinate rectangle coordrect.
 	 */
-	public Vector<GlyphI> getItemsByCoord(Rectangle2D.Double coordrect) {
-		Vector<GlyphI> pickvect = new Vector<GlyphI>();
+	public List<GlyphI> getItemsByCoord(Rectangle2D.Double coordrect) {
+		List<GlyphI> pickvect = new ArrayList<GlyphI>();
 		scene.pickTraversal(coordrect, pickvect, view);
 		return pickvect;
 	}
 
 	/**
-	 *  retrieve a Vector of all drawn glyphs that overlap
+	 *  retrieve a List of all drawn glyphs that overlap
 	 *  the pixel point x, y.
 	 */
-	public Vector<GlyphI> getItemsByPixel(int x, int y) {
+	public List<GlyphI> getItemsByPixel(int x, int y) {
 		Rectangle pixrect = new Rectangle(x-this.pixelblur, y-this.pixelblur,
 				2*this.pixelblur, 2*this.pixelblur);
 		Rectangle2D.Double coordrect = new Rectangle2D.Double();
@@ -338,7 +338,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * @param pixrect a rectangle in pixel space
 	 * @return the overlapping glyphs
 	 */
-	public Vector<GlyphI> getItems(Rectangle pixrect) {
+	public List<GlyphI> getItems(Rectangle pixrect) {
 		// no pixelblur for region selection
 		Rectangle2D.Double coordrect = new Rectangle2D.Double();
 		coordrect = view.transformToCoords(pixrect, coordrect);
@@ -352,7 +352,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * @return the overlapping glyphs
 	 * @see com.affymetrix.genoviz.widget.NeoAbstractWidget#setPixelFuzziness
 	 */
-	public Vector<GlyphI> getItems(double x, double y) {
+	public List<GlyphI> getItems(double x, double y) {
 		Rectangle2D.Double coordrect = new Rectangle2D.Double(x, y, 1, 1);
 		if (0 < pixelblur) {
 			Rectangle pixrect = new Rectangle();
@@ -364,7 +364,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		return getItemsByCoord(coordrect);
 	}
 
-	public Vector<GlyphI> getItems(double x, double y, int location) {
+	public List<GlyphI> getItems(double x, double y, int location) {
 		return getItems(x,y);
 	}
 
@@ -779,7 +779,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		scene.setVisibility(gl, isVisible);
 	}
 
-	public void setVisibility(Vector glyphs, boolean isVisible) {
+	public void setVisibility(List glyphs, boolean isVisible) {
 		for (int i=0; i<glyphs.size(); i++) {
 			setVisibility((GlyphI)glyphs.get(i), isVisible);
 		}
@@ -1165,7 +1165,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	public boolean isOnTop(GlyphI gl) {
 		if (!gl.isVisible()) { return false; }
 		Rectangle2D.Double cbox = gl.getCoordBox();
-		Vector<GlyphI> pickvect = new Vector<GlyphI>();
+		List<GlyphI> pickvect = new ArrayList<GlyphI>();
 		getScene().pickTraversal(cbox, pickvect, getView());
 		if (pickvect.size() == 0) {
 			// something very strange is going on if pickvect doesn't at

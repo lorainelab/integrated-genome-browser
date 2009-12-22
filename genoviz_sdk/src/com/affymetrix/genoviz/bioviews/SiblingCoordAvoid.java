@@ -16,7 +16,8 @@ package com.affymetrix.genoviz.bioviews;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This packer makes sure siblings do not overlap.
@@ -35,10 +36,10 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 			GlyphI child, ViewI view) {
 		Rectangle2D.Double childbox, siblingbox;
 		childbox = child.getCoordBox();
-		Vector children = parent.getChildren();
+		List children = parent.getChildren();
 		if (children == null) { return null; }
 
-		Vector<GlyphI> sibsinrange = new Vector<GlyphI>();
+		List<GlyphI> sibsinrange = new ArrayList<GlyphI>();
 		GlyphI sibling;
 		int i, j;
 		for (i=0; i<children.size(); i++) {

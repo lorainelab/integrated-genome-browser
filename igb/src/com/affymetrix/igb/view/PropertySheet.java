@@ -61,11 +61,11 @@ class PropertySheet extends JPanel {
    * out values in a column, then column headings will
    * be PROPERTY and then labels for the item whose
    * values are being presented.
-   * @param name_values - a Vector containing name-values for a
+   * @param name_values - a List containing name-values for a
    *   one or more Properties
    * @param props - the list of Properties
    */
-  private String[] getColumnHeadings(Vector<String[]> name_values,
+  private String[] getColumnHeadings(List<String[]> name_values,
                                     Map[] props) {
     // will contain number of Properties + 1 if by_rows is false
     // will contain number of values if by_rows is true
@@ -100,11 +100,11 @@ class PropertySheet extends JPanel {
    * this PropertySheet.
    * If there are no Properties to be shown, then returns
    * default rows.
-   * @param name_values - a Vector containing name-values for a
+   * @param name_values - a List containing name-values for a
    *   one or more Properties
    * @param props  the list of Properties
    */
-  private String[][] buildRows(Vector<String[]> name_values, Map[] props) {
+  private String[][] buildRows(List<String[]> name_values, Map[] props) {
     int num_props = props.length;
     int num_vals = name_values.size();
     String[][] rows = null;
@@ -137,20 +137,20 @@ class PropertySheet extends JPanel {
 
 
   /**
-   * take name_values and return a new Vector that
+   * take name_values and return a new ArrayList that
    *  starts with the names found in preferred_ordering in the specified order,
    *  and then adds entries in name_values that were not found in preferred_ordering.
    *
-   *  WARNING! this destroys integrity of original name_values Vector!
-   *  also assumes that there are no null entries in name_values Vector
+   *  WARNING! this destroys integrity of original name_values!
+   *  also assumes that there are no null entries in name_values
    *
-   * @param name_values   a Vector of String[]'s
-   * @param preferred_ordering a Vector of Strings with the preferred order of column names
+   * @param name_values   a List of String[]s
+   * @param preferred_ordering a List of Strings with the preferred order of column names
    * @param useOnlySpecifiedColumns If true, then the property sheet will display ONLY the properties
    * whose names are listed. 
    */
-  private Vector<String[]> reorderNames(Vector<String[]> name_values, Vector<String> preferred_ordering) {
-	  Vector<String[]> reordered = new Vector<String[]>(name_values.size());
+  private List<String[]> reorderNames(List<String[]> name_values, List<String> preferred_ordering) {
+	  List<String[]> reordered = new ArrayList<String[]>(name_values.size());
 		for (String request : preferred_ordering) {
 			for (int k = 0; k < name_values.size(); k++) {
 				String[] vals = name_values.get(k);
@@ -180,12 +180,12 @@ class PropertySheet extends JPanel {
    * @param props  the given Properties
    * @param preferred_prop_order the preferred order of columns
    * @param noData the value to use when a property value is null
-   * @see #buildRows(Vector, Map[])
+   * @see #buildRows(List, Map[])
    */
-  public void showProperties(Map[] props, Vector<String> preferred_prop_order, String noData) {
+  public void showProperties(Map[] props, List<String> preferred_prop_order, String noData) {
     PropertyKeys propkeys = new PropertyKeys();
 
-    Vector<String[]> name_values = propkeys.getNameValues(props, noData);
+    List<String[]> name_values = propkeys.getNameValues(props, noData);
     if (preferred_prop_order != null) {
       name_values = reorderNames(name_values, preferred_prop_order);
     }

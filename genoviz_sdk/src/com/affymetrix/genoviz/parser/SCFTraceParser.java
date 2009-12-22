@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * parsers SCF format trace data.
@@ -182,7 +182,7 @@ public class SCFTraceParser implements ContentParser {
 			dis.skipBytes(samples_offset - streampos);
 			streampos = samples_offset;
 
-			Vector sampleVector = trace.getSampleVector();
+			List sampleVector = trace.getSampleVector();
 
 			if ( Float.valueOf(version).doubleValue() >= 2.0f ) {
 				/* There are this.samples points */

@@ -45,7 +45,7 @@ public abstract class AbstractTieredMap
 	public boolean debug_events = false; // for debugging only
 	public String name; // for debugging only
 
-	protected Vector<MapTierGlyph> tiers = new Vector<MapTierGlyph>();
+	protected List<MapTierGlyph> tiers = new ArrayList<MapTierGlyph>();
 	private List<TierEventListener> tierEventListeners = new CopyOnWriteArrayList<TierEventListener>();
 	private boolean notifyingListeners = false;
 
@@ -278,7 +278,7 @@ public abstract class AbstractTieredMap
 	 * Get all the tiers for the TieredNeoMap.
 	 * @return vector of tiers.
 	 */
-	public Vector getAllTiers( ) {
+	public List getAllTiers( ) {
 		return tiers;
 	}
 
@@ -293,7 +293,7 @@ public abstract class AbstractTieredMap
 			m.removeChildren();
 		}
 		super.clearWidget();
-		tiers = new Vector<MapTierGlyph>();
+		tiers = new ArrayList<MapTierGlyph>();
 	}
 
 	/**

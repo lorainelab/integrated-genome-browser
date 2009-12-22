@@ -77,7 +77,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private JButton searchButton = new JButton("Search");
 	private JButton clear_button = new JButton("Clear");
 	private SeqMapView gviewer;
-	private Vector<GlyphI> glyphs = new Vector<GlyphI>();
+	private List<GlyphI> glyphs = new ArrayList<GlyphI>();
 	private Color hitcolor = new Color(150, 150, 255);
 
 	private final JTable table = new JTable();

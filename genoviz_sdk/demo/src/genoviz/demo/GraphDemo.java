@@ -13,7 +13,6 @@
 
 package genoviz.demo;
 
-import java.awt.*;
 import java.applet.*;
 import java.util.*;
 
@@ -21,6 +20,8 @@ import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.BasicGraphGlyph;
 import com.affymetrix.genoviz.glyph.BasicImageGlyph;
+import java.awt.BorderLayout;
+import java.awt.Image;
 import javax.swing.JScrollBar;
 
 public class GraphDemo extends Applet {

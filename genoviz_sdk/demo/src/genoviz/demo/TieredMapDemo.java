@@ -14,7 +14,6 @@
 package genoviz.demo;
 
 import java.applet.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
@@ -24,6 +23,18 @@ import com.affymetrix.genoviz.widget.tieredmap.*;
 import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.Toolkit;
 import javax.swing.JScrollBar;
 
 /**

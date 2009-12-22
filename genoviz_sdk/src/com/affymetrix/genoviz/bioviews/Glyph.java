@@ -13,12 +13,17 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
-import java.util.*;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
 import com.affymetrix.genoviz.glyph.GlyphStyle;
 import com.affymetrix.genoviz.glyph.GlyphStyleFactory;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.Stack;
+import java.util.Vector;
 
 /**
  * The base class that implements the GlyphI interface. All other glyphs are

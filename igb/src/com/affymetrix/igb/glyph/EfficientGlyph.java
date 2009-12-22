@@ -13,10 +13,13 @@
 
 package com.affymetrix.igb.glyph;
 
-import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix.genoviz.bioviews.GlyphI {

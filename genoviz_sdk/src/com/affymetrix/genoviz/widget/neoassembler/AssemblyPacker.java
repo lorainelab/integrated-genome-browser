@@ -13,11 +13,10 @@
 
 package com.affymetrix.genoviz.widget.neoassembler;
 
-import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.glyph.*;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class AssemblyPacker implements PackerI {

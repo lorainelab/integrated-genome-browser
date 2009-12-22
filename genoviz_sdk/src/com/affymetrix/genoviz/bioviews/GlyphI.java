@@ -12,10 +12,12 @@
  */
 
 package com.affymetrix.genoviz.bioviews;
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Vector;
 import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 
 /**
  *      GlyphI, along with SceneI and ViewI,

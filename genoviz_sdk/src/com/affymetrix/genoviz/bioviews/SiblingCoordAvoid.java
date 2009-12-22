@@ -13,12 +13,10 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
-import java.util.*;
-import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.glyph.StretchContainerGlyph;
-import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.Vector;
 
 /**
  * This packer makes sure siblings do not overlap.

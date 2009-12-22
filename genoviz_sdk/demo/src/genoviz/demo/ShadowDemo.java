@@ -14,7 +14,6 @@
 package genoviz.demo;
 
 import java.applet.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
 
@@ -23,6 +22,19 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.geom.Rectangle2D;
 import javax.swing.JScrollBar;
 

@@ -13,10 +13,10 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class LineStretchContainerGlyph extends Glyph {

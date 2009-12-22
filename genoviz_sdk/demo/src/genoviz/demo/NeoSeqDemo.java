@@ -14,7 +14,6 @@
 package genoviz.demo;
 
 import java.applet.Applet;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -27,6 +26,22 @@ import com.affymetrix.genoviz.parser.FastaSequenceParser;
 import com.affymetrix.genoviz.widget.NeoSeq;
 import com.affymetrix.genoviz.widget.NeoSeqCustomizer;
 import com.affymetrix.genoviz.widget.neoseq.AnnotationGlyph;
+import java.awt.BorderLayout;
+import java.awt.CheckboxMenuItem;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.Toolkit;
+import java.awt.Window;
 
 public class NeoSeqDemo extends Applet
 	implements WindowListener, ActionListener, ItemListener

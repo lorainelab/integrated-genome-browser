@@ -12,8 +12,6 @@
  */
 package com.affymetrix.igb.view;
 
-import com.affymetrix.genometryImpl.BioSeq;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -29,6 +27,11 @@ import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TransformTierGlyph;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 
 public final class RestrictionControlView extends JComponent
 				implements ListSelectionListener, ActionListener {

@@ -13,9 +13,9 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPackerI {

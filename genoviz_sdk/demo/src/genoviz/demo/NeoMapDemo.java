@@ -14,7 +14,6 @@
 package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
@@ -35,6 +34,12 @@ import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoMapCustomizer;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Rectangle;
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;

@@ -23,7 +23,11 @@ import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
 
 import java.applet.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Panel;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;

@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.tiers;
 
-//import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;

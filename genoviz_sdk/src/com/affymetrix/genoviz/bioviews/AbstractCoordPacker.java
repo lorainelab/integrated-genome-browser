@@ -13,10 +13,10 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import com.affymetrix.genoviz.util.*;
+import java.awt.Rectangle;
 
 /**
  * Abstract base class for many coordinate-based packers.

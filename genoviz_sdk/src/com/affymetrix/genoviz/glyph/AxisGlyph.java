@@ -13,12 +13,15 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.awt.*;
 import java.util.Vector;
 import java.text.DecimalFormat;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 /**

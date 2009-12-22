@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.widget;
 
-//import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.awt.geom.Point2D;

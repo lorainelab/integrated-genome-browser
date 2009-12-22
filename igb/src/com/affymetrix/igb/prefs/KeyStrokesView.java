@@ -13,7 +13,6 @@
 
 package com.affymetrix.igb.prefs;
 
-import java.awt.*;
 import java.util.*;
 import java.util.prefs.*;
 import javax.swing.*;
@@ -22,6 +21,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import java.awt.BorderLayout;
 
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 

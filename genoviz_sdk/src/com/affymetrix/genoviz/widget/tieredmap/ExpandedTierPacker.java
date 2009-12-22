@@ -15,9 +15,9 @@ package com.affymetrix.genoviz.widget.tieredmap;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.util.*;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {

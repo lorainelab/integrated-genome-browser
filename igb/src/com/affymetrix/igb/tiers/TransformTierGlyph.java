@@ -18,7 +18,8 @@ import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -143,6 +144,7 @@ public final class TransformTierGlyph extends TierGlyph {
   //
   // need to redo pickTraversal, etc. to take account of transform also...
   //
+	@Override
   public void pickTraversal(Rectangle2D.Double pickRect, Vector<GlyphI> pickVector,
                             ViewI view)  {
 
@@ -175,6 +177,7 @@ public final class TransformTierGlyph extends TierGlyph {
 
 
   // NOT YET TESTED
+	@Override
   public void pickTraversal(Rectangle pickRect, Vector<GlyphI> pickVector,
                             ViewI view) {
     if (isVisible && intersects(pickRect, view))  {
@@ -199,6 +202,7 @@ public final class TransformTierGlyph extends TierGlyph {
 
 
   // don't move children! just change tier's transform offset
+	@Override
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;

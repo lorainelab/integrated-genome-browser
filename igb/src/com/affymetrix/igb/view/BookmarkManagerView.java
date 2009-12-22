@@ -22,7 +22,13 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.swing.dnd.*;
 
-import java.awt.*;
+//import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import java.awt.event.*;
@@ -750,7 +756,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
       }
     }
 
-    Collection dragging_paths = new Vector();
+    List<TreePath> dragging_paths = new ArrayList<TreePath>();
 
     public void dragGestureRecognized(DragGestureEvent dge) {
       dragging_paths.clear();

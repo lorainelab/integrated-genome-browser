@@ -39,7 +39,7 @@ public class EfficientSolidGlyph extends EfficientGlyph  {
    * Sets if the glyph is hitable.  Most glyphs will probably be hitable, 
    * and the default value is true.
    * Making a glyph not hitable keeps it from being selectable, and from being
-   * in the NeoMouseEvent.getItems() vector.
+   * in NeoMouseEvent.getItems().
    */
   public void setHitable (boolean hitable) {
     this.hitable = hitable;

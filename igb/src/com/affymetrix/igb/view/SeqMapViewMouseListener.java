@@ -172,8 +172,8 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
     }
 
     // seems no longer needed
-    //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs vector
-    Vector<GraphGlyph> graphs = new Vector<GraphGlyph>();
+    //map.removeItem(match_glyphs);  // remove all match glyphs in match_glyphs
+    List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
     for (int i=0; i<hcount; i++) {
       Object obj = hits.get(i);
       if (obj instanceof GraphGlyph) {

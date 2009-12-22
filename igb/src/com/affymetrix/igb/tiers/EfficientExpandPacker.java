@@ -236,7 +236,7 @@ public abstract class EfficientExpandPacker extends ExpandPacker {
     Vector<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
     if (avoid_sibs) {
-      sibsinrange = new Vector<GlyphI>();
+      sibsinrange = new ArrayList<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
 	GlyphI sibling = sibs.get(i);

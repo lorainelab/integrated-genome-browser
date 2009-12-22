@@ -156,7 +156,7 @@ public final class OrfAnalyzer extends JComponent
 
 
 		AffyTieredMap map = smv.getSeqMap();
-		orf_holders = new Vector<FlyPointLinkerGlyph>();
+		orf_holders = new ArrayList<FlyPointLinkerGlyph>();
 		if (vseq == null || !(vseq.isComplete())) {
 			Application.errorPanel("Cannot perform ORF analysis: must first load all residues for sequence");
 			show_orfs = false;

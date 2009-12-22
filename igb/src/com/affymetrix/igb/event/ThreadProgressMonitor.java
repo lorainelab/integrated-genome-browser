@@ -3,7 +3,8 @@ package com.affymetrix.igb.event;
 import java.awt.Component;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *  Provides a JDialog that can let the user know about an underlying process
@@ -31,10 +32,10 @@ public final class ThreadProgressMonitor {
     if (cancel_text == null) {cancel_text = "Cancel";}
     String ok_text = UIManager.getString("OptionPane.okButtonText");
     if (ok_text == null) {ok_text = "OK";}
-    Vector<String> button_vector = new Vector<String>(2);
-    if (can_dismiss) {button_vector.add(ok_text);}
-    if (can_cancel) {button_vector.add(cancel_text);}
-    String[] buttons = button_vector.toArray(new String[button_vector.size()]);
+    List<String> button_list = new ArrayList<String>(2);
+    if (can_dismiss) {button_list.add(ok_text);}
+    if (can_cancel) {button_list.add(cancel_text);}
+    String[] buttons = button_list.toArray(new String[button_list.size()]);
     this.thread = t;
     this.opt_pane = new JOptionPane(
       message,

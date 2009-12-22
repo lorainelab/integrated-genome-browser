@@ -65,7 +65,7 @@ public final class GlyphEdgeMatcher  {
    *  Glyphs present in both query_glyphs and target_glyphs will match each other
    *    (no filtering against matching self).
    *
-   *  Glyphs added for matches are collected and returned in match_glyphs vector.
+   *  Glyphs added for matches are collected and returned in match_glyphs.
    */
   public void matchEdges(NeoMap map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
     call_count = 0;

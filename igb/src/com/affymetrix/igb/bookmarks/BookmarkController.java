@@ -103,7 +103,7 @@ public abstract class BookmarkController {
       loaded_graphs = gviewer.collectGraphs();
     }
     Iterator iter = loaded_graphs.iterator();
-    List<String> loaded_graph_paths = new Vector<String>(loaded_graphs.size());
+    List<String> loaded_graph_paths = new ArrayList<String>(loaded_graphs.size());
     while (iter.hasNext()) {
       GraphGlyph gr = (GraphGlyph) iter.next();
       GraphSym graf_info = (GraphSym) gr.getInfo();

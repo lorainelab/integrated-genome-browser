@@ -182,7 +182,7 @@ public class TierGlyph extends SolidGlyph {
 			       "use TierGlyph.addChild(glyph) instead");
   }
 
-  // overriding addChild() to keep track of whether children are sorted in child vector
+  // overriding addChild() to keep track of whether children are sorted
   //    by ascending min
   public void addChild(GlyphI glyph) {
     int count = this.getChildCount();

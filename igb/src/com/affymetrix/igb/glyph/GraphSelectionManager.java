@@ -644,7 +644,7 @@ public final class GraphSelectionManager
       return;
     }
     
-    Vector<GraphGlyph> selected_graph_glyphs = new Vector<GraphGlyph>(0);
+    List<GraphGlyph> selected_graph_glyphs = new ArrayList<GraphGlyph>(0);
     current_graph = null;
     second_current_graph = null;
 

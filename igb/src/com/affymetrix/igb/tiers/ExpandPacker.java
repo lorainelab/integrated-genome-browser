@@ -13,12 +13,13 @@
 
 package com.affymetrix.igb.tiers;
 
-import java.awt.*;
+//import java.awt.*;
 import java.util.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.util.*;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class ExpandPacker implements PaddedPackerI, NeoConstants  {
@@ -347,17 +348,17 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     childbox = child.getCoordBox();
     Vector<GlyphI> sibs = parent.getChildren();
     if (sibs == null) { return null; }
-    Vector<GlyphI> sibsinrange = null;
+    List<GlyphI> sibsinrange = null;
     boolean childMoved = true;
     if (avoid_sibs) {
-      sibsinrange = new Vector<GlyphI>();
+      sibsinrange = new ArrayList<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
 	GlyphI sibling = sibs.elementAt(i);
 	siblingbox = sibling.getCoordBox();
 	if (!(siblingbox.x > (childbox.x+childbox.width) ||
 	      ((siblingbox.x+siblingbox.width) < childbox.x)) ) {
-	  sibsinrange.addElement(sibling);
+	  sibsinrange.add(sibling);
 	}
       }
       if (DEBUG_CHECKS)  { System.out.println("sibs in range: " + sibsinrange.size()); }
@@ -374,7 +375,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
       childMoved = false;
       int sibsinrange_size = sibsinrange.size();
       for (int j=0; j<sibsinrange_size; j++) {
-        GlyphI sibling = sibsinrange.elementAt(j);
+        GlyphI sibling = sibsinrange.get(j);
         if (sibling == child) { continue; }
         siblingbox = sibling.getCoordBox();
 	if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

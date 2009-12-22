@@ -17,7 +17,13 @@ import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.swing.ColorIcon;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
@@ -48,9 +54,9 @@ import javax.swing.*;
   static final SortedSet<String> keystroke_node_names = Collections.<String>synchronizedSortedSet(new TreeSet<String>());
   static String app_dir = null;
 	
-  private static Vector<String> FILENAMES;
+  private static List<String> FILENAMES;
   static {
-    FILENAMES = new Vector<String>();
+    FILENAMES = new ArrayList<String>();
     FILENAMES.add(CONTROL_GRAPH_DIRECTORY);
     FILENAMES.add(DATA_DIRECTORY);
     FILENAMES.add(OUTPUT_DIRECTORY);

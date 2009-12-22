@@ -115,7 +115,7 @@ public class FastaSequenceParser implements ContentParser {
 			return null;
 		}
 		if ( v.size() == 1 ) {
-			return v.elementAt( 0 );
+			return v.get( 0 );
 		}
 		return v;
 	}

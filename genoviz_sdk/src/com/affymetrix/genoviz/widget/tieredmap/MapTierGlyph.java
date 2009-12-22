@@ -153,7 +153,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
 		if (kids != null) {
 			for (int i=0; i < kids.size(); i++)
-				this.removeChild((GlyphI)kids.elementAt(i));
+				this.removeChild((GlyphI)kids.get(i));
 		}
 		gsn.removeChildren();
 		// CLH: This is a hack. Instead of removing gsn,
@@ -200,7 +200,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 			java.util.Vector children_in_range = gsn.getOverlappingGlyphs(a, b);
 			int j_size = children_in_range.size();
 			for (int j=0; j<j_size; j++) {
-				child = (GlyphI) children_in_range.elementAt(j);
+				child = (GlyphI) children_in_range.get(j);
 				// TransientGlyphs are usually NOT drawn in standard drawTraversal
 				if (drawTransients() || !(child instanceof TransientGlyph)) {
 					child.drawTraversal(view);
@@ -265,7 +265,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 				for (int i = 0; i < moreStrings.size(); i++) {
 					textYPos += label_spacing;
 					if ( textYPos >= bottom ) break;
-					g.drawString (moreStrings.elementAt(i), textXPos, textYPos);
+					g.drawString (moreStrings.get(i), textXPos, textYPos);
 				}
 			}
 		}

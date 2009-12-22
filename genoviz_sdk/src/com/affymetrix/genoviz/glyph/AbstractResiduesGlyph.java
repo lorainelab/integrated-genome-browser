@@ -88,7 +88,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 		if (children != null) {
 			Object child;
 			for (int i=0; i<children.size(); i++) {
-				child = children.elementAt(i);
+				child = children.get(i);
 				if (child instanceof ResiduesGlyphI)
 					((ResiduesGlyphI)child).setResidueFont( fnt );
 			}
@@ -134,7 +134,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 			GlyphI child;
 			Rectangle2D.Double childbox;
 			for (i=0; i<children.size(); i++) {
-				child = children.elementAt(i);
+				child = children.get(i);
 				childbox = child.getCoordBox();
 				child.setCoords(childbox.x, y, childbox.width, height);
 			}

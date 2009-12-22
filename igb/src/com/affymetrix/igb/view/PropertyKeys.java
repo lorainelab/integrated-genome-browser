@@ -101,6 +101,6 @@ final class PropertyKeys {
                                  int index) {
     // name_values is a list of arrays - the first item of
     // each array is the name-value
-    return (name_values.elementAt(index))[0];
+    return (name_values.get(index))[0];
   }
 }

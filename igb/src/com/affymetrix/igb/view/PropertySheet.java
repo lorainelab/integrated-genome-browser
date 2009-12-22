@@ -112,7 +112,7 @@ class PropertySheet extends JPanel {
       rows = new String[num_props][num_vals];
       for (int j = 0 ; j < num_props ; j++) {
         for (int i = 0 ; i < num_vals ; i++) {
-          String[] vals = name_values.elementAt(i);
+          String[] vals = name_values.get(i);
           try {
             rows[j][i]=vals[j+1];
           }
@@ -125,7 +125,7 @@ class PropertySheet extends JPanel {
     else {
       rows = new String[num_vals][num_props + 1];
       for (int i = 0 ; i < num_vals ; i++) {
-        String[] vals = name_values.elementAt(i);
+        String[] vals = name_values.get(i);
         rows[i][0] = vals[0];
         for (int j = 1 ; j < vals.length ; j++) {
           rows[i][j] = vals[j];
@@ -153,7 +153,7 @@ class PropertySheet extends JPanel {
 	  Vector<String[]> reordered = new Vector<String[]>(name_values.size());
 		for (String request : preferred_ordering) {
 			for (int k = 0; k < name_values.size(); k++) {
-				String[] vals = name_values.elementAt(k);
+				String[] vals = name_values.get(k);
 				if (vals != null && vals.length > 0) {
 					String name = vals[0];
 					if (name.equals(request)) {

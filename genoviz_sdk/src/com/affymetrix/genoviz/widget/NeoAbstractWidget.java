@@ -367,7 +367,7 @@ public abstract class NeoAbstractWidget extends Container
 		}
 		else if (result instanceof Vector && ((Vector)result).size() > 0) {
 			Vector<G> vec = (Vector)result;
-			return vec.elementAt(vec.size()-1);
+			return vec.get(vec.size()-1);
 		}
 		else {
 			return null;
@@ -606,7 +606,7 @@ public abstract class NeoAbstractWidget extends Container
 	 */
 	public void moveAbsolute(Vector<GlyphI> glyphs, double x, double y) {
 		for (int i=0; i<glyphs.size(); i++) {
-			moveAbsolute(glyphs.elementAt(i), x, y);
+			moveAbsolute(glyphs.get(i), x, y);
 		}
 	}
 
@@ -644,7 +644,7 @@ public abstract class NeoAbstractWidget extends Container
 	 */
 	public void moveRelative(Vector<GlyphI> glyphs, double x, double y) {
 		for (int i=0; i<glyphs.size(); i++) {
-			moveRelative(glyphs.elementAt(i), x, y);
+			moveRelative(glyphs.get(i), x, y);
 		}
 	}
 
@@ -715,7 +715,7 @@ public abstract class NeoAbstractWidget extends Container
 			return;
 		}
 		for (int i=0; i<glyphs.size(); i++) {
-			select(glyphs.elementAt(i));
+			select(glyphs.get(i));
 		}
 	}
 
@@ -727,8 +727,8 @@ public abstract class NeoAbstractWidget extends Container
 		while (selected.size() > 0) {
 			// selected.size() shrinks because deselect(glyph)
 			//    calls selected.removeElement()
-			Object gl = selected.elementAt(0);
-			if (gl == null) { selected.removeElementAt(0); }
+			Object gl = selected.get(0);
+			if (gl == null) { selected.remove(0); }
 			else {
 				deselect((GlyphI)gl);
 			}
@@ -763,7 +763,7 @@ public abstract class NeoAbstractWidget extends Container
 			clearSelected();
 		}
 		for (int i=0; i<vec.size(); i++) {
-			deselect((GlyphI)vec.elementAt(i));
+			deselect((GlyphI)vec.get(i));
 		}
 	}
 

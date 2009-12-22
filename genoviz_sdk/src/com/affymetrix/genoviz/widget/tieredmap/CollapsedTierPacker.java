@@ -51,7 +51,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 		GlyphI child;
 		double height;
 		for (int i=0; i<children.size(); i++) {
-			child = (GlyphI)children.elementAt(i);
+			child = (GlyphI)children.get(i);
 			height = child.getCoordBox().height;
 			maxHeight = (height > maxHeight) ? height : maxHeight;
 		}
@@ -95,7 +95,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 		if (alignment == ALIGN_TOP) {
 			double top = pbox.y + parent_spacer;
 			for (int i=0; i<children.size(); i++) {
-				child = (GlyphI)children.elementAt(i);
+				child = (GlyphI)children.get(i);
 				cbox = child.getCoordBox();
 				child.moveAbsolute(cbox.x, top);
 			}
@@ -104,7 +104,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 		else if (alignment == ALIGN_BOTTOM) {
 			double bottom = pbox.y + pbox.height - parent_spacer;
 			for (int i=0; i<children.size(); i++) {
-				child = (GlyphI)children.elementAt(i);
+				child = (GlyphI)children.get(i);
 				cbox = child.getCoordBox();
 				child.moveAbsolute(cbox.x, bottom - cbox.height);
 			}
@@ -112,7 +112,7 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 		else  {  // alignment == ALIGN_CENTER
 			double center = pbox.y + parent_height / 2;
 			for (int i=0; i<children.size(); i++) {
-				child = (GlyphI)children.elementAt(i);
+				child = (GlyphI)children.get(i);
 				cbox = child.getCoordBox();
 				child.moveAbsolute(cbox.x, center - cbox.height/2);
 			}

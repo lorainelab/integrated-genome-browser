@@ -240,7 +240,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		else {  // old way
 			int sibs_size = sibs.size();
 			for (int i=0; i<sibs_size; i++) {
-				child = sibs.elementAt(i);
+				child = sibs.get(i);
 				cbox = child.getCoordBox();
 				// MUST CALL moveAbsolute!!!
 				// setCoords() does not guarantee that coord changes will recurse
@@ -266,19 +266,19 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		}
 		Rectangle2D.Double newbox = new Rectangle2D.Double();
 		Rectangle2D.Double tempbox = new Rectangle2D.Double();
-		child = sibs.elementAt(0);
+		child = sibs.get(0);
 		newbox.setRect(pbox.x, child.getCoordBox().y,
 				pbox.width, child.getCoordBox().height);
 		int sibs_size = sibs.size();
 		if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
 			for (int i=1; i<sibs_size; i++) {
-				child = sibs.elementAt(i);
+				child = sibs.get(i);
 				GeometryUtils.union(newbox, child.getCoordBox(), newbox);
 			}
 		}
 		else if (STRETCH_VERTICAL) {
 			for (int i=1; i<sibs_size; i++) {
-				child = sibs.elementAt(i);
+				child = sibs.get(i);
 				Rectangle2D.Double childbox = child.getCoordBox();
 				tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
 				GeometryUtils.union(newbox, tempbox, newbox);
@@ -286,7 +286,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 		}
 		else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
 			for (int i=1; i<sibs_size; i++) {
-				child = sibs.elementAt(i);
+				child = sibs.get(i);
 				Rectangle2D.Double childbox = child.getCoordBox();
 				tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
 				GeometryUtils.union(newbox, tempbox, newbox);
@@ -332,7 +332,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 			sibsinrange = new Vector<GlyphI>();
 			int sibs_size = sibs.size();
 			for (int i=0; i<sibs_size; i++) {
-				GlyphI sibling = (GlyphI)sibs.elementAt(i);
+				GlyphI sibling = (GlyphI)sibs.get(i);
 				siblingbox = sibling.getCoordBox();
 				if (!(siblingbox.x > (childbox.x+childbox.width) ||
 							((siblingbox.x+siblingbox.width) < childbox.x)) ) {
@@ -351,7 +351,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants  {
 			childMoved = false;
 			int sibsinrange_size = sibsinrange.size();
 			for (int j=0; j<sibsinrange_size; j++) {
-				GlyphI sibling = sibsinrange.elementAt(j);
+				GlyphI sibling = sibsinrange.get(j);
 				if (sibling == child) { continue; }
 				siblingbox = sibling.getCoordBox();
 				if (DEBUG_CHECKS)  { System.out.println("checking against: " + sibling); }

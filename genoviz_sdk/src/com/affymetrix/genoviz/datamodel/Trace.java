@@ -132,7 +132,7 @@ public class Trace implements TraceI {
 	 * @return the TraceSample for the indexed data point.
 	 */
 	public TraceSample sampleAt(int index) {
-		return sampleVector.elementAt(index);
+		return sampleVector.get(index);
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class Trace implements TraceI {
 	public void setPeaks() {
 		peak = new int[baseVector.size()];
 		for (int i = baseVector.size()-1; 0 <= i; i--) {
-			BaseCall b = baseVector.elementAt(i);
+			BaseCall b = baseVector.get(i);
 			peak[i] = b.getTracePoint();
 			//System.err.println(peak[i]);
 		}
@@ -212,7 +212,7 @@ public class Trace implements TraceI {
 		if (index < 0 || baseVector.size()-1 < index) {
 			return null;
 		}
-		return baseVector.elementAt(index);
+		return baseVector.get(index);
 	}
 
 	public String getName() {
@@ -296,7 +296,7 @@ public class Trace implements TraceI {
 		// so last point in trace is first point in reverse trace, and the
 		// base values are switched for their complement
 		for (int i = num_samples-1; i >= 0; i--) {
-			sample = sampleVector.elementAt(i);
+			sample = sampleVector.get(i);
 			rev_sample = sample.complement();
 			rev_samples.addElement(rev_sample);
 		}
@@ -307,7 +307,7 @@ public class Trace implements TraceI {
 		// It is here for backward compatibility.
 		BaseCall base;
 		for (int i = baseVector.size() - 1; i >= 0; i--) {
-			base = baseVector.elementAt(i).reverseComplement(num_samples);
+			base = baseVector.get(i).reverseComplement(num_samples);
 			rev.addBase(base);
 		}
 

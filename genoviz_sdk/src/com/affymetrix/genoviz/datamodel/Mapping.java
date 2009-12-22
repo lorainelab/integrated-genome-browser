@@ -194,7 +194,7 @@ public class Mapping {
 	 * return a particular span.
 	 */
 	public Span getSpan(int index) {
-		return spans.elementAt(index);
+		return spans.get(index);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class Mapping {
 		Span sp;
 		int numspans = spans.size();
 		for (i=0; i<numspans; i++) {
-			sp = spans.elementAt(i);
+			sp = spans.get(i);
 			if (ref_pos >= sp.ref_start && ref_pos <= sp.ref_end) {
 				seqpos = sp.seq_start + (ref_pos - sp.ref_start);
 				return seqpos;
@@ -253,7 +253,7 @@ public class Mapping {
 		Span sp;
 		int numspans = spans.size();
 		for (i=0; i<numspans; i++) {
-			sp = spans.elementAt(i);
+			sp = spans.get(i);
 			if (map_pos >= sp.seq_start && map_pos <= sp.seq_end) {
 				ref_pos = sp.ref_start + (map_pos - sp.seq_start);
 				return ref_pos;

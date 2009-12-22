@@ -56,11 +56,11 @@ public class LineStretchContainerGlyph extends Glyph {
 			// what should be done if no children left???
 		}
 		else {
-			GlyphI child = (GlyphI)child_glyphs.elementAt(0);
+			GlyphI child = (GlyphI)child_glyphs.get(0);
 			Rectangle2D.Double childbox = child.getCoordBox();
 			this.setCoords(childbox.x, childbox.y, childbox.width, childbox.height);
 			for (int i=1; i<child_glyphs.size(); i++) {
-				child = (GlyphI)child_glyphs.elementAt(i);
+				child = (GlyphI)child_glyphs.get(i);
 				childbox = child.getCoordBox();
 				coordbox.add(childbox);
 			}

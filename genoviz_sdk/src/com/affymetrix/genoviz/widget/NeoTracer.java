@@ -761,7 +761,7 @@ public class NeoTracer extends NeoContainerWidget
 	 */
 	private void replaceBaseCalls( BaseCall[] theCalls, int bases_index ) {
 		try {
-			BaseCalls bc = base_calls_vector.elementAt( bases_index );
+			BaseCalls bc = base_calls_vector.get( bases_index );
 			bc.setBaseCalls( theCalls );
 		} catch ( ArrayIndexOutOfBoundsException e ) {
 		}
@@ -801,7 +801,7 @@ public class NeoTracer extends NeoContainerWidget
 		int old_base_height = 4; // arbitrary number to keep highlighting rectangle from colliding with horizontal rule.
 		int iBaseGlyphs = base_glyphs.size();
 		for( int i =0; i < iBaseGlyphs; i++ ) {
-			TraceBaseGlyph old_base_glyph = base_glyphs.elementAt(i);
+			TraceBaseGlyph old_base_glyph = base_glyphs.get(i);
 			old_base_height += old_base_glyph.getHeight() + 1;
 		}
 
@@ -845,7 +845,7 @@ public class NeoTracer extends NeoContainerWidget
 		// we should remove all the base glyphs.
 		int iBaseGlyphs = base_glyphs.size();
 		for ( int i =0; i < iBaseGlyphs; i++ ) {
-			TraceBaseGlyph baseGlyph = base_glyphs.elementAt(i);
+			TraceBaseGlyph baseGlyph = base_glyphs.get(i);
 			base_map.getScene().removeGlyph(baseGlyph);
 		}
 		base_glyphs.removeAllElements();
@@ -859,7 +859,7 @@ public class NeoTracer extends NeoContainerWidget
 		if ( null == bc || base_calls_vector.contains( bc ) ) {
 			trace.setActiveBaseCalls( bc );
 			for( int i=0; i < base_glyphs.size(); i++ ) {
-				TraceBaseGlyph base_glyph = base_glyphs.elementAt(i);
+				TraceBaseGlyph base_glyph = base_glyphs.get(i);
 				if ( base_glyph.getBaseCalls() == trace.getActiveBaseCalls() ) {
 					this.activeBaseCallsGlyph = base_glyph;
 				}
@@ -1027,7 +1027,7 @@ public class NeoTracer extends NeoContainerWidget
 		}
 		else {
 			for( int i=0; i < base_glyphs.size(); i++ ) {
-				TraceBaseGlyph base_glyph = base_glyphs.elementAt(i);
+				TraceBaseGlyph base_glyph = base_glyphs.get(i);
 				base_map.select(base_glyph, start, end);
 			}
 		}
@@ -1277,7 +1277,7 @@ public class NeoTracer extends NeoContainerWidget
 	public void setBaseVisibility(int baseID, boolean visible) {
 		if (!(getBaseVisibility(baseID) == visible)) {
 			for( int i=0; i < base_glyphs.size(); i++ ) {
-				base_glyphs.elementAt(i).setVisibility(baseID, visible);
+				base_glyphs.get(i).setVisibility(baseID, visible);
 			}
 			base_map.getScene().maxDamage();
 		}
@@ -1460,7 +1460,7 @@ public class NeoTracer extends NeoContainerWidget
 		GlyphI gchild;
 		Rectangle2D.Double childbox;
 		for (int i=0; i<gchildren.size(); i++) {
-			gchild = (GlyphI)gchildren.elementAt(i);
+			gchild = (GlyphI)gchildren.get(i);
 			// since selection glyph already dealt with, need to skip it
 			//    should try eliminating special seleciton handling above and
 			//    see if can just deal with it here -- GAH 12-9-97
@@ -1615,7 +1615,7 @@ public class NeoTracer extends NeoContainerWidget
 	public void setTraceColors(Color[] colors) {
 		trace_glyph.setTraceColors(colors);
 		for( int i=0; i < base_glyphs.size(); i++ ) {
-			base_glyphs.elementAt(i).setBaseColors(colors);
+			base_glyphs.get(i).setBaseColors(colors);
 		}
 	}
 
@@ -1742,7 +1742,7 @@ public class NeoTracer extends NeoContainerWidget
 				int span = position - last_pos;// amount of space we have to stuff in inserts
 				double spacing = span / ( iSize + 1 ); // space inbetween edges
 				for( int i=0; i < iSize; i++ ) {
-					char insert_base = inserts.elementAt(i).charValue();
+					char insert_base = inserts.get(i).charValue();
 					int insert_pos = last_pos + (int)( spacing * (i+1) );
 					new_base_obj = new BaseConfidence( insert_base, conf, insert_pos );
 					consensus.addBase( new_base_obj );

@@ -309,7 +309,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
     double coord_height = ymax - ymin;
     coord_height = coord_height + (2 * parent_spacer);
     for (int i=0; i<sibs.size(); i++) {
-      child = (GlyphI)sibs.elementAt(i);
+      child = (GlyphI)sibs.get(i);
       child.moveRelative(0, parent_spacer - ymin);
       //      System.out.println(child.getCoordBox());
     }
@@ -317,19 +317,19 @@ public final class FasterExpandPacker extends EfficientExpandPacker
     // old implementation
     Rectangle2D.Double newbox = new Rectangle2D.Double();
     Rectangle2D.Double tempbox = new Rectangle2D.Double();
-    child = (GlyphI)sibs.elementAt(0);
+    child = (GlyphI)sibs.get(0);
     newbox.setRect(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-	child = (GlyphI)sibs.elementAt(i);
+	child = (GlyphI)sibs.get(i);
 	GeometryUtils.union(newbox, child.getCoordBox(), newbox);
       }
     }
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-	child = (GlyphI)sibs.elementAt(i);
+	child = (GlyphI)sibs.get(i);
 	Rectangle2D.Double childbox = child.getCoordBox();
 	tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
@@ -337,7 +337,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
-	child = (GlyphI)sibs.elementAt(i);
+	child = (GlyphI)sibs.get(i);
 	Rectangle2D.Double childbox = child.getCoordBox();
 	tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);

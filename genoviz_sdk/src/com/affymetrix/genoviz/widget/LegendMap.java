@@ -176,7 +176,7 @@ public class LegendMap extends NeoMap implements TierEventListener  {
 		Rectangle2D.Double trackbox = map_to_track.getCoordBounds();
 
 		for (int i=0; i<legend_glyphs.size(); i++) {
-			lglyph = legend_glyphs.elementAt(i);
+			lglyph = legend_glyphs.get(i);
 			MapTierGlyph mtg = getTierForLegend(lglyph);
 
 			if (mtg != null) {

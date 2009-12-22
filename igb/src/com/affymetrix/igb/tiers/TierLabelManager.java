@@ -422,7 +422,7 @@ public final class TierLabelManager {
         else if (selected.size() > 0) {
           // take glyph at end of selected, just in case there is more
           //    than one -- the last one should be on top...
-          TierLabelGlyph gl = (TierLabelGlyph) selected.elementAt(selected.size()-1);
+          TierLabelGlyph gl = (TierLabelGlyph) selected.get(selected.size()-1);
           labelmap.toFront(gl);
           dragLabel(gl, nevt);
         }

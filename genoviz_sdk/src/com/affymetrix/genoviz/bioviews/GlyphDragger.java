@@ -244,7 +244,7 @@ public class GlyphDragger
 		Vector children = gl.getChildren();
 		if (children != null) {
 			for (int i=0; i<children.size(); i++) {
-				GlyphI child = (GlyphI)children.elementAt(i);
+				GlyphI child = (GlyphI)children.get(i);
 				GlyphI newchild = GlyphDragger.duplicateGlyph(child, col);
 				newgl.addChild(newchild);
 			}

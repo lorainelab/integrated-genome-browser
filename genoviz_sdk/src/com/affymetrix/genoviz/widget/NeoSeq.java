@@ -961,7 +961,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	public void removeAnnotations(Vector glyphs) {
 		for (int i=0; i<glyphs.size(); i++) {
-			removeAnnotation((GlyphI)glyphs.elementAt(i));
+			removeAnnotation((GlyphI)glyphs.get(i));
 		}
 	}
 
@@ -1888,12 +1888,12 @@ public class NeoSeq extends NeoContainerWidget
 		seqchildren = getResidueGlyph().getChildren();
 		// collect all the WrapAnnot children of the residue glyph
 		for (int i=0; i<seqchildren.size(); i++) {
-			seqchild = seqchildren.elementAt(i);
+			seqchild = seqchildren.get(i);
 			if (seqchild instanceof WrapAnnot) {
 				wrap_annot = (WrapAnnot)seqchild;
 				annotchildren = wrap_annot.getChildren();
 				for (int j=0; j<annotchildren.size(); j++) {
-					annotchild = annotchildren.elementAt(j);
+					annotchild = annotchildren.get(j);
 					if (annotchild instanceof AnnotationGlyph) {
 						if (annotchild == sel_glyph) { continue; }
 						annot_glyph = (AnnotationGlyph)annotchild;
@@ -1941,7 +1941,7 @@ public class NeoSeq extends NeoContainerWidget
 		}
 		if (annot instanceof WrapFontColors) {
 			for (int i=start; i<pickvect.size(); i++) {
-				if (pickvect.elementAt(i) instanceof WrapFontColors) {
+				if (pickvect.get(i) instanceof WrapFontColors) {
 					return false;
 				}
 			}
@@ -1949,7 +1949,7 @@ public class NeoSeq extends NeoContainerWidget
 		}
 		else if (annot instanceof WrapColors) {
 			for (int i=start; i<pickvect.size(); i++) {
-				if (pickvect.elementAt(i) instanceof WrapColors) {
+				if (pickvect.get(i) instanceof WrapColors) {
 					return false;
 				}
 			}

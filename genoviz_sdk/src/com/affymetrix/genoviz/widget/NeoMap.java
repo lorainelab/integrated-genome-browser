@@ -1102,7 +1102,7 @@ public class NeoMap extends NeoWidget implements
 				*/
 			   int count = vec.size();
 			   for (int i=count-1; i>=0; i--) {
-				   GlyphI g = vec.elementAt(i);
+				   GlyphI g = vec.get(i);
 				   if (null != g) {
 					   removeItem(g);
 				   }
@@ -1247,7 +1247,7 @@ public class NeoMap extends NeoWidget implements
 
 		   public void select(Vector glyphs, int start, int end) {
 			   for (int i=0; i<glyphs.size(); i++) {
-				   select((GlyphI)glyphs.elementAt(i), start, end);
+				   select((GlyphI)glyphs.get(i), start, end);
 			   }
 		   }
 

@@ -53,7 +53,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 
 	public void destroy() {
 		for ( int i = 0; i < widgets.size(); i++ ) {
-			widgets.elementAt(i).destroy();
+			widgets.get(i).destroy();
 		}
 		widgets.removeAllElements();
 		this.removeAll();
@@ -136,7 +136,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 
 	public void setVisibility(Vector<GlyphI> glyphs, boolean isVisible) {
 		for (int i=0; i<glyphs.size(); i++) {
-			setVisibility(glyphs.elementAt(i), isVisible);
+			setVisibility(glyphs.get(i), isVisible);
 		}
 	}
 
@@ -234,7 +234,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					+"Not for "+ axisid);
 		// The following will throw an exception if widgets is empty.
 		// This will do until we find out (and formalize) the default.
-		return widgets.elementAt(0).getExpansionBehavior(axisid);
+		return widgets.get(0).getExpansionBehavior(axisid);
 	}
 
 	/** Subclasses must define getWidget() method. */
@@ -438,7 +438,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					+"Not " + axisid);
 		// The following will throw an exception if widgets is empty.
 		// This will do until we find out (and formalize) the default.
-		return widgets.elementAt(0).getMaxZoom(axisid);
+		return widgets.get(0).getMaxZoom(axisid);
 	}
 
 	/**
@@ -452,7 +452,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					+"Not " + axisid);
 		// The following will throw an exception if widgets is empty.
 		// This will do until we find out (and formalize) the default.
-		return widgets.elementAt(0).getMinZoom(axisid);
+		return widgets.get(0).getMinZoom(axisid);
 	}
 
 	/*--------  End of Zooming Implementation --------*/
@@ -478,7 +478,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		Scene glyph_scene, widg_scene;
 		NeoAbstractWidget widg;
 		for (int i=0; i<widgets.size(); i++) {
-			widg = widgets.elementAt(i);
+			widg = widgets.get(i);
 			if (widg.getWidget(gl) == widg) { return widg; }
 		}
 		return null;
@@ -494,7 +494,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	public void removeItem(Vector<GlyphI> vec) {
 		Vector<GlyphI> glyphs = (Vector)vec.clone();
 		for (int i=0; i<glyphs.size(); i++) {
-			removeItem(glyphs.elementAt(i));
+			removeItem(glyphs.get(i));
 		}
 	}
 
@@ -535,7 +535,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	public void setDamageOptimized(boolean optimize) {
 		Vector<? extends NeoAbstractWidget> widgvec = getWidgets();
 		for (int i=0; i<widgvec.size(); i++) {
-			Object widg = widgvec.elementAt(i);
+			Object widg = widgvec.get(i);
 			if (widg instanceof NeoMap) {
 				((NeoMap)widg).setDamageOptimized(optimize);
 			}
@@ -548,7 +548,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	public void setScrollingOptimized(boolean optimize) {
 		Vector<? extends NeoAbstractWidget> widgvec = getWidgets();
 		for (int i=0; i<widgvec.size(); i++) {
-			NeoAbstractWidget widg = widgvec.elementAt(i);
+			NeoAbstractWidget widg = widgvec.get(i);
 			if (widg instanceof NeoMap) {
 				((NeoMap)widg).setScrollingOptimized(optimize);
 			}

@@ -42,7 +42,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 		GlyphI sibling;
 		int i, j;
 		for (i=0; i<children.size(); i++) {
-			sibling = (GlyphI)children.elementAt(i);
+			sibling = (GlyphI)children.get(i);
 			siblingbox = sibling.getCoordBox();
 			if (!(siblingbox.x > (childbox.x+childbox.width) ||
 						((siblingbox.x+siblingbox.width) < childbox.x)) ) {
@@ -58,7 +58,7 @@ public class SiblingCoordAvoid extends AbstractCoordPacker {
 		while (childMoved) {
 			childMoved = false;
 			for (j=0; j<sibsinrange.size(); j++) {
-				sibling = sibsinrange.elementAt(j);
+				sibling = sibsinrange.get(j);
 				if (sibling == child) { continue; }
 				siblingbox = sibling.getCoordBox();
 				if (child.hit(siblingbox, view) ) {

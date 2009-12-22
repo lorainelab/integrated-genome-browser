@@ -585,7 +585,7 @@ public class AxisGlyph extends Glyph {
 			if ( selected_regions != null ) {
 				g.setColor ( getBackgroundColor() );
 				for ( int i = 0; i < selected_regions.size(); i++ ) {
-					int[] select_range = (int[])selected_regions.elementAt(i);
+					int[] select_range = (int[])selected_regions.get(i);
 					select_coord.x = select_range[0];
 					select_coord.width = select_range[1] - select_range[0];
 					view.transformToPixels ( select_coord, select_pix );
@@ -718,7 +718,7 @@ public class AxisGlyph extends Glyph {
 				if ( selected_regions != null ) {
 					g.setColor ( getForegroundColor() );
 					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.elementAt(j);
+						int[] select_range = (int[])selected_regions.get(j);
 						select_coord.x = select_range[0];
 						select_coord.width = select_range[1] - select_range[0];
 						view.transformToPixels ( select_coord, select_pix );
@@ -774,7 +774,7 @@ public class AxisGlyph extends Glyph {
 				if ( selected_regions != null ) { // setting color for selections
 					g.setColor ( getForegroundColor() );
 					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.elementAt(j);
+						int[] select_range = (int[])selected_regions.get(j);
 						select_coord.x = select_range[0];
 						select_coord.width = select_range[1] - select_range[0];
 						view.transformToPixels ( select_coord, select_pix );
@@ -850,7 +850,7 @@ public class AxisGlyph extends Glyph {
 				if ( selected_regions != null ) {
 					g.setColor ( getForegroundColor() );
 					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.elementAt(j);
+						int[] select_range = (int[])selected_regions.get(j);
 						select_coord.x = select_range[0];
 						select_coord.width = select_range[1] - select_range[0];
 						view.transformToPixels ( select_coord, select_pix );
@@ -889,7 +889,7 @@ public class AxisGlyph extends Glyph {
 				if ( selected_regions != null ) {
 					g.setColor ( getForegroundColor() );
 					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.elementAt(j);
+						int[] select_range = (int[])selected_regions.get(j);
 						select_coord.x = select_range[0];
 						select_coord.width = select_range[1] - select_range[0];
 						view.transformToPixels ( select_coord, select_pix );

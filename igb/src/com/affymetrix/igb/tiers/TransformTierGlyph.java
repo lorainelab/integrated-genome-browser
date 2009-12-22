@@ -166,7 +166,7 @@ public final class TransformTierGlyph extends TierGlyph {
         GlyphI child;
         int childnum = children.size();
         for ( int i = 0; i < childnum; i++ ) {
-          child = children.elementAt( i );
+          child = children.get( i );
           child.pickTraversal(internal_pickRect, pickVector, view );
         }
       }
@@ -193,7 +193,7 @@ public final class TransformTierGlyph extends TierGlyph {
         GlyphI child;
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
-          child = children.elementAt(i);
+          child = children.get(i);
           child.pickTraversal(internal_pickRect, pickVector, view);
         }
       }

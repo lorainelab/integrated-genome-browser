@@ -438,7 +438,7 @@ public class MapGlyphFactory implements NeoConstants  {
 
 			if (packer != null) {
 				packer.pack(scene.getGlyph(), item,
-						scene.getViews().elementAt(0));
+						scene.getViews().get(0));
 			}
 
 		} catch( InstantiationException ie ) {

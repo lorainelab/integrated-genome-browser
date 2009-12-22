@@ -1361,7 +1361,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 		int max = vec.size();
 		for (int i=0; i<max; i++) {
-			if (vec.elementAt(i) instanceof AlignmentGlyph && elem.compareTo((AlignmentGlyph)vec.elementAt(i)) < 0) {
+			if (vec.get(i) instanceof AlignmentGlyph && elem.compareTo((AlignmentGlyph)vec.get(i)) < 0) {
 				return i;
 			}
 		}
@@ -1445,7 +1445,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 		Object[] o = new Object[v.size()];
 		for ( int i = 0; i < o.length; i ++ ) {
-			Object g = v.elementAt( i );
+			Object g = v.get( i );
 			if ( g instanceof StringGlyph ) {
 				StringGlyph sg = ( StringGlyph ) g;
 				o[i] = sg.getString();
@@ -1465,7 +1465,7 @@ public class NeoAssembler extends NeoContainerWidget
 	private void selectLabel( double offset ) {
 		Vector<GlyphI> v = this.labelmap.getItems( 10, offset );
 		for ( int i = 0; i < v.size(); i++ ) {
-			GlyphI o = v.elementAt( i );
+			GlyphI o = v.get( i );
 			if ( o instanceof StringGlyph ) {
 				StringGlyph g = ( StringGlyph ) o;
 				this.labelmap.select( g );
@@ -1614,7 +1614,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	public void clearSelected() {
 		for (int i=0; i<selected.size(); i++) {
-			GlyphI gl = selected.elementAt(i);
+			GlyphI gl = selected.get(i);
 			gl.getScene().deselect(gl);
 		}
 		selected.removeAllElements();
@@ -1667,7 +1667,7 @@ public class NeoAssembler extends NeoContainerWidget
 			throw new NullPointerException("cannot addData if adapters is null.");
 		}
 		for (int i=0; i<adapters.size(); i++) {
-			da = adapters.elementAt(i);
+			da = adapters.get(i);
 			if (da.accepts(obj)) {
 				glyph = da.createGlyph(obj);
 				return glyph;
@@ -1791,7 +1791,7 @@ public class NeoAssembler extends NeoContainerWidget
 		AlignmentGlyph parent;
 		List<AlignedResiduesGlyph> unaligned_spans;
 		for (int i=0; i<parents.size(); i++) {
-			parent = (AlignmentGlyph)parents.elementAt(i);
+			parent = (AlignmentGlyph)parents.get(i);
 			unaligned_spans = parent.getUnalignedSpans();
 			for (AlignedResiduesGlyph arglyph : unaligned_spans) {
 				arglyph.setBackgroundColor(unaligned_rect_color);
@@ -1822,7 +1822,7 @@ public class NeoAssembler extends NeoContainerWidget
 			Vector aligns = cglyph.getChildren();
 			if (aligns != null) {
 				for (int i=0; i<aligns.size(); i++) {
-					child = aligns.elementAt(i);
+					child = aligns.get(i);
 					if (child instanceof ResiduesGlyphI) {
 						rglyph = (ResiduesGlyphI)child;
 						rglyph.setResidueFont(residue_font);
@@ -1849,7 +1849,7 @@ public class NeoAssembler extends NeoContainerWidget
 				Vector aligns = cglyph.getChildren();
 				if (aligns != null) {
 					for (int i=0; i<aligns.size(); i++) {
-						child = aligns.elementAt(i);
+						child = aligns.get(i);
 						if (child instanceof AlignmentGlyph) {
 							seq_glyph = (AlignmentGlyph)child;
 							glyphbox = seq_glyph.getCoordBox();
@@ -1858,7 +1858,7 @@ public class NeoAssembler extends NeoContainerWidget
 							Vector child2 = seq_glyph.getChildren();
 
 							for (int k=0; k<child2.size(); k++){
-								GlyphI glyph = (GlyphI)child2.elementAt(k);
+								GlyphI glyph = (GlyphI)child2.get(k);
 								glyphbox = glyph.getCoordBox();
 								glyph.setCoords(glyphbox.x, glyphbox.y,
 										glyphbox.width, align_glyph_height);
@@ -2517,7 +2517,7 @@ public class NeoAssembler extends NeoContainerWidget
 			Vector<GlyphI> align_glyphs = this.getAlignmentGlyphs();
 			AlignmentGlyph gar;
 			for (int i=0; i<align_glyphs.size(); i++) {
-				gar = (AlignmentGlyph) align_glyphs.elementAt(i);
+				gar = (AlignmentGlyph) align_glyphs.get(i);
 				gar.setForegroundColor(residue_color);
 			}
 			if (colors_affect_cons && cons_glyph != null)  {

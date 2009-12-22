@@ -158,7 +158,7 @@ public abstract class Glyph implements GlyphI  {
 			GlyphI child;
 			int numChildren = children.size();
 			for ( int i = 0; i < numChildren; i++ ) {
-				child = children.elementAt( i );
+				child = children.get( i );
 				// TransientGlyphs are usually NOT drawn in standard drawTraversal
 				if (!(child instanceof TransientGlyph) || drawTransients()) {
 					child.drawTraversal(view);
@@ -269,7 +269,7 @@ public abstract class Glyph implements GlyphI  {
 				GlyphI child;
 				int childnum = children.size();
 				for ( int i = 0; i < childnum; i++ ) {
-					child = children.elementAt( i );
+					child = children.get( i );
 					child.pickTraversal( pickRect, pickVector, view );
 				}
 			}
@@ -302,7 +302,7 @@ public abstract class Glyph implements GlyphI  {
 				// We avoid object creation overhead by avoiding Enumeration.
 				int childnum = children.size();
 				for (int i=0; i<childnum; i++) {
-					child = children.elementAt(i);
+					child = children.get(i);
 					child.pickTraversal(pickRect, pickVector, view);
 				}
 			}
@@ -434,7 +434,7 @@ public abstract class Glyph implements GlyphI  {
 	public void removeAllChildren() {
 		if (children != null)  {
 			for (int i=0; i<children.size(); i++) {
-				children.elementAt(i).setScene(null);
+				children.get(i).setScene(null);
 			}
 		}
 		children = null;
@@ -446,7 +446,7 @@ public abstract class Glyph implements GlyphI  {
 	}
 
 	public GlyphI getChild(int index) {
-		return children.elementAt(index);
+		return children.get(index);
 	}
 
 	public Vector<GlyphI> getChildren()  {
@@ -631,7 +631,7 @@ public abstract class Glyph implements GlyphI  {
 		if (children != null) {
 			int numchildren = children.size();
 			for (int i=0; i<numchildren; i++) {
-				children.elementAt(i).moveRelative(diffx, diffy);
+				children.get(i).moveRelative(diffx, diffy);
 			}
 		}
 	}
@@ -647,7 +647,7 @@ public abstract class Glyph implements GlyphI  {
 		if (children != null) {
 			int size = children.size();
 			for (int i=0; i<size; i++) {
-				children.elementAt(i).setScene(s);
+				children.get(i).setScene(s);
 			}
 		}
 	}

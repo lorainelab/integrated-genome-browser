@@ -176,7 +176,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		Vector<GlyphI> subGlyphs = arrow.getChildren();
 		if (null != subGlyphs){
 			for (int k = 0; k<subGlyphs.size(); k++){
-				SolidGlyph sg = (SolidGlyph)(subGlyphs.elementAt(k));
+				SolidGlyph sg = (SolidGlyph)(subGlyphs.get(k));
 				Rectangle2D.Double rect = sg.getCoordBox();
 				sg.setCoords(rect.x, y, rect.width, height);
 			}
@@ -244,8 +244,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			AlignedResiduesGlyph child;
 			int seqstart, seqend;
 			for (int i=0; i<max; i++) {
-				if (children.elementAt(i) instanceof AlignedResiduesGlyph) {
-					child = (AlignedResiduesGlyph)children.elementAt(i);
+				if (children.get(i) instanceof AlignedResiduesGlyph) {
+					child = (AlignedResiduesGlyph)children.get(i);
 					seqstart = child.getParentSeqStart();
 					seqend = child.getParentSeqEnd();
 					setChildResidues(child, seqstart, seqend);
@@ -264,8 +264,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		int max = children.size();
 		AlignedResiduesGlyph child;
 		for (int i=0; i<max; i++) {
-			if (children.elementAt(i) instanceof AlignedResiduesGlyph) {
-				child = (AlignedResiduesGlyph)children.elementAt(i);
+			if (children.get(i) instanceof AlignedResiduesGlyph) {
+				child = (AlignedResiduesGlyph)children.get(i);
 				child.setReference(reference);
 				child.setMatchChar ( match_char );
 			}
@@ -641,7 +641,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			if (children != null) {
 				int size = children.size();
 				for (int i=0; i<size; i++) {
-					children.elementAt(i).setSelected(selected);
+					children.get(i).setSelected(selected);
 				}
 			}
 		}

@@ -266,7 +266,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     double coord_height = ymax - ymin;
     coord_height = coord_height + (2 * parent_spacer);
     for (int i=0; i<sibs.size(); i++) {
-      child = sibs.elementAt(i);
+      child = sibs.get(i);
       child.moveRelative(0, parent_spacer - ymin);
       //      System.out.println(child.getCoordBox());
     }
@@ -274,19 +274,19 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     // old implementation
     Rectangle2D.Double newbox = new Rectangle2D.Double();
     Rectangle2D.Double tempbox = new Rectangle2D.Double();
-    child = sibs.elementAt(0);
+    child = sibs.get(0);
     newbox.setRect(pbox.x, child.getCoordBox().y,
                    pbox.width, child.getCoordBox().height);
     int sibs_size = sibs.size();
     if (STRETCH_HORIZONTAL && STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-	child = sibs.elementAt(i);
+	child = sibs.get(i);
 	GeometryUtils.union(newbox, child.getCoordBox(), newbox);
       }
     }
     else if (STRETCH_VERTICAL) {
       for (int i=1; i<sibs_size; i++) {
-	child = sibs.elementAt(i);
+	child = sibs.get(i);
 	Rectangle2D.Double childbox = child.getCoordBox();
 	tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
@@ -294,7 +294,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
     }
     else if (STRETCH_HORIZONTAL) {  // NOT YET TESTED
       for (int i=1; i<sibs_size; i++) {
-	child = sibs.elementAt(i);
+	child = sibs.get(i);
 	Rectangle2D.Double childbox = child.getCoordBox();
 	tempbox.setRect(childbox.x, newbox.y, childbox.width, newbox.height);
 	GeometryUtils.union(newbox, tempbox, newbox);
@@ -353,7 +353,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
       sibsinrange = new ArrayList<GlyphI>();
       int sibs_size = sibs.size();
       for (int i=0; i<sibs_size; i++) {
-	GlyphI sibling = sibs.elementAt(i);
+	GlyphI sibling = sibs.get(i);
 	siblingbox = sibling.getCoordBox();
 	if (!(siblingbox.x > (childbox.x+childbox.width) ||
 	      ((siblingbox.x+siblingbox.width) < childbox.x)) ) {

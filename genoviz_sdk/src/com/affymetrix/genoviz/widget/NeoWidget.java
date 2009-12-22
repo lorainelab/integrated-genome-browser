@@ -781,7 +781,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 
 	public void setVisibility(Vector glyphs, boolean isVisible) {
 		for (int i=0; i<glyphs.size(); i++) {
-			setVisibility((GlyphI)glyphs.elementAt(i), isVisible);
+			setVisibility((GlyphI)glyphs.get(i), isVisible);
 		}
 	}
 
@@ -806,7 +806,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	public void select(Vector vec, double x, double y,
 			double width, double height) {
 		for (int i=0; i<vec.size(); i++) {
-			select((GlyphI)vec.elementAt(i), x, y, width, height);
+			select((GlyphI)vec.get(i), x, y, width, height);
 		}
 	}
 
@@ -1172,7 +1172,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			//    least pick up the glyph itself...
 			return false;
 		}
-		if (gl == pickvect.elementAt(pickvect.size()-1)) {
+		if (gl == pickvect.get(pickvect.size()-1)) {
 			// if gl is last element in pickvect then it was drawn last,
 			//   and therefore is on top and unobscured
 			return true;

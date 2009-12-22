@@ -496,7 +496,7 @@ public final class GraphSelectionManager
       NeoMouseEvent nevt = (NeoMouseEvent)evt;
       Vector selected = nevt.getItems();
       for (int i=selected.size()-1; i >=0; i--) {
-        GlyphI gl = (GlyphI)selected.elementAt(i);
+        GlyphI gl = (GlyphI)selected.get(i);
         // only allow dragging and scaling if graph is contained within an ancestor PixelFloaterGlyph...
         if (gl instanceof GraphGlyph && GraphGlyphUtils.hasFloatingAncestor(gl)) {
           GraphGlyph gr = (GraphGlyph)gl;

@@ -93,7 +93,7 @@ public class AssemblyPacker implements PackerI {
 		cbox = assembly.getCoordBox();
 		offset = cbox.y;
 		for (i=0; i<alignments.size(); i++) {
-			align = (AlignmentGlyph)alignments.elementAt(i);
+			align = (AlignmentGlyph)alignments.get(i);
 			pack(assembly, align, i);
 		}
 		return null;

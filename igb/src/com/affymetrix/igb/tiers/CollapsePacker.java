@@ -39,7 +39,7 @@ public final class CollapsePacker implements PaddedPackerI {
       GlyphI child;
       double height;
       for (int i=0; i<children.size(); i++) {
-	child = (GlyphI)children.elementAt(i);
+	child = (GlyphI)children.get(i);
 	height = child.getCoordBox().height;
 	maxHeight = (height > maxHeight) ? height : maxHeight;
       }

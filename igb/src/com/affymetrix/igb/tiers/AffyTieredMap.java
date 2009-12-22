@@ -267,7 +267,7 @@ public class AffyTieredMap extends NeoMap {
 			 *   Vector shrinks during removal...
 			 */
 			for (int i = childCount - 1; i >= 0; i--) {
-				GlyphI child = children.elementAt(i);
+				GlyphI child = children.get(i);
 				removeItem(child);
 			}
 		}

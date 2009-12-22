@@ -189,7 +189,7 @@ public abstract class AbstractTieredMap
 	public void packTiers(boolean full_repack, boolean stretch_map)  {
 		if (full_repack) {
 			for (int i=0; i<tiers.size(); i++) {
-				MapTierGlyph mtg = tiers.elementAt(i);
+				MapTierGlyph mtg = tiers.get(i);
 				mtg.pack(getView());
 			}
 		}
@@ -207,7 +207,7 @@ public abstract class AbstractTieredMap
 			offset = mbox.y;
 		}
 		for (int i=0; i<tiers.size(); i++) {
-			mtg = tiers.elementAt(i);
+			mtg = tiers.get(i);
 
 			// don't make room if tier isn't visible, or if it's hidden
 
@@ -231,7 +231,7 @@ public abstract class AbstractTieredMap
 			mtg = null;
 
 			for (int i=0; i<tiers.size(); i++) {
-				mtg = tiers.elementAt(i);
+				mtg = tiers.get(i);
 				if ( mtg.getState() == MapTierGlyph.HIDDEN ) continue;
 				else if ( newbox == null ) {
 					newbox = new Rectangle2D.Double();
@@ -269,7 +269,7 @@ public abstract class AbstractTieredMap
 	 */
 	public MapTierGlyph getTierAt(int i) {
 		if (i>=0 && i<tiers.size()) {
-			return tiers.elementAt(i);
+			return tiers.get(i);
 		}
 		else return null;
 	}
@@ -288,7 +288,7 @@ public abstract class AbstractTieredMap
 
 	public void clearWidget() {
 		for ( int i = 0; i < tiers.size(); i++ ) {
-			MapTierGlyph m = tiers.elementAt(i);
+			MapTierGlyph m = tiers.get(i);
 			m.removeAllTierStateChangeListeners();
 			m.removeChildren();
 		}
@@ -307,7 +307,7 @@ public abstract class AbstractTieredMap
 			return;
 
 		for (int i=0; i<tiers.size(); i++) {
-			MapTierGlyph tier = tiers.elementAt(i);
+			MapTierGlyph tier = tiers.get(i);
 			Rectangle2D.Double tbox = tier.getCoordBox();
 			tier.setCoords(mbox.x, tbox.y, mbox.width, tbox.height);
 		}
@@ -357,8 +357,8 @@ public abstract class AbstractTieredMap
 		if ( from == to ) { // null operation
 			return;
 		}
-		MapTierGlyph mtg = tiers.elementAt( from );
-		tiers.removeElementAt( from );
+		MapTierGlyph mtg = tiers.get( from );
+		tiers.remove( from );
 		tiers.insertElementAt( mtg, to );
 
 		repack();
@@ -386,15 +386,15 @@ public abstract class AbstractTieredMap
 		if ( from == to ) { // null operation
 			return;
 		}
-		MapTierGlyph mtg = tiers.elementAt( from );
-		tiers.removeElementAt( from );
+		MapTierGlyph mtg = tiers.get( from );
+		tiers.remove( from );
 		tiers.insertElementAt( mtg, to );
 
 		// Then do the other map:
-		mtg = otherMap.tiers.elementAt(tierLocs[0]);
+		mtg = otherMap.tiers.get(tierLocs[0]);
 		if (mtg == null)
 			return; // Why isn't an exception thrown?
-		otherMap.tiers.removeElementAt(from);
+		otherMap.tiers.remove(from);
 		otherMap.tiers.insertElementAt(mtg, to);
 
 	}
@@ -415,7 +415,7 @@ public abstract class AbstractTieredMap
 
 		// Remove the tier's children
 
-		MapTierGlyph toRemove = tiers.elementAt(loc);
+		MapTierGlyph toRemove = tiers.get(loc);
 
 		toRemove.removeChildren();
 
@@ -503,7 +503,7 @@ public abstract class AbstractTieredMap
 
 		// And set the state of our corresponding tier appropriately.
 
-		MapTierGlyph ourTier = tiers.elementAt(loc);
+		MapTierGlyph ourTier = tiers.get(loc);
 
 		// Access the properties directly, rather than via access
 		// methods -- avoid ping-pongs.

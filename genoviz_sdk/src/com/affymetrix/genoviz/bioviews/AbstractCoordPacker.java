@@ -70,7 +70,7 @@ public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
 		GlyphI child;
 		if (children == null) { return null; }
 		for (int i=0; i<children.size(); i++) {
-			child = (GlyphI)children.elementAt(i);
+			child = (GlyphI)children.get(i);
 			pack(parent, child, view);
 		}
 		return null;

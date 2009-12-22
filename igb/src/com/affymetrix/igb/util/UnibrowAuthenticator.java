@@ -55,13 +55,19 @@ public final class UnibrowAuthenticator extends Authenticator  {
 	
 	promptL.setText(this.getRequestingPrompt());
 	urlL.setText(this.getRequestingURL().toString());
-	String url = this.getRequestingURL().toString();
 	
 	// Use the URL to find the server info, which will
 	// keep track of login attempts, provide information
 	// about the server name, and which may provide a 
 	// default login and password.
-	GenericServer server = getServer(url);
+	GenericServer server = null;
+
+	try {
+		server = ServerList.getServer(this.getRequestingURL());
+	} catch (URISyntaxException e) {
+		throw new IllegalArgumentException(e);
+	}
+
 	if (server != null && server.serverObj != null) {
 		login = server.login;
 		password = server.password;
@@ -117,27 +123,5 @@ public final class UnibrowAuthenticator extends Authenticator  {
 	    }		
 	}
     return auth;
-  }
-  
-  /*
-   * Try to look up the server name based on the requesting URL.
-   * If the server isn't found, recurse, stripping off last part
-   * of path up to "/".  Eventually, we should get the the base
-   * URL under which the server info is hashed.
-   */
-  private GenericServer getServer(String url) {
-
-		GenericServer server = ServerList.getServer(url);
-		if (server == null && url.indexOf("/") > 0) {
-			int lastSlashPos = url.lastIndexOf("/");
-			if (lastSlashPos > 0) {
-				url = url.substring(0, lastSlashPos);
-			}
-			return getServer(url);
-		} else {
-			urlL.setText(url);
-			return server;
-		}
-	  
   }
 }

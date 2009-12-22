@@ -13,10 +13,11 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
-import java.util.*;
-
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
 /**
  * A SceneI is an abstract two dimensional space with x and y coordinates
@@ -117,7 +118,7 @@ public interface SceneI {
 	/**
 	 *  Return a Vector of all views onto the scene
 	 */
-	public Vector<ViewI> getViews();
+	public List<ViewI> getViews();
 
 	/**
 	 *  Draw all the views of this scene

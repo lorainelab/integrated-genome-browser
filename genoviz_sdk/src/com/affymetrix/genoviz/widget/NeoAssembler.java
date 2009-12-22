@@ -37,6 +37,8 @@ import java.awt.FontMetrics;
 import java.awt.ItemSelectable;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -302,7 +304,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	private int assemblyType = NA_ASSEMBLY;
 
-	protected Vector<NeoRangeListener> range_listeners = new Vector<NeoRangeListener>();
+	protected CopyOnWriteArraySet<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
 	protected Character match_char = null;
 
@@ -1787,13 +1789,11 @@ public class NeoAssembler extends NeoContainerWidget
 	public void resetUnalignedColors() {
 		Vector parents = getAlignmentGlyphs();
 		AlignmentGlyph parent;
-		Vector unaligned_spans;
-		AlignedResiduesGlyph arglyph;
+		List<AlignedResiduesGlyph> unaligned_spans;
 		for (int i=0; i<parents.size(); i++) {
 			parent = (AlignmentGlyph)parents.elementAt(i);
 			unaligned_spans = parent.getUnalignedSpans();
-			for (int j=0; j<unaligned_spans.size(); j++) {
-				arglyph = (AlignedResiduesGlyph)unaligned_spans.elementAt(j);
+			for (AlignedResiduesGlyph arglyph : unaligned_spans) {
 				arglyph.setBackgroundColor(unaligned_rect_color);
 				arglyph.setForegroundColor(unaligned_font_color);
 			}
@@ -2238,11 +2238,11 @@ public class NeoAssembler extends NeoContainerWidget
 			//   if switch to making a new matrix with each call to
 			//   adjustColorMatrix()
 
-			Vector<GlyphI> align_glyphs = this.getAlignmentGlyphs();
+			List<GlyphI> align_glyphs = this.getAlignmentGlyphs();
 			AlignmentGlyph gar;
 			if (color_matrix == bg_color_matrix) {
 				for (int i=0; i<align_glyphs.size(); i++) {
-					gar = (AlignmentGlyph) align_glyphs.elementAt(i);
+					gar = (AlignmentGlyph) align_glyphs.get(i);
 					gar.setBackgroundColorMatrix(color_matrix);
 				}
 				if (colors_affect_cons && cons_glyph != null) {
@@ -2252,7 +2252,7 @@ public class NeoAssembler extends NeoContainerWidget
 			else if (color_matrix == fg_color_matrix) {
 
 				for (int i=0; i<align_glyphs.size(); i++) {
-					gar = (AlignmentGlyph)align_glyphs.elementAt(i);
+					gar = (AlignmentGlyph)align_glyphs.get(i);
 					gar.setForegroundColorStrategy(gar.ALIGNMENT_BASED);
 					gar.setForegroundColorMatrix(color_matrix);
 				}
@@ -2532,9 +2532,7 @@ public class NeoAssembler extends NeoContainerWidget
 				Rectangle2D.Double vbox = evt.getCoordBox();
 				NeoRangeEvent nevt = new NeoRangeEvent(this,
 						vbox.x, vbox.x + vbox.width);
-				NeoRangeListener rl;
-				for (int i=0; i<range_listeners.size(); i++) {
-					rl = range_listeners.elementAt(i);
+				for (NeoRangeListener rl : range_listeners) {
 					rl.rangeChanged(nevt);
 				}
 			}
@@ -2548,9 +2546,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @param l the listener.
 	 */
 	public void addRangeListener(NeoRangeListener l) {
-		if (!range_listeners.contains(l)) {
-			range_listeners.addElement(l);
-		}
+		range_listeners.add(l);
 	}
 
 	/**
@@ -2560,7 +2556,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @param l the listener.
 	 */
 	public void removeRangeListener(NeoRangeListener l) {
-		range_listeners.removeElement(l);
+		range_listeners.remove(l);
 	}
 
 	public void selectBaseRangeOnConsensus( int x_coord_start, int x_coord_end) {

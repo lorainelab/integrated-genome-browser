@@ -14,12 +14,27 @@
 package genoviz.demo;
 
 import java.applet.*;
-import java.awt.*;
 import java.awt.event.*;
-//import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.net.URL;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.Panel;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.geom.Rectangle2D;
+import java.util.List;
+import javax.swing.JScrollBar;
 
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.awt.NeoPanel;
@@ -39,8 +54,7 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
-import java.awt.geom.Rectangle2D;
-import javax.swing.JScrollBar;
+
 
 /**
  *  A demo of the NeoAssembler widget.  Uses "low-level" calls to
@@ -630,14 +644,12 @@ public class NeoAssemblerDemo extends Applet
 	public void toggleExternalFontColoring() {
 		external_font_coloring = !external_font_coloring;
 		Vector aligns = map.getAlignmentGlyphs();
-		Vector spans;
+		List<AlignedResiduesGlyph> spans;
 		AlignmentGlyph ag;
-		AlignedResiduesGlyph sg;
 		for (int i=0; i<aligns.size(); i++) {
 			ag = (AlignmentGlyph)aligns.elementAt(i);
 			spans = ag.getAlignedSpans();
-			for (int j=0; j<spans.size(); j++) {
-				sg = (AlignedResiduesGlyph)spans.elementAt(j);
+			for (AlignedResiduesGlyph sg : spans) {
 				if (external_font_coloring) {
 					sg.setForegroundPainter(fg_painter);
 					sg.setForegroundColorStrategy(AlignedResiduesGlyph.CALCULATED);
@@ -657,14 +669,12 @@ public class NeoAssemblerDemo extends Applet
 	public void toggleExternalRectColoring() {
 		external_rect_coloring = !external_rect_coloring;
 		Vector aligns = map.getAlignmentGlyphs();
-		Vector spans;
+		List<AlignedResiduesGlyph> spans;
 		AlignmentGlyph ag;
-		AlignedResiduesGlyph sg;
 		for (int i=0; i<aligns.size(); i++) {
 			ag = (AlignmentGlyph)aligns.elementAt(i);
 			spans = ag.getAlignedSpans();
-			for (int j=0; j<spans.size(); j++) {
-				sg = (AlignedResiduesGlyph)spans.elementAt(j);
+			for (AlignedResiduesGlyph sg : spans) {
 				if (external_rect_coloring) {
 					sg.setBackgroundPainter(bg_painter);
 					sg.setBackgroundColorStrategy(AlignedResiduesGlyph.CALCULATED);

@@ -25,8 +25,10 @@ import com.affymetrix.genoviz.datamodel.NASequence;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Used in NeoAssembler to display gapped sequence alignments.
@@ -81,19 +83,18 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	private SequenceI reference;
 	private Mapping seqToRefMap;
 	private boolean setSequence = false;
-	private boolean setReference = false;
 
 	// These are now inherited from AbstractResiduesGlyph!  Leaving them in
 	//   overshadows inherited fields, and causes problems with compareTo()
 	//   (and probably other methods too)  GAH 1-9-98
 	//  int seq_beg, seq_end;
 
-	// in addition to holding all child glyphs in getChildren() vector,
-	// keeping separate vectors for aligned span children and
+	// in addition to holding all child glyphs in getChildren(),
+	// keeping separate lists for aligned span children and
 	// unaligned span children (otherwise there's no real way to
 	// distinguish them)
-	protected Vector<GlyphI> unaligned_spans = new Vector<GlyphI>();
-	protected Vector<GlyphI> aligned_spans = new Vector<GlyphI>();
+	protected List<AlignedResiduesGlyph> unaligned_spans = new ArrayList<AlignedResiduesGlyph>();
+	protected List<AlignedResiduesGlyph> aligned_spans = new ArrayList<AlignedResiduesGlyph>();
 
 	private ArrowGlyph arrow = new ArrowGlyph();
 
@@ -260,7 +261,6 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	public void setReference(Sequence reference) {
 		if (children == null) { return; }
 		this.reference = reference;
-		setReference = true;
 		int max = children.size();
 		AlignedResiduesGlyph child;
 		for (int i=0; i<max; i++) {
@@ -330,7 +330,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			} else {
 				glyph = new AlignedResiduesGlyph();
 			}
-			aligned_spans.addElement(glyph);
+			aligned_spans.add(glyph);
 			// This assumes that refstart <= refend always!!!
 
 			addResidueGlyphChild(glyph, seqstart, seqend, refstart, refend);
@@ -368,7 +368,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		} else {
 			glyph = new AlignedResiduesGlyph();
 		}
-		unaligned_spans.addElement(glyph);
+		unaligned_spans.add(glyph);
 		glyph.setBackgroundColorStrategy(glyph.FIXED_COLOR);
 
 		addResidueGlyphChild(glyph, seqstart, seqend, refstart, refend);
@@ -387,16 +387,9 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setBackgroundColorStrategy(int strategy) {
-		Vector glyphs = getAlignedSpans();
-		AlignedResiduesGlyph arglyph;
-		try {
-			for (int i=0; i<glyphs.size(); i++) {
-				arglyph = (AlignedResiduesGlyph)glyphs.elementAt(i);
-				arglyph.setBackgroundColorStrategy(strategy);
-			}
-		}
-		catch (Exception e) {
-			// arglyph must not be an AlignedResiduesGlyph
+		List<AlignedResiduesGlyph> glyphs = getAlignedSpans();
+		for (AlignedResiduesGlyph arglyph : glyphs) {
+			arglyph.setBackgroundColorStrategy(strategy);
 		}
 	}
 
@@ -427,16 +420,9 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 	public void setForegroundColorStrategy(int strategy) {
-		Vector glyphs = getAlignedSpans();
-		AlignedResiduesGlyph arglyph;
-		try  {
-			for (int i=0; i<glyphs.size(); i++) {
-				arglyph = (AlignedResiduesGlyph)glyphs.elementAt(i);
-				arglyph.setForegroundColorStrategy(strategy);
-			}
-		}
-		catch (Exception e) {
-			// arglyph must not be an AlignedResiduesGlyph
+		List<AlignedResiduesGlyph> glyphs = getAlignedSpans();
+		for (AlignedResiduesGlyph arglyph : glyphs) {
+			arglyph.setForegroundColorStrategy(strategy);
 		}
 	}
 
@@ -455,17 +441,17 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	}
 
 
-	public Vector getAlignedSpans() {
+	public List<AlignedResiduesGlyph> getAlignedSpans() {
 		return aligned_spans;
 	}
 
-	public Vector getUnalignedSpans() {
+	public List<AlignedResiduesGlyph> getUnalignedSpans() {
 		return unaligned_spans;
 	}
 
 	public void removeChild(GlyphI glyph)  {
-		aligned_spans.removeElement(glyph);
-		unaligned_spans.removeElement(glyph);
+		aligned_spans.remove(glyph);
+		unaligned_spans.remove(glyph);
 		super.removeChild(glyph);
 	}
 
@@ -591,9 +577,9 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 				// assuming unaligned spans are NOT transient
 				// (should be valid assumption)
 				if (alwaysDrawUnalignedSpans) {
-					Vector spans = getUnalignedSpans();
+					List<AlignedResiduesGlyph> spans = getUnalignedSpans();
 					for (int i=0; i<spans.size(); i++) {
-						((GlyphI)spans.elementAt(i)).drawTraversal(view);
+						(spans.get(i)).drawTraversal(view);
 					}
 				}
 				// special-casing outline selection when at low resolution
@@ -674,10 +660,8 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		public void setBackgroundColor(Color c) {
 			super.setBackgroundColor(c);
 			arrow.setBackgroundColor(c);
-			Vector vec = getAlignedSpans();
-			GlyphI gl;
-			for (int i=0; i<vec.size(); i++) {
-				gl = (GlyphI)vec.elementAt(i);
+			List<AlignedResiduesGlyph> vec = getAlignedSpans();
+			for (GlyphI gl : vec) {
 				gl.setColor(c);
 			}
 		}

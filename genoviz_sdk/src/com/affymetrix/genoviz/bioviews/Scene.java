@@ -13,12 +13,15 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.glyph.TransientGlyph;
-import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -46,9 +49,9 @@ public class Scene implements SceneI  {
 	 * Vector of transient glyphs that are "layered" on top of views
 	 * after all other glyphs have been drawn.
 	 */
-	protected Vector<TransientGlyph> transients;
+	protected List<TransientGlyph> transients;
 
-	protected Vector<NeoDataAdapterI> adapters;
+	protected List<NeoDataAdapterI> adapters;
 
 	public Scene ()  {
 		/*
@@ -200,16 +203,16 @@ public class Scene implements SceneI  {
 	// should really move data adapters out to widgets...
 	public void addDataAdapter(NeoDataAdapterI adapter) {
 		if (adapters == null) {
-			adapters = new Vector<NeoDataAdapterI>();
+			adapters = new ArrayList<NeoDataAdapterI>();
 		}
-		adapters.addElement(adapter);
+		adapters.add(adapter);
 		adapter.setScene(this);
 	}
 
 	// should really move data adapters out to widgets...
 	public void removeDataAdapter(NeoDataAdapterI adapter) {
 		if (adapters == null)  return;
-		adapters.removeElement(adapter);
+		adapters.remove(adapter);
 	}
 
 	// should really move data adapters out to widgets...
@@ -220,7 +223,7 @@ public class Scene implements SceneI  {
 			return null;
 		}
 		for (int i=0; i<adapters.size(); i++) {
-			da = adapters.elementAt(i);
+			da = adapters.get(i);
 			if (da.accepts(obj)) {
 				glyph = da.createGlyph(obj);
 				if (glyph != null) {
@@ -507,14 +510,14 @@ public class Scene implements SceneI  {
 
 	protected void addTransient(TransientGlyph tg) {
 		if (transients == null) {
-			transients = new Vector<TransientGlyph>();
+			transients = new ArrayList<TransientGlyph>();
 		}
-		transients.addElement(tg);
+		transients.add(tg);
 	}
 
 	protected void removeTransient(TransientGlyph tg) {
 		if (transients == null) { return; }
-		transients.removeElement(tg);
+		transients.remove(tg);
 	}
 
 	/**
@@ -524,11 +527,11 @@ public class Scene implements SceneI  {
 	 */
 	public void removeAllTransients() {
 		if ( null != transients ) {
-			transients.removeAllElements();
+			transients.clear();
 		}
 	}
 
-	protected Vector<TransientGlyph> getTransients() {
+	protected List<TransientGlyph> getTransients() {
 		return transients;
 	}
 

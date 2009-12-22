@@ -259,6 +259,7 @@
 	<target name="run" depends="compile" description="run IGB">
 		<java fork="true" classname="com.affymetrix.igb.IGB">
 			<jvmarg line="${igb.jvmargs}" />
+			<sysproperty key="java.util.logging.config.file" value="${basedir}/etc/logging.properties" />
 			<classpath>
 				<fileset dir="${lib.dir}" includes="*.jar" />
 				<dirset dir="${basedir}">

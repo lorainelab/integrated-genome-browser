@@ -391,7 +391,7 @@ public abstract class Glyph implements GlyphI  {
 			children.add(glyph);
 		}
 		else  {
-			children.insertElementAt(glyph, position);
+			children.add(position, glyph);
 		}
 		// setParent() also calls setScene()
 		glyph.setParent(this);

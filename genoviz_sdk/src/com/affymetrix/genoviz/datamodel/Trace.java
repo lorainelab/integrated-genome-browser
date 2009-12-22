@@ -320,9 +320,7 @@ public class Trace implements TraceI {
 		sb.append("sampleVector.size(): " + sampleVector.size() + "\n");
 		sb.append("baseVector.size(): " + baseVector.size() + "\n");
 		int i = 0;
-		Enumeration e = baseVector.elements();
-		while (e.hasMoreElements()) {
-			BaseCall cb = (BaseCall) e.nextElement();
+		for (BaseCall cb : baseVector) {
 			sb.append(cb.getBase());
 			i++;
 			if (i == 79) {
@@ -340,10 +338,8 @@ public class Trace implements TraceI {
 	 */
 	public BaseCall[] getBaseCalls() {
 		BaseCall[] cba = new BaseCall[baseVector.size()];
-		Enumeration e = baseVector.elements();
 		int i = 0;
-		while (e.hasMoreElements()) {
-			BaseCall cb = (BaseCall) e.nextElement();
+		for (BaseCall cb : baseVector) {
 			cba[i] = cb;
 			i++;
 		}

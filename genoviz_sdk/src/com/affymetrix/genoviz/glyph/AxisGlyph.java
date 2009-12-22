@@ -173,7 +173,7 @@ public class AxisGlyph extends Glyph {
 	}
 
 	public void deselectAll () {
-		selected_regions.removeAllElements();
+		selected_regions.clear();
 	}
 
 	public int getLabelFormat() {

@@ -1514,7 +1514,7 @@ public class NeoAssembler extends NeoContainerWidget
 				Vector<GlyphI> a = (Vector<GlyphI>) alignmap.getSelected().clone();
 				// Vector a must be a clone! getSelected() returns the real thing.
 				a.addAll(consmap.getSelected());
-				//this.selected.removeAllElements();
+				//this.selected.clear();
 				this.selected = a;
 			}
 
@@ -1540,13 +1540,10 @@ public class NeoAssembler extends NeoContainerWidget
 						//    (keep track of subselection with select_start / select_end)
 						alignmap.deselect(alignmap.getSelected());
 						consmap.deselect(consmap.getSelected());
-						GlyphI item;
 						Vector<GlyphI> items = selmap.getItems(nevt.getCoordX(),
 								nevt.getCoordY());
-						Enumeration<GlyphI> e = items.elements();
 						sel_glyph = null;
-						while (e.hasMoreElements()) {
-							item = e.nextElement();
+						for (GlyphI item : items) {
 							if (item instanceof AbstractResiduesGlyph) {
 								sel_glyph = item;
 								// CoordX returns reference coord
@@ -1617,7 +1614,7 @@ public class NeoAssembler extends NeoContainerWidget
 			GlyphI gl = selected.get(i);
 			gl.getScene().deselect(gl);
 		}
-		selected.removeAllElements();
+		selected.clear();
 	}
 
 	public Vector<GlyphI> getSelected() {

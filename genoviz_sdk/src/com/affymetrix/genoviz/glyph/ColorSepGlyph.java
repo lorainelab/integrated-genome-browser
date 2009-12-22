@@ -53,10 +53,7 @@ public class ColorSepGlyph extends Glyph  {
 		if (children == null)  { return; }
 		if (colors.length > 0) {
 			for (int colorIndex = 0; colorIndex < colors.length; colorIndex++) {
-				Enumeration children_enum = children.elements();
-				GlyphI child;
-				while (children_enum.hasMoreElements())  {
-					child = (GlyphI)children_enum.nextElement();
+				for (GlyphI child : children) {
 					if (child.getColor() == colors[colorIndex]) {
 						child.drawTraversal(view);
 					}

@@ -448,16 +448,13 @@ public class WrapSequence extends WrapGlyph {
 			outline_annot_glyph.drawTraversal(view);
 
 			/* Draw all the children not already drawn above. */
-			for ( Enumeration enm = getChildren().elements();
-					enm.hasMoreElements();
-				) {
-				Object o = enm.nextElement();
+			for (GlyphI o : getChildren()) {
 				if ( o != this.stripe_glyph &&
 						o != this.annot_glyph &&
 						o != this.sel_glyph &&
 						o != this.font_annot_glyph &&
 						o != this.outline_annot_glyph ) {
-					((GlyphI)o).drawTraversal(view);
+					o.drawTraversal(view);
 						}
 				}
 

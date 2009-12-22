@@ -537,10 +537,7 @@ public class NeoQualler extends NeoContainerWidget
 
 
 	protected void barMapStartHighlight(NeoMouseEvent evt) {
-		Vector items = evt.getItems();
-		Enumeration e = items.elements();
-		while (e.hasMoreElements()) {
-			Object item = e.nextElement();
+		for (Object item : evt.getItems()) {
 			int base = (int)evt.getCoordX();
 			sel_range.setPoint(base);
 			sel_range.notifyObservers();
@@ -548,10 +545,7 @@ public class NeoQualler extends NeoContainerWidget
 	}
 
 	protected void barMapExtendHighlight(NeoMouseEvent evt) {
-		Vector items = evt.getItems();
-		Enumeration e = items.elements();
-		while (e.hasMoreElements()) {
-			Object item = e.nextElement();
+		for (Object item : evt.getItems()) {
 			int base = (int)evt.getCoordX();
 			sel_range.update(base);
 			sel_range.notifyObservers();

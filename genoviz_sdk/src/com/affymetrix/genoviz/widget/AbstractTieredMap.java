@@ -334,7 +334,7 @@ public abstract class AbstractTieredMap
 
 		// Finally, remove our own
 
-		tiers.removeElement (toRemove);
+		tiers.remove (toRemove);
 
 		repack ();
 		updateWidget();
@@ -359,7 +359,7 @@ public abstract class AbstractTieredMap
 		}
 		MapTierGlyph mtg = tiers.get( from );
 		tiers.remove( from );
-		tiers.insertElementAt( mtg, to );
+		tiers.add( to, mtg );
 
 		repack();
 		updateWidget();
@@ -388,14 +388,14 @@ public abstract class AbstractTieredMap
 		}
 		MapTierGlyph mtg = tiers.get( from );
 		tiers.remove( from );
-		tiers.insertElementAt( mtg, to );
+		tiers.add( to, mtg );
 
 		// Then do the other map:
 		mtg = otherMap.tiers.get(tierLocs[0]);
 		if (mtg == null)
 			return; // Why isn't an exception thrown?
 		otherMap.tiers.remove(from);
-		otherMap.tiers.insertElementAt(mtg, to);
+		otherMap.tiers.add(to, mtg);
 
 	}
 

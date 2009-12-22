@@ -713,8 +713,8 @@ public class NeoTracer extends NeoContainerWidget
 			this.base_count = trace.getBaseCount();
 			BaseCall[] b = trace.getActiveBaseCalls().getBaseCalls();
 			base_map.removeItem ( (GlyphI)base_glyphs );
-			base_calls_vector.removeAllElements();
-			base_glyphs.removeAllElements();
+			base_calls_vector.clear();
+			base_glyphs.clear();
 			addBaseCalls( b, start );
 		}
 	}
@@ -848,8 +848,8 @@ public class NeoTracer extends NeoContainerWidget
 			TraceBaseGlyph baseGlyph = base_glyphs.get(i);
 			base_map.getScene().removeGlyph(baseGlyph);
 		}
-		base_glyphs.removeAllElements();
-		base_calls_vector.removeAllElements();
+		base_glyphs.clear();
+		base_calls_vector.clear();
 	}
 
 	/**
@@ -1060,9 +1060,7 @@ public class NeoTracer extends NeoContainerWidget
 						(id == nevt.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 					// Switch which set of base calls is the active one.
 					// Note this needs to be done before the selection stuff below.
-					Enumeration items = nevt.getItems().elements();
-					while( items.hasMoreElements() ) {
-						GlyphI glyph = (GlyphI)items.nextElement();
+					for (GlyphI glyph : nevt.getItems()) {
 						if( glyph instanceof TraceBaseGlyph ) {
 							BaseCalls bc = ( ( TraceBaseGlyph ) glyph ).getBaseCalls();
 							if ( bc != getActiveBaseCalls() ) {
@@ -1389,7 +1387,6 @@ public class NeoTracer extends NeoContainerWidget
 		boolean gViz = getBaseVisibility( TraceGlyph.G );
 		boolean tViz = getBaseVisibility( TraceGlyph.T );
 		Vector<BaseCalls> newBaseCalls = new Vector<BaseCalls>();
-		Enumeration<BaseCalls> e = base_calls_vector.elements();
 		for (BaseCalls bc : base_calls_vector ) {
 			newBaseCalls.add( bc.reverseComplement() );
 		}
@@ -1747,7 +1744,7 @@ public class NeoTracer extends NeoContainerWidget
 					new_base_obj = new BaseConfidence( insert_base, conf, insert_pos );
 					consensus.addBase( new_base_obj );
 				}
-				inserts.removeAllElements(); // clear insert bases
+				inserts.clear(); // clear insert bases
 
 				// insert the latest base
 				new_base_obj = new BaseConfidence( new_base, conf, position );

@@ -395,9 +395,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 
 	public void setBackgroundColorArray(Color[] col_array) {
 		if (null != children) {
-			Enumeration e = children.elements();
-			while (e.hasMoreElements()) {
-				Object o = e.nextElement();
+			for (GlyphI o : children) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setBackgroundColorArray(col_array);
 					((AlignedResiduesGlyph)o).redoColors();
@@ -408,9 +406,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 
 	public void setBackgroundColorMatrix(Color[][] col_matrix) {
 		if (null != children) {
-			Enumeration e = children.elements();
-			while (e.hasMoreElements()) {
-				Object o = e.nextElement();
+			for (GlyphI o : children) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setBackgroundColorMatrix(col_matrix);
 					((AlignedResiduesGlyph)o).redoColors();
@@ -429,9 +425,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 
 	public void setForegroundColorMatrix(Color[][] col_matrix) {
 		if (null != children) {
-			Enumeration e = children.elements();
-			while (e.hasMoreElements()) {
-				Object o = e.nextElement();
+			for (GlyphI o : children) {
 				if (o instanceof AlignedResiduesGlyph) {
 					((AlignedResiduesGlyph) o).setForegroundColorMatrix(col_matrix);
 					((AlignedResiduesGlyph)o).redoColors();
@@ -669,9 +663,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		public void setForegroundColor(Color c) {
 			super.setForegroundColor(c);
 			if (null != children) {
-				Enumeration e = children.elements();
-				while (e.hasMoreElements()) {
-					Object o = e.nextElement();
+				for (GlyphI o : children) {
 					if (o instanceof AlignedResiduesGlyph) {
 						((AlignedResiduesGlyph) o).setForegroundColor(c);
 					}

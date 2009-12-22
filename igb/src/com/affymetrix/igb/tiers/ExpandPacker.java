@@ -218,7 +218,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants  {
       synchronized(sibs) {  // testing synchronizing on sibs vector...
 	GlyphI[] sibarray = new GlyphI[sibs.size()];
 	sibs.copyInto(sibarray);
-	sibs.removeAllElements(); // sets parent.getChildren() to empty Vector
+	sibs.clear(); // sets parent.getChildren() to empty Vector
 	int sibs_size = sibarray.length;
 	//	System.out.println("packing each child");
 	for (int i=0; i<sibs_size; i++) {

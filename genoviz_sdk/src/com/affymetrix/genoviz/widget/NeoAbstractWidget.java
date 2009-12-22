@@ -733,7 +733,7 @@ public abstract class NeoAbstractWidget extends Container
 				deselect((GlyphI)gl);
 			}
 		}
-		selected.removeAllElements();
+		selected.clear();
 	}
 
 	/**
@@ -789,7 +789,7 @@ public abstract class NeoAbstractWidget extends Container
 	 *  each Glyph.
 	 */
 	public void clearWidget() {
-		selected.removeAllElements();
+		selected.clear();
 		// reset glyph_hash
 		glyph_hash = new Hashtable<GlyphI,Object>();
 
@@ -867,7 +867,7 @@ public abstract class NeoAbstractWidget extends Container
 		mouse_listeners.clear();
 		glyph_hash.clear();
 		model_hash.clear();
-		selected.removeAllElements();
+		selected.clear();
 	}
 
 	// Implementing KeyListener interface and collecting key events

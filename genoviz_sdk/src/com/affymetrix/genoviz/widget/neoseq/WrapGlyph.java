@@ -228,10 +228,7 @@ public abstract class WrapGlyph extends Glyph implements Translatable  {
 
 	public void setSequence(SequenceI seq) {
 		if (children != null)  {
-			Enumeration children_enum = children.elements();
-			GlyphI child;
-			while (children_enum.hasMoreElements())  {
-				child = (GlyphI)children_enum.nextElement();
+			for (GlyphI child : children) {
 				if (child instanceof WrapGlyph) {
 					((WrapGlyph)child).setSequence(seq);
 				}
@@ -241,10 +238,7 @@ public abstract class WrapGlyph extends Glyph implements Translatable  {
 
 	public void setResiduesPerLine(int residues_per_line) {
 		if (children != null)  {
-			Enumeration children_enum = children.elements();
-			GlyphI child;
-			while (children_enum.hasMoreElements())  {
-				child = (GlyphI)children_enum.nextElement();
+			for (GlyphI child : children) {
 				if (child instanceof WrapGlyph) {
 					((WrapGlyph)child).setResiduesPerLine(residues_per_line);
 				}

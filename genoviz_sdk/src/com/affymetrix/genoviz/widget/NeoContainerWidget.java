@@ -55,7 +55,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		for ( int i = 0; i < widgets.size(); i++ ) {
 			widgets.get(i).destroy();
 		}
-		widgets.removeAllElements();
+		widgets.clear();
 		this.removeAll();
 	}
 
@@ -68,18 +68,14 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	}
 
 	public void updateWidget(boolean full_update) {
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		NeoAbstractWidget widg;
-		while (e.hasMoreElements()) {
-			widg = e.nextElement();
+		for (NeoAbstractWidget widg : widgets) {
 			widg.updateWidget(full_update);
 		}
 	}
 
 	public void stretchToFit(boolean xstretch, boolean ystretch) {
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			e.nextElement().stretchToFit(xstretch,ystretch);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.stretchToFit(xstretch,ystretch);
 		}
 	};
 
@@ -90,10 +86,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	 */
 	public void setBackground(Color theColor) {
 		super.setBackground(theColor);
-		for (Enumeration<NeoAbstractWidget> e = widgets.elements();
-				e.hasMoreElements();
-			) {
-			NeoAbstractWidget w = e.nextElement();
+		for (NeoAbstractWidget w : widgets) {
 			if (w != this) {
 					w.setBackground(theColor);
 			}
@@ -103,9 +96,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	//********************************************************
 
 	public void setRubberBandBehavior(boolean activate) {
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			e.nextElement().setRubberBandBehavior(activate);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setRubberBandBehavior(activate);
 		}
 	}
 
@@ -166,13 +158,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 	}
 
 	public void setSelectionAppearance(int behavior) {
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			e.nextElement().setSelectionAppearance(behavior);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setSelectionAppearance(behavior);
 		}
 	}
 	public int getSelectionAppearance() {
-		return widgets.firstElement().getSelectionAppearance();
+		return widgets.get(0).getSelectionAppearance();
 	}
 
 	public void setSelectionColor(Color col) {
@@ -214,10 +205,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		if (!(NeoAbstractWidget.EXPAND == behavior || NeoAbstractWidget.NO_EXPAND == behavior))
 			throw new IllegalArgumentException(
 					"Can only set behavior to EXPAND or NO_EXPAND");
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.setExpansionBehavior(axisid, behavior);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setExpansionBehavior(axisid, behavior);
 		}
 	}
 
@@ -306,10 +295,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					+") or INTEGRAL_ALL ("+NeoAbstractWidget.INTEGRAL_ALL+"). "
 					+"Not to " + constraint);
 					}
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.setScaleConstraint(axisid, constraint);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setScaleConstraint(axisid, constraint);
 		}
 	}
 
@@ -322,10 +309,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set zoom behavior for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.setZoomBehavior(axisid, constraint);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setZoomBehavior(axisid, constraint);
 		}
 	}
 
@@ -338,10 +323,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set zoom behavior for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.setZoomBehavior(axisid, constraint, coord);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setZoomBehavior(axisid, constraint, coord);
 		}
 	}
 
@@ -355,10 +338,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set zoomer for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.setZoomer(axisid, adj);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setZoomer(axisid, adj);
 		}
 	}
 
@@ -372,10 +353,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set Scroller for X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not for " + axisid);
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.setScroller(axisid, adj);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setScroller(axisid, adj);
 		}
 	}
 
@@ -389,9 +368,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
 		Enumeration e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = (NeoAbstractWidget)e.nextElement();
-			w.zoom(axisid, zoom_scale);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.zoom(axisid, zoom_scale);
 		}
 	}
 
@@ -404,10 +382,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set max zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
-		Enumeration e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = (NeoAbstractWidget)e.nextElement();
-			w.setMaxZoom(axisid, limit);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setMaxZoom(axisid, limit);
 		}
 	}
 
@@ -420,10 +396,8 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set min zoom along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
-		Enumeration e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = (NeoAbstractWidget)e.nextElement();
-			w.setMaxZoom(axisid, limit);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.setMaxZoom(axisid, limit);
 		}
 	}
 
@@ -467,15 +441,12 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 					"Can set scroll along X ("+NeoAbstractWidget.X
 					+") or Y ("+NeoAbstractWidget.Y+") axis. "
 					+"Not " + axisid);
-		Enumeration<NeoAbstractWidget> e = widgets.elements();
-		while (e.hasMoreElements()) {
-			NeoAbstractWidget w = e.nextElement();
-			w.scroll(axisid, value);
+		for (NeoAbstractWidget widg : widgets) {
+			widg.scroll(axisid, value);
 		}
 	}
 
 	public NeoAbstractWidget getWidget(GlyphI gl) {
-		Scene glyph_scene, widg_scene;
 		NeoAbstractWidget widg;
 		for (int i=0; i<widgets.size(); i++) {
 			widg = widgets.get(i);
@@ -510,7 +481,7 @@ public abstract class NeoContainerWidget extends NeoAbstractWidget {
 		// BEGIN bug fix for bug #185, 5-28-98
 		glyph_hash.clear();
 		model_hash.clear();
-		selected.removeAllElements();
+		selected.clear();
 		// END bug fix for bug #185, 5-28-98
 	}
 

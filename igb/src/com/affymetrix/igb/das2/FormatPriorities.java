@@ -2,7 +2,7 @@ package com.affymetrix.igb.das2;
 
 import java.util.Map;
 
-import com.affymetrix.genometryImpl.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 
 
 /**

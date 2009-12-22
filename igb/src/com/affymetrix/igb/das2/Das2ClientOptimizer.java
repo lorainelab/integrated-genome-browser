@@ -13,6 +13,7 @@
 package com.affymetrix.igb.das2;
 
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
+import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
@@ -22,7 +23,6 @@ import java.util.*;
 import java.util.zip.ZipInputStream;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
-import com.affymetrix.genometryImpl.useq.*;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;

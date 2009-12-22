@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.util;
 
 /**
- *  a Vector-like class for doubles (since Vectors don't deal with primitives).
+ *  a List-like class for doubles (since Lists don't deal with primitives).
  *  does not implement the Collection interfaces.
  *  really just for getting a stretchable array of doubles.
  */

@@ -13,10 +13,10 @@
 package com.affymetrix.genometryImpl;
 
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genometryImpl.event.SymMapChangeEvent;
 import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
@@ -40,7 +40,7 @@ public class AnnotatedSeqGroup {
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
-	final private static Vector<SymMapChangeListener> sym_map_change_listeners = new Vector<SymMapChangeListener>(1);
+	final private static CopyOnWriteArraySet<SymMapChangeListener> sym_map_change_listeners = new CopyOnWriteArraySet<SymMapChangeListener>();
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	
 	
@@ -143,7 +143,7 @@ public class AnnotatedSeqGroup {
 		}
 	}
 
-	final private static List<SymMapChangeListener> getSymMapChangeListeners() {
+	final private static CopyOnWriteArraySet<SymMapChangeListener> getSymMapChangeListeners() {
 		return sym_map_change_listeners;
 	}
 

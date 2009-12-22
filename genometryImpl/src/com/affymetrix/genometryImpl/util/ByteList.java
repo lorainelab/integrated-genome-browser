@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.util;
 
 /**
- *  A Vector-like class for bytes (since Vectors don't deal with primitives).
+ *  A List-like class for bytes (since Lists don't deal with primitives).
  *  Does not implement the Collection interfaces.
  *  Really just for getting a stretchable array of bytes.
  */

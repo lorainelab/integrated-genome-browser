@@ -411,7 +411,7 @@ public abstract class SeqUtils {
 	/**
 	 *  More general version of transformSymmetry(resultSet, SeqSymmetry[] syms, BioSeq[] seqs).
 	 *  In this version, try and calculate resultSet span(s) for all BioSeqs encountered in syms,
-	 *  not just the BioSeqs found in an input seqs Vector.
+	 *  not just the BioSeqs found in an input seqs List.
 	 *
 	 *  WARNING!!! GAH 5-21-2003
 	 *  There seems to be a bug somewhere in transform methods that ends up sometimes getting

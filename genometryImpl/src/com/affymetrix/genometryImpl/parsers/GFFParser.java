@@ -722,11 +722,11 @@ public final class GFFParser implements AnnotationWriter  {
 		 *  key = attribute tag, value = attribute values, with following restrictions:
 		 *    if single value for a key, then hash.get(key) = value
 		 *    if no value for a key, then hash.get(key) = key
-		 *    if multiple values for a key, then hash.get(key) = Vector vec,
+		 *    if multiple values for a key, then hash.get(key) = List vec,
 		 *         and each value is an element in vec
 		 */
 		public static void processAttributes(Map<String,Object> m, String attributes) {
-			Vector<String> vals = new Vector<String>();
+			List<String> vals = new ArrayList<String>();
 			String[] attarray = att_regex.split(attributes);
 			for (int i=0; i<attarray.length; i++) {
 				String att = attarray[i];
@@ -742,31 +742,31 @@ public final class GFFParser implements AnnotationWriter  {
 						String group1 = value_matcher.group(1);
 						String group2 = value_matcher.group(2);
 						if (group1 != null) {
-							vals.addElement(group1);
+							vals.add(group1);
 						}
 						else {
-							vals.addElement(group2);
+							vals.add(group2);
 						}
 						matches = value_matcher.find();
 					}
 					// common case where there's only one value for a tag,
 					//  so hash the tag to that value
 					if (vals.size() == 1) {
-						Object the_object = vals.elementAt(0);
+						Object the_object = vals.get(0);
 						m.put(tag, the_object);
-						vals.removeAllElements();
+						vals.clear();
 					}
 					// rare case -- if no value for the tag, hash the tag to itself...
 					else if (vals.size() == 0) {
 						m.put(tag, tag);
-						vals.removeAllElements();
+						vals.clear();
 					}
 					// not-so-common case where there's multiple values for a tag,
-					//   so hash the tag to the Vector/List of all the values,
-					//   and make a new Vector for next tag-value entry
+					//   so hash the tag to the List/List of all the values,
+					//   and make a new List for next tag-value entry
 					else {
 						m.put(tag, vals);
-						vals = new Vector<String>();
+						vals = new ArrayList<String>();
 					}
 				}
 			}  // end attribute processing

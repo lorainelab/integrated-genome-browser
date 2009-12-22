@@ -14,7 +14,7 @@
 package com.affymetrix.genometryImpl.util;
 
 /**
- *  A Vector-like class for shorts (since Vectors don't deal with primitives).
+ *  A List-like class for shorts (since Lists don't deal with primitives).
  *  Does not implement the Collection interfaces.
  *  Really just for getting a stretchable array of shorts.
  */

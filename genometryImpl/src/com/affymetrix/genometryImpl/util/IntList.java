@@ -16,7 +16,7 @@ package com.affymetrix.genometryImpl.util;
 import java.util.Arrays;
 
 /**
- *  A Vector-like class for ints (since Vectors don't deal with primitives).
+ *  A List-like class for ints (since Lists don't deal with primitives).
  *  Does not implement the Collection interfaces.
  *  Really just for getting a stretchable array of ints.
  */

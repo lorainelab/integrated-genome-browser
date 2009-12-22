@@ -135,7 +135,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
 
     GlyphI topgl = null;
     if (! nevt.getItems().isEmpty()) {
-      topgl = nevt.getItems().lastElement();
+      topgl = nevt.getItems().get(nevt.getItems().size()-1);
       topgl = zoomCorrectedGlyphChoice(topgl, zoom_point);
     }
 

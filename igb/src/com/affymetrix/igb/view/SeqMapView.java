@@ -1784,7 +1784,7 @@ public class SeqMapView extends JPanel
 		if (glyphs.isEmpty()) {
 			return null;
 		} else {
-			return glyphToSym(glyphs.lastElement());
+			return glyphToSym(glyphs.get(glyphs.size()-1));
 		}
 	}
 

@@ -122,39 +122,9 @@ final class SeqMapViewActionListener implements ActionListener {
     if (command.equals(gviewer.zoomtoMI.getText())) {
       gviewer.zoomToSelections();
     }
-		/*else if (command.equals(gviewer.zoomclampMI.getText())) {
-      Vector selected_glyphs = seqmap.getSelected();
-      if (selected_glyphs.isEmpty()) {
-        Application.errorPanel("Nothing selected");
-      } else {
-        gviewer.clampToGlyph((GlyphI) selected_glyphs.lastElement());
-      }
-		 
-    }*/
 		else if (command.equals(gviewer.selectParentMI.getText())) {
       gviewer.selectParents();
-    /*}
-		else if (command.equals(gviewer.printSymmetryMI.getText())) {
-      SeqSymmetry sym = gviewer.getSelectedSymmetry();
-      if (sym == null) {
-        Application.errorPanel("No symmetry selected");
-      } else if (sym instanceof GraphSym) {
-        GraphSym gs = (GraphSym) sym;
-        GraphStateI gstate = gs.getGraphState();
-        IAnnotStyle style = gstate.getTierStyle();
-        System.out.println("Graph: " + gs.getGraphName());
-        Map m = gs.getProperties();
-        if (m != null) {
-          Set keys = m.keySet();
-          Iterator iter = keys.iterator();
-          while (iter.hasNext()) {
-            String key = (String)iter.next();
-            System.out.println(key + " --> " + m.get(key));
-          }
-        }
-      } else {
-        SeqUtils.printSymmetry(sym);
-      }*/
+   
 		} else if (command.equals(gviewer.centerMI.getText())) {
 			gviewer.centerAtHairline();
     } else if (command.equals(gviewer.slicendiceMI)) {

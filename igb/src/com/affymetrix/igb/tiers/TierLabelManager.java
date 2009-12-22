@@ -387,7 +387,7 @@ public final class TierLabelManager {
         Vector selected_glyphs = nevt.getItems();
         GlyphI topgl = null;
         if (!selected_glyphs.isEmpty()) {
-          topgl = (GlyphI) selected_glyphs.lastElement();
+          topgl = (GlyphI) selected_glyphs.get(selected_glyphs.size()-1);
         }
         
         // Dispatch track selection event

@@ -19,6 +19,8 @@ import javax.swing.*;
 
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class UnibrowAuthenticator extends Authenticator  {
   JFrame frm;
@@ -45,6 +47,7 @@ public final class UnibrowAuthenticator extends Authenticator  {
     message_panel.add(passwordTF);
   }
 
+	@Override
   protected PasswordAuthentication getPasswordAuthentication()  {
 
 	// Don't try to authenticate when the url is for the
@@ -65,7 +68,9 @@ public final class UnibrowAuthenticator extends Authenticator  {
 	try {
 		server = ServerList.getServer(this.getRequestingURL());
 	} catch (URISyntaxException e) {
-		throw new IllegalArgumentException(e);
+		String message = "Unable to parse URL '" + this.getRequestingURL().toExternalForm() + "' into server object";
+		Logger.getLogger(UnibrowAuthenticator.class.getName()).log(Level.SEVERE, message, e);
+		throw new IllegalArgumentException(message, e);
 	}
 
 	if (server != null && server.serverObj != null) {

@@ -550,7 +550,7 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 	private void removePreference(String DirectoryOrURL, String serverType, String serverName) {
 		ServerList.removeServerFromPrefs(DirectoryOrURL);
-		this.glv.removeServer(serverName, DirectoryOrURL, ServerType.valueOf(serverType));
+		GeneralLoadView.removeServer(serverName, DirectoryOrURL, ServerType.valueOf(serverType));
 		sourceTableModel.init();
 	}
 

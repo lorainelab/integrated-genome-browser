@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
  * @author jnicol1
  */
 public abstract class PrefsLoader {
-	private static final int CURRENT_PREF_VERSION = 1;
+	private static final int CURRENT_PREF_VERSION = 2;
 	private static Map<String,Map> prefs_hash;
 
 	private static final String user_dir = System.getProperty("user.dir");
@@ -218,17 +218,31 @@ public abstract class PrefsLoader {
 	 *
 	 * @return true if the preferences version matches this copy of IGB
 	 */
+	@SuppressWarnings("fallthrough")
 	private static void checkPrefsVersion() {
 		int version = UnibrowPrefsUtil.getTopNode().getInt("version", 0);
 
-		/* Preferences are not versioned */
-		if (version == 0) {
-			/* Update server preferences to new format */
-			ServerList.updateServerPrefs();
+		switch(version) {
+			case 0:
+				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading unversioned preferences to version 1");
+				ServerList.updateServerPrefs();
+				/* continue */
+			case 1:
+				Logger.getLogger(PrefsLoader.class.getName()).log(Level.FINE, "Upgrading preferences version 1 to version 2");
 
-			/* Version the preferences */
-			version = 1;
-			UnibrowPrefsUtil.getTopNode().putInt("version", version);
+				ServerList.updateServerURLsInPrefs();
+
+				/* continue */
+
+				/* add future version checks here */
+				
+				/* this always should occur in version n-1 */
+				version = 2; /* change this number to current prefs version */
+				UnibrowPrefsUtil.getTopNode().putInt("version", version);
+				break;
+			default:
+				/* do nothing */
+
 		}
 
 		/*

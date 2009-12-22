@@ -212,6 +212,32 @@ public final class ServerList {
 		}
 	}
 
+	public static void updateServerURLsInPrefs() {
+		Preferences servers = UnibrowPrefsUtil.getServersNode();
+		Preferences currentServer;
+		String normalizedURL;
+		String decodedURL;
+		
+		try {
+			for (String encodedURL : servers.childrenNames()) {
+				currentServer = servers.node(encodedURL);
+				decodedURL = GeneralUtils.URLDecode(encodedURL);
+				normalizedURL = formatURL(decodedURL, ServerType.valueOf(currentServer.get("type", "Unknown")));
+
+				if (!decodedURL.equals(normalizedURL)) {
+					Logger.getLogger(ServerList.class.getName()).log(Level.FINE, "upgrading server URL: '" + decodedURL + "' in preferences");
+					Preferences normalizedServer = servers.node(GeneralUtils.URLEncode(normalizedURL));
+					for (String key : currentServer.keys()) {
+						normalizedServer.put(key, currentServer.get(key, ""));
+					}
+					currentServer.removeNode();
+				}
+			}
+		} catch (BackingStoreException ex) {
+			Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
 	/**
 	 * Add or update a server in the preferences subsystem.  This only modifies
 	 * the preferences nodes, it does not affect any other part of the application.

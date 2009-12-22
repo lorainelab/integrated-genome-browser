@@ -8,6 +8,9 @@ import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.util.StringEncrypter;
 import com.affymetrix.igb.util.StringEncrypter.EncryptionException;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -335,4 +338,27 @@ public final class ServerList {
 				return url;
 		}
 	}
+
+	/**
+	 * Get server from ServerList that matches the URL.
+	 * @param u
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	public static GenericServer getServer(URL u) throws URISyntaxException {
+		URI a = u.toURI();
+		URI b;
+		for (String url : url2server.keySet()) {
+			try {
+				b = new URI(url);
+				if (!b.relativize(a).equals(a)) {
+					return url2server.get(url);
+				}
+			} catch (URISyntaxException ex) {
+				Logger.getLogger(ServerList.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		throw new IllegalArgumentException("URL " + u.toString() + " is not a valid server.");
+	}
+
 }

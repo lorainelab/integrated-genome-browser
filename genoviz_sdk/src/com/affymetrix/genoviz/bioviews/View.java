@@ -297,8 +297,7 @@ public class View implements ViewI, NeoPaintListener,
 			   scratch_coords.y = (double)src.y;
 			   scratch_coords.width = (double)src.width;
 			   scratch_coords.height = (double)src.height;
-			   Rectangle2D.Double result = transform.inverseTransform(scratch_coords, dst);
-			   return result;
+			   return LinearTransform.inverseTransform(transform, scratch_coords, dst);
 		   }
 
 		public Point2D transformToCoords(Point2D src, Point2D dst) {

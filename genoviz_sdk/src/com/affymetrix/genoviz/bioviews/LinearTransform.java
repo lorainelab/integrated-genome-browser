@@ -27,24 +27,6 @@ public class LinearTransform extends AffineTransform  {
 	}
 
 	/**
-	 * Transforms the coordinate inversely on the axis indicated.
-	 * If transform is being used in between a scene and a view,
-	 * this would convert from  view/pixel coordinates to Scene coordinates.
-	 * @param orientation X or Y
-	 * @param in the coordinate
-	 */
-	public final double inverseTransform(int orientation, double in) {
-		double out = 0;
-		if (orientation == NeoConstants.HORIZONTAL) {
-			out = (in - this.getTranslateX()) / this.getScaleX();
-		} else if (orientation == NeoConstants.VERTICAL) {
-			out = (in - this.getTranslateY()) / this.getScaleY();
-		}
-		return out;
-	}
-
-
-	/**
 	 * Transforms the source rectangle.
 	 * @param src the Rectangle2D.Double to be transformed.
 	 * @param dst ignored
@@ -72,11 +54,11 @@ public class LinearTransform extends AffineTransform  {
 	 * @param dst ignored
 	 * @return the souce rectangle transformed.
 	 */
-	public final Rectangle2D.Double inverseTransform(Rectangle2D.Double src, Rectangle2D.Double dst) {
-		dst.x = (src.x - this.getTranslateX()) / this.getScaleX();
-		dst.y = (src.y - this.getTranslateY()) / this.getScaleY();
-		dst.width = src.width / this.getScaleX();
-		dst.height = src.height / this.getScaleY();
+	public static final Rectangle2D.Double inverseTransform(AffineTransform t, Rectangle2D.Double src, Rectangle2D.Double dst) {
+		dst.x = (src.x - t.getTranslateX()) / t.getScaleX();
+		dst.y = (src.y - t.getTranslateY()) / t.getScaleY();
+		dst.width = src.width / t.getScaleX();
+		dst.height = src.height / t.getScaleY();
 
 		if (dst.height < 0) {
 			dst.y = dst.y + dst.height;
@@ -89,20 +71,20 @@ public class LinearTransform extends AffineTransform  {
 		return dst;
 	}
 
-	public final void setScaleX(double scale) {
-		this.setTransform(scale,0,0,this.getScaleY(),this.getTranslateX(),this.getTranslateY());
+	public static final void setScaleX(AffineTransform t, double scale) {
+		t.setTransform(scale,0,0,t.getScaleY(),t.getTranslateX(),t.getTranslateY());
 	}
 
-	public final void setScaleY(double scale) {
-		this.setTransform(this.getScaleX(),0,0,scale,this.getTranslateX(),this.getTranslateY());
+	public static final void setScaleY(AffineTransform t, double scale) {
+		t.setTransform(t.getScaleX(),0,0,scale,t.getTranslateX(),t.getTranslateY());
 	}
 
-	public final void setTranslateX(double offset) {
-		this.setTransform(this.getScaleX(), 0, 0, this.getScaleY(), offset, this.getTranslateY());
+	public static final void setTranslateX(AffineTransform t, double offset) {
+		t.setTransform(t.getScaleX(), 0, 0, t.getScaleY(), offset, t.getTranslateY());
 	}
 
-	public final void setTranslateY(double offset) {
-		this.setTransform(this.getScaleX(), 0, 0, this.getScaleY(), this.getTranslateX(), offset);
+	public static final void setTranslateY(AffineTransform t, double offset) {
+		t.setTransform(t.getScaleX(), 0, 0, t.getScaleY(), t.getTranslateX(), offset);
 	}
 
 	public boolean equals(LinearTransform lint) {

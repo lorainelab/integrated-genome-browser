@@ -1523,8 +1523,8 @@ public class NeoSeq extends NeoContainerWidget
 		scroll_increment = inc;
 
 		sclt.setConstrainValue(inc);
-		sclt.setTranslateX(0);
-		sclt.setTranslateY(0);
+		LinearTransform.setTranslateX(sclt, 0);
+		LinearTransform.setTranslateY(sclt, 0);
 		residue_map.setScrollTransform(NeoWidget.Y, sclt);
 		num_map.setScrollTransform(NeoWidget.Y, sclt);
 		offset_scroll.setBlockIncrement(inc);

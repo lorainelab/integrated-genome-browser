@@ -26,6 +26,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.glyph.SmartRubberBand;
 import com.affymetrix.igb.event.VirtualRubberBandEvent;
+import java.awt.geom.AffineTransform;
 
 /**
  *  Splits a tiered map across multiple windows on multiple screens.
@@ -78,7 +79,7 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 			((View) rootview).calcCoordBox();  // just to make sure...
 		}
 		// transform scale is pixels/coord, transform offset is in pixels
-		LinearTransform trans =  rootview.getTransform();
+		AffineTransform trans =  rootview.getTransform();
 		double xscale = trans.getScaleX();
 		double yscale = trans.getScaleY();
 		double xoffset = trans.getTranslateX();
@@ -96,11 +97,9 @@ public final class MultiWindowTierMap extends AffyTieredMap implements MouseList
 				}
 
 				ViewI cview = cmap.getView();
-				LinearTransform ctrans =  cview.getTransform();
-				ctrans.setScaleX(xscale);
-				ctrans.setScaleY(yscale);
-				ctrans.setTranslateX(xoffset - (x * tile_width));
-				ctrans.setTranslateY(yoffset - (y * tile_height));
+				AffineTransform ctrans =  cview.getTransform();
+				ctrans.setTransform(
+						xscale,0,0,yscale,xoffset - (x * tile_width),yoffset - (y * tile_height));
 				cview.setFullView(rootview);
 				cmap.updateWidget();
 			}

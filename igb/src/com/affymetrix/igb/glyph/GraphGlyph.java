@@ -805,8 +805,8 @@ public final class GraphGlyph extends Glyph {
 				(external_yscale * internal_offset) +
 				(external_yscale * internal_yscale * getVisibleMinY()) +
 				external_offset;
-		trans.setScaleY(new_yscale);
-		trans.setTranslateY(new_yoffset);
+		LinearTransform.setScaleY(trans, new_yscale);
+		LinearTransform.setTranslateY(trans, new_yoffset);
 	}
 
 	private double getUpperYCoordInset(ViewI view) {
@@ -852,8 +852,8 @@ public final class GraphGlyph extends Glyph {
 
 		double yscale = (coordbox.height - top_ycoord_inset - bottom_ycoord_inset) / num;
 		double yoffset = coordbox.y + coordbox.height - bottom_ycoord_inset;
-		lt.setScaleY(yscale);
-		lt.setTranslateY(yoffset);
+		LinearTransform.setScaleY(lt, yscale);
+		LinearTransform.setTranslateY(lt, yoffset);
 	}
 
 

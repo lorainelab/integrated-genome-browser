@@ -105,10 +105,9 @@ public final class TransformTierGlyph extends TierGlyph {
     trans2D.scale(1.0, tier_transform.getScaleY());
 
     modified_view_transform = new LinearTransform();
-    modified_view_transform.setScaleX(incoming_view_transform.getScaleX());
-    modified_view_transform.setTranslateX(incoming_view_transform.getTranslateX());
-    modified_view_transform.setScaleY(trans2D.getScaleY());
-    modified_view_transform.setTranslateY(trans2D.getTranslateY());
+	modified_view_transform.setTransform(
+			incoming_view_transform.getScaleX(),0,0,trans2D.getScaleY(),
+			incoming_view_transform.getTranslateX(),trans2D.getTranslateY());
     view.setTransform(modified_view_transform);
 
     // need to set view coordbox based on nested transformation
@@ -134,7 +133,7 @@ public final class TransformTierGlyph extends TierGlyph {
       yscale = (double)fixedPixHeight / coordbox.height;
     }
     yscale = yscale / view_transform.getScaleY();
-    tier_transform.setScaleY(tier_transform.getScaleY() * yscale );
+    LinearTransform.setScaleY(tier_transform, tier_transform.getScaleY() * yscale );
  
 
     coordbox.height = coordbox.height * yscale;
@@ -160,7 +159,7 @@ public final class TransformTierGlyph extends TierGlyph {
 	// modify pickRect on the way in
 	//   (transform from view coords to local (tier) coords)
 	//    [ an inverse transform? ]
-	tier_transform.inverseTransform(pickRect, internal_pickRect);
+	LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
 
 	// copied from second part of Glyph.pickTraversal()
         GlyphI child;
@@ -189,7 +188,7 @@ public final class TransformTierGlyph extends TierGlyph {
       if (children != null)  {
 	// recast to pickTraversal() with coord box rather than pixel box
 	pix_rect.setRect(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
-	tier_transform.inverseTransform(pix_rect, internal_pickRect);
+	LinearTransform.inverseTransform(tier_transform, pix_rect, internal_pickRect);
         GlyphI child;
         int childnum = children.size();
         for (int i=0; i<childnum; i++) {
@@ -206,13 +205,13 @@ public final class TransformTierGlyph extends TierGlyph {
   public void moveRelative(double diffx, double diffy) {
     coordbox.x += diffx;
     coordbox.y += diffy;
-    tier_transform.setTranslateY(tier_transform.getTranslateY() + diffy);
+    LinearTransform.setTranslateY(tier_transform, tier_transform.getTranslateY() + diffy);
   }
 
 
   public void debugLocation(Rectangle2D.Double pickRect) {
     // just for debugging
-    tier_transform.inverseTransform(pickRect, internal_pickRect);
+    LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
     GlyphI pick_glyph = new FillRectGlyph();
     pick_glyph.setCoords(internal_pickRect.x, internal_pickRect.y,
 			 internal_pickRect.width, internal_pickRect.height);

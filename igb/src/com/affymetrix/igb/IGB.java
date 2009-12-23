@@ -65,7 +65,7 @@ import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.util.ComponentWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
-import com.affymetrix.igb.util.UnibrowAuthenticator;
+import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
 
@@ -359,7 +359,7 @@ public final class IGB extends Application
 
 		// when HTTP authentication is needed, getPasswordAuthentication will
 		//    be called on the authenticator set as the default
-		Authenticator.setDefault(new UnibrowAuthenticator(frm));
+		Authenticator.setDefault(new IGBAuthenticator(frm));
 		
 		
 		// force loading of prefs if hasn't happened yet

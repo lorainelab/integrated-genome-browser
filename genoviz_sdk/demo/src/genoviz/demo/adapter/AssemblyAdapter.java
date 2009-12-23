@@ -60,7 +60,7 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 		// temp variables to help extract assembly info from data models
 		Vector aligns;
 		Mapping align;
-		Vector spans;
+		List spans;
 		Span sp;
 		GlyphI seqtag, labeltag;
 		String name;
@@ -70,13 +70,13 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 		//--------- setting up consensus map info ---------
 		Mapping consensus = assem.getConsensus();
 		spans = consensus.getSpans();
-		start = ((Span)spans.elementAt(0)).ref_start;
-		end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
+		start = ((Span)spans.get(0)).ref_start;
+		end = ((Span)spans.get(spans.size()-1)).ref_end;
 		seqtag = map.setConsensus(start, end,
 				consensus.getSequence().getResidues());
 		map.setDataModel(seqtag, consensus);
 		for (int j=0; j<spans.size(); j++) {
-			sp = (Span)spans.elementAt(j);
+			sp = (Span)spans.get(j);
 			map.addAlignedSpan(seqtag, sp.seq_start, sp.seq_end,
 					sp.ref_start, sp.ref_end);
 		}
@@ -86,8 +86,8 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 		for (int i=1; i<aligns.size(); i++) {
 			align = (Mapping)aligns.elementAt(i);
 			spans = align.getSpans();
-			start = ((Span)spans.elementAt(0)).ref_start;
-			end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
+			start = ((Span)spans.get(0)).ref_start;
+			end = ((Span)spans.get(spans.size()-1)).ref_end;
 			if (!align.isForward()) {
 				int temp = start;
 				start = end;
@@ -107,7 +107,7 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 			map.setDataModel(seqtag, align);
 			map.setDataModel(labeltag, align);
 			for (int j=0; j<spans.size(); j++) {
-				sp = (Span)spans.elementAt(j);
+				sp = (Span)spans.get(j);
 				map.addAlignedSpan(seqtag, sp.seq_start, sp.seq_end,
 						sp.ref_start, sp.ref_end);
 			}

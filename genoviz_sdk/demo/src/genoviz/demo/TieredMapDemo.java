@@ -325,19 +325,19 @@ public class TieredMapDemo extends Applet
 
 	public void mouseClicked ( MouseEvent e ) {
 		NeoMouseEvent nme = (NeoMouseEvent)e;
-		Vector glyphs = nme.getItems();
+		List<GlyphI> glyphs = nme.getItems();
 		for ( int i = 0; i < glyphs.size(); i++ )
 			// iterate through selected glyphs, looking for a MapTierGlyph
-			if ( glyphs.elementAt ( i ) instanceof MapTierGlyph )
-				selectedTier = (MapTierGlyph) glyphs.elementAt( i );
-			else ((GlyphI)glyphs.elementAt ( i )).draw(map.getView());
+			if ( glyphs.get ( i ) instanceof MapTierGlyph )
+				selectedTier = (MapTierGlyph) glyphs.get( i );
+			else ((GlyphI)glyphs.get ( i )).draw(map.getView());
 		if ( selectedTier == null ) return;
 		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) return;
 		if ( e.getSource().equals(map) )
 			if ( (nme.getModifiers() & InputEvent.SHIFT_MASK) !=0 ) {
 				for (int i = 0; i < glyphs.size(); i++) {
-					if ( ! ( glyphs.elementAt(i) instanceof MapTierGlyph ) ) {
-						GlyphI remove_me = (GlyphI) glyphs.elementAt(i);
+					if ( ! ( glyphs.get(i) instanceof MapTierGlyph ) ) {
+						GlyphI remove_me = (GlyphI) glyphs.get(i);
 						map.removeItem ( remove_me );
 						remove_me.getParent().removeChild(remove_me);
 						map.repack();

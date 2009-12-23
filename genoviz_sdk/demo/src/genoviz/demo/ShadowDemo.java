@@ -36,6 +36,7 @@ import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import javax.swing.JScrollBar;
 
 /**
@@ -393,7 +394,7 @@ public class ShadowDemo extends Applet
 			return;
 
 		NeoMouseEvent nmEvent    = (NeoMouseEvent) e;
-		Vector glyphsIntersected = nmEvent.getItems();
+		List glyphsIntersected = nmEvent.getItems();
 
 		if (glyphsIntersected.contains (shadowRect)) {
 			shadowActive = true;

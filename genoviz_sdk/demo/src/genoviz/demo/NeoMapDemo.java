@@ -499,13 +499,11 @@ public class NeoMapDemo extends JApplet
       if (fuzziness <= pixelBox.height || fuzziness <= pixelBox.width) {
 	// Rubberband is non-trivial.
 	// Select items within it.
-	Vector items = map.getItems(pixelBox);
+	List<GlyphI> items = map.getItems(pixelBox);
 	if (!e.isShiftDown()) {
 	  map.deselect(map.getSelected());
 	}
-	GlyphI gl;
-	for (int i=0; i<items.size(); i++) {
-	  gl = (GlyphI)items.elementAt(i);
+	for (GlyphI gl : items) {
 	  if (gl.isSelectable()) {
 	    map.select(gl);
 	  }
@@ -534,16 +532,15 @@ public class NeoMapDemo extends JApplet
       map.addAxis(0);
       map.updateWidget();
     }
-    else if (theItem == hideMenuItem) {
-      // should be able to just do setVisibility(selected, false);
-      Enumeration enm = map.getSelected().elements();
-      while (enm.hasMoreElements()) {
-	GlyphI gl = (GlyphI)enm.nextElement();
-	map.setVisibility(gl, false);
-	hidden.addElement(gl);
-      }
-      map.updateWidget();
-    }
+   else if (theItem == hideMenuItem) {
+		// should be able to just do setVisibility(selected, false);
+		for (Iterator<GlyphI> it = map.getSelected().iterator(); it.hasNext();) {
+			GlyphI gl = it.next();
+			map.setVisibility(gl, false);
+			hidden.addElement(gl);
+		}
+		map.updateWidget();
+	}
     else if (theItem == unhideMenuItem) {
       // should be able to just do setVisibility(selected, true);
       Enumeration enm = hidden.elements();

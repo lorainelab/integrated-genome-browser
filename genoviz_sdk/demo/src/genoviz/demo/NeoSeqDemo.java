@@ -324,7 +324,7 @@ public class NeoSeqDemo extends Applet
 
 
 	public void toFrontSelectionOverlappers() {
-		Vector<GlyphI> overlappers =
+		List<GlyphI> overlappers =
 			seqview.getAnnotationItems(seqview.getSelectedStart(),
 					seqview.getSelectedEnd());
 		for (GlyphI gl : overlappers) {
@@ -334,14 +334,14 @@ public class NeoSeqDemo extends Applet
 	}
 
 	public void printSelectionOverlappers() {
-		Vector<GlyphI> overlappers =
+		List<GlyphI> overlappers =
 			seqview.getAnnotationItems(seqview.getSelectedStart(),
 					seqview.getSelectedEnd());
 		AnnotationGlyph gl;
 		if (overlappers.size() > 0) {
 			System.out.print("Annotations overlapping selection");
 			for (int i=0; i<overlappers.size(); i++) {
-				gl = (AnnotationGlyph)overlappers.elementAt(i);
+				gl = (AnnotationGlyph)overlappers.get(i);
 				System.out.print("   from " + gl.getStart() + " to " + gl.getEnd());
 			}
 		}
@@ -359,7 +359,7 @@ public class NeoSeqDemo extends Applet
 	}
 
 	public void testSelectedVisibility() {
-		Vector<GlyphI> overlappers =
+		List<GlyphI> overlappers =
 			seqview.getAnnotationItems(seqview.getSelectedStart(),
 					seqview.getSelectedEnd());
 		if (overlappers.size() <= 0) {
@@ -371,7 +371,7 @@ public class NeoSeqDemo extends Applet
 			return;
 		}
 
-		GlyphI gl = overlappers.elementAt(0);
+		GlyphI gl = overlappers.get(0);
 		if (seqview.isUnObscured(gl)) {
 			System.out.println("selected glyph is fully visible");
 		}

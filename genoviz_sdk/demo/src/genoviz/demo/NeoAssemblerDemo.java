@@ -54,6 +54,7 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
+import java.util.Iterator;
 
 
 /**
@@ -247,10 +248,10 @@ public class NeoAssemblerDemo extends Applet
 	public Object addGaps(Mapping align) {
 		// this assumes only one glyph returned by NeoAssembler.getItems()!
 		GlyphI seqtag = map.<GlyphI>getItem(align);
-		Vector<Span> spans = align.getSpans();
+		List<Span> spans = align.getSpans();
 		Span sp;
 		for (int j=0; j<spans.size(); j++) {
-			sp = spans.elementAt(j);
+			sp = spans.get(j);
 			// simulating unaligned edges
 			// by declaring the first and last spans unaligned
 			if (simulateTrimmedEdges && ((j==0) || (j == spans.size()-1))) {
@@ -275,12 +276,12 @@ public class NeoAssemblerDemo extends Applet
 	 */
 	public GlyphI addUniAlignment(Mapping align) {
 		AlignmentGlyph ag = (AlignmentGlyph)addAlign(align);
-		Vector spans = align.getSpans();
+		List spans = align.getSpans();
 		Span sp;
 		int align_start, align_end, align_length;
 
-		align_start = ((Span)spans.elementAt(0)).ref_start;
-		align_end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
+		align_start = ((Span)spans.get(0)).ref_start;
+		align_end = ((Span)spans.get(spans.size()-1)).ref_end;
 		align_length = Math.abs(align_end-align_start)+1;
 
 		String seq_string = align.getSequence().getResidues();
@@ -291,7 +292,7 @@ public class NeoAssemblerDemo extends Applet
 		int align_position;
 
 		for (int j=0; j<spans.size(); j++) {
-			sp = (Span)spans.elementAt(j);
+			sp = (Span)spans.get(j);
 			if (align.isForward()) {
 				align_position = sp.ref_start - align_start;
 				for (int seq_position=sp.seq_start; seq_position<=sp.seq_end;
@@ -334,14 +335,14 @@ public class NeoAssemblerDemo extends Applet
 
 	public Object addAlign(Mapping align) {
 		String name;
-		Vector spans;
+		List spans;
 		Span sp;
 		int start, end;
 		GlyphI seqtag, labeltag;
 
 		spans = align.getSpans();
-		start = ((Span)spans.elementAt(0)).ref_start;
-		end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
+		start = ((Span)spans.get(0)).ref_start;
+		end = ((Span)spans.get(spans.size()-1)).ref_end;
 		if (!align.isForward()) {
 			int temp = start;
 			start = end;
@@ -409,7 +410,7 @@ public class NeoAssemblerDemo extends Applet
 		Enumeration enm = selectedDataModels.elements();
 		while (enm.hasMoreElements()) {
 			Mapping align = (Mapping)enm.nextElement();
-			Vector<GlyphI> seq_glyphs = map.<GlyphI>getItems(align);
+			List<GlyphI> seq_glyphs = map.<GlyphI>getItems(align);
 			map.deselect(seq_glyphs);
 			map.removeItem(seq_glyphs);
 		}
@@ -523,16 +524,16 @@ public class NeoAssemblerDemo extends Applet
 
 	public void addConsensus() {
 		if (consensus_added) { return; }
-		Vector spans = consensus.getSpans();
-		int start = ((Span)spans.elementAt(0)).ref_start;
-		int end = ((Span)spans.elementAt(spans.size()-1)).ref_end;
+		List spans = consensus.getSpans();
+		int start = ((Span)spans.get(0)).ref_start;
+		int end = ((Span)spans.get(spans.size()-1)).ref_end;
 		consglyph = (AlignmentGlyph)map.setConsensus(start, end,
 				consensus.getSequence().getResidues());
 		Span sp;
 		map.setDataModel(consglyph, consensus);
 		//int cycle = 0;
 		for (int j=0; j<spans.size(); j++) {
-			sp = (Span)spans.elementAt(j);
+			sp = (Span)spans.get(j);
 			map.addAlignedSpan(consglyph, sp.seq_start, sp.seq_end,
 					sp.ref_start, sp.ref_end);
 		}
@@ -627,15 +628,15 @@ public class NeoAssemblerDemo extends Applet
 	 *         in the vector
 	 */
 	public void doExternalSort() {
-		Vector align_glyphs = map.getAlignmentGlyphs();
+		List align_glyphs = map.getAlignmentGlyphs();
 		Object temp1, temp2;
 		int j;
 		for (int i = 0; i < align_glyphs.size()/2; i++) {
 			j = align_glyphs.size() - i - 1;
-			temp1 = align_glyphs.elementAt(i);
-			temp2 = align_glyphs.elementAt(j);
-			align_glyphs.setElementAt(temp2, i);
-			align_glyphs.setElementAt(temp1, j);
+			temp1 = align_glyphs.get(i);
+			temp2 = align_glyphs.get(j);
+			align_glyphs.set(i, temp2);
+			align_glyphs.set(j, temp1);
 		}
 		map.pack();
 		map.updateWidget();
@@ -643,11 +644,11 @@ public class NeoAssemblerDemo extends Applet
 
 	public void toggleExternalFontColoring() {
 		external_font_coloring = !external_font_coloring;
-		Vector aligns = map.getAlignmentGlyphs();
+		List aligns = map.getAlignmentGlyphs();
 		List<AlignedResiduesGlyph> spans;
 		AlignmentGlyph ag;
 		for (int i=0; i<aligns.size(); i++) {
-			ag = (AlignmentGlyph)aligns.elementAt(i);
+			ag = (AlignmentGlyph)aligns.get(i);
 			spans = ag.getAlignedSpans();
 			for (AlignedResiduesGlyph sg : spans) {
 				if (external_font_coloring) {
@@ -668,11 +669,11 @@ public class NeoAssemblerDemo extends Applet
 
 	public void toggleExternalRectColoring() {
 		external_rect_coloring = !external_rect_coloring;
-		Vector aligns = map.getAlignmentGlyphs();
+		List aligns = map.getAlignmentGlyphs();
 		List<AlignedResiduesGlyph> spans;
 		AlignmentGlyph ag;
 		for (int i=0; i<aligns.size(); i++) {
-			ag = (AlignmentGlyph)aligns.elementAt(i);
+			ag = (AlignmentGlyph)aligns.get(i);
 			spans = ag.getAlignedSpans();
 			for (AlignedResiduesGlyph sg : spans) {
 				if (external_rect_coloring) {
@@ -934,10 +935,9 @@ public class NeoAssemblerDemo extends Applet
 	public void mousePressed(MouseEvent e) {
 		if (e.getSource() == map) {
 			selectedDataModels.removeAllElements();
-			Vector items = map.getSelected();
-			Enumeration enm = items.elements();
-			while (enm.hasMoreElements()) {
-				GlyphI gl = (GlyphI)enm.nextElement();
+			List<GlyphI> items = map.getSelected();
+			for (Iterator<GlyphI> it = items.iterator(); it.hasNext();) {
+				GlyphI gl = it.next();
 				if (map.getDataModel(gl) != null) {
 					selectedDataModels.addElement(map.getDataModel(gl));
 				}
@@ -1004,10 +1004,10 @@ public class NeoAssemblerDemo extends Applet
 		oneGlyph = (AlignmentGlyph)theAssembler.getConsensusGlyph();
 		if (oneGlyph.isSelected() ) return oneGlyph;
 		else {
-			Vector theGlyphs = theAssembler.getAlignmentGlyphs();
+			List<GlyphI> theGlyphs = theAssembler.getAlignmentGlyphs();
 
 			for ( int i  = 0; i < theGlyphs.size(); i++ ) {
-				oneGlyph = (AlignmentGlyph)theGlyphs.elementAt ( i );
+				oneGlyph = (AlignmentGlyph)theGlyphs.get ( i );
 				if (oneGlyph.isSelected() ) return oneGlyph;
 			}
 		}

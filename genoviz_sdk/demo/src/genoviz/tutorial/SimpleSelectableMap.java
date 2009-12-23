@@ -28,6 +28,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.List;
 
 public class SimpleSelectableMap extends GlyphTestMap  
 	implements NeoRubberBandListener {
@@ -87,7 +88,7 @@ public class SimpleSelectableMap extends GlyphTestMap
 			if (fuzziness <= pixelBox.height || fuzziness <= pixelBox.width) {
 				// Rubberband is non-trivial.
 				// Select items within it.
-				Vector items = map.getItems(pixelBox);
+				List items = map.getItems(pixelBox);
 				map.select(items);
 				map.updateWidget();
 			}

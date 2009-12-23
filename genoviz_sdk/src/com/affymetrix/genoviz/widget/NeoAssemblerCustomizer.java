@@ -33,7 +33,6 @@ public class NeoAssemblerCustomizer
 
 	Checkbox scrollingOpt = new Checkbox("optimized");
 	Checkbox damageOpt = new Checkbox("optimized");
-	Checkbox timerOn = new Checkbox("");
 	Checkbox autoSort = new Checkbox("automatic");
 
 	Checkbox labelsLeft = new Checkbox("left");
@@ -65,7 +64,6 @@ public class NeoAssemblerCustomizer
 
 		scrollingOpt.addItemListener(this);
 		damageOpt.addItemListener(this);
-		timerOn.addItemListener(this);
 		autoSort.addItemListener(this);
 
 		// Labels Position
@@ -185,11 +183,6 @@ public class NeoAssemblerCustomizer
 			assembler.setDamageOptimized(this.scrollingOpt.getState());
 			return;
 		}
-		else if (evtSource == this.timerOn) {
-			View view = ((NeoMap)assembler.getWidget(NeoAssembler.ALIGNMENTS)).getView();
-			view.isTimed(this.timerOn.getState());
-			return;
-		}
 		else if (evtSource == this.damageOpt) {
 			assembler.setDamageOptimized(this.damageOpt.getState());
 			return;
@@ -263,7 +256,6 @@ public class NeoAssemblerCustomizer
 		this.scrollersRight.setState(NeoAssembler.PLACEMENT_RIGHT == id);
 		this.scrollingOpt.setState(assembler.isScrollingOptimized());
 		this.damageOpt.setState(assembler.isDamageOptimized());
-		this.timerOn.setState(false); // Need an accessor here.
 		id = assembler.getPlacement(NeoAssembler.AXIS_SCROLLER);
 		this.axisTop.setState(NeoAssembler.PLACEMENT_TOP == id);
 		this.axisBottom.setState(NeoAssembler.PLACEMENT_BOTTOM == id);

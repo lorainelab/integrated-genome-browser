@@ -43,7 +43,7 @@ public class Scene implements SceneI  {
 	 */
 	protected boolean damaged = false;
 	protected Rectangle2D.Double damageCoordBox;
-	protected Rectangle2D.Double scratchCoordBox;
+	private final Rectangle2D scratchCoordBox;
 
 	/**
 	 * Vector of transient glyphs that are "layered" on top of views

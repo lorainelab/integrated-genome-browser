@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 public class View implements ViewI, NeoPaintListener,
 	   MouseListener, MouseMotionListener, KeyListener  {
 
-		   Rectangle scratch_pixelbox = new Rectangle();
+		   private final Rectangle scratch_pixelbox = new Rectangle();
 
 		   public boolean DEBUG_FIT = false;
 		   // if DEBUG_SPILLOVER then no clipRect call when drawing view,
@@ -64,7 +64,7 @@ public class View implements ViewI, NeoPaintListener,
 		   //    colors with each new draw
 		   private static final boolean DEBUG_BACKGROUND = false;
 		   private int debug_cycle = 0;
-		   private Color[] debug_color =
+		   private static final Color[] debug_color =
 		   { Color.red, Color.yellow, Color.white, Color.green };
 
 		   // if DEBUG_SCROLL_CHECKS, then if optimizedScrollDraw() fails and have
@@ -89,7 +89,9 @@ public class View implements ViewI, NeoPaintListener,
 		   //  performed internal to view
 		   private static final boolean DEBUG_BUFFERED = false;
 
-		   private boolean DEBUG_OPTSCROLL = false;
+		   private static final boolean DEBUG_OPTSCROLL = false;
+
+		   private static final boolean DEBUG_TIMED = false;
 
 		   protected Rectangle pixelbox;
 
@@ -109,23 +111,23 @@ public class View implements ViewI, NeoPaintListener,
 
 		   protected Rectangle2D.Double coordbox;
 		   protected Graphics2D graphics;
-		   protected boolean isTimed = false;
-		   protected com.affymetrix.genoviz.util.Timer timecheck;
-		   protected List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
-		   protected List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
-		   protected List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
+
+		   private final com.affymetrix.genoviz.util.Timer timecheck;
+		   protected final List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
+		   protected final List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
+		   protected final List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
 
 		   /**
 			*  Vector of viewbox listeners to be notified immediately _before_
 			*    view is drawn with changed bounding box
 			*/
-		   protected List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+		   protected final List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
 		   /**
 			*  Vector of viewbox listeners to be notified immediately _after__
 			*    view is drawn with changed bounding box
 			*/
-		   protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+		   protected final List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
 
 		   /** fields to help with optimizations **/
 		   protected boolean scrolling_optimized = false;
@@ -141,10 +143,10 @@ public class View implements ViewI, NeoPaintListener,
 		   protected Image bufferImage;
 		   protected Graphics bufferGraphics;
 		   protected Dimension bufferSize;
-		   protected boolean firstScrollOptimizedDraw = true;
-		   protected boolean firstDamageOptimizedDraw = true;
-		   protected boolean firstBufferOptimizedDraw = true;
-		   protected Rectangle damagePixelBox = new Rectangle();
+		   private boolean firstScrollOptimizedDraw = true;
+		   private boolean firstDamageOptimizedDraw = true;
+		   private boolean firstBufferOptimizedDraw = true;
+		   protected final Rectangle damagePixelBox = new Rectangle();
 
 		   protected Dimension component_size;
 		   protected Rectangle component_bounds;
@@ -155,12 +157,10 @@ public class View implements ViewI, NeoPaintListener,
 			  Views have a few boxes that aren't visible to the outside world
 			  These are to store temporary stuff, for instance to have a
 			  destination Rectangle2D.Double when doing transformations that actually
-			  map to pixel space (not sure if scratch_pixels is really needed...)
+			  map to pixel space
 			  */
-		   protected Rectangle2D.Double scratch_coords;
-		   protected Rectangle scratch_pixels;
-		   protected Point2D.Double scratch_coord;
-		   protected Point scratch_pixel;
+		   private final Rectangle2D.Double scratch_coords;
+		   private final Point2D.Double scratch_coord;
 
 		   protected Rectangle scene_pixelbox;
 		   protected Rectangle2D.Double scene_coordbox;
@@ -176,9 +176,7 @@ public class View implements ViewI, NeoPaintListener,
 
 			   prevCoordBox = new Rectangle2D.Double();
 			   prevCalcCoordBox = new Rectangle2D.Double();
-			   scratch_pixels = new Rectangle();
 			   scratch_coords = new Rectangle2D.Double();
-			   scratch_pixel = new Point(0,0);
 			   scratch_coord = new Point2D.Double(0,0);
 			   scene_pixelbox = new Rectangle();
 		   }
@@ -318,7 +316,7 @@ public class View implements ViewI, NeoPaintListener,
 		   public void draw()  {
 			   boolean drawn = false;
 			   drawCount++;
-			   if (isTimed) {
+			   if (DEBUG_TIMED) {
 				   timecheck.start();
 			   }
 			   component_size = component.getSize();
@@ -426,7 +424,7 @@ public class View implements ViewI, NeoPaintListener,
 
 			   lastTransform = (LinearTransform)transform.clone();
 			  
-			   if (isTimed) {
+			   if (DEBUG_TIMED) {
 				   timecheck.print();
 			   }
 
@@ -937,11 +935,6 @@ public class View implements ViewI, NeoPaintListener,
 
 		   public void removePreDrawViewListener(NeoViewBoxListener l)  {
 			   predraw_viewbox_listeners.remove(l);
-		   }
-
-
-		   public void isTimed(boolean timed) {
-			   isTimed = timed;
 		   }
 
 		   public Dimension getComponentSize() {

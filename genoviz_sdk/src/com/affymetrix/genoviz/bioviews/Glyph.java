@@ -57,6 +57,8 @@ public abstract class Glyph implements GlyphI  {
 	protected boolean selected;
 	protected int draw_order = DRAW_SELF_FIRST;
 
+	protected boolean selectable = true;
+
 	public Glyph()
 	{
 		coordbox = new Rectangle2D.Double();
@@ -657,8 +659,6 @@ public abstract class Glyph implements GlyphI  {
 		return scene;
 	}
 
-
-	protected boolean selectable = true;
 
 	/**
 	 * Sets the selectability of the glyph.

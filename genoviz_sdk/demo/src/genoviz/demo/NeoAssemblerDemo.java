@@ -54,6 +54,7 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -189,7 +190,7 @@ public class NeoAssemblerDemo extends Applet
 
 		assem = loadData();  // parses in data and populates assembly data model
 		consensus = assem.getConsensus();
-		Vector aligns = assem.getAlignments();
+		List aligns = assem.getAlignments();
 
 		//if (isMemed)  { memcheck.printMemory(); }
 
@@ -387,13 +388,13 @@ public class NeoAssemblerDemo extends Applet
 	}
 
 	public void addAlignment() {
-		Vector aligns;
+		List aligns;
 		aligns = assem.getAlignments();
 		if (currentSeq >= aligns.size()) {
 			showStatus("No more sequences to add.");
 		}
 		else {
-			addAlign((Mapping)aligns.elementAt(currentSeq));
+			addAlign((Mapping)aligns.get(currentSeq));
 			currentSeq++;
 			map.updateWidget();
 			if (currentSeq == aligns.size()) {
@@ -449,14 +450,13 @@ public class NeoAssemblerDemo extends Applet
 	}
 
 	public void addNext() {
-		Vector aligns;
-		aligns = assem.getAlignments();
+		List aligns = assem.getAlignments();
 		if (currentSeq >= aligns.size()) {
 			System.err.println("No more sequences to add.");
 			showStatus("No more sequences to add.");
 		}
 		else {
-			Mapping align = (Mapping)aligns.elementAt(currentSeq);
+			Mapping align = (Mapping)aligns.get(currentSeq);
 			if (no_reverse) {
 				if (!align.isForward()) {
 					currentSeq++;
@@ -484,7 +484,7 @@ public class NeoAssemblerDemo extends Applet
 
 	public void addTheRest() {
 		//System.err.println("adding all sequences");
-		Vector aligns = assem.getAlignments();
+		List aligns = assem.getAlignments();
 		while (currentSeq < aligns.size()) {
 			addNext();
 		}

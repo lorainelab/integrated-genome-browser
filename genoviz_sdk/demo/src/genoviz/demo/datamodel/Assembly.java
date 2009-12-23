@@ -26,9 +26,9 @@ public class Assembly {
 	/**
 	 * A vector of Mappings corresponding to aligned sequences
 	 */
-	Vector aligns;
-	Vector seqs;
-	Vector traces;
+	List aligns;
+	List seqs;
+	List traces;
 
 	/**
 	 * The length of the entire assembly
@@ -60,13 +60,13 @@ public class Assembly {
 		//     length
 		Mapping m;
 		Span s;
-		Vector v;
+		List<Span> v;
 		int max = 0;
 		for (int i=0; i<aligns.size(); i++) {
 			m = (Mapping)aligns.elementAt(i);
 			v = m.getSpans();
 			for (int j=0; j < v.size(); j++) {
-				s = (Span)v.elementAt(j);
+				s = (Span)v.get(j);
 				if (s.ref_end >= s.ref_start) {
 					if (s.ref_end > max) {
 						max = s.ref_end;
@@ -120,13 +120,13 @@ public class Assembly {
 		return consensus;
 	}
 
-	public Vector getAlignments() {
+	public List getAlignments() {
 		return aligns;
 	}
-	public Vector getSequences() {
+	public List getSequences() {
 		return seqs;
 	}
-	public Vector getTraces() {
+	public List getTraces() {
 		return traces;
 	}
 

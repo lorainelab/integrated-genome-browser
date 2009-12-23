@@ -58,7 +58,7 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 		Assembly assem = (Assembly)obj;
 
 		// temp variables to help extract assembly info from data models
-		Vector aligns;
+		List aligns;
 		Mapping align;
 		List spans;
 		Span sp;
@@ -84,7 +84,7 @@ public class AssemblyAdapter implements NeoDataAdapterI {
 		//----------- setting up alignment map info ------------
 		aligns = assem.getAlignments();
 		for (int i=1; i<aligns.size(); i++) {
-			align = (Mapping)aligns.elementAt(i);
+			align = (Mapping)aligns.get(i);
 			spans = align.getSpans();
 			start = ((Span)spans.get(0)).ref_start;
 			end = ((Span)spans.get(spans.size()-1)).ref_end;

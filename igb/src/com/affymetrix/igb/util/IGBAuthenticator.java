@@ -213,15 +213,10 @@ public class IGBAuthenticator extends Authenticator {
 	 * @return
 	 */
 	private PasswordAuthentication displayDialog(final Preferences serverNode, final GenericServer serverObject, final String url) {
-		/* Modify Swing components on the event queue */
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				setMessage(serverObject.serverName);
-				server.setText(url);
-				anon.setSelected(true);
-				remember.setEnabled(serverNode.parent().getBoolean(PREF_REMEMBER, true));
-			}
-		});
+		setMessage(serverObject.serverName);
+		server.setText(url);
+		anon.setSelected(true);
+		remember.setEnabled(serverNode.parent().getBoolean(PREF_REMEMBER, true));
 
 		int result = JOptionPane.showOptionDialog(parent, dialog, null, OK_CANCEL_OPTION, PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 
@@ -238,7 +233,12 @@ public class IGBAuthenticator extends Authenticator {
 		}
 
 		/* User cancelled or quit login prompt */
-		return null;
+		/*
+		 * We really want to return null here, but there is a bug in
+		 * Das2ServerInfo: getSources() will call initialize() every time
+		 * if the login() fails.  Currently, this occurs 4 times on startup.
+		 */
+		return doAnonymous();
 	}
 
 	/**

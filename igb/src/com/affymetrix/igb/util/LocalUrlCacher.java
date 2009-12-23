@@ -136,7 +136,7 @@ public final class LocalUrlCacher {
 	 * @return
 	 * @throws java.io.IOException
 	 */
-	public static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
+	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
 					throws IOException {
 		//look to see if a sessionId is present in the headers
 		String sessionId = null;

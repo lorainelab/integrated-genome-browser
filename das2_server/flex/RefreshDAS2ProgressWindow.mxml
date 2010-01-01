@@ -5,7 +5,7 @@
 	height="102"
 	verticalGap="0"
 	close="closeWindow()"
-	layout="vertical" backgroundAlpha="0.9" alpha="0.9" titleIcon="@Embed(source='assets/database_refresh.png')">
+	layout="vertical" backgroundAlpha="0.9" alpha="0.9" titleIcon="@Embed(source='assets/database_lightning.png')">
     <mx:states>
         <mx:State name="FinishedState">
             <mx:RemoveChild target="{progress}"/>

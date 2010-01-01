@@ -3000,7 +3000,7 @@ public class GenoPubServlet extends HttpServlet {
 			} else {
 				// New create a new user role
 				UserRole role = new UserRole();
-				role.setRoleName(GenoPubSecurity.USER_ROLE);
+				role.setRoleName(request.getParameter("role"));
 				role.setUserName(user.getUserName());
 				role.setIdUser(user.getIdUser());
 				sess.save(role);

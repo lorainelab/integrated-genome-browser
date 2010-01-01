@@ -846,7 +846,7 @@ public abstract class ServerUtils {
 		}
 
 		if (alteredChromStrings.size() > 0) {
-			System.out.print("WARNING: altered chromosomes found. ");
+			System.out.print("WARNING: altered chromosomes found for genome " + oldGenome.getID() + ". ");
 			if (isIgnored) {
 				System.out.println("Indexing; this may cause problems.");
 			} else {

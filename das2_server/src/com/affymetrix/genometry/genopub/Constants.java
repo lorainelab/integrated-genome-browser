@@ -27,7 +27,8 @@ public class Constants {
 		".gff", 
 		".gtf",
 		".psl",
-		".useq"
+		".useq",
+		".bulkUpload"
 	};
 	
 	public static String[] SEQUENCE_FILE_EXTENSIONS = new String[] 

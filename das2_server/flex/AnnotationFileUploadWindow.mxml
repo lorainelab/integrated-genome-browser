@@ -34,6 +34,8 @@
 	[Bindable]
 	public var idAnnotation:Object = null;
 	[Bindable]
+	public var idAnnotationGrouping:Object = null;
+	[Bindable]
 	public var annotationName:Object = null;
 
 	private var multiFileUpload:MultiFileUpload;
@@ -47,6 +49,7 @@
 	public function initializeFileUploadParameters():void{
            var postVariables:URLVariables = new URLVariables;
 		   postVariables.idAnnotation = idAnnotation; 
+		   postVariables.idAnnotationGrouping = idAnnotationGrouping;
 		   multiFileUpload.setUploadURLParameters(postVariables);  
 	}
 			
@@ -90,6 +93,7 @@
         } else {
         	var postVariables:URLVariables = new URLVariables;
 	        postVariables.idAnnotation = idAnnotation;
+	        postVariables.idAnnotationGrouping = idAnnotationGrouping;
 	        multiFileUpload.setUploadURLParameters(postVariables);  
         }
       

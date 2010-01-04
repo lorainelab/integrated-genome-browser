@@ -922,6 +922,7 @@
         	var uploadWindow:AnnotationFileUploadWindow = AnnotationFileUploadWindow(PopUpManager.createPopUp(parentApplication.mainArea, AnnotationFileUploadWindow, true));
         	PopUpManager.centerPopUp(uploadWindow);
         	uploadWindow.idAnnotation = annotationsTree.selectedItem.@idAnnotation;
+        	uploadWindow.idAnnotationGrouping = annotationsTree.selectedItem.@idAnnotationGrouping;
         	uploadWindow.annotationName = annotationsTree.selectedItem.@label;
         	uploadWindow.uploadBrowseButton.setFocus();
         	uploadWindow.init();

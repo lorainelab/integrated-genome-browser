@@ -2498,10 +2498,12 @@ public class GenoPubServlet extends HttpServlet {
 								tempBulkUploadFile = new File (genometry_genopub_dir, "TempFileDeleteMe_"+USeqArchive.createRandowWord(6));
 								filePart.writeTo(tempBulkUploadFile); 
 								//make new annotations based on current annotation with modifications from the 1.ablk text file
-								AnnotationGrouping ag = getAnnotationGrouping(annotation, sess, req);							
-								uploadBulkAnnotations(tempBulkUploadFile, annotation, ag, res);
-								if (tempBulkUploadFile.exists()) tempBulkUploadFile.delete();
-								break;
+								AnnotationGrouping ag = getAnnotationGrouping(annotation, sess, idAnnotationGrouping);							
+								uploadBulkAnnotations(sess, tempBulkUploadFile, annotation, ag, res);
+								if (tempBulkUploadFile.exists()) { 
+									tempBulkUploadFile.delete();
+									break;
+								}
 							}
 
 							// Is this a valid file extension?
@@ -2579,7 +2581,8 @@ public class GenoPubServlet extends HttpServlet {
 
 	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
 	 * @author davidnix*/
-	private void uploadBulkAnnotations(File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping ag, HttpServletResponse res) throws IOException{
+	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping ag, HttpServletResponse res) 
+	   throws IOException, InsufficientPermissionException {
 
 		BufferedReader in = new BufferedReader (new FileReader(spreadSheet));
 		String line;
@@ -2588,20 +2591,28 @@ public class GenoPubServlet extends HttpServlet {
 		//for each line create a new annotation
 		while ((line = in.readLine()) != null){
 			line = line.trim();
-			if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) continue;
+			if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) {
+				continue;
+			}
 			
 			//parse name, fileName, summary, description
 			Matcher mat = tab.matcher(line);
-			if (mat.matches() == false) throw new IOException("Unable to parse the required fields from this line -> " + line+"  Aborting bulk upload.");
+			if (mat.matches() == false) { 
+				throw new IOException("Unable to parse the required fields from this line -> " + line+"  Aborting bulk upload.");
+			}
 			String name = mat.group(1).trim();
-			if (name.length()==0) throw new IOException("Failed to parse an annotation name from this line -> " + line+"  Aborting bulk upload.");
+			if (name.length()==0) {
+				throw new IOException("Failed to parse an annotation name from this line -> " + line+"  Aborting bulk upload.");
+			}
 			File dataFile = new File (mat.group(2).trim());
-			if (dataFile.canRead() == false) throw new IOException("Cannot read or find the File in line -> " + line+", looking for "+dataFile+" . Aborting bulk uploading.");
+			if (dataFile.canRead() == false) {
+				throw new IOException("Cannot read or find the File in line -> " + line+", looking for "+dataFile+" . Aborting bulk uploading.");
+			}
 			String summary = mat.group(3).trim();
 			String description = mat.group(4).trim();
 			
 			//make new annotation cloning current annotation
-			addNewAnnotation(sourceAnnotation, name, summary, description, dataFile, ag, res);
+			addNewAnnotation(sess, sourceAnnotation, name, summary, description, dataFile, ag, res);
 			
 		}
 		in.close();
@@ -2610,10 +2621,10 @@ public class GenoPubServlet extends HttpServlet {
 	
 	/**Fetches the AnnotationGrouping from a particular request. For bulk uploading.
 	 * @author davidnix*/
-	private AnnotationGrouping getAnnotationGrouping(Annotation sourceAnnot, Session sess, HttpServletRequest request) throws Exception{		
+	private AnnotationGrouping getAnnotationGrouping(Annotation sourceAnnot, Session sess, Integer idAnnotationGrouping) throws Exception{		
 		// Get the annotation grouping this annotation is in.
 		AnnotationGrouping ag = null;
-		if (Util.getIntegerParameter(request, "idAnnotationGrouping") == null) {
+		if (idAnnotationGrouping == null || idAnnotationGrouping.intValue() == -99) {
 			// If this is a root annotation, find the default root annotation
 			// grouping for the genome version.
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, sourceAnnot.getIdGenomeVersion()));
@@ -2623,7 +2634,7 @@ public class GenoPubServlet extends HttpServlet {
 			}
 		} else {
 			// Otherwise, find the annotation grouping passed in as a request parameter.			
-			ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, Util.getIntegerParameter(request, "idAnnotationGrouping")));
+			ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 		}
 		return ag;
 	}
@@ -2631,70 +2642,63 @@ public class GenoPubServlet extends HttpServlet {
 	/**Adds an new Annotation cloning in part the source annotation. For bulk uploading.
 	 * @author davidnix*/
 	@SuppressWarnings("unchecked")
-	private void addNewAnnotation(Annotation sourceAnnot, String name, String summary, String description, File dataFile, AnnotationGrouping ag, HttpServletResponse res) throws IOException {		
-		Session sess = null;
-		Transaction tx = null;
+	private void addNewAnnotation(Session sess, Annotation sourceAnnot, String name, String summary, String description, File dataFile, AnnotationGrouping ag, HttpServletResponse res) 
+	    throws IOException, InsufficientPermissionException {		
 
-		try {
-			//hmm might be a bit inefficient to open and close a new session/ transaction for every annotation added, don't know what is permitted here so going inefficient
-			sess = HibernateUtil.getSessionFactory().openSession();
-			tx = sess.beginTransaction();
 
-			// Make sure the user can write this annotation 
-			if (!this.genoPubSecurity.canWrite(sourceAnnot)) {
-				throw new InsufficientPermissionException("Insufficient permision to write annotation.");
-			}
-
-			Annotation dup = new Annotation();
-
-			dup.setName(name);
-			if (description.length()!=0) dup.setDescription(description);
-			else dup.setDescription(sourceAnnot.getDescription());
-			if (summary.length()!=0) dup.setSummary(summary);
-			else dup.setSummary(sourceAnnot.getSummary());
-			dup.setIdAnalysisType(sourceAnnot.getIdAnalysisType());
-			dup.setIdExperimentPlatform(sourceAnnot.getIdExperimentPlatform());
-			dup.setIdExperimentMethod(sourceAnnot.getIdExperimentMethod());
-			dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
-			dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
-			dup.setIdUser(sourceAnnot.getIdUser());
-			dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
-
-			sourceAnnot.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
-			sourceAnnot.setCreatedBy(this.genoPubSecurity.getUserName());
-
-			sess.save(dup);
-
-			// Add the annotation to the annotation grouping
-			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
-				newAnnotations.add(a);
-			}
-			newAnnotations.add(dup);
-			ag.setAnnotations(newAnnotations);
-
-			// Create a file directory and move in the data file
-			dup.setFileName("A" + dup.getIdAnnotation());
-			File dir = new File (genometry_genopub_dir, dup.getFileName());
-			dir.mkdir();
-			File moved = new File (dir, dataFile.getName());
-			if (dataFile.renameTo(moved) == false) throw new IOException("Failed to move the dataFile '"+dataFile+"' to its archive location  '"+moved+"' . Aborting bulk uploading.");
-			
-			tx.commit();
-
-		} catch (InsufficientPermissionException e) {
-			e.printStackTrace();
-			this.reportError(res, e.getMessage());
-			if (tx != null) tx.rollback();				
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			this.reportError(res, e.toString());
-			if (tx != null)  tx.rollback();			
-		} finally {
-			if (sess != null)  sess.close();
+		// Make sure the user can write this annotation 
+		if (!this.genoPubSecurity.canWrite(sourceAnnot)) {
+			throw new InsufficientPermissionException("Insufficient permision to write annotation.");
 		}
 
+		Annotation dup = new Annotation();
+
+		dup.setName(name);
+		if (description.length()!=0) {
+			dup.setDescription(description);
+		}
+		else {
+			dup.setDescription(sourceAnnot.getDescription());
+		}
+		if (summary.length()!=0) {
+			dup.setSummary(summary);
+		}
+		else {
+			dup.setSummary(sourceAnnot.getSummary());
+		}
+		dup.setIdAnalysisType(sourceAnnot.getIdAnalysisType());
+		dup.setIdExperimentPlatform(sourceAnnot.getIdExperimentPlatform());
+		dup.setIdExperimentMethod(sourceAnnot.getIdExperimentMethod());
+		dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
+		dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
+		dup.setIdUser(sourceAnnot.getIdUser());
+		dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
+
+		sourceAnnot.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+		sourceAnnot.setCreatedBy(this.genoPubSecurity.getUserName());
+
+		sess.save(dup);
+
+		// Add the annotation to the annotation grouping
+		Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+		for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+			newAnnotations.add(a);
+		}
+		newAnnotations.add(dup);
+		ag.setAnnotations(newAnnotations);
+
+		sess.flush();
+
+		// Create a file directory and move in the data file
+		dup.setFileName("A" + dup.getIdAnnotation());
+		File dir = new File (genometry_genopub_dir, dup.getFileName());
+		dir.mkdir();
+		File moved = new File (dir, dataFile.getName());
+		if (dataFile.renameTo(moved) == false) {
+			throw new IOException("Failed to move the dataFile '"+dataFile+"' to its archive location  '"+moved+"' . Aborting bulk uploading.");
+		}
+			
+		
 	}
 
 	

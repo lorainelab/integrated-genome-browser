@@ -2498,7 +2498,7 @@ public class GenoPubServlet extends HttpServlet {
 								tempBulkUploadFile = new File (genometry_genopub_dir, "TempFileDeleteMe_"+USeqArchive.createRandowWord(6));
 								filePart.writeTo(tempBulkUploadFile); 
 								//make new annotations based on current annotation with modifications from the 1.ablk text file
-								AnnotationGrouping ag = getAnnotationGrouping(annotation, sess, idAnnotationGrouping);							
+								AnnotationGrouping ag = getDefaultAnnotationGrouping(annotation, sess, idAnnotationGrouping);							
 								uploadBulkAnnotations(sess, tempBulkUploadFile, annotation, ag, res);
 								if (tempBulkUploadFile.exists()) { 
 									tempBulkUploadFile.delete();
@@ -2581,7 +2581,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
 	 * @author davidnix*/
-	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping ag, HttpServletResponse res) 
+	private void uploadBulkAnnotations(Session sess, File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping defaultAnnotationGrouping, HttpServletResponse res) 
 	   throws IOException, InsufficientPermissionException {
 
 		BufferedReader in = new BufferedReader (new FileReader(spreadSheet));
@@ -2611,8 +2611,22 @@ public class GenoPubServlet extends HttpServlet {
 			String summary = mat.group(3).trim();
 			String description = mat.group(4).trim();
 			
+			// If the annotation name is preceded by a directory structure, parse
+			// out actual name and create/find the annotation groupings represented
+			// the the directory structure embedded in the name;
+			String annotationName = "";
+			AnnotationGrouping ag = null;
+			if (name.lastIndexOf("/") >= 0) {
+				annotationName = name.substring(name.lastIndexOf("/") + 1);
+				ag = getSpecifiedAnnotationGrouping(sess, defaultAnnotationGrouping, name.substring(0, name.lastIndexOf("/")));
+			} else {
+				annotationName = name;
+				ag = defaultAnnotationGrouping;
+			}
+			
+			
 			//make new annotation cloning current annotation
-			addNewAnnotation(sess, sourceAnnotation, name, summary, description, dataFile, ag, res);
+			addNewAnnotation(sess, sourceAnnotation, annotationName, summary, description, dataFile, ag, res);
 			
 		}
 		in.close();
@@ -2621,7 +2635,7 @@ public class GenoPubServlet extends HttpServlet {
 	
 	/**Fetches the AnnotationGrouping from a particular request. For bulk uploading.
 	 * @author davidnix*/
-	private AnnotationGrouping getAnnotationGrouping(Annotation sourceAnnot, Session sess, Integer idAnnotationGrouping) throws Exception{		
+	private AnnotationGrouping getDefaultAnnotationGrouping(Annotation sourceAnnot, Session sess, Integer idAnnotationGrouping) throws Exception{		
 		// Get the annotation grouping this annotation is in.
 		AnnotationGrouping ag = null;
 		if (idAnnotationGrouping == null || idAnnotationGrouping.intValue() == -99) {
@@ -2638,6 +2652,46 @@ public class GenoPubServlet extends HttpServlet {
 		}
 		return ag;
 	}
+
+	/*
+	 * Get the annotation grouping (off of the base annotation grouping) specified as a directory structure 
+	 * in the annotation name.  If annotation groupings do not exist, create them.  
+	 */
+	@SuppressWarnings("unchecked")
+	private AnnotationGrouping getSpecifiedAnnotationGrouping(Session sess, AnnotationGrouping annotationGroupingBase, String name){
+		AnnotationGrouping agNext = annotationGroupingBase;
+		
+		String[] tokens = name.split("/");
+		AnnotationGrouping agCurrent = annotationGroupingBase;
+		for (int x = 0; x < tokens.length; x++) {
+			String agName = tokens[x];
+			agNext = null;
+			for (AnnotationGrouping ag : (Set<AnnotationGrouping>)agCurrent.getAnnotationGroupings()) {
+				if (ag.getName().equalsIgnoreCase(agName)) {
+					agNext = ag;
+					break;
+				}
+			}
+			
+			if (agNext == null) {
+				agNext = new AnnotationGrouping();
+				agNext.setName(agName);
+				agNext.setIdParentAnnotationGrouping(agCurrent.getIdAnnotationGrouping());
+				agNext.setIdGenomeVersion(agCurrent.getIdGenomeVersion());
+				agNext.setIdUserGroup(agCurrent.getIdUserGroup());
+				sess.save(agNext);
+				sess.flush();	
+				sess.refresh(agNext);
+				sess.refresh(agCurrent);
+			}
+			agCurrent = agNext;
+			
+			
+		}
+		
+		return agNext;		
+	}
+	
 	
 	/**Adds an new Annotation cloning in part the source annotation. For bulk uploading.
 	 * @author davidnix*/

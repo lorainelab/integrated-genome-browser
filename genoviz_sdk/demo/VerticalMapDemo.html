@@ -5,7 +5,6 @@
 <body BGCOLOR="#ddddee">
 <center><h2>GenoViz Vertical NeoMap Demo</h2></center>
 
-<body>
 
 <p> Here we demonstrate a vertically oriented map.
 Both maps below were built with the exact same API calls,
@@ -22,12 +21,13 @@ Zooming along the primary axis will be centered along the point indicated
 by the hairline.
 
 <p> <strong>CAVEAT</strong>:
-Some of the glyphs included in the GenoViz do not yet display correctly
-on vertical maps.
-Those descended from DirectedGlyph do.
+Some of the glyphs included in the GenoViz works best with horizontal map.
+Those descended from DirectedGlyph works best for both horizonatl and vertical map.
 </p>
-
-        <center>
+<center>
+<table border="1">
+	<tr>
+		<td>
           <applet
             code="genoviz.demo.VerticalMapDemo"
             archive="genoviz.jar"
@@ -36,8 +36,10 @@ Those descended from DirectedGlyph do.
             <strong>If you see this text, your browser apparently
               doesn't support Java!</strong>
           </applet>
-        </center>
-
+		</td>
+	</tr>
+</table>
+</center>
 <center>
 <h3><a href="src/genoviz/demoVerticalMapDemo.java">Java Source Code</a></h3>
 <h3><a href="../index.html">GenoViz Overview</a></h3>

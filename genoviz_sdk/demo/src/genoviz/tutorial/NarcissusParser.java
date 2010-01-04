@@ -69,6 +69,7 @@ public class NarcissusParser implements ContentParser {
 	/**
 	 * constructs a parser
 	 */
+	@SuppressWarnings("unchecked")
 	public NarcissusParser () {
 		positions.put("left", new Integer(LabelGlyph.LEFT));
 		positions.put("right", new Integer(LabelGlyph.RIGHT));
@@ -330,6 +331,7 @@ public class NarcissusParser implements ContentParser {
 	private Stack parents = new Stack();
 	GlyphI lastItem = null;
 
+	@SuppressWarnings("unchecked")
 	protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
 		throws IOException
 	{
@@ -390,6 +392,7 @@ public class NarcissusParser implements ContentParser {
 	 * parses a feature type and adds it to a list of such types.
 	 * Once added, the feature type becomes a keyword.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void parseFeatureType(StreamTokenizer theTokens)
 		throws IOException
 	{

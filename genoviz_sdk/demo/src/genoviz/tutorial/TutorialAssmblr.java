@@ -13,16 +13,8 @@
 
 package genoviz.tutorial;
 
-import java.applet.*;
-import java.awt.*;
 import java.io.*;
-import java.util.*;
-
-
 import com.affymetrix.genoviz.widget.NeoAssembler;
-import com.affymetrix.genoviz.awt.NeoPanel;
-import com.affymetrix.genoviz.bioviews.Glyph;
-import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import javax.swing.JApplet;
 
 
@@ -31,6 +23,7 @@ public class TutorialAssmblr extends JApplet {
 
 	NeoAssembler assmblr;
 
+	@Override
 	public void init() {
 	    NeoAssembler.use_neo_scroll = false;
 	    NeoAssembler.use_neo_zoom = false;
@@ -53,8 +46,8 @@ public class TutorialAssmblr extends JApplet {
 		    e.printStackTrace();
 		}
 		assmblr.stretchToFit(true, false);
-		assmblr.zoom(assmblr.Y, 1.0);
-		assmblr.scroll(assmblr.Y, 0);
+		assmblr.zoom(NeoAssembler.Y, 1.0);
+		assmblr.scroll(NeoAssembler.Y, 0);
 		assmblr.updateWidget();
 	}
 

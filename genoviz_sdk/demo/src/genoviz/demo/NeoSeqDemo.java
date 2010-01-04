@@ -74,6 +74,7 @@ public class NeoSeqDemo extends Applet
 	private boolean going = false;
 	private Color nicePaleBlue = new Color(180, 250, 250);
 
+	@Override
 	public void init()  {
 
 		String param;
@@ -102,6 +103,7 @@ public class NeoSeqDemo extends Applet
 		/** Using an inner class to catch mouseReleased (nee mouseUp) */
 
 		this.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseReleased(MouseEvent evt) {
 				if (clicking) {
 					if (framesShowing) {
@@ -119,6 +121,7 @@ public class NeoSeqDemo extends Applet
 
 		seqview.addKeyListener(new KeyAdapter() {
 			// Why is this not getting called?
+			@Override
 			public void keyPressed(KeyEvent evt) {
 				System.err.println("NeoSeqDemo saw key pressed.");
 			}
@@ -197,6 +200,7 @@ public class NeoSeqDemo extends Applet
 		mapframe.setVisible(true);
 		final Applet app = this;
 		mapframe.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				if(e.getSource() == mapframe) {
 					app.stop();
@@ -208,6 +212,7 @@ public class NeoSeqDemo extends Applet
 		});
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return ("Demonstration of genoviz Software's Sequence Viewing Widget");
 	}
@@ -227,16 +232,19 @@ public class NeoSeqDemo extends Applet
 	}
 
 
+	@Override
 	public void start() {
 		if (framesShowing) {
 			showFrames();
 		}
 	}
 
+	@Override
 	public void stop() {
 		hideFrames();
 	}
 
+	@Override
 	public void destroy() {
 		if ( this.mapframe != null )  {
 			this.mapframe.setVisible( false );
@@ -444,6 +452,7 @@ public class NeoSeqDemo extends Applet
 		}
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		if (null == this.backgroundImage) {
 			super.paint(g);

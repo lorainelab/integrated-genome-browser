@@ -13,6 +13,7 @@
 
 package genoviz.demo;
 
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import java.applet.*;
 import java.util.*;
 
@@ -20,22 +21,23 @@ import com.affymetrix.genoviz.awt.NeoPanel;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.glyph.BasicGraphGlyph;
 import com.affymetrix.genoviz.glyph.BasicImageGlyph;
+import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Image;
-import javax.swing.JScrollBar;
 
 public class GraphDemo extends Applet {
 	NeoMap map;
-	JScrollBar xzoomer;
+	AdjustableJSlider xzoomer;
 	Vector selected = new Vector();
 
+	@Override
 	public void init() {
 		map = new NeoMap(true, false);  // no internal vertical scroller
 		map.setMapOffset(-200, 200);
 		map.setMapRange(0, 1000);
 		map.addAxis(0);
 
-		xzoomer = new JScrollBar(JScrollBar.VERTICAL);
+		xzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 
 		NeoPanel widg_pan = new NeoPanel();
 		widg_pan.setLayout(new BorderLayout());
@@ -44,7 +46,7 @@ public class GraphDemo extends Applet {
 		setLayout(new BorderLayout());
 		add("Center", widg_pan);
 
-		map.setZoomer(map.X, xzoomer);
+		map.setZoomer(NeoMap.X, xzoomer);
 
 		double xcoords[] = { 100, 200, 300, 400, 500, 600, 700, 800, 900 };
 		double ycoords[] = { -50, -25,  25, 100,  50, 175, -10,  50,  74 };
@@ -67,8 +69,8 @@ public class GraphDemo extends Applet {
 		BasicImageGlyph ig;
 		ig = (BasicImageGlyph)map.addItem(600, 700);
 		ig.setImage(img2, this);
-		ig.setPrimaryFill(ig.TILED);
-		ig.setSecondaryFill(ig.NONE);
+		ig.setPrimaryFill(BasicImageGlyph.TILED);
+		ig.setSecondaryFill(BasicImageGlyph.NONE);
 
 		// Put a red ball at 600.
 		map.configure("-offset 0");

@@ -122,6 +122,7 @@ public class AlignmentParser {
 	 * @return a collection of Mappings
 	 * @see com.affymetrix.genoviz.datamodel.Mapping
 	 */
+	@SuppressWarnings("unchecked")
 	public static Vector getAlignments(BufferedReader chars, Hashtable seqhash) throws IOException {
 		Vector results = new Vector();
 		StringTokenizer toks;

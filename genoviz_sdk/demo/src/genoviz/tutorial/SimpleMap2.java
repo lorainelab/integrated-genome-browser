@@ -19,20 +19,19 @@ import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 
 import java.awt.Frame;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.util.Hashtable;
-import java.util.Vector;
 
 public class SimpleMap2 extends SimpleMap0 {
 
 	Hashtable positions = new Hashtable();
 	MapGlyphFactory labelFactory;
 
+	@SuppressWarnings("unchecked")
 	public SimpleMap2() {
 		positions.put("left", new Integer(LabelGlyph.LEFT));
 		positions.put("right", new Integer(LabelGlyph.RIGHT));
@@ -41,6 +40,7 @@ public class SimpleMap2 extends SimpleMap0 {
 		labelFactory = map.addFactory("-glyphtype com.affymetrix.genoviz.glyph.LabelGlyph");
 	}
 
+	@Override
 	protected void parseLine(int theLineNumber, StreamTokenizer theTokens)
 		throws IOException
 	{
@@ -126,10 +126,12 @@ public class SimpleMap2 extends SimpleMap0 {
 		me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = (Window) e.getSource();
 				w.dispose();
 			}
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}
@@ -137,7 +139,7 @@ public class SimpleMap2 extends SimpleMap0 {
 
 		f.pack();
 		f.setBounds(20, 40, 400, 500);
-		f.show();
+		f.setVisible(true);//f.show();
 	}
 
 }

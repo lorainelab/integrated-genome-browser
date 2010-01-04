@@ -48,6 +48,7 @@ public class Assembly {
 		this(consensus, aligns, seqs, null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Assembly(Mapping consensus, Vector aligns, Vector seqs, Vector traces) {
 		this.consensus = consensus;
 		this.aligns = aligns;
@@ -66,7 +67,7 @@ public class Assembly {
 			m = (Mapping)aligns.elementAt(i);
 			v = m.getSpans();
 			for (int j=0; j < v.size(); j++) {
-				s = (Span)v.get(j);
+				s = v.get(j);
 				if (s.ref_end >= s.ref_start) {
 					if (s.ref_end > max) {
 						max = s.ref_end;

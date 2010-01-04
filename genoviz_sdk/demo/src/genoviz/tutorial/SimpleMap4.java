@@ -13,7 +13,6 @@
 
 package genoviz.tutorial;
 
-import com.affymetrix.genoviz.datamodel.Range;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
 
 import java.awt.Frame;
@@ -23,7 +22,6 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.util.Hashtable;
-import java.util.Vector;
 
 public class SimpleMap4 extends SimpleMap3 {
 
@@ -74,6 +72,7 @@ public class SimpleMap4 extends SimpleMap3 {
 	}
        */
 
+	@SuppressWarnings("unchecked")
 	protected void parseFeatureType(StreamTokenizer theTokens)
 		throws IOException
 	{
@@ -105,10 +104,12 @@ public class SimpleMap4 extends SimpleMap3 {
 		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = (Window) e.getSource();
 				w.dispose();
 			}
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}
@@ -116,7 +117,7 @@ public class SimpleMap4 extends SimpleMap3 {
 
 		f.pack();
 		f.setBounds(20, 40, 400, 500);
-		f.show();
+		f.setVisible(true);//f.show();
 	}
 
 }

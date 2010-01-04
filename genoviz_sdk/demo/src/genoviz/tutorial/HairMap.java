@@ -30,6 +30,7 @@ public class HairMap extends SimpleMap3 {
 		hairline.setSelectable( false );
 
 		MouseListener zoomPointAdjuster = new MouseAdapter() {
+			@Override
 			public void mouseReleased( MouseEvent e ) {
 				double focus = ( ( NeoMouseEvent ) e ).getCoordX();
 				zoomPoint.setSpot( focus );
@@ -46,11 +47,13 @@ public class HairMap extends SimpleMap3 {
 		Frame f = new Frame( "GenoViz" );
 		f.add( me, BorderLayout.CENTER );
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = ( Window ) e.getSource();
 				w.dispose();
 			}
 
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}

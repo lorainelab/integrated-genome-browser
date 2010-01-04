@@ -14,16 +14,12 @@
 package genoviz.tutorial;
 
 import com.affymetrix.genoviz.widget.NeoMap;
-import com.affymetrix.genoviz.glyph.StringGlyph;
 import com.affymetrix.genoviz.datamodel.Range;
 
-import java.applet.Applet;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Event;
 import java.awt.FileDialog;
-import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
@@ -59,10 +55,12 @@ public class SimpleMap extends JApplet implements ActionListener {
             cpane.add("Center", map);
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return("Simple Map Demo - genoviz Software, Inc.");
 	}
 
+	@Override
 	public void init() {
 		super.init();
 		String s = getParameter("config");
@@ -71,6 +69,7 @@ public class SimpleMap extends JApplet implements ActionListener {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void addFileMenuItems(Frame theFrame) {
 		int FILE = 0; // assuming the File menu is the first one.
 		Menu fileMenu;
@@ -114,7 +113,7 @@ public class SimpleMap extends JApplet implements ActionListener {
 				FileDialog dialog = new FileDialog((Frame)f,
 						"Open File", FileDialog.LOAD);
 				dialog.pack();
-				dialog.show();
+				dialog.setVisible(true);//dialog.show();
 				if (null != dialog.getFile()) { // not cancelled
 					this.map.clearWidget();
 					this.map.addAxis(0);
@@ -253,10 +252,12 @@ public class SimpleMap extends JApplet implements ActionListener {
 		me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = (Window) e.getSource();
 				w.dispose();
 			}
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}
@@ -264,7 +265,7 @@ public class SimpleMap extends JApplet implements ActionListener {
 
 		f.pack();
 		f.setBounds( 20, 40, 300, 250);
-		f.show();
+		f.setVisible(true);//f.show();
 	}
 
 }

@@ -72,6 +72,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 
 	protected MouseListener mouser = new MouseAdapter() {
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (widget == e.getSource()) {
 				if (null != widget) {
@@ -87,6 +88,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 		descLabel = new Label("");
 
 		this.hider = new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt){
 				Frame f = (Frame)evt.getSource();
 				f.setVisible(false);
@@ -98,10 +100,12 @@ public class TutorialTracer extends Applet implements ActionListener {
 
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return ("Demonstration of genoviz Software's Trace Viewing Widget");
 	}
 
+	@Override
 	public void init() {
 
 		editMenu.addSeparator();
@@ -220,6 +224,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 	}
 
 
+	@Override
 	public void start() {
 		MenuBar bar;
 		Container parent;
@@ -240,13 +245,14 @@ public class TutorialTracer extends Applet implements ActionListener {
 			parentFrame.addWindowListener(this.hider);
 		}
 		if (null != propFrame && propFrameShowing) {
-			propFrame.show();
+			propFrame.setVisible(true); //propFrame.show();
 		}
 		super.start();
 		NeoTracer nt = widget;
 
 	}
 
+	@Override
 	public void stop() {
 		MenuBar bar;
 		Container parent;
@@ -288,7 +294,7 @@ public class TutorialTracer extends Applet implements ActionListener {
 				propFrame.pack();
 				propFrame.addWindowListener(this.hider);
 			}
-			propFrame.show();
+			propFrame.setVisible(true); //propFrame.show();
 		}
 		else if (evtSource == posText) {
 			try  {
@@ -324,22 +330,22 @@ public class TutorialTracer extends Applet implements ActionListener {
 		}
 		else if (evtSource == xzoomB) {
 			xzoom_value *= 1.1;
-			widget.zoom(widget.X, xzoom_value);
+			widget.zoom(NeoTracer.X, xzoom_value);
 			widget.updateWidget();
 		}
 		else if (evtSource == yzoomB) {
 			yzoom_value *= 1.1;
-			widget.zoom(widget.Y, yzoom_value);
+			widget.zoom(NeoTracer.Y, yzoom_value);
 			widget.updateWidget(true);
 		}
 		else if (evtSource == scrollLeftB) {
 			scroll_value -= 5;
-			widget.scroll(widget.X, scroll_value);
+			widget.scroll(NeoTracer.X, scroll_value);
 			widget.updateWidget();
 		}
 		else if (evtSource == scrollRightB) {
 			scroll_value += 5;
-			widget.scroll(widget.X, scroll_value);
+			widget.scroll(NeoTracer.X, scroll_value);
 			widget.updateWidget();
 		}
 		else if (evtSource == optScrollingB) {

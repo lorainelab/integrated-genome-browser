@@ -97,7 +97,7 @@ public class GlyphTestMap extends JApplet implements ActionListener {
 	int start = Integer.parseInt(start_field.getText());
 	int end = Integer.parseInt(end_field.getText());
 	Class glyph_class = Class.forName(glyph_name);
-	Color col = map.getColor(color_name);
+	Color col = NeoMap.getColor(color_name);
 	MapGlyphFactory fac = map.getFactory();
 	fac.setGlyphtype(glyph_class);
 	fac.setBackgroundColor(col);

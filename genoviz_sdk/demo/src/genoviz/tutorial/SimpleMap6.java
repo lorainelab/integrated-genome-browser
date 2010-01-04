@@ -14,7 +14,6 @@
 package genoviz.tutorial;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
-import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 
 import java.applet.Applet;
@@ -28,6 +27,7 @@ public class SimpleMap6 extends Applet {
 	protected MapHandler parser;
 	protected NeoPanel pan;
 
+	@Override
 	public void init() {
 
 		parser = new MapHandler();

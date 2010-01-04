@@ -34,7 +34,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.WindowConstants;
 
 public class NeoDraw extends JApplet 
@@ -82,7 +81,7 @@ public class NeoDraw extends JApplet
   public NeoDraw() {
     map = new NeoMap();
 
-    this.map.setSelectionEvent(this.map.ON_MOUSE_DOWN);
+    this.map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
     this.map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
     this.map.addRubberBandListener(this);
 
@@ -135,6 +134,7 @@ public class NeoDraw extends JApplet
     clearMap();
   }
 
+	@Override
   public String getAppletInfo() {
     return "Simple Map Drawing Program - genoviz Software, Inc.";
   }
@@ -252,7 +252,7 @@ public class NeoDraw extends JApplet
   public void rubberBandChanged(NeoRubberBandEvent theEvent) {
     // Here we react to a rubberband.
     if (theEvent.getID() == NeoRubberBandEvent.BAND_END
-	&& map.NO_SELECTION != map.getSelectionEvent())
+	&& NeoMap.NO_SELECTION != map.getSelectionEvent())
       {
 	NeoRubberBandEvent bandevent = theEvent;
 	Rectangle pixelBox = bandevent.getPixelBox();

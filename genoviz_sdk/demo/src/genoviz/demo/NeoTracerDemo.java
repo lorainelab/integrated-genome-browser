@@ -127,8 +127,8 @@ public class NeoTracerDemo extends Applet
 			widget = new NeoTracer(true, false, false);
 			xzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
 			yzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
-			widget.setZoomer(widget.X, xzoomer);
-			widget.setZoomer(widget.Y, yzoomer);
+			widget.setZoomer(NeoTracer.X, xzoomer);
+			widget.setZoomer(NeoTracer.Y, yzoomer);
 		}
 		else {
 			widget = new NeoTracer();
@@ -146,10 +146,12 @@ public class NeoTracerDemo extends Applet
 		this.add("Center", widg_pan);
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return ("Demonstration of genoviz Software's Trace Viewing Widget");
 	}
 
+	@Override
 	public void init() {
 
 		editMenu.addSeparator();
@@ -331,6 +333,7 @@ public class NeoTracerDemo extends Applet
 	}
 
 
+	@Override
 	public void start() {
 		Container parent;
 		parent = this.getParent();
@@ -343,16 +346,17 @@ public class NeoTracerDemo extends Applet
 		}
 
 		if (external_zoomers)  {
-			zoomframe.show();
+			zoomframe.setVisible(true); //zoomframe.show();
 		}
 		if (null != propFrame && propFrameShowing) {
-			propFrame.show();
+			propFrame.setVisible(true);//propFrame.show();
 		}
 		super.start();
 		NeoTracer nt = widget;
 
 	}
 
+	@Override
 	public void stop() {
 		Container parent;
 		parent = this.getParent();
@@ -379,6 +383,7 @@ public class NeoTracerDemo extends Applet
 			propFrame.add("Center", customizer);
 			propFrame.pack();
 			propFrame.addWindowListener(new WindowAdapter() {
+				@Override
 				public void windowClosing(WindowEvent e) {
 					propFrameShowing = false;
 					propFrame.setVisible(false);
@@ -386,7 +391,7 @@ public class NeoTracerDemo extends Applet
 			});
 		}
 		propFrame.setBounds(200, 200, 500, 300);
-		propFrame.show();
+		propFrame.setVisible(true);//propFrame.show();
 	}
 
 	public void centerAtBase(int baseNum) {
@@ -407,22 +412,22 @@ public class NeoTracerDemo extends Applet
 		}
 		else if (evtSource == xzoomB) {
 			xzoom_value *= 1.1;
-			widget.zoom(widget.X, xzoom_value);
+			widget.zoom(NeoTracer.X, xzoom_value);
 			widget.updateWidget();
 		}
 		else if (evtSource == yzoomB) {
 			yzoom_value *= 1.1;
-			widget.zoom(widget.Y, yzoom_value);
+			widget.zoom(NeoTracer.Y, yzoom_value);
 			widget.updateWidget(true);
 		}
 		else if (evtSource == scrollLeftB) {
 			scroll_value -= 5;
-			widget.scroll(widget.X, scroll_value);
+			widget.scroll(NeoTracer.X, scroll_value);
 			widget.updateWidget();
 		}
 		else if (evtSource == scrollRightB) {
 			scroll_value += 5;
-			widget.scroll(widget.X, scroll_value);
+			widget.scroll(NeoTracer.X, scroll_value);
 			widget.updateWidget();
 		}
 		else if (evtSource == optScrollingB) {
@@ -489,7 +494,7 @@ public class NeoTracerDemo extends Applet
 			new_pan.setLayout(new BorderLayout());
 			new_pan.add("Center", (Component)oneClone);
 			cloneFrame.add("Center", widg_pan);
-			cloneFrame.show();
+			cloneFrame.setVisible(true);//cloneFrame.show();
 		}
 	}
 

@@ -68,10 +68,12 @@ public class NeoQuallerDemo extends Applet
 		widget.addRangeListener(this);
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return ("Demonstration of genoviz Software's Quality Scores Viewing Widget");
 	}
 
+	@Override
 	public void init() {
 
 		String seq = getParameter("seqFile");
@@ -138,7 +140,7 @@ public class NeoQuallerDemo extends Applet
 			framer.setLayout(new BorderLayout());
 			framer.add("Center", widg_pan);
 			framer.setSize(400, 200);
-			framer.show();
+			framer.setVisible(true);//framer.show();
 		}
 
 		else {
@@ -181,6 +183,7 @@ public class NeoQuallerDemo extends Applet
 		return cp;
 	}
 
+	@Override
 	public void start() {
 
 		/*
@@ -195,7 +198,7 @@ public class NeoQuallerDemo extends Applet
 		/* */
 
 		if (null != propFrame && propFrameShowing) {
-			propFrame.show();
+			propFrame.setVisible(true);//propFrame.show();
 		}
 		super.start();
 
@@ -203,6 +206,7 @@ public class NeoQuallerDemo extends Applet
 		widget.scrollRange(0.0f);
 	}
 
+	@Override
 	public void stop() {
 		Container parent;
 		parent = this.getParent();
@@ -224,6 +228,7 @@ public class NeoQuallerDemo extends Applet
 			propFrame.add("Center", customizer);
 			propFrame.pack();
 			propFrame.addWindowListener(new WindowAdapter() {
+				@Override
 				public void windowClosing(WindowEvent e) {
 					propFrameShowing = false;
 					propFrame.setVisible(false);
@@ -231,7 +236,7 @@ public class NeoQuallerDemo extends Applet
 			});
 		}
 		propFrame.setBounds(200, 200, 300, 150);
-		propFrame.show();
+		propFrame.setVisible(true);//propFrame.show();
 	}
 
 	public void centerAtBase(int baseNum) {
@@ -308,7 +313,7 @@ public class NeoQuallerDemo extends Applet
 			cloneFrame.setLayout(new BorderLayout());
 			cloneFrame.add("Center", new_pan);
 			cloneFrame.setSize(400, 200);
-			cloneFrame.show();
+			cloneFrame.setVisible(true);//cloneFrame.show();
 		}
 	}
 

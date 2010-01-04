@@ -54,7 +54,6 @@ import com.affymetrix.genoviz.glyph.AlignedResiduesGlyph;
 import genoviz.demo.datamodel.Assembly;
 import genoviz.demo.parser.AlignmentParser;
 import genoviz.demo.parser.SequenceParser;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -232,7 +231,7 @@ public class NeoAssemblerDemo extends Applet
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width-pixel_width)/2,
 				(screen_size.height-pixel_height)/2);
-		mapframe.show();
+		mapframe.setVisible(true);//mapframe.show();
 
 		mapframe.addWindowListener(this);
 		map.addMouseListener(this);
@@ -377,7 +376,7 @@ public class NeoAssemblerDemo extends Applet
 			propframe.addWindowListener(this);
 		}
 		propframe.setBounds(200, 200, 500, 300);
-		propframe.show();
+		propframe.setVisible(true);//propframe.show();
 	}
 
 	// Disable Add Alignment menus.  Done when all of the alignments have been added.
@@ -614,7 +613,7 @@ public class NeoAssemblerDemo extends Applet
 		zoomframe.add("North", hzoom);
 		zoomframe.pack();
 		zoomframe.setSize(200, zoomframe.getSize().height);
-		zoomframe.show();
+		zoomframe.setVisible(true);//zoomframe.show();
 	}
 
 	/**
@@ -627,6 +626,7 @@ public class NeoAssemblerDemo extends Applet
 	 *    call NeoAssembler.pack() to repack from top to bottom as ordered
 	 *         in the vector
 	 */
+	@SuppressWarnings("unchecked")
 	public void doExternalSort() {
 		List align_glyphs = map.getAlignmentGlyphs();
 		Object temp1, temp2;
@@ -702,10 +702,10 @@ public class NeoAssemblerDemo extends Applet
 			getGoing();
 		}
 		if (mapframe != null) {
-			mapframe.show();
+			mapframe.setVisible(true);//mapframe.show();
 		}
 		if (zoomframe != null) {
-			zoomframe.show();
+			zoomframe.setVisible(true);//zoomframe.show();
 		}
 	}
 
@@ -932,6 +932,7 @@ public class NeoAssemblerDemo extends Applet
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void mousePressed(MouseEvent e) {
 		if (e.getSource() == map) {
 			selectedDataModels.removeAllElements();
@@ -974,7 +975,7 @@ public class NeoAssemblerDemo extends Applet
 		int seqPos = 0;
 		StringBuffer retSeq = new StringBuffer( "" );
 		for ( int i = begSeq; i < endSeq; i++ ) {
-			seqPos = glyphMap.mapToSequence( i );
+			seqPos = glyphMap.mapToMapped(i); //seqPos = glyphMap.mapToSequence( i );
 			char c = glyphSeq.getResidue( seqPos );
 			if ( ' ' < c ) {
 				retSeq.append ( glyphSeq.getResidue ( seqPos ) );

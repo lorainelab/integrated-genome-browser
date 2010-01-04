@@ -17,6 +17,7 @@ import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 
+import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
@@ -24,11 +25,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 public class SequenceMap1 extends SequenceMap0 implements NeoRangeListener {
 
 	protected MouseListener mouser = new MouseAdapter() {
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e instanceof NeoMouseEvent) {
 				neoMouseClicked((NeoMouseEvent)e);
@@ -48,6 +49,7 @@ public class SequenceMap1 extends SequenceMap0 implements NeoRangeListener {
 		this.map.addMouseListener(this.mouser);
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return "Simple Sequence Map - genoviz Software, Inc.";
 	}
@@ -56,8 +58,8 @@ public class SequenceMap1 extends SequenceMap0 implements NeoRangeListener {
 		int sbeg = (int)theEvent.getVisibleStart();
 		// Center zooming at the beginning of the range.
 		this.map.setZoomBehavior(
-				this.map.X,
-				this.map.CONSTRAIN_COORD,
+				NeoMap.X,
+				NeoMap.CONSTRAIN_COORD,
 				sbeg
 				);
 	}
@@ -69,10 +71,12 @@ public class SequenceMap1 extends SequenceMap0 implements NeoRangeListener {
 		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = (Window) e.getSource();
 				w.dispose();
 			}
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}
@@ -80,7 +84,7 @@ public class SequenceMap1 extends SequenceMap0 implements NeoRangeListener {
 
 		f.pack();
 		f.setBounds( 20, 40, 300, 250 );
-		f.show();
+		f.setVisible(true);//f.show();
 	}
 
 }

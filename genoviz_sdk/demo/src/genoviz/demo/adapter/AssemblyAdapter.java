@@ -14,7 +14,6 @@
 package genoviz.demo.adapter;
 
 import java.util.*;
-import com.affymetrix.genoviz.awt.*;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.glyph.AlignmentGlyph;

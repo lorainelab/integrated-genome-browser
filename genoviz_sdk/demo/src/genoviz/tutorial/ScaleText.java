@@ -26,6 +26,7 @@ public class ScaleText  extends SolidGlyph {
 	protected String text = "Put your text here!";
 	protected int count = 9;
 	protected static int MAX_SIZE = 24;
+	@Override
 	public void draw(ViewI view) {
 
 		this.calcPixels(view);

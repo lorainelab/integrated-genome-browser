@@ -6,20 +6,26 @@
 <center><h2>GenoViz SDK NeoMap & NeoSeq Interaction Demo</h2></center>
 
 <center>
-<applet
-        code="genoviz.demo.ShadowDemo"
-        archive="genoviz.jar"
-        width=300
-        height=150>
-<strong>If you see this text, your browser apparently doesn't support Java!</strong>
-</applet>
+<table border="1">
+	<tr>
+		<td>
+		<applet
+			code="genoviz.demo.ShadowDemo"
+			archive="genoviz.jar"
+			width=725
+			height=200>
+		<strong>If you see this text, your browser apparently doesn't support Java!</strong>
+		</applet>
+		</td>
+	</tr>
+</table>
 </center>
 
 <p>
 This demo shows how one widget can be "shadowed" on another.
 The two widgets have been set up
-so the range of sequence shown in the NeoSeq (above) is represented
-in the NeoMap (framed in a floating window)
+so the range of sequence shown in the NeoSeq (left) is represented
+in the NeoMap (framed in right)
 by a red shadow along the axis.
 Any changes in this range are propagated to the shadow.
 So as you scroll the NeoSeq,

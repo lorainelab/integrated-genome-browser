@@ -34,6 +34,7 @@ public class ScoredAnnotation extends Annotation implements ScoredAnnotationI {
 		return score;
 	}
 
+	@Override
 	public String toString() {
 		return (super.toString() + " : Score = " + score);
 	}

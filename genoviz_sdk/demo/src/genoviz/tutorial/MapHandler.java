@@ -120,6 +120,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param theName a unique name.
 	 * @param theMap on which glyphs are to be placed.
 	 */
+	@SuppressWarnings("unchecked")
 	public void addMap( String theName, NeoMap theMap ) {
 		System.out.println( "adding map type " + theName );
 		this.maps.put( theName, theMap );
@@ -129,6 +130,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle the start of the document.
 	 * @see org.xml.sax.DocumentHandler#startDocument
 	 */
+	@Override
 	public void startDocument() {
 		System.out.println( "Start document" );
 	}
@@ -137,6 +139,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle the end of the document.
 	 * @see org.xml.sax.DocumentHandler#endDocument
 	 */
+	@Override
 	public void endDocument() {
 		System.out.println( "End document" );
 	}
@@ -147,7 +150,8 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle the start of an element.
 	 * @see org.xml.sax.DocumentHandler#startElement
 	 */
-	public void startElement( String name, AttributeList attributes ) {
+	@SuppressWarnings("unchecked")
+	public void startElement( String name, Attributes attributes ) {
 		GlyphI     lastItem = null;
 		LabelGlyph label = null;
 		NeoMap    nextMap = null;
@@ -366,6 +370,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * @param config string to pass to the glyph factory
 	 * @param labelPlacement LEFT, RIGHT, ABOVE, BELOW, or CENTER
 	 */
+	@SuppressWarnings("unchecked")
 	public void defineGlyphStyle( NeoMap theMap, String name, String config, 
 			Object labelPlacement ) {
 		if ( null == name ) {
@@ -392,6 +397,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle the end of an element.
 	 * @see org.xml.sax.DocumentHandler#endElement
 	 */
+	@Override
 	public void endElement( String name ) {
 		System.out.println( "End element:  " + name );
 
@@ -413,6 +419,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle character data.
 	 * @see org.xml.sax.DocumentHandler#charData
 	 */
+	@Override
 	public void characters( char ch[], int start, int length ) {
 		System.out.println( "Character data:  \"" + escape( ch, length ) + '"' );
 
@@ -435,6 +442,7 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle ignorable whitespace.
 	 * @see org.xml.sax.DocumentHandler#ignorableWhitespace
 	 */
+	@Override
 	public void ignorableWhitespace( char ch[], int start, int length ) {
 		System.out.println( "Ignorable whitespace:  \"" + escape( ch, length ) + '"' );
 	}
@@ -443,12 +451,13 @@ public class MapHandler extends HandlerBase implements ContentParser {
 	 * Handle a processing instruction.
 	 * @see org.xml.sax.DocumentHandler#processingInstruction
 	 */
+	@Override
 	public void processingInstruction( String target, String data ) {
 		System.out.println( "Processing Instruction:  " + target + ' '
 				+ escape( data.toCharArray(), data.length() ) );
 	}
 
-	private Object getLabelPosition( AttributeList attributes ) {
+	private Object getLabelPosition( Attributes attributes ) {
 		Object p = null;
 		String v = attributes.getValue("labeled");
 

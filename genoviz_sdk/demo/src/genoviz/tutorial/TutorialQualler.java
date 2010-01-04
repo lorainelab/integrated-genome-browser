@@ -63,6 +63,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 
 	protected MouseListener mouser = new MouseAdapter() {
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (widget == e.getSource()) {
 				if (null != oneClone) {
@@ -86,6 +87,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 		widget = new NeoQualler();
 
 		this.hider = new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent evt){
 				Frame f = (Frame)evt.getSource();
 				f.setVisible(false);
@@ -96,10 +98,12 @@ public class TutorialQualler extends Applet implements ActionListener {
 		};
 	}
 
+	@Override
 	public String getAppletInfo() {
 		return ("Demonstration of genoviz Software's Quality Scores Viewing Widget");
 	}
 
+	@Override
 	public void init() {
 
 		String seq = getParameter("seqFile");
@@ -153,7 +157,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 			pan.add("Center", (Component)widget);
 			framer.add("Center", pan);
 			framer.setSize(400, 200);
-			framer.show();
+			framer.setVisible(true); //framer.show();
 			framer.addWindowListener(this.hider);
 		}
 
@@ -198,6 +202,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 		return cp;
 	}
 
+	@Override
 	public void start() {
 		MenuBar bar;
 		Container parent;
@@ -216,7 +221,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 			parentFrame.addWindowListener(this.hider);
 		}
 		if (null != propFrame && propFrameShowing) {
-			propFrame.show();
+			propFrame.setVisible(true); //propFrame.show();
 		}
 		super.start();
 
@@ -224,6 +229,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 		widget.scrollRange(0.0f);
 	}
 
+	@Override
 	public void stop() {
 		MenuBar bar;
 		Container parent;
@@ -271,7 +277,7 @@ public class TutorialQualler extends Applet implements ActionListener {
 				propFrame.pack();
 				propFrame.addWindowListener(this.hider);
 			}
-			propFrame.show();
+			propFrame.setVisible(true); //propFrame.show();
 		}
 		else if (evtSource == posText) {
 			try  {

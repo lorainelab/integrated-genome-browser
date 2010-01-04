@@ -73,6 +73,7 @@ public class TieredMapDemo extends Applet
 	public TieredMapDemo() {
 	}
 
+	@Override
 	public void init() {
 		String param;
 
@@ -90,6 +91,7 @@ public class TieredMapDemo extends Applet
 		}
 	}
 
+	@Override
 	public void start() {
 
 		/*
@@ -152,19 +154,21 @@ public class TieredMapDemo extends Applet
 			*/
 
 		frame.addComponentListener ( new ComponentAdapter() {
+			@Override
 			public void componentShown ( ComponentEvent ce ) {
 				map.repack();
 				ce.getComponent().validate();
 			}
 		} );
 		frame.addWindowListener ( new WindowAdapter() {
+			@Override
 			public void windowClosing ( WindowEvent we ) {
 				TieredMapDemo.this.stop();
 				System.exit( 0 );
 			}
 		} );
 		createMenuBar ( frame );
-		frame.show();
+		frame.setVisible(true);//frame.show();
 	}
 
 	// sets up the popup menu
@@ -180,6 +184,7 @@ public class TieredMapDemo extends Applet
 	 * Creates the three tiers for the view
 	 * and the factories that will populate them with glyphs.
 	 */
+	@SuppressWarnings("unchecked")
 	void createTiers () {
 		axisTier = new MapTierGlyph();
 		axisTier.setState ( MapTierGlyph.COLLAPSED );
@@ -236,6 +241,7 @@ public class TieredMapDemo extends Applet
 		return factory;
 	}
 
+	@SuppressWarnings("unchecked")
 	MapTierGlyph makeTier( int state, int height, String label, MapGlyphFactory factory ) {
 		MapTierGlyph tierglyph = new MapTierGlyph();
 		/*
@@ -319,6 +325,7 @@ public class TieredMapDemo extends Applet
 		map.updateWidget ( true );
 	}
 
+	@Override
 	public void stop () {
 		frame.setVisible(false);
 	}
@@ -330,14 +337,14 @@ public class TieredMapDemo extends Applet
 			// iterate through selected glyphs, looking for a MapTierGlyph
 			if ( glyphs.get ( i ) instanceof MapTierGlyph )
 				selectedTier = (MapTierGlyph) glyphs.get( i );
-			else ((GlyphI)glyphs.get ( i )).draw(map.getView());
+			else (glyphs.get ( i )).draw(map.getView());
 		if ( selectedTier == null ) return;
 		if ( selectedTier.getLabel().equals ( axisTier.getLabel() ) ) return;
 		if ( e.getSource().equals(map) )
 			if ( (nme.getModifiers() & InputEvent.SHIFT_MASK) !=0 ) {
 				for (int i = 0; i < glyphs.size(); i++) {
 					if ( ! ( glyphs.get(i) instanceof MapTierGlyph ) ) {
-						GlyphI remove_me = (GlyphI) glyphs.get(i);
+						GlyphI remove_me = glyphs.get(i);
 						map.removeItem ( remove_me );
 						remove_me.getParent().removeChild(remove_me);
 						map.repack();
@@ -365,6 +372,7 @@ public class TieredMapDemo extends Applet
 		tmdemo.start();
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		if (null == this.backgroundImage) {
 			super.paint(g);

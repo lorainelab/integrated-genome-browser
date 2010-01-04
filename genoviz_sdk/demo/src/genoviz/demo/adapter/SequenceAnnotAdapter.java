@@ -36,6 +36,7 @@ public class SequenceAnnotAdapter implements NeoDataAdapterI {
 		factory.configure(options);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void configure(Hashtable options)  {
 		factory.configure(options);
 	}

@@ -140,8 +140,8 @@ public class NeoMapDemo extends JApplet
     AdjustableJSlider xzoomer = new AdjustableJSlider(JSlider.HORIZONTAL);
     AdjustableJSlider yzoomer = new AdjustableJSlider(JSlider.VERTICAL);
 
-    map.setZoomer(map.X, xzoomer);
-    map.setZoomer(map.Y, yzoomer);
+    map.setZoomer(NeoMap.X, xzoomer);
+    map.setZoomer(NeoMap.Y, yzoomer);
 
     // Place an axis along the center of the map.
     map.addAxis(0);
@@ -349,6 +349,7 @@ public class NeoMapDemo extends JApplet
     map.addItem(sg, child2);
   }
 
+	@Override
   public String getAppletInfo() {
     return ("Demonstration of Genoviz NeoMap Widget");
   }
@@ -483,7 +484,7 @@ public class NeoMapDemo extends JApplet
     Object coord_source = nme.getSource();
     if (coord_source == map && e instanceof NeoMouseEvent) {
       // Make the selected item the center of zooming.
-      map.setZoomBehavior(map.X, map.CONSTRAIN_COORD, nme.getCoordX());
+      map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, nme.getCoordX());
     }
   }
 
@@ -491,7 +492,7 @@ public class NeoMapDemo extends JApplet
 
   public void rubberBandChanged(NeoRubberBandEvent e) {
     int id = e.getID();
-    if (id == e.BAND_END && map.getSelectionEvent() != map.NO_SELECTION) {
+    if (id == NeoRubberBandEvent.BAND_END && map.getSelectionEvent() != NeoMap.NO_SELECTION) {
       // Here we add some selection by rubberband.
       Rectangle pixelBox = e.getPixelBox();
       pixelBox.setSize(pixelBox.width+1, pixelBox.height+1);
@@ -514,7 +515,7 @@ public class NeoMapDemo extends JApplet
   }
 
   /** ActionListener interface implementation */
-
+  @SuppressWarnings("unchecked")
   public void actionPerformed(ActionEvent e) {
     Object theItem = e.getSource();
     if (theItem == printMenuItem) {

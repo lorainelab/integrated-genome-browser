@@ -14,7 +14,6 @@
 package genoviz.tutorial;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
-import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 
 import java.applet.Applet;
@@ -27,6 +26,7 @@ public class SimpleMap5 extends Applet {
 	protected NarcissusParser parser;
 	protected NeoPanel pan;
 
+	@Override
 	public void init() {
 		parser = new NarcissusParser();
 		this.setLayout(new BorderLayout());

@@ -42,10 +42,12 @@ public class SimpleMap3 extends SimpleMap1 {
 		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = (Window) e.getSource();
 				w.dispose();
 			}
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}
@@ -53,7 +55,7 @@ public class SimpleMap3 extends SimpleMap1 {
 
 		f.pack();
 		f.setBounds(20, 40, 900, 400);
-		f.show();
+		f.setVisible(true);//f.show();
 	}
 
 }

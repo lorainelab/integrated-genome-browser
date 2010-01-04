@@ -57,6 +57,7 @@ public class SequenceParser {
 	 * @return a Vector of Sequences.
 	 * @see com.affymetrix.genoviz.datamodel.Sequence
 	 */
+	@SuppressWarnings("unchecked")
 	public static Vector getSequences (BufferedReader chars) throws IOException {
 		Vector results = new Vector();
 		StreamTokenizer toks = new StreamTokenizer(chars);

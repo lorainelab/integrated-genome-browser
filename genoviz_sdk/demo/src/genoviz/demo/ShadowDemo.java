@@ -13,6 +13,7 @@
 
 package genoviz.demo;
 
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import java.applet.*;
 import java.awt.event.*;
 import java.util.Vector;
@@ -22,6 +23,7 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.glyph.*;
+import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Choice;
@@ -34,10 +36,9 @@ import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.Toolkit;
-import java.awt.Window;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import javax.swing.JScrollBar;
+import javax.swing.JFrame;
 
 /**
  *  Demo of "shadowing" a NeoSeq on a NeoMap via
@@ -54,8 +55,8 @@ public class ShadowDemo extends Applet
 	protected NeoSeq seqview;
 	protected GlyphI  shadowRect;
 
-	protected Frame mapframe;
-
+	protected Panel mapframe;
+	
 	protected Vector annotations;
 	protected Label sizeL, spacingL, stripeL, firstL, lastL;
 	protected TextField sizeT, spacingT, stripeT;
@@ -89,10 +90,24 @@ public class ShadowDemo extends Applet
 
 	protected double mouse_offset;
 
+	@Override
 	public String getAppletInfo() {
 		return ("Demonstration of Widget Shadowing");
 	}
 
+	static public void main(String[] args)
+	{
+		ShadowDemo demo = new ShadowDemo();
+		demo.init();
+		demo.start();
+		JFrame window = new JFrame(demo.getName());
+		window.setContentPane(demo);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.pack();
+		window.setVisible(true);
+	}
+
+	@Override
 	public void init() {
 		StringBuffer seqbuf;
 
@@ -133,8 +148,8 @@ public class ShadowDemo extends Applet
 
 		// Set the color scheme.
 
-		seqview.setBackground(seqview.RESIDUES, Color.white);
-		seqview.setBackground(seqview.NUMBERS, Color.white);
+		seqview.setBackground(NeoSeq.RESIDUES, Color.white);
+		seqview.setBackground(NeoSeq.NUMBERS, Color.white);
 		seqview.setResidueColor(Color.black);
 
 		Color[] okayColors = {
@@ -144,7 +159,8 @@ public class ShadowDemo extends Applet
 		seqview.setStripeColors(okayColors);
 
 		Panel controlP = new Panel();
-
+		controlP.setLayout(new BorderLayout());
+		
 		this.setLayout(new BorderLayout());
 
 		// hardwired sizing of seqview...
@@ -153,8 +169,12 @@ public class ShadowDemo extends Applet
 		Panel seq_pan = new NeoPanel();
 		seq_pan.setLayout(new BorderLayout());
 		seq_pan.add("Center", (Component)seqview);
-		add("Center", seq_pan);
-
+		
+		controlP.add("West",seq_pan);
+		controlP.add("East",mapframe);
+		
+		add("Center", controlP);
+		
 		/*   testing NeoSeq.preferredSize() methods...
 			 seqview.setPreferredSize(50, 15);
 			 System.out.println(seqview.getPreferredSize());
@@ -172,6 +192,7 @@ public class ShadowDemo extends Applet
 
 	}
 
+	@Override
 	public void start() {
 		Container parent;
 		parent = this.getParent();
@@ -184,6 +205,7 @@ public class ShadowDemo extends Applet
 		mapview.updateWidget();
 	}
 
+	@Override
 	public void stop() {
 		Container parent;
 		parent = this.getParent();
@@ -194,11 +216,11 @@ public class ShadowDemo extends Applet
 		mapframe.setVisible(false);
 	}
 
-
+	@Override
 	public void destroy() {
 		if ( this.mapframe != null )  {
 			this.mapframe.setVisible( false );
-			this.mapframe.dispose();
+			//this.mapframe.dispose();
 			this.mapframe = null;
 		}
 		super.destroy();
@@ -222,6 +244,7 @@ public class ShadowDemo extends Applet
 	   }
 	   }*/
 
+	@SuppressWarnings("unchecked")
 	public void addBackgroundAnnotation() {
 		Object annot = seqview.addAnnotation(seqview.getSelectedStart(),
 				seqview.getSelectedEnd(),
@@ -259,13 +282,17 @@ public class ShadowDemo extends Applet
 
 		// Add a SequenceGlyph to the map
 
-		SequenceGlyph sg =
-			(SequenceGlyph) mapview.addItem (0, seqlength); sg.setResidues(seqstring);
+		//SequenceGlyph sg = (SequenceGlyph) mapview.addItem (0, seqlength);
+		SequenceGlyph sg = new ColoredResiduesGlyph();
+		sg.setResidues(seqstring);
 		sg.setBackgroundColor (Color.lightGray);
-
+		sg.setCoords(0, 5, seqlength, 10);
+		mapview.addItem(sg);
+		
 		// Build up the UI around the mapview
 
-		mapframe = new Frame("NeoMap - Shadowing Demo");
+		//mapframe = new Frame("NeoMap - Shadowing Demo");
+		mapframe = new NeoPanel();
 		mapframe.setLayout(new BorderLayout());
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		mapframe.setLocation((screen_size.width-MAP_WIDTH)/4,
@@ -274,8 +301,8 @@ public class ShadowDemo extends Applet
 		mapview.setSize(MAP_WIDTH, MAP_HEIGHT);
 		mapview.setBackground(new Color(180, 250, 250));
 
-		JScrollBar hzoom = new JScrollBar(JScrollBar.VERTICAL);
-		mapview.setZoomer(mapview.X, hzoom);
+		AdjustableJSlider hzoom = new AdjustableJSlider(Adjustable.VERTICAL);
+		mapview.setZoomer(NeoMap.X, hzoom);
 
 		NeoPanel map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
@@ -285,21 +312,21 @@ public class ShadowDemo extends Applet
 		NeoPanel zoom_pan = new NeoPanel();
 		zoom_pan.setLayout(new BorderLayout());
 		zoom_pan.add("Center", hzoom);
-
+		
 		mapframe.add("West", zoom_pan);
-		mapframe.pack();
-		mapframe.show();
-		mapframe.toFront();
-		mapframe.addWindowListener(
-				new WindowAdapter() {
-					public void windowClosing(WindowEvent we) {
-						((Window)we.getSource()).setVisible(false);
-						mapframe_active = false;
-					}
-					public void windowDeactivated(WindowEvent we) {
-						if ( mapframe_active && mapframe != null) mapframe.toFront();
-					}
-				});
+		mapframe.setVisible(true);//mapframe.show();
+//		mapframe.pack();
+//		mapframe.toFront();
+//		mapframe.addWindowListener(
+//				new WindowAdapter() {
+//					public void windowClosing(WindowEvent we) {
+//						((Window)we.getSource()).setVisible(false);
+//						//mapframe_active = false;
+//					}
+//					public void windowDeactivated(WindowEvent we) {
+//						if ( mapframe_active && mapframe != null) mapframe.toFront();
+//					}
+//				});
 		return mapview;
 	}
 

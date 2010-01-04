@@ -13,8 +13,6 @@
 
 package genoviz.demo.datamodel;
 
-import java.util.Vector;
-
 public class Annotation implements AnnotationI  {
 	protected int start, end;
 	/** 

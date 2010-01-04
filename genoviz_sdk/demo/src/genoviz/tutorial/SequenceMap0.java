@@ -33,6 +33,7 @@ public class SequenceMap0 extends SimpleMap4 {
 	protected Frame seqFrame = null;
 	protected NeoPanel pan = new NeoPanel();
 
+	@Override
 	public String getAppletInfo() {
 		return "Simple Sequence Map - genoviz Software, Inc.";
 	}
@@ -93,12 +94,14 @@ public class SequenceMap0 extends SimpleMap4 {
 	}
        */
 
+	@Override
 	public void start() {
 		super.start();
 		if (null != seqFrame) {
-			seqFrame.show();
+			seqFrame.setVisible(true); //seqFrame.show();
 		}
 	}
+	@Override
 	public void stop() {
 		super.stop();
 		if (null != seqFrame) {
@@ -126,10 +129,12 @@ public class SequenceMap0 extends SimpleMap4 {
 		// me.addFileMenuItems(f);
 
 		f.addWindowListener( new WindowAdapter() {
+			@Override
 			public void windowClosing( WindowEvent e ) {
 				Window w = (Window) e.getSource();
 				w.dispose();
 			}
+			@Override
 			public void windowClosed( WindowEvent e ) {
 				System.exit( 0 );
 			}
@@ -137,7 +142,7 @@ public class SequenceMap0 extends SimpleMap4 {
 
 		f.pack();
 		f.setBounds( 20, 40, 300, 250 );
-		f.show();
+		f.setVisible(true);//f.show();
 	}
 
 }

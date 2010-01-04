@@ -13,11 +13,13 @@
 
 package genoviz.demo;
 
+import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
@@ -26,7 +28,7 @@ import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.Shadow;
 import com.affymetrix.genoviz.widget.VisibleRange;
-import javax.swing.JScrollBar;
+import javax.swing.JFrame;
 
 /**
  *  Demonstrates using the vertical map option
@@ -37,23 +39,36 @@ import javax.swing.JScrollBar;
 public class VerticalMapDemo extends Applet {
 	Panel panel1, panel2;
 
+	static public void main(String[] args)
+	{
+		VerticalMapDemo demo = new VerticalMapDemo();
+		demo.init();
+		demo.start();
+		JFrame window = new JFrame(demo.getName());
+		window.setContentPane(demo);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.pack();
+		window.setVisible(true);
+	}
+
+	@Override
 	public void init() {
 		panel1 = testMap(NeoConstants.HORIZONTAL);
-		//panel2 = testMap(NeoMap.VERTICAL);
+		panel2 = testMap(NeoConstants.VERTICAL);
 		this.setLayout(new GridLayout(1,2,10,0));
 		this.add(panel1);
-		//this.add(panel2);
+		this.add(panel2);
 
 	}
 
 	public Panel testMap(int orient) {
-		final NeoMap map = new NeoMap();
+		final NeoMap map = new NeoMap(true,true,orient,new LinearTransform());
 		final VisibleRange selectedRange = new VisibleRange();
 
 		map.setSelectionEvent(NeoMap.ON_MOUSE_DOWN);
 		map.setMapRange(0, 10000);
-		map.setMapOffset(-100, 100);
-		AxisGlyph ax = map.addAxis(0);
+		map.setMapOffset(0, 100);
+		AxisGlyph ax = map.addAxis(50);
 
 		map.configure("-glyphtype FillRectGlyph -color green" +
 				" -offset 40 -width 5");
@@ -69,16 +84,16 @@ public class VerticalMapDemo extends Applet {
 		map.addItem(4000, 1000);
 		map.addItem(6000, 9000);
 
-		JScrollBar xzoomer = new JScrollBar(JScrollBar.VERTICAL);
+		AdjustableJSlider xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
 		map.setZoomer(NeoMap.X, xzoomer);
-		JScrollBar yzoomer = new JScrollBar(JScrollBar.HORIZONTAL);
+		AdjustableJSlider yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 		map.setZoomer(NeoMap.Y, yzoomer);
-
+		
 		NeoPanel map_pan = new NeoPanel();
 		map_pan.setLayout(new BorderLayout());
 		map_pan.add("Center", map);
-		map_pan.add("West", xzoomer);
-		map_pan.add("North", yzoomer);
+		map_pan.add("West", yzoomer);
+		map_pan.add("North", xzoomer);
 
 		Shadow hairline = new Shadow( map, orient );
 		selectedRange.addListener( hairline );
@@ -111,7 +126,7 @@ public class VerticalMapDemo extends Applet {
 			}
 		};
 		selectedRange.addListener( zoomMidPointSetter );
-
+		
 		return map_pan;
 	}
 

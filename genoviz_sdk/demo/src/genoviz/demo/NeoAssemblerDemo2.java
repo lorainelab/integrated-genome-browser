@@ -65,8 +65,8 @@ public class NeoAssemblerDemo2 extends Applet {
 		this.map.setLabelWidth( 200 );
 
 		// Use the NeoAssembler's built-in selection methods.
-		this.map.setSelectionEvent(map.ON_MOUSE_DOWN);
-		this.map.setSelectionBehavior(map.SELECT_RESIDUES);
+		this.map.setSelectionEvent(NeoAssembler.ON_MOUSE_DOWN);
+		this.map.setSelectionBehavior(NeoAssembler.SELECT_RESIDUES);
 
 		/**
 		  In order for the assembly map to automatically respond to resize events
@@ -87,6 +87,7 @@ public class NeoAssemblerDemo2 extends Applet {
 
 
 	URL seq_URL = null, align_URL = null;
+	@Override
 	public void init() {
 		int alignwidth = Integer.parseInt(getParameter("alignwidth"));
 		try {
@@ -126,13 +127,13 @@ public class NeoAssemblerDemo2 extends Applet {
 		labelB.addActionListener( new ActionListener() {
 			public void actionPerformed( ActionEvent e ) {
 				Button b = (Button) e.getSource();
-				int id = map.getPlacement(map.LABELS);
-				if (id == map.PLACEMENT_LEFT) {
-					map.configureLayout( map.LABELS, map.PLACEMENT_RIGHT );
+				int id = map.getPlacement(NeoAssembler.LABELS);
+				if (id == NeoAssembler.PLACEMENT_LEFT) {
+					map.configureLayout( NeoAssembler.LABELS, NeoAssembler.PLACEMENT_RIGHT );
 					b.setLabel( "Labels Right" );
 				}
-				else if ( id == map.PLACEMENT_RIGHT ) {
-					map.configureLayout( map.LABELS, map.PLACEMENT_LEFT );
+				else if ( id == NeoAssembler.PLACEMENT_RIGHT ) {
+					map.configureLayout( NeoAssembler.LABELS, NeoAssembler.PLACEMENT_LEFT );
 					b.setLabel( "Labels Left" );
 				}
 			}
@@ -143,13 +144,13 @@ public class NeoAssemblerDemo2 extends Applet {
 		consensusB.addActionListener( new ActionListener() {
 			public void actionPerformed( ActionEvent e ) {
 				Button b = (Button) e.getSource();
-				int id = map.getPlacement(map.CONSENSUS);
-				if (id == map.PLACEMENT_BOTTOM) {
-					map.configureLayout(map.CONSENSUS, map.PLACEMENT_TOP);
+				int id = map.getPlacement(NeoAssembler.CONSENSUS);
+				if (id == NeoAssembler.PLACEMENT_BOTTOM) {
+					map.configureLayout(NeoAssembler.CONSENSUS, NeoAssembler.PLACEMENT_TOP);
 					b.setLabel("Consensus Top");
 				}
-				else if (id == map.PLACEMENT_TOP) {
-					map.configureLayout(map.CONSENSUS, map.PLACEMENT_BOTTOM);
+				else if (id == NeoAssembler.PLACEMENT_TOP) {
+					map.configureLayout(NeoAssembler.CONSENSUS, NeoAssembler.PLACEMENT_BOTTOM);
 					b.setLabel("Consensus Bottom");
 				}
 			}
@@ -160,13 +161,13 @@ public class NeoAssemblerDemo2 extends Applet {
 		axisB.addActionListener( new ActionListener() {
 			public void actionPerformed( ActionEvent e ) {
 				Button b = (Button) e.getSource();
-				int id = map.getPlacement(map.AXIS_SCROLLER);
-				if (id == map.PLACEMENT_BOTTOM) {
-					map.configureLayout(map.AXIS_SCROLLER, map.PLACEMENT_TOP);
+				int id = map.getPlacement(NeoAssembler.AXIS_SCROLLER);
+				if (id == NeoAssembler.PLACEMENT_BOTTOM) {
+					map.configureLayout(NeoAssembler.AXIS_SCROLLER, NeoAssembler.PLACEMENT_TOP);
 					b.setLabel("Axis Scroller Top");
 				}
-				else if (id == map.PLACEMENT_TOP) {
-					map.configureLayout(map.AXIS_SCROLLER, map.PLACEMENT_BOTTOM);
+				else if (id == NeoAssembler.PLACEMENT_TOP) {
+					map.configureLayout(NeoAssembler.AXIS_SCROLLER, NeoAssembler.PLACEMENT_BOTTOM);
 					b.setLabel("Axis Scroller Bottom");
 				}
 			}
@@ -177,13 +178,13 @@ public class NeoAssemblerDemo2 extends Applet {
 		offsetB.addActionListener( new ActionListener() {
 			public void actionPerformed( ActionEvent e ) {
 				Button b = (Button) e.getSource();
-				int id = map.getPlacement(map.OFFSET_SCROLLER);
-				if (id == map.PLACEMENT_LEFT) {
-					map.configureLayout(map.OFFSET_SCROLLER, map.PLACEMENT_RIGHT);
+				int id = map.getPlacement(NeoAssembler.OFFSET_SCROLLER);
+				if (id == NeoAssembler.PLACEMENT_LEFT) {
+					map.configureLayout(NeoAssembler.OFFSET_SCROLLER, NeoAssembler.PLACEMENT_RIGHT);
 					b.setLabel("Offset Scroller Right");
 				}
-				else if (id == map.PLACEMENT_RIGHT) {
-					map.configureLayout(map.OFFSET_SCROLLER, map.PLACEMENT_LEFT);
+				else if (id == NeoAssembler.PLACEMENT_RIGHT) {
+					map.configureLayout(NeoAssembler.OFFSET_SCROLLER, NeoAssembler.PLACEMENT_LEFT);
 					b.setLabel("Offset Scroller Left");
 				}
 			}
@@ -206,9 +207,9 @@ public class NeoAssemblerDemo2 extends Applet {
 					assem = loadData(seq_URL, align_URL);
 					map.addData(assem);
 					map.setRange(0, assem.getLength()+1);
-					map.zoom( map.X, map.getMaxZoom( map.X ) );
-					map.scroll( map.Y, 1 );
-					map.scroll( map.Y, -1 );
+					map.zoom( NeoAssembler.X, map.getMaxZoom( NeoAssembler.X ) );
+					map.scroll( NeoAssembler.Y, 1 );
+					map.scroll( NeoAssembler.Y, -1 );
 					validate();
 					b.setLabel( "Clear" );
 				}

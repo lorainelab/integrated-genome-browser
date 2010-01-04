@@ -15,7 +15,6 @@ package genoviz.tutorial;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.MapGlyphFactory;
-import com.affymetrix.genoviz.glyph.LabelGlyph;
 
 import com.affymetrix.genoviz.glyph.StringGlyph;
 import java.awt.Color;

@@ -34,6 +34,8 @@ import org.dom4j.io.XMLWriter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -47,7 +49,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	private static final String GENOPUB_HTML_WRAPPER = "GenoPub.html";
 	private static final String REALM                = "Das2";
-	
+
 	private static final int ERROR_CODE_OTHER                     = 901;
 	private static final int ERROR_CODE_UNSUPPORTED_FILE_TYPE     = 902;
 	private static final int ERROR_CODE_INCORRECT_FILENAME        = 903;
@@ -91,35 +93,34 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String DICTIONARY_ADD_REQUEST             = "dictionaryAdd";
 	public static final String DICTIONARY_UPDATE_REQUEST          = "dictionaryUpdate"; 
 	public static final String DICTIONARY_DELETE_REQUEST          = "dictionaryDelete"; 
-  public static final String VERIFY_REQUEST                     = "verify";
-	
+	public static final String VERIFY_REQUEST                     = "verify";
+
 	private GenoPubSecurity genoPubSecurity = null;
-	
+
 	private String genometry_genopub_dir;
-	
+
 	public void init() throws ServletException {
 		if (getGenoPubDir() == false) {
 			Logger.getLogger(this.getClass().getName()).severe("FAILED to init() GenoPubServlet, aborting!");
 			throw new ServletException("FAILED " + this.getClass().getName() + ".init(), aborting!");
 		}
 	}
-	
+
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
-    	throws ServletException, IOException {
+	throws ServletException, IOException {
 		handleRequest(req, res);
 	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)
-		throws ServletException, IOException {
+	throws ServletException, IOException {
 		handleRequest(req, res);
 	}
 
 	private void handleRequest(HttpServletRequest req, HttpServletResponse res)
-	        throws ServletException, IOException {
-		
+	throws ServletException, IOException {
 
 		try {
-			
+
 			// Get the GenoPubSecurity		
 			genoPubSecurity = GenoPubSecurity.class.cast(req.getSession().getAttribute(GenoPubSecurity.SESSION_KEY));
 			if (genoPubSecurity == null) {
@@ -132,7 +133,6 @@ public class GenoPubServlet extends HttpServlet {
 						req.isUserInRole(GenoPubSecurity.GUEST_ROLE));
 				req.getSession().setAttribute(GenoPubSecurity.SESSION_KEY, genoPubSecurity);
 			}
-
 
 			// Handle the request
 			if (req.getPathInfo() == null) {
@@ -229,7 +229,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	private void handleFlexRequest(HttpServletRequest request, HttpServletResponse res) throws IOException {
 		Session sess = null;
-		
+
 		try {
 
 			// If idAnnotation was provided, make sure the user has permission
@@ -238,10 +238,10 @@ public class GenoPubServlet extends HttpServlet {
 				sess = HibernateUtil.getSessionFactory().openSession();
 				Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-			
-    			if (!genoPubSecurity.canRead(annotation)) {
-    				throw new InsufficientPermissionException("Insufficient permission to access this annotation");
-    			}
+
+				if (!genoPubSecurity.canRead(annotation)) {
+					throw new InsufficientPermissionException("Insufficient permission to access this annotation");
+				}
 			}
 
 			// Now stream the HTML wrapper to the response.  This HTML
@@ -252,31 +252,31 @@ public class GenoPubServlet extends HttpServlet {
 
 		}  catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		} 
 
-		
+
 	}
-	
+
 	private void handleSecurityRequest(HttpServletRequest request, HttpServletResponse res) throws Exception{
 		XMLWriter writer = new XMLWriter(res.getOutputStream(),
-			                                 OutputFormat.createCompactFormat());
+				OutputFormat.createCompactFormat());
 		writer.write(genoPubSecurity.getXML());
 
 	}
-	
+
 	private void handleDictionaryRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			Document doc = DictionaryHelper.reload(sess).getXML(genoPubSecurity);
@@ -286,23 +286,23 @@ public class GenoPubServlet extends HttpServlet {
 		}  catch (Exception e) {
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleAnnotationsRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-    	Document doc = null;
+		Document doc = null;
 		Session sess = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
-			
+
 			AnnotationQuery annotationQuery = new AnnotationQuery(request);
 			doc = annotationQuery.getAnnotationDocument(sess, genoPubSecurity);
 
@@ -311,21 +311,21 @@ public class GenoPubServlet extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-			
-		
+
+
 	}
-	
-	
+
+
 	private void handleAnnotationRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
@@ -333,48 +333,48 @@ public class GenoPubServlet extends HttpServlet {
 				throw new Exception("idAnnotation request to get Annotation");
 			}
 			Integer idAnnotation = new Integer(request.getParameter("idAnnotation"));
-			
+
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-			
+
 			if (!genoPubSecurity.canRead(annotation)) {
 				throw new InsufficientPermissionException("Insufficient permission to access this annotation");
 			}
-			
+
 			Document doc = annotation.getXML(this.genoPubSecurity, DictionaryHelper.getInstance(sess), genometry_genopub_dir);
 
 			XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
+
 		}  catch (InsufficientPermissionException e) {
-			
+
 			this.reportError(res, e.getMessage());
-			
+
 		} catch (Exception e) {			
 
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		} 
-		
 
-		
+
+
 	}
-	
+
 	private void handleOrganismAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			// Only admins can add organisms
 			if (!this.genoPubSecurity.isAdminRole()) {
 				throw new InsufficientPermissionException("Insufficient permission to add organism.");
 			}
-			
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new InvalidNameException("Please enter an organism DAS2 name.");
@@ -385,36 +385,36 @@ public class GenoPubServlet extends HttpServlet {
 			if (request.getParameter("commonName") == null || request.getParameter("commonName").equals("")) {
 				throw new InvalidNameException("Please enter an organism common name.");
 			}
-			
+
 			// Make sure that the DAS2 name has no spaces or special characters
 			if (request.getParameter("name").indexOf(" ") >= 0) {
 				throw new InvalidNameException("The organism DAS2 name cannot have spaces.");
 			}
-		    Pattern pattern = Pattern.compile("\\W");
-		    Matcher matcher = pattern.matcher(request.getParameter("name"));
+			Pattern pattern = Pattern.compile("\\W");
+			Matcher matcher = pattern.matcher(request.getParameter("name"));
 			if (matcher.find()) {
 				throw new InvalidNameException("The organism DAS2 name cannot have special characters.");
 			}
 
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Organism organism = new Organism();
-			
+
 			organism.setName(request.getParameter("name"));
 			organism.setCommonName(request.getParameter("commonName"));
 			organism.setBinomialName(request.getParameter("binomialName"));
-			
+
 			sess.save(organism);
-			
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res, "idOrganism", organism.getIdOrganism());
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
@@ -432,32 +432,32 @@ public class GenoPubServlet extends HttpServlet {
 				tx.rollback();
 			}
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
-	
+
+
 	private void handleOrganismUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Organism organism = Organism.class.cast(sess.load(Organism.class, Util.getIntegerParameter(request, "idOrganism")));
 
 			// Check write permissions
 			if (!this.genoPubSecurity.canWrite(organism)) {
 				throw new InsufficientPermissionException("Insufficient permission to update organism.");
 			}
-			
-			
+
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new InvalidNameException("Please enter an organism DAS2 name.");
@@ -468,32 +468,32 @@ public class GenoPubServlet extends HttpServlet {
 			if (request.getParameter("commonName") == null || request.getParameter("commonName").equals("")) {
 				throw new InvalidNameException("Please enter an organism common name.");
 			}
-			
+
 			// Make sure that the DAS2 name has no spaces or special characters
 			if (request.getParameter("name").indexOf(" ") >= 0) {
 				throw new InvalidNameException("The organism DAS2 name cannot have spaces.");
 			}
-		    Pattern pattern = Pattern.compile("\\W");
-		    Matcher matcher = pattern.matcher(request.getParameter("name"));
+			Pattern pattern = Pattern.compile("\\W");
+			Matcher matcher = pattern.matcher(request.getParameter("name"));
 			if (matcher.find()) {
 				throw new InvalidNameException("The organism DAS2 name cannot have special characters.");
 			}
 
-			
+
 			organism.setName(request.getParameter("name"));
 			organism.setCommonName(request.getParameter("commonName"));
 			organism.setBinomialName(request.getParameter("binomialName"));
 			organism.setNCBITaxID(request.getParameter("NCBITaxID"));
-			
+
 			sess.flush();
-			
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res, "idOrganism", organism.getIdOrganism());
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
@@ -510,51 +510,51 @@ public class GenoPubServlet extends HttpServlet {
 			if (tx != null) {
 				tx.rollback();
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
+
 	private void handleOrganismDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-		
-			
+
+
 			Integer idOrganism = Util.getIntegerParameter(request, "idOrganism");
 			Organism organism = Organism.class.cast(sess.load(Organism.class, idOrganism));
-			
+
 
 			// Check write permissions
 			if (!this.genoPubSecurity.canWrite(organism)) {
 				throw new InsufficientPermissionException("Insufficient permission to update organism.");
 			}
 
-			
+
 			sess.delete(organism);
-			
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res);
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
 				tx.rollback();
 			}
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
 			if (tx != null) {
@@ -562,40 +562,40 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	private void handleGenomeVersionRequest(HttpServletRequest request, HttpServletResponse res) {
 		Session sess = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
 			if (request.getParameter("idGenomeVersion") == null || request.getParameter("idGenomeVersion").equals("")) {
 				throw new Exception("idGenomeVersion request to get Genome Version");
 			}
-			
+
 
 			Integer idGenomeVersion = new Integer(request.getParameter("idGenomeVersion"));
 
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
-			
+
 			Document doc = gv.getXML(genoPubSecurity, this.genometry_genopub_dir);
-			
+
 			XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 		} finally {
 
 			if (sess != null) {
@@ -605,18 +605,18 @@ public class GenoPubServlet extends HttpServlet {
 		}
 	}
 
-	
+
 	private void handleGenomeVersionAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			// Only admins can add genome versions
 			if (!this.genoPubSecurity.isAdminRole()) {
 				throw new InsufficientPermissionException("Insufficient permissions to add genome version.");
 			}
-			
-			
+
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new InvalidNameException("Please enter the genome version name.");
@@ -625,44 +625,44 @@ public class GenoPubServlet extends HttpServlet {
 			if (request.getParameter("name").indexOf(" ") >= 0) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have spaces.");
 			}
-		    Pattern pattern = Pattern.compile("\\W");
-		    Matcher matcher = pattern.matcher(request.getParameter("name"));
+			Pattern pattern = Pattern.compile("\\W");
+			Matcher matcher = pattern.matcher(request.getParameter("name"));
 			if (matcher.find()) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have special characters.");
 			}
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			GenomeVersion genomeVersion = new GenomeVersion();
-			
+
 			Integer idOrganism = Util.getIntegerParameter(request, "idOrganism");
 			Organism organism = Organism.class.cast(sess.load(Organism.class, idOrganism));
-			
+
 			genomeVersion.setIdOrganism(idOrganism);
 			genomeVersion.setName(request.getParameter("name"));
 			genomeVersion.setBuildDate(Util.getDateParameter(request, "buildDate"));
 			sess.save(genomeVersion);
-			
+
 			// Now add a root annotation grouping
 			AnnotationGrouping annotationGrouping = new AnnotationGrouping();
 			annotationGrouping.setName(genomeVersion.getName());
 			annotationGrouping.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
 			annotationGrouping.setIdParentAnnotationGrouping(null);
 			sess.save(annotationGrouping);
-			
+
 			Set annotationGroupingsToKeep = new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
 			annotationGroupingsToKeep.add(annotationGrouping);
 			genomeVersion.setAnnotationGroupings(annotationGroupingsToKeep);
 
-			
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res, "idGenomeVersion", genomeVersion.getIdGenomeVersion());
-			
-			
+
+
 		} catch (InvalidNameException e) {
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
@@ -674,7 +674,7 @@ public class GenoPubServlet extends HttpServlet {
 				tx.rollback();
 			}
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
 			if (tx != null) {
@@ -682,32 +682,32 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleGenomeVersionUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, Util.getIntegerParameter(request, "idGenomeVersion")));
-			
+
 			// Make sure the user can write this genome version
 			if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 				throw new InsufficientPermissionException("Insufficient permision to write genome version.");
 			}
-			
-			
-			
+
+
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new InvalidNameException("Please enter the genome version name.");
@@ -716,12 +716,12 @@ public class GenoPubServlet extends HttpServlet {
 			if (request.getParameter("name").indexOf(" ") >= 0) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have spaces.");
 			}
-		    Pattern pattern = Pattern.compile("\\W");
-		    Matcher matcher = pattern.matcher(request.getParameter("name"));
+			Pattern pattern = Pattern.compile("\\W");
+			Matcher matcher = pattern.matcher(request.getParameter("name"));
 			if (matcher.find()) {
 				throw new InvalidNameException("The genome version DAS2 name cannot have special characters.");
 			}
-			
+
 			// If the genomeversion name has changed, change to root annotation grouping
 			// name
 			if (!request.getParameter("name").equals(genomeVersion.getName())) {
@@ -729,7 +729,7 @@ public class GenoPubServlet extends HttpServlet {
 				ag.setName(request.getParameter("name"));
 				ag.setDescription(request.getParameter("name"));
 			}
-			
+
 			genomeVersion.setIdOrganism(Util.getIntegerParameter(request, "idOrganism"));
 			genomeVersion.setName(request.getParameter("name"));
 			genomeVersion.setBuildDate(Util.getDateParameter(request, "buildDate"));
@@ -738,7 +738,7 @@ public class GenoPubServlet extends HttpServlet {
 			genomeVersion.setCoordSource(request.getParameter("coordSource"));
 			genomeVersion.setCoordTestRange(request.getParameter("coordTestRange"));
 			genomeVersion.setCoordAuthority(request.getParameter("coordAuthority"));
-			
+
 
 			// Delete segments		
 			StringReader reader = new StringReader(request.getParameter("segmentsXML"));
@@ -761,25 +761,25 @@ public class GenoPubServlet extends HttpServlet {
 				}
 			} 
 			sess.flush();
-			
+
 			// Add segments
 			for(Iterator i = segmentsDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element segmentNode = (Element)i.next();
-				
+
 				String idSegment = segmentNode.attributeValue("idSegment");
 				String len = segmentNode.attributeValue("length");
 				len = len.replace(",", "");
 				String sortOrder = segmentNode.attributeValue("sortOrder");
-				
+
 				Segment s = null;
 				if (idSegment != null && !idSegment.equals("")) {
 					s = Segment.class.cast(sess.load(Segment.class, new Integer(idSegment)));
-					
+
 					s.setName(segmentNode.attributeValue("name"));
 					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
 					s.setSortOrder(sortOrder != null && !sortOrder.equals("") ? new Integer(sortOrder) : null);
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
-					
+
 
 				} else {
 					s = new Segment();		
@@ -788,15 +788,15 @@ public class GenoPubServlet extends HttpServlet {
 					s.setLength(len != null && !len.equals("") ? new Integer(len) : null);
 					s.setSortOrder(sortOrder != null && !sortOrder.equals("") ? new Integer(sortOrder) : null);
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
-					
+
 					sess.save(s);
 					sess.flush();
 				}
-				
+
 			}    
 			sess.flush();
-			
-			
+
+
 			// Remove sequence files
 			reader = new StringReader(request.getParameter("sequenceFilesToRemoveXML"));
 			sax = new SAXReader();
@@ -807,16 +807,16 @@ public class GenoPubServlet extends HttpServlet {
 				file.delete();
 			}            
 
-			
-			
+
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res, "idGenomeVersion", genomeVersion.getIdGenomeVersion());
 
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
@@ -834,15 +834,15 @@ public class GenoPubServlet extends HttpServlet {
 				tx.rollback();
 			}
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
+
 	private void handleGenomeVersionDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -853,12 +853,12 @@ public class GenoPubServlet extends HttpServlet {
 			// Find the genome version
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
-			
+
 			// Make sure the user can write this genome version
 			if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 				throw new InsufficientPermissionException("Insufficient permision to delete genome version.");
 			}
-			
+
 			// Delete the root annotation grouping
 			AnnotationGrouping ag = genomeVersion.getRootAnnotationGrouping();
 			if (ag != null) {
@@ -868,34 +868,34 @@ public class GenoPubServlet extends HttpServlet {
 				}
 				sess.delete(ag);
 			}
-			
+
 			// Delete segments
 			for (Segment segment : (Set<Segment>)genomeVersion.getSegments()) {
 				sess.delete(segment);
 			}
-			
+
 			// Delete aliases
 			for (GenomeVersionAlias alias : (Set<GenomeVersionAlias>)genomeVersion.getAliases()) {
 				sess.delete(alias);
 			}
-			
+
 			sess.flush();
-			
+
 			// remove sequence files
 			genomeVersion.removeSequenceFiles(genometry_genopub_dir);
-		
-			
+
+
 			// Now delete the genome version
 			sess.refresh(genomeVersion);
 			sess.delete(genomeVersion);
-			
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res);
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
@@ -908,42 +908,42 @@ public class GenoPubServlet extends HttpServlet {
 				tx.rollback();
 			}
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
+
 	private void handleSegmentImportRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
-			
+
+
 			String chromosomeInfo = request.getParameter("chromosomeInfo");
 			String line;
 			int count = 1;
 			if (chromosomeInfo != null && !chromosomeInfo.equals("")) {
 				Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 				GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
-				
+
 				// Make sure the user can write this genome version
 				if (!this.genoPubSecurity.canWrite(genomeVersion)) {
 					throw new InsufficientPermissionException("Insufficient permision to update the genome version.");
 				}
-				
+
 				BufferedReader reader = new BufferedReader(new StringReader(chromosomeInfo));
 				while ((line = reader.readLine()) != null) {	
 					if ( (line.length() == 0) || line.equals("") || line.startsWith("#"))  { 
 						continue; 
 					}
-					
+
 					String name = null;
 					String len = null;
 					try {
@@ -962,22 +962,22 @@ public class GenoPubServlet extends HttpServlet {
 					s.setLength(len != null && !len.equals("") ? new Integer(len.replaceAll("[^0-9]", "")) : null);
 					s.setSortOrder(new Integer(count));
 					s.setIdGenomeVersion(genomeVersion.getIdGenomeVersion());
-					
+
 					sess.save(s);
 
 					count++;
 				}
 				sess.flush();
 			}
-			
-			
+
+
 			tx.commit();
-			
+
 			DictionaryHelper.reload(sess);
-			
+
 			this.reportSuccess(res, "idGenomeVersion", new Integer(request.getParameter("idGenomeVersion")));
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {			
 			reportError(res, e.getMessage());
 			if (tx != null) {
@@ -994,147 +994,147 @@ public class GenoPubServlet extends HttpServlet {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 	private void handleSequenceFormUploadURLRequest(HttpServletRequest req, HttpServletResponse res) {
-	    try {
-	        
-	        //
-	        // COMMENTED OUT CODE: 
-	        //    String baseURL =  "http"+ (isLocalHost ? "://" : "s://") + req.getServerName() + req.getContextPath();
-	        //
-	        // To fix upload problem (missing session in upload servlet for FireFox, Safari), encode session in URL
-	        // for upload servlet.  Also, use non-secure (http: rather than https:) when making http request; 
-	        // otherwise, existing session is not accessible to upload servlet.
-	        //
-	        //
-	        
-	        String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
-	        String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.SEQUENCE_UPLOAD_FILES_REQUEST;
-	        // Encode session id in URL so that session maintains for upload servlet when called from
-	        // Flex upload component inside FireFox, Safari
-	        URL += ";jsessionid=" + req.getRequestedSessionId();
-	        
-	        // Get the valid file extensions
-	        String fileExtensions = "";
-	        for (int x=0; x < Constants.SEQUENCE_FILE_EXTENSIONS.length; x++) {
-	        	if (fileExtensions.length() > 0) {
-	        		fileExtensions += ";";
-	        	}
-	        	fileExtensions += "*" + Constants.SEQUENCE_FILE_EXTENSIONS[x];
-	        }
-	        
-	        res.setContentType("application/xml");
-	        res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
-	        
-	      } catch (Exception e) {
-	        System.out.println("An error has occured in GenoPubServlet - " + e.toString());
-	      }		
+		try {
+
+			//
+			// COMMENTED OUT CODE: 
+			//    String baseURL =  "http"+ (isLocalHost ? "://" : "s://") + req.getServerName() + req.getContextPath();
+			//
+			// To fix upload problem (missing session in upload servlet for FireFox, Safari), encode session in URL
+			// for upload servlet.  Also, use non-secure (http: rather than https:) when making http request; 
+			// otherwise, existing session is not accessible to upload servlet.
+			//
+			//
+
+			String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
+			String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.SEQUENCE_UPLOAD_FILES_REQUEST;
+			// Encode session id in URL so that session maintains for upload servlet when called from
+			// Flex upload component inside FireFox, Safari
+			URL += ";jsessionid=" + req.getRequestedSessionId();
+
+			// Get the valid file extensions
+			String fileExtensions = "";
+			for (int x=0; x < Constants.SEQUENCE_FILE_EXTENSIONS.length; x++) {
+				if (fileExtensions.length() > 0) {
+					fileExtensions += ";";
+				}
+				fileExtensions += "*" + Constants.SEQUENCE_FILE_EXTENSIONS[x];
+			}
+
+			res.setContentType("application/xml");
+			res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
+
+		} catch (Exception e) {
+			System.out.println("An error has occured in GenoPubServlet - " + e.toString());
+		}		
 	}
 
 	private void handleSequenceUploadRequest(HttpServletRequest req, HttpServletResponse res) {
-		
+
 		Session sess = null;
 		Integer idGenomeVersion = null;
-		
-	    GenomeVersion genomeVersion = null;
 
-	    String fileName = null;
-	    
-		
+		GenomeVersion genomeVersion = null;
+
+		String fileName = null;
+
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
-			
-			
-		    res.setDateHeader("Expires", -1);
-		    res.setDateHeader("Last-Modified", System.currentTimeMillis());
-		    res.setHeader("Pragma", "");
-		    res.setHeader("Cache-Control", "");
-		 
-		    
-		    res.setCharacterEncoding("UTF-8");
-
-    	            
-    	    MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
-    	    Part part;
-    	    while ((part = mp.readNextPart()) != null) {
-    	      String name = part.getName();
-    	      if (part.isParam()) {
-    	        // it's a parameter part
-    	        ParamPart paramPart = (ParamPart) part;
-    	        String value = paramPart.getStringValue();
-    	        if (name.equals("idGenomeVersion")) {
-    	            idGenomeVersion = new Integer(String.class.cast(value));
-    	        } 
-    	      }
-    	      
-    	      if (idGenomeVersion != null) {
-    	    	  break;
-    	      }
-    	    
-    	    }
-    	      
-    	      
-    	    if (idGenomeVersion != null) {
-    	    	genomeVersion = (GenomeVersion)sess.get(GenomeVersion.class, idGenomeVersion);
-    	    } 
-    	    if (genomeVersion != null) {
-    	    	if (this.genoPubSecurity.canWrite(genomeVersion)) {
-    	    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
-
-    	    		// Make sure that the data root dir exists
-    	    		if (!new File(genometry_genopub_dir).exists()) {
-    	    			boolean success = (new File(genometry_genopub_dir)).mkdir();
-    	    			if (!success) {
-    	    				throw new Exception("Unable to create directory " + genometry_genopub_dir);      
-    	    			}
-    	    		}
-
-    	    		String sequenceDir = genomeVersion.getSequenceDirectory(genometry_genopub_dir);
-
-    	    		// Create sequence directory if it doesn't exist
-    	    		if (!new File(sequenceDir).exists()) {
-    	    			boolean success = (new File(sequenceDir)).mkdir();
-    	    			if (!success) {
-    	    				throw new Exception("Unable to create directory " + sequenceDir);      
-    	    			}      
-    	    		}
-
-    	    		while ((part = mp.readNextPart()) != null) {        
-    	    			if (part.isFile()) {
-    	    				// it's a file part
-    	    				FilePart filePart = (FilePart) part;
-    	    				fileName = filePart.getFileName();
-    	    				if (fileName != null) {
-    	    					
-    	    					// Is the fileName valid?
-    	    					if (!Util.isValidSequenceFileType(fileName)) {
-    	    						throw new UnsupportedFileTypeException("Bypassing upload of sequence files for  " + genomeVersion.getName() + " for file" + fileName + ". Unsupported file extension");
-    	    					}
-
-    	    					// Write the file
-    	    					long size = filePart.writeTo(new File(sequenceDir));
-    	    				
-    	    				}
-    	    				else { 
-    	    				}
-    	    			}
-    	    		}
-    	    		sess.flush();
-
-    	    		this.reportSuccess(res, "idGenomeVersion", genomeVersion.getIdGenomeVersion());
-    				
-
-    	    	} else {
-    	    		throw new InsufficientPermissionException("Bypassing upload of sequence files for  " + genomeVersion.getName() + " due to insufficient permissions.");
-    	    	}
-    	    } else {
-    	    	throw new Exception("No genome version provided for sequence files");
-    	    }
 
 
-    	    
+			res.setDateHeader("Expires", -1);
+			res.setDateHeader("Last-Modified", System.currentTimeMillis());
+			res.setHeader("Pragma", "");
+			res.setHeader("Cache-Control", "");
+
+
+			res.setCharacterEncoding("UTF-8");
+
+
+			MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
+			Part part;
+			while ((part = mp.readNextPart()) != null) {
+				String name = part.getName();
+				if (part.isParam()) {
+					// it's a parameter part
+					ParamPart paramPart = (ParamPart) part;
+					String value = paramPart.getStringValue();
+					if (name.equals("idGenomeVersion")) {
+						idGenomeVersion = new Integer(String.class.cast(value));
+					} 
+				}
+
+				if (idGenomeVersion != null) {
+					break;
+				}
+
+			}
+
+
+			if (idGenomeVersion != null) {
+				genomeVersion = (GenomeVersion)sess.get(GenomeVersion.class, idGenomeVersion);
+			} 
+			if (genomeVersion != null) {
+				if (this.genoPubSecurity.canWrite(genomeVersion)) {
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
+
+					// Make sure that the data root dir exists
+					if (!new File(genometry_genopub_dir).exists()) {
+						boolean success = (new File(genometry_genopub_dir)).mkdir();
+						if (!success) {
+							throw new Exception("Unable to create directory " + genometry_genopub_dir);      
+						}
+					}
+
+					String sequenceDir = genomeVersion.getSequenceDirectory(genometry_genopub_dir);
+
+					// Create sequence directory if it doesn't exist
+					if (!new File(sequenceDir).exists()) {
+						boolean success = (new File(sequenceDir)).mkdir();
+						if (!success) {
+							throw new Exception("Unable to create directory " + sequenceDir);      
+						}      
+					}
+
+					while ((part = mp.readNextPart()) != null) {        
+						if (part.isFile()) {
+							// it's a file part
+							FilePart filePart = (FilePart) part;
+							fileName = filePart.getFileName();
+							if (fileName != null) {
+
+								// Is the fileName valid?
+								if (!Util.isValidSequenceFileType(fileName)) {
+									throw new UnsupportedFileTypeException("Bypassing upload of sequence files for  " + genomeVersion.getName() + " for file" + fileName + ". Unsupported file extension");
+								}
+
+								// Write the file
+								long size = filePart.writeTo(new File(sequenceDir));
+
+							}
+							else { 
+							}
+						}
+					}
+					sess.flush();
+
+					this.reportSuccess(res, "idGenomeVersion", genomeVersion.getIdGenomeVersion());
+
+
+				} else {
+					throw new InsufficientPermissionException("Bypassing upload of sequence files for  " + genomeVersion.getName() + " due to insufficient permissions.");
+				}
+			} else {
+				throw new Exception("No genome version provided for sequence files");
+			}
+
+
+
 
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
@@ -1151,37 +1151,37 @@ public class GenoPubServlet extends HttpServlet {
 				sess.close();
 			}
 		}
-		
-		
+
+
 	}
 
-	
+
 	private void handleAnnotationGroupingAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
-			
-			
+
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new Exception("Please enter the annotation folder name.");
 			}
-			
+
 			if (genoPubSecurity.isGuestRole()) {
 				throw new InsufficientPermissionException("Insufficient permissions to add a folder.");
 			}
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			AnnotationGrouping annotationGrouping = new AnnotationGrouping();
-			
+
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idParentAnnotationGrouping = Util.getIntegerParameter(request, "idParentAnnotationGrouping");
 			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");
 			// If this is a root annotation grouping, find the default root annotation
-	        // grouping for the genome version.
+			// grouping for the genome version.
 			AnnotationGrouping parentAnnotationGrouping = null;
 			if (idParentAnnotationGrouping == null) {
 				GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
@@ -1193,40 +1193,40 @@ public class GenoPubServlet extends HttpServlet {
 			} else {
 				parentAnnotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idParentAnnotationGrouping));
 			}
-			
+
 			// If parent annotation grouping is owned by a user group, this
 			// child annotation grouping must be as well.
 			if (parentAnnotationGrouping.getIdUserGroup() != null) {
-				
+
 				if (idUserGroup == null ||
-					!parentAnnotationGrouping.getIdUserGroup().equals(idUserGroup)) {
+						!parentAnnotationGrouping.getIdUserGroup().equals(idUserGroup)) {
 					throw new Exception("Folder '" + request.getParameter("name") + "' must belong to user group '" + 
 							DictionaryHelper.getInstance(sess).getUserGroupName(parentAnnotationGrouping.getIdUserGroup()) + "'");
 
 				}
 			} 
-			
-			
-			
-			
+
+
+
+
 			annotationGrouping.setName(request.getParameter("name"));
 			annotationGrouping.setIdGenomeVersion(idGenomeVersion);
 			annotationGrouping.setIdParentAnnotationGrouping(idParentAnnotationGrouping);
-			
+
 			annotationGrouping.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));				
 
 			annotationGrouping.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 			annotationGrouping.setCreatedBy(this.genoPubSecurity.getUserName());
 
-			
+
 			sess.save(annotationGrouping);
-			
+
 			tx.commit();
-			
-			
+
+
 			this.reportSuccess(res, "idAnnotationGrouping", annotationGrouping.getIdAnnotationGrouping());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {			
 			this.reportError(res, e.getMessage());
 			if (tx != null) {
@@ -1238,98 +1238,98 @@ public class GenoPubServlet extends HttpServlet {
 			if (tx != null) {
 				tx.rollback();
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 	private void handleAnnotationGroupingUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new Exception("Please enter the annotation folder name.");
 			}
 
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			AnnotationGrouping annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, Util.getIntegerParameter(request, "idAnnotationGrouping")));
-			
-			
+
+
 			// Make sure the user can write this annotation grouping
 			if (!this.genoPubSecurity.canWrite(annotationGrouping)) {
 				throw new InsufficientPermissionException("Insufficient permision to write annotation folder.");
 			}
-			
+
 			// If parent annotation grouping is owned by a user group, this
 			// child annotation grouping must be as well.
 			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");
 			if (annotationGrouping.getParentAnnotationGrouping() != null &&
-			    annotationGrouping.getParentAnnotationGrouping().getIdUserGroup() != null) {
-				
+					annotationGrouping.getParentAnnotationGrouping().getIdUserGroup() != null) {
+
 				if (idUserGroup == null ||
-					!annotationGrouping.getParentAnnotationGrouping().getIdUserGroup().equals(idUserGroup)) {
+						!annotationGrouping.getParentAnnotationGrouping().getIdUserGroup().equals(idUserGroup)) {
 					throw new Exception("Folder '" + request.getParameter("name") + "' must belong to user group '" + 
 							DictionaryHelper.getInstance(sess).getUserGroupName(annotationGrouping.getParentAnnotationGrouping().getIdUserGroup()) + "'");
 				}
 			} 
-			
+
 			annotationGrouping.setName(request.getParameter("name"));
 			annotationGrouping.setDescription(request.getParameter("description"));
 			annotationGrouping.setIdUserGroup(idUserGroup);
-			
+
 			sess.save(annotationGrouping);
-			
+
 			tx.commit();
-			
-		
+
+
 			this.reportSuccess(res, "idAnnotationGrouping", annotationGrouping.getIdAnnotationGrouping());
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 	private void handleAnnotationGroupingMoveRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idParentAnnotationGrouping = Util.getIntegerParameter(request, "idParentAnnotationGrouping");
@@ -1351,16 +1351,16 @@ public class GenoPubServlet extends HttpServlet {
 				// Otherwise, find the annotation grouping passed in as a request parameter.
 				parentAnnotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idParentAnnotationGrouping));
 			}
-			
 
-			
-		
-			
+
+
+
+
 			// If this is a copy instead of a move,
 			// clone the annotation grouping, leaving the existing one as-is.
 			if (isMove.equals("Y")) {
 				annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
-				
+
 				// Make sure the user can write this annotation grouping
 				if (!this.genoPubSecurity.canWrite(annotationGrouping)) {
 					throw new InsufficientPermissionException("Insufficient permision to move this annotation folder.");
@@ -1372,7 +1372,7 @@ public class GenoPubServlet extends HttpServlet {
 				annotationGrouping.setDescription(ag.getDescription());
 				annotationGrouping.setIdGenomeVersion(ag.getIdGenomeVersion());
 				annotationGrouping.setIdUserGroup(ag.getIdUserGroup());				
-				
+
 				Set annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
 				for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
 					annotationsToKeep.add(a);
@@ -1385,168 +1385,167 @@ public class GenoPubServlet extends HttpServlet {
 			// different genome version
 			if (!parentAnnotationGrouping.getIdGenomeVersion().equals(annotationGrouping.getIdGenomeVersion())) {
 				throw new Exception("Annotation folder '" + annotationGrouping.getName() + 
-						"' cannot be moved to a different genome version");
+				"' cannot be moved to a different genome version");
 			}
-	
+
 			// The move/copy is disallowed if the from and to annotation grouping are the
 			// same
 			if (parentAnnotationGrouping.getIdAnnotationGrouping().equals(idAnnotationGrouping)) {
 				throw new Exception("Move/copy operation to same annotation folder is not allowed.");
 			}
-			
+
 			// Set the parent annotation grouping
 			annotationGrouping.setIdParentAnnotationGrouping(parentAnnotationGrouping.getIdAnnotationGrouping());
-			
-			
+
+
 			tx.commit();
 
-			
+
 			this.reportSuccess(res, "idAnnotationGrouping", annotationGrouping.getIdAnnotationGrouping());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	 private void handleAnnotationGroupingDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
-	    Session sess = null;
-	    Transaction tx = null;
-	    
-	    try {
-	      sess = HibernateUtil.getSessionFactory().openSession();
-	      tx = sess.beginTransaction();
-	      
-	      Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
-	      AnnotationGrouping annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
-	      
-	      List descendents = new ArrayList();
-	      descendents.add(annotationGrouping);
-	      annotationGrouping.recurseGetChildren(descendents);
-	      
-	      
-	      // Make sure the user can write this annotation grouping and all of its
-	      // descendent annotations and annotation groupings
-	      for(Iterator i = descendents.iterator(); i.hasNext();) {
-	        Object descendent = i.next();
-	        if (!this.genoPubSecurity.canWrite(descendent)) {
-	          if (descendent.equals(annotationGrouping)) {
-	            throw new InsufficientPermissionException("Insufficient permision to delete this annotation folder.");	            
-	          } else if (descendent instanceof AnnotationGrouping){
-	            AnnotationGrouping ag = (AnnotationGrouping)descendent;
-	            throw new InsufficientPermissionException("Insufficent permission to delete child folder '" + ag.getName() + "'.");
-	          } else if (descendent instanceof Annotation){
-              Annotation a = (Annotation)descendent;
-              throw new InsufficientPermissionException("Insufficent permission to delete child annotation '" + a.getName() + "'.");
-            }
-	        }
-	      }
-	      
-	      // Make sure we are not trying to delete an annotation that also exists in
-	      // another folder (that will not be deleted.)
-	      for(Iterator i = descendents.iterator(); i.hasNext();) {
-          Object descendent = i.next();
-          if (descendent instanceof Annotation) {
-            Annotation a = (Annotation)descendent;
-            if (a.getAnnotationGroupings().size() > 1) {
-              for(Iterator i1 = a.getAnnotationGroupings().iterator(); i1.hasNext();) {
-                AnnotationGrouping ag = (AnnotationGrouping)i1.next();
-                boolean inDeleteList = false;
-                for(Iterator i2 = descendents.iterator(); i2.hasNext();) {
-                  Object d = i2.next();
-                  if (d instanceof AnnotationGrouping) {
-                    AnnotationGrouping agToDelete = (AnnotationGrouping)d;
-                    if (agToDelete.getIdAnnotationGrouping().equals(ag.getIdAnnotationGrouping())) {
-                      inDeleteList = true;
-                      break;
-                    }
-                  }
-                }
-                if (!inDeleteList) {
-                  throw new InsufficientPermissionException("Cannot remove contents of folder '" + annotationGrouping.getName() + 
-                      "' because annotation '" + a.getName() + 
-                      "' exists in folder '" + 
-                      ag.getName() + 
-                      "'.  Please remove this annotation first.");
-                }
-              }
-            }
-          }
-	      }
-	      
-	      // Now delete all of the contents of the annotation grouping and then the
-	      // annotation grouping itself.  By traversing the list from the
-	      // in reverse, we are sure to delete the children before the parent
-	      // folder.
-	      for(int i = descendents.size() - 1; i >= 0; i--) {
-	        Object descendent = descendents.get(i);
-	        
-	        // Remove annotation file(s)
-	        if (descendent instanceof Annotation) {
-	          Annotation a = (Annotation)descendent;	          
-	          a.removeFiles(genometry_genopub_dir);              
-	        } 
-	        
-	        // Delete the object from db
-	        sess.delete(descendent);          
-	      }
+	private void handleAnnotationGroupingDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
+		Session sess = null;
+		Transaction tx = null;
 
-	      tx.commit();
-	      
-	      this.reportSuccess(res);
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+			tx = sess.beginTransaction();
 
-	    } catch (InsufficientPermissionException e) {
+			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
+			AnnotationGrouping annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 
-	    	this.reportError(res, e.getMessage());
-	    	if (tx != null) {
-	    		tx.rollback();
-	    	}
-
-	    } catch (Exception e) {
-
-        this.reportError(res, e.toString());
-	      if (tx != null) {
-	        tx.rollback();
-	      }
-	      
-	    } finally {
-	      
-	      if (sess != null) {
-	        sess.close();
-	      }
-	    }
-	    
-	  }
+			List descendents = new ArrayList();
+			descendents.add(annotationGrouping);
+			annotationGrouping.recurseGetChildren(descendents);
 
 
-	
+			// Make sure the user can write this annotation grouping and all of its
+			// descendent annotations and annotation groupings
+			for(Iterator i = descendents.iterator(); i.hasNext();) {
+				Object descendent = i.next();
+				if (!this.genoPubSecurity.canWrite(descendent)) {
+					if (descendent.equals(annotationGrouping)) {
+						throw new InsufficientPermissionException("Insufficient permision to delete this annotation folder.");	            
+					} else if (descendent instanceof AnnotationGrouping){
+						AnnotationGrouping ag = (AnnotationGrouping)descendent;
+						throw new InsufficientPermissionException("Insufficent permission to delete child folder '" + ag.getName() + "'.");
+					} else if (descendent instanceof Annotation){
+						Annotation a = (Annotation)descendent;
+						throw new InsufficientPermissionException("Insufficent permission to delete child annotation '" + a.getName() + "'.");
+					}
+				}
+			}
+
+			// Make sure we are not trying to delete an annotation that also exists in
+			// another folder (that will not be deleted.)
+			for(Iterator i = descendents.iterator(); i.hasNext();) {
+				Object descendent = i.next();
+				if (descendent instanceof Annotation) {
+					Annotation a = (Annotation)descendent;
+					if (a.getAnnotationGroupings().size() > 1) {
+						for(Iterator i1 = a.getAnnotationGroupings().iterator(); i1.hasNext();) {
+							AnnotationGrouping ag = (AnnotationGrouping)i1.next();
+							boolean inDeleteList = false;
+							for(Iterator i2 = descendents.iterator(); i2.hasNext();) {
+								Object d = i2.next();
+								if (d instanceof AnnotationGrouping) {
+									AnnotationGrouping agToDelete = (AnnotationGrouping)d;
+									if (agToDelete.getIdAnnotationGrouping().equals(ag.getIdAnnotationGrouping())) {
+										inDeleteList = true;
+										break;
+									}
+								}
+							}
+							if (!inDeleteList) {
+								throw new InsufficientPermissionException("Cannot remove contents of folder '" + annotationGrouping.getName() + 
+										"' because annotation '" + a.getName() + 
+										"' exists in folder '" + 
+										ag.getName() + 
+								"'.  Please remove this annotation first.");
+							}
+						}
+					}
+				}
+			}
+
+			// Now delete all of the contents of the annotation grouping and then the
+			// annotation grouping itself.  By traversing the list from the
+			// in reverse, we are sure to delete the children before the parent
+			// folder.
+			for(int i = descendents.size() - 1; i >= 0; i--) {
+				Object descendent = descendents.get(i);
+
+				// Remove annotation file(s)
+				if (descendent instanceof Annotation) {
+					Annotation a = (Annotation)descendent;	          
+					a.removeFiles(genometry_genopub_dir);              
+				} 
+
+				// Delete the object from db
+				sess.delete(descendent);          
+			}
+
+			tx.commit();
+
+			this.reportSuccess(res);
+
+		} catch (InsufficientPermissionException e) {
+
+			this.reportError(res, e.getMessage());
+			if (tx != null) {
+				tx.rollback();
+			}
+
+		} catch (Exception e) {
+
+			this.reportError(res, e.toString());
+			if (tx != null) {
+				tx.rollback();
+			}
+
+		} finally {
+
+			if (sess != null) {
+				sess.close();
+			}
+		}
+
+	}
+
+
 	@SuppressWarnings("unchecked")
 	private void handleAnnotationAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 
 		try {
 			if (genoPubSecurity.isGuestRole()) {
@@ -1565,84 +1564,84 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
-			
+
 			String name = request.getParameter("name");
 			String codeVisibility = request.getParameter("codeVisibility");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
 			Integer idUserGroup = Util.getIntegerParameter(request, "idUserGroup");			
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-		
-			
+
+
 			// Create a new annotation
 			Annotation annotation = createNewAnnotation(sess, name, codeVisibility, idGenomeVersion, idAnnotationGrouping, idUserGroup);
-			
-			
+
+
 			sess.flush();
-			
-			
-			
+
+
+
 			tx.commit();
 
-			
+
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
 			root.addAttribute("idAnnotation", annotation.getIdAnnotation().toString());
 			root.addAttribute("idGenomeVersion", idGenomeVersion.toString());
 			root.addAttribute("idAnnotationGrouping", idAnnotationGrouping != null ? idAnnotationGrouping.toString() : "");
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
+					OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Annotation createNewAnnotation(Session sess, String name, String codeVisibility, Integer idGenomeVersion, Integer idAnnotationGrouping,  Integer idUserGroup) throws Exception {
 		Annotation annotation = new Annotation();
-		
-		
+
+
 		annotation.setName(name);
 		annotation.setIdGenomeVersion(idGenomeVersion);
 		annotation.setCodeVisibility(codeVisibility);
 		annotation.setIdUserGroup(idUserGroup);
-		
+
 		// Only set ownership if this is not an admin
 		if (!genoPubSecurity.isAdminRole()) {
 			annotation.setIdUser(genoPubSecurity.getIdUser());				
 		}
-		
+
 		annotation.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 		annotation.setCreatedBy(this.genoPubSecurity.getUserName());
-		
+
 		sess.save(annotation);
 		sess.flush();
 
@@ -1668,31 +1667,31 @@ public class GenoPubServlet extends HttpServlet {
 		}
 		newAnnotations.add(annotation);
 		ag.setAnnotations(newAnnotations);
-		
-		
+
+
 		// Assign a file directory name
 		annotation.setFileName("A" + annotation.getIdAnnotation());
-		
+
 		return annotation;
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleAnnotationUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));
-			
+
 			// Make sure the user can write this annotation 
 			if (!this.genoPubSecurity.canWrite(annotation)) {
 				throw new InsufficientPermissionException("Insufficient permision to write annotation.");
 			}
-			
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new Exception("Please enter an annotation name.");
@@ -1705,7 +1704,7 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("For private annotations, the group must be specified.");
 				}
 			}
-			
+
 			annotation.setName(request.getParameter("name"));
 			annotation.setDescription(request.getParameter("description"));
 			annotation.setSummary(request.getParameter("summary"));
@@ -1715,7 +1714,7 @@ public class GenoPubServlet extends HttpServlet {
 			annotation.setCodeVisibility(request.getParameter("codeVisibility"));
 			annotation.setIdUserGroup(Util.getIntegerParameter(request, "idUserGroup"));
 			annotation.setIdUser(Util.getIntegerParameter(request, "idUser"));
-			
+
 			// Remove annotation files
 			StringReader reader = new StringReader(request.getParameter("filesToRemoveXML"));
 			SAXReader sax = new SAXReader();
@@ -1725,66 +1724,65 @@ public class GenoPubServlet extends HttpServlet {
 				File file = new File(fileNode.attributeValue("url"));
 				file.delete();
 			}            
-			
+
 			sess.save(annotation);
-			
+
 			tx.commit();
-			
-			
+
+
 			this.reportSuccess(res, "idAnnotation", annotation.getIdAnnotation());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleAnnotationDuplicateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			// Make sure that the required fields are filled in
 			if (request.getParameter("idAnnotation") == null || request.getParameter("idAnnotation").equals("")) {
 				throw new Exception("idAnnotation required.");
 			}
 
-			
+
 			Annotation sourceAnnot = Annotation.class.cast(sess.load(Annotation.class, Util.getIntegerParameter(request, "idAnnotation")));
-			
+
 			// Make sure the user can write this annotation 
 			if (!this.genoPubSecurity.canWrite(sourceAnnot)) {
 				throw new InsufficientPermissionException("Insufficient permision to write annotation.");
 			}
-			
+
 			Annotation dup = new Annotation();
-			
+
 			dup.setName(sourceAnnot.getName() + "_copy");
 			dup.setDescription(sourceAnnot.getDescription());
 			dup.setSummary(sourceAnnot.getSummary());
@@ -1795,13 +1793,13 @@ public class GenoPubServlet extends HttpServlet {
 			dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
 			dup.setIdUser(sourceAnnot.getIdUser());
 			dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
-			
+
 			sourceAnnot.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
 			sourceAnnot.setCreatedBy(this.genoPubSecurity.getUserName());
-			
-			
+
+
 			sess.save(dup);
-			
+
 
 			// Get the annotation grouping this annotation is in.
 			AnnotationGrouping ag = null;
@@ -1813,26 +1811,26 @@ public class GenoPubServlet extends HttpServlet {
 				if (ag == null) {
 					throw new Exception("Cannot find root annotation grouping for " + gv.getName());
 				}
-			} else {
+			} else {				
 				// Otherwise, find the annotation grouping passed in as a request parameter.
 				ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, Util.getIntegerParameter(request, "idAnnotationGrouping")));
 			}
 
 			// Add the annotation to the annotation grouping
 			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {	
 				newAnnotations.add(a);
 			}
 			newAnnotations.add(dup);
 			ag.setAnnotations(newAnnotations);
-			
-			
+
+
 			// Assign a file directory name
 			dup.setFileName("A" + dup.getIdAnnotation());
-			
+
 			tx.commit();
-			
-			
+
+
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
 			root.addAttribute("idAnnotation", dup.getIdAnnotation().toString());
@@ -1841,48 +1839,48 @@ public class GenoPubServlet extends HttpServlet {
 			} else {
 				root.addAttribute("idAnnotationGrouping", "");
 			}
-		
+
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
+					OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
+
 	private void handleAnnotationDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Integer idAnnotation = Util.getIntegerParameter(request, "idAnnotation");
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
 
@@ -1890,58 +1888,58 @@ public class GenoPubServlet extends HttpServlet {
 			if (!this.genoPubSecurity.canWrite(annotation)) {
 				throw new InsufficientPermissionException("Insufficient permision to delete annotation.");
 			}
-			
-			
+
+
 			// remove annotation files
 			annotation.removeFiles(genometry_genopub_dir);
-			
+
 			// delete database object
 			sess.delete(annotation);
-			
+
 			tx.commit();
 
-			
+
 			this.reportSuccess(res);
-			
+
 		}  catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 	private void handleAnnotationUnlinkRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Integer idAnnotation = Util.getIntegerParameter(request, "idAnnotation");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
-			
+
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
 			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, idGenomeVersion));
 
@@ -1949,8 +1947,8 @@ public class GenoPubServlet extends HttpServlet {
 			if (!this.genoPubSecurity.canWrite(annotation)) {
 				throw new InsufficientPermissionException("Insufficient permision to unlink annotation.");
 			}
-			
-			
+
+
 			// Get the annotation grouping this annotation should be removed from.
 			AnnotationGrouping annotationGrouping = null;
 			if (idAnnotationGrouping == null) {
@@ -1974,14 +1972,14 @@ public class GenoPubServlet extends HttpServlet {
 					continue;
 				}
 				annotationsToKeep.add(a);
-				
+
 			}
 			annotationGrouping.setAnnotations(annotationsToKeep);
 
-			
-			
+
+
 			tx.commit();
-			
+
 			// Send back XML attributes showing remaining references to annotation groupings
 			sess.refresh(annotation);
 			StringBuffer remainingAnnotationGroupings = new StringBuffer();
@@ -1992,10 +1990,10 @@ public class GenoPubServlet extends HttpServlet {
 				}
 				remainingAnnotationGroupings.append("    '" + ag.getName() + "'");
 				agCount++;
-				
+
 			}
 
-			
+
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
 			root.addAttribute("idAnnotation", annotation.getIdAnnotation().toString());
@@ -2003,45 +2001,45 @@ public class GenoPubServlet extends HttpServlet {
 			root.addAttribute("numberRemainingAnnotationGroupings", new Integer(agCount).toString());
 			root.addAttribute("remainingAnnotationGroupings", remainingAnnotationGroupings.toString());
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
+					OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 	private void handleAnnotationMoveRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			Integer idAnnotation = Util.getIntegerParameter(request, "idAnnotation");
 			Integer idGenomeVersion = Util.getIntegerParameter(request, "idGenomeVersion");
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
@@ -2057,7 +2055,7 @@ public class GenoPubServlet extends HttpServlet {
 					throw new InsufficientPermissionException("Insufficient permision to unlink annotation.");
 				}
 			}
-			
+
 			// Get the annotation grouping this annotation should be moved to.
 			AnnotationGrouping annotationGroupingNew = null;
 			if (idAnnotationGrouping == null) {
@@ -2071,16 +2069,16 @@ public class GenoPubServlet extends HttpServlet {
 				// Otherwise, find the annotation grouping passed in as a request parameter.
 				annotationGroupingNew = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 			}
-			
-			
+
+
 
 			// The move/copy is disallowed if the parent annotation grouping belongs to a 
 			// different genome version
 			if (!annotationGroupingNew.getIdGenomeVersion().equals(annotation.getIdGenomeVersion())) {
 				throw new Exception("Annotation '" + annotation.getName() + 
-						"' cannot be moved to a different genome version");
+				"' cannot be moved to a different genome version");
 			}
-			
+
 			// The move/copy is disallowed if the from and to annotation grouping are the
 			// same
 			if (idAnnotationGroupingOld != null) {
@@ -2092,8 +2090,8 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("Move/copy operation to same folder is not allowed.");
 				}
 			}
-	
-			
+
+
 			//
 			// Add the annotation to the annotation grouping
 			//
@@ -2103,9 +2101,9 @@ public class GenoPubServlet extends HttpServlet {
 			}
 			newAnnotations.add(annotation);
 			annotationGroupingNew.setAnnotations(newAnnotations);
-			
-			
-		
+
+
+
 			// If this is a move instead of a copy,
 			// get the annotation grouping this annotation should be removed from.
 			if (isMove.equals("Y")) {
@@ -2137,100 +2135,100 @@ public class GenoPubServlet extends HttpServlet {
 
 			}
 
-		
-			
+
+
 			tx.commit();
 
-			
+
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
 			root.addAttribute("idAnnotation", annotation.getIdAnnotation().toString());
 			root.addAttribute("idGenomeVersion", idGenomeVersion.toString());
 			root.addAttribute("idAnnotationGrouping", idAnnotationGrouping != null ? idAnnotationGrouping.toString() : "");
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
+					OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 	private void handleAnnotationInfoRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		org.dom4j.io.OutputFormat format = org.dom4j.io.OutputFormat.createPrettyPrint();
-        org.dom4j.io.HTMLWriter writer = null;
-      
-			
+		org.dom4j.io.HTMLWriter writer = null;
+
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 
 			Integer idAnnotation = Util.getIntegerParameter(request, "idAnnotation");
-			
+
 			DictionaryHelper dh = DictionaryHelper.getInstance(sess);
-			
+
 			Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
-			
+
 			if (!this.genoPubSecurity.canRead(annotation)) {
 				throw new Exception("Insufficient permissions to access information on this annotation.");				
 			}
-			
+
 			res.setContentType("text/html");
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("HTML");
-			
-            Element head = root.addElement("HEAD");
-            Element link = head.addElement("link");
-            link.addAttribute("rel", "stylesheet");
-            link.addAttribute("type", "text/css");
-            
-            String baseURL = "";
-            StringBuffer fullPath = request.getRequestURL();
-            String extraPath = request.getServletPath() + request.getPathInfo();
-            int pos = fullPath.lastIndexOf(extraPath);
-            if (pos > 0) {
-            	baseURL = fullPath.substring(0, pos);
-            }
-            
-            link.addAttribute("href", baseURL + "/info.css");
-			
+
+			Element head = root.addElement("HEAD");
+			Element link = head.addElement("link");
+			link.addAttribute("rel", "stylesheet");
+			link.addAttribute("type", "text/css");
+
+			String baseURL = "";
+			StringBuffer fullPath = request.getRequestURL();
+			String extraPath = request.getServletPath() + request.getPathInfo();
+			int pos = fullPath.lastIndexOf(extraPath);
+			if (pos > 0) {
+				baseURL = fullPath.substring(0, pos);
+			}
+
+			link.addAttribute("href", baseURL + "/info.css");
+
 			Element body = root.addElement("BODY");
 
 
-            Element center = body.addElement("CENTER");
+			Element center = body.addElement("CENTER");
 			Element h1   = center.addElement("H1");
 			h1.addText("DAS2 Annotation");
 
 			Element h2   = body.addElement("H2");
 			h2.addText(annotation.getName());
-			
+
 			Element table = body.addElement("TABLE");
-			
+
 			Element row   = table.addElement("TR");
 			row.addElement("TD").addText("Summary").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getSummary() != null && !annotation.getSummary().equals("") ? annotation.getSummary() : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Description").addAttribute("CLASS", "label");
 			if (annotation.getDescription() == null || annotation.getDescription().equals("")) {
@@ -2240,61 +2238,61 @@ public class GenoPubServlet extends HttpServlet {
 				description = annotation.getDescription().replaceAll("\\r", "<br>");
 				row.addElement("TD").addCDATA(description);				
 			}
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Experiment platform").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdExperimentPlatform() != null ? dh.getExperimentPlatform(annotation.getIdExperimentPlatform()) : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Experiment method").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdExperimentMethod() != null ? dh.getExperimentMethod(annotation.getIdExperimentMethod()) : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Analysis type").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdAnalysisType() != null ? dh.getAnalysisType(annotation.getIdAnalysisType()) : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Owner").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdUser() != null ? dh.getUserFullName(annotation.getIdUser()) : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Owner email").addAttribute("CLASS", "label");
 			String userEmail = dh.getUserEmail(annotation.getIdUser());
 			row.addElement("TD").addCDATA(userEmail != null ? userEmail : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Owner institute").addAttribute("CLASS", "label");
 			String userInstitute = dh.getUserInstitute(annotation.getIdUser());
 			row.addElement("TD").addCDATA(userInstitute != null ? userInstitute : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getIdUserGroup() != null ? dh.getUserGroupName(annotation.getIdUserGroup()) : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			 
 			row.addElement("TD").addText("User Group contact").addAttribute("CLASS", "label");
 			String groupContact = dh.getUserGroupContact(annotation.getIdUserGroup());
 			row.addElement("TD").addCDATA(groupContact != null ? groupContact : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group email").addAttribute("CLASS", "label");
 			String groupEmail = dh.getUserGroupEmail(annotation.getIdUserGroup());
 			row.addElement("TD").addCDATA(groupEmail != null ? groupEmail : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("User Group institute").addAttribute("CLASS", "label");
 			String groupInstitute = dh.getUserGroupInstitute(annotation.getIdUserGroup());
 			row.addElement("TD").addCDATA(groupInstitute != null ? groupInstitute : "&nbsp;");
-			
+
 			row   = table.addElement("TR");			
 			row.addElement("TD").addText("Visibility").addAttribute("CLASS", "label");
 			row.addElement("TD").addCDATA(annotation.getCodeVisibility() != null && !annotation.getCodeVisibility().equals("") ? Visibility.getDisplay(annotation.getCodeVisibility()) : "&nbsp;");
-			
-			
+
+
 			String publishedBy = "&nbsp;";
 			if (annotation.getCreatedBy() != null && !annotation.getCreatedBy().equals("")) {
 				publishedBy = annotation.getCreatedBy();
-				
+
 				if (annotation.getCreateDate() != null) {
 					publishedBy += " " + Util.formatDate(annotation.getCreateDate());
 				}
@@ -2309,232 +2307,240 @@ public class GenoPubServlet extends HttpServlet {
 
 
 			writer = new org.dom4j.io.HTMLWriter(res.getWriter(), format);	        	
-	        writer.write(doc);
-	        writer.flush();
-	        writer.close();
-			
+			writer.write(doc);
+			writer.flush();
+			writer.close();
+
 		} catch (Exception e) {
-			
+
 			if (writer != null) {
 				writer.close();
 			}
-			
+
 			e.printStackTrace();
 			Document doc = DocumentHelper.createDocument();
 
 			res.setContentType("text/html");
 			Element root = doc.addElement("HTML");
-			
-            Element head = root.addElement("HEAD");
-            Element link = head.addElement("link");
-            link.addAttribute("rel", "stylesheet");
-            link.addAttribute("type", "text/css");
-            Element body = root.addElement("BODY");
-            body.addText(e.toString());
+
+			Element head = root.addElement("HEAD");
+			Element link = head.addElement("link");
+			link.addAttribute("rel", "stylesheet");
+			link.addAttribute("type", "text/css");
+			Element body = root.addElement("BODY");
+			body.addText(e.toString());
 
 			XMLWriter w = new org.dom4j.io.HTMLWriter(res.getWriter(), format);
 
 			w.write(doc);
 			w.close();
-			
+
 		} finally {
 			if (writer != null) {
 				writer.close();
 			}
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
+
 	private void handleAnnotationFormUploadURLRequest(HttpServletRequest req, HttpServletResponse res) {
-	    try {
-	        
-	        //
-	        // COMMENTED OUT CODE: 
-	        //    String baseURL =  "http"+ (isLocalHost ? "://" : "s://") + req.getServerName() + req.getContextPath();
-	        //
-	        // To fix upload problem (missing session in upload servlet for FireFox, Safari), encode session in URL
-	        // for upload servlet.  Also, use non-secure (http: rather than https:) when making http request; 
-	        // otherwise, existing session is not accessible to upload servlet.
-	        //
-	        //
-	        
-	        String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
-	        String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.ANNOTATION_UPLOAD_FILES_REQUEST;
-	        // Encode session id in URL so that session maintains for upload servlet when called from
-	        // Flex upload component inside FireFox, Safari
-	        URL += ";jsessionid=" + req.getRequestedSessionId();
-	        
-	        // Get the valid file extensions
-	        String fileExtensions = "";
-	        for (int x=0; x < Constants.ANNOTATION_FILE_EXTENSIONS.length; x++) {
-	        	if (fileExtensions.length() > 0) {
-	        		fileExtensions += ";";
-	        	}
-	        	fileExtensions += "*" + Constants.ANNOTATION_FILE_EXTENSIONS[x];
-	        }
-	        
-	        
-	        res.setContentType("application/xml");
-	        res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
-	        
-	      } catch (Exception e) {
-	        System.out.println("An error has occured in GenoPubServlet handleAnnotationFormUploadURLRequest - " + e.toString());
-	      }		
+		try {
+
+			//
+			// COMMENTED OUT CODE: 
+			//    String baseURL =  "http"+ (isLocalHost ? "://" : "s://") + req.getServerName() + req.getContextPath();
+			//
+			// To fix upload problem (missing session in upload servlet for FireFox, Safari), encode session in URL
+			// for upload servlet.  Also, use non-secure (http: rather than https:) when making http request; 
+			// otherwise, existing session is not accessible to upload servlet.
+			//
+			//
+
+			String baseURL =  "http"+  "://"  + req.getServerName() + ":" + req.getLocalPort() + req.getContextPath();
+			String URL = baseURL + "/" +  GENOPUB_WEBAPP_NAME + "/" +  this.ANNOTATION_UPLOAD_FILES_REQUEST;
+			// Encode session id in URL so that session maintains for upload servlet when called from
+			// Flex upload component inside FireFox, Safari
+			URL += ";jsessionid=" + req.getRequestedSessionId();
+
+			// Get the valid file extensions
+			String fileExtensions = "";
+			for (int x=0; x < Constants.ANNOTATION_FILE_EXTENSIONS.length; x++) {
+				if (fileExtensions.length() > 0) {
+					fileExtensions += ";";
+				}
+				fileExtensions += "*" + Constants.ANNOTATION_FILE_EXTENSIONS[x];
+			}
+
+
+			res.setContentType("application/xml");
+			res.getOutputStream().println("<UploadURL url='" + URL + "'" + " fileExtensions='" + fileExtensions + "'" + "/>");
+
+		} catch (Exception e) {
+			System.out.println("An error has occured in GenoPubServlet handleAnnotationFormUploadURLRequest - " + e.toString());
+		}		
 	}
 
-	
+
 	private void handleAnnotationUploadRequest(HttpServletRequest req, HttpServletResponse res) {
-		
+
 		Session sess = null;
 		Integer idAnnotation = null;
-		
-	    Annotation annotation = null;
-	    
+
+		Annotation annotation = null;
+
 		String annotationName = null;
 		String codeVisibility = null;
 		Integer idGenomeVersion = null;
 		Integer idAnnotationGrouping = null;
 		Integer idUserGroup = null;
-	    
-	    String fileName = null;
-	    Transaction tx = null;
-	    StringBuffer bypassedFiles = new StringBuffer();
-	    
-		
+
+		String fileName = null;
+		Transaction tx = null;
+		StringBuffer bypassedFiles = new StringBuffer();
+		File tempBulkUploadFile = null;
+
 		try {
-			
+
 			if (genoPubSecurity.isGuestRole()) {
 				throw new Exception("Insufficient permissions to upload data.");
 			}
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
-			
-		    res.setDateHeader("Expires", -1);
-		    res.setDateHeader("Last-Modified", System.currentTimeMillis());
-		    res.setHeader("Pragma", "");
-		    res.setHeader("Cache-Control", "");
-		 
-		    
-		    res.setCharacterEncoding("UTF-8");
 
-    	            
-    	    MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
-    	    Part part;
-    	    while ((part = mp.readNextPart()) != null) {
-    	      String name = part.getName();
-    	      if (part.isParam()) {
-    	        // it's a parameter part
-    	        ParamPart paramPart = (ParamPart) part;
-    	        String value = paramPart.getStringValue();
-    	        if (name.equals("idAnnotation")) {
-    	            idAnnotation = new Integer(String.class.cast(value));
-    	        } else if (name.equals("name")) {
-    	        	annotationName = value;
-    	        } else if (name.equals("codeVisibility")) {
-    	        	codeVisibility = value;
-    	        } else if (name.equals("idGenomeVersion")) {
-    	        	idGenomeVersion = new Integer(value);
-    	        } else if (name.equals("idAnnotationGrouping")) {
-    	        	if (value != null && !value.equals("")) {
-    	        		idAnnotationGrouping = new Integer(value);
-    	        	}
-    	        } else if (name.equals("idUserGroup")) {
-    	        	if (value != null && !value.equals("")) {
-    	        		idUserGroup = new Integer(value);
-    	        	}
-    	        }
-    	      }
-    	      
-    	      if (idAnnotation != null) {
-    	    	  break;
-    	      } else if (annotationName != null && codeVisibility != null && idGenomeVersion != null && idAnnotationGrouping != null && idUserGroup != null) {
-    	    	  break;
-    	      }
-    	    
-    	    }
-    	      
-    	      
-    	    if (idAnnotation != null) {
-    	    	annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
-    	    } else {
-    	    	// If idAnnotation wasn't sent in as parameter, we are adding
-    	    	// annotation as part of the upload
-    	    	annotation = createNewAnnotation(sess, annotationName, codeVisibility, idGenomeVersion, idAnnotationGrouping.intValue() == -99 ? null : idAnnotationGrouping, idUserGroup.intValue() == -99 ? null : idUserGroup);
-    	    	sess.flush();
-    	    }
+			res.setDateHeader("Expires", -1);
+			res.setDateHeader("Last-Modified", System.currentTimeMillis());
+			res.setHeader("Pragma", "");
+			res.setHeader("Cache-Control", "");
+			res.setCharacterEncoding("UTF-8");
 
-    	    if (annotation != null) {
-    	    	if (this.genoPubSecurity.canWrite(annotation)) {
-    	    		SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
+			MultipartParser mp = new MultipartParser(req, Integer.MAX_VALUE); 
+			Part part;
+			while ((part = mp.readNextPart()) != null) {
+				String name = part.getName();
+				if (part.isParam()) {
+					// it's a parameter part
+					ParamPart paramPart = (ParamPart) part;
+					String value = paramPart.getStringValue();
+					if (name.equals("idAnnotation")) {
+						idAnnotation = new Integer(String.class.cast(value));
+					} else if (name.equals("name")) {
+						annotationName = value;
+					} else if (name.equals("codeVisibility")) {
+						codeVisibility = value;
+					} else if (name.equals("idGenomeVersion")) {
+						idGenomeVersion = new Integer(value);
+					} else if (name.equals("idAnnotationGrouping")) {
+						if (value != null && !value.equals("")) {
+							idAnnotationGrouping = new Integer(value);
+						}
+					} else if (name.equals("idUserGroup")) {
+						if (value != null && !value.equals("")) {
+							idUserGroup = new Integer(value);
+						}
+					}
+				}
 
-    	    		// Make sure that the genometry server dir exists
-    	    		if (!new File(genometry_genopub_dir).exists()) {
-    	    			boolean success = (new File(genometry_genopub_dir)).mkdir();
-    	    			if (!success) {
-    	    				throw new Exception("Unable to create directory " + genometry_genopub_dir);      
-    	    			}
-    	    		}
+				if (idAnnotation != null) {
+					break;
+				} else if (annotationName != null && codeVisibility != null && idGenomeVersion != null && idAnnotationGrouping != null && idUserGroup != null) {
+					break;
+				}
 
-    	    		String annotationFileDir = annotation.getDirectory(genometry_genopub_dir);
-
-    	    		// Create annotation directory if it doesn't exist
-    	    		if (!new File(annotationFileDir).exists()) {
-    	    			boolean success = (new File(annotationFileDir)).mkdir();
-    	    			if (!success) {
-    	    				throw new Exception("Unable to create directory " + annotationFileDir);      
-    	    			}      
-    	    		}
-
-    	    		while ((part = mp.readNextPart()) != null) {        
-    	    			if (part.isFile()) {
-    	    				// it's a file part
-    	    				FilePart filePart = (FilePart) part;
-    	    				fileName = filePart.getFileName();
-    	    				
-    	    				// Is this a valid file extension?
-    	    				if (!Util.isValidAnnotationFileType(fileName)) {
-    	    					String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  Unsupported file extension.";    	    					
-    	    					throw new UnsupportedFileTypeException(message);
-    	    				}
-    	    				
-    	    				// If this is a bar file, does the file name match a known segment name?
-    	    				if (fileName.toUpperCase().endsWith(".BAR")) {
-    	    					
-    	    					DictionaryHelper dh = DictionaryHelper.getInstance(sess);
-    	    					GenomeVersion genomeVersion = dh.getGenomeVersion(annotation.getIdGenomeVersion());
-    	    					sess.refresh(genomeVersion);
-    	    					
-    	    					if (!Util.fileHasSegmentName(fileName, genomeVersion)) {
-        	    					String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  File name is invalid because it does not start with a valid segment name.";    	    					
-    	    						throw new IncorrectFileNameException(message);
-    	    					}
-    	    				}
-    	    				
-	    					if (fileName != null) {
-    	    					// the part actually contained a file
-    	    					long size = filePart.writeTo(new File(annotationFileDir));
-    	    				}
-
-    	    			}
-    	    		}
-    	    		sess.flush();
-    	    	} else {
-    	    		throw new InsufficientPermissionException("Bypassing upload of annotation " + annotation.getName() + " due to insufficient permissions.");
-    	    	}
-    	    }
+			}
 
 
-    	    tx.commit();
+			if (idAnnotation != null) {				
+				annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
+			} else {
+				// If idAnnotation wasn't sent in as parameter, we are adding
+				// annotation as part of the upload
+				annotation = createNewAnnotation(sess, annotationName, codeVisibility, idGenomeVersion, idAnnotationGrouping.intValue() == -99 ? null : idAnnotationGrouping, idUserGroup.intValue() == -99 ? null : idUserGroup);
+				sess.flush();				
+			}
 
-    	    this.reportSuccess(res, "idAnnotation", annotation.getIdAnnotation());
-		
+			if (annotation != null) {
+				if (this.genoPubSecurity.canWrite(annotation)) {
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy");
+
+					// Make sure that the genometry server dir exists
+					if (!new File(genometry_genopub_dir).exists()) {
+						boolean success = (new File(genometry_genopub_dir)).mkdir();
+						if (!success) {
+							throw new Exception("Unable to create directory " + genometry_genopub_dir);      
+						}
+					}
+
+					String annotationFileDir = annotation.getDirectory(genometry_genopub_dir);
+
+					// Create annotation directory if it doesn't exist
+					if (!new File(annotationFileDir).exists()) {
+						boolean success = (new File(annotationFileDir)).mkdir();
+						if (!success) {
+							throw new Exception("Unable to create directory " + annotationFileDir);      
+						}      
+					}
+
+					while ((part = mp.readNextPart()) != null) {        
+						if (part.isFile()) {
+							// it's a file part
+							FilePart filePart = (FilePart) part;
+							fileName = filePart.getFileName();
+							
+							//is it a bulk upload? 
+							if (fileName.endsWith("bulkUpload")) {
+								//write temp file
+								tempBulkUploadFile = new File (genometry_genopub_dir, "TempFileDeleteMe_"+USeqArchive.createRandowWord(6));
+								filePart.writeTo(tempBulkUploadFile); 
+								//make new annotations based on current annotation with modifications from the 1.ablk text file
+								AnnotationGrouping ag = getAnnotationGrouping(annotation, sess, req);							
+								uploadBulkAnnotations(tempBulkUploadFile, annotation, ag, res);
+								if (tempBulkUploadFile.exists()) tempBulkUploadFile.delete();
+								break;
+							}
+
+							// Is this a valid file extension?
+							if (!Util.isValidAnnotationFileType(fileName)) {
+								String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  Unsupported file extension.";    	    					
+								throw new UnsupportedFileTypeException(message);
+							}
+
+							// If this is a bar file, does the file name match a known segment name?
+							if (fileName.toUpperCase().endsWith(".BAR")) {
+
+								DictionaryHelper dh = DictionaryHelper.getInstance(sess);
+								GenomeVersion genomeVersion = dh.getGenomeVersion(annotation.getIdGenomeVersion());
+								sess.refresh(genomeVersion);
+
+								if (!Util.fileHasSegmentName(fileName, genomeVersion)) {
+									String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  File name is invalid because it does not start with a valid segment name.";    	    					
+									throw new IncorrectFileNameException(message);
+								}
+							}
+
+							if (fileName != null) {
+								// the part actually contained a file
+								long size = filePart.writeTo(new File(annotationFileDir));
+							}
+
+						}
+					}
+					sess.flush();
+				} else {
+					throw new InsufficientPermissionException("Bypassing upload of annotation " + annotation.getName() + " due to insufficient permissions.");
+				}
+			}
+
+
+			tx.commit();
+
+			this.reportSuccess(res, "idAnnotation", annotation.getIdAnnotation());
+
 
 		} catch (InsufficientPermissionException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
@@ -2562,14 +2568,136 @@ public class GenoPubServlet extends HttpServlet {
 			e.printStackTrace();
 			this.reportError(res, e.toString(), ERROR_CODE_OTHER);
 		} finally {
-			
+			if (tempBulkUploadFile != null && tempBulkUploadFile.exists()) tempBulkUploadFile.delete();
 			if (sess != null) {
 				sess.close();
 			}
 		}
+
+
+	}
+
+	/**Reads in a tab delimited file (name, fullPathFileName, summary, description) describing new Annotations to be created using a sourceAnnotation as a template.
+	 * @author davidnix*/
+	private void uploadBulkAnnotations(File spreadSheet, Annotation sourceAnnotation, AnnotationGrouping ag, HttpServletResponse res) throws IOException{
+
+		BufferedReader in = new BufferedReader (new FileReader(spreadSheet));
+		String line;
+		Pattern tab = Pattern.compile("([^\\t]+)\\t([^\\t]+)\\t([^\\t]+)\\t(.+)", Pattern.DOTALL);
 		
+		//for each line create a new annotation
+		while ((line = in.readLine()) != null){
+			line = line.trim();
+			if (line.length() == 0 || line.startsWith("#") || line.startsWith("Name")) continue;
+			
+			//parse name, fileName, summary, description
+			Matcher mat = tab.matcher(line);
+			if (mat.matches() == false) throw new IOException("Unable to parse the required fields from this line -> " + line+"  Aborting bulk upload.");
+			String name = mat.group(1).trim();
+			if (name.length()==0) throw new IOException("Failed to parse an annotation name from this line -> " + line+"  Aborting bulk upload.");
+			File dataFile = new File (mat.group(2).trim());
+			if (dataFile.canRead() == false) throw new IOException("Cannot read or find the File in line -> " + line+", looking for "+dataFile+" . Aborting bulk uploading.");
+			String summary = mat.group(3).trim();
+			String description = mat.group(4).trim();
+			
+			//make new annotation cloning current annotation
+			addNewAnnotation(sourceAnnotation, name, summary, description, dataFile, ag, res);
+			
+		}
+		in.close();
 		
 	}
+	
+	/**Fetches the AnnotationGrouping from a particular request. For bulk uploading.
+	 * @author davidnix*/
+	private AnnotationGrouping getAnnotationGrouping(Annotation sourceAnnot, Session sess, HttpServletRequest request) throws Exception{		
+		// Get the annotation grouping this annotation is in.
+		AnnotationGrouping ag = null;
+		if (Util.getIntegerParameter(request, "idAnnotationGrouping") == null) {
+			// If this is a root annotation, find the default root annotation
+			// grouping for the genome version.
+			GenomeVersion gv = GenomeVersion.class.cast(sess.load(GenomeVersion.class, sourceAnnot.getIdGenomeVersion()));
+			ag = gv.getRootAnnotationGrouping();
+			if (ag == null) {
+				throw new Exception("Cannot find root annotation grouping for " + gv.getName());
+			}
+		} else {
+			// Otherwise, find the annotation grouping passed in as a request parameter.			
+			ag = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, Util.getIntegerParameter(request, "idAnnotationGrouping")));
+		}
+		return ag;
+	}
+	
+	/**Adds an new Annotation cloning in part the source annotation. For bulk uploading.
+	 * @author davidnix*/
+	@SuppressWarnings("unchecked")
+	private void addNewAnnotation(Annotation sourceAnnot, String name, String summary, String description, File dataFile, AnnotationGrouping ag, HttpServletResponse res) throws IOException {		
+		Session sess = null;
+		Transaction tx = null;
+
+		try {
+			//hmm might be a bit inefficient to open and close a new session/ transaction for every annotation added, don't know what is permitted here so going inefficient
+			sess = HibernateUtil.getSessionFactory().openSession();
+			tx = sess.beginTransaction();
+
+			// Make sure the user can write this annotation 
+			if (!this.genoPubSecurity.canWrite(sourceAnnot)) {
+				throw new InsufficientPermissionException("Insufficient permision to write annotation.");
+			}
+
+			Annotation dup = new Annotation();
+
+			dup.setName(name);
+			if (description.length()!=0) dup.setDescription(description);
+			else dup.setDescription(sourceAnnot.getDescription());
+			if (summary.length()!=0) dup.setSummary(summary);
+			else dup.setSummary(sourceAnnot.getSummary());
+			dup.setIdAnalysisType(sourceAnnot.getIdAnalysisType());
+			dup.setIdExperimentPlatform(sourceAnnot.getIdExperimentPlatform());
+			dup.setIdExperimentMethod(sourceAnnot.getIdExperimentMethod());
+			dup.setCodeVisibility(sourceAnnot.getCodeVisibility());
+			dup.setIdUserGroup(sourceAnnot.getIdUserGroup());
+			dup.setIdUser(sourceAnnot.getIdUser());
+			dup.setIdGenomeVersion(sourceAnnot.getIdGenomeVersion());
+
+			sourceAnnot.setCreateDate(new java.sql.Date(System.currentTimeMillis()));
+			sourceAnnot.setCreatedBy(this.genoPubSecurity.getUserName());
+
+			sess.save(dup);
+
+			// Add the annotation to the annotation grouping
+			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+				newAnnotations.add(a);
+			}
+			newAnnotations.add(dup);
+			ag.setAnnotations(newAnnotations);
+
+			// Create a file directory and move in the data file
+			dup.setFileName("A" + dup.getIdAnnotation());
+			File dir = new File (genometry_genopub_dir, dup.getFileName());
+			dir.mkdir();
+			File moved = new File (dir, dataFile.getName());
+			if (dataFile.renameTo(moved) == false) throw new IOException("Failed to move the dataFile '"+dataFile+"' to its archive location  '"+moved+"' . Aborting bulk uploading.");
+			
+			tx.commit();
+
+		} catch (InsufficientPermissionException e) {
+			e.printStackTrace();
+			this.reportError(res, e.getMessage());
+			if (tx != null) tx.rollback();				
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.reportError(res, e.toString());
+			if (tx != null)  tx.rollback();			
+		} finally {
+			if (sess != null)  sess.close();
+		}
+
+	}
+
+	
 	
 
 	@SuppressWarnings("unchecked")
@@ -2578,10 +2706,10 @@ public class GenoPubServlet extends HttpServlet {
 
 		Document doc = DocumentHelper.createDocument();
 		Element root = doc.addElement("UsersAndGroups");
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
-			
+
 			// Get group members
 			StringBuffer query = new StringBuffer();
 			query.append("SELECT      gr, ");
@@ -2589,7 +2717,7 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("FROM        UserGroup as gr   ");
 			query.append("LEFT JOIN   gr.members as mem ");
 			query.append("ORDER BY    gr.name, mem.lastName, mem.firstName ");
-			
+
 			List<Object[]> rows = (List<Object[]>)sess.createQuery(query.toString()).list();
 
 			String groupNamePrev = "";
@@ -2599,16 +2727,16 @@ public class GenoPubServlet extends HttpServlet {
 			Element managersNode = null;
 			Element userNode = null;
 			HashMap<Integer, Element> groupNodeMap = new HashMap<Integer, Element>();
-		
+
 			for (Object[] row : rows) {
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
-				
+
 				// Only show groups this user managers
 				if (!this.genoPubSecurity.isManager(group)) {
 					continue;
 				}
-				
+
 				if (!group.getName().equals(groupNamePrev)) {
 					groupNode = doc.getRootElement().addElement("UserGroup");
 					groupNode.addAttribute("label", group.getName());
@@ -2621,7 +2749,7 @@ public class GenoPubServlet extends HttpServlet {
 					groupNodeMap.put(group.getIdUserGroup(), groupNode);					
 					membersNode = null;
 				}
-				
+
 				if (user != null) {
 					if (membersNode == null) {
 						membersNode = groupNode.addElement("members");
@@ -2632,8 +2760,8 @@ public class GenoPubServlet extends HttpServlet {
 					userNode.addAttribute("idUser", user.getIdUser().toString());
 					userNode.addAttribute("type", "Member");					
 				}
-				
-				
+
+
 				groupNamePrev = group.getName();
 			}
 
@@ -2644,19 +2772,19 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("FROM        UserGroup as gr   ");
 			query.append("JOIN   gr.collaborators as col ");
 			query.append("ORDER BY    gr.name, col.lastName, col.firstName ");
-			
+
 			rows = (List<Object[]>)sess.createQuery(query.toString()).list();
 			for (Object[] row : rows) {
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
-				
+
 				// Only show groups this user managers
 				if (!this.genoPubSecurity.isManager(group)) {
 					continue;
 				}
-				
+
 				groupNode = groupNodeMap.get(group.getIdUserGroup());
-				
+
 				collabsNode = groupNode.element("collaborators");				
 				if (collabsNode == null) {
 					collabsNode = groupNode.addElement("collaborators");
@@ -2667,7 +2795,7 @@ public class GenoPubServlet extends HttpServlet {
 				userNode.addAttribute("idUser", user.getIdUser().toString());
 				userNode.addAttribute("type", "Collaborator");					
 			}
-			
+
 			// Get group managers
 			query = new StringBuffer();
 			query.append("SELECT      gr, ");
@@ -2675,36 +2803,36 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("FROM        UserGroup as gr   ");
 			query.append("JOIN   gr.managers as mgr ");
 			query.append("ORDER BY    gr.name, mgr.lastName, mgr.firstName ");
-			
+
 			rows = (List<Object[]>)sess.createQuery(query.toString()).list();
 			for (Object[] row : rows) {
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 				groupNode = groupNodeMap.get(group.getIdUserGroup());
-				
+
 				// Only show groups this user managers
 				if (!this.genoPubSecurity.isManager(group)) {
 					continue;
 				}
-				
+
 				managersNode = groupNode.element("managers");				
 				if (managersNode == null) {
 					managersNode = groupNode.addElement("managers");
 				}
-				
+
 				userNode = managersNode.addElement("User");
 				userNode.addAttribute("label", user.getName());
 				userNode.addAttribute("name",  user.getName());
 				userNode.addAttribute("idUser", user.getIdUser().toString());
 				userNode.addAttribute("type", "Manager");					
 			}
-			
+
 			// Get All Users
 			query = new StringBuffer();
 			query.append("SELECT      user ");
 			query.append("FROM        User as user   ");
 			query.append("ORDER BY    user.lastName, user.firstName ");
-			
+
 			List<User> users = (List<User>)sess.createQuery(query.toString()).list();
 			for (User user : users) {
 				userNode = doc.getRootElement().addElement("User");
@@ -2718,14 +2846,14 @@ public class GenoPubServlet extends HttpServlet {
 				userNode.addAttribute("institute", user.getInstitute() != null ? user.getInstitute() : "");					
 				userNode.addAttribute("userName",  user.getUserName() != null ? user.getUserName() : "");
 				userNode.addAttribute("canWrite", this.genoPubSecurity.canWrite(user) ? "Y" : "N");
-				
+
 				if (this.genoPubSecurity.canWrite(user)) {
 					userNode.addAttribute("passwordDisplay",  user.getPasswordDisplay() != null ? user.getPasswordDisplay() : "");
 
 					for(UserRole role : (Set<UserRole>)user.getRoles()) {
 						userNode.addAttribute("role", role.getRoleName());
 					}
-					
+
 					StringBuffer memberGroups = new StringBuffer();
 					for(UserGroup memberGroup : (Set<UserGroup>)user.getMemberUserGroups()) {
 						if (memberGroups.length() > 0) {
@@ -2734,7 +2862,7 @@ public class GenoPubServlet extends HttpServlet {
 						memberGroups.append(memberGroup.getName());
 					}
 					userNode.addAttribute("memberGroups", memberGroups.length() > 0 ? memberGroups.toString() : "(none)");
-					
+
 					StringBuffer collaboratorGroups = new StringBuffer();
 					Element collaboratorGroupNode = userNode.addElement("collaborators");
 					for(UserGroup colGroup : (Set<UserGroup>)user.getCollaboratingUserGroups()) {
@@ -2744,7 +2872,7 @@ public class GenoPubServlet extends HttpServlet {
 						collaboratorGroups.append(colGroup.getName());
 					}
 					userNode.addAttribute("collaboratorGroups", collaboratorGroups.length() > 0 ? collaboratorGroups.toString() : "(none)");
-					
+
 					StringBuffer managerGroups = new StringBuffer();
 					for(UserGroup mgrGroup : (Set<UserGroup>)user.getManagingUserGroups()) {
 						if (managerGroups.length() > 0) {
@@ -2753,49 +2881,49 @@ public class GenoPubServlet extends HttpServlet {
 						managerGroups.append(mgrGroup.getName());
 					}
 					userNode.addAttribute("managerGroups", managerGroups.length() > 0 ? managerGroups.toString() : "(none)");
-					
+
 				}
 			}
-			
+
 			XMLWriter writer = new XMLWriter(res.getOutputStream(), OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
-	}
-	
 
-	
+	}
+
+
+
 	@SuppressWarnings("unchecked")
 	private void handleUserAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			// Only admins can add users
 			if (!this.genoPubSecurity.isAdminRole()) {
 				throw new InsufficientPermissionException("Insufficient permissions to add users.");
 			}
-			
+
 			// Make sure that the required fields are filled in
 			if ((request.getParameter("firstName") == null || request.getParameter("firstName").equals("")) &&
-			    (request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
+					(request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
 				throw new Exception("Please enter first or last name.");
 			}
 			if (request.getParameter("userName") == null || request.getParameter("userName").equals("")) {
 				throw new Exception("Please enter the user name.");
 			}
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 
@@ -2804,16 +2932,16 @@ public class GenoPubServlet extends HttpServlet {
 			if (users.size() > 0) {
 				throw new Exception("The user name " + request.getParameter("userName") + " is already taken.  Please enter a unique user name.");
 			}
-	
+
 			User user = new User();
-			
+
 			user.setFirstName(request.getParameter("firstName"));
 			user.setMiddleName(request.getParameter("middleName"));
 			user.setLastName(request.getParameter("lastName"));
 			user.setUserName(request.getParameter("userName"));
-			
+
 			sess.save(user);
-			
+
 			sess.flush();
 
 			// Default user to das2user role
@@ -2825,111 +2953,111 @@ public class GenoPubServlet extends HttpServlet {
 			sess.save(role);
 			sess.flush();
 
-						
+
 			tx.commit();
-			
+
 			this.reportSuccess(res, "idUser", user.getIdUser());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	private void handleUserDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx =  sess.beginTransaction();
-			
+
 			User user = User.class.cast(sess.load(User.class, Util.getIntegerParameter(request, "idUser")));
 
 			// Check write permissions
 			if (!this.genoPubSecurity.canWrite(user)) {
 				throw new InsufficientPermissionException("Insufficient permissions to delete user.");
 			}
-			
+
 			for (UserRole role : (Set<UserRole>)user.getRoles()) {
 				sess.delete(role);
 			}
 			sess.flush();
-			
+
 			sess.refresh(user);
-			
-	
-			
+
+
+
 			sess.delete(user);
-			
+
 			sess.flush();
-			
+
 			tx.commit();
 
-			
+
 			this.reportSuccess(res);
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleUserUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			User user = User.class.cast(sess.load(User.class, Util.getIntegerParameter(request, "idUser")));
-			
+
 			// Check write permissions
 			if (!this.genoPubSecurity.canWrite(user)) {
 				throw new InsufficientPermissionException("Insufficient permissions to write user.");
@@ -2937,17 +3065,17 @@ public class GenoPubServlet extends HttpServlet {
 
 			// Make sure that the required fields are filled in
 			if ((request.getParameter("firstName") == null || request.getParameter("firstName").equals("")) &&
-			    (request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
+					(request.getParameter("lastName") == null || request.getParameter("lastName").equals(""))) {
 				throw new Exception("Please enter first or last name.");
 			}
 			if (request.getParameter("userName") == null || request.getParameter("userName").equals("")) {
-					throw new Exception("Please enter the user name.");
+				throw new Exception("Please enter the user name.");
 			}
 			if (request.getParameter("role") == null || request.getParameter("role").equals("")) {
 				throw new Exception("Please select a role (admin, user, guest).");
 			}
 
-			
+
 			// Get rid of existing roles if the user name has changed
 			boolean userNameChanged = false;
 			if (!user.getUserName().equals(request.getParameter("userName"))) {
@@ -2959,13 +3087,13 @@ public class GenoPubServlet extends HttpServlet {
 				if (users.size() > 0) {
 					throw new Exception("The user name " + request.getParameter("userName") + " is already taken.  Please enter a unique user name.");
 				}
-				
+
 				for (UserRole role : (Set<UserRole>)user.getRoles()) {
 					sess.delete(role);						
 					sess.flush();
 				}
 			}
-			
+
 
 			// Set the fields to the values from the screen
 			user.setFirstName(request.getParameter("firstName"));
@@ -2974,23 +3102,23 @@ public class GenoPubServlet extends HttpServlet {
 			user.setUserName(request.getParameter("userName"));
 			user.setEmail(request.getParameter("email"));
 			user.setInstitute(request.getParameter("institute"));
-			
+
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD)) {
 				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
-			  try {
-	        String digestedPassword = getDigestedPassword(pw);
-	        user.setPassword(digestedPassword);       			    
-			  } catch (Exception e) {
-			     e.printStackTrace();
-			     Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
-			  }
+				try {
+					String digestedPassword = getDigestedPassword(pw);
+					user.setPassword(digestedPassword);       			    
+				} catch (Exception e) {
+					e.printStackTrace();
+					Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
+				}
 			}
-			
+
 			// Flush here so that if user name changes, the user row is
 			// updated before trying to insert a new role
 			sess.flush();
-			
+
 			// Set existing user roles
 			if (user.getRoles() != null && !userNameChanged) {
 				for (UserRole role : (Set<UserRole>)user.getRoles()) {
@@ -3005,55 +3133,55 @@ public class GenoPubServlet extends HttpServlet {
 				role.setIdUser(user.getIdUser());
 				sess.save(role);
 			}
-			
+
 
 			sess.flush();
-						
+
 			tx.commit();
 
 			this.reportSuccess(res, "idUser", user.getIdUser());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
 	private void handleUserPasswordRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			if (this.genoPubSecurity.isGuestRole()) {
 				throw new InsufficientPermissionException("Cannot change guest account password");
 			}
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			User user = User.class.cast(sess.load(User.class, this.genoPubSecurity.getIdUser()));
-						
+
 			// Encrypt the password
 			if (!request.getParameter("password").equals(User.MASKED_PASSWORD) && !request.getParameter("password").equals("")) {
 				String pw = user.getUserName() + ":" + REALM + ":" + request.getParameter("password");
@@ -3065,49 +3193,49 @@ public class GenoPubServlet extends HttpServlet {
 					Logger.getLogger(this.getClass().getName()).severe("Unabled to get digested password " + e.toString());
 				}		
 			}
-			
+
 			// Flush here so that if user name changes, the user row is
 			// updated before trying to insert a new role
 			sess.flush();
-	
+
 			tx.commit();
 
 			this.reportSuccess(res, "idUser", user.getIdUser());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleGroupAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
 
 		try {
-			
+
 			// Only admins can add groups
 			if (!this.genoPubSecurity.isAdminRole()) {
 				throw new InsufficientPermissionException("Insufficient permissions to add groups.");
@@ -3117,120 +3245,120 @@ public class GenoPubServlet extends HttpServlet {
 				throw new Exception("Please enter the group name.");
 			}
 
-			
+
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			UserGroup group = new UserGroup();
-			
+
 			group.setName(request.getParameter("name"));
 
 			sess.save(group);
-			
+
 			sess.flush();
-						
+
 			tx.commit();
-			
+
 			this.reportSuccess(res, "idUserGroup", group.getIdUserGroup());
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
-		
+
+
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	private void handleGroupDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			UserGroup group = UserGroup.class.cast(sess.load(UserGroup.class, Util.getIntegerParameter(request, "idUserGroup")));
-			
+
 			// Check write permissions
 			if (!this.genoPubSecurity.canWrite(group)) {
 				throw new InsufficientPermissionException("Insufficient permissions to delete group.");
 			}
-			
+
 			sess.delete(group);
-			
+
 			sess.flush();
-			
-			
+
+
 			tx.commit();
 
-			
-    		this.reportSuccess(res);
-			
-			
+
+			this.reportSuccess(res);
+
+
 		} catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
 
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleGroupUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			UserGroup group = UserGroup.class.cast(sess.load(UserGroup.class, Util.getIntegerParameter(request, "idUserGroup")));
-			
+
 			// Check write permissions
 			if (!this.genoPubSecurity.canWrite(group)) {
 				throw new InsufficientPermissionException("Insufficient permissions to write group.");
 			}
-			
+
 			// Make sure required fields are filled in.
 			if (request.getParameter("name") == null || request.getParameter("name").equals("")) {
 				throw new Exception("Please enter the group name.");
@@ -3240,8 +3368,8 @@ public class GenoPubServlet extends HttpServlet {
 			group.setContact(request.getParameter("contact"));
 			group.setEmail(request.getParameter("email"));
 			group.setInstitute(request.getParameter("institute"));
-			
-			
+
+
 			// Add members
 			StringReader reader = new StringReader(request.getParameter("membersXML"));
 			SAXReader sax = new SAXReader();
@@ -3254,7 +3382,7 @@ public class GenoPubServlet extends HttpServlet {
 				members.add(member);
 			}    
 			group.setMembers(members);
-			
+
 			// Add collaborators
 			reader = new StringReader(request.getParameter("collaboratorsXML"));
 			sax = new SAXReader();
@@ -3267,7 +3395,7 @@ public class GenoPubServlet extends HttpServlet {
 				collaborators.add(collab);
 			}    
 			group.setCollaborators(collaborators);
-			
+
 			// Add managers
 			reader = new StringReader(request.getParameter("managersXML"));
 			sax = new SAXReader();
@@ -3280,55 +3408,55 @@ public class GenoPubServlet extends HttpServlet {
 				managers.add(mgr);
 			}    
 			group.setManagers(managers);
-			
-			
+
+
 			sess.flush();
-						
+
 			tx.commit();
 
 			this.reportSuccess(res, "idUserGroup", group.getIdUserGroup());
-			
-			
+
+
 		}  catch (InsufficientPermissionException e) {
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
 
-	
 
-	
+
+
 	@SuppressWarnings("unchecked")
 	private void handleDictionaryAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 			String dictionaryName = request.getParameter("dictionaryName");
 			Integer id = null;
-			
+
 			if (dictionaryName.equals("AnalysisType")) {
 				AnalysisType dict = new AnalysisType();
 				dict.setName(request.getParameter("name"));
@@ -3351,52 +3479,52 @@ public class GenoPubServlet extends HttpServlet {
 				sess.save(dict);
 				id = dict.getIdExperimentPlatform();
 			} 
-			
+
 			sess.flush();
 
 			tx.commit();
-			
+
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");
 			root.addAttribute("id", id.toString());
 			root.addAttribute("dictionaryName", dictionaryName);
 			XMLWriter writer = new XMLWriter(res.getOutputStream(),
-            OutputFormat.createCompactFormat());
+					OutputFormat.createCompactFormat());
 			writer.write(doc);
-			
-			
+
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
-		
+
+
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	private void handleDictionaryDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 
 			String dictionaryName = request.getParameter("dictionaryName");
 			Integer id = Util.getIntegerParameter(request, "id");
-			
+
 			if (dictionaryName.equals("AnalysisType")) {
 				AnalysisType dict = AnalysisType.class.cast(sess.load(AnalysisType.class, id));
 				// Check write permissions
@@ -3404,7 +3532,7 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("Insufficient permissions to delete dictionary entry.");
 				}
 				sess.delete(dict);
-				
+
 			} else if (dictionaryName.equals("ExperimentMethod")) {
 				ExperimentMethod dict = ExperimentMethod.class.cast(sess.load(ExperimentMethod.class, id));
 				// Check write permissions
@@ -3412,7 +3540,7 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("Insufficient permissions to delete dictionary entry.");
 				}
 				sess.delete(dict);
-				
+
 			} else if (dictionaryName.equals("ExperimentPlatform")) {
 				ExperimentPlatform dict = ExperimentPlatform.class.cast(sess.load(ExperimentPlatform.class, id));
 				// Check write permissions
@@ -3420,51 +3548,51 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("Insufficient permissions to delete dictionary entry.");
 				}
 				sess.delete(dict);
-				
+
 			} 
-			
+
 			sess.flush();
-			
-					
+
+
 			tx.commit();
 
 			this.reportSuccess(res);
-			
-			
+
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
-		
+
+
 	}
 
 
-	
+
 	@SuppressWarnings("unchecked")
 	private void handleDictionaryUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
-		
+
 		try {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
-			
+
 
 			String dictionaryName = request.getParameter("dictionaryName");
 			Integer id = Util.getIntegerParameter(request, "id");
-			
+
 			if (dictionaryName.equals("AnalysisType")) {
 				AnalysisType dict = AnalysisType.class.cast(sess.load(AnalysisType.class, id));
 				// Check write permissions
@@ -3477,7 +3605,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (this.genoPubSecurity.isAdminRole()) {
 					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
 				}
-				
+
 			} else if (dictionaryName.equals("ExperimentMethod")) {
 				ExperimentMethod dict = ExperimentMethod.class.cast(sess.load(ExperimentMethod.class, id));
 				// Check write permissions
@@ -3490,7 +3618,7 @@ public class GenoPubServlet extends HttpServlet {
 				if (this.genoPubSecurity.isAdminRole()) {
 					dict.setIdUser(Util.getIntegerParameter(request, "idUser"));
 				}
-				
+
 			} else if (dictionaryName.equals("ExperimentPlatform")) {
 				ExperimentPlatform dict = ExperimentPlatform.class.cast(sess.load(ExperimentPlatform.class, id));
 				// Check write permissions
@@ -3506,38 +3634,38 @@ public class GenoPubServlet extends HttpServlet {
 			} 
 
 			sess.flush();
-						
+
 			tx.commit();
 
 			this.reportSuccess(res, "id", id);
-			
-			
+
+
 		} catch (InsufficientPermissionException e) {
-			
+
 			this.reportError(res, e.getMessage());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			this.reportError(res, e.toString());
-			
+
 			if (tx != null) {
 				tx.rollback();				
 			}
-			
+
 		} finally {
-			
+
 			if (sess != null) {
 				sess.close();
 			}
 		}
-		
+
 	}
-	
+
 	private void handleVerifyRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess  = null;
 		StringBuffer invalidGenomeVersions = new StringBuffer();
@@ -3588,7 +3716,7 @@ public class GenoPubServlet extends HttpServlet {
 							emptyAnnotations.append(qa.getAnnotation().getName());
 						}
 					}
-					
+
 				}
 			}
 
@@ -3596,17 +3724,17 @@ public class GenoPubServlet extends HttpServlet {
 				StringBuffer message = new StringBuffer();
 				if (invalidGenomeVersions.length() > 0) {
 					message.append("Annotations and sequence for the following genome versions will be bypassed due to missing segment information:\n" + 
-									invalidGenomeVersions.toString() +  
-									".\n\n");			
+							invalidGenomeVersions.toString() +  
+					".\n\n");			
 				}
 				if (emptyAnnotations.length() > 0) {
 					message.append("The following empty annotations will be bypassed:\n" + 
-									emptyAnnotations.toString() +  
-									".\n\n");			
+							emptyAnnotations.toString() +  
+					".\n\n");			
 				}
 				message.append("Do you wish to continue with DAS/2 reload?\n\n");
 				this.reportError(res, message.toString()); 
-				
+
 			} else {
 				this.reportSuccess(res);
 			}
@@ -3622,8 +3750,8 @@ public class GenoPubServlet extends HttpServlet {
 		}
 	}
 
-	
-	
+
+
 	private String getFlexHTMLWrapper(HttpServletRequest request) {
 		StringBuffer buf = new StringBuffer();
 		BufferedReader input = null;
@@ -3677,24 +3805,24 @@ public class GenoPubServlet extends HttpServlet {
 
 		// Make sure we have the parameter
 		if (genometry_genopub_dir == null || genometry_genopub_dir.equals("")) {
-            Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter " + Constants.GENOMETRY_SERVER_DIR_GENOPUB);
+			Logger.getLogger(this.getClass().getName()).severe("Unable to find parameter " + Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 			return false;
 		}
-		
+
 		// Make sure that the genometry server dir exists
-        if (!new File(genometry_genopub_dir).exists()) {
-      	  boolean success = (new File(genometry_genopub_dir)).mkdir();
-            if (!success) {
-              Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_genopub_dir);
-              return false;
-            }
-        }
-        
-		if (genometry_genopub_dir != null && !genometry_genopub_dir.endsWith("/")) {
-		  genometry_genopub_dir += "/";			
+		if (!new File(genometry_genopub_dir).exists()) {
+			boolean success = (new File(genometry_genopub_dir)).mkdir();
+			if (!success) {
+				Logger.getLogger(this.getClass().getName()).severe("Unable to create directory " + genometry_genopub_dir);
+				return false;
+			}
 		}
-		
-		
+
+		if (genometry_genopub_dir != null && !genometry_genopub_dir.endsWith("/")) {
+			genometry_genopub_dir += "/";			
+		}
+
+
 		Logger.getLogger(this.getClass().getName()).fine("genometry_genopub_dir = " + genometry_genopub_dir);
 
 		return true;
@@ -3730,86 +3858,86 @@ public class GenoPubServlet extends HttpServlet {
 		}
 		return names;
 	}
-	
-
-  
-  private String getDigestedPassword(String password) throws NoSuchAlgorithmException{
-    byte[] defaultBytes = password.getBytes();
-    MessageDigest algorithm = MessageDigest.getInstance("MD5");
-    algorithm.reset();
-    algorithm.update(defaultBytes);
-    byte messageDigest[] = algorithm.digest();
-
-    StringBuffer hexString = new StringBuffer(messageDigest.length * 2);
-    for (int i=0; i < messageDigest.length;i++)
-    {
-      int value1 = (int) (messageDigest[i] >> 4);
-      value1 &= 0x0f;
-      if (value1 >= 10)
-      {
-        hexString.append(((char) (value1 - 10 + 'a')));
-      }
-      else
-      {
-        hexString.append(((char) (value1 + '0')));
-      }
-      int value2 = (int) (int) (messageDigest[i] & 0x0f);
-      value2 &= 0x0f;
-      if (value2 >= 10)
-      {
-        hexString.append(((char) (value2 - 10 + 'a')));
-      }
-      else
-      {
-        hexString.append(((char) (value2 + '0')));
-      }
-    }
-    String digestedPassword = hexString.toString();    
-    return digestedPassword;
-  }
-  
-  private void reportError(HttpServletResponse response, String message) {
-	  reportError(response, message, null);
-
-  }
-  private void reportError(HttpServletResponse response, String message, Integer statusCode) {
-	  try {
-		  if (statusCode != null) {
-			  response.setStatus(statusCode.intValue());
-		  }
-		  Document doc = DocumentHelper.createDocument();
-		  Element root = doc.addElement("Error");
-		  root.addAttribute("message", message);
-		  XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
-		  writer.write(doc);	    
-	  } catch (Exception e) {
-		  e.printStackTrace();
-	  }
-
-  }
-  private void reportSuccess(HttpServletResponse response) {
-	  this.reportSuccess(response, null, null);
-  }
-  
-  private void reportSuccess(HttpServletResponse response, Integer id) {
-	  this.reportSuccess(response, "id", id);
-  }
 
 
-  private void reportSuccess(HttpServletResponse response, String attributeName, Integer id) {
-	  try {
-		  Document doc = DocumentHelper.createDocument();
-		  Element root = doc.addElement("SUCCESS");
-		  if (id != null && attributeName != null) {
-			  root.addAttribute(attributeName, id.toString());
-		  }
-		  XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
-		  writer.write(doc);
-	  } catch (Exception e) {
-		  e.printStackTrace();
 
-	  }
-  }
+	private String getDigestedPassword(String password) throws NoSuchAlgorithmException{
+		byte[] defaultBytes = password.getBytes();
+		MessageDigest algorithm = MessageDigest.getInstance("MD5");
+		algorithm.reset();
+		algorithm.update(defaultBytes);
+		byte messageDigest[] = algorithm.digest();
+
+		StringBuffer hexString = new StringBuffer(messageDigest.length * 2);
+		for (int i=0; i < messageDigest.length;i++)
+		{
+			int value1 = (int) (messageDigest[i] >> 4);
+			value1 &= 0x0f;
+			if (value1 >= 10)
+			{
+				hexString.append(((char) (value1 - 10 + 'a')));
+			}
+			else
+			{
+				hexString.append(((char) (value1 + '0')));
+			}
+			int value2 = (int) (int) (messageDigest[i] & 0x0f);
+			value2 &= 0x0f;
+			if (value2 >= 10)
+			{
+				hexString.append(((char) (value2 - 10 + 'a')));
+			}
+			else
+			{
+				hexString.append(((char) (value2 + '0')));
+			}
+		}
+		String digestedPassword = hexString.toString();    
+		return digestedPassword;
+	}
+
+	private void reportError(HttpServletResponse response, String message) {
+		reportError(response, message, null);
+
+	}
+	private void reportError(HttpServletResponse response, String message, Integer statusCode) {
+		try {
+			if (statusCode != null) {
+				response.setStatus(statusCode.intValue());
+			}
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("Error");
+			root.addAttribute("message", message);
+			XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
+			writer.write(doc);	    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	private void reportSuccess(HttpServletResponse response) {
+		this.reportSuccess(response, null, null);
+	}
+
+	private void reportSuccess(HttpServletResponse response, Integer id) {
+		this.reportSuccess(response, "id", id);
+	}
+
+
+	private void reportSuccess(HttpServletResponse response, String attributeName, Integer id) {
+		try {
+			Document doc = DocumentHelper.createDocument();
+			Element root = doc.addElement("SUCCESS");
+			if (id != null && attributeName != null) {
+				root.addAttribute(attributeName, id.toString());
+			}
+			XMLWriter writer = new XMLWriter(response.getOutputStream(), OutputFormat.createCompactFormat());
+			writer.write(doc);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+	}
 
 }
 

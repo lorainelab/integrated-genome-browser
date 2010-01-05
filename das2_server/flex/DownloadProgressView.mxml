@@ -49,8 +49,6 @@
 	    
 	    private static var downloadWindowCount:int = 0;
 	    
-	    
-
 		public function init(parent:DisplayObject, url:String, params:Object, startDownloadButton:Button, estimatedDownloadSize:Number, suggestedFileName:String):void {
 			this.url = url;
 	    	this.params = params;
@@ -152,13 +150,11 @@
 	    		bytesLoadedLastRound = bytesLoaded;
 	    	}
 	    	
-	    	// If event.bytesTotal is not initialized, used the estimated
-	    	// download size instead.
-	    	if (event.bytesTotal == 0) {
-	    		bytesTotal = estimatedDownloadSize;
-	    	} else {
-	    		bytesTotal = event.bytesTotal;
-	    	}
+	    	// Use the estimated download size because we can't depend on 
+	    	// event.bytesTotal.  With IE, 
+	    	// event.bytesTotal = 0; with FireFox, event.bytesTotal is
+	    	// significantly lower than estimated download size.
+	    	bytesTotal = estimatedDownloadSize;
 	    	
 	    	// If we have loaded all of the bytes, show the finalizing download
 	    	// message.

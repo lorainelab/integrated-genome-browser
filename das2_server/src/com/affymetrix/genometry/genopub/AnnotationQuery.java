@@ -222,7 +222,7 @@ public class AnnotationQuery {
 		
 				
 		// Use hash to create XML Document.  Perform 2 passes so that organisms
-		// with populoated genome versions (annotations or sequences) appear first
+		// with populated genome versions (annotations or sequences) appear first
 		// in the list.
 
 		fillOrganismNodes(root, dictionaryHelper, genoPubSecurity, true);

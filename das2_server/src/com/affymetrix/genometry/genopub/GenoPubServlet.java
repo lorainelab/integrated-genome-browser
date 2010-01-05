@@ -60,6 +60,8 @@ public class GenoPubServlet extends HttpServlet {
 	private static final int ERROR_CODE_UNSUPPORTED_FILE_TYPE     = 902;
 	private static final int ERROR_CODE_INCORRECT_FILENAME        = 903;
 	private static final int ERROR_CODE_INSUFFICIENT_PERMISSIONS  = 904;
+	
+	private static final String SESSION_DOWNLOAD_KEYS              = "genopubDownloadKeys";
 
 	public static final String SECURITY_REQUEST                   = "security";
 	public static final String DICTIONARIES_REQUEST               = "dictionaries";
@@ -2425,6 +2427,8 @@ public class GenoPubServlet extends HttpServlet {
 			sess = HibernateUtil.getSessionFactory().openSession();
 			tx = sess.beginTransaction();
 
+			DictionaryHelper dh = DictionaryHelper.getInstance(sess);
+
 			res.setDateHeader("Expires", -1);
 			res.setDateHeader("Last-Modified", System.currentTimeMillis());
 			res.setHeader("Pragma", "");
@@ -2466,6 +2470,7 @@ public class GenoPubServlet extends HttpServlet {
 
 			}
 
+			
 
 			if (idAnnotation != null) {				
 				annotation = (Annotation)sess.get(Annotation.class, idAnnotation);
@@ -2526,11 +2531,7 @@ public class GenoPubServlet extends HttpServlet {
 
 							// If this is a bar file, does the file name match a known segment name?
 							if (fileName.toUpperCase().endsWith(".BAR")) {
-
-								DictionaryHelper dh = DictionaryHelper.getInstance(sess);
-								GenomeVersion genomeVersion = dh.getGenomeVersion(annotation.getIdGenomeVersion());
-								sess.refresh(genomeVersion);
-
+								GenomeVersion genomeVersion = GenomeVersion.class.cast(sess.load(GenomeVersion.class, annotation.getIdGenomeVersion()));
 								if (!Util.fileHasSegmentName(fileName, genomeVersion)) {
 									String message = "Bypassing upload of annotation file  " + fileName + " for annotation " + annotation.getName() + ".  File name is invalid because it does not start with a valid segment name.";    	    					
 									throw new IncorrectFileNameException(message);
@@ -2766,6 +2767,7 @@ public class GenoPubServlet extends HttpServlet {
 			
 		
 	}
+
 	
 	@SuppressWarnings("unchecked")
 	private void handleAnnotationEstimateDownloadSizeRequest(HttpServletRequest req, HttpServletResponse res) {
@@ -2793,34 +2795,43 @@ public class GenoPubServlet extends HttpServlet {
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
 				for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
 					double compressionRatio = 1;
-					if (file.getName().toUpperCase().endsWith("FEP")) {
-						compressionRatio = 1.6;
-					} else if (file.getName().toUpperCase().endsWith("PDF")) {
+					if (file.getName().toUpperCase().endsWith("BAR")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("BED")) {
+						compressionRatio = 2.5;
+					} else if (file.getName().toUpperCase().endsWith("GFF")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("BRS")) {
+						compressionRatio = 4;
+					} else if (file.getName().toUpperCase().endsWith("BGN")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("BGR")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("BP1")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("BP2")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("CYT")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("GTF")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("PSL")) {
+						compressionRatio = 3;
+					} else if (file.getName().toUpperCase().endsWith("USEQ")) {
 						compressionRatio = 1;
-					} else if (file.getName().toUpperCase().endsWith("TIF")) {
-						compressionRatio = 1.9;
-					} else if (file.getName().toUpperCase().endsWith("TIFF")) {
-						compressionRatio = 1.9;
-					} else if (file.getName().toUpperCase().endsWith("JPG")) {
-						compressionRatio = 1;
-					} else if (file.getName().toUpperCase().endsWith("JPEG")) {
-						compressionRatio = 1;
-					} else if (file.getName().toUpperCase().endsWith("TXT")) {
-						compressionRatio = 2.7; 
-					} else if (file.getName().toUpperCase().endsWith("RTF")) {
-						compressionRatio = 2.7;
-					} else if (file.getName().toUpperCase().endsWith("DAT")) {
-						compressionRatio = 1.6;
-					} else if (file.getName().toUpperCase().endsWith("CEL")) {
-						compressionRatio = 2.8;
-					} else if (file.getName().toUpperCase().endsWith("ZIP")) {
-						compressionRatio = 1;
-					} else if (file.getName().toUpperCase().endsWith("GZ")) {
-						compressionRatio = 1;
-					}     
+					} else if (file.getName().toUpperCase().endsWith("BNIB")) {
+						compressionRatio = 2;
+					}  else if (file.getName().toUpperCase().endsWith("FASTA")) {
+						compressionRatio = 2;
+					}       
 					estimatedDownloadSize += new BigDecimal(file.length() / compressionRatio).longValue();
 				}
 			}
+
+			// Store download keys in session b/c Flex FileReference cannnot
+			// handle long request parameter
+			req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, keys);
+			
 			this.reportSuccess(res, "size", new Long(estimatedDownloadSize).toString());
 		} catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.toString());
@@ -2838,8 +2849,13 @@ public class GenoPubServlet extends HttpServlet {
 	private void handleAnnotationDownloadRequest(HttpServletRequest req, HttpServletResponse res) {
 		Session sess = null;
 
-		// Get the request parameter with the keys;
-		String keys = req.getParameter("keys");
+		// Get the download keys stored in session when download size estimated.  
+		// Can't use request parameter here do to Flex FileReference url properties
+		// size restriction.
+		String keys = (String)req.getSession().getAttribute(SESSION_DOWNLOAD_KEYS);
+		
+		// Now empty out the session attribute
+		req.getSession().setAttribute(SESSION_DOWNLOAD_KEYS, "");
 	    
 	    // Get the parameter that tells us if we are handling a large download.
 		ArchiveHelper archiveHelper = new ArchiveHelper();
@@ -2848,8 +2864,15 @@ public class GenoPubServlet extends HttpServlet {
 	    }
 		
 		try {
+			if (keys == null || keys.equals("")) {
+				throw new Exception("Cannot perform download due to empty keys parameter.");
+			}
 			sess = HibernateUtil.getSessionFactory().openSession();
 		        
+			res.setContentType("application/x-download");
+		    res.setHeader("Content-Disposition", "attachment;filename=genopub_annotations.zip");
+		    res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+		    
 	        // Open the archive output stream
 	        archiveHelper.setTempDir("./");
 	        TarArchiveOutputStream tarOut = null;
@@ -2954,10 +2977,9 @@ public class GenoPubServlet extends HttpServlet {
 			}
 			 
 			
-			res.setContentType("application/x-download");
-		    res.setHeader("Content-Disposition", "attachment;filename=genopub_annotations.zip");
-		    res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+
 	        
+
 	        
 	        if (archiveHelper.isZipMode()) {
 	          zipOut.finish();

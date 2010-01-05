@@ -52,9 +52,9 @@ public class GlyphTestMap extends JApplet implements ActionListener {
     map = new NeoMap(false, false);
     //    map.setMapColor(Color.PINK);
     // make sure map expands to encompass all glyph x coords
-    map.setExpansionBehavior(NeoMap.X, NeoMap.EXPAND); 
+    map.setExpansionBehavior(NeoMap.X, NeoMap.EXPAND);
     // make sure map expands to encompass all glyph y coords
-    map.setExpansionBehavior(NeoMap.Y, NeoMap.EXPAND);  
+    map.setExpansionBehavior(NeoMap.Y, NeoMap.EXPAND);
     map.setMapRange(0, 500);
     map.setMapOffset(-20, 100);
     map.addAxis(0);

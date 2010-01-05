@@ -50,6 +50,7 @@ public class NeoWidgetICustomizer
 	protected GridBagLayout layout;
 	protected GridBagConstraints labelConstraints = new GridBagConstraints();
 	protected GridBagConstraints valueConstraints = new GridBagConstraints();
+	protected GridBagConstraints descConstraints =  new GridBagConstraints();
 	protected FlowLayout valuePanelLayout = new FlowLayout(FlowLayout.LEFT);
 
 	protected Choice colorChoice;
@@ -75,8 +76,12 @@ public class NeoWidgetICustomizer
 		labelConstraints.gridx = 0;
 
 		valueConstraints.gridy = 0;
+		//valueConstraints.anchor = GridBagConstraints.CENTER;
 		valueConstraints.anchor = GridBagConstraints.WEST;
-		valueConstraints.gridwidth = GridBagConstraints.REMAINDER;
+		//valueConstraints.gridwidth = GridBagConstraints.REMAINDER;
+		
+		descConstraints.anchor = GridBagConstraints.WEST;
+		descConstraints.gridwidth = GridBagConstraints.REMAINDER;
 
 		includeBackgroundEditor();
 
@@ -98,6 +103,9 @@ public class NeoWidgetICustomizer
 		layout.setConstraints(backgroundColorPanel, valueConstraints);
 		backgroundColorPanel.add(colorChoice);
 		add(backgroundColorPanel);
+		Label descLabel = new Label("Background color of the map", Label.LEFT);
+		layout.setConstraints(descLabel, descConstraints);
+		add(descLabel);
 		valueConstraints.gridy++;
 	}
 
@@ -112,6 +120,9 @@ public class NeoWidgetICustomizer
 		layout.setConstraints(foregroundColorPanel, valueConstraints);
 		foregroundColorPanel.add(foregroundColorChoice);
 		add(foregroundColorPanel);
+		Label descLabel = new Label("Foreground color of the map", Label.LEFT);
+		layout.setConstraints(descLabel, descConstraints);
+		add(descLabel);
 		valueConstraints.gridy++;
 	}
 
@@ -126,6 +137,9 @@ public class NeoWidgetICustomizer
 		layout.setConstraints(fuzzinessPanel, valueConstraints);
 		fuzzinessPanel.add(fuzzinessChoice);
 		add(fuzzinessPanel);
+		Label descLabel = new Label("Precision of pointer in the map", Label.LEFT);
+		layout.setConstraints(descLabel, descConstraints);
+		add(descLabel);
 		valueConstraints.gridy++;
 	}
 
@@ -148,6 +162,9 @@ public class NeoWidgetICustomizer
 		selectionPanel.add(selectionChoice);
 		selectionPanel.add(selectionColorChoice);
 		add(selectionPanel);
+		Label descLabel = new Label("Appearance, color and event for selected glyph", Label.LEFT);
+		layout.setConstraints(descLabel, descConstraints);
+		add(descLabel);
 		valueConstraints.gridy++;
 	}
 

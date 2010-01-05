@@ -31,6 +31,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.glyph.StringGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoMapCustomizer;
@@ -108,9 +109,18 @@ public class NeoMapDemo extends JApplet
   public NeoMapDemo()  {
 
     going = true;
-    map = new NeoMap(true, true);
+    map = new NeoMap(true, true){
+		@Override
+		public void componentResized(ComponentEvent evt) {
+			if (evt.getSource() == canvas) {
+				this.stretchToFit(false, true);
+				this.updateWidget();
+			}
+		}
+	};
+	
     map.setMapColor(nicePaleBlue);
-
+	
     /**
      *  Use the NeoMap's built-in selection behavior.
      */
@@ -160,6 +170,9 @@ public class NeoMapDemo extends JApplet
 
     map.addMouseListener(this);
     map.addRubberBandListener(this);
+	
+	map.setReshapeBehavior(NeoMap.X, NeoMap.EXPAND);
+	map.setReshapeBehavior(NeoMap.Y, NeoMap.EXPAND);
   }
 
   public void addItemsDirectly() {
@@ -215,6 +228,15 @@ public class NeoMapDemo extends JApplet
     map.addItem(gene_item, map.addItem(100, 200));
     map.addItem(gene_item, map.addItem(350, 375));
     map.addItem(gene_item, map.addItem(600, 700));
+
+	fac.setGlyphtype(StringGlyph.class);
+	fac.setOffset(0);
+	fac.setWidth(20);
+	fac.setBackgroundColor(Color.blue);
+	StringGlyph str_glyph = (StringGlyph) map.addItem(200,600);
+	str_glyph.setString("Click Edit > Properties to change map behavior");
+	str_glyph.setForegroundColor(Color.red);
+
   }
 
   /**
@@ -485,6 +507,7 @@ public class NeoMapDemo extends JApplet
     if (coord_source == map && e instanceof NeoMouseEvent) {
       // Make the selected item the center of zooming.
       map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, nme.getCoordX());
+	  map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_COORD, nme.getCoordY());
     }
   }
 
@@ -561,7 +584,7 @@ public class NeoMapDemo extends JApplet
 	propframe.pack();
 //	propframe.addWindowListener(this);
       }
-      propframe.setBounds(200, 200, 500, 300);
+      propframe.setBounds(200, 200, 750, 300);
       propframe.setVisible(true);
     }
 

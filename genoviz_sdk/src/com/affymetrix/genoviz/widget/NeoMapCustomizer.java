@@ -53,6 +53,9 @@ public class NeoMapCustomizer
 		layout.setConstraints(mapColorPanel, valueConstraints);
 		mapColorPanel.add(mapColorChoice);
 		add(mapColorPanel);
+		Label descLabel = new Label("Background color of the map", Label.LEFT);
+		layout.setConstraints(descLabel, descConstraints);
+		add(descLabel);
 		valueConstraints.gridy++;
 	}
 

@@ -43,6 +43,9 @@ public class NeoWidgetCustomizer
 		layout.setConstraints(scrollingPanel, valueConstraints);
 		scrollingPanel.add(scrollingIncrBehavior);
 		add(scrollingPanel);
+		Label descScrollingLabel = new Label("Don't know what Scrolling Do", Label.LEFT);
+		layout.setConstraints(descScrollingLabel, descConstraints);
+		add(descScrollingLabel);
 		valueConstraints.gridy++;
 
 		// Rubber Band
@@ -54,6 +57,9 @@ public class NeoWidgetCustomizer
 		layout.setConstraints(bandingPanel, valueConstraints);
 		bandingPanel.add(bandingBehavior);
 		add(bandingPanel);
+		Label descBandingLabel = new Label("Don't know what Rubber Band Do", Label.LEFT);
+		layout.setConstraints(descBandingLabel, descConstraints);
+		add(descBandingLabel);
 		valueConstraints.gridy++;
 
 		// Zoom Behavior
@@ -66,6 +72,9 @@ public class NeoWidgetCustomizer
 		zoomingPanel.add(zoomingXChoice);
 		zoomingPanel.add(zoomingYChoice);
 		add(zoomingPanel);
+		Label descZoomLabel = new Label("Don't know what Zoom Do", Label.LEFT);
+		layout.setConstraints(descZoomLabel, descConstraints);
+		add(descZoomLabel);
 		valueConstraints.gridy++;
 
 		includeReshapeBehavior();
@@ -92,6 +101,9 @@ public class NeoWidgetCustomizer
 		reshapingPanel.add(reshapingBehaviorX);
 		reshapingPanel.add(reshapingBehaviorY);
 		add(reshapingPanel);
+		Label descLabel = new Label("Fit the map in available area", Label.LEFT);
+		layout.setConstraints(descLabel, descConstraints);
+		add(descLabel);
 		valueConstraints.gridy++;
 	}
 

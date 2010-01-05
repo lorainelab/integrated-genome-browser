@@ -48,8 +48,8 @@
 	
 	public function initializeFileUploadParameters():void{
            var postVariables:URLVariables = new URLVariables;
-		   postVariables.idAnnotation = idAnnotation; 
 		   postVariables.idAnnotationGrouping = idAnnotationGrouping;
+		   postVariables.idAnnotation = idAnnotation; 
 		   multiFileUpload.setUploadURLParameters(postVariables);  
 	}
 			
@@ -92,8 +92,8 @@
         	
         } else {
         	var postVariables:URLVariables = new URLVariables;
-	        postVariables.idAnnotation = idAnnotation;
 	        postVariables.idAnnotationGrouping = idAnnotationGrouping;
+	        postVariables.idAnnotation = idAnnotation;
 	        multiFileUpload.setUploadURLParameters(postVariables);  
         }
       

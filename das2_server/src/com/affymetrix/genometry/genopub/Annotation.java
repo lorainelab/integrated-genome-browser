@@ -277,6 +277,29 @@ public class Annotation implements Owned {
 	    }
 	}
 
+	
+	public List<File> getFiles(String data_root) throws IOException {
+		
+		ArrayList<File> files = new ArrayList<File>();
+		
+		String filePath = getDirectory(data_root);
+	    File dir = new File(filePath);
+	    
+	    if (dir.exists()) {
+		    // Delete the files in the directory
+		    String[] childFileNames = dir.list();
+		    if (childFileNames != null) {
+				for (int x = 0; x < childFileNames.length; x++) {
+					String fileName = filePath + "/" + childFileNames[x];
+					File f = new File(fileName);
+					files.add(f);
+				}
+		    	
+		    }
+	    }
+	    
+	    return files;
+	}
 	public boolean isBarGraphData(String data_root) throws IOException {
 		boolean isExtension = false;
 		String filePath = getDirectory(data_root);

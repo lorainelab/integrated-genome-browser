@@ -58,7 +58,19 @@
     <mx:request>
     </mx:request>
    </mx:HTTPService> 
-     
+   
+   <mx:HTTPService             
+    id="getDownloadEstimatedSize" 
+    url="genopub/annotationEstimateDownloadSize"
+    resultFormat="e4x"
+    showBusyCursor="true"
+    result="onGetDownloadEstimatedSize(event)"
+    fault="parentApplication.onFailHttpRequest('Failed to get annotation download estimated size', event)"
+    method="POST"
+    useProxy="false">
+    <mx:request>
+    </mx:request>
+   </mx:HTTPService>  
    	<mx:HTTPService             
     id="getGenomeVersion" 
     url="genopub/genomeVersion"
@@ -264,6 +276,14 @@
         private var MENUITEM_DELETE_ANNOTATION:String          = "Remove annotation";
         private var MENUITEM_DELETE_ANNOTATION_GROUPING:String = "Remove folder";
     	
+    	private static const  KB:Number = Math.pow(2, 10);
+  		private static const  MB:Number = Math.pow(2, 20);
+  		private static const  GB:Number = Math.pow(2, 30);
+  		private static const   ZIP_MAX_SIZE:Number = (4 * GB);
+    	
+    	private const DOWNLOAD_FILES_URL:String       = "genopub/annotationDownloadFiles"; 
+		private const SUGGESTED_LOCAL_FILENAME:String = "genopub-data";  
+
     	[Bindable]
     	private var newButtonMenuForOrganisms:Menu = new Menu();
     	[Bindable]
@@ -289,6 +309,9 @@
         
         private var itemToRemove:Object = null;
         private var itemsToRemove:Array = new Array();
+
+        private var downloadKeys:String = new String();
+        private var estimatedDownloadSize:Number = new Number();
         
         private static var alertButtonWidthDefault:Number = Alert.buttonWidth;
         
@@ -957,6 +980,140 @@
 			return ancestor;
         }
         
+        private function getChildAnnotations(item:Object, children:Array):void {
+			for each(var child:Object in item.children()) {
+				if (child.name() == "Annotation") {
+					children.push(child);											
+				} else {
+					this.getChildAnnotations(child, children);
+				}
+			}
+        }
+        
+        private function promptToDownloadSelectedItems():void {
+        	var itemsToDownload:Array = new Array();
+        	downloadKeys = new String();
+        	for each(var item:Object in annotationsTree.selectedItems) {
+        		var annotations:Array = new Array();
+        		if (item.name() == "Annotation") {
+        			annotations.push(item);
+        		} else {
+        			getChildAnnotations(item, annotations);
+        		}
+        		
+        		for each (var annotation:Object in annotations) {
+	        		// Get rid of duplicates
+	        		var keep:Boolean = true;
+        		
+    	    		for each(var di:Object in itemsToDownload) {
+        				if (di.@idAnnotation == annotation.@idAnnotation) {
+        					keep = false;
+        					break;
+        				}
+        			}
+    	    		if (keep) {
+        				itemsToDownload.push(annotation);
+        				var idAnnotationGrouping:Object = annotation.@idAnnotationGrouping != "" ? annotation.@idAnnotationGrouping : "-99";
+        				downloadKeys += annotation.@idAnnotation + "," + idAnnotationGrouping + ":";         						
+        			}
+        		}
+        	}
+        	if (itemsToDownload.length == 0) {
+        		Alert.show("Please select the annotations or folders to download.");
+        		return;
+        	}
+        	var params:Object = new Object();
+        	params.keys = downloadKeys;
+        	this.getDownloadEstimatedSize.send(params);
+        }
+
+        
+        private function onGetDownloadEstimatedSize(event:ResultEvent):void {
+    		if (getDownloadEstimatedSize.lastResult.@size == 0) {
+    			Alert.show("No data files exist in the selected folder(s).", "");
+    		} else {
+    			estimatedDownloadSize = getDownloadEstimatedSize.lastResult.@size;
+	    	
+    			var call:Object = event.token;
+				Alert.show( "Ready to download approximately " + getFileSizeText(estimatedDownloadSize) + " of data.  Proceed?",
+						"",
+						(Alert.YES | Alert.NO), this, 
+						downloadFiles); 
+    		
+    		}
+    	}
+    	
+    	        
+        public static function getFileSizeText(theFileSize:Number):String {
+	    	var size:Number = 0;
+	    	var sizeTxt:String = "";
+	    	if (theFileSize > GB ) {
+	    		// Round gigabyte to the one decimal place
+	      		size = Math.round((theFileSize / GB) * 10) / 10;
+	      		if (size == 0) {
+	      			size = 1;
+	      		} 
+	      		sizeTxt = size + " GB";
+	    	}  else if (theFileSize > MB ) {
+	    		// Round megabyte to neareast whole number
+	      		size = Math.round(theFileSize / MB);
+	      		if (size == 0) {
+	      			size = 1;
+	      		}
+	      		sizeTxt = size + " MB";
+	    	} else if (theFileSize > KB ) {
+	    		// Round kb to the nearest 100th place
+	      		size = Math.round((theFileSize / KB) / 100) * 100;
+	      		if (size == 0) {
+	      			size = 1;
+	      		}
+	      		sizeTxt = size + " KB";
+	    	} else {
+	    		// Round bytes to nearest 100th place
+	      		size = Math.round(theFileSize / 100) * 100;
+				if (size == 0) {
+	      			size = 1;
+	      		}
+	      		sizeTxt = size + " bytes";
+	    	}
+	    	return sizeTxt;
+	  	}
+
+
+		private function downloadFiles(event:CloseEvent):void {
+			if (event.detail==Alert.YES) {
+		        var parms:URLVariables = new URLVariables();
+		        parms.keys = downloadKeys;
+	        	parms.mode = estimatedDownloadSize >= ZIP_MAX_SIZE ? "tar" : "zip";
+	        	
+	    		var progressWindow:DownloadProgressView = new DownloadProgressView();	        
+	    		progressWindow.init(this, 
+	    		  this.DOWNLOAD_FILES_URL, 
+	    		  parms, 
+	    		  this.downloadButton, 
+	    		  estimatedDownloadSize, 
+	    		  this.SUGGESTED_LOCAL_FILENAME);
+			}
+	
+		}  
+        
+        private function removeSelectedItems():void {
+    		if (itemsToRemove.length == 0) {
+    			return;
+    		}
+    		itemToRemove = itemsToRemove.shift();
+    		if (itemToRemove.name() == "Organism") {
+    			this.promptToRemoveOrganism();
+    		} else if (itemToRemove.name() == "GenomeVersion") {
+    			this.promptToRemoveGenomeVersion();
+    		} else if (itemToRemove.name() == "AnnotationGrouping") {
+    			this.promptToRemoveAnnotationGrouping();
+    		} else if (itemToRemove.name() == "Annotation") {
+    			this.promptToRemoveAnnotation();
+    		}
+        	
+        }
+        
         private function promptToRemoveSelectedItems():void {
         	itemsToRemove = new Array();
         	for each(var item:Object in annotationsTree.selectedItems) {
@@ -1012,24 +1169,6 @@
         	}
         	removeSelectedItems();
         }
-        
-        private function removeSelectedItems():void {
-    		if (itemsToRemove.length == 0) {
-    			return;
-    		}
-    		itemToRemove = itemsToRemove.shift();
-    		if (itemToRemove.name() == "Organism") {
-    			this.promptToRemoveOrganism();
-    		} else if (itemToRemove.name() == "GenomeVersion") {
-    			this.promptToRemoveGenomeVersion();
-    		} else if (itemToRemove.name() == "AnnotationGrouping") {
-    			this.promptToRemoveAnnotationGrouping();
-    		} else if (itemToRemove.name() == "Annotation") {
-    			this.promptToRemoveAnnotation();
-    		}
-        	
-        }
-        
 
         /***********************************************************************
         * 
@@ -2129,6 +2268,11 @@
 				            	toolTip="Delete annotation"  id="removeAnnotationButton"/>
 				            </mx:HBox>
 				        </mx:ViewStack>
+				        <mx:VRule height="20" id="vrule21" width="2"/>
+				        <mx:LinkButton styleName="linkMenuButton" label="Download" 
+				        	icon="@Embed(source='assets/download.gif')" 
+				            enabled="true"
+				        	click="{treeItemToSelect=null;promptToDownloadSelectedItems()}" id="downloadButton"/>
 				        <mx:VRule height="20" id="vrule1" width="2"/>
 				        <mx:LinkButton styleName="linkMenuButton" label="Refresh" 
 				        	icon="@Embed(source='assets/refresh.png')" 
@@ -2567,7 +2711,7 @@
 			<mx:RemoveChild target="{removeButtonStack}"/>
 			<mx:RemoveChild target="{vrule3}"/>
 			<mx:RemoveChild target="{hbox15}"/>
-			<mx:AddChild relativeTo="{linkbutton8}" position="before" target="{hbox15}"/>
+			<mx:AddChild relativeTo="{vrule2}" position="before" target="{hbox15}"/>
 			<mx:RemoveChild target="{vrule2}"/>
 			<mx:RemoveChild target="{duplicateButton}"/>
 			<mx:RemoveChild target="{vrule0}"/>
@@ -2575,6 +2719,16 @@
 			<mx:RemoveChild target="{vrule5}"/>
 			<mx:RemoveChild target="{vrule6}"/>
 			<mx:SetProperty target="{hbox17}" name="styleName"/>
+			<mx:RemoveChild target="{downloadButton}"/>
+			<mx:AddChild relativeTo="{hbox15}" position="lastChild" target="{downloadButton}"/>
+			<mx:RemoveChild target="{linkbutton8}"/>
+			<mx:AddChild relativeTo="{hbox15}" position="lastChild" target="{linkbutton8}"/>
+			<mx:AddChild relativeTo="{linkbutton8}" position="before">
+				<mx:VRule height="20"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{downloadButton}" position="before">
+				<mx:Spacer width="30"/>
+			</mx:AddChild>
 	
          </mx:State>
 	</mx:states>

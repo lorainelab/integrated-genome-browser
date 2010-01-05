@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -18,6 +21,8 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -25,6 +30,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -35,7 +42,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
-import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
@@ -82,6 +88,8 @@ public class GenoPubServlet extends HttpServlet {
 	public static final String ANNOTATION_INFO_REQUEST            = "annotationInfo";
 	public static final String ANNOTATION_FORM_UPLOAD_URL_REQUEST = "annotationUploadURL";
 	public static final String ANNOTATION_UPLOAD_FILES_REQUEST    = "annotationUploadFiles"; 
+	public static final String ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST  = "annotationEstimateDownloadSize"; 
+	public static final String ANNOTATION_DOWNLOAD_FILES_REQUEST  = "annotationDownloadFiles"; 
 	public static final String USERS_AND_GROUPS_REQUEST           = "usersAndGroups"; 
 	public static final String USER_ADD_REQUEST                   = "userAdd";
 	public static final String USER_PASSWORD_REQUEST              = "userPassword"; 
@@ -191,7 +199,11 @@ public class GenoPubServlet extends HttpServlet {
 				this.handleAnnotationFormUploadURLRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.ANNOTATION_UPLOAD_FILES_REQUEST)) {
 				this.handleAnnotationUploadRequest(req, res);
-			} else if (req.getPathInfo().endsWith(this.USERS_AND_GROUPS_REQUEST)) {
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_DOWNLOAD_FILES_REQUEST)) {
+				this.handleAnnotationDownloadRequest(req, res);
+			} else if (req.getPathInfo().endsWith(this.ANNOTATION_ESTIMATE_DOWNLOAD_SIZE_REQUEST)) {
+				this.handleAnnotationEstimateDownloadSizeRequest(req, res);
+			}  else if (req.getPathInfo().endsWith(this.USERS_AND_GROUPS_REQUEST)) {
 				this.handleUsersAndGroupsRequest(req, res);
 			} else if (req.getPathInfo().endsWith(this.USER_ADD_REQUEST)) {
 				this.handleUserAddRequest(req, res);
@@ -2549,7 +2561,7 @@ public class GenoPubServlet extends HttpServlet {
 			if (tx != null) {
 				tx.rollback();
 			}
-			this.reportError(res, e.getMessage(),ERROR_CODE_UNSUPPORTED_FILE_TYPE);
+			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
 		}  catch (IncorrectFileNameException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
@@ -2754,9 +2766,221 @@ public class GenoPubServlet extends HttpServlet {
 			
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void handleAnnotationEstimateDownloadSizeRequest(HttpServletRequest req, HttpServletResponse res) {
+		Session sess = null;
 
+		// Get the request parameter with the keys;
+		String keys = req.getParameter("keys");
+		
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+
+	        long estimatedDownloadSize = 0;
+			
+			String[] keyTokens = keys.split(":");
+			for(int x = 0; x < keyTokens.length; x++) {
+				String key = keyTokens[x];
+				
+				String[] idTokens = key.split(",");
+				if (idTokens.length != 2) {
+					throw new Exception("Invalid parameter format " + key + " encountered. Expected 99,99 for idAnnotation and idAnnotationGrouping");
+				}
+				Integer idAnnotation = new Integer(idTokens[0]);
+				Integer idAnnotationGrouping = new Integer(idTokens[1]);
+				
+				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
+				for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
+					double compressionRatio = 1;
+					if (file.getName().toUpperCase().endsWith("FEP")) {
+						compressionRatio = 1.6;
+					} else if (file.getName().toUpperCase().endsWith("PDF")) {
+						compressionRatio = 1;
+					} else if (file.getName().toUpperCase().endsWith("TIF")) {
+						compressionRatio = 1.9;
+					} else if (file.getName().toUpperCase().endsWith("TIFF")) {
+						compressionRatio = 1.9;
+					} else if (file.getName().toUpperCase().endsWith("JPG")) {
+						compressionRatio = 1;
+					} else if (file.getName().toUpperCase().endsWith("JPEG")) {
+						compressionRatio = 1;
+					} else if (file.getName().toUpperCase().endsWith("TXT")) {
+						compressionRatio = 2.7; 
+					} else if (file.getName().toUpperCase().endsWith("RTF")) {
+						compressionRatio = 2.7;
+					} else if (file.getName().toUpperCase().endsWith("DAT")) {
+						compressionRatio = 1.6;
+					} else if (file.getName().toUpperCase().endsWith("CEL")) {
+						compressionRatio = 2.8;
+					} else if (file.getName().toUpperCase().endsWith("ZIP")) {
+						compressionRatio = 1;
+					} else if (file.getName().toUpperCase().endsWith("GZ")) {
+						compressionRatio = 1;
+					}     
+					estimatedDownloadSize += new BigDecimal(file.length() / compressionRatio).longValue();
+				}
+			}
+			this.reportSuccess(res, "size", new Long(estimatedDownloadSize).toString());
+		} catch (Exception e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.toString());
+			e.printStackTrace();
+			this.reportError(res, e.toString(), ERROR_CODE_OTHER);
+		} finally {
+			if (sess != null) {
+				sess.close();
+			}
+		}
+	}
 	
-	
+
+	@SuppressWarnings("unchecked")
+	private void handleAnnotationDownloadRequest(HttpServletRequest req, HttpServletResponse res) {
+		Session sess = null;
+
+		// Get the request parameter with the keys;
+		String keys = req.getParameter("keys");
+	    
+	    // Get the parameter that tells us if we are handling a large download.
+		ArchiveHelper archiveHelper = new ArchiveHelper();
+		if (req.getParameter("mode") != null && !req.getParameter("mode").equals("")) {
+	      archiveHelper.setMode(req.getParameter("mode"));
+	    }
+		
+		try {
+			sess = HibernateUtil.getSessionFactory().openSession();
+		        
+	        // Open the archive output stream
+	        archiveHelper.setTempDir("./");
+	        TarArchiveOutputStream tarOut = null;
+	        ZipOutputStream zipOut = null;
+	        if (archiveHelper.isZipMode()) {
+	          zipOut = new ZipOutputStream(res.getOutputStream());
+	        } else {
+	          tarOut = new TarArchiveOutputStream(res.getOutputStream());
+	        }
+	        
+	        long totalArchiveSize = 0;
+			
+			String[] keyTokens = keys.split(":");
+			for(int x = 0; x < keyTokens.length; x++) {
+				String key = keyTokens[x];
+				
+				String[] idTokens = key.split(",");
+				if (idTokens.length != 2) {
+					throw new Exception("Invalid parameter format " + key + " encountered. Expected 99,99 for idAnnotation and idAnnotationGrouping");
+				}
+				Integer idAnnotation = new Integer(idTokens[0]);
+				Integer idAnnotationGrouping = new Integer(idTokens[1]);
+				
+				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
+				
+				if (!this.genoPubSecurity.canRead(annotation)) {
+					throw new InsufficientPermissionException("Insufficient permission to read/download annotation.");
+				}
+				
+				AnnotationGrouping annotationGrouping = null;
+				if (idAnnotationGrouping.intValue() == -99) {
+					DictionaryHelper dh = DictionaryHelper.getInstance(sess);
+					GenomeVersion gv = dh.getGenomeVersion(annotation.getIdGenomeVersion());
+					annotationGrouping = gv.getRootAnnotationGrouping();
+				} else {
+					for(AnnotationGrouping ag : (Set<AnnotationGrouping>)annotation.getAnnotationGroupings()) {
+						if (ag.getIdAnnotationGrouping().equals(idAnnotationGrouping)) {
+							annotationGrouping = ag;
+							break;
+							
+						}
+					}
+					
+				}
+				if (annotationGrouping == null) {
+					throw new Exception("Unable to find annotation grouping " + idAnnotationGrouping);
+				}
+				
+				String path = annotationGrouping.getQualifiedName() + "/" + annotation.getName() + "/";
+				
+				
+				for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
+					String zipEntryName = path + file.getName();
+					archiveHelper.setArchiveEntryName(zipEntryName);
+		            
+		            // If we are using tar, compress the file first using
+		            // zip.  If we are zipping the file, just open
+		            // it to read.            
+		            InputStream in = archiveHelper.getInputStreamToArchive(file.getAbsolutePath(), zipEntryName);
+		            
+
+		            // Add an entry to the archive 
+		            // (The file name starts after the year subdirectory)
+		            ZipEntry zipEntry = null;
+		            if (archiveHelper.isZipMode()) {
+		              // Add ZIP entry 
+		              zipEntry = new ZipEntry(archiveHelper.getArchiveEntryName());
+		              zipOut.putNextEntry(zipEntry);              
+		            } else {
+		              // Add a TAR archive entry
+		              TarArchiveEntry entry = new TarArchiveEntry(archiveHelper.getArchiveEntryName());
+		              entry.setSize(archiveHelper.getArchiveFileSize());
+		              tarOut.putArchiveEntry(entry);
+		            }
+		            
+
+		            // Transfer bytes from the file to the archive file
+		            OutputStream out = null;
+		            if (archiveHelper.isZipMode()) {
+		              out = zipOut;
+		            } else {
+		              out = tarOut;
+		            }
+		            int size = archiveHelper.transferBytes(in, out);
+		            totalArchiveSize += size;
+
+		            if (archiveHelper.isZipMode()) {
+		              zipOut.closeEntry();              
+		              totalArchiveSize += zipEntry.getCompressedSize();
+		            } else {
+		              tarOut.closeArchiveEntry();
+		              totalArchiveSize += archiveHelper.getArchiveFileSize();
+		            }
+		            
+		            // Remove temporary files
+		            archiveHelper.removeTemporaryFile();
+				
+				}
+				
+
+				
+			}
+			 
+			
+			res.setContentType("application/x-download");
+		    res.setHeader("Content-Disposition", "attachment;filename=genopub_annotations.zip");
+		    res.setHeader("Cache-Control", "max-age=0, must-revalidate");
+	        
+	        
+	        if (archiveHelper.isZipMode()) {
+	          zipOut.finish();
+	          zipOut.flush();          
+	        } else {
+	          tarOut.close();
+	          tarOut.flush();
+	        }
+
+			
+		} catch (InsufficientPermissionException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			this.reportError(res, e.getMessage(), this.ERROR_CODE_INSUFFICIENT_PERMISSIONS);
+		}  catch (Exception e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.toString());
+			e.printStackTrace();
+			this.reportError(res, e.toString(), ERROR_CODE_OTHER);
+		} finally {
+			if (sess != null) {
+				sess.close();
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private void handleUsersAndGroupsRequest(HttpServletRequest request, HttpServletResponse res) {
@@ -3982,7 +4206,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	private void reportSuccess(HttpServletResponse response, String attributeName, Integer id) {
+	private void reportSuccess(HttpServletResponse response, String attributeName, Object id) {
 		try {
 			Document doc = DocumentHelper.createDocument();
 			Element root = doc.addElement("SUCCESS");

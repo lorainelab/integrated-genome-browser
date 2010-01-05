@@ -1030,7 +1030,7 @@
         
         private function onGetDownloadEstimatedSize(event:ResultEvent):void {
     		if (getDownloadEstimatedSize.lastResult.@size == 0) {
-    			Alert.show("No data files exist in the selected folder(s).", "");
+    			Alert.show("No data files exist for selected item(s).", "");
     		} else {
     			estimatedDownloadSize = getDownloadEstimatedSize.lastResult.@size;
 	    	

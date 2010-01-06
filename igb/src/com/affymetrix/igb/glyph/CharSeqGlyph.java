@@ -1,15 +1,15 @@
 package com.affymetrix.igb.glyph;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.genoviz.bioviews.ViewI;
 
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
-import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import java.awt.geom.Rectangle2D;
+
 
 /**
  * CharSeqGlyph differs from SequenceGlyph in that it can take either a 
@@ -46,12 +46,14 @@ public final class CharSeqGlyph extends SequenceGlyph
 		setResidueFont(mono_default_font);
 	}
 
+	@Override
 	public void setResidues(String residues) {
 		chariter = new ImprovedStringCharIter(residues);
 		residue_length = residues.length();
 		residuesSet = true;
 	}
 
+	@Override
 	public String getResidues() {
 		return null;
 	}
@@ -98,14 +100,14 @@ public final class CharSeqGlyph extends SequenceGlyph
 					visible_seq_span, coordbox.height);
 			view.transformToPixels(scratchrect, pixelbox);
 			pixels_per_base = ( view.getTransform()).getScaleX();
-			int seq_pixel_offset = pixelbox.x;
-
+			
 			// ***** background already drawn in drawTraversal(), so just return if
 			// ***** scale is < 1 pixel per base
 			if (pixels_per_base < 1 || !residuesSet) {
 				return;
 			} // ***** otherwise semantic zooming to show more detail *****
 			if (visible_seq_span > 0) {
+				int seq_pixel_offset = pixelbox.x;
 				String str = chariter.substring(seq_beg_index, seq_end_index);
 				drawHorizontalResidues(g, pixels_per_base, str, seq_beg_index, seq_end_index, seq_pixel_offset);
 			}
@@ -118,6 +120,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 	 *
 	 * <p> We are showing letters regardless of the height constraints on the glyph.
 	 */
+	@Override
 	protected void drawHorizontalResidues(Graphics g,
 			double pixelsPerBase,
 			String str,
@@ -125,9 +128,8 @@ public final class CharSeqGlyph extends SequenceGlyph
 			int seqEndIndex,
 			int pixelStart) {
 		int baseline = (this.pixelbox.y + (this.pixelbox.height / 2)) + this.fontmet.getAscent() / 2 - 1;
-	
-		drawResidueRectangles(g, pixelsPerBase, str);
 
+		drawResidueRectangles(g, pixelsPerBase, str);
 		drawResidueStrings(g, pixelsPerBase, str, pixelStart, baseline);
 	}
 
@@ -157,20 +159,13 @@ public final class CharSeqGlyph extends SequenceGlyph
 	private void drawResidueStrings(Graphics g, double pixelsPerBase, String str, int pixelStart, int baseline) {
 		g.setFont(getResidueFont());
 		g.setColor(getForegroundColor());
-		fontmet = GeneralUtils.getFontMetrics(getResidueFont());
-		if (this.font_width < pixelsPerBase) {
+		if (this.font_width <= pixelsPerBase) {
 			// Ample room to draw residue letters.
 			for (int i = 0; i < str.length(); i++) {
 				String c = String.valueOf(str.charAt(i));
 				if (c != null) {
 					g.drawString(c, pixelStart + (int) (i * pixelsPerBase), baseline);
 				}
-			}
-		} else if (((double) ((int) pixelsPerBase) == pixelsPerBase) && (this.font_width == pixelsPerBase)) {
-			// pixelsPerBase matches the font width.
-			// Draw the whole string in one go.
-			if (str != null) {
-				g.drawString(str, pixelStart, baseline);
 			}
 		}
 	}

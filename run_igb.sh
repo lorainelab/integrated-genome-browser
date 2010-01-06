@@ -18,7 +18,16 @@
 #  - Specify directly on command line
 
 # Find out where we are installed
-PREFIX=`readlink -f $0`
+PREFIX=`readlink -f $0 2>/dev/null`
+
+# Not all readlinks support -f.  Ideally, this should run recursively to
+# determine its real path.  Currently it only will resolve the first
+# link.
+if [ $? -ne 0 ]; then
+	PREFIX=`readlink $0`
+	[ $? -ne 0  ] && PREFIX=$0
+fi
+
 PREFIX=`dirname $PREFIX`
 
 # File Locations

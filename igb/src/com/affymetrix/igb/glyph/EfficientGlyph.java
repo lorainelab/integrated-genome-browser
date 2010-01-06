@@ -29,10 +29,6 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
   private static final boolean debug = false;
   private static final boolean DEBUG_DT = false;
 
-  // If true, apply corrections to avoid an AWT drawing bug that can happen
-  // for very large glyphs (bigger than about 32000 pixels).
-  static final boolean FIX_AWT_BIG_RECT_BUG = true;
-
   static protected int min_pixels_width=1;
   static protected int min_pixels_height=1;
 
@@ -192,7 +188,7 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
       }
       if (hit(pickRect, view))  {
         if (!pickList.contains(this)) {
-          // Note that Vector.contains() performs a test using "equals()".
+          // Note that List.contains() performs a test using "equals()".
           // EfficientGlyph extends Rectangle2D.Double which tests equality based
           // on coordinates.  This means that you can't "select" both a parent glyph
           // and a child glyph that have identical coordinates.
@@ -215,30 +211,6 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
   /** NOT YET IMPLEMENTED. */
   public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList, ViewI view) {
     //TODO: need to covert pickRect to coords...
-    /*
-    if (isVisible && intersects(pickRect, view))  {
-      if (debug)  {
-        System.out.println("intersects");
-      }
-      if (hit(pickRect, view))  {
-        if (!pickList.contains(this)) {
-          pickList.add(this);
-        }
-        if (debug)   {
-          System.out.println("Hit " + this);
-        }
-      }
-      if (children != null)  {
-        GlyphI child;
-        // We avoid object creation overhead by avoiding Enumeration.
-        int childnum = children.size();
-        for (int i=0; i<childnum; i++) {
-          child = (GlyphI)children.get(i);
-          child.pickTraversal(pickRect, pickList, view);
-        }
-      }
-    }
-    */
   }
 
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
@@ -383,25 +355,21 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
 
   /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   public void setForegroundColor(Color color)  {
-    //    this.style = stylefactory.getStyle( color, style.getBackgroundColor(), style.getFont() );
     this.color = color;
   }
 
   /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   public Color getForegroundColor()  {
     return color;
-    //    return this.style.getForegroundColor();
   }
 
   /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   public void setBackgroundColor(Color color)  {
-    //    this.style = stylefactory.getStyle( style.getForegroundColor(), color, style.getFont() );
     this.color = color;
   }
 
   /** For {@link EfficientGlyph} there is no difference between foreground and background color. */
   public Color getBackgroundColor()  {
-    //    return this.style.getBackgroundColor();
     return color;
   }
 
@@ -501,18 +469,6 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
    *
    * @param selected true if the glyph is to be selected,
    * false otherwise.
-   * @deprecated use {@link #setSelected(boolean)} instead.
-   */
-  /*public void select(boolean selected) {
-    setSelected(selected);
-  }*/
-
-  /**
-   * Selects the glyph if it is selectable.
-   * If it is not then this does nothing.
-   *
-   * @param selected true if the glyph is to be selected,
-   * false otherwise.
    */
 	@Deprecated
   public void setSelected(boolean selected) {
@@ -565,16 +521,14 @@ public class EfficientGlyph extends Rectangle2D.Double implements com.affymetrix
     return true;
   }
 
-  /** Fixes a bug that can happen with AWT when drawing very large rectangles, by
+  /** Fixes a bug that can happen with AWT when drawing rectangles bigger than about 32000 pixels, by
    *  trimming the pixelbox of a large rectangle to the region that intersects the view.
    */
   public static final Rectangle fixAWTBigRectBug(ViewI view, Rectangle pixelbox) {
-    if (FIX_AWT_BIG_RECT_BUG) {
       if (pixelbox.width >= 1024) {
         Rectangle compbox = view.getComponentSizeRect();
 		pixelbox = pixelbox.intersection(compbox);
 	  }
-    }
     return pixelbox;
   }
 

@@ -1174,7 +1174,7 @@ public class SeqMapView extends JPanel
 		if (frm != null) {
 			StringBuffer title = new StringBuffer(128);
 			if (appNameFirstInTitle) {
-				title.append(IGBConstants.APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
+				title.append(IGBConstants.APP_NAME + " " + IGBConstants.APP_VERSION);
 			}
 			if (seq != null) {
 				if (title.length() > 0) {
@@ -1195,7 +1195,7 @@ public class SeqMapView extends JPanel
 				if (title.length() > 0) {
 					title.append(" - ");
 				}
-				title.append(IGBConstants.APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
+				title.append(IGBConstants.APP_NAME + " " + IGBConstants.APP_VERSION);
 			}
 			frm.setTitle(title.toString());
 		}

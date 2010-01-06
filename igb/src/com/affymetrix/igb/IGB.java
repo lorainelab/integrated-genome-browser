@@ -68,6 +68,13 @@ import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.swing.DisplayUtils;
+import java.text.MessageFormat;
+
+import static com.affymetrix.igb.IGBConstants.BUNDLE;
+import static com.affymetrix.igb.IGBConstants.APP_NAME;
+import static com.affymetrix.igb.IGBConstants.APP_VERSION;
+import static com.affymetrix.igb.IGBConstants.APP_VERSION_FULL;
+import static com.affymetrix.igb.IGBConstants.USER_AGENT;
 
 /**
  *  Main class for the Integrated Genome Browser (IGB, pronounced ig-bee).
@@ -76,20 +83,12 @@ public final class IGB extends Application
 				implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener {
 
 	static IGB singleton_igb;
-	private static String APP_NAME = IGBConstants.APP_NAME;
-	private static String APP_SHORT_NAME = IGBConstants.APP_SHORT_NAME;
-	private static String APP_VERSION = IGBConstants.IGB_VERSION;
-	/**
-	 * HTTP User Agent presented to servers.  Java version is appended by
-	 * the JRE at runtime.  The user agent is of the format
-	 * "APP_SHORT_NAME/APP_VERSION, os.name/os.version (os.arch)".
-	 */
-	private static String HttpUserAgent = APP_SHORT_NAME + "/" + APP_VERSION + ", " + System.getProperty("os.name") + "/" + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")";
 	private static boolean USE_MULTI_WINDOW_MAP = false;
 	private static boolean REPORT_GRAPHICS_CONFIG = false;
 	public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 	private static final String BUG_URL = "http://sourceforge.net/tracker/?group_id=129420&atid=714744";
+	private static final String MENU_ITEM_HAS_DIALOG = BUNDLE.getString("menuItemHasDialog");
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	static String[] main_args;
 	static Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
@@ -154,7 +153,7 @@ public final class IGB extends Application
 		try {
 
 			// Configure HTTP User agent
-			System.setProperty("http.agent", HttpUserAgent);
+			System.setProperty("http.agent", USER_AGENT);
 
 			// Turn on anti-aliased fonts. (Ignored prior to JDK1.5)
 			System.setProperty("swing.aatext", "true");
@@ -188,8 +187,8 @@ public final class IGB extends Application
 			// be captured there.
 			ConsoleView.init();
 
-			System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION + "\"");
-			System.out.println("UserAgent: " + HttpUserAgent);
+			System.out.println("Starting \"" + APP_NAME + " " + APP_VERSION_FULL + "\"");
+			System.out.println("UserAgent: " + USER_AGENT);
 			System.out.println("Java version: " + System.getProperty("java.version") + " from " + System.getProperty("java.vendor"));
 			Runtime runtime = Runtime.getRuntime();
 			System.out.println("System memory: " + runtime.maxMemory() / 1024);
@@ -330,7 +329,7 @@ public final class IGB extends Application
 				mi.setDockIconImage(this.getIcon());
 			}
 		}
-		frm = new JFrame(APP_NAME + " " + IGBConstants.IGB_FRIENDLY_VERSION);
+		frm = new JFrame(APP_NAME + " " + APP_VERSION);
 		RepaintManager rm = RepaintManager.currentManager(frm);
 
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -412,23 +411,23 @@ public final class IGB extends Application
 		gmodel.addGroupSelectionListener(map_view);
 		gmodel.addSymSelectionListener(map_view);
 
-		file_menu = MenuUtil.getMenu("File");
-		file_menu.setMnemonic('F');
+		file_menu = MenuUtil.getMenu(BUNDLE.getString("fileMenu"));
+		file_menu.setMnemonic(BUNDLE.getString("fileMenuMnemonic").charAt(0));
 
-		edit_menu = MenuUtil.getMenu("Edit");
-		edit_menu.setMnemonic('E');
+		edit_menu = MenuUtil.getMenu(BUNDLE.getString("editMenu"));
+		edit_menu.setMnemonic(BUNDLE.getString("editMenuMnemonic").charAt(0));
 
-		view_menu = MenuUtil.getMenu("View");
-		view_menu.setMnemonic('V');
+		view_menu = MenuUtil.getMenu(BUNDLE.getString("viewMenu"));
+		view_menu.setMnemonic(BUNDLE.getString("viewMenuMnemonic").charAt(0));
 
-		bookmark_menu = MenuUtil.getMenu("Bookmarks");
-		bookmark_menu.setMnemonic('B');
+		bookmark_menu = MenuUtil.getMenu(BUNDLE.getString("bookmarksMenu"));
+		bookmark_menu.setMnemonic(BUNDLE.getString("bookmarksMenuMnemonic").charAt(0));
 
-		tools_menu = MenuUtil.getMenu("Tools");
-		tools_menu.setMnemonic('T');
+		tools_menu = MenuUtil.getMenu(BUNDLE.getString("toolsMenu"));
+		tools_menu.setMnemonic(BUNDLE.getString("toolsMenuMnemonic").charAt(0));
 
-		help_menu = MenuUtil.getMenu("Help");
-		help_menu.setMnemonic('H');
+		help_menu = MenuUtil.getMenu(BUNDLE.getString("helpMenu"));
+		help_menu.setMnemonic(BUNDLE.getString("helpMenuMnemonic").charAt(0));
 
 		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
@@ -491,7 +490,13 @@ public final class IGB extends Application
 
 		gc_item = new JMenuItem("Invoke Garbage Collection", KeyEvent.VK_I);
 		memory_item = new JMenuItem("Print Memory Usage", KeyEvent.VK_M);
-		about_item = new JMenuItem("About " + APP_NAME + "...", KeyEvent.VK_A);
+		about_item = new JMenuItem(
+				MessageFormat.format(
+					MENU_ITEM_HAS_DIALOG,
+					MessageFormat.format(
+						BUNDLE.getString("about"),
+						APP_NAME)),
+				KeyEvent.VK_A);
 		about_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/About16.gif"));
 		console_item = new JMenuItem("Show Console...", KeyEvent.VK_C);
 		console_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/development/Host16.gif"));
@@ -633,7 +638,7 @@ public final class IGB extends Application
 
 	private void fileMenu() {
 		web_links_item = new JMenuItem(WebLinksManagerView.getShowFrameAction());
-		preferences_item = new JMenuItem("Preferences ...", KeyEvent.VK_E);
+		preferences_item = new JMenuItem(MessageFormat.format(MENU_ITEM_HAS_DIALOG, BUNDLE.getString("preferences")), KeyEvent.VK_E);
 		preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
 		preferences_item.addActionListener(this);
 		MenuUtil.addToMenu(file_menu, open_file_item);
@@ -867,7 +872,7 @@ public final class IGB extends Application
 		message_pane.setLayout(new BoxLayout(message_pane, BoxLayout.Y_AXIS));
 		JTextArea about_text = new JTextArea();
 
-		String text = APP_NAME + ", version: " + APP_VERSION + "\n\n" +
+		String text = APP_NAME + ", version: " + APP_VERSION_FULL + "\n\n" +
 						"IGB (pronounced ig-bee) is a product of the open source Genoviz project,\n" +
 						"which develops interactive visualization software for genomics.\n" +
 						"Affymetrix, Inc., donated Genoviz and IGB to the open source community in 2004.\n" +
@@ -933,7 +938,7 @@ public final class IGB extends Application
 
 		final JOptionPane pane = new JOptionPane(message_pane, JOptionPane.INFORMATION_MESSAGE,
 						JOptionPane.DEFAULT_OPTION);
-		final JDialog dialog = pane.createDialog(frm, "About " + APP_NAME);
+		final JDialog dialog = pane.createDialog(frm, MessageFormat.format(BUNDLE.getString("about"), APP_NAME));
 		dialog.setVisible(true);
 	}
 
@@ -1283,7 +1288,7 @@ public final class IGB extends Application
 	}
 
 	public String getVersion() {
-		return APP_VERSION;
+		return APP_VERSION_FULL;
 	}
 
 	/** Not yet implemented. */

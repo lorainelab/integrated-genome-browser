@@ -15,12 +15,12 @@ import java.awt.Color;
 import java.awt.Component;
 
 public final class ColorTableCellRenderer extends JLabel implements TableCellRenderer {
-    Border unselectedBorder = null;
-    Border selectedBorder = null;
+    private Border unselectedBorder = null;
+    private Border selectedBorder = null;
 
-    boolean isBordered = true;
+    private boolean isBordered = true;
 
-    static Border emptyBorder = new EmptyBorder(1, 1, 1, 1);
+    private static final Border emptyBorder = new EmptyBorder(1, 1, 1, 1);
 
     public ColorTableCellRenderer(boolean isBordered) {
         this.isBordered = isBordered;
@@ -71,11 +71,6 @@ public final class ColorTableCellRenderer extends JLabel implements TableCellRen
           setBorder(emptyBorder);
         }
         
-        /*
-        setToolTipText("RGB value: " + newColor.getRed() + ", "
-                                     + newColor.getGreen() + ", "
-                                     + newColor.getBlue());
-        */
         return this;
     }
 }

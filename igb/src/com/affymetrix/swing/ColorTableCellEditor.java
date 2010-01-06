@@ -17,11 +17,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public final class ColorTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-    Color currentColor;
-    JButton button;
-    JColorChooser colorChooser;
-    JDialog dialog;
-    protected static final String EDIT = "edit";
+    private Color currentColor;
+    private JButton button;
+    private JColorChooser colorChooser;
+    private JDialog dialog;
+    private static final String EDIT = "edit";
 
     public ColorTableCellEditor() {
         //Set up the editor (from the table's point of view),

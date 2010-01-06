@@ -26,6 +26,10 @@ import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.parser.*;
 import com.affymetrix.genoviz.widget.*;
+import java.util.Hashtable;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -318,6 +322,62 @@ public class NeoQuallerDemo extends Applet
 	}
 
 	public void rangeChanged(NeoRangeEvent evt) {
+	}
+
+	@Override
+	public URL getCodeBase()
+	{
+		if (isApplication) {
+				return this.getClass().getResource("/");
+			}
+		return super.getCodeBase();
+	}
+
+
+	@Override
+	public AppletContext getAppletContext()
+	{
+		if(isApplication)
+			return null;
+		return super.getAppletContext();
+	}
+
+
+	@Override
+	public URL getDocumentBase()
+	{
+		if(isApplication)
+			return getCodeBase();
+		return super.getDocumentBase();
+	}
+
+	@Override
+	public String getParameter(String name)
+	{
+		if(isApplication)
+			return parameters.get(name);
+		return super.getParameter(name);
+	}
+
+	static Boolean isApplication = false;
+	static Hashtable<String,String> parameters;
+	static public void main(String[] args)
+	{
+		isApplication = true;
+		NeoQuallerDemo me = new NeoQuallerDemo();
+		parameters = new Hashtable<String, String>();
+		parameters.put("seqFile","data/qualtest.seq");
+		parameters.put("phredFile","data/qualtest.phred");
+		me.init();
+		me.start();
+		JFrame frm = new JFrame("NeoQuallerDemo");
+		frm.getContentPane().add("Center", me);
+		JButton properties = new JButton("Properties");
+		frm.getContentPane().add("South", properties);
+		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frm.pack();
+		//frm.setBounds(20, 40, 900, 400);
+		frm.setVisible(true);
 	}
 
 }

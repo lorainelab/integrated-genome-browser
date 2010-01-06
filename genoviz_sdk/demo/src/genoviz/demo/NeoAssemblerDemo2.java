@@ -31,6 +31,8 @@ import java.awt.Panel;
 import java.awt.event.*;
 import java.net.*;
 import java.util.*;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  * This is a reworking of the old NeoAssemblerDemo
@@ -232,5 +234,58 @@ public class NeoAssemblerDemo2 extends Applet {
 		return model;
 	}
 
+	@Override
+	public URL getCodeBase()
+	{
+		if (isApplication) {
+				return this.getClass().getResource("/");
+			}
+		return super.getCodeBase();
+	}
 
+
+	@Override
+	public AppletContext getAppletContext()
+	{
+		if(isApplication)
+			return null;
+		return super.getAppletContext();
+	}
+
+
+	@Override
+	public URL getDocumentBase()
+	{
+		if(isApplication)
+			return getCodeBase();
+		return super.getDocumentBase();
+	}
+
+	@Override
+	public String getParameter(String name)
+	{
+		if(isApplication)
+			return parameters.get(name);
+		return super.getParameter(name);
+	}
+
+	static Boolean isApplication = false;
+	static Hashtable<String,String> parameters;
+	static public void main(String[] args)
+	{
+		isApplication = true;
+		NeoAssemblerDemo2 me = new NeoAssemblerDemo2();
+		parameters = new Hashtable<String, String>();
+		parameters.put("seq_file","data/test-sequence.data");
+		parameters.put("map_file","data/test-assembly.data");
+		parameters.put("alignwidth","14");
+		me.init();
+		me.start();
+		JFrame frm = new JFrame("GenoViz NeoMap Demo");
+		frm.getContentPane().add("Center", me);
+		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frm.pack();
+		//frm.setBounds(20, 40, 900, 400);
+		frm.setVisible(true);
+	}
 }

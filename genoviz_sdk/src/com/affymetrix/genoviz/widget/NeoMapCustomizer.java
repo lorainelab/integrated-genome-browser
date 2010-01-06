@@ -34,7 +34,7 @@ public class NeoMapCustomizer
 
 	public NeoMapCustomizer() {
 		super();
-		includeMapColorEditor();
+		//includeMapColorEditor();
 	}
 
 	public void includeSelection() {

@@ -500,11 +500,10 @@ public class NeoMapDemo extends JApplet
   public void mouseReleased(MouseEvent e) { }
 
   public void mousePressed(MouseEvent e) {
-    Object source = e.getSource();
     if (!(e instanceof NeoMouseEvent)) { return; }
     NeoMouseEvent nme = (NeoMouseEvent)e;
     Object coord_source = nme.getSource();
-    if (coord_source == map && e instanceof NeoMouseEvent) {
+    if (coord_source == map) {
       // Make the selected item the center of zooming.
       map.setZoomBehavior(NeoMap.X, NeoMap.CONSTRAIN_COORD, nme.getCoordX());
 	  map.setZoomBehavior(NeoMap.Y, NeoMap.CONSTRAIN_COORD, nme.getCoordY());

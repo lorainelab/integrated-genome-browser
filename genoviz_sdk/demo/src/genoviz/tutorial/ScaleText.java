@@ -17,7 +17,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Toolkit;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.glyph.SolidGlyph;
 
@@ -37,19 +36,22 @@ public class ScaleText  extends SolidGlyph {
 		// create Font and FontMetrics objects to scale
 		// text size against glyph width
 		Font font = new Font(text, Font.PLAIN, count);
-		FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+//		FontMetrics fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+		FontMetrics fm = g.getFontMetrics(font);
 
 		// scale up if text is smaller than glyph size
 		while (fm.stringWidth(text) < bbox.width && MAX_SIZE > count) {
 			count++;
 			font = new Font(text, Font.PLAIN,count);
-			fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+//			fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+			fm = g.getFontMetrics(font);
 		}
 		// scale down if text is larger than glyph size
 		while (fm.stringWidth(text) > bbox.width){
 			count--;
 			font = new Font(text, Font.PLAIN,count);
-			fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+//			fm = Toolkit.getDefaultToolkit().getFontMetrics(font);
+			fm = g.getFontMetrics(font);
 		}
 
 		int space = (bbox.width - fm.stringWidth(text))/2;

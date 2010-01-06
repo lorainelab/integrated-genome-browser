@@ -153,9 +153,6 @@ public class NarcissusParser implements ContentParser {
 					tokens.pushBack();
 					parseLine(lineNumber, tokens);
 					break;
-				default:
-					System.err.println("got token " + token);
-					System.err.println("Skipping line " + lineNumber);
 				case StreamTokenizer.TT_EOL: // reset
 					while (StreamTokenizer.TT_EOF != token
 							&& StreamTokenizer.TT_EOL != token)

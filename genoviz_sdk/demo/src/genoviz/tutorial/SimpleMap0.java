@@ -160,9 +160,6 @@ public class SimpleMap0 extends Applet implements ActionListener {
 					tokens.pushBack();
 					parseLine(lineNumber, tokens);
 					break;
-				default:
-					System.err.println("got token " + token);
-					System.err.println("Skipping line " + lineNumber);
 				case StreamTokenizer.TT_EOL: // reset
 					while (StreamTokenizer.TT_EOF != token
 							&& StreamTokenizer.TT_EOL != token)

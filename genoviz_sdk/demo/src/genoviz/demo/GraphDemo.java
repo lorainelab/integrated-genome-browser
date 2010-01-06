@@ -15,6 +15,7 @@ package genoviz.demo;
 
 import com.affymetrix.genoviz.awt.AdjustableJSlider;
 import java.applet.*;
+import java.net.MalformedURLException;
 import java.util.*;
 
 import com.affymetrix.genoviz.awt.NeoPanel;
@@ -24,29 +25,46 @@ import com.affymetrix.genoviz.glyph.BasicImageGlyph;
 import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.net.URL;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 public class GraphDemo extends Applet {
 	NeoMap map;
 	AdjustableJSlider xzoomer;
+	AdjustableJSlider yzoomer;
 	Vector selected = new Vector();
 
 	@Override
 	public void init() {
-		map = new NeoMap(true, false);  // no internal vertical scroller
+		map = new NeoMap(true, true) {
+
+			@Override
+			public void componentResized(ComponentEvent evt) {
+				if (evt.getSource() == canvas) {
+					this.stretchToFit(false, true);
+					this.updateWidget();
+				}
+			}
+		};  // no internal vertical scroller
 		map.setMapOffset(-200, 200);
 		map.setMapRange(0, 1000);
 		map.addAxis(0);
-
-		xzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
+		xzoomer = new AdjustableJSlider(Adjustable.HORIZONTAL);
+		yzoomer = new AdjustableJSlider(Adjustable.VERTICAL);
 
 		NeoPanel widg_pan = new NeoPanel();
 		widg_pan.setLayout(new BorderLayout());
 		widg_pan.add("Center", map);
-		widg_pan.add("West", xzoomer);
+		widg_pan.add("North", xzoomer);
+		widg_pan.add("West", yzoomer);
 		setLayout(new BorderLayout());
 		add("Center", widg_pan);
 
 		map.setZoomer(NeoMap.X, xzoomer);
+		map.setZoomer(NeoMap.Y, yzoomer);
 
 		double xcoords[] = { 100, 200, 300, 400, 500, 600, 700, 800, 900 };
 		double ycoords[] = { -50, -25,  25, 100,  50, 175, -10,  50,  74 };
@@ -85,4 +103,62 @@ public class GraphDemo extends Applet {
 	}
 
 
+	@Override
+	public URL getCodeBase()
+	{
+		if (isApplication) {
+				return this.getClass().getResource("/");
+			}		
+		return super.getCodeBase();
+	}
+
+
+	@Override
+	public AppletContext getAppletContext()
+	{
+		if(isApplication)
+			return null;
+		return super.getAppletContext();
+	}
+
+
+	@Override
+	public URL getDocumentBase()
+	{
+		if(isApplication)
+			return getCodeBase();
+		return super.getDocumentBase();
+	}
+
+
+	@Override
+	public Image getImage(URL filebaseurl, String filename)
+	{
+		if(isApplication)
+		{
+		try {
+			String filepath = filebaseurl.toString();
+			filepath += filename.substring(2, filename.length());
+			System.out.println("GetImage :" + filepath);
+			return Toolkit.getDefaultToolkit().getImage(new URL(filepath));
+		} catch (MalformedURLException ex) {
+			ex.printStackTrace();
+		}
+		}
+		return super.getImage(filebaseurl, filename);
+	}
+
+	static Boolean isApplication = false;
+	static public void main(String[] args)
+	{
+		isApplication = true;
+		GraphDemo me = new GraphDemo();
+		me.init();
+		JFrame frm = new JFrame("GenoViz NeoMap Demo");
+		frm.getContentPane().add("Center", me);
+		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		frm.pack();
+		frm.setBounds(20, 40, 900, 400);
+		frm.setVisible(true);
+	}
 }

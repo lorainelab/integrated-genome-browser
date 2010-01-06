@@ -60,6 +60,7 @@ public class GenoPubServlet extends HttpServlet {
 	private static final int ERROR_CODE_UNSUPPORTED_FILE_TYPE     = 902;
 	private static final int ERROR_CODE_INCORRECT_FILENAME        = 903;
 	private static final int ERROR_CODE_INSUFFICIENT_PERMISSIONS  = 904;
+	private static final int ERROR_CODE_FILE_TOO_BIG              = 905;
 	
 	private static final String SESSION_DOWNLOAD_KEYS              = "genopubDownloadKeys";
 
@@ -2537,10 +2538,18 @@ public class GenoPubServlet extends HttpServlet {
 									throw new IncorrectFileNameException(message);
 								}
 							}
-
+							
 							if (fileName != null) {
 								// the part actually contained a file
-								long size = filePart.writeTo(new File(annotationFileDir));
+								File file = new File (annotationFileDir, fileName);
+								long size = filePart.writeTo(file);
+								//check size of text files
+								if (Util.tooManyLines(file)){
+									file.delete();
+//Tony, how do I pass this error onto the user, I'd like to let them know why the upload failed and what to do about it.  As it is, the message sent is just the error code. See the catch below.									
+									throw new FileTooBigException("Aborting upload, text formatted annotation file '" + annotation.getName() + " exceeds the maximum allowed size ("+
+											Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES+" lines). Convert to xxx.useq (see http://useq.sourceforge.net/useqArchiveFormat.html) or other binary form.");
+								}
 							}
 
 						}
@@ -2569,6 +2578,12 @@ public class GenoPubServlet extends HttpServlet {
 				tx.rollback();
 			}
 			this.reportError(res, e.getMessage(), ERROR_CODE_INCORRECT_FILENAME);
+		}  catch (FileTooBigException e) {
+			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
+			if (tx != null) {
+				tx.rollback();
+			}
+			this.reportError(res, e.getMessage(), ERROR_CODE_FILE_TOO_BIG);
 		} catch (UnsupportedFileTypeException e) {
 			Logger.getLogger(this.getClass().getName()).warning(e.getMessage());
 			if (tx != null) {
@@ -2975,11 +2990,6 @@ public class GenoPubServlet extends HttpServlet {
 
 				
 			}
-			 
-			
-
-	        
-
 	        
 	        if (archiveHelper.isZipMode()) {
 	          zipOut.finish();

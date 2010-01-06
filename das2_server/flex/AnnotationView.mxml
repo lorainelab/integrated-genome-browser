@@ -1083,7 +1083,6 @@
 		private function downloadFiles(event:CloseEvent):void {
 			if (event.detail==Alert.YES) {
 		        var parms:URLVariables = new URLVariables();
-		        parms.keys = downloadKeys;
 	        	parms.mode = estimatedDownloadSize >= ZIP_MAX_SIZE ? "tar" : "zip";
 	        	
 	    		var progressWindow:DownloadProgressView = new DownloadProgressView();	        

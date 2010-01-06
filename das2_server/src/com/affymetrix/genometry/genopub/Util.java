@@ -1,6 +1,8 @@
 package com.affymetrix.genometry.genopub;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.*;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -118,5 +120,26 @@ public class Util {
 		}
 		
 		return buf;
+	}
+
+	public static boolean tooManyLines(File file) throws IOException{
+		String lcName = file.getName().toLowerCase();
+		// is it a text file to check
+		for (int i=0; i< Constants.FILE_EXTENSIONS_TO_CHECK_SIZE_BEFORE_UPLOADING.length; i++){
+			if (lcName.endsWith(Constants.FILE_EXTENSIONS_TO_CHECK_SIZE_BEFORE_UPLOADING[i])){
+				int counter = 0;
+				BufferedReader in = new BufferedReader (new FileReader(file));
+				while (in.readLine() != null){
+					if (counter > Constants.MAXIMUM_NUMBER_TEXT_FILE_LINES) {
+						in.close();
+						return true;
+					}
+					else counter++;
+				}
+				in.close();
+				return false;
+			}
+		}
+		return false;
 	}
 }

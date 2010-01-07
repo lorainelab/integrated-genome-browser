@@ -126,7 +126,7 @@ public final class ServerList {
 				server = new GenericServer(name, root_url, serverType, root_url);
 			}
 			if (serverType == ServerType.DAS) {
-				DasServerInfo info = new DasServerInfo(url, name);
+				DasServerInfo info = new DasServerInfo(url);
 				server = new GenericServer(name, info.getRootUrl(), serverType, info);
 			}
 			if (serverType == ServerType.DAS2) {

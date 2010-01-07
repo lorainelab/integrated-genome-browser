@@ -21,16 +21,15 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 public final class DasEntryPoint {
 
-  String entry_id;
-  String description;
-  String seqtype;
-  SeqSpan segment_span;
-  BioSeq aseq;
-  DasSource das_source;
-  boolean has_subparts;
-  int start; // start: 0-interbase coords
-  int stop;
-  boolean forward = true;
+  private final String entry_id;
+  private String description;
+  private String seqtype;
+  private SeqSpan segment_span;
+  private BioSeq aseq;
+  private final DasSource das_source;
+  private int start; // start: 0-interbase coords
+  private int stop;
+  private boolean forward = true;
 
   // still need to figure out matching up entry point to BioSeq in genometry model
   public DasEntryPoint(DasSource source, String id) {
@@ -49,7 +48,6 @@ public final class DasEntryPoint {
   }
   protected void setDescription(String desc) { description = desc; }
   protected void setSeqType(String type) { seqtype = type; }
-  protected void setSubParts(boolean b) { has_subparts = b; }
 
   public String getID() {  return entry_id; }  // or should ID be a URI?
   public String getDescription() { return description; }

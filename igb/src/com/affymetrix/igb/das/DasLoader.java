@@ -39,8 +39,8 @@ import com.affymetrix.igb.util.XMLUtils;
  */
 public abstract class DasLoader {
 
-	final static boolean DEBUG = false;
-	static final Pattern white_space = Pattern.compile("\\s+");
+	private final static boolean DEBUG = false;
+	private static final Pattern white_space = Pattern.compile("\\s+");
 
 	/**
 	 *  Returns a List of String's which are the id's of the segments.

@@ -13,10 +13,7 @@
 
 package com.affymetrix.igb.das;
 
-//import java.io.*;
-//import java.net.*;
 import java.util.*;
-//import org.xml.sax.*;
 import org.w3c.dom.*;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
@@ -26,20 +23,20 @@ import com.affymetrix.igb.util.XMLUtils;
 
 public final class DasSource {
 
-  static GenometryModel gmodel = GenometryModel.getGenometryModel();
+  private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-  String id;
-  String version;
-  String name;
-  String description;
-  String info_url;
-  String mapmaster;
-  DasServerInfo server;
-  AnnotatedSeqGroup genome = null;
-  Map<String,DasEntryPoint> entry_points = new LinkedHashMap<String,DasEntryPoint>();
-  Map<String,DasType> types = new LinkedHashMap<String,DasType>();
-  boolean entries_initialized = false;
-  boolean types_initialized = false;
+  private final String id;
+  private String version;
+  private String name;
+  private String description;
+  private String info_url;
+  private String mapmaster;
+  private DasServerInfo server;
+  private AnnotatedSeqGroup genome = null;
+  private final Map<String,DasEntryPoint> entry_points = new LinkedHashMap<String,DasEntryPoint>();
+  private final Map<String,DasType> types = new LinkedHashMap<String,DasType>();
+  private boolean entries_initialized = false;
+  private boolean types_initialized = false;
 
   public DasSource(DasServerInfo source_server, String source_id, boolean init) {
     id = source_id;
@@ -122,7 +119,6 @@ public final class DasSource {
 	String sizestr = seg.getAttribute("size");  // can optionally use "size" instead of "start" and "stop"
 	String seqtype = seg.getAttribute("type");  // optional
 	String orient = seg.getAttribute("orientation");  // optional if using "size" attribute
-	String subpart_str = seg.getAttribute("subparts");
 
 	String description = null;
         Text desctext = (Text)seg.getFirstChild();
@@ -142,18 +138,10 @@ public final class DasSource {
 	else if (sizestr != null) {
 	  stop = Integer.parseInt(sizestr);
 	}
-	boolean has_subparts = false;
-	if (subpart_str != null) {
-	  has_subparts = (subpart_str.equalsIgnoreCase("yes") || subpart_str.equalsIgnoreCase("true"));
-	}
-	//	DasEntryPoint entry_point =
-	//	  new DasEntryPoint(this, segid, seqtype, desc, has_subparts, start, stop, forward);
 	DasEntryPoint entry_point = new DasEntryPoint(this, segid);
 	entry_point.setSeqType(seqtype);
 	entry_point.setDescription(description);
 	entry_point.setInterval(start, stop, forward);
-	entry_point.setSubParts(has_subparts);
-	//this.addEntryPoint(entry_point);
       }
     }
     catch (Exception ex) {

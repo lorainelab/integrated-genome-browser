@@ -63,49 +63,11 @@ public final class GraphsView extends JPanel implements IPrefEditorComponent  {
     heat_row.add(heat_cb);
     heat_row.setAlignmentX(0.0f);
     graphs_box.add(heat_row);
-    
     graphs_box.add(Box.createRigidArea(new Dimension(0,5)));
-    
-
-//    JLabel graph_height_label = new JLabel("Floating graph default pixel height: ");
-//    JTextField graph_height_field = UnibrowPrefsUtil.createNumberTextField(
-//      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_FLOATING_PIXEL_HEIGHT, Integer.toString(GraphGlyphUtils.default_pix_height), Integer.class);
-//    Box height_box = new Box(BoxLayout.Y_AXIS);
-//    height_box.add(graph_height_label);
-//    height_box.add(Box.createHorizontalStrut(5));
-//    height_box.add(graph_height_field);
-//    height_box.add(Box.createHorizontalGlue());
-//    graphs_box.add(height_box);
-
-//    JLabel graph_height_label2 = new JLabel("Tiered graph default coord height: ");
-//    JLabel graph_height_label2 = new JLabel("Graph default coord height: ");
-//    JTextField graph_height_field2 = UnibrowPrefsUtil.createNumberTextField(
-//      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACHED_COORD_HEIGHT, Integer.toString(GraphGlyphUtils.default_coord_height), Integer.class);
-//    Box height_box2 = new Box(BoxLayout.Y_AXIS);
-//    height_box2.add(graph_height_label2);
-//    height_box2.add(Box.createHorizontalStrut(5));
-//    height_box2.add(graph_height_field2);
-//    height_box2.add(Box.createHorizontalGlue());
-//    graphs_box.add(height_box2);
-
-//    graphs_box.add(Box.createVerticalStrut(5));
-
-//    Box defpan5 = new Box(BoxLayout.Y_AXIS);
-//    defpan5.add(new JLabel("When making a tier from a floating graph, use: "));
-//    String[] combo_options = new String[] {GraphGlyphUtils.USE_CURRENT_HEIGHT, GraphGlyphUtils.USE_DEFAULT_HEIGHT};
-//    JComboBox float2attachCB = UnibrowPrefsUtil.createComboBox(
-//      GraphGlyphUtils.getGraphPrefsNode(), GraphGlyphUtils.PREF_ATTACH_HEIGHT_MODE, combo_options, GraphGlyphUtils.default_attach_mode);
-//    defpan5.add(float2attachCB);
-//    graphs_box.add(defpan5);
-
-//    graphs_box.add(Box.createVerticalStrut(5));
         
     validate();
   }
 
-  /*public void destroy() {
-    removeAll();
-  }*/
 
   /** A main method for testing. */
   public static void main(String[] args) throws Exception {

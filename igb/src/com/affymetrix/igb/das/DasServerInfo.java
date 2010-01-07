@@ -23,34 +23,25 @@ public final class DasServerInfo {
 	private static final boolean REPORT_SOURCES = false;
 	private static final boolean REPORT_CAPS = true;
 	private String root_url;
-	private String name;
-	private Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
+	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
 	/** Creates an instance of DasServerInfo for the given DAS server.
 	 *  @param init  whether or not to initialize the data right away.  If false
 	 *    will not contact the server to initialize data until needed.
 	 */
-	public DasServerInfo(String url, String name) {
+	public DasServerInfo(String url) {
 		root_url = url;
-		this.name = name;
 		// all trailing "/" chars are stripped off the end if present
 		while (root_url.endsWith("/")) {
 			root_url = root_url.substring(0, root_url.length() - 1);
 		}
-		/*if (init) {
-			initialize();
-		}*/
 	}
 
 	/** Returns the root URL String.  Will not have any trailing "/" at the end. */
 	public String getRootUrl() {
 		return root_url;
 	}
-
-	/*public String getName() {
-		return name;
-	}*/
 
 
 	public Map<String, DasSource> getDataSources() {
@@ -70,11 +61,7 @@ public final class DasServerInfo {
 	 *      http://biodas.org/documents/spec.html
 	 */
 	private void initialize() {
-		//TODO: think about whether this needs synchronization.
-		//TODO: clean-up streams in finally block
 		try {
-			//      System.out.println("in DasUtils.findDasSource()");
-			//      SynonymLookup lookup = SynonymLookup.getDefaultLookup();
 			String request_str = root_url;
 			if (!request_str.contains("/dsn")) {
 				request_str += "/dsn";
@@ -87,8 +74,6 @@ public final class DasServerInfo {
 			String das_version = request_con.getHeaderField("X-DAS-Version");
 			String das_status = request_con.getHeaderField("X-DAS-Status");
 			String das_capabilities = request_con.getHeaderField("X-DAS-Capabilities");
-
-			//setDasVersion(das_version);
 
 			System.out.println("DAS server version: " + das_version + ", status: " + das_status);
 			if (REPORT_CAPS) {

@@ -21,5 +21,9 @@ public interface AnnotatedSeqViewer {
   public void setAnnotatedSeq(BioSeq seq, 
 			      boolean preserve_selection, 
 			      boolean preserve_view);
+  public void setAnnotatedSeq(BioSeq seq,
+			      boolean preserve_selection,
+			      boolean preserve_view_x,
+				  boolean preserve_view_y);
   public BioSeq getAnnotatedSeq();
 }

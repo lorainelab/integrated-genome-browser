@@ -32,7 +32,7 @@ public class SquiggleGlyph extends SolidGlyph  {
 		if (pixelbox.height == 0) { pixelbox.height = 1; }
 		Graphics g = view.getGraphics();
 
-		g.setColor(getForegroundColor());
+		g.setColor(getBackgroundColor());
 		if (pixelbox.width < 2*preferred_halfsegment || pixelbox.height < 3) {
 			g.fillRect(pixelbox.x, pixelbox.y, pixelbox.width, pixelbox.height);
 		}

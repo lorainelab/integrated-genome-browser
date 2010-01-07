@@ -292,7 +292,7 @@ public final class NeoQuallerDemo2 extends Applet
 		parameters.put("FASTQFile","data/qualtest.fastq");
 		me.init();
 		me.start();
-		JFrame frm = new JFrame("NeoQuallerDemo");
+		JFrame frm = new JFrame("Genoviz NeoQualler2 Demo");
 		frm.getContentPane().add("Center", me);
 		JButton properties = new JButton("Properties");
 		frm.getContentPane().add("South", properties);

@@ -119,7 +119,7 @@ public class TieredMapDemo extends Applet
 		map.setScroller ( NeoMap.Y, yscroll );
 		map_pan.add ( yscroll, BorderLayout.EAST );
 
-		frame = new Frame("TieredNeoMap Demo");
+		frame = new Frame("Genoviz TieredNeoMap Demo");
 		frame.setSize ( pixel_width, pixel_height );
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation((screen_size.width-pixel_width)/2,

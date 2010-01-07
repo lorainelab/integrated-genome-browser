@@ -44,7 +44,7 @@ public class VerticalMapDemo extends Applet {
 		VerticalMapDemo demo = new VerticalMapDemo();
 		demo.init();
 		demo.start();
-		JFrame window = new JFrame(demo.getName());
+		JFrame window = new JFrame("Genoviz VerticalMap Demo");
 		window.setContentPane(demo);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.pack();

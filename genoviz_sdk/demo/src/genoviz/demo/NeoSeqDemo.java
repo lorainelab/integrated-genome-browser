@@ -170,7 +170,7 @@ public class NeoSeqDemo extends Applet
 		seqview.setResidueFontColor(Color.yellow);
 		seqview.setNumberFontColor(Color.black);
 
-		mapframe = new Frame("genoviz NeoSeq Demo");
+		mapframe = new Frame("Genoviz NeoSeq Demo");
 		mapframe.setLayout(new BorderLayout());
 		setupMenus(mapframe);
 
@@ -1010,7 +1010,7 @@ public class NeoSeqDemo extends Applet
 		parameters.put("seq_file","data/test.fst");
 		me.init();
 		me.start();
-		JFrame frm = new JFrame("NeoQuallerDemo");
+		JFrame frm = new JFrame("Genoviz NeoSeq Demo");
 		frm.getContentPane().add("Center", me);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frm.pack();

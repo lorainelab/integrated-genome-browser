@@ -370,7 +370,7 @@ public class NeoQuallerDemo extends Applet
 		parameters.put("phredFile","data/qualtest.phred");
 		me.init();
 		me.start();
-		JFrame frm = new JFrame("NeoQuallerDemo");
+		JFrame frm = new JFrame("Genoviz NeoQualler Demo");
 		frm.getContentPane().add("Center", me);
 		JButton properties = new JButton("Properties");
 		frm.getContentPane().add("South", properties);

@@ -57,7 +57,7 @@ public class NeoWidgetCustomizer
 		layout.setConstraints(bandingPanel, valueConstraints);
 		bandingPanel.add(bandingBehavior);
 		add(bandingPanel);
-		Label descBandingLabel = new Label("Don't know what Rubber Band Do", Label.LEFT);
+		Label descBandingLabel = new Label("Allows to select multiple glyphs by dragging.", Label.LEFT);
 		layout.setConstraints(descBandingLabel, descConstraints);
 		add(descBandingLabel);
 		valueConstraints.gridy++;
@@ -72,7 +72,7 @@ public class NeoWidgetCustomizer
 		zoomingPanel.add(zoomingXChoice);
 		zoomingPanel.add(zoomingYChoice);
 		add(zoomingPanel);
-		Label descZoomLabel = new Label("Don't know what Zoom Do", Label.LEFT);
+		Label descZoomLabel = new Label("Horizontal and Vertical focus point for zooming", Label.LEFT);
 		layout.setConstraints(descZoomLabel, descConstraints);
 		add(descZoomLabel);
 		valueConstraints.gridy++;

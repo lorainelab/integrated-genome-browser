@@ -209,9 +209,9 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
     if (lsm != null) {lsm.removeListSelectionListener(this);}
   }
 
-  void refreshSeqMapView() {
+  private void refreshSeqMapView() {
     if (smv != null) {
-      smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true);
+      smv.setAnnotatedSeq(smv.getAnnotatedSeq(), true, true, true);
     }
   }
 

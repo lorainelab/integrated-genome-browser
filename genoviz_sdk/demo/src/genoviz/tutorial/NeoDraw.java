@@ -139,25 +139,25 @@ public class NeoDraw extends JApplet
     return "Simple Map Drawing Program - genoviz Software, Inc.";
   }
 
-  public void deselectGlyphMenu() {
-    arrowMenuItem.setState(false);
-    boundedPointMenuItem.setState(false);
-    centeredCircleMenuItem.setState(false);
-    fillOvalMenuItem.setState(false);
-    fillRectMenuItem.setState(false);
-    lineContainerMenuItem.setState(false);
-    outlineRectMenuItem.setState(false);
-    squiggleMenuItem.setState(false);
-    triBarGlyphMenuItem.setState(false);
-    triangleMenuItem.setState(false);
+  public void deselectGlyphMenu(JCheckBoxMenuItem src) {
+    arrowMenuItem.setState(src == arrowMenuItem);
+    boundedPointMenuItem.setState(src == boundedPointMenuItem);
+    centeredCircleMenuItem.setState(src == centeredCircleMenuItem);
+    fillOvalMenuItem.setState(src == fillOvalMenuItem);
+    fillRectMenuItem.setState(src == fillRectMenuItem);
+    lineContainerMenuItem.setState(src == lineContainerMenuItem);
+    outlineRectMenuItem.setState(src == outlineRectMenuItem);
+    squiggleMenuItem.setState(src == squiggleMenuItem);
+    triBarGlyphMenuItem.setState(src == triBarGlyphMenuItem);
+    triangleMenuItem.setState(src == triangleMenuItem);
   }
 
-  public void deselectColorMenu() {
-    blackMenuItem.setState(false);
-    blueMenuItem.setState(false);
-    redMenuItem.setState(false);
-    grayMenuItem.setState(false);
-    magentaMenuItem.setState(false);
+  public void deselectColorMenu(JCheckBoxMenuItem src) {
+    blackMenuItem.setState(src == blackMenuItem);
+    blueMenuItem.setState(src == blueMenuItem);
+    redMenuItem.setState(src == redMenuItem);
+    grayMenuItem.setState(src == grayMenuItem);
+    magentaMenuItem.setState(src == magentaMenuItem);
   }
 
   public void itemStateChanged(ItemEvent evt) {
@@ -166,65 +166,65 @@ public class NeoDraw extends JApplet
     MapGlyphFactory fac = map.getFactory();
     if (state == ItemEvent.SELECTED)  {
       if (src == arrowMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.ArrowGlyph.class);
       }
       else if (src == boundedPointMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.BoundedPointGlyph.class);
       }
       else if (src == centeredCircleMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.CenteredCircleGlyph.class);
       }
       else if (src == fillOvalMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.FillOvalGlyph.class);
       }
       else if (src == fillRectMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.FillRectGlyph.class);
       }
       else if (src == lineContainerMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.LineContainerGlyph.class);
       }
       else if (src == outlineRectMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.OutlineRectGlyph.class);
       }
       else if (src == squiggleMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.SquiggleGlyph.class);
       }
       else if (src == triBarGlyphMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.TriBarGlyph.class);
       }
       else if (src == triangleMenuItem) {
-	deselectGlyphMenu();
+	deselectGlyphMenu((JCheckBoxMenuItem) src);
 	fac.setGlyphtype(com.affymetrix.genoviz.glyph.TriangleGlyph.class);
       }
 
       // Colors
       else if (src == blackMenuItem) {
-	deselectColorMenu();
+	deselectColorMenu((JCheckBoxMenuItem) src);
 	fac.setBackgroundColor(Color.black);
       }
       else if (src == blueMenuItem) {
-	deselectColorMenu();
+	deselectColorMenu((JCheckBoxMenuItem) src);
 	fac.setBackgroundColor(Color.blue);
       }
       else if (src == redMenuItem) {
-	deselectColorMenu();
+	deselectColorMenu((JCheckBoxMenuItem) src);
 	fac.setBackgroundColor(Color.red);
       }
       else if (src == grayMenuItem) {
-	deselectColorMenu();
+	deselectColorMenu((JCheckBoxMenuItem) src);
 	fac.setBackgroundColor(Color.gray);
       }
       else if (src == magentaMenuItem) {
-	deselectColorMenu();
+	deselectColorMenu((JCheckBoxMenuItem) src);
 	fac.setBackgroundColor(Color.magenta);
       }
     }

@@ -321,7 +321,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	// remove the previous search results from the map.
 	private void clearResults() {
 		if (!glyphs.isEmpty()) {
-			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true);
+			gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, true, true);
 		}
 		glyphs.clear();
 

@@ -408,7 +408,7 @@ public class AffyTieredMap extends NeoMap {
 
 		// transforming fixed coord to find fixed pixel
 		fixed_pixel = trans.transform(Y, fixed_coord);
-		
+
 		// calculate transform offset needed to hold coords at same fixed pixel
 		double pix_offset = fixed_pixel - pixels_per_coord[id] * fixed_coord;
 		// convert transform offset (which is in pixels) to coords
@@ -457,6 +457,9 @@ public class AffyTieredMap extends NeoMap {
 		LinearTransform.setTranslateY(trans, pixel_offset[id]);
 		LinearTransform.setScaleY(trans, pixels_per_coord[id]);
 
+//		System.out.println("Zoom scale : "+ zoom_scale);
+//		System.out.println("pixels_per_base = " + zoomer_scale[id] +
+//						",  coords_per_pixel[id] = " + 1/zoomer_scale[Y]);
 		if (zoom_scale != zoomer_scale[id]) {
 			adjustZoomer(id);
 		}

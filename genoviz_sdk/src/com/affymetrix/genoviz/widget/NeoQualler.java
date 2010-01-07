@@ -573,7 +573,7 @@ public class NeoQualler extends NeoContainerWidget
 						barMapExtendHighlight(nevt);
 							}
 				}
-			}
+			}			
 		}
 		super.heardMouseEvent(evt);
 	}

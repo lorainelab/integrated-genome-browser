@@ -281,7 +281,7 @@ public class NeoAssemblerDemo2 extends Applet {
 		parameters.put("alignwidth","14");
 		me.init();
 		me.start();
-		JFrame frm = new JFrame("GenoViz NeoMap Demo");
+		JFrame frm = new JFrame("GenoViz NeoAssembler-2 Demo");
 		frm.getContentPane().add("Center", me);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frm.pack();

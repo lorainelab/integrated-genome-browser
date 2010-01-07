@@ -109,15 +109,7 @@ public class NeoMapDemo extends JApplet
   public NeoMapDemo()  {
 
     going = true;
-    map = new NeoMap(true, true){
-		@Override
-		public void componentResized(ComponentEvent evt) {
-			if (evt.getSource() == canvas) {
-				this.stretchToFit(false, true);
-				this.updateWidget();
-			}
-		}
-	};
+    map = new NeoMap(true, true);
 	
     map.setMapColor(nicePaleBlue);
 	
@@ -171,8 +163,6 @@ public class NeoMapDemo extends JApplet
     map.addMouseListener(this);
     map.addRubberBandListener(this);
 	
-	map.setReshapeBehavior(NeoMap.X, NeoMap.EXPAND);
-	map.setReshapeBehavior(NeoMap.Y, NeoMap.EXPAND);
   }
 
   public void addItemsDirectly() {
@@ -583,7 +573,7 @@ public class NeoMapDemo extends JApplet
 	propframe.pack();
 //	propframe.addWindowListener(this);
       }
-      propframe.setBounds(200, 200, 750, 300);
+//      propframe.setBounds(200, 200, 750, 300);
       propframe.setVisible(true);
     }
 

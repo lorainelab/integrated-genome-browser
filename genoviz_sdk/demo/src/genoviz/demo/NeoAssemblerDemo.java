@@ -154,7 +154,7 @@ public class NeoAssemblerDemo extends Applet
 				Label placeholder =
 					new Label("Running genoviz NeoAssembler Demo", Label.CENTER);
 				this.setLayout(new BorderLayout());
-				this.add("Center", placeholder);
+				this.add("North", placeholder);
 				placeholder.setBackground(nicePaleBlue);
 			}
 
@@ -210,7 +210,7 @@ public class NeoAssemblerDemo extends Applet
 
 		//if (isMemed)  { memcheck.printMemory(); }
 
-		mapframe = new Frame("genoviz NeoAssembler Demo");
+		mapframe = new Frame("Genoviz NeoAssembler Demo");
 		setupMenus(mapframe);
 		mapframe.setLayout(new BorderLayout());
 
@@ -1066,11 +1066,11 @@ public class NeoAssemblerDemo extends Applet
 		parameters.put("map_file","data/test-assembly.data");
 		me.init();
 		me.start();
-		JFrame frm = new JFrame("GenoViz NeoMap Demo");
-		frm.getContentPane().add("Center", me);
-		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frm.pack();
-		//frm.setBounds(20, 40, 900, 400);
-		frm.setVisible(true);
+//		JFrame frm = new JFrame("GenoViz NeoAssembler Demo");
+//		frm.getContentPane().add("Center", me);
+//		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//		frm.pack();
+//		//frm.setBounds(20, 40, 900, 400);
+//		frm.setVisible(true);
 	}
 }

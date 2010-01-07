@@ -108,7 +108,7 @@ public class GraphDemo extends Applet {
 	{
 		if (isApplication) {
 				return this.getClass().getResource("/");
-			}		
+			}
 		return super.getCodeBase();
 	}
 
@@ -136,14 +136,13 @@ public class GraphDemo extends Applet {
 	{
 		if(isApplication)
 		{
-		try {
-			String filepath = filebaseurl.toString();
-			filepath += filename.substring(2, filename.length());
-			System.out.println("GetImage :" + filepath);
-			return Toolkit.getDefaultToolkit().getImage(new URL(filepath));
-		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
-		}
+			try {
+				String filepath = filebaseurl.toString();
+				filepath += filename.substring(2, filename.length());
+				return Toolkit.getDefaultToolkit().getImage(new URL(filepath));
+			} catch (MalformedURLException ex) {
+				ex.printStackTrace();
+			}
 		}
 		return super.getImage(filebaseurl, filename);
 	}
@@ -154,7 +153,7 @@ public class GraphDemo extends Applet {
 		isApplication = true;
 		GraphDemo me = new GraphDemo();
 		me.init();
-		JFrame frm = new JFrame("GenoViz NeoMap Demo");
+		JFrame frm = new JFrame("GenoViz Graph Demo");
 		frm.getContentPane().add("Center", me);
 		frm.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frm.pack();

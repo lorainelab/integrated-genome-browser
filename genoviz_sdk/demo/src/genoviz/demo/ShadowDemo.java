@@ -100,7 +100,7 @@ public class ShadowDemo extends Applet
 		ShadowDemo demo = new ShadowDemo();
 		demo.init();
 		demo.start();
-		JFrame window = new JFrame(demo.getName());
+		JFrame window = new JFrame("Genoviz Shadow Demo");
 		window.setContentPane(demo);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.pack();

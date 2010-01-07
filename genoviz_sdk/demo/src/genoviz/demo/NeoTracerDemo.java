@@ -595,7 +595,7 @@ public class NeoTracerDemo extends Applet
 		parameters.put("phd","data/traceTest/trace.phd");
 		me.init();
 		me.start();
-		JFrame frm = new JFrame("NeoQuallerDemo");
+		JFrame frm = new JFrame("Genoviz NeoTracer Demo");
 		frm.getContentPane().add("Center", me);
 		JButton properties = new JButton("Properties");
 		frm.getContentPane().add("South", properties);

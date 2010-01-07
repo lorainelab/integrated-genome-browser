@@ -244,7 +244,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
     handler.setTiersCollapsed(tier_labels, collapsed, true, true);
-    refreshMap(true);
+    refreshMap(true,true);
   }
 
   public void changeExpandMax(List<TierLabelGlyph> tier_labels) {
@@ -290,7 +290,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 			style.setMaxDepth(max);
 			tier.setMaxExpandDepth(max);
 		}
-		refreshMap(false);
+		refreshMap(false,true);
 	}
 
   private void setTwoTiers(List<TierLabelGlyph> tier_label_glyphs, boolean b) {
@@ -301,7 +301,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         ((IAnnotStyleExtended) style).setSeparate(b);
       }
     }
-    refreshMap(false);
+    refreshMap(false,true);
     handler.sortTiers();
   }
 
@@ -317,7 +317,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		  }
 	  }
 	  showMenu.removeAll();
-	  refreshMap(true); // when re-showing all tiers, do strech_to_fit in the y-direction
+	  refreshMap(true,true); // when re-showing all tiers, do strech_to_fit in the y-direction
 	  handler.sortTiers();
 	}
 
@@ -348,7 +348,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         public void actionPerformed(ActionEvent e) {
           style.setShow(true);
           showMenu.remove(show_tier);
-          refreshMap(false);
+          refreshMap(false,true);
           handler.sortTiers();
         }
       });
@@ -370,7 +370,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
 
-    refreshMap(false);
+    refreshMap(false,true);
   }
 
   private void changeColor(final List<TierLabelGlyph> tier_label_glyphs, final boolean fg) {
@@ -425,7 +425,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
                                         null); //no CANCEL button handler
     dialog.setVisible(true);
 
-    refreshMap(false);
+    refreshMap(false,false);
   }
 
   public void renameTier(final TierGlyph tier) {
@@ -438,7 +438,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     if (new_label != null && new_label.length() > 0) {
       style.setHumanName(new_label);
     }
-    refreshMap(false);
+    refreshMap(false,false);
   }
 
   private void setColorByScore(List<TierLabelGlyph> tier_labels, boolean b) {
@@ -450,7 +450,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       }
     }
 
-    refreshMap(false);
+    refreshMap(false,false);
   }
 
 
@@ -566,12 +566,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     gl.setColor(atier.getForegroundColor());
   }
 
-  private void refreshMap(boolean stretch_vertically) {
+  private void refreshMap(boolean stretch_vertically, boolean stretch_horizonatally) {
     if (gviewer != null) {
       // if an AnnotatedSeqViewer is being used, ask it to update itself.
       // later this can be made more specific to just update the tiers that changed
-      boolean preserve_view = ! stretch_vertically;
-      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view);
+      boolean preserve_view_x = ! stretch_vertically;
+	  boolean preserve_view_y = ! stretch_horizonatally;
+      gviewer.setAnnotatedSeq(gviewer.getAnnotatedSeq(), true, preserve_view_x, preserve_view_y);
     } else {
       // if no AnnotatedSeqViewer (as in simple test programs), update the tiermap itself.
       handler.repackTheTiers(false, stretch_vertically);

@@ -18,7 +18,6 @@ import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -61,7 +60,6 @@ import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.glyph.EdgeMatchAdjuster;
 import com.affymetrix.igb.tiers.AffyLabelledTierMap;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.igb.tiers.MultiWindowTierMap;
 import com.affymetrix.igb.util.ComponentWriter;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
@@ -83,18 +81,15 @@ public final class IGB extends Application
 				implements ActionListener, ContextualPopupListener, GroupSelectionListener, SeqSelectionListener {
 
 	static IGB singleton_igb;
-	private static boolean USE_MULTI_WINDOW_MAP = false;
-	private static boolean REPORT_GRAPHICS_CONFIG = false;
-	public static boolean ALLOW_PARTIAL_SEQ_LOADING = true;
 	private static final String TABBED_PANES_TITLE = "Tabbed Panes";
 	private static final String BUG_URL = "http://sourceforge.net/tracker/?group_id=129420&atid=714744";
 	private static final String MENU_ITEM_HAS_DIALOG = BUNDLE.getString("menuItemHasDialog");
-	static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	static String[] main_args;
-	static Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
-	Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
-	Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
-	JMenu popup_windowsM = new JMenu("Open in Window...");
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static String[] main_args;
+	static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
+	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
+	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
+	private final JMenu popup_windowsM = new JMenu("Open in Window...");
 	SimpleBookmarkServer web_control = null;
 	JFrame frm;
 	JMenuBar mbar;
@@ -142,8 +137,8 @@ public final class IGB extends Application
 	AlignControl align_control;
 	public DataLoadView data_load_view = null;
 	AltSpliceView slice_view = null;
-	List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
-	List<Object> plugins = new ArrayList<Object>(16);
+	private final List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
+	private final List<Object> plugins = new ArrayList<Object>(16);
 	FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 
 	/**
@@ -333,28 +328,6 @@ public final class IGB extends Application
 		RepaintManager rm = RepaintManager.currentManager(frm);
 
 		GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		// hardwiring to switch to using multiple windows for main map if there are 4 or more screens
-		GraphicsDevice[] devices = genv.getScreenDevices();
-
-		if (devices.length >= 4) {
-			int multi_window_choice =
-							JOptionPane.showConfirmDialog(frm,
-							"Use multi-screen rendering speedups?\n" +
-							"(but some features will be disabled)",
-							"Multi-screen Rendering Options",
-							JOptionPane.YES_NO_OPTION);
-
-			if (multi_window_choice == JOptionPane.YES_OPTION) {
-				System.out.println("&&&&&&&&&&&&&&  MULTI_WINDOW_CHOICE = YES &&&&&&&&&&&&&&");
-				USE_MULTI_WINDOW_MAP = true;
-				REPORT_GRAPHICS_CONFIG = true;
-			}
-		}
-		if (REPORT_GRAPHICS_CONFIG) {
-			System.out.println("*** double buffer max size: " + rm.getDoubleBufferMaximumSize());
-			GraphicsConfigChecker gchecker = new GraphicsConfigChecker();  // auto-reports config
-		}
-		
 
 		// when HTTP authentication is needed, getPasswordAuthentication will
 		//    be called on the authenticator set as the default
@@ -381,31 +354,12 @@ public final class IGB extends Application
 		mbar = MenuUtil.getMainMenuBar();
 		frm.setJMenuBar(mbar);
 
-		String tile_xpixels_arg = get_arg("-tile_width", main_args);
-		String tile_ypixels_arg = get_arg("-tile_height", main_args);
-		String tile_col_arg = get_arg("-tile_columns", main_args);
-		String tile_row_arg = get_arg("-tile_rows", main_args);
-		if (tile_xpixels_arg != null &&
-						tile_ypixels_arg != null &&
-						tile_col_arg != null &&
-						tile_row_arg != null) {
-			USE_MULTI_WINDOW_MAP = true;
-			try {
-				MultiWindowTierMap.tile_width = Integer.parseInt(tile_xpixels_arg);
-				MultiWindowTierMap.tile_height = Integer.parseInt(tile_ypixels_arg);
-				MultiWindowTierMap.tile_columns = Integer.parseInt(tile_col_arg);
-				MultiWindowTierMap.tile_rows = Integer.parseInt(tile_row_arg);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-
 		gmodel.addGroupSelectionListener(this);
 		gmodel.addSeqSelectionListener(this);
 		// WARNING!!  IGB _MUST_ be added as group and seq selection listener to model _BEFORE_ map_view is,
 		//    otherwise assumptions for persisting group / seq / span prefs are not valid!
 
-		map_view = SeqMapView.makeSeqMapView(true, USE_MULTI_WINDOW_MAP);
+		map_view = SeqMapView.makeSeqMapView();
 		map_view.setFrame(frm);
 		gmodel.addSeqSelectionListener(map_view);
 		gmodel.addGroupSelectionListener(map_view);
@@ -543,10 +497,7 @@ public final class IGB extends Application
 		Container cpane = frm.getContentPane();
 		int table_height = 250;
 		int fudge = 55;
-		//    RepaintManager rm = RepaintManager.currentManager(frm);
-		if (REPORT_GRAPHICS_CONFIG) {
-			System.out.println("repaint manager: " + rm.getClass());
-		}
+
 		Rectangle frame_bounds = UnibrowPrefsUtil.retrieveWindowLocation("main window",
 						new Rectangle(0, 0, 950, 600)); // 1.58 ratio -- near golden ratio and 1920/1200, which is native ratio for large widescreen LCDs.
 		UnibrowPrefsUtil.setWindowSize(frm, frame_bounds);

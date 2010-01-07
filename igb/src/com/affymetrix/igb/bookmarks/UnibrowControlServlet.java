@@ -51,14 +51,11 @@ import com.affymetrix.igb.general.ServerList;
  */
 public final class UnibrowControlServlet {
 
-	static boolean DEBUG_DAS2_LOAD = false;
-	static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	static final Pattern query_splitter = Pattern.compile("[;\\&]");
-	Application uni;
+	private static final boolean DEBUG_DAS2_LOAD = false;
+	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private static final Pattern query_splitter = Pattern.compile("[;\\&]");
+	private Application uni;
 
-	/*public void setUnibrowInstance(Application uni) {
-	this.uni = uni;
-	}*/
 	/** Convenience method for retrieving a String parameter from a parameter map
 	 *  of an HttpServletRequest.
 	 *  @param map Should be a Map, such as from {@link javax.servlet.ServletRequest#getParameterMap()},
@@ -117,14 +114,6 @@ public final class UnibrowControlServlet {
 		if (has_graph_source_urls) {
 			BookmarkController.loadGraphsEventually(uni.getMapView(), parameters);
 		}
-
-		/*
-		AnnotatedSeqGroup seq_group = gmodel.getSeqGroup(version);
-		Das2VersionedSource das_version = null;
-		if (seq_group != null && (seq_group instanceof Das2SeqGroup)) {
-		das_version = ((Das2SeqGroup)seq_group).getOriginalVersionedSource();
-		}
-		 */
 
 		String[] das2_query_urls = (String[]) parameters.get(Bookmark.DAS2_QUERY_URL);
 		String[] das2_server_urls = (String[]) parameters.get(Bookmark.DAS2_SERVER_URL);

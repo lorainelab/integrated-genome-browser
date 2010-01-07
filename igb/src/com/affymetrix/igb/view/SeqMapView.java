@@ -302,38 +302,26 @@ public class SeqMapView extends JPanel
 	 *  NOT to set this to true in any view other than the main view; it should
 	 *  be false in the AltSpliceView, for instance.
 	 */
-	public static SeqMapView makeSeqMapView(boolean add_popups, boolean split_win) {
+	public static SeqMapView makeSeqMapView() {
 		SeqMapView smv = new SeqMapView();
-		smv.init(add_popups, split_win, true);
+		smv.init(true);
 		return smv;
 	}
 
 	/** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
 	 *  will be done in init()
 	 */
-	private AffyTieredMap createSeqMap(boolean splitWindows, boolean labelTiermap,
-					boolean internalXScroller, boolean internalYScroller) {
-		AffyTieredMap resultSeqMap;
-		if (splitWindows) {
-			resultSeqMap = new MultiWindowTierMap(false, false);
-		} else if (labelTiermap) {
-			resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
-			NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
-			label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
-			label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
-		} else {
-			resultSeqMap = new AffyTieredMap(internalXScroller, internalYScroller, NeoConstants.HORIZONTAL);
-		}
+	private AffyTieredMap createSeqMap(boolean internalXScroller, boolean internalYScroller) {
+		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
+		NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
+		label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
+		label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
 		return resultSeqMap;
 	}
 
-	protected void init(boolean add_popups, boolean split_win, boolean label_tiermap) {
+	protected void init(boolean add_popups) {
 
-		if (split_win) {
-			label_tiermap = false;
-		}
-
-		seqmap = createSeqMap(split_win, label_tiermap, INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
+		seqmap = createSeqMap(INTERNAL_XSCROLLER, INTERNAL_YSCROLLER);
 
 		seqmap.setReshapeBehavior(NeoAbstractWidget.X, NeoConstants.NONE);
 		seqmap.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
@@ -345,7 +333,6 @@ public class SeqMapView extends JPanel
 		seqmap.setMapColor(Color.BLACK);
 
 		edge_matcher = GlyphEdgeMatcher.getSingleton();
-
 
 		action_listener = new SeqMapViewActionListener(this);
 		mouse_listener = new SeqMapViewMouseListener(this);
@@ -362,36 +349,36 @@ public class SeqMapView extends JPanel
 		seqmap.setZoomer(NeoMap.X, xzoomer);
 		seqmap.setZoomer(NeoMap.Y, yzoomer);
 
-		if (label_tiermap) {
-			tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
-			tier_manager.setDoGraphSelections(true);
-			if (add_popups) {
-				//NOTE: popup listeners are called in reverse of the order that they are added
-				// Must use separate instances of GraphSelectioManager if we want to use
-				// one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
-				//tier_manager.addPopupListener(new GraphSelectionManager(this));
-				tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
-				//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
-				tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
-			}
-			
-			// Listener for track selection events.  We will use this to populate 'Selection Info'
-			// grid with properties of the Type.
-			TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
-				  public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
-					  // TODO:  Find properties of selected track and show in 'Selection Info' tab.
-					  //System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
-				  }
-			};
-			tier_manager.addTrackSelectionListener(track_selection_listener);
+
+		tier_manager = new TierLabelManager((AffyLabelledTierMap) seqmap);
+		tier_manager.setDoGraphSelections(true);
+		if (add_popups) {
+			//NOTE: popup listeners are called in reverse of the order that they are added
+			// Must use separate instances of GraphSelectioManager if we want to use
+			// one as a ContextualPopupListener AND one as a TierLabelHandler.PopupListener
+			//tier_manager.addPopupListener(new GraphSelectionManager(this));
+			tier_manager.addPopupListener(new TierArithmetic(tier_manager, this));
+			//TODO: tier_manager.addPopupListener(new CurationPopup(tier_manager, this));
+			tier_manager.addPopupListener(new SeqMapViewPopup(tier_manager, this));
 		}
+
+		// Listener for track selection events.  We will use this to populate 'Selection Info'
+		// grid with properties of the Type.
+		TierLabelManager.TrackSelectionListener track_selection_listener = new TierLabelManager.TrackSelectionListener() {
+
+			public void trackSelectionNotify(GlyphI topLevelGlyph, TierLabelManager handler) {
+				// TODO:  Find properties of selected track and show in 'Selection Info' tab.
+				//System.out.println("SELECTED TRACK " + topLevelGlyph.toString());
+			}
+		};
+		tier_manager.addTrackSelectionListener(track_selection_listener);
+
 
 		seqmap.setSelectionAppearance(SceneI.SELECT_OUTLINE);
 		seqmap.addMouseListener(mouse_listener);
 
-		if (label_tiermap) {
-			tier_manager.setDoGraphSelections(true);
-		}
+		tier_manager.setDoGraphSelections(true);
+
 		// A "Smart" rubber band is necessary becaus we don't want our attempts
 		// to drag the graph handles to also cause rubber-banding
 		SmartRubberBand srb = new SmartRubberBand(seqmap);
@@ -441,26 +428,9 @@ public class SeqMapView extends JPanel
 			this.add(BorderLayout.EAST, yzoombox);
 		}
 
-		// experimenting with transcriptarium split windows
-		if (split_win) {
-			// don't display map if split_win, display is via multiple separate windows controlled by resultSeqMap
-
-			//  switched to using JScrollBar,
-			//  previous problems with Swing JScrollBar (and I think AWT Scrollbar as well)
-			//      seem to have been resolved as of JDK 1.5
-			JScrollBar xscroller = new JScrollBar(JScrollBar.HORIZONTAL);
-			JScrollBar yscroller = new JScrollBar(JScrollBar.VERTICAL);
-
-			seqmap.setRangeScroller(xscroller);
-			seqmap.setOffsetScroller(yscroller);
-			JPanel scrollP = new JPanel();
-			scrollP.setLayout(new BorderLayout());
-			scrollP.add(BorderLayout.SOUTH, xscroller);
-			scrollP.add(BorderLayout.WEST, yscroller);
-			this.add(BorderLayout.CENTER, scrollP);
-		} else {
-			this.add(BorderLayout.CENTER, seqmap);
-		}
+		
+		this.add(BorderLayout.CENTER, seqmap);
+	
 		LinkControl link_control = new LinkControl();
 		this.addPopupListener(link_control);
 

@@ -10,6 +10,7 @@ import com.affymetrix.genometryImpl.event.SymSelectionListener;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,10 +41,10 @@ public final class GenometryModel {
 	// maps sequences to lists of selected symmetries
 	Map<BioSeq,List<SeqSymmetry>> seq2selectedSymsHash = new HashMap<BioSeq,List<SeqSymmetry>>();
 
-	final List<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArrayList<SeqSelectionListener>();
-	final List<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArrayList<GroupSelectionListener>();
-	final List<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArrayList<SymSelectionListener>();
-	final List<FeatureSelectionListener> feature_selection_listeners = new CopyOnWriteArrayList<FeatureSelectionListener>();
+	final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
+	final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
+	final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
+	final Set<FeatureSelectionListener> feature_selection_listeners = new CopyOnWriteArraySet<FeatureSelectionListener>();
 
 	AnnotatedSeqGroup selected_group = null;
 	BioSeq selected_seq = null;
@@ -135,16 +136,14 @@ public final class GenometryModel {
 	}
 
 	public void addGroupSelectionListener(GroupSelectionListener listener) {
-		if (!group_selection_listeners.contains(listener)) {
-			group_selection_listeners.add(listener);
-		}
+		group_selection_listeners.add(listener);
 	}
 
 	public void removeGroupSelectionListener(GroupSelectionListener listener) {
 		group_selection_listeners.remove(listener);
 	}
 
-	public List<GroupSelectionListener> getGroupSelectionListeners() {
+	public Set<GroupSelectionListener> getGroupSelectionListeners() {
 		return group_selection_listeners;
 	}
 
@@ -164,16 +163,14 @@ public final class GenometryModel {
 	}
 
 	public void addFeatureSelectionListener(FeatureSelectionListener listener) {
-		if (!feature_selection_listeners.contains(listener)) {
-			feature_selection_listeners.add(listener);
-		}
+		feature_selection_listeners.add(listener);
 	}
 
 	public void removeFeatureSelectionListener(FeatureSelectionListener listener) {
 		feature_selection_listeners.remove(listener);
 	}
 
-	public List<FeatureSelectionListener> getFeatureSelectionListeners() {
+	public Set<FeatureSelectionListener> getFeatureSelectionListeners() {
 		return feature_selection_listeners;
 	}
 
@@ -211,16 +208,14 @@ public final class GenometryModel {
 	}
 
 	public void addSeqSelectionListener(SeqSelectionListener listener) {
-		if (!seq_selection_listeners.contains(listener)) {
-			seq_selection_listeners.add(listener);
-		}
+		seq_selection_listeners.add(listener);
 	}
 
 	public void removeSeqSelectionListener(SeqSelectionListener listener) {
 		seq_selection_listeners.remove(listener);
 	}
 
-	public List<SeqSelectionListener> getSeqSelectionListeners() {
+	public Set<SeqSelectionListener> getSeqSelectionListeners() {
 		return seq_selection_listeners;
 	}
 
@@ -238,16 +233,14 @@ public final class GenometryModel {
 	}
 
 	public void addSymSelectionListener(SymSelectionListener listener) {
-		if (!sym_selection_listeners.contains(listener)) {
-			sym_selection_listeners.add(listener);
-		}
+		sym_selection_listeners.add(listener);
 	}
 
 	public void removeSymSelectionListener(SymSelectionListener listener) {
 		sym_selection_listeners.remove(listener);
 	}
 
-	public List<SymSelectionListener> getSymSelectionListeners() {
+	public Set<SymSelectionListener> getSymSelectionListeners() {
 		return sym_selection_listeners;
 	}
 

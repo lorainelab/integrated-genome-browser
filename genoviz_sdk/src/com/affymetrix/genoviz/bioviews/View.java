@@ -28,7 +28,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -113,21 +113,21 @@ public class View implements ViewI, NeoPaintListener,
 		   protected Graphics2D graphics;
 
 		   private final com.affymetrix.genoviz.util.Timer timecheck;
-		   protected final List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
-		   protected final List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
-		   protected final List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
+		   protected final Set<MouseListener> mouse_listeners = new CopyOnWriteArraySet<MouseListener>();
+		   protected final Set<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArraySet<MouseMotionListener>();
+		   protected final Set<KeyListener> key_listeners = new CopyOnWriteArraySet<KeyListener>();
 
 		   /**
 			*  Vector of viewbox listeners to be notified immediately _before_
 			*    view is drawn with changed bounding box
 			*/
-		   protected final List<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+		   protected final Set<NeoViewBoxListener> predraw_viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
 
 		   /**
 			*  Vector of viewbox listeners to be notified immediately _after__
 			*    view is drawn with changed bounding box
 			*/
-		   protected final List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
+		   protected final Set<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
 
 		   /** fields to help with optimizations **/
 		   protected boolean scrolling_optimized = false;
@@ -370,8 +370,7 @@ public class View implements ViewI, NeoPaintListener,
 							   coordbox.width, coordbox.height);
 					   NeoViewBoxChangeEvent nevt =
 						   new NeoViewBoxChangeEvent(this, newbox, true);
-					   for (int i=0; i<predraw_viewbox_listeners.size(); i++) {
-						   NeoViewBoxListener listener = predraw_viewbox_listeners.get(i);
+					   for (NeoViewBoxListener listener : predraw_viewbox_listeners) {
 						   listener.viewBoxChanged(nevt);
 					   }
 				   }
@@ -449,8 +448,8 @@ public class View implements ViewI, NeoPaintListener,
 					   NeoViewBoxChangeEvent nevt =
 						   new NeoViewBoxChangeEvent(this, newbox, false);
 
-					   for (int i=0; i<viewbox_listeners.size(); i++) {
-						   viewbox_listeners.get(i).viewBoxChanged(nevt);
+					   for (NeoViewBoxListener l : viewbox_listeners) {
+						   l.viewBoxChanged(nevt);
 					   }
 				   }
 			   }
@@ -887,9 +886,7 @@ public class View implements ViewI, NeoPaintListener,
 		   //  Standard methods to implement the event source for event listeners
 
 		   public void addMouseListener(MouseListener l) {
-			   if (!mouse_listeners.contains(l)) {
-				   mouse_listeners.add(l);
-			   }
+			   mouse_listeners.add(l);
 		   }
 
 		   public void removeMouseListener(MouseListener l) {
@@ -897,9 +894,7 @@ public class View implements ViewI, NeoPaintListener,
 		   }
 
 		   public void addMouseMotionListener(MouseMotionListener l) {
-			   if (!mouse_motion_listeners.contains(l)) {
-				   mouse_motion_listeners.add(l);
-			   }
+			   mouse_motion_listeners.add(l);
 		   }
 
 		   public void removeMouseMotionListener(MouseMotionListener l) {
@@ -907,9 +902,7 @@ public class View implements ViewI, NeoPaintListener,
 		   }
 
 		   public void addKeyListener(KeyListener l) {
-			   if (!key_listeners.contains(l)) {
-				   key_listeners.add(l);
-			   }
+			   key_listeners.add(l);
 		   }
 
 		   public void removeKeyListener(KeyListener l) {
@@ -917,9 +910,7 @@ public class View implements ViewI, NeoPaintListener,
 		   }
 
 		   public void addPostDrawViewListener(NeoViewBoxListener l) {
-			   if (!viewbox_listeners.contains(l)) {
-				   viewbox_listeners.add(l);
-			   }
+			   viewbox_listeners.add(l);
 		   }
 
 		   public void removePostDrawViewListener(NeoViewBoxListener l) {
@@ -927,9 +918,7 @@ public class View implements ViewI, NeoPaintListener,
 		   }
 
 		   public void addPreDrawViewListener(NeoViewBoxListener l) {
-			   if (!predraw_viewbox_listeners.contains(l)) {
-				   predraw_viewbox_listeners.add(l);
-			   }
+			   predraw_viewbox_listeners.add(l);
 		   }
 
 		   public void removePreDrawViewListener(NeoViewBoxListener l)  {

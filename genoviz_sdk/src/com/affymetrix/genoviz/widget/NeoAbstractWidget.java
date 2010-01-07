@@ -26,6 +26,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 
 /**
@@ -253,9 +254,9 @@ public abstract class NeoAbstractWidget extends Container
 
 	protected Dimension pref_widg_size = new Dimension(1, 1);
 
-	protected List<MouseListener> mouse_listeners = new CopyOnWriteArrayList<MouseListener>();
-	protected List<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArrayList<MouseMotionListener>();
-	protected List<KeyListener> key_listeners = new CopyOnWriteArrayList<KeyListener>();
+	protected Set<MouseListener> mouse_listeners = new CopyOnWriteArraySet<MouseListener>();
+	protected Set<MouseMotionListener> mouse_motion_listeners = new CopyOnWriteArraySet<MouseMotionListener>();
+	protected Set<KeyListener> key_listeners = new CopyOnWriteArraySet<KeyListener>();
 
 	protected Hashtable<GlyphI,Object> glyph_hash = new Hashtable<GlyphI,Object>();
 
@@ -823,9 +824,7 @@ public abstract class NeoAbstractWidget extends Container
 
 	@Override
 	public void addMouseListener(MouseListener l) {
-		if (!mouse_listeners.contains(l)) {
-			mouse_listeners.add(l);
-		}
+		mouse_listeners.add(l);
 	}
 
 	@Override
@@ -835,9 +834,7 @@ public abstract class NeoAbstractWidget extends Container
 
 	@Override
 	public void addMouseMotionListener(MouseMotionListener l) {
-		if (!mouse_motion_listeners.contains(l)) {
-			mouse_motion_listeners.add(l);
-		}
+		mouse_motion_listeners.add(l);
 	}
 
 	@Override
@@ -847,9 +844,7 @@ public abstract class NeoAbstractWidget extends Container
 
 	@Override
 	public void addKeyListener(KeyListener l) {
-		if (!key_listeners.contains(l)) {
-			key_listeners.add(l);
-		}
+		key_listeners.add(l);
 	}
 
 	@Override

@@ -27,6 +27,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import java.awt.geom.Rectangle2D;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  *
@@ -42,7 +43,7 @@ public final class TierLabelManager {
   private int yoffset_pop = 0;
 
 
-  private List<PopupListener> popup_listeners = new ArrayList<PopupListener>();
+  private Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
   
 
   /**
@@ -340,20 +341,18 @@ public final class TierLabelManager {
     public void popupNotify(JPopupMenu popup, TierLabelManager handler);
   }
 
-  List<TrackSelectionListener> track_selection_listeners = new ArrayList<TrackSelectionListener>();
+  Set<TrackSelectionListener> track_selection_listeners = new CopyOnWriteArraySet<TrackSelectionListener>();
   
 
   public void addTrackSelectionListener(TrackSelectionListener l) {
 	    track_selection_listeners.add(l);
   }
 
-  public void doTrackSelection(GlyphI topLevelGlyph) {
-	    
+	public void doTrackSelection(GlyphI topLevelGlyph) {
 		for (TrackSelectionListener l : track_selection_listeners) {
-	      l.trackSelectionNotify(topLevelGlyph, this);
-	    }
-
-	  }  
+			l.trackSelectionNotify(topLevelGlyph, this);
+		}
+	}
 
 
 

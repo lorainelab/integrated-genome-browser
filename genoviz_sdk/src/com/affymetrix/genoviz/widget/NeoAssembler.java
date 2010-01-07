@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
@@ -303,7 +304,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	private int assemblyType = NA_ASSEMBLY;
 
-	protected CopyOnWriteArraySet<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
+	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
 	protected Character match_char = null;
 
@@ -1187,9 +1188,10 @@ public class NeoAssembler extends NeoContainerWidget
 	@Deprecated
 		public synchronized void reshape(int x, int y, int width, int height) {
 			super.reshape(x, y, width, height);
-			alignmap.adjustScroller(alignmap.Y);
+			alignmap.adjustScroller(NeoMap.Y);
 		}
 
+	@Override
 	public synchronized void doLayout() {
 		// System.out.println("NeoAssembler.layout()");
 		// this assumes that NeoAssembler has no insets
@@ -1518,9 +1520,9 @@ public class NeoAssembler extends NeoContainerWidget
 			}
 
 			else if (SELECT_RESIDUES == selection_behavior) {
-				if ((id == evt.MOUSE_PRESSED &&
+				if ((id == MouseEvent.MOUSE_PRESSED &&
 							alignmap.getSelectionEvent() == ON_MOUSE_DOWN) ||
-						(id == evt.MOUSE_RELEASED &&
+						(id == MouseEvent.MOUSE_RELEASED &&
 						 alignmap.getSelectionEvent() == ON_MOUSE_UP)) {
 					if (source == labelmap) {
 						consmap.deselect(consmap.getSelected());
@@ -1566,7 +1568,7 @@ public class NeoAssembler extends NeoContainerWidget
 						}
 					}
 						 }
-				else if (id == evt.MOUSE_DRAGGED
+				else if (id == MouseEvent.MOUSE_DRAGGED
 						&& NeoMap.NO_SELECTION != alignmap.getSelectionEvent()) {
 					if (source == alignmap || source == consmap) {
 						NeoMap selmap = (source == alignmap) ? alignmap : consmap;
@@ -1608,6 +1610,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void clearSelected() {
 		for (int i=0; i<selected.size(); i++) {
 			GlyphI gl = selected.get(i);
@@ -1616,6 +1619,7 @@ public class NeoAssembler extends NeoContainerWidget
 		selected.clear();
 	}
 
+	@Override
 	public List<GlyphI> getSelected() {
 		return selected;
 	}
@@ -1672,6 +1676,7 @@ public class NeoAssembler extends NeoContainerWidget
 		throw new RuntimeException("no adapters accept " + obj);
 	}
 
+	@Override
 	public void setScrollingOptimized(boolean optimize_scrolling) {
 		if (this.optimize_scrolling != optimize_scrolling) {
 			this.optimize_scrolling = optimize_scrolling;
@@ -1684,6 +1689,7 @@ public class NeoAssembler extends NeoContainerWidget
 		return this.optimize_scrolling;
 	}
 
+	@Override
 	public void setDamageOptimized(boolean optimize_damage) {
 		if (this.optimize_damage != optimize_damage) {
 			this.optimize_damage = optimize_damage;

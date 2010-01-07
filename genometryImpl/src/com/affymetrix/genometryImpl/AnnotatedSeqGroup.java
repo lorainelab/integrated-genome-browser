@@ -40,7 +40,7 @@ public class AnnotatedSeqGroup {
 	private boolean id2seq_dirty_bit; // used to keep the lazy copy
 	final private TreeMap<String,Set<SeqSymmetry>> id2sym_hash;	// list of names -> sym
 	final private TreeMap<String,Set<String>> symid2id_hash;	// main sym id -> list of other names
-	final private static CopyOnWriteArraySet<SymMapChangeListener> sym_map_change_listeners = new CopyOnWriteArraySet<SymMapChangeListener>();
+	final private static Set<SymMapChangeListener> sym_map_change_listeners = new CopyOnWriteArraySet<SymMapChangeListener>();
 	private HashMap<String, Integer> type_id2annot_id = new HashMap<String, Integer>();
 	
 	
@@ -146,7 +146,7 @@ public class AnnotatedSeqGroup {
 		}
 	}
 
-	final private static CopyOnWriteArraySet<SymMapChangeListener> getSymMapChangeListeners() {
+	final private static Set<SymMapChangeListener> getSymMapChangeListeners() {
 		return sym_map_change_listeners;
 	}
 

@@ -37,7 +37,7 @@ import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 import javax.swing.JSlider;
 
@@ -129,7 +129,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	protected String hscroll_loc = hscroll_default_loc;
 	protected String vscroll_loc = vscroll_default_loc;
 
-	protected List<NeoRubberBandListener> rubberband_listeners = new CopyOnWriteArrayList<NeoRubberBandListener>();
+	protected Set<NeoRubberBandListener> rubberband_listeners = new CopyOnWriteArraySet<NeoRubberBandListener>();
 
 
 	public NeoWidget() {
@@ -150,6 +150,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * Destructor that unlocks graphic resources, cuts links.
 	 * Call only when the map is no longer being displayed.
 	 */
+	@Override
 	public void destroy() {
 
 		super.destroy();
@@ -1290,9 +1291,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	}
 
 	public void addRubberBandListener(NeoRubberBandListener l) {
-		if (!rubberband_listeners.contains(l)) {
-			rubberband_listeners.add(l);
-		}
+		rubberband_listeners.add(l);
 	}
 
 	public void removeRubberBandListener(NeoRubberBandListener l) {

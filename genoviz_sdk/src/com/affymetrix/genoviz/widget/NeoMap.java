@@ -48,6 +48,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 
 /**
@@ -98,7 +99,6 @@ public class NeoMap extends NeoWidget implements
 		   private static final boolean DEBUG_RESHAPE = false;
 		   private static final boolean debug = false;
 
-		   private static final boolean NM_DEBUG_COLORS = false;
 		   private static final boolean NM_DEBUG_PAINT = false;
 
 		   protected static Color default_map_background = new Color(180, 250, 250);
@@ -133,8 +133,8 @@ public class NeoMap extends NeoWidget implements
 		   boolean drag_scrolling_enabled = false;
 
 		   protected int selectionMethod = NO_SELECTION;
-		   protected List<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArrayList<NeoViewBoxListener>();
-		   protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
+		   protected Set<NeoViewBoxListener> viewbox_listeners = new CopyOnWriteArraySet<NeoViewBoxListener>();
+		   protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
 		   /**
 			* Constructs a horizontal NeoMap with scrollbars.
@@ -525,6 +525,7 @@ public class NeoMap extends NeoWidget implements
 			* This overrides {@link NeoWidget#destroy()}
 			* so that we can clear the rubber band and its listeners.
 			*/
+	@Override
 		   public void destroy() {
 			   clearWidget();
 			   super.destroy();
@@ -717,6 +718,7 @@ public class NeoMap extends NeoWidget implements
 		   /**
 			*  xfit and yfit override reshape_constraint[X] and reshape_constraint[Y]
 			*/
+	@Override
 		   public void stretchToFit(boolean xfit, boolean yfit) {
 			   stretchCount++;
 			   if (DEBUG_STRETCH)  {
@@ -1120,14 +1122,15 @@ public class NeoMap extends NeoWidget implements
 			* Removes all glyphs.
 			* However, factories, dataadapters, coord bounds, etc. remain.
 			*/
+	@Override
 		   public void clearWidget() {
 			   super.clearWidget();
 			   // create new eveGlyph, set its coords and expansion behavior to old eveGlyph
 			   RootGlyph oldeve = (RootGlyph)scene.getGlyph();
 			   Rectangle2D.Double evebox = oldeve.getCoordBox();
 			   RootGlyph neweve = createRootGlyph();
-			   neweve.setExpansionBehavior(neweve.X, oldeve.getExpansionBehavior(oldeve.X));
-			   neweve.setExpansionBehavior(neweve.Y, oldeve.getExpansionBehavior(oldeve.Y));
+			   neweve.setExpansionBehavior(RootGlyph.X, oldeve.getExpansionBehavior(RootGlyph.X));
+			   neweve.setExpansionBehavior(RootGlyph.Y, oldeve.getExpansionBehavior(RootGlyph.Y));
 			   neweve.setCoords(evebox.x, evebox.y, evebox.width, evebox.height);
 			   scene.setGlyph(neweve);
 
@@ -1271,6 +1274,7 @@ public class NeoMap extends NeoWidget implements
 			   }
 		   }
 
+	@Override
 		   public void update(Graphics g) {
 			   if (NM_DEBUG_PAINT)  {
 				   System.out.println("NeoMap.update() called");
@@ -1278,6 +1282,7 @@ public class NeoMap extends NeoWidget implements
 			   paint(g);
 		   }
 
+	@Override
 		   public void repaint() {
 			   if (NM_DEBUG_PAINT)  {
 				   System.out.println("NeoMap.repaint() called");
@@ -1288,6 +1293,7 @@ public class NeoMap extends NeoWidget implements
 		   }
 
 
+	@Override
 		   public void paint(Graphics g) {
 			   if (NM_DEBUG_PAINT) {
 				   System.out.println("NeoMap.paint() called");
@@ -1306,6 +1312,7 @@ public class NeoMap extends NeoWidget implements
 			   return canvas.getBackground();
 		   }
 
+	@Override
 		   public void setBackground(Color theColor) {
 			   super.setBackground(theColor);
 			   setBackground(MAP, theColor);
@@ -1426,7 +1433,7 @@ public class NeoMap extends NeoWidget implements
 			*/
 		   public void setMaxZoomToFont(Font fnt) {
 			   font_for_max_zoom = fnt;
-         seqmetrics = GeneralUtils.getFontMetrics(font_for_max_zoom);
+			   seqmetrics = GeneralUtils.getFontMetrics(font_for_max_zoom);
 			   int font_width = seqmetrics.charWidth('C');
 			   setMaxZoom(X, font_width);
 		   }
@@ -1443,9 +1450,6 @@ public class NeoMap extends NeoWidget implements
 			   Object src = evt.getSource();
 			   int direction = evt.getDirection();
 			   if (src == canvas_drag_monitor) {
-
-				   Rectangle2D.Double vbox = getViewBounds();
-				   String str;
 				   double scroll_to_coord;
 				   int pixels_per_scroll = 10;
 				   if (direction == NeoConstants.NORTH) {
@@ -1465,14 +1469,12 @@ public class NeoMap extends NeoWidget implements
 							   (pixels_per_scroll - trans.getTranslateX()) / trans.getScaleX();
 					   scroll(X, scroll_to_coord);
 					   updateWidget();
-					   str = "EAST";
 				   }
 				   else if (direction == NeoConstants.WEST) {
 					   scroll_to_coord =
 							   (-pixels_per_scroll - trans.getTranslateX()) / trans.getScaleX();
 					   scroll(X, scroll_to_coord);
 					   updateWidget();
-					   str = "WEST";
 				   }
 			   }
 		   }
@@ -1514,6 +1516,7 @@ public class NeoMap extends NeoWidget implements
 			* and MouseMotionListeners registered to listen for mouse events
 			* on widget/map.
 			*/
+	@Override
 		   public void heardMouseEvent(MouseEvent e) {
 			   if (! (e instanceof NeoViewMouseEvent)) { return; }
 			   NeoViewMouseEvent nme = (NeoViewMouseEvent)e;
@@ -1571,8 +1574,8 @@ public class NeoMap extends NeoWidget implements
 				   NeoViewBoxChangeEvent vevt =
 					   new NeoViewBoxChangeEvent(this, e.getCoordBox());
 
-				   for (int i=0; i<viewbox_listeners.size(); i++) {
-					   viewbox_listeners.get(i).viewBoxChanged(vevt);
+				   for (NeoViewBoxListener l : viewbox_listeners) {
+					   l.viewBoxChanged(vevt);
 				   }
 			   }
 			   if (range_listeners.size() > 0) {
@@ -1585,8 +1588,8 @@ public class NeoMap extends NeoWidget implements
 					   nevt = new NeoRangeEvent(this, vbox.x, vbox.x + vbox.width);
 				   }
 
-				   for (int i=0; i<range_listeners.size(); i++) {
-					   range_listeners.get(i).rangeChanged(nevt);
+				   for (NeoRangeListener l : this.range_listeners) {
+					   l.rangeChanged(nevt);
 					   // currently range events are generated for _any_ viewbox change
 					   //    event, so sometimes the range may not actually have changed,
 					   //    might be only "offset" that is changing
@@ -1601,16 +1604,14 @@ public class NeoMap extends NeoWidget implements
 					   new NeoRubberBandEvent(this, e.getID(), e.getWhen(), e.getModifiers(),
 							   e.getX(), e.getY(), e.getClickCount(),
 							   e.isPopupTrigger(), e.getRubberBand());
-				   for (int i=0; i<rubberband_listeners.size(); i++) {
-					   rubberband_listeners.get(i).rubberBandChanged(nevt);
+				   for (NeoRubberBandListener l : rubberband_listeners) {
+					   l.rubberBandChanged(nevt);
 				   }
 			   }
 		   }
 
 		   public void addViewBoxListener(NeoViewBoxListener l) {
-			   if (!viewbox_listeners.contains(l)) {
-				   viewbox_listeners.add(l);
-			   }
+			   viewbox_listeners.add(l);
 		   }
 
 		   public void removeViewBoxListener(NeoViewBoxListener l) {
@@ -1618,9 +1619,7 @@ public class NeoMap extends NeoWidget implements
 		   }
 
 		   public void addRangeListener(NeoRangeListener l) {
-			   if (!range_listeners.contains(l)) {
-				   range_listeners.add(l);
-			   }
+			   range_listeners.add(l);
 		   }
 
 		   public void removeRangeListener(NeoRangeListener l) {

@@ -33,6 +33,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Rectangle;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 
 /**
@@ -213,7 +214,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected int scroll_increment;
 	private ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
-	protected List<NeoRangeListener> range_listeners = new CopyOnWriteArrayList<NeoRangeListener>();
+	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 
 	public NeoSeq() {
 		super();
@@ -352,6 +353,7 @@ public class NeoSeq extends NeoContainerWidget
 		updateWidget();
 	}
 
+	@Override
 	public void destroy() {
 		residue_map.getView().removePostDrawViewListener ( this );
 		this.seq.removeSequenceListener ( this );
@@ -376,6 +378,7 @@ public class NeoSeq extends NeoContainerWidget
 	 * Responds to cursor control keys.
 	 * These keys do not generate KEY_TYPED events.
 	 */
+	@Override
 	public void keyPressed(KeyEvent e) {
 		if (null == this.seq)
 			return;
@@ -396,7 +399,7 @@ public class NeoSeq extends NeoContainerWidget
 				p = 0;
 				if ( isEditable() )
 					this.insertionPoint.setOffset( p );
-				if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+				if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 					clearSelection();
 				else {
 					if ( this.sel_range.isEmpty() ) {
@@ -409,7 +412,7 @@ public class NeoSeq extends NeoContainerWidget
 				break;
 			case KeyEvent.VK_END:
 				p = last;
-				if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+				if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 					clearSelection();
 				else {
 					if ( this.sel_range.isEmpty() ) {
@@ -431,7 +434,7 @@ public class NeoSeq extends NeoContainerWidget
 						this.insertionPoint.setOffset( p );
 						makeResidueVisible( p );
 					}
-					if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 						clearSelection();
 					else {
 						if ( this.sel_range.isEmpty() ) {
@@ -451,7 +454,7 @@ public class NeoSeq extends NeoContainerWidget
 					p = this.insertionPoint.getOffset() + rpl;
 					p = Math.min( p, last + 1 );
 					this.insertionPoint.setOffset( p );
-					if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 						clearSelection();
 					else {
 						if ( this.sel_range.isEmpty() ) {
@@ -473,7 +476,7 @@ public class NeoSeq extends NeoContainerWidget
 						p++;
 						this.insertionPoint.setOffset( p );
 						makeResidueVisible( p );
-						if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) ) {
+						if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) ) {
 							clearSelection();
 						}
 						else {
@@ -493,7 +496,7 @@ public class NeoSeq extends NeoContainerWidget
 						p--;
 						this.insertionPoint.setOffset( p );
 						makeResidueVisible( p );
-						if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+						if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 							clearSelection();
 						else {
 							if ( this.sel_range.isEmpty() ) {
@@ -510,7 +513,7 @@ public class NeoSeq extends NeoContainerWidget
 					p = this.insertionPoint.getOffset();
 					p = Math.max( 0, p - rps );
 					this.insertionPoint.setOffset( p );
-					if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 						clearSelection();
 					else {
 						if ( this.sel_range.isEmpty() ) {
@@ -527,7 +530,7 @@ public class NeoSeq extends NeoContainerWidget
 					p = this.insertionPoint.getOffset();
 					p = Math.min( p + rps, last+1 );
 					this.insertionPoint.setOffset( p );
-					if ( 0 == ( e.SHIFT_MASK & e.getModifiers() ) )
+					if ( 0 == ( KeyEvent.SHIFT_MASK & e.getModifiers() ) )
 						clearSelection();
 					else {
 						if ( this.sel_range.isEmpty() ) {
@@ -547,6 +550,7 @@ public class NeoSeq extends NeoContainerWidget
 	/**
 	 * Responds to ASCII keys being typed.
 	 */
+	@Override
 	public void keyTyped(KeyEvent e) {
 		if ( ! this.isEditable() )
 			return;
@@ -642,6 +646,7 @@ public class NeoSeq extends NeoContainerWidget
 				"can only getPlacement of an AXIS_SCROLLER, RESIDUES, or NUMBERS.");
 	}
 
+	@Override
 	public void doLayout() {
 
 		// Assume that we can bail if our offset_scroll isn't a Component.
@@ -764,6 +769,7 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 
+	@Override
 	public void stretchToFit(boolean b1, boolean b2) {
 
 		int start_base = (int)num_map.getView().getCoordBox().y;
@@ -861,6 +867,7 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
 		doLayout();
@@ -1011,7 +1018,7 @@ public class NeoSeq extends NeoContainerWidget
 		setSequence(seq);
 		residue_map.scrollOffset(start_base);
 		num_map.scrollOffset(start_base);
-		residue_map.adjustScroller(residue_map.Y);
+		residue_map.adjustScroller(NeoMap.Y);
 	}
 
 	/**
@@ -1196,6 +1203,7 @@ public class NeoSeq extends NeoContainerWidget
 		sel_range.notifyObservers();
 	}
 
+	@Override
 	public void heardMouseEvent(MouseEvent evt) {
 		if (!(evt instanceof NeoMouseEvent)) { return; }
 		NeoMouseEvent e = (NeoMouseEvent)evt;
@@ -1209,17 +1217,17 @@ public class NeoSeq extends NeoContainerWidget
 			int x = e.getX();
 			int y = e.getY();
 			if ( this.isEditable() ) {
-				if ( ON_MOUSE_DOWN == sel_behavior && e.MOUSE_PRESSED == e.getID() ||
-						ON_MOUSE_UP == sel_behavior && e.MOUSE_RELEASED == e.getID() ||
-						e.MOUSE_DRAGGED == e.getID() ) {
+				if ( ON_MOUSE_DOWN == sel_behavior && NeoMouseEvent.MOUSE_PRESSED == e.getID() ||
+						ON_MOUSE_UP == sel_behavior && NeoMouseEvent.MOUSE_RELEASED == e.getID() ||
+						NeoMouseEvent.MOUSE_DRAGGED == e.getID() ) {
 					int residue = getCoordResidue(e.getCoordX(),e.getCoordY());
 					this.insertionPoint.setOffset( residue );
 					updateWidget();
 						}
 			}
 			if (sel_behavior != NO_SELECTION) {
-				if ((id == e.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN) ||
-						(id == e.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
+				if ((id == NeoMouseEvent.MOUSE_PRESSED && sel_behavior == ON_MOUSE_DOWN) ||
+						(id == NeoMouseEvent.MOUSE_RELEASED && sel_behavior == ON_MOUSE_UP)) {
 
 					if (!residue_canvas.getBounds().contains(x, y)) {
 						return;
@@ -1231,7 +1239,7 @@ public class NeoSeq extends NeoContainerWidget
 						residueMapStartHighlight(e);
 					}
 						}
-				else if (id == e.MOUSE_DRAGGED && sel_behavior == ON_MOUSE_DOWN) {
+				else if (id == NeoMouseEvent.MOUSE_DRAGGED && sel_behavior == ON_MOUSE_DOWN) {
 					// checking to make sure drag is within bounds of canvas --
 					//    DragMonitor will deal with drags to outside of canvas
 					if (residue_canvas.getBounds().contains(x, y)) {
@@ -1632,10 +1640,12 @@ public class NeoSeq extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void setSelectionAppearance(int behavior) {
 		super.setSelectionAppearance(behavior);
 	}
 
+	@Override
 	public void setSelectionColor(Color col) {
 		super.setSelectionColor(col);
 		getResidueGlyph().setHighlightColor(col);
@@ -1699,12 +1709,14 @@ public class NeoSeq extends NeoContainerWidget
 	 * in terms of pixel dimentions
 	 * rather than lines of residues.
 	 */
+	@Override
 	public void setPreferredSize(Dimension theSize) {
 		preferred_size = theSize;
 		preferredWidthInResidues = 0;
 		preferredHeightInLines = 0;
 	}
 
+	@Override
 	public Dimension getPreferredSize() {
 		if (0 < preferredWidthInResidues * preferredHeightInLines) {
 			return getPreferredSize(preferredWidthInResidues, preferredHeightInLines);
@@ -1850,6 +1862,7 @@ public class NeoSeq extends NeoContainerWidget
 	//************************************************************
 
 	// need to decide what "clearing" the sequence widget actually means
+	@Override
 	public void clearWidget() {
 		clearAnnotations();
 		super.clearWidget();
@@ -2146,17 +2159,15 @@ public class NeoSeq extends NeoContainerWidget
 				Range r = getVisibleRange();
 				NeoRangeEvent nevt = new NeoRangeEvent(this, r.beg, r.end);
 
-				for (int i=0; i<range_listeners.size(); i++) {
-					range_listeners.get(i).rangeChanged(nevt);
+				for (NeoRangeListener l : range_listeners) {
+					l.rangeChanged(nevt);
 				}
 			}
 		}
 	}
 
 	public void addRangeListener(NeoRangeListener l) {
-		if (!range_listeners.contains(l)) {
-			range_listeners.add(l);
-		}
+		range_listeners.add(l);
 	}
 
 	public void removeRangeListener(NeoRangeListener l) {

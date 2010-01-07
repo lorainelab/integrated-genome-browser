@@ -87,6 +87,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
 import javax.swing.*;
@@ -132,8 +133,8 @@ public class SeqMapView extends JPanel
 	boolean slicing_in_effect = false;
 	boolean hairline_is_labeled = true;
 	SeqSpan viewspan_before_slicing = null;
-	List<SymSelectionListener> selection_listeners = new ArrayList<SymSelectionListener>();
-	List<ContextualPopupListener> popup_listeners = new ArrayList<ContextualPopupListener>();
+	Set<SymSelectionListener> selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
+	Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 	/**
 	 *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing

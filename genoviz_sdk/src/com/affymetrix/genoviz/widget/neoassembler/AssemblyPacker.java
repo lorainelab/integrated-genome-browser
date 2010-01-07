@@ -13,9 +13,11 @@
 
 package com.affymetrix.genoviz.widget.neoassembler;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.AlignmentGlyph;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -86,13 +88,10 @@ public class AssemblyPacker implements PackerI {
 
 		if (alignments == null) { return null; }
 		AlignmentGlyph align;
-		int i;
-		double offset;
-		Rectangle2D.Double rect, cbox;
+		Rectangle2D.Double cbox;
 
 		cbox = assembly.getCoordBox();
-		offset = cbox.y;
-		for (i=0; i<alignments.size(); i++) {
+		for (int i=0; i<alignments.size(); i++) {
 			align = (AlignmentGlyph)alignments.get(i);
 			pack(assembly, align, i);
 		}

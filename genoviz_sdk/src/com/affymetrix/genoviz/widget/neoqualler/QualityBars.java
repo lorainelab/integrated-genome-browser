@@ -13,12 +13,14 @@
 
 package com.affymetrix.genoviz.widget.neoqualler;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.datamodel.ReadConfidence;
+import com.affymetrix.genoviz.glyph.ColorSepGlyph;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import java.awt.*;
-import java.util.*;
 
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.glyph.*;
 import java.awt.geom.Rectangle2D;
 
 public class QualityBars extends Glyph  {
@@ -80,15 +82,18 @@ public class QualityBars extends Glyph  {
 		}
 	}
 
+	@Override
 	public void draw(ViewI view) {
 		super.draw(view);
 	}
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible && coord_hitbox.intersects(coordbox);
 	}

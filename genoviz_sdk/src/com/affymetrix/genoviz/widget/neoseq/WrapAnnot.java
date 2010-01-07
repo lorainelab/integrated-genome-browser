@@ -13,9 +13,9 @@
 
 package com.affymetrix.genoviz.widget.neoseq;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.util.*;
-
-import com.affymetrix.genoviz.bioviews.*;
 
 /**
  * contains other WrapGlyphs.
@@ -29,6 +29,7 @@ public class WrapAnnot extends WrapGlyph {
 		children = new ArrayList<GlyphI>();
 	}
 
+	@Override
 	public void addChild(GlyphI glyph)  {
 		if (glyph instanceof WrapGlyph) {
 			((WrapGlyph)glyph).setResiduesPerLine(residues_per_line);
@@ -36,6 +37,7 @@ public class WrapAnnot extends WrapGlyph {
 		super.addChild(glyph);
 	}
 
+	@Override
 	public void addChild(GlyphI glyph, int position) {
 		if (glyph instanceof WrapGlyph) {
 			((WrapGlyph)glyph).setResiduesPerLine(residues_per_line);

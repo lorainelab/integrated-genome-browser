@@ -39,6 +39,7 @@ public abstract class AnnotationGlyph extends WrapGlyph {
 	}
 
 
+	@Override
 	public String toString() {
 		return "Annotation " + super.toString();
 	}

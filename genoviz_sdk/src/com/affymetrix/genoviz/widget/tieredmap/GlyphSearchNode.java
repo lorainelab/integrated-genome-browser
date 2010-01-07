@@ -298,7 +298,6 @@ public class GlyphSearchNode implements Cloneable {
 		}
 
 		if (null != children) {
-			int j_size = children.size();
 			for (GlyphI c : children) {
 				Rectangle2D.Double cbox = c.getCoordBox();
 				if (! ( ((cbox.x + cbox.width) < a) || (cbox.x > b)) ) {

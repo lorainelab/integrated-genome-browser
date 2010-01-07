@@ -19,9 +19,9 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPackerI {
-	public static int ALIGN_TOP = 1000;
-	public static int ALIGN_BOTTOM = 1001;
-	public static int ALIGN_CENTER = 1002;
+	public static final int ALIGN_TOP = 1000;
+	public static final int ALIGN_BOTTOM = 1001;
+	public static final int ALIGN_CENTER = 1002;
 
 	int alignment = ALIGN_CENTER;
 	double maxHeight = 0;
@@ -45,15 +45,12 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 	}
 
 
+	@Override
 	public Rectangle pack(GlyphI parent, ViewI view) {
-		List children = parent.getChildren();
+		List<GlyphI> children = parent.getChildren();
 		if (children == null) { return null; }
-		GlyphI child;
-		double height;
-		for (int i=0; i<children.size(); i++) {
-			child = (GlyphI)children.get(i);
-			height = child.getCoordBox().height;
-			maxHeight = (height > maxHeight) ? height : maxHeight;
+		for (GlyphI child : children) {
+			maxHeight = Math.max(maxHeight, child.getCoordBox().height);
 		}
 		adjustHeight(parent);
 		moveAllChildren(parent);
@@ -84,35 +81,30 @@ public class CollapsedTierPacker extends AbstractCoordPacker implements PaddedPa
 	}
 
 	protected void moveAllChildren(GlyphI parent) {
-		Rectangle2D.Double pbox = parent.getCoordBox();
-		List children = parent.getChildren();
+		List<GlyphI> children = parent.getChildren();
 		if (children == null) { return; }
-		double parent_height = parent.getCoordBox().height;
-
-		Rectangle2D.Double cbox;
-		GlyphI child;
+		Rectangle2D.Double pbox = parent.getCoordBox();
+		double parent_height = pbox.height;
 
 		if (alignment == ALIGN_TOP) {
 			double top = pbox.y + parent_spacer;
-			for (int i=0; i<children.size(); i++) {
-				child = (GlyphI)children.get(i);
-				cbox = child.getCoordBox();
-				child.moveAbsolute(cbox.x, top);
+			for (GlyphI child : children) {
+				child.moveAbsolute(child.getCoordBox().x, top);
 			}
 		}
 
 		else if (alignment == ALIGN_BOTTOM) {
 			double bottom = pbox.y + pbox.height - parent_spacer;
-			for (int i=0; i<children.size(); i++) {
-				child = (GlyphI)children.get(i);
+			Rectangle2D.Double cbox;
+			for (GlyphI child : children) {
 				cbox = child.getCoordBox();
 				child.moveAbsolute(cbox.x, bottom - cbox.height);
 			}
 		}
 		else  {  // alignment == ALIGN_CENTER
 			double center = pbox.y + parent_height / 2;
-			for (int i=0; i<children.size(); i++) {
-				child = (GlyphI)children.get(i);
+			Rectangle2D.Double cbox;
+			for (GlyphI child : children) {
 				cbox = child.getCoordBox();
 				child.moveAbsolute(cbox.x, center - cbox.height/2);
 			}

@@ -13,12 +13,13 @@
 
 package com.affymetrix.genoviz.widget.neoseq;
 
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.ViewI;
+
 
 public class WrapFontColors extends AnnotationGlyph {
 	// max types to allocate space for
 	// currently forward/reverse strand plus six possible translations = 8
-	static int maxDrawTypes = 8;
+	private static final int maxDrawTypes = 8;
 
 	boolean drawTypes[];
 

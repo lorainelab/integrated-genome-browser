@@ -101,8 +101,9 @@ public class AsymAxisGlyph extends Glyph  {
 		return baseGlyphHeight;
 	}
 
+	@Override
 	public void draw(ViewI view) {
-		int beg, end, i, j;
+		int beg, end;
 		Graphics g = view.getGraphics();
 		Rectangle2D.Double viewbox = view.getCoordBox();
 
@@ -117,9 +118,6 @@ public class AsymAxisGlyph extends Glyph  {
 		if (beg < 0) { beg = 0; }
 
 		// Drawing base letters along the axis for each visible base
-		int stringsdrawn = 0;
-		char theBase;
-		int baseID;
 
 		double minview = viewbox.x;
 		double maxview = viewbox.x + viewbox.width;
@@ -151,7 +149,6 @@ public class AsymAxisGlyph extends Glyph  {
 		maxview += labelCoords.width;
 
 		boolean bases_within_view = false;
-		int firstbase=0, lastbase=0;
 
 		// don't worry about setting default for firstbase/lastbase to nonsense --
 		// if they aren't set in loop, they won't be used anyway
@@ -175,10 +172,8 @@ public class AsymAxisGlyph extends Glyph  {
 		if ( true || bases_within_view ) {
 			g.setColor(numColor);
 
-			Mapping aligner = this.base_calls.getAligner();
-
 			try {
-				for (i=0; i < baseCount; i += increment ) {
+				for (int i=0; i < baseCount; i += increment ) {
 					calledBase = this.base_calls.getBaseCall(i);
 					if ( calledBase != null) {
 						baseCoordPoint.x = calledBase.getTracePoint();

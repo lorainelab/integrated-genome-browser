@@ -121,8 +121,9 @@ public class TraceBaseGlyph extends Glyph  {
 		return (int)(this.getCoordBox().height);
 	}
 
+	@Override
 	public void draw(ViewI view) {
-		int beg, end, i, j;
+		int beg, end;
 		Graphics g = view.getGraphics();
 		Rectangle2D.Double viewbox = view.getCoordBox();
 
@@ -169,7 +170,6 @@ public class TraceBaseGlyph extends Glyph  {
 		maxview += labelCoords.width;
 
 		boolean bases_within_view = false;
-		int firstbase=0, lastbase=0;
 
 		// don't worry about setting default for firstbase/lastbase to nonsense --
 		// if they aren't set in loop, they won't be used anyway
@@ -181,15 +181,13 @@ public class TraceBaseGlyph extends Glyph  {
 
 		BaseCall calledBase;
 		try {
-			for (i=0; i<baseCount; i++) {
+			for (int i=0; i<baseCount; i++) {
 				if ((calledBase = this.base_calls.getBaseCall(i)) != null) {
 					baseCoordPoint.x = calledBase.getTracePoint() + coordbox.x;
 					if ((baseCoordPoint.x >= minview) && (baseCoordPoint.x <= maxview))  {
 						if (!bases_within_view) {
-							firstbase = i;
 							bases_within_view = true;
 						}
-						lastbase = i;
 
 						if (showBases) {
 							baseCoordPoint.y = coordbox.y;
@@ -224,11 +222,13 @@ public class TraceBaseGlyph extends Glyph  {
 
 	}
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible && coord_hitbox.intersects(coordbox);
 	}
@@ -258,6 +258,7 @@ public class TraceBaseGlyph extends Glyph  {
 	 * @param width
 	 * @param height ignored
 	 */
+	@Override
 	public void select(double x, double y, double width, double height) {
 		select(x, x+width);
 	}
@@ -292,10 +293,12 @@ public class TraceBaseGlyph extends Glyph  {
 	public void deselect(int begbase, int endbase) {
 	}
 
+	@Override
 	public boolean supportsSubSelection() {
 		return true;
 	}
 
+	@Override
 	public Rectangle2D.Double getSelectedRegion() {
 		if (sel_glyph == null) {
 			if (selected) {

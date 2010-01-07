@@ -13,14 +13,13 @@
 
 package com.affymetrix.genoviz.widget.neoseq;
 
-import java.awt.*;
-import java.util.*;
-
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.datamodel.NASequence;
 import com.affymetrix.genoviz.datamodel.Range;
-import com.affymetrix.genoviz.util.NeoConstants;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class WrapSequence extends WrapGlyph {
@@ -56,6 +55,7 @@ public class WrapSequence extends WrapGlyph {
 		this.addChild(outline_annot_glyph);
 	}
 
+	@Override
 	public void setSequence (SequenceI seq)  {
 		super.setSequence(seq);
 		this.seq = seq;
@@ -264,11 +264,13 @@ public class WrapSequence extends WrapGlyph {
 				}
 	}
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return  isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible && coord_hitbox.intersects(coordbox);
 	}
@@ -297,6 +299,7 @@ public class WrapSequence extends WrapGlyph {
 		return getSequence().getResidues(0,0);
 	}
 
+	@Override
 	public void setCoords(double x, double y, double width, double height) {
 		stripe_glyph.setCoords(x, y, width, height);
 		annot_glyph.setCoords(x, y, width, height);
@@ -305,6 +308,7 @@ public class WrapSequence extends WrapGlyph {
 		super.setCoords(x, y, width, height);
 	}
 
+	@Override
 	public void setCoordBox(Rectangle2D.Double coordbox)   {
 		stripe_glyph.setCoordBox(coordbox);
 		annot_glyph.setCoordBox(coordbox);
@@ -349,7 +353,7 @@ public class WrapSequence extends WrapGlyph {
 		color_glyph.setColor(color);
 		color_glyph.setColorSpan(start,end);
 		color_glyph.setCoordBox(coordbox);
-		color_glyph.setFill(color_glyph.OUTLINE);
+		color_glyph.setFill(WrapColors.OUTLINE);
 		outline_annot_glyph.addChild(color_glyph);
 		return color_glyph;
 	}
@@ -403,7 +407,7 @@ public class WrapSequence extends WrapGlyph {
 			sel_glyph.setSequence(seq);
 			sel_glyph.setColor(sel_color);
 			sel_glyph.setCoordBox(coordbox);
-			sel_glyph.setFill(sel_glyph.SELECTED);
+			sel_glyph.setFill(WrapColors.SELECTED);
 
 			// shouldn't need this at the moment, since drawTraversal has been
 			// overriden to call drawTraversal on these glyphs directly, rather
@@ -430,6 +434,7 @@ public class WrapSequence extends WrapGlyph {
 	 * Some children need to be drawn before the residues
 	 * and some after.
 	 */
+	@Override
 	public void drawTraversal(ViewI view)  {
 		if (isVisible && coordbox.intersects(view.getCoordBox())) {
 

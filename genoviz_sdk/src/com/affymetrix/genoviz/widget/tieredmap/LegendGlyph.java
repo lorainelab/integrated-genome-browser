@@ -13,10 +13,10 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import java.awt.*;
 
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 
 public class LegendGlyph extends OutlineRectGlyph {
 
@@ -31,6 +31,7 @@ public class LegendGlyph extends OutlineRectGlyph {
 	  Foreground color is outline color.
 	  */
 
+	@Override
 	public void draw(ViewI view) {
 		Graphics g = view.getGraphics();
 		g.setColor(getBackgroundColor());

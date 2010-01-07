@@ -18,7 +18,6 @@ import java.awt.geom.Point2D;
 
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
-import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 public class WrapColors extends AnnotationGlyph {
@@ -63,6 +62,7 @@ public class WrapColors extends AnnotationGlyph {
 		annot_end = end;
 	}
 
+	@Override
 	public void setSequence (SequenceI seq)  {
 		super.setSequence(seq);
 	}
@@ -72,6 +72,7 @@ public class WrapColors extends AnnotationGlyph {
 	 * Note this is only the case with Glyph.drawSelectedOutline,
 	 * not drawSelectedFill.
 	 */
+	@Override
 	protected void drawSelectedOutline(ViewI view) {
 		draw(view);
 	}

@@ -96,8 +96,9 @@ public class TraceGlyph extends Glyph  {
 		}
 	}
 
+	@Override
 	public void draw(ViewI view) {
-		int beg, end, i, j;
+		int beg, end;
 		double[] traceArray;
 		Graphics g = view.getGraphics();
 		Rectangle2D.Double viewbox = view.getCoordBox();
@@ -116,7 +117,7 @@ public class TraceGlyph extends Glyph  {
 		if (beg < coordbox.x ) beg = (int)coordbox.x;
 		if (end > coordbox.x + dataCount - 1) end = (int)coordbox.x + dataCount - 1;
 
-		for (i=0; i<=3; i++) {
+		for (int i=0; i<=3; i++) {
 			if (!showTrace[i]) {
 				continue;
 			}
@@ -126,7 +127,7 @@ public class TraceGlyph extends Glyph  {
 			prevCoordPoint.y = coordbox.height - traceArray[beg - (int)coordbox.x];
 			prevPixelPoint = view.transformToPixels(prevCoordPoint, prevPixelPoint);
 			// drawing curves along every point j for the given trace i
-			for (j=beg+1; j<=end; j++) {
+			for (int j=beg+1; j<=end; j++) {
 				currCoordPoint.x = j;
 				currCoordPoint.y = coordbox.height - traceArray[j - (int)coordbox.x];
 				currPixelPoint =
@@ -142,11 +143,13 @@ public class TraceGlyph extends Glyph  {
 		}
 	}
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible && coord_hitbox.intersects(coordbox);
 	}
@@ -176,7 +179,7 @@ public class TraceGlyph extends Glyph  {
 	 * set the color to use to highlight selected areas of the trace.
 	 */
 	public void setSelectionColor( Color c ) {
-		this.selColor = c;
+		TraceGlyph.selColor = c;
 		this.sel_color = c;
 		if (sel_glyph != null) {
 			sel_glyph.setColor(sel_color);
@@ -195,6 +198,7 @@ public class TraceGlyph extends Glyph  {
 		this.deselect(base, base);
 	}
 
+	@Override
 	public void select(double x, double y, double width, double height) {
 		select(x, x+width);
 	}
@@ -223,10 +227,12 @@ public class TraceGlyph extends Glyph  {
 
 	}
 
+	@Override
 	public boolean supportsSubSelection() {
 		return true;
 	}
 
+	@Override
 	public Rectangle2D.Double getSelectedRegion() {
 		if (sel_glyph == null) {
 			if (selected) {

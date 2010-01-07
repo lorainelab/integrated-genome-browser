@@ -13,13 +13,14 @@
 
 package com.affymetrix.genoviz.widget.neoqualler;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 import java.awt.geom.Rectangle2D;
 
 public class QualityRect extends Glyph
 {
+	@Override
 	public void draw(ViewI view) {
 		view.transformToPixels(coordbox, pixelbox);
 		// shrinks slightly to differentiate from possible neighbors
@@ -47,11 +48,13 @@ public class QualityRect extends Glyph
 		super.draw(view);
 	}
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return  pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return coord_hitbox.intersects(coordbox);
 	}

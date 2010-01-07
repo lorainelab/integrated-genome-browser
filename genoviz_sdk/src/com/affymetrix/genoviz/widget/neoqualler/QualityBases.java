@@ -13,13 +13,16 @@
 
 package com.affymetrix.genoviz.widget.neoqualler;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.datamodel.BaseConfidence;
+import com.affymetrix.genoviz.datamodel.ReadConfidence;
+import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.*;
 import java.awt.geom.Point2D;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.datamodel.*;
-
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
 
 public class QualityBases extends Glyph  {
@@ -91,6 +94,7 @@ public class QualityBases extends Glyph  {
 		clearSelection();
 	}
 
+	@Override
 	public void draw(ViewI view) {
 		int beg, end, i, j;
 		Graphics g = view.getGraphics();
@@ -196,11 +200,13 @@ public class QualityBases extends Glyph  {
 		}
 	}
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible && coord_hitbox.intersects(coordbox);
 	}

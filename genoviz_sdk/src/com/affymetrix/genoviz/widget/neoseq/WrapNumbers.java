@@ -12,13 +12,11 @@
  */
 
 package com.affymetrix.genoviz.widget.neoseq;
-import com.affymetrix.genoviz.glyph.*;
 
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
-import com.affymetrix.genoviz.datamodel.Range;
-import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 
 public class WrapNumbers extends WrapGlyph {
@@ -32,6 +30,7 @@ public class WrapNumbers extends WrapGlyph {
 	/** specifies the gap between the numbers and the residues to the right. */
 	private static final int RIGHT_MARGIN = 6;
 
+	@Override
 	public void setSequence (SequenceI seq) {
 		seqLength = seq.getLength();
 	}

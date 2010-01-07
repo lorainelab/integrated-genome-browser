@@ -24,7 +24,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 
 // as long as moveRelative and moveAbsolute are used for moving the
@@ -45,7 +46,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
-	private List<TierStateChangeListener> tierStateChangeListeners = new CopyOnWriteArrayList<TierStateChangeListener>();
+	private Set<TierStateChangeListener> tierStateChangeListeners = new CopyOnWriteArraySet<TierStateChangeListener>();
 
 	/**
 	 *  If hidden, the MapTierGlyph height is 0 coords
@@ -96,8 +97,8 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	/**
 	 *  not used yet -- intended for bidirectional stacking of tiers, but
 	 *  not sure when that will be implemented */
-	public static int GREATER = 200;
-	public static int LESSER = 201;
+	public static final int GREATER = 200;
+	public static final int LESSER = 201;
 
 	protected int state = EXPANDED;
 	protected int stateBeforeHidden = EXPANDED;
@@ -190,6 +191,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		this.moreStrings = theStrings;
 	}
 
+	@Override
 	protected void drawChildren(ViewI view) {
 		if (children != null)  {
 			GlyphI child;
@@ -211,6 +213,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		}
 	}
 
+	@Override
 	public void draw(ViewI view) {
 
 		view.transformToPixels(coordbox, pixelbox);
@@ -377,6 +380,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		if (state==HIDDEN) setState(stateBeforeHidden);
 	}
 
+	@Override
 	public boolean hit (Rectangle pixel_hitbox, ViewI view) {
 		calcPixels(view);
 
@@ -386,6 +390,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		return pixel_hitbox.intersects (this.getPixelBox());
 	}
 
+	@Override
 	public boolean hit (Rectangle2D.Double coord_hitbox, ViewI view) {
 
 		if (!isVisible() || !this.hitable)
@@ -436,11 +441,13 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	}
 
 	/** Equivalent to {@link #setFillColor(Color)}. */
+	@Override
 	public void setBackgroundColor(Color color)  {
 		setFillColor(color);
 	}
 
 	/** Equivalent to {@link #getFillColor()}. */
+	@Override
 	public Color getBackgroundColor()  {
 		return getFillColor();
 	}
@@ -458,6 +465,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 * Equivalent to {@link #setLabelColor(Color)}.
 	 * @see #setLabel(String)
 	 */
+	@Override
 	public void setForegroundColor(Color color)  {
 		setLabelColor(color);
 	}
@@ -467,6 +475,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	 * Equivalent to {@link #getLabelColor}.
 	 * @see #setLabel(String)
 	 */
+	@Override
 	public Color getForegroundColor()  {
 		return getLabelColor();
 	}
@@ -495,6 +504,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	}
 
 	/** Get whether or not the tier should be hit by the mouse. */
+	@Override
 	public boolean isHitable() {
 		return hitable;
 	}
@@ -535,20 +545,19 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 	}
 
 	/** Add a TierStateChangeListener to the audience. */
-	public synchronized void addTierStateChangeListener(TierStateChangeListener tl) {
+	public void addTierStateChangeListener(TierStateChangeListener tl) {
 		tierStateChangeListeners.add(tl);
 	}
 
 	/** Remove a TierStateChangeListener from the audience. */
-	public synchronized void removeTierStateChangeListener(TierStateChangeListener tl) {
+	public void removeTierStateChangeListener(TierStateChangeListener tl) {
 		tierStateChangeListeners.remove(tl);
 	}
 
 	/** Tell all listeners of a TierStateChangeEvent. */
-	public synchronized void notifyTierStateChangeListeners(TierStateChangeEvent evt) {
-		int tot = tierStateChangeListeners.size();
-		for (int i=0; i < tot; i++) {
-			(tierStateChangeListeners.get(i)).heardTierStateChangeEvent(evt);
+	public void notifyTierStateChangeListeners(TierStateChangeEvent evt) {
+		for (TierStateChangeListener tl : tierStateChangeListeners) {
+			tl.heardTierStateChangeEvent(evt);
 		}
 	}
 
@@ -583,6 +592,7 @@ public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 		else { return "INVALID STRAND"; }
 	}
 
+	@Override
 	public final String toString() { return label; }
 
 }

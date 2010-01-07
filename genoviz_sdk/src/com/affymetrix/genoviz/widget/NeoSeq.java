@@ -968,7 +968,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	public void removeAnnotations(List<GlyphI> glyphs) {
 		for (int i=0; i<glyphs.size(); i++) {
-			removeAnnotation((GlyphI)glyphs.get(i));
+			removeAnnotation(glyphs.get(i));
 		}
 	}
 

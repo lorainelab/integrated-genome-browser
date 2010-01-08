@@ -13,9 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.FontMetrics;
 import java.awt.Font;
 
@@ -24,8 +22,8 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 /**
  * Adds an internal label string to solid rectangle glyph.
  */
-public class LabelledRectGlyph extends FillRectGlyph implements LabelledGlyphI {
-	String text;
+public class LabelledRectGlyph extends FillRectGlyph {
+	private String text;
 
 	public void setText(String str) {
 		this.text = str;
@@ -40,6 +38,7 @@ public class LabelledRectGlyph extends FillRectGlyph implements LabelledGlyphI {
 	//      it will not fit.
 	public static final int min_width_needed_for_text = 32;
 
+	@Override
 	public void draw(ViewI view) {
 		super.draw( view );
 		if( getText() != null ) {

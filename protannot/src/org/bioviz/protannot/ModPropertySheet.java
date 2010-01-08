@@ -15,7 +15,7 @@ final class ModPropertySheet extends JPanel {
     private JLabel title;
     private JScrollPane scroll_pane;
     private JViewport jvp;
-    private Dimension size = new Dimension(1000, 1000);
+    private final Dimension size = new Dimension(1000, 1000);
     private static final String DEFAULT_TITLE = " ";
     private Properties[] props;
 

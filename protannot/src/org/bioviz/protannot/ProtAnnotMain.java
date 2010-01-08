@@ -131,7 +131,7 @@ final class ProtAnnotMain implements WindowListener {
     private Hashtable<String,Color> loadPrefs() {
         Hashtable<String,Color> phash = new Hashtable<String,Color>();
 
-        prefs = Preferences.userNodeForPackage(org.bioviz.protannot.ProtAnnotMain.class);
+        prefs = Preferences.userNodeForPackage(ProtAnnotMain.class);
 
         try
         {

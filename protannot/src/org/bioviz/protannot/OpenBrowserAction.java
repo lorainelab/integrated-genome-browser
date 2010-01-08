@@ -12,7 +12,7 @@ import com.affymetrix.genoviz.event.NeoMouseEvent;
  */
 final class OpenBrowserAction extends AbstractAction implements MouseListener {
 
-    private GenomeView view = null;
+    private final GenomeView view;
     private String url = null;
 
     /**

@@ -14,7 +14,7 @@ import java.util.List;
  */
 final class ZoomToFeatureAction extends AbstractAction implements MouseListener {
 
-    private GenomeView view = null;
+    private final GenomeView view;
 
     /**
      * Create a new ZoomToFeatureAction.

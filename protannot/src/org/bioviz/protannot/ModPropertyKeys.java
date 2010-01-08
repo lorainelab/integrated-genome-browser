@@ -12,7 +12,7 @@ import java.util.*;
  */
 final class ModPropertyKeys {
 
-    private String[] keys = new String[0];
+    private final String[] keys = new String[0];
 
     /**
      * Fills up a Vector with arrays containing names and values

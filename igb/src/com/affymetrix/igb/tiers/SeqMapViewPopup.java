@@ -349,7 +349,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
           style.setShow(true);
           showMenu.remove(show_tier);
           refreshMap(false,true);
-          handler.sortTiers();
+          //handler.sortTiers();
         }
       });
       showMenu.add(show_tier);

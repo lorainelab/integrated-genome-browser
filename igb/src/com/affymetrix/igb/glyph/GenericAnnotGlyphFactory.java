@@ -29,6 +29,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.parsers.TrackLineParser;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 
 import com.affymetrix.igb.tiers.AffyTieredMap;
 import com.affymetrix.igb.tiers.TierGlyph;
@@ -51,7 +52,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	 *  to addLeafsToTier has all its leaf nodes at the same depth from the top.
 	 */
 	private static Class default_eparent_class = (new EfficientLineContGlyph()).getClass();
-	private static Class default_echild_class = (new EfficientFillRectGlyph()).getClass();
+	private static Class default_echild_class = (new FillRectGlyph()).getClass();
 	private static Class default_elabelled_parent_class = (new EfficientLabelledLineGlyph()).getClass();
 	private static int DEFAULT_THICK_HEIGHT = 25;
 	private static int DEFAULT_THIN_HEIGHT = 15;

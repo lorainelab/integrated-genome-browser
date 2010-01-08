@@ -116,7 +116,7 @@ public final class GlyphEdgeMatcher  {
       double tend = tbox.x + tbox.width;
       if (Math.abs(qstart - tstart) <= fuzness) {
         if (target.getParent() != null) {
-          EfficientSolidGlyph mglyph = new EfficientFillRectGlyph();
+          FillRectGlyph mglyph = new FillRectGlyph();
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);
@@ -131,7 +131,7 @@ public final class GlyphEdgeMatcher  {
 
       if (Math.abs(qend - tend) <= fuzness) {
         if (target.getParent() != null) {
-          EfficientSolidGlyph mglyph = new EfficientFillRectGlyph();
+          FillRectGlyph mglyph = new FillRectGlyph();
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
           mglyph.setColor(col);

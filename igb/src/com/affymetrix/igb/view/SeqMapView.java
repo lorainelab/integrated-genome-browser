@@ -1077,7 +1077,9 @@ public class SeqMapView extends JPanel
 		// Ignore preserve_view if seq has changed
 		if ((preserve_view_x || preserve_view_y) && same_seq) {
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
+			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 		} else {
+			seqmap.stretchToFit(true, true);
 			seqmap.stretchToFit(true, true);
 			zoomToSelections();
 			int[] range = seqmap.getVisibleRange();
@@ -1428,16 +1430,13 @@ public class SeqMapView extends JPanel
 				if (csym instanceof Das2FeatureRequestSym) {
 					Das2FeatureRequestSym dsym = (Das2FeatureRequestSym) csym;
 					SeqSpan ospan = dsym.getOverlapSpan();
-					// System.out.println("DAS FEATURE SYM: " + SeqUtils.spanToString(csym.getSpan(0)));
 					if (fortier != null) {
-						GlyphI mglyph = new EfficientFillRectGlyph();
-						//	    mglyph.setColor(Color.lightGray);  this is done in TierGlyph for now...
+						GlyphI mglyph = new FillRectGlyph();
 						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 						fortier.addMiddleGlyph(mglyph);
 					}
 					if (revtier != null) {
-						GlyphI mglyph = new EfficientFillRectGlyph();
-						//	    mglyph.setColor(Color.lightGray);  this is done in TierGlyph for now...
+						GlyphI mglyph = new FillRectGlyph();
 						mglyph.setCoords(ospan.getMin(), 0, ospan.getMax() - ospan.getMin(), 0);
 						revtier.addMiddleGlyph(mglyph);
 					}

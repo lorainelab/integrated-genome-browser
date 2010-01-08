@@ -34,7 +34,7 @@ import org.xml.sax.InputSource;
  * @version $Id$
  */
 public final class UrlLoaderThread extends Thread {
-  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
+  private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
   private final URL[] urls;
   private final String[] tier_names;
   private final SeqMapView gviewer;

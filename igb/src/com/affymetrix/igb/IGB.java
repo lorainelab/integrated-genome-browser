@@ -34,6 +34,7 @@ import java.util.List;
 
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.genoviz.swing.DisplayUtils;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 
@@ -65,7 +66,8 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.swing.DisplayUtils;
+
+
 import java.text.MessageFormat;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;

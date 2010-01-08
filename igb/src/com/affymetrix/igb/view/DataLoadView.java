@@ -22,7 +22,7 @@ import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.view.load.FeatureTreeView;
-import com.affymetrix.swing.DisplayUtils;
+import com.affymetrix.genoviz.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import javax.swing.table.TableRowSorter;
 

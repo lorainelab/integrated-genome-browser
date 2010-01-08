@@ -3,7 +3,7 @@
  *
  * http://java.sun.com/docs/books/tutorial/uiswing/components/table.html#data
  */
-package com.affymetrix.swing;
+package com.affymetrix.genoviz.swing;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.table.TableCellEditor;

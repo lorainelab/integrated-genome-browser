@@ -19,7 +19,7 @@ import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.swing.DisplayUtils;
+import com.affymetrix.genoviz.swing.DisplayUtils;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -31,18 +31,15 @@ import javax.swing.event.*;
  *  A panel for viewing and editing weblinks.
  */
 public final class WebLinksManagerView extends JPanel {
-  JList the_list;
+  private JList the_list;
 
-  JMenuBar mbar = new JMenuBar();
-
-  Action import_action;
-  Action export_action;
-
-  Action delete_action;
-  Action edit_action;
-  Action add_action;
+  private final Action import_action;
+  private final Action export_action;
+  private final Action delete_action;
+  private final Action edit_action;
+  private final Action add_action;
   
-  WebLinkEditorPanel edit_panel;
+  private final WebLinkEditorPanel edit_panel;
 
 
   /** Creates a new instance of Class */

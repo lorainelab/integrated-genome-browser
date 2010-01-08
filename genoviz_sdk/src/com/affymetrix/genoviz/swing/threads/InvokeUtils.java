@@ -5,7 +5,7 @@
  * This may be used for any purposes whatsoever without acknowledgment.
  */
 
-package com.affymetrix.swing.threads;
+package com.affymetrix.genoviz.swing.threads;
 
 import java.awt.Component;
 import javax.swing.*;

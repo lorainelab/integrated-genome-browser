@@ -26,7 +26,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
-import com.affymetrix.swing.BooleanTableCellRenderer;
+import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

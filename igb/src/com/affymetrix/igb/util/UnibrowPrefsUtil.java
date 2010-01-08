@@ -16,7 +16,7 @@ package com.affymetrix.igb.util;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.swing.ColorIcon;
+import com.affymetrix.genoviz.swing.ColorIcon;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

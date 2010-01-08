@@ -14,7 +14,7 @@
   27Jan1999  dl               Undo last change
 */
 
-package com.affymetrix.swing.threads;
+package com.affymetrix.genoviz.swing.threads;
 
 /**
  * Interface for runnable actions that bear results and/or throw Exceptions.

@@ -40,7 +40,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.swing.threads.*;
+import com.affymetrix.genoviz.swing.threads.*;
 import com.affymetrix.igb.parsers.*;
 import org.xml.sax.SAXException;
 

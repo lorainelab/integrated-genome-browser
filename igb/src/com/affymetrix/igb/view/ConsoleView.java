@@ -21,13 +21,13 @@ import javax.swing.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.swing.DisplayUtils;
+import com.affymetrix.genoviz.swing.DisplayUtils;
 
 public final class ConsoleView {
   
-  static String TITLE;
+  private static String TITLE;
   
-  static JFrame frame;
+  private static JFrame frame;
     
   private ConsoleView() {
     TITLE = Application.getSingleton().getApplicationName() + " Console";

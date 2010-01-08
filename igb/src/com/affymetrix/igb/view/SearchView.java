@@ -32,7 +32,7 @@ import com.affymetrix.genometryImpl.event.SymMapChangeListener;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.das2.Das2VersionedSource;
-import com.affymetrix.swing.IntegerTableCellRenderer;
+import com.affymetrix.genoviz.swing.IntegerTableCellRenderer;
 import java.awt.Dimension;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;

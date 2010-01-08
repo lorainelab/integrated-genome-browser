@@ -1,4 +1,4 @@
-package com.affymetrix.swing;
+package com.affymetrix.genoviz.swing;
 
 import java.util.EventObject;
 import javax.swing.table.TableCellEditor;

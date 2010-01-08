@@ -25,7 +25,7 @@ import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.GraphAdjusterView;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.swing.DisplayUtils;
+import com.affymetrix.genoviz.swing.DisplayUtils;
 
 import java.awt.Color;
 import java.awt.Dimension;

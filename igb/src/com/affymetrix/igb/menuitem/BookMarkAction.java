@@ -33,7 +33,6 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.view.SeqMapView;
 
-import com.affymetrix.igb.tiers.*;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.parsers.*;
 
@@ -44,28 +43,26 @@ import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
-import com.affymetrix.swing.DisplayUtils;
-import java.awt.geom.Rectangle2D;
+import com.affymetrix.genoviz.swing.DisplayUtils;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
-  static GenometryModel gmodel = GenometryModel.getGenometryModel();
-  final static boolean DEBUG = false;
+  private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+  private final static boolean DEBUG = false;
 
-  JMenu bookmark_menu;
-  JMenuItem add_pos_markMI;
-  JMenuItem add_graph_markMI;
-  JMenuItem exportMI;
-  JMenuItem importMI;
-  JMenuItem clearMI;
-  JMenuItem manage_bookmarksMI;
-  SeqMapView gviewer;
-  Application uni;
-  private Map<Object,Component> component_hash = new HashMap<Object,Component>();
-  BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
-  JMenu main_bm_menu;
-  boolean unsaved_bookmarks = false;
-  JFrame bookmark_manager_frame = null;
-  BookmarkManagerView bmv = null;
+  private final JMenu bookmark_menu;
+  private final JMenuItem add_pos_markMI;
+  private final JMenuItem add_graph_markMI;
+  private final JMenuItem exportMI;
+  private final JMenuItem importMI;
+  private final JMenuItem clearMI;
+  private final JMenuItem manage_bookmarksMI;
+  private final SeqMapView gviewer;
+  private final Application uni;
+  private final Map<Object,Component> component_hash = new HashMap<Object,Component>();
+  private final BookmarkList main_bookmark_list = new BookmarkList("Bookmarks");
+  private final JMenu main_bm_menu;
+  private JFrame bookmark_manager_frame = null;
+  private BookmarkManagerView bmv = null;
 
 
   private static JFileChooser static_chooser = null;
@@ -203,7 +200,6 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
     else if (src == exportMI) {
       exportBookmarks(main_bookmark_list, gviewer.getFrame());
-      unsaved_bookmarks = false;
     }
     else if (src == importMI) {
       importBookmarks(main_bookmark_list, gviewer.getFrame());
@@ -212,7 +208,6 @@ public final class BookMarkAction implements ActionListener, MenuListener {
     }
     else if (src == clearMI) {
       removeAllBookmarks();
-      unsaved_bookmarks = false;
     } 
     else if (src == manage_bookmarksMI) {
       showBookmarkManager();
@@ -427,7 +422,6 @@ public final class BookMarkAction implements ActionListener, MenuListener {
 				System.out.println("bookmark name: " + bookmark_name);
 			}
 			addBookmark(mark_sym.getProperties(), bookmark_name);
-			unsaved_bookmarks = true;
 		}
 	}
 

@@ -28,7 +28,7 @@ import com.affymetrix.igb.prefs.IPrefEditorComponent;
 import com.affymetrix.igb.tiers.AnnotStyle;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-import com.affymetrix.swing.*;
+import com.affymetrix.genoviz.swing.*;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 
 /**
@@ -47,7 +47,6 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
   private static final String GLYPH_DEPTH = "Connected";
   private static final String LABEL_FIELD = "Label Field";
   private static final String HUMAN_NAME = "Display Name";
-  //  private static final String GRAPH_TIER = "Graph Tier";
 
   private final static String[] col_headings = {
     HUMAN_NAME,
@@ -57,37 +56,36 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
     //    GRAPH_TIER,
   };
 
-  private final int COL_HUMAN_NAME = 0;
-  private final int COL_COLOR = 1;
-  private final int COL_BACKGROUND = 2;
-  private final int COL_SEPARATE = 3;
-  private final int COL_COLLAPSED = 4;
-  private final int COL_MAX_DEPTH = 5;
-  private final int COL_GLYPH_DEPTH = 6;
-  private final int COL_LABEL_FIELD = 7;
-  private final int COL_TIER_NAME = 8;
-  //  private final int COL_GRAPH_TIER = 9;
+  private static final int COL_HUMAN_NAME = 0;
+  private static final int COL_COLOR = 1;
+  private static final int COL_BACKGROUND = 2;
+  private static final int COL_SEPARATE = 3;
+  private static final int COL_COLLAPSED = 4;
+  private static final int COL_MAX_DEPTH = 5;
+  private static final int COL_GLYPH_DEPTH = 6;
+  private static final int COL_LABEL_FIELD = 7;
+  private static final int COL_TIER_NAME = 8;
 
   private final TierPrefsTableModel model;
   private final ListSelectionModel lsm;
-  private TableRowSorter<TierPrefsTableModel> sorter;
+  private final TableRowSorter<TierPrefsTableModel> sorter;
 
-  static final String PREF_AUTO_REFRESH = "Auto-Apply Tier Customizer Changes";
-  static final boolean default_auto_refresh = true;
-  JCheckBox auto_refresh_CB;
+  private static final String PREF_AUTO_REFRESH = "Auto-Apply Tier Customizer Changes";
+  private static final boolean default_auto_refresh = true;
+  private JCheckBox auto_refresh_CB;
 
-  static final String REFRESH_LIST = "Refresh List";
-  JButton refresh_list_B = new JButton(REFRESH_LIST);
+  private static final String REFRESH_LIST = "Refresh List";
+  private final JButton refresh_list_B = new JButton(REFRESH_LIST);
 
-  static final String REFRESH_MAP = "Refresh Map";
-  JButton refresh_map_B = new JButton(REFRESH_MAP);
+  private static final String REFRESH_MAP = "Refresh Map";
+  private final JButton refresh_map_B = new JButton(REFRESH_MAP);
 
-  static final String AUTO_REFRESH = "Auto Refresh";
-  static final String APPLY_DEFAULT_BG = "Apply Default Background";
+  private static final String AUTO_REFRESH = "Auto Refresh";
+  private static final String APPLY_DEFAULT_BG = "Apply Default Background";
 
-  SeqMapView smv;
+  private SeqMapView smv;
 
-  static AnnotStyle default_annot_style = AnnotStyle.getDefaultInstance(); // make sure at least the default instance exists;
+  private static AnnotStyle default_annot_style = AnnotStyle.getDefaultInstance(); // make sure at least the default instance exists;
 
   public TierPrefsView() {
     this(false, true);

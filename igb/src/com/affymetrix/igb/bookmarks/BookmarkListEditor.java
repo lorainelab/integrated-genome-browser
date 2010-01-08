@@ -13,10 +13,10 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genoviz.swing.DisplayUtils;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
@@ -25,26 +25,26 @@ public final class BookmarkListEditor {
   /** The name of the JFrame. */
   public static final String TITLE = "Bookmark Editor";
 
-  JPanel central_component = new JPanel();
+  private final JPanel central_component = new JPanel();
 
-  JLabel type_label = new JLabel("Type:");
-  JLabel type_label_2 = new JLabel("");
+  private final JLabel type_label = new JLabel("Type:");
+  private final JLabel type_label_2 = new JLabel("");
 
-  JPanel main_box = new JPanel();
+  private final JPanel main_box = new JPanel();
   
-  JLabel name_label = new JLabel("Name:", JLabel.TRAILING);
-  JTextField name = new JTextField(30);
+  private final JLabel name_label = new JLabel("Name:", JLabel.TRAILING);
+  private final JTextField name = new JTextField(30);
 
-  BookmarkTableComponent ucb_editor = new BookmarkTableComponent();
+  private final BookmarkTableComponent ucb_editor = new BookmarkTableComponent();
   
-  JButton submit_button;
-  JButton cancel_button;
+  private final JButton submit_button;
+  private final JButton cancel_button;
   
-  JFrame frame = new JFrame(TITLE);
+  private final JFrame frame = new JFrame(TITLE);
 
-  BookmarkList the_bookmark_list = null;
+  private BookmarkList the_bookmark_list = null;
   
-  DefaultTreeModel tree_model = null;
+  private DefaultTreeModel tree_model = null;
 
    /** Creates a new instance of BookmarkListEditor. */
   public BookmarkListEditor(DefaultTreeModel t) {
@@ -112,6 +112,7 @@ public final class BookmarkListEditor {
     }
 
    frame.addWindowListener( new WindowAdapter() {
+			@Override
       public void windowClosing(WindowEvent evt) {
         saveWindowLocation();
       }
@@ -123,16 +124,6 @@ public final class BookmarkListEditor {
     UnibrowPrefsUtil.saveWindowLocation(frame, TITLE);
   }
   
-  /** Tells whether this component knows how to edit the given BookmarkList.
-   *  If it returns false, you shouldn't call openDialog or setBookmarkList
-   *  with this item.
-   *  For example, returns false if the BookmarkList represents a separator
-   *  because there isn't any meaningful way to edit a separator.
-   */
-  /*public boolean canEdit(BookmarkList bl) {
-    Object o = bl.getUserObject();
-    return (o instanceof String || o instanceof Bookmark);
-  }*/
   
   public void openDialog(BookmarkList bl) {
     this.setBookmarkList(bl);
@@ -140,7 +131,7 @@ public final class BookmarkListEditor {
     frame.doLayout();
     frame.repaint();
     
-    com.affymetrix.swing.DisplayUtils.bringFrameToFront(frame);
+    DisplayUtils.bringFrameToFront(frame);
   }
 
   boolean using_ucb_editor = true;

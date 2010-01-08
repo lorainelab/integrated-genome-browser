@@ -11,7 +11,7 @@
   30Jun1998  dl               Create public version
 */
 
-package com.affymetrix.swing.threads;
+package com.affymetrix.genoviz.swing.threads;
 import java.lang.reflect.*;
 
 /**

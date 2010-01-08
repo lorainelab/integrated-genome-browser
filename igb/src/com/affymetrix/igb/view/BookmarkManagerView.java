@@ -20,9 +20,8 @@ import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.swing.dnd.*;
+import com.affymetrix.genoviz.swing.dnd.*;
 
-//import java.awt.*;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -44,22 +43,20 @@ import javax.swing.tree.*;
  *  A panel for viewing and re-arranging bookmarks in a hierarchy.
  */
 public final class BookmarkManagerView extends JPanel implements TreeSelectionListener, IPlugin {
-  JTree tree;
-  BottomThing thing;
+  private JTree tree;
+  private BottomThing thing;
 
-  DefaultTreeModel tree_model = new DefaultTreeModel(null, true);
-  JMenuBar mbar = new JMenuBar();
+  private final DefaultTreeModel tree_model = new DefaultTreeModel(null, true);
 
   // refresh_action is an action that is useful during debugging, but should go away later.
-  // Action refresh_action;
-  Action import_action;
-  Action export_action;
-  Action delete_action;
-  Action add_separator_action;
-  Action add_folder_action;
-  Action add_bookmark_action;
+  private final Action import_action;
+  private final Action export_action;
+  private final Action delete_action;
+  private final Action add_separator_action;
+  private final Action add_folder_action;
+  private final Action add_bookmark_action;
 
-  BookmarkTreeCellRenderer renderer;
+  private BookmarkTreeCellRenderer renderer;
 
   /** Creates a new instance of Class */
   public BookmarkManagerView() {

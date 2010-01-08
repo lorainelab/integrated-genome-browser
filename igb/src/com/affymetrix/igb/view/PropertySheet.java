@@ -17,7 +17,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
-import com.affymetrix.swing.BlockingTableCellEditor;
+import com.affymetrix.genoviz.swing.BlockingTableCellEditor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 

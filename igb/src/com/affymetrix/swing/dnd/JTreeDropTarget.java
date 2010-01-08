@@ -37,13 +37,13 @@ import javax.swing.tree.*;
  */
 public abstract class JTreeDropTarget implements DropTargetListener, PropertyChangeListener {
   /** Keeps track of the value set in checkTransferType() */
-  protected boolean acceptable_type = false;
+  private boolean acceptable_type = false;
 
   protected JTree tree;
-  protected TreePath[] selections;
-  protected TreePath lead_selection;
-  protected DropTarget dropTarget;
-  protected DataFlavor[] my_flavors = null;
+  private TreePath[] selections;
+  private TreePath lead_selection;
+  private DropTarget dropTarget;
+  private DataFlavor[] my_flavors = null;
   
   /** Set this to true if you want acceptOrRejectDrag() to send 
    *  acceptDrag(DnDConstants.ACTION_COPY) rather than rejectDrag()
@@ -52,8 +52,8 @@ public abstract class JTreeDropTarget implements DropTargetListener, PropertyCha
    *  The only expected ill effect is that certain versions of the 
    *  JRE (like Windows) may not give the correct visual feedback.
    */
-  protected boolean PROVISIONAL_ACCEPT = false;
-  protected final static boolean DEBUG = false;
+  private static final boolean PROVISIONAL_ACCEPT = false;
+  private final static boolean DEBUG = false;
 
   /** This constructor provided for sub-classing.
    *  Must call setTree() and setFlavors() after using this.

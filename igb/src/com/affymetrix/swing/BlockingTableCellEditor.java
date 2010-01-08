@@ -10,7 +10,7 @@ import javax.swing.*;
  */
 public final class BlockingTableCellEditor extends AbstractCellEditor implements TableCellEditor {
   
-  Object original = null;
+  private Object original = null;
   
   public BlockingTableCellEditor() {
     super();
@@ -27,10 +27,12 @@ public final class BlockingTableCellEditor extends AbstractCellEditor implements
     return null;
   }
 
+	@Override
   public boolean isCellEditable(EventObject anEvent) {
     return true;
   }
 
+	@Override
   public boolean shouldSelectCell(EventObject anEvent) {
     return true;
   }

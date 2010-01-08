@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public final class IntegerTableCellRenderer extends DefaultTableCellRenderer {
   
-  NumberFormat nf;
+  private NumberFormat nf;
   
   public IntegerTableCellRenderer() {
     super();
@@ -33,6 +33,7 @@ public final class IntegerTableCellRenderer extends DefaultTableCellRenderer {
     setHorizontalAlignment(SwingConstants.RIGHT);
   }
 
+	@Override
   protected void setValue(Object value) {
     if (value instanceof Number) { // handles Integer, Double, etc.
       super.setValue(nf.format(value));

@@ -18,9 +18,9 @@ import java.awt.event.ActionListener;
 
 public final class ColorTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
     private Color currentColor;
-    private JButton button;
-    private JColorChooser colorChooser;
-    private JDialog dialog;
+    private final JButton button;
+    private final JColorChooser colorChooser;
+    private final JDialog dialog;
     private static final String EDIT = "edit";
 
     public ColorTableCellEditor() {

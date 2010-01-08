@@ -26,19 +26,8 @@ import java.awt.dnd.*;
  * @author  ed
  */
 public final class AutoScrollingJTree extends JTree implements Autoscroll {
-  public static final Insets defaultScrollInsets = new Insets(12, 12, 12, 12);
-  protected Insets scrollInsets = defaultScrollInsets;
-
-  public AutoScrollingJTree() {
-  }
-  
-  public void setScrollInsets(Insets insets) {
-    this.scrollInsets = insets;
-  }
-
-  public Insets getScrollInsets() {
-    return scrollInsets;
-  }
+  private static final Insets defaultScrollInsets = new Insets(12, 12, 12, 12);
+  private static final Insets scrollInsets = defaultScrollInsets;
 
   // Implementation of Autoscroll interface
   public Insets getAutoscrollInsets() {

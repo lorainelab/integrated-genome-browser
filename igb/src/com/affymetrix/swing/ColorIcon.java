@@ -21,8 +21,8 @@ import javax.swing.Icon;
  */
 public final class ColorIcon implements Icon {
 
-  Color the_color = Color.BLACK;
-  int the_size = 11;
+  private Color the_color = Color.BLACK;
+  private int the_size = 11;
 
   /** A default Black ColorIcon. */
   public ColorIcon() {

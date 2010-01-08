@@ -29,7 +29,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Hashtable;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -51,10 +50,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-import com.affymetrix.swing.ColorTableCellEditor;
-import com.affymetrix.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.swing.ColorTableCellEditor;
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 /**
@@ -501,14 +502,14 @@ final class ProtAnnotMain implements WindowListener {
      */
     private String[] getSamplesFromServer()
     {
-        Vector<String> ret = new Vector<String>();
+        List<String> ret = new ArrayList<String>();
         String page = loadPage();
         Pattern pattern = Pattern.compile("<a.+href=\"(.+paxml)\"");
         Matcher matcher = pattern.matcher(page);
         while (matcher.find()) {
             ret.add(matcher.group(1));
         }
-        return (String[])ret.toArray(new String[ret.size()]);
+        return (String[])ret.toArray(new String[0]);
     }
 
     /**

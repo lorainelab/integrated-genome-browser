@@ -102,7 +102,7 @@ final class GenomeView extends JPanel implements MouseListener{
     private AdjustableJSlider yzoomer;
     private BioSeq gseq;
     private BioSeq vseq;
-    private Vector<GlyphI> exonGlyphs = null;
+    private List<GlyphI> exonGlyphs = null;
     private List<SeqSymmetry> exonList = new ArrayList<SeqSymmetry>();
     private Hashtable<String,Color> prefs_hash;
 
@@ -116,8 +116,8 @@ final class GenomeView extends JPanel implements MouseListener{
     private Color col_sequence = Color.black;
     private Color col_axis_bg = Color.lightGray;
     
-    private Vector<GlyphI> selected = new Vector<GlyphI>();
-    private Vector<GlyphI> storeSelected;
+    private List<GlyphI> selected = new ArrayList<GlyphI>();
+    private List<GlyphI> storeSelected;
     private VisibleRange zoomPoint;
     
     // size constants
@@ -304,7 +304,7 @@ final class GenomeView extends JPanel implements MouseListener{
         axismap.clearWidget();
         seqmap.setBackground(col_bg);
         
-        exonGlyphs = new Vector<GlyphI>();
+        exonGlyphs = new ArrayList<GlyphI>();
         exonList = new ArrayList<SeqSymmetry>();
 
         zoomPoint = new VisibleRange();
@@ -423,7 +423,7 @@ final class GenomeView extends JPanel implements MouseListener{
             exonList.add(exon2genome);
             cglyph.setColor(col_ts);
             cglyph.setCoords(gSpan.getMin(), 0, gSpan.getLength(), 20);
-            exonGlyphs.addElement(cglyph);
+            exonGlyphs.add(cglyph);
             tGlyph.addChild(cglyph);
             //  testing display of "exon segments" for transcripts that have
             //     base inserts relative to the genomic sequence
@@ -739,16 +739,16 @@ final class GenomeView extends JPanel implements MouseListener{
         } else
         {
 
-            Vector<GlyphI> hitGlyphs = seqmap.getItems(nme.getCoordX(),
+            List<GlyphI> hitGlyphs = seqmap.getItems(nme.getCoordX(),
                     nme.getCoordY());
             if (!multiselect) {
                 seqmap.clearSelected();
             }
             selected = seqmap.getSelected();
-            Vector<GlyphI> to_select = getGlyphsToSelect(hitGlyphs, selected,
+            List<GlyphI> to_select = getGlyphsToSelect(hitGlyphs, selected,
                     multiselect);
             if (to_select == null) {
-                selected = new Vector<GlyphI>();
+                selected = new ArrayList<GlyphI>();
             } else {
                 if (to_select.size() > 0) {
                     seqmap.select(to_select);
@@ -777,7 +777,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
     private void showProperties() {
-        Vector<Properties> propvec = new Vector<Properties>();
+        List<Properties> propvec = new ArrayList<Properties>();
         Properties props = null;
         for (GlyphI gl : selected) {
             SymWithProps info = null;
@@ -811,8 +811,7 @@ final class GenomeView extends JPanel implements MouseListener{
                 }
             }
         }
-        Properties[] prop_array = new Properties[propvec.size()];
-        propvec.copyInto(prop_array);
+		Properties[] prop_array = (Properties[])propvec.toArray(new Properties[0]);
         table_view.showProperties(prop_array);
     }
 
@@ -834,18 +833,18 @@ final class GenomeView extends JPanel implements MouseListener{
      * @param   clicked_glyphs
      * @param   prev_glyphs
      * @param   multiselect
-     * @return  Vector<GlyphI>
+     * @return  List<GlyphI>
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
-    private Vector<GlyphI> getGlyphsToSelect(Vector<GlyphI> clicked_glyphs,
-            Vector<GlyphI> prev_glyphs,
+    private List<GlyphI> getGlyphsToSelect(List<GlyphI> clicked_glyphs,
+            List<GlyphI> prev_glyphs,
             boolean multiselect) {
         List<GlyphI> candidates = new ArrayList<GlyphI>();
         filterGlyphs(candidates, clicked_glyphs);
         if (multiselect) {
             filterGlyphs(candidates, prev_glyphs);
         }
-        Vector<GlyphI> to_return = new Vector<GlyphI>();
+        List<GlyphI> to_return = new ArrayList<GlyphI>();
         GlyphI champion = null;
         Rectangle2D candidate_box;
         double champion_end = 0;
@@ -855,7 +854,7 @@ final class GenomeView extends JPanel implements MouseListener{
         for (GlyphI candidate : candidates) {
             // we want everything
             if (multiselect) {
-                to_return.addElement(candidate);
+                to_return.add(candidate);
             } // we just want the topmost GlyphI
             // to figure out what Glyph is on top we have to think about geometry
             else {
@@ -876,7 +875,7 @@ final class GenomeView extends JPanel implements MouseListener{
             }
         }
         if (champion != null) {
-            to_return.addElement(champion);
+            to_return.add(champion);
         }
         return to_return;
     }
@@ -889,7 +888,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genometryImpl.SymWithProps
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
      */
-    private void filterGlyphs(List<GlyphI> gList, Vector<GlyphI> glyphs) {
+    private void filterGlyphs(List<GlyphI> gList, List<GlyphI> glyphs) {
         for (GlyphI g : glyphs) {
             Object info = g.getInfo();
             if (info != null) {
@@ -904,10 +903,10 @@ final class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Returns selected Glyphs
-     * @return  Returns list selected Glyphs in vector
+     * @return  Returns list of selected Glyphs
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
-    Vector<GlyphI> getSelected() {
+    List<GlyphI> getSelected() {
         return selected;
     }
 
@@ -932,7 +931,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Zoom to the selected glyphs.
      */
     void zoomToSelection() {       
-        Vector<GlyphI> selections = getSelected();
+        List<GlyphI> selections = getSelected();
         if (selections.isEmpty()) {
             return;
         }

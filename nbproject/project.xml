@@ -69,6 +69,12 @@
                     <location>igb/test</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
+                <source-folder>
+                    <label>protannot/src</label>
+                    <type>java</type>
+                    <location>protannot/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
             </folders>
             <ide-actions>
                 <action name="build">
@@ -184,6 +190,10 @@
                         <label>igb/test</label>
                         <location>igb/test</location>
                     </source-folder>
+                    <source-folder style="packages">
+                        <label>protannot/src</label>
+                        <location>protannot/src</location>
+                    </source-folder>
                     <source-file>
                         <location>build.xml</location>
                     </source-file>
@@ -215,6 +225,7 @@
                 <package-root>genometryImpl/test</package-root>
                 <package-root>genoviz_sdk/test</package-root>
                 <package-root>igb/test</package-root>
+                <package-root>protannot/src</package-root>
                 <classpath mode="compile">ext/javax.servlet.jar:ext/org.mortbay.jetty.jar:genometryImpl/src:ext/image4j.jar:ext/affx_fusion.jar:ext/myswing.jar:ext/freehep-2.1.1.jar:ext/commons-codec-1.4.jar:ext/catalina.jar:ext/cos.jar:ext/dom4j-1.6.1.jar:ext/hibernate3.jar:/usr/share/junit/junit.jar:/usr/share/java/junit4.jar:genoviz_sdk/src:ext/commons-compress-1.0.jar</classpath>
                 <built-to>das2_server/build</built-to>
                 <built-to>genometryImpl/build</built-to>

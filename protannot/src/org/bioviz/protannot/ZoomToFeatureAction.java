@@ -3,10 +3,10 @@ package org.bioviz.protannot;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
 import javax.swing.AbstractAction;
-import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.List;
 
 /**
  * Asks ProtAnnot to center on the location of the 
@@ -58,7 +58,7 @@ final class ZoomToFeatureAction extends AbstractAction implements MouseListener 
         if (!(e instanceof NeoMouseEvent)) {
             return;
         }
-        Vector<GlyphI> selected = view.getSelected();
+        List<GlyphI> selected = view.getSelected();
         setEnabled(selected != null && !selected.isEmpty());
     }
 }

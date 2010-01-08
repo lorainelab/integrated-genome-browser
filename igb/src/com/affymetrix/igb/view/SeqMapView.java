@@ -607,7 +607,7 @@ public class SeqMapView extends JPanel
 		}
 
 		axis_tier.addChild(axis);
-
+		
 		// it is important to set the colors before adding the tier
 		// to the map, else the label tier colors won't match
 		if (seqmap.getTiers().size() >= tier_index) {
@@ -1065,7 +1065,7 @@ public class SeqMapView extends JPanel
 		}
 
 		shrinkWrap();
-
+		
 		seqmap.toFront(axis_tier);
 
 		// restore floating layers to front of map
@@ -1077,9 +1077,23 @@ public class SeqMapView extends JPanel
 		// Ignore preserve_view if seq has changed
 		if ((preserve_view_x || preserve_view_y) && same_seq) {
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
+
+			/** Possible bug : When all strands are hidden.
+			 * tier label and tiers do appera at same position.
+			**/
+			// NOTE: Below call to stretchToFit is not redundancy. It is there
+			//       to solve above mentioned bug.
+			
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 		} else {
 			seqmap.stretchToFit(true, true);
+			
+			/** Possible bug : Below both ranges are different
+			*	System.out.println("SeqMapRange "+seqmap.getMapRange()[1]);
+			*	System.out.println("VisibleRange "+seqmap.getVisibleRange()[1]);
+			**/
+			// NOTE: Below call to stretchToFit is not redundancy. It is there
+			//       to solve a bug (ID: 2912651 -- tier map and tiers off-kilter)
 			seqmap.stretchToFit(true, true);
 			zoomToSelections();
 			int[] range = seqmap.getVisibleRange();

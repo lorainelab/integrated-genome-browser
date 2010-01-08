@@ -4,11 +4,14 @@
  */
 package org.bioviz.protannot;
 
+import org.freehep.util.export.ExportDialog;
+
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
+import com.affymetrix.genoviz.swing.ColorTableCellEditor;
+import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 
-import org.freehep.util.export.ExportDialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -50,8 +53,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
-import com.affymetrix.genoviz.swing.ColorTableCellEditor;
-import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -88,7 +89,7 @@ final class ProtAnnotMain implements WindowListener {
     private Dimension screen;
     private int frm_width;// = (int) (screen.width * .8f);
     private int frm_height;// = (int) (screen.height * .8f);
-    private boolean testmode = false;
+    private static final boolean testmode = false;
     private enum Arguments {
         SERVER,
         FILENAME;
@@ -104,7 +105,7 @@ final class ProtAnnotMain implements WindowListener {
         }
 
     };
-    private Hashtable<Arguments,String> ArgumentValues = new Hashtable<Arguments,String>();
+    private final Hashtable<Arguments,String> ArgumentValues = new Hashtable<Arguments,String>();
     
     public static void main(String[] args) {
         ProtAnnotMain test = new ProtAnnotMain();
@@ -116,7 +117,7 @@ final class ProtAnnotMain implements WindowListener {
     /**
      * Unloads everything from GnomeView if unable to read the selected file.
      */
-    void no_data() {
+    private void no_data() {
         frm.setTitle(" ProtAnnot");
         gview.setTitle("");
         gview.no_data();
@@ -720,7 +721,7 @@ final class ProtAnnotMain implements WindowListener {
     /**
      * Table model for color prefrences
      */
-    class ColorTableModel extends AbstractTableModel{
+    private class ColorTableModel extends AbstractTableModel{
 
             final String[] col_headings = {"Name","Color"};
             Object[][] data;

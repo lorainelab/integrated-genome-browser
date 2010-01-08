@@ -386,6 +386,9 @@
 					<include name="genometryImpl" />
 				</dirset>
 				<dirset dir="${basedir}">
+					<include name="protannot" />
+				</dirset>
+				<dirset dir="${basedir}">
 					<include name="igb" />
 					<include name="das2_server" />
 				</dirset>

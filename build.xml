@@ -17,6 +17,7 @@
 		<property name="genometry"     value="${basedir}/genometryImpl" />
 		<property name="igb"           value="${basedir}/igb" />
 		<property name="das2server"    value="${basedir}/das2_server" />
+		<property name="protannot"    value="${basedir}/protannot" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"    value="${basedir}/ext" />
@@ -25,7 +26,7 @@
 		<property name="docs.dir"   value="${basedir}/documentation/api-docs" />
 		<property name="report.dir" value="${basedir}/reports" />
 
-		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test" />
+		<property name="javadoc.src.path"   value="${genoviz}/src:${genoviz}/test:${genoviz}/demo/src:${genometry}/src:${genometry}/test:${igb}/src:${igb}/test:${das2server}/src:${das2server}/test:${protannot}/src" />
 	</target>
 
 	<target name="compile" depends="common-init" description="Compile all genoviz subprojects">
@@ -146,6 +147,7 @@
 			<fileset dir="${dist.dir}">
 				<include name="das2server.jar" />
 				<include name="genometry.jar" />
+				<include name="protannot.jar" />
 			</fileset>
 		</copy>
 

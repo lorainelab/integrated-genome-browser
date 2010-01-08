@@ -8,6 +8,7 @@
 		<property name="genometryImpl" value="${basedir}/../genometryImpl" />
 		<property name="igb"           value="${basedir}/../igb" />
 		<property name="das2server"    value="${basedir}/../das2_server" />
+		<property name="protannot"    value="${basedir}/../protannot" />
 
 		<!-- directory paths -->
 		<property name="lib.dir"     value="${basedir}/../ext" />

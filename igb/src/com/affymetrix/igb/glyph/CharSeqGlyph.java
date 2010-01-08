@@ -25,10 +25,10 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
  */
 public final class CharSeqGlyph extends SequenceGlyph
 		 {
-	SearchableCharIterator chariter;
-	boolean residuesSet = false;
-	int residue_length = 0;
-	static Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
+	private SearchableCharIterator chariter;
+	private boolean residuesSet = false;
+	private int residue_length = 0;
+	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
 	// default to true for backward compatability
 	protected boolean hitable = true;

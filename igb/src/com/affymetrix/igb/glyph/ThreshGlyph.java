@@ -24,9 +24,7 @@ import com.affymetrix.genoviz.glyph.*;
  *  on far left.
  */
 public final class ThreshGlyph extends FillRectGlyph {
-  static Font label_font = new Font("SansSerif", Font.PLAIN, 12);
-  
-  String label;
+  private String label;
 
   public void setLabel(String s) {
     this.label = s;
@@ -34,6 +32,7 @@ public final class ThreshGlyph extends FillRectGlyph {
 
   public String getLabel() { return label; }
 
+	@Override
   public void draw(ViewI view) {
     super.draw(view);
     view.transformToPixels(coordbox, pixelbox);

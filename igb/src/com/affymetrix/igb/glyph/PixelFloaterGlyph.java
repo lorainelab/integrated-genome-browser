@@ -31,11 +31,11 @@ import java.awt.geom.Rectangle2D;
  *   current view (the View's viewbox).
  */
 public final class PixelFloaterGlyph extends Glyph  {
-  LinearTransform childtrans = new LinearTransform();
-  Rectangle2D.Double view_pix_box = new Rectangle2D.Double();
-  boolean OUTLINE_BOUNDS = false;
-  boolean XPIXEL_FLOAT = false;
-  boolean YPIXEL_FLOAT = true;
+  private final LinearTransform childtrans = new LinearTransform();
+  private final Rectangle2D.Double view_pix_box = new Rectangle2D.Double();
+  private static final boolean OUTLINE_BOUNDS = false;
+  private static final boolean XPIXEL_FLOAT = false;
+  private static final boolean YPIXEL_FLOAT = true;
 
   /**
    *  Should only have to modify view to set Y part of transform to identity 

@@ -25,7 +25,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  */
 public class EfficientSolidGlyph extends EfficientGlyph  {
 
-  boolean hitable = true;
+  private boolean hitable = true;
 
   /**
    * @return whether or not this glyph is hitable

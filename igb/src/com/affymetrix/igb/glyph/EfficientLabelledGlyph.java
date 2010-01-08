@@ -15,34 +15,30 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.GeneralUtils;
-import com.affymetrix.genoviz.util.GeometryUtils;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 public class EfficientLabelledGlyph extends EfficientSolidGlyph implements LabelledGlyph {
 
-	static boolean OUTLINE_PIXELBOX = false;
-	static boolean DEBUG_OPTIMIZED_FILL = false;
-	static boolean optimize_child_draw = true;
+	private static final boolean OUTLINE_PIXELBOX = false;
+	private static final boolean DEBUG_OPTIMIZED_FILL = false;
+	private static final boolean optimize_child_draw = true;
 	static Rectangle2D.Double scratch_cbox = new Rectangle2D.Double();
-	static int max_char_ypix = 40; // maximum allowed pixel height of chars
-	static int max_char_xpix = 30; // maximum allowed pixel width of chars
-	static int min_char_ypix = 5;  // minimum allowed pixel height of chars
-	static int min_char_xpix = 4;  // minimum allowed pixel width of chars
+	static final int max_char_ypix = 40; // maximum allowed pixel height of chars
+	static final int max_char_xpix = 30; // maximum allowed pixel width of chars
+	static final int min_char_ypix = 5;  // minimum allowed pixel height of chars
+	static final int min_char_xpix = 4;  // minimum allowed pixel width of chars
 	// ypix2fonts: index is char height in pixels, entry is Font that gives that char height (or smaller)
-	static Font[] ypix2fonts = new Font[max_char_ypix + 1];
+	static final Font[] ypix2fonts = new Font[max_char_ypix + 1];
 	// xpix2fonts: index is char width in pixels, entry is Font that gives that char width (or smaller)
-	static Font[] xpix2fonts = new Font[max_char_xpix + 1];
-	static int pixel_separation = 1;
-	static double pixels_per_inch = (double) Toolkit.getDefaultToolkit().getScreenResolution();
-	static double points_per_inch = 72;
-	static double points_per_pixel = points_per_inch / pixels_per_inch;
-	boolean show_label = true;
-	boolean toggle_by_width = true;
-	boolean toggle_by_height = true;
-	String label;
-	int label_loc = NORTH;
+	static final Font[] xpix2fonts = new Font[max_char_xpix + 1];
+	static final int pixel_separation = 1;
+	protected boolean show_label = true;
+	protected boolean toggle_by_width = true;
+	protected boolean toggle_by_height = true;
+	protected String label;
+	protected int label_loc = NORTH;
 
 	static {
 		setBaseFont(new Font("Monospaced", Font.PLAIN, 1));

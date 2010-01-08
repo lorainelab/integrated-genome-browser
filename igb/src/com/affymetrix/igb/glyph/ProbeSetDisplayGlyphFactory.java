@@ -16,7 +16,6 @@ package com.affymetrix.igb.glyph;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
@@ -62,7 +61,7 @@ giving PS_x_(CSym_x_View), you cannot predict at what depth to find
 the probeset, probe and pieces of probes
 */  
   
-  static final boolean DEBUG = false;
+  private static final boolean DEBUG = false;
     
   /** Any method name (track-line name) ending with this is taken as a poly_a_site. */
   public static final String POLY_A_SITE_METHOD = "netaffx poly_a_sites";
@@ -71,14 +70,13 @@ the probeset, probe and pieces of probes
   /** Any method name (track-line name) ending with this is taken as a consensus/exemplar sequence. */
   public static final String NETAFFX_CONSENSUS = " netaffx consensus";
 
-  static Color ps_color = Color.PINK;
-  static Color ps_s_color = Color.GREEN;
-  static Color ps_x_color = Color.ORANGE;
-  static Color poly_a_site_color = Color.BLUE;
-  static Color poly_a_stack_color = Color.CYAN;
+  private static Color ps_color = Color.PINK;
+  private static Color ps_s_color = Color.GREEN;
+  private static Color ps_x_color = Color.ORANGE;
+  private static Color poly_a_site_color = Color.BLUE;
+  private static Color poly_a_stack_color = Color.CYAN;
   
-  SeqMapView gviewer;
-  Color default_tier_color = Color.black;
+  private SeqMapView gviewer;
 
   /** Whether to draw a glyph for probesets that floats free from the glyph
    *  for the consensus.  Two glyphs can be drawn for each probeset:
@@ -86,16 +84,16 @@ the probeset, probe and pieces of probes
    *  is independent and thus gets packed separately in
    *  an independent tier.
    */
-  boolean do_independent_probeset_glyphs = false;
+  private static final boolean do_independent_probeset_glyphs = false;
   
   /** 
    * Whether to put an outline around the probe glyphs in the same probeset.
    */
-  boolean outline_probes_in_probeset = false;
+  private static final boolean outline_probes_in_probeset = false;
   
-  int glyph_depth = 2;
+  private static final int glyph_depth = 2;
   
-  String label_field = null;
+  private String label_field = null;
 
   public void init(Map options) {
   }

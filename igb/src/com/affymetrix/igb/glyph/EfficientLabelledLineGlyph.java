@@ -29,14 +29,12 @@ import java.awt.geom.Rectangle2D;
 /** A subclass of EfficientLabelledGlyph that makes all its children
  *  center themselves vertically on the same line.
  */
-public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph
-   implements LabelledGlyph  {
+public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 
-  boolean move_children = true;
+  private boolean move_children = true;
 
   @Override
   public void draw(ViewI view) {
-    //    super.draw(view);
     Rectangle2D.Double full_view_cbox = view.getFullView().getCoordBox();
     Graphics g = view.getGraphics();
 

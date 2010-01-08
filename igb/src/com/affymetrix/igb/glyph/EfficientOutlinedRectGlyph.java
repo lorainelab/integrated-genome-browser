@@ -23,9 +23,9 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *  A glyph that is drawn as a solid, outlined rectangle.
  */
 public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph  {
-  Color bgcolor = Color.white;
-  static boolean optimize_child_draw = true;
+  private Color bgcolor = Color.white;
   
+	@Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
@@ -48,6 +48,7 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
 
   // specifies how to draw the glyph when it is too small to draw its
   // contained glyphs
+	@Override
   public void fillDraw(ViewI view) {
     super.fillDraw(view);
   }
@@ -55,6 +56,7 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
   /** Sets the outline color; the fill color is automatically calculated as  
    *  a darker shade. 
    */
+	@Override
   public void setColor(Color c) {
     super.setColor(c);
     bgcolor = c.darker();

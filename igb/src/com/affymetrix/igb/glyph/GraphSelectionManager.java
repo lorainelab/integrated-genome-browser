@@ -70,7 +70,6 @@ public final class GraphSelectionManager
 
   private static FileTracker output_file_tracker = FileTracker.OUTPUT_DIR_TRACKER;
 
-  private final List graphlist = new ArrayList();
   private GraphGlyph current_graph = null;
   private GraphGlyph graph_to_scale = null;
   //   second_curent_graph is
@@ -319,7 +318,6 @@ public final class GraphSelectionManager
 		  } else if (src == delete_graph) {
 			  deleteGraph(current_source, current_graph);
 			  current_graph = null;  // for garbage collection, and other reasons
-			  graphlist.remove(current_source); // for garbage collection, etc.
 		  } // NOT YET WORKING --
 		  // need to put graph's parent PixelFloaterGlyphs in their own parent PixelFloaterGlyph,
 		  //   rather than have them as siblings of tiers -- otherwise, when moved to back, will
@@ -352,8 +350,7 @@ public final class GraphSelectionManager
 
 		  current_source.updateWidget();
 	  }
-	  graphlist.clear(); // for garbage collection, etc.
-  }
+ }
 
 
   /** Deletes a graph from a widget, and tries to make sure the GraphSym can

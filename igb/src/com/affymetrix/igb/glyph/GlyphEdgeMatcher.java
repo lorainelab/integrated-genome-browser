@@ -23,15 +23,10 @@ import java.awt.geom.Rectangle2D;
 
 public final class GlyphEdgeMatcher  {
 
-  Color col = Color.white;
-  int start_match_count = 0;
-  int end_match_count = 0;
-  int check_count = 0;
-  int intersect_count = 0;
-  int call_count = 0;
-  double fuzness = 0;
+  private Color col = Color.white;
+  private double fuzness = 0;
 
-  static GlyphEdgeMatcher singleton_matcher = null;
+  private static GlyphEdgeMatcher singleton_matcher = null;
   
   protected GlyphEdgeMatcher() {
   }
@@ -68,29 +63,18 @@ public final class GlyphEdgeMatcher  {
    *  Glyphs added for matches are collected and returned in match_glyphs.
    */
   public void matchEdges(NeoMap map, List<GlyphI> query_glyphs, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
-    call_count = 0;
-    start_match_count = 0;
-    end_match_count = 0;
-    check_count = 0;
-    intersect_count = 0;
-    //    System.out.println("called GlyphEdgeMatcher.matchEdges(), query_glyph count = " + query_glyphs.size());
-    for (int i=0; i<query_glyphs.size(); i++) {
-      GlyphI query = query_glyphs.get(i);
+    for (GlyphI query : query_glyphs) {
       matchEdges(map, query, target_glyphs, match_glyphs);
     }
   }
 
   private void matchEdges(NeoMap map, GlyphI query, List<GlyphI> target_glyphs, List<GlyphI> match_glyphs) {
-    for (int k=0; k<target_glyphs.size(); k++) {
-      GlyphI target = target_glyphs.get(k);
+    for (GlyphI target : target_glyphs) {
       matchEdges(map, query, target, match_glyphs);
     }
   }
   
   private void matchEdges(NeoMap map, GlyphI query, GlyphI target, List<GlyphI> match_glyphs) {
-    //    System.out.println("trying to match edges: query = " + query + ", target = " + target);
-    call_count++;
-    
     // Simply skip all TransientGlyph, such as the hairline shadow
     if ((target instanceof TransientGlyph) || (query instanceof TransientGlyph)) {
       return;
@@ -125,16 +109,13 @@ public final class GlyphEdgeMatcher  {
       // terminal case, neither query nor target have children
       // see if they intersect, if so, see if edges match
       // glyph1.start == glyph2.end is _not_considered a match
-      check_count++;
-    
-      intersect_count++;
+
       double qstart = qbox.x;
       double qend = qbox.x + qbox.width;
       double tstart = tbox.x;
       double tend = tbox.x + tbox.width;
       if (Math.abs(qstart - tstart) <= fuzness) {
         if (target.getParent() != null) {
-          start_match_count++;
           EfficientSolidGlyph mglyph = new EfficientFillRectGlyph();
           mglyph.setHitable(false);
           mglyph.setCoords(tstart, tbox.y-1, 1, tbox.height+2);
@@ -150,7 +131,6 @@ public final class GlyphEdgeMatcher  {
 
       if (Math.abs(qend - tend) <= fuzness) {
         if (target.getParent() != null) {
-          end_match_count++;
           EfficientSolidGlyph mglyph = new EfficientFillRectGlyph();
           mglyph.setHitable(false);
           mglyph.setCoords(tend-1, tbox.y-1, 1, tbox.height+2);
@@ -161,9 +141,7 @@ public final class GlyphEdgeMatcher  {
           match_glyphs.add(mglyph);
         }
       }
-      //if (qstart == tend) { } // does this count? not for now...
-      //if (qend == tstart) { } // does this count? not for now...
-      
+
       // NOTE:
       // Can add match glyphs directly to TierGlyph or as child of target.getParent().
       // 

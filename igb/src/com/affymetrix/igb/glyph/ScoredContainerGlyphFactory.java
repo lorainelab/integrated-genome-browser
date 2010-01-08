@@ -43,12 +43,9 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.SeqMapView;
 
 public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  {
-  static final boolean DEBUG = false;
+  private static final boolean DEBUG = false;
   
-  static final boolean separate_by_strand = true;
-  
-  public ScoredContainerGlyphFactory() {
-  }
+  private static final boolean separate_by_strand = true;
   
   /** Does nothing. */
   public void init(Map options) {

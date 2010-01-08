@@ -23,14 +23,11 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 public final class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
-  static int frm_width = 400;
-  static int frm_height = 200;
-  GlyphEdgeMatcher edge_matcher;
-  SeqMapView gviewer;
-  JSlider tslider;
-  int thresh_min = 0;
-  int thresh_max = 100;
-  int prev_thresh;
+  private SeqMapView gviewer;
+  private final JSlider tslider;
+  private static final int thresh_min = 0;
+  private static final int thresh_max = 100;
+  private int prev_thresh;
 
   private static EdgeMatchAdjuster singleton_adjuster = null;
   private static JFrame singleton_frame = null;
@@ -65,7 +62,6 @@ public final class EdgeMatchAdjuster extends JPanel implements ChangeListener  {
   }
 
   private EdgeMatchAdjuster(GlyphEdgeMatcher matcher, SeqMapView view) {
-    edge_matcher = matcher;
     gviewer = view;
     prev_thresh = (int)matcher.getFuzziness();
     tslider = new JSlider(JSlider.HORIZONTAL, 

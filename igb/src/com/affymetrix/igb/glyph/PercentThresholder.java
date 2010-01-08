@@ -29,13 +29,13 @@ import javax.swing.event.ChangeEvent;
 public final class PercentThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
-  NeoAbstractWidget widg;
-  JSlider min_percent_slider;
-  JSlider max_percent_slider;
-  JTextField min_perT;
-  JTextField max_perT;
-  JCheckBox syncCB;
-  boolean sync_min_max;
+  private final NeoAbstractWidget widg;
+  private final JSlider min_percent_slider;
+  private final JSlider max_percent_slider;
+  private final JTextField min_perT;
+  private final JTextField max_perT;
+  private final JCheckBox syncCB;
+  private boolean sync_min_max;
 
   // info2pscores is a hash of GraphGlyphs' data model
   //   (usually a GraphSym if using genometry) to float[] arrays, each of length
@@ -54,20 +54,20 @@ public final class PercentThresholder extends JPanel
   //    FIX THIS!  But also need to balance between memory concerns and the
   //    desire to avoid recalculation of percent-to-score array (which requires a
   //    sort) every time a graph is selected...
-  Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
-  List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+  private final Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
+  private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 
   /**
    *  Now trying to map slider values to percentages, such that each slider
    *  unit = 0.1 percent (or in other words slider units per percent = 10)
    */
-  float sliders_per_percent = 10.0f;
-  float percents_per_slider = 1.0f / sliders_per_percent;
-  float abs_min_percent = 0.0f;
-  float abs_max_percent = 100.0f;
-  float prev_min;
-  float prev_max;
-  float slider_label_offset = 50.0f;
+  private static final float sliders_per_percent = 10.0f;
+  private static final float percents_per_slider = 1.0f / sliders_per_percent;
+  private static final float abs_min_percent = 0.0f;
+  private static final float abs_max_percent = 100.0f;
+  private float prev_min;
+  private float prev_max;
+  private static final float slider_label_offset = 50.0f;
 
   static PercentThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     //    PercentThresholder thresher = new PercentThresholder(sgg, widg);

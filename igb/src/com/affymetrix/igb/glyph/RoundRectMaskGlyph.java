@@ -28,9 +28,9 @@ import java.awt.geom.RoundRectangle2D;
  */
 public final class RoundRectMaskGlyph extends EfficientGlyph  {
 
-  static BasicStroke stroke = new BasicStroke(2);
-  RoundRectangle2D.Double rr2d = new RoundRectangle2D.Double();
-  Color fillColor = Color.WHITE;
+  private static final BasicStroke stroke = new BasicStroke(2);
+  private final RoundRectangle2D.Double rr2d = new RoundRectangle2D.Double();
+  private Color fillColor = Color.WHITE;
   
   public RoundRectMaskGlyph(Color fillColor) {
     super();

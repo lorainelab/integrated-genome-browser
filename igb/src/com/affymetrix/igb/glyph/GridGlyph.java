@@ -20,9 +20,9 @@ import java.awt.geom.Rectangle2D;
 //import com.affymetrix.genoviz.bioviews.*;
 
 public final class GridGlyph extends Glyph {
-  double grid_spacing = 0;
-  Rectangle gridbox_pix = new Rectangle();
-  Rectangle2D.Double gridbox_coords = new Rectangle2D.Double();
+  private double grid_spacing = 0;
+  private final Rectangle gridbox_pix = new Rectangle();
+  private final Rectangle2D.Double gridbox_coords = new Rectangle2D.Double();
 
   public void setGridSpacing(double spacing) {
     grid_spacing = spacing;

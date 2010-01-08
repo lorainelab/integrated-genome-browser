@@ -15,7 +15,6 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Color;
 import java.util.*;
 import java.util.List;
@@ -27,10 +26,10 @@ import com.affymetrix.igb.view.*;
 import com.affymetrix.igb.tiers.*;
 
 public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
-  static int default_glyph_height = 50;
+  private static final int default_glyph_height = 50;
 
-  Color glyph_color;
-  int glyph_height = default_glyph_height;
+  private Color glyph_color;
+  private int glyph_height = default_glyph_height;
 
   /*
    *  style options:
@@ -38,7 +37,7 @@ public final class CoverageSummarizerFactory implements MapViewGlyphFactoryI  {
    *        (coords covered by spans / total coords in pixel)
    *    SIMPLE: just shows what regions are covered by spans as solid blocks
    */
-  int style = CoverageSummarizerGlyph.DEFAULT_STYLE;
+  private int style = CoverageSummarizerGlyph.DEFAULT_STYLE;
 
   public CoverageSummarizerFactory() { }
 

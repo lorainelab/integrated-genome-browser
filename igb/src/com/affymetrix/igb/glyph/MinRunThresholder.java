@@ -29,25 +29,22 @@ import com.affymetrix.genoviz.widget.*;
 public final class MinRunThresholder extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
 
-  static int frm_width = 400;
-  static int frm_height = 200;
-  //  SmartGraphGlyph sgg;
-  List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
-  NeoAbstractWidget widg;
-  JSlider tslider;
-  JTextField minrunTF;
-  int default_thresh_min = 0;
-  int default_thresh_max = 250;
-  int thresh_min = default_thresh_min;
-  int thresh_max = default_thresh_max;
-  int minrun_thresh = 0;
+  private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+  private final NeoAbstractWidget widg;
+  private JSlider tslider;
+  private JTextField minrunTF;
+  private static final int default_thresh_min = 0;
+  private static final int default_thresh_max = 250;
+  private static final int thresh_min = default_thresh_min;
+  private int thresh_max = default_thresh_max;
+  private int minrun_thresh = 0;
 
-  int max_chars = 9;
-  int max_pix_per_char = 6;
-  int tf_min_xpix = max_chars * max_pix_per_char;
-  int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
-  int tf_min_ypix = 20;
-  int tf_max_ypix = 25;
+  private static final int max_chars = 9;
+  private static final int max_pix_per_char = 6;
+  private static final int tf_min_xpix = max_chars * max_pix_per_char;
+  private static final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
+  private static final int tf_min_ypix = 20;
+  private static final int tf_max_ypix = 25;
 
   static MinRunThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MinRunThresholder dthresher = new MinRunThresholder(sgg, widg);

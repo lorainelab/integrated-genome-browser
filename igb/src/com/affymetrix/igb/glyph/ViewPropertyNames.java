@@ -2,7 +2,7 @@
 package com.affymetrix.igb.glyph;
 
 /**Contributed by Ido Tamir.*/
-public interface ViewPropertyNames {
+interface ViewPropertyNames {
 	public static final String INITIAL_MAX_Y = "initialMaxY";
 	public static final String INITIAL_MIN_Y = "initialMinY";
 	public static final String INITIAL_COLOR = "initialColor";

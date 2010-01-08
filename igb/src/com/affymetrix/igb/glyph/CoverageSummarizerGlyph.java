@@ -29,7 +29,6 @@ import com.affymetrix.genoviz.glyph.SolidGlyph;
 
 import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.SeqSymSummarizer;
-import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Point2D;
@@ -53,20 +52,19 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
   public static int COVERAGE = 2;
   public static int SIMPLE = 3;
   public static int SMOOTHED_COVERAGE = 4;
-  //  public static int ENHANCED_SMOOTHED_COVERAGE = 5;
   public static int DEFAULT_STYLE = COVERAGE;
 
-  static Font default_font = new Font("Courier", Font.PLAIN, 12);
-  static NumberFormat nformat = new DecimalFormat();
+  private static final Font default_font = new Font("Courier", Font.PLAIN, 12);
+  private static final  NumberFormat nformat = new DecimalFormat();
 
-  int[] mins = null;
-  int[] maxs = null;
-  double[] yval_for_xpixel = null;
-  double[] smoothed_yval = null;
-  Point2D.Double curr_coord = new Point2D.Double(0,0);
-  Point curr_pixel = new Point(0,0);
-  int glyph_style = DEFAULT_STYLE;
-  float avg_coverage;
+  private int[] mins = null;
+  private int[] maxs = null;
+  private double[] yval_for_xpixel = null;
+  private double[] smoothed_yval = null;
+  private final Point2D.Double curr_coord = new Point2D.Double(0,0);
+  private final Point curr_pixel = new Point(0,0);
+  private int glyph_style = DEFAULT_STYLE;
+  private float avg_coverage;
 
   /**
    *  starting to factor in a smoothing based on values of adjacent pixels.
@@ -161,7 +159,6 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
       bases_covered += (max_array[i] - min_array[i]);
     }
     avg_coverage = (float)bases_covered / (float)total_bases;
-    //    System.out.println("average coverage: " + avg_coverage);
   }
 
 
@@ -177,6 +174,7 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
   public int getStyle() { return glyph_style; }
 
+	@Override
   public void draw(ViewI view) {
     if (mins == null || maxs == null)  { return; }
     // could size cache to just the view's pixelbox, but then may end up creating a
@@ -198,7 +196,6 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
     double coords_per_pixel = 1.0 / pixels_per_coord;
     view.transformToPixels(coordbox, pixelbox);
 
-    int pbox_yheight = pixelbox.y + pixelbox.height;
     Graphics g = view.getGraphics();
     Rectangle2D.Double view_coordbox = view.getCoordBox();
     double min_xcoord = view_coordbox.x;
@@ -206,8 +203,6 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
 
     int beg_index = 0;
     int end_index = maxs.length-1;
-
-    double coord_length = maxs[end_index] - mins[beg_index];
 
     int draw_beg_index = Arrays.binarySearch(mins, (int)min_xcoord);
     int draw_end_index = Arrays.binarySearch(maxs, (int)max_xcoord) + 1;
@@ -328,10 +323,8 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
       double xoffset = coords_per_pixel / 2.0;
 
       g.setColor(this.getColor());
-      double prev_yval = -1;
       for (int pindex =0 ; pindex < view_pixel_width; pindex++) {
 	curr_coord.x = (pindex * coords_per_pixel) + xoffset;
-	//	double curr_yval = yval_for_xpixel[pindex];
 	double curr_yval = yvals[pindex];
 	if (curr_yval != 0) {
 	  curr_coord.y = yoffset - (curr_yval * yscale);
@@ -350,7 +343,6 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
       // drawing outline around bounding box
       g.setColor(Color.lightGray);
       g.setFont(default_font);
-      //    g.drawString(nformat.format(max_coverage*100), 3, pixelbox.y + 10);
       String msg = "Max coverage in view: " + nformat.format(coverage);
       g.drawString(msg, 3, pixelbox.y + 10);
     }

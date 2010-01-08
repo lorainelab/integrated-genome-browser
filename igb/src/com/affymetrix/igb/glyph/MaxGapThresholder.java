@@ -31,26 +31,23 @@ import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 public final class MaxGapThresholder extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {
 
-  static int frm_width = 400;
-  static int frm_height = 200;
+  private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+  private final NeoAbstractWidget widg;
+  private final JSlider tslider;
+  private final JTextField maxgapTF;
+  private static final int default_thresh_max = 250;
+  private static final int default_thresh_min = 0;
+  private int thresh_max = default_thresh_max;
+  private int thresh_min = default_thresh_min;
 
-  List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
-  NeoAbstractWidget widg;
-  JSlider tslider;
-  JTextField maxgapTF;
-  int default_thresh_max = 250;
-  int default_thresh_min = 0;
-  int thresh_max = default_thresh_max;
-  int thresh_min = default_thresh_min;
+  private int maxgap_thresh = 0;
 
-  int maxgap_thresh = 0;
-
-  int max_chars = 9;
-  int max_pix_per_char = 6;
-  int tf_min_xpix = max_chars * max_pix_per_char;
-  int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
-  int tf_min_ypix = 20;
-  int tf_max_ypix = 25;
+  private static final int max_chars = 9;
+  private static int max_pix_per_char = 6;
+  private static final int tf_min_xpix = max_chars * max_pix_per_char;
+  private static final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
+  private static final int tf_min_ypix = 20;
+  private static final int tf_max_ypix = 25;
 
   static MaxGapThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MaxGapThresholder dthresher = new MaxGapThresholder(sgg, widg);
@@ -58,7 +55,6 @@ public final class MaxGapThresholder extends JPanel
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", dthresher);
-    //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
 			@Override
       public void windowClosing(WindowEvent evt) {

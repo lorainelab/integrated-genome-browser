@@ -15,14 +15,14 @@ package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.SolidGlyph;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
-public abstract class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.SolidGlyph  {
-  GlyphI template_glyph;
-  int[] xcoords;
-  int[] selected_xcoords;
-  int flylength = 1;
+public abstract class FlyweightPointGlyph extends SolidGlyph  {
+  protected GlyphI template_glyph;
+  protected int[] xcoords;
+  protected int flylength = 1;
   
   public FlyweightPointGlyph(GlyphI gl, int[] xarray, int flength) {
     template_glyph = gl;
@@ -35,6 +35,7 @@ public abstract class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.S
     this.setCoords((double)xmin, tbox.y, (double)xlength, tbox.height);
   }
 
+	@Override
   public void drawTraversal(ViewI view)  {
     super.drawTraversal(view);
     if (xcoords != null) {
@@ -61,6 +62,7 @@ public abstract class FlyweightPointGlyph extends com.affymetrix.genoviz.glyph.S
   /**
    *  Reifying flyweight glyphs as needed in pickTraversal.
    */
+	@Override
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
     super.pickTraversal(pickRect, pickList, view);

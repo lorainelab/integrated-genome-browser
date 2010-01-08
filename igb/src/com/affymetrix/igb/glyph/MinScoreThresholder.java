@@ -32,18 +32,15 @@ import com.affymetrix.genoviz.widget.*;
 public final class MinScoreThresholder extends JPanel
   implements ChangeListener, ActionListener  {
 
-  static NumberFormat nformat = new DecimalFormat();
-  static int frm_width = 400;
-  static int frm_height = 200;
-  //  SmartGraphGlyph sgg;
-  List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
-  NeoAbstractWidget widg;
-  JSlider tslider;
-  JTextField minscoreTF;
-  float thresh_min = -500;
-  float thresh_max = 500;
-  float minscore_thresh = 0;
-  float sliders_per_score = 0;
+  private static final NumberFormat nformat = new DecimalFormat();
+  private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
+  private final NeoAbstractWidget widg;
+  private final JSlider tslider;
+  private final JTextField minscoreTF;
+  private float thresh_min = -500;
+  private float thresh_max = 500;
+  private float minscore_thresh = 0;
+  private float sliders_per_score = 0;
 
   static MinScoreThresholder showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {
     MinScoreThresholder dthresher = new MinScoreThresholder(sgg, widg);
@@ -51,7 +48,6 @@ public final class MinScoreThresholder extends JPanel
     Container cpane = frm.getContentPane();
     cpane.setLayout(new BorderLayout());
     cpane.add("Center", dthresher);
-    //    frm.setSize(frm_width, frm_height);
     frm.addWindowListener( new WindowAdapter() {
 			@Override
       public void windowClosing(WindowEvent evt) {

@@ -38,9 +38,9 @@ import java.util.List;
  *
  */
 public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
-  static boolean optimize_child_draw = true;
-  static boolean DEBUG_OPTIMIZED_FILL = false;
-  boolean move_children = true;
+  private static final boolean optimize_child_draw = true;
+  private static final boolean DEBUG_OPTIMIZED_FILL = false;
+  private boolean move_children = true;
 
   @Override
   public void drawTraversal(ViewI view)  {
@@ -160,11 +160,9 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
   protected void adjustChildren() {
     double max_height = 0.0;
     if (isMoveChildren()) {
-      List childlist = this.getChildren();
+      List<GlyphI> childlist = this.getChildren();
       if (childlist != null) {
-        int child_count = this.getChildCount();
-        for (int i=0; i<child_count; i++) {
-          GlyphI child = (GlyphI)childlist.get(i);
+        for (GlyphI child :childlist) {
           double child_height = adjustChild(child);
           max_height = Math.max(max_height, child_height);
         }

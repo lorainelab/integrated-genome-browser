@@ -22,12 +22,13 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  */
 public final class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
     
-  Paint paint = new GradientPaint(0, 0, Color.GREEN, 5, 2, Color.YELLOW, true);
+  private Paint paint = new GradientPaint(0, 0, Color.GREEN, 5, 2, Color.YELLOW, true);
   
   public void setPaint(Paint p) {
     this.paint = p;
   }
   
+	@Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);

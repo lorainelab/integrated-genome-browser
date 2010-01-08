@@ -1,7 +1,6 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.BioSeq;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -22,9 +21,6 @@ public final class DeletionGlyph extends SolidGlyph {
     Rectangle pbox = view.getScratchPixBox();
     view.transformToPixels(this.coordbox, pbox);
     Graphics g = view.getGraphics();
-
-    // Unlikely this will ever be big enough to need the fix.
-    //EfficientSolidGlyph.fixAWTBigRectBug(view, pixelbox);
 
     //pixelbox.width = Math.max( pixelbox.width, min_pixels_width );
     pbox.height = Math.max( pbox.height, min_pixels_height );
@@ -100,10 +96,8 @@ public final class DeletionGlyph extends SolidGlyph {
 	pglyph.getCoordBox().width += pglyph.getCoordBox().x;
 	pglyph.getCoordBox().x = 0;
 	DeletionGlyph boundary_glyph = new DeletionGlyph();
-	//	boundary_glyph.setCoords(0.0, 0.0, 1.0, (double) thin_height);
 	boundary_glyph.setCoords(0.0, deletion_y, 1.0, deletion_height);
 	boundary_glyph.setColor(pglyph.getColor());
-	//boundary_glyph.setHitable(false);
 	pglyph.addChild(boundary_glyph);
       }
 	  
@@ -116,7 +110,6 @@ public final class DeletionGlyph extends SolidGlyph {
 	DeletionGlyph boundary_glyph = new DeletionGlyph();
 	boundary_glyph.setCoords(coordseq.getLength()-0.5, deletion_y, 1.0, deletion_height);
 	boundary_glyph.setColor(pglyph.getColor());
-	//boundary_glyph.setHitable(false);
 	pglyph.addChild(boundary_glyph);
       }
 

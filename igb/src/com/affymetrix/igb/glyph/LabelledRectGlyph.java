@@ -19,9 +19,8 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.glyph.*;
 
 public final class LabelledRectGlyph extends FillRectGlyph {
-  String label;
-  boolean toggle_by_width = true;
-  Font fnt;
+  private String label;
+  private Font fnt;
 
   public LabelledRectGlyph()  {
     super();
@@ -36,8 +35,7 @@ public final class LabelledRectGlyph extends FillRectGlyph {
       g.setColor(getBackgroundColor());
       FontMetrics fm = g.getFontMetrics();
       int text_width = fm.stringWidth(label);
-      int text_height = fm.getAscent();
-      if ((! toggle_by_width) || (text_width <= pixelbox.width)) {
+      if (text_width <= pixelbox.width) {
 	int xpos = pixelbox.x + (pixelbox.width/2) - (text_width/2);
 	g.drawString(label, xpos, pixelbox.y);
       }
@@ -45,7 +43,9 @@ public final class LabelledRectGlyph extends FillRectGlyph {
 
   }
 
+	@Override
   public Font getFont() { return fnt; }
+	@Override
   public void setFont(Font f) { this.fnt = f; }
   public void setLabel(String str) { this.label = str; }
   public String getLabel() { return label; }

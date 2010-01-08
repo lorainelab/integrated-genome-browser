@@ -954,7 +954,9 @@ public final class GraphGlyph extends Glyph {
 			}
 		}
 		DrawPoints(offset, yscale, view, graph_style, g, plot_bottom_ypixel, plot_top_ypixel);
-		DrawAvgLine(graph_style, g, coords_per_pixel);
+		if (graph_style == GraphType.MINMAXAVG) {
+			DrawAvgLine(g, coords_per_pixel);
+		}
 	}
 
 	private void DrawPoints(double offset, double yscale, ViewI view, GraphType graph_style, Graphics g, int plot_bottom_ypixel, int plot_top_ypixel) {
@@ -997,11 +999,8 @@ public final class GraphGlyph extends Glyph {
 				points_in_pixel++;
 			} else {
 				// draw previous pixel position
-				if (graph_style == GraphType.MINMAXAVG ||
-						graph_style == GraphType.LINE_GRAPH ||
-						graph_style == GraphType.HEAT_MAP) {
-					drawSingleRect(ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, graph_style, g, ysum, points_in_pixel, i);
-				}
+				drawSingleRect(
+						ymin_pixel, plot_bottom_ypixel, plot_top_ypixel, ymax_pixel, graph_style, g, ysum, points_in_pixel, i);
 
 				ymin_pixel = curr_point.y;
 				ymax_pixel = curr_point.y;
@@ -1045,10 +1044,8 @@ public final class GraphGlyph extends Glyph {
 	}
 
 
-	private void DrawAvgLine(GraphType graph_style, Graphics g, double coords_per_pixel) {
-		if (graph_style == GraphType.MINMAXAVG) {
-			g.setColor(lighter);
-		}
+	private void DrawAvgLine(Graphics g, double coords_per_pixel) {
+		g.setColor(lighter);
 		int prev_index = 0;
 		// find the first pixel position that has a real value in pixel_cache
 		while ((prev_index < pixel_cache.length) && (pixel_cache[prev_index] == Integer.MIN_VALUE)) {
@@ -1061,15 +1058,13 @@ public final class GraphGlyph extends Glyph {
 				if (yval == Integer.MIN_VALUE) {
 					continue;
 				}
-				if (graph_style == GraphType.MINMAXAVG) {
-					if (pixel_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
-						g.drawLine(i, yval, i, yval);
-					} else {
-						// last pixel had at least one datapoint, so connect with line
-						g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
-					}
-					prev_index = i;
+				if (pixel_cache[i - 1] == Integer.MIN_VALUE && coords_per_pixel > 30) {
+					g.drawLine(i, yval, i, yval);
+				} else {
+					// last pixel had at least one datapoint, so connect with line
+					g.drawLine(prev_index, pixel_cache[prev_index], i, yval);
 				}
+				prev_index = i;
 			}
 		}
 	}
@@ -1079,14 +1074,8 @@ public final class GraphGlyph extends Glyph {
 	 * Draws thresholded regions.
 	 * Current set up so that if regions_parent != null, then instead of drawing to view,
 	 * populate regions_parent with child SeqSymmetries for each region that passes threshold,
-	 *
 	 */
 	void drawThresholdedRegions(ViewI view, MutableSeqSymmetry region_holder, BioSeq aseq) {
-		/*
-		 *  Should really eventually move the SeqSymmetry stuff out of this class, maybe have
-		 *     drawThresholdedRegions() populate regions that pass threshold as two IntLists or
-		 *     something...
-		 */
 		double max_gap_threshold = getMaxGapThreshold();
 		double min_run_threshold = getMinRunThreshold();
 		double span_start_shift = getThreshStartShift();
@@ -1096,9 +1085,7 @@ public final class GraphGlyph extends Glyph {
 		float max_score_threshold = Float.POSITIVE_INFINITY;
 		if (thresh_direction == GraphState.THRESHOLD_DIRECTION_GREATER) {
 			min_score_threshold = getMinScoreThreshold();
-			max_score_threshold = Float.POSITIVE_INFINITY;
 		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_LESS) {
-			min_score_threshold = Float.NEGATIVE_INFINITY;
 			max_score_threshold = getMaxScoreThreshold();
 		} else if (thresh_direction == GraphState.THRESHOLD_DIRECTION_BETWEEN) {
 			min_score_threshold = getMinScoreThreshold();
@@ -1134,11 +1121,7 @@ public final class GraphGlyph extends Glyph {
 			System.out.println("in SmartGraphGlyph.drawThresholdedRegions(), problem with setting up threshold line!");
 			thresh_score = (getVisibleMinY() + (getVisibleMaxY() / 2));
 		}
-		if (thresh_score < getVisibleMinY() || thresh_score > getVisibleMaxY()) {
-			thresh_glyph.setVisibility(false);
-		} else {
-			thresh_glyph.setVisibility(true);
-		}
+		thresh_glyph.setVisibility(thresh_score >= getVisibleMinY() && thresh_score <= getVisibleMaxY());
 		thresh_ycoord = getCoordValue(view, (float) thresh_score);
 		thresh_glyph.setCoords(coordbox.x, thresh_ycoord, coordbox.width, 1);
 		Graphics g = view.getGraphics();

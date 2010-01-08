@@ -302,13 +302,13 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 		String label_field = the_style.getLabelField();
 		boolean use_label = label_field != null && (label_field.trim().length() > 0);
 		if (use_label) {
-			LabelledGlyph lglyph = (LabelledGlyph) labelledGlyphClass.newInstance();
+			EfficientLabelledGlyph lglyph = (EfficientLabelledGlyph) labelledGlyphClass.newInstance();
 			Object property = getTheProperty(insym, label_field);
 			String label = (property == null) ? "" : property.toString();
 			if (the_tier.getDirection() == TierGlyph.Direction.REVERSE) {
-				lglyph.setLabelLocation(LabelledGlyph.SOUTH);
+				lglyph.setLabelLocation(GlyphI.SOUTH);
 			} else {
-				lglyph.setLabelLocation(LabelledGlyph.NORTH);
+				lglyph.setLabelLocation(GlyphI.NORTH);
 			}
 			lglyph.setLabel(label);
 			pheight = 2 * pheight;

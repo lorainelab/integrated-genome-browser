@@ -19,7 +19,7 @@ import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class EfficientLabelledGlyph extends EfficientSolidGlyph implements LabelledGlyph {
+public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 
 	private static final boolean OUTLINE_PIXELBOX = false;
 	private static final boolean DEBUG_OPTIMIZED_FILL = false;

@@ -27,12 +27,11 @@ import com.affymetrix.genoviz.glyph.DirectedGlyph;
 import com.affymetrix.genoviz.glyph.PointedGlyph;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-//import com.affymetrix.igb.glyph.*;
+import com.affymetrix.igb.glyph.EfficientLabelledGlyph;
 import com.affymetrix.igb.glyph.EfficientLabelledLineGlyph;
 import com.affymetrix.igb.glyph.EfficientLineContGlyph;
 import com.affymetrix.igb.glyph.EfficientOutlineContGlyph;
 import com.affymetrix.igb.glyph.EfficientOutlinedRectGlyph;
-import com.affymetrix.igb.glyph.LabelledGlyph;
 import com.affymetrix.igb.tiers.ExpandPacker;
 import com.affymetrix.igb.tiers.TierGlyph;
 import com.affymetrix.igb.view.SeqMapView;
@@ -246,9 +245,8 @@ final class GlyphElement implements Cloneable, XmlAppender {
 				if (gl != null) {
 					gl.setCoords(span.getMin(), 0, span.getLength(), glyph_height);
 
-					boolean is_labeled_glyph = (gl instanceof LabelledGlyph);
-					if (is_labeled_glyph) {
-						configureLabel((LabelledGlyph) gl, insym, tier_glyph);
+					if (gl instanceof EfficientLabelledGlyph) {
+						configureLabel((EfficientLabelledGlyph) gl, insym, tier_glyph);
 					}
 
 					gl.setColor(findColor(propertyMap));
@@ -336,7 +334,7 @@ final class GlyphElement implements Cloneable, XmlAppender {
     return color;
   }
 
-  private void configureLabel(LabelledGlyph lgl, SeqSymmetry insym, TierGlyph tier_glyph) {
+  private void configureLabel(EfficientLabelledGlyph lgl, SeqSymmetry insym, TierGlyph tier_glyph) {
 	  String the_label = determineLabel(insym);
 
     // go ahead and set the height big enough for a label, even if it is null,
@@ -346,9 +344,9 @@ final class GlyphElement implements Cloneable, XmlAppender {
     if (the_label != null) {
       lgl.setLabel(the_label);
       if (tier_glyph.getDirection() == TierGlyph.Direction.REVERSE) {
-        lgl.setLabelLocation(LabelledGlyph.SOUTH);
+        lgl.setLabelLocation(GlyphI.SOUTH);
       } else {
-        lgl.setLabelLocation(LabelledGlyph.NORTH);
+        lgl.setLabelLocation(GlyphI.NORTH);
       }
     }
   }

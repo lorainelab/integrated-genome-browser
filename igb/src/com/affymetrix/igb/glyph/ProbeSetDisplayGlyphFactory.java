@@ -238,11 +238,11 @@ the probeset, probe and pieces of probes
       EfficientLabelledLineGlyph lglyph = new EfficientLabelledLineGlyph();
       lglyph.setMoveChildren(false);
       if (forward) { 
-        lglyph.setLabelLocation(LabelledGlyph.NORTH); 
+        lglyph.setLabelLocation(GlyphI.NORTH);
         child_y += parent_height;
       }
       else {
-        lglyph.setLabelLocation(LabelledGlyph.SOUTH);
+        lglyph.setLabelLocation(GlyphI.SOUTH);
       }
       String label = (String)((SymWithProps)consensus_sym).getProperty(label_field);
       lglyph.setLabel(label);

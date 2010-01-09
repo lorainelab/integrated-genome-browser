@@ -12,9 +12,11 @@ Caenorhabditis remanei	C. remanei	C_remanei	caeRem
 Callithrix jacchus	Common Marmoset	C_jacchus	calJac	Callithrix_jacchus
 Canis lupus familiaris	Dog	C_familiaris	canFam	Canis_familiaris
 Cavia porcellus	Guinea Pig	C_porcellus	cavPor	Cavia_porcellus
+Chlamydomanas reinhardtii	C_reinhardtii
 Choloepus hoffmanni	Two-toed Sloth	C_hoffmanni	choHof	Choloepus_hoffmanni
 Ciona intestinalis	C. intestinalis	C_intestinalis	ci	Ciona_intestinalis
 Ciona savignyi	C. savignyi	C_savignyi		Ciona_savignyi
+Cucumis sativus	Cucumber	C_sativus
 Danio rerio	Zebrafish	D_rerio	danRer	Danio_rerio
 Dasypus novemcinctus	Nine-banded Armadillo	D_novemcinctus		Dasypus_novemcinctus
 Drosophila ananassae	D. ananassae	D_ananassae	droAna
@@ -42,8 +44,10 @@ Homo sapiens	Human	H_sapiens	hg	Homo_sapiens
 Loxodonta africana	African Bush Elephant	L_africana	loxAfr	Loxodonta_africana
 Macaca mulatta	Rhesus	M_mulatta	rheMac	Macaca_mulatta
 Macropus eugenii	Tammar Wallaby	M_eugenii		Macropus_eugenii
+Manihot esculenta	Cassava	M_esculenta
 Medicago truncatula	Barrel Medic	M_truncatula	
 Microcebus murinus	Gray Mouse Lemur	M_murinus	micMur	Microcebus_murinus
+Mimulus guttatus	Monkey Flower	M_guttatus
 Monodelphis domestica	Opossum	M_domestica	monDom	Monodelphis_domestica
 Mus musculus	Mouse	M_musculus	mm	Mus_musculus
 Mycobacterium abscessus	M. abcessus	M_abscessus	
@@ -66,6 +70,7 @@ Pristionchus pacificus	P. pacificus	P_pacificus	priPac
 Procavia capensis	Rock Hyrax	P_capensis	proCap	Procavia_capensis
 Pteropus vampyrus	Large Flying Fox	P_vampyrus	pteVam	Pteropus_vampyrus
 Rattus norvegicus	Rat	R_norvegicus	rn	Rattus_norvegicus
+Ricinis communis	Castor Oil Plant	R_comunis
 Saccharomyces cerevisiae	Yeast	S_cerevisiae	sacCer	Saccharomyces_cerevisiae
 Schizosaccharomyces pombe	Fission Yeast	S_pombe	
 Sodalis glossinidius	S. glossinidius	S_glossinidius	

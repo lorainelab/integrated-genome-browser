@@ -107,6 +107,32 @@
 	</das2Server>
 
 	
+
+	<!-- Here is a server entry. Copy, paste it immediately below, and modify it to match your server, all but the last field is required, keep the order of the elements the same.  -->
+	<!-- PLEASE VALIDATE YOUR ENTRY by copying this entire document and pasting it into http://www.xmlvalidation.com/documentation.0.html?&L=0 -->
+	<das2Server>
+		<!-- The name of the server as it should be displayed in applications -->
+		<serverName>epigenome.at</serverName>
+		
+		<!-- The url of the server for programatic access to das/2 resources, this should return a sources xml response listing all of the species and genome builds served by the server -->
+		<serverURL>http://india907.server4you.de:8080/das2/genome</serverURL>
+		
+		<!-- The DAS/2 server implementation -->
+		<serverImplementation>GenoViz Genometry Classic</serverImplementation>
+		
+		<!-- Free text description of the server and its contents -->
+		<serverDescription>Serves a variety of annotations for many species with an emphasis on plants.</serverDescription>
+		
+		<!-- What organization is administering this server -->
+		<contactOrganization>GEN-AU, Genome Research in Austria</contactOrganization>
+		
+		<!-- One or more contact email address -->
+		<contactEmail>tamir@imp.univie.ac.at</contactEmail>
+		
+		<!-- Optional, one or more human readible urls for the organization or other related information -->
+		<contactURL>http://epigenome.at</contactURL>
+		<contactURL>http://www.gen-au.at</contactURL>
+	</das2Server>
 	
 	
 	

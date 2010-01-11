@@ -17,7 +17,6 @@ import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.widget.*;
-import com.affymetrix.genoviz.util.GeometryUtils;
 
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.event.ActionEvent;
@@ -224,7 +223,7 @@ public class AffyTieredMap extends NeoMap {
 					newbox.setRect(pbox.x, mtg.getCoordBox().y,
 									pbox.width, mtg.getCoordBox().height);
 				} else {
-					GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
+					Rectangle2D.union(newbox, mtg.getCoordBox(), newbox);
 				}
 			}
 

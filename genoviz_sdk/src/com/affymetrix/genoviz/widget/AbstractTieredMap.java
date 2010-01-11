@@ -22,7 +22,6 @@ import com.affymetrix.genoviz.event.TierEventListener;
 import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
 import com.affymetrix.genoviz.widget.tieredmap.*;
-import com.affymetrix.genoviz.util.GeometryUtils;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -239,7 +238,7 @@ public abstract class AbstractTieredMap
 							pbox.width, mtg.getCoordBox().height);
 				}
 				else {
-					GeometryUtils.union(newbox, mtg.getCoordBox(), newbox);
+					Rectangle2D.union(newbox, mtg.getCoordBox(), newbox);
 				}
 			}
 

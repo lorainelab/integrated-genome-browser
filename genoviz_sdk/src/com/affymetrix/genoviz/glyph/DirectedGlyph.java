@@ -13,12 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.GeometryUtils;
 import com.affymetrix.genoviz.util.NeoConstants;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
 
 /**
  * A glyph that has direction.

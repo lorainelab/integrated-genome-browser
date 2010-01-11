@@ -13,13 +13,10 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.GeometryUtils;
 
 /**
  * A glyph that is drawn as a solid rectangle to represent a break in

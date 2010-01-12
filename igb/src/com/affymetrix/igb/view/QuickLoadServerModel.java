@@ -290,6 +290,7 @@ public final class QuickLoadServerModel {
 			br = new BufferedReader(ireader);
 			String line;
 			while ((line = br.readLine()) != null) {
+				if ( (line.length() == 0) || line.startsWith("#"))  { continue; }
 				AnnotatedSeqGroup group = null;
 				String[] fields = tab_regex.split(line);
 				if (fields.length >= 1) {

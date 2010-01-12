@@ -34,7 +34,7 @@ public final class ChromInfoParser {
 		BufferedReader dis = new BufferedReader(new InputStreamReader(istr));
 		String line;
 		while ((line = dis.readLine()) != null) {
-			if ( (line.length() == 0) || line.equals("") || line.startsWith("#"))  { continue; }
+			if ( (line.length() == 0) || line.startsWith("#"))  { continue; }
 			String[] fields = tab_regex.split(line);
 			if (fields.length == 0) { continue; }
 			if (fields.length == 1) {

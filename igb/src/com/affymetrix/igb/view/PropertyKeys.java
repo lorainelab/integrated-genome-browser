@@ -22,17 +22,7 @@ import java.util.*;
  * This is a modified version of com.affymetrix.genoviz.bio.datamodel.feature.PropertyKeys
  */
 final class PropertyKeys {
-  String[] keys = new String[0];
-
-  /**
-   * Orders for keys.  Properties name-value pairs are
-   *    listed in the order defined here.
-   * If properties are present with names _not_ defined here, they are
-   *    listed last.
-   */
-  public void setKeyOrder(String[] keys) {
-    this.keys = keys;
-  }
+  private String[] keys = new String[0];
 
   /**
    * Fills up a Vector with arrays containing names and values

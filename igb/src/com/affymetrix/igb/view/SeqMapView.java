@@ -1809,10 +1809,6 @@ public class SeqMapView extends JPanel
 		sliceAndDiceNow(unionSym);
 	}
 
-	public SeqSymmetry getSliceSymmetry() {
-		return slice_symmetry;
-	}
-
 	// disables the sliced view while the slicing thread works
 	void enableSeqMap(boolean b) {
 		seqmap.setVisible(b);

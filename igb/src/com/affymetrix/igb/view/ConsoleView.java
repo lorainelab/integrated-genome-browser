@@ -165,12 +165,6 @@ public final class ConsoleView {
       ta.append(s);
       if (original != null) {original.write(i);}
     }
-
-    public void write(char[] buf, int off, int len) {
-      String s = new String(buf, off, len);
-      ta.append(s);
-      if (original != null) {original.print(s);}
-    }
   }
   
 }

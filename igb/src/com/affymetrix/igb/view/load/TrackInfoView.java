@@ -10,12 +10,9 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 
 class TrackInfoView extends JComponent  {

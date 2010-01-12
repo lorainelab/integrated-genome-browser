@@ -30,34 +30,28 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
   private Color fill_color = null;
 
 	@Override
-  public void drawTraversal(ViewI view)  {
-    if (optimize_child_draw) {
-      Rectangle pixelbox = view.getScratchPixBox();
-      //      view.transformToPixels(coordbox, pixelbox);
-      view.transformToPixels(this, pixelbox);
-      if (withinView(view) && isVisible) {
-	if (pixelbox.width <=3 || pixelbox.height <=3) {
-	  // still ends up drawing children for selected, but in general 
-	  //    only a few glyphs are ever selected at the same time, so should be fine
-	  if (selected) { drawSelected(view); }  
-	  else  { fillDraw(view); }
+	public void drawTraversal(ViewI view) {
+		Rectangle pixelbox = view.getScratchPixBox();
+		view.transformToPixels(this, pixelbox);
+		if (isVisible && withinView(view)) {
+			if (pixelbox.width <= 3 || pixelbox.height <= 3) {
+				// still ends up drawing children for selected, but in general
+				//    only a few glyphs are ever selected at the same time, so should be fine
+				if (selected) {
+					drawSelected(view);
+				} else {
+					fillDraw(view);
+				}
+			} else {
+				super.drawTraversal(view);  // big enough to draw children
+			}
+		}
 	}
-	else {
-	  super.drawTraversal(view);  // big enough to draw children
-	}
-      }
-    }
-    else {
-      super.drawTraversal(view);  // no optimization, so draw children
-    }
-  }    
 
   public void fillDraw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
     Graphics g = view.getGraphics();
-    //    g.setColor(getBackgroundColor());
-    //    g.setColor(color);
     if (DEBUG_OPTIMIZED_FILL) {
       g.setColor(Color.white);
     }
@@ -75,6 +69,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
     super.draw(view);
   }
     
+	@Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(this, pixelbox);
@@ -97,6 +92,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
   /**
    *  Overriden to force children to center on line
    */
+	@Override
   public void addChild(GlyphI glyph) {
     if (isMoveChildren()) {
       // center the child vertically in the parent
@@ -108,6 +104,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
     super.addChild(glyph);
   }
 
+	@Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
     return isVisible ? coord_hitbox.intersects(this) : false;
   }

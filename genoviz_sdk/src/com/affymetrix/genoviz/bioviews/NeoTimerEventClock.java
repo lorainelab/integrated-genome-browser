@@ -16,7 +16,8 @@ package com.affymetrix.genoviz.bioviews;
 import com.affymetrix.genoviz.event.NeoTimerEvent;
 import com.affymetrix.genoviz.event.NeoTimerListener;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  *  A timer thread that generates NeoTimerEvents at specified intervals.
@@ -39,7 +40,7 @@ public class NeoTimerEventClock extends Thread {
 	//   absolute, relative, or both...
 
 	// standard listener list for events
-	protected List<NeoTimerListener> listeners = new CopyOnWriteArrayList<NeoTimerListener>();
+	protected Set<NeoTimerListener> listeners = new CopyOnWriteArraySet<NeoTimerListener>();
 
 	public NeoTimerEventClock(int time_interval) {
 		this.time_interval = time_interval;
@@ -110,9 +111,7 @@ public class NeoTimerEventClock extends Thread {
 			return;
 		}
 		NeoTimerEvent nte = new NeoTimerEvent(src, arg, count);
-		NeoTimerListener listener;
-		for (int i=0; i<listeners.size(); i++) {
-			listener = listeners.get(0);
+		for (NeoTimerListener listener : listeners) {
 			listener.heardTimerEvent(nte);
 		}
 	}
@@ -132,7 +131,7 @@ public class NeoTimerEventClock extends Thread {
 		listeners.remove(ntl);
 	}
 
-	public List getTimerListeners() {
+	public Set getTimerListeners() {
 		return listeners;
 	}
 }

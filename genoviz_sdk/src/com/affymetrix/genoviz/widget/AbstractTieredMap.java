@@ -14,7 +14,7 @@
 package com.affymetrix.genoviz.widget;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.awt.Dimension;
 
 import com.affymetrix.genoviz.event.TierEvent;
@@ -45,7 +45,7 @@ public abstract class AbstractTieredMap
 	public String name; // for debugging only
 
 	protected List<MapTierGlyph> tiers = new ArrayList<MapTierGlyph>();
-	private List<TierEventListener> tierEventListeners = new CopyOnWriteArrayList<TierEventListener>();
+	private Set<TierEventListener> tierEventListeners = new CopyOnWriteArraySet<TierEventListener>();
 	private boolean notifyingListeners = false;
 
 	/**
@@ -88,9 +88,7 @@ public abstract class AbstractTieredMap
 	 * Add a listener to the audience.
 	 */
 	public synchronized void addTierEventListener(TierEventListener tel) {
-		if (!tierEventListeners.contains(tel)) {
-			tierEventListeners.add(tel);
-		}
+		tierEventListeners.add(tel);
 	}
 
 	/**
@@ -117,10 +115,9 @@ public abstract class AbstractTieredMap
 			}
 		}
 		if ( notifyingListeners ) return;
-		int tot = tierEventListeners.size();
 		notifyingListeners = true;
-		for (int i=0; i < tot; i++) {
-			(tierEventListeners.get(i)).heardTierEvent(evt);
+		for (TierEventListener l : tierEventListeners) {
+			l.heardTierEvent(evt);
 		}
 		notifyingListeners = false;
 	}

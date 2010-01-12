@@ -18,7 +18,8 @@ import com.affymetrix.genoviz.event.SequenceListener;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Models a biological sequence with known residues.
@@ -36,7 +37,7 @@ public class Sequence implements EditableSequenceI {
 	private String name;
 
 	private List<Position> positions = new ArrayList<Position>();
-	private List<SequenceListener> listeners = new CopyOnWriteArrayList<SequenceListener>();
+	private Set<SequenceListener> listeners = new CopyOnWriteArraySet<SequenceListener>();
 
 	private StringBuffer residues;
 
@@ -303,6 +304,7 @@ public class Sequence implements EditableSequenceI {
 		this.name = name;
 	}
 
+	@Override
 	public String toString() {
 		String s = this.getClass().getName()
 			+ ": length = " + this.length;

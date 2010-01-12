@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.datamodel;
 
-import com.affymetrix.genoviz.event.SequenceEvent;
 import com.affymetrix.genoviz.event.SequenceListener;
 
 /**

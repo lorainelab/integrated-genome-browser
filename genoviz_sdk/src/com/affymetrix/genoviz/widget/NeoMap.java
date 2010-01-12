@@ -16,10 +16,8 @@ package com.affymetrix.genoviz.widget;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genoviz.awt.NeoCanvas;
-
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;

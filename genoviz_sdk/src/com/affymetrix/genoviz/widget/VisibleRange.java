@@ -16,7 +16,8 @@ package com.affymetrix.genoviz.widget;
 import com.affymetrix.genoviz.event.NeoRangeEvent;
 import com.affymetrix.genoviz.event.NeoRangeListener;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Keeps track of a visible range.
@@ -27,7 +28,7 @@ public class VisibleRange implements Cloneable {
 
 	private double beginning;
 	private double end;
-	private List<NeoRangeListener> listeners = new CopyOnWriteArrayList<NeoRangeListener>();
+	private Set<NeoRangeListener> listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 	private boolean changed = false;
 	private boolean reversed = false;
 
@@ -59,7 +60,7 @@ public class VisibleRange implements Cloneable {
 		try {
 			o = super.clone();
 			VisibleRange vr = ( VisibleRange ) o;
-			vr.listeners = new CopyOnWriteArrayList<NeoRangeListener>();
+			vr.listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 			vr.changed = false;
 		} catch ( CloneNotSupportedException e ) {
 		}
@@ -146,7 +147,7 @@ public class VisibleRange implements Cloneable {
 	}
 
 	public void addListener( NeoRangeListener theListener ) {
-		if ( ! this.listeners.contains ( theListener ) ) this.listeners.add( theListener );
+		this.listeners.add( theListener );
 		NeoRangeEvent evt = new NeoRangeEvent( this, this.beginning, this.end) ;
 		theListener.rangeChanged(evt);
 	}
@@ -157,6 +158,7 @@ public class VisibleRange implements Cloneable {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return this.getClass().getName() + "[" + getBeginning() + ", " + getEnd() + "]";
 	}

@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.event.*;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.GeneralUtils;

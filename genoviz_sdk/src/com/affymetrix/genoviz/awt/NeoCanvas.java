@@ -15,8 +15,9 @@ import com.affymetrix.genoviz.event.NeoPaintListener;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.JComponent;
 
 /**
@@ -25,7 +26,7 @@ import javax.swing.JComponent;
  * that can be listened for (by a {@link NeoPaintListener}).
  */
 public class NeoCanvas extends JComponent  {
-  private final List<NeoPaintListener> paintListeners = new CopyOnWriteArrayList<NeoPaintListener>();
+  private final Set<NeoPaintListener> paintListeners = new CopyOnWriteArraySet<NeoPaintListener>();
 
   /**
    * Paints the component,
@@ -79,9 +80,7 @@ public class NeoCanvas extends JComponent  {
    * @param pl the listener
    */
   public void addNeoPaintListener(NeoPaintListener pl) {
-    if (!paintListeners.contains(pl)) {
-      paintListeners.add(pl);
-    }
+    paintListeners.add(pl);
   }
 
   /**
@@ -101,7 +100,7 @@ public class NeoCanvas extends JComponent  {
    *
    * @return a List of all the NeoPaintListeners to this NeoCanvas.
    */
-  public List<NeoPaintListener> getNeoPaintListeners() {
+  public Set<NeoPaintListener> getNeoPaintListeners() {
     return paintListeners;
   }
 }

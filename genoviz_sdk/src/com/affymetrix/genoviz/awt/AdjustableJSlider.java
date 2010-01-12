@@ -88,8 +88,6 @@ public class AdjustableJSlider extends JSlider implements Adjustable {
 	 */
 	public final void setBlockIncrement(int  v) {/*this.blockIncrement = v;*/}
 
-	private int visibleAmount;
-
 	/**
 	 * For compatibility with Adjustable.
 	 * @return the extent.

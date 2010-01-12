@@ -13,10 +13,9 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-//import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.event.NeoDragEvent;
 import com.affymetrix.genoviz.event.NeoDragListener;
@@ -30,7 +29,7 @@ public class DragMonitor
 	implements NeoConstants, MouseListener, MouseMotionListener, NeoTimerListener {
 
 	NeoCanvas can;
-	List<NeoDragListener> listeners = new CopyOnWriteArrayList<NeoDragListener>();
+	Set<NeoDragListener> listeners = new CopyOnWriteArraySet<NeoDragListener>();
 	boolean already_dragging_outside = false;
 
 	protected NeoTimerEventClock timer = null;
@@ -104,8 +103,8 @@ public class DragMonitor
 		if (!(arg instanceof Integer)) { return; }
 		int direction = ((Integer)arg).intValue();
 		NeoDragEvent new_event = new NeoDragEvent(this, direction);
-		for (int i=0; i<listeners.size(); i++) {
-			listeners.get(i).heardDragEvent(new_event);
+		for (NeoDragListener l : listeners) {
+			l.heardDragEvent(new_event);
 		}
 		time_count++;
 	}
@@ -118,7 +117,7 @@ public class DragMonitor
 		listeners.remove(listener);
 	}
 
-	public List<NeoDragListener> getDragListeners() {
+	public Set<NeoDragListener> getDragListeners() {
 		return listeners;
 	}
 

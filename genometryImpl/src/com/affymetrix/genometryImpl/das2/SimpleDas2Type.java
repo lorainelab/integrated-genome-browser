@@ -8,12 +8,6 @@ public class SimpleDas2Type {
 	private String             name;
 	private List<String>       formats;
 	private Map<String,Object> props;
-	
-	public SimpleDas2Type(String name, List<String> formats) {
-	    super();
-	    this.name = name;
-	    this.formats = formats;
-    }
 
 	public SimpleDas2Type(String name, List<String> formats,
             Map<String, Object> props) {

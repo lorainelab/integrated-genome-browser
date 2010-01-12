@@ -17,9 +17,9 @@ import java.util.*;
 import com.affymetrix.genometryImpl.BioSeq;
 
 public final class SeqSelectionEvent extends EventObject {
-	List<BioSeq> selected_seqs;
-	BioSeq primary_selection = null;
-	static final long serialVersionUID = 1L;
+	private List<BioSeq> selected_seqs;
+	private BioSeq primary_selection = null;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 *  Constructor.
@@ -34,23 +34,6 @@ public final class SeqSelectionEvent extends EventObject {
 		if (selected_seqs.size() > 0) {
 			primary_selection = selected_seqs.get(0);
 		}
-	}
-
-	public SeqSelectionEvent(Object src, BioSeq seq) {
-		super(src);
-		selected_seqs = new ArrayList<BioSeq>(1);
-		if (seq != null) {
-			primary_selection = seq;
-			selected_seqs.add(seq);
-		}
-	}
-
-	/**
-	 *  @return a List of AnnotatedBioSeq's that have been selected.
-	 *   The List can be empty, but will not be null.
-	 */
-	public List getSelectedSeqs() {
-		return selected_seqs;
 	}
 
 	/** Gets the first entry in the list {@link #getSelectedSeqs()}.

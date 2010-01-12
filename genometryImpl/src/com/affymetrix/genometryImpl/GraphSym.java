@@ -261,10 +261,6 @@ public class GraphSym extends SimpleSymWithProps {
 		return wBuf[i - bufStart];
 	}
 
-	public int getGraphWidthCount() {
-		return hasWidth ? this.pointCount : 0;
-	}
-
 	public final boolean hasWidth() {
 		return hasWidth;
 	}

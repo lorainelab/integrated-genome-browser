@@ -18,7 +18,6 @@ import com.affymetrix.genometryImpl.TypedSym;
 
 public final class SimpleDas2Feature extends SimpleSymWithProps implements TypedSym  {
 	String id;
-	//  URI feat_uri;
 	String type;  // eventually replace with Das2Type
 	String name;
 	String created;
@@ -26,10 +25,7 @@ public final class SimpleDas2Feature extends SimpleSymWithProps implements Typed
 	String doc_href;
 	// need to change this, since
 	String parent_id;  // problem here, DAS2XML features can have multiple parents
-	//  List parents; // DAS2XML now allows features to have multiple parents
-	List notes;  // or should these just be folded into properties?
-	List xids;   // or should these just be folded into properties?
-
+	
 	public SimpleDas2Feature(String feat_id, String feat_type, String feat_name, String feat_parent_id,
 			String feat_created, String feat_modified, String feat_doc_href, Map<String, Object> feat_props) {
 		id = feat_id;

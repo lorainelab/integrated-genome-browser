@@ -11,19 +11,14 @@ import java.util.Comparator;
  *  @see  SeqSymMinComparator
  */
 public final class SeqSymStartComparator implements Comparator<SeqSymmetry> {
-	boolean ascending;
-	BioSeq seq;
+	private final boolean ascending;
+	private final BioSeq seq;
 
 	/** Constructor.
 	 *  @param s  sequence to base the sorting on
 	 *  @param b  true to sort ascending, false for descending
 	 */
 	public SeqSymStartComparator(BioSeq s, boolean b) {
-		this.seq = s;
-		this.ascending = b;
-	}
-
-	public void reset(BioSeq s, boolean b) {
 		this.seq = s;
 		this.ascending = b;
 	}

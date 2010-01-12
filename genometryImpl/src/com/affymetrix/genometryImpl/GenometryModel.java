@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.event.FeatureSelectionListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
@@ -9,13 +8,10 @@ import com.affymetrix.genometryImpl.event.SymSelectionEvent;
 import com.affymetrix.genometryImpl.event.SymSelectionListener;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.TreePath;
 
 public final class GenometryModel {
 
@@ -44,7 +40,6 @@ public final class GenometryModel {
 	final Set<SeqSelectionListener> seq_selection_listeners = new CopyOnWriteArraySet<SeqSelectionListener>();
 	final Set<GroupSelectionListener> group_selection_listeners = new CopyOnWriteArraySet<GroupSelectionListener>();
 	final Set<SymSelectionListener> sym_selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
-	final Set<FeatureSelectionListener> feature_selection_listeners = new CopyOnWriteArraySet<FeatureSelectionListener>();
 
 	AnnotatedSeqGroup selected_group = null;
 	BioSeq selected_seq = null;
@@ -143,44 +138,12 @@ public final class GenometryModel {
 		group_selection_listeners.remove(listener);
 	}
 
-	public Set<GroupSelectionListener> getGroupSelectionListeners() {
-		return group_selection_listeners;
-	}
-
 	private void fireGroupSelectionEvent(Object src, List<AnnotatedSeqGroup> glist) {
 		GroupSelectionEvent evt = new GroupSelectionEvent(src, glist);
 		for (GroupSelectionListener listener : group_selection_listeners) {
 			listener.groupSelectionChanged(evt);
 		}
 	}
-
-	//Feature Select Event
-	public void setSelectedFeature(TreePath path) {
-		if (DEBUG)  {
-			System.out.println("GenometryModel.setSelectedFeature() called, ");
-		}
-		fireFeatureSelectionEvent(this, path);
-	}
-
-	public void addFeatureSelectionListener(FeatureSelectionListener listener) {
-		feature_selection_listeners.add(listener);
-	}
-
-	public void removeFeatureSelectionListener(FeatureSelectionListener listener) {
-		feature_selection_listeners.remove(listener);
-	}
-
-	public Set<FeatureSelectionListener> getFeatureSelectionListeners() {
-		return feature_selection_listeners;
-	}
-
-	private void fireFeatureSelectionEvent(Object src, TreePath path) {
-		TreeSelectionEvent evt = new TreeSelectionEvent(src, path, false, null, null);
-		for (FeatureSelectionListener listener : feature_selection_listeners) {
-			listener.featureSelectionChanged(evt);
-		}
-	}
-
 
 	public BioSeq getSelectedSeq() {
 		return selected_seq;
@@ -215,10 +178,6 @@ public final class GenometryModel {
 		seq_selection_listeners.remove(listener);
 	}
 
-	public Set<SeqSelectionListener> getSeqSelectionListeners() {
-		return seq_selection_listeners;
-	}
-
 	/**
 	 *  SeqSelectionListeners are notified in the order they were added as listeners
 	 *    (order is important when one listener relies on another's state --
@@ -234,14 +193,6 @@ public final class GenometryModel {
 
 	public void addSymSelectionListener(SymSelectionListener listener) {
 		sym_selection_listeners.add(listener);
-	}
-
-	public void removeSymSelectionListener(SymSelectionListener listener) {
-		sym_selection_listeners.remove(listener);
-	}
-
-	public Set<SymSelectionListener> getSymSelectionListeners() {
-		return sym_selection_listeners;
 	}
 
 	private void fireSymSelectionEvent(Object src, List<SeqSymmetry> syms) {

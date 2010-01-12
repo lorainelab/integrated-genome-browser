@@ -18,9 +18,9 @@ import java.util.*;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 
 public final class GroupSelectionEvent extends EventObject {
-	List<AnnotatedSeqGroup> selected_groups;
-	AnnotatedSeqGroup primary_selection = null;
-	static final long serialVersionUID = 1L;
+	private List<AnnotatedSeqGroup> selected_groups;
+	private AnnotatedSeqGroup primary_selection = null;
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 *  Constructor.
@@ -37,26 +37,6 @@ public final class GroupSelectionEvent extends EventObject {
 		} else if (! selected_groups.isEmpty()) {
 			primary_selection = groups.get(0);
 		}
-	}
-
-	public GroupSelectionEvent(Object src, AnnotatedSeqGroup group) {
-		super(src);
-		if (group == null) {
-			primary_selection = null;
-			selected_groups = Collections.<AnnotatedSeqGroup>emptyList();
-		} else {
-			primary_selection = group;
-			selected_groups = new ArrayList<AnnotatedSeqGroup>(1);
-			selected_groups.add(group);
-		}
-	}
-
-	/**
-	 *  @return a non-null List of AnnotatedSeqGroups that have been selected.
-	 *    The list might be empty, but will not be null.
-	 */
-	public List<AnnotatedSeqGroup> getSelectedGroups() {
-		return selected_groups;
 	}
 
 	/** Gets the first entry in the list {@link #getSelectedGroups()}.

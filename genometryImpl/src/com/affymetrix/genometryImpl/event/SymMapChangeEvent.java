@@ -28,8 +28,4 @@ public final class SymMapChangeEvent extends EventObject {
 		super(src);
 		this.group = seq_group;
 	}
-
-	public AnnotatedSeqGroup getSeqGroup() {
-		return group;
-	}
 }

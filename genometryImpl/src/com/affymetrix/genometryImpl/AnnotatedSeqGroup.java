@@ -104,7 +104,7 @@ public class AnnotatedSeqGroup {
 		return type_id2annot_id.keySet();
 	}
 
-	public final Integer getAnnotationId(String type) {
+	private final Integer getAnnotationId(String type) {
 		return type_id2annot_id.get(type);
 	}
 	
@@ -152,10 +152,6 @@ public class AnnotatedSeqGroup {
 
 	final public static void addSymMapChangeListener(SymMapChangeListener l) {
 		sym_map_change_listeners.add(l);
-	}
-
-	final public static void removeSymMapChangeListener(SymMapChangeListener l) {
-		sym_map_change_listeners.remove(l);
 	}
 
 	/**

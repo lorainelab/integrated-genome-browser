@@ -75,16 +75,6 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 		}
 	}
 
-	/** Sets the properties to the given Map.
-	 *  This does not copy the properties, but rather maintains a reference
-	 *  to the actual Map passed-in.
-	 *  @param propmap  a Map of String's to String's.  This class is designed to not throw exceptions
-	 *  if the map is null.
-	 */
-	public void setProperties(Map<String,Object> propmap) {
-		this.props = propmap;
-	}
-
 	public boolean setProperty(String name, Object val) {
 		if (props == null) {
 			props = new Hashtable<String,Object>();
@@ -97,20 +87,4 @@ public class SingletonSymWithProps extends MutableSingletonSeqSymmetry
 		if (props == null) { return null; }
 		return props.get(name);
 	}
-
-	public void removeProperty(String name) {
-		if (props != null) {
-			props.remove(name);
-		}
-	}
-
-	public void printProps() {
-		if (props == null) {
-			System.out.println("no props"); return;
-		}
-		for (String key : props.keySet()) {
-			System.out.println(key + " --> " + props.get(key));
-		}
-	}
-
 }

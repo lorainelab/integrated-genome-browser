@@ -142,12 +142,14 @@
 				<include name="commons-collections-2.1.1.jar"/>
 				<include name="commons-codec-1.4.jar"/>
 				<include name="commons-compress-1.0.jar"/>
+				<include name="commons-logging-1.0.4jar"/>
 				<include name="cos.jar"/>
 				<include name="dom4j-1.6.1.jar"/>
 				<include name="log4j-1.2.11.jar"/>
 				<include name="hibernate3.jar"/>
-				<include name="httpclient-4.0.1.jar"/>
-				<include name="jta.jar" /> 		
+				<include name="image4.jar" /> 		
+				<include name="jta.jar" /> 	
+				<include name="log4j-1.2.11.jar"/>
 				<include name="org.mortbay.jetty.jar"/>
 			</fileset>
 			<fileset dir="${dist.dir}">

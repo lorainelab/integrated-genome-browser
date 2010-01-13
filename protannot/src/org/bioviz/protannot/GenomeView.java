@@ -18,6 +18,7 @@ import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import com.affymetrix.genoviz.glyph.LineContainerGlyph;
 import com.affymetrix.genoviz.glyph.OutlineRectGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.genoviz.widget.Shadow;
@@ -43,7 +44,7 @@ import java.util.Map.Entry;
 
 final class GenomeView extends JPanel implements MouseListener{
 
-    static public enum COLORS
+    static enum COLORS
     {
         BACKGROUND("background", Color.white),
         FRAME0("frame0", new Color(0,0,145)),
@@ -68,17 +69,17 @@ final class GenomeView extends JPanel implements MouseListener{
             return name;
         }
 
-        public Color defaultColor()
+        private Color defaultColor()
         {
             return color;
         }
 
-        public int getRGB()
+        int getRGB()
         {
             return color.getRGB();
         }
 
-        static public Hashtable<String,Color> defaultColorList()
+        static Hashtable<String,Color> defaultColorList()
         {
             Hashtable<String,Color> defaults = new Hashtable<String,Color>();
 
@@ -89,17 +90,17 @@ final class GenomeView extends JPanel implements MouseListener{
         }
     };
 
-    public  JPopupMenu popup;
+    JPopupMenu popup;
     private boolean rev_comp = false;
-    private boolean DEBUG_GENOMIC_ANNOTS = false;
-    private boolean DEBUG_TRANSCRIPT_ANNOTS = false;
-    private boolean DEBUG_PROTEIN_ANNOTS = false;
-    private TieredNeoMap seqmap;
-    private NeoMap axismap;
-    private NeoMap[] maps;
-    private ModPropertySheet table_view;    
-    private AdjustableJSlider xzoomer;
-    private AdjustableJSlider yzoomer;
+    private static final boolean DEBUG_GENOMIC_ANNOTS = false;
+    private static final boolean DEBUG_TRANSCRIPT_ANNOTS = false;
+    private static final boolean DEBUG_PROTEIN_ANNOTS = false;
+    private final TieredNeoMap seqmap;
+    private final NeoMap axismap;
+    private final NeoMap[] maps;
+    private final ModPropertySheet table_view;
+    private final AdjustableJSlider xzoomer;
+    private final AdjustableJSlider yzoomer;
     private BioSeq gseq;
     private BioSeq vseq;
     private List<GlyphI> exonGlyphs = null;
@@ -121,14 +122,14 @@ final class GenomeView extends JPanel implements MouseListener{
     private VisibleRange zoomPoint;
     
     // size constants
-    private int axis_pixel_height = 20;
-    private int seq_pixel_height = 10;
-    private int upper_white_space = 5;
-    private int middle_white_space = 2;
-    private int lower_white_space = 2;
-    private int divider_size = 8;
-    private int table_height = 150;
-    private int seqmap_pixel_height = 500;
+    private static final int axis_pixel_height = 20;
+    private static final int seq_pixel_height = 10;
+    private static final int upper_white_space = 5;
+    private static final int middle_white_space = 2;
+    private static final int lower_white_space = 2;
+    private static final int divider_size = 8;
+    private static final int table_height = 150;
+    private static final int seqmap_pixel_height = 500;
 
     
     /**
@@ -157,7 +158,6 @@ final class GenomeView extends JPanel implements MouseListener{
         seqmap.setMapOffset(0, seqmap_pixel_height);
         axismap = new NeoMap(false, false);
         axismap.setMapColor(col_axis_bg);
-        //axismap.setReshapeBehavior(NeoAbstractWidget.X, NeoAbstractWidget.FITWIDGET);
         axismap.setMapOffset(0, axis_pixel_height + seq_pixel_height
                 + upper_white_space + middle_white_space
                 + lower_white_space);
@@ -173,7 +173,6 @@ final class GenomeView extends JPanel implements MouseListener{
         seqmap.setZoomer(NeoMap.Y, yzoomer);
         
         axismap.setZoomer(NeoMap.X, seqmap.getZoomer(TieredNeoMap.X));
-//        axismap.setRangeScroller(seqmap.getScroller(TieredNeoMap.X));
         
 
         seqmap.getScroller(NeoMap.X).addAdjustmentListener(new AdjustmentListener() {
@@ -308,13 +307,13 @@ final class GenomeView extends JPanel implements MouseListener{
         exonList = new ArrayList<SeqSymmetry>();
 
         zoomPoint = new VisibleRange();
-        Shadow hairline = new Shadow( this.seqmap, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.black );
-	hairline.setSelectable( false );
-	zoomPoint.addListener( hairline );
+        Shadow hairline = new Shadow( this.seqmap, NeoConstants.HORIZONTAL, Color.black );
+		hairline.setSelectable( false );
+		zoomPoint.addListener( hairline );
 
-        Shadow axishairline = new Shadow( this.axismap, com.affymetrix.genoviz.util.NeoConstants.HORIZONTAL, Color.black );
-	axishairline.setSelectable( false );
-	zoomPoint.addListener( axishairline );
+        Shadow axishairline = new Shadow( this.axismap, NeoConstants.HORIZONTAL, Color.black );
+		axishairline.setSelectable( false );
+		zoomPoint.addListener( axishairline );
                 
         int acount = gseq.getAnnotationCount();
 
@@ -340,7 +339,6 @@ final class GenomeView extends JPanel implements MouseListener{
         }
 
         MapTierGlyph sumTier = new MapTierGlyph();
-        //    sumTier.setCoords(0, 0, gseq.getLength(), 20);
         sumTier.setCoords(0, seqmap_pixel_height - 20, gseq.getLength(), 20);
         sumTier.setState(MapTierGlyph.EXPANDED);
 
@@ -471,7 +469,7 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     *
+     * Make transcript annotations into a glyph.
      * @param   amrna
      * @param   annot2mrna
      * @param   path2view
@@ -689,24 +687,23 @@ final class GenomeView extends JPanel implements MouseListener{
         axismap.getScene().addGlyph(sg);     
     }
 
-    /** MouseListener interface implementation */
     public void mouseClicked(MouseEvent e) {
     }
 
-    /** MouseListener interface implementation */
     public void mouseEntered(MouseEvent e) {
     }
 
-    /** MouseListener interface implementation */
     public void mouseExited(MouseEvent e) {
     }
 
-    /** MouseListener interface implementation */
     public void mouseReleased(MouseEvent e) {
-    }
+		if (e.isPopupTrigger()) {
+			popup.show(this, e.getX(), e.getY());
+		}
+	}
 
     /**
-     * Sets zoom foucs. If clicked on any glpyh then it is selected.
+     * Sets zoom focus. If clicked on any glyph then it is selected.
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      * @see     com.affymetrix.genoviz.event.NeoMouseEvent
      * @see     com.affymetrix.genoviz.widget.NeoMap
@@ -1025,7 +1022,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Action to be performed when user saves color changes.
      * @param   colorhash   Hashtable<String,Color> new color preferences
      */
-    public void changePreference(Hashtable<String,Color> colorhash)
+    void changePreference(Hashtable<String,Color> colorhash)
     {
         tempChangePreference(colorhash);
         initPrefs(colorhash);
@@ -1035,7 +1032,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Action to be performed when user apply color changes.
      * @param   colorhash   Hashtable<String,Color> new color preferences
      */
-    public void tempChangePreference(Hashtable<String,Color> colorhash)
+    void tempChangePreference(Hashtable<String,Color> colorhash)
     {
         tempColorPrefs(colorhash);
         if(gseq != null)
@@ -1050,7 +1047,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Action to be performed when user cancel color changes. So revert back to old color preferences.
      * @param   colorhash   Hashtable<String,Color> new color preferences
      */
-    public void cancelChangePrefernce()
+    void cancelChangePrefernce()
     {
         tempColorPrefs(prefs_hash);
         if(gseq != null)
@@ -1065,7 +1062,7 @@ final class GenomeView extends JPanel implements MouseListener{
      * Returns color preferences.
      * @return  Hashtable<String,Color>     Returns color preferences.
      */
-    public Hashtable<String,Color> getColorPrefs()
+    Hashtable<String,Color> getColorPrefs()
     {
         return prefs_hash;
     }

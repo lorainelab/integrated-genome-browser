@@ -1074,7 +1074,7 @@ public class SeqMapView extends JPanel
 			seqmap.stretchToFit(!preserve_view_x, !preserve_view_y);
 
 			/** Possible bug : When all strands are hidden.
-			 * tier label and tiers do appera at same position.
+			 * tier label and tiers do appear at same position.
 			**/
 			// NOTE: Below call to stretchToFit is not redundancy. It is there
 			//       to solve above mentioned bug.

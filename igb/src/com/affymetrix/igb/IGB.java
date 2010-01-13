@@ -120,6 +120,7 @@ public final class IGB extends Application
 	private JMenuItem export_map_item;
 	private JMenuItem export_labelled_map_item;
 	private JMenuItem export_slice_item;
+	private JMenuItem export_whole_frame;
 	private JMenuItem preferences_item;
 	private JMenuItem exit_item;
 	private JMenuItem view_ucsc_item;
@@ -398,11 +399,13 @@ public final class IGB extends Application
 		print_item = new JMenuItem("Print", KeyEvent.VK_P);
 		print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
+		print_frame_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		export_to_file_menu = new JMenu("Export");
 		export_to_file_menu.setMnemonic('T');
 		export_map_item = new JMenuItem("Main View", KeyEvent.VK_M);
 		export_labelled_map_item = new JMenuItem("Main View (With Labels)", KeyEvent.VK_L);
 		export_slice_item = new JMenuItem("Sliced View (With Labels)", KeyEvent.VK_S);
+		export_whole_frame = new JMenuItem("Whole Frame");
 
 		exit_item = new JMenuItem("Exit", KeyEvent.VK_E);
 
@@ -478,6 +481,7 @@ public final class IGB extends Application
 		export_map_item.addActionListener(this);
 		export_labelled_map_item.addActionListener(this);
 		export_slice_item.addActionListener(this);
+		export_whole_frame.addActionListener(this);
 		exit_item.addActionListener(this);
 
 		toggle_edge_matching_item.addActionListener(this);
@@ -595,9 +599,11 @@ public final class IGB extends Application
 		MenuUtil.addToMenu(file_menu, clear_graphs_item);
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, print_item);
+		MenuUtil.addToMenu(file_menu, print_frame_item);
 		file_menu.add(export_to_file_menu);
 		MenuUtil.addToMenu(export_to_file_menu, export_map_item);
 		MenuUtil.addToMenu(export_to_file_menu, export_labelled_map_item);
+		MenuUtil.addToMenu(export_to_file_menu, export_whole_frame);
 		file_menu.addSeparator();
 		MenuUtil.addToMenu(file_menu, preferences_item);
 		file_menu.addSeparator();
@@ -738,7 +744,13 @@ public final class IGB extends Application
 			} catch (Exception ex) {
 				errorPanel("Problem during output.", ex);
 			}
-		} else if (src == export_slice_item) {
+		} else if (src == export_whole_frame) {
+			try {
+				ComponentWriter.showExportDialog(getFrame());
+			} catch (Exception ex) {
+				errorPanel("Problem during output.", ex);
+			}
+		}else if (src == export_slice_item) {
 			try {
 				if (slice_view != null) {
 					AffyLabelledTierMap tm = (AffyLabelledTierMap) slice_view.getSplicedView().getSeqMap();

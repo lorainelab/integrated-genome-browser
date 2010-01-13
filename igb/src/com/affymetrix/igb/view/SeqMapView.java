@@ -504,7 +504,7 @@ public class SeqMapView extends JPanel
 		return frm;
 	}
 
-	public void setupPopups() {
+	private void setupPopups() {
 		sym_popup = new JPopupMenu();
 		sym_info = new JLabel("");
 		sym_info.setEnabled(false); // makes the text look different (usually lighter)

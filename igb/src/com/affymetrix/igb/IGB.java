@@ -88,60 +88,60 @@ public final class IGB extends Application
 	private static final String MENU_ITEM_HAS_DIALOG = BUNDLE.getString("menuItemHasDialog");
 	private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private static String[] main_args;
-	static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
+	private static final Map<Component, Frame> comp2window = new HashMap<Component, Frame>();
 	private final Map<Component, PluginInfo> comp2plugin = new HashMap<Component, PluginInfo>();
 	private final Map<Component, JCheckBoxMenuItem> comp2menu_item = new HashMap<Component, JCheckBoxMenuItem>();
 	private final JMenu popup_windowsM = new JMenu("Open in Window...");
-	SimpleBookmarkServer web_control = null;
-	JFrame frm;
-	JMenuBar mbar;
-	JMenu file_menu;
-	JMenu export_to_file_menu;
-	JMenu view_menu;
-	JMenu edit_menu;
-	JMenu bookmark_menu;
-	JMenu tools_menu;
-	JMenu help_menu;
-	JTabbedPane tab_pane;
-	JSplitPane splitpane;
+	private SimpleBookmarkServer web_control = null;
+	private JFrame frm;
+	private JMenuBar mbar;
+	private JMenu file_menu;
+	private JMenu export_to_file_menu;
+	private JMenu view_menu;
+	private JMenu edit_menu;
+	private JMenu bookmark_menu;
+	private JMenu tools_menu;
+	private JMenu help_menu;
+	private JTabbedPane tab_pane;
+	private JSplitPane splitpane;
 	public BookMarkAction bmark_action; // needs to be public for the BookmarkManagerView plugin
-	LoadFileAction open_file_action;
-	JMenuItem gc_item;
-	JMenuItem memory_item;
-	JMenuItem about_item;
-	JMenuItem documentation_item;
-	JMenuItem bug_item;
-	JMenuItem console_item;
-	JMenuItem clear_item;
-	JMenuItem clear_graphs_item;
-	JMenuItem open_file_item;
-	JMenuItem print_item;
-	JMenuItem print_frame_item;
-	JMenuItem export_map_item;
-	JMenuItem export_labelled_map_item;
-	JMenuItem export_slice_item;
-	JMenuItem preferences_item;
-	JMenuItem exit_item;
-	JMenuItem view_ucsc_item;
-	JMenuItem res2clip_item;
-	JMenuItem clamp_view_item;
-	JMenuItem unclamp_item;
-	JMenuItem rev_comp_item;
-	JCheckBoxMenuItem shrink_wrap_item;
-	JMenuItem adjust_edgematch_item;
-	JCheckBoxMenuItem toggle_hairline_label_item;
-	JCheckBoxMenuItem toggle_edge_matching_item;
-	JMenuItem autoscroll_item;
-	JMenuItem web_links_item;
-	JMenuItem move_tab_to_window_item;
-	JMenuItem move_tabbed_panel_to_window_item;
-	SeqMapView map_view;
-	AlignControl align_control;
+	private LoadFileAction open_file_action;
+	private JMenuItem gc_item;
+	private JMenuItem memory_item;
+	private JMenuItem about_item;
+	private JMenuItem documentation_item;
+	private JMenuItem bug_item;
+	private JMenuItem console_item;
+	private JMenuItem clear_item;
+	private JMenuItem clear_graphs_item;
+	private JMenuItem open_file_item;
+	private JMenuItem print_item;
+	private JMenuItem print_frame_item;
+	private JMenuItem export_map_item;
+	private JMenuItem export_labelled_map_item;
+	private JMenuItem export_slice_item;
+	private JMenuItem preferences_item;
+	private JMenuItem exit_item;
+	private JMenuItem view_ucsc_item;
+	private JMenuItem res2clip_item;
+	private JMenuItem clamp_view_item;
+	private JMenuItem unclamp_item;
+	private JMenuItem rev_comp_item;
+	private JCheckBoxMenuItem shrink_wrap_item;
+	private JMenuItem adjust_edgematch_item;
+	private JCheckBoxMenuItem toggle_hairline_label_item;
+	private JCheckBoxMenuItem toggle_edge_matching_item;
+	private JMenuItem autoscroll_item;
+	private JMenuItem web_links_item;
+	private JMenuItem move_tab_to_window_item;
+	private JMenuItem move_tabbed_panel_to_window_item;
+	private SeqMapView map_view;
 	public DataLoadView data_load_view = null;
-	AltSpliceView slice_view = null;
+	private AltSpliceView slice_view = null;
 	private final List<PluginInfo> plugins_info = new ArrayList<PluginInfo>(16);
 	private final List<Object> plugins = new ArrayList<Object>(16);
-	FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
+	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
+	private AnnotatedSeqGroup prev_selected_group = null;
 
 	/**
 	 * Start the program.
@@ -387,8 +387,6 @@ public final class IGB extends Application
 
 		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
-		align_control = new AlignControl(this, map_view);
-
 		open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
 		//load_das_action = new DasFeaturesAction2(map_view);
 		clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
@@ -530,10 +528,8 @@ public final class IGB extends Application
 		tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		tab_pane.setMinimumSize(new Dimension(0, 0));
 
-		//if (USE_STATUS_BAR) {
 		status_bar.setStatus(getApplicationName() + " " + getVersion());
 		cpane.add(status_bar, BorderLayout.SOUTH);
-		//}
 
 		// Show the frame before loading the plugins.  Thus any error panel
 		// that is created by an exception during plugin set-up will appear
@@ -595,7 +591,6 @@ public final class IGB extends Application
 		preferences_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Preferences16.gif"));
 		preferences_item.addActionListener(this);
 		MenuUtil.addToMenu(file_menu, open_file_item);
-		//MenuUtil.addToMenu(file_menu, load_das_item);
 		MenuUtil.addToMenu(file_menu, clear_item);
 		MenuUtil.addToMenu(file_menu, clear_graphs_item);
 		file_menu.addSeparator();
@@ -774,7 +769,6 @@ public final class IGB extends Application
 		} else if (src == toggle_edge_matching_item) {
 			map_view.setEdgeMatching(!map_view.getEdgeMatching());
 			toggle_edge_matching_item.setState(map_view.getEdgeMatching());
-			//adjust_edgematch_item.setEnabled(map_view.getEdgeMatching());
 		} else if (src == adjust_edgematch_item) {
 			EdgeMatchAdjuster.showFramedThresholder(map_view.getEdgeMatcher(), map_view);
 		}
@@ -1074,7 +1068,6 @@ public final class IGB extends Application
 					frame.dispose();
 					tab_pane.addTab(display_name, null, comp, (tool_tip == null ? display_name : tool_tip));
 					UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_TAB);
-					//PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_TAB);
 					JCheckBoxMenuItem menu_item = comp2menu_item.get(comp);
 					if (menu_item != null) {
 						menu_item.setSelected(false);
@@ -1086,7 +1079,6 @@ public final class IGB extends Application
 			DisplayUtils.bringFrameToFront(comp2window.get(comp));
 		}
 		UnibrowPrefsUtil.saveComponentState(title, UnibrowPrefsUtil.COMPONENT_STATE_WINDOW);
-		//PluginInfo.getNodeForName(title).put(PluginInfo.KEY_PLACEMENT, PluginInfo.PLACEMENT_WINDOW);
 	}
 
 	private void openTabbedPanelInNewWindow(final JComponent comp) {
@@ -1248,7 +1240,6 @@ public final class IGB extends Application
 	public String getResourceString(String key) {
 		return null;
 	}
-	AnnotatedSeqGroup prev_selected_group = null;
 
 	public void groupSelectionChanged(GroupSelectionEvent evt) {
 		AnnotatedSeqGroup selected_group = evt.getSelectedGroup();

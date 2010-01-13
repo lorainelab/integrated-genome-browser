@@ -222,6 +222,7 @@
 
 	<target name="clean" depends="common-init">
 		<delete file="igb_exe.jar"/>
+		<delete file="protannot_exe.jar"/>
 		<delete file="${genoviz}/genoviz.jar" />
 		<delete file="${demos.dir}/genoviz.jar" />
 		<delete dir="${dist.dir}" />
@@ -262,6 +263,19 @@
 				<include name="myswing.jar"/>
 				<include name="image4j.jar" />
 				<include name="commons-codec-1.4.jar"/>
+			</zipgroupfileset>
+		</jar>
+		<jar jarfile="protannot_exe.jar" update="false">
+			<manifest>
+				<attribute name="Main-Class" value="org.bioviz.protannot.ProtAnnotMain"/>
+			</manifest>
+			<zipgroupfileset dir="${dist.dir}">
+				<include name="genometry.jar"/>
+				<include name="genoviz.jar"/>
+				<include name="protannot.jar"/>
+			</zipgroupfileset>
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="freehep-2.1.1.jar"/>
 			</zipgroupfileset>
 		</jar>
 	</target>

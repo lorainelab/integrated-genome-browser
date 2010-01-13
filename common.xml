@@ -14,7 +14,7 @@
 		<property name="webapp.dir"   value="${dist.dir}/webapp" />
 		<property name="release.dir"   value="${dist.dir}/release" />
 
-		<property name="deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_DAS2_HERE" />
+		<property name="server.deploy.dir"   value="USE_PATH_TO_TOMCAT_WEBAPPS_HERE" />
 
 		<condition property="build.version" value="${svn.info.rev}" else="${DSTAMP}">
 			<isset property="svn.info.rev" />
@@ -75,11 +75,24 @@
 		<filter token="jnlp.codebase" value="${jnlp.codebase}" />
 		<filter token="jnlp.icon.name" value="${jnlp.icon.name}" />
 		<filter token="jnlp.splashicon.name" value="${jnlp.splashicon.name}" />
-
+     
+    <!-- Set genopub vs. classic mode settings --> 
+		<condition property="das2genopub">
+			<istrue value="${das2_genopub_mode}" />
+		</condition>
 		<condition property="web.xml" value="${genopub.web.xml}" else="${classic.web.xml}">
 			<istrue value="${das2_genopub_mode}" />
 		</condition>
 		<condition property="context.xml" value="${genopub.context.xml}" else="${classic.context.xml}">
+			<istrue value="${das2_genopub_mode}" />
+		</condition>
+		<condition property="das2_release" value="das2server-genopub" else="das2server">
+			<istrue value="${das2_genopub_mode}" />
+		</condition>
+		<condition property="das2_webapp" value="das2genopub" else="das2">
+			<istrue value="${das2_genopub_mode}" />
+		</condition>
+		<condition property="das2_install_notes" value="INSTALL.txt" else="INSTALL_classic.txt">
 			<istrue value="${das2_genopub_mode}" />
 		</condition>
 	</target>

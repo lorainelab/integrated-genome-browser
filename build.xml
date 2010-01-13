@@ -135,8 +135,8 @@
 		</copy> 
 		<copy todir="${webapp.dir}/WEB-INF/lib">
 			<fileset dir="${lib.dir}">
-				<include name="antlr-2.7.6rc1.jar" />  
- 			  <include name="asm.jar" /> 
+				<include name="antlr-2.7.6rc1.jar"/>
+				<include name="asm.jar" /> 
 				<include name="asm-attrs.jar" /> 
 				<include name="cglib-2.1.3.jar" /> 
 				<include name="commons-collections-2.1.1.jar"/>
@@ -163,39 +163,6 @@
 		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
 	</target>
 
-	<target name="deploy" description="Copy das2 web application to apache tomcat">
-		<copy todir="${deploy.dir}" overwrite="true">
-			<fileset dir="${webapp.dir}">
-				<include name="*.css" />
-				<include name="*.swf" />
-				<include name="*.html" />
-				<include name="*.ico" />
-				<include name="*.png" />
-				<include name="*.js" />
-			</fileset>
-		</copy> 
-		<copy todir="${deploy.dir}/META-INF" overwrite="true">
-			<fileset dir="${webapp.dir}/META-INF">
-				<include name="context.xml" />
-			</fileset>
-		</copy> 
-		<copy todir="${deploy.dir}/WEB-INF" overwrite="true">
-			<fileset dir="${webapp.dir}/WEB-INF">
-				<include name="web.xml" />
-			</fileset>
-		</copy>
-		<copy todir="${deploy.dir}/WEB-INF/classes" overwrite="true">
-			<fileset dir="${webapp.dir}/WEB-INF/classes">
-				<include name="*.xml" />
-				<include name="*.properties" />
-			</fileset>
-		</copy>
-		<copy todir="${deploy.dir}/WEB-INF/lib" overwrite="true">
-			<fileset dir="${webapp.dir}/WEB-INF/lib">
-				<include name="*.jar" />
-			</fileset>
-		</copy>
-	</target>
 	
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
@@ -318,26 +285,42 @@
 	</target>
 
 	<target name="release-das2server" depends="common-init">
-		<mkdir dir="${release.dir}/das2server" />
+		<mkdir dir="${release.dir}/${das2_release}" />
 
 		<antcall target="webapp">
-			<param name="webapp.dir" value="${release.dir}/das2server/das2" />
+			<param name="webapp.dir" value="${release.dir}/${das2_release}/${das2_webapp}" />
 		</antcall>
-
-		<copy todir="${release.dir}/das2server">
+		
+		<copy todir="${release.dir}/${das2_release}">
 			<fileset dir="${basedir}">
 				<include name="NOTICES.txt" />
 				<include name="RELEASES.txt" />
 				<include name="LICENSE.html" />
 			</fileset>
 			<fileset file="${lib.dir}/APACHE_LICENSE_2.txt" />
-			<fileset file="${das2server}/INSTALL.txt" />
-			<fileset file="${das2server}/genopub.sql" />
-		</copy>
+		</copy>	
 
-		<zip destfile="${release.dir}/das2server.zip" basedir="${release.dir}">
-			<include name="das2server/**" />
+		<copy  file="${das2server}/${das2_install_notes}" tofile="${release.dir}/${das2_release}/INSTALL.txt" overwrite="true"/>
+
+	  <antcall target="copy-genopub-sql"/>
+		
+		<zip destfile="${release.dir}/${das2_release}.zip" basedir="${release.dir}">
+			<include name="${das2_release}/**" />
 		</zip>
+	</target>
+	
+	<target name="copy-genopub-sql" if="das2genopub">
+		<copy todir="${release.dir}/${das2_release}">
+			<fileset file="${das2server}/genopub.sql" />
+		</copy>	
+	</target>
+
+	<target name="deploy-das2server" depends="release-das2server" description="Copy das2 web application to apache tomcat">
+		<copy todir="${server.deploy.dir}/${das2_webapp}" overwrite="true">
+			<fileset dir="${release.dir}/${das2_release}/${das2_webapp}">
+				<include name="**/*" />
+			</fileset>
+		</copy> 
 	</target>
 
 	<target name="release-igb-webstart" depends="common-init">

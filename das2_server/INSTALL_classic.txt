@@ -5,14 +5,12 @@ There are two ways to configure the GenoViz Genometry DAS2 server:
 * Classic mode: The annotations are organized into a directory structure on the file system.  
 * GenoPub mode: The annotations are managed by the GenoPub (Genomic Annotation Publisher), which stores information about each annotation in a database.  A web-based tool allows annotations to be easily added, described, and organized.  Through the tool, users and groups are managed and annotation security is specified. Access to annotations is brokered by the DAS2 server so that  only authorized users can gain access to these resources.    
 
-Here are instructions for installing the DAS2 server in GenoPub mode. Any java servlet container will work.  Here we show how to do this with Tomcat.  Likewise most relational databases can be appropriately configured.  In this demonstration we are using MySQL. Lastly, these web apps were developed and run on Windows but since the majority of bioinformatics web servers use Linux, we use Red Hat Enterprise 5 in this tutorial.
+Here are instructions for installing the DAS2 server in Classic mode. Any java servlet container will work.  Here we show how to do this with Tomcat.  Likewise most relational databases can be appropriately configured.  In this demonstration we are using MySQL. Lastly, these web apps were developed and run on Windows but since the majority of bioinformatics web servers use Linux, we use Red Hat Enterprise 5 in this tutorial.
 
 
 === System Requirements ===
 * Java 6+, 64-bit recommended (http://java.sun.com/)
 * Apache Tomcat 5.5+ (http://apache.tomcat.org/)
-* MySQL database server (http://mysql.com)
-* MySQL jdbc driver (http://mysql.com, download the mysql-connector-java-5.1.7.zip)
 * Web accessible Linux, MacOSX, or Windows server with > 4G of RAM. This demo uses Red Hat Enterprize 5.
 
 
@@ -46,39 +44,21 @@ export CATALINA_OPTS=-Xmx4096m
 
 
 == Step 3: Install the the GenoViz GenoPub DAS/2 Web app ==
-* Download the latest beta das2server-genopub.zip archive from http://sourceforge.net/projects/genoviz/files/
+* Download the latest beta das2server.zip archive from http://sourceforge.net/projects/genoviz/files/
 * Unzip the archive 
-* Move the entire das2genopub directory into ~apache-tomcat-5.xxx/webapps directory
+* Move the entire das2 directory into ~apache-tomcat-5.xxx/webapps directory
 
+== Step 4: Configure the GenoViz GenoPub DAS/2 Web app ==
+* Modify the '~/das2/WEB-INF/web.xml' doc in a text editor
+** Change the '/path/to/das2/data/' to the full path directory name where you want to store your data. 
+** NOTE: The das2 servlet will need write access to the sub-directory /.indexed. This is used to store indexing files.  It is rebuilt upon a restart of the servlet.
 
-== Step 4: Install and Configure MySQL ==
-* MySQL comes as a standard install option in RedHat, if needed obtain and install MySQL 5+ from http://dev.mysql.com/downloads/
-* Start the MySQL daemon '/etc/init.d/mysqld start'
-* Login as root 'mysql -u root -p'
-* Create a database user account called 'genopub'.  Here is an example mysql command:
-<pre>
-      mysql> CREATE USER 'genopub'@'localhost' IDENTIFIED BY 'some_password';
-      mysql> GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'localhost' WITH GRANT OPTION;
-      mysql> CREATE USER 'genopub'@'%' IDENTIFIED BY 'some_password';
-      mysql> GRANT ALL PRIVILEGES ON genopub.* TO 'genopub'@'%' WITH GRANT OPTION;
-      mysql> FLUSH PRIVILEGES
-</pre>
-* Logout of the root account and login as the genopub user
-* In mysql, run the genopub.sql script to create genopub database 'mysql> source genopub.sql'
-
-
-
-
-== Step 5: Configure the GenoViz GenoPub DAS/2 Web app ==
-* Modify the '~/das2genopub/WEB-INF/web.xml' doc in a text editor
-** Change the '/path/to/das2/genopubdata/' to the full path directory name where you want to store your data 
-** Create that data directory. Note it should not be the same directory used to store data from the classic mode DAS/2 server.
+** Create that data directory. 
 ** Change the 'admin@example.com' to point to a trusted admin
-** Change the 'http://www.example.com:8080/das2genopub/genome' replacing 'www.example.com:8080' with the URL for your machine. This is the same one you used to verify your tomcat installation.
+** Change the 'http://www.example.com:8080/das2/genome' replacing 'www.example.com:8080' with the URL for your machine. This is the same one you used to verify your tomcat installation.
 
-* Modify the ~/das2genopub/META-INF/context.xml doc in a text editor 
+* Modify the ~/das2/META-INF/context.xml doc in a text editor 
 ** Set the docBase and workdir in <Context> to the relative path of the webapp application. Example: <Context pathdocBase="webapps/das2" workDir="webapps/das2"debug="0" reloadable="true"> 
-** Set the 'your_genopub_db_password_here' to the genopub user password you assigned in MySQL.  You will need to change this in both the <RESOURCE> and <REALM> 
 
 
 
@@ -86,32 +66,28 @@ export CATALINA_OPTS=-Xmx4096m
 
 
 
-== Step 6: Launch it! ==
-* Be sure the mysql daemon is running...
+== Step 5: Launch it! ==
 * Start up tomcat...
-* Launch the GenoPub tool: http://yourhost:8080/das2genopub/genopub . To programmatically access this sever using DAS/2 the URL is http://yourhost:8080/das2genopub/genome .
-* Login with the username 'admin' and the password 'admin'.  Click the 'Change password' link on the top right of the screen and change the admin password. Click on the Users and Groups link and add yourself as a user.  If you are an admin, click the 'Admin' radio button.  Quit your browser and try the URL again as yourself to make sure you can login.  
-* Add some data.
-* Click the 'Reload DAS/2 Server' link to add your new data to the server
+* From a browser, try a DAS/2 sources request: http://yourhost:8080/das2/genome . 
+* The das2 servlet does not detect changes in the data directory.  The servlet must be reloaded before it will register any changes.
 
-
-
-== Step 7: Register Your Das/2 Server ==
-* Register your http://yourhost:8080/das2genopub/genome URL, otherwise no one will know about your most excellent data.  Note only datasets you designate as public will be visable to non authenticated users.
+== Step 6: Register Your Das/2 Server ==
+* Register your http://yourhost:8080/das2/genome URL, otherwise no one will know about your most excellent data.  Note only datasets you designate as public will be visable to non authenticated users.
 * Currently, the [http://www.dasregistry.org DasRegistry] does not support DAS/2 services.  As a temporary work around, download the 'das2Registry.xml' file from the [http://genoviz.svn.sourceforge.net/viewvc/genoviz/trunk/das2_server/resources/ GenoViz Project], add an entry, and email it back to the [mailto:genoviz-devel@lists.sourceforge.net  GenoViz developers] . If you have access to the GenoViz SVN, modify it directly. 
 
 
-== Step 8: Visualize your data in IGB ==
+== Step 7: Visualize your data in IGB ==
 * The [[Software:IGB Integrated Genome Browser]] is fully DAS/2 and DAS/1 compliant and a good application for visualizing your genomic data.  
 * Launch IGB using the web start links 
 * Under the 'Data Access' tab, click the 'Configure...' button and add your server:
-** Server URL 'http://yourhost:8080/das2genopub/genome'
+** Server URL 'http://yourhost:8080/das2/genome'
 ** Server name 'YourOrg'
 ** Server type 'DAS2'
-** Login 'your genopub login name'
-** Password 'your genopub password'
+** Login (leave blank)
+** Password (leave blank)
 * Click the 'Add' button, a confirmatory message should appear
 * Under the 'Data Access' tab, select a Species and a Genome Version where your data resides
 
 
 Please send comments to xxxx if you encounter install issues or needed corrections.
+

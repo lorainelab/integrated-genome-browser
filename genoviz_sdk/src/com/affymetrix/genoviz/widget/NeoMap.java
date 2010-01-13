@@ -204,7 +204,7 @@ public class NeoMap extends NeoWidget implements
             direction=-1; //zoom in the opposite direction of the rotation
           } else {  //non-modified wheel
             adjustable=scroller[Y]; //scroll vertically
-            direction=1; //scroll in the opposite direction of the rotation
+			direction=1; //scroll in the opposite direction of the rotation
           }
           if(adjustable==null) {  //if there is no adjustable for this action
             return; //ignore the mouse wheel movement
@@ -420,7 +420,7 @@ public class NeoMap extends NeoWidget implements
     //view to transform pixel coordinates to view coordinates, or revamp the whole sequence of events altogether so that
     //such transformation occurs somewhere else
     canvas.addMouseWheelListener(mouseWheelListener); //listen for the mouse wheel so that we can scroll and zoom
-
+	
     canvas.addKeyListener(view);
     canvas.addComponentListener(this);
 

@@ -34,57 +34,8 @@ public final class NibbleResiduesParser {
 	 *  will be thrown.
 	 */
 	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group) throws IOException {
-		BioSeq result_seq = null;
-		BufferedInputStream bis = null;
-		DataInputStream dis = null;
-		try {
-			Timer tim = new Timer();
-			tim.start();
-			if (istr instanceof BufferedInputStream) {
-				bis = (BufferedInputStream)istr;
-			}
-			else {
-				bis = new BufferedInputStream(istr);
-			}
-			dis = new DataInputStream(bis);
-			String name = dis.readUTF();
-			//      System.out.println("name: " + name);
-			String version = dis.readUTF();
-			//      System.out.println("version: " + version);
-			int num_residues = dis.readInt();
-			//      System.out.println("length: " + num_residues);
-
-			BioSeq existing_seq = seq_group.getSeq(name);
-			if (existing_seq != null) {
-				result_seq = existing_seq;
-			} else {
-				result_seq = seq_group.addSeq(name, num_residues);
-			}
-
-			System.out.println("NibbleBioSeq: " + result_seq);
-			SetResiduesIterator(num_residues,dis, result_seq);
-
-			float read_time = tim.read()/1000f;
-			System.out.println("time to read in bnib residues file: " + read_time);
-		}
-		finally {
-			GeneralUtils.safeClose(dis);
-			GeneralUtils.safeClose(bis);
-		}
-		return result_seq;
+			return parse(istr,seq_group,0,-1);
 	}
-
-	private static void SetResiduesIterator(int num_residues, DataInputStream dis, BioSeq result_seq) throws IOException {
-		byte[] nibble_array = new byte[num_residues / 2 + num_residues % 2];
-
-		dis.readFully(nibble_array);
-		//System.out.println("nibble array length: " + nibble_array.length);
-
-		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
-		//System.out.println("NibbleIterator: " + residues_provider);
-		result_seq.setResiduesProvider(residues_provider);
-	}
-
 
 	/*public static GeneralBioSeq readBinaryFile(String file_name) throws IOException {
 		FileInputStream fis = null;
@@ -116,6 +67,63 @@ public final class NibbleResiduesParser {
 		}
 	}
 
+	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end) throws IOException
+	{
+		BioSeq result_seq = null;
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		try {
+			Timer tim = new Timer();
+			tim.start();
+			if (istr instanceof BufferedInputStream) {
+				bis = (BufferedInputStream)istr;
+			}
+			else {
+				bis = new BufferedInputStream(istr);
+			}
+			dis = new DataInputStream(bis);
+			String name = dis.readUTF();
+			//      System.out.println("name: " + name);
+			String version = dis.readUTF();
+			//      System.out.println("version: " + version);
+			int total_residues = dis.readInt();
+
+			start = start < 0 ? 0 : start;
+			end = end > total_residues ? total_residues: end;
+
+			int num_residues = end - start;
+			num_residues = num_residues < 0 ? total_residues : num_residues;
+
+			BioSeq existing_seq = seq_group.getSeq(name);
+			if (existing_seq != null) {
+				result_seq = existing_seq;
+			} else {
+				result_seq = seq_group.addSeq(name, num_residues);
+			}
+
+			System.out.println("NibbleBioSeq: " + result_seq);
+
+			SetResiduesIterator(start, num_residues,dis, result_seq);
+
+			float read_time = tim.read()/1000f;
+			System.out.println("time to read in bnib residues file: " + read_time);
+		}
+		finally {
+			GeneralUtils.safeClose(dis);
+			GeneralUtils.safeClose(bis);
+		}
+		return result_seq;
+	}
+
+	private static void SetResiduesIterator(int start, int num_residues, DataInputStream dis, BioSeq result_seq) throws IOException {
+
+		byte[] nibble_array = new byte[num_residues / 2 + num_residues % 2];
+		dis.skipBytes(start/2);
+		dis.readFully(nibble_array);
+		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
+		result_seq.setResiduesProvider(residues_provider);
+	}
+
 	/**
 	 * Read BNIB sequence from specified file.  (begin,end] are in interbase coords.
 	 * @param seqfile
@@ -124,7 +132,7 @@ public final class NibbleResiduesParser {
 	 * @return
 	 */
 	
-	private static void writeBinaryFile(String file_name, String seqname, String seqversion,
+	public static void writeBinaryFile(String file_name, String seqname, String seqversion,
 			String residues) throws IOException {
 
 		// Note: We need to support case because many groups, including

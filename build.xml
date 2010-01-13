@@ -127,10 +127,39 @@
 				<include name="*.png" />
 			</fileset>
 		</copy>
+		
 		<copy todir="${webapp.dir}/WEB-INF/classes">
 			<fileset dir="${das2.resources}">
-				<include name="*.xml" />
-				<include name="*.properties" />
+				<include name="das2Registry.xml" />
+				<include name="logging.properties" />
+			</fileset>
+		</copy> 
+
+		<copy todir="${webapp.dir}/WEB-INF/lib">
+			<fileset dir="${lib.dir}">
+				<include name="hibernate3.jar"/>
+				<include name="image4.jar" /> 		
+				<include name="org.mortbay.jetty.jar"/>
+			</fileset>
+			<fileset dir="${dist.dir}">
+				<include name="das2server.jar" />
+				<include name="genometry.jar" />
+				<include name="protannot.jar" />
+			</fileset>
+		</copy>
+		
+		<antcall target="webapp-copy-genopub-files"/>
+
+		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
+		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
+	</target>
+
+	<target name="webapp-copy-genopub-files" if="das2genopub">
+		<copy todir="${webapp.dir}/WEB-INF/classes">
+			<fileset dir="${das2.resources}">
+				<include name="hibernate.cfg.xml" />
+				<include name="genopub.hbm.xml" />
+				<include name="log4j.properties" />
 			</fileset>
 		</copy> 
 		<copy todir="${webapp.dir}/WEB-INF/lib">
@@ -145,24 +174,11 @@
 				<include name="commons-logging-1.0.4jar"/>
 				<include name="cos.jar"/>
 				<include name="dom4j-1.6.1.jar"/>
-				<include name="log4j-1.2.11.jar"/>
-				<include name="hibernate3.jar"/>
-				<include name="image4.jar" /> 		
 				<include name="jta.jar" /> 	
 				<include name="log4j-1.2.11.jar"/>
-				<include name="org.mortbay.jetty.jar"/>
 			</fileset>
-			<fileset dir="${dist.dir}">
-				<include name="das2server.jar" />
-				<include name="genometry.jar" />
-				<include name="protannot.jar" />
-			</fileset>
-		</copy>
-
-		<copy file="${web.xml}" tofile="${webapp.dir}/WEB-INF/web.xml" overwrite="true"/>
-		<copy file="${context.xml}" tofile="${webapp.dir}/META-INF/context.xml" overwrite="true"/>
+    </copy>
 	</target>
-
 	
 	<target name="all" depends="exe" description="Runs the 'jar' and 'exe' tasks">
 		<iterate target="all" />
@@ -302,14 +318,14 @@
 
 		<copy  file="${das2server}/${das2_install_notes}" tofile="${release.dir}/${das2_release}/INSTALL.txt" overwrite="true"/>
 
-	  <antcall target="copy-genopub-sql"/>
+	  <antcall target="release-copy-genopub-sql"/>
 		
 		<zip destfile="${release.dir}/${das2_release}.zip" basedir="${release.dir}">
 			<include name="${das2_release}/**" />
 		</zip>
 	</target>
 	
-	<target name="copy-genopub-sql" if="das2genopub">
+	<target name="release-copy-genopub-sql" if="das2genopub">
 		<copy todir="${release.dir}/${das2_release}">
 			<fileset file="${das2server}/genopub.sql" />
 		</copy>	

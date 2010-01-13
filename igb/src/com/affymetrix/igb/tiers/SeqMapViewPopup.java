@@ -40,14 +40,13 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
 import com.affymetrix.igb.view.*;
-import com.affymetrix.igb.view.AnnotatedSeqViewer;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 
   private static final boolean DEBUG = false;
   
-  private static GenometryModel gmodel = GenometryModel.getGenometryModel();
-  private AnnotatedSeqViewer gviewer;
+  private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
+  private SeqMapView gviewer;
   private TierLabelManager handler;
 
   private final JMenu showMenu = new JMenu("Show...");
@@ -55,17 +54,17 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private final JMenu strandsMenu = new JMenu("Strands...");
   private final JMenuItem deleteMI = new JMenuItem("Delete");
 
-  private ActionToggler at1;
-  private ActionToggler at2;
-  private ActionToggler at3;
+  private final ActionToggler at1;
+  private final ActionToggler at2;
+  private final ActionToggler at3;
 
-  private Action select_all_tiers_action = new AbstractAction("Select All Tiers") {
+  private final Action select_all_tiers_action = new AbstractAction("Select All Tiers") {
     public void actionPerformed(ActionEvent e) {
       handler.selectAllTiers();
     }
   };
 
-  private Action rename_action = new AbstractAction("Change Display Name") {
+  private final Action rename_action = new AbstractAction("Change Display Name") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() != 1) {
@@ -76,85 +75,85 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  private Action customize_action = new AbstractAction("Customize") {
+  private final Action customize_action = new AbstractAction("Customize") {
     public void actionPerformed(ActionEvent e) {
       showCustomizer();
     }
   };
 
-  private Action expand_action = new AbstractAction("Expand") {
+  private final Action expand_action = new AbstractAction("Expand") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getSelectedTierLabels(), false);
     }
   };
 
-  private Action expand_all_action = new AbstractAction("Expand All") {
+  private final Action expand_all_action = new AbstractAction("Expand All") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getAllTierLabels(), false);
     }
   };
 
-  private Action collapse_action = new AbstractAction("Collapse") {
+  private final Action collapse_action = new AbstractAction("Collapse") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getSelectedTierLabels(), true);
     }
   };
 
-  private Action collapse_all_action = new AbstractAction("Collapse All") {
+  private final Action collapse_all_action = new AbstractAction("Collapse All") {
     public void actionPerformed(ActionEvent e) {
       setTiersCollapsed(handler.getAllTierLabels(), true);
     }
   };
 
-  private Action hide_action = new AbstractAction("Hide") {
+  private final Action hide_action = new AbstractAction("Hide") {
     public void actionPerformed(ActionEvent e) {
       hideTiers(handler.getSelectedTierLabels());
     }
   };
 
-  private Action show_all_action = new AbstractAction("Show All Types") {
+  private final Action show_all_action = new AbstractAction("Show All Types") {
     public void actionPerformed(ActionEvent e) {
       showAllTiers();
     }
   };
 
-  private Action change_color_action = new AbstractAction("Change FG Color") {
+  private final Action change_color_action = new AbstractAction("Change FG Color") {
     public void actionPerformed(ActionEvent e) {
       changeColor(handler.getSelectedTierLabels(), true);
     }
   };
 
-  private Action change_bg_color_action = new AbstractAction("Change BG Color") {
+  private final Action change_bg_color_action = new AbstractAction("Change BG Color") {
     public void actionPerformed(ActionEvent e) {
       changeColor(handler.getSelectedTierLabels(), false);
     }
   };
 
-  private Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
+  private final Action color_by_score_on_action = new AbstractAction("Color By Score ON") {
     public void actionPerformed(ActionEvent e) {
       setColorByScore(handler.getSelectedTierLabels(), true);
     }
   };
 
-  private Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
+  private final Action color_by_score_off_action = new AbstractAction("Color By Score OFF") {
     public void actionPerformed(ActionEvent e) {
       setColorByScore(handler.getSelectedTierLabels(), false);
     }
   };
 
-  private Action show_two_tiers = new AbstractAction("Show 2 tiers (+) and (-)") {
+  private final Action show_two_tiers = new AbstractAction("Show 2 tiers (+) and (-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), true);
     }
   };
 
-  private Action show_single_tier = new AbstractAction("Show 1 tier (+/-)") {
+  private final Action show_single_tier = new AbstractAction("Show 1 tier (+/-)") {
     public void actionPerformed(ActionEvent e) {
       setTwoTiers(handler.getSelectedTierLabels(), false);
     }
   };
   
-  private Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
+  private final Action sym_summarize_action = new AbstractAction("Make Annotation Depth Graph") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -164,7 +163,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       addSymSummaryTier(current_tier);
     }
   };
-  private Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
+  private final Action coverage_action = new AbstractAction("Make Annotation Coverage Track") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -174,7 +173,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
       addSymCoverageTier(current_tier);
     }
   };
-  private Action save_bed_action = new AbstractAction("Save tier as BED file") {
+  private final Action save_bed_action = new AbstractAction("Save tier as BED file") {
     public void actionPerformed(ActionEvent e) {
       List<TierGlyph> current_tiers = handler.getSelectedTiers();
       if (current_tiers.size() > 1) {
@@ -185,20 +184,20 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-  private Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
+  private final Action change_expand_max_action = new AbstractAction("Adjust Max Expand") {
     public void actionPerformed(ActionEvent e) {
       changeExpandMax(handler.getSelectedTierLabels());
     }
   };
 
-  private Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
+  private final Action change_expand_max_all_action = new AbstractAction("Adjust Max Expand All") {
     public void actionPerformed(ActionEvent e) {
       changeExpandMax(handler.getAllTierLabels());
     }
   };
 
   
-  private Action delete_action = new AbstractAction("Delete selected tiers (NOT IMPLEMENTED") {
+  private final Action delete_action = new AbstractAction("Delete selected tiers (NOT IMPLEMENTED") {
     public void actionPerformed(ActionEvent e) {
       List current_tiers = handler.getSelectedTierLabels();
       if (Application.confirmPanel("Really remove selected tiers?\n"+
@@ -208,17 +207,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     }
   };
 
-
-  public SeqMapViewPopup(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
-    this.handler = handler;
-    this.gviewer = gviewer;
-    if (gviewer instanceof SeqMapView) {
-      SeqMapView smv = (SeqMapView) gviewer;
-      at1 = new ActionToggler(smv.getSeqMap().show_plus_action);
-      at2 = new ActionToggler(smv.getSeqMap().show_minus_action);
-      at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
-    }
-  }
+	public SeqMapViewPopup(TierLabelManager handler, SeqMapView smv) {
+		this.handler = handler;
+		this.gviewer = smv;
+		at1 = new ActionToggler(smv.getSeqMap().show_plus_action);
+		at2 = new ActionToggler(smv.getSeqMap().show_minus_action);
+		at3 = new ActionToggler(smv.getSeqMap().show_mixed_action);
+	}
 
   private void showCustomizer() {
     PreferencesPanel pv = PreferencesPanel.getSingleton();

@@ -25,7 +25,7 @@ import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.igb.view.AnnotatedSeqViewer;
+import com.affymetrix.igb.view.SeqMapView;
 
 
 /**
@@ -38,7 +38,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
 
   static GenometryModel gmodel = GenometryModel.getGenometryModel();
 
-  AnnotatedSeqViewer gviewer;
+  SeqMapView gviewer;
   TierLabelManager handler;
 
   JMenu combineMenu = new JMenu("Combine Selected Tiers");
@@ -49,7 +49,7 @@ public final class TierArithmetic implements TierLabelManager.PopupListener {
   JMenuItem xorMI = new JMenuItem("Xor");
   JMenuItem notMI = new JMenuItem("Not");
 
-  public TierArithmetic(TierLabelManager handler, AnnotatedSeqViewer gviewer) {
+  public TierArithmetic(TierLabelManager handler, SeqMapView gviewer) {
     this.handler = handler;
     this.gviewer = gviewer;
 

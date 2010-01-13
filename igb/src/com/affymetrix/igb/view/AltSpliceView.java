@@ -36,13 +36,13 @@ public class AltSpliceView extends JComponent
 				SymSelectionListener, SeqSelectionListener,
 				TierLabelManager.PopupListener {
 
-	private static GenometryModel gmodel = GenometryModel.getGenometryModel();
+	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
 	private boolean CONTROLS_ON_SIDE = false;
-	private SeqMapView original_view;
-	private SeqMapView spliced_view;
-	private OrfAnalyzer orf_analyzer;
-	private JTextField buffer_sizeTF;
-	private JCheckBox slice_by_selectionCB;
+	private final SeqMapView original_view;
+	private final SeqMapView spliced_view;
+	private final OrfAnalyzer orf_analyzer;
+	private final JTextField buffer_sizeTF;
+	private final JCheckBox slice_by_selectionCB;
 	private List<SeqSymmetry> last_selected_syms = new ArrayList<SeqSymmetry>();
 	private BioSeq last_seq_changed = null;
 	private boolean pending_sequence_change = false;

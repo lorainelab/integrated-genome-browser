@@ -97,8 +97,7 @@ import javax.swing.*;
  * @version $Id$
  */
 public class SeqMapView extends JPanel
-				implements AnnotatedSeqViewer, 
-				SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
+				implements SymSelectionListener, SeqSelectionListener, GroupSelectionListener {
 
 	private static final boolean DIAGNOSTICS = false;
 	private static final boolean DEBUG_TIERS = false;
@@ -123,18 +122,14 @@ public class SeqMapView extends JPanel
 	private static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
 	protected boolean view_cytobands_in_axis = true;
 	public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
-	//  public boolean LABEL_TIERMAP = true;
-	//  boolean SPLIT_WINDOWS = false;  // flag for testing transcriptarium split windows strategy
 	boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
-	//boolean rev_comp = false;
 	boolean coord_shift = false;
 	boolean show_slicendice = false;
 	boolean slicing_in_effect = false;
 	boolean hairline_is_labeled = true;
-	SeqSpan viewspan_before_slicing = null;
-	Set<SymSelectionListener> selection_listeners = new CopyOnWriteArraySet<SymSelectionListener>();
-	Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
+	private SeqSpan viewspan_before_slicing = null;
+	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
 	protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 	/**
 	 *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing

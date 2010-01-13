@@ -22,7 +22,7 @@
 	<!--                                                                  -->
 	<context-param>
 		<param-name>xml_base</param-name>
-		<param-value>http://www.example.com:8080/das2/genome</param-value>
+		<param-value>http://www.example.com:8080/genopub/genome</param-value>
 	</context-param>
 	
 	<!-- Listener to obtain Hibernate session  --> 

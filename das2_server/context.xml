@@ -31,10 +31,14 @@
     username="genopub" password="your_genopub_db_password_here"
     driverClassName="com.mysql.jdbc.Driver"
     url="jdbc:mysql://localhost:3306/genopub?autoReconnect=true"/>
-    
-  <Realm className="org.apache.catalina.realm.DataSourceRealm" debug="0"
-    dataSourceName="jdbc/GENOPUB" localDataSource="true" digest="MD5"
+
+  <Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
+    driverName="com.mysql.jdbc.Driver"
+    connectionURL="jdbc:mysql://localhost:3306/genopub?autoReconnect=true"
+    connectionName="genopub" connectionPassword="your_genopub_db_password_here"
+    digest="MD5"
     userTable="User" userNameCol="userName" userCredCol="password"
     userRoleTable="UserRole" roleNameCol="roleName"/>
+ 
 </Context>
 

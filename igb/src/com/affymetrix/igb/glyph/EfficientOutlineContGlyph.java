@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -23,7 +24,7 @@ import java.awt.geom.Rectangle2D;
  *  A new version of OutlineRectGlyph, 
  *     subclassed from EfficientGlyph instead of Glyph.
  */
-public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
+public class EfficientOutlineContGlyph extends Glyph  {
   private static final boolean optimize_child_draw = true;
   private static final boolean DEBUG_OPTIMIZED_FILL = false;
   private boolean move_children = true;
@@ -106,7 +107,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
 
 	@Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible ? coord_hitbox.intersects(this.getCoordBox()) : false;
+    return isVisible && coord_hitbox.intersects(this.getCoordBox());
   }
 
   /** Sets the fill color. Use null if you do not want the rectangle filled. 

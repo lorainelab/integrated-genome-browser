@@ -1045,10 +1045,10 @@ public class AxisGlyph extends Glyph {
 	public boolean isHitable() { return hitable; }
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
-		return (isHitable() && pixel_hitbox.intersects(pixelbox));
+		return isHitable() && pixel_hitbox.intersects(pixelbox);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-		return (isHitable() && coord_hitbox.intersects(coordbox));
+		return isHitable() && coord_hitbox.intersects(coordbox);
 	}
 }

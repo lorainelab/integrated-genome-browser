@@ -13,13 +13,14 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class EfficientLabelledGlyph extends EfficientSolidGlyph {
+public class EfficientLabelledGlyph extends Glyph {
 
 	private static final boolean OUTLINE_PIXELBOX = false;
 	private static final boolean DEBUG_OPTIMIZED_FILL = false;

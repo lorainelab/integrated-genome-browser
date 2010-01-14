@@ -80,7 +80,7 @@ public class LineStretchContainerGlyph extends Glyph {
 
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
-		return  isVisible && pixel_hitbox.intersects(pixelbox);
+		return isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {

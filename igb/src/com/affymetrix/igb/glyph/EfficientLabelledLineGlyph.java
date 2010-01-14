@@ -32,6 +32,21 @@ import java.awt.geom.Rectangle2D;
 public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 
   private boolean move_children = true;
+  private static final int arrowDirection = NeoConstants.NONE;
+
+  public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 2,  5,3 }, 0);
+  public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 1);
+  public static final BasicStroke dashStroke2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 2);
+  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 3,  5,2 }, 11);
+  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 10);
+  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
+      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 9);
+
 
   @Override
   public void draw(ViewI view) {
@@ -124,38 +139,7 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
     }
   }
 
-  int arrowDirection = NeoConstants.NONE;
-
-  /**
-   *  Direction to use for drawing little arrows on the line.
-   *  @param d should be {@link NeoConstants#RIGHT},
-   *  {@link NeoConstants#LEFT}, or {@link NeoConstants#NONE}.
-   */
-  public void setArrowDirection(int d) throws IllegalArgumentException {
-    if (d == NeoConstants.NONE || d == NeoConstants.LEFT || d == NeoConstants.RIGHT) {
-      arrowDirection = d;
-    } else {
-      throw new IllegalArgumentException();
-    }
-  }
-
-  public int getArrowDirection() {
-    return arrowDirection;
-  }
-
-  public static final BasicStroke dashStroke0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 2,  5,3 }, 0);
-  public static final BasicStroke dashStroke1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 1);
-  public static final BasicStroke dashStroke2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 2);
-  public static final BasicStroke dashStrokeNeg0 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10.0f, new float[] {1, 3,  5,2 }, 11);
-  public static final BasicStroke dashStrokeNeg1 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 10);
-  public static final BasicStroke dashStrokeNeg2 = new BasicStroke(1f, BasicStroke.CAP_SQUARE,
-      BasicStroke.JOIN_MITER,  10, new float[] {1, 10}, 9);
-
+  
   /**
    *  Draws a line with little arrows to indicate the direction.
    *  @param direction should be {@link NeoConstants#RIGHT},

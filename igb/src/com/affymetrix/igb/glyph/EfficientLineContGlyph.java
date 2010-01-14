@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -30,14 +31,12 @@ import java.util.List;
  *  has multiple sub-ranges within it, such as genes which have a known intron/exon
  *  structure.
  *
- *  This is a new version of ImprovedLineContGlyph,
- *     subclassed from EfficientGlyph instead of Glyph,
- *     and renamed EfficientLineContGlyph.
+ *  This is a new version of ImprovedLineContGlyph.
  *
  *  Optimized to just draw a filled rect if glyph is small, and skip drawing children
  *
  */
-public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
+public final class EfficientLineContGlyph extends Glyph  {
   private static final boolean optimize_child_draw = true;
   private static final boolean DEBUG_OPTIMIZED_FILL = false;
   private boolean move_children = true;
@@ -123,7 +122,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
   @Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible ? coord_hitbox.intersects(this.getCoordBox()) : false;
+    return isVisible && coord_hitbox.intersects(this.getCoordBox());
   }
 
   /**

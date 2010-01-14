@@ -2,22 +2,19 @@ package com.affymetrix.genoviz.widget.tieredmap;
 
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.geom.Rectangle2D.Double;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.util.*;
-import com.affymetrix.genoviz.util.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 
-	protected boolean DEBUG = true;
 	protected boolean DEBUG_CHECKS = false;
 	protected double coord_fuzziness = 1;
 	protected double spacing = 2;
 	protected int movetype;
 	protected Rectangle2D.Double before = new Rectangle2D.Double();
-	boolean STRETCH_HORIZONTAL = true;
-	boolean USE_NEW_PACK = true;
+	private boolean STRETCH_HORIZONTAL = true;
 	boolean use_search_nodes = false;
 	/**
 	 * Parent_spacer is <em>not</em> the same as AbstractCoordPacker.spacing.
@@ -54,6 +51,10 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 	 */
 	public void setMoveType(int movetype) {
 		this.movetype = movetype;
+	}
+
+	public int getMoveType() {
+		return movetype;
 	}
 
 	/**
@@ -158,7 +159,7 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 		STRETCH_HORIZONTAL = b;
 	}
 
-	public boolean getStretchHorizontal(boolean b) {
+	public boolean getStretchHorizontal() {
 		return STRETCH_HORIZONTAL;
 	}
 
@@ -171,9 +172,6 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 			return null;
 		}
 
-		/**
-		 *  child packing
-		 */
 		Rectangle2D.Double pbox = parent.getCoordBox();
 
 		// resetting height of parent to just spacers
@@ -198,30 +196,14 @@ public class ExpandedTierPacker implements PaddedPackerI, NeoConstants {
 		//    back...
 		//
 		// trying synchronization to ensure this method is threadsafe
-		if (USE_NEW_PACK) {
-			synchronized (sibs) {  // testing synchronizing on sibs vector...
-				GlyphI[] sibarray = new GlyphI[sibs.size()];
-				sibs.toArray(sibarray);
-				sibs.clear(); // sets parent.getChildren() to empty Vector
-				int sibs_size = sibarray.length;
-				for (int i = 0; i < sibs_size; i++) {
-					child = sibarray[i];
-					sibs.add(child);  // add children back in one at a time
-					pack(parent, child, view);
-					if (DEBUG_CHECKS) {
-						System.out.println(child);
-					}
-				}
-			}
-		} else {
-			int sibs_size = sibs.size();
+		synchronized (sibs) {  // testing synchronizing on sibs vector...
+			GlyphI[] sibarray = new GlyphI[sibs.size()];
+			sibs.toArray(sibarray);
+			sibs.clear(); // sets parent.getChildren() to empty Vector
+			int sibs_size = sibarray.length;
 			for (int i = 0; i < sibs_size; i++) {
-				child = sibs.get(i);
-				// MUST CALL moveAbsolute!!!
-				// setCoords() does not guarantee that coord changes will recurse
-				// down through descendants of child!
-
-				// GAH 10-4-99 deal with expansion of parent within child pack...
+				child = sibarray[i];
+				sibs.add(child);  // add children back in one at a time
 				pack(parent, child, view);
 				if (DEBUG_CHECKS) {
 					System.out.println(child);

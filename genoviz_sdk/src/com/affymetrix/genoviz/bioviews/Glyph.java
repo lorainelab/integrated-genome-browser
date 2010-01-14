@@ -733,4 +733,16 @@ public abstract class Glyph implements GlyphI  {
 		return true;
 	}
 
+	/**
+	 * (May not be necessary in current versions of Java.)
+	 * Fixes a bug that can happen with AWT when drawing rectangles bigger than about 32000 pixels, by
+	 *  trimming the pixelbox of a large rectangle to the region that intersects the view.
+	 */
+	public static Rectangle fixAWTBigRectBug(ViewI view, Rectangle pixelbox) {
+		if (pixelbox.width >= 1024) {
+			Rectangle compbox = view.getComponentSizeRect();
+			pixelbox = pixelbox.intersection(compbox);
+		}
+		return pixelbox;
+	}
 }

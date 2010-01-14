@@ -31,7 +31,7 @@ public final class EfficientPaintRectGlyph extends EfficientSolidGlyph  {
 	@Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
 
     Graphics2D g = view.getGraphics();
     

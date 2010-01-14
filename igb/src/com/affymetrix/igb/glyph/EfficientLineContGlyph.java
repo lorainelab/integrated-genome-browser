@@ -46,7 +46,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
   public void drawTraversal(ViewI view)  {
     if (optimize_child_draw) {
       Rectangle pixelbox = view.getScratchPixBox();
-      view.transformToPixels(this, pixelbox);
+      view.transformToPixels(this.getCoordBox(), pixelbox);
       if (withinView(view) && isVisible) {
         if (pixelbox.width <=3 || pixelbox.height <=3) {
           // still ends up drawing children for selected, but in general
@@ -66,15 +66,13 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
   public void fillDraw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
     Graphics g = view.getGraphics();
-    //    g.setColor(getBackgroundColor());
-    //    g.setColor(color);
     if (DEBUG_OPTIMIZED_FILL) {
       g.setColor(Color.white);
     }
     else {
-      g.setColor(color);
+      g.setColor(this.getBackgroundColor());
     }
 
     pixelbox = fixAWTBigRectBug(view, pixelbox);
@@ -91,7 +89,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
   @Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
     if (pixelbox.height == 0) { pixelbox.height = 1; }
     Graphics g = view.getGraphics();
@@ -113,8 +111,8 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
     if (isMoveChildren()) {
       double child_height = adjustChild(glyph);
       super.addChild(glyph);
-      if (child_height > this.height) {
-        this.height = child_height;
+      if (child_height > this.getCoordBox().height) {
+        this.getCoordBox().height = child_height;
         adjustChildren();
       }
     } else {
@@ -125,7 +123,7 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
 
   @Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible ? coord_hitbox.intersects(this) : false;
+    return isVisible ? coord_hitbox.intersects(this.getCoordBox()) : false;
   }
 
   /**
@@ -148,12 +146,12 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
       // child.cbox.y is modified, but not child.cbox.height)
       // center the children of the LineContainerGlyph on the line
       final Rectangle2D.Double cbox = child.getCoordBox();
-      final double ycenter = this.y + this.height/2;
+      final double ycenter = this.getCoordBox().y + this.getCoordBox().height/2;
       // use moveAbsolute or moveRelative to make sure children of "child" glyph also get moved
       child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
       return cbox.height;
     } else {
-      return this.height;
+      return this.getCoordBox().height;
     }
   }
 
@@ -168,8 +166,8 @@ public final class EfficientLineContGlyph extends EfficientSolidGlyph  {
         }
       }
     }
-    if (max_height > this.height) {
-      this.height = max_height;
+    if (max_height > this.getCoordBox().height) {
+      this.getCoordBox().height = max_height;
       adjustChildren(); // have to adjust children again after a height change.
     }
   }

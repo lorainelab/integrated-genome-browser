@@ -117,7 +117,7 @@ public interface GlyphI extends NeoConstants  {
 	/**
 	 * Gets the entire collection of this glyph's children.
 	 *
-	 * @return a Vector containing the children.
+	 * @return a List containing the children.
 	 */
 	public List<GlyphI> getChildren();
 

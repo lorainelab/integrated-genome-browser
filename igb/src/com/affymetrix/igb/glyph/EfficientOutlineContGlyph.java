@@ -32,7 +32,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
 	@Override
 	public void drawTraversal(ViewI view) {
 		Rectangle pixelbox = view.getScratchPixBox();
-		view.transformToPixels(this, pixelbox);
+		view.transformToPixels(this.getCoordBox(), pixelbox);
 		if (isVisible && withinView(view)) {
 			if (pixelbox.width <= 3 || pixelbox.height <= 3) {
 				// still ends up drawing children for selected, but in general
@@ -50,13 +50,13 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
 
   public void fillDraw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
     Graphics g = view.getGraphics();
     if (DEBUG_OPTIMIZED_FILL) {
       g.setColor(Color.white);
     }
     else {
-      g.setColor(color);
+      g.setColor(this.getBackgroundColor());
     }
     
     pixelbox = fixAWTBigRectBug(view, pixelbox);
@@ -72,7 +72,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
 	@Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
     if (pixelbox.width == 0) { pixelbox.width = 1; }
     if (pixelbox.height == 0) { pixelbox.height = 1; }
 
@@ -98,7 +98,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
       // center the child vertically in the parent
       // child.cbox.y is modified, but not child.cbox.height)
       Rectangle2D.Double cbox = glyph.getCoordBox();
-      double ycenter = this.y + this.height/2;
+      double ycenter = this.getCoordBox().y + this.getCoordBox().height/2;
       cbox.y = ycenter - cbox.height/2;
     }
     super.addChild(glyph);
@@ -106,7 +106,7 @@ public class EfficientOutlineContGlyph extends EfficientSolidGlyph  {
 
 	@Override
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return isVisible ? coord_hitbox.intersects(this) : false;
+    return isVisible ? coord_hitbox.intersects(this.getCoordBox()) : false;
   }
 
   /** Sets the fill color. Use null if you do not want the rectangle filled. 

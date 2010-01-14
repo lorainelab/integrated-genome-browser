@@ -28,7 +28,7 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
 	@Override
   public void draw(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
     
     pixelbox = fixAWTBigRectBug(view, pixelbox);
     

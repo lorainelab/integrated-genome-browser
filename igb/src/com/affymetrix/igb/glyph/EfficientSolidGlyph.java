@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
 import java.awt.geom.Rectangle2D;
 import com.affymetrix.genoviz.bioviews.ViewI;
 
@@ -23,7 +24,7 @@ import com.affymetrix.genoviz.bioviews.ViewI;
  *    Mainly a convenience so other Glyph's don't have to implement hit 
  *       methods if they are willing to stick with simple hits.
  */
-public class EfficientSolidGlyph extends EfficientGlyph  {
+public class EfficientSolidGlyph extends Glyph  {
 
   private boolean hitable = true;
 
@@ -45,14 +46,8 @@ public class EfficientSolidGlyph extends EfficientGlyph  {
     this.hitable = hitable;
   }
 
-  /*public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
-    Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
-    return  hitable && isVisible() && pixel_hitbox.intersects(pixelbox);
-  }*/
-
   public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
-    return hitable && isVisible() && coord_hitbox.intersects(this);
+    return hitable && isVisible() && coord_hitbox.intersects(this.coordbox);
   }
 
 }

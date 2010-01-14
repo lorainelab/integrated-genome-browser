@@ -39,10 +39,11 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
     Graphics g = view.getGraphics();
 
     // perform an intersection of the view and this glyph, in the X axis only.
-    scratch_cbox.x = Math.max(this.x, full_view_cbox.x);
-    scratch_cbox.width = Math.min(this.x + this.width, full_view_cbox.x + full_view_cbox.width) - scratch_cbox.x;
-    scratch_cbox.y = this.y;
-    scratch_cbox.height = this.height;
+	Rectangle2D.Double cbox = this.getCoordBox();
+    scratch_cbox.x = Math.max(cbox.x, full_view_cbox.x);
+    scratch_cbox.width = Math.min(cbox.x + cbox.width, full_view_cbox.x + full_view_cbox.width) - scratch_cbox.x;
+    scratch_cbox.y = cbox.y;
+    scratch_cbox.height = cbox.height;
 
     Rectangle pixelbox = view.getScratchPixBox();
     view.transformToPixels(scratch_cbox, pixelbox);
@@ -201,8 +202,8 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
     if (isMoveChildren()) {
       double child_height = adjustChild(glyph);
       super.addChild(glyph);
-      if (this.height < 2.0 * child_height) {
-        this.height = 2.0 * child_height;
+      if (this.getCoordBox().height < 2.0 * child_height) {
+        this.getCoordBox().height = 2.0 * child_height;
         adjustChildren();
       }
     } else {
@@ -220,19 +221,19 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
 
       if (show_label) {
         if (label_loc == NORTH) {
-          ycenter = this.y + (0.75 * this.height);
+          ycenter = this.getCoordBox().y + (0.75 * this.getCoordBox().height);
           child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
         } else {
-          ycenter = this.y + (0.25 * this.height);
+          ycenter = this.getCoordBox().y + (0.25 * this.getCoordBox().height);
           child.moveRelative(0, ycenter - cbox.height/2 - cbox.y);
         }
       } else {
-        ycenter = this.y + this.height * 0.5;
+        ycenter = this.getCoordBox().y + this.getCoordBox().height * 0.5;
       }
       child.moveRelative(0, ycenter - (cbox.height * 0.5) - cbox.y);
       return cbox.height;
     } else {
-      return this.height;
+      return this.getCoordBox().height;
     }
   }
 
@@ -249,8 +250,8 @@ public final class EfficientLabelledLineGlyph extends EfficientLabelledGlyph {
         }
       }
     }
-    if (this.height < 2.0 * max_height) {
-      this.height = 2.0 * max_height;
+    if (this.getCoordBox().height < 2.0 * max_height) {
+      this.getCoordBox().height = 2.0 * max_height;
       adjustChildren(); // have to adjust children again after a height change.
     }
   }

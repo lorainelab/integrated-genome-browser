@@ -82,7 +82,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 	public void drawTraversal(ViewI view) {
 		if (optimize_child_draw) {
 			Rectangle pixelbox = view.getScratchPixBox();
-			view.transformToPixels(this, pixelbox);
+			view.transformToPixels(this.getCoordBox(), pixelbox);
 			if (withinView(view) && isVisible) {
 				if ((pixelbox.width <= 3) ||
 								(pixelbox.height <= 3)) {
@@ -110,25 +110,26 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 		if (DEBUG_OPTIMIZED_FILL) {
 			g.setColor(Color.white);
 		} else {
-			g.setColor(color);
+			g.setColor(this.getBackgroundColor());
 		}
 
 		if (show_label) {
-			scratch_cbox.x = this.x;
-			scratch_cbox.width = this.width;
+			Rectangle2D.Double cbox = this.getCoordBox();
+			scratch_cbox.x = cbox.x;
+			scratch_cbox.width = cbox.width;
 			if (label_loc == NORTH) {
-				scratch_cbox.y = this.y + this.height / 2;
-				scratch_cbox.height = this.height / 2;
+				scratch_cbox.y = cbox.y + cbox.height / 2;
+				scratch_cbox.height = cbox.height / 2;
 			} else if (label_loc == SOUTH) {
-				scratch_cbox.y = this.y;
-				scratch_cbox.height = this.height / 2;
+				scratch_cbox.y = cbox.y;
+				scratch_cbox.height = cbox.height / 2;
 			}
 			view.transformToPixels(scratch_cbox, pixelbox);
 		} else {
-			view.transformToPixels(this, pixelbox);
+			view.transformToPixels(this.getCoordBox(), pixelbox);
 		}
 
-		EfficientGlyph.fixAWTBigRectBug(view, pixelbox);
+		fixAWTBigRectBug(view, pixelbox);
 		if (pixelbox.width < 1) {
 			pixelbox.width = 1;
 		}
@@ -143,7 +144,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 		super.draw(view);
 		Rectangle pixelbox = view.getScratchPixBox();
 		Graphics g = view.getGraphics();
-		view.transformToPixels(this, pixelbox);
+		view.transformToPixels(this.getCoordBox(), pixelbox);
 		int original_pix_width = pixelbox.width;
 		if (pixelbox.width == 0) {
 			pixelbox.width = 1;
@@ -207,7 +208,7 @@ public class EfficientLabelledGlyph extends EfficientSolidGlyph {
 
 	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view) {
-		return isVisible ? coord_hitbox.intersects(this) : false;
+		return isVisible && coord_hitbox.intersects(this.getCoordBox());
 	}
 
 	public void setLabelLocation(int loc) {

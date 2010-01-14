@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.awt.geom.Area;
@@ -26,7 +27,7 @@ import java.awt.geom.RoundRectangle2D;
  * a glyph representing one arm of a chromosome, with the cytobands
  * as children.
  */
-public final class RoundRectMaskGlyph extends EfficientGlyph  {
+public final class RoundRectMaskGlyph extends Glyph  {
 
   private static final BasicStroke stroke = new BasicStroke(2);
   private final RoundRectangle2D.Double rr2d = new RoundRectangle2D.Double();
@@ -35,12 +36,12 @@ public final class RoundRectMaskGlyph extends EfficientGlyph  {
   public RoundRectMaskGlyph(Color fillColor) {
     super();
     this.fillColor = fillColor;
-    this.setDrawOrder(EfficientGlyph.DRAW_CHILDREN_FIRST);
+    this.setDrawOrder(Glyph.DRAW_CHILDREN_FIRST);
   }
   
   RoundRectangle2D.Double getShapeInPixels(ViewI view) {
     Rectangle pixelbox = view.getScratchPixBox();
-    view.transformToPixels(this, pixelbox);
+    view.transformToPixels(this.getCoordBox(), pixelbox);
 
     // turning off fixAWTBigRectBug  because it is probably unnecessary and because
     // it causes the glyph to draw the round edges at the edges of the view, even when

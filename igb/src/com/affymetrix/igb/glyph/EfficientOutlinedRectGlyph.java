@@ -45,13 +45,6 @@ public final class EfficientOutlinedRectGlyph extends EfficientOutlineContGlyph 
 
     super.draw(view);
   }
-
-  // specifies how to draw the glyph when it is too small to draw its
-  // contained glyphs
-	@Override
-  public void fillDraw(ViewI view) {
-    super.fillDraw(view);
-  }
   
   /** Sets the outline color; the fill color is automatically calculated as  
    *  a darker shade. 

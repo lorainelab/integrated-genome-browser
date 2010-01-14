@@ -682,7 +682,7 @@ public class SeqMapView extends JPanel
 	}
 
 
-	public EfficientSolidGlyph makeCytobandGlyph() {
+	public Glyph makeCytobandGlyph() {
 		BioSeq sma = getAnnotatedSeq();
 		SymWithProps cyto_annots = null;
 		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
@@ -705,7 +705,7 @@ public class SeqMapView extends JPanel
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	public EfficientSolidGlyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
+	public Glyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;

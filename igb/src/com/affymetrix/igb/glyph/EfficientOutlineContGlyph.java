@@ -25,7 +25,6 @@ import java.awt.geom.Rectangle2D;
  *     subclassed from EfficientGlyph instead of Glyph.
  */
 public class EfficientOutlineContGlyph extends Glyph  {
-  private static final boolean optimize_child_draw = true;
   private static final boolean DEBUG_OPTIMIZED_FILL = false;
   private boolean move_children = true;
   private Color fill_color = null;

@@ -1,11 +1,12 @@
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
+import com.affymetrix.genoviz.glyph.LabelGlyph;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.util.*;
-import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
@@ -235,7 +236,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 		return null;
 	}
 
-	private void packParent(GlyphI parent) {
+	void packParent(GlyphI parent) {
 		List<GlyphI> sibs = parent.getChildren();
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		Rectangle2D.Double newbox = new Rectangle2D.Double();
@@ -261,8 +262,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 
 		if (parent instanceof TransformTierGlyph) {
 			TransformTierGlyph transtier = (TransformTierGlyph) parent;
-			LinearTransform tier_transform = transtier.getTransform();
-			tier_transform.transform(newbox, newbox);
+			transtier.getTransform().transform(newbox, newbox);
 		}
 		parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
 	}
@@ -278,27 +278,24 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 	 */
 	public Rectangle pack(GlyphI parent, GlyphI child,
 			ViewI view, boolean avoid_sibs) {
-		//    System.out.println("packing child: " + child);
 		Rectangle2D.Double childbox, siblingbox;
 		Rectangle2D.Double pbox = parent.getCoordBox();
 		childbox = child.getCoordBox();
 		if (movetype == UP) {
-			//      System.out.println("moving up");
 			child.moveAbsolute(childbox.x,
 					pbox.y + pbox.height - childbox.height - parent_spacer);
 		} else {
 			// assuming if movetype != UP then it is DOWN
 			//    (ignoring LEFT, RIGHT, MIRROR_VERTICAL, etc. for now)
-			//      System.out.println("moving down");
 			child.moveAbsolute(childbox.x, pbox.y + parent_spacer);
 		}
 		childbox = child.getCoordBox();
+		List<GlyphI> sibsinrange = null;
+		boolean childMoved = true;
 		List<GlyphI> sibs = parent.getChildren();
 		if (sibs == null) {
 			return null;
 		}
-		List<GlyphI> sibsinrange = null;
-		boolean childMoved = true;
 		if (avoid_sibs) {
 			sibsinrange = new ArrayList<GlyphI>();
 			int sibs_size = sibs.size();
@@ -321,6 +318,13 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 		} else {
 			childMoved = false;
 		}
+		moveToAvoid(childMoved, sibsinrange, child, view);
+		adjustTierBounds(child, parent, pbox, childbox);
+
+		return null;
+	}
+
+	private void moveToAvoid(boolean childMoved, List<GlyphI> sibsinrange, GlyphI child, ViewI view) {
 		while (childMoved) {
 			childMoved = false;
 			int sibsinrange_size = sibsinrange.size();
@@ -329,7 +333,7 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 				if (sibling == child) {
 					continue;
 				}
-				siblingbox = sibling.getCoordBox();
+				Rectangle2D.Double siblingbox = sibling.getCoordBox();
 				if (DEBUG_CHECKS) {
 					System.out.println("checking against: " + sibling);
 				}
@@ -347,7 +351,9 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 				}
 			}
 		}
+	}
 
+	private void adjustTierBounds(GlyphI child, GlyphI parent, Double pbox, Double childbox) {
 		// adjusting tier bounds to encompass child (plus spacer)
 		// maybe can get rid of this now?
 		//   since also handled in pack(parent, view)
@@ -367,7 +373,5 @@ public class ExpandPacker implements PaddedPackerI, NeoConstants {
 				pbox.height = yend - pbox.y;
 			}
 		}
-
-		return null;
 	}
 }

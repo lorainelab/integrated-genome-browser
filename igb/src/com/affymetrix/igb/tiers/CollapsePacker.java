@@ -14,7 +14,6 @@
 package com.affymetrix.igb.tiers;
 
 import java.awt.Rectangle;
-import java.util.*;
 import java.util.List;
 import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;

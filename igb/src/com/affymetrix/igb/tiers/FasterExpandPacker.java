@@ -1,21 +1,18 @@
 package com.affymetrix.igb.tiers;
 
-import java.awt.Rectangle;
-import java.util.*;
-
-import com.affymetrix.genoviz.util.NeoConstants;
-import com.affymetrix.genoviz.bioviews.*;
-
 import com.affymetrix.genometryImpl.util.DoubleList;
-import com.affymetrix.genoviz.widget.tieredmap.PaddedPackerI;
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import java.util.*;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 /**
  *
  *  A new packer for laying out children of a TierGlyph.
  *  <p>
- *  The successor to EfficientExpandPacker, which is in turn the successor to
- *  ExpandPacker.  FasterExpandPacker should be much faster (nearly linear time),
+ *  FasterExpandPacker should be faster than ExpandPacker (nearly linear time),
  *  but will only work provided that certain conditions are met:
  *     1. The list of children being packed into a parent must be sorted by
  *          ascending min (child.getCoordBox().x)
@@ -97,14 +94,9 @@ import java.awt.geom.Rectangle2D;
  *    to visually indicate pileup
  *</p>
  */
-public final class FasterExpandPacker extends EfficientExpandPacker
-		implements PaddedPackerI, NeoConstants {
+public final class FasterExpandPacker extends ExpandPacker {
 
 	int max_slots_allowed = 1000;
-
-	public int getMaxSlots() {
-		return max_slots_allowed;
-	}
 
 	/**
 	 *  Sets the maximum depth of glyphs to pack in the tier.
@@ -129,7 +121,7 @@ public final class FasterExpandPacker extends EfficientExpandPacker
 		constant_heights = b;
 	}
 
-	double getMaxChildHeight(GlyphI parent) {
+	private double getMaxChildHeight(GlyphI parent) {
 		double max = 0;
 		if (constant_heights) {
 			max = parent.getChild(0).getCoordBox().height;
@@ -142,7 +134,6 @@ public final class FasterExpandPacker extends EfficientExpandPacker
 		return max;
 	}
 
-	// PackerI interface (via inheritance from PaddedPackerI
 	@Override
 	public Rectangle pack(GlyphI parent, ViewI view) {
 		boolean REPORT_SLOT_CHECKS = false;
@@ -289,37 +280,5 @@ public final class FasterExpandPacker extends EfficientExpandPacker
 		packParent(parent);
 
 		return null;
-	}
-
-	private void packParent(GlyphI parent) {
-		List<GlyphI> sibs = parent.getChildren();
-		Rectangle2D.Double pbox = parent.getCoordBox();
-		Rectangle2D.Double newbox = new Rectangle2D.Double();
-		Rectangle2D.Double tempbox = new Rectangle2D.Double();
-		GlyphI child = (GlyphI) sibs.get(0);
-		newbox.setRect(pbox.x, child.getCoordBox().y, pbox.width, child.getCoordBox().height);
-		int sibs_size = sibs.size();
-		if (STRETCH_HORIZONTAL) {
-			for (int i = 1; i < sibs_size; i++) {
-				child = (GlyphI) sibs.get(i);
-				Rectangle2D.union(newbox, child.getCoordBox(), newbox);
-			}
-		} else {
-			for (int i = 1; i < sibs_size; i++) {
-				child = (GlyphI) sibs.get(i);
-				Rectangle2D.Double childbox = child.getCoordBox();
-				tempbox.setRect(newbox.x, childbox.y, newbox.width, childbox.height);
-				Rectangle2D.union(newbox, tempbox, newbox);
-			}
-		}
-		newbox.y = newbox.y - parent_spacer;
-		newbox.height = newbox.height + (2 * parent_spacer);
-
-		if (parent instanceof TransformTierGlyph) {
-			TransformTierGlyph transtier = (TransformTierGlyph) parent;
-			LinearTransform tier_transform = transtier.getTransform();
-			tier_transform.transform(newbox, newbox);
-		}
-		parent.setCoords(newbox.x, newbox.y, newbox.width, newbox.height);
 	}
 }

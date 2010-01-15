@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.apps.*;
 
 
 /**Container for a sorted RegionScoreText[].
@@ -39,13 +39,16 @@ public class RegionScoreTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedRegionScoreTexts[sortedRegionScoreTexts.length-1].start);
 		sliceInfo.setNumberRecords(sortedRegionScoreTexts.length);
 	}
-	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
+	/**Writes six or 12 column xxx.bed formatted lines to the PrintWriter*/
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedRegionScoreTexts.length; i++){
 			//chrom start stop name score strand
-			out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
+			//bed12?
+			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionScoreTexts[i].text);
+			if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+tokens[0] +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+			else out.println(chrom+"\t"+sortedRegionScoreTexts[i].start+"\t"+sortedRegionScoreTexts[i].stop+"\t"+sortedRegionScoreTexts[i].text +"\t"+ sortedRegionScoreTexts[i].score +"\t"+strand);
 		}
 	}
 

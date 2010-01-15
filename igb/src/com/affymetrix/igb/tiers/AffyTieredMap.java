@@ -194,8 +194,7 @@ public class AffyTieredMap extends NeoMap {
 							((mtg.getState() == TierGlyph.TierState.HIDDEN))) {
 				continue;
 			}
-			if (mtg instanceof TransformTierGlyph &&
-							((TransformTierGlyph) mtg).hasFixedPixelHeight()) {
+			if (mtg instanceof TransformTierGlyph) {
 				TransformTierGlyph transtier = (TransformTierGlyph) mtg;
 				transtier.fitToPixelHeight(this.getView());
 				fixed_pixel_height += transtier.getFixedPixHeight();

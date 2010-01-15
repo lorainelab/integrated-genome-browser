@@ -711,11 +711,13 @@ public class NeoTracer extends NeoContainerWidget
 			// Move the base calls out of the trace
 			// and add them directly.
 			this.base_count = trace.getBaseCount();
-			BaseCall[] b = trace.getActiveBaseCalls().getBaseCalls();
-			base_map.removeItem ( (GlyphI)base_glyphs );
-			base_calls_vector.clear();
-			base_glyphs.clear();
-			addBaseCalls( b, start );
+			if (trace.getActiveBaseCalls() != null) {
+				BaseCall[] b = trace.getActiveBaseCalls().getBaseCalls();
+				base_map.removeItem((GlyphI) base_glyphs);
+				base_calls_vector.clear();
+				base_glyphs.clear();
+				addBaseCalls(b, start);
+			}
 		}
 	}
 	

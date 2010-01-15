@@ -8,7 +8,7 @@ public class GlyphMinYComparator implements Comparator<GlyphI> {
 	public int compare(GlyphI g1, GlyphI g2) {
 		if (g1.getCoordBox().y < g2.getCoordBox().y) {
 			return -1;
-		} else if (g2.getCoordBox().y > g1.getCoordBox().y) {
+		} else if (g1.getCoordBox().y > g2.getCoordBox().y) {
 			return 1;
 		} else {
 			return 0;

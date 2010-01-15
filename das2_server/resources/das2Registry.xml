@@ -121,7 +121,7 @@
 		<serverImplementation>GenoViz Genometry Classic</serverImplementation>
 		
 		<!-- Free text description of the server and its contents -->
-		<serverDescription>Serves a variety of annotations for many species with an emphasis on plants.</serverDescription>
+		<serverDescription>Serves public and private (GenAu only) NGS and chip-chip data mostly for mouse and human</serverDescription>
 		
 		<!-- What organization is administering this server -->
 		<contactOrganization>GEN-AU, Genome Research in Austria</contactOrganization>

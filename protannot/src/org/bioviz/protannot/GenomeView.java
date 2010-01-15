@@ -499,7 +499,7 @@ final class GenomeView extends JPanel implements MouseListener{
         }
 
         SeqSpan pSpan = SeqUtils.getOtherSpan(annot2mrna, mrna_span);
-        BioSeq protein = (BioSeq) pSpan.getBioSeq();
+        BioSeq protein = pSpan.getBioSeq();
 
 
         GlyphI aGlyph = new LineContainerGlyph();
@@ -808,7 +808,7 @@ final class GenomeView extends JPanel implements MouseListener{
                 }
             }
         }
-		Properties[] prop_array = (Properties[])propvec.toArray(new Properties[0]);
+		Properties[] prop_array = propvec.toArray(new Properties[0]);
         table_view.showProperties(prop_array);
     }
 

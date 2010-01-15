@@ -510,7 +510,7 @@ final class ProtAnnotMain implements WindowListener {
         while (matcher.find()) {
             ret.add(matcher.group(1));
         }
-        return (String[])ret.toArray(new String[0]);
+        return ret.toArray(new String[0]);
     }
 
     /**

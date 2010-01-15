@@ -1,10 +1,8 @@
 package com.affymetrix.genometryImpl.parsers.useq;
 import com.affymetrix.genometryImpl.parsers.useq.data.*;
-
 import java.io.*;
 import java.util.zip.*;
 import java.util.*;
-import java.util.regex.*;
 
 /**Class for parsing USeq binary files for DAS2 requests and writing the data to stream. A USeqArchive is created upon request for a USeq data file
  * this should be cached to speed up subsequent retrieval.

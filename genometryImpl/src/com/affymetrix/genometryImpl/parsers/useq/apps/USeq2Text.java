@@ -3,13 +3,10 @@ import java.io.*;
 import java.util.regex.*;
 import java.util.zip.*;
 import java.util.*;
-
 import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
-
-
-/**Converts USeq binary archives to text six column bed format.*/
+/**Converts USeq binary archives to text 6 or 12 column bed format.*/
 public class USeq2Text {
 
 	//fields

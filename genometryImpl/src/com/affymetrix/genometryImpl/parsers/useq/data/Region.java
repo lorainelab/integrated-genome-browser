@@ -1,12 +1,17 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.Serializable;
 import java.util.*;
+import com.affymetrix.genometryImpl.parsers.useq.*;
 
 
 /**
  * Simple start stop object. Assumes interbase coordinates. 
  * @author david.nix@hci.utah.edu*/
-public class Region implements Comparable<Region> {
+public class Region implements Comparable<Region>, Serializable {
 	//fields
+	private static final long serialVersionUID = 1L;
 	protected int start;
 	protected int stop;
 	
@@ -112,11 +117,11 @@ public class Region implements Comparable<Region> {
 	 * @param bed file, skips empty lines and those starting with '#'
 	 * @param subStart and subEnd are the number to subtract from the ends of each region
 	 * @return a HashMap<Chr,sorted Region[]> or null in none are found
-	 * *
+	 * */
 	public static HashMap<String,Region[]> parseStartStops (File bedFile, int subStart, int subEnd){
 		HashMap<String,ArrayList<Region>> ss = new HashMap<String,ArrayList<Region>>();
 		try{
-			BufferedReader in = IO.fetchBufferedReader(bedFile);
+			BufferedReader in = USeqUtilities.fetchBufferedReader(bedFile);
 			String line;
 			String[] tokens;
 			ArrayList<Region> al = new ArrayList<Region>();
@@ -157,7 +162,7 @@ public class Region implements Comparable<Region> {
 	}
 	
 	public int getMiddle(){
-		return Num.calculateMiddleIntergenicCoordinates(start, stop);
-	}*/
+		return USeqUtilities.calculateMiddleIntergenicCoordinates(start, stop);
+	}
 
 }

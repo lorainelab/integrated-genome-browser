@@ -285,13 +285,6 @@ public interface GlyphI extends NeoConstants  {
 	 */
 	public boolean isSelected();
 
-
-	/**
-	 * Searches children for hits and add them to the pick vector.
-	 * @param pickvec modified by this routine to return the results
-	 */
-	public void pickTraversal(Rectangle pickrect, List<GlyphI> pickvec, ViewI view);
-
 	/**
 	 * Searches children for hits and add them to the pick vector.
 	 * @param pickvec modified by this routine to return the results

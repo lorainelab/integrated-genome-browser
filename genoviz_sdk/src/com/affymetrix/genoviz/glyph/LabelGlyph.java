@@ -221,13 +221,6 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 		pixelbox.width += 4;
 	}
 
-
-	public boolean intersects(Rectangle rect, ViewI view) {
-		this.calcPixels(view);
-		return super.intersects(rect, view);
-	}
-
-
 	public boolean intersects(Rectangle2D.Double rect, ViewI view) {
 		this.calcPixels(view);
 		this.coordbox = view.transformToCoords(this.pixelbox, this.coordbox);
@@ -430,33 +423,6 @@ public class LabelGlyph extends Glyph implements NeoConstants  {
 			}
 			if (children != null)  {
 				GlyphI child;
-				int childnum = children.size();
-				for (int i=0; i<childnum; i++) {
-					child = children.get(i);
-					child.pickTraversal(pickRect, pickList, view);
-				}
-			}
-		}
-	}
-
-	/**
-	 * We override the superclass's version of this method
-	 * so that we can add both the labeling (this) and labeled glyph
-	 * to the pickList.
-	 */
-	public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList,
-			ViewI view)
-	{
-		if (isVisible && intersects(pickRect, view))  {
-			if (hit(pickRect, view))  {
-				pickList.add(this);
-				if (null != this.labeled && !pickList.contains(this.labeled)) {
-					pickList.add(this.labeled);
-				}
-			}
-			if (children != null)  {
-				GlyphI child;
-				// We avoid object creation overhead by avoiding Enumeration.
 				int childnum = children.size();
 				for (int i=0; i<childnum; i++) {
 					child = children.get(i);

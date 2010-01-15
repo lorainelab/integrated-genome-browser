@@ -1,25 +1,9 @@
-/**
-*   Copyright (c) 2001-2006 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.glyph.FillRectGlyph;
-import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
@@ -39,8 +23,6 @@ import java.util.*;
  *
  */
 public final class TransformTierGlyph extends TierGlyph {
-  private static final boolean DEBUG_PICK_TRAVERSAL = false;
-
   /*
    *  if fixed_pixel_height == true,
    *    then adjust transform during pack, etc. to keep tier
@@ -60,8 +42,6 @@ public final class TransformTierGlyph extends TierGlyph {
 
   // for caching in pickTraversal() methods
   private Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
-  // for caching in pickTraversal(pixbox, picks, view) method
-  private Rectangle2D.Double pix_rect = new Rectangle2D.Double();
   
   public TransformTierGlyph(IAnnotStyle style)  {
     super(style);
@@ -71,6 +51,7 @@ public final class TransformTierGlyph extends TierGlyph {
     return tier_transform;
   }
 
+	@Override
   public void drawChildren(ViewI view) {
 
     // MODIFY VIEW
@@ -81,26 +62,9 @@ public final class TransformTierGlyph extends TierGlyph {
     // should allow for arbitrarily deep nesting of transforms too, since cumulative
     //     transform is set to be view transform, and view transform is restored after draw...
 
-    // should just copy values instead of creating new object every time,
-    //    but for now just creating new object for convenience
-    //    modified_view_transform = new LinearTransform(incoming_view_transform);
-
-    //    modified_view_transform = new LinearTransform(incoming_view_transform);
-    //    modified_view_transform.append(tier_transform);
-    //    modified_view_transform.prepend(tier_transform);
-    //    view.setTransform(modified_view_transform);
-    //    view.setTransform(tier_transform);
-
-    // should switch soon to doing this completely through
-    //    LinearTransform calls, and eliminate new AffineTransform creation...
     AffineTransform trans2D = new AffineTransform();
     trans2D.translate(0.0, incoming_view_transform.getTranslateY());
     trans2D.scale(1.0, incoming_view_transform.getScaleY());
-
-    //    trans2D.translate(1.0, this.getCoordBox().y);
-    //    System.out.println("tier transform: offset = " + tier_transform.getOffsetY() +
-    //    		       ", scale = " + tier_transform.getScaleY());
-
     trans2D.translate(1.0, tier_transform.getTranslateY());
     trans2D.scale(1.0, tier_transform.getScaleY());
 
@@ -134,7 +98,6 @@ public final class TransformTierGlyph extends TierGlyph {
     }
     yscale = yscale / view_transform.getScaleY();
     LinearTransform.setScaleY(tier_transform, tier_transform.getScaleY() * yscale );
- 
 
     coordbox.height = coordbox.height * yscale;
   }
@@ -147,7 +110,7 @@ public final class TransformTierGlyph extends TierGlyph {
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
 
-    // copied form first part of Glyph.pickTraversal()
+    // copied from first part of Glyph.pickTraversal()
     if (isVisible && intersects(pickRect, view))  {
       if (hit(pickRect, view))  {
         if (!pickList.contains(this)) {
@@ -169,36 +132,9 @@ public final class TransformTierGlyph extends TierGlyph {
           child.pickTraversal(internal_pickRect, pickList, view );
         }
       }
-      if (DEBUG_PICK_TRAVERSAL)  { debugLocation(pickRect); }
     }
 
   }
-
-
-  // NOT YET TESTED
-	@Override
-  public void pickTraversal(Rectangle pickRect, List<GlyphI> pickList,
-                            ViewI view) {
-    if (isVisible && intersects(pickRect, view))  {
-      if (hit(pickRect, view))  {
-        if (!pickList.contains(this)) {
-          pickList.add(this);
-        }
-      }
-      if (children != null)  {
-	// recast to pickTraversal() with coord box rather than pixel box
-	pix_rect.setRect(pickRect.x, pickRect.y, pickRect.width, pickRect.height);
-	LinearTransform.inverseTransform(tier_transform, pix_rect, internal_pickRect);
-        GlyphI child;
-        int childnum = children.size();
-        for (int i=0; i<childnum; i++) {
-          child = children.get(i);
-          child.pickTraversal(internal_pickRect, pickList, view);
-        }
-      }
-    }
-  }
-
 
   // don't move children! just change tier's transform offset
 	@Override
@@ -206,21 +142,6 @@ public final class TransformTierGlyph extends TierGlyph {
     coordbox.x += diffx;
     coordbox.y += diffy;
     LinearTransform.setTranslateY(tier_transform, tier_transform.getTranslateY() + diffy);
-  }
-
-
-  public void debugLocation(Rectangle2D.Double pickRect) {
-    // just for debugging
-    LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
-    GlyphI pick_glyph = new FillRectGlyph();
-    pick_glyph.setCoords(internal_pickRect.x, internal_pickRect.y,
-			 internal_pickRect.width, internal_pickRect.height);
-    System.out.println("pick at: ");
-    System.out.println("view coords: " + pickRect);
-    System.out.println("tier coords: " + internal_pickRect);
-
-    pick_glyph.setColor(Color.black);
-    this.addChild(pick_glyph);
   }
 
   public boolean hasFixedPixelHeight() {

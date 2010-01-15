@@ -240,11 +240,6 @@ public class Scene implements SceneI  {
 		eveGlyph.pickTraversal(coordrect, pickvect, view);
 	}
 
-	public void pickTraversal(Rectangle coordrect, List<GlyphI> pickvect,
-			ViewI view) {
-		eveGlyph.pickTraversal(coordrect, pickvect, view);
-	}
-
 	/**
 	 * Sets visibility for a partiuclar glyph in the scene.
 	 * @param glyph the glyph to set.

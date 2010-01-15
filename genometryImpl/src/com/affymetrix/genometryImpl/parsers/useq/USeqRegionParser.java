@@ -8,8 +8,9 @@ import java.util.zip.ZipInputStream;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.parsers.useq.data.*;
+import java.util.regex.*;
+import com.affymetrix.genometryImpl.parsers.BedParser;
 
 /**For parsing binary USeq region data into GenViz display objects.
  * @author david.nix@hci.utah.edu*/
@@ -22,6 +23,8 @@ public final class USeqRegionParser  {
 	private boolean addAnnotationsToSeq;
 	private ArchiveInfo archiveInfo;
 	private SliceInfo sliceInfo;
+	public static final Pattern TAB = Pattern.compile("\\t");
+	private static final Pattern COMMA = Pattern.compile(",");
 
 
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup group, String stream_name, boolean addAnnotationsToSeq, ArchiveInfo ai) throws IOException {		
@@ -209,8 +212,42 @@ public final class USeqRegionParser  {
 		RegionText[] r = pd.getRegionTexts();
 		float score = Float.NEGATIVE_INFINITY; // Float.NEGATIVE_INFINITY signifies that score is not used
 		for (int i=0; i< r.length; i++){
-			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), r[i].getText(), score, forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			SymWithProps bedline_sym;
+			//check to see if this is a bed 12
+			//bed12?
+			String[] tokens = TAB.split(r[i].getText());
+			//yes
+			if (tokens.length == 7){
+				int min = r[i].getStart();
+				int max = r[i].getStop();
+				String annot_name = tokens[0];
+				// thickStart field
+				int thick_min = Integer.parseInt(tokens[1]);
+				// thickEnd field
+				int thick_max = Integer.parseInt(tokens[2]);
+				// itemRgb skip
+				// blockCount
+				int blockCount = Integer.parseInt(tokens[4]); 
+				// blockSizes
+				int[] blockSizes = BedParser.parseIntArray(tokens[5]);
+				if (blockCount != blockSizes.length) {
+					System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq);
+					return;
+				}
+				// blockStarts
+				int[] blockStarts = BedParser.parseIntArray(tokens[6]); 
+				if (blockCount != blockStarts.length) {
+					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq);
+					return;
+				}
+				int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
+				int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
+				bedline_sym = new UcscBedSym(nameOfTrack, seq, min, max, annot_name, score, forward, thick_min, thick_max, blockMins, blockMaxs);
+			}
+			//no
+			else {
+				bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), r[i].getText(), score, forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			}
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
 			//if (indexNames) seq_group.addToIndex(nameText, bedline_sym);
@@ -226,8 +263,42 @@ public final class USeqRegionParser  {
 		//add syms
 		RegionScoreText[] r = pd.getRegionScoreTexts();
 		for (int i=0; i< r.length; i++){
-			//TODO: rewrite to use a zero child just props Sym see BedParser b.s., this is way inefficient!
-			SymWithProps bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), r[i].getText(), r[i].getScore(), forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			SymWithProps bedline_sym;
+			//check to see if this is a bed 12
+			//bed12?
+			String[] tokens = TAB.split(r[i].getText());
+			//yes
+			if (tokens.length == 7){
+				int min = r[i].getStart();
+				int max = r[i].getStop();
+				String annot_name = tokens[0];
+				// thickStart field
+				int thick_min = Integer.parseInt(tokens[1]);
+				// thickEnd field
+				int thick_max = Integer.parseInt(tokens[2]);
+				// itemRgb skip
+				// blockCount
+				int blockCount = Integer.parseInt(tokens[4]); 
+				// blockSizes
+				int[] blockSizes = BedParser.parseIntArray(tokens[5]);
+				if (blockCount != blockSizes.length) {
+					System.out.println("WARNING: block count does not agree with block sizes.  Ignoring " + annot_name + " on " + seq);
+					return;
+				}
+				// blockStarts
+				int[] blockStarts = BedParser.parseIntArray(tokens[6]); 
+				if (blockCount != blockStarts.length) {
+					System.out.println("WARNING: block size does not agree with block starts.  Ignoring " + annot_name + " on " + seq);
+					return;
+				}
+				int[] blockMins = BedParser.makeBlockMins(min, blockStarts);
+				int[] blockMaxs = BedParser.makeBlockMaxs(blockSizes, blockMins);
+				bedline_sym = new UcscBedSym(nameOfTrack, seq, min, max, annot_name, r[i].getScore(), forward, thick_min, thick_max, blockMins, blockMaxs);
+			}
+			//no
+			else {
+				bedline_sym = new UcscBedSym(nameOfTrack, seq, r[i].getStart(), r[i].getStop(), r[i].getText(), r[i].getScore(), forward, Integer.MIN_VALUE, Integer.MIN_VALUE, new int[]{r[i].getStart()}, new int[]{r[i].getStop()});
+			}
 			symlist.add(bedline_sym);
 			if (addAnnotationsToSeq) seq.addAnnotation(bedline_sym);
 			//if (indexNames) seq_group.addToIndex(nameScoreText, bedline_sym);
@@ -250,6 +321,8 @@ public final class USeqRegionParser  {
 		String strand = sliceInfo.getStrand();
 		return strand.equals("+") || strand.equals(".");
 	}
+	
+	
 
 }
 

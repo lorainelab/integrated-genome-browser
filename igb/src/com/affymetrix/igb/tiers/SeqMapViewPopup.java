@@ -556,7 +556,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     gsym.setGraphName("depth: " + atier.getLabel());
     aseq.addAnnotation(gsym);
     gviewer.setAnnotatedSeq(aseq, true, true);
-    GraphGlyph gl = (GraphGlyph)((SeqMapView)gviewer).getSeqMap().getItem(gsym);
+    GraphGlyph gl = (GraphGlyph)gviewer.getSeqMap().getItem(gsym);
     gl.setGraphStyle(GraphType.STAIRSTEP_GRAPH);
     gl.setColor(atier.getForegroundColor());
   }

@@ -1,18 +1,6 @@
-/**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.tiers;
 
+import com.affymetrix.genoviz.comparator.GlyphMinXComparator;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -41,8 +29,7 @@ public class TierGlyph extends SolidGlyph {
   // extending solid glyph to inherit hit methods (though end up setting as not hitable by default...)
   private boolean sorted = true;
   private boolean ready_for_searching = false;
-  private static final Comparator<GlyphI> child_sorter = new GlyphMinComparator();
-//  protected int direction = DIRECTION_NONE;
+  private static final Comparator<GlyphI> child_sorter = new GlyphMinXComparator();
   protected Direction direction = Direction.NONE;
 
   /** glyphs to be drawn in the "middleground" --
@@ -52,10 +39,6 @@ public class TierGlyph extends SolidGlyph {
   private final List<GlyphI> middle_glyphs = new ArrayList<GlyphI>();
 
   public static enum TierState { HIDDEN, COLLAPSED, EXPANDED, FIXED_COORD_HEIGHT};
-  //public static final int HIDDEN = 100;
-  //public static final int COLLAPSED = 101;
-  //public static final int EXPANDED = 102;
-  //public static final int FIXED_COORD_HEIGHT = 103;
 
   public static enum Direction { FORWARD, NONE, REVERSE, BOTH, AXIS};
 
@@ -89,8 +72,8 @@ public class TierGlyph extends SolidGlyph {
 
   private static final Font default_font = new Font("Monospaced", Font.PLAIN, 12);
 
-  private PackerI expand_packer = new FasterExpandPacker();
-  private PackerI collapse_packer = new CollapsePacker();
+  private ExpandPacker expand_packer = new FasterExpandPacker();
+  private CollapsePacker collapse_packer = new CollapsePacker();
 
   private List<GlyphI> max_child_sofar = null;
 
@@ -177,6 +160,7 @@ public class TierGlyph extends SolidGlyph {
   }
 
 
+	@Override
   public void addChild(GlyphI glyph, int position) {
     throw new RuntimeException("TierGlyph.addChild(glyph, position) not allowed, " +
 			       "use TierGlyph.addChild(glyph) instead");
@@ -184,6 +168,7 @@ public class TierGlyph extends SolidGlyph {
 
   // overriding addChild() to keep track of whether children are sorted
   //    by ascending min
+	@Override
   public void addChild(GlyphI glyph) {
     int count = this.getChildCount();
     if (count <= 0) {
@@ -266,11 +251,11 @@ public class TierGlyph extends SolidGlyph {
   }
 
 
-  public void setLabel(String str) {
+  public final void setLabel(String str) {
     label = str;
   }
 
-  public String getLabel() {
+  public final String getLabel() {
     return label;
   }
 
@@ -285,37 +270,30 @@ public class TierGlyph extends SolidGlyph {
   }
 
   // overriding pack to ensure that tier is always the full width of the scene
-  public void pack(ViewI view) {
-    int cycles = 1;
-    for (int i=0; i<cycles; i++) {
-      initForSearching();
-      super.pack(view);
-      Rectangle2D.Double mbox = scene.getCoordBox();
-      Rectangle2D.Double cbox = this.getCoordBox();
-
-      if (shouldDrawLabel()) {
-        // Add extra space to make room for the label.
-
-        // Although the space SHOULD be computed based on font metrics, etc,
-        // that doesn't really work any better than a fixed coord value
-        this.setCoords(mbox.x, cbox.y - 6, mbox.width, cbox.height + 6);
-      } else {
-        this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
-      }
-      //    if (isTimed && label.startsWith("whatever (+)")) {
-    }
-  }
-
 	@Override
-  public void drawTraversal(ViewI view) {
-    super.drawTraversal(view);
-  }
+	public void pack(ViewI view) {
+		initForSearching();
+		super.pack(view);
+		Rectangle2D.Double mbox = scene.getCoordBox();
+		Rectangle2D.Double cbox = this.getCoordBox();
+
+		if (shouldDrawLabel()) {
+			// Add extra space to make room for the label.
+
+			// Although the space SHOULD be computed based on font metrics, etc,
+			// that doesn't really work any better than a fixed coord value
+			this.setCoords(mbox.x, cbox.y - 6, mbox.width, cbox.height + 6);
+		} else {
+			this.setCoords(mbox.x, cbox.y, mbox.width, cbox.height);
+		}
+	}
 
   /**
    *  Overriden to allow background shading by a collection of non-child
    *    "middleground" glyphs.  These are rendered after the solid background but before
    *    all of the children (which could be considered the "foreground").
    */
+	@Override
   public void draw(ViewI view) {
     view.transformToPixels(coordbox, pixelbox);
     pixelbox.width = Math.max ( pixelbox.width, min_pixels_width );
@@ -356,8 +334,6 @@ public class TierGlyph extends SolidGlyph {
       g.drawRect(pixelbox.x, pixelbox.y,
 		 pixelbox.width-1, pixelbox.height);
     }
-    // not messing with clipbox until need to
-    //        g.setClip ( oldClipbox );
 
     if (! style.isGraphTier()) {
       // graph tiers take care of drawing their own handles and labels.
@@ -423,6 +399,7 @@ public class TierGlyph extends SolidGlyph {
    *  Remove all children of the glyph, including those added with
    *  addMiddleGlyph(GlyphI).
    */
+	@Override
   public void removeAllChildren() {
     super.removeAllChildren();
     // also remove all middleground glyphs
@@ -434,7 +411,7 @@ public class TierGlyph extends SolidGlyph {
     middle_glyphs.clear();
   }
 
-  public void setState(TierState newstate) {
+  public final void setState(TierState newstate) {
     if (newstate == TierState.EXPANDED) {
       setPacker(expand_packer);
       setVisibility(true);
@@ -453,11 +430,11 @@ public class TierGlyph extends SolidGlyph {
   }
 
   /** Equivalent to setVisibility(true). */
-  public void restoreState() {
+  public final void restoreState() {
     setVisibility(true);
   }
 
-  public TierState getState() {
+  public final TierState getState() {
 	  if (!isVisible()) {
 		  return TierState.HIDDEN;
 	  }
@@ -470,24 +447,20 @@ public class TierGlyph extends SolidGlyph {
 	  return TierState.FIXED_COORD_HEIGHT;
   }
 
-  public PackerI getExpandedPacker() {
+  private PackerI getExpandedPacker() {
     return expand_packer;
-  }
-
-  public PackerI getCollapsedPacker() {
-    return collapse_packer;
   }
 
   /** Sets the expand packer.  Note that you are responsible for setting
    *  any properties of the packer, such as those based on the AnnotStyle.
    */
-  public void setExpandedPacker(PackerI packer) {
+  public final void setExpandedPacker(ExpandPacker packer) {
     this.expand_packer = packer;
     setSpacer(getSpacer());
     setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
   }
 
-  public void setCollapsedPacker(PackerI packer) {
+  public final void setCollapsedPacker(CollapsePacker packer) {
     this.collapse_packer = packer;
     setSpacer(getSpacer());
     setStyle(getAnnotStyle()); // make sure the correct packer is used, and that its properties are set
@@ -529,11 +502,13 @@ public class TierGlyph extends SolidGlyph {
 
 
   // very, very deprecated
+	@Override
   public Color getColor() {
     return getForegroundColor();
   }
 
   // very, very deprecated
+	@Override
   public void setColor(Color c) {
     setForegroundColor(c);
   }
@@ -545,25 +520,25 @@ public class TierGlyph extends SolidGlyph {
     return style.getBackground();
   }
 
+	@Override
   public void setForegroundColor(Color color) {
     if (style.getColor() != color) {
       style.setColor(color);
     }
-    //super.setForegroundColor(color);
-    //super.setColor(color); // NO: super.setColor calls setBackgroundColor()
-  }
+   }
 
+	@Override
   public Color getForegroundColor() {
     return style.getColor();
   }
 
+	@Override
   public void setBackgroundColor(Color color) {
-    //super.setBackgroundColor(color);
     setFillColor(color);
   }
 
+	@Override
   public Color getBackgroundColor() {
-    //return super.getBackgroundColor();
     return getFillColor();
   }
 
@@ -596,11 +571,13 @@ public class TierGlyph extends SolidGlyph {
   }
 
   /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
+	@Override
   protected void drawSelectedFill(ViewI view) {
     this.drawSelectedOutline(view);
   }
 
   /** Not implemented.  Will behave the same as drawSelectedOutline(ViewI). */
+	@Override
   protected void drawSelectedReverse(ViewI view) {
     this.drawSelectedOutline(view);
   }

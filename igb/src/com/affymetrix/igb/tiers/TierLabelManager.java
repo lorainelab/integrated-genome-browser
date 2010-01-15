@@ -1,16 +1,3 @@
-/**
-*   Copyright (c) 2001-2007 Affymetrix, Inc.
-*
-*   Licensed under the Common Public License, Version 1.0 (the "License").
-*   A copy of the license must be included with any distribution of
-*   this source code.
-*   Distributions from Affymetrix, Inc., place this in the
-*   IGB_LICENSE.html file.
-*
-*   The license is also available at
-*   http://www.opensource.org/licenses/cpl.php
-*/
-
 package com.affymetrix.igb.tiers;
 
 import java.awt.event.*;
@@ -23,10 +10,10 @@ import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import java.awt.geom.Rectangle2D;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -35,15 +22,15 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public final class TierLabelManager {
 
-  private AffyLabelledTierMap tiermap;
-  private AffyTieredMap labelmap;
-  private JPopupMenu popup;
+  private final AffyLabelledTierMap tiermap;
+  private final AffyTieredMap labelmap;
+  private final JPopupMenu popup;
 
-  private int xoffset_pop = 10;
-  private int yoffset_pop = 0;
+  private final static int xoffset_pop = 10;
+  private final static int yoffset_pop = 0;
 
 
-  private Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
+  private final Set<PopupListener> popup_listeners = new CopyOnWriteArraySet<PopupListener>();
   
 
   /**
@@ -87,10 +74,7 @@ public final class TierLabelManager {
 
   /** Selects all non-hidden tiers. */
   void selectAllTiers()  {
-    List<TierLabelGlyph> labels = getAllTierLabels();
-    int tiercount = labels.size();
-    for (int i=0; i<tiercount; i++) {
-      TierLabelGlyph tierlabel = labels.get(i);
+    for (TierLabelGlyph tierlabel : getAllTierLabels()) {
       if (tierlabel.getReferenceTier().getAnnotStyle().getShow()) {
         labelmap.select(tierlabel);
       }
@@ -113,16 +97,12 @@ public final class TierLabelManager {
       return;
     }
 
-    List<TierLabelGlyph> labels = getAllTierLabels();
-    //boolean selections_changed = false;
-    
     GenometryModel gmodel = GenometryModel.getGenometryModel();
     
     ArrayList<SeqSymmetry> symmetries = new ArrayList<SeqSymmetry>();
     symmetries.addAll(gmodel.getSelectedSymmetriesOnCurrentSeq());
 
-    for (int j = 0; j<getAllTierLabels().size(); j++) {
-      TierLabelGlyph tierlabel = labels.get(j);
+    for (TierLabelGlyph tierlabel : getAllTierLabels()) {
       TierGlyph tg = tierlabel.getReferenceTier();
       int child_count = tg.getChildCount();
       if (child_count > 0 && tg.getChild(0) instanceof GraphGlyph) {
@@ -148,35 +128,30 @@ public final class TierLabelManager {
           if (tierlabel.isSelected()) {
             if (! symmetries.contains(sym)) {
               symmetries.add(sym);
-              //selections_changed = true;
             }
           } else if (symmetries.contains(sym)) {
             symmetries.remove(sym);
-            //selections_changed = true;
           }
         }
       }
     }
 
-    //if (selections_changed) {
       gmodel.setSelectedSymmetries(symmetries, tiermap);
-    //}
   }
 
   /** Gets all the GraphGlyph objects inside the given list of TierLabelGlyph's. */
-  public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
-    List<GraphGlyph> result = new ArrayList<GraphGlyph>();
+	public static List<GraphGlyph> getContainedGraphs(List<TierLabelGlyph> tier_label_glyphs) {
+		List<GraphGlyph> result = new ArrayList<GraphGlyph>();
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
-      result.addAll(getContainedGraphs(tlg));
-    }
-    return result;
-  }
+			result.addAll(getContainedGraphs(tlg));
+		}
+		return result;
+	}
   
   /** Gets all the GraphGlyph objects inside the given TierLabelGlyph. */
   private static List<GraphGlyph> getContainedGraphs(TierLabelGlyph tlg) {
     ArrayList<GraphGlyph> result = new ArrayList<GraphGlyph>();
     TierGlyph tier = (TierGlyph) tlg.getInfo();
-    //IAnnotStyle style = tier.getAnnotStyle();
     int child_count = tier.getChildCount();
     if ( child_count > 0 && tier.getChild(0) instanceof GraphGlyph) {
       for (int j=0; j<child_count; j++) {
@@ -260,20 +235,7 @@ public final class TierLabelManager {
     tiermap.updateWidget();
   }
   
-  /** Comparator class needed to sort tiers based on label placement. */
-  private final class MinYSorter implements Comparator<GlyphI> {
-    public int compare(GlyphI glyph1, GlyphI glyph2) {
-      Rectangle2D.Double box1 = glyph1.getCoordBox();
-      Rectangle2D.Double box2 = glyph2.getCoordBox();
-      if (box1.y < box2.y) { return -1; }
-      else if (box1.y > box2.y) { return 1; }
-      else { return 0; }
-    }
-  }
-  
-  private Comparator<GlyphI> ysorter = new MinYSorter();
-  
-  private Comparator<GlyphI> tier_sorter = ysorter;
+  private Comparator<GlyphI> tier_sorter = new GlyphMinYComparator();
   
   
   /**

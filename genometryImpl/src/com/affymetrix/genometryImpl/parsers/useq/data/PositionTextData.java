@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.apps.*;
 
 /**Container for a sorted PositionText[].
  * @author david.nix@hci.utah.edu*/
@@ -38,13 +38,16 @@ public class PositionTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedPositionTexts[sortedPositionTexts.length-1].position);
 		sliceInfo.setNumberRecords(sortedPositionTexts.length);
 	}
-	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
+	/**Writes 6 or 12 column xxx.bed formatted lines to the PrintWriter*/
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedPositionTexts.length; i++){
 			//chrom start stop name score strand
-			out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+sortedPositionTexts[i].text+"\t0\t"+strand);
+			//bed12?
+			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedPositionTexts[i].text);
+			if (tokens.length == 7) out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+tokens[0]+"\t0\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+			else out.println(chrom+"\t"+sortedPositionTexts[i].position+"\t"+(sortedPositionTexts[i].position + 1)+"\t"+sortedPositionTexts[i].text+"\t0\t"+strand);
 		}
 	}
 	/**Writes the PositionText[] to a binary file.

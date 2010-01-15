@@ -169,7 +169,6 @@ public final class OrfAnalyzer extends JComponent
 
 		fortier = new TransformTierGlyph(new DefaultIAnnotStyle());
 		fortier.setLabel("Stop Codons");
-		fortier.setFixedPixelHeight(true);
 		fortier.setFixedPixHeight(25);
 		fortier.setFillColor(Color.darkGray);
 		fortier.setDirection(TierGlyph.Direction.FORWARD);
@@ -177,7 +176,6 @@ public final class OrfAnalyzer extends JComponent
 
 		revtier = new TransformTierGlyph(new DefaultIAnnotStyle());
 		revtier.setLabel("Stop Codons");
-		revtier.setFixedPixelHeight(true);
 		revtier.setFixedPixHeight(25);
 		revtier.setFillColor(Color.darkGray);
 		revtier.setDirection(TierGlyph.Direction.REVERSE);

@@ -574,9 +574,7 @@ public class SeqMapView extends JPanel
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
 	private TransformTierGlyph addAxisTier(int tier_index) {
-
 		axis_tier = new TransformTierGlyph(getAxisAnnotStyle());
-		axis_tier.setFixedPixelHeight(true);
 		axis_tier.setFixedPixHeight(45);
 		axis_tier.setDirection(TierGlyph.Direction.AXIS);
 		AxisGlyph axis = seqmap.addAxis(0);

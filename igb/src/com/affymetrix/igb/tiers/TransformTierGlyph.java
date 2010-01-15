@@ -23,25 +23,18 @@ import java.util.*;
  *
  */
 public final class TransformTierGlyph extends TierGlyph {
-  /*
-   *  if fixed_pixel_height == true,
-   *    then adjust transform during pack, etc. to keep tier
-   *    same height in pixels
-   *  (assumes tier only appears in one map / scene)
-   */
-  private boolean fixed_pixel_height = false;
   private int fixedPixHeight = 1;
 
-  private LinearTransform tier_transform = new LinearTransform();
+  private final LinearTransform tier_transform = new LinearTransform();
 
   private LinearTransform modified_view_transform = new LinearTransform();
-  private Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
+  private final Rectangle2D.Double modified_view_coordbox = new Rectangle2D.Double();
 
   private LinearTransform incoming_view_transform;
   private Rectangle2D.Double incoming_view_coordbox;
 
   // for caching in pickTraversal() methods
-  private Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
+  private final Rectangle2D.Double internal_pickRect = new Rectangle2D.Double();
   
   public TransformTierGlyph(IAnnotStyle style)  {
     super(style);
@@ -85,7 +78,6 @@ public final class TransformTierGlyph extends TierGlyph {
     // RESTORE ORIGINAL VIEW
     view.setTransform(incoming_view_transform);
     view.setCoordBox(incoming_view_coordbox);
-
   }
 
   public void fitToPixelHeight(ViewI view) {
@@ -110,31 +102,27 @@ public final class TransformTierGlyph extends TierGlyph {
   public void pickTraversal(Rectangle2D.Double pickRect, List<GlyphI> pickList,
                             ViewI view)  {
 
-    // copied from first part of Glyph.pickTraversal()
-    if (isVisible && intersects(pickRect, view))  {
-      if (hit(pickRect, view))  {
-        if (!pickList.contains(this)) {
-          pickList.add(this);
-        }
-      }
+		if (!isVisible || !intersects(pickRect,view)) {
+			return;
+		}
+		if (hit(pickRect, view)) {
+			if (!pickList.contains(this)) {
+				pickList.add(this);
+			}
+		}
 
-      if (children != null)  {
-	// modify pickRect on the way in
-	//   (transform from view coords to local (tier) coords)
-	//    [ an inverse transform? ]
-	LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
+		if (children != null) {
+			// modify pickRect on the way in
+			//   (transform from view coords to local (tier) coords)
+			//    [ an inverse transform? ]
+			LinearTransform.inverseTransform(tier_transform, pickRect, internal_pickRect);
 
-	// copied from second part of Glyph.pickTraversal()
-        GlyphI child;
-        int childnum = children.size();
-        for ( int i = 0; i < childnum; i++ ) {
-          child = children.get( i );
-          child.pickTraversal(internal_pickRect, pickList, view );
-        }
-      }
-    }
+			for (GlyphI child : children) {
+				child.pickTraversal(internal_pickRect, pickList, view);
+			}
+		}
+	}
 
-  }
 
   // don't move children! just change tier's transform offset
 	@Override
@@ -142,14 +130,6 @@ public final class TransformTierGlyph extends TierGlyph {
     coordbox.x += diffx;
     coordbox.y += diffy;
     LinearTransform.setTranslateY(tier_transform, tier_transform.getTranslateY() + diffy);
-  }
-
-  public boolean hasFixedPixelHeight() {
-    return fixed_pixel_height;
-  }
-
-  public void setFixedPixelHeight(boolean b) {
-    fixed_pixel_height = b;
   }
 
   public void setFixedPixHeight(int pix_height) {

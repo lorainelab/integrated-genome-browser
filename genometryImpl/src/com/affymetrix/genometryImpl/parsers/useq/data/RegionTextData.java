@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import com.affymetrix.genometryImpl.parsers.useq.*;
+import com.affymetrix.genometryImpl.parsers.useq.apps.*;
 
 /**Container for a sorted RegionText[].
  * @author david.nix@hci.utah.edu*/
@@ -38,13 +38,17 @@ public class RegionTextData extends USeqData{
 		sliceInfo.setLastStartPosition(sortedRegionTexts[sortedRegionTexts.length-1].start);
 		sliceInfo.setNumberRecords(sortedRegionTexts.length);
 	}
-	/**Writes six column xxx.bed formatted lines to the PrintWriter*/
+	/**Writes 6 or 12 column xxx.bed formatted lines to the PrintWriter*/
 	public void writeBed (PrintWriter out){
 		String chrom = sliceInfo.getChromosome();
 		String strand = sliceInfo.getStrand();
 		for (int i=0; i< sortedRegionTexts.length; i++){
 			//chrom start stop name score strand
 			out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+ sortedRegionTexts[i].text +"\t0\t"+strand);
+			//bed12?
+			String[] tokens = Text2USeq.PATTERN_TAB.split(sortedRegionTexts[i].text);
+			if (tokens.length == 7) out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+ tokens[0] +"\t0\t"+strand+"\t"+tokens[1]+"\t"+tokens[2]+"\t"+tokens[3]+"\t"+tokens[4]+"\t"+tokens[5]+"\t"+tokens[6]);
+			else out.println(chrom+"\t"+sortedRegionTexts[i].start+"\t"+sortedRegionTexts[i].stop+"\t"+ sortedRegionTexts[i].text +"\t0\t"+strand);
 		}
 	}
 	/**Writes the RegionText[] to a binary file.  Each region's start/stop is converted to a running offset/length which are written as either ints or shorts.

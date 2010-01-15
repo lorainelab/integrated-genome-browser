@@ -128,6 +128,15 @@ public class USeqUtilities {
 		System.out.println (message);
 		System.exit(0);
 	}
+	/**Given a String of ints delimited by something, will parse or return null.*/
+	public static int[] stringArrayToInts(String s, String delimiter) throws NumberFormatException{
+		String[] tokens = s.split(delimiter);
+		int[] num = new int[tokens.length];
+			for (int i=0; i< tokens.length; i++){
+				num[i] = Integer.parseInt(tokens[i]);
+			}
+			return num;
+	}
 	/**Extracts the full path file names of all the files and directories in a given directory. If a file is given it is
 	 * returned as the File[0].
 	 * Skips files starting with a '.'*/
@@ -251,5 +260,26 @@ public class USeqUtilities {
 			return false;
 		}
 		return true;
+	}
+	/**Merges all files in File[][] to a File[].*/
+	public static File[] collapseFileArray(File[][] f){
+		ArrayList<File> al = new ArrayList<File>();
+		for (int i=0; i< f.length; i++){
+			if (f[i] != null){
+				for (int j=0; j< f[i].length; j++){
+					al.add(f[i][j]);
+				}
+			}
+		}
+		File[] files = new File[al.size()];
+		al.toArray(files);
+		return files;
+	}
+	/**Using interbase coordinates so length = stop - start.*/
+	public static int calculateMiddleIntergenicCoordinates(int start, int end){
+		if (start == end) return start;
+		double length = end - start;
+		double halfLength = length/2.0;
+		return (int)Math.round(halfLength) + start;
 	}
 }

@@ -13,7 +13,7 @@
 
 package com.affymetrix.genometryImpl.parsers;
 
-import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import java.io.*;
 
 
@@ -22,6 +22,7 @@ import com.affymetrix.genometryImpl.util.NibbleIterator;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.util.Collection;
 
 public final class NibbleResiduesParser {
 
@@ -88,11 +89,14 @@ public final class NibbleResiduesParser {
 			//      System.out.println("version: " + version);
 			int total_residues = dis.readInt();
 
-			start = start < 0 ? 0 : start;
-			end = end > total_residues ? total_residues: end;
+			start = Math.max(0,start);
+			start = Math.min(total_residues, start);
 
+			end = Math.max(0, end);
+			end = Math.min(total_residues, end);
+	
 			int num_residues = end - start;
-			num_residues = num_residues < 0 ? total_residues : num_residues;
+			//num_residues = num_residues < 0 ? total_residues : num_residues;
 
 			BioSeq existing_seq = seq_group.getSeq(name);
 			if (existing_seq != null) {
@@ -103,7 +107,7 @@ public final class NibbleResiduesParser {
 
 			System.out.println("NibbleBioSeq: " + result_seq);
 
-			SetResiduesIterator(start, num_residues,dis, result_seq);
+			SetResiduesIterator(start, end, dis, result_seq);
 
 			float read_time = tim.read()/1000f;
 			System.out.println("time to read in bnib residues file: " + read_time);
@@ -115,11 +119,29 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
-	private static void SetResiduesIterator(int start, int num_residues, DataInputStream dis, BioSeq result_seq) throws IOException {
+	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end, OutputStream output) throws IOException
+	{
+		BioSeq seq = parse(istr,seq_group,start,end);
+		return writeAnnotations(seq,output);
+	}
 
-		byte[] nibble_array = new byte[num_residues / 2 + num_residues % 2];
+	private static void SetResiduesIterator(int start, int end, DataInputStream dis, BioSeq result_seq) throws IOException {
+
+		int num_residues = end - start;
+		byte[] temp_array = null;
+		int extra = Math.max(end%2, num_residues%2);
+		temp_array = new byte[num_residues / 2 + extra];
+
+		//System.out.println("Start "+start);
+		//System.out.println("End   "+end);
+		//System.out.println("Len   "+num_residues);
 		dis.skipBytes(start/2);
-		dis.readFully(nibble_array);
+		dis.readFully(temp_array);
+		int first = start%2;
+		int last = first + num_residues;
+		String temp = NibbleIterator.nibblesToString(temp_array, first, last);
+		//System.out.println("Temp " + temp);
+		byte[] nibble_array = NibbleIterator.stringToNibbles(temp, 0, temp.length());
 		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
 		result_seq.setResiduesProvider(residues_provider);
 	}
@@ -230,7 +252,25 @@ public final class NibbleResiduesParser {
 		}
 	}
 
-	public static String getMimeType()  { return "binary/bnib"; }
+
+	public static boolean writeAnnotations(BioSeq seq, OutputStream outstream)
+	{
+		DataOutputStream dos = null;
+		try
+		{
+			dos = new DataOutputStream(outstream);
+			dos.writeBytes(seq.getResidues());
+			dos.flush();
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public String getMimeType() {
+		return "ASCI/text";
+	}
 
 }
 

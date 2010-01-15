@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import com.affymetrix.genometryImpl.parsers.useq.*;
+
 
 
 /**Container for a sorted PositionScore[] and it's associated meta data.
@@ -35,6 +35,52 @@ public class PositionScoreData extends USeqData implements Comparable <PositionS
 	}
 
 	//methods
+	
+	/**Writes slices of data to the save directory, adds the entries to the ArrayList.*/
+	public void sliceWritePositionScoreData(int rowChunkSize, File saveDirectory, ArrayList<File> files2Zip) throws IOException{
+		int beginningIndex = 0;
+		int endIndex = 0;
+		int numberPositions = sortedPositionScores.length;
+		while (true){
+			//find beginningIndex and endIndex(excluded) indexes
+			PositionScore[] slice;
+			//don't slice?
+			if (rowChunkSize == -1){
+				beginningIndex =0;
+				endIndex = numberPositions;
+				slice = sortedPositionScores;
+			}
+			//slice!
+			else {
+				beginningIndex = endIndex;
+				endIndex = beginningIndex + rowChunkSize;
+				if (endIndex > numberPositions) {
+					endIndex = numberPositions;
+				}
+				else {
+					//advance until position changes
+					int endBP = sortedPositionScores[endIndex-1].getPosition();
+					for (int i=endIndex; i< numberPositions; i++){
+						if (sortedPositionScores[i].getPosition() != endBP){
+							break;
+						}
+						endIndex++;
+					}
+				}
+				int num = endIndex - beginningIndex;
+				slice = new PositionScore[num];
+				System.arraycopy(sortedPositionScores, beginningIndex, slice, 0, num);
+			}
+			//update slice info
+			PositionScoreData.updateSliceInfo(slice, sliceInfo);
+			PositionScoreData pd = new PositionScoreData (slice, sliceInfo);
+			File savedFile = pd.write(saveDirectory, true);
+			files2Zip.add(savedFile);
+			//at the end of the data?
+			if (endIndex == numberPositions) break;
+		}
+	}
+	
 	/**Updates the SliceInfo setting just the FirstStartPosition, LastStartPosition, and NumberRecords.*/
 	public static void updateSliceInfo (PositionScore[] sortedPositionScores, SliceInfo sliceInfo){
 		sliceInfo.setFirstStartPosition(sortedPositionScores[0].position);

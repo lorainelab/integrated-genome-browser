@@ -1,9 +1,14 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import org.junit.Before;
@@ -12,55 +17,68 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author hiralv
+ * @author aloraine
  */
 public class NibbleFileParserTest {
 
 	String input_string = "AAAAAAAAAAACCCCCCCCCGGGGGGGGGTTTT";
 	String infile_name = "test/data/bnib/BNIB_chrQ.bnib";
-	String outfile_name = "test/data/bnib/bnibTest.bnib";
+	String outfile_name = "bnipoutput.txt";
 	String seq_version = "1.0";
 	String seq_name = "testseq";
-	File infile = new File(infile_name);
+	File infil = new File(infile_name);
 	StringBuffer sb;
 	InputStream isr;
-	int total_residues = input_string.length();
 
 	@Before
 	public void setup() throws Exception
 	{
-			assertTrue(infile.exists());
+			assertTrue(infil.exists());
+			sb = new StringBuffer();
+			isr = GeneralUtils.getInputStream(infil, sb);
 	}
 
 	@Test
-	public void testCases() throws Exception
+	public void fileLoadingAndFileWriting() throws Exception
 	{
-		testCase(0,input_string.length());
-		testCase(4,18);						// even, even
-		testCase(6,7);						// even, odd
-		testCase(1,4);						// odd , even
-		testCase(1,5);						// odd , odd
-		testCase(-1,3);
-		testCase(11,total_residues+4);
-		testCase(-5,total_residues+5);
+		BioSeq seq = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test File"));
+		assertTrue(seq.getResidues().equals(input_string));
+		System.out.println(input_string + " == " + seq.getResidues());
 	}
 
-	public void testCase(int start, int end) throws Exception
+	@Test
+	public void randomLoadTest1() throws Exception
 	{
-		sb = new StringBuffer();
-		isr = GeneralUtils.getInputStream(infile, sb);
-		ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-		boolean result = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test"),start,end,outstream);
-
-		start = Math.max(0,start);
-		start = Math.min(total_residues, start);
-
-		end = Math.max(0, end);
-		end = Math.min(total_residues, end);
-	
-		assertTrue(result);
-		assertEquals(input_string.substring(start, end),outstream.toString());
-		outstream.close();
+		BioSeq seq = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test File"),4,18);
+		assertTrue(seq.getResidues().equals(input_string.substring(4, 18)));
+		System.out.println(input_string.substring(4, 18) + " == " + seq.getResidues());
 	}
+
+	@Test
+	public void randomLoadTest2() throws Exception
+	{
+		BioSeq seq = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test File"),6,7);
+		assertTrue(seq.getResidues().equals(input_string.substring(6, 7)));
+		System.out.println(input_string.substring(6, 7) + " == " + seq.getResidues());
+	}
+
+	@Test
+	public void randomLoadTest3() throws Exception
+	{
+		BioSeq seq = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test File"),1,2);
+		assertTrue(seq.getResidues().equals(input_string.substring(1, 2)));
+		System.out.println(input_string.substring(1, 2) + " == " + seq.getResidues());
+
+	}
+
+	@Test
+	public void randomLoadTest4() throws Exception
+	{
+		BioSeq seq = NibbleResiduesParser.parse(isr, new AnnotatedSeqGroup("Test File"),1,3);
+		assertTrue(seq.getResidues().equals(input_string.substring(1, 3)));
+		System.out.println(input_string.substring(1, 3) + " == " + seq.getResidues());
+
+	}
+
 
 }

@@ -210,10 +210,6 @@
                         <label>Demos</label>
                         <target>demos</target>
                     </action>
-                    <action>
-                        <label>Protannot</label>
-                        <target>run_protannot</target>
-                    </action>
                 </context-menu>
             </view>
             <subprojects/>

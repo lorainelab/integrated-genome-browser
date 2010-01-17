@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * A testing class to check whether ProtAnnot XML files can be read by
+ * ProtAnnot
  */
 
 package org.bioviz.protannot;
@@ -11,27 +11,43 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 /**
- *
+ * This class opens a directory and then attempts to read every file in the
+ * directory that terminates with file extension suffix .paxml. Use this
+ * class to test whether each .paxml file in the directory is readable by
+ * the ProtAnnot Xml2GenometryParser class.
  * @author hvora1
+ * @author loraine
  */
 public class TestSamples {
 
     static public void main(String args[])
     {
-        String dirpath = "/afs/transvar.org/home/hvora1/src/protannot_python/samples/";
+		String dirpath = ".";
+		if (args.length==1) {
+			dirpath = args[0];
+		}
         File dir = new File(dirpath);
         String[] files = dir.list();
-        System.out.println("Total files " + files.length);
+        System.err.println("Total files " + files.length);
         for(String s : files)
         {
+			if (!s.endsWith(".paxml")) {
+				System.err.println(s + " doesn't end with .paxml.Skipping it.");
+				continue;
+			}
             if(testFile(dirpath+s))
-                System.out.println(s + "read sucessfully");
+                System.err.println(s + "read sucessfully.");
             else
-                System.out.println("Error reading " + s);
+                System.err.println("Error reading " + s);
         }
         
     }
 
+	/**
+	 * Test whether the given file can be read into ProtAnnot data models.
+	 * @param filename	the name of the file to test
+	 * @return	boolean	true if ProtAnnot can read the file, false if not
+	 */
     static private boolean testFile(String filename)
     {
         BufferedInputStream bistr;
@@ -41,7 +57,7 @@ public class TestSamples {
             if(parser.parse(bistr) != null)
                 return true;
         } catch (FileNotFoundException ex) {
-            System.out.println(filename + "File not found");
+            System.err.println(filename + "File not found");
         }
         return false;
     }

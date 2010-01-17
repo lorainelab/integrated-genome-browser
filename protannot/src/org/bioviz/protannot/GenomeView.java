@@ -39,11 +39,19 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- *
+ * This class displays the main view of transcripts, the conserved
+ * motifs (protein annotations) they encode, and an exon summary
+ * that shows how the transcript structures vary.
  */
 
 final class GenomeView extends JPanel implements MouseListener{
 
+	// We allow users to change the colors of transcripts, protein
+	// annotations, etc
+	// The default colors (see below) were chosen to accommodate
+	// people with red/green color blindness and also to make it
+	// possible to distinguish the frame colors when printed in
+	// black and white.
     static enum COLORS
     {
         BACKGROUND("background", Color.white),
@@ -91,11 +99,15 @@ final class GenomeView extends JPanel implements MouseListener{
     };
 
     JPopupMenu popup;
+
+	// Ann's note: is this still be used?
     private boolean rev_comp = false;
     private static final boolean DEBUG_GENOMIC_ANNOTS = false;
     private static final boolean DEBUG_TRANSCRIPT_ANNOTS = false;
     private static final boolean DEBUG_PROTEIN_ANNOTS = false;
+	// the map that displays the transcripts and protein annotations
     private final TieredNeoMap seqmap;
+	// the map that shows the sequence and axis
     private final NeoMap axismap;
     private final NeoMap[] maps;
     private final ModPropertySheet table_view;
@@ -121,7 +133,8 @@ final class GenomeView extends JPanel implements MouseListener{
     private List<GlyphI> storeSelected;
     private VisibleRange zoomPoint;
     
-    // size constants
+    // size constants - these are needed to control the layout
+	// of different elements within each moap.
     private static final int axis_pixel_height = 20;
     private static final int seq_pixel_height = 10;
     private static final int upper_white_space = 5;
@@ -144,7 +157,8 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Sets up the layout
+     * Sets up the layout for the maps and the other elements that are
+	 * part of the application.
      * @param   phash   Color perefrences stored in hashtable to setup the layout.
      * @see     om.affymetrix.genoviz.widget.NeoAbstractWidget
      */
@@ -234,7 +248,7 @@ final class GenomeView extends JPanel implements MouseListener{
 
     
     /**
-     * Initialized GenomeView colors with prefrences provided in the parameter phash
+     * Initialized GenomeView colors with preferences provided in the parameter phash
      * @param   phash   Hashtable providing color prefrences for GenomeView
      */
     private void initPrefs(Hashtable<String,Color> phash) {
@@ -276,17 +290,29 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Add mouse listener to maps.
-     * @param   listener    Lintener that is to be added to maps.
+     * Add mouse listener to maps so that the application can detect
+	 * user interactions with the dispflay.
+     * @param   listener    Listener that is to be added to maps.
      */
     void addMapListener(MouseListener listener) {
         seqmap.addMouseListener(listener);
         axismap.addMouseListener(listener);
     }
 
+	/**
+	 * Ann's note: Please explain what parameter is_new does
+	 */
+
     /**
-     * 
-     * @param   gseq
+     * Set the data model - the BioSeq object - that the application
+	 * will display.
+	 *
+     * @param   gseq the data model representing the trancripts, their
+	 * annotations, and their meta-data properties, such as their ids
+	 * in external databases.
+	 * @param is_new whether or not this BioSeq object has not been displayed
+	 * previously. This allows ProtAnnot to redraw the Glyphs using a new
+	 * color scheme without changing the zoom level.
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
@@ -372,17 +398,22 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Sets the title of the frame provided by the parameter title
-     * @param   title   - Title of the frame. Usually the name of the file
+     * Sets the title of the frame provided by the parameter title.
+     * @param   title	Title of the frame. Usually the name of the file on display.
      */
     void setTitle(String title) {
         table_view.setTitle(title);
     }
 
+	/**
+	 * Ann's note:
+	 * Please explain what path2view represents.
+	 */
+
     /**
-     * Make RNA into a glyph.
-     * @param   mrna2genome
-     * @param   path2view
+     * Make a Glyph to represent the given mRNA object.
+     * @param   mrna2genome	a data model represented an mRNA, a set of exons
+     * @param   path2view	Ann's note: please explain what this is
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.BioSeq
      * @see     com.affymetrix.genometryImpl.MutableSeqSymmetry
@@ -469,7 +500,7 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Make transcript annotations into a glyph.
+     * Create Glyphs that represent each transcript.
      * @param   amrna
      * @param   annot2mrna
      * @param   path2view
@@ -550,10 +581,11 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Colors by exon frame relative to _genomic_ coordinates
+     * Colors by exon frame relative to genomic coordinates
      * @param   gl
-     * @param   protSpan
-     * @param   genSpan
+     * @param   protSpan	represents a protein annotation, an annotation on the
+	 * transcript's translated sequence
+     * @param   genSpan	
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      * @see     com.affymetrix.genometryImpl.SeqSpan
      */
@@ -667,7 +699,7 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Sets the axismap. Sets range,background and foreground color
+     * Sets the axismap. Sets range,background and foreground color.
      * @see     com.affymetrix.genoviz.glyph.SequenceGlyph
      */
     private void setupAxisMap() { 
@@ -703,7 +735,8 @@ final class GenomeView extends JPanel implements MouseListener{
 	}
 
     /**
-     * Sets zoom focus. If clicked on any glyph then it is selected.
+     * Sets zoom focus and selects any Glyph underlying the location of the
+	 * click.
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      * @see     com.affymetrix.genoviz.event.NeoMouseEvent
      * @see     com.affymetrix.genoviz.widget.NeoMap
@@ -753,7 +786,7 @@ final class GenomeView extends JPanel implements MouseListener{
                 }
             }
         }
-	zoomPoint.setSpot(seqmap.getZoomCoord(NeoMap.X));
+		zoomPoint.setSpot(seqmap.getZoomCoord(NeoMap.X));
         
         axismap.updateWidget();
         seqmap.updateWidget();
@@ -767,7 +800,8 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Shows property in the property table
+     * Shows properties (meta-data about selected items) in the property table
+	 * at the bottom of the display.
      * @see     com.affymetrix.genometryImpl.SeqSymmetry
      * @see     com.affymetrix.genometryImpl.SymWithProps
      * @see     com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry
@@ -813,9 +847,9 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Coverts Map to Properties to be able use in property table
-     * @param   prop
-     * @return  Properties
+     * Coverts Map to Properties to for display in property table.
+     * @param   prop	a Map containing meta-data name/value pairs for an item
+     * @return  Properties the meta-data values transformed to Property objects
      */
     private Properties convertPropsToProperties(Map<String, Object> prop) {
         Properties retval = new Properties();
@@ -996,9 +1030,9 @@ final class GenomeView extends JPanel implements MouseListener{
         }
     }
 
-        /**
-     * Store old values.
-     */
+	/**
+    * Store old values.
+    */
     private void storeCurrentSelection() {
         storeSelected = getSelected();
     }
@@ -1029,7 +1063,7 @@ final class GenomeView extends JPanel implements MouseListener{
     }
 
     /**
-     * Action to be performed when user apply color changes.
+     * Action to be performed when user attempts to apply color changes.
      * @param   colorhash   Hashtable<String,Color> new color preferences
      */
     void tempChangePreference(Hashtable<String,Color> colorhash)

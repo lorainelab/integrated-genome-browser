@@ -165,23 +165,10 @@ public final class IGB extends Application
 			// user is used to in their operating system, so leave as false.
 			JFrame.setDefaultLookAndFeelDecorated(false);
 
-			String laf = System.getProperty("swing.defaultlaf");
-			// if laf != null, then the user-requested l-and-f has already been applied
-			// if laf == null, then apply the windows look and feel
-			if (laf == null) {
-				try {
-					// It this is Windows, then use the Windows look and feel.
-
-					Class cl = Class.forName("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-					LookAndFeel look_and_feel = (LookAndFeel) cl.newInstance();
-
-					if (look_and_feel.isSupportedLookAndFeel()) {
-						UIManager.setLookAndFeel(look_and_feel);
-					}
-				} catch (Exception ulfe) {
-					// Windows look and feel is only supported on Windows, and only in
-					// some version of the jre.  That is perfectly ok.
-				}
+			try {
+				UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 
 			// Initialize the ConsoleView right off, so that ALL output will

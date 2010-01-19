@@ -166,19 +166,15 @@ public class AffyTieredMap extends NeoMap {
 		// Now hide or show tiers based on which checkboxes are selected
 		for (TierGlyph mtg : tiers) {
 			if (mtg.getChildCount() <= 0) {
-				mtg.setState(TierGlyph.TierState.HIDDEN);
+				mtg.setVisibility(false);
 			} else if ((!show_plus) && mtg.getDirection() == TierGlyph.Direction.FORWARD) {
-				mtg.setState(TierGlyph.TierState.HIDDEN);
+				mtg.setVisibility(false);
 			} else if ((!show_minus) && mtg.getDirection() == TierGlyph.Direction.REVERSE) {
-				mtg.setState(TierGlyph.TierState.HIDDEN);
+				mtg.setVisibility(false);
 			} else if ((!show_mixed) && (mtg.getDirection() == TierGlyph.Direction.BOTH)) {
-				mtg.setState(TierGlyph.TierState.HIDDEN);
+				mtg.setVisibility(false);
 			} else {
-				if (mtg.getAnnotStyle().getShow()) {
-					mtg.restoreState();
-				} else {
-					mtg.setState(TierGlyph.TierState.HIDDEN);
-				}
+				mtg.setVisibility(mtg.getAnnotStyle().getShow());
 			}
 		}
 
@@ -189,9 +185,8 @@ public class AffyTieredMap extends NeoMap {
 		double offset = 0;
 		double height = mbox.height;
 		for (TierGlyph mtg : tiers) {
-			// don't make room if tier is'nt visible, or if it's hidden
-			if ((!mtg.isVisible()) ||
-							((mtg.getState() == TierGlyph.TierState.HIDDEN))) {
+			// don't make room if tier isn't visible
+			if (!mtg.isVisible()) {
 				continue;
 			}
 			if (mtg instanceof TransformTierGlyph) {
@@ -215,9 +210,10 @@ public class AffyTieredMap extends NeoMap {
 			Rectangle2D.Double pbox = getCoordBounds();
 			Rectangle2D.Double newbox = null;
 			for (TierGlyph mtg : tiers) {
-				if ((!mtg.isVisible()) || (mtg.getState() == TierGlyph.TierState.HIDDEN)) {
+				if (!mtg.isVisible()) {
 					continue;
-				} else if (newbox == null) {
+				}
+				if (newbox == null) {
 					newbox = new Rectangle2D.Double();
 					newbox.setRect(pbox.x, mtg.getCoordBox().y,
 									pbox.width, mtg.getCoordBox().height);

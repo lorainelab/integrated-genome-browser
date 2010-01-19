@@ -411,29 +411,6 @@ public class TierGlyph extends SolidGlyph {
     middle_glyphs.clear();
   }
 
-  public final void setState(TierState newstate) {
-    if (newstate == TierState.EXPANDED) {
-      setPacker(expand_packer);
-      setVisibility(true);
-    }
-    else if (newstate == TierState.COLLAPSED) {
-      setPacker(collapse_packer);
-      setVisibility(true);
-    }
-    else if (newstate == TierState.FIXED_COORD_HEIGHT)  {
-      setPacker(null);
-      setVisibility(true);
-    }
-    else if (newstate == TierState.HIDDEN) {
-      setVisibility(false);
-    }
-  }
-
-  /** Equivalent to setVisibility(true). */
-  public final void restoreState() {
-    setVisibility(true);
-  }
-
   public final TierState getState() {
 	  if (!isVisible()) {
 		  return TierState.HIDDEN;

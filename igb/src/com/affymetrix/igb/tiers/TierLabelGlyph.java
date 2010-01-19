@@ -10,9 +10,6 @@ import com.affymetrix.genoviz.util.NeoConstants;
  * A glyph used to display a label for a TierGlyph.
  */
 public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
-
-	private Font fnt;
-	
 	@Override
 	public String toString() {
 		return ("TierLabelGlyph: label: \"" + getLabelString() + "\"  +coordbox: " + coordbox);
@@ -104,10 +101,6 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 	private void drawLabel(Graphics g, Rectangle boundingPixelBox, Rectangle pixelbox) {
 		// assumes that pixelbox coordinates are already computed
 
-		if (null != fnt) {
-			g.setFont(fnt);
-		}
-
 		String label = getLabelString();
 		// this was for test:
 		// label = "hey_this_is_going_to_be-a-long-text-to-test.the.behaviour";
@@ -168,15 +161,5 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 		g.drawRect(pixelbox.x + 1, pixelbox.y + 1,
 				pixelbox.width - 3, pixelbox.height - 3);
-	}
-
-	@Override
-	public void setFont(Font f) {
-		this.fnt = f;
-	}
-
-	@Override
-	public Font getFont() {
-		return this.fnt;
 	}
 }

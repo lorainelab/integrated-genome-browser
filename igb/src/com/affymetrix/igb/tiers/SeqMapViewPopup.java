@@ -46,8 +46,8 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   private static final boolean DEBUG = false;
   
   private static final GenometryModel gmodel = GenometryModel.getGenometryModel();
-  private SeqMapView gviewer;
-  private TierLabelManager handler;
+  private final SeqMapView gviewer;
+  private final TierLabelManager handler;
 
   private final JMenu showMenu = new JMenu("Show...");
   private final JMenu changeMenu = new JMenu("Change...");
@@ -223,22 +223,26 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
   }
 
   List<IAnnotStyle> getStyles(List<TierLabelGlyph> tier_label_glyphs) {
-    if (tier_label_glyphs.size() == 0) { return Collections.<IAnnotStyle>emptyList(); }
+		if (tier_label_glyphs.size() == 0) {
+			return Collections.<IAnnotStyle>emptyList();
+		}
 
-    // styles is a list of styles with no duplicates, so a Set rather than a List
-    // might make sense.  But at the moment it seems faster to use a List
-    List<IAnnotStyle> styles = new ArrayList<IAnnotStyle>(tier_label_glyphs.size());
+		// styles is a list of styles with no duplicates, so a Set rather than a List
+		// might make sense.  But at the moment it seems faster to use a List
+		List<IAnnotStyle> styles = new ArrayList<IAnnotStyle>(tier_label_glyphs.size());
 
 		for (TierLabelGlyph tlg : tier_label_glyphs) {
-      TierGlyph tier = tlg.getReferenceTier();
-      IAnnotStyle tps = tier.getAnnotStyle();
-      if (tps != null && ! styles.contains(tps)) styles.add(tps);
-    }
-    return styles;
-  }
+			TierGlyph tier = tlg.getReferenceTier();
+			IAnnotStyle tps = tier.getAnnotStyle();
+			if (tps != null && !styles.contains(tps)) {
+				styles.add(tps);
+			}
+		}
+		return styles;
+	}
 
   private void setTiersCollapsed(List<TierLabelGlyph> tier_labels, boolean collapsed) {
-    handler.setTiersCollapsed(tier_labels, collapsed, true, true);
+    handler.setTiersCollapsed(tier_labels, collapsed);
     refreshMap(true,true);
   }
 
@@ -308,12 +312,12 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 		  IAnnotStyle style = tier.getAnnotStyle();
 		  if (style != null) {
 			  style.setShow(true);
-			  tier.restoreState();
+			  tier.setVisibility(true);
 		  }
 	  }
 	  showMenu.removeAll();
-	  refreshMap(true,true); // when re-showing all tiers, do strech_to_fit in the y-direction
 	  handler.sortTiers();
+	  refreshMap(true,true); // when re-showing all tiers, do strech_to_fit in the y-direction
 	}
 
   /** Hides one tier and creates a JMenuItem that can be used to show it again.
@@ -321,10 +325,10 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
    */
   private void hideOneTier(final TierGlyph tier) {
     final IAnnotStyle style = tier.getAnnotStyle();
-    // if style.getShow() is already false, there is likely a bug somewhere!
-		if (style == null) {
-			return;
-		}
+	  // if style.getShow() is already false, there is likely a bug somewhere!
+	  if (style == null) {
+		  return;
+	  }
     if (style.getShow()) {
       style.setShow(false);
       final JMenuItem show_tier = new JMenuItem() {
@@ -343,15 +347,13 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
         public void actionPerformed(ActionEvent e) {
           style.setShow(true);
           showMenu.remove(show_tier);
+		  handler.sortTiers();
           refreshMap(false,true);
-          //handler.sortTiers();
         }
       });
       showMenu.add(show_tier);
     }
-    if (! style.getShow()) {
-      tier.setState(TierGlyph.TierState.HIDDEN);
-    }
+	tier.setVisibility(false);
   }
 
   /** Hides multiple tiers and then repacks.
@@ -618,7 +620,7 @@ public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
     collapse_action.setEnabled(any_are_expanded);
     expand_action.setEnabled(any_are_collapsed);
     change_expand_max_action.setEnabled(any_are_expanded);
-    show_single_tier.setEnabled(any_are_separate_tiers);
+	show_single_tier.setEnabled(any_are_separate_tiers);
     show_two_tiers.setEnabled(any_are_single_tier);
     collapse_all_action.setEnabled(not_empty);
     expand_all_action.setEnabled(not_empty);

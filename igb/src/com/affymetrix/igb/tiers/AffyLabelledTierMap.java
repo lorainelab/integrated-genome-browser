@@ -109,6 +109,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	for (TierLabelGlyph label_glyph : label_glyphs) {
       TierGlyph tier_glyph = (TierGlyph)label_glyph.getInfo();
       Rectangle2D.Double tbox = tier_glyph.getCoordBox();
+	  System.out.println("Changing coords from : " + lbox.y + "to " + tbox.y);
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setVisibility(tier_glyph.isVisible());
     }
@@ -131,7 +132,7 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
    *  Called by addTier() methods.  Override this to 
    *  add additional settings to the glyph.
    */
-  private TierLabelGlyph createTierLabel(TierGlyph mtg) {
+  private void createTierLabel(TierGlyph mtg) {
     TierLabelGlyph label_glyph = new TierLabelGlyph(mtg);
     // No need to set the TierLabelGlyph colors or label:
     // it reads that information dynamically from the given TierGlyph
@@ -141,7 +142,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
     //   (which also sets value returned by label_glyph.getInfo())
     labelmap.setDataModel(label_glyph, mtg);  
     label_glyphs.add(label_glyph);
-    return label_glyph;
   }
 
 	@Override

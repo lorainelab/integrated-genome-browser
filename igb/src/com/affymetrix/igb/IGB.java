@@ -143,6 +143,9 @@ public final class IGB extends Application
 	private final List<Object> plugins = new ArrayList<Object>(16);
 	private FileTracker load_directory = FileTracker.DATA_DIR_TRACKER;
 	private AnnotatedSeqGroup prev_selected_group = null;
+	private BioSeq prev_selected_seq = null;
+	
+	private static final Logger APP = Logger.getLogger("app");
 
 	/**
 	 * Start the program.
@@ -249,12 +252,10 @@ public final class IGB extends Application
 		return map_view;
 	}
 
-	//public JMenuBar getMenuBar() { return mbar; }
 	public JFrame getFrame() {
 		return frm;
 	}
 
-	//public JTabbedPane getTabPane() { return tab_pane; }
 	private void startControlServer() {
 		// Use the Swing Thread to start a non-Swing thread
 		// that will start the control server.
@@ -276,10 +277,6 @@ public final class IGB extends Application
 				t.start();
 			}
 		});
-	}
-
-	public SimpleBookmarkServer getControlServer() {
-		return web_control;
 	}
 
 	/**
@@ -389,13 +386,10 @@ public final class IGB extends Application
 		bmark_action = new BookMarkAction(this, map_view, bookmark_menu);
 
 		open_file_action = new LoadFileAction(map_view.getFrame(), load_directory);
-		//load_das_action = new DasFeaturesAction2(map_view);
 		clear_item = new JMenuItem("Clear All", KeyEvent.VK_C);
 		clear_graphs_item = new JMenuItem("Clear Graphs", KeyEvent.VK_L);
 		open_file_item = new JMenuItem("Open file", KeyEvent.VK_O);
 		open_file_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Open16.gif"));
-		//load_das_item = new JMenuItem("Access DAS/1 Servers", KeyEvent.VK_D);
-		//load_das_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Import16.gif"));
 		print_item = new JMenuItem("Print", KeyEvent.VK_P);
 		print_item.setIcon(MenuUtil.getIcon("toolbarButtonGraphics/general/Print16.gif"));
 		print_frame_item = new JMenuItem("Print Whole Frame", KeyEvent.VK_F);
@@ -475,7 +469,6 @@ public final class IGB extends Application
 		clear_item.addActionListener(this);
 		clear_graphs_item.addActionListener(this);
 		open_file_item.addActionListener(this);
-		//load_das_item.addActionListener(this);
 		print_item.addActionListener(this);
 		print_frame_item.addActionListener(this);
 		export_map_item.addActionListener(this);
@@ -510,7 +503,6 @@ public final class IGB extends Application
 
 		cpane.setLayout(new BorderLayout());
 		splitpane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		//splitpane.setOneTouchExpandable(true);		// confusing to new users
 		splitpane.setDividerSize(8);
 		splitpane.setDividerLocation(frm.getHeight() - (table_height + fudge));
 		splitpane.setTopComponent(map_view);
@@ -569,7 +561,6 @@ public final class IGB extends Application
 		for (Object plugin : plugins) {
 			if (plugin instanceof DataLoadView) {
 				data_load_view = (DataLoadView) plugin;
-				//data_load_view.initialize();
 			}
 		}
 
@@ -585,8 +576,6 @@ public final class IGB extends Application
 		//   the control server that listens to ping requests?
 		// Therefore start listening for http requests only after all set-up is done.
 		startControlServer();
-
-		//initialized = true;
 	}
 
 	private void fileMenu() {
@@ -615,13 +604,11 @@ public final class IGB extends Application
 	}
 
 	private void viewMenu() {
-		// rev_comp option currently not working, so disabled
 		JMenu strands_menu = new JMenu("Strands");
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_plus_action));
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_minus_action));
 		strands_menu.add(new ActionToggler(getMapView().getSeqMap().show_mixed_action));
 		view_menu.add(strands_menu);
-		//    MenuUtil.addToMenu(view_menu, rev_comp_item);
 		MenuUtil.addToMenu(view_menu, autoscroll_item);
 		MenuUtil.addToMenu(view_menu, view_ucsc_item);
 		MenuUtil.addToMenu(view_menu, toggle_edge_matching_item);
@@ -1198,14 +1185,10 @@ public final class IGB extends Application
 
 			public void actionPerformed(ActionEvent evt) {
 				JCheckBoxMenuItem src = (JCheckBoxMenuItem) evt.getSource();
-				//openCompInWindow(comp, title, tool_tip, null, tab_pane);
 				Frame frame = comp2window.get(comp);
 				if (frame == null) {
 					openCompInWindow(comp, tab_pane);
 					src.setSelected(true);
-				} else {
-					// would like to move window back into tab, but needs some work
-					//src.setSelected(false);
 				}
 			}
 		});
@@ -1261,7 +1244,6 @@ public final class IGB extends Application
 		}
 		prev_selected_group = selected_group;
 	}
-	BioSeq prev_selected_seq = null;
 
 	public void seqSelectionChanged(SeqSelectionEvent evt) {
 		BioSeq selected_seq = evt.getSelectedSeq();
@@ -1270,8 +1252,6 @@ public final class IGB extends Application
 		}
 		prev_selected_seq = selected_seq;
 	}
-
-	public static final Logger APP = Logger.getLogger("app");
 
 	public Logger getLogger() {
 		return APP;

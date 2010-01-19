@@ -1,15 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
@@ -120,21 +108,20 @@ public class SeqMapView extends JPanel
 	 * other ways.
 	 */
 	private static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
-	protected boolean view_cytobands_in_axis = true;
-	public static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
-	boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
+	private static final boolean view_cytobands_in_axis = true;
+	private static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
+	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
-	boolean coord_shift = false;
-	boolean show_slicendice = false;
-	boolean slicing_in_effect = false;
-	boolean hairline_is_labeled = true;
-	private SeqSpan viewspan_before_slicing = null;
+	protected boolean coord_shift = false;
+	private boolean show_slicendice = false;
+	private boolean slicing_in_effect = false;
+	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
-	protected XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
+	private final XmlStylesheetGlyphFactory default_glyph_factory = new XmlStylesheetGlyphFactory();
 	/**
 	 *  number of bases that slicer tries to buffer on each side of every span it is using to guide slicing
 	 */
-	int slice_buffer = 100;
+	private int slice_buffer = 100;
 	/**
 	 *  maximum number of query glyphs for edge matcher.
 	 *  any more than this and won't attempt to edge match
@@ -143,11 +130,11 @@ public class SeqMapView extends JPanel
 	 *   M is total number of glyphs to try and match against query glyphs
 	 *   [or possibly O(N^2 * M) ???] )
 	 */
-	int max_for_matching = 500;
+	private static final int max_for_matching = 500;
 	/**
 	 *  current symmetry used to determine slicing
 	 */
-	SeqSymmetry slice_symmetry;
+	private SeqSymmetry slice_symmetry;
 	/** boolean for setting map range to min and max bounds of
 	AnnotatedBioSeq's annotations */
 	private boolean SHRINK_WRAP_MAP_BOUNDS = false;
@@ -155,9 +142,9 @@ public class SeqMapView extends JPanel
 	protected boolean INTERNAL_XSCROLLER = true;
 	protected boolean INTERNAL_YSCROLLER = true;
 
-	JFrame frm;
+	private JFrame frm;
 	protected AffyTieredMap seqmap;
-	UnibrowHairline hairline = null;
+	private UnibrowHairline hairline = null;
 	BioSeq aseq;
 	/**
 	 *  a virtual sequence that maps the BioSeq aseq to the map coordinates.
@@ -170,8 +157,8 @@ public class SeqMapView extends JPanel
 	 */
 	BioSeq viewseq;
 	// mapping of annotated seq to virtual "view" seq
-	MutableSeqSymmetry seq2viewSym;
-	SeqSymmetry[] transform_path;
+	private MutableSeqSymmetry seq2viewSym;
+	private SeqSymmetry[] transform_path;
 	private static final String PREF_AXIS_LABEL_FORMAT = "Axis label format";
 	/** One of the acceptable values of {@link #PREF_AXIS_LABEL_FORMAT}. */
 	public static final String VALUE_AXIS_LABEL_FORMAT_COMMA = "COMMA";
@@ -197,25 +184,22 @@ public class SeqMapView extends JPanel
 	public static final Color default_axis_color = Color.BLACK;
 	public static final Color default_axis_background = Color.WHITE;
 	public static final String default_axis_label_format = VALUE_AXIS_LABEL_FORMAT_COMMA;
-	//public static final Color default_default_annot_color = new Color(192, 192, 114);
-	//public static final Color default_default_background_color = Color.BLACK;
+
 	public static final Color default_edge_match_color = Color.WHITE;
 	public static final Color default_edge_match_fuzzy_color = new Color(200, 200, 200); // light gray
-	public static final boolean default_x_zoomer_above = true;
-	public static final boolean default_y_zoomer_left = true;
-	static NumberFormat nformat = NumberFormat.getIntegerInstance();
+	private static final boolean default_x_zoomer_above = true;
+	private static final boolean default_y_zoomer_left = true;
 	/** Hash of method names (lower case) to forward tiers */
-	Map<String, TierGlyph> method2ftier = new HashMap<String, TierGlyph>();
+	private final Map<String, TierGlyph> method2ftier = new HashMap<String, TierGlyph>();
 	/** Hash of method names (lower case) to reverse tiers */
-	Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
+	private final Map<String, TierGlyph> method2rtier = new HashMap<String, TierGlyph>();
 	/** Hash of GraphStates to TierGlyphs. */
-	Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
+	private final Map<IAnnotStyle, TierGlyph> gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
 	//Map gstyle2floatTier = new HashMap();
-	PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
-	GlyphEdgeMatcher edge_matcher = null;
-	JPopupMenu sym_popup;
-	JMenu sym_menu;
-	JLabel sym_info;
+	private final PixelFloaterGlyph pixel_floater_glyph = new PixelFloaterGlyph();
+	private GlyphEdgeMatcher edge_matcher = null;
+	private JPopupMenu sym_popup;
+	private JLabel sym_info;
 	// A fake menu item, prevents null pointer exceptions in actionPerformed()
 	// for menu items whose real definitions are commented-out in the code
 	private static final JMenuItem empty_menu_item = new JMenuItem("");
@@ -224,11 +208,11 @@ public class SeqMapView extends JPanel
 	JMenuItem selectParentMI = empty_menu_item;
 	JMenuItem slicendiceMI = empty_menu_item;
 	// for right-click on background
-	protected SeqMapViewActionListener action_listener;
-	protected SeqMapViewMouseListener mouse_listener;
+	private SeqMapViewActionListener action_listener;
+	private SeqMapViewMouseListener mouse_listener;
 	private CharSeqGlyph seq_glyph = null;
-	SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
-	List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
+	private SeqSymmetry seq_selected_sym = null;  // symmetry representing selected region of sequence
+	private final List<GlyphI> match_glyphs = new ArrayList<GlyphI>();
 	protected TierLabelManager tier_manager;
 	PixelFloaterGlyph grid_layer = null;
 	GridGlyph grid_glyph = null;
@@ -236,7 +220,7 @@ public class SeqMapView extends JPanel
 	protected JComponent yzoombox;
 	protected MapRangeBox map_range_box;
 	GenometryModel gmodel = GenometryModel.getGenometryModel();
-	final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
+	private final static Font SMALL_FONT = new Font("SansSerif", Font.PLAIN, 10);
 	public static Font axisFont = new Font("Courier", Font.BOLD, 12);
 	boolean report_hairline_position_in_status_bar = false;
 	boolean report_status_in_status_bar = true;
@@ -248,17 +232,15 @@ public class SeqMapView extends JPanel
 	 *  units to scroll are either in pixels or bases
 	 */
 	ActionListener map_auto_scroller = null;
-	javax.swing.Timer swing_timer = null;
-	int as_bases_per_pix = 75;
-	int as_pix_to_scroll = 4;
-	int as_time_interval = 20;
-	int as_start_pos = 0;
-	int as_end_pos;
-	int modcount = 0;
+	private javax.swing.Timer swing_timer = null;
+	private int as_bases_per_pix = 75;
+	private int as_pix_to_scroll = 4;
+	private int as_time_interval = 20;
+	private int as_start_pos = 0;
+	private int as_end_pos;
 	private final int xoffset_pop = 10;
 	private final int yoffset_pop = 0;
-	JMenu navigation_menu = null;
-	Thread slice_thread = null;
+	private Thread slice_thread = null;
 	/** Whether the Application name goes first in the title bar.
 	 */
 	protected boolean appNameFirstInTitle = false;
@@ -301,17 +283,6 @@ public class SeqMapView extends JPanel
 		SeqMapView smv = new SeqMapView();
 		smv.init(true);
 		return smv;
-	}
-
-	/** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
-	 *  will be done in init()
-	 */
-	private AffyTieredMap createSeqMap(boolean internalXScroller, boolean internalYScroller) {
-		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
-		NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
-		label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
-		label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
-		return resultSeqMap;
 	}
 
 	protected void init(boolean add_popups) {
@@ -433,6 +404,18 @@ public class SeqMapView extends JPanel
 
 		UnibrowPrefsUtil.getTopNode().addPreferenceChangeListener(pref_change_listener);
 	}
+
+	/** Creates an instance to be used as the SeqMap.  Set-up of listeners and such
+	 *  will be done in init()
+	 */
+	private static AffyTieredMap createSeqMap(boolean internalXScroller, boolean internalYScroller) {
+		AffyTieredMap resultSeqMap = new AffyLabelledTierMap(internalXScroller, internalYScroller);
+		NeoMap label_map = ((AffyLabelledTierMap) resultSeqMap).getLabelMap();
+		label_map.setSelectionAppearance(SceneI.SELECT_OUTLINE);
+		label_map.setReshapeBehavior(NeoAbstractWidget.Y, NeoConstants.NONE);
+		return resultSeqMap;
+	}
+
 	// This preference change listener can reset some things, like whether
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
@@ -487,11 +470,11 @@ public class SeqMapView extends JPanel
 		}
 	};
 
-	public void setFrame(JFrame frm) {
+	public final void setFrame(JFrame frm) {
 		this.frm = frm;
 	}
 
-	public TierLabelManager getTierManager() {
+	public final TierLabelManager getTierManager() {
 		return tier_manager;
 	}
 
@@ -832,11 +815,10 @@ public class SeqMapView extends JPanel
 		aseq = null;
 		viewseq = null;
 		clearSelection();
-		method2rtier = new HashMap<String, TierGlyph>();
-		method2ftier = new HashMap<String, TierGlyph>();
-		gstyle2tier = new HashMap<IAnnotStyle, TierGlyph>();
-		//gstyle2floatTier = new HashMap();
-		match_glyphs = new ArrayList<GlyphI>();
+		method2rtier.clear();
+		method2ftier.clear();
+		gstyle2tier.clear();
+		match_glyphs.clear();
 		seqmap.updateWidget();
 	}
 
@@ -928,7 +910,7 @@ public class SeqMapView extends JPanel
 		boolean same_seq = ((seq == this.aseq) && (seq != null));
 
 
-		match_glyphs = new ArrayList<GlyphI>();
+		match_glyphs.clear();
 		List<SeqSymmetry> old_selections = Collections.<SeqSymmetry>emptyList();
 		double old_zoom_spot_x = seqmap.getZoomCoord(AffyTieredMap.X);
 		double old_zoom_spot_y = seqmap.getZoomCoord(AffyTieredMap.Y);
@@ -1202,7 +1184,7 @@ public class SeqMapView extends JPanel
 		// Hides all empty tiers.  Doesn't really remove them.
 		for (TierGlyph tg : seqmap.getTiers()) {
 			if (tg.getChildCount() <= 0) {
-				tg.setState(TierGlyph.TierState.HIDDEN);
+				tg.setVisibility(false);
 			}
 		}
 	}
@@ -1851,12 +1833,6 @@ public class SeqMapView extends JPanel
 	 *  Assumes that symmetry children are ordered by child.getSpan(aseq).getMin().
 	 */
 	private void sliceAndDiceNow(SeqSymmetry sym) {
-		//    System.out.println("%%%%%% called SeqMapView.sliceAndDice() %%%%%%");
-		if (!slicing_in_effect) {
-			//   only redo viewspan_before_slicing if slicing is not already in effect, because
-			//   if (slicing_in_effect) and slicing again, probably just adjusting slice buffer
-			viewspan_before_slicing = getVisibleSpan();
-		}
 		int childCount = (sym == null) ? 0 : sym.getChildCount();
 
 		if (childCount <= 0) {
@@ -2286,7 +2262,7 @@ public class SeqMapView extends JPanel
 		}
 
 		if (match_query_count <= max_for_matching) {
-			match_glyphs = new ArrayList<GlyphI>();
+			match_glyphs.clear();
 			ArrayList<GlyphI> target_glyphs = new ArrayList<GlyphI>();
 			target_glyphs.add(seqmap.getScene().getGlyph());
 			double fuzz = getEdgeMatcher().getFuzziness();

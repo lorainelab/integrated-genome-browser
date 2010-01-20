@@ -119,11 +119,19 @@ public final class NibbleResiduesParser {
 
 	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, OutputStream output) throws IOException
 	{
-		BioSeq seq = parse(istr,seq_group);
-		return writeAnnotations(seq,output);
+		return parse(istr,seq_group, 0, Integer.MAX_VALUE, output);
 	}
 
-	// Read BNIB sequence from specified file.  Note that range can't be specified.
+	public static boolean parse(InputStream istr, OutputStream output) throws FileNotFoundException, IOException
+	{
+		return parse(istr,new AnnotatedSeqGroup("No_Data"), output);
+	}
+
+	public static boolean parse(InputStream istr, int start, int end, OutputStream output) throws FileNotFoundException, IOException
+	{
+		return parse(istr,new AnnotatedSeqGroup("No_Data"), start, end, output);
+	}
+
 	public static byte[] ReadBNIB(File seqfile) throws FileNotFoundException, IOException {
 		DataInputStream dis = null;
 		try {
@@ -153,14 +161,6 @@ public final class NibbleResiduesParser {
 		NibbleIterator residues_provider = new NibbleIterator(nibble_array, num_residues);
 		result_seq.setResiduesProvider(residues_provider);
 	}
-
-	/**
-	 * Read BNIB sequence from specified file.  (begin,end] are in interbase coords.
-	 * @param seqfile
-	 * @param begin
-	 * @param end
-	 * @return
-	 */
 
 	public static void writeBinaryFile(String file_name, String seqname, String seqversion,
 			String residues) throws IOException {

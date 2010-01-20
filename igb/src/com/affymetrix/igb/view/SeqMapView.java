@@ -2731,8 +2731,6 @@ public class SeqMapView extends JPanel
 	/**
 	 *  Returns a tier for the given IAnnotStyle, creating the tier if necessary.
 	 *  Generally called by a Graph Glyph Factory.
-	 *  @param tier_direction use {@link TierGlyph#DIRECTION_REVERSE} if you want
-	 *  the tier to go below the axis. Other values have no effect.
 	 */
 	public final TierGlyph getGraphTier(IAnnotStyle style, TierGlyph.Direction tier_direction) {
 		if (style == null) {

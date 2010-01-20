@@ -9,7 +9,7 @@ import java.util.List;
  * A generic version is a genome version found on a specific server.
  * Thus, GenericVersion has a many-to-one map to AnnotatedSeqGroup.
  *
- * @other $Id$
+ * @author GenericVersion.java 4632 2009-11-04 15:19:16Z jnicol $
  */
 public final class GenericVersion implements Comparable<GenericVersion> {
 

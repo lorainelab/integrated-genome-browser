@@ -457,7 +457,7 @@ public class AnnotatedSeqGroup {
 	/**
 	 * Create a temporary shallow-copy genome, to avoid any side-effects.
 	 * @param oldGenome
-	 * @return
+	 * @return tempGenome
 	 */
 	public static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
 		AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup(oldGenome.getID());

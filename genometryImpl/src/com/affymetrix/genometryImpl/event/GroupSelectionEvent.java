@@ -39,7 +39,7 @@ public final class GroupSelectionEvent extends EventObject {
 		}
 	}
 
-	/** Gets the first entry in the list {@link #getSelectedGroups()}.
+	/** Gets the first entry in the list {@link #getSelectedGroup()}.
 	 *  @return an AnnotatedSeqGroup or null.
 	 */
 	public AnnotatedSeqGroup getSelectedGroup() {

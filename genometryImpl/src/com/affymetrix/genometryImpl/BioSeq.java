@@ -17,7 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @version: $Id$
+ * @author $Id$
  */
 public final class BioSeq implements SearchableCharIterator {
 	private static final boolean DEBUG = false;
@@ -447,8 +447,8 @@ public final class BioSeq implements SearchableCharIterator {
 	 * fillchar to fill any gaps in the sequence.  Unknown if this implementation
 	 * is inclusive or exclusive on start and end.
 	 *
-	 * @param  start    the start index (inclusive?)
-	 * @param  end      the end index (exclusive?)
+	 * @param  res_start    the start index (inclusive?)
+	 * @param  res_end      the end index (exclusive?)
 	 * @param  fillchar the character to fill empty residues in the sequence with.
 	 * @return          a String containing residues between start and end.
 	 */

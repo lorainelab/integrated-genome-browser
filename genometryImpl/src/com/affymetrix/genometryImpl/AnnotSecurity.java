@@ -58,7 +58,6 @@ public interface AnnotSecurity {
 	 * @return
 	 * @throws Exception
 	 */
-	
 	public String getSequenceDirectory(String data_root, AnnotatedSeqGroup genome) throws Exception;
 	
 }

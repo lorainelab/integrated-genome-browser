@@ -42,20 +42,22 @@ public interface IndexWriter {
 	/**
 	 * Get the minimum of a given symmetry.
 	 * @param sym
-	 * @return
+	 * @param seq
+	 * @return integer
 	 */
 	public int getMin(SeqSymmetry sym, BioSeq seq);
 
 	/**
 	 * Get the maximum of a given symmetry.
 	 * @param sym
-	 * @return
+	 * @param seq
+	 * @return integer
 	 */
 	public int getMax(SeqSymmetry sym, BioSeq seq);
 
 	/**
 	 * Get the preferred formats.
-	 * @return
+	 * 
 	 */
 	public List<String> getFormatPrefList();
 }

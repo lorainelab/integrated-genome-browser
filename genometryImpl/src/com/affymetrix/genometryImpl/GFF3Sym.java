@@ -67,15 +67,18 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 	private char frame;
 	private String attributes;
 
+	
 	/**
 	 * Constructor.
 	 * The coordinates should be given exactly as they appear in a GFF file.
 	 * In principle, the first coordinate is supposed to be less than the second one,
 	 * but in practice this isn't always followed, so this constructor will correct
 	 * those errors and will also convert from base-1 to interbase-0 coordinates.
-	 * @param a  The coordinate in column 4 of the GFF file.
-	 * @param b  The coordinate in column 5 of the GFF file.
-	 * @param attributes   Attributes, formatted in GFF3 style.
+	 * @param source
+	 * @param feature_type
+	 * @param score
+	 * @param frame
+	 * @param attributes Attributes, formatted in GFF3 style.
 	 */
 	public GFF3Sym(String source, String feature_type,
 			float score, char frame, String attributes) {

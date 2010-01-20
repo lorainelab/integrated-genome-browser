@@ -237,7 +237,7 @@ public class GraphSym extends SimpleSymWithProps {
 
 	/**
 	 * This is expensive, and should only happen when we're copying the coords.
-	 * @return
+	 * @return tempCoords
 	 */
 	public int[] getGraphWidthCoords() {
 		int[] tempCoords = new int[this.pointCount];
@@ -269,7 +269,7 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 * Find last point with value <= xmin.
 	 * @param xmin
-	 * @return
+	 * @return 0
 	 */
 	public final int determineBegIndex(double xmin) {
 		int begIndex = 0;
@@ -293,7 +293,8 @@ public class GraphSym extends SimpleSymWithProps {
 	 * Find first point with value >= xmax.
 	 * Use previous starting index as a starting point.
 	 * @param xmax
-	 * @return
+	 * @param prevIndex
+	 * @return pointCount-1
 	 */
 	public final int determineEndIndex(double xmax, int prevIndex) {
 		int begIndex = 0;
@@ -378,9 +379,6 @@ public class GraphSym extends SimpleSymWithProps {
 	/**
 	 * Read into buffers
 	 * @param start
-	 * @param pointCount
-	 * @param bufFile
-	 * @param buffer
 	 */
 	private void readIntoBuffers(int start) {
 		DataInputStream dis = null;

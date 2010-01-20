@@ -16,7 +16,6 @@ public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
 
 	/** Constructor.
 	 *  @param s  sequence to base the sorting on
-	 *  @param b  true to sort ascending, false for descending
 	 */
 	public SeqSymMinComparator(BioSeq s) {
 		this.seq = s;

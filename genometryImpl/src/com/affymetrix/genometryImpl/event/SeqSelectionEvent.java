@@ -36,7 +36,7 @@ public final class SeqSelectionEvent extends EventObject {
 		}
 	}
 
-	/** Gets the first entry in the list {@link #getSelectedSeqs()}.
+	/** Gets the first entry in the list {@link #getSelectedSeq()}.
 	 *  @return an BioSeq or null.
 	 */
 	public BioSeq getSelectedSeq() {

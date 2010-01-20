@@ -832,18 +832,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void retrieveBNIB(ArrayList ranges, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
-		/*if (ranges.size() != 0) {
-		// A ranged request for a bnib.  Not supported.
-		PrintWriter pw = response.getWriter();
-		pw.println("This DAS/2 server does not support ranged " + format + " requests:    ");
-		pw.println(request.getRequestURL().toString());
-		return;
-		}*/
-
-		// range requests are ignored.  The entire sequence is returned.
-
+		
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
+
+		if (ranges.size() != 0)
+		{
+			response.setContentType("text"); // set text type
+			DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+			NibbleResiduesParser.parse(new FileInputStream(seqfile), (Integer)ranges.get(0), (Integer)ranges.get(1), dos);
+			GeneralUtils.safeClose(dos);
+			return;
+		}
+
 		if (seqfile.exists()) {
 			byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
 			response.setContentType(NibbleResiduesParser.getMimeType()); // set bnib format mime type

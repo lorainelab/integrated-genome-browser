@@ -17,7 +17,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Tests of class {@link com.affymetrix.igb.parsers.GFF3Parser}.
+ * Tests of class 
  */
 public class GFF3ParserTest {
 

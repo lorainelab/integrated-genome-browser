@@ -202,7 +202,7 @@ public final class Das2VersionedSource {
 	}
 
 
-	private void getRegionList(NodeList regionlist, String region_request) throws NumberFormatException {
+	public void getRegionList(NodeList regionlist, String region_request) throws NumberFormatException {
 		for (int i = 0; i < regionlist.getLength(); i++) {
 			Element reg = (Element) regionlist.item(i);
 			String region_id = reg.getAttribute(URID);
@@ -290,7 +290,7 @@ public final class Das2VersionedSource {
     }
 
 
-	private void getTypeList(NodeList typelist, String types_request) {
+	public void getTypeList(NodeList typelist, String types_request) {
 		if (DEBUG) {
 		System.out.println("Das2 Type Length: " + typelist.getLength());
 		if (typelist.getLength() == 1) {

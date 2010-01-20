@@ -327,7 +327,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	/**
 	 * Parses the name field from the file.  Gene names are allowed to be non-unique.
 	 * @param s
-	 * @return
+	 * @return annot_name
 	 */
 	private static String parseName(String s) {
 		String annot_name = new String(s); // create a new String so the entire input line doesn't get preserved

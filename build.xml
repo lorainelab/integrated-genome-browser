@@ -279,6 +279,19 @@
 		</java>
 	</target>
 
+	<target name="run_Protannot" depends="compile" description="run Protannot">
+		<java fork="true" classname="org.bioviz.protannot.ProtAnnotMain">
+			<classpath>
+				<fileset dir="${lib.dir}" includes="freehep-2.1.1.jar" />
+				<dirset dir="${basedir}">
+					<include name="genometryImpl/build" />
+					<include name="genoviz_sdk/build" />
+					<include name="protannot/build" />
+				</dirset> 
+			</classpath>
+		</java>
+	</target>
+
 	<target name="release" depends="release-igb, release-das2server, release-igb-webstart, release-genoviz-sdk" description="Package IGB for Release" />
 
 	<target name="release-igb" depends="exe">

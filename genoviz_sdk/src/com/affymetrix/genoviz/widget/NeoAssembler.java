@@ -1047,7 +1047,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 *   <code>addSequence</code>
 	 * @param name the <code>String</code> label to display for
 	 *   <code>gl</code>
-	 * @return
+	 * @return GlyphI
 	 * @see #addSequence
 	 */
 	public GlyphI setLabel(GlyphI seq_tag, String name) {

@@ -1476,14 +1476,8 @@ public class NeoSeq extends NeoContainerWidget
 	 * Striping is used as a background coloring of the residues to make viewing
 	 * the sequence easier.
 	 *
-	 * @param orientation  the constant orientation identifier,
-	 * either NO_STRIPES, VERTICAL_STRIPES, or
-	 * HORIZONTAL_STRIPES.
-	 *
-	 * @see #NO_STRIPES
-	 * @see #VERTICAL_STRIPES
-	 * @see #HORIZONTAL_STRIPES
 	 */
+
 	public void setStripeOrientation(int i) {
 		switch (i) {
 			case WrapStripes.NONE:

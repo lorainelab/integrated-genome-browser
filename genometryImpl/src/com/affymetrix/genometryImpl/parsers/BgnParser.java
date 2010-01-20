@@ -72,11 +72,15 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 		return null;
 	}
 
+
 	/**
-	 *  The main parsing routine.
-	 *  @param seq_group  must not be null.
-	 *  @param blength  Byte Buffer Length.
-	 *     If length is unknown, force to skip using byte buffer by passing in blength = -1;
+	 *
+	 * @param istr
+	 * @param annot_type
+	 * @param seq_group
+	 * @param annotate_seq
+	 * @return List of seq symmetries
+	 * @throws java.io.IOException
 	 */
 	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup seq_group, boolean annotate_seq) throws IOException {

@@ -53,7 +53,7 @@ public final class WiggleParser {
 
 	/**
 	 *  Reads a Wiggle-formatted file using any combination of the three formats
-	 *  {@link #BED4}, {@link #VARSTEP}, {@link #FIXEDSTEP}.
+	 *  BED4,VARSTEP,FIXEDSTEP.
 	 *  The format must be specified on the first line following a track line,
 	 *  otherwise BED4 is assumed.
 	 */
@@ -172,11 +172,10 @@ public final class WiggleParser {
 		return current_start;
 	}
 
+	
 	/**
 	 * Parse a single line of data (BED4 format).
-	 * @param line
-	 * @param current_format
-	 * @param seq_group
+	 * @param fields
 	 * @param current_data
 	 * @param current_datamap
 	 */
@@ -202,13 +201,14 @@ public final class WiggleParser {
 		current_data.add(x1, Float.parseFloat(fields[3]), width);
 	}
 	
+	
 	/**
 	 * Parse a single line of data (variableStep format).
-	 * @param line
-	 * @param current_format
-	 * @param seq_group
+	 * @param fields
 	 * @param current_data
 	 * @param current_datamap
+	 * @param current_seq_id
+	 * @param current_span
 	 */
 	private static void parseDataLine(
 					String[] fields,
@@ -235,11 +235,12 @@ public final class WiggleParser {
 
 	/**
 	 * Parse a single line of data (fixedStep format).
-	 * @param line
-	 * @param current_format
-	 * @param seq_group
+	 * @param fields
 	 * @param current_data
 	 * @param current_datamap
+	 * @param current_seq_id
+	 * @param current_span
+	 * @param current_start
 	 */
 	private static void parseDataLine(
 					String[] fields, 
@@ -267,7 +268,7 @@ public final class WiggleParser {
 	 * @param name
 	 * @param line
 	 * @param default_val
-	 * @return
+	 * @return string
 	 */
 	private static String parseFormatLine(String line, String name, String default_val) {
 		String[] fields = field_regex.split(line);

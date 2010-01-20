@@ -143,23 +143,14 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		MAKE_TYPE_CONTAINER_SYM = make_container_syms;
 	}*/
 
-	/**  Sets whether or not to try to prevent duplicate annotations by using
-	 *      the Unibrow.getSymHash() global symmetry hash.  If symmetry already
-	 *      in symhash has same id (key to symhash) then don't add new annotation.
-	 *  @param filter_out_by_id
+	
+    /**
+	 *
+	 * @param istr
+	 * @param seq_group
+	 * @return List of Seq symmetries.
+	 * @throws java.io.IOException
 	 */
-	/*public void setFilterOutById(boolean filter_out_by_id) {
-		FILTER_OUT_BY_ID = filter_out_by_id;
-	}*/
-
-	/*public void addFeatureFilter(String feat_str) {
-		filter_hash.put(feat_str, feat_str);
-	}*/
-
-	/*public void removeFeatureFilter(String feat_str) {
-		filter_hash.remove(feat_str);
-	}*/
-
 	public List<SeqSymmetry> parse(InputStream istr, AnnotatedSeqGroup seq_group)
 					throws IOException {
 		InputSource isrc = new InputSource(istr);

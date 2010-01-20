@@ -116,7 +116,7 @@ If you wish to use 'ant':
   igb.jar genoviz_sdk/genoviz.jar and genometry/genometry.jar
 
 'ant docs' 
-  to create javadocs documentation into the 'api-docs' folder.
+  to create javadocs documentation into the 'doc/api' folder.
 
 'ant clean' 
   to remove compiled classes and documentation.

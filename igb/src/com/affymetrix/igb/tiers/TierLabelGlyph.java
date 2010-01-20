@@ -62,7 +62,7 @@ public final class TierLabelGlyph extends SolidGlyph implements NeoConstants {
 
 	/**
 	 * Returns the label of the reference tier, or some default string if there isn't one.
-	 * @return
+	 * @return string
 	 */
 	private String getLabelString() {
 		TierGlyph reference_tier = getReferenceTier();

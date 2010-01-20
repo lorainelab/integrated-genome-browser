@@ -117,10 +117,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 
   /**
    * Adds a tier to the map and generates a label for it.
-   * <p>We don't need to override {@link AffyTieredMap#addTier(TierGlyph)}
-   * because it calls {@link AffyTieredMap#addTier(TierGlyph, boolean)},
-   * which, in turn calls {@link AffyTieredMap#addTier(TierGlyph,int)}
-   * which we override here.
    */
 	@Override
   public void addTier(TierGlyph mtg, int tier_index) {

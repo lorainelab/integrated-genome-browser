@@ -370,7 +370,6 @@ public final class FastaParser {
 	 * @param seqfile
 	 * @param begin_sequence
 	 * @param end_sequence
-	 * @return
 	 * @throws java.io.FileNotFoundException
 	 * @throws java.io.IOException
 	 * @throws java.lang.IllegalArgumentException

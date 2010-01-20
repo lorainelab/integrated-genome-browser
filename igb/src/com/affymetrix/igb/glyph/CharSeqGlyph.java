@@ -13,7 +13,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**
  * CharSeqGlyph differs from SequenceGlyph in that it can take either a 
- * String as residues (via sg.setResidues()) or a {@link CharIterator}
+ * String as residues (via sg.setResidues()) or a {@link SearchableCharIterator}
  * as a provider of residues (via sg.setResiduesProvider()) .
  * This allows one to glyphify large biological sequences while maintaining a more 
  * compressed representation of the sequences residues.

@@ -159,8 +159,7 @@ final class GenomeView extends JPanel implements MouseListener{
     /**
      * Sets up the layout for the maps and the other elements that are
 	 * part of the application.
-     * @param   phash   Color perefrences stored in hashtable to setup the layout.
-     * @see     om.affymetrix.genoviz.widget.NeoAbstractWidget
+     * @param   phash   Color perefrences stored in hashtable to setup the layout. 
      */
     GenomeView(Hashtable<String,Color> phash) {
 
@@ -1079,7 +1078,7 @@ final class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Action to be performed when user cancel color changes. So revert back to old color preferences.
-     * @param   colorhash   Hashtable<String,Color> new color preferences
+     * 
      */
     void cancelChangePrefernce()
     {

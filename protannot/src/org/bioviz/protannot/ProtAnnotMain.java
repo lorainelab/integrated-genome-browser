@@ -124,9 +124,9 @@ final class ProtAnnotMain implements WindowListener {
     }
 
     /**
-     * Loads prefrences from the a file.
-     * @param   prefs_name  File name containing prefrences.
-     * @return              Returns a hashtable with name as key and Color as a value.
+     * Loads preferences from the file.
+     * 
+     * @return Returns a hashtable with name as key and Color as a value.
      */
     private Hashtable<String,Color> loadPrefs() {
         Hashtable<String,Color> phash = new Hashtable<String,Color>();

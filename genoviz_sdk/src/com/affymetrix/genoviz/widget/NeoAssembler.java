@@ -808,20 +808,19 @@ public class NeoAssembler extends NeoContainerWidget
 	 * the alignment coordinate system from <code>alignstart</code> to
 	 * <code>alignend</code>.
 	 *
-	 * @param seq_tag   an Object (GlyphI) to which a new span is added.
-	 *                  instances of seq_tag are returned from
-	 *                  <code>addSequence</code>.
-	 * @param seqstart  the starting residue position in the sequence of this
-	 *                  span.
-	 * @param seqend    the final residue position in the sequence of this span.
-	 * @param refstart  the starting position in the alignment coordinate
-	 *                  system of the first residue of this span.
-	 * @param refend    the final position in the alignment coordinate
-	 *                  system of the last residue of this span.
+	 * @param seq_tag    an Object (GlyphI) to which a new span is added.
+	 *                   instances of seq_tag are returned from
+	 *                   <code>addSequence</code>.
+	 * @param seqstart   the starting residue position in the sequence of this
+	 *                   span.
+	 * @param seqend     the final residue position in the sequence of this span.
+	 * @param alignstart the starting position in the alignment coordinate
+	 *                   system of the first residue of this span.
+	 * @param alignend   the final position in the alignment coordinate
+	 *                   system of the last residue of this span.
 	 *
 	 * @return the <code>Glyph</code> of the span.
 	 *
-	 * @see #addSequence
 	 */
 	public GlyphI addAlignedSpan(GlyphI seq_tag, int seqstart, int seqend,
 			int alignstart, int alignend) {
@@ -1021,10 +1020,10 @@ public class NeoAssembler extends NeoContainerWidget
 		return aglyph;
 	}
 
+
 	/**
 	 * gets the label of an aligned sequence.
-	 *
-	 * @param gl the alignment labeled.
+	 * @param seq_tag the alignment labeled.
 	 * @return a String containing the label.
 	 */
 	public String getLabel(GlyphI seq_tag) {
@@ -1043,11 +1042,12 @@ public class NeoAssembler extends NeoContainerWidget
 	 * associates a string label with an aligned sequence.  The label is
 	 * displayed adjacent to the sequence alignment display.
 	 *
-	 * @param gl  the <code>GlyphI</code> representing the
+	 * @param seq_tag  the <code>GlyphI</code> representing the
 	 *   aligned sequence returned from
 	 *   <code>addSequence</code>
 	 * @param name the <code>String</code> label to display for
 	 *   <code>gl</code>
+	 * @return
 	 * @see #addSequence
 	 */
 	public GlyphI setLabel(GlyphI seq_tag, String name) {

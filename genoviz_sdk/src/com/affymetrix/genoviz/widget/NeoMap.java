@@ -881,7 +881,7 @@ public class NeoMap extends NeoWidget implements
 			* mapped to the pixel_box's space.  For example, to map a whole Scene to a
 			* view, with no zooming, the coord_box would be the coordinate bounds of
 			* the Scene, and the pixel_box the size of the NeoCanvas holding the View.
-			* @return
+			* @return new_trans
 			*/
 		   public LinearTransform calcFittedTransform() {
 			   LinearTransform new_trans = new LinearTransform();

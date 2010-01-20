@@ -28,7 +28,7 @@ public class NibbleResiduesParserTest {
 
 	/**
 	 * Create string with all 256 possible 2-residue combinations... AA, AC, ..., AU, ..., UA, UC, ..., UU
-	 * @return
+	 * @return string
 	 */
 	private String createTestString() {
 		StringBuffer testBuffer = new StringBuffer(256*2);

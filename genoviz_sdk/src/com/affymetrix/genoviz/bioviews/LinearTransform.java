@@ -13,8 +13,9 @@ public class LinearTransform extends AffineTransform  {
 	 * Transforms the coordinate on the axis indicated.
 	 * If transform is being used in between a scene and a view,
 	 * this would convert from scene coordinates to view/pixel coordinates.
-	 * @param orientation {@link #X} or {@link #Y}
+	 * @param orientation
 	 * @param in   the coordinate
+	 * @return
 	 */
 	public double transform(int orientation, double in) {
 		double out = 0;

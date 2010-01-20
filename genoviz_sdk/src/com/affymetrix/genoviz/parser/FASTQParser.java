@@ -10,24 +10,6 @@ import java.net.URL;
 
 /**
  * parses output from FASTQ.
- *
- * <p> It will look something like this:
- * <pre>
- * @EAS54_6_R1_2_1_413_324
- * CCCTTCTTGTCTTCAGCGTTTCTCC
- * +
- * ;;3;;;;;;;;;;;;7;;;;;;;88
- * @EAS54_6_R1_2_1_540_792
- * TTGGCAGGCCAAGGCCGATGGATCA
- * +
- * ;;;;;;;;;;;7;;;;;-;;;3;83
- * @EAS54_6_R1_2_1_443_348
- * GTTGCTTCTGGCGTGGGTGGGGGGG
- * +EAS54_6_R1_2_1_443_348
- * ;;;;;;;;;;;9;7;;.7;393333
- * 
- * </pre>
- *
  * @author John Nicol
  */
 public final class FASTQParser {

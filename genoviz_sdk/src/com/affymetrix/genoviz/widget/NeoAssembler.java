@@ -2510,7 +2510,7 @@ public class NeoAssembler extends NeoContainerWidget
 
 	/**
 	 * Setting residue font color sets font color strategy
-	 * for AlignedResidues to {@link #FIXED_COLOR}.
+	 * @param col
 	 */
 	public void setResidueFontColor(Color col) {
 		font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;

@@ -29,9 +29,10 @@ public abstract class ErrorHandler {
 	public static void errorPanel(String message) {
 		errorPanel("ERROR", message);
 	}
-
-	/** Error panel with default title and given Throwable. 
-	 * @see #setPrintStackTraces(boolean)
+	/**Error panel with default title and given Throwable.
+	 *
+	 * @param message
+	 * @param e
 	 */
 	public static void errorPanel(String message, Throwable e) {
 		errorPanel("ERROR", message, e);
@@ -63,10 +64,11 @@ public abstract class ErrorHandler {
 	 *  This is designed to probably be safe from the EventDispatchThread or from 
 	 *  any other thread.
 	 *  @param frame the parent frame, null is ok.
+	 *  @param title
+	 *  @param message
 	 *  @param e an exception (or error), if any.  null is ok. If not null,
 	 *  the exception text will be appended to the message and
 	 *  a stack trace might be printed on standard error.
-	 * @see #setPrintStackTraces(boolean)
 	 */
 	public static void errorPanel(final JFrame frame, final String title, String message, final Throwable e) {
 		// logging the error to standard out is redundant, but preserves

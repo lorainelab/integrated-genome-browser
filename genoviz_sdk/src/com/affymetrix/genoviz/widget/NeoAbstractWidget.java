@@ -637,10 +637,10 @@ public abstract class NeoAbstractWidget extends Container
 	 * Offsets are specified in coordinate space (not pixels).
 	 *
 	 * @param glyphs the List of GlyphIs to move
-	 * @param diffx the double relative offset along the X axis
-	 * @param diffy the double relative offset along the Y axis
-	 * @see #moveAbsolute
-	 * @see NeoMap#addItem
+	 * @param x the double relative offset along the X axis
+	 * @param y the double relative offset along the Y axis
+	 * 
+	 *
 	 */
 	public void moveRelative(List<GlyphI> glyphs, double x, double y) {
 		for (int i=0; i<glyphs.size(); i++) {

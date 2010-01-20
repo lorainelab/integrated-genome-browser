@@ -129,16 +129,7 @@ public final class StatusBar extends JPanel {
     updateMemory();
   }
   
-  /** Sets the String in the position status bar.
-   *  HTML can be used if prefixed with "<html>".
-   *  Can be safely called from any thread.
-   *  @param s  a String, null is ok; null will erase the String.
-   */
-  /*public void setPosition(String s) {
-    if (s == null) { s = ""; }
-    
-    updateSafely(position_ta, s);
-  }*/
+  
   
   Action performGcAction = new AbstractAction("Release Unused Memory") {
     public void actionPerformed(ActionEvent ae) {

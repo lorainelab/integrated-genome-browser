@@ -121,7 +121,7 @@ public final class GraphGlyph extends Glyph {
 
 	/**
 	 * Temporary helper method.
-	 * @return
+	 * 
 	 */
 	public float[] copyYCoords() {
 		return graf.copyGraphYCoords();

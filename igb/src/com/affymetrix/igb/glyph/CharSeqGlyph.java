@@ -170,8 +170,10 @@ public final class CharSeqGlyph extends SequenceGlyph
 		}
 	}
 
-	/** If false, then {@link #hit(Rectangle, ViewI)} and
-	 *  {@link #hit(Rectangle2D, ViewI)} will always return false.
+	
+	/**
+	 *
+	 * @param h
 	 */
 	public void setHitable(boolean h) {
 		this.hitable = h;

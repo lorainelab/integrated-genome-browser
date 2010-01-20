@@ -295,15 +295,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		max_val_slider.setEnabled(b);
 	}
 
-	/**
-	 *  When there are multiple graphs selected, you can show the minimum and
-	 *  maximum values in the text boxes like "min : max", or the text boxes
-	 *  can be set to blank values.
-	 *  @param b set to true if you want to show the range as "min : max"
-	 */
-	/*public void setShowMinAndMax(boolean b) {
-		show_min_and_max = b;
-	}*/
+	
 
 	private void initValues() {
 		float min_of_mins = Float.POSITIVE_INFINITY;

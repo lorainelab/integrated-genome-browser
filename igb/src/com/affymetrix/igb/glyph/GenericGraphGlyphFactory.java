@@ -123,7 +123,7 @@ public final class GenericGraphGlyphFactory implements MapViewGlyphFactoryI {
 	 * @param map
 	 * @param smv
 	 * @param update_map
-	 * @return
+	 * @return graph glyph
 	 */
 	private static GraphGlyph displayGraphSym(GraphSym newgraf, GraphSym graf, Rectangle2D.Double cbox, AffyTieredMap map, SeqMapView smv, boolean update_map) {
 		GraphGlyph graph_glyph = new GraphGlyph(newgraf, graf.getGraphState());

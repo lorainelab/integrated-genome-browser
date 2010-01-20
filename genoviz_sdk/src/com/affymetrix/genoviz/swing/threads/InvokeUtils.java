@@ -43,8 +43,6 @@ public final class InvokeUtils {
      * <p>
      * @exception  InterruptedException If we're interrupted while waiting for
      *             the user to select an option.
-     *
-     * @see #invokeAndWait
      */
     public static int invokeOptionDialog(
             final Component parentComponent,

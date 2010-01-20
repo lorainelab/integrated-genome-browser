@@ -415,9 +415,12 @@ public class MapHandler extends HandlerBase implements ContentParser {
 		}
 	}
 
+	
 	/**
-	 * Handle character data.
-	 * @see org.xml.sax.DocumentHandler#charData
+	 *
+	 * @param ch
+	 * @param start
+	 * @param length
 	 */
 	@Override
 	public void characters( char ch[], int start, int length ) {

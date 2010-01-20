@@ -1237,8 +1237,8 @@ public class NeoTracer extends NeoContainerWidget
 	/**
 	 * Sets whether or not the trace and bases for a given dye are visible.
 	 *
-	 * @param theDye  must be one of A, C, G, T, or N.
-	 * @param isVisible  indicates visibility of <code>theDye</code>
+	 * @param traceID must be one of A, C, G, T, or N.
+	 * @param visible  indicates visibility of <code>theDye</code>
 	 */
 	public void setVisibility(int traceID, boolean visible) {
 		switch (traceID) {
@@ -1313,9 +1313,8 @@ public class NeoTracer extends NeoContainerWidget
 	/**
 	 * Highlights the left (5') end of the trace.
 	 *
-	 * @param  i the integer (in trace coordinates, not bases)
+	 * @param left_trim_end the integer (in trace coordinates, not bases)
 	 * specifying where to stop trimming the left end of the trace
-	 * @see #setBasesTrimmedLeft
 	 */
 	public void setLeftTrim(int left_trim_end) {
 		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
@@ -1332,9 +1331,8 @@ public class NeoTracer extends NeoContainerWidget
 	/**
 	 * Highlights the right (3') end of the trace.
 	 *
-	 * @param  i the integer (in trace coordinates, not bases)
+	 * @param right_trim_start the integer (in trace coordinates, not bases)
 	 * specifying where to start trimming the right end of the trace
-	 * @see #setBasesTrimmedRight
 	 */
 	public void setRightTrim(int right_trim_start) {
 		Rectangle2D.Double coordbox = trace_glyph.getCoordBox();
@@ -1836,7 +1834,6 @@ public class NeoTracer extends NeoContainerWidget
 		return hscroll;
 	}
 
-
 	/**
 	 * Make an <em>internal</em>
 	 * adjustable responsible for horizontal scrolling.
@@ -1844,7 +1841,7 @@ public class NeoTracer extends NeoContainerWidget
 	 * The caller should not add it elsewhere in the user interface.
 	 * If the given Adjustable isn't an instance of Component,
 	 * the call will be ignored.
-	 * @see #setScroller(int,Adjustable)
+	 * @param scroller
 	 */
 	public void setScroller(JScrollBar scroller) {
 

@@ -33,7 +33,7 @@ import javax.swing.WindowConstants;
 
 /**
  *
- * @Version $Id$
+ * @author NeoQuallerDemo.java 4946 2010-01-07 22:56:59Z hiralv $
  */
 public class NeoQuallerDemo extends Applet
 	implements ActionListener, NeoRangeListener {

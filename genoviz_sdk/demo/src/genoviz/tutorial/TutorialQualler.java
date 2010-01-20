@@ -32,7 +32,7 @@ import com.affymetrix.genoviz.widget.*;
 
 /**
  *
- * @Version $Id$
+ * @author TutorialQualler.java 4917 2010-01-04 22:37:23Z hiralv $
  */
 public class TutorialQualler extends Applet implements ActionListener {
 	boolean framed = false;

@@ -1449,7 +1449,7 @@ public class NeoSeq extends NeoContainerWidget
 	/**
 	 * set the width of the striping.
 	 *
-	 * @param width the integer width in pixels of the stripe
+	 * @param i the integer width in pixels of the stripe
 	 */
 	public void setStripeWidth(int i) {
 		if (i >= 0) {
@@ -1573,7 +1573,7 @@ public class NeoSeq extends NeoContainerWidget
 
 	/**
 	 * Sets the Color of the numbers and residues in the NeoSeq.
-	 * @param theColor the Color to be used for the residues
+	 * @param color the Color to be used for the residues
 	 *                 and the numbers.
 	 */
 	public void setResidueColor(Color color) {

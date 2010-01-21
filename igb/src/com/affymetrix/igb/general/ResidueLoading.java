@@ -15,6 +15,7 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,9 +50,19 @@ public final class ResidueLoading {
 				String uri;
 
 				if (partial_load) {
+					// Try to load in bnib format
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, true);
+					String residues = GetPartialFASTADas2Residues(uri);
+					if (residues != null) {
+						// span is non-null, here
+						AddResiduesToComposition(aseq, residues, span);
+						gviewer.setAnnotatedSeq(aseq, true, true, true);
+						return true;
+					}
+
 					// Try to load in fasta format
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, false);
-					String residues = GetPartialFASTADas2Residues(uri);
+					residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
 						AddResiduesToComposition(aseq, residues, span);
@@ -279,6 +290,17 @@ public final class ResidueLoading {
 				return null;
 			}
 
+			
+			if (content_type.equals(NibbleResiduesParser.getMimeType())) {
+				// check for bnib format
+				if (DEBUG) {
+					System.out.println("   response is in bnib format, parsing...");
+				}
+				ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+				NibbleResiduesParser.parse(istr,outstream);
+				return outstream.toString();
+			}
+
 			if (content_type.equals(FastaParser.getMimeType())) {
 				// check for fasta format
 				if (DEBUG) {
@@ -286,7 +308,7 @@ public final class ResidueLoading {
 				}
 				return FastaParser.parseResidues(istr);
 			}
-
+			
 			if (DEBUG) {
 				System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
 			}

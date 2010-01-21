@@ -524,11 +524,14 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		}
 	}
 
+	
 	/**
 	 * Add the URL/Directory and server name to the preferences.
 	 * @param DirectoryOrURL
-	 * @param serverTypeStr
+	 * @param serverType
 	 * @param serverName
+	 * @param login
+	 * @param password
 	 */
 	private void addToPreferences(String DirectoryOrURL, ServerType serverType, String serverName, String login, String password) {
 		// Add to GeneralLoadView and validate

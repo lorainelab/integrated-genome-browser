@@ -158,8 +158,8 @@ public final class QuickLoadServerModel {
 	 * Process the annots.xml file (if it exists).
 	 * This has friendly type names.
 	 * @param filename
-	 * @param annotsMap
-	 * @return
+	 * @param annotList
+	 * @return true or false
 	 */
 	private static boolean processAnnotsXml(String filename, List<AnnotMapElt> annotList) {
 		InputStream istr = null;
@@ -184,8 +184,8 @@ public final class QuickLoadServerModel {
 	/**
 	 * Process the annots.txt file (if it exists).
 	 * @param filename
-	 * @param annotsMap
-	 * @return
+	 * @param annotList
+	 * @return true or false
 	 */
 	private static boolean processAnnotsTxt(String filename, List<AnnotMapElt> annotList) {
 		InputStream istr = null;

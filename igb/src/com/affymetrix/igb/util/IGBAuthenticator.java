@@ -210,7 +210,7 @@ public class IGBAuthenticator extends Authenticator {
 	 * @param serverNode
 	 * @param serverObject
 	 * @param url
-	 * @return
+	 * @return Password authentication to the user
 	 */
 	private PasswordAuthentication displayDialog(final Preferences serverNode, final GenericServer serverObject, final String url) {
 		setMessage(serverObject.serverName);

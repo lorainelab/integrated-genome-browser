@@ -273,11 +273,7 @@ public class SeqMapView extends JPanel
 	};
 
 	/**
-	 * Creates an instance.
-	 * @param add_popups  Whether to add some popup menus to the tier label manager
-	 *  that control tier hiding and collapsing and so forth.  It is probably best
-	 *  NOT to set this to true in any view other than the main view; it should
-	 *  be false in the AltSpliceView, for instance.
+	 * Creates an instance of SeqMapView.
 	 */
 	public static SeqMapView makeSeqMapView() {
 		SeqMapView smv = new SeqMapView();
@@ -2769,7 +2765,7 @@ public class SeqMapView extends JPanel
 	 *  already exist.
 	 *  Generally called by the Glyph Factory.
 	 *  Note that this can create empty tiers.  But if the tiers are not filled with
-	 *  something, they will later be removed automatically by {@link SeqMapView#setAnnotatedSeq(AnnotatedBioSeq)}.
+	 *  something, they will later be removed automatically. 
 	 *  @param meth  The tier name; it will be treated as case-insensitive.
 	 *  @param next_to_axis Do you want the Tier as close to the axis as possible?
 	 *  @param style  a non-null instance of IAnnotStyle; tier label and other properties

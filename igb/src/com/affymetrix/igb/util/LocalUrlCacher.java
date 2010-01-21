@@ -133,7 +133,7 @@ public final class LocalUrlCacher {
 	 *                                 { header name ==> [header value 1, header value 2, ...] }
 	 * headers will get cleared of any entries it had before getting passed as arg
 	 * @param fileMayNotExist Don't warn if file doesn't exist.
-	 * @return
+	 * @return input stream from the loaded url
 	 * @throws java.io.IOException
 	 */
 	private static InputStream getInputStream(String url, int cache_option, boolean write_to_cache, Map<String,String> headers, boolean fileMayNotExist)
@@ -303,16 +303,16 @@ public final class LocalUrlCacher {
 	}
 
 
+
 	/**
 	 * if no content_length header, then need to load a chunk at a time
 	 * till find end, then piece back together into content byte array
 	 * Note, must set initial capacity to 1000 to avoid stream loading interruption.
 	 * @param bis
-	 * @param content_length
-	 * @param content
-	 * @return
-	 * @throws IOException
+	 * @return loaded content in the form of a byte array
+	 * @throws java.io.IOException
 	 */
+	@SuppressWarnings("static-access")
 	private static byte[] loadContentInChunks(BufferedInputStream bis) throws IOException {
 		if (DEBUG_CONNECTION) {
 			System.out.println("No content length header, so doing piecewise loading");

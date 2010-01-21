@@ -224,7 +224,7 @@ public final class GeneralLoadView extends JComponent
 	 * @param serverType
 	 * @param login
 	 * @param password 
-	 * @return
+	 * @return true or false
 	 */
 	public boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
 		if (!serverType.equals(ServerType.DAS2)) {
@@ -307,8 +307,6 @@ public final class GeneralLoadView extends JComponent
 
 	/**
 	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
-	 * @param gviewer
-	 * @return
 	 */
 	private void RestorePersistentGenome() {
 		// Get group and seq info from persistent preferences.
@@ -885,7 +883,6 @@ public final class GeneralLoadView extends JComponent
 
 	/**
 	 * Don't allow buttons to be used if they're not valid.
-	 * @param seqID
 	 */
 	private void disableButtonsIfNecessary() {
 		// Don't allow buttons for a full genome sequence

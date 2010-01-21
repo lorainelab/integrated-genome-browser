@@ -45,7 +45,7 @@ public class XMLUtils {
 	 * Opens an XML document, using {@link #nonValidatingFactory()}.
 	 *
 	 * @param url
-	 * @return
+	 * @return the opened XML doc
 	 * @throws ParserConfigurationException
 	 * @throws MalformedURLException
 	 * @throws SAXException
@@ -67,7 +67,7 @@ public class XMLUtils {
 	 * Opens an XML document, using {@link #nonValidatingFactory()}.
 	 *
 	 * @param request_con
-	 * @return
+	 * @return doc
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
@@ -90,7 +90,7 @@ public class XMLUtils {
 	 * Opens an XML document, using {@link #nonValidatingFactory()}.
 	 *
 	 * @param str
-	 * @return
+	 * @return Document
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException 

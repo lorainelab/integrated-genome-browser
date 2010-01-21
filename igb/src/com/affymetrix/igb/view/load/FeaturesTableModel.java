@@ -52,7 +52,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	/**
 	 * Only want to display features with visible attribute set to true.
 	 * @param features
-	 * @return
+	 * @return list of visible features
 	 */
 	private List<GenericFeature> getVisibleFeatures(List<GenericFeature> features) {
 		if (features == null) {

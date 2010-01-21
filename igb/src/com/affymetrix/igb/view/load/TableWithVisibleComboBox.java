@@ -23,10 +23,13 @@ import javax.swing.table.TableRowSorter;
  */
 public final class TableWithVisibleComboBox {
 	private static TableRowSorter<FeaturesTableModel> sorter;
-  /**
-   * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
-   * @param items
-   */
+  
+	/**
+	 * Set the columm to use the ComboBox DAScb and renderer (which also depends on the row/server type)
+	 * @param table
+	 * @param column
+	 * @param enabled
+	 */
   public static void setComboBoxEditors(JTableX table, int column, boolean enabled) {
     RowEditorModel rm = new RowEditorModel();
     // tell the JTableX which RowEditorModel we are using

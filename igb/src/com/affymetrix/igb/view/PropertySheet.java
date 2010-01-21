@@ -146,8 +146,7 @@ class PropertySheet extends JPanel {
    *
    * @param name_values   a List of String[]s
    * @param preferred_ordering a List of Strings with the preferred order of column names
-   * @param useOnlySpecifiedColumns If true, then the property sheet will display ONLY the properties
-   * whose names are listed. 
+   * @return String array of re-ordered names
    */
   private List<String[]> reorderNames(List<String[]> name_values, List<String> preferred_ordering) {
 	  List<String[]> reordered = new ArrayList<String[]>(name_values.size());

@@ -866,17 +866,19 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
+	
 	/**
-	 * Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
+	 *Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
 	 * @param ranges
 	 * @param span
-	 * @param org_name
-	 * @param version_name
+	 * @param sequence_directory
+	 * @param organism_name
 	 * @param seqname
 	 * @param format
 	 * @param response
 	 * @param request
 	 * @throws java.io.IOException
+	 * @deprecated
 	 */
 	@Deprecated
 	private static final void retrieveFASTA(ArrayList ranges, SeqSpan span, String sequence_directory, String organism_name, String seqname, String format, HttpServletResponse response, HttpServletRequest request)
@@ -1627,7 +1629,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * @param graph_name2file
 	 * @param graph_name
 	 * @param seqid
-	 * @return
+	 * @return file path of the graph
 	 */
 	private static final String DetermineFilePath(Map<String, String> graph_name2dir, Map<String, String> graph_name2file, String graph_name, String seqid) {
 		// for now using graph_name as graph type

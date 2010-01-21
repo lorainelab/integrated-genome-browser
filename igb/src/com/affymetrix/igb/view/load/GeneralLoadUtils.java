@@ -420,7 +420,7 @@ public final class GeneralLoadUtils {
 	 * An AnnotatedSeqGroup was added independently of the GeneralLoadUtils.
 	 * Update GeneralLoadUtils state.
 	 * @param aseq
-	 * @return
+	 * @return genome version
 	 */
 	GenericVersion getUnknownVersion(AnnotatedSeqGroup aseq) {
 		String versionName = aseq.getID();
@@ -468,7 +468,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * Get list of versions for given species.  Create it if it doesn't exist.
 	 * @param speciesName
-	 * @return
+	 * @return list of versions for the given species.
 	 */
 	private List<GenericVersion> getSpeciesVersionList(String speciesName) {
 		List<GenericVersion> gVersionList;
@@ -498,7 +498,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * Returns the list of servers associated with the given versions.
 	 * @param features -- assumed to be non-null.
-	 * @return
+	 * @return A list of servers associated with the given versions.
 	 */
 	public static List<GenericServer> getServersWithAssociatedFeatures(List<GenericFeature> features) {
 		List<GenericServer> serverList = new ArrayList<GenericServer>();
@@ -574,7 +574,7 @@ public final class GeneralLoadUtils {
 	 * Load the sequence info for the given genome version.
 	 * Try all versions listed until one succeeds.
 	 * @param gVersion
-	 * @return
+	 * @return sequence info for the given genome version
 	 */
 	private static AnnotatedSeqGroup loadChromInfo(List<GenericVersion> gVersions) {
 		for (GenericVersion gVersion : gVersions) {
@@ -671,7 +671,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * Make sure virtual genome doesn't overflow int bounds.
 	 * @param group
-	 * @return
+	 * @return true or false
 	 */
 	private static boolean isVirtualGenomeSmallEnough(AnnotatedSeqGroup group, int chrom_count) {
 		double seq_bounds = 0.0;
@@ -728,7 +728,7 @@ public final class GeneralLoadUtils {
 	 * Load and display annotations (requested for the specific feature).
 	 * Adjust the load status accordingly.
 	 * @param gFeature
-	 * @return
+	 * @return true or false
 	 */
 	boolean loadAndDisplayAnnotations(GenericFeature gFeature, BioSeq cur_seq, FeaturesTableModel model) {
 

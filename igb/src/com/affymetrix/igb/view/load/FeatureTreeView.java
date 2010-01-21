@@ -207,7 +207,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * Note that if a feature "a/b" is on server #1, and feature "a/c" is on server #2, then
 	 * these features have distinct parents.
 	 * @param features
-	 * @return
+	 * @return root which is of the type DefaultMutableTreeNode
 	 */
 	static DefaultMutableTreeNode CreateTree(List<GenericFeature> features) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
@@ -239,8 +239,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	/**
 	 * See if a node already exists for this feature's first "/".
 	 * @param root
+	 * @param feature
 	 * @param featureName
-	 * @return
 	 */
 	private static void addOrFindNode(DefaultMutableTreeNode root, GenericFeature feature, String featureName) {
 		if (!featureName.contains(path_separator)) {
@@ -333,7 +333,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 * @param tree
 	 * @param x
 	 * @param y
-	 * @return
+	 * @return URL
 	 */
 	private static URL getURLAt(JTree tree, int x, int y) {
 
@@ -372,11 +372,11 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 	/**
 	 * Find hyperlink for the feature name.
-	 * @param nodeData
+	 * @param gFeature
 	 * @param bounds
 	 * @param x
 	 * @param y
-	 * @return
+	 * @return hyerlink for the feature name
 	 */
 	private static URL featureFriendlyURL(GenericFeature gFeature, Rectangle bounds, int x, int y) {
 		if (gFeature.friendlyURL != null) {
@@ -390,14 +390,15 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		return null;
 	}
 
+	
 	/**
 	 * Find hyperlink for the server name.
-	 * @param nodeData
+	 * @param gServer
 	 * @param thetree
 	 * @param bounds
 	 * @param x
 	 * @param y
-	 * @return
+	 * @return hyperlink of the server name
 	 */
 	private static URL serverFriendlyURL(GenericServer gServer, JTree thetree, Rectangle bounds, int x, int y) {
 		if (gServer.friendlyURL != null) {

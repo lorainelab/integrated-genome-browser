@@ -11,7 +11,7 @@ public class Constants {
 
 	public static final String SEQUENCE_DIR_PREFIX    = "SEQ";
 
-	public static final int MAXIMUM_NUMBER_TEXT_FILE_LINES = 1000;
+	public static final int MAXIMUM_NUMBER_TEXT_FILE_LINES = 10000;
 
 	public static String[] ANNOTATION_FILE_EXTENSIONS = new String[] 
 	                                                               {

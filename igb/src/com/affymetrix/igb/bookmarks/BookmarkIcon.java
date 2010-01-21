@@ -58,19 +58,6 @@ public final class BookmarkIcon implements Icon {
       return new BookmarkIcon(width, height, x, y);
     }
     
-    /** Creates an Icon.
-     *  @param style  {@link #UNIBROW_CONTROL} or {@link #EXTERNAL}
-     */
-    /*public BookmarkIcon getBookmarkIcon(int style) {
-        if (style == UNIBROW_CONTROL) {
-          return UNIBROW_CONTROL_ICON;
-        } else if (style == EXTERNAL) {
-          return EXTERNAL_ICON;
-        } else { // style == SEPARATOR
-          return SEPARATOR_ICON;
-        }
-    }*/
-
     public int getIconHeight() {
         return height;
     }

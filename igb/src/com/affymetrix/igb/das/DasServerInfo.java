@@ -26,9 +26,10 @@ public final class DasServerInfo {
 	private final Map<String, DasSource> sources = new LinkedHashMap<String, DasSource>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;
 
-	/** Creates an instance of DasServerInfo for the given DAS server.
-	 *  @param init  whether or not to initialize the data right away.  If false
-	 *    will not contact the server to initialize data until needed.
+
+	/**
+	 * Creates an instance of DasServerInfo for the given DAS server url.
+	 * @param url
 	 */
 	public DasServerInfo(String url) {
 		root_url = url;

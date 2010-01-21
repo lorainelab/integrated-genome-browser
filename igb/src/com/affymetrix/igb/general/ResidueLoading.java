@@ -31,7 +31,7 @@ public final class ResidueLoading {
 	 * @param genomeVersionName -- name of the genome.
 	 * @param seq_name -- sequence (chromosome) name
 	 * @param span	-- May be null.  If not, then it's used for partial loading.
-	 * @return
+	 * @return boolean
 	 */
 	// Most confusing thing here -- certain parsers update the composition, and certain ones do not.
 	// DAS/1 and partial loading in DAS/2 do not update the composition, so it's done separately.
@@ -122,8 +122,7 @@ public final class ResidueLoading {
 	 * @param seqid
 	 * @param min
 	 * @param max
-	 * @param length
-	 * @return
+	 * @return a string of residues from the DAS/1 server
 	 */
 	private static String GetDAS1Residues(String das_dna_server, String current_genome_name, String seqid, int min, int max) {
 		String residues = null;
@@ -163,7 +162,7 @@ public final class ResidueLoading {
 	 * @param seq_group
 	 * @param seq_name
 	 * @param root_url
-	 * @return
+	 * @return true or false
 	 */
 	private static boolean GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url) {
 		boolean loaded;

@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class BgrParserTest {
 
 	/**
-	@Test
+	
 	//Creates a Bgr format file
 	public void CreateBgrFile() throws IOException {
 

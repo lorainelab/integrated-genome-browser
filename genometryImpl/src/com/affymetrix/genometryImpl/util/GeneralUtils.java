@@ -121,7 +121,7 @@ public final class GeneralUtils {
 	/**
 	 * Get a favicon from the URL.
 	 * @param iconString
-	 * @return
+	 * @return null
 	 */
 	public static ImageIcon determineFriendlyIcon(String iconString) {
 		// Step 1. getting IconURL

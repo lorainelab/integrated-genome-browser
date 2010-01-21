@@ -56,7 +56,7 @@ public final class Persistence {
 
 	/**
 	 * Restore selection of group.
-	 * @return
+	 * @return the restored group which is an AnnotatedSeqGroup.
 	 */
 	public static AnnotatedSeqGroup restoreGroupSelection() {
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();
@@ -93,7 +93,7 @@ public final class Persistence {
 	/**
 	 * Restore the selected chromosome.
 	 * @param group
-	 * @return
+	 * @return restore the selected chromosome which is a BioSeq
 	 */
 	public static BioSeq restoreSeqSelection(AnnotatedSeqGroup group) {
 		Preferences genomes_node = UnibrowPrefsUtil.getGenomesNode();

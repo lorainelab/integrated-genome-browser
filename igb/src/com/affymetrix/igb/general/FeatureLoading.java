@@ -47,7 +47,7 @@ public final class FeatureLoading {
 	 * Load annotation names for the given version name (across multiple servers).
 	 * The internal call is threaded to keep from locking up the GUI.
 	 * @param versionSet
-	 * @return
+	 * @return true or false
 	 */
 	public static boolean loadFeatureNames(Set<GenericVersion> versionSet) {
 		for (final GenericVersion gVersion : versionSet) {
@@ -201,7 +201,7 @@ public final class FeatureLoading {
 	/**
 	 * split into entries by DAS/2 versioned source
 	 * @param requests
-	 * @return
+	 * @return requests_by_version
 	 */
 	private static Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> splitDAS2RequestsByVersion(List<Das2FeatureRequestSym> requests) {
 		Map<Das2VersionedSource, Set<Das2FeatureRequestSym>> requests_by_version =

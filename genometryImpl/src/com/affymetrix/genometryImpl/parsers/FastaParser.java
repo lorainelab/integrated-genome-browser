@@ -370,11 +370,12 @@ public final class FastaParser {
 	 * @param seqfile
 	 * @param begin_sequence
 	 * @param end_sequence
+	 * @return FASTA sequence byte[]
 	 * @throws java.io.FileNotFoundException
 	 * @throws java.io.IOException
 	 * @throws java.lang.IllegalArgumentException
 	 */
-		public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
+	public static byte[] ReadFASTA(File seqfile, int begin_sequence, int end_sequence)
 			throws FileNotFoundException, IOException, IllegalArgumentException {
 
 			if (begin_sequence < 0)

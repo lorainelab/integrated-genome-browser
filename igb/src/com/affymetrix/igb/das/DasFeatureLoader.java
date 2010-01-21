@@ -101,10 +101,9 @@ public final class DasFeatureLoader {
 
 	/**
 	 * Walk the SeqSymmetry, converting all of its children into DAS URLs.
-	 *
 	 * @param sym the SeqSymmetry to walk.
 	 * @param query_root the base URL used to build all URLs.
-	 * @param type the type fragment which will be appended to all URLs.
+	 * @param encoded_type the type fragment which will be appended to all URLs.
 	 * @param urls the List which complete DAS URLs will be added to.
 	 * @throws java.io.UnsupportedEncodingException
 	 * @throws java.net.MalformedURLException

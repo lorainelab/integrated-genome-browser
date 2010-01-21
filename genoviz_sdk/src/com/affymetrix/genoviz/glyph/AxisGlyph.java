@@ -1035,9 +1035,6 @@ public class AxisGlyph extends Glyph {
 		return result;
 	}
 
-	/** If false, then {@link #hit(Rectangle, ViewI)} and
-	 *  {@link #hit(Rectangle2D, ViewI)} will always return false.
-	 */
 	public void setHitable(boolean h) {
 		this.hitable = h;
 	}

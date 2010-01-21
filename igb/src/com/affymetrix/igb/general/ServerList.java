@@ -48,7 +48,7 @@ public final class ServerList {
 	 *  Return the GenericServer object.  (This could be non-unique if passed a name.)
 	 *
 	 * @param URLorName
-	 * @return 
+	 * @return gserver or server
 	 */
 	public static GenericServer getServer(String URLorName) {
 		GenericServer server = url2server.get(URLorName);
@@ -67,7 +67,7 @@ public final class ServerList {
 	 * @param serverType
 	 * @param name
 	 * @param url
-	 * @return
+	 * @return GenericServer
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url) {
 
@@ -81,7 +81,7 @@ public final class ServerList {
 	 * @param url
 	 * @param username
 	 * @param password
-	 * @return
+	 * @return GenericServer
 	 */
 	public static GenericServer addServer(ServerType serverType, String name, String url, String username, String password) {
 
@@ -108,7 +108,7 @@ public final class ServerList {
 	 * @param serverType
 	 * @param url
 	 * @param name
-	 * @return
+	 * @return initialized server
 	 */
 	private static GenericServer initServer(ServerType serverType, String url, String name, String username, String password) {
 		GenericServer server = null;
@@ -378,7 +378,7 @@ public final class ServerList {
 	/**
 	 * Get server from ServerList that matches the URL.
 	 * @param u
-	 * @return
+	 * @return server
 	 * @throws URISyntaxException
 	 */
 	public static GenericServer getServer(URL u) throws URISyntaxException {

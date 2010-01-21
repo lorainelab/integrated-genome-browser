@@ -43,8 +43,7 @@ public abstract class BookmarkController {
   /** Causes a bookmark to be executed.  If this is a Unibrow bookmark,
    *  it will be opened in the viewer using
    *  {@link UnibrowControlServlet#goToBookmark}.  If it is an external
-   *  bookmark, it will be opened in an external browser, using
-   *  {@link WebBrowserControl#displayURL(String)}.
+   *  bookmark, it will be opened in an external browser.
    */
   public static void viewBookmark(Application app, Bookmark bm) {
     if (bm.isUnibrowControl()) {

@@ -57,7 +57,7 @@ public final class LoadUtils {
 	/**
 	 * Used to give a friendly name for QuickLoad features.
 	 * @param name
-	 * @return
+	 * @return name
 	 */
 	public static String stripFilenameExtensions(final String name) {
 		// Remove ending .gz or .zip extension.

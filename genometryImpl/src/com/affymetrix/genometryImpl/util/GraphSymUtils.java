@@ -486,7 +486,7 @@ public final class GraphSymUtils {
 	/**
 	 * Find last point with value <= xmin.
 	 * @param xmin
-	 * @return
+	 * @return integer value which is the last point with value <=xmin
 	 */
 	public final static int determineBegIndex(GraphSym graf, double xmin) {
 		return graf.determineBegIndex(xmin);
@@ -496,7 +496,7 @@ public final class GraphSymUtils {
 	 * Find first point with value >= xmax.
 	 * Use beginning index as a starting point.
 	 * @param xmax
-	 * @return
+	 * @return integer value which is the first point with value >= xmax
 	 */
 	public final static int determineEndIndex(GraphSym graf, double xmax, int begIndex) {
 		return graf.determineEndIndex(xmax, begIndex);

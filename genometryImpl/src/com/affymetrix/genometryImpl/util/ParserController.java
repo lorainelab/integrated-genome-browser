@@ -109,12 +109,11 @@ public final class ParserController {
 	/**
 	 * Parsing indexed files; don't annotate.
 	 * Precondition: the stream is parseable via IndexWriter.
-	 * @param stream_name
-	 * @param annotList
 	 * @param str
+	 * @param annotList
+	 * @param stream_name
 	 * @param type_prefix
-	 * @param seq_group
-	 * @return
+	 * @return A list of parsed indexes
 	 */
 	public static List parseIndexed(InputStream str, List<AnnotMapElt> annotList, String stream_name, AnnotatedSeqGroup seq_group, String type_prefix) {
 		IndexWriter iWriter = getIndexWriter(stream_name);
@@ -144,7 +143,7 @@ public final class ParserController {
 	/**
 	 * Determine extension.
 	 * @param stream_name
-	 * @return
+	 * @return the file extension
 	 */
 	public static String getExtension(String stream_name) {
 		if (stream_name.endsWith(".link.psl")) {

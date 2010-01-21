@@ -91,7 +91,7 @@ public final class GenericServer implements Comparable<GenericServer> {
 	 * then server name,
 	 * then DAS2, DAS, Quickload.
 	 * @param gServer
-	 * @return
+	 * @return comparison integer
 	 */
 	public int compareTo(GenericServer gServer) {
 		if (this.enabled != gServer.enabled) {

@@ -1222,7 +1222,6 @@ public static final String spanToString(SeqSpan span) {
 }
 
 /** Provides a string representation of a SeqSpan.
- *  @see #USE_SHORT_FORMAT_FOR_SYMS
  */
 public static final String symToString(SeqSymmetry sym) {
 	if (sym == null) {

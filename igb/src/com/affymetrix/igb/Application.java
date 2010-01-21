@@ -80,7 +80,6 @@ public abstract class Application {
 
  /**
 	 * Make a little progress bar so that the app doesn't look locked up.
-	 * @param s
 	 */
  public synchronized void setNotLockedUpStatus() {
 	 status_bar.progressBar.setVisible(true);

@@ -235,7 +235,7 @@ public final class WebLink {
 	 * replace all "$$" in the url pattern with the given id, URLEncoded
 	 * @param url
 	 * @param id
-	 * @return
+	 * @return url
 	 */
 	public static String replacePlaceholderWithId(String url, String id) {
 		if (url == null || id == null) {
@@ -255,7 +255,7 @@ public final class WebLink {
 	/**
 	 * replace all "$:genome:$" in the url pattern with the current seqGroup id, URLEncoded
 	 * @param url
-	 * @return
+	 * @return url
 	 */
 	public static String replaceGenomeId(String url) {
 		if (url == null) {

@@ -12,7 +12,7 @@ public final class UcscPslComparator implements Comparator<UcscPslSym> {
 	 * and in second case, by UscsPslSym.getTargetMax().
 	 * @param sym1
 	 * @param sym2
-	 * @return 
+	 * @return comparison integer
 	 */
 	public int compare(UcscPslSym sym1, UcscPslSym sym2) {
 		final int min1 = sym1.getTargetMin();

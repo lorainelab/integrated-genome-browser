@@ -301,12 +301,18 @@ public abstract class ServerUtils {
 	}
 
 
+
 	/**
-	 * Index the file, if possible.
+	 * Index the file, if possible or load the file.
 	 * @param dataRoot
 	 * @param file
+	 * @param stream_name
+	 * @param annot_name
+	 * @param annots_map
 	 * @param genome
-	 * @param loadedSyms
+	 * @param annot_id
+	 * @throws java.io.FileNotFoundException
+	 * @throws java.io.IOException
 	 */
 	private static void indexOrLoadFile(String dataRoot, File file, String stream_name, String annot_name, Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map, AnnotatedSeqGroup genome, Integer annot_id) throws FileNotFoundException, IOException {
 
@@ -597,15 +603,14 @@ public abstract class ServerUtils {
 		return result;
 	}
 
+	
 	/**
 	 * Get the list of symmetries.
 	 * @param overlap_span
-	 * @param min - array of min values
-	 * @param max - array of max values
-	 * @param indexedFile - indexed file to read from
-	 * @param filePos - array of indexed file positions
+	 * @param iSyms
+	 * @param annot_type
 	 * @param group
-	 * @return
+	 * @return list of indexed overlapped symmetries
 	 */
 	public static List getIndexedOverlappedSymmetries(
 			SeqSpan overlap_span,
@@ -627,7 +632,7 @@ public abstract class ServerUtils {
 	 * Chromosome is not an issue; everything returned is on the same chromosome.
 	 * @param overlap_span
 	 * @param symList
-	 * @return
+	 * @return list of overlapping seq symmetries
 	 */
 	private static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<SeqSymmetry> symList) {
 		List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
@@ -662,15 +667,14 @@ public abstract class ServerUtils {
 		return newList;
 	}
 
+
 	/**
-	 * Get the list of symmetries.
+	 * Get the list of symmetries
 	 * @param overlap_span
-	 * @param min - array of min values
-	 * @param max - array of max values
-	 * @param indexedFile - indexed file to read from
-	 * @param filePos - array of indexed file positions
+	 * @param iSyms
+	 * @param annot_type
 	 * @param group
-	 * @return
+	 * @return list of indexed seq symmetries
 	 */
 	private static List getIndexedSymmetries(
 			SeqSpan overlap_span,

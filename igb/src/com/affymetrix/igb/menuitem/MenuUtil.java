@@ -78,7 +78,7 @@ public abstract class MenuUtil {
   }
   
   /**
-   *  Calls {@link #addToMenu(JMenu, JMenuItem, String)}
+   *  Calls {@link #addToMenu(JMenu, JMenuItem)}
    *  with command set to null.
    */
   public static final JMenuItem addToMenu(JMenu menu, JMenuItem item) {

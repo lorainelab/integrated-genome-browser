@@ -36,7 +36,7 @@ public abstract class PrefsLoader {
 	 /**
    *  We no longer distribute a file called "igb_prefs.xml".
    *  Instead there is a default prefs file hidden inside the igb.jar file, and
-   *  this is augmented by a web-based prefs file at {@link #WEB_PREFS_URL}.
+   *  this is augmented by a web-based prefs file.
    *  But, we still will load a file called "igb_prefs.xml" if it exists in
    *  the user's home directory, since they may have put some personal modifications
    *  there.
@@ -215,8 +215,6 @@ public abstract class PrefsLoader {
 	/**
 	 * Checks the version of the preferences file.  This function is also
 	 * responsible for updating older preference files to the current version.
-	 *
-	 * @return true if the preferences version matches this copy of IGB
 	 */
 	@SuppressWarnings("fallthrough")
 	private static void checkPrefsVersion() {

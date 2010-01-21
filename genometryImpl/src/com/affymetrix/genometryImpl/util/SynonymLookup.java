@@ -202,7 +202,7 @@ public final class SynonymLookup {
 	 * @param synonym2 the second potential synonym.
 	 * @param cs the case sensitivity of this query.
 	 * @param sr whether tailing '_random' of the synonyms should be stripped before comparison.
-	 * @return
+	 * @return true or false
 	 */
 
 	public boolean isSynonym(String synonym1, String synonym2, boolean cs, boolean sr) {

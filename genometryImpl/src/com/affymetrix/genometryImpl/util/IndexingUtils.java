@@ -144,15 +144,18 @@ public class IndexingUtils {
 	}
 
 
+	
 	/**
-	 * Generate indexes.
-	 * @param genome
+	 *
+	 * @param originalGenome
+	 * @param tempGenome
 	 * @param dataRoot
 	 * @param file
-	 * @param originalFileName
 	 * @param loadedSyms
 	 * @param iWriter
 	 * @param typeName
+	 * @param returnTypeName
+	 * @throws java.io.IOException
 	 */
 	static void determineIndexes(
 			AnnotatedSeqGroup originalGenome, AnnotatedSeqGroup tempGenome,
@@ -194,12 +197,12 @@ public class IndexingUtils {
 		}
 	}
 
+	
 	/**
 	 * Find symmetries that have IDs or titles matching regex.  Return no more than resultLimit symmetries.
-	 * @param fileName -- of indexed symmetries (done by genome)
+	 * @param genome
 	 * @param regex
-	 * @param resultLimit
-	 * @return
+	 * @return list of Seq symmetries
 	 */
 	public static List<SeqSymmetry> findSymsByName(AnnotatedSeqGroup genome, Pattern regex) {
 		final Matcher matcher = regex.matcher("");
@@ -263,8 +266,8 @@ public class IndexingUtils {
 	 * @param seq -- the chromosome
 	 * @param group -- the group (used to determine IDs for each sym)
 	 * @param iSyms
-	 * @param fos
-	 * @return - success or failure
+	 * @param indexesFileName
+	 * @throws java.io.IOException
 	 */
 	public static void writeIndexedAnnotations(
 			List<SeqSymmetry> syms,
@@ -421,12 +424,13 @@ public class IndexingUtils {
 		return results;
 	}
 
+
 	/**
 	 * Get "length" bytes starting at filePosStart
-	 * @param fis
+	 * @param file
 	 * @param filePosStart
 	 * @param length
-	 * @return
+	 * @return byte array 
 	 */
 	public static byte[] readBytesFromFile(File file, long filePosStart, int length) {
 		byte[] contentsOnly = null;
@@ -455,7 +459,7 @@ public class IndexingUtils {
 	 * @param indexesFileName
 	 * @param annot_type
 	 * @param bytes1 - consensus symmetries in a byte array
-	 * @return
+	 * @return Byte array of the input stream
 	 * @throws IOException
 	 */
 	static ByteArrayInputStream readAdditionalLinkPSLIndex(
@@ -489,9 +493,10 @@ public class IndexingUtils {
 		return new ByteArrayInputStream(combinedByteArr);
 	}
 
+	
 	/**
 	 * Find the maximum overlap given a range.
-	 * @param insideRange -- an array of length 2, with a start and end coordinate.
+	 * @param overlapRange -- an array of length 2, with a start and end coordinate.
 	 * @param outputRange -- an outputted array of length 2, with a start position (from min[] array) and an end position (from min[] array).
 	 * @param min -- array of SORTED min points.
 	 * @param max -- array of max points.
@@ -517,7 +522,7 @@ public class IndexingUtils {
 	 * Find minimum index of min[] array that is >= start range.
 	 * @param min
 	 * @param elt
-	 * @return
+	 * @return tempPos
 	 */
 	private static int findMinimaGreaterOrEqual(int[] min, int elt) {
 		int tempPos = Arrays.binarySearch(min, elt);
@@ -537,7 +542,7 @@ public class IndexingUtils {
 	 * Find maximum index of min[] array that is <= end range.
 	 * @param min
 	 * @param elt
-	 * @return
+	 * @return tempPos
 	 */
 	private static int findMaximaLessOrEqual(int[] min, int elt) {
 		int tempPos = Arrays.binarySearch(min, elt);
@@ -597,8 +602,8 @@ public class IndexingUtils {
 	 * Backtrack to find any max values where start <= max <= end.
 	 * @param minStart
 	 * @param max
-	 * @param overlapRange
-	 * @return
+	 * @param overlapStart
+	 * @return minVal
 	 */
 	private static int backtrackForHalfInIntervals(int minStart, int[] max, int overlapStart) {
 		int minVal = minStart;

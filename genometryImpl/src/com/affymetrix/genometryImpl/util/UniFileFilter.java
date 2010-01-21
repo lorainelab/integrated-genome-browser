@@ -99,7 +99,6 @@ public final class UniFileFilter extends FileFilter {
 	/** Adds a file extension that will be considered to represent
 	 *  compression types that the filter should
 	 *  accept.  Endings, such as ".z" or ".gz",  are considered case-insensitive.
-	 * @see #getExtension(File)
 	 */
 	public void addCompressionEnding(String ending) {
 		compression_endings.add(ending.toLowerCase());

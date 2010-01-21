@@ -36,7 +36,7 @@ public class USeqArchive {
 		byte data[] = new byte[2048];
 		int numEntries = entries.size();
 		SliceInfo sliceInfo = null;
-		//for each entry
+		//for each entry		
 		for (int i=0; i< numEntries; i++){
 			//get input stream to read entry
 			ZipEntry entry = entries.get(i);			
@@ -44,7 +44,7 @@ public class USeqArchive {
 			//is this entirely contained or needing to be split?, skip first entry which is the readme file
 			if (i!=0) sliceInfo = new SliceInfo(entry.getName());
 			if (i == 0 || sliceInfo.isContainedBy(beginningBP, endingBP)){
-				out.putNextEntry(entry);
+				out.putNextEntry(entry);			
 				//read in and write out, wish there was a way of just copying it directly
 				while ((count = bis.read(data, 0, 2048))!= -1)  out.write(data, 0, count);
 				//close entry
@@ -147,18 +147,15 @@ public class USeqArchive {
 	/**Fetches the ZipEntries for a given range.  Returns null if none found or chromStrand not found.*/
 	public ArrayList<ZipEntry> fetchZipEntries (String chromStrand, int beginningBP, int endingBP){
 		ArrayList<ZipEntry> al = new ArrayList<ZipEntry>();
-		//fetch chromStrand, these are sorted so ounce found then lost kill it.
+		//fetch chromStrand
 		DataRange[] dr = chromStrandRegions.get(chromStrand);
 		if (dr == null) return null;
-		boolean foundOne = false;
 		for (int i=0; i< dr.length; i++){
 			if (dr[i].intersects(beginningBP, endingBP)) {
 				al.add(dr[i].zipEntry);
-				foundOne = true;
 			}
-			else if (foundOne) break;
 		}
-		if (foundOne == false) return null;
+		if (al.size() == 0) return null;
 		return al;
 	}
 

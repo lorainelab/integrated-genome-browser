@@ -537,7 +537,6 @@ public final class GeneralLoadUtils {
 	 * Load the sequence info for the given genome version.
 	 * If there's more than one server with this genome version, just pick the first one.
 	 * @param versionName
-	 * @return
 	 */
 	private static void loadSeqInfo(final String versionName) {
 		if (DEBUG) {
@@ -573,7 +572,7 @@ public final class GeneralLoadUtils {
 	/**
 	 * Load the sequence info for the given genome version.
 	 * Try all versions listed until one succeeds.
-	 * @param gVersion
+	 * @param gVersions
 	 * @return sequence info for the given genome version
 	 */
 	private static AnnotatedSeqGroup loadChromInfo(List<GenericVersion> gVersions) {
@@ -821,7 +820,7 @@ public final class GeneralLoadUtils {
 	 * @param gviewer
 	 * @param visible_seq
 	 * @param overlap
-	 * @return
+	 * @return true or false
 	 */
 	private boolean loadDAS2Annotations(
 					BioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, BioSeq visible_seq, SeqSpan overlap) {

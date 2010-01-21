@@ -816,7 +816,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		// PhaseI: retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
-			retrieveBNIB(ranges, sequence_directory, seqname, format, response, request);
+			retrieveBNIB(ranges, span, sequence_directory, seqname, format, response, request);
 			return;
 		}
 
@@ -831,16 +831,20 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println(request.getRequestURL().toString());
 	}
 
-	private static final void retrieveBNIB(ArrayList ranges, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+	private static final void retrieveBNIB(ArrayList ranges, SeqSpan span, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
 
+		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+		
 		if (ranges.size() != 0)
 		{
+			int spanStart = 0, spanEnd = 0;
+			spanStart = span.getStart();
+			spanEnd = span.getEnd();
 			response.setContentType("text"); // set text type
-			DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-			NibbleResiduesParser.parse(new FileInputStream(seqfile), (Integer)ranges.get(0), (Integer)ranges.get(1), dos);
+			NibbleResiduesParser.parse(new FileInputStream(seqfile), spanStart, spanEnd, dos);
 			GeneralUtils.safeClose(dos);
 			return;
 		}
@@ -848,7 +852,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		if (seqfile.exists()) {
 			byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
 			response.setContentType(NibbleResiduesParser.getMimeType()); // set bnib format mime type
-			DataOutputStream dos = new DataOutputStream(response.getOutputStream());
 			try {
 				dos.write(buf, 0, buf.length);
 			} finally {

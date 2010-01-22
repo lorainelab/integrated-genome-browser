@@ -630,7 +630,7 @@ public abstract class ServerUtils {
 	/**
 	 * Return only the symmetries that have some overlap with this span.
 	 * Chromosome is not an issue; everything returned is on the same chromosome.
-	 * @param overlap_span
+	 * @param overlapSpan
 	 * @param symList
 	 * @return list of overlapping seq symmetries
 	 */

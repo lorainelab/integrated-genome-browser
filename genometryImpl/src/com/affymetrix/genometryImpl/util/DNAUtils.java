@@ -20,19 +20,6 @@ package com.affymetrix.genometryImpl.util;
 public final class DNAUtils {
 
 	/**
-	 * Determines the (non-reversed) complement of a sequence of nucleotides.
-	 *
-	 * @param s a string of nucleotide codes.
-	 * @return the complementary codes.
-	 */
-	/*public static String complement(String s) {
-		if (s == null)  { return null; }
-		StringBuffer buf = new StringBuffer(s);
-		DNAUtils.complementBuffer(buf);
-		return buf.toString();
-	}*/
-
-	/**
 	 * Determines the reverse complement of a sequence of nucleotides.
 	 *
 	 * @param s a string of nucleotide codes.
@@ -61,57 +48,6 @@ public final class DNAUtils {
 		}
 		return;
 	}
-
-	/**
-	 * Gets the reverse complement of a sequence of nucleotides.
-	 *
-	 * @param sb  nucleotide codes.
-	 * @return the complementary codes in reverse order in a new String.
-	 */
-	/*public static String getReverseComplement(CharSequence sb) {
-		if ( sb == null ) { return null; }
-		int length = sb.length();
-		char[] sbRC = new char[length];
-
-		for (int i=0, j=length-1; j>= 0; i++, j--) {
-			sbRC[i] = complementChar(sb.charAt(j));
-		}
-
-		return new String(sbRC);
-	}*/
-
-
-
-	/**
-	 * Determines the (non-reversed) complement of a sequence of nucleotides.
-	 *
-	 * @param buf a string of nucleotide codes
-	 *            each of which is replaced
-	 *            with its complementary code.
-	 * @see #complement
-	 */
-	/*protected static void complementBuffer(StringBuffer buf) {
-		char base;
-		for (int i=0; i<buf.length(); i++) {
-			base = buf.charAt(i);
-			buf.setCharAt(i, complementChar(base));
-		}
-	}*/
-
-	/**
-	 * Determines the (un-complemented) reverse of a sequence of nucleotides.
-	 *
-	 * @param s a string of nucleotide codes.
-	 * @return the codes in reverse order.
-	 */
-	/*public static String reverse(String s) {
-		if (s == null) { return null; }
-		StringBuffer buf = new StringBuffer(s.length());
-		for (int i=s.length()-1; i>=0; i--) {
-			buf.append(s.charAt(i));
-		}
-		return buf.toString();
-	}*/
 
 	private static char complementChar(char b) {
 

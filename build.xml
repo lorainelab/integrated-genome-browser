@@ -174,7 +174,7 @@
 				<include name="commons-collections-2.1.1.jar"/>
 				<include name="commons-codec-1.4.jar"/>
 				<include name="commons-compress-1.0.jar"/>
-				<include name="commons-logging-1.0.4jar"/>
+				<include name="commons-logging-1.0.4.jar"/>
 				<include name="cos.jar"/>
 				<include name="dom4j-1.6.1.jar"/>
 				<include name="jta.jar" /> 	

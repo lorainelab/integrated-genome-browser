@@ -91,8 +91,8 @@ mysql -u root -p
 ** Change the 'http://www.example.com:8080/das2genopub/genome' replacing 'www.example.com:8080' with the URL for your machine. This is the same one you used to verify your tomcat installation.
 
 * Modify the ~/apache-tomcat-5.xxx/webapps/das2genopub/META-INF/context.xml doc in a text editor 
-** Set the docBase and workdir in <Context> to the relative path of the webapp application. (e.g. <Context path="/das2" docBase="webapps/das2genopub" workDir="webapps/das2genopub" debug="0" reloadable="true">)
-** Set the 'your_genopub_db_password_here' to the genopub user password you assigned in MySQL.  You will need to change this in both the <RESOURCE> and <REALM> 
+** Set the docBase  in <Context> to the relative path of the webapp application. (e.g. <Context path="/das2genopub" docBase="webapps/das2genopub" debug="0" reloadable="true">)
+** Set the 'your_genopub_db_password_here' in <RESOURCE> to the genopub user password you assigned in MySQL.  
 
 * (Optional) Create a 'index.html' doc describing your server and place it in the '~/apache-tomcat-5.xxx/webapps/das2genopub/' directory. This will be hot linked in some applications.
 * (Optional) Likewise, add a favicon.ico to the '~/apache-tomcat-5.xxx/webapps/das2genopub/' directory representing your organization.  This will be displayed in apps alongside your genopub server name.

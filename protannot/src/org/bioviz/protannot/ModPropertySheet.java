@@ -10,12 +10,9 @@ import javax.swing.table.*;
  */
 final class ModPropertySheet extends JPanel {
 
-    // the table showing name-value pairs
-    private JTable table;
     private JLabel title;
     private JScrollPane scroll_pane;
-    private JViewport jvp;
-    private final Dimension size = new Dimension(1000, 1000);
+    private final JViewport jvp;
     private static final String DEFAULT_TITLE = " ";
     private Properties[] props;
 
@@ -115,7 +112,7 @@ final class ModPropertySheet extends JPanel {
         Vector<String[]> name_values = propkeys.getNameValues(props);
         String[][] rows = buildRows(name_values, props);
         String[] col_headings = getColumnHeadings(props);
-        this.table = new JTable();
+        JTable table = new JTable(); // the table showing name-value pairs
         TableModel model = new DefaultTableModel(rows, col_headings) {
 
             @Override
@@ -135,9 +132,9 @@ final class ModPropertySheet extends JPanel {
             champion = (candidate > champion ? candidate : champion);
         }
         table.setEnabled(false);
-        this.size.height = table.getSize().height;
-        //    updateColumnSize();
-        table.setSize(this.size);
+		Dimension size = new Dimension(1000, 1000);
+        size.height = table.getSize().height;
+        table.setSize(size);
         this.removeAll();
         this.setLayout(new BorderLayout());
         scroll_pane = new JScrollPane(table);

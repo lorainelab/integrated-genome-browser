@@ -79,16 +79,12 @@ final class ProtAnnotMain implements WindowListener {
     private JFrame frm;
     // has NeoMaps and PropertySheet (JTable)
     private GenomeView gview;
-    // the genome_seq we're looking at
-    private BioSeq genome_seq;
     // is populated from prefs_file
     private Hashtable<String,Color> prefs_hash;
     // for storing user prefrences
     private Preferences prefs;
     // width of the user's screen
     private Dimension screen;
-    private int frm_width;// = (int) (screen.width * .8f);
-    private int frm_height;// = (int) (screen.height * .8f);
     private static final boolean testmode = false;
     private enum Arguments {
         SERVER,
@@ -200,7 +196,7 @@ final class ProtAnnotMain implements WindowListener {
         {
             bistr = new BufferedInputStream(fistr);
             Xml2GenometryParser parser = new Xml2GenometryParser();
-            genome_seq = parser.parse(bistr);
+            BioSeq genome_seq = parser.parse(bistr);
             gview.setTitle("viewing file: " + filename);
             gview.setBioSeq(genome_seq,true);
             frm.setTitle(" ProtAnnot: " + filename);
@@ -221,8 +217,8 @@ final class ProtAnnotMain implements WindowListener {
     private void start(String[] args) {
         frm = new JFrame(" ProtAnnot");
         screen = frm.getToolkit().getScreenSize();
-        frm_width = (int) (screen.width * .8f);
-        frm_height = (int) (screen.height * .8f);
+        int frm_width = (int) (screen.width * .8f);
+        int frm_height = (int) (screen.height * .8f);
         frm.setSize(frm_width, frm_height);
         frm.setLocation((int) (screen.width * .1f), (int) (screen.height * .05f));
         setUpPanels();

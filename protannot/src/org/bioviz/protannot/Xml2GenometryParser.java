@@ -36,9 +36,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 final class Xml2GenometryParser {
 
-    private DocumentBuilderFactory dbFactory;
     private DocumentBuilder dBuilder;
-    private boolean DEBUG = false;
+    private static final boolean DEBUG = false;
     private HashMap<String,BioSeq> mrna_hash;
     private HashMap<String,BioSeq> prot_hash;
     // instance variables needed during the parse
@@ -50,7 +49,7 @@ final class Xml2GenometryParser {
 
     Xml2GenometryParser() {
         try {
-            dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,7 +271,7 @@ final class Xml2GenometryParser {
                 }
             }
         }
-        String prop = (new Integer(num_spans)).toString();
+        String prop =  (Integer.valueOf(num_spans)).toString();
         hitSym.setProperty("num_spans", new String(prop));
         hitSym.setProperty("type", "hit");
         hitSym.addSpan(hitSpan);
@@ -342,11 +341,11 @@ final class Xml2GenometryParser {
 
         SimpleSymWithProps spanSym = new SimpleSymWithProps();
         addDescriptors(elem, spanSym);
-        String prop = (new Integer(start + 1)).toString();
+        String prop = (Integer.valueOf(start+1)).toString();
         spanSym.setProperty("aa_start", prop);
-        prop = (new Integer(end + 1)).toString();
+        prop = (Integer.valueOf(end + 1)).toString();
         spanSym.setProperty("aa_end", prop);
-        prop = (new Integer(end - start + 1)).toString();
+        prop = (Integer.valueOf(end - start + 1)).toString();
         spanSym.setProperty("aa_length", prop);
         SeqSpan qspan = new SimpleSeqSpan(start, end, query_seq);
         spanSym.addSpan(qspan);
@@ -489,64 +488,8 @@ final class Xml2GenometryParser {
         for (SeqSymmetry esym : exon_list) {
             m2gSym.addChild(esym);
         }
-
-        int exoncount = m2gSym.getChildCount();
-        int mrnalength = 0;
-        for (int i = 0; i < exoncount; i++) {
-            SeqSymmetry esym = m2gSym.getChild(i);
-            SeqSpan gspan = esym.getSpan(genomic);
-            mrnalength += gspan.getLength();
-        }
-        for (int i = 0; i < exon_insert_list.size(); i++) {
-            Element iel = (Element) exon_insert_list.get(i);
-            //	int istart = Integer.parseInt(iel.getAttribute("insert_at"));
-            int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
-            mrnalength += ilength;
-        }
-
-        start = 0;
-        end = 0;
-        String mrna_id = "mrna";
-        BioSeq mrna = new BioSeq(mrna_id, null, mrnalength);
-        mrna_hash.put(mrna_id, mrna);
-        SeqSpan mrna_span = new SimpleSeqSpan(0, mrnalength, mrna);
-        m2gSym.addSpan(mrna_span);
-
-        for (int i = 0; i < exoncount; i++) {
-            SimpleSymWithProps esym = (SimpleSymWithProps) m2gSym.getChild(i);
-            SeqSpan gspan = esym.getSpan(genomic);
-            end = start + gspan.getLength();
-            Vector<Element> hit_inserts = new Vector<Element>();
-
-            /** check each exon_insert, figure out which (if any) exons it overlaps */
-            for (int insert_index = 0; insert_index < exon_insert_list.size(); insert_index++) {
-                Element iel = (Element) exon_insert_list.get(insert_index);
-                int istart = Integer.parseInt(iel.getAttribute("insert_at"));
-                int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
-                if (SeqUtils.contains(gspan, (SeqSpan) iel)) {
-                    // need to add children to this exon symmetry to indicate an insertion
-                    //   (or possibly deletion?) of bases in the transcript relative to the genomic
-                    //	    processExonInsert(esym, istart, ilength);
-                    System.err.println("insert: insertion_start = " + istart + ", length = " + ilength);
-                    // remove this exon_insert from list to consider in future passes
-                    //    need to also decrement the insert_index to make sure removal doesn't cause
-                    //    next exon_insert to not be considered...
-                    exon_insert_list.remove(insert_index);
-                    hit_inserts.add(iel);
-                    insert_index--;
-                    end += ilength;
-                }
-            }
-
-            SeqSpan tspan = new SimpleSeqSpan(start, end, mrna);
-            esym.addSpan(tspan);
-
-            if (hit_inserts.size() > 0) {
-                processExonInsert((MutableSeqSymmetry) esym, hit_inserts, genomic, mrna);
-            }
-
-            start = end;
-        }
+		
+		BioSeq mrna = addSpans(m2gSym, genomic, exon_insert_list);
 
         String protein_id = null;
 
@@ -579,6 +522,64 @@ final class Xml2GenometryParser {
         genomic.addAnnotation(m2gSym);
         mrna.addAnnotation(m2gSym);
     }
+
+
+	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list) throws NumberFormatException {
+		int exoncount = m2gSym.getChildCount();
+        int mrnalength = 0;
+        for (int i = 0; i < exoncount; i++) {
+            SeqSymmetry esym = m2gSym.getChild(i);
+            SeqSpan gspan = esym.getSpan(genomic);
+            mrnalength += gspan.getLength();
+        }
+        for (int i = 0; i < exon_insert_list.size(); i++) {
+            Element iel = (Element) exon_insert_list.get(i);
+            //	int istart = Integer.parseInt(iel.getAttribute("insert_at"));
+            int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
+            mrnalength += ilength;
+        }
+
+		int start = 0;
+		int end = 0;
+		String mrna_id = "mrna";
+		BioSeq mrna = new BioSeq(mrna_id, null, mrnalength);
+		mrna_hash.put(mrna_id, mrna);
+		SeqSpan mrna_span = new SimpleSeqSpan(0, mrnalength, mrna);
+		m2gSym.addSpan(mrna_span);
+		for (int i = 0; i < exoncount; i++) {
+			SimpleSymWithProps esym = (SimpleSymWithProps) m2gSym.getChild(i);
+			SeqSpan gspan = esym.getSpan(genomic);
+			end = start + gspan.getLength();
+			Vector<Element> hit_inserts = new Vector<Element>();
+			/** check each exon_insert, figure out which (if any) exons it overlaps */
+			for (int insert_index = 0; insert_index < exon_insert_list.size(); insert_index++) {
+				Element iel = (Element) exon_insert_list.get(insert_index);
+				int istart = Integer.parseInt(iel.getAttribute("insert_at"));
+				int ilength = Integer.parseInt(iel.getAttribute("insert_length"));
+				if (SeqUtils.contains(gspan, (SeqSpan) iel)) {
+					// need to add children to this exon symmetry to indicate an insertion
+					//   (or possibly deletion?) of bases in the transcript relative to the genomic
+					//	    processExonInsert(esym, istart, ilength);
+					System.err.println("insert: insertion_start = " + istart + ", length = " + ilength);
+					// remove this exon_insert from list to consider in future passes
+					//    need to also decrement the insert_index to make sure removal doesn't cause
+					//    next exon_insert to not be considered...
+					exon_insert_list.remove(insert_index);
+					hit_inserts.add(iel);
+					insert_index--;
+					end += ilength;
+				}
+			}
+			SeqSpan tspan = new SimpleSeqSpan(start, end, mrna);
+			esym.addSpan(tspan);
+			if (!hit_inserts.isEmpty()) {
+				processExonInsert((MutableSeqSymmetry) esym, hit_inserts, genomic, mrna);
+			}
+			start = end;
+		}
+		return mrna;
+	}
+
 
     /**
      *

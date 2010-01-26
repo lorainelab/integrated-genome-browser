@@ -1,23 +1,10 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genometryImpl.event;
 
 import java.util.*;
 import com.affymetrix.genometryImpl.BioSeq;
 
 public final class SeqSelectionEvent extends EventObject {
-	private List<BioSeq> selected_seqs;
+	private final List<BioSeq> selected_seqs;
 	private BioSeq primary_selection = null;
 	private static final long serialVersionUID = 1L;
 
@@ -29,9 +16,13 @@ public final class SeqSelectionEvent extends EventObject {
 	 */
 	public SeqSelectionEvent(Object src, List<BioSeq> seqs) {
 		super(src);
-		this.selected_seqs = seqs;
-		if (selected_seqs == null) { selected_seqs = Collections.<BioSeq>emptyList(); }
-		if (selected_seqs.size() > 0) {
+		if (seqs == null) {
+			this.selected_seqs = Collections.<BioSeq>emptyList();
+		} else {
+			this.selected_seqs = seqs;
+		}
+
+		if (!selected_seqs.isEmpty()) {
 			primary_selection = selected_seqs.get(0);
 		}
 	}

@@ -26,8 +26,6 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Vector;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -165,9 +163,10 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			uniChild.setResidueFont(this.getResidueFont());
 		}
 		setResidueFont(default_font);
-		setDrawOrder(this.DRAW_CHILDREN_FIRST);
+		setDrawOrder(AlignmentGlyph.DRAW_CHILDREN_FIRST);
 	}
 
+	@Override
 	public void setCoords(double x, double y, double width, double height) {
 		super.setCoords(x, y, width, height);
 		arrow.setCoords(x, y, width, height);
@@ -369,7 +368,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			glyph = new AlignedResiduesGlyph();
 		}
 		unaligned_spans.add(glyph);
-		glyph.setBackgroundColorStrategy(glyph.FIXED_COLOR);
+		glyph.setBackgroundColorStrategy(AlignedResiduesGlyph.FIXED_COLOR);
 
 		addResidueGlyphChild(glyph, seqstart, seqend, refstart, refend);
 
@@ -443,6 +442,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		return unaligned_spans;
 	}
 
+	@Override
 	public void removeChild(GlyphI glyph)  {
 		aligned_spans.remove(glyph);
 		unaligned_spans.remove(glyph);
@@ -548,6 +548,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	 * Rather, it calls arrow.draw() and/or children.drawTraversal() as appropriate.
 	 * Therefore need to deal with drawing selection here rather than in draw().
 	 */
+	@Override
 	public void drawTraversal(ViewI view)  {
 		if (useUniChild && align_modified) {
 			//      System.out.println("TRYING TO SET UNICHILD RESIDUES");
@@ -601,34 +602,24 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		 * &gt; 0 otherwise.
 		 */
 		public int compareTo(AlignmentGlyph otherseq) {
-			if (seq_beg < otherseq.seq_beg) {
-				return -1;
+			if (seq_beg != otherseq.seq_beg) {
+				return ((Integer)seq_beg).compareTo(otherseq.seq_beg);
 			}
-			else if (seq_beg > otherseq.seq_beg) {
-				return 1;
-			}
-			else {   // otherwise they start at the same location, go to size
-				if (seq_end < otherseq.seq_end) {
-					return -2;
-				}
-				else if (seq_end > otherseq.seq_end) {
-					return 2;
-				}
-				else {  // same size and length, punt and return 0
-					return 0;
-				}
-			}
+			return ((Integer)seq_end).compareTo(otherseq.seq_end);
 		}
 
+	@Override
 		public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 			calcPixels(view);
 			return  isVisible && pixel_hitbox.intersects(pixelbox);
 		}
 
+	@Override
 		public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 			return isVisible && coord_hitbox.intersects(coordbox);
 		}
 
+	@Override
 		public void setSelected(boolean selected) {
 			super.setSelected(selected);
 			arrow.setSelected(selected);
@@ -660,6 +651,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			}
 		}
 
+	@Override
 		public void setForegroundColor(Color c) {
 			super.setForegroundColor(c);
 			if (null != children) {
@@ -683,6 +675,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 		 * Need to override setScene()
 		 * to make sure arrowglyph gets its scene set properly.
 		 */
+	@Override
 		public void setScene(Scene s) {
 			super.setScene(s);
 			arrow.setScene(s);

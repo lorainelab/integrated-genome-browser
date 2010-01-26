@@ -2139,7 +2139,7 @@ public class GenoPubServlet extends HttpServlet {
 				// Remove the annotation grouping the annotation was in
 				// by adding back the annotations to the annotation grouping, 
 				// excluding the annotation that has moved
-				Set annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
+				Set<Annotation> annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
 				for(Annotation a : (Set<Annotation>)annotationGroupingOld.getAnnotations()) {
 					if (a.getIdAnnotation().equals(annotation.getIdAnnotation())) {
 						continue;
@@ -4185,7 +4185,7 @@ public class GenoPubServlet extends HttpServlet {
 		StringBuffer hexString = new StringBuffer(messageDigest.length * 2);
 		for (int i=0; i < messageDigest.length;i++)
 		{
-			int value1 = (int) (messageDigest[i] >> 4);
+			int value1 = (messageDigest[i] >> 4);
 			value1 &= 0x0f;
 			if (value1 >= 10)
 			{
@@ -4195,7 +4195,7 @@ public class GenoPubServlet extends HttpServlet {
 			{
 				hexString.append(((char) (value1 + '0')));
 			}
-			int value2 = (int) (int) (messageDigest[i] & 0x0f);
+			int value2 = (messageDigest[i] & 0x0f);
 			value2 &= 0x0f;
 			if (value2 >= 10)
 			{

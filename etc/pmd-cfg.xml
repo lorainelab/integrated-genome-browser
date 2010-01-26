@@ -23,6 +23,7 @@
 		<exclude name="AvoidFinalLocalVariables" />
 		<exclude name="AvoidFinalLocalVariable" />
 		<exclude name="AvoidUsingShortType" />
+		<exclude name="BooleanInversion" />
 		<exclude name="CallSuperInConstructor" />
 		<exclude name="DataflowAnomalyAnalysis" />
 		<exclude name="DefaultPackage" />
@@ -37,6 +38,8 @@
 		<exclude name="ConfusingTernary" />
 		<exclude name="TooFewBranchesForASwitchStatement" />
 		<exclude name="UncommentedEmptyConstructor" />
+		<exclude name="UncommentedEmptyMethod" />
+		<exclude name="UseCollectionIsEmpty" />
 		<exclude name="UseSingleton" />
 	</rule>
 	<rule ref="rulesets/finalizers.xml" />

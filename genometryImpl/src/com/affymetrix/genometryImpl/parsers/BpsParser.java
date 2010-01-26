@@ -34,7 +34,6 @@ import java.util.logging.Logger;
 
 public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	private static final UcscPslComparator comp = new UcscPslComparator();
-	private static final boolean DEBUG = false;
 	static List<String> pref_list = new ArrayList<String>();
 	static {
 		pref_list.add("bps");
@@ -154,7 +153,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 
 	public static void convertPslToBps(String psl_in, String bps_out)  {
 		System.out.println("reading text psl file");
-		List<SeqSymmetry> psl_syms = readPslFile(psl_in);
+		List<UcscPslSym> psl_syms = readPslFile(psl_in);
 		System.out.println("done reading text psl file, annot count = " + psl_syms.size());
 		System.out.println("writing binary psl file");
 		//    writeBpsFile(psl_syms, bps_out);
@@ -163,8 +162,8 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	}
 
 
-	public static List parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
-		throws IOException {
+	public static List<UcscPslSym> parse(String file_name, String annot_type, AnnotatedSeqGroup seq_group)
+			throws IOException {
 		GenometryModel.logInfo("loading file: " + file_name);
 		List results = null;
 		FileInputStream fis = null;
@@ -175,14 +174,13 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 			fis = new FileInputStream(fil);
 			BufferedInputStream bis = new BufferedInputStream(fis);
 
-				byte[] bytebuf = new byte[(int)flength];
-				bis.read(bytebuf);
-				//        fis.read(bytebuf);
-				ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
-				dis = new DataInputStream(bytestream);
+			byte[] bytebuf = new byte[(int) flength];
+			bis.read(bytebuf);
+			//        fis.read(bytebuf);
+			ByteArrayInputStream bytestream = new ByteArrayInputStream(bytebuf);
+			dis = new DataInputStream(bytestream);
 			results = parse(dis, annot_type, (AnnotatedSeqGroup) null, seq_group, false, true);
-		}
-		finally {
+		} finally {
 			GeneralUtils.safeClose(dis);
 			GeneralUtils.safeClose(fis);
 		}
@@ -340,11 +338,11 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	}
 
 
-	private static List<SeqSymmetry> readPslFile(String file_name) {
+	private static List<UcscPslSym> readPslFile(String file_name) {
 		Timer tim = new Timer();
 		tim.start();
 
-		List<SeqSymmetry> results = null;
+		List<UcscPslSym> results = null;
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 		try {
@@ -395,7 +393,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "binary PSL".
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		DataOutputStream dos = null;
 		try {
@@ -425,7 +423,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 		return true;
 	}
 
-	public Comparator getComparator(BioSeq seq) {
+	public Comparator<UcscPslSym> getComparator(BioSeq seq) {
 		return comp;
 	}
 	
@@ -449,7 +447,7 @@ public final class BpsParser implements AnnotationWriter, IndexWriter  {
 	public List<String> getFormatPrefList() {
 		return BpsParser.pref_list;
 	}
-	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+	public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
 			return BpsParser.parse(dis, annot_type, null, group, false, false);
 		} catch (IOException ex) {

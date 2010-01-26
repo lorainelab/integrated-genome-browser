@@ -325,7 +325,7 @@ public final class ExonArrayDesignParser implements AnnotationWriter {
 	 *    Level 3: probeset annots (EfficieentProbesetSymA)
 	 *    Level 4: probes (virtual, encoded in EfficientProbesetSymA parent)
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq aseq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq aseq,
 			String type, OutputStream outstream) throws IOException {
 		boolean success = false;
 		DataOutputStream dos = null;

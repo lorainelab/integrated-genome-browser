@@ -31,13 +31,13 @@ public interface IndexWriter {
 	 * Parse the given stream, returning a list of SeqSymmetries.
 	 * @return list of SeqSymmetries.
 	 */
-	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group);
+	public List<? extends SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group);
 
 	/**
 	 * Get a comparator for the class.
 	 * @return comparator.
 	 */
-	public Comparator getComparator(BioSeq seq);
+	public Comparator<? extends SeqSymmetry> getComparator(BioSeq seq);
 
 	/**
 	 * Get the minimum of a given symmetry.

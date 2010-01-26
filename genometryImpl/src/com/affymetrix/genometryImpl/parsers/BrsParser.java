@@ -435,7 +435,7 @@ public static void main(String[] args) {
  *  Implementing AnnotationWriter interface to write out annotations
  *    to an output stream as "binary UCSC refseq gene". File extension ".brs".
  **/
-public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 		String type, OutputStream outstream) {
 	System.out.println("in BrsParser.writeAnnotations()");
 	boolean success = true;
@@ -469,7 +469,7 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 		outputBrsFormat((UcscGeneSym)sym, dos);
 	}
 
-	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+	public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
 			return this.parse((InputStream) dis, annot_type, group, false);
 		} catch (IOException ex) {
@@ -478,7 +478,7 @@ public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
 		return null;
 	}
 
-	public Comparator getComparator(BioSeq seq) {
+	public Comparator<SeqSymmetry> getComparator(BioSeq seq) {
 		return new SeqSymMinComparator(seq);
 	}
 

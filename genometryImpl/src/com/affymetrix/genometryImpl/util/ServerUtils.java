@@ -612,13 +612,13 @@ public abstract class ServerUtils {
 	 * @param group
 	 * @return list of indexed overlapped symmetries
 	 */
-	public static List getIndexedOverlappedSymmetries(
+	public static <S extends SeqSymmetry> List<S> getIndexedOverlappedSymmetries(
 			SeqSpan overlap_span,
 			IndexedSyms iSyms,
 			String annot_type,
 			AnnotatedSeqGroup group) {
 
-		List<SeqSymmetry> symList = getIndexedSymmetries(overlap_span,iSyms,annot_type,group);
+		List<S> symList = getIndexedSymmetries(overlap_span,iSyms,annot_type,group);
 
 		// We need to filter this list to only return overlaps.
 		// Due to the way indexing is implemented, there may have been additional symmetries outside of the specified interval.
@@ -634,9 +634,9 @@ public abstract class ServerUtils {
 	 * @param symList
 	 * @return list of overlapping seq symmetries
 	 */
-	private static List<SeqSymmetry> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<SeqSymmetry> symList) {
-		List<SeqSymmetry> newList = new ArrayList<SeqSymmetry>(symList.size());
-		for (SeqSymmetry sym : symList) {
+	private static <S extends SeqSymmetry> List<S> filterForOverlappingSymmetries(SeqSpan overlapSpan, List<S> symList) {
+		List<S> newList = new ArrayList<S>(symList.size());
+		for (S sym : symList) {
 			if (sym instanceof UcscPslSym) {
 				UcscPslSym uSym = (UcscPslSym)sym;
 				SeqSpan span = uSym.getSpan(uSym.getTargetSeq());

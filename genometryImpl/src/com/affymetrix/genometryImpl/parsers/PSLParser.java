@@ -68,7 +68,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		is_link_psl = b;
 	}
 
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
+	public List<UcscPslSym> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group,
 			boolean annotate_query, boolean annotate_target) throws IOException {
 		return parse(istr, annot_type, query_group, target_group, null,
@@ -95,7 +95,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	 *  @param annotate_other   if true, then alignment SeqSymmetries (in PSL3 format files) are added to other seq as annotations
 	 *
 	 */
-	public List<SeqSymmetry> parse(InputStream istr, String annot_type,
+	public List<UcscPslSym> parse(InputStream istr, String annot_type,
 			AnnotatedSeqGroup query_group, AnnotatedSeqGroup target_group, AnnotatedSeqGroup other_group,
 			boolean annotate_query, boolean annotate_target, boolean annotate_other)
 			throws IOException {
@@ -103,7 +103,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		if (DEBUG) {
 			System.out.println("in PSLParser.parse(), create_container_annot: " + create_container_annot);
 		}
-		ArrayList<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
+		List<UcscPslSym> results = new ArrayList<UcscPslSym>();
 
 		// Make temporary seq groups for any unspecified group.
 		// These temporary groups do not require synonym matching, because they should
@@ -234,8 +234,8 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 				}
 
 				// Main method to determine the symmetry
-				SeqSymmetry sym = determineSym(
-						query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, annot_type, fields, findex, childcount, other_group, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, other2types, annotate_query, query2types, annotate_target, target2types, results);
+				UcscPslSym sym = determineSym(
+						query_group, qname, qsize, target_group, tname, in_bottom_of_link_psl, tsize, qforward, tforward, block_size_array, q_start_array, t_start_array, annot_type, fields, findex, childcount, other_group, match, mismatch, repmatch, n_count, q_gap_count, q_gap_bases, t_gap_count, t_gap_bases, same_orientation, qmin, qmax, tmin, tmax, blockcount, annotate_other, other2types, annotate_query, query2types, annotate_target, target2types);
 
 				total_annot_count++;
 				total_child_count += sym.getChildCount();
@@ -301,7 +301,9 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return qseq;
 	}
 
-	private SeqSymmetry determineSym(AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<BioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<BioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<BioSeq, Map<String, SimpleSymWithProps>> target2types, ArrayList<SeqSymmetry> results) throws NumberFormatException {
+	private UcscPslSym determineSym(
+			AnnotatedSeqGroup query_group, String qname, int qsize, AnnotatedSeqGroup target_group, String tname, boolean in_bottom_of_link_psl, int tsize, boolean qforward, boolean tforward, String[] block_size_array, String[] q_start_array, String[] t_start_array, String annot_type, String[] fields, int findex, int childcount, AnnotatedSeqGroup other_group, int match, int mismatch, int repmatch, int n_count, int q_gap_count, int q_gap_bases, int t_gap_count, int t_gap_bases, boolean same_orientation, int qmin, int qmax, int tmin, int tmax, int blockcount, boolean annotate_other, Map<BioSeq, Map<String, SimpleSymWithProps>> other2types, boolean annotate_query, Map<BioSeq, Map<String, SimpleSymWithProps>> query2types, boolean annotate_target, Map<BioSeq, Map<String, SimpleSymWithProps>> target2types)
+			throws NumberFormatException {
 		BioSeq qseq = determineSeq(query_group, qname, qsize);
 		BioSeq tseq = target_group.getSeq(tname);
 		boolean shared_query_target = false;
@@ -513,7 +515,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "PSL" format
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		return writeAnnotations(syms, seq, false, type, null, outstream);
 	}
@@ -521,7 +523,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	/**
 	 *  This version of the method is able to write out track lines
 	 **/
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			boolean writeTrackLines, String type,
 			String description, OutputStream outstream) {
 
@@ -569,7 +571,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 	}
 
 
-	public Comparator getComparator(BioSeq seq) {
+	public Comparator<UcscPslSym> getComparator(BioSeq seq) {
 		return comp;
 	}
 
@@ -598,7 +600,7 @@ public final class PSLParser implements AnnotationWriter, IndexWriter {
 		return PSLParser.psl_pref_list;
 	}
 
-	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+	public List<UcscPslSym> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
 			return this.parse(dis, annot_type, null, group, null, false, false, false);
 		} catch (IOException ex) {

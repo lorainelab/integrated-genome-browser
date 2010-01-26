@@ -651,7 +651,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "DASGFF" XML format.
 	 */
-	public boolean writeAnnotations(Collection<SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq, String type, OutputStream outstream) {
 		// Das2FeatureSaxParser.writeAnnotations() does not use seq arg, since now writing out all spans
 		//  but still takes a seq arg to comply with AnnotationWriter interface (but can be null)
 
@@ -687,7 +687,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			}
 
 			MutableSeqSpan mspan = new SimpleMutableSeqSpan();
-			Iterator<SeqSymmetry> iterator = syms.iterator();
+			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry annot = iterator.next();
 				// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans/LOCs

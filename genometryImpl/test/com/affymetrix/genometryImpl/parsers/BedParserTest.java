@@ -119,10 +119,9 @@ public class BedParserTest {
 			//System.out.println("parseIntArray");
 
 			String int_array = "1,7,8,9,10";
-			BedParser instance = new BedParser();
 
 			int[] expResult = new int[] {1,7,8,9,10};
-			int[] result = instance.parseIntArray(int_array);
+			int[] result = BedParser.parseIntArray(int_array);
 			for (int i=0; i<expResult.length; i++) {
 				assertEquals(expResult[i], result[i]);
 			}    
@@ -135,11 +134,10 @@ public class BedParserTest {
 			// the parser doesn't accept whitespace in the integer lists
 			// (Maybe it should, but it insn't expected to need to do so.)
 			String int_array = "1,7, 8,9,10";
-			BedParser instance = new BedParser();
 
 			boolean passed = false;
 			try {
-				int[] result = instance.parseIntArray(int_array);
+				int[] result = BedParser.parseIntArray(int_array);
 			} catch (NumberFormatException nfe) {
 				passed = true;
 			}
@@ -156,10 +154,9 @@ public class BedParserTest {
 
 			int min = 100;
 			int[] blockStarts = new int[] {1,3,4,5,9};
-			BedParser instance = new BedParser();
 
 			int[] expResult = new int[] {101,103,104,105,109};
-			int[] result = instance.makeBlockMins(min, blockStarts);
+			int[] result = BedParser.makeBlockMins(min, blockStarts);
 			for (int i=0; i<expResult.length; i++) {
 				assertEquals(expResult[i], result[i]);
 			}    
@@ -174,10 +171,9 @@ public class BedParserTest {
 
 			int[] blockMins =  new int[] {1,3,4,5,9};
 			int[] blockSizes =  new int[] {1,3,4,5,9};
-			BedParser instance = new BedParser();
 
 			int[] expResult =  new int[] {2,6,8,10,18};
-			int[] result = instance.makeBlockMaxs(blockMins, blockSizes);
+			int[] result = BedParser.makeBlockMaxs(blockMins, blockSizes);
 			for (int i=0; i<expResult.length; i++) {
 				assertEquals(expResult[i], result[i]);
 			}    

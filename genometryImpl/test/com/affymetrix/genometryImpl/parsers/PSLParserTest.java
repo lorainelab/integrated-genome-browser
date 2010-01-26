@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.UcscPslSym;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,11 +30,10 @@ public class PSLParserTest {
 			InputStream istr = new ByteArrayInputStream(string.getBytes());
 			AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 			boolean annot_query = true;
-			boolean annot_target = false;
 			String stream_name = "test_file";
 			PSLParser instance = new PSLParser();
 
-			Collection<SeqSymmetry> syms = null;
+			Collection<UcscPslSym> syms = null;
 			try {
 				syms = instance.parse(istr, stream_name, group, group, annot_query, true);
 			} catch (IOException ioe) {

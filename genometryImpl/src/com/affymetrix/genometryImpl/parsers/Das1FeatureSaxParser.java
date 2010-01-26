@@ -847,7 +847,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "DASGFF" XML format
 	 */
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 					String type, OutputStream outstream) {
 		boolean success = true;
 		// for now, assume bounds of query are min/max of syms...
@@ -858,7 +858,7 @@ public final class Das1FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		try {
 			PrintWriter pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outstream)));
 			Das1FeatureSaxParser.writeDasFeatHeader(qspan, pw);
-			Iterator<SeqSymmetry> iterator = syms.iterator();
+			Iterator<? extends SeqSymmetry> iterator = syms.iterator();
 			while (iterator.hasNext()) {
 				SeqSymmetry annot = iterator.next();
 				Das1FeatureSaxParser.writeDasFeature(annot, seq, type, pw);

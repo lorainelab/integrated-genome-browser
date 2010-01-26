@@ -99,7 +99,7 @@ public class CytobandParserTest {
 
 		CytobandParser instance = new CytobandParser();
 
-		Collection<SeqSymmetry> syms = new ArrayList();
+		Collection<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
 
 		syms = instance.parse(istr, seq_group, annot_seq);
 

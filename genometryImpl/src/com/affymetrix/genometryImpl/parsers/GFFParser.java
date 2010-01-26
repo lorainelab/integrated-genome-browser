@@ -958,7 +958,7 @@ public final class GFFParser implements AnnotationWriter  {
 
 	// assumes that seqid for outputting in GFF format is id of sym's first span's BioSeq
 	// currently type is ignored
-	public boolean writeAnnotations(java.util.Collection syms, String type, OutputStream outstream) {
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, String type, OutputStream outstream) {
 		boolean success = true;
 		int count = 0;
 		if (DEBUG) {
@@ -997,7 +997,7 @@ public final class GFFParser implements AnnotationWriter  {
 	 *    to an output stream as "GFF" format.
 	 *  @param type  currently ignored
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		boolean success = true;
 		if (DEBUG) {

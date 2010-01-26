@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class BpsParserTest {
 			String stream_name = "test_file";
 
 			PSLParser parser = new PSLParser();
-			List<SeqSymmetry> syms = parser.parse(istr, stream_name, group, group, annot_seq, true);
+			List<UcscPslSym> syms = parser.parse(istr, stream_name, group, group, annot_seq, true);
 
 			BpsParser instance2 = new BpsParser();
 			boolean writeResult = instance2.writeAnnotations(syms, null, "", outstream);
@@ -110,7 +109,7 @@ public class BpsParserTest {
 		AnnotatedSeqGroup group = new AnnotatedSeqGroup("Test Group");
 		boolean annot_seq = true;
 
-		List<SeqSymmetry> syms = null;
+		List<UcscPslSym> syms = null;
 		try {
 			PSLParser parser = new PSLParser();
 			syms = parser.parse(istr, "stream_test", group, group, annot_seq, true);
@@ -122,15 +121,10 @@ public class BpsParserTest {
 
 		BioSeq seq = group.getSeq("chr1");
 
-		List<UcscPslSym> pslSyms = new ArrayList<UcscPslSym>(syms.size());
-		for (SeqSymmetry sym : syms) {
-			pslSyms.add((UcscPslSym)sym);
-		}
-
 		BpsParser bps = new BpsParser();
 			Comparator<UcscPslSym> USCCCompare = bps.getComparator(seq);
 		List<SeqSymmetry> sortedSyms = IndexingUtils.getSortedAnnotationsForChrom(
-				pslSyms, seq, USCCCompare);
+				syms, seq, USCCCompare);
 
 		assertEquals(3,sortedSyms.size());	// precisely 3 symmetries on chr1.
 

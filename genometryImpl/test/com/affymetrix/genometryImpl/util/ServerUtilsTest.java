@@ -174,7 +174,7 @@ public class ServerUtilsTest {
 		assertEquals(0, overlap_span.getMin());
 		assertEquals(11200177, overlap_span.getMax());
 		assertEquals(overlap_span.getBioSeq(), seq);
-		result = ServerUtils.getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
+		result = ServerUtils.<UcscPslSym>getIndexedOverlappedSymmetries(overlap_span, iSyms, "testOUT", group);
 		assertEquals(385, result.size());
 		assertEquals(88976, result.get(0).getTargetMin());
 		assertEquals(89560, result.get(0).getTargetMax());
@@ -304,8 +304,6 @@ public class ServerUtilsTest {
 		result = ServerUtils.getOverlappedSymmetries(overlap_span, query_type);
 		assertNotNull(result);
 		assertEquals(6, result.size());	// not sure why all 6 of these are here
-
-		List<UcscPslSym> tempResult = new ArrayList<UcscPslSym>(result.size());
 
 		BioSeq seq = genome.getSeq(seqid);
 		assertNotNull(seq);

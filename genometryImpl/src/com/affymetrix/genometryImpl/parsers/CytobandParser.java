@@ -177,7 +177,7 @@ public final class CytobandParser implements AnnotationWriter  {
 		}
 	}
 
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		System.out.println("in CytobandParser.writeAnnotations()");
 		boolean success = true;

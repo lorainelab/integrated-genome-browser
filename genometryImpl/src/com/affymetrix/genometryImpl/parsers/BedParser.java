@@ -521,7 +521,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 	 *  Implementing AnnotationWriter interface to write out annotations
 	 *    to an output stream as "BED" format.
 	 **/
-	public boolean writeAnnotations(java.util.Collection<SeqSymmetry> syms, BioSeq seq,
+	public boolean writeAnnotations(Collection<? extends SeqSymmetry> syms, BioSeq seq,
 			String type, OutputStream outstream) {
 		if (DEBUG){
 			System.out.println("in BedParser.writeAnnotations()");
@@ -551,7 +551,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 		BedParser.writeSymmetry(dos, sym, seq);
 	}
 
-	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+	public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
 			return this.parse(dis, GenometryModel.getGenometryModel(), group, false, annot_type, false);
 		} catch (IOException ex) {
@@ -560,7 +560,7 @@ public final class BedParser implements AnnotationWriter, IndexWriter  {
 		return null;
 	}
 
-	public Comparator getComparator(BioSeq seq) {
+	public Comparator<SeqSymmetry> getComparator(BioSeq seq) {
 		return new SeqSymMinComparator(seq);
 	}
 

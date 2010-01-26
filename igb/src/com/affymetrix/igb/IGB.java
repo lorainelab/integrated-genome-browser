@@ -1243,5 +1243,4 @@ public final class IGB extends Application
 	public Logger getLogger() {
 		return APP;
 	}
-	failure;// this causes an example build break
 }

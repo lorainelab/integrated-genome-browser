@@ -54,6 +54,23 @@ public final class LoadUtils {
 		}
 	};
 
+	public static enum ServerStatus {
+		NotInitialized ("Not initialized"),
+		Initialized ("Initialized"),
+		NotResponding ("Not responding");
+
+		private String name;
+
+		ServerStatus(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	};
+
 	/**
 	 * Used to give a friendly name for QuickLoad features.
 	 * @param name

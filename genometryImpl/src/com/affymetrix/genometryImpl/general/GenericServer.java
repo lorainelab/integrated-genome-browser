@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl.general;
 
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import java.net.URL;
 import javax.swing.ImageIcon;
 
@@ -20,7 +21,8 @@ public final class GenericServer implements Comparable<GenericServer> {
 	public final URL friendlyURL;			// friendly URL that users may look at.
 	private ImageIcon friendlyIcon = null;		// friendly icon that users may look at.
 	private boolean friendlyIconAttempted = false;	// Don't keep on searching for friendlyIcon
-	public int  loginAttempts = 0;
+	public int loginAttempts = 0;
+	private ServerStatus serverStatus = ServerStatus.NotInitialized;	// Is this server initialized?
 
 	/**
 	 * @param serverName
@@ -101,5 +103,13 @@ public final class GenericServer implements Comparable<GenericServer> {
 			return this.serverName.compareTo(gServer.serverName);
 		}
 		return this.serverType.compareTo(gServer.serverType);		
+	}
+
+	public void setServerStatus(ServerStatus serverStatus) {
+		this.serverStatus = serverStatus;
+	}
+
+	public ServerStatus getServerStatus() {
+		return this.serverStatus;
 	}
 }

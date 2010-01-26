@@ -10,6 +10,7 @@
 
 	<rule ref="rulesets/basic.xml">
 		<exclude name="ForLoopShouldBeWhileLoop" />
+		<exclude name="UnnecessaryFinalModifier" />
 	</rule>
 	<rule ref="rulesets/braces.xml/WhileLoopsMustUseBraces" />
 	<rule ref="rulesets/clone.xml" />
@@ -18,13 +19,15 @@
 		<exclude name="ExcessiveParameterList" />
 	</rule>
 	<rule ref="rulesets/controversial.xml">
-		<exclude name="OnlyOneReturn" />
-		<exclude name="UnusedModifier" />
 		<exclude name="AtLeastOneConstructor" />
 		<exclude name="AvoidFinalLocalVariables" />
 		<exclude name="AvoidFinalLocalVariable" />
+		<exclude name="AvoidUsingShortType" />
+		<exclude name="CallSuperInConstructor" />
 		<exclude name="DataflowAnomalyAnalysis" />
 		<exclude name="DefaultPackage" />
+		<exclude name="OnlyOneReturn" />
+		<exclude name="UnusedModifier" />
 	</rule>
 	<rule ref="rulesets/coupling.xml">
 		<exclude name="ExcessiveImports" />
@@ -33,6 +36,7 @@
 	<rule ref="rulesets/design.xml">
 		<exclude name="ConfusingTernary" />
 		<exclude name="TooFewBranchesForASwitchStatement" />
+		<exclude name="UncommentedEmptyConstructor" />
 		<exclude name="UseSingleton" />
 	</rule>
 	<rule ref="rulesets/finalizers.xml" />

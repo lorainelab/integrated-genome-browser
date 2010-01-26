@@ -24,11 +24,6 @@ public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
 	public int compare(SeqSymmetry sym1, SeqSymmetry sym2) {
 		SeqSpan span1 = sym1.getSpan(seq);
 		SeqSpan span2 = sym2.getSpan(seq);
-		final int min1 = span1.getMin();
-		final int min2 = span2.getMin();
-		if (min1 != min2) {
-			return ((Integer) min1).compareTo(min2);
-		}
-		return ((Integer) span1.getMax()).compareTo(span2.getMax());
+		return SeqSpanComparator.compareSpans(span1, span2);
 	}
 }

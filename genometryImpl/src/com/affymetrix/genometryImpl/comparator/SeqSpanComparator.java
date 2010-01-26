@@ -9,6 +9,10 @@ import java.util.Comparator;
  */
 public final class SeqSpanComparator implements Comparator<SeqSpan> {
 	public int compare(SeqSpan span1, SeqSpan span2) {
+		return compareSpans(span1, span2);
+	}
+
+	static int compareSpans(SeqSpan span1, SeqSpan span2) {
 		final int min1 = span1.getMin();
 		final int min2 = span2.getMin();
 		if (min1 != min2) {

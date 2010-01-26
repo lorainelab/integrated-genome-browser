@@ -20,6 +20,7 @@ import com.affymetrix.genometryImpl.MutableSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SymWithProps;
+import com.affymetrix.genometryImpl.comparator.SeqSpanComparator;
 import com.affymetrix.genometryImpl.span.MutableDoubleSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -168,7 +169,7 @@ public abstract class SeqUtils {
 		List<SeqSpan> mergedSpans = SeqUtils.getLeafSpans(mergedSym, seq);
 
 		// order them based on start
-		Collections.sort(mergedSpans, new SeqUtils.StartSorter());
+		Collections.sort(mergedSpans, new SeqSpanComparator());
 
 		// invert and add to new SeqSymmetry
 		//   for now ignoring the ends...
@@ -320,24 +321,6 @@ public abstract class SeqUtils {
 		return true;
 	}
 
-	/** Inner class helper for inverse() method. */
-	private static final class StartSorter implements Comparator<SeqSpan> {
-		static StartSorter static_instance = null;
-
-		public static StartSorter getInstance() {
-			if (static_instance == null) {
-				static_instance = new StartSorter();
-			}
-			return static_instance;
-		}
-
-		public int compare(SeqSpan spanA, SeqSpan spanB) {
-			int minA = spanA.getMin();
-			int minB = spanB.getMin();
-			if (minA < minB) { return -1; } else if (minA > minB) { return 1; } else { return 0; }  // equal
-		}
-	}
-
 	private static final MutableSeqSymmetry spanMerger(List<SeqSpan> spans) {
 		MutableSeqSymmetry resultSym = new SimpleMutableSeqSymmetry();
 		spanMerger(spans, resultSym);
@@ -355,14 +338,15 @@ public abstract class SeqUtils {
 		int max = Integer.MIN_VALUE;
 		// will probably be smaller, but specifying an initial capacity
 		//   that won't be exceeded can be more efficient
-		ArrayList<SeqSpan> merged_spans = new ArrayList<SeqSpan>(spans.size());
+		List<SeqSpan> merged_spans = new ArrayList<SeqSpan>(spans.size());
 
+		SeqSpanComparator seqSpanComp = new SeqSpanComparator();
 		while ((index = getFirstNonNull(spans)) > -1) {
 			MutableSeqSpan span = mergeHelp(spans, index);
 
 			merged_spans.add(span);
 		}
-		Collections.sort(merged_spans, SeqUtils.StartSorter.getInstance());
+		Collections.sort(merged_spans, seqSpanComp);
 		for (SeqSpan span : merged_spans) {
 			MutableSingletonSeqSymmetry childSym =
 				new MutableSingletonSeqSymmetry(span.getStart(), span.getEnd(), span.getBioSeq());

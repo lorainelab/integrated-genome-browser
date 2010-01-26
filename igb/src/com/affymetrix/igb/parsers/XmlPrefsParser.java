@@ -24,11 +24,10 @@ import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.prefs.WebLink;
 import com.affymetrix.igb.view.PluginInfo;
 import com.affymetrix.igb.general.ServerList;
-import com.affymetrix.igb.prefs.SourceTableModel;
+import com.affymetrix.igb.glyph.MapViewGlyphFactoryI;
 
 /**
  *Class for parsing preferences for IGB.

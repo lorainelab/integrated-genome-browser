@@ -1,15 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
 package com.affymetrix.genometryImpl.parsers;
 
 import java.io.*;
@@ -18,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
 
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
@@ -63,7 +50,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 	//   exonStarts int[exoncount]
 	//     exonEnds int[exoncount]
 	//
-	public List parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
+	public List<SeqSymmetry> parse(DataInputStream dis, String annot_type, AnnotatedSeqGroup group) {
 		try {
 			return this.parse(dis, annot_type, group, false);
 		} catch (IOException ex) {
@@ -93,13 +80,13 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 		// annots is list of top-level parent syms (max 1 per seq in seq_group) that get
 		//    added as annotations to the annotated BioSeqs -- their children
 		//    are then actual transcript annotations
-		ArrayList<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> annots = new ArrayList<SeqSymmetry>();
 		// results is list actual transcript annotations
-		ArrayList<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
+		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>(15000);
 		// chrom2sym is temporary hash to put top-level parent syms in to map
 		//     seq id to top-level symmetry, prior to adding these parent syms
 		//     to the actual annotated seqs
-		HashMap<String, SeqSymmetry> chrom2sym = new HashMap<String, SeqSymmetry>(); // maps chrom name to top-level symmetry
+		Map<String, SeqSymmetry> chrom2sym = new HashMap<String, SeqSymmetry>(); // maps chrom name to top-level symmetry
 
 		int total_exon_count = 0;
 		int count = 0;

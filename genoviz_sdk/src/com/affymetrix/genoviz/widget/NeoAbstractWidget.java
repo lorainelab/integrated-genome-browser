@@ -360,18 +360,17 @@ public abstract class NeoAbstractWidget extends Container
 	 *   more glyphs.
 	 * @return the GlyphI most recently associated with the datamodel
 	 */
+	@SuppressWarnings("unchecked")
 	public <G extends GlyphI> G getItem(Object datamodel) {
 		Object result = model_hash.get(datamodel);
 		if (result instanceof GlyphI) {
 			return (G)result;
 		}
-		else if (result instanceof List && ((List)result).size() > 0) {
-			List<G> vec = (List)result;
+		if (result instanceof List && ((List)result).size() > 0) {
+			List<G> vec = (List<G>)result;
 			return vec.get(vec.size()-1);
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 
 	/**
@@ -384,18 +383,18 @@ public abstract class NeoAbstractWidget extends Container
 	 * @return the <code>List</code> of glyphs associated with <code>
 	 *  datamodel</code>.
 	 */
+	@SuppressWarnings("unchecked")
 	public <G extends GlyphI> List<G> getItems(Object datamodel) {
 		Collections.singletonList(datamodel);
 		Object result = model_hash.get(datamodel);
 		if (result instanceof List) {
-			return (List<G>)result;
-		} else {
-			List<G> vec = new ArrayList<G>();
-			if ( null != result ) {
-				vec.add((G)result);
-			}
-			return vec;
+			return (List<G>) result;
 		}
+		List<G> vec = new ArrayList<G>();
+		if (null != result) {
+			vec.add((G) result);
+		}
+		return vec;
 	}
 
 	/**

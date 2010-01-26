@@ -676,7 +676,7 @@ public abstract class ServerUtils {
 	 * @param group
 	 * @return list of indexed seq symmetries
 	 */
-	private static List getIndexedSymmetries(
+	private static <S extends SeqSymmetry> List<S> getIndexedSymmetries(
 			SeqSpan overlap_span,
 			IndexedSyms iSyms,
 			String annot_type,
@@ -697,7 +697,7 @@ public abstract class ServerUtils {
 
 			if (minPos >= maxPos) {
 				// Nothing found, or invalid values passed in.
-				return Collections.<SeqSymmetry>emptyList();
+				return Collections.<S>emptyList();
 			}
 			byte[] bytes = IndexingUtils.readBytesFromFile(
 					iSyms.file, iSyms.filePos[minPos], (int) (iSyms.filePos[maxPos] - iSyms.filePos[minPos]));
@@ -710,7 +710,7 @@ public abstract class ServerUtils {
 			}
 			dis = new DataInputStream(newIstr);
 
-			return iSyms.iWriter.parse(dis, annot_type, group);
+			return (List<S>)iSyms.iWriter.parse(dis, annot_type, group);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -786,7 +786,7 @@ public abstract class ServerUtils {
 				SymWithProps tannot = aseq.getAnnotation(type);
 				SymWithProps first_child = (SymWithProps) tannot.getChild(0);
 				if (first_child != null) {
-					List formats = (List) first_child.getProperty("preferred_formats");
+					List<String> formats = (List<String>) first_child.getProperty("preferred_formats");
 					if (formats != null) {
 						flist = formats;
 					}

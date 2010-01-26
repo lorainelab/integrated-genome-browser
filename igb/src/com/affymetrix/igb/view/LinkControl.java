@@ -36,6 +36,7 @@ final class LinkControl implements ContextualPopupListener {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void generateMenuItemsFromLinks(Object links, SeqSymmetry primary_sym, Map<String, String> menu_items) {
 		if (links instanceof String) {
 			Object link_names = null;

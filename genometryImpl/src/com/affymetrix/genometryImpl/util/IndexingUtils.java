@@ -1,7 +1,6 @@
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SimpleSymWithProps;

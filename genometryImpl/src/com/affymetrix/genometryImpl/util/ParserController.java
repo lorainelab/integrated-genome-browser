@@ -2,11 +2,20 @@ package com.affymetrix.genometryImpl.util;
 
 import java.io.*;
 import java.util.*;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.parsers.*;
 import com.affymetrix.genometryImpl.parsers.AnnotsParser.AnnotMapElt;
+import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.BgnParser;
+import com.affymetrix.genometryImpl.parsers.Bprobe1Parser;
+import com.affymetrix.genometryImpl.parsers.BpsParser;
+import com.affymetrix.genometryImpl.parsers.BrsParser;
+import com.affymetrix.genometryImpl.parsers.CytobandParser;
+import com.affymetrix.genometryImpl.parsers.Das1FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
+import com.affymetrix.genometryImpl.parsers.GFFParser;
+import com.affymetrix.genometryImpl.parsers.IndexWriter;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

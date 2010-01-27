@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.IndexedSingletonSym;

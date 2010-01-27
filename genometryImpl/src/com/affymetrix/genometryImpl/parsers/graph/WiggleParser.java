@@ -1,6 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.graph;
 
-import com.affymetrix.genometryImpl.parsers.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -20,6 +19,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
+import com.affymetrix.genometryImpl.parsers.TrackLineParser;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import java.util.Iterator;

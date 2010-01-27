@@ -14,7 +14,11 @@
 package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
+import com.affymetrix.genometryImpl.style.StateProvider;
 import java.awt.Color;
 
 import java.util.*;

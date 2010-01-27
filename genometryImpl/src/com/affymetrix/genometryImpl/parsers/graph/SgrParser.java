@@ -3,8 +3,6 @@ package com.affymetrix.genometryImpl.parsers.graph;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;

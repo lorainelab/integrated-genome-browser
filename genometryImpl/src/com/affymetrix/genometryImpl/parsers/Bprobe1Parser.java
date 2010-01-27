@@ -14,7 +14,6 @@ package com.affymetrix.genometryImpl.parsers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
 

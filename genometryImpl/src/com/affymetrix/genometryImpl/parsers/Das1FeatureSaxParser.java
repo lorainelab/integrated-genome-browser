@@ -15,16 +15,11 @@ package com.affymetrix.genometryImpl.parsers;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
-
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.xml.sax.*;
-import org.xml.sax.SAXException;
-
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.SeqUtils;

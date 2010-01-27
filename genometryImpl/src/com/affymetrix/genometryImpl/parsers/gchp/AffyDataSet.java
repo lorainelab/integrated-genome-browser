@@ -14,7 +14,6 @@
 package com.affymetrix.genometryImpl.parsers.gchp;
 
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.util.*;
 import java.io.*;
 import java.util.*;
 

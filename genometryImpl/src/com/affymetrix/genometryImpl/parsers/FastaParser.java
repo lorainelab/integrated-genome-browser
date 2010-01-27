@@ -17,9 +17,6 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 import java.text.*;
-
-import java.util.List;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;

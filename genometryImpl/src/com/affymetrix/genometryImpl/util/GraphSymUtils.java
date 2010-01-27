@@ -29,7 +29,6 @@ import com.affymetrix.genometryImpl.parsers.graph.GrParser;
 import com.affymetrix.genometryImpl.parsers.graph.BgrParser;
 import com.affymetrix.genometryImpl.parsers.graph.WiggleParser;
 import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
-import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 
 public final class GraphSymUtils {
 

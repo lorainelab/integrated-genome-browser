@@ -13,7 +13,6 @@
 
 package com.affymetrix.genometryImpl.parsers.gchp;
 
-import com.affymetrix.genometryImpl.parsers.*;
 import java.nio.charset.Charset;
 
 public enum AffyDataType {

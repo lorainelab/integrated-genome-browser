@@ -16,18 +16,14 @@ package com.affymetrix.genoviz.glyph;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Toolkit;
 import java.awt.Rectangle;
 import java.awt.Graphics;
-
-import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import com.affymetrix.genoviz.util.*;
-import com.affymetrix.genoviz.widget.NeoAssembler;
 import java.awt.geom.Rectangle2D;
 
 /**

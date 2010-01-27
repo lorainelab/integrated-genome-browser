@@ -13,9 +13,8 @@
 
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
-import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 

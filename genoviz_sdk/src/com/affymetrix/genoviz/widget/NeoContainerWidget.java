@@ -13,8 +13,8 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.*;
 import java.awt.Adjustable;
 import java.awt.Color;
@@ -22,7 +22,9 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 import javax.swing.JScrollBar;
 
 /**

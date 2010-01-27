@@ -14,9 +14,7 @@
 package com.affymetrix.genoviz.datamodel;
 
 import java.util.ArrayList;
-import java.util.Vector;
 import java.util.Hashtable;
-import java.util.Enumeration;
 import java.util.Arrays;
 import java.util.List;
 

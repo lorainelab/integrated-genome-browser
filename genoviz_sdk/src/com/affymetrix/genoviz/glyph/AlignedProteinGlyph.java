@@ -14,7 +14,7 @@
 package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.util.ProteinUtils;
-import com.affymetrix.genoviz.bioviews.ViewI;
+
 
 import java.awt.Color;
 

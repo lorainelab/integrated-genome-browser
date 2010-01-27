@@ -13,17 +13,36 @@
 
 package com.affymetrix.genoviz.widget;
 
+import com.affymetrix.genoviz.awt.NeoCanvas;
+import com.affymetrix.genoviz.awt.NeoPanel;
+import com.affymetrix.genoviz.bioviews.ConstrainLinearTrnsfm;
+import com.affymetrix.genoviz.bioviews.DragMonitor;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-
-import com.affymetrix.genoviz.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.event.*;
 import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.util.*;
-
-import com.affymetrix.genoviz.widget.neoseq.*;
+import com.affymetrix.genoviz.event.NeoDragEvent;
+import com.affymetrix.genoviz.event.NeoDragListener;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
+import com.affymetrix.genoviz.event.NeoViewBoxListener;
+import com.affymetrix.genoviz.event.SequenceEvent;
+import com.affymetrix.genoviz.event.SequenceListener;
+import com.affymetrix.genoviz.util.GeneralUtils;
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Selection;
+import com.affymetrix.genoviz.widget.neoseq.AnnotationGlyph;
+import com.affymetrix.genoviz.widget.neoseq.Caret;
+import com.affymetrix.genoviz.widget.neoseq.WrapAnnot;
+import com.affymetrix.genoviz.widget.neoseq.WrapColors;
+import com.affymetrix.genoviz.widget.neoseq.WrapFontColors;
+import com.affymetrix.genoviz.widget.neoseq.WrapNumbers;
+import com.affymetrix.genoviz.widget.neoseq.WrapSequence;
+import com.affymetrix.genoviz.widget.neoseq.WrapStripes;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Component;

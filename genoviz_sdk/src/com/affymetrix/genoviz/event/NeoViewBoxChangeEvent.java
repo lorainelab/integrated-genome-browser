@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.event;
 
 import java.util.EventObject;
-import com.affymetrix.genoviz.bioviews.*;
 import java.awt.geom.Rectangle2D;
 
 /**

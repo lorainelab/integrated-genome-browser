@@ -13,9 +13,8 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.Hashtable;
-
-import com.affymetrix.genoviz.bioviews.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;

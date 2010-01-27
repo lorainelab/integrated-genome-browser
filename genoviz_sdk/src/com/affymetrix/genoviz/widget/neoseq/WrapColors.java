@@ -13,10 +13,11 @@
 
 package com.affymetrix.genoviz.widget.neoseq;
 
+import com.affymetrix.genoviz.bioviews.Scene;
+import com.affymetrix.genoviz.bioviews.View;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
 import java.awt.geom.Point2D;
-
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.datamodel.SequenceI;
 import java.awt.geom.Rectangle2D;
 

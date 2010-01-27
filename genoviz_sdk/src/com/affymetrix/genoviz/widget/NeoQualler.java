@@ -15,15 +15,20 @@ package com.affymetrix.genoviz.widget;
 
 import java.awt.event.*;
 import java.util.*;
-
 import com.affymetrix.genoviz.awt.NeoPanel;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.datamodel.*;
-import com.affymetrix.genoviz.util.*;
-
-import com.affymetrix.genoviz.widget.neoqualler.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.datamodel.Range;
+import com.affymetrix.genoviz.datamodel.ReadConfidence;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
+import com.affymetrix.genoviz.event.NeoViewBoxListener;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.util.Selection;
+import com.affymetrix.genoviz.widget.neoqualler.QualityBars;
+import com.affymetrix.genoviz.widget.neoqualler.QualityBases;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;

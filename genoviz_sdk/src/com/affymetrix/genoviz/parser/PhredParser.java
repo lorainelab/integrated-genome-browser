@@ -13,14 +13,10 @@
 
 package com.affymetrix.genoviz.parser;
 
-import com.affymetrix.genoviz.datamodel.BaseCall;
 import com.affymetrix.genoviz.datamodel.BaseConfidence;
 import com.affymetrix.genoviz.datamodel.ReadConfidence;
-
 import java.net.*;
 import java.io.*;
-import java.lang.String;
-import java.util.Vector;
 import java.util.StringTokenizer;
 
 /**

@@ -13,10 +13,10 @@
 
 package com.affymetrix.genoviz.bioviews;
 
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
-import com.affymetrix.genoviz.util.*;
 import java.awt.Rectangle;
+import java.util.List;
 
 /**
  * Abstract base class for many coordinate-based packers.
@@ -24,7 +24,7 @@ import java.awt.Rectangle;
  * {@link PackerI#pack(GlyphI parent, GlyphI child, ViewI view)}.
  */
 public abstract class AbstractCoordPacker implements PackerI, NeoConstants {
-
+    
 	protected boolean DEBUG = false;
 	protected boolean DEBUG_CHECKS = false;
 

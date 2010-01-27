@@ -14,9 +14,9 @@
 package com.affymetrix.genoviz.widget;
 
 import com.affymetrix.genoviz.event.TierEvent;
-import com.affymetrix.genoviz.widget.tieredmap.*;
+import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 
-import java.util.*;
+
 
 /**
  * A map that is separated into horizontal divisions, or tiers.

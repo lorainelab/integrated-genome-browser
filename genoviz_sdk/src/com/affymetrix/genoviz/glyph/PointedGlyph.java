@@ -13,10 +13,7 @@
 
 package com.affymetrix.genoviz.glyph;
 
-import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.ViewI;
-import com.affymetrix.genoviz.util.NeoConstants;
-
 import java.awt.Graphics;
 
 /**

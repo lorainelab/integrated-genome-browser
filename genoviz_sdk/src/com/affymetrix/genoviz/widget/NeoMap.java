@@ -13,10 +13,8 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-
 import com.affymetrix.genoviz.awt.NeoCanvas;
 import com.affymetrix.genoviz.bioviews.ExponentialTransform;
 import com.affymetrix.genoviz.bioviews.GlyphI;
@@ -29,9 +27,18 @@ import com.affymetrix.genoviz.bioviews.PackerI;
 import com.affymetrix.genoviz.bioviews.RubberBand;
 import com.affymetrix.genoviz.bioviews.View;
 import com.affymetrix.genoviz.bioviews.DragMonitor;
-
-import com.affymetrix.genoviz.event.*;
-
+import com.affymetrix.genoviz.event.NeoDragEvent;
+import com.affymetrix.genoviz.event.NeoDragListener;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
+import com.affymetrix.genoviz.event.NeoRubberBandEvent;
+import com.affymetrix.genoviz.event.NeoRubberBandListener;
+import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
+import com.affymetrix.genoviz.event.NeoViewBoxListener;
+import com.affymetrix.genoviz.event.NeoViewMouseEvent;
+import com.affymetrix.genoviz.event.NeoWidgetEvent;
+import com.affymetrix.genoviz.event.NeoWidgetListener;
 import com.affymetrix.genoviz.glyph.AxisGlyph;
 import com.affymetrix.genoviz.glyph.RootGlyph;
 import com.affymetrix.genoviz.util.NeoConstants;
@@ -46,6 +53,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.JScrollBar;
 

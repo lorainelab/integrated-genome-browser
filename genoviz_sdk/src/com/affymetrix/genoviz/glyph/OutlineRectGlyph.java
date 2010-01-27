@@ -13,8 +13,9 @@
 
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
+
 
 /**
  * A glyph drawn as a filled or empty outlined rectangle.

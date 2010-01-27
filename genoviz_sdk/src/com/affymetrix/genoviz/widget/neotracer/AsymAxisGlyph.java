@@ -13,12 +13,12 @@
 
 package com.affymetrix.genoviz.widget.neotracer;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.datamodel.BaseCall;
+import com.affymetrix.genoviz.datamodel.BaseCalls;
 import java.awt.*;
 import java.awt.geom.Point2D;
-
-
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.datamodel.*;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
 

@@ -13,12 +13,12 @@
 
 package com.affymetrix.genoviz.widget;
 
-import java.util.*;
 import java.awt.Color;
 import java.awt.Font;
-
 import com.affymetrix.genoviz.event.TierEvent;
-import com.affymetrix.genoviz.widget.tieredmap.*;
+import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
+import java.util.List;
+
 
 /**
  * A tiered map containing just labels.

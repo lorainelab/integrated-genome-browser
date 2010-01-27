@@ -13,9 +13,11 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.event.*;
-//import com.affymetrix.genoviz.widget.*;
-
+import com.affymetrix.genoviz.event.NeoMouseEvent;
+import com.affymetrix.genoviz.event.NeoRangeEvent;
+import com.affymetrix.genoviz.event.NeoRangeListener;
+import com.affymetrix.genoviz.event.NeoWidgetEvent;
+import com.affymetrix.genoviz.event.NeoWidgetListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

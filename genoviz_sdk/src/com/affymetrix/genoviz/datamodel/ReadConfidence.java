@@ -15,7 +15,7 @@ package com.affymetrix.genoviz.datamodel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+
 
 /**
  * models a set of scores indicating the confidence

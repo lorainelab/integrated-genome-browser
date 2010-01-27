@@ -13,7 +13,7 @@
 
 package com.affymetrix.genoviz.bioviews;
 
-import java.awt.event.*;
+
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.*;
 import java.awt.geom.Point2D;
@@ -28,6 +28,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;

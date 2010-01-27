@@ -3,7 +3,6 @@ package com.affymetrix.genoviz.swing.dnd;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
 import java.beans.PropertyChangeListener;
 import javax.swing.*;

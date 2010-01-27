@@ -13,8 +13,9 @@
 
 package com.affymetrix.genoviz.glyph;
 
+import com.affymetrix.genoviz.bioviews.Glyph;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.*;
-import com.affymetrix.genoviz.bioviews.*;
 import java.awt.geom.Point2D;
 
 /**

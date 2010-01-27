@@ -13,7 +13,8 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.event.*;
+import com.affymetrix.genoviz.event.NeoWidgetEvent;
+import com.affymetrix.genoviz.event.NeoWidgetListener;
 import java.awt.AWTEventMulticaster;
 import java.util.EventListener;
 

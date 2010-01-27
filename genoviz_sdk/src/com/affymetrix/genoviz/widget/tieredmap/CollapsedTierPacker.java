@@ -1,7 +1,9 @@
 package com.affymetrix.genoviz.widget.tieredmap;
 
+import com.affymetrix.genoviz.bioviews.AbstractCoordPacker;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.util.*;
-import com.affymetrix.genoviz.bioviews.*;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 

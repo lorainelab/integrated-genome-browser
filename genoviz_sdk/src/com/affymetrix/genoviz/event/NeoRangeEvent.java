@@ -14,7 +14,7 @@
 package com.affymetrix.genoviz.event;
 
 import java.util.EventObject;
-import com.affymetrix.genoviz.bioviews.*;
+
 
 /**
  *  Event generated when visible span of a Neo* widget primary axis changes.

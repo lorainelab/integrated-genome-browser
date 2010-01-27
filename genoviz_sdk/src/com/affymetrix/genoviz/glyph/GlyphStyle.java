@@ -14,7 +14,6 @@
 package com.affymetrix.genoviz.glyph;
 
 import java.awt.*;
-import java.util.*;
 
 /**
  * A Glyph Style is associated with each glyph,

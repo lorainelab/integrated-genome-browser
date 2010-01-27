@@ -13,8 +13,8 @@
 
 package com.affymetrix.genoviz.widget;
 
-import com.affymetrix.genoviz.bioviews.*;
-
+import com.affymetrix.genoviz.bioviews.Scene;
+import com.affymetrix.genoviz.bioviews.SceneI;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.*;
 import java.awt.event.ItemEvent;

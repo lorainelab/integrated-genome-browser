@@ -21,7 +21,7 @@ import com.affymetrix.genoviz.event.TierEvent;
 import com.affymetrix.genoviz.event.TierEventListener;
 import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
-import com.affymetrix.genoviz.widget.tieredmap.*;
+import com.affymetrix.genoviz.widget.tieredmap.MapTierGlyph;
 import java.awt.geom.Rectangle2D;
 
 /**

@@ -13,10 +13,12 @@
 
 package com.affymetrix.genoviz.widget.tieredmap;
 
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.PackerI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.event.TierStateChangeEvent;
 import com.affymetrix.genoviz.event.TierStateChangeListener;
-import com.affymetrix.genoviz.glyph.*;
+import com.affymetrix.genoviz.glyph.TransientGlyph;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;

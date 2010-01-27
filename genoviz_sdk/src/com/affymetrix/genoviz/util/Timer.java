@@ -13,7 +13,6 @@
 
 package com.affymetrix.genoviz.util;
 
-import java.util.Date;
 
 /**
  * A little utility class to help monitor performance.

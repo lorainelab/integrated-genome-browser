@@ -13,8 +13,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.*;
-import java.util.List;
-
 import java.awt.geom.Rectangle2D;
 
 /**

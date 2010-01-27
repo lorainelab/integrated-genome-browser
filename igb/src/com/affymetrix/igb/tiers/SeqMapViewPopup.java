@@ -18,9 +18,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
-
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.util.UniFileChooser;
 import com.affymetrix.genometryImpl.SymWithProps;
@@ -29,7 +27,6 @@ import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.glyph.*;
 import com.affymetrix.igb.menuitem.FileTracker;
 import com.affymetrix.genometryImpl.parsers.BedParser;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
@@ -37,9 +34,10 @@ import com.affymetrix.genometryImpl.style.GraphType;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.glyph.GraphGlyph;
 import com.affymetrix.igb.prefs.PreferencesPanel;
 import com.affymetrix.igb.tiers.AffyTieredMap.ActionToggler;
-import com.affymetrix.igb.view.*;
+import com.affymetrix.igb.view.SeqMapView;
 
 public final class SeqMapViewPopup implements TierLabelManager.PopupListener {
 

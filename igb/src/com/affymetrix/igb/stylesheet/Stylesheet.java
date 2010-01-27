@@ -21,7 +21,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SymWithProps;
 import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Stylesheet implements Cloneable, XmlAppender {

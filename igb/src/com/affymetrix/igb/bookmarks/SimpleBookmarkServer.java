@@ -18,7 +18,6 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import java.net.*;
 import java.io.*;
-import java.util.*;
 
 /**
  *  A very simple servlet that listens for bookmark commands as http GET requests.

@@ -19,7 +19,6 @@ import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public final class LocalUrlCacher {

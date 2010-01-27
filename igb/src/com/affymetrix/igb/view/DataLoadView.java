@@ -16,7 +16,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.*;
-
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GenometryModel;

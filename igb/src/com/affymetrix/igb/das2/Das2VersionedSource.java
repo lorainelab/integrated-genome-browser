@@ -15,7 +15,6 @@ package com.affymetrix.igb.das2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
 import org.w3c.dom.*;
 import java.lang.Object.*;
 import java.net.URI.*;

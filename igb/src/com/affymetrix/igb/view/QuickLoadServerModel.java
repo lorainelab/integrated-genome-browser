@@ -28,7 +28,6 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public final class QuickLoadServerModel {

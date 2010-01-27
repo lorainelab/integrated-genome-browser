@@ -13,10 +13,10 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import java.awt.*;
 
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 
 public final class LabelledRectGlyph extends FillRectGlyph {
   private String label;

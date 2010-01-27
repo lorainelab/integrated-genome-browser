@@ -16,7 +16,6 @@ package com.affymetrix.igb.tiers;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.util.*;
-import java.util.List;
 import java.awt.event.*;
 import javax.swing.*;
 

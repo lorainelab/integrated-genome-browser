@@ -13,12 +13,12 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.genoviz.glyph.TransientGlyph;
+import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.Color;
 import java.util.List;
-
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.genoviz.widget.*;
 import java.awt.geom.Rectangle2D;
 
 public final class GlyphEdgeMatcher  {

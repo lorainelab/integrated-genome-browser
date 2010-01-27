@@ -1,7 +1,6 @@
 package com.affymetrix.igb.general;
 
 import java.util.prefs.Preferences;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;

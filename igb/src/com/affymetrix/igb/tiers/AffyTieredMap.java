@@ -14,18 +14,17 @@ package com.affymetrix.igb.tiers;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.LinearTransform;
 import com.affymetrix.genoviz.util.ComponentPagePrinter;
-import com.affymetrix.genoviz.widget.*;
-
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.widget.NeoMap;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 
 /**

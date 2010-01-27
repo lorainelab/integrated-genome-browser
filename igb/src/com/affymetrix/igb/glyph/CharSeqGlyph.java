@@ -2,12 +2,10 @@ package com.affymetrix.igb.glyph;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-
-import com.affymetrix.genoviz.glyph.*;
 import com.affymetrix.genoviz.bioviews.ViewI;
-
 import com.affymetrix.genometryImpl.util.ImprovedStringCharIter;
 import com.affymetrix.genometryImpl.util.SearchableCharIterator;
+import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 

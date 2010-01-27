@@ -13,6 +13,8 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -21,8 +23,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.util.List;
-
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.geom.Rectangle2D;
 

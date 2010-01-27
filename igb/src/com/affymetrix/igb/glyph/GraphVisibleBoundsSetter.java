@@ -18,7 +18,6 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.ChangeListener;

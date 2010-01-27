@@ -14,15 +14,16 @@
 package com.affymetrix.igb.bookmarks;
 
 import java.awt.Color;
-import java.util.*;
 import java.util.List;
 import java.io.*;
-
 import com.affymetrix.genometryImpl.*;
-import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
+import com.affymetrix.genometryImpl.style.GraphState;
+import com.affymetrix.genometryImpl.style.GraphType;
+import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
-
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
@@ -30,6 +31,14 @@ import com.affymetrix.igb.util.*;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.SwingUtilities;
 
 /**

@@ -14,7 +14,6 @@
 package com.affymetrix.igb.bookmarks;
 
 import javax.swing.JMenuItem;
-import java.awt.event.ActionListener;
 import java.awt.Font;
 
 /**

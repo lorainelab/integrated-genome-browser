@@ -25,12 +25,17 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.view.SeqMapView;
-import com.affymetrix.igb.das2.*;
 import com.affymetrix.igb.event.UrlLoaderThread;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.igb.das2.Das2Capability;
+import com.affymetrix.igb.das2.Das2FeatureRequestSym;
+import com.affymetrix.igb.das2.Das2Region;
+import com.affymetrix.igb.das2.Das2ServerInfo;
+import com.affymetrix.igb.das2.Das2Type;
+import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.FeatureLoading;
 import com.affymetrix.igb.general.ServerList;
 

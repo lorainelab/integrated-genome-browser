@@ -14,9 +14,9 @@
 package com.affymetrix.igb.glyph;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.igb.view.SeqMapView;
 import java.util.*;
 
-import com.affymetrix.igb.view.*;
 
 public interface MapViewGlyphFactoryI  {
   public void init(Map options);

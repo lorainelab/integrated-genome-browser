@@ -2,17 +2,19 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.symmetry.SingletonSeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSymmetry;
-import com.affymetrix.genoviz.bioviews.*;
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.widget.*;
+import com.affymetrix.genoviz.widget.NeoMap;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.tiers.AffyLabelledTierMap;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TierGlyph;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.List;
+
 
 /**
  *  A MouseListener for the SeqMapView.

@@ -19,17 +19,20 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
-
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.*;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
+import com.affymetrix.genometryImpl.event.SeqSelectionListener;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.tiers.*;
+import com.affymetrix.igb.tiers.AnnotStyle;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TierLabelManager;
 
 public class AltSpliceView extends JComponent
 				implements ActionListener, ComponentListener, ItemListener,

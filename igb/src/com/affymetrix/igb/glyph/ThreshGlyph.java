@@ -13,11 +13,9 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
 import java.awt.*;
-// import java.text.DecimalFormat;
-
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
 
 /**
  *  Extends FillRectGlyph for showing threshold, so that it keeps a label showing threshold level 

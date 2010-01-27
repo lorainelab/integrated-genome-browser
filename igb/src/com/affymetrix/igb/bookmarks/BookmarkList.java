@@ -15,7 +15,6 @@ package com.affymetrix.igb.bookmarks;
 
 import com.affymetrix.igb.Application;
 import java.io.*;
-import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import javax.swing.tree.*;

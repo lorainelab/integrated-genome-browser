@@ -13,6 +13,7 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -25,9 +26,6 @@ import javax.swing.event.ChangeEvent;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
-
-import com.affymetrix.genoviz.widget.*;
 
 public final class MinScoreThresholder extends JPanel
   implements ChangeListener, ActionListener  {

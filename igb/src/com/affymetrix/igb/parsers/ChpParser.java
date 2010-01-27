@@ -12,19 +12,26 @@
 */
 package com.affymetrix.igb.parsers;
 
+import affymetrix.calvin.data.CHPTilingEntry;
+import affymetrix.calvin.data.ProbeSetQuantificationData;
+import affymetrix.calvin.data.ProbeSetQuantificationDetectionData;
+import affymetrix.calvin.data.TilingSequenceData;
 import com.affymetrix.genometryImpl.GraphSym;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
 import java.util.*;
-import java.util.List;
-
-import affymetrix.fusion.chp.*;
-import affymetrix.calvin.data.*;
-import affymetrix.calvin.utils.*;
 import affymetrix.calvin.parameter.ParameterNameValue;
-
+import affymetrix.calvin.utils.AffymetrixGuidType;
+import affymetrix.fusion.chp.FusionCHPData;
+import affymetrix.fusion.chp.FusionCHPDataReg;
+import affymetrix.fusion.chp.FusionCHPGenericData;
+import affymetrix.fusion.chp.FusionCHPHeader;
+import affymetrix.fusion.chp.FusionCHPLegacyData;
+import affymetrix.fusion.chp.FusionCHPQuantificationData;
+import affymetrix.fusion.chp.FusionCHPQuantificationDetectionData;
+import affymetrix.fusion.chp.FusionCHPTilingData;
+import affymetrix.fusion.chp.FusionExpressionProbeSetResults;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.ScoredContainerSym;
@@ -35,7 +42,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
-
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das2.Das2Region;

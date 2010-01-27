@@ -12,13 +12,13 @@
 */
 package com.affymetrix.igb.tiers;
 
-import com.affymetrix.genometryImpl.style.*;
+import com.affymetrix.genometryImpl.style.HeatMap;
 import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import java.util.regex.Pattern;
-
-import com.affymetrix.genometryImpl.style.HeatMap;
+import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genometryImpl.style.IAnnotStyleExtended;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.stylesheet.XmlStylesheetParser;
 import com.affymetrix.igb.stylesheet.AssociationElement;

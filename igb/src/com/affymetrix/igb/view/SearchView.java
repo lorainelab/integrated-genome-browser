@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import java.util.regex.*;
 import javax.swing.*;
 

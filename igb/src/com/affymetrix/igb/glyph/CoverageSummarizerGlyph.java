@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.*;
-import java.util.List;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 

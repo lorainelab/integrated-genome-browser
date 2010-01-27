@@ -13,18 +13,17 @@
 
 package com.affymetrix.igb.glyph;
 
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
-import com.affymetrix.genoviz.widget.*;
 
 public final class MinRunThresholder extends JPanel
   implements ChangeListener, ActionListener, FocusListener  {

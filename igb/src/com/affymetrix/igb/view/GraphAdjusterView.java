@@ -17,9 +17,6 @@ import java.awt.Component;
 import java.io.*;
 import javax.swing.*;
 import java.util.*;
-import java.util.List;
-
-import com.affymetrix.genoviz.bioviews.*;
 import com.affymetrix.genometryImpl.GraphIntervalSym;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -34,6 +31,8 @@ import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.genometryImpl.util.FloatTransformer;
 import com.affymetrix.genometryImpl.util.FloatTransformer.IdentityTransform;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.igb.util.GraphSaverFileChooser;
 import java.text.NumberFormat;
 import java.text.ParseException;

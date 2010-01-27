@@ -39,9 +39,9 @@ import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
 import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
 import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genoviz.swing.threads.InvokeUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.threads.*;
-import com.affymetrix.igb.parsers.*;
+import com.affymetrix.igb.parsers.ChpParser;
 import org.xml.sax.SAXException;
 
 /**

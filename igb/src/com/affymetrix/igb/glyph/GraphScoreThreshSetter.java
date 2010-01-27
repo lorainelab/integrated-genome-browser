@@ -39,7 +39,7 @@ import javax.swing.event.*;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.*;
-import java.util.List;
+
 
 public final class GraphScoreThreshSetter extends JPanel
 				implements ChangeListener, ActionListener, FocusListener {

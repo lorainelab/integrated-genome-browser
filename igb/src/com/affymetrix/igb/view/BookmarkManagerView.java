@@ -13,15 +13,20 @@
 
 package com.affymetrix.igb.view;
 
+import com.affymetrix.genoviz.swing.dnd.AutoScrollingJTree;
+import com.affymetrix.genoviz.swing.dnd.JTreeDropTarget;
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.igb.menuitem.BookMarkAction;
 import com.affymetrix.igb.menuitem.MenuUtil;
 import com.affymetrix.igb.prefs.IPlugin;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.util.ErrorHandler;
-import com.affymetrix.genoviz.swing.dnd.*;
-
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.bookmarks.BookmarkList;
+import com.affymetrix.igb.bookmarks.BookmarkListEditor;
+import com.affymetrix.igb.bookmarks.BookmarkTreeCellRenderer;
+import com.affymetrix.igb.bookmarks.Separator;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;

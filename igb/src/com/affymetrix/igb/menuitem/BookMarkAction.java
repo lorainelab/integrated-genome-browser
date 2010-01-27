@@ -15,7 +15,6 @@ package com.affymetrix.igb.menuitem;
 
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Rectangle;
@@ -23,27 +22,25 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.event.MenuListener;
-
 import com.affymetrix.genometryImpl.SimpleSymWithProps;
 import com.affymetrix.genometryImpl.GenometryModel;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.view.SeqMapView;
-
 import com.affymetrix.igb.Application;
-import com.affymetrix.igb.parsers.*;
-
 import com.affymetrix.genometryImpl.util.UniFileFilter;
-
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import com.affymetrix.igb.bookmarks.*;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.BookmarkManagerView;
 import com.affymetrix.genoviz.swing.DisplayUtils;
+import com.affymetrix.igb.bookmarks.Bookmark;
+import com.affymetrix.igb.bookmarks.BookmarkController;
+import com.affymetrix.igb.bookmarks.BookmarkJMenuItem;
+import com.affymetrix.igb.bookmarks.BookmarkList;
+import com.affymetrix.igb.bookmarks.Separator;
+import com.affymetrix.igb.parsers.BookmarksParser;
 
 public final class BookMarkAction implements ActionListener, MenuListener {
   private static final GenometryModel gmodel = GenometryModel.getGenometryModel();

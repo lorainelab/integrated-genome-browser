@@ -2,17 +2,18 @@ package com.affymetrix.igb.tiers;
 
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
-
-import com.affymetrix.genoviz.event.*;
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.widget.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genoviz.comparator.GlyphMinYComparator;
 import com.affymetrix.genometryImpl.style.IAnnotStyle;
+import com.affymetrix.genoviz.bioviews.GlyphDragger;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.bioviews.SceneI;
+import com.affymetrix.genoviz.bioviews.ViewI;
+import com.affymetrix.genoviz.event.NeoMouseEvent;
 import com.affymetrix.genoviz.util.NeoConstants;
+import com.affymetrix.genoviz.widget.NeoAbstractWidget;
 import com.affymetrix.igb.glyph.GraphGlyph;
 import java.util.concurrent.CopyOnWriteArraySet;
 

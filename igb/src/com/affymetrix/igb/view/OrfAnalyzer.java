@@ -18,20 +18,19 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-
-import com.affymetrix.genoviz.bioviews.*;
-import com.affymetrix.genoviz.glyph.*;
-import com.affymetrix.igb.tiers.*;
-
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.FlyPointLinkerGlyph;
 import com.affymetrix.genometryImpl.util.IntList;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
+import com.affymetrix.genoviz.bioviews.GlyphI;
+import com.affymetrix.genoviz.glyph.FillRectGlyph;
+import com.affymetrix.igb.tiers.AffyTieredMap;
+import com.affymetrix.igb.tiers.TierGlyph;
+import com.affymetrix.igb.tiers.TransformTierGlyph;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 
 /**

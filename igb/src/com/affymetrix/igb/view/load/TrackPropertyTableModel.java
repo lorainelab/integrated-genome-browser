@@ -1,9 +1,6 @@
 package com.affymetrix.igb.view.load;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-
 import javax.swing.table.AbstractTableModel;
 
 class TrackPropertyTableModel extends AbstractTableModel {

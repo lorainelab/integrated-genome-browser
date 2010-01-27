@@ -2,6 +2,7 @@ package com.affymetrix.genometryImpl;
 
 import com.affymetrix.genometryImpl.span.SimpleMutableSeqSpan;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
+import com.affymetrix.genometryImpl.symmetry.SimpleMutableSeqSymmetry;
 import com.affymetrix.genometryImpl.util.DNAUtils;
 import com.affymetrix.genometryImpl.util.SeqUtils;
 import com.affymetrix.genometryImpl.util.IndexingUtils.IndexedSyms;
@@ -591,4 +592,61 @@ public final class BioSeq implements SearchableCharIterator {
 		return this.getID();
 	}
 
+
+	/**
+	 * Add residues to composition (full sequence loaded).
+	 * @param aseq
+	 */
+	public static void AddResiduesToComposition(BioSeq aseq) {
+		if (aseq.getResiduesProvider() != null) {
+			SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
+			BioSeq subseq = new BioSeq(
+					aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
+			subseq.setResiduesProvider(aseq.getResiduesProvider());
+			addSubseqToComposition(aseq, span, subseq);
+			return;
+		}
+		String residues = aseq.getResidues();
+		SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
+		AddResiduesToComposition(aseq, residues, span);
+	}
+
+
+	/**
+	 * Adds the residues to the composite sequence.  This allows merging of subsequences.
+	 * @param aseq
+	 * @param residues
+	 * @param span
+	 */
+	public static void AddResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
+		BioSeq subseq = new BioSeq(
+				aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
+		subseq.setResidues(residues);
+		addSubseqToComposition(aseq, span, subseq);
+	}
+
+	private static void addSubseqToComposition(BioSeq aseq,SeqSpan span, BioSeq subSeq) {
+		SeqSpan subSpan = new SimpleSeqSpan(0, span.getLength(), subSeq);
+		SeqSpan mainSpan = span;
+		MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
+		subsym.addSpan(subSpan);
+		subsym.addSpan(mainSpan);
+		MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
+		if (compsym == null) {
+			//No children.  Add one.
+			compsym = new SimpleMutableSeqSymmetry();
+			compsym.addChild(subsym);
+			compsym.addSpan(new SimpleSeqSpan(mainSpan.getMin(), mainSpan.getMax(), aseq));
+			aseq.setComposition(compsym);
+		} else {
+			// Merge children that already exist.
+			compsym.addChild(subsym);
+			SeqSpan compspan = compsym.getSpan(aseq);
+			int compmin = Math.min(compspan.getMin(), span.getMin());
+			int compmax = Math.max(compspan.getMax(), span.getMax());
+			SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
+			compsym.removeSpan(compspan);
+			compsym.addSpan(new_compspan);
+		}
+	}
 }

@@ -55,7 +55,7 @@ public final class ResidueLoading {
 					String residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
-						AddResiduesToComposition(aseq, residues, span);
+						BioSeq.AddResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -65,7 +65,7 @@ public final class ResidueLoading {
 					residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
-						AddResiduesToComposition(aseq, residues, span);
+						BioSeq.AddResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -74,7 +74,7 @@ public final class ResidueLoading {
 					uri = generateDas2URI(
 							server.URL, genomeVersionName, seq_name, min, max, true);
 					if (LoadResiduesFromDAS2(seq_group, uri)) {
-						AddResiduesToComposition(aseq);
+						BioSeq.AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -82,7 +82,7 @@ public final class ResidueLoading {
 					// Try fasta format.
 					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, false);
 					if (LoadResiduesFromDAS2(seq_group, uri)) {
-						AddResiduesToComposition(aseq);
+						BioSeq.AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -96,7 +96,7 @@ public final class ResidueLoading {
 			for (GenericServer server : serversWithChrom) {
 				if (server.serverType == ServerType.QuickLoad) {
 					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
-						AddResiduesToComposition(aseq);
+						BioSeq.AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
@@ -112,10 +112,10 @@ public final class ResidueLoading {
 					// Add to composition if we're doing a partial sequence
 					if (partial_load) {
 						// span is non-null, here
-						AddResiduesToComposition(aseq, residues, span);
+						BioSeq.AddResiduesToComposition(aseq, residues, span);
 					} else {
 						aseq.setResidues(residues);
-						AddResiduesToComposition(aseq);
+						BioSeq.AddResiduesToComposition(aseq);
 					}
 					gviewer.setAnnotatedSeq(aseq, true, true, true);
 					return true;
@@ -322,60 +322,4 @@ public final class ResidueLoading {
 		return null;
 	}
 
-	/**
-	 * Add residues to composition (full sequence loaded).
-	 * @param aseq
-	 */
-	private static void AddResiduesToComposition(BioSeq aseq) {
-		if (aseq.getResiduesProvider() != null) {
-			SeqSpan span = new SimpleSeqSpan(0, aseq.getResiduesProvider().getLength(), aseq);
-			BioSeq subseq = new BioSeq(
-					aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), aseq.getResiduesProvider().getLength());
-			subseq.setResiduesProvider(aseq.getResiduesProvider());
-			addSubseqToComposition(aseq, span, subseq);
-			return;
-		}
-		String residues = aseq.getResidues();
-		SeqSpan span = new SimpleSeqSpan(0, residues.length(), aseq);
-		AddResiduesToComposition(aseq, residues, span);
-	}
-
-
-	/**
-	 * Adds the residues to the composite sequence.  This allows merging of subsequences.
-	 * @param aseq
-	 * @param residues
-	 * @param span
-	 */
-	private static void AddResiduesToComposition(BioSeq aseq, String residues, SeqSpan span) {
-		BioSeq subseq = new BioSeq(
-				aseq.getID() + ":" + span.getMin() + "-" + span.getMax(), aseq.getVersion(), residues.length());
-		subseq.setResidues(residues);
-		addSubseqToComposition(aseq, span, subseq);
-	}
-
-	private static void addSubseqToComposition(BioSeq aseq,SeqSpan span, BioSeq subSeq) {
-		SeqSpan subSpan = new SimpleSeqSpan(0, span.getLength(), subSeq);
-		SeqSpan mainSpan = span;
-		MutableSeqSymmetry subsym = new SimpleMutableSeqSymmetry();
-		subsym.addSpan(subSpan);
-		subsym.addSpan(mainSpan);
-		MutableSeqSymmetry compsym = (MutableSeqSymmetry) aseq.getComposition();
-		if (compsym == null) {
-			//No children.  Add one.
-			compsym = new SimpleMutableSeqSymmetry();
-			compsym.addChild(subsym);
-			compsym.addSpan(new SimpleSeqSpan(mainSpan.getMin(), mainSpan.getMax(), aseq));
-			aseq.setComposition(compsym);
-		} else {
-			// Merge children that already exist.
-			compsym.addChild(subsym);
-			SeqSpan compspan = compsym.getSpan(aseq);
-			int compmin = Math.min(compspan.getMin(), span.getMin());
-			int compmax = Math.max(compspan.getMax(), span.getMax());
-			SeqSpan new_compspan = new SimpleSeqSpan(compmin, compmax, aseq);
-			compsym.removeSpan(compspan);
-			compsym.addSpan(new_compspan);
-		}
-	}
 }

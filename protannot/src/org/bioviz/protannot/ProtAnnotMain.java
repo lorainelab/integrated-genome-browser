@@ -4,14 +4,13 @@
  */
 package org.bioviz.protannot;
 
-import org.freehep.util.export.ExportDialog;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
-import com.affymetrix.genoviz.util.ComponentPagePrinter;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import com.affymetrix.genoviz.util.ComponentPagePrinter;
 
+import org.freehep.util.export.ExportDialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -32,6 +31,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Hashtable;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -85,7 +85,9 @@ final class ProtAnnotMain implements WindowListener {
     private Preferences prefs;
     // width of the user's screen
     private Dimension screen;
-    private static final boolean testmode = false;
+    private int frm_width;// = (int) (screen.width * .8f);
+    private int frm_height;// = (int) (screen.height * .8f);
+    private boolean testmode = true;
     private enum Arguments {
         SERVER,
         FILENAME;
@@ -96,13 +98,13 @@ final class ProtAnnotMain implements WindowListener {
                return SERVER;
            else if(s.equalsIgnoreCase("-f"))
                return FILENAME;
-           
+
            return null;
         }
 
     };
     private final Hashtable<Arguments,String> ArgumentValues = new Hashtable<Arguments,String>();
-    
+
     public static void main(String[] args) {
         ProtAnnotMain test = new ProtAnnotMain();
         test.parseArguments(args);
@@ -121,7 +123,7 @@ final class ProtAnnotMain implements WindowListener {
 
     /**
      * Loads preferences from the file.
-     * 
+     *
      * @return Returns a hashtable with name as key and Color as a value.
      */
     private Hashtable<String,Color> loadPrefs() {
@@ -197,9 +199,9 @@ final class ProtAnnotMain implements WindowListener {
             bistr = new BufferedInputStream(fistr);
             Xml2GenometryParser parser = new Xml2GenometryParser();
             BioSeq genome_seq = parser.parse(bistr);
-            gview.setTitle("viewing file: " + filename);
+            gview.setTitle("viewing file: " + filename + " version :" +genome_seq.getVersion() + " id :" + genome_seq.getID());
             gview.setBioSeq(genome_seq,true);
-            frm.setTitle(" ProtAnnot: " + filename);
+            frm.setTitle(" ProtAnnot: " + filename + " version :" +genome_seq.getVersion() + " id :" + genome_seq.getID());
         } catch (Exception ex) {
             Reporter.report("Couldn't read file: " + filename,
                     ex, false, false, true);
@@ -226,7 +228,7 @@ final class ProtAnnotMain implements WindowListener {
         setupColorChooser();
         if(getArgumentValue(Arguments.SERVER)!=null)
             setupSamplesFromServer();
-       
+
         frm.addWindowListener(this);
         frm.setVisible(true);
         if(getArgumentValue(Arguments.FILENAME)!=null)
@@ -417,34 +419,34 @@ final class ProtAnnotMain implements WindowListener {
      */
     private void addQuickLaunch(JMenuBar mbar) {
         JLabel test = new JLabel("                || Chose Test file :-");
-        JButton low = new JButton("Low");
-        JButton med = new JButton("Medium");
-        JButton high = new JButton("High");
+        JButton low = new JButton("OLD");
+        JButton med = new JButton("NEW");
+        //JButton high = new JButton("High");
         mbar.add(test);
         mbar.add(low);
         mbar.add(med);
-        mbar.add(high);
+        //mbar.add(high);
 
         low.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    load(new File(user_dir + "/samples/AF113210.1.paxml"));
+                    load(new File(user_dir + "/samples/ABCB4.paxml"));
                 }
             });
 
         med.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    load(new File(user_dir + "/samples/ADARB1.paxml"));
+                    load(new File(user_dir + "/pyResample/temp/ADARB1.paxml"));
                 }
             });
 
-        high.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-                    load(new File(user_dir +"/samples/ABCB4.paxml"));
-                }
-            });
+//        high.addActionListener(new ActionListener() {
+//
+//                public void actionPerformed(ActionEvent e) {
+//                    load(new File(user_dir +"/samples/ABCB4.paxml"));
+//                }
+//            });
     }
 
     /**
@@ -489,7 +491,7 @@ final class ProtAnnotMain implements WindowListener {
 
         if(files.length <= 0)
             open.setEnabled(false);
-            
+
         sampleChooser.add(buttonpanel);
 
     }
@@ -556,7 +558,7 @@ final class ProtAnnotMain implements WindowListener {
      * @param   args    Argument pair to be inserted in dictionary.
      */
     private void addToArgumentDictionary(String[] args) {
-       
+
        for(int i=0; i<args.length; i+=2)
        {
             if(Arguments.getValue(args[i])!=null)
@@ -584,7 +586,7 @@ final class ProtAnnotMain implements WindowListener {
         try {
             URL url = new URL(getArgumentValue(Arguments.SERVER));
             URLConnection conn = url.openConnection();
-            
+
             // setting these timeouts ensures the client does not deadlock indefinitely
             // when the server has problems.
             conn.setConnectTimeout(1000 * 10);
@@ -641,7 +643,7 @@ final class ProtAnnotMain implements WindowListener {
         table.setDefaultRenderer(Color.class, new ColorTableCellRenderer(true));
         table.setDefaultEditor(Color.class, new ColorTableCellEditor());
         table.setFillsViewportHeight(true);
-       
+
         JPanel buttonpanel = new JPanel();
         buttonpanel.setLayout(new GridLayout(1,4));
 
@@ -654,7 +656,7 @@ final class ProtAnnotMain implements WindowListener {
         buttonpanel.add(apply);
         buttonpanel.add(save);
         buttonpanel.add(cancel);
-        
+
 
         apply.addActionListener(new ActionListener() {
 
@@ -689,7 +691,7 @@ final class ProtAnnotMain implements WindowListener {
                 colorChooser.setVisible(false);
             }
         });
-        
+
         colorChooser.add("Center",table);
         colorChooser.add("South",buttonpanel);
 
@@ -803,7 +805,7 @@ final class ProtAnnotMain implements WindowListener {
 
                 for(int i=0; i<data.length; i++)
                     colorhash.put((String)data[i][0], (Color)data[i][1]);
-                
+
                 return colorhash;
             }
 

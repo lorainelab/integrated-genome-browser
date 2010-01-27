@@ -1,8 +1,11 @@
 package com.affymetrix.igb.general;
 
+import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.util.LoadUtils.ServerType;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.util.GeneralUtils;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.igb.das.DasServerInfo;
 import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.util.StringEncrypter;
@@ -15,20 +18,32 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public final class ServerList {
-	static Map<String, String> url2Name = new LinkedHashMap<String, String>();
-	static Map<GenericServer, String> server2Name = new LinkedHashMap<GenericServer, String>();
-	static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
+	private final static Map<String, String> url2Name = new LinkedHashMap<String, String>();
+	private final static Map<GenericServer, String> server2Name = new LinkedHashMap<GenericServer, String>();
+	private final static Map<String, GenericServer> url2server = new LinkedHashMap<String, GenericServer>();
+	private final static Set<GenericServerInitListener> server_init_listeners = new CopyOnWriteArraySet<GenericServerInitListener>();
 
 	public static Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
-		for (GenericServer gServer : server2Name.keySet()) {
+		for (GenericServer gServer : getAllServers()) {
 			if (gServer.enabled) {
+				serverList.add(gServer);
+			}
+		}
+		return serverList;
+	}
+
+	public static Set<GenericServer> getInitializedServers() {
+		Set<GenericServer> serverList = new HashSet<GenericServer>();
+		for (GenericServer gServer : ServerList.getEnabledServers()) {
+			if (gServer.getServerStatus() == ServerStatus.Initialized) {
 				serverList.add(gServer);
 			}
 		}
@@ -53,7 +68,7 @@ public final class ServerList {
 	public static GenericServer getServer(String URLorName) {
 		GenericServer server = url2server.get(URLorName);
 		if (server == null) {
-			for (GenericServer gServer : server2Name.keySet()) {
+			for (GenericServer gServer : getAllServers()) {
 				if (gServer.serverName.equals(URLorName)) {
 					return gServer;
 				}
@@ -395,6 +410,18 @@ public final class ServerList {
 			}
 		}
 		throw new IllegalArgumentException("URL " + u.toString() + " is not a valid server.");
+	}
+
+	public static void addServerInitListener(GenericServerInitListener listener) {
+		server_init_listeners.add(listener);
+	}
+
+	public static void fireServerInitEvent(GenericServer server, ServerStatus status) {
+		server.setServerStatus(status);
+		GenericServerInitEvent evt = new GenericServerInitEvent(server);
+		for (GenericServerInitListener listener : server_init_listeners) {
+			listener.GenericServerInit(evt);
+		}
 	}
 
 }

@@ -106,6 +106,15 @@ final class Xml2GenometryParser {
         int glength = 0;
         String name = top_element.getTagName();
         if (name.equalsIgnoreCase("dnaseq")) {
+
+            String version = "";
+            String seq = "genome";
+
+            try {
+                version = top_element.getAttribute("version");
+                seq = top_element.getAttribute("seq");
+            } catch (Exception e) {
+            }
             if (DEBUG) {
                 System.err.println("processing dna seq");
             }
@@ -118,9 +127,22 @@ final class Xml2GenometryParser {
                 if (cname != null && cname.equalsIgnoreCase("residues")) {
                     Text resnode = (Text) child.getFirstChild();
                     String residues = resnode.getData();
-
-                    genomic = new BioSeq("genome", null, residues.length());
+                    genomic = new BioSeq(seq, version, residues.length());
                     genomic.setResidues(residues);
+                    try {
+                        int start = Integer.parseInt(((Element) child).getAttribute("start")) - 1;
+                        int end = Integer.parseInt(((Element) child).getAttribute("end")) - 1;
+                        if (start < end) {
+                            end++;
+                        } else {
+                            start++;
+                        }
+                        genomic.setBounds(start, start+residues.length());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
             }
             if (genomic == null) {
@@ -130,7 +152,7 @@ final class Xml2GenometryParser {
                     System.err.println("problem with dnaseq length attribute, arbitrarily assigning 200000");
                     glength = 200000;
                 }
-                genomic = new BioSeq("genome", null, glength);
+                genomic = new BioSeq(seq, version, glength);
             }
 
             processDNASeq(genomic, top_element);
@@ -341,7 +363,7 @@ final class Xml2GenometryParser {
 
         SimpleSymWithProps spanSym = new SimpleSymWithProps();
         addDescriptors(elem, spanSym);
-        String prop = (Integer.valueOf(start+1)).toString();
+        String prop = (Integer.valueOf(start + 1)).toString();
         spanSym.setProperty("aa_start", prop);
         prop = (Integer.valueOf(end + 1)).toString();
         spanSym.setProperty("aa_end", prop);
@@ -489,7 +511,7 @@ final class Xml2GenometryParser {
             m2gSym.addChild(esym);
         }
 		
-		BioSeq mrna = addSpans(m2gSym, genomic, exon_insert_list);
+		BioSeq mrna = addSpans(m2gSym, genomic, exon_insert_list, start);
 
         String protein_id = null;
 
@@ -524,7 +546,7 @@ final class Xml2GenometryParser {
     }
 
 
-	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list) throws NumberFormatException {
+	private BioSeq addSpans(TypeContainerAnnot m2gSym, BioSeq genomic, List exon_insert_list, int start) throws NumberFormatException {
 		int exoncount = m2gSym.getChildCount();
         int mrnalength = 0;
         for (int i = 0; i < exoncount; i++) {
@@ -539,12 +561,12 @@ final class Xml2GenometryParser {
             mrnalength += ilength;
         }
 
-		int start = 0;
 		int end = 0;
 		String mrna_id = "mrna";
 		BioSeq mrna = new BioSeq(mrna_id, null, mrnalength);
+		mrna.setBounds(start, start+mrnalength);
 		mrna_hash.put(mrna_id, mrna);
-		SeqSpan mrna_span = new SimpleSeqSpan(0, mrnalength, mrna);
+		SeqSpan mrna_span = new SimpleSeqSpan(mrna.getMin(), mrnalength, mrna);
 		m2gSym.addSpan(mrna_span);
 		for (int i = 0; i < exoncount; i++) {
 			SimpleSymWithProps esym = (SimpleSymWithProps) m2gSym.getChild(i);
@@ -748,9 +770,10 @@ final class Xml2GenometryParser {
 
         SeqSpan mspan = new SimpleSeqSpan(mstart_point.getStart(), mend_point.getEnd(), mrna);
         BioSeq protein = new BioSeq(protein_id, null, mspan.getLength() / 3);
-
+		protein.setBounds(mspan.getMin(), mspan.getLength()/3);
+		
         prot_hash.put(protein_id, protein);
-        SeqSpan pspan = new SimpleSeqSpan(0, protein.getLength(), protein);
+        SeqSpan pspan = new SimpleSeqSpan(protein.getMin(), protein.getLength(), protein);
         if (DEBUG) {
             System.err.println("protein: length = " + pspan.getLength());
         }

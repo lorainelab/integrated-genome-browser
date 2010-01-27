@@ -15,6 +15,7 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
+import com.affymetrix.genometryImpl.util.LoadUtils.ServerStatus;
 import com.affymetrix.genometryImpl.util.SpeciesLookup;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.genoviz.util.ErrorHandler;
@@ -82,9 +83,6 @@ public final class GeneralLoadUtils {
 	private static final Map<String, Boolean> version2init =
 			new HashMap<String, Boolean>();
 
-	// List of servers.
-	private static final List<GenericServer> discoveredServers = new ArrayList<GenericServer>();
-
 	// versions associated with a given genome.
 	static final Map<String, List<GenericVersion>> species2genericVersionList =
 			new LinkedHashMap<String, List<GenericVersion>>();	// the list of versions associated with the species
@@ -111,26 +109,8 @@ public final class GeneralLoadUtils {
 		}
 	}
 
-	//public boolean allow_reinitialization = true;
-	/*public void clear() {
-		version2init.clear();
-		discoveredServers.clear();
-		species2genericVersionList.clear();
-		versionName2species.clear();
-		versionName2versionSet.clear();
-	}*/
-
 	public GeneralLoadUtils() {
 		this.gviewer = Application.getSingleton().getMapView();
-	}
-
-	private static GenericServer serverExists(List <GenericServer> servers, String serverName, ServerType serverType) {
-		for (GenericServer gServer : servers) {
-			if (gServer.serverName.equals(serverName) && gServer.serverType == serverType) {
-				return gServer;
-			}
-		}
-		return null;
 	}
 
 	
@@ -142,43 +122,19 @@ public final class GeneralLoadUtils {
 	 * @return success of server add.
 	 */
 	boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
-		GenericServer gServer = serverExists(discoveredServers, serverName, serverType);
+		GenericServer gServer = ServerList.getServer(serverURL);
 		if (gServer != null) {
 			System.out.println("Server " + gServer.toString() +" already exists at " + gServer.URL);
 			return false;
 		}
-		
-		try {
-			if (serverType == ServerType.QuickLoad) {
-				gServer = ServerList.addServer(serverType, serverName, serverURL);
-				if (gServer == null) {
-					return false;
-				}
-				if (!getQuickLoadSpeciesAndVersions(gServer)) {
-					return false;
-				}
-				discoveredServers.add(gServer);
-			} else if (serverType == ServerType.DAS) {
-				gServer = ServerList.addServer(serverType, serverName, serverURL);
-				if (gServer == null) {
-					return false;
-				}
-				if (!getDAS1SpeciesAndVersions(gServer)) {
-					return false;
-				}
-				discoveredServers.add(gServer);
 
-			} else if (serverType == ServerType.DAS2) {
-				gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
-				if (gServer == null) {
-					return false;
-				}
-				discoveredServers.add(gServer);
-				getDAS2Species(gServer);
-				getDAS2Versions(gServer);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (serverType == ServerType.Unknown) {
+			// should never happen
+			return false;
+		}
+		
+		gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
+		if (!discoverServer(gServer)) {
 			return false;
 		}
 
@@ -188,7 +144,7 @@ public final class GeneralLoadUtils {
 
 		return true;
 	}
-	
+
 	/**
 	 * Remove specified server.
 	 * @param serverName
@@ -197,18 +153,12 @@ public final class GeneralLoadUtils {
 	 * @return success if server removed
 	 */
 	boolean removeServer(String serverName, String serverURL, ServerType serverType) {
-
-		// Try to remove from discoveredServers.  If it is disabled, it is not
-		// in this list.
-		GenericServer gServer = serverExists(discoveredServers, serverName, serverType);
+		GenericServer gServer = ServerList.getServer(serverURL);
 		if (gServer == null) {
 			System.out.println("Server " + serverName +" does not exist");
 		} else {
-			discoveredServers.remove(gServer);			
+			ServerList.removeServer(serverURL);
 		}
-
-		// Remove from ServerList
-		ServerList.removeServer(serverURL);
 		
 		return true;
 	}
@@ -218,75 +168,43 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover all of the servers and genomes and versions.
 	 */
-	void discoverServersAndSpeciesAndVersions() {
-		// it's assumed that if we're here, we need to refresh this information.
-		discoveredServers.clear();
-		discoverServersInternal(discoveredServers);
-		discoverSpeciesAndVersionsInternal();
-	}
-
-
-	/**
-	 * Discover the list of servers.
-	 *
-	 * @param discoveredServers 
-	 */
-	public static synchronized void discoverServersInternal(final List<GenericServer> discoveredServers) {
+	synchronized void discoverServersAndSpeciesAndVersions() {
 		for (GenericServer gServer : ServerList.getEnabledServers()) {
-			if (gServer.serverType == ServerType.DAS2) {
-				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
-					discoveredServers.add(gServer);
-				}
-			}
-		}
-
-		// Discover DAS servers
-		// TODO -- strip out descriptions and make synonyms with DAS/2
-		// TODO -- get chromosome info
-		for (GenericServer gServer : ServerList.getEnabledServers()) {
-			if (gServer.serverType == ServerType.DAS) {
-				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
-					discoveredServers.add(gServer);
-				}
-			}
-		}
-
-		// Discover Quickload servers
-		// This is based on new preferences, which allow arbitrarily many quickload servers.
-		for (GenericServer gServer : ServerList.getEnabledServers()) {
-			if (gServer.serverType == ServerType.QuickLoad) {
-				if (serverExists(discoveredServers, gServer.serverName, gServer.serverType) == null) {
-					discoveredServers.add(gServer);
-				}
-			}
+			discoverServer(gServer);
 		}
 	}
 
-	/**
-	 * Discover the species and genome versions.
-	 */
-	private synchronized void discoverSpeciesAndVersionsInternal() {
-		for (GenericServer gServer : discoveredServers) {
-			if (gServer.serverType == ServerType.DAS2) {
-				getDAS2Species(gServer);
-				getDAS2Versions(gServer);
-				continue;
-			}
-			if (gServer.serverType == ServerType.DAS) {
-				getDAS1SpeciesAndVersions(gServer);
-				continue;
-			}
-			if (gServer.serverType == ServerType.QuickLoad) {
-				getQuickLoadSpeciesAndVersions(gServer);
-				continue;
-			}
+
+	private boolean discoverServer(GenericServer gServer) {
+		try {
 			if (gServer.serverType == ServerType.Unknown) {
-				System.out.println("WARNING: Discovered server class " + gServer.serverType);
-				continue;
+				// should never happen
+				return false;
 			}
-			System.out.println("WARNING: Unknown server class " + gServer.serverType);
+			if (gServer.serverType == ServerType.QuickLoad) {
+				if (gServer == null || !getQuickLoadSpeciesAndVersions(gServer)) {
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					return false;
+				}
+			} else if (gServer.serverType == ServerType.DAS) {
+				if (gServer == null || !getDAS1SpeciesAndVersions(gServer)) {
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					return false;
+				}
+			} else if (gServer.serverType == ServerType.DAS2) {
+				if (gServer == null || !getDAS2SpeciesAndVersions(gServer)) {
+					ServerList.fireServerInitEvent(gServer, ServerStatus.NotResponding);
+					return false;
+				}
+			}
+			ServerList.fireServerInitEvent(gServer, ServerStatus.Initialized);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
 		}
+		return true;
 	}
+
 
 	/**
 	 * Discover species from DAS
@@ -325,7 +243,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private synchronized boolean getDAS2Species(GenericServer gServer) {
+	private synchronized boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		if (server.getSources() == null || server.getSources().values() == null || server.getSources().values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
@@ -333,25 +251,8 @@ public final class GeneralLoadUtils {
 		}
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
-			List<GenericVersion> gVersionList;
-			if (!species2genericVersionList.containsKey(speciesName)) {
-				gVersionList = new ArrayList<GenericVersion>();
-				species2genericVersionList.put(speciesName, gVersionList);
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Discover genomes from DAS/2
-	 * @param gServer
-	 */
-	private synchronized void getDAS2Versions(GenericServer gServer) {
-		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
-		for (Das2Source source : server.getSources().values()) {
-			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
-			List<GenericVersion> gVersionList = species2genericVersionList.get(speciesName);
-
+			List<GenericVersion> gVersionList = this.getSpeciesVersionList(speciesName);
+			
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
 				String versionName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), versionSource.getName());
@@ -360,6 +261,7 @@ public final class GeneralLoadUtils {
 				discoverVersion(versionName, gServer, gVersion, gVersionList, speciesName);
 			}
 		}
+		return true;
 	}
 
 	/**

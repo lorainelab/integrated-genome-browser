@@ -33,7 +33,7 @@ public final class ServerList {
 	public static Set<GenericServer> getEnabledServers() {
 		Set<GenericServer> serverList = new HashSet<GenericServer>();
 		for (GenericServer gServer : getAllServers()) {
-			if (gServer.enabled) {
+			if (gServer.enabled && gServer.getServerStatus() != ServerStatus.NotResponding) {
 				serverList.add(gServer);
 			}
 		}
@@ -417,10 +417,12 @@ public final class ServerList {
 	}
 
 	public static void fireServerInitEvent(GenericServer server, ServerStatus status) {
-		server.setServerStatus(status);
-		GenericServerInitEvent evt = new GenericServerInitEvent(server);
-		for (GenericServerInitListener listener : server_init_listeners) {
-			listener.GenericServerInit(evt);
+		if (server.getServerStatus() != status) {
+			server.setServerStatus(status);
+			GenericServerInitEvent evt = new GenericServerInitEvent(server);
+			for (GenericServerInitListener listener : server_init_listeners) {
+				listener.GenericServerInit(evt);
+			}
 		}
 	}
 

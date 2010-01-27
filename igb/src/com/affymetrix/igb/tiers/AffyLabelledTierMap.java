@@ -109,7 +109,6 @@ public final class AffyLabelledTierMap extends AffyTieredMap  {
 	for (TierLabelGlyph label_glyph : label_glyphs) {
       TierGlyph tier_glyph = (TierGlyph)label_glyph.getInfo();
       Rectangle2D.Double tbox = tier_glyph.getCoordBox();
-	  System.out.println("Changing coords from : " + lbox.y + "to " + tbox.y);
       label_glyph.setCoords(lbox.x, tbox.y, lbox.width, tbox.height);
       label_glyph.setVisibility(tier_glyph.isVisible());
     }

@@ -134,7 +134,7 @@ final class GenomeView extends JPanel implements MouseListener{
     private VisibleRange zoomPoint;
     
     // size constants - these are needed to control the layout
-	// of different elements within each moap.
+	// of different elements within each map.
     private static final int axis_pixel_height = 20;
     private static final int seq_pixel_height = 10;
     private static final int upper_white_space = 5;
@@ -324,8 +324,9 @@ final class GenomeView extends JPanel implements MouseListener{
     void setBioSeq(BioSeq gseq, boolean is_new) {
         this.gseq = gseq;
         seqmap.clearWidget();
-        seqmap.setMapRange(0, gseq.getLength());
+        seqmap.setMapRange(gseq.getMin(), gseq.getMax());
         axismap.clearWidget();
+		axismap.setMapRange(gseq.getMin(), gseq.getMax());
         seqmap.setBackground(col_bg);
         
         exonGlyphs = new ArrayList<GlyphI>();
@@ -344,13 +345,14 @@ final class GenomeView extends JPanel implements MouseListener{
 
         SeqSymmetry[] path2view = new SeqSymmetry[1];
         MutableSeqSymmetry viewSym = new SimpleMutableSeqSymmetry();
-        viewSym.addSpan(new SimpleSeqSpan(0, gseq.getLength(), gseq));
+        viewSym.addSpan(new SimpleSeqSpan(gseq.getMin(), gseq.getMax(), gseq));
         vseq = new BioSeq("view seq", null, gseq.getLength());
+        vseq.setBounds(gseq.getMin(), gseq.getMax());
 
         if (rev_comp) {
-            viewSym.addSpan(new SimpleSeqSpan(gseq.getLength(), 0, vseq));
+            viewSym.addSpan(new SimpleSeqSpan(vseq.getMax(), vseq.getMin(), vseq));
         } else {
-            viewSym.addSpan(new SimpleSeqSpan(0, gseq.getLength(), vseq));
+            viewSym.addSpan(new SimpleSeqSpan(vseq.getMin(), vseq.getMax(), vseq));
         }
 
         path2view[0] = viewSym;
@@ -364,7 +366,7 @@ final class GenomeView extends JPanel implements MouseListener{
         }
 
         MapTierGlyph sumTier = new MapTierGlyph();
-        sumTier.setCoords(0, seqmap_pixel_height - 20, gseq.getLength(), 20);
+        sumTier.setCoords(gseq.getMin(), seqmap_pixel_height - 20, gseq.getLength(), 20);
         sumTier.setState(MapTierGlyph.EXPANDED);
 
         ExpandedTierPacker epack = (ExpandedTierPacker) sumTier.getExpandedPacker();
@@ -384,6 +386,7 @@ final class GenomeView extends JPanel implements MouseListener{
         {
             axismap.stretchToFit(true, false);
             seqmap.stretchToFit(true, true);
+			seqmap.getScroller(NeoMap.X).setValue(gseq.getMin());
         }
         else
         {
@@ -424,7 +427,7 @@ final class GenomeView extends JPanel implements MouseListener{
     private void glyphifyMRNA(SeqSymmetry mrna2genome, SeqSymmetry[] path2view) {
         int childcount = mrna2genome.getChildCount();
         MapTierGlyph tier = new MapTierGlyph();
-        tier.setCoords(0, 0, gseq.getLength(), 80);
+        tier.setCoords(gseq.getMin(), 0, gseq.getLength(), 80);
         tier.setState(MapTierGlyph.EXPANDED);
         ExpandedTierPacker epack = (ExpandedTierPacker) tier.getExpandedPacker();
         epack.setMoveType(ExpandedTierPacker.DOWN);
@@ -702,17 +705,18 @@ final class GenomeView extends JPanel implements MouseListener{
      * @see     com.affymetrix.genoviz.glyph.SequenceGlyph
      */
     private void setupAxisMap() { 
-        axismap.setMapRange(0, gseq.getLength());
+        
 
         /* Implementing it in this way because in above method synchronization is lost when
          zoomtoselected feature is used. So to correct it below used method is used */
         
         axismap.addAxis(upper_white_space+axis_pixel_height);
-        String residues = gseq.getResidues();
-        SequenceGlyph sg = new ColoredResiduesGlyph();
-        sg.setResidues(residues);
-        sg.setCoords(0, upper_white_space + axis_pixel_height
-                + middle_white_space, gseq.getLength(), seq_pixel_height);
+        //String residues = gseq.getResidues();
+        ColoredResiduesGlyph sg = new ColoredResiduesGlyph();
+        sg.setResiduesProvider(gseq, gseq.getLength());
+        //sg.setResidues(residues);
+        sg.setCoords(gseq.getMin(), upper_white_space + axis_pixel_height
+                + middle_white_space, gseq.getLength() , seq_pixel_height);
         sg.setForegroundColor(col_sequence);
         sg.setBackgroundColor(col_axis_bg);
         axismap.getScene().addGlyph(sg);     
@@ -933,7 +937,7 @@ final class GenomeView extends JPanel implements MouseListener{
 
     /**
      * Returns selected Glyphs
-     * @return  Returns list of selected Glyphs
+     * @return  Returns list of selected Glyphs 
      * @see     com.affymetrix.genoviz.bioviews.GlyphI
      */
     List<GlyphI> getSelected() {

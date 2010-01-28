@@ -2,7 +2,6 @@ package com.affymetrix.genometry.genopub;
 
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 

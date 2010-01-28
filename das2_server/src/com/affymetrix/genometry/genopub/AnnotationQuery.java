@@ -1,6 +1,5 @@
 package com.affymetrix.genometry.genopub;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,28 +8,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.mortbay.http.HttpRequest;
 
-import com.affymetrix.genometry.genopub.Annotation;
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
-import com.affymetrix.genometry.genopub.DictionaryHelper;
-import com.affymetrix.genometry.genopub.GenoPubSecurity;
-import com.affymetrix.genometry.genopub.GenomeVersion;
-import com.affymetrix.genometry.genopub.GenomeVersionComparator;
-import com.affymetrix.genometry.genopub.Organism;
-import com.affymetrix.genometry.genopub.OrganismComparator;
-import com.affymetrix.genometry.genopub.QualifiedAnnotation;
-import com.affymetrix.genometry.genopub.Segment;
-import com.affymetrix.genometry.genopub.Util;
 
 public class AnnotationQuery {
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -13,7 +12,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
 
 public class GenomeVersion {
 

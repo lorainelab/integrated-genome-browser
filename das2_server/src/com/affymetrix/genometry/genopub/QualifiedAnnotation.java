@@ -1,9 +1,5 @@
 package com.affymetrix.genometry.genopub;
 
-import java.util.Map;
-import java.util.TreeMap;
-
-import com.affymetrix.genometry.genopub.Annotation;
 
 public class QualifiedAnnotation {
 	private Annotation annotation;

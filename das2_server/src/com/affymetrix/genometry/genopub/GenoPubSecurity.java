@@ -1,10 +1,7 @@
 package com.affymetrix.genometry.genopub;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,15 +12,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.Session;
 
-import com.affymetrix.genometry.genopub.Annotation;
-import com.affymetrix.genometry.genopub.AnnotationGrouping;
-import com.affymetrix.genometry.genopub.AnnotationQuery;
-import com.affymetrix.genometry.genopub.Organism;
-import com.affymetrix.genometry.genopub.Owned;
-import com.affymetrix.genometry.genopub.QualifiedAnnotation;
-import com.affymetrix.genometry.genopub.User;
-import com.affymetrix.genometry.genopub.UserGroup;
-import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.AnnotSecurity;
 

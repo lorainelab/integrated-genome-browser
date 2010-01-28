@@ -13,8 +13,9 @@
 
 package com.affymetrix.genoviz.event;
 
+import com.affymetrix.genoviz.bioviews.GlyphI;
 import java.util.EventObject;
-import com.affymetrix.genoviz.bioviews.*;
+
 
 /**
  *  This does NOT have any relation to NeoDragEvent

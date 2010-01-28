@@ -13,9 +13,10 @@
 
 package com.affymetrix.genoviz.widget;
 
+import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.bioviews.GlyphI;
 import com.affymetrix.genoviz.event.NeoMouseEvent;
-import com.affymetrix.genoviz.util.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 import java.awt.Adjustable;
 import java.awt.Color;
 import java.awt.Component;

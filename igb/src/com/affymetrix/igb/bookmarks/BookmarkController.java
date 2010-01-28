@@ -13,10 +13,15 @@
 
 package com.affymetrix.igb.bookmarks;
 
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.GenometryModel;
+import com.affymetrix.genometryImpl.GraphSym;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
+import com.affymetrix.genometryImpl.SymWithProps;
 import java.awt.Color;
 import java.util.List;
 import java.io.*;
-import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.style.DefaultIAnnotStyle;
 import com.affymetrix.genometryImpl.style.GraphState;
 import com.affymetrix.genometryImpl.style.GraphType;
@@ -27,7 +32,8 @@ import com.affymetrix.genometryImpl.util.GraphSymUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.glyph.GraphGlyph;
-import com.affymetrix.igb.util.*;
+import com.affymetrix.igb.util.GraphGlyphUtils;
+import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;

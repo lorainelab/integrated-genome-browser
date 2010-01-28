@@ -23,7 +23,8 @@ import com.affymetrix.genoviz.bioviews.ViewI;
 import com.affymetrix.genoviz.bioviews.Scene;
 import com.affymetrix.genoviz.bioviews.ResiduePainter;
 import com.affymetrix.genoviz.datamodel.SequenceI;
-import com.affymetrix.genoviz.util.*;
+import com.affymetrix.genoviz.util.DNAUtils;
+import com.affymetrix.genoviz.util.GeneralUtils;
 import java.awt.geom.Rectangle2D;
 
 /**

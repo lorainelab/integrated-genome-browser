@@ -3,9 +3,12 @@ package com.affymetrix.genometry.servlets;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import org.mortbay.http.HttpContext;
+import org.mortbay.http.HttpServer;
+import org.mortbay.http.SocketListener;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
 
-import org.mortbay.http.*;
-import org.mortbay.jetty.servlet.*;
 
 /**
  *  Pure java web server wrapper around GenometryDas2Servlet

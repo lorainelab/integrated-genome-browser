@@ -9,9 +9,9 @@
 package com.affymetrix.genometry.servlets;
 
 import java.io.*;
-//import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 public final class GZIPResponseWrapper extends HttpServletResponseWrapper {
 	protected HttpServletResponse origResponse = null;

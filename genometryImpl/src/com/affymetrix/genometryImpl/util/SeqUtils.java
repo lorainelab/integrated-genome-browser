@@ -355,7 +355,7 @@ public abstract class SeqUtils {
 			resultSym.addChild(childSym);
 		}
 		BioSeq seq;
-		if (merged_spans.size() > 0) { seq = (merged_spans.get(0)).getBioSeq(); }
+		if (merged_spans.size() > 0) { seq = merged_spans.get(0).getBioSeq(); }
 		else { seq = null; }
 		SeqSpan resultSpan = new SimpleSeqSpan(min, max, seq);
 		resultSym.addSpan(resultSpan);

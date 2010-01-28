@@ -93,20 +93,11 @@ import com.affymetrix.genometryImpl.util.Timer;
  *</pre>
  */
 public abstract class BsnpParser {
-	//  static String default_text_infile = "c:/data/ucsc/hg15/";
-	//  static String genome_version = "H_sapiens_Apr_2003";
 
-	//  source enum('BAC_OVERLAP','MIXED','RANDOM','OTHER','Affy10K','Affy120K','unknown') NOT NULL default 'unknown',
-	//  type enum('SNP','INDEL','SEGMENTAL','unknown') NOT NULL default 'unknown',
-
-	//  static Pattern line_regex = Pattern.compile("\t");
 	private static final Pattern line_regex = Pattern.compile("\\s+");  // replaced single tab with one or more whitespace
-	//Map source_hash = new HashMap();
-	//Map type_hash = new HashMap();
 
 	private static void outputBsnpFormat(List<SeqSymmetry> parents, String genome_version, DataOutputStream dos)
 		throws IOException {
-		try        {
 			int pcount = parents.size();
 			dos.writeUTF(genome_version);
 			dos.writeInt(pcount);  // how many seqs there are
@@ -138,10 +129,6 @@ public abstract class BsnpParser {
 				}
 			}
 			System.out.println("total snps output to bsnp file: " + total_snp_count);
-		}
-		finally {
-			// close stream ?
-		}
 	}
 
 	/**
@@ -156,48 +143,44 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		AnnotatedSeqGroup seq_group = gmodel.addSeqGroup("Test Group");
 
 		List<SeqSymmetry> results = new ArrayList<SeqSymmetry>();
-		try {
 			GFFParser gff_parser = new GFFParser();
-			gff_parser.parse(istr, seq_group, true);
-			int problem_count = 0;
-			for (BioSeq aseq : seq_group.getSeqList()) {
-				int acount = aseq.getAnnotationCount();
-				String seqid = aseq.getID();
-				System.out.println("seq = " + seqid + ", annots = " + acount);
-				// for some reason having diffent enzymes in source column causes parent sym to be added as annotation multiple times!
-				// therefore just taking first annotation
-				// need to debug this eventually...
-				if (acount >= 1) { 
-					SimpleSymWithProps new_psym = new SimpleSymWithProps();
-					BioSeq seq = new BioSeq(seqid, aseq.getVersion(), 1000000000);
-					new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
-					new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
-					for (int k=0; k<acount; k++) {
-						SeqSymmetry psym = aseq.getAnnotation(k);
-						int child_count = psym.getChildCount();
-						System.out.println("    child annots: " + child_count);
+		gff_parser.parse(istr, seq_group, true);
+		int problem_count = 0;
+		for (BioSeq aseq : seq_group.getSeqList()) {
+			int acount = aseq.getAnnotationCount();
+			String seqid = aseq.getID();
+			System.out.println("seq = " + seqid + ", annots = " + acount);
+			// for some reason having diffent enzymes in source column causes parent sym to be added as annotation multiple times!
+			// therefore just taking first annotation
+			// need to debug this eventually...
+			if (acount >= 1) {
+				SimpleSymWithProps new_psym = new SimpleSymWithProps();
+				BioSeq seq = new BioSeq(seqid, aseq.getVersion(), 1000000000);
+				new_psym.addSpan(new SimpleSeqSpan(0, 1000000000, seq));
+				new_psym.setProperty(SimpleSymWithProps.CONTAINER_PROP, Boolean.TRUE);
+				for (int k = 0; k < acount; k++) {
+					SeqSymmetry psym = aseq.getAnnotation(k);
+					int child_count = psym.getChildCount();
+					System.out.println("    child annots: " + child_count);
 
-						for (int i=0; i<child_count; i++) {
-							UcscGffSym csym = (UcscGffSym)psym.getChild(i);
-							int coord = csym.getSpan(0).getMin();
-							//            String snp_name = csym.getID();
-							String snp_name = csym.getFeatureType();  // because of quirk in how GFF files are constructed
-							//            System.out.println("coord = " + coord + ", id = " + snp_name);
-							// now derive snpid from snp_name (strip off 'SNP_A-' prefix and convert to integer)
-							//              int snpid = ...
-							//              EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord, snpid);
-							EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord);
-							new_psym.addChild(snp_sym);
-						}
+					for (int i = 0; i < child_count; i++) {
+						UcscGffSym csym = (UcscGffSym) psym.getChild(i);
+						int coord = csym.getSpan(0).getMin();
+						//            String snp_name = csym.getID();
+						String snp_name = csym.getFeatureType();  // because of quirk in how GFF files are constructed
+						//            System.out.println("coord = " + coord + ", id = " + snp_name);
+						// now derive snpid from snp_name (strip off 'SNP_A-' prefix and convert to integer)
+						//              int snpid = ...
+						//              EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord, snpid);
+						EfficientSnpSym snp_sym = new EfficientSnpSym(new_psym, coord);
+						new_psym.addChild(snp_sym);
 					}
-					results.add(new_psym);
 				}
+				results.add(new_psym);
 			}
-			System.out.println("problems: " + problem_count);
 		}
-		finally {
-			// close stream ? 
-		}
+		System.out.println("problems: " + problem_count);
+
 		return results;
 	}
 
@@ -206,7 +189,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		int snp_count = 0;
 		int weird_length_count = 0;
 		Map<String,SeqSymmetry> id2psym = new HashMap<String,SeqSymmetry>();
-		ArrayList<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> parent_syms = new ArrayList<SeqSymmetry>();
 		try {
 			String line;
 			while ((line = br.readLine()) != null) {

@@ -125,7 +125,7 @@ public class IndexingUtils {
 		}
 		
 		if (fullPath.indexOf(fullDirName) >= 0) {
-			String shortenedPath = (fullPath.replace(fullDirName, ""));
+			String shortenedPath = fullPath.replace(fullDirName, "");
 			return retVal + shortenedPath;			
 		} else {
 			return retVal + annot_name;

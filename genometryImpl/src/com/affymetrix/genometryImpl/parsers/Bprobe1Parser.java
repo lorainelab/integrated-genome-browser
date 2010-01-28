@@ -107,7 +107,7 @@ public final class Bprobe1Parser implements AnnotationWriter {
 			dis = new DataInputStream(bis);
 			String format = dis.readUTF();
 			int format_version = dis.readInt();
-			boolean version2 = (format.equals("bp2"));
+			boolean version2 = format.equals("bp2");
 			
 			if (DEBUG) {
 				System.out.println("is bp2: " + version2);

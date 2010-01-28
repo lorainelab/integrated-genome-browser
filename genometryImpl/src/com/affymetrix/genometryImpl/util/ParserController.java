@@ -170,10 +170,10 @@ public final class ParserController {
 		int sindex = stream_name.lastIndexOf("/");
 		String type_prefix = (sindex < 0) ? null : stream_name.substring(0, sindex + 1);  // include ending "/" in prefix
 
-		if (stream_name.endsWith((".bed"))) {
+		if (stream_name.endsWith(".bed")) {
 			return new BedParser();
 		}
-		if (stream_name.endsWith((".bps"))) {
+		if (stream_name.endsWith(".bps")) {
 			return new BpsParser();
 		}
 		if (stream_name.endsWith(".psl") && !stream_name.endsWith(".link.psl")) {

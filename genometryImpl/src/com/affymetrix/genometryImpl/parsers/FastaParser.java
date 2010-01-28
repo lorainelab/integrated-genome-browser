@@ -236,7 +236,7 @@ public final class FastaParser {
 		com.affymetrix.genometryImpl.util.Timer tim = new com.affymetrix.genometryImpl.util.Timer();
 		tim.start();
 		BioSeq seq = aseq;
-		String seqid = ("unknown");
+		String seqid = "unknown";
 		// maybe guesstimate size of buffer needed based on file size???
 		StringBuffer buf;
 		if (fixed_length_buffer) {

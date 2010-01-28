@@ -37,7 +37,7 @@ public class USeq2Text {
 			File bedFile = new File (useqArchive.getParentFile(), USeqUtilities.removeExtension(useqArchive.getName())+".bed");
 			PrintWriter out = new PrintWriter (new FileWriter (bedFile));
 			ZipFile zf = new ZipFile(useqArchive);
-			Enumeration<ZipEntry> e = (Enumeration<ZipEntry>) zf.entries();
+			Enumeration<? extends ZipEntry> e = zf.entries();
 			
 			//make an ArchiveInfo object on the first element in the zip archive
 			ZipEntry ze = e.nextElement();
@@ -101,7 +101,7 @@ public class USeq2Text {
 				try{
 					switch (test){
 					case 'f': useqArchives = USeqUtilities.extractFiles(new File(args[++i]), USeqUtilities.USEQ_EXTENSION_NO_PERIOD); break;
-					case 'h': printDocs(); System.exit(0);
+					case 'h': printDocs(); System.exit(0); break;
 					default: USeqUtilities.printExit("\nProblem, unknown option! " + mat.group());
 					}
 				}

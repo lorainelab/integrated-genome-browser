@@ -481,7 +481,7 @@ final class Xml2GenometryParser {
 
 
         List<SeqSymmetry> exon_list = new ArrayList<SeqSymmetry>();
-        List exon_insert_list = new ArrayList();
+        List<Node> exon_insert_list = new ArrayList<Node>();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
             String nodename = child.getNodeName();

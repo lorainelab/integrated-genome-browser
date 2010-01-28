@@ -86,7 +86,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	//    FIX THIS!  But also need to balance between memory concerns and the
 	//    desire to avoid recalculation of percent-to-score array (which requires a
 	//    sort) every time a graph is selected...
-	private final Map info2pscores = new HashMap();
+	private final Map<Object,float[]> info2pscores = new HashMap<Object,float[]>();
 	private final List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 
 	/*
@@ -775,7 +775,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 		if (info == null) {
 			System.err.println("Graph has no info! " + gl);
 		}
-		float[] p2score = (float[]) info2pscores.get(info);
+		float[] p2score = info2pscores.get(info);
 
 		if (p2score == null) {
 			float[] ycoords = gl.copyYCoords();

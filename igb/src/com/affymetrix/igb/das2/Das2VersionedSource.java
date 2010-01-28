@@ -16,9 +16,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.w3c.dom.*;
-import java.lang.Object.*;
-import java.net.URI.*;
-
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.BioSeq;

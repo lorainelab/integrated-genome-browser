@@ -1,10 +1,29 @@
 package com.affymetrix.genometryImpl.parsers.useq.apps;
+import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
+import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.parsers.useq.data.Position;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScore;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreText;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionText;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.Region;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScore;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreText;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionText;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.affymetrix.genometryImpl.parsers.useq.*;
-import com.affymetrix.genometryImpl.parsers.useq.data.*;
+//import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
 
 /**Splits a tab delimited text file by chromosome (and optionally strand), sort on position, then divides it by the number of rows.

@@ -1,9 +1,10 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
-import com.affymetrix.genometryImpl.parsers.useq.*;
+
 
 
 /**

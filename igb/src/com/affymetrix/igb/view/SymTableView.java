@@ -16,10 +16,10 @@ import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.DerivedSeqSymmetry;
 import java.util.*;
-
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.event.SymSelectionEvent;
+import com.affymetrix.genometryImpl.event.SymSelectionListener;
 import java.text.NumberFormat;
 
 public final class SymTableView extends PropertySheet implements SymSelectionListener {

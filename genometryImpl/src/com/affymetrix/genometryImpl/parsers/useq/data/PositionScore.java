@@ -1,5 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
-import java.io.*;
+
 
 /** @author david.nix@hci.utah.edu*/
 public class PositionScore extends Position {

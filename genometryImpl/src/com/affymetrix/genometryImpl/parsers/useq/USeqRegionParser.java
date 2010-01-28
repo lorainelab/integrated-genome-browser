@@ -1,4 +1,5 @@
 package com.affymetrix.genometryImpl.parsers.useq;
+
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.BioSeq;
 import java.io.*;
@@ -8,9 +9,24 @@ import java.util.zip.ZipInputStream;
 import com.affymetrix.genometryImpl.UcscBedSym;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.SymWithProps;
-import com.affymetrix.genometryImpl.parsers.useq.data.*;
 import java.util.regex.*;
 import com.affymetrix.genometryImpl.parsers.BedParser;
+import com.affymetrix.genometryImpl.parsers.useq.data.Position;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScore;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreText;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionText;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.Region;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScore;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreText;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionText;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 
 /**For parsing binary USeq region data into GenViz display objects.
  * @author david.nix@hci.utah.edu*/

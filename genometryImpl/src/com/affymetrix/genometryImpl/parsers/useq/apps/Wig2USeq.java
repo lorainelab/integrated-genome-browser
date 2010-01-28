@@ -1,11 +1,14 @@
 package com.affymetrix.genometryImpl.parsers.useq.apps;
 
+import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScore;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.affymetrix.genometryImpl.parsers.useq.*;
-import com.affymetrix.genometryImpl.parsers.useq.data.*;
 
 public class Wig2USeq {
 

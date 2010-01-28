@@ -1,11 +1,13 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
 
+import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import com.affymetrix.genometryImpl.parsers.useq.apps.Text2USeq;
 import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import com.affymetrix.genometryImpl.parsers.useq.*;
-import com.affymetrix.genometryImpl.parsers.useq.apps.*;
+
 
 
 /**Container for a sorted RegionScoreText[].

@@ -1,8 +1,8 @@
 package com.affymetrix.genometryImpl.parsers.useq.data;
 
+import com.affymetrix.genometryImpl.parsers.useq.SliceInfo;
 import java.io.*;
 
-import com.affymetrix.genometryImpl.parsers.useq.*;
 
 /**Parent Container for a sorted Data[] and it's associated SliceInfo.
  * @author david.nix@hci.utah.edu*/

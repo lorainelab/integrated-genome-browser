@@ -16,12 +16,14 @@ package com.affymetrix.igb.event;
 import java.net.*;
 import java.io.*;
 import javax.swing.SwingUtilities;
-
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.igb.Application;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
-import com.affymetrix.genometryImpl.parsers.*;
+import com.affymetrix.genometryImpl.parsers.BpsParser;
+import com.affymetrix.genometryImpl.parsers.Das1FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
+import com.affymetrix.genometryImpl.parsers.PSLParser;
 import com.affymetrix.genoviz.util.GeneralUtils;
 import com.affymetrix.genoviz.util.ErrorHandler;
 import com.affymetrix.igb.view.SeqMapView;

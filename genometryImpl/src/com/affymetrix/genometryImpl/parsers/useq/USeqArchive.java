@@ -1,5 +1,13 @@
 package com.affymetrix.genometryImpl.parsers.useq;
-import com.affymetrix.genometryImpl.parsers.useq.data.*;
+
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionScoreTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.PositionTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionScoreTextData;
+import com.affymetrix.genometryImpl.parsers.useq.data.RegionTextData;
 import java.io.*;
 import java.util.zip.*;
 import java.util.*;

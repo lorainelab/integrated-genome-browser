@@ -1,5 +1,6 @@
 package com.affymetrix.igb.view.load;
 
+import com.affymetrix.genometryImpl.event.GenericServerInitEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -35,15 +36,18 @@ import com.affymetrix.genometryImpl.AnnotatedSeqGroup;
 import com.affymetrix.genometryImpl.GenometryModel;
 import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.comparator.StringVersionDateComparator;
+import com.affymetrix.genometryImpl.event.GenericServerInitListener;
 import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
 import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genometryImpl.event.SeqSelectionEvent;
 import com.affymetrix.genometryImpl.event.SeqSelectionListener;
 
 import com.affymetrix.genometryImpl.general.GenericFeature;
+import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.general.Persistence;
+import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
 
@@ -56,7 +60,7 @@ import javax.swing.SwingWorker;
 import javax.swing.table.TableColumn;
 
 public final class GeneralLoadView extends JComponent
-				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener {
+				implements ItemListener, ActionListener, GroupSelectionListener, SeqSelectionListener, GenericServerInitListener {
 
 	static GeneralLoadUtils glu = new GeneralLoadUtils();
 	private static final boolean DEBUG_EVENTS = false;
@@ -72,7 +76,7 @@ public final class GeneralLoadView extends JComponent
 	private JButton all_residuesB;
 	private JButton partial_residuesB;
 	private final JButton refresh_dataB;
-	private SeqMapView gviewer;
+	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
@@ -80,10 +84,6 @@ public final class GeneralLoadView extends JComponent
 	private TrackInfoView track_info_view;
 
 	public GeneralLoadView() {
-		if (Application.getSingleton() != null) {
-			gviewer = Application.getSingleton().getMapView();
-		}
-	
 		this.setLayout(new BorderLayout());
 
 		JPanel choicePanel = new JPanel();
@@ -100,7 +100,6 @@ public final class GeneralLoadView extends JComponent
 		choicePanel.add(new JLabel(CHOOSE + ":"));
 		choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(speciesCB);
-		//choicePanel.add(Box.createHorizontalGlue());
 
 		choicePanel.add(Box.createHorizontalStrut(50));
 		versionCB = new JComboBox() {
@@ -183,6 +182,8 @@ public final class GeneralLoadView extends JComponent
 
 		this.setBorder(BorderFactory.createEtchedBorder());
 
+		ServerList.addServerInitListener(this);
+
 		populateSpeciesData();
 
 	}
@@ -198,7 +199,7 @@ public final class GeneralLoadView extends JComponent
 		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
 			protected Void doInBackground() throws Exception {
-				glu.discoverServersAndSpeciesAndVersions();
+				GeneralLoadUtils.discoverServersAndSpeciesAndVersions();
 				return null;
 			}
 
@@ -231,7 +232,7 @@ public final class GeneralLoadView extends JComponent
 			login = null;
 			password = null;
 		}
-		if (!glu.addServer(serverName, serverURL, serverType, login, password)) {
+		if (!GeneralLoadUtils.addServer(serverName, serverURL, serverType, login, password)) {
 			return false;
 		}
 
@@ -255,9 +256,10 @@ public final class GeneralLoadView extends JComponent
 
 		return true;
 	}
-	
-	public static boolean removeServer(String serverName, String serverURL, ServerType serverType) {
-		return glu.removeServer(serverName, serverURL, serverType);
+
+	public void GenericServerInit(GenericServerInitEvent evt) {
+		GenericServer gServer = (GenericServer)evt.getSource();
+		//System.out.println("GLV: init of server " + gServer.serverName);
 	}
 
 
@@ -385,15 +387,15 @@ public final class GeneralLoadView extends JComponent
 				try {
 				if (src == partial_residuesB) {
 					SeqSpan viewspan = gviewer.getVisibleSpan();
-					if (!glu.loadResidues(genomeVersionName, curSeq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+					if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
 						// Load the full sequence if the partial one couldn't be loaded.
-						if (!glu.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
+						if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
 							ErrorHandler.errorPanel("Couldn't load sequence",
 											"Was not able to locate the sequence.");
 						}
 					}
 				} else {
-					if (!glu.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
+					if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
 						ErrorHandler.errorPanel("Couldn't load sequence",
 										"Was not able to locate the sequence.");
 					}
@@ -427,7 +429,7 @@ public final class GeneralLoadView extends JComponent
 
 		// Load any features that have a visible strategy and haven't already been loaded.
 		String genomeVersionName = (String) versionCB.getSelectedItem();
-		for (GenericFeature gFeature : glu.getFeatures(genomeVersionName)) {
+		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(genomeVersionName)) {
 			if (gFeature.loadStrategy != LoadStrategy.VISIBLE && gFeature.loadStrategy != LoadStrategy.CHROMOSOME) {
 				continue;
 			}
@@ -441,7 +443,7 @@ public final class GeneralLoadView extends JComponent
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
-			glu.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
 		}
 		Application.getSingleton().setStatus("", false);
 
@@ -534,7 +536,6 @@ public final class GeneralLoadView extends JComponent
 		versionCB.setEnabled(false);
 		(new InitVersionWorker(versionName, group)).execute();	
 	}
-
 
 	/**
 	 * Run initialization of version on thread, so we don't lock up the GUI.
@@ -783,7 +784,7 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("Creating new table with chrom " + (curSeq == null ? null : curSeq.getID()));
 		}
 
-		List<GenericFeature> features = glu.getFeatures(versionName);
+		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
 		if (DEBUG_EVENTS) {
 			System.out.println("features for " + versionName + ": " + features.toString());
 		}
@@ -854,7 +855,7 @@ public final class GeneralLoadView extends JComponent
 	 */
 	private void loadWholeRangeFeatures(String versionName) {
 		BioSeq curSeq = gmodel.getSelectedSeq();
-		for (GenericFeature gFeature : glu.getFeatures(versionName)) {
+		for (GenericFeature gFeature : GeneralLoadUtils.getFeatures(versionName)) {
 			if (gFeature.loadStrategy != LoadStrategy.GENOME) {
 				continue;
 			}
@@ -877,7 +878,7 @@ public final class GeneralLoadView extends JComponent
 			if (DEBUG_EVENTS) {
 				System.out.println("Selected : " + gFeature.featureName);
 			}
-			glu.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
+			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
 		}
 	}
 

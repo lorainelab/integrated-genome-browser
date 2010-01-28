@@ -78,7 +78,7 @@ public final class GeneralLoadUtils {
 	/** Unused list of chromosomes that may be used in a future chromosome lookup */
 	private static final String CHROM_SYNONYM_FILE = "/chromosomes.txt";
 	
-	private final SeqMapView gviewer;
+	private final static SeqMapView gviewer = Application.getSingleton().getMapView();
 
 	private static final Map<String, Boolean> version2init =
 			new HashMap<String, Boolean>();
@@ -108,11 +108,6 @@ public final class GeneralLoadUtils {
 			Logger.getLogger(GeneralLoadUtils.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
-	public GeneralLoadUtils() {
-		this.gviewer = Application.getSingleton().getMapView();
-	}
-
 	
 	/**
 	 * Add specified server, finding species and versions associated with it.
@@ -121,7 +116,7 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
+	static boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
 		GenericServer gServer = ServerList.getServer(serverURL);
 		if (gServer != null) {
 			System.out.println("Server " + gServer.toString() +" already exists at " + gServer.URL);
@@ -152,7 +147,7 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success if server removed
 	 */
-	boolean removeServer(String serverName, String serverURL, ServerType serverType) {
+	public static boolean removeServer(String serverName, String serverURL, ServerType serverType) {
 		GenericServer gServer = ServerList.getServer(serverURL);
 		if (gServer == null) {
 			System.out.println("Server " + serverName +" does not exist");
@@ -168,14 +163,14 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover all of the servers and genomes and versions.
 	 */
-	synchronized void discoverServersAndSpeciesAndVersions() {
+	synchronized static void discoverServersAndSpeciesAndVersions() {
 		for (GenericServer gServer : ServerList.getEnabledServers()) {
 			discoverServer(gServer);
 		}
 	}
 
 
-	private boolean discoverServer(GenericServer gServer) {
+	private static boolean discoverServer(GenericServer gServer) {
 		try {
 			if (gServer.serverType == ServerType.Unknown) {
 				// should never happen
@@ -211,7 +206,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private synchronized boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
+	private synchronized static boolean getDAS1SpeciesAndVersions(GenericServer gServer) {
 		DasServerInfo server = (DasServerInfo) gServer.serverObj;
 		if (server.getDataSources() == null || server.getDataSources().values() == null || server.getDataSources().values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
@@ -243,7 +238,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious problem
 	 */
-	private synchronized boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
+	private synchronized static boolean getDAS2SpeciesAndVersions(GenericServer gServer) {
 		Das2ServerInfo server = (Das2ServerInfo) gServer.serverObj;
 		if (server.getSources() == null || server.getSources().values() == null || server.getSources().values().isEmpty()) {
 			System.out.println("WARNING: Couldn't find species for server: " + gServer.serverName);
@@ -251,7 +246,7 @@ public final class GeneralLoadUtils {
 		}
 		for (Das2Source source : server.getSources().values()) {
 			String speciesName = SPECIES_LOOKUP.getSpeciesName(source.getName());
-			List<GenericVersion> gVersionList = this.getSpeciesVersionList(speciesName);
+			List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 			
 			// Das/2 has versioned sources.  Get each version.
 			for (Das2VersionedSource versionSource : source.getVersions().values()) {
@@ -269,7 +264,7 @@ public final class GeneralLoadUtils {
 	 * @param gServer
 	 * @return false if there's an obvious failure.
 	 */
-	private synchronized boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
+	private synchronized static boolean getQuickLoadSpeciesAndVersions(GenericServer gServer) {
 		URL quickloadURL = null;
 		try {
 			quickloadURL = new URL((String) gServer.serverObj);
@@ -310,7 +305,7 @@ public final class GeneralLoadUtils {
 				System.out.println("Unknown quickload genome:" + genomeName);
 			}
 
-			List<GenericVersion> gVersionList = this.getSpeciesVersionList(species);
+			List<GenericVersion> gVersionList = getSpeciesVersionList(species);
 
 			GenericVersion gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
 			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
@@ -328,7 +323,7 @@ public final class GeneralLoadUtils {
 		String versionName = aseq.getID();
 		String speciesName = "-- Unknown -- " + versionName;	// make it distinct, but also make it appear at the top of the species list.
 
-		List<GenericVersion> gVersionList = this.getSpeciesVersionList(speciesName);
+		List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
 
 		GenericServer gServer = new  GenericServer(null, null, ServerType.Unknown, null);
 		GenericVersion gVersion = new GenericVersion(versionName, versionName, gServer, null);
@@ -346,7 +341,7 @@ public final class GeneralLoadUtils {
 	 * @param gVersionList not null.
 	 * @param speciesName not null or empty.
 	 */
-	private void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String speciesName) {
+	private static void discoverVersion(String versionName, GenericServer gServer, GenericVersion gVersion, List<GenericVersion> gVersionList, String speciesName) {
 		if (!gVersionList.contains(gVersion)) {
 			gVersionList.add(gVersion);
 		}
@@ -372,7 +367,7 @@ public final class GeneralLoadUtils {
 	 * @param speciesName
 	 * @return list of versions for the given species.
 	 */
-	private List<GenericVersion> getSpeciesVersionList(String speciesName) {
+	private static List<GenericVersion> getSpeciesVersionList(String speciesName) {
 		List<GenericVersion> gVersionList;
 		if (!species2genericVersionList.containsKey(speciesName)) {
 			gVersionList = new ArrayList<GenericVersion>();
@@ -388,7 +383,7 @@ public final class GeneralLoadUtils {
 	 *  Returns the list of features for the genome with the given version name.
 	 *  The list may (rarely) be empty, but never null.
 	 */
-	List<GenericFeature> getFeatures(final String versionName) {
+	static List<GenericFeature> getFeatures(final String versionName) {
 		// There may be more than one server with the same versionName.  Merge all the version names.
 		List<GenericFeature> featureList = new ArrayList<GenericFeature>();
 		for (GenericVersion gVersion : versionName2versionSet.get(versionName)) {
@@ -631,7 +626,7 @@ public final class GeneralLoadUtils {
 	 * @param gFeature
 	 * @return true or false
 	 */
-	boolean loadAndDisplayAnnotations(GenericFeature gFeature, BioSeq cur_seq, FeaturesTableModel model) {
+	static boolean loadAndDisplayAnnotations(GenericFeature gFeature, BioSeq cur_seq, FeaturesTableModel model) {
 
 		// We don't validate previous load status.  It's assumed that we want to reload the feature.
 
@@ -724,7 +719,7 @@ public final class GeneralLoadUtils {
 	 * @param overlap
 	 * @return true or false
 	 */
-	private boolean loadDAS2Annotations(
+	private static boolean loadDAS2Annotations(
 					BioSeq selected_seq, final String feature_name, Das2VersionedSource version, SeqMapView gviewer, BioSeq visible_seq, SeqSpan overlap) {
 		if (selected_seq == null) {
 			ErrorHandler.errorPanel("ERROR", "selected seq is not appropriate for loading DAS2 data");
@@ -766,7 +761,7 @@ public final class GeneralLoadUtils {
 	 * @param span	-- may be null, if the entire sequence is requested.
 	 * @return true if succeeded.
 	 */
-	boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
+	static boolean loadResidues(String genomeVersionName, BioSeq aseq, int min, int max, SeqSpan span) {
 		String seq_name = aseq.getID();
 		if (DEBUG) {
 			System.out.println("processing request to load residues for sequence: " + seq_name);
@@ -786,7 +781,7 @@ public final class GeneralLoadUtils {
 		// We'll need to know what the appropriate synonym is, for the given server.
 
 		// Determine list of servers that might have this chromosome sequence.
-		List<GenericFeature> features = this.getFeatures(genomeVersionName);
+		List<GenericFeature> features = getFeatures(genomeVersionName);
 		Set<GenericServer> serversWithChrom = new HashSet<GenericServer>();
 		for (GenericFeature feature : features) {
 			serversWithChrom.add(feature.gVersion.gServer);

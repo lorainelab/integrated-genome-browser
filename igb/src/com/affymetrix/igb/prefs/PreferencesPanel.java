@@ -48,9 +48,6 @@ public final class PreferencesPanel extends JPanel {
   }
 
   public static int TAB_NUM_TIERS = -1;
-  /*private static int TAB_NUM_KEY_STROKES = -1;
-  private static int TAB_NUM_MISC_OPTIONS = -1;
-  private static int TAB_NUM_GRAPHS_VIEW = -1;*/
 	
   public final static String IMPORT_ACTION_COMMAND = WINDOW_NAME + " / Import";
   public final static String EXPORT_ACTION_COMMAND = WINDOW_NAME + " / Export";

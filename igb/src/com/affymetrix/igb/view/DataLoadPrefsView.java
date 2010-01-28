@@ -27,6 +27,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -292,10 +293,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 			public void actionPerformed(ActionEvent e) {
 				Object url = table.getModel().getValueAt(table.getSelectedRow(), SourceColumn.URL.ordinal());
-				Object serverType = table.getModel().getValueAt(table.getSelectedRow(), SourceColumn.Type.ordinal());
 				Object serverName = table.getModel().getValueAt(table.getSelectedRow(), SourceColumn.Name.ordinal());
 
-				removePreference(url.toString(), serverType.toString(), serverName.toString());
+				removePreference(url.toString(), serverName.toString());
 			}
 		};
 
@@ -551,9 +551,13 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		serverDialog(serverName, serverType);
 	}
 
-	private void removePreference(String DirectoryOrURL, String serverType, String serverName) {
+	private void removePreference(String DirectoryOrURL, String serverName) {
 		ServerList.removeServerFromPrefs(DirectoryOrURL);
-		GeneralLoadView.removeServer(serverName, DirectoryOrURL, ServerType.valueOf(serverType));
+		if (ServerList.getServer(DirectoryOrURL) == null) {
+			System.out.println("Server " + serverName +" does not exist");
+		} else {
+			ServerList.removeServer(DirectoryOrURL);
+		}
 		sourceTableModel.init();
 	}
 

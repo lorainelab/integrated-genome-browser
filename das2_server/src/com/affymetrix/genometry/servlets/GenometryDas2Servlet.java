@@ -37,12 +37,6 @@ import com.affymetrix.genometryImpl.util.HiddenFileFilter;
 import com.affymetrix.genometryImpl.util.Optimize;
 import com.affymetrix.genometryImpl.util.ServerUtils;
 
-import org.w3c.dom.*;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.affymetrix.genometry.genopub.*;
@@ -296,7 +290,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 			ServerUtils.loadSynonyms(synonym_file);
 
-			if (this.is_genometry_genopub_mode) {
+			if (is_genometry_genopub_mode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
 				loadGenomesFromDB();				  
 			} else {
@@ -333,16 +327,16 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		// Indicates if the annotation info comes from the genopub or the file system
 		if (context.getInitParameter(Constants.GENOMETRY_MODE) != null && 
 				context.getInitParameter(Constants.GENOMETRY_MODE).equalsIgnoreCase(Constants.GENOMETRY_MODE_GENOPUB)) {
-			this.is_genometry_genopub_mode = true;
+			is_genometry_genopub_mode = true;
 			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_GENOPUB);
 		} else {
-			this.is_genometry_genopub_mode = false;
+			is_genometry_genopub_mode = false;
 			genometry_server_dir = context.getInitParameter(Constants.GENOMETRY_SERVER_DIR_CLASSIC);
 		}
 
 		if (genometry_server_dir != null  && !genometry_server_dir.endsWith("/")) {
 			genometry_server_dir += "/";      
-		};
+		}
 
 
 		maintainer_email = context.getInitParameter("maintainer_email");
@@ -517,9 +511,9 @@ public final class GenometryDas2Servlet extends HttpServlet {
 					// Load annotations for the genome version
 					for (QualifiedAnnotation qa : qualifiedAnnotations) {
 
-						String fileName = qa.getAnnotation().getQualifiedFileName(this.genometry_server_dir);    
+						String fileName = qa.getAnnotation().getQualifiedFileName(genometry_server_dir);    
 						String typePrefix = qa.getTypePrefix();     
-						File file = new File(fileName);;
+						File file = new File(fileName);
 						if (file.exists()) {
 							Logger.getLogger(GenometryDas2Servlet.class.getName()).fine("Annotation type = " + (typePrefix != null  ? typePrefix : "") + "\t" + (fileName != null ? fileName : ""));
 
@@ -1131,6 +1125,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 				if (annotList != null) {
 					AnnotMapElt ame = AnnotMapElt.findTitleElt(title, annotList);
 					if (ame != null && ame.props != null) {
+						props = new HashMap<String, Object>();
 						for (Map.Entry<String,String> propEntry : ame.props.entrySet()) {
 							if (propEntry.getValue().length() > 0) {
 								props.put(propEntry.getKey(), propEntry.getValue());
@@ -1193,7 +1188,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			gmodel = GenometryModel.refreshGenometryModel();
 
 			// Reload the annotation files
-			if (this.is_genometry_genopub_mode) {
+			if (is_genometry_genopub_mode) {
 				Logger.getLogger(GenometryDas2Servlet.class.getName()).info("Loading genomes from relational database....");
 				this.loadGenomesFromDB();
 
@@ -1214,7 +1209,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			Logger.getLogger(GenometryDas2Servlet.class.getName()).severe("ERROR - problems refreshing annotations " + e.toString());
 			e.printStackTrace();
 		} finally {
-			if (this.is_genometry_genopub_mode) {
+			if (is_genometry_genopub_mode) {
 				HibernateUtil.getSessionFactory().close();
 			}
 		}
@@ -1573,11 +1568,6 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		OutputStream outstream = null;
 		try {
 			AnnotationWriter writer = (AnnotationWriter) writerclass.newInstance();
-			if (writerclass == null) {
-				System.out.println("no AnnotationWriter found for format: " + output_format);
-				response.setStatus(response.SC_BAD_REQUEST);
-				return;
-			}
 			String mime_type = writer.getMimeType();
 			if (writer instanceof Das2FeatureSaxParser) {
 				((Das2FeatureSaxParser) writer).setBaseURI(new URI(xbase));

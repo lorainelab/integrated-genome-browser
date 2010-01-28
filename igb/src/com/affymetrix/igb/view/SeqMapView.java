@@ -2181,8 +2181,6 @@ public class SeqMapView extends JPanel
 			int min = viewseq.getMin();
 			int max = viewseq.getMax();
 			seqmap.setMapRange(min, max);
-		} else {
-			seqmap.setMapRange(0, viewseq.getLength());
 		}
 		seqmap.stretchToFit(false, false);
 		seqmap.updateWidget();

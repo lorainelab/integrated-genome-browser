@@ -462,9 +462,6 @@ public class AnnotatedSeqGroup {
 	public static AnnotatedSeqGroup tempGenome(AnnotatedSeqGroup oldGenome) {
 		AnnotatedSeqGroup tempGenome = new AnnotatedSeqGroup(oldGenome.getID());
 		tempGenome.setOrganism(oldGenome.getOrganism());
-		if (oldGenome == null) {
-			return tempGenome;
-		}
 		for (BioSeq seq : oldGenome.getSeqList()) {
 			tempGenome.addSeq(seq.getID(), seq.getLength());
 		}

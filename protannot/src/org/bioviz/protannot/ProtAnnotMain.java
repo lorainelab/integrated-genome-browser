@@ -86,7 +86,7 @@ final class ProtAnnotMain implements WindowListener {
     private Dimension screen;
     private int frm_width;// = (int) (screen.width * .8f);
     private int frm_height;// = (int) (screen.height * .8f);
-    private boolean testmode = false;
+    private final boolean testmode = false;
     private enum Arguments {
         SERVER,
         FILENAME;

@@ -21,7 +21,7 @@ import java.util.List;
 
 public class GlyphSearchNode implements Cloneable {
 
-	private Hashtable<GlyphI,Object> glyphsInSearchTree = new Hashtable<GlyphI,Object>();
+	private final Hashtable<GlyphI,Object> glyphsInSearchTree = new Hashtable<GlyphI,Object>();
 
 	private GlyphSearchNode l;
 	private GlyphSearchNode r;

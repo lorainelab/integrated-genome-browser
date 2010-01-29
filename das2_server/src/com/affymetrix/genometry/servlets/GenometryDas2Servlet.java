@@ -1,7 +1,7 @@
 package com.affymetrix.genometry.servlets;
 
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.parsers.useq.*;
+
 
 import java.io.*;
 import java.net.*;
@@ -9,8 +9,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+
 
 import java.text.SimpleDateFormat;
 
@@ -40,6 +39,14 @@ import com.affymetrix.genometryImpl.util.ServerUtils;
 import org.hibernate.Session;
 
 import com.affymetrix.genometry.genopub.*;
+import com.affymetrix.genometryImpl.parsers.useq.USeqArchive;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**

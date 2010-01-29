@@ -31,17 +31,17 @@ import java.util.*;
  */
 public class ZoomLine implements NeoWidgetListener {
 
-	private VisibleRange zoomPoint = new VisibleRange();
-	private Hashtable<NeoMap,Shadow> maps = new Hashtable<NeoMap,Shadow>();
+	private final VisibleRange zoomPoint = new VisibleRange();
+	private final Hashtable<NeoMap,Shadow> maps = new Hashtable<NeoMap,Shadow>();
 
-	private MouseListener zoomPointAdjuster = new MouseAdapter() {
+	private final MouseListener zoomPointAdjuster = new MouseAdapter() {
 		public void mouseReleased( MouseEvent e ) {
 			double focus = ((NeoMouseEvent)e).getCoordX();
 			ZoomLine.this.zoomPoint.setSpot(focus);
 		}
 	};
 
-	private KeyListener zoomPointNudger = new KeyAdapter() {
+	private final KeyListener zoomPointNudger = new KeyAdapter() {
 		public void keyPressed( KeyEvent ke ) {
 			double at = ZoomLine.this.zoomPoint.getBeginning();
 			int c = ke.getKeyCode();

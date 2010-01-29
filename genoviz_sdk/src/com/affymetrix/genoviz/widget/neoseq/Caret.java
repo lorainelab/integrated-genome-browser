@@ -35,17 +35,17 @@ public class Caret extends WrapGlyph {
 	 * x = offset of start position of annot into row of bases
 	 * y = first base of row that start of annot is in
 	 */
-	private Point2D.Double colorCoordPoint1 = new Point2D.Double(0,0);
+	private final Point2D.Double colorCoordPoint1 = new Point2D.Double(0,0);
 
 	/**
 	 * x = offset of end position of annot into row of bases
 	 * y = last base of row that start of annot is in
 	 */
-	private Point2D.Double colorCoordPoint2 = new Point2D.Double(0,0);
+	private final Point2D.Double colorCoordPoint2 = new Point2D.Double(0,0);
 
 	private Rectangle2D.Double visible_box;
 
-	private int y_offset_fudge = 3;
+	private final int y_offset_fudge = 3;
 
 	/** Caret is drawn outlining the current character. */
 	public static final int OUTLINE = 0;

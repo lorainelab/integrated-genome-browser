@@ -28,6 +28,7 @@ import com.affymetrix.genoviz.swing.DisplayUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import javax.swing.table.TableRowSorter;
 
+
 public class DataLoadView extends JComponent  { 
 	static GenometryModel gmodel = GenometryModel.getGenometryModel();
 

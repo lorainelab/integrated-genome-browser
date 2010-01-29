@@ -10,8 +10,9 @@ package com.affymetrix.genometry.servlets;
 
 import java.io.*;
 import java.util.zip.GZIPOutputStream;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 
 public final class GZIPResponseStream extends ServletOutputStream {
 	protected ByteArrayOutputStream baos = null;

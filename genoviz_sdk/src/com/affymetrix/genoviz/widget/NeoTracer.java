@@ -182,7 +182,7 @@ public class NeoTracer extends NeoContainerWidget
 	// optional - for aligned bases
 	private BaseCalls consensus; // reference string
 
-	private Set<NeoBaseSelectListener> base_listeners = new CopyOnWriteArraySet<NeoBaseSelectListener>();
+	private final Set<NeoBaseSelectListener> base_listeners = new CopyOnWriteArraySet<NeoBaseSelectListener>();
 
 	protected Glyph line_glyph;
 	protected FillRectGlyph left_trim_glyph, right_trim_glyph;

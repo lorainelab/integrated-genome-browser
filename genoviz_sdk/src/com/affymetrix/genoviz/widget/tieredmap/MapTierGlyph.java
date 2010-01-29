@@ -48,7 +48,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class MapTierGlyph extends com.affymetrix.genoviz.bioviews.Glyph {
 
-	private Set<TierStateChangeListener> tierStateChangeListeners = new CopyOnWriteArraySet<TierStateChangeListener>();
+	private final Set<TierStateChangeListener> tierStateChangeListeners = new CopyOnWriteArraySet<TierStateChangeListener>();
 
 	/**
 	 *  If hidden, the MapTierGlyph height is 0 coords

@@ -94,7 +94,7 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 	protected List<AlignedResiduesGlyph> unaligned_spans = new ArrayList<AlignedResiduesGlyph>();
 	protected List<AlignedResiduesGlyph> aligned_spans = new ArrayList<AlignedResiduesGlyph>();
 
-	private ArrowGlyph arrow = new ArrowGlyph();
+	private final ArrowGlyph arrow = new ArrowGlyph();
 
 	/** should the arrow ever be drawn? */
 	protected boolean drawArrow = true;

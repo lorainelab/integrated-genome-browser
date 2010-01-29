@@ -25,7 +25,7 @@ import java.util.List;
 public class ReadConfidence
 {
 
-	private List<BaseConfidence> qualityList;
+	private final List<BaseConfidence> qualityList;
 	private int maxConfidence = 0;
 
 	/**

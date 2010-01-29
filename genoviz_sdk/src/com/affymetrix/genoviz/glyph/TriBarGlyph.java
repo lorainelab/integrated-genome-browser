@@ -28,7 +28,7 @@ public class TriBarGlyph extends DirectedGlyph {
 	private int x[];
 	private int y[];
 	private Color fillColor = Color.gray;
-	private Rectangle bar = new Rectangle();
+	private final Rectangle bar = new Rectangle();
 
 
 	/**

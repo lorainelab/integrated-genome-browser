@@ -27,10 +27,10 @@ public class ArrowGlyph extends DirectedGlyph  {
 
 	private int x[];
 	private int y[];
-	private Rectangle stem = new Rectangle();
+	private final Rectangle stem = new Rectangle();
 	private static final int MAX_STEM_WIDTH = 25;
 	private int stemWidth, headX, headY;
-	private Polygon poly;
+	private final Polygon poly;
 
 	protected boolean fillArrowHead = true;
 	protected boolean fillStem = true;

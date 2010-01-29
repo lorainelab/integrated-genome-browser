@@ -23,9 +23,9 @@ import java.util.EventObject;
  */
 public class SequenceEvent extends EventObject {
 
-	private EditType type;
-	private int offset;
-	private int length;
+	private final EditType type;
+	private final int offset;
+	private final int length;
 
 	public SequenceEvent( SequenceI theSource,
 			EditType theType,
@@ -85,7 +85,7 @@ public class SequenceEvent extends EventObject {
 	 */
 	public static final class EditType {
 
-		private String typeString;
+		private final String typeString;
 
 		private EditType(String s) {
 			typeString = s;

@@ -43,7 +43,7 @@ public class SequencePosition implements Position {
 		notifyListeners();
 	}
 
-	private CopyOnWriteArraySet<PositionListener> listeners = new CopyOnWriteArraySet<PositionListener>();
+	private final CopyOnWriteArraySet<PositionListener> listeners = new CopyOnWriteArraySet<PositionListener>();
 	public void addListener( PositionListener l ) {
 		this.listeners.add( l );
 	}

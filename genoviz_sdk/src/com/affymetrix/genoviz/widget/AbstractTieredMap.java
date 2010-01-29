@@ -45,7 +45,7 @@ public abstract class AbstractTieredMap
 	public String name; // for debugging only
 
 	protected List<MapTierGlyph> tiers = new ArrayList<MapTierGlyph>();
-	private Set<TierEventListener> tierEventListeners = new CopyOnWriteArraySet<TierEventListener>();
+	private final Set<TierEventListener> tierEventListeners = new CopyOnWriteArraySet<TierEventListener>();
 	private boolean notifyingListeners = false;
 
 	/**

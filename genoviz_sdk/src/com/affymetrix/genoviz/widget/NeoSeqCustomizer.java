@@ -39,7 +39,7 @@ public class NeoSeqCustomizer
 	Color[] stripesColor;
 	Choice scrollingIncrBehavior = new Choice();
 	Choice spacingChoice = new Choice();
-	private Checkbox editable = new Checkbox();
+	private final Checkbox editable = new Checkbox();
 
 	public NeoSeqCustomizer() {
 

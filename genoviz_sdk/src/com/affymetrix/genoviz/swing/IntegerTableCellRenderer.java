@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public final class IntegerTableCellRenderer extends DefaultTableCellRenderer {
   
-  private NumberFormat nf;
+  private final NumberFormat nf;
   
   public IntegerTableCellRenderer() {
     super();

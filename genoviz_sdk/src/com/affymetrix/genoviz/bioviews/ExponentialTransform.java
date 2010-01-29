@@ -25,7 +25,7 @@ package com.affymetrix.genoviz.bioviews;
  *    the "gradual deceleration" of the zoom scrollbar
  */
 public final class ExponentialTransform {
-	private double lxmin, ratio;
+	private final double lxmin, ratio;
 
 	// for zoomer transform, x is transformed to y
 	public ExponentialTransform(double xmin, double xmax, double ymin, double ymax) {

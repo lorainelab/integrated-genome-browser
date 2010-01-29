@@ -236,7 +236,7 @@ public class NeoSeq extends NeoContainerWidget
 	protected WrapNumbers num_glyph;
 
 	protected int scroll_increment;
-	private ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
+	private final ConstrainLinearTrnsfm sclt = new ConstrainLinearTrnsfm();
 
 	protected Set<NeoRangeListener> range_listeners = new CopyOnWriteArraySet<NeoRangeListener>();
 

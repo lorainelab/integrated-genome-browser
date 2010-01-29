@@ -31,7 +31,7 @@ import java.awt.*;
 public class GlyphStyle {
 
 	private Color background_color = null;
-	private Color foreground_color = null;
+	private  Color foreground_color = null;
 	private Font fnt = null;
 
 	public GlyphStyle( Color fg, Color gb, Font fnt ) {

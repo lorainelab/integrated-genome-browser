@@ -238,7 +238,7 @@ public class MapGlyphFactory implements NeoConstants  {
 		}
 		Object tempobj;
 		String tempstr;
-		int tempint;
+		
 
 		// checking for new background_color and setting if present
 		tempobj = options.get("-color");

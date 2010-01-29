@@ -62,7 +62,7 @@ public class AxisGlyph extends Glyph {
 
 	protected double label_scale = 1;
 
-	protected List selected_regions;
+	private List<int[]> selected_regions;
 
 	// default to true for backward compatability
 	protected boolean hitable = true;
@@ -78,6 +78,21 @@ public class AxisGlyph extends Glyph {
 	}
 
 	protected Font label_font;
+
+
+	// This DecimalFormat is used with the COMMA format.
+	// It simply instructs java to insert commas between every three characters.
+	DecimalFormat comma_format = new DecimalFormat("#,###.###");
+
+
+	// A couple constants used only in the draw method.
+	protected int subtick_size = 1;
+	protected static final Rectangle2D.Double unitrect = new Rectangle2D.Double(0,0,1,1);
+	// A couple of temporary rectangles used in the draw method
+	private final Rectangle2D.Double select_coord = new Rectangle2D.Double();
+	private final Rectangle select_pix = new Rectangle();
+	private final Rectangle2D.Double scratchcoords = new Rectangle2D.Double();
+	private final Rectangle scratchpixels = new Rectangle();
 
 	/**
 	 * Sets the font in which labels will be rendered.
@@ -102,12 +117,14 @@ public class AxisGlyph extends Glyph {
 	 * @param fnt a new matching font will be created
 	 * and used internally.
 	 */
+	@Override
 	public void setFont(Font fnt) {
 		if (!fnt.equals(this.label_font)) {
 			internalSetFont(new Font(fnt.getName(), fnt.getStyle(), fnt.getSize()));
 		}
 	}
 
+	@Override
 	public Font getFont() {
 		return new Font
 			(this.label_font.getName(),
@@ -165,13 +182,12 @@ public class AxisGlyph extends Glyph {
 	}
 
 	//TODO: use a Range object for the range
-  @SuppressWarnings("unchecked")
 	public void selectRange ( int[] range ) {
 		if ( range.length != 2 ) {
 			System.err.println ( "AxisGlyph.selectRange got a int[] that was not of length 2.  Not selecting range." );
 			return;
 		}
-		if ( selected_regions == null ) selected_regions = new ArrayList();
+		if ( selected_regions == null ) selected_regions = new ArrayList<int[]>();
 		selected_regions.add( range );
 	}
 
@@ -182,9 +198,6 @@ public class AxisGlyph extends Glyph {
 	public int getLabelFormat() {
 		return this.labelFormat;
 	}
-
-	private double tickOffset = .5f;
-
 
 	protected int tickPlacement = ABOVE;
 
@@ -322,11 +335,13 @@ public class AxisGlyph extends Glyph {
 		this(HORIZONTAL);
 	}
 
+	@Override
 	public void setCoords(double x, double y, double width, double height) {
 		super.setCoords(x, y, width, height);
 		setCenter();
 	}
 
+	@Override
 	public void setCoordBox(Rectangle2D.Double coordbox) {
 		super.setCoordBox(coordbox);
 		setCenter();
@@ -464,17 +479,9 @@ public class AxisGlyph extends Glyph {
 		}
 	}
 
-	// A couple constants used only in the draw method.
-	protected int subtick_size = 1;
-	protected static final Rectangle2D.Double unitrect = new Rectangle2D.Double(0,0,1,1);
-	// A couple of temporary rectangles used in the draw method
-	private final Rectangle2D.Double select_coord = new Rectangle2D.Double();
-	private final Rectangle select_pix = new Rectangle();
-	private final Rectangle2D.Double scratchcoords = new Rectangle2D.Double();
-	private final Rectangle scratchpixels = new Rectangle();
 
+	@Override
 	public void draw(ViewI view) {
-		String label = null;
 		int axis_loc;
 		LinearTransform cumulative;
 		int axis_length;
@@ -562,13 +569,8 @@ public class AxisGlyph extends Glyph {
 			clip_end = clipbox.x + clipbox.width;
 		}
 
-		if (axis_start > clip_start)  {
-			axis_start = clip_start;
-		}
-
-		if (axis_end < clip_end) {
-			axis_end = clip_end;
-		}
+		axis_start = Math.min(axis_start, clip_start);
+		axis_end = Math.max(axis_end, clip_end);
 
 		axis_length = axis_end - axis_start + 1;
 
@@ -577,25 +579,13 @@ public class AxisGlyph extends Glyph {
 		// Draw the base line.
 
 		int center_line_start = axis_loc - centerLineThickness/2;
-		int center_line_end = center_line_start + centerLineThickness;
 
 		if (orient == VERTICAL)  {
 			g.fillRect(center_line_start, axis_start, centerLineThickness,axis_length);
 		}
 		else {
 			g.fillRect(axis_start, center_line_start, axis_length, centerLineThickness);
-			// Drawing selected major axis ticks and labels in red if selected
-			if ( selected_regions != null ) {
-				g.setColor ( getBackgroundColor() );
-				for ( int i = 0; i < selected_regions.size(); i++ ) {
-					int[] select_range = (int[])selected_regions.get(i);
-					select_coord.x = select_range[0];
-					select_coord.width = select_range[1] - select_range[0];
-					view.transformToPixels ( select_coord, select_pix );
-					g.fillRect ( select_pix.x, center_line_start, select_pix.width, centerLineThickness);
-				}
-				g.setColor ( getForegroundColor() );
-			}
+			setColorForSelections2(g, view, center_line_start);
 		}
 
 		if (DEBUG_DRAW) {
@@ -622,12 +612,11 @@ public class AxisGlyph extends Glyph {
 			}
 			if (pixelbox.y+pixelbox.height > clipbox.y+clipbox.height)  {
 				view.transformToCoords(clipbox, scratchcoords);
-				max_map = scratchcoords.y + scratchcoords.height;
 			}
 			else  {
-				view.transformToCoords(pixelbox, scratchcoords);
-				max_map = scratchcoords.y + scratchcoords.height;
+				view.transformToCoords(pixelbox, scratchcoords);		
 			}
+			max_map = scratchcoords.y + scratchcoords.height;
 		}
 		else {
 			if (pixelbox.x < clipbox.x)  {
@@ -640,17 +629,15 @@ public class AxisGlyph extends Glyph {
 
 			if (pixelbox.x+pixelbox.width > clipbox.x+clipbox.width)  {
 				view.transformToCoords(clipbox, scratchcoords);
-				max_map = scratchcoords.x + scratchcoords.width;
 			}
 			else  {
-				view.transformToCoords(pixelbox, scratchcoords);
-				max_map = scratchcoords.x + scratchcoords.width;
+				view.transformToCoords(pixelbox, scratchcoords);	
 			}
+			max_map = scratchcoords.x + scratchcoords.width;
 		}
 
 		if (DEBUG_DRAW) System.err.println("map_loc " + map_loc + ", max " + max_map);
 
-		int i = 0;
 		double subtick_increment = tick_increment/10;
 		double subtick_loc, rev_subtick_loc;
 		// need to do tick_loc for those maps that don't start
@@ -695,227 +682,9 @@ public class AxisGlyph extends Glyph {
 			tick_scaled_increment = scratchcoords.width;
 			rev_tick_scaled_loc = scratchcoords.x;
 		}
-
-		// Draw the major tick marks including labels.
-
-		int canvas_loc;   // location in canvas coordinates
-		int less_count = 0;
-		int greater_count = 0;
-		int string_draw_count = 0;
-		int init_tick_loc = (int)tick_loc;
-
-		if ( !reversed ) {
-			for( ; tick_loc <= max_map ; tick_loc += tick_increment, tick_scaled_loc += tick_scaled_increment)  {
-				canvas_loc = (int)tick_scaled_loc;
-
-				// Don't draw things which are off the screen
-				//        if (canvas_loc < clipbox.x || canvas_loc > clipbox.x+clipbox.width) continue;
-				/*
-				   if (canvas_loc < clipbox.x || canvas_loc > clipbox.x+clipbox.width) {
-				   if (canvas_loc < clipbox.x) { less_count++; }
-				   else { greater_count++; }
-				   continue;
-				   }
-				   */
-
-				if ( selected_regions != null ) {
-					g.setColor ( getForegroundColor() );
-					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.get(j);
-						select_coord.x = select_range[0];
-						select_coord.width = select_range[1] - select_range[0];
-						view.transformToPixels ( select_coord, select_pix );
-						if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-							g.setColor ( getBackgroundColor() );
-					}
-				}
-				if (labelFormat != NO_LABELS)  {
-					label = stringRepresentation(tick_loc, tick_increment);
-				}
-				// putting in check to make sure don't extend past scene bounds when
-				// view is "bigger" than scene
-				if (tick_loc >= scene_start && tick_loc <= scene_end) {
-					if (orient == VERTICAL) {
-						if (labelFormat != NO_LABELS) {
-							if (LEFT == this.labelPlacement) {
-								int x = fm.stringWidth(label);
-								g.drawString(label, center_line_start-labelGap-x, canvas_loc);
-							}
-							else {
-								g.drawString(label, center_line_start+labelShift, canvas_loc);
-							}
-						}
-						g.fillRect(center_line_start-2, canvas_loc,
-								centerLineThickness+4, 2);
-					}
-					else {
-						if (labelFormat != NO_LABELS)  {
-							g.drawString(label, canvas_loc, center_line_start-labelShift);
-							string_draw_count++;
-						}
-						g.fillRect(canvas_loc, center_line_start-2,
-								2, centerLineThickness+4);
-					}
-					i++;
-				}
-			}
-			//      System.out.println("initial loc: " + init_tick_loc + ", less_count: "+ less_count + ", greater_count: " + greater_count +
-			//                         "string_draw_count: " + string_draw_count);
-		}
-		else { //reversed axis, major axis ticks and numbering
-			for( ; rev_tick_loc > 0; rev_tick_loc -= tick_increment, rev_tick_scaled_loc -= tick_scaled_increment)  {
-				canvas_loc = (int)rev_tick_scaled_loc;
-
-				// Don't draw things which are out of the clipbox
-				// This fixes an enormous performance drain.  EEE-Sept 2000
-				if (canvas_loc < clipbox.x) break;
-				if (canvas_loc > clipbox.x+clipbox.width) continue;
-
-				// rev_tick_value = the value which will be drawn above the tick mark.
-				double rev_tick_value = (rev_tick_const - rev_tick_loc);
-
-				if ( selected_regions != null ) { // setting color for selections
-					g.setColor ( getForegroundColor() );
-					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.get(j);
-						select_coord.x = select_range[0];
-						select_coord.width = select_range[1] - select_range[0];
-						view.transformToPixels ( select_coord, select_pix );
-						if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-							g.setColor ( getBackgroundColor() );
-					}
-				}
-				if (labelFormat != NO_LABELS)  {
-					label = stringRepresentation(rev_tick_value, tick_increment);
-				}
-				// putting in check to make sure don't extend past scene bounds when
-				// view is "bigger" than scene
-				if (rev_tick_loc >= scene_start && rev_tick_loc <= scene_end) {
-					if (orient == VERTICAL) {
-						if (labelFormat != NO_LABELS)  {
-							if (LEFT == this.labelPlacement) {
-								int x = fm.stringWidth(label);
-								g.drawString(label, center_line_start-labelGap-x, canvas_loc);
-							}
-							else {
-								g.drawString(label, center_line_start+labelShift, canvas_loc);
-							}
-						}
-						g.fillRect(center_line_start-2, canvas_loc,
-								centerLineThickness+4, 2);
-					}
-					else {
-						if (labelFormat != NO_LABELS)  {
-							g.drawString(label, canvas_loc, center_line_start-labelShift);
-						}
-						g.fillRect(canvas_loc, center_line_start-2,
-								2, centerLineThickness+4);
-					}
-					i++;
-				}
-			}
-		}
-
-		//Draw the minor tick marks.
-
-		double subtick_scaled_loc, subtick_scaled_increment;
-		if (orient == VERTICAL) {
-			scratchcoords.y = subtick_loc;
-			scratchcoords.height = subtick_increment;
-			cumulative.transform(scratchcoords, scratchcoords);
-			subtick_scaled_loc = scratchcoords.y;
-			subtick_scaled_increment = scratchcoords.height;
-		}
-		else {  //horizontal map
-			if (!reversed) {
-				scratchcoords.x = subtick_loc;
-				scratchcoords.width = subtick_increment;
-				// what is this doing??? hopefully just vestigial...
-				// should try getting rid of it soon -- GAH 12-6-97
-				cumulative.transform(scratchcoords, scratchcoords);
-				subtick_scaled_loc = scratchcoords.x;
-				subtick_scaled_increment = scratchcoords.width;
-			}
-			else {  //reversed map
-				scratchcoords.x = rev_subtick_loc;
-				scratchcoords.width = subtick_increment;
-				cumulative.transform(scratchcoords, scratchcoords);
-				subtick_scaled_loc = scratchcoords.x;
-				subtick_scaled_increment = scratchcoords.width;
-			}
-		}
-
-		if (!reversed) {
-			for( ; subtick_loc <= max_map; subtick_loc += subtick_increment) {
-				//  canvas_loc = (int)subtick_scaled_loc;
-				canvas_loc = (int)(subtick_scaled_loc + 0.5f);
-
-				if ( selected_regions != null ) {
-					g.setColor ( getForegroundColor() );
-					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.get(j);
-						select_coord.x = select_range[0];
-						select_coord.width = select_range[1] - select_range[0];
-						view.transformToPixels ( select_coord, select_pix );
-						if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-							g.setColor ( getBackgroundColor() );
-					}
-				}
-				// putting in check to make sure don't extend past scene bounds when
-				//   view is "bigger" than scene
-				if (subtick_loc >= scene_start && subtick_loc <= scene_end) {
-					// this should put a tick subtick_size pixels tall tick above
-					// the line, nothing below it
-					if (orient == VERTICAL) {
-						g.drawLine(center_line_start-subtick_size, canvas_loc,
-								center_line_start, canvas_loc);
-					}
-					else {
-						g.drawLine(canvas_loc, center_line_start-subtick_size,
-								canvas_loc, center_line_start);
-					}
-				}
-				subtick_scaled_loc += subtick_scaled_increment;
-			}
-		}
-
-		else { //reversed map
-			for( ; rev_subtick_loc >= 0; rev_subtick_loc -= subtick_increment, subtick_scaled_loc -= subtick_scaled_increment) {
-				//canvas_loc = (int)subtick_scaled_loc;
-				canvas_loc = (int)(subtick_scaled_loc + 0.5f);
-
-				// Don't draw things which are out of the clipbox
-				// This fixes an enormous performance drain. EEE-Sept 2000
-				if (canvas_loc < clipbox.x)  break;
-				if (canvas_loc > clipbox.x+clipbox.width) continue;
-
-				if ( selected_regions != null ) {
-					g.setColor ( getForegroundColor() );
-					for ( int j = 0; j < selected_regions.size(); j++ ) {
-						int[] select_range = (int[])selected_regions.get(j);
-						select_coord.x = select_range[0];
-						select_coord.width = select_range[1] - select_range[0];
-						view.transformToPixels ( select_coord, select_pix );
-						if ( canvas_loc > select_pix.x && canvas_loc < ( select_pix.x + select_pix.width ) )
-							g.setColor ( getBackgroundColor() );
-					}
-				}
-				// putting in check to make sure don't extend past scene bounds when
-				// view is "bigger" than scene
-				if (rev_subtick_loc >= scene_start && rev_subtick_loc <= scene_end) {
-					// this should put a tick subtick_size pixels tall tick above
-					// the line, nothing below it
-					if (orient == VERTICAL) {
-						g.drawLine(center_line_start-subtick_size, canvas_loc,
-								center_line_start, canvas_loc);
-					}
-					else {
-						g.drawLine(canvas_loc, center_line_start-subtick_size,
-								canvas_loc, center_line_start);
-					}
-				}
-			}
-		}
+		drawTicks(tick_loc, max_map, tick_increment, tick_scaled_loc, tick_scaled_increment, g, view, scene_start, scene_end, fm, center_line_start, rev_tick_loc, rev_tick_scaled_loc, clipbox, rev_tick_const);
+		
+		drawSubTicks(subtick_loc, subtick_increment, cumulative, rev_subtick_loc, max_map, g, view, scene_start, scene_end, center_line_start, clipbox);
 
 		if (savefont != label_font) {
 			g.setFont(savefont);
@@ -925,11 +694,210 @@ public class AxisGlyph extends Glyph {
 		if (DEBUG_DRAW) { System.err.println("leaving draw() for " + this); }
 		DEBUG_DRAW = false;
 
-	} // end of Draw method.
+	}
 
-	// This DecimalFormat is used with the COMMA format.
-	// It simply instructs java to insert commas between every three characters.
-	DecimalFormat comma_format = new DecimalFormat("#,###.###");
+
+	/**
+	 * Draw the major tick marks including labels.
+	 * @param tick_loc
+	 * @param max_map
+	 * @param tick_increment
+	 * @param tick_scaled_loc
+	 * @param tick_scaled_increment
+	 * @param g
+	 * @param view
+	 * @param scene_start
+	 * @param scene_end
+	 * @param fm
+	 * @param center_line_start
+	 * @param rev_tick_loc
+	 * @param rev_tick_scaled_loc
+	 * @param clipbox
+	 * @param rev_tick_const
+	 */
+	private void drawTicks(double tick_loc, double max_map, double tick_increment, double tick_scaled_loc, double tick_scaled_increment, Graphics g, ViewI view, double scene_start, double scene_end, FontMetrics fm, int center_line_start, double rev_tick_loc, double rev_tick_scaled_loc, Rectangle clipbox, double rev_tick_const) {
+		if (!reversed) {
+			drawForwardTick(tick_loc, max_map, tick_increment, tick_scaled_loc, tick_scaled_increment, g, view, scene_start, scene_end, fm, center_line_start);
+		} else {
+			//reversed axis, major axis ticks and numbering
+			drawReverseTick(rev_tick_loc, tick_increment, rev_tick_scaled_loc, tick_scaled_increment, clipbox, rev_tick_const, g, view, scene_start, scene_end, fm, center_line_start);
+		}
+	}
+
+	private void drawForwardTick(double tick_loc, double max_map, double tick_increment, double tick_scaled_loc, double tick_scaled_increment, Graphics g, ViewI view, double scene_start, double scene_end, FontMetrics fm, int center_line_start) {
+		for (; tick_loc <= max_map; tick_loc += tick_increment, tick_scaled_loc += tick_scaled_increment) {
+			int canvas_loc = (int) tick_scaled_loc;
+			setColorForSelections(g, view, canvas_loc);
+			String label = "";
+			if (labelFormat != NO_LABELS) {
+				label = stringRepresentation(tick_loc, tick_increment);
+			}
+			drawTickLoc(tick_loc, scene_start, scene_end, fm, label, g, center_line_start, canvas_loc);
+		}
+	}
+
+	private void drawReverseTick(double rev_tick_loc, double tick_increment, double rev_tick_scaled_loc, double tick_scaled_increment, Rectangle clipbox, double rev_tick_const, Graphics g, ViewI view, double scene_start, double scene_end, FontMetrics fm, int center_line_start) {
+		//reversed axis, major axis ticks and numbering
+		for (; rev_tick_loc > 0; rev_tick_loc -= tick_increment, rev_tick_scaled_loc -= tick_scaled_increment) {
+			int canvas_loc = (int) rev_tick_scaled_loc;
+			// Don't draw things which are out of the clipbox
+			// This fixes an enormous performance drain.  EEE-Sept 2000
+			if (canvas_loc < clipbox.x) {
+				break;
+			}
+			if (canvas_loc > clipbox.x + clipbox.width) {
+				continue;
+			}
+			setColorForSelections(g, view, canvas_loc);
+			String label = "";
+			if (labelFormat != NO_LABELS) {
+				double rev_tick_value = rev_tick_const - rev_tick_loc;
+				label = stringRepresentation(rev_tick_value, tick_increment);
+			}
+			drawTickLoc(rev_tick_loc, scene_start, scene_end, fm, label, g, center_line_start, canvas_loc);
+		}
+	}
+
+	
+	/**
+	 * Draw the minor tick marks.
+	 * @param subtick_loc
+	 * @param subtick_increment
+	 * @param cumulative
+	 * @param rev_subtick_loc
+	 * @param max_map
+	 * @param g
+	 * @param view
+	 * @param scene_start
+	 * @param scene_end
+	 * @param center_line_start
+	 * @param clipbox
+	 */
+	private void drawSubTicks(double subtick_loc, double subtick_increment, LinearTransform cumulative, double rev_subtick_loc, double max_map, Graphics g, ViewI view, double scene_start, double scene_end, int center_line_start, Rectangle clipbox) {
+		double subtick_scaled_increment;
+		double subtick_scaled_loc;
+		if (orient == VERTICAL) {
+			scratchcoords.y = subtick_loc;
+			scratchcoords.height = subtick_increment;
+			cumulative.transform(scratchcoords, scratchcoords);
+			subtick_scaled_loc = scratchcoords.y;
+			subtick_scaled_increment = scratchcoords.height;
+		} else {
+			//horizontal map
+			if (!reversed) {
+				scratchcoords.x = subtick_loc;
+			} else {
+				//reversed map
+				scratchcoords.x = rev_subtick_loc;
+			}
+			scratchcoords.width = subtick_increment;
+			cumulative.transform(scratchcoords, scratchcoords);
+			subtick_scaled_loc = scratchcoords.x;
+			subtick_scaled_increment = scratchcoords.width;
+		}
+		if (!reversed) {
+			drawForwardSubTick(subtick_loc, max_map, subtick_increment, subtick_scaled_loc, g, view, scene_start, scene_end, center_line_start, subtick_scaled_increment);
+		} else {
+			//reversed map
+			drawReverseSubTick(rev_subtick_loc, subtick_increment, subtick_scaled_loc, subtick_scaled_increment, clipbox, g, view, scene_start, scene_end, center_line_start);
+		}
+	}
+
+
+
+	private void drawForwardSubTick(double subtick_loc, double max_map, double subtick_increment, double subtick_scaled_loc, Graphics g, ViewI view, double scene_start, double scene_end, int center_line_start, double subtick_scaled_increment) {
+		for (; subtick_loc <= max_map; subtick_loc += subtick_increment) {
+			int canvas_loc = (int) (subtick_scaled_loc + 0.5f);
+			setColorForSelections(g, view, canvas_loc);
+			drawSubTickLoc(subtick_loc, scene_start, scene_end, g, center_line_start, canvas_loc);
+			subtick_scaled_loc += subtick_scaled_increment;
+		}
+	}
+
+
+	private void drawReverseSubTick(double rev_subtick_loc, double subtick_increment, double subtick_scaled_loc, double subtick_scaled_increment, Rectangle clipbox, Graphics g, ViewI view, double scene_start, double scene_end, int center_line_start) {
+		//reversed map
+		for (; rev_subtick_loc >= 0; rev_subtick_loc -= subtick_increment, subtick_scaled_loc -= subtick_scaled_increment) {
+			int canvas_loc = (int) (subtick_scaled_loc + 0.5f);
+			// Don't draw things which are out of the clipbox
+			// This fixes an enormous performance drain. EEE-Sept 2000
+			if (canvas_loc < clipbox.x) {
+				break;
+			}
+			if (canvas_loc > clipbox.x + clipbox.width) {
+				continue;
+			}
+			setColorForSelections(g, view, canvas_loc);
+			drawSubTickLoc(rev_subtick_loc, scene_start, scene_end, g, center_line_start, canvas_loc);
+		}
+	}
+
+
+	private void setColorForSelections(Graphics g, ViewI view, int canvas_loc) {
+		if (selected_regions != null) {
+			g.setColor(getForegroundColor());
+			for (int[] select_range : selected_regions) {
+				select_coord.x = select_range[0];
+				select_coord.width = select_range[1] - select_range[0];
+				view.transformToPixels(select_coord, select_pix);
+				if (canvas_loc > select_pix.x && canvas_loc < (select_pix.x + select_pix.width)) {
+					g.setColor(getBackgroundColor());
+				}
+			}
+		}
+	}
+
+
+	private void setColorForSelections2(Graphics g, ViewI view, int center_line_start) {
+		// Drawing selected major axis ticks and labels in red if selected
+		if (selected_regions != null) {
+			g.setColor(getBackgroundColor());
+			for (int[] select_range : selected_regions) {
+				select_coord.x = select_range[0];
+				select_coord.width = select_range[1] - select_range[0];
+				view.transformToPixels(select_coord, select_pix);
+				g.fillRect(select_pix.x, center_line_start, select_pix.width, centerLineThickness);
+			}
+			g.setColor(getForegroundColor());
+		}
+	}
+
+
+
+	private void drawTickLoc(double tick_loc, double scene_start, double scene_end, FontMetrics fm, String label, Graphics g, int center_line_start, int canvas_loc) {
+		if (tick_loc >= scene_start && tick_loc <= scene_end) {
+			if (orient == VERTICAL) {
+				if (labelFormat != NO_LABELS) {
+					if (LEFT == this.labelPlacement) {
+						int x = fm.stringWidth(label);
+						g.drawString(label, center_line_start - labelGap - x, canvas_loc);
+					} else {
+						g.drawString(label, center_line_start + labelShift, canvas_loc);
+					}
+				}
+				g.fillRect(center_line_start - 2, canvas_loc, centerLineThickness + 4, 2);
+			} else {
+				if (labelFormat != NO_LABELS) {
+					g.drawString(label, canvas_loc, center_line_start - labelShift);
+				}
+				g.fillRect(canvas_loc, center_line_start - 2, 2, centerLineThickness + 4);
+			}
+		}
+	}
+
+
+	private void drawSubTickLoc(double subtick_loc, double scene_start, double scene_end, Graphics g, int center_line_start, int canvas_loc) {
+		if (subtick_loc >= scene_start && subtick_loc <= scene_end) {
+			// this should put a tick subtick_size pixels tall tick above
+			// the line, nothing below it
+			if (orient == VERTICAL) {
+				g.drawLine(center_line_start - subtick_size, canvas_loc, center_line_start, canvas_loc);
+			} else {
+				g.drawLine(canvas_loc, center_line_start - subtick_size, canvas_loc, center_line_start);
+			}
+		}
+
+	}
 
 	/**
 	 * Represents a doubleing point number as a string.
@@ -1041,12 +1009,15 @@ public class AxisGlyph extends Glyph {
 		this.hitable = h;
 	}
 
+	@Override
 	public boolean isHitable() { return hitable; }
 
+	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		return isHitable() && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isHitable() && coord_hitbox.intersects(coordbox);
 	}

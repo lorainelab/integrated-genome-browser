@@ -62,39 +62,38 @@ public final class GraphScoreThreshSetter extends JPanel
 //  boolean thresh_is_min = true;
 	private List<GraphGlyph> graphs = new ArrayList<GraphGlyph>();
 	//private Map flipped_hash = new HashMap();
-	private NeoAbstractWidget widg;
-	private GraphVisibleBoundsSetter per_info_provider;
-	private MaxGapThresholder max_gap_thresher;
-	private MinRunThresholder min_run_thresher;
-	private JSlider score_val_slider;
-	private JSlider score_percent_slider;
-	private JTextField score_valT;
-	private JTextField score_perT;
-	private JRadioButton thresh_aboveB;
-	private JRadioButton thresh_belowB;
-	private JRadioButton thresh_unknownB; // invisible radio button
-	private JTextField shift_startTF = new JTextField("0", 5);
-	private JTextField shift_endTF = new JTextField("0", 5);
-	private JComboBox threshCB = new JComboBox();
-	private JButton tier_threshB = new JButton("Make Track");
-	private float sliders_per_percent = 10.0f;
-	private float percents_per_slider = 1.0f / sliders_per_percent;
-	private int total_val_sliders = 1000;
-	private float sliders_per_val;
-	//private float vals_per_slider;
+	private final NeoAbstractWidget widg;
+	private final GraphVisibleBoundsSetter per_info_provider;
+	private final MaxGapThresholder max_gap_thresher;
+	private final MinRunThresholder min_run_thresher;
+	private final JSlider score_val_slider;
+	private final JSlider score_percent_slider;
+	private final JTextField score_valT;
+	private final JTextField score_perT;
+	private final JRadioButton thresh_aboveB;
+	private final JRadioButton thresh_belowB;
+	private final JRadioButton thresh_unknownB; // invisible radio button
+	private final JTextField shift_startTF = new JTextField("0", 5);
+	private final JTextField shift_endTF = new JTextField("0", 5);
+	private final JComboBox threshCB = new JComboBox();
+	private final JButton tier_threshB = new JButton("Make Track");
+	private final float sliders_per_percent = 10.0f;
+	private final float percents_per_slider = 1.0f / sliders_per_percent;
+	private final int total_val_sliders = 1000;
+	private  float sliders_per_val;
 	private float abs_min_val;
 	private float abs_max_val;
 	private float prev_thresh_val;
-	private float abs_min_per = 0;
-	private float abs_max_per = 100;
+	private final float abs_min_per = 0;
+	private final float abs_max_per = 100;
 	private float prev_thresh_per;
-	private boolean show_min_and_max = false;
-	private int max_chars = 15;
-	private int max_pix_per_char = 6;
-	private int tf_min_xpix = max_chars * max_pix_per_char;
-	private int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
-	private int tf_min_ypix = 10;
-	private int tf_max_ypix = 25;
+	private final boolean show_min_and_max = false;
+	private final int max_chars = 15;
+	private final int max_pix_per_char = 6;
+	private final int tf_min_xpix = max_chars * max_pix_per_char;
+	private final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
+	private final int tf_min_ypix = 10;
+	private final int tf_max_ypix = 25;
 
 
 	static {

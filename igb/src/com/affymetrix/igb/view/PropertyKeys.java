@@ -22,7 +22,7 @@ import java.util.*;
  * This is a modified version of com.affymetrix.genoviz.bio.datamodel.feature.PropertyKeys
  */
 final class PropertyKeys {
-  private String[] keys = new String[0];
+  private final String[] keys = new String[0];
 
   /**
    * Fills up a Vector with arrays containing names and values

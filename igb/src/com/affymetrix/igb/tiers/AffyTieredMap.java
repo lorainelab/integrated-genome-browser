@@ -33,7 +33,7 @@ import javax.swing.*;
  */
 public class AffyTieredMap extends NeoMap {
 
-	private List<TierGlyph> tiers = new ArrayList<TierGlyph>();
+	private final List<TierGlyph> tiers = new ArrayList<TierGlyph>();
 
 	// the total pixel height of visible fixed pixel tiers
 	//    (recalculated with every packTiers() call)

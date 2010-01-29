@@ -36,7 +36,7 @@ public final class MaxGapThresholder extends JPanel
   private static final int default_thresh_max = 250;
   private static final int default_thresh_min = 0;
   private int thresh_max = default_thresh_max;
-  private int thresh_min = default_thresh_min;
+  private final int thresh_min = default_thresh_min;
 
   private int maxgap_thresh = 0;
 

@@ -31,7 +31,7 @@ public final class DasSource {
   private String description;
   private String info_url;
   private String mapmaster;
-  private DasServerInfo server;
+  private final DasServerInfo server;
   private AnnotatedSeqGroup genome = null;
   private final Map<String,DasEntryPoint> entry_points = new LinkedHashMap<String,DasEntryPoint>();
   private final Map<String,DasType> types = new LinkedHashMap<String,DasType>();

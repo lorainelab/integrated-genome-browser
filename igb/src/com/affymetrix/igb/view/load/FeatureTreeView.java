@@ -58,8 +58,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	private final GeneralLoadView glv;
 	private final JButton serverPrefsB;
 	private TreePath selectedPath;
-	private TreeCellRenderer tcr;
-	private TreeCellEditor tce;
+	private final TreeCellRenderer tcr;
+	private final TreeCellEditor tce;
 
 	public FeatureTreeView(GeneralLoadView glv) {
 		this.glv = glv;	// used to see feature table, which this is linked to.
@@ -281,8 +281,8 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 
 	private final class TreeMouseListener implements MouseListener, MouseMotionListener {
 
-		private Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
-		private Cursor defaultCursor = null;
+		private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+		private final Cursor defaultCursor = null;
 
 		public void mouseClicked(MouseEvent e) {
 
@@ -424,9 +424,9 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 	 */
 	private final class FeatureTreeCellRenderer extends DefaultTreeCellRenderer {
 
-		private JCheckBox leafCheckBox = new JCheckBox();
-		private Color selectionBorderColor, selectionForeground;
-		private Color selectionBackground, textForeground, textBackground;
+		private final JCheckBox leafCheckBox = new JCheckBox();
+		private final Color selectionBorderColor, selectionForeground;
+		private final Color selectionBackground, textForeground, textBackground;
 
 		public FeatureTreeCellRenderer() {
 			Font fontValue;

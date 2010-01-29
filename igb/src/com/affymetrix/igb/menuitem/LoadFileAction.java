@@ -68,8 +68,8 @@ import org.xml.sax.SAXException;
  */
 public final class LoadFileAction {
 
-	private JFrame gviewerFrame;
-	private FileTracker load_dir_tracker;
+	private final JFrame gviewerFrame;
+	private final FileTracker load_dir_tracker;
 	private static int unknown_group_count = 1;
 	private static final String UNKNOWN_GROUP_PREFIX = "Unknown Group";
 

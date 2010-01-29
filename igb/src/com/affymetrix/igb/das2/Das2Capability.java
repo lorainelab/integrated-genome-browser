@@ -4,8 +4,8 @@ import java.net.*;
 import java.util.*;
 
 public final class Das2Capability {
-  private String type;
-  private URI root_uri;
+  private final String type;
+  private final URI root_uri;
   private static final Map<String,Das2VersionedSource> cap2version = new LinkedHashMap<String,Das2VersionedSource>();
 
   Das2Capability(String cap_type, URI cap_root) {

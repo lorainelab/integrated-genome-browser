@@ -60,7 +60,7 @@ public final class GenericAnnotGlyphFactory implements MapViewGlyphFactoryI {
 	private int glyph_depth = 2;  // default is depth = 2 (only show leaf nodes and parents of leaf nodes)
 	private Class parent_glyph_class;
 	private Class child_glyph_class;
-	private Class parent_labelled_glyph_class;
+	private final Class parent_labelled_glyph_class;
 
 	public GenericAnnotGlyphFactory() {
 		parent_glyph_class = default_eparent_class;

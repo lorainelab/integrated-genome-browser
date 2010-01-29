@@ -6,9 +6,9 @@ import java.net.URI;
 
 public final class Das2Region {
 
-    private URI region_uri;
-    private BioSeq aseq;
-    private Das2VersionedSource versioned_source;
+    private final URI region_uri;
+    private  BioSeq aseq;
+    private final Das2VersionedSource versioned_source;
 
     public Das2Region(Das2VersionedSource source, URI reg_uri, String nm, String info, int ln) {
         region_uri = reg_uri;

@@ -75,8 +75,8 @@ public final class SimpleGraphTab extends JPanel
 	JButton colorB = new JButton("Color");
 	JSlider height_slider = new JSlider(JSlider.HORIZONTAL, 10, 500, 50);
 
-	private	List<GraphSym> grafs = new ArrayList<GraphSym>();
-	private List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
+	private final	List<GraphSym> grafs = new ArrayList<GraphSym>();
+	private final List<GraphGlyph> glyphs = new ArrayList<GraphGlyph>();
 
 	private static Map<String,FloatTransformer> name2transform;
 	private static final String IDENTITY_TRANSFORM = "Copy";

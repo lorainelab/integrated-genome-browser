@@ -26,11 +26,11 @@ public final class BookmarkIcon implements Icon {
     public static final int EXTERNAL = 1;
     public static final int SEPARATOR = 2;
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
-    private int[] xPoints;
-    private int[] yPoints;
+    private final int[] xPoints;
+    private final int[] yPoints;
 
     public BookmarkIcon(int width, int height, int[] xPoints, int[] yPoints) {
       if (xPoints.length != yPoints.length || xPoints.length==0) {

@@ -41,10 +41,10 @@ public final class Das2VersionedSource {
     static String NAME = Das2FeatureSaxParser.NAME;
     static String TITLE = Das2FeatureSaxParser.TITLE;
     static GenometryModel gmodel = GenometryModel.getGenometryModel();
-    private URI version_uri;
-    private URI coords_uri;
-    private Das2Source source;
-    private String name;
+    private final URI version_uri;
+    private final URI coords_uri;
+    private final Das2Source source;
+    private final String name;
     private final Map<String,Das2Capability> capabilities = new HashMap<String,Das2Capability>();
     private final Map<String,Das2Region> regions = new LinkedHashMap<String,Das2Region>();
     private AnnotatedSeqGroup genome = null;

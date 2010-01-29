@@ -33,7 +33,7 @@ public final class KeyStrokesView extends IPrefEditorComponent implements ListSe
   private final static String[] col_headings = {"Action", "Key Stroke"};
   private final DefaultTableModel model;
   private final ListSelectionModel lsm;
-  private TableRowSorter<DefaultTableModel> sorter;
+  private final TableRowSorter<DefaultTableModel> sorter;
   KeyStrokeEditPanel edit_panel = null;
 
   public KeyStrokesView() {

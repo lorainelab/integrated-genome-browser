@@ -41,7 +41,7 @@ public final class UnibrowHairline {
   // scrolls or zooms the map.
   // (We could use a NeoRangeListener on the NeoMap instead of
   // a pre-draw NeoViewBoxListener on the View.)
-  private NeoViewBoxListener pre_draw_listener;
+  private final NeoViewBoxListener pre_draw_listener;
 
   // the current location of the hairline
   private double focus = 1;

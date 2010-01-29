@@ -23,11 +23,11 @@ import java.util.*;
  */
 public final class Das2Source {
 
-  private URI source_uri;
-  private String name;
+  private final URI source_uri;
+  private final String name;
   private final Map<String,Das2VersionedSource> versions = new LinkedHashMap<String,Das2VersionedSource>();
  
-  private Das2ServerInfo server;
+  private final Das2ServerInfo server;
 
 
   public Das2Source(Das2ServerInfo source_server, URI src_uri, String source_name) {

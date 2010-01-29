@@ -36,7 +36,7 @@ import java.awt.GridLayout;
 public final class RestrictionControlView extends JComponent
 				implements ListSelectionListener, ActionListener {
 
-	private SeqMapView gviewer;
+	private final SeqMapView gviewer;
 	private final Hashtable<String,String> site_hash = new Hashtable<String,String>();
 	private JList siteList;
 	private JPanel labelP;

@@ -68,20 +68,20 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private static final String SELECTINMAP_TIP = "highlight matches in sequence map";
 
 	private JTextField searchTF;
-	private JPanel pan1 = new JPanel();
-	private JComboBox sequence_CB = new JComboBox();
-	private JComboBox searchCB = new JComboBox();
-	private JCheckBox remoteSearchCheckBox = new JCheckBox("");
-	private JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
-	private JButton searchButton = new JButton("Search");
-	private JButton clear_button = new JButton("Clear");
-	private SeqMapView gviewer;
-	private List<GlyphI> glyphs = new ArrayList<GlyphI>();
-	private Color hitcolor = new Color(150, 150, 255);
+	private final JPanel pan1 = new JPanel();
+	private final JComboBox sequence_CB = new JComboBox();
+	private final JComboBox searchCB = new JComboBox();
+	private final JCheckBox remoteSearchCheckBox = new JCheckBox("");
+	private final JCheckBox selectInMapCheckBox = new JCheckBox(SELECTINMAP_TEXT);
+	private final JButton searchButton = new JButton("Search");
+	private final JButton clear_button = new JButton("Clear");
+	private final SeqMapView gviewer;
+	private final List<GlyphI> glyphs = new ArrayList<GlyphI>();
+	private final Color hitcolor = new Color(150, 150, 255);
 
-	private final JTable table = new JTable();
-	private final JTextField filterText = new JTextField();
-	private final JLabel status_bar = new JLabel("0 results");
+	private  JTable table = new JTable();
+	private  JTextField filterText = new JTextField();
+	private  JLabel status_bar = new JLabel("0 results");
 	private SearchResultsTableModel model;
 	private TableRowSorter<SearchResultsTableModel> sorter;
 	private ListSelectionModel lsm;
@@ -688,7 +688,7 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		private final int END_COLUMN = 3;
 		private final int CHROM_COLUMN = 4;
 		private final int STRAND_COLUMN = 5;
-		private List<SeqSymmetry> search_results;
+		private final List<SeqSymmetry> search_results;
 
 		public SearchResultsTableModel(List<SeqSymmetry> results) {
 			search_results = results;

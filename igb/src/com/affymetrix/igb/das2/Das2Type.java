@@ -17,12 +17,12 @@ import java.util.*;
 import java.net.*;
 
 public final class Das2Type {
-  private Das2VersionedSource versioned_source;
-  private URI type_uri;
-  private String name;
+  private final Das2VersionedSource versioned_source;
+  private final URI type_uri;
+  private final String name;
   private String short_name;
-  private Map<String, String> props;
-  private Map<String,String> formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
+  private final Map<String, String> props;
+  private final Map<String,String> formats; // formats is a map of format names ("bed", "psl", etc.) to mime-type Strings
 
   public Das2Type(Das2VersionedSource version, URI type_uri, String name,
 		  Map<String,String> formats, Map<String, String> props) {

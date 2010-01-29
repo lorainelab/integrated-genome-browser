@@ -94,8 +94,8 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	 *  unit = 0.1 percent (or in other words slider units per percent = 10)
 	 */
 	private static final float sliders_per_percent = 10.0f;
-	private float abs_min_percent = 0.0f;
-	private float abs_max_percent = 100.0f;
+	private final float abs_min_percent = 0.0f;
+	private final float abs_max_percent = 100.0f;
 	private float prev_min_per = 0;
 	private float prev_max_per = 100;
 	private final int total_val_sliders = 1000;
@@ -105,13 +105,13 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	//private float abs_max_val;
 	private float prev_min_val;
 	private float prev_max_val;
-	private float per_offset = 0.1f;
-	private float val_offset = 0.1f;
+	private final float per_offset = 0.1f;
+	private final float val_offset = 0.1f;
 	//private Dimension slider_sizepref = new Dimension(600, 15);
 	//private Dimension textbox_sizepref = new Dimension(400, 15);
 	//private boolean set_slider_sizepref = false;
 	//private boolean set_textbox_sizepref = false;
-	private boolean show_min_and_max = false;
+	private final boolean show_min_and_max = false;
 	private boolean includePercentileControls = true;
 
 	static GraphVisibleBoundsSetter showFramedThresholder(GraphGlyph sgg, NeoAbstractWidget widg) {

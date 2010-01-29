@@ -20,7 +20,7 @@ import javax.swing.JFrame;
 public final class MacIntegration {
 	/** private instance of MacIntegration for singleton pattern */
 	private static MacIntegration instance = null;
-	private Class<?> applicationClass;
+	private  Class<?> applicationClass;
 	private Object application;
 
 	/**
@@ -82,7 +82,7 @@ public final class MacIntegration {
 }
 
 final class ApplicationListenerProxy implements InvocationHandler {
-	private Object o;
+	private final Object o;
 
 	public static Object newInstance(Object o) {
 		return Proxy.newProxyInstance(

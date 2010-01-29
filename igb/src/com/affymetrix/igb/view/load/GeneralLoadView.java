@@ -73,14 +73,14 @@ public final class GeneralLoadView extends JComponent
 	private AnnotatedSeqGroup curGroup = null;
 	private final JComboBox versionCB;
 	private final JComboBox speciesCB;
-	private JButton all_residuesB;
-	private JButton partial_residuesB;
+	private final JButton all_residuesB;
+	private final JButton partial_residuesB;
 	private final JButton refresh_dataB;
 	private static final SeqMapView gviewer = Application.getSingleton().getMapView();
 	private JTableX feature_table;
 	private FeaturesTableModel feature_model;
 	JScrollPane featuresTableScrollPane;
-	private FeatureTreeView feature_tree_view;
+	private final FeatureTreeView feature_tree_view;
 	private TrackInfoView track_info_view;
 
 	public GeneralLoadView() {

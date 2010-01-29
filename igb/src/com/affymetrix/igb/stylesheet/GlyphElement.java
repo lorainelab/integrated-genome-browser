@@ -113,8 +113,8 @@ final class GlyphElement implements Cloneable, XmlAppender {
 
   private static final int glyph_height = 10;
   
-  private DerivedSeqSymmetry der; // used for transforming spans
-  private MutableSeqSpan derSpan; // used for transforming spans
+  private final DerivedSeqSymmetry der; // used for transforming spans
+  private final MutableSeqSpan derSpan; // used for transforming spans
   
   public Object clone() throws CloneNotSupportedException {
     GlyphElement clone = (GlyphElement) super.clone();

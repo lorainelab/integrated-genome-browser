@@ -61,7 +61,7 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
   private final Action add_folder_action;
   private final Action add_bookmark_action;
 
-  private BookmarkTreeCellRenderer renderer;
+  private final BookmarkTreeCellRenderer renderer;
 
   /** Creates a new instance of Class */
   public BookmarkManagerView() {
@@ -211,9 +211,9 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
     TreePath selected_path = null;
     BookmarkList selected_bl = null;
 
-    private JTree tree;
+    private final JTree tree;
     private Application app = null;
-    private DefaultTreeModel def_tree_model;
+    private final DefaultTreeModel def_tree_model;
 
     Action properties_action;
     Action goto_action;

@@ -133,7 +133,7 @@ public class SeqMapView extends JPanel
 	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
 	boolean show_edge_matches = true;
 	protected boolean coord_shift = false;
-	private boolean show_slicendice = false;
+	private final boolean show_slicendice = false;
 	private boolean slicing_in_effect = false;
 	private boolean hairline_is_labeled = true;
 	private final Set<ContextualPopupListener> popup_listeners = new CopyOnWriteArraySet<ContextualPopupListener>();
@@ -246,7 +246,7 @@ public class SeqMapView extends JPanel
 	boolean report_status_in_status_bar = true;
 	protected SeqSymmetry sym_used_for_title = null;
 
-	private JButton refreshButton = new JButton("Refresh data");
+	private final JButton refreshButton = new JButton("Refresh data");
 
 	/*
 	 *  units to scroll are either in pixels or bases
@@ -436,7 +436,7 @@ public class SeqMapView extends JPanel
 	// the axis uses comma format or not, in response to changes in the stored
 	// preferences.  Changes to axis, and other tier, colors are not so simple,
 	// in part because of the need to coordinate with the label glyphs.
-	private PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
+	private final PreferenceChangeListener pref_change_listener = new PreferenceChangeListener() {
 
 		public void preferenceChange(PreferenceChangeEvent pce) {
 			if (getAxisTier() == null) {

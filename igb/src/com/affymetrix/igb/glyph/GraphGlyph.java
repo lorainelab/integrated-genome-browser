@@ -49,7 +49,7 @@ public final class GraphGlyph extends Glyph {
 	private static Font default_font = new Font("Courier", Font.PLAIN, 12);
 	private static final Font axis_font = new Font("SansSerif", Font.PLAIN, 12);
 	private static final NumberFormat nformat = new DecimalFormat();
-	private int xpix_offset = 0;
+	private final int xpix_offset = 0;
 	private final Point zero_point = new Point(0, 0);
 	private final Point2D.Double coord = new Point2D.Double(0, 0);
 	private final Point curr_point = new Point(0, 0);

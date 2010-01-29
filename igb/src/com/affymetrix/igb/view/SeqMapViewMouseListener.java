@@ -54,7 +54,7 @@ final class SeqMapViewMouseListener implements MouseListener, NeoRubberBandListe
   // The program should work perfectly fine with this flag true or false,
   // the rubber band simply looks odd sometimes (particularly with a fast drag)
   // if this flag is true.
-  private boolean SELECT_ON_MOUSE_PRESSED = false;
+  private final boolean SELECT_ON_MOUSE_PRESSED = false;
   boolean DEBUG_RUBBERBAND = false;
 
   SeqMapView smv;

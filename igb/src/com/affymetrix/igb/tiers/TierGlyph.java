@@ -64,7 +64,7 @@ public class TierGlyph extends SolidGlyph {
    * if no "middle" glyphs, then background is drawn with fill_color
    */
   private Color other_fill_color = null;
-  private Color outline_color = null;
+  private final Color outline_color = null;
   private String label = null;
 
 

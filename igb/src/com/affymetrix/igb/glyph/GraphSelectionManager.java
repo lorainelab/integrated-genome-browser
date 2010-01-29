@@ -92,10 +92,10 @@ public final class GraphSelectionManager
   private JLabel graph_info;
   private JLabel graph_info2;
 
-  private JMenu graph_style = new JMenu("Graph Style");
-  private JMenu decor = new JMenu("Decorations");
-  private JMenu bounds = new JMenu("Adjust Visible Graph Bounds");
-  private JMenu combine = new JMenu("Combine 2 Graphs");
+  private final JMenu graph_style = new JMenu("Graph Style");
+  private final JMenu decor = new JMenu("Decorations");
+  private final JMenu bounds = new JMenu("Adjust Visible Graph Bounds");
+  private final JMenu combine = new JMenu("Combine 2 Graphs");
 
   private JMenuItem bar_graph;
   private JMenuItem line_graph;

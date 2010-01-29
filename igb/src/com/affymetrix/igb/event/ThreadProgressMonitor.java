@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public final class ThreadProgressMonitor {
   private JOptionPane opt_pane;
   private JDialog dialog;
-  private Thread thread;
+  private final Thread thread;
   private boolean is_closed = false;
   
   /** Creates a JDialog with parent component c.

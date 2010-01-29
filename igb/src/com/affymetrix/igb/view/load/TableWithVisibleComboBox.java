@@ -67,8 +67,8 @@ public final class TableWithVisibleComboBox {
 
   private static final class ColumnRenderer extends JComponent implements TableCellRenderer {
 
-    private JComboBox comboBoxRender;
-    private JTextField textFieldRender;	// If an entire genome is loaded in, change the combo box to a text field.
+    private final JComboBox comboBoxRender;
+    private final JTextField textFieldRender;	// If an entire genome is loaded in, change the combo box to a text field.
 
     public ColumnRenderer() {
       comboBoxRender = new JComboBox();

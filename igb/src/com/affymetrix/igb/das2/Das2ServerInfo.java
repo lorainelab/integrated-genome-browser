@@ -25,8 +25,8 @@ import com.affymetrix.igb.util.XMLUtils;
 
 public final class Das2ServerInfo  {
   private static boolean DEBUG_SOURCES_QUERY = false;
-	private URI server_uri;
-	private String name;
+	private final URI server_uri;
+	private final String name;
 	private final Map<String,Das2Source> sources = new LinkedHashMap<String,Das2Source>();  // map of URIs to Das2Sources, using LinkedHashMap for predictable iteration
 	private final Map<String,Das2Source> name2source = new LinkedHashMap<String,Das2Source>();  // using LinkedHashMap for predictable iteration
 	private boolean initialized = false;

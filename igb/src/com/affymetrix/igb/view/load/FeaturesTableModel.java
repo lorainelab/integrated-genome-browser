@@ -35,7 +35,7 @@ final class FeaturesTableModel extends AbstractTableModel implements ChangeListe
 	//private static final int LOAD_STATUS_COLUMN = 4;
 	final List<GenericFeature> features;
 	private final GeneralLoadView glv;
-	private featureTableComparator visibleFeatureComp = new featureTableComparator();
+	private final featureTableComparator visibleFeatureComp = new featureTableComparator();
 
 	FeaturesTableModel(GeneralLoadView glv, List<GenericFeature> features, BioSeq cur_seq) {
 		this.glv = glv;

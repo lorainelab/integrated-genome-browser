@@ -20,15 +20,15 @@ import java.awt.geom.Rectangle2D;
 public final class FlyPointLinkerGlyph extends FlyweightPointGlyph {
 
 	private int distance_min_threshold = 0;
-	private GlyphI link_glyph;  // template glyph for links
+	private final GlyphI link_glyph;  // template glyph for links
 	// xmin is _not_ the min val in xcoords, but rather designates the lower bound of
 	//   the analysis that led to these points  (for example, in an ORF analysis the xcoords
 	//   designate location of stop codons, but the ORF analysis likely begins
 	//   somewhere upstream of the first stop codon
-	private int xmin;
+	private final int xmin;
 	// xmax is _not_ the max val in xcoords, but rather designates the upper bound of
 	//   the analysis that led to these points
-	private int xmax;
+	private final int xmax;
 
 	/**
 	 *  make sure link_template.coordbox.height <= this.coordbox.height

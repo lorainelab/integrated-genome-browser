@@ -13,7 +13,6 @@
 package com.affymetrix.igb.das2;
 
 import com.affymetrix.genometryImpl.parsers.graph.BarParser;
-import com.affymetrix.genometryImpl.parsers.useq.*;
 import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.MutableSeqSymmetry;
@@ -42,6 +41,10 @@ import com.affymetrix.genometryImpl.parsers.Das2FeatureSaxParser;
 import com.affymetrix.genometryImpl.parsers.ExonArrayDesignParser;
 import com.affymetrix.genometryImpl.parsers.GFFParser;
 import com.affymetrix.genometryImpl.parsers.PSLParser;
+import com.affymetrix.genometryImpl.parsers.useq.ArchiveInfo;
+import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
+import com.affymetrix.genometryImpl.parsers.useq.USeqRegionParser;
+import com.affymetrix.genometryImpl.parsers.useq.USeqUtilities;
 import com.affymetrix.genoviz.util.GeneralUtils;
 
 /*

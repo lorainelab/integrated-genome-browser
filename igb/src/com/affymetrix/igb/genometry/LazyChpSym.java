@@ -2,17 +2,21 @@ package com.affymetrix.igb.genometry;
 
 import affymetrix.calvin.data.ProbeSetQuantificationData;
 import affymetrix.calvin.data.ProbeSetQuantificationDetectionData;
+import com.affymetrix.genometryImpl.BioSeq;
+import com.affymetrix.genometryImpl.IndexedSingletonSym;
+import com.affymetrix.genometryImpl.IndexedSym;
 import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 import com.affymetrix.genometryImpl.comparator.SeqSymMinComparator;
 import com.affymetrix.genometryImpl.style.DefaultStateProvider;
 import java.util.*;
-import com.affymetrix.genometryImpl.*;
 import com.affymetrix.genometryImpl.util.SynonymLookup;
 import com.affymetrix.igb.Application;
 import com.affymetrix.igb.util.QuantByIntIdComparator;
 import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 import com.affymetrix.genometryImpl.util.StringUtils;
 import com.affymetrix.genometryImpl.IntId;
+import com.affymetrix.genometryImpl.SeqSpan;
+import com.affymetrix.genometryImpl.SeqSymmetry;
 import com.affymetrix.genometryImpl.SingletonSymWithIntId;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.das2.Das2ClientOptimizer;
@@ -22,7 +26,8 @@ import com.affymetrix.igb.das2.Das2ServerInfo;
 import com.affymetrix.igb.das2.Das2Type;
 import com.affymetrix.igb.das2.Das2VersionedSource;
 import com.affymetrix.igb.general.ServerList;
-
+import com.affymetrix.genometryImpl.ScoredContainerSym;
+import com.affymetrix.genometryImpl.TypeContainerAnnot;
 
 /**
  *  Want to automatically load location data for probesets on chip

@@ -15,7 +15,8 @@ package com.affymetrix.igb.view;
 
 import com.affymetrix.genometryImpl.SeqSpan;
 import com.affymetrix.genometryImpl.GenometryModel;
-import com.affymetrix.genometryImpl.event.*;
+import com.affymetrix.genometryImpl.event.GroupSelectionEvent;
+import com.affymetrix.genometryImpl.event.GroupSelectionListener;
 import com.affymetrix.genoviz.event.NeoViewBoxChangeEvent;
 import com.affymetrix.genoviz.event.NeoViewBoxListener;
 import com.affymetrix.genoviz.widget.NeoMap;

@@ -414,7 +414,13 @@ public final class BioSeq implements SearchableCharIterator {
 		if (residues_provider == null) {
 			return getResiduesNoProvider(start, end, '-');
 		}
-		return residues_provider.substring(start, end);
+
+		if (start <= end) {
+			return residues_provider.substring(start, end);
+		}
+
+		// start > end -- that means reverse complement.
+		return DNAUtils.reverseComplement(residues_provider.substring(end, start));
 	}
 	private String getResiduesNoProvider(int start, int end, char fillchar) {
 		int residue_length = this.getLength();

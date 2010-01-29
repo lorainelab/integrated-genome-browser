@@ -34,7 +34,7 @@ public final class BookmarkTableModel extends AbstractTableModel {
     }
   }
   
-  List<Duple> duples = Collections.EMPTY_LIST;
+  List<Duple> duples = Collections.<Duple>emptyList();
   String[] names = {"Parameter", "Value"};
   
   /** The number of extra rows to display to give users room to

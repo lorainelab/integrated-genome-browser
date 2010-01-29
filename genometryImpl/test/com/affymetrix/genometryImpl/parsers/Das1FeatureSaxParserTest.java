@@ -86,6 +86,7 @@ public class Das1FeatureSaxParserTest {
 	 * Tests the parsing of a simple example file
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 		public void testParse() {
 			InputStream istr = null;
 			assertTrue(new File(test_file_name_2).exists());

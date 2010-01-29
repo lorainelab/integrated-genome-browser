@@ -245,7 +245,8 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *  maps organism names to list of genome versions for that organism
 	 */
 	private static Map<String, List<AnnotatedSeqGroup>> organisms = new LinkedHashMap<String, List<AnnotatedSeqGroup>>();
-	private Map<String, Class> output_registry = new HashMap<String, Class>();
+	private Map<String, Class<? extends AnnotationWriter>> output_registry =
+			new HashMap<String, Class<? extends AnnotationWriter>>();
 	private final SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private long date_initialized = 0;
 	private String date_init_string = null;
@@ -425,7 +426,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		return true;
 	}
 
-	private static final void initFormats(Map<String, Class> output_registry) {
+	private static final void initFormats(Map<String, Class<? extends AnnotationWriter>> output_registry) {
 		output_registry.put("link.psl", ProbeSetDisplayPlugin.class);
 		output_registry.put("bps", BpsParser.class);
 		output_registry.put("psl", PSLParser.class);
@@ -1298,7 +1299,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 
 		List<SeqSymmetry> result = null;
 		BioSeq outseq = null;
-		Class<AnnotationWriter> writerclass = null;
+		Class<? extends AnnotationWriter> writerclass = null;
 
 		if (query == null || query.length() == 0) {
 			// no query string, so requesting _all_ features for a versioned source
@@ -1596,7 +1597,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * or, 2) looks for graph files as bar files sans seq grouping directories, but within data directory hierarchy
 	 * or, 3) tries to directly access file
 	 */
-	private final void handleGraphRequest(Map<String, Class> output_registry, String xbase, HttpServletResponse response,
+	private final void handleGraphRequest(Map<String, Class<? extends AnnotationWriter>> output_registry, String xbase, HttpServletResponse response,
 			String type, SeqSpan span) {
 		BioSeq seq = span.getBioSeq();
 		String seqid = seq.getID();
@@ -1608,8 +1609,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		Map<String, String> graph_name2file = genome2graphfiles.get(genome);
 
 		String file_path = DetermineFilePath(graph_name2dir, graph_name2file, graph_name, seqid);
-		Class<AnnotationWriter> writerclass = output_registry.get("bar");
-		OutputGraphSlice(writerclass, file_path, span, type, xbase, response);
+		OutputGraphSlice(output_registry.get("bar"), file_path, span, type, xbase, response);
 	}
 
 	/**
@@ -1641,7 +1641,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void OutputGraphSlice(
-			Class<AnnotationWriter> writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
+			Class<? extends AnnotationWriter> writerclass, String file_path, SeqSpan span, String type, String xbase, HttpServletResponse response) {
 		GraphSym graf = null;
 		try {
 			graf = BarParser.getSlice(file_path, gmodel, span);
@@ -1668,7 +1668,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	}
 
 	private static final void OutputTheAnnotations(
-			Class<AnnotationWriter> writerclass,
+			Class<? extends AnnotationWriter> writerclass,
 			String output_format,
 			HttpServletResponse response,
 			List<SeqSymmetry> result,
@@ -1709,7 +1709,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private static final boolean outputAnnotations(List<SeqSymmetry> syms, BioSeq seq,
 			String annot_type,
 			String xbase, HttpServletResponse response,
-			Class<AnnotationWriter> writerclass,
+			Class<? extends AnnotationWriter> writerclass,
 			String format) {
 		try {
 			if (writerclass == null) {

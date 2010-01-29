@@ -134,7 +134,7 @@ public final class BookmarksParser {
     if (DEBUG) System.out.println("loading bookmarks in Netscape format from a BufferedReader");
 
     BookmarkList current_list = bookmarks;
-    Stack parents = new Stack();
+    Stack<BookmarkList> parents = new Stack<BookmarkList>();
     String line;
     while ((line = br.readLine()) != null) {
       line = line.trim();
@@ -151,7 +151,7 @@ public final class BookmarksParser {
       } else if (str.startsWith("</DL>")) { // Finish that list
         if (DEBUG) System.out.println("END LIST: "+line);
         if (current_list != null && ! parents.isEmpty()) { 
-          current_list = (BookmarkList) parents.pop();
+          current_list = parents.pop();
           if (current_list == null) {
             if (DEBUG) System.out.println("parent list is null");
           } else {
@@ -160,12 +160,10 @@ public final class BookmarksParser {
         }
         else if (DEBUG) {System.out.println("Still in null list");}
       } else if (str.startsWith("<DT>")) { // Add a bookmark to current list
-        //if (DEBUG) System.out.println("BOOKMARK: "+line);
         Bookmark b = parseNetscapeFormatBookmark(line);
         if (DEBUG) System.out.println("BOOKMARK: "+b);
         if (b != null) current_list.addBookmark(b);
       } else if (str.startsWith("<HR>")) { // Add divider to current list
-        //if (DEBUG) System.out.println("DIVIDER:  "+line);
         current_list.addSeparator();
       } else {
         if (DEBUG) System.out.println("????:     "+line);
@@ -184,9 +182,9 @@ public final class BookmarksParser {
     try {
       parseNetscapeBookmarks(bookmarks, br);
     } finally {
-      if (br != null) {br.close();}
-      if (isr != null) {isr.close();}
-      if (fis != null) {fis.close();}
+		GeneralUtils.safeClose(br);
+		GeneralUtils.safeClose(isr);
+		GeneralUtils.safeClose(fis);
     }
     return;
   }
@@ -201,8 +199,8 @@ public final class BookmarksParser {
     try {
       parseBEDFormat(bookmarks, bis, gmodel);
     } finally {
-      if (bis != null) {bis.close();}
-      if (fis != null) {fis.close();}
+		GeneralUtils.safeClose(bis);
+		GeneralUtils.safeClose(fis);
     }
     return;
   }
@@ -267,12 +265,10 @@ public final class BookmarksParser {
       br = new BufferedReader(isr);
       String line;
       while ((line = br.readLine()) != null) {
-        //int uindex = line.indexOf(UnibrowControlServer.SERVLET_NAME+"?");
         int uindex = line.indexOf("http://");
         if (uindex >= 0) {
-          int qstart = uindex; //+ UnibrowControlServer.SERVLET_NAME.length() + 1;
+          int qstart = uindex;
           int qend = line.indexOf("\"", qstart);
-          //            String query_string= line.substring(qstart, qend);
           String query_string;
           if (qend < 0) {
             query_string= line.substring(qstart);
@@ -294,9 +290,9 @@ public final class BookmarksParser {
         }
       }
     } finally {
-      if (br != null) br.close();
-      if (isr != null) isr.close();
-      if (fis != null) fis.close();
-    }
+		  GeneralUtils.safeClose(br);
+		  GeneralUtils.safeClose(isr);
+		  GeneralUtils.safeClose(fis);
+	  }
   }  
 }

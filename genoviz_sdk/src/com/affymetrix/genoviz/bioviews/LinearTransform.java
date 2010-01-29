@@ -14,8 +14,8 @@ public class LinearTransform extends AffineTransform  {
 	 * If transform is being used in between a scene and a view,
 	 * this would convert from scene coordinates to view/pixel coordinates.
 	 * @param orientation
-	 * @param in   the coordinate
-	 * @return
+	 * @param in the coordinate
+	 * @return transformed coord.
 	 */
 	public double transform(int orientation, double in) {
 		double out = 0;

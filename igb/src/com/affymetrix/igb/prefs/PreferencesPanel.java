@@ -102,7 +102,7 @@ public final class PreferencesPanel extends JPanel {
    *  @return the index of the added tab in the tab pane.
    */
   public int addPrefEditorComponent(final IPrefEditorComponent pec) {
-    tab_pane.addTab(pec.getName(), pec.getIcon(), (Component) pec, pec.getToolTip());
+    tab_pane.add((Component) pec);
     ((Component) pec).addComponentListener(new ComponentAdapter() {
 			@Override
       public void componentShown(ComponentEvent e) {

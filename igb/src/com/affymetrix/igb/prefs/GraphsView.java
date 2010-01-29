@@ -10,11 +10,12 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 /**
  *  A panel that shows the preferences for graph properties.
  */
-public final class GraphsView extends JPanel implements IPrefEditorComponent  {
+public final class GraphsView extends IPrefEditorComponent  {
     
   public GraphsView() {
     super();
     this.setName("Graphs");
+	this.setToolTipText("Edit Default Graph Properties");
     this.setLayout(new BorderLayout());
 
     JPanel main_box = new JPanel();
@@ -50,57 +51,7 @@ public final class GraphsView extends JPanel implements IPrefEditorComponent  {
         
     validate();
   }
-  
-  public String getHelpTextHTML() {
-	  return "<h1>" + this.getName() + "</h1>\n" +
-			  "<p>\n" +
-			  "This panel allows you to change default options for newly-created graphs.  " +
-			  "Changes have no effect on existing graphs, but apply to any new graphs " +
-			  "created afterwards.  " +
-			  "Graph bookmarks can contain information about the properties  " +
-			  "of each graph.  Properties specified in bookmarks will take precedence over these defaults.  " +
-			  "</p>" +
-			  "<p>" +
-			  "<h2>Use floating graphs by default</h2>" +
-			  "Whether new graphs should be floating by defualt. " +
-			  "Has no effect on graphs loaded through bookmarks since they explicitly specify floating or not-floating.  " +
-			  "Has no effect on graphs created from '.egr' files.  " +
-			  "Recommend: false." +
-			  "</p>" +
-			  "<p>" +
-			  "<h2>Use file URL as graph name</h2>" +
-			  "Whether to use the complete URL for the name of newly-loaded graphs.  " +
-			  "True uses the complete URL 'file:///home/graph.gr';  " +
-			  "False uses the shorter filename 'graph.gr'.  " +
-			  "Has no effect on graphs loaded through bookmarks if they explicitly set a graph name.  " +
-			  "Recommend: false." +
-			  "</p>" +
-			  "<p>" +
-			  "<h2>Make graphs from scored-interval files</h2>" +
-			  "When loading data from an '.egr' file (sometimes called a '.sin' file) " +
-			  "the program can automatically convert the score or scores into a graph or graphs. " +
-			  "Usually you want this to happen, so set this to true. " +
-			  "Recommend: true." +
-			  "</p>" +
-			  "<p>" +
-			  "<h2>Preferred Heatmap</h2>" +
-			  "Default heatmap to use for graphs created from scored-interval files. " +
-			  "The 'blue/yellow' and 'black/white' maps are good choices in general, " +
-			  "but the 'red/black/green' map is preferred for some uses. ";
-  }
-  
-  public Icon getIcon() {
-    return null;
-  }
-  
-  public String getToolTip() {
-    return "Edit Default Graph Properties";
-  }
-  
-  public String getInfoURL() {
-    return null;
-  }    
-  
+
   public void refresh() {
   }
   

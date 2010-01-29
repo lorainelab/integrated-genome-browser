@@ -13,8 +13,15 @@
 
 package com.affymetrix.igb.prefs;
 
-import javax.swing.Icon;
-
+import com.affymetrix.genometryImpl.util.GeneralUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JPanel;
 
 /**
  *  An interface that should be implemented by any JComponent that can be used 
@@ -22,30 +29,7 @@ import javax.swing.Icon;
  *  There is no requirement that the preferences be stored using the
  *  java.util.prefs package, but that is what is generally expected.
  */
-public interface IPrefEditorComponent {
-    
-  /**
-   *  Returns a String that can be used as the name of the component.
-   *  Preferably a very short string, since it may be used as the name of
-   *  a tab in a tab pane.
-   *  @return a non-null, short String identifier.
-   */
-  public String getName();
-  
-  /**
-   *  Will return an Icon for use in tab panes or frames containing the component.
-   *  Null is ok.
-   *  @return an Icon or null
-   */
-  public Icon getIcon();
-  
-  /**
-   *  Returns a short String description, appropriate for use as a tool-tip.
-   *  Can be equivalent to the name.
-   *  @return A non-null String.
-   */
-  public String getToolTip();
-  
+public abstract class IPrefEditorComponent extends JPanel {
   /**
    *  Gives help text explaining the function of this preferences editor component.
    *  If no help is available, should return null rather than an empty String.
@@ -55,14 +39,32 @@ public interface IPrefEditorComponent {
    *  after a re-start.
    *  @return Text in HTML format, or null
    */
-  public String getHelpTextHTML();
-  
-  /**
-   *  Returns a URL where the user can go for more information on this panel.
-   *  @return a String or null
-   */
-  public String getInfoURL();
-  
+  public String getHelpTextHTML() {
+		StringBuilder builder = new StringBuilder();
+		char buffer[] = new char[4096];
+		InputStream stream = null;
+		Reader reader = null;
+
+		try {
+			stream = this.getClass().getResourceAsStream("/help/" + this.getClass().getName() + ".html");
+			reader = new InputStreamReader(stream, "UTF-8");
+
+			for (int read = reader.read(buffer, 0, buffer.length); read >0; read = reader.read(buffer, 0, buffer.length)) {
+				builder.append(buffer);
+			}
+
+		} catch (UnsupportedEncodingException ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "UTF-8 is not a supported encoding?!", ex);
+		} catch (IOException ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Unable to load help file for " + this.getClass().getName(), ex);
+		} finally {
+			GeneralUtils.safeClose(reader);
+			GeneralUtils.safeClose(stream);
+		}
+
+		return builder.toString();
+	}
+
   /**
    *  Causes the JComponent to update its fields
    *  so that they match what is stored in the java preferences.
@@ -71,5 +73,5 @@ public interface IPrefEditorComponent {
    *  But this method may be called after large events, such as importing
    *  an xml file containing preferences, or after deleting stored preferences.
    */
-  public void refresh();
+  public abstract void refresh();
 }

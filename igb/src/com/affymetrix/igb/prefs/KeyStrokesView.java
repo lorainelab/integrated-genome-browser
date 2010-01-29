@@ -26,8 +26,8 @@ import java.awt.BorderLayout;
 /**
  *  A panel that shows the preferences mapping between KeyStroke's and Actions. 
  */
-public final class KeyStrokesView extends JPanel implements ListSelectionListener, 
-  PreferenceChangeListener, IPrefEditorComponent  {
+public final class KeyStrokesView extends IPrefEditorComponent implements ListSelectionListener,
+  PreferenceChangeListener {
 
   private final JTable table = new JTable();
   private final static String[] col_headings = {"Action", "Key Stroke"};
@@ -39,6 +39,7 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
   public KeyStrokesView() {
     super();
     this.setName("Shortcuts");
+	this.setToolTipText("Edit Locations");
     this.setLayout(new BorderLayout());
 
     JScrollPane scroll_pane = new JScrollPane(table);
@@ -137,45 +138,4 @@ public final class KeyStrokesView extends JPanel implements ListSelectionListene
     if (lsm != null) {lsm.removeListSelectionListener(this);}
     UnibrowPrefsUtil.getKeystrokesNode().removePreferenceChangeListener(this);
   }*/
-
-  public String getHelpTextHTML() {
-    StringBuffer sb = new StringBuffer();
-    sb.append("<h1>Shortcut Keystrokes</h1>\n");
-    sb.append("<p>\n");
-    sb.append("Use this panel to associate a shortcut keystroke with various menu items and other actions.  ");
-    sb.append("Choose an action, type a key combination and press 'Apply'.  ");
-    sb.append("It is necessary to shut down and <b>restart</b> the program before the changes take effect.  ");
-    sb.append("</p>\n");
-    
-    sb.append("<p>\n");
-    sb.append("Each keystroke must contain at least one modifier key, like 'control' or 'alt'.  ");
-    sb.append("It is possible to assign the same shortcut to multiple actions, ");
-    sb.append("but that should generally be avoided. ");
-    sb.append("</p>\n");
-    
-    sb.append("<p>\n");
-    sb.append("Shortcut keys for zooming and scrolling the view will apply both in the main view  ");
-    sb.append("and in the sliced view.  The effect can be confusing when both views are visible  ");
-    sb.append("in the same window at the same time.  Opening the sliced view in a separate window  ");
-    sb.append("can give more predictable shortcut behavior.  ");
-    sb.append("</p>\n");
-
-    sb.append("  ");
-    sb.append("  ");
- 
-    return sb.toString();
-  }
-  
-  public Icon getIcon() {
-    return null;
-  }
-  
-  public String getToolTip() {
-    return "Edit Locations";
-  }
-  
-  public String getInfoURL() {
-    return null;
-  }
-    
 }

@@ -26,7 +26,7 @@ import com.affymetrix.igb.view.UnibrowHairline;
 /**
  *  A panel that shows the preferences for particular special URLs and file locations.
  */
-public final class OptionsView extends JPanel implements IPrefEditorComponent, ActionListener  {
+public final class OptionsView extends IPrefEditorComponent implements ActionListener  {
 
   //final LocationEditPanel edit_panel1 = new LocationEditPanel();
   JButton clear_prefsB = new JButton("Reset all preferences to defaults");
@@ -34,6 +34,7 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
   public OptionsView() {
     super();
     this.setName("Other Options");
+	this.setToolTipText("Edit Miscellaneous Options");
     this.setLayout(new BorderLayout());
 
     JPanel main_box = new JPanel();
@@ -138,47 +139,6 @@ public final class OptionsView extends JPanel implements IPrefEditorComponent, A
     if (src == clear_prefsB) {
       UnibrowPrefsUtil.clearPreferences(this);
     }
-  }
-
- 
-  public String getHelpTextHTML() {
-    StringBuffer sb = new StringBuffer();
-
-    sb.append("<h1>" + this.getName() + "</h1>\n");
-    sb.append("<p>\n");
-    sb.append("This panel allows you to change a variety of miscellaneous settings.  ");
-    sb.append("It is not necessary to re-start the program for these changes to take effect.  ");
-    
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>Ask before exiting</h2>\n");
-    sb.append("Whether to show a confirmation dialog before closing the program. ");
-    sb.append("This can help you avoid accidentally losing your work.  ");
-   
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>Keep hairline in view</h2>\n");
-    sb.append("Whether to automatically prevent the hairline from moving ");
-    sb.append("outside the view as you scroll.  ");
-    sb.append("Recommend: true.");
-   
-    sb.append("</p>\n");
-
-    return sb.toString();
-  }
-
-  public Icon getIcon() {
-    return null;
-  }
-
-  public String getToolTip() {
-    return "Edit Miscellaneous Options";
-  }
-
-  public String getInfoURL() {
-    return null;
   }
 
   public void refresh() {

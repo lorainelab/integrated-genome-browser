@@ -27,7 +27,6 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
-import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -51,7 +50,7 @@ import javax.swing.table.TableColumn;
  *
  * @version $Id$
  */
-public final class DataLoadPrefsView extends JPanel implements IPrefEditorComponent {
+public final class DataLoadPrefsView extends IPrefEditorComponent {
 	private static final long serialVersionUID = -2897919705543641511l;
 
 	private static final String PREF_SYN_FILE_URL = "Synonyms File URL";
@@ -86,6 +85,8 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 
 	public DataLoadPrefsView(GeneralLoadView glv) {
 		this.glv = glv;
+		this.setName("Data Sources");
+		this.setToolTipText("Edit data sources and preferences");
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.setBorder(BorderFactory.createEtchedBorder());
 
@@ -637,68 +638,9 @@ public final class DataLoadPrefsView extends JPanel implements IPrefEditorCompon
 		clear_cacheB.addActionListener(clear_cache_al);
 	}
 
-	@Override
-	public String getName() {
-		return "Data Sources";
-	}
-
 	public void refresh() {
 		// the checkboxes and text fields refresh themselves automatically....
 		cache_usage_selector.setSelectedItem(usage2str.get(
 				new Integer(LocalUrlCacher.getPreferredCacheUsage())));
 	}
-
-	public Icon getIcon() {
-		return null;
-	}
-
-	public String getToolTip() {
-		return "Edit data sources and preferences";
-	}
-
-	public String getHelpTextHTML() {
-		StringBuffer sb = new StringBuffer();
-
-		sb.append("<h1>" + this.getName() + "</h1>\n");
-		sb.append("<p>\n");
-		sb.append("This panel allows you to change settings for data sources.  ");
-		sb.append("It is not necessary to restart the program for these changes to take effect.  ");
-		sb.append("NOTE: Temporarily, the Add Server functionality may require a restart to take effect.");
-		sb.append("</p>\n");
-
-		sb.append("<p>\n");
-		sb.append("<h2>Add Server</h2>\n");
-		sb.append("Add an additional server for loading of genomes, sequences, etc.");
-		sb.append("The user needs to specify if this is a Quickload, DAS, or DAS/2 server");
-		sb.append("</p>\n");
-
-		sb.append("<p>\n");
-		sb.append("<h2>Add Personal Synonyms File</h2>\n");
-		sb.append("The location of a synonyms file to use to help resolve cases where ");
-		sb.append("different data files refer to the same genome or chromosome by different names. ");
-		sb.append("For instance 'hg16' = 'ncbi.v34' and 'chrM' = 'chrMT' and 'chr1' = 'CHR1'. ");
-		sb.append("This is simply a tab-delimited file where entries on the same row are all synonymous. ");
-		sb.append("Synonyms will be <b>merged</b> from the servers, preference files, and the file listed here. ");
-		sb.append("</p>\n");
-
-		sb.append("<p>\n");
-		sb.append("<h2>Cache</h2>\n");
-		sb.append("IGB stores files downloaded over the network in a local cache. ");
-		sb.append("Files loaded from a local filesystem or network filesystem are not cached. ");
-		sb.append("We recommend that you leave the 'Cache Usage' setting on 'Normal' and ");
-		sb.append("that you choose true for both 'Cache Annotations' and 'Cache DNA Residues'.");
-		sb.append("If disk storage space is a problem, you can press the 'Clear Cache' button. ");
-		sb.append("You may also choose to turn the cache off, though performance will degrade. ");
-		sb.append("Some, but not all, users find it necessary to turn off the cache when they ");
-		sb.append("are not connected to the internet.  For most users, this is not necessary as ");
-		sb.append("long as the cache already contains a few essential files. ");
-		sb.append("</p>\n");
-
-		return sb.toString();
-	}
-
-	public String getInfoURL() {
-		return null;
-	}
-
 }

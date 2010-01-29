@@ -31,11 +31,12 @@ import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
+import java.text.MessageFormat;
 
 /**
  *  A panel for choosing tier properties for the {@link SeqMapView}.
  */
-public final class TierPrefsView extends JPanel implements ListSelectionListener, IPrefEditorComponent, WindowListener  {
+public final class TierPrefsView extends IPrefEditorComponent implements ListSelectionListener, WindowListener  {
 
   private final JTable table = new JTable();
 
@@ -94,6 +95,9 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
 
   public TierPrefsView(boolean add_refresh_list_button, boolean add_refresh_map_button) {
     super();
+
+	this.setName("Tiers");
+	this.setToolTipText("Set Tier Colors and Properties");
     this.setLayout(new BorderLayout());
 
     JScrollPane table_scroll_pane = new JScrollPane(table);
@@ -523,122 +527,6 @@ public final class TierPrefsView extends JPanel implements ListSelectionListener
     f.setSize(800, 800);
     f.setVisible(true);
   }*/
-
-  public String getName() {
-    return "Tiers";
-  }
-
-  public String getHelpTextHTML() {
-    StringBuffer sb = new StringBuffer();
-
-    sb.append("<h1>" + this.getName() + "</h1>\n");
-    sb.append("<p>\n");
-    sb.append("Use this panel to change properties of annotation tiers.  ");
-    sb.append("Changes do not require re-start, and settings for most annotation types ");
-    sb.append("will be remembered between sessions.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>Default Row</h2>\n");
-    sb.append("Properties on the default row apply when loading annotation types ");
-    sb.append("for which you have not previously set specific properties.  Once properties have been set for ");
-    sb.append("any annotation type, those settings will be remembered and used instead of the default properties. ");
-    sb.append("Certain properties of the default row, such as "+HUMAN_NAME+", are not editable, since ");
-    sb.append("it would not be desirable for all annotation types to be given the same "+HUMAN_NAME+".");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+TIER_NAME+"</h2>\n");
-    sb.append("The name of the tier.  ");
-    sb.append("If the name is shown in <i>italic</i> font, the settings for that tier ");
-    sb.append("will apply only to the current session.  ");
-    sb.append("If the tier name is shown in normal font, the settings will persist between sessions.  ");
-    sb.append("Non-persistent settings are used for graphs and temporary data resulting from arithmetic manipulations,  ");
-    sb.append("such as intersections and unions of tiers.  ");
-    //sb.append("Such settings that are not remembered between sessions are indicated by a tier name in <i>italics</i>.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+HUMAN_NAME+"</h2>\n");
-    sb.append("Sets the name to display as the tier label.  By default, this is the same as "+TIER_NAME+", ");
-    sb.append("but you can change the displayed name if you wish.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>Color and Background</h2>\n");
-    sb.append("Sets the foreground and background colors.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+SEPARATE+"</h2>\n");
-    sb.append("Whether to display annotations in two tiers (+) and (-), or one (+/-).  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+COLLAPSED+"</h2>\n");
-    sb.append("Whether to collapse the tier to its minimum height.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+MAX_DEPTH+"</h2>\n");
-    sb.append("The maximum rows of annotations to show in tiers that are <em>not</em> collapsed.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+GLYPH_DEPTH+"</h2>\n");
-    sb.append("Whether to connect groups of exons into transcripts.  ");
-    sb.append("Should be false for data with no intron-exon structure,  ");
-    sb.append("such as repeats or contigs.  ");
-    sb.append("Setting this to false for items that <em>do</em> have intron-exon structure ");
-    sb.append("may affect whether labels are displayed.  See below.");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+LABEL_FIELD+"</h2>\n");
-    sb.append("The name of the field to use to construct labels.  ");
-    sb.append("For most annotation types you may choose to use 'id' to turn labels on ");
-    sb.append("or leave this blank to turn off labels. ");
-    sb.append("Turning labels off reduces the memory required by the program.  ");
-    sb.append("Not all annotation types have 'id' fields, so it isn't possible to use 'id' for all types.  ");
-    sb.append("Features in some annotation types have additional properties that you may choose to use for a label.  ");
-    sb.append("For example, with 'RefSeq' data, you may choose to use 'gene name'.  ");
-    sb.append("Check in the 'Selection Info' window to find the names of the properties for items of any type.  ");
-    sb.append("</p><p>");
-    sb.append("Note that when "+GLYPH_DEPTH+" is true, the label is constructed from the property value of the whole transcript.");
-    sb.append("When false, the label is constructed from the property values of each individual exon.  ");
-    sb.append("Since the individual exons and the whole transcripts may have properties with different names, ");
-    sb.append("changing the setting of "+GLYPH_DEPTH+" may affect which labels are shown.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+APPLY_DEFAULT_BG+"</h2>\n");
-    sb.append("Copies the background color from the default row to all other rows.");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+REFRESH_MAP+"</h2>\n");
-    sb.append("Redraws the display applying any changes that have been made in the table.  ");
-    sb.append("</p>\n");
-
-    sb.append("<p>\n");
-    sb.append("<h2>"+AUTO_REFRESH+"</h2>\n");
-    sb.append("If selected, the display will refresh automatically after each change.");
-    sb.append("</p>\n");
-
-    return sb.toString();
-  }
-
-  public Icon getIcon() {
-    return null;
-  }
-
-  public String getInfoURL() {
-    return "";
-  }
-
-  public String getToolTip() {
-    return "Set Tier Colors and Properties";
-  }
 
   // implementation of IPrefEditorComponent
   public void refresh() {

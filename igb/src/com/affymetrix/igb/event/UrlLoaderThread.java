@@ -110,7 +110,7 @@ public final class UrlLoaderThread extends Thread {
         }
         if (isInterrupted()) {return;}
 
-				Application.getSingleton().setNotLockedUpStatus("Updating view");
+		Application.getSingleton().addNotLockedUpMsg("Updating view");
         if (isInterrupted()) {break;}
 
         // update the view, except for the last time where we let the "finally" block do it
@@ -124,7 +124,7 @@ public final class UrlLoaderThread extends Thread {
       // update the view again, mainly in case the thread was interrupted
       updateViewer(gviewer, aseq);
     }
-		Application.getSingleton().setStatus("");
+		Application.getSingleton().removeNotLockedUpMsg("Updating view");
   }
   
   private void parseUrl(URL url, String file_extension, String tier_name)
@@ -133,8 +133,7 @@ public final class UrlLoaderThread extends Thread {
     if (where_from == null || where_from.length()==0) {
       where_from = url.getPath();
     }
-		Application.getSingleton().setNotLockedUpStatus("Connecting to " + where_from);
-    //monitor.setMessageEventually("Connecting to "+where_from);
+		//Application.getSingleton().setNotLockedUpStatus("Connecting to " + where_from);
     if (isInterrupted()) {return;}
     
     URLConnection connection = url.openConnection();
@@ -143,7 +142,7 @@ public final class UrlLoaderThread extends Thread {
     connection.connect(); // throws an exception if no connection available
     
     //monitor.setMessageEventually("Loading data from "+where_from);
-		Application.getSingleton().setNotLockedUpStatus("Loading data from " + where_from);
+		//Application.getSingleton().setNotLockedUpStatus("Loading data from " + where_from);
     if (isInterrupted()) {return;}
     
     parseDataFromURL(gviewer, connection, file_extension, tier_name);

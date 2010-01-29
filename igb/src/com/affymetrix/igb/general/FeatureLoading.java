@@ -155,6 +155,7 @@ public final class FeatureLoading {
 	 */
 	public static void processDas2FeatureRequests(
 					List<Das2FeatureRequestSym> requests,
+					final String feature_name,
 					final boolean update_display,
 					final GenometryModel gmodel,
 					final SeqMapView gviewer) {
@@ -187,7 +188,7 @@ public final class FeatureLoading {
 						BioSeq aseq = gmodel.getSelectedSeq();
 						gviewer.setAnnotatedSeq(aseq, true, true);
 					}
-					Application.getSingleton().setStatus("", false);
+					Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 				}
 			};
 
@@ -231,9 +232,10 @@ public final class FeatureLoading {
 			}
 			IAnnotStyleExtended style = DefaultStateProvider.getGlobalStateProvider().getAnnotStyle(type.getID());
 			style.setHumanName(type.getName());
-			Application.getSingleton().setNotLockedUpStatus("Loading " + type.getShortName());
+			Application.getSingleton().addNotLockedUpMsg("Loading " + type.getShortName());
 			List<Das2FeatureRequestSym> feature_list = Das2ClientOptimizer.loadFeatures(request_sym);
 			result_syms.addAll(feature_list);
+			Application.getSingleton().removeNotLockedUpMsg("Loading " + type.getShortName());
 		}
 	}
 
@@ -257,7 +259,7 @@ public final class FeatureLoading {
 			}
 			@Override
 			public void done() {
-				Application.getSingleton().setStatus("",false);
+				Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 			}
 		};
 

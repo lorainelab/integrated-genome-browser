@@ -511,7 +511,6 @@ public final class IGB extends Application
 		tab_pane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		tab_pane.setMinimumSize(new Dimension(0, 0));
 
-		status_bar.setStatus(getApplicationName() + " " + getVersion());
 		cpane.add(status_bar, BorderLayout.SOUTH);
 
 		// Show the frame before loading the plugins.  Thus any error panel

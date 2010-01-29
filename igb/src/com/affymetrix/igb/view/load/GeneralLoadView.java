@@ -91,17 +91,17 @@ public final class GeneralLoadView extends JComponent
 		choicePanel.setBorder(BorderFactory.createEmptyBorder(2, 4, 4, 4));
 
 		speciesCB = new JComboBox();
-						speciesCB.addItem(SELECT_SPECIES);
+		speciesCB.addItem(SELECT_SPECIES);
 		speciesCB.setMaximumSize(new Dimension(speciesCB.getPreferredSize().width*4,speciesCB.getPreferredSize().height));
-
 		speciesCB.setEnabled(false);
 		speciesCB.setEditable(false);
 		speciesCB.setToolTipText(CHOOSE + " " + SELECT_SPECIES);
+
 		choicePanel.add(new JLabel(CHOOSE + ":"));
 		choicePanel.add(Box.createHorizontalStrut(5));
 		choicePanel.add(speciesCB);
-
 		choicePanel.add(Box.createHorizontalStrut(50));
+
 		versionCB = new JComboBox() {
 			/**
 			 * Default implementation of addListener permits the same class
@@ -186,35 +186,37 @@ public final class GeneralLoadView extends JComponent
 
 		populateSpeciesData();
 
+		addListeners();
 	}
 
 	/**
 	 * Discover servers, species, etc., asynchronously.
 	 */
 	private void populateSpeciesData() {
-		Application.getSingleton().setNotLockedUpStatus("Loading servers...");
-
 		Executor vexec = Executors.newSingleThreadExecutor();
 
-		SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+		for (final GenericServer gServer : ServerList.getEnabledServers()) {
+			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
-			protected Void doInBackground() throws Exception {
-				GeneralLoadUtils.discoverServersAndSpeciesAndVersions();
-				return null;
-			}
+				protected Void doInBackground() throws Exception {
+					Application.getSingleton().addNotLockedUpMsg("Loading server " + gServer.serverName);
+					GeneralLoadUtils.discoverServer(gServer);
+					return null;
+				}
 
-			@Override
-			public void done() {
-				initializeKingdomCB();
-				initializeSpeciesCB();
-				Application.getSingleton().setNotLockedUpStatus("Loading previous genome...");
-				RestorePersistentGenome();
-				Application.getSingleton().setStatus("",false);
-				addListeners();
-			}
-		};
+				@Override
+				public void done() {
+					/*
+					 initializeSpeciesCB();
+					Application.getSingleton().setNotLockedUpStatus("Loading previous genome...");
+					RestorePersistentGenome();
+					Application.getSingleton().setStatus("", false);
+					 */
+				}
+			};
 
-		vexec.execute(worker);
+			vexec.execute(worker);
+		}
 	}
 
 
@@ -259,7 +261,23 @@ public final class GeneralLoadView extends JComponent
 
 	public void GenericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
+
+		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer.serverName);
+		
+		System.out.println("GLV: init of server " + gServer.serverName);
+
+		// Need to refresh species names
+		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
+		refreshSpeciesCB();
+
+		// Need to refresh version names (if a species is selected)
+
+		// Need to refresh feature tree view (if a version is selected)
 		//System.out.println("GLV: init of server " + gServer.serverName);
+
+		if (speciesListener) {
+			this.speciesCB.addItemListener(this);
+		}
 	}
 
 
@@ -274,21 +292,25 @@ public final class GeneralLoadView extends JComponent
 
 	}
 
-	private void initializeKingdomCB() {
-		// TODO
-	}
-
 	/**
 	 * Initialize Species combo box.  It is assumed that we have the species data at this point.
 	 * If a species was already selected, leave it as the selected species.
 	 */
-	private void initializeSpeciesCB() {
+	private void refreshSpeciesCB() {
+		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
+		if (speciesListLength == speciesCB.getItemCount() -1) {
+			// No new species.  Don't bother refreshing.
+			if (speciesListLength == 0) {
+				speciesCB.setEnabled(false);
+				// disable if there are no species yet.
+			}
+			return;
+		}
 		String oldSpecies = (String)speciesCB.getSelectedItem();
 		speciesCB.removeItemListener(this);
 		speciesCB.removeAllItems();
 		speciesCB.addItem(SELECT_SPECIES);
 
-		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
 		if (speciesListLength == 0) {
 			// Disable the speciesName selectedSpecies.
 			speciesCB.setEnabled(false);
@@ -353,9 +375,9 @@ public final class GeneralLoadView extends JComponent
 	}
 
 	private static void initVersion(String versionName) {
-		Application.getSingleton().setNotLockedUpStatus("Loading chromosomes...");
+		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes...");
 		GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
-		Application.getSingleton().setStatus("",false);
+		Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes...");
 	}
 	
 	/**
@@ -372,7 +394,7 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().setNotLockedUpStatus("Loading residues");
+		Application.getSingleton().addNotLockedUpMsg("Loading residues");
 
 		final String genomeVersionName = (String) versionCB.getSelectedItem();
 
@@ -408,7 +430,7 @@ public final class GeneralLoadView extends JComponent
 			}
 			@Override
 			public void done() {
-				Application.getSingleton().setStatus("",false);
+				Application.getSingleton().removeNotLockedUpMsg("Loading residues");
 			}
 		};
 
@@ -553,14 +575,14 @@ public final class GeneralLoadView extends JComponent
 
 		@Override
 		public Void doInBackground() {
-			Application.getSingleton().setNotLockedUpStatus("Loading chromosomes...");
+			Application.getSingleton().addNotLockedUpMsg("Loading chromosomes...");
 			GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.
 			return null;
 		}
 
 		@Override
 		protected void done() {
-			Application.getSingleton().setStatus("", false);
+			Application.getSingleton().removeNotLockedUpMsg("Loading chromosomes...");
 			speciesCB.setEnabled(true);
 			versionCB.setEnabled(true);
 			gmodel.setSelectedSeqGroup(group);
@@ -718,11 +740,11 @@ public final class GeneralLoadView extends JComponent
 			return;
 		}
 
-		Application.getSingleton().setNotLockedUpStatus("Loading features");
+		Application.getSingleton().addNotLockedUpMsg("Loading features");
 
 		createFeaturesTable(true);
 		loadWholeRangeFeatures(versionName);
-		Application.getSingleton().setStatus("",false);
+		Application.getSingleton().removeNotLockedUpMsg("Loading features");
 	}
 
 
@@ -738,7 +760,7 @@ public final class GeneralLoadView extends JComponent
 		versionCB.removeItemListener(this);
 		GenericVersion gVersion = glu.getUnknownVersion(group);
 		String species = GeneralLoadUtils.versionName2species.get(gVersion.versionName);
-		initializeSpeciesCB();
+		refreshSpeciesCB();
 		if (DEBUG_EVENTS) {
 			System.out.println("Species is " + species + ", version is " + gVersion.versionName);
 		}

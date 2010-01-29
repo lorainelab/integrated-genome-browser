@@ -163,14 +163,14 @@ public final class GeneralLoadUtils {
 	/**
 	 * Discover all of the servers and genomes and versions.
 	 */
-	synchronized static void discoverServersAndSpeciesAndVersions() {
+	static void discoverServersAndSpeciesAndVersions() {
 		for (GenericServer gServer : ServerList.getEnabledServers()) {
 			discoverServer(gServer);
 		}
 	}
 
 
-	private static boolean discoverServer(GenericServer gServer) {
+	static boolean discoverServer(GenericServer gServer) {
 		try {
 			if (gServer.serverType == ServerType.Unknown) {
 				// should never happen
@@ -285,30 +285,24 @@ public final class GeneralLoadUtils {
 
 		for (String genomeID : genomeList) {
 			String genomeName = LOOKUP.findMatchingSynonym(gmodel.getSeqGroupNames(), genomeID);
+			String versionName,speciesName;
 			// Retrieve group identity, since this has already been added in QuickLoadServerModel.
-
-			AnnotatedSeqGroup group = gmodel.addSeqGroup(genomeName);
-			List<GenericVersion> gVersions = group.getVersions();
+			List<GenericVersion> gVersions = gmodel.addSeqGroup(genomeName).getVersions();
 			if (!gVersions.isEmpty()) {
 				// We've found a corresponding version object that was initialized earlier.
-				String versionName = gVersions.get(0).versionName;
-				String speciesName = versionName2species.get(versionName);
-				GenericVersion quickLoadVersion = new GenericVersion(genomeID, versionName, gServer, quickloadServer);
-				List<GenericVersion> gVersionList = species2genericVersionList.get(speciesName);
-				discoverVersion(versionName, gServer, quickLoadVersion, gVersionList, speciesName);
-				continue;
+				versionName = gVersions.get(0).versionName;
+				speciesName = versionName2species.get(versionName);
+			} else {
+				// Unknown genome.  We'll add the name as if it's a species and a version.
+				if (DEBUG) {
+					System.out.println("Unknown quickload genome:" + genomeName);
+				}
+				versionName = genomeName;
+				speciesName = SPECIES_LOOKUP.getSpeciesName(genomeName);
 			}
-			String species = SPECIES_LOOKUP.getSpeciesName(genomeName);
-
-			// Unknown genome.  We'll add the name as if it's a species and a version.
-			if (DEBUG) {
-				System.out.println("Unknown quickload genome:" + genomeName);
-			}
-
-			List<GenericVersion> gVersionList = getSpeciesVersionList(species);
-
-			GenericVersion gVersion = new GenericVersion(genomeID, genomeName, gServer, quickloadServer);
-			discoverVersion(gVersion.versionName, gServer, gVersion, gVersionList, species);
+			GenericVersion quickLoadVersion = new GenericVersion(genomeID, versionName, gServer, quickloadServer);
+			List<GenericVersion> gVersionList = getSpeciesVersionList(speciesName);
+			discoverVersion(versionName, gServer, quickLoadVersion, gVersionList, speciesName);
 		}
 		return true;
 	}
@@ -527,12 +521,11 @@ public final class GeneralLoadUtils {
 			return group;
 		}
 		if (gVersion.gServer.serverType == ServerType.Unknown) {
-				group = gmodel.addSeqGroup(gVersion.versionName);
-				return group;
-			}
+			group = gmodel.addSeqGroup(gVersion.versionName);
+			return group;
+		}
 
 		System.out.println("WARNING: Unknown server class " + gVersion.gServer.serverType);
-
 		return null;
 	}
 
@@ -659,43 +652,32 @@ public final class GeneralLoadUtils {
 
 
 		ServerType serverType = gFeature.gVersion.gServer.serverType;
-		Application.getSingleton().setNotLockedUpStatus();
+
+		
+
+		boolean result = false;
+
+		Application.getSingleton().addNotLockedUpMsg("Loading feature " + gFeature.featureName);
 
 		if (serverType == ServerType.DAS2) {
-			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
-			if (loadDAS2Annotations(
+			result = loadDAS2Annotations(
 							selected_seq,
 							gFeature.featureName,
 							(Das2VersionedSource) gFeature.gVersion.versionSourceObj,
 							gviewer,
 							visible_seq,
-							overlap)) {
-				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
-				return true;
-			}
-			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
-			return false;
-		}
-		if (serverType == ServerType.DAS) {
-			if (DasFeatureLoader.loadFeatures(gFeature, overlap)) {
-				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
-				return true;
-			}
-			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
-			return false;
-		}
-		if (serverType == ServerType.QuickLoad) {
-			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADING);
-			if (FeatureLoading.loadQuickLoadAnnotations(gFeature)) {
-				SetLoadStatus(gFeature, cur_seq, model, LoadStatus.LOADED);
-				return true;
-			}
-			SetLoadStatus(gFeature, cur_seq, model, LoadStatus.UNLOADED);
-			return false;
+							overlap);
+		} else if (serverType == ServerType.DAS) {
+			result = DasFeatureLoader.loadFeatures(gFeature, overlap);
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
+		} else if (serverType == ServerType.QuickLoad) {
+			result = FeatureLoading.loadQuickLoadAnnotations(gFeature);
+		} else {
+			System.out.println("class " + serverType + " is not implemented.");
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + gFeature.featureName);
 		}
 
-		System.out.println("class " + serverType + " is not implemented.");
-		return false;
+		return result;
 	}
 
 	private static void SetLoadStatus(GenericFeature gFeature, BioSeq aseq, FeaturesTableModel model, LoadStatus ls) {
@@ -748,7 +730,7 @@ public final class GeneralLoadUtils {
 			}
 		}
 
-		FeatureLoading.processDas2FeatureRequests(requests, true, gmodel, gviewer);
+		FeatureLoading.processDas2FeatureRequests(requests, feature_name, true, gmodel, gviewer);
 		return true;
 	}
 

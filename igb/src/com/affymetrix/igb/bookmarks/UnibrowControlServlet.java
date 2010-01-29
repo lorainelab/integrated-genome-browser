@@ -151,8 +151,8 @@ public final class UnibrowControlServlet {
 		if (DEBUG_DAS2_LOAD) {
 			System.out.println("UnibrowControlServlet.loadDataFromDas2 called");
 		}
-		ArrayList<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
-		ArrayList<String> opaque_requests = new ArrayList<String>();
+		List<Das2FeatureRequestSym> das2_requests = new ArrayList<Das2FeatureRequestSym>();
+		List<String> opaque_requests = new ArrayList<String>();
 		for (int i = 0; i < das2_server_urls.length; i++) {
 			String das2_server_url = GeneralUtils.URLDecode(das2_server_urls[i]);
 			String das2_query_url = GeneralUtils.URLDecode(das2_query_urls[i]);
@@ -246,7 +246,9 @@ public final class UnibrowControlServlet {
 
 		if (das2_requests.size() > 0) {
 			SeqMapView gviewer = Application.getSingleton().getMapView();
-			FeatureLoading.processDas2FeatureRequests(das2_requests, true, gmodel, gviewer);
+			String featureName = "bookmarked data";
+			Application.getSingleton().addNotLockedUpMsg("Loading feature " + featureName);
+			FeatureLoading.processDas2FeatureRequests(das2_requests, featureName, true, gmodel, gviewer);
 		}
 		if (opaque_requests.size() > 0) {
 			String[] data_urls = new String[opaque_requests.size()];

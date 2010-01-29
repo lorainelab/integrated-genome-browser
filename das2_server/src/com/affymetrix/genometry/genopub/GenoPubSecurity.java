@@ -27,7 +27,7 @@ public class GenoPubSecurity implements AnnotSecurity {
 	public static final String    GROUP_SCOPE_LEVEL = "GROUP";
 	public static final String    ALL_SCOPE_LEVEL   = "ALL";
 	
-	private boolean                scrutinizeAccess = false;
+	private  boolean                scrutinizeAccess = false;
 	
 	
 	private User                    user;
@@ -35,12 +35,12 @@ public class GenoPubSecurity implements AnnotSecurity {
 	private boolean                isGuestRole = true;
 	
 	
-	private HashMap<Integer, UserGroup>   groupsMemCollabVisibility = new HashMap<Integer, UserGroup>();
-	private HashMap<Integer, UserGroup>   groupsMemVisibility = new HashMap<Integer, UserGroup>();
+	private final HashMap<Integer, UserGroup>   groupsMemCollabVisibility = new HashMap<Integer, UserGroup>();
+	private final HashMap<Integer, UserGroup>   groupsMemVisibility = new HashMap<Integer, UserGroup>();
 	
 	
-	private HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
-	private Map<String, GenomeVersion> versionNameToVersionMap = new HashMap<String, GenomeVersion>();
+	private final HashMap<String, HashMap<Integer, QualifiedAnnotation>> versionToAuthorizedAnnotationMap = new HashMap<String, HashMap<Integer, QualifiedAnnotation>>();
+	private  Map<String, GenomeVersion> versionNameToVersionMap = new HashMap<String, GenomeVersion>();
 	
 	private String                  baseURL;
 	

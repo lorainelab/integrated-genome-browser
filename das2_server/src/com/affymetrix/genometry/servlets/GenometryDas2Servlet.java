@@ -252,18 +252,18 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 *  maps organism names to list of genome versions for that organism
 	 */
 	private static Map<String, List<AnnotatedSeqGroup>> organisms = new LinkedHashMap<String, List<AnnotatedSeqGroup>>();
-	private Map<String, Class<? extends AnnotationWriter>> output_registry =
+	private final Map<String, Class<? extends AnnotationWriter>> output_registry =
 			new HashMap<String, Class<? extends AnnotationWriter>>();
 	private final SimpleDateFormat date_formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private long date_initialized = 0;
 	private String date_init_string = null;
 	private static Map<AnnotatedSeqGroup,List<AnnotMapElt>> annots_map = new HashMap<AnnotatedSeqGroup,List<AnnotMapElt>>();    // hash of filenames to annot properties.
 
-	private Map<AnnotatedSeqGroup, Map<String, String>> genome2graphfiles = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
-	private Map<AnnotatedSeqGroup, Map<String, String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
-	private HashMap<String, USeqArchive> file2USeqArchive = new HashMap<String, USeqArchive>();
+	private final Map<AnnotatedSeqGroup, Map<String, String>> genome2graphfiles = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
+	private final Map<AnnotatedSeqGroup, Map<String, String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
+	private final HashMap<String, USeqArchive> file2USeqArchive = new HashMap<String, USeqArchive>();
 	private Transformer types_transformer;
-	private boolean DEFAULT_USE_TYPES_XSLT = true;
+	private final boolean DEFAULT_USE_TYPES_XSLT = true;
 	private boolean use_types_xslt;
 
 	private static String synonym_file;

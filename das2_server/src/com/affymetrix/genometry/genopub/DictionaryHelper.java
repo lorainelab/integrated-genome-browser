@@ -11,44 +11,34 @@ import org.dom4j.Element;
 
 import org.hibernate.Session;
 
-import com.affymetrix.genometry.genopub.AnalysisType;
-import com.affymetrix.genometry.genopub.DictionaryHelper;
-import com.affymetrix.genometry.genopub.ExperimentMethod;
-import com.affymetrix.genometry.genopub.ExperimentPlatform;
-import com.affymetrix.genometry.genopub.GenoPubSecurity;
-import com.affymetrix.genometry.genopub.GenomeVersion;
-import com.affymetrix.genometry.genopub.Organism;
-import com.affymetrix.genometry.genopub.User;
-import com.affymetrix.genometry.genopub.UserGroup;
-import com.affymetrix.genometry.genopub.Visibility;
 
 public class DictionaryHelper {
     
     private static DictionaryHelper              theDictionaryHelper   = null;
 	
-    private HashMap<Integer, AnalysisType>        analysisTypeMap  = new HashMap<Integer, AnalysisType>();
-	private List<AnalysisType>                    analysisTypeList = new ArrayList<AnalysisType>();
+    private final HashMap<Integer, AnalysisType>        analysisTypeMap  = new HashMap<Integer, AnalysisType>();
+	private final List<AnalysisType>                    analysisTypeList = new ArrayList<AnalysisType>();
 	
-    private HashMap<Integer, ExperimentMethod>    experimentMethodMap  = new HashMap<Integer, ExperimentMethod>();
-	private List<ExperimentMethod>                experimentMethodList = new ArrayList<ExperimentMethod>();
+    private final HashMap<Integer, ExperimentMethod>    experimentMethodMap  = new HashMap<Integer, ExperimentMethod>();
+	private final List<ExperimentMethod>                experimentMethodList = new ArrayList<ExperimentMethod>();
 
-    private HashMap<Integer, ExperimentPlatform>  experimentPlatformMap  = new HashMap<Integer, ExperimentPlatform>();
-	private List<ExperimentPlatform>              experimentPlatformList = new ArrayList<ExperimentPlatform>();
+    private final HashMap<Integer, ExperimentPlatform>  experimentPlatformMap  = new HashMap<Integer, ExperimentPlatform>();
+	private final List<ExperimentPlatform>              experimentPlatformList = new ArrayList<ExperimentPlatform>();
 
-	private HashMap<Integer, Organism>            organismMap  = new HashMap<Integer, Organism>();
-	private List<Organism>                        organismList = new ArrayList<Organism>();
+	private final HashMap<Integer, Organism>            organismMap  = new HashMap<Integer, Organism>();
+	private final  List<Organism>                        organismList = new ArrayList<Organism>();
 
-	private HashMap<Integer, GenomeVersion>       genomeVersionMap  = new HashMap<Integer, GenomeVersion>();
-	private List<GenomeVersion>                   genomeVersionList = new ArrayList<GenomeVersion>();
-	private HashMap<Integer, List<GenomeVersion>> organismToGenomeVersionMap = new HashMap<Integer, List<GenomeVersion>>();
+	private final HashMap<Integer, GenomeVersion>       genomeVersionMap  = new HashMap<Integer, GenomeVersion>();
+	private final List<GenomeVersion>                   genomeVersionList = new ArrayList<GenomeVersion>();
+	private final HashMap<Integer, List<GenomeVersion>> organismToGenomeVersionMap = new HashMap<Integer, List<GenomeVersion>>();
 
-	private HashMap<Integer, UserGroup>           groupMap  = new HashMap<Integer, UserGroup>();
-	private List<UserGroup>                       groupList = new ArrayList<UserGroup>();
+	private final HashMap<Integer, UserGroup>           groupMap  = new HashMap<Integer, UserGroup>();
+	private final List<UserGroup>                       groupList = new ArrayList<UserGroup>();
 
-	private HashMap<Integer, User>                userMap  = new HashMap<Integer, User>();
-	private List<User>                            userList = new ArrayList<User>();
+	private final HashMap<Integer, User>                userMap  = new HashMap<Integer, User>();
+	private final List<User>                            userList = new ArrayList<User>();
 
-	private List<Visibility>                      visibilityList = new ArrayList<Visibility>();
+	private final List<Visibility>                      visibilityList = new ArrayList<Visibility>();
 
 	public static DictionaryHelper getInstance(Session sess) {
 		if (theDictionaryHelper == null) {

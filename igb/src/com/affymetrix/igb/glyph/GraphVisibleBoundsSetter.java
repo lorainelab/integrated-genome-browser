@@ -47,12 +47,12 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private final JRadioButton by_percentileRB = new JRadioButton("By Percentile (individually)");
 	private final JPanel valP = new JPanel();  // for adjust-by-value controls
 	private final JPanel perP = new JPanel();  // for adjust-by-percent controls
-	private final int max_chars = 8;
-	private final int max_pix_per_char = 6;
+	private final static int max_chars = 8;
+	private final static int max_pix_per_char = 6;
 	private final int tf_min_xpix = max_chars * max_pix_per_char;
 	private final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
-	private final int tf_min_ypix = 10;
-	private final int tf_max_ypix = 25;
+	private final static int tf_min_ypix = 10;
+	private final static int tf_max_ypix = 25;
 
 
 	static {
@@ -98,7 +98,7 @@ public final class GraphVisibleBoundsSetter extends JPanel
 	private final float abs_max_percent = 100.0f;
 	private float prev_min_per = 0;
 	private float prev_max_per = 100;
-	private final int total_val_sliders = 1000;
+	private final static int total_val_sliders = 1000;
 	private float sliders_per_val; // slider units per yval unit
 	//private float vals_per_slider; // yval units per slider unit
 	//private float abs_min_val;

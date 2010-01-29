@@ -258,8 +258,8 @@ public class SeqMapView extends JPanel
 	private int as_time_interval = 20;
 	private int as_start_pos = 0;
 	private int as_end_pos;
-	private final int xoffset_pop = 10;
-	private final int yoffset_pop = 0;
+	private final static int xoffset_pop = 10;
+	private final static int yoffset_pop = 0;
 	private Thread slice_thread = null;
 	/** Whether the Application name goes first in the title bar.
 	 */

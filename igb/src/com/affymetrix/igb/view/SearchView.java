@@ -682,12 +682,12 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 	private class SearchResultsTableModel extends AbstractTableModel {
 
 		private final String[] column_names = {"ID", "Tier", "Start", "End", "Chromosome", "Strand"};
-		private final int ID_COLUMN = 0;
-		private final int TIER_COLUMN = 1;
-		private final int START_COLUMN = 2;
-		private final int END_COLUMN = 3;
-		private final int CHROM_COLUMN = 4;
-		private final int STRAND_COLUMN = 5;
+		private static  final int ID_COLUMN = 0;
+		private static final int TIER_COLUMN = 1;
+		private static final int START_COLUMN = 2;
+		private static final int END_COLUMN = 3;
+		private static final int CHROM_COLUMN = 4;
+		private static final int STRAND_COLUMN = 5;
 		private final List<SeqSymmetry> search_results;
 
 		public SearchResultsTableModel(List<SeqSymmetry> results) {

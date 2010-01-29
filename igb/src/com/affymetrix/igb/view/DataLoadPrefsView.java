@@ -24,6 +24,7 @@ import com.affymetrix.igb.prefs.SourceTableModel;
 import com.affymetrix.igb.prefs.SourceTableModel.SourceColumn;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

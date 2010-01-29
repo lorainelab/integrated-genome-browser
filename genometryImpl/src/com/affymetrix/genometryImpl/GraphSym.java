@@ -61,7 +61,7 @@ public class GraphSym extends SimpleSymWithProps {
 
 	private int xCoords[];	// too slow to do indexing of x right now
 
-	private double xDelta = 0.0f;	// used by GraphGlyph
+	private  double xDelta = 0.0f;	// used by GraphGlyph
 
 	/**
 	 *  id_locked is a temporary fix to allow graph id to be changed after construction, 

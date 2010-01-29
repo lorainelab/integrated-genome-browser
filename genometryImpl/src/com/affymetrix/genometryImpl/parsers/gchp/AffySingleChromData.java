@@ -27,12 +27,12 @@ import java.util.*;
 
 final class AffySingleChromData {
 
-	private int start;
-	private int rowCount;
+	private final int start;
+	private final int rowCount;
 	String displayName; // AND by a display name.
 
 	private List<AffyChpColumnData> columns = new ArrayList<AffyChpColumnData>();
-	private AffyGenericChpFile chpFile;
+	private final AffyGenericChpFile chpFile;
 	AffyDataSet dataSet;
 
 	/** Creates a new instance of SingleChromosomeData */

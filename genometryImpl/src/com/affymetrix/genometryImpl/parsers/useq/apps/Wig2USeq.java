@@ -15,17 +15,17 @@ public class Wig2USeq {
 	private File[] files;
 	private float skipValue = Float.MIN_VALUE;
 	private float negativeSkipValue;
-	private ArrayList<File> files2Zip = new ArrayList<File>();
+	private final ArrayList<File> files2Zip = new ArrayList<File>();
 	private int rowChunkSize = 100000;
 	private File saveDirectory;
 	private String versionedGenome = null;
 	private int graphStyle = 1;
 	private String color = null;
 	private String description = null;
-	private File workingWigFile = null;
-	private Pattern number = Pattern.compile("^\\d");
-	private Pattern space = Pattern.compile("\\s");
-	private Pattern equal = Pattern.compile("=");
+	private  File workingWigFile = null;
+	private final Pattern number = Pattern.compile("^\\d");
+	private final Pattern space = Pattern.compile("\\s");
+	private final Pattern equal = Pattern.compile("=");
 
 	public Wig2USeq(String[] args) {
 		//check for args 

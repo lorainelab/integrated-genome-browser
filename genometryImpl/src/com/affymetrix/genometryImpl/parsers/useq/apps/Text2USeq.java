@@ -52,7 +52,7 @@ public class Text2USeq {
 	private File[] outputDirectories;
 	private File workingBinarySaveDirectory;
 	private HashMap<String, File> chromStrandFileHash;
-	private ArrayList<File> files2Zip = new ArrayList<File>();
+	private final ArrayList<File> files2Zip = new ArrayList<File>();
 	public static final Pattern PATTERN_TAB = Pattern.compile("\\t");
 	public static final Pattern PATTERN_STRAND = Pattern.compile(".*[+-\\.]$");
 
@@ -960,8 +960,8 @@ public class Text2USeq {
 	
 	private class PositionStringArray implements Comparable{
 
-		private int position;
-		private String[] line;
+		private final int position;
+		private final String[] line;
 		
 		public PositionStringArray(int position, String[] line){
 			this.position = position;

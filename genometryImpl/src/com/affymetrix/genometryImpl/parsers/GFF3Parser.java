@@ -58,7 +58,7 @@ public final class GFF3Parser {
 	private static final Pattern directive_version = Pattern.compile("##gff-version\\s+(.*)");
 
 	private static final boolean use_track_lines = true;
-	private TrackLineParser track_line_parser = new TrackLineParser();
+	private final TrackLineParser track_line_parser = new TrackLineParser();
 
 	private static final Set<String> IGNORABLE_TYPES;
 	private static final Set<String> seenTypes = Collections.<String>synchronizedSet(new HashSet<String>());
@@ -73,7 +73,7 @@ public final class GFF3Parser {
 	}
 
 	/** Contains a list of parent ids which have been ignored */
-	private Set<String> bad_parents = new HashSet<String>();
+	private final Set<String> bad_parents = new HashSet<String>();
 
 	public GFF3Parser() {
 	}

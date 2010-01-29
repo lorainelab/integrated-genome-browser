@@ -60,7 +60,7 @@ final class WiggleData {
 	private static final class Point3D {
 		private final float y;
 		private final int x;
-		private int w;
+		private final int w;
 		public Point3D(int x, float y,int w) {
 			this.x = x; this.y =y; this.w = w;
 		}

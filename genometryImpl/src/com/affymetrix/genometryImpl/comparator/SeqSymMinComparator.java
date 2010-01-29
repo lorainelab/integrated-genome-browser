@@ -12,7 +12,7 @@ import java.util.Comparator;
  *  @see SeqSymStartComparator
  */
 public final class SeqSymMinComparator implements Comparator<SeqSymmetry> {
-	private BioSeq seq;
+	private final BioSeq seq;
 
 	/** Constructor.
 	 *  @param s  sequence to base the sorting on

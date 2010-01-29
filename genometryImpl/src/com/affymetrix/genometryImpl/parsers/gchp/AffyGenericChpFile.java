@@ -28,8 +28,8 @@ public final class AffyGenericChpFile {
 	private Map<String,AffyChpParameter> parameterMap = new LinkedHashMap<String,AffyChpParameter>();
 	private AffyGenericDataHeader header;
 	List<AffyDataGroup> groups;
-	private File file;
-	private ChromLoadPolicy loadPolicy;
+	private final File file;
+	private final ChromLoadPolicy loadPolicy;
 
 	/** Creates a new instance of AffyCnChpParser */
 	private AffyGenericChpFile(File file, ChromLoadPolicy loadPolicy) {

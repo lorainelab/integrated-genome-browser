@@ -27,9 +27,9 @@ import com.affymetrix.genometryImpl.util.FloatList;
  *  Assumes that ScoredContainerSym has only one SeqSpan
  */
 public class ScoredContainerSym extends SimpleSymWithProps {
-	private Map<String,Object> name2scores = new HashMap<String,Object>();
-	private List<Object> scorevals = new ArrayList<Object>();
-	private List<String> scorenames = new ArrayList<String>();
+	private final Map<String,Object> name2scores = new HashMap<String,Object>();
+	private final List<Object> scorevals = new ArrayList<Object>();
+	private final List<String> scorenames = new ArrayList<String>();
 
 	private static Map<String,GraphState> id2gstate = new HashMap<String,GraphState>();
 

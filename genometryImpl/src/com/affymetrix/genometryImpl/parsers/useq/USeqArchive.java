@@ -18,13 +18,13 @@ import java.util.*;
  * @author david.nix@hci.utah.edu*/
 public class USeqArchive {
 
-	private File zipFile;
+	private final File zipFile;
 	private ZipFile zipArchive;
 	private ArchiveInfo archiveInfo;
 	private ZipEntry archiveReadMeEntry;
-	private HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
+	private final HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
 	//DAS2 does not support stranded requests at this time so leave false.
-	private boolean maintainStrandedness = false;
+	private final boolean maintainStrandedness = false;
 
 	public USeqArchive (File zipFile) throws Exception{
 		this.zipFile = zipFile;

@@ -1,8 +1,8 @@
 package com.affymetrix.genometryImpl.util;
 
 public final class NibbleIterator implements SearchableCharIterator {
-	private int length;
-	private byte[] nibble_array;
+	private final int length;
+	private final byte[] nibble_array;
 
 	public NibbleIterator(byte[] nibs, int len) {
 		this.length = len;

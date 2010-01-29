@@ -78,7 +78,7 @@ public final class GraphState {
 	private boolean show_label = true;
 
 	private HeatMap heat_map;
-	private IAnnotStyle tier_style;
+	private final IAnnotStyle tier_style;
 	private IAnnotStyle combo_tier_style = null;
 
 	public static float default_graph_height = 100.0f;

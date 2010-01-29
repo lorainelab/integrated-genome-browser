@@ -28,11 +28,11 @@ public final class AffyDataSet {
 	private List<AffyChpColumnType> columnTypes;
 	private long num_rows;
 
-	private Map<Integer, AffySingleChromData> num2chromData = new LinkedHashMap<Integer,AffySingleChromData>();
-	private List<String> chromosomeNames = new ArrayList<String>();
+	private final Map<Integer, AffySingleChromData> num2chromData = new LinkedHashMap<Integer,AffySingleChromData>();
+	private final List<String> chromosomeNames = new ArrayList<String>();
 
 
-	private AffyGenericChpFile chpFile;
+	private final AffyGenericChpFile chpFile;
 
 
 	/** Creates a new instance of AffyDataSet */

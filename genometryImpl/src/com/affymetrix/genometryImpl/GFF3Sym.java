@@ -63,9 +63,9 @@ public final class GFF3Sym extends SimpleSymWithProps implements Scored, Support
 	private String source;
 	private String method;
 	public String feature_type;
-	private float score;
-	private char frame;
-	private String attributes;
+	private final float score;
+	private final char frame;
+	private final String attributes;
 
 	
 	/**

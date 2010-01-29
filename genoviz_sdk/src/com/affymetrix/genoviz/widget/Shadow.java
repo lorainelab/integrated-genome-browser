@@ -43,8 +43,8 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	private final FillRectGlyph vGlyph = new FillRectGlyph();
 
 	private NeoMap map;
-	private final double topMargin = 0.0;  // margins between viewable area and the shadow
-	private final double bottomMargin = 0.0;
+	private final static double topMargin = 0.0;  // margins between viewable area and the shadow
+	private final static double bottomMargin = 0.0;
 	private int orientation;
 	private boolean labeled=false;  // should we draw a label?
 	private boolean labelForReverse = false;

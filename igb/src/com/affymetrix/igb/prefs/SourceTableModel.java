@@ -1,6 +1,5 @@
 package com.affymetrix.igb.prefs;
 
-import com.affymetrix.genometryImpl.util.LoadUtils;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.igb.general.ServerList;
 
@@ -21,7 +20,7 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	private static final long serialVersionUID = 1l;
 	private final List<GenericServer> servers = new ArrayList<GenericServer>();
 
-	public static enum SourceColumn { Name, Type, URL, Login, Password, Enabled };
+	public static enum SourceColumn { Name, Type, URL, Enabled };
 
 	public SourceTableModel() {
 		init();
@@ -63,10 +62,6 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 				return servers.get(rowIndex).serverType;
 			case URL:
 				return servers.get(rowIndex).URL;
-			case Login:
-				return servers.get(rowIndex).login;
-			case Password:
-				return servers.get(rowIndex).password != null && !servers.get(rowIndex).password.equals("") ? "****" : ""; 				
 			default:
 				throw new IllegalArgumentException("columnIndex " + columnIndex + " is out of range");
 		}
@@ -75,56 +70,28 @@ public final class SourceTableModel extends AbstractTableModel implements Prefer
 	@Override
     public boolean isCellEditable(int row, int col) {
 		SourceColumn c = SourceColumn.valueOf(this.getColumnName(col));
-		return c != SourceColumn.Type && ServerList.inServerPrefs(servers.get(row).URL);
+		return c == SourceColumn.Enabled && ServerList.inServerPrefs(servers.get(row).URL);
     }
-    
+
 
 	@Override
     public void setValueAt(Object value, int row, int col) {
         GenericServer server = servers.get(row);
-        String existingDirectoryOrURL = server.URL;
         
         switch (SourceColumn.valueOf(this.getColumnName(col))) {
         case Enabled:
 			server.enabled = Boolean.class.cast(value);
 			break;
-		case Name:
-			server.serverName = String.class.cast(value);
-			break;
-		case Type:
-			if (server.serverType.equals(LoadUtils.ServerType.QuickLoad)) {
-				server.serverType = LoadUtils.ServerType.QuickLoad;
-			} else if  (server.serverType.equals(LoadUtils.ServerType.DAS)) {
-				server.serverType = LoadUtils.ServerType.DAS;
-			} else if  (server.serverType.equals(LoadUtils.ServerType.DAS2)) {
-				server.serverType = LoadUtils.ServerType.DAS2;
-			}
-			break;
-		case URL:
-			server.URL = String.class.cast(value);
-			break;
-		case Login:
-			server.login = String.class.cast(value);
-			break;
-		case Password:
-			server.password = String.class.cast(value);
-			break;
-		
 		default:
-			throw new IllegalArgumentException("columnIndex " + col + " is out of range");
+			throw new IllegalArgumentException("columnIndex " + col + " not editable");
         }
         
-		changePreference(existingDirectoryOrURL, server);
+		changePreference(server);
     }
     
 
-	private void changePreference(String existingDirectoryOrURL, GenericServer server) {
-
-		if (!existingDirectoryOrURL.equals(server.URL)) {
-			ServerList.removeServerFromPrefs(existingDirectoryOrURL);
-		}
+	private void changePreference(GenericServer server) {
 		ServerList.addServerToPrefs(server);
-		
 		this.fireTableDataChanged();
 		
 		

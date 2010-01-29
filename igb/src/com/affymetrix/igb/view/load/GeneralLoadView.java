@@ -219,46 +219,6 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
-
-	/**
-	 * Add and verify another server.  Called from DataLoadPrefsView.
-	 * @param serverName
-	 * @param serverURL
-	 * @param serverType
-	 * @param login
-	 * @param password 
-	 * @return true or false
-	 */
-	public boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
-		if (!serverType.equals(ServerType.DAS2)) {
-			login = null;
-			password = null;
-		}
-		if (!GeneralLoadUtils.addServer(serverName, serverURL, serverType, login, password)) {
-			return false;
-		}
-
-		// server has been added.  Refresh necessary boxes, tables, etc.
-		AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-		if (group == null) {
-			return true;
-		}
-		BioSeq seq = gmodel.getSelectedSeq();
-
-		String versionName = (String)this.versionCB.getSelectedItem();
-		initVersion(versionName);
-
-		gmodel.setSelectedSeqGroup(null);
-		gmodel.setSelectedSeq(null);
-
-		gmodel.setSelectedSeqGroup(group);
-		if (seq != null) {
-			gmodel.setSelectedSeq(seq);
-		}
-
-		return true;
-	}
-
 	public void GenericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
 

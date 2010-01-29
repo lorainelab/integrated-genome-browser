@@ -278,4 +278,9 @@ public class IGBAuthenticator extends Authenticator {
 			ServerList.addServerToPrefs(serverObject);
 		}
 	}
+
+	public static void resetAuth(String url) {
+		Preferences serverNode = UnibrowPrefsUtil.getServersNode().node(GeneralUtils.URLEncode(url));
+		serverNode.put(PREF_AUTH_TYPE, AuthType.ASK.toString());
+	}
 }

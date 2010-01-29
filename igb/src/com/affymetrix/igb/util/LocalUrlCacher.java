@@ -19,6 +19,8 @@ import com.affymetrix.igb.Application;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 public final class LocalUrlCacher {
@@ -31,6 +33,17 @@ public final class LocalUrlCacher {
 	public static final int IGNORE_CACHE = 100;
 	public static final int ONLY_CACHE = 101;
 	public static final int NORMAL_CACHE = 102;
+	public static enum CacheUsage {
+		Normal(NORMAL_CACHE),
+		Disabled(IGNORE_CACHE),
+		Offline(ONLY_CACHE);
+
+		public final int usage;
+		
+		CacheUsage(int usage) {
+			this.usage = usage;
+		}
+	};
 
 	// the "quickload" part of the constant value is there for historical reasons
 	public static final String PREF_CACHE_USAGE = "quickload_cache_usage";
@@ -491,6 +504,7 @@ public final class LocalUrlCacher {
 	 *  Simply removes all cached files.
 	 */
 	public static void clearCache() {
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Clearing cache");
 		DeleteFilesInDirectory(cache_header_root);
 		DeleteFilesInDirectory(cache_content_root);
 	}
@@ -516,6 +530,7 @@ public final class LocalUrlCacher {
 	}
 
 	public static void setPreferredCacheUsage(int usage) {
+		Logger.getLogger(LocalUrlCacher.class.getName()).log(Level.INFO, "Setting Caching mode to " + getCacheUsage(usage));
 		UnibrowPrefsUtil.saveIntParam(LocalUrlCacher.PREF_CACHE_USAGE, usage);
 	}
 
@@ -584,5 +599,13 @@ public final class LocalUrlCacher {
 		BufferedOutputStream hbos = new BufferedOutputStream(new FileOutputStream(header_cache_file));
 		headerprops.store(hbos, null);
 		GeneralUtils.safeClose(hbos);
+	}
+
+	public static final CacheUsage getCacheUsage(int usage) {
+		for(CacheUsage u : CacheUsage.values()) {
+			if(u.usage == usage) { return u; }
+		}
+
+		return null;
 	}
 }

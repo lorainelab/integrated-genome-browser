@@ -6,7 +6,7 @@
     xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
     xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
 
-  <description>This ruleset if for the genoviz project</description>
+  <description>This ruleset is for the Genoviz project</description>
 
 	<rule ref="rulesets/basic.xml">
 		<exclude name="ForLoopShouldBeWhileLoop" />
@@ -29,6 +29,7 @@
 		<exclude name="DataflowAnomalyAnalysis" />
 		<exclude name="DefaultPackage" />
 		<exclude name="OnlyOneReturn" />
+		<exclude name="UnnecessaryParentheses" />
 		<exclude name="UnusedModifier" />
 	</rule>
 	<rule ref="rulesets/coupling.xml">
@@ -45,7 +46,9 @@
 	</rule>
 	<rule ref="rulesets/finalizers.xml" />
 	<rule ref="rulesets/imports.xml" />
-	<rule ref="rulesets/j2ee.xml" />
+	<rule ref="rulesets/j2ee.xml" >
+		<exclude name="DoNotUseThreads"/>
+	</rule>
 	<rule ref="rulesets/junit.xml" />
 	<rule ref="rulesets/logging-jakarta-commons.xml" />
 	<rule ref="rulesets/logging-java.xml">

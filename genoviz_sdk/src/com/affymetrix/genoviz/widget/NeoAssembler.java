@@ -1216,7 +1216,6 @@ public class NeoAssembler extends NeoContainerWidget
 
 	@Override
 	public synchronized void doLayout() {
-		// System.out.println("NeoAssembler.layout()");
 		// this assumes that NeoAssembler has no insets
 		//   but I'm pretty sure the base Panel class never has insets...
 
@@ -1236,9 +1235,6 @@ public class NeoAssembler extends NeoContainerWidget
 		// alignment map width = consensus map width = horizontal scroll length
 		// alignment map ybeg = label map ybeg = vertical scroll ybeg
 		// alignment map xbeg = consensus map xbeg = horizontal scroll xbeg
-
-	    //	    System.out.println("in old NeoAssembler.doLayout()");
-		LinearTransform trans = alignmap.getView().getTransform();
 		Dimension dim = this.getSize();
 		int cons_y=0, label_x=0;
 		int align_x=0, align_y=0, align_height=0, align_width=0;
@@ -1325,12 +1321,9 @@ public class NeoAssembler extends NeoContainerWidget
 				corner_width, zoom_size);
 
 		// scale perpendicular to axis is always 1
-		try {
-			consmap.zoomOffset(1.0f);
-			alignmap.zoomOffset(1.0f);
-			labelmap.zoomOffset(1.0f);
-		} catch (IllegalArgumentException e) {
-		}
+		consmap.zoomOffset(1.0f);
+		alignmap.zoomOffset(1.0f);
+		labelmap.zoomOffset(1.0f);
 
 	}
 
@@ -1504,15 +1497,16 @@ public class NeoAssembler extends NeoContainerWidget
 
 	int select_start, select_end;
 
+	@Override
 	public void heardMouseEvent(MouseEvent evt) {
 		int id = evt.getID();
 		Object source = evt.getSource();
 		if (evt instanceof NeoMouseEvent) {
 			NeoMouseEvent nevt = (NeoMouseEvent)evt;
 			if (SELECT_ALIGNMENTS == selection_behavior) {
-				if ((id == evt.MOUSE_PRESSED &&
+				if ((id == MouseEvent.MOUSE_PRESSED &&
 							alignmap.getSelectionEvent() == ON_MOUSE_DOWN) ||
-						(id == evt.MOUSE_RELEASED &&
+						(id == MouseEvent.MOUSE_RELEASED &&
 						 alignmap.getSelectionEvent() == ON_MOUSE_UP)) {
 
 					if (source == alignmap) {
@@ -1938,6 +1932,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 *  labels are only affected by scrolling along Y
 	 *  consensus (and axis) are only affected by scrolling along X
 	 */
+	@Override
 	public void scroll(int id, double value) {
 		if (id == X) {
 			alignmap.scroll(id, value);
@@ -1953,11 +1948,13 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void setMinZoom(int axisid, double scale) {
 		throw new IllegalArgumentException("NeoAssembler.setMinZoom() " +
 				"not yet supported");
 	}
 
+	@Override
 	public void setMaxZoom(int axisid, double scale) {
 		if (axisid == NeoAbstractWidget.X) {
 			consmap.setMaxZoom(axisid, scale);
@@ -1970,6 +1967,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void removeItem(GlyphI item) {
 		if (item instanceof AlignmentGlyph) {
 			AlignmentGlyph itemglyph = (AlignmentGlyph)item;
@@ -1992,6 +1990,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * to reset inner widget's scenes, etc.
 	 * Note that this does not remove any data adapters.
 	 */
+	@Override
 	public void clearWidget() {
 		super.clearWidget();
 		setUpAlignMap();
@@ -2026,6 +2025,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 *                 {@link #CONSTRAIN_END}.
 	 * @see NeoAbstractWidget
 	 */
+	@Override
 	public void setZoomBehavior(int id, int behavior) {
 		zoom_behavior[id] = behavior;
 		alignmap.setZoomBehavior(id, behavior);
@@ -2037,6 +2037,7 @@ public class NeoAssembler extends NeoContainerWidget
 		}
 	}
 
+	@Override
 	public void setZoomBehavior(int id, int behavior, double coord) {
 		zoom_behavior[id] = behavior;
 		alignmap.setZoomBehavior(id, behavior, coord);
@@ -2138,6 +2139,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 * @param adj The adjustable to use.
 	 */
 
+	@Override
 	public void setZoomer(int id, Adjustable adj) {
 		if (adj == null) {
 			throw new IllegalArgumentException("NeoAssembler.setZoomer() requires "
@@ -2207,7 +2209,7 @@ public class NeoAssembler extends NeoContainerWidget
 	 */
 	public void setLabelWidth(int label_width) {
 		this.label_width = label_width;
-		labelmap.setBounds(labelmap.X, 0, label_width-1);
+		labelmap.setBounds(NeoMap.X, 0, label_width-1);
 		doLayout();
 	}
 
@@ -2278,11 +2280,11 @@ public class NeoAssembler extends NeoContainerWidget
 
 				for (int i=0; i<align_glyphs.size(); i++) {
 					gar = (AlignmentGlyph)align_glyphs.get(i);
-					gar.setForegroundColorStrategy(gar.ALIGNMENT_BASED);
+					gar.setForegroundColorStrategy(AlignmentGlyph.ALIGNMENT_BASED);
 					gar.setForegroundColorMatrix(color_matrix);
 				}
 				if (colors_affect_cons && cons_glyph != null) {
-					cons_glyph.setForegroundColorStrategy(cons_glyph.ALIGNMENT_BASED);
+					cons_glyph.setForegroundColorStrategy(AlignmentGlyph.ALIGNMENT_BASED);
 					cons_glyph.setForegroundColorMatrix(color_matrix);
 				}
 			}

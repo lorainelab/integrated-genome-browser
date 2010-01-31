@@ -105,7 +105,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 	}
 
 	public void resetShadow(NeoMap destination, int theOrientation, Color theColor)  {
-		if (this.topMargin + this.bottomMargin >= 1.0) {
+		if (Shadow.topMargin + Shadow.bottomMargin >= 1.0) {
 			System.out.println("Margins too large." );
 		}
 
@@ -123,15 +123,15 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 			case NeoConstants.HORIZONTAL:
 				ourX = sbox.x;
 				ourWidth = 1;
-				ourY = sbox.y + ( sbox.height * this.topMargin );
-				ourHeight = sbox.height * (1.0 - this.topMargin - this.bottomMargin );
+				ourY = sbox.y + ( sbox.height * Shadow.topMargin );
+				ourHeight = sbox.height * (1.0 - Shadow.topMargin - Shadow.bottomMargin );
 
 				break;
 			case NeoConstants.VERTICAL:
 				ourY = sbox.y;
 				ourHeight = 1;
-				ourX = sbox.x + ( sbox.width * this.topMargin );
-				ourWidth = sbox.width * (1.0 - this.topMargin - this.bottomMargin );
+				ourX = sbox.x + ( sbox.width * Shadow.topMargin );
+				ourWidth = sbox.width * (1.0 - Shadow.topMargin - Shadow.bottomMargin );
 
 				break;
 			default:
@@ -182,7 +182,7 @@ public class Shadow implements NeoRangeListener, NeoViewBoxListener {
 			label.setBackgroundColor(vGlyph.getBackgroundColor());
 			label.setForegroundColor ( Color.black );
 			label.setShowBackground(true);
-			label.setPlacement(StringGlyph.CENTER);
+			label.setPlacement(NeoConstants.CENTER);
 			label.setSelectable(false);
 
 			this.setRange(current_range_st, current_range_en);

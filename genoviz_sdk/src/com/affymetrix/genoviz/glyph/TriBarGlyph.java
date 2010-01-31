@@ -1,16 +1,3 @@
-/**
- *   Copyright (c) 1998-2005 Affymetrix, Inc.
- *    
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.  
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
@@ -45,11 +32,12 @@ public class TriBarGlyph extends DirectedGlyph {
 	}
 
 
+	@Override
 	public void draw( ViewI view ) {
 		calcPixels( view );
 		Graphics g = view.getGraphics();
 		g.setColor( getBackgroundColor() );
-		calcBar( view );
+		calcBar();
 		g.fillRect( this.bar.x, this.bar.y, this.bar.width, this.bar.height );
 		g.setColor( getFillColor() );
 		g.fillPolygon( this.x, this.y, 4 );
@@ -73,6 +61,7 @@ public class TriBarGlyph extends DirectedGlyph {
 	public void setFillColor(Color  v) {this.fillColor = v;}
 
 
+	@Override
 	public void calcPixels(ViewI view) {
 		view.transformToPixels(coordbox, pixelbox);
 		int xtricenter;
@@ -130,7 +119,7 @@ public class TriBarGlyph extends DirectedGlyph {
 		}
 	}
 
-	private void calcBar( ViewI view ) {
+	private void calcBar() {
 		switch ( this.getDirection() ) {
 			case EAST:
 			case WEST:

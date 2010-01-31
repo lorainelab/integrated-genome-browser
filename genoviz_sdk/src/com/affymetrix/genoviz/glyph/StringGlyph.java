@@ -1,22 +1,8 @@
-/**
- *   Copyright (c) 1998-2005 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.ViewI;
-import java.awt.*;
 import com.affymetrix.genoviz.util.NeoConstants;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
 
 /**
  * A glyph used to display a text string.
@@ -41,6 +27,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 	private boolean show_background = false;
 
 
+	@Override
 	public String toString() {
 		return ("StringGlyph: string: \""+str+"\"  +coordbox: "+coordbox);
 	}
@@ -71,6 +58,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		return show_background;
 	}
 
+	@Override
 	public void draw(ViewI view) {
 		Graphics g = view.getGraphics();
 		g.setPaintMode();
@@ -86,29 +74,26 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		int text_height = fm.getAscent();
 		int blank_width = fm.charWidth ('z')*2;
 
-		Rectangle2D.Double view_box = view.getCoordBox();
 		view.transformToPixels(coordbox, pixelbox);
 		if (DEBUG_PIXELBOX) {
 			debug_rect.setBounds(pixelbox.x, pixelbox.y,
 					pixelbox.width, pixelbox.height);
 		}
 		if (placement == LEFT) {
-			pixelbox.x = pixelbox.x;
 		}
 		else if (placement == RIGHT) {
-			pixelbox.x = pixelbox.x + pixelbox.width + blank_width;
+			pixelbox.x += pixelbox.width + blank_width;
 		}
 		else {
-			pixelbox.x = pixelbox.x + pixelbox.width/2 - text_width/2;
+			pixelbox.x += pixelbox.width/2 - text_width/2;
 		}
 		if (placement == ABOVE) {
-			pixelbox.y = pixelbox.y;
 		}
 		else if (placement == BELOW) {
-			pixelbox.y = pixelbox.y + pixelbox.height;
+			pixelbox.y += pixelbox.height;
 		}
 		else {
-			pixelbox.y = pixelbox.y + pixelbox.height/2 + text_height/2;
+			pixelbox.y += pixelbox.height/2 + text_height/2;
 		}
 		pixelbox.width = text_width;
 		pixelbox.height = text_height+1; // +1 for an extra pixel below the text
@@ -150,6 +135,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 	/** Sets the font.  If you attemt to set the font to null, it will set itself
 	 *  to a default font.
 	 */
+	@Override
 	public void setFont(Font f) {
 		if (f==null) {
 			this.fnt = DEFAULT_FONT;
@@ -158,6 +144,7 @@ public class StringGlyph extends SolidGlyph implements NeoConstants  {
 		}
 	}
 
+	@Override
 	public Font getFont() {
 		return this.fnt;
 	}

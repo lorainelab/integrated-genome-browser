@@ -20,6 +20,7 @@ import com.affymetrix.genoviz.glyph.LabelGlyph;
 import com.affymetrix.genoviz.glyph.StringGlyph;
 import com.affymetrix.genoviz.glyph.SequenceGlyph;
 import com.affymetrix.genoviz.parser.*;
+import com.affymetrix.genoviz.util.NeoConstants;
 import com.affymetrix.genoviz.widget.NeoMap;
 
 import java.awt.Adjustable;
@@ -233,12 +234,12 @@ public class NarcissusParser implements ContentParser {
 					String text = parseString(theTokens);
 					if (theLabeledGlyph instanceof StringGlyph) {
 						((StringGlyph)theLabeledGlyph).setString(text);
-						((StringGlyph)theLabeledGlyph).setPlacement( StringGlyph.CENTER );
+						((StringGlyph)theLabeledGlyph).setPlacement( NeoConstants.CENTER );
 						((StringGlyph)theLabeledGlyph).setForegroundColor( Color.red );
 					}
 					else if (theLabeledGlyph instanceof SequenceGlyph) {
 						((SequenceGlyph)theLabeledGlyph).setResidues(text);
-						((SequenceGlyph)theLabeledGlyph).setOrientation(SequenceGlyph.HORIZONTAL);
+						((SequenceGlyph)theLabeledGlyph).setOrientation(NeoConstants.HORIZONTAL);
 						((SequenceGlyph)theLabeledGlyph).setForegroundColor( Color.green );
 						((SequenceGlyph)theLabeledGlyph).setBackgroundColor( Color.blue );
 					}

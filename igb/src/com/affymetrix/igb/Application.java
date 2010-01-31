@@ -57,7 +57,7 @@ public abstract class Application {
 
 	public final void addNotLockedUpMsg(String s) {
 		progressStringList.add(s);
-		if (status_bar.getStatus().length() == 0) {
+		if (status_bar.getStatus().trim().length() == 0) {
 			setNotLockedUpStatus(s);
 		}
 	}
@@ -70,6 +70,7 @@ public abstract class Application {
 			// Time to change status message.
 			if (progressStringList.isEmpty()) {
 				setStatus("");
+				status_bar.progressBar.setVisible(false);
 			} else {
 				setNotLockedUpStatus(progressStringList.get(0));
 			}
@@ -108,7 +109,6 @@ public abstract class Application {
 	 */
 	public final synchronized void setStatus(String s, boolean echo) {
 		status_bar.setStatus(leftPaddingString + s);
-		status_bar.progressBar.setVisible(false);
 		if (echo && s != null) {
 			System.out.println(s);
 		}

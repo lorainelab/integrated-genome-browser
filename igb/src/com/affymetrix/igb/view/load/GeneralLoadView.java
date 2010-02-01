@@ -10,8 +10,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -207,7 +205,6 @@ public final class GeneralLoadView extends JComponent
 				@Override
 				public void done() {
 					/*
-					 initializeSpeciesCB();
 					Application.getSingleton().setNotLockedUpStatus("Loading previous genome...");
 					RestorePersistentGenome();
 					Application.getSingleton().setStatus("", false);
@@ -223,17 +220,25 @@ public final class GeneralLoadView extends JComponent
 		GenericServer gServer = (GenericServer)evt.getSource();
 
 		Application.getSingleton().removeNotLockedUpMsg("Loading server " + gServer.serverName);
-		
-		System.out.println("GLV: init of server " + gServer.serverName);
 
 		// Need to refresh species names
 		boolean speciesListener = this.speciesCB.getItemListeners().length > 0;
 		refreshSpeciesCB();
 
-		// Need to refresh version names (if a species is selected)
+		String speciesName = (String)this.speciesCB.getSelectedItem();
+		if (speciesName != null && !speciesName.equals(SELECT_SPECIES)) {
+			//refresh version names if a species is selected
+			refreshVersionCB(speciesName);
 
-		// Need to refresh feature tree view (if a version is selected)
-		//System.out.println("GLV: init of server " + gServer.serverName);
+			String versionName = (String)this.versionCB.getSelectedItem();
+			if (versionName != null && !versionName.equals(SELECT_GENOME)) {
+				// refresh this version
+				initVersion(versionName);
+
+				// TODO: refresh feature tree view if a version is selected
+				refreshTreeView();
+			}
+		}
 
 		if (speciesListener) {
 			this.speciesCB.addItemListener(this);
@@ -260,7 +265,7 @@ public final class GeneralLoadView extends JComponent
 		int speciesListLength = GeneralLoadUtils.species2genericVersionList.keySet().size();
 		if (speciesListLength == speciesCB.getItemCount() -1) {
 			// No new species.  Don't bother refreshing.
-			if (speciesListLength == 0) {
+			if (speciesListLength == 0 && speciesCB.isEnabled()) {
 				speciesCB.setEnabled(false);
 				// disable if there are no species yet.
 			}
@@ -271,23 +276,74 @@ public final class GeneralLoadView extends JComponent
 		speciesCB.removeAllItems();
 		speciesCB.addItem(SELECT_SPECIES);
 
-		if (speciesListLength == 0) {
-			// Disable the speciesName selectedSpecies.
-			speciesCB.setEnabled(false);
-			return;
-		}
-
-		// Sort the species before presenting them
-		SortedSet<String> speciesList = new TreeSet<String>();
+		// Add names to combo boxes.
+		List<String> speciesList = new ArrayList<String>();
 		speciesList.addAll(GeneralLoadUtils.species2genericVersionList.keySet());
+		Collections.sort(speciesList);
+		// Sort the species
 		for (String speciesName : speciesList) {
 			speciesCB.addItem(speciesName);
 		}
+
 
 		if (oldSpecies != null && speciesList.contains(oldSpecies)) {
 			speciesCB.setSelectedItem(oldSpecies);
 		}
 	}
+
+
+	/**
+	 * Refresh the genome versions, now that the species has changed.
+	 * If there's precisely one versionName, just select it.
+	 * @param speciesName
+	 */
+	private void refreshVersionCB(String speciesName) {
+		List<GenericVersion> versionList = GeneralLoadUtils.species2genericVersionList.get(speciesName);
+		int versionListLength = versionList == null ? 0 : versionList.size();
+		if (versionListLength == versionCB.getItemCount() -1) {
+			// No new versions.  Don't bother refreshing.
+			if (versionListLength == 0 && versionCB.isEnabled()) {
+				versionCB.setEnabled(false);
+				// disable if there are no versions yet.
+			}
+			return;
+		}
+
+		String oldVersion = (String)versionCB.getSelectedItem();
+		versionCB.removeItemListener(this);
+		versionCB.removeAllItems();
+		versionCB.addItem(SELECT_GENOME);
+		versionCB.setSelectedIndex(0);
+
+		if (speciesName.equals(SELECT_SPECIES) && versionCB.isEnabled()) {
+			// Disable the versionName.
+			versionCB.setEnabled(false);
+			return;
+		}
+
+		// Add names to combo boxes.
+		List<String> versionNames = new ArrayList<String>();
+		for(GenericVersion gVersion : GeneralLoadUtils.species2genericVersionList.get(speciesName)) {
+			// the same versionName name may occur on multiple servers
+			if (!versionNames.contains(gVersion.versionName)) {
+				versionNames.add(gVersion.versionName);
+			}
+		}
+		Collections.sort(versionNames, new StringVersionDateComparator());
+		// Sort the versions (by date)
+
+		for (String versionName : versionNames) {
+			versionCB.addItem(versionName);
+		}
+		versionCB.setEnabled(true);
+		if (oldVersion != null && !oldVersion.equals(SELECT_GENOME) && GeneralLoadUtils.versionName2species.containsKey(oldVersion)) {
+			versionCB.setSelectedItem(oldVersion);
+		}
+		if (versionCB.getItemCount() > 1) {
+			versionCB.addItemListener(this);
+		}
+	}
+
 
 	/**
 	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
@@ -427,7 +483,6 @@ public final class GeneralLoadView extends JComponent
 			}
 			GeneralLoadUtils.loadAndDisplayAnnotations(gFeature, curSeq, feature_model);
 		}
-		Application.getSingleton().setStatus("", false);
 
 	}
 
@@ -465,25 +520,6 @@ public final class GeneralLoadView extends JComponent
 
 		// Populate the versionName CB
 		refreshVersionCB(speciesName);
-
-		// TODO: Investigate threading issues with this code.  If the server responds slowly when setting the genome, the sequence cannot be selected.
-		// Set the selected seq group if there's only one possible choice for the versionName.
-		/*if (!speciesName.equals(SELECT_SPECIES) && this.glu.species2genericVersionList != null) {
-			if (versionCB.getItemCount() == 2) {
-				// There is precisely one genome versionName, and the versionCB has precisely one genome versionName (and the SELECT option)
-				List<GenericVersion> versionList = this.glu.species2genericVersionList.get(speciesName);
-				String versionName = versionList.get(0).versionName;
-				AnnotatedSeqGroup genome = gmodel.getSeqGroup(versionName);
-				if (genome != null && genome != gmodel.getSelectedSeqGroup() && versionCB.getItemAt(1).equals(versionName)) {
-					initVersion(versionName);
-					gmodel.setSelectedSeqGroup(genome);
-
-					// TODO: Need to be certain that the group is selected at this point!
-					gmodel.setSelectedSeq(genome.getSeq(0));
-					return;
-				}
-			}
-		}*/
 
 		if (gmodel.getSelectedSeqGroup() != null) {
 			gmodel.setSelectedSeqGroup(null);
@@ -554,42 +590,6 @@ public final class GeneralLoadView extends JComponent
 
 
 	/**
-	 * Refresh the genome versions, now that the species has changed.
-	 * If there's precisely one versionName, just select it.
-	 * @param speciesName
-	 */
-	private void refreshVersionCB(String speciesName) {
-		versionCB.removeItemListener(this);
-		versionCB.removeAllItems();
-		versionCB.addItem(SELECT_GENOME);
-		versionCB.setSelectedIndex(0);
-
-		if (speciesName.equals(SELECT_SPECIES)) {
-			// Disable the versionName.
-			versionCB.setEnabled(false);
-			return;
-		}
-
-		// Add versionName names to combo boxes.
-
-		List<String> versionNames = new ArrayList<String>();
-		for(GenericVersion gVersion : GeneralLoadUtils.species2genericVersionList.get(speciesName)) {
-			// the same versionName name may occur on multiple servers
-			if (!versionNames.contains(gVersion.versionName)) {
-				versionNames.add(gVersion.versionName);
-			}
-		}
-
-		Collections.sort(versionNames, new StringVersionDateComparator());	// Sort the versions (by date)
-		
-		for (String versionName : versionNames) {
-			versionCB.addItem(versionName);
-		}
-		versionCB.setEnabled(true);
-		versionCB.addItemListener(this);
-	}
-
-	/**
 	 * This gets called when the genome versionName is changed.
 	 * This occurs via the combo boxes, or by an external event like bookmarks, or LoadFileAction
 	 * @param evt
@@ -601,11 +601,6 @@ public final class GeneralLoadView extends JComponent
 			System.out.println("GeneralLoadView.groupSelectionChanged() called, group: " + (group == null ? null : group.getID()));
 		}
 		if (group == null) {
-			/*if (speciesCB.getSelectedItem() != SELECT_SPECIES) {
-				speciesCB.removeItemListener(this);
-				speciesCB.setSelectedItem(SELECT_SPECIES);
-				speciesCB.addItemListener(this);
-			}*/
 			if (versionCB.getSelectedItem() != SELECT_GENOME) {
 				versionCB.removeItemListener(this);
 				versionCB.setSelectedItem(SELECT_GENOME);
@@ -702,7 +697,8 @@ public final class GeneralLoadView extends JComponent
 
 		Application.getSingleton().addNotLockedUpMsg("Loading features");
 
-		createFeaturesTable(true);
+		refreshTreeView();
+		createFeaturesTable();
 		loadWholeRangeFeatures(versionName);
 		Application.getSingleton().removeNotLockedUpMsg("Loading features");
 	}
@@ -753,13 +749,24 @@ public final class GeneralLoadView extends JComponent
 		this.feature_model = new FeaturesTableModel(this, null, null);
 		this.feature_table.setModel(this.feature_model);
 		featuresTableScrollPane.setViewportView(this.feature_table);
-		this.feature_tree_view.clearTreeView();
+		feature_tree_view.clearTreeView();
+	}
+
+	private void refreshTreeView() {
+		String versionName = (String) versionCB.getSelectedItem();
+		List<GenericFeature> features = GeneralLoadUtils.getFeatures(versionName);
+		if (features == null || features.isEmpty()) {
+			clearFeaturesTable();
+			feature_tree_view.clearTreeView();
+			return;
+		}
+		feature_tree_view.initOrRefreshTree(features);
 	}
 
 	/**
 	 * Create the table with the list of features and their status.
 	 */
-	void createFeaturesTable(boolean refreshTree) {
+	void createFeaturesTable() {
 		String versionName = (String) this.versionCB.getSelectedItem();
 		BioSeq curSeq = gmodel.getSelectedSeq();
 		if (DEBUG_EVENTS) {
@@ -770,15 +777,7 @@ public final class GeneralLoadView extends JComponent
 		if (DEBUG_EVENTS) {
 			System.out.println("features for " + versionName + ": " + features.toString());
 		}
-		if(refreshTree) {
-			if (features == null || features.isEmpty()) {
-				clearFeaturesTable();
-				this.feature_tree_view.clearTreeView();
-				return;
-			}
-			this.feature_tree_view.initOrRefreshTree(features);
-		}
-
+		
 		if (DEBUG_EVENTS) {
 			System.out.println("Creating table with features: " + features.toString());
 		}

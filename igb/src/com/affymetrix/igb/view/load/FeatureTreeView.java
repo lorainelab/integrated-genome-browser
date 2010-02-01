@@ -583,7 +583,7 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 					}
 					if (nodeData instanceof GenericFeature) {
 						((GenericFeature) nodeData).setVisible();
-						glv.createFeaturesTable(false);
+						glv.createFeaturesTable();
 					}
 					tree.repaint();
 					fireEditingStopped();

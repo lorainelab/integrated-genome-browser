@@ -56,9 +56,6 @@ import com.affymetrix.genometryImpl.TypeContainerAnnot;
 public final class LazyChpSym extends ScoredContainerSym {
 
   public static String PROBESET_SERVER_NAME = "NetAffx";
-  // public static String PROBESET_SERVER_NAME = "localhost";  // for debugging
-
-  //  static Map genome2chp;
   BioSeq aseq;
 
   /**
@@ -79,7 +76,7 @@ public final class LazyChpSym extends ScoredContainerSym {
    *   represented as an integer
    *  list should be sorted by integer id
    */
-  List int_entries = null;
+  final List int_entries;
 
   /** in Affy Fusion SDK this is called "CHP array type", for example "HuEx-1_0-st-v2" */
   String chp_array_type = null;
@@ -116,7 +113,6 @@ public final class LazyChpSym extends ScoredContainerSym {
     this.probeset_id2data = id2data;
     this.probeset_name2data = name2data;
     this.int_entries = entries_with_int_id;
-    // this.addSpan(new SimpleSeqSpan(0, aseq.getLength(), aseq));
   }
 
   /**
@@ -130,50 +126,57 @@ public final class LazyChpSym extends ScoredContainerSym {
    */
   protected boolean coords_loaded = false;
 
+	@Override
   public int getChildCount() {
     if (! coords_loaded) { loadCoords(); }
     return super.getChildCount();
   }
 
+	@Override
   public SeqSymmetry getChild(int index) {
     if (! coords_loaded) { loadCoords(); }
     return super.getChild(index);
   }
 
+	@Override
   public float[] getChildScores(IndexedSym child, List scorelist) {
     if (! coords_loaded) { loadCoords(); }
     return super.getChildScores(child, scorelist);
   }
 
+	@Override
   public float[] getChildScores(IndexedSym child) {
     if (! coords_loaded) { loadCoords(); }
     return super.getChildScores(child);
   }
 
+	@Override
   public int getScoreCount() {
     if (! coords_loaded) { loadCoords(); }
     return super.getScoreCount();
   }
 
+	@Override
   public float[] getScores(String name) {
     if (! coords_loaded) { loadCoords(); }
     return super.getScores(name);
   }
 
+	@Override
   public float[] getScores(int index) {
     if (! coords_loaded) { loadCoords(); }
     return super.getScores(index);
   }
 
+	@Override
   public String getScoreName(int index)  {
     if (! coords_loaded) { loadCoords(); }
     return super.getScoreName(index);
   }
 
 
-  public void loadCoords() {
-		//    Timer tim = new Timer();
-		//    tim.start();
+	@SuppressWarnings("unchecked")
+  private void loadCoords() {
 		coords_loaded = true;
 		/**
 		 *  Coords & ids are retrieved on a per-seq basis via a DAS/2 server, preferably in an optimized binary format
@@ -230,11 +233,8 @@ public final class LazyChpSym extends ScoredContainerSym {
 			chp_array_syns.add(chp_array_type);
 		}
 		for (String synonym : chp_array_syns) {
-			//      String synonym = (String)chp_array_syns.get(i);
 			String lcsyn = synonym.toLowerCase();
-			//      System.out.println("   synonym: " + synonym);
 			for (Das2Type type : types.values()) {
-				//	String tname = type.getName();
 				//  Switched to type.getShortName() to fix problem with name matching when name has a path prefix...
 				String tname = type.getShortName();
 				if ((tname.startsWith(synonym) || tname.startsWith(lcsyn)) && (matched_types.get(type) == null)) {
@@ -382,13 +382,10 @@ public final class LazyChpSym extends ScoredContainerSym {
 				pvals[i] = 0;
 			}
 		}
-		//    this.addScores("score: " + this.getID(), quants);
-		//    this.addScores("pval: " + this.getID(), pvals);
 		this.addScores("score", quants);
 		if (has_pvals) {
 			this.addScores("pval", pvals);
 		}
-		//    System.out.println("Time to load and merge coords from DAS for CHP file: " + tim.read()/1000f);
 		System.out.println("Matching probeset integer IDs with CHP data, matches: " + id_hit_count);
 		System.out.println("Matching non-integer string IDs with CHP data, matches: " + str_hit_count);
 	}

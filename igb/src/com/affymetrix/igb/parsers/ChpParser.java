@@ -55,18 +55,11 @@ import com.affymetrix.igb.util.QuantDetectByIntIdComparator;
 
 
 public final class ChpParser {
-  static boolean DEBUG = false;
-  static boolean reader_registered = false;
-  //  public static void parse(InputStream str, AnnotatedSeqGroup seq_group, String stream_name) {
-  // }
-
+  private static final boolean DEBUG = false;
+  private static boolean reader_registered = false;
   public static List parse(String file_name) throws IOException {
-    //    Timer tim = new Timer();
-    //    tim.start();
     List results = null;
     if (! (reader_registered)) {
-      //    FusionCHPLegacyData.registerReader();
-      //    FusionCHPGenericData.registerReader();
       FusionCHPTilingData.registerReader();
       FusionCHPQuantificationData.registerReader();
       FusionCHPQuantificationDetectionData.registerReader();
@@ -146,9 +139,7 @@ public final class ChpParser {
        *
        */
     }
-
-    //    System.out.println("Time to load CHP file (etc.): " + tim.read()/1000f);
-    return results;
+   return results;
   }
 
   public static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp)  {
@@ -175,8 +166,6 @@ public final class ChpParser {
      *
      */
   protected static List<LazyChpSym> makeLazyChpSyms(String file_name, String chp_array_type, Map id2data, Map name2data, List int_entries) {
-    //    Timer tim2 = new Timer();
-    //    tim2.start();
     GenometryModel gmodel = GenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
 
@@ -208,7 +197,6 @@ public final class ChpParser {
     int scount = group.getSeqCount();
     for (int i=0; i<scount; i++) {
       BioSeq aseq = group.getSeq(i);
-      //String seqid = aseq.getID();
       // Don't make LazyChpSym if can't find sequence on DAS/2 server
       Das2Region das_segment = vsource.getSegment(aseq);
       // I think above test for presence of sequence on server will handle skipping the genome and encode regions
@@ -224,22 +212,18 @@ public final class ChpParser {
 	results.add(chp_sym);
       }
     }
-    //    System.out.println("Time to build LazyChpSyms: " + tim2.read()/1000f);
     return results;
   }
 
 
   /** same as parseQuantChp, but adding detection/pval */
   public static List<LazyChpSym> parseQuantDetectChp(FusionCHPQuantificationDetectionData chp) {
-    //GenometryModel gmodel = GenometryModel.getGenometryModel();
-    //AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     List<LazyChpSym> results = null;
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
     String array_type = chp.getArrayType();
     int ps_count = chp.getEntryCount();
-    //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
     List<ProbeSetQuantificationDetectionData> int_entries = new ArrayList<ProbeSetQuantificationDetectionData>(ps_count);
     int int_id_count = 0;
@@ -264,7 +248,6 @@ public final class ChpParser {
 	nid = new Integer(intid);
 	psqData.setName(null);
 	int_entries.add(psqData);
-	//	id2data.put(nid, psqData);
 	int_id_count++;
       }
       else {  // nid < 0, then nid field not being used, so name should be used instead
@@ -275,12 +258,10 @@ public final class ChpParser {
 	  psqData.setId(intid);
 	  psqData.setName(null);
 	  int_entries.add(psqData);
-	  //	  id2data.put(nid, psqData);
 	  int_id_count++;
 	}
 	catch (Exception ex) {
 	  // can't parse as an integer
-	  //	  name2data.put(name, psqData);
 	  str_id_count++;
 	}
       }
@@ -307,15 +288,12 @@ public final class ChpParser {
 
 
   public static List<LazyChpSym> parseQuantChp(FusionCHPQuantificationData chp) {
-    //GenometryModel gmodel = GenometryModel.getGenometryModel();
-    //AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
     List<LazyChpSym> results = null;
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
     String array_type = chp.getArrayType();
     int ps_count = chp.getEntryCount();
-    //    Map name2data = new HashMap(ps_count);
     Map id2data = new HashMap(ps_count);
     List<ProbeSetQuantificationData> int_entries = new ArrayList<ProbeSetQuantificationData>(ps_count);
     int int_id_count = 0;
@@ -336,7 +314,6 @@ public final class ChpParser {
 	nid = new Integer(intid);
 	psqData.setName(null);
 	int_entries.add(psqData);
-	//	id2data.put(nid, psqData);
 	int_id_count++;
       }
       else {  // nid < 0, then nid field not being used, so name should be used instead
@@ -347,12 +324,10 @@ public final class ChpParser {
 	  psqData.setId(intid);
 	  psqData.setName(null);
 	  int_entries.add(psqData);
-	  //	  id2data.put(nid, psqData);
 	  int_id_count++;
 	}
 	catch (Exception ex) {
 	  // can't parse as an integer
-	  //	  name2data.put(name, psqData);
 	  str_id_count++;
 	}
       }
@@ -389,8 +364,7 @@ public final class ChpParser {
   public static List<LazyChpSym> oldParseQuantChp(FusionCHPQuantificationData chp) {
     GenometryModel gmodel = GenometryModel.getGenometryModel();
     AnnotatedSeqGroup group = gmodel.getSelectedSeqGroup();
-    //ArrayList results = new ArrayList();
-
+ 
     String file_name = chp.getFileName();
     String algName = chp.getAlgName();
     String algVersion = chp.getAlgVersion();
@@ -418,7 +392,7 @@ public final class ChpParser {
     int match_count = 0;
 
     if (is_exon_chp) {  // exon results, so try to match up prefixed ids with ids already seen?
-      ArrayList<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
+      List<SeqSymmetry> syms = new ArrayList<SeqSymmetry>();
       for (int i=0; i<ps_count; i++) {
 	psqData = chp.getQuantificationEntry(i);
 	float val = psqData.getQuantification();
@@ -534,17 +508,15 @@ public final class ChpParser {
 
 
   public static List parseLegacyChp(FusionCHPLegacyData chp) {
-      ArrayList results = new ArrayList();
+	  List results = new ArrayList();
     FusionCHPHeader header = chp.getHeader();
     System.out.println("Alg name: " + header.getAlgName());
     System.out.println("Alg version: " + header.getAlgVersion());
-    //    System.out.println(header.getAlgorithmParameter("Alpha1"));
     System.out.println("Assay type: " + header.getAssayType());
     System.out.println("Chip type: " + header.getChipType());
     System.out.println("Rows: " + header.getRows() + ", Columns: " + header.getCols());
     System.out.println("Parent .cel file: " + header.getParentCellFile());
     System.out.println("Program ID: " + header.getProgID());
-    //    System.out.println(header.getSummaryParameter("RawQ"));
 
     int probe_count = header.getNumProbeSets();
     System.out.println("number of probesets: " + probe_count);
@@ -565,7 +537,7 @@ public final class ChpParser {
 
   public static List<GraphSym> parseTilingChp(FusionCHPTilingData tchp, boolean annotate_seq, boolean ensure_unique_id) {
     GenometryModel gmodel = GenometryModel.getGenometryModel();
-    ArrayList<GraphSym> results = new ArrayList<GraphSym>();
+    List<GraphSym> results = new ArrayList<GraphSym>();
     int seq_count = tchp.getNumberSequences();
     String alg_name = tchp.getAlgName();
     String alg_vers = tchp.getAlgVersion();
@@ -678,23 +650,6 @@ public final class ChpParser {
     return results;
   }
 
-  /*public static void main(String[] args) throws IOException {
-    //    String infile = "c:/data/chp_test_data/from_Luis_Mar2006/4009028_37_D6_Hela_1st_A_signal.chp";
-    GenometryModel gmodel = GenometryModel.getGenometryModel();
-    AnnotatedSeqGroup group = gmodel.addSeqGroup("H_sapiens_Mar_2006");
-    gmodel.setSelectedSeqGroup(group);
-    String infile = "c:/data/chp_data_exon/exon_chp_results/HuEx-1_0-st-v2.colon-cancer-data-set/10_5N.rma-exon-all-dabg.chp";
-    List results = ChpParser.parse(infile);
-    if (results != null)  {
-        System.out.println("graphs parsed: " + results.size());
-        for (int i = 0; i < results.size(); i++) {
-            GraphSymFloat gsym = (GraphSymFloat) results.get(i);
-            System.out.println(gsym.getGraphName() + ",  " + gsym.getID() +
-                               ",  points = " + gsym.getPointCount());
-        }
-    }
-  }*/
-
 }
 /** For sorting single-score probeset entries */
 
@@ -710,17 +665,6 @@ public final class ChpParser {
     }
   }
 
-  /*
-  class TwoScoreEntry extends ScoreEntry {
-    float quant;
-    float pval;
-    public TwoScoreEntry(SeqSymmetry sym, float quant, float pval) {
-      this.sym = sym;
-      this.quant = quant;
-      this.pval = pval;
-    }
-  }
-   */
 
   /** For sorting single-score probeset entries */
 class ScoreEntryComparator implements Comparator<ScoreEntry>  {

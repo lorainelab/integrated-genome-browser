@@ -1048,6 +1048,7 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			}
 		}
 
+		view.calcCoordBox();
 		double prev_pixels_per_coord = pixels_per_coord[id];
 		pixels_per_coord[id] = zoom_scale;
 		coords_per_pixel[id] = 1/zoom_scale;

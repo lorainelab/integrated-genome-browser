@@ -263,7 +263,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	private final Map<AnnotatedSeqGroup, Map<String, String>> genome2graphdirs = new LinkedHashMap<AnnotatedSeqGroup, Map<String, String>>();
 	private final HashMap<String, USeqArchive> file2USeqArchive = new HashMap<String, USeqArchive>();
 	private Transformer types_transformer;
-	private final boolean DEFAULT_USE_TYPES_XSLT = true;
+	private static final boolean DEFAULT_USE_TYPES_XSLT = true;
 	private boolean use_types_xslt;
 
 	private static String synonym_file;

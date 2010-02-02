@@ -27,7 +27,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class Sequence implements EditableSequenceI {
 
-	private final boolean debug_exceptions = false;
+	private static final boolean debug_exceptions = false;
 	private String id;
 	protected int start; // Points to first char.
 	private int end; // Points to last char. Not beyond.

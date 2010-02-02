@@ -24,7 +24,7 @@ public class USeqArchive {
 	private ZipEntry archiveReadMeEntry;
 	private final HashMap<String, DataRange[]> chromStrandRegions = new HashMap<String, DataRange[]> ();
 	//DAS2 does not support stranded requests at this time so leave false.
-	private final boolean maintainStrandedness = false;
+	private static final boolean maintainStrandedness = false;
 
 	public USeqArchive (File zipFile) throws Exception{
 		this.zipFile = zipFile;

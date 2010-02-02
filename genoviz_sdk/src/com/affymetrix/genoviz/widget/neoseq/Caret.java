@@ -45,7 +45,7 @@ public class Caret extends WrapGlyph {
 
 	private Rectangle2D.Double visible_box;
 
-	private final int y_offset_fudge = 3;
+	private static final int y_offset_fudge = 3;
 
 	/** Caret is drawn outlining the current character. */
 	public static final int OUTLINE = 0;

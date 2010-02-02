@@ -35,7 +35,7 @@ public class SequenceGlyph extends AbstractResiduesGlyph
 	boolean residuesSet = false;
 	private boolean show_background = true;
 
-	private final boolean drawingRects = false;
+	private static final boolean drawingRects = false;
 	public final boolean isDrawingRects() {
 		return this.drawingRects;
 	}

@@ -50,7 +50,7 @@ public final class NibbleResiduesParser {
 		return seq;
 	}*/
 
-
+	//Returns bnib format
 	public static BioSeq parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end) throws IOException
 	{
 		BioSeq result_seq = null;
@@ -111,22 +111,26 @@ public final class NibbleResiduesParser {
 		return result_seq;
 	}
 
+	//Returns raw format
 	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, int start, int end, OutputStream output) throws IOException
 	{
 		BioSeq seq = parse(istr,seq_group,start,end);
 		return writeAnnotations(seq,output);
 	}
 
+	//Returns raw format
 	public static boolean parse(InputStream istr, AnnotatedSeqGroup seq_group, OutputStream output) throws IOException
 	{
 		return parse(istr,seq_group, 0, Integer.MAX_VALUE, output);
 	}
 
+	//Returns raw format
 	public static boolean parse(InputStream istr, OutputStream output) throws FileNotFoundException, IOException
 	{
 		return parse(istr,new AnnotatedSeqGroup("No_Data"), output);
 	}
 
+	//Returns raw format
 	public static boolean parse(InputStream istr, int start, int end, OutputStream output) throws FileNotFoundException, IOException
 	{
 		return parse(istr,new AnnotatedSeqGroup("No_Data"), start, end, output);
@@ -224,6 +228,25 @@ public final class NibbleResiduesParser {
 		}
 	}
 
+	public static boolean writeAnnotations(BioSeq seq, OutputStream outstream)
+	{
+		DataOutputStream dos = null;
+		try
+		{
+			dos = new DataOutputStream(outstream);
+			dos.writeBytes(seq.getResidues());
+			dos.flush();
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	public static String getMimeType() {
+		return "binary/bnib";
+	}
+
 	/** Reads a FASTA file and outputs a binary sequence file.
 	 *  @param args  sequence name, input file, output file, sequence version
 	 */
@@ -258,26 +281,6 @@ public final class NibbleResiduesParser {
 		catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-
-	public static boolean writeAnnotations(BioSeq seq, OutputStream outstream)
-	{
-		DataOutputStream dos = null;
-		try
-		{
-			dos = new DataOutputStream(outstream);
-			dos.writeBytes(seq.getResidues());
-			dos.flush();
-			return true;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return false;
-		}
-	}
-
-	public static String getMimeType() {
-		return "binary/bnib";
 	}
 
 }

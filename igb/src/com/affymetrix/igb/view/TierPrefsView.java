@@ -31,7 +31,7 @@ import com.affymetrix.genometryImpl.style.IAnnotStyle;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.genoviz.swing.ColorTableCellEditor;
 import com.affymetrix.genoviz.swing.ColorTableCellRenderer;
-import java.text.MessageFormat;
+
 
 /**
  *  A panel for choosing tier properties for the {@link SeqMapView}.

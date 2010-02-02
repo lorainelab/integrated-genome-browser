@@ -772,7 +772,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 	 * Handle a sequence request.
 	 * @param request
 	 * @param response
-	 * @throws java.io.IOException
+	 * @throws java.io.IOExceptionhandleSequenceRequest
 	 */
 	private  final void handleSequenceRequest(AnnotatedSeqGroup genome, HttpServletRequest request, HttpServletResponse response)
 	throws IOException {
@@ -816,7 +816,13 @@ public final class GenometryDas2Servlet extends HttpServlet {
 			format = formats.get(0);
 		}
 
-		// PhaseI: retrieval of whole chromosome in bnib format
+		// PhaseI: retrieval of whole chromosome in raw format
+		if (format.equals("raw")) {
+			retrieveRAW(ranges, span, sequence_directory, seqname, format, response, request);
+			return;
+		}
+
+		// PhaseII: retrieval of whole chromosome in bnib format
 		if (format.equals("bnib")) {
 			retrieveBNIB(ranges, span, sequence_directory, seqname, format, response, request);
 			return;
@@ -833,23 +839,57 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		pw.println(request.getRequestURL().toString());
 	}
 
+	private static final void retrieveRAW(ArrayList ranges, SeqSpan span, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
+
+		String file_name = sequence_directory + seqname + ".bnib";
+		File seqfile = new File(file_name);
+
+		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
+
+		if (seqfile.exists()) {
+			if (ranges.size() != 0) {
+				int spanStart = 0, spanEnd = 0;
+				spanStart = span.getStart();
+				spanEnd = span.getEnd();
+				response.setContentType("text/raw"); // set text type
+				NibbleResiduesParser.parse(new FileInputStream(seqfile), spanStart, spanEnd, dos);
+				GeneralUtils.safeClose(dos);
+				return;
+			}
+			response.setContentType("text/raw"); // set text type
+			NibbleResiduesParser.parse(new FileInputStream(seqfile), dos);
+			GeneralUtils.safeClose(dos);
+			return;
+
+		} else {
+			PrintWriter pw = response.getWriter();
+			pw.println("File not found: " + file_name);
+			pw.println("This DAS/2 server cannot currently handle request:    ");
+			pw.println(request.getRequestURL().toString());
+		}
+
+	}
+
 	private static final void retrieveBNIB(ArrayList ranges, SeqSpan span, String sequence_directory, String seqname, String format, HttpServletResponse response, HttpServletRequest request) throws IOException {
 		
 		String file_name = sequence_directory + seqname + ".bnib";
 		File seqfile = new File(file_name);
 
 		DataOutputStream dos = new DataOutputStream(response.getOutputStream());
-		
-		if (ranges.size() != 0)
-		{
-			int spanStart = 0, spanEnd = 0;
-			spanStart = span.getStart();
-			spanEnd = span.getEnd();
-			response.setContentType("text"); // set text type
-			NibbleResiduesParser.parse(new FileInputStream(seqfile), spanStart, spanEnd, dos);
-			GeneralUtils.safeClose(dos);
-			return;
-		}
+
+		/*
+		 * Partial loading of bnib file not supported
+		 */
+//		if (ranges.size() != 0)
+//		{
+//			int spanStart = 0, spanEnd = 0;
+//			spanStart = span.getStart();
+//			spanEnd = span.getEnd();
+//			response.setContentType("text"); // set text type
+//			NibbleResiduesParser.parse(new FileInputStream(seqfile), spanStart, spanEnd, dos);
+//			GeneralUtils.safeClose(dos);
+//			return;
+//		}
 
 		if (seqfile.exists()) {
 			byte[] buf = NibbleResiduesParser.ReadBNIB(seqfile);
@@ -868,7 +908,7 @@ public final class GenometryDas2Servlet extends HttpServlet {
 		}
 	}
 
-	
+
 	/**
 	 *Retrieve sequence from FASTA file.  Please note restrictions in FASTA parser for DAS/2 serving.
 	 * @param ranges

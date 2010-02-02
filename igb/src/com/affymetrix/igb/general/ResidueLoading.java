@@ -12,14 +12,22 @@ import com.affymetrix.igb.Application;
 import com.affymetrix.igb.das.DasLoader;
 import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.view.SeqMapView;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public final class ResidueLoading {
 
+	enum FORMAT {
+		RAW,
+		BNIB,
+		FASTA
+	};
+	
 	private static final boolean DEBUG = true;
 
 	/**
@@ -41,14 +49,13 @@ public final class ResidueLoading {
 		final SeqMapView gviewer = Application.getSingleton().getMapView();
 		AnnotatedSeqGroup seq_group = aseq.getSeqGroup();
 
-		// Attempt to load via DAS/2
-		for (GenericServer server : serversWithChrom) {
-			if (server.serverType == ServerType.DAS2) {
-				String uri;
-
-				if (partial_load) {
-					// Try to load in bnib format
-					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, true);
+		//First try to load from DAS2, then Quickload and at last DAS1
+		if (partial_load) {
+			// Try to load in raw format from DAS2 server.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS2) {
+					String uri;
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
 					String residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
@@ -56,28 +63,76 @@ public final class ResidueLoading {
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
+				}
+			}
 
-					// Try to load in fasta format
-					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, false);
-					residues = GetPartialFASTADas2Residues(uri);
+			// Try to load in fasta format from DAS2 server.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS2) {
+					String uri;
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
+					String residues = GetPartialFASTADas2Residues(uri);
 					if (residues != null) {
 						// span is non-null, here
 						BioSeq.AddResiduesToComposition(aseq, residues, span);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
-				} else {
-					// not a partial load.  Try bnib format first, as this format is more compactly represented internally.
+				}
+			}
+
+			// Try to load from Quickload server.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.QuickLoad) {
+					String residues = GetQuickLoadResidues(seq_group, seq_name, server.URL, min, max);
+					if (residues != null) {
+						BioSeq.AddResiduesToComposition(aseq, residues, span);
+						gviewer.setAnnotatedSeq(aseq, true, true, true);
+						return true;
+					}
+				}
+			}
+
+			// Try to load via DAS/1 server.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS) {
+					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
+					if (residues != null) {
+						// Add to composition if we're doing a partial sequence
+						// span is non-null, here
+						BioSeq.AddResiduesToComposition(aseq, residues, span);
+						gviewer.setAnnotatedSeq(aseq, true, true, true);
+						return true;
+					}
+				}
+			}
+		}
+		// not a partial load.
+		else {
+
+			//Try to load in raw format from DAS2 server, as this format is more compactly represented internally.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS2) {
+					String uri;
+					
 					uri = generateDas2URI(
-							server.URL, genomeVersionName, seq_name, min, max, true);
-					if (LoadResiduesFromDAS2(seq_group, uri)) {
+					server.URL, genomeVersionName, seq_name, min, max, FORMAT.RAW);
+					String residues = LoadResiduesFromDAS2(uri);
+					if (residues != null) {
+						aseq.setResidues(residues);
 						BioSeq.AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
 						return true;
 					}
+				}
+			}
 
-					// Try fasta format.
-					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, false);
+			// Try to load in bnib format from DAS2 server, as this format is more compactly represented internally.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS2) {
+					String uri;
+					uri = generateDas2URI(
+							server.URL, genomeVersionName, seq_name, min, max, FORMAT.BNIB);
 					if (LoadResiduesFromDAS2(seq_group, uri)) {
 						BioSeq.AddResiduesToComposition(aseq);
 						gviewer.setAnnotatedSeq(aseq, true, true, true);
@@ -85,11 +140,21 @@ public final class ResidueLoading {
 					}
 				}
 			}
-		}
 
+			// Try to load in fasta format from DAS2 server.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS2) {
+					String uri;
+					uri = generateDas2URI(server.URL, genomeVersionName, seq_name, min, max, FORMAT.FASTA);
+					if (LoadResiduesFromDAS2(seq_group, uri)) {
+						BioSeq.AddResiduesToComposition(aseq);
+						gviewer.setAnnotatedSeq(aseq, true, true, true);
+						return true;
+					}
+				}
+			}
 
-		if (!partial_load) {
-			// Attempt to load via Quickload -- not supported except for full loading.
+			//Try to load from Quickload server.
 			for (GenericServer server : serversWithChrom) {
 				if (server.serverType == ServerType.QuickLoad) {
 					if (GetQuickLoadResidues(seq_group, seq_name, server.URL)) {
@@ -99,23 +164,17 @@ public final class ResidueLoading {
 					}
 				}
 			}
-		}
 
-		for ( // Attempt to load via DAS/1
-				GenericServer server : serversWithChrom) {
-			if (server.serverType == ServerType.DAS) {
-				String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
-				if (residues != null) {
-					// Add to composition if we're doing a partial sequence
-					if (partial_load) {
-						// span is non-null, here
-						BioSeq.AddResiduesToComposition(aseq, residues, span);
-					} else {
+			// Try to load via DAS/1 server.
+			for (GenericServer server : serversWithChrom) {
+				if (server.serverType == ServerType.DAS) {
+					String residues = GetDAS1Residues(server.URL, genomeVersionName, seq_name, min, max);
+					if (residues != null) {
 						aseq.setResidues(residues);
 						BioSeq.AddResiduesToComposition(aseq);
+						gviewer.setAnnotatedSeq(aseq, true, true, true);
+						return true;
 					}
-					gviewer.setAnnotatedSeq(aseq, true, true, true);
-					return true;
 				}
 			}
 		}
@@ -198,18 +257,59 @@ public final class ResidueLoading {
 		return loaded;
 	}
 
+	private static String GetQuickLoadResidues(AnnotatedSeqGroup seq_group, String seq_name, String root_url, int min, int max)
+	{
+		InputStream istr = null;
+		String genome_name = seq_group.getID();
+		try {
+			String url_path = root_url + genome_name + "/" + seq_name + ".bnib";
+			if (DEBUG) {
+				System.out.println("  Quickload location of bnib file: " + url_path);
+			}
+			istr = LocalUrlCacher.getInputStream(url_path, true);
+			if (istr == null) {
+				return null;
+			}
+			
+			ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+			NibbleResiduesParser.parse(istr, min, max, outstream);
+			return outstream.toString();
+
+		} catch (Exception ex) {
+			System.out.println("Error -- cannot access sequence:\n" + "seq = '" + seq_name + "'\n" + "version = '" + genome_name + "'\n" + "server = " + root_url);
+			ex.printStackTrace();
+			return null;
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+	}
 	// Generate URI (e.g., "http://www.bioviz.org/das2/genome/A_thaliana_TAIR8/chr1?range=0:1000")
 	private static String generateDas2URI(String URL, String genomeVersionName,
-			String segmentName, int min, int max, boolean bnibFormat) {
+			String segmentName, int min, int max, FORMAT Format) {
 		if (DEBUG) {
 			System.out.println("trying to load residues via DAS/2");
 		}
 		String uri = URL + "/" + genomeVersionName + "/" + segmentName + "?format=";
-		if (!bnibFormat) {
-			uri += "fasta";
-		} else {
-			uri += "bnib";
+//		if (!bnibFormat) {
+//			uri += "fasta";
+//		} else {
+//			uri += "bnib";
+//		}
+		switch(Format)
+		{
+			case RAW:
+				uri += "raw";
+				break;
+
+			case BNIB:
+				uri += "bnib";
+				break;
+
+			case FASTA:
+				uri += "fasta";
+				break;
 		}
+		
 		if (max > -1) {
 			// ranged
 			uri = uri + "&range=" + min + ":" + max;
@@ -269,6 +369,44 @@ public final class ResidueLoading {
 		return false;
 	}
 
+	private static String LoadResiduesFromDAS2(String uri) {
+		InputStream istr = null;
+		Map<String, String> headers = new HashMap<String, String>();
+		try {
+			istr = LocalUrlCacher.getInputStream(uri, true, headers);
+			// System.out.println(headers);
+			String content_type = headers.get("content-type");
+			if (DEBUG) {
+				System.out.println("    response content-type: " + content_type);
+			}
+			if (istr == null || content_type == null) {
+				if (DEBUG) {
+					System.out.println("  Improper response from DAS/2; aborting DAS/2 residues loading.");
+				}
+				return null;
+			}
+			if(content_type.equals("text/raw"))
+			{
+				if (DEBUG) {
+					System.out.println("   response is in raw format, parsing...");
+				}
+				BufferedReader buff = new BufferedReader(new InputStreamReader(istr));
+				return buff.readLine();
+			}
+
+			if (DEBUG) {
+				System.out.println("   response is not in accepted format, aborting DAS/2 residues loading");
+			}
+			return null;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			GeneralUtils.safeClose(istr);
+		}
+
+		return null;
+	}
+
 	// try loading via DAS/2 server
 	private static String GetPartialFASTADas2Residues(String uri) {
 		InputStream istr = null;
@@ -287,16 +425,24 @@ public final class ResidueLoading {
 				return null;
 			}
 
-			
-			if (content_type.equals(NibbleResiduesParser.getMimeType())) {
-				// check for bnib format
+			if(content_type.equals("text/raw"))
+			{
 				if (DEBUG) {
-					System.out.println("   response is in bnib format, parsing...");
+					System.out.println("   response is in raw format, parsing...");
 				}
-				ByteArrayOutputStream outstream = new ByteArrayOutputStream();
-				NibbleResiduesParser.parse(istr,outstream);
-				return outstream.toString();
+				BufferedReader buff = new BufferedReader(new InputStreamReader(istr));
+				return buff.readLine();
 			}
+			
+//			if (content_type.equals(NibbleResiduesParser.getMimeType())) {
+//				// check for bnib format
+//				if (DEBUG) {
+//					System.out.println("   response is in bnib format, parsing...");
+//				}
+//				ByteArrayOutputStream outstream = new ByteArrayOutputStream();
+//				NibbleResiduesParser.parse(istr,outstream);
+//				return outstream.toString();
+//			}
 
 			if (content_type.equals(FastaParser.getMimeType())) {
 				// check for fasta format

@@ -201,8 +201,6 @@ public final class LoadFileAction {
 		}
 
 		setGroupAndSeq(gmodel, previous_seq_group, previous_seq, new_seq);
-
-		return;
 	}
 
 	

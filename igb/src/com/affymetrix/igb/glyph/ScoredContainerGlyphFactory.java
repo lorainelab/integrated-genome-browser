@@ -108,7 +108,6 @@ public final class ScoredContainerGlyphFactory implements MapViewGlyphFactoryI  
 			map.stretchToFit(false, false);
 			map.updateWidget();
 		}
-		return;
 	}
   
   private static GraphIntervalSym[] makeGraphs(ScoredContainerSym container, AnnotatedSeqGroup seq_group) {

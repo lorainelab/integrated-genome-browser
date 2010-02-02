@@ -441,14 +441,11 @@ public class NeoQualler extends NeoContainerWidget
 		base_map.getScene().addGlyph(line_glyph);
 
 		updateWidget();
-
-		return;
 	}
 
 	public void scrollRange(double value) {
 		bar_map.scrollRange(value);
 		base_map.scrollRange(value);
-		return;
 	}
 
 	public void zoomRange(double value) {
@@ -474,7 +471,6 @@ public class NeoQualler extends NeoContainerWidget
 
 		scrollRange((int)xstart);
 		updateWidget();
-		return;
 	}
 
 	public int getLocation(NeoAbstractWidget widg) {

@@ -240,7 +240,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 	 * @see com.affymetrix.genoviz.widget.NeoAbstractWidget#configureLayout
 	 */
 	public void configureLayout(int component, int placement) {
-		return;
 	}
 
 	/**

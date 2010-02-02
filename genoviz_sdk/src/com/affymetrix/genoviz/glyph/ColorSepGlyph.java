@@ -48,9 +48,9 @@ public class ColorSepGlyph extends Glyph  {
 
 	public void setColorArray(Color[] ca) {
 		colors = ca;
-		return ;
 	}
 
+	@Override
 	protected void drawChildren(ViewI view) {
 		if (children == null)  { return; }
 		if (colors.length > 0) {

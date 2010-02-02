@@ -674,7 +674,6 @@ public abstract class Glyph implements GlyphI  {
 
 	/** Default implementation does nothing. */
 	public void getChildTransform(ViewI view, LinearTransform trans) {
-		return;
 	}
 
 	public boolean getGlobalChildTransform(ViewI view, LinearTransform trans) {

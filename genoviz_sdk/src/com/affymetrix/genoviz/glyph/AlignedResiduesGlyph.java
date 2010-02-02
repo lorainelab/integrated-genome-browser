@@ -339,7 +339,6 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 	 * Subclasses should call {@link #redoColors(int[])}.
 	 */
 	public void redoColors() {
-		return;
 	}
 
 	public String getSequence() {

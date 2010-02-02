@@ -909,7 +909,6 @@ public class NeoTracer extends NeoContainerWidget
 				base_map.scrollRange(off);
 			}
 		}
-		return;
 	}
 
 	/**

@@ -122,7 +122,6 @@ public final class BookmarkTableComponent {
 
       data_model.setValuesFromMap(Bookmark.parseParameters(url));
     }
-    return;
   }  
 }
  

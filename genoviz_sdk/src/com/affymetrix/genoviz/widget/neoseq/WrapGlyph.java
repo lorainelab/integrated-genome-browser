@@ -293,7 +293,6 @@ public abstract class WrapGlyph extends Glyph implements Translatable  {
 
 	public void setSpacing(int spacing) {
 		line_spacing = spacing;
-		return;
 	}
 
 	public int getSpacing() {

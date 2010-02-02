@@ -1143,8 +1143,6 @@ public class NeoSeq extends NeoContainerWidget
 		}
 
 		updateWidget();
-
-		return;
 	}
 
 
@@ -1184,7 +1182,6 @@ public class NeoSeq extends NeoContainerWidget
 		int cval = value - (value % scroll_increment);
 		residue_map.scrollOffset(cval);
 		num_map.scrollOffset(cval);
-		return;
 	}
 
 	public int getLocation(NeoAbstractWidget widg) {
@@ -1358,7 +1355,6 @@ public class NeoSeq extends NeoContainerWidget
 		sel_range.clear();
 		sel_range.notifyObservers();
 		residues_selected = false;
-		return;
 	}
 
 	protected void calcNumPixelWidth() {

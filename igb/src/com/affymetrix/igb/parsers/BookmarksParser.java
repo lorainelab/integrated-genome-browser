@@ -186,7 +186,6 @@ public final class BookmarksParser {
 		GeneralUtils.safeClose(isr);
 		GeneralUtils.safeClose(fis);
     }
-    return;
   }
 
   /** Parses bookmarks from a given file (formatted in BED format)
@@ -202,7 +201,6 @@ public final class BookmarksParser {
 		GeneralUtils.safeClose(bis);
 		GeneralUtils.safeClose(fis);
     }
-    return;
   }
   
   public static void parseBEDFormat(BookmarkList bookmarks, BufferedInputStream istr, GenometryModel gmodel) throws IOException {

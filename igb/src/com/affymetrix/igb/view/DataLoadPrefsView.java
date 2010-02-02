@@ -184,7 +184,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				try {
 					if (f != null) {
 						synonymFile.setText(f.getCanonicalPath());
-						addSynonymFile(synonymFile.getText());
+						loadSynonymFile(synonymFile.getText());
 					}
 				} catch (IOException ex) {
 					Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
@@ -194,7 +194,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		synonymFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				addSynonymFile(synonymFile.getText());
+				loadSynonymFile(synonymFile.getText());
 			}
 		});
 
@@ -212,6 +212,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				.addComponent(synonymsLabel)
 				.addComponent(synonymFile)
 				.addComponent(openFile));
+
+		/* Load the synonym file from preferences on startup */
+		loadSynonymFile(synonymFile.getText());
 
 		return synonymsPanel;
 	}
@@ -235,7 +238,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		});
 
 		cachePanel.setLayout(layout);
-		cachePanel.setBorder(new TitledBorder("Cache Setttings"));
+		cachePanel.setBorder(new TitledBorder("Cache Settings"));
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
 
@@ -411,9 +414,8 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		ServerList.removeServer(url);
 	}
 
-	private static void addSynonymFile(String file) {
+	private static void loadSynonymFile(String file) {
 		if (file == null || file.isEmpty()) {
-			UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, "");
 			return;
 		}
 		
@@ -429,7 +431,6 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		try {
 			fis = new FileInputStream(file);
 			SynonymLookup.getDefaultLookup().loadSynonyms(fis);
-			UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, f.getCanonicalPath());
 		} catch (IOException ex) {
 			ErrorHandler.errorPanel(
 					"Unable to Load Synonym File",
@@ -451,7 +452,6 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 	private static File fileChooser(int mode, Component parent) throws HeadlessException {
 		JFileChooser chooser = new JFileChooser();
-		int option;
 		
 		chooser.setCurrentDirectory(FileTracker.DATA_DIR_TRACKER.getFile());
 		chooser.setFileSelectionMode(mode);
@@ -459,9 +459,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		chooser.setAcceptAllFileFilterUsed(mode != DIRECTORIES_ONLY);
 		chooser.rescanCurrentDirectory();
 		
-		option = chooser.showOpenDialog(parent);
-		
-		if (option != APPROVE_OPTION) { return null; }
+		if (chooser.showOpenDialog(parent) != APPROVE_OPTION) { return null; }
 
 		return chooser.getSelectedFile();
 	}

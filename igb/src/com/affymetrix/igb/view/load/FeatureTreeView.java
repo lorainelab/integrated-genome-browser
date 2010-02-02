@@ -255,7 +255,10 @@ public final class FeatureTreeView extends JComponent implements ActionListener 
 		// the recursive adding of non leaves
 		String featureLeft = featureName.substring(0, featureName.indexOf(path_separator));
 		String featureRight = featureName.substring(featureName.indexOf(path_separator) + 1);
-		Enumeration<DefaultMutableTreeNode> en = root.children();
+
+		@SuppressWarnings("unchecked")
+		Enumeration<DefaultMutableTreeNode> en = root.children();	// no way to avoid compiler warning in Java 6
+		
 		while (en.hasMoreElements()) {
 			DefaultMutableTreeNode candidate = en.nextElement();
 			Object nodeData = candidate.getUserObject();

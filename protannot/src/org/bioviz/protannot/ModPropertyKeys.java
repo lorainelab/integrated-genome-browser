@@ -1,6 +1,3 @@
-/**
- * Started with com.neomorphic.bio.datamodel.feature.PropertyKeys and modified
- */
 package org.bioviz.protannot;
 
 import java.util.*;
@@ -33,14 +30,7 @@ final class ModPropertyKeys {
             if (props[i] == null) {
                 continue;
             }
-            for (Object obj : props[i].keySet()) {
-                String name;
-                if (obj instanceof String) {
-                    name = (String) obj;
-                } else {
-                    // failsafe, in case key is _not_ a String, name it by obj.toString()
-                    name = obj.toString();
-                }
+            for (String name : props[i].stringPropertyNames()) {
                 String[] name_value = rows_thus_far.get(name);
                 if (name_value != null) {
                     continue;

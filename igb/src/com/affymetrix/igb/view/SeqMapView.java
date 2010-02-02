@@ -111,23 +111,7 @@ public class SeqMapView extends JPanel
 	private static final boolean DEBUG_TIERS = false;
 	public static boolean DEBUG_COMP = false;
 	private static final boolean DEBUG_STYLESHEETS = false;
-	/** Add spans to the transformation sym that will cause all
-	 * "intron" spans in the regions of aseq between exons chosen for slicing
-	 * to be transformed into zero-length spans.
-	 * This allows glyph factories to find "deleted" exons
-	 * and draw them (if desired) without requiring messy calculations in
-	 * the glyph factories.
-	 */
-	private static final boolean ADD_INTRON_TRANSFORMS = true;
-	/**
-	 * Extends the action of ADD_INTRON_TRANSFORMS to add an extra transform for
-	 * the "intron" that extends from the start of the sequence to the first
-	 * selected exon and from the end of the last selected exon to the end of
-	 * the sequence.  It is probably NOT very efficient to do this.  It seems
-	 * to work better to let the glyph factories figure out this information in
-	 * other ways.
-	 */
-	private static final boolean ADD_EDGE_INTRON_TRANSFORMS = false;
+	
 	private static final boolean view_cytobands_in_axis = true;
 	private static final Pattern CYTOBAND_TIER_REGEX = Pattern.compile(".*" + CytobandParser.CYTOBAND_TIER_NAME);
 	protected boolean SUBSELECT_SEQUENCE = true;  // try to visually select range along seq glyph based on rubberbanding
@@ -567,12 +551,12 @@ public class SeqMapView extends JPanel
 		}
 	};
 
-	public TransformTierGlyph getAxisTier() {
+	public final TransformTierGlyph getAxisTier() {
 		return axis_tier;
 	}
 
 	/** Set up a tier with fixed pixel height and place axis in it. */
-	private TransformTierGlyph addAxisTier(int tier_index) {
+	private final TransformTierGlyph addAxisTier(int tier_index) {
 		axis_tier = new TransformTierGlyph(getAxisAnnotStyle());
 		axis_tier.setFixedPixHeight(45);
 		axis_tier.setDirection(TierGlyph.Direction.AXIS);
@@ -615,7 +599,7 @@ public class SeqMapView extends JPanel
 		return axis_tier;
 	}
 
-	private static CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
+	private static final CharSeqGlyph initSeqGlyph(BioSeq viewSeq, Color axis_fg, AxisGlyph axis) {
 		CharSeqGlyph seq_glyph = new CharSeqGlyph();
 		seq_glyph.setForegroundColor(axis_fg);
 		seq_glyph.setShowBackground(false);
@@ -633,7 +617,7 @@ public class SeqMapView extends JPanel
 
 
 
-	private static void showFillRect(BioSeq viewSeq, CharSeqGlyph seqGlyph, SeqSymmetry compsym, AxisGlyph axis) {
+	private static final void showFillRect(BioSeq viewSeq, CharSeqGlyph seqGlyph, SeqSymmetry compsym, AxisGlyph axis) {
 		int compcount = compsym.getChildCount();
 		// create a color, c3, in between the foreground and background colors
 		Color c1 = axis.getForegroundColor();
@@ -679,7 +663,7 @@ public class SeqMapView extends JPanel
 	}
 
 
-	public Glyph makeCytobandGlyph() {
+	public final Glyph makeCytobandGlyph() {
 		BioSeq sma = getAnnotatedSeq();
 		SymWithProps cyto_annots = null;
 		List<SymWithProps> cyto_tiers = sma.getAnnotations(CYTOBAND_TIER_REGEX);
@@ -702,7 +686,7 @@ public class SeqMapView extends JPanel
 	 *        (when cytobands are loaded via DAS/2, child of TypeContainerAnnot
 	 *         will be a Das2FeatureRequestSym, which will have cytoband children).
 	 */
-	public Glyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
+	public final Glyph makeCytobandGlyph(TypeContainerAnnot cyto_container) {
 		int cyto_height = 11; // the pointed glyphs look better if this is an odd number
 
 		RoundRectMaskGlyph cytoband_glyph_A = null;
@@ -811,7 +795,7 @@ public class SeqMapView extends JPanel
 	}
 
 	/** Sets the axis label format from the value in the persistent preferences. */
-	public static void setAxisFormatFromPrefs(AxisGlyph axis) {
+	public static final void setAxisFormatFromPrefs(AxisGlyph axis) {
 		// It might be good to move this to AffyTieredMap
 		String axis_format = UnibrowPrefsUtil.getTopNode().get(PREF_AXIS_LABEL_FORMAT, VALUE_AXIS_LABEL_FORMAT_COMMA);
 		if (VALUE_AXIS_LABEL_FORMAT_COMMA.equalsIgnoreCase(axis_format)) {
@@ -1850,20 +1834,22 @@ public class SeqMapView extends JPanel
 	 */
 	private void sliceAndDiceNow(SeqSymmetry sym) {
 		int childCount = (sym == null) ? 0 : sym.getChildCount();
-
-		if (childCount <= 0) {
+		if (childCount == 0) {
 			return;
 		}
+		
 		coord_shift = true;
+
+		slice_symmetry = sym;
+		viewseq = new BioSeq("view_seq", "", aseq.getLength());
+		
 		if (seq2viewSym == null) {
 			seq2viewSym = new SimpleMutableSeqSymmetry();
 		} else {
 			seq2viewSym.clear();
 		}
 
-		slice_symmetry = sym;
-		viewseq = new BioSeq("view_seq", "", aseq.getLength());
-		//viewseq = new com.affymetrix.genometry.seq.SimpleCompAnnotBioSeq("view_seq", aseq.getLength());
+		
 
 		// rebuild seq2viewSym as a symmetry mapping slices of aseq to abut next to each other
 		//    mapped to viewseq
@@ -1898,20 +1884,7 @@ public class SeqMapView extends JPanel
 				SeqUtils.encompass(prev_seq_slice, seq_slice_span, prev_seq_slice);
 				SeqUtils.encompass(prev_view_slice, view_slice_span, prev_view_slice);
 			} else {
-				if (ADD_INTRON_TRANSFORMS) {
-					if (prev_seq_slice != null) {
-						SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), seq_slice_span.getMin(), aseq);
-						SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
-						// SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
-						// since there will be frequent calls to getSpan(BioSeq)
-						seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
-					} else if (ADD_EDGE_INTRON_TRANSFORMS && i == 0) {
-						// Add an extra transform for the "intron" that extends from the start of the sequence to the first selected exon
-						SeqSpan intron_region_span = new SimpleSeqSpan(0, seq_slice_span.getMin(), aseq);
-						SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
-						seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
-					}
-				}
+				addIntronTransforms(prev_seq_slice, seq_slice_span, view_slice_span);
 
 				SeqSymmetry slice_sym = new SimplePairSeqSymmetry(seq_slice_span, view_slice_span);
 				seq2viewSym.addChild(slice_sym);
@@ -1921,13 +1894,6 @@ public class SeqMapView extends JPanel
 			}
 			slice_offset += slice_length;
 			prev_max = slice_max;
-		}
-
-		if (ADD_EDGE_INTRON_TRANSFORMS && ADD_INTRON_TRANSFORMS) {
-			// Add an extra transform for the "intron" that extends from the last selection to the end of the sequence
-			SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), aseq.getLength(), aseq);
-			SeqSpan zero_length_span = new SimpleSeqSpan(prev_view_slice.getMax(), prev_view_slice.getMax(), viewseq);
-			seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
 		}
 
 		SeqSpan seq_span = SeqUtils.getChildBounds(seq2viewSym, aseq);
@@ -1942,6 +1908,27 @@ public class SeqMapView extends JPanel
 		slicing_in_effect = true;
 
 		setAnnotatedSeq(aseq);
+	}
+
+	/**
+	 * Add spans to the transformation sym that will cause all
+	 * "intron" spans in the regions of aseq between exons chosen for slicing
+	 * to be transformed into zero-length spans.
+	 * This allows glyph factories to find "deleted" exons
+	 * and draw them (if desired) without requiring messy calculations in
+	 * the glyph factories.
+	 * @param prev_seq_slice
+	 * @param seq_slice_span
+	 * @param view_slice_span
+	 */
+	private void addIntronTransforms(MutableSeqSpan prev_seq_slice, MutableSeqSpan seq_slice_span, MutableSeqSpan view_slice_span) {
+		if (prev_seq_slice != null) {
+			SeqSpan intron_region_span = new SimpleSeqSpan(prev_seq_slice.getMax(), seq_slice_span.getMin(), aseq);
+			SeqSpan zero_length_span = new SimpleSeqSpan(view_slice_span.getMin(), view_slice_span.getMin(), viewseq);
+			// SimplePairSeqSymmetry is better than EfficientPairSeqSymmetry here,
+			// since there will be frequent calls to getSpan(BioSeq)
+			seq2viewSym.addChild(new SimplePairSeqSymmetry(intron_region_span, zero_length_span));
+		}
 	}
 
 	public void toggleAutoScroll() {

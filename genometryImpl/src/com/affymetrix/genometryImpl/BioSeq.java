@@ -428,6 +428,8 @@ public final class BioSeq implements SearchableCharIterator {
 			throw new IllegalArgumentException("start: " + start + " residues: " + this.getResidues());
 		}
 
+		//TODO: If start is greater than residue_length then
+		//			this condition fails and returns unexpected string
 		// Sanity checks on argument size.
 		start = Math.min(start, residue_length);
 		end = Math.min(end, residue_length);

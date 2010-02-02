@@ -17,7 +17,7 @@ package com.affymetrix.genometryImpl.util;
  * A little utility class to help monitor performance.
  */
 public final class Timer {
-	protected long start_time, read_time;
+	private long start_time, read_time;
 
 	/**
 	 * Notes a start time.

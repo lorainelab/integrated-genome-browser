@@ -124,7 +124,7 @@ public final class LazyChpSym extends ScoredContainerSym {
    *  Coords & ids are retrieved on a per-seq basis via a DAS/2 server, preferably in an optimized binary format
    *  [server_root]/[genomeid]/features?segment=[seqid];
    */
-  protected boolean coords_loaded = false;
+  private boolean coords_loaded = false;
 
 	@Override
   public int getChildCount() {

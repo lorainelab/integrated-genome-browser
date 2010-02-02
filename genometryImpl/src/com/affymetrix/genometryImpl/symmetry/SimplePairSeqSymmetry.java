@@ -21,11 +21,11 @@ import java.util.List;
 
 public final class SimplePairSeqSymmetry implements SeqSymmetry {
 
-	protected List<SeqSymmetry> children = null;
-	protected SeqSymmetry parent = null;
-	protected static int count = 2;
-	protected SeqSpan spanA;
-	protected SeqSpan spanB;
+	private List<SeqSymmetry> children = null;
+	private SeqSymmetry parent = null;
+	private static int count = 2;
+	private SeqSpan spanA;
+	private SeqSpan spanB;
 
 	/*public SimplePairSeqSymmetry(List<SeqSpan> spans) {
 		spanA = spans.get(0);

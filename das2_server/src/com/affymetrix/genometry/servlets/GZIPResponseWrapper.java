@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 public final class GZIPResponseWrapper extends HttpServletResponseWrapper {
-	protected HttpServletResponse origResponse = null;
-	protected ServletOutputStream stream = null;
-	protected PrintWriter writer = null;
+	private HttpServletResponse origResponse = null;
+	private ServletOutputStream stream = null;
+	private PrintWriter writer = null;
 
 	public GZIPResponseWrapper(HttpServletResponse response) {
 		super(response);

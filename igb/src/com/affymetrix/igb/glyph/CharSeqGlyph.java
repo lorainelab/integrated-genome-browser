@@ -29,7 +29,7 @@ public final class CharSeqGlyph extends SequenceGlyph
 	private static final Font mono_default_font = new Font("Monospaced", Font.BOLD, 12);
 
 	// default to true for backward compatability
-	protected boolean hitable = true;
+	private boolean hitable = true;
 	public static final String PREF_A_COLOR = "Adenine color";
 	public static final String PREF_T_COLOR = "Thymine color";
 	public static final String PREF_G_COLOR = "Guanine color";

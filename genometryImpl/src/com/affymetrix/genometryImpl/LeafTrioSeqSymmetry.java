@@ -17,8 +17,8 @@ import com.affymetrix.genometryImpl.span.SimpleSeqSpan;
 
 /** A SeqSymmetry with exactly three SeqSpan's. */
 public final class LeafTrioSeqSymmetry implements SeqSymmetry {
-	protected int startA, startB, endA, endB, startC, endC;
-	protected BioSeq seqA, seqB, seqC;
+	private int startA, startB, endA, endB, startC, endC;
+	private BioSeq seqA, seqB, seqC;
 
 	public LeafTrioSeqSymmetry(int startA, int endA, BioSeq seqA, 
 			int startB, int endB, BioSeq seqB, 

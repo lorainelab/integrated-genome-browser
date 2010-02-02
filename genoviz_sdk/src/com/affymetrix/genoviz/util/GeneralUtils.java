@@ -11,7 +11,7 @@ import java.util.*;
  */
 public final class GeneralUtils  {
 
-	protected static Hashtable<String,Color> colormap;
+	private static Hashtable<String,Color> colormap;
 
 	/**
 	 * toObjectString(obj) is a debugging tool

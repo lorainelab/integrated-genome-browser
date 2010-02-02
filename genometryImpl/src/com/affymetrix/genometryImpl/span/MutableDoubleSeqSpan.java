@@ -17,9 +17,9 @@ import com.affymetrix.genometryImpl.BioSeq;
 import com.affymetrix.genometryImpl.MutableSeqSpan;
 
 public final class MutableDoubleSeqSpan implements MutableSeqSpan, Cloneable {
-	protected double start;
-	protected double end;
-	protected BioSeq seq;
+	private double start;
+	private double end;
+	private BioSeq seq;
 
 	public MutableDoubleSeqSpan(double start, double end, BioSeq seq) {
 		this.start = start;

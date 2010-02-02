@@ -95,7 +95,7 @@ public final class BarParser implements AnnotationWriter  {
 	 */
 	static int points_per_chunk = 1024;
 
-	protected static Map<String,Object> coordset2seqs = new HashMap<String,Object>();
+	private static Map<String,Object> coordset2seqs = new HashMap<String,Object>();
 
 	/**
 	 *  Gets a slice from a graph bar file.  The returned GraphSym is intended to

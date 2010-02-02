@@ -1658,11 +1658,6 @@ public class NeoSeq extends NeoContainerWidget
 	}
 
 	@Override
-	public void setSelectionAppearance(int behavior) {
-		super.setSelectionAppearance(behavior);
-	}
-
-	@Override
 	public void setSelectionColor(Color col) {
 		super.setSelectionColor(col);
 		getResidueGlyph().setHighlightColor(col);

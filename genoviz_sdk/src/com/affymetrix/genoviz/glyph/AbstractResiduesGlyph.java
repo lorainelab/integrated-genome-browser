@@ -218,6 +218,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 		}
 	}
 
+	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
 		if ( ! isSelected() ) {
@@ -225,10 +226,7 @@ public abstract class AbstractResiduesGlyph extends Glyph implements ResiduesGly
 		}
 	}
 
-	protected void drawSelectedFill(ViewI view) {
-		super.drawSelectedFill(view);
-	}
-
+	@Override
 	protected void drawSelectedOutline(ViewI view) {
 		if (sel_glyph != null)  {
 			draw(view);

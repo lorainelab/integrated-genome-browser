@@ -31,6 +31,7 @@ public class LineStretchContainerGlyph extends Glyph {
 	/**
 	 *  overriding addChild to force children to center on line
 	 */
+	@Override
 	public void addChild(GlyphI glyph) {
 		super.addChild(glyph);
 
@@ -85,14 +86,13 @@ public class LineStretchContainerGlyph extends Glyph {
 		return isVisible && pixel_hitbox.intersects(pixelbox);
 	}
 
+	@Override
 	public boolean hit(Rectangle2D.Double coord_hitbox, ViewI view)  {
 		return isVisible && coord_hitbox.intersects(coordbox);
 	}
 
 
-	public void pack(ViewI view) {
-		super.pack(view);
-	}
+	
 
 
 }

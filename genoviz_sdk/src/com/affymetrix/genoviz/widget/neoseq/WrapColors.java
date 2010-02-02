@@ -63,11 +63,6 @@ public class WrapColors extends AnnotationGlyph {
 		annot_end = end;
 	}
 
-	@Override
-	public void setSequence (SequenceI seq)  {
-		super.setSequence(seq);
-	}
-
 	/** Overriden to prevent
 	 * an outline box from being drawn around the entire glyph.
 	 * Note this is only the case with Glyph.drawSelectedOutline,

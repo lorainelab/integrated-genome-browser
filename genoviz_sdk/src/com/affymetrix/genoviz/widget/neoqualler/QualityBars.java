@@ -83,11 +83,6 @@ public class QualityBars extends Glyph  {
 	}
 
 	@Override
-	public void draw(ViewI view) {
-		super.draw(view);
-	}
-
-	@Override
 	public boolean hit(Rectangle pixel_hitbox, ViewI view)  {
 		calcPixels(view);
 		return isVisible && pixel_hitbox.intersects(pixelbox);

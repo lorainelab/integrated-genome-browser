@@ -828,10 +828,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 		selected.remove(g);
 	}
 
-	public void clearWidget() {
-		super.clearWidget();
-	}
-
 	/**
 	 * Scale constraints are currently only considered during
 	 *    zooming with zoomer[] adjustables

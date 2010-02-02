@@ -15,7 +15,6 @@ package com.affymetrix.genoviz.glyph;
 
 import com.affymetrix.genoviz.bioviews.Glyph;
 import com.affymetrix.genoviz.bioviews.GlyphI;
-import java.awt.geom.Rectangle2D;
 
 /**
  *  A glyph that expands when children are added, so that its bounding box is
@@ -23,6 +22,7 @@ import java.awt.geom.Rectangle2D;
  */
 public class StretchContainerGlyph extends Glyph {
 
+	@Override
 	public void addChild(GlyphI child)  {
 		super.addChild(child);
 		propagateStretch(child);
@@ -36,12 +36,10 @@ public class StretchContainerGlyph extends Glyph {
 		}
 	}
 
+	@Override
 	public void setCoords(double x, double y, double width, double height)  {
 		super.setCoords(x, y, width, height);
 	}
 
-	public void setCoordBox(Rectangle2D.Double coordbox)   {
-		super.setCoordBox(coordbox);
-	}
 
 }

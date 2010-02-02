@@ -25,7 +25,7 @@ public final class WebLink {
 	private static final boolean DEBUG = false;
 	private String url = null;
 	private String name = "";
-	private final String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
+	private static final String id_field_name = null; // null implies use getId(); "xxx" means use getProperty("xxx");
 	private String original_regex = null;
 	private RegexType regexType = RegexType.TYPE;	// matching on type or id
 	private static final String separator = System.getProperty("line.separator");

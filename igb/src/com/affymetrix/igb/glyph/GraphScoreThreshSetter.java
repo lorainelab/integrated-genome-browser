@@ -77,23 +77,23 @@ public final class GraphScoreThreshSetter extends JPanel
 	private final JTextField shift_endTF = new JTextField("0", 5);
 	private final JComboBox threshCB = new JComboBox();
 	private final JButton tier_threshB = new JButton("Make Track");
-	private final float sliders_per_percent = 10.0f;
+	private static final float sliders_per_percent = 10.0f;
 	private final float percents_per_slider = 1.0f / sliders_per_percent;
-	private final int total_val_sliders = 1000;
+	private static final int total_val_sliders = 1000;
 	private  float sliders_per_val;
 	private float abs_min_val;
 	private float abs_max_val;
 	private float prev_thresh_val;
-	private final float abs_min_per = 0;
-	private final float abs_max_per = 100;
+	private static final float abs_min_per = 0;
+	private static final float abs_max_per = 100;
 	private float prev_thresh_per;
-	private final boolean show_min_and_max = false;
-	private final int max_chars = 15;
-	private final int max_pix_per_char = 6;
+	private static final boolean show_min_and_max = false;
+	private static final int max_chars = 15;
+	private static final int max_pix_per_char = 6;
 	private final int tf_min_xpix = max_chars * max_pix_per_char;
 	private final int tf_max_xpix = tf_min_xpix + (2 * max_pix_per_char);
-	private final int tf_min_ypix = 10;
-	private final int tf_max_ypix = 25;
+	private static final int tf_min_ypix = 10;
+	private static final int tf_max_ypix = 25;
 
 
 	static {

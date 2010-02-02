@@ -40,7 +40,7 @@ public class AltSpliceView extends JComponent
 				TierLabelManager.PopupListener {
 
 	private final static GenometryModel gmodel = GenometryModel.getGenometryModel();
-	private final boolean CONTROLS_ON_SIDE = false;
+	private static final boolean CONTROLS_ON_SIDE = false;
 	private final SeqMapView original_view;
 	private final SeqMapView spliced_view;
 	private final OrfAnalyzer orf_analyzer;

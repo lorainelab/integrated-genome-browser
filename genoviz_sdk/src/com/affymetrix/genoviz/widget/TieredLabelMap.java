@@ -99,12 +99,6 @@ public class TieredLabelMap extends AbstractTieredMap {
 		}
 	}
 
-	/** Adding only permitted by ourself */
-
-	private void addTier(MapTierGlyph mtg) {
-		addTier(mtg, false);
-	}
-
 	private void addTier(MapTierGlyph mtg, boolean ontop) {
 		if (mtg == null)
 			return;

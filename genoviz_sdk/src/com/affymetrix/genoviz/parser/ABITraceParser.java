@@ -247,17 +247,6 @@ public class ABITraceParser implements ContentParser {
 		return index_block_size;
 	}
 
-	private int readIndexOffset (DataInputStream in) throws IOException {
-		int index_block_offset = 0;
-
-		// Read block index offset
-		in.skip (8);
-		curpos += 8;
-		index_block_offset = readABIint (in, "index_block_offset");
-
-		return index_block_offset;
-	}
-
 	private int readABIshort (DataInputStream in, String msg) throws IOException {
 		int short_value = 0;
 

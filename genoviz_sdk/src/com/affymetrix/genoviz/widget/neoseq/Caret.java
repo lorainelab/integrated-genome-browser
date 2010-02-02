@@ -101,16 +101,6 @@ public class Caret extends WrapGlyph {
 		return this.position;
 	}
 
-	/**
-	 * set an "oposite" color for XOR drawing when this is a solid caret.
-	 */
-	private Color revColor() {
-		byte r = ( byte ) getBackgroundColor().getRed();
-		byte g = ( byte ) getBackgroundColor().getGreen();
-		byte b = ( byte ) getBackgroundColor().getBlue();
-		return new Color( ~r&255, ~g&255, ~b&255 );
-	}
-
 	public void draw(ViewI view) {
 
 		if ( null == this.position ) {

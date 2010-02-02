@@ -292,22 +292,6 @@ public final class SearchView extends JComponent implements ActionListener, Grou
 		}
 	};
 
-	/**
-     * Update the row filter regular expression from the expression in
-     * the text box.
-     */
-    private void newFilter() {
-        RowFilter<SearchResultsTableModel, Object> rf = null;
-        //If current expression doesn't parse, don't update.
-        try {
-            rf = RowFilter.regexFilter(filterText.getText(), 0);
-        } catch (java.util.regex.PatternSyntaxException e) {
-            return;
-        }
-        sorter.setRowFilter(rf);
-    }
-
-
 	private void displayInTable(List<SeqSymmetry> rows) {
 		model.fireTableDataChanged();
 	}

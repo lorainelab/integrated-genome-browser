@@ -348,6 +348,7 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
 	 */
+	/**
 	private void RestorePersistentGenome() {
 		// Get group and seq info from persistent preferences.
 		// (Recovering as much data as possible before activating listeners.)
@@ -389,7 +390,7 @@ public final class GeneralLoadView extends JComponent
 			e.printStackTrace();
 		}
 	}
-
+**/
 	private static void initVersion(String versionName) {
 		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes...");
 		GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.

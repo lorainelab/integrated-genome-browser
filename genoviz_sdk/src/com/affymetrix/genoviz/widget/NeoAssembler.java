@@ -220,10 +220,6 @@ public class NeoAssembler extends NeoContainerWidget
 	protected int font_color_strategy = AlignedResiduesGlyph.FIXED_COLOR;
 	protected int rect_color_strategy = AlignedResiduesGlyph.ALIGNMENT_BASED;
 
-	public boolean tryUniChild = false;
-
-	//private static final boolean debug = false;
-
 	protected boolean complementIfReversed = true;
 	protected boolean show_axis = true;
 	protected boolean apply_color_retro = true;
@@ -757,12 +753,10 @@ public class NeoAssembler extends NeoContainerWidget
 		//   causes problems because of special calls to
 		//   consensus.setResidues, etc. in NeoAssembler
 		if (NA_ASSEMBLY == assemblyType) {
-			cons_glyph = new AlignmentGlyph(AlignmentGlyph.NA_RESIDUES, length,
-					false);
+			cons_glyph = new AlignmentGlyph(AlignmentGlyph.NA_RESIDUES, length);
 		}
 		else if (AA_ASSEMBLY == assemblyType) {
-			cons_glyph = new AlignmentGlyph(AlignmentGlyph.AA_RESIDUES, length,
-					false);
+			cons_glyph = new AlignmentGlyph(AlignmentGlyph.AA_RESIDUES, length);
 		}
 		else {
 			System.out.println("!!! no assembly type !!!");
@@ -976,12 +970,10 @@ public class NeoAssembler extends NeoContainerWidget
 		if (start < end) { length = end-start+1; }
 		else { length = start-end+1; }
 		if (NA_ASSEMBLY == assemblyType) {
-			aglyph = new AlignmentGlyph(AlignmentGlyph.NA_RESIDUES, length,
-					tryUniChild);
+			aglyph = new AlignmentGlyph(AlignmentGlyph.NA_RESIDUES, length);
 		}
 		else if (AA_ASSEMBLY == assemblyType) {
-			aglyph = new AlignmentGlyph(AlignmentGlyph.AA_RESIDUES, length,
-					tryUniChild);
+			aglyph = new AlignmentGlyph(AlignmentGlyph.AA_RESIDUES, length);
 		}
 		else {
 			System.out.println("!!! no assembly type !!!");

@@ -107,7 +107,6 @@ public final class DasSource {
     try {
       System.out.println("Das Entry Request: " + entry_request);
       Document doc = XMLUtils.getDocument(entry_request);
-      Element top_element = doc.getDocumentElement();
       NodeList segments = doc.getElementsByTagName("SEGMENT");
 	  int length = segments.getLength();
       System.out.println("segments: " + length);
@@ -157,7 +156,6 @@ public final class DasSource {
     try {
       System.out.println("Das Types Request: " + types_request);
       Document doc = XMLUtils.getDocument(types_request);
-      Element top_element = doc.getDocumentElement();
       NodeList typelist = doc.getElementsByTagName("TYPE");
       System.out.println("types: " + typelist.getLength());
       for (int i=0; i< typelist.getLength(); i++)  {
@@ -166,9 +164,9 @@ public final class DasSource {
 	String method = typenode.getAttribute("method");
 	String category = typenode.getAttribute("category");
 
-	String countstr = null;
-	Text count_text = (Text)typenode.getFirstChild();
-	if (count_text != null) { countstr = count_text.getData(); }
+	//String countstr = null;
+	//Text count_text = (Text)typenode.getFirstChild();
+	//if (count_text != null) { countstr = count_text.getData(); }
 
 	//	System.out.println("type id: " + typeid);
 	DasType type = new DasType(this, typeid, method, category);

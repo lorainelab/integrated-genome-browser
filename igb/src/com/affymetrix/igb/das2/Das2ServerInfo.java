@@ -141,8 +141,6 @@ public final class Das2ServerInfo  {
 			System.out.println("Initializing " + server_uri);
 			Document doc = XMLUtils.getDocument(response);
 
-			Element top_element = doc.getDocumentElement();
-
 			NodeList sources = doc.getElementsByTagName("SOURCE");
 			parseSources(sources, das_query);
 		} catch (Exception ex) {

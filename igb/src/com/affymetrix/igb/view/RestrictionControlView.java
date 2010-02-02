@@ -85,7 +85,7 @@ public final class RestrictionControlView extends JComponent
 				String site_name, site_dna;
 				String reply_string;
 				//    String reply_string = distr.readLine();
-				int rcount = 0;
+				//int rcount = 0;
 				while ((reply_string = d.readLine()) != null) {
 					//	System.out.println(reply_string);
 					string_toks = new StringTokenizer(reply_string);
@@ -93,7 +93,7 @@ public final class RestrictionControlView extends JComponent
 					site_dna = string_toks.nextToken();
 					site_hash.put(site_name, site_dna);
 					sites.add(site_name);
-					rcount++;
+					//rcount++;
 				}
 			} catch (Exception ex) {
 				load_success = false;

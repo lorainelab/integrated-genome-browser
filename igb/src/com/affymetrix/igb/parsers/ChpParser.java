@@ -67,7 +67,6 @@ public final class ChpParser {
       reader_registered = true;
     }
 
-    File testfil = new File(file_name);
     System.out.println("Parsing CHP file: " + file_name);
 
     FusionCHPData chp = FusionCHPDataReg.read(file_name);

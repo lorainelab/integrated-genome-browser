@@ -230,7 +230,7 @@ final class WebLinkEditorPanel extends JPanel {
         return false;
       }
       else try {
-        Pattern p = Pattern.compile(regex_tf.getText());
+        Pattern.compile(regex_tf.getText());
       } catch (PatternSyntaxException pse) {
         ErrorHandler.errorPanel("Bad Regular Expression", 
           "Error in regular expression:\n" + pse.getMessage(), regex_tf);

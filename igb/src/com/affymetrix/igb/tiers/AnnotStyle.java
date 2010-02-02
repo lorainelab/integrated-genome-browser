@@ -600,7 +600,6 @@ public class AnnotStyle implements IAnnotStyleExtended {
     else if (score > max) { score = max;}
 
     final float range = max - min;
-    final float norm_score = (score/range);
     int index = (int) ((score/range) * 255);
 
     return getCustomHeatMap().getColors()[ index ];

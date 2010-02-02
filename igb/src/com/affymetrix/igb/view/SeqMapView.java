@@ -1016,7 +1016,7 @@ public class SeqMapView extends JPanel
 			temp_tiers.clear(); // redundant hint to garbage collection
 		}
 
-		TransformTierGlyph at = addAxisTier(axis_index);
+		addAxisTier(axis_index);
 		addAnnotationTiers();
 		removeEmptyTiers();
 

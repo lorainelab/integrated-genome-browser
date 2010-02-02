@@ -200,9 +200,6 @@ public final class CoverageSummarizerGlyph extends SolidGlyph {
     double min_xcoord = view_coordbox.x;
     double max_xcoord = view_coordbox.x + view_coordbox.width;
 
-    int beg_index = 0;
-    int end_index = maxs.length-1;
-
     int draw_beg_index = Arrays.binarySearch(mins, (int)min_xcoord);
     int draw_end_index = Arrays.binarySearch(maxs, (int)max_xcoord) + 1;
     if (draw_beg_index < 0) {

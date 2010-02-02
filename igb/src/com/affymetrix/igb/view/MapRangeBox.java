@@ -46,7 +46,6 @@ final class MapRangeBox extends JComponent implements NeoViewBoxListener, GroupS
     }
         @Override
     public Dimension getMaximumSize() {
-      Dimension d = super.getMaximumSize();
       return new Dimension(200, getPreferredSize().height);
     }
   };

@@ -204,9 +204,9 @@ public final class BookmarkList extends DefaultMutableTreeNode {
   private static void exportAsNetscapeHTML_recursive(BookmarkList list, Writer bw, String indent) throws IOException {
     // Note: the H3 here could have also ADD_DATE, LAST_MODIFIED and ID attributes
     Enumeration e = list.children();
-    int i=0;
+    //int i=0;
     while (e.hasMoreElements()) {
-      i++;
+      //i++;
       BookmarkList btn = (BookmarkList) e.nextElement();
       Object o = btn.getUserObject();
       if (o instanceof String) {

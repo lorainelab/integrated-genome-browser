@@ -231,7 +231,6 @@ public final class BookmarksParser {
         }
         try {
           if (DEBUG) System.out.println("Bookmark: "+annotname);
-          Map m = new HashMap();
           Bookmark bm = BookmarkController.makeBookmark(annot, annotname);
           if (DEBUG) System.out.println("Adding bookmark "+bm+" to list "+sub_list.getName());
           sub_list.addBookmark(bm);

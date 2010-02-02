@@ -191,7 +191,7 @@ public final class OrfAnalyzer extends JComponent
 
 
 		for (int i = 0; i < stop_codons.length; i++) {
-			int count = 0;
+			//int count = 0;
 			boolean forward_codon = (i <= 2);
 			String codon = stop_codons[i];
 
@@ -216,7 +216,7 @@ public final class OrfAnalyzer extends JComponent
 				frame_lists[frame].add(seq_index);
 				res_index = vseq.indexOf(codon, res_index + 1);
 
-				count++;
+				//count++;
 			}
 		}
 

@@ -83,7 +83,6 @@ public final class DasServerInfo {
 		
 			Document doc = XMLUtils.getDocument(request_con);
 
-			Element top_element = doc.getDocumentElement();
 			NodeList dsns = doc.getElementsByTagName("DSN");
 			System.out.println("dsn count: " + dsns.getLength());
 			for (int i = 0; i < dsns.getLength(); i++) {

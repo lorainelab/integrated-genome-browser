@@ -184,7 +184,6 @@ public final class Das2VersionedSource {
 			InputStream response = LocalUrlCacher.getInputStream(region_request, false);
 
 			Document doc = XMLUtils.getDocument(response);
-			Element top_element = doc.getDocumentElement();
 			NodeList regionlist = doc.getElementsByTagName("SEGMENT");
 			if (DEBUG) {
 				System.out.println("segments: " + regionlist.getLength());
@@ -270,7 +269,6 @@ public final class Das2VersionedSource {
 						return;
 					}
 					Document doc = XMLUtils.getDocument(response);
-					Element top_element = doc.getDocumentElement();
 					NodeList typelist = doc.getElementsByTagName("TYPE");
 
 					getTypeList(typelist, types_request);

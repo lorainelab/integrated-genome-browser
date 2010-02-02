@@ -435,7 +435,6 @@ public final class LoadFileAction {
 		} else if (lcname.endsWith(".brs")) {
 			BrsParser parser = new BrsParser();
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".brs"));
-			List<SeqSymmetry> alist = parser.parse(str, annot_type, selected_group);
 			return input_seq;
 		} else if (lcname.endsWith(".bsnp")) {
 			String annot_type = stream_name.substring(0, stream_name.indexOf(".bsnp"));

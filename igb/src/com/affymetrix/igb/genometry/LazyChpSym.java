@@ -254,7 +254,7 @@ public final class LazyChpSym extends ScoredContainerSym {
 		List<SeqSymmetry> id_sym_hits = new ArrayList<SeqSymmetry>(10000);
 		int id_hit_count = 0;
 		int str_hit_count = 0;
-		int all_digit_not_int = 0;
+	    int all_digit_not_int = 0;
 
 		for (Das2Type das_type : matched_types.keySet()) {
 			System.out.println("#### found DAS/2 type: " + das_type.getName() + ", for CHP array type: " + chp_array_type);

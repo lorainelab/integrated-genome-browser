@@ -55,7 +55,6 @@ public final class GridGlyph extends Glyph {
     //    System.out.println("num lines: " + num_lines);
     if (num_lines > 200) { return; }
 		     
-    Rectangle pixelbox = view.getScratchPixBox();
     Graphics g = view.getGraphics();
 
     //    g.setColor(Color.lightGray);

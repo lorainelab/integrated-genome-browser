@@ -44,17 +44,15 @@ public final class GraphSaverFileChooser extends UniFileChooser {
       removeChoosableFileFilter(filters[i]);
     }
     
-    boolean has_width_coords = false;
+   
     if (sym instanceof GraphIntervalSym) {
       addChoosableFileFilter(wig_filter);
       addChoosableFileFilter(egr_filter);
-      has_width_coords = true;
     }
     else {
       addChoosableFileFilter(bgr_filter);      
       addChoosableFileFilter(sgr_filter);
       addChoosableFileFilter(gr_filter);
-      has_width_coords = false;
     }
 
     setFileFilter(getChoosableFileFilters()[0]);

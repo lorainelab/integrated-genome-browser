@@ -95,7 +95,6 @@ public final class BookmarkManagerView extends JPanel implements TreeSelectionLi
       BookmarkManagerView.TreeNodeTransferable.my_flavor
     };
 
-    DoubleTree dub_t = new BookmarkManagerView.DoubleTree(tree, flavors);
 
     // Would love to try using setDragEnabled(true) because this gives a better
     // selection mechanism. But that would involve a re-write of much of this code

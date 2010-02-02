@@ -173,7 +173,6 @@ public class WrapSequence extends WrapGlyph {
 
 		int first_drawn_residue, last_drawn_residue;
 		int line_beg_index, line_end_index;
-		int i;
 		String res_string;
 
 		Graphics g = view.getGraphics();

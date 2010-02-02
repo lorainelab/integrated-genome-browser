@@ -181,8 +181,6 @@ public class AlignmentGlyph extends AbstractResiduesGlyph
 			}
 		}
 		if (useUniChild) {
-			int seqstart = (int)x;
-			int seqend = (int)(x+width-1);
 			uniChild.setCoords(x, y, width, height);
 		}
 	}

@@ -319,7 +319,7 @@ public class MapGlyphFactory implements NeoConstants  {
 		if (tempobj != null) {
 			if (tempobj instanceof String) {
 				tempstr = (String)tempobj;
-				boolean ok = true;
+				
 				try {
 					setGlyphtype(Class.forName(tempstr));
 				}
@@ -328,16 +328,16 @@ public class MapGlyphFactory implements NeoConstants  {
 						try {
 							tempstr = ("com.affymetrix.genoviz.glyph." + tempstr);
 							setGlyphtype(Class.forName(tempstr));
-							ok = true;
+							
 							options.put("-glyphtype", tempstr);
 						}
 						catch (ClassNotFoundException ex2) {
-							ok = false;
+							
 							System.out.println(ex2.toString());
 							ex2.printStackTrace();
 						}
 					} else {
-						ok = false;
+						
 					}
 				}
 			} else if (tempobj instanceof Class) {

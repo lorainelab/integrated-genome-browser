@@ -188,7 +188,6 @@ public class NeoWidgetCustomizer
 	}
 
 	private void setScaleConstraint(int theAxis, String theChoice) {
-		int constraint = 0;
 		if (theChoice.equalsIgnoreCase("Top")
 				|| theChoice.equalsIgnoreCase("Left")) {
 			widget.setZoomBehavior(theAxis, NeoAbstractWidget.CONSTRAIN_START);

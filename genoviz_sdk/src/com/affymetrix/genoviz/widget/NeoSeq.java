@@ -1232,7 +1232,6 @@ public class NeoSeq extends NeoContainerWidget
 		if (!(evt instanceof NeoMouseEvent)) { return; }
 		NeoMouseEvent e = (NeoMouseEvent)evt;
 		int id = e.getID();
-		Object source = e.getSource();
 
 		// need to fix event source and coord source coming from NeoMap!
 		// also need to add location property to NeoMouseEvent!

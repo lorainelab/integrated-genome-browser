@@ -367,10 +367,10 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 	}
 
 	public void draw(ViewI view) {
-		Rectangle pixelclipbox = view.getPixelBox();
+		
 		Rectangle2D.Double coordclipbox = view.getCoordBox();
 		Graphics g = view.getGraphics();
-		double pixels_per_residue, residues_per_pixel;
+		double pixels_per_residue;
 		int visible_ref_beg, visible_ref_end,
 			visible_seq_beg, visible_seq_end, visible_seq_span,
 			seq_beg_index, seq_end_index;
@@ -388,9 +388,7 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 				visible_seq_span, coordbox.height);
 		view.transformToPixels(scratchrect, pixelbox);
 		pixels_per_residue = ((double)pixelbox.width)/scratchrect.width;
-		residues_per_pixel = 1/pixels_per_residue;
 		int seq_pixel_offset = pixelbox.x;
-		int seq_pixel_width =  pixelbox.width;
 
 		// ***** draw a normal rect if scale is < 1 pixel per residue ******
 		// ****  or if sequence has not been set ****
@@ -502,7 +500,6 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 					// if !monospaced but font color is fixed, need to draw each residue
 					//     individually, but only need to set color once
 					if (fg_color_strategy == FIXED_COLOR) {
-						int todraw = seq_end_index - seq_beg_index + 1;
 						g.setFont(getResidueFont());
 						String current_char;
 						int xposition = pixelstart;
@@ -517,7 +514,6 @@ public class AlignedResiduesGlyph extends Glyph implements ResiduesGlyphI  {
 					// font color is not fixed, so need to draw each residue
 					//    individually with its own color setting
 					else {
-						int todraw = seq_end_index - seq_beg_index + 1;
 						g.setFont(getResidueFont());
 						Color last_color;
 						String current_char;

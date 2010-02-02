@@ -455,7 +455,6 @@ public class ABITraceParser implements ContentParser {
 	}
 
 	private void setBaseStrength (int signal_strength, char base) {
-		int correct_strength = 0;
 
 		if (base == 'A')
 			A_strength = signal_strength;
@@ -486,7 +485,7 @@ public class ABITraceParser implements ContentParser {
 		boolean success = false;
 		int base;
 		Integer base_position;
-		int prev_position = 0;
+		
 
 		if ( null != bases_index && bases_index.occur ) {
 			List<Integer> base_positions = new ArrayList<Integer>(baseposition_index.numwrd);

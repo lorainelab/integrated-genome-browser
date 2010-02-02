@@ -96,7 +96,7 @@ public class QualityBases extends Glyph  {
 
 	@Override
 	public void draw(ViewI view) {
-		int beg, end, i, j;
+		int beg, end, i;
 		Graphics g = view.getGraphics();
 		Rectangle2D.Double viewbox = view.getCoordBox();
 

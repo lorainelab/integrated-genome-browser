@@ -561,7 +561,6 @@ public class NeoTracer extends NeoContainerWidget
 
 		// The base_map_pixel_height is now being correctly set in addBaseGlyph.
 		int base_height = base_map_pixel_height;
-		int scroll_size = 0;
 		int hz_size = 0, vz_size = 0, hs_size = 0;
 		if (hscroll_show)  { hs_size = ((Component)hscroll).getPreferredSize().height; }
 		if (hzoom_show) { hz_size = ((Component)hzoom).getPreferredSize().width; }

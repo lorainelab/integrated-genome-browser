@@ -1048,7 +1048,6 @@ public abstract class NeoWidget extends NeoAbstractWidget
 			}
 		}
 
-		Rectangle2D.Double prev_view_coords = view.calcCoordBox();
 		double prev_pixels_per_coord = pixels_per_coord[id];
 		pixels_per_coord[id] = zoom_scale;
 		coords_per_pixel[id] = 1/zoom_scale;

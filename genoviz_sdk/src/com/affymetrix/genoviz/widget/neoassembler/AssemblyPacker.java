@@ -88,12 +88,10 @@ public class AssemblyPacker implements PackerI {
 
 		if (alignments == null) { return null; }
 		AlignmentGlyph align;
-		Rectangle2D.Double cbox;
-
-		cbox = assembly.getCoordBox();
 		for (int i=0; i<alignments.size(); i++) {
 			align = (AlignmentGlyph)alignments.get(i);
 			pack(assembly, align, i);
+
 		}
 		return null;
 	}

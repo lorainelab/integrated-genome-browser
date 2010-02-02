@@ -81,7 +81,7 @@ public final class SeqSymSummarizer {
 		//   needed, though likely won't fill it
 		IntList transition_xpos = new IntList(span_num * 2);
 		FloatList transition_ypos = new FloatList(span_num * 2);
-		int transitions = 0; // the value of this variable is never used for anything
+		//int transitions = 0; // the value of this variable is never used for anything
 		int prev_depth = 0;
 		while ((starts_index < span_num) && (stops_index < span_num)) {
 			// figure out whether next position is a start, stop, or both
@@ -106,20 +106,20 @@ public final class SeqSymSummarizer {
 				if ((prev_depth <= 0) && (depth > 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(1);
-					transitions++;
+					//transitions++;
 					prev_depth = 1;
 				}
 				else if ((prev_depth > 0) && (depth <= 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(0);
-					transitions++;
+					//transitions++;
 					prev_depth = 0;
 				}
 			}
 			else {
 				transition_xpos.add(next_transition);
 				transition_ypos.add(depth);
-				transitions++;
+				//transitions++;
 				max_depth = Math.max(depth, max_depth);
 			}
 		}
@@ -136,20 +136,20 @@ public final class SeqSymSummarizer {
 				if ((prev_depth <= 0) && (depth > 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(1);
-					transitions++;
+					//transitions++;
 					prev_depth = 1;
 				}
 				else if ((prev_depth > 0) && (depth <= 0)) {
 					transition_xpos.add(next_transition);
 					transition_ypos.add(0);
-					transitions++;
+					//transitions++;
 					prev_depth = 0;
 				}
 			}
 			else {
 				transition_xpos.add(next_transition);
 				transition_ypos.add(depth);
-				transitions++;
+				//transitions++;
 				max_depth = Math.max(depth, max_depth);
 			}
 		}

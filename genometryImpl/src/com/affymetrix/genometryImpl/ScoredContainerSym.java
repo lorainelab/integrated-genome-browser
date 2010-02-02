@@ -173,7 +173,6 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 		IntList xlist = new IntList(score_count);
 		IntList wlist = new IntList(score_count);
 		FloatList ylist = new FloatList(score_count);
-		int correct_strand_count = 0;
 		for (int i=0; i<score_count; i++) {
 			IndexedSym isym = (IndexedSym)this.getChild(i);
 			if (isym.getIndex() != i) {
@@ -186,7 +185,6 @@ public class ScoredContainerSym extends SimpleSymWithProps {
 				xlist.add(cspan.getMin());
 				wlist.add(cspan.getLength());
 				ylist.add(scores[i]);
-				correct_strand_count++;
 			}
 		}
 

@@ -68,7 +68,7 @@ public final class NibbleResiduesParser {
 			dis = new DataInputStream(bis);
 			String name = dis.readUTF();
 			//      System.out.println("name: " + name);
-			String version = dis.readUTF();
+			dis.readUTF();
 			//      System.out.println("version: " + version);
 			int total_residues = dis.readInt();
 

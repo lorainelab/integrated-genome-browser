@@ -373,7 +373,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 			throw new SAXException("Segment id uses illegal characters: '" + seqid_att + "'");
 		}
 		String range = atts.getValue(RANGE);
-		String cigar = atts.getValue(CIGAR); // location can optionally have an alignment cigar string
+		atts.getValue(CIGAR); // location can optionally have an alignment cigar string
 		// DO_SEQID_HACK is a very temporary fix!!!
 		// Need to move to using full URI references to identify sequences,
 		if (DO_SEQID_HACK) {
@@ -617,7 +617,7 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 		Iterator<Map.Entry<String, Object>> citer = parts.entrySet().iterator();
 		while (citer.hasNext()) {
 			Map.Entry<String, Object> keyval = citer.next();
-			String child_id = keyval.getKey();
+			keyval.getKey();
 			SeqSymmetry child_sym = (SeqSymmetry) keyval.getValue();
 			if (child_sym instanceof SymWithProps) {
 				String child_type = (String) ((SymWithProps) child_sym).getProperty("type");
@@ -713,7 +713,6 @@ public final class Das2FeatureSaxParser extends org.xml.sax.helpers.DefaultHandl
 					String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
 		// removed aseq argument from writeDasFeature() args, don't need any more since writing out all spans
 		//	BioSeq aseq, String feat_type, PrintWriter pw, MutableSeqSpan mspan) {
-		String feat_name = null;
 		if (feat_type == null) {
 			feat_type = BioSeq.determineMethod(annot);
 		}

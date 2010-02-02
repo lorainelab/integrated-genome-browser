@@ -115,7 +115,6 @@ public final class CntParser {
 				throw new IOException("Line has wrong number of data columns.");
 			}
 
-			String snpId = fields[0];
 			String seqid = fields[1];
 			int x = Integer.parseInt(fields[2]);
 

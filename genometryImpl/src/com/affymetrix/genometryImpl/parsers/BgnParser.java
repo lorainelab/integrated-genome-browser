@@ -343,7 +343,7 @@ public final class BgnParser implements AnnotationWriter, IndexWriter {
 				System.out.println("EXON COUNTS DON'T MATCH UP FOR " + name + " !!!");
 			} else {
 				for (int i = 0; i < ecount; i++) {
-					int emin = Integer.parseInt(emins[i]);
+					Integer.parseInt(emins[i]);
 				}
 				for (int i = 0; i < ecount; i++) {
 					int emax = Integer.parseInt(emaxs[i]);

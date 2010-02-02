@@ -629,7 +629,7 @@ CHUNK_LOOP:
 			byte[] headbytes = new byte[8];
 			//    byte[] headbytes = new byte[10];
 			dis.readFully(headbytes);
-			String headstr = new String(headbytes);
+			//String headstr = new String(headbytes);
 			float version = dis.readFloat();       // int  #rows in data section (nrow)
 			int total_seqs = dis.readInt();
 			int vals_per_point = dis.readInt(); // int  #columns in data section (ncol)

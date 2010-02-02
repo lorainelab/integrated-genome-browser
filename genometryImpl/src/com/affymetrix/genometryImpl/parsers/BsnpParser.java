@@ -167,7 +167,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 						UcscGffSym csym = (UcscGffSym) psym.getChild(i);
 						int coord = csym.getSpan(0).getMin();
 						//            String snp_name = csym.getID();
-						String snp_name = csym.getFeatureType();  // because of quirk in how GFF files are constructed
+						csym.getFeatureType();  // because of quirk in how GFF files are constructed
 						//            System.out.println("coord = " + coord + ", id = " + snp_name);
 						// now derive snpid from snp_name (strip off 'SNP_A-' prefix and convert to integer)
 						//              int snpid = ...
@@ -211,9 +211,9 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 					System.out.println("length != 1: " + line);
 					weird_length_count++;
 				}
-				String snpid = fields[4];
-				String snp_source = fields[5].intern();
-				String snp_type = fields[6].intern();
+				//String snpid = fields[4];
+				//String snp_source = fields[5].intern();
+				//String snp_type = fields[6].intern();
 				//        EfficientSnpSym snp_sym = new EfficientSnpSym(psym, min, snpid);
 				EfficientSnpSym snp_sym = new EfficientSnpSym(psym, min);
 				psym.addChild(snp_sym);
@@ -239,7 +239,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 		if (istr instanceof BufferedInputStream) { bis = (BufferedInputStream)istr; }
 		else { bis = new BufferedInputStream(istr); }
 		DataInputStream dis = new DataInputStream(bis);
-		String genome_version = dis.readUTF();
+		dis.readUTF();
 		int seq_count = dis.readInt();
 		int[] snp_counts = new int[seq_count];
 		String[] seqids = new String[seq_count];
@@ -259,7 +259,7 @@ chr1        XbaI        SNP_A-1507333        219135381        219135381        .
 			total_snp_count += snp_counts[i];
 		}
 		snp_syms = new ArrayList<SeqSymmetry>(total_snp_count);
-		EfficientSnpSym dummy_snp = new EfficientSnpSym(null, 0);
+		//EfficientSnpSym dummy_snp = new EfficientSnpSym(null, 0);
 		// Object[] all_coord_arrays = new Object[seq_count];
 		for (int i=0; i<seq_count; i++) {
 			BioSeq aseq = seqs[i];

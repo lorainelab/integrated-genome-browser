@@ -300,8 +300,8 @@ public class AnnotationQuery {
 				if (rootGroupings != null && rootGroupings.size() > 0) {
 					for (String groupingKey : rootGroupings.keySet()) {
 						
-						String[] tokens     = groupingKey.split(KEY_DELIM);
-						String groupingName          = tokens[0];
+						//String[] tokens     = groupingKey.split(KEY_DELIM);
+						//String groupingName          = tokens[0];
 						
 
 						TreeMap<String, ?> annotNameMap = groupingToAnnotations.get(groupingKey);

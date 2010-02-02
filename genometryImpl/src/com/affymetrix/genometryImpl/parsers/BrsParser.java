@@ -266,7 +266,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 		int max_tlength = Integer.MIN_VALUE;
 		int max_exons = Integer.MIN_VALUE;
 		int total_exon_count = 0;
-		int biguns = 0;
 		int big_spliced = 0;
 
 		Timer tim = new Timer();
@@ -364,7 +363,6 @@ public final class BrsParser implements AnnotationWriter, IndexWriter  {
 					}
 				}
 				if (tlength >= 500000) {
-					biguns++;
 				}
 
 				total_exon_count += ecount;

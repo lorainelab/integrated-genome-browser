@@ -243,7 +243,6 @@ public class TabDelimitedParser {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return;
 	}
 
 	/*

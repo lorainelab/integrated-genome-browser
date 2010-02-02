@@ -46,7 +46,6 @@ public final class DNAUtils {
 			sb.setCharAt(i, complementChar(sb.charAt(j)));
 			sb.setCharAt(j, c);
 		}
-		return;
 	}
 
 	private static char complementChar(char b) {

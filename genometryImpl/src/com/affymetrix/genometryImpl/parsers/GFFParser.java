@@ -769,7 +769,6 @@ public final class GFFParser implements AnnotationWriter  {
 					}
 				}
 			}  // end attribute processing
-			return;
 		}
 
 		/**

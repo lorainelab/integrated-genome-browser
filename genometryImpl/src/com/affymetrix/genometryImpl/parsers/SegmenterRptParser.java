@@ -272,7 +272,6 @@ public final class SegmenterRptParser {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return;
 	}
 
 	public String getHeaderValue(String key, SymWithProps sym) {

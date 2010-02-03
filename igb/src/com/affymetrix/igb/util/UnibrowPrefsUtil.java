@@ -450,41 +450,6 @@ import javax.swing.*;
   }
 
   /**
-   *  Creates a JTextField associated with a String preference.
-   *  Can also be used with Integer, Boolean, etc., preferences,
-   *  since they can be inter-converted with Strings.
-   *  Will initialize itself with the value of the given
-   *  preference and will update itself, via a PreferenceChangeListener,
-   *  if the preference value changes.
-   */
-  public static JTextField createTextField(final Preferences node,
-    final String pref_name, String default_val) {
-    String initial_value = node.get(pref_name, default_val);
-    final JTextField text_box = new JTextField(initial_value);
-    text_box.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {
-        String current_value = text_box.getText();
-        node.put(pref_name, current_value);
-      }
-    });
-    node.addPreferenceChangeListener(new PreferenceChangeListener() {
-      public void preferenceChange(PreferenceChangeEvent evt) {
-        if (evt.getNode().equals(node) && evt.getKey().equals(pref_name)) {
-          text_box.setText(evt.getNewValue());
-        }
-      }
-    });
-    text_box.addFocusListener(new java.awt.event.FocusListener() {
-      public void focusGained(java.awt.event.FocusEvent e) {}
-      public void focusLost(java.awt.event.FocusEvent e) {
-        text_box.postActionEvent();
-      }
-    });
-    return text_box;
-  }
-
-
-  /**
    *  Creates a JComboBox associated with a String preference.
    *  Will initialize itself with the value of the given
    *  preference and will update itself, via a PreferenceChangeListener,

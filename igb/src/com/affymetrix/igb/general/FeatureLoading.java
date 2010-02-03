@@ -160,6 +160,7 @@ public final class FeatureLoading {
 					final GenometryModel gmodel,
 					final SeqMapView gviewer) {
 		if ((requests == null) || (requests.size() == 0)) {
+			Application.getSingleton().removeNotLockedUpMsg("Loading feature " + feature_name);
 			return;
 		}
 		final List<Das2FeatureRequestSym> result_syms = new ArrayList<Das2FeatureRequestSym>();
@@ -194,8 +195,6 @@ public final class FeatureLoading {
 
 			vexec.execute(worker);
 		}
-		//for some reason this doesn't always get called
-		Application.getSingleton().setStatus("", false);
 	}
 
 

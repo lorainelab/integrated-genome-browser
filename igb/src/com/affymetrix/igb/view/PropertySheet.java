@@ -17,10 +17,13 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import com.affymetrix.igb.util.JTableCutPasteAdapter;
-import com.affymetrix.genoviz.swing.BlockingTableCellEditor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
+/**
+ *
+ * @version $Id$
+ */
 class PropertySheet extends JPanel {
     
   // the table showing name-value pairs
@@ -191,7 +194,12 @@ class PropertySheet extends JPanel {
     String[][] rows = buildRows(name_values,props);
     String[] col_headings = getColumnHeadings(name_values,props);
 
-    TableModel model = new DefaultTableModel(rows,col_headings);
+    TableModel model = new DefaultTableModel(rows, col_headings) {
+		public static final long serialVersionUID = 1l;
+		
+		@Override
+		public boolean isCellEditable(int row, int column) { return false; }
+	};
     table.setModel(model);
     if (sortable) {
 		sorter = new TableRowSorter<TableModel>(model);
@@ -207,10 +215,6 @@ class PropertySheet extends JPanel {
     scroll_pane = new JScrollPane(table);
     this.add(scroll_pane, BorderLayout.CENTER);
     table.setCellSelectionEnabled(true);
-    
-    TableCellEditor tce = new BlockingTableCellEditor();    
-    table.setDefaultEditor(Object.class, tce);
-    table.setCellEditor(tce);
 
     validate();
     for (int i=0; i<table.getColumnCount(); i++) {

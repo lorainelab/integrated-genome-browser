@@ -423,23 +423,19 @@ public final class GeneralLoadView extends JComponent
 
 			public Void doInBackground() {
 				try {
-				if (src == partial_residuesB) {
-					SeqSpan viewspan = gviewer.getVisibleSpan();
-					if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
-						// Load the full sequence if the partial one couldn't be loaded.
+					if (src == partial_residuesB) {
+						SeqSpan viewspan = gviewer.getVisibleSpan();
+						if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, viewspan.getMin(), viewspan.getMax(), viewspan)) {
+							ErrorHandler.errorPanel("Couldn't load partial sequence",
+									"Couldn't locate the partial sequence.  Try loading the full sequence.");
+						}
+					} else {
 						if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
-							ErrorHandler.errorPanel("Couldn't load sequence",
-											"Was not able to locate the sequence.");
+							ErrorHandler.errorPanel("Couldn't load full sequence",
+									"Couldn't locate the sequence.");
 						}
 					}
-				} else {
-					if (!GeneralLoadUtils.loadResidues(genomeVersionName, curSeq, 0, curSeq.getLength(), null)) {
-						ErrorHandler.errorPanel("Couldn't load sequence",
-										"Was not able to locate the sequence.");
-					}
-				}
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 				return null;

@@ -215,6 +215,28 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
+
+	/**
+	 * Add and verify another server.  Called from DataLoadPrefsView.
+	 * @param serverName
+	 * @param serverURL
+	 * @param serverType
+	 * @return true or false
+	 */
+	public GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
+		GenericServer server = GeneralLoadUtils.addServer(serverType, serverName, serverURL);
+
+		if (server != null) {
+			// server has been added.  Refresh necessary boxes, tables, etc.
+			String version = (String)this.versionCB.getSelectedItem();
+			if (!SELECT_GENOME.equals(version)) {initVersion(version); }
+			gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
+			gmodel.setSelectedSeq(gmodel.getSelectedSeq());
+		}
+
+		return server;
+	}
+
 	public void GenericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
 

@@ -27,6 +27,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -48,6 +49,7 @@ import javax.swing.table.TableColumn;
 
 import static com.affymetrix.igb.util.LocalUrlCacher.CacheUsage;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
@@ -68,9 +70,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 	private static final String[] OPTIONS = new String[]{"Add Server", "Cancel"};
 
-	public DataLoadPrefsView() {
+	public DataLoadPrefsView(GeneralLoadView glv) {
 		final GroupLayout layout = new GroupLayout(this);
-		final JPanel sourcePanel = initSourcePanel();
+		final JPanel sourcePanel = initSourcePanel(glv);
 		final JPanel synonymsPanel = initSynonymsPanel(this);
 		final JPanel cachePanel = initCachePanel();
 
@@ -92,7 +94,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				.addComponent(cachePanel));
 	}
 
-	private static JPanel initSourcePanel() {
+	private static JPanel initSourcePanel(final GeneralLoadView glv) {
 		final JPanel sourcePanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(sourcePanel);
 		final SourceTableModel sourceTableModel = new SourceTableModel();
@@ -106,7 +108,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		final JButton addServerButton = createButton("Add\u2026", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showAddSourceDialog();
+				showAddSourceDialog(glv);
 				sourceTableModel.init();
 			}
 		});
@@ -146,13 +148,10 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		sourcesTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 				int viewRow = sourcesTable.getSelectedRow();
-				if (viewRow >= 0 && ServerList.inServerPrefs((String)sourcesTable.getValueAt(viewRow, SourceColumn.URL.ordinal()))) {
-					removeServerButton.setEnabled(true);
-					editAuthButton.setEnabled(true);
-				} else {
-					removeServerButton.setEnabled(false);
-					editAuthButton.setEnabled(false);
-				}
+				boolean enable = viewRow >= 0 && ServerList.inServerPrefs((String)sourcesTable.getValueAt(viewRow, SourceColumn.URL.ordinal()));
+				
+				removeServerButton.setEnabled(enable);
+				editAuthButton.setEnabled(enable);
 			}
 		});
 
@@ -177,26 +176,40 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		final JPanel synonymsPanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(synonymsPanel);
 		final JLabel synonymsLabel= new JLabel("Synonyms File");
-		final JTextField synonymFile = UnibrowPrefsUtil.createTextField(UnibrowPrefsUtil.getLocationsNode(), PREF_SYN_FILE_URL, "");
-		final JButton openFile = createButton("\u2026", new ActionListener() {
+		final JTextField synonymFile = new JTextField(UnibrowPrefsUtil.getLocationsNode().get(PREF_SYN_FILE_URL, ""));
+		final JButton openFile = new JButton("\u2026");
+		final ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				File f = fileChooser(FILES_AND_DIRECTORIES, parent);
-				try {
-					if (f != null) {
-						synonymFile.setText(f.getCanonicalPath());
-						loadSynonymFile(synonymFile.getText());
+				Object source = e.getSource();
+
+				if (source == openFile) {
+					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
+					try {
+						if (file != null) {
+							synonymFile.setText(file.getCanonicalPath());
+						}
+					} catch (IOException ex) {
+						Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
 					}
-				} catch (IOException ex) {
-					Logger.getLogger(DataLoadPrefsView.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+				if (synonymFile.getText().isEmpty()) {
+					UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, "");
+				} else if (loadSynonymFile(synonymFile)) {
+					UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, synonymFile.getText());
+				} else {
+					ErrorHandler.errorPanel(
+					"Unable to Load Synonyms",
+					"Unable to load personal synonyms from " + synonymFile.getText() + ".");
 				}
 			}
-		});
+		};
 
-		synonymFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				loadSynonymFile(synonymFile.getText());
-			}
-		});
+		openFile.setToolTipText("Open Local Directory");
+		openFile.addActionListener(listener);
+		synonymFile.addActionListener(listener);
+
+		
 
 		synonymsPanel.setLayout(layout);
 		synonymsPanel.setBorder(new TitledBorder("Personal Synonyms"));
@@ -214,7 +227,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				.addComponent(openFile));
 
 		/* Load the synonym file from preferences on startup */
-		loadSynonymFile(synonymFile.getText());
+		loadSynonymFile(synonymFile);
 
 		return synonymsPanel;
 	}
@@ -222,9 +235,10 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 	private static JPanel initCachePanel() {
 		final JPanel cachePanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(cachePanel);
-		final JLabel usageLabel = new JLabel("Caching Mode");
+		final JLabel usageLabel = new JLabel("Cache Behavior");
+		final JLabel emptyLabel = new JLabel();
 		final JComboBox	cacheUsage = new JComboBox(CacheUsage.values());
-		final JButton clearCache = createButton("Clear Cache", new ActionListener() {
+		final JButton clearCache = createButton("Empty Cache", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				LocalUrlCacher.clearCache();
 			}
@@ -241,16 +255,23 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		cachePanel.setBorder(new TitledBorder("Cache Settings"));
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(true);
+		layout.linkSize(usageLabel, emptyLabel);
 
-		layout.setHorizontalGroup(layout.createSequentialGroup()
-				.addComponent(usageLabel)
-				.addComponent(cacheUsage)
-				.addComponent(clearCache));
+		layout.setHorizontalGroup(layout.createParallelGroup(LEADING)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(usageLabel)
+					.addComponent(cacheUsage))
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(emptyLabel)
+					.addComponent(clearCache)));
 
-		layout.setVerticalGroup(layout.createParallelGroup(BASELINE)
-				.addComponent(usageLabel)
-				.addComponent(cacheUsage)
-				.addComponent(clearCache));
+		layout.setVerticalGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(BASELINE)
+					.addComponent(usageLabel)
+					.addComponent(cacheUsage))
+				.addGroup(layout.createParallelGroup(BASELINE)
+					.addComponent(emptyLabel)
+					.addComponent(clearCache)));
 
 		return cachePanel;
 	}
@@ -298,17 +319,21 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 	}
 
 	private static JPanel createAddSourceDialog(final JTextField name, final JTextField url, final JComboBox  type) {
-		JPanel messageContainer = new JPanel();
-
+		final JPanel messageContainer = new JPanel();
 		final JPanel addServerPanel = new JPanel();
 		final JLabel nameLabel = new JLabel("Name");
 		final JLabel urlLabel = new JLabel("URL");
 		final JLabel typeLabel = new JLabel("Type");
 		final JButton openDir = new JButton("\u2026");
-
-		openDir.setToolTipText("Open Local Directory");
-
 		final GroupLayout layout = new GroupLayout(addServerPanel);
+
+		type.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openDir.setEnabled(type.getSelectedItem() == LoadUtils.ServerType.QuickLoad);
+			}
+		});
+		openDir.setToolTipText("Open Local Directory");
+		openDir.setEnabled(false);
 
 		addServerPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
@@ -323,12 +348,12 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 					.addComponent(nameLabel)
 					.addComponent(name))
 				.addGroup(layout.createSequentialGroup()
+					.addComponent(typeLabel)
+					.addComponent(type))
+				.addGroup(layout.createSequentialGroup()
 					.addComponent(urlLabel)
 					.addComponent(url)
-					.addComponent(openDir))
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(typeLabel)
-					.addComponent(type)));
+					.addComponent(openDir)));
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
 				.addComponent(messageContainer)
@@ -336,12 +361,12 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 					.addComponent(nameLabel)
 					.addComponent(name))
 				.addGroup(layout.createParallelGroup(BASELINE)
+					.addComponent(typeLabel)
+					.addComponent(type))
+				.addGroup(layout.createParallelGroup(BASELINE)
 					.addComponent(urlLabel)
 					.addComponent(url)
-					.addComponent(openDir))
-				.addGroup(layout.createParallelGroup(BASELINE)
-					.addComponent(typeLabel)
-					.addComponent(type)));
+					.addComponent(openDir)));
 
 		messageContainer.setLayout(new BoxLayout(messageContainer, BoxLayout.Y_AXIS));
 
@@ -361,11 +386,12 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		return addServerPanel;
 	}
 
-	private static void showAddSourceDialog() {
+	private static void showAddSourceDialog(GeneralLoadView glv) {
 		JTextField name = new JTextField();
 		JTextField url = new JTextField();
 		JComboBox  type = new JComboBox(LoadUtils.ServerType.values());
 
+		type.removeItem(LoadUtils.ServerType.Unknown);
 		int result = JOptionPane.showOptionDialog(
 				null,
 				createAddSourceDialog(name, url, type),
@@ -377,7 +403,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				OPTIONS[0]);
 
 		if (result == OK_OPTION) {
-			addDataSource(url.getText(), (ServerType)type.getSelectedItem(), name.getText());
+			addDataSource((ServerType)type.getSelectedItem(), name.getText(), url.getText(), glv);
 		}
 	}
 
@@ -387,12 +413,12 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	private static void addDataSource(String url, ServerType type, String name) {
+	private static void addDataSource(ServerType type, String name, String url, GeneralLoadView glv) {
 		if (url == null || url.isEmpty() || name == null || name.isEmpty()) {
 			return;
 		}
 		
-		GenericServer server = ServerList.addServer(type, name, url);
+		GenericServer server = glv.addServer(type, name, url);
 
 		if (server == null) {
 			ErrorHandler.errorPanel(
@@ -414,39 +440,28 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		ServerList.removeServer(url);
 	}
 
-	private static void loadSynonymFile(String file) {
-		if (file == null || file.isEmpty()) {
-			return;
-		}
-		
-		File f = new File(file);
-		if (!f.isFile()) {
-			ErrorHandler.errorPanel(
-					"File not Found",
-					"The personal synonyms file '" + file + "' does not exist.");
-			return;
-		}
+	private static boolean loadSynonymFile(JTextField synonymFile) {
+		File file = new File(synonymFile.getText());
+
+		if (!file.isFile() || !file.canRead()) { return false; }
 
 		FileInputStream fis = null;
 		try {
+			synonymFile.setText(file.getCanonicalPath());
 			fis = new FileInputStream(file);
 			SynonymLookup.getDefaultLookup().loadSynonyms(fis);
 		} catch (IOException ex) {
-			ErrorHandler.errorPanel(
-					"Unable to Load Synonym File",
-					"Unable to load the personal synonym file '" + file + "'.",
-					ex);
+			return false;
 		} finally {
 			GeneralUtils.safeClose(fis);
 		}
+
+		return true;
 	}
 	
 	private static JButton createButton(String name, ActionListener listener) {
 		final JButton button = new JButton(name);
-
-		button.setAlignmentX(JComponent.LEFT_ALIGNMENT);
 		button.addActionListener(listener);
-
 		return button;
 	}
 

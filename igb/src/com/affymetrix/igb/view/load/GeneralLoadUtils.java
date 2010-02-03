@@ -116,28 +116,20 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	static boolean addServer(String serverName, String serverURL, ServerType serverType, String login, String password) {
-		GenericServer gServer = ServerList.getServer(serverURL);
-		if (gServer != null) {
-			System.out.println("Server " + gServer.toString() +" already exists at " + gServer.URL);
-			return false;
-		}
-
-		if (serverType == ServerType.Unknown) {
-			// should never happen
-			return false;
-		}
+	static GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
+		/* should never happen */
+		if (serverType == ServerType.Unknown) { return null; }
 		
-		gServer = ServerList.addServer(serverType, serverName, serverURL, login, password);
-		if (!discoverServer(gServer)) {
-			return false;
+		GenericServer gServer = ServerList.addServer(serverType, serverName, serverURL);
+		if (gServer == null || !discoverServer(gServer)) {
+			return null;
 		}
 
 		// We just added a server, so reset the init flag on the versions
 		// so that the types requests are reissued.
 		version2init.clear();
 
-		return true;
+		return gServer;
 	}
 
 	/**

@@ -521,7 +521,8 @@ public final class BookMarkAction implements ActionListener, MenuListener {
   private static class BookmarkSymmetry extends SimpleSymWithProps {
     public BookmarkSymmetry() {
       super();
-      props = new LinkedHashMap<String,Object>();
+	  Map<String,Object> tempProps = new LinkedHashMap<String,Object>();
+	  super.setProperties(tempProps);
     }
   }  
 }

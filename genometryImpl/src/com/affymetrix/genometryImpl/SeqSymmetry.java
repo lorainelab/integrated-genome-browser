@@ -13,10 +13,6 @@
 
 package com.affymetrix.genometryImpl;
 
-import com.affymetrix.genometryImpl.SeqSpan;
-import com.affymetrix.genometryImpl.MutableSeqSpan;
-import com.affymetrix.genometryImpl.BioSeq;
-
 /**
  * Implementations model a collection of {@link SeqSpan}s.
  * SeqSymmetries are also a collection of SeqSymmetries.
@@ -25,8 +21,6 @@ import com.affymetrix.genometryImpl.BioSeq;
 public interface SeqSymmetry {
 	public String getID();
 	public int getSpanCount();
-
-	//  public int getSpanCount(BioSeq seq);
 
 	/**
 	 *  Convenience method to get a SeqSpan whose BioSeq is seq
@@ -60,14 +54,5 @@ public interface SeqSymmetry {
 	public BioSeq getSpanSeq(int index);
 	public int getChildCount();
 	public SeqSymmetry getChild(int index);
-
-	// Removed getParent() to allow for possibility of same symmetry being used in multiple 
-	//      hiearchies (having multiple parents)
-	//   public SeqSymmetry getParent();
-
-	// Methods to improve efficiency for "compressed" SeqSymmetry implementations
-	//  public boolean getChildSpan(int child_index, BioSeq seq, MutableSeqSpan span);
-	//  public boolean getChildSpan(int child_index, int child_span_index, MutableSeqSpan span);
-
 
 }

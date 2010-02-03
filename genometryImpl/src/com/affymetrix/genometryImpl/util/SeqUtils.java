@@ -1,16 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.BioSeq;
@@ -39,6 +26,10 @@ public abstract class SeqUtils {
 
 	/** Controls the format used for printing spans in {@link #spanToString(SeqSpan)}. */
 	private static final boolean USE_SHORT_FORMAT_FOR_SPANS= true;
+
+
+	// This DecimalFormat is used to insert commas between every three characters.
+	private static final java.text.DecimalFormat span_format = new java.text.DecimalFormat("#,###.###");
 
 	/**
 	 * Get depth of the symmetry. (Longest number of recursive calls to getChild()
@@ -77,42 +68,6 @@ public abstract class SeqUtils {
 				spanA.getBioSeq() == spanB.getBioSeq());
 	}
 
-
-
-	private static final int getFirstNonNull(List<SeqSpan> spans) {
-		int spanCount = spans.size();
-		for (int i=0; i<spanCount; i++) {
-			if (spans.get(i) != null) { return i; }
-		}
-		return -1;
-	}
-
-
-	private static final MutableSeqSpan mergeHelp(List<SeqSpan> spans, int index) {
-		SeqSpan curSpan = spans.get(index);
-		MutableSeqSpan result = new SimpleMutableSeqSpan(curSpan);
-		boolean changed = true;
-		while (changed) {
-			changed = mergeHelp(spans, result);
-		}
-		return result;
-	}
-
-	private static final boolean mergeHelp(List<SeqSpan> spans, MutableSeqSpan result) {
-		boolean changed = false;
-		int spanCount = spans.size();
-		for (int i=0; i<spanCount; i++) {
-			SeqSpan curSpan = spans.get(i);
-			if (curSpan == null) { continue; }
-			//  Specifying that union should use loose overlap...
-			boolean overlap = SeqUtils.union(result, curSpan, result, false);
-			if (overlap) {
-				changed = true;
-				spans.set(i, null);
-			}
-		}
-		return changed;
-	}
 
 
 	public static final List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
@@ -332,35 +287,66 @@ public abstract class SeqUtils {
 	 * now ensures that spanMerger returns a resultSym whose children
 	 *    are sorted relative to span.getBioSeq()
 	 */
-	private static final boolean spanMerger(List<SeqSpan> spans, MutableSeqSymmetry resultSym) {
-		int index;
+	private static final void spanMerger(List<SeqSpan> spans, MutableSeqSymmetry resultSym) {
 		int min = Integer.MAX_VALUE;
 		int max = Integer.MIN_VALUE;
 		// will probably be smaller, but specifying an initial capacity
 		//   that won't be exceeded can be more efficient
 		List<SeqSpan> merged_spans = new ArrayList<SeqSpan>(spans.size());
 
-		SeqSpanComparator seqSpanComp = new SeqSpanComparator();
-		while ((index = getFirstNonNull(spans)) > -1) {
-			MutableSeqSpan span = mergeHelp(spans, index);
-
-			merged_spans.add(span);
+		SeqSpan span;
+		while ((span = getFirstNonNullSpan(spans)) != null) {
+			MutableSeqSpan mergeSpan = mergeHelp(spans, span);
+			merged_spans.add(mergeSpan);
 		}
-		Collections.sort(merged_spans, seqSpanComp);
-		for (SeqSpan span : merged_spans) {
+		Collections.sort(merged_spans, new SeqSpanComparator());
+		for (SeqSpan mergedSpan : merged_spans) {
 			MutableSingletonSeqSymmetry childSym =
-				new MutableSingletonSeqSymmetry(span.getStart(), span.getEnd(), span.getBioSeq());
-			min = Math.min(span.getMin(), min);
-			max = Math.max(span.getMax(), max);
+				new MutableSingletonSeqSymmetry(mergedSpan.getStart(), mergedSpan.getEnd(), mergedSpan.getBioSeq());
+			min = Math.min(mergedSpan.getMin(), min);
+			max = Math.max(mergedSpan.getMax(), max);
 			resultSym.addChild(childSym);
 		}
-		BioSeq seq;
-		if (merged_spans.size() > 0) { seq = merged_spans.get(0).getBioSeq(); }
-		else { seq = null; }
+		BioSeq seq = merged_spans.isEmpty() ? null : merged_spans.get(0).getBioSeq();
 		SeqSpan resultSpan = new SimpleSeqSpan(min, max, seq);
 		resultSym.addSpan(resultSpan);
-		return true;
 	}
+
+	private static final SeqSpan getFirstNonNullSpan(List<SeqSpan> spans) {
+		for (SeqSpan span : spans) {
+			if (span != null) {
+				return span;
+			}
+		}
+		return null;
+	}
+
+
+	private static final MutableSeqSpan mergeHelp(List<SeqSpan> spans, SeqSpan curSpan) {
+		MutableSeqSpan result = new SimpleMutableSeqSpan(curSpan);
+		boolean changed = true;
+		while (changed) {
+			changed = mergeHelp(spans, result);
+		}
+		return result;
+	}
+
+	private static final boolean mergeHelp(List<SeqSpan> spans, MutableSeqSpan result) {
+		boolean changed = false;
+		int spanCount = spans.size();
+		for (int i=0; i<spanCount; i++) {
+			SeqSpan curSpan = spans.get(i);
+			if (curSpan == null) { continue; }
+			//  Specifying that union should use loose overlap...
+			boolean overlap = SeqUtils.union(result, curSpan, result, false);
+			if (overlap) {
+				changed = true;
+				spans.set(i, null);
+			}
+		}
+		return changed;
+	}
+
 
 
 	/**
@@ -404,12 +390,11 @@ public abstract class SeqUtils {
 	 *    tranform methods themselves rather than have a post-operative fix!
 	 */
 	public static final boolean transformSymmetry(MutableSeqSymmetry resultSet, SeqSymmetry[] symPath) {
-		// for each SeqSymmetry mapSym in SeqSymmetry[] symPathy
-		for (int i=0; i<symPath.length; i++) {
-			SeqSymmetry sym = symPath[i];
-			boolean success = transformSymmetry(resultSet, sym, true);
-			if (! success) { return false; }
-			if (DEBUG) { System.out.print("after symPath entry " + i + ", "); SeqUtils.printSymmetry(resultSet); System.out.println("---\n"); }
+		for (SeqSymmetry sym : symPath) {
+			if (! transformSymmetry(resultSet, sym, true)) { return false; }
+			if (DEBUG) { 
+				SeqUtils.printSymmetry(resultSet);
+			}
 		}
 		return true;
 	}
@@ -583,7 +568,7 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 		if (DEBUG) {
 			System.out.println("looping through mapSym children");
 		}
-		//        if (DEBUG) { System.out.print("mapSym: "); SeqUtils.printSymmetry(mapSym); }
+
 		// STEP 1
 		int map_childcount = mapSym.getChildCount();
 		STEP1_LOOP:
@@ -632,12 +617,7 @@ public static final boolean transformSymmetry(MutableSeqSymmetry resultSym, SeqS
 						} else {
 							interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
 						}
-						/*
-						System.out.print("resultSym: "); printSymmetry(resultSym);
-						System.out.print("mapSym: "); printSymmetry(map_child_sym);
-						s                System.out.print("intersect span: "); printSpan(interSpan);
-						System.out.println("-------------------------");
-						 */
+		
 						if (childResult == null) {
 							// special-casing derived seq symmetries to preserve derivation info...
 							// hmm, maybe should just make this the normal case and always preserve
@@ -722,70 +702,84 @@ public static final List<SeqSymmetry> getOverlappingChildren(SeqSymmetry sym, Se
 
 
 // breaking out STEP 2
-protected static final boolean addParentSpans(MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
-	int resultChildCount = resultSym.getChildCount();
-	if (DEBUG)  { System.out.println("result child count = " + resultChildCount); }
-	if (DEBUG) { System.out.print("resSym -- "); SeqUtils.printSymmetry(resultSym); }
-	if (DEBUG) { System.out.print("mapSym -- "); SeqUtils.printSymmetry(mapSym); }
-	// possibly want to add another branch here if resultSym has only one child --
-	//      could "collapse up" by moving any spans in child that aren't in
-	//      parent up to parent, and removing child
-	if (resultChildCount > 0) {
+	protected static final boolean addParentSpans(MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
+		int resultChildCount = resultSym.getChildCount();
+		if (DEBUG) {
+			System.out.println("result child count = " + resultChildCount);
+			System.out.print("resSym -- ");
+			SeqUtils.printSymmetry(resultSym);
+			System.out.print("mapSym -- ");
+			SeqUtils.printSymmetry(mapSym);
+		}
+		// possibly want to add another branch here if resultSym has only one child --
+		//      could "collapse up" by moving any spans in child that aren't in
+		//      parent up to parent, and removing child
+		if (resultChildCount == 0) {
+			return true;
+		}
 		// for now, only worry about SeqSpans corresponding to (having same BioSeq as)
 		//    SeqSpans in _mapSym_ (rather than subMapSyms or subResSyms)
 		int mapSpanCount = mapSym.getSpanCount();
-		for (int spandex=0; spandex < mapSpanCount; spandex++) {
+		for (int spandex = 0; spandex < mapSpanCount; spandex++) {
 			SeqSpan mapSpan = mapSym.getSpan(spandex);
 			BioSeq mapSeq = mapSpan.getBioSeq();
 			SeqSpan resSpan = resultSym.getSpan(mapSeq);
 
+			if (resSpan != null) {
+				continue;
+			}
 			// if no span in resultSym with same BioSeq, then need to create one based
 			//    on encompass() of childResSym spans (if there are any...)
-			if (resSpan == null) {
-				if (DEBUG) { System.out.println("need to create new resSpan for seq " + mapSeq.getID()); }
+			if (DEBUG) {
+				System.out.println("need to create new resSpan for seq " + mapSeq.getID());
+			}
 
-				int forCount = 0;
-				// need to use NEGATIVE_INFINITY for doubles, since Double.MIN_VALUE is really smallest
-				//   _positive_ value, and may be transforming into negative coords...
-				//          double min = Double.MAX_VALUE;
-				//          double max = Double.MIN_VALUE;
-				double min = Double.POSITIVE_INFINITY;
-				double max = Double.NEGATIVE_INFINITY;
-				boolean bounds_set = false;
-				for (int childIndex=0; childIndex < resultChildCount; childIndex++) {
-					SeqSymmetry childResSym = resultSym.getChild(childIndex);
-					SeqSpan childResSpan = childResSym.getSpan(mapSeq);
-					if (DEBUG) { System.out.print("child span -- "); SeqUtils.printSpan(childResSpan); }
-					if (childResSpan != null) {
-						min = Math.min(childResSpan.getMinDouble(), min);
-						max = Math.max(childResSpan.getMaxDouble(), max);
-						bounds_set = true;
-						if (childResSpan.isForward()) { forCount++; }
-						else { forCount--; }
-						//              (childResSpan.isForward()) ? (forCount++) : (forCount--);
-						if (DEBUG)  { System.out.println("Min: " + min + ", Max: " + max); }
+			int forCount = 0;
+			// need to use NEGATIVE_INFINITY for doubles, since Double.MIN_VALUE is really smallest
+			//   _positive_ value, and may be transforming into negative coords...
+			double min = Double.POSITIVE_INFINITY;
+			double max = Double.NEGATIVE_INFINITY;
+			boolean bounds_set = false;
+			for (int childIndex = 0; childIndex < resultChildCount; childIndex++) {
+				SeqSymmetry childResSym = resultSym.getChild(childIndex);
+				SeqSpan childResSpan = childResSym.getSpan(mapSeq);
+				if (DEBUG) {
+					System.out.print("child span -- ");
+					SeqUtils.printSpan(childResSpan);
+				}
+				if (childResSpan != null) {
+					min = Math.min(childResSpan.getMinDouble(), min);
+					max = Math.max(childResSpan.getMaxDouble(), max);
+					bounds_set = true;
+					if (childResSpan.isForward()) {
+						forCount++;
+					} else {
+						forCount--;
+					}
+					if (DEBUG) {
+						System.out.println("Min: " + min + ", Max: " + max);
 					}
 				}
-				if (bounds_set) {  // only add parent span if bounds were set by child span...
-					//          MutableSeqSpan newResSpan = new SimpleMutableSeqSpan();
-					MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
-					newResSpan.setBioSeq(mapSeq);
-					if (forCount >= 0) {  // new result span should be forward
-						newResSpan.setStartDouble(min);
-						newResSpan.setEndDouble(max);
-					}
-					else {  // new result span should be reverse
-						newResSpan.setStartDouble(max);
-						newResSpan.setEndDouble(min);
-					}
-					if (DEBUG) {System.out.print("adding span to resSym -- "); SeqUtils.printSpan(newResSpan);}
-					resultSym.addSpan(newResSpan);
-				}  // END if (bounds_set)
+			}
+			if (bounds_set) {  // only add parent span if bounds were set by child span...
+				MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
+				newResSpan.setBioSeq(mapSeq);
+				if (forCount >= 0) {  // new result span should be forward
+					newResSpan.setStartDouble(min);
+					newResSpan.setEndDouble(max);
+				} else {  // new result span should be reverse
+					newResSpan.setStartDouble(max);
+					newResSpan.setEndDouble(min);
+				}
+				if (DEBUG) {
+					System.out.print("adding span to resSym -- ");
+					SeqUtils.printSpan(newResSpan);
+				}
+				resultSym.addSpan(newResSpan);
 			}
 		}
-	}  // end of STEP 2 _(if resultChildCount > 0)_
-	return true;
-}
+		return true;
+	}
 
 
 /**
@@ -816,9 +810,11 @@ public static final boolean transformSpan(SeqSpan srcSpan, MutableSeqSpan dstSpa
 	// check to see that the span being transformed overlaps the span with
 	//   same BioSeq in the given SeqSymmetry
 	if (! overlap(srcSpan, span1)) {
-		//      System.out.println("no overlap: ");
 		return false;
 	}
+
+	dstSpan.setBioSeq(dstSeq);
+
 	// trying to optimize out scaling, since it's usually not necessary...
 	// length check to determine if scaling is needed
 	boolean needScaling = (span1.getLengthDouble() != span2.getLengthDouble());
@@ -826,7 +822,6 @@ public static final boolean transformSpan(SeqSpan srcSpan, MutableSeqSpan dstSpa
 		boolean opposite_spans = (span1.isForward() ^ span2.isForward());
 		boolean resultForward = opposite_spans ^ srcSpan.isForward();
 		double scale = span2.getLengthDouble() / span1.getLengthDouble();
-		dstSpan.setBioSeq(dstSeq);
 
 		double vstart, vend;
 
@@ -848,13 +843,11 @@ public static final boolean transformSpan(SeqSpan srcSpan, MutableSeqSpan dstSpa
 	} else {   // scaling not needed, so using faster implementation
 		if (span1.isForward() == span2.isForward()) {
 			double offset = span2.getStartDouble() - span1.getStartDouble();
-			dstSpan.setBioSeq(dstSeq);
 			dstSpan.setStartDouble(srcSpan.getStartDouble() + offset);
 			dstSpan.setEndDouble(srcSpan.getEndDouble() + offset);
 
 		} else {
 			double offset = span2.getStartDouble() + span1.getStartDouble();
-			dstSpan.setBioSeq(dstSeq);
 			dstSpan.setStartDouble(offset - srcSpan.getStartDouble());
 			dstSpan.setEndDouble(offset - srcSpan.getEndDouble());
 		}
@@ -1129,92 +1122,12 @@ private static final void copyToDerived(SeqSymmetry sym, DerivedSeqSymmetry der)
 	int childCount = sym.getChildCount();
 	for (int i=0; i<childCount; i++) {
 		SeqSymmetry child = sym.getChild(i);
-		//      MutableSeqSymmetry newchild = new SimpleMutableSeqSymmetry();
 		DerivedSeqSymmetry newchild = new SimpleDerivedSeqSymmetry();
 		copyToDerived(child, newchild);
 		der.addChild(newchild);
 	}
 }
 
-
-public static final void printSpan(SeqSpan span) {
-	System.out.println(spanToString(span));
-}
-
-public static final void printSymmetry(SeqSymmetry sym) {
-	printSymmetry(sym, "  ");
-}
-
-public static final void printSymmetry(SeqSymmetry sym, String spacer) {
-	printSymmetry(sym, spacer, false);
-}
-
-public static final void printSymmetry(SeqSymmetry sym, String spacer, boolean print_props) {
-	printSymmetry("", sym, spacer, print_props);
-}
-
-// not public.  Used for recursion
-private static final void printSymmetry(String indent, SeqSymmetry sym, String spacer, boolean print_props) {
-	System.out.println(indent + symToString(sym));
-	if (print_props && sym instanceof SymWithProps) {
-		SymWithProps pp = (SymWithProps) sym;
-		Map<String,Object> props = pp.getProperties();
-		if (props != null) {
-			for (Map.Entry<String,Object> entry : props.entrySet()) {
-				String key = entry.getKey();
-				Object value = entry.getValue();
-				System.out.println(indent + spacer + key + " --> " + value);
-			}
-		}
-		else { System.out.println(indent + spacer + " no properties"); }
-	}
-	for (int i=0; i<sym.getSpanCount(); i++) {
-		SeqSpan span = sym.getSpan(i);
-		System.out.println(indent + spacer  + spanToString(span));
-	}
-	for (int j=0; j<sym.getChildCount(); j++) {
-		SeqSymmetry child_sym = sym.getChild(j);
-		printSymmetry(indent + spacer, child_sym, spacer, print_props);
-	}
-}
-
-// This DecimalFormat is used to insert commas between every three characters.
-private static final java.text.DecimalFormat span_format = new java.text.DecimalFormat("#,###.###");
-
-/** Provides a string representation of a SeqSpan.
- *  @see #USE_SHORT_FORMAT_FOR_SPANS
- */
-public static final String spanToString(SeqSpan span) {
-	if (USE_SHORT_FORMAT_FOR_SPANS) {
-		if (span == null) { return "Span: null"; }
-		BioSeq seq = span.getBioSeq();
-		return ((seq == null ? "nullseq" : seq.getID()) + ": [" +
-				span_format.format(span.getMin()) + " - " + span_format.format(span.getMax()) +
-				"] (" +
-				( span.isForward() ? "+" : "-") + span_format.format(span.getLength()) + ")"
-			   );
-	}
-	else {
-		if (span == null) { return "Span: null"; }
-		return ("Span: " +
-				"min = " + span_format.format(span.getMin()) +
-				", max = " + span_format.format(span.getMax()) +
-				", length = " + span_format.format(span.getLength()) +
-				", forward = " + span.isForward() +
-				", seq = " + span.getBioSeq().getID() +  " " + span.getBioSeq());
-	}
-}
-
-/** Provides a string representation of a SeqSpan.
- */
-public static final String symToString(SeqSymmetry sym) {
-	if (sym == null) {
-		return "SeqSymmetry == null";
-	}
-
-	return "sym.getID() is not implemented.";
-	
-}
 
 public static final SeqSpan getChildBounds(SeqSymmetry parent, BioSeq seq) {
 	int rev_count = 0;
@@ -1273,6 +1186,83 @@ public static final String getResidues(SeqSymmetry sym, BioSeq seq) {
 		}
 	}
 	return result;
+}
+
+
+
+public static final void printSpan(SeqSpan span) {
+	System.out.println(spanToString(span));
+}
+
+public static final void printSymmetry(SeqSymmetry sym) {
+	printSymmetry(sym, "  ");
+}
+
+public static final void printSymmetry(SeqSymmetry sym, String spacer) {
+	printSymmetry(sym, spacer, false);
+}
+
+public static final void printSymmetry(SeqSymmetry sym, String spacer, boolean print_props) {
+	printSymmetry("", sym, spacer, print_props);
+}
+
+// not public.  Used for recursion
+private static final void printSymmetry(String indent, SeqSymmetry sym, String spacer, boolean print_props) {
+	System.out.println(indent + symToString(sym));
+	if (print_props && sym instanceof SymWithProps) {
+		SymWithProps pp = (SymWithProps) sym;
+		Map<String,Object> props = pp.getProperties();
+		if (props != null) {
+			for (Map.Entry<String,Object> entry : props.entrySet()) {
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				System.out.println(indent + spacer + key + " --> " + value);
+			}
+		}
+		else { System.out.println(indent + spacer + " no properties"); }
+	}
+	for (int i=0; i<sym.getSpanCount(); i++) {
+		SeqSpan span = sym.getSpan(i);
+		System.out.println(indent + spacer  + spanToString(span));
+	}
+	for (int j=0; j<sym.getChildCount(); j++) {
+		SeqSymmetry child_sym = sym.getChild(j);
+		printSymmetry(indent + spacer, child_sym, spacer, print_props);
+	}
+}
+
+
+/** Provides a string representation of a SeqSpan.
+ *  @see #USE_SHORT_FORMAT_FOR_SPANS
+ */
+	public static final String spanToString(SeqSpan span) {
+		if (span == null) {
+			return "Span: null";
+		}
+		if (USE_SHORT_FORMAT_FOR_SPANS) {
+			BioSeq seq = span.getBioSeq();
+			return ((seq == null ? "nullseq" : seq.getID()) + ": ["
+					+ span_format.format(span.getMin()) + " - " + span_format.format(span.getMax())
+					+ "] ("
+					+ (span.isForward() ? "+" : "-") + span_format.format(span.getLength()) + ")");
+		}
+		return ("Span: "
+				+ "min = " + span_format.format(span.getMin())
+				+ ", max = " + span_format.format(span.getMax())
+				+ ", length = " + span_format.format(span.getLength())
+				+ ", forward = " + span.isForward()
+				+ ", seq = " + span.getBioSeq().getID() + " " + span.getBioSeq());
+	}
+
+/** Provides a string representation of a SeqSpan.
+ */
+public static final String symToString(SeqSymmetry sym) {
+	if (sym == null) {
+		return "SeqSymmetry == null";
+	}
+
+	return "sym.getID() is not implemented.";
+
 }
 
 }

@@ -360,7 +360,7 @@ the probeset, probe and pieces of probes
     }
     String meth = BioSeq.determineMethod(probeset);
     DerivedSeqSymmetry probeset_sym = SeqUtils.copyToDerived(probeset);
-    SeqUtils.transformSymmetry(probeset_sym, consensus_sym);
+    SeqUtils.transformSymmetry(probeset_sym, consensus_sym, true);
     // Note that the transformation generates a probeset_sym of depth 3
 
     String probeset_id = null;

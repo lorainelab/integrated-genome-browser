@@ -33,9 +33,25 @@ public class SeqUtilsTest {
 		}
 
 	@Test
-		public void testUnion() {
-			//System.out.println("union");
+	public void testDepth() {
+		BioSeq seq = seqA;
+		SeqSymmetry symA;
+		SeqSymmetry symB;
+		MutableSeqSymmetry result;
 
+		symA = new SingletonSeqSymmetry(300, 400, seq);
+		symB = new SingletonSeqSymmetry(700, 900, seq);
+
+		int depth = SeqUtils.getDepth(symA);
+		assertEquals(1, depth);
+
+		result = SeqUtils.union(symA, symB, seq);
+		depth = SeqUtils.getDepth(result);
+		assertEquals(2, depth);
+	}
+
+	@Test
+		public void testUnion() {
 			BioSeq seq = seqA;
 			SeqSymmetry symA;
 			SeqSymmetry symB;
@@ -114,22 +130,93 @@ public class SeqUtilsTest {
 
 
 			assertEquals(1000, result.getChild(3).getSpan(seqA).getStart());
-			assertEquals(1100, result.getChild(3).getSpan(seqA).getEnd()); 
+			assertEquals(1100, result.getChild(3).getSpan(seqA).getEnd());
 		}
 
-	//  public void testIntersection() {
-	//    System.out.println("intersection");
-	//    
-	//    SeqSymmetry symA = null;
-	//    SeqSymmetry symB = null;
-	//    BioSeq seq = null;
-	//    
-	//    MutableSeqSymmetry expResult = null;
-	//    MutableSeqSymmetry result = SeqUtils.intersection(symA, symB, seq);
-	//    assertEquals(expResult, result);
-	//    
-	//    fail("The test case is a prototype.");
-	//  }
+	@Test
+	  public void testIntersection() {
+	    BioSeq seq = seqA;
+			SeqSymmetry symA;
+			SeqSymmetry symB;
+			MutableSeqSymmetry result;
+			SeqSpan result_span;
+
+			symA = new SingletonSeqSymmetry(300, 400, seq);
+			symB = new SingletonSeqSymmetry(700, 900, seq);
+			result = SeqUtils.intersection(symA, symB, seq);
+			result_span = result.getSpan(seq);
+			assertNull(result_span);
+
+			symA = new SingletonSeqSymmetry(300, 400, seq);
+			symB = new SingletonSeqSymmetry(1000, 600, seq);
+			result = SeqUtils.intersection(symA, symB, seq);
+			result_span = result.getSpan(seq);
+			assertNull(result_span);
+
+			symA = new SingletonSeqSymmetry(400, 300, seq);
+			symB = new SingletonSeqSymmetry(700, 900, seq);
+			result = SeqUtils.intersection(symA, symB, seq);
+			result_span = result.getSpan(seq);
+			assertNull(result_span);
+
+			// The intersection symmetry is always oriented in the '+' direction.
+			symA = new SingletonSeqSymmetry(400, 300, seq);
+			symB = new SingletonSeqSymmetry(1000, 200, seq);
+			result = SeqUtils.intersection(symA, symB, seq);
+			result_span = result.getSpan(seq);
+			assertEquals(300, result_span.getStart());
+			assertEquals(400, result_span.getEnd());
+
+			MutableSeqSymmetry symC = new SimpleMutableSeqSymmetry();
+			symC.addChild(new SingletonSeqSymmetry(100, 200, seqA));
+			symC.addChild(new SingletonSeqSymmetry(500, 600, seqA));
+			symC.addChild(new SingletonSeqSymmetry(1000, 1100, seqA));
+
+			MutableSeqSymmetry symD = new SimpleMutableSeqSymmetry();
+			symD.addChild(new SingletonSeqSymmetry(900, 800, seqA));
+			symD.addChild(new SingletonSeqSymmetry(600, 500, seqA));
+			symD.addChild(new SingletonSeqSymmetry(1000, 1200, seqB));
+			symD.addChild(new SingletonSeqSymmetry(300, 150, seqA));
+
+			result = SeqUtils.intersection(symC, symD, seqA);
+			assertNotNull(result);
+
+			// where is 1000-1100?
+			assertEquals(2, result.getChildCount());
+			assertEquals(150, result.getSpan(seqA).getStart());
+			assertEquals(600, result.getSpan(seqA).getEnd());
+			assertEquals(150, result.getSpan(seqA).getMin());
+			assertEquals(600, result.getSpan(seqA).getMax());
+			assertTrue(result.getSpan(seqA).isForward());
+
+			assertTrue(result.getChild(0).getSpan(seqA).isForward());
+			assertEquals(150, result.getChild(0).getSpan(seqA).getStart());
+			assertEquals(200, result.getChild(0).getSpan(seqA).getEnd());
+
+			assertTrue(result.getChild(1).getSpan(seqA).isForward());
+			assertEquals(500, result.getChild(1).getSpan(seqA).getStart());
+			assertEquals(600, result.getChild(1).getSpan(seqA).getEnd());
+		
+
+			result = SeqUtils.intersection(symD, symC, seqA);
+			assertNotNull(result);
+
+			assertEquals(2, result.getChildCount());
+			assertEquals(150, result.getSpan(seqA).getStart());
+			assertEquals(600, result.getSpan(seqA).getEnd());
+			assertEquals(150, result.getSpan(seqA).getMin());
+			assertEquals(600, result.getSpan(seqA).getMax());
+			assertTrue(result.getSpan(seqA).isForward());
+
+			assertFalse(result.getChild(0).getSpan(seqA).isForward());
+			assertEquals(200, result.getChild(0).getSpan(seqA).getStart());
+			assertEquals(150, result.getChild(0).getSpan(seqA).getEnd());
+
+			assertFalse(result.getChild(1).getSpan(seqA).isForward());
+			assertEquals(600, result.getChild(1).getSpan(seqA).getStart());
+			assertEquals(500, result.getChild(1).getSpan(seqA).getEnd());
+
+	}
 	//  
 	//  public void testOverlap() {
 	//    System.out.println("overlap");
@@ -201,7 +288,6 @@ public class SeqUtilsTest {
 	 */
 	@Test
 		public void testTransformSymmetry() {
-			//System.out.println("transformSymmetry");
 			BioSeq annot_seq = new BioSeq("annot", "version", 1000000);
 			BioSeq view_seq = new BioSeq("view_seq", "version", 1000000);
 
@@ -227,9 +313,6 @@ public class SeqUtilsTest {
 				transformer.addChild(child);
 			}
 
-			//    System.out.println("Transformer");
-			//    SeqUtils.printSymmetry(transformer);
-
 			// Now create a symmetry to be transformed.
 			// This one has many children, all of length 50, with starts from the array starts[]
 
@@ -246,9 +329,6 @@ public class SeqUtilsTest {
 
 			boolean result = SeqUtils.transformSymmetry(initialSym, transformer, true);
 			assertEquals(true, result);
-
-			//    System.out.println("Result");
-			//    SeqUtils.printSymmetry(initialSym);
 
 			assertEquals(11, initialSym.getChildCount());
 			assertNull(initialSym.getChild(0).getSpan(view_seq));

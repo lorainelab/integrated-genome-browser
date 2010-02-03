@@ -113,9 +113,9 @@ public final class ServerList {
 	 */
 	public static void removeServer(String url) {
 		GenericServer server = url2server.get(url);
-		/*url2Name.remove(url);
+		url2Name.remove(url);
 		server2Name.remove(server);
-		url2server.remove(url);*/
+		url2server.remove(url);
 		server.enabled = false;
 		fireServerInitEvent(server, ServerStatus.NotResponding);	// remove it from our lists.
 	}

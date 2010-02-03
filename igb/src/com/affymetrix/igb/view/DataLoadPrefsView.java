@@ -71,9 +71,9 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 	private static final String[] OPTIONS = new String[]{"Add Server", "Cancel"};
 
-	public DataLoadPrefsView(GeneralLoadView glv) {
+	public DataLoadPrefsView() {
 		final GroupLayout layout = new GroupLayout(this);
-		final JPanel sourcePanel = initSourcePanel(glv);
+		final JPanel sourcePanel = initSourcePanel();
 		final JPanel synonymsPanel = initSynonymsPanel(this);
 		final JPanel cachePanel = initCachePanel();
 
@@ -95,7 +95,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				.addComponent(cachePanel));
 	}
 
-	private static JPanel initSourcePanel(final GeneralLoadView glv) {
+	private static JPanel initSourcePanel() {
 		final JPanel sourcePanel = new JPanel();
 		final GroupLayout layout = new GroupLayout(sourcePanel);
 		final SourceTableModel sourceTableModel = new SourceTableModel();
@@ -109,7 +109,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 
 		final JButton addServerButton = createButton("Add\u2026", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showAddSourceDialog(glv);
+				showAddSourceDialog();
 				sourceTableModel.init();
 			}
 		});
@@ -181,9 +181,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		final JButton openFile = new JButton("\u2026");
 		final ActionListener listener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Object source = e.getSource();
-
-				if (source == openFile) {
+				if (e.getSource() == openFile) {
 					File file = fileChooser(FILES_AND_DIRECTORIES, parent);
 					try {
 						if (file != null) {
@@ -194,9 +192,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 					}
 				}
 
-				if (synonymFile.getText().isEmpty()) {
-					UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, "");
-				} else if (loadSynonymFile(synonymFile)) {
+				if (synonymFile.getText().isEmpty() || loadSynonymFile(synonymFile)) {
 					UnibrowPrefsUtil.getLocationsNode().put(PREF_SYN_FILE_URL, synonymFile.getText());
 				} else {
 					ErrorHandler.errorPanel(
@@ -387,7 +383,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 		return addServerPanel;
 	}
 
-	private static void showAddSourceDialog(GeneralLoadView glv) {
+	private static void showAddSourceDialog() {
 		JTextField name = new JTextField();
 		JTextField url = new JTextField();
 		JComboBox  type = new JComboBox(LoadUtils.ServerType.values());
@@ -404,7 +400,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 				OPTIONS[0]);
 
 		if (result == OK_OPTION) {
-			addDataSource((ServerType)type.getSelectedItem(), name.getText(), url.getText(), glv);
+			addDataSource((ServerType)type.getSelectedItem(), name.getText(), url.getText());
 		}
 	}
 
@@ -414,7 +410,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 	 * @param type
 	 * @param name
 	 */
-	private static void addDataSource(ServerType type, String name, String url, GeneralLoadView glv) {
+	private static void addDataSource(ServerType type, String name, String url) {
 		if (url == null || url.isEmpty() || name == null || name.isEmpty()) {
 			return;
 		}

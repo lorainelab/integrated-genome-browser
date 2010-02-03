@@ -44,6 +44,7 @@ import com.affymetrix.genometryImpl.general.GenericFeature;
 import com.affymetrix.genometryImpl.general.GenericServer;
 import com.affymetrix.genometryImpl.general.GenericVersion;
 import com.affymetrix.igb.Application;
+import com.affymetrix.igb.general.Persistence;
 import com.affymetrix.igb.general.ServerList;
 import com.affymetrix.igb.util.ThreadUtils;
 import com.affymetrix.igb.view.SeqMapView;
@@ -215,28 +216,6 @@ public final class GeneralLoadView extends JComponent
 		}
 	}
 
-
-	/**
-	 * Add and verify another server.  Called from DataLoadPrefsView.
-	 * @param serverName
-	 * @param serverURL
-	 * @param serverType
-	 * @return true or false
-	 */
-	public GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
-		GenericServer server = GeneralLoadUtils.addServer(serverType, serverName, serverURL);
-
-		if (server != null) {
-			// server has been added.  Refresh necessary boxes, tables, etc.
-			String version = (String)this.versionCB.getSelectedItem();
-			if (!SELECT_GENOME.equals(version)) {initVersion(version); }
-			gmodel.setSelectedSeqGroup(gmodel.getSelectedSeqGroup());
-			gmodel.setSelectedSeq(gmodel.getSelectedSeq());
-		}
-
-		return server;
-	}
-
 	public void GenericServerInit(GenericServerInitEvent evt) {
 		GenericServer gServer = (GenericServer)evt.getSource();
 
@@ -369,7 +348,6 @@ public final class GeneralLoadView extends JComponent
 	/**
 	 * bootstrap bookmark from Preferences for last species/versionName/genome / sequence / region
 	 */
-	/**
 	private void RestorePersistentGenome() {
 		// Get group and seq info from persistent preferences.
 		// (Recovering as much data as possible before activating listeners.)
@@ -411,7 +389,7 @@ public final class GeneralLoadView extends JComponent
 			e.printStackTrace();
 		}
 	}
-**/
+
 	private static void initVersion(String versionName) {
 		Application.getSingleton().addNotLockedUpMsg("Loading chromosomes...");
 		GeneralLoadUtils.initVersionAndSeq(versionName); // Make sure this genome versionName's feature names are initialized.

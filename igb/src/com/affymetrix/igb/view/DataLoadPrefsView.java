@@ -27,6 +27,7 @@ import com.affymetrix.igb.util.UnibrowPrefsUtil;
 import com.affymetrix.genoviz.swing.BooleanTableCellRenderer;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.LocalUrlCacher;
+import com.affymetrix.igb.view.load.GeneralLoadUtils;
 import com.affymetrix.igb.view.load.GeneralLoadView;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -418,7 +419,7 @@ public final class DataLoadPrefsView extends IPrefEditorComponent {
 			return;
 		}
 		
-		GenericServer server = glv.addServer(type, name, url);
+		GenericServer server = GeneralLoadUtils.addServer(type, name, url);
 
 		if (server == null) {
 			ErrorHandler.errorPanel(

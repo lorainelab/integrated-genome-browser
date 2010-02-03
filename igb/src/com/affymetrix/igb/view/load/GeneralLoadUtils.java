@@ -116,7 +116,7 @@ public final class GeneralLoadUtils {
 	 * @param serverType
 	 * @return success of server add.
 	 */
-	static GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
+	public static GenericServer addServer(ServerType serverType, String serverName, String serverURL) {
 		/* should never happen */
 		if (serverType == ServerType.Unknown) { return null; }
 		

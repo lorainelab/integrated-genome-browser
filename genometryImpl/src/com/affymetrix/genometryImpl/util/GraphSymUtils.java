@@ -1,16 +1,3 @@
-/**
- *   Copyright (c) 2001-2007 Affymetrix, Inc.
- *
- *   Licensed under the Common Public License, Version 1.0 (the "License").
- *   A copy of the license must be included with any distribution of
- *   this source code.
- *   Distributions from Affymetrix, Inc., place this in the
- *   IGB_LICENSE.html file.
- *
- *   The license is also available at
- *   http://www.opensource.org/licenses/cpl.php
- */
-
 package com.affymetrix.genometryImpl.util;
 
 import com.affymetrix.genometryImpl.SeqSymmetry;
@@ -32,24 +19,7 @@ import com.affymetrix.genometryImpl.parsers.useq.USeqGraphParser;
 
 public final class GraphSymUtils {
 
-	static boolean DEBUG_READ = false;
-	static boolean DEBUG_DATA = false;
-	static int MAX_INITCAP = 1024*1024;
-
-	/** 8-byte floating-point.  Names of the other data-type constants can be interpreted similarly. */
-	public static int BYTE8_FLOAT = 0;
-	public static int BYTE4_FLOAT = 1;
-	public static int BYTE4_SIGNED_INT = 2;
-	public static int BYTE2_SIGNED_INT = 3;
-	public static int BYTE1_SIGNED_INT = 4;
-	public static int BYTE4_UNSIGNED_INT = 5;
-	public static int BYTE2_UNSIGNED_INT = 6;
-	public static int BYTE1_UNSIGNED_INT = 7;
-
-	public static String[] valstrings =
-	{ "BYTE8_FLOAT", "BYTE4_FLOAT",
-		"BYTE4_SIGNED_INT", "BYTE2_SIGNED_INT", "BYTE1_SIGNED_INT",
-		"BYTE4_UNSIGNED_INT", "BYTE2_UNSIGNED_INT", "BYTE1_UNSIGNED_INT" };
+	private static final int MAX_INITCAP = 1024*1024;
 
 	/**
 	 *  Transforms a restricted type of GraphSym based on a SeqSymmetry.
@@ -141,7 +111,7 @@ public final class GraphSymUtils {
 				// try to determine start_index.  Luckily, when there are widths, there
 				// tend to be fewer graph points to deal with.
 				// assumes graph is sorted
-				start_index = determineBegIndex(original_graf, ostart - 1);
+				start_index = original_graf.determineBegIndex(ostart - 1);
 			}
 			for (int k = start_index; k < kmax; k++) {
 				final int old_xcoord = original_graf.getGraphXCoord(k);
@@ -380,7 +350,6 @@ public final class GraphSymUtils {
 	 *    Plan to change this to a sampling strategy if scores.length greater than some cutoff (maybe 100,000 ?)
 	 */
 	public static float[] calcPercents2Scores(float[] scores, float bins_per_percent) {
-		boolean USE_SAMPLING = true;
 		int max_sample_size = 100000;
 		float abs_max_percent = 100.0f;
 		float percents_per_bin = 1.0f / bins_per_percent;
@@ -394,8 +363,7 @@ public final class GraphSymUtils {
 		// in performance comparisons of System.arraycopy() vs. piecewise loop,
 		//     piecewise takes about twice as long for copying same number of elements,
 		//     but this 2x performance hit should be overwhelmed by time taken for larger array sort
-		//tim.start();
-		if (USE_SAMPLING && (num_scores > (2 * max_sample_size)) ) {
+		if (num_scores > (2 * max_sample_size) ) {
 			int sample_step = num_scores / max_sample_size;
 			int sample_index = 0;
 			ordered_scores = new float[max_sample_size];
@@ -469,36 +437,10 @@ public final class GraphSymUtils {
 		// copy properties over...
 		span_graph.setProperties(trans_frag_graph.cloneProperties());
 
-		if (DEBUG_DATA) {
-			for (int i = 0; i < span_graph.getPointCount(); i++) {
-				System.out.println("TransFrag graph point: x = " + span_graph.getGraphXCoord(i)
-						+ ", y = " + span_graph.getGraphXCoord(i));
-			}
-		}
-
 		// add transfrag property...
 		span_graph.setProperty("TransFrag", "TransFrag");
 		return span_graph;
 
-	}
-
-	/**
-	 * Find last point with value <= xmin.
-	 * @param xmin
-	 * @return integer value which is the last point with value <=xmin
-	 */
-	public final static int determineBegIndex(GraphSym graf, double xmin) {
-		return graf.determineBegIndex(xmin);
-	}
-
-	/**
-	 * Find first point with value >= xmax.
-	 * Use beginning index as a starting point.
-	 * @param xmax
-	 * @return integer value which is the first point with value >= xmax
-	 */
-	public final static int determineEndIndex(GraphSym graf, double xmax, int begIndex) {
-		return graf.determineEndIndex(xmax, begIndex);
 	}
 
 	private final static boolean hasWidth(GraphSym graf) {

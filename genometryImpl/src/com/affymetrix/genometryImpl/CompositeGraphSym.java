@@ -38,7 +38,7 @@ public final class CompositeGraphSym extends GraphSym {
 
 	private void createNewCoords(GraphSym slice) {
 		int slice_min = slice.getMinXCoord();
-		int slice_index = GraphSymUtils.determineBegIndex(this, slice_min);
+		int slice_index = this.determineBegIndex(slice_min);
 
 		int coordSize = this.getPointCount();
 		int sliceSize = slice.getPointCount();

@@ -22,8 +22,6 @@ import java.util.*;
  */
 public abstract class SeqUtils {
 
-	private static final boolean DEBUG = false;
-
 	/** Controls the format used for printing spans in {@link #spanToString(SeqSpan)}. */
 	private static final boolean USE_SHORT_FORMAT_FOR_SPANS= true;
 
@@ -71,7 +69,7 @@ public abstract class SeqUtils {
 
 
 	public static final List<SeqSpan> getLeafSpans(SeqSymmetry sym, BioSeq seq) {
-		ArrayList<SeqSpan> leafSpans = new ArrayList<SeqSpan>();
+		List<SeqSpan> leafSpans = new ArrayList<SeqSpan>();
 		collectLeafSpans(sym, seq, leafSpans);
 		return leafSpans;
 	}
@@ -92,7 +90,7 @@ public abstract class SeqUtils {
 	}
 
 	public static final List<SeqSymmetry> getLeafSyms(SeqSymmetry sym) {
-		ArrayList<SeqSymmetry> leafSyms = new ArrayList<SeqSymmetry>();
+		List<SeqSymmetry> leafSyms = new ArrayList<SeqSymmetry>();
 		collectLeafSyms(sym, leafSyms);
 		return leafSyms;
 	}
@@ -128,37 +126,36 @@ public abstract class SeqUtils {
 
 		// invert and add to new SeqSymmetry
 		//   for now ignoring the ends...
-		int spanCount = mergedSpans.size();
-
 		MutableSeqSymmetry invertedSym = new SimpleMutableSeqSymmetry();
-		if (spanCount < 1) {
-			// no spans, so just return sym of whole range of seq
-			invertedSym.addSpan(new SimpleMutableSeqSpan(0, seq.getLength(), seq));
-			return invertedSym;
-		} else {
-			SeqSpan firstSpan = mergedSpans.get(0);
-			if (firstSpan.getMin() > 0) {
-				SeqSymmetry beforeSym = new MutableSingletonSeqSymmetry(0, firstSpan.getMin(), seq);
-				invertedSym.addChild(beforeSym);
-			}
+
+		int spanCount = mergedSpans.size();
+		if (spanCount > 0) {
+			addInvertChildren(mergedSpans, seq, invertedSym, spanCount);
+		}	
+
+		invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
+
+		return invertedSym;
+	}
+
+
+	private static void addInvertChildren(List<SeqSpan> mergedSpans, BioSeq seq, MutableSeqSymmetry invertedSym, int spanCount) {
+		SeqSpan firstSpan = mergedSpans.get(0);
+		if (firstSpan.getMin() > 0) {
+			SeqSymmetry beforeSym = new MutableSingletonSeqSymmetry(0, firstSpan.getMin(), seq);
+			invertedSym.addChild(beforeSym);
 		}
 		for (int i = 0; i < spanCount - 1; i++) {
 			SeqSpan preSpan = mergedSpans.get(i);
 			SeqSpan postSpan = mergedSpans.get(i + 1);
-			SeqSymmetry gapSym =
-					new MutableSingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
+			SeqSymmetry gapSym = new MutableSingletonSeqSymmetry(preSpan.getMax(), postSpan.getMin(), seq);
 			invertedSym.addChild(gapSym);
 		}
-
 		SeqSpan lastSpan = mergedSpans.get(spanCount - 1);
 		if (lastSpan.getMax() < seq.getLength()) {
 			SeqSymmetry afterSym = new MutableSingletonSeqSymmetry(lastSpan.getMax(), seq.getLength(), seq);
 			invertedSym.addChild(afterSym);
 		}
-
-		invertedSym.addSpan(new SimpleSeqSpan(0, seq.getLength(), seq));
-
-		return invertedSym;
 	}
 
 
@@ -201,7 +198,7 @@ public abstract class SeqUtils {
 			SeqUtils.collectLeafSyms(sym, leaves);
 		}
 		int leafCount = leaves.size();
-		ArrayList<SeqSpan> spans = new ArrayList<SeqSpan>(leafCount);
+		List<SeqSpan> spans = new ArrayList<SeqSpan>(leafCount);
 		for (SeqSymmetry sym : leaves) {
 			spans.add(sym.getSpan(seq));
 		}
@@ -213,7 +210,7 @@ public abstract class SeqUtils {
 	/**
 	 *  "Logical" OR of SeqSymmetries (relative to a particular BioSeq).
 	 */
-	public static final void union(SeqSymmetry symA, SeqSymmetry symB,
+	private static final void union(SeqSymmetry symA, SeqSymmetry symB,
 			MutableSeqSymmetry resultSym, BioSeq seq) {
 		resultSym.clear();
 		List<SeqSpan> spans = new ArrayList<SeqSpan>();
@@ -462,10 +459,8 @@ public abstract class SeqUtils {
 
 	private static void loopThruMapSymChildren(SeqSymmetry mapSym, MutableSeqSymmetry resultSym) {
 		int map_childcount = mapSym.getChildCount();
-		STEP1_LOOP:
 		for (int index = 0; index < map_childcount; index++) {
 			SeqSymmetry map_child_sym = mapSym.getChild(index);
-			MutableSeqSymmetry childResult = null;
 
 			// "sit still"
 			// find the subset of BioSeqs that are pointed to by SeqSpans in both
@@ -474,48 +469,8 @@ public abstract class SeqUtils {
 			//        spanX and the spanY
 			//    if no intersection, keep looping
 			//    if intersection exists, then add to child_resultSym
-			int spanCount = map_child_sym == null ? 0 : map_child_sym.getSpanCount();
-
-			// WARNING: still need to switch to using mutable SeqSpan args for efficiency
-			for (int spandex = 0; spandex < spanCount; spandex++) {
-				SeqSpan mapspan = map_child_sym.getSpan(spandex);
-				BioSeq seq = mapspan.getBioSeq();
-				SeqSpan respan = resultSym.getSpan(seq);
-
-				if (respan == null) {
-					continue;
-				}
-
-				// GAH 6-12-2003 flipped intersection() span args around
-				// shouldn't really matter, since later redoing intersectSpan based
-				//     on respan orientation anyway...
-				MutableSeqSpan interSpan = (MutableSeqSpan) intersection(respan, mapspan);
-				if (interSpan != null) {
-					// GAH 6-12-2003
-					// ensuring that orientation of intersectSpan is same as respan
-					// (regardless of behavior of intersection());
-					if (respan.isForward()) {
-						interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
-					} else {
-						interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
-					}
-
-					if (childResult == null) {
-						// special-casing derived seq symmetries to preserve derivation info...
-						// hmm, maybe should just make this the normal case and always preserve
-						//    derivation info (if available...)
-						// NOT YET TESTED!!!
-						//    GAH 5-14-2002
-						if (mapSym instanceof DerivedSeqSymmetry) {
-							childResult = new SimpleDerivedSeqSymmetry();
-							((DerivedSeqSymmetry) childResult).setOriginalSymmetry(resultSym);
-						} else {
-							childResult = new SimpleMutableSeqSymmetry();
-						}
-					}
-					childResult.addSpan(interSpan);
-				}
-			}
+			
+			MutableSeqSymmetry childResult = addIntersectionsToChildResultSyms(map_child_sym, resultSym, mapSym);
 			if (childResult == null) {
 				continue;
 			}
@@ -544,6 +499,49 @@ public abstract class SeqUtils {
 
 		addParentSpans(resultSym, mapSym);
 	}
+
+
+	private static MutableSeqSymmetry addIntersectionsToChildResultSyms(SeqSymmetry map_child_sym, MutableSeqSymmetry resultSym, SeqSymmetry mapSym) {
+		MutableSeqSymmetry childResult = null;
+		int spanCount = map_child_sym == null ? 0 : map_child_sym.getSpanCount();
+		// WARNING: still need to switch to using mutable SeqSpan args for efficiency
+		for (int spandex = 0; spandex < spanCount; spandex++) {
+			SeqSpan mapspan = map_child_sym.getSpan(spandex);
+			BioSeq seq = mapspan.getBioSeq();
+			SeqSpan respan = resultSym.getSpan(seq);
+			if (respan == null) {
+				continue;
+			} // shouldn't really matter, since later redoing intersectSpan based
+			//     on respan orientation anyway...
+			MutableSeqSpan interSpan = (MutableSeqSpan) intersection(respan, mapspan);
+			if (interSpan != null) {
+				// GAH 6-12-2003
+				// ensuring that orientation of intersectSpan is same as respan
+				// (regardless of behavior of intersection());
+				if (respan.isForward()) {
+					interSpan.setDouble(interSpan.getMinDouble(), interSpan.getMaxDouble(), interSpan.getBioSeq());
+				} else {
+					interSpan.setDouble(interSpan.getMaxDouble(), interSpan.getMinDouble(), interSpan.getBioSeq());
+				}
+				if (childResult == null) {
+					// special-casing derived seq symmetries to preserve derivation info...
+					// hmm, maybe should just make this the normal case and always preserve
+					//    derivation info (if available...)
+					// NOT YET TESTED!!!
+					//    GAH 5-14-2002
+					if (mapSym instanceof DerivedSeqSymmetry) {
+						childResult = new SimpleDerivedSeqSymmetry();
+						((DerivedSeqSymmetry) childResult).setOriginalSymmetry(resultSym);
+					} else {
+						childResult = new SimpleMutableSeqSymmetry();
+					}
+				}
+				childResult.addSpan(interSpan);
+			}
+		}
+		return childResult;
+	}
+
 
 
 	private static boolean transformLeafSymmetry(int spanCount, SeqSymmetry mapSym, MutableSeqSymmetry resultSym, SeqSpan linkSpan, SeqSpan mapSpan) {
@@ -634,9 +632,6 @@ public abstract class SeqUtils {
 			}
 			// if no span in resultSym with same BioSeq, then need to create one based
 			//    on encompass() of childResSym spans (if there are any...)
-			if (DEBUG) {
-				System.out.println("need to create new resSpan for seq " + mapSeq.getID());
-			}
 
 			int forCount = 0;
 			// need to use NEGATIVE_INFINITY for doubles, since Double.MIN_VALUE is really smallest
@@ -647,10 +642,6 @@ public abstract class SeqUtils {
 			for (int childIndex = 0; childIndex < resultChildCount; childIndex++) {
 				SeqSymmetry childResSym = resultSym.getChild(childIndex);
 				SeqSpan childResSpan = childResSym.getSpan(mapSeq);
-				if (DEBUG) {
-					System.out.print("child span -- ");
-					SeqUtils.printSpan(childResSpan);
-				}
 				if (childResSpan != null) {
 					min = Math.min(childResSpan.getMinDouble(), min);
 					max = Math.max(childResSpan.getMaxDouble(), max);
@@ -659,9 +650,6 @@ public abstract class SeqUtils {
 						forCount++;
 					} else {
 						forCount--;
-					}
-					if (DEBUG) {
-						System.out.println("Min: " + min + ", Max: " + max);
 					}
 				}
 			}
@@ -672,7 +660,7 @@ public abstract class SeqUtils {
 	}
 
 
-	private static MutableSeqSpan addParentSpan(BioSeq mapSeq, int forCount, double min, double max, MutableSeqSymmetry resultSym) {
+	private static void addParentSpan(BioSeq mapSeq, int forCount, double min, double max, MutableSeqSymmetry resultSym) {
 		// only add parent span if bounds were set by child span...
 		MutableSeqSpan newResSpan = new MutableDoubleSeqSpan();
 		newResSpan.setBioSeq(mapSeq);
@@ -686,7 +674,6 @@ public abstract class SeqUtils {
 			newResSpan.setEndDouble(min);
 		}
 		resultSym.addSpan(newResSpan);
-		return newResSpan;
 	}
 
 

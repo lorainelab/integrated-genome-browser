@@ -310,7 +310,7 @@ public class GenoPubServlet extends HttpServlet {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void handleAnnotationsRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Document doc = null;
 		Session sess = null;
@@ -585,7 +585,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	private void handleGenomeVersionRequest(HttpServletRequest request, HttpServletResponse res) {
 		Session sess = null;
 
@@ -652,8 +652,7 @@ public class GenoPubServlet extends HttpServlet {
 			GenomeVersion genomeVersion = new GenomeVersion();
 
 			Integer idOrganism = Util.getIntegerParameter(request, "idOrganism");
-			Organism organism = Organism.class.cast(sess.load(Organism.class, idOrganism));
-
+			
 			genomeVersion.setIdOrganism(idOrganism);
 			genomeVersion.setName(request.getParameter("name"));
 			genomeVersion.setBuildDate(Util.getDateParameter(request, "buildDate"));
@@ -666,7 +665,7 @@ public class GenoPubServlet extends HttpServlet {
 			annotationGrouping.setIdParentAnnotationGrouping(null);
 			sess.save(annotationGrouping);
 
-			Set annotationGroupingsToKeep = new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
+			Set<AnnotationGrouping>  annotationGroupingsToKeep= new TreeSet<AnnotationGrouping>(new AnnotationGroupingComparator());
 			annotationGroupingsToKeep.add(annotationGrouping);
 			genomeVersion.setAnnotationGroupings(annotationGroupingsToKeep);
 
@@ -705,7 +704,6 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleGenomeVersionUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -759,10 +757,11 @@ public class GenoPubServlet extends HttpServlet {
 			StringReader reader = new StringReader(request.getParameter("segmentsXML"));
 			SAXReader sax = new SAXReader();
 			Document segmentsDoc = sax.read(reader);
-			for (Segment segment : (Set<Segment>)genomeVersion.getSegments()) {
+			for (Iterator<?> i = genomeVersion.getSegments().iterator(); i.hasNext();) {
+				Segment segment = Segment.class.cast(i.next());
 				boolean found = false;
-				for(Iterator i = segmentsDoc.getRootElement().elementIterator(); i.hasNext();) {
-					Element segmentNode = (Element)i.next();
+				for(Iterator<?> i1 = segmentsDoc.getRootElement().elementIterator(); i1.hasNext();) {
+					Element segmentNode = (Element)i1.next();
 					String idSegment = segmentNode.attributeValue("idSegment");
 					if (idSegment != null && !idSegment.equals("")) {
 						if (segment.getIdSegment().equals(new Integer(idSegment))) {
@@ -778,7 +777,7 @@ public class GenoPubServlet extends HttpServlet {
 			sess.flush();
 
 			// Add segments
-			for(Iterator i = segmentsDoc.getRootElement().elementIterator(); i.hasNext();) {
+			for(Iterator<?> i = segmentsDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element segmentNode = (Element)i.next();
 
 				String idSegment = segmentNode.attributeValue("idSegment");
@@ -816,7 +815,7 @@ public class GenoPubServlet extends HttpServlet {
 			reader = new StringReader(request.getParameter("sequenceFilesToRemoveXML"));
 			sax = new SAXReader();
 			Document filesDoc = sax.read(reader);
-			for(Iterator i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
+			for(Iterator<?> i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
 				file.delete();
@@ -858,6 +857,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
+
 	private void handleGenomeVersionDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -885,12 +885,14 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Delete segments
-			for (Segment segment : (Set<Segment>)genomeVersion.getSegments()) {
+			for (Iterator<?> i = genomeVersion.getSegments().iterator(); i.hasNext();) {
+				Segment segment = Segment.class.cast(i.next());
 				sess.delete(segment);
 			}
 
 			// Delete aliases
-			for (GenomeVersionAlias alias : (Set<GenomeVersionAlias>)genomeVersion.getAliases()) {
+			for (Iterator<?> i = genomeVersion.getAliases().iterator(); i.hasNext();) {
+				GenomeVersionAlias alias = GenomeVersionAlias.class.cast(i.next());
 				sess.delete(alias);
 			}
 
@@ -1337,6 +1339,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
+
 	private void handleAnnotationGroupingMoveRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -1388,8 +1391,9 @@ public class GenoPubServlet extends HttpServlet {
 				annotationGrouping.setIdGenomeVersion(ag.getIdGenomeVersion());
 				annotationGrouping.setIdUserGroup(ag.getIdUserGroup());				
 
-				Set annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
-				for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+				Set<Annotation> annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
+				for(Iterator<?> i = ag.getAnnotations().iterator(); i.hasNext();) {
+					Annotation a = Annotation.class.cast(i.next());
 					annotationsToKeep.add(a);
 				}
 				annotationGrouping.setAnnotations(annotationsToKeep);
@@ -1446,6 +1450,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
+
 	private void handleAnnotationGroupingDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -1457,14 +1462,14 @@ public class GenoPubServlet extends HttpServlet {
 			Integer idAnnotationGrouping = Util.getIntegerParameter(request, "idAnnotationGrouping");
 			AnnotationGrouping annotationGrouping = AnnotationGrouping.class.cast(sess.load(AnnotationGrouping.class, idAnnotationGrouping));
 
-			List descendents = new ArrayList();
+			List<Object> descendents = new ArrayList<Object>();
 			descendents.add(annotationGrouping);
 			annotationGrouping.recurseGetChildren(descendents);
 
 
 			// Make sure the user can write this annotation grouping and all of its
 			// descendent annotations and annotation groupings
-			for(Iterator i = descendents.iterator(); i.hasNext();) {
+			for(Iterator<?> i = descendents.iterator(); i.hasNext();) {
 				Object descendent = i.next();
 				if (!this.genoPubSecurity.canWrite(descendent)) {
 					if (descendent.equals(annotationGrouping)) {
@@ -1481,15 +1486,15 @@ public class GenoPubServlet extends HttpServlet {
 
 			// Make sure we are not trying to delete an annotation that also exists in
 			// another folder (that will not be deleted.)
-			for(Iterator i = descendents.iterator(); i.hasNext();) {
+			for(Iterator<?> i = descendents.iterator(); i.hasNext();) {
 				Object descendent = i.next();
 				if (descendent instanceof Annotation) {
 					Annotation a = (Annotation)descendent;
 					if (a.getAnnotationGroupings().size() > 1) {
-						for(Iterator i1 = a.getAnnotationGroupings().iterator(); i1.hasNext();) {
+						for(Iterator<?> i1 = a.getAnnotationGroupings().iterator(); i1.hasNext();) {
 							AnnotationGrouping ag = (AnnotationGrouping)i1.next();
 							boolean inDeleteList = false;
-							for(Iterator i2 = descendents.iterator(); i2.hasNext();) {
+							for(Iterator<?> i2 = descendents.iterator(); i2.hasNext();) {
 								Object d = i2.next();
 								if (d instanceof AnnotationGrouping) {
 									AnnotationGrouping agToDelete = (AnnotationGrouping)d;
@@ -1556,7 +1561,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleAnnotationAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -1639,7 +1644,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private Annotation createNewAnnotation(Session sess, String name, String codeVisibility, Integer idGenomeVersion, Integer idAnnotationGrouping,  Integer idUserGroup) throws Exception {
 		Annotation annotation = new Annotation();
 
@@ -1676,8 +1681,9 @@ public class GenoPubServlet extends HttpServlet {
 		}
 
 		// Add the annotation to the annotation grouping
-		Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-		for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+		Set<Annotation> newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+		for(Iterator<?>i = ag.getAnnotations().iterator(); i.hasNext();) {
+			Annotation a = Annotation.class.cast(i.next());
 			newAnnotations.add(a);
 		}
 		newAnnotations.add(annotation);
@@ -1691,7 +1697,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void handleAnnotationUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -1734,7 +1740,7 @@ public class GenoPubServlet extends HttpServlet {
 			StringReader reader = new StringReader(request.getParameter("filesToRemoveXML"));
 			SAXReader sax = new SAXReader();
 			Document filesDoc = sax.read(reader);
-			for(Iterator i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
+			for(Iterator<?> i = filesDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element fileNode = (Element)i.next();
 				File file = new File(fileNode.attributeValue("url"));
 				file.delete();
@@ -1775,7 +1781,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void handleAnnotationDuplicateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -1832,8 +1838,9 @@ public class GenoPubServlet extends HttpServlet {
 			}
 
 			// Add the annotation to the annotation grouping
-			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-			for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {	
+			Set<Annotation> newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+			for(Iterator<?> i = ag.getAnnotations().iterator(); i.hasNext();) {	
+				Annotation a = Annotation.class.cast(i.next());
 				newAnnotations.add(a);
 			}
 			newAnnotations.add(dup);
@@ -1943,6 +1950,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
+
 	private void handleAnnotationUnlinkRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -1981,8 +1989,9 @@ public class GenoPubServlet extends HttpServlet {
 			// Remove the annotation grouping the annotation was in
 			// by adding back the annotations to the annotation grouping, 
 			// excluding the annotation to be removed
-			Set annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
-			for(Annotation a : (Set<Annotation>)annotationGrouping.getAnnotations()) {
+			Set<Annotation> annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
+			for(Iterator<?>i = annotationGrouping.getAnnotations().iterator(); i.hasNext();) {
+				Annotation a = Annotation.class.cast(i.next());
 				if (a.getIdAnnotation().equals(annotation.getIdAnnotation())) {
 					continue;
 				}
@@ -1999,7 +2008,8 @@ public class GenoPubServlet extends HttpServlet {
 			sess.refresh(annotation);
 			StringBuffer remainingAnnotationGroupings = new StringBuffer();
 			int agCount = 0;
-			for (AnnotationGrouping ag : (Set<AnnotationGrouping>)annotation.getAnnotationGroupings()) {
+			for (Iterator<?> i1 = annotation.getAnnotationGroupings().iterator(); i1.hasNext();) {
+				AnnotationGrouping ag = AnnotationGrouping.class.cast(i1.next());
 				if (remainingAnnotationGroupings.length() > 0) {
 					remainingAnnotationGroupings.append(",\n");					
 				}
@@ -2110,8 +2120,9 @@ public class GenoPubServlet extends HttpServlet {
 			//
 			// Add the annotation to the annotation grouping
 			//
-			Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-			for(Annotation a : (Set<Annotation>)annotationGroupingNew.getAnnotations()) {
+			Set<Annotation> newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+			for(Iterator<?> i = annotationGroupingNew.getAnnotations().iterator(); i.hasNext();) {
+				Annotation a = Annotation.class.cast(i.next());
 				newAnnotations.add(a);
 			}
 			newAnnotations.add(annotation);
@@ -2140,7 +2151,8 @@ public class GenoPubServlet extends HttpServlet {
 				// by adding back the annotations to the annotation grouping, 
 				// excluding the annotation that has moved
 				Set<Annotation> annotationsToKeep = new TreeSet<Annotation>(new AnnotationComparator());
-				for(Annotation a : (Set<Annotation>)annotationGroupingOld.getAnnotations()) {
+				for(Iterator<?> i1 = annotationGroupingOld.getAnnotations().iterator(); i1.hasNext();) {
+					Annotation a = Annotation.class.cast(i1.next());
 					if (a.getIdAnnotation().equals(annotation.getIdAnnotation())) {
 						continue;
 					}
@@ -2685,7 +2697,6 @@ public class GenoPubServlet extends HttpServlet {
 	 * Get the annotation grouping (off of the base annotation grouping) specified as a directory structure 
 	 * in the annotation name.  If annotation groupings do not exist, create them.  
 	 */
-	@SuppressWarnings("unchecked")
 	private AnnotationGrouping getSpecifiedAnnotationGrouping(Session sess, AnnotationGrouping annotationGroupingBase, String name){
 		AnnotationGrouping agNext = annotationGroupingBase;
 		
@@ -2694,7 +2705,8 @@ public class GenoPubServlet extends HttpServlet {
 		for (int x = 0; x < tokens.length; x++) {
 			String agName = tokens[x];
 			agNext = null;
-			for (AnnotationGrouping ag : (Set<AnnotationGrouping>)agCurrent.getAnnotationGroupings()) {
+			for (Iterator<?> i = agCurrent.getAnnotationGroupings().iterator(); i.hasNext();) {
+				AnnotationGrouping ag = AnnotationGrouping.class.cast(i.next());
 				if (ag.getName().equalsIgnoreCase(agName)) {
 					agNext = ag;
 					break;
@@ -2723,7 +2735,6 @@ public class GenoPubServlet extends HttpServlet {
 	
 	/**Adds an new Annotation cloning in part the source annotation. For bulk uploading.
 	 * @author davidnix*/
-	@SuppressWarnings("unchecked")
 	private void addNewAnnotation(Session sess, Annotation sourceAnnot, String name, String summary, String description, File dataFile, AnnotationGrouping ag, HttpServletResponse res) 
 	    throws IOException, InsufficientPermissionException {		
 
@@ -2762,8 +2773,9 @@ public class GenoPubServlet extends HttpServlet {
 		sess.save(dup);
 
 		// Add the annotation to the annotation grouping
-		Set newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
-		for(Annotation a : (Set<Annotation>)ag.getAnnotations()) {
+		Set<Annotation> newAnnotations = new TreeSet<Annotation>(new AnnotationComparator());
+		for(Iterator<?> i = ag.getAnnotations().iterator(); i.hasNext();) {
+			Annotation a = Annotation.class.cast(i.next());
 			newAnnotations.add(a);
 		}
 		newAnnotations.add(dup);
@@ -2784,7 +2796,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 	
-	@SuppressWarnings("unchecked")
+
 	private void handleAnnotationEstimateDownloadSizeRequest(HttpServletRequest req, HttpServletResponse res) {
 		Session sess = null;
 
@@ -2805,7 +2817,6 @@ public class GenoPubServlet extends HttpServlet {
 					throw new Exception("Invalid parameter format " + key + " encountered. Expected 99,99 for idAnnotation and idAnnotationGrouping");
 				}
 				Integer idAnnotation = new Integer(idTokens[0]);
-				Integer idAnnotationGrouping = new Integer(idTokens[1]);
 				
 				Annotation annotation = Annotation.class.cast(sess.load(Annotation.class, idAnnotation));
 				for (File file : annotation.getFiles(this.genometry_genopub_dir)) {
@@ -2860,7 +2871,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 	
 
-	@SuppressWarnings("unchecked")
+
 	private void handleAnnotationDownloadRequest(HttpServletRequest req, HttpServletResponse res) {
 		Session sess = null;
 
@@ -2923,7 +2934,8 @@ public class GenoPubServlet extends HttpServlet {
 					GenomeVersion gv = dh.getGenomeVersion(annotation.getIdGenomeVersion());
 					annotationGrouping = gv.getRootAnnotationGrouping();
 				} else {
-					for(AnnotationGrouping ag : (Set<AnnotationGrouping>)annotation.getAnnotationGroupings()) {
+					for(Iterator<?>i = annotation.getAnnotationGroupings().iterator(); i.hasNext();) {
+						AnnotationGrouping ag = AnnotationGrouping.class.cast(i.next());
 						if (ag.getIdAnnotationGrouping().equals(idAnnotationGrouping)) {
 							annotationGrouping = ag;
 							break;
@@ -3014,7 +3026,7 @@ public class GenoPubServlet extends HttpServlet {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void handleUsersAndGroupsRequest(HttpServletRequest request, HttpServletResponse res) {
 		Session sess = null;
 
@@ -3032,7 +3044,7 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("LEFT JOIN   gr.members as mem ");
 			query.append("ORDER BY    gr.name, mem.lastName, mem.firstName ");
 
-			List<Object[]> rows = (List<Object[]>)sess.createQuery(query.toString()).list();
+			List<?> rows = sess.createQuery(query.toString()).list();
 
 			String groupNamePrev = "";
 			Element groupNode = null;
@@ -3042,7 +3054,8 @@ public class GenoPubServlet extends HttpServlet {
 			Element userNode = null;
 			HashMap<Integer, Element> groupNodeMap = new HashMap<Integer, Element>();
 
-			for (Object[] row : rows) {
+			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
+				Object[] row = Object[].class.cast(i.next());
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 
@@ -3052,7 +3065,7 @@ public class GenoPubServlet extends HttpServlet {
 				}
 
 				if (!group.getName().equals(groupNamePrev)) {
-					groupNode = doc.getRootElement().addElement("UserGroup");
+					groupNode = root.addElement("UserGroup");
 					groupNode.addAttribute("label", group.getName());
 					groupNode.addAttribute("name", group.getName());					
 					groupNode.addAttribute("contact", group.getContact() != null ? group.getContact() : "");					
@@ -3087,8 +3100,10 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("JOIN   gr.collaborators as col ");
 			query.append("ORDER BY    gr.name, col.lastName, col.firstName ");
 
-			rows = (List<Object[]>)sess.createQuery(query.toString()).list();
-			for (Object[] row : rows) {
+			rows = sess.createQuery(query.toString()).list();
+			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
+				Object[] row = Object[].class.cast(i.next());
+				
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 
@@ -3118,8 +3133,10 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("JOIN   gr.managers as mgr ");
 			query.append("ORDER BY    gr.name, mgr.lastName, mgr.firstName ");
 
-			rows = (List<Object[]>)sess.createQuery(query.toString()).list();
-			for (Object[] row : rows) {
+			rows = sess.createQuery(query.toString()).list();
+			for (Iterator<?> i = rows.iterator(); i.hasNext();) {
+				Object[] row = Object[].class.cast(i.next());
+				
 				UserGroup group = (UserGroup)row[0];
 				User user = (User)row[1];
 				groupNode = groupNodeMap.get(group.getIdUserGroup());
@@ -3147,9 +3164,10 @@ public class GenoPubServlet extends HttpServlet {
 			query.append("FROM        User as user   ");
 			query.append("ORDER BY    user.lastName, user.firstName ");
 
-			List<User> users = (List<User>)sess.createQuery(query.toString()).list();
-			for (User user : users) {
-				userNode = doc.getRootElement().addElement("User");
+			List<?> users = sess.createQuery(query.toString()).list();
+			for (Iterator<?> i = users.iterator(); i.hasNext();) {
+				User user = User.class.cast(i.next());
+				userNode = root.addElement("User");
 				userNode.addAttribute("label", user.getName());
 				userNode.addAttribute("name",  user.getName());
 				userNode.addAttribute("idUser", user.getIdUser().toString());
@@ -3164,12 +3182,14 @@ public class GenoPubServlet extends HttpServlet {
 				if (this.genoPubSecurity.canWrite(user)) {
 					userNode.addAttribute("passwordDisplay",  user.getPasswordDisplay() != null ? user.getPasswordDisplay() : "");
 
-					for(UserRole role : (Set<UserRole>)user.getRoles()) {
+					for(Iterator<?> i1 = user.getRoles().iterator(); i1.hasNext();) {
+						UserRole role = UserRole.class.cast(i1.next());
 						userNode.addAttribute("role", role.getRoleName());
 					}
 
 					StringBuffer memberGroups = new StringBuffer();
-					for(UserGroup memberGroup : (Set<UserGroup>)user.getMemberUserGroups()) {
+					for(Iterator<?> i1 = user.getMemberUserGroups().iterator(); i1.hasNext();) {
+						UserGroup memberGroup = UserGroup.class.cast(i1.next());
 						if (memberGroups.length() > 0) {
 							memberGroups.append(", ");
 						}
@@ -3178,8 +3198,8 @@ public class GenoPubServlet extends HttpServlet {
 					userNode.addAttribute("memberGroups", memberGroups.length() > 0 ? memberGroups.toString() : "(none)");
 
 					StringBuffer collaboratorGroups = new StringBuffer();
-					Element collaboratorGroupNode = userNode.addElement("collaborators");
-					for(UserGroup colGroup : (Set<UserGroup>)user.getCollaboratingUserGroups()) {
+					for(Iterator<?> i1 = user.getCollaboratingUserGroups().iterator(); i1.hasNext();) {
+						UserGroup colGroup = UserGroup.class.cast(i1.next());
 						if (collaboratorGroups.length() > 0) {
 							collaboratorGroups.append(", ");
 						}
@@ -3188,7 +3208,8 @@ public class GenoPubServlet extends HttpServlet {
 					userNode.addAttribute("collaboratorGroups", collaboratorGroups.length() > 0 ? collaboratorGroups.toString() : "(none)");
 
 					StringBuffer managerGroups = new StringBuffer();
-					for(UserGroup mgrGroup : (Set<UserGroup>)user.getManagingUserGroups()) {
+					for(Iterator<?> i1 = user.getManagingUserGroups().iterator(); i1.hasNext();) {
+						UserGroup mgrGroup = UserGroup.class.cast(i1.next());
 						if (managerGroups.length() > 0) {
 							managerGroups.append(", ");
 						}
@@ -3218,7 +3239,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleUserAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3242,7 +3263,7 @@ public class GenoPubServlet extends HttpServlet {
 			tx = sess.beginTransaction();
 
 			// Make sure this user name doesn't exist
-			List users = sess.createQuery("SELECT u.userName from User u where u.userName = '" + request.getParameter("userName") + "'").list();
+			List<?> users = sess.createQuery("SELECT u.userName from User u where u.userName = '" + request.getParameter("userName") + "'").list();
 			if (users.size() > 0) {
 				throw new Exception("The user name " + request.getParameter("userName") + " is already taken.  Please enter a unique user name.");
 			}
@@ -3259,7 +3280,6 @@ public class GenoPubServlet extends HttpServlet {
 			sess.flush();
 
 			// Default user to das2user role
-			TreeSet roles = new TreeSet();
 			UserRole role = new UserRole();
 			role.setRoleName(GenoPubSecurity.USER_ROLE);
 			role.setUserName(user.getUserName());
@@ -3299,7 +3319,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleUserDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3315,7 +3335,8 @@ public class GenoPubServlet extends HttpServlet {
 				throw new InsufficientPermissionException("Insufficient permissions to delete user.");
 			}
 
-			for (UserRole role : (Set<UserRole>)user.getRoles()) {
+			for (Iterator<?> i = user.getRoles().iterator(); i.hasNext();) {
+				UserRole role = UserRole.class.cast(i.next());
 				sess.delete(role);
 			}
 			sess.flush();
@@ -3361,7 +3382,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleUserUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3397,12 +3418,13 @@ public class GenoPubServlet extends HttpServlet {
 			}
 			if (userNameChanged) {
 				// Make sure this user name doesn't exist
-				List users = sess.createQuery("SELECT u.userName from User u where u.userName = '" + request.getParameter("userName") + "'").list();
+				List<?> users = sess.createQuery("SELECT u.userName from User u where u.userName = '" + request.getParameter("userName") + "'").list();
 				if (users.size() > 0) {
 					throw new Exception("The user name " + request.getParameter("userName") + " is already taken.  Please enter a unique user name.");
 				}
 
-				for (UserRole role : (Set<UserRole>)user.getRoles()) {
+				for (Iterator<?> i = user.getRoles().iterator(); i.hasNext();) {
+					UserRole role = UserRole.class.cast(i.next());
 					sess.delete(role);						
 					sess.flush();
 				}
@@ -3435,7 +3457,9 @@ public class GenoPubServlet extends HttpServlet {
 
 			// Set existing user roles
 			if (user.getRoles() != null && !userNameChanged) {
-				for (UserRole role : (Set<UserRole>)user.getRoles()) {
+				for (Iterator<?> i = user.getRoles().iterator(); i.hasNext();) {
+					UserRole role = UserRole.class.cast(i.next());
+					
 					role.setRoleName(request.getParameter("role"));
 					role.setUserName(user.getUserName());
 				}
@@ -3481,7 +3505,7 @@ public class GenoPubServlet extends HttpServlet {
 
 	}
 
-	@SuppressWarnings("unchecked")
+
 	private void handleUserPasswordRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3543,7 +3567,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleGroupAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3603,7 +3627,6 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	private void handleGroupDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3657,7 +3680,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleGroupUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3688,8 +3711,8 @@ public class GenoPubServlet extends HttpServlet {
 			StringReader reader = new StringReader(request.getParameter("membersXML"));
 			SAXReader sax = new SAXReader();
 			Document membersDoc = sax.read(reader);
-			TreeSet members = new TreeSet(new UserComparator());
-			for(Iterator i = membersDoc.getRootElement().elementIterator(); i.hasNext();) {
+			TreeSet<User> members = new TreeSet<User>(new UserComparator());
+			for(Iterator<?> i = membersDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element memberNode = (Element)i.next();
 				Integer idUser = new Integer(memberNode.attributeValue("idUser"));
 				User member = User.class.cast(sess.get(User.class, idUser));
@@ -3701,8 +3724,8 @@ public class GenoPubServlet extends HttpServlet {
 			reader = new StringReader(request.getParameter("collaboratorsXML"));
 			sax = new SAXReader();
 			Document collabsDoc = sax.read(reader);
-			TreeSet collaborators = new TreeSet(new UserComparator());
-			for(Iterator i = collabsDoc.getRootElement().elementIterator(); i.hasNext();) {
+			TreeSet<User> collaborators = new TreeSet<User>(new UserComparator());
+			for(Iterator<?> i = collabsDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element collabNode = (Element)i.next();
 				Integer idUser = new Integer(collabNode.attributeValue("idUser"));
 				User collab = User.class.cast(sess.get(User.class, idUser));
@@ -3714,8 +3737,8 @@ public class GenoPubServlet extends HttpServlet {
 			reader = new StringReader(request.getParameter("managersXML"));
 			sax = new SAXReader();
 			Document managersDoc = sax.read(reader);
-			TreeSet managers = new TreeSet(new UserComparator());
-			for(Iterator i = managersDoc.getRootElement().elementIterator(); i.hasNext();) {
+			TreeSet<User> managers = new TreeSet<User>(new UserComparator());
+			for(Iterator<?> i = managersDoc.getRootElement().elementIterator(); i.hasNext();) {
 				Element mgrNode = (Element)i.next();
 				Integer idUser = new Integer(mgrNode.attributeValue("idUser"));
 				User mgr = User.class.cast(sess.get(User.class, idUser));
@@ -3759,7 +3782,7 @@ public class GenoPubServlet extends HttpServlet {
 
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleDictionaryAddRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3827,7 +3850,7 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-	@SuppressWarnings("unchecked")
+
 	private void handleDictionaryDeleteRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -3893,8 +3916,6 @@ public class GenoPubServlet extends HttpServlet {
 	}
 
 
-
-	@SuppressWarnings("unchecked")
 	private void handleDictionaryUpdateRequest(HttpServletRequest request, HttpServletResponse res) throws Exception {
 		Session sess = null;
 		Transaction tx = null;
@@ -4233,9 +4254,6 @@ public class GenoPubServlet extends HttpServlet {
 		this.reportSuccess(response, null, null);
 	}
 
-	private void reportSuccess(HttpServletResponse response, Integer id) {
-		this.reportSuccess(response, "id", id);
-	}
 
 
 	private void reportSuccess(HttpServletResponse response, String attributeName, Object id) {

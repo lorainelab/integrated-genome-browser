@@ -71,17 +71,17 @@ public class AnnotationGrouping {
       this.parentAnnotationGrouping = parentAnnotationGrouping;
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean hasVisibility(String codeVisibility) {
-      boolean hasVisibility = false;
-      for(Annotation a : (Set<Annotation>)this.annotations) {
-        if (a.getCodeVisibility().equals(codeVisibility)) {
-          hasVisibility = true;
-          break;
-        }
-      }
-      return hasVisibility;
 
+    public boolean hasVisibility(String codeVisibility) {
+    	boolean hasVisibility = false;
+    	for(Iterator<?> i = this.annotations.iterator(); i.hasNext();) {
+    		Annotation a = Annotation.class.cast(i.next());
+    		if (a.getCodeVisibility().equals(codeVisibility)) {
+    			hasVisibility = true;
+    			break;
+    		}
+    	}
+    	return hasVisibility;
     }
 
     public Integer getIdGenomeVersion() {
@@ -117,18 +117,20 @@ public class AnnotationGrouping {
       return qualifiedName;
     }
     
-    public void recurseGetChildren(List descendents) {
-      for(Iterator i = this.getAnnotationGroupings().iterator(); i.hasNext();) {
-        AnnotationGrouping ag = (AnnotationGrouping)i.next();
-        descendents.add(ag);
-        ag.recurseGetChildren(descendents);
-      }
-      for(Iterator i = this.getAnnotations().iterator(); i.hasNext();) {
-        Annotation a = (Annotation)i.next();
-        descendents.add(a);
-      }
-      
+    
+
+    public void recurseGetChildren(List<Object> descendents) {
+    	for(Iterator<?> i = this.getAnnotationGroupings().iterator(); i.hasNext();) {        
+    		AnnotationGrouping ag = AnnotationGrouping.class.cast(i.next());
+    		descendents.add(ag);
+    		ag.recurseGetChildren(descendents);
+    	}
+    	for(Iterator<?> i = this.getAnnotations().iterator(); i.hasNext();) {
+    		Annotation a = Annotation.class.cast(i.next());
+    		descendents.add(a);
+    	}
     }
+    
     public String getCreatedBy() {
       return createdBy;
     }

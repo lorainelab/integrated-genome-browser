@@ -2185,6 +2185,23 @@ public class SeqMapView extends JPanel
 		seqmap.updateWidget();
 	}
 
+	/**
+	 * generates part of UCSC query url for current genome coordinates.
+	 * @return query URL for current view. "ucsc version not resolvable" on error.
+	 */
+	public String getUCSCQuery(){
+		if(aseq == null){
+			return "Error: no genome selected. please select a genome first";
+		}
+        String UcscVersion = getUcscGenomeVersion(aseq.getVersion());
+        String region = getRegionString();
+        if(UcscVersion != null && region != null){
+            return "db=" + UcscVersion + "&position=" + region;
+        }
+        return "Error: genome version not resolvable for UCSC " + aseq.getVersion();
+    }
+
+
 	/** Returns the genome UcscVersion in UCSC two-letter plus number format, like "hg17". */
 	private static String getUcscGenomeVersion(String version) {
 		String ucsc_version = null;

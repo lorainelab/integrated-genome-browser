@@ -66,8 +66,7 @@ import com.affymetrix.igb.util.LocalUrlCacher;
 import com.affymetrix.igb.tiers.IGBStateProvider;
 import com.affymetrix.igb.util.IGBAuthenticator;
 import com.affymetrix.igb.util.UnibrowPrefsUtil;
-
-
+import com.affymetrix.igb.view.ucsc.UCSCView;
 import java.text.MessageFormat;
 
 import static com.affymetrix.igb.IGBConstants.BUNDLE;
@@ -532,6 +531,8 @@ public final class IGB extends Application
 		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true));
 		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
 		plugins_info.add(new PluginInfo(RestrictionControlView.class.getName(), "Restriction Sites", true));
+
+		plugins_info.add(new PluginInfo(UCSCView.class.getName(), "UCSC View", true));
 
 		plugins_info.addAll(getPluginsFromXmlPrefs(PrefsLoader.getIGBPrefs(main_args)));
 

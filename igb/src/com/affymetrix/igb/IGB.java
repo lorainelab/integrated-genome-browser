@@ -526,7 +526,7 @@ public final class IGB extends Application
 		frm.setVisible(true);
 
 		plugins_info.add(new PluginInfo(DataLoadView.class.getName(), "Data Access", true));
-		plugins_info.add(new PluginInfo(SymTableView.class.getName(), "Selection Info", true));
+		plugins_info.add(new PluginInfo(PropertyView.class.getName(), "Selection Info", true));
 		plugins_info.add(new PluginInfo(SearchView.class.getName(), "Search", true));
 		plugins_info.add(new PluginInfo(AltSpliceView.class.getName(), "Sliced View", true));
 		plugins_info.add(new PluginInfo(SimpleGraphTab.class.getName(), "Graph Adjuster", true));
